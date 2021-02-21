@@ -651,7 +651,7 @@ local function loadAddon(self)
         SetCVar("test_cameraDynamicPitch", true)
         SetCVar("cameraKeepCharacterCentered", false)
         SetCVar("cameraReduceUnexpectedMovement", false)
-        hooksecurefunc("StaticPopup_Show", function(which, text_arg1, text_arg2, data, insertedFrame)
+        hooksecurefunc("StaticPopup_Show", function(which)
             if which == "EXPERIMENTAL_CVAR_WARNING" then
                 StaticPopup_Hide("EXPERIMENTAL_CVAR_WARNING")
             end

@@ -14,7 +14,6 @@ local RoundDec = GW.RoundDec
 local IsIn = GW.IsIn
 local nameRoleIcon = GW.nameRoleIcon
 
-local GW_READY_CHECK_INPROGRESS = false
 local GW_PORTRAIT_BACKGROUND = {
     [1] = {l = 0, r = 0.828, t = 0, b = 0.166015625},
     [2] = {l = 0, r = 0.828, t = 0.166015625, b = 0.166015625 * 2},
@@ -31,10 +30,11 @@ GW.AddForProfiling("party", "setPortraitBackground", setPortraitBackground)
 local function updateAwayData(self)
     local playerInstanceId = select(4, UnitPosition("player"))
     local instanceId = select(4, UnitPosition(self.unit))
+    local readyCheckStatus = GetReadyCheckStatus(self.unit)
     local portraitIndex = 1
 
-    if not GW_READY_CHECK_INPROGRESS then 
-        self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
+    if not readyCheckStatus then 
+        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
         SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
     end
 
@@ -48,7 +48,7 @@ local function updateAwayData(self)
     end
 
     if UnitHasIncomingResurrection(self.unit) then
-        self.classicon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
+        self.classicon:SetTexture("Interface/RaidFrame/Raid-Icon-Rez")
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
     end
 
@@ -68,14 +68,12 @@ local function updateAwayData(self)
         portraitIndex = 3
     end
 
-    if GW_READY_CHECK_INPROGRESS == true then
-        if self.ready == -1 then
+    if readyCheckStatus then
+        if readyCheckStatus == "waiting" then
             self.classicon:SetTexCoord(0, 1, 0, 0.25)
-        end
-        if self.ready == false then
+        elseif eadyCheckStatus == "notready" then
             self.classicon:SetTexCoord(0, 1, 0.25, 0.50)
-        end
-        if self.ready == true then
+        elseif readyCheckStatus == "ready" then
             self.classicon:SetTexCoord(0, 1, 0.50, 0.75)
         end
         if not self.classicon:IsShown() then
@@ -342,7 +340,7 @@ local function setUnitName(self)
     end
 
     if UnitIsGroupLeader(self.unit) then
-        nameString = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\icon-groupleader:18:18:0:-3|t" .. nameString
+        nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:18:18:0:-3|t" .. nameString
     end
     
     self.name:SetText(nameString)
@@ -466,9 +464,9 @@ local function party_OnEvent(self, event, unit, arg1)
     if not self.nameNotLoaded then
         setUnitName(self)
     end
-    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" and unit == self.unit then
+    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
         setHealth(self)
-    elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" and unit == self.unit then
+    elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
         local power = UnitPower(self.unit, UnitPowerType(self.unit))
         local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
         local powerPrecentage = 0
@@ -478,42 +476,28 @@ local function party_OnEvent(self, event, unit, arg1)
         self.powerbar:SetValue(powerPrecentage)
     elseif IsIn(event, "UNIT_LEVEL", "GROUP_ROSTER_UPDATE", "UNIT_MODEL_CHANGED") then
         updatePartyData(self)
-    elseif event == "UNIT_HEAL_PREDICTION" and unit == self.unit then
+    elseif event == "UNIT_HEAL_PREDICTION" then
         setPredictionAmount(self)
     elseif IsIn(event,"UNIT_PHASE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "UNIT_THREAT_SITUATION_UPDATE", "INCOMING_RESURRECT_CHANGED", "INCOMING_SUMMON_CHANGED") then
         updateAwayData(self)  
-    elseif (event == "UNIT_PORTRAIT_UPDATE" and unit == self.unit) or event == "PORTRAITS_UPDATED" or event == "UNIT_PHASE" then
+    elseif event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" or event == "UNIT_PHASE" then
         updateUnitPortrait(self)
-    elseif event == "UNIT_NAME_UPDATE" and unit == self.unit then
+    elseif event == "UNIT_NAME_UPDATE" then
         setUnitName(self)
-    elseif event == "UNIT_AURA" and unit == self.unit then
+    elseif event == "UNIT_AURA" then
         updatePartyAuras(self)
     elseif event == "READY_CHECK" then
-        self.ready = -1
-        GW_READY_CHECK_INPROGRESS = true
         updateAwayData(self)
-        self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\readycheck")
+        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
     elseif event == "READY_CHECK_CONFIRM" and unit == self.unit then
-        self.ready = arg1
         updateAwayData(self)
     elseif event == "READY_CHECK_FINISHED" then
-        GW_READY_CHECK_INPROGRESS = false
-        AddToAnimation(
-            "ReadyCheckPartyWait" .. self.unit,
-            0,
-            1,
-            GetTime(),
-            2,
-            function()
-            end,
-            nil,
-            function()
-                if UnitInParty(self.unit) ~= nil then
-                    self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
-                    SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
-                end
+        C_Timer.After(1.5, function(self)
+            if UnitInParty(self.unit) then
+                self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
+                SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
             end
-        )
+        end)
     end
 end
 GW.AddForProfiling("party", "party_OnEvent", party_OnEvent)
