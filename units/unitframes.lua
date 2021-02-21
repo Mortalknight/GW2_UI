@@ -315,12 +315,15 @@ local function updateRaidMarkers(self, event)
         self.raidmarker:SetTexture(nil)
         return
     end
-    self.raidmarker:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. i)
+    self.raidmarker:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcon_" .. i)
 end
 GW.AddForProfiling("unitframes", "updateRaidMarkers", updateRaidMarkers)
 
 local function setUnitPortrait(self)
     SetPortraitTexture(self.portrait, self.unit)
+    if self.frameInvert then
+        self.portrait:SetTexCoord(1, 0, 0, 1)
+    end
     self.activePortrait = nil
 end
 GW.AddForProfiling("unitframes", "setUnitPortrait", setUnitPortrait)
@@ -334,7 +337,7 @@ local function unitFrameData(self, event)
     local name = UnitName(self.unit)
 
     if UnitIsGroupLeader(self.unit) then
-        name = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\icon-groupleader:18:18|t" .. name
+        name = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:18:18|t" .. name
     end
 
     self.nameString:SetText(name)
