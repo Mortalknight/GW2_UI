@@ -20,10 +20,6 @@ local JAILERS_TOWER_LEVEL_TYPE_STRINGS = {
     [Enum.JailersTowerType.UpperReaches] = JAILERS_TOWER_LEVEL_TOAST_UPPER_REACHES,
 }
 
-local function getTimeStringFromSeconds(timeAmount)
-    return SecondsToClock(timeAmount, hours ~= 0)
-end
-
 local function getObjectiveBlock(self, index)
     if _G[self:GetName() .. "GwQuestObjective" .. index] ~= nil then
         _G[self:GetName() .. "GwQuestObjective" .. index]:SetScript("OnEnter", nil)
@@ -274,7 +270,7 @@ local function updateCurrentScenario(self, event, ...)
                         local elapsed = select(11, C_Scenario.GetCriteriaInfoByStep(bonusStepIndex, criteriaIndex))
                         if elapsed and elapsed > 0 then
                             GwQuestTrackerTimer.timer:SetValue(1 - (elapsed / duration))
-                            GwQuestTrackerTimer.timerString:SetText(getTimeStringFromSeconds(duration - elapsed))
+                            GwQuestTrackerTimer.timerString:SetText(SecondsToClock(duration - elapsed))
                         else
                             GwQuestTrackerTimer:SetScript("OnUpdate", nil)
                         end
@@ -419,19 +415,19 @@ local function scenarioTimerUpdate(...)
                         GwQuestTrackerTimer.chestoverlay.chest2:SetShown(elapsedTime < time2)
                         GwQuestTrackerTimer.chestoverlay.chest3:SetShown(elapsedTime < time3)
                         if elapsedTime < timeLimit then
-                            GwQuestTrackerTimer.timerString:SetText(getTimeStringFromSeconds(timeLimit - elapsedTime))
+                            GwQuestTrackerTimer.timerString:SetText(SecondsToClock(timeLimit - elapsedTime))
                             GwQuestTrackerTimer.timerString:SetTextColor(1, 1, 1)
                         else
-                            GwQuestTrackerTimer.timerString:SetText(getTimeStringFromSeconds(0))
+                            GwQuestTrackerTimer.timerString:SetText(SecondsToClock(0))
                             GwQuestTrackerTimer.timerString:SetTextColor(255, 0, 0)
                         end
                         if elapsedTime < time3 then
-                            GwQuestTrackerTimer.timerStringChest3:SetText(getTimeStringFromSeconds(time3 - elapsedTime))
-                            GwQuestTrackerTimer.timerStringChest2:SetText(getTimeStringFromSeconds(time2 - elapsedTime))
+                            GwQuestTrackerTimer.timerStringChest3:SetText(SecondsToClock(time3 - elapsedTime))
+                            GwQuestTrackerTimer.timerStringChest2:SetText(SecondsToClock(time2 - elapsedTime))
                             GwQuestTrackerTimer.timerStringChest3:Show()
                             GwQuestTrackerTimer.timerStringChest2:Show()
                         elseif elapsedTime < time2 then
-                            GwQuestTrackerTimer.timerStringChest2:SetText(getTimeStringFromSeconds(time2 - elapsedTime))
+                            GwQuestTrackerTimer.timerStringChest2:SetText(SecondsToClock(time2 - elapsedTime))
                             GwQuestTrackerTimer.timerStringChest2:Show()
                             GwQuestTrackerTimer.timerStringChest3:Hide()
                         else
@@ -455,7 +451,7 @@ local function scenarioTimerUpdate(...)
                     function()
                         local _, elapsedTime, _ = GetWorldElapsedTime(timerID)
                         GwQuestTrackerTimer.timer:SetValue(1 - (elapsedTime / duration))
-                        GwQuestTrackerTimer.timerString:SetText(getTimeStringFromSeconds(duration - elapsedTime))
+                        GwQuestTrackerTimer.timerString:SetText(SecondsToClock(duration - elapsedTime))
                     end
                 )
                 GwQuestTrackerTimer.timer:Show()
@@ -639,7 +635,7 @@ local function LoadScenarioFrame()
         function(self)
             GameTooltip:SetOwner(self, "ANCHOR_LEFT")
             GameTooltip:SetText(CHALLENGE_MODE_DEATH_COUNT_TITLE:format(self.count), 1, 1, 1)
-            GameTooltip:AddLine(CHALLENGE_MODE_DEATH_COUNT_DESCRIPTION:format(getTimeStringFromSeconds(self.timeLost)))
+            GameTooltip:AddLine(CHALLENGE_MODE_DEATH_COUNT_DESCRIPTION:format(SecondsToClock(self.timeLost)))
             GameTooltip:Show()
         end
     )

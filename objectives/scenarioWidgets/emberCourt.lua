@@ -1,13 +1,21 @@
 local _, GW = ...
+local addedPadding = false
 
 local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus)
     if GW.locationData.mapID == 1644 then
         if ScenarioWidgetContainerBlock.WidgetContainer:GetHeight() > 1.1 then
             numCriteria = numCriteria + 1
+            local w2 = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904)
             local container = _G.ScenarioWidgetContainerBlock
+            local padding = 0
             objectiveBlock = GW.GetScenarioObjectivesBlock(block, numCriteria)
             container.gwBlock = objectiveBlock
-            objectiveBlock:SetHeight(container:GetHeight())
+            if not addedPadding and w2 and w2.timerMax == 0 then
+                padding = 15
+                addedPadding = true
+            end
+            objectiveBlock:SetHeight(container:GetHeight() + padding)
+            
 
             if not container.gwHooked then
                 container:SetParent(objectiveBlock)
@@ -63,7 +71,7 @@ local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHei
                     local widget = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904)
                     if widget.timerValue ~= widget.timerMax then 
                         GwQuestTrackerTimer.timer:SetValue(widget.timerValue / widget.timerMax)
-                        GwQuestTrackerTimer.timerString:SetText(getTimeStringFromSeconds(widget.timerValue))
+                        GwQuestTrackerTimer.timerString:SetText(SecondsToClock(widget.timerValue, false))
                     else
                         GwQuestTrackerTimer:SetScript("OnUpdate", nil)
                         GW.updateCurrentScenario(GwQuesttrackerContainerScenario)
