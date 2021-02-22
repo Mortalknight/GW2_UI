@@ -245,14 +245,16 @@ local function updateCurrentScenario(self, event, ...)
         )
     end
 
+    local GwQuestTrackerTimerSavedHeight = 1
+
     -- add special widgets here
     numCriteria = GW.addWarfrontData(GwScenarioBlock, numCriteria)
     numCriteria = GW.addHeroicVisionsData(GwScenarioBlock, numCriteria)
     numCriteria = GW.addJailersTowerData(GwScenarioBlock, numCriteria)
+    numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus = GW.addEmberCourtData(GwScenarioBlock, numCriteria, GwQuestTrackerTimerSavedHeight)
 
     local bonusSteps = C_Scenario.GetBonusSteps()
     local numCriteriaPrev = numCriteria
-    local GwQuestTrackerTimerSavedHeight = 1
 
     for k, v in pairs(bonusSteps) do
         local bonusStepIndex = v
@@ -281,7 +283,7 @@ local function updateCurrentScenario(self, event, ...)
                 GwQuestTrackerTimer.timer:Show()
                 GwQuestTrackerTimerSavedHeight = GwQuestTrackerTimerSavedHeight + 40
                 showTimerAsBonus = true
-            else
+            elseif not showTimerAsBonus then
                 GwQuestTrackerTimerSavedHeight = 1
                 GwQuestTrackerTimer:SetScript("OnUpdate", nil)
                 GwQuestTrackerTimer.timer:Hide()
@@ -320,14 +322,16 @@ local function updateCurrentScenario(self, event, ...)
         intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
     end
 
-    if showTimerAsBonus then
+    if showTimerAsBonus or GwQuestTrackerTimerSavedHeight < 1.1 then
         GwQuestTrackerTimer.height = GwQuestTrackerTimerSavedHeight
 
         GwQuestTrackerTimer:SetHeight(GwQuestTrackerTimer.height)
     end
+
     GwScenarioBlock:SetHeight(GwScenarioBlock.height - intGWQuestTrackerHeight)
     GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
 end
+GW.updateCurrentScenario = updateCurrentScenario
 GW.AddForProfiling("scenario", "updateCurrentScenario", updateCurrentScenario)
 
 local function scenarioTimerStop()
