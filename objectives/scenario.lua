@@ -185,7 +185,7 @@ local function updateCurrentScenario(self, event, ...)
         stageName = ""
     end
     if difficultyName ~= nil then
-        local level, _, _ = C_ChallengeMode.GetActiveKeystoneInfo()
+        local level = C_ChallengeMode.GetActiveKeystoneInfo()
         if level > 0 then
             compassData.TITLE = stageName .. " |cFFFFFFFF +" .. level .. " " .. difficultyName .. "|r"
         else
