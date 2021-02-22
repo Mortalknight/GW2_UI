@@ -68,7 +68,6 @@ local function getDebuffs(unit, filter)
     local debuffList = {}
 
     for i = 1, 40 do
-        table.wipe(debuffList[i])
         if UnitDebuff(unit, i, filter) then
             debuffList[i] = {}
             local dbi = debuffList[i]
