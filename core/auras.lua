@@ -10,7 +10,7 @@ local function sortAuras(a, b)
 
     return (b.caster ~= "player" and a.caster == "player")
 end
-GW.AddForProfiling("unitframes", "sortAuras", sortAuras)
+GW.AddForProfiling("auras", "sortAuras", sortAuras)
 
 local function sortAurasRevert(a, b)
     if a.caster and b.caster and a.caster == b.caster then
@@ -19,7 +19,7 @@ local function sortAurasRevert(a, b)
 
     return (a.caster ~= "player" and b.caster == "player")
 end
-GW.AddForProfiling("unitframes", "sortAuras", sortAuras)
+GW.AddForProfiling("auras", "sortAuras", sortAuras)
 
 
 local function sortAuraList(auraList, revert)
@@ -31,19 +31,17 @@ local function sortAuraList(auraList, revert)
 
     return auraList
 end
-GW.AddForProfiling("unitframes", "sortAuraList", sortAuraList)
+GW.AddForProfiling("auras", "sortAuraList", sortAuraList)
 
-local buffList = {}
-for i = 1, 40 do
-    buffList[i] = {}
-end
 local function getBuffs(unit, filter, revert)
+    local buffList = {}
+
     if filter == nil then
         filter = ""
     end
     for i = 1, 40 do
-        table.wipe(buffList[i])
-        if UnitBuff(unit, i, filter) ~= nil then
+        if UnitBuff(unit, i, filter) then
+            buffList[i] = {}
             local bli = buffList[i]
             bli.id = i
 
@@ -64,16 +62,15 @@ local function getBuffs(unit, filter, revert)
 
     return sortAuraList(buffList, revert)
 end
-GW.AddForProfiling("unitframes", "getBuffs", getBuffs)
+GW.AddForProfiling("auras", "getBuffs", getBuffs)
 
-local debuffList = {}
-for i = 1, 40 do
-    debuffList[i] = {}
-end
 local function getDebuffs(unit, filter)
+    local debuffList = {}
+
     for i = 1, 40 do
         table.wipe(debuffList[i])
-        if UnitDebuff(unit, i, filter) ~= nil then
+        if UnitDebuff(unit, i, filter) then
+            debuffList[i] = {}
             local dbi = debuffList[i]
             dbi.id = i
 
@@ -94,7 +91,7 @@ local function getDebuffs(unit, filter)
 
     return sortAuraList(debuffList)
 end
-GW.AddForProfiling("unitframes", "getDebuffs", getDebuffs)
+GW.AddForProfiling("auras", "getDebuffs", getDebuffs)
 
 local function setAuraType(self, typeAura)
     if self.typeAura == typeAura then
@@ -117,7 +114,7 @@ local function setAuraType(self, typeAura)
 
     self.typeAura = typeAura
 end
-GW.AddForProfiling("unitframes", "setAuraType", setAuraType)
+GW.AddForProfiling("auras", "setAuraType", setAuraType)
 
 local function setBuffData(self, buffs, i)
     if not self or not buffs then
@@ -172,7 +169,7 @@ local function setBuffData(self, buffs, i)
 
     return true
 end
-GW.AddForProfiling("unitframes", "setBuffData", setBuffData)
+GW.AddForProfiling("auras", "setBuffData", setBuffData)
 
 local function auraAnimateIn(self)
     local endWidth = self:GetWidth()
@@ -188,7 +185,7 @@ local function auraAnimateIn(self)
         end
     )
 end
-GW.AddForProfiling("unitframes", "auraAnimateIn", auraAnimateIn)
+GW.AddForProfiling("auras", "auraAnimateIn", auraAnimateIn)
 
 -- No use for player (not secure)
 local function UpdateBuffLayout(self, event, anchorPos)
@@ -301,7 +298,7 @@ local function auraFrame_OnUpdate(self, elapsed)
         self.throt = self.throt - elapsed
     end
 end
-GW.AddForProfiling("unitframes", "auraFrame_OnUpdate", auraFrame_OnUpdate)
+GW.AddForProfiling("auras", "auraFrame_OnUpdate", auraFrame_OnUpdate)
 
 local function auraFrame_OnEnter(self)
     if self:IsShown() and self.auraid ~= nil and self.unit ~= nil then
@@ -315,7 +312,7 @@ local function auraFrame_OnEnter(self)
         GameTooltip:Show()
     end
 end
-GW.AddForProfiling("unitframes", "auraFrame_OnEnter", auraFrame_OnEnter)
+GW.AddForProfiling("auras", "auraFrame_OnEnter", auraFrame_OnEnter)
 
 local function CreateAuraFrame(name, parent)
     local f = CreateFrame("Button", name, parent, "GwAuraFrame")
