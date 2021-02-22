@@ -82,4 +82,4 @@ local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHei
 
     return numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus
 end
-GW.addHeroicVisionsData = addHeroicVisionsData
+GW.addEmberCourtData = addEmberCourtData
