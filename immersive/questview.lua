@@ -476,7 +476,12 @@ local function LoadQuestview()
             GwQuestviewFrameContainerDeclineQuest:SetShown(not QuestFrame.autoQuest and true or false)
             GwQuestviewFrame:EnableKeyboard(true)
             GwQuestviewFrame:SetScript("OnKeyDown", function(self, key)
-                if key == "SPACE" then nextGossip() end
+                if key == "SPACE" then
+                    self:SetPropagateKeyboardInput(false)
+                    nextGossip()
+                else
+                    self:SetPropagateKeyboardInput(true)
+                end
             end)
         end
     )
