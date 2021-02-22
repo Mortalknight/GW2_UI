@@ -137,6 +137,9 @@ immersive/tooltips.lua
 immersive/damagetext.xml
 immersive/damagetext.lua
 
+objectives/scenarioWidgets/heroicVisions.lua
+objectives/scenarioWidgets/jailersTower.lua
+objectives/scenarioWidgets/warfront.lua
 objectives/questtracker.xml
 objectives/map.lua
 objectives/worldmap.lua

@@ -62,6 +62,7 @@ local function getObjectiveBlock(self, index)
 
     return newBlock
 end
+GW.GetScenarioObjectivesBlock = getObjectiveBlock
 GW.AddForProfiling("scenario", "getObjectiveBlock", getObjectiveBlock)
 
 local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiveType, quantity)
@@ -145,8 +146,7 @@ local function updateCurrentScenario(self, event, ...)
     GwScenarioBlock.questLogIndex = 0
     GwScenarioBlock:Show()
 
-    local _, _, numStages, _, _, _, _, _, _, scenarioType = C_Scenario.GetInfo()
-    local inWarfront = (scenarioType == LE_SCENARIO_TYPE_WARFRONT)
+    local _, _, numStages = C_Scenario.GetInfo()
     if (numStages == 0 or IsOnGroundFloorInJailersTower()) then
         local name, instanceType, _, difficultyName, _ = GetInstanceInfo()
         if instanceType == "raid" then
@@ -219,13 +219,7 @@ local function updateCurrentScenario(self, event, ...)
     GwScenarioBlock.Header:SetTextColor(GwScenarioBlock.color.r, GwScenarioBlock.color.g, GwScenarioBlock.color.b)
     GwScenarioBlock.hover:SetVertexColor(GwScenarioBlock.color.r, GwScenarioBlock.color.g, GwScenarioBlock.color.b)
     GW.AddTrackerNotification(compassData, true)
-    --
 
-    --[[
-    local inChallengeMode = bit.band(flags, SCENARIO_FLAG_CHALLENGE_MODE) == SCENARIO_FLAG_CHALLENGE_MODE;
-    local inProvingGrounds = bit.band(flags, SCENARIO_FLAG_PROVING_GROUNDS) == SCENARIO_FLAG_PROVING_GROUNDS;
-    local dungeonDisplay = bit.band(flags, SCENARIO_FLAG_USE_DUNGEON_DISPLAY) == SCENARIO_FLAG_USE_DUNGEON_DISPLAY;
-    --]]
     if questID ~= nil then
         GwScenarioBlock.questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
     end
@@ -251,88 +245,10 @@ local function updateCurrentScenario(self, event, ...)
         )
     end
 
-    if inWarfront then
-        local winfo = C_CurrencyInfo.GetCurrencyInfo(1540) -- wood
-        local iinfo = C_CurrencyInfo.GetCurrencyInfo(1541) -- iron
-        --Wood
-        addObjectiveBlock(
-            GwScenarioBlock,
-            ParseCriteria(winfo.quantity, winfo.maxQuantity, winfo.name),
-            false,
-            numCriteria + 1,
-            "progressbar",
-            winfo.quantity
-        )
-        --Iron
-        addObjectiveBlock(
-            GwScenarioBlock,
-            ParseCriteria(iinfo.quantity, iinfo.maxQuantity, iinfo.name),
-            false,
-            numCriteria + 2,
-            "progressbar",
-            iinfo.quantity / iinfo.maxQuantity * 100
-        )
-        numCriteria = numCriteria + 2
-    elseif GW.locationData.mapID == 1469 or GW.locationData.mapID == 1470 then -- Heroic Vision for OP and SW
-        local info = C_CurrencyInfo.GetCurrencyInfo(1744) --Corrupted Memento
-        addObjectiveBlock(
-            GwScenarioBlock,
-            ParseCriteria(info.quantity, 0, info.name),
-            false,
-            numCriteria + 1,
-            "monster",
-            info.quantity
-        )
-        numCriteria = numCriteria + 1
-    elseif IsInJailersTower() then
-        local widgetInfo = C_UIWidgetManager.GetScenarioHeaderCurrenciesAndBackgroundWidgetVisualizationInfo(2319)
-        local remainingDeathText, remainingDeath = "", ""
-        if widgetInfo then
-            local currencies = widgetInfo.currencies
-            remainingDeathText = currencies[1].tooltip
-            remainingDeath = currencies[1].text
-        end
-
-        --Phantasma
-        local phinfo = C_CurrencyInfo.GetCurrencyInfo(1728)
-        addObjectiveBlock(
-            GwScenarioBlock,
-            "|T3743737:0:0:0:0:64:64:4:60:4:60|t " .. phinfo.quantity .. " " .. phinfo.name,
-            false,
-            numCriteria + 1,
-            "monster",
-            phinfo.quantity
-        )
-        --reamaning death
-        addObjectiveBlock(
-            GwScenarioBlock,
-            "|TInterface/AddOns/GW2_UI/textures/icons/icon-dead:0:0:0:0:64:64:4:60:4:60|t " .. remainingDeath .. " " .. remainingDeathText,
-            false,
-            numCriteria + 2,
-            "monster",
-            phinfo.quantity
-        )
-        local objectiveBlock = getObjectiveBlock(GwScenarioBlock, numCriteria + 1)
-        objectiveBlock:SetScript("OnEnter", function()
-            GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-            GameTooltip:ClearLines()
-            GameTooltip:SetCurrencyByID(1728)
-            GameTooltip:Show()
-        end)
-        objectiveBlock:HookScript("OnLeave", GameTooltip_Hide)
-
-        -- grab the MawBuffs Button drom here (need a skin later)
-        local container = _G.ScenarioBlocksFrame.MawBuffsBlock.Container
-        objectiveBlock = getObjectiveBlock(GwScenarioBlock, numCriteria + 3)
-        objectiveBlock:SetHeight(container:GetHeight())
-        container:SetParent(objectiveBlock)
-        container:ClearAllPoints()
-        container:SetAllPoints()
-        objectiveBlock:Show()
-        objectiveBlock.ObjectiveText:SetText(text)
-        GwScenarioBlock.height = GwScenarioBlock.height + objectiveBlock:GetHeight()
-        GwScenarioBlock.numObjectives = GwScenarioBlock.numObjectives + 1
-    end
+    -- add special widgets here
+    numCriteria = GW.addWarfrontData(GwScenarioBlock, numCriteria)
+    numCriteria = GW.addHeroicVisionsData(GwScenarioBlock, numCriteria)
+    numCriteria = GW.addJailersTowerData(GwScenarioBlock, numCriteria)
 
     local bonusSteps = C_Scenario.GetBonusSteps()
     local numCriteriaPrev = numCriteria
@@ -340,10 +256,6 @@ local function updateCurrentScenario(self, event, ...)
 
     for k, v in pairs(bonusSteps) do
         local bonusStepIndex = v
-        --[[
-        local scenarioName, currentStage, numStages, flags, _, _, completed, xp, money =
-            C_Scenario.GetInfo(bonusStepIndex)
-        --]]
         local _, _, numCriteria = C_Scenario.GetStepInfo(bonusStepIndex)
 
         for criteriaIndex = 1, numCriteria do
