@@ -583,7 +583,6 @@ local function UpdateQuestItem(block)
 
         QuestObjectiveItem_UpdateCooldown(block.actionButton)
         block.actionButton:SetScript("OnUpdate", QuestObjectiveItem_OnUpdate)
-        block.actionButton:SetScale(GwQuestTracker:GetScale())
         block.actionButton:Show()
     else
         block.hasItem = false
