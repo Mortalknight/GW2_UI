@@ -569,7 +569,7 @@
                 </FontString>
 
                 <FontString parentKey="prestigeString" text="4" justifyH="CENTER" justifyV="MIDDLE">
-                    <Size x="28" y="28"/>
+                    <Size x="32" y="28"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.portrait" relativePoint="BOTTOMRIGHT" x="-20" y="18"></Anchor>
                     </Anchors>

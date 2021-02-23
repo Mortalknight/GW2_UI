@@ -465,11 +465,6 @@ local function updateMainBar(toggle)
     fmActionbar.rangeTimer = -1
     fmActionbar.fadeTimer = -1
     fmActionbar.elapsedTimer = -1
-    local btn_yOff = 0
-
-    if not GetSetting("XPBAR_ENABLED") then
-        btn_yOff = -14
-    end
 
     local rangeIndicatorSetting = GetSetting("MAINBAR_RANGEINDICATOR")
     for i = 1, 12 do
@@ -539,7 +534,7 @@ local function updateMainBar(toggle)
                 fmActionbar,
                 "LEFT",
                 btn_padding - MAIN_MENU_BAR_BUTTON_MARGIN - MAIN_MENU_BAR_BUTTON_SIZE,
-                btn_yOff
+                (GetSetting("XPBAR_ENABLED") and 0 or -14)
             )
 
             if i == 6 and not GetSetting("PLAYER_AS_TARGET_FRAME") then
