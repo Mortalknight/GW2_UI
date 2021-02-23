@@ -190,7 +190,7 @@ local function GWUseThisLocalization()
     L["UNEQUIP_LEGENDARY"] = "Du musst das Item erst ausziehen, bevor du es aufwerten kannst."
     L["NOT_A_LEGENDARY"] = "Du kannst dieses Item nicht aufwerten."
     L["BAG_SORT_ORDER_FIRST"] = "Sortieren: Erste Tasche"
-    L["BAG_SORT_ORDER_LAST"] = "Sortieren: Letzte Tasche"
+    L["BAG_SORT_ORDER_LAST"] = "In die letzte Tasche sortieren"
     L["BAG_NEW_ORDER_FIRST"] = "Neue Items in erste Tasche"
     L["BAG_NEW_ORDER_LAST"] = "Neue Items in letzte Tasche"
     L["BAG_ORDER_NORMAL"] = "Normale Sortierung"

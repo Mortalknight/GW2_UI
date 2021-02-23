@@ -1,15 +1,15 @@
 local _, GW = ...
-local SetSetting = GW.SetSetting
+local _G, _M = getfenv(0), {}
+setfenv(1, setmetatable(_M, {__index=_G}))
 local GetSetting = GW.GetSetting
-local SortBagsRightToLeft
 
-CreateFrame('GameTooltip', 'SortBagsTooltip', nil, 'GameTooltipTemplate')
+CreateFrame("GameTooltip", "SortBagsTooltip", nil, "GameTooltipTemplate")
 
-local CONTAINERS
+BAG_CONTAINERS = {0, 1, 2, 3, 4}
+BANK_BAG_CONTAINERS = {-1, 5, 6, 7, 8, 9, 10}
 
-function GW_SortBags()
-    CONTAINERS = {0, 1, 2, 3, 4}
-    SortBagsRightToLeft = GetSetting("SORT_BAGS_RIGHT_TO_LEFT")
+function _G.GW_SortBags()
+    CONTAINERS = {unpack(BAG_CONTAINERS)}
     for i = #CONTAINERS, 1, -1 do
         if GetBagSlotFlag(i - 1, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
             tremove(CONTAINERS, i)
@@ -18,9 +18,8 @@ function GW_SortBags()
     Start()
 end
 
-function GW_SortBankBags()
-    CONTAINERS = {-1, 5, 6, 7, 8, 9, 10}
-    SortBagsRightToLeft = GetSetting("SORT_BAGS_RIGHT_TO_LEFT")
+function _G.GW_SortBankBags()
+    CONTAINERS = {unpack(BANK_BAG_CONTAINERS)}
     for i = #CONTAINERS, 1, -1 do
         if GetBankBagSlotFlag(i - 1, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
             tremove(CONTAINERS, i)
@@ -29,19 +28,9 @@ function GW_SortBankBags()
     Start()
 end
 
-local function GetSortBagsRightToLeft(enabled)
-    return GetSetting("SORT_BAGS_RIGHT_TO_LEFT")
-end
-GW.GetSortBagsRightToLeft = GetSortBagsRightToLeft
-
-local function SetSortBagsRightToLeft(enabled)
-    SetSetting("SORT_BAGS_RIGHT_TO_LEFT", enabled)
-end
-GW.SetSortBagsRightToLeft = SetSortBagsRightToLeft
-
 local function set(...)
     local t = {}
-    local n = select('#', ...)
+    local n = select("#", ...)
     for i = 1, n do
         t[select(i, ...)] = true
     end
@@ -50,7 +39,7 @@ end
 
 local function union(...)
     local t = {}
-    local n = select('#', ...)
+    local n = select("#", ...)
     for i = 1, n do
         for k in pairs(select(i, ...)) do
             t[k] = true
@@ -133,15 +122,97 @@ local CLASSES = {
     },
 }
 
+do
+    local f = CreateFrame"Frame"
+    f:SetScript("OnEvent", function()
+        f:SetScript("OnUpdate", function()
+            for _, container in pairs(BAG_CONTAINERS) do
+                for position = 1, GetContainerNumSlots(container) do
+                    SetScanTooltip(container, position)
+                end
+            end
+            f:SetScript("OnUpdate", nil)
+        end)
+    end)
+    f:RegisterEvent"PLAYER_LOGIN"
+end
+
+do
+    local f = CreateFrame"Frame"
+    f:SetScript("OnEvent", function()
+        for _, container in pairs(BANK_BAG_CONTAINERS) do
+            for position = 1, GetContainerNumSlots(container) do
+                SetScanTooltip(container, position)
+            end
+        end
+    end)
+    f:RegisterEvent"BANKFRAME_OPENED"
+end
+
 local model, itemStacks, itemClasses, itemSortKeys
 
-local function Move(src, dst)
+do
+    local f = CreateFrame"Frame"
+
+    local process = coroutine.create(function() end);
+
+    local suspended
+
+    function Start()
+        process = coroutine.create(function()
+            while not Initialize() do
+                coroutine.yield()
+            end
+            while true do
+                suspended = false
+                if InCombatLockdown() then
+                    return
+                end
+                local complete = Sort()
+                if complete then
+                    return
+                end
+                Stack()
+                if not suspended then
+                    coroutine.yield()
+                end
+            end
+        end)
+        f:Show()
+    end
+
+    f:SetScript("OnUpdate", function(_, arg1)
+        if coroutine.status(process) == "suspended" then
+            suspended = true
+            coroutine.resume(process)
+        end
+        if coroutine.status(process) == "dead" then
+            f:Hide()
+        end
+    end)
+end
+
+function LT(a, b)
+    local i = 1
+    while true do
+        if a[i] and b[i] and a[i] ~= b[i] then
+            return a[i] < b[i]
+        elseif not a[i] and b[i] then
+            return true
+        elseif not b[i] then
+            return false
+        end
+        i = i + 1
+    end
+end
+
+function Move(src, dst)
     local texture, _, srcLocked = GetContainerItemInfo(src.container, src.position)
     local _, _, dstLocked = GetContainerItemInfo(dst.container, dst.position)
     
     if texture and not srcLocked and not dstLocked then
         ClearCursor()
-        PickupContainerItem(src.container, src.position)
+           PickupContainerItem(src.container, src.position)
         PickupContainerItem(dst.container, dst.position)
 
         if src.item == dst.item then
@@ -156,109 +227,19 @@ local function Move(src, dst)
             src.count, dst.count = dst.count, src.count
         end
 
+        coroutine.yield()
         return true
-    end
-end
-
-local function Sort()
-    local complete = true
-
-    for _, dst in ipairs(model) do
-        if dst.targetItem and (dst.item ~= dst.targetItem or dst.count < dst.targetCount) then
-            complete = false
-
-            local sources, rank = {}, {}
-
-            for _, src in ipairs(model) do
-                if src.item == dst.targetItem
-                    and src ~= dst
-                    and not (dst.item and src.class and src.class ~= itemClasses[dst.item])
-                    and not (src.targetItem and src.item == src.targetItem and src.count <= src.targetCount)
-                then
-                    rank[src] = abs(src.count - dst.targetCount + (dst.item == dst.targetItem and dst.count or 0))
-                    tinsert(sources, src)
-                end
-            end
-
-            sort(sources, function(a, b) return rank[a] < rank[b] end)
-
-            for _, src in ipairs(sources) do
-                if Move(src, dst) then
-                    break
-                end
-            end
-        end
-    end
-
-    return complete
-end
-
-local function Stack()
-    for _, src in ipairs(model) do
-        if src.item and src.count < itemStacks[src.item] and src.item ~= src.targetItem then
-            for _, dst in ipairs(model) do
-                if dst ~= src and dst.item and dst.item == src.item and dst.count < itemStacks[dst.item] and dst.item ~= dst.targetItem then
-                    Move(src, dst)
-                end
-            end
-        end
-    end
-end
-
-do
-    local f = CreateFrame'Frame'
-    f:Hide()
-
-    local timeout
-
-    function Start()
-        if f:IsShown() then return end
-        GW.BagSortInitialize()
-        timeout = GetTime() + 7
-        f:Show()
-    end
-
-    local delay = 0
-    f:SetScript('OnUpdate', function(_, arg1)
-        if InCombatLockdown() or GetTime() > timeout then
-            f:Hide()
-            return
-        end 
-        delay = delay - arg1
-        if delay <= 0 then
-            delay = .2
-            local complete = Sort()
-            if complete then
-                f:Hide()
-                return
-            end
-            Stack()
-        end
-    end)
-end
-
-local function LT(a, b)
-    local i = 1
-    while true do
-        if a[i] and b[i] and a[i] ~= b[i] then
-            return a[i] < b[i]
-        elseif not a[i] and b[i] then
-            return true
-        elseif not b[i] then
-            return false
-        end
-        i = i + 1
     end
 end
 
 do
     local patterns = {}
     for i = 1, 10 do
-        local text = gsub(ITEM_SPELL_CHARGES, '(-?%d+)(.-)|4([^;]-);', function(numberString, gap, numberForms)
+        local text = gsub(format(ITEM_SPELL_CHARGES, i), "(-?%d+)(.-)|4([^;]-);", function(numberString, gap, numberForms)
             local singular, dual, plural
-            _, _, singular, dual, plural = strfind(numberForms, '(.+):(.+):(.+)');
+            _, _, singular, dual, plural = strfind(numberForms, "(.+):(.+):(.+)");
             if not singular then
-                _, _, singular, plural = strfind(numberForms, '(.+):(.+)')
+                _, _, singular, plural = strfind(numberForms, "(.+):(.+)")
             end
             local i = abs(tonumber(numberString))
             local numberForm
@@ -274,30 +255,22 @@ do
         patterns[text] = i
     end
 
-    local function itemCharges(text)
+    function itemCharges(text)
         return patterns[text]
     end
-    GW.itemCharges = itemCharges
 end
 
-local function TooltipInfo(container, position)
-    SortBagsTooltip:SetOwner(UIParent, 'ANCHOR_NONE')
-    SortBagsTooltip:ClearLines()
-
-    if container == BANK_CONTAINER then
-        SortBagsTooltip:SetInventoryItem('player', BankButtonIDToInvSlotID(position))
-    else
-        SortBagsTooltip:SetBagItem(container, position)
-    end
+function TooltipInfo(container, position)
+    SetScanTooltip(container, position)
 
     local charges, usable, soulbound, quest, conjured
     for i = 1, SortBagsTooltip:NumLines() do
-        local text = getglobal('SortBagsTooltipTextLeft' .. i):GetText()
+        local text = getglobal("SortBagsTooltipTextLeft" .. i):GetText()
 
-        charges = GW.itemCharges(text)
-        if charges then
-            charges = charges
-        elseif strfind(text, '^' .. ITEM_SPELL_TRIGGER_ONUSE) then
+        local extractedCharges = itemCharges(text)
+        if extractedCharges then
+            charges = extractedCharges
+        elseif strfind(text, "^" .. ITEM_SPELL_TRIGGER_ONUSE) then
             usable = true
         elseif text == ITEM_SOULBOUND then
             soulbound = true
@@ -311,7 +284,156 @@ local function TooltipInfo(container, position)
     return charges or 1, usable, soulbound, quest, conjured
 end
 
-local function ContainerClass(container)
+function SetScanTooltip(container, position)
+    SortBagsTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+    SortBagsTooltip:ClearLines()
+
+    if container == BANK_CONTAINER then
+        SortBagsTooltip:SetInventoryItem("player", BankButtonIDToInvSlotID(position))
+    else
+        SortBagsTooltip:SetBagItem(container, position)
+    end
+end
+
+function Sort()
+    local complete, moved
+    repeat
+        complete, moved = true, false
+        for _, dst in ipairs(model) do
+            if dst.targetItem and (dst.item ~= dst.targetItem or dst.count < dst.targetCount) then
+                complete = false
+
+                local sources, rank = {}, {}
+
+                for _, src in ipairs(model) do
+                    if src.item == dst.targetItem
+                        and src ~= dst
+                        and not (dst.item and src.class and src.class ~= itemClasses[dst.item])
+                        and not (src.targetItem and src.item == src.targetItem and src.count <= src.targetCount)
+                    then
+                        rank[src] = abs(src.count - dst.targetCount + (dst.item == dst.targetItem and dst.count or 0))
+                        tinsert(sources, src)
+                    end
+                end
+
+                sort(sources, function(a, b) return rank[a] < rank[b] end)
+
+                for _, src in ipairs(sources) do
+                    if Move(src, dst) then
+                        moved = true
+                        break
+                    end
+                end
+            end
+        end
+    until complete or not moved
+    return complete
+end
+
+function Stack()
+    for _, src in ipairs(model) do
+        if src.item and src.count < itemStacks[src.item] and src.item ~= src.targetItem then
+            for _, dst in ipairs(model) do
+                if dst ~= src and dst.item and dst.item == src.item and dst.count < itemStacks[dst.item] and dst.item ~= dst.targetItem then
+                    if Move(src, dst) then
+                        return
+                    end
+                end
+            end
+        end
+    end
+end
+
+do
+    local counts
+
+    local function insert(t, v)
+        if GetSetting("SORT_BAGS_RIGHT_TO_LEFT") then
+            tinsert(t, v)
+        else
+            tinsert(t, 1, v)
+        end
+    end
+
+    local function assign(slot, item)
+        if counts[item] > 0 then
+            local count
+            if GetSetting("SORT_BAGS_RIGHT_TO_LEFT") and mod(counts[item], itemStacks[item]) ~= 0 then
+                count = mod(counts[item], itemStacks[item])
+            else
+                count = min(counts[item], itemStacks[item])
+            end
+            slot.targetItem = item
+            slot.targetCount = count
+            counts[item] = counts[item] - count
+            return true
+        end
+    end
+
+    function Initialize()
+        model, counts, itemStacks, itemClasses, itemSortKeys = {}, {}, {}, {}, {}
+
+        for _, container in ipairs(CONTAINERS) do
+            local class = ContainerClass(container)
+            for position = 1, GetContainerNumSlots(container) do
+                local slot = {container=container, position=position, class=class}
+                local item = Item(container, position)
+                if item then
+                    local _, count, locked = GetContainerItemInfo(container, position)
+                    if locked then
+                        return false
+                    end
+                    slot.item = item
+                    slot.count = count
+                    counts[item] = (counts[item] or 0) + count
+                end
+                insert(model, slot)
+            end
+        end
+
+        local free = {}
+        for item, count in pairs(counts) do
+            local stacks = ceil(count / itemStacks[item])
+            free[item] = stacks
+            if itemClasses[item] then
+                free[itemClasses[item]] = (free[itemClasses[item]] or 0) + stacks
+            end
+        end
+        for _, slot in ipairs(model) do
+            if slot.class and free[slot.class] then
+                free[slot.class] = free[slot.class] - 1
+            end
+        end
+
+        local items = {}
+        for item in pairs(counts) do
+            tinsert(items, item)
+        end
+        sort(items, function(a, b) return LT(itemSortKeys[a], itemSortKeys[b]) end)
+
+        for _, slot in ipairs(model) do
+            if slot.class then
+                for _, item in ipairs(items) do
+                    if itemClasses[item] == slot.class and assign(slot, item) then
+                        break
+                    end
+                end
+            else
+                for _, item in ipairs(items) do
+                    if (not itemClasses[item] or free[itemClasses[item]] > 0) and assign(slot, item) then
+                        if itemClasses[item] then
+                            free[itemClasses[item]] = free[itemClasses[item]] - 1
+                        end
+                        break
+                    end
+                end
+            end
+        end
+        return true
+    end
+end
+
+function ContainerClass(container)
     if container ~= 0 and container ~= BANK_CONTAINER then
         local name = GetBagName(container)
         if name then        
@@ -326,12 +448,12 @@ local function ContainerClass(container)
     end
 end
 
-local function Item(container, position)
+function Item(container, position)
     local link = GetContainerItemLink(container, position)
     if link then
-        local _, _, itemID, enchantID, suffixID, uniqueID = strfind(link, 'item:(%d+):(%d*):(%d*):(%d*)')
+        local _, _, itemID, enchantID, suffixID, uniqueID = strfind(link, "item:(%d+):(%d*):::::(%d*):(%d*)")
         itemID = tonumber(itemID)
-        local _, _, quality, _, _, _, _, stack, slot, _, sellPrice, classId, subClassId = GetItemInfo('item:' .. itemID)
+        local itemName, _, quality, _, _, _, _, stack, slot, _, sellPrice, classId, subClassId = GetItemInfo("item:" .. itemID)
         local charges, usable, soulbound, quest, conjured = TooltipInfo(container, position)
 
         local sortKey = {}
@@ -407,13 +529,14 @@ local function Item(container, position)
         tinsert(sortKey, slot)
         tinsert(sortKey, subClassId)
         tinsert(sortKey, -quality)
+        tinsert(sortKey, itemName)
         tinsert(sortKey, itemID)
-        tinsert(sortKey, (SortBagsRightToLeft and 1 or -1) * charges)
+        tinsert(sortKey, (GetSetting("SORT_BAGS_RIGHT_TO_LEFT") and 1 or -1) * charges)
         tinsert(sortKey, suffixID)
         tinsert(sortKey, enchantID)
         tinsert(sortKey, uniqueID)
 
-        local key = format('%s:%s:%s:%s:%s:%s', itemID, enchantID, suffixID, uniqueID, charges, (soulbound and 1 or 0))
+        local key = format("%s:%s:%s:%s:%s:%s", itemID, enchantID, suffixID, uniqueID, charges, (soulbound and 1 or 0))
 
         itemStacks[key] = stack
         itemSortKeys[key] = sortKey
@@ -427,90 +550,4 @@ local function Item(container, position)
 
         return key
     end
-end
-
-do
-    local counts
-
-    local function insert(t, v)
-        if SortBagsRightToLeft then
-            tinsert(t, v)
-        else
-            tinsert(t, 1, v)
-        end
-    end
-
-    local function assign(slot, item)
-        if counts[item] > 0 then
-            local count
-            if SortBagsRightToLeft and mod(counts[item], itemStacks[item]) ~= 0 then
-                count = mod(counts[item], itemStacks[item])
-            else
-                count = min(counts[item], itemStacks[item])
-            end
-            slot.targetItem = item
-            slot.targetCount = count
-            counts[item] = counts[item] - count
-            return true
-        end
-    end
-
-    local function BagSortInitialize()
-        model, counts, itemStacks, itemClasses, itemSortKeys = {}, {}, {}, {}, {}
-
-        for _, container in ipairs(CONTAINERS) do
-            local class = ContainerClass(container)
-            for position = 1, GetContainerNumSlots(container) do
-                local slot = {container=container, position=position, class=class}
-                local item = Item(container, position)
-                if item then
-                    local _, count = GetContainerItemInfo(container, position)
-                    slot.item = item
-                    slot.count = count
-                    counts[item] = (counts[item] or 0) + count
-                end
-                insert(model, slot)
-            end
-        end
-
-        local free = {}
-        for item, count in pairs(counts) do
-            local stacks = ceil(count / itemStacks[item])
-            free[item] = stacks
-            if itemClasses[item] then
-                free[itemClasses[item]] = (free[itemClasses[item]] or 0) + stacks
-            end
-        end
-        for _, slot in ipairs(model) do
-            if slot.class and free[slot.class] then
-                free[slot.class] = free[slot.class] - 1
-            end
-        end
-
-        local items = {}
-        for item in pairs(counts) do
-            tinsert(items, item)
-        end
-        sort(items, function(a, b) return LT(itemSortKeys[a], itemSortKeys[b]) end)
-
-        for _, slot in ipairs(model) do
-            if slot.class then
-                for _, item in ipairs(items) do
-                    if itemClasses[item] == slot.class and assign(slot, item) then
-                        break
-                    end
-                end
-            else
-                for _, item in ipairs(items) do
-                    if (not itemClasses[item] or free[itemClasses[item]] > 0) and assign(slot, item) then
-                        if itemClasses[item] then
-                            free[itemClasses[item]] = free[itemClasses[item]] - 1
-                        end
-                        break
-                    end
-                end
-            end
-        end
-    end
-    GW.BagSortInitialize = BagSortInitialize
 end

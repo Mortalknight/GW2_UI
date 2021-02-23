@@ -2,6 +2,14 @@ local _, GW = ...
 local v = GW.vernotes
 
 v(
+    "1.10.6",
+    [=[
+    - Update sorting to the latest version
+    - Update extended char stats
+]=]
+)
+
+v(
     "1.10.5",
     [=[
     - Party buff shows now correct duration

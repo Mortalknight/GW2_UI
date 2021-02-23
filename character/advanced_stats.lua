@@ -28,7 +28,11 @@ local CHAR_EQUIP_SLOTS = {
 
 local enchants = {
     Biznick = "2523", --3% Hit from Biznick
-    Bracer_Mana_Reg = "2565" -- 4 MP5
+    Bracer_Mana_Reg = "2565" ,-- 4 MP5
+    PROPHETIC_AURA = "2590", -- 4 MP5 for priest ZG Enchant
+    BRILLIANT_MANA_OIL = "2629", -- 12 MP5
+    LESSER_MANA_OIL = "2625", -- 8 MP5
+    MINOR_MANA_OIL = "2624", -- 4 MP5
 }
 
 local schools = {
@@ -126,7 +130,7 @@ local function _GetMissChanceByDifference(weaponSkill, defenseValue)
     if (defenseValue - weaponSkill) <= 10 then
         return 5 + (defenseValue - weaponSkill) * 0.1
     else
-        return 7 + (defenseValue - weaponSkill - 10) * 0.4
+        return min(8, 6 + (defenseValue - weaponSkill) * 0.2)
     end
 end
 
@@ -194,6 +198,15 @@ local function _GetTalentModifierMP5()
     return mod
 end
 
+local function _GetBlessingOfWisdomModifier()
+    local mod = 0
+    if GW.myClassID == ClassIndex.PALADIN then
+        local _, _, _, _, points, _, _, _ = GetTalentInfo(1, 10)
+        mod = points * 0.1 -- 0-20% from Improved Blessing of Wisdom
+    end
+    return mod
+end
+
 local function _GetAuraModifier()
     local mod = 0
     local bonus = 0
@@ -209,6 +222,10 @@ local function _GetAuraModifier()
             bonus = bonus + 10 -- 10 MP5 from Warchief Belssing
         elseif spellId == 18194 then
             bonus = bonus + 8 -- 8 MP5 from Nightfin Soup
+        elseif spellId == 25691 then
+            bonus = bonus + 6 -- 6 MP5 from Sagefish Delight
+        elseif spellId == 25690 then
+            bonus = bonus + 3 -- 8 MP5 from Smoked Sagefish
         elseif spellId == 5677 then
             bonus = bonus + 10 -- 4 mana pe 2 sec Mana spring Totem Rank 1
         elseif spellId == 10491 then
@@ -217,6 +234,32 @@ local function _GetAuraModifier()
             bonus = bonus + 20 -- 8 mana pe 2 sec Mana spring Totem Rank 3
         elseif spellId == 10494 then
             bonus = bonus + 25 -- 10 mana pe 2 sec Mana spring Totem Rank 4
+        elseif spellId == 25894 then
+            local blessingMod = _GetBlessingOfWisdomModifier() + 1
+         	bonus = bonus + math.ceil(30 * blessingMod) -- Greater Blessing of Wisdom Rank 1
+        elseif spellId == 25918 then
+            local blessingMod = _GetBlessingOfWisdomModifier() + 1
+         	bonus = bonus + math.ceil(33 * blessingMod) -- Greater Blessing of Wisdom Rank 2
+        elseif spellId == 19742 then
+            local blessingMod = _GetBlessingOfWisdomModifier() + 1
+            bonus = bonus + math.ceil(10 * blessingMod) -- Blessing of Wisdom Rank 1
+        elseif spellId == 19850 then
+            local blessingMod = _GetBlessingOfWisdomModifier() + 1
+         	bonus = bonus + math.ceil(15 * blessingMod) -- Blessing of Wisdom Rank 2
+        elseif spellId == 19852 then
+            local blessingMod = _GetBlessingOfWisdomModifier() + 1
+            bonus = bonus + math.ceil(20 * blessingMod) -- Blessing of Wisdom Rank 3
+        elseif spellId == 19853 then
+            local blessingMod = _GetBlessingOfWisdomModifier() + 1
+         	bonus = bonus + math.ceil(25 * blessingMod) -- Blessing of Wisdom Rank 4
+        elseif spellId == 19854 then
+            local blessingMod = _GetBlessingOfWisdomModifier() + 1
+         	bonus = bonus + math.ceil(30 * blessingMod) -- Blessing of Wisdom Rank 5
+        elseif spellId == 25290 then
+            local blessingMod = _GetBlessingOfWisdomModifier() + 1
+         	bonus = bonus + math.ceil(33 * blessingMod) -- Blessing of Wisdom Rank 6
+        elseif spellId == 17252 then
+            bonus = bonus + 22 -- 22 MP5 from Mark of the Dragon Lord
         end
     end
 
@@ -292,6 +335,25 @@ local function _GetMP5ValueOnItems()
             if enchant and enchant == enchants.Bracer_Mana_Reg then
                 mp5 = mp5 + 4
             end
+            -- Priest ZG Enchant
+            if enchant and enchant == enchants.PROPHETIC_AURA then
+                mp5 = mp5 + 4
+            end
+        end
+    end
+
+    -- Check weapon enchants (e.g. Mana Oil)
+    local hasMainEnchant, _, _, mainHandEnchantID = GetWeaponEnchantInfo()
+    mainHandEnchantID = tostring(mainHandEnchantID)
+    if (hasMainEnchant) then
+        if mainHandEnchantID == enchants.BRILLIANT_MANA_OIL then
+            mp5 = mp5 + 12
+        end
+        if mainHandEnchantID == enchants.LESSER_MANA_OIL then
+            mp5 = mp5 + 8
+        end
+        if mainHandEnchantID == enchants.MINOR_MANA_OIL then
+            mp5 = mp5 + 4
         end
     end
 
@@ -314,7 +376,7 @@ local function GetMP5FromSpirit()
         base = lastManaReg
     end
     lastManaReg = base
-    return RoundDec(base, 0) * 5
+    return RoundDec(base * 5, 1)
 end
 
 -- Get MP5 from items
@@ -411,12 +473,21 @@ end
 -- Gets the range hit chance against enemies 3 level above the player level
 local function RangeMissChanceBossLevel()
     local rangedAttackBase, rangedAttackMod = UnitRangedAttack("player")
+    local rangedWeaponSkill = rangedAttackBase + rangedAttackMod
     local enemyDefenseValue = (GW.mylevel + 3) * 5
 
-    local missChance = _GetMissChanceByDifference(rangedAttackBase + rangedAttackMod, enemyDefenseValue)
-    missChance = missChance - _GetRangeHitBonus()
-    
-    missChance = Clamp(missChance, 0, 100)
+    local missChance = _GetMissChanceByDifference(rangedWeaponSkill, enemyDefenseValue)
+    local hitBonus = _GetRangeHitBonus()
+    if rangedWeaponSkill < 305 and hitBonus >= 1 then
+        hitBonus = hitBonus - 1
+    end
+    missChance = missChance - hitBonus
+
+    if missChance < 0 then
+        missChance = 0
+    elseif missChance > 100 then
+        missChance = 100
+    end
 
     return RoundDec(missChance, 2) .. "%"
 end
@@ -429,7 +500,7 @@ local function SpellHitBonus()
 end
 
 local function SpellMissChanceSameLevel()
-    local missChance = 3
+    local missChance = 4
 
     missChance = missChance - _GetTalentModifierSpellHit()
     local mod = GetSpellHitModifier()
@@ -437,13 +508,17 @@ local function SpellMissChanceSameLevel()
         missChance = missChance - mod
     end
 
-    missChance = Clamp(missChance, 0, 100)
+    if missChance < 1 then
+        missChance = 1
+    elseif missChance > 100 then
+        missChance = 100
+    end
 
     return RoundDec(missChance, 2) .. "%"
 end
 
 local function SpellMissChanceBossLevel()
-    local missChance = 16
+    local missChance = 17
 
     missChance = missChance - _GetTalentModifierSpellHit()
     local mod = GetSpellHitModifier()
@@ -451,7 +526,11 @@ local function SpellMissChanceBossLevel()
         missChance = missChance - mod
     end
 
-    missChance = Clamp(missChance, 0, 100)
+    if missChance < 1 then
+        missChance = 1
+    elseif missChance > 100 then
+        missChance = 100
+    end
 
     return RoundDec(missChance, 2) .. "%"
 end
@@ -463,10 +542,7 @@ end
 local function _GetTalentModifierHolyCrit()
     local mod = 0
 
-    if GW.myClassID == ClassIndex.PALADIN then -- Paladin
-        local _, _, _, _, points = GetTalentInfo(1, 13)
-        mod = points * 1 -- 0-5% Holy Power
-    elseif GW.myClassID == ClassIndex.PRIEST then -- Priest
+    if GW.myClassID == ClassIndex.PRIEST then -- Priest
         local _, _, _, _, points = GetTalentInfo(2, 3)
         mod = points * 1 -- 0-5% Holy Specialization
     end
