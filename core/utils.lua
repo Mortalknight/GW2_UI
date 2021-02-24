@@ -484,10 +484,10 @@ GW.vernotes = vernotes
 -- create custom UIFrameFlash animation
 local function SetUpFrameFlash(frame, loop)
     frame.flasher = frame:CreateAnimationGroup("Flash")
-    frame.flasher.fadein = frame.flasher:CreateAnimation("ALPHA", "FadeIn")
+    frame.flasher.fadein = frame.flasher:CreateAnimation("Alpha", "FadeIn")
     frame.flasher.fadein:SetOrder(1)
 
-    frame.flasher.fadeout = frame.flasher:CreateAnimation("ALPHA", "FadeOut")
+    frame.flasher.fadeout = frame.flasher:CreateAnimation("Alpha", "FadeOut")
     frame.flasher.fadeout:SetOrder(2)
 
     if loop then

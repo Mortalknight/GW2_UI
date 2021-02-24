@@ -342,14 +342,10 @@ local function updateHotkey(self, actionButtonType)
     text = string.gsub(text, "(Up Arrow)", "UP")
     text = string.gsub(text, "(Down Arrow)", "DN")
 
-    if hotkey:GetText() == RANGE_INDICATOR then
+    if hotkey:GetText() == RANGE_INDICATOR or not GetSetting("BUTTON_ASSIGNMENTS") then
         hotkey:SetText("")
     else
-        if GetSetting("BUTTON_ASSIGNMENTS") then
-            hotkey:SetText(text)
-        else
-            hotkey:SetText("")
-        end
+        hotkey:SetText(text)
     end
 end
 GW.updateHotkey = updateHotkey
@@ -501,7 +497,7 @@ local function updateMainBar(toggle)
             if IsEquippedAction(btn.action) then
                 local borname = "ActionButton" .. i .. "Border"
                 if _G[borname] then
-                    _G[borname]:SetVertexColor(0, 1.0, 0, 1)
+                    _G[borname]:SetVertexColor(0, 1, 0, 1)
                 end
             end
 
@@ -516,13 +512,7 @@ local function updateMainBar(toggle)
             btn["gw_HotKey"] = hotkey
 
             if GetSetting("BUTTON_ASSIGNMENTS") then
-                local hkBg =
-                    CreateFrame(
-                    "Frame",
-                    "GwHotKeyBackDropActionButton" .. i,
-                    hotkey:GetParent(),
-                    "GwActionHotkeyBackdropTmpl"
-                )
+                local hkBg = CreateFrame("Frame", "GwHotKeyBackDropActionButton" .. i, hotkey:GetParent(), "GwActionHotkeyBackdropTmpl")
 
                 hkBg:SetPoint("CENTER", hotkey, "CENTER", 0, 0)
                 _G["GwHotKeyBackDropActionButton" .. i .. "Texture"]:SetParent(hotkey:GetParent())

@@ -116,14 +116,10 @@ local function updateHotkey(self, actionButtonType)
     text = string.gsub(text, "(Up Arrow)", "UP")
     text = string.gsub(text, "(Down Arrow)", "DN")
 
-    if hotkey:GetText() == RANGE_INDICATOR then
+    if hotkey:GetText() == RANGE_INDICATOR or not GetSetting("BUTTON_ASSIGNMENTS") then
         hotkey:SetText("")
     else
-        if GetSetting("BUTTON_ASSIGNMENTS") then
-            hotkey:SetText(text)
-        else
-            hotkey:SetText("")
-        end
+        hotkey:SetText(text)
     end
 end
 GW.AddForProfiling("petbar", "updateHotkey", updateHotkey)
