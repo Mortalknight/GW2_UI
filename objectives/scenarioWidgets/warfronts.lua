@@ -1,4 +1,5 @@
 local _, GW = ...
+local ParseCriteria = GW.ParseCriteria
 
 local function addWarfrontData(block, numCriteria)
     local scenarioType = select(10, C_Scenario.GetInfo())
@@ -9,7 +10,7 @@ local function addWarfrontData(block, numCriteria)
         local iinfo = C_CurrencyInfo.GetCurrencyInfo(1541) -- iron
         --Wood
         numCriteria = numCriteria + 1
-        addObjectiveBlock(
+        GW.AddScenarioObjectivesBlock(
             block,
             ParseCriteria(winfo.quantity, winfo.maxQuantity, winfo.name),
             false,
@@ -19,7 +20,7 @@ local function addWarfrontData(block, numCriteria)
         )
         --Iron
         numCriteria = numCriteria + 1
-        addObjectiveBlock(
+        GW.AddScenarioObjectivesBlock(
             block,
             ParseCriteria(iinfo.quantity, iinfo.maxQuantity, iinfo.name),
             false,

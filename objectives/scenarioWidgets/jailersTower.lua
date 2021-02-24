@@ -13,7 +13,7 @@ local function addJailersTowerData(block, numCriteria)
         --Phantasma
         local phinfo = C_CurrencyInfo.GetCurrencyInfo(1728)
         numCriteria = numCriteria + 1
-        addObjectiveBlock(
+        GW.AddScenarioObjectivesBlock(
             block,
             "|T3743737:0:0:0:0:64:64:4:60:4:60|t " .. phinfo.quantity .. " " .. phinfo.name,
             false,
@@ -33,7 +33,7 @@ local function addJailersTowerData(block, numCriteria)
 
         --reamaning death
         numCriteria = numCriteria + 1
-        addObjectiveBlock(
+        GW.AddScenarioObjectivesBlock(
             block,
             "|TInterface/AddOns/GW2_UI/textures/icons/icon-dead:0:0:0:0:64:64:4:60:4:60|t " .. remainingDeath .. " " .. remainingDeathText,
             false,

@@ -91,6 +91,7 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
         block.numObjectives = block.numObjectives + 1
     end
 end
+GW.AddScenarioObjectivesBlock = addObjectiveBlock
 GW.AddForProfiling("scenario", "addObjectiveBlock", addObjectiveBlock)
 
 local function updateCurrentScenario(self, event, ...)
