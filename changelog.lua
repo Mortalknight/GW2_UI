@@ -11,6 +11,7 @@ NEW
     - Added option to invert target/focus frame
     - Immersive Questing: Now works with auto accepting quest addons like AAP
     - Added Ember Court to the objectives tracker (Big thanks to Belazor for all the testing)
+    - Added Credits
 
 FIXES
     - Update "Raid Debuffs"

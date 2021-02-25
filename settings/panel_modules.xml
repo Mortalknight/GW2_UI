@@ -15,6 +15,12 @@
                     <Anchor point="TOPRIGHT" relativeKey="$parent.welcome" x="-130" y="0"></Anchor>
                 </Anchors>
             </Button>
+            <Button parentKey="credits" inherits="GwStandardButton" text="Credits">
+                <Size x="120" y="22" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.statusReport" x="-130" y="0"></Anchor>
+                </Anchors>
+            </Button>
         </Frames>
     </Frame>
 

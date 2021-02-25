@@ -66,6 +66,7 @@ settings/hover_binding.lua
 settings/welcome.xml
 settings/welcome.lua
 settings/moveableFrameHandler.lua
+settings/credits.lua
 
 core/auras.lua
 

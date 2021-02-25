@@ -24,6 +24,14 @@ local statusReport_OnClick = function(self, button)
 end
 AddForProfiling("panel_modules", "statusReport_OnClick", statusReport_OnClick)
 
+local creditst_OnClick = function(self, button)
+    if self.settings then
+        self.settings:Hide()
+    end
+    GW.ShowCredits()
+end
+AddForProfiling("panel_modules", "creditst_OnClick", creditst_OnClick)
+
 local function LoadModulesPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsModulePanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
@@ -40,6 +48,10 @@ local function LoadModulesPanel(sWindow)
     p.statusReport.settings = sWindow
     p.statusReport:SetText(LANDING_PAGE_REPORT)
     p.statusReport:SetScript("OnClick", statusReport_OnClick)
+
+    p.credits.settings = sWindow
+    p.credits:SetText(L["Credits"])
+    p.credits:SetScript("OnClick", creditst_OnClick)
 
     createCat(L["MODULES"], L["Enable and disable components"], p, 0)
 
