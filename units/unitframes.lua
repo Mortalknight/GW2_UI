@@ -793,7 +793,7 @@ local function LoadTarget()
         end
     end
 
-    RegisterMovableFrame(NewUnitFrame, TARGET, "target_pos", "GwTargetFrameTemplateDummy", nil, nil, {"scaleable"})
+    RegisterMovableFrame(NewUnitFrame, TARGET, "target_pos", "GwTargetFrameTemplateDummy", nil, nil, {"default", "scaleable"})
 
     NewUnitFrame:ClearAllPoints()
     NewUnitFrame:SetPoint("TOPLEFT", NewUnitFrame.gwMover)
@@ -887,7 +887,7 @@ local function LoadFocus()
     NewUnitFrame.unit = "focus"
     NewUnitFrame.type = "NormalTarget"
 
-    RegisterMovableFrame(NewUnitFrame, FOCUS, "focus_pos", "GwTargetFrameTemplateDummy", nil, nil, {"scaleable"})
+    RegisterMovableFrame(NewUnitFrame, FOCUS, "focus_pos", "GwTargetFrameTemplateDummy", nil, nil, {"default", "scaleable"})
 
     NewUnitFrame:ClearAllPoints()
     NewUnitFrame:SetPoint("TOPLEFT", NewUnitFrame.gwMover)
@@ -956,7 +956,7 @@ local function LoadTargetOfUnit(unit)
     f.type = "SmallTarget"
     f.unit = unitID
 
-    RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "GwTargetFrameSmallTemplateDummy", nil, nil, {"scaleable"})
+    RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "GwTargetFrameSmallTemplateDummy", nil, nil, {"default", "scaleable"})
 
     f:ClearAllPoints()
     f:SetPoint("TOPLEFT", f.gwMover)

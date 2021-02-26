@@ -9,7 +9,7 @@ local function TopCenterPosition(self, _, b)
 end
 
 local function WidgetUISetup()
-    GW.RegisterMovableFrame(_G.UIWidgetTopCenterContainerFrame, "TopCenterContainerMover", "TopCenterWidget_pos", "VerticalActionBarDummy", {58, 58}, nil, {"scaleable"})
+    GW.RegisterMovableFrame(_G.UIWidgetTopCenterContainerFrame, "TopWidget", "TopCenterWidget_pos", "VerticalActionBarDummy", {58, 58}, nil, {"default", "scaleable"})
     _G.UIWidgetTopCenterContainerFrame:ClearAllPoints()
     _G.UIWidgetTopCenterContainerFrame:SetPoint("CENTER", _G.UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
 

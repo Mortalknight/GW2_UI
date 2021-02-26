@@ -172,7 +172,7 @@ local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
     GwCastingBar.showDetails = GetSetting("CASTINGBAR_DATA")
 
     if name == "GwCastingBarPlayer" then
-        RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "GwCastFrameDummy", nil, nil, {"scaleable"})
+        RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "GwCastFrameDummy", nil, nil, {"default", "scaleable"})
         GwCastingBar:ClearAllPoints()
         GwCastingBar:SetPoint("TOPLEFT", GwCastingBar.gwMover)
     else
