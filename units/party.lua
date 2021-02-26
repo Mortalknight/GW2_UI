@@ -31,9 +31,10 @@ local function updateAwayData(self)
     local playerInstanceId = select(4, UnitPosition("player"))
     local instanceId = select(4, UnitPosition(self.unit))
     local readyCheckStatus = GetReadyCheckStatus(self.unit)
+    local phaseReason = UnitPhaseReason(self.unit)
     local portraitIndex = 1
 
-    if not readyCheckStatus then 
+    if not readyCheckStatus and not UnitHasIncomingResurrection(self.unit) and not C_IncomingSummon.HasIncomingSummon(self.unit) then 
         self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
         SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
     end
@@ -42,7 +43,6 @@ local function updateAwayData(self)
         portraitIndex = 2
     end
 
-    local phaseReason = UnitPhaseReason(self.unit)
     if phaseReason then
         portraitIndex = 4
     end
@@ -54,6 +54,7 @@ local function updateAwayData(self)
 
     if C_IncomingSummon.HasIncomingSummon(self.unit) then
         local status = C_IncomingSummon.IncomingSummonStatus(self.unit)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
         if status == Enum.SummonStatus.Pending then
             self.classicon:SetAtlas("Raid-Icon-SummonPending")
         elseif status == Enum.SummonStatus.Accepted then
@@ -61,7 +62,6 @@ local function updateAwayData(self)
         elseif status == Enum.SummonStatus.Declined then
             self.classicon:SetAtlas("Raid-Icon-SummonDeclined")
         end
-        self.classicon:SetTexCoord(unpack(GW.TexCoords))
     end
 
     if not UnitIsConnected(self.unit) then
@@ -69,6 +69,7 @@ local function updateAwayData(self)
     end
 
     if readyCheckStatus then
+        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
         if readyCheckStatus == "waiting" then
             self.classicon:SetTexCoord(0, 1, 0, 0.25)
         elseif eadyCheckStatus == "notready" then
@@ -76,12 +77,9 @@ local function updateAwayData(self)
         elseif readyCheckStatus == "ready" then
             self.classicon:SetTexCoord(0, 1, 0.50, 0.75)
         end
-        if not self.classicon:IsShown() then
-            self.classicon:Show()
-        end
     end
 
-    if UnitThreatSituation(self.unit) ~= nil and UnitThreatSituation(self.unit) > 2 then
+    if UnitThreatSituation(self.unit) and UnitThreatSituation(self.unit) > 2 then
         portraitIndex = 5
     end
     
@@ -93,9 +91,8 @@ local function updateUnitPortrait(self)
     if self.portrait then
         local playerInstanceId = select(4, UnitPosition("player"))
         local instanceId = select(4, UnitPosition(self.unit))
-        local phaseReason = UnitPhaseReason(self.unit)
 
-        if playerInstanceId == instanceId and not phaseReason then
+        if playerInstanceId == instanceId and not UnitPhaseReason(self.unit) then
             SetPortraitTexture(self.portrait, self.unit)
         else
             self.portrait:SetTexture(nil)
@@ -486,13 +483,10 @@ local function party_OnEvent(self, event, unit, arg1)
         setUnitName(self)
     elseif event == "UNIT_AURA" then
         updatePartyAuras(self)
-    elseif event == "READY_CHECK" then
-        updateAwayData(self)
-        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
-    elseif event == "READY_CHECK_CONFIRM" and unit == self.unit then
+    elseif event == "READY_CHECK" or (event == "READY_CHECK_CONFIRM" and unit == self.unit) then
         updateAwayData(self)
     elseif event == "READY_CHECK_FINISHED" then
-        C_Timer.After(1.5, function(self)
+        C_Timer.After(1.5, function()
             if UnitInParty(self.unit) then
                 self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
                 SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))

@@ -54,14 +54,20 @@ GW.AddForProfiling("raidframes", "hideBlizzardRaidFrame", hideBlizzardRaidFrame)
 
 local function updateRaidMarkers(self)
     local i = GetRaidTargetIndex(self.unit)
-    self.targetmarker = i
-    if self.targetmarker == nil then
-        self.classicon:SetTexture(nil)
-        return
-    end
-    self.classicon:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcon_" .. i)
-    if not self.classicon:IsShown() then
-        self.classicon:Show()
+
+    if i then
+        self.targetmarker = i
+        self.classicon:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcon_" .. i)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
+        self.classicon:SetShown(true)
+    else
+        self.targetmarker = nil
+        if not GetSetting("RAID_CLASS_COLOR") then
+            self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
+            SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
+        else
+            self.classicon:SetTexture(nil)
+        end    
     end
 end
 GW.AddForProfiling("raidframes", "updateRaidMarkers", updateRaidMarkers)
@@ -244,26 +250,21 @@ local function highlightTargetFrame(self)
 end
 GW.AddForProfiling("raidframes", "highlightTargetFrame", highlightTargetFrame)
 
-local function updateClassIconToReadyCheckIcon(self)
-    self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
-end
-GW.AddForProfiling("raidframes", "updateClassIconToReadyCheckIcon", updateClassIconToReadyCheckIcon)
-
 local function updateAwayData(self)
     local classColor = GetSetting("RAID_CLASS_COLOR")
     local readyCheckStatus = GetReadyCheckStatus(self.unit)
-    local iconState = 1
-
+    local iconState = 0
     local _, englishClass, classIndex = UnitClass(self.unit)
+
     self.name:SetTextColor(1, 1, 1)
 
-    if not classColor and not readyCheckStatus then
-        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
-        iconState = 1
+    if classColor and classIndex and classIndex > 0 then
+        local color = GWGetClassColor(englishClass, true)
+        self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
+        self.classicon:SetShown(false)
     end
-
-    if classColor and classIndex ~= nil and classIndex ~= 0 then
-        iconState = 0
+    if not classColor and not readyCheckStatus then
+        iconState = 1
     end
     if UnitIsDeadOrGhost(self.unit) then
         iconState = 2
@@ -282,25 +283,19 @@ local function updateAwayData(self)
         end
     end
 
-    if iconState == 0 then
-        local color = GWGetClassColor(englishClass, true)
-        self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
-        if self.classicon:IsShown() then
-            self.classicon:Hide()
-        end
-    end
     if iconState == 1 then
+        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
         self.healthbar:SetStatusBarColor(0.207, 0.392, 0.168)
         SetClassIcon(self.classicon, classIndex)
     end
 
-    if self.targetmarker ~= nil and not readyCheckStatus and GetSetting("RAID_UNIT_MARKERS") then
+    if self.targetmarker and not readyCheckStatus and GetSetting("RAID_UNIT_MARKERS") then
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
         updateRaidMarkers(self)
     end
 
     if iconState == 2 then
-        if classColor == true then
+        if classColor then
             self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
         end
         SetDeadIcon(self.classicon)
@@ -315,6 +310,7 @@ local function updateAwayData(self)
         self.classicon:Show()
     end
     if iconState == 4 or iconState == 5 or iconState == 6 then
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
         if iconState == 4 then
             self.classicon:SetAtlas("Raid-Icon-SummonPending")
         elseif iconState == 5 then
@@ -322,11 +318,12 @@ local function updateAwayData(self)
         elseif iconState == 6 then
             self.classicon:SetAtlas("Raid-Icon-SummonDeclined")
         end
-        self.classicon:SetTexCoord(unpack(GW.TexCoords))
+        
         self.classicon:Show()
     end
 
     if readyCheckStatus then
+        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
         if readyCheckStatus == "waiting" then
             self.classicon:SetTexCoord(0, 1, 0, 0.25)
         elseif eadyCheckStatus == "notready" then
@@ -346,8 +343,7 @@ local function updateAwayData(self)
         self.healthbar:SetStatusBarColor(0.3, 0.3, 0.3, 1)
     end
 
-    local phaseReason = UnitPhaseReason(self.unit)
-    if UnitIsConnected(self.unit) and (phaseReason or not UnitInRange(self.unit)) then
+    if UnitIsConnected(self.unit) and (UnitPhaseReason(self.unit) or not UnitInRange(self.unit)) then
         local r, g, b = self.healthbar:GetStatusBarColor()
 
         self.healthbar:SetStatusBarColor(r * 0.3, g * 0.3, b * 0.3)
@@ -356,7 +352,7 @@ local function updateAwayData(self)
         self.classicon:SetAlpha(1)
     end
 
-    if UnitThreatSituation(self.unit) ~= nil and UnitThreatSituation(self.unit) > 2 then
+    if UnitThreatSituation(self.unit) and UnitThreatSituation(self.unit) > 2 then
         self.aggroborder:Show()
     else
         self.aggroborder:Hide()
@@ -755,26 +751,22 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         updateAwayData(self)
     elseif event == "RAID_TARGET_UPDATE" and GetSetting("RAID_UNIT_MARKERS") then
         updateRaidMarkers(self)
-    elseif event == "READY_CHECK" then
-        updateAwayData(self)
-        updateClassIconToReadyCheckIcon(self)
-    elseif event == "READY_CHECK_CONFIRM" and unit == self.unit then
+    elseif event == "READY_CHECK" or (event == "READY_CHECK_CONFIRM" and unit == self.unit) then
         updateAwayData(self)
     elseif event == "READY_CHECK_FINISHED" then
-        C_Timer.After(1.5, function(self)
-            if UnitInRaid(self.unit) ~= nil then
+        C_Timer.After(1.5, function()
+            if UnitInRaid(self.unit) then
                 local _, englishClass, classIndex = UnitClass(self.unit)
                 if GetSetting("RAID_CLASS_COLOR") then
                     local color = GWGetClassColor(englishClass, true)
                     self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
-                    if self.classicon:IsShown() then
-                        self.classicon:Hide()
-                    end
+                    self.classicon:SetShown(false)
                 else
                     self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
+                    self.healthbar:SetStatusBarColor(0.207, 0.392, 0.168)
+                    self.classicon:SetShown(true)
+                    SetClassIcon(self.classicon, classIndex)
                 end
-                self.healthbar:SetStatusBarColor(0.207, 0.392, 0.168)
-                SetClassIcon(self.classicon, classIndex)
             end
         end)
     end

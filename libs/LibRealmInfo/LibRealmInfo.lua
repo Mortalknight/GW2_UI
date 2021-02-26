@@ -122,10 +122,14 @@ function lib:GetRealmInfoByGUID(guid)
         return debug("Unsupported GUID type", (strsplit("-", guid)))
     end
     local _, _, _, _, _, _, realm = GetPlayerInfoByGUID(guid)
-    if realm == "" then
+    if realm == "" or realm == nil then
         realm = GetRealmName()
     end
-    return self:GetRealmInfo(realm)
+    if realm and strlen(realm) > 0 then
+        return self:GetRealmInfo(realm)
+    else
+        return debug("No realm available for unit", guid)
+    end
 end
 
 ------------------------------------------------------------------------

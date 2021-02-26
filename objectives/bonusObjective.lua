@@ -267,7 +267,7 @@ local function setUpBlock(questIDs, collapsed)
                         if finished then
                             objectiveProgress = objectiveProgress + (1 / numObjectives)
                         else
-                            objectiveProgress = objectiveProgress + progressValue
+                            objectiveProgress = objectiveProgress + (progressValue / numObjectives)
                         end
                     end
                 end
