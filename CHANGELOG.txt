@@ -1,10 +1,10 @@
 5.9.0
 NEW
     - Added "player frame in target frame style"
-    - Immersive Questing: "Next Gossip" with space
+    - Immersive Questing: Trigger "Next Gossip" with space
     - Show cooldowns at bags and character correct by using our own cooldown system
     - Added toggle for player PvP indicator
-    - Added "World Quest Addon"-Skin (embedded into Objectives tracker)
+    - Added "World Quest Addon"-Skin (embedded into objectives tracker)
     - Added option to invert target/focus frame
     - Immersive Questing: Now works with auto accepting quest addons like AAP
     - Added Ember Court to the objectives tracker (Big thanks to Belazor for all the testing)
