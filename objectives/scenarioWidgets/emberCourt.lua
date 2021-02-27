@@ -39,7 +39,7 @@ local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHei
             block.numObjectives = block.numObjectives + 1
         end
 
-        local w2 = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904)
+        local w2 = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904) and C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904) or C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2906)
         if w2 and w2.timerMax > 0 and w2.timerValue <= w2.timerMax then
             _G.GwQuestTrackerTimer:SetScript(
                 "OnUpdate",
