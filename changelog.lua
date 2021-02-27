@@ -4,6 +4,7 @@ local v = GW.vernotes
 v("5.9.1", [=[
 FIXES
     - Torghast tooltip issue
+    - Fix M+ timer overlapping (Thanks to Sethos)
 ]=])
 
 v("5.9.0", [=[

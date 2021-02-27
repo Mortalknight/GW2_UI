@@ -243,12 +243,13 @@ local function updateCurrentScenario(self, event, ...)
     end
 
     local GwQuestTrackerTimerSavedHeight = 1
+    local isEmberCourtWidget = false
 
     -- add special widgets here
     numCriteria = GW.addWarfrontData(GwScenarioBlock, numCriteria)
     numCriteria = GW.addHeroicVisionsData(GwScenarioBlock, numCriteria)
     numCriteria = GW.addJailersTowerData(GwScenarioBlock, numCriteria)
-    numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus = GW.addEmberCourtData(GwScenarioBlock, numCriteria, GwQuestTrackerTimerSavedHeight)
+    numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget = GW.addEmberCourtData(GwScenarioBlock, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget)
 
     local bonusSteps = C_Scenario.GetBonusSteps()
     local numCriteriaPrev = numCriteria
@@ -311,18 +312,18 @@ local function updateCurrentScenario(self, event, ...)
 
     local intGWQuestTrackerHeight = 0
 
-    if _G["GwAffixFrame"]:IsShown() then
+    if _G.GwAffixFrame:IsShown() then
         intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
     end
 
-    if GwQuestTrackerTimer.timer:IsShown() then
+    if _G.GwQuestTrackerTimer.timer:IsShown() then
         intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
     end
 
-    if showTimerAsBonus or GwQuestTrackerTimerSavedHeight < 1.1 then
-        GwQuestTrackerTimer.height = GwQuestTrackerTimerSavedHeight
+    if showTimerAsBonus or isEmberCourtWidget then
+        _G.GwQuestTrackerTimer.height = GwQuestTrackerTimerSavedHeight
 
-        GwQuestTrackerTimer:SetHeight(GwQuestTrackerTimer.height)
+        _G.GwQuestTrackerTimer:SetHeight(_G.GwQuestTrackerTimer.height)
     end
 
     GwScenarioBlock:SetHeight(GwScenarioBlock.height - intGWQuestTrackerHeight)
@@ -332,12 +333,12 @@ GW.updateCurrentScenario = updateCurrentScenario
 GW.AddForProfiling("scenario", "updateCurrentScenario", updateCurrentScenario)
 
 local function scenarioTimerStop()
-    GwQuestTrackerTimer:SetScript("OnUpdate", nil)
-    GwQuestTrackerTimer.timer:Hide()
-    GwQuestTrackerTimer.timerStringChest2:Hide()
-    GwQuestTrackerTimer.timerStringChest3:Hide()
-    GwQuestTrackerTimer.chestoverlay:Hide()
-    GwQuestTrackerTimer.deathcounter:Hide()
+    _G.GwQuestTrackerTimer:SetScript("OnUpdate", nil)
+    _G.GwQuestTrackerTimer.timer:Hide()
+    _G.GwQuestTrackerTimer.timerStringChest2:Hide()
+    _G.GwQuestTrackerTimer.timerStringChest3:Hide()
+    _G.GwQuestTrackerTimer.chestoverlay:Hide()
+    _G.GwQuestTrackerTimer.deathcounter:Hide()
 end
 GW.AddForProfiling("scenario", "scenarioTimerStop", scenarioTimerStop)
 
@@ -346,7 +347,7 @@ local function scenarioAffixes()
     local i = 1
     for k, v in pairs(affixes) do
         if i == 1 then
-            GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
+            _G.GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
             GwQuestTrackerTimer.timer:ClearAllPoints()
             GwQuestTrackerTimer.timer:SetPoint("TOPLEFT", GwQuestTrackerTimer.affixes, "BOTTOMLEFT", -10, -15)
         end

@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus)
+local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget)
     if GW.locationData.mapID == 1644 then
         if _G.ScenarioWidgetContainerBlock.WidgetContainer:GetHeight() > 1.1 then
             numCriteria = numCriteria + 1
@@ -62,8 +62,10 @@ local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHei
             _G.GwQuestTrackerTimer:SetScript("OnUpdate", nil)
             _G.GwQuestTrackerTimer.timer:Hide()
         end
+
+        isEmberCourtWidget = true
     end
 
-    return numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus
+    return numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget
 end
 GW.addEmberCourtData = addEmberCourtData
