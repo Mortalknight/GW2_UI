@@ -946,8 +946,10 @@ local function LoadBag(helpers)
                 local _, realm = UnitFullName("player")
                 GameTooltip:AddDoubleLine(realm .. " " .. TOTAL, nil, nil, nil, 1, 1, 1)
                 for name, money in pairs(list) do
-                    local color = select(4, GetClassColor(GetCharClass(name)))
-                    SetTooltipMoney(GameTooltip, money, "TOOLTIP", ("|c%s%s|r:"):format(color, name))
+                    if money and money > 0 then
+                        local color = select(4, GetClassColor(GetCharClass(name)))
+                        SetTooltipMoney(GameTooltip, money, "TOOLTIP", ("|c%s%s|r:"):format(color, name))
+                    end
                 end
 
                 -- add total gold on realm+faction
