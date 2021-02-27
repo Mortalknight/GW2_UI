@@ -23,7 +23,7 @@ local function addJailersTowerData(block, numCriteria)
         )
 
         local objectiveBlock = GW.GetScenarioObjectivesBlock(block, numCriteria)
-        objectiveBlock:SetScript("OnEnter", function()
+        objectiveBlock:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
             GameTooltip:ClearLines()
             GameTooltip:SetCurrencyByID(1728)

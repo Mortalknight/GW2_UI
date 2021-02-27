@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.9.1", [=[
+FIXES
+    - Torghast tooltip issue
+]=])
+
 v("5.9.0", [=[
 NEW
     - Added "player frame in target frame style"

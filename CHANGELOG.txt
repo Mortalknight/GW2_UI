@@ -1,3 +1,7 @@
+5.9.1
+FIXES
+    - Torghast tooltip issue
+
 5.9.0
 NEW
     - Added "player frame in target frame style"
