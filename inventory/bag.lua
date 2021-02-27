@@ -947,8 +947,8 @@ local function LoadBag(helpers)
                 GameTooltip:AddDoubleLine(realm .. " " .. TOTAL, nil, nil, nil, 1, 1, 1)
                 for name, money in pairs(list) do
                     if money and money > 0 then
-                        local color = select(4, GetClassColor(GetCharClass(name)))
-                        SetTooltipMoney(GameTooltip, money, "TOOLTIP", ("|c%s%s|r:"):format(color, name))
+                        local color = GW.GWGetClassColor(GetCharClass(name), true, true)
+                        SetTooltipMoney(GameTooltip, money, "TOOLTIP", ("|c%s%s|r:"):format(color.colorStr, name))
                     end
                 end
 

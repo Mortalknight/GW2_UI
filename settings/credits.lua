@@ -52,7 +52,7 @@ local function CreateSection(width, height, parent, anchor1, anchorTo, anchor2, 
     if oneDivider then
         local Divider = section.Header:CreateTexture(nil, "ARTWORK")
         Divider:SetHeight(2)
-        Divider:SetPoint("LEFT", section.Header, "LEFT", -10, 0)
+        Divider:SetPoint("LEFT", section.Header, "LEFT", -20, 0)
         Divider:SetPoint("RIGHT", section.Header, "RIGHT", 20, 0)
         Divider:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep")
         section.Header.Divider = Divider
