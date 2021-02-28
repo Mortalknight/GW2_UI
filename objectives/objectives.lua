@@ -1142,7 +1142,7 @@ end
 local function tracker_OnEvent(self, event, ...)
     local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
 
-    if event == "UNIT_QUEST_LOG_CHANGED" then
+    if event == "UNIT_QUEST_LOG_CHANGED" and ... == "player" then
         updateQuestLogLayout(self)
     elseif event == "QUEST_ACCEPTED" then
         local questID = ...
@@ -1349,7 +1349,7 @@ local function LoadQuestTracker()
         "OnMouseDown",
         function(self)
             local p = self:GetParent()
-            if p.collapsed == nil or p.collapsed == false then
+            if not p.collapsed then
                 p.collapsed = true
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
             else
@@ -1372,7 +1372,7 @@ local function LoadQuestTracker()
         "OnMouseDown",
         function(self)
             local p = self:GetParent()
-            if p.collapsed == nil or p.collapsed == false then
+            if not p.collapsed then
                 p.collapsed = true
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
             else
@@ -1428,6 +1428,7 @@ local function LoadQuestTracker()
                 tracker_OnUpdate(fTracker)
             end
         else
+            if event == "UNIT_QUEST_LOG_CHANGED" and ... ~= "player" then return end
             C_Timer.After(0.25, function() tracker_OnUpdate(fTracker) end)
         end
     end)
