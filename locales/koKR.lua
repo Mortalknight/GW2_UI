@@ -328,4 +328,5 @@ L["Developed by"] = true
 L["With Contributions by"] = true
 L["Localised by"] = true
 L["QA Testing by"] = true
-L["Credits"] = true
+L["Credits"] = "제작자"
+L["Socket Frame"] = "보석홈 UI"

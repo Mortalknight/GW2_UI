@@ -2,6 +2,8 @@ local _, GW = ...
 local v = GW.vernotes
 
 v("5.9.2", [=[
+NEW
+    - Added socket frame skin
 FIXES
     - Objective tracker improvments
     - Focus frame invert is now working

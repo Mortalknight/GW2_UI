@@ -502,9 +502,11 @@ local function loadAddon(self)
     if GetSetting("HELPFRAME_SKIN_ENABLED") then
         GW.skinHelpFrameOnEvent()
     end
-
     if GetSetting("WORLDMAP_COORDS_TOGGLE") then
         GW.AddCoordsToWorldMap()
+    end
+    if GetSetting("SOCKET_SKIN_ENABLED") then
+        GW.SkinSocketUI()
     end
 
     GW.LoadVehicleButton()

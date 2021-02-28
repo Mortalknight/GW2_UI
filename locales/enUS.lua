@@ -325,3 +325,4 @@ L["With Contributions by"] = true
 L["Localised by"] = true
 L["QA Testing by"] = true
 L["Credits"] = true
+L["Socket Frame"] = true

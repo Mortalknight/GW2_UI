@@ -21,6 +21,7 @@
     <Script file="immersive\skins\dressUpFrame.lua"/>
     <Script file="immersive\skins\inspectFrame.lua"/>
     <Script file="immersive\skins\helpFrame.lua"/>
+    <Script file="immersive\skins\socket.lua"/>
     
     <Script file="immersive\skins\addons\immersion.lua"/>
     <Script file="immersive\skins\addons\postal.lua"/>

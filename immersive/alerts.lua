@@ -256,7 +256,7 @@ local function skinGuildChallengeAlert(frame)
 
     -- Background
     local region = select(2, frame:GetRegions())
-    if region:IsObjectType('Texture') then
+    if region:IsObjectType("Texture") then
         if region:GetTexture() == "Interface\\GuildFrame\\GuildChallenges" then
             region:Kill()
         end

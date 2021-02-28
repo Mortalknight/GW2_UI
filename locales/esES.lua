@@ -327,3 +327,4 @@ L["With Contributions by"] = "Con contribuciones por"
 L["Localised by"] = "Traducido por"
 L["QA Testing by"] = "Control de calidad por"
 L["Credits"] = "Reparto"
+L["Socket Frame"] = true

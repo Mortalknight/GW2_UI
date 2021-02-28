@@ -53,6 +53,8 @@ local function LoadSkinsPanel(sWindow)
     addOption(p_blizzard, INSPECT, nil, "INSPECTION_SKIN_ENABLED")
     addOption(p_blizzard, DRESSUP_FRAME, nil, "DRESSUP_SKIN_ENABLED")
     addOption(p_blizzard, HELP_FRAME_TITLE, nil, "HELPFRAME_SKIN_ENABLED")
+    addOption(p_blizzard, L["Socket Frame"], nil, "SOCKET_SKIN_ENABLED")
+    
     addOption(p_addons, "World Quest Tracker", nil, "SKIN_WQT_ENABLED", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOption(p_addons, "Immersion", nil, "IMMERSIONADDON_SKIN_ENABLED")
 

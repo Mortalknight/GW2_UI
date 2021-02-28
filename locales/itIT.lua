@@ -327,3 +327,4 @@ L["You have now finished installing GW2 UI!"] = "Hai concluso l'installazione de
 L["Your items have been repaired for: %s"] = "I tuoi oggetti sono stati riparati per: %s"
 L["Your items have been repaired using guild bank funds for: %s"] = "I tuoi oggetti sono stati riparati usando i fondi della banca di gilda per: %s"
 L["Zone Ability"] = "Abilità di zona"
+L["Socket Frame"] = true

@@ -326,4 +326,5 @@ L["Developed by"] = true
 L["With Contributions by"] = true
 L["Localised by"] = true
 L["QA Testing by"] = true
-L["Credits"] = true
+L["Credits"] = "Créditos"
+L["Socket Frame"] = "Incrustación"
