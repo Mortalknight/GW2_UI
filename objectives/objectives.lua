@@ -459,12 +459,24 @@ local function getBlockCampaign(blockIndex)
 end
 GW.AddForProfiling("objectives", "getBlockCampaign", getBlockCampaign)
 
-local function getBlockByID(questID, isCampaign, isFrequency)
+local function getBlockById(questID)
+    for i = 1, 50 do -- loop quest and campaign
+        local block = _G[(i <= 25 and "GwCampaignBlock" or "GwQuestBlock") .. (i <= 25 and i or i - 25)]
+        if block then
+            if block.questID == questID then
+                return block
+            end
+        end
+    end
+
+    return nil
+end
+
+local function getBlockByIdOrCreateNew(questID, isCampaign, isFrequency)
     local blockName = isCampaign and "GwCampaignBlock" or "GwQuestBlock"
-    local correctBlock
 
     for i = 1, 25 do
-        if _G[blockName .. i] ~= nil then
+        if _G[blockName .. i] then
             if _G[blockName .. i].questID == questID then
                 return _G[blockName .. i]
             elseif _G[blockName .. i].questID == nil then
@@ -475,20 +487,17 @@ local function getBlockByID(questID, isCampaign, isFrequency)
         end
     end
 
-    return correctBlock
+    return nil
 end
 
 local function getQuestWatchId(questID)
-    local questWatchId
-
     for i = 1, C_QuestLog.GetNumQuestWatches() do
         if questID == C_QuestLog.GetQuestIDForQuestWatchIndex(i) then
-            questWatchId = i
-            break
+            return i
         end
     end
 
-    return questWatchId
+    return nil
 end
 
 local function addObjective(block, text, finished, objectiveIndex, objectiveType)
@@ -628,7 +637,7 @@ local function OnBlockClickHandler(self, button)
 end
 GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
-local function updateQuest(self, block, questWatchId, quest)
+local function updateQuest(self, block, quest)
     block.height = 25
     block.numObjectives = 0
     block.turnin:Hide()
@@ -713,7 +722,7 @@ local function updateQuest(self, block, questWatchId, quest)
 end
 GW.AddForProfiling("objectives", "updateQuest", updateQuest)
 
-local function updateQuestByID(self, block, quest, questID, questWatchId, questLogIndex)
+local function updateQuestByID(self, block, quest, questID, questLogIndex)
     block.height = 25
     block.numObjectives = 0
     block.turnin:Hide()
@@ -945,7 +954,7 @@ local function updateQuestLogLayout(self)
                         return
                     end
 
-                    updateQuest(self, block, i, q)
+                    updateQuest(self, block, q)
                     block:Show()
                     savedHeightCampagin = savedHeightCampagin + block.height
                     updateQuestItemPositions(block.actionButton, savedHeightCampagin, nil, block)
@@ -981,7 +990,7 @@ local function updateQuestLogLayout(self)
                     if block == nil then
                         return
                     end
-                    updateQuest(self, block, i, q)
+                    updateQuest(self, block, q)
                     block.isFrequency = isFrequency
                     block:Show()
                     savedHeightQuest = savedHeightQuest + block.height
@@ -1051,7 +1060,7 @@ local function updateQuestLogLayoutSingle(self, questID, added)
     end
     local isCampaign = q:IsCampaign()
     local questWatchId = getQuestWatchId(questID)
-    local questBlockOfIdOrNew = questWatchId and getBlockByID(questID, isCampaign, isFrequency)
+    local questBlockOfIdOrNew = questWatchId and getBlockByIdOrCreateNew(questID, isCampaign, isFrequency)
     local blockName = isCampaign and "GwCampaignBlock" or "GwQuestBlock"
     local itemButton = isCampaign and "GwCampaginItemButton" or "GwQuestItemButton"
     local containerName = isCampaign and GwQuesttrackerContainerCampaign or GwQuesttrackerContainerQuests
@@ -1059,13 +1068,13 @@ local function updateQuestLogLayoutSingle(self, questID, added)
     local savedHeight = 20
     local heightForQuestItem = 20
     local counterQuest = 0
-    if questWatchId ~= nil and questBlockOfIdOrNew ~= nil and questLogIndex and questLogIndex > 0 then
-        updateQuestByID(self, questBlockOfIdOrNew, q, questID, questWatchId, questLogIndex)
+    if questWatchId and questBlockOfIdOrNew and questLogIndex and questLogIndex > 0 then
+        updateQuestByID(self, questBlockOfIdOrNew, q, questID, questLogIndex)
         questBlockOfIdOrNew.isFrequency = isFrequency
         questBlockOfIdOrNew:Show()
         if added == true then
             C_Timer.After(0.1, function()
-                local questBlockOfIdOrNew = questWatchId and getBlockByID(questID, isCampaign, isFrequency)
+                local questBlockOfIdOrNew = questWatchId and getBlockByIdOrCreateNew(questID, isCampaign, isFrequency)
                 NewQuestAnimation(questBlockOfIdOrNew)
             end)
         end
@@ -1108,26 +1117,22 @@ local function checkForAutoQuests()
         local questID, popUpType = GetAutoQuestPopUp(i)
         if questID and (popUpType == "OFFER" or popUpType == "COMPLETE") then
             --find our block with that questId
-            local q = QuestCache:Get(questID)
-            if q then
-                local isCampaign = q:IsCampaign()
-                local questBlockOfIdOrNew = getBlockByID(questID, isCampaign)
-                if questBlockOfIdOrNew and questBlockOfIdOrNew.questID == questID then
-                    if popUpType == "OFFER" then
-                        questBlockOfIdOrNew.popupQuestAccept:Show()
-                        questBlockOfIdOrNew.popupQuestAccept:SetScript("OnClick", function(self)
-                            ShowQuestOffer(self:GetParent().id)
-                            RemoveAutoQuestPopUp(self:GetParent().id)
-                            self:Hide()
-                        end)
-                    elseif popUpType == "COMPLETE" then
-                        questBlockOfIdOrNew.turnin:Show()
-                        questBlockOfIdOrNew.turnin:SetScript("OnClick",function(self)
-                            ShowQuestComplete(self:GetParent().id)
-                            RemoveAutoQuestPopUp(self:GetParent().id)
-                            self:Hide()
-                        end)
-                    end
+            local questBlock = getBlockById(questID)
+            if questBlock and questBlock.questID == questID then
+                if popUpType == "OFFER" then
+                    questBlock.popupQuestAccept:Show()
+                    questBlock.popupQuestAccept:SetScript("OnClick", function(self)
+                        ShowQuestOffer(self:GetParent().id)
+                        RemoveAutoQuestPopUp(self:GetParent().id)
+                        self:Hide()
+                    end)
+                elseif popUpType == "COMPLETE" then
+                    questBlock.turnin:Show()
+                    questBlock.turnin:SetScript("OnClick",function(self)
+                        ShowQuestComplete(self:GetParent().id)
+                        RemoveAutoQuestPopUp(self:GetParent().id)
+                        self:Hide()
+                    end)
                 end
             end
         end
@@ -1137,7 +1142,7 @@ end
 local function tracker_OnEvent(self, event, ...)
     local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
 
-    if event == "QUEST_LOG_UPDATE" then
+    if event == "UNIT_QUEST_LOG_CHANGED" then
         updateQuestLogLayout(self)
     elseif event == "QUEST_ACCEPTED" then
         local questID = ...
@@ -1182,7 +1187,7 @@ local function tracker_OnEvent(self, event, ...)
     end
 
     if self.watchMoneyReasons > numWatchedQuests then self.watchMoneyReasons = self.watchMoneyReasons - numWatchedQuests end
-    checkForAutoQuests()
+    C_Timer.After(0.5, checkForAutoQuests)
     QuestTrackerLayoutChanged()
 end
 GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
@@ -1326,7 +1331,7 @@ local function LoadQuestTracker()
     fTraScr:SetScrollChild(fScroll)
 
     fQuest:SetScript("OnEvent", tracker_OnEvent)
-    fQuest:RegisterEvent("QUEST_LOG_UPDATE")
+    fQuest:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
     fQuest:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
     fQuest:RegisterEvent("QUEST_AUTOCOMPLETE")
     fQuest:RegisterEvent("QUEST_ACCEPTED")
@@ -1399,7 +1404,7 @@ local function LoadQuestTracker()
     compassUpdateFrame:RegisterEvent("PLAYER_STOPPED_MOVING")
     compassUpdateFrame:RegisterEvent("PLAYER_CONTROL_LOST")
     compassUpdateFrame:RegisterEvent("PLAYER_CONTROL_GAINED")
-    compassUpdateFrame:RegisterEvent("QUEST_LOG_UPDATE")
+    compassUpdateFrame:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
     compassUpdateFrame:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
     compassUpdateFrame:RegisterEvent("PLAYER_MONEY")
     compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_WORLD")

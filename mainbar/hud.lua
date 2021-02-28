@@ -153,7 +153,6 @@ local function xpbar_OnEvent(self, event)
     local valPrec = valCurrent / valMax
     local valPrecRepu = 0
 
-    local effectiveLevel = GW.myeffectivelevel;
     local level = GW.mylevel
     local maxPlayerLevel = GetMaxLevelForPlayerExpansion()
     local Nextlevel = math.min(maxPlayerLevel, level + 1)
@@ -458,8 +457,8 @@ local function xpbar_OnEvent(self, event)
         Nextlevel = Nextlevel and Nextlevel .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon:20:20:0:0|t" or ""
     end
 
-    if GW.mylevel ~= effectiveLevel then
-      level = level.. " |cFF00FF00("..effectiveLevel..")|r"
+    if GW.mylevel ~= UnitEffectiveLevel("player") then
+      level = level.. " |cFF00FF00(" .. UnitEffectiveLevel("player") .. ")|r"
     end
 
     GwExperienceFrame.NextLevel:SetText(Nextlevel)
