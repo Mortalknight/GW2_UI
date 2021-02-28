@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.9.2", [=[
+FIXES
+    - Objective tracker improvments
+    - Focus frame invert is now working
+]=])
+
 v("5.9.1", [=[
 FIXES
     - Torghast tooltip issue

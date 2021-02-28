@@ -883,7 +883,7 @@ end
 GW.LoadTarget = LoadTarget
 
 local function LoadFocus()
-    local NewUnitFrame = createNormalUnitFrame("GwFocusUnitFrame")
+    local NewUnitFrame = createNormalUnitFrame("GwFocusUnitFrame", GetSetting("focus_FRAME_INVERT"))
     NewUnitFrame.unit = "focus"
     NewUnitFrame.type = "NormalTarget"
 
