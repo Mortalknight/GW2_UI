@@ -4,9 +4,7 @@ local CommaValue = GW.CommaValue
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local UpdateMoney = GW.UpdateMoney
-local GetRealmMoney = GW.GetRealmMoney
-local GetCharClass = GW.GetCharClass
-local GetRealmStorage = GW.GetRealmStorage
+local GetStorage = GW.GetStorage
 local ClearStorage = GW.ClearStorage
 local EnableTooltip = GW.EnableTooltip
 local FormatMoneyForChat = GW.FormatMoneyForChat
@@ -961,113 +959,132 @@ local function LoadBag(helpers)
         "OnEnter",
         function(self)
             local myGold = {}
-            local list, total = GetRealmMoney()
-            local totalAlliance, totalHorde = 0, 0
-            local listAlliance, listHorde
+            local list = GetStorage(nil, "REALM")
+            local totalAlliance, totalHorde, total = 0, 0, 0
             local resetCountersFormatter = strjoin("", "|cffaaaaaa", L["Reset Session Data: Hold Ctrl + Right Click"], "|r")
-            local resetInfoFormatter = strjoin("", "|cffaaaaaa", L["Reset all Data: Hold Shift + Right Click"], "|r")
+            local resetInfoFormatter = strjoin("", "|cffaaaaaa", L["Reset Character Data: Hold Shift + Right Click"], "|r")
 
-            if GW.myfaction == "Horde" then
-                totalHorde = total
-                listHorde = list
-                listAlliance, totalAlliance = GW.GetRealmMoneyForFraction("Alliance")
-            elseif GW.myfaction == "Alliance" then
-                totalAlliance = total
-                listAlliance = list
-                listHorde, totalHorde = GW.GetRealmMoneyForFraction("Horde")
-            else
-                listAlliance, totalAlliance = GW.GetRealmMoneyForFraction("Alliance")
-                listHorde, totalHorde = GW.GetRealmMoneyForFraction("Horde")
-            end
-
-            for name, money in pairs(listAlliance) do
-                if money and money > 0 then
-                    tinsert(myGold,
-                    {
-                        name = name,
-                        amount = money,
-                        faction = "Alliance"
-                    })
-                end
-            end
-            for name, money in pairs(listHorde) do
-                if money and money > 0 then
-                    tinsert(myGold,
-                    {
-                        name = name,
-                        amount = money,
-                        faction = "Horde"
-                    })
-                end
-            end
-
-            GameTooltip:SetOwner(self, "ANCHOR_TOP")
-            GameTooltip:ClearLines()
-
-            sort(myGold, function(a, b)
-                return a.amount > b.amount
-            end)
-
-            GameTooltip:AddLine(L["Session:"])
-            GameTooltip:AddDoubleLine(L["Earned:"], GW.FormatMoneyForChat(GW.earnedMoney), 1, 1, 1, 1, 1, 1)
-            GameTooltip:AddDoubleLine(L["Spent:"], GW.FormatMoneyForChat(GW.spentMoney), 1, 1, 1, 1, 1, 1)
-            if GW.earnedMoney < GW.spentMoney then
-                GameTooltip:AddDoubleLine(L["Deficit:"], GW.FormatMoneyForChat(GW.earnedMoney - GW.spentMoney), 1, 0, 0, 1, 1, 1)
-            elseif (GW.earnedMoney - GW.spentMoney) > 0 then
-                GameTooltip:AddDoubleLine(L["Profit:"], GW.FormatMoneyForChat(GW.earnedMoney - GW.spentMoney), 0, 1, 0, 1, 1, 1)
-            end
-            GameTooltip_AddBlankLineToTooltip(GameTooltip)
-
-            -- list all players from the realm
-            GameTooltip:AddLine(CHARACTER .. ":")
-            for _, g in pairs(myGold) do
-                local color = GW.GWGetClassColor(GetCharClass(g.name, g.faction), true, true)
-                local nameLine = ""
-                if GW.myfaction ~= "" and GW.myfaction ~= "Neutral" then
-                    nameLine = format("|TInterface/FriendsFrame/PlusManz-%s:14|t ", g.faction)
+            if list then
+                for realm, faction in pairs(list) do
+                    if faction and type(faction) == "table" then
+                        for char, v in pairs(faction) do
+                            if v.money and v.money >= 0 then
+                                tinsert(myGold,
+                                {
+                                    name = v.name,
+                                    amount = v.money,
+                                    class = v.class,
+                                    faction = v.faction
+                                })
+                                if v.faction and v.faction == "Alliance" then
+                                    totalAlliance = totalAlliance + v.money
+                                elseif v.faction and v.faction == "Horde" then
+                                    totalHorde = totalHorde + v.money
+                                else
+                                    total = total + v.money
+                                end
+                            end
+                        end
+                    end
                 end
 
-                local toonName = format("%s%s", nameLine, g.name)
-                GameTooltip:AddDoubleLine((g.name == GW.myname and toonName .. " |TInterface/COMMON/Indicator-Green:14|t") or toonName, GW.FormatMoneyForChat(g.amount), color.r, color.g, color.b, 1, 1, 1)
-            end
+                sort(myGold, function(a, b)
+                    return a.amount > b.amount
+                end)
 
-            -- add total gold on realm+faction
-            GameTooltip_AddBlankLineToTooltip(GameTooltip)
-            GameTooltip:AddLine(FRIENDS_LIST_REALM)
-            
-            if totalAlliance > 0 and totalHorde > 0 then
-                if totalAlliance ~= 0 then GameTooltip:AddDoubleLine(FACTION_ALLIANCE, GW.FormatMoneyForChat(totalAlliance), 0, .376, 1, 1, 1, 1) end
-                if totalHorde ~= 0 then GameTooltip:AddDoubleLine(FACTION_HORDE, GW.FormatMoneyForChat(totalHorde), 1, .2, .2, 1, 1, 1) end
+                GameTooltip:SetOwner(self, "ANCHOR_TOP")
+                GameTooltip:ClearLines()
+
+                GameTooltip:AddLine(L["Session:"])
+                GameTooltip:AddDoubleLine(L["Earned:"], GW.FormatMoneyForChat(GW.earnedMoney), 1, 1, 1, 1, 1, 1)
+                GameTooltip:AddDoubleLine(L["Spent:"], GW.FormatMoneyForChat(GW.spentMoney), 1, 1, 1, 1, 1, 1)
+                if GW.earnedMoney < GW.spentMoney then
+                    GameTooltip:AddDoubleLine(L["Deficit:"], GW.FormatMoneyForChat(GW.earnedMoney - GW.spentMoney), 1, 0, 0, 1, 1, 1)
+                elseif (GW.earnedMoney - GW.spentMoney) > 0 then
+                    GameTooltip:AddDoubleLine(L["Profit:"], GW.FormatMoneyForChat(GW.earnedMoney - GW.spentMoney), 0, 1, 0, 1, 1, 1)
+                end
                 GameTooltip_AddBlankLineToTooltip(GameTooltip)
-            end
 
-            GameTooltip:AddDoubleLine(TOTAL .. ":", GW.FormatMoneyForChat(totalAlliance + totalHorde), 1, 1, 1, 1, 1, 1)
+                -- list all players from the realm
+                GameTooltip:AddLine(CHARACTER .. ":")
+                for _, g in pairs(myGold) do
+                    local color = GW.GWGetClassColor(g.class, true, true)
+                    local nameLine = ""
+                    if g.faction ~= "" and g.faction ~= "Neutral" then
+                        nameLine = format("|TInterface/FriendsFrame/PlusManz-%s:14|t ", g.faction)
+                    elseif g.faction and g.faction == "Neutral" then
+                        nameLine = format("|TInterface/Timer/%s-Logo:14|t ", "Panda")
+                    end
 
-            GameTooltip_AddBlankLineToTooltip(GameTooltip)
-            GameTooltip:AddDoubleLine(TOKEN_FILTER_LABEL .. ":", GW.FormatMoneyForChat(C_WowTokenPublic.GetCurrentMarketPrice() or 0), 0, .8, 1, 1, 1, 1)
+                    local toonName = format("%s%s", nameLine, g.name)
+                    GameTooltip:AddDoubleLine((g.name == GW.myname and toonName .. " |TInterface/COMMON/Indicator-Green:14:14:0:-2|t") or toonName, GW.FormatMoneyForChat(g.amount), color.r, color.g, color.b, 1, 1, 1)
+                end
 
-            local grayValue = GetGraysValue()
-            if grayValue > 0 then
+                -- add total gold on realm
                 GameTooltip_AddBlankLineToTooltip(GameTooltip)
-                GameTooltip:AddDoubleLine(L["Grays"] , GW.FormatMoneyForChat(grayValue), nil, nil, nil, 1, 1, 1)
+                GameTooltip:AddLine(FRIENDS_LIST_REALM)
+                
+                if totalAlliance > 0 and totalHorde > 0 then
+                    if totalAlliance ~= 0 then GameTooltip:AddDoubleLine(FACTION_ALLIANCE, GW.FormatMoneyForChat(totalAlliance), 0, .376, 1, 1, 1, 1) end
+                    if totalHorde ~= 0 then GameTooltip:AddDoubleLine(FACTION_HORDE, GW.FormatMoneyForChat(totalHorde), 1, .2, .2, 1, 1, 1) end
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                end
+
+                GameTooltip:AddDoubleLine(TOTAL .. ":", GW.FormatMoneyForChat(totalAlliance + totalHorde + total), 1, 1, 1, 1, 1, 1)
+
+                GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                C_WowTokenPublic.UpdateMarketPrice()
+                GameTooltip:AddDoubleLine(TOKEN_FILTER_LABEL .. ":", GW.FormatMoneyForChat(C_WowTokenPublic.GetCurrentMarketPrice() or 0), 0, .8, 1, 1, 1, 1)
+
+                local grayValue = GetGraysValue()
+                if grayValue > 0 then
+                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                    GameTooltip:AddDoubleLine(L["Grays"] , GW.FormatMoneyForChat(grayValue), nil, nil, nil, 1, 1, 1)
+                end
+
+                GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                GameTooltip:AddLine(resetCountersFormatter)
+                GameTooltip:AddLine(resetInfoFormatter)
+
+                GameTooltip:Show()
             end
-
-            GameTooltip_AddBlankLineToTooltip(GameTooltip)
-            GameTooltip:AddLine(resetCountersFormatter)
-            GameTooltip:AddLine(resetInfoFormatter)
-
-            GameTooltip:Show()
         end
     )
 
     -- clear money storage on right-click
+    local menuList = {}
     f.moneyFrame:SetScript(
         "OnClick",
         function(self, button)
             if button == "RightButton" then
                 if IsShiftKeyDown() then
-                    ClearStorage(GetRealmStorage("MONEY"))
-                    UpdateMoney()
+                    wipe(menuList)
+                    tinsert(menuList, { text = 'Delete Character', isTitle = true, notCheckable = true })
+
+                    local list = GetStorage(nil, "REALM")
+                    if list then
+                        for realm, faction in pairs(list) do
+                            if faction and type(faction) == "table" then
+                                for char, v in pairs(faction) do
+                                    if v.money and v.money >= 0 then
+                                        tinsert(menuList,
+                                        {
+                                            text = format("%s - %s", v.name, realm),
+                                            notCheckable = true,
+                                            func = function()
+                                                ClearStorage(nil, {v.faction, v.name})
+                                                GW.UpdateCharData()
+                                                UpdateMoney()
+                                            end
+                                        })
+                                    end
+                                end
+                            end
+                        end
+
+                        GW.SetEasyMenuAnchor(GW.EasyMenu, self)
+			            _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+                    end
                 elseif IsControlKeyDown() then
                     GW.earnedMoney = 0
                     GW.spentMoney = 0
