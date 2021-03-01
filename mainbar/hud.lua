@@ -1202,5 +1202,25 @@ local function LoadXPBar()
 
     --Loss Of Control Icon Skin
     LossOfControlFrame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+
+    -- show weekly reward 
+    PVEFrame:HookScript("OnShow", function(self)
+        UIParentLoadAddOn("Blizzard_PVPUI")
+        if _G.PVPQueueFrame.HonorInset.CasualPanel.WeeklyChest then
+            _G.PVPQueueFrame.HonorInset.CasualPanel.WeeklyChest:SetScript("OnMouseDown", function()
+                if UIParentLoadAddOn("Blizzard_WeeklyRewards") then
+                    if WeeklyRewardsFrame:IsShown() then
+                        WeeklyRewardsFrame:Hide()
+                    else
+                        WeeklyRewardsFrame:Show()
+                    end
+                else
+                    LoadAddOn("Blizzard_WeeklyRewards")
+                    WeeklyRewardsFrame:Show()
+                end
+            end)
+        end
+    end)
+    
 end
 GW.LoadXPBar = LoadXPBar

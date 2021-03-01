@@ -59,6 +59,10 @@ GW.MOVABLE_FRAMES = {}
 GW.scaleableFrames = {}
 GW.scaleableMainHudFrames = {}
 
+-- money
+GW.earnedMoney = 0
+GW.spentMoney = 0
+
 -- Init global function
 GW.InitLocationDataHandler()
 

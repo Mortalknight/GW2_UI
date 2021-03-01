@@ -44,10 +44,10 @@ end
 GW.GetStorage = GetStorage
 
 -- Get a storage or value for the players realm+faction
-local GetRealmStorage = function (...)
+local GetRealmStorage = function (overrideFraction, ...)
     local _, realm = UnitFullName("player")
 
-    return GetStorage(GW.myfaction, realm, ...)
+    return GetStorage(overrideFraction and overrideFraction or GW.myfaction, realm, ...)
 end
 GW.GetRealmStorage = GetRealmStorage
 
@@ -90,8 +90,8 @@ local UpdateCharClass = function ()
 end
 GW.UpdateCharClass = UpdateCharClass
 
-local GetCharClass = function (name)
-    return GetRealmStorage("CLASS", name)
+local GetCharClass = function (name, fraction)
+    return GetRealmStorage(fraction and fraction or nil, "CLASS", name)
 end
 GW.GetCharClass = GetCharClass
 
@@ -100,13 +100,25 @@ GW.GetCharClass = GetCharClass
 
 local UpdateMoney = function ()
     local money = GetMoney()
+
+    -- first store old money
+    local oldMoney = GetRealmStorage(nil, "MONEY", GW.myname)
+    local OldMoney = oldMoney or money
+
+    local change = money - OldMoney 
+    if OldMoney > money then		-- Lost Money
+		GW.spentMoney = GW.spentMoney - change
+	else							-- Gained Moeny
+		GW.earnedMoney = GW.earnedMoney + change
+	end
+
     SetRealmStorage("MONEY", GW.myname, money)
 end
 GW.UpdateMoney = UpdateMoney
 
 -- Get all money on this realm and faction
 local GetRealmMoney = function ()
-    local s = GetRealmStorage("MONEY")
+    local s = GetRealmStorage(nil, "MONEY")
 
     if s then
         local sum = 0
@@ -117,3 +129,16 @@ local GetRealmMoney = function ()
     end
 end
 GW.GetRealmMoney = GetRealmMoney
+
+local GetRealmMoneyForFraction = function (fraction)
+    local s = GetRealmStorage(fraction, "MONEY")
+
+    if s then
+        local sum = 0
+        for _,v in pairs(s) do
+            sum = sum + v
+        end
+        return s, sum
+    end
+end
+GW.GetRealmMoneyForFraction = GetRealmMoneyForFraction
