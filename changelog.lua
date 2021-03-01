@@ -7,6 +7,7 @@ NEW
 FIXES
     - Objective tracker improvments
     - Focus frame invert is now working
+    - Fix auto repair
 ]=])
 
 v("5.9.1", [=[
