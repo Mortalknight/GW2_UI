@@ -965,24 +965,22 @@ local function LoadBag(helpers)
             local resetInfoFormatter = strjoin("", "|cffaaaaaa", L["Reset Character Data: Hold Shift + Right Click"], "|r")
 
             if list then
-                for realm, faction in pairs(list) do
-                    if faction and type(faction) == "table" then
-                        for char, v in pairs(faction) do
-                            if v.money and v.money >= 0 then
-                                tinsert(myGold,
-                                {
-                                    name = v.name,
-                                    amount = v.money,
-                                    class = v.class,
-                                    faction = v.faction
-                                })
-                                if v.faction and v.faction == "Alliance" then
-                                    totalAlliance = totalAlliance + v.money
-                                elseif v.faction and v.faction == "Horde" then
-                                    totalHorde = totalHorde + v.money
-                                else
-                                    total = total + v.money
-                                end
+                for realm, char in pairs(list) do
+                    if char and type(char) == "table" then
+                        if char.money and char.money >= 0 then
+                            tinsert(myGold,
+                            {
+                                name = char.name,
+                                amount = char.money,
+                                class = char.class,
+                                faction = char.faction
+                            })
+                            if char.faction and char.faction == "Alliance" then
+                                totalAlliance = totalAlliance + char.money
+                            elseif char.faction and char.faction == "Horde" then
+                                totalHorde = totalHorde + char.money
+                            else
+                                total = total + char.money
                             end
                         end
                     end
@@ -1052,33 +1050,31 @@ local function LoadBag(helpers)
     )
 
     -- clear money storage on right-click
-    local menuList = {}
     f.moneyFrame:SetScript(
         "OnClick",
         function(self, button)
             if button == "RightButton" then
                 if IsShiftKeyDown() then
-                    wipe(menuList)
+                    local menuList = {}
                     tinsert(menuList, { text = 'Delete Character', isTitle = true, notCheckable = true })
 
                     local list = GetStorage(nil, "REALM")
                     if list then
-                        for realm, faction in pairs(list) do
-                            if faction and type(faction) == "table" then
-                                for char, v in pairs(faction) do
-                                    if v.money and v.money >= 0 then
-                                        tinsert(menuList,
-                                        {
-                                            text = format("%s - %s", v.name, realm),
-                                            notCheckable = true,
-                                            func = function()
-                                                ClearStorage(nil, {v.faction, v.name})
-                                                GW.UpdateCharData()
-                                                UpdateMoney()
-                                            end
-                                        })
-                                    end
+                        for realm, char in pairs(list) do
+                            if char and type(char) == "table" then
+                                if char.money and char.money >= 0 then
+                                    tinsert(menuList,
+                                    {
+                                        text = format("%s - %s", char.name, realm),
+                                        notCheckable = true,
+                                        func = function()
+                                            ClearStorage(nil, char.name)
+                                            GW.UpdateCharData()
+                                            UpdateMoney()
+                                        end
+                                    })
                                 end
+
                             end
                         end
 
