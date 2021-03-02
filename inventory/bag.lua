@@ -1056,7 +1056,7 @@ local function LoadBag(helpers)
             if button == "RightButton" then
                 if IsShiftKeyDown() then
                     local menuList = {}
-                    tinsert(menuList, { text = 'Delete Character', isTitle = true, notCheckable = true })
+                    tinsert(menuList, { text = DELETE, isTitle = true, notCheckable = true })
 
                     local list = GetStorage(nil, "REALM")
                     if list then
@@ -1065,7 +1065,7 @@ local function LoadBag(helpers)
                                 if char.money and char.money >= 0 then
                                     tinsert(menuList,
                                     {
-                                        text = format("%s - %s", char.name, realm),
+                                        text = format("%s - %s", char.name, char.faction),
                                         notCheckable = true,
                                         func = function()
                                             ClearStorage(nil, char.name)
