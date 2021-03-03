@@ -1008,9 +1008,9 @@ local function LoadBag(helpers)
                 for _, g in pairs(myGold) do
                     local color = GW.GWGetClassColor(g.class, true, true)
                     local nameLine = ""
-                    if g.faction ~= "" and g.faction ~= "Neutral" then
+                    if g.faction and g.faction ~= "" and g.faction ~= "Neutral" then
                         nameLine = format("|TInterface/FriendsFrame/PlusManz-%s:14|t ", g.faction)
-                    elseif g.faction and g.faction == "Neutral" then
+                    elseif g.faction and g.faction ~= "" and g.faction == "Neutral" then
                         nameLine = format("|TInterface/Timer/%s-Logo:14|t ", "Panda")
                     end
 

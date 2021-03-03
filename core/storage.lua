@@ -10,6 +10,18 @@ local LoadStorage = function ()
     GW.UpdateCharData()
     GW.UpdateMoney()
 
+    -- remove old dataformat from new db
+    for realm, faction in pairs(storage) do
+        if faction and type(faction) == "table" then
+            for factionKey, factionValues in pairs(faction) do
+                if factionKey and (factionKey == "Alliance" or factionKey == "Horde" or factionKey == "Neutral") then
+                    storage[realm][factionKey] = nil
+                    break
+                end 
+            end
+        end
+    end
+
     -- Migrate data to new table (temp function)
     if GW2UI_STORAGE then
         local oldStorage = GW2UI_STORAGE

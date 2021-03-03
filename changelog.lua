@@ -1,9 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("5.9.2", [=[
+v("5.10.0", [=[
 NEW
     - Added socket frame skin
+    - Added layout and functions to money tooltip (bags)
+
 FIXES
     - Objective tracker improvments
     - Focus frame invert is now working

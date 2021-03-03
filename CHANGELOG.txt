@@ -1,6 +1,7 @@
-5.9.2
+5.10.0
 NEW
     - Added socket frame skin
+    - Added layout and functions to money tooltip (bags)
 
 FIXES
     - Objective tracker improvments
