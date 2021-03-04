@@ -4,6 +4,43 @@ local _, GW = ...
 local STRIP_TEX = "Texture"
 local STRIP_FONT = "FontString"
 
+local BlizzardRegions = {
+	"Left",
+	"Middle",
+	"Right",
+	"Mid",
+	"LeftDisabled",
+	"MiddleDisabled",
+	"RightDisabled",
+	"TopLeft",
+	"TopRight",
+	"BottomLeft",
+	"BottomRight",
+	"TopMiddle",
+	"MiddleLeft",
+	"MiddleRight",
+	"BottomMiddle",
+	"MiddleMiddle",
+	"TabSpacer",
+	"TabSpacer1",
+	"TabSpacer2",
+	"_RightSeparator",
+	"_LeftSeparator",
+	"Cover",
+	"Border",
+	"Background",
+	"TopTex",
+	"TopLeftTex",
+	"TopRightTex",
+	"LeftTex",
+	"BottomTex",
+	"BottomLeftTex",
+	"BottomRightTex",
+	"RightTex",
+	"MiddleTex",
+	"Center",
+}
+
 local ArrowRotation = {
     up = 0,
     down = 3.14,
@@ -120,8 +157,16 @@ local function AddHover(self)
         self.hover = hover
         self.hover:SetAlpha(0)
 
-        self:SetScript("OnEnter", GwStandardButton_OnEnter)
-        self:SetScript("OnLeave", GwStandardButton_OnLeave)
+        if self.OnEnter then
+            self:HookScript("OnEnter", GwStandardButton_OnEnter)
+        else
+            self:SetScript("OnEnter", GwStandardButton_OnEnter)
+        end
+        if self.OnLeave then
+            self:HookScript("OnLeave", GwStandardButton_OnLeave)
+        else
+            self:SetScript("OnLeave", GwStandardButton_OnLeave)
+        end
     end
 end
 
@@ -195,6 +240,14 @@ end
 
 local function SkinButton(button, isXButton, setTextColor, onlyHover)
     if not button then return end
+
+    local name = button.GetName and button:GetName()
+    for _, area in pairs(BlizzardRegions) do
+        local object = (name and _G[name .. area]) or button[area]
+        if object then
+            object:SetAlpha(0)
+        end
+    end
 
     if not onlyHover then
         if isXButton then
@@ -340,10 +393,11 @@ local function SkinDropDownMenu(frame)
     frame.backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 2, -2)
 
     button:ClearAllPoints()
-
     button:SetPoint("RIGHT", frame, "RIGHT", -10, 3)
 
     button.SetPoint = GW.NoOp
+    button:StripTextures()
+
     button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
@@ -351,7 +405,7 @@ local function SkinDropDownMenu(frame)
 
     if text then
         text:ClearAllPoints()
-        text:SetPoint("RIGHT", button, "LEFT", -2, 0)
+        text:SetPoint("RIGHT", button, "LEFT", 4, 0)
     end
 
     if icon then
