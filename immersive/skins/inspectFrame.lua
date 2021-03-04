@@ -31,7 +31,6 @@ local function SkinInspectFrameOnLoad()
     if not InspectFrame.tex then
         local tex = InspectFrame:CreateTexture("bg", "BACKGROUND", 0)
         tex:SetPoint("TOP", InspectFrame, "TOP", 0, 20)
-        local w, h = InspectFrame:GetSize()
         tex:SetSize(w + 50, h + 70)
         tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
         InspectFrame.tex = tex
