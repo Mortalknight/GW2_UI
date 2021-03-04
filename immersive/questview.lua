@@ -604,11 +604,7 @@ local function LoadQuestview()
     GwQuestviewFrameContainerDeclineQuest:SetScript(
         "OnClick",
         function(self, event, addon)
-            if questState == "TAKE" then
-                DeclineQuest()
-            else
-                CloseQuest()
-            end
+            CloseQuest()
         end
     )
     GwQuestviewFrameContainerAcceptButton:SetScript(
