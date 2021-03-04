@@ -5,6 +5,8 @@ v("5.10.0", [=[
 NEW
     - Added socket frame skin
     - Added layout and functions to money tooltip (bags)
+    - Immersive Questing: Right click to go one gossip back
+    - Immersive Questing: Accept quest with space
 
 FIXES
     - Objective tracker improvments
