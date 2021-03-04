@@ -2,6 +2,13 @@ local _, GW = ...
 local v = GW.vernotes
 
 v(
+    "1.10.7",
+    [=[
+    - Added direbear to classpower
+]=]
+)
+
+v(
     "1.10.6",
     [=[
     - Update sorting to the latest version

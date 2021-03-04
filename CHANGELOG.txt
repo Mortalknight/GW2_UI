@@ -1,3 +1,6 @@
+1.10.7
+- Added direbear to classpower
+
 1.10.6
 - Update sorting to the latest version
 - Update extended char stats

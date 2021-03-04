@@ -119,7 +119,7 @@ local function setDruid(f)
 
     if form == 1 then -- cat
         barType = "combo|little_mana"
-    elseif form == 5 then --bear
+    elseif form == 5 or form == 8 then --bear
         barType = "little_mana"
     end
 
