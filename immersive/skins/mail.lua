@@ -407,6 +407,7 @@ local function LoadMailSkin()
     InboxTitleText:SetTextColor(1, 1, 1, 1)
     InboxTitleText:SetJustifyH("LEFT")
 
+    _G.AutoCompleteBox:StripTextures()
     _G.AutoCompleteBox:CreateBackdrop(GW.skins.constBackdropFrame)
 
     -- movable stuff

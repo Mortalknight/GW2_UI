@@ -58,13 +58,13 @@ local function LoadGossipSkin()
     GW.HandleNextPrevButton(_G.ItemTextNextPageButton)
 
     _G.ItemTextPageText:SetTextColor(1, 1, 1)
-    hooksecurefunc(_G.ItemTextPageText, 'SetTextColor', function(pageText, headerType, r, g, b)
+    hooksecurefunc(_G.ItemTextPageText, "SetTextColor", function(pageText, headerType, r, g, b)
         if r ~= 1 or g ~= 1 or b ~= 1 then
             pageText:SetTextColor(headerType, 1, 1, 1)
         end
     end)
 
-    local StripAllTextures = {'GossipFrameGreetingPanel', 'GossipGreetingScrollFrame'}
+    local StripAllTextures = {"GossipFrameGreetingPanel", "GossipGreetingScrollFrame"}
     for _, object in pairs(StripAllTextures) do
         _G[object]:StripTextures()
     end
@@ -72,7 +72,7 @@ local function LoadGossipSkin()
     local GossipGreetingScrollFrame = _G.GossipGreetingScrollFrame
     GossipGreetingScrollFrame:SkinScrollFrame()
 
-    hooksecurefunc('GossipFrameUpdate', handleGossipText)
+    hooksecurefunc("GossipFrameUpdate", handleGossipText)
     _G.GossipGreetingText:SetTextColor(1, 1, 1)
     handleGossipText()
 
@@ -80,7 +80,7 @@ local function LoadGossipSkin()
     _G.GossipFrameGreetingGoodbyeButton:SkinButton(false, true)
 
     for i = 1, 4 do
-        local notch = _G['NPCFriendshipStatusBarNotch' .. i]
+        local notch = _G["NPCFriendshipStatusBarNotch" .. i]
         if notch then
             notch:SetColorTexture(0, 0, 0)
             notch:SetSize(1, 16)
@@ -96,7 +96,7 @@ local function LoadGossipSkin()
     NPCFriendshipStatusBar.bg:SetPoint("BOTTOMRIGHT", NPCFriendshipStatusBar, "BOTTOMRIGHT", 3, -3)
 
     NPCFriendshipStatusBar.icon:ClearAllPoints()
-    NPCFriendshipStatusBar.icon:SetPoint('RIGHT', NPCFriendshipStatusBar, 'LEFT', 0, -3)
+    NPCFriendshipStatusBar.icon:SetPoint("RIGHT", NPCFriendshipStatusBar, "LEFT", 0, -3)
     NPCFriendshipStatusBar.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
     -- mover

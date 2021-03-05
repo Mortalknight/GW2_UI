@@ -9,6 +9,7 @@ NEW
     - Immersive Questing: Accept quest with space
     - Added worldmap skin
     - Added gossip skin
+    - Added itemupgrade skin
 
 FIXES
     - Objective tracker improvments
