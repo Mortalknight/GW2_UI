@@ -595,3 +595,11 @@ local function GetScreenQuadrant(frame)
     return point
 end
 GW.GetScreenQuadrant = GetScreenQuadrant
+
+do
+    local a1, a2, a3, a4, a5 = "", "|c[fF][fF]%x%x%x%x%x%x", "|r", "|[TA].-|[ta]", "^%s*"
+    local function StripString(s)
+        return gsub(gsub(gsub(gsub(s, a2, a1), a3, a1), a4, a1) , a5, a1)
+    end
+    GW.StripString = StripString
+end

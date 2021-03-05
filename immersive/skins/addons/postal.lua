@@ -1,7 +1,6 @@
 local _, GW = ...
 
-local function SkinPostalAddonFrame()
-
+local function LoadPostalAddonSkin()
     if PostalOpenAllButton then
         PostalOpenAllButton:SkinButton(false, true)
     end
@@ -40,5 +39,5 @@ local function SkinPostalAddonFrame()
         Postal_BlackBookButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
     end
 end
-GW.SkinPostalAddonFrame = SkinPostalAddonFrame
+GW.LoadPostalAddonSkin = LoadPostalAddonSkin
 

@@ -7,6 +7,8 @@ NEW
     - Added layout and functions to money tooltip (bags)
     - Immersive Questing: Right click to go one gossip back
     - Immersive Questing: Accept quest with space
+    - Added worldmap skin
+    - Added gossip skin
 
 FIXES
     - Objective tracker improvments

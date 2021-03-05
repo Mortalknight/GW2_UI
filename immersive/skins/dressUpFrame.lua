@@ -5,7 +5,9 @@ local function BG_Resize(self)
     self:GetParent():GetParent().tex:SetSize(w + 50, h + 30)
 end
 
-local function SkinDressUpFrame()
+local function LoadDressUpFrameSkin()
+    if not GW.GetSetting("INSPECTION_SKIN_ENABLED") then return end
+
     DressUpFrame:StripTextures()
     DressUpFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     DressUpFrameCloseButton:SkinButton(true)
@@ -51,4 +53,4 @@ local function SkinDressUpFrame()
     WardrobeOutfitEditFrame.CancelButton:SkinButton(false, true)
     WardrobeOutfitEditFrame.DeleteButton:SkinButton(false, true)
 end
-GW.SkinDressUpFrame = SkinDressUpFrame
+GW.LoadDressUpFrameSkin = LoadDressUpFrameSkin

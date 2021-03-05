@@ -117,6 +117,7 @@ local function SkinInspectFrameOnLoad()
     for _, Slot in pairs({InspectPaperDollItemsFrame:GetChildren()}) do
         if Slot:IsObjectType("Button") or Slot:IsObjectType("ItemButton") then
             Slot.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            Slot.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
             Slot:StripTextures()
         end
     end
@@ -134,7 +135,9 @@ local function SkinInspectFrameOnLoad()
     InspectTalentFrame:StripTextures()
 end
 
-local function SkinInspectFrame()
+local function LoadInspectFrameSkin()
+    if not GW.GetSetting("INSPECTION_SKIN_ENABLED") then return end
+
     hooksecurefunc("InspectFrame_LoadUI", SkinInspectFrameOnLoad)
 end
-GW.SkinInspectFrame = SkinInspectFrame
+GW.LoadInspectFrameSkin = LoadInspectFrameSkin

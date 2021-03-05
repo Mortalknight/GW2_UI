@@ -24,6 +24,8 @@ local function UpdateCoords()
 end
 
 local function AddCoordsToWorldMap()
+    if not GW.GetSetting("WORLDMAP_COORDS_TOGGLE") then return end
+
     local WorldMapFrame = _G.WorldMapFrame
 
 	local CoordsTimer = nil

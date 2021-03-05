@@ -1,7 +1,9 @@
 local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 
-local function SkinBlizzardOptions()
+local function LoadBlizzardOptionsSkin()
+    if not GW.GetSetting("BLIZZARD_OPTIONS_SKIN_ENABLED") then return end
+
     --Interface and System Options
     local OptionsFrames = {_G.InterfaceOptionsFrameCategories, _G.InterfaceOptionsFramePanelContainer, _G.InterfaceOptionsFrameAddOns, _G.VideoOptionsFrameCategoryFrame, _G.VideoOptionsFramePanelContainer, _G.Display_, _G.Graphics_, _G.RaidGraphics_, _G.AudioOptionsSoundPanelHardware, _G.AudioOptionsSoundPanelVolume, _G.AudioOptionsSoundPanelPlayback, _G.AudioOptionsVoicePanelTalking, _G.AudioOptionsVoicePanelListening, _G.AudioOptionsVoicePanelBinding}
     local OptionsButtons = {_G.GraphicsButton, _G.RaidButton}
@@ -372,4 +374,4 @@ local function SkinBlizzardOptions()
         end
     end)
 end
-GW.SkinBlizzardOptions = SkinBlizzardOptions
+GW.LoadBlizzardOptionsSkin = LoadBlizzardOptionsSkin

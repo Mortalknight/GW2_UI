@@ -64,7 +64,9 @@ local function SkinDeathRecapFrame_Loaded()
     end
 end
 
-local function SkinDeathRecapFrame()
+local function LoadDeathRecapSkin()
+    if not GW.GetSetting("DEATHRECAPFRAME_SKIN_ENABLED") then return end
+
     hooksecurefunc("OpenDeathRecapUI", SkinDeathRecapFrame_Loaded)
 end
-GW.SkinDeathRecapFrame = SkinDeathRecapFrame
+GW.LoadDeathRecapSkin = LoadDeathRecapSkin

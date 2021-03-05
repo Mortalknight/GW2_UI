@@ -1395,7 +1395,7 @@ local function LoadQuestTracker()
     GW.LoadScenarioFrame()
     GW.LoadAchievementFrame()
     GW.LoadBonusFrame()
-    GW.SkinWQT()
+    GW.LoadWQTAddonSkin()
 
     fNotify.shouldDisplay = false
     -- only update the tracker on Events or if player moves

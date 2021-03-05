@@ -336,3 +336,4 @@ L["Earned:"] = "Guadagnato:"
 L["Spent:"] = "Speso:"
 L["Deficit:"] = "Disavanzo:"
 L["Profit:"] = "Profitto:"
+L["Gossip Frame"] = true

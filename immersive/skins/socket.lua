@@ -1,6 +1,8 @@
 local _, GW = ...
 
-local function SkinSocketUI()
+local function LoadSocketUISkin()
+    if not GW.GetSetting("SOCKET_SKIN_ENABLED") then return end
+
     ItemSocketingFrame_LoadUI()
     local ItemSocketingFrame = _G.ItemSocketingFrame
 
@@ -55,4 +57,4 @@ local function SkinSocketUI()
         self:StopMovingOrSizing()
     end)
 end
-GW.SkinSocketUI = SkinSocketUI
+GW.LoadSocketUISkin = LoadSocketUISkin

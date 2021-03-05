@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local function SkinGhostFrame()
+local function LoadGhostFrameSkin()
     local GhostFrame = _G.GhostFrame
 
     local tex = GhostFrame:CreateTexture("bg", "BACKGROUND")
@@ -30,4 +30,4 @@ local function SkinGhostFrame()
         i = i + 1
     end
 end
-GW.SkinGhostFrame = SkinGhostFrame
+GW.LoadGhostFrameSkin = LoadGhostFrameSkin

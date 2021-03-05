@@ -109,7 +109,9 @@ local function SkinLFGInvitePopup()
     _G.LFGInvitePopup:CreateBackdrop(constBackdropFrame)
 end
 
-local function SkinLFGFrames()
+local function LoadLFGSkins()
+    if not GW.GetSetting("LFG_FRAMES_SKIN_ENABLED") then return end
+
     SkinLFGInvitePopup()
     SkinLFDRoleCheckPopup()
     SkinLFGDungeonReadyDialog()
@@ -117,4 +119,4 @@ local function SkinLFGFrames()
     SkinLFGListApplicationDialog()
     SkinLFGListInviteDialog()
 end
-GW.SkinLFGFrames = SkinLFGFrames
+GW.LoadLFGSkins = LoadLFGSkins

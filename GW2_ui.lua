@@ -443,72 +443,33 @@ local function loadAddon(self)
             hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
         end
     end
-    if GetSetting("STATICPOPUP_SKIN_ENABLED") then
-        GW.SkinStaticPopup()
-    end
-    if GetSetting("BNTOASTFRAME_SKIN_ENABLED") then
-        GW.SkinBNToastFrame()
-    end
-    if GetSetting("DEATHRECAPFRAME_SKIN_ENABLED") then
-        GW.SkinDeathRecapFrame()
-    end
-    if GetSetting("DROPDOWN_SKIN_ENABLED") then
-        GW.SkinDropDown()
-    end
-    if GetSetting("LFG_FRAMES_SKIN_ENABLED") then
-        GW.SkinLFGFrames()
-    end
-    if GetSetting("READYCHECK_SKIN_ENABLED") then
-        GW.SkinReadyCheck()
-    end
-    if GetSetting("TALKINGHEAD_SKIN_ENABLED") then
-        GW.SkinAndPositionTalkingHeadFrame()
-    end
-    if GetSetting("MISC_SKIN_ENABLED") then
-        GW.SkinTimerTrackerFrame()
-        GW.SkinGhostFrame()
-    end
-    if GetSetting("IMMERSIONADDON_SKIN_ENABLED") then
-        GW.SkinImmersionAddonFrame()
-    end
-    if GetSetting("FLIGHTMAP_SKIN_ENABLED") then
-        GW.SkinFlightMap()
-    end
-    if GetSetting("ADDONLIST_SKIN_ENABLED") then
-        GW.SkinAddonList()
-    end
-    if GetSetting("BINDINGS_SKIN_ENABLED") then
-        GW.SkinBindingsUI()
-    end
-    if GetSetting("BLIZZARD_OPTIONS_SKIN_ENABLED") then
-        GW.SkinBlizzardOptions()
-    end
-    if GetSetting("MACRO_SKIN_ENABLED") then
-        GW.SkinMacroOptions()
-    end
-    if GetSetting("MAIL_SKIN_ENABLED") then
-        GW.SkinMail()
-        GW.SkinPostalAddonFrame()
-    end
-    if GetSetting("BARBERSHOP_SKIN_ENABLED") then
-        GW.SkinBarShopUI()
-    end
-    if GetSetting("INSPECTION_SKIN_ENABLED") then
-        GW.SkinInspectFrame()
-    end
-    if GetSetting("INSPECTION_SKIN_ENABLED") then
-        GW.SkinDressUpFrame()
-    end
-    if GetSetting("HELPFRAME_SKIN_ENABLED") then
-        GW.skinHelpFrameOnEvent()
-    end
-    if GetSetting("WORLDMAP_COORDS_TOGGLE") then
-        GW.AddCoordsToWorldMap()
-    end
-    if GetSetting("SOCKET_SKIN_ENABLED") then
-        GW.SkinSocketUI()
-    end
 
+    -- Skins: BLizzard & Addons
+    GW.LoadStaticPopupSkin()
+    GW.LoadBNToastSkin()
+    GW.LoadDeathRecapSkin()
+    GW.LoadDropDownSkin()
+    GW.LoadLFGSkins()
+    GW.LoadReadyCheckSkin()
+    GW.LoadTalkingHeadSkin()
+    GW.LoadMiscBlizzardFrameSkins()
+    GW.LoadFlightMapSkin()
+    GW.LoadAddonListSkin()
+    GW.LoadBindingsUISkin()
+    GW.LoadBlizzardOptionsSkin()
+    GW.LoadMacroOptionsSkin()
+    GW.LoadMailSkin()
+    GW.LoadBarShopUISkin()
+    GW.LoadInspectFrameSkin()
+    GW.LoadDressUpFrameSkin()
+    GW.LoadHelperFrameSkin()
+    GW.LoadSocketUISkin()
+    GW.LoadWorldMapSkin()
+    GW.LoadGossipSkin()
+
+    GW.LoadImmersionAddonSkin()
+
+    GW.AddCoordsToWorldMap()
     GW.LoadVehicleButton()
     GW.MakeAltPowerBarMovable()
     GW.WidgetUISetup()

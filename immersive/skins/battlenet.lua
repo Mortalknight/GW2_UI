@@ -2,7 +2,9 @@ local _, GW = ...
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local GetSetting = GW.GetSetting
 
-local function SkinBNToastFrame()
+local function LoadBNToastSkin()
+    if not GetSetting("BNTOASTFRAME_SKIN_ENABLED") then return end
+
     local BNToastFrame = _G.BNToastFrame
     BNToastFrame:CreateBackdrop()
     BNToastFrame.BottomRightCorner:Hide()
@@ -37,4 +39,4 @@ local function SkinBNToastFrame()
 
     RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"})
 end
-GW.SkinBNToastFrame = SkinBNToastFrame
+GW.LoadBNToastSkin = LoadBNToastSkin

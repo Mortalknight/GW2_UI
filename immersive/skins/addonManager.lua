@@ -2,7 +2,9 @@ local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 
-local function SkinAddonList()
+local function LoadAddonListSkin()
+    if not GW.GetSetting("ADDONLIST_SKIN_ENABLED") then return end
+
     local AddonList = _G.AddonList
 
     AddonList.NineSlice:Hide()
@@ -71,4 +73,4 @@ local function SkinAddonList()
         end
     end)
 end
-GW.SkinAddonList = SkinAddonList
+GW.LoadAddonListSkin = LoadAddonListSkin

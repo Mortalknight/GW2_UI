@@ -97,7 +97,7 @@ local function addWQTTrackerQuest(self)
     GW.QuestTrackerLayoutChanged()
 end
 
-local function SkinWQT()
+local function LoadWQTAddonSkin()
     if not GetSetting("SKIN_WQT_ENABLED") or not WorldQuestTrackerAddon then return end
 
     local fWQT = CreateFrame("Frame", "GwQuesttrackerContainerWQT", GwQuestTrackerScrollChild, "GwQuesttrackerContainer")
@@ -132,4 +132,4 @@ local function SkinWQT()
     addWQTTrackerQuest(fWQT)
     hooksecurefunc(WorldQuestTrackerAddon, "RefreshTrackerWidgets", function() addWQTTrackerQuest(fWQT) end)
 end
-GW.SkinWQT = SkinWQT
+GW.LoadWQTAddonSkin = LoadWQTAddonSkin

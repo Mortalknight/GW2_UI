@@ -11,7 +11,7 @@ local function SkinTimerTrackerFrame_OnShow(self)
     end
 end
 
-local function SkinTimerTrackerFrame()
+local function LoadTimerTrackerSkin()
     hooksecurefunc("StartTimer_SetGoTexture", SkinTimerTrackerFrame_OnShow)
 end
-GW.SkinTimerTrackerFrame = SkinTimerTrackerFrame
+GW.LoadTimerTrackerSkin = LoadTimerTrackerSkin

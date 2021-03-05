@@ -1,7 +1,9 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
 
-local function SkinFlightMap()
+local function LoadFlightMapSkin()
+    if not GW.GetSetting("FLIGHTMAP_SKIN_ENABLED") then return end
+
     FlightMap_LoadUI()
 
     local FlightMapFrame = _G.FlightMapFrame
@@ -38,4 +40,4 @@ local function SkinFlightMap()
     TaxiFrame.CloseButton:SetPoint("TOPRIGHT", TaxiFrame, "TOPRIGHT", 20, 4)
     TaxiFrame.CloseButton:SetParent(TaxiFrame)
 end
-GW.SkinFlightMap = SkinFlightMap
+GW.LoadFlightMapSkin = LoadFlightMapSkin

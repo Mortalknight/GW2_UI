@@ -89,11 +89,13 @@ local function SkinDropDownList()
     end)
 end
 
-local function SkinDropDown()
+local function LoadDropDownSkin()
+    if not GW.GetSetting("DROPDOWN_SKIN_ENABLED") then return end
+
     SkinDropDownList()
     SkinUIDropDownMenu()
 end
-GW.SkinDropDown = SkinDropDown
+GW.LoadDropDownSkin = LoadDropDownSkin
 
 local function SkinTextBox(seg1, seg2, seg3)
     if seg1 ~= nil then
@@ -124,3 +126,52 @@ local function MutateInaccessableObject(frame, objType, func)
     end
 end
 GW.MutateInaccessableObject = MutateInaccessableObject
+
+local function SkinNavBarButtons(self)
+    if not self:GetParent():GetName() == "WorldMapFrame" then return end
+
+	local navButton = self.navList[#self.navList]
+	if navButton and not navButton.isSkinned then
+
+        --[[ Add this later if we have a custom texture for navigationbars
+        navButton:StripTextures()
+        navButton:SkinButton(false, false, true)
+
+		local r = {navButton:GetRegions()}
+        for _,c in pairs(r) do
+            if c:GetObjectType() == "FontString" then
+                c:SetTextColor(0, 0, 0, 1)
+                c:SetShadowOffset(0, 0)
+            end
+        end
+
+        local tex = navButton:CreateTexture(nil, "BACKGROUND")
+        tex:SetPoint("LEFT", navButton, "LEFT")
+        tex:SetPoint("TOP", navButton, "TOP")
+        tex:SetPoint("BOTTOM", navButton, "BOTTOM")
+        tex:SetPoint("RIGHT", navButton, "RIGHT")
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button")
+        navButton.tex = tex
+        navButton.tex:SetAlpha(1)
+
+        hooksecurefunc(navButton, "SetWidth", function()
+            local w = navButton:GetWidth()
+
+            navButton.tex:SetPoint("RIGHT", navButton, "LEFT", w, 0)
+        end)
+        ]]
+		if navButton.MenuArrowButton then
+			navButton.MenuArrowButton:StripTextures()
+			if navButton.MenuArrowButton.Art then
+				navButton.MenuArrowButton.Art:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                navButton.MenuArrowButton.Art:SetTexCoord(0, 1, 0, 1)
+                navButton.MenuArrowButton.Art:SetSize(16, 16)
+			end
+		end
+
+		navButton.xoffset = 1
+
+		navButton.isSkinned = true
+	end
+end
+GW.SkinNavBarButtons = SkinNavBarButtons

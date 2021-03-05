@@ -338,3 +338,4 @@ L["Earned:"] = true
 L["Spent:"] = true
 L["Deficit:"] = true
 L["Profit:"] = true
+L["Gossip Frame"] = "NPC 대화 창"

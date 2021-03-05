@@ -45,7 +45,9 @@ local function SkinBarShop()
     end)
 end
 
-local function SkinBarShopUI()
+local function LoadBarShopUISkin()
+    if not GW.GetSetting("BARBERSHOP_SKIN_ENABLED") then return end
+
     hooksecurefunc("BarberShopFrame_LoadUI", SkinBarShop)
 end
-GW.SkinBarShopUI = SkinBarShopUI
+GW.LoadBarShopUISkin = LoadBarShopUISkin

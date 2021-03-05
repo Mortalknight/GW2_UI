@@ -1,6 +1,8 @@
 local _, GW = ...
 
-local function SkinImmersionAddonFrame()
+local function LoadImmersionAddonSkin()
+    if not GW.GetSetting("IMMERSIONADDON_SKIN_ENABLED") then return end
+
     local ImmersionFrame = _G.ImmersionFrame
 
     if ImmersionFrame then
@@ -19,4 +21,4 @@ local function SkinImmersionAddonFrame()
         ImmersionFrame.TalkBox.MainFrame.Indicator:SetPoint("TOPRIGHT", -56, -13)
     end
 end
-GW.SkinImmersionAddonFrame = SkinImmersionAddonFrame
+GW.LoadImmersionAddonSkin = LoadImmersionAddonSkin

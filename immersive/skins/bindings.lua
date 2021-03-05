@@ -1,7 +1,9 @@
 local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 
-local function SkinBindingsUI()
+local function LoadBindingsUISkin()
+    if not GW.GetSetting("BINDINGS_SKIN_ENABLED") then return end
+
     KeyBindingFrame_LoadUI()
 
     local buttons = {
@@ -106,4 +108,4 @@ local function SkinBindingsUI()
     )
 
 end
-GW.SkinBindingsUI = SkinBindingsUI
+GW.LoadBindingsUISkin = LoadBindingsUISkin
