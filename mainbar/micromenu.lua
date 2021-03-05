@@ -432,7 +432,7 @@ local function setupMicroButtons(mbf)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip_SetTitle(GameTooltip, L["GW2 UI Update"])
         GameTooltip:AddLine(self.tooltipText)
-		GameTooltip:Show()
+        GameTooltip:Show()
     end)
 end
 GW.AddForProfiling("micromenu", "setupMicroButtons", setupMicroButtons)

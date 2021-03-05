@@ -1079,7 +1079,7 @@ local function LoadBag(helpers)
                         end
 
                         GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-			            _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+                        _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
                     end
                 elseif IsControlKeyDown() then
                     GW.earnedMoney = 0

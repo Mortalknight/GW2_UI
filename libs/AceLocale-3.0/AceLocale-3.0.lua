@@ -18,7 +18,7 @@ local getmetatable, setmetatable, rawset, rawget = getmetatable, setmetatable, r
 
 local gameLocale = GetLocale()
 if gameLocale == "enGB" then
-	gameLocale = "enUS"
+    gameLocale = "enUS"
 end
 
 AceLocale.apps = AceLocale.apps or {}          -- array of ["AppName"]=localetableref
@@ -26,19 +26,19 @@ AceLocale.appnames = AceLocale.appnames or {}  -- array of [localetableref]="App
 
 -- This metatable is used on all tables returned from GetLocale
 local readmeta = {
-	__index = function(self, key) -- requesting totally unknown entries: fire off a nonbreaking error and return key
-		rawset(self, key, key)      -- only need to see the warning once, really
-		geterrorhandler()(MAJOR..": "..tostring(AceLocale.appnames[self])..": Missing entry for '"..tostring(key).."'")
-		return key
-	end
+    __index = function(self, key) -- requesting totally unknown entries: fire off a nonbreaking error and return key
+        rawset(self, key, key)      -- only need to see the warning once, really
+        geterrorhandler()(MAJOR..": "..tostring(AceLocale.appnames[self])..": Missing entry for '"..tostring(key).."'")
+        return key
+    end
 }
 
 -- This metatable is used on all tables returned from GetLocale if the silent flag is true, it does not issue a warning on unknown keys
 local readmetasilent = {
-	__index = function(self, key) -- requesting totally unknown entries: return key
-		rawset(self, key, key)      -- only need to invoke this function once
-		return key
-	end
+    __index = function(self, key) -- requesting totally unknown entries: return key
+        rawset(self, key, key)      -- only need to invoke this function once
+        return key
+    end
 }
 
 -- Remember the locale table being registered right now (it gets set by :NewLocale())
@@ -50,10 +50,10 @@ local assertfalse = function() assert(false) end
 
 -- This metatable proxy is used when registering nondefault locales
 local writeproxy = setmetatable({}, {
-	__newindex = function(self, key, value)
-		rawset(registering, key, value == true and key or value) -- assigning values: replace 'true' with key string
-	end,
-	__index = assertfalse
+    __newindex = function(self, key, value)
+        rawset(registering, key, value == true and key or value) -- assigning values: replace 'true' with key string
+    end,
+    __index = assertfalse
 })
 
 -- This metatable proxy is used when registering the default locale.
@@ -64,12 +64,12 @@ local writeproxy = setmetatable({}, {
 --           doesn't get overwritten.
 --
 local writedefaultproxy = setmetatable({}, {
-	__newindex = function(self, key, value)
-		if not rawget(registering, key) then
-			rawset(registering, key, value == true and key or value)
-		end
-	end,
-	__index = assertfalse
+    __newindex = function(self, key, value)
+        if not rawget(registering, key) then
+            rawset(registering, key, value == true and key or value)
+        end
+    end,
+    __index = assertfalse
 })
 
 --- Register a new locale (or extend an existing one) for the specified application.
@@ -92,36 +92,36 @@ local writedefaultproxy = setmetatable({}, {
 -- @return Locale Table to add localizations to, or nil if the current locale is not required.
 function AceLocale:NewLocale(application, locale, isDefault, silent)
 
-	-- GAME_LOCALE allows translators to test translations of addons without having that wow client installed
-	local gameLocale = GAME_LOCALE or gameLocale
+    -- GAME_LOCALE allows translators to test translations of addons without having that wow client installed
+    local gameLocale = GAME_LOCALE or gameLocale
 
-	local app = AceLocale.apps[application]
+    local app = AceLocale.apps[application]
 
-	if silent and app and getmetatable(app) ~= readmetasilent then
-		geterrorhandler()("Usage: NewLocale(application, locale[, isDefault[, silent]]): 'silent' must be specified for the first locale registered")
-	end
+    if silent and app and getmetatable(app) ~= readmetasilent then
+        geterrorhandler()("Usage: NewLocale(application, locale[, isDefault[, silent]]): 'silent' must be specified for the first locale registered")
+    end
 
-	if not app then
-		if silent=="raw" then
-			app = {}
-		else
-			app = setmetatable({}, silent and readmetasilent or readmeta)
-		end
-		AceLocale.apps[application] = app
-		AceLocale.appnames[app] = application
-	end
+    if not app then
+        if silent=="raw" then
+            app = {}
+        else
+            app = setmetatable({}, silent and readmetasilent or readmeta)
+        end
+        AceLocale.apps[application] = app
+        AceLocale.appnames[app] = application
+    end
 
-	if locale ~= gameLocale and not isDefault then
-		return -- nop, we don't need these translations
-	end
+    if locale ~= gameLocale and not isDefault then
+        return -- nop, we don't need these translations
+    end
 
-	registering = app -- remember globally for writeproxy and writedefaultproxy
+    registering = app -- remember globally for writeproxy and writedefaultproxy
 
-	if isDefault then
-		return writedefaultproxy
-	end
+    if isDefault then
+        return writedefaultproxy
+    end
 
-	return writeproxy
+    return writeproxy
 end
 
 --- Returns localizations for the current locale (or default locale if translations are missing).
@@ -130,8 +130,8 @@ end
 -- @param silent If true, the locale is optional, silently return nil if it's not found (defaults to false, optional)
 -- @return The locale table for the current language.
 function AceLocale:GetLocale(application, silent)
-	if not silent and not AceLocale.apps[application] then
-		error("Usage: GetLocale(application[, silent]): 'application' - No locales registered for '"..tostring(application).."'", 2)
-	end
-	return AceLocale.apps[application]
+    if not silent and not AceLocale.apps[application] then
+        error("Usage: GetLocale(application[, silent]): 'application' - No locales registered for '"..tostring(application).."'", 2)
+    end
+    return AceLocale.apps[application]
 end

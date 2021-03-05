@@ -415,7 +415,7 @@ local function loadBaseFrame()
         moveDistance = GetScaleDistance()
         self:SetScript("OnUpdate", function()
             local scale = GetScaleDistance() / moveDistance * heroFrameNormalScale
-            if scale < 0.2 then	scale = 0.2	elseif scale > 3.0 then	scale = 3.0	end
+            if scale < 0.2 then scale = 0.2 elseif scale > 3.0 then scale = 3.0 end
             GwCharacterWindow:SetScale(scale)
             local s = heroFrameNormalScale / GwCharacterWindow:GetScale()
             local x = heroFrameX * s

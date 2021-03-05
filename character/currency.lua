@@ -112,9 +112,9 @@ local function loadCurrency(curwin)
                 if cinfo.quantity == 0 then
                     slot.item.amount:SetFontObject("GameFontDisable")
                     slot.item.spaceString:SetFontObject("GameFontDisable")
-				else
-					slot.item.amount:SetFontObject("GameFontHighlight")
-					slot.item.spaceString:SetFontObject("GameFontHighlight")
+                else
+                    slot.item.amount:SetFontObject("GameFontHighlight")
+                    slot.item.spaceString:SetFontObject("GameFontHighlight")
                 end
                 slot.item.icon:SetTexture(cinfo.iconFileID)
 

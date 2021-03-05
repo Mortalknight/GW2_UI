@@ -48,13 +48,13 @@
     </Frame>
 
     <CheckButton hidden="true" name="GWIgnoreSlotCheck" parentKey="ignoreSlotCheck" checked="false" virtual="true">
-		<Size x="16" y="16"></Size>
-		<Anchors>
-			<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
-		</Anchors>
-		<NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
-		<CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
-	</CheckButton>
+        <Size x="16" y="16"></Size>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+        </Anchors>
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"></NormalTexture>
+        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
+    </CheckButton>
 
     <ItemButton name="GwPaperDollButtonTemplate" registerForDrag="LeftButton" registerForClicks="LeftButtonUp, RightButtonUp" mixin="ContainerFrameItemButtonMixin" inherits="SecureHandlerClickTemplate,PaperDollAzeriteItemOverlayTemplate" virtual="true">
         <Size x="49" y="49"></Size>

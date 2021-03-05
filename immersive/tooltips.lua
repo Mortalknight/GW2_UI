@@ -82,8 +82,8 @@ local LEVEL1 = strlower(_G.TOOLTIP_UNIT_LEVEL:gsub("%s?%%s%s?%-?", ""))
 local LEVEL2 = strlower(_G.TOOLTIP_UNIT_LEVEL_CLASS:gsub("^%%2$s%s?(.-)%s?%%1$s", "%1"):gsub("^%-?г?о?%s?", ""):gsub("%s?%%s%s?%-?", ""))
 
 local function IsModKeyDown()
-	local k = GetSetting("ADVANCED_TOOLTIP_ID_MODIFIER")
-	return k == "ALWAYS" or ((k == "SHIFT" and IsShiftKeyDown()) or (k == "CTRL" and IsControlKeyDown()) or (k == "ALT" and IsAltKeyDown()))
+    local k = GetSetting("ADVANCED_TOOLTIP_ID_MODIFIER")
+    return k == "ALWAYS" or ((k == "SHIFT" and IsShiftKeyDown()) or (k == "CTRL" and IsControlKeyDown()) or (k == "ALT" and IsAltKeyDown()))
 end
 
 local function movePlacement(self)
@@ -652,11 +652,11 @@ end
 local function SkinProgressbar(self)
     if not self or self:IsForbidden() or not self.progressBarPool then return end
 
-	local sb = self.progressBarPool:GetNextActive()
-	if (not sb or not sb.Bar) or sb.Bar.backdrop then return end
+    local sb = self.progressBarPool:GetNextActive()
+    if (not sb or not sb.Bar) or sb.Bar.backdrop then return end
 
-	sb.Bar:StripTextures()
-	sb.Bar:CreateBackdrop()
+    sb.Bar:StripTextures()
+    sb.Bar:CreateBackdrop()
     sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
     sb.Bar.BorderLeft:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
     sb.Bar.BorderRight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
@@ -664,7 +664,7 @@ local function SkinProgressbar(self)
     sb.Bar.LeftDivider:Hide()
     sb.Bar.RightDivider:Hide()
 
-	self.pbBar = sb.Bar
+    self.pbBar = sb.Bar
 end
 
 local function SetStyle(tooltip)

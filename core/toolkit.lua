@@ -5,40 +5,40 @@ local STRIP_TEX = "Texture"
 local STRIP_FONT = "FontString"
 
 local BlizzardRegions = {
-	"Left",
-	"Middle",
-	"Right",
-	"Mid",
-	"LeftDisabled",
-	"MiddleDisabled",
-	"RightDisabled",
-	"TopLeft",
-	"TopRight",
-	"BottomLeft",
-	"BottomRight",
-	"TopMiddle",
-	"MiddleLeft",
-	"MiddleRight",
-	"BottomMiddle",
-	"MiddleMiddle",
-	"TabSpacer",
-	"TabSpacer1",
-	"TabSpacer2",
-	"_RightSeparator",
-	"_LeftSeparator",
-	"Cover",
-	"Border",
-	"Background",
-	"TopTex",
-	"TopLeftTex",
-	"TopRightTex",
-	"LeftTex",
-	"BottomTex",
-	"BottomLeftTex",
-	"BottomRightTex",
-	"RightTex",
-	"MiddleTex",
-	"Center",
+    "Left",
+    "Middle",
+    "Right",
+    "Mid",
+    "LeftDisabled",
+    "MiddleDisabled",
+    "RightDisabled",
+    "TopLeft",
+    "TopRight",
+    "BottomLeft",
+    "BottomRight",
+    "TopMiddle",
+    "MiddleLeft",
+    "MiddleRight",
+    "BottomMiddle",
+    "MiddleMiddle",
+    "TabSpacer",
+    "TabSpacer1",
+    "TabSpacer2",
+    "_RightSeparator",
+    "_LeftSeparator",
+    "Cover",
+    "Border",
+    "Background",
+    "TopTex",
+    "TopLeftTex",
+    "TopRightTex",
+    "LeftTex",
+    "BottomTex",
+    "BottomLeftTex",
+    "BottomRightTex",
+    "RightTex",
+    "MiddleTex",
+    "Center",
 }
 
 local ArrowRotation = {
@@ -443,19 +443,19 @@ local function HandleNextPrevButton(button, arrowDir)
     if button.isSkinned then return end
 
     if not arrowDir then
-		arrowDir = "down"
-		local name = button:GetDebugName()
-		local ButtonName = name and name:lower()
-		if ButtonName then
-			if strfind(ButtonName, 'left') or strfind(ButtonName, 'prev') or strfind(ButtonName, 'decrement') or strfind(ButtonName, 'backward') or strfind(ButtonName, 'back') then
-				arrowDir = 'left'
-			elseif strfind(ButtonName, 'right') or strfind(ButtonName, 'next') or strfind(ButtonName, 'increment') or strfind(ButtonName, 'forward') then
-				arrowDir = 'right'
-			elseif strfind(ButtonName, 'scrollup') or strfind(ButtonName, 'upbutton') or strfind(ButtonName, 'top') or strfind(ButtonName, 'asc') or strfind(ButtonName, 'home') or strfind(ButtonName, 'maximize') then
-				arrowDir = 'up'
-			end
-		end
-	end
+        arrowDir = "down"
+        local name = button:GetDebugName()
+        local ButtonName = name and name:lower()
+        if ButtonName then
+            if strfind(ButtonName, "left") or strfind(ButtonName, "prev") or strfind(ButtonName, "decrement") or strfind(ButtonName, "backward") or strfind(ButtonName, "back") then
+                arrowDir = "left"
+            elseif strfind(ButtonName, "right") or strfind(ButtonName, "next") or strfind(ButtonName, "increment") or strfind(ButtonName, "forward") then
+                arrowDir = "right"
+            elseif strfind(ButtonName, "scrollup") or strfind(ButtonName, "upbutton") or strfind(ButtonName, "top") or strfind(ButtonName, "asc") or strfind(ButtonName, "home") or strfind(ButtonName, "maximize") then
+                arrowDir = "up"
+            end
+        end
+    end
 
     button:StripTextures()
     

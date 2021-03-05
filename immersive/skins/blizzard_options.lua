@@ -51,8 +51,8 @@ local function LoadBlizzardOptionsSkin()
         }
 
     _G.RolePollPopup:StripTextures()
-	_G.RolePollPopup:CreateBackdrop(GW.skins.constBackdropFrame)
-	_G.RolePollPopupCloseButton:SkinButton(true)
+    _G.RolePollPopup:CreateBackdrop(GW.skins.constBackdropFrame)
+    _G.RolePollPopupCloseButton:SkinButton(true)
 
 
     local InterfaceOptionsFrame = _G.InterfaceOptionsFrame

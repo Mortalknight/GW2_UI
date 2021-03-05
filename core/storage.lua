@@ -137,11 +137,11 @@ local UpdateMoney = function ()
     local OldMoney = oldMoney or money
 
     local change = money - OldMoney 
-    if OldMoney > money then		-- Lost Money
-		GW.spentMoney = GW.spentMoney - change
-	else							-- Gained Moeny
-		GW.earnedMoney = GW.earnedMoney + change
-	end
+    if OldMoney > money then        -- Lost Money
+        GW.spentMoney = GW.spentMoney - change
+    else                            -- Gained Moeny
+        GW.earnedMoney = GW.earnedMoney + change
+    end
 
     SetStorage("money", money)
 end

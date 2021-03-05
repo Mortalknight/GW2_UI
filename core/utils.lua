@@ -6,14 +6,14 @@ local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
 GW.EasyMenu = CreateFrame("Frame", "GWEasyMenu", UIParent, "UIDropDownMenuTemplate")
 
 local function SetEasyMenuAnchor(menu, frame)
-	local point = GW.GetScreenQuadrant(frame)
-	local bottom = point and strfind(point, "BOTTOM")
-	local left = point and strfind(point, "LEFT")
+    local point = GW.GetScreenQuadrant(frame)
+    local bottom = point and strfind(point, "BOTTOM")
+    local left = point and strfind(point, "LEFT")
 
-	local anchor1 = (bottom and left and "BOTTOMLEFT") or (bottom and "BOTTOMRIGHT") or (left and "TOPLEFT") or "TOPRIGHT"
-	local anchor2 = (bottom and left and "TOPLEFT") or (bottom and "TOPRIGHT") or (left and "BOTTOMLEFT") or "BOTTOMRIGHT"
+    local anchor1 = (bottom and left and "BOTTOMLEFT") or (bottom and "BOTTOMRIGHT") or (left and "TOPLEFT") or "TOPRIGHT"
+    local anchor2 = (bottom and left and "TOPLEFT") or (bottom and "TOPRIGHT") or (left and "BOTTOMLEFT") or "BOTTOMRIGHT"
 
-	UIDropDownMenu_SetAnchor(menu, 0, 0, anchor1, frame, anchor2)
+    UIDropDownMenu_SetAnchor(menu, 0, 0, anchor1, frame, anchor2)
 end
 GW.SetEasyMenuAnchor = SetEasyMenuAnchor
 
@@ -521,19 +521,19 @@ end
 GW.StopFlash = StopFlash
 
 local function FrameFlash(frame, duration, fadeOutAlpha, fadeInAlpha, loop)
-	if not frame.flasher then
-		SetUpFrameFlash(frame,loop)
-	end
+    if not frame.flasher then
+        SetUpFrameFlash(frame,loop)
+    end
 
-	if not frame.flasher:IsPlaying() then
+    if not frame.flasher:IsPlaying() then
         frame.flasher.fadein:SetDuration(duration)
         frame.flasher.fadein:SetFromAlpha(fadeOutAlpha or 0)
         frame.flasher.fadein:SetToAlpha(fadeInAlpha or 1)
         frame.flasher.fadeout:SetDuration(duration)
         frame.flasher.fadeout:SetFromAlpha(fadeInAlpha or 1)
         frame.flasher.fadeout:SetToAlpha(fadeOutAlpha or 0)
-		frame.flasher:Play()
-	end
+        frame.flasher:Play()
+    end
 end
 GW.FrameFlash = FrameFlash
 

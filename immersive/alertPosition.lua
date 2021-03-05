@@ -97,9 +97,9 @@ local function SetupAlertFramePosition()
     end
 
     -- Catch all added alert System by other addins
-	hooksecurefunc(_G.AlertFrame, "AddAlertFrameSubSystem", function(_, alertFrameSubSystem)
-		resetAlertSubSystemAdjustPositions(alertFrameSubSystem)
-	end)
+    hooksecurefunc(_G.AlertFrame, "AddAlertFrameSubSystem", function(_, alertFrameSubSystem)
+        resetAlertSubSystemAdjustPositions(alertFrameSubSystem)
+    end)
     -- setup AlertFrame and Bonus Roll Frame
     hooksecurefunc(_G.AlertFrame, "UpdateAnchors", RePostAlertFrame)
 end

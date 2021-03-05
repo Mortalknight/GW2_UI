@@ -76,7 +76,7 @@ local function reskinItemButton(iname, b)
         b.itemlevel:SetText("")
     end
 
-	GW.RegisterCooldown(_G[b:GetName() .. "Cooldown"])
+    GW.RegisterCooldown(_G[b:GetName() .. "Cooldown"])
 end
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 
@@ -717,8 +717,8 @@ local function LoadInventory()
 
     StackSplitFrame.textboxbg = StackSplitFrame:CreateTexture(nil, "BACKGROUND")
     StackSplitFrame.textboxbg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-	StackSplitFrame.textboxbg:SetPoint("TOPLEFT", 35, -20)
-	StackSplitFrame.textboxbg:SetPoint("BOTTOMRIGHT", -35, 55)
+    StackSplitFrame.textboxbg:SetPoint("TOPLEFT", 35, -20)
+    StackSplitFrame.textboxbg:SetPoint("BOTTOMRIGHT", -35, 55)
 
 end
 GW.LoadInventory = LoadInventory

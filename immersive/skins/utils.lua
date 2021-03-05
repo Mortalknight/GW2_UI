@@ -130,14 +130,14 @@ GW.MutateInaccessableObject = MutateInaccessableObject
 local function SkinNavBarButtons(self)
     if not self:GetParent():GetName() == "WorldMapFrame" then return end
 
-	local navButton = self.navList[#self.navList]
-	if navButton and not navButton.isSkinned then
+    local navButton = self.navList[#self.navList]
+    if navButton and not navButton.isSkinned then
 
         --[[ Add this later if we have a custom texture for navigationbars
         navButton:StripTextures()
         navButton:SkinButton(false, false, true)
 
-		local r = {navButton:GetRegions()}
+        local r = {navButton:GetRegions()}
         for _,c in pairs(r) do
             if c:GetObjectType() == "FontString" then
                 c:SetTextColor(0, 0, 0, 1)
@@ -160,18 +160,18 @@ local function SkinNavBarButtons(self)
             navButton.tex:SetPoint("RIGHT", navButton, "LEFT", w, 0)
         end)
         ]]
-		if navButton.MenuArrowButton then
-			navButton.MenuArrowButton:StripTextures()
-			if navButton.MenuArrowButton.Art then
-				navButton.MenuArrowButton.Art:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+        if navButton.MenuArrowButton then
+            navButton.MenuArrowButton:StripTextures()
+            if navButton.MenuArrowButton.Art then
+                navButton.MenuArrowButton.Art:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
                 navButton.MenuArrowButton.Art:SetTexCoord(0, 1, 0, 1)
                 navButton.MenuArrowButton.Art:SetSize(16, 16)
-			end
-		end
+            end
+        end
 
-		navButton.xoffset = 1
+        navButton.xoffset = 1
 
-		navButton.isSkinned = true
-	end
+        navButton.isSkinned = true
+    end
 end
 GW.SkinNavBarButtons = SkinNavBarButtons
