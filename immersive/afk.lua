@@ -26,7 +26,7 @@ local function SetAFK(self, status)
 
         if IsInGuild() then
             local guildName, guildRankName = GetGuildInfo("player")
-            self.bottom.guild:SetFormattedText("%s-%s", guildName, guildRankName)
+            self.bottom.guild:SetFormattedText("<%s> [%s]", guildName, guildRankName) 
         else
             self.bottom.guild:SetText(L["No Guild"])
         end
