@@ -80,13 +80,11 @@ local function QuestInfo_Display(parentFrame)
 
     local numSpellRewards = isQuestLog and GetNumQuestLogRewardSpells() or GetNumRewardSpells()
     if numSpellRewards > 0 then
-        if E.private.skins.parchmentRemoverEnable then
-            for spellHeader in rewardsFrame.spellHeaderPool:EnumerateActive() do
-                spellHeader:SetVertexColor(1, 1, 1)
-            end
-            for spellIcon in rewardsFrame.spellRewardPool:EnumerateActive() do
-                HandleReward(spellIcon)
-            end
+        for spellHeader in rewardsFrame.spellHeaderPool:EnumerateActive() do
+            spellHeader:SetVertexColor(1, 1, 1)
+        end
+        for spellIcon in rewardsFrame.spellRewardPool:EnumerateActive() do
+            HandleReward(spellIcon)
         end
 
         for followerReward in rewardsFrame.followerRewardPool:EnumerateActive() do
