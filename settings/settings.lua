@@ -309,6 +309,8 @@ local function InitPanel(panel, hasScroll)
     local box_padding = 8
     local pY = -48
 
+    local numRows = 1
+
     local padding = {x = box_padding, y = (hasScroll and panel.scroll.scrollchild.sub:GetText() or panel.sub:GetText()) and -55 or -35}
     local first = true
 
@@ -334,6 +336,7 @@ local function InitPanel(panel, hasScroll)
         if (newLine and not first) or padding.x > 440 then
             padding.y = padding.y + (pY + box_padding)
             padding.x = box_padding
+            numRows = numRows + 1
         end
         if first then
             first = false
@@ -575,6 +578,17 @@ local function InitPanel(panel, hasScroll)
         else
             padding.x = 450
         end
+    end
+
+    -- Scrollframe settings
+    if hasScroll then
+        panel.scroll:SetScrollChild(panel.scroll.scrollchild)
+        panel.scroll.scrollchild:SetHeight(panel:GetHeight())
+        panel.scroll.scrollchild:SetWidth(panel.scroll:GetWidth() - 20)
+        panel.scroll.slider:SetMinMaxValues(0, max(0, numRows * 40 - panel:GetHeight() + 50))
+        panel.scroll.slider.thumb:SetHeight(100)
+        panel.scroll.slider:SetValue(1)
+        panel.scroll.maxScroll = max(0, numRows * 40 - panel:GetHeight()+50)
     end
 end
 GW.InitPanel = InitPanel
