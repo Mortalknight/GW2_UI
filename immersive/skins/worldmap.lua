@@ -376,6 +376,13 @@ local function LoadWorldMapSkin()
 
     hooksecurefunc("NavBar_AddButton", GW.SkinNavBarButtons)
 
+    local w, h = _G.QuestModelScene:GetSize()
+    _G.QuestModelScene:StripTextures()
+    _G.QuestModelScene.tex = _G.QuestModelScene:CreateTexture("bg", "BACKGROUND", 0)
+    _G.QuestModelScene.tex:SetPoint("TOP", _G.QuestModelScene, "TOP", 0, 20)
+    _G.QuestModelScene.tex:SetSize(w + 30, h + 60)
+    _G.QuestModelScene.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+
     -- Addons
     if _G["AtlasLootToggleFromWorldMap2"] then
         local button = _G["AtlasLootToggleFromWorldMap2"]
