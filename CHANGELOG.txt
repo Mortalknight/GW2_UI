@@ -1,3 +1,6 @@
+1.10.8
+- Adjust combopoint anchors
+
 1.10.7
 - Added direbear to classpower
 

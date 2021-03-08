@@ -2,6 +2,13 @@ local _, GW = ...
 local v = GW.vernotes
 
 v(
+    "1.10.8",
+    [=[
+    - Adjust combopoint anchors
+]=]
+)
+
+v(
     "1.10.7",
     [=[
     - Added direbear to classpower

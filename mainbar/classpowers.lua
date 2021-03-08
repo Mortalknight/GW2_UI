@@ -78,7 +78,7 @@ local function setComboBar(f)
 
     if f.ourTarget and f.comboPointsOnTarget then
         f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", -8, -10)
+        f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", -8, -15)
         f:SetWidth(220)
         f:SetHeight(30)
         f:Hide()
@@ -153,11 +153,11 @@ local function selectType(f)
     elseif GW.myClassID == 11 then
         showBar = setDruid(f)
     end
-    if showBar then
-        f:Show()
-    else
-        f:Hide()
+
+    if (GW.myClassID == 4 or GW.myClassID == 11) and f.ourTarget and f.comboPointsOnTarget and f.barType == "combo" then
+        showBar = UnitExists("target") and UnitCanAttack("player", "target") and not UnitIsDead("target")
     end
+    f:SetShown(showBar)
 end
 
 local function barChange_OnEvent(self, event, ...)
