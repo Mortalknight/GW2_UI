@@ -305,10 +305,10 @@ local function setComboBar(f)
     if f.ourTarget and f.comboPointsOnTarget then
         f:ClearAllPoints()
         if GwTargetUnitFrame.frameInvert then
-            f:SetPoint("TOPRIGHT", GwTargetUnitFrame.castingbar, "TOPRIGHT", 0, -5)
+            f:SetPoint("TOPRIGHT", GwTargetUnitFrame.castingbar, "TOPRIGHT", 0, -13)
             f.combopoints:SetWidth(213)
         else
-            f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", 0, -5)
+            f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", 0, -13)
         end
         f:SetWidth(220)
         f:SetHeight(30)

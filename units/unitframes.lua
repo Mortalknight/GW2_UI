@@ -791,6 +791,9 @@ local function LoadTarget()
         else
             NewUnitFrame.auras:SetPoint("TOPLEFT", NewUnitFrame.nameString, "TOPLEFT", 2, 17)
         end
+    elseif GetSetting("target_HOOK_COMBOPOINTS") then
+        NewUnitFrame.auras:ClearAllPoints()
+        NewUnitFrame.auras:SetPoint("TOPLEFT", NewUnitFrame.castingbarBackground, "BOTTOMLEFT", 2, -23)
     end
 
     RegisterMovableFrame(NewUnitFrame, TARGET, "target_pos", "GwTargetFrameTemplateDummy", nil, nil, {"default", "scaleable"})
