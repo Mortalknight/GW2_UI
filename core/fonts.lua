@@ -96,10 +96,10 @@ local function LoadFonts()
     setFont(ZoneTextFont, narrow, 32, "", 1.25, -1.25, 0.75)
     setFont(SubZoneTextFont, narrow, 24, "", 1.25, -1.25, 0.75)
     setFont(PVPInfoTextFont, narrow, 16, "", 1.25, -1.25, 0.75)
-    setFont(RaidWarningFrameSlot1, narrow, 12, "", 0.75, -0.75, 0.75)
-    setFont(RaidWarningFrameSlot2, narrow, 12, "", 0.75, -0.75, 0.75)
-    setFont(RaidBossEmoteFrameSlot1, narrow, 12, "", 0.75, -0.75, 0.75)
-    setFont(RaidBossEmoteFrameSlot2, narrow, 12, "", 0.75, -0.75, 0.75)
+    setFont(RaidWarningFrameSlot1, narrow, nil, "", 0.75, -0.75, 0.75)
+    setFont(RaidWarningFrameSlot2, narrow, nil, "", 0.75, -0.75, 0.75)
+    setFont(RaidBossEmoteFrameSlot1, narrow, nil, "", 0.75, -0.75, 0.75)
+    setFont(RaidBossEmoteFrameSlot2, narrow, nil, "", 0.75, -0.75, 0.75)
     setFont(MailFont_Large, normal)
     setFont(BossEmoteNormalHuge, normal)
     setFont(CoreAbilityFont, normal)
@@ -166,15 +166,15 @@ local function LoadFonts()
     setFont(SystemFont_Shadow_Large2, normal)
     setFont(ZoneTextString, normal)
 
-    RaidBossEmoteFrame.timings["RAID_NOTICE_MIN_HEIGHT"] = 12
-    RaidBossEmoteFrame.timings["RAID_NOTICE_MAX_HEIGHT"] = 12
-    RaidBossEmoteFrame.timings["RAID_NOTICE_SCALE_UP_TIME"] = 0
-    RaidBossEmoteFrame.timings["RAID_NOTICE_SCALE_DOWN_TIME"] = 0
+    --RaidBossEmoteFrame.timings["RAID_NOTICE_MIN_HEIGHT"] = 12
+    --RaidBossEmoteFrame.timings["RAID_NOTICE_MAX_HEIGHT"] = 12
+    --RaidBossEmoteFrame.timings["RAID_NOTICE_SCALE_UP_TIME"] = 0
+    --RaidBossEmoteFrame.timings["RAID_NOTICE_SCALE_DOWN_TIME"] = 0
 
-    RaidWarningFrame.timings["RAID_NOTICE_MIN_HEIGHT"] = 12
-    RaidWarningFrame.timings["RAID_NOTICE_MAX_HEIGHT"] = 12
-    RaidWarningFrame.timings["RAID_NOTICE_SCALE_UP_TIME"] = 0
-    RaidWarningFrame.timings["RAID_NOTICE_SCALE_DOWN_TIME"] = 0
+    --RaidWarningFrame.timings["RAID_NOTICE_MIN_HEIGHT"] = 12
+    --RaidWarningFrame.timings["RAID_NOTICE_MAX_HEIGHT"] = 12
+    --RaidWarningFrame.timings["RAID_NOTICE_SCALE_UP_TIME"] = 0
+    --RaidWarningFrame.timings["RAID_NOTICE_SCALE_DOWN_TIME"] = 0
 
     RaidWarningFrame:SetSize(640, 48)
     RaidBossEmoteFrame:SetSize(640, 56)
