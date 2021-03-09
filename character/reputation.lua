@@ -512,7 +512,6 @@ updateDetails = function()
             break
         end
 
-        repCount = repCount + 1
         if expandedFactions[factionID] then
             expCount = expCount + 1
         end
@@ -529,6 +528,8 @@ updateDetails = function()
             facData[factionID] = {}
         end
         if not isHeader or hasRep then
+            repCount = repCount + 1
+
             facOrder[#facOrder + 1] = factionID
             facData[factionID].loaded = true
             facData[factionID].factionIndex = idx
@@ -966,7 +967,7 @@ local function LoadReputation(tabContainer)
     sf.dynamic = function(offset)
         return dynamicOffset(sf, offset)
     end
-    sf.scrollBar.doNotHide = true
+    sf.scrollBar.doNotHide = false
 
     updateSavedReputation()
     updateReputations()
