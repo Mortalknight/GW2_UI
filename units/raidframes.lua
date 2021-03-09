@@ -1046,7 +1046,9 @@ local function createRaidFrame(registerUnit, index)
         frame.aggroborder = frame.absorbbar.aggroborder
         frame.nameNotLoaded = false
 
-        frame.name:SetFont(UNIT_NAME_FONT, 12)
+        if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
+            frame.name:SetFont(UNIT_NAME_FONT, 12)
+        end
         frame.name:SetShadowOffset(-1, -1)
         frame.name:SetShadowColor(0, 0, 0, 1)
 

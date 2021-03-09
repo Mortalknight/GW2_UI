@@ -36,7 +36,9 @@ local function createNormalUnitFrame(ftype, revert)
     f.healthString:SetFont(UNIT_NAME_FONT, 11)
     f.healthString:SetShadowOffset(1, -1)
 
-    f.nameString:SetFont(UNIT_NAME_FONT, 14)
+    if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
+        f.nameString:SetFont(UNIT_NAME_FONT, 14)
+    end
     f.nameString:SetShadowOffset(1, -1)
 
     f.threatString:SetFont(STANDARD_TEXT_FONT, 11)
@@ -73,7 +75,9 @@ local function createNormalUnitFrameSmall(ftype)
     f.healthString:SetFont(UNIT_NAME_FONT, 11)
     f.healthString:SetShadowOffset(1, -1)
 
-    f.nameString:SetFont(UNIT_NAME_FONT, 14)
+    if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
+        f.nameString:SetFont(UNIT_NAME_FONT, 14)
+    end
     f.nameString:SetShadowOffset(1, -1)
 
     f.levelString:SetFont(UNIT_NAME_FONT, 14)

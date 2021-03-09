@@ -8,6 +8,7 @@ NEW
 FIXES
     - Fix some gossip skin issues
     - Module buttons are not inactive anymore
+    - Fix UTF8 issue if font module is deactivated (for any reason blizzard is not supporting UTF8 if we set a default blizzard font)
 ]=])
 
 v("5.10.0", [=[

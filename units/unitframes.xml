@@ -154,7 +154,7 @@
             </Layer>
             <Layer level="OVERLAY">
 
-                <FontString parentKey="nameString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
+                <FontString parentKey="nameString" text="unknown" inherits="GameFontNormalMed3" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="200" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
@@ -332,7 +332,7 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <FontString parentKey="nameString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
+                <FontString parentKey="nameString" text="unknown" inherits="GameFontNormalMed3" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="120" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
@@ -526,7 +526,7 @@
             </Layer>
             <Layer level="OVERLAY">
 
-                <FontString parentKey="nameString" text="unknown" justifyH="RIGHT" justifyV="MIDDLE">
+                <FontString parentKey="nameString" text="unknown" inherits="GameFontNormalMed3" justifyH="RIGHT" justifyV="MIDDLE">
                     <Size x="200" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="0" y="2"></Anchor>
