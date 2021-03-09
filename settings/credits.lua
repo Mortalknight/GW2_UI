@@ -171,6 +171,7 @@ local function CreateCreditsFrame()
     CreditsFrame.Section6.Content.Button:SetText(CLOSE)
     CreditsFrame.Section6.Content.Button:SetScript("OnClick", function(self)
         HideUIPanel(CreditsFrame)
+        GwSettingsWindow:Show()
     end)
 
     tinsert(UISpecialFrames, "GWCreditsFrame")

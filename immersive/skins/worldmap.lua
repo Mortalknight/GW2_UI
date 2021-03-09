@@ -55,6 +55,7 @@ local function HandleReward(frame)
         end
     end
 end
+GW.HandleReward = HandleReward
 
 local function QuestInfo_Display(parentFrame)
     local rewardsFrame = _G.QuestInfoFrame.rewardsFrame

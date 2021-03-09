@@ -4,6 +4,10 @@ local v = GW.vernotes
 v("5.11.0", [=[
 NEW
     - Added more info to bag and guild micromenu icons
+
+FIXES
+    - Fix some gossip skin issues
+    - Module buttons are not inactive anymore
 ]=])
 
 v("5.10.0", [=[

@@ -134,6 +134,18 @@ local function LoadGossipSkin()
         ["042c54"] = "1c86ee",
     }
 
+    hooksecurefunc("QuestInfo_Display", function()
+        for i, questItem in ipairs(_G.QuestInfoFrame.rewardsFrame.RewardButtons) do
+            GW.HandleReward(questItem)
+        end
+    end)
+
+    hooksecurefunc("QuestFrame_SetTitleTextColor", function(self)
+        self:SetTextColor(1, .8, .1)
+    end)
+    hooksecurefunc("QuestFrame_SetTextColor", function(self)
+        self:SetTextColor(1, 1, 1)
+    end)
     hooksecurefunc("QuestFrameProgressItems_Update", function()
         _G.QuestProgressRequiredItemsText:SetTextColor(1, 0.8, 0.1)
         _G.QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
@@ -157,6 +169,21 @@ local function LoadGossipSkin()
             end
         end
     end)
+    hooksecurefunc("QuestFrameProgressItems_Update", function()
+        _G.QuestProgressRequiredItemsText:SetTextColor(1, .8, .1)
+        _G.QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
+    end)
+
+    for i = 1, 6 do
+        local button = _G["QuestProgressItem" .. i]
+        local icon = _G["QuestProgressItem" .. i .. "IconTexture"]
+        icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        icon:SetPoint("TOPLEFT", 2, -2)
+        icon:SetSize(icon:GetWidth() -3, icon:GetHeight() -3)
+        button:SetWidth(button:GetWidth() -4)
+        button:StripTextures()
+        button:SetFrameLevel(button:GetFrameLevel() +1)
+    end
 
     _G.QuestFrameDetailPanel.SealMaterialBG:SetAlpha(0)
     _G.QuestFrameRewardPanel.SealMaterialBG:SetAlpha(0)
@@ -174,6 +201,8 @@ local function LoadGossipSkin()
 
     _G.QuestRewardScrollFrame.ScrollBar:SkinScrollBar()
     _G.QuestRewardScrollFrame:SkinScrollFrame()
+    _G.QuestProgressScrollFrameScrollBar:SkinScrollBar()
+    _G.QuestProgressScrollFrame:SkinScrollFrame()
 
     _G.QuestFrameAcceptButton:SkinButton(false, true)
     _G.QuestFrameDeclineButton:SkinButton(false, true)

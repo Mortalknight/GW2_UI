@@ -2,6 +2,10 @@
 NEW
     - Added more info to bag and guild micromenu icons
 
+FIXES
+    - Fix some gossip skin issues
+    - Module buttons are not inactive anymore
+
 5.10.0
 NEW
     - Added socket frame skin

@@ -73,6 +73,10 @@ local function styleRewards()
     GwQuestviewFrameContainerDialogRequired:SetTextColor(1, 1, 1)
     GwQuestviewFrameContainerDialogRequired:SetShadowColor(0, 0, 0, 1)
     GwQuestviewFrameContainerDialogRequired:SetText(L["Required Items:"])
+
+    for i, questItem in ipairs(QuestInfoRewardsFrame.RewardButtons) do
+        GW.HandleReward(questItem)
+    end
 end
 GW.AddForProfiling("questview", "styleRewards", styleRewards)
 
@@ -189,7 +193,8 @@ local function showRewards()
         local itemWidth = 0
         for i = 1, itemReq, 1 do
             local frame = _G["QuestProgressItem" .. i]
-            if (frame) then
+            if frame then
+                local icon = _G[frame:GetName() .. "IconTexture"]
                 if itemHeight == 0 then
                     itemHeight = math.ceil(frame:GetHeight())
                 end

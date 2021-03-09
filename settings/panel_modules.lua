@@ -41,14 +41,17 @@ local function LoadModulesPanel(sWindow)
     p.scroll.scrollchild.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.scroll.scrollchild.sub:SetText(L["Enable or disable the modules you need and don't need."])
 
+    p.welcome:SetParent(p.scroll.scrollchild)
     p.welcome.settings = sWindow
     p.welcome:SetText(L["Welcome"])
     p.welcome:SetScript("OnClick", welcome_OnClick)
 
+    p.statusReport:SetParent(p.scroll.scrollchild)
     p.statusReport.settings = sWindow
     p.statusReport:SetText(LANDING_PAGE_REPORT)
     p.statusReport:SetScript("OnClick", statusReport_OnClick)
 
+    p.credits:SetParent(p.scroll.scrollchild)
     p.credits.settings = sWindow
     p.credits:SetText(L["Credits"])
     p.credits:SetScript("OnClick", creditst_OnClick)

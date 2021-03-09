@@ -232,6 +232,7 @@ local function CreateStatusFrame()
     StatusFrame.Section4.Content.Button2:SetText(CLOSE)
     StatusFrame.Section4.Content.Button2:SetScript("OnClick", function(self)
         HideUIPanel(StatusFrame)
+        GwSettingsWindow:Show()
     end)
 
     tinsert(UISpecialFrames, "GWStatusFrame")
