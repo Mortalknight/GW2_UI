@@ -68,6 +68,10 @@ settings/welcome.lua
 settings/moveableFrameHandler.lua
 settings/credits.lua
 
+dataInfo/money.lua
+dataInfo/guild.lua
+dataInfo/bags.lua
+
 core/auras.lua
 
 changelog.lua

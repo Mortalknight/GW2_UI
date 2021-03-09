@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.11.0", [=[
+NEW
+    - Added more info to bag and guild micromenu icons
+]=])
+
 v("5.10.0", [=[
 NEW
     - Added socket frame skin
