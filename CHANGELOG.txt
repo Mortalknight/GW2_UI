@@ -1,3 +1,7 @@
+5.11.1
+FIXES
+    - Some setting dropdowns are not accessible
+
 5.11.0
 NEW
     - Added more info to bag and guild micromenu icons

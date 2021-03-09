@@ -349,6 +349,10 @@ local function InitPanel(panel, hasScroll)
         of.title:SetTextColor(1, 1, 1)
         of.title:SetShadowColor(0, 0, 0, 1)
 
+        if hasScroll and v.optionType == "dropdown" then
+            of.container:SetParent(panel)
+        end
+
         of:SetScript(
             "OnEnter",
             function()
@@ -365,6 +369,11 @@ local function InitPanel(panel, hasScroll)
             local scrollFrame = of.container.contentScroll
             scrollFrame.numEntries = #v.options
             scrollFrame.scrollBar.thumbTexture:SetSize(12, 30)
+            scrollFrame.scrollBar:ClearAllPoints()
+            scrollFrame.scrollBar:SetPoint("TOPRIGHT", -3, -12)
+            scrollFrame.scrollBar:SetPoint("BOTTOMRIGHT", -3, 12)
+            scrollFrame.scrollBar.scrollUp:SetPoint("TOPRIGHT", 0, 12)
+            scrollFrame.scrollBar.scrollDown:SetPoint("BOTTOMRIGHT", 0, -12)
             
             scrollFrame.data = GW.copyTable(nil, v)
             scrollFrame.of = of

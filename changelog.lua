@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.11.1", [=[
+FIXES
+    - Some setting dropdowns are not accessible
+]=])
+
 v("5.11.0", [=[
 NEW
     - Added more info to bag and guild micromenu icons
