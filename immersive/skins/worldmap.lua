@@ -83,6 +83,10 @@ local function QuestInfo_Display(template)
         questItem.Name:SetTextColor(1, 1, 1)
     end
 
+    for i, questItem in ipairs(QuestInfoRewardsFrame.RewardButtons) do
+        HandleReward(questItem)
+    end
+
     local numSpellRewards = isQuestLog and GetNumQuestLogRewardSpells() or GetNumRewardSpells()
     if numSpellRewards > 0 then
         for spellHeader in rewardsFrame.spellHeaderPool:EnumerateActive() do
