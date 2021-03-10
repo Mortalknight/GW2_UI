@@ -1,4 +1,5 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local function SkinHeaders(header)
     if not header.IsSkinned then
@@ -57,7 +58,10 @@ local function HandleReward(frame)
 end
 GW.HandleReward = HandleReward
 
-local function QuestInfo_Display(parentFrame)
+local function QuestInfo_Display(template)
+    if not GetSetting("GOSSIP_SKIN_ENABLED") and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD) then return end
+    if not GetSetting("WORLDMAP_SKIN_ENABLED") and (template == QUEST_TEMPLATE_MAP_DETAILS or template == QUEST_TEMPLATE_MAP_REWARDS) then return end
+    
     local rewardsFrame = _G.QuestInfoFrame.rewardsFrame
     local isQuestLog = _G.QuestInfoFrame.questLog ~= nil
 
@@ -122,10 +126,10 @@ local function QuestInfo_Display(parentFrame)
         end
     end
 
-    _G.QuestInfoTitleHeader:SetTextColor(1, .8, .1)
-    _G.QuestInfoDescriptionHeader:SetTextColor(1, .8, .1)
-    _G.QuestInfoObjectivesHeader:SetTextColor(1, .8, .1)
-    _G.QuestInfoRewardsFrame.Header:SetTextColor(1, .8, .1)
+    _G.QuestInfoTitleHeader:SetTextColor(1, 0.8, 0.1)
+    _G.QuestInfoDescriptionHeader:SetTextColor(1, 0.8, 0.1)
+    _G.QuestInfoObjectivesHeader:SetTextColor(1, 0.8, 0.1)
+    _G.QuestInfoRewardsFrame.Header:SetTextColor(1, 0.8, 0.1)
     _G.QuestInfoDescriptionText:SetTextColor(1, 1, 1)
     _G.QuestInfoObjectivesText:SetTextColor(1, 1, 1)
     _G.QuestInfoGroupSize:SetTextColor(1, 1, 1)
@@ -167,6 +171,7 @@ local function QuestInfo_Display(parentFrame)
         end
     end
 end
+GW.QuestInfo_Display = QuestInfo_Display
 
 local function LoadWorldMapSkin()
     if not GW.GetSetting("WORLDMAP_SKIN_ENABLED") then return end

@@ -1,3 +1,11 @@
+5.11.2
+FIXES
+    - Fix some gossip skin issues
+    - Some reputation issues
+
+MISC
+    - Update toc
+
 5.11.1
 FIXES
     - Some setting dropdowns are not accessible

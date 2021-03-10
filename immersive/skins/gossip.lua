@@ -134,14 +134,9 @@ local function LoadGossipSkin()
         ["042c54"] = "1c86ee",
     }
 
-    hooksecurefunc("QuestInfo_Display", function()
-        for i, questItem in ipairs(_G.QuestInfoFrame.rewardsFrame.RewardButtons) do
-            GW.HandleReward(questItem)
-        end
-    end)
-
+    hooksecurefunc("QuestInfo_Display", GW.QuestInfo_Display)
     hooksecurefunc("QuestFrame_SetTitleTextColor", function(self)
-        self:SetTextColor(1, .8, .1)
+        self:SetTextColor(1, 0.8, 0.1)
     end)
     hooksecurefunc("QuestFrame_SetTextColor", function(self)
         self:SetTextColor(1, 1, 1)
@@ -170,7 +165,7 @@ local function LoadGossipSkin()
         end
     end)
     hooksecurefunc("QuestFrameProgressItems_Update", function()
-        _G.QuestProgressRequiredItemsText:SetTextColor(1, .8, .1)
+        _G.QuestProgressRequiredItemsText:SetTextColor(1, 0.8, 0.1)
         _G.QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
     end)
 
@@ -203,6 +198,8 @@ local function LoadGossipSkin()
     _G.QuestRewardScrollFrame:SkinScrollFrame()
     _G.QuestProgressScrollFrameScrollBar:SkinScrollBar()
     _G.QuestProgressScrollFrame:SkinScrollFrame()
+    _G.QuestDetailScrollFrame.ScrollBar:SkinScrollBar()
+    _G.QuestDetailScrollFrame:SkinScrollFrame()
 
     _G.QuestFrameAcceptButton:SkinButton(false, true)
     _G.QuestFrameDeclineButton:SkinButton(false, true)
