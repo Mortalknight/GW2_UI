@@ -615,7 +615,7 @@ local function LoadChat()
     hooksecurefunc("FCF_MinimizeFrame", function(chatFrame)
         if chatFrame.minimized then
             local id = chatFrame:GetID()
-            chatFrame.Container:SetAlpha(0)
+            if chatFrame.Container then chatFrame.Container:SetAlpha(0) end
             if not chatFrame.minFrame.minimiizeStyled then
                 chatFrame.minFrame:StripTextures(true)
                 chatFrame.minFrame:CreateBackdrop(GW.skins.constBackdropFrame)
