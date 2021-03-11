@@ -53,6 +53,7 @@ local function LoadGossipSkin()
 
     _G.GossipGreetingScrollFrameScrollBar:SkinScrollBar()
     _G.ItemTextScrollFrameScrollBar:SkinScrollBar()
+    _G.ItemTextScrollFrame:SkinScrollFrame()
 
     GW.HandleNextPrevButton(_G.ItemTextPrevPageButton)
     GW.HandleNextPrevButton(_G.ItemTextNextPageButton)
