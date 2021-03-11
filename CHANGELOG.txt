@@ -1,3 +1,7 @@
+5.11.3
+FIXES
+    - Fix rare ember court and chatframe lua error
+
 5.11.2
 FIXES
     - Fix some gossip skin issues

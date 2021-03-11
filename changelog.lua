@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.11.3", [=[
+FIXES
+    - Fix rare ember court and chatframe lua error
+]=])
+
 v("5.11.2", [=[
 FIXES
     - Fix some gossip skin issues
