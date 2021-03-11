@@ -1134,6 +1134,8 @@ local function checkForAutoQuests()
                         self:Hide()
                     end)
                 end
+            elseif questBlock == nil then
+                C_Timer.After(0.5, checkForAutoQuests)
             end
         end
     end
