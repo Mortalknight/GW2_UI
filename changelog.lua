@@ -7,6 +7,7 @@ FIXES
 
 MISC
     - Remove auto sell junk chat output: Blizzard os doing this now
+    - Added "Great Vault" Button to micromenu
 ]=])
 
 v("5.11.2", [=[

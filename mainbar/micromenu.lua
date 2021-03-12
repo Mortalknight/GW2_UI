@@ -435,13 +435,31 @@ local function setupMicroButtons(mbf)
     StoreMicroButton:ClearAllPoints()
     StoreMicroButton:SetPoint("BOTTOMLEFT", HelpMicroButton, "BOTTOMRIGHT", 4, 0)
 
+    -- great vault icom
+    local greatVaultIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
+    greatVaultIcon.newbieText = nil
+    greatVaultIcon.tooltipText = GREAT_VAULT_REWARDS
+    reskinMicroButton(greatVaultIcon, "GreatVaultMicroButton", mbf)
+    greatVaultIcon:ClearAllPoints()
+    greatVaultIcon:SetPoint("BOTTOMLEFT", StoreMicroButton, "BOTTOMRIGHT", 4, 0)
+    --greatVaultIcon:GetNormalTexture():SetAtlas("pvpqueue-chest-greatvault-incomplete", TextureKitConstants.UseAtlasSize)
+    greatVaultIcon:SetScript("OnMouseUp", function(self, button, upInside)
+        if button == "LeftButton" and upInside then
+            if WeeklyRewardsFrame and WeeklyRewardsFrame:IsShown() then
+                HideUIPanel(WeeklyRewardsFrame)
+            else
+                WeeklyRewards_ShowUI()
+            end
+        end
+    end)
+
     -- Update icon
     updateIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
     updateIcon.newbieText = nil
     updateIcon.tooltipText = ""
     reskinMicroButton(updateIcon, "UpdateMicroButton", mbf)
     updateIcon:ClearAllPoints()
-    updateIcon:SetPoint("BOTTOMLEFT", StoreMicroButton, "BOTTOMRIGHT", 4, 0)
+    updateIcon:SetPoint("BOTTOMLEFT", greatVaultIcon, "BOTTOMRIGHT", 4, 0)
     updateIcon:Hide()
     updateIcon:HookScript("OnEnter", function(self)
         GameTooltip:ClearLines()
