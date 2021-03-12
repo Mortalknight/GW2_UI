@@ -71,6 +71,7 @@ settings/credits.lua
 dataInfo/money.lua
 dataInfo/guild.lua
 dataInfo/bags.lua
+dataInfo/time.lua
 
 core/auras.lua
 

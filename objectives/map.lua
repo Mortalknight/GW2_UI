@@ -227,48 +227,7 @@ local function checkCursorOverMap()
 end
 GW.AddForProfiling("map", "checkCursorOverMap", checkCursorOverMap)
 
-local function time_OnEnter(self)
-    local string
 
-    if GetCVarBool("timeMgrUseLocalTime") then
-        string = TIMEMANAGER_TOOLTIP_LOCALTIME:gsub(":", "")
-    else
-        string = TIMEMANAGER_TOOLTIP_REALMTIME:gsub(":", "")
-    end
-
-    GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
-    GameTooltip:AddLine(TIMEMANAGER_TITLE)
-    GameTooltip:AddLine(L["Shift-Click to toggle military time format"], 1, 1, 1, TRUE)
-    GameTooltip:AddLine(L["Left Click to switch between Local and Realm time"], 1, 1, 1, TRUE)
-    GameTooltip:AddLine(L["Right Click to open the Stopwatch"], 1, 1, 1, TRUE)
-    GameTooltip:AddLine(L["Shift-Right Click to open the Time Manager"], 1, 1, 1, TRUE)
-    GameTooltip:AddDoubleLine(WORLD_MAP_FILTER_TITLE .. " ", string, nil, nil, nil, 1, 1, 0)
-    GameTooltip:SetMinimumWidth(100)
-    GameTooltip:Show()
-end
-GW.AddForProfiling("map", "time_OnEnter", time_OnEnter)
-
-local function time_OnClick(self, button)
-    if button == "LeftButton" then
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-
-        if not IsShiftKeyDown() then
-            TimeManager_ToggleLocalTime()
-            time_OnEnter(self)
-        else
-            TimeManager_ToggleTimeFormat()
-        end
-    end
-    if button == "RightButton" then
-        if IsShiftKeyDown() then
-            ToggleTimeManager()
-        else
-            PlaySound(SOUNDKIT.IG_MAINMENU_QUIT)
-            Stopwatch_Toggle()
-        end
-    end
-end
-GW.AddForProfiling("map", "time_OnClick", time_OnClick)
 
 local function getMinimapShape()
     return "SQUARE"
@@ -446,10 +405,12 @@ local function LoadMinimap()
         self.total_elapsed = 0.1
         self.Time:SetText(GameTime_GetTime(false))
     end
+    GwMapTime:RegisterEvent("UPDATE_INSTANCE_INFO")
     GwMapTime:SetScript("OnUpdate", fnGwMapTime_OnUpdate)
-    GwMapTime:SetScript("OnClick", time_OnClick)
-    GwMapTime:SetScript("OnEnter", time_OnEnter)
-    GwMapTime:SetScript("OnLeave", GameTooltip_Hide)
+    GwMapTime:SetScript("OnClick", GW.Time_OnClick)
+    GwMapTime:SetScript("OnEnter", GW.Time_OnEnter)
+    GwMapTime:SetScript("OnLeave", GW.Time_OnLeave)
+    GwMapTime:SetScript("OnEvent", GW.Time_OnEvent)
 
     --coords
     if GetSetting("MINIMAP_COORDS_TOGGLE") then

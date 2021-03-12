@@ -1,13 +1,17 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("5.11.3", [=[
+v("5.12.0", [=[
+    NEW
+    - Added "Great Vault" Button to micromenu
+    - Added gametime datatext (hover the time on minimap)
+
 FIXES
     - Fix rare ember court and chatframe lua error
+    - Fix some target/foucs overlapping
 
 MISC
     - Remove auto sell junk chat output: Blizzard os doing this now
-    - Added "Great Vault" Button to micromenu
 ]=])
 
 v("5.11.2", [=[
