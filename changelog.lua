@@ -4,6 +4,9 @@ local v = GW.vernotes
 v("5.11.3", [=[
 FIXES
     - Fix rare ember court and chatframe lua error
+
+MISC
+    - Remove auto sell junk chat output: Blizzard os doing this now
 ]=])
 
 v("5.11.2", [=[

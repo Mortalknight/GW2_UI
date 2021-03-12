@@ -250,7 +250,6 @@ L["Loot to leftmost Bag"] = true
 L["Right"] = true
 L["Secure"] = true
 L["Selling junk"] = true
-L["Sold junk for: %s"] = true
 L["Separate bags"] = true
 L["New Bag Name"] = true
 L["Right click to customize the bag title."] = true

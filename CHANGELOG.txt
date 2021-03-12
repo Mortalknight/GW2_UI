@@ -2,6 +2,9 @@
 FIXES
     - Fix rare ember court and chatframe lua error
 
+MISC
+    - Remove auto sell junk chat output: Blizzard os doing this now
+
 5.11.2
 FIXES
     - Fix some gossip skin issues
