@@ -812,11 +812,11 @@ local function LoadTarget()
     NewUnitFrame:EnableMouse(true)
     NewUnitFrame:RegisterForClicks("AnyDown")
 
-    local mask = UIParent:CreateMaskTexture()
-    mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
+    NewUnitFrame.portrait.mask = UIParent:CreateMaskTexture()
+    NewUnitFrame.portrait.mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
 
-    mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    mask:SetSize(58, 58)
+    NewUnitFrame.portrait.mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    NewUnitFrame.portrait.mask:SetSize(58, 58)
     NewUnitFrame.portrait:AddMaskTexture(mask)
 
     AddToClique(NewUnitFrame)
@@ -899,11 +899,11 @@ local function LoadFocus()
     NewUnitFrame:ClearAllPoints()
     NewUnitFrame:SetPoint("TOPLEFT", NewUnitFrame.gwMover)
 
-    local mask = UIParent:CreateMaskTexture()
-    mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
+    NewUnitFrame.portrait.mask = UIParent:CreateMaskTexture()
+    NewUnitFrame.portrait.mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
 
-    mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    mask:SetSize(58, 58)
+    NewUnitFrame.portrait.mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    NewUnitFrame.portrait.mask:SetSize(58, 58)
     NewUnitFrame.portrait:AddMaskTexture(mask)
 
     NewUnitFrame:SetAttribute("*type1", "target")
