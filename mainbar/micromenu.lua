@@ -465,11 +465,18 @@ local function setupMicroButtons(mbf)
     -- Disable icon till level 60 then lets flash it one time
     greatVaultIcon:SetEnabled(IsPlayerAtEffectiveMaxLevel())
     greatVaultIcon:RegisterEvent("PLAYER_LEVEL_UP")
+    greatVaultIcon:RegisterEvent("WEEKLY_REWARDS_UPDATE")
     greatVaultIcon:SetScript("OnEvent", function(self, event, ...)
-        local level = ...
-        if level >= GetMaxLevelForPlayerExpansion() then
-            self:SetEnabled(true)
-            GW.FrameFlash(self, 1, 0.3, 1, true)
+        if event == "PLAYER_LEVEL_UP" then
+            local level = ...
+            if level >= GetMaxLevelForPlayerExpansion() then
+                self:SetEnabled(true)
+                GW.FrameFlash(self, 1, 0.3, 1, true)
+            end
+        elseif event == "WEEKLY_REWARDS_UPDATE" then
+            if C_WeeklyRewards.HasAvailableRewards() then
+                GW.FrameFlash(self, 1, 0.3, 1, true)
+            end
         end
     end)
 
