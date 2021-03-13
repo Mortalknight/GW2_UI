@@ -448,7 +448,7 @@ local function setupMicroButtons(mbf)
     -- great vault icom
     local greatVaultIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
     greatVaultIcon.newbieText = nil
-    greatVaultIcon.tooltipText = GREAT_VAULT_REWARDS
+    greatVaultIcon.tooltipText = RATED_PVP_WEEKLY_VAULT
     reskinMicroButton(greatVaultIcon, "GreatVaultMicroButton", mbf)
     greatVaultIcon:ClearAllPoints()
     greatVaultIcon:SetPoint("BOTTOMLEFT", StoreMicroButton, "BOTTOMRIGHT", 4, 0)
@@ -475,7 +475,7 @@ local function setupMicroButtons(mbf)
             end
         elseif event == "WEEKLY_REWARDS_UPDATE" then
             if C_WeeklyRewards.HasAvailableRewards() then
-                self.tooltipText = GREAT_VAULT_REWARDS .. "\n" .. GW.RGBToHex(GREEN_FONT_COLOR:GetRGB()) .. GREAT_VAULT_REWARDS_WAITING .. "|r"
+                self.tooltipText = RATED_PVP_WEEKLY_VAULT .. "\n" .. GW.RGBToHex(GREEN_FONT_COLOR:GetRGB()) .. MYTHIC_PLUS_COLLECT_GREAT_VAULT .. "|r"
                 GW.FrameFlash(self, 1, 0.3, 1, true)
             end
         end
