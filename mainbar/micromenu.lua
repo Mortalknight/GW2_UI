@@ -386,6 +386,7 @@ local function setupMicroButtons(mbf)
     GuildMicroButton:RegisterEvent("GUILD_MOTD")
     GuildMicroButton:HookScript("OnEvent", updateGuildButton)
     GuildMicroButton:HookScript("OnEnter", GW.Guild_OnEnter)
+    GuildMicroButton:SetScript("OnClick", GW.Guild_OnClick)
     updateGuildButton(GuildMicroButton, "GUILD_ROSTER_UPDATE")
 
     -- LFDMicroButton

@@ -4,6 +4,12 @@ local CommaValue = GW.CommaValue
 
 local guildTable = {}
 
+local menuList = {
+    {text = OPTIONS, isTitle = true, notCheckable=true},
+    {text = INVITE, hasArrow = true, notCheckable=true,},
+    {text = CHAT_MSG_WHISPER_INFORM, hasArrow = true, notCheckable=true,}
+}
+
 local onlinestatusstring = "|cffFFFFFF[|r|cffFF0000%s|r|cffFFFFFF]|r"
 local onlinestatus = {
     [0] = "",
@@ -63,7 +69,7 @@ local function FetchGuildMembers()
 
     local totalMembers = GetNumGuildMembers()
     for i = 1, totalMembers do
-        local name, rank, rankIndex, level, _, zone, note, officerNote, connected, memberstatus, className, _, _, isMobile = GetGuildRosterInfo(i)
+        local name, rank, rankIndex, level, _, zone, note, officerNote, connected, memberstatus, className, _, _, isMobile, _, _, guid = GetGuildRosterInfo(i)
         if not name then return end
 
         local statusInfo = isMobile and mobilestatus[memberstatus] or onlinestatus[memberstatus]
@@ -71,15 +77,18 @@ local function FetchGuildMembers()
 
         if connected or isMobile then
             guildTable[#guildTable + 1] = {
-                name = gsub(name, gsub(GW.myrealm, "[%s%-]", ""), ""),	--1
-                rank = rank,					--2
-                level = level,					--3
-                zone = zone,					--4
-                note = note,					--5
-                officerNote = officerNote,		--6
-                status = statusInfo,			--7
-                class = className,				--8
-                rankIndex = rankIndex			--9
+                name = gsub(name, gsub(GW.myrealm, "[%s%-]", ""), ""),
+                rank = rank,
+                level = level,
+                zone = zone,
+                note = note,
+                officerNote = officerNote,
+                online = connected,
+                status = statusInfo,
+                class = className,
+                rankIndex = rankIndex,
+                isMobile = isMobile,
+                guid = guid
             }
         end
     end
@@ -157,3 +166,58 @@ local function Guild_OnEnter(self)
     GameTooltip:Show()
 end
 GW.Guild_OnEnter = Guild_OnEnter
+
+local function inviteClick(self, name, guid)
+    GW.EasyMenu:Hide()
+
+    if not (name and name ~= "") then return end
+
+    if guid then
+        local inviteType = GetDisplayedInviteType(guid)
+        if inviteType == "INVITE" or inviteType == "SUGGEST_INVITE" then
+            C_PartyInfo.InviteUnit(name)
+        elseif inviteType == "REQUEST_INVITE" then
+            C_PartyInfo.RequestInviteFromUnit(name)
+        end
+    else
+        C_PartyInfo.InviteUnit(name)
+    end
+end
+
+local function whisperClick(self, playerName)
+    GW.EasyMenu:Hide()
+    SetItemRef("player:" .. playerName, format("|Hplayer:%1$s|h[%1$s]|h", playerName), "LeftButton")
+end
+
+local function Guild_OnClick(self, button)
+    if button == "LeftButton" then
+        self:OnClick()
+    elseif button == "RightButton" and IsInGuild() then
+        local menuCountWhispers = 0
+        local menuCountInvites = 0
+
+        menuList[2].menuList = {}
+        menuList[3].menuList = {}
+
+        for _, info in ipairs(guildTable) do
+            if (info.online or info.isMobile) and strmatch(info.name, "([^%-]+).*") ~= GW.myname then
+                local classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
+                if not classc then classc = levelc end
+
+                local name = format(levelNameString, levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, strmatch(info.name, "([^%-]+).*"))
+                if inGroup(strmatch(info.name, "([^%-]+).*")) ~= "" then
+                    name = name .. " |cffaaaaaa*|r"
+                elseif not (info.isMobile and info.zone == REMOTE_CHAT) then
+                    menuCountInvites = menuCountInvites + 1
+                    menuList[2].menuList[menuCountInvites] = {text = name, arg1 = strmatch(info.name, "([^%-]+).*"), arg2 = info.guid, notCheckable = true, func = inviteClick}
+                end
+
+                menuCountWhispers = menuCountWhispers + 1
+                menuList[3].menuList[menuCountWhispers] = {text = name, arg1 = strmatch(info.name, "([^%-]+).*"), notCheckable = true, func = whisperClick}
+            end
+        end
+        GW.SetEasyMenuAnchor(GW.EasyMenu, self)
+        _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+    end
+end
+GW.Guild_OnClick = Guild_OnClick
