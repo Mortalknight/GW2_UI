@@ -92,13 +92,13 @@ local function Time_OnEnter(self)
             local isLFR, isHeroicOrMythicDungeon = (difficulty == 7 or difficulty == 17), (difficulty == 2 or difficulty == 23)
             local _, _, isHeroic, _, displayHeroic, displayMythic = GetDifficultyInfo(difficulty)
             local sortName = name .. (displayMythic and 4 or (isHeroic or displayHeroic) and 3 or isLFR and 1 or 2)
-            local difficultyLetter = (displayMythic and PLAYER_DIFFICULTY6 or (isHeroic or displayHeroic) and PLAYER_DIFFICULTY2 or isLFR and PLAYER_DIFFICULTY3 or PLAYER_DIFFICULTY1)
+            local difficulty = (displayMythic and PLAYER_DIFFICULTY6 or (isHeroic or displayHeroic) and PLAYER_DIFFICULTY2 or isLFR and PLAYER_DIFFICULTY3 or PLAYER_DIFFICULTY1)
             local buttonImg = instanceIconByName[name] and format("|T%s:16:16:0:0:96:96:0:64:0:64|t ", instanceIconByName[name]) or ""
 
             if isRaid then
-                tinsert(lockedInstances.raids, {sortName, difficultyLetter, buttonImg, {GetSavedInstanceInfo(i)}})
+                tinsert(lockedInstances.raids, {sortName, difficulty, buttonImg, {GetSavedInstanceInfo(i)}})
             elseif isHeroicOrMythicDungeon then
-                tinsert(lockedInstances.dungeons, {sortName, difficultyLetter, buttonImg, {GetSavedInstanceInfo(i)}})
+                tinsert(lockedInstances.dungeons, {sortName, difficulty, buttonImg, {GetSavedInstanceInfo(i)}})
             end
         end
     end
@@ -112,15 +112,15 @@ local function Time_OnEnter(self)
         sort(lockedInstances.raids, sortFunc)
 
         for i = 1, #lockedInstances.raids do
-            local difficultyLetter = lockedInstances.raids[i][2]
+            local difficulty = lockedInstances.raids[i][2]
             local buttonImg = lockedInstances.raids[i][3]
             local name, _, reset, _, _, extended, _, _, maxPlayers, _, numEncounters, encounterProgress = unpack(lockedInstances.raids[i][4])
 
             local lockoutColor = extended and lockoutColorExtended or lockoutColorNormal
             if numEncounters and numEncounters > 0 and (encounterProgress and encounterProgress > 0) then
-                GameTooltip:AddDoubleLine(format("%s%s %s |cffaaaaaa(%s, %s/%s)", buttonImg, maxPlayers, difficultyLetter, name, encounterProgress, numEncounters), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
+                GameTooltip:AddDoubleLine(format("%s%s %s |cffaaaaaa(%s: %s/%s)", buttonImg, maxPlayers, difficulty, name, encounterProgress, numEncounters), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
             else
-                GameTooltip:AddDoubleLine(format("%s%s %s |cffaaaaaa(%s)", buttonImg, maxPlayers, difficultyLetter, name), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
+                GameTooltip:AddDoubleLine(format("%s%s %s |cffaaaaaa(%s)", buttonImg, maxPlayers, difficulty, name), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
             end
         end
     end
@@ -134,15 +134,15 @@ local function Time_OnEnter(self)
         sort(lockedInstances.dungeons, sortFunc)
 
         for i = 1,#lockedInstances.dungeons do
-            local difficultyLetter = lockedInstances.dungeons[i][2]
+            local difficulty = lockedInstances.dungeons[i][2]
             local buttonImg = lockedInstances.dungeons[i][3]
             local name, _, reset, _, _, extended, _, _, maxPlayers, _, numEncounters, encounterProgress = unpack(lockedInstances.dungeons[i][4])
 
             local lockoutColor = extended and lockoutColorExtended or lockoutColorNormal
             if numEncounters and numEncounters > 0 and (encounterProgress and encounterProgress > 0) then
-                GameTooltip:AddDoubleLine(format("%s%s %s |cffaaaaaa(%s, %s/%s)", buttonImg, maxPlayers, difficultyLetter, name, encounterProgress, numEncounters), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
+                GameTooltip:AddDoubleLine(format("%s%s %s |cffaaaaaa(%s: %s/%s)", buttonImg, maxPlayers, difficulty, name, encounterProgress, numEncounters), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
             else
-                GameTooltip:AddDoubleLine(format("%s%s %s |cffaaaaaa(%s)", buttonImg, maxPlayers, difficultyLetter, name), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
+                GameTooltip:AddDoubleLine(format("%s%s %s |cffaaaaaa(%s)", buttonImg, maxPlayers, difficulty, name), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
             end
         end
     end
