@@ -475,10 +475,12 @@ local function setupMicroButtons(mbf)
             end
         elseif event == "WEEKLY_REWARDS_UPDATE" then
             if C_WeeklyRewards.HasAvailableRewards() then
+                self.tooltipText = GREAT_VAULT_REWARDS .. "\n" .. GW.RGBToHex(GREEN_FONT_COLOR:GetRGB()) .. GREAT_VAULT_REWARDS_WAITING .. "|r"
                 GW.FrameFlash(self, 1, 0.3, 1, true)
             end
         end
     end)
+    print(GREEN_FONT_COLOR:GetRGB())
 
     -- Update icon
     updateIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
