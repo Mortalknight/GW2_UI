@@ -114,13 +114,13 @@ local function Time_OnEnter(self)
         for i = 1, #lockedInstances.raids do
             local difficulty = lockedInstances.raids[i][2]
             local buttonImg = lockedInstances.raids[i][3]
-            local name, _, reset, _, _, extended, _, _, maxPlayers, _, numEncounters, encounterProgress = unpack(lockedInstances.raids[i][4])
+            local name, _, reset, _, _, extended, _, _, _, _, numEncounters, encounterKilled = unpack(lockedInstances.raids[i][4])
 
             local lockoutColor = extended and lockoutColorExtended or lockoutColorNormal
-            if numEncounters and numEncounters > 0 and (encounterProgress and encounterProgress > 0) then
-                GameTooltip:AddDoubleLine(format("%s%s %s |cffaaaaaa(%s: %s/%s)", buttonImg, maxPlayers, difficulty, name, encounterProgress, numEncounters), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
+            if numEncounters and numEncounters > 0 and (encounterKilled and encounterKilled > 0) then
+                GameTooltip:AddDoubleLine(format("%s%s |cffaaaaaa(%s, %s/%s)", buttonImg, name, difficulty, encounterKilled, numEncounters), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
             else
-                GameTooltip:AddDoubleLine(format("%s%s %s |cffaaaaaa(%s)", buttonImg, maxPlayers, difficulty, name), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
+                GameTooltip:AddDoubleLine(format("%s%s |cffaaaaaa(%s)", buttonImg, name, difficulty), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
             end
         end
     end
@@ -136,13 +136,13 @@ local function Time_OnEnter(self)
         for i = 1,#lockedInstances.dungeons do
             local difficulty = lockedInstances.dungeons[i][2]
             local buttonImg = lockedInstances.dungeons[i][3]
-            local name, _, reset, _, _, extended, _, _, maxPlayers, _, numEncounters, encounterProgress = unpack(lockedInstances.dungeons[i][4])
+            local name, _, reset, _, _, extended, _, _, _, _, numEncounters, encounterKilled = unpack(lockedInstances.dungeons[i][4])
 
             local lockoutColor = extended and lockoutColorExtended or lockoutColorNormal
-            if numEncounters and numEncounters > 0 and (encounterProgress and encounterProgress > 0) then
-                GameTooltip:AddDoubleLine(format("%s%s %s |cffaaaaaa(%s: %s/%s)", buttonImg, maxPlayers, difficulty, name, encounterProgress, numEncounters), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
+            if numEncounters and numEncounters > 0 and (encounterKilled and encounterKilled > 0) then
+                GameTooltip:AddDoubleLine(format("%s%s |cffaaaaaa(%s, %s/%s)", buttonImg, name, difficulty, encounterKilled, numEncounters), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
             else
-                GameTooltip:AddDoubleLine(format("%s%s %s |cffaaaaaa(%s)", buttonImg, maxPlayers, difficulty, name), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
+                GameTooltip:AddDoubleLine(format("%s%s |cffaaaaaa(%s)", buttonImg, name, difficulty), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
             end
         end
     end

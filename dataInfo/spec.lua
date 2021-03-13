@@ -48,16 +48,19 @@ local function TalentButton_OnEnter(self)
     end
 
     for i, info in ipairs(spec_data) do
-        GameTooltip:AddLine(AddTexture(info.icon) .. format("|cffFFFFFF%s:|r ", info.name) .. (i == GW.myspec and ("|cff00FF00" .. ACTIVE_PETS .. "|r") or ("|cffFF0000" .. FACTION_INACTIVE .. "|r")), 1, 1, 1)
+        if i == GW.myspec then
+            --GameTooltip:AddLine(AddTexture(info.icon) .. format("|cffFFFFFF%s:|r ", info.name) .. (i == GW.myspec and ("|cff00FF00" .. ACTIVE_PETS .. "|r") or ("|cffFF0000" .. FACTION_INACTIVE .. "|r")), 1, 1, 1)
+            GameTooltip:AddLine(format("|cffFFFFFF%s:|r %s", SPECIALIZATION, AddTexture(info.icon) .. info.name), nil, nil, true)
+        end
     end
 
-    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+    --GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
     local specialization = GetLootSpecialization()
     local sameSpec = specialization == 0 and GW.myspec
     local specIndex = spec_data[sameSpec or specialization]
     if specIndex and specIndex.name then
-        GameTooltip:AddLine(format("|cffFFFFFF%s:|r %s", SELECT_LOOT_SPECIALIZATION, sameSpec and format(LOOT_SPECIALIZATION_DEFAULT, specIndex.name) or specIndex.name), nil, nil, nil ,true)
+        GameTooltip:AddLine(format("|cffFFFFFF%s:|r %s %s", SELECT_LOOT_SPECIALIZATION, AddTexture(specIndex.icon), sameSpec and format(LOOT_SPECIALIZATION_DEFAULT, specIndex.name) or specIndex.name), nil, nil, nil ,true)
     end
 
     GameTooltip_AddBlankLineToTooltip(GameTooltip)
@@ -87,7 +90,7 @@ local function TalentButton_OnEnter(self)
     end
 
     GameTooltip_AddBlankLineToTooltip(GameTooltip)
-    GameTooltip:AddLine("|cffaaaaaa" .. L["Right Click to change Talent Specialization"] .. "|r")
+    GameTooltip:AddLine("|cffaaaaaa" .. L["Right Click to change Talent Specialization"] .. "|r", nil, nil, nil, true)
 
     GameTooltip:Show()
 end

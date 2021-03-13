@@ -467,6 +467,7 @@ local function loadAddon(self)
     GW.LoadWorldMapSkin()
     GW.LoadGossipSkin()
     GW.LoadItemUpgradeSkin()
+    GW.LoadTimeManagerSkin()
 
     GW.LoadImmersionAddonSkin()
 
