@@ -8,12 +8,12 @@ local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHei
             objectiveBlock = GW.GetScenarioObjectivesBlock(block, numCriteria)
             container.gwBlock = objectiveBlock
             objectiveBlock:SetHeight(container:GetHeight())
-            
-            if not container.gwHooked then
-                container:SetParent(objectiveBlock)
-                container:ClearAllPoints()
-                container:SetAllPoints()
+       
+            container:SetParent(objectiveBlock)
+            container:ClearAllPoints()
+            container:SetAllPoints()
 
+            if not container.gwHooked then
                 hooksecurefunc(_G.ScenarioWidgetContainerBlock, "SetHeight", function(self)
                     if _G.ScenarioWidgetContainerBlock:IsShown() and _G.ScenarioWidgetContainerBlock.gwBlock then
                         GW.updateCurrentScenario(_G.GwQuesttrackerContainerScenario)
@@ -25,13 +25,12 @@ local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHei
                         GW.updateCurrentScenario(_G.GwQuesttrackerContainerScenario)
                     end
                 end)
-
-                container.SetParent = GW.NoOp
-                container.ClearAllPoints = GW.NoOp
-                container.SetAllPoints = GW.NoOp
-
                 container.gwHooked = true
             end
+
+            --container.SetParent = GW.NoOp
+            --container.ClearAllPoints = GW.NoOp
+            --container.SetAllPoints = GW.NoOp
 
             objectiveBlock:Show()
             objectiveBlock.ObjectiveText:SetText("")
