@@ -335,3 +335,4 @@ L["Gossip Frame"] = "Диалоги"
 L["Saved Raid(s)"] = true
 L["Saved Dungeon(s)"] = true
 L["Daily Reset"] = true
+L["Right Click to change Talent Specialization"] = true

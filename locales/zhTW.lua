@@ -335,3 +335,4 @@ L["Gossip Frame"] = "對話"
 L["Saved Raid(s)"] = "已保存的團隊"
 L["Saved Dungeon(s)"] = "已保存的地城"
 L["Daily Reset"] = "每日重置"
+L["Right Click to change Talent Specialization"] = true

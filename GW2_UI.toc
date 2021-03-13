@@ -72,6 +72,7 @@ dataInfo/money.lua
 dataInfo/guild.lua
 dataInfo/bags.lua
 dataInfo/time.lua
+dataInfo/spec.lua
 
 core/auras.lua
 

@@ -326,17 +326,23 @@ local function setupMicroButtons(mbf)
         tref:ClearAllPoints()
         tref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
 
+        tref:RegisterForClicks("LeftButtonUp", "RightButtonUp")
         tref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         tref:SetAttribute(
             "_onclick",
             [=[
-            local f = self:GetFrameRef("GwCharacterWindow")
-            f:SetAttribute("keytoggle", "1")
-            f:SetAttribute("windowpanelopen", "talents")
+            if button == "LeftButton" then
+                local f = self:GetFrameRef("GwCharacterWindow")
+                f:SetAttribute("keytoggle", "1")
+                f:SetAttribute("windowpanelopen", "talents")
+            end
             ]=]
         )
         tref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
+        tref:SetScript("OnLeave", GameTooltip_Hide)
         tref:SetScript("OnHide", GameTooltip_Hide)
+        tref:HookScript("OnEnter", GW.TalentButton_OnEnter)
+        tref:HookScript("OnClick", GW.TalentButton_OnClick)
 
         disableMicroButton(SpellbookMicroButton)
         disableMicroButton(TalentMicroButton, true)
@@ -347,8 +353,11 @@ local function setupMicroButtons(mbf)
 
         -- TalentMicroButton
         tref = TalentMicroButton
+        tref:RegisterForClicks("LeftButtonUp", "RightButtonUp")
         tref:ClearAllPoints()
         tref:SetPoint("BOTTOMLEFT", SpellbookMicroButton, "BOTTOMRIGHT", 4, 0)
+        tref:HookScript("OnEnter", GW.TalentButton_OnEnter)
+        tref:SetScript("OnClick", GW.TalentButton_OnClick)
 
         -- we've added an extra button so expand the container a bit
         mbf:SetWidth(mbf:GetWidth() + 28)

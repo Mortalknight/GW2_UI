@@ -4,7 +4,8 @@ local v = GW.vernotes
 v("5.12.0", [=[
     NEW
     - Added "Great Vault" Button to micromenu
-    - Added gametime datatext (hover the time on minimap)
+    - Added datatext to gametime (hover the time on minimap)
+    - Added datatext to talent micro button
 
 FIXES
     - Fix rare ember court and chatframe lua error
@@ -12,6 +13,7 @@ FIXES
 
 MISC
     - Remove auto sell junk chat output: Blizzard os doing this now
+    - Right click guild micromenu button to invite or whisper guild mebers
 ]=])
 
 v("5.11.2", [=[
