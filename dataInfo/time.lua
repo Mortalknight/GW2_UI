@@ -21,13 +21,6 @@ local InstanceNameByID = {
     [749] = C_Map.GetAreaInfo(3845) -- "The Eye" vs. "Tempest Keep"
 }
 
-if GW.mylocal == "deDE" then -- remove "Der" at beginning
-    InstanceNameByID[1023] = "Belagerung von Boralus"
-    InstanceNameByID[1041] = "Königsruh"
-    InstanceNameByID[1021] = "Kronsteiganwesen"
-    InstanceNameByID[1186] = "Spitzen des Aufstiegs"
-end
-
 local instanceIconByName = {}
 local function GetInstanceImages(raid)
     local index = 1
@@ -38,14 +31,6 @@ local function GetInstanceImages(raid)
         instanceID, name, _, _, buttonImage = EJ_GetInstanceByIndex(index, raid)
     end
 end
-
-local krcntw = GW.mylocal == "koKR" or GW.mylocal == "zhCN" or GW.mylocal == "zhTW"
-local difficultyTag = { -- Raid Finder, Normal, Heroic, Mythic
-    krcntw and _G.PLAYER_DIFFICULTY3 or string.sub(_G.PLAYER_DIFFICULTY3, 1, 1), -- R
-    krcntw and _G.PLAYER_DIFFICULTY1 or string.sub(_G.PLAYER_DIFFICULTY1, 1, 1), -- N
-    krcntw and _G.PLAYER_DIFFICULTY2 or string.sub(_G.PLAYER_DIFFICULTY2, 1, 1), -- H
-    krcntw and _G.PLAYER_DIFFICULTY6 or string.sub(_G.PLAYER_DIFFICULTY6, 1, 1)  -- M
-}
 
 local function sortFunc(a, b)
     return a[1] < b[1]
@@ -107,7 +92,7 @@ local function Time_OnEnter(self)
             local isLFR, isHeroicOrMythicDungeon = (difficulty == 7 or difficulty == 17), (difficulty == 2 or difficulty == 23)
             local _, _, isHeroic, _, displayHeroic, displayMythic = GetDifficultyInfo(difficulty)
             local sortName = name .. (displayMythic and 4 or (isHeroic or displayHeroic) and 3 or isLFR and 1 or 2)
-            local difficultyLetter = (displayMythic and difficultyTag[4] or (isHeroic or displayHeroic) and difficultyTag[3] or isLFR and difficultyTag[1] or difficultyTag[2])
+            local difficultyLetter = (displayMythic and PLAYER_DIFFICULTY6 or (isHeroic or displayHeroic) and PLAYER_DIFFICULTY2 or isLFR and PLAYER_DIFFICULTY3 or PLAYER_DIFFICULTY1)
             local buttonImg = instanceIconByName[name] and format("|T%s:16:16:0:0:96:96:0:64:0:64|t ", instanceIconByName[name]) or ""
 
             if isRaid then
@@ -236,8 +221,8 @@ GW.Time_OnLeave = Time_OnLeave
 
 local function Time_OnEvent(self, event)
     if event == "UPDATE_INSTANCE_INFO" and mouseOver then
-Time_OnEnter(self)
-end
+        Time_OnEnter(self)
+    end
 end
 GW.Time_OnEvent = Time_OnEvent
 
@@ -250,4 +235,3 @@ local function Time_OnClick(self, button)
     end
 end
 GW.Time_OnClick = Time_OnClick
-
