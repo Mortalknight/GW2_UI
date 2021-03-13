@@ -452,14 +452,24 @@ local function setupMicroButtons(mbf)
     reskinMicroButton(greatVaultIcon, "GreatVaultMicroButton", mbf)
     greatVaultIcon:ClearAllPoints()
     greatVaultIcon:SetPoint("BOTTOMLEFT", StoreMicroButton, "BOTTOMRIGHT", 4, 0)
-    --greatVaultIcon:GetNormalTexture():SetAtlas("pvpqueue-chest-greatvault-incomplete", TextureKitConstants.UseAtlasSize)
     greatVaultIcon:SetScript("OnMouseUp", function(self, button, upInside)
-        if button == "LeftButton" and upInside then
+        if button == "LeftButton" and upInside and self:IsEnabled() then
+            GW.StopFlash(self) -- Hide flasher if playing
             if WeeklyRewardsFrame and WeeklyRewardsFrame:IsShown() then
                 HideUIPanel(WeeklyRewardsFrame)
             else
                 WeeklyRewards_ShowUI()
             end
+        end
+    end)
+    -- Disable icon till level 60 then lets flash it one time
+    greatVaultIcon:SetEnabled(IsPlayerAtEffectiveMaxLevel())
+    greatVaultIcon:RegisterEvent("PLAYER_LEVEL_UP")
+    greatVaultIcon:SetScript("OnEvent", function(self, event, ...)
+        local level = ...
+        if level >= GetMaxLevelForPlayerExpansion() then
+            self:SetEnabled(true)
+            GW.FrameFlash(self, 1, 0.3, 1, true)
         end
     end)
 
