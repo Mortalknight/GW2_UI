@@ -1,9 +1,6 @@
 local _, GW = ...
 
 ----- Added API to Frames -----
-local STRIP_TEX = "Texture"
-local STRIP_FONT = "FontString"
-
 local BlizzardRegions = {
     "Left",
     "Middle",
@@ -99,9 +96,9 @@ local function StripRegion(which, object, kill, alpha)
         object:Kill()
     elseif alpha then
         object:SetAlpha(0)
-    elseif which == STRIP_TEX then
+    elseif which == "Texture" then
         object:SetTexture()
-    elseif which == STRIP_FONT then
+    elseif which == "FontString" then
         object:SetText("")
     end
 end
@@ -110,7 +107,7 @@ local function StripType(which, object, kill, alpha)
     if object:IsObjectType(which) then
         StripRegion(which, object, kill, alpha)
     else
-        if which == STRIP_TEX then
+        if which == "Texture" then
             local FrameName = object.GetName and object:GetName()
             for _, Blizzard in pairs(StripTexturesBlizzFrames) do
                 local BlizzFrame = object[Blizzard] or (FrameName and _G[FrameName .. Blizzard])
@@ -132,7 +129,7 @@ local function StripType(which, object, kill, alpha)
 end
 
 local function StripTextures(object, kill, alpha)
-    StripType(STRIP_TEX, object, kill, alpha)
+    StripType("Texture", object, kill, alpha)
 end
 
 local function Kill(object)
@@ -295,14 +292,12 @@ local function SkinTab(tabButton, direction)
     if tabButton.SetDisabledTexture then tabButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/units/unittab" .. direction) end
 
     if tabButton.Text then
-        --tabButton.Text:SetTextColor(0, 0, 0, 1)
         tabButton.Text:SetShadowOffset(0, 0)
     end
 
     local r = {tabButton:GetRegions()}
     for _,c in pairs(r) do
         if c:GetObjectType() == "FontString" then
-            --c:SetTextColor(0, 0, 0, 1)
             c:SetShadowOffset(0, 0)
         end
     end
@@ -527,6 +522,5 @@ while object do
     object = EnumerateFrames(object)
 end
 
---Hacky fix for issue on 7.1 PTR where scroll frames no longer seem to inherit the methods from the 'Frame' widget
 local scrollFrame = CreateFrame("ScrollFrame")
 addapi(scrollFrame)

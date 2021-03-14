@@ -3,6 +3,7 @@ local L = GW.L
 local GetStorage = GW.GetStorage
 local ClearStorage = GW.ClearStorage
 local UpdateMoney = GW.UpdateMoney
+local FormatMoneyForChat = GW.FormatMoneyForChat
 
 local function GetGraysValue()
     local value = 0
@@ -68,7 +69,7 @@ GW.Money_OnClick = Money_OnClick
 local function Money_OnEnter(self)
     local myGold = {}
     local list = GetStorage(nil, "REALM")
-    local totalAlliance, totalHorde, total = 0, 0, 0
+    local totalAlliance, totalHorde, totalFactionless = 0, 0, 0
     local resetCountersFormatter = strjoin("", "|cffaaaaaa", L["Reset Session Data: Hold Ctrl + Right Click"], "|r")
     local resetInfoFormatter = strjoin("", "|cffaaaaaa", L["Reset Character Data: Hold Shift + Right Click"], "|r")
 
@@ -88,7 +89,7 @@ local function Money_OnEnter(self)
                     elseif char.faction and char.faction == "Horde" then
                         totalHorde = totalHorde + char.money
                     else
-                        total = total + char.money
+                        totalFactionless = totalFactionless + char.money
                     end
                 end
             end
@@ -102,12 +103,12 @@ local function Money_OnEnter(self)
         GameTooltip:ClearLines()
 
         GameTooltip:AddLine(L["Session:"])
-        GameTooltip:AddDoubleLine(L["Earned:"], GW.FormatMoneyForChat(GW.earnedMoney), 1, 1, 1, 1, 1, 1)
-        GameTooltip:AddDoubleLine(L["Spent:"], GW.FormatMoneyForChat(GW.spentMoney), 1, 1, 1, 1, 1, 1)
+        GameTooltip:AddDoubleLine(L["Earned:"], FormatMoneyForChat(GW.earnedMoney), 1, 1, 1, 1, 1, 1)
+        GameTooltip:AddDoubleLine(L["Spent:"], FormatMoneyForChat(GW.spentMoney), 1, 1, 1, 1, 1, 1)
         if GW.earnedMoney < GW.spentMoney then
-            GameTooltip:AddDoubleLine(L["Deficit:"], GW.FormatMoneyForChat(GW.earnedMoney - GW.spentMoney), 1, 0, 0, 1, 1, 1)
+            GameTooltip:AddDoubleLine(L["Deficit:"], FormatMoneyForChat(GW.earnedMoney - GW.spentMoney), 1, 0, 0, 1, 1, 1)
         elseif (GW.earnedMoney - GW.spentMoney) > 0 then
-            GameTooltip:AddDoubleLine(L["Profit:"], GW.FormatMoneyForChat(GW.earnedMoney - GW.spentMoney), 0, 1, 0, 1, 1, 1)
+            GameTooltip:AddDoubleLine(L["Profit:"], FormatMoneyForChat(GW.earnedMoney - GW.spentMoney), 0, 1, 0, 1, 1, 1)
         end
         GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
@@ -131,21 +132,21 @@ local function Money_OnEnter(self)
         GameTooltip:AddLine(FRIENDS_LIST_REALM)
         
         if totalAlliance > 0 and totalHorde > 0 then
-            if totalAlliance ~= 0 then GameTooltip:AddDoubleLine(FACTION_ALLIANCE, GW.FormatMoneyForChat(totalAlliance), 0, 0.376, 1, 1, 1, 1) end
-            if totalHorde ~= 0 then GameTooltip:AddDoubleLine(FACTION_HORDE, GW.FormatMoneyForChat(totalHorde), 1, 0.2, 0.2, 1, 1, 1) end
+            if totalAlliance ~= 0 then GameTooltip:AddDoubleLine(FACTION_ALLIANCE, FormatMoneyForChat(totalAlliance), 0, 0.376, 1, 1, 1, 1) end
+            if totalHorde ~= 0 then GameTooltip:AddDoubleLine(FACTION_HORDE, FormatMoneyForChat(totalHorde), 1, 0.2, 0.2, 1, 1, 1) end
             GameTooltip_AddBlankLineToTooltip(GameTooltip)
         end
 
-        GameTooltip:AddDoubleLine(TOTAL .. ":", GW.FormatMoneyForChat(totalAlliance + totalHorde + total), 1, 1, 1, 1, 1, 1)
+        GameTooltip:AddDoubleLine(TOTAL .. ":", FormatMoneyForChat(totalAlliance + totalHorde + totalFactionless), 1, 1, 1, 1, 1, 1)
 
         GameTooltip_AddBlankLineToTooltip(GameTooltip)
         C_WowTokenPublic.UpdateMarketPrice()
-        GameTooltip:AddDoubleLine(TOKEN_FILTER_LABEL .. ":", GW.FormatMoneyForChat(C_WowTokenPublic.GetCurrentMarketPrice() or 0), 0, 0.8, 1, 1, 1, 1)
+        GameTooltip:AddDoubleLine(TOKEN_FILTER_LABEL .. ":", FormatMoneyForChat(C_WowTokenPublic.GetCurrentMarketPrice() or 0), 0, 0.8, 1, 1, 1, 1)
 
         local grayValue = GetGraysValue()
         if grayValue > 0 then
             GameTooltip_AddBlankLineToTooltip(GameTooltip)
-            GameTooltip:AddDoubleLine(L["Grays"] , GW.FormatMoneyForChat(grayValue), nil, nil, nil, 1, 1, 1)
+            GameTooltip:AddDoubleLine(L["Grays"] , FormatMoneyForChat(grayValue), nil, nil, nil, 1, 1, 1)
         end
 
         GameTooltip_AddBlankLineToTooltip(GameTooltip)

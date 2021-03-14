@@ -3,11 +3,12 @@ local L = GW.L
 
 local mouseOver = false
 local collectedInstanceImages = false
-
-local lockoutColorExtended, lockoutColorNormal = {r = 0.3, g = 1, b = 0.3}, {r = 0.8, g = 0.8, b = 0.8}
+local lockoutColorExtended = {r = 0.3, g = 1, b = 0.3}
+local lockoutColorNormal = {r = 0.8, g = 0.8, b = 0.8}
 
 -- Torghast
-local TorghastWidgets, TorghastInfo = {
+local TorghastInfo
+local TorghastWidgets = {
     {nameID = 2925, levelID = 2930}, -- Fracture Chambers
     {nameID = 2926, levelID = 2932}, -- Skoldus Hall
     {nameID = 2924, levelID = 2934}, -- Soulforges
@@ -88,8 +89,9 @@ local function Time_OnEnter(self)
 
     for i = 1, GetNumSavedInstances() do
         local name, _, _, difficulty, locked, extended, _, isRaid = GetSavedInstanceInfo(i)
-        if (locked or extended) and name then
-            local isLFR, isHeroicOrMythicDungeon = (difficulty == 7 or difficulty == 17), (difficulty == 2 or difficulty == 23)
+        if locked or extended and name then
+            local isLFR = (difficulty == 7 or difficulty == 17)
+            local isHeroicOrMythicDungeon = (difficulty == 2 or difficulty == 23)
             local _, _, isHeroic, _, displayHeroic, displayMythic = GetDifficultyInfo(difficulty)
             local sortName = name .. (displayMythic and 4 or (isHeroic or displayHeroic) and 3 or isLFR and 1 or 2)
             local difficulty = (displayMythic and PLAYER_DIFFICULTY6 or (isHeroic or displayHeroic) and PLAYER_DIFFICULTY2 or isLFR and PLAYER_DIFFICULTY3 or PLAYER_DIFFICULTY1)
@@ -174,7 +176,7 @@ local function Time_OnEnter(self)
     end
 
     if TorghastInfo and C_QuestLog.IsQuestFlaggedCompleted(60136) then
-        local torghastHeader
+        local torghastHeader = false
         for _, value in pairs(TorghastWidgets) do
             local nameInfo = C_UIWidgetManager.GetTextWithStateWidgetVisualizationInfo(value.nameID)
             if nameInfo and nameInfo.shownState == 1 then

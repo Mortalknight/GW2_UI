@@ -4,9 +4,7 @@ local GetSetting = GW.GetSetting
 
 local spec_data = {}
 local spec_data_loaded = false
-local specList = {
-	{text = SPECIALIZATION, isTitle = true, notCheckable = true}
-}
+local specList = {{text = SPECIALIZATION, isTitle = true, notCheckable = true}}
 
 local function GetSpecData()
     for index = 1, GetNumSpecializations() do
@@ -15,7 +13,7 @@ local function GetSpecData()
         if id then
             spec_data[index] = {id = id, name = name, icon = icon}
             spec_data[id] = {name = name, icon = icon}
-            specList[#specList + 1] = { text = format("|T%s:14:14:0:0:64:64:4:60:4:60|t  %s", icon, name), checked = function() return GetSpecialization() == index end, func = function() SetSpecialization(index) end }
+            specList[#specList + 1] = {text = format("|T%s:14:14:0:0:64:64:4:60:4:60|t  %s", icon, name), checked = function() return GetSpecialization() == index end, func = function() SetSpecialization(index) end}
         end
     end
 
@@ -49,12 +47,9 @@ local function TalentButton_OnEnter(self)
 
     for i, info in ipairs(spec_data) do
         if i == GW.myspec then
-            --GameTooltip:AddLine(AddTexture(info.icon) .. format("|cffFFFFFF%s:|r ", info.name) .. (i == GW.myspec and ("|cff00FF00" .. ACTIVE_PETS .. "|r") or ("|cffFF0000" .. FACTION_INACTIVE .. "|r")), 1, 1, 1)
-            GameTooltip:AddLine(format("|cffFFFFFF%s:|r %s", SPECIALIZATION, AddTexture(info.icon) .. info.name), nil, nil, true)
+           GameTooltip:AddLine(format("|cffFFFFFF%s:|r %s", SPECIALIZATION, AddTexture(info.icon) .. info.name), nil, nil, nil, true)
         end
     end
-
-    --GameTooltip_AddBlankLineToTooltip(GameTooltip)
 
     local specialization = GetLootSpecialization()
     local sameSpec = specialization == 0 and GW.myspec
@@ -84,7 +79,7 @@ local function TalentButton_OnEnter(self)
             if i > 4 then break end
             local _, name, icon, _, _, _, unlocked = GetPvpTalentInfoByID(talentID)
             if name and unlocked then
-                GameTooltip:AddLine(AddTexture(icon ).. " " .. name)
+                GameTooltip:AddLine(AddTexture(icon).. " " .. name)
             end
         end
     end
