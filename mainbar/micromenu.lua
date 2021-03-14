@@ -477,6 +477,9 @@ local function setupMicroButtons(mbf)
             if C_WeeklyRewards.HasAvailableRewards() then
                 self.tooltipText = RATED_PVP_WEEKLY_VAULT .. "\n" .. GW.RGBToHex(GREEN_FONT_COLOR:GetRGB()) .. MYTHIC_PLUS_COLLECT_GREAT_VAULT .. "|r"
                 GW.FrameFlash(self, 1, 0.3, 1, true)
+            else
+                self.tooltipText = RATED_PVP_WEEKLY_VAULT
+                GW.StopFlash(self)
             end
         end
     end)
