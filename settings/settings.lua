@@ -18,10 +18,12 @@ local function switchCat(index)
     if l then
         l.iconbg:Show()
         l.cat_panel:Show()
-        if l.cat_hasScroll then
-            l.cat_panel.scroll.slider:SetShown(l.cat_panel.scroll.maxScroll > 0)
-            l.cat_panel.scroll.scrollUp:SetShown(l.cat_panel.scroll.maxScroll > 0)
-            l.cat_panel.scroll.scrollDown:SetShown(l.cat_panel.scroll.maxScroll > 0)
+        if l.cat_crollFrames then
+            for k, v in pairs(l.cat_crollFrames) do 
+                v.scroll.slider:SetShown(v.scroll.maxScroll > 0)
+                v.scroll.scrollUp:SetShown(v.scroll.maxScroll > 0)
+                v.scroll.scrollDown:SetShown(v.scroll.maxScroll > 0)
+            end
         end
         UIFrameFadeIn(l.cat_panel, 0.2, 0, 1)
     end
@@ -49,7 +51,7 @@ local fnF_OnClick = function(self, button)
 end
 AddForProfiling("settings", "fnF_OnClick", fnF_OnClick)
 
-local function CreateCat(name, desc, panel, icon, bg, hasScroll)
+local function CreateCat(name, desc, panel, icon, bg, scrollFrames)
     local i = #settings_cat + 1
 
     -- create and position a new button/label for this category
@@ -58,7 +60,7 @@ local function CreateCat(name, desc, panel, icon, bg, hasScroll)
     f.cat_name = name
     f.cat_desc = desc
     f.cat_id = i
-    f.cat_hasScroll = hasScroll
+    f.cat_crollFrames = scrollFrames
     settings_cat[i] = f
     f:SetPoint("TOPLEFT", -40, -32 + (-40 * (i - 1)))
 
@@ -374,6 +376,7 @@ local function InitPanel(panel, hasScroll)
             scrollFrame.scrollBar:SetPoint("BOTTOMRIGHT", -3, 12)
             scrollFrame.scrollBar.scrollUp:SetPoint("TOPRIGHT", 0, 12)
             scrollFrame.scrollBar.scrollDown:SetPoint("BOTTOMRIGHT", 0, -12)
+            scrollFrame.scrollBar:SetFrameLevel(scrollFrame:GetFrameLevel() + 5)
             
             scrollFrame.data = GW.copyTable(nil, v)
             scrollFrame.of = of

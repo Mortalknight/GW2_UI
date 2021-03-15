@@ -15,32 +15,34 @@ local function LoadAurasPanel(sWindow)
     p.header:Hide()
     p.sub:Hide()
 
-    local p_auras = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
+    local p_auras = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
     p_auras:SetHeight(180)
+    p_auras:SetWidth(512)
     p_auras:ClearAllPoints()
     p_auras:SetPoint("TOPLEFT", p, "TOPLEFT", 0, 0)
-    p_auras.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    p_auras.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p_auras.header:SetText(L["Raid Auras"])
-    p_auras.sub:SetFont(UNIT_NAME_FONT, 12)
-    p_auras.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p_auras.sub:SetText(L["Edit which buffs and debuffs are shown."])
+    p_auras.scroll.scrollchild.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    p_auras.scroll.scrollchild.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p_auras.scroll.scrollchild.header:SetText(L["Raid Auras"])
+    p_auras.scroll.scrollchild.sub:SetFont(UNIT_NAME_FONT, 12)
+    p_auras.scroll.scrollchild.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    p_auras.scroll.scrollchild.sub:SetText(L["Edit which buffs and debuffs are shown."])
 
-    local p_indicator = CreateFrame("Frame", nil, p, "GwSettingsPanelTmpl")
-    p_indicator:SetHeight(340)
+    local p_indicator = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
+    p_indicator:SetHeight(445)
+    p_indicator:SetWidth(512)
     p_indicator:ClearAllPoints()
     p_indicator:SetPoint("TOPLEFT", p_auras, "BOTTOMLEFT", 0, 0)
-    p_indicator.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    p_indicator.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p_indicator.header:SetText(L["Raid Indicators"])
-    p_indicator.sub:SetFont(UNIT_NAME_FONT, 12)
-    p_indicator.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p_indicator.sub:SetText(L["Edit raid aura indicators."])
+    p_indicator.scroll.scrollchild.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    p_indicator.scroll.scrollchild.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p_indicator.scroll.scrollchild.header:SetText(L["Raid Indicators"])
+    p_indicator.scroll.scrollchild.sub:SetFont(UNIT_NAME_FONT, 12)
+    p_indicator.scroll.scrollchild.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    p_indicator.scroll.scrollchild.sub:SetText(L["Edit raid aura indicators."])
 
-    createCat(L["Raid Auras"], L["Show or hide auras and edit raid aura indicators."], p, 2)
+    createCat(L["Raid Auras"], L["Show or hide auras and edit raid aura indicators."], p, 2, nil, {p_auras, p_indicator})
 
-    addOptionText(p_auras, L["Ignored Auras"], L["A list of auras that should never be shown."], "AURAS_IGNORED", nil, nil, nil, {["RAID_FRAMES"] = true})
-    addOptionText(p_auras, L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], "AURAS_MISSING", nil, nil, nil, {["RAID_FRAMES"] = true})
+    addOptionText(p_auras.scroll.scrollchild, L["Ignored Auras"], L["A list of auras that should never be shown."], "AURAS_IGNORED", nil, nil, nil, {["RAID_FRAMES"] = true})
+    addOptionText(p_auras.scroll.scrollchild, L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], "AURAS_MISSING", nil, nil, nil, {["RAID_FRAMES"] = true})
 
     local raidDebuffKeys, raidDebuffVales = {}, {}
     local settingstable = GetSetting("RAIDDEBUFFS")
@@ -54,7 +56,7 @@ local function LoadAurasPanel(sWindow)
         end
     end
     addOptionDropdown(
-        p_auras,
+        p_auras.scroll.scrollchild,
         L["Dungeon & Raid Debuffs"],
         L["Show important Dungeon & Raid debuffs"],
         "RAIDDEBUFFS",
@@ -68,8 +70,8 @@ local function LoadAurasPanel(sWindow)
         true
     )
 
-    addOption(p_indicator, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p_indicator, L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], "INDICATORS_TIME", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p_indicator.scroll.scrollchild, L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], "INDICATORS_TIME", nil, nil, {["RAID_FRAMES"] = true})
 
     local auraKeys, auraVals = {0}, {NONE_KEY}
     for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
@@ -84,7 +86,7 @@ local function LoadAurasPanel(sWindow)
         local key = "INDICATOR_" .. pos
         local t = L[GW.indicatorsText[v]]
         addOptionDropdown(
-            p_indicator,
+            p_indicator.scroll.scrollchild,
             L["%s Indicator"]:format(t),
             L["Edit %s raid aura indicator."]:format(t),
             key,
@@ -98,7 +100,7 @@ local function LoadAurasPanel(sWindow)
         )
     end
 
-    InitPanel(p_auras)
-    InitPanel(p_indicator)
+    InitPanel(p_auras, true)
+    InitPanel(p_indicator, true)
 end
 GW.LoadAurasPanel = LoadAurasPanel

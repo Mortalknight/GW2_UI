@@ -335,7 +335,7 @@ local function LoadWorldMapSkin()
 
     local ExecuteSessionCommand = QuestMapFrame.QuestSessionManagement.ExecuteSessionCommand
     ExecuteSessionCommand:CreateBackdrop()
-    ExecuteSessionCommand:SkinButton(false, true)
+    ExecuteSessionCommand:SkinButton(false, true, false, true)
 
     local icon = ExecuteSessionCommand:CreateTexture(nil, "ARTWORK")
     icon:SetPoint("TOPLEFT", 0, 0)

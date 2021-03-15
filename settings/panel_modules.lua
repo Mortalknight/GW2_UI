@@ -56,7 +56,7 @@ local function LoadModulesPanel(sWindow)
     p.credits:SetText(L["Credits"])
     p.credits:SetScript("OnClick", creditst_OnClick)
 
-    createCat(L["MODULES"], L["Enable and disable components"], p, 0, nil, true)
+    createCat(L["MODULES"], L["Enable and disable components"], p, 0, nil, {p})
 
     addOption(p.scroll.scrollchild, XPBAR_LABEL, nil, "XPBAR_ENABLED")
     addOption(p.scroll.scrollchild, L["Health Globe"], L["Enable the health bar replacement."], "HEALTHGLOBE_ENABLED")

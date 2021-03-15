@@ -17,7 +17,7 @@ local function LoadPlayerPanel(sWindow)
     p.scroll.scrollchild.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.scroll.scrollchild.sub:SetText(L["Modify the player frame settings."])
 
-    createCat(PLAYER, L["Modify the player frame settings."], p, 9, nil, true)
+    createCat(PLAYER, L["Modify the player frame settings."], p, 9, nil, {p})
 
     addOption(p.scroll.scrollchild, L["Player frame in target frame style"], nil, "PLAYER_AS_TARGET_FRAME", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p.scroll.scrollchild, RAID_USE_CLASS_COLORS, nil, "player_CLASS_COLOR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})

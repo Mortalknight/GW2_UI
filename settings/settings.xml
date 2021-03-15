@@ -156,7 +156,7 @@
             </Button>
 
             <Frame parentKey="panels">
-                <Size x="512" y="600"/>
+                <Size x="512" y="625"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" x="0" y="0"/>
                 </Anchors>

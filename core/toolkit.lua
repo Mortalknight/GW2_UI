@@ -235,7 +235,7 @@ local function CreateBackdrop(frame, backdropTexture)
     end
 end
 
-local function SkinButton(button, isXButton, setTextColor, onlyHover)
+local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover)
     if not button then return end
 
     local name = button.GetName and button:GetName()
@@ -274,7 +274,7 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
         end
     end
 
-    if not isXButton or onlyHover then
+    if (not isXButton or onlyHover) and not noHover then
         button:AddHover()
     end
 end

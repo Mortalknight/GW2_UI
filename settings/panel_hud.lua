@@ -17,7 +17,7 @@ local function LoadHudPanel(sWindow)
     p.scroll.scrollchild.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.scroll.scrollchild.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
 
-    createCat(UIOPTIONS_MENU, L["Edit the HUD modules."], p, 3, nil, true)
+    createCat(UIOPTIONS_MENU, L["Edit the HUD modules."], p, 3, nil, {p})
 
     addOption(p.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND")
     addOption(p.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
