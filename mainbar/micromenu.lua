@@ -483,7 +483,6 @@ local function setupMicroButtons(mbf)
             end
         end
     end)
-    print(GREEN_FONT_COLOR:GetRGB())
 
     -- Update icon
     updateIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
