@@ -69,7 +69,7 @@ local function updateHealthData(self, anims)
     local auy_off = Y_FULL - Y_RANGE * (1 - aup)
 
     -- determine how much shield (over absorb) to overlay
-    local ap = absorb_over / healthMax
+    local ap = min(absorb_over / healthMax, 1) -- only max 1, if ap over is greater then player hp
     local apy_off = Y_FULL - 7 - Y_RANGE * (1 - ap)
 
     -- determine how much predicted health to overlay
