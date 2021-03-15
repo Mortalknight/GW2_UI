@@ -155,7 +155,7 @@ local function Guild_OnEnter(self)
                 GameTooltip:AddLine("|cff999999   " .. LABEL_NOTE .. ":|r " .. info.note, ttsubh.r, ttsubh.g, ttsubh.b, 1)
             end
             if info.officerNote ~= "" then
-                GameTooltip:AddLine("|cff999999   " .. GUILD_RANK1_DESC .. ":|r " info.officerNote, ttoff.r, ttoff.g, ttoff.b, 1)
+                GameTooltip:AddLine("|cff999999   " .. GUILD_RANK1_DESC .. ":|r " .. info.officerNote, ttoff.r, ttoff.g, ttoff.b, 1)
             end
         else
             GameTooltip:AddDoubleLine(format("|cff%02x%02x%02x%d|r %s%s %s", levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, strmatch(info.name, "([^%-]+).*"), inGroup(info.name), info.status), info.zone, classc.r, classc.g, classc.b, zonec.r, zonec.g, zonec.b)

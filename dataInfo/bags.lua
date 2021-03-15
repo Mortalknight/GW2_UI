@@ -45,7 +45,7 @@ local function Bags_OnEnter(self)
     for i = 1, MAX_WATCHED_TOKENS do
         local info = C_CurrencyInfo.GetBackpackCurrencyInfo(i)
         if info then
-            if i == 1 and then
+            if i == 1 then
                 GameTooltip_AddBlankLineToTooltip(GameTooltip)
                 GameTooltip:AddLine(CURRENCY)
             end
