@@ -4,4 +4,5 @@ ignore:
   - tools
   - README.md
   - readme_files
+  - _MACOSX
 
