@@ -336,3 +336,4 @@ L["Saved Raid(s)"] = "Banda(s) guardada(s)"
 L["Saved Dungeon(s)"] = "Mazmorra(s) guardada(s)"
 L["Daily Reset"] = "Reinicio diario"
 L["Right Click to change Talent Specialization"] = "Clic derecho para cambiar la especialización"
+L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = true

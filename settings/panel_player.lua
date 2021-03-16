@@ -25,7 +25,7 @@ local function LoadPlayerPanel(sWindow)
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Aura Style"],
-        nil,
+        L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"],
         "PLAYER_AURA_STYLE",
         nil,
         {"LEGACY", "SECURE"},

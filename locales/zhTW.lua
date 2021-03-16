@@ -336,3 +336,4 @@ L["Saved Raid(s)"] = "已保存的團隊"
 L["Saved Dungeon(s)"] = "已保存的地城"
 L["Daily Reset"] = "每日重置"
 L["Right Click to change Talent Specialization"] = true
+L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = true
