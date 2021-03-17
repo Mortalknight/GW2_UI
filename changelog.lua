@@ -4,6 +4,7 @@ local v = GW.vernotes
 v("5.12.1", [=[
 FIXES
     - Fix target/focus mask overlapping
+    - Fix Great Vault micro menu button interaction with dominos
 
 MISC
     - Update locals
