@@ -169,9 +169,13 @@ local function showRewards()
     local items = GetNumQuestRewards()
     local spells = GetNumRewardSpells()
     local choices = GetNumQuestChoices()
+    local honor = GetRewardHonor()
+    local questID = GetQuestID()
+    local hasChanceForQuestSessionBonusReward = C_QuestLog.QuestHasQuestSessionBonus(questID)
 
     local qinfoHeight = 300
     local qinfoTop = -20
+    local itemReqOffset = (items > 0 or currency > 0 or money > 0 or xp > 0 or honor > 0 or hasChanceForQuestSessionBonusReward) and 50 or 9
 
     styleRewards()
 
@@ -179,6 +183,8 @@ local function showRewards()
         qinfoHeight = 150
         qinfoTop = 55
 
+        GwQuestviewFrameContainerDialogRequired:ClearAllPoints()
+        GwQuestviewFrameContainerDialogRequired:SetPoint("CENTER", GwQuestviewFrameContainerDialog, "CENTER", 40, (itemReqOffset == 50 and -80 or -30))
         UIFrameFadeIn(GwQuestviewFrameContainerDialogRequired, 0.1, 0, 1)
 
         if QUESTREQ["money"] > 0 then
@@ -209,7 +215,7 @@ local function showRewards()
                     GwQuestviewFrame,
                     "CENTER",
                     (((i + 1) % 2) * (itemWidth + 20) - 160),
-                    -(itemHeight + 9) * (math.ceil(i / 2))
+                    -(itemHeight + itemReqOffset) * (math.ceil(i / 2))
                 )
                 frame:SetFrameLevel(5)
                 frame:SetScript(
