@@ -466,6 +466,7 @@ local function setupMicroButtons(mbf)
     greatVaultIcon:SetEnabled(IsPlayerAtEffectiveMaxLevel())
     greatVaultIcon:RegisterEvent("PLAYER_LEVEL_UP")
     greatVaultIcon:RegisterEvent("WEEKLY_REWARDS_UPDATE")
+    greatVaultIcon:RegisterEvent("PLAYER_ENTERING_WORLD")
     greatVaultIcon:SetScript("OnEvent", function(self, event, ...)
         if event == "PLAYER_LEVEL_UP" then
             local level = ...
@@ -473,14 +474,16 @@ local function setupMicroButtons(mbf)
                 self:SetEnabled(true)
                 GW.FrameFlash(self, 1, 0.3, 1, true)
             end
-        elseif event == "WEEKLY_REWARDS_UPDATE" then
-            if C_WeeklyRewards.HasAvailableRewards() then
-                self.tooltipText = RATED_PVP_WEEKLY_VAULT .. "\n" .. GW.RGBToHex(GREEN_FONT_COLOR:GetRGB()) .. MYTHIC_PLUS_COLLECT_GREAT_VAULT .. "|r"
-                GW.FrameFlash(self, 1, 0.3, 1, true)
-            else
-                self.tooltipText = RATED_PVP_WEEKLY_VAULT
-                GW.StopFlash(self)
-            end
+        elseif event == "WEEKLY_REWARDS_UPDATE" or event == "PLAYER_ENTERING_WORLD" then
+            C_Timer.After(0.5, function()
+                if C_WeeklyRewards.HasAvailableRewards() then
+                    greatVaultIcon.tooltipText = RATED_PVP_WEEKLY_VAULT .. "\n" .. GW.RGBToHex(GREEN_FONT_COLOR:GetRGB()) .. MYTHIC_PLUS_COLLECT_GREAT_VAULT .. "|r"
+                    GW.FrameFlash(greatVaultIcon, 1, 0.3, 1, true)
+                else
+                    greatVaultIcon.tooltipText = RATED_PVP_WEEKLY_VAULT
+                    GW.StopFlash(greatVaultIcon)
+                end
+            end)
         end
     end)
 

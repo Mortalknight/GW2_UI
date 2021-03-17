@@ -173,10 +173,7 @@ local function LoadGossipSkin()
     for i = 1, 6 do
         local button = _G["QuestProgressItem" .. i]
         local icon = _G["QuestProgressItem" .. i .. "IconTexture"]
-        icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-        icon:SetPoint("TOPLEFT", 2, -2)
-        icon:SetSize(icon:GetWidth() -3, icon:GetHeight() -3)
-        button:SetWidth(button:GetWidth() -4)
+        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         button:StripTextures()
         button:SetFrameLevel(button:GetFrameLevel() +1)
     end
