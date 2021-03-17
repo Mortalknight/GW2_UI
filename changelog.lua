@@ -1,6 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.12.1", [=[
+FIXES
+    - Fix target/focus mask overlapping
+
+MISC
+    - Update locals
+]=])
+
 v("5.12.0", [=[
 NEW
     - Added "Great Vault" Button to micromenu

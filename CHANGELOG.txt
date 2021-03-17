@@ -1,3 +1,10 @@
+5.12.1
+FIXES
+    - Fix target/focus mask overlapping
+
+MISC
+    - Update locals
+
 5.12.0
 NEW
     - Added "Great Vault" Button to micromenu

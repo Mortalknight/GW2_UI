@@ -805,6 +805,12 @@ local function LoadTarget()
     NewUnitFrame:ClearAllPoints()
     NewUnitFrame:SetPoint("TOPLEFT", NewUnitFrame.gwMover)
 
+    NewUnitFrame.portrait.mask = NewUnitFrame:CreateMaskTexture()
+    NewUnitFrame.portrait.mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
+    NewUnitFrame.portrait.mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    NewUnitFrame.portrait.mask:SetSize(58, 58)
+    NewUnitFrame.portrait:AddMaskTexture(NewUnitFrame.portrait.mask)
+
     NewUnitFrame:SetAttribute("*type1", "target")
     NewUnitFrame:SetAttribute("*type2", "togglemenu")
     NewUnitFrame:SetAttribute("unit", "target")
@@ -891,6 +897,12 @@ local function LoadFocus()
 
     NewUnitFrame:ClearAllPoints()
     NewUnitFrame:SetPoint("TOPLEFT", NewUnitFrame.gwMover)
+
+    NewUnitFrame.portrait.mask = NewUnitFrame:CreateMaskTexture()
+    NewUnitFrame.portrait.mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
+    NewUnitFrame.portrait.mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    NewUnitFrame.portrait.mask:SetSize(58, 58)
+    NewUnitFrame.portrait:AddMaskTexture(NewUnitFrame.portrait.mask)
 
     NewUnitFrame:SetAttribute("*type1", "target")
     NewUnitFrame:SetAttribute("*type2", "togglemenu")
