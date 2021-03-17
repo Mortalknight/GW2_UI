@@ -76,7 +76,7 @@ local function Time_OnEnter(self)
         elseif not startTime then
             startTime = QUEUE_TIME_UNAVAILABLE
         elseif startTime ~= 0 then
-            startTime = SecondsToTime(startTime, false, nil, 3)
+            startTime = SecondsToTime(startTime, true, nil, 3)
         end
 
         if canEnter and startTime ~= 0 then
@@ -120,9 +120,9 @@ local function Time_OnEnter(self)
 
             local lockoutColor = extended and lockoutColorExtended or lockoutColorNormal
             if numEncounters and numEncounters > 0 and (encounterKilled and encounterKilled > 0) then
-                GameTooltip:AddDoubleLine(format("%s%s |cffaaaaaa(%s, %s/%s)", buttonImg, name, difficulty, encounterKilled, numEncounters), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
+                GameTooltip:AddDoubleLine(format("%s%s |cffaaaaaa(%s, %s/%s)", buttonImg, name, difficulty, encounterKilled, numEncounters), SecondsToTime(reset, true, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
             else
-                GameTooltip:AddDoubleLine(format("%s%s |cffaaaaaa(%s)", buttonImg, name, difficulty), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
+                GameTooltip:AddDoubleLine(format("%s%s |cffaaaaaa(%s)", buttonImg, name, difficulty), SecondsToTime(reset, true, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
             end
         end
     end
@@ -142,9 +142,9 @@ local function Time_OnEnter(self)
 
             local lockoutColor = extended and lockoutColorExtended or lockoutColorNormal
             if numEncounters and numEncounters > 0 and (encounterKilled and encounterKilled > 0) then
-                GameTooltip:AddDoubleLine(format("%s%s |cffaaaaaa(%s, %s/%s)", buttonImg, name, difficulty, encounterKilled, numEncounters), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
+                GameTooltip:AddDoubleLine(format("%s%s |cffaaaaaa(%s, %s/%s)", buttonImg, name, difficulty, encounterKilled, numEncounters), SecondsToTime(reset, true, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
             else
-                GameTooltip:AddDoubleLine(format("%s%s |cffaaaaaa(%s)", buttonImg, name, difficulty), SecondsToTime(reset, false, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
+                GameTooltip:AddDoubleLine(format("%s%s |cffaaaaaa(%s)", buttonImg, name, difficulty), SecondsToTime(reset, true, nil, 3), 1, 1, 1, lockoutColor.r, lockoutColor.g, lockoutColor.b)
             end
         end
     end
