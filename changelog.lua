@@ -2,7 +2,7 @@ local _, GW = ...
 local v = GW.vernotes
 
 v("5.12.0", [=[
-    NEW
+NEW
     - Added "Great Vault" Button to micromenu
     - Added datatext to gametime (hover the time on minimap)
     - Added datatext to talent micro button
