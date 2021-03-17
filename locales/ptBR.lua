@@ -337,3 +337,4 @@ L["Saved Dungeon(s)"] = "Masmorra(s) Salva(s)"
 L["Daily Reset"] = "Reset Diário"
 L["Right Click to change Talent Specialization"] = "Clique com Botão Direito do Mouse para mudar Especialização de Talentos"
 L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = "Legado: ordenadas por duração, mas não é possível cancelar auras clicando com o botão direito em combate\nSeguro: não ordenado, mas é possível cancelar as auras clicando com o botão direito em combate."
+L["Weekly Reset"] = true

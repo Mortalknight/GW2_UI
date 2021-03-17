@@ -201,6 +201,7 @@ local function Time_OnEnter(self)
     end
 
     GameTooltip:AddDoubleLine(L["Daily Reset"], SecondsToTime(C_DateAndTime.GetSecondsUntilDailyReset()), 1, 1, 1, lockoutColorNormal.r, lockoutColorNormal.g, lockoutColorNormal.b)
+    GameTooltip:AddDoubleLine(L["Weekly Reset"], SecondsToTime(C_DateAndTime.GetSecondsUntilWeeklyReset(), true, nil, 3), 1, 1, 1, lockoutColorNormal.r, lockoutColorNormal.g, lockoutColorNormal.b)
 
     if GameTooltip:NumLines() > 0 then
         GameTooltip_AddBlankLineToTooltip(GameTooltip)
