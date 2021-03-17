@@ -336,4 +336,4 @@ L["Saved Raid(s)"] = "Incursioni Salvate"
 L["Saved Dungeon(s)"] = "Spedizioni Salvate"
 L["Daily Reset"] = "Ripristino Giornaliero"
 L["Right Click to change Talent Specialization"] = "Clicca con il tasto destro del mouse per cambiare la Specializzazione dei Talenti"
-L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = true
+L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = "Legacy: Ordinate per durata ma le auree non possono essere cancellate con il tasto destro in combattimento\nSicuro: Non ordinate ma le auree possono essere cancellate con il tasto destro in combattimento"
