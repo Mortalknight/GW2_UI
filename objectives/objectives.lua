@@ -1095,7 +1095,6 @@ local function updateQuestLogLayoutSingle(self, questID, added)
             for i = 1, 25 do
                 if _G[blockName .. i] and _G[blockName .. i]:IsShown() and _G[blockName .. i].questID ~= questID then
                     heightForQuestItem = heightForQuestItem + _G[blockName .. i].height
-                    break
                 elseif _G[blockName .. i] and _G[blockName .. i]:IsShown() and _G[blockName .. i].questID == questID then
                     heightForQuestItem = heightForQuestItem + _G[blockName .. i].height
                     break
