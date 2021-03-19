@@ -340,3 +340,4 @@ L["Daily Reset"] = "일일 초기화"
 L["Right Click to change Talent Specialization"] = "특성 전문화를 변경하려면 우클릭"
 L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = true
 L["Weekly Reset"] = true
+L["Conduits"] = true

@@ -494,6 +494,7 @@ local function LoadMinimap()
         self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
         self.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
     end)
+    GarrisonLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter)
 
     local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")
     local fnGwMailButton_OnEvent = function(self, event, ...)
