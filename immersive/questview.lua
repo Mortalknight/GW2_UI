@@ -175,7 +175,7 @@ local function showRewards()
 
     local qinfoHeight = 300
     local qinfoTop = -20
-    local itemReqOffset = (items > 0 or currency > 0 or money > 0 or xp > 0 or honor > 0 or hasChanceForQuestSessionBonusReward) and 50 or 9
+    local itemReqOffset = ((items > 0 or currency > 0 or money > 0 or xp > 0 or honor > 0 or hasChanceForQuestSessionBonusReward) and (choices > 0 or spells > 0 or title)) and 50 or 9
 
     styleRewards()
 
@@ -208,6 +208,7 @@ local function showRewards()
                     itemWidth = math.ceil(frame:GetWidth())
                 end
                 UIFrameFadeIn(frame, 0.1, 0, 1)
+                if i > 2 and itemReqOffset == 50 then itemReqOffset = (itemHeight - 9) end -- reset yOffset if itemReq > 2
                 frame:SetParent(GwQuestviewFrame)
                 frame:ClearAllPoints()
                 frame:SetPoint(
@@ -293,12 +294,16 @@ local function lastGossip()
         if QUESTSTRINGINT ~= 1 then
             PlaySound(906)
         end
-        if QUESTSTRINGINT == count then
-            questTextCompleted()
-        else
-            GwQuestviewFrameContainerAcceptButton:SetText(L["Skip"])
-            QuestInfoRewardsFrame:SetShown(false)
-            questStateSet = false
+        GwQuestviewFrameContainerAcceptButton:SetText(L["Skip"])
+        QuestInfoRewardsFrame:SetShown(false)
+        GwQuestviewFrameContainerDialogRequired:Hide()
+        questStateSet = false
+        local itemReq = #QUESTREQ["currency"] + #QUESTREQ["stuff"]
+        for i = 1, itemReq, 1 do
+            local frame = _G["QuestProgressItem" .. i]
+            if frame then
+                frame:Hide()
+            end
         end
     else
         questTextCompleted()
