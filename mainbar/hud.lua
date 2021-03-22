@@ -926,7 +926,7 @@ displayRewards = function()
         GW_LEVELING_REWARDS[i] = {}
         GW_LEVELING_REWARDS[i]["type"] = "TALENT"
         GW_LEVELING_REWARDS[i]["id"] = 0
-        GW_LEVELING_REWARDS[i]["level"] = select(3, GetTalentTierInfo(i, GetSpecialization()))
+        GW_LEVELING_REWARDS[i]["level"] = select(3, GetTalentTierInfo(i, GetActiveSpecGroup()))
     end
 
     GW_LEVELING_REWARD_AVALIBLE = false

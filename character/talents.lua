@@ -386,7 +386,7 @@ local function loadTalents()
                 numberDisplay.title:SetShadowColor(0, 0, 0, 0)
                 numberDisplay.title:SetShadowOffset(1, -1)
                 numberDisplay:SetPoint("BOTTOM", fistOnRow, "TOP", 0, 13)
-                numberDisplay.title:SetText(select(3, GetTalentTierInfo(row, GetSpecialization())))
+                numberDisplay.title:SetText(select(3, GetTalentTierInfo(row, GetActiveSpecGroup())))
             end
         end
     end
