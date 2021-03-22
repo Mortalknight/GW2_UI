@@ -620,7 +620,7 @@ local function LoadBank(helpers)
 
         dd.bagOrder.checkbutton:SetScript(
             "OnClick",
-            function(self)
+            function()
                 local newStatus = not GetSetting("BANK_REVERSE_SORT")
                 dd.bagOrder.checkbutton:SetChecked(newStatus)
                 SetSetting("BANK_REVERSE_SORT", newStatus)
@@ -631,7 +631,7 @@ local function LoadBank(helpers)
 
         dd.itemBorder.checkbutton:HookScript(
             "OnClick",
-            function(self)
+            function()
                 local newStatus = not GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW")
                 dd.itemBorder.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", newStatus)
@@ -690,7 +690,7 @@ local function LoadBank(helpers)
     f.DepositAll:SetText(REAGENTBANK_DEPOSIT)
     f.DepositAll:SetScript(
         "OnClick",
-        function(self)
+        function()
             DepositReagentBank()
         end
     )

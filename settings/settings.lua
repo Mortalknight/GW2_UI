@@ -9,7 +9,7 @@ local settings_cat = {}
 local all_options = {}
 
 local function switchCat(index)
-    for i, l in ipairs(settings_cat) do
+    for _, l in ipairs(settings_cat) do
         l.iconbg:Hide()
         l.cat_panel:Hide()
     end
@@ -19,7 +19,7 @@ local function switchCat(index)
         l.iconbg:Show()
         l.cat_panel:Show()
         if l.cat_crollFrames then
-            for k, v in pairs(l.cat_crollFrames) do 
+            for _, v in pairs(l.cat_crollFrames) do 
                 v.scroll.slider:SetShown(v.scroll.maxScroll > 0)
                 v.scroll.scrollUp:SetShown(v.scroll.maxScroll > 0)
                 v.scroll.scrollDown:SetShown(v.scroll.maxScroll > 0)
@@ -46,7 +46,7 @@ local fnF_OnLeave = function(self)
 end
 AddForProfiling("settings", "fnF_OnLeave", fnF_OnLeave)
 
-local fnF_OnClick = function(self, button)
+local fnF_OnClick = function(self)
     switchCat(self.cat_id)
 end
 AddForProfiling("settings", "fnF_OnClick", fnF_OnClick)
@@ -224,7 +224,7 @@ local function checkDependenciesOnLoad()
     local options = all_options
     local allOptionsSet = false
 
-    for k, v in pairs(options) do
+    for _, v in pairs(options) do
         if v.dependence then
             allOptionsSet = false
             for sn, sv in pairs(v.dependence) do
@@ -316,7 +316,7 @@ local function InitPanel(panel, hasScroll)
     local padding = {x = box_padding, y = (hasScroll and panel.scroll.scrollchild.sub:GetText() or panel.sub:GetText()) and -55 or -35}
     local first = true
 
-    for k, v in pairs(options) do
+    for _, v in pairs(options) do
         local newLine = false
         local optionFrameType = "GwOptionBoxTmpl"
         if v.optionType == "slider" then
@@ -436,7 +436,7 @@ local function InitPanel(panel, hasScroll)
             of.button.string:SetFont(UNIT_NAME_FONT, 12)
             of.button:SetScript(
                 "OnClick",
-                function(self, button)
+                function(self)
                     local dd = self:GetParent()
                     if dd.container:IsShown() then
                         dd.container:Hide()
@@ -510,7 +510,7 @@ local function InitPanel(panel, hasScroll)
             of.checkbutton:SetChecked(GetSetting(v.optionName, v.perSpec))
             of.checkbutton:SetScript(
                 "OnClick",
-                function(self, button)
+                function(self)
                     local toSet = false
                     if self:GetChecked() then
                         toSet = true
@@ -544,7 +544,7 @@ local function InitPanel(panel, hasScroll)
         elseif v.optionType == "button" then
             of:SetScript(
                 "OnClick",
-                function(self, button)
+                function()
                     if v.callback ~= nil then
                         v.callback()
                     end
@@ -624,13 +624,13 @@ local function LoadSettings()
     fmGWP.input:SetScript("OnEditFocusGained", nil)
     fmGWP.input:SetScript("OnEditFocusLost", nil)
     fmGWP.input:SetScript("OnEnterPressed", fnGWP_input_OnEnterPressed)
-    local fnGWP_accept_OnClick = function(self, button)
+    local fnGWP_accept_OnClick = function(self)
         if self:GetParent().method ~= nil then
             self:GetParent().method()
         end
         self:GetParent():Hide()
     end
-    local fnGWP_cancel_OnClick = function(self, button)
+    local fnGWP_cancel_OnClick = function(self)
         self:GetParent():Hide()
     end
     fmGWP.acceptButton:SetScript("OnClick", fnGWP_accept_OnClick)
@@ -693,20 +693,20 @@ local function LoadSettings()
         preferredIndex = 3
     }
 
-    local fnGSWMH_OnClick = function(self, button)
+    local fnGSWMH_OnClick = function()
         if InCombatLockdown() then
             DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["You can not move elements during combat!"])
             return
         end
         GW.moveHudObjects(GW.MoveHudScaleableFrame)
     end
-    local fnGSWS_OnClick = function(self, button)
+    local fnGSWS_OnClick = function()
         C_UI.Reload()
     end
-    local fnGSWD_OnClick = function(self, button)
+    local fnGSWD_OnClick = function()
         StaticPopup_Show("JOIN_DISCORD")
     end
-    local fmGSWKB_OnClick = function(self, button)
+    local fmGSWKB_OnClick = function()
         GwSettingsWindow:Hide()
         GW.DisplayHoverBinding()
     end

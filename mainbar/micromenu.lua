@@ -21,7 +21,7 @@ do
     local myRealm = gsub(GW.myrealm, "[%s%-]", "")
     local myName = GW.myname .. "-" .. myRealm
     local printChatMessage = false
-    local function SendRecieve(self, event, prefix, message, _, sender)
+    local function SendRecieve(_, event, prefix, message, _, sender)
         if event == "CHAT_MSG_ADDON" then
             if sender == myName then return end
             if prefix == "GW2UI_VERSIONCHK" then
@@ -115,7 +115,7 @@ local function updateGuildButton(self, event)
 end
 GW.AddForProfiling("micromenu", "updateGuildButton", updateGuildButton)
 
-local function updateQuestLogButton(self, event)
+local function updateQuestLogButton(_, event)
     if event ~= "QUEST_LOG_UPDATE" then
         return
     end
@@ -630,7 +630,7 @@ local function LoadMicroMenu()
     --end
     hooksecurefunc(
         "MainMenuMicroButton_ShowAlert",
-        function(f, t)
+        function(f)
             if f == TalentMicroButtonAlert and not TalentMicroButton:HasTalentAlertToShow() then
                 f:Hide()
             end
@@ -660,12 +660,12 @@ local function LoadMicroMenu()
         fadeIn:SetFromAlpha(0.0)
         fadeIn:SetToAlpha(1.0)
         fadeIn:SetDuration(mbf.cf:GetAttribute("fadeTime"))
-        mbf.cf.fadeOut = function(self)
+        mbf.cf.fadeOut = function()
             fi:Stop()
             fo:Stop()
             fo:Play()
         end
-        mbf.cf.fadeIn = function(self)
+        mbf.cf.fadeIn = function()
             self:SetAlpha(1)
             fi:Stop()
             fo:Stop()

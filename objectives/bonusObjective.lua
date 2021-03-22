@@ -185,7 +185,7 @@ local function setUpBlock(questIDs, collapsed)
     local blockIndex = 1
     local foundEvent = false
 
-    for k, v in pairs(questIDs) do
+    for _, v in pairs(questIDs) do
         local questID = v.ID
         local isInArea, isOnMap, numObjectives, text = GetTaskInfo(questID)
         local questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
@@ -323,7 +323,7 @@ local function setUpBlock(questIDs, collapsed)
     return foundEvent, shownBlocks
 end
 
-local function updateBonusObjective(self, event)
+local function updateBonusObjective(self)
     RemoveTrackerNotificationOfType("EVENT")
 
     for i = 1, 20 do
@@ -335,7 +335,6 @@ local function updateBonusObjective(self, event)
     end
 
     local tasks = GetTasksTable()
-    local EventToShow = false
     wipe(trackedEventIDs)
 
     for i = 1, C_QuestLog.GetNumWorldQuestWatches() do
@@ -344,17 +343,14 @@ local function updateBonusObjective(self, event)
             trackedEventIDs[wqID] = {}
             trackedEventIDs[wqID].ID = wqID
             trackedEventIDs[wqID].tracked = true
-            EventToShow = true
         end
     end
 
-    for k, v in pairs(tasks) do
+    for _, v in pairs(tasks) do
         if trackedEventIDs[v] == nil then
             trackedEventIDs[v] = {}
             trackedEventIDs[v].ID = v
             trackedEventIDs[v].tracked = false
-            local isInArea = GetTaskInfo(v)
-            if isInArea then EventToShow = true end
         end
     end
 

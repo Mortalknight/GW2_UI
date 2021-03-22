@@ -170,7 +170,7 @@ local function setProfile(index)
 end
 AddForProfiling("panel_profiles", "setProfile", setProfile)
 
-local function delete_OnClick(self, button)
+local function delete_OnClick(self)
     local p = self:GetParent()
     GW.WarningPrompt(
         L["Are you sure you want to delete this profile?"],
@@ -221,14 +221,14 @@ local function buttons_OnLeave(self)
 end
 AddForProfiling("panel_profiles", "buttons_OnLeave", buttons_OnLeave)
 
-local function activate_OnClick(self, button)
+local function activate_OnClick(self)
     local p = self:GetParent()
     setProfile(p.profileID)
     updateProfiles(p:GetParent():GetParent():GetParent())
 end
 AddForProfiling("panel_profiles", "activate_OnClick", activate_OnClick)
 
-local function export_OnClick(self, button)
+local function export_OnClick(self)
     local p = self:GetParent()
     local exportString = GW.GetExportString(p.profileID, GW2UI_SETTINGS_PROFILES[p.profileID]["profilename"])
 
@@ -244,7 +244,7 @@ local function export_OnClick(self, button)
 end
 AddForProfiling("panel_profiles", "export_OnClick", export_OnClick)
 
-local function rename_OnClick(self, button)
+local function rename_OnClick(self)
     StaticPopup_Show("GW_CHANGE_PROFILE_NAME", nil, nil, self:GetParent())
 end
 
@@ -265,7 +265,7 @@ local function copyTable(newTable, tableToCopy)
 end
 GW.copyTable = copyTable
 
-local function copy_OnClick(self, button)
+local function copy_OnClick(self)
     local newProfil = copyTable(nil, GW2UI_SETTINGS_PROFILES[self:GetParent().profileID])
     GW.addProfile(self:GetParent():GetParent():GetParent():GetParent(), L["Copy of"] .. " " .. GW2UI_SETTINGS_PROFILES[self:GetParent().profileID]["profilename"], newProfil, true)
 end
@@ -471,10 +471,10 @@ local function LoadProfilesPanel(sWindow)
     p.sub:SetTextColor(125 / 255, 125 / 255, 125 / 255)
     p.sub:SetText(L["Profiles are an easy way to share your settings across characters and realms."])
 
-    local fnGSPF_OnShow = function(self)
+    local fnGSPF_OnShow = function()
         sWindow.background:SetTexture("Interface/AddOns/GW2_UI/textures/profiles/profiles-bg")
     end
-    local fnGSPF_OnHide = function(self)
+    local fnGSPF_OnHide = function()
         sWindow.background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagbg")
     end
     p:SetScript("OnShow", fnGSPF_OnShow)
@@ -538,7 +538,7 @@ local function LoadProfilesPanel(sWindow)
     local fmGCNP = CreateFrame("Button", nil, p.scrollchild, "GwCreateNewProfileTmpl")
     fmGCNP:SetText(NEW_COMPACT_UNIT_FRAME_PROFILE)
     fmGCNP:SetWidth(fmGCNP:GetTextWidth() + 10)
-    local fnGCNP_OnClick = function(self, button)
+    local fnGCNP_OnClick = function()
         inputPrompt(
             NEW_COMPACT_UNIT_FRAME_PROFILE,
             function()
@@ -553,7 +553,7 @@ local function LoadProfilesPanel(sWindow)
     local fmIP = CreateFrame("Button", nil, p.scrollchild, "GwCreateNewProfileTmpl")
     fmIP:SetText(L["Import Profile"])
     fmIP:SetWidth(fmIP:GetTextWidth() + 10)
-    local fnGCNP_OnClick = function(self, button)
+    local fnGCNP_OnClick = function()
         ImportExportFrame:Show()
         ImportExportFrame.header:SetText(L["Import Profile"])
         ImportExportFrame.subheader:SetText("")

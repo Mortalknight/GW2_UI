@@ -6,7 +6,7 @@ local InitPanel = GW.InitPanel
 local SetSetting = GW.SetSetting
 local AddForProfiling = GW.AddForProfiling
 
-local welcome_OnClick = function(self, button)
+local welcome_OnClick = function(self)
     if self.settings then
         self.settings:Hide()
     end
@@ -16,7 +16,7 @@ local welcome_OnClick = function(self, button)
 end
 AddForProfiling("panel_modules", "welcome_OnClick", welcome_OnClick)
 
-local statusReport_OnClick = function(self, button)
+local statusReport_OnClick = function(self)
     if self.settings then
         self.settings:Hide()
     end
@@ -24,7 +24,7 @@ local statusReport_OnClick = function(self, button)
 end
 AddForProfiling("panel_modules", "statusReport_OnClick", statusReport_OnClick)
 
-local creditst_OnClick = function(self, button)
+local creditst_OnClick = function(self)
     if self.settings then
         self.settings:Hide()
     end

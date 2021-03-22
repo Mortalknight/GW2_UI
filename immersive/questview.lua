@@ -74,7 +74,7 @@ local function styleRewards()
     GwQuestviewFrameContainerDialogRequired:SetShadowColor(0, 0, 0, 1)
     GwQuestviewFrameContainerDialogRequired:SetText(L["Required Items:"])
 
-    for i, questItem in ipairs(QuestInfoRewardsFrame.RewardButtons) do
+    for _, questItem in ipairs(QuestInfoRewardsFrame.RewardButtons) do
         GW.HandleReward(questItem)
     end
 end
@@ -200,7 +200,6 @@ local function showRewards()
         for i = 1, itemReq, 1 do
             local frame = _G["QuestProgressItem" .. i]
             if frame then
-                local icon = _G[frame:GetName() .. "IconTexture"]
                 if itemHeight == 0 then
                     itemHeight = math.ceil(frame:GetHeight())
                 end
@@ -262,7 +261,7 @@ GW.AddForProfiling("questview", "questTextCompleted", questTextCompleted)
 local function nextGossip()
     QUESTSTRINGINT = QUESTSTRINGINT + 1
     local count = 0
-    for k, v in pairs(QUESTSTRING) do
+    for k, _ in pairs(QUESTSTRING) do
         count = count + 1
     end
     if QUESTSTRINGINT <= count then
@@ -285,7 +284,7 @@ GW.AddForProfiling("questview", "nextGossip", nextGossip)
 local function lastGossip()
     QUESTSTRINGINT = max(QUESTSTRINGINT - 1, 1)
     local count = 0
-    for k, v in pairs(QUESTSTRING) do
+    for k, _ in pairs(QUESTSTRING) do
         count = count + 1
     end
     if QUESTSTRINGINT <= count then
@@ -553,7 +552,7 @@ local function LoadQuestview()
                 if key == "SPACE" then
                     self:SetPropagateKeyboardInput(false)
                     local Stringcount = 0
-                    for k, v in pairs(QUESTSTRING) do
+                    for k, _ in pairs(QUESTSTRING) do
                         Stringcount = Stringcount + 1
                     end
 
@@ -583,7 +582,7 @@ local function LoadQuestview()
 
     GwQuestviewFrame:SetScript(
         "OnEvent",
-        function(self, event, ...)
+        function(_, event, ...)
             if event == "QUEST_PROGRESS" then
                 hideBlizzardQuestFrame()
                 clearQuestReq()
@@ -680,7 +679,7 @@ local function LoadQuestview()
 
     GwQuestviewFrameContainerDialog:SetScript(
         "OnClick",
-        function(self, button, addon)
+        function(_, button)
             if button == "RightButton" then
                 lastGossip()
             else
@@ -690,15 +689,15 @@ local function LoadQuestview()
     )
     GwQuestviewFrameContainerDeclineQuest:SetScript(
         "OnClick",
-        function(self, event, addon)
+        function()
             CloseQuest()
         end
     )
     GwQuestviewFrameContainerAcceptButton:SetScript(
         "OnClick",
-        function(self, button, addon)
+        function()
             local Stringcount = 0
-            for k, v in pairs(QUESTSTRING) do
+            for k, _ in pairs(QUESTSTRING) do
                 Stringcount = Stringcount + 1
             end
 

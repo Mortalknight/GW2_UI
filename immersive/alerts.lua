@@ -1133,7 +1133,7 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
     end
 end
 
-local function AlertContainerFrameOnEvent(self, event, ...)
+local function AlertContainerFrameOnEvent(_, event, ...)
     if event == "PLAYER_LEVEL_UP" then
         local level, _, _, talentPoints, numNewPvpTalentSlots = ...
         GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
@@ -1149,7 +1149,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         end
 
         -- if we learn a spell here we should show the new spell so we remove the event drom the toastQueue list
-        for k, v in pairs(toastQueue) do
+        for _, v in pairs(toastQueue) do
             if v ~= nil and v.event == "LEARNED_SPELL_IN_TAB" then
                 v.event = ""
             end
@@ -1160,7 +1160,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         toastQueue[#toastQueue + 1] = {name = name, spellID = spellID, icon = icon, event = event}
 
         C_Timer.After(1, function()
-            for k, v in pairs(toastQueue) do
+            for _, v in pairs(toastQueue) do
                 if v ~= nil then
                     GW2_UIAlertSystem.AlertSystem:AddAlert(SPELL_BUCKET_ABILITIES_UNLOCKED, nil, v.name, false, v.icon, false, v.spellID)
                 end

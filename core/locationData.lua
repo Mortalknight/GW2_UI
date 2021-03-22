@@ -49,7 +49,7 @@ local function LocationDate_OnUpdate(self, elapsed)
     end
 end
 
-local function MapInfoFrameOnEvent(self)
+local function MapInfoFrameOnEvent()
     GW.locationData.mapID = C_Map.GetBestMapForUnit("player")
     GW.locationData.instanceMapID = select(8, GetInstanceInfo())
     GW.locationData.ZoneText = GetRealZoneText()

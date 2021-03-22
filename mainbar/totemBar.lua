@@ -3,7 +3,7 @@ local _, GW = ...
 local TOTEM_BAR_BUTTON_SIZE = 48
 local TOTEM_BAR_BUTTON_MARGIN = 3
 
-local function gw_totem_bar_OnEvent(self, event)
+local function gw_totem_bar_OnEvent(self)
     for i = 1, MAX_TOTEMS do
         local button = _G["TotemFrameTotem" .. i]
         local _, _, startTime, duration, icon = GetTotemInfo(button.slot)
@@ -113,10 +113,6 @@ local function Create_Totem_Bar()
     gw_totem_bar:RegisterEvent("PLAYER_TOTEM_UPDATE")
     gw_totem_bar:RegisterEvent("PLAYER_ENTERING_WORLD")
     gw_totem_bar:SetScript("OnEvent", gw_totem_bar_OnEvent)
-
-    hooksecurefunc("TotemButton_Update", function(button)
-
-    end)
 
     GW.RegisterMovableFrame(gw_totem_bar, GW.L["Class Totems"], "TotemBar_pos", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"})
     gw_totem_bar:ClearAllPoints()

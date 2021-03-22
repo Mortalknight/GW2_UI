@@ -1,7 +1,6 @@
 local _, GW = ...
 local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
 
-
 -- Easy menu
 GW.EasyMenu = CreateFrame("Frame", "GWEasyMenu", UIParent, "UIDropDownMenuTemplate")
 

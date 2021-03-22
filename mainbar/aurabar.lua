@@ -274,7 +274,7 @@ local function cancelAura(self)
     end
 end
 
-local function auraFrame_OnClick(self, button, down)
+local function auraFrame_OnClick(self, button)
     if not InCombatLockdown() and button == "RightButton" and self.atype ~= 0 then
         cancelAura(self)
     end
@@ -340,7 +340,7 @@ local function getSecureTempEnchant(self, idx)
 end
 GW.AddForProfiling("aurabar_secure", "getSecureTempEnchant", getSecureTempEnchant)
 
-local function getSecureFilter(self, btn)
+local function getSecureFilter(_, btn)
     return btn:GetAttribute("filter")
 end
 GW.AddForProfiling("aurabar_secure", "getSecureFilter", getSecureFilter)
@@ -355,7 +355,7 @@ local function getLegacyAura(self, idx)
 end
 GW.AddForProfiling("aurabar_secure", "getLegacyAura", getLegacyAura)
 
-local function getLegacyFilter(self, btn)
+local function getLegacyFilter(_, btn)
     return btn.filter
 end
 GW.AddForProfiling("aurabar_secure", "getLegacyFilter", getLegacyFilter)
@@ -485,7 +485,7 @@ local function loadAuras(lm, secure)
     hb:ClearAllPoints()
     hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
     lm:RegisterBuffFrame(hb)
-    hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function (frame)
+    hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function ()
         local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
         local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 
@@ -527,7 +527,7 @@ local function loadAuras(lm, secure)
         hd:SetPoint(anchor_hd, hd.gwMover, anchor_hd, 0, 0)
     end
     lm:RegisterDebuffFrame(hd)
-    hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function (frame)
+    hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function ()
         local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
         local anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 

@@ -1,6 +1,4 @@
 local _, GW = ...
-local L = GW.L
-local constBackdropFrame = GW.skins.constBackdropFrame
 local SetSetting = GW.SetSetting
 local GetSetting = GW.GetSetting
 
@@ -28,9 +26,6 @@ local function AddOnClickHandlers()
         local b = _G["MailItem" .. i .. "Button"]
 
         if b then
-            local r = {b:GetRegions()}
-            local ii = 1
-
             b:SetScript("OnClick", function(self)
                 --setup our UI code
                 SendMailFrame:Hide()

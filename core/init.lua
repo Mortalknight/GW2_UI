@@ -103,16 +103,16 @@ local function RemoveNPE(self, event)
         end
 
         if event then
-            NPERemoveFrame:UnregisterEvent(event)
+            self:UnregisterEvent(event)
         end
     end
 end
 
 if _G.NewPlayerExperience then
-    RemoveNPE()
+    RemoveNPE(NPERemoveFrame)
 else
     NPERemoveFrame:RegisterEvent("ADDON_LOADED")
-    NPERemoveFrame:SetScript("OnEvent",RemoveNPE)
+    NPERemoveFrame:SetScript("OnEvent", RemoveNPE)
 end
 
 local function AcknowledgeTips()

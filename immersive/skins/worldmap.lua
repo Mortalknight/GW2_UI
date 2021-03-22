@@ -83,7 +83,7 @@ local function QuestInfo_Display(template)
         questItem.Name:SetTextColor(1, 1, 1)
     end
 
-    for i, questItem in ipairs(QuestInfoRewardsFrame.RewardButtons) do
+    for _, questItem in ipairs(QuestInfoRewardsFrame.RewardButtons) do
         HandleReward(questItem)
     end
 

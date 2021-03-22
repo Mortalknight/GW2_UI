@@ -14,13 +14,13 @@ local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHei
             container:SetAllPoints()
 
             if not container.gwHooked then
-                hooksecurefunc(_G.ScenarioWidgetContainerBlock, "SetHeight", function(self)
+                hooksecurefunc(_G.ScenarioWidgetContainerBlock, "SetHeight", function()
                     if _G.ScenarioWidgetContainerBlock:IsShown() and _G.ScenarioWidgetContainerBlock.gwBlock then
                         GW.updateCurrentScenario(_G.GwQuesttrackerContainerScenario)
                     end
                 end)
 
-                hooksecurefunc(_G.ScenarioWidgetContainerBlock.WidgetContainer, "SetHeight", function(self)
+                hooksecurefunc(_G.ScenarioWidgetContainerBlock.WidgetContainer, "SetHeight", function()
                     if _G.ScenarioWidgetContainerBlock:IsShown() and _G.ScenarioWidgetContainerBlock.gwBlock then
                         GW.updateCurrentScenario(_G.GwQuesttrackerContainerScenario)
                     end

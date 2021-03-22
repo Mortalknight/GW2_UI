@@ -4,8 +4,6 @@ local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionText = GW.AddOptionText
 local createCat = GW.CreateCat
-local StrUpper = GW.StrUpper
-local StrLower = GW.StrLower
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local InitPanel = GW.InitPanel
@@ -46,7 +44,7 @@ local function LoadAurasPanel(sWindow)
 
     local raidDebuffKeys, raidDebuffVales = {}, {}
     local settingstable = GetSetting("RAIDDEBUFFS")
-    for spellID, value in pairs(GW.ImportendRaidDebuff) do
+    for spellID, _ in pairs(GW.ImportendRaidDebuff) do
         if spellID and GetSpellInfo(spellID) then
             local name = format("%s |cFF888888(%d)|r", GetSpellInfo(spellID), spellID)
             tinsert(raidDebuffKeys, spellID)

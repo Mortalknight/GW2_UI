@@ -88,7 +88,7 @@ local function unlearn_OnEnter(self)
 end
 GW.AddForProfiling("professions", "unlearn_OnEnter", unlearn_OnEnter)
 
-local function unlearn_OnClick(self, button)
+local function unlearn_OnClick(self)
     if InCombatLockdown() then
         PlaySound(44310)
         UIErrorsFrame:AddMessage(SPELL_FAILED_AFFECTING_COMBAT, 1.0, 0.1, 0.1, 1.0)
@@ -107,7 +107,7 @@ local function unlearnSpec_OnEnter(self)
 end
 GW.AddForProfiling("professions", "unlearnSpec_OnEnter", unlearnSpec_OnEnter)
 
-local function unlearnSpec_OnClick(self, button)
+local function unlearnSpec_OnClick(self)
     if InCombatLockdown() then
         PlaySound(44310)
         UIErrorsFrame:AddMessage(SPELL_FAILED_AFFECTING_COMBAT, 1.0, 0.1, 0.1, 1.0)
@@ -256,7 +256,7 @@ local function updateOverview(fmOverview)
 end
 GW.AddForProfiling("professions", "updateOverview", updateOverview)
 
-local function overview_OnUpdate(self, elapsed)
+local function overview_OnUpdate(self)
     self:SetScript("OnUpdate", nil)
     updateOverview(self)
     self.queuedUpdate = false

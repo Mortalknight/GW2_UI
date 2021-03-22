@@ -188,7 +188,7 @@ function SkinSliderFrame(frame)
 
     local thumb = frame:GetThumbTexture()
     thumb:SetSize(SIZE - 2, SIZE - 2)
-    
+
     local tex = frame:CreateTexture("bg", "BACKGROUND")
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/sliderbg")
     frame.tex = tex
@@ -464,7 +464,7 @@ local function HandleNextPrevButton(button, arrowDir)
     end
 
     button:StripTextures()
-    
+
     button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
     button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
     button:SetDisabledTexture("Interface/AddOns/GW2_UI/Texturesuistuff//arrowup_down")

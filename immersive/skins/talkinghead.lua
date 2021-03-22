@@ -1,5 +1,4 @@
 local _, GW = ...
-local constBackdropFrame = GW.skins.constBackdropFrame
 
 local function SkinTalkingHeadFrame_OnShow()
     local TalkingHeadFrame = _G.TalkingHeadFrame

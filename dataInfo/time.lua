@@ -216,7 +216,7 @@ local function Time_OnEnter(self)
 end
 GW.Time_OnEnter = Time_OnEnter
 
-local function Time_OnLeave(self)
+local function Time_OnLeave()
     GameTooltip_Hide()
     mouseOver = false
 end
@@ -229,7 +229,7 @@ local function Time_OnEvent(self, event)
 end
 GW.Time_OnEvent = Time_OnEvent
 
-local function Time_OnClick(self, button)
+local function Time_OnClick(_, button)
     if button == "LeftButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         ToggleTimeManager()

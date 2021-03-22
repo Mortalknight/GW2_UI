@@ -161,11 +161,11 @@ local function updateHealthData(self, anims)
     self.text_h.value:SetText(hv)
     self.text_a.value:SetText(av)
 
-    for i, v in ipairs(self.text_h.shadow) do
+    for _, v in ipairs(self.text_h.shadow) do
         v:SetText(hv)
     end
 
-    for i, v in ipairs(self.text_a.shadow) do
+    for _, v in ipairs(self.text_a.shadow) do
         v:SetText(av)
     end
 
@@ -310,7 +310,7 @@ local function LoadHealthGlobe()
     hg:RegisterForClicks("AnyUp")
 
     -- setup masking textures
-    for i, v in ipairs(hg.fill.masked) do
+    for _, v in ipairs(hg.fill.masked) do
         v:AddMaskTexture(hg.fill.mask)
     end
 
@@ -433,7 +433,7 @@ local function LoadHealthGlobe()
     fadeIn:SetToAlpha(1.0)
     fadeIn:SetDuration(0.1)
 
-    pvp.fadeOut = function(self)
+    pvp.fadeOut = function()
         pagIn:Stop()
         pagOut:Stop()
         pagOut:Play()

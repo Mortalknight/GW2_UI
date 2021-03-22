@@ -6,7 +6,7 @@ local AddForProfiling = GW.AddForProfiling
 local wpanel
 local step = 0
 
-local function settings_OnClick(self, button)
+local function settings_OnClick(self)
     local t = self.target
     self:GetParent():Hide()
     t:Show()
@@ -14,7 +14,7 @@ local function settings_OnClick(self, button)
 end
 AddForProfiling("welcome", "settings_OnClick", settings_OnClick)
 
-local function toggle_OnClick(self, button)
+local function toggle_OnClick(self)
     if self:GetText() == L["Changelog"] then
         self:GetParent().welcome:Hide()
         self:GetParent().changelog:Show()
@@ -27,7 +27,7 @@ local function toggle_OnClick(self, button)
 end
 AddForProfiling("welcome", "toggle_OnClick", toggle_OnClick)
 
-local function movehud_OnClick(self, button)
+local function movehud_OnClick(self)
     if InCombatLockdown() then
         DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["You can not move elements during combat!"])
         return
@@ -58,7 +58,7 @@ local function button1_OnClick()
         wpanel.welcome.button1:Show()
         wpanel.welcome.button2:Hide()
 
-        wpanel.welcome.button1:SetScript("OnClick", function(self)
+        wpanel.welcome.button1:SetScript("OnClick", function()
             step = 1
             button1_OnClick()
         end)
@@ -71,7 +71,7 @@ local function button1_OnClick()
         wpanel.welcome.button1:Show()
         wpanel.welcome.button2:Show()
 
-        wpanel.welcome.button1:SetScript("OnClick", function(self)
+        wpanel.welcome.button1:SetScript("OnClick", function()
             FCF_ResetChatWindows()
             FCF_OpenNewWindow(LOOT .. " / " .. TRADE)
 
@@ -123,7 +123,7 @@ local function button1_OnClick()
             step = 2
             button1_OnClick()
         end)
-        wpanel.welcome.button2:SetScript("OnClick", function(self)
+        wpanel.welcome.button2:SetScript("OnClick", function()
             step = 2
             button1_OnClick()
         end)
@@ -136,7 +136,7 @@ local function button1_OnClick()
         wpanel.welcome.button1:Show()
         wpanel.welcome.button2:Show()
 
-        wpanel.welcome.button1:SetScript("OnClick", function(self)
+        wpanel.welcome.button1:SetScript("OnClick", function()
             SetCVar("statusTextDisplay", "BOTH")
             SetCVar("screenshotQuality", 10)
             SetCVar("chatMouseScroll", 1)
@@ -159,7 +159,7 @@ local function button1_OnClick()
             step = 3
             button1_OnClick()
         end)
-        wpanel.welcome.button2:SetScript("OnClick", function(self)
+        wpanel.welcome.button2:SetScript("OnClick", function()
             step = 3
             button1_OnClick()
         end)
@@ -172,7 +172,7 @@ local function button1_OnClick()
         wpanel.welcome.button1:Show()
         wpanel.welcome.button2:Show()
 
-        wpanel.welcome.button1:SetScript("OnClick", function(self)
+        wpanel.welcome.button1:SetScript("OnClick", function()
             SetSetting("PIXEL_PERFECTION", true)
             GW.PixelPerfection()
 
@@ -181,7 +181,7 @@ local function button1_OnClick()
             step = 4
             button1_OnClick()
         end)
-        wpanel.welcome.button2:SetScript("OnClick", function(self)
+        wpanel.welcome.button2:SetScript("OnClick", function()
             step = 4
             button1_OnClick()
         end)
@@ -193,7 +193,7 @@ local function button1_OnClick()
         wpanel.welcome.button1:Show()
         wpanel.welcome.button2:Hide()
 
-        wpanel.welcome.button1:SetScript("OnClick", function(self)
+        wpanel.welcome.button1:SetScript("OnClick", function()
             C_UI.Reload()
         end)
     end

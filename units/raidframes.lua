@@ -968,7 +968,7 @@ local function sortByRole()
     local roleIndex = {"TANK", "HEALER", "DAMAGER", "NONE"}
     local unitString = IsInRaid() and "raid" or "party"
 
-    for k, v in pairs(roleIndex) do
+    for _, v in pairs(roleIndex) do
         if unitString == "party" and UnitGroupRolesAssigned("player") == v then
             tinsert(sorted, "player")
         end

@@ -14,7 +14,7 @@ local function UpdateCoords()
     else
         CoordsFrame.Coords:SetFormattedText("%s: %s", PLAYER, "n/a")
     end
-    
+
     if WorldMapFrame.ScrollContainer:IsMouseOver() then
         local x, y = WorldMapFrame.ScrollContainer:GetNormalizedCursorPosition()
         if x and y and x >= 0 and y >= 0 then

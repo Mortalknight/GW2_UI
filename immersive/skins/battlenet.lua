@@ -28,7 +28,6 @@ local function LoadBNToastSkin()
     BNToastFrame:HookScript("OnShow", function(self)
         self.tex:SetSize(_G.BNToastFrame:GetSize())
 
-        local point = GetSetting("BNToastPos")
         self:ClearAllPoints()
         self:SetPoint("TOPLEFT", self.gwMover)
 

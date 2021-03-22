@@ -67,20 +67,20 @@ end
 local function SellJunkFrame_OnEvent(self, event)
     if event == "MERCHANT_SHOW" then
         -- Reset variables
-        totalPrice, mBagID, mBagSlot = 0, -1, -1
+        mBagID, mBagSlot = -1, -1
         -- Do nothing if shift key is held down
         if IsShiftKeyDown() then return end
         -- Cancel existing ticker if present
         if SellJunkTicker then SellJunkTicker:Cancel() end
         -- Sell grey items using ticker (ends when all grey items are sold or iteration count reached)
         SellJunkTicker = C_Timer.NewTicker(0.2, sellJunk, IterationCount)
-        SellJunkFrame:RegisterEvent("ITEM_LOCKED")
-        SellJunkFrame:RegisterEvent("ITEM_UNLOCKED")
+        self:RegisterEvent("ITEM_LOCKED")
+        self:RegisterEvent("ITEM_UNLOCKED")
     elseif event == "ITEM_LOCKED" then
         GwBagFrame.smsj:Show()
-        SellJunkFrame:UnregisterEvent("ITEM_LOCKED")
+        self:UnregisterEvent("ITEM_LOCKED")
     elseif event == "ITEM_UNLOCKED" then
-        SellJunkFrame:UnregisterEvent("ITEM_UNLOCKED")
+        self:UnregisterEvent("ITEM_UNLOCKED")
         -- Check whether vendor refuses to buy items
         if mBagID and mBagSlot and mBagID ~= -1 and mBagSlot ~= -1 then
             local _, count, locked = GetContainerItemInfo(mBagID, mBagSlot)
@@ -718,7 +718,7 @@ local function LoadBag(helpers)
     -- setup settings button and its dropdown items
     f.buttonSort:HookScript(
         "OnClick",
-        function(self)
+        function()
             PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
             SortBags()
         end
@@ -760,7 +760,7 @@ local function LoadBag(helpers)
 
         dd.newOrder.checkbutton:HookScript(
             "OnClick",
-            function(self)
+            function()
                 local newStatus = not GetSetting("BAG_REVERSE_NEW_LOOT")
                 SetInsertItemsLeftToRight(newStatus)
                 dd.newOrder.checkbutton:SetChecked(newStatus)
@@ -771,7 +771,7 @@ local function LoadBag(helpers)
 
         dd.sortOrder.checkbutton:HookScript(
             "OnClick",
-            function(self)
+            function()
                 local newStatus = not GetSetting("BAG_ITEMS_REVERSE_SORT")
                 SetSortBagsRightToLeft(newStatus)
                 dd.sortOrder.checkbutton:SetChecked(newStatus)
@@ -782,7 +782,7 @@ local function LoadBag(helpers)
 
         dd.bagOrder.checkbutton:HookScript(
             "OnClick",
-            function(self)
+            function()
                 local newStatus = not GetSetting("BAG_REVERSE_SORT")
                 dd.bagOrder.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_REVERSE_SORT", newStatus)
@@ -794,7 +794,7 @@ local function LoadBag(helpers)
 
         dd.itemBorder.checkbutton:HookScript(
             "OnClick",
-            function(self)
+            function()
                 local newStatus = not GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW")
                 dd.itemBorder.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", newStatus)
@@ -805,7 +805,7 @@ local function LoadBag(helpers)
 
         dd.junkIcon.checkbutton:HookScript(
             "OnClick",
-            function(self)
+            function()
                 local newStatus = not GetSetting("BAG_ITEM_JUNK_ICON_SHOW")
                 dd.junkIcon.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_JUNK_ICON_SHOW", newStatus)
@@ -816,7 +816,7 @@ local function LoadBag(helpers)
 
         dd.scrapIcon.checkbutton:HookScript(
             "OnClick",
-            function(self)
+            function()
                 local newStatus = not GetSetting("BAG_ITEM_SCRAP_ICON_SHOW")
                 dd.scrapIcon.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_SCRAP_ICON_SHOW", newStatus)
@@ -827,7 +827,7 @@ local function LoadBag(helpers)
 
         dd.upgradeIcon.checkbutton:HookScript(
             "OnClick",
-            function(self)
+            function()
                 local newStatus = not GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW")
                 dd.upgradeIcon.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_UPGRADE_ICON_SHOW", newStatus)
@@ -838,7 +838,7 @@ local function LoadBag(helpers)
 
         dd.professionColor.checkbutton:HookScript(
             "OnClick",
-            function(self)
+            function()
                 local newStatus = not GetSetting("BAG_PROFESSION_BAG_COLOR")
                 dd.professionColor.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_PROFESSION_BAG_COLOR", newStatus)
@@ -849,7 +849,7 @@ local function LoadBag(helpers)
 
         dd.vendorGrays.checkbutton:HookScript(
             "OnClick",
-            function(self)
+            function()
                 local newStatus = not GetSetting("BAG_VENDOR_GRAYS")
                 dd.vendorGrays.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_VENDOR_GRAYS", newStatus)
@@ -860,7 +860,7 @@ local function LoadBag(helpers)
 
         dd.showItemLvl.checkbutton:HookScript(
             "OnClick",
-            function(self)
+            function()
                 local newStatus = not GetSetting("BAG_SHOW_ILVL")
                 dd.showItemLvl.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_SHOW_ILVL", newStatus)
@@ -871,7 +871,7 @@ local function LoadBag(helpers)
 
         dd.separateBags.checkbutton:HookScript(
             "OnClick",
-            function(self)
+            function()
                 local newStatus = not GetSetting("BAG_SEPARATE_BAGS")
                 dd.separateBags.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_SEPARATE_BAGS", newStatus)
@@ -1050,7 +1050,7 @@ local function LoadBag(helpers)
             _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(self.editBox:GetText())
             return
         end,
-        OnButton2 = function(self, data)
+        OnButton2 = function(_, data)
             SetSetting("BAG_HEADER_NAME" .. data, "")
 
             if tonumber(data) > 0 then

@@ -738,7 +738,7 @@ local function updateTab(fmSpellbook)
     for tab = 1, 5 do
         local fmTab = fmSpellbook.tabContainers[tab]
         if tab == 4 then
-            UpdatePvPTab(fmSpellbook, fmTab)
+            UpdatePvPTab(fmTab)
         else
             updateRegTab(fmSpellbook, fmTab, tab)
         end

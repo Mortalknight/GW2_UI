@@ -176,7 +176,7 @@ local function detailsControls_OnHide(self)
 end
 GW.AddForProfiling("reputation", "detailsControls_OnHide", detailsControls_OnHide)
 
-local function details_OnClick(self, button)
+local function details_OnClick(self)
     if self.item.details:IsShown() then
         detailFaction(self.item.factionID, false)
         self:SetHeight(DETAIL_H)
@@ -206,13 +206,8 @@ local function setDetailEx(
     earnedValue,
     atWarWith,
     canToggleAtWar,
-    isHeader,
-    isCollapsed,
-    hasRep,
     isWatched,
-    isChild,
-    factionID,
-    hasBonusRepGain)
+    factionID)
     frame:Show()
 
     frame.factionIndex = factionIndex
@@ -463,13 +458,8 @@ local function setDetail(frame, dat)
         dat.earnedValue,
         dat.atWarWith,
         dat.canToggleAtWar,
-        dat.isHeader,
-        dat.isCollapsed,
-        dat.hasRep,
         dat.isWatched,
-        dat.isChild,
-        dat.factionID,
-        dat.hasBonusRepGain
+        dat.factionID
     )
 end
 GW.AddForProfiling("reputation", "setDetail", setDetail)
@@ -484,7 +474,7 @@ updateDetails = function()
     local expCount = 0
 
     -- clean up facData table (re-use instead of reallocate to prevent mem bloat)
-    for k, v in pairs(facData) do
+    for _, v in pairs(facData) do
         v.loaded = false
     end
     table.wipe(facOrder)
@@ -788,7 +778,7 @@ local function updateDetailsSearch(s)
     local expCount = 0
 
     -- clean up facData table (re-use instead of reallocate to prevent mem bloat)
-    for k, v in pairs(facData) do
+    for _, v in pairs(facData) do
         v.loaded = false
     end
     table.wipe(facOrder)
@@ -880,7 +870,7 @@ local function updateDetailsSearch(s)
 end
 GW.AddForProfiling("reputation", "updateDetailsSearch", updateDetailsSearch)
 
-local function dynamicOffset(self, offset)
+local function dynamicOffset(_, offset)
     local heightSoFar = 0
     local element = 0
     local scrollHeight = 0
@@ -916,12 +906,12 @@ local function LoadReputation(tabContainer)
     fmGPR.categories.scroll = 1
     fmGPR.categories:EnableMouseWheel(true)
     fmGPR.categories:RegisterEvent("UPDATE_FACTION")
-    local fnGPR_OnEvent = function(self, event)
+    local fnGPR_OnEvent = function(self)
         if not GW.inWorld then
             return
         end
         updateSavedReputation()
-        if GwPaperReputation:IsShown() then
+        if self:GetParent():IsShown() then
             updateOldData()
         end
     end

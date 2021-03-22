@@ -68,6 +68,18 @@ local function outfitEquipButton_OnClick()
 end
 GW.AddForProfiling("character_equipset", "outfitEquipButton_OnClick", outfitEquipButton_OnClick)
 
+
+local function GearSetButton_Edit(self)
+    GearManagerDialogPopup:SetParent(GwDressingRoom)
+    GearManagerDialogPopup:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
+    GearManagerDialogPopup:Show()
+
+    GearManagerDialogPopup.isEdit = true
+    GearManagerDialogPopup.setID = self.setID
+    GearManagerDialogPopup.origName = self.setName
+    RecalculateGearManagerDialogPopup(self.setName, self.icon:GetTexture())
+end
+
 local function DropDownOutfit_OnLoad(self)
     self.Dropdown = self:GetParent().DropDownOutfitFrame
     UIDropDownMenu_Initialize(self.Dropdown, nil, "MENU")
@@ -133,17 +145,6 @@ local function outfitEditButton_OnClick(self)
     ToggleDropDownMenu(1, nil, self:GetParent().DropDownOutfitFrame, self, 0, 0)
 end
 GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditButton_OnClick)
-
-function GearSetButton_Edit(self)
-    GearManagerDialogPopup:SetParent(GwDressingRoom)
-    GearManagerDialogPopup:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
-    GearManagerDialogPopup:Show()
-
-    GearManagerDialogPopup.isEdit = true
-    GearManagerDialogPopup.setID = self.setID
-    GearManagerDialogPopup.origName = self.setName
-    RecalculateGearManagerDialogPopup(self.setName, self.icon:GetTexture())
-end
 
 local function outfitDeleteButton_OnClick(self)
     WarningPrompt(

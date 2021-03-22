@@ -81,7 +81,7 @@ local function updateBoss_RaidMarkers(self)
 end
 GW.AddForProfiling("unitframes", "updateBoss_RaidMarkers", updateBoss_RaidMarkers)
 
-local function bossFrame_OnEvent(self, event, unit)
+local function bossFrame_OnEvent(self, event)
     if not self:IsShown() then
         return
     end

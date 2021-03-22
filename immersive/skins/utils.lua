@@ -31,11 +31,11 @@ local function SkinUIDropDownMenu()
             expandArrow:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
             expandArrow:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
         end
-    
+
         local Backdrop = _G[listFrameName .. "Backdrop"]
         Backdrop:StripTextures()
         Backdrop:CreateBackdrop(constBackdropFrame)
-    
+
         local menuBackdrop = _G[listFrameName .. "MenuBackdrop"]
         menuBackdrop:StripTextures()
         menuBackdrop:CreateBackdrop(constBackdropFrame)

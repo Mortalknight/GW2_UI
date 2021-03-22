@@ -29,7 +29,7 @@ local EMPTY_IN_RAD = 128 * math.pi / 180 -- the angle in radians for an empty ba
 local FULL_IN_RAD = 2 * math.pi / 180 -- the angle in radians for a full bar
 local DELTA_RAD = EMPTY_IN_RAD - FULL_IN_RAD
 
-local function fill_OnFinished(self, flag)
+local function fill_OnFinished(self)
     -- on finishing refill, unregister any event notifications until next spellcast
     -- also force bar to "full" state just in case weirdness happened somewhere
     local f = self:GetParent()
@@ -111,7 +111,7 @@ local function initBar(self, pew)
             return
         end
         if string.find(v, ",") then
-            for k, v in pairs(GW.splitString(v, ",", true)) do
+            for _, v in pairs(GW.splitString(v, ",", true)) do
                 if IsSpellKnown(tonumber(v)) then
                     self.spellId = tonumber(v)
                     break
@@ -128,7 +128,7 @@ local function initBar(self, pew)
             v = SecureCmdOptionParse(DODGEBAR_SPELLS_ATTR[GW.myclass])
             if string.find(v, ",") then
                 local found = false
-                for k, v in pairs(GW.splitString(v, ",", true)) do
+                for _, v in pairs(GW.splitString(v, ",", true)) do
                     if IsSpellKnown(tonumber(v)) then
                         self:SetAttribute("spell", tonumber(v))
                         found = true
@@ -245,7 +245,7 @@ GW.AddForProfiling("dodgebar", "dodge_OnEvent", dodge_OnEvent)
 local function dodge_OnEnter(self)
     -- change the masks/art to the hover version
     local af = self.arcfill
-    for i, v in ipairs(af.masked) do
+    for _, v in ipairs(af.masked) do
         v:AddMaskTexture(af.mask_hover)
         v:RemoveMaskTexture(af.mask_normal)
     end
@@ -264,7 +264,7 @@ GW.AddForProfiling("dodgebar", "dodge_OnEnter", dodge_OnEnter)
 local function dodge_OnLeave(self)
     -- change the masks/art to the non-hover (normal) version
     local af = self.arcfill
-    for i, v in ipairs(af.masked) do
+    for _, v in ipairs(af.masked) do
         v:AddMaskTexture(af.mask_normal)
         v:RemoveMaskTexture(af.mask_hover)
     end

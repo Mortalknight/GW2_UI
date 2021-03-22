@@ -195,7 +195,7 @@ end
 GW.healthBarAnimation = healthBarAnimation
 GW.AddForProfiling("unitframes", "healthBarAnimation", healthBarAnimation)
 
-local function setUnitPortraitFrame(self, event)
+local function setUnitPortraitFrame(self)
     if self.portrait == nil or self.background == nil then
         return
     end
@@ -251,7 +251,7 @@ local function setUnitPortraitFrame(self, event)
         local npcId = GW.GetUnitCreatureId(self.unit)
 
         for modId, _ in pairs(DBM.ModLists) do
-            for i, id in ipairs(DBM.ModLists[modId]) do
+            for _, id in ipairs(DBM.ModLists[modId]) do
                 local mod = DBM:GetModByName(id)
                 if mod.creatureId ~= nil and mod.creatureId == npcId then
                     foundBossMod = true
@@ -313,7 +313,7 @@ local function updateAvgItemLevel(self, event, guid)
 end
 GW.AddForProfiling("unitframes", "updateAvgItemLevel", updateAvgItemLevel)
 
-local function updateRaidMarkers(self, event)
+local function updateRaidMarkers(self)
     local i = GetRaidTargetIndex(self.unit)
     if i == nil then
         self.raidmarker:SetTexture(nil)
@@ -376,7 +376,7 @@ local function protectedCastAnimation(self, powerPrec)
 end
 GW.AddForProfiling("unitframes", "protectedCastAnimation", protectedCastAnimation)
 
-local function hideCastBar(self, event)
+local function hideCastBar(self)
     self.castingbarBackground:Hide()
     self.castingString:Hide()
 
@@ -474,7 +474,7 @@ local function updateCastValues(self, event)
 end
 GW.AddForProfiling("unitframes", "updateCastValues", updateCastValues)
 
-local function updatePowerValues(self, event, hideAt0)
+local function updatePowerValues(self, hideAt0)
     local powerType, powerToken, _ = UnitPowerType(self.unit)
     local power = UnitPower(self.unit, powerType)
     local powerMax = UnitPowerMax(self.unit, powerType)
@@ -641,8 +641,8 @@ local function target_OnEvent(self, event, unit)
         if (ttf) then unitFrameData(ttf, event) end
         updateHealthValues(self, event)
         if (ttf) then updateHealthValues(ttf, event) end
-        updatePowerValues(self, event)
-        if (ttf) then updatePowerValues(ttf, event) end
+        updatePowerValues(self)
+        if (ttf) then updatePowerValues(ttf) end
         updateCastValues(self, event)
         if (ttf) then updateCastValues(ttf, event) end
         updateRaidMarkers(self, event)
@@ -667,7 +667,7 @@ local function target_OnEvent(self, event, unit)
             if UnitExists("targettarget") then
                 unitFrameData(ttf, event)
                 updateHealthValues(ttf, event)
-                updatePowerValues(ttf, event)
+                updatePowerValues(ttf)
                 updateCastValues(ttf, event)
                 updateRaidMarkers(ttf, event)
             end
@@ -691,7 +691,7 @@ local function target_OnEvent(self, event, unit)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
-            updatePowerValues(self, event)
+            updatePowerValues(self)
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START") then
             updateCastValues(self, event)
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
@@ -711,8 +711,8 @@ local function focus_OnEvent(self, event, unit)
         if (ttf) then unitFrameData(ttf, event) end
         updateHealthValues(self, event)
         if (ttf) then updateHealthValues(ttf, event) end
-        updatePowerValues(self, event)
-        if (ttf) then updatePowerValues(ttf, event) end
+        updatePowerValues(self)
+        if (ttf) then updatePowerValues(ttf) end
         updateCastValues(self, event)
         if (ttf) then updateCastValues(ttf, event) end
         updateRaidMarkers(self, event)
@@ -737,7 +737,7 @@ local function focus_OnEvent(self, event, unit)
             if UnitExists("focustarget") then
                 unitFrameData(ttf, event)
                 updateHealthValues(ttf, event)
-                updatePowerValues(ttf, event)
+                updatePowerValues(ttf)
                 updateCastValues(ttf, event)
                 updateRaidMarkers(ttf, event)
             end
@@ -750,7 +750,7 @@ local function focus_OnEvent(self, event, unit)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
-            updatePowerValues(self, event)
+            updatePowerValues(self)
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START") then
             updateCastValues(self, event)
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
@@ -867,7 +867,7 @@ local function LoadTarget()
         local fctf = CreateFrame("Frame", nil, NewUnitFrame)
         fctf:SetFrameLevel(NewUnitFrame:GetFrameLevel() + 3)
         fctf:RegisterEvent("UNIT_COMBAT")
-        fctf:SetScript("OnEvent", function(self, event, unit, ...)
+        fctf:SetScript("OnEvent", function(self, _, unit, ...)
             if self.unit == unit then
                 CombatFeedback_OnCombatEvent(self, ...)
             end

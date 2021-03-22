@@ -34,7 +34,7 @@ local function manageButton()
     local GwGroupManage = CreateFrame("Frame", nil, UIParent, "GwGroupManage")
     local fmGMGB = CreateFrame("Frame", "GwManageGroupButton", UIParent, "GwManageGroupButtonTmpl")
 
-    local fnGMGB_OnClick = function(self, button)
+    local fnGMGB_OnClick = function()
         if GwGroupManage:IsShown() then
             GwGroupManage:Hide()
         else
@@ -84,26 +84,26 @@ local function manageButton()
         fmGMGIB:SetTextColor(1, 1, 1, 0.5)
     end
 
-    local fnGBITP_OnClick = function(self, button)
+    local fnGBITP_OnClick = function()
         inviteToGroup(GwManageGroupInviteBox:GetText())
         GwManageGroupInviteBox:SetText("")
         GwManageGroupInviteBox:ClearFocus()
     end
     fmGBITP:SetScript("OnClick", fnGBITP_OnClick)
 
-    local fnGMGLB_OnClick = function(self, button)
+    local fnGMGLB_OnClick = function()
         C_PartyInfo.LeaveParty()
     end
     fmGMGLB:SetScript("OnClick", fnGMGLB_OnClick)
 
-    local fmButtonSetActiceDeactive = function(self, event, ...)
+    local fmButtonSetActiceDeactive = function(self)
         if UnitIsGroupLeader("player") or UnitIsGroupAssistant("player") then
             self:Enable()
         else
             self:Disable()
         end
     end
-    local fnGGRC_OnClick = function(self, button)
+    local fnGGRC_OnClick = function()
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         DoReadyCheck()
     end
@@ -116,7 +116,7 @@ local function manageButton()
     fmGGRC:RegisterEvent("GROUP_ROSTER_UPDATE")
     fmGGRC:RegisterEvent("RAID_ROSTER_UPDATE")
 
-    local fmGGCD_OnClick = function(self, button)
+    local fmGGCD_OnClick = function()
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         C_PartyInfo.DoCountdown(10)
     end
@@ -130,7 +130,7 @@ local function manageButton()
     fmGGCD:RegisterEvent("GROUP_ROSTER_UPDATE")
     fmGGCD:RegisterEvent("RAID_ROSTER_UPDATE")
 
-    local fnGGRlC_OnClick = function(self, button)
+    local fnGGRlC_OnClick = function()
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         InitiateRolePoll()
     end
@@ -139,7 +139,7 @@ local function manageButton()
     fmGGRlC:RegisterEvent("GROUP_ROSTER_UPDATE")
     fmGGRlC:RegisterEvent("RAID_ROSTER_UPDATE")
 
-    local fnGGMC_OnEvent = function(self, event, ...)
+    local fnGGMC_OnEvent = function(self)
         if UnitIsGroupLeader("player") then
             self:Enable()
         else
@@ -152,7 +152,7 @@ local function manageButton()
             self:SetText(CONVERT_TO_RAID)
         end
     end
-    local fnGGMC_OnClick = function(self, button)
+    local fnGGMC_OnClick = function()
         if IsInRaid() then
             C_PartyInfo.ConvertToParty()
         else
@@ -187,7 +187,7 @@ local function manageButton()
         self:RegisterEvent("RAID_ROSTER_UPDATE")
         self:RegisterEvent("PLAYER_REGEN_ENABLED")
     end
-    local fnGMIG_OnEvent = function(self, event, ...)
+    local fnGMIG_OnEvent = function(self)
         if IsInGroup() then
             self:Show()
             GwGroupManage:SetHeight(280)
@@ -219,7 +219,7 @@ local function manageButton()
         _G[self:GetName() .. "Ground"]:SetTextColor(255 / 255, 241 / 255, 209 / 255)
         _G[self:GetName() .. "Ground"]:SetText(L["WM"])
     end
-    local fnGWMM_OnEvent = function(self)
+    local fnGWMM_OnEvent = function()
         local inCombat = UnitAffectingCombat("player")
         if GetSetting("WORLD_MARKER_FRAME") and ((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and
                 (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) then
@@ -331,12 +331,12 @@ local function manageButton()
         fadeIn:SetFromAlpha(0.0)
         fadeIn:SetToAlpha(1.0)
         fadeIn:SetDuration(0.15)
-        fmGMGB.fadeOut = function(self)
+        fmGMGB.fadeOut = function()
             fi:Stop()
             fo:Stop()
             fo:Play()
         end
-        fmGMGB.fadeIn = function(self)
+        fmGMGB.fadeIn = function()
             fi:Stop()
             fo:Stop()
             fi:Play()

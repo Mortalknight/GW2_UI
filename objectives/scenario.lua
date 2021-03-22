@@ -254,7 +254,7 @@ local function updateCurrentScenario(self, event, ...)
     local bonusSteps = C_Scenario.GetBonusSteps()
     local numCriteriaPrev = numCriteria
 
-    for k, v in pairs(bonusSteps) do
+    for _, v in pairs(bonusSteps) do
         local bonusStepIndex = v
         local _, _, numCriteria = C_Scenario.GetStepInfo(bonusStepIndex)
 
@@ -345,7 +345,7 @@ GW.AddForProfiling("scenario", "scenarioTimerStop", scenarioTimerStop)
 local function scenarioAffixes()
     local _, affixes, _ = C_ChallengeMode.GetActiveKeystoneInfo()
     local i = 1
-    for k, v in pairs(affixes) do
+    for _, v in pairs(affixes) do
         if i == 1 then
             _G.GwQuestTrackerTimer.height = GwQuestTrackerTimer.height + 40
             GwQuestTrackerTimer.timer:ClearAllPoints()
@@ -479,7 +479,7 @@ local function scenarioTimerUpdate(...)
 end
 GW.AddForProfiling("scenario", "scenarioTimerUpdate", scenarioTimerUpdate)
 
-local function scenarioTimerOnEvent(self, event, ...)
+local function scenarioTimerOnEvent(_, event, ...)
     if (event == "PLAYER_ENTERING_WORLD" or event == nil) then
         -- ScenarioTimer_CheckTimers(GetWorldElapsedTimers());
         scenarioTimerUpdate(GetWorldElapsedTimers())

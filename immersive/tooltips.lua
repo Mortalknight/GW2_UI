@@ -195,7 +195,7 @@ local function RemoveTrashLines(self)
     end
 end
 
-local function TT_OnEvent(self, event, unitGUID)
+local function TT_OnEvent(_, event, unitGUID)
     if UnitExists("mouseover") and UnitGUID("mouseover") == unitGUID then
         local itemLevel, retryUnit, retryTable, iLevelDB = GetUnitItemLevel("mouseover")
         if itemLevel == "tooSoon" then
@@ -741,7 +741,7 @@ local function LoadTooltips()
 
         local eventFrame = CreateFrame("Frame")
         eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
-        eventFrame:SetScript("OnEvent", function(self, event, key)
+        eventFrame:SetScript("OnEvent", function(_, _, key)
             if key == "LSHIFT" or key == "RSHIFT" or key == "LCTRL" or key == "RCTRL" or key == 'LALT' or key == 'RALT' then
                 local owner = GameTooltip:GetOwner()
                 local notOnAuras = not (owner and owner.UpdateTooltip)

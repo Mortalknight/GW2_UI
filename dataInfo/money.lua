@@ -35,7 +35,7 @@ local function Money_OnClick(self, button)
 
             local list = GetStorage(nil, "REALM")
             if list then
-                for realm, char in pairs(list) do
+                for _, char in pairs(list) do
                     if char and type(char) == "table" then
                         if char.money and char.money >= 0 then
                             tinsert(menuList,
@@ -74,7 +74,7 @@ local function Money_OnEnter(self)
     local resetInfoFormatter = strjoin("", "|cffaaaaaa", L["Reset Character Data: Hold Shift + Right Click"], "|r")
 
     if list then
-        for realm, char in pairs(list) do
+        for _, char in pairs(list) do
             if char and type(char) == "table" then
                 if char.money and char.money >= 0 then
                     tinsert(myGold,

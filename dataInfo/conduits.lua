@@ -25,7 +25,7 @@ local function LandingButton_OnEnter(self)
 
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine( format("|cffFFFFFF%s:|r %s", COVENANT_PREVIEW_SOULBINDS, soulbindData.name), nil, nil, nil, true)
-       
+
 	    local nodes = soulbindData.tree.nodes
         local conduits = {}
         local traits = {}

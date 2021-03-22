@@ -47,7 +47,7 @@ local function MirrorTimer_Show(timer, value, maxvalue, scale, paused, label)
 end
 GW.MirrorTimer_Show = MirrorTimer_Show
 
-local function mirrorTimerFrame_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6)
+local function mirrorTimerFrame_OnEvent(self, event, arg1)
     if event == "PLAYER_ENTERING_WORLD" then
         for index = 1, _G.MIRRORTIMER_NUMTIMERS do
             local timer, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(index)

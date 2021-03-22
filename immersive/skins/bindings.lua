@@ -43,7 +43,7 @@ local function LoadBindingsUISkin()
     _G.KeyBindingFrameScrollFrame:SkinScrollFrame()
     _G.KeyBindingFrameScrollFrameScrollBar:SkinScrollBar()
 
-    hooksecurefunc("BindingButtonTemplate_SetupBindingButton", function(binding, button)
+    hooksecurefunc("BindingButtonTemplate_SetupBindingButton", function(_, button)
         button:SkinButton(false, true)
     end)
 

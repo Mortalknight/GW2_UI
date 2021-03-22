@@ -86,7 +86,6 @@ local function getNearestQuestPOI()
     end
 
     local closestQuestID
-    local xQ, yQ = nil, nil
     local minDistSqr = math.huge
     local isWQ = false
     wipe(questCompass)
@@ -238,7 +237,7 @@ local function RemoveTrackerNotificationOfType(doType)
 end
 GW.RemoveTrackerNotificationOfType = RemoveTrackerNotificationOfType
 
-local function removeNotification(key)
+local function removeNotification()
     currentNotificationKey = ""
     GwObjectivesNotification.shouldDisplay = false
 end
@@ -304,7 +303,7 @@ local function SetObjectiveNotification()
     if not GetSetting("SHOW_QUESTTRACKER_COMPASS") then return end
 
     local data, dataBefore
-    for k, v in pairs(notifications) do
+    for k, _ in pairs(notifications) do
         if not notifications[k].COMPASS and notifications[k] ~= nil then
             if data ~= nil then
                 if prioritys(data.TYPE, notifications[k].TYPE) then

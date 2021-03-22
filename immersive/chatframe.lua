@@ -73,7 +73,7 @@ do
             return (w ~= "" and w) or (y ~= "" and y) or ""
         end
     end
-    local hyperLinkFunc = function(w, x, y)
+    local hyperLinkFunc = function(w, _, y)
         if w ~= "" then
             return
         end
@@ -187,14 +187,14 @@ local function handleChatFrameFadeIn(chatFrame)
 
     setChatBackgroundColor(chatFrame)
     local frameName = chatFrame:GetName()
-    for k, v in pairs(CHAT_FRAME_TEXTURES) do
+    for _, v in pairs(CHAT_FRAME_TEXTURES) do
         local object = _G[frameName .. v]
         if object and object:IsShown() then
             UIFrameFadeIn(object, 0.5, object:GetAlpha(), 1)
         end
     end
     if chatFrame.isDocked == 1 then
-        for k, v in pairs(gw_fade_frames) do
+        for _, v in pairs(gw_fade_frames) do
             if v == ChatFrameToggleVoiceDeafenButton or v == ChatFrameToggleVoiceMuteButton then
                 if v == ChatFrameToggleVoiceDeafenButton and ChatFrameToggleVoiceDeafenButton:IsShown() then
                     UIFrameFadeIn(v, 0.5, v:GetAlpha(), 1)
@@ -237,14 +237,14 @@ local function handleChatFrameFadeOut(chatFrame)
     local chatAlpha = select(6, GetChatWindowInfo(chatFrame:GetID()))
     local frameName = chatFrame:GetName()
 
-    for k, v in pairs(CHAT_FRAME_TEXTURES) do
+    for _, v in pairs(CHAT_FRAME_TEXTURES) do
         local object = _G[frameName .. v]
         if object and object:IsShown() then
             UIFrameFadeOut(object, 2, object:GetAlpha(), 0)
         end
     end
     if chatFrame.isDocked == 1 then
-        for k, v in pairs(gw_fade_frames) do
+        for _, v in pairs(gw_fade_frames) do
             if v == ChatFrameToggleVoiceDeafenButton or v == ChatFrameToggleVoiceMuteButton then
                 if v == ChatFrameToggleVoiceDeafenButton and ChatFrameToggleVoiceDeafenButton:IsShown() then
                     UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
@@ -454,7 +454,7 @@ local function styleChatWindow(frame)
     frame.button.tex:SetAllPoints()
     frame.button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
 
-    frame.button:SetScript("OnMouseUp", function(_, btn)
+    frame.button:SetScript("OnMouseUp", function()
         if not GW2_UICopyChatFrame:IsShown() then
             local _, fontSize = FCF_GetChatWindowInfo(frame:GetID())
             if fontSize < 10 then fontSize = 12 end
@@ -590,7 +590,7 @@ local function LoadChat()
         frame:SetFading(shouldFading)
     end
 
-    hooksecurefunc("FCF_SetTemporaryWindowType", function(chatFrame, chatType, chatTarget)
+    hooksecurefunc("FCF_SetTemporaryWindowType", function(chatFrame)
         styleChatWindow(chatFrame)
         FCFTab_UpdateAlpha(chatFrame)
         chatFrame:SetTimeVisible(100)
@@ -614,7 +614,6 @@ local function LoadChat()
 
     hooksecurefunc("FCF_MinimizeFrame", function(chatFrame)
         if chatFrame.minimized then
-            local id = chatFrame:GetID()
             if chatFrame.Container then chatFrame.Container:SetAlpha(0) end
             if not chatFrame.minFrame.minimiizeStyled then
                 chatFrame.minFrame:StripTextures(true)
@@ -661,7 +660,7 @@ local function LoadChat()
 
     hooksecurefunc(
         "FCFTab_UpdateColors",
-        function(self, selected)
+        function(self)
             self:GetFontString():SetTextColor(1, 1, 1)
             self.leftSelectedTexture:SetVertexColor(1, 1, 1)
             self.middleSelectedTexture:SetVertexColor(1, 1, 1)

@@ -96,7 +96,7 @@ local function SkinBubble(frame, backdrop)
     frame.isSkinnedGW2_UI = true
 end
 
-local function ChatBubble_OnEvent(self, event, msg, sender, _, _, _, _, _, _, _, _, _, guid)
+local function ChatBubble_OnEvent(_, event, msg, sender)
     if event == "PLAYER_ENTERING_WORLD" then --Clear caches
         wipe(messageToSender)
     else

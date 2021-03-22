@@ -1,5 +1,4 @@
 local _, GW = ...
-local L = GW.L
 local CommaValue = GW.CommaValue
 
 local guildTable = {}
@@ -166,7 +165,7 @@ local function Guild_OnEnter(self)
 end
 GW.Guild_OnEnter = Guild_OnEnter
 
-local function inviteClick(self, name, guid)
+local function inviteClick(_, name, guid)
     GW.EasyMenu:Hide()
 
     if not (name and name ~= "") then return end
@@ -181,7 +180,7 @@ local function inviteClick(self, name, guid)
     end
 end
 
-local function whisperClick(self, playerName)
+local function whisperClick(_, playerName)
     GW.EasyMenu:Hide()
     SetItemRef("player:" .. playerName, format("|Hplayer:%1$s|h[%1$s]|h", playerName), "LeftButton")
 end

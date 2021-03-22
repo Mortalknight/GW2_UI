@@ -1,9 +1,7 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
-local StopAnimation = GW.StopAnimation
 local AddToClique = GW.AddToClique
 local createNormalUnitFrame = GW.createNormalUnitFrame
 local IsIn = GW.IsIn
@@ -25,7 +23,7 @@ local function updateHealthTextString(self, health, healthPrecentage)
 end
 GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextString)
 
-local function updateHealthData(self, event)
+local function updateHealthData(self)
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
     local absorb = UnitGetTotalAbsorbs(self.unit)
@@ -143,17 +141,17 @@ local function unitFrameData(self)
     SetPortraitTexture(self.portrait, self.unit)
 end
 
-local function player_OnEvent(self, event, unit)
+local function player_OnEvent(self, event)
     if event == "PLAYER_ENTERING_WORLD" then
         unitFrameData(self)
         updateHealthData(self, event)
-        GW.updatePowerValues(self, event, false)
+        GW.updatePowerValues(self, false)
     elseif IsIn(event, "PLAYER_LEVEL_UP", "GROUP_ROSTER_UPDATE", "UNIT_PORTRAIT_UPDATE") then
         unitFrameData(self)
     elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
         updateHealthData(self)
     elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT", "UPDATE_SHAPESHIFT_FORM", "ACTIVE_TALENT_GROUP_CHANGED") then
-        GW.updatePowerValues(self, event, false)
+        GW.updatePowerValues(self, false)
     elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         GW.PlayerSelectPvp(self)
     elseif event == "RESURRECT_REQUEST" then
@@ -257,7 +255,7 @@ local function LoadPlayerFrame()
     fadeIn:SetToAlpha(1.0)
     fadeIn:SetDuration(0.1)
 
-    pvp.fadeOut = function(self)
+    pvp.fadeOut = function()
         pagIn:Stop()
         pagOut:Stop()
         pagOut:Play()

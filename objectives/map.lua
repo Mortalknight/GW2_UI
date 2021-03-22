@@ -90,7 +90,7 @@ local function SetMinimapHover()
 end
 GW.SetMinimapHover = SetMinimapHover
 
-local function lfgAnim(self, elapse)
+local function lfgAnim(_, elapse)
     if Minimap:IsShown() then
         QueueStatusMinimapButtonIcon:SetAlpha(1)
     else
@@ -117,7 +117,7 @@ end
 GW.AddForProfiling("map", "lfgAnimStop", lfgAnimStop)
 
 local function hideMiniMapIcons()
-    for k, v in pairs(MAP_FRAMES_HIDE) do
+    for _, v in pairs(MAP_FRAMES_HIDE) do
         if v then
             v:Hide()
             v:SetScript(
@@ -233,7 +233,7 @@ local function getMinimapShape()
     return "SQUARE"
 end
 
-local function stackIcons(self, event, ...)
+local function stackIcons(self)
     local children = {Minimap:GetChildren()}
     for _, child in ipairs(children) do
         if child:HasScript("OnClick") and child:IsShown() and child:GetName() then
@@ -270,14 +270,14 @@ local function stackIcons(self, event, ...)
 end
 GW.AddForProfiling("map", "stackIcons", stackIcons)
 
-local function stack_OnEvent(self, event, ...)
+local function stack_OnEvent(self, event)
     if event == "PLAYER_ENTERING_WORLD" then
         stackIcons(self)
     end
 end
 GW.AddForProfiling("map", "stack_OnEvent", stack_OnEvent)
 
-local function stack_OnClick(self, button)
+local function stack_OnClick(self)
     if not self.container:IsShown() then
         stackIcons(self)
         self.container:Show()
@@ -288,7 +288,7 @@ local function stack_OnClick(self, button)
 end
 GW.AddForProfiling("map", "stack_OnClick", stack_OnClick)
 
-local function minimap_OnShow(self)
+local function minimap_OnShow()
     if GwAddonToggle and GwAddonToggle.gw_Showing then
         GwAddonToggle:Show()
     end
@@ -298,7 +298,7 @@ local function minimap_OnShow(self)
 end
 GW.AddForProfiling("map", "minimap_OnShow", minimap_OnShow)
 
-local function minimap_OnHide(self)
+local function minimap_OnHide()
     if GwAddonToggle then
         GwAddonToggle:Hide()
     end
@@ -551,7 +551,7 @@ local function LoadMinimap()
 
     Minimap:SetScript(
         "OnEnter",
-        function(self)
+        function()
             hoverMiniMap()
             Minimap:SetScript(
                 "OnUpdate",
@@ -578,7 +578,7 @@ local function LoadMinimap()
     )
     Minimap:SetScript(
         "OnMouseDown",
-        function(self, event)
+        function(_, event)
             if event == "RightButton" then
                 ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "MiniMapTracking", 0, -5)
 

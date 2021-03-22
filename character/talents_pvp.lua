@@ -20,7 +20,7 @@ local function spellButton_OnEnter(self)
 end
 GW.AddForProfiling("talents_pvp", "spellButton_OnEnter", spellButton_OnEnter)
 
-local function slotButton_OnDragStart(self, button)
+local function slotButton_OnDragStart(self)
     if InCombatLockdown() or self.isFuture or self.isPassive then
         return
     end
@@ -160,7 +160,7 @@ local function button_OnModifiedClick(self)
 end
 GW.AddForProfiling("talents_pvp", "button_OnModifiedClick", button_OnModifiedClick)
 
-local function spellButton_OnClick(self, button, down)
+local function spellButton_OnClick(self)
     if IsModifiedClick() then
         return button_OnModifiedClick(self)
     end
@@ -186,7 +186,7 @@ local function spellButton_OnClick(self, button, down)
 end
 GW.AddForProfiling("talents_pvp", "spellButton_OnClick", spellButton_OnClick)
 
-local function slotButton_OnClick(self, button, down)
+local function slotButton_OnClick(self)
     if not self.isEnabled then
         return
     end
@@ -245,15 +245,15 @@ end
 GW.AddForProfiling("talents_pvp", "setSlotButton", setSlotButton)
 
 local talentIds = {}
-local function UpdatePvPTab(fmSpellbook, fmTab)
+local function UpdatePvPTab(fmTab)
     if not C_SpecializationInfo.CanPlayerUsePVPTalentUI() then
-        for k, v in pairs(fmTab.groups) do
+        for _, v in pairs(fmTab.groups) do
             v:Hide()
         end
         fmTab.groups["lock"]:Show()
         return
     else
-        for k, v in pairs(fmTab.groups) do
+        for _, v in pairs(fmTab.groups) do
             v:Show()
         end
         fmTab.groups["lock"]:Hide()
@@ -271,7 +271,7 @@ local function UpdatePvPTab(fmSpellbook, fmTab)
 
     wipe(talentIds)
     local tidx = 1
-    for i, slot in ipairs({"TalentSlot1", "TalentSlot2", "TalentSlot3"}) do
+    for i, _ in ipairs({"TalentSlot1", "TalentSlot2", "TalentSlot3"}) do
         local btn = slotGroup.pool:Acquire()
         local row = 0
         local col = (i - 1) % 3
@@ -303,7 +303,7 @@ local function UpdatePvPTab(fmSpellbook, fmTab)
         end
     )
 
-    for i, talentId in ipairs(talentIds) do
+    for _, talentId in ipairs(talentIds) do
         local _, _, icon, _, _, spellId, _ = GetPvpTalentInfoByID(talentId)
         local isPassive = IsPassiveSpell(spellId)
         local btn
@@ -347,7 +347,7 @@ local function UpdatePvPTab(fmSpellbook, fmTab)
 end
 GW.UpdatePvPTab = UpdatePvPTab
 
-local function slotPool_Resetter(self, btn)
+local function slotPool_Resetter(_, btn)
     btn:EnableMouse(false)
     btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     btn:RegisterForDrag("LeftButton")
@@ -377,7 +377,7 @@ local function slotPool_Resetter(self, btn)
 end
 GW.AddForProfiling("talents_pvp", "slotPool_Resetter", slotPool_Resetter)
 
-local function activePool_Resetter(self, btn)
+local function activePool_Resetter(_, btn)
     btn:EnableMouse(false)
     btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     btn:Hide()
@@ -392,7 +392,7 @@ local function activePool_Resetter(self, btn)
 end
 GW.AddForProfiling("talents_pvp", "activePool_Resetter", activePool_Resetter)
 
-local function passivePool_Resetter(self, btn)
+local function passivePool_Resetter(_, btn)
     btn:EnableMouse(false)
     btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     btn:Hide()

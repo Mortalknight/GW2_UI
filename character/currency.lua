@@ -363,9 +363,9 @@ local function raidInfoSetup(raidinfo)
 end
 GW.AddForProfiling("currency", "raidInfoSetup", raidInfoSetup)
 
-local function menuItem_OnClick(self, button)
+local function menuItem_OnClick(self)
     local menuItems = self:GetParent().items
-    for k, v in pairs(menuItems) do
+    for _, v in pairs(menuItems) do
         v:SetNormalTexture(nil)
         v.ToggleMe:Hide()
     end

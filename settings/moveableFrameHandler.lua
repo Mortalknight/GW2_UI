@@ -5,7 +5,7 @@ local GetDefault = GW.GetDefault
 local L = GW.L
 
 local settings_window_open_before_change = false
-local function lockHudObjects(self, inCombat)
+local function lockHudObjects(_, inCombat)
     GW.MoveHudScaleableFrame:UnregisterAllEvents()
     if InCombatLockdown() then
         DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["You can not move elements during combat!"])
@@ -18,7 +18,7 @@ local function lockHudObjects(self, inCombat)
         GwSettingsWindow:Show()
     end
 
-    for i, mf in ipairs(GW.MOVABLE_FRAMES) do
+    for _, mf in ipairs(GW.MOVABLE_FRAMES) do
         mf:EnableMouse(false)
         mf:SetMovable(false)
         mf:Hide()
@@ -38,7 +38,7 @@ local function moveHudObjects(self)
         settings_window_open_before_change = true
     end
     GwSettingsWindow:Hide()
-    for i, mf in pairs(GW.MOVABLE_FRAMES) do
+    for _, mf in pairs(GW.MOVABLE_FRAMES) do
         mf:EnableMouse(true)
         mf:SetMovable(true)
         mf:Show()
@@ -182,7 +182,7 @@ local function CheckIfMoved(self, settingsName, new_point)
     end
 end
 
-local function smallSettings_resetToDefault(self, btn)
+local function smallSettings_resetToDefault(self)
     local mf = self:GetParent().child
     --local f = mf.gw_frame
     local settingsName = mf.gw_Settings
@@ -470,7 +470,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     moveframe.optionHeight = false
 
     if smallOptions then
-        for k, v in pairs(smallOptions) do
+        for _, v in pairs(smallOptions) do
             if v == "scaleable" then
                 moveframe.optionScaleable = true
             elseif v == "height" then
@@ -600,10 +600,10 @@ local function LoadMovers()
     moverSettingsFrame.movers.up:SetScript("OnClick", function() MoveFrameByPixel(0, 1) end)
     moverSettingsFrame.movers.down:SetScript("OnClick", function() MoveFrameByPixel(0, -1) end)
 
-    moverSettingsFrame:SetScript("OnShow", function(self)
+    moverSettingsFrame:SetScript("OnShow", function()
         mf:Show()
     end)
-    moverSettingsFrame:SetScript("OnHide", function(self)
+    moverSettingsFrame:SetScript("OnHide", function()
         mf:Hide()
     end)
 

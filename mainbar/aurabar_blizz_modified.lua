@@ -63,7 +63,7 @@ local function auraHeader_OnEvent(self, event, ...)
     end
 end
 
-local function auraHeader_OnAttributeChanged(self, name, value)
+local function auraHeader_OnAttributeChanged(self, name)
     if ( name == "_ignore" or self:GetAttribute("_ignore") ) then
         return;
     end
@@ -329,7 +329,7 @@ local function sortFactory(key, separateOwn, reverse)
     end
 end
 
-for i, key in ipairs{"consolidateIdx", "index", "name", "expires"} do
+for _, key in ipairs{"consolidateIdx", "index", "name", "expires"} do
     local label = key:upper();
     sorters[label] = {};
     for bool in pairs{[true] = true, [false] = false} do

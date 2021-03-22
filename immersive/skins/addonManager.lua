@@ -1,5 +1,4 @@
 local _, GW = ...
-local constBackdropFrame = GW.skins.constBackdropFrame
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 
 local function LoadAddonListSkin()

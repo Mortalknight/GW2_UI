@@ -32,7 +32,7 @@ local function SkinGearManagerDialogPopup_OnShow()
 end
 
 local function SkinGearManagerDialogPopupButtons_OnUpdate()
-    local texture, index, button
+    local texture, index
     local popup = _G.GearManagerDialogPopup
     local buttons = popup.buttons
     local offset = FauxScrollFrame_GetOffset(_G.GearManagerDialogPopupScrollFrame) or 0
