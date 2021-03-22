@@ -85,13 +85,13 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
 
     if hideUnused == true then
         btn.gwBackdrop:Hide()
-        btn:HookScript("OnHide", hideBackdrop)
-        btn:HookScript("OnShow", showBackdrop)
+        btn:HookScript("OnHide", GW.hideBackdrop)
+        btn:HookScript("OnShow", GW.showBackdrop)
     end
 end
 GW.AddForProfiling("petbar", "setActionButtonStyle", setActionButtonStyle)
 
-local function updateHotkey(self, actionButtonType)
+local function updateHotkey(self)
     local hotkey = self.HotKey
     local text = hotkey:GetText()
 

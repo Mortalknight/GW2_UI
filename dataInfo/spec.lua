@@ -39,7 +39,7 @@ local function TalentButton_OnEnter(self)
             GameTooltip:AddLine(disabledTooltipText, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
         end
     end
-    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+    GameTooltip:AddLine(" ")
 
     if not spec_data_loaded then
         GetSpecData()
@@ -58,7 +58,7 @@ local function TalentButton_OnEnter(self)
         GameTooltip:AddLine(format("|cffFFFFFF%s:|r %s %s", SELECT_LOOT_SPECIALIZATION, AddTexture(specIndex.icon), sameSpec and format(LOOT_SPECIALIZATION_DEFAULT, specIndex.name) or specIndex.name), nil, nil, nil ,true)
     end
 
-    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+    GameTooltip:AddLine(" ")
     GameTooltip:AddLine(TALENTS, 1, 0.93, 0.73)
 
     for i = 1, _G.MAX_TALENT_TIERS do
@@ -72,7 +72,7 @@ local function TalentButton_OnEnter(self)
 
     local pvpTalents = C_SpecializationInfo.GetAllSelectedPvpTalentIDs()
     if next(pvpTalents) then
-        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+        GameTooltip:AddLine(" ")
         GameTooltip:AddLine(PVP_TALENTS, 1, 0.93, 0.73)
 
         for i, talentID in next, pvpTalents do
@@ -84,7 +84,7 @@ local function TalentButton_OnEnter(self)
         end
     end
 
-    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+    GameTooltip:AddLine(" ")
     GameTooltip:AddLine("|cffaaaaaa" .. L["Right Click to change Talent Specialization"] .. "|r", nil, nil, nil, true)
 
     GameTooltip:Show()

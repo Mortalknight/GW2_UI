@@ -259,7 +259,7 @@ local function updateCurrentScenario(self, event, ...)
         local _, _, numCriteria = C_Scenario.GetStepInfo(bonusStepIndex)
 
         for criteriaIndex = 1, numCriteria do
-            local criteriaString, criteriaType, criteriaCompleted, quantity, totalQuantity, flags, assetID, quantityString, criteriaID, duration, elapsed, criteriaFailed = C_Scenario.GetCriteriaInfoByStep(bonusStepIndex, criteriaIndex)
+            local criteriaString, _, criteriaCompleted, quantity, totalQuantity, _, _, _, _, duration, elapsed, criteriaFailed, isWeightedProgress = C_Scenario.GetCriteriaInfoByStep(bonusStepIndex, criteriaIndex)
             local objectiveType = "progressbar"
             if not isWeightedProgress then
                 objectiveType = "monster"

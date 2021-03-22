@@ -107,7 +107,7 @@ local function Time_OnEnter(self)
 
     if next(lockedInstances.raids) then
         if GameTooltip:NumLines() > 0 then
-            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+            GameTooltip:AddLine(" ")
         end
         GameTooltip:AddLine(L["Saved Raid(s)"])
 
@@ -129,7 +129,7 @@ local function Time_OnEnter(self)
 
     if next(lockedInstances.dungeons) then
         if GameTooltip:NumLines() > 0 then
-            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+            GameTooltip:AddLine(" ")
         end
         GameTooltip:AddLine(L["Saved Dungeon(s)"])
 
@@ -161,7 +161,7 @@ local function Time_OnEnter(self)
         if reset then
             if not addedLine then
                 if GameTooltip:NumLines() > 0 then
-                    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                    GameTooltip:AddLine(" ")
                 end
                 GameTooltip:AddLine(WORLD_BOSSES_TEXT)
                 addedLine = true
@@ -182,7 +182,7 @@ local function Time_OnEnter(self)
             if nameInfo and nameInfo.shownState == 1 then
                 if not torghastHeader then
                     if GameTooltip:NumLines() > 0 then
-                        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                        GameTooltip:AddLine(" ")
                     end
                     GameTooltip:AddLine(TorghastInfo.name)
                     torghastHeader = true
@@ -197,19 +197,19 @@ local function Time_OnEnter(self)
     end
 
     if GameTooltip:NumLines() > 0 then
-        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+        GameTooltip:AddLine(" ")
     end
 
     GameTooltip:AddDoubleLine(L["Daily Reset"], SecondsToTime(C_DateAndTime.GetSecondsUntilDailyReset()), 1, 1, 1, lockoutColorNormal.r, lockoutColorNormal.g, lockoutColorNormal.b)
     GameTooltip:AddDoubleLine(L["Weekly Reset"], SecondsToTime(C_DateAndTime.GetSecondsUntilWeeklyReset(), true, nil, 3), 1, 1, 1, lockoutColorNormal.r, lockoutColorNormal.g, lockoutColorNormal.b)
 
     if GameTooltip:NumLines() > 0 then
-        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+        GameTooltip:AddLine(" ")
     end
 
     GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_REALMTIME, GameTime_GetGameTime(true), nil, nil, nil, 1, 1, 1)
     GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_LOCALTIME, GameTime_GetLocalTime(true), nil, nil, nil, 1, 1, 1)
-    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+    GameTooltip:AddLine(" ")
     GameTooltip:AddLine(format("%s%s%s", "|cffaaaaaa", GAMETIME_TOOLTIP_TOGGLE_CLOCK, "|r"))
 
     GameTooltip:Show()

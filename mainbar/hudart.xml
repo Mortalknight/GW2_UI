@@ -65,7 +65,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Frame name="GwActionBarHud" frameStrata="BACKGROUND">
+            <Frame name="GwActionBarHud" parentKey="actionBarHud" frameStrata="BACKGROUND">
                 <Size x="1024" y="256"></Size>
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="14" />

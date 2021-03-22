@@ -5,10 +5,10 @@ local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHei
         if _G.ScenarioWidgetContainerBlock.WidgetContainer:GetHeight() > 1.1 then
             numCriteria = numCriteria + 1
             local container = _G.ScenarioWidgetContainerBlock
-            objectiveBlock = GW.GetScenarioObjectivesBlock(block, numCriteria)
+            local objectiveBlock = GW.GetScenarioObjectivesBlock(block, numCriteria)
             container.gwBlock = objectiveBlock
             objectiveBlock:SetHeight(container:GetHeight())
-       
+
             container:SetParent(objectiveBlock)
             container:ClearAllPoints()
             container:SetAllPoints()

@@ -170,7 +170,7 @@ end
 
 local function DecodeProfile(dataString)
     local dataType = LibBase64:IsBase64(dataString) and "base64" or strfind(dataString, "{") and "table" or nil
-    local profileName, profilePlayer, version, profileData
+    local profileName, profilePlayer, version, profileData, success
 
     if dataType == "base64" then
         local decodedData = LibBase64:Decode(dataString)

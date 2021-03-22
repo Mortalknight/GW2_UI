@@ -110,7 +110,7 @@ local function Money_OnEnter(self)
         elseif (GW.earnedMoney - GW.spentMoney) > 0 then
             GameTooltip:AddDoubleLine(L["Profit:"], FormatMoneyForChat(GW.earnedMoney - GW.spentMoney), 0, 1, 0, 1, 1, 1)
         end
-        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+        GameTooltip:AddLine(" ")
 
         -- list all players from the realm
         GameTooltip:AddLine(CHARACTER .. ":")
@@ -128,28 +128,28 @@ local function Money_OnEnter(self)
         end
 
         -- add total gold on realm
-        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+        GameTooltip:AddLine(" ")
         GameTooltip:AddLine(FRIENDS_LIST_REALM)
         
         if totalAlliance > 0 and totalHorde > 0 then
             if totalAlliance ~= 0 then GameTooltip:AddDoubleLine(FACTION_ALLIANCE, FormatMoneyForChat(totalAlliance), 0, 0.376, 1, 1, 1, 1) end
             if totalHorde ~= 0 then GameTooltip:AddDoubleLine(FACTION_HORDE, FormatMoneyForChat(totalHorde), 1, 0.2, 0.2, 1, 1, 1) end
-            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+            GameTooltip:AddLine(" ")
         end
 
         GameTooltip:AddDoubleLine(TOTAL .. ":", FormatMoneyForChat(totalAlliance + totalHorde + totalFactionless), 1, 1, 1, 1, 1, 1)
 
-        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+        GameTooltip:AddLine(" ")
         C_WowTokenPublic.UpdateMarketPrice()
         GameTooltip:AddDoubleLine(TOKEN_FILTER_LABEL .. ":", FormatMoneyForChat(C_WowTokenPublic.GetCurrentMarketPrice() or 0), 0, 0.8, 1, 1, 1, 1)
 
         local grayValue = GetGraysValue()
         if grayValue > 0 then
-            GameTooltip_AddBlankLineToTooltip(GameTooltip)
+            GameTooltip:AddLine(" ")
             GameTooltip:AddDoubleLine(L["Grays"] , FormatMoneyForChat(grayValue), nil, nil, nil, 1, 1, 1)
         end
 
-        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+        GameTooltip:AddLine(" ")
         GameTooltip:AddLine(resetCountersFormatter)
         GameTooltip:AddLine(resetInfoFormatter)
 

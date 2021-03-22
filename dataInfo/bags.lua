@@ -18,7 +18,7 @@ local function Bags_OnEnter(self)
             GameTooltip:AddLine(disabledTooltipText, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
         end
     end
-    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+    GameTooltip:AddLine(" ")
 
     for i = 0, NUM_BAG_SLOTS do
         local bagName = GetBagName(i)
@@ -46,7 +46,7 @@ local function Bags_OnEnter(self)
         local info = C_CurrencyInfo.GetBackpackCurrencyInfo(i)
         if info then
             if i == 1 then
-                GameTooltip_AddBlankLineToTooltip(GameTooltip)
+                GameTooltip:AddLine(" ")
                 GameTooltip:AddLine(CURRENCY)
             end
             if info.quantity then

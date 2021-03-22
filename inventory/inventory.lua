@@ -255,7 +255,7 @@ local function getContainerFrame(bag_id)
 end
 GW.AddForProfiling("inventory", "getContainerFrame", getContainerFrame)
 
-local function freeItemButtons(cf, p, bag_id)
+local function freeItemButtons(cf, p)
     -- return all of the ItemButtons we previously took before taking new ones, as long as
     -- we are still the frame that took them to start with (bank/bag might have grabbed
     -- them from each other in the mean-time)
@@ -423,7 +423,7 @@ GW.AddForProfiling("inventory", "bag_OnMouseDown", bag_OnMouseDown)
 -- positions ItemButtons fluidly for this container
 local function layoutContainerFrame(cf, max_col, row, col, rev, item_off)
     if not cf or not cf.gw_num_slots or cf.gw_num_slots <= 0 then
-        return col, row
+        return col, row, false, 0
     end
     
     local unfinishedRow = false

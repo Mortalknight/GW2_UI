@@ -276,10 +276,10 @@ local function AddUpdateCB(func, payload)
 end
 GW.AddUpdateCB = AddUpdateCB
 
-local function gw_OnUpdate(self, elapsed)
+local function gw_OnUpdate(_, elapsed)
     local foundAnimation = false
     local count = 0
-    for k, v in pairs(animations) do
+    for _, v in pairs(animations) do
         count = count + 1
         if v["completed"] == false and GetTime() >= (v["start"] + v["duration"]) then
             if v["easeing"] == nil then
@@ -347,7 +347,7 @@ GW.PixelPerfection = PixelPerfection
 local SCALE_HUD_FRAMES = {}
 local function UpdateHudScale()
     local hudScale = GetSetting("HUD_SCALE")
-    for i, f in ipairs(SCALE_HUD_FRAMES) do
+    for _, f in ipairs(SCALE_HUD_FRAMES) do
         if f then
             local fm = f.gwMover
             local sf = 1.0
@@ -477,20 +477,20 @@ local function loadAddon(self)
     GW.WidgetUISetup()
 
     --Create hud art
-    GW.LoadHudArt()
+    local hudArt = GW.LoadHudArt()
 
     --Create experiencebar
     if GetSetting("XPBAR_ENABLED") then
         GW.LoadXPBar()
     else
-        GwActionBarHud:ClearAllPoints()
-        GwActionBarHud:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
-        GwHudArtFrame.edgeTintBottom1:ClearAllPoints()
-        GwHudArtFrame.edgeTintBottom1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
-        GwHudArtFrame.edgeTintBottom1:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
-        GwHudArtFrame.edgeTintBottom2:ClearAllPoints()
-        GwHudArtFrame.edgeTintBottom2:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
-        GwHudArtFrame.edgeTintBottom2:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 0, 0)
+        hudArt.actionBarHud:ClearAllPoints()
+        hudArt.actionBarHud:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
+        hudArt.edgeTintBottom1:ClearAllPoints()
+        hudArt.edgeTintBottom1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
+        hudArt.edgeTintBottom1:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
+        hudArt.edgeTintBottom2:ClearAllPoints()
+        hudArt.edgeTintBottom2:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
+        hudArt.edgeTintBottom2:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 0, 0)
     end
 
     if GetSetting("FONTS_ENABLED") then
@@ -745,7 +745,7 @@ GW.AddToClique = AddToClique
 
 local waitTable = {}
 local waitFrame = nil
-local function wait_OnUpdate(self, elapse)
+local function wait_OnUpdate(_, elapse)
     local count = #waitTable
     local i = 1
     while (i <= count) do

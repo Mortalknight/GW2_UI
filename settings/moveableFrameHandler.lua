@@ -264,7 +264,6 @@ GW.AddForProfiling("index", "mover_OnDragStart", mover_OnDragStart)
 
 local function mover_OnDragStop(self)
     local settingsName = self.gw_Settings
-    local lockAble = self.gw_Lockable
     self:StopMovingOrSizing()
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
 
@@ -276,9 +275,6 @@ local function mover_OnDragStop(self)
     self:ClearAllPoints()
     self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
     SetSetting(settingsName, new_point)
-    if lockAble ~= nil then
-        SetSetting(lockAble, false)
-    end
     -- check if we need to know if the frame is on its default position
     CheckIfMoved(self, settingsName, new_point)
 
@@ -422,7 +418,6 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     end
     moveframe:SetScale(frame:GetScale())
     moveframe.gw_Settings = settingsName
-    moveframe.gw_Lockable = lockAble
     moveframe.gw_isMoved = isMoved
     moveframe.gw_frame = frame
     moveframe.gw_mhf = mhf
@@ -548,7 +543,7 @@ GW.RegisterMovableFrame = RegisterMovableFrame
 local function MoveFrameByPixel(nudgeX, nudgeY)
     local mover = GwSmallSettingsWindow.childMover
 
-    local point, anchor, anchorPoint, x, y = mover:GetPoint()
+    local point, _, anchorPoint, x, y = mover:GetPoint()
     x = x + nudgeX
     y = y + nudgeY
     mover:ClearAllPoints()

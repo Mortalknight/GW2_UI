@@ -8,7 +8,6 @@ local GetSetting = GW.GetSetting
 
 local CPWR_FRAME
 local CPF_HOOKED_TO_TARGETFRAME = false
-local hasMover = false
 
 local function updateTextureBasedOnCondition(self)
     if GW.myClassID == 9 then -- Warlock
@@ -53,7 +52,7 @@ local function animFlare(f, scale, offset, duration, rotate)
         end
     )
 end
-GW.AddForProfiling("classpowers", "powerFlare", powerFlare)
+GW.AddForProfiling("classpowers", "animFlare", animFlare)
 
 local function decayCounter_OnAnim()
     local f = CPWR_FRAME
@@ -694,8 +693,7 @@ GW.AddForProfiling("classpowers", "setDeathKnight", setDeathKnight)
 
 -- SHAMAN
 local function powerMaelstrom(self, event, ...)
-    local fdc = self.maelstrom
-    local _, count, duration, expires = findBuff("player", 344179)
+    local _, count, duration, _ = findBuff("player", 344179)
 
     if duration == nil then
         self.gwPower = -1
@@ -929,7 +927,7 @@ local function setWarlock(f)
     if GW.myspec == 3 then -- Destruction
         f.warlock.shardFragment.amount = -1
         f.warlock.shardFragment:Show()
-        flarAnimationMap = {
+        local flarAnimationMap = {
             width = 512,
             height = 512,
             colums = 2,

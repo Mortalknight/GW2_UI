@@ -326,7 +326,7 @@ local function updateAwayData(self)
         self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
         if readyCheckStatus == "waiting" then
             self.classicon:SetTexCoord(0, 1, 0, 0.25)
-        elseif eadyCheckStatus == "notready" then
+        elseif readyCheckStatus == "notready" then
             self.classicon:SetTexCoord(0, 1, 0.25, 0.50)
         elseif readyCheckStatus == "ready" then
             self.classicon:SetTexCoord(0, 1, 0.50, 0.75)
@@ -690,7 +690,7 @@ local function updateAuras(self)
 end
 GW.AddForProfiling("raidframes", "updateAuras", updateAuras)
 
-local function raidframe_OnEvent(self, event, unit, arg1)
+local function raidframe_OnEvent(self, event, unit)
     if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         -- Enable or disable mouse handling on aura frames
         local name, enable = self:GetName(), event == "PLAYER_REGEN_ENABLED" or GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT")
@@ -1059,7 +1059,7 @@ local function createRaidFrame(registerUnit, index)
         hooksecurefunc(
             frame.healthbar,
             "SetStatusBarColor",
-            function(bar, r, g, b, a)
+            function(_, r, g, b, a)
                 frame.healthbar.spark:SetVertexColor(r, g, b, a)
             end
         )

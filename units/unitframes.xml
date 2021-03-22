@@ -39,7 +39,7 @@
                 <Texture parentKey="powerbarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                     <Size x="215" y="7"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="0" y=""></Anchor>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
                 <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbars">

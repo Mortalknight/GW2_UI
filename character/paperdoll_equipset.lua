@@ -21,7 +21,7 @@ end
 GW.AddForProfiling("character_equipset", "updateIngoredSlots", updateIngoredSlots)
 
 local function toggleIgnoredSlots(show)
-    for k, v in pairs(SavedItemSlots) do
+    for _, v in pairs(SavedItemSlots) do
         if show then
             v.ignoreSlotCheck:Show()
         else
@@ -31,7 +31,7 @@ local function toggleIgnoredSlots(show)
 end
 GW.AddForProfiling("character_equipset", "toggleIgnoredSlots", toggleIgnoredSlots)
 
-local function outfitListButton_OnClick(self, button)
+local function outfitListButton_OnClick(self)
     if not self.saveOutfit:IsShown() then
         drawItemSetList()
         toggleIgnoredSlots(true)
@@ -58,7 +58,7 @@ local function outfitListButton_OnClick(self, button)
 end
 GW.AddForProfiling("character_equipset", "outfitListButton_OnClick", outfitListButton_OnClick)
 
-local function outfitEquipButton_OnClick(self, button)
+local function outfitEquipButton_OnClick()
     local selectedSetID = GwPaperDollOutfits.selectedSetID
     if (selectedSetID ~= nil) then
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
@@ -68,13 +68,13 @@ local function outfitEquipButton_OnClick(self, button)
 end
 GW.AddForProfiling("character_equipset", "outfitEquipButton_OnClick", outfitEquipButton_OnClick)
 
-local function DropDownOutfit_OnLoad(self, button)
+local function DropDownOutfit_OnLoad(self)
     self.Dropdown = self:GetParent().DropDownOutfitFrame
     UIDropDownMenu_Initialize(self.Dropdown, nil, "MENU")
     UIDropDownMenu_SetInitializeFunction(self.Dropdown, GWGearSetEditButtonDropDown_Initialize)
 end
 
-function GWGearSetEditButtonDropDown_Initialize(dropdownFrame, level, menuList)
+function GWGearSetEditButtonDropDown_Initialize(dropdownFrame)
     local gearSetButton = dropdownFrame:GetParent()
     local info = UIDropDownMenu_CreateInfo()
     info.text = EQUIPMENT_SET_EDIT
@@ -113,7 +113,7 @@ function GWGearSetEditButtonDropDown_Initialize(dropdownFrame, level, menuList)
     end
 end
 
-local function outfitSaveButton_OnClick(self, button)
+local function outfitSaveButton_OnClick(self)
     WarningPrompt(
         TRANSMOG_OUTFIT_CONFIRM_SAVE:format(self:GetParent().setName),
         function()
@@ -125,7 +125,7 @@ local function outfitSaveButton_OnClick(self, button)
 end
 GW.AddForProfiling("character_equipset", "outfitSaveButton_OnClick", outfitSaveButton_OnClick)
 
-function outfitEditButton_OnClick(self, button)
+local function outfitEditButton_OnClick(self)
     if self.gearSetButton ~= self:GetParent() then
         HideDropDownMenu(1)
         self.gearSetButton = self:GetParent()
@@ -134,7 +134,7 @@ function outfitEditButton_OnClick(self, button)
 end
 GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditButton_OnClick)
 
-function GearSetButton_Edit(self, button)
+function GearSetButton_Edit(self)
     GearManagerDialogPopup:SetParent(GwDressingRoom)
     GearManagerDialogPopup:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
     GearManagerDialogPopup:Show()
@@ -145,7 +145,7 @@ function GearSetButton_Edit(self, button)
     RecalculateGearManagerDialogPopup(self.setName, self.icon:GetTexture())
 end
 
-local function outfitDeleteButton_OnClick(self, button)
+local function outfitDeleteButton_OnClick(self)
     WarningPrompt(
         TRANSMOG_OUTFIT_CONFIRM_DELETE:format(self:GetParent().setName),
         function()
@@ -311,7 +311,7 @@ end
 --]]
 local function LoadPDEquipset(fmMenu)
     local fmGPDO = CreateFrame("Frame", "GwPaperDollOutfits", GwPaperDoll, "GwPaperDollOutfits")
-    local fnGPDO_newOutfit_OnClick = function(self, button)
+    local fnGPDO_newOutfit_OnClick = function(self)
         self.oldParent = GearManagerDialogPopup:GetParent()
         GearManagerDialogPopup:SetParent(GwDressingRoom)
         --GearManagerDialogPopup:GetParent():ClearAllPoints()

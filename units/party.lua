@@ -1,5 +1,4 @@
 local _, GW = ...
-local L = GW.L
 local TimeCount = GW.TimeCount
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local GetSetting = GW.GetSetting
@@ -7,7 +6,6 @@ local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
-local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
@@ -72,7 +70,7 @@ local function updateAwayData(self)
         self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
         if readyCheckStatus == "waiting" then
             self.classicon:SetTexCoord(0, 1, 0, 0.25)
-        elseif eadyCheckStatus == "notready" then
+        elseif readyCheckStatus == "notready" then
             self.classicon:SetTexCoord(0, 1, 0.25, 0.50)
         elseif readyCheckStatus == "ready" then
             self.classicon:SetTexCoord(0, 1, 0.50, 0.75)
@@ -449,7 +447,7 @@ local function updatePartyData(self)
 end
 GW.AddForProfiling("party", "updatePartyData", updatePartyData)
 
-local function party_OnEvent(self, event, unit, arg1)
+local function party_OnEvent(self, event, unit)
     if not UnitExists(self.unit) or IsInRaid() then
         return
     end

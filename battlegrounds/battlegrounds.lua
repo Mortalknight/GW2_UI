@@ -124,7 +124,7 @@ local function getLandMarkFrame(i, hasTimer)
         local land_mark_frame = CreateFrame("Frame", "GwBattleLandMarkFrame" .. i, gwbgs, "GwBattleLandMarkFrame")
         land_mark_frame:SetPoint("CENTER", gwbgs.MID, "BOTTOMLEFT", (36) * (i - 1) + 18, hasTimer and 32 or 45)
     end
-    return land_mark_frame or _G["GwBattleLandMarkFrame" .. i]
+    return _G["GwBattleLandMarkFrame" .. i]
 end
 GW.AddForProfiling("battlegrounds", "getLandMarkFrame", getLandMarkFrame)
 
@@ -258,7 +258,7 @@ local function TimerFlag_OnUpdate(self, elapsed)
 end
 GW.AddForProfiling("battlegrounds", "TimerFlag_OnUpdate", TimerFlag_OnUpdate)
 
-local function pvpHud_onEvent(self, event)
+local function pvpHud_onEvent(_, event)
     if bgs[GW.locationData.instanceMapID] ~= nil then
         -- check if we are in the same BG or if we directly join from another BG. In that case we need to reset the score OR if we joind a new BG
         if (lastBG > 0 and lastBG ~= GW.locationData.instanceMapID) or event == "PLAYER_ENTERING_BATTLEGROUND" then
@@ -303,7 +303,7 @@ local function pvpHud_onEvent(self, event)
         gwbgs:RegisterEvent("BATTLEGROUND_POINTS_UPDATE")
         gwbgs:RegisterEvent("UPDATE_UI_WIDGET")
         gwbgs:RegisterEvent("AREA_POIS_UPDATED")
-        
+
         gwbgs:Show()
     else
         gwbgs:UnregisterAllEvents()

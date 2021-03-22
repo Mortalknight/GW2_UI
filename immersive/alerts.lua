@@ -1181,11 +1181,11 @@ local function LoadAlertSystemFrameSkins()
     if not AchievementFrame then
         AchievementFrame_LoadUI()
     end
-    
+
     -- Achievements
     hooksecurefunc(_G.AchievementAlertSystem, "setUpFunction", skinAchievementAlert)
     hooksecurefunc(_G.CriteriaAlertSystem, "setUpFunction", skinCriteriaAlert)
-    
+
     -- Encounters
     hooksecurefunc(_G.DungeonCompletionAlertSystem, "setUpFunction", skinDungeonCompletionAlert)
     hooksecurefunc(_G.WorldQuestCompleteAlertSystem, "setUpFunction", skinWorldQuestCompleteAlert)
@@ -1200,19 +1200,19 @@ local function LoadAlertSystemFrameSkins()
     hooksecurefunc(_G.MoneyWonAlertSystem, "setUpFunction", skinMoneyWonAlert)
     hooksecurefunc(_G.EntitlementDeliveredAlertSystem, "setUpFunction", skinEntitlementDeliveredAlert)
     hooksecurefunc(_G.RafRewardDeliveredAlertSystem, "setUpFunction", skinRafRewardDeliveredAlert)
-    
+
     -- Professions
     hooksecurefunc(_G.DigsiteCompleteAlertSystem, "setUpFunction", skinDigsiteCompleteAlert)
     hooksecurefunc(_G.NewRecipeLearnedAlertSystem, "setUpFunction", skinNewRecipeLearnedAlert)
 
     -- Honor
     hooksecurefunc(_G.HonorAwardedAlertSystem, "setUpFunction", skinHonorAwardedAlert)
-    
+
     -- Pets/Mounts
     hooksecurefunc(_G.NewPetAlertSystem, "setUpFunction", skinNewPetAlert)
     hooksecurefunc(_G.NewMountAlertSystem, "setUpFunction", skinNewPetAlert)
     hooksecurefunc(_G.NewToyAlertSystem, "setUpFunction", skinNewPetAlert)
-    
+
     -- Garrisons
     hooksecurefunc(_G.GarrisonFollowerAlertSystem, "setUpFunction", skinGarrisonFollowerAlert)
     hooksecurefunc(_G.GarrisonShipFollowerAlertSystem, "setUpFunction", skinGarrisonShipFollowerAlert)
@@ -1221,7 +1221,7 @@ local function LoadAlertSystemFrameSkins()
     hooksecurefunc(_G.GarrisonMissionAlertSystem, "setUpFunction", skinGarrisonMissionAlert)
     hooksecurefunc(_G.GarrisonShipMissionAlertSystem, "setUpFunction", skinGarrisonShipMissionAlert)
     hooksecurefunc(_G.GarrisonRandomMissionAlertSystem, "setUpFunction", skinGarrisonRandomMissionAlert)
-    
+
     --Bonus Roll Money
     skinBonusRollMoney() --TODO: position
 

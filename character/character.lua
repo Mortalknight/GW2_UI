@@ -324,7 +324,7 @@ local function click_OnEvent(self, event)
     end
     ClearOverrideBindings(self)
 
-    for k, win in pairs(windowsList) do
+    for _, win in pairs(windowsList) do
         if win.TabFrame and win.Bindings then
             for key, click in pairs(win.Bindings) do
                 local keyBind, keyBind2 = GetBindingKey(key)
@@ -338,7 +338,7 @@ local function click_OnEvent(self, event)
         end
     end
 end
-GW.AddForProfiling("character", "mover_OnEvent", mover_OnEvent)
+GW.AddForProfiling("character", "click_OnEvent", click_OnEvent)
 
 local function GetScaleDistance()
     local left, top = heroFrameLeft, heroFrameTop
@@ -364,13 +364,13 @@ local function loadBaseFrame()
     fmGCW.secure:SetAttribute("_onclick", charSecure_OnClick)
     fmGCW.secure:SetFrameRef("GwCharacterWindow", fmGCW)
     fmGCW:SetAttribute("_onattributechanged", charSecure_OnAttributeChanged)
-    fmGCW.SoundOpen = function(self)
+    fmGCW.SoundOpen = function()
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
     end
-    fmGCW.SoundSwap = function(self)
+    fmGCW.SoundSwap = function()
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
     end
-    fmGCW.SoundExit = function(self)
+    fmGCW.SoundExit = function()
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
     end
 
@@ -398,7 +398,7 @@ local function loadBaseFrame()
         GameTooltip_SetTitle(GameTooltip, L["Scale with Right Click"])
         GameTooltip:Show()
     end)
-    fmGCW.sizer:SetScript("OnLeave", function(self)
+    fmGCW.sizer:SetScript("OnLeave", function()
         fmGCW.sizer.texture:SetDesaturated(true)
         GameTooltip_Hide()
     end)
@@ -424,7 +424,7 @@ local function loadBaseFrame()
             GwCharacterWindow:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
         end)
     end)
-    fmGCW.sizer:SetScript("OnMouseUp", function(self, btn)
+    fmGCW.sizer:SetScript("OnMouseUp", function(self)
         self:SetScript("OnUpdate", nil)
         SetSetting("HERO_POSITION_SCALE", GwCharacterWindow:GetScale())
         -- Save hero frame position
@@ -491,7 +491,7 @@ GW.AddForProfiling("character", "charTab_OnEnter", charTab_OnEnter)
 
 local function LoadCharacter()
     local anyThingToLoad = false
-    for k, v in pairs(windowsList) do
+    for _, v in pairs(windowsList) do
         if GetSetting(v.SettingName) then
             anyThingToLoad = true
         end
@@ -503,7 +503,7 @@ local function LoadCharacter()
     loadBaseFrame()
 
     local tabIndex = 1
-    for k, v in pairs(windowsList) do
+    for _, v in pairs(windowsList) do
         if GetSetting(v.SettingName) then
             local container = CreateFrame("Frame", nil, GwCharacterWindow, "GwCharacterTabContainer")
             local tab = createTabIcon(v.TabIcon, tabIndex)

@@ -102,7 +102,7 @@ local function Guild_OnEnter(self)
             GameTooltip:AddLine(disabledTooltipText, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
         end
     end
-    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+    GameTooltip:AddLine(" ")
 
     local shiftDown = IsShiftKeyDown()
     local total, _, online = GetNumGuildMembers()
@@ -119,7 +119,7 @@ local function Guild_OnEnter(self)
     end
 
     if GetGuildRosterMOTD() ~= "" then
-        GameTooltip_AddBlankLineToTooltip(GameTooltip)
+        GameTooltip:AddLine(" ")
         GameTooltip:AddLine(GUILD_MOTD .. " |cffaaaaaa- |cffffffff" .. GetGuildRosterMOTD(), ttsubh.r, ttsubh.g, ttsubh.b, 1)
     end
 
@@ -133,7 +133,7 @@ local function Guild_OnEnter(self)
 
     local zonec
 
-    GameTooltip_AddBlankLineToTooltip(GameTooltip)
+    GameTooltip:AddLine(" ")
     for i, info in ipairs(guildTable) do
         if i > 20 then
             GameTooltip:AddLine("+ " .. (online - 20) .. " " .. BINDING_HEADER_OTHER, ttsubh.r, ttsubh.g, ttsubh.b)

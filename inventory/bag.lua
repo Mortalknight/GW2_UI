@@ -4,10 +4,7 @@ local CommaValue = GW.CommaValue
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local UpdateMoney = GW.UpdateMoney
-local GetStorage = GW.GetStorage
-local ClearStorage = GW.ClearStorage
 local EnableTooltip = GW.EnableTooltip
-local FormatMoneyForChat = GW.FormatMoneyForChat
 local inv
 
 local BAG_ITEM_SIZE = 40
@@ -15,8 +12,6 @@ local BAG_ITEM_LARGE_SIZE = 40
 local BAG_ITEM_COMPACT_SIZE = 32
 local BAG_ITEM_PADDING = 5
 local BAG_WINDOW_SIZE = 480
-
-local BAG1
 
 local IterationCount = 500
 local SellJunkFrame = CreateFrame("FRAME")
@@ -41,7 +36,6 @@ local function sellJunk()
             CurrentItemLink = GetContainerItemLink(BagID, BagSlot)
             if CurrentItemLink then
                 _, _, Rarity, _, _, _, _, _, _, _, ItemPrice = GetItemInfo(CurrentItemLink)
-                local _, itemCount = GetContainerItemInfo(BagID, BagSlot)
                 if Rarity == 0 and ItemPrice ~= 0 then
                     SoldCount = SoldCount + 1
                     if MerchantFrame:IsShown() then
@@ -143,7 +137,7 @@ local function layoutBagItems(f)
     local row = sep and 1 or 0
     local item_off = BAG_ITEM_SIZE + BAG_ITEM_PADDING
     local unfinishedRow = false
-    local finishedRow = 0
+    local finishedRows = 0
 
     local iS = BACKPACK_CONTAINER
     local iE = NUM_BAG_SLOTS
@@ -180,7 +174,7 @@ local function layoutBagItems(f)
         end
 
         if unfinishedRow then f:GetParent().unfinishedRow = f:GetParent().unfinishedRow  + 1 end
-        if finishedRows then f:GetParent().finishedRow = f:GetParent().finishedRow + finishedRows end
+        f:GetParent().finishedRow = f:GetParent().finishedRow + finishedRows
 
         if not rev and bag_id < 4 then 
             slotID = GetInventorySlotInfo("Bag" .. bag_id .. "Slot")
@@ -317,7 +311,7 @@ local function setBagBarOrder(f)
 end
 GW.AddForProfiling("bag", "setBagBarOrder", setBagBarOrder)
 
-local function bag_OnClick(self, button, down)
+local function bag_OnClick(self, button)
     -- on left click, ensure that the bag stays open despite default toggle behavior
     if button == "LeftButton" then
         if self.gwHasBag and not IsBagOpen(self:GetBagID()) then
@@ -421,7 +415,7 @@ local function onBagResizeStop(self)
 end
 GW.AddForProfiling("bag", "onBagResizeStop", onBagResizeStop)
 
-local function onBagFrameChangeSize(self, width, height, skip)
+local function onBagFrameChangeSize(self, _, _, skip)
     local cols = inv.colCount(BAG_ITEM_SIZE, BAG_ITEM_PADDING, self:GetWidth())
 
     if not self.gw_bag_cols or self.gw_bag_cols ~= cols then
@@ -684,7 +678,7 @@ local function LoadBag(helpers)
     end
 
     -- anytime a ContainerFrame is populated with a backpack bagId, we take its buttons
-    hooksecurefunc("ContainerFrame_GenerateFrame", function(frame, size, id)
+    hooksecurefunc("ContainerFrame_GenerateFrame", function(frame, _, id)
         if id >= BACKPACK_CONTAINER and id <= NUM_BAG_SLOTS then
             rescanBagContainers(f)
             if frame.ExtraBagSlotsHelpBox then
@@ -947,7 +941,7 @@ local function LoadBag(helpers)
 
     f.currency:SetScript(
         "OnClick",
-        function(self, button)
+        function()
             -- TODO: cannot do this properly until we make the whole bag frame secure
             if not InCombatLockdown() then
                 ToggleCharacter("TokenFrame")

@@ -232,7 +232,7 @@ local function blockOnEnter(self)
     if self.objectiveBlocks == nil then
         self.objectiveBlocks = {}
     end
-    for k, v in pairs(self.objectiveBlocks) do
+    for _, v in pairs(self.objectiveBlocks) do
         v.StatusBar.progress:Show()
     end
     AddToAnimation(
@@ -264,7 +264,7 @@ local function blockOnLeave(self)
     if self.objectiveBlocks == nil then
         self.objectiveBlocks = {}
     end
-    for k, v in pairs(self.objectiveBlocks) do
+    for _, v in pairs(self.objectiveBlocks) do
         v.StatusBar.progress:Hide()
     end
     if animations[self:GetName() .. "hover"] ~= nil then
@@ -543,7 +543,7 @@ local function addObjective(block, text, finished, objectiveIndex, objectiveType
 end
 GW.AddForProfiling("objectives", "addObjective", addObjective)
 
-local function updateQuestObjective(block, numObjectives, isComplete, title)
+local function updateQuestObjective(block, numObjectives)
     local addedObjectives = 1
     for objectiveIndex = 1, numObjectives do
         --local text, _, finished = GetQuestLogLeaderBoard(objectiveIndex, block.questLogIndex)
@@ -557,7 +557,7 @@ end
 GW.AddForProfiling("objectives", "updateQuestObjective", updateQuestObjective)
 
 local itemButtonUpdateAfterCombat = CreateFrame("Frame")
-itemButtonUpdateAfterCombat:SetScript("OnEvent", function(self, event)
+itemButtonUpdateAfterCombat:SetScript("OnEvent", function(self)
     self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     GW.updateQuestLogLayout(GwQuesttrackerContainerQuests)
 end)
@@ -664,14 +664,13 @@ local function updateQuest(self, block, quest)
         block.Header:SetText(quest.title)
 
         --Quest item
-        local itemButton = quest:IsCampaign() and "GwCampaginItemButton" or "GwQuestItemButton"
         UpdateQuestItem(block)
 
         if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
             isComplete = true
         end
 
-        updateQuestObjective(block, numObjectives, quest:IsComplete(), quest.title)
+        updateQuestObjective(block, numObjectives)
 
         if requiredMoney ~= nil and requiredMoney > GetMoney() then
             addObjective(
@@ -746,14 +745,13 @@ local function updateQuestByID(self, block, quest, questID, questLogIndex)
     block.Header:SetText(quest.title)
 
     --Quest item
-    local itemButton = quest:IsCampaign() and "GwCampaginItemButton" or "GwQuestItemButton"
     UpdateQuestItem(block)
 
     if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
         isComplete = true
     end
 
-    updateQuestObjective(block, numObjectives, quest:IsComplete(), quest.title)
+    updateQuestObjective(block, numObjectives)
 
     if requiredMoney ~= nil and requiredMoney > GetMoney() then
         addObjective(
@@ -805,7 +803,7 @@ end
 GW.AddForProfiling("objectives", "updateQuestByID", updateQuestByID)
 
 local questButtonHelperFrame = CreateFrame("Frame")
-questButtonHelperFrame:SetScript("OnEvent", function(self, event)
+questButtonHelperFrame:SetScript("OnEvent", function(self)
     self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     GW.updateQuestItemPositions(self.button, self.height, self.type, self.block)
 end)
@@ -845,7 +843,7 @@ GW.updateQuestItemPositions = updateQuestItemPositions
 GW.AddForProfiling("objectives", "updateQuestItemPositions", updateQuestItemPositions)
 
 local questExraButtonHelperFrame = CreateFrame("Frame")
-questExraButtonHelperFrame:SetScript("OnEvent", function(self, event)
+questExraButtonHelperFrame:SetScript("OnEvent", function(self)
     self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     GW.updateExtraQuestItemPositions(self.height)
 end)
@@ -1062,7 +1060,6 @@ local function updateQuestLogLayoutSingle(self, questID, added)
     local questWatchId = getQuestWatchId(questID)
     local questBlockOfIdOrNew = questWatchId and getBlockByIdOrCreateNew(questID, isCampaign, isFrequency)
     local blockName = isCampaign and "GwCampaignBlock" or "GwQuestBlock"
-    local itemButton = isCampaign and "GwCampaginItemButton" or "GwQuestItemButton"
     local containerName = isCampaign and GwQuesttrackerContainerCampaign or GwQuesttrackerContainerQuests
     local header = containerName.header
     local savedHeight = 20
@@ -1193,7 +1190,7 @@ local function tracker_OnEvent(self, event, ...)
 end
 GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
 
-local function tracker_OnUpdate(self)
+local function tracker_OnUpdate()
     local prevState = GwObjectivesNotification.shouldDisplay
 
     if GW.locationData.mapID or GW.locationData.instanceMapID then

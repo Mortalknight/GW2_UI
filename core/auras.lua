@@ -243,7 +243,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 size = bigSize
                 lineSize = bigSize
 
-                for k, v in pairs(self.saveAuras[frame.auraType]) do
+                for _, v in pairs(self.saveAuras[frame.auraType]) do
                     if v == list[index].name then
                         newAura = false
                     end

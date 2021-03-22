@@ -1,9 +1,10 @@
 local _, GW = ...
+local L = GW.L
 
 local function LoadSlashCommands()
     _G["SLASH_GWSLASH1"] = "/gw2"
 
-    SlashCmdList["GWSLASH"] = function(msg, eb)
+    SlashCmdList["GWSLASH"] = function(msg)
         if msg == "" then
             DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r Slash commands:")
             DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r   /gw2 settings       -> To open the settings window")

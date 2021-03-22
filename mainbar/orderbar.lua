@@ -55,7 +55,7 @@ local function orderBar_OnEvent(self, event)
     if OrderHallCommandBar then
         OrderHallCommandBar:SetShown(false)
         OrderHallCommandBar:UnregisterAllEvents()
-        OrderHallCommandBar:SetScript("OnShow", Self_Hide)
+        OrderHallCommandBar:SetScript("OnShow", GW.Self_Hide)
     end
 
     local inOrderHall = C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_7_0)

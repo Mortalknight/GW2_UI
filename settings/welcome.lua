@@ -198,7 +198,7 @@ local function button1_OnClick()
         end)
     end
 end
-AddForProfiling("welcome", "pixel_OnClick", pixel_OnClick)
+AddForProfiling("welcome", "button1_OnClick", button1_OnClick)
 
 local function setDefaultOpenLayout()
     wpanel.welcome.header:SetFont(DAMAGE_TEXT_FONT,14)

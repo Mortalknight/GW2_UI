@@ -17,8 +17,8 @@ local GW_LEVELING_REWARD_AVALIBLE
 local gw_reputation_vals = nil
 local gw_honor_vals = nil
 
-local function xpbar_OnEnter()
-    GameTooltip:SetOwner(GwExperienceFrame, "ANCHOR_CURSOR")
+local function xpbar_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
 
     local valCurrent = UnitXP("Player")
@@ -59,9 +59,9 @@ local function xpbar_OnEnter()
         )
     end
 
-    UIFrameFadeOut(GwExperienceFrame.ExpBar, 0.2, GwExperienceFrame.ExpBar:GetAlpha(), 0)
-    UIFrameFadeOut(GwExperienceFrame.AzeritBar, 0.2, GwExperienceFrame.AzeritBar:GetAlpha(), 0)
-    UIFrameFadeOut(GwExperienceFrame.RepuBar, 0.2, GwExperienceFrame.RepuBar:GetAlpha(), 0)
+    UIFrameFadeOut(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 0)
+    UIFrameFadeOut(self.AzeritBar, 0.2, self.AzeritBar:GetAlpha(), 0)
+    UIFrameFadeOut(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 0)
 
     local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
     local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
@@ -105,7 +105,7 @@ local function xpbar_OnClick()
             if AzeriteEssenceUI and AzeriteEssenceUI:IsShown() then
                 HideUIPanel(AzeriteEssenceUI)
             else
-                OpenAzeriteEssenceUIFromItemLocation(itemLocation)
+                OpenAzeriteEssenceUIFromItemLocation(heartItemLocation)
             end
         end
     end
@@ -183,13 +183,13 @@ local function xpbar_OnEvent(self, event)
 
     local animationSpeed = 15
 
-    GwExperienceFrame.ExpBar:SetStatusBarColor(0.83, 0.57, 0)
+    self.ExpBar:SetStatusBarColor(0.83, 0.57, 0)
 
     gw_reputation_vals = nil
     
     local name, reaction, _, _, _, factionID = GetWatchedFactionInfo()
     if factionID and factionID > 0 then
-        local factionName, _, standingId, bottomValue, topValue, earnedValue = GetFactionInfoByID(factionID)
+        local _, _, standingId, bottomValue, topValue, earnedValue = GetFactionInfoByID(factionID)
         local friendID, friendRep, friendMaxRep, friendName, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
         local isParagon = false
         local isFriend = false
@@ -205,7 +205,7 @@ local function xpbar_OnEvent(self, event)
             valPrecRepu = (currentValue - 0) / (maxValueParagon - 0)
             gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((currentValue - 0)) .. " / " .. CommaValue((maxValueParagon - 0)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
-            GwExperienceFrame.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
+            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
             isParagon = true
         elseif friendID ~= nil then
             if nextFriendThreshold then
@@ -215,7 +215,7 @@ local function xpbar_OnEvent(self, event)
                 valPrecRepu = 1
                 gw_reputation_vals = friendName .. " " .. REPUTATION .. " " .. CommaValue(friendMaxRep) .. " / " .. CommaValue(friendMaxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
-            GwExperienceFrame.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
+            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
             isFriend = true
         else
             local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
@@ -228,7 +228,7 @@ local function xpbar_OnEvent(self, event)
                 valPrecRepu = (earnedValue - bottomValue) / (topValue - bottomValue)
                 gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((earnedValue - bottomValue)) .. " / " .. CommaValue((topValue - bottomValue)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
-            GwExperienceFrame.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
+            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
             isNormal = true
         end
 
@@ -254,59 +254,51 @@ local function xpbar_OnEvent(self, event)
         else
             AzeritVal = 0
         end
-        GwExperienceFrame.AzeritBar:SetStatusBarColor(
+        self.AzeritBar:SetStatusBarColor(
             FACTION_BAR_COLORS[10].r,
             FACTION_BAR_COLORS[10].g,
             FACTION_BAR_COLORS[10].b
         )
-        GwExperienceFrame.AzeritBar.animation:Show()
+        self.AzeritBar.animation:Show()
     end
 
     if showBar2 then
-        GwExperienceFrame.AzeritBarCandy:SetValue(AzeritVal)
+        self.AzeritBarCandy:SetValue(AzeritVal)
 
         AddToAnimation(
             "AzeritBarAnimation",
-            GwExperienceFrame.AzeritBar.AzeritBarAnimation,
+            self.AzeritBar.AzeritBarAnimation,
             AzeritVal,
             GetTime(),
             animationSpeed,
             function()
-                GwExperienceFrame.AzeritBar.Spark:SetWidth(
+                self.AzeritBar.Spark:SetWidth(
                     math.max(
                         8,
-                        math.min(
-                            9,
-                            GwExperienceFrame.AzeritBar:GetWidth() *
-                                animations["AzeritBarAnimation"]["progress"]
-                        )
+                        math.min(9, self.AzeritBar:GetWidth() * animations["AzeritBarAnimation"]["progress"])
                     )
                 )
 
-                GwExperienceFrame.AzeritBar:SetValue(animations["AzeritBarAnimation"]["progress"])
-                GwExperienceFrame.AzeritBar.Spark:SetPoint(
-                    "LEFT",
-                    GwExperienceFrame.AzeritBar:GetWidth() * animations["AzeritBarAnimation"]["progress"] - 8,
-                    0
-                )
+                self.AzeritBar:SetValue(animations["AzeritBarAnimation"]["progress"])
+                self.AzeritBar.Spark:SetPoint("LEFT", self.AzeritBar:GetWidth() * animations["AzeritBarAnimation"]["progress"] - 8, 0)
             end
         )
-        GwExperienceFrame.AzeritBar.AzeritBarAnimation = AzeritVal
+        self.AzeritBar.AzeritBarAnimation = AzeritVal
 
         if maxPlayerLevel == GW.mylevel then
             level = AzeritLevel
             Nextlevel = AzeritLevel + 1 --Max azerit level is infinity
-            GwExperienceFrame.NextLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
-            GwExperienceFrame.CurrentLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
-            GwExperienceFrame.labelRight:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit")
-            GwExperienceFrame.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit")
+            self.NextLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
+            self.CurrentLevel:SetTextColor(240 / 255, 189 / 255, 103 / 255)
+            self.labelRight:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit")
+            self.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit")
         end
     else
         local texture = (maxPlayerLevel == GW.mylevel) and "Interface/AddOns/GW2_UI/textures/hud/level-label-azerit" or "Interface/AddOns/GW2_UI/textures/hud/level-label"
-        GwExperienceFrame.NextLevel:SetTextColor(1, 1, 1)
-        GwExperienceFrame.CurrentLevel:SetText(1, 1, 1)
-        GwExperienceFrame.labelRight:SetTexture(texture)
-        GwExperienceFrame.labelLeft:SetTexture(texture)
+        self.NextLevel:SetTextColor(1, 1, 1)
+        self.CurrentLevel:SetText(1, 1, 1)
+        self.labelRight:SetTexture(texture)
+        self.labelLeft:SetTexture(texture)
     end
 
     --If we are inside a pvp arena we show the honorbar
@@ -329,7 +321,7 @@ local function xpbar_OnEvent(self, event)
             1,
             1,
             1
-            GwExperienceFrame.ExpBar:SetStatusBarColor(1, 0.2, 0.2)
+            self.ExpBar:SetStatusBarColor(1, 0.2, 0.2)
     end
 
     local GainBigExp = false
@@ -357,49 +349,36 @@ local function xpbar_OnEvent(self, event)
         GetTime(),
         animationSpeed,
         function(step)
-            GwExperienceFrame.ExpBar.Spark:SetWidth(
+            self.ExpBar.Spark:SetWidth(
                 math.max(
                     8,
-                    math.min(
-                        9,
-                        GwExperienceFrame.ExpBar:GetWidth() * animations["experiencebarAnimation"]["progress"]
-                    )
+                    math.min(9,self.ExpBar:GetWidth() * animations["experiencebarAnimation"]["progress"])
                 )
             )
 
             if not GainBigExp then
-                GwExperienceFrame.ExpBar:SetValue(animations["experiencebarAnimation"]["progress"])
-                GwExperienceFrame.ExpBar.Spark:SetPoint(
-                    "LEFT",
-                    GwExperienceFrame.ExpBar:GetWidth() * animations["experiencebarAnimation"]["progress"] - 8,
-                    0
-                )
+                self.ExpBar:SetValue(animations["experiencebarAnimation"]["progress"])
+                self.ExpBar.Spark:SetPoint("LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"]["progress"] - 8, 0)
 
                 local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"]["progress"]) + 90
-                GwXpFlare:SetPoint("CENTER", GwExperienceFrame, "LEFT", flarePoint, 0)
+                GwXpFlare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
             end
-            GwExperienceFrame.ExpBar.Rested:SetValue(rested)
-            GwExperienceFrame.ExpBar.Rested:SetPoint(
-                "LEFT",
-                GwExperienceFrame.ExpBar,
-                "LEFT",
-                GwExperienceFrame.ExpBar:GetWidth() * animations["experiencebarAnimation"]["progress"],
-                0
-            )
+            self.ExpBar.Rested:SetValue(rested)
+            self.ExpBar.Rested:SetPoint("LEFT", self.ExpBar, "LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"]["progress"], 0)
 
             if GainBigExp and GwXpFlare.soundCooldown < GetTime() then
                 expSoundCooldown =
                     math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
 
-                    GwExperienceFrame.ExpBar:SetValue(animations["experiencebarAnimation"]["progress"])
-                    GwExperienceFrame.ExpBar.Spark:SetPoint(
+                    self.ExpBar:SetValue(animations["experiencebarAnimation"]["progress"])
+                    self.ExpBar.Spark:SetPoint(
                     "LEFT",
-                    GwExperienceFrame.ExpBar:GetWidth() * animations["experiencebarAnimation"]["progress"] - 8,
+                    self.ExpBar:GetWidth() * animations["experiencebarAnimation"]["progress"] - 8,
                     0
                 )
 
                 local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"]["progress"]) + 90
-                GwXpFlare:SetPoint("CENTER", GwExperienceFrame, "LEFT", flarePoint, 0)
+                GwXpFlare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
 
                 GwXpFlare.soundCooldown = GetTime() + expSoundCooldown
                 PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
@@ -416,39 +395,32 @@ local function xpbar_OnEvent(self, event)
         0.3,
         function()
             local prog = animations["GwExperienceBarCandy"]["progress"]
-            GwExperienceFrame.ExpBarCandy:SetValue(prog)
+            self.ExpBarCandy:SetValue(prog)
         end
     )
 
     if showBar3 then
-        GwExperienceFrame.RepuBarCandy:SetValue(valPrecRepu)
+        self.RepuBarCandy:SetValue(valPrecRepu)
 
         AddToAnimation(
             "repuBarAnimation",
-            GwExperienceFrame.RepuBar.repuBarAnimation,
+            self.RepuBar.repuBarAnimation,
             valPrecRepu,
             GetTime(),
             animationSpeed,
             function()
-                GwExperienceFrame.RepuBar.Spark:SetWidth(
+                self.RepuBar.Spark:SetWidth(
                     math.max(
                         8,
-                        math.min(
-                            9,
-                            GwExperienceFrame.RepuBar:GetWidth() * animations["repuBarAnimation"]["progress"]
-                        )
+                        math.min(9, self.RepuBar:GetWidth() * animations["repuBarAnimation"]["progress"])
                     )
                 )
 
-                GwExperienceFrame.RepuBar:SetValue(animations["repuBarAnimation"]["progress"])
-                GwExperienceFrame.RepuBar.Spark:SetPoint(
-                    "LEFT",
-                    GwExperienceFrame.RepuBar:GetWidth() * animations["repuBarAnimation"]["progress"] - 8,
-                    0
-                )
+                self.RepuBar:SetValue(animations["repuBarAnimation"]["progress"])
+                self.RepuBar.Spark:SetPoint("LEFT", self.RepuBar:GetWidth() * animations["repuBarAnimation"]["progress"] - 8, 0)
             end
         )
-        GwExperienceFrame.RepuBar.repuBarAnimation = valPrecRepu
+        self.RepuBar.repuBarAnimation = valPrecRepu
     end
 
     experiencebarAnimation = valPrec
@@ -461,224 +433,224 @@ local function xpbar_OnEvent(self, event)
       level = level.. " |cFF00FF00(" .. UnitEffectiveLevel("player") .. ")|r"
     end
 
-    GwExperienceFrame.NextLevel:SetText(Nextlevel)
-    GwExperienceFrame.CurrentLevel:SetText(restingIconString .. level)
+    self.NextLevel:SetText(Nextlevel)
+    self.CurrentLevel:SetText(restingIconString .. level)
     if showBar1 and showBar2 and showBar3 then
-        GwExperienceFrame.ExpBar:Show()
-        GwExperienceFrame.ExpBarCandy:Show()
-        GwExperienceFrame.ExpBar:SetHeight(2.66)
-        GwExperienceFrame.ExpBarCandy:SetHeight(2.66)
-        GwExperienceFrame.ExpBar.Spark:SetHeight(2.66)
-        GwExperienceFrame.ExpBar.Spark:Show()
-        GwExperienceFrame.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        GwExperienceFrame.ExpBar:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.ExpBar:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBar:Show()
+        self.ExpBarCandy:Show()
+        self.ExpBar:SetHeight(2.66)
+        self.ExpBarCandy:SetHeight(2.66)
+        self.ExpBar.Spark:SetHeight(2.66)
+        self.ExpBar.Spark:Show()
+        self.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.self:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBar:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
 
-        GwExperienceFrame.AzeritBar:Show()
-        GwExperienceFrame.AzeritBarCandy:Show()
-        GwExperienceFrame.AzeritBar.animation:Show()
-        GwExperienceFrame.AzeritBar:SetHeight(2.66)
-        GwExperienceFrame.AzeritBar.animation:SetHeight(2.66)
-        GwExperienceFrame.AzeritBarCandy:SetHeight(2.66)
-        GwExperienceFrame.AzeritBar.Spark:SetHeight(2.66)
-        GwExperienceFrame.AzeritBar.Spark:Show()
-        GwExperienceFrame.AzeritBarCandy:SetPoint("TOPLEFT", 90, -8)
-        GwExperienceFrame.AzeritBarCandy:SetPoint("TOPRIGHT", -90, -8)
-        GwExperienceFrame.AzeritBar:SetPoint("TOPLEFT", 90, -8)
-        GwExperienceFrame.AzeritBar:SetPoint("TOPRIGHT", -90, -8)
+        self.AzeritBar:Show()
+        self.AzeritBarCandy:Show()
+        self.AzeritBar.animation:Show()
+        self.AzeritBar:SetHeight(2.66)
+        self.AzeritBar.animation:SetHeight(2.66)
+        self.AzeritBarCandy:SetHeight(2.66)
+        self.AzeritBar.Spark:SetHeight(2.66)
+        self.AzeritBar.Spark:Show()
+        self.AzeritBarCandy:SetPoint("TOPLEFT", 90, -8)
+        self.AzeritBarCandy:SetPoint("TOPRIGHT", -90, -8)
+        self.AzeritBar:SetPoint("TOPLEFT", 90, -8)
+        self.AzeritBar:SetPoint("TOPRIGHT", -90, -8)
 
-        GwExperienceFrame.RepuBar:Show()
-        GwExperienceFrame.RepuBarCandy:Show()
-        GwExperienceFrame.RepuBar:SetHeight(2.66)
-        GwExperienceFrame.RepuBarCandy:SetHeight(2.66)
-        GwExperienceFrame.RepuBar.Spark:SetHeight(2.66)
-        GwExperienceFrame.RepuBar.Spark:Show()
-        GwExperienceFrame.RepuBarCandy:SetPoint("TOPLEFT", 90, -12)
-        GwExperienceFrame.RepuBarCandy:SetPoint("TOPRIGHT", -90, -12)
-        GwExperienceFrame.RepuBar:SetPoint("TOPLEFT", 90, -12)
-        GwExperienceFrame.RepuBar:SetPoint("TOPRIGHT", -90, -12)
+        self.RepuBar:Show()
+        self.RepuBarCandy:Show()
+        self.RepuBar:SetHeight(2.66)
+        self.RepuBarCandy:SetHeight(2.66)
+        self.RepuBar.Spark:SetHeight(2.66)
+        self.RepuBar.Spark:Show()
+        self.RepuBarCandy:SetPoint("TOPLEFT", 90, -12)
+        self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -12)
+        self.RepuBar:SetPoint("TOPLEFT", 90, -12)
+        self.RepuBar:SetPoint("TOPRIGHT", -90, -12)
     elseif showBar1 and not showBar2 and showBar3 then
-        GwExperienceFrame.ExpBar:Show()
-        GwExperienceFrame.ExpBarCandy:Show()
-        GwExperienceFrame.ExpBar:SetHeight(4)
-        GwExperienceFrame.ExpBarCandy:SetHeight(4)
-        GwExperienceFrame.ExpBar.Spark:SetHeight(4)
-        GwExperienceFrame.ExpBar.Spark:Show()
-        GwExperienceFrame.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        GwExperienceFrame.ExpBar:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.ExpBar:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBar:Show()
+        self.ExpBarCandy:Show()
+        self.ExpBar:SetHeight(4)
+        self.ExpBarCandy:SetHeight(4)
+        self.ExpBar.Spark:SetHeight(4)
+        self.ExpBar.Spark:Show()
+        self.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBar:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
 
-        GwExperienceFrame.AzeritBar:Hide()
-        GwExperienceFrame.AzeritBarCandy:Hide()
-        GwExperienceFrame.AzeritBar.animation:Hide()
-        GwExperienceFrame.AzeritBar:SetValue(0)
-        GwExperienceFrame.AzeritBarCandy:SetValue(0)
-        GwExperienceFrame.AzeritBar.Spark:Hide()
+        self.AzeritBar:Hide()
+        self.AzeritBarCandy:Hide()
+        self.AzeritBar.animation:Hide()
+        self.AzeritBar:SetValue(0)
+        self.AzeritBarCandy:SetValue(0)
+        self.AzeritBar.Spark:Hide()
 
-        GwExperienceFrame.RepuBar:Show()
-        GwExperienceFrame.RepuBarCandy:Show()
-        GwExperienceFrame.RepuBar:SetHeight(4)
-        GwExperienceFrame.RepuBarCandy:SetHeight(4)
-        GwExperienceFrame.RepuBar.Spark:SetHeight(4)
-        GwExperienceFrame.RepuBar.Spark:Show()
-        GwExperienceFrame.RepuBarCandy:SetPoint("TOPLEFT", 90, -8)
-        GwExperienceFrame.RepuBarCandy:SetPoint("TOPRIGHT", -90, -8)
-        GwExperienceFrame.RepuBar:SetPoint("TOPLEFT", 90, -8)
-        GwExperienceFrame.RepuBar:SetPoint("TOPRIGHT", -90, -8)
+        self.RepuBar:Show()
+        self.RepuBarCandy:Show()
+        self.RepuBar:SetHeight(4)
+        self.RepuBarCandy:SetHeight(4)
+        self.RepuBar.Spark:SetHeight(4)
+        self.RepuBar.Spark:Show()
+        self.RepuBarCandy:SetPoint("TOPLEFT", 90, -8)
+        self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -8)
+        self.RepuBar:SetPoint("TOPLEFT", 90, -8)
+        self.RepuBar:SetPoint("TOPRIGHT", -90, -8)
     elseif not showBar1 and showBar2 and showBar3 then
-        GwExperienceFrame.ExpBar:Hide()
-        GwExperienceFrame.ExpBarCandy:Hide()
-        GwExperienceFrame.ExpBar:SetValue(0)
-        GwExperienceFrame.ExpBarCandy:SetValue(0)
-        GwExperienceFrame.ExpBar.Spark:Hide()
+        self.ExpBar:Hide()
+        self.ExpBarCandy:Hide()
+        self.ExpBar:SetValue(0)
+        self.ExpBarCandy:SetValue(0)
+        self.ExpBar.Spark:Hide()
 
-        GwExperienceFrame.AzeritBar:Show()
-        GwExperienceFrame.AzeritBarCandy:Show()
-        GwExperienceFrame.AzeritBar.animation:Show()
-        GwExperienceFrame.AzeritBar:SetHeight(4)
-        GwExperienceFrame.AzeritBar.animation:SetHeight(4)
-        GwExperienceFrame.AzeritBarCandy:SetHeight(4)
-        GwExperienceFrame.AzeritBar.Spark:SetHeight(4)
-        GwExperienceFrame.AzeritBar.Spark:Show()
-        GwExperienceFrame.AzeritBarCandy:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.AzeritBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        GwExperienceFrame.AzeritBar:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.AzeritBar:SetPoint("TOPRIGHT", -90, -4)
+        self.AzeritBar:Show()
+        self.AzeritBarCandy:Show()
+        self.AzeritBar.animation:Show()
+        self.AzeritBar:SetHeight(4)
+        self.AzeritBar.animation:SetHeight(4)
+        self.AzeritBarCandy:SetHeight(4)
+        self.AzeritBar.Spark:SetHeight(4)
+        self.AzeritBar.Spark:Show()
+        self.AzeritBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.AzeritBarCandy:SetPoint("TOPRIGHT", -90, -4)
+        self.AzeritBar:SetPoint("TOPLEFT", 90, -4)
+        self.AzeritBar:SetPoint("TOPRIGHT", -90, -4)
 
-        GwExperienceFrame.RepuBar:Show()
-        GwExperienceFrame.RepuBarCandy:Show()
-        GwExperienceFrame.RepuBar:SetHeight(4)
-        GwExperienceFrame.RepuBarCandy:SetHeight(4)
-        GwExperienceFrame.RepuBar.Spark:SetHeight(4)
-        GwExperienceFrame.RepuBar.Spark:Show()
-        GwExperienceFrame.RepuBarCandy:SetPoint("TOPLEFT", 90, -8)
-        GwExperienceFrame.RepuBarCandy:SetPoint("TOPRIGHT", -90, -8)
-        GwExperienceFrame.RepuBar:SetPoint("TOPLEFT", 90, -8)
-        GwExperienceFrame.RepuBar:SetPoint("TOPRIGHT", -90, -8)
+        self.RepuBar:Show()
+        self.RepuBarCandy:Show()
+        self.RepuBar:SetHeight(4)
+        self.RepuBarCandy:SetHeight(4)
+        self.RepuBar.Spark:SetHeight(4)
+        self.RepuBar.Spark:Show()
+        self.RepuBarCandy:SetPoint("TOPLEFT", 90, -8)
+        self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -8)
+        self.RepuBar:SetPoint("TOPLEFT", 90, -8)
+        self.RepuBar:SetPoint("TOPRIGHT", -90, -8)
     elseif not showBar1 and not showBar2 and showBar3 then
-        GwExperienceFrame.ExpBar:Hide()
-        GwExperienceFrame.ExpBarCandy:Hide()
-        GwExperienceFrame.ExpBar:SetValue(0)
-        GwExperienceFrame.ExpBarCandy:SetValue(0)
-        GwExperienceFrame.ExpBar.Spark:Hide()
+        self.ExpBar:Hide()
+        self.ExpBarCandy:Hide()
+        self.ExpBar:SetValue(0)
+        self.ExpBarCandy:SetValue(0)
+        self.ExpBar.Spark:Hide()
 
-        GwExperienceFrame.AzeritBar:Hide()
-        GwExperienceFrame.AzeritBarCandy:Hide()
-        GwExperienceFrame.AzeritBar.animation:Hide()
-        GwExperienceFrame.AzeritBar:SetValue(0)
-        GwExperienceFrame.AzeritBarCandy:SetValue(0)
-        GwExperienceFrame.AzeritBar.Spark:Hide()
+        self.AzeritBar:Hide()
+        self.AzeritBarCandy:Hide()
+        self.AzeritBar.animation:Hide()
+        self.AzeritBar:SetValue(0)
+        self.AzeritBarCandy:SetValue(0)
+        self.AzeritBar.Spark:Hide()
 
-        GwExperienceFrame.RepuBar:Show()
-        GwExperienceFrame.RepuBarCandy:Show()
-        GwExperienceFrame.RepuBar:SetHeight(8)
-        GwExperienceFrame.RepuBarCandy:SetHeight(8)
-        GwExperienceFrame.RepuBar.Spark:SetHeight(8)
-        GwExperienceFrame.RepuBar.Spark:Show()
-        GwExperienceFrame.RepuBarCandy:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.RepuBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        GwExperienceFrame.RepuBar:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.RepuBar:SetPoint("TOPRIGHT", -90, -4)
+        self.RepuBar:Show()
+        self.RepuBarCandy:Show()
+        self.RepuBar:SetHeight(8)
+        self.RepuBarCandy:SetHeight(8)
+        self.RepuBar.Spark:SetHeight(8)
+        self.RepuBar.Spark:Show()
+        self.RepuBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -4)
+        self.RepuBar:SetPoint("TOPLEFT", 90, -4)
+        self.RepuBar:SetPoint("TOPRIGHT", -90, -4)
     elseif not showBar1 and not showBar2 and not showBar3 then
-        GwExperienceFrame.ExpBar:Hide()
-        GwExperienceFrame.ExpBarCandy:Hide()
-        GwExperienceFrame.ExpBar:SetValue(0)
-        GwExperienceFrame.ExpBarCandy:SetValue(0)
-        GwExperienceFrame.ExpBar.Spark:Hide()
+        self.ExpBar:Hide()
+        self.ExpBarCandy:Hide()
+        self.ExpBar:SetValue(0)
+        self.ExpBarCandy:SetValue(0)
+        self.ExpBar.Spark:Hide()
 
-        GwExperienceFrame.AzeritBar:Hide()
-        GwExperienceFrame.AzeritBarCandy:Hide()
-        GwExperienceFrame.AzeritBar.animation:Hide()
-        GwExperienceFrame.AzeritBar:SetValue(0)
-        GwExperienceFrame.AzeritBarCandy:SetValue(0)
-        GwExperienceFrame.AzeritBar.Spark:Hide()
+        self.AzeritBar:Hide()
+        self.AzeritBarCandy:Hide()
+        self.AzeritBar.animation:Hide()
+        self.AzeritBar:SetValue(0)
+        self.AzeritBarCandy:SetValue(0)
+        self.AzeritBar.Spark:Hide()
 
-        GwExperienceFrame.RepuBar:Hide()
-        GwExperienceFrame.RepuBarCandy:Hide()
-        GwExperienceFrame.RepuBar:SetValue(0)
-        GwExperienceFrame.RepuBarCandy:SetValue(0)
-        GwExperienceFrame.RepuBar.Spark:Hide()
+        self.RepuBar:Hide()
+        self.RepuBarCandy:Hide()
+        self.RepuBar:SetValue(0)
+        self.RepuBarCandy:SetValue(0)
+        self.RepuBar.Spark:Hide()
     elseif showBar1 and not showBar2 and not showBar3 then
-        GwExperienceFrame.ExpBar:Show()
-        GwExperienceFrame.ExpBarCandy:Show()
-        GwExperienceFrame.ExpBar:SetHeight(8)
-        GwExperienceFrame.ExpBarCandy:SetHeight(8)
-        GwExperienceFrame.ExpBar.Spark:SetHeight(8)
-        GwExperienceFrame.ExpBar.Spark:Show()
-        GwExperienceFrame.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        GwExperienceFrame.ExpBar:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.ExpBar:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBar:Show()
+        self.ExpBarCandy:Show()
+        self.ExpBar:SetHeight(8)
+        self.ExpBarCandy:SetHeight(8)
+        self.ExpBar.Spark:SetHeight(8)
+        self.ExpBar.Spark:Show()
+        self.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBar:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
 
-        GwExperienceFrame.AzeritBar:Hide()
-        GwExperienceFrame.AzeritBarCandy:Hide()
-        GwExperienceFrame.AzeritBar.animation:Hide()
-        GwExperienceFrame.AzeritBar:SetValue(0)
-        GwExperienceFrame.AzeritBarCandy:SetValue(0)
-        GwExperienceFrame.AzeritBar.Spark:Hide()
+        self.AzeritBar:Hide()
+        self.AzeritBarCandy:Hide()
+        self.AzeritBar.animation:Hide()
+        self.AzeritBar:SetValue(0)
+        self.AzeritBarCandy:SetValue(0)
+        self.AzeritBar.Spark:Hide()
 
-        GwExperienceFrame.RepuBar:Hide()
-        GwExperienceFrame.RepuBarCandy:Hide()
-        GwExperienceFrame.RepuBar:SetValue(0)
-        GwExperienceFrame.RepuBarCandy:SetValue(0)
-        GwExperienceFrame.RepuBar.Spark:Hide()
+        self.RepuBar:Hide()
+        self.RepuBarCandy:Hide()
+        self.RepuBar:SetValue(0)
+        self.RepuBarCandy:SetValue(0)
+        self.RepuBar.Spark:Hide()
     elseif showBar1 and showBar2 and not showBar3 then
-        GwExperienceFrame.ExpBar:Show()
-        GwExperienceFrame.ExpBarCandy:Show()
-        GwExperienceFrame.ExpBar:SetHeight(4)
-        GwExperienceFrame.ExpBarCandy:SetHeight(4)
-        GwExperienceFrame.ExpBar.Spark:SetHeight(4)
-        GwExperienceFrame.ExpBar.Spark:Show()
-        GwExperienceFrame.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        GwExperienceFrame.ExpBar:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.ExpBar:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBar:Show()
+        self.ExpBarCandy:Show()
+        self.ExpBar:SetHeight(4)
+        self.ExpBarCandy:SetHeight(4)
+        self.ExpBar.Spark:SetHeight(4)
+        self.ExpBar.Spark:Show()
+        self.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBar:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
 
-        GwExperienceFrame.AzeritBar:Show()
-        GwExperienceFrame.AzeritBarCandy:Show()
-        GwExperienceFrame.AzeritBar.animation:Show()
-        GwExperienceFrame.AzeritBar:SetHeight(4)
-        GwExperienceFrame.AzeritBar.animation:SetHeight(4)
-        GwExperienceFrame.AzeritBarCandy:SetHeight(4)
-        GwExperienceFrame.AzeritBar.Spark:SetHeight(4)
-        GwExperienceFrame.AzeritBar.Spark:Show()
-        GwExperienceFrame.AzeritBarCandy:SetPoint("TOPLEFT", 90, -8)
-        GwExperienceFrame.AzeritBarCandy:SetPoint("TOPRIGHT", -90, -8)
-        GwExperienceFrame.AzeritBar:SetPoint("TOPLEFT", 90, -8)
-        GwExperienceFrame.AzeritBar:SetPoint("TOPRIGHT", -90, -8)
+        self.AzeritBar:Show()
+        self.AzeritBarCandy:Show()
+        self.AzeritBar.animation:Show()
+        self.AzeritBar:SetHeight(4)
+        self.AzeritBar.animation:SetHeight(4)
+        self.AzeritBarCandy:SetHeight(4)
+        self.AzeritBar.Spark:SetHeight(4)
+        self.AzeritBar.Spark:Show()
+        self.AzeritBarCandy:SetPoint("TOPLEFT", 90, -8)
+        self.AzeritBarCandy:SetPoint("TOPRIGHT", -90, -8)
+        self.AzeritBar:SetPoint("TOPLEFT", 90, -8)
+        self.AzeritBar:SetPoint("TOPRIGHT", -90, -8)
 
-        GwExperienceFrame.RepuBar:Hide()
-        GwExperienceFrame.RepuBarCandy:Hide()
-        GwExperienceFrame.RepuBar:SetValue(0)
-        GwExperienceFrame.RepuBarCandy:SetValue(0)
-        GwExperienceFrame.RepuBar.Spark:Hide()
+        self.RepuBar:Hide()
+        self.RepuBarCandy:Hide()
+        self.RepuBar:SetValue(0)
+        self.RepuBarCandy:SetValue(0)
+        self.RepuBar.Spark:Hide()
     elseif not showBar1 and showBar2 and not showBar3 then
-        GwExperienceFrame.ExpBar:Hide()
-        GwExperienceFrame.ExpBarCandy:Hide()
-        GwExperienceFrame.ExpBar:SetValue(0)
-        GwExperienceFrame.ExpBarCandy:SetValue(0)
-        GwExperienceFrame.ExpBar.Spark:Hide()
+        self.ExpBar:Hide()
+        self.ExpBarCandy:Hide()
+        self.ExpBar:SetValue(0)
+        self.ExpBarCandy:SetValue(0)
+        self.ExpBar.Spark:Hide()
 
-        GwExperienceFrame.AzeritBar:Show()
-        GwExperienceFrame.AzeritBarCandy:Show()
-        GwExperienceFrame.AzeritBar.animation:Show()
-        GwExperienceFrame.AzeritBar:SetHeight(8)
-        GwExperienceFrame.AzeritBar.animation:SetHeight(8)
-        GwExperienceFrame.AzeritBarCandy:SetHeight(8)
-        GwExperienceFrame.AzeritBar.Spark:SetHeight(8)
-        GwExperienceFrame.AzeritBar.Spark:Show()
-        GwExperienceFrame.AzeritBarCandy:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.AzeritBarCandy:SetPoint("TOPRIGHT", -90, -4)
-        GwExperienceFrame.AzeritBar:SetPoint("TOPLEFT", 90, -4)
-        GwExperienceFrame.AzeritBar:SetPoint("TOPRIGHT", -90, -4)
+        self.AzeritBar:Show()
+        self.AzeritBarCandy:Show()
+        self.AzeritBar.animation:Show()
+        self.AzeritBar:SetHeight(8)
+        self.AzeritBar.animation:SetHeight(8)
+        self.AzeritBarCandy:SetHeight(8)
+        self.AzeritBar.Spark:SetHeight(8)
+        self.AzeritBar.Spark:Show()
+        self.AzeritBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.AzeritBarCandy:SetPoint("TOPRIGHT", -90, -4)
+        self.AzeritBar:SetPoint("TOPLEFT", 90, -4)
+        self.AzeritBar:SetPoint("TOPRIGHT", -90, -4)
 
-        GwExperienceFrame.RepuBar:Hide()
-        GwExperienceFrame.RepuBarCandy:Hide()
-        GwExperienceFrame.RepuBar:SetValue(0)
-        GwExperienceFrame.RepuBarCandy:SetValue(0)
-        GwExperienceFrame.RepuBar.Spark:Hide()
+        self.RepuBar:Hide()
+        self.RepuBarCandy:Hide()
+        self.RepuBar:SetValue(0)
+        self.RepuBarCandy:SetValue(0)
+        self.RepuBar.Spark:Hide()
     end
 
     if experiencebarAnimation > valPrec then
@@ -688,15 +660,15 @@ end
 GW.AddForProfiling("hud", "xpbar_OnEvent", xpbar_OnEvent)
 
 local function animateAzeriteBar(self, elapsed)
-    self:SetPoint("RIGHT", GwExperienceFrame.AzeritBar.Spark, "RIGHT", 0, 0)
+    self:SetPoint("RIGHT", self:GetParent():GetParent().AzeritBar.Spark, "RIGHT", 0, 0)
     local speed = 0.01
     self.prog = self.prog + (speed * elapsed)
     if self.prog > 1 then
         self.prog = 0
     end
 
-    self.texture1:SetTexCoord(0, GwExperienceFrame.AzeritBar:GetValue(), 0, 1)
-    self.texture2:SetTexCoord(GwExperienceFrame.AzeritBar:GetValue(), 0, 1, 0)
+    self.texture1:SetTexCoord(0, self:GetParent():GetParent().AzeritBar:GetValue(), 0, 1)
+    self.texture2:SetTexCoord(self:GetParent():GetParent().AzeritBar:GetValue(), 0, 1, 0)
 
     if self.prog < 0.2 then
         self.texture2:SetVertexColor(1, 1, 1, lerp(0, 1, self.prog / 0.2))
@@ -712,18 +684,18 @@ local function animateAzeriteBar(self, elapsed)
 end
 GW.AddForProfiling("hud", "animateAzeriteBar", animateAzeriteBar)
 
-local function updateBarSize()
+local function updateBarSize(self)
     local m = (UIParent:GetWidth() - 180) / 10
     for i = 1, 9 do
         local rm = (m * i) + 90
         _G["barsep" .. i]:ClearAllPoints()
-        _G["barsep" .. i]:SetPoint("LEFT", GwExperienceFrame, "LEFT", rm, 0)
+        _G["barsep" .. i]:SetPoint("LEFT", self, "LEFT", rm, 0)
     end
 
     m = (UIParent:GetWidth() - 180)
     dubbleBarSep:SetWidth(m)
     dubbleBarSep:ClearAllPoints()
-    dubbleBarSep:SetPoint("LEFT", GwExperienceFrame, "LEFT", 90, 0)
+    dubbleBarSep:SetPoint("LEFT", self, "LEFT", 90, 0)
 end
 GW.AddForProfiling("hud", "updateBarSize", updateBarSize)
 
@@ -740,7 +712,7 @@ GW.AddForProfiling("hud", "registerActionHudAura", registerActionHudAura)
 
 local currentTexture = nil
 
-local function selectBg()
+local function selectBg(self)
     if not GetSetting("HUD_BACKGROUND") or not GetSetting("HUD_SPELL_SWAP") then
         return
     end
@@ -790,13 +762,13 @@ local function selectBg()
 
     if currentTexture ~= left then
         currentTexture = left
-        GwActionBarHud.Right:SetTexture(right)
-        GwActionBarHud.Left:SetTexture(left)
+        self.actionBarHud.Right:SetTexture(right)
+        self.actionBarHud.Left:SetTexture(left)
     end
 end
 GW.AddForProfiling("hud", "selectBg", selectBg)
 
-local function combatHealthState()
+local function combatHealthState(self)
     if not GetSetting("HUD_BACKGROUND") then
         return
     end
@@ -806,23 +778,23 @@ local function combatHealthState()
     if unitHealthPrecentage < 0.5 and not UnitIsDeadOrGhost("player") then
         unitHealthPrecentage = unitHealthPrecentage / 0.5
 
-        GwActionBarHud.Left:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
-        GwActionBarHud.Right:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        self.actionBarHud.Left:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        self.actionBarHud.Right:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
 
-        GwActionBarHud.RightSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
-        GwActionBarHud.LeftSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        self.actionBarHud.RightSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        self.actionBarHud.LeftSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
 
-        GwActionBarHud.LeftBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
-        GwActionBarHud.RightBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
+        self.actionBarHud.LeftBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
+        self.actionBarHud.RightBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
     else
-        GwActionBarHud.Left:SetVertexColor(1, 1, 1)
-        GwActionBarHud.Right:SetVertexColor(1, 1, 1)
+        self.actionBarHud.Left:SetVertexColor(1, 1, 1)
+        self.actionBarHud.Right:SetVertexColor(1, 1, 1)
 
-        GwActionBarHud.LeftSwim:SetVertexColor(1, 1, 1)
-        GwActionBarHud.RightSwim:SetVertexColor(1, 1, 1)
+        self.actionBarHud.LeftSwim:SetVertexColor(1, 1, 1)
+        self.actionBarHud.RightSwim:SetVertexColor(1, 1, 1)
 
-        GwActionBarHud.LeftBlood:SetVertexColor(1, 1, 1, 0)
-        GwActionBarHud.RightBlood:SetVertexColor(1, 1, 1, 0)
+        self.actionBarHud.LeftBlood:SetVertexColor(1, 1, 1, 0)
+        self.actionBarHud.RightBlood:SetVertexColor(1, 1, 1, 0)
     end
 end
 GW.AddForProfiling("hud", "combatHealthState", combatHealthState)
@@ -954,13 +926,13 @@ displayRewards = function()
         GW_LEVELING_REWARDS[i] = {}
         GW_LEVELING_REWARDS[i]["type"] = "TALENT"
         GW_LEVELING_REWARDS[i]["id"] = 0
-        GW_LEVELING_REWARDS[i]["level"] = select(3, GetTalentTierInfo(i, GetActiveSpecGroup()))
+        GW_LEVELING_REWARDS[i]["level"] = select(3, GetTalentTierInfo(i, GetSpecialization()))
     end
 
     GW_LEVELING_REWARD_AVALIBLE = false
 
     local spells = {GetSpecializationSpells(GW.myspec)}
-    for k, v in pairs(spells) do
+    for _, v in pairs(spells) do
         if v ~= nil then
             local tIndex = #GW_LEVELING_REWARDS + 1
             GW_LEVELING_REWARDS[tIndex] = {}
@@ -975,7 +947,7 @@ displayRewards = function()
 
         if skillType == "FUTURESPELL" and spellId ~= nil then
             local shouldAdd = true
-            for k, v in pairs(GW_LEVELING_REWARDS) do
+            for _, v in pairs(GW_LEVELING_REWARDS) do
                 if v["type"] == "SPELL" and v["id"] == spellId then
                     shouldAdd = false
                 end
@@ -999,7 +971,7 @@ displayRewards = function()
     )
 
     local i = 1
-    for k, v in pairs(GW_LEVELING_REWARDS) do
+    for _, v in pairs(GW_LEVELING_REWARDS) do
         if v["level"] > GW.mylevel then
             if _G["GwLevelingRewardsItem" .. i].mask ~= nil then
                 _G["GwLevelingRewardsItem" .. i].icon:RemoveMaskTexture(_G["GwLevelingRewardsItem" .. i].mask)
@@ -1074,14 +1046,14 @@ local function hud_OnEvent(self, event, ...)
     if event == "UNIT_AURA" then
         local unit = ...
         if unit == "player" then
-            selectBg()
+            selectBg(self)
         end
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
-        selectBg()
+        selectBg(self)
     elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" then
         local unit = ...
         if unit == "player" then
-            combatHealthState()
+            combatHealthState(self)
         end
     elseif event == "MIRROR_TIMER_START" then
         local arg1, arg2, arg3, arg4, arg5, arg6 = ...
@@ -1091,7 +1063,7 @@ end
 GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
 
 local function LoadHudArt()
-    local hudArtFrame = CreateFrame("Frame", "GwHudArtFrame", UIParent, "GwHudArtFrame")
+    local hudArtFrame = CreateFrame("Frame", nil, UIParent, "GwHudArtFrame")
     GW.MixinHideDuringPetAndOverride(hudArtFrame)
 
     if not GetSetting("BORDER_ENABLED") and hudArtFrame.edgeTint then
@@ -1100,12 +1072,12 @@ local function LoadHudArt()
         end
     end
 
-    if not GetSetting("HUD_BACKGROUND") and GwActionBarHud.HUDBG then
-        for _, f in ipairs(GwActionBarHud.HUDBG) do
+    if not GetSetting("HUD_BACKGROUND") and hudArtFrame.actionBarHud.HUDBG then
+        for _, f in ipairs(hudArtFrame.actionBarHud.HUDBG) do
             f:Hide()
         end
     else
-        GW.RegisterScaleFrame(GwActionBarHud)
+        GW.RegisterScaleFrame(hudArtFrame.actionBarHud)
     end
 
     hudArtFrame:SetScript("OnEvent", hud_OnEvent)
@@ -1117,30 +1089,13 @@ local function LoadHudArt()
     hudArtFrame:RegisterEvent("MIRROR_TIMER_START")
     hudArtFrame:RegisterUnitEvent("UNIT_HEALTH", "player")
     hudArtFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
-    selectBg()
-    combatHealthState()
+    selectBg(hudArtFrame)
+    combatHealthState(hudArtFrame)
 
     --Loss Of Control Icon Skin
     LossOfControlFrame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
-    -- show weekly reward 
-    PVEFrame:HookScript("OnShow", function(self)
-        UIParentLoadAddOn("Blizzard_PVPUI")
-        if _G.PVPQueueFrame.HonorInset.CasualPanel.WeeklyChest then
-            _G.PVPQueueFrame.HonorInset.CasualPanel.WeeklyChest:SetScript("OnMouseDown", function()
-                if UIParentLoadAddOn("Blizzard_WeeklyRewards") then
-                    if WeeklyRewardsFrame:IsShown() then
-                        WeeklyRewardsFrame:Hide()
-                    else
-                        WeeklyRewardsFrame:Show()
-                    end
-                else
-                    LoadAddOn("Blizzard_WeeklyRewards")
-                    WeeklyRewardsFrame:Show()
-                end
-            end)
-        end
-    end)
+    return hudArtFrame
 end
 GW.LoadHudArt = LoadHudArt
 
@@ -1149,52 +1104,54 @@ local function LoadXPBar()
 
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")
     GW.MixinHideDuringPet(experiencebar)
-    GwlevelLableRightButton:SetScript("OnClick", xpbar_OnClick)
-    GwlevelLableRightButton:SetScript(
+    experiencebar.rightButton:SetScript("OnClick", xpbar_OnClick)
+    experiencebar.rightButton:SetScript(
         "OnEnter",
-        function()
-            GwExperienceFrame.NextLevel.oldColor = {}
-            GwExperienceFrame.NextLevel.oldColor.r, GwExperienceFrame.NextLevel.oldColor.g, GwExperienceFrame.NextLevel.oldColor.b = GwExperienceFrame.NextLevel:GetTextColor()
-            GwExperienceFrame.NextLevel:SetTextColor(GwExperienceFrame.NextLevel.oldColor.r * 2, GwExperienceFrame.NextLevel.oldColor.g * 2, GwExperienceFrame.NextLevel.oldColor.b * 2)
+        function(self)
+            local p = self:GetParent()
+            p.NextLevel.oldColor = {}
+            p.NextLevel.oldColor.r, p.NextLevel.oldColor.g, p.NextLevel.oldColor.b = p.NextLevel:GetTextColor()
+            p.NextLevel:SetTextColor(p.NextLevel.oldColor.r * 2, p.NextLevel.oldColor.g * 2, p.NextLevel.oldColor.b * 2)
         end
     )
-    GwlevelLableRightButton:SetScript(
+    experiencebar.rightButton:SetScript(
         "OnLeave",
-        function()
-            if GwExperienceFrame.NextLevel.oldColor == nil then
+        function(self)
+            local p = self:GetParent()
+            if p.NextLevel.oldColor == nil then
                 return
             end
-            GwExperienceFrame.NextLevel:SetTextColor(GwExperienceFrame.NextLevel.oldColor.r, GwExperienceFrame.NextLevel.oldColor.g, GwExperienceFrame.NextLevel.oldColor.b)
+            p.NextLevel:SetTextColor(p.NextLevel.oldColor.r, p.NextLevel.oldColor.g, p.NextLevel.oldColor.b)
         end
     )
 
-    GwExperienceFrame.AzeritBar.animation:SetScript(
+    experiencebar.AzeritBar.animation:SetScript(
         "OnShow",
-        function()
-            GwExperienceFrame.AzeritBar.animation:SetScript(
+        function(self)
+            self.animation:SetScript(
                 "OnUpdate",
                 function(self, elapsed)
-                    animateAzeriteBar(GwExperienceFrame.AzeritBar.animation, elapsed)
+                    animateAzeriteBar(self, elapsed)
                 end
             )
         end
     )
-    GwExperienceFrame.AzeritBar.animation:SetScript(
+    experiencebar.AzeritBar.animation:SetScript(
         "OnHide",
-        function()
-            GwExperienceFrame.AzeritBar.animation:SetScript("OnUpdate", nil)
+        function(self)
+            self:SetScript("OnUpdate", nil)
         end
     )
 
     experiencebarAnimation = UnitXP("Player") / UnitXPMax("Player")
 
-    GwExperienceFrame.RepuBar.repuBarAnimation = 0
-    GwExperienceFrame.AzeritBar.AzeritBarAnimation = 0
-    GwExperienceFrame.NextLevel:SetFont(UNIT_NAME_FONT, 12)
-    GwExperienceFrame.CurrentLevel:SetFont(UNIT_NAME_FONT, 12)
+    experiencebar.RepuBar.repuBarAnimation = 0
+    experiencebar.AzeritBar.AzeritBarAnimation = 0
+    experiencebar.NextLevel:SetFont(UNIT_NAME_FONT, 12)
+    experiencebar.CurrentLevel:SetFont(UNIT_NAME_FONT, 12)
 
-    updateBarSize()
-    xpbar_OnEvent()
+    updateBarSize(experiencebar)
+    xpbar_OnEvent(experiencebar)
 
     experiencebar:SetScript("OnEvent", xpbar_OnEvent)
 
@@ -1214,11 +1171,11 @@ local function LoadXPBar()
     experiencebar:SetScript("OnEnter", xpbar_OnEnter)
     experiencebar:SetScript(
         "OnLeave",
-        function()
+        function(self)
             GameTooltip_Hide()
-            UIFrameFadeIn(GwExperienceFrame.ExpBar, 0.2, GwExperienceFrame.ExpBar:GetAlpha(), 1)
-            UIFrameFadeIn(GwExperienceFrame.AzeritBar, 0.2, GwExperienceFrame.AzeritBar:GetAlpha(), 1)
-            UIFrameFadeIn(GwExperienceFrame.RepuBar, 0.2, GwExperienceFrame.RepuBar:GetAlpha(), 1)
+            UIFrameFadeIn(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 1)
+            UIFrameFadeIn(self.AzeritBar, 0.2, self.AzeritBar:GetAlpha(), 1)
+            UIFrameFadeIn(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 1)
         end
     )    
 end

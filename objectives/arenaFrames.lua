@@ -21,7 +21,7 @@ local FractionIcon = {}
     FractionIcon.Horde = "|TInterface/AddOns/GW2_UI/textures/battleground/Horde:16:16:0:0|t "
     FractionIcon.NONE = ""
 
-local function setCompass(isArena)
+local function setCompass()
     local compassData = {}
     local compassTitle, compassDesc = "", ""
 
@@ -113,7 +113,6 @@ local function updateArena_Name(self)
     local inBG = UnitInBattleground("player")
     local guidTarget = UnitGUID("target")
     local specID = GetArenaOpponentSpec(self.id)
-    local specName = ""
     local nameString = UNKNOWNOBJECT
     local name
 
@@ -169,7 +168,7 @@ local function updateArena_Name(self)
 end
 GW.AddForProfiling("arenaFrames", "updateArena_Name", updateArena_Name)
 
-local function arenaFrame_OnEvent(self, event, unit)
+local function arenaFrame_OnEvent(self, event)
     local _, instanceType = IsInInstance()
     if instanceType ~= "arena" and instanceType ~= "pvp" then
         return
@@ -201,7 +200,7 @@ local function arenaPrepFrame_OnEvent()
         if i <= numOpps then
             local specID, gender = GetArenaOpponentSpec(i)
             if specID > 0 then 
-                local nameString = UNKNOWEN
+                local nameString = UNKNOWN
                 local className, classFile
                 local _, specName, _, _, role, class = GetSpecializationInfoByID(specID, gender)
                 for i = 1, GetNumClasses() do
@@ -273,7 +272,7 @@ local function registerFrame(i)
         "OnShow",
         function(self)
             --Hide prep frames
-            for k, frame in pairs(arenaPrepFrames) do
+            for _, frame in pairs(arenaPrepFrames) do
                 if frame:IsShown() then
                     frame:Hide()
                 end
@@ -291,7 +290,7 @@ local function registerFrame(i)
 
     arenaFrame:SetScript(
         "OnHide",
-        function(self)
+        function()
             countArenaFrames = countArenaFrames - 1
             updateArenaFrameHeight()
             local _, instanceType = IsInInstance()
@@ -323,7 +322,7 @@ local function registerPrepFrame(i)
 
     arenaPrepFrame:SetScript(
         "OnShow",
-        function(self)
+        function()
             updateArenaFrameHeight()
             countArenaPrepFrames = countArenaPrepFrames + 1
         end
@@ -359,11 +358,11 @@ local function LoadArenaFrame()
     f:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     f:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
     f:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
-    f:SetScript("OnEvent", function(self, event)
+    f:SetScript("OnEvent", function()
         C_Timer.After(0.8, function()
             local _, instanceType = IsInInstance()
             if instanceType == "arena" or instanceType == "pvp" then
-                setCompass(isArena)
+                setCompass()
                 updateArenaFrameHeight()
             end
         end)

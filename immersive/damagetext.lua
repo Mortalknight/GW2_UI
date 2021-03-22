@@ -238,7 +238,7 @@ local function handleCombatLogEvent(self, timestamp, event, hideCaster, sourceGU
 
     if playerGUID == sourceGUID then
         if (string.find(event, "_DAMAGE")) then
-            local spellID, spellName, spellSchool, amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand
+            local spellID, spellName, spellSchool, amount, overkill, school_ignore, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand
             if (string.find(event, "SWING")) then
                 spellName, amount, overkill, school_ignore, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand = "melee", ...
             elseif (string.find(event, "ENVIRONMENTAL")) then
@@ -260,7 +260,7 @@ local function handleCombatLogEvent(self, timestamp, event, hideCaster, sourceGU
         end
     elseif (bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_GUARDIAN) > 0 or bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PET) > 0) and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) > 0 then -- caster is player pet
         if (string.find(event, "_DAMAGE")) then
-            local spellID, spellName, spellSchool, amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand
+            local spellID, spellName, spellSchool, amount, overkill, school_ignore, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand
             if (string.find(event, "SWING")) then
                 spellName, amount, overkill, school_ignore, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand = "pet", ...
             elseif (string.find(event, "ENVIRONMENTAL")) then
@@ -281,14 +281,14 @@ local function handleCombatLogEvent(self, timestamp, event, hideCaster, sourceGU
     end
 end
 
-local function onNamePlateAdded(self, event, unitID)
+local function onNamePlateAdded(_, _, unitID)
     local guid = UnitGUID(unitID)
 
     unitToGuid[unitID] = guid
     guidToUnit[guid] = unitID
 end
 
-local function onNamePlateRemoved(self, event, unitID)
+local function onNamePlateRemoved(_, _, unitID)
     local guid = unitToGuid[unitID]
 
     unitToGuid[unitID] = nil
@@ -301,7 +301,7 @@ local function onNamePlateRemoved(self, event, unitID)
     end
 end
 
-local function onCombatLogEvent(self, event)
+local function onCombatLogEvent(self)
     handleCombatLogEvent(self, CombatLogGetCurrentEventInfo())
 end
 
@@ -315,7 +315,7 @@ local function LoadDamageText()
     f:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
     f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
-    f:SetScript("OnEvent", function(self, event, ...)
+    f:SetScript("OnEvent", function(_, event, ...)
         if event == "NAME_PLATE_UNIT_ADDED" then
             onNamePlateAdded(f, event, ...)
         elseif event == "NAME_PLATE_UNIT_REMOVED" then
