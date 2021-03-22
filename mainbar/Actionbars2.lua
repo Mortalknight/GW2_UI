@@ -1053,7 +1053,7 @@ local function changeFlyoutStyle(self)
     if not self.FlyoutArrow then
         return
     end
-    
+
     self.FlyoutBorder:Hide()
     self.FlyoutBorderShadow:Hide()
     SpellFlyoutHorizontalBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
@@ -1138,5 +1138,19 @@ local function LoadActionBars(lm)
         ExtraActionBarFrame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 130)
         ExtraActionBarFrame:SetFrameStrata("MEDIUM")
     end
+
+    local HIDE_MOST = {
+        GwStanceBarButton = "hidden",
+        StanceButton1 = "hidden",
+        StanceButton2 = "hidden",
+        StanceButton3 = "hidden",
+        StanceButton4 = "hidden",
+        StanceButton5 = "hidden",
+        StanceButton6 = "hidden",
+    -- Add new frames/ buttons to hide
+    }
+
+    FRAMELOCK_STATES.COMMENTATOR_SPECTATING_MODE = Mixin(FRAMELOCK_STATES.COMMENTATOR_SPECTATING_MODE, HIDE_MOST)
+    FRAMELOCK_STATES.PETBATTLES = Mixin(FRAMELOCK_STATES.PETBATTLES, HIDE_MOST)
 end
 GW.LoadActionBars = LoadActionBars
