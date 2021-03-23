@@ -8,6 +8,7 @@ FIXES
 
 MISC
     - Update locals
+    - Code clean up
 ]=])
 
 v("5.12.0", [=[

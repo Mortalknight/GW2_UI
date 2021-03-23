@@ -5,6 +5,7 @@ FIXES
 
 MISC
     - Update locals
+    - Code clean up
 
 5.12.0
 NEW

@@ -439,7 +439,7 @@ local function loadAddon(self)
 
         if not IsAddOnLoaded("ConsolePortUI_Menu") then
             GwMainMenuFrame:SetSize(GameMenuButtonMacros:GetWidth(), GameMenuButtonMacros:GetHeight())
-            GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonMacros, "BOTTOMLEFT", 0, -1)
+            GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonUIOptions, "BOTTOMLEFT", 0, -1)
             hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
         end
     end
