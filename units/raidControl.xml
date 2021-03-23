@@ -74,7 +74,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <EditBox name="GwManageGroupInviteBox" autoFocus="false">
+            <EditBox parentKey="groupInviteBox" autoFocus="false">
                 <Size x="110" y="20"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
@@ -95,41 +95,40 @@
                 </Layers>
                 <FontString inherits="ChatFontNormal" />
             </EditBox>
-            <Button name="GwButtonInviteToParty" inherits="GwStandardButton" text="PARTY_INVITE">
+            <Button parentKey="inviteToParty" inherits="GwStandardButton" text="INVITE">
                 <Size x="80" y="20" />
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwManageGroupInviteBox" x="-5" y="-10"></Anchor>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.groupInviteBox" relativePoint="BOTTOMLEFT" x="-5" y="-10"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="GwManageGroupLeaveButton" inherits="GwStandardButton" text="EXIT">
+            <Button parentKey="groupLeaveButton" inherits="GwStandardButton" text="EXIT">
                 <Size x="80" y="20" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="GwManageGroupInviteBox" x="5" y="-10"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.groupInviteBox" x="5" y="-10"></Anchor>
                 </Anchors>
             </Button>
-            <Frame name="GwGroupManagerInGroup">
+            <Frame parentKey="inGroup">
                 <Size x="80" y="240"></Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="GwButtonInviteToParty" x="0" y="-10"></Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.inviteToParty" x="0" y="-10"></Anchor>
                 </Anchors>
                 <Layers>
                     <layer level="OVERLAY">
-                        <FontString name="$parentTarget" text="TEST" inherits="GameFontNormalSmall" justifyH="LEFT">
+                        <FontString parentKey="header" text="RAID_TARGET_ICON" inherits="GameFontNormalSmall" justifyH="LEFT">
                             <Size x="512" y="25"></Size>
-                            <Color r="1" b="1" g="1"></Color>
+                            <Color r="1" g="0.95" b="0.82"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="5" y="5"></Anchor>
                             </Anchors>
                         </FontString>
-
                     </layer>
                 </Layers>
                 <Frames>
-                    <Button name="GwGroupReadyCheck" inherits="GwStandardButton" text="READY_CHECK">
+                    <Button parentKey="readyCheck" inherits="GwStandardButton" text="READY_CHECK">
                         <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button"></NormalTexture>
                         <Size x="235" y="30" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-160"></Anchor>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-160"></Anchor>
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY">
@@ -142,11 +141,11 @@
                             </Layer>
                         </Layers>
                     </Button>
-                    <Button name="GwGroupCountdown" inherits="GwStandardButton" text="PLAYER_COUNTDOWN_BUTTON">
+                    <Button parentKey="countdown" inherits="GwStandardButton" text="PLAYER_COUNTDOWN_BUTTON">
                         <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button"></NormalTexture>
                         <Size x="235" y="30" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-200"></Anchor>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-200"></Anchor>
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY">
@@ -159,20 +158,18 @@
                             </Layer>
                         </Layers>
                     </Button>
-
-                    <Button name="GwGroupRoleCheck" inherits="GwStandardButton" text="ROLE_POLL">
+                    <Button parentKey="roleCheck" inherits="GwStandardButton" text="ROLE_POLL">
                         <Size x="100" y="30" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="GwManageGroupLeaveButton" x="0" y="-240"></Anchor>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-240"></Anchor>
                         </Anchors>
                     </Button>
-                    <Button name="GwGroupManagerConvert" inherits="GwStandardButton" text="Convert to Raid">
+                    <Button parentKey="convert" inherits="GwStandardButton" text="Convert to Raid">
                         <Size x="120" y="30" />
                         <Anchors>
-                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="GwButtonInviteToParty" x="0" y="-240"></Anchor>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeKey="$parent.$parent.inviteToParty" x="0" y="-240"></Anchor>
                         </Anchors>
                     </Button>
-
                 </Frames>
             </Frame>
         </Frames>
@@ -185,7 +182,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentkey="texture" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
                     <Size x="50" y="50" />
                     <Anchors>
                         <Anchor point="CENTER"></Anchor>
@@ -203,7 +200,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentkey="texture" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
                     <Size x="35" y="35" />
                     <Anchors>
                         <Anchor point="CENTER"></Anchor>
@@ -230,7 +227,7 @@
                 </Texture>
             </Layer>
             <layer level="OVERLAY">
-                <FontString name="$parentGround" text="TEST" inherits="GameFontNormalSmall" justifyH="LEFT">
+                <FontString parentKey="header" text="TEST" inherits="GameFontNormalSmall" justifyH="LEFT">
                     <Size x="512" y="25"></Size>
                     <Color r="1" b="1" g="1"></Color>
                     <Anchors>
