@@ -130,7 +130,7 @@ local function LoadPaperDoll(tabContainer)
     -- pull corruption thingy from default paperdoll
     if (CharacterStatsPane and CharacterStatsPane.ItemLevelFrame) then
         local cpt = CharacterStatsPane.ItemLevelFrame.Corruption
-        local attr = GwPaperDollStats
+        local attr = GwDressingRoom.stats
         if (cpt and attr) then
             cpt:SetParent(attr)
             cpt:ClearAllPoints()

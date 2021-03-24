@@ -244,7 +244,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
+            <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true">
                 <Size x="205" y="16"/>
                 <Anchors>
                     <Anchor point="RIGHT" relativePoint="RIGHT" x="-55"/>
@@ -618,7 +618,7 @@
                             </Layer>
                         </Layers>
                     </Frame>
-                    <Slider parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
+                    <Slider parentKey="slider" orientation="VERTICAL" enableMouse="true">
                         <Size x="12" y="12"/>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-12"/>
@@ -780,7 +780,7 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
+                    <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true">
                         <Size x="120" y="16"/>
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="10" y="-15"/>
@@ -839,7 +839,7 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
+                    <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true">
                         <Size x="120" y="16"/>
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="10" y="-15"/>

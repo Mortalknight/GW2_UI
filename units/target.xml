@@ -341,7 +341,7 @@
         <Size x="20" y="20"/>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="outline" name="backdrop" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
+                <Texture parentKey="outline" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Size x="20" y="20"/>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"/>
@@ -349,7 +349,7 @@
                 </Texture>
             </Layer>
             <Layer>
-                <Texture name="$parentBuffIcon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
+                <Texture parentKey="buffIcon" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Size x="18" y="18"/>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
 
@@ -357,13 +357,13 @@
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <FontString name="$parentBuffDuration" parentKey="durationString" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
+                <FontString  parentKey="buffDuration" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="32" y="12"/>
                     <Anchors>
                         <Anchor point="BOTTOM" x="0" y="-12"/>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentBuffStacks" parentKey="stacksString" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
+                <FontString parentKey="buffStacks" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="-10"/>
@@ -379,7 +379,7 @@
         <Size x="32" y="32"/>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="0">
-                <Texture name="$parentOutline" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
+                <Texture parentKey="backdrop" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
 
                     <Color r="0" b="0" g="0" a="1"></Color>
                     <Anchors>
@@ -389,7 +389,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="-1">
-                <Texture parentKey="background" name="$parentDeBuffBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Size x="24" y="24"/>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                     <Anchors>
@@ -401,7 +401,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Cooldown parentKey="cooldown" name="$parentCooldown" inherits="ActionButtonTemplate" frameStrata="MEDIUM" toplevel="true">
+            <Cooldown parentKey="cooldown" inherits="ActionButtonTemplate" frameStrata="MEDIUM" toplevel="true">
                 <SwipeTexture>
                     <Color r="1" g="1" b="1" a="1"/>
                 </SwipeTexture>
@@ -412,7 +412,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentBuffDuration" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentKey="duration" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="100" y="12"/>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="BOTTOM" x="0" y="0"/>
@@ -421,7 +421,7 @@
                     </Layer>
                 </Layers>
             </Cooldown>
-            <Frame name="$parentIcon" frameStrata="HIGH" toplevel="true">
+            <Frame parentKey="debuffIcon" frameStrata="HIGH" toplevel="true">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="3" y="-3"/>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
@@ -435,7 +435,7 @@
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                             </Anchors>
                         </Texture>
-                        <FontString name="$parentBuffStacks" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentKey="stacks" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="100" y="12"/>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="1" y="-1"/>
@@ -444,7 +444,7 @@
                         </FontString>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <Texture name="$parentBuffIcon" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                             <Size x="24" y="24"/>
                             <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                             <Anchors>

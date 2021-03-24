@@ -320,7 +320,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Frame parentKey="itemLevelFrame" hidden="false" virtual="true">
+            <Frame parentKey="itemLevelFrame" hidden="false">
                 <Size x="180" y="20"></Size>
                 <Anchors>
                     <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.classIcon" x="10" y="0"></Anchor>
@@ -353,7 +353,7 @@
                     <OnLeave function="GameTooltip_Hide"/>
                 </Scripts>
             </Frame>
-            <Frame name="GwPaperDollStats">
+            <Frame parentKey="stats">
                 <Size x="184" y="301"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-105"></Anchor>
@@ -384,7 +384,7 @@
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="10"></Anchor>
                 </Anchors>
             </Frame>
-            <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelWithControlsTemplate ModelTemplate" enableMouse="true" parentKey="model">
+            <PlayerModel inherits="ModelWithZoomTemplate ModelWithControlsTemplate ModelTemplate" enableMouse="true" parentKey="model">
                 <Size x="355" y="598"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="60" y="20"></Anchor>

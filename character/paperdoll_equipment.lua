@@ -623,7 +623,7 @@ local function updateStats()
                 end
                 showStat = foundRole
             end
-            statFrame = getStatListFrame(GwPaperDollStats, numShownStats)    
+            statFrame = getStatListFrame(GwDressingRoom.stats, numShownStats)
             statFrame.onEnterFunc = nil
             statFrame.UpdateTooltip = nil
             PAPERDOLL_STATINFO[stat.stat].updateFunc(statFrame, "player")
@@ -649,7 +649,7 @@ local function updateStats()
         end
     end
     -- Add Durability Icon
-    statFrame = getDurabilityListFrame(GwPaperDollStats)
+    statFrame = getDurabilityListFrame(GwDressingRoom.stats)
     statFrame:ClearAllPoints()
     statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
     durabilityFrame = statFrame
@@ -844,8 +844,8 @@ end
 
 local function LoadPDBagList(fmMenu)
     local fmGDR = CreateFrame("Button", "GwDressingRoom", GwPaperDoll, "GwDressingRoom")
-    local fmPD3M = PaperDoll3dModel
-    local fmGPDS = GwPaperDollStats
+    local fmPD3M = GwDressingRoom.model
+    local fmGPDS = GwDressingRoom.stats
 
     grabDefaultSlots(CharacterHeadSlot, {"TOPLEFT", fmGDR.gear, "TOPLEFT", 0, 0}, fmGDR, 50)
     grabDefaultSlots(CharacterShoulderSlot, {"TOPLEFT", CharacterHeadSlot, "BOTTOMLEFT", 0, -5}, fmGDR, 50)

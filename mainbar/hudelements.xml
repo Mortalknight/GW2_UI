@@ -415,7 +415,7 @@
                     </layer>
                 </Layers>
             </Frame>
-            <Button name="GwCloseLevelingRewards" parentKey="CloseButton" inherits="GwStandardButton" text="Close">
+            <Button parentKey="CloseButton" inherits="GwStandardButton" text="Close">
                 <Size x="70" y="20" />
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="BOTTOM" relativeTo="GwLevelingRewards" x="5" y="10"></Anchor>

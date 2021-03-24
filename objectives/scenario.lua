@@ -312,7 +312,7 @@ local function updateCurrentScenario(self, event, ...)
 
     local intGWQuestTrackerHeight = 0
 
-    if _G.GwAffixFrame:IsShown() then
+    if GwQuestTrackerTimer.affixes:IsShown() then
         intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
     end
 
@@ -355,23 +355,23 @@ local function scenarioAffixes()
         local _, _, filedataid = C_ChallengeMode.GetAffixInfo(affixID)
 
         if filedataid ~= nil then
-            SetPortraitToTexture(_G["GwAffixFrame" .. i .. "Icon"], filedataid)
+            SetPortraitToTexture(GwQuestTrackerTimer.affixes.affixes[i].icon, filedataid)
         end
-        _G["GwAffixFrame" .. i].affixID = affixID
-        _G["GwAffixFrame" .. i]:Show()
-        _G["GwAffixFrame" .. i .. "Icon"]:Show()
-        _G["GwAffixFrame"]:Show()
+        GwQuestTrackerTimer.affixes.affixes[i].affixID = affixID
+        GwQuestTrackerTimer.affixes.affixes[i]:Show()
+        GwQuestTrackerTimer.affixes.affixes[i].icon:Show()
+        GwQuestTrackerTimer.affixes:Show()
         i = i + 1
     end
 
     if i == 1 then
         GwQuestTrackerTimer.timer:ClearAllPoints()
         GwQuestTrackerTimer.timer:SetPoint("TOPRIGHT", GwQuestTrackerTimer.affixes, "BOTTOMRIGHT", -10, 20)
-        for k = 1, 4 do
-            _G["GwAffixFrame" .. k].affixID = nil
-            _G["GwAffixFrame" .. k .. "Icon"]:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss")
+        for _, v in ipairs(GwQuestTrackerTimer.affixes.affixes) do
+            v.affixID = nil
+            v.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss")
         end
-        _G["GwAffixFrame"]:Hide()
+        GwQuestTrackerTimer.affixes:Hide()
     end
 end
 GW.AddForProfiling("scenario", "scenarioAffixes", scenarioAffixes)
@@ -470,11 +470,11 @@ local function scenarioTimerUpdate(...)
     GwQuestTrackerTimer:SetScript("OnUpdate", nil)
 
     if hasUpdatedAffixes == false then
-        for i = 1, 4 do
-            _G["GwAffixFrame" .. i].affixID = nil
-            _G["GwAffixFrame" .. i .. "Icon"]:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss")
+        for _, v in ipairs(GwQuestTrackerTimer.affixes.affixes) do
+            v.affixID = nil
+            v.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss")
         end
-        _G["GwAffixFrame"]:Hide()
+        GwQuestTrackerTimer.affixes:Hide()
     end
 end
 GW.AddForProfiling("scenario", "scenarioTimerUpdate", scenarioTimerUpdate)
@@ -572,66 +572,24 @@ local function LoadScenarioFrame()
             self:GetParent().timerBackground:Hide()
         end
     )
-    timerBlock.affixes["1"]:SetScript(
-        "OnEnter",
-        function(self)
-            if self.affixID ~= nil then
-                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 50)
-                GameTooltip:ClearLines()
-                local name, description = C_ChallengeMode.GetAffixInfo(self.affixID)
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(name, 1, 1, 1, 1, true)
-                GameTooltip:AddLine(description, nil, nil, nil, true)
-                GameTooltip:Show()
+    for _, v in ipairs(timerBlock.affixes.affixes) do
+        v:SetScript(
+            "OnEnter",
+            function(self)
+                if self.affixID ~= nil then
+                    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 50)
+                    GameTooltip:ClearLines()
+                    local name, description = C_ChallengeMode.GetAffixInfo(self.affixID)
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:SetText(name, 1, 1, 1, 1, true)
+                    GameTooltip:AddLine(description, nil, nil, nil, true)
+                    GameTooltip:Show()
+                end
             end
-        end
-    )
-    timerBlock.affixes["1"]:SetScript("OnLeave", GameTooltip_Hide)
-    timerBlock.affixes["2"]:SetScript(
-        "OnEnter",
-        function(self)
-            if self.affixID ~= nil then
-                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 50)
-                GameTooltip:ClearLines()
-                local name, description = C_ChallengeMode.GetAffixInfo(self.affixID)
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(name, 1, 1, 1, 1, true)
-                GameTooltip:AddLine(description, nil, nil, nil, true)
-                GameTooltip:Show()
-            end
-        end
-    )
-    timerBlock.affixes["2"]:SetScript("OnLeave", GameTooltip_Hide)
-    timerBlock.affixes["3"]:SetScript(
-        "OnEnter",
-        function(self)
-            if self.affixID ~= nil then
-                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 50)
-                GameTooltip:ClearLines()
-                local name, description = C_ChallengeMode.GetAffixInfo(self.affixID)
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(name, 1, 1, 1, 1, true)
-                GameTooltip:AddLine(description, nil, nil, nil, true)
-                GameTooltip:Show()
-            end
-        end
-    )
-    timerBlock.affixes["3"]:SetScript("OnLeave", GameTooltip_Hide)
-    timerBlock.affixes["4"]:SetScript(
-        "OnEnter",
-        function(self)
-            if self.affixID ~= nil then
-                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 50)
-                GameTooltip:ClearLines()
-                local name, description = C_ChallengeMode.GetAffixInfo(self.affixID)
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(name, 1, 1, 1, 1, true)
-                GameTooltip:AddLine(description, nil, nil, nil, true)
-                GameTooltip:Show()
-            end
-        end
-    )
-    timerBlock.affixes["4"]:SetScript("OnLeave", GameTooltip_Hide)
+        )
+        v:SetScript("OnLeave", GameTooltip_Hide)
+    end
+
     timerBlock.deathcounter:SetScript(
         "OnEnter",
         function(self)

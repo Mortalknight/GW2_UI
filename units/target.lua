@@ -8,26 +8,18 @@ function GwTargetFrameSmallTemplateHealthBar_OnLoad(self)
 end
 
 function GwBuffIcon_OnLoad(self)
-    _G[self:GetName() .. "BuffDuration"]:SetFont(UNIT_NAME_FONT, 11)
-    _G[self:GetName() .. "BuffDuration"]:SetTextColor(1, 1, 1)
+    self.buffDuration:SetFont(UNIT_NAME_FONT, 11)
+    self.buffDuration:SetTextColor(1, 1, 1)
 end
 
 function GwDeBuffIcon_OnLoad(self)
-    local mName = self:GetName()
+    self.icon = self.debuffIcon.icon
 
-    self.icon = _G[mName .. "IconBuffIcon"]
+    self.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
+    self.debuffIcon.stacks:SetTextColor(255, 255, 255)
 
-    _G[mName .. "IconBuffStacks"]:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
-    _G[mName .. "IconBuffStacks"]:SetTextColor(255, 255, 255)
-
-    _G[mName .. "CooldownBuffDuration"]:SetFont(UNIT_NAME_FONT, 14)
-    _G[mName .. "CooldownBuffDuration"]:SetTextColor(255, 255, 255)
-
-    _G[mName .. "IconBuffStacks"]:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
-    _G[mName .. "IconBuffStacks"]:SetTextColor(255, 255, 255)
-
-    _G[mName .. "CooldownBuffDuration"]:SetFont(UNIT_NAME_FONT, 14)
-    _G[mName .. "CooldownBuffDuration"]:SetTextColor(255, 255, 255)
+    self.cooldown.duration:SetFont(UNIT_NAME_FONT, 14)
+    self.cooldown.duration:SetTextColor(255, 255, 255)
 end
 
 function GwTargetFrameTemplateDummy_OnLoad(self)

@@ -263,7 +263,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="GwspellbookTab1" inherits="SecureHandlerClickTemplate">
+            <Button parentKey="tab1" inherits="SecureHandlerClickTemplate">
                 <Size x="45" y="50"></Size>
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="TOP" x="-93" y="-30"></Anchor>
@@ -288,7 +288,7 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="GwspellbookTab2" inherits="SecureHandlerClickTemplate">
+            <Button name="GwspellbookTab2" parentKey="tab2" inherits="SecureHandlerClickTemplate">
                 <Size x="45" y="50"></Size>
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="TOP" x="-42" y="-30"></Anchor>
@@ -314,7 +314,7 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="GwspellbookTab3" inherits="SecureHandlerClickTemplate">
+            <Button parentKey="tab3" inherits="SecureHandlerClickTemplate">
                 <Size x="45" y="50"></Size>
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="TOP" x="7" y="-30"></Anchor>
@@ -340,7 +340,7 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="GwspellbookTab4" inherits="SecureHandlerClickTemplate">
+            <Button parentKey="tab4" inherits="SecureHandlerClickTemplate">
                 <Size x="45" y="50"></Size>
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="TOP" x="57" y="-30"></Anchor>
@@ -365,7 +365,7 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="GwspellbookTab5" inherits="SecureHandlerClickTemplate">
+            <Button parentKey="tab5" inherits="SecureHandlerClickTemplate">
                 <Size x="45" y="50"></Size>
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="TOP" x="105" y="-30"></Anchor>

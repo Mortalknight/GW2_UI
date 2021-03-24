@@ -3,14 +3,14 @@
 
     <Frame name="GwSettingsRaidPanelTmpl" inherits="GwSettingsPanelTmpl" virtual="true">
         <Frames>
-            <Button name="GwToggleRaidPreview" inherits="GwStandardButton" text="-">
+            <Button parentKey="buttonRaidPreview" inherits="GwStandardButton" text="-">
                 <Size x="24" y="24" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" x="-10" y="-10" />
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString parentKey="label" text="Preview:" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                        <FontString parentKey="label" text="PREVIEW" inherits="GameFontNormalSmall" justifyH="RIGHT">
                             <Color r="1" b="1" g="1"></Color>
                             <Anchors>
                                 <Anchor point="RIGHT" relativePoint="LEFT" x="-5" y="0"></Anchor>

@@ -53,7 +53,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="GwlevelLableRightButton" parentKey="rightButton">
+            <Button parentKey="rightButton">
                 <Size x="128" y="32"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -82,7 +82,7 @@
                         </Anchors>
                         <Layers>
                             <Layer>
-                                <Texture name="ExpBarSparkTexture" parentKey="ExpBarSpark" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
+                                <Texture parentKey="ExpBarSpark" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
                                     <Size x="8" y="8"></Size>
                                 </Texture>
                             </Layer>
@@ -124,7 +124,7 @@
                         </Anchors>
                         <Layers>
                             <Layer>
-                                <Texture name="RepuBarSparkTexture" parentKey="SparkTexture" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
+                                <Texture parentKey="SparkTexture" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
                                     <Size x="8" y="8"></Size>
                                 </Texture>
                             </Layer>
@@ -196,8 +196,7 @@
                     </Frame>
                 </Frames>
             </StatusBar>
-
-            <Frame name="ExperienceBarOverlay" frameLevel="5" toplevel="true">
+            <Frame parentKey="barOverlay" frameLevel="5" toplevel="true">
                 <Size x="1" y="13"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
@@ -205,57 +204,52 @@
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture name="dubbleBarSep" hidden="true" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
+                        <Texture parentKey="dubbleBarSep" hidden="true" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="1" y="2"></Size>
                         </Texture>
-                        <Texture name="barsep1" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="4" y="12"></Size>
                         </Texture>
-                        <Texture name="barsep2" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="4" y="12"></Size>
                         </Texture>
-                        <Texture name="barsep3" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="4" y="12"></Size>
                         </Texture>
-                        <Texture name="barsep4" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="4" y="12"></Size>
                         </Texture>
-                        <Texture name="barsep5" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="4" y="12"></Size>
                         </Texture>
-                        <Texture name="barsep6" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="4" y="12"></Size>
                         </Texture>
-                        <Texture name="barsep7" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="4" y="12"></Size>
                         </Texture>
-                        <Texture name="barsep8" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="4" y="12"></Size>
                         </Texture>
-                        <Texture name="barsep9" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="4" y="12"></Size>
                         </Texture>
-
-
                     </Layer>
                 </Layers>
                 <Frames>
-                    <Frame name="GwXpFlare" hidden="true" parentKey="flare">
+                    <Frame hidden="true" parentKey="flare">
                         <Size x="200" y="200"></Size>
                         <Anchors>
                             <Anchor point="CENTER" relativePoint="LEFT" x="200"></Anchor>
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY">
-                                <Texture parentKey="texture" file="Interface/AddOns/GW2_UI/textures/hud/expflare">
-
-                                </Texture>
+                                <Texture parentKey="texture" file="Interface/AddOns/GW2_UI/textures/hud/expflare"/>
                             </Layer>
                         </Layers>
                     </Frame>
                 </Frames>
             </Frame>
-
         </Frames>
     </Frame>
 

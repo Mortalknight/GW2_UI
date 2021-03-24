@@ -112,7 +112,7 @@
                 </Anchors>
                 <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
             </StatusBar>
-            <Frame name="$parentAuras">
+            <Frame name="$parentAuras" parentKey="auras">
                 <Size x="20" y="20"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>

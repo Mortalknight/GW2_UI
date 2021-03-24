@@ -45,7 +45,7 @@ local function LandingButton_OnEnter(self)
             GameTooltip:AddLine(L["Conduits"], 1, 0.93, 0.73)
             for i = 1, #conduits do
                 local name, _, icon = GetSpellInfo(C_Soulbinds.GetConduitSpellID(conduits[i][1], conduits[i][2]))
-                local conduitItemLevel = C_Soulbinds.GetConduitItemLevel(conduits[i][1], conduits[i][2])
+                local conduitItemLevel = C_Soulbinds.GetConduitCollectionData(conduits[i][1]).conduitItemLevel
                 local conduitQuality = C_Soulbinds.GetConduitQuality(conduits[i][1], conduits[i][2])
                 local color = ITEM_QUALITY_COLORS[conduitQuality]
 

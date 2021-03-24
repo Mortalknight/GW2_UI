@@ -28,6 +28,7 @@ local forcedMABags = false
 
 local swimAnimation = 0
 local lastSwimState = true
+local hudArtFrame
 
 if Profiler then
     _G.GW_Addon_Scope = GW
@@ -254,9 +255,9 @@ GW.StopAnimation = StopAnimation
 local l = CreateFrame("Frame", nil, UIParent)
 
 local function swimAnim()
-    local r, g, b = GwActionBarHud.RightSwim:GetVertexColor()
-    GwActionBarHud.RightSwim:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
-    GwActionBarHud.LeftSwim:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
+    local r, g, b = hudArtFrame.actionBarHud.RightSwim:GetVertexColor()
+    hudArtFrame.actionBarHud.RightSwim:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
+    hudArtFrame.actionBarHud.LeftSwim:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
 end
 GW.AddForProfiling("index", "swimAnim", swimAnim)
 
@@ -477,20 +478,20 @@ local function loadAddon(self)
     GW.WidgetUISetup()
 
     --Create hud art
-    local hudArt = GW.LoadHudArt()
+    hudArtFrame = GW.LoadHudArt()
 
     --Create experiencebar
     if GetSetting("XPBAR_ENABLED") then
         GW.LoadXPBar()
     else
-        hudArt.actionBarHud:ClearAllPoints()
-        hudArt.actionBarHud:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
-        hudArt.edgeTintBottom1:ClearAllPoints()
-        hudArt.edgeTintBottom1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
-        hudArt.edgeTintBottom1:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
-        hudArt.edgeTintBottom2:ClearAllPoints()
-        hudArt.edgeTintBottom2:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
-        hudArt.edgeTintBottom2:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 0, 0)
+        hudArtFrame.actionBarHud:ClearAllPoints()
+        hudArtFrame.actionBarHud:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
+        hudArtFrame.edgeTintBottom1:ClearAllPoints()
+        hudArtFrame.edgeTintBottom1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
+        hudArtFrame.edgeTintBottom1:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
+        hudArtFrame.edgeTintBottom2:ClearAllPoints()
+        hudArtFrame.edgeTintBottom2:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
+        hudArtFrame.edgeTintBottom2:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 0, 0)
     end
 
     if GetSetting("FONTS_ENABLED") then

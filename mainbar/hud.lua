@@ -112,8 +112,8 @@ local function xpbar_OnClick()
 end
 GW.AddForProfiling("hud", "xpbar_OnClick", xpbar_OnClick)
 
-local function flareAnim()
-    GwXpFlare:Show()
+local function flareAnim(self)
+    GwExperienceBar.barOverlay.flare:Show()
 
     AddToAnimation(
         "GwXpFlare",
@@ -122,15 +122,15 @@ local function flareAnim()
         GetTime(),
         1,
         function(prog)
-            GwXpFlare.texture:SetAlpha(1)
-            GwXpFlare.texture:SetRotation(lerp(0, 3, prog))
+            self.barOverlay.flare.texture:SetAlpha(1)
+            self.barOverlay.flare.texture:SetRotation(lerp(0, 3, prog))
             if prog > 0.75 then
-                GwXpFlare.texture:SetAlpha(lerp(1, 0, math.sin(((prog - 0.75) / 0.25) * math.pi * 0.5)))
+                self.barOverlay.flare.texture:SetAlpha(lerp(1, 0, math.sin(((prog - 0.75) / 0.25) * math.pi * 0.5)))
             end
         end,
         nil,
         function()
-            GwXpFlare:Hide()
+            self.barOverlay.flare:Hide()
         end
     )
 end
@@ -186,7 +186,7 @@ local function xpbar_OnEvent(self, event)
     self.ExpBar:SetStatusBarColor(0.83, 0.57, 0)
 
     gw_reputation_vals = nil
-    
+
     local name, reaction, _, _, _, factionID = GetWatchedFactionInfo()
     if factionID and factionID > 0 then
         local _, _, standingId, bottomValue, topValue, earnedValue = GetFactionInfoByID(factionID)
@@ -328,14 +328,14 @@ local function xpbar_OnEvent(self, event)
     local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (GW.mylevel / maxPlayerLevel)))
     if (valPrec - experiencebarAnimation) > FlareBreakPoint then
         GainBigExp = true
-        flareAnim()
+        flareAnim(self)
     end
 
     if experiencebarAnimation > valPrec then
         experiencebarAnimation = 0
     end
 
-    GwXpFlare.soundCooldown = 0
+    self.barOverlay.flare.soundCooldown = 0
     local expSoundCooldown = 0
     local startTime = GetTime()
 
@@ -361,12 +361,12 @@ local function xpbar_OnEvent(self, event)
                 self.ExpBar.Spark:SetPoint("LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"]["progress"] - 8, 0)
 
                 local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"]["progress"]) + 90
-                GwXpFlare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
+                self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
             end
             self.ExpBar.Rested:SetValue(rested)
             self.ExpBar.Rested:SetPoint("LEFT", self.ExpBar, "LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"]["progress"], 0)
 
-            if GainBigExp and GwXpFlare.soundCooldown < GetTime() then
+            if GainBigExp and self.barOverlay.flare.soundCooldown < GetTime() then
                 expSoundCooldown =
                     math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
 
@@ -378,9 +378,9 @@ local function xpbar_OnEvent(self, event)
                 )
 
                 local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"]["progress"]) + 90
-                GwXpFlare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
+                self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
 
-                GwXpFlare.soundCooldown = GetTime() + expSoundCooldown
+                self.barOverlay.flare.soundCooldown = GetTime() + expSoundCooldown
                 PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
 
                 animations["experiencebarAnimation"]["from"] = step
@@ -686,16 +686,18 @@ GW.AddForProfiling("hud", "animateAzeriteBar", animateAzeriteBar)
 
 local function updateBarSize(self)
     local m = (UIParent:GetWidth() - 180) / 10
-    for i = 1, 9 do
+    local i = 1
+    for _, v in ipairs(self.barOverlay.barSep) do
         local rm = (m * i) + 90
-        _G["barsep" .. i]:ClearAllPoints()
-        _G["barsep" .. i]:SetPoint("LEFT", self, "LEFT", rm, 0)
+        v:ClearAllPoints()
+        v:SetPoint("LEFT", self, "LEFT", rm, 0)
+        i = i + 1
     end
 
     m = (UIParent:GetWidth() - 180)
-    dubbleBarSep:SetWidth(m)
-    dubbleBarSep:ClearAllPoints()
-    dubbleBarSep:SetPoint("LEFT", self, "LEFT", 90, 0)
+    self.barOverlay.dubbleBarSep:SetWidth(m)
+    self.barOverlay.dubbleBarSep:ClearAllPoints()
+    self.barOverlay.dubbleBarSep:SetPoint("LEFT", self, "LEFT", 90, 0)
 end
 GW.AddForProfiling("hud", "updateBarSize", updateBarSize)
 
@@ -1128,7 +1130,7 @@ local function LoadXPBar()
     experiencebar.AzeritBar.animation:SetScript(
         "OnShow",
         function(self)
-            self.animation:SetScript(
+            self:SetScript(
                 "OnUpdate",
                 function(self, elapsed)
                     animateAzeriteBar(self, elapsed)

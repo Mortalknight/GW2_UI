@@ -63,7 +63,7 @@
         </Anchors>
         <Layers>
             <Layer Level="BACKGROUND">
-                <Texture name="compassBG" parentKey="compassBG" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
+                <Texture parentKey="compassBG" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
                     <Color r="1" g="1" b="1" a="0.3"></Color>
                     <Size x="300" y="70"></Size>
                     <Anchors>
@@ -125,7 +125,7 @@
                 </Anchors>
                 <Layers>
                     <Layer textureSubLevel="2" Level="BACKGROUND">
-                        <Texture name="GwCompassRound" file="Interface/AddOns/GW2_UI/textures/questview/compass-rad-bg">
+                        <Texture parentKey="roundTexture" file="Interface/AddOns/GW2_UI/textures/questview/compass-rad-bg">
                             <Size x="60" y="60"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
@@ -133,7 +133,7 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="3" Level="BACKGROUND">
-                        <Texture name="GwCompassArrow" parentKey="arrow" file="Interface/AddOns/GW2_UI/textures/questview/compass-arrow">
+                        <Texture parentKey="arrow" file="Interface/AddOns/GW2_UI/textures/questview/compass-arrow">
                             <Size x="60" y="60"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
@@ -434,25 +434,20 @@
                     </Layer>
                 </Layers>
             </Frame>
-            <Frame name="GwAffixFrame" hidden="true" parentKey="affixes">
+            <Frame parentKey="affixes" hidden="true">
                 <Size x="280" y="40"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"></Anchor>
                 </Anchors>
-                <Layers>
-                    <Layer>
-
-                    </Layer>
-                </Layers>
                 <Frames>
-                    <Frame name="$parent1" parentKey="1">
+                    <Frame parentArray="affixes">
                         <Size x="38" y="38"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         </Anchors>
                         <Layers>
                             <layer>
-                                <Texture name="$parentIcon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
+                                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
@@ -461,14 +456,14 @@
                             </layer>
                         </Layers>
                     </Frame>
-                    <Frame name="$parent2" parentKey="2">
+                    <Frame parentArray="affixes">
                         <Size x="38" y="38"></Size>
                         <Anchors>
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="75" y="0"></Anchor>
                         </Anchors>
                         <Layers>
                             <layer>
-                                <Texture name="$parentIcon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
+                                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
@@ -477,14 +472,14 @@
                             </layer>
                         </Layers>
                     </Frame>
-                    <Frame name="$parent3" parentKey="3">
+                    <Frame parentArray="affixes">
                         <Size x="38" y="38"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="0"></Anchor>
                         </Anchors>
                         <Layers>
                             <layer>
-                                <Texture name="$parentIcon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
+                                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
@@ -493,14 +488,14 @@
                             </layer>
                         </Layers>
                     </Frame>
-                    <Frame name="$parent4" parentKey="4">
+                    <Frame parentArray="affixes">
                         <Size x="38" y="38"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="0"></Anchor>
                         </Anchors>
                         <Layers>
                             <layer>
-                                <Texture name="$parentIcon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
+                                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
                                     <Size x="38" y="38"></Size>
                                     <Anchors>
                                         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
@@ -511,17 +506,17 @@
                     </Frame>
                 </Frames>
             </Frame>
-            <Frame name="TimerBarOverlay" hidden="true" frameLevel="5" toplevel="true" parentKey="chestoverlay">
+            <Frame hidden="true" frameLevel="5" toplevel="true" parentKey="chestoverlay">
                 <Size x="1" y="20"></Size>
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="-20" />
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture name="chest2" parentKey="chest2" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
+                        <Texture parentKey="chest2" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="2" y="23"></Size>
                         </Texture>
-                        <Texture name="chest3" parentKey="chest3" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
+                        <Texture parentKey="chest3" file="Interface/AddOns/GW2_UI/textures/hud/xpbarbg">
                             <Size x="2" y="23"></Size>
                         </Texture>
                     </Layer>

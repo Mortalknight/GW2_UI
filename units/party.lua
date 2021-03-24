@@ -169,29 +169,29 @@ local function updatePartyDebuffs(self, x, y)
         local indexBuffFrame = _G["Gw" .. unit .. "DebuffItemFrame" .. i]
         if debuffList[i] then
             if indexBuffFrame == nil then
-                indexBuffFrame = CreateFrame("Frame", "Gw" .. unit .. "DebuffItemFrame" .. i, _G[self:GetName() .. "Auras"],  "GwDeBuffIcon")
-                indexBuffFrame:SetParent(_G[self:GetName() .. "Auras"])
+                indexBuffFrame = CreateFrame("Frame", "Gw" .. unit .. "DebuffItemFrame" .. i, self.auras,  "GwDeBuffIcon")
+                indexBuffFrame:SetParent(self.auras)
 
-                _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
-                _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "Cooldown"]:SetDrawEdge(0)
-                _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "Cooldown"]:SetDrawSwipe(1)
-                _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "Cooldown"]:SetReverse(1)
-                _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "Cooldown"]:SetHideCountdownNumbers(true)
+                indexBuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+                indexBuffFrame.cooldown:SetDrawEdge(0)
+                indexBuffFrame.cooldown:SetDrawSwipe(1)
+                indexBuffFrame.cooldown:SetReverse(1)
+                indexBuffFrame.cooldown:SetHideCountdownNumbers(true)
                 indexBuffFrame:SetSize(24, 24)
             end
-            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "IconBuffIcon"]:SetTexture(debuffList[i].icon)
-            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "IconBuffIcon"]:SetParent(_G["Gw" .. unit .. "DebuffItemFrame" .. i])
+            indexBuffFrame.icon:SetTexture(debuffList[i].icon)
+            indexBuffFrame.icon:SetParent(indexBuffFrame)
 
             indexBuffFrame.expires = debuffList[i].expires
             indexBuffFrame.duration = debuffList[i].duration
 
-            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+            indexBuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
             if debuffList[i].dispelType ~= nil and DEBUFF_COLOR[debuffList[i].dispelType] ~= nil then
-                _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "DeBuffBackground"]:SetVertexColor(DEBUFF_COLOR[debuffList[i].dispelType].r, DEBUFF_COLOR[debuffList[i].dispelType].g, DEBUFF_COLOR[debuffList[i].dispelType].b)
+                indexBuffFrame.background:SetVertexColor(DEBUFF_COLOR[debuffList[i].dispelType].r, DEBUFF_COLOR[debuffList[i].dispelType].g, DEBUFF_COLOR[debuffList[i].dispelType].b)
             end
 
-            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "CooldownBuffDuration"]:SetText(debuffList[i].duration > 0 and TimeCount(debuffList[i].timeRemaining) or "")
-            _G["Gw" .. unit .. "DebuffItemFrame" .. i .. "IconBuffStacks"]:SetText((debuffList[i].count or 1) > 1 and debuffList[i].count or "")
+            indexBuffFrame.cooldown.duration:SetText(debuffList[i].duration > 0 and TimeCount(debuffList[i].timeRemaining) or "")
+            indexBuffFrame.debuffIcon.stacks:SetText((debuffList[i].count or 1) > 1 and debuffList[i].count or "")
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint("BOTTOMRIGHT", (26 * x), 26 * y)
 
@@ -261,31 +261,30 @@ local function updatePartyAuras(self)
     local unit = self.unit
 
     local buffList = getUnitBuffs(unit)
-    local fname = self:GetName()
 
     for i = 1, 40 do
         local indexBuffFrame = _G["Gw" .. unit .. "BuffItemFrame" .. i]
         if buffList[i] then
-            if indexBuffFrame == nil then
-                indexBuffFrame = CreateFrame("Button", "Gw" .. unit .. "BuffItemFrame" .. i, _G[fname .. "Auras"], "GwBuffIconBig")
+            if not indexBuffFrame then
+                indexBuffFrame = CreateFrame("Button", "Gw" .. unit .. "BuffItemFrame" .. i, self.auras, "GwBuffIconBig")
                 indexBuffFrame:RegisterForClicks("RightButtonUp")
-                _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetFont(UNIT_NAME_FONT, 11)
-                _G[indexBuffFrame:GetName() .. "BuffDuration"]:SetTextColor(1, 1, 1)
-                _G[indexBuffFrame:GetName() .. "BuffStacks"]:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
-                _G[indexBuffFrame:GetName() .. "BuffStacks"]:SetTextColor(1, 1, 1)
-                indexBuffFrame:SetParent(_G[fname .. "Auras"])
+                indexBuffFrame.buffDuration:SetFont(UNIT_NAME_FONT, 11)
+                indexBuffFrame.buffDuration:SetTextColor(1, 1, 1)
+                indexBuffFrame.buffStacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
+                indexBuffFrame.buffStacks:SetTextColor(1, 1, 1)
+                indexBuffFrame:SetParent(self.auras)
                 indexBuffFrame:SetSize(20, 20)
             end
             local margin = -indexBuffFrame:GetWidth() + -2
             local marginy = indexBuffFrame:GetWidth() + 12
-            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffIcon"]:SetTexture(buffList[i].icon)
-            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffIcon"]:SetParent(_G["Gw" .. unit .. "BuffItemFrame" .. i])
+            indexBuffFrame.buffIcon:SetTexture(buffList[i].icon)
+            indexBuffFrame.buffIcon:SetParent(indexBuffFrame)
 
             indexBuffFrame.expires = buffList[i].expires
             indexBuffFrame.duration = buffList[i].duration
 
-            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffDuration"]:SetText("")
-            _G["Gw" .. unit .. "BuffItemFrame" .. i .. "BuffStacks"]:SetText((buffList[i].count or 1) > 1 and buffList[i].count or "")
+            indexBuffFrame.buffDuration:SetText("")
+            indexBuffFrame.buffStacks:SetText((buffList[i].count or 1) > 1 and buffList[i].count or "")
             indexBuffFrame:ClearAllPoints()
             indexBuffFrame:SetPoint("BOTTOMRIGHT", (-margin * x), marginy * y)
 

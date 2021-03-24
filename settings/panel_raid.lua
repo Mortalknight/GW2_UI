@@ -11,7 +11,7 @@ local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
 
 local function LoadRaidPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsRaidPanelTmpl")
+    local p = CreateFrame("Frame", "GwSettingsRaidPanel", sWindow.panels, "GwSettingsRaidPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.header:SetText(RAID)
