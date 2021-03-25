@@ -383,7 +383,7 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
     local frame = _G["Gw" .. parent:GetName() .. "DeBuffItemFrame" .. btnIndex]
 
     if not frame then
-        frame = CreateFrame("Button", _G["Gw" .. parent:GetName() .. "DeBuffItemFrame" .. btnIndex], parent, "GwDeBuffIcon")
+        frame = CreateFrame("Button", "Gw" .. parent:GetName() .. "DeBuffItemFrame" .. btnIndex, parent, "GwDeBuffIcon")
         frame:SetParent(parent)
         frame:SetFrameStrata("MEDIUM")
         frame:SetSize(size, size)
