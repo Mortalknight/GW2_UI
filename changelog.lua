@@ -1,6 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.12.2", [=[
+FIXES
+    - Fix some lua errors
+
+MISC
+    - Code clean up
+]=])
+
 v("5.12.1", [=[
 FIXES
     - Fix target/focus mask overlapping

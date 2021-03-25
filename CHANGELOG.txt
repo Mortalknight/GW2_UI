@@ -1,3 +1,10 @@
+5.12.2
+FIXES
+    - Fix some lua errors
+
+MISC
+    - Code clean up
+
 5.12.1
 FIXES
     - Fix target/focus mask overlapping

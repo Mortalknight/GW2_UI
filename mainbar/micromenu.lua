@@ -665,13 +665,13 @@ local function LoadMicroMenu()
             fo:Stop()
             fo:Play()
         end
-        mbf.cf.fadeIn = function()
+        mbf.cf.fadeIn = function(self)
             self:SetAlpha(1)
             fi:Stop()
             fo:Stop()
             fi:Play()
         end
-    
+
         mbf:SetFrameRef("cf", mbf.cf)
 
         mbf:SetAttribute("_onenter", [=[
