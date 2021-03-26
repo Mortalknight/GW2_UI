@@ -1,7 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("5.12.2", [=[
+v("5.13.0", [=[
+NEW
+    - Added option for important debuffs to target and focus frame
+
 FIXES
     - Fix some lua errors
 

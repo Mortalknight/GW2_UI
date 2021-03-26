@@ -827,11 +827,14 @@ local function LoadTarget()
 
     NewUnitFrame.displayBuffs = GetSetting("target_BUFFS")
     NewUnitFrame.displayDebuffs = GetSetting("target_DEBUFFS")
-    
+
     NewUnitFrame.showThreat = GetSetting("target_THREAT_VALUE_ENABLED")
 
-    NewUnitFrame.debuffFilter = "player"
-
+    -- priority: All > Important > Player
+    NewUnitFrame.debuffFilter = "PLAYER"
+    if GetSetting("target_BUFFS_FILTER_IMPORTANT") then
+        NewUnitFrame.debuffFilter = "IMPORTANT"
+    end
     if GetSetting("target_BUFFS_FILTER_ALL") then
         NewUnitFrame.debuffFilter = nil
     end
@@ -921,8 +924,12 @@ local function LoadFocus()
     NewUnitFrame.displayBuffs = GetSetting("focus_BUFFS")
     NewUnitFrame.displayDebuffs = GetSetting("focus_DEBUFFS")
 
-    NewUnitFrame.debuffFilter = "player"
-    if GetSetting("focus_BUFFS_FILTER_ALL") == true then
+    -- priority: All > Important > Player
+    NewUnitFrame.debuffFilter = "PLAYER"
+    if GetSetting("focus_BUFFS_FILTER_IMPORTANT") then
+        NewUnitFrame.debuffFilter = "IMPORTANT"
+    end
+    if GetSetting("focus_BUFFS_FILTER_ALL") then
         NewUnitFrame.debuffFilter = nil
     end
 

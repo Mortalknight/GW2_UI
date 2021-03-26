@@ -64,13 +64,20 @@ local function getBuffs(unit, filter, revert)
 end
 GW.AddForProfiling("auras", "getBuffs", getBuffs)
 
-local function getDebuffs(unit, filter)
+local function getDebuffs(unit, filter, revert)
     local debuffList = {}
+    local showImportant = false
+    local counter = 0
+    if filter == "IMPORTANT" then
+        filter = nil
+        showImportant = true
+    end
 
     for i = 1, 40 do
-        if UnitDebuff(unit, i, filter) then
-            debuffList[i] = {}
-            local dbi = debuffList[i]
+        if UnitDebuff(unit, i, filter) and ((showImportant and (select(7, UnitDebuff(unit, i, filter)) == "player" or GW.ImportendRaidDebuff[select(10, UnitDebuff(unit, i, filter))])) or not showImportant) then
+            counter = #debuffList + 1
+            debuffList[counter] = {}
+            local dbi = debuffList[counter]
             dbi.id = i
 
             dbi.name,
@@ -88,7 +95,7 @@ local function getDebuffs(unit, filter)
         end
     end
 
-    return sortAuraList(debuffList)
+    return sortAuraList(debuffList, revert)
 end
 GW.AddForProfiling("auras", "getDebuffs", getDebuffs)
 
@@ -206,9 +213,9 @@ local function UpdateBuffLayout(self, event, anchorPos)
 
     saveAuras.buff = {}
     saveAuras.debuff = {}
-    
+
     for frameIndex = minIndex, maxIndex do
-        local index = frameIndex 
+        local index = frameIndex
         local list = auraList
         local newAura = true
 
@@ -251,7 +258,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 self.animating = false
                 saveAuras[frame.auraType][#saveAuras[frame.auraType] + 1] = list[index].name
             end
-            
+
             usedWidth = usedWidth + size + marginX
             if maxSize < usedWidth then
                 usedWidth = 0
@@ -277,7 +284,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 auraAnimateIn(frame)
             end
 
-            if usedWidth == 0 then 
+            if usedWidth == 0 then
                 usedWidth = usedWidth + size + marginX
             end
         elseif frame and frame:IsShown() then

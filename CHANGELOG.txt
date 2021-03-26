@@ -1,4 +1,7 @@
-5.12.2
+5.13.0
+NEW
+    - Added option for important debuffs to target and focus frame
+
 FIXES
     - Fix some lua errors
 

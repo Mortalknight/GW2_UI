@@ -159,6 +159,7 @@ GW_DEFAULT["target_DEBUFFS_FILTER"] = true
 GW_DEFAULT["target_BUFFS"] = true
 GW_DEFAULT["target_BUFFS_FILTER"] = true
 GW_DEFAULT["target_BUFFS_FILTER_ALL"] = false
+GW_DEFAULT["target_BUFFS_FILTER_IMPORTANT"] = false
 GW_DEFAULT["target_ILVL"] = false
 GW_DEFAULT["target_THREAT_VALUE_ENABLED"] = false
 GW_DEFAULT["target_HOOK_COMBOPOINTS"] = false
@@ -176,6 +177,7 @@ GW_DEFAULT["focus_DEBUFFS_FILTER"] = true
 GW_DEFAULT["focus_BUFFS"] = true
 GW_DEFAULT["focus_BUFFS_FILTER"] = true
 GW_DEFAULT["focus_BUFFS_FILTER_ALL"] = false
+GW_DEFAULT["focus_BUFFS_FILTER_IMPORTANT"] = false
 
 GW_DEFAULT["focus_HEALTH_VALUE_ENABLED"] = false
 GW_DEFAULT["focus_HEALTH_VALUE_TYPE"] = false
