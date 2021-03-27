@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.13.1", [=[
+FIXES
+    - Fix and error that raid buffs not disapearing
+]=])
+
 v("5.13.0", [=[
 NEW
     - Added option for important debuffs to target and focus frame

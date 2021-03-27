@@ -127,7 +127,7 @@ local function getUnitDebuffs(unit)
 
             if shouldDisplay then
                 debuffList[counter] = {}
-                
+
                 debuffList[counter].name = debuffName
                 debuffList[counter].icon = icon
                 debuffList[counter].count = count
@@ -165,48 +165,33 @@ local function updatePartyDebuffs(self, x, y)
     local unit = self.unit
     local debuffList = getUnitDebuffs(unit)
 
-    for i = 1, 40 do
-        local indexBuffFrame = _G["Gw" .. unit .. "DebuffItemFrame" .. i]
+    for i, debuffFrame in pairs(self.debuffFrames) do
         if debuffList[i] then
-            if indexBuffFrame == nil then
-                indexBuffFrame = CreateFrame("Frame", "Gw" .. unit .. "DebuffItemFrame" .. i, self.auras,  "GwDeBuffIcon")
-                indexBuffFrame:SetParent(self.auras)
+            debuffFrame.icon:SetTexture(debuffList[i].icon)
+            debuffFrame.icon:SetParent(debuffFrame)
 
-                indexBuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
-                indexBuffFrame.cooldown:SetDrawEdge(0)
-                indexBuffFrame.cooldown:SetDrawSwipe(1)
-                indexBuffFrame.cooldown:SetReverse(1)
-                indexBuffFrame.cooldown:SetHideCountdownNumbers(true)
-                indexBuffFrame:SetSize(24, 24)
-            end
-            indexBuffFrame.icon:SetTexture(debuffList[i].icon)
-            indexBuffFrame.icon:SetParent(indexBuffFrame)
+            debuffFrame.expires = debuffList[i].expires
+            debuffFrame.duration = debuffList[i].duration
 
-            indexBuffFrame.expires = debuffList[i].expires
-            indexBuffFrame.duration = debuffList[i].duration
-
-            indexBuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+            debuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
             if debuffList[i].dispelType ~= nil and DEBUFF_COLOR[debuffList[i].dispelType] ~= nil then
-                indexBuffFrame.background:SetVertexColor(DEBUFF_COLOR[debuffList[i].dispelType].r, DEBUFF_COLOR[debuffList[i].dispelType].g, DEBUFF_COLOR[debuffList[i].dispelType].b)
+                debuffFrame.background:SetVertexColor(DEBUFF_COLOR[debuffList[i].dispelType].r, DEBUFF_COLOR[debuffList[i].dispelType].g, DEBUFF_COLOR[debuffList[i].dispelType].b)
             end
 
-            indexBuffFrame.cooldown.duration:SetText(debuffList[i].duration > 0 and TimeCount(debuffList[i].timeRemaining) or "")
-            indexBuffFrame.debuffIcon.stacks:SetText((debuffList[i].count or 1) > 1 and debuffList[i].count or "")
-            indexBuffFrame:ClearAllPoints()
-            indexBuffFrame:SetPoint("BOTTOMRIGHT", (26 * x), 26 * y)
+            debuffFrame.cooldown.duration:SetText(debuffList[i].duration > 0 and TimeCount(debuffList[i].timeRemaining) or "")
+            debuffFrame.debuffIcon.stacks:SetText((debuffList[i].count or 1) > 1 and debuffList[i].count or "")
+            debuffFrame:ClearAllPoints()
+            debuffFrame:SetPoint("BOTTOMRIGHT", (26 * x), 26 * y)
 
-            indexBuffFrame:SetScript(
-                "OnEnter",
-                function()
-                    GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT")
-                    GameTooltip:ClearLines()
-                    GameTooltip:SetUnitDebuff(unit, debuffList[i].key)
-                    GameTooltip:Show()
-                end
-            )
-            indexBuffFrame:SetScript("OnLeave", GameTooltip_Hide)
+            debuffFrame:SetScript("OnEnter", function(self)
+                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+                GameTooltip:ClearLines()
+                GameTooltip:SetUnitDebuff(unit, debuffList[i].key)
+                GameTooltip:Show()
+            end)
+            debuffFrame:SetScript("OnLeave", GameTooltip_Hide)
 
-            indexBuffFrame:Show()
+            debuffFrame:Show()
 
             x = x + 1
             if x > 8 then
@@ -214,9 +199,9 @@ local function updatePartyDebuffs(self, x, y)
                 x = 0
             end
         else
-            if indexBuffFrame then
-                indexBuffFrame:Hide()
-            end
+            debuffFrame:Hide()
+            debuffFrame:SetScript("OnEnter", nil)
+            debuffFrame:SetScript("OnLeave", nil)
         end
     end
 end
@@ -262,44 +247,30 @@ local function updatePartyAuras(self)
 
     local buffList = getUnitBuffs(unit)
 
-    for i = 1, 40 do
-        local indexBuffFrame = _G["Gw" .. unit .. "BuffItemFrame" .. i]
+    for i, buffFrame in pairs(self.buffFrames) do
         if buffList[i] then
-            if not indexBuffFrame then
-                indexBuffFrame = CreateFrame("Button", "Gw" .. unit .. "BuffItemFrame" .. i, self.auras, "GwBuffIconBig")
-                indexBuffFrame:RegisterForClicks("RightButtonUp")
-                indexBuffFrame.buffDuration:SetFont(UNIT_NAME_FONT, 11)
-                indexBuffFrame.buffDuration:SetTextColor(1, 1, 1)
-                indexBuffFrame.buffStacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
-                indexBuffFrame.buffStacks:SetTextColor(1, 1, 1)
-                indexBuffFrame:SetParent(self.auras)
-                indexBuffFrame:SetSize(20, 20)
-            end
-            local margin = -indexBuffFrame:GetWidth() + -2
-            local marginy = indexBuffFrame:GetWidth() + 12
-            indexBuffFrame.buffIcon:SetTexture(buffList[i].icon)
-            indexBuffFrame.buffIcon:SetParent(indexBuffFrame)
+            local margin = -buffFrame:GetWidth() + -2
+            local marginy = buffFrame:GetWidth() + 12
+            buffFrame.buffIcon:SetTexture(buffList[i].icon)
+            buffFrame.buffIcon:SetParent(buffFrame)
 
-            indexBuffFrame.expires = buffList[i].expires
-            indexBuffFrame.duration = buffList[i].duration
+            buffFrame.expires = buffList[i].expires
+            buffFrame.duration = buffList[i].duration
 
-            indexBuffFrame.buffDuration:SetText("")
-            indexBuffFrame.buffStacks:SetText((buffList[i].count or 1) > 1 and buffList[i].count or "")
-            indexBuffFrame:ClearAllPoints()
-            indexBuffFrame:SetPoint("BOTTOMRIGHT", (-margin * x), marginy * y)
+            buffFrame.buffDuration:SetText("")
+            buffFrame.buffStacks:SetText((buffList[i].count or 1) > 1 and buffList[i].count or "")
+            buffFrame:ClearAllPoints()
+            buffFrame:SetPoint("BOTTOMRIGHT", (-margin * x), marginy * y)
 
-            indexBuffFrame:SetScript(
-                "OnEnter",
-                function()
-                    GameTooltip:SetOwner(indexBuffFrame, "ANCHOR_BOTTOMLEFT", 28, 0)
-                    GameTooltip:ClearLines()
-                    GameTooltip:SetUnitBuff(unit, buffList[i].key)
-                    GameTooltip:Show()
-                end
-            )
-            indexBuffFrame:SetScript("OnLeave", GameTooltip_Hide)
+            buffFrame:SetScript("OnEnter", function(self)
+                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
+                GameTooltip:ClearLines()
+                GameTooltip:SetUnitBuff(unit, buffList[i].key)
+                GameTooltip:Show()
+            end)
+            buffFrame:SetScript("OnLeave", GameTooltip_Hide)
 
-            indexBuffFrame:Show()
+            buffFrame:Show()
 
             x = x + 1
             if x > 8 then
@@ -307,12 +278,9 @@ local function updatePartyAuras(self)
                 x = 0
             end
         else
-            if indexBuffFrame then
-                indexBuffFrame:Hide()
-                indexBuffFrame:SetScript("OnEnter", nil)
-                indexBuffFrame:SetScript("OnClick", nil)
-                indexBuffFrame:SetScript("OnLeave", nil)
-            end
+            buffFrame:Hide()
+            buffFrame:SetScript("OnEnter", nil)
+            buffFrame:SetScript("OnLeave", nil)
         end
     end
     updatePartyDebuffs(self, x, y)
@@ -336,7 +304,7 @@ local function setUnitName(self)
     if UnitIsGroupLeader(self.unit) then
         nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:18:18:0:-3|t" .. nameString
     end
-    
+
     self.name:SetText(nameString)
 end
 GW.AddForProfiling("party", "setUnitName", setUnitName)
@@ -361,7 +329,7 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
         self.healthstring:SetText(healthstring)
         self.healthstring:SetJustifyH("RIGHT")
     end
-    if healthCur == 0 then 
+    if healthCur == 0 then
         self.healthstring:SetTextColor(255, 0, 0)
     else
         self.healthstring:SetTextColor(1, 1, 1)
@@ -371,7 +339,7 @@ end
 GW.AddForProfiling("party", "setHealthValue", setHealthValue)
 
 local function setHealPrediction(self, predictionPrecentage)
-    self.predictionbar:SetValue(predictionPrecentage)    
+    self.predictionbar:SetValue(predictionPrecentage)
 end
 GW.AddForProfiling("party", "setHealPrediction", setHealPrediction)
 
@@ -549,24 +517,17 @@ local function createPartyFrame(i)
     if i > 0 then
         RegisterUnitWatch(frame)
     else
-        RegisterStateDriver(
-        frame,
-        "visibility",
-        "[group:raid] hide; [group:party] show; hide"
-    )
+        RegisterStateDriver(frame, "visibility", "[group:raid] hide; [group:party] show; hide")
     end
     frame:EnableMouse(true)
     frame:RegisterForClicks("AnyUp")
 
     frame:SetScript("OnLeave", GameTooltip_Hide)
-    frame:SetScript(
-        "OnEnter",
-        function()
-            GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
-            GameTooltip:SetUnit(registerUnit)
-            GameTooltip:Show()
-        end
-    )
+    frame:SetScript("OnEnter", function()
+        GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+        GameTooltip:SetUnit(registerUnit)
+        GameTooltip:Show()
+    end)
 
     AddToClique(frame)
 
@@ -600,6 +561,32 @@ local function createPartyFrame(i)
     frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", registerUnit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", registerUnit)
+
+    -- create de/buff frames
+    frame.buffFrames = {}
+    frame.debuffFrames = {}
+    for k = 1, 40 do
+        local debuffFrame = CreateFrame("Frame", nil, frame.auras,  "GwDeBuffIcon")
+        debuffFrame:SetParent(frame.auras)
+        debuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+        debuffFrame.cooldown:SetDrawEdge(0)
+        debuffFrame.cooldown:SetDrawSwipe(1)
+        debuffFrame.cooldown:SetReverse(1)
+        debuffFrame.cooldown:SetHideCountdownNumbers(true)
+        debuffFrame:SetSize(24, 24)
+
+        frame.debuffFrames[k] = debuffFrame
+
+        local buffFrame = CreateFrame("Button", nil, frame.auras, "GwBuffIconBig")
+        buffFrame.buffDuration:SetFont(UNIT_NAME_FONT, 11)
+        buffFrame.buffDuration:SetTextColor(1, 1, 1)
+        buffFrame.buffStacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
+        buffFrame.buffStacks:SetTextColor(1, 1, 1)
+        buffFrame:SetParent(frame.auras)
+        buffFrame:SetSize(20, 20)
+
+        frame.buffFrames[k] = buffFrame
+    end
 
     party_OnEvent(frame, "load")
 

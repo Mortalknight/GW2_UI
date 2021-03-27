@@ -443,7 +443,7 @@ local function xpbar_OnEvent(self, event)
         self.ExpBar.Spark:SetHeight(2.66)
         self.ExpBar.Spark:Show()
         self.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
-        self.self:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
         self.ExpBar:SetPoint("TOPLEFT", 90, -4)
         self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
 

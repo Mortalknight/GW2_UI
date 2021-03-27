@@ -518,7 +518,7 @@ local function showBuffIcon(parent, i, btnIndex, x, y, icon, isMissing)
     local frame = _G["Gw" .. parent:GetName() .. "BuffItemFrame" .. btnIndex]
 
     if not frame then
-        frame = CreateFrame("Button", name, parent, "GwBuffIconBig")
+        frame = CreateFrame("Button", "Gw" .. parent:GetName() .. "BuffItemFrame" .. btnIndex, parent, "GwBuffIconBig")
         frame:SetParent(parent)
         frame:SetFrameStrata("MEDIUM")
         frame:SetSize(14, 14)
@@ -901,7 +901,7 @@ local function PositionRaidFrame(frame, parent, i, grow1, grow2, cells1, sizePer
     if not isV then
         dir1, dir2 = dir2, dir1
     end
-    
+
     local pos1, pos2 = dir1 * ((i - 1) % cells1), dir2 * (ceil(i / cells1) - 1)
 
     local a = (isU and "BOTTOM" or "TOP") .. (isR and "LEFT" or "RIGHT")
