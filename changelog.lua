@@ -3,7 +3,9 @@ local v = GW.vernotes
 
 v("5.13.1", [=[
 FIXES
-    - Fix and error that raid buffs not disapearing
+    - Fix an error that raid buffs not disapearing
+    - Fix an error with conduits datatext if you havent a soulbind
+    - Raise PetBattleFrame so auras are not overlapping them anymore
 ]=])
 
 v("5.13.0", [=[

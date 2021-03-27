@@ -536,6 +536,9 @@ local function loadAuras(lm, secure)
             hd:SetPoint(anchor_hd, hd.gwMover, anchor_hd, 0, 0)
         end
     end)
+
+    -- Raise PetBattleFrame
+    PetBattleFrame:SetFrameLevel(hb:GetFrameLevel() + 5)
 end
 
 local function LoadPlayerAuras(lm)
