@@ -1,7 +1,7 @@
 local _, GW = ...
 
 local function handleGossipText()
-    local buttons = _G.GossipFrame.buttons
+    local buttons = GossipFrame.buttons
     if buttons and next(buttons) then
         for _, button in ipairs(buttons) do
             local str = button:GetFontString()
@@ -21,20 +21,20 @@ end
 local function LoadGossipSkin()
     if not GW.GetSetting("GOSSIP_SKIN_ENABLED") then return end
 
-    local GossipFrame = _G.GossipFrame
-    _G.ItemTextFrame:StripTextures(true)
-    _G.ItemTextFrame:CreateBackdrop()
+    local GossipFrame = GossipFrame
+    ItemTextFrame:StripTextures(true)
+    ItemTextFrame:CreateBackdrop()
 
-    local tex = _G.ItemTextFrame:CreateTexture("bg", "BACKGROUND", 0)
+    local tex = ItemTextFrame:CreateTexture("bg", "BACKGROUND", 0)
     local w, h = ItemTextFrame:GetSize()
-    tex:SetPoint("TOP", _G.ItemTextFrame, "TOP", 0, 20)
+    tex:SetPoint("TOP", ItemTextFrame, "TOP", 0, 20)
     tex:SetSize(w + 50, h + 70)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    _G.ItemTextFrame.tex = tex
+    ItemTextFrame.tex = tex
 
-    _G.ItemTextScrollFrame:StripTextures()
+    ItemTextScrollFrame:StripTextures()
 
-    _G.GossipFrameNpcNameText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+    GossipFrameNpcNameText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     GossipFrame:StripTextures()
     GossipFrame:CreateBackdrop()
     tex = GossipFrame:CreateTexture("bg", "BACKGROUND", 0)
@@ -48,18 +48,18 @@ local function LoadGossipSkin()
     GossipFrame.CloseButton:SetSize(20, 20)
     GossipFrame.Background:Hide()
 
-    _G.ItemTextFrameCloseButton:SkinButton(true)
-    _G.ItemTextFrameCloseButton:SetSize(20, 20)
+    ItemTextFrameCloseButton:SkinButton(true)
+    ItemTextFrameCloseButton:SetSize(20, 20)
 
-    _G.GossipGreetingScrollFrameScrollBar:SkinScrollBar()
-    _G.ItemTextScrollFrameScrollBar:SkinScrollBar()
-    _G.ItemTextScrollFrame:SkinScrollFrame()
+    GossipGreetingScrollFrameScrollBar:SkinScrollBar()
+    ItemTextScrollFrameScrollBar:SkinScrollBar()
+    ItemTextScrollFrame:SkinScrollFrame()
 
-    GW.HandleNextPrevButton(_G.ItemTextPrevPageButton)
-    GW.HandleNextPrevButton(_G.ItemTextNextPageButton)
+    GW.HandleNextPrevButton(ItemTextPrevPageButton)
+    GW.HandleNextPrevButton(ItemTextNextPageButton)
 
-    _G.ItemTextPageText:SetTextColor(1, 1, 1)
-    hooksecurefunc(_G.ItemTextPageText, "SetTextColor", function(pageText, headerType, r, g, b)
+    ItemTextPageText:SetTextColor(1, 1, 1)
+    hooksecurefunc(ItemTextPageText, "SetTextColor", function(pageText, headerType, r, g, b)
         if r ~= 1 or g ~= 1 or b ~= 1 then
             pageText:SetTextColor(headerType, 1, 1, 1)
         end
@@ -70,15 +70,15 @@ local function LoadGossipSkin()
         _G[object]:StripTextures()
     end
 
-    local GossipGreetingScrollFrame = _G.GossipGreetingScrollFrame
+    local GossipGreetingScrollFrame = GossipGreetingScrollFrame
     GossipGreetingScrollFrame:SkinScrollFrame()
 
     hooksecurefunc("GossipFrameUpdate", handleGossipText)
-    _G.GossipGreetingText:SetTextColor(1, 1, 1)
+    GossipGreetingText:SetTextColor(1, 1, 1)
     handleGossipText()
 
-    _G.GossipFrameGreetingGoodbyeButton:StripTextures()
-    _G.GossipFrameGreetingGoodbyeButton:SkinButton(false, true)
+    GossipFrameGreetingGoodbyeButton:StripTextures()
+    GossipFrameGreetingGoodbyeButton:SkinButton(false, true)
 
     for i = 1, 4 do
         local notch = _G["NPCFriendshipStatusBarNotch" .. i]
@@ -88,7 +88,7 @@ local function LoadGossipSkin()
         end
     end
 
-    local NPCFriendshipStatusBar = _G.NPCFriendshipStatusBar
+    local NPCFriendshipStatusBar = NPCFriendshipStatusBar
     NPCFriendshipStatusBar:StripTextures()
     NPCFriendshipStatusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
     NPCFriendshipStatusBar.bg = NPCFriendshipStatusBar:CreateTexture(nil, "BACKGROUND")
@@ -101,8 +101,8 @@ local function LoadGossipSkin()
     NPCFriendshipStatusBar.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
     --QuestFrame
-    local QuestFrame = _G.QuestFrame
-    _G.QuestFrameNpcNameText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+    local QuestFrame = QuestFrame
+    QuestFrameNpcNameText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     QuestFrame:StripTextures()
     QuestFrame:CreateBackdrop()
     QuestFrame.tex = QuestFrame:CreateTexture("bg", "BACKGROUND", 0)
@@ -114,12 +114,12 @@ local function LoadGossipSkin()
     QuestFrame.CloseButton:SkinButton(true)
     QuestFrame.CloseButton:SetSize(20, 20)
 
-    _G.QuestFrameDetailPanel:StripTextures()
-    _G.QuestDetailScrollFrame:StripTextures()
-    _G.QuestProgressScrollFrame:StripTextures()
-    _G.QuestGreetingScrollFrame:StripTextures()
+    QuestFrameDetailPanel:StripTextures()
+    QuestDetailScrollFrame:StripTextures()
+    QuestProgressScrollFrame:StripTextures()
+    QuestGreetingScrollFrame:StripTextures()
 
-    _G.QuestFrameGreetingPanel:HookScript("OnShow", function(frame)
+    QuestFrameGreetingPanel:HookScript("OnShow", function(frame)
         for button in frame.titleButtonPool:EnumerateActive() do
             button.Icon:SetDrawLayer("ARTWORK")
 
@@ -143,20 +143,20 @@ local function LoadGossipSkin()
         self:SetTextColor(1, 1, 1)
     end)
     hooksecurefunc("QuestFrameProgressItems_Update", function()
-        _G.QuestProgressRequiredItemsText:SetTextColor(1, 0.8, 0.1)
-        _G.QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
+        QuestProgressRequiredItemsText:SetTextColor(1, 0.8, 0.1)
+        QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
     end)
     hooksecurefunc("QuestInfo_ShowRequiredMoney", function()
         local requiredMoney = GetQuestLogRequiredMoney()
         if requiredMoney > 0 then
             if requiredMoney > GetMoney() then
-                _G.QuestInfoRequiredMoneyText:SetTextColor(0.63, 0.09, 0.09)
+                QuestInfoRequiredMoneyText:SetTextColor(0.63, 0.09, 0.09)
             else
-                _G.QuestInfoRequiredMoneyText:SetTextColor(1, 0.8, 0.1)
+                QuestInfoRequiredMoneyText:SetTextColor(1, 0.8, 0.1)
             end
         end
     end)
-    hooksecurefunc(_G.QuestInfoSealFrame.Text, "SetText", function(text)
+    hooksecurefunc(QuestInfoSealFrame.Text, "SetText", function(text)
         if text and text ~= "" then
             local colorStr, rawText = strmatch(text, "|c[fF][fF](%x%x%x%x%x%x)(.-)|r")
             if colorStr and rawText then
@@ -166,8 +166,8 @@ local function LoadGossipSkin()
         end
     end)
     hooksecurefunc("QuestFrameProgressItems_Update", function()
-        _G.QuestProgressRequiredItemsText:SetTextColor(1, 0.8, 0.1)
-        _G.QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
+        QuestProgressRequiredItemsText:SetTextColor(1, 0.8, 0.1)
+        QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
     end)
 
     for i = 1, 6 do
@@ -178,32 +178,32 @@ local function LoadGossipSkin()
         button:SetFrameLevel(button:GetFrameLevel() +1)
     end
 
-    _G.QuestFrameDetailPanel.SealMaterialBG:SetAlpha(0)
-    _G.QuestFrameRewardPanel.SealMaterialBG:SetAlpha(0)
-    _G.QuestFrameProgressPanel.SealMaterialBG:SetAlpha(0)
-    _G.QuestFrameGreetingPanel.SealMaterialBG:SetAlpha(0)
+    QuestFrameDetailPanel.SealMaterialBG:SetAlpha(0)
+    QuestFrameRewardPanel.SealMaterialBG:SetAlpha(0)
+    QuestFrameProgressPanel.SealMaterialBG:SetAlpha(0)
+    QuestFrameGreetingPanel.SealMaterialBG:SetAlpha(0)
 
-    _G.QuestFrameGreetingPanel:StripTextures(true)
-    _G.QuestFrameGreetingGoodbyeButton:SkinButton(false, true)
-    _G.QuestGreetingFrameHorizontalBreak:Kill()
+    QuestFrameGreetingPanel:StripTextures(true)
+    QuestFrameGreetingGoodbyeButton:SkinButton(false, true)
+    QuestGreetingFrameHorizontalBreak:Kill()
 
-    _G.QuestDetailScrollChildFrame:StripTextures(true)
-    _G.QuestRewardScrollChildFrame:StripTextures(true)
-    _G.QuestFrameProgressPanel:StripTextures(true)
-    _G.QuestFrameRewardPanel:StripTextures(true)
+    QuestDetailScrollChildFrame:StripTextures(true)
+    QuestRewardScrollChildFrame:StripTextures(true)
+    QuestFrameProgressPanel:StripTextures(true)
+    QuestFrameRewardPanel:StripTextures(true)
 
-    _G.QuestRewardScrollFrame.ScrollBar:SkinScrollBar()
-    _G.QuestRewardScrollFrame:SkinScrollFrame()
-    _G.QuestProgressScrollFrameScrollBar:SkinScrollBar()
-    _G.QuestProgressScrollFrame:SkinScrollFrame()
-    _G.QuestDetailScrollFrame.ScrollBar:SkinScrollBar()
-    _G.QuestDetailScrollFrame:SkinScrollFrame()
+    QuestRewardScrollFrame.ScrollBar:SkinScrollBar()
+    QuestRewardScrollFrame:SkinScrollFrame()
+    QuestProgressScrollFrameScrollBar:SkinScrollBar()
+    QuestProgressScrollFrame:SkinScrollFrame()
+    QuestDetailScrollFrame.ScrollBar:SkinScrollBar()
+    QuestDetailScrollFrame:SkinScrollFrame()
 
-    _G.QuestFrameAcceptButton:SkinButton(false, true)
-    _G.QuestFrameDeclineButton:SkinButton(false, true)
-    _G.QuestFrameCompleteButton:SkinButton(false, true)
-    _G.QuestFrameGoodbyeButton:SkinButton(false, true)
-    _G.QuestFrameCompleteQuestButton:SkinButton(false, true)
+    QuestFrameAcceptButton:SkinButton(false, true)
+    QuestFrameDeclineButton:SkinButton(false, true)
+    QuestFrameCompleteButton:SkinButton(false, true)
+    QuestFrameGoodbyeButton:SkinButton(false, true)
+    QuestFrameCompleteQuestButton:SkinButton(false, true)
 
     -- mover
     GossipFrame.mover = CreateFrame("Frame", nil, GossipFrame)
@@ -223,5 +223,23 @@ local function LoadGossipSkin()
         self:StopMovingOrSizing()
     end)
 
+    QuestLogPopupDetailFrame:StripTextures()
+    QuestLogPopupDetailFrame:CreateBackdrop()
+    tex = QuestLogPopupDetailFrame:CreateTexture("bg", "BACKGROUND", 0)
+    w, h = QuestLogPopupDetailFrame:GetSize()
+    tex:SetPoint("TOP", QuestLogPopupDetailFrame, "TOP", 0, 20)
+    tex:SetSize(w + 50, h + 70)
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    QuestLogPopupDetailFrame.tex = tex
+
+    QuestLogPopupDetailFrameAbandonButton:SkinButton(false, true)
+	QuestLogPopupDetailFrameShareButton:SkinButton(false, true)
+	QuestLogPopupDetailFrameTrackButton:SkinButton(false, true)
+    QuestLogPopupDetailFrameCloseButton:SkinButton(true)
+    QuestLogPopupDetailFrameCloseButton:SetSize(20, 20)
+
+    QuestLogPopupDetailFrameScrollFrame:StripTextures()
+	QuestLogPopupDetailFrameScrollFrameScrollBar:SkinScrollBar()
+    QuestLogPopupDetailFrameScrollFrame:SkinScrollFrame()
 end
 GW.LoadGossipSkin = LoadGossipSkin

@@ -117,7 +117,7 @@ local function setBagHeaders()
             local r, g, b = 1, 1, 1
             local itemName, _, itemRarity = GetItemInfo(itemID)
             if itemRarity then r, g, b = GetItemQualityColor(itemRarity) end
-            
+
             _G["GwBagFrameGwBagHeader" .. i].nameString:SetText(strlen(customBagHeaderName) > 0 and customBagHeaderName or itemName and itemName or UNKNOWN)
             _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(r, g, b, 1)
         else
@@ -509,7 +509,8 @@ local function bag_OnShow(self)
     end
 
     updateBagBar(self.ItemFrame)
-    updateBagContainers(self)
+    --updateBagContainers(self) -- Already triggered in 'rescanBagContainers'
+    rescanBagContainers(self)
 end
 GW.AddForProfiling("bag", "bag_OnShow", bag_OnShow)
 
@@ -680,7 +681,7 @@ local function LoadBag(helpers)
     -- anytime a ContainerFrame is populated with a backpack bagId, we take its buttons
     hooksecurefunc("ContainerFrame_GenerateFrame", function(frame, _, id)
         if id >= BACKPACK_CONTAINER and id <= NUM_BAG_SLOTS then
-            rescanBagContainers(f)
+            --rescanBagContainers(f) -- Testing if this is causing the delay
             if frame.ExtraBagSlotsHelpBox then
                 local h = frame.ExtraBagSlotsHelpBox
                 h:ClearAllPoints()
@@ -1039,7 +1040,7 @@ local function LoadBag(helpers)
     smsj.text:SetText(L["Selling junk"])
 
     f.smsj = smsj
-    
+
     StaticPopupDialogs["GW_CHANGE_BAG_HEADER"] = {
         text = L["New Bag Name"],
         button1 = SAVE,
@@ -1056,7 +1057,7 @@ local function LoadBag(helpers)
             if tonumber(data) > 0 then
                 local slotID = GetInventorySlotInfo("Bag" .. data - 1 .. "Slot")
                 local itemID = GetInventoryItemID("player", slotID)
-            
+
                 if itemID then
                     local r, g, b = 1, 1, 1
                     local itemName, _, itemRarity = GetItemInfo(itemID)
