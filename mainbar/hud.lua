@@ -113,7 +113,7 @@ end
 GW.AddForProfiling("hud", "xpbar_OnClick", xpbar_OnClick)
 
 local function flareAnim(self)
-    GwExperienceBar.barOverlay.flare:Show()
+    self.barOverlay.flare:Show()
 
     AddToAnimation(
         "GwXpFlare",
