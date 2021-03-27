@@ -227,8 +227,6 @@ local function checkCursorOverMap()
 end
 GW.AddForProfiling("map", "checkCursorOverMap", checkCursorOverMap)
 
-
-
 local function getMinimapShape()
     return "SQUARE"
 end
@@ -257,7 +255,7 @@ local function stackIcons(self)
         if frame:IsShown() then
             frame:SetParent(self.container)
             frame:ClearAllPoints()
-            frame:SetPoint("RIGHT", self.container, "RIGHT", frameIndex * -36, 0)
+            frame:SetPoint("RIGHT", self.container, "RIGHT", frameIndex * -35, 0)
             frameIndex = frameIndex + 1
             frame:SetScript("OnDragStart", nil)
         end
@@ -270,10 +268,8 @@ local function stackIcons(self)
 end
 GW.AddForProfiling("map", "stackIcons", stackIcons)
 
-local function stack_OnEvent(self, event)
-    if event == "PLAYER_ENTERING_WORLD" then
-        stackIcons(self)
-    end
+local function stack_OnEvent(self)
+    stackIcons(self)
 end
 GW.AddForProfiling("map", "stack_OnEvent", stack_OnEvent)
 
@@ -421,7 +417,7 @@ local function LoadMinimap()
         GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
         GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
         GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
-   
+
         -- only set the coords updater here if they are showen always
         local hoverSetting = GetSetting("MINIMAP_HOVER")
         if hoverSetting == "COORDS" or hoverSetting == "CLOCKCOORDS" or hoverSetting == "ZONECOORDS" or hoverSetting == "ALL" then
@@ -497,7 +493,7 @@ local function LoadMinimap()
     GarrisonLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter)
 
     local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")
-    local fnGwMailButton_OnEvent = function(self, event, ...)
+    local fnGwMailButton_OnEvent = function(self, event)
         if (event == "UPDATE_PENDING_MAIL") then
             if (HasNewMail()) then
                 if Minimap:IsShown() then
@@ -525,7 +521,6 @@ local function LoadMinimap()
     GwMailButton.gw_Showing = false
     GwMailButton:RegisterEvent("UPDATE_PENDING_MAIL")
     GwMailButton:SetFrameLevel(GwMailButton:GetFrameLevel() + 1)
-    
 
     local fmGAT = CreateFrame("Button", "GwAddonToggle", UIParent, "GwAddonToggle")
     fmGAT:SetScript("OnClick", stack_OnClick)
