@@ -643,7 +643,7 @@ local function LoadBank(helpers)
         dd.compactBank.checkbutton:SetChecked(GetSetting("BAG_ITEM_SIZE") == BANK_ITEM_COMPACT_SIZE)
         dd.bagOrder.checkbutton:SetChecked(GetSetting("BANK_REVERSE_SORT"))
         dd.itemBorder.checkbutton:SetChecked(GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW"))
-        
+
         -- setup bag setting icons locals
         dd.compactBank.title:SetText(L["Compact Icons"])
         dd.bagOrder.title:SetText(L["Reverse Bag Order"])

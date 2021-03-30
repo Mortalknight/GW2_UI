@@ -926,29 +926,20 @@ local function LoadBag(helpers)
     f.moneyFrame:SetScript("OnClick", GW.Money_OnClick)
 
     -- update money when applicable
-    f.moneyFrame:SetScript(
-        "OnEvent",
-        function(self, event, ...)
-            if not GW.inWorld then
-                return
-            end
-            if event == "PLAYER_MONEY" then
-                updateMoney(self:GetParent())
-            end
+    f.moneyFrame:SetScript("OnEvent", function(self)
+        if GW.inWorld then
+            updateMoney(self:GetParent())
         end
-    )
+    end)
     f.moneyFrame:RegisterEvent("PLAYER_MONEY")
     updateMoney(f)
 
-    f.currency:SetScript(
-        "OnClick",
-        function()
-            -- TODO: cannot do this properly until we make the whole bag frame secure
-            if not InCombatLockdown() then
-                ToggleCharacter("TokenFrame")
-            end
+    f.currency:SetScript("OnClick", function()
+        -- TODO: cannot do this properly until we make the whole bag frame secure
+        if not InCombatLockdown() then
+            ToggleCharacter("TokenFrame")
         end
-    )
+    end)
 
     -- setup watch currencies
     f.currency1:SetFont(UNIT_NAME_FONT, 12)
@@ -959,54 +950,39 @@ local function LoadBag(helpers)
     f.currency3:SetTextColor(1, 1, 1)
 
     -- set warch currencies tooltips
-    f.currency1Frame:SetScript(
-        "OnEnter",
-        function(self)
-            if not self.CurrencyIdx then
-                return
-            end
-            GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-            GameTooltip:ClearLines()
-            GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-            GameTooltip:Show()
+    f.currency1Frame:SetScript("OnEnter", function(self)
+        if not self.CurrencyIdx then
+            return
         end
-    )
-    f.currency2Frame:SetScript(
-        "OnEnter",
-        function(self)
-            if not self.CurrencyIdx then
-                return
-            end
-            GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-            GameTooltip:ClearLines()
-            GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-            GameTooltip:Show()
+        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+        GameTooltip:ClearLines()
+        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+        GameTooltip:Show()
+    end)
+    f.currency2Frame:SetScript("OnEnter", function(self)
+        if not self.CurrencyIdx then
+            return
         end
-    )
-    f.currency3Frame:SetScript(
-        "OnEnter",
-        function(self)
-            if not self.CurrencyIdx then
-                return
-            end
-            GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-            GameTooltip:ClearLines()
-            GameTooltip:SetCurrencyToken(self.CurrencyIdx)
-            GameTooltip:Show()
+        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+        GameTooltip:ClearLines()
+        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+        GameTooltip:Show()
+    end)
+    f.currency3Frame:SetScript("OnEnter", function(self)
+        if not self.CurrencyIdx then
+            return
         end
-    )
+        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+        GameTooltip:ClearLines()
+        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+        GameTooltip:Show()
+    end)
 
-    f.currency:SetScript(
-        "OnEvent",
-        function(self, event, ...)
-            if not GW.inWorld then
-                return
-            end
-            if event == "CURRENCY_DISPLAY_UPDATE" then
-                watchCurrency(self:GetParent())
-            end
+    f.currency:SetScript("OnEvent", function(self)
+        if GW.inWorld then
+            watchCurrency(self:GetParent())
         end
-    )
+    end)
     f.currency:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
     hooksecurefunc(
         C_CurrencyInfo, "SetCurrencyBackpack",

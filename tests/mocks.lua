@@ -34,7 +34,7 @@ gwMocks.BuildLFGRewardData = function()
     local rewardData = {}
 
     local name,
-        typeID,
+        _,
         subtypeID,
         iconTextureFile,
         moneyBase,
@@ -93,8 +93,7 @@ gwMocks.TalkingHeadFrame_PlayCurrent = function()
     end
 
     local currentDisplayInfo = model:GetDisplayInfo()
-    local displayInfo, cameraID, vo, duration, lineNumber, numLines, name, text, isNewTalkingHead =
-        gwMocks.GetCurrentLineInfo()
+    local displayInfo, cameraID, vo, _, _, _, name, text, isNewTalkingHead = gwMocks.GetCurrentLineInfo()
     local textFormatted = string.format(text)
     if displayInfo and displayInfo ~= 0 then
         frame:Show()
@@ -222,18 +221,18 @@ gwMocks.GetCurrentLineAnimationInfo = function()
     return 0, 60, 60, 7.6910004615784
 end
 
-gwMocks.GetLootRollItemInfo = function(rollID)
+gwMocks.GetLootRollItemInfo = function(_)
     local itemName,
-        itemLink,
+        _,
         itemRarity,
-        itemLevel,
-        itemMinLevel,
-        itemType,
-        itemSubType,
-        itemStackCount,
-        itemEquipLoc,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
         itemTexture,
-        itemSellPrice = GetItemInfo(18832)
+        _ = GetItemInfo(18832)
     -- return itemTexture, itemName, 1, itemRarity, true, true, true, true, 0, 0, 1, true
     return itemTexture, itemName, 1, itemRarity, false, false, false, false, 1, 1, 1, true
 end
@@ -252,7 +251,7 @@ gwMocks.GroupLootFrame_OnShow = function(self)
         name,
         count,
         quality,
-        bindOnPickUp,
+        _,
         canNeed,
         canGreed,
         canDisenchant,
@@ -302,7 +301,7 @@ gwMocks.GroupLootFrame_OnShow = function(self)
     self.Timer:SetFrameLevel(self:GetFrameLevel() - 1)
 end
 
-gwMocks.GroupLootFrame_OnUpdate = function(self, elapsed)
+gwMocks.GroupLootFrame_OnUpdate = function(self)
     local left = gwMocks.GetLootRollTimeLeft(self:GetParent().rollID)
     local min, max = self:GetMinMaxValues()
     if ((left < min) or (left > max)) then

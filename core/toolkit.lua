@@ -175,7 +175,7 @@ local function SkinCheckButton(button)
     if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal") end
 end
 
-function SkinSliderFrame(frame)
+local function SkinSliderFrame(frame)
     local orientation = frame:GetOrientation()
     local SIZE = 12
 

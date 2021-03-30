@@ -441,17 +441,21 @@ local function MixinHideDuringPetAndOverride(f)
 end
 GW.MixinHideDuringPetAndOverride = MixinHideDuringPetAndOverride
 
-local function getContainerItemLinkByName(itemName)
+local function getContainerItemLinkByNameOrId(itemName, id)
+    local itemLink = nil
     for bag = 0, 4 do
         for slot = 1, GetContainerNumSlots(bag) do
             local item = GetContainerItemLink(bag, slot)
-            if item and item:find(itemName) then
-                return item
+            if item and (item:find(itemName) or item:find(id)) then
+                itemLink = item
+                break
             end
         end
     end
+
+    return itemLink
 end
-GW.getContainerItemLinkByName = getContainerItemLinkByName
+GW.getContainerItemLinkByNameOrId = getContainerItemLinkByNameOrId
 
 local function getInventoryItemLinkByNameAndId(name, id)
     for slot = 1, 17 do

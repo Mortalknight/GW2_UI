@@ -494,7 +494,7 @@ end
 GW.AddForProfiling("classpowers", "setPaladin", setPaladin)
 
 -- HUNTER
-local function powerFrenzy(self, event, ...)
+local function powerFrenzy(self, event)
     local fdc = self.decayCounter
     local _, count, duration, expires = findBuff("pet", 272790)
 
@@ -518,7 +518,7 @@ local function powerFrenzy(self, event, ...)
 end
 GW.AddForProfiling("classpowers", "powerFrenzy", powerFrenzy)
 
-local function powerMongoose(self, event, ...)
+local function powerMongoose(self, event)
     local fdc = self.decayCounter
     local _, count, duration, expires = findBuff("player", 259388)
 
@@ -766,7 +766,7 @@ local function powerArcane(self, event, ...)
 end
 GW.AddForProfiling("classpowers", "powerArcane", powerArcane)
 
-local function powerFrost(self, event, ...)
+local function powerFrost(self, event)
     local _, count, _, _ = findBuff("player", 205473)
 
     if not count then count = 0 end
@@ -1229,7 +1229,7 @@ local function selectType(f)
 end
 GW.AddForProfiling("classpowers", "selectType", selectType)
 
-local function barChange_OnEvent(self, event, ...)
+local function barChange_OnEvent(self, event)
     local f = self:GetParent()
     if event == "UPDATE_SHAPESHIFT_FORM" then
         -- this event fires often when form hasn't changed; check old form against current form

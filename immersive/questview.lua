@@ -260,10 +260,8 @@ GW.AddForProfiling("questview", "questTextCompleted", questTextCompleted)
 
 local function nextGossip()
     QUESTSTRINGINT = QUESTSTRINGINT + 1
-    local count = 0
-    for k, _ in pairs(QUESTSTRING) do
-        count = count + 1
-    end
+    local count = #QUESTSTRING
+
     if QUESTSTRINGINT <= count then
         GwQuestviewFrameContainerDialogString:SetText(QUESTSTRING[QUESTSTRINGINT])
         setQuestGiverAnimation(count)
@@ -283,10 +281,8 @@ GW.AddForProfiling("questview", "nextGossip", nextGossip)
 
 local function lastGossip()
     QUESTSTRINGINT = max(QUESTSTRINGINT - 1, 1)
-    local count = 0
-    for k, _ in pairs(QUESTSTRING) do
-        count = count + 1
-    end
+    local count = #QUESTSTRING
+
     if QUESTSTRINGINT <= count then
         GwQuestviewFrameContainerDialogString:SetText(QUESTSTRING[QUESTSTRINGINT])
         setQuestGiverAnimation(count)
@@ -427,7 +423,7 @@ local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
             dirty = 1
         end
     end
-    
+
     if dirty then
         PM:SetPosition(uX, uY, uZ)
         GW.Debug("set pos:", unit, "id:", fileid, "x:", uX, "y:", uY, "z:", uZ, "is_dead:", is_dead)
@@ -551,10 +547,7 @@ local function LoadQuestview()
             GwQuestviewFrame:SetScript("OnKeyDown", function(self, key)
                 if key == "SPACE" then
                     self:SetPropagateKeyboardInput(false)
-                    local Stringcount = 0
-                    for k, _ in pairs(QUESTSTRING) do
-                        Stringcount = Stringcount + 1
-                    end
+                    local Stringcount = #QUESTSTRING
 
                     if QUESTSTRINGINT < Stringcount then
                         nextGossip()
@@ -696,10 +689,7 @@ local function LoadQuestview()
     GwQuestviewFrameContainerAcceptButton:SetScript(
         "OnClick",
         function()
-            local Stringcount = 0
-            for k, _ in pairs(QUESTSTRING) do
-                Stringcount = Stringcount + 1
-            end
+            local Stringcount = #QUESTSTRING
 
             if QUESTSTRINGINT < Stringcount then
                 QUESTSTRINGINT = Stringcount - 1

@@ -570,7 +570,7 @@
             </Layer>
         </Layers>
         <Scripts>
-            <OnLoad function="VerticalActionBarDummy_OnLoad"/>
+            <OnLoad function="GwVerticalActionBarDummy_OnLoad"/>
         </Scripts>
     </Frame>
 

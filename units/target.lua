@@ -46,7 +46,7 @@ function GwCastFrameDummy_OnLoad(self)
     self.frameName:SetShadowOffset(1, -1)
 end
 
-function VerticalActionBarDummy_OnLoad(self)
+function GwVerticalActionBarDummy_OnLoad(self)
     self.frameName:SetFont(DAMAGE_TEXT_FONT, 14)
     self.frameName:SetShadowColor(0, 0, 0, 1)
     self.frameName:SetShadowOffset(1, -1)

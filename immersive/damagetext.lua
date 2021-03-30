@@ -151,24 +151,32 @@ local function getFontElement(self)
         return f
     end
 end
-local function setElementData(self, critical, source, missType)
-    if critical then
-      self.crit = true
-      self.string:SetFont(DAMAGE_TEXT_FONT, 34, "OUTLINED")
-      self.critTexture:Show()
-    elseif missType then
+local function setElementData(self, critical, source, missType, blocked, absorbed)
+    if missType then
         self.critTexture:Hide()
         self.string:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINED")
         self.crit = false
+    elseif blocked then
+        self.critTexture:Hide()
+        self.string:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
+        self.crit = false
+    elseif absorbed then
+        self.critTexture:Hide()
+        self.string:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
+        self.crit = false
+    elseif critical then
+        self.critTexture:Show()
+        self.string:SetFont(DAMAGE_TEXT_FONT, 34, "OUTLINED")
+        self.crit = true
     else
-      self.critTexture:Hide()
-      self.string:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
-      self.crit = false
+        self.critTexture:Hide()
+        self.string:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
+        self.crit = false
     end
     self.pet = false
 
     local colorSource = "spell"
-    if source == "pet" or source == "melee"then
+    if source == "pet" or source == "melee" then
         colorSource = source
         if source == "pet" then
             self.pet = true
@@ -184,9 +192,9 @@ local function formatDamageValue(amount)
     return USE_COMMA_FORMATING and CommaValue(amount) or amount
 end
 
-local function displayDamageText(self, guid, amount, critical, source, missType)
+local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed)
     local f = getFontElement(self)
-    f.string:SetText(missType and getglobal(missType) or formatDamageValue(amount))
+    f.string:SetText(missType and getglobal(missType) or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount))
 
     local nameplate
     local unit = guidToUnit[guid]
@@ -202,7 +210,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType)
     f.anchorFrame = nameplate
     f.unit = unit
 
-    setElementData(f, critical, source, missType)
+    setElementData(f, critical, source, missType, blocked, absorbed)
 
     f:Show()
     f:ClearAllPoints()
@@ -231,52 +239,52 @@ local function displayDamageText(self, guid, amount, critical, source, missType)
     animateTextNormal(f, namePlatesOffsets[nameplate])
 end
 
-local function handleCombatLogEvent(self, timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, ...)
+local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlags, _, destGUID, _, _, _, ...)
     local targetUnit = guidToUnit[destGUID]
     -- if targetNameplate doesnt exists, ignore
     if not targetUnit then return end
 
     if playerGUID == sourceGUID then
         if (string.find(event, "_DAMAGE")) then
-            local spellID, spellName, spellSchool, amount, overkill, school_ignore, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand
+            local spellName, amount, blocked, absorbed, critical
             if (string.find(event, "SWING")) then
-                spellName, amount, overkill, school_ignore, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand = "melee", ...
+                spellName, amount, _, _, _, blocked, absorbed, critical = "melee", ...
             elseif (string.find(event, "ENVIRONMENTAL")) then
-                spellName, amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = ...
+                spellName, amount, _, _, _, blocked, absorbed, critical = ...
             else
-                spellID, spellName, spellSchool, amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand = ...
+                _, spellName, _, amount, _, _, _, blocked, absorbed, critical = ...
             end
-            displayDamageText(self, destGUID, amount, critical, spellName)
+            displayDamageText(self, destGUID, amount, critical, spellName, nil, blocked, absorbed)
         elseif (string.find(event, "_MISSED")) then
-            local missType, isOffHand, amountMissed, critical, spellId, spellName, spellSchool
+            local missType
             if (string.find(event, "RANGE") or string.find(event, "SPELL")) then
-                missType, isOffHand, amountMissed, critical = select(4,...)
+                missType = select(4,...)
             elseif (string.find(event, "SWING")) then
-                missType, isOffHand, amountMissed, critical = ...
+                missType = ...
             else
-                spellId, spellName, spellSchool, missType = ...
+                _, _, _, missType = ...
             end
             displayDamageText(self, destGUID, nil, nil, nil, missType)
         end
     elseif (bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_GUARDIAN) > 0 or bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PET) > 0) and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) > 0 then -- caster is player pet
         if (string.find(event, "_DAMAGE")) then
-            local spellID, spellName, spellSchool, amount, overkill, school_ignore, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand
+            local amount, _, _, _, _, blocked, absorbed, critical
             if (string.find(event, "SWING")) then
-                spellName, amount, overkill, school_ignore, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand = "pet", ...
+                _, amount, _, _, _, blocked, absorbed, critical = "pet", ...
             elseif (string.find(event, "ENVIRONMENTAL")) then
-                spellName, amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing = ...
+                _, amount, _, _, _, blocked, absorbed, critical = ...
             else
-                spellID, spellName, spellSchool, amount, overkill, school, resisted, blocked, absorbed, critical, glancing, crushing, isOffHand = ...
+                _, _, _, amount, _, _, _, blocked, absorbed, critical = ...
             end
-            displayDamageText(self, destGUID, amount, critical, "pet")
+            displayDamageText(self, destGUID, amount, critical, "pet", nil, blocked, absorbed)
         elseif (string.find(event, "_MISSED")) then
-            local missType, isOffHand, amountMissed, critical
+            local missType
             if (string.find(event, "RANGE") or string.find(event, "SPELL")) then
-                missType, isOffHand, amountMissed, critical = select(4,...)
+                missType = select(4,...)
             elseif (string.find(event, "SWING")) then
-                missType, isOffHand, amountMissed, critical = ...
+                missType = ...
             end
-            displayDamageText(self, destGUID, nil, nil, nil, missType)
+            displayDamageText(self, destGUID, nil, nil, "pet", missType)
         end
     end
 end

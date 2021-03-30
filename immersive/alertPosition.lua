@@ -27,7 +27,6 @@ local function UpdateGroupLootContainer(self)
         self:Hide()
     end
 end
-
 -- /run BonusRollFrame_StartBonusRoll(242969,'test',10,1220,1273,14)
 
 local function RePostAlertFrame()
@@ -59,7 +58,7 @@ local function AdjustQueuedAnchors(self, relativeAlert)
     return relativeAlert
 end
 
-function AdjustAnchors(self, relativeAlert)
+local function AdjustAnchors(self, relativeAlert)
     if self.alertFrame:IsShown() then
         self.alertFrame:ClearAllPoints()
         self.alertFrame:SetPoint(POSITION, relativeAlert, ANCHOR_POINT, 0, YOFFSET)
@@ -68,7 +67,7 @@ function AdjustAnchors(self, relativeAlert)
     return relativeAlert
 end
 
-function AdjustAnchorsNonAlert(self, relativeAlert)
+local function AdjustAnchorsNonAlert(self, relativeAlert)
     if self.anchorFrame:IsShown() then
         self.anchorFrame:ClearAllPoints()
         self.anchorFrame:SetPoint(POSITION, relativeAlert, ANCHOR_POINT, 0, YOFFSET)

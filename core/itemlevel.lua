@@ -142,7 +142,7 @@ end
 
 local function GetGearSlotInfo(unit, slot, itemlink, deepScan)
     local tt = GW.ScanTooltip
-    
+
     tt:SetOwner(UIParent, "ANCHOR_NONE")
     if itemlink and string.find(itemlink, "item") then
         tt:SetHyperlink(itemlink)

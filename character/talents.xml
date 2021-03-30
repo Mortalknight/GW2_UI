@@ -288,7 +288,7 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="GwspellbookTab2" parentKey="tab2" inherits="SecureHandlerClickTemplate">
+            <Button parentKey="tab2" inherits="SecureHandlerClickTemplate">
                 <Size x="45" y="50"></Size>
                 <Anchors>
                     <Anchor point="BOTTOM" relativePoint="TOP" x="-42" y="-30"></Anchor>

@@ -5,7 +5,7 @@ local GWGetClassColor = GW.GWGetClassColor
 local SetClassIcon = GW.SetClassIcon
 local AddToAnimation = GW.AddToAnimation
 local IsIn = GW.IsIn
-local getContainerItemLinkByName = GW.getContainerItemLinkByName
+local getContainerItemLinkByNameOrId = GW.getContainerItemLinkByNameOrId
 local setItemLevel = GW.setItemLevel
 
 local PlayerSlots = {
@@ -141,12 +141,12 @@ local function updateBagItemButton(button)
     local broken = (maxDurability and durability == 0)
 
     button.ItemId = id
-    button.ItemLink = getContainerItemLinkByName(name)
-    if button.ItemLink == nil then 
+    button.ItemLink = getContainerItemLinkByNameOrId(name, id)
+    if button.ItemLink == nil then
         button.ItemLink = GW.getInventoryItemLinkByNameAndId(name, id)
     end
     button:ResetAzeriteItem()
-    
+
     if textureName then
         SetItemButtonTexture(button, textureName)
         SetItemButtonCount(button, count)
@@ -174,7 +174,7 @@ local function updateBagItemButton(button)
 
         setItemLevel(button, quality, button.ItemLink)
         setItemButtonQuality(button, quality)
-    
+
         button.IconOverlay:SetShown(button.ItemLink and IsCorruptedItem(button.ItemLink))
     end
 end
@@ -182,7 +182,7 @@ GW.AddForProfiling("paperdoll_equipment", "updateBagItemButton", updateBagItemBu
 
 local function updateBagItemList(itemButton)
     local id = itemButton.id or itemButton:GetID()
-    if selectedInventorySlot ~= id then
+    if selectedInventorySlot ~= id or InCombatLockdown() then
         return
     end
 
@@ -203,8 +203,9 @@ local function updateBagItemList(itemButton)
 
             updateBagItemButton(itemFrame)
 
+            itemFrame:ClearAllPoints()
             itemFrame:SetPoint("TOPLEFT", x, -y)
-            itemFrame:Show()            
+            itemFrame:Show()
             gridIndex = gridIndex + 1
 
             x = x + 49 + 3
@@ -222,7 +223,7 @@ local function updateBagItemList(itemButton)
         end
     end
     for i = itemIndex, numBagSlotFrames do
-        if _G["gwPaperDollBagSlotButton" .. i] ~= nil then
+        if _G["gwPaperDollBagSlotButton" .. i] then
             _G["gwPaperDollBagSlotButton" .. i]:Hide()
         end
     end
@@ -446,7 +447,7 @@ end
 GW.AddForProfiling("paperdoll_equipment", "stat_OnEnter", stat_OnEnter)
 
 getBagSlotFrame = function(i)
-    if _G["gwPaperDollBagSlotButton" .. i] ~= nil then
+    if _G["gwPaperDollBagSlotButton" .. i] then
         return _G["gwPaperDollBagSlotButton" .. i]
     end
 
@@ -464,7 +465,7 @@ end
 GW.AddForProfiling("paperdoll_equipment", "getBagSlotFrame", getBagSlotFrame)
 
 local function updateBagItemListAll()
-    if selectedInventorySlot ~= nil then
+    if selectedInventorySlot ~= nil or InCombatLockdown() then
         return
     end
 
@@ -488,6 +489,7 @@ local function updateBagItemListAll()
 
                 updateBagItemButton(itemFrame)
 
+                itemFrame:ClearAllPoints()
                 itemFrame:SetPoint("TOPLEFT", x, -y)
                 itemFrame:Show()
                 gridIndex = gridIndex + 1
@@ -508,7 +510,7 @@ local function updateBagItemListAll()
         end
     end
     for i = itemIndex, numBagSlotFrames do
-        if _G["gwPaperDollBagSlotButton" .. i] ~= nil then
+        if _G["gwPaperDollBagSlotButton" .. i] then
             _G["gwPaperDollBagSlotButton" .. i]:Hide()
         end
     end

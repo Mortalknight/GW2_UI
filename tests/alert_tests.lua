@@ -4,7 +4,7 @@ local gwMocks = GW.gwMocks
 
 local tests = {}
 
-tests.SingleAchievement = function(msg, editBox)
+tests.SingleAchievement = function()
     Debug("expected: one achievment shows immediately")
     if not AchievementFrame then
         AchievementFrame_LoadUI()
@@ -12,7 +12,7 @@ tests.SingleAchievement = function(msg, editBox)
     AchievementAlertSystem:AddAlert(33)
 end
 
-tests.TwoAchievements = function(msg, editBox)
+tests.TwoAchievements = function()
     Debug("expected: two achievements show immediately")
     if not AchievementFrame then
         AchievementFrame_LoadUI()
@@ -21,7 +21,7 @@ tests.TwoAchievements = function(msg, editBox)
     AchievementAlertSystem:AddAlert(34)
 end
 
-tests.ThreeAchievements = function(msg, editBox)
+tests.ThreeAchievements = function()
     Debug("expected: two achievements show immediately, one shows after first two disappear")
     if not AchievementFrame then
         AchievementFrame_LoadUI()
@@ -31,7 +31,7 @@ tests.ThreeAchievements = function(msg, editBox)
     AchievementAlertSystem:AddAlert(35)
 end
 
-tests.FourAchievementsDelay = function(msg, editBox)
+tests.FourAchievementsDelay = function()
     Debug("expected: two achievements show immediately, two more show after first two disappear")
     if not AchievementFrame then
         AchievementFrame_LoadUI()
@@ -47,7 +47,7 @@ tests.FourAchievementsDelay = function(msg, editBox)
     )
 end
 
-tests.ThreeCriteria = function(msg, editBox)
+tests.ThreeCriteria = function()
     Debug("expected: two criteria progress show immediately, third NEVER shows")
     if not AchievementFrame then
         AchievementFrame_LoadUI()
@@ -57,12 +57,12 @@ tests.ThreeCriteria = function(msg, editBox)
     CriteriaAlertSystem:AddAlert(35, "Bloop35")
 end
 
-tests.DungeonComplete = function(msg, editBox)
+tests.DungeonComplete = function()
     Debug("expected: dungeon complete for Court of Stars Heroic with Timewarped Badge and Order Resource rewards")
     DungeonCompletionAlertSystem:AddAlert(gwMocks.BuildLFGRewardData(false))
 end
 
-tests.BonusRoll = function(msg, editBox)
+tests.BonusRoll = function()
     Debug(
         "expected: bonus roll window appears with 10s timer using Order Resources currency, rolls at 5s then 'wins' some gold, then goes away (if you do not have any Order Resources, window will not appear)"
     )
@@ -82,7 +82,7 @@ tests.BonusRoll = function(msg, editBox)
     )
 end
 
-tests.TalkingHead = function(msg, editBox)
+tests.TalkingHead = function()
     Debug("expected: talking head window appears with Thalyssra voice line, goes away when complete (~8s)")
     if not TalkingHeadFrame then
         TalkingHead_LoadUI()
@@ -99,17 +99,17 @@ tests.TalkingHead = function(msg, editBox)
     )
 end
 
-tests.Money = function(msg, editBox)
+tests.Money = function()
     Debug("expected: money won alert appears")
     MoneyWonAlertSystem:AddAlert(333)
 end
 
-tests.Recipe = function(msg, editBox)
+tests.Recipe = function()
     Debug("expected: new recipe alert appears")
     NewRecipeLearnedAlertSystem:AddAlert(204)
 end
 
-tests.LegendaryLoot = function(msg, editBox)
+tests.LegendaryLoot = function()
     Debug("expected: legendary loot drop alert appears")
     local _, link, _ = GetItemInfo(18832)
     Debug(link)
@@ -121,7 +121,7 @@ tests.LegendaryLoot = function(msg, editBox)
     )
 end
 
-tests.StoreLoot = function(msg, editBox)
+tests.StoreLoot = function()
     Debug("expected: store loot purchase alert appears")
     StorePurchaseAlertSystem:AddAlert(
         "\124cffa335ee\124Hitem:180545::::::::::\124h[Mystic Runesaber]\124h\124r",
@@ -131,7 +131,7 @@ tests.StoreLoot = function(msg, editBox)
     )
 end
 
-tests.MultiLoot = function(msg, editBox)
+tests.MultiLoot = function()
     Debug("expected: a combination of loot and upgrade alerts appear")
     local _, link, _ = GetItemInfo(18832)
     Debug(link)
@@ -163,7 +163,7 @@ tests.MultiLoot = function(msg, editBox)
     )
 end
 
-tests.GroupLoot = function(msg, editBox)
+tests.GroupLoot = function()
     Debug("expected: two group loot windows with countdowns that disappear near end of countdown")
     local rollID1 = GetTime() + 10
     local rollID2 = GetTime() + 11
@@ -199,34 +199,34 @@ tests.GroupLoot = function(msg, editBox)
     )
 end
 
-tests.CollectionsAlert = function(msg, editBox)
+tests.CollectionsAlert = function()
     Debug("expected: yellow tutorial pin on collections button")
     MainMenuMicroButton_ShowAlert(CollectionsMicroButtonAlert, COLLECTION_UNOPENED_PLURAL)
 end
 
-tests.LFDAlert = function(msg, editBox)
+tests.LFDAlert = function()
     Debug("expected: yellow tutorial pin on group finder button")
     MainMenuMicroButton_ShowAlert(LFDMicroButtonAlert, LFG_MICRO_BUTTON_SPEC_TUTORIAL)
 end
 
-tests.EJAlert = function(msg, editBox)
+tests.EJAlert = function()
     Debug("expected: yellow tutorial pin on encounter journal button")
     MainMenuMicroButton_ShowAlert(EJMicroButtonAlert, AJ_MICRO_BUTTON_ALERT_TEXT)
 end
 
-tests.StoreAlert = function(msg, editBox)
+tests.StoreAlert = function()
     Debug("expected: yellow tutorial pin on store button")
     MainMenuMicroButton_ShowAlert(StoreMicroButtonAlert, STORE_MICRO_BUTTON_ALERT_TRIAL_CAP_REACHED)
 end
 
-tests.CharacterAlert = function(msg, editBox)
+tests.CharacterAlert = function()
     Debug("expected: yellow tutorial pin on character button")
     MainMenuMicroButton_ShowAlert(CharacterMicroButtonAlert, CHARACTER_SHEET_MICRO_BUTTON_AZERITE_AVAILABLE)
 end
 
 local function AlertTestsSetup()
     _G["SLASH_GW_TEST_ALERT1"] = "/gwtestalert"
-    SlashCmdList["GW_TEST_ALERT"] = function(msg, editBox)
+    SlashCmdList["GW_TEST_ALERT"] = function(msg)
         local args = {}
         for arg in msg:gmatch("%w+") do
             tinsert(args, arg)
@@ -247,7 +247,7 @@ local function AlertTestsSetup()
             Debug("running alert tests:", msg)
             for i = 1, #args do
                 if tests[args[i]] then
-                    tests[args[i]](msg, editBox)
+                    tests[args[i]]()
                 end
             end
         end

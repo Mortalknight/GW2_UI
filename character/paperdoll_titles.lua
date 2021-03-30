@@ -107,15 +107,10 @@ local function LoadPDTitles(fmMenu)
     -- update title window when a title update event occurs
     titlewin:SetScript(
         "OnEvent",
-        function(self, event, ...)
-            if not GW.inWorld then
-                return
-            end
-            if event == "KNOWN_TITLES_UPDATE" or event == "UNIT_NAME_UPDATE" then
-                if self:IsShown() then
-                    saveKnowenTitles()
-                    loadTitle(self)
-                end
+        function(self)
+            if GW.inWorld and self:IsShown() then
+                saveKnowenTitles()
+                loadTitle(self)
             end
         end
     )

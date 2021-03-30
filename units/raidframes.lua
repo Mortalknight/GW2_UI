@@ -568,7 +568,7 @@ local function updateBuffs(self)
 
     -- missing buffs
     if not UnitIsDeadOrGhost(self.unit) then
-        
+
         repeat
             i, name = i + 1, UnitBuff(self.unit, i)
             if name and missing[name] then
@@ -663,7 +663,7 @@ local function updateBuffs(self)
 
                                     shouldDisplay = false
                                 end
-                                
+
                                 frame:Show()
                             end
                         end
