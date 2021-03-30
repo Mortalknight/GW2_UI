@@ -1,28 +1,72 @@
 local _, GW = ...
-local L = GW.L
 local GetSetting = GW.GetSetting
 
-local function manageButtonDelay(self, setShown)
-    if UnitAffectingCombat("player") then
-        self:RegisterEvent("PLAYER_REGEN_ENABLED")
+local function fnGMIG_OnEvent(self)
+    if InCombatLockdown() then return end
+
+    if IsInGroup() then
+        self:Show()
+        GwGroupManage:SetHeight(420)
     else
-        self:SetShown(setShown)
+        self:Hide()
+        GwGroupManage:SetHeight(80)
     end
+
+    if IsInRaid() then
+        GwManageGroupButton.icon:SetTexCoord(0, 0.59375, 0.2968, 0.2968 * 2)
+    else
+        GwManageGroupButton.icon:SetTexCoord(0, 0.59375, 0, 0.2968)
+    end
+
+    local active = UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")
+    for _, marker in pairs(self.markers) do
+        marker:SetEnabled(active)
+        marker:GetNormalTexture():SetDesaturated(not active)
+    end
+    for _, marker in pairs(self.workdmarkers) do
+        marker:SetEnabled(active)
+        marker:GetNormalTexture():SetDesaturated(not active)
+    end
+
+    self.convert:SetEnabled(UnitIsGroupLeader("player"))
+    self.convert:SetText(IsInRaid() and CONVERT_TO_PARTY or CONVERT_TO_RAID)
+
+    self.countdown:SetEnabled(active)
+    self.readyCheck:SetEnabled(active)
+    self.roleCheck:SetEnabled(active)
 end
-GW.AddForProfiling("raidControl", "manageButtonDelay", manageButtonDelay)
 
 local function manageButton()
     local GwGroupManage = CreateFrame("Frame", "GwGroupManage", UIParent, "GwGroupManage")
-    local fmGMGB = CreateFrame("Frame", "GwManageGroupButton", UIParent, "GwManageGroupButtonTmpl")
+    local fmGMGB = CreateFrame("Button", "GwManageGroupButton", UIParent, "GwManageGroupButtonTmpl")
 
-    local fnGMGB_OnClick = function()
-        if GwGroupManage:IsShown() then
-            GwGroupManage:Hide()
+    fmGMGB:SetFrameRef("GroupManager", GwGroupManage)
+    fmGMGB:SetAttribute("state", "closed")
+    fmGMGB:SetAttribute("_onclick", [=[
+        local ref = self:GetFrameRef("GroupManager")
+        local state = self:GetAttribute("state")
+
+        if state == "closed" then
+            ref:Show()
+            self:SetAttribute("state", "open")
         else
-            GwGroupManage:Show()
+            ref:Hide()
+            self:SetAttribute("state","closed")
         end
-    end
-    fmGMGB:SetScript("OnMouseDown", fnGMGB_OnClick)
+    ]=])
+
+    GwGroupManage:SetFrameRef("GroupManagerGroup", GwGroupManage.inGroup)
+    GwGroupManage:SetAttribute("_onshow", [=[
+        local ref = self:GetFrameRef("GroupManagerGroup") 
+
+        if PlayerInGroup() ~= false then
+            ref:Show()
+            self:SetHeight(420)
+        else
+            ref:Hide()
+            self:SetHeight(80)
+        end
+    ]=])
 
     local fnGMGIB_OnEscapePressed = function(self)
         self:ClearFocus()
@@ -66,62 +110,37 @@ local function manageButton()
         C_PartyInfo.LeaveParty()
     end)
 
-    local fmButtonSetActiceDeactive = function(self)
-        if UnitIsGroupLeader("player") or UnitIsGroupAssistant("player") then
-            self:Enable()
-        else
-            self:Disable()
-        end
-    end
     local fnGGRC_OnClick = function()
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         DoReadyCheck()
     end
-    GwGroupManage.inGroup.readyCheck:SetScript("OnEvent", fmButtonSetActiceDeactive)
     GwGroupManage.inGroup.readyCheck:SetScript("OnClick", fnGGRC_OnClick)
     GwGroupManage.inGroup.readyCheck.hover:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck-button-hover")
     GwGroupManage.inGroup.readyCheck:GetFontString():SetTextColor(218 / 255, 214 / 255, 200 / 255)
     GwGroupManage.inGroup.readyCheck:GetFontString():SetShadowColor(0, 0, 0, 1)
     GwGroupManage.inGroup.readyCheck:GetFontString():SetShadowOffset(1, -1)
-    GwGroupManage.inGroup.readyCheck:RegisterEvent("GROUP_ROSTER_UPDATE")
-    GwGroupManage.inGroup.readyCheck:RegisterEvent("RAID_ROSTER_UPDATE")
+    GwGroupManage.inGroup.readyCheck:SetEnabled(UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
 
     local fmGGCD_OnClick = function()
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         C_PartyInfo.DoCountdown(10)
     end
 
-    GwGroupManage.inGroup.countdown:SetScript("OnEvent", fmButtonSetActiceDeactive)
     GwGroupManage.inGroup.countdown:SetScript("OnClick", fmGGCD_OnClick)
     GwGroupManage.inGroup.countdown.hover:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck-button-hover")
     GwGroupManage.inGroup.countdown:GetFontString():SetTextColor(218 / 255, 214 / 255, 200 / 255)
     GwGroupManage.inGroup.countdown:GetFontString():SetShadowColor(0, 0, 0, 1)
     GwGroupManage.inGroup.countdown:GetFontString():SetShadowOffset(1, -1)
-    GwGroupManage.inGroup.countdown:RegisterEvent("GROUP_ROSTER_UPDATE")
-    GwGroupManage.inGroup.countdown:RegisterEvent("RAID_ROSTER_UPDATE")
+    GwGroupManage.inGroup.countdown:SetEnabled(UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
 
     local fnGGRlC_OnClick = function()
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         InitiateRolePoll()
     end
-    GwGroupManage.inGroup.roleCheck:SetScript("OnEvent", fmButtonSetActiceDeactive)
     GwGroupManage.inGroup.roleCheck:SetScript("OnClick", fnGGRlC_OnClick)
-    GwGroupManage.inGroup.roleCheck:RegisterEvent("GROUP_ROSTER_UPDATE")
-    GwGroupManage.inGroup.roleCheck:RegisterEvent("RAID_ROSTER_UPDATE")
+    GwGroupManage.inGroup.roleCheck:GetFontString():SetShadowColor(0, 0, 0, 1)
+    GwGroupManage.inGroup.roleCheck:SetEnabled(UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
 
-    local fnGGMC_OnEvent = function(self)
-        if UnitIsGroupLeader("player") then
-            self:Enable()
-        else
-            self:Disable()
-        end
-
-        if IsInRaid() then
-            self:SetText(CONVERT_TO_PARTY)
-        else
-            self:SetText(CONVERT_TO_RAID)
-        end
-    end
     local fnGGMC_OnClick = function()
         if IsInRaid() then
             C_PartyInfo.ConvertToParty()
@@ -129,76 +148,17 @@ local function manageButton()
             C_PartyInfo.ConvertToRaid()
         end
     end
-    GwGroupManage.inGroup.convert:SetScript("OnEvent", fnGGMC_OnEvent)
     GwGroupManage.inGroup.convert:SetScript("OnClick", fnGGMC_OnClick)
-    GwGroupManage.inGroup.convert:RegisterEvent("GROUP_ROSTER_UPDATE")
-    GwGroupManage.inGroup.convert:RegisterEvent("RAID_ROSTER_UPDATE")
-    GwGroupManage.inGroup.convert:RegisterEvent("PLAYER_ENTERING_WORLD")
+    GwGroupManage.inGroup.convert:GetFontString():SetShadowColor(0, 0, 0, 1)
 
-    local fnGMIG_OnLoad = function(self)
-        if IsInGroup() then
-            self:Show()
-            GwGroupManage:SetHeight(280)
-        else
-            self:Hide()
-            GwGroupManage:SetHeight(80)
-        end
+    GwGroupManage.inGroup.header:SetFont(UNIT_NAME_FONT, 14)
+    GwGroupManage.inGroup.header2:SetFont(UNIT_NAME_FONT, 14)
+    GwGroupManage.inGroup.header2:SetText(WORLD_MARKER:format(0):gsub("%d", ""))
 
-        if IsInRaid() then
-            fmGMGB.icon:SetTexCoord(0, 0.59375, 0.2968, 0.2968 * 2)
-        else
-            fmGMGB.icon:SetTexCoord(0, 0.59375, 0, 0.2968)
-        end
-        self.header:SetFont(UNIT_NAME_FONT, 14)
-
-        self:RegisterEvent("GROUP_ROSTER_UPDATE")
-        self:RegisterEvent("RAID_ROSTER_UPDATE")
-        self:RegisterEvent("PLAYER_REGEN_ENABLED")
-    end
-    local fnGMIG_OnEvent = function(self)
-        if IsInGroup() then
-            self:Show()
-            GwGroupManage:SetHeight(280)
-        else
-            self:Hide()
-            GwGroupManage:SetHeight(80)
-        end
-
-        if IsInRaid() then
-            fmGMGB.icon:SetTexCoord(0, 0.59375, 0.2968, 0.2968 * 2)
-        else
-            fmGMGB.icon:SetTexCoord(0, 0.59375, 0, 0.2968)
-        end
-    end
+    GwGroupManage.inGroup:RegisterEvent("GROUP_ROSTER_UPDATE")
+    GwGroupManage.inGroup:RegisterEvent("RAID_ROSTER_UPDATE")
+    GwGroupManage.inGroup:RegisterEvent("PLAYER_REGEN_ENABLED")
     GwGroupManage.inGroup:SetScript("OnEvent", fnGMIG_OnEvent)
-    fnGMIG_OnLoad(GwGroupManage.inGroup)
-
-    local fnGWMM_OnEvent = function(self, event)
-        local shouldShowWm = GetSetting("WORLD_MARKER_FRAME") and ((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
-        if event == "PLAYER_REGEN_ENABLED" then self:UnregisterEvent(event) end
-
-        manageButtonDelay(self, shouldShowWm)
-    end
-    local fmGWMM = CreateFrame("Frame", "GwWorldMarkerManage", UIParent, "GwWorldMarkerManage")
-    if GetSetting("WORLD_MARKER_FRAME") and ((IsInGroup() and GetSetting("RAID_STYLE_PARTY")) or IsInRaid()) and
-        (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) then
-            fmGWMM:Show()
-    else
-        fmGWMM:Hide()
-    end
-    fmGWMM:RegisterEvent("GROUP_ROSTER_UPDATE")
-    fmGWMM:RegisterEvent("RAID_ROSTER_UPDATE")
-    fmGWMM:RegisterEvent("PLAYER_REGEN_ENABLED")
-    fmGWMM:SetScript("OnEvent", fnGWMM_OnEvent)
-    fmGWMM.header:SetFont(UNIT_NAME_FONT, 14)
-    fmGWMM.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    fmGWMM.header:SetText(L["WM"])
-
-    local x = 10
-    local y = -30
-
-    local xx = 1
-    local yy = -30
 
     local fnF_OnEnter = function(self)
         self.texture:SetBlendMode("ADD")
@@ -207,20 +167,10 @@ local function manageButton()
         self.texture:SetBlendMode("BLEND")
     end
 
-    local f
-    for i = 1, 9 do
-        f = CreateFrame("Button", "GwRaidMarkerButton" .. i, fmGWMM, "GwRaidGroundMarkerButton")
-        f:SetScript("OnEnter", fnF_OnEnter)
-        f:SetScript("OnLeave", fnF_OnLeave)
-        f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", fmGWMM, "TOPLEFT", xx, yy)
-        f:SetNormalTexture(i < 9 and "Interface/AddOns/GW2_UI/textures/party/GM_" .. i or "Interface/BUTTONS/UI-GROUPLOOT-PASS-DOWN")
-        f:SetAttribute("type", "macro")
-        f:SetAttribute("macrotext", (i < 9 and "/wm " .. i or "/cwm 9"))
+    local x, y, f = 15, -25
 
-        yy = yy + -37
-    end
-
+    GwGroupManage.inGroup.markers = {}
+    GwGroupManage.inGroup.workdmarkers = {}
     for i = 1, 8 do
         f = CreateFrame("Button", "GwRaidMarkerButton" .. i, GwGroupManage.inGroup, "GwRaidMarkerButton")
         f:SetScript("OnEnter", fnF_OnEnter)
@@ -228,17 +178,38 @@ local function manageButton()
 
         f:ClearAllPoints()
         f:SetPoint("TOPLEFT", GwGroupManage.inGroup, "TOPLEFT", x, y)
-        f:SetNormalTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. i)
+        f:SetNormalTexture("Interface/TargetingFrame/UI-RaidTargetingIcon_" .. i)
         f:SetScript("OnClick", function()
-            PlaySound(1115) --U_CHAT_SCROLL_BUTTON
-            SetRaidTarget("target", i)
+            PlaySound(1115)
+            SetRaidTargetIcon("target", i)
         end)
 
-        x = x + 61
+        x = x + 44
         if i == 4 then
-            y = y + -55
-            x = 10
+            y = y + -40
+            x = 15
         end
+        GwGroupManage.inGroup.markers[i] = f
+    end
+
+    y = y + -65
+    x = 15
+    for i = 1, 9 do
+        f = CreateFrame("Button", "GwWorldMarkerButton" .. i, GwGroupManage.inGroup, "GwRaidGroundMarkerButton")
+        f:SetScript("OnEnter", fnF_OnEnter)
+        f:SetScript("OnLeave", fnF_OnLeave)
+        f:ClearAllPoints()
+        f:SetPoint("TOPLEFT", GwGroupManage.inGroup, "TOPLEFT", x, y)
+        f:SetNormalTexture(i < 9 and "Interface/AddOns/GW2_UI/textures/party/GM_" .. i or "Interface/BUTTONS/UI-GROUPLOOT-PASS-DOWN")
+        f:SetAttribute("type", "macro")
+        f:SetAttribute("macrotext", (i < 9 and "/wm " .. i or "/cwm 9"))
+
+        x = x + 44
+        if i == 4 or i == 8 then
+            y = y + -40
+            x = 15
+        end
+        GwGroupManage.inGroup.workdmarkers[i] = f
     end
 
     local fnGMGB_OnEnter = function(self)
@@ -261,6 +232,8 @@ local function manageButton()
     end
     fmGMGB:SetScript("OnEnter", fnGMGB_OnEnter)
     fmGMGB:HookScript("OnLeave", fnGMGB_OnLeave)
+
+    fnGMIG_OnEvent(GwGroupManage.inGroup)
 
     if GetSetting("FADE_GROUP_MANAGE_FRAME") then
         local fo = fmGMGB:CreateAnimationGroup("fadeOut")
