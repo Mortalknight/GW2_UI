@@ -27,7 +27,7 @@
         </Layers>
     </Button>
 
-    <Frame name="GwGroupManage" enableMouse="true" hidden="true" virtual="true" parent="UIParent" inherits="SecureHandlerShowHideTemplate">
+    <Frame name="GwGroupManage" enableMouse="true" hidden="true" virtual="true" parent="UIParent" inherits="SecureHandlerShowHideTemplate,SecureHandlerStateTemplate">
         <Size x="200" y="80"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="62" y="-60"></Anchor>

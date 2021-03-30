@@ -2,15 +2,7 @@ local _, GW = ...
 local GetSetting = GW.GetSetting
 
 local function fnGMIG_OnEvent(self)
-    if InCombatLockdown() then return end
-
-    if IsInGroup() then
-        self:Show()
-        GwGroupManage:SetHeight(420)
-    else
-        self:Hide()
-        GwGroupManage:SetHeight(80)
-    end
+    local active = UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")
 
     if IsInRaid() then
         GwManageGroupButton.icon:SetTexCoord(0, 0.59375, 0.2968, 0.2968 * 2)
@@ -18,13 +10,11 @@ local function fnGMIG_OnEvent(self)
         GwManageGroupButton.icon:SetTexCoord(0, 0.59375, 0, 0.2968)
     end
 
-    local active = UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")
     for _, marker in pairs(self.markers) do
         marker:SetEnabled(active)
         marker:GetNormalTexture():SetDesaturated(not active)
     end
     for _, marker in pairs(self.workdmarkers) do
-        marker:SetEnabled(active)
         marker:GetNormalTexture():SetDesaturated(not active)
     end
 
@@ -49,9 +39,11 @@ local function manageButton()
         if state == "closed" then
             ref:Show()
             self:SetAttribute("state", "open")
+            ref:SetAttribute("state", "open")
         else
             ref:Hide()
             self:SetAttribute("state","closed")
+            ref:SetAttribute("state", "closed")
         end
     ]=])
 
@@ -67,6 +59,19 @@ local function manageButton()
             self:SetHeight(80)
         end
     ]=])
+    GwGroupManage:SetAttribute("_onstate-barlayout", [=[
+        local ref = self:GetFrameRef("GroupManagerGroup") 
+        local state = self:GetAttribute("state")
+
+        if newstate == "show" and state == "open" then
+            self:SetHeight(420)
+            ref:Show()
+        elseif newstate == "hide" and state == "open" then
+            self:SetHeight(80)
+            ref:Hide()
+        end
+    ]=])
+    RegisterStateDriver(GwGroupManage, "barlayout", "[group:raid] show; [group:party] show; hide")
 
     local fnGMGIB_OnEscapePressed = function(self)
         self:ClearFocus()
