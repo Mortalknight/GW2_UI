@@ -1153,11 +1153,11 @@ local function LoadActionBars(lm)
     FRAMELOCK_STATES.COMMENTATOR_SPECTATING_MODE = Mixin(FRAMELOCK_STATES.COMMENTATOR_SPECTATING_MODE, HIDE_MOST)
     FRAMELOCK_STATES.PETBATTLES = Mixin(FRAMELOCK_STATES.PETBATTLES, HIDE_MOST)
 
-    ActionBarController:HookScript("OnEvent", function(_, event)
-        if event == "UPDATE_BONUS_ACTIONBAR" then
-            ActionBarController_ResetToDefault()
-            ValidateActionBarTransition()
-        end
-    end)
+    --ActionBarController:HookScript("OnEvent", function(_, event)
+        --if event == "UPDATE_BONUS_ACTIONBAR" then
+            --ActionBarController_ResetToDefault()
+            --ValidateActionBarTransition()
+        --end
+    --end)
 end
 GW.LoadActionBars = LoadActionBars
