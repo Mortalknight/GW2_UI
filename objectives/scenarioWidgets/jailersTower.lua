@@ -51,7 +51,7 @@ local function addJailersTowerData(block, numCriteria)
         container:ClearAllPoints()
         container:SetAllPoints()
         objectiveBlock:Show()
-        objectiveBlock.ObjectiveText:SetText(text)
+        objectiveBlock.ObjectiveText:SetText("")
         block.height = block.height + objectiveBlock:GetHeight()
         block.numObjectives = block.numObjectives + 1
     end
