@@ -439,7 +439,7 @@ local function LoadCurrency(tabContainer)
     item = CreateFrame("Button", "RaidInfoFrame", fmMenu, "GwCharacterMenuButtonTemplate")
     item.ToggleMe = raidinfo
     item:SetScript("OnClick", menuItem_OnClick)
-    item:SetText(RAID_INFO)
+    item:SetText(RAID_INFORMATION)
     item:ClearAllPoints()
     item:SetPoint("TOPLEFT", fmMenu.items["currency"], "BOTTOMLEFT")
     fmMenu.items["raidinfo"] = item

@@ -337,3 +337,4 @@ L["Right Click to change Talent Specialization"] = "Clicca con il tasto destro d
 L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = "Legacy: Ordinate per durata ma le auree non possono essere cancellate con il tasto destro in combattimento\nSicuro: Non ordinate ma le auree possono essere cancellate con il tasto destro in combattimento"
 L["Weekly Reset"] = "Reset Settimanale"
 L["Conduits"] = "Condotti"
+L["Raid Group: %s"] = true

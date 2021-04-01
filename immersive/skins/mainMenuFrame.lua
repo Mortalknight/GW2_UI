@@ -84,12 +84,12 @@ local function SkinMainMenu()
     local GameMenuFrame = _G.GameMenuFrame
 
     local GwMainMenuFrame = CreateFrame("Button", nil, GameMenuFrame, "GameMenuButtonTemplate")
-    GwMainMenuFrame:SetText(format("|cffffedba%s|r", GW.addonName))
+    GwMainMenuFrame:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
     GwMainMenuFrame:SetScript(
         "OnClick",
         function()
             if InCombatLockdown() then
-                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["Settings are not available in combat!"])
+                DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"])):gsub("*", GW.Gw2Color)
                 return
             end
             ShowUIPanel(GwSettingsWindow)

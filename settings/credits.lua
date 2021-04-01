@@ -115,11 +115,11 @@ local function CreateCreditsFrame()
     CreditsFrame.Section6 = CreateSection(300, 55, CreditsFrame, "TOP", CreditsFrame.Section5, "BOTTOM", 0, true)
 
     --Section headers
-    CreditsFrame.Section1.Header.Text:SetText("|cffffedba" .. L["\nCreated by: "]:gsub("\n", ""):gsub(":", "")  .. "|r")
-    CreditsFrame.Section2.Header.Text:SetText("|cffffedba" .. L["Developed by"] .. "|r")
-    CreditsFrame.Section3.Header.Text:SetText("|cffffedba" .. L["With Contributions by"] .. "|r")
-    CreditsFrame.Section4.Header.Text:SetText("|cffffedba" .. L["Localised by"] .. "|r")
-    CreditsFrame.Section5.Header.Text:SetText("|cffffedba" .. L["QA Testing by"] .. "|r")
+    CreditsFrame.Section1.Header.Text:SetText(("*" .. L["\nCreated by: "]:gsub("\n", ""):gsub(":", "")  .. "|r")):gsub("*", GW.Gw2Color)
+    CreditsFrame.Section2.Header.Text:SetText(("*" .. L["Developed by"] .. "|r")):gsub("*", GW.Gw2Color)
+    CreditsFrame.Section3.Header.Text:SetText(("*" .. L["With Contributions by"] .. "|r")):gsub("*", GW.Gw2Color)
+    CreditsFrame.Section4.Header.Text:SetText(("*" .. L["Localised by"] .. "|r")):gsub("*", GW.Gw2Color)
+    CreditsFrame.Section5.Header.Text:SetText(("*" .. L["QA Testing by"] .. "|r")):gsub("*", GW.Gw2Color)
     CreditsFrame.Section6.Header.Text:SetText("")
 
     --Section content

@@ -180,6 +180,7 @@ local function updatePartyDebuffs(self, x, y)
 
             debuffFrame.cooldown.duration:SetText(debuffList[i].duration > 0 and TimeCount(debuffList[i].timeRemaining) or "")
             debuffFrame.debuffIcon.stacks:SetText((debuffList[i].count or 1) > 1 and debuffList[i].count or "")
+            debuffFrame.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, (debuffList[i].count or 1) > 9 and 11 or 14, "OUTLINE")
             debuffFrame:ClearAllPoints()
             debuffFrame:SetPoint("BOTTOMRIGHT", (26 * x), 26 * y)
 
@@ -250,7 +251,7 @@ local function updatePartyAuras(self)
     for i, buffFrame in pairs(self.buffFrames) do
         if buffList[i] then
             local margin = -buffFrame:GetWidth() + -2
-            local marginy = buffFrame:GetWidth() + 12
+            local marginy = buffFrame:GetWidth() + 5
             buffFrame.buffIcon:SetTexture(buffList[i].icon)
             buffFrame.buffIcon:SetParent(buffFrame)
 

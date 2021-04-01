@@ -1140,7 +1140,7 @@ end
 local function tracker_OnEvent(self, event, ...)
     local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
 
-    if event == "UNIT_QUEST_LOG_CHANGED" and ... == "player" then
+    if event == "QUEST_LOG_UPDATE" then
         updateQuestLogLayout(self)
     elseif event == "QUEST_ACCEPTED" then
         local questID = ...
@@ -1329,7 +1329,7 @@ local function LoadQuestTracker()
     fTraScr:SetScrollChild(fScroll)
 
     fQuest:SetScript("OnEvent", tracker_OnEvent)
-    fQuest:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
+    fQuest:RegisterEvent("QUEST_LOG_UPDATE")
     fQuest:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
     fQuest:RegisterEvent("QUEST_AUTOCOMPLETE")
     fQuest:RegisterEvent("QUEST_ACCEPTED")
@@ -1402,7 +1402,7 @@ local function LoadQuestTracker()
     compassUpdateFrame:RegisterEvent("PLAYER_STOPPED_MOVING")
     compassUpdateFrame:RegisterEvent("PLAYER_CONTROL_LOST")
     compassUpdateFrame:RegisterEvent("PLAYER_CONTROL_GAINED")
-    compassUpdateFrame:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
+    compassUpdateFrame:RegisterEvent("QUEST_LOG_UPDATE")
     compassUpdateFrame:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
     compassUpdateFrame:RegisterEvent("PLAYER_MONEY")
     compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -1426,7 +1426,6 @@ local function LoadQuestTracker()
                 tracker_OnUpdate(fTracker)
             end
         else
-            if event == "UNIT_QUEST_LOG_CHANGED" and ... ~= "player" then return end
             C_Timer.After(0.25, function() tracker_OnUpdate(fTracker) end)
         end
     end)

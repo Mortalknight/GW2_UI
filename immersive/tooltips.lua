@@ -495,7 +495,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
         local guid = UnitGUID(unit) or ""
         local id = tonumber(strmatch(guid, "%-(%d-)%-%x-$"), 10)
         if id then
-            self:AddLine(format("|cffffedba%s|r %d", ID, id))
+            self:AddLine(format(("*%s|r %d"):gsub("*", GW.Gw2Color), ID, id))
         end
     end
 end
@@ -516,16 +516,16 @@ local function GameTooltip_OnTooltipSetItem(self)
         local itemCountOption = GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT")
 
         if link ~= nil and IsModKeyDown() then
-            right = format("|cffffedba%s|r %s", ID, strmatch(link, ":(%w+)"))
+            right = format(("*%s|r %s"):gsub("*", GW.Gw2Color), ID, strmatch(link, ":(%w+)"))
         end
 
         if itemCountOption == "BAG" then
-            left = format("|cffffedba%s|r %d", INVENTORY_TOOLTIP, num)
+            left = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
         elseif itemCountOption == "BANK" then
-            bankCount = format("|cffffedba%s|r %d", BANK, (numall - num))
+            bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
         elseif itemCountOption == "BOTH" then
-            left = format("|cffffedba%s|r %d", INVENTORY_TOOLTIP, num)
-            bankCount = format("|cffffedba%s|r %d", BANK, (numall - num))
+            left = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
+            bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
         end
 
         if left ~= " " or right ~= " " then
@@ -545,7 +545,7 @@ local function GameTooltip_OnTooltipSetSpell(self)
     local id = select(2, self:GetSpell())
     if id and IsModKeyDown() then
 
-        local displayString = format("|cffffedba%s|r %d", ID, id)
+        local displayString = format(("*%s|r %d"):gsub("*", GW.Gw2Color), ID, id)
 
         for i = 1, self:NumLines() do
             local line = _G[format("GameTooltipTextLeft%d", i)]
@@ -575,9 +575,9 @@ local function SetUnitAuraData(self, id, caster)
                 local name = UnitName(caster)
                 local _, class = UnitClass(caster)
                 local color = GWGetClassColor(class, showClassColor, true)
-                self:AddDoubleLine(format("|cffffedba%s|r %d", ID, id), format("|c%s%s|r", color.colorStr, name))
+                self:AddDoubleLine(format(("*%s|r %d"):gsub("*", GW.Gw2Color), ID, id), format("|c%s%s|r", color.colorStr, name))
             else
-                self:AddLine(format("|cffffedba%s|r %d", ID, id))
+                self:AddLine(format(("*%s|r %d"):gsub("*", GW.Gw2Color), ID, id))
             end
         end
 
@@ -603,7 +603,7 @@ local function SetToyByItemID(self, id)
     if self:IsForbidden() then return end
 
     if id and IsModKeyDown() then
-        self:AddLine(format("|cffffedba%s|r %d", ID, id))
+        self:AddLine(format(("*%s|r %d"):gsub("*", GW.Gw2Color), ID, id))
         self:Show()
     end
 end
@@ -613,7 +613,7 @@ local function SetCurrencyToken(self, idx)
 
     if idx and IsModKeyDown() then
         local id = tonumber(strmatch(C_CurrencyInfo.GetCurrencyListLink(idx),"currency:(%d+)"))
-        self:AddLine(format("|cffffedba%s|r %d", ID, id))
+        self:AddLine(format(("*%s|r %d"):gsub("*", GW.Gw2Color), ID, id))
         self:Show()
     end
 end
@@ -622,7 +622,7 @@ local function SetCurrencyTokenByID(self, id)
     if self:IsForbidden() then return end
 
     if id and IsModKeyDown() then
-        self:AddLine(format("|cffffedba%s|r %d", ID, id))
+        self:AddLine(format(("*%s|r %d"):gsub("*", GW.Gw2Color), ID, id))
         self:Show()
     end
 end
@@ -632,7 +632,7 @@ local function QuestID(self)
 
     local id = self.questLogIndex and C_QuestLog.GetQuestIDForLogIndex(self.questLogIndex) or self.questID
     if id and IsModKeyDown() then
-        GameTooltip:AddLine(format("|cffffedba%s|r %d", _G.ID, id))
+        GameTooltip:AddLine(format(("*%s|r %d"):gsub("*", GW.Gw2Color), _G.ID, id))
         GameTooltip:Show()
     end
 end
@@ -643,7 +643,7 @@ local function SetBackpackToken(self, id)
     if id and IsModKeyDown() then
         local info = C_CurrencyInfo.GetBackpackCurrencyInfo(id)
         if info and info.currencyTypesID then
-            self:AddLine(format("|cffffedba%s|r %d", ID, id))
+            self:AddLine(format(("*%s|r %d"):gsub("*", GW.Gw2Color), ID, id))
             self:Show()
         end
     end

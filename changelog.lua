@@ -1,6 +1,16 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.13.2", [=[
+FIXES
+    - Partyframes: Debuff stacks > 9 are now display correctly 
+
+MISC
+    - Partyframes: Make buff line margin smaller to show more buffs
+    - Added players raid group into player tooltip
+    - Make Raid Control secure: Added Worldmakers into that menu
+]=])
+
 v("5.13.1", [=[
 FIXES
     - Fix an error that raid buffs not disapearing

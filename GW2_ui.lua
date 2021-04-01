@@ -15,12 +15,12 @@ GW.VERSION_STRING = "GW2_UI @project-version@"
 _G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
 
 if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
-    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r You have installed GW2_UI retail version. Please install the classic version to use GW2_UI.")
+    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r You have installed GW2_UI retail version. Please install the classic version to use GW2_UI."):gsub("*", GW.Gw2Color))
     return
 end
 
 if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") then
-    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
+    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r"):gsub("*", GW.Gw2Color))
 end
 
 local loaded = false
@@ -395,7 +395,7 @@ local function loadAddon(self)
 
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
         PixelPerfection()
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
+        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r"):gsub("*", GW.Gw2Color))
     else
         GW.scale = UIParent:GetScale()
         GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
@@ -423,12 +423,12 @@ local function loadAddon(self)
     else
         --Setup addon button
         local GwMainMenuFrame = CreateFrame("Button", "GW2_UI_SettingsButton", _G.GameMenuFrame, "GameMenuButtonTemplate") -- add a button name to you that for other Addons
-        GwMainMenuFrame:SetText(format("|cffffedba%s|r", GW.addonName))
+        GwMainMenuFrame:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
         GwMainMenuFrame:SetScript(
             "OnClick",
             function()
                 if InCombatLockdown() then
-                    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["Settings are not available in combat!"])
+                    DEFAULT_CHAT_FRAME:AddMessage(("|*GW2 UI:|r "):gsub("*", GW.Gw2Color) .. L["Settings are not available in combat!"])
                     return
                 end
                 ShowUIPanel(GwSettingsWindow)
