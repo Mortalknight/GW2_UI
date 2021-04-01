@@ -43,7 +43,7 @@ do
 
                 if isUpdate and not printChatMessage then
                     GW.FrameFlash(updateIcon, 1, 0.3, 1, true)
-                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. updateIcon.tooltipText)):gsub("*", GW.Gw2Color)
+                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. updateIcon.tooltipText):gsub("*", GW.Gw2Color))
                     updateIcon:Show()
                     printChatMessage = true
                 end

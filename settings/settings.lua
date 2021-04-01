@@ -695,7 +695,7 @@ local function LoadSettings()
 
     local fnGSWMH_OnClick = function()
         if InCombatLockdown() then
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"])):gsub("*", GW.Gw2Color)
+            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
             return
         end
         GW.moveHudObjects(GW.MoveHudScaleableFrame)
@@ -750,7 +750,7 @@ local function LoadSettings()
             if event == "PLAYER_REGEN_DISABLED" and self:IsShown() then
                 self:Hide()
                 mf:Hide()
-                DEFAULT_CHAT_FRAME:AddMessage(("*GW2GW2_UI:|r " .. L["Settings are not available in combat!"])):gsub("*", GW.Gw2Color)
+                DEFAULT_CHAT_FRAME:AddMessage(("*GW2GW2_UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
                 sWindow.wasOpen = true
             elseif event == "PLAYER_REGEN_ENABLED" and self.wasOpen then
                 self:Show()

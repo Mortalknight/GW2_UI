@@ -89,7 +89,7 @@ local function SkinMainMenu()
         "OnClick",
         function()
             if InCombatLockdown() then
-                DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"])):gsub("*", GW.Gw2Color)
+                DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
                 return
             end
             ShowUIPanel(GwSettingsWindow)

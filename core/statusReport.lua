@@ -187,10 +187,10 @@ local function CreateStatusFrame()
     StatusFrame.Section4 = CreateSection(300, 60, StatusFrame, "TOP", StatusFrame.Section3, "BOTTOM", 0)
 
     --Section headers
-    StatusFrame.Section1.Header.Text:SetText(("'AddOn Info|r")):gsub("*", GW.Gw2Color)
-    StatusFrame.Section2.Header.Text:SetText(("'WoW Info|r")):gsub("*", GW.Gw2Color)
-    StatusFrame.Section3.Header.Text:SetText(("'Character Info|r")):gsub("*", GW.Gw2Color)
-    StatusFrame.Section4.Header.Text:SetText(("'Actions|r")):gsub("*", GW.Gw2Color)
+    StatusFrame.Section1.Header.Text:SetText(("'AddOn Info|r"):gsub("*", GW.Gw2Color))
+    StatusFrame.Section2.Header.Text:SetText(("'WoW Info|r"):gsub("*", GW.Gw2Color))
+    StatusFrame.Section3.Header.Text:SetText(("'Character Info|r"):gsub("*", GW.Gw2Color))
+    StatusFrame.Section4.Header.Text:SetText(("'Actions|r"):gsub("*", GW.Gw2Color))
 
     --Section content
     StatusFrame.Section1.Content = CreateContentLines(5, StatusFrame.Section1, StatusFrame.Section1.Header)

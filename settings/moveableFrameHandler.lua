@@ -8,7 +8,7 @@ local settings_window_open_before_change = false
 local function lockHudObjects(_, inCombat)
     GW.MoveHudScaleableFrame:UnregisterAllEvents()
     if InCombatLockdown() then
-        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"])):gsub("*", GW.Gw2Color)
+        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
         return
     end
 
@@ -54,7 +54,7 @@ local function moveHudObjects(self)
     self:RegisterEvent("PLAYER_REGEN_DISABLED")
     self:SetScript("OnEvent", function(self, event)
         if event == "PLAYER_REGEN_DISABLED" then
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"])):gsub("*", GW.Gw2Color)
+            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
             self:UnregisterEvent(event)
             lockHudObjects(self, true)
         end

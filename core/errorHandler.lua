@@ -51,7 +51,7 @@ local function HandleError(msg, stack)
                     Debug("ERROR", msg .. "\n" .. stack)
 
                     if ErrorHandler.errors == 1 then
-                        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000[ERROR]|r " .. msg .. "\n\nPlease create a new ticket on Curse, Discord or GitHub, copy & paste the log in there and add any additional info you might have. Thank you! =)")):gsub("*", GW.Gw2Color)
+                        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000[ERROR]|r " .. msg .. "\n\nPlease create a new ticket on Curse, Discord or GitHub, copy & paste the log in there and add any additional info you might have. Thank you! =)"):gsub("*", GW.Gw2Color))
                     end
 
                     break
