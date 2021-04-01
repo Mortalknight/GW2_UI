@@ -339,4 +339,3 @@ L["Right Click to change Talent Specialization"] = "특성 전문화를 변경�
 L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = "레거시 : 지속 시간별로 정렬되지만 전투 중 우클릭으로 오라를 취소 할 수 없습니다.\n고정 : 지속 시간별로 정렬되지 않지만 전투 중 우클릭으로 오라를 취소 할 수 있습니다."
 L["Weekly Reset"] = "주간 초기화"
 L["Conduits"] = "도관"
-L["Raid Group: %s"] = true

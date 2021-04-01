@@ -257,7 +257,7 @@ local function globe_OnEnter(self)
         end
         if groupNumber then
             GameTooltip:AddLine(" ")
-            GameTooltip:AddLine(format(L["Raid Group: %s"], groupNumber), 1, 1, 1)
+            GameTooltip:AddLine(format(QUEST_SUGGESTED_GROUP_NUM_TAG, groupNumber), 1, 1, 1)
         end
     end
     GameTooltip:Show()

@@ -337,4 +337,3 @@ L["Right Click to change Talent Specialization"] = "Rechtsklick um die Talentspe
 L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = "Klassich: Sortiert nach Dauer, aber Auren können nicht durch Rechtsklick im Kampf abgebrochen werden\nSicher: Nicht sortiert, aber Auren können durch Rechtsklick im Kampf abgebrochen werden"
 L["Weekly Reset"] = "Wöchentlicher Reset"
 L["Conduits"] = "Medien"
-L["Raid Group: %s"] = "Schlachtzuggruppe: %s"
