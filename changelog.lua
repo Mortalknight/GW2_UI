@@ -9,6 +9,7 @@ MISC
     - Partyframes: Make buff line margin smaller to show more buffs
     - Added players raid group into player tooltip
     - Make Raid Control secure: Added Worldmakers into that menu
+    - Added option to set max shown lines on copy chat frame
 ]=])
 
 v("5.13.1", [=[

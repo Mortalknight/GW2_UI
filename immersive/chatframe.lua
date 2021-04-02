@@ -42,7 +42,6 @@ local tabTexs = {
 }
 
 local gw_fade_frames = {}
-local copyLines = {}
 
 local function colorizeLine(text, r, g, b)
     local hexCode = GW.RGBToHex(r, g, b)
@@ -58,7 +57,7 @@ local canChangeMessage = function(arg1, id)
     if id and arg1 == "" then return id end
 end
 
-local function messageIsProtected(message)
+local function isMessageProtected(message)
     return message and (message ~= gsub(message, "(:?|?)|K(.-)|k", canChangeMessage))
 end
 
@@ -92,27 +91,26 @@ do
     end
 end
 
-local function getLines(frame)
+local function getLines(frame, copyLines)
     local index = 1
-    for i = 1, frame:GetNumMessages() do
+    local maxMessages, frameMessages = tonumber(GetSetting("CHAT_MAX_COPY_CHAT_LINES")), frame:GetNumMessages()
+    local startLine = frameMessages <= maxMessages and 1 or frameMessages + 1 - maxMessages
+    print(startLine)
+    for i = startLine, frame:GetNumMessages() do
         local message, r, g, b = frame:GetMessageInfo(i)
-        if message and not messageIsProtected(message) then
-            --Set fallback color values
-            r, g, b = r or 1, g or 1, b or 1
-            --Remove icons
-            message = removeIconFromLine(message)
-            --Add text color
-            message = colorizeLine(message, r, g, b)
+        if message and not isMessageProtected(message) then
+            r, g, b = r or 1, g or 1, b or 1            --Set fallback color values
+            message = removeIconFromLine(message)       --Remove icons
+            message = colorizeLine(message, r, g, b)    --Add text color
             copyLines[index] = message
             index = index + 1
         end
     end
 
-    return index - 1
+    return index - 1, copyLines
 end
 
 local function setButtonPosition(frame)
-    local frame = _G["ChatFrame" .. frame:GetID()]
     local name = frame:GetName()
     local editbox = _G[name .. "EditBox"]
 
@@ -203,10 +201,10 @@ local function handleChatFrameFadeIn(chatFrame)
                 end
             else
                 UIFrameFadeIn(v, 0.5, v:GetAlpha(), 1)
-            end   
+            end
         end
 
-        UIFrameFadeIn(_G.ChatFrame1.Container, 0.5, _G.ChatFrame1.Container:GetAlpha(), 1)
+        UIFrameFadeIn(ChatFrame1.Container, 0.5, ChatFrame1.Container:GetAlpha(), 1)
         UIFrameFadeIn(ChatFrameMenuButton, 0.5, ChatFrameMenuButton:GetAlpha(), 1)
     elseif chatFrame.isDocked == nil then
         if chatFrame.Container then
@@ -255,7 +253,7 @@ local function handleChatFrameFadeOut(chatFrame)
                 UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
             end
         end
-        UIFrameFadeOut(_G.ChatFrame1.Container, 2, _G.ChatFrame1.Container:GetAlpha(), chatAlpha)
+        UIFrameFadeOut(ChatFrame1.Container, 2, ChatFrame1.Container:GetAlpha(), chatAlpha)
     elseif chatFrame.isDocked == nil then
         if chatFrame.Container then
             UIFrameFadeOut(chatFrame.Container, 2, chatFrame.Container:GetAlpha(), chatAlpha)
@@ -328,7 +326,7 @@ local function styleChatWindow(frame)
             _G[tab:GetName()..texName.."Right"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright")
             _G[tab:GetName()..texName.."Left"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
             _G[tab:GetName()..texName.."Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive")
-            
+
             _G[tab:GetName()..texName.."Right"]:SetBlendMode("BLEND")
             _G[tab:GetName()..texName.."Left"]:SetBlendMode("BLEND")
             _G[tab:GetName()..texName.."Middle"]:SetBlendMode("BLEND")
@@ -374,7 +372,7 @@ local function styleChatWindow(frame)
     frame.buttonFrame:StripTextures()
 
     hooksecurefunc(tab, "SetAlpha", function(t, alpha)
-        if alpha ~= 1 and (not t.isDocked or _G.GeneralDockManager.selected:GetID() == t:GetID()) then
+        if alpha ~= 1 and (not t.isDocked or GeneralDockManager.selected:GetID() == t:GetID()) then
             t:SetAlpha(1)
         elseif alpha < 0.6 then
             t:SetAlpha(0.6)
@@ -398,8 +396,8 @@ local function styleChatWindow(frame)
     frame:SetClampRectInsets(0,0,0,0)
     frame:SetClampedToScreen(false)
     frame:StripTextures(true)
-    _G[name.."ButtonFrame"]:Hide()
-    
+    _G[name .. "ButtonFrame"]:Hide()
+
     local a, b, c = select(6, editbox:GetRegions())
     a:SetTexture()
     b:SetTexture()
@@ -456,14 +454,16 @@ local function styleChatWindow(frame)
 
     frame.button:SetScript("OnMouseUp", function()
         if not GW2_UICopyChatFrame:IsShown() then
+            local copyLines = {}
             local _, fontSize = FCF_GetChatWindowInfo(frame:GetID())
             if fontSize < 10 then fontSize = 12 end
             FCF_SetChatWindowFontSize(frame, frame, 0.01)
             GW2_UICopyChatFrame:Show()
-            local lineCt = getLines(frame)
+            local lineCt = getLines(frame, copyLines)
             local text = table.concat(copyLines, " \n", 1, lineCt)
             FCF_SetChatWindowFontSize(frame, frame, fontSize)
             GW2_UICopyChatFrame.editBox:SetText(text)
+            wipe(copyLines)
         else
             GW2_UICopyChatFrame:Hide()
         end
@@ -692,7 +692,7 @@ local function LoadChat()
     end
     FCF_FadeOutChatFrame(_G["ChatFrame1"])
 
-    for _, frameName in pairs(_G.CHAT_FRAMES) do
+    for _, frameName in pairs(CHAT_FRAMES) do
         _G[frameName .. "Tab"]:SetScript("OnDoubleClick", nil)
     end
 
@@ -712,9 +712,9 @@ local function LoadChat()
             end)
     end
 
-    _G.CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
 
-    _G.CombatLogQuickButtonFrame_CustomTexture:Hide()
+    CombatLogQuickButtonFrame_CustomTexture:Hide()
     BuildCopyChatFrame()
 end
 GW.LoadChat = LoadChat

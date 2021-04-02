@@ -337,3 +337,5 @@ L["Right Click to change Talent Specialization"] = "Rechtsklick um die Talentspe
 L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = "Klassich: Sortiert nach Dauer, aber Auren können nicht durch Rechtsklick im Kampf abgebrochen werden\nSicher: Nicht sortiert, aber Auren können durch Rechtsklick im Kampf abgebrochen werden"
 L["Weekly Reset"] = "Wöchentlicher Reset"
 L["Conduits"] = "Medien"
+L["Maximum lines of 'Copy Chat Frame'"] = "Maximale Zeilen im 'Chat-Kopieren-Fenster'"
+L["Set the maximum number of lines displayed in the Copy Chat Frame"] = "Setze die maximalen Anzahl an Zeilen, die im 'Chat-Kopieren-Fenster' angzeigt werden'"

@@ -337,3 +337,5 @@ L["Right Click to change Talent Specialization"] = "點右鍵更改天賦專精"
 L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = "傳統: 依照時間排序，但是戰鬥中無法點右鍵取消光環。\n安全: 不會排序，但是戰鬥中可以點右鍵取消光環。"
 L["Weekly Reset"] = "每週重置"
 L["Conduits"] = "靈印"
+L["Maximum lines of 'Copy Chat Frame'"] = true
+L["Set the maximum number of lines displayed in the Copy Chat Frame"] = true

@@ -361,7 +361,7 @@ local function InitPanel(panel, hasScroll)
                 GameTooltip:SetOwner(of, "ANCHOR_CURSOR", 0, 0)
                 GameTooltip:ClearLines()
                 GameTooltip:AddLine(v.name, 1, 1, 1)
-                GameTooltip:AddLine(v.desc, 1, 1, 1)
+                GameTooltip:AddLine(v.desc, 1, 1, 1, 1, true)
                 GameTooltip:Show()
             end
         )
@@ -600,7 +600,7 @@ local function InitPanel(panel, hasScroll)
         panel.scroll.slider:SetMinMaxValues(0, max(0, numRows * 40 - panel:GetHeight() + 50))
         panel.scroll.slider.thumb:SetHeight(100)
         panel.scroll.slider:SetValue(1)
-        panel.scroll.maxScroll = max(0, numRows * 40 - panel:GetHeight()+50)
+        panel.scroll.maxScroll = max(0, numRows * 40 - panel:GetHeight() + 50)
     end
 end
 GW.InitPanel = InitPanel

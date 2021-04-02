@@ -335,3 +335,5 @@ L["Right Click to change Talent Specialization"] = true
 L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = true
 L["Weekly Reset"] = true
 L["Conduits"] = true
+L["Maximum lines of 'Copy Chat Frame'"] = true
+L["Set the maximum number of lines displayed in the Copy Chat Frame"] = true

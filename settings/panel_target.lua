@@ -22,7 +22,7 @@ local function LoadTargetPanel(sWindow)
     p_target.scroll.scrollchild.sub:SetText(L["Modify the target frame settings."])
 
     local p_focus = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
-    p_focus:SetHeight(250)
+    p_focus:SetHeight(255)
     p_focus:SetWidth(512)
     p_focus:ClearAllPoints()
     p_focus:SetPoint("TOPLEFT", p_target, "BOTTOMLEFT", 0, 0)
