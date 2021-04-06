@@ -337,5 +337,5 @@ L["Right Click to change Talent Specialization"] = "Clique com Botão Direito do
 L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = "Legado: ordenadas por duração, mas não é possível cancelar auras clicando com o botão direito em combate\nSeguro: não ordenado, mas é possível cancelar as auras clicando com o botão direito em combate."
 L["Weekly Reset"] = "Reset Semanal"
 L["Conduits"] = "Conduítes"
-L["Maximum lines of 'Copy Chat Frame'"] = true
-L["Set the maximum number of lines displayed in the Copy Chat Frame"] = true
+L["Maximum lines of 'Copy Chat Frame'"] = "Máximo de linhas para 'Copiar a Grade do Bate-papo'"
+L["Set the maximum number of lines displayed in the Copy Chat Frame"] = "Definir o número máximo de linhas mostradas em Copiar Grade de Bate-papo"

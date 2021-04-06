@@ -339,5 +339,5 @@ L["Right Click to change Talent Specialization"] = "특성 전문화를 변경�
 L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"] = "레거시 : 지속 시간별로 정렬되지만 전투 중 우클릭으로 오라를 취소 할 수 없습니다.\n고정 : 지속 시간별로 정렬되지 않지만 전투 중 우클릭으로 오라를 취소 할 수 있습니다."
 L["Weekly Reset"] = "주간 초기화"
 L["Conduits"] = "도관"
-L["Maximum lines of 'Copy Chat Frame'"] = true
-L["Set the maximum number of lines displayed in the Copy Chat Frame"] = true
+L["Maximum lines of 'Copy Chat Frame'"] = "'채팅 창 복사'의 최대 줄"
+L["Set the maximum number of lines displayed in the Copy Chat Frame"] = "채팅 창 복사에 표시되는 최대 줄 수를 설정합니다."
