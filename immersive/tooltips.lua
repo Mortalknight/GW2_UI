@@ -339,14 +339,27 @@ local function SetUnitText(self, unit, isShiftKeyDown)
             local r, g, b, role = 1, 1, 1, UnitGroupRolesAssigned(unit)
             if IsInGroup() and (UnitInParty(unit) or UnitInRaid(unit)) and (role ~= "NONE") then
                 if role == "HEALER" then
-                    role, r, g, b = HEALER, 0, 1, .59
+                    role, r, g, b = HEALER, 0, 1, 0.59
                 elseif role == "TANK" then
-                    role, r, g, b = TANK, .16, .31, .61
+                    role, r, g, b = TANK, 0.16, 0.31, 0.61
                 elseif role == "DAMAGER" then
-                    role, r, g, b = DAMAGER, .77, .12, .24
+                    role, r, g, b = DAMAGER, 0.77, 0.12, 0.24
+                end
+                -- if in raid add also the assist function here eg: Role:      Tank(Maintank)
+                local isGroupLeader = UnitIsGroupLeader(unit)
+                local isGroupAssist = UnitIsGroupAssistant(unit)
+                local raidId = UnitInRaid(unit)
+                local raidRole = ""
+                if raidId then
+                    local raidR = select(10, GetRaidRosterInfo(raidId))
+                    if raidR == "MAINTANK" then raidRole = " (" .. MAINTANK .. ")" end
+                    if raidR == "MAINASSIST" then raidRole = " (" .. MAIN_ASSIST .. ")" end
                 end
 
-                GameTooltip:AddDoubleLine(format("%s:", ROLE), role, nil, nil, nil, r, g, b)
+                GameTooltip:AddDoubleLine(format("%s:", ROLE), role .. (raidRole ~= "" and raidRole or ""), nil, nil, nil, r, g, b)
+                if isGroupLeader or isGroupAssist then
+                    GameTooltip:AddDoubleLine("", isGroupLeader and RAID_LEADER or RAID_ASSISTANT , nil, nil, nil, r, g, b)
+                end
             end
         end
 

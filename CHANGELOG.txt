@@ -7,6 +7,7 @@ MISC
     - Added players raid group into player tooltip
     - Make Raid Control secure: Added Worldmakers into that menu
     - Added option to set max shown lines on copy chat frame
+    - Added 'Main Tank', 'Main Assist', 'Group Leader' and 'Group Assist' info to raid unit tooltips
 
 5.13.1
 FIXES
