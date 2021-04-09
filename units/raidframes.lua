@@ -219,17 +219,17 @@ local function setUnitName(self)
     end
 
     if UnitIsGroupLeader(self.unit) then
-        nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:15:15:0:-3|t" .. nameString
+        nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:0:0:0:-2:64:64:4:60:4:60|t " .. nameString
     elseif UnitIsGroupAssistant(self.unit) then
-        nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-assist:15:15:0:-3|t" .. nameString
+        nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-assist:0:0:0:-2:64:64:4:60:4:60|t " .. nameString
     end
 
     if self.index then
         local _, _, _, _, _, _, _, _, _, role = GetRaidRosterInfo(self.index)
         if role == "MAINTANK" then
-            nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-maintank:15:15:0:-3|t" .. nameString
+            nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-maintank:15:15:0:-2|t " .. nameString
         elseif role == "MAINASSIST" then
-            nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist:15:15:0:-3|t" .. nameString
+            nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist:15:15:0:-1|t " .. nameString
         end 
     end
 

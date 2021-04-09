@@ -32,9 +32,9 @@ PowerBarColorCustom["STAGGER"] = {r = 0.52, g = 1.0, b = 0.52}
 
 local nameRoleIcon = {}
 GW.nameRoleIcon = nameRoleIcon
-nameRoleIcon["TANK"] = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank:12:12:0:0|t "
-nameRoleIcon["HEALER"] = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-healer:12:12:0:0|t "
-nameRoleIcon["DAMAGER"] = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:12:12:0:0|t "
+nameRoleIcon["TANK"] = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank:0:0:0:0:64:64:4:60:4:60|t "
+nameRoleIcon["HEALER"] = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-healer:0:0:0:0:64:64:4:60:4:60|t "
+nameRoleIcon["DAMAGER"] = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:0:0:0:0:64:64:4:60:4:60|t "
 nameRoleIcon["NONE"] = ""
 
 local professionBagColor = {
