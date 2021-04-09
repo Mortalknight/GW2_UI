@@ -396,9 +396,9 @@ local function hideCastBar(self)
         setUnitPortrait(self)
     end
 
-    if animations["GwUnitFrame" .. self.unit .. "Cast"] ~= nil then
-        animations["GwUnitFrame" .. self.unit .. "Cast"]["completed"] = true
-        animations["GwUnitFrame" .. self.unit .. "Cast"]["duration"] = 0
+    if animations["GwUnitFrame" .. self.unit .. "Cast"] then
+        animations["GwUnitFrame" .. self.unit .. "Cast"].completed = true
+        animations["GwUnitFrame" .. self.unit .. "Cast"].duration = 0
     end
 end
 GW.AddForProfiling("unitframes", "hideCastBar", hideCastBar)

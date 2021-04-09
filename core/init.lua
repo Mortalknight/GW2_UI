@@ -59,6 +59,7 @@ GW.locationData = {}
 GW.MOVABLE_FRAMES = {}
 GW.scaleableFrames = {}
 GW.scaleableMainHudFrames = {}
+GW.animations = {}
 
 -- money
 GW.earnedMoney = 0

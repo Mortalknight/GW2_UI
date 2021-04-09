@@ -437,6 +437,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         btn:HookScript("OnShow", showBackdrop)
     end
 end
+GW.setActionButtonStyle = setActionButtonStyle
 GW.AddForProfiling("Actionbars2", "setActionButtonStyle", setActionButtonStyle)
 
 local function main_OnEvent(self, event)

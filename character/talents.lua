@@ -870,10 +870,7 @@ local function updateButton(self)
 
     local _, autostate = GetSpellAutocast(self.spellbookIndex, self.booktype)
 
-    self.autocast:Hide()
-    if autostate then
-        self.autocast:Show()
-    end
+    self.autocast:SetShown(autostate)
 end
 GW.AddForProfiling("talents", "updateButton", updateButton)
 

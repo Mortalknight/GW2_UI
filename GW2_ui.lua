@@ -9,6 +9,10 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = GW.Libs.LSM
 
+local animations = GW.animations
+
+local l = CreateFrame("Frame", nil, UIParent) -- Main event frame
+
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
 -- setup Binding Header color
@@ -52,44 +56,40 @@ if AchievementMicroButton_Update == nil then
     end
 end
 
-local animations = {}
-GW.animations = animations
 local function AddToAnimation(name, from, to, start, duration, method, easeing, onCompleteCallback, doCompleteOnOverider)
     local newAnimation = true
-    if animations[name] ~= nil then
-        if (animations[name]["start"] + animations[name]["duration"]) > GetTime() then
-            newAnimation = false
-        end
+    if animations[name] then
+        newAnimation = (animations[name].start + animations[name].duration) > GetTime()
     end
-    if doCompleteOnOverider == nil then
+    if not doCompleteOnOverider then
         newAnimation = true
     end
 
-    if newAnimation == false then
-        animations[name]["duration"] = duration
-        animations[name]["to"] = to
-        animations[name]["progress"] = 0
-        animations[name]["method"] = method
-        animations[name]["completed"] = false
-        animations[name]["easeing"] = easeing
-        animations[name]["onCompleteCallback"] = onCompleteCallback
+    if not newAnimation then
+        animations[name].duration = duration
+        animations[name].to = to
+        animations[name].progress = 0
+        animations[name].method = method
+        animations[name].completed = false
+        animations[name].easeing = easeing
+        animations[name].onCompleteCallback = onCompleteCallback
     else
         animations[name] = {}
-        animations[name]["start"] = start
-        animations[name]["duration"] = duration
-        animations[name]["from"] = from
-        animations[name]["to"] = to
-        animations[name]["progress"] = 0
-        animations[name]["method"] = method
-        animations[name]["completed"] = false
-        animations[name]["easeing"] = easeing
-        animations[name]["onCompleteCallback"] = onCompleteCallback
+        animations[name].start = start
+        animations[name].duration = duration
+        animations[name].from = from
+        animations[name].to = to
+        animations[name].progress = 0
+        animations[name].method = method
+        animations[name].completed = false
+        animations[name].easeing = easeing
+        animations[name].onCompleteCallback = onCompleteCallback
     end
 end
 GW.AddToAnimation = AddToAnimation
 
 local function buttonAnim(self, name, w, hover)
-    local prog = animations[name]["progress"]
+    local prog = animations[name].progress
     local l = GW.lerp(0, w, prog)
 
     hover:SetPoint("RIGHT", self, "LEFT", l, 0)
@@ -187,9 +187,8 @@ function GwStandardButton_OnLeave(self)
     )
 end
 
-
 local function barAnimation(self, barWidth, sparkWidth)
-    local snap = (animations[self.animationName]["progress"] * 100) / 5
+    local snap = (animations[self.animationName].progress * 100) / 5
 
     local round_closest = 0.05 * snap
 
@@ -245,19 +244,18 @@ local function SetDeadIcon(self)
 end
 GW.SetDeadIcon = SetDeadIcon
 
-local function StopAnimation(k)
-    if animations[k] ~= nil then
-        animations[k] = nil
+local function StopAnimation(name)
+    if animations[name] then
+        animations[name].completed = true
+        animations[name].duration = 0
     end
 end
 GW.StopAnimation = StopAnimation
 
-local l = CreateFrame("Frame", nil, UIParent)
-
 local function swimAnim()
     local r, g, b = hudArtFrame.actionBarHud.RightSwim:GetVertexColor()
-    hudArtFrame.actionBarHud.RightSwim:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
-    hudArtFrame.actionBarHud.LeftSwim:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
+    hudArtFrame.actionBarHud.RightSwim:SetVertexColor(r, g, b, animations.swimAnimation.progress)
+    hudArtFrame.actionBarHud.LeftSwim:SetVertexColor(r, g, b, animations.swimAnimation.progress)
 end
 GW.AddForProfiling("index", "swimAnim", swimAnim)
 
@@ -267,13 +265,7 @@ local function AddUpdateCB(func, payload)
         return
     end
 
-    tinsert(
-        updateCB,
-        {
-            ["func"] = func,
-            ["payload"] = payload
-        }
-    )
+    tinsert(updateCB,{func = func, payload = payload})
 end
 GW.AddUpdateCB = AddUpdateCB
 
@@ -282,36 +274,36 @@ local function gw_OnUpdate(_, elapsed)
     local count = 0
     for _, v in pairs(animations) do
         count = count + 1
-        if v["completed"] == false and GetTime() >= (v["start"] + v["duration"]) then
-            if v["easeing"] == nil then
-                v["progress"] = GW.lerp(v["from"], v["to"], math.sin(1 * math.pi * 0.5))
+        if v.completed == false and GetTime() >= (v.start + v.duration) then
+            if v.easeing == nil then
+                v.progress = GW.lerp(v.from, v.to, math.sin(1 * math.pi * 0.5))
             else
-                v["progress"] = GW.lerp(v["from"], v["to"], 1)
+                v.progress = GW.lerp(v.from, v.to, 1)
             end
-            if v["method"] ~= nil then
-                v["method"](v["progress"])
-            end
-
-            if v["onCompleteCallback"] ~= nil then
-                v["onCompleteCallback"]()
+            if v.method ~= nil then
+                v.method(v.progress)
             end
 
-            v["completed"] = true
+            if v.onCompleteCallback ~= nil then
+                v.onCompleteCallback()
+            end
+
+            v.completed = true
             foundAnimation = true
         end
-        if v["completed"] == false then
-            if v["easeing"] == nil then
-                v["progress"] =
-                    GW.lerp(v["from"], v["to"], math.sin((GetTime() - v["start"]) / v["duration"] * math.pi * 0.5))
+        if v.completed == false then
+            if v.easeing == nil then
+                v.progress =
+                    GW.lerp(v.from, v.to, math.sin((GetTime() - v.start) / v.duration * math.pi * 0.5))
             else
-                v["progress"] = GW.lerp(v["from"], v["to"], (GetTime() - v["start"]) / v["duration"])
+                v.progress = GW.lerp(v.from, v.to, (GetTime() - v.start) / v.duration)
             end
-            v["method"](v["progress"])
+            v.method(v.progress)
             foundAnimation = true
         end
     end
 
-    if foundAnimation == false and count ~= 0 then
+    if not foundAnimation and count > 0 then
         table.wipe(animations)
     end
 
@@ -366,7 +358,7 @@ local function UpdateHudScale()
         if not mf.gw_frame.isMoved and mf:GetScale() ~= hudScale then
             mf.gw_frame:SetScale(hudScale)
             mf:SetScale(hudScale)
-            GW.SetSetting(mf.gw_Settings .."_scale", hudScale)
+            GW.SetSetting(mf.gw_Settings .. "_scale", hudScale)
         end
     end
 end
@@ -428,7 +420,7 @@ local function loadAddon(self)
             "OnClick",
             function()
                 if InCombatLockdown() then
-                    DEFAULT_CHAT_FRAME:AddMessage(("|*GW2 UI:|r "):gsub("*", GW.Gw2Color) .. L["Settings are not available in combat!"])
+                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
                     return
                 end
                 ShowUIPanel(GwSettingsWindow)

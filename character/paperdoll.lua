@@ -9,6 +9,10 @@ local fmMenu
 local hideCharframe = true
 
 local function characterPanelToggle(frame)
+    if InCombatLockdown() then
+        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. ERR_NOT_IN_COMBAT):gsub("*", GW.Gw2Color))
+        return
+    end
     fmMenu:Hide()
     GwPaperDollBagItemList:Hide()
     GwPaperDollOutfits:Hide()

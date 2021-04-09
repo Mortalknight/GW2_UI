@@ -95,7 +95,7 @@ local function getLines(frame, copyLines)
     local index = 1
     local maxMessages, frameMessages = tonumber(GetSetting("CHAT_MAX_COPY_CHAT_LINES")), frame:GetNumMessages()
     local startLine = frameMessages <= maxMessages and 1 or frameMessages + 1 - maxMessages
-    print(startLine)
+
     for i = startLine, frame:GetNumMessages() do
         local message, r, g, b = frame:GetMessageInfo(i)
         if message and not isMessageProtected(message) then

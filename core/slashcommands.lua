@@ -14,6 +14,10 @@ local function LoadSlashCommands()
             DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r   /gw2 mh             -> To activate 'Move HUD'-Mode"):gsub("*", GW.Gw2Color))
             DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r   /gw2 reset profile  -> To reset the current profile to default settings"):gsub("*", GW.Gw2Color))
         elseif msg == "settings" then
+            if InCombatLockdown() then
+                DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
+                return
+            end
             ShowUIPanel(GwSettingsWindow)
             UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
         elseif msg == "reset windows" then
@@ -25,6 +29,10 @@ local function LoadSlashCommands()
         elseif msg == "status" then
             GW.ShowStatusReport()
         elseif msg == "kb" then
+            if InCombatLockdown() then
+                DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
+                return
+            end
             GW.DisplayHoverBinding()
         elseif msg == "mh" then
             if InCombatLockdown() then
@@ -37,13 +45,17 @@ local function LoadSlashCommands()
                 GW.moveHudObjects(GW.MoveHudScaleableFrame)
             end
         elseif msg == "reset profile" then
-                GW.WarningPrompt(
-                    GW.L["Are you sure you want to load the default settings?\n\nAll previous settings will be lost."],
-                    function()
-                        GW.ResetToDefault()
-                        C_UI.Reload()
-                    end
-                )
+            if InCombatLockdown() then
+                DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
+                return
+            end
+            GW.WarningPrompt(
+                GW.L["Are you sure you want to load the default settings?\n\nAll previous settings will be lost."],
+                function()
+                    GW.ResetToDefault()
+                    C_UI.Reload()
+                end
+            )
         else
             DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r \"" .. msg .. "\" is not a valid GW2 UI slash command."):gsub("*", GW.Gw2Color))
         end

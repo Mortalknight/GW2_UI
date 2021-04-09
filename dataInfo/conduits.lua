@@ -31,8 +31,8 @@ local function LandingButton_OnEnter(self)
             if node.state == Enum.SoulbindNodeState.Selected then
                 if node.conduitID and node.conduitID > 0 and node.conduitRank and node.conduitType then
                     tinsert(conduits, {id = node.conduitID, rank = node.conduitRank, type = node.conduitType})
-                elseif node.icon and node.spellID then
-                    tinsert(traits, {icon = node.icon, spellId = node.spellID})
+                elseif node.icon and node.spellID and select(1, GetSpellInfo(node.spellID)) then
+                    tinsert(traits, {icon = node.icon, spellName = select(1, GetSpellInfo(node.spellID))})
                 end
             end
         end
@@ -54,7 +54,7 @@ local function LandingButton_OnEnter(self)
             if #conduits > 0 then GameTooltip:AddLine(" ") end
             GameTooltip:AddLine(GARRISON_TRAITS, 1, 0.93, 0.73)
             for i = 1, #traits do
-                GameTooltip:AddLine(AddTexture(traits[i].icon) .. " " .. select(1, GetSpellInfo(traits[i].spellId)) .. "|r ")
+                GameTooltip:AddLine(AddTexture(traits[i].icon) .. " " .. traits[i].spellName .. "|r ")
             end
         end
     end

@@ -119,7 +119,7 @@ local function UpdatePowerData(self, forcePowerType, powerToken)
         GetTime(),
         0.2,
         function()
-            local powerPrec = animations[f.animKey]["progress"]
+            local powerPrec = animations[f.animKey].progress
             local bit = powerBarWidth / 15
             local spark = bit * math.floor(15 * (powerPrec))
 
@@ -135,7 +135,7 @@ local function UpdatePowerData(self, forcePowerType, powerToken)
             )
             f.candy.spark:SetPoint("LEFT", f.bar, "RIGHT", -2, 0)
             local barPoint = spark + 3
-            if animations[f.animKey]["progress"] == 0 then
+            if animations[f.animKey].progress == 0 then
                 f.bar:Hide()
             else
                 f.bar:Show()

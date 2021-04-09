@@ -10,6 +10,18 @@ local AddToAnimation = GW.AddToAnimation
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local AddActionBarCallback = GW.AddActionBarCallback
 
+local function setActionButtonAutocast(id)
+    local btn = _G["PetActionButton" .. id]
+    local autoCastEnabled = select(6, GetPetActionInfo(id))
+
+    if btn then
+        for _, v in pairs(_G["PetActionButton" .. id .. "Shine"].sparkles) do
+            v:SetShown(autoCastEnabled)
+        end
+        _G["PetActionButton" .. id .. "AutoCastable"]:SetShown(autoCastEnabled)
+    end
+end
+
 local function petBarUpdate()
     _G.PetActionButton1Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
     _G.PetActionButton2Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow")
@@ -19,110 +31,13 @@ local function petBarUpdate()
     _G.PetActionButton9Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
     _G.PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
     for i = 1, 12 do
-        if _G["PetActionButton" .. i] ~= nil then
+        if _G["PetActionButton" .. i] then
             _G["PetActionButton" .. i .. "NormalTexture2"]:SetTexture(nil)
+            setActionButtonAutocast(i)
         end
     end
 end
 GW.AddForProfiling("petbar", "petBarUpdate", petBarUpdate)
-
-local function setActionButtonStyle(buttonName, noBackDrop, hideUnused)
-    local btn = _G[buttonName]
-
-    if btn.icon ~= nil then
-        btn.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    end
-    if btn.HotKey ~= nil then
-        btn.HotKey:ClearAllPoints()
-        btn.HotKey:SetPoint("CENTER", btn, "BOTTOM", 0, 0)
-        btn.HotKey:SetJustifyH("CENTER")
-    end
-    if btn.Count ~= nil then
-        btn.Count:ClearAllPoints()
-        btn.Count:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -3, -3)
-        btn.Count:SetJustifyH("RIGHT")
-        btn.Count:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
-        btn.Count:SetTextColor(1, 1, 0.6)
-    end
-
-    if btn.Border ~= nil then
-        btn.Border:SetSize(btn:GetWidth(), btn:GetWidth())
-        btn.Border:SetBlendMode("BLEND")
-        btn.Border:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-    end
-    if btn.NormalTexture ~= nil then
-        btn:SetNormalTexture("Interface/AddOns/GW2_UI/textures/bag/bagnormal")
-    end
-
-    if _G[buttonName .. "FloatingBG"] ~= nil then
-        _G[buttonName .. "FloatingBG"]:SetTexture(nil)
-    end
-    if _G[buttonName .. "NormalTexture2"] ~= nil then
-        _G[buttonName .. "NormalTexture2"]:SetTexture(nil)
-        _G[buttonName .. "NormalTexture2"]:Hide()
-    end
-    if btn.AutoCastable ~= nil then
-        btn.AutoCastable:SetSize(btn:GetWidth(), btn:GetWidth())
-    end
-
-    btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
-    btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
-    btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
-    btn.Name:SetAlpha(0) --Hide Marco Name on Actionbutton
-
-    if noBackDrop == nil or noBackDrop == false then
-        local backDrop = CreateFrame("Frame", nil, btn, "GwActionButtonBackdropTmpl")
-        local backDropSize = 1
-        if btn:GetWidth() > 40 then
-            backDropSize = 2
-        end
-
-        backDrop:SetPoint("TOPLEFT", btn, "TOPLEFT", -backDropSize, backDropSize)
-        backDrop:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", backDropSize, -backDropSize)
-
-        btn.gwBackdrop = backDrop
-    end
-
-    if hideUnused == true then
-        btn.gwBackdrop:Hide()
-        btn:HookScript("OnHide", GW.hideBackdrop)
-        btn:HookScript("OnShow", GW.showBackdrop)
-    end
-end
-GW.AddForProfiling("petbar", "setActionButtonStyle", setActionButtonStyle)
-
-local function updateHotkey(self)
-    local hotkey = self.HotKey
-    local text = hotkey:GetText()
-
-    if text == nil then
-        return
-    end
-
-    text = string.gsub(text, "(s%-)", "S")
-    text = string.gsub(text, "(a%-)", "A")
-    text = string.gsub(text, "(c%-)", "C")
-    text = string.gsub(text, "(Mouse Button )", "M")
-    text = string.gsub(text, "(Middle Mouse)", "M3")
-    text = string.gsub(text, "(Num Pad )", "N")
-    text = string.gsub(text, "(Page Up)", "PU")
-    text = string.gsub(text, "(Page Down)", "PD")
-    text = string.gsub(text, "(Spacebar)", "SpB")
-    text = string.gsub(text, "(Insert)", "Ins")
-    text = string.gsub(text, "(Home)", "Hm")
-    text = string.gsub(text, "(Delete)", "Del")
-    text = string.gsub(text, "(Left Arrow)", "LT")
-    text = string.gsub(text, "(Right Arrow)", "RT")
-    text = string.gsub(text, "(Up Arrow)", "UP")
-    text = string.gsub(text, "(Down Arrow)", "DN")
-
-    if hotkey:GetText() == RANGE_INDICATOR or not GetSetting("BUTTON_ASSIGNMENTS") then
-        hotkey:SetText("")
-    else
-        hotkey:SetText(text)
-    end
-end
-GW.AddForProfiling("petbar", "updateHotkey", updateHotkey)
 
 local function setPetBar(fmPet)
     local BUTTON_SIZE = 28
@@ -134,35 +49,36 @@ local function setPetBar(fmPet)
     for i = 1, 12 do
         local btn = _G["PetActionButton" .. i]
         local btnPrev = _G["PetActionButton" .. (i - 1)]
-        if btn ~= nil then
-            btn:SetParent(fmPet)
-            updateHotkey(btn)
-            btn.noGrid = nil
+        local btnShine = _G["PetActionButton" .. i .. "Shine"]
 
-            btn:SetSize(BUTTON_SIZE, BUTTON_SIZE)
-            if i < 4 then
-                btn:SetSize(32, 32)
-            elseif i == 8 then
-                btn:ClearAllPoints()
-                btn:SetPoint("BOTTOM", _G.PetActionButton5, "TOP", 0, BUTTON_MARGIN)
-            end
+        if btn then
+            btn:SetParent(fmPet)
+            GW.updateHotkey(btn)
+            btn.noGrid = nil
+            btn:SetSize(i < 4 and 32 or BUTTON_SIZE, i < 4 and 32 or BUTTON_SIZE)
 
             if i > 1 and i ~= 8 then
                 btn:ClearAllPoints()
-
-                if i > 3 then
-                    btn:SetPoint("BOTTOMLEFT", btnPrev, "BOTTOMRIGHT", BUTTON_MARGIN, 0)
-                else
-                    btn:SetPoint("BOTTOMLEFT", btnPrev, "BOTTOMRIGHT", BUTTON_MARGIN, 0)
-                end
+                btn:SetPoint("BOTTOMLEFT", btnPrev, "BOTTOMRIGHT", BUTTON_MARGIN, 0)
+            elseif i == 8 then
+                btn:ClearAllPoints()
+                btn:SetPoint("BOTTOM", PetActionButton5, "TOP", 0, BUTTON_MARGIN)
             end
-            local btnShine = _G["PetActionButton" .. i .. "Shine"]
+            
             if btnShine then
                 btnShine:SetSize(btn:GetSize())
+                for _, v in pairs(_G["PetActionButton" .. i .. "Shine"].sparkles) do
+                   v:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
+                   v:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
+                end
+
+                _G["PetActionButton" .. i .. "AutoCastable"]:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
+                _G["PetActionButton" .. i .. "AutoCastable"]:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
             end
 
             if i == 1 then
                 hooksecurefunc("PetActionBar_Update", petBarUpdate)
+                hooksecurefunc("TogglePetAutocast", setActionButtonAutocast)
             end
 
             if i <= 3 or i >= 8 then
@@ -172,7 +88,7 @@ local function setPetBar(fmPet)
                 btn:SetAttribute("_onreceivedrag", nil)
             end
 
-            setActionButtonStyle("PetActionButton" .. i)
+            GW.setActionButtonStyle("PetActionButton" .. i)
         end
     end
 end
@@ -246,7 +162,7 @@ local function updatePetData(self, event, unit)
         GetTime(),
         0.2,
         function()
-            self.health:SetValue(animations.petBarAnimation.progress)
+            self.health:SetValue(animations["petBarAnimation"].progress)
         end
     )
     self.health.animationCurrent = healthprec

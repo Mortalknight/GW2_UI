@@ -44,7 +44,7 @@ local function animFlare(f, scale, offset, duration, rotate)
         GetTime(),
         duration,
         function()
-            local p = animations["POWER_FLARE_ANIM"]["progress"]
+            local p = animations["POWER_FLARE_ANIM"].progress
             ff:SetAlpha(p)
             if rotate then
                 ff:SetRotation(1 * p)
@@ -57,7 +57,7 @@ GW.AddForProfiling("classpowers", "animFlare", animFlare)
 local function decayCounter_OnAnim()
     local f = CPWR_FRAME
     local fdc = f.decayCounter
-    local p = animations["DECAYCOUNTER_BAR"]["progress"]
+    local p = animations["DECAYCOUNTER_BAR"].progress
     local px = p * 262
     fdc.precentage = p
     fdc.bar:SetValue(p)
@@ -70,14 +70,14 @@ GW.AddForProfiling("classpowers", "decayCounter_OnAnim", decayCounter_OnAnim)
 local function decayCounterFlash_OnAnim()
     local f = CPWR_FRAME
     local fdc = f.decayCounter
-    fdc.flash:SetAlpha(animations["DECAYCOUNTER_TEXT"]["progress"])
+    fdc.flash:SetAlpha(animations["DECAYCOUNTER_TEXT"].progress)
 end
 GW.AddForProfiling("classpowers", "decayCounterFlash_OnAnim", decayCounterFlash_OnAnim)
 
 local function maelstromCounter_OnAnim()
     local f = CPWR_FRAME
     local fms = f.maelstrom
-    local p = animations["MAELSTROMCOUNTER_BAR"]["progress"]
+    local p = animations["MAELSTROMCOUNTER_BAR"].progress
     local px = p * 262
     fms.precentage = p
     fms.bar:SetValue(p)
@@ -90,14 +90,14 @@ GW.AddForProfiling("classpowers", "maelstromCounter_OnAnim", maelstromCounter_On
 local function maelstromCounterFlash_OnAnim()
     local f = CPWR_FRAME
     local fms = f.maelstrom
-    fms.flash:SetAlpha(animations["MAELSTROMCOUNTER_TEXT"]["progress"])
+    fms.flash:SetAlpha(animations["MAELSTROMCOUNTER_TEXT"].progress)
 end
 GW.AddForProfiling("classpowers", "maelstromCounterFlash_OnAnim", maelstromCounterFlash_OnAnim)
 
 local function decay_OnAnim()
     local f = CPWR_FRAME
     local fd = f.decay
-    local p = animations["DECAY_BAR"]["progress"]
+    local p = animations["DECAY_BAR"].progress
     local px = p * 310
     fd.precentage = p
     fd.bar:SetValue(p)
@@ -110,7 +110,7 @@ GW.AddForProfiling("classpowers", "decay_OnAnim", decay_OnAnim)
 local function metamorphosis_OnAnim()
     local f = CPWR_FRAME
     local fd = f.decay
-    local p = animations["METAMORPHOSIS_BAR"]["progress"]
+    local p = animations["METAMORPHOSIS_BAR"].progress
     local px = p * 310
     fd.precentage = p
     fd.bar:SetValue(p)
@@ -273,7 +273,7 @@ local function powerCombo(self, event, ...)
                     GetTime(),
                     0.5,
                     function()
-                        local p = animations["COMBOPOINTS_FLARE"]["progress"]
+                        local p = animations["COMBOPOINTS_FLARE"].progress
                         self.combopoints.comboFlare:SetAlpha(p)
                     end,
                     nil,
@@ -618,8 +618,8 @@ local function powerRune(self)
             fFill:SetHeight(32)
             fFill:SetVertexColor(1, 1, 1)
             if animations[animId] then
-                animations[animId]["completed"] = true
-                animations[animId]["duration"] = 0
+                animations[animId].completed = true
+                animations[animId].duration = 0
             end
         else
             if rune_start == 0 then
@@ -633,9 +633,9 @@ local function powerRune(self)
                 rune_start,
                 rune_duration,
                 function()
-                    fFill:SetTexCoord(0.5, 1, 1 - animations[animId]["progress"], 1)
-                    fFill:SetHeight(32 * animations[animId]["progress"])
-                    fFill:SetVertexColor(1, 0.6 * animations[animId]["progress"], 0.6 * animations[animId]["progress"])
+                    fFill:SetTexCoord(0.5, 1, 1 - animations[animId].progress, 1)
+                    fFill:SetHeight(32 * animations[animId].progress)
+                    fFill:SetVertexColor(1, 0.6 * animations[animId].progress, 0.6 * animations[animId].progress)
                 end,
                 "noease",
                 function()
@@ -648,7 +648,7 @@ local function powerRune(self)
                         GetTime(),
                         0.5,
                         function()
-                            f.flare:SetAlpha(animations["HOLY_POWER_FLARE_ANIMATION"]["progress"])
+                            f.flare:SetAlpha(animations["HOLY_POWER_FLARE_ANIMATION"].progress)
                         end
                     )
                 end
@@ -874,7 +874,7 @@ local function powerSoulshard(self, event, ...)
                     GetTime(),
                     0.7,
                     function()
-                        local p = GW.RoundInt(animations["WARLOCK_SHARD_FLARE"]["progress"])
+                        local p = GW.RoundInt(animations["WARLOCK_SHARD_FLARE"].progress)
                         self.warlock.shardFlare:SetTexCoord(GW.getSpriteByIndex(self.warlock.flareMap, p))
                     end,
                     nil,
@@ -909,7 +909,7 @@ local function powerSoulshard(self, event, ...)
                 GetTime(),
                 0.3,
                 function()
-                    local p = animations["WARLOCK_FRAGMENT_FLARE"]["progress"]
+                    local p = animations["WARLOCK_FRAGMENT_FLARE"].progress
                     self.warlock.shardFragment.flare:SetAlpha(p)
                 end
             )
