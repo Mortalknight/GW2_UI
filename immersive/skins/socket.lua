@@ -20,7 +20,7 @@ local function LoadSocketUISkin()
         end
     end
 
-    local tex = ItemSocketingFrame:CreateTexture("bg", "BACKGROUND", 0)
+    local tex = ItemSocketingFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     tex:SetPoint("TOP", ItemSocketingFrame, "TOP", 0, 20)
     local w, h = ItemSocketingFrame:GetSize()
     tex:SetSize(w + 50, h + 70)

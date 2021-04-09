@@ -8,7 +8,7 @@ local function LoadItemUpgradeSkin()
     local ItemUpgradeFrame = _G.ItemUpgradeFrame
     _G.ItemUpgradeFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     ItemUpgradeFrame:StripTextures()
-    ItemUpgradeFrame.tex = ItemUpgradeFrame:CreateTexture("bg", "BACKGROUND", 0)
+    ItemUpgradeFrame.tex = ItemUpgradeFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     local w, h = ItemUpgradeFrame:GetSize()
     ItemUpgradeFrame.tex:SetPoint("TOP", ItemUpgradeFrame, "TOP", 0, 20)
     ItemUpgradeFrame.tex:SetSize(w + 50, h + 70)

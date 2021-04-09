@@ -15,7 +15,7 @@ local function LoadTimeManagerSkin()
     end
     
     TimeManagerFrame:StripTextures()
-    TimeManagerFrame.tex = TimeManagerFrame:CreateTexture("bg", "BACKGROUND", 0)
+    TimeManagerFrame.tex = TimeManagerFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     local w, h = TimeManagerFrame:GetSize()
     TimeManagerFrame.tex:SetPoint("TOP", TimeManagerFrame, "TOP", 0, 20)
     TimeManagerFrame.tex:SetSize(w + 50, h + 20)
