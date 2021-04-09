@@ -19,9 +19,9 @@ local classification = {
     rare = format("|cffAF5050 %s|r", ITEM_QUALITY3_DESC)
 }
 local genderTable = {
-    " " .. _G.UNKNOWN .. " ",
-    " " .. _G.MALE .. " ",
-    " " .. _G.FEMALE .. " "
+    " " .. UNKNOWN .. " ",
+    " " .. MALE .. " ",
+    " " .. FEMALE .. " "
 }
 
 local TT = CreateFrame("Frame")
@@ -78,8 +78,8 @@ local UNSTYLED = {
     QuickKeybindTooltip
 }
 
-local LEVEL1 = strlower(_G.TOOLTIP_UNIT_LEVEL:gsub("%s?%%s%s?%-?", ""))
-local LEVEL2 = strlower(_G.TOOLTIP_UNIT_LEVEL_CLASS:gsub("^%%2$s%s?(.-)%s?%%1$s", "%1"):gsub("^%-?г?о?%s?", ""):gsub("%s?%%s%s?%-?", ""))
+local LEVEL1 = strlower(TOOLTIP_UNIT_LEVEL:gsub("%s?%%s%s?%-?", ""))
+local LEVEL2 = strlower(TOOLTIP_UNIT_LEVEL_CLASS:gsub("^%%2$s%s?(.-)%s?%%1$s", "%1"):gsub("^%-?г?о?%s?", ""):gsub("%s?%%s%s?%-?", ""))
 
 local function IsModKeyDown()
     local k = GetSetting("ADVANCED_TOOLTIP_ID_MODIFIER")
@@ -292,16 +292,16 @@ local function SetUnitText(self, unit, isShiftKeyDown)
         if realm and realm ~= "" then
             if isShiftKeyDown or alwaysShowRealm then
                 name = name .. "-" .. realm
-            elseif relationship == _G.LE_REALM_RELATION_COALESCED then
-                name = name .. _G.FOREIGN_SERVER_LABEL
-            elseif relationship == _G.LE_REALM_RELATION_VIRTUAL then
-                name = name .. _G.INTERACTIVE_SERVER_LABEL
+            elseif relationship == LE_REALM_RELATION_COALESCED then
+                name = name .. FOREIGN_SERVER_LABEL
+            elseif relationship == LE_REALM_RELATION_VIRTUAL then
+                name = name .. INTERACTIVE_SERVER_LABEL
             end
         end
 
         name = name .. ((UnitIsAFK(unit) and " |cffFFFFFF[|r|cffFF0000" .. AFK .. "|r|cffFFFFFF]|r") or (UnitIsDND(unit) and " |cffFFFFFF[|r|cffFFFF00" .. DND .. "|r|cffFFFFFF]|r") or "")
 
-        _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColor.colorStr, name or UNKNOWN)
+        GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColor.colorStr, name or UNKNOWN)
 
         local lineOffset = 2
         if guildName then
@@ -310,9 +310,9 @@ local function SetUnitText(self, unit, isShiftKeyDown)
             end
 
             if guildRanks then
-                _G.GameTooltipTextLeft2:SetFormattedText("<|cff00ff10%s|r> [|cff00ff10%s|r]", guildName, guildRankName)
+                GameTooltipTextLeft2:SetFormattedText("<|cff00ff10%s|r> [|cff00ff10%s|r]", guildName, guildRankName)
             else
-                _G.GameTooltipTextLeft2:SetFormattedText("<|cff00ff10%s|r>", guildName)
+                GameTooltipTextLeft2:SetFormattedText("<|cff00ff10%s|r>", guildName)
             end
 
             lineOffset = 3
@@ -356,9 +356,9 @@ local function SetUnitText(self, unit, isShiftKeyDown)
                     if raidR == "MAINASSIST" then raidRole = " (" .. MAIN_ASSIST .. ")" end
                 end
 
-                GameTooltip:AddDoubleLine(format("%s:", ROLE), role .. (raidRole ~= "" and raidRole or ""), nil, nil, nil, r, g, b)
+                GameTooltip:AddDoubleLine(format("%s:", ROLE), role .. raidRole, nil, nil, nil, r, g, b)
                 if isGroupLeader or isGroupAssist then
-                    GameTooltip:AddDoubleLine("", isGroupLeader and RAID_LEADER or RAID_ASSISTANT , nil, nil, nil, r, g, b)
+                    GameTooltip:AddDoubleLine(" ", isGroupLeader and RAID_LEADER or RAID_ASSISTANT , nil, nil, nil, r, g, b)
                 end
             end
         end
@@ -405,7 +405,7 @@ local function SetUnitText(self, unit, isShiftKeyDown)
         if unitReaction and unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
         local nameColorStr = nameColor.colorStr or RGBToHex(nameColor.r, nameColor.g, nameColor.b, "ff")
 
-        _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColorStr, name or UNKNOWN)
+        GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColorStr, name or UNKNOWN)
 
         return UnitIsTapDenied(unit) and {r = 159 / 255, g = 159 / 255, b = 159 / 255} or nameColor
     end
@@ -692,8 +692,8 @@ local function LoadTooltips()
         SetStyle(tooltip)
     end
     hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle)
-    _G.GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
-    _G.GameTooltip.ItemTooltip.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
+    GameTooltip.ItemTooltip.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     hooksecurefunc("GameTooltip_ShowProgressBar", SkinProgressbar)
 
     if GetSetting("TOOLTIP_MOUSE") then
