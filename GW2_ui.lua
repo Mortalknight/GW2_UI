@@ -6,6 +6,7 @@ local SetSetting = GW.SetSetting
 local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
+local CheckForIncompatibleAddons = GW.CheckForIncompatibleAddons
 local Debug = GW.Debug
 local LibSharedMedia = GW.Libs.LSM
 
@@ -23,7 +24,7 @@ if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
     return
 end
 
-if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") then
+if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") and not CheckForIncompatibleAddons("Actionbars") then
     DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r"):gsub("*", GW.Gw2Color))
 end
 
@@ -39,7 +40,7 @@ if Profiler then
 end
 
 local function disableMABags()
-    local bags = GetSetting("BAGS_ENABLED")
+    local bags = GetSetting("BAGS_ENABLED") and not CheckForIncompatibleAddons("Inventory")
     if not bags or not MovAny or not MADB then
         return
     end
@@ -490,13 +491,15 @@ local function loadAddon(self)
         GW.LoadFonts()
     end
 
-    if GetSetting("GW_COMBAT_TEXT_MODE") == "GW2" then
-        SetCVar("floatingCombatTextCombatDamage", 0)
-        GW.LoadDamageText()
-    elseif GetSetting("GW_COMBAT_TEXT_MODE") == "BLIZZARD" then
-        SetCVar("floatingCombatTextCombatDamage", 1)
-    else
-        SetCVar("floatingCombatTextCombatDamage", 0)
+    if not CheckForIncompatibleAddons("FloatingCombatText") then -- Only touch this setting if no other addon for this is loaded
+        if GetSetting("GW_COMBAT_TEXT_MODE") == "GW2" then
+            SetCVar("floatingCombatTextCombatDamage", 0)
+            GW.LoadDamageText()
+        elseif GetSetting("GW_COMBAT_TEXT_MODE") == "BLIZZARD" then
+            SetCVar("floatingCombatTextCombatDamage", 1)
+        else
+            SetCVar("floatingCombatTextCombatDamage", 0)
+        end
     end
 
     if GetSetting("CASTINGBAR_ENABLED") then
@@ -504,21 +507,21 @@ local function loadAddon(self)
         GW.LoadCastingBar(PetCastingBarFrame, "GwCastingBarPet", "pet", false)
     end
 
-    if GetSetting("MINIMAP_ENABLED") then
+    if GetSetting("MINIMAP_ENABLED") and not CheckForIncompatibleAddons("Minimap") then
         GW.LoadMinimap()
     end
 
-    if GetSetting("QUESTTRACKER_ENABLED") then
+    if GetSetting("QUESTTRACKER_ENABLED") and not CheckForIncompatibleAddons("Objectives") then
         GW.LoadQuestTracker()
     else
-        GW.AdjustQuestTracker(GetSetting("ACTIONBARS_ENABLED"), GetSetting("MINIMAP_ENABLED"))
+        GW.AdjustQuestTracker((GetSetting("ACTIONBARS_ENABLED") and not CheckForIncompatibleAddons("Actionbars")), (GetSetting("MINIMAP_ENABLED") and not CheckForIncompatibleAddons("Minimap")))
     end
 
     if GetSetting("TOOLTIPS_ENABLED") then
         GW.LoadTooltips()
     end
 
-    if GetSetting("QUESTVIEW_ENABLED") then
+    if GetSetting("QUESTVIEW_ENABLED") and not CheckForIncompatibleAddons("ImmersiveQuesting") then
         GW.LoadQuestview()
     end
 
@@ -539,12 +542,14 @@ local function loadAddon(self)
         GW.LoadPowerBar()
     end
 
-    if GetSetting("BAGS_ENABLED") then
-        GW.LoadInventory()
-        GW.SkinLooTFrame()
-    else
-        -- if not our bags, we need to cut the bagbar frame out of the micromenu
-        GW.LoadDefaultBagBar()
+    if not CheckForIncompatibleAddons("Inventory") then -- Only touch this setting if no other addon for this is loaded
+        if GetSetting("BAGS_ENABLED") then
+            GW.LoadInventory()
+            GW.SkinLooTFrame()
+        else
+            -- if not our bags, we need to cut the bagbar frame out of the micromenu
+            GW.LoadDefaultBagBar()
+        end
     end
 
     if GetSetting("USE_BATTLEGROUND_HUD") then
@@ -590,7 +595,7 @@ local function loadAddon(self)
     end
 
     -- create action bars
-    if GetSetting("ACTIONBARS_ENABLED") then
+    if GetSetting("ACTIONBARS_ENABLED") and not CheckForIncompatibleAddons("Actionbars") then
         GW.LoadActionBars(lm)
         GW.ExtraAB_BossAB_Setup()
     end
@@ -605,19 +610,21 @@ local function loadAddon(self)
         GW.LoadPlayerAuras(lm)
     end
 
-    if GetSetting("DYNAMIC_CAM") then
-        SetCVar("test_cameraDynamicPitch", true)
-        SetCVar("cameraKeepCharacterCentered", false)
-        SetCVar("cameraReduceUnexpectedMovement", false)
-        hooksecurefunc("StaticPopup_Show", function(which)
-            if which == "EXPERIMENTAL_CVAR_WARNING" then
-                StaticPopup_Hide("EXPERIMENTAL_CVAR_WARNING")
-            end
-        end)
-    else
-        SetCVar("test_cameraDynamicPitch", false)
-        SetCVar("cameraKeepCharacterCentered", true)
-        SetCVar("cameraReduceUnexpectedMovement", true)
+    if not CheckForIncompatibleAddons("DynamicCam") then -- Only touch this setting if no other addon for this is loaded
+        if GetSetting("DYNAMIC_CAM") then
+            SetCVar("test_cameraDynamicPitch", true)
+            SetCVar("cameraKeepCharacterCentered", false)
+            SetCVar("cameraReduceUnexpectedMovement", false)
+            hooksecurefunc("StaticPopup_Show", function(which)
+                if which == "EXPERIMENTAL_CVAR_WARNING" then
+                    StaticPopup_Hide("EXPERIMENTAL_CVAR_WARNING")
+                end
+            end)
+        else
+            SetCVar("test_cameraDynamicPitch", false)
+            SetCVar("cameraKeepCharacterCentered", true)
+            SetCVar("cameraReduceUnexpectedMovement", true)
+        end
     end
 
     if GetSetting("AFK_MODE") then
@@ -631,11 +638,11 @@ local function loadAddon(self)
     GW.LoadMicroMenu()
     GW.LoadOrderBar()
 
-    if GetSetting("PARTY_FRAMES") then
+    if GetSetting("PARTY_FRAMES") and not CheckForIncompatibleAddons("Groupframes") then
         GW.LoadPartyFrames()
     end
 
-    if GetSetting("RAID_FRAMES") then
+    if GetSetting("RAID_FRAMES") and not CheckForIncompatibleAddons("Raidframes") then
         GW.LoadRaidFrames()
     end
 

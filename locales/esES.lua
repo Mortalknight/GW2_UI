@@ -339,3 +339,4 @@ L["Weekly Reset"] = "Reinicio semanal"
 L["Conduits"] = "Conductos"
 L["Maximum lines of 'Copy Chat Frame'"] = "Líneas máximas para 'Copiar marco de chat'"
 L["Set the maximum number of lines displayed in the Copy Chat Frame"] = "Establece el número máximo que se muestran en el marco de copiar de chat"
+L["Deactivated because the following addon(s) loaded:"] = true

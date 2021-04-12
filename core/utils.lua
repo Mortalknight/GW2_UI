@@ -385,7 +385,7 @@ local function securePetAndOverride(f, stateType)
     elseif stateType == "override" then
         RegisterStateDriver(f, "petoverride", "[overridebar] hide; [vehicleui] hide; show")
     else
-        RegisterStateDriver(f, "petoverride", "[overridebar] hide; [vehicleui] hide; [petbattle] hide; show")
+        RegisterStateDriver(f, "petoverride", "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [possessbar,@vehicle,exists] hide; show")
     end
     return true
 end

@@ -339,3 +339,4 @@ L["Weekly Reset"] = "Reset Semanal"
 L["Conduits"] = "Conduítes"
 L["Maximum lines of 'Copy Chat Frame'"] = "Máximo de linhas para 'Copiar a Grade do Bate-papo'"
 L["Set the maximum number of lines displayed in the Copy Chat Frame"] = "Definir o número máximo de linhas mostradas em Copiar Grade de Bate-papo"
+L["Deactivated because the following addon(s) loaded:"] = true

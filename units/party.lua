@@ -614,13 +614,13 @@ end
 GW.AddForProfiling("party", "hideBlizzardPartyFrame", hideBlizzardPartyFrame)
 
 local function LoadPartyFrames()
-    if not _G.GwManageGroupButton then
+    if not GwManageGroupButton then
         GW.manageButton()
     end
 
     hideBlizzardPartyFrame()
 
-    if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
+    if (GetSetting("RAID_FRAMES") and GW.CheckForIncompatibleAddons("Raidframes")) and GetSetting("RAID_STYLE_PARTY") then
         return
     end
 

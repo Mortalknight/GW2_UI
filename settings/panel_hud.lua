@@ -41,9 +41,9 @@ local function LoadHudPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU")
     addOption(p.scroll.scrollchild, DISPLAY_BORDERS, nil, "BORDER_ENABLED")
     addOption(p.scroll.scrollchild, L["Show Coordinates on World Map"], L["Show Coordinates on World Map"], "WORLDMAP_COORDS_TOGGLE", nil, nil)
-    addOption(p.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", nil, nil, {["MINIMAP_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Show Coordinates on Minimap"], L["Show Coordinates on Minimap"], "MINIMAP_COORDS_TOGGLE", nil, nil, {["MINIMAP_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", nil, nil, {["PARTY_FRAMES"] = true})
+    addOption(p.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", nil, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
+    addOption(p.scroll.scrollchild, L["Show Coordinates on Minimap"], L["Show Coordinates on Minimap"], "MINIMAP_COORDS_TOGGLE", nil, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
+    addOption(p.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", nil, nil, {["PARTY_FRAMES"] = true}, "Groupframes")
     addOption(
         p.scroll.scrollchild,
         L["Pixel Perfect Mode"],
@@ -61,10 +61,14 @@ local function LoadHudPanel(sWindow)
         "GW_COMBAT_TEXT_MODE",
         nil,
         {"GW2", "BLIZZARD", "OFF"},
-        {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS}
+        {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS},
+        nil,
+        nil,
+        nil,
+        "FloatingCombatText"
     )
-    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"})
-    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"})
+    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOptionSlider(
         p.scroll.scrollchild,
         L["HUD Scale"],
@@ -102,7 +106,9 @@ local function LoadHudPanel(sWindow)
             ZONE .. " + " .. L["Coordinates"]
         },
         nil,
-        {["MINIMAP_ENABLED"] = true}
+        {["MINIMAP_ENABLED"] = true},
+        nil,
+        "Minimap"
     )
     addOptionDropdown(
         p.scroll.scrollchild,
@@ -121,7 +127,9 @@ local function LoadHudPanel(sWindow)
             DEFAULT
         },
         nil,
-        {["MINIMAP_ENABLED"] = true}
+        {["MINIMAP_ENABLED"] = true},
+        nil,
+        "Minimap"
     )
     addOptionDropdown(
         p.scroll.scrollchild,

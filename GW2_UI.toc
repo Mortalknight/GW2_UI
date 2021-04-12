@@ -15,6 +15,7 @@
 
 core/TaintLess.xml
 core/debug.lua
+core/incompatibleAddons.lua
 core/errorHandler.lua
 core/locationData.lua
 libs/libs.xml

@@ -1241,9 +1241,6 @@ end
 GW.AdjustQuestTracker = AdjustQuestTracker
 
 local function LoadQuestTracker()
-    --local qt_enabled = GetSetting("QUESTTRACKER_ENABLED")
-    --local bars_enabled = GetSetting("ACTIONBARS_ENABLED")
-
     -- disable the default tracker
     ObjectiveTrackerFrame:SetMovable(1)
     ObjectiveTrackerFrame:SetUserPlaced(true)

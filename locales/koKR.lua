@@ -341,3 +341,4 @@ L["Weekly Reset"] = "주간 초기화"
 L["Conduits"] = "도관"
 L["Maximum lines of 'Copy Chat Frame'"] = "'채팅 창 복사'의 최대 줄"
 L["Set the maximum number of lines displayed in the Copy Chat Frame"] = "채팅 창 복사에 표시되는 최대 줄 수를 설정합니다."
+L["Deactivated because the following addon(s) loaded:"] = true

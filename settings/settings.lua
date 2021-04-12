@@ -79,7 +79,7 @@ local function CreateCat(name, desc, panel, icon, bg, scrollFrames)
 end
 GW.CreateCat = CreateCat
 
-local function AddOption(panel, name, desc, optionName, callback, params, dependence)
+local function AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
     if not panel then
         return
     end
@@ -94,6 +94,7 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
     opt["optionType"] = "boolean"
     opt["callback"] = callback
     opt["dependence"] = dependence
+    opt["isIncompatibleAddonLoaded"] = false
 
     if params then
         for k, v in pairs(params) do opt[k] = v end
@@ -105,11 +106,25 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
     local i = #(all_options) + 1
     all_options[i] = opt
 
+    if incompatibleAddons then
+        local checkAce3Module, Ace3Addon, Ace3Module = string.find(incompatibleAddons, "|")
+        if checkAce3Module then
+            incompatibleAddons, Ace3Addon, Ace3Module = string.split("|", incompatibleAddons)
+        end
+
+        local isIncompatibleAddonLoaded, whichAddonsLoaded = GW.CheckForIncompatibleAddons(incompatibleAddons, checkAce3Module, Ace3Addon, Ace3Module)
+        if isIncompatibleAddonLoaded then
+
+            opt["desc"] = (desc and desc or "") .. "\n\n|cffffedba" .. L["Deactivated because the following addon(s) loaded:"] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r"
+            opt["isIncompatibleAddonLoaded"] = true
+        end
+    end
+
     return opt
 end
 GW.AddOption = AddOption
 
-local function AddOptionButton(panel, name, desc, optionName, callback, params, dependence)
+local function AddOptionButton(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
     if not panel then
         return
     end
@@ -135,12 +150,20 @@ local function AddOptionButton(panel, name, desc, optionName, callback, params, 
     local i = #(all_options) + 1
     all_options[i] = opt
 
+    if incompatibleAddons then
+        local isIncompatibleAddonLoaded, whichAddonsLoaded = GW.CheckForIncompatibleAddons(incompatibleAddons)
+        if isIncompatibleAddonLoaded then
+            opt["desc"] =  (desc and desc or "") .. "\n\n|cffffedba" .. L["Deactivated because the following addon(s) loaded:|r |cffff0000"] .. "\n" .. whichAddonsLoaded .. "|r"
+            opt["isIncompatibleAddonLoaded"] = true
+        end
+    end
+
     return opt
 end
 GW.AddOptionButton = AddOptionButton
 
-local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, dependence_value)
+local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
 
     opt["min"] = min
     opt["max"] = max
@@ -152,16 +175,16 @@ local function AddOptionSlider(panel, name, desc, optionName, callback, min, max
 end
 GW.AddOptionSlider = AddOptionSlider
 
-local function AddOptionText(panel, name, desc, optionName, callback, multiline, params, dependence)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, dependence_value)
+local function AddOptionText(panel, name, desc, optionName, callback, multiline, params, dependence, incompatibleAddons)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
 
     opt["multiline"] = multiline
     opt["optionType"] = "text"
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, dependence_value)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
 
     opt["options"] = {}
     opt["options"] = options_list
@@ -179,8 +202,17 @@ local function WarningPrompt(text, method)
 end
 GW.WarningPrompt = WarningPrompt
 
-local function setDependenciesOption(type, name, SetEnable)
-    if SetEnable then
+local function setDependenciesOption(type, name, SetEnable, deactivateColor)
+    if deactivateColor then
+        _G[name].title:SetTextColor(0.82, 0, 0)
+        if type == "slider" then
+            _G[name].input:SetTextColor(0.82, 0, 0)
+        elseif type == "text" then
+            _G[name].input:SetTextColor(0.82, 0, 0)
+        elseif type == "dropdown" then
+            _G[name].button.string:SetTextColor(0.82, 0, 0)
+        end
+    elseif SetEnable then
         _G[name].title:SetTextColor(1, 1, 1)
         if type == "boolean" then
             _G[name]:Enable()
@@ -225,7 +257,9 @@ local function checkDependenciesOnLoad()
     local allOptionsSet = false
 
     for _, v in pairs(options) do
-        if v.dependence then
+        if v.isIncompatibleAddonLoaded then
+            setDependenciesOption(v.optionType, v.optionName, false, true)
+        elseif v.dependence then
             allOptionsSet = false
             for sn, sv in pairs(v.dependence) do
                 if type(sv) == "table" then
@@ -437,6 +471,7 @@ local function InitPanel(panel, hasScroll)
             of.button:SetScript(
                 "OnClick",
                 function(self)
+                    if v.isIncompatibleAddonLoaded then return end -- if incompatible addons is loaded, do nothing
                     local dd = self:GetParent()
                     if dd.container:IsShown() then
                         dd.container:Hide()
@@ -463,6 +498,10 @@ local function InitPanel(panel, hasScroll)
             of.slider:SetScript(
                 "OnValueChanged",
                 function(self)
+                    if v.isIncompatibleAddonLoaded then -- if incompatible addons is loaded, do nothing
+                        self:SetValue(GetSetting(v.optionName, v.perSpec))
+                        return
+                    end
                     local roundValue = RoundDec(self:GetValue(), v.decimalNumbers)
 
                     SetSetting(v.optionName, roundValue, v.perSpec)
@@ -476,6 +515,10 @@ local function InitPanel(panel, hasScroll)
             of.input:SetScript(
                 "OnEnterPressed",
                 function(self)
+                    if v.isIncompatibleAddonLoaded then -- if incompatible addons is loaded, do nothing
+                        self:SetNumber(RoundDec(GetSetting(v.optionName), v.decimalNumbers))
+                        return
+                    end
                     local roundValue = RoundDec(self:GetNumber(), v.decimalNumbers) or v.min
 
                     self:ClearFocus()
@@ -499,6 +542,10 @@ local function InitPanel(panel, hasScroll)
             of.input:SetScript(
                 "OnEnterPressed",
                 function(self)
+                    if v.isIncompatibleAddonLoaded then -- if incompatible addons is loaded, do nothing
+                        self:SetText(GetSetting(v.optionName, v.perSpec) or "")
+                        return
+                    end
                     self:ClearFocus()
                     SetSetting(v.optionName, self:GetText(), v.perSpec)
                     if v.callback ~= nil then
@@ -511,6 +558,11 @@ local function InitPanel(panel, hasScroll)
             of.checkbutton:SetScript(
                 "OnClick",
                 function(self)
+                    if v.isIncompatibleAddonLoaded then -- if incompatible addons is loaded, do nothing
+                        self:SetChecked(not self:GetChecked())
+                        return
+                    end
+
                     local toSet = false
                     if self:GetChecked() then
                         toSet = true
@@ -527,6 +579,7 @@ local function InitPanel(panel, hasScroll)
             of:SetScript(
                 "OnClick",
                 function(self)
+                    if v.isIncompatibleAddonLoaded then return end -- if incompatible addons is loaded, do nothing
                     local toSet = true
                     if self.checkbutton:GetChecked() then
                         toSet = false
@@ -545,6 +598,7 @@ local function InitPanel(panel, hasScroll)
             of:SetScript(
                 "OnClick",
                 function()
+                    if v.isIncompatibleAddonLoaded then return end -- if incompatible addons is loaded, do nothing
                     if v.callback ~= nil then
                         v.callback()
                     end

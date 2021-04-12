@@ -8,6 +8,7 @@ MISC
     - Make Raid Control secure: Added Worldmakers into that menu
     - Added option to set max shown lines on copy chat frame
     - Added 'Main Tank', 'Main Assist', 'Group Leader' and 'Group Assist' info to raid unit tooltips
+    - Some options are now deactivated if conflicting addons are loaded. In the settings you can see which Addons is causing the deactivation.
 
 5.13.1
 FIXES
