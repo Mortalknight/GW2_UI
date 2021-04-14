@@ -14,7 +14,7 @@ end
     SetDefaultOnTheFly(226512) -- Sanguine
     SetDefaultOnTheFly(240559) -- Grievous
     SetDefaultOnTheFly(240443) -- Bursting
-    -- Shadowlands Affix
+    -- Shadowlands Season 1
     SetDefaultOnTheFly(342494) -- Belligerent Boast (Prideful)
 
 -- Shadowlands Dungeons

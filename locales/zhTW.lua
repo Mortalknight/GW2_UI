@@ -339,4 +339,4 @@ L["Weekly Reset"] = "每週重置"
 L["Conduits"] = "靈印"
 L["Maximum lines of 'Copy Chat Frame'"] = "'複製聊天視窗' 的最大行數"
 L["Set the maximum number of lines displayed in the Copy Chat Frame"] = "設定複製聊天視窗最多顯示幾行。"
-L["Deactivated because the following addon(s) loaded:"] = true
+L["Deactivated because the following addon(s) loaded:"] = "已停用，因為已載入插件:"

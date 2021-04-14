@@ -1034,7 +1034,7 @@ GW.AddForProfiling("raidframes", "UpdateRaidFramesLayout", UpdateRaidFramesLayou
 
 local function createRaidFrame(registerUnit, index)
     local frame = _G["GwCompact" .. registerUnit]
-    if _G["GwCompact" .. registerUnit] == nil then
+    if not frame then
         frame = CreateFrame("Button", "GwCompact" .. registerUnit, GwRaidFrameContainer, "GwRaidFrame")
         frame.name = _G[frame:GetName() .. "Data"].name
         frame.healthstring = _G[frame:GetName() .. "Data"].healthstring
