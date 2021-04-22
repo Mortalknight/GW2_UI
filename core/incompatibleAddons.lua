@@ -54,17 +54,17 @@ local function CheckForIncompatibleAddonModule(addon, module) -- works only for 
     return loaded, loaded and module or nil
 end
 
-local function CheckForIncompatibleAddons(setting, checkAce3Module, ace3AddonName, ace3AddonModule)
-    local isIncompatibleAddonLoaded = false
+local function IsIncompatibleAddonLoaded(setting, checkAce3Module, ace3AddonName, ace3AddonModule)
+    local IncompatibleAddonLoaded = false
     local whichAddonsIsLoaded = ""
     for settings, addons in pairs(IncompatibleAddons) do
         if settings == setting then
             for _, addon in ipairs(addons) do
                 if IsAddOnLoaded(addon) then
-                    isIncompatibleAddonLoaded = true
+                    IncompatibleAddonLoaded = true
                     local moduleLoadedText
                     if checkAce3Module then
-                        isIncompatibleAddonLoaded, moduleLoadedText = CheckForIncompatibleAddonModule(ace3AddonName, ace3AddonModule)
+                        IncompatibleAddonLoaded, moduleLoadedText = CheckForIncompatibleAddonModule(ace3AddonName, ace3AddonModule)
                     end
                     whichAddonsIsLoaded =  select(2, GetAddOnInfo(addon)) .. (checkAce3Module and moduleLoadedText and " (" .. ace3AddonModule .. ")" or "") .. ", " .. whichAddonsIsLoaded
                 end
@@ -73,6 +73,6 @@ local function CheckForIncompatibleAddons(setting, checkAce3Module, ace3AddonNam
     end
 
     if strlen(whichAddonsIsLoaded) > 0 then whichAddonsIsLoaded = strsub(whichAddonsIsLoaded, 0 , strlen(whichAddonsIsLoaded) - 2) end
-    return isIncompatibleAddonLoaded, whichAddonsIsLoaded
+    return IncompatibleAddonLoaded, whichAddonsIsLoaded
 end
-GW.CheckForIncompatibleAddons = CheckForIncompatibleAddons
+GW.IsIncompatibleAddonLoaded = IsIncompatibleAddonLoaded

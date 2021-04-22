@@ -620,7 +620,7 @@ local function LoadPartyFrames()
 
     hideBlizzardPartyFrame()
 
-    if (GetSetting("RAID_FRAMES") and GW.CheckForIncompatibleAddons("Raidframes")) and GetSetting("RAID_STYLE_PARTY") then
+    if GetSetting("RAID_FRAMES") and not GW.IsIncompatibleAddonLoaded("Raidframes") and GetSetting("RAID_STYLE_PARTY") then
         return
     end
 

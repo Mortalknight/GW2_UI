@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.13.3", [=[
+FIXES
+    - Raid styled party frames now working as intended
+]=])
+
 v("5.13.2", [=[
 FIXES
     - Partyframes: Debuff stacks > 9 are now display correctly 

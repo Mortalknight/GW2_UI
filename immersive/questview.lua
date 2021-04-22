@@ -608,7 +608,7 @@ local function LoadQuestview()
             if event == "QUEST_DETAIL" then
                 local questStartItemID = ...
                 if (questStartItemID ~= nil and questStartItemID ~= 0) or QuestIsFromAreaTrigger() then
-                    if GetSetting("QUESTTRACKER_ENABLED") and not GW.CheckForIncompatibleAddons("Objectives") then
+                    if GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoaded("Objectives") then
                         AcknowledgeAutoAcceptQuest()
                     end
                     return

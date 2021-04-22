@@ -112,7 +112,7 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
             incompatibleAddons, Ace3Addon, Ace3Module = string.split("|", incompatibleAddons)
         end
 
-        local isIncompatibleAddonLoaded, whichAddonsLoaded = GW.CheckForIncompatibleAddons(incompatibleAddons, checkAce3Module, Ace3Addon, Ace3Module)
+        local isIncompatibleAddonLoaded, whichAddonsLoaded = GW.IsIncompatibleAddonLoaded(incompatibleAddons, checkAce3Module, Ace3Addon, Ace3Module)
         if isIncompatibleAddonLoaded then
 
             opt["desc"] = (desc and desc or "") .. "\n\n|cffffedba" .. L["Deactivated because the following addon(s) loaded:"] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r"
@@ -151,7 +151,7 @@ local function AddOptionButton(panel, name, desc, optionName, callback, params, 
     all_options[i] = opt
 
     if incompatibleAddons then
-        local isIncompatibleAddonLoaded, whichAddonsLoaded = GW.CheckForIncompatibleAddons(incompatibleAddons)
+        local isIncompatibleAddonLoaded, whichAddonsLoaded = GW.IsIncompatibleAddonLoaded(incompatibleAddons)
         if isIncompatibleAddonLoaded then
             opt["desc"] =  (desc and desc or "") .. "\n\n|cffffedba" .. L["Deactivated because the following addon(s) loaded:|r |cffff0000"] .. "\n" .. whichAddonsLoaded .. "|r"
             opt["isIncompatibleAddonLoaded"] = true
