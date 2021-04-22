@@ -353,7 +353,7 @@ local function SetUnitText(self, unit, isShiftKeyDown)
                 local raidRole = ""
                 if raidId then
                     local raidR = select(10, GetRaidRosterInfo(raidId))
-                    if raidR == "MAINTANK" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-maintank:0:0:0:-2:64:64:4:60:4:60|t " .. MAINTANK .. ")" end
+                    if raidR == "MAINTANK" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-maintank:0:0:0:-3:64:64:4:60:4:60|t " .. MAINTANK .. ")" end
                     if raidR == "MAINASSIST" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist:0:0:0:-1:64:64:4:60:4:60|t " .. MAIN_ASSIST .. ")" end
                 end
 
