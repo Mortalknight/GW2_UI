@@ -21,28 +21,27 @@ local function LoadRaidPanel(sWindow)
 
     createCat(RAID, L["Edit the group settings."], p, 8)
 
-    addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", nil, nil, {["RAID_FRAMES"] = true}, "Raidframes")
-    addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS", nil, nil, {["RAID_FRAMES"] = true}, "Raidframes")
-    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true}, "Raidframes")
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true}, "Raidframes")
-    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["RAID_FRAMES"] = true}, "Raidframes")
-    addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS", nil, nil, {["RAID_FRAMES"] = true}, "Raidframes")
+    addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
+    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS", nil, nil, {["RAID_FRAMES"] = true})
     addOption(
         p,
         L["Sort Raid Frames by Role"],
         L["Sort raid unit frames by role (tank, heal, damage) instead of group."],
         "RAID_SORT_BY_ROLE",
         function()
-            if GetSetting("RAID_FRAMES") and not GW.CheckForIncompatibleAddonModule("Raidframes") then
+            if GetSetting("RAID_FRAMES") then
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
         end,
         nil,
-        {["RAID_FRAMES"] = true},
-        "Raidframes"
+        {["RAID_FRAMES"] = true}
     )
-    addOption(p, L["Show Aura Tooltips in Combat"], L["Show tooltips of buffs and debuffs even when you are in combat."], "RAID_AURA_TOOLTIP_IN_COMBAT", nil, nil, {["RAID_FRAMES"] = true}, "Raidframes")
+    addOption(p, L["Show Aura Tooltips in Combat"], L["Show tooltips of buffs and debuffs even when you are in combat."], "RAID_AURA_TOOLTIP_IN_COMBAT", nil, nil, {["RAID_FRAMES"] = true})
 
     addOptionDropdown(
         p,
@@ -59,8 +58,7 @@ local function LoadRaidPanel(sWindow)
         },
         nil,
         {["RAID_FRAMES"] = true},
-        nil,
-        "Raidframes"
+        nil
     )
 
     addOptionDropdown(
@@ -73,8 +71,7 @@ local function LoadRaidPanel(sWindow)
         {NONE_KEY, L["Different Than Own"], ALL},
         nil,
         {["RAID_FRAMES"] = true},
-        nil,
-        "Raidframes"
+        nil
     )
 
     local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
@@ -91,7 +88,7 @@ local function LoadRaidPanel(sWindow)
         L["Set the grow direction for raid frames."],
         "RAID_GROW",
         function()
-            if GetSetting("RAID_FRAMES") and not GW.CheckForIncompatibleAddonModule("Raidframes") then
+            if GetSetting("RAID_FRAMES") then
                 GW.UpdateRaidFramesAnchor()
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
@@ -107,8 +104,7 @@ local function LoadRaidPanel(sWindow)
         ),
         nil,
         {["RAID_FRAMES"] = true},
-        nil,
-        "Raidframes"
+        nil
     )
 
     addOptionDropdown(
@@ -117,7 +113,7 @@ local function LoadRaidPanel(sWindow)
         L["Set where the raid frame container should be anchored.\n\nBy position: Always the same as the container's position on screen.\nBy growth: Always opposite to the growth direction."],
         "RAID_ANCHOR",
         function()
-            if GetSetting("RAID_FRAMES") and not GW.CheckForIncompatibleAddonModule("Raidframes") then
+            if GetSetting("RAID_FRAMES") then
                 GW.UpdateRaidFramesAnchor()
             end
         end,
@@ -125,8 +121,7 @@ local function LoadRaidPanel(sWindow)
         {L["By position on screen"], L["By growth direction"], "TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
         nil,
         {["RAID_FRAMES"] = true},
-        nil,
-        "Raidframes"
+        nil
     )
 
     addOptionSlider(
@@ -135,7 +130,7 @@ local function LoadRaidPanel(sWindow)
         L["Set the number of raid unit frames per column or row, depending on grow directions."],
         "RAID_UNITS_PER_COLUMN",
         function()
-            if GetSetting("RAID_FRAMES") and not GW.CheckForIncompatibleAddonModule("Raidframes") then
+            if GetSetting("RAID_FRAMES") then
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
@@ -145,8 +140,7 @@ local function LoadRaidPanel(sWindow)
         nil,
         0,
         {["RAID_FRAMES"] = true},
-        nil,
-        "Raidframes"
+        nil
     )
 
     addOptionSlider(
@@ -155,7 +149,7 @@ local function LoadRaidPanel(sWindow)
         L["Set the width of the raid units."],
         "RAID_WIDTH",
         function()
-            if GetSetting("RAID_FRAMES") and not GW.CheckForIncompatibleAddonModule("Raidframes") then
+            if GetSetting("RAID_FRAMES") then
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
@@ -165,8 +159,7 @@ local function LoadRaidPanel(sWindow)
         nil,
         0,
         {["RAID_FRAMES"] = true},
-        nil,
-        "Raidframes"
+        nil
     )
 
     addOptionSlider(
@@ -175,7 +168,7 @@ local function LoadRaidPanel(sWindow)
         L["Set the height of the raid units."],
         "RAID_HEIGHT",
         function()
-            if GetSetting("RAID_FRAMES") and not GW.CheckForIncompatibleAddonModule("Raidframes") then
+            if GetSetting("RAID_FRAMES") then
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
@@ -185,8 +178,7 @@ local function LoadRaidPanel(sWindow)
         nil,
         0,
         {["RAID_FRAMES"] = true},
-        nil,
-        "Raidframes"
+        nil
     )
 
     addOptionSlider(
@@ -195,7 +187,7 @@ local function LoadRaidPanel(sWindow)
         L["Set the maximum width that the raid frames can be displayed.\n\nThis will cause unit frames to shrink or move to the next row."],
         "RAID_CONT_WIDTH",
         function()
-            if GetSetting("RAID_FRAMES") and not GW.CheckForIncompatibleAddonModule("Raidframes") then
+            if GetSetting("RAID_FRAMES")  then
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
@@ -205,8 +197,7 @@ local function LoadRaidPanel(sWindow)
         nil,
         0,
         {["RAID_FRAMES"] = true},
-        nil,
-        "Raidframes"
+        nil
     )
 
     addOptionSlider(
@@ -215,7 +206,7 @@ local function LoadRaidPanel(sWindow)
         L["Set the maximum height that the raid frames can be displayed.\n\nThis will cause unit frames to shrink or move to the next column."],
         "RAID_CONT_HEIGHT",
         function()
-            if GetSetting("RAID_FRAMES") and not GW.CheckForIncompatibleAddonModule("Raidframes") then
+            if GetSetting("RAID_FRAMES") then
                 GW.UpdateRaidFramesLayout()
                 GW.UpdateRaidFramesPosition()
             end
@@ -225,8 +216,7 @@ local function LoadRaidPanel(sWindow)
         nil,
         0,
         {["RAID_FRAMES"] = true},
-        nil,
-        "Raidframes"
+        nil
     )
 
     InitPanel(p)

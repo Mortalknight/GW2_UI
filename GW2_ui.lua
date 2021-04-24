@@ -638,11 +638,11 @@ local function loadAddon(self)
     GW.LoadMicroMenu()
     GW.LoadOrderBar()
 
-    if GetSetting("PARTY_FRAMES") and not IsIncompatibleAddonLoaded("Groupframes") then
+    if GetSetting("PARTY_FRAMES") then
         GW.LoadPartyFrames()
     end
 
-    if GetSetting("RAID_FRAMES") and not IsIncompatibleAddonLoaded("Raidframes") then
+    if GetSetting("RAID_FRAMES") then
         GW.LoadRaidFrames()
     end
 

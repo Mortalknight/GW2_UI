@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.13.4", [=[
+FIXES
+    - Fix interaction with Dominos
+]=])
+
 v("5.13.3", [=[
 FIXES
     - Raid styled party frames now working as intended

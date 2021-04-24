@@ -33,22 +33,11 @@ local IncompatibleAddons = {
     Objectives = {
         "!KalielsTracker",
     },
-    Raidframes = {
-        "Grid2",
-        "VuhDo",
-    },
-    Groupframes = {
-        "Grid2",
-    },
-    RaidAndGroupFrames = {
-        "Grid2",
-        "VuhDo",
-    }
 }
 
 local function CheckForIncompatibleAddonModule(addon, module) -- works only for ace3 addons
     local loaded = false
-    if addon == "Bartender4" then
+    if addon == "Bartender4" and IsAddOnLoaded(addon) then
         loaded = LibStub("AceAddon-3.0", true):GetAddon(addon, true):GetModule(module).db.profile.enabled
     end
     return loaded, loaded and module or nil

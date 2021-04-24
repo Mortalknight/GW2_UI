@@ -10,6 +10,17 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local questInfo = {}
 
+local function IsQuestAutoTurnInOrAutoAccept(blockQuestID, checkType)
+    for i = 1, GetNumAutoQuestPopUps() do
+        local questID, popUpType = GetAutoQuestPopUp(i)
+        if blockQuestID and questID and popUpType and popUpType == checkType and blockQuestID == questID then
+            return true
+        end
+    end
+
+    return false
+end
+
 local function wiggleAnim(self)
     if self.animation == nil then
         self.animation = 0
@@ -638,17 +649,17 @@ end
 GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
 local function updateQuest(self, block, quest)
-    block.height = 25
-    block.numObjectives = 0
-    block.turnin:Hide()
-    block.popupQuestAccept:Hide()
-
     local questID = quest:GetID()
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
     local questLogIndex = quest:GetQuestLogIndex()
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
     local questFailed = C_QuestLog.IsFailed(questID)
+
+    block.height = 25
+    block.numObjectives = 0
+    block.turnin:SetShown(IsQuestAutoTurnInOrAutoAccept(questID, "COMPLETE"))
+    block.popupQuestAccept:SetShown(IsQuestAutoTurnInOrAutoAccept(questID, "OFFER"))
 
     if questID and questLogIndex and questLogIndex > 0 then
         if requiredMoney then
@@ -722,15 +733,15 @@ end
 GW.AddForProfiling("objectives", "updateQuest", updateQuest)
 
 local function updateQuestByID(self, block, quest, questID, questLogIndex)
-    block.height = 25
-    block.numObjectives = 0
-    block.turnin:Hide()
-    block.popupQuestAccept:Hide()
-
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
     local isComplete = quest:IsComplete()
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
     local questFailed = C_QuestLog.IsFailed(questID)
+
+    block.height = 25
+    block.numObjectives = 0
+    block.turnin:SetShown(IsQuestAutoTurnInOrAutoAccept(questID, "COMPLETE"))
+    block.popupQuestAccept:SetShown(IsQuestAutoTurnInOrAutoAccept(questID, "OFFER"))
 
     if requiredMoney then
         self.watchMoneyReasons = self.watchMoneyReasons + 1
