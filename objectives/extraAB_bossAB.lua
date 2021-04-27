@@ -26,13 +26,19 @@ local function ExtraButtons_UpdateScale()
     ExtraActionBarHolder:SetSize(width * scale, height * scale)
     ExtraActionBarHolder.gwMover:SetSize(width * scale, height * scale)
 
-    QuickKeybindFrame.phantomExtraActionButton.normalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty")
-    QuickKeybindFrame.phantomExtraActionButton.normalTexture:ClearAllPoints()
-    QuickKeybindFrame.phantomExtraActionButton.normalTexture:SetAllPoints(ExtraActionBarHolder.gwMover)
-    QuickKeybindFrame.phantomExtraActionButton.QuickKeybindHighlightTexture:ClearAllPoints()
-    QuickKeybindFrame.phantomExtraActionButton.QuickKeybindHighlightTexture:SetAllPoints(ExtraActionBarHolder.gwMover)
-    QuickKeybindFrame.phantomExtraActionButton:ClearAllPoints()
-    QuickKeybindFrame.phantomExtraActionButton:SetAllPoints(ExtraActionBarHolder.gwMover)
+    -- For 9.1 need to be removed with 9.1
+    if QuickKeybindFrame.phantomExtraActionButton then
+        QuickKeybindFrame.phantomExtraActionButton.normalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty")
+        QuickKeybindFrame.phantomExtraActionButton.normalTexture:ClearAllPoints()
+        QuickKeybindFrame.phantomExtraActionButton.normalTexture:SetAllPoints(ExtraActionBarHolder.gwMover)
+        QuickKeybindFrame.phantomExtraActionButton.QuickKeybindHighlightTexture:ClearAllPoints()
+        QuickKeybindFrame.phantomExtraActionButton.QuickKeybindHighlightTexture:SetAllPoints(ExtraActionBarHolder.gwMover)
+        QuickKeybindFrame.phantomExtraActionButton:ClearAllPoints()
+        QuickKeybindFrame.phantomExtraActionButton:SetAllPoints(ExtraActionBarHolder.gwMover)
+    elseif ExtraActionButton1 then
+        ExtraActionButton1.QuickKeybindHighlightTexture:ClearAllPoints()
+        ExtraActionButton1.QuickKeybindHighlightTexture:SetAllPoints(ExtraActionBarHolder.gwMover)
+    end
 end
 
 local function UpdateExtraBindings()

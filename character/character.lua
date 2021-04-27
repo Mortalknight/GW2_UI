@@ -5,7 +5,7 @@ local SetSetting = GW.SetSetting
 
 local windowsList = {}
 local hasBeenLoaded = false
-local moveDistance, heroFrameX, heroFrameY, heroFrameLeft, heroFrameTop, heroFrameNormalScale, heroFrameEffectiveScale = 0, 0, 0, 0, 0, 1
+local moveDistance, heroFrameX, heroFrameY, heroFrameLeft, heroFrameTop, heroFrameNormalScale, heroFrameEffectiveScale = 0, 0, 0, 0, 0, 1, 0
 
 windowsList[1] = {
     ["OnLoad"] = "LoadPaperDoll",

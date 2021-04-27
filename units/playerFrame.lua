@@ -237,6 +237,11 @@ local function LoadPlayerFrame()
         end
     end)
 
+    -- grab the TotemFramebuttons to our own Totem Frame
+    if PlayerFrame and TotemFrame then
+        GW.Create_Totem_Bar()
+    end
+
     -- setup anim to flash the PvP marker
     local pvp = NewUnitFrame.pvp
     local pagIn = pvp:CreateAnimationGroup("fadeIn")

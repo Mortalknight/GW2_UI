@@ -172,7 +172,7 @@ local function manageButton()
         self.texture:SetBlendMode("BLEND")
     end
 
-    local x, y, f = 15, -25
+    local x, y, f = 15, -25, nil
 
     GwGroupManage.inGroup.markers = {}
     GwGroupManage.inGroup.workdmarkers = {}

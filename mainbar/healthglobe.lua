@@ -329,7 +329,7 @@ local function LoadHealthGlobe()
     -- so we do it here instead
     hg.fill.maskb:SetPoint("CENTER", hg.fill, "CENTER", 0, 0)
     hg.fill.maska:SetPoint("CENTER", hg.fill, "CENTER", 0, 0)
-    
+
     hg.fill.absorb_over:AddMaskTexture(hg.fill.maska)
     hg.fill.absorb_under:AddMaskTexture(hg.fill.maskb)
     hg.fill.anti:AddMaskTexture(hg.fill.maskb)

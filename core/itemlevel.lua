@@ -201,7 +201,7 @@ GW.GetGearSlotInfo = GetGearSlotInfo
 
 local function CalculateAverageItemLevel(iLevelDB, unit)
     local spec = GetInspectSpecialization(unit)
-    local isOK, total, link = true, 0
+    local isOK, total, link = true, 0, nil
 
     if not spec or spec == 0 then
         isOK = false
@@ -221,7 +221,7 @@ local function CalculateAverageItemLevel(iLevelDB, unit)
     end
 
     -- Main hand
-    local mainItemLevel, mainQuality, mainEquipLoc, mainItemClass, mainItemSubClass, _ = 0
+    local mainItemLevel, mainQuality, mainEquipLoc, mainItemClass, mainItemSubClass = 0, nil, nil, nil, nil
     link = GetInventoryItemLink(unit, 16)
     if link then
         mainItemLevel = iLevelDB[16]
@@ -231,7 +231,7 @@ local function CalculateAverageItemLevel(iLevelDB, unit)
     end
 
     -- Off hand
-    local offItemLevel, offEquipLoc = 0
+    local offItemLevel, offEquipLoc = 0, nil
     link = GetInventoryItemLink(unit, 17)
     if link then
         offItemLevel = iLevelDB[17]

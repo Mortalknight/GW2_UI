@@ -441,7 +441,7 @@ local function updateDebuffs(self)
     local showImportendInstanceDebuffs = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
-    local i, framesDone, aurasDone = 0
+    local i, framesDone, aurasDone = 0, false, false
     repeat
         i = i + 1
 
@@ -558,7 +558,7 @@ end
 local function updateBuffs(self)
     local btnIndex, x, y = 1, 0, 0
     local indicators = AURAS_INDICATORS[GW.myclass]
-    local i, name, spellid = 1
+    local i, name, spellid = 1, nil, nil
     FillTable(missing, true, strsplit(",", (GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
@@ -693,7 +693,7 @@ local function raidframe_OnEvent(self, event, unit)
         -- Enable or disable mouse handling on aura frames
         local name, enable = self:GetName(), event == "PLAYER_REGEN_ENABLED" or GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT")
         for j = 1, 2 do
-            local i, aura, frame = 1, j == 1 and "Buff" or "Debuff"
+            local i, aura, frame = 1, j == 1 and "Buff" or "Debuff", nil
             repeat
                 frame, i = _G["Gw" .. name .. aura .. "ItemFrame" .. i], i + 1
                 if frame then
