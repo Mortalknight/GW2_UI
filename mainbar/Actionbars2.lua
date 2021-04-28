@@ -705,24 +705,22 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 end
 GW.AddForProfiling("Actionbars2", "updateMultiBar", updateMultiBar)
 
-local function stance_OnEvent(_, _, ...)
+local function stance_OnEvent(self, _, ...)
     local unit = ...
-    if InCombatLockdown() or unit ~= "player" then
-        return
-    end
+    if InCombatLockdown() or unit ~= "player" then return end
 
     if GetNumShapeshiftForms() < 1 then
-        GwStanceBarButton:Hide()
+        self:Hide()
     else
         GW.setStanceBar()
-        GwStanceBarButton:Show()
+        self:Show()
     end
 end
 GW.AddForProfiling("Actionbars2", "stance_OnEvent", stance_OnEvent)
 
 local function getStanceBarButton()
-    if _G["GwStanceBarButton"] ~= nil then
-        return _G["GwStanceBarButton"]
+    if GwStanceBarButton then
+        return GwStanceBarButton
     else
         local SBB = CreateFrame("Button", "GwStanceBarButton", UIParent, "GwStanceBarButton")
 
@@ -730,15 +728,19 @@ local function getStanceBarButton()
         SBB:RegisterEvent("PLAYER_ALIVE")
         SBB:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
         SBB:SetScript("OnEvent", stance_OnEvent)
+
+        GW.MixinHideDuringPet(SBB)
         return SBB
     end
 end
 
 local function getStanceBarContainer()
-    if _G["GwStanceBarContainer"] ~= nil then
-        return _G["GwStanceBarContainer"]
+    if GwStanceBarContainer then
+        return GwStanceBarContainer
     else
-        return CreateFrame("Frame", "GwStanceBarContainer", UIParent, nil)
+        local container = CreateFrame("Frame", "GwStanceBarContainer", UIParent, nil)
+        GW.MixinHideDuringPet(container)
+        return container
     end
 end
 
@@ -747,12 +749,11 @@ local function setStanceBar()
     local SBC
 
     for i = 1, 12 do
-        if _G["StanceButton" .. i] ~= nil then
+        if _G["StanceButton" .. i] then
+            _G["StanceButton" .. i]:ClearAllPoints()
             if i == 1 then
-                _G["StanceButton" .. i]:ClearAllPoints()
                 _G["StanceButton" .. i]:SetPoint("BOTTOM", StanceBarFrame, "BOTTOM", 0, 0)
             else
-                _G["StanceButton" .. i]:ClearAllPoints()
                 _G["StanceButton" .. i]:SetPoint("BOTTOM", _G["StanceButton" .. i - 1], "TOP", 0, 2)
             end
             _G["StanceButton" .. i]:SetSize(30, 30)
@@ -778,7 +779,7 @@ local function setStanceBar()
         SBC = getStanceBarContainer()
         SBC:ClearAllPoints()
         SBC:SetPoint('BOTTOM', SBB, 'TOP', 0, 0)
-        
+
         StanceBarFrame:SetParent(SBC)
         StanceBarFrame:SetPoint("BOTTOMLEFT", SBB, "TOPLEFT", 0, 0)
         StanceBarFrame:SetPoint("BOTTOMRIGHT", SBB, "TOPRIGHT", 0, 0)
