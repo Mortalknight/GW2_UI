@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.13.5", [=[
+FIXES
+    - Fix taint issue in pet battle
+]=])
+
 v("5.13.4", [=[
 FIXES
     - Fix interaction with Dominos

@@ -1140,6 +1140,7 @@ local function LoadActionBars(lm)
         ExtraActionBarFrame:SetFrameStrata("MEDIUM")
     end
 
+    --[[ -- This is taintig in pet battles for rouge and druid
     local HIDE_MOST = {
         GwStanceBarButton = "hidden",
         StanceButton1 = "hidden",
@@ -1153,7 +1154,7 @@ local function LoadActionBars(lm)
 
     FRAMELOCK_STATES.COMMENTATOR_SPECTATING_MODE = Mixin(FRAMELOCK_STATES.COMMENTATOR_SPECTATING_MODE, HIDE_MOST)
     FRAMELOCK_STATES.PETBATTLES = Mixin(FRAMELOCK_STATES.PETBATTLES, HIDE_MOST)
-
+    ]]
     --ActionBarController:HookScript("OnEvent", function(_, event)
         --if event == "UPDATE_BONUS_ACTIONBAR" then
             --ActionBarController_ResetToDefault()
