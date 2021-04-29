@@ -113,6 +113,7 @@ mainbar/petbar.xml
 mainbar/dodgebar.xml
 mainbar/layout.lua
 mainbar/hud.lua
+mainbar/stancebar.lua
 mainbar/actionbars2.lua
 mainbar/petbar.lua
 mainbar/aurabar_blizz_modified.lua

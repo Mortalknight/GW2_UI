@@ -263,7 +263,6 @@ GW_DEFAULT["MultiBarBottomRight"]["ButtonsPerRow"] = 6
 GW_DEFAULT["MultiBarBottomRight"]["hideDefaultBackground"] = true
 
 GW_DEFAULT["MULTIBAR_RIGHT_COLS"] = 1
-GW_DEFAULT["STANCEBAR_POSITION"] = "LEFT"
 
 GW_DEFAULT["PlayerBuffFrame"] = {}
 GW_DEFAULT["PlayerBuffFrame"]["point"] = "BOTTOMLEFT"
@@ -351,6 +350,16 @@ GW_DEFAULT["TotemBar_pos"]["relativePoint"] = "TOPRIGHT"
 GW_DEFAULT["TotemBar_pos"]["xOfs"] = -500
 GW_DEFAULT["TotemBar_pos"]["yOfs"] = -50
 GW_DEFAULT["TotemBar_pos_scale"] = 1
+GW_DEFAULT["TotemBar_GrowDirection"] = "HORIZONTAL"
+GW_DEFAULT["TotemBar_SortDirection"] = "ASC"
+
+GW_DEFAULT["StanceBar_pos"] = {}
+GW_DEFAULT["StanceBar_pos"]["point"] = "BOTTOMLEFT"
+GW_DEFAULT["StanceBar_pos"]["relativePoint"] = "BOTTOMLEFT"
+GW_DEFAULT["StanceBar_pos"]["xOfs"] = 360
+GW_DEFAULT["StanceBar_pos"]["yOfs"] = 30
+GW_DEFAULT["StanceBar_pos_scale"] = 1
+GW_DEFAULT["StanceBar_GrowDirection"] = "UP"
 
 GW_DEFAULT["PowerBar_pos"] = {}
 GW_DEFAULT["PowerBar_pos"]["point"] = "BOTTOMLEFT"
@@ -379,9 +388,6 @@ GW_DEFAULT["TopCenterWidget_pos"]["relativePoint"] = "TOP"
 GW_DEFAULT["TopCenterWidget_pos"]["xOfs"] = 0
 GW_DEFAULT["TopCenterWidget_pos"]["yOfs"] = -30
 GW_DEFAULT["TopCenterWidget_pos_scale"] = 1
-
-GW_DEFAULT["TotemBar_GrowDirection"] = "HORIZONTAL"
-GW_DEFAULT["TotemBar_SortDirection"] = "ASC"
 
 GW_DEFAULT["AlertPos"] = {}
 GW_DEFAULT["AlertPos"]["point"] = "BOTTOMRIGHT"

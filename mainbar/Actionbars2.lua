@@ -705,106 +705,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 end
 GW.AddForProfiling("Actionbars2", "updateMultiBar", updateMultiBar)
 
-local function stance_OnEvent(self, _, ...)
-    local unit = ...
-    if InCombatLockdown() or unit ~= "player" then return end
 
-    if GetNumShapeshiftForms() < 1 then
-        self:Hide()
-    else
-        GW.setStanceBar()
-        self:Show()
-    end
-end
-GW.AddForProfiling("Actionbars2", "stance_OnEvent", stance_OnEvent)
-
-local function getStanceBarButton()
-    if GwStanceBarButton then
-        return GwStanceBarButton
-    else
-        local SBB = CreateFrame("Button", "GwStanceBarButton", UIParent, "GwStanceBarButton")
-
-        SBB:RegisterEvent("CHARACTER_POINTS_CHANGED")
-        SBB:RegisterEvent("PLAYER_ALIVE")
-        SBB:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-        SBB:SetScript("OnEvent", stance_OnEvent)
-
-        GW.MixinHideDuringPet(SBB)
-        return SBB
-    end
-end
-
-local function getStanceBarContainer()
-    if GwStanceBarContainer then
-        return GwStanceBarContainer
-    else
-        local container = CreateFrame("Frame", "GwStanceBarContainer", UIParent, nil)
-        GW.MixinHideDuringPet(container)
-        return container
-    end
-end
-
-local function setStanceBar()
-    local SBB = getStanceBarButton()
-    local SBC
-
-    for i = 1, 12 do
-        if _G["StanceButton" .. i] then
-            _G["StanceButton" .. i]:ClearAllPoints()
-            if i == 1 then
-                _G["StanceButton" .. i]:SetPoint("BOTTOM", StanceBarFrame, "BOTTOM", 0, 0)
-            else
-                _G["StanceButton" .. i]:SetPoint("BOTTOM", _G["StanceButton" .. i - 1], "TOP", 0, 2)
-            end
-            _G["StanceButton" .. i]:SetSize(30, 30)
-            setActionButtonStyle("StanceButton" .. i, true, nil ,true)
-        end
-    end
-
-    SBB:ClearAllPoints()
-    if GetSetting("STANCEBAR_POSITION") == "LEFT" then
-        SBB:SetPoint('BOTTOMRIGHT', ActionButton1, 'BOTTOMLEFT', -5, 0)
-    else
-        SBB:SetPoint('BOTTOMLEFT', ActionButton12, 'BOTTOMRIGHT', 5, 0)
-    end
-
-    if GetNumShapeshiftForms() == 1 then
-        StanceButton1:ClearAllPoints()
-        if GetSetting("STANCEBAR_POSITION") == "LEFT" then
-            StanceButton1:SetPoint('TOPRIGHT', ActionButton1, 'TOPLEFT', -5, 2)
-        else
-            StanceButton1:SetPoint('TOPLEFT', ActionButton12, 'TOPRIGHT', 5, 2)
-        end
-    else
-        SBC = getStanceBarContainer()
-        SBC:ClearAllPoints()
-        SBC:SetPoint('BOTTOM', SBB, 'TOP', 0, 0)
-
-        StanceBarFrame:SetParent(SBC)
-        StanceBarFrame:SetPoint("BOTTOMLEFT", SBB, "TOPLEFT", 0, 0)
-        StanceBarFrame:SetPoint("BOTTOMRIGHT", SBB, "TOPRIGHT", 0, 0)
-    end
-
-    if GetNumShapeshiftForms() < 2 then
-        SBB:Hide()
-    else
-        SBB:Show()
-        SBC:Hide()
-        SBB:SetFrameRef("GwStanceBarContainer", SBC)
-        SBB:SetAttribute(
-            "_onclick",
-            [=[
-            if self:GetFrameRef("GwStanceBarContainer"):IsVisible() then
-                self:GetFrameRef("GwStanceBarContainer"):Hide()
-            else
-                self:GetFrameRef("GwStanceBarContainer"):Show()
-            end
-        ]=]
-        )
-    end
-end
-GW.setStanceBar = setStanceBar
-GW.AddForProfiling("Actionbars2", "setStanceBar", setStanceBar)
 
 local function setPossessBar()
     PossessBarFrame:ClearAllPoints()
@@ -1120,7 +1021,7 @@ local function LoadActionBars(lm)
 
     -- do stuff to other pieces of the blizz UI
     hideBlizzardsActionbars()
-    setStanceBar()
+    GW.CreateStanceBar()
     setPossessBar()
     setLeaveVehicleButton()
 

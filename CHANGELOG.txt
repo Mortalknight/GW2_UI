@@ -1,4 +1,7 @@
-5.13.5
+5.14.0
+NEW
+    - Make stancebar movable and let you choose the grow direction
+
 FIXES
     - Fix taint issue in pet battle
 

@@ -7,6 +7,7 @@ local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local InitPanel = GW.InitPanel
 local AddForProfiling = GW.AddForProfiling
+local StrUpper = GW.StrUpper
 
 local function setMultibarCols()
     local cols = GetSetting("MULTIBAR_RIGHT_COLS")
@@ -100,12 +101,14 @@ local function LoadActionbarPanel(sWindow)
     )
     addOptionDropdown(
         p,
-        L["Stance Bar Position"],
-        L["Set the position of the stance bar (left or right from the main action bar)."],
-        "STANCEBAR_POSITION",
-        GW.setStanceBar,
-        {"LEFT", "RIGHT"},
-        {L["Left"], L["Right"]},
+        L["Stance Bar Growth Direction"],
+        L["Set the growth direction of the stance bar"],
+        "StanceBar_GrowDirection",
+        function()
+            GW.SetStanceButtons(GwStanceBarButton)
+        end,
+        {"UP", "DOWN", "LEFT", "RIGHT"},
+        {StrUpper(L["Up"], 1, 1), StrUpper(L["Down"], 1, 1), L["Left"], L["Right"]},
         nil,
         {["ACTIONBARS_ENABLED"] = true},
         nil,

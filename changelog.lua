@@ -1,7 +1,9 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("5.13.5", [=[
+v("5.14.0", [=[
+NEW
+    - Make stancebar movable and let you choose the grow direction
 FIXES
     - Fix taint issue in pet battle
 ]=])
