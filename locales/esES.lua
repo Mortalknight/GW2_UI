@@ -339,4 +339,4 @@ L["Maximum lines of 'Copy Chat Frame'"] = "Líneas máximas para 'Copiar marco d
 L["Set the maximum number of lines displayed in the Copy Chat Frame"] = "Establece el número máximo que se muestran en el marco de copiar de chat"
 L["Deactivated because the following addon(s) loaded:"] = "Desactivado porque este/os addon/s han cargado:"
 L["Stance Bar Growth Direction"] = "Dirección de crecimiento de la barra de forma."
-L["Set the growth direction of the stance bar"] = "Establece la dirección de crecimiento de la barra de forma."
+L["Set the growth direction of the stance bar"] = "Establece la dirección de crecimiento de la barra de forma.  "

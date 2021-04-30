@@ -338,5 +338,5 @@ L["Conduits"] = "靈印"
 L["Maximum lines of 'Copy Chat Frame'"] = "'複製聊天視窗' 的最大行數"
 L["Set the maximum number of lines displayed in the Copy Chat Frame"] = "設定複製聊天視窗最多顯示幾行。"
 L["Deactivated because the following addon(s) loaded:"] = "已停用，因為已載入插件:"
-L["Stance Bar Growth Direction"] = true
-L["Set the growth direction of the stance bar"] = true
+L["Stance Bar Growth Direction"] = "姿勢形態列展開方向"
+L["Set the growth direction of the stance bar"] = "設定姿勢形態列展開時的方向。"

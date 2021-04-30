@@ -338,5 +338,5 @@ L["Conduits"] = "Conduítes"
 L["Maximum lines of 'Copy Chat Frame'"] = "Máximo de linhas para 'Copiar a Grade do Bate-papo'"
 L["Set the maximum number of lines displayed in the Copy Chat Frame"] = "Definir o número máximo de linhas mostradas em Copiar Grade de Bate-papo"
 L["Deactivated because the following addon(s) loaded:"] = "Desativado devido ao uso do(s) seguinte(s) addon(s):"
-L["Stance Bar Growth Direction"] = true
-L["Set the growth direction of the stance bar"] = true
+L["Stance Bar Growth Direction"] = "Direção de Distribuição da Barra de Posturas"
+L["Set the growth direction of the stance bar"] = "Definir a direção de distribuição da barra de posturas"
