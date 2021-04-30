@@ -5,6 +5,7 @@ v("5.14.0", [=[
 NEW
     - Make stancebar movable and let you choose the grow direction
     - Added option to override addon conflict behaivor
+    - Ctrl. + click the countdown button (raid control) to trigger the dbm pull timer
 
 FIXES
     - Fix taint issue in pet battle

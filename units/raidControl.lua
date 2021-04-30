@@ -126,9 +126,13 @@ local function manageButton()
     GwGroupManage.inGroup.readyCheck:GetFontString():SetShadowOffset(1, -1)
     GwGroupManage.inGroup.readyCheck:SetEnabled(UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
 
-    local fmGGCD_OnClick = function()
+    local fmGGCD_OnClick = function(_, button)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-        C_PartyInfo.DoCountdown(10)
+        if IsControlKeyDown() and button == "LeftButton" and IsAddOnLoaded("DBM-Core") then
+            SlashCmdList.DEADLYBOSSMODSPULL()
+        else
+            C_PartyInfo.DoCountdown(10)
+        end
     end
 
     GwGroupManage.inGroup.countdown:SetScript("OnClick", fmGGCD_OnClick)
