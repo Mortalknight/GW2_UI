@@ -4,6 +4,8 @@ local v = GW.vernotes
 v("5.14.0", [=[
 NEW
     - Make stancebar movable and let you choose the grow direction
+    - Added option to override addon conflict behaivor
+
 FIXES
     - Fix taint issue in pet battle
 ]=])

@@ -1,67 +1,27 @@
 local _, GW = ...
 
-local IncompatibleAddons = {
-    Actionbars = {
-        "Bartender4",
-        "Dominos",
-    },
-    ImmersiveQuesting = {
-        "Storyline",
-        "Immersive",
-        "Immersion",
-        "Tofu",
-        "Queso",
-    },
-    DynamicCam = {
-        "DynamicCam",
-        "Queso",
-    },
-    Inventory = {
-        "AdiBags",
-        "ArkInventory",
-        "Bagnon",
-        "Sorted",
-    },
-    Minimap = {
-        "SexyMap",
-    },
-    FloatingCombatText = {
-        "ClassicFCT",
-        "xCT+",
-        "NameplateSCT",
-    },
-    Objectives = {
-        "!KalielsTracker",
-    },
-}
-
-local function CheckForIncompatibleAddonModule(addon, module) -- works only for ace3 addons
-    local loaded = false
-    if addon == "Bartender4" and IsAddOnLoaded(addon) then
-        loaded = LibStub("AceAddon-3.0", true):GetAddon(addon, true):GetModule(module).db.profile.enabled
-    end
-    return loaded, loaded and module or nil
-end
-
-local function IsIncompatibleAddonLoaded(setting, checkAce3Module, ace3AddonName, ace3AddonModule)
+local function IsIncompatibleAddonLoadedOrOverride(setting, LoadedAndOverride)
     local IncompatibleAddonLoaded = false
     local whichAddonsIsLoaded = ""
-    for settings, addons in pairs(IncompatibleAddons) do
+    local isOverride = false
+    for settings, table in pairs(GW.GetSetting("IncompatibleAddons")) do
         if settings == setting then
-            for _, addon in ipairs(addons) do
+            isOverride = table.Override
+            for _, addon in ipairs(table.Addons) do
                 if IsAddOnLoaded(addon) then
                     IncompatibleAddonLoaded = true
-                    local moduleLoadedText
-                    if checkAce3Module then
-                        IncompatibleAddonLoaded, moduleLoadedText = CheckForIncompatibleAddonModule(ace3AddonName, ace3AddonModule)
-                    end
-                    whichAddonsIsLoaded =  select(2, GetAddOnInfo(addon)) .. (checkAce3Module and moduleLoadedText and " (" .. ace3AddonModule .. ")" or "") .. ", " .. whichAddonsIsLoaded
+
+                    whichAddonsIsLoaded =  select(2, GetAddOnInfo(addon)) .. ", " .. whichAddonsIsLoaded
                 end
             end
         end
     end
 
     if strlen(whichAddonsIsLoaded) > 0 then whichAddonsIsLoaded = strsub(whichAddonsIsLoaded, 0 , strlen(whichAddonsIsLoaded) - 2) end
-    return IncompatibleAddonLoaded, whichAddonsIsLoaded
+    if LoadedAndOverride then
+        return IncompatibleAddonLoaded and isOverride and false or IncompatibleAddonLoaded and not isOverride and true
+    else
+        return IncompatibleAddonLoaded, whichAddonsIsLoaded, isOverride
+    end
 end
-GW.IsIncompatibleAddonLoaded = IsIncompatibleAddonLoaded
+GW.IsIncompatibleAddonLoadedOrOverride = IsIncompatibleAddonLoadedOrOverride

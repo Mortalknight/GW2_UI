@@ -6,7 +6,7 @@ local SetSetting = GW.SetSetting
 local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
-local IsIncompatibleAddonLoaded = GW.IsIncompatibleAddonLoaded
+local IsIncompatibleAddonLoadedOrOverride = GW.IsIncompatibleAddonLoadedOrOverride
 local Debug = GW.Debug
 local LibSharedMedia = GW.Libs.LSM
 
@@ -24,7 +24,7 @@ if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
     return
 end
 
-if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoaded("Actionbars") then
+if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
     DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r"):gsub("*", GW.Gw2Color))
 end
 
@@ -40,7 +40,7 @@ if Profiler then
 end
 
 local function disableMABags()
-    local bags = GetSetting("BAGS_ENABLED") and not IsIncompatibleAddonLoaded("Inventory")
+    local bags = GetSetting("BAGS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Inventory", true)
     if not bags or not MovAny or not MADB then
         return
     end
@@ -491,7 +491,7 @@ local function loadAddon(self)
         GW.LoadFonts()
     end
 
-    if not IsIncompatibleAddonLoaded("FloatingCombatText") then -- Only touch this setting if no other addon for this is loaded
+    if not IsIncompatibleAddonLoadedOrOverride("FloatingCombatText", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("GW_COMBAT_TEXT_MODE") == "GW2" then
             SetCVar("floatingCombatTextCombatDamage", 0)
             GW.LoadDamageText()
@@ -507,21 +507,21 @@ local function loadAddon(self)
         GW.LoadCastingBar(PetCastingBarFrame, "GwCastingBarPet", "pet", false)
     end
 
-    if GetSetting("MINIMAP_ENABLED") and not IsIncompatibleAddonLoaded("Minimap") then
+    if GetSetting("MINIMAP_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Minimap", true) then
         GW.LoadMinimap()
     end
 
-    if GetSetting("QUESTTRACKER_ENABLED") and not IsIncompatibleAddonLoaded("Objectives") then
+    if GetSetting("QUESTTRACKER_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
         GW.LoadQuestTracker()
     else
-        GW.AdjustQuestTracker((GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoaded("Actionbars")), (GetSetting("MINIMAP_ENABLED") and not IsIncompatibleAddonLoaded("Minimap")))
+        GW.AdjustQuestTracker((GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true)), (GetSetting("MINIMAP_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Minimap", true)))
     end
 
     if GetSetting("TOOLTIPS_ENABLED") then
         GW.LoadTooltips()
     end
 
-    if GetSetting("QUESTVIEW_ENABLED") and not IsIncompatibleAddonLoaded("ImmersiveQuesting") then
+    if GetSetting("QUESTVIEW_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("ImmersiveQuesting", true) then
         GW.LoadQuestview()
     end
 
@@ -542,7 +542,7 @@ local function loadAddon(self)
         GW.LoadPowerBar()
     end
 
-    if not IsIncompatibleAddonLoaded("Inventory") then -- Only touch this setting if no other addon for this is loaded
+    if not IsIncompatibleAddonLoadedOrOverride("Inventory", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("BAGS_ENABLED") then
             GW.LoadInventory()
             GW.SkinLooTFrame()
@@ -595,7 +595,7 @@ local function loadAddon(self)
     end
 
     -- create action bars
-    if GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoaded("Actionbars") then
+    if GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
         GW.LoadActionBars(lm)
         GW.ExtraAB_BossAB_Setup()
     end
@@ -610,7 +610,7 @@ local function loadAddon(self)
         GW.LoadPlayerAuras(lm)
     end
 
-    if not IsIncompatibleAddonLoaded("DynamicCam") then -- Only touch this setting if no other addon for this is loaded
+    if not IsIncompatibleAddonLoadedOrOverride("DynamicCam", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("DYNAMIC_CAM") then
             SetCVar("test_cameraDynamicPitch", true)
             SetCVar("cameraKeepCharacterCentered", false)

@@ -529,3 +529,60 @@ GW_DEFAULT["player_pos"]["relativePoint"] = "CENTER"
 GW_DEFAULT["player_pos"]["xOfs"] = -56
 GW_DEFAULT["player_pos"]["yOfs"] = -100
 GW_DEFAULT["player_pos_scale"] = 1
+
+-- incompatible addons
+GW_DEFAULT.IncompatibleAddons = {
+    Actionbars = {
+        Override = false,
+        Addons = {
+            "Bartender4",
+            "Dominos",
+        },
+    },
+    ImmersiveQuesting = {
+        Override = false,
+        Addons = {
+            "Storyline",
+            "Immersive",
+            "Immersion",
+            "Tofu",
+            "Queso",
+        },
+    },
+    DynamicCam = {
+        Override = false,
+        Addons = {
+            "DynamicCam",
+            "Queso",
+        },
+    },
+    Inventory = {
+        Override = false,
+        Addons = {
+            "AdiBags",
+            "ArkInventory",
+            "Bagnon",
+            "Sorted",
+        },
+    },
+    Minimap = {
+        Override = false,
+        Addons = {
+            "SexyMap",
+        },
+    },
+    FloatingCombatText = {
+        Override = false,
+        Addons = {
+            "ClassicFCT",
+            "xCT+",
+            "NameplateSCT",
+        },
+    },
+    Objectives = {
+        Override = false,
+        Addons = {
+            "!KalielsTracker",
+        },
+    },
+}
