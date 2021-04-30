@@ -340,6 +340,6 @@ L["Set the maximum number of lines displayed in the Copy Chat Frame"] = "Setze d
 L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] = "Die folgenden Addons wurden geladen, was zu Konflikten führen kann. Standardmäßig ist diese Einstellung deaktiviert."
 L["Stance Bar Growth Direction"] = "Stance Bar Wachstumsrichtung"
 L["Set the growth direction of the stance bar"] = "Setze die Wachstumsrichtung der Stance Bar"
-L["Ctrl + Click to toggle override"] = "Strg. + Klick umd die Einstellung zu überschreiben"
+L["Ctrl + Click to toggle override"] = "Strg. + Klick um die Einstellung zu überschreiben"
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = "Inkompatibles Addons-Verhalten überschrieben. Benötigt ein Nachladen, um wirksam zu werden."
 L["You have overridden this behavior."] = "Du hast dieses Verhalten überschrieben."
