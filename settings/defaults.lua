@@ -355,9 +355,9 @@ GW_DEFAULT["TotemBar_SortDirection"] = "ASC"
 
 GW_DEFAULT["StanceBar_pos"] = {}
 GW_DEFAULT["StanceBar_pos"]["point"] = "BOTTOMLEFT"
-GW_DEFAULT["StanceBar_pos"]["relativePoint"] = "BOTTOMLEFT"
-GW_DEFAULT["StanceBar_pos"]["xOfs"] = 360
-GW_DEFAULT["StanceBar_pos"]["yOfs"] = 30
+GW_DEFAULT["StanceBar_pos"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["StanceBar_pos"]["xOfs"] = -405
+GW_DEFAULT["StanceBar_pos"]["yOfs"] = 31
 GW_DEFAULT["StanceBar_pos_scale"] = 1
 GW_DEFAULT["StanceBar_GrowDirection"] = "UP"
 
