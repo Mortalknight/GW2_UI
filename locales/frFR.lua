@@ -189,7 +189,6 @@ L["Modifier for IDs"] = "Modificateur pour les identifiants"
 L["Modify the focus frame settings."] = "Modifier les configurations du cadre du focus."
 L["Modify the player frame settings."] = "Modifier les options du cadre du joueur."
 L["Modify the target frame settings."] = "Modifier les options du cadre de la cible."
-L["MODULES"] = true
 L["Modules"] = true
 L["Move and resize the player auras."] = "Déplacer et redimensionner les auras du joueur."
 L["Move HUD"] = "Déplacer l'ATH"

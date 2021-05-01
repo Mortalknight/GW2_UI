@@ -157,7 +157,6 @@ L["Minimap details"] = true
 L["Always show Minimap details."] = true
 L["Minimap Scale"] = true
 L["Change the Minimap size."] = true
-L["MODULES"] = true
 L["Modules"] = true
 L["Enable and disable components"] = true
 L["Enable or disable the modules you need and don't need."] = true
