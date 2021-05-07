@@ -1011,7 +1011,7 @@ local function LoadBag(helpers)
     smsj.shadow:SetAllPoints()
     smsj.shadow:SetColorTexture(0.1, 0.1, 0.1, 1.0)
 
-    smsj.text = smsj:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge") 
+    smsj.text = smsj:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
     smsj.text:SetAllPoints();
     smsj.text:SetText(L["Selling junk"])
 

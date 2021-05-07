@@ -166,6 +166,21 @@ objectives/extraAB_bossAB.lua
 objectives/altPowerBar.lua
 objectives/widgetUI.lua
 
+social/social.xml
+social/ignoreList.xml
+social/raf.xml
+social/friends.xml
+social/who.xml
+social/quickjoin.xml
+social/raid.xml
+social/raid.lua
+social/quickjoin.lua
+social/who.lua
+social/friends.lua
+social/raf.lua
+social/ignoreList.lua
+social/social.lua
+
 character/character.xml
 character/paperdoll.xml
 character/reputation.xml

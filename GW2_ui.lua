@@ -17,7 +17,10 @@ local l = CreateFrame("Frame", nil, UIParent) -- Main event frame
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
 -- setup Binding Header color
-_G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
+BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
+
+-- Make a global GW variable , so others cann access out functions
+GW2_ADDON = GW
 
 if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
     DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r You have installed GW2_UI retail version. Please install the classic version to use GW2_UI."):gsub("*", GW.Gw2Color))
@@ -94,7 +97,7 @@ local function buttonAnim(self, name, w, hover)
     local l = GW.lerp(0, w, prog)
 
     hover:SetPoint("RIGHT", self, "LEFT", l, 0)
-    hover:SetVertexColor(1, 1, 1, GW.lerp(0, 1, ((prog) - 0.5) / 0.5))
+    hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, GW.lerp(0, 1, ((prog) - 0.5) / 0.5))
 end
 GW.AddForProfiling("index", "buttonAnim", buttonAnim)
 
@@ -557,6 +560,8 @@ local function loadAddon(self)
     end
 
     GW.LoadCharacter()
+
+    GW.LoadSocialFrame()
 
     GW.LoadMirrorTimers()
     GW.LoadAutoRepair()

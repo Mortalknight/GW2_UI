@@ -161,7 +161,7 @@ local charSecure_OnAttributeChanged =
             return
         else
             showTal = true
-            fmSBM:SetAttribute("tabopen", 4)
+            fmSBM:SetAttribute("tabopen", 5)
         end
     elseif fmProf ~= nil and value == "professions" then
         if keytoggle and fmProf:IsVisible() then -- and fmSBM and fmSBM:GetAttribute("tabopen") == 4 then

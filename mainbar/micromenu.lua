@@ -174,7 +174,7 @@ local function gwMicro_PositionAlert(alert)
             alert ~= StoreMicroButtonAlert and
             alert ~= CharacterMicroButtonAlert and
             alert ~= TalentMicroButtonAlert)
-     then
+    then
         return
     end
     alert.Arrow:ClearAllPoints()

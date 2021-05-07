@@ -379,7 +379,7 @@ GW.AddForProfiling("currency", "menuItem_OnClick", menuItem_OnClick)
 
 local function LoadCurrency(tabContainer)
     -- setup the currency window as a HybridScrollFrame and init each of the faux frame buttons
-    local curwin_outer = CreateFrame("Frame", nil, tabContainer, "GwCurrencyWindow")
+    local curwin_outer = CreateFrame("Frame", "GWCharacterCurrenyRaidInfoFrame", tabContainer, "GwCurrencyWindow")
     local curwin = curwin_outer.CurrencyScroll
 
     curwin.update = loadCurrency
@@ -425,7 +425,7 @@ local function LoadCurrency(tabContainer)
     raidinfo:RegisterEvent("UPDATE_INSTANCE_INFO")
 
     -- setup a menu frame
-    local fmMenu = CreateFrame("Frame", nil, tabContainer, "GwCharacterMenu")
+    local fmMenu = CreateFrame("Frame", "GWCurrencyMenu", tabContainer, "GwCharacterMenu")
     fmMenu.items = {}
 
     local item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")

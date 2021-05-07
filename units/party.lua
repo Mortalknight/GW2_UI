@@ -515,11 +515,8 @@ local function createPartyFrame(i)
     frame:SetAttribute("*type1", "target")
     frame:SetAttribute("*type2", "togglemenu")
 
-    if i > 0 then
-        RegisterUnitWatch(frame)
-    else
-        RegisterStateDriver(frame, "visibility", "[group:raid] hide; [group:party] show; hide")
-    end
+    RegisterStateDriver(frame, "visibility", "[group:raid] hide; [group:party] show; hide")
+
     frame:EnableMouse(true)
     frame:RegisterForClicks("AnyUp")
 
