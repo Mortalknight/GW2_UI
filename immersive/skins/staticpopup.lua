@@ -1,5 +1,4 @@
 local _, GW = ...
-local SkinButton = GW.skins.SkinButton
 
 local function gwSetStaticPopupSize()
     for i = 1, 4 do
@@ -10,6 +9,10 @@ local function gwSetStaticPopupSize()
         _G["StaticPopup" .. i .. "ItemFrame"].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         _G["StaticPopup" .. i .. "ItemFrameNormalTexture"]:SetTexture(nil)
+        _G["StaticPopup" .. i .. "CloseButton"]:SkinButton(true)
+        _G["StaticPopup" .. i .. "CloseButton"]:SetSize(20, 20)
+        _G["StaticPopup" .. i .. "CloseButton"]:ClearAllPoints()
+        _G["StaticPopup" .. i .. "CloseButton"]:SetPoint("TOPRIGHT", -20, -5)
     end
 end
 
@@ -17,7 +20,8 @@ local function SkinStaticPopup()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
 
-        StaticPopup:SetBackdrop(nil)
+        StaticPopup:StripTextures()
+        StaticPopup:CreateBackdrop()
         StaticPopup.CoverFrame:Hide()
         StaticPopup.Separator:Hide()
 
@@ -43,8 +47,45 @@ local function SkinStaticPopup()
         _G["StaticPopup" .. i .. "EditBoxMid"]:ClearAllPoints()
         _G["StaticPopup" .. i .. "EditBoxMid"]:SetPoint("TOPLEFT", _G["StaticPopup" .. i .. "EditBoxLeft"], "BOTTOMRIGHT", -25, 3)
         _G["StaticPopup" .. i .. "EditBoxMid"]:SetPoint("BOTTOMRIGHT", _G["StaticPopup" .. i .. "EditBoxRight"], "TOPLEFT", 25, -3)
-
-        hooksecurefunc("StaticPopup_OnUpdate", gwSetStaticPopupSize)
     end
+
+    hooksecurefunc("StaticPopup_OnUpdate", gwSetStaticPopupSize)
+    --Movie skip Frame
+    hooksecurefunc("CinematicFrame_OnDisplaySizeChanged", function(self)
+        if self and self.closeDialog and not self.closeDialog.template then
+            self.closeDialog.Border:Hide()
+
+            local tex = self.closeDialog:CreateTexture("bg", "BACKGROUND")
+            tex:SetPoint("TOP", self.closeDialog, "TOP", 0, 0)
+            tex:SetSize(self.closeDialog:GetSize())
+            tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+            self.closeDialog.tex = tex
+
+            local dialogName = self.closeDialog.GetName and self.closeDialog:GetName()
+            local closeButton = self.closeDialog.ConfirmButton or (dialogName and _G[dialogName .. "ConfirmButton"])
+            local resumeButton = self.closeDialog.ResumeButton or (dialogName and _G[dialogName .. "ResumeButton"])
+            if closeButton then 
+                closeButton:SkinButton(false, true)
+            end
+            if resumeButton then
+                resumeButton:SkinButton(false, true)
+            end
+        end
+    end)
+
+    hooksecurefunc("MovieFrame_PlayMovie", function(self)
+        if self and self.CloseDialog and not self.CloseDialog.template then
+            self.CloseDialog.Border:Hide()
+
+            local tex = self.CloseDialog:CreateTexture("bg", "BACKGROUND")
+            tex:SetPoint("TOP", self.CloseDialog, "TOP", 0, 0)
+            tex:SetSize(self.CloseDialog:GetSize())
+            tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+            self.CloseDialog.tex = tex
+
+            self.CloseDialog.ConfirmButton:SkinButton(false, true)
+            self.CloseDialog.ResumeButton:SkinButton(false, true)
+        end
+    end)
 end
 GW.SkinStaticPopup = SkinStaticPopup
