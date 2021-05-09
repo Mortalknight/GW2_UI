@@ -2,9 +2,9 @@ local _, GW = ...
 local maxTalentRows = 7
 local talentsPerRow = 3
 --Legacy
-local MAX_NUM_TALENTS = 20
+local MAX_NUM_TALENTS = 25
 -- Default 8 but none uses 8 talent rows in classic
-local MAX_NUM_TALENT_TIERS = 8
+local MAX_NUM_TALENT_TIERS = 9
 local NUM_TALENT_COLUMNS = 4
 local TALENT_BRANCH_ARRAY = {}
 
@@ -155,9 +155,9 @@ local function updateTalentTrees()
     if InCombatLockdown() then return end
 
     for f = 1, GW.api.GetNumSpecializations() do
-        local forceDesaturated, tierUnlocked
+        local forceDesaturated
         local talentPoints = UnitCharacterPoints("player")
-        local name, iconTexture, pointsSpent = GetTalentTabInfo(f)
+        local name, _, pointsSpent = GetTalentTabInfo(f)
         local TalentFrame = _G["GwLegacyTalentTree" .. f]
 
         TalentFrame.pointsSpent = pointsSpent
@@ -179,7 +179,7 @@ local function updateTalentTrees()
         local numTalents = GetNumTalents(f)
         for i = 1, MAX_NUM_TALENTS do
             if i <= numTalents then
-                local name, texture, tier, column, rank, maxRank, isExceptional, available, spellid = GetTalentInfo(f, i)
+                local name, texture, tier, column, rank, maxRank, isExceptional, available = GetTalentInfo(f, i)
 
                 TALENT_BRANCH_ARRAY[f][tier][column].id = i
                 local button = _G['GwLegacyTalentTree' .. f .. 'Teir' .. tier .. 'index' .. column]
@@ -259,19 +259,9 @@ local function updateTalentTrees()
 end
 
 local function loadTalentsFrames()
-    local classDisplayName, class, classID = UnitClass('player')
-    local txR, txT, txH, txMH
-
-    txR = 588 / 1024
-    txT = 0
-    txH = 140
-    txMH = 512
-    local specs = GW.api.GetNumSpecializations()
-    if specs > 3 then
-        txMH = 1024
-    end
-
+    local _, _, classID = UnitClass('player')
     local mask = UIParent:CreateMaskTexture()
+    
     mask:SetPoint("TOPLEFT", GwCharacterWindow, 'TOPLEFT', 0, 0)
     mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\windowbg-mask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(853, 853)
@@ -284,7 +274,6 @@ local function loadTalentsFrames()
         container:SetPoint('TOPLEFT', GwTalentFrame, 'TOPLEFT', (284 * (i - 1)) + 5, -92)
         container.spec = i
 
-        local id, name, description, icon, background, role, primaryStat = GW.api.GetSpecializationInfo(i)
         container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
         container.background:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
         container.background:AddMaskTexture(mask)

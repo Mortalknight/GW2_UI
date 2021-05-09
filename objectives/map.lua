@@ -505,37 +505,11 @@ local function LoadMinimap()
 
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
+    MiniMapTracking:SetPoint("TOPLEFT", Minimap, -15, -30)
     GameTimeFrame:SetPoint("TOPLEFT", Minimap, -42, 0)
     MiniMapMailFrame:SetPoint("TOPLEFT", Minimap, 45, 15)
     MiniMapBattlefieldFrame:ClearAllPoints()
     MiniMapBattlefieldFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 45, 0)
-
-    MiniMapTrackingFrame:UnregisterAllEvents()
-    MiniMapTrackingFrame:SetScript("OnEvent", nil)
-    MiniMapTrackingFrame:Hide()
-    GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
-    GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -43, 0)
-    local icontype = GetTrackingTexture()
-    if icontype == 132328 then icontype = icontype .. GW.myClassID end
-    if icontype and trackingTypes[icontype] then
-        GwMiniMapTrackingIcon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
-        GwMiniMapTrackingFrame:Show()
-    else
-        GwMiniMapTrackingFrame:Hide()
-    end
-    GwMiniMapTrackingFrame:RegisterEvent("UNIT_AURA")
-    GwMiniMapTrackingFrame:SetScript("OnEvent", function(self, event) 
-        if event == "UNIT_AURA" then
-            local icontype = GetTrackingTexture()
-            if icontype == 132328 then icontype = icontype .. GW.myClassID end
-            if icontype and trackingTypes[icontype] then     
-                GwMiniMapTrackingIcon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
-                GwMiniMapTrackingFrame:Show()
-            else
-                GwMiniMapTrackingFrame:Hide()
-            end
-        end
-    end)
 
     MinimapZoneText:SetTextColor(1, 1, 1)
 
@@ -636,6 +610,17 @@ local function LoadMinimap()
                 self:SetZoom(self:GetZoom() + 1)
             elseif delta < 0 and self:GetZoom() > 0 then
                 self:SetZoom(self:GetZoom() - 1)
+            end
+        end
+    )
+
+    Minimap:SetScript(
+        "OnMouseDown",
+        function(_, button)
+            if button == "RightButton" then
+                ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "MiniMapTracking", 0, -5)
+
+                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
             end
         end
     )

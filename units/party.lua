@@ -10,8 +10,6 @@ local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
-local LibLCD = GW.Libs.LCD
-local UnitAura = GW.Libs.LCD.UnitAuraWithBuffs
 local LHC = GW.Libs.LHC
 
 local GW_READY_CHECK_INPROGRESS = false
@@ -867,10 +865,6 @@ local function createPartyFrame(i)
     LHC.RegisterCallback(frame, "HealComm_HealDelayed", HealCommEventHandler)
     LHC.RegisterCallback(frame, "HealComm_ModifierChanged", HealCommEventHandler)
     LHC.RegisterCallback(frame, "HealComm_GUIDDisappeared", HealCommEventHandler)
-
-    LibLCD.RegisterCallback("GW2_UI", "UNIT_BUFF", function(event, unit)
-        party_OnEvent(frame, "UNIT_AURA", unit)
-    end) 
 
     party_OnEvent(frame, "load")
 

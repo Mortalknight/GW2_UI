@@ -31,13 +31,8 @@ do
         GW.Libs[name] = _G.LibStub(libname, silent)
     end
 
-    AddLib("LCD", "LibClassicDurations", true)
-    AddLib("LCC", "LibClassicCasterino", true)
     AddLib("LHC", "LibHealComm-4.0", true)
     AddLib("Compress", "LibCompress", true)
     AddLib("Serializer", "AceSerializer-3.0", true)
     AddLib("LibBase64", "LibBase64-1.0", true)
-    if GW.Libs.LCD then
-        GW.Libs.LCD:Register("GW2_UI")
-    end
 end

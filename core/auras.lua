@@ -3,7 +3,6 @@ local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local GetSetting = GW.GetSetting
 local TimeCount = GW.TimeCount
-local UnitAura = GW.Libs.LCD.UnitAuraWithBuffs
 
 local textureMapping = {
     [1] = 16,    --Main hand

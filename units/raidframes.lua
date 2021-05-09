@@ -21,8 +21,6 @@ local IsIn = GW.IsIn
 local TimeCount = GW.TimeCount
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
-local LCD = GW.Libs.LCD
-local UnitAura = GW.Libs.LCD.UnitAuraWithBuffs
 local LHC = GW.Libs.LHC
 
 local GROUPD_TYPE = "PARTY"
@@ -1107,10 +1105,6 @@ local function createRaidFrame(registerUnit, index)
     LHC.RegisterCallback(frame, "HealComm_HealDelayed", HealCommEventHandler)
     LHC.RegisterCallback(frame, "HealComm_ModifierChanged", HealCommEventHandler)
     LHC.RegisterCallback(frame, "HealComm_GUIDDisappeared", HealCommEventHandler)
-
-    LCD.RegisterCallback("GW2_UI", "UNIT_BUFF", function(event, unit)
-        raidframe_OnEvent(frame, "UNIT_AURA", unit)
-    end) 
 
     raidframe_OnEvent(frame, "load")
 

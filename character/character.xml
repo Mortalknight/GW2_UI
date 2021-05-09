@@ -147,7 +147,7 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.skillsMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentHonor" parentKey="honorMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="HONOR" >
+            <Button name="$parentHonor" parentKey="honorMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="PVP" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.reputationMenu" relativePoint="BOTTOMLEFT"></Anchor>
@@ -164,7 +164,7 @@
             <OnLoad>
                 self.skillsMenu:SetText(SKILLS)
                 self.reputationMenu:SetText(REPUTATION)
-                self.honorMenu:SetText(HONOR)
+                self.honorMenu:SetText(PVP)
                 self.petMenu:SetText(PET)
                 if not HasPetUI() then self.petMenu:Hide() end
             </OnLoad>
@@ -1114,7 +1114,7 @@
         </Frames>
         <Scripts>
             <OnLoad>
-                self.backButton:SetText(CHARACTER .. ": " .. HONOR)
+                self.backButton:SetText(CHARACTER .. ": " .. PVP)
                 self:RegisterEvent("PLAYER_PVP_KILLS_CHANGED")
                 self:RegisterEvent("PLAYER_ENTERING_WORLD")
                 self:RegisterEvent("PLAYER_PVP_RANK_CHANGED")
@@ -1123,13 +1123,13 @@
             </OnLoad>
             <OnEvent>
                 if event == "PLAYER_PVP_KILLS_CHANGED" or event == "PLAYER_PVP_RANK_CHANGED" then
-                    UpdateHonorTab()
+                    --UpdateHonorTab()
                 elseif event == "PLAYER_ENTERING_WORLD" then
-                    UpdateHonorTab(1)
+                    --UpdateHonorTab(1)
                 elseif event == "UNIT_LEVEL" then
-                    UpdateHonorTab()
+                    --UpdateHonorTab()
                 elseif event == "PLAYER_GUILD_UPDATE" then
-                    UpdateHonorTab()
+                    --UpdateHonorTab()
                 end
             </OnEvent>
         </Scripts>

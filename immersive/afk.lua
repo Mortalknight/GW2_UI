@@ -2,7 +2,6 @@ local _, GW = ...
 local L = GW.L
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
-local LCC = GW.Libs.LCC
 
 local ignoreKeys = {
     LALT = true,
@@ -86,7 +85,7 @@ local function AFKMode_OnEvent(self, event, ...)
     end
 
     if InCombatLockdown() or CinematicFrame:IsShown() or MovieFrame:IsShown() then return end
-    if LCC:UnitCastingInfo("player") ~= nil then
+    if UnitCastingInfo("player") ~= nil then
         --Don't activate afk if player is crafting stuff, check back in 30 seconds
         C_Timer.After(30, function() AFKMode_OnEvent(self) end)
         return
@@ -218,7 +217,7 @@ local function loadAFKAnimation()
     AFKMode.bottom = CreateFrame("Frame", nil, AFKMode)
     AFKMode.bottom:SetFrameLevel(0)
     AFKMode.bottom:SetPoint("BOTTOM", AFKMode, "BOTTOM", 0, -5)
-    AFKMode.bottom:SetBackdrop(BackdropFrame)
+    AFKMode.bottom:CreateBackdrop(BackdropFrame)
     AFKMode.bottom:SetWidth(GetScreenWidth() + (GW.border * 2))
     AFKMode.bottom:SetHeight(GetScreenHeight() * (1.5 / 10))
 

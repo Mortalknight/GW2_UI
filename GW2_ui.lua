@@ -10,15 +10,10 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
 
-GW.VERSION_STRING = "@project-version@ Classic"
+GW.VERSION_STRING = "@project-version@ TBC Classic"
 
 -- setup Binding Header color
 _G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
-
-if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then 
-    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r You have installed GW2_UI classic version. Please install the retail version to use GW2_UI.")
-    return
-end
 
 if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") then 
     DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")

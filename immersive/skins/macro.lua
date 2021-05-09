@@ -1,10 +1,6 @@
 local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 local constBackdropFrame = GW.skins.constBackdropFrame
-local SkinButton = GW.skins.SkinButton
-local SkinTab = GW.skins.SkinTab
-local SkinScrollBar = GW.skins.SkinScrollBar
-local SkinScrollFrame = GW.skins.SkinScrollFrame
 
 local function SkinMacroOptions()
     MacroFrame_LoadUI()
@@ -14,7 +10,6 @@ local function SkinMacroOptions()
     _G.MacroFrameBg:Hide()
     MacroFrame.TitleBg:Hide()
     MacroFrame.TopTileStreaks:Hide()
-    MacroFrame:SetBackdrop(nil)
 
     _G.MacroFrameInsetInsetTopBorder:Hide()
     _G.MacroFrameInsetInsetBottomBorder:Hide()
@@ -25,9 +20,10 @@ local function SkinMacroOptions()
     _G.MacroFrameInsetInsetBotRightCorner:Hide()
     _G.MacroFrameInsetInsetBotLeftCorner:Hide()
 
-    _G.MacroFrameInset:SetBackdrop(constBackdropFrameBorder)
+    _G.MacroFrameInset:CreateBackdrop(constBackdropFrameBorder)
     _G.MacroHorizontalBarLeft:Hide()
-    _G.MacroFrameTextBackground:SetBackdrop(constBackdropFrame)
+    MacroFrameTextBackground:StripTextures() -- TODO
+    _G.MacroFrameTextBackground:CreateBackdrop(constBackdropFrame)
 
     local r = {MacroFrame:GetRegions()}
     local i = 1
@@ -138,7 +134,7 @@ local function SkinMacroOptions()
     MacroPopupFrame.BG:Hide()
 
     MacroPopupFrame:SetSize(MacroPopupFrame:GetSize(), MacroPopupFrame:GetSize() + 5)
-    MacroPopupFrame:SetBackdrop(constBackdropFrame)
+    MacroPopupFrame:CreateBackdrop(constBackdropFrame)
 
     for i = 1, _G.NUM_MACRO_ICONS_SHOWN do
         local button = _G["MacroPopupButton" .. i]

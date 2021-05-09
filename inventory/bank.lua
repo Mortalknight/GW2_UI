@@ -494,7 +494,7 @@ local function LoadBank(helpers)
     do
         EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
         local dd = f.buttonSettings.dropdown
-        dd:SetBackdrop(GW.skins.constBackdropFrame)
+        dd:CreateBackdrop(GW.skins.constBackdropFrame)
         f.buttonSettings:SetScript(
             "OnClick",
             function(self)

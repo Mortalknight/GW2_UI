@@ -368,21 +368,7 @@ local function setUnknowSpellButton(self,icon,spellID,rank,ispassive,level)
     end
     self:SetScript("OnEnter",gw_spell_buttonOnEnter)
     self:SetScript("OnLeave",gw_spell_buttonOnLeave)
-
-
 end
-
-local function checkIfSkillShouldShown(skillID)
-    local skillNameToCheck =  GetSpellInfo(skillID)
-    for skillIndex = 1, GetNumSkillLines() do
-        local skillName, _, _, skillRank = GetSkillLineInfo(skillIndex)
-        if skillName == skillNameToCheck and skillRank > 0 then
-            return false
-        end
-    end
-    return true
-end
-
 
 local function filterUnknownSpell(knownSpellID,spell)
     local show = true
