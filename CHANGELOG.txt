@@ -1,3 +1,7 @@
+5.14.1
+FIXES
+    - Fix a group layout issue
+
 5.14.0
 NEW
     - Make stancebar movable and let you choose the grow direction
