@@ -207,18 +207,6 @@ local function hideMiniMapIcons()
 end
 GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 
-local function MapPositionToXY(arg)
-    local mapID = C_Map.GetBestMapForUnit(arg)
-    if mapID and arg then
-        local mapPos = C_Map.GetPlayerMapPosition(mapID, arg)
-        if mapPos then
-            return mapPos:GetXY()
-        end
-    end
-    return 0, 0
-end
-GW.AddForProfiling("map", "MapPositionToXY", MapPositionToXY)
-
 local function MapCoordsMiniMap_OnEnter(self) 
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
     GameTooltip:AddLine(L["MAP_COORDINATES_TITLE"])  
@@ -229,11 +217,10 @@ end
 GW.AddForProfiling("map", "MapCoordsMiniMap_OnEnter", MapCoordsMiniMap_OnEnter)
 
 local function mapCoordsMiniMap_setCoords(self)
-    local posX, posY = MapPositionToXY("player")
-    if (posX == 0 and posY == 0) then
-        self.Coords:SetText("n/a")
+    if GW.locationData.x and GW.locationData.y then
+        self.Coords:SetText(RoundDec(GW.locationData.xText, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(GW.locationData.yText, self.MapCoordsMiniMapPrecision))
     else
-        self.Coords:SetText(RoundDec(posX * 1000 / 10, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(posY * 1000 / 10, self.MapCoordsMiniMapPrecision)) 
+        self.Coords:SetText("n/a")
     end
 end
 GW.AddForProfiling("map", "mapCoordsMiniMap_setCoords", mapCoordsMiniMap_setCoords)

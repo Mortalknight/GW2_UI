@@ -228,7 +228,7 @@ GW.AddForProfiling("bag", "rescanBagContainers", rescanBagContainers)
 
 -- draws the backpack bag slots in the correct order
 local function setBagBarOrder(f)
-    local x, y = -40
+    local x, y = -40, nil
     local bag_size = 28
     local bag_padding = 4
     local rev = GetSetting("BAG_REVERSE_SORT")

@@ -1,25 +1,7 @@
 local _, GW = ...
 
 local CoordsFrame
-local moveDistance, mapX, mapY, mapLeft, mapTop, mapNormalScale, mapEffectiveScale = 0, 0, 0, 0, 0, 1
-
-local mapRects, tempVec2D = {}, CreateVector2D(0, 0)
-local function GetPlayerMapPos(mapID)
-	tempVec2D.x, tempVec2D.y = UnitPosition("player")
-	if not tempVec2D.x then return end
-
-	local mapRect = mapRects[mapID]
-	if not mapRect then
-		mapRect = {
-			select(2, C_Map.GetWorldPosFromMapPos(mapID, CreateVector2D(0, 0))),
-			select(2, C_Map.GetWorldPosFromMapPos(mapID, CreateVector2D(1, 1)))}
-		mapRect[2]:Subtract(mapRect[1])
-		mapRects[mapID] = mapRect
-	end
-	tempVec2D:Subtract(mapRect[1])
-
-	return (tempVec2D.y/mapRect[2].y), (tempVec2D.x/mapRect[2].x)
-end
+local moveDistance, mapX, mapY, mapLeft, mapTop, mapNormalScale, mapEffectiveScale = 0, 0, 0, 0, 0, 1, 0
 
 local function UpdateCoords()
     local WorldMapFrame = _G.WorldMapFrame
@@ -27,22 +9,12 @@ local function UpdateCoords()
         return
     end
 
-	local x, y
-	local mapID = C_Map.GetBestMapForUnit("player")
-	if mapID then
-		x, y = GetPlayerMapPos(mapID)
-	else
-		x, y = nil, nil
-	end
-
-	if x and y then
-		x = GW.RoundDec(100 * x, 2)
-		y = GW.RoundDec(100 * y, 2)
-		CoordsFrame.Coords:SetFormattedText("%s: %.2f, %.2f", PLAYER, (x or 0), (y or 0))
-	else
-		CoordsFrame.Coords:SetFormattedText("%s: %s", PLAYER, "n/a")
+    if GW.locationData.x and GW.locationData.y then
+        CoordsFrame.Coords:SetFormattedText("%s: %.2f, %.2f", PLAYER, (GW.locationData.xText or 0), (GW.locationData.yText or 0))
+    else
+        CoordsFrame.Coords:SetFormattedText("%s: %s", PLAYER, "n/a")
     end
-    
+
     if WorldMapFrame.ScrollContainer:IsMouseOver() then
         local x, y = WorldMapFrame.ScrollContainer:GetNormalizedCursorPosition()
         if x and y and x >= 0 and y >= 0 then
@@ -74,6 +46,7 @@ local function SkinWorldMap()
 
     _G.WorldMapContinentDropDown:SkinDropDownMenu()
     _G.WorldMapZoneDropDown:SkinDropDownMenu()
+    WorldMapZoneMinimapDropDown:SkinDropDownMenu()
 
     _G.WorldMapContinentDropDown:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 330, -35)
     _G.WorldMapContinentDropDown:SetWidth(205)
@@ -112,8 +85,8 @@ local function SkinWorldMap()
 
     _G.WorldMapTooltip:SetFrameLevel(WorldMapFrame.ScrollContainer:GetFrameLevel() + 110)
 
-	-- Added Coords to Worldmap
-	local CoordsTimer = nil
+    -- Added Coords to Worldmap
+    local CoordsTimer = nil
     CoordsFrame = CreateFrame("Frame", nil, WorldMapFrame)
     CoordsFrame:SetFrameLevel(WorldMapFrame.BorderFrame:GetFrameLevel() + 2)
     CoordsFrame:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
@@ -123,8 +96,8 @@ local function SkinWorldMap()
 
     WorldMapFrame:HookScript("OnShow", function()
         if not CoordsTimer then
-			UpdateCoords()
-			CoordsTimer = C_Timer.NewTicker(0.1, function() UpdateCoords() end)
+            UpdateCoords()
+            CoordsTimer = C_Timer.NewTicker(0.1, function() UpdateCoords() end)
         end
     end)
     WorldMapFrame:HookScript("OnHide", function()
@@ -134,7 +107,7 @@ local function SkinWorldMap()
 
     CoordsFrame.Coords:ClearAllPoints()
     CoordsFrame.Coords:SetPoint("TOP", _G.WorldMapFrame.ScrollContainer, "TOP", 0, 0)
-    
+
     -- Enable movement
     WorldMapFrame:SetMovable(true)
     WorldMapFrame:RegisterForDrag("LeftButton")
@@ -168,7 +141,7 @@ local function SkinWorldMap()
         local x,y = MapCanvasScrollControllerMixin.GetCursorPosition(f)
         local s = WorldMapFrame:GetScale() * UIParent:GetEffectiveScale()
         return x/s, y/s
-    end        
+    end
 
     local scaleHandle = CreateFrame("Frame", nil, WorldMapFrame)
     scaleHandle:SetWidth(50)

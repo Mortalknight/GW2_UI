@@ -134,41 +134,22 @@ GW.stats.getArmor = getArmor
 
 
 
-local function getDefense(unit)
-    local numSkills = GetNumSkillLines()
-    local skillIndex = 0
+local function getDefense()
     local stat
     local tooltip
     local tooltip2
 
-    for i = 1, numSkills do
-        local skillName = select(1, GetSkillLineInfo(i))
-        local isHeader = select(2, GetSkillLineInfo(i))
+    local base, modifier = UnitDefense("player")
+	local posBuff = 0
+	local negBuff = 0
+	if ( modifier > 0 ) then
+		posBuff = modifier
+	elseif ( modifier < 0 ) then
+		negBuff = modifier
+	end
 
-        if (isHeader == nil or (not isHeader)) and (skillName == DEFENSE) then
-            skillIndex = i
-            break
-        end
-    end
-
-    local skillRank = 0
-    local skillModifier = 0
-    if (skillIndex > 0) then
-        skillRank = select(4, GetSkillLineInfo(skillIndex))
-        skillModifier = select(6, GetSkillLineInfo(skillIndex))
-    end
-    
-    skillModifier = skillModifier + GW.stats._GetTalentModifierDefense()
-
-    local posBuff = 0
-    local negBuff = 0
-    if skillModifier > 0 then
-        posBuff = skillModifier
-    elseif skillModifier < 0 then
-        negBuff = skillModifier
-    end
-    stat, tooltip = formateStat(DEFENSE_COLON, skillRank, posBuff, negBuff)
-    local valueNum = max(0, skillRank + posBuff + negBuff)
+    stat, tooltip = formateStat(DEFENSE_COLON, base, posBuff, negBuff)
+    local valueNum = max(0, base + posBuff + negBuff)
     tooltip2 = format(DEFAULT_STATDEFENSE_TOOLTIP, valueNum, 0, valueNum * 0.04, valueNum * 0.04)
     tooltip2 = tooltip2:gsub('.-\n', '', 1)
     tooltip2 = tooltip2:gsub('%b()', '')
@@ -312,6 +293,220 @@ local function getDamage(unit, prefix)
     return stat, tooltip, tooltip2
 end
 GW.stats.getDamage = getDamage
+
+local function getRangeAttackSpeed()
+    local text = UnitRangedDamage("player")
+    text = format("%.2f", text);
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. ATTACK_SPEED .. " " .. text .. FONT_COLOR_CODE_CLOSE;
+	local tooltip2 = format(CR_HASTE_RATING_TOOLTIP, GetCombatRating(CR_HASTE_RANGED), GetCombatRatingBonus(CR_HASTE_RANGED));
+
+    return text, tooltip, tooltip2
+end
+GW.stats.getRangeAttackSpeed = getRangeAttackSpeed
+
+local function getAttackSpeed()
+    local speed, offhandSpeed = UnitAttackSpeed("player")
+    speed = format("%.2f", speed)
+    if offhandSpeed then
+        offhandSpeed = format("%.2f", offhandSpeed)
+    end
+    local text;
+    if offhandSpeed then
+        text = speed .. " / " .. offhandSpeed
+    else
+        text = speed
+    end
+
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. ATTACK_SPEED .. " " .. text .. FONT_COLOR_CODE_CLOSE
+    local tooltip2 = format(CR_HASTE_RATING_TOOLTIP, GetCombatRating(CR_HASTE_MELEE), GetCombatRatingBonus(CR_HASTE_MELEE))
+
+    return text, tooltip, tooltip2
+end
+GW.stats.getAttackSpeed = getAttackSpeed
+
+local function getDodge()
+    local chance = GetDodgeChance();
+	local tooltip = HIGHLIGHT_FONT_COLOR_CODE..getglobal("DODGE_CHANCE").." "..string.format("%.02f", chance).."%"..FONT_COLOR_CODE_CLOSE;
+	local tooltip2 = format(CR_DODGE_TOOLTIP, GetCombatRating(CR_DODGE), GetCombatRatingBonus(CR_DODGE));
+
+    return format("%.2f%%", chance), tooltip, tooltip2
+end
+GW.stats.getDodge = getDodge
+
+local function getParry()
+    local chance = GetParryChance();
+	local tooltip = HIGHLIGHT_FONT_COLOR_CODE..getglobal("PARRY_CHANCE").." "..string.format("%.02f", chance).."%"..FONT_COLOR_CODE_CLOSE;
+	local tooltip2 = format(CR_PARRY_TOOLTIP, GetCombatRating(CR_PARRY), GetCombatRatingBonus(CR_PARRY));
+
+    return format("%.2f%%", chance), tooltip, tooltip2
+end
+GW.stats.getParry = getParry
+
+local function getBlock()
+    local chance = GetBlockChance();
+	local tooltip = HIGHLIGHT_FONT_COLOR_CODE..getglobal("BLOCK_CHANCE").." "..string.format("%.02f", chance).."%"..FONT_COLOR_CODE_CLOSE;
+	local tooltip2 = format(CR_BLOCK_TOOLTIP, GetCombatRating(CR_BLOCK), GetCombatRatingBonus(CR_BLOCK));
+
+    return format("%.2f%%", chance), tooltip, tooltip2
+end
+GW.stats.getBlock = getBlock
+
+local function getResilience()
+    local resilience = GetCombatRating(CR_RESILIENCE_CRIT_TAKEN);
+	local bonus = GetCombatRatingBonus(CR_RESILIENCE_CRIT_TAKEN);
+	local tooltip = HIGHLIGHT_FONT_COLOR_CODE..STAT_RESILIENCE.." "..resilience..FONT_COLOR_CODE_CLOSE;
+	local tooltip2 = format(RESILIENCE_TOOLTIP, bonus, min(bonus * 2, 25.00), bonus);
+
+    return resilience, tooltip, tooltip2
+end
+GW.stats.getResilience = getResilience
+
+local function getRating(ratingIndex)
+    local rating = GetCombatRating(ratingIndex)
+    local ratingBonus = GetCombatRatingBonus(ratingIndex)
+    local statName = getglobal("COMBAT_RATING_NAME" .. ratingIndex)
+    local tooltip, tooltip2 = HIGHLIGHT_FONT_COLOR_CODE .. statName .. " " .. rating .. FONT_COLOR_CODE_CLOSE, nil
+    -- Can probably axe this if else tree if all rating tooltips follow the same format
+    if ( ratingIndex == CR_HIT_MELEE ) then
+        tooltip2 = format(CR_HIT_MELEE_TOOLTIP, UnitLevel("player"), ratingBonus, GetArmorPenetration());
+    elseif ( ratingIndex == CR_HIT_RANGED ) then
+        tooltip2 = format(CR_HIT_RANGED_TOOLTIP, UnitLevel("player"), ratingBonus, GetArmorPenetration());
+    elseif ( ratingIndex == CR_DODGE ) then
+        tooltip2 = format(CR_DODGE_TOOLTIP, ratingBonus);
+    elseif ( ratingIndex == CR_PARRY ) then
+        tooltip2 = format(CR_PARRY_TOOLTIP, ratingBonus);
+    elseif ( ratingIndex == CR_BLOCK ) then
+        tooltip2 = format(CR_PARRY_TOOLTIP, ratingBonus);
+    elseif ( ratingIndex == CR_HIT_SPELL ) then
+        tooltip2 = format(CR_HIT_SPELL_TOOLTIP, UnitLevel("player"), ratingBonus, GetSpellPenetration(), GetSpellPenetration());
+    elseif ( ratingIndex == CR_EXPERTISE ) then
+        tooltip2 = format(CR_EXPERTISE_TOOLTIP, ratingBonus);
+    else
+        tooltip2 = HIGHLIGHT_FONT_COLOR_CODE .. getglobal("COMBAT_RATING_NAME" .. ratingIndex) .. " " .. rating;
+    end
+
+    return rating, tooltip, tooltip2
+end
+GW.stats.getRating = getRating
+
+local function getMeleeCritChance()
+    local critChance = GetCritChance()
+    critChance = format("%.2f%%", critChance);
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE..MELEE_CRIT_CHANCE.." "..critChance..FONT_COLOR_CODE_CLOSE;
+    local tooltip2 = format(CR_CRIT_MELEE_TOOLTIP, GetCombatRating(CR_CRIT_MELEE), GetCombatRatingBonus(CR_CRIT_MELEE));
+
+    return critChance, tooltip, tooltip2
+end
+GW.stats.getMeleeCritChance = getMeleeCritChance
+
+local function getSpellCritChance(frame)
+	local holySchool = 2;
+	-- Start at 2 to skip physical damage
+	local minCrit = GetSpellCritChance(holySchool);
+	frame.spellCrit = {};
+	frame.spellCrit[holySchool] = minCrit;
+	local spellCrit;
+	for i=(holySchool+1), MAX_SPELL_SCHOOLS do
+		spellCrit = GetSpellCritChance(i);
+		minCrit = min(minCrit, spellCrit);
+		frame.spellCrit[i] = spellCrit;
+	end
+	-- Add agility contribution
+	--minCrit = minCrit + GetSpellCritChanceFromIntellect();
+	minCrit = format("%.2f%%", minCrit);
+	frame.minCrit = minCrit;
+
+    return minCrit
+end
+GW.stats.getSpellCritChance = getSpellCritChance
+
+local function getRangedCritChance()
+    local critChance = GetRangedCritChance()
+    critChance = format("%.2f%%", critChance);
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE..RANGED_CRIT_CHANCE.." "..critChance..FONT_COLOR_CODE_CLOSE;
+    local tooltip2 = format(CR_CRIT_RANGED_TOOLTIP, GetCombatRating(CR_CRIT_RANGED), GetCombatRatingBonus(CR_CRIT_RANGED));
+
+    return critChance, tooltip, tooltip2
+end
+GW.stats.getRangedCritChance = getRangedCritChance
+
+local function getMeleeExpertise()
+    local expertise, offhandExpertise = GetExpertise();
+    local _, offhandSpeed = UnitAttackSpeed("player");
+    local exp;
+    if( offhandSpeed ) then
+        exp = expertise.." / "..offhandExpertise;
+    else
+        exp = expertise;
+    end
+
+    local text
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. getglobal("COMBAT_RATING_NAME" .. CR_EXPERTISE) .. " " .. exp .. FONT_COLOR_CODE_CLOSE;
+
+    local expertisePercent, offhandExpertisePercent = GetExpertisePercent();
+    expertisePercent = format("%.2f", expertisePercent);
+    if( offhandSpeed ) then
+        offhandExpertisePercent = format("%.2f", offhandExpertisePercent);
+        text = expertisePercent.."% / "..offhandExpertisePercent.."%";
+    else
+        text = expertisePercent.."%";
+    end
+    local tooltip2 = format(CR_EXPERTISE_TOOLTIP, text, GetCombatRating(CR_EXPERTISE), GetCombatRatingBonus(CR_EXPERTISE));
+
+    return exp, tooltip, tooltip2
+end
+GW.stats.getMeleeExpertise = getMeleeExpertise
+
+local function getSpellHaste()
+	local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. SPELL_HASTE .. FONT_COLOR_CODE_CLOSE;
+	local tooltip2 = format(SPELL_HASTE_TOOLTIP, GetCombatRatingBonus(CR_HASTE_SPELL));
+
+    return GetCombatRating(CR_HASTE_SPELL), tooltip, tooltip2
+end
+GW.stats.getSpellHaste = getSpellHaste
+
+local function getManaReg()
+	if ( not UnitHasMana("player") ) then
+		return NOT_APPLICABLE, nil, nil
+	end
+	
+	local base, casting = GetManaRegen(); 
+	-- All mana regen stats are displayed as mana/5 sec.
+	base = floor( base * 5.0 );
+	casting = floor( casting * 5.0 );
+	local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. MANA_REGEN .. FONT_COLOR_CODE_CLOSE;
+	local tooltip2 = format(MANA_REGEN_TOOLTIP, base, casting);
+
+    return base, tooltip, tooltip2
+end
+GW.stats.getManaReg = getManaReg
+
+local function getSpellBonusDamage(frame)
+	local holySchool = 2;
+	-- Start at 2 to skip physical damage
+	local minModifier = GetSpellBonusDamage(holySchool);
+	frame.bonusDamage = {};
+	frame.bonusDamage[holySchool] = minModifier;
+	local bonusDamage;
+	for i=(holySchool+1), MAX_SPELL_SCHOOLS do
+		bonusDamage = GetSpellBonusDamage(i);
+		minModifier = min(minModifier, bonusDamage);
+		frame.bonusDamage[i] = bonusDamage;
+	end
+    frame.minModifier = minModifier;
+
+    return minModifier
+end
+GW.stats.getSpellBonusDamage = getSpellBonusDamage
+
+local function getBonusHealing()
+	local bonusHealing = GetSpellBonusHealing();
+	local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. BONUS_HEALING .. FONT_COLOR_CODE_CLOSE;
+	local tooltip2 =format(BONUS_HEALING_TOOLTIP, bonusHealing);
+
+    return bonusHealing, tooltip, tooltip2
+end
+GW.stats.getBonusHealing = getBonusHealing
 
 local function getAttackPower(unit, prefix)
     if not unit then

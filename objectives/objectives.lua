@@ -602,23 +602,15 @@ local function tracker_OnEvent(self, event, ...)
 end
 GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
 
-
-local function trackerNotification_OnEvent(self, event)
-    mapID = C_Map.GetBestMapForUnit("player")
-end
-GW.AddForProfiling("objectives", "trackerNotification_OnEvent", trackerNotification_OnEvent)
-
 local function tracker_OnUpdate()
-    if GwQuestTracker.trot < GetTime() then
-        local state = GwObjectivesNotification.shouldDisplay
+    local prevState = GwObjectivesNotification.shouldDisplay
 
-        GwQuestTracker.trot = GetTime() + 1
-        GW.SetObjectiveNotification(mapID)
+    if GW.locationData.mapID or GW.locationData.instanceMapID then
+        GW.SetObjectiveNotification()
+    end
 
-        if state ~= GwObjectivesNotification.shouldDisplay then
-            state = GwObjectivesNotification.shouldDisplay
-            GW.NotificationStateChanged(state)
-        end
+    if prevState ~= GwObjectivesNotification.shouldDisplay then
+        GW.NotificationStateChanged(GwObjectivesNotification.shouldDisplay)
     end
 end
 GW.AddForProfiling("objectives", "tracker_OnUpdate", tracker_OnUpdate)
@@ -737,10 +729,37 @@ local function LoadQuestTracker()
     updateQuestLogLayout("LOAD")
 
     fNotify.shouldDisplay = false
-    fTracker.trot = GetTime() + 2
-    fTracker:SetScript("OnEvent", trackerNotification_OnEvent)
-    fTracker:RegisterEvent("PLAYER_ENTERING_WORLD")
-    fTracker:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     fTracker:SetScript("OnUpdate", tracker_OnUpdate)
+
+
+    -- only update the tracker on Events or if player moves
+    local compassUpdateFrame = CreateFrame("Frame")
+    compassUpdateFrame:RegisterEvent("PLAYER_STARTED_MOVING")
+    compassUpdateFrame:RegisterEvent("PLAYER_STOPPED_MOVING")
+    compassUpdateFrame:RegisterEvent("PLAYER_CONTROL_LOST")
+    compassUpdateFrame:RegisterEvent("PLAYER_CONTROL_GAINED")
+    compassUpdateFrame:RegisterEvent("QUEST_LOG_UPDATE")
+    compassUpdateFrame:RegisterEvent("QUEST_WATCH_LIST_CHANGED")
+    compassUpdateFrame:RegisterEvent("PLAYER_MONEY")
+    compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    compassUpdateFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+    compassUpdateFrame:SetScript("OnEvent", function(self, event, ...)
+        -- Events for start updating
+        if GW.IsIn(event, "PLAYER_STARTED_MOVING", "PLAYER_CONTROL_LOST") then
+            self.Ticker = C_Timer.NewTicker(1, function() tracker_OnUpdate() end)
+        elseif GW.IsIn(event, "PLAYER_STOPPED_MOVING", "PLAYER_CONTROL_GAINED") then -- Events for stop updating
+            if self.Ticker then
+                self.Ticker:Cancel()
+                self.Ticker = nil
+            end
+        elseif event == "QUEST_DATA_LOAD_RESULT" then
+            local questID, success = ...
+            if success and GwObjectivesNotification.compass.dataIndex and questID == GwObjectivesNotification.compass.dataIndex then
+                tracker_OnUpdate()
+            end
+        else
+            C_Timer.After(0.25, function() tracker_OnUpdate() end)
+        end
+    end)
 end
 GW.LoadQuestTracker = LoadQuestTracker

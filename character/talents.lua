@@ -1,11 +1,6 @@
 local _, GW = ...
-local maxTalentRows = 7
-local talentsPerRow = 3
---Legacy
-local MAX_NUM_TALENTS = 25
 -- Default 8 but none uses 8 talent rows in classic
 local MAX_NUM_TALENT_TIERS = 9
-local NUM_TALENT_COLUMNS = 4
 local TALENT_BRANCH_ARRAY = {}
 
 local function hookTalentButton(self, container, row, index)

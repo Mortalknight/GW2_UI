@@ -79,8 +79,6 @@ local STATS_ICONS ={
     Arcane = {x = 2, y = 8},
 }
 
-local savedItemSlots = {}
-local savedPlayerTitles = {}
 local savedReputation = {}
 local selectedReputationCat = 1
 local reputationLastUpdateMethod = function() end
@@ -93,7 +91,7 @@ local function collectDurability(self)
     local completeDurabilityNumItems = 0
     for i = 1, 23 do
         local current, maximum = GetInventoryItemDurability(i)
-            
+
         if current ~= nil then
             completeDurability = completeDurability + (current / maximum)
             completeDurabilityNumItems = completeDurabilityNumItems + 1
@@ -345,11 +343,9 @@ function gwPaperDollUpdateStats()
     statText, tooltip1, tooltip2 = GW.stats.getArmor()
     grid, x, y, numShownStats = setStatFrame("ARMOR", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
 
-    -- Defense only for Tanksclasses
-    if GW.myClassID == 1 or GW.myClassID == 2 or GW.myClassID == 11 then
-        statText, tooltip1, tooltip2 = GW.stats.getDefense()
-        grid, x, y, numShownStats = setStatFrame("DEFENSE", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-    end
+    -- Defense
+    statText, tooltip1, tooltip2 = GW.stats.getDefense()
+    grid, x, y, numShownStats = setStatFrame("DEFENSE", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
 
     --getAttackBothHands
     statText, tooltip1, tooltip2 = GW.stats.getAttackBothHands()
@@ -366,18 +362,17 @@ function gwPaperDollUpdateStats()
     --ranged attack
     statText, tooltip1, tooltip2 = GW.stats.getRangedAttack()
     if statText ~= nil then
-    grid, x, y, numShownStats = setStatFrame("RANGEDATTACK", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
+        grid, x, y, numShownStats = setStatFrame("RANGEDATTACK", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 
     --ranged damage
     statText, tooltip1, tooltip2 = GW.stats.getRangedDamage()
-    if statText ~= nil then
+    if statText then
         grid, x, y, numShownStats = setStatFrame("RANGEDDAMAGE", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-        hasRanged = true
     end
 
     --ranged attack power
-    if statText ~= nil then
+    if statText then
         statText, tooltip1, tooltip2 = GW.stats.getRangedAttackPower()
         grid, x, y, numShownStats = setStatFrame("RANGEDATTACKPOWER", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
@@ -1313,6 +1308,20 @@ local function LoadPaperDoll()
     GwUpdateReputationDetails()
 
     --LoadHonorTab()
+
+    GwPapaerDollStats.advancedChatStatsFrame = CreateFrame("Frame", nil, GwPapaerDollStats)
+    GwPapaerDollStats.advancedChatStatsFrame:SetPoint("TOPLEFT", GwPapaerDollStats, "TOPLEFT", 0, -1)
+    GwPapaerDollStats.advancedChatStatsFrame:SetSize(180, 40)
+    GwPapaerDollStats.advancedChatStatsFrame:SetScript("OnMouseUp", function(self)
+        GW.ShowAdvancedChatStats(self:GetParent())
+    end)
+    GwPapaerDollStats.advancedChatStatsFrame:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:ClearLines()
+        GameTooltip:SetText(ADVANCED_LABEL .. " " .. STAT_CATEGORY_ATTRIBUTES, nil, nil, nil, nil, true)
+        GameTooltip:Show()
+    end)
+    GwPapaerDollStats.advancedChatStatsFrame:SetScript("OnLeave", GameTooltip_Hide)
 
     StaticPopupDialogs["UNEQUIP_LEGENDARY"] = {
         text = L["UNEQUIP_LEGENDARY"],

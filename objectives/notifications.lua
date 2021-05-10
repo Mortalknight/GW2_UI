@@ -4,8 +4,6 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local GetSetting = GW.GetSetting
 local AddToAnimation = GW.AddToAnimation
 
-local currentNotificationKey = ""
-local currentMapID = ""
 local notifications = {}
 
 local icons = {}
@@ -61,25 +59,24 @@ local questCompass = {
     ["COLOR"] = TRACKER_TYPE_COLOR["QUEST"],
     ["COMPASS"] = true
 }
-local function getNearestQuestPOI(currentMapID)
-    if not currentMapID then
-        return nil
-    end
-    local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
-    local numQuests, _ = GetNumQuestLogEntries()
-    if posTable == nil or numQuests == nil then
+local function getNearestQuestPOI()
+    if not GW.locationData.mapID then
         return nil
     end
 
-    local posX, posY = posTable:GetXY()
+    local numQuests = GetNumQuestLogEntries()
+    if (GW.locationData.x == nil or GW.locationData.y == nil) and numQuests then
+        return nil
+    end
+
     local closest = nil
     for i = 1, numQuests do
-        local title, _, _, isHeader, _, isComplete, _, questID, _, _, _, hasLocalPOI, _ = GetQuestLogTitle(i)
+        local title, _, _, isHeader, _, isComplete, _, questID, _, _, _, hasLocalPOI = GetQuestLogTitle(i)
         if not isHeader and not isComplete and hasLocalPOI then
-            local _, poiX, poiY, _ = QuestPOIGetIconInfo(questID)
+            local _, poiX, poiY = QuestPOIGetIconInfo(questID)
             if poiX then
-                local dx = posX - poiX
-                local dy = posY - poiY
+                local dx = GW.locationData.x - poiX
+                local dy = GW.locationData.y - poiY
                 local dist = sqrt(dx * dx + dy * dy)
                 if not closest or dist < closest then
                     closest = dist
@@ -109,17 +106,21 @@ local bodyCompass = {
     ["COMPASS"] = true
 }
 local function getBodyPOI()
-    if not currentMapID then
+    if not GW.locationData.mapID then
         return nil
     end
-    local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
-    local corpTable = C_DeathInfo.GetCorpseMapPosition(currentMapID)
-    if posTable == nil or corpTable == nil then
+
+    if GW.locationData.x == nil or GW.locationData.y == nil then
         return nil
     end
-    local posX, _ = posTable:GetXY()
+
+    local corpTable = C_DeathInfo.GetCorpseMapPosition(GW.locationData.mapID)
+    if corpTable == nil then
+        return nil
+    end
+
     local x, y = corpTable:GetXY()
-    if posX == nil or posX == 0 or x == nil or x == 0 then
+    if x == nil or x == 0 then
         return nil
     end
 
@@ -137,8 +138,6 @@ local function AddTrackerNotification(data)
     end
 
     notifications[data["ID"]] = data
-
-    --   SetObjectiveNotification()
 end
 GW.AddTrackerNotification = AddTrackerNotification
 
@@ -147,7 +146,6 @@ local function RemoveTrackerNotification(notificationID)
         return
     end
     notifications[data["ID"]] = nil
-    --   SetObjectiveNotification()
 end
 GW.RemoveTrackerNotification = RemoveTrackerNotification
 
@@ -157,12 +155,10 @@ local function RemoveTrackerNotificationOfType(doType)
             notifications[k] = nil
         end
     end
-    --   SetObjectiveNotification()
 end
 GW.RemoveTrackerNotificationOfType = RemoveTrackerNotificationOfType
 
-local function removeNotification(key)
-    currentNotificationKey = ""
+local function removeNotification()
     GwObjectivesNotification.shouldDisplay = false
 end
 GW.AddForProfiling("notifications", "removeNotification", removeNotification)
@@ -200,26 +196,19 @@ GW.NotificationStateChanged = NotificationStateChanged
 
 local square_half = math.sqrt(0.5)
 local rad_135 = math.rad(135)
-local function updateRadar(self, elapsed)
-    if not currentMapID then
+local function updateRadar(self)
+    if not GW.locationData.mapID then
         return
     end
-    self.TotalElapsed = self.TotalElapsed + elapsed
-    if self.TotalElapsed < 0.016 then
-        return
-    end
-    self.TotalElapsed = 0
 
-    local posTable = C_Map.GetPlayerMapPosition(currentMapID, "player")
-    if posTable == nil or self.data["X"] == nil then
+    if GW.locationData.x == nil or GW.locationData.y == nil or self.data.X == nil then
         RemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
         return
     end
-    local posX, posY = posTable:GetXY()
 
     local pFacing = GetPlayerFacing()
-    local dir_x = self.data["X"] - posX
-    local dir_y = self.data["Y"] - posY
+    local dir_x = self.data["X"] - GW.locationData.x
+    local dir_y = self.data["Y"] - GW.locationData.y
     local a = math.atan2(dir_y, dir_x)
     a = rad_135 - a - pFacing
 
@@ -228,13 +217,13 @@ local function updateRadar(self, elapsed)
 end
 GW.AddForProfiling("notifications", "updateRadar", updateRadar)
 
-local function SetObjectiveNotification(mapID)
-    currentMapID = mapID
-    local data
-    for k, v in pairs(notifications) do
+local function SetObjectiveNotification()
+    if not GetSetting("SHOW_QUESTTRACKER_COMPASS") then return end
+    local data, dataBefore
+    for k, _ in pairs(notifications) do
         if not notifications[k]["COMPASS"] and notifications[k] ~= nil then
             if data ~= nil then
-                if prioritys(data["KEY"], notifications[k]["KEY"]) then
+                if prioritys(data["TYPE"], notifications[k]["TYPE"]) then
                     data = notifications[k]
                 end
             else
@@ -243,21 +232,21 @@ local function SetObjectiveNotification(mapID)
         end
     end
 
-    if data == nil and GetSetting("SHOW_QUESTTRACKER_COMPASS") then
-        if UnitIsDeadOrGhost("PLAYER") then
-            data = getBodyPOI()
-        end
-        if data == nil then
-            data = getNearestQuestPOI(currentMapID)
-        end
+    if UnitIsDeadOrGhost("PLAYER") then
+        dataBefore = data
+        data = getBodyPOI()
+        if data == nil then data = dataBefore end
     end
 
     if data == nil then
-        removeNotification(currentNotificationKey)
+        data = getNearestQuestPOI()
+    end
+
+    if data == nil then
+        removeNotification()
         return
     end
 
-    local key = data["KEY"]
     local title = data["TITLE"]
     local desc = data["DESC"]
     local color = data["COLOR"]
@@ -267,8 +256,6 @@ local function SetObjectiveNotification(mapID)
     if color == nil then
         color = {r = 1, g = 1, b = 1}
     end
-
-    currentNotificationKey = key
 
     if icons[data["TYPE"]] ~= nil then
         GwObjectivesNotification.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\" .. icons[data["TYPE"]].tex)
@@ -290,7 +277,6 @@ local function SetObjectiveNotification(mapID)
         GwObjectivesNotification.compass:Show()
         GwObjectivesNotification.compass.data = data
         GwObjectivesNotification.compass.dataIndex = data["ID"]
-        currentNotificationKey = key
 
         if icons[data["TYPE"]] ~= nil then
             GwObjectivesNotification.compass.icon:SetTexture(
@@ -306,12 +292,14 @@ local function SetObjectiveNotification(mapID)
             GwObjectivesNotification.compass.icon:SetTexture(nil)
         end
 
-        GwObjectivesNotification.compass.TotalElapsed = 0
-        GwObjectivesNotification.compass:SetScript("OnUpdate", updateRadar)
+        GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
         GwObjectivesNotification.icon:SetTexture(nil)
     else
         GwObjectivesNotification.compass:Hide()
-        GwObjectivesNotification.compass:SetScript("OnUpdate", nil)
+        if GwObjectivesNotification.compass.Timer then
+            GwObjectivesNotification.compass.Timer:Cancel()
+            GwObjectivesNotification.compass.Timer = nil
+        end
     end
 
     GwObjectivesNotification.title:SetText(title)
@@ -320,7 +308,6 @@ local function SetObjectiveNotification(mapID)
 
     if desc == nil or desc == "" then
         GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -30)
-        
     else
         GwObjectivesNotification.title:SetPoint("TOP", GwObjectivesNotification, "TOP", 0, -15)
     end
