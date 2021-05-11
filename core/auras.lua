@@ -469,18 +469,17 @@ local function CreateAuraFrame(name, parent)
 end
 GW.CreateAuraFrame = CreateAuraFrame
 
-local function LoadAuras(f, a, u)
-    local unit = u or f.unit
+local function LoadAuras(self)
     for i = 1, 40 do
-        local frame = CreateAuraFrame("Gw" .. unit .. "buffFrame" .. i, a)
-        frame.unit = unit
+        local frame = CreateAuraFrame("Gw" .. self.unit .. "buffFrame" .. i, self.auras)
+        frame.unit = self.unit
         frame.auraType = "buff"
-        frame = CreateAuraFrame("Gw" .. unit .. "debuffFrame" .. i, a)
-        frame.unit = unit
+        frame = CreateAuraFrame("Gw" .. self.unit .. "debuffFrame" .. i, self.auras)
+        frame.unit = self.unit
         frame.auraType = "debuff"
     end
-    f.saveAuras = {}
-    f.saveAuras["buff"] = {}
-    f.saveAuras["debuff"] = {}
+    self.saveAuras = {}
+    self.saveAuras.buff = {}
+    self.saveAuras.debuff = {}
 end
 GW.LoadAuras = LoadAuras

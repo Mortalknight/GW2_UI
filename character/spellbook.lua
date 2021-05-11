@@ -103,7 +103,7 @@ end
 
 local spellButtonIndex = 1
 local function setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spellbookIndex, booktype, tab, name, rank, level)
-    local autocastable, autostate = GetSpellAutocast(spellbookIndex, booktype)
+    local _, autostate = GetSpellAutocast(spellbookIndex, booktype)
 
     _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].autocast:Hide()
     if autostate then
@@ -567,12 +567,12 @@ local function updateSpellbookTab()
 
         for i = 1, numSpells do
             local spellIndex = i + offset
-            local _, rank, _, _, _, _, spellID =  GetSpellInfo(spellIndex, BOOKTYPE)
             local skillType = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
             local ispassive = IsPassiveSpell(spellID)
             local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
-            local name = GetSpellBookItemName(spellIndex, BOOKTYPE)
+            local name, rank, spellID = GetSpellBookItemName(spellIndex, BOOKTYPE)
 
+            rank = string.match(rank, "[%d]")
             knownSpellID[#knownSpellID + 1] = spellID
 
             --[[ --TODO: Need new spells for TBC

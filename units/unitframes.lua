@@ -686,7 +686,7 @@ local function LoadTarget()
     LHC.RegisterCallback(NewUnitFrame, "HealComm_ModifierChanged", HealCommEventHandler)
     LHC.RegisterCallback(NewUnitFrame, "HealComm_GUIDDisappeared", HealCommEventHandler)
 
-    LoadAuras(NewUnitFrame, NewUnitFrame.auras)
+    LoadAuras(NewUnitFrame)
 
     -- create floating combat text
     if GetSetting("TARGET_FLOATING_COMBAT_TEXT") then
