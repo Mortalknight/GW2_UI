@@ -157,8 +157,8 @@ end
 
 local function CreateAdvancedChatStats(parent)
     local as = CreateFrame("Frame", nil, parent)
-    as:SetPoint("TOPLEFT", parent, "TOPRIGHT", 40, 80)
-    as:SetSize(200, parent:GetHeight() + 120)
+    as:SetPoint("TOPLEFT", parent, "TOPRIGHT", 40, 60)
+    as:SetSize(200, parent:GetHeight() + 170)
 
     local tex = as:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", as, "TOP", 0, 25)

@@ -530,8 +530,7 @@ local function updateSpellbookTab()
     local knownSpellID = {}
 
     for spellBookTabs = 1, 5 do
-        local name, texture, offset, numSpells, offSpecID, shouldHide, specID = GetSpellTabInfo(spellBookTabs)
-        local flyOuts = {}
+        local name, texture, offset, numSpells = GetSpellTabInfo(spellBookTabs)
         local BOOKTYPE = 'spell'
 
         local pagingID = 1;
@@ -556,13 +555,10 @@ local function updateSpellbookTab()
         _G['GwSpellbookContainerTab' .. spellBookTabs].title:SetText(name)
 
         local boxIndex = 1
-        local y = 1
-        local fPassive = false
-        local indexToPassive = nil
         local lastSkillid = 0
+        local lastName = ""
         local lastButton
         local header
-        local headerPositionY = 0
         local needNewHeader = true
 
         pagingContainer.column1 = 0
@@ -570,18 +566,17 @@ local function updateSpellbookTab()
         pagingContainer.headers = {}
 
         for i = 1, numSpells do
-            local hasHigherRank = false
             local spellIndex = i + offset
-            local name, rank, icon, castingTime, minRange, maxRange, spellID =  GetSpellInfo(spellIndex, BOOKTYPE)
-            local skillType, spellId = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
+            local _, rank, _, _, _, _, spellID =  GetSpellInfo(spellIndex, BOOKTYPE)
+            local skillType = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
             local ispassive = IsPassiveSpell(spellID)
             local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
-            local name, Subtext = GetSpellBookItemName(spellIndex, BOOKTYPE)
+            local name = GetSpellBookItemName(spellIndex, BOOKTYPE)
 
             knownSpellID[#knownSpellID + 1] = spellID
 
+            --[[ --TODO: Need new spells for TBC
             --find requiredTalentID if needed
-            local requiredTalentID = nil
             for k, v in pairs(GW.SpellsByLevel) do
                 for _, spell in pairs(v) do
                     if spell.id == spellID and spell.rank ~= nil then
@@ -590,13 +585,11 @@ local function updateSpellbookTab()
                 end
             end
 
-            needNewHeader = true
             for k, v in pairs(GW.SpellsByLevel) do
                 for _, spell in pairs(v) do
                     local contains
                     if spell.requiredIds ~= nil then
                         if spell.id == spellID then
-
                             contains = GW.tableContains(spell.requiredIds, lastSkillid)
                         end
                         if contains then
@@ -605,14 +598,19 @@ local function updateSpellbookTab()
                     end
                 end
             end
+            ]]
+
+            needNewHeader = true
+            if lastName == name then
+                needNewHeader = false
+            end
 
             local mainButton = setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name, rank)
             spellButtonIndex = spellButtonIndex + 1
             boxIndex = boxIndex + 1
 
-
             local unlearnd = {}
-            unlearnd = findHigherRank(unlearnd, spellID)
+            --unlearnd = findHigherRank(unlearnd, spellID)  --TODO: Need new spells for TBC
 
             if needNewHeader then
                 local currentHeight = getHeaderHeight(pagingContainer,header)
@@ -647,6 +645,7 @@ local function updateSpellbookTab()
                 header.buttons = header.buttons + 1
             end
 
+            --[[ --TODO: Need new spells for TBC
             local lastBox = mainButton
             for _, unknownSpellID in pairs(unlearnd) do
 
@@ -666,14 +665,14 @@ local function updateSpellbookTab()
                 lastBox = unKnownChildButton
                 header.buttons = header.buttons +1
             end
+            ]]
             header:SetHeight(header.height)
-            lastSkillid = spellID
+            --lastSkillid = spellID --TODO: Need new spells for TBC
+            lastName = name
             lastButton = mainButton
 
             setUpPaging(_G['GwSpellbookContainerTab' .. spellBookTabs])
         end
-
-
 
         for i = boxIndex, 100 do
             _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. i]:SetAlpha(0)
@@ -682,7 +681,7 @@ local function updateSpellbookTab()
         end
     end
 
-    updateUnknownTab(knownSpellID)
+    --updateUnknownTab(knownSpellID)
 end
 
 local function spellBookTab_onClick(self)

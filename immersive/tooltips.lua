@@ -415,7 +415,7 @@ local function LoadTooltips()
 
         local eventFrame = CreateFrame("Frame")
         eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
-        eventFrame:SetScript("OnEvent", function(self, event, key)
+        eventFrame:SetScript("OnEvent", function(_, _, key)
             if key == "LSHIFT" or key == "RSHIFT" or key == "LCTRL" or key == "RCTRL" then
                 local owner = GameTooltip:GetOwner()
                 local notOnAuras = not (owner and owner.UpdateTooltip)
