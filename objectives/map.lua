@@ -279,17 +279,9 @@ GW.AddForProfiling("map", "time_OnEnter", time_OnEnter)
 local function time_OnClick(self, button)
     if button == "LeftButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-
-        if not IsShiftKeyDown() then
-            TimeManager_ToggleLocalTime()
-            time_OnEnter(self)
-        else
-            TimeManager_ToggleTimeFormat()
-        end
-    end
-    if button == "RightButton" then
-        PlaySound(SOUNDKIT.IG_MAINMENU_QUIT)
-        Stopwatch_Toggle()
+        ToggleTimeManager()
+    else
+        GameTimeFrame:Click()
     end
 end
 GW.AddForProfiling("map", "time_OnClick", time_OnClick)
