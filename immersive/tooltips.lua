@@ -238,7 +238,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
             end
             local numList = #targetList
             if (numList > 0) then
-                self:AddLine(format("%s (|cffffffff%d|r): %s", L["TARGETED_BY"], numList, table.concat(targetList, ", ")), nil, nil, nil, true)
+                self:AddLine(format("%s (|cffffffff%d|r): %s", L["Targeted by:"], numList, table.concat(targetList, ", ")), nil, nil, nil, true)
                 wipe(targetList)
             end
         end

@@ -251,7 +251,7 @@ local function setPetStatFrame(stat, index, statText, tooltip, tooltip2, grid, x
 end
 
 local Slots = {"HeadSlot", "ShoulderSlot", "ChestSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "MainHandSlot", "SecondaryHandSlot", "RangedSlot"}
-local SlotsFriendly = {INVTYPE_HEAD, INVTYPE_SHOULDER, INVTYPE_CHEST, INVTYPE_WRIST, INVTYPE_HAND, INVTYPE_WAIST, INVTYPE_LEGS, INVTYPE_FEET, INVTYPE_WEAPONMAINHAND, INVTYPE_WEAPONOFFHAND, L["INVTYPE_RANGED"]}
+local SlotsFriendly = {INVTYPE_HEAD, INVTYPE_SHOULDER, INVTYPE_CHEST, INVTYPE_WRIST, INVTYPE_HAND, INVTYPE_WAIST, INVTYPE_LEGS, INVTYPE_FEET, INVTYPE_WEAPONMAINHAND, INVTYPE_WEAPONOFFHAND, L["Ranged"]}
 
 function GW_DurabilityTooltip(self)
     local duravaltotal, duramaxtotal, durapercent = 0, 0, 0
@@ -707,8 +707,8 @@ local function getNewReputationDetail(i)
     f.controles.atwar:SetScript("OnLeave", detailsAtwar_OnLeave)
 
     f.details:Hide()
-    f.currentRank:SetText(L["CHARACTER_CURRENT_RANK"])
-    f.nextRank:SetText(L["CHARACTER_NEXT_RANK"])
+    f.currentRank:SetText(REFORGE_CURRENT)
+    f.nextRank:SetText(NEXT)
 
     if i > 1 then
         _G["GwReputationDetails" .. i]:SetPoint("TOPLEFT", _G["GwReputationDetails" .. (i - 1)],"BOTTOMLEFT", 0, -1)
@@ -1082,6 +1082,7 @@ function GWupdateSkills()
             f.abandon:SetScript("OnLeave", nil)
         end
 
+        if skillMaxRank == 0 then skillMaxRank = 1 end
 
         LastElement = f
         y = y + height
@@ -1322,15 +1323,6 @@ local function LoadPaperDoll()
         GameTooltip:Show()
     end)
     GwPapaerDollStats.advancedChatStatsFrame:SetScript("OnLeave", GameTooltip_Hide)
-
-    StaticPopupDialogs["UNEQUIP_LEGENDARY"] = {
-        text = L["UNEQUIP_LEGENDARY"],
-        button1 = CANCEL,
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        preferredIndex = 3
-    }
 
     return GwCharacterWindowContainer
 end

@@ -554,18 +554,23 @@ end
 GW.AddForProfiling("objectives", "updateQuest", updateQuest)
 
 local function QuestTrackerLayoutChanged()
-    GwQuestTrackerScroll:SetSize(
-        350,
-        GwQuesttrackerContainerQuests:GetHeight()
-    )
+    local scroll = 0
+    local height = GwQuesttrackerContainerQuests:GetHeight() + 60
+    local trackerHeight = GetSetting("QuestTracker_pos_height") - GwObjectivesNotification:GetHeight()
+
+    if height > tonumber(trackerHeight) then
+        scroll = math.abs(trackerHeight - height)
+    end
+    GwQuestTrackerScroll.maxScroll = scroll
+    GwQuestTrackerScroll:SetSize(GwQuestTracker:GetWidth(), height)
 end
 GW.QuestTrackerLayoutChanged = QuestTrackerLayoutChanged
 
-local function updateQuestLogLayout(intent, ...)
+local function updateQuestLogLayout()
     local savedHeight = 1
     local numQuests = GetNumQuestWatches()
     if numQuests == 0 then GwQuestHeader:Hide() end
-    
+
     if GwQuesttrackerContainerQuests.collapsed == true then
         GwQuestHeader:Show()
         numQuests = 0
@@ -614,6 +619,34 @@ local function tracker_OnUpdate()
     end
 end
 GW.AddForProfiling("objectives", "tracker_OnUpdate", tracker_OnUpdate)
+
+local function AdjustQuestTracker(our_bars, our_minimap)
+    if (not our_minimap) then
+        return
+    end
+
+    local o = ObjectiveTrackerFrame
+    if (o:IsUserPlaced()) then
+        return
+    end
+
+    local m = MinimapCluster
+    local x
+
+    if (our_bars) then
+        x = 310
+    else
+        x = 220
+    end
+
+    o:ClearAllPoints()
+    o:SetMovable(true)
+    o:SetUserPlaced(true)
+    o:SetPoint("TOPRIGHT", m, "BOTTOMRIGHT", x, 0)
+    o:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", x, 130)
+    o:SetMovable(false)
+end
+GW.AdjustQuestTracker = AdjustQuestTracker
 
 local function LoadQuestTracker()
     -- disable the default tracker
@@ -667,7 +700,7 @@ local function LoadQuestTracker()
     fScroll:SetPoint("TOPRIGHT", fTraScr, "TOPRIGHT")
     fQuest:SetPoint("TOPRIGHT", fScroll, "TOPRIGHT")
 
-    fScroll:SetSize(350, 2)
+    fScroll:SetSize(fTracker:GetWidth(), 2)
     fTraScr:SetScrollChild(fScroll)
 
     fQuest:SetScript("OnEvent", tracker_OnEvent)

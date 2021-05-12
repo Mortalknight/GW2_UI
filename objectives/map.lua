@@ -186,8 +186,8 @@ GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 
 local function MapCoordsMiniMap_OnEnter(self) 
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
-    GameTooltip:AddLine(L["MAP_COORDINATES_TITLE"])  
-    GameTooltip:AddLine(L["MAP_COORDINATES_TOGGLE_TEXT"], 1, 1, 1, TRUE) 
+    GameTooltip:AddLine(L["Map Coordinates"])
+    GameTooltip:AddLine(L["Left Click to toggle higher precision coordinates."], 1, 1, 1, true)
     GameTooltip:SetMinimumWidth(100)
     GameTooltip:Show()
 end
@@ -264,21 +264,14 @@ end
 GW.AddForProfiling("map", "checkCursorOverMap", checkCursorOverMap)
 
 local function time_OnEnter(self)
-    local string
-
-    if GetCVarBool("timeMgrUseLocalTime") then
-        string = TIMEMANAGER_TOOLTIP_LOCALTIME:gsub(":", "")
-    else
-        string = TIMEMANAGER_TOOLTIP_REALMTIME:gsub(":", "")
-    end
-
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
-    GameTooltip:AddLine(TIMEMANAGER_TITLE)
-    GameTooltip:AddLine(L["MAP_CLOCK_MILITARY"], 1, 1, 1, TRUE)
-    GameTooltip:AddLine(L["MAP_CLOCK_LOCAL_REALM"], 1, 1, 1, TRUE)
-    GameTooltip:AddLine(L["MAP_CLOCK_STOPWATCH"], 1, 1, 1, TRUE)
-    GameTooltip:AddDoubleLine(WORLD_MAP_FILTER_TITLE .. " ", string, nil, nil, nil, 1, 1, 0)
-    GameTooltip:SetMinimumWidth(100)
+    GameTooltip:ClearLines()
+    GameTooltip_SetTitle(GameTooltip, TIMEMANAGER_TOOLTIP_TITLE)
+    GameTooltip:AddLine(" ")
+    GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_REALMTIME, GameTime_GetGameTime(true), nil, nil, nil, 1, 1, 1)
+    GameTooltip:AddDoubleLine(TIMEMANAGER_TOOLTIP_LOCALTIME, GameTime_GetLocalTime(true), nil, nil, nil, 1, 1, 1)
+    GameTooltip:AddLine(" ")
+    GameTooltip:AddLine(format("%s%s%s", "|cffaaaaaa", GAMETIME_TOOLTIP_TOGGLE_CLOCK, "|r"))
     GameTooltip:Show()
 end
 GW.AddForProfiling("map", "time_OnEnter", time_OnEnter)

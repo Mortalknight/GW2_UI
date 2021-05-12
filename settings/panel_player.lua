@@ -22,12 +22,12 @@ local function LoadPlayerPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Player frame in target frame style"], nil, "PLAYER_AS_TARGET_FRAME", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p.scroll.scrollchild, RAID_USE_CLASS_COLORS, nil, "player_CLASS_COLOR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
     addOption(p.scroll.scrollchild, L["PvP Indicator"], nil, "PLAYER_SHOW_PVP_INDICATOR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["ENERGY_MANA_TICK"], nil, "PLAYER_ENERGY_MANA_TICK", nil, nil, {["POWERBAR_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["ENERGY_MANA_TICK_HIDE_OFC"], nil, "PLAYER_ENERGY_MANA_TICK_HIDE_OFC", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
-    addOption(p.scroll.scrollchild, L["5SR_TIMER"], nil, "PLAYER_5SR_TIMER", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
+    addOption(p.scroll.scrollchild, L["Energy/Mana Ticker"], nil, "PLAYER_ENERGY_MANA_TICK", nil, nil, {["POWERBAR_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Show Energy/Mana Ticker only in combat"], nil, "PLAYER_ENERGY_MANA_TICK_HIDE_OFC", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
+    addOption(p.scroll.scrollchild, L["5 secound rule: display remaning time"], nil, "PLAYER_5SR_TIMER", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
     addOptionSlider(
         p.scroll.scrollchild,
-        L["AURAS_PER_ROW"],
+        L["Auras per Row"],
         nil,
         "PLAYER_AURA_WRAP_NUM",
         nil,
@@ -39,7 +39,7 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionSlider(
         p.scroll.scrollchild,
-        L["PLAYER_BUFF_SIZE"],
+        L["Buff size"],
         nil,
         "PlayerBuffFrame_ICON_SIZE",
         nil,
@@ -52,7 +52,7 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionSlider(
         p.scroll.scrollchild,
-        L["PLAYER_DEBUFF_SIZE"],
+        L["Debuff size"],
         nil,
         "PlayerDebuffFrame_ICON_SIZE",
         nil,
@@ -65,32 +65,32 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionDropdown(
         p.scroll.scrollchild,
-        L["PLAYER_BUFFS_GROW"],
+        L["Player Buff Growth Direction"],
         nil,
         "PlayerBuffFrame_GrowDirection",
         GW.UpdateHudScale(),
         {"UP", "DOWN", "UPR", "DOWNR"},
         {
-            StrUpper(L["UP"], 1, 1),
-            StrUpper(L["DOWN"], 1, 1),
-            L["UP_AND_RIGHT"],
-            L["DOWN_AND_RIGHT"]
+            StrUpper(L["Up"], 1, 1),
+            StrUpper(L["Down"], 1, 1),
+            L["Up and Right"],
+            L["Down and Right"]
         },
         nil,
         {["PLAYER_BUFFS_ENABLED"] = true}
     )
     addOptionDropdown(
         p.scroll.scrollchild,
-        L["PLAYER_DEBUFFS_GROW"],
+        L["Player Debuffs Growth Direction"],
         nil,
         "PlayerDebuffFrame_GrowDirection",
         GW.UpdateHudScale(),
         {"UP", "DOWN", "UPR", "DOWNR"},
         {
-            StrUpper(L["UP"], 1, 1),
-            StrUpper(L["DOWN"], 1, 1),
-            L["UP_AND_RIGHT"],
-            L["DOWN_AND_RIGHT"]
+            StrUpper(L["Up"], 1, 1),
+            StrUpper(L["Down"], 1, 1),
+            L["Up and Right"],
+            L["Down and Right"]
         },
         nil,
         {["PLAYER_BUFFS_ENABLED"] = true}

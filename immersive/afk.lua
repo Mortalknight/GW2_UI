@@ -28,7 +28,7 @@ local function SetAFK(self, status)
             local guildName, guildRankName = GetGuildInfo("player")
             self.bottom.guild:SetFormattedText("%s-%s", guildName, guildRankName)
         else
-            self.bottom.guild:SetText(L["NO_GUILD"])
+            self.bottom.guild:SetText(L["No Guild"])
         end
 
         self.bottom.model.curAnimation = "wave"
@@ -249,7 +249,7 @@ local function loadAFKAnimation()
 
     AFKMode.bottom.guild = AFKMode.bottom:CreateFontString(nil, "OVERLAY")
     AFKMode.bottom.guild:SetFont(UNIT_NAME_FONT, 20)
-    AFKMode.bottom.guild:SetText(L["NO_GUILD"])
+    AFKMode.bottom.guild:SetText(L["No Guild"])
     AFKMode.bottom.guild:SetPoint("TOPLEFT", AFKMode.bottom.name, "BOTTOMLEFT", 0, -6)
     AFKMode.bottom.guild:SetTextColor(0.7, 0.7, 0.7)
 

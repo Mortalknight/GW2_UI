@@ -181,7 +181,7 @@ local function HoverKeyBinds()
                 for i = 1, #self.button.bindings do
                     SetBinding(self.button.bindings[i])
                 end
-                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["BINGSINGS_CLEAR"] .." |cff00ff00" .. self.button.name .. "|r.")
+                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["All key bindings cleared for"] .." |cff00ff00" .. self.button.name .. "|r.")
                 self:Update(self.button, self.spellmacro)
                 if self.spellmacro ~= "MACRO" then GameTooltip:Hide() end
                 return

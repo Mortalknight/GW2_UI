@@ -72,7 +72,7 @@ local function styleRewards()
     GwQuestviewFrameContainerDialogRequired:SetFont("UNIT_NAME_FONT", 14)
     GwQuestviewFrameContainerDialogRequired:SetTextColor(1, 1, 1)
     GwQuestviewFrameContainerDialogRequired:SetShadowColor(0, 0, 0, 1)
-    GwQuestviewFrameContainerDialogRequired:SetText(L["QUEST_REQUIRED_ITEMS"])
+    GwQuestviewFrameContainerDialogRequired:SetText(L["Required Items:"])
 end
 GW.AddForProfiling("questview", "styleRewards", styleRewards)
 
@@ -234,7 +234,7 @@ local function questTextCompleted()
         GwQuestviewFrameContainerAcceptButton:SetText(COMPLETE_QUEST)
     elseif questState == "PROGRESS" then
         showRewards()
-        GwQuestviewFrameContainerAcceptButton:SetText(L["QUEST_VIEW_SKIP"])
+        GwQuestviewFrameContainerAcceptButton:SetText(L["Skip"])
     else
         showRewards()
         GwQuestviewFrameContainerAcceptButton:SetText(ACCEPT)
@@ -258,7 +258,7 @@ local function nextGossip()
         if QUESTSTRINGINT == count then
             questTextCompleted()
         else
-            GwQuestviewFrameContainerAcceptButton:SetText(L["QUEST_VIEW_SKIP"])
+            GwQuestviewFrameContainerAcceptButton:SetText(L["Skip"])
         end
     else
         questTextCompleted()

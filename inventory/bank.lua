@@ -516,32 +516,21 @@ local function LoadBank(helpers)
 
         dd.bagOrder.checkbutton:SetScript(
             "OnClick",
-            function(self)
-                if GetSetting("BANK_REVERSE_SORT") then
-                    dd.bagOrder:SetText(L["BAG_ORDER_REVERSE"])
-                    SetSetting("BANK_REVERSE_SORT", false)
-                else
-                    dd.bagOrder:SetText(L["BAG_ORDER_NORMAL"])
-                    SetSetting("BANK_REVERSE_SORT", true)
-                end
+            function()
+                local newStatus = not GetSetting("BANK_REVERSE_SORT")
+                dd.bagOrder.checkbutton:SetChecked(newStatus)
+                SetSetting("BANK_REVERSE_SORT", newStatus)
+
                 ContainerFrame_UpdateAll()
             end
         )
 
-        if BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
-            dd.compactBank.checkbutton:SetChecked(false)
-        else
-            dd.compactBank.checkbutton:SetChecked(true)
-        end
-        if GetSetting("BANK_REVERSE_SORT") then
-            dd.bagOrder.checkbutton:SetChecked(true)
-        else
-            dd.bagOrder.checkbutton:SetChecked(false)
-        end
+        dd.compactBank.checkbutton:SetChecked(GetSetting("BAG_ITEM_SIZE") == BANK_ITEM_COMPACT_SIZE)
+        dd.bagOrder.checkbutton:SetChecked(GetSetting("BANK_REVERSE_SORT"))
 
         -- setup bag setting title locals
-        dd.compactBank.title:SetText(L["COMPACT_ICONS"])
-        dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
+        dd.compactBank.title:SetText(L["Compact Icons"])
+        dd.bagOrder.title:SetText(L["Reverse Bag Order"])
     end
 
     -- return a callback that should be called when item size changes

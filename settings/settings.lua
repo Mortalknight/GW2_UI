@@ -629,13 +629,13 @@ local function LoadSettings()
     sWindow.versionString:SetFont(UNIT_NAME_FONT, 12)
     sWindow.versionString:SetText(GW.VERSION_STRING)
     sWindow.headerString:SetText(CHAT_CONFIGURATION)
-    fmGSWMH:SetText(L["MOVE_HUD_BUTTON"])
-    fmGSWS:SetText(L["SETTINGS_SAVE_RELOAD"])
+    fmGSWMH:SetText(L["Move HUD"])
+    fmGSWS:SetText(L["Save and Reload"])
     fmGSWKB:SetText(KEY_BINDING)
-    fmGSWD:SetText(L["DISCORD"])
+    fmGSWD:SetText(L["Join Discord"])
 
     StaticPopupDialogs["JOIN_DISCORD"] = {
-        text = L["DISCORD"],
+        text = L["Join Discord"],
         button2 = CLOSE,
         timeout = 0,
         whileDead = true,

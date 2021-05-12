@@ -41,8 +41,8 @@ local function LoadAurasPanel(sWindow)
 
     createCat(L["Raid Auras"], L["Show or hide auras and edit raid aura indicators."], p, 2, nil, {p_auras, p_indicator})
 
-    addOptionText(p_auras.scroll.scrollchild, L["RAID_AURAS_IGNORED"], L["RAID_AURAS_IGNORED_DESC"], "AURAS_IGNORED", nil, nil, nil, {["RAID_FRAMES"] = true})
-    addOptionText(p_auras.scroll.scrollchild, L["RAID_AURAS_MISSING"], L["RAID_AURAS_MISSING_DESC"], "AURAS_MISSING", nil, nil, nil, {["RAID_FRAMES"] = true})
+    addOptionText(p_auras.scroll.scrollchild, L["Ignored Auras"], L["A list of auras that should never be shown."], "AURAS_IGNORED", nil, nil, nil, {["RAID_FRAMES"] = true})
+    addOptionText(p_auras.scroll.scrollchild, L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], "AURAS_MISSING", nil, nil, nil, {["RAID_FRAMES"] = true})
 
     local raidDebuffKeys, raidDebuffVales = {}, {}
     local settingstable = GetSetting("RAIDDEBUFFS")
@@ -71,8 +71,8 @@ local function LoadAurasPanel(sWindow)
         true
     )
 
-    addOption(p_indicator.scroll.scrollchild, L["INDICATORS_ICON"], L["INDICATORS_ICON_DESC"], "INDICATORS_ICON", nil, nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p_indicator.scroll.scrollchild, L["INDICATORS_TIME"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME", nil, nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", nil, nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p_indicator.scroll.scrollchild, L["Show Remaining Time"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME", nil, nil, nil, {["RAID_FRAMES"] = true})
 
     local auraKeys, auraVals = {0}, {NONE_KEY}
     for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do

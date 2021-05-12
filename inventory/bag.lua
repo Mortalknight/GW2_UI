@@ -70,7 +70,7 @@ local function sellJunk()
     if SoldCount == 0 or SellJunkTicker and SellJunkTicker._remainingIterations == 1 then 
         StopSelling() 
         if totalPrice > 0 then 
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["SELLING_JUNK_FOR"]:format(FormatMoneyForChat(totalPrice)))
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["Sold Junk for: %s"]:format(FormatMoneyForChat(totalPrice)))
         end
     end
 end
@@ -798,13 +798,13 @@ local function LoadBag(helpers)
         setupVendorJunk(dd.vendorGrays.checkbutton:GetChecked())
 
         -- setup bag setting title locals
-        dd.compactBags.title:SetText(L["COMPACT_ICONS"])
-        dd.sortOrder.title:SetText(L["BAG_SORT_ORDER_LAST"])
-        dd.itemBorder.title:SetText(L["SHOW_QUALITY_COLOR"])
-        dd.junkIcon.title:SetText(L["SHOW_JUNK_ICON"])
+        dd.compactBags.title:SetText(L["Compact Icons"])
+        dd.sortOrder.title:SetText(L["Sort to Last Bag"])
+        dd.itemBorder.title:SetText(L["Show Quality Color"])
+        dd.junkIcon.title:SetText(L["Show Junk Icon"])
         dd.professionColor.title:SetText(L["PROFESSION_BAG_COLOR"])
         dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
-        dd.vendorGrays.title:SetText(L["VENDOR_GRAYS"])
+        dd.vendorGrays.title:SetText(L["Sell Junk automatically"])
     end
 
     -- setup money frame
@@ -854,7 +854,7 @@ local function LoadBag(helpers)
     
         smsj.text = smsj:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge") 
         smsj.text:SetAllPoints();
-        smsj.text:SetText(L["SELLING_JUNK"])
+        smsj.text:SetText(L["Selling Junk"])
     
         f.smsj = smsj
 

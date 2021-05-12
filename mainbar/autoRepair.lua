@@ -20,7 +20,7 @@ local function autoRepairOutput()
     if STATUS == "PLAYER_REPAIR_FAILED" then
         DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. ERR_NOT_ENOUGH_MONEY)
     else
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["REPAIRD_FOR"]:format(FormatMoneyForChat(COST)))
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["Your items have been repaired for: %s"]:format(FormatMoneyForChat(COST)))
     end
 end
 

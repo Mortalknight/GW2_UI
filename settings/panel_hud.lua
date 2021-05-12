@@ -19,31 +19,31 @@ local function LoadHudPanel(sWindow)
 
     createCat(UIOPTIONS_MENU, L["Edit the HUD modules."], p, 3, nil, {p})
 
-    addOption(p.scroll.scrollchild, L["HUD_BACKGROUND"], L["HUD_BACKGROUND_DESC"], "HUD_BACKGROUND")
-    addOption(p.scroll.scrollchild, L["DYNAMIC_HUD"], L["DYNAMIC_HUD_DESC"], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
-    addOption(p.scroll.scrollchild, L["CHAT_FADE"], L["CHAT_FADE_DESC"], "CHATFRAME_FADE", nil, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["COMPASS_TOGGLE"], L["COMPASS_TOGGLE_DESC"], "SHOW_QUESTTRACKER_COMPASS", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["ADV_CAST_BAR"], L["ADV_CAST_BAR_DESC"], "CASTINGBAR_DATA", nil, nil, {["CASTINGBAR_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["FADE_MICROMENU"], L["FADE_MICROMENU_DESC"], "FADE_MICROMENU")
-    addOption(p.scroll.scrollchild, L["AUTO_REPAIR"], L["AUTO_REPAIR_DESC"], "AUTO_REPAIR")
+    addOption(p.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND")
+    addOption(p.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
+    addOption(p.scroll.scrollchild, L["Fade Chat"], L["Allow the chat to fade when not in use."], "CHATFRAME_FADE", nil, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], "CASTINGBAR_DATA", nil, nil, {["CASTINGBAR_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU")
+    addOption(p.scroll.scrollchild, L["Auto Repair"], L["Automatically repair using the following method when visiting a merchant."], "AUTO_REPAIR")
     addOption(p.scroll.scrollchild, DISPLAY_BORDERS, nil, "BORDER_ENABLED")
-    addOption(p.scroll.scrollchild, L["MINIMAP_FPS"], L["MINIMAP_FPS"], "MINIMAP_FPS", nil, nil, {["MINIMAP_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["FADE_GROUP_MANAGE_FRAME"], L["FADE_GROUP_MANAGE_FRAME_DESC"], "FADE_GROUP_MANAGE_FRAME", nil, nil, {["PARTY_FRAMES"] = true})
+    addOption(p.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", nil, nil, {["MINIMAP_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", nil, nil, {["PARTY_FRAMES"] = true})
     addOption(
         p.scroll.scrollchild,
-        L["PIXEL_PERFECTION"],
-        L["PIXEL_PERFECTION_DESC"],
+        L["Pixel Perfect Mode"],
+        L["Scales the UI into a Pixel Perfect Mode. This is dependent on screen resolution."],
         "PIXEL_PERFECTION",
         function()
             SetCVar("useUiScale", 0)
             GW.PixelPerfection()
         end
     )
-    addOption(p.scroll.scrollchild, L["AFK_MODE"], L["AFK_MODE_DESC"], "AFK_MODE")
+    addOption(p.scroll.scrollchild, L["AFK Mode"], L["When you go AFK display the AFK screen."], "AFK_MODE")
     addOptionSlider(
         p,
-        L["HUD_SCALE"],
-        L["HUD_SCALE_DESC"],
+        L["HUD Scale"],
+        L["Change the HUD size."],
         "HUD_SCALE",
         GW.UpdateHudScale,
         0.5,
@@ -83,8 +83,8 @@ local function LoadHudPanel(sWindow)
     )
     addOptionDropdown(
         p.scroll.scrollchild,
-        L["MINIMAP_SCALE"],
-        L["MINIMAP_SCALE_DESC"],
+        L["Minimap Scale"],
+        L["Change the Minimap size."],
         "MINIMAP_SCALE",
         function()
             Minimap:SetSize(GetSetting("MINIMAP_SCALE"), GetSetting("MINIMAP_SCALE"))

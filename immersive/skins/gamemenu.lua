@@ -24,12 +24,12 @@ local ICON_SPRITES = {
 
 local function PositionGameMenuButton()
     GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + GameMenuButtonLogout:GetHeight() - 4)
-    local _, relTo, _, _, offY = GameMenuButtonLogout:GetPoint()
-    if relTo ~= GameMenuFrame[L["SETTINGS_BUTTON"]] then
-        GameMenuFrame[L["SETTINGS_BUTTON"]]:ClearAllPoints()
-        GameMenuFrame[L["SETTINGS_BUTTON"]]:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, -1)
-        GameMenuButtonLogout:ClearAllPoints()
-        GameMenuButtonLogout:SetPoint("TOPLEFT", GameMenuFrame[L["SETTINGS_BUTTON"]], "BOTTOMLEFT", 0, offY)
+    local _, relTo, _, _, offY = GameMenuButtonKeybindings:GetPoint()
+    if relTo ~= GameMenuFrame[GW.addonName] then
+        GameMenuFrame[GW.addonName]:ClearAllPoints()
+        GameMenuFrame[GW.addonName]:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, -1)
+        GameMenuButtonKeybindings:ClearAllPoints()
+        GameMenuButtonKeybindings:SetPoint("TOPLEFT", GameMenuFrame[GW.addonName], "BOTTOMLEFT", 0, offY)
     end
 end
 GW.PositionGameMenuButton = PositionGameMenuButton
@@ -69,13 +69,12 @@ local function SkinMainMenu()
     local GameMenuFrame = _G.GameMenuFrame
 
     local GwMainMenuFrame = CreateFrame("Button", nil, GameMenuFrame, "GameMenuButtonTemplate")
-    GwMainMenuFrame:SetText(L["SETTINGS_BUTTON"])
-    GwMainMenuFrame:SetText(format("|cffffedba%s|r", L["SETTINGS_BUTTON"]))
+    GwMainMenuFrame:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
     GwMainMenuFrame:SetScript(
         "OnClick",
         function()
             if InCombatLockdown() then
-                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HIDE_SETTING_IN_COMBAT"])
+                DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
                 return
             end
             ShowUIPanel(GwSettingsWindow)
@@ -83,7 +82,7 @@ local function SkinMainMenu()
             HideUIPanel(GameMenuFrame)
         end
     )
-    GameMenuFrame[L["SETTINGS_BUTTON"]] = GwMainMenuFrame
+    GameMenuFrame[GW.addonName] = GwMainMenuFrame
     BUTTONS[#BUTTONS + 1] = {button = GwMainMenuFrame, sprite = {4, 3}}
 
     if not IsAddOnLoaded("ConsolePortUI_Menu") then
@@ -108,5 +107,10 @@ local function SkinMainMenu()
     _G.GameMenuFrameHeader:Hide()
 
     applyButtonStyle()
+
+    -- remove elvui transparent bg if ours is enabled
+    if IsAddOnLoaded("ElvUI") then
+        _G.GameMenuFrame.backdrop:Hide()
+    end
 end
 GW.SkinMainMenu = SkinMainMenu

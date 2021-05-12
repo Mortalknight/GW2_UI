@@ -21,7 +21,7 @@ local function xpbar_OnEnter()
     local rested = GetXPExhaustion()
     local isRestingString = ""
     if IsResting() then
-        isRestingString = L["EXP_BAR_TOOLTIP_EXP_RESTING"]
+        isRestingString = L[" (Resting)"]
     end
 
     GameTooltip:AddLine(COMBAT_XP_GAIN .. isRestingString, 1, 1, 1)
@@ -41,7 +41,7 @@ local function xpbar_OnEnter()
 
     if rested ~= nil and rested ~= 0 then
         GameTooltip:AddLine(
-            L["EXP_BAR_TOOLTIP_EXP_RESTED"] ..
+            L["Rested "] ..
                 CommaValue(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
             1,
             1,

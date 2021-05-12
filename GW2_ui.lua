@@ -598,7 +598,7 @@ local function loadAddon(self)
     GW.UpdateHudScale()
 
     if (forcedMABags) then
-        GW.Notice(L["DISABLED_MA_BAGS"])
+        GW.Notice(L["Disabled MoveAnything's bag handling."])
     end
 
     --Add Shared Media

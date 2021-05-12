@@ -2,8 +2,79 @@ local _, GW = ...
 local L = GW.L
 local GetSetting = GW.GetSetting
 local RoundDec = GW.RoundDec
+local updateIcon
 
-PERFORMANCEBAR_UPDATE_INTERVAL = 1
+do
+    local SendMessageWaiting 
+    local function SendMessage()
+        if IsInRaid() then
+            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, (not IsInRaid(LE_PARTY_CATEGORY_HOME) and IsInRaid(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "RAID")
+        elseif IsInGroup() then
+            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, (not IsInGroup(LE_PARTY_CATEGORY_HOME) and IsInGroup(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "PARTY")
+        elseif IsInGuild() then
+            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, "GUILD")
+        end
+
+        SendMessageWaiting = nil
+    end
+
+    local SendRecieveGroupSize = 0
+    local myRealm = gsub(GW.myrealm, "[%s%-]", "")
+    local myName = GW.myname .. "-" .. myRealm
+    local printChatMessage = false
+    local function SendRecieve(_, event, prefix, message, _, sender)
+        if event == "CHAT_MSG_ADDON" then
+            if sender == myName then return end
+            if prefix == "GW2UI_VERSIONCHK" then
+                local version, subversion, hotfix = string.match(message, "GW2_UI v(%d+).(%d+).(%d+)")
+                local currentVersion, currentSubversion, currentHotfix = string.match(GW.VERSION_STRING, "GW2_UI v(%d+).(%d+).(%d+)")
+                local isUpdate = false
+                if version == nil or subversion == nil or hotfix == nil or currentVersion == nil or currentSubversion == nil or currentHotfix == nil then return end
+
+                if version > currentVersion then
+                    updateIcon.tooltipText = L["New update available for download."]
+                    isUpdate = true
+                elseif subversion > currentSubversion then
+                    updateIcon.tooltipText = L["New update available containing new features."]
+                    isUpdate = true
+                elseif hotfix > currentHotfix then
+                    updateIcon.tooltipText = L["A |cFFFF0000major|r update is available.\nIt's strongly recommended that you update."]
+                    isUpdate = true
+                end
+
+                if isUpdate and not printChatMessage then
+                    GW.FrameFlash(updateIcon, 1, 0.3, 1, true)
+                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. updateIcon.tooltipText):gsub("*", GW.Gw2Color))
+                    updateIcon:Show()
+                    printChatMessage = true
+                end
+            end
+        elseif event == "GROUP_ROSTER_UPDATE" or event == "RAID_ROSTER_UPDATE" then
+            local num = GetNumGroupMembers()
+            if num ~= SendRecieveGroupSize then
+                if num > 1 and num > SendRecieveGroupSize then
+                    if not SendMessageWaiting then
+                        SendMessageWaiting = C_Timer.After(10, SendMessage)
+                    end
+                end
+                SendRecieveGroupSize = num
+            end
+        elseif event == "PLAYER_ENTERING_WORLD" then
+            if not SendMessageWaiting then
+                SendMessageWaiting = C_Timer.After(10, SendMessage)
+            end
+        end
+    end
+
+    C_ChatInfo.RegisterAddonMessagePrefix("GW2UI_VERSIONCHK")
+
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("CHAT_MSG_ADDON")
+    f:RegisterEvent("GROUP_ROSTER_UPDATE")
+    f:RegisterEvent("RAID_ROSTER_UPDATE")
+    f:RegisterEvent("PLAYER_ENTERING_WORLD")
+    f:SetScript("OnEvent", SendRecieve)
+end
 
 local function updateGuildButton(self, event)
     if event == "GUILD_ROSTER_UPDATE" then
@@ -63,19 +134,19 @@ local function LatencyInfoToolTip()
     GameTooltip:ClearLines()
     GameTooltip_AddNewbieTip(MainMenuMicroButton, MainMenuMicroButton.tooltipText, 1.0, 1.0, 1.0, MainMenuMicroButton.newbieText)
     GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(L["FPS_TOOLTIP_1"] .. frameRate .." fps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(L["FPS_TOOLTIP_2"] .. lagHome .." ms", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(L["FPS_TOOLTIP_3"] .. lagWorld .." ms", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["FPS "] .. frameRate .." fps", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["Latency (Home) "] .. lagHome .." ms", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["Latency (World) "] .. lagWorld .." ms", 0.8, 0.8, 0.8)
     GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(L["FPS_TOOLTIP_4"] .. RoundDec(down,2) .. " Kbps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(L["FPS_TOOLTIP_5"] .. RoundDec(up,2) .. " Kbps", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["Bandwidth (Download) "] .. RoundDec(down,2) .. " Kbps", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["Bandwidth (Upload) "] .. RoundDec(up,2) .. " Kbps", 0.8, 0.8, 0.8)
     GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
 
     for i = 1, numAddons do
         addonMemory = addonMemory + GetAddOnMemoryUsage(i)
     end
 
-    GameTooltip:AddLine(L["FPS_TOOLTIP_6"] .. RoundDec(addonMemory / 1024, 2) .. " MB", 0.8, 0.8, 0.8)
+    GameTooltip:AddLine(L["Memory for Addons: "] .. RoundDec(addonMemory / 1024, 2) .. " MB", 0.8, 0.8, 0.8)
 
     for i = 1, numAddons do
         if type(AddonMemoryArray[i]) ~= "table" then
@@ -354,6 +425,22 @@ local function setupMicroButtons(mbf)
     -- HelpMicroButton
     HelpMicroButton:ClearAllPoints()
     HelpMicroButton:SetPoint("BOTTOMLEFT", MainMenuMicroButton, "BOTTOMRIGHT", 4, 0)
+
+    -- Update icon
+    updateIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
+    updateIcon.newbieText = nil
+    updateIcon.tooltipText = ""
+    reskinMicroButton(updateIcon, "UpdateMicroButton", mbf)
+    updateIcon:ClearAllPoints()
+    updateIcon:SetPoint("BOTTOMLEFT", HelpMicroButton, "BOTTOMRIGHT", 4, 0)
+    updateIcon:Hide()
+    updateIcon:HookScript("OnEnter", function(self)
+        GameTooltip:ClearLines()
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip_SetTitle(GameTooltip, L["GW2 UI Update"])
+        GameTooltip:AddLine(self.tooltipText)
+        GameTooltip:Show()
+    end)
 end
 GW.AddForProfiling("micromenu", "setupMicroButtons", setupMicroButtons)
 

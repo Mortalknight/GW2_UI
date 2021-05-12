@@ -126,7 +126,7 @@ local function getBodyPOI()
 
     bodyCompass["X"] = x
     bodyCompass["Y"] = y
-    bodyCompass["TITLE"] = L["TRACKER_RETRIVE_CORPSE"]
+    bodyCompass["TITLE"] = L["Retrieve your corpse"]
 
     return bodyCompass
 end
