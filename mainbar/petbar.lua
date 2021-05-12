@@ -210,15 +210,18 @@ local function updatePetFrameLocation()
         return
     end
     local fBar = MultiBarBottomLeft
+    local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 54 or 0
     fPet:ClearAllPoints()
+    fPet.gwMover:ClearAllPoints()
     if fBar and fBar.gw_FadeShowing then
-        fPet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 212)
+        fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + xOff, 212)
+        fPet:SetPoint("TOPLEFT", fPet.gwMover)
     else
-        fPet:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53, 120)
+        fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + xOff, 120)
+        fPet:SetPoint("TOPLEFT", fPet.gwMover)
     end
 end
 GW.AddForProfiling("petbar", "updatePetFrameLocation", updatePetFrameLocation)
-GW.updatePetFrameLocation = updatePetFrameLocation
 
 local function SetPetHappiness(self)
     local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
@@ -384,20 +387,14 @@ local function LoadPetFrame(lm)
 
     updatePetData(playerPetFrame, "UNIT_PET", "player")
 
-    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, true, true)
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, true, {"default", "scaleable"}, true)
 
     if not playerPetFrame.isMoved then
         AddActionBarCallback(updatePetFrameLocation)
         updatePetFrameLocation()
     else
         playerPetFrame:ClearAllPoints()
-        playerPetFrame:SetPoint(
-            GetSetting("pet_pos")["point"],
-            UIParent,
-            GetSetting("pet_pos")["relativePoint"],
-            GetSetting("pet_pos")["xOfs"],
-            GetSetting("pet_pos")["yOfs"]
-        )
+        playerPetFrame:SetPoint("TOPLEFT", playerPetFrame.gwMover)
     end
 
     lm:RegisterPetFrame(playerPetFrame)

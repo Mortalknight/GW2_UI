@@ -198,6 +198,45 @@ local function delete_OnClick(self, button)
 end
 AddForProfiling("panel_profiles", "delete_OnClick", delete_OnClick)
 
+local function buttons_OnEnter(self)
+    if self:GetParent().activateAble ~= nil and self:GetParent().activateAble == true then
+        self:GetParent().activateButton:Show()
+    end
+    if self:GetParent().deleteable ~= nil and self:GetParent().deleteable == true then
+        self:GetParent().deleteButton:Show()
+    end
+    if self:GetParent().renameable ~= nil and self:GetParent().renameable == true then
+        self:GetParent().renameButton:Show()
+    end
+    if self:GetParent().exportable ~= nil and self:GetParent().exportable == true then
+        self:GetParent().exportButton:Show()
+    end
+    if self:GetParent().copyable ~= nil and self:GetParent().copyable == true then
+        self:GetParent().copyButton:Show()
+    end
+end
+AddForProfiling("panel_profiles", "activate_OnEnter", activate_OnEnter)
+
+local function buttons_OnLeave(self)
+    if self:GetParent().deleteable ~= nil and self:GetParent().deleteable == true then
+        self:GetParent().deleteButton:Hide()
+    end
+    if self:GetParent().exportable ~= nil and self:GetParent().exportable == true then
+        self:GetParent().exportButton:Hide()
+    end
+    if self:GetParent().renameable ~= nil and self:GetParent().renameable == true then
+        self:GetParent().renameButton:Hide()
+    end
+    if self:GetParent().activateAble ~= nil and self:GetParent().activateAble == true then
+        self:GetParent().activateButton:Hide()
+    end
+    if self:GetParent().copyable ~= nil and self:GetParent().copyable == true then
+        self:GetParent().copyButton:Hide()
+    end
+    self:GetParent().background:SetBlendMode("BLEND")
+end
+AddForProfiling("panel_profiles", "buttons_OnLeave", buttons_OnLeave)
+
 local function activate_export_OnEnter(self)
     if self:GetParent().activateAble ~= nil and self:GetParent().activateAble == true then
         self:GetParent().activateButton:Show()
@@ -234,6 +273,32 @@ local function export_OnClick(self, button)
 end
 AddForProfiling("panel_profiles", "export_OnClick", export_OnClick)
 
+local function rename_OnClick(self)
+    StaticPopup_Show("GW_CHANGE_PROFILE_NAME", nil, nil, self:GetParent())
+end
+
+local function copyTable(newTable, tableToCopy)
+    if type(newTable) ~= "table" then newTable = {} end
+
+    if type(tableToCopy) == "table" then
+        for option, value in pairs(tableToCopy) do
+            if type(value) == "table" then
+                value = copyTable(newTable[option], value)
+            end
+
+            newTable[option] = value
+        end
+    end
+
+    return newTable
+end
+GW.copyTable = copyTable
+
+local function copy_OnClick(self)
+    local newProfil = copyTable(nil, GW2UI_SETTINGS_PROFILES[self:GetParent().profileID])
+    GW.addProfile(self:GetParent():GetParent():GetParent():GetParent(), L["Copy of"] .. " " .. GW2UI_SETTINGS_PROFILES[self:GetParent().profileID]["profilename"], newProfil, true)
+end
+
 local function item_OnLoad(self)
     self.name:SetFont(UNIT_NAME_FONT, 14)
     self.name:SetTextColor(1, 1, 1)
@@ -257,6 +322,12 @@ local function item_OnLoad(self)
     self.exportButton:SetScript("OnEnter", activate_export_OnEnter)
     self.exportButton:SetScript("OnLeave", buttons_OnLeave)
     self.exportButton:SetScript("OnClick", export_OnClick)
+    self.renameButton:SetScript("OnEnter", buttons_OnEnter)
+    self.renameButton:SetScript("OnLeave", buttons_OnLeave)
+    self.renameButton:SetScript("OnClick", rename_OnClick)
+    self.copyButton:SetScript("OnEnter", buttons_OnEnter)
+    self.copyButton:SetScript("OnLeave", buttons_OnLeave)
+    self.copyButton:SetScript("OnClick", copy_OnClick)
 end
 AddForProfiling("panel_profiles", "item_OnLoad", item_OnLoad)
 
@@ -270,6 +341,12 @@ local function item_OnEnter(self)
     if self.exportable ~= nil and self.exportable == true then
         self.exportButton:Show()
     end
+    if self.renameable ~= nil and self.renameable == true then
+        self.renameButton:Show()
+    end
+    if self.copyable ~= nil and self.copyable == true then
+        self.copyButton:Show()
+    end
     self.background:SetBlendMode("ADD")
 end
 AddForProfiling("panel_profiles", "item_OnEnter", item_OnEnter)
@@ -280,6 +357,12 @@ local function item_OnLeave(self)
     end
     if self.exportable ~= nil and self.exportable == true then
         self.exportButton:Hide()
+    end
+    if self.renameable ~= nil and self.renameable == true then
+        self.renameButton:Hide()
+    end
+    if self.copyable ~= nil and self.copyable == true then
+        self.copyButton:Hide()
     end
     self.activateButton:Hide()
     self.background:SetBlendMode("BLEND")
@@ -314,6 +397,8 @@ updateProfiles = function(self)
 
             f.deleteable = true
             f.exportable = true
+            f.renameable = true
+            f.copyable = true
             f.background:SetTexCoord(0, 1, 0, 0.5)
             f.activateAble = true
             if currentProfile == k then
@@ -322,12 +407,13 @@ updateProfiles = function(self)
             end
 
             local description =
-                L["PROFILES_CREATED"] ..
+                L["Created: "] ..
                 v["profileCreatedDate"] ..
-                    L["PROFILES_CREATED_BY"] ..
-                        v["profileCreatedCharacter"] .. L["PROFILES_LAST_UPDATE"] .. v["profileLastUpdated"]
+                    L["\nCreated by: "] ..
+                        v["profileCreatedCharacter"] .. L["\nLast updated: "] .. v["profileLastUpdated"]
 
             f.name:SetText(v["profilename"])
+            f.name:SetWidth(min(f.name:GetStringWidth(), 250))
             f.desc:SetText(description)
             f:SetPoint("TOPLEFT", 15, (-70 * h) + -120)
             h = h + 1
@@ -451,6 +537,8 @@ local function LoadProfilesPanel(sWindow)
 
     resetTodefault.deleteable = false
     resetTodefault.exportable = false
+    resetTodefault.renameable = false
+    resetTodefault.copyable = false
     resetTodefault.background:SetTexCoord(0, 1, 0, 0.5)
     resetTodefault.activateAble = true
 
@@ -510,5 +598,37 @@ local function LoadProfilesPanel(sWindow)
     updateProfiles(p)
 
     ImportExportFrame = createImportExportFrame(p)
+
+    StaticPopupDialogs["GW_CHANGE_PROFILE_NAME"] = {
+        text = GARRISON_SHIP_RENAME_LABEL,
+        button1 = SAVE,
+        button2 = CANCEL,
+        selectCallbackByIndex = true,
+        OnButton1 = function(self, data)
+            local profileToRename = GW2UI_SETTINGS_PROFILES[data.profileID]
+            local text = self.editBox:GetText()
+            local changeDate = date("%m/%d/%y %H:%M:%S")
+            local description = L["Created: "] .. profileToRename["profileCreatedDate"] .. L["\nCreated by: "] ..
+                profileToRename["profileCreatedCharacter"] .. L["\nLast updated: "] .. changeDate
+
+            -- Use hidden frame font object to calculate string width
+            GW.HiddenFrame.HiddenString:SetFont(UNIT_NAME_FONT, 14)
+            GW.HiddenFrame.HiddenString:SetText(text)
+            profileToRename["profilename"] = text
+            profileToRename["profileLastUpdated"] = changeDate
+            data.name:SetText(text)
+            data.name:SetWidth(min(GW.HiddenFrame.HiddenString:GetStringWidth() + 5, 250))
+            data.desc:SetText(description)
+
+            return
+        end,
+        OnButton2 = function() end,
+        timeout = 0,
+        whileDead = 1,
+        hasEditBox = 1,
+        maxLetters = 64,
+        editBoxWidth = 250,
+        closeButton = 0,
+    }
 end
 GW.LoadProfilesPanel = LoadProfilesPanel

@@ -1,9 +1,7 @@
 local _, GW = ...
 local L = GW.L
-local gw_set_unit_flag = GW.UnitFlags
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
-local CountTable = GW.CountTable
 local GWGetClassColor = GW.GWGetClassColor
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
@@ -14,7 +12,6 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
 local SetDeadIcon = GW.SetDeadIcon
-local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local FillTable = GW.FillTable
 local IsIn = GW.IsIn
@@ -24,8 +21,6 @@ local RoundDec = GW.RoundDec
 local LHC = GW.Libs.LHC
 
 local GROUPD_TYPE = "PARTY"
-local GW_READY_CHECK_INPROGRESS = false
-
 local previewSteps = {40, 20, 10, 5}
 local previewStep = 0
 local hudMoving = false
@@ -39,8 +34,8 @@ local function hideBlizzardRaidFrame()
         return
     end
 
-    if _G["CompactRaidFrameManagerDisplayFrameHiddenModeToggle"] then
-        _G["CompactRaidFrameManagerDisplayFrameHiddenModeToggle"]:Hide()
+    if CompactRaidFrameManagerDisplayFrameHiddenModeToggle then
+        CompactRaidFrameManagerDisplayFrameHiddenModeToggle:Hide()
     end
     if CompactRaidFrameManager then
         CompactRaidFrameManager:UnregisterAllEvents()
@@ -61,13 +56,19 @@ GW.AddForProfiling("raidframes", "hideBlizzardRaidFrame", hideBlizzardRaidFrame)
 local function updateRaidMarkers(self)
     local i = GetRaidTargetIndex(self.unit)
     self.targetmarker = i
-    if self.targetmarker == nil then
-        self.classicon:SetTexture(nil)
-        return
-    end
-    self.classicon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. i)
-    if not self.classicon:IsShown() then
-        self.classicon:Show()
+    if i then
+        self.targetmarker = i
+        self.classicon:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcon_" .. i)
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
+        self.classicon:SetShown(true)
+    else
+        self.targetmarker = nil
+        if not GetSetting("RAID_CLASS_COLOR") then
+            self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
+            SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
+        else
+            self.classicon:SetTexture(nil)
+        end
     end
 end
 GW.AddForProfiling("raidframes", "updateRaidMarkers", updateRaidMarkers)
@@ -185,7 +186,7 @@ local function setUnitName(self)
     end
 
     local nameString = UnitName(self.unit)
-    
+
     if not nameString or nameString == UNKNOWNOBJECT then
         self.nameNotLoaded = false
     else
@@ -222,29 +223,18 @@ local function highlightTargetFrame(self)
 end
 GW.AddForProfiling("raidframes", "highlightTargetFrame", highlightTargetFrame)
 
-local function updateClassIcon(self)
-    if b == false then
-        self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
-    else
-        self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\readycheck")
-    end
-end
-GW.AddForProfiling("raidframes", "updateClassIcon", updateClassIcon)
-
 local function updateAwayData(self)
     local classColor = GetSetting("RAID_CLASS_COLOR")
-    local iconState = 1
-
+    local readyCheckStatus = GetReadyCheckStatus(self.unit)
+    local iconState = 0
     local _, englishClass, classIndex = UnitClass(self.unit)
+
     self.name:SetTextColor(1, 1, 1)
 
-    if classIndex ~= nil and classIndex ~= 0 and classColor == false and GW_READY_CHECK_INPROGRESS == false then
-        self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
-        iconState = 1
-    end
-
-    if classColor == true and classIndex ~= nil and classIndex ~= 0 then
-        iconState = 0
+    if classColor and classIndex and classIndex > 0 then
+        local color = GWGetClassColor(englishClass, true)
+        self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
+        self.classicon:SetShown(false)
     end
     if UnitIsDeadOrGhost(self.unit) then
         iconState = 2
@@ -261,11 +251,12 @@ local function updateAwayData(self)
         end
     end
     if iconState == 1 then
+        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
         self.healthbar:SetStatusBarColor(0.207, 0.392, 0.168)
         SetClassIcon(self.classicon, classIndex)
     end
 
-    if self.targetmarker ~= nil and GW_READY_CHECK_INPROGRESS == false and GetSetting("RAID_UNIT_MARKERS") == true then
+    if self.targetmarker and not readyCheckStatus and GetSetting("RAID_UNIT_MARKERS") then
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
         updateRaidMarkers(self)
     end
@@ -285,14 +276,13 @@ local function updateAwayData(self)
         self.classicon:Show()
     end
 
-    if GW_READY_CHECK_INPROGRESS == true then
-        if self.ready == -1 then
+    if readyCheckStatus then
+        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
+        if readyCheckStatus == "waiting" then
             self.classicon:SetTexCoord(0, 1, 0, 0.25)
-        end
-        if self.ready == false then
+        elseif readyCheckStatus == "notready" then
             self.classicon:SetTexCoord(0, 1, 0.25, 0.50)
-        end
-        if self.ready == true then
+        elseif readyCheckStatus == "ready" then
             self.classicon:SetTexCoord(0, 1, 0.50, 0.75)
         end
         if not self.classicon:IsShown() then
@@ -309,10 +299,8 @@ local function updateAwayData(self)
 
     if UnitIsConnected(self.unit) and (not UnitInPhase(self.unit) or not UnitInRange(self.unit)) then
         local r, g, b = self.healthbar:GetStatusBarColor()
-        r = r * 0.3
-        b = b * 0.3
-        g = g * 0.3
-        self.healthbar:SetStatusBarColor(r, g, b)
+
+        self.healthbar:SetStatusBarColor(r * 0.3, g * 0.3, b * 0.3)
         self.classicon:SetAlpha(0.4)
     else
         self.classicon:SetAlpha(1)
@@ -346,20 +334,19 @@ end
 local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires)
     local size = 16
     local marginX, marginY = x * (size + 2), y * (size + 2)
-    local name = "Gw" .. parent:GetName() .. "DeBuffItemFrame" .. btnIndex
-    local frame = _G[name]
+    local frame = _G["Gw" .. parent:GetName() .. "DeBuffItemFrame" .. btnIndex]
 
     if not frame then
-        frame = CreateFrame("Button", name, parent, "GwDeBuffIcon")
+        frame = CreateFrame("Button", "Gw" .. parent:GetName() .. "DeBuffItemFrame" .. btnIndex, parent, "GwDeBuffIcon")
         frame:SetParent(parent)
         frame:SetFrameStrata("MEDIUM")
         frame:SetSize(size, size)
         frame:ClearAllPoints()
         frame:SetPoint("BOTTOMLEFT", parent.healthbar, "BOTTOMLEFT", marginX + 3, marginY + 3)
 
-        _G[name .. "Icon"]:SetPoint("TOPLEFT", frame, "TOPLEFT", 1, -1)
-        _G[name .. "Icon"]:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
-        
+        frame.debuffIcon:SetPoint("TOPLEFT", frame, "TOPLEFT", 1, -1)
+        frame.debuffIcon:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
+
         frame:SetScript("OnEnter", onDebuffEnter)
         frame:SetScript("OnLeave", GameTooltip_Hide)
         frame:SetScript("OnMouseUp", onDebuffMouseUp)
@@ -386,9 +373,9 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
     frame.index = i
     frame.filter = filter
 
-    _G[frame:GetName() .. "CooldownBuffDuration"]:SetText(expires and TimeCount(expires - GetTime()) or "")
-    _G[frame:GetName() .. "IconBuffStacks"]:SetText((count or 1) > 1 and count or "")
-    _G[frame:GetName() .. "IconBuffStacks"]:SetFont(UNIT_NAME_FONT, (count or 1) > 9 and 9 or 14)
+    frame.cooldown.duration:SetText(expires and TimeCount(expires - GetTime()) or 0)
+    frame.debuffIcon.stacks:SetText((count or 1) > 1 and count or "")
+    frame.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, (count or 1) > 9 and 9 or 14)
 
     frame:Show()
 
@@ -408,7 +395,7 @@ local function updateDebuffs(self)
     local show_importend_raid_instance_debuffs = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
-    local i, framesDone, aurasDone = 0
+    local i, framesDone, aurasDone = 0, false, false
     repeat
         i = i + 1
 
@@ -488,21 +475,20 @@ end
 local function showBuffIcon(parent, i, btnIndex, x, y, icon, isMissing)
     local size = 14
     local marginX, marginY = x * (size + 2), y * (size + 2)
-    local name = "Gw" .. parent:GetName() .. "BuffItemFrame" .. btnIndex
-    local frame = _G[name]
+    local frame = _G["Gw" .. parent:GetName() .. "BuffItemFrame" .. btnIndex]
 
     if not frame then
-        frame = CreateFrame("Button", name, parent, "GwBuffIconBig")
+        frame = CreateFrame("Button", "Gw" .. parent:GetName() .. "BuffItemFrame" .. btnIndex, parent, "GwBuffIconBig")
         frame:SetParent(parent)
         frame:SetFrameStrata("MEDIUM")
         frame:SetSize(14, 14)
         frame:ClearAllPoints()
         frame:SetPoint("BOTTOMRIGHT", parent.healthbar, "BOTTOMRIGHT", -(marginX + 3), marginY + 3)
 
-        _G[name .. "BuffDuration"]:SetFont(UNIT_NAME_FONT, 11)
-        _G[name .. "BuffDuration"]:SetTextColor(1, 1, 1)
-        _G[name .. "BuffStacks"]:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
-        _G[name .. "BuffStacks"]:SetTextColor(1, 1, 1)
+        frame.buffDuration:SetFont(UNIT_NAME_FONT, 11)
+        frame.buffDuration:SetTextColor(1, 1, 1)
+        frame.buffStacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
+        frame.buffStacks:SetTextColor(1, 1, 1)
 
         frame:SetScript("OnEnter", onBuffEnter)
         frame:SetScript("OnLeave", GameTooltip_Hide)
@@ -514,10 +500,10 @@ local function showBuffIcon(parent, i, btnIndex, x, y, icon, isMissing)
     frame.index = i
     frame.isMissing = isMissing
 
-    _G[name .. "BuffIcon"]:SetTexture(icon)
-    _G[name .. "BuffIcon"]:SetVertexColor(1, isMissing and .75 or 1, isMissing and .75 or 1)
-    _G[name .. "BuffDuration"]:SetText("")
-    _G[name .. "BuffStacks"]:SetText("")
+    frame.buffIcon:SetTexture(icon)
+    frame.buffIcon:SetVertexColor(1, isMissing and .75 or 1, isMissing and .75 or 1)
+    frame.buffDuration:SetText("")
+    frame.buffStacks:SetText("")
 
     frame:Show()
 
@@ -532,7 +518,7 @@ end
 local function updateBuffs(self)
     local btnIndex, x, y = 1, 0, 0
     local indicators = AURAS_INDICATORS[GW.myclass]
-    local i, name, spellid = 1
+    local i, name, spellid = 1, nil, nil
     FillTable(missing, true, strsplit(",", (GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
     FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
@@ -636,7 +622,7 @@ local function updateBuffs(self)
 
                                     shouldDisplay = false
                                 end
-                                
+
                                 frame:Show()
                             end
                         end
@@ -666,7 +652,7 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         -- Enable or disable mouse handling on aura frames
         local name, enable = self:GetName(), event == "PLAYER_REGEN_ENABLED" or GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT")
         for j=1,2 do
-            local i, aura, frame = 1, j == 1 and "Buff" or "Debuff"
+            local i, aura, frame = 1, j == 1 and "Buff" or "Debuff", nil
             repeat
                 frame, i = _G["Gw" .. name .. aura .. "ItemFrame" .. i], i + 1
                 if frame then
@@ -717,49 +703,24 @@ local function raidframe_OnEvent(self, event, unit, arg1)
         updateAwayData(self)
     elseif event == "RAID_TARGET_UPDATE" and GetSetting("RAID_UNIT_MARKERS") == true then
         updateRaidMarkers(self)
-    elseif event == "READY_CHECK" then
-        self.ready = -1
-        if not IsInRaid() and self.unit == "player" then
-            self.ready = true
-        end
-        if IsInRaid() and self.unit == "raid" .. UnitInRaid(unit) then
-            self.ready = true
-        end
-        GW_READY_CHECK_INPROGRESS = true
-        updateAwayData(self)
-        updateClassIcon(self, true)
-    elseif event == "READY_CHECK_CONFIRM" and unit == self.unit then
-        self.ready = arg1
+    elseif event == "READY_CHECK" or (event == "READY_CHECK_CONFIRM" and unit == self.unit) then
         updateAwayData(self)
     elseif event == "READY_CHECK_FINISHED" then
-        AddToAnimation(
-            "ReadyCheckRaidWaitCheck" .. self.unit,
-            0,
-            1,
-            GetTime(),
-            2,
-            function()
-            end,
-            nil,
-            function()
-                GW_READY_CHECK_INPROGRESS = false
-                local classColor = GetSetting("RAID_CLASS_COLOR")
-                if UnitInRaid(self.unit) ~= nil then
-                    local _, englishClass, classIndex = UnitClass(self.unit)
-                    if classColor == true then
-                        local color = GWGetClassColor(englishClass, true)
-                        self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
-                        if self.classicon:IsShown() then
-                            self.classicon:Hide()
-                        end
-                    else    
-                        self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
-                    end
+        C_Timer.After(1.5, function()
+            if UnitInRaid(self.unit) then
+                local _, englishClass, classIndex = UnitClass(self.unit)
+                if GetSetting("RAID_CLASS_COLOR") then
+                    local color = GWGetClassColor(englishClass, true)
+                    self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
+                    self.classicon:SetShown(false)
+                else
+                    self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
                     self.healthbar:SetStatusBarColor(0.207, 0.392, 0.168)
+                    self.classicon:SetShown(true)
                     SetClassIcon(self.classicon, classIndex)
                 end
             end
-        )
+        end)
     end
 end
 GW.AddForProfiling("raidframes", "raidframe_OnEvent", raidframe_OnEvent)
@@ -832,10 +793,10 @@ local function GetRaidFramesMeasures(players)
         players = players or max(1, GetNumGroupMembers())
     else
         players = 0
-        for i = 1, 40 do
+        for i = 1, MAX_RAID_MEMBERS do
             local _, _, grp = GetRaidRosterInfo(i)
-            if grp >= ceil(players / 5) then
-                players = max((grp - 1) * 5, players) + 1
+            if grp >= ceil(players / MEMBERS_PER_RAID_GROUP) then
+                players = max((grp - 1) * MEMBERS_PER_RAID_GROUP, players) + 1
             end
         end
         players = max(1, players, GetNumGroupMembers())
@@ -913,14 +874,14 @@ local function UpdateRaidFramesPosition()
     players = previewStep == 0 and 40 or previewSteps[previewStep]
 
     -- Get directions, rows, cols and sizing
-    local grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m = GetRaidFramesMeasures(players)
+    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures(players)
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     -- Update size
     GwRaidFrameContainer.gwMover:SetSize(isV and size2 or size1, isV and size1 or size2)
 
     -- Update unit frames
-    for i = 1, 40 do
+    for i = 1, MAX_RAID_MEMBERS do
         PositionRaidFrame(_G["GwRaidGridDisplay" .. i], GwRaidFrameContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
         if i > players then _G["GwRaidGridDisplay" .. i]:Hide() else _G["GwRaidGridDisplay" .. i]:Show() end
     end
@@ -946,7 +907,7 @@ end
 local grpPos, noGrp = {}, {}
 local function UpdateRaidFramesLayout()
     -- Get directions, rows, cols and sizing
-    local grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m = GetRaidFramesMeasures()
+    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures()
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     if not InCombatLockdown() then
@@ -959,7 +920,7 @@ local function UpdateRaidFramesLayout()
     if unitString == "party" then
         tinsert(sorted, "player")
 
-        for i = 1, 40 do
+        for i = 1, MAX_RAID_MEMBERS do
             if UnitExists(unitString .. i) then
                 tinsert(sorted, unitString .. i)
             end
@@ -974,9 +935,9 @@ local function UpdateRaidFramesLayout()
     wipe(grpPos) wipe(noGrp)
 
     -- Position by group
-    for i = 1, 40 do
+    for i = 1, MAX_RAID_MEMBERS do
         if not tContains(sorted, unitString .. i) then
-            if i < 5 then
+            if i < MEMBERS_PER_RAID_GROUP then
                 PositionRaidFrame(_G["GwCompactparty" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
             end
 
@@ -992,8 +953,8 @@ local function UpdateRaidFramesLayout()
 
     -- Find spots for units with missing group info
     for _,i in ipairs(noGrp) do
-        for grp=1,8 do
-            if (grpPos[grp] or 0) < 5 then
+        for grp = 1, NUM_RAID_GROUPS do
+            if (grpPos[grp] or 0) < MEMBERS_PER_RAID_GROUP then
                 grpPos[grp] = (grpPos[grp] or 0) + 1
                 PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, (grp - 1) * 5 + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
                 break
@@ -1026,7 +987,7 @@ local function createRaidFrame(registerUnit, index)
         hooksecurefunc(
             frame.healthbar,
             "SetStatusBarColor",
-            function(bar, r, g, b, a)
+            function(_, r, g, b, a)
                 frame.healthbar.spark:SetVertexColor(r, g, b, a)
             end
         )
@@ -1040,7 +1001,7 @@ local function createRaidFrame(registerUnit, index)
 
     frame.healthbar.animationName = "GwCompact" .. registerUnit .. "animation"
     frame.healthbar.animationValue = 0
-    
+
     frame.manabar.animationName = "GwCompact" .. registerUnit .. "manabaranimation"
     frame.manabar.animationValue = 0
 
@@ -1067,7 +1028,7 @@ local function createRaidFrame(registerUnit, index)
     )
 
     -- Handle callbacks from HealComm
-    local HealCommEventHandler = function (event, casterGUID, spellID, healType, endTime, ...)
+    local HealCommEventHandler = function ()
         local self = frame
         return setPredictionAmount(self)
     end
@@ -1140,7 +1101,7 @@ local function LoadRaidFrames()
         GetSetting("raid_pos")["yOfs"]
     )
 
-    RegisterMovableFrame(GwRaidFrameContainer, RAID_FRAMES_LABEL, "raid_pos", "VerticalActionBarDummy")
+    RegisterMovableFrame(GwRaidFrameContainer, RAID_FRAMES_LABEL, "raid_pos", "VerticalActionBarDummy", nil, true, {"default", "default"})
 
     hooksecurefunc(GwRaidFrameContainer.gwMover, "StopMovingOrSizing", function (frame)
         local anchor = GetSetting("RAID_ANCHOR")
@@ -1149,11 +1110,11 @@ local function LoadRaidFrames()
             local g1, g2 = strsplit("+", GetSetting("RAID_GROW"))
             anchor = (IsIn("DOWN", g1, g2) and "TOP" or "BOTTOM") .. (IsIn("RIGHT", g1, g2) and "LEFT" or "RIGHT")
         end
-    
+
         if anchor ~= "POSITION" then
             local x = anchor:sub(-5) == "RIGHT" and frame:GetRight() - GetScreenWidth() or anchor:sub(-4) == "LEFT" and frame:GetLeft() or frame:GetLeft() + (frame:GetWidth() - GetScreenWidth()) / 2
             local y = anchor:sub(1, 3) == "TOP" and frame:GetTop() - GetScreenHeight() or anchor:sub(1, 6) == "BOTTOM" and frame:GetBottom() or frame:GetBottom() + (frame:GetHeight() - GetScreenHeight()) / 2
-    
+
             frame:ClearAllPoints()
             frame:SetPoint(anchor, x, y)
         end
@@ -1164,7 +1125,7 @@ local function LoadRaidFrames()
         end
     end)
 
-    for i = 1, 40 do
+    for i = 1, MAX_RAID_MEMBERS do
         local f = CreateFrame("Frame", "GwRaidGridDisplay" .. i, GwRaidFrameContainer.gwMover, "VerticalActionBarDummy")
         f:SetParent(GwRaidFrameContainer.gwMover)
         f.frameName:SetText("")

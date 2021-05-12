@@ -4,6 +4,7 @@ local PowerBarColorCustom = GW.PowerBarColorCustom
 local bloodSpark = GW.BLOOD_SPARK
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
+local GetSetting = GW.GetSetting
 
 local function powerBar_OnUpdate(self)
     if self.lostKnownPower == nil or self.powerMax == nil or self.lastUpdate == nil or self.animating == true then
@@ -163,18 +164,25 @@ GW.UpdatePowerData = UpdatePowerData
 
 local function LoadPowerBar()
     local playerPowerBar = CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
-    GW.RegisterScaleFrame(playerPowerBar)
-    if GW.GetSetting("XPBAR_ENABLED") then
-        playerPowerBar:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", 53, 86)
-    else
-        playerPowerBar:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", 53, 72)
+
+    GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "PowerBar_pos", "VerticalActionBarDummy", nil, true, {"default", "scaleable"}, true)
+
+    playerPowerBar:ClearAllPoints()
+    playerPowerBar:SetPoint("TOPLEFT", playerPowerBar.gwMover)
+
+    -- position mover
+    if not playerPowerBar.isMoved  then
+        local framePoint = GetSetting("PowerBar_pos")
+        local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
+        playerPowerBar.gwMover:ClearAllPoints()
+        playerPowerBar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - yOff)
     end
 
     _G[playerPowerBar:GetName() .. "CandySpark"]:ClearAllPoints()
 
     playerPowerBar:SetScript(
         "OnEvent",
-        function(self, event, unit)
+        function(_, event, unit)
             if (event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER") and unit == "player" then
                 UpdatePowerData(GwPlayerPowerBar)
                 return

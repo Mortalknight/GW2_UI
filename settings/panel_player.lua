@@ -2,29 +2,31 @@ local _, GW = ...
 local L = GW.L
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionSlider = GW.AddOptionSlider
+local addOptionText = GW.AddOptionText
 local addOption = GW.AddOption
 local StrUpper = GW.StrUpper
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
-local AddForProfiling = GW.AddForProfiling
 
 local function LoadPlayerPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
-    p.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.header:SetText(PLAYER)
-    p.sub:SetFont(UNIT_NAME_FONT, 12)
-    p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.sub:SetText(L["PLAYER_DESC"])
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
+    p.scroll.scrollchild.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    p.scroll.scrollchild.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.scroll.scrollchild.header:SetText(PLAYER)
+    p.scroll.scrollchild.sub:SetFont(UNIT_NAME_FONT, 12)
+    p.scroll.scrollchild.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    p.scroll.scrollchild.sub:SetText(L["Modify the player frame settings."])
 
-    createCat(PLAYER, L["PLAYER_DESC"], p, 9)
+    createCat(PLAYER, L["Modify the player frame settings."], p, 9, nil, {p})
 
-    addOption(p, L["ENERGY_MANA_TICK"], nil, "PLAYER_ENERGY_MANA_TICK", nil, nil, {["POWERBAR_ENABLED"] = true})
-    addOption(p, L["ENERGY_MANA_TICK_HIDE_OFC"], nil, "PLAYER_ENERGY_MANA_TICK_HIDE_OFC", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
-    addOption(p, L["5SR_TIMER"], nil, "PLAYER_5SR_TIMER", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
-
+    addOption(p.scroll.scrollchild, L["Player frame in target frame style"], nil, "PLAYER_AS_TARGET_FRAME", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, RAID_USE_CLASS_COLORS, nil, "player_CLASS_COLOR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
+    addOption(p.scroll.scrollchild, L["PvP Indicator"], nil, "PLAYER_SHOW_PVP_INDICATOR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["ENERGY_MANA_TICK"], nil, "PLAYER_ENERGY_MANA_TICK", nil, nil, {["POWERBAR_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["ENERGY_MANA_TICK_HIDE_OFC"], nil, "PLAYER_ENERGY_MANA_TICK_HIDE_OFC", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
+    addOption(p.scroll.scrollchild, L["5SR_TIMER"], nil, "PLAYER_5SR_TIMER", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
     addOptionSlider(
-        p,
+        p.scroll.scrollchild,
         L["AURAS_PER_ROW"],
         nil,
         "PLAYER_AURA_WRAP_NUM",
@@ -36,7 +38,7 @@ local function LoadPlayerPanel(sWindow)
         {["PLAYER_BUFFS_ENABLED"] = true}
     )
     addOptionSlider(
-        p,
+        p.scroll.scrollchild,
         L["PLAYER_BUFF_SIZE"],
         nil,
         "PlayerBuffFrame_ICON_SIZE",
@@ -49,7 +51,7 @@ local function LoadPlayerPanel(sWindow)
         2
     )
     addOptionSlider(
-        p,
+        p.scroll.scrollchild,
         L["PLAYER_DEBUFF_SIZE"],
         nil,
         "PlayerDebuffFrame_ICON_SIZE",
@@ -62,7 +64,7 @@ local function LoadPlayerPanel(sWindow)
         2
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         L["PLAYER_BUFFS_GROW"],
         nil,
         "PlayerBuffFrame_GrowDirection",
@@ -78,7 +80,7 @@ local function LoadPlayerPanel(sWindow)
         {["PLAYER_BUFFS_ENABLED"] = true}
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         L["PLAYER_DEBUFFS_GROW"],
         nil,
         "PlayerDebuffFrame_GrowDirection",
@@ -94,7 +96,7 @@ local function LoadPlayerPanel(sWindow)
         {["PLAYER_BUFFS_ENABLED"] = true}
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         nil,
         "PLAYER_UNIT_HEALTH",
@@ -105,6 +107,49 @@ local function LoadPlayerPanel(sWindow)
         {["HEALTHGLOBE_ENABLED"] = true}
     )
 
-    InitPanel(p)
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        L["Class Totems Sorting"],
+        nil,
+        "TotemBar_SortDirection",
+        nil,
+        {"ASC", "DSC"},
+        {L["Ascending"], L["Descending"]},
+        nil,
+        {["HEALTHGLOBE_ENABLED"] = true}
+    )
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        L["Class Totems Growth Direction"],
+        nil,
+        "TotemBar_GrowDirection",
+        nil,
+        {"HORIZONTAL", "VERTICAL"},
+        {L["Horizontal"], L["Vertical"]},
+        nil,
+        {["HEALTHGLOBE_ENABLED"] = true}
+    )
+    addOptionText(p.scroll.scrollchild,
+        L["Dodge Bar Ability"],
+        L["Enter the spell ID which should be tracked by the dodge bar.\nIf no ID is entered, the default abilities based on your specialization and talents are tracked."],
+        "PLAYER_TRACKED_DODGEBAR_SPELL",
+        function(self)
+            local spellId = self:GetNumber()
+            local name = ""
+            if spellId > 0 and IsSpellKnown(spellId) then
+                name = GetSpellInfo(spellId)
+            end
+            self:SetText(name)
+            GW.SetSetting("PLAYER_TRACKED_DODGEBAR_SPELL", name)
+            GW.SetSetting("PLAYER_TRACKED_DODGEBAR_SPELL_ID", spellId)
+            GW.initDodgebarSpell(GwDodgeBar)
+            GW.setDodgebarSpell(GwDodgeBar)
+        end,
+        nil,
+        nil,
+        {["HEALTHGLOBE_ENABLED"] = true}
+    )
+
+    InitPanel(p, true)
 end
 GW.LoadPlayerPanel = LoadPlayerPanel

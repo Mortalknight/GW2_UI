@@ -1,5 +1,4 @@
 local _, GW = ...
-local L = GW.L
 local CommaValue = GW.CommaValue
 local AddToClique = GW.AddToClique
 local Self_Hide = GW.Self_Hide
@@ -50,7 +49,7 @@ local function updateHealthData(self, anims)
     local health = UnitHealth("Player")
     local healthMax = UnitHealthMax("Player")
     local prediction = self.healPredictionAmount
-    
+
     local health_def = healthMax - health
     local prediction_over = prediction - health_def
     if prediction_over < 0 then
@@ -123,7 +122,7 @@ local function updateHealthData(self, anims)
 
     self.text_h.value:SetText(hv)
 
-    for i, v in ipairs(self.text_h.shadow) do
+    for _, v in ipairs(self.text_h.shadow) do
         v:SetText(hv)
     end
 
@@ -132,7 +131,7 @@ GW.AddForProfiling("healthglobe", "updateHealthData", updateHealthData)
 
 local function selectPvp(self)
     local prevFlag = self.pvp.pvpFlag
-    if GetPVPDesired("player") or UnitIsPVP("player") or UnitIsPVPFreeForAll("player") then
+    if GetSetting("PLAYER_SHOW_PVP_INDICATOR") and (GetPVPDesired("player") or UnitIsPVP("player") or UnitIsPVPFreeForAll("player")) then
         self.pvp.pvpFlag = true
         if prevFlag ~= true then
             if GW.myfaction == "Horde" then
@@ -149,6 +148,7 @@ local function selectPvp(self)
         self.pvp.horde:Hide()
     end
 end
+GW.PlayerSelectPvp = selectPvp
 GW.AddForProfiling("healthglobe", "selectPvp", selectPvp)
 
 local function globe_OnEvent(self, event, ...)
@@ -194,12 +194,25 @@ local function globe_OnEnter(self)
             GameTooltip_AddNormalLine(GameTooltip, ERR_PVP_TOGGLE_OFF, true)
         end
     end
+    if IsInRaid() then
+        local groupNumber
+        for i = 1, GetNumGroupMembers() do
+            if UnitIsUnit("raid" .. i, "player") then
+                groupNumber = select(3, GetRaidRosterInfo(i))
+            end
+        end
+        if groupNumber then
+            GameTooltip:AddLine(" ")
+            GameTooltip:AddLine(format(QUEST_SUGGESTED_GROUP_NUM_TAG, groupNumber), 1, 1, 1)
+        end
+    end
     GameTooltip:Show()
 
-    if self.pvp.pvpFlag then
+    if GetSetting("PLAYER_SHOW_PVP_INDICATOR") and self.pvp.pvpFlag then
         self.pvp:fadeIn()
     end
 end
+GW.PlayerFrame_OnEnter = globe_OnEnter
 GW.AddForProfiling("healthglobe", "globe_OnEnter", globe_OnEnter)
 
 local function fill_OnFinish(self)
@@ -212,7 +225,11 @@ GW.AddForProfiling("healthglobe", "fill_OnFinish", fill_OnFinish)
 local function repair_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
-    GameTooltip:AddLine(L["DAMAGED_OR_BROKEN_EQUIPMENT"], 1, 1, 1)
+    if self.gearBroken then
+        GameTooltip:AddLine(TUTORIAL_TITLE37, 1, 1, 1)
+    else
+        GameTooltip:AddLine(TUTORIAL_TITLE36, 1, 1, 1)
+    end
     GameTooltip:Show()
 end
 GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)
@@ -229,12 +246,22 @@ local function LoadHealthGlobe()
     local hg = CreateFrame("Button", nil, UIParent, "GwHealthGlobeTmpl")
     GW.RegisterScaleFrame(hg, 1.1)
 
-    -- position based on XP bar space
-    if GetSetting("XPBAR_ENABLED") then
-        hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 17)
-    else
-        hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
-    end
+        -- position based on XP bar space and make it movable if your actionbars are off
+        if GetSetting("ACTIONBARS_ENABLED") then
+            if GetSetting("XPBAR_ENABLED") then
+                hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 17)
+            else
+                hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
+            end
+        else
+            GW.RegisterMovableFrame(hg, GW.L["Health Globe"], "HealthGlobe_pos", "VerticalActionBarDummy", nil, true, {"default"}, false)
+            hg:SetPoint("TOPLEFT", hg.gwMover)
+            if not GetSetting("XPBAR_ENABLED") and not hg.isMoved then
+                local framePoint = GetSetting("HealthGlobe_pos")
+                hg.gwMover:ClearAllPoints()
+                hg.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, 0)
+            end
+        end
 
     --save settingsvalue for later use
     hg.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
@@ -244,16 +271,17 @@ local function LoadHealthGlobe()
     hg:SetAttribute("*type2", "togglemenu")
     hg:SetAttribute("unit", "player")
     AddToClique(hg)
+    hg:RegisterForClicks("AnyUp")
 
     -- setup masking textures
-    for i, v in ipairs(hg.fill.masked) do
+    for _, v in ipairs(hg.fill.masked) do
         v:AddMaskTexture(hg.fill.mask)
     end
 
     -- setting these values in the XML creates animation glitches
     -- so we do it here instead
     hg.fill.maskb:SetPoint("CENTER", hg.fill, "CENTER", 0, 0)
-    
+
     hg.fill.prediction_under:AddMaskTexture(hg.fill.maskb)
     hg.fill.anti:AddMaskTexture(hg.fill.maskb)
 
@@ -295,12 +323,12 @@ local function LoadHealthGlobe()
 
     -- set handlers for health globe and disable default player frame
     PlayerFrame:SetScript("OnEvent", nil)
-    PlayerFrame:Hide()
+    PlayerFrame:Kill()
     hg:SetScript("OnEvent", globe_OnEvent)
     hg:SetScript("OnEnter", globe_OnEnter)
     hg:SetScript("OnLeave", function(self)
         GameTooltip_Hide()
-        if self.pvp.pvpFlag then
+        if GetSetting("PLAYER_SHOW_PVP_INDICATOR") and self.pvp.pvpFlag then
             self.pvp:fadeOut()
         end
     end)
@@ -312,7 +340,7 @@ local function LoadHealthGlobe()
     hg:RegisterUnitEvent("UNIT_FACTION", "player")
 
     -- Handle callbacks from HealComm
-    local HealCommEventHandler = function (event, casterGUID, spellID, healType, endTime, ...)
+    local HealCommEventHandler = function ()
         local self = hg
         return setPredictionAmount(self)
     end
@@ -341,13 +369,7 @@ local function LoadHealthGlobe()
 
     -- grab the TotemFrame so it remains visible
     if PlayerFrame and TotemFrame then
-        TotemFrame:SetParent(playerHealthGLobaBg)
-        PlayerFrame:ClearAllPoints()
-        PlayerFrame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -500, 50)
-        -- TODO: we can't position this directly; it's permanently attached to the PlayerFrame via SetPoints
-        -- in the TotemFrame OnUpdate that we can't override because combat lockdowns and whatnot, and simply
-        -- moving the PlayerFrame isn't ideal because its layout is highly variable; really we probably just
-        -- need to completely re-implement the TotemFrame with a custom version
+        GW.Create_Totem_Bar()
     end
 
     -- setup anim to flash the PvP marker
@@ -379,6 +401,8 @@ local function LoadHealthGlobe()
         pagOut:Stop()
         pagIn:Play()
     end
+
+    if not GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
 
     return hg
 end

@@ -203,7 +203,9 @@
                         <Anchor point="TOPLEFT" x="0" y="-20"/>
                     </Anchors>
                 </FontString>
+
             </Layer>
+
         </Layers>
         <Frames >
             <Frame name="$parentDropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
@@ -217,10 +219,10 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" x="1" y="-40"/>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                 <Layers>
                     <Layer>
-                        <Texture name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
+                        <Texture name="$parentSpark" file="Interface/AddOns/GW2_UI/textures/hud/bloodspark">
                             <Anchors>
                                 <Anchor point="RIGHT" x="0" y="0"/>
                             </Anchors>
@@ -249,12 +251,13 @@
                     <OnLoad function="GwTargetFrameSmallTemplateHealthBar_OnLoad"/>
                 </Scripts>
             </StatusBar>
+
             <StatusBar name="$parentHealthBarCandy" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
                 <Size x="146" y="15"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" x="1" y="-40"/>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbarcandy"/>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/gwstatusbarcandy"/>
             </StatusBar>
             <StatusBar name="$parentCastingBar" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
                 <Size x="146" y="15"/>
@@ -299,7 +302,7 @@
         <Size x="20" y="20"/>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="outline" name="backdrop" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="20" y="20"/>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"/>
@@ -307,20 +310,21 @@
                 </Texture>
             </Layer>
             <Layer>
-                <Texture name="$parentBuffIcon" parentKey="icon" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                <Texture parentKey="buffIcon" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="18" y="18"/>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <FontString name="$parentBuffDuration" parentKey="durationString" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
+                <FontString  parentKey="buffDuration" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="32" y="12"/>
                     <Anchors>
                         <Anchor point="BOTTOM" x="0" y="-12"/>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentBuffStacks" parentKey="stacksString" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
+                <FontString parentKey="buffStacks" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="-10"/>
@@ -332,12 +336,11 @@
             <OnLoad function="GwBuffIcon_OnLoad"/>
         </Scripts>
     </Frame>
-
     <Frame name="GwDeBuffIcon" frameStrata="LOW" toplevel="true" virtual="true">
         <Size x="32" y="32"/>
         <Layers>
-            <Layer Level="ARTWORK" textureSubLevel="0">
-                <Texture name="$parentOutline" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+            <Layer level="ARTWORK" textureSubLevel="0">
+                <Texture parentKey="backdrop" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Color r="0" b="0" g="0" a="1"></Color>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"/>
@@ -346,18 +349,19 @@
                 </Texture>
             </Layer>
             <Layer Level="ARTWORK" textureSubLevel="-1">
-                <Texture parentKey="background" name="$parentDeBuffBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Size x="24" y="24"/>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+
                     </Anchors>
                 </Texture>
             </Layer>
         </Layers>
         <Frames>
-            <Cooldown parentKey="cooldown" name="$parentCooldown" inherits="ActionButtonTemplate" frameStrata="MEDIUM" toplevel="true">
+            <Cooldown parentKey="cooldown" inherits="ActionButtonTemplate" frameStrata="MEDIUM" toplevel="true">
                 <SwipeTexture>
                     <Color r="1" g="1" b="1" a="1"/>
                 </SwipeTexture>
@@ -368,7 +372,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentBuffDuration" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentKey="duration" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="100" y="12"/>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="BOTTOM" x="0" y="0"/>
@@ -377,7 +381,7 @@
                     </Layer>
                 </Layers>
             </Cooldown>
-            <Frame name="$parentIcon" frameStrata="HIGH" toplevel="true">
+            <Frame parentKey="debuffIcon" frameStrata="HIGH" toplevel="true">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="3" y="-3"/>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
@@ -391,7 +395,7 @@
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                             </Anchors>
                         </Texture>
-                        <FontString name="$parentBuffStacks" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString parentKey="stacks" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Size x="100" y="12"/>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="1" y="-1"/>
@@ -400,7 +404,7 @@
                         </FontString>
                     </Layer>
                     <Layer level="OVERLAY">
-                        <Texture name="$parentBuffIcon" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                             <Size x="24" y="24"/>
                             <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                             <Anchors>
@@ -427,14 +431,12 @@
                 <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\targetshadowmoveable">
                     <Size x="512" y="128"/>
                     <Anchors>
-                        <Anchor point="CENTER" x="0" y="0"/>
+                        <Anchor point="CENTER" x="0" y="-5"/>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
-                    <Size x="50" y="30"></Size>
+                <FontString parentKey="frameName" text="Frame Name" justifyH="CENTER">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
+                        <Anchor point="CENTER"/>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -443,7 +445,6 @@
             <OnLoad function="GwTargetFrameTemplateDummy_OnLoad"/>
         </Scripts>
     </Button>
-
     <Button name="GwTargetFrameSmallTemplateDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent" virtual="true">
         <Size x="150" y="20"/>
         <Layers>
@@ -451,14 +452,13 @@
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
                     <Size x="150" y="20"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-27"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="5" y="-27"/>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="4" y="-22"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="4" y="-22"/>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
-                    <Size x="0" y="0"></Size>
+                <FontString parentKey="frameName" text="Frame Name" justifyH="CENTER">
                     <Anchors>
-                        <Anchor point="CENTER" x="0" y="0"/>
+                        <Anchor point="CENTER"/>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -467,7 +467,6 @@
             <OnLoad function="GwTargetFrameSmallTemplateDummy_OnLoad"/>
         </Scripts>
     </Button>
-
     <Button name="GwPetFrameDummy" frameStrata="DIALOG" toplevel="true" parent="UIParent" virtual="true">
         <Size x="328" y="100"></Size>
         <Layers>
@@ -478,11 +477,9 @@
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
-                    <Size x="50" y="30"></Size>
+                <FontString parentKey="frameName" text="Frame Name" justifyH="CENTER">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
+                        <Anchor point="CENTER"/>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -502,11 +499,9 @@
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
-                    <Size x="0" y="0"></Size>
+                <FontString parentKey="frameName" text="Frame Name" justifyH="CENTER">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
+                        <Anchor point="CENTER"/>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -516,7 +511,7 @@
         </Scripts>
     </Button>
 
-    <Frame name="VerticalActionBarDummy" virtual="true" frameStrata="DIALOG" parent="UIParent" inherits="SecureHandlerBaseTemplate" protected="true">
+    <Frame name="VerticalActionBarDummy" virtual="true" frameStrata="DIALOG" parent="UIParent">
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background">
@@ -527,30 +522,16 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <FontString parentKey="frameName" text="Frame Name" justifyH="LEFT">
-                    <Size x="50" y="30"></Size>
+                <FontString parentKey="frameName" text="Frame Name" justifyH="CENTER">
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-5"/>
+                        <Anchor point="CENTER"/>
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
         <Scripts>
-            <OnLoad function="VerticalActionBarDummy_OnLoad"/>
+            <OnLoad function="GwVerticalActionBarDummy_OnLoad"/>
         </Scripts>
     </Frame>
-
-    <Button name="GwDummyLockButton" enableMouse="true" virtual="true">
-        <Size x="20" y="20"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="5"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="BACKGROUND">
-                <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\actionbarmoveable" parentKey="Background"/>
-            </Layer>
-        </Layers>
-    </Button>
 
 </Ui>

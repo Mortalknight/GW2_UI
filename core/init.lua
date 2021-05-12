@@ -25,9 +25,18 @@ GW.Gw2Color = "|cffffedba" -- Color used for chat prints or buttons
 GW.skins = {}
 GW.TexCoords = {0, 1, 0, 1}
 GW.locationData = {}
+GW.MOVABLE_FRAMES = {}
+GW.scaleableFrames = {}
+GW.scaleableMainHudFrames = {}
 GW.animations = {}
+
 GW.HiddenFrame = CreateFrame("Frame")
+GW.HiddenFrame.HiddenString = GW.HiddenFrame:CreateFontString(nil, "OVERLAY")
 GW.HiddenFrame:Hide()
+
+-- money
+GW.earnedMoney = 0
+GW.spentMoney = 0
 
 -- Init global function
 GW.InitLocationDataHandler()
@@ -41,7 +50,12 @@ do
     end
 
     AddLib("LHC", "LibHealComm-4.0", true)
+    AddLib("LSM", "LibSharedMedia-3.0", true)
     AddLib("Compress", "LibCompress", true)
     AddLib("Serializer", "AceSerializer-3.0", true)
     AddLib("LibBase64", "LibBase64-1.0", true)
+    AddLib("AceLocale", "AceLocale-3.0", true)
 end
+
+-- Locale doesn't exist yet, make it exist
+GW.L = GW.Libs.AceLocale:GetLocale("GW2_UI")

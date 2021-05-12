@@ -3,33 +3,36 @@ local L = GW.L
 local RoundInt = GW.RoundInt
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
-local GetDefault = GW.GetDefault
 local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
-local LibSharedMedia = LibStub("LibSharedMedia-3.0", true)
+local animations = GW.animations
+local LibSharedMedia = GW.Libs.LSM
+
+local l = CreateFrame("Frame", nil, UIParent) -- Main event frame
+local HasPetUIFrame = CreateFrame("Frame", nil, UIParent)
+local OnUpdateActionBars = nil
 
 GW.VERSION_STRING = "@project-version@ TBC Classic"
 
 -- setup Binding Header color
 _G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
 
+-- Make a global GW variable , so others cann access out functions
+GW2_ADDON = GW
+
 if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") then 
     DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
 end
 
 local loaded = false
-local hudScale = 1
 local forcedMABags = false
-local ourActionbarsloaded = false
+
 local ourPetbar = false
-
-local MOVABLE_FRAMES = {}
-GW.MOVABLE_FRAMES = MOVABLE_FRAMES
-
 local swimAnimation = 0
 local lastSwimState = true
+local hudArtFrame
 
 if Profiler then
     _G.GW_Addon_Scope = GW
@@ -53,194 +56,46 @@ local function disableTitanPanelBarAdjusting()
         TitanMovable_AddonAdjust("ExtraActionBarFrame", true)
         TitanMovable_AddonAdjust("MinimapCluster", true)
     end
-end     
+end 
 
-local function lockableOnClick(self, btn)
-    local mf = self:GetParent()
-    --local f = mf.gw_frame
-    local settingsName = mf.gw_Settings
-    local lockAble = mf.gw_Lockable
-
-    local dummyPoint = GetDefault(settingsName)
-    mf:ClearAllPoints()
-    mf:SetPoint(
-        dummyPoint["point"],
-        UIParent,
-        dummyPoint["relativePoint"],
-        dummyPoint["xOfs"],
-        dummyPoint["yOfs"]
-    )
-
-    local point, _, relativePoint, xOfs, yOfs = mf:GetPoint()
-
-    local new_point = GetSetting(settingsName)
-    new_point["point"] = point
-    new_point["relativePoint"] = relativePoint
-    new_point["xOfs"] = GW.RoundInt(xOfs)
-    new_point["yOfs"] = GW.RoundInt(yOfs)
-    SetSetting(settingsName, new_point)
-
-    --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
-    if settingsName == "PlayerBuffFrame" or settingsName == "PlayerDebuffFrame" then
-        SetSetting(settingsName .. "_GrowDirection", "UP")
-    end
-end
-GW.AddForProfiling("index", "lockableOnClick", lockableOnClick)
-
-local function lockFrame_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-    GameTooltip:ClearLines()
-    GameTooltip:SetText(SYSTEM_DEFAULT, 1, 1, 1)
-    GameTooltip:Show()
-end
-GW.AddForProfiling("index", "lockFrame_OnEnter", lockFrame_OnEnter)
-
-local function mover_OnDragStart(self)
-    self.IsMoving = true
-    self:StartMoving()
-end
-GW.AddForProfiling("index", "mover_OnDragStart", mover_OnDragStart)
-
-local function mover_OnDragStop(self)
-    local settingsName = self.gw_Settings
-    local lockAble = self.gw_Lockable
-    local isMoved = self.gw_isMoved
-    self:StopMovingOrSizing()
-    local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
-
-    local new_point = GetSetting(settingsName)
-    new_point.point = point
-    new_point.relativePoint = relativePoint
-    new_point.xOfs = math.floor(xOfs)
-    new_point.yOfs = math.floor(yOfs)
-    SetSetting(settingsName, new_point)
-    if lockAble ~= nil then
-        SetSetting(lockAble, false)
-    end
-    -- check if we need to know if the frame is on its default position
-    if isMoved ~= nil then
-        local defaultPoint = GetDefault(settingsName)
-        local growDirection = GetSetting(settingsName .. "_GrowDirection")
-        local frame = self.gw_frame
-        if defaultPoint.point == new_point.point and defaultPoint.relativePoint == new_point.relativePoint and defaultPoint.xOfs == new_point.xOfs and defaultPoint.yOfs == new_point.yOfs and (growDirection and growDirection == "UP") then
-            frame.isMoved = false
-            frame:SetAttribute("isMoved", false)
-        else
-            frame.isMoved = true
-            frame:SetAttribute("isMoved", true)
-        end
-    end
-
-    self.IsMoving = false
-end
-GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
-
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, lockAble, isMoved)
-    local moveframe = CreateFrame("Frame", nil, UIParent, dummyFrame)
-    frame.gwMover = moveframe
-    if size then
-        moveframe:SetSize(unpack(size))
-    else
-        moveframe:SetSize(frame:GetSize())
-    end
-    moveframe.gw_Settings = settingsName
-    moveframe.gw_Lockable = lockAble
-    moveframe.gw_isMoved = isMoved
-    moveframe.gw_frame = frame
-
-    if moveframe.frameName and moveframe.frameName.SetText then
-        moveframe.frameName:SetText(displayName)
-    end
-    local dummyPoint = GetSetting(settingsName)
-    moveframe:ClearAllPoints()
-    moveframe:SetPoint(
-        dummyPoint["point"],
-        UIParent,
-        dummyPoint["relativePoint"],
-        dummyPoint["xOfs"],
-        dummyPoint["yOfs"]
-    )
-    local num = #MOVABLE_FRAMES
-    MOVABLE_FRAMES[num + 1] = moveframe
-    moveframe:Hide()
-    moveframe:RegisterForDrag("LeftButton")
-
-    if lockAble ~= nil then
-        local lockFrame = CreateFrame("Button", nil, moveframe, "GwDummyLockButton")
-        lockFrame:SetScript("OnEnter", lockFrame_OnEnter)
-        lockFrame:SetScript("OnLeave", GameTooltip_Hide)
-        lockFrame:SetScript("OnClick", lockableOnClick)
-    end
-
-    if isMoved ~= nil then
-        local defaultPoint = GetDefault(settingsName)
-
-        if defaultPoint["point"] == dummyPoint["point"] and defaultPoint["relativePoint"] == dummyPoint["relativePoint"] and defaultPoint["xOfs"] == dummyPoint["xOfs"] and defaultPoint["yOfs"] == dummyPoint["yOfs"] then
-            frame.isMoved = false
-            frame:SetAttribute("isMoved", false)
-        else
-            frame.isMoved = true
-            frame:SetAttribute("isMoved", true)
-        end
-    end
-
-    moveframe:SetScript("OnDragStart", mover_OnDragStart)
-    moveframe:SetScript("OnDragStop", mover_OnDragStop)
-end
-GW.RegisterMovableFrame = RegisterMovableFrame
-
-local function UpdateFramePositions()
-    for i, mf in pairs(MOVABLE_FRAMES) do
-        local f = mf.gw_frame
-        local newp = GetSetting(mf.gw_Settings)
-        f:ClearAllPoints()
-        f:SetPoint(newp["point"], UIParent, newp["relativePoint"], newp["xOfs"], newp["yOfs"])
-    end
-end
-GW.UpdateFramePositions = UpdateFramePositions
-
-local animations = {}
-GW.animations = animations
 local function AddToAnimation(name, from, to, start, duration, method, easeing, onCompleteCallback, doCompleteOnOverider)
     local newAnimation = true
-    if animations[name] ~= nil then
-        if (animations[name]["start"] + animations[name]["duration"]) > GetTime() then
-            newAnimation = false
-        end
+    if animations[name] then
+        newAnimation = (animations[name].start + animations[name].duration) > GetTime()
     end
-    if doCompleteOnOverider == nil then
+    if not doCompleteOnOverider then
         newAnimation = true
     end
 
-    if newAnimation == false then
-        animations[name]["duration"] = duration
-        animations[name]["to"] = to
-        animations[name]["progress"] = 0
-        animations[name]["method"] = method
-        animations[name]["completed"] = false
-        animations[name]["easeing"] = easeing
-        animations[name]["onCompleteCallback"] = onCompleteCallback
+    if not newAnimation then
+        animations[name].duration = duration
+        animations[name].to = to
+        animations[name].progress = 0
+        animations[name].method = method
+        animations[name].completed = false
+        animations[name].easeing = easeing
+        animations[name].onCompleteCallback = onCompleteCallback
     else
         animations[name] = {}
-        animations[name]["start"] = start
-        animations[name]["duration"] = duration
-        animations[name]["from"] = from
-        animations[name]["to"] = to
-        animations[name]["progress"] = 0
-        animations[name]["method"] = method
-        animations[name]["completed"] = false
-        animations[name]["easeing"] = easeing
-        animations[name]["onCompleteCallback"] = onCompleteCallback
+        animations[name].start = start
+        animations[name].duration = duration
+        animations[name].from = from
+        animations[name].to = to
+        animations[name].progress = 0
+        animations[name].method = method
+        animations[name].completed = false
+        animations[name].easeing = easeing
+        animations[name].onCompleteCallback = onCompleteCallback
     end
 end
 GW.AddToAnimation = AddToAnimation
 
 local function buttonAnim(self, name, w, hover)
-    local prog = animations[name]["progress"]
+    local prog = animations[name].progress
     local l = GW.lerp(0, w, prog)
 
     hover:SetPoint("RIGHT", self, "LEFT", l, 0)
-    hover:SetVertexColor(1, 1, 1, GW.lerp(0, 1, ((prog) - 0.5) / 0.5))
+    hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, GW.lerp(0, 1, ((prog) - 0.5) / 0.5))
 end
 GW.AddForProfiling("index", "buttonAnim", buttonAnim)
 
@@ -305,7 +160,7 @@ function GwStandardButton_OnLeave(self)
 end
 
 local function barAnimation(self, barWidth, sparkWidth)
-    local snap = (animations[self.animationName]["progress"] * 100) / 5
+    local snap = (animations[self.animationName].progress * 100) / 5
 
     local round_closest = 0.05 * snap
 
@@ -361,56 +216,18 @@ local function SetDeadIcon(self)
 end
 GW.SetDeadIcon = SetDeadIcon
 
-local function StopAnimation(k)
-    if animations[k] ~= nil then
-        animations[k] = nil
+local function StopAnimation(name)
+    if animations[name] then
+        animations[name].completed = true
+        animations[name].duration = 0
     end
 end
 GW.StopAnimation = StopAnimation
 
-local callback = {}
-
-local function actionBarStateChanged()
-    for k, v in pairs(callback) do
-        v()
-    end
-end
-
-local function actionBarFrameShow(f, name)
-    StopAnimation(name)
-    f.gw_FadeShowing = true
-    actionBarStateChanged()
-    AddToAnimation(name, 0, 1, GetTime(), 0.1, function()
-        f:SetAlpha(animations[name]['progress'])
-    end, nil, function()
-        for i = 1, 12 do
-            f.gw_Buttons[i].cooldown:SetDrawBling(true)
-        end
-        actionBarStateChanged()
-    end)
-end
-
-local function actionBarFrameHide(f, name)
-    StopAnimation(name)
-    f.gw_FadeShowing = false
-    for i = 1, 12 do
-        f.gw_Buttons[i].cooldown:SetDrawBling(false)
-    end
-    AddToAnimation(name, 1, 0, GetTime(), 0.1, function()
-        f:SetAlpha(animations[name]['progress'])
-    end, nil, function()
-        actionBarStateChanged()
-    end)
-end
-
-local l = CreateFrame("Frame", nil, UIParent)
-local HasPetUIFrame = CreateFrame("Frame", nil, UIParent)
-local OnUpdateActionBars = nil
-
 local function swimAnim()
-    local r, g, b = _G["GwActionBarHudRIGHTSWIM"]:GetVertexColor()
-    _G["GwActionBarHudRIGHTSWIM"]:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
-    _G["GwActionBarHudLEFTSWIM"]:SetVertexColor(r, g, b, animations["swimAnimation"]["progress"])
+    local r, g, b = hudArtFrame.actionBarHud.RightSwim:GetVertexColor()
+    hudArtFrame.actionBarHud.RightSwim:SetVertexColor(r, g, b, animations.swimAnimation.progress)
+    hudArtFrame.actionBarHud.LeftSwim:SetVertexColor(r, g, b, animations.swimAnimation.progress)
 end
 GW.AddForProfiling("index", "swimAnim", swimAnim)
 
@@ -420,56 +237,46 @@ local function AddUpdateCB(func, payload)
         return
     end
 
-    tinsert(
-        updateCB,
-        {
-            ["func"] = func,
-            ["payload"] = payload
-        }
-    )
+    tinsert(updateCB,{func = func, payload = payload})
 end
 GW.AddUpdateCB = AddUpdateCB
 
-local function gw_OnUpdate(self, elapsed)
+local function gw_OnUpdate(_, elapsed)
     local foundAnimation = false
     local count = 0
-    for k, v in pairs(animations) do
+    for _, v in pairs(animations) do
         count = count + 1
-        if v["completed"] == false and GetTime() >= (v["start"] + v["duration"]) then
-            if v["easeing"] == nil then
-                v["progress"] = GW.lerp(v["from"], v["to"], math.sin(1 * math.pi * 0.5))
+        if v.completed == false and GetTime() >= (v.start + v.duration) then
+            if v.easeing == nil then
+                v.progress = GW.lerp(v.from, v.to, math.sin(1 * math.pi * 0.5))
             else
-                v["progress"] = GW.lerp(v["from"], v["to"], 1)
+                v.progress = GW.lerp(v.from, v.to, 1)
             end
-            if v["method"] ~= nil then
-                v["method"](v["progress"])
-            end
-
-            if v["onCompleteCallback"] ~= nil then
-                v["onCompleteCallback"]()
+            if v.method ~= nil then
+                v.method(v.progress)
             end
 
-            v["completed"] = true
+            if v.onCompleteCallback ~= nil then
+                v.onCompleteCallback()
+            end
+
+            v.completed = true
             foundAnimation = true
         end
-        if v["completed"] == false then
-            if v["easeing"] == nil then
-                v["progress"] =
-                    GW.lerp(v["from"], v["to"], math.sin((GetTime() - v["start"]) / v["duration"] * math.pi * 0.5))
+        if v.completed == false then
+            if v.easeing == nil then
+                v.progress =
+                    GW.lerp(v.from, v.to, math.sin((GetTime() - v.start) / v.duration * math.pi * 0.5))
             else
-                v["progress"] = GW.lerp(v["from"], v["to"], (GetTime() - v["start"]) / v["duration"])
+                v.progress = GW.lerp(v.from, v.to, (GetTime() - v.start) / v.duration)
             end
-            v["method"](v["progress"])
+            v.method(v.progress)
             foundAnimation = true
         end
     end
 
-    if foundAnimation == false and count ~= 0 then
+    if not foundAnimation and count ~= 0 then
         table.wipe(animations)
-    end
-
-    if OnUpdateActionBars then
-        OnUpdateActionBars(elapsed)
     end
 
     --Swim hud
@@ -508,7 +315,7 @@ GW.PixelPerfection = PixelPerfection
 
 local SCALE_HUD_FRAMES = {}
 local function UpdateHudScale()
-    hudScale = GetSetting("HUD_SCALE")
+    local hudScale = GetSetting("HUD_SCALE")
     for i, f in ipairs(SCALE_HUD_FRAMES) do
         if f then
             local fm = f.gwMover
@@ -520,6 +327,14 @@ local function UpdateHudScale()
             if fm then
                 fm:SetScale(hudScale * sf)
             end
+        end
+    end
+    -- let all mainhub frames scale with the HUD scaler, but only if they are not moved and not individual scaled
+    for _, mf in pairs(GW.scaleableMainHudFrames) do
+        if not mf.gw_frame.isMoved and mf:GetScale() ~= hudScale then
+            mf.gw_frame:SetScale(hudScale)
+            mf:SetScale(hudScale)
+            GW.SetSetting(mf.gw_Settings .. "_scale", hudScale)
         end
     end
 end
@@ -538,6 +353,11 @@ end
 GW.RegisterScaleFrame = RegisterScaleFrame
 
 local function loadAddon(self)
+    --Create Settings window
+    GW.LoadMovers()
+    GW.LoadSettings()
+    GW.LoadHoverBinds()
+
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
         PixelPerfection()
         DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
@@ -545,6 +365,7 @@ local function loadAddon(self)
         GW.scale = UIParent:GetScale()
         GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
     end
+    GW.mult = (1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)
 
     -- disable Move Anything bag handling
     disableMABags()
@@ -567,10 +388,6 @@ local function loadAddon(self)
     GW.inDebug = false
     --@end-non-debug@]===]
 
-    --Create Settings window
-    GW.LoadSettings()
-    GW.LoadHoverBinds()
-
     -- Load Slash commands
     GW.LoadSlashCommands()
 
@@ -582,13 +399,13 @@ local function loadAddon(self)
         GW.SkinMainMenu()
     else
         --Setup addon button
-        local GwMainMenuFrame = CreateFrame("Button", nil, _G.GameMenuFrame, "GameMenuButtonTemplate")
-        GwMainMenuFrame:SetText(format("|cffffedba%s|r", L["SETTINGS_BUTTON"]))
+        local GwMainMenuFrame = CreateFrame("Button", "GW2_UI_SettingsButton", _G.GameMenuFrame, "GameMenuButtonTemplate") -- add a button name to you that for other Addons
+        GwMainMenuFrame:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
         GwMainMenuFrame:SetScript(
             "OnClick",
             function()
                 if InCombatLockdown() then
-                    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["HIDE_SETTING_IN_COMBAT"])
+                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
                     return
                 end
                 ShowUIPanel(GwSettingsWindow)
@@ -596,11 +413,11 @@ local function loadAddon(self)
                 HideUIPanel(GameMenuFrame)
             end
         )
-        GameMenuFrame[L["SETTINGS_BUTTON"]] = GwMainMenuFrame
+        GameMenuFrame[GW.addonName] = GwMainMenuFrame
 
         if not IsAddOnLoaded("ConsolePortUI_Menu") then
-            GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
-            GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonAddons, "BOTTOMLEFT", 0, -1)
+            GwMainMenuFrame:SetSize(GameMenuButtonMacros:GetWidth(), GameMenuButtonMacros:GetHeight())
+            GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonUIOptions, "BOTTOMLEFT", 0, -1)
             hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
         end
     end
@@ -631,20 +448,20 @@ local function loadAddon(self)
 
 
     --Create hud art
-    GW.LoadHudArt()
+    hudArtFrame = GW.LoadHudArt()
 
     --Create experiencebar
     if GetSetting("XPBAR_ENABLED") then
         GW.LoadXPBar()
     else
-        GwActionBarHud:ClearAllPoints()
-        GwActionBarHud:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
-        GwHudArtFrame.edgeTintBottom1:ClearAllPoints()
-        GwHudArtFrame.edgeTintBottom1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
-        GwHudArtFrame.edgeTintBottom1:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
-        GwHudArtFrame.edgeTintBottom2:ClearAllPoints()
-        GwHudArtFrame.edgeTintBottom2:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
-        GwHudArtFrame.edgeTintBottom2:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 0, 0)
+        hudArtFrame.actionBarHud:ClearAllPoints()
+        hudArtFrame.actionBarHud:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
+        hudArtFrame.edgeTintBottom1:ClearAllPoints()
+        hudArtFrame.edgeTintBottom1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
+        hudArtFrame.edgeTintBottom1:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
+        hudArtFrame.edgeTintBottom2:ClearAllPoints()
+        hudArtFrame.edgeTintBottom2:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
+        hudArtFrame.edgeTintBottom2:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 0, 0)
     end
 
     if GetSetting("FONTS_ENABLED") then
@@ -652,7 +469,8 @@ local function loadAddon(self)
     end
 
     if GetSetting("CASTINGBAR_ENABLED") then
-        GW.LoadCastingBar()
+        GW.LoadCastingBar(CastingBarFrame, "GwCastingBarPlayer", "player", true)
+        GW.LoadCastingBar(PetCastingBarFrame, "GwCastingBarPet", "pet", false)
     end
 
     if GetSetting("MINIMAP_ENABLED") then
@@ -661,6 +479,8 @@ local function loadAddon(self)
 
     if GetSetting("QUESTTRACKER_ENABLED") then
         GW.LoadQuestTracker()
+    else
+        GW.AdjustQuestTracker(GetSetting("ACTIONBARS_ENABLED"), GetSetting("MINIMAP_ENABLED"))
     end
 
     if GetSetting("TOOLTIPS_ENABLED") then
@@ -676,12 +496,15 @@ local function loadAddon(self)
     end
 
     --Create player hud
-    if GetSetting("HEALTHGLOBE_ENABLED") then
+    if GetSetting("HEALTHGLOBE_ENABLED") and not GetSetting("PLAYER_AS_TARGET_FRAME") then
         local hg = GW.LoadHealthGlobe()
-        GW.LoadDodgeBar(hg)
+        GW.LoadDodgeBar(hg, false)
+    elseif GetSetting("HEALTHGLOBE_ENABLED") and GetSetting("PLAYER_AS_TARGET_FRAME") then
+        local hg = GW.LoadPlayerFrame()
+        GW.LoadDodgeBar(hg, true)
     end
 
-    if GetSetting("POWERBAR_ENABLED") then
+    if GetSetting("POWERBAR_ENABLED") and not GetSetting("PLAYER_AS_TARGET_FRAME") then
         GW.LoadPowerBar()
         if GetSetting("PLAYER_ENERGY_MANA_TICK") then
             GW.load5SR()
@@ -693,7 +516,7 @@ local function loadAddon(self)
         GW.SkinLooTFrame()
     end
 
-    GW.LoadBreathMeter()
+    GW.LoadMirrorTimers()
     GW.LoadAutoRepair()
 
     --Create unitframes
@@ -724,7 +547,6 @@ local function loadAddon(self)
     -- create action bars
     if GetSetting("ACTIONBARS_ENABLED") then
         GW.LoadActionBars(lm)
-        ourActionbarsloaded = true
     end
 
     -- create pet frame
@@ -735,7 +557,6 @@ local function loadAddon(self)
 
     -- create buff frame
     if GetSetting("PLAYER_BUFFS_ENABLED") then
-        -- GW.LoadBuffs()
         GW.LoadPlayerAuras(lm)
     end
 
@@ -743,7 +564,7 @@ local function loadAddon(self)
         if GetCVar("test_cameraDynamicPitch") == "0" then
             SetCVar("test_cameraDynamicPitch", true)
         end
-        hooksecurefunc("StaticPopup_Show", function(which, text_arg1, text_arg2, data, insertedFrame)
+        hooksecurefunc("StaticPopup_Show", function(which)
             if which == "EXPERIMENTAL_CVAR_WARNING" then
                 StaticPopup_Hide("EXPERIMENTAL_CVAR_WARNING")
             end
@@ -828,7 +649,7 @@ local function gw_OnEvent(self, event, ...)
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
         GW.inWorld = true
-        if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
+        if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
             PixelPerfection()
         end
         if not setHasPetUI then
@@ -890,7 +711,7 @@ GW.AddToClique = AddToClique
 
 local waitTable = {}
 local waitFrame = nil
-local function wait_OnUpdate(self, elapse)
+local function wait_OnUpdate(_, elapse)
     local count = #waitTable
     local i = 1
     while (i <= count) do

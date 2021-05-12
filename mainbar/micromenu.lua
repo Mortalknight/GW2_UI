@@ -6,29 +6,41 @@ local RoundDec = GW.RoundDec
 PERFORMANCEBAR_UPDATE_INTERVAL = 1
 
 local function updateGuildButton(self, event)
-    if event ~= "GUILD_ROSTER_UPDATE" then
-        return
-    end
-
-    local gmb = SocialsMicroButton
-    if gmb == nil then
-        return
-    end
-
-    local _, _, numOnlineMembers = GetNumGuildMembers()
-
-    if numOnlineMembers ~= nil and numOnlineMembers > 0 then
-        gmb.GwNotifyDark:Show()
-
-        if numOnlineMembers > 9 then
-            gmb.GwNotifyText:SetText(numOnlineMembers)
-        else
-            gmb.GwNotifyText:SetText(numOnlineMembers .. " ")
+    if event == "GUILD_ROSTER_UPDATE" then
+        local gmb = GuildMicroButton
+        if gmb == nil then
+            return
         end
-        gmb.GwNotifyText:Show()
-    else
-        gmb.GwNotifyDark:Hide()
-        gmb.GwNotifyText:Hide()
+
+        local _, _, numOnlineMembers = GetNumGuildMembers()
+
+        if numOnlineMembers ~= nil and numOnlineMembers > 0 then
+            gmb.GwNotifyDark:Show()
+
+            if numOnlineMembers > 9 then
+                gmb.GwNotifyText:SetText(numOnlineMembers)
+            else
+                gmb.GwNotifyText:SetText(numOnlineMembers .. " ")
+            end
+            gmb.GwNotifyText:Show()
+        else
+            gmb.GwNotifyDark:Hide()
+            gmb.GwNotifyText:Hide()
+        end
+
+        GW.FetchGuildMembers()
+
+        if GetMouseFocus() == self then
+            GW.Guild_OnEnter(self)
+        end
+    elseif event == "MODIFIER_STATE_CHANGED" then
+        if not IsAltKeyDown() and GetMouseFocus() == self then
+			GW.Guild_OnEnter(self)
+		end
+    elseif event == "GUILD_MOTD" then
+        if GetMouseFocus() == self then
+            GW.Guild_OnEnter(self)
+        end
     end
 end
 GW.AddForProfiling("micromenu", "updateGuildButton", updateGuildButton)
@@ -187,7 +199,7 @@ local function setupMicroButtons(mbf)
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
         reskinMicroButton(cref, "CharacterMicroButton", mbf)
-    
+
         cref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         cref:SetAttribute(
             "_onclick",
@@ -225,6 +237,7 @@ local function setupMicroButtons(mbf)
     bref:HookScript("OnClick", ToggleAllBags)
     bref.interval = 0
     bref:HookScript("OnUpdate", bag_OnUpdate)
+    bref:HookScript("OnEnter", GW.Bags_OnEnter)
 
     -- determine if we are using the default spell & talent buttons
     -- or if we need our custom talent button for the hero panel
@@ -302,8 +315,12 @@ local function setupMicroButtons(mbf)
         end
     )
     SocialsMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
+    SocialsMicroButton:RegisterEvent("MODIFIER_STATE_CHANGED")
+    SocialsMicroButton:RegisterEvent("GUILD_MOTD")
+    SocialsMicroButton:HookScript("OnEnter", GW.Guild_OnEnter)
+    SocialsMicroButton:SetScript("OnClick", GW.Guild_OnClick)
     SocialsMicroButton:HookScript("OnEvent", updateGuildButton)
-    updateGuildButton()
+    updateGuildButton(GuildMicroButton, "GUILD_ROSTER_UPDATE")
 
     -- WorldMapMicroButton
     WorldMapMicroButton:ClearAllPoints()
@@ -417,6 +434,11 @@ local function LoadMicroMenu()
 
     -- create our micro button container frame
     local mbf = CreateFrame("Frame", nil, UIParent, "GwMicroButtonFrameTmpl")
+    local postDragFunction = function(mbf)
+        mbf.cf.bg:SetShown(not mbf.isMoved)
+    end
+    GW.RegisterMovableFrame(mbf, GW.L["Micro Bar"], "MicromenuPos", "VerticalActionBarDummy", nil, true, {"default"}, nil, postDragFunction)
+    mbf:SetPoint("TOPLEFT", mbf.gwMover)
 
     -- reskin all default (and custom) micro buttons to our styling
     reskinMicroButtons(mbf.cf)
@@ -493,7 +515,7 @@ local function LoadMicroMenu()
             fo:Stop()
             fi:Play()
         end
-    
+
         mbf:SetFrameRef("cf", mbf.cf)
 
         mbf:SetAttribute("_onenter", [=[

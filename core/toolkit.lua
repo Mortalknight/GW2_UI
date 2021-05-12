@@ -4,6 +4,13 @@ local _, GW = ...
 local STRIP_TEX = "Texture"
 local STRIP_FONT = "FontString"
 
+local ArrowRotation = {
+    up = 0,
+    down = 3.14,
+    left = 1.57,
+    right = -1.57,
+}
+
 local tabs = {
     "LeftDisabled",
     "MiddleDisabled",
@@ -200,6 +207,7 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
             end
             if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/button") end
             if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/button_disable") end
+            button:DisableDrawLayer("BACKGROUND")
 
             if button.LeftSeparator then button.LeftSeparator:Hide() end
             if button.RightSeparator then button.RightSeparator:Hide() end
@@ -224,7 +232,7 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
 end
 
 local function SkinTab(tabButton)
-    tabButton:CreateBackdrop(nil)
+    tabButton:CreateBackdrop()
 
     if tabButton.SetNormalTexture then tabButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/unittab") end
     if tabButton.SetHighlightTexture then 
@@ -353,6 +361,50 @@ local function SkinDropDownMenu(frame)
     end
 end
 
+local function HandleNextPrevButton(button, arrowDir)
+    if button.isSkinned then return end
+
+    if not arrowDir then
+        arrowDir = "down"
+        local name = button:GetDebugName()
+        local ButtonName = name and name:lower()
+        if ButtonName then
+            if strfind(ButtonName, "left") or strfind(ButtonName, "prev") or strfind(ButtonName, "decrement") or strfind(ButtonName, "backward") or strfind(ButtonName, "back") then
+                arrowDir = "left"
+            elseif strfind(ButtonName, "right") or strfind(ButtonName, "next") or strfind(ButtonName, "increment") or strfind(ButtonName, "forward") then
+                arrowDir = "right"
+            elseif strfind(ButtonName, "scrollup") or strfind(ButtonName, "upbutton") or strfind(ButtonName, "top") or strfind(ButtonName, "asc") or strfind(ButtonName, "home") or strfind(ButtonName, "maximize") then
+                arrowDir = "up"
+            end
+        end
+    end
+
+    button:StripTextures()
+
+    button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/arrowup_down")
+    button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/arrowup_down")
+    button:SetDisabledTexture("Interface/AddOns/GW2_UI/Textures/arrowup_down")
+
+    local Normal, Disabled, Pushed = button:GetNormalTexture(), button:GetDisabledTexture(), button:GetPushedTexture()
+
+    button:SetSize(20, 20)
+    Disabled:SetVertexColor(.3, .3, .3)
+
+    Normal:SetTexCoord(0, 1, 0, 1)
+    Pushed:SetTexCoord(0, 1, 0, 1)
+    Disabled:SetTexCoord(0, 1, 0, 1)
+
+    local rotation = ArrowRotation[arrowDir]
+    if rotation then
+        Normal:SetRotation(rotation)
+        Pushed:SetRotation(rotation)
+        Disabled:SetRotation(rotation)
+    end
+
+    button.isSkinned = true
+end
+GW.HandleNextPrevButton = HandleNextPrevButton
+
 local function addapi(object)
     local mt = getmetatable(object).__index
     if not object.Kill then mt.Kill = Kill end
@@ -386,5 +438,5 @@ while object do
 end
 
 --Hacky fix for issue on 7.1 PTR where scroll frames no longer seem to inherit the methods from the 'Frame' widget
-local scrollFrame = CreateFrame('ScrollFrame')
+local scrollFrame = CreateFrame("ScrollFrame")
 addapi(scrollFrame)

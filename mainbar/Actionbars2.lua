@@ -97,6 +97,47 @@ GW.AddForProfiling("Actionbars2", "stateChanged", stateChanged)
 
 hooksecurefunc("ValidateActionBarTransition", stateChanged)
 
+local function FlyoutDirection(actionbar)
+    for i = 1, 12 do
+        local button = actionbar.gw_Buttons[i]
+        if (button.FlyoutArrow or button.FlyoutArrow:IsShown()) and SpellFlyout then
+            local combat = InCombatLockdown()
+
+            --Change arrow direction depending on what bar the button is on
+            local arrowDistance = 2
+            if ((SpellFlyout:IsShown() and SpellFlyout:GetParent() == button) or GetMouseFocus() == button) then
+                arrowDistance = 5
+            end
+
+            local point = GW.GetScreenQuadrant(actionbar)
+
+            if point ~= "UNKNOWN" then
+                if strfind(point, "TOP") then
+                    button.FlyoutArrow:ClearAllPoints()
+                    button.FlyoutArrow:SetPoint("BOTTOM", button, "BOTTOM", 0, -arrowDistance)
+                    SetClampedTextureRotation(button.FlyoutArrow, 180)
+                    if not combat then button:SetAttribute("flyoutDirection", "DOWN") end
+                elseif point == "RIGHT" then
+                    button.FlyoutArrow:ClearAllPoints()
+                    button.FlyoutArrow:SetPoint("LEFT", button, "LEFT", -arrowDistance, 0)
+                    SetClampedTextureRotation(button.FlyoutArrow, 270)
+                    if not combat then button:SetAttribute("flyoutDirection", "LEFT") end
+                elseif point == "LEFT" then
+                    button.FlyoutArrow:ClearAllPoints()
+                    button.FlyoutArrow:SetPoint("RIGHT", button, "RIGHT", arrowDistance, 0)
+                    SetClampedTextureRotation(button.FlyoutArrow, 90)
+                    if not combat then button:SetAttribute("flyoutDirection", "RIGHT") end
+                elseif point == "CENTER" or strfind(point, "BOTTOM") then
+                    button.FlyoutArrow:ClearAllPoints()
+                    button.FlyoutArrow:SetPoint("TOP", button, "TOP", 0, arrowDistance)
+                    SetClampedTextureRotation(button.FlyoutArrow, 0)
+                    if not combat then button:SetAttribute("flyoutDirection", "UP") end
+                end
+            end
+        end
+    end
+end
+
 -- fader logic
 local fadeTime = 0.1
 
@@ -482,7 +523,7 @@ local function updateMainBar(toggle)
                 btn_yOff
             )
 
-            if i == 6 then
+            if i == 6 and not GetSetting("PLAYER_AS_TARGET_FRAME") then
                 btn_padding = btn_padding + 108
             end
         end
@@ -616,13 +657,34 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     end
 
     fmMultibar:SetScript("OnUpdate", nil)
-    fmMultibar:ClearAllPoints()
-    if (barName == "MultiBarBottomRight" or barName == "MultiBarBottomLeft") and not GetSetting("XPBAR_ENABLED") then
-        fmMultibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs -14)
-    else
-        fmMultibar:SetPoint(settings.point, UIParent, settings.relativePoint, settings.xOfs, settings.yOfs)
-    end
     fmMultibar:SetSize(used_width, used_height)
+
+    if barName == "MultiBarLeft" then
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, "VerticalActionBarDummy", nil, nil, {"default", "scaleable"}, nil, FlyoutDirection)
+    elseif barName == "MultiBarRight" then
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, "VerticalActionBarDummy", nil, nil, {"default", "scaleable"}, nil, FlyoutDirection)
+    elseif barName == "MultiBarBottomLeft" then
+        lm:RegisterMultiBarLeft(fmMultibar)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, "VerticalActionBarDummy", nil, true, {"default", "scaleable"}, true, FlyoutDirection)
+    elseif barName == "MultiBarBottomRight" then
+        lm:RegisterMultiBarRight(fmMultibar)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, "VerticalActionBarDummy", nil, true, {"default", "scaleable"}, true, FlyoutDirection)
+    end
+
+    fmMultibar:ClearAllPoints()
+    fmMultibar:SetPoint("TOPLEFT", fmMultibar.gwMover)
+
+    -- position mover
+    if (barName == "MultiBarBottomLeft" or barName == "MultiBarBottomRight") and (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not fmMultibar.isMoved  then
+        local framePoint = GetSetting(barName)
+        local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
+        fmMultibar.gwMover:ClearAllPoints()
+        if barName == "MultiBarBottomLeft" then
+            fmMultibar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + 56, framePoint.yOfs - yOff)
+        elseif barName == "MultiBarBottomRight" then
+            fmMultibar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs - 56, framePoint.yOfs - yOff)
+        end
+    end
 
     -- set fader logic
     createFaderAnim(fmMultibar, state)
@@ -634,18 +696,9 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     multibar:SetScript("OnHide", nil)
     multibar:EnableMouse(false)
 
-    if barName == "MultiBarLeft" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, "VerticalActionBarDummy")
-    elseif barName == "MultiBarRight" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, "VerticalActionBarDummy")
-    elseif barName == "MultiBarBottomLeft" then
-        lm:RegisterMultiBarLeft(fmMultibar)
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, "VerticalActionBarDummy", nil, true, true)
-    elseif barName == "MultiBarBottomRight" then
-        lm:RegisterMultiBarRight(fmMultibar)
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, "VerticalActionBarDummy", nil, true, true)
-    end
-    
+    -- flyout direction
+    FlyoutDirection(fmMultibar)
+
     return fmMultibar
 end
 GW.AddForProfiling("Actionbars2", "updateMultiBar", updateMultiBar)

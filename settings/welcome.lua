@@ -27,13 +27,13 @@ local function toggle_OnClick(self, button)
 end
 AddForProfiling("welcome", "toggle_OnClick", toggle_OnClick)
 
-local function movehud_OnClick(self, button)
+local function movehud_OnClick(self)
     if InCombatLockdown() then
-        DEFAULT_CHAT_FRAME:AddMessage(L["HUD_MOVE_ERR"])
+        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
         return
     end
     self:GetParent():Hide()
-    GW.moveHudObjects()
+    GW.moveHudObjects(GW.MoveHudScaleableFrame)
 end
 AddForProfiling("welcome", "movehud_OnClick", movehud_OnClick)
 

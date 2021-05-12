@@ -102,48 +102,25 @@ local function SetMinimapHover()
 end
 GW.SetMinimapHover = SetMinimapHover
 
-local function SetMinimapPosition()
-    local ourBuffBar = GetSetting("PLAYER_BUFFS_ENABLED")
-    local ourTracker = GetSetting("QUESTTRACKER_ENABLED")
-    local mapPos = GetSetting("MINIMAP_POS")
-    local mapSize = Minimap:GetHeight()
+local function setMinimapButtons(side)
+    MiniMapBattlefieldIcon:ClearAllPoints()
+    GwMailButton:ClearAllPoints()
+    GwAddonToggle:ClearAllPoints()
+    GwAddonToggle.container:ClearAllPoints()
 
-    -- adjust minimap and minimap cluster placement (some default things anchor off cluster)
-
-    local mc_x = 0
-    if ourTracker then
-        mc_x = -320
-    end
-
-    MinimapCluster:ClearAllPoints()
-    Minimap:ClearAllPoints()
-    Minimap:SetParent(UIParent)
-    MinimapZoneTextButton:Hide()
-
-    MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
-
-    if mapPos == "TOP" then
-        if ourBuffBar then
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -(mapSize + 60))
-            Minimap:SetPoint("TOPRIGHT", UIParent, -5, -5)
-        else
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -(mapSize + 110))
-            Minimap:SetPoint("TOPRIGHT", UIParent, -5, -50)
-        end
+    if side == "left" then
+        MiniMapBattlefieldIcon:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -8.5, -69)
+        GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -16, -47)
+        GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -10, -127)
+        GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
     else
-        if ourBuffBar then
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, 0)
-        else
-            MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", mc_x, -50)
-        end
-        if GW.GetSetting("XPBAR_ENABLED") then
-            Minimap:SetPoint("BOTTOMRIGHT", UIParent, -5, 21)
-        else
-            Minimap:SetPoint("BOTTOMRIGHT", UIParent, -5, 7)
-        end
+        MiniMapBattlefieldIcon:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -69)
+        GwMailButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 14, -47)
+        GwAddonToggle:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -127)
+        GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
     end
 end
-GW.SetMinimapPosition = SetMinimapPosition
+GW.setMinimapButtons = setMinimapButtons
 
 local function lfgAnimStop()
     MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
@@ -624,10 +601,25 @@ local function LoadMinimap()
     Minimap:HookScript("OnShow", minimap_OnShow)
     Minimap:HookScript("OnHide", minimap_OnHide)
 
-    Minimap:SetSize(GetSetting("MINIMAP_SCALE"), GetSetting("MINIMAP_SCALE"))
+    local size = GetSetting("MINIMAP_SCALE")
+    Minimap:SetSize(size, size)
 
-    SetMinimapPosition()
+    -- mobeable stuff
+    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "VerticalActionBarDummy", {size, size}, nil, {"default"}, nil, MinimapPostDrag)
+    Minimap:ClearAllPoints()
+    Minimap:SetPoint("TOPLEFT", Minimap.gwMover)
+    -- check on which side we need to set the buttons
+    local x = Minimap:GetCenter()
+    local screenWidth = UIParent:GetRight()
+    if x > (screenWidth / 2) then
+        setMinimapButtons("left")
+    else
+        setMinimapButtons("right")
+    end
+    MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
+    MinimapCluster:ClearAllPoints()
+    MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
 
-    hoverMiniMapOut()
+    C_Timer.After(0.1, hoverMiniMapOut)
 end
 GW.LoadMinimap = LoadMinimap

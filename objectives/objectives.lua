@@ -616,11 +616,6 @@ end
 GW.AddForProfiling("objectives", "tracker_OnUpdate", tracker_OnUpdate)
 
 local function LoadQuestTracker()
-    --local qt_enabled = GetSetting("QUESTTRACKER_ENABLED")
-    --local bars_enabled = GetSetting("ACTIONBARS_ENABLED")
-    local map_enabled = GetSetting("MINIMAP_ENABLED")
-    local map_position = GetSetting("MINIMAP_POS")
-
     -- disable the default tracker
     QuestWatchFrame:SetMovable(1)
     QuestWatchFrame:SetUserPlaced(true)
@@ -641,9 +636,13 @@ local function LoadQuestTracker()
         function(self, delta)
             delta = -delta * 15
             local s = math.max(0, self:GetVerticalScroll() + delta)
+            if self.maxScroll ~= nil then
+                s = math.min(self.maxScroll, s)
+            end
             self:SetVerticalScroll(s)
         end
     )
+    fTraScr.maxScroll = 0
 
     local fScroll = CreateFrame("Frame", "GwQuestTrackerScrollChild", fTraScr, "GwQuestTracker")
 
@@ -660,18 +659,6 @@ local function LoadQuestTracker()
 
     fQuest:SetParent(fScroll)
 
-    if map_enabled then
-        if map_position == "TOP" then
-            fTracker:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT")
-            fTracker:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 25)
-        else
-            fTracker:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT")
-            fTracker:SetPoint("BOTTOMRIGHT", Minimap, "TOPRIGHT", 0, 3)
-        end
-    else
-        fTracker:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT")
-        fTracker:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT")
-    end
     fNotify:SetPoint("TOPRIGHT", fTracker, "TOPRIGHT")
 
     fTraScr:SetPoint("TOPRIGHT", fNotify, "BOTTOMRIGHT")
@@ -761,5 +748,10 @@ local function LoadQuestTracker()
             C_Timer.After(0.25, function() tracker_OnUpdate() end)
         end
     end)
+
+    GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", {400, 10}, true, {"scaleable", "height"})
+    fTracker:ClearAllPoints()
+    fTracker:SetPoint("TOPLEFT", fTracker.gwMover)
+    fTracker:SetHeight(GetSetting("QuestTracker_pos_height"))
 end
 GW.LoadQuestTracker = LoadQuestTracker

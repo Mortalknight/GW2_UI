@@ -78,7 +78,12 @@ local function setComboBar(f)
 
     if f.ourTarget and f.comboPointsOnTarget then
         f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", -8, -15)
+        if GwTargetUnitFrame.frameInvert then
+            f:SetPoint("TOPRIGHT", GwTargetUnitFrame.castingbar, "TOPRIGHT", 0, -13)
+            f.combopoints:SetWidth(213)
+        else
+            f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", 0, -13)
+        end
         f:SetWidth(220)
         f:SetHeight(30)
         f:Hide()
@@ -182,11 +187,20 @@ end
 
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
-    GW.RegisterScaleFrame(cpf)
-    if GW.GetSetting("XPBAR_ENABLED") then
-        cpf:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 81)
-    else
-        cpf:SetPoint('BOTTOMLEFT', UIParent, "BOTTOM", -372, 67)
+
+    GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", "VerticalActionBarDummy", nil, true, {"default", "scaleable"}, true)
+    cpf:ClearAllPoints()
+    cpf:SetPoint("TOPLEFT", cpf.gwMover)
+    hooksecurefunc(cpf, "SetHeight", function() cpf.gwMover:SetHeight(cpf:GetHeight()) end)
+    hooksecurefunc(cpf, "SetWidth", function() cpf.gwMover:SetWidth(cpf:GetWidth()) end)
+
+    -- position mover
+    if (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not cpf.isMoved  then
+        local framePoint = GW.GetSetting("ClasspowerBar_pos")
+        local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
+        local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 52 or 0
+        cpf.gwMover:ClearAllPoints()
+        cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
     end
 
     cpf.ourTarget = GetSetting("TARGET_ENABLED")
@@ -196,17 +210,27 @@ local function LoadClassPowers()
 
     -- create an extra mana power bar that is used sometimes (druid) only if our Powerbar is on
     if cpf.ourPowerBar then
-        local exbar = CreateFrame("Frame", "GwPlayerPowerBarExtra", GwPlayerPowerBar, "GwPlayerPowerBar")
-        exbar.candy.spark:ClearAllPoints()
-        exbar:SetSize(GwPlayerPowerBar:GetWidth(), 5)
-        exbar.bar:SetHeight(5)
-        exbar.candy:SetHeight(5)
-        exbar.candy.spark:SetHeight(5)
-        exbar.statusBar:SetHeight(5)
-        exbar:ClearAllPoints()
-        exbar:SetPoint("TOPLEFT", "GwPlayerPowerBar", "TOPLEFT", 0, 5)
-        exbar:SetFrameStrata("MEDIUM")
-        exbar.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
+        local anchorFrame = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame or _G.GwPlayerPowerBar
+        local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame.powerbar:GetWidth() or _G.GwPlayerPowerBar:GetWidth()
+        local lmb = CreateFrame("Frame", "GwPlayerPowerBarExtra", anchorFrame, "GwPlayerPowerBar")
+        cpf.lmb = lmb
+        lmb.candy.spark:ClearAllPoints()
+
+        lmb.bar:SetHeight(5)
+        lmb.candy:SetHeight(5)
+        lmb.candy.spark:SetHeight(5)
+        lmb.statusBar:SetHeight(5)
+        lmb:ClearAllPoints()
+        if GetSetting("PLAYER_AS_TARGET_FRAME") then
+            lmb:SetPoint("LEFT", anchorFrame.castingbarBackground, "LEFT", 2, 5)
+            lmb:SetSize(barWidth + 2, 7)
+            lmb.statusBar:SetWidth(barWidth - 2)
+        else
+            lmb:SetPoint("TOPLEFT", anchorFrame, "TOPLEFT", 0, 5)
+            lmb:SetSize(barWidth, 7)
+        end
+        lmb:SetFrameStrata("MEDIUM")
+        lmb.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
     end
 
     cpf.Script:SetScript("OnEvent", barChange_OnEvent)

@@ -16,6 +16,17 @@ local classification = {
 local LEVEL1 = strlower(_G.TOOLTIP_UNIT_LEVEL:gsub("%s?%%s%s?%-?", ""))
 local LEVEL2 = strlower(_G.TOOLTIP_UNIT_LEVEL_CLASS:gsub("^%%2$s%s?(.-)%s?%%1$s", "%1"):gsub("^%-?г?о?%s?", ""):gsub("%s?%%s%s?%-?", ""))
 
+local function IsModKeyDown()
+    local k = GetSetting("ADVANCED_TOOLTIP_ID_MODIFIER")
+    return k == "ALWAYS" or ((k == "SHIFT" and IsShiftKeyDown()) or (k == "CTRL" and IsControlKeyDown()) or (k == "ALT" and IsAltKeyDown()))
+end
+
+local genderTable = {
+    " " .. UNKNOWN .. " ",
+    " " .. MALE .. " ",
+    " " .. FEMALE .. " "
+}
+
 local UNSTYLED = {
     "GameTooltip",
     "ShoppingTooltip1",
@@ -95,9 +106,11 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
         local guildName, guildRankName, _, guildRealm = GetGuildInfo(unit)
         local relationship = UnitRealmRelationship(unit)
         local pvpName = UnitPVPName(unit)
+        local gender = UnitSex(unit)
         local playerTitles = GetSetting("ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES")
         local alwaysShowRealm = GetSetting("ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS")
         local guildRanks = GetSetting("ADVANCED_TOOLTIP_SHOW_GUILD_RANKS")
+        local showGender = GetSetting("ADVANCED_TOOLTIP_SHOW_GENDER")
 
         local nameColor = GWGetClassColor(class, showClassColor, true)
 
@@ -119,7 +132,6 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
 
         _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColor.colorStr, name or UNKNOWN)
 
-        local lineOffset = 2
         if guildName then
             if guildRealm and isShiftKeyDown then
                 guildName = guildName .. "-" .. guildRealm
@@ -131,12 +143,12 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
                 _G.GameTooltipTextLeft2:SetFormattedText("<|cff00ff10%s|r>", guildName)
             end
 
-            lineOffset = 3
         end
 
         local diffColor = GetCreatureDifficultyColor(level)
         local race = UnitRace(unit)
-        local levelString = format("|cff%02x%02x%02x%s|r %s |c%s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", race or "", nameColor.colorStr, localeClass)
+        local unitGender = showGender and genderTable[gender]
+        local levelString = format("|cff%02x%02x%02x%s|r %s%s |c%s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", unitGender or "", race or "", nameColor.colorStr, localeClass)
 
         if levelLine then
             levelLine:SetText(levelString)
@@ -233,8 +245,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
     end
 
     -- NPC ID's
-    local npcID = GetSetting("ADVANCED_TOOLTIP_NPC_ID")
-    if unit and npcID and not isPlayerUnit then
+    if unit and IsModKeyDown() and not isPlayerUnit then
         local guid = UnitGUID(unit) or ""
         local id = tonumber(strmatch(guid, "%-(%d-)%-%x-$"), 10)
         if id then
@@ -257,9 +268,8 @@ local function GameTooltip_OnTooltipSetItem(self)
         local numall = GetItemCount(link, true)
         local left, right, bankCount = " ", " ", " "
         local itemCountOption = GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT")
-        local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
 
-        if link ~= nil and showSpellID then
+        if link ~= nil and IsModKeyDown() then
             right = format("|cffffedba%s|r %s", ID, strmatch(link, ":(%w+)"))
         end
 
@@ -287,29 +297,28 @@ end
 local function GameTooltip_OnTooltipSetSpell(self)
     if self:IsForbidden() then return end
     local id = select(2, self:GetSpell())
-    local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
-    if not id or not showSpellID then return end
+    if id and IsModKeyDown() then
 
-    local displayString = format("|cffffedba%s|r %d", ID, id)
+        local displayString = format("|cffffedba%s|r %d", ID, id)
 
-    for i = 1, self:NumLines() do
-        local line = _G[format("GameTooltipTextLeft%d", i)]
-        local text = line and line.GetText and line:GetText()
-        if text and strfind(text, displayString) then
-            return
+        for i = 1, self:NumLines() do
+            local line = _G[format("GameTooltipTextLeft%d", i)]
+            local text = line and line.GetText and line:GetText()
+            if text and strfind(text, displayString) then
+                return
+            end
         end
-    end
 
-    self:AddLine(displayString)
-    self:Show()
+        self:AddLine(displayString)
+        self:Show()
+    end
 end
 
 local function SetUnitAuraData(self, id, caster)
     if id then
-        local showSpellID = GetSetting("ADVANCED_TOOLTIP_SPELL_ITEM_ID")
         local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
 
-        if showSpellID then
+        if IsModKeyDown() then
             if caster then
                 local name = UnitName(caster)
                 local _, class = UnitClass(caster)
@@ -389,7 +398,7 @@ local function LoadTooltips()
         GameTooltip:HookScript("OnTooltipSetSpell", movePlacement)
         --GameTooltip:HookScript("OnTooltipSetItem", movePlacement)
         GameTooltip:HookScript("OnTooltipSetDefaultAnchor", movePlacement)
-        RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", "VerticalActionBarDummy", {320, 80})
+        RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", "VerticalActionBarDummy", {230, 80}, true, {"default"})
         hooksecurefunc(GameTooltip.gwMover, "StopMovingOrSizing", function (frame)
             local anchor = "BOTTOMRIGHT"
             local x = frame:GetRight() - GetScreenWidth()
@@ -416,10 +425,8 @@ local function LoadTooltips()
         local eventFrame = CreateFrame("Frame")
         eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
         eventFrame:SetScript("OnEvent", function(_, _, key)
-            if key == "LSHIFT" or key == "RSHIFT" or key == "LCTRL" or key == "RCTRL" then
-                local owner = GameTooltip:GetOwner()
-                local notOnAuras = not (owner and owner.UpdateTooltip)
-                if notOnAuras and UnitExists("mouseover") then
+            if key == "LSHIFT" or key == "RSHIFT" or key == "LCTRL" or key == "RCTRL" or key == 'LALT' or key == 'RALT' then
+                if UnitExists("mouseover") then
                     GameTooltip:SetUnit("mouseover")
                 end
             end

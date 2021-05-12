@@ -93,7 +93,7 @@
                                 </Texture>
                             </Layer>
                             <Layer level="OVERLAY">
-                                <FontString name="$parenthealthstring" parentKey="healthstring" text="" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                <FontString name="$parenthealthstring" parentKey="healthstring" text="50%" inherits="GameFontNormalSmall" justifyH="LEFT">
                                     <Size x="65" y="8"/>
                                     <Color r="1" g="1" b="1"></Color>
                                     <Anchors>
@@ -112,7 +112,7 @@
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
             </StatusBar>
-            <Frame name="$parentAuras">
+            <Frame name="$parentAuras" parentKey="auras">
                 <Size x="20" y="20"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
@@ -120,6 +120,10 @@
             </Frame>
         </Frames>
     </Button>
+
+
+
+
 
     <Frame name="GwManageGroupButtonTmpl" topLevel="true" frameStrata="LOW" inherits="SecureHandlerEnterLeaveTemplate" virtual="true">
         <Size x="100" y="72"/>

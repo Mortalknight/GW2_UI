@@ -54,16 +54,20 @@ local function GetSetting(name)
 end
 GW.GetSetting = GetSetting
 
-local function SetSetting(name, state)
+local function SetSetting(name, state, tableID)
     local profileIndex = GetActiveProfile()
-    
+
     local settings = GW2UI_SETTINGS_DB_03
     if profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] then
         settings = GW2UI_SETTINGS_PROFILES[profileIndex]
         settings["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
     end
 
-    settings[name] = state
+    if tableID then
+        settings[name][tableID] = state
+    else
+        settings[name] = state
+    end
 end
 GW.SetSetting = SetSetting
 

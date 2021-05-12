@@ -3,117 +3,142 @@ local _, GW = ...
 local storage
 
 local LoadStorage = function ()
-    GW2UI_STORAGE = GW2UI_STORAGE or {}
-    storage = GW2UI_STORAGE
+    GW2UI_STORAGE2 = GW2UI_STORAGE2 or {}
+    storage = GW2UI_STORAGE2
 
-    GW.UpdateCharClass()
+    -- Update Chardata
+    GW.UpdateCharData()
     GW.UpdateMoney()
+
+    -- Migrate data to new table (temp function)
+    if GW2UI_STORAGE then
+        local oldStorage = GW2UI_STORAGE
+        local SetMigrateData = function(realm, name, key, value)
+            local s = storage
+
+            s[realm] = s[realm] or {}
+            s = s[realm]
+            s[name] = s[name] or {}
+            s = s[name]
+
+            s[key] = value
+        end
+
+        for faction, realm in pairs(oldStorage) do
+            if realm and type(realm) == "table" then
+                for realmName, realmValues in pairs(realm) do
+                    if realmValues and type(realmValues) == "table" then
+                        for typeKey, typeValues in pairs(realmValues) do
+                            if typeValues and type(typeValues) == "table" then
+                                for valueKey, values in pairs(typeValues) do
+                                    SetMigrateData(realmName, valueKey, "name", valueKey)
+                                    SetMigrateData(realmName, valueKey, "faction", faction)
+                                    if typeKey == "CLASS" then SetMigrateData(realmName, valueKey, "class", values) end
+                                    if typeKey == "MONEY" then SetMigrateData(realmName, valueKey, "money", values) end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        -- add money if we do not have them
+        for _, chars in pairs(storage) do
+            if chars and type(chars) == "table" then
+                for _, v in pairs(chars) do
+                    if not v.money then v.money = 0 end
+                end
+            end
+        end
+
+        GW2UI_STORAGE = nil
+    end
 end
 GW.LoadStorage = LoadStorage
 
--- Set a storage value by passing the path segments and value
--- Example: To set storage[a][b][c] to v call SetStorage("a", "b", "c", v)
-local SetStorage = function (...)
+-- Set a storage value by REALM CHARNAME key = values
+local SetStorage = function (key, value)
     if not storage then return end
 
-    local s, n = storage, select("#", ...)
+    local s = storage
 
-    for i=1, n-2 do
-        local k = select(i, ...)
-        s[k] = s[k] or {}
-        s = s[k]
-    end
+    s[GW.myrealm] = s[GW.myrealm] or {}
+    s = s[GW.myrealm]
+    s[GW.myname] = s[GW.myname] or {}
+    s = s[GW.myname]
 
-    s[select(n-1, ...)] = select(n, ...)
+    s[key] = value
 end
 GW.SetStorage = SetStorage
 
--- Get a storage value by passing the path segments
--- Example: To get storage[a][b][c] call GetStorage("a", "b", "c")
-local GetStorage = function (...)
+-- Get a storage value by passing the key or a tableTyp to get the complete table or without an parameter to get char table
+local GetStorage = function (key, tableTyp)
     if not storage then return end
 
-    local s, n = storage, select("#", ...)
+    local s = storage
 
-    for i=1, n do
-        if s ~= nil then s = s[select(i, ...)] end
+    if tableTyp then
+        if tableTyp == "REALM" then
+            return s[GW.myrealm] and s[GW.myrealm] or nil
+        end
     end
 
-    return s
+    if s[GW.myrealm] and s[GW.myrealm][GW.myname] then
+        if key then
+            if s[GW.myrealm][GW.myname][key] then
+                return s[GW.myrealm][GW.myname][key]
+            else
+                return nil
+            end
+        else
+            return s[GW.myrealm][GW.myname]
+        end
+    end
+
+    return nil
 end
 GW.GetStorage = GetStorage
 
--- Get a storage or value for the players realm+faction
-local GetRealmStorage = function (...)
-    local _, realm = UnitFullName("player")
-
-    return GetStorage(GW.myfaction, realm, ...)
-end
-GW.GetRealmStorage = GetRealmStorage
-
--- Set a value on the realm+faction storage
-local SetRealmStorage = function (...)
-    local _, realm = UnitFullName("player")
-
-    SetStorage(GW.myfaction, realm, ...)
-end
-GW.SetRealmStorage = SetRealmStorage
-
 -- Clear the whole storage or just a part of it
-local ClearStorage = function (...)
+local ClearStorage = function (key, overrideCharacter)
     if not storage then return end
 
-    local n, s, k = select("#", ...), ...
-    if n > 0 and s == nil then
-        return
-    elseif type(s) ~= "table" then
-        s, k = storage, s
-    end
+    local s = storage
 
-    if k then
-        if type(s[k]) == "table" then
-            wipe(s[k])
-        else
-            s[k] = nil
+    if s[GW.myrealm] and s[GW.myrealm][(overrideCharacter and overrideCharacter or GW.myname)] then
+        if key and s[GW.myrealm][(overrideCharacter and overrideCharacter or GW.myname)][key] then
+            s[GW.myrealm][(overrideCharacter and overrideCharacter or GW.myname)][key] = nil
+        elseif not key then
+            s[GW.myrealm][(overrideCharacter and overrideCharacter or GW.myname)] = nil
         end
-    else
-        wipe(s)
     end
 end
 GW.ClearStorage = ClearStorage
 
-
----------- CLASS ----------
-
-local UpdateCharClass = function ()
-    SetRealmStorage("CLASS", GW.myname, GW.myclass)
-end
-GW.UpdateCharClass = UpdateCharClass
-
-local GetCharClass = function (name)
-    return GetRealmStorage("CLASS", name)
-end
-GW.GetCharClass = GetCharClass
-
-
 ---------- MONEY ----------
-
 local UpdateMoney = function ()
     local money = GetMoney()
-    SetRealmStorage("MONEY", GW.myname, money)
+
+    -- first store old money
+    local oldMoney = GetStorage("money")
+    local OldMoney = oldMoney or money
+
+    local change = money - OldMoney 
+    if OldMoney > money then        -- Lost Money
+        GW.spentMoney = GW.spentMoney - change
+    else                            -- Gained Moeny
+        GW.earnedMoney = GW.earnedMoney + change
+    end
+
+    SetStorage("money", money)
 end
 GW.UpdateMoney = UpdateMoney
 
--- Get all money on this realm and faction
-local GetRealmMoney = function ()
-    local s = GetRealmStorage("MONEY")
-
-    if s then
-        local sum = 0
-        for _,v in pairs(s) do
-            sum = sum + v
-        end
-        return s, sum
-    end
+---------- CHAR DATA ----------
+local UpdateCharData = function ()
+    SetStorage("name", GW.myname)
+    SetStorage("faction", GW.myfaction)
+    SetStorage("class", GW.myclass)
 end
-GW.GetRealmMoney = GetRealmMoney
+GW.UpdateCharData = UpdateCharData

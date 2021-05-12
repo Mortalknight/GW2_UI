@@ -1,4 +1,20 @@
 local _, GW = ...
+local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
+
+-- Easy menu
+GW.EasyMenu = CreateFrame("Frame", "GWEasyMenu", UIParent, "UIDropDownMenuTemplate")
+
+local function SetEasyMenuAnchor(menu, frame)
+    local point = GW.GetScreenQuadrant(frame)
+    local bottom = point and strfind(point, "BOTTOM")
+    local left = point and strfind(point, "LEFT")
+
+    local anchor1 = (bottom and left and "BOTTOMLEFT") or (bottom and "BOTTOMRIGHT") or (left and "TOPLEFT") or "TOPRIGHT"
+    local anchor2 = (bottom and left and "TOPLEFT") or (bottom and "TOPRIGHT") or (left and "BOTTOMLEFT") or "BOTTOMRIGHT"
+
+    UIDropDownMenu_SetAnchor(menu, 0, 0, anchor1, frame, anchor2)
+end
+GW.SetEasyMenuAnchor = SetEasyMenuAnchor
 
 if UnitIsTapDenied == nil then
     function UnitIsTapDenied()
@@ -99,18 +115,18 @@ local function FormatMoneyForChat(amount)
     local str, coppercolor, silvercolor, goldcolor = "", "|cffb16022", "|cffaaaaaa", "|cffddbc44"
 
     local value = abs(amount)
-    local gold = floor(value / 10000)
-    local silver = floor((value / 100) % 100)
-    local copper = floor(value % 100)
+    local gold = math.floor(value / (COPPER_PER_SILVER * SILVER_PER_GOLD))
+    local silver = math.floor((value - (gold * COPPER_PER_SILVER * SILVER_PER_GOLD)) / COPPER_PER_SILVER)
+    local copper = mod(value, COPPER_PER_SILVER)
 
     if gold > 0 then
-        str = format("%s%d|r|TInterface/MoneyFrame/UI-GoldIcon:12:12|t%s", goldcolor, GW.CommaValue(gold), (silver > 0 or copper > 0) and " " or "")
+        str = format("%s%s |r|TInterface/MoneyFrame/UI-GoldIcon:12:12|t%s", goldcolor, GW.CommaValue(gold), " ")
     end
-    if silver > 0 then
-        str = format("%s%s%d|r|TInterface/MoneyFrame/UI-SilverIcon:12:12|t%s", str, silvercolor, silver, copper > 0 and " " or "")
+    if silver > 0 or gold > 0 then
+        str = format("%s%s%d |r|TInterface/MoneyFrame/UI-SilverIcon:12:12|t%s", str, silvercolor, silver, (copper > 0 or gold > 0) and " " or "")
     end
-    if copper > 0 or value == 0 then
-        str = format("%s%s%d|r|TInterface/MoneyFrame/UI-CopperIcon:12:12|t", str, coppercolor, copper)
+    if copper > 0 or value == 0 or value > 0 then
+        str = format("%s%s%d |r|TInterface/MoneyFrame/UI-CopperIcon:12:12|t", str, coppercolor, copper)
     end
 
     return str
@@ -129,7 +145,7 @@ local function GWGetClassColor(class, useClassColor, forNameString)
     if useBlizzardClassColor then
         color = RAID_CLASS_COLORS[class]
     else
-        color = GW.CLASS_COLORS_RAIDFRAME[class]
+        color = CLASS_COLORS_RAIDFRAME[class]
     end
 
     if type(color) ~= "table" then return end
@@ -306,7 +322,7 @@ do
             tinsert(splitTable, strsub(str, start, pos -1))
             start = pos + strlen(delim)
         end
-        
+
         tinsert(splitTable, strsub(str, start))
 
         return unpack(splitTable)
@@ -428,6 +444,7 @@ local function frame_OnEnter(self)
     end
     GameTooltip:Show()
 end
+
 local function EnableTooltip(self, text, dir, y_off)
     self.tooltipText = text
     if not dir then
@@ -500,38 +517,42 @@ end
 GW.vernotes = vernotes
 
 -- create custom UIFrameFlash animation
-local function FrameFlash(frame, fadeInTime, fadeOutTime, showWhenDone, flashInHoldTime, flashOutHoldTime)
-    local flasher
+local function SetUpFrameFlash(frame, loop)
+    frame.flasher = frame:CreateAnimationGroup("Flash")
+    frame.flasher.fadein = frame.flasher:CreateAnimation("Alpha", "FadeIn")
+    frame.flasher.fadein:SetOrder(1)
 
-    if not frame.flasher then
-        flasher = frame:CreateAnimationGroup()
-    else
-        flasher = frame.flasher
-    end
+    frame.flasher.fadeout = frame.flasher:CreateAnimation("Alpha", "FadeOut")
+    frame.flasher.fadeout:SetOrder(2)
 
-    local fade1 = flasher:CreateAnimation("Alpha")
-    local fade2 = flasher:CreateAnimation("Alpha")
-    fade1:SetDuration(fadeInTime)
-    fade1:SetToAlpha(1)
-    fade1:SetOrder(1)
-    fade1:SetEndDelay(flashInHoldTime)
-    
-    fade2:SetDuration(fadeOutTime)
-    fade2:SetToAlpha(0)
-    fade2:SetOrder(2)
-    fade2:SetEndDelay(flashOutHoldTime)
-
-    if showWhenDone then
-        flasher:SetScript("OnFinished", function(self)
-            frame:SetAlpha(1)
+    if loop then
+        frame.flasher:SetScript("OnFinished", function(self)
+            self:Play()
         end)
-    else
-        flasher:SetScript("OnFinished", nil)
+    end
+end
+
+local function StopFlash(frame)
+    if frame.flasher and frame.flasher:IsPlaying() then
+        frame.flasher:Stop()
+    end
+end
+GW.StopFlash = StopFlash
+
+local function FrameFlash(frame, duration, fadeOutAlpha, fadeInAlpha, loop)
+    if not frame.flasher then
+        SetUpFrameFlash(frame,loop)
     end
 
-    frame.flasher = flasher
-
-    frame.flasher:Play()
+    if not frame.flasher:IsPlaying() then
+        frame.flasher.fadein:SetDuration(duration)
+        frame.flasher.fadein:SetFromAlpha(fadeOutAlpha or 0)
+        frame.flasher.fadein:SetToAlpha(fadeInAlpha or 1)
+        frame.flasher.fadeout:SetDuration(duration)
+        frame.flasher.fadeout:SetFromAlpha(fadeInAlpha or 1)
+        frame.flasher.fadeout:SetToAlpha(fadeOutAlpha or 0)
+        frame.flasher:Play()
+    end
 end
 GW.FrameFlash = FrameFlash
 
@@ -540,3 +561,52 @@ local function IsDispellableByMe(debuffType)
     return dispel and dispel[debuffType]
 end
 GW.IsDispellableByMe = IsDispellableByMe
+
+local function GetScreenQuadrant(frame)
+    local x, y = frame:GetCenter()
+    local screenWidth = GetScreenWidth()
+    local screenHeight = GetScreenHeight()
+
+    if not (x and y) then
+        return "UNKNOWN"
+    end
+
+    local point
+    if (x > (screenWidth / 3) and x < (screenWidth / 3) * 2) and y > (screenHeight / 3) * 2 then
+        point = "TOP"
+    elseif x < (screenWidth / 3) and y > (screenHeight / 3) * 2 then
+        point = "TOPLEFT"
+    elseif x > (screenWidth / 3) * 2 and y > (screenHeight / 3) * 2 then
+        point = "TOPRIGHT"
+    elseif (x > (screenWidth / 3) and x < (screenWidth / 3) * 2) and y < (screenHeight / 3) then
+        point = "BOTTOM"
+    elseif x < (screenWidth / 3) and y < (screenHeight / 3) then
+        point = "BOTTOMLEFT"
+    elseif x > (screenWidth / 3) * 2 and y < (screenHeight / 3) then
+        point = "BOTTOMRIGHT"
+    elseif x < (screenWidth / 3) and (y > (screenHeight / 3) and y < (screenHeight / 3) * 2) then
+        point = "LEFT"
+    elseif x > (screenWidth / 3) * 2 and y < (screenHeight / 3) * 2 and y > (screenHeight / 3) then
+        point = "RIGHT"
+    else
+        point = "CENTER"
+    end
+
+    return point
+end
+GW.GetScreenQuadrant = GetScreenQuadrant
+
+local function ColorGradient(perc, ...)
+    if perc >= 1 then
+        return select(select("#", ...) - 2, ...)
+    elseif perc <= 0 then
+        return ...
+    end
+
+    local num = select("#", ...) / 3
+    local segment, relperc = math.modf(perc * (num - 1))
+    local r1, g1, b1, r2, g2, b2 = select((segment * 3) + 1, ...)
+
+    return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
+end
+GW.ColorGradient = ColorGradient

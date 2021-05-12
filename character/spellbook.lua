@@ -690,7 +690,7 @@ local function spellBookTab_onClick(self)
     GwspellbookTab3.background:Hide()
     GwspellbookTab4.background:Hide()
     GwspellbookTab5.background:Hide()
-    GwspellbookTab6.background:Hide()
+    --GwspellbookTab6.background:Hide()
     self.background:Show()
 end
 
@@ -763,6 +763,7 @@ local function LoadSpellBook()
         end
     end
 
+    --[[
     CreateFrame('ScrollFrame', 'GwSpellbookUnknown',GwSpellbook, 'GwSpellbookUnknown')
     local menuItem = CreateFrame('Button', 'GwspellbookTab' .. 6,GwSpellbookMenu, 'GwspellbookTab')
     menuItem:SetPoint("TOPLEFT", GwSpellbookMenu, "TOPLEFT", 0, -menuItem:GetHeight() * (6 - 1))
@@ -774,14 +775,13 @@ local function LoadSpellBook()
     menuItem:SetNormalTexture(nil)
     menuItem:SetText("")
     GwSpellbookUnknown.title:SetText(L["FUTURE_SPELLS"])
-
+    ]]
 
     GwSpellbookContainerTab1:Hide()
     GwSpellbookContainerTab2:Hide()
     GwSpellbookContainerTab3:Show()
     GwSpellbookContainerTab4:Hide()
     GwSpellbookContainerTab5:Hide()
-
 
     GwspellbookTab1:SetFrameRef('GwSpellbookMenu', GwSpellbookMenu)
     GwspellbookTab1:SetAttribute("_onclick", [=[
@@ -803,11 +803,12 @@ local function LoadSpellBook()
     GwspellbookTab5:SetAttribute("_onclick", [=[
         self:GetFrameRef('GwSpellbookMenu'):SetAttribute('tabopen', 5)
     ]=])
-    GwspellbookTab6:SetFrameRef('GwSpellbookMenu', GwSpellbookMenu)
-    GwspellbookTab6:SetAttribute("_onclick", [=[
-        self:GetFrameRef('GwSpellbookMenu'):SetAttribute('tabopen', 6)
-    ]=])
-    GwspellbookTab5:SetFrameRef('GwspellbookTab6', GwspellbookTab6)
+    --GwspellbookTab6:SetFrameRef('GwSpellbookMenu', GwSpellbookMenu)
+    --GwspellbookTab6:SetAttribute("_onclick", [=[
+    --    self:GetFrameRef('GwSpellbookMenu'):SetAttribute('tabopen', 6)
+    --]=])
+    --GwspellbookTab5:SetFrameRef('GwspellbookTab6', GwspellbookTab6)
+    --[[
     GwspellbookTab5:SetAttribute("_onstate-petstate", [=[
         if newstate == "nopet" then
             self:GetFrameRef('GwspellbookTab6'):SetPoint("TOPLEFT",self:GetFrameRef('GwSpellbookMenu'),"TOPLEFT",0,-44*4)
@@ -821,14 +822,14 @@ local function LoadSpellBook()
         end
     ]=])
     RegisterStateDriver(GwspellbookTab5, "petstate", "[target=pet,noexists] nopet; [target=pet,help] hasPet;")
-
+]]
 
     GwSpellbookMenu:SetFrameRef('GwSpellbookContainerTab1',GwSpellbookContainerTab1)
     GwSpellbookMenu:SetFrameRef('GwSpellbookContainerTab2',GwSpellbookContainerTab2)
     GwSpellbookMenu:SetFrameRef('GwSpellbookContainerTab3',GwSpellbookContainerTab3)
     GwSpellbookMenu:SetFrameRef('GwSpellbookContainerTab4',GwSpellbookContainerTab4)
     GwSpellbookMenu:SetFrameRef('GwSpellbookContainerTab5',GwSpellbookContainerTab5)
-    GwSpellbookMenu:SetFrameRef('GwSpellbookUnknown',GwSpellbookUnknown)
+    --GwSpellbookMenu:SetFrameRef('GwSpellbookUnknown',GwSpellbookUnknown)
     GwSpellbookMenu:SetAttribute('_onattributechanged', [=[
         if name~='tabopen' then return end
 
@@ -837,7 +838,7 @@ local function LoadSpellBook()
         self:GetFrameRef('GwSpellbookContainerTab3'):Hide()
         self:GetFrameRef('GwSpellbookContainerTab4'):Hide()
         self:GetFrameRef('GwSpellbookContainerTab5'):Hide()
-        self:GetFrameRef('GwSpellbookUnknown'):Hide()
+        --self:GetFrameRef('GwSpellbookUnknown'):Hide()
 
 
         if value == 1 then
@@ -860,10 +861,10 @@ local function LoadSpellBook()
             self:GetFrameRef('GwSpellbookContainerTab5'):Show()
             return
         end
-        if value == 6 then
-            self:GetFrameRef('GwSpellbookUnknown'):Show()
-            return
-        end
+        --if value == 6 then
+            --self:GetFrameRef('GwSpellbookUnknown'):Show()
+            --return
+        --end
     ]=])
     GwSpellbookMenu:SetAttribute('tabOpen', 2)
 
@@ -873,7 +874,7 @@ local function LoadSpellBook()
     GwspellbookTab4:HookScript('OnClick', spellBookTab_onClick)
     GwspellbookTab5:HookScript('OnClick', spellBookTab_onClick)
     GwspellbookTab5:HookScript('OnHide', function() spellBookTab_onClick(GwspellbookTab2) end)
-    GwspellbookTab6:HookScript('OnClick', spellBookTab_onClick)
+    --GwspellbookTab6:HookScript('OnClick', spellBookTab_onClick)
     GwSpellbookMenu:SetScript('OnShow', function()
         if InCombatLockdown() then return end
         updateSpellbookTab()

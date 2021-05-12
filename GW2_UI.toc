@@ -6,13 +6,11 @@
 ## Version: @project-version@
 
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
-## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES
+## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES, GW2UI_STORAGE2
 
 core/TaintLess.xml
 core/locationData.lua
 libs/libs.xml
-
-core/init.lua
 
 locales/enUS.lua
 locales/deDE.lua
@@ -27,6 +25,8 @@ locales/zhCN.lua
 locales/itIT.lua
 
 core/consts.lua
+core/init.lua
+core/raid_debuffs.lua
 core/toolkit.lua
 core/utils.lua
 core/shared.xml
@@ -56,7 +56,12 @@ settings/panel_profiles.lua
 settings/hover_binding.lua
 settings/welcome.xml
 settings/welcome.lua
+settings/moveableFrameHandler.lua
 settings/versionApi.lua
+
+dataInfo/money.lua
+dataInfo/guild.lua
+dataInfo/bags.lua
 
 core/auras.lua
 
@@ -84,6 +89,7 @@ units/unitframes.xml
 units/raidframes.lua
 units/unitframes.lua
 units/party.lua
+units/playerFrame.lua
 
 mainbar/micromenu.xml
 mainbar/micromenu.lua
@@ -100,12 +106,14 @@ mainbar/actionbars.xml
 mainbar/petbar.xml
 mainbar/dodgebar.xml
 mainbar/5sr.lua
+mainbar/mirrortimer.lua
 mainbar/hud.lua
 mainbar/actionbars2.lua
 mainbar/petbar.lua
 mainbar/aurabar_blizz_modified.lua
 mainbar/aurabar.lua
 mainbar/castingbar.lua
+mainbar/totemBar.lua
 mainbar/healthglobe.lua
 mainbar/powerbar.lua
 mainbar/classpowers.lua

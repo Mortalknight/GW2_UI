@@ -396,16 +396,17 @@ GW.AddForProfiling("hud", "updateBarSize", updateBarSize)
 
 local action_hud_auras = {}
 
-local function registerActionHudAura(aura, left, right)
-    action_hud_auras[aura] = {}
-    action_hud_auras[aura]["aura"] = aura
-    action_hud_auras[aura]["left"] = left
-    action_hud_auras[aura]["right"] = right
+local function registerActionHudAura(auraID, left, right, unit)
+    action_hud_auras[auraID] = {}
+    action_hud_auras[auraID].auraID = auraID
+    action_hud_auras[auraID].left = left
+    action_hud_auras[auraID].right = right
+    action_hud_auras[auraID].unit = unit
 end
 local currentTexture = nil
 GW.AddForProfiling("hud", "registerActionHudAura", registerActionHudAura)
 
-local function selectBg()
+local function selectBg(self)
     if not GetSetting("HUD_BACKGROUND") or not GetSetting("HUD_SPELL_SWAP") then
         return
     end
@@ -421,25 +422,37 @@ local function selectBg()
         right = "Interface\\AddOns\\GW2_UI\\textures\\rightshadowcombat"
         left = "Interface\\AddOns\\GW2_UI\\textures\\leftshadowcombat"
 
+        local bolFound = false
         for i = 1, 40 do
             local _, _, _, _, _, _, _, _, _, spellID = UnitBuff("player", i)
-            if spellID ~= nil and action_hud_auras[spellID] ~= nil then
-                left = action_hud_auras[spellID]["left"]
-                right = action_hud_auras[spellID]["right"]
+            if spellID ~= nil and action_hud_auras[spellID] ~= nil and action_hud_auras[spellID].unit == "player" then
+                right = action_hud_auras[spellID].right
+                left = action_hud_auras[spellID].left
+                break
+            end
+        end
+        if not bolFound then
+            for i = 1, 40 do
+                local _, _, _, _, _, _, _, _, _, spellID = UnitBuff("pet", i)
+                if spellID ~= nil and action_hud_auras[spellID] ~= nil and action_hud_auras[spellID].unit == "pet" then
+                    right = action_hud_auras[spellID].right
+                    left = action_hud_auras[spellID].left
+                    break
+                end
             end
         end
     end
 
     if currentTexture ~= left then
         currentTexture = left
-        _G["GwActionBarHudLEFT"]:SetTexture(left)
-        _G["GwActionBarHudRIGHT"]:SetTexture(right)
+        self.actionBarHud.Right:SetTexture(right)
+        self.actionBarHud.Left:SetTexture(left)
     end
 end
 GW.AddForProfiling("hud", "selectBg", selectBg)
 
-local function combatHealthState()
-    if not GetSetting("HUD_BACKGROUND") then 
+local function combatHealthState(self)
+    if not GetSetting("HUD_BACKGROUND") then
         return
     end
 
@@ -448,23 +461,23 @@ local function combatHealthState()
     if unitHealthPrecentage < 0.5 and not UnitIsDeadOrGhost("player") then
         unitHealthPrecentage = unitHealthPrecentage / 0.5
 
-        _G["GwActionBarHudLEFT"]:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
-        _G["GwActionBarHudRIGHT"]:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        self.actionBarHud.Left:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        self.actionBarHud.Right:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
 
-        _G["GwActionBarHudRIGHTSWIM"]:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
-        _G["GwActionBarHudLEFTSWIM"]:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        self.actionBarHud.RightSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
+        self.actionBarHud.LeftSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
 
-        _G["GwActionBarHudLEFTBLOOD"]:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
-        _G["GwActionBarHudRIGHTBLOOD"]:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
+        self.actionBarHud.LeftBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
+        self.actionBarHud.RightBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
     else
-        _G["GwActionBarHudLEFT"]:SetVertexColor(1, 1, 1)
-        _G["GwActionBarHudRIGHT"]:SetVertexColor(1, 1, 1)
+        self.actionBarHud.Left:SetVertexColor(1, 1, 1)
+        self.actionBarHud.Right:SetVertexColor(1, 1, 1)
 
-        _G["GwActionBarHudRIGHTSWIM"]:SetVertexColor(1, 1, 1)
-        _G["GwActionBarHudLEFTSWIM"]:SetVertexColor(1, 1, 1)
+        self.actionBarHud.LeftSwim:SetVertexColor(1, 1, 1)
+        self.actionBarHud.RightSwim:SetVertexColor(1, 1, 1)
 
-        _G["GwActionBarHudLEFTBLOOD"]:SetVertexColor(1, 1, 1, 0)
-        _G["GwActionBarHudRIGHTBLOOD"]:SetVertexColor(1, 1, 1, 0)
+        self.actionBarHud.LeftBlood:SetVertexColor(1, 1, 1, 0)
+        self.actionBarHud.RightBlood:SetVertexColor(1, 1, 1, 0)
     end
 end
 GW.AddForProfiling("hud", "combatHealthState", combatHealthState)
@@ -472,108 +485,70 @@ GW.AddForProfiling("hud", "combatHealthState", combatHealthState)
 registerActionHudAura(
     31842,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy"
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy",
+    "player"
 )
 registerActionHudAura(
     31884,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy"
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy",
+    "player"
 )
 registerActionHudAura(
     5487,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_bear",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_bear"
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_bear",
+    "player"
 )
 registerActionHudAura(
     768,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_cat",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_cat"
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_cat",
+    "player"
 )
 registerActionHudAura(
     51271,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_frost",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_frost"
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_frost",
+    "player"
 )
 registerActionHudAura(
     187827,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_metamorph",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_metamorph"
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_metamorph",
+    "player"
 )
 registerActionHudAura(
     215785,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_fire",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_fire"
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_fire",
+    "player"
 )
 registerActionHudAura(
     77762,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_fire",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_fire"
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_fire",
+    "player"
 )
 registerActionHudAura(
     201846,
     "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_storm",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_storm"
+    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_storm",
+    "player"
 )
-
-local function LoadBreathMeter()
-    CreateFrame("Frame", "GwBreathMeter", UIParent, "GwBreathMeter")
-    GwBreathMeter:Hide()
-    GwBreathMeter:SetScript(
-        "OnShow",
-        function()
-            UIFrameFadeIn(GwBreathMeter, 0.2, GwBreathMeter:GetAlpha(), 1)
-        end
-    )
-    MirrorTimer1:SetScript(
-        "OnShow",
-        function(self)
-            self:Hide()
-        end
-    )
-    MirrorTimer1:UnregisterAllEvents()
-
-    GwBreathMeter:RegisterEvent("MIRROR_TIMER_START")
-    GwBreathMeter:RegisterEvent("MIRROR_TIMER_STOP")
-
-    GwBreathMeter:SetScript(
-        "OnEvent",
-        function(self, event, arg1, arg2, arg3, arg4)
-            if event == "MIRROR_TIMER_START" then
-                local texture = "Interface\\AddOns\\GW2_UI\\textures\\castingbar"
-                if arg1 == "BREATH" then
-                    texture = "Interface\\AddOns\\GW2_UI\\textures\\breathmeter"
-                end
-                GwBreathMeterBar:SetStatusBarTexture(texture)
-                GwBreathMeterBar:SetMinMaxValues(0, arg3)
-                GwBreathMeterBar:SetScript(
-                    "OnUpdate",
-                    function()
-                        GwBreathMeterBar:SetValue(GetMirrorTimerProgress(arg1))
-                    end
-                )
-                GwBreathMeter:Show()
-            end
-            if event == "MIRROR_TIMER_STOP" then
-                GwBreathMeterBar:SetScript("OnUpdate", nil)
-                GwBreathMeter:Hide()
-            end
-        end
-    )
-end
-GW.LoadBreathMeter = LoadBreathMeter
 
 local function hud_OnEvent(self, event, ...)
     if event == "UNIT_AURA" then
         local unit = ...
         if unit == "player" then
-            selectBg()
+            selectBg(self)
         end
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
-        selectBg()
+        selectBg(self)
     elseif event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_MAXHEALTH" then
         local unit = ...
         if unit == "player" then
-            combatHealthState()
+            combatHealthState(self)
         end
     end
 end
@@ -604,8 +579,10 @@ local function LoadHudArt()
     hudArtFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     hudArtFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
     hudArtFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
-    selectBg()
-    combatHealthState()
+    selectBg(hudArtFrame)
+    combatHealthState(hudArtFrame)
+
+    return hudArtFrame
 end
 GW.LoadHudArt = LoadHudArt
 

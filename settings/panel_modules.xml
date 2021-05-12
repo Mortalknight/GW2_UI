@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwSettingsModulePanelTmpl" inherits="GwSettingsPanelTmpl" virtual="true">
+    <Frame name="GwSettingsModulePanelTmpl" inherits="GwSettingsPanelScrollTmpl" virtual="true">
         <Frames>
             <Button parentKey="welcome" inherits="GwStandardButton" text="Welcome">
                 <Size x="120" y="22" />
