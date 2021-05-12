@@ -492,7 +492,7 @@ local function HandleNextPrevButton(button, arrowDir)
 
     button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
     button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
-    button:SetDisabledTexture("Interface/AddOns/GW2_UI/Texturesuistuff//arrowup_down")
+    button:SetDisabledTexture("Interface/AddOns/GW2_UI/Textures/uistuff//arrowup_down")
 
     local Normal, Disabled, Pushed = button:GetNormalTexture(), button:GetDisabledTexture(), button:GetPushedTexture()
 

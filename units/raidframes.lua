@@ -67,7 +67,7 @@ local function updateRaidMarkers(self)
             SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
         else
             self.classicon:SetTexture(nil)
-        end    
+        end
     end
 end
 GW.AddForProfiling("raidframes", "updateRaidMarkers", updateRaidMarkers)
@@ -199,7 +199,7 @@ local function setUnitName(self)
     local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
     local realmflag = ""
-    
+
     if not nameString or nameString == UNKNOWNOBJECT then
         self.nameNotLoaded = false
     else
@@ -318,7 +318,7 @@ local function updateAwayData(self)
         elseif iconState == 6 then
             self.classicon:SetAtlas("Raid-Icon-SummonDeclined")
         end
-        
+
         self.classicon:Show()
     end
 
@@ -990,7 +990,7 @@ local function UpdateRaidFramesLayout()
     if not InCombatLockdown() then
         GwRaidFrameContainer:SetSize(isV and size2 or size1, isV and size1 or size2)
     end
-    
+
     local unitString = IsInRaid() and "raid" or "party"
     local sorted = (unitString == "party" or GetSetting("RAID_SORT_BY_ROLE")) and sortByRole() or {}
 
@@ -1071,7 +1071,6 @@ local function createRaidFrame(registerUnit, index)
 
     frame.healthbar.animationName = "GwCompact" .. registerUnit .. "animation"
     frame.healthbar.animationValue = 0
-    
 
     frame.manabar.animationName = "GwCompact" .. registerUnit .. "manabaranimation"
     frame.manabar.animationValue = 0
@@ -1145,7 +1144,7 @@ local function LoadRaidFrames()
     if not _G.GwManageGroupButton then
         GW.manageButton()
     end
-    
+
     hideBlizzardRaidFrame()
 
     if CompactRaidFrameManager_UpdateShown then
@@ -1170,16 +1169,16 @@ local function LoadRaidFrames()
 
     hooksecurefunc(GwRaidFrameContainer.gwMover, "StopMovingOrSizing", function (frame)
         local anchor = GetSetting("RAID_ANCHOR")
-    
+
         if anchor == "GROWTH" then
             local g1, g2 = strsplit("+", GetSetting("RAID_GROW"))
             anchor = (IsIn("DOWN", g1, g2) and "TOP" or "BOTTOM") .. (IsIn("RIGHT", g1, g2) and "LEFT" or "RIGHT")
         end
-    
+
         if anchor ~= "POSITION" then
             local x = anchor:sub(-5) == "RIGHT" and frame:GetRight() - GetScreenWidth() or anchor:sub(-4) == "LEFT" and frame:GetLeft() or frame:GetLeft() + (frame:GetWidth() - GetScreenWidth()) / 2
             local y = anchor:sub(1, 3) == "TOP" and frame:GetTop() - GetScreenHeight() or anchor:sub(1, 6) == "BOTTOM" and frame:GetBottom() or frame:GetBottom() + (frame:GetHeight() - GetScreenHeight()) / 2
-    
+
             frame:ClearAllPoints()
             frame:SetPoint(anchor, x, y)
         end

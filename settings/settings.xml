@@ -309,7 +309,7 @@
                 <Anchors>
                     <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
                 </Anchors>
-                 <Frames>
+                <Frames>
                     <ScrollFrame parentKey="contentScroll" inherits="GwHybridScrollFrameTemplate">
                         <Size x="250" y="120"></Size>
                         <Anchors>

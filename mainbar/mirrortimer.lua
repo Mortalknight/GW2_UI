@@ -63,7 +63,7 @@ local function mirrorTimerFrame_OnEvent(self, event, arg1)
     if not self:IsShown() or arg1 ~= self.timer then
         return
     end
-    
+
     if event == "MIRROR_TIMER_PAUSE" then
         if arg1 > 0 then
             self.paused = 1

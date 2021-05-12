@@ -102,12 +102,12 @@ end
 GW.AddForProfiling("index", "buttonAnim", buttonAnim)
 
 --[[
- Basic helper function for spritemaps
- mapExample = {
-  width = 100,
-  height = 10,
-  colums = 5,
-  rows = 3
+    Basic helper function for spritemaps
+    mapExample = {
+    width = 100,
+    height = 10,
+    colums = 5,
+    rows = 3
 }
 ]]--
 local function getSprite(map,x,y)

@@ -64,12 +64,12 @@ local function setPetBar(fmPet)
                 btn:ClearAllPoints()
                 btn:SetPoint("BOTTOM", PetActionButton5, "TOP", 0, BUTTON_MARGIN)
             end
-            
+
             if btnShine then
                 btnShine:SetSize(btn:GetSize())
                 for _, v in pairs(_G["PetActionButton" .. i .. "Shine"].sparkles) do
-                   v:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
-                   v:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
+                    v:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
+                    v:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
                 end
 
                 _G["PetActionButton" .. i .. "AutoCastable"]:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")

@@ -1286,7 +1286,7 @@ local function LoadClassPowers()
         GW.MixinHideDuringPetAndOverride(lmb)
         cpf.lmb = lmb
         lmb.candy.spark:ClearAllPoints()
-        
+
         lmb.bar:SetHeight(5)
         lmb.candy:SetHeight(5)
         lmb.candy.spark:SetHeight(5)

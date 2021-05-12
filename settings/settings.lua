@@ -416,7 +416,7 @@ local function InitPanel(panel, hasScroll)
                 GameTooltip:SetOwner(of, "ANCHOR_CURSOR", 0, 0)
                 GameTooltip:ClearLines()
                 GameTooltip:AddLine(v.name, 1, 1, 1)
-                GameTooltip:AddLine(v.desc, 1, 1, 1, 1, true)
+                GameTooltip:AddLine(v.desc, 1, 1, 1, true)
                 GameTooltip:Show()
             end
         )
@@ -834,7 +834,7 @@ local function LoadSettings()
             button:SetWidth(200)
             button:SetPoint("CENTER", editBox, "CENTER", 0, -30)
         end,
-        preferredIndex = 3
+        preferredIndex = 4
     }
 
     local fnGSWMH_OnClick = function()

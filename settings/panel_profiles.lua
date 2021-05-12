@@ -360,7 +360,7 @@ updateProfiles = function(self)
             item_OnLoad(f)
             self.profile_buttons[k + 1] = f
         end
-    
+
         if v ~= nil then
             f:Show()
             f.profileID = k

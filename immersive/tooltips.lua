@@ -266,7 +266,6 @@ end
 
 local function SetUnitText(self, unit, isShiftKeyDown)
     local name, realm = UnitName(unit)
-    
     local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
 
     if UnitIsPlayer(unit) then
@@ -332,8 +331,6 @@ local function SetUnitText(self, unit, isShiftKeyDown)
             else
                 levelLine:SetFormattedText("%s%s|r %s%s |c%s%s|r", hexColor, level > 0 and level or "??", unitGender or "", race or "", nameColor.colorStr, localeClass)
             end
-
-            
         end
 
         if showRole then
@@ -763,9 +760,7 @@ local function LoadTooltips()
         eventFrame:RegisterEvent("MODIFIER_STATE_CHANGED")
         eventFrame:SetScript("OnEvent", function(_, _, key)
             if key == "LSHIFT" or key == "RSHIFT" or key == "LCTRL" or key == "RCTRL" or key == 'LALT' or key == 'RALT' then
-                local owner = GameTooltip:GetOwner()
-                local notOnAuras = not (owner and owner.UpdateTooltip)
-                if notOnAuras and UnitExists("mouseover") then
+                if UnitExists("mouseover") then
                     GameTooltip:SetUnit("mouseover")
                 end
             end

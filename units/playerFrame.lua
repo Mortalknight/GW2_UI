@@ -272,6 +272,8 @@ local function LoadPlayerFrame()
         pagIn:Play()
     end
 
+    if not GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
+
     PlayerFrame:Kill()
 
     --hide unsed things from default target frame

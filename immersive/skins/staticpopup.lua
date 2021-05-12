@@ -41,7 +41,6 @@ local function LoadStaticPopupSkin()
                 _G["StaticPopup" .. i .. "ExtraButton"]:SkinButton(false, true)
             end
         end
-    
 
         --Change EditBox
         _G["StaticPopup" .. i .. "EditBoxLeft"]:Hide()
@@ -58,7 +57,7 @@ local function LoadStaticPopupSkin()
     hooksecurefunc("CinematicFrame_OnDisplaySizeChanged", function(self)
         if self and self.closeDialog and not self.closeDialog.template then
             self.closeDialog.Border:Hide()
-            
+
             local tex = self.closeDialog:CreateTexture("bg", "BACKGROUND")
             tex:SetPoint("TOP", self.closeDialog, "TOP", 0, 0)
             tex:SetSize(self.closeDialog:GetSize())

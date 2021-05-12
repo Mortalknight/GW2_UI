@@ -332,7 +332,7 @@ local function setUnitPortrait(self)
 end
 GW.AddForProfiling("unitframes", "setUnitPortrait", setUnitPortrait)
 
-local function unitFrameData(self, event)
+local function unitFrameData(self)
     local level = UnitLevel(self.unit)
     if level == -1 then
         level = "??"
@@ -349,7 +349,7 @@ local function unitFrameData(self, event)
 
     updateHealthbarColor(self)
 
-    setUnitPortraitFrame(self, event)
+    setUnitPortraitFrame(self)
 end
 GW.AddForProfiling("unitframes", "unitFrameData", unitFrameData)
 
@@ -403,7 +403,7 @@ local function hideCastBar(self)
 end
 GW.AddForProfiling("unitframes", "hideCastBar", hideCastBar)
 
-local function updateCastValues(self, event)
+local function updateCastValues(self)
     local castType = 1
 
     local name, _, texture, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(self.unit)
@@ -414,7 +414,7 @@ local function updateCastValues(self, event)
     end
 
     if name == nil then
-        hideCastBar(self, event)
+        hideCastBar(self)
         return
     end
 
@@ -739,11 +739,11 @@ local function focus_OnEvent(self, event, unit)
                 updateHealthValues(ttf, event)
                 updatePowerValues(ttf)
                 updateCastValues(ttf, event)
-                updateRaidMarkers(ttf, event)
+                updateRaidMarkers(ttf)
             end
         end
     elseif event == "RAID_TARGET_UPDATE" then
-        updateRaidMarkers(self, event)
+        updateRaidMarkers(self)
     elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
             UpdateBuffLayout(self, event)

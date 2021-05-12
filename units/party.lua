@@ -80,7 +80,7 @@ local function updateAwayData(self)
     if UnitThreatSituation(self.unit) and UnitThreatSituation(self.unit) > 2 then
         portraitIndex = 5
     end
-    
+
     setPortraitBackground(self, portraitIndex)
 end
 GW.AddForProfiling("party", "updateAwayData", updateAwayData)
@@ -442,7 +442,7 @@ local function party_OnEvent(self, event, unit)
     elseif event == "UNIT_HEAL_PREDICTION" then
         setPredictionAmount(self)
     elseif IsIn(event,"UNIT_PHASE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "UNIT_THREAT_SITUATION_UPDATE", "INCOMING_RESURRECT_CHANGED", "INCOMING_SUMMON_CHANGED") then
-        updateAwayData(self)  
+        updateAwayData(self)
     elseif event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" or event == "UNIT_PHASE" then
         updateUnitPortrait(self)
     elseif event == "UNIT_NAME_UPDATE" then

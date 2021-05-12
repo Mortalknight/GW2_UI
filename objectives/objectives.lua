@@ -1422,7 +1422,7 @@ local function LoadQuestTracker()
     compassUpdateFrame:SetScript("OnEvent", function(self, event, ...)
         -- Events for start updating
         if IsIn(event, "PLAYER_STARTED_MOVING", "PLAYER_CONTROL_LOST") then
-            self.Ticker = C_Timer.NewTicker(1, function() tracker_OnUpdate(fTracker) end)
+            self.Ticker = C_Timer.NewTicker(1, function() tracker_OnUpdate() end)
         elseif IsIn(event, "PLAYER_STOPPED_MOVING", "PLAYER_CONTROL_GAINED") then -- Events for stop updating
             if self.Ticker then
                 self.Ticker:Cancel()
@@ -1431,10 +1431,10 @@ local function LoadQuestTracker()
         elseif event == "QUEST_DATA_LOAD_RESULT" then
             local questID, success = ...
             if success and GwObjectivesNotification.compass.dataIndex and questID == GwObjectivesNotification.compass.dataIndex then
-                tracker_OnUpdate(fTracker)
+                tracker_OnUpdate()
             end
         else
-            C_Timer.After(0.25, function() tracker_OnUpdate(fTracker) end)
+            C_Timer.After(0.25, function() tracker_OnUpdate() end)
         end
     end)
 

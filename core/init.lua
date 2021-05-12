@@ -90,7 +90,7 @@ do
 end
 
 -- Locale doesn't exist yet, make it exist
-GW.L = GW.Libs.AceLocale:GetLocale("GW2_UI") 
+GW.L = GW.Libs.AceLocale:GetLocale("GW2_UI")
 
 -- remove the NPE, conflicts with customs hero and spell book panel
 local NPERemoveFrame = CreateFrame("Frame")

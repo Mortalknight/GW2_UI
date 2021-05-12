@@ -6,7 +6,7 @@ local messageToSender = {}
 local function UpdateBubbleBorder(self)
     local backdrop = self.backdrop
     local text = backdrop and backdrop.String
-    
+
     if not text then
         return 
     end
@@ -108,7 +108,7 @@ local function ChatBubble_OnUpdate(self, elapsed)
         local backdrop = chatBubble:GetChildren(1)
         if backdrop and not backdrop:IsForbidden() and not chatBubble.isSkinnedGW2_UI then
             SkinBubble(chatBubble, backdrop)
-       end
+        end
     end
 end
 

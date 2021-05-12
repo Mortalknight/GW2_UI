@@ -169,11 +169,11 @@ local function MapCoordsMiniMap_OnClick(self, button)
     if button == "LeftButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
-        if self.MapCoordsMiniMapPrecision == 0 then 
+        if self.MapCoordsMiniMapPrecision == 0 then
             self.MapCoordsMiniMapPrecision = 2
         else
             self.MapCoordsMiniMapPrecision = 0
-        end  
+        end
 
         SetSetting("MINIMAP_COORDS_PRECISION", self.MapCoordsMiniMapPrecision)
         mapCoordsMiniMap_setCoords(self)
@@ -314,7 +314,7 @@ local function setMinimapButtons(side)
     GwMailButton:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
-    
+
     if side == "left" then
         QueueStatusMinimapButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -8.5, -69)
         GameTimeFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
@@ -573,8 +573,8 @@ local function LoadMinimap()
     )
     Minimap:SetScript(
         "OnMouseDown",
-        function(_, event)
-            if event == "RightButton" then
+        function(_, button)
+            if button == "RightButton" then
                 ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "MiniMapTracking", 0, -5)
 
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
