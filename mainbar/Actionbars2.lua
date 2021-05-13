@@ -680,11 +680,12 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     if (barName == "MultiBarBottomLeft" or barName == "MultiBarBottomRight") and (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not fmMultibar.isMoved  then
         local framePoint = GetSetting(barName)
         local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
+        local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 56 or 0
         fmMultibar.gwMover:ClearAllPoints()
         if barName == "MultiBarBottomLeft" then
-            fmMultibar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + 56, framePoint.yOfs - yOff)
+            fmMultibar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
         elseif barName == "MultiBarBottomRight" then
-            fmMultibar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs - 56, framePoint.yOfs - yOff)
+            fmMultibar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs - xOff, framePoint.yOfs - yOff)
         end
     end
 

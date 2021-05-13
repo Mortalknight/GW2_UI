@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.14.2", [=[
+FIXES
+    - Fix buff layout issue
+]=])
+
 v("5.14.1", [=[
 FIXES
     - Fix a group layout issue
