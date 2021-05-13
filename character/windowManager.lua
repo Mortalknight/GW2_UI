@@ -80,6 +80,9 @@ local charSecure_OnClick = [=[
     elseif button == "Skills" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "paperdollskills")
+    elseif button == "Titles" then
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "titles")
     elseif button == "Honor" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "paperdollhonor")
@@ -99,11 +102,13 @@ local charSecure_OnAttributeChanged = [=[
     local fmDollPetCont = self:GetFrameRef("GwPetContainer")
     local fmDollDress = self:GetFrameRef("GwDressingRoom")
     local fmDollHonor = self:GetFrameRef("GwPaperHonor")
+    local fmDollTitles = self:GetFrameRef("GwPaperTitles")
     local showDoll = false
     local showDollMenu = false
     local showDollRepu = false
     local showDollSkills = false
     local showDollHonor = false
+    local showDollTitles = false
     local showDollPetCont = false
     local fmSBM = self:GetFrameRef("GwSpellbook")
     local showSpell = false
@@ -140,7 +145,7 @@ local charSecure_OnAttributeChanged = [=[
             showSpell = true
         end
     elseif fmDoll ~= nil and value == "paperdoll" then
-        if keytoggle and fmDoll:IsVisible() and (not fmDollRepu:IsVisible() and not fmDollSkills:IsVisible() and not fmDollPetCont:IsVisible() and not fmDollHonor:IsVisible()) then
+        if keytoggle and fmDoll:IsVisible() and (not fmDollRepu:IsVisible() and not fmDollSkills:IsVisible() and not fmDollPetCont:IsVisible() and not fmDollHonor:IsVisible() and not fmDollTitles:IsVisible()) then
             self:SetAttribute("keytoggle", nil)
             self:SetAttribute("windowpanelopen", nil)
             return
@@ -162,6 +167,14 @@ local charSecure_OnAttributeChanged = [=[
             return
         else
             showDollSkills = true
+        end
+    elseif fmDollTitles ~= nil and value == "titles" then
+        if keytoggle and fmDollTitles:IsVisible() then
+            self:SetAttribute("keytoggle", nil)
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showDollTitles = true
         end
     elseif fmDollHonor ~= nil and value == "paperdollhonor" then
         if keytoggle and fmDollHonor:IsVisible() then
@@ -197,6 +210,7 @@ local charSecure_OnAttributeChanged = [=[
             fmDollSkills:Hide()
             fmDollPetCont:Hide()
             fmDollHonor:Hide()
+            fmDollTitles:Hide()
         else
             fmDoll:Hide()
         end
@@ -225,6 +239,7 @@ local charSecure_OnAttributeChanged = [=[
             fmDollPetCont:Hide()
             fmDollDress:Hide()
             fmDollHonor:Hide()
+            fmDollTitles:Hide()
         else
             fmDoll:Hide()
         end
@@ -239,6 +254,7 @@ local charSecure_OnAttributeChanged = [=[
             fmDollMenu:Hide()
             fmDollPetCont:Hide()
             fmDollHonor:Hide()
+            fmDollTitles:Hide()
         else
             fmDoll:Hide()
         end
@@ -252,6 +268,7 @@ local charSecure_OnAttributeChanged = [=[
             fmDollDress:Hide()
             fmDollRepu:Hide()
             fmDollPetCont:Hide()
+            fmDollTitles:Hide()
         else
             fmDoll:Hide()
         end
@@ -265,6 +282,22 @@ local charSecure_OnAttributeChanged = [=[
             fmDollDress:Hide()
             fmDollRepu:Hide()
             fmDollMenu:Hide()
+            fmDollHonor:Hide()
+            fmDollTitles:Hide()
+        else
+            fmDoll:Hide()
+        end
+    end
+    if fmDollTitles and showDollTitles then
+        if showDollTitles and not close then
+            fmDoll:Show()
+            fmDollTitles:Show()
+            fmDollDress:Show()
+
+            fmDollSkills:Hide()
+            fmDollRepu:Hide()
+            fmDollMenu:Hide()
+            fmDollPetCont:Hide()
             fmDollHonor:Hide()
         else
             fmDoll:Hide()
@@ -569,15 +602,18 @@ local function LoadWindows()
                 fmGCW:SetFrameRef("GwPaperReputation", GwPaperReputation)
                 fmGCW:SetFrameRef("GwPaperHonor", GwPaperHonor)
                 fmGCW:SetFrameRef("GwPaperSkills", GwPaperSkills)
+                fmGCW:SetFrameRef("GwPaperTitles", GwPaperTitles)
                 fmGCW:SetFrameRef("GwDressingRoom", GwDressingRoom)
                 fmGCW:SetFrameRef("GwPetContainer", GwPetContainer)
 
                 styleCharacterMenuButton(GwCharacterMenu.skillsMenu, true)
                 styleCharacterMenuButton(GwCharacterMenu.reputationMenu, false)
-                styleCharacterMenuButton(GwCharacterMenu.honorMenu, true)
-                styleCharacterMenuButton(GwCharacterMenu.petMenu, false)
+                styleCharacterMenuButton(GwCharacterMenu.titleMenu, true)
+                styleCharacterMenuButton(GwCharacterMenu.honorMenu, false)
+                styleCharacterMenuButton(GwCharacterMenu.petMenu, true)
                 styleCharacterMenuBackButton(GwPaperSkills.backButton)
                 styleCharacterMenuBackButton(GwPaperReputation.backButton)
+                styleCharacterMenuBackButton(GwPaperTitles.backButton)
                 styleCharacterMenuBackButton(GwPaperHonor.backButton)
                 styleCharacterMenuBackButton(GwDressingRoomPet.backButton)
 
@@ -597,6 +633,11 @@ local function LoadWindows()
                     f:SetAttribute("keytoggle", true)
                     f:SetAttribute("windowpanelopen", "reputation")
                 ]=])
+                GwCharacterMenu.titleMenu:SetAttribute("_onclick", [=[
+                    local f = self:GetFrameRef("GwCharacterWindow")
+                    f:SetAttribute("keytoggle", true)
+                    f:SetAttribute("windowpanelopen", "titles")
+                ]=])
                 GwCharacterMenu.honorMenu:SetAttribute("_onclick", [=[
                     local f = self:GetFrameRef("GwCharacterWindow")
                     f:SetAttribute("keytoggle", true)
@@ -613,6 +654,11 @@ local function LoadWindows()
                     f:SetAttribute("windowpanelopen", "paperdoll")
                 ]=])
                 GwPaperReputation.backButton:SetAttribute("_onclick", [=[
+                    local f = self:GetFrameRef("GwCharacterWindow")
+                    f:SetAttribute("keytoggle", true)
+                    f:SetAttribute("windowpanelopen", "paperdoll")
+                ]=])
+                GwPaperTitles.backButton:SetAttribute("_onclick", [=[
                     local f = self:GetFrameRef("GwCharacterWindow")
                     f:SetAttribute("keytoggle", true)
                     f:SetAttribute("windowpanelopen", "paperdoll")

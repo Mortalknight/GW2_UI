@@ -377,11 +377,12 @@ local function LoadMinimap()
     SetMinimapHover()
 
     hooksecurefunc("BattlefieldFrame_OnUpdate", lfgAnim)
-    --hooksecurefunc("EyeTemplate_StopAnimating", lfgAnimStop)
-
-    MiniMapBattlefieldIcon:SetSize(20, 20)
-    MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
-    MiniMapBattlefieldIcon:SetSize(20, 20)
+    hooksecurefunc("MiniMapBattlefieldFrame_isArena", function()
+        MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
+        MiniMapBattlefieldIcon:SetSize(20, 20)
+        MiniMapBattlefieldIcon:ClearAllPoints()
+        MiniMapBattlefieldIcon:SetPoint("CENTER", MiniMapBattlefieldFrame, "CENTER", 0, 0)
+    end)
     MiniMapBattlefieldFrame.animationCircle = CreateFrame("Frame", "GwLFDAnimation", MiniMapBattlefieldFrame, "GwLFDAnimation")
 
     Minimap:SetMaskTexture("Interface\\ChatFrame\\ChatFrameBackground")

@@ -201,7 +201,14 @@ GW_DEFAULT["MultiBarBottomRight"]["ButtonsPerRow"] = 6
 GW_DEFAULT["MultiBarBottomRight"]["hideDefaultBackground"] = true
 
 GW_DEFAULT["MULTIBAR_RIGHT_COLS"] = 1
-GW_DEFAULT["STANCEBAR_POSITION"] = "LEFT"
+
+GW_DEFAULT["StanceBar_pos"] = {}
+GW_DEFAULT["StanceBar_pos"]["point"] = "BOTTOMLEFT"
+GW_DEFAULT["StanceBar_pos"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["StanceBar_pos"]["xOfs"] = -405
+GW_DEFAULT["StanceBar_pos"]["yOfs"] = 31
+GW_DEFAULT["StanceBar_pos_scale"] = 1
+GW_DEFAULT["StanceBar_GrowDirection"] = "UP"
 
 GW_DEFAULT["MultiBarRight"] = {}
 GW_DEFAULT["MultiBarRight"]["point"] = "RIGHT"

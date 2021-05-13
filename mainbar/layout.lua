@@ -6,8 +6,6 @@ local _, GW = ...
 -- TODO: not finished yet, only doing buff stuff mostly at this point, and
 -- still has all the previous bugs with aura stuff and WQs
 
-local Debug = GW.Debug
-
 local lm = {}
 
 function lm:RegisterBuffFrame(f)

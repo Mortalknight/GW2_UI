@@ -109,6 +109,7 @@ mainbar/dodgebar.xml
 mainbar/5sr.lua
 mainbar/mirrortimer.lua
 mainbar/hud.lua
+mainbar/stancebar.lua
 mainbar/actionbars2.lua
 mainbar/petbar.lua
 mainbar/aurabar_blizz_modified.lua

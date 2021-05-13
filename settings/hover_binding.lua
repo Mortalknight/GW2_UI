@@ -52,18 +52,18 @@ local function HoverKeyBinds()
             if not self.enabled or InCombatLockdown() then return end
             self.button = b
             self.spellmacro = spellmacro
-            
+
             self:ClearAllPoints()
             self:SetAllPoints(b)
             self:Show()
-            
+
             ShoppingTooltip1:Hide()
-            
+
             if spellmacro == "SPELL" then
                 self.button.id = SpellBook_GetSpellBookSlot(self.button)
                 self.button.name = GetSpellBookItemName(self.button.id, SpellBookFrame.bookType)
-                
-                GameTooltip:AddLine(L['BINDINGS_TRIGGER'])
+
+                GameTooltip:AddLine(L['Trigger'])
                 GameTooltip:Show()
                 GameTooltip:SetScript("OnHide", function(self)
                     self:SetOwner(bind, "ANCHOR_NONE")
@@ -73,7 +73,7 @@ local function HoverKeyBinds()
                     if #bind.button.bindings == 0 then
                         self:AddLine(NOT_BOUND, .6, .6, .6)
                     else
-                        self:AddDoubleLine(KEY_BINDING, L['BINGSINGS_KEY'], .6, .6, .6, .6, .6, .6)
+                        self:AddDoubleLine(KEY_BINDING, L['Key'], .6, .6, .6, .6, .6, .6)
                         for i = 1, #bind.button.bindings do
                             self:AddDoubleLine(i, bind.button.bindings[i])
                         end
@@ -83,20 +83,20 @@ local function HoverKeyBinds()
                 end)
             elseif spellmacro == "MACRO" then
                 self.button.id = self.button:GetID()
-                
+
                 if localmacros==1 then self.button.id = self.button.id + 120 end
-                
+
                 self.button.name = GetMacroInfo(self.button.id)
-                
+
                 GameTooltip:SetOwner(bind, "ANCHOR_NONE")
                 GameTooltip:SetPoint("BOTTOM", bind, "TOP", 0, 1)
                 GameTooltip:AddLine(bind.button.name, 1, 1, 1)
-                
+
                 bind.button.bindings = {GetBindingKey(spellmacro .. " " .. bind.button.name)}
                     if #bind.button.bindings == 0 then
                         GameTooltip:AddLine(NOT_BOUND, .6, .6, .6)
                     else
-                        GameTooltip:AddDoubleLine(KEY_BINDING, L['BINGSINGS_KEY'], .6, .6, .6, .6, .6, .6)
+                        GameTooltip:AddDoubleLine(KEY_BINDING, L['Key'], .6, .6, .6, .6, .6, .6)
                         for i = 1, #bind.button.bindings do
                             GameTooltip:AddDoubleLine(KEY_BINDING .. i, bind.button.bindings[i], 1, 1, 1)
                         end
@@ -105,16 +105,16 @@ local function HoverKeyBinds()
             elseif spellmacro == "STANCE" or spellmacro == "PET" then
                 self.button.id = tonumber(b:GetID())
                 self.button.name = b:GetName()
-                
+
                 if not self.button.name then return end
-                
+
                 if not self.button.id or self.button.id < 1 or self.button.id > (spellmacro=="STANCE" and 10 or 12) then
                     self.button.bindstring = "CLICK " .. self.button.name .. ":LeftButton"
                 else
                     self.button.bindstring = (spellmacro == "STANCE" and "SHAPESHIFTBUTTON" or "BONUSACTIONBUTTON") ..self.button.id
                 end
-                
-                GameTooltip:AddLine(L['BINDINGS_TRIGGER'])
+
+                GameTooltip:AddLine(L['Trigger'])
                 GameTooltip:Show()
                 GameTooltip:SetScript("OnHide", function(self)
                     self:SetOwner(bind, "ANCHOR_NONE")
@@ -124,7 +124,7 @@ local function HoverKeyBinds()
                     if #bind.button.bindings == 0 then
                         self:AddLine(NOT_BOUND, .6, .6, .6)
                     else
-                        self:AddDoubleLine(KEY_BINDING, L['BINGSINGS_KEY'], .6, .6, .6, .6, .6, .6)
+                        self:AddDoubleLine(KEY_BINDING, L['Key'], .6, .6, .6, .6, .6, .6)
                         for i = 1, #bind.button.bindings do
                             self:AddDoubleLine(i, bind.button.bindings[i])
                         end
@@ -135,9 +135,9 @@ local function HoverKeyBinds()
             else
                 self.button.action = tonumber(b.action)
                 self.button.name = b:GetName()
-                
+
                 if not self.button.name then return end
-                
+
                 if not self.button.action or self.button.action < 1 or self.button.action > 132 then
                     self.button.bindstring = "CLICK " .. self.button.name .. ":LeftButton"
                 else
@@ -154,8 +154,8 @@ local function HoverKeyBinds()
                         self.button.bindstring = "MULTIACTIONBAR3BUTTON"..modact
                     end
                 end
-                
-                GameTooltip:AddLine(L['BINDINGS_TRIGGER'])
+
+                GameTooltip:AddLine(L['Trigger'])
                 GameTooltip:Show()
                 GameTooltip:SetScript("OnHide", function(self)
                     self:SetOwner(bind, "ANCHOR_NONE")
@@ -165,7 +165,7 @@ local function HoverKeyBinds()
                     if #bind.button.bindings == 0 then
                         self:AddLine(NOT_BOUND, .6, .6, .6)
                     else
-                        self:AddDoubleLine(KEY_BINDING, L['BINGSINGS_KEY'], .6, .6, .6, .6, .6, .6)
+                        self:AddDoubleLine(KEY_BINDING, L['Key'], .6, .6, .6, .6, .6, .6)
                         for i = 1, #bind.button.bindings do
                             self:AddDoubleLine(i, bind.button.bindings[i])
                         end
@@ -186,7 +186,7 @@ local function HoverKeyBinds()
                 if self.spellmacro ~= "MACRO" then GameTooltip:Hide() end
                 return
             end
-            
+
             if key == "LSHIFT"
             or key == "RSHIFT"
             or key == "LCTRL"
@@ -197,21 +197,20 @@ local function HoverKeyBinds()
             or key == "LeftButton"
             or key == "MiddleButton"
             then return end
-            
 
             if key == "Button4" then key = "BUTTON4" end
             if key == "Button5" then key = "BUTTON5" end
-            
+
             local alt = IsAltKeyDown() and "ALT-" or ""
             local ctrl = IsControlKeyDown() and "CTRL-" or ""
             local shift = IsShiftKeyDown() and "SHIFT-" or ""
-            
+
             if not self.spellmacro or self.spellmacro == "PET" or self.spellmacro == "STANCE" then
                 SetBinding(alt .. ctrl .. shift .. key, self.button.bindstring)
             else
                 SetBinding(alt .. ctrl .. shift .. key, self.spellmacro .. " " .. self.button.name)
             end
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. alt .. ctrl .. shift .. key .. " |cff00ff00" .. L['BINGSINGS_BIND'] .. " |r" .. self.button.name .. ".")
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. alt .. ctrl .. shift .. key .. " |cff00ff00" .. L['bound to'] .. " |r" .. self.button.name .. ".")
             self:Update(self.button, self.spellmacro)
             if self.spellmacro ~= "MACRO" then GameTooltip:Hide() end
         end
@@ -226,11 +225,11 @@ local function HoverKeyBinds()
         end
         function bind:Deactivate(save)
             if save then
-                AttemptToSaveBindings(GetCurrentBindingSet())
-                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L['ALL_BINDINGS_SAVE'])
+                SaveBindings(GetCurrentBindingSet())
+                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L['All key bindings have been saved.'])
             else
                 LoadBindings(GetCurrentBindingSet())
-                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L['ALL_BINDINGS_DISCARD'])
+                DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L['All newly set key bindings have been discarded.'])
             end
             self.enabled = false
             self:HideFrame()
@@ -264,7 +263,7 @@ local function HoverKeyBinds()
             local sb = _G["SpellButton" .. i]
             sb:HookScript("OnEnter", function(self) bind:Update(self, "SPELL") end)
         end
-        
+
         local function registermacro()
             for i = 1, 120 do
                 local mb = _G["MacroButton"..i]
@@ -273,7 +272,7 @@ local function HoverKeyBinds()
             MacroFrameTab1:HookScript("OnMouseUp", function() localmacros = 0 end)
             MacroFrameTab2:HookScript("OnMouseUp", function() localmacros = 1 end)
         end
-        
+
         if not IsAddOnLoaded("Blizzard_MacroUI") then
             hooksecurefunc("LoadAddOn", function(addon)
                 if addon == "Blizzard_MacroUI" then
@@ -287,7 +286,7 @@ local function HoverKeyBinds()
     end
     if not bind.enabled then
         bind:Activate()
-        keyBindPrompt(L['BINDINGS_DESC'])
+        keyBindPrompt(L["Hover your mouse over any action button to bind it. Press the esc key or right click to clear the current action button's keybinding."])
     end
 end
 GW.HoverKeyBinds = HoverKeyBinds
