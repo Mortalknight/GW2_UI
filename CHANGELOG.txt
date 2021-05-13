@@ -1,2 +1,9 @@
+0.2-TBC-beta
+- Add player titles
+- Added TBC Raid Debuffs
+- Added Indicator buffs
+- Make Stancebutton movable
+- Fixes
+
 0.1-TBC-beta
 - First working version
