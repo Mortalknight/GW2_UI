@@ -150,6 +150,8 @@ immersive/afk.lua
 immersive/questview.lua
 immersive/chatframe.lua
 immersive/chatbubbles.lua
+immersive/damagetext.xml
+immersive/damagetext.lua
 
 objectives/map.lua
 objectives/questtracker.xml

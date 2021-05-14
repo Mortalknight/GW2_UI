@@ -102,6 +102,7 @@ local charSecure_OnAttributeChanged = [=[
     local fmDollPetCont = self:GetFrameRef("GwPetContainer")
     local fmDollDress = self:GetFrameRef("GwDressingRoom")
     local fmDollHonor = self:GetFrameRef("GwPaperHonor")
+    local PVPFrame = self:GetFrameRef("PVPFrame")
     local fmDollTitles = self:GetFrameRef("GwPaperTitles")
     local showDoll = false
     local showDollMenu = false
@@ -211,6 +212,7 @@ local charSecure_OnAttributeChanged = [=[
             fmDollPetCont:Hide()
             fmDollHonor:Hide()
             fmDollTitles:Hide()
+            PVPFrame:Hide()
         else
             fmDoll:Hide()
         end
@@ -240,6 +242,7 @@ local charSecure_OnAttributeChanged = [=[
             fmDollDress:Hide()
             fmDollHonor:Hide()
             fmDollTitles:Hide()
+            PVPFrame:Hide()
         else
             fmDoll:Hide()
         end
@@ -255,6 +258,7 @@ local charSecure_OnAttributeChanged = [=[
             fmDollPetCont:Hide()
             fmDollHonor:Hide()
             fmDollTitles:Hide()
+            PVPFrame:Hide()
         else
             fmDoll:Hide()
         end
@@ -263,6 +267,7 @@ local charSecure_OnAttributeChanged = [=[
         if showDollHonor and not close then
             fmDoll:Show()
             fmDollHonor:Show()
+            PVPFrame:Show()
 
             fmDollMenu:Hide()
             fmDollDress:Hide()
@@ -284,6 +289,7 @@ local charSecure_OnAttributeChanged = [=[
             fmDollMenu:Hide()
             fmDollHonor:Hide()
             fmDollTitles:Hide()
+            PVPFrame:Hide()
         else
             fmDoll:Hide()
         end
@@ -299,6 +305,7 @@ local charSecure_OnAttributeChanged = [=[
             fmDollMenu:Hide()
             fmDollPetCont:Hide()
             fmDollHonor:Hide()
+            PVPFrame:Hide()
         else
             fmDoll:Hide()
         end
@@ -605,6 +612,7 @@ local function LoadWindows()
                 fmGCW:SetFrameRef("GwPaperTitles", GwPaperTitles)
                 fmGCW:SetFrameRef("GwDressingRoom", GwDressingRoom)
                 fmGCW:SetFrameRef("GwPetContainer", GwPetContainer)
+                fmGCW:SetFrameRef("PVPFrame", PVPFrame)
 
                 styleCharacterMenuButton(GwCharacterMenu.skillsMenu, true)
                 styleCharacterMenuButton(GwCharacterMenu.reputationMenu, false)

@@ -21,7 +21,21 @@ local function LoadHudPanel(sWindow)
 
     addOption(p.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND")
     addOption(p.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
+    addOption(p.scroll.scrollchild, L["AFK Mode"], L["When you go AFK display the AFK screen."], "AFK_MODE")
     addOption(p.scroll.scrollchild, L["Fade Chat"], L["Allow the chat to fade when not in use."], "CHATFRAME_FADE", nil, nil, {["CHATFRAME_ENABLED"] = true})
+    addOptionSlider(
+        p.scroll.scrollchild,
+        L["Maximum lines of 'Copy Chat Frame'"],
+        L["Set the maximum number of lines displayed in the Copy Chat Frame"],
+        "CHAT_MAX_COPY_CHAT_LINES",
+        nil,
+        50,
+        500,
+        nil,
+        0,
+        {["CHATFRAME_ENABLED"] = true},
+        1
+    )
     addOption(p.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], "CASTINGBAR_DATA", nil, nil, {["CASTINGBAR_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU")
@@ -39,7 +53,21 @@ local function LoadHudPanel(sWindow)
             GW.PixelPerfection()
         end
     )
-    addOption(p.scroll.scrollchild, L["AFK Mode"], L["When you go AFK display the AFK screen."], "AFK_MODE")
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        COMBAT_TEXT_LABEL,
+        COMBAT_SUBTEXT,
+        "GW_COMBAT_TEXT_MODE",
+        nil,
+        {"GW2", "BLIZZARD", "OFF"},
+        {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS},
+        nil,
+        nil,
+        nil,
+        "FloatingCombatText"
+    )
+    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOptionSlider(
         p,
         L["HUD Scale"],

@@ -76,7 +76,7 @@ local function LoadAurasPanel(sWindow)
 
     local auraKeys, auraVals = {0}, {NONE_KEY}
     for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
-        if not indicator[4] then
+        if not indicator[4] and GetSpellInfo(spellID) then
             local name = format("%s |cFF888888(%d)|r", GetSpellInfo(spellID), spellID)
             tinsert(auraKeys, spellID)
             tinsert(auraVals, name)
@@ -92,7 +92,7 @@ local function LoadAurasPanel(sWindow)
             L["Edit %s raid aura indicator."]:format(t),
             key,
             function()
-                SetSetting(key, tonumber(GetSetting(key, true)), true)
+                SetSetting(key, tonumber(GetSetting(key, true)))
             end,
             auraKeys,
             auraVals,

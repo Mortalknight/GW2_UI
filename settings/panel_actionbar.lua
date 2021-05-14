@@ -40,7 +40,8 @@ local function LoadActionbarPanel(sWindow)
         OPTION_TOOLTIP_SHOW_MULTIBAR1,
         "GW_SHOW_MULTI_ACTIONBAR_1",
         function(toSet)
-            if toSet then SHOW_MULTI_ACTIONBAR_1 = "1" else SHOW_MULTI_ACTIONBAR_1 = nil end
+            --if toSet then SHOW_MULTI_ACTIONBAR_1 = "1" else SHOW_MULTI_ACTIONBAR_1 = nil end
+            SetActionBarToggles(notGetSetting("GW_SHOW_MULTI_ACTIONBAR_1"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_2"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_3"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_4"), GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED"))
             InterfaceOptions_UpdateMultiActionBars()
         end,
         nil,
@@ -53,6 +54,7 @@ local function LoadActionbarPanel(sWindow)
         "GW_SHOW_MULTI_ACTIONBAR_2",
         function(toSet)
             if toSet then SHOW_MULTI_ACTIONBAR_2 = "1" else SHOW_MULTI_ACTIONBAR_2 = nil end
+            SetActionBarToggles(notGetSetting("GW_SHOW_MULTI_ACTIONBAR_1"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_2"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_3"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_4"), GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED"))
             InterfaceOptions_UpdateMultiActionBars()
         end,
         nil,
@@ -65,6 +67,7 @@ local function LoadActionbarPanel(sWindow)
         "GW_SHOW_MULTI_ACTIONBAR_3",
         function(toSet)
             if toSet then SHOW_MULTI_ACTIONBAR_3 = "1" else SHOW_MULTI_ACTIONBAR_3 = nil end
+            SetActionBarToggles(notGetSetting("GW_SHOW_MULTI_ACTIONBAR_1"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_2"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_3"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_4"), GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED"))
             InterfaceOptions_UpdateMultiActionBars()
         end,
         nil,
@@ -77,6 +80,7 @@ local function LoadActionbarPanel(sWindow)
         "GW_SHOW_MULTI_ACTIONBAR_4",
         function(toSet)
             if toSet then SHOW_MULTI_ACTIONBAR_4 = "1" else SHOW_MULTI_ACTIONBAR_4 = nil end
+            SetActionBarToggles(notGetSetting("GW_SHOW_MULTI_ACTIONBAR_1"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_2"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_3"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_4"), GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED"))
             InterfaceOptions_UpdateMultiActionBars()
         end,
         nil,

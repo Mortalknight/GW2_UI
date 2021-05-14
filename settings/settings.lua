@@ -743,22 +743,25 @@ local function LoadSettings()
     GW.LoadProfilesPanel(sWindow)
 
     checkDependenciesOnLoad()
+    switchCat(1)
+    GwSettingsWindow:Hide()
 
-    -- change the blizzard actionbarsettings on "InterfaceOptions_OnShow" 
-    InterfaceOptionsFrame:HookScript("OnShow", function()
-        local bar1, bar2, bar3, bar4 = GetSetting("GW_SHOW_MULTI_ACTIONBAR_1"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_2"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_3"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_4")
-        _G.InterfaceOptionsActionBarsPanelBottomLeft:SetChecked(bar1)
-        _G.InterfaceOptionsActionBarsPanelBottomRight:SetChecked(bar2)
-        _G.InterfaceOptionsActionBarsPanelRight:SetChecked(bar3)
-        _G.InterfaceOptionsActionBarsPanelRightTwo:SetChecked(bar4)
-    end)
+    -- change the blizzard actionbarsettings on "InterfaceOptions_OnShow"
+    _G.InterfaceOptionsActionBarsPanelBottomLeft:Hide()
+    _G.InterfaceOptionsActionBarsPanelBottomRight:Hide()
+    _G.InterfaceOptionsActionBarsPanelRight:Hide()
+    _G.InterfaceOptionsActionBarsPanelRightTwo:Hide()
+    --InterfaceOptionsFrame:HookScript("OnShow", function()
+    --    local bar1, bar2, bar3, bar4 = GetSetting("GW_SHOW_MULTI_ACTIONBAR_1"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_2"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_3"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_4")
+    --    _G.InterfaceOptionsActionBarsPanelBottomLeft:SetChecked(bar1)
+    --    _G.InterfaceOptionsActionBarsPanelBottomRight:SetChecked(bar2)
+    --    _G.InterfaceOptionsActionBarsPanelRight:SetChecked(bar3)
+    --    _G.InterfaceOptionsActionBarsPanelRightTwo:SetChecked(bar4)
+    --end)
 
     local fnGSBC_OnClick = function(self)
         self:GetParent():Hide()
     end
     sWindow.close:SetScript("OnClick", fnGSBC_OnClick)
-
-    switchCat(1)
-    GwSettingsWindow:Hide()
 end
 GW.LoadSettings = LoadSettings

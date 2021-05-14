@@ -1053,6 +1053,49 @@ local function title_OnClick(self)
 end
 GW.AddForProfiling("paperdoll_titles", "title_OnClick", title_OnClick)
 
+local function LoadPVPTab()
+    PVPFrame:SetParent(GwPaperHonor)
+    PVPFrame:ClearAllPoints()
+    PVPFrame:SetPoint("TOPLEFT", GwPaperHonor, "TOPLEFT", 0, 0)
+    PVPFrame:SetPoint("BOTTOMRIGHT", GwPaperHonor, "BOTTOMRIGHT", 0, 8)
+
+    PVPFrameBackground:ClearAllPoints()
+    PVPFrameBackground:SetPoint("TOPLEFT", GwPaperHonor, "TOPLEFT", 0, 0)
+    PVPFrameBackground:SetPoint("BOTTOMRIGHT", GwPaperHonor, "BOTTOMRIGHT", 0, 8)
+
+    PVPFrame:StripTextures(true)
+
+    PVPFrameHonorLabel:ClearAllPoints()
+    PVPFrameHonorLabel:SetPoint("TOP", PVPFrameBackground, "TOP", 0, -10)
+    PVPFrameHonorLabel:SetFont(UNIT_NAME_FONT, 14)
+    PVPFrameHonorPoints:SetFont(UNIT_NAME_FONT, 14)
+
+    PVPFrameArenaLabel:ClearAllPoints()
+    PVPFrameArenaLabel:SetPoint("TOP", PVPFrameBackground, "TOP", 0, -130)
+    PVPFrameArenaLabel:SetFont(UNIT_NAME_FONT, 14)
+    PVPFrameArenaPoints:SetFont(UNIT_NAME_FONT, 14)
+
+    PVPHonor:ClearAllPoints()
+    PVPHonor:SetPoint("TOP", PVPFrameBackground, "TOP", 0, -35)
+
+    PVPHonorKillsLabel:SetFont(STANDARD_TEXT_FONT, 14)
+    PVPHonorTodayLabel:SetFont(STANDARD_TEXT_FONT, 14)
+    PVPHonorTodayKills:SetFont(STANDARD_TEXT_FONT, 14)
+    PVPHonorYesterdayLabel:SetFont(STANDARD_TEXT_FONT, 14)
+    PVPHonorYesterdayKills:SetFont(STANDARD_TEXT_FONT, 14)
+    PVPHonorLifetimeLabel:SetFont(STANDARD_TEXT_FONT, 14)
+    PVPHonorLifetimeKills:SetFont(STANDARD_TEXT_FONT, 14)
+
+    PVPTeam1Standard:ClearAllPoints()
+    PVPTeam1Standard:SetPoint("LEFT", PVPFrameBackground, "LEFT", 150, 90)
+
+    PVPTeam2Standard:ClearAllPoints()
+    PVPTeam2Standard:SetPoint("LEFT", PVPFrameBackground, "LEFT", 150, 0)
+
+    PVPTeam3Standard:ClearAllPoints()
+    PVPTeam3Standard:SetPoint("LEFT", PVPFrameBackground, "LEFT", 150, -90)
+end
+
 local function loadTitle(titlewin)
     local USED_TITLE_HEIGHT
     local zebra
@@ -1425,7 +1468,7 @@ local function LoadPaperDoll()
     gwPaperDollUpdatePetStats()
     GwUpdateReputationDetails()
 
-    --LoadHonorTab()
+    LoadPVPTab()
 
     GwPapaerDollStats.advancedChatStatsFrame = CreateFrame("Frame", nil, GwPapaerDollStats)
     GwPapaerDollStats.advancedChatStatsFrame:SetPoint("TOPLEFT", GwPapaerDollStats, "TOPLEFT", 0, -1)

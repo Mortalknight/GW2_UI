@@ -40,7 +40,6 @@ local tabTexs = {
 }
 
 local gw_fade_frames = {}
-local copyLines = {}
 
 local function colorizeLine(text, r, g, b)
     local hexCode = GW.RGBToHex(r, g, b)
@@ -56,7 +55,7 @@ local canChangeMessage = function(arg1, id)
     if id and arg1 == "" then return id end
 end
 
-local function messageIsProtected(message)
+local function isMessageProtected(message)
     return message and (message ~= gsub(message, "(:?|?)|K(.-)|k", canChangeMessage))
 end
 
@@ -89,23 +88,23 @@ do
     end
 end
 
-local function getLines(frame)
+local function getLines(frame, copyLines)
     local index = 1
-    for i = 1, frame:GetNumMessages() do
+    local maxMessages, frameMessages = tonumber(GetSetting("CHAT_MAX_COPY_CHAT_LINES")), frame:GetNumMessages()
+    local startLine = frameMessages <= maxMessages and 1 or frameMessages + 1 - maxMessages
+
+    for i = startLine, frame:GetNumMessages() do
         local message, r, g, b = frame:GetMessageInfo(i)
-        if message and not messageIsProtected(message) then
-            --Set fallback color values
-            r, g, b = r or 1, g or 1, b or 1
-            --Remove icons
-            message = removeIconFromLine(message)
-            --Add text color
-            message = colorizeLine(message, r, g, b)
+        if message and not isMessageProtected(message) then
+            r, g, b = r or 1, g or 1, b or 1            --Set fallback color values
+            message = removeIconFromLine(message)       --Remove icons
+            message = colorizeLine(message, r, g, b)    --Add text color
             copyLines[index] = message
             index = index + 1
         end
     end
 
-    return index - 1
+    return index - 1, copyLines
 end
 
 local function setButtonPosition(frame)
@@ -429,18 +428,20 @@ local function styleChatWindow(frame)
     frame.button.tex:SetAllPoints()
     frame.button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/maximize_button")
 
-    frame.button:SetScript("OnMouseUp", function(_, btn)
-        if not GW2_UI_CopyChatFrame:IsShown() then
+    frame.button:SetScript("OnMouseUp", function()
+        if not GW2_UICopyChatFrame:IsShown() then
+            local copyLines = {}
             local _, fontSize = FCF_GetChatWindowInfo(frame:GetID())
             if fontSize < 10 then fontSize = 12 end
             FCF_SetChatWindowFontSize(frame, frame, 0.01)
-            GW2_UI_CopyChatFrame:Show()
-            local lineCt = getLines(frame)
+            GW2_UICopyChatFrame:Show()
+            local lineCt = getLines(frame, copyLines)
             local text = table.concat(copyLines, " \n", 1, lineCt)
             FCF_SetChatWindowFontSize(frame, frame, fontSize)
-            GW2_UI_CopyChatFrame.editBox:SetText(text)
+            GW2_UICopyChatFrame.editBox:SetText(text)
+            wipe(copyLines)
         else
-            GW2_UI_CopyChatFrame:Hide()
+            GW2_UICopyChatFrame:Hide()
         end
     end)
 
@@ -468,7 +469,7 @@ end
 GW.AddForProfiling("chatframe", "chatBackgroundOnResize", chatBackgroundOnResize)
 
 local function BuildCopyChatFrame()
-    local frame = CreateFrame("Frame", "GW2_UI_CopyChatFrame", UIParent)
+    local frame = CreateFrame("Frame", "GW2_UICopyChatFrame", UIParent)
 
     tinsert(UISpecialFrames, "CopyChatFrame")
 

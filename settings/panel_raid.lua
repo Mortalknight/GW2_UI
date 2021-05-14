@@ -90,20 +90,15 @@ local function LoadRaidPanel(sWindow)
         L["Set where the raid frame container should be anchored.\n\nBy position: Always the same as the container's position on screen.\nBy growth: Always opposite to the growth direction."],
         "RAID_ANCHOR",
         function()
-            if GetSetting("RAID_FRAMES") == true then
+            if GetSetting("RAID_FRAMES") then
                 GW.UpdateRaidFramesAnchor()
             end
         end,
-        pos,
-        MapTable(
-            pos,
-            function(posi, i)
-                return StrUpper(L[i <= 2 and "RAID_ANCHOR_BY_" .. posi or posi], 1, 1)
-            end,
-            true
-        ),
+        {"POSITION", "GROWTH", "TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
+        {L["By position on screen"], L["By growth direction"], "TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
         nil,
-        {["RAID_FRAMES"] = true}
+        {["RAID_FRAMES"] = true},
+        nil
     )
 
     addOptionSlider(

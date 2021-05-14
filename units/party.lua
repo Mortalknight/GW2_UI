@@ -325,7 +325,7 @@ local function updateUnitPortrait(self)
         local playerInstanceId = select(4, UnitPosition("player"))
         local instanceId = select(4, UnitPosition(self.unit))
 
-        if playerInstanceId == instanceId and not UnitPhaseReason(self.unit) then
+        if playerInstanceId == instanceId then
             SetPortraitTexture(self.portrait, self.unit)
         else
             self.portrait:SetTexture(nil)

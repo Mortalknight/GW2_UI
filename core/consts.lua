@@ -279,6 +279,7 @@ local AURAS_INDICATORS = {
         [9858]    = {0.33, 0.73, 0.75}, -- Regrowth(Rank 9)
         [26980]   = {0.33, 0.73, 0.75}, -- Regrowth(Rank 10)
         [29166]   = {0.49, 0.60, 0.55}, -- Innervate
+        [33763]   = {0.33, 0.37, 0.47}, -- Lifebloom
     },
     PALADIN = {
         [1044]    = {0.89, 0.45, 0}, -- Blessing of Freedom
