@@ -2,6 +2,13 @@ local _, GW = ...
 local v = GW.vernotes
 
 v(
+"0.4-TBC-beta",
+[=[
+    - Fixes
+]=]
+)
+
+v(
 "0.3-TBC-beta",
 [=[
     - Added PvP Tab

@@ -1,3 +1,6 @@
+0.4-TBC-beta
+- Fixes
+
 0.3-TBC-beta
 - Added PvP Tab
 - Added FCT Option
