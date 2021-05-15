@@ -56,18 +56,18 @@ local function SkinBlizzardOptions()
     local InterfaceOptionsFrame = _G.InterfaceOptionsFrame
     InterfaceOptionsFrameHeader:Hide()
 
-   -- _G.InterfaceOptionsFrameTab1TabSpacer:Hide()
-   -- _G.InterfaceOptionsFrameTab2TabSpacer1:Hide()
-   -- _G.InterfaceOptionsFrameTab2TabSpacer2:Hide()
+    -- _G.InterfaceOptionsFrameTab1TabSpacer:Hide()
+    -- _G.InterfaceOptionsFrameTab2TabSpacer1:Hide()
+    -- _G.InterfaceOptionsFrameTab2TabSpacer2:Hide()
     InterfaceOptionsFrameHeaderText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     _G.InterfaceOptionsDisplayPanelResetTutorials:ClearAllPoints()
     _G.InterfaceOptionsDisplayPanelResetTutorials:SetPoint("LEFT", _G.InterfaceOptionsDisplayPanelShowTutorials, "RIGHT", 150, 0)
 
-    hooksecurefunc("InterfaceOptionsFrame_TabOnClick", function()
-        _G.InterfaceOptionsFrameTab1TabSpacer:Hide()
-        _G.InterfaceOptionsFrameTab2TabSpacer1:Hide()
-        _G.InterfaceOptionsFrameTab2TabSpacer2:Hide()
-    end)
+    --hooksecurefunc("InterfaceOptionsFrame_TabOnClick", function()
+    --    _G.InterfaceOptionsFrameTab1TabSpacer:Hide()
+    --   _G.InterfaceOptionsFrameTab2TabSpacer1:Hide()
+    --    _G.InterfaceOptionsFrameTab2TabSpacer2:Hide()
+    --end)
 
     local VideoOptionsFrame = _G.VideoOptionsFrame
     VideoOptionsFrameHeader:Hide()

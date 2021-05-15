@@ -5,13 +5,16 @@ local GetSetting = GW.GetSetting
 local AddToAnimation = GW.AddToAnimation
 
 local notifications = {}
+local questCompass = {}
 
-local icons = {}
-icons["QUEST"] = {tex = "icon-objective", l = 0, r = 1, t = 0.25, b = 0.5}
-icons["DEAD"] = {tex = "party/icon-dead", l = 0, r = 1, t = 0, b = 1}
+local icons = {
+    QUEST = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
+    DEAD = {tex = "icon-dead", l = 0, r = 1, t = 0, b = 1},
+}
 
-local notification_priority = {}
-notification_priority["EVENT_NEARBY"] = 1
+local notification_priority = {
+    EVENT = 1
+}
 
 local function prioritys(a, b)
     if a == nil or a == "" then
@@ -54,57 +57,52 @@ local function getQuestPOIText(questLogIndex)
 end
 GW.AddForProfiling("notifications", "getQuestPOIText", getQuestPOIText)
 
-local questCompass = {
-    ["TYPE"] = "QUEST",
-    ["COLOR"] = TRACKER_TYPE_COLOR["QUEST"],
-    ["COMPASS"] = true
-}
 local function getNearestQuestPOI()
     if not GW.locationData.mapID then
         return nil
     end
 
     local numQuests = GetNumQuestLogEntries()
-    if (GW.locationData.x == nil or GW.locationData.y == nil) and numQuests then
+    if (GW.locationData.x == nil or GW.locationData.y == nil) and numQuests == 0 then
         return nil
     end
 
-    local closest = nil
+    local closestQuestID
+    local minDistSqr = math.huge
+    wipe(questCompass)
+
     for i = 1, numQuests do
-        local title, _, _, isHeader, _, isComplete, _, questID, _, _, _, hasLocalPOI = GetQuestLogTitle(i)
+        local _, _, _, isHeader, _, isComplete, _, questID, _, _, _, hasLocalPOI = GetQuestLogTitle(i)
         if not isHeader and not isComplete and hasLocalPOI then
-            local _, poiX, poiY = QuestPOIGetIconInfo(questID)
-            if poiX then
-                local dx = GW.locationData.x - poiX
-                local dy = GW.locationData.y - poiY
-                local dist = sqrt(dx * dx + dy * dy)
-                if not closest or dist < closest then
-                    closest = dist
-                    local objectiveText = getQuestPOIText(i)
-                    questCompass["DESC"] = objectiveText
-                    questCompass["TITLE"] = title
-                    questCompass["ID"] = questID
-                    questCompass["X"] = poiX
-                    questCompass["Y"] = poiY
-                    questCompass["QUESTID"] = questID
-                end
+            local distSqr, onContinent = GetDistanceSqToQuest(i) --Index
+            if onContinent and distSqr <= minDistSqr then
+                minDistSqr = distSqr
+                closestQuestID = questID
             end
         end
     end
-    if closest then
-        return questCompass
-    else
-        return nil
+
+    if closestQuestID then
+        local _, poiX, poiY = QuestPOIGetIconInfo(closestQuestID)
+        if poiX then
+            questCompass.DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID))
+            questCompass.TITLE = GetQuestLogTitle(GetQuestLogIndexByID(closestQuestID))
+            questCompass.ID = questID
+            questCompass.X = poiX
+            questCompass.Y = poiY
+            questCompass.TYPE = "QUEST"
+            questCompass.COLOR = TRACKER_TYPE_COLOR.QUEST
+            questCompass.COMPASS = true
+            questCompass.ID = closestQuestID
+
+            return questCompass
+        end
     end
+
+    return nil
 end
 GW.AddForProfiling("notifications", "getNearestQuestPOI", getNearestQuestPOI)
 
-local bodyCompass = {
-    ["TYPE"] = "DEAD",
-    ["ID"] = "playerDead",
-    ["COLOR"] = TRACKER_TYPE_COLOR["DEAD"],
-    ["COMPASS"] = true
-}
 local function getBodyPOI()
     if not GW.locationData.mapID then
         return nil
@@ -124,34 +122,42 @@ local function getBodyPOI()
         return nil
     end
 
-    bodyCompass["X"] = x
-    bodyCompass["Y"] = y
-    bodyCompass["TITLE"] = L["Retrieve your corpse"]
+    local bodyCompass = {}
+    bodyCompass.X = x
+    bodyCompass.Y = y
+    bodyCompass.TITLE = L["Retrieve your corpse"]
+    bodyCompass.TYPE = "DEAD"
+    bodyCompass.ID = "playerDead"
+    bodyCompass.COLOR = TRACKER_TYPE_COLOR.DEAD
+    bodyCompass.COMPASS = true
 
     return bodyCompass
 end
 GW.AddForProfiling("notifications", "getBodyPOI", getBodyPOI)
 
-local function AddTrackerNotification(data)
-    if data == nil or data["ID"] == nil then
+local function AddTrackerNotification(data, forceUpdate)
+    if data == nil or data.ID == nil then
         return
     end
-
-    notifications[data["ID"]] = data
+    notifications[data.ID] = data
+    if forceUpdate then
+        GW.forceCompassHeaderUpdate()
+    end
 end
 GW.AddTrackerNotification = AddTrackerNotification
 
 local function RemoveTrackerNotification(notificationID)
-    if data == nil or notificationID == nil then
+    if notificationID == nil then
         return
     end
-    notifications[data["ID"]] = nil
+
+    notifications[notificationID] = nil
 end
 GW.RemoveTrackerNotification = RemoveTrackerNotification
 
 local function RemoveTrackerNotificationOfType(doType)
     for k, v in pairs(notifications) do
-        if v["TYPE"] == doType then
+        if v.TYPE == doType then
             notifications[k] = nil
         end
     end
@@ -207,8 +213,9 @@ local function updateRadar(self)
     end
 
     local pFacing = GetPlayerFacing()
-    local dir_x = self.data["X"] - GW.locationData.x
-    local dir_y = self.data["Y"] - GW.locationData.y
+    if pFacing == nil then pFacing = 0 end
+    local dir_x = self.data.X - GW.locationData.x
+    local dir_y = self.data.Y - GW.locationData.y
     local a = math.atan2(dir_y, dir_x)
     a = rad_135 - a - pFacing
 
@@ -217,13 +224,15 @@ local function updateRadar(self)
 end
 GW.AddForProfiling("notifications", "updateRadar", updateRadar)
 
+local currentCompassData
 local function SetObjectiveNotification()
     if not GetSetting("SHOW_QUESTTRACKER_COMPASS") then return end
+
     local data, dataBefore
     for k, _ in pairs(notifications) do
-        if not notifications[k]["COMPASS"] and notifications[k] ~= nil then
+        if not notifications[k].COMPASS and notifications[k] ~= nil then
             if data ~= nil then
-                if prioritys(data["TYPE"], notifications[k]["TYPE"]) then
+                if prioritys(data.TYPE, notifications[k].TYPE) then
                     data = notifications[k]
                 end
             else
@@ -241,32 +250,31 @@ local function SetObjectiveNotification()
     if data == nil then
         data = getNearestQuestPOI()
     end
-
     if data == nil then
         removeNotification()
         return
     end
 
-    local title = data["TITLE"]
-    local desc = data["DESC"]
-    local color = data["COLOR"]
-    local useRadar = data["COMPASS"]
-    local progress = data["PROGRESS"]
+    local title = data.TITLE
+    local desc = data.DESC
+    local color = data.COLOR
+    local useRadar = data.COMPASS
+    local progress = data.PROGRESS
 
     if color == nil then
         color = {r = 1, g = 1, b = 1}
     end
 
-    if icons[data["TYPE"]] ~= nil then
-        GwObjectivesNotification.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\" .. icons[data["TYPE"]].tex)
+    if icons[data.TYPE] ~= nil then
+        GwObjectivesNotification.icon:SetTexture("Interface/AddOns/GW2_UI/textures/" .. icons[data.TYPE].tex)
         GwObjectivesNotification.icon:SetTexCoord(
-            icons[data["TYPE"]].l,
-            icons[data["TYPE"]].r,
-            icons[data["TYPE"]].t,
-            icons[data["TYPE"]].b
+            icons[data.TYPE].l,
+            icons[data.TYPE].r,
+            icons[data.TYPE].t,
+            icons[data.TYPE].b
         )
 
-        if progress ~= nil and icons[data["TYPE"]] then
+        if progress ~= nil and icons[data.TYPE] then
             GwObjectivesNotification.icon:SetTexture(nil)
         end
     else
@@ -276,23 +284,30 @@ local function SetObjectiveNotification()
     if useRadar then
         GwObjectivesNotification.compass:Show()
         GwObjectivesNotification.compass.data = data
-        GwObjectivesNotification.compass.dataIndex = data["ID"]
+        GwObjectivesNotification.compass.dataIndex = data.ID
 
-        if icons[data["TYPE"]] ~= nil then
-            GwObjectivesNotification.compass.icon:SetTexture(
-                "Interface\\AddOns\\GW2_UI\\textures\\" .. icons[data["TYPE"]].tex
-            )
+        if icons[data.TYPE] ~= nil then
+            GwObjectivesNotification.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/" .. icons[data.TYPE].tex)
             GwObjectivesNotification.compass.icon:SetTexCoord(
-                icons[data["TYPE"]].l,
-                icons[data["TYPE"]].r,
-                icons[data["TYPE"]].t,
-                icons[data["TYPE"]].b
+                icons[data.TYPE].l,
+                icons[data.TYPE].r,
+                icons[data.TYPE].t,
+                icons[data.TYPE].b
             )
         else
             GwObjectivesNotification.compass.icon:SetTexture(nil)
         end
 
-        GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
+        if currentCompassData and currentCompassData ~= GwObjectivesNotification.compass.dataIndex then
+            currentCompassData = GwObjectivesNotification.compass.dataIndex
+            if GwObjectivesNotification.compass.Timer then
+                GwObjectivesNotification.compass.Timer:Cancel()
+            end
+            GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
+        elseif not currentCompassData then
+            currentCompassData = GwObjectivesNotification.compass.dataIndex
+            GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
+        end
         GwObjectivesNotification.icon:SetTexture(nil)
     else
         GwObjectivesNotification.compass:Hide()
@@ -304,6 +319,7 @@ local function SetObjectiveNotification()
 
     GwObjectivesNotification.title:SetText(title)
     GwObjectivesNotification.title:SetTextColor(color.r, color.g, color.b)
+    GwObjectivesNotification.compassBG:SetVertexColor(color.r, color.g, color.b, 0.3)
     GwObjectivesNotification.desc:SetText(desc)
 
     if desc == nil or desc == "" then

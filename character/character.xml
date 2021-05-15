@@ -672,9 +672,6 @@
                         self:RegisterEvent("UNIT_PET_TRAINING_POINTS")
                         self:RegisterEvent("UNIT_HAPPINESS")
                     </OnLoad>
-                    <OnEvent>
-                        gwPaperDollPetStats_OnEvent(self, event, ...)
-                    </OnEvent>
                 </Scripts>
             </Frame>
         </Frames>
@@ -1362,9 +1359,6 @@
                         self:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
                         self:RegisterUnitEvent("UNIT_AURA", "player")
                     </OnLoad>
-                    <OnEvent>
-                        gwPaperDollStats_OnEvent(self, event, ...)
-                    </OnEvent>
                 </Scripts>
             </Frame>
             <Frame name="$parentGear" parentKey="gear">

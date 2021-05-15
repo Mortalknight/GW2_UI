@@ -99,20 +99,24 @@ local function collectDurability(self)
             completeDurabilityNumItems = completeDurabilityNumItems + 1
         end
     end
-    self.Value:SetText(GW.RoundDec(completeDurability / completeDurabilityNumItems * 100) .. "%")
+    if completeDurabilityNumItems > 0 then
+        self.Value:SetText(GW.RoundDec(completeDurability / completeDurabilityNumItems * 100) .. "%")
+    else
+        self.Value:SetText("N/A")
+    end
 end
 GW.AddForProfiling("paperdoll_equipment", "collectDurability", collectDurability)
 
-function gwPaperDollStats_QueuedUpdate(self)
+local function PaperDollStats_QueuedUpdate(self)
     self:SetScript("OnUpdate", nil)
-    gwPaperDollUpdateStats()
+    GW.PaperDollUpdateStats()
     collectDurability(durabilityFrame)
 end
 
-function gwPaperDollUpdateUnitData()
+local function PaperDollUpdateUnitData()
     GwDressingRoom.characterName:SetText(UnitPVPName("player"))
     local spec = GW.api.GetSpecialization()
-    local id, name, description, icon, background, role = GW.api.GetSpecializationInfo(spec, nil, nil, nil, GW.mysex)
+    local _, name = GW.api.GetSpecializationInfo(spec, nil, nil, nil, GW.mysex)
     local color = GWGetClassColor(GW.myclass, true)
     GW.SetClassIcon(GwDressingRoom.classIcon, GW.myclass)
 
@@ -126,26 +130,20 @@ function gwPaperDollUpdateUnitData()
     end
 end
 
-local ShowPetFrameAfterCombat = CreateFrame("Frame", nil, UIParent)
-function gwPaperDollPetStats_OnEvent(self, event, ...)
+local function PaperDollPetStats_OnEvent(self, event, ...)
     if InCombatLockdown() then
-        ShowPetFrameAfterCombat:SetScript(
-            "OnUpdate",
-            function(self, event, ...)
-                local inCombat = UnitAffectingCombat("player")
-                if inCombat == true then
-                    return
-                end
-                gwPaperDollPetStats_OnEvent(self, event, ...)
-                ShowPetFrameAfterCombat:SetScript("OnUpdate", nil)
-            end
-        )
+        self:RegisterEvent("PLAYER_REGEN_ENABLED")
+        self.prevEvent = event
         return
+    end
+    if event == "PLAYER_REGEN_ENABLED" then
+        event = self.prevEvent
+        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     end
 
     local unit = ...
     local hasUI = HasPetUI()
-    if event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or (event == "UNIT_PET" and arg1 == "player") then
+    if event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or (event == "UNIT_PET" and unit == "player") then
         if GwPetContainer:IsVisible() and not hasUI then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
             GwCharacterMenu.petMenu:Hide()
@@ -158,21 +156,21 @@ function gwPaperDollPetStats_OnEvent(self, event, ...)
             return
         end
     end
-    gwPaperDollUpdatePetStats()
+    GW.PaperDollUpdatePetStats()
 end
 
-function gwPaperDollStats_OnEvent(self, event, ...)
+local function PaperDollStats_OnEvent(self, event, ...)
     local unit = ...
     if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MODEL_CHANGED" or event=="UNIT_NAME_UPDATE" or event=="PLAYER_PVP_RANK_CHANGED" and unit == "player" then
         GwDressingRoom.model:SetUnit("player", false)
-        gwPaperDollUpdateUnitData()
+        PaperDollUpdateUnitData()
         collectDurability(durabilityFrame)
         return
     end
 
     if unit == "player" then
         if event == "UNIT_LEVEL" then
-            gwPaperDollUpdateUnitData()
+            PaperDollUpdateUnitData()
         elseif event == "UNIT_DAMAGE" or
                 event == "UNIT_ATTACK_SPEED" or
                 event == "UNIT_RANGEDDAMAGE" or
@@ -185,7 +183,7 @@ function gwPaperDollStats_OnEvent(self, event, ...)
                 event == "UNIT_RESISTANCES" or
                 event == "UPDATE_INVENTORY_ALERTS" or
                 IsMounted() then
-            self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
+            self:SetScript("OnUpdate", PaperDollStats_QueuedUpdate)
         end
     end
 
@@ -199,14 +197,14 @@ function gwPaperDollStats_OnEvent(self, event, ...)
             event == "PLAYER_AVG_ITEM_LEVEL_UPDATE" or
             event == "PLAYER_DAMAGE_DONE_MODS" or
             IsMounted() then
-        self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
+        self:SetScript("OnUpdate", PaperDollStats_QueuedUpdate)
     elseif event == "PLAYER_TALENT_UPDATE" then
-        gwPaperDollUpdateUnitData()
-        self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
+        PaperDollUpdateUnitData()
+        self:SetScript("OnUpdate", PaperDollStats_QueuedUpdate)
     elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
-        gwPaperDollUpdateStats()
+        PaperDollUpdateStats()
     elseif event == "SPELL_POWER_CHANGED" then
-        self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
+        self:SetScript("OnUpdate", PaperDollStats_QueuedUpdate)
     end
 end
 
@@ -221,13 +219,23 @@ local function statGridPos(grid, x, y)
     return grid, x, y
 end
 
+local function PaperDollGetStatListFrame(self, i)
+    if _G["GwPaperDollStat" .. i] ~= nil then return _G["GwPaperDollStat" .. i] end
+    return CreateFrame("Frame", "GwPaperDollStat" .. i, self, "GwPaperDollStat")
+end
+
+local function PaperDollPetGetStatListFrame(self, i)
+    if _G["GwPaperDollPetStat" .. i] ~= nil then return _G["GwPaperDollPetStat" .. i] end
+    return CreateFrame("Frame", "GwPaperDollPetStat" .. i, self, "GwPaperDollStat")
+end
+
 local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y)
-    local statFrame = gwPaperDollGetStatListFrame(GwPapaerDollStats, index)
+    local statFrame = PaperDollGetStatListFrame(GwPapaerDollStats, index)
     statFrame.tooltip = tooltip
     statFrame.tooltip2 = tooltip2
     statFrame.stat = stat
     statFrame.Value:SetText(statText)
-    gwPaperDollSetStatIcon(statFrame, stat)
+    GW.PaperDollSetStatIcon(statFrame, stat)
 
     statFrame:ClearAllPoints()
     if stat == "DURABILITY" then
@@ -245,7 +253,7 @@ local function setPetStatFrame(stat, index, statText, tooltip, tooltip2, grid, x
     statFrame.tooltip2 = tooltip2
     statFrame.stat = stat
     statFrame.Value:SetText(statText)
-    gwPaperDollSetStatIcon(statFrame, stat)
+    GW.PaperDollSetStatIcon(statFrame, stat)
 
     statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
     grid, x, y = statGridPos(grid, x, y)
@@ -316,7 +324,7 @@ function GW_DurabilityTooltip(self)
 end
 GW.AddForProfiling("paperdoll_equipment", "DurabilityTooltip", DurabilityTooltip)
 
-function gwPaperDollUpdateStats()
+local function PaperDollUpdateStats()
     local avgItemLevel, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
     local statName, statText, tooltip1, tooltip2
 
@@ -388,8 +396,9 @@ function gwPaperDollUpdateStats()
     --durability
     grid, x, y, numShownStats = setStatFrame("DURABILITY", numShownStats, "DURABILITY", nil, nil, grid, x, y)
 end
+GW.PaperDollUpdateStats = PaperDollUpdateStats
 
-function gwPaperDollUpdatePetStats()
+local function PaperDollUpdatePetStats()
     local hasUI, isHunterPet = HasPetUI()
     local statName, statText, tooltip1, tooltip2
     GwCharacterMenu.petMenu:Hide()
@@ -455,8 +464,9 @@ function gwPaperDollUpdatePetStats()
         grid, x, y, numShownStats = setPetStatFrame(GW.stats.RESITANCE_STATS[resistanceIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 end
+GW.PaperDollUpdatePetStats = PaperDollUpdatePetStats
 
-function gwPaperDollSetStatIcon(self, stat)
+local function PaperDollSetStatIcon(self, stat)
     local newTexture = "Interface\\AddOns\\GW2_UI\\textures\\character\\statsicon"
 
     if STATS_ICONS[stat] ~= nil then
@@ -476,18 +486,9 @@ function gwPaperDollSetStatIcon(self, stat)
         end
     end
 end
+GW.PaperDollSetStatIcon = PaperDollSetStatIcon
 
-function gwPaperDollGetStatListFrame(self, i)
-    if _G["GwPaperDollStat" .. i] ~= nil then return _G["GwPaperDollStat" .. i] end
-    return CreateFrame("Frame", "GwPaperDollStat" .. i, self, "GwPaperDollStat")
-end
-
-function gwPaperDollPetGetStatListFrame(self, i)
-    if _G["GwPaperDollPetStat" .. i] ~= nil then return _G["GwPaperDollPetStat" .. i] end
-    return CreateFrame("Frame", "GwPaperDollPetStat" .. i, self, "GwPaperDollStat")
-end
-
-function gwPaperDollSlotButton_Update(self)
+local function PaperDollSlotButton_Update(self)
     local slot = self:GetID()
     local textureName = GetInventoryItemTexture("player", slot)
     local cooldown = _G[self:GetName() .. "Cooldown"]
@@ -1347,6 +1348,9 @@ local function LoadPaperDoll()
     CreateFrame("Frame", "GwPetContainer", GwCharacterWindowContainer, "GwPetContainer")
     CreateFrame("Button", "GwDressingRoomPet", GwPetContainer, "GwPetPaperdoll")
 
+    GwPapaerDollStats:SetScript("OnEvent", PaperDollStats_OnEvent)
+    GwDressingRoomPet:SetScript("OnEvent", PaperDollPetStats_OnEvent)
+
     grabDefaultSlots(CharacterHeadSlot, {"TOPLEFT", GwDressingRoom.gear, "TOPLEFT", 0, 0}, GwDressingRoom, 50)
     grabDefaultSlots(CharacterShoulderSlot, {"TOPLEFT", CharacterHeadSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
     grabDefaultSlots(CharacterChestSlot, {"TOPLEFT", CharacterShoulderSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
@@ -1390,10 +1394,10 @@ local function LoadPaperDoll()
                     CharacterRangedSlot.icon:SetTexCoord(0, 0.25, 0.5, 0.625)
                 end
             end
-            gwPaperDollSlotButton_Update(button)
+            PaperDollSlotButton_Update(button)
         else
             button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-            gwPaperDollSlotButton_Update(button)
+            PaperDollSlotButton_Update(button)
         end
     end)
 
@@ -1464,8 +1468,8 @@ local function LoadPaperDoll()
     CharacterFrame:UnregisterAllEvents()
     hooksecurefunc("ToggleCharacter", GwToggleCharacter)
 
-    gwPaperDollUpdateStats()
-    gwPaperDollUpdatePetStats()
+    PaperDollUpdateStats()
+    PaperDollUpdatePetStats()
     GwUpdateReputationDetails()
 
     LoadPVPTab()

@@ -566,7 +566,12 @@ local function QuestTrackerLayoutChanged()
 end
 GW.QuestTrackerLayoutChanged = QuestTrackerLayoutChanged
 
-local function updateQuestLogLayout()
+local function updateQuestLogLayout(self)
+    if self.isUpdating or not self.init then
+        return
+    end
+    self.isUpdating = true
+
     local savedHeight = 1
     local numQuests = GetNumQuestWatches()
     if numQuests == 0 then GwQuestHeader:Hide() end
@@ -599,11 +604,13 @@ local function updateQuestLogLayout()
     end
 
     QuestTrackerLayoutChanged()
+
+    self.isUpdating = false
 end
 GW.AddForProfiling("objectives", "updateQuestLogLayout", updateQuestLogLayout)
 
-local function tracker_OnEvent(self, event, ...)
-    updateQuestLogLayout(...)
+local function tracker_OnEvent(self)
+    updateQuestLogLayout(self)
 end
 GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
 
@@ -625,7 +632,7 @@ local function AdjustQuestTracker(our_bars, our_minimap)
         return
     end
 
-    local o = ObjectiveTrackerFrame
+    local o = QuestWatchFrame
     if (o:IsUserPlaced()) then
         return
     end
@@ -727,17 +734,18 @@ local function LoadQuestTracker()
     header.title:SetText(QUESTS_LABEL)
 
     header:SetScript(
-        "OnClick",
+        "OnMouseDown",
         function(self)
             local p = self:GetParent()
-            if p.collapsed == nil or p.collapsed == false then
+            if not p.collapsed then
                 p.collapsed = true
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
             else
                 p.collapsed = false
                 PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
             end
-            updateQuestLogLayout("COLLAPSE")
+            updateQuestLogLayout(p)
+            QuestTrackerLayoutChanged()
         end
     )
     header.title:SetTextColor(
@@ -746,11 +754,12 @@ local function LoadQuestTracker()
         TRACKER_TYPE_COLOR["QUEST"].b
     )
 
-    updateQuestLogLayout("LOAD")
+    fQuest.init = false
+    tracker_OnEvent(fQuest)
+    fQuest.init = true
 
     fNotify.shouldDisplay = false
     fTracker:SetScript("OnUpdate", tracker_OnUpdate)
-
 
     -- only update the tracker on Events or if player moves
     local compassUpdateFrame = CreateFrame("Frame")
