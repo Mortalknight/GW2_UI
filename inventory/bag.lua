@@ -802,9 +802,9 @@ local function LoadBag(helpers)
         dd.sortOrder.title:SetText(L["Sort to Last Bag"])
         dd.itemBorder.title:SetText(L["Show Quality Color"])
         dd.junkIcon.title:SetText(L["Show Junk Icon"])
-        dd.professionColor.title:SetText(L["PROFESSION_BAG_COLOR"])
-        dd.bagOrder.title:SetText(L["BAG_ORDER_REVERSE"])
-        dd.vendorGrays.title:SetText(L["Sell Junk automatically"])
+        dd.professionColor.title:SetText(L["Show Profession Bag Coloring"])
+        dd.bagOrder.title:SetText(L["Reverse Bag Order"])
+        dd.vendorGrays.title:SetText(L["Sell junk automatically"])
     end
 
     -- setup money frame
@@ -847,15 +847,15 @@ local function LoadBag(helpers)
         smsj:SetSize(160, 22)
         smsj:SetToplevel(true)
         smsj:Hide()
-    
+
         smsj.shadow = smsj:CreateTexture(nil, "BACKGROUND")
         smsj.shadow:SetAllPoints()
         smsj.shadow:SetColorTexture(0.1, 0.1, 0.1, 1.0)
-    
+
         smsj.text = smsj:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge") 
         smsj.text:SetAllPoints();
         smsj.text:SetText(L["Selling Junk"])
-    
+
         f.smsj = smsj
 
     return changeItemSize

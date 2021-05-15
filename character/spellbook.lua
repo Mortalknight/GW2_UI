@@ -1,7 +1,6 @@
 local _, GW = ...
-local L = GW.L
 
-function gw_spell_buttonOnEnter(self)
+local function spell_buttonOnEnter(self)
     if self.spellId == nil then return end
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
@@ -29,7 +28,7 @@ function gw_spell_buttonOnEnter(self)
     GameTooltip:Show()
 end
 
-function gw_spell_buttonOnLeave(self)
+local function spell_buttonOnLeave(self)
     GameTooltip:Hide()
 end
 
@@ -366,8 +365,8 @@ local function setUnknowSpellButton(self,icon,spellID,rank,ispassive,level)
         self.icon:RemoveMaskTexture(self.mask)
         self.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border')
     end
-    self:SetScript("OnEnter",gw_spell_buttonOnEnter)
-    self:SetScript("OnLeave",gw_spell_buttonOnLeave)
+    self:SetScript("OnEnter",spell_buttonOnEnter)
+    self:SetScript("OnLeave",spell_buttonOnLeave)
 end
 
 local function filterUnknownSpell(knownSpellID,spell)
@@ -749,8 +748,8 @@ local function LoadSpellBook()
             f:RegisterForDrag("LeftButton")
             f:RegisterEvent("SPELL_UPDATE_COOLDOWN")
             f:RegisterEvent("PET_BAR_UPDATE")
-            f:HookScript('OnEnter', gw_spell_buttonOnEnter)
-            f:HookScript('OnLeave', gw_spell_buttonOnLeave)
+            f:HookScript('OnEnter', spell_buttonOnEnter)
+            f:HookScript('OnLeave', spell_buttonOnLeave)
             f:Hide()
 
             line = line + 1

@@ -395,7 +395,7 @@ local PATTERN_ILVL_SCALED = ITEM_LEVEL_ALT:gsub("%(%%d%)", "%%((%%d)%%)"):gsub("
 
 -- Get an item's real level, scanning the tooltip if necessary
 local function GetRealItemLevel(link)
-    local i, numBonusIds, linkLvl, upgradeLvl = 0, 0
+    local i, numBonusIds, linkLvl, upgradeLvl = 0, 0, nil, nil
     for v in link:gmatch(":(%-?%d*)") do
         i, v = i + 1, tonumber(v)
         if i == 9 then

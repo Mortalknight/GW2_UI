@@ -245,10 +245,8 @@ GW.AddForProfiling("questview", "questTextCompleted", questTextCompleted)
 
 local function nextGossip()
     QUESTSTRINGINT = QUESTSTRINGINT + 1
-    local count = 0
-    for k, v in pairs(QUESTSTRING) do
-        count = count + 1
-    end
+    local count = #QUESTSTRING
+
     if QUESTSTRINGINT <= count then
         GwQuestviewFrameContainerDialogString:SetText(QUESTSTRING[QUESTSTRINGINT])
         setQuestGiverAnimation(count)
@@ -259,6 +257,33 @@ local function nextGossip()
             questTextCompleted()
         else
             GwQuestviewFrameContainerAcceptButton:SetText(L["Skip"])
+        end
+    else
+        questTextCompleted()
+    end
+end
+GW.AddForProfiling("questview", "nextGossip", nextGossip)
+
+local function lastGossip()
+    QUESTSTRINGINT = max(QUESTSTRINGINT - 1, 1)
+    local count = #QUESTSTRING
+
+    if QUESTSTRINGINT <= count then
+        GwQuestviewFrameContainerDialogString:SetText(QUESTSTRING[QUESTSTRINGINT])
+        setQuestGiverAnimation(count)
+        if QUESTSTRINGINT ~= 1 then
+            PlaySound(906)
+        end
+        GwQuestviewFrameContainerAcceptButton:SetText(L["Skip"])
+        QuestInfoRewardsFrame:SetShown(false)
+        GwQuestviewFrameContainerDialogRequired:Hide()
+        questStateSet = false
+        local itemReq =  #QUESTREQ["stuff"]
+        for i = 1, itemReq, 1 do
+            local frame = _G["QuestProgressItem" .. i]
+            if frame then
+                frame:Hide()
+            end
         end
     else
         questTextCompleted()
@@ -361,7 +386,7 @@ local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
             dirty = 1
         end
     end
-    
+
     if dirty then
         PM:SetPosition(uX, uY, uZ)
         GW.Debug("set pos:", unit, fileid, uX, uY, uZ)
@@ -386,13 +411,13 @@ local function showQuestFrame()
     local npc_type = UnitCreatureType("npc")
 
     if UnitIsUnit("npc", "player") then
-        local board = "World/Expansion06/Doodads/Artifact/7AF_Paladin_MissionBoard01.m2"
+        --local board = "World/Expansion06/Doodads/Artifact/7AF_Paladin_MissionBoard01.m2"
         QUEST_NPC_TYPE = 1
         GwQuestviewFrameContainerGiverModel:ClearModel()
         GwQuestviewFrameContainerGiverModel:SetUnit("none")
-        GwQuestviewFrameContainerGiverModel:SetModel(board)
-        GwQuestviewFrameContainerGiverModel:SetFacing(-0.5)
-        GwQuestviewFrameContainerGiverModel:SetPosition(-15, 1.9, -0.8)
+        --GwQuestviewFrameContainerGiverModel:SetModel(board)
+        --GwQuestviewFrameContainerGiverModel:SetFacing(-0.5)
+        --GwQuestviewFrameContainerGiverModel:SetPosition(-15, 1.9, -0.8)
     elseif npc_name and npc_type then
         if UnitIsDead("npc") then
             QUEST_NPC_TYPE = 2
@@ -430,18 +455,70 @@ local function clearQuestReq()
 end
 GW.AddForProfiling("questview", "clearQuestReq", clearQuestReq)
 
+local function acceptQuest()
+    if questState == "TAKE" then
+        if (QuestFrame.autoQuest) then
+            AcknowledgeAutoAcceptQuest()
+        else
+            AcceptQuest()
+            CloseQuest()
+        end
+        if GwQuestviewFrame:IsShown() then GwQuestviewFrame:Hide() end
+    elseif questState == "PROGRESS" then
+        CloseQuest()
+    else
+        if (GetNumQuestChoices() == 0) then
+            GetQuestReward()
+            CloseQuest()
+        elseif (GetNumQuestChoices() == 1) then
+            GetQuestReward(1)
+            CloseQuest()
+        else
+            if (QuestInfoFrame.itemChoice == 0) then
+                QuestChooseRewardError()
+            else
+                GetQuestReward(QuestInfoFrame.itemChoice)
+                CloseQuest()
+            end
+        end
+    end
+end
+
 local function LoadQuestview()
     CreateFrame("Frame", "GwQuestviewFrame", UIParent, "GwQuestviewFrame")
     GwQuestviewFrameContainerDialogString:SetFont(STANDARD_TEXT_FONT, 14)
     GwQuestviewFrameContainerDialogString:SetTextColor(1, 1, 1)
     GwQuestviewFrameContainerDialogQuestTitle:SetTextColor(255 / 255, 197 / 255, 39 / 255)
     GwQuestviewFrameContainerDialogQuestTitle:SetFont(DAMAGE_TEXT_FONT, 24)
-    GwQuestviewFrameContainerDeclineQuest:SetText(DECLINE)
+    GwQuestviewFrameContainerDeclineQuest:SetText(IGNORE)
 
     GwQuestviewFrame:SetScript(
         "OnShow",
         function()
             UIFrameFadeIn(GwQuestviewFrame, 0.2, 0, 1)
+            GwQuestviewFrame:EnableKeyboard(true)
+            GwQuestviewFrame:SetScript("OnKeyDown", function(self, key)
+                if key == "SPACE" then
+                    self:SetPropagateKeyboardInput(false)
+                    local Stringcount = #QUESTSTRING
+
+                    if QUESTSTRINGINT < Stringcount then
+                        nextGossip()
+                    else
+                        acceptQuest()
+                    end
+                else
+                    self:SetPropagateKeyboardInput(true)
+                end
+            end)
+        end
+    )
+
+    GwQuestviewFrame:SetScript(
+        "OnHide",
+        function()
+            GwQuestviewFrame:EnableKeyboard(false)
+            GwQuestviewFrame:SetScript("OnKeyDown", nil)
         end
     )
 
@@ -541,57 +618,30 @@ local function LoadQuestview()
 
     GwQuestviewFrameContainerDialog:SetScript(
         "OnClick",
-        function(self, event, addon)
-            nextGossip()
+        function(_, button)
+            if button == "RightButton" then
+                lastGossip()
+            else
+                nextGossip()
+            end
         end
     )
     GwQuestviewFrameContainerDeclineQuest:SetScript(
         "OnClick",
-        function(self, event, addon)
-            if questState == "TAKE" then
-                DeclineQuest()
-            else
-                CloseQuest()
-            end
+        function()
+            CloseQuest()
         end
     )
     GwQuestviewFrameContainerAcceptButton:SetScript(
         "OnClick",
-        function(self, event, addon)
-            Stringcount = 0
-            for k, v in pairs(QUESTSTRING) do
-                Stringcount = Stringcount + 1
-            end
+        function()
+            local Stringcount = #QUESTSTRING
 
             if QUESTSTRINGINT < Stringcount then
                 QUESTSTRINGINT = Stringcount - 1
                 nextGossip()
             else
-                if questState == "TAKE" then
-                    if (QuestFrame.autoQuest) then
-                        AcknowledgeAutoAcceptQuest()
-                    else
-                        AcceptQuest()
-                        CloseQuest()
-                    end
-                elseif questState == "PROGRESS" then
-                    CloseQuest()
-                else
-                    if (GetNumQuestChoices() == 0) then
-                        GetQuestReward()
-                        CloseQuest()
-                    elseif (GetNumQuestChoices() == 1) then
-                        GetQuestReward(1)
-                        CloseQuest()
-                    else
-                        if (QuestInfoFrame.itemChoice == 0) then
-                            QuestChooseRewardError()
-                        else
-                            GetQuestReward(QuestInfoFrame.itemChoice)
-                            CloseQuest()
-                        end
-                    end
-                end
+                acceptQuest()
             end
         end
     )
