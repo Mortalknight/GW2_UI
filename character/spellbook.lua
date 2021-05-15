@@ -807,21 +807,20 @@ local function LoadSpellBook()
     --    self:GetFrameRef('GwSpellbookMenu'):SetAttribute('tabopen', 6)
     --]=])
     --GwspellbookTab5:SetFrameRef('GwspellbookTab6', GwspellbookTab6)
-    --[[
     GwspellbookTab5:SetAttribute("_onstate-petstate", [=[
         if newstate == "nopet" then
-            self:GetFrameRef('GwspellbookTab6'):SetPoint("TOPLEFT",self:GetFrameRef('GwSpellbookMenu'),"TOPLEFT",0,-44*4)
+            --self:GetFrameRef('GwspellbookTab6'):SetPoint("TOPLEFT",self:GetFrameRef('GwSpellbookMenu'),"TOPLEFT",0,-44*4)
             self:Hide()
             if self:GetFrameRef('GwSpellbookMenu'):GetAttribute('tabopen') then
                 self:GetFrameRef('GwSpellbookMenu'):SetAttribute('tabopen', 2)
             end
         elseif newstate == "hasPet" then
-            self:GetFrameRef('GwspellbookTab6'):SetPoint("TOPLEFT",self:GetFrameRef('GwSpellbookMenu'),"TOPLEFT",0,-44*5)
+            --self:GetFrameRef('GwspellbookTab6'):SetPoint("TOPLEFT",self:GetFrameRef('GwSpellbookMenu'),"TOPLEFT",0,-44*5)
             self:Show()
         end
     ]=])
     RegisterStateDriver(GwspellbookTab5, "petstate", "[target=pet,noexists] nopet; [target=pet,help] hasPet;")
-]]
+
 
     GwSpellbookMenu:SetFrameRef('GwSpellbookContainerTab1',GwSpellbookContainerTab1)
     GwSpellbookMenu:SetFrameRef('GwSpellbookContainerTab2',GwSpellbookContainerTab2)

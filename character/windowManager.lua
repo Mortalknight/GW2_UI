@@ -594,7 +594,7 @@ local function LoadWindows()
             container:SetScript("OnHide", container_OnHide)
             tab:SetFrameRef('GwCharacterWindow', fmGCW)
             tab:SetAttribute('_OnClick', v.OnClick)
-            
+
             container.TabFrame = tab
             container.CharWindow = fmGCW
             container.HeaderIcon = v.HeaderIcon

@@ -27,7 +27,7 @@ local function LoadPlayerPanel(sWindow)
     addOption(p.scroll.scrollchild, L["5 secound rule: display remaning time"], nil, "PLAYER_5SR_TIMER", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
     addOptionSlider(
         p.scroll.scrollchild,
-        L["Auras per Row"],
+        L["Auras per row"],
         nil,
         "PLAYER_AURA_WRAP_NUM",
         nil,
