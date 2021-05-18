@@ -80,7 +80,7 @@ local function getNearestQuestPOI()
     local numTrackedWQ = C_QuestLog.GetNumWorldQuestWatches()
     local numQuests = C_QuestLog.GetNumQuestLogEntries()
 
-    if (GW.locationData.x == nil or GW.locationData.y == nil) and (numTrackedQuests == 0 or numTrackedWQ == 0 or numQuests) then
+    if (GW.locationData.x == nil or GW.locationData.y == nil) and (numTrackedQuests == 0 or numTrackedWQ == 0 or numQuests == 0) then
         return nil
     end
 

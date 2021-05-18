@@ -160,7 +160,7 @@ local function mapCoordsMiniMap_setCoords(self)
     if GW.locationData.x and GW.locationData.y then
         self.Coords:SetText(RoundDec(GW.locationData.xText, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(GW.locationData.yText, self.MapCoordsMiniMapPrecision)) 
     else
-        self.Coords:SetText("n/a")
+        self.Coords:SetText(NOT_APPLICABLE)
     end
 end
 GW.AddForProfiling("map", "mapCoordsMiniMap_setCoords", mapCoordsMiniMap_setCoords)
@@ -411,7 +411,7 @@ local function LoadMinimap()
     --coords
     if GetSetting("MINIMAP_COORDS_TOGGLE") then
         GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
-        GwMapCoords.Coords:SetText("n/a")
+        GwMapCoords.Coords:SetText(NOT_APPLICABLE)
         GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
         GwMapCoords.MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
         GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
@@ -428,7 +428,7 @@ local function LoadMinimap()
     --FPS
     if GetSetting("MINIMAP_FPS") then
         GwMapFPS = CreateFrame("Button", "GwMapFPS", Minimap, "GwMapFPS")
-        GwMapFPS.fps:SetText("n/a")
+        GwMapFPS.fps:SetText(NOT_APPLICABLE)
         GwMapFPS.fps:SetFont(STANDARD_TEXT_FONT, 12)
         GwMapFPS.elapsedTimer = -1
         local updateCap = 1 / 5 -- cap fps update to 5 FPS

@@ -72,7 +72,7 @@ local function xpbar_OnEnter(self)
         if xpForNextPoint > 0 then
             xpPct = math.floor((azeriteXP / xpForNextPoint) * 100) .. "%"
         else
-            xpPct = "n/a"
+            xpPct = NOT_APPLICABLE
         end
         GameTooltip:AddLine(
             AZERITE_POWER_BAR:format(
