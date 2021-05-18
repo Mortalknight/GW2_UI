@@ -555,7 +555,7 @@ end
 GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
 
 local function LoadHudArt()
-    local hudArtFrame = CreateFrame("Frame", "GwHudArtFrame", UIParent, "GwHudArtFrame")
+    local hudArtFrame = CreateFrame("Frame", "GwHudArtFrame", UIParent, "GwHudArtFrame") 
 
     if not GetSetting("BORDER_ENABLED") and hudArtFrame.edgeTint then
         for _, f in ipairs(hudArtFrame.edgeTint) do
@@ -563,12 +563,12 @@ local function LoadHudArt()
         end
     end
 
-    if not GetSetting("HUD_BACKGROUND") and GwActionBarHud.HUDBG then
-        for _, f in ipairs(GwActionBarHud.HUDBG) do
+    if not GetSetting("HUD_BACKGROUND") and hudArtFrame.actionBarHud.HUDBG then
+        for _, f in ipairs(hudArtFrame.actionBarHud.HUDBG) do
             f:Hide()
         end
     else
-        GW.RegisterScaleFrame(GwActionBarHud)
+        GW.RegisterScaleFrame(hudArtFrame.actionBarHud)
     end
 
     hudArtFrame:SetScript("OnEvent", hud_OnEvent)

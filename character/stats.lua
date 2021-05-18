@@ -140,13 +140,13 @@ local function getDefense()
     local tooltip2
 
     local base, modifier = UnitDefense("player")
-	local posBuff = 0
-	local negBuff = 0
-	if ( modifier > 0 ) then
-		posBuff = modifier
-	elseif ( modifier < 0 ) then
-		negBuff = modifier
-	end
+    local posBuff = 0
+    local negBuff = 0
+    if ( modifier > 0 ) then
+        posBuff = modifier
+    elseif ( modifier < 0 ) then
+        negBuff = modifier
+    end
 
     stat, tooltip = formateStat(DEFENSE_COLON, base, posBuff, negBuff)
     local valueNum = max(0, base + posBuff + negBuff)
@@ -298,7 +298,7 @@ local function getRangeAttackSpeed()
     local text = UnitRangedDamage("player")
     text = format("%.2f", text);
     local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. ATTACK_SPEED .. " " .. text .. FONT_COLOR_CODE_CLOSE;
-	local tooltip2 = format(CR_HASTE_RATING_TOOLTIP, GetCombatRating(CR_HASTE_RANGED), GetCombatRatingBonus(CR_HASTE_RANGED));
+    local tooltip2 = format(CR_HASTE_RATING_TOOLTIP, GetCombatRating(CR_HASTE_RANGED), GetCombatRatingBonus(CR_HASTE_RANGED));
 
     return text, tooltip, tooltip2
 end
@@ -326,8 +326,8 @@ GW.stats.getAttackSpeed = getAttackSpeed
 
 local function getDodge()
     local chance = GetDodgeChance();
-	local tooltip = HIGHLIGHT_FONT_COLOR_CODE..getglobal("DODGE_CHANCE").." "..string.format("%.02f", chance).."%"..FONT_COLOR_CODE_CLOSE;
-	local tooltip2 = format(CR_DODGE_TOOLTIP, GetCombatRating(CR_DODGE), GetCombatRatingBonus(CR_DODGE));
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE..getglobal("DODGE_CHANCE").." "..string.format("%.02f", chance).."%"..FONT_COLOR_CODE_CLOSE;
+    local tooltip2 = format(CR_DODGE_TOOLTIP, GetCombatRating(CR_DODGE), GetCombatRatingBonus(CR_DODGE));
 
     return format("%.2f%%", chance), tooltip, tooltip2
 end
@@ -335,8 +335,8 @@ GW.stats.getDodge = getDodge
 
 local function getParry()
     local chance = GetParryChance();
-	local tooltip = HIGHLIGHT_FONT_COLOR_CODE..getglobal("PARRY_CHANCE").." "..string.format("%.02f", chance).."%"..FONT_COLOR_CODE_CLOSE;
-	local tooltip2 = format(CR_PARRY_TOOLTIP, GetCombatRating(CR_PARRY), GetCombatRatingBonus(CR_PARRY));
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE..getglobal("PARRY_CHANCE").." "..string.format("%.02f", chance).."%"..FONT_COLOR_CODE_CLOSE;
+    local tooltip2 = format(CR_PARRY_TOOLTIP, GetCombatRating(CR_PARRY), GetCombatRatingBonus(CR_PARRY));
 
     return format("%.2f%%", chance), tooltip, tooltip2
 end
@@ -344,8 +344,8 @@ GW.stats.getParry = getParry
 
 local function getBlock()
     local chance = GetBlockChance();
-	local tooltip = HIGHLIGHT_FONT_COLOR_CODE..getglobal("BLOCK_CHANCE").." "..string.format("%.02f", chance).."%"..FONT_COLOR_CODE_CLOSE;
-	local tooltip2 = format(CR_BLOCK_TOOLTIP, GetCombatRating(CR_BLOCK), GetCombatRatingBonus(CR_BLOCK));
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE..getglobal("BLOCK_CHANCE").." "..string.format("%.02f", chance).."%"..FONT_COLOR_CODE_CLOSE;
+    local tooltip2 = format(CR_BLOCK_TOOLTIP, GetCombatRating(CR_BLOCK), GetCombatRatingBonus(CR_BLOCK));
 
     return format("%.2f%%", chance), tooltip, tooltip2
 end
@@ -353,9 +353,9 @@ GW.stats.getBlock = getBlock
 
 local function getResilience()
     local resilience = GetCombatRating(CR_RESILIENCE_CRIT_TAKEN);
-	local bonus = GetCombatRatingBonus(CR_RESILIENCE_CRIT_TAKEN);
-	local tooltip = HIGHLIGHT_FONT_COLOR_CODE..STAT_RESILIENCE.." "..resilience..FONT_COLOR_CODE_CLOSE;
-	local tooltip2 = format(RESILIENCE_TOOLTIP, bonus, min(bonus * 2, 25.00), bonus);
+    local bonus = GetCombatRatingBonus(CR_RESILIENCE_CRIT_TAKEN);
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE..STAT_RESILIENCE.." "..resilience..FONT_COLOR_CODE_CLOSE;
+    local tooltip2 = format(RESILIENCE_TOOLTIP, bonus, min(bonus * 2, 25.00), bonus);
 
     return resilience, tooltip, tooltip2
 end
@@ -400,21 +400,21 @@ end
 GW.stats.getMeleeCritChance = getMeleeCritChance
 
 local function getSpellCritChance(frame)
-	local holySchool = 2;
-	-- Start at 2 to skip physical damage
-	local minCrit = GetSpellCritChance(holySchool);
-	frame.spellCrit = {};
-	frame.spellCrit[holySchool] = minCrit;
-	local spellCrit;
-	for i=(holySchool+1), MAX_SPELL_SCHOOLS do
-		spellCrit = GetSpellCritChance(i);
-		minCrit = min(minCrit, spellCrit);
-		frame.spellCrit[i] = spellCrit;
-	end
-	-- Add agility contribution
-	--minCrit = minCrit + GetSpellCritChanceFromIntellect();
-	minCrit = format("%.2f%%", minCrit);
-	frame.minCrit = minCrit;
+    local holySchool = 2;
+    -- Start at 2 to skip physical damage
+    local minCrit = GetSpellCritChance(holySchool);
+    frame.spellCrit = {};
+    frame.spellCrit[holySchool] = minCrit;
+    local spellCrit;
+    for i=(holySchool+1), MAX_SPELL_SCHOOLS do
+        spellCrit = GetSpellCritChance(i);
+        minCrit = min(minCrit, spellCrit);
+        frame.spellCrit[i] = spellCrit;
+    end
+    -- Add agility contribution
+    --minCrit = minCrit + GetSpellCritChanceFromIntellect();
+    minCrit = format("%.2f%%", minCrit);
+    frame.minCrit = minCrit;
 
     return minCrit
 end
@@ -458,41 +458,41 @@ end
 GW.stats.getMeleeExpertise = getMeleeExpertise
 
 local function getSpellHaste()
-	local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. SPELL_HASTE .. FONT_COLOR_CODE_CLOSE;
-	local tooltip2 = format(SPELL_HASTE_TOOLTIP, GetCombatRatingBonus(CR_HASTE_SPELL));
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. SPELL_HASTE .. FONT_COLOR_CODE_CLOSE;
+    local tooltip2 = format(SPELL_HASTE_TOOLTIP, GetCombatRatingBonus(CR_HASTE_SPELL));
 
     return GetCombatRating(CR_HASTE_SPELL), tooltip, tooltip2
 end
 GW.stats.getSpellHaste = getSpellHaste
 
 local function getManaReg()
-	if ( not UnitHasMana("player") ) then
-		return NOT_APPLICABLE, nil, nil
-	end
-	
-	local base, casting = GetManaRegen(); 
-	-- All mana regen stats are displayed as mana/5 sec.
-	base = floor( base * 5.0 );
-	casting = floor( casting * 5.0 );
-	local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. MANA_REGEN .. FONT_COLOR_CODE_CLOSE;
-	local tooltip2 = format(MANA_REGEN_TOOLTIP, base, casting);
+    if ( not UnitHasMana("player") ) then
+        return NOT_APPLICABLE, nil, nil
+    end
+    
+    local base, casting = GetManaRegen(); 
+    -- All mana regen stats are displayed as mana/5 sec.
+    base = floor( base * 5.0 );
+    casting = floor( casting * 5.0 );
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. MANA_REGEN .. FONT_COLOR_CODE_CLOSE;
+    local tooltip2 = format(MANA_REGEN_TOOLTIP, base, casting);
 
     return base, tooltip, tooltip2
 end
 GW.stats.getManaReg = getManaReg
 
 local function getSpellBonusDamage(frame)
-	local holySchool = 2;
-	-- Start at 2 to skip physical damage
-	local minModifier = GetSpellBonusDamage(holySchool);
-	frame.bonusDamage = {};
-	frame.bonusDamage[holySchool] = minModifier;
-	local bonusDamage;
-	for i=(holySchool+1), MAX_SPELL_SCHOOLS do
-		bonusDamage = GetSpellBonusDamage(i);
-		minModifier = min(minModifier, bonusDamage);
-		frame.bonusDamage[i] = bonusDamage;
-	end
+    local holySchool = 2;
+    -- Start at 2 to skip physical damage
+    local minModifier = GetSpellBonusDamage(holySchool);
+    frame.bonusDamage = {};
+    frame.bonusDamage[holySchool] = minModifier;
+    local bonusDamage;
+    for i=(holySchool+1), MAX_SPELL_SCHOOLS do
+        bonusDamage = GetSpellBonusDamage(i);
+        minModifier = min(minModifier, bonusDamage);
+        frame.bonusDamage[i] = bonusDamage;
+    end
     frame.minModifier = minModifier;
 
     return minModifier
@@ -500,9 +500,9 @@ end
 GW.stats.getSpellBonusDamage = getSpellBonusDamage
 
 local function getBonusHealing()
-	local bonusHealing = GetSpellBonusHealing();
-	local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. BONUS_HEALING .. FONT_COLOR_CODE_CLOSE;
-	local tooltip2 =format(BONUS_HEALING_TOOLTIP, bonusHealing);
+    local bonusHealing = GetSpellBonusHealing();
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. BONUS_HEALING .. FONT_COLOR_CODE_CLOSE;
+    local tooltip2 =format(BONUS_HEALING_TOOLTIP, bonusHealing);
 
     return bonusHealing, tooltip, tooltip2
 end

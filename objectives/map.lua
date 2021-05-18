@@ -5,8 +5,6 @@ local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
 local trackingTypes = GW.trackingTypes
 
-local IS_GUILD_GROUP
-
 local MAP_FRAMES_HIDE = {}
 MAP_FRAMES_HIDE[1] = MiniMapMailFrame
 MAP_FRAMES_HIDE[2] = MiniMapVoiceChatFrame
@@ -107,20 +105,35 @@ local function setMinimapButtons(side)
     GwMailButton:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
+    GwMiniMapTrackingFrame:ClearAllPoints()
 
     if side == "left" then
         MiniMapBattlefieldIcon:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -8.5, -69)
         GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -16, -47)
         GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -10, -127)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
+        GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -43, 0)
     else
         MiniMapBattlefieldIcon:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -69)
         GwMailButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 14, -47)
         GwAddonToggle:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -127)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
+        GwMiniMapTrackingFrame:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 38, 0)
     end
 end
-GW.setMinimapButtons = setMinimapButtons
+
+local function MinimapPostDrag(self)
+    _G.MinimapBackdrop:ClearAllPoints()
+    _G.MinimapBackdrop:SetAllPoints(_G.Minimap)
+
+    local x = self.gwMover:GetCenter()
+    local screenWidth = UIParent:GetRight()
+    if x > (screenWidth / 2) then
+        setMinimapButtons("left")
+    else
+        setMinimapButtons("right")
+    end
+end
 
 local function lfgAnimStop()
     MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
@@ -197,7 +210,7 @@ local function mapCoordsMiniMap_setCoords(self)
     if GW.locationData.x and GW.locationData.y then
         self.Coords:SetText(RoundDec(GW.locationData.xText, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(GW.locationData.yText, self.MapCoordsMiniMapPrecision))
     else
-        self.Coords:SetText("n/a")
+        self.Coords:SetText(NOT_APPLICABLE)
     end
 end
 GW.AddForProfiling("map", "mapCoordsMiniMap_setCoords", mapCoordsMiniMap_setCoords)
@@ -394,6 +407,30 @@ local function LoadMinimap()
     GwMapGradient:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
     GwMapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
 
+    GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
+
+    local icontype = MiniMapTrackingIcon:GetTexture()
+    if icontype == 132328 then icontype = icontype .. GW.myClassID end
+    if icontype and trackingTypes[icontype] then
+        GwMiniMapTrackingFrame.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
+        GwMiniMapTrackingFrame:Show()
+    else
+        GwMiniMapTrackingFrame:Hide()
+    end
+
+    GwMiniMapTrackingFrame:RegisterEvent("MINIMAP_UPDATE_TRACKING")
+    GwMiniMapTrackingFrame:SetScript("OnEvent", function(self)
+        local icontype = MiniMapTrackingIcon:GetTexture()
+        if icontype == 132328 then icontype = icontype .. GW.myClassID end
+        if icontype and trackingTypes[icontype] then
+            self.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
+            self:Show()
+        else
+            self:Hide()
+        end
+    end)
+
+
     GwMapTime = CreateFrame("Button", "GwMapTime", Minimap, "GwMapTime")
     TimeManager_LoadUI()
     TimeManagerClockButton:Hide()
@@ -414,7 +451,7 @@ local function LoadMinimap()
     GwMapTime:SetScript("OnLeave", GameTooltip_Hide)
 
     GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
-    GwMapCoords.Coords:SetText("n/a")
+    GwMapCoords.Coords:SetText(NOT_APPLICABLE)
     GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
     GwMapCoords.elapsedTimer = -1
     GwMapCoords.updateCap = 1 / 5 -- cap coord update to 5 FPS
@@ -427,7 +464,7 @@ local function LoadMinimap()
     --FPS
     if GetSetting("MINIMAP_FPS") then
         GwMapFPS = CreateFrame("Button", "GwMapFPS", Minimap, "GwMapFPS")
-        GwMapFPS.fps:SetText("n/a")
+        GwMapFPS.fps:SetText(NOT_APPLICABLE)
         GwMapFPS.fps:SetFont(STANDARD_TEXT_FONT, 12)
         GwMapFPS.elapsedTimer = -1
         local updateCap = 1 / 5 -- cap fps update to 5 FPS

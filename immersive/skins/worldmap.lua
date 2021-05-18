@@ -12,7 +12,7 @@ local function UpdateCoords()
     if GW.locationData.x and GW.locationData.y then
         CoordsFrame.Coords:SetFormattedText("%s: %.2f, %.2f", PLAYER, (GW.locationData.xText or 0), (GW.locationData.yText or 0))
     else
-        CoordsFrame.Coords:SetFormattedText("%s: %s", PLAYER, "n/a")
+        CoordsFrame.Coords:SetFormattedText("%s: %s", PLAYER, NOT_APPLICABLE)
     end
 
     if WorldMapFrame.ScrollContainer:IsMouseOver() then

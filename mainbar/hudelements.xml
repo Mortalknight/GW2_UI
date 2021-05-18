@@ -327,7 +327,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="GwMiniMapTrackingIcon" file="Interface\AddOns\GW2_UI\Textures\track-icons-map">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\Textures\track-icons-map">
                     <Size>
                         <AbsDimension x="40" y="40"/>
                     </Size>
@@ -339,13 +339,13 @@
         </Layers>
         <Scripts>
             <OnMouseUp>
-                if button == "RightButton" then
-                    CancelTrackingBuff()
-                end
+                ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "MiniMapTracking", 0, -5)
             </OnMouseUp> 
             <OnEnter>
-                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
-                GameTooltip:SetTrackingSpell()
+                GameTooltip:SetOwner(self, "ANCHOR_LEFT");
+                GameTooltip:SetText(TRACKING, 1, 1, 1);
+                GameTooltip:AddLine(MINIMAP_TRACKING_TOOLTIP_NONE, nil, nil, nil, true);
+                GameTooltip:Show();
             </OnEnter>
             <OnLeave>
                 GameTooltip:Hide()

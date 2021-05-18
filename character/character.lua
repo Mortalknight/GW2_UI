@@ -102,7 +102,7 @@ local function collectDurability(self)
     if completeDurabilityNumItems > 0 then
         self.Value:SetText(GW.RoundDec(completeDurability / completeDurabilityNumItems * 100) .. "%")
     else
-        self.Value:SetText("N/A")
+        self.Value:SetText(NOT_APPLICABLE)
     end
 end
 GW.AddForProfiling("paperdoll_equipment", "collectDurability", collectDurability)
@@ -1055,6 +1055,8 @@ end
 GW.AddForProfiling("paperdoll_titles", "title_OnClick", title_OnClick)
 
 local function LoadPVPTab()
+    PVPFrame.Hide = PVPFrame.Show
+    PVPFrame:Show()
     PVPFrame:SetParent(GwPaperHonor)
     PVPFrame:ClearAllPoints()
     PVPFrame:SetPoint("TOPLEFT", GwPaperHonor, "TOPLEFT", 0, 0)

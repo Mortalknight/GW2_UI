@@ -142,7 +142,6 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
             else
                 _G.GameTooltipTextLeft2:SetFormattedText("<|cff00ff10%s|r>", guildName)
             end
-
         end
 
         local diffColor = GetCreatureDifficultyColor(level)
@@ -204,7 +203,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
 
     RemoveTrashLines(self) -- keep an eye on this may be buggy
 
-    local color = SetUnitText(self, unit, UnitLevel(unit), isShiftKeyDown)
+    SetUnitText(self, unit, UnitLevel(unit), isShiftKeyDown)
     local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
 
     if not isShiftKeyDown and not isControlKeyDown then

@@ -319,7 +319,6 @@ local function SetObjectiveNotification()
 
     GwObjectivesNotification.title:SetText(title)
     GwObjectivesNotification.title:SetTextColor(color.r, color.g, color.b)
-    GwObjectivesNotification.compassBG:SetVertexColor(color.r, color.g, color.b, 0.3)
     GwObjectivesNotification.desc:SetText(desc)
 
     if desc == nil or desc == "" then
