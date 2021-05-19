@@ -116,7 +116,7 @@ local charSecure_OnAttributeChanged = [=[
     local showTal = false
 
     local hasPetUI = self:GetAttribute("HasPetUI")
-    
+
     local close = false
     local keytoggle = self:GetAttribute("keytoggle")
 
@@ -673,6 +673,18 @@ local function LoadWindows()
                     f:SetAttribute("keytoggle", true)
                     f:SetAttribute("windowpanelopen", "paperdoll")
                 ]=])
+
+                -- pet GwDressingRoom
+                GwCharacterMenu.petMenu:SetAttribute("_onstate-petstate", [=[
+                    if newstate == "nopet" then
+                        self:Hide()
+                        self:GetFrameRef("GwCharacterWindow"):SetAttribute("HasPetUI", false)
+                    elseif newstate == "hasPet" then
+                        self:Show()
+                        self:GetFrameRef("GwCharacterWindow"):SetAttribute("HasPetUI", true)
+                    end
+                ]=])
+                RegisterStateDriver(GwCharacterMenu.petMenu, "petstate", "[target=pet,noexists] nopet; [target=pet,help] hasPet;")
             end
             v.TabFrame = tab
 

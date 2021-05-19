@@ -153,13 +153,13 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.reputationMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentHonor" parentKey="honorMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="PVP" >
+            <Button name="$parentHonor" parentKey="honorMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate" text="PVP" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.titleMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate" text="Reputation" >
+            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="PET" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.honorMenu" relativePoint="BOTTOMLEFT"></Anchor>
@@ -172,7 +172,6 @@
                 self.reputationMenu:SetText(REPUTATION)
                 self.honorMenu:SetText(PVP)
                 self.petMenu:SetText(PET)
-                if not HasPetUI() then self.petMenu:Hide() end
             </OnLoad>
         </Scripts>
     </Frame>

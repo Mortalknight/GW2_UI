@@ -4,72 +4,66 @@ local animations = GW.animations
 local GetSetting = GW.GetSetting
 local UpdatePowerData = GW.UpdatePowerData
 
-local MAX_COMBO_POINTS = 5
-
-local function animFlare(f, scale, offset, duration, rotate)
-    scale = scale or 32
-    offset = offset or 0
-    duration = duration or 0.5
-    rotate = rotate or false
-    local ff = f.flare
-    local pwr = f.gwPower
-    ff:ClearAllPoints()
-    ff:SetPoint("CENTER", f, "LEFT", (scale * pwr) + offset, 0)
-    AddToAnimation(
-        "POWER_FLARE_ANIM",
-        1,
-        0,
-        GetTime(),
-        duration,
-        function()
-            local p = animations["POWER_FLARE_ANIM"]["progress"]
-            ff:SetAlpha(p)
-            if rotate then
-                ff:SetRotation(1 * p)
-            end
-        end
-    )
-end
-
 local function powerCombo(self, event, ...)
     local pType = select(2, ...)
     if event ~= "CLASS_POWER_INIT" and pType ~= "COMBO_POINTS" then
         return
     end
 
+    local pwrMax = UnitPowerMax("player", Enum.PowerType.ComboPoints)
+    local pwr = UnitPower("player", Enum.PowerType.ComboPoints)
+
     local old_power = self.gwPower
-    old_power = old_power or -1
-
-    local pwr = GetComboPoints("player", "target")
-    local p = pwr - 1
-
-    if pwr > 0 and not self:IsShown() and UnitExists("target") then
-        self:Show()
-    end
     self.gwPower = pwr
 
-    self.background:SetTexCoord(0, 1, 0.125 * (MAX_COMBO_POINTS - 1), 0.125 * MAX_COMBO_POINTS)
-    self.fill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
+    if pwr > 0 and not self:IsShown() and UnitExists("target") then
+        self.combopoints:Show()
+    end
 
-    if old_power < pwr and event ~= "CLASS_POWER_INIT" then
-        animFlare(self, 40)
+    -- hide all not needed ones
+    for i = pwrMax + 1, 9 do
+        self.combopoints["runeTex" .. i]:Hide()
+        self.combopoints["combo" .. i]:Hide()
+    end
+
+
+    for i = 1, pwrMax do
+        if pwr >= i then
+            self.combopoints["combo" .. i]:SetTexCoord(0.5, 1, 0.5, 0)
+            self.combopoints["runeTex" .. i]:Show()
+            self.combopoints["combo" .. i]:Show()
+            self.combopoints.comboFlare:ClearAllPoints()
+            self.combopoints.comboFlare:SetPoint("CENTER", self.combopoints["combo" .. i], "CENTER", 0, 0)
+            if pwr > old_power then
+                self.combopoints.comboFlare:Show()
+                AddToAnimation(
+                    "COMBOPOINTS_FLARE",
+                    0,
+                    5,
+                    GetTime(),
+                    0.5,
+                    function()
+                        local p = animations["COMBOPOINTS_FLARE"].progress
+                        self.combopoints.comboFlare:SetAlpha(p)
+                    end,
+                    nil,
+                    function()
+                        self.combopoints.comboFlare:Hide()
+                    end
+                )
+            end
+        else
+            self.combopoints["combo" .. i]:Hide()
+        end
     end
 end
 
 local function setComboBar(f)
     f.barType = "combo"
-    f:SetHeight(40)
-    f:SetWidth(320)
-    f.background:SetHeight(32)
-    f.background:SetWidth(256)
-    f.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo-bg")
-    f.background:SetTexCoord(0, 1, 0.5, 1)
-    f.flare:SetWidth(128)
-    f.flare:SetHeight(128)
-    f.flare:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo-flash")
-    f.fill:SetHeight(40)
-    f.fill:SetWidth(320)
-    f.fill:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\altpower\\combo")
+    f.background:SetTexture(nil)
+    f.fill:SetTexture(nil)
+    f:SetHeight(32)
+    f.combopoints:Show()
 
     f:SetScript("OnEvent", powerCombo)
     powerCombo(f, "CLASS_POWER_INIT")
@@ -86,6 +80,19 @@ local function setComboBar(f)
         end
         f:SetWidth(220)
         f:SetHeight(30)
+        f.combopoints.comboFlare:SetSize(64, 64)
+        local point = 0
+        for i = 1, 9 do
+            f.combopoints["runeTex" .. i]:SetSize(18, 18)
+            f.combopoints["combo" .. i]:SetSize(18, 18)
+            if GwTargetUnitFrame.frameInvert then
+                f.combopoints["runeTex" .. i]:ClearAllPoints()
+                f.combopoints["combo" .. i]:ClearAllPoints()
+                f.combopoints["runeTex" .. i]:SetPoint("RIGHT", f.combopoints, "RIGHT", point, 0)
+                f.combopoints["combo" .. i]:SetPoint("RIGHT", f.combopoints, "RIGHT", point, 0)
+                point = point - 32
+            end
+        end
         f:Hide()
     end
 end
@@ -146,6 +153,8 @@ GW.AddForProfiling("classpowers", "setDruid", setDruid)
 local function selectType(f)
     f:SetScript("OnEvent", nil)
     f:UnregisterAllEvents()
+
+    f.combopoints:Hide()
 
     if f.ourPowerBar then
         GwPlayerPowerBarExtra:Hide()

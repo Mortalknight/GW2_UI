@@ -661,36 +661,6 @@ local function gw_OnEvent(self, event, ...)
         if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
             PixelPerfection()
         end
-        if not setHasPetUI then
-            local delayUpdateTime = GetTime() + 0.4
-            HasPetUIFrame:SetScript(
-                "OnUpdate",
-                function()
-                    if GetTime() < delayUpdateTime then
-                        return
-                    end
-                    if GetSetting("USE_CHARACTER_WINDOW") then
-                        if InCombatLockdown() then
-                            setAttributeAfterCombat:SetScript(
-                                "OnUpdate",
-                                function()
-                                    local inCombat = UnitAffectingCombat("player")
-                                    if inCombat == true then
-                                        return
-                                    end
-                                    GwCharacterWindow:SetAttribute("HasPetUI", select(1, HasPetUI()))
-                                    setAttributeAfterCombat:SetScript("OnUpdate", nil)
-                                end)
-                            return
-                        else
-                            GwCharacterWindow:SetAttribute("HasPetUI", select(1, HasPetUI()))
-                        end
-                    end
-                    setHasPetUI = true
-                    HasPetUIFrame:SetScript("OnUpdate", nil)
-                end
-            )
-        end
     elseif event == "PLAYER_LEVEL_UP" then
         GW.mylevel = ...
         Debug("New level:", GW.mylevel)

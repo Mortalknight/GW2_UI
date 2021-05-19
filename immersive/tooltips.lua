@@ -388,6 +388,27 @@ local function anchorTooltip(self, p)
 end
 GW.AddForProfiling("tooltips", "anchorTooltip", anchorTooltip)
 
+local function SkinItemRefTooltip()
+    local SkinItemRefTooltip_Update = function()
+        if ItemRefTooltip:IsShown() then
+            ItemRefCloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
+            ItemRefCloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+            ItemRefCloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+            ItemRefCloseButton:SetSize(20, 20)
+            ItemRefCloseButton:ClearAllPoints()
+            ItemRefCloseButton:SetPoint("TOPRIGHT", -3, -3)
+            ItemRefTooltip:StripTextures()
+            ItemRefTooltip:CreateBackdrop(constBackdropArgs)
+
+            if IsAddOnLoaded("Pawn") then
+                if ItemRefTooltip.PawnIconFrame then ItemRefTooltip.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
+            end
+        end
+    end
+
+    hooksecurefunc("SetItemRef", SkinItemRefTooltip_Update)
+end
+
 local function LoadTooltips()
     if GetSetting("TOOLTIP_MOUSE") then
         hooksecurefunc("GameTooltip_SetDefaultAnchor", anchorTooltip)
@@ -412,6 +433,8 @@ local function LoadTooltips()
             end
         end)
     end
+
+    SkinItemRefTooltip()
 
     if GetSetting("ADVANCED_TOOLTIP") then
         GameTooltip:HookScript("OnTooltipSetUnit", GameTooltip_OnTooltipSetUnit)

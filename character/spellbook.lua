@@ -1,5 +1,31 @@
 local _, GW = ...
 
+local function SpellButton_OnModifiedClick(self)
+    local slot = self.spellbookIndex
+    local book = self.booktype
+    if IsModifiedClick("CHATLINK") then
+        if MacroFrameText and MacroFrameText:HasFocus() then
+            local spell, subSpell = GetSpellBookItemName(slot, book)
+            if spell and not IsPassiveSpell(slot, book) then
+                if subSpell and strlen(subSpell) > 0 then
+                    ChatEdit_InsertLink(spell .. "(" .. subSpell .. ")")
+                else
+                    ChatEdit_InsertLink(spell)
+                end
+            end
+        else
+            local profLink, profId = GetSpellTradeSkillLink(slot, book)
+            if profId then
+                ChatEdit_InsertLink(profLink)
+            else
+                ChatEdit_InsertLink(GetSpellLink(slot, book))
+            end
+        end
+    elseif IsModifiedClick("PICKUPACTION") and not InCombatLockdown() and not IsPassiveSpell(slot, book) then
+        PickupSpellBookItem(slot, book)
+    end
+end
+
 local function spell_buttonOnEnter(self)
     if self.spellId == nil then return end
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
@@ -103,82 +129,89 @@ end
 local spellButtonIndex = 1
 local function setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spellbookIndex, booktype, tab, name, rank, level)
     local _, autostate = GetSpellAutocast(spellbookIndex, booktype)
+    local btn =  _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]
 
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].autocast:Hide()
-    if autostate then
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].autocast:Show()
-    end
+    btn.isPassive = ispassive
+    btn.isFuture = (skillType == 'FUTURESPELL')
+    btn.isFlyout = (skillType == 'FLYOUT')
+    btn.spellbookIndex = spellbookIndex
+    btn.booktype = booktype
+    btn:EnableMouse(true)
+    btn.spellId = spellID
+    btn.requiredLevel = level
+    btn.icon:SetTexture(icon)
+    btn:SetAlpha(1)
+    btn:SetAttribute("ispickable", false)
 
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].isPassive = ispassive
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].isFuture = (skillType == 'FUTURESPELL')
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].isFlyout = (skillType == 'FLYOUT')
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].spellbookIndex = spellbookIndex
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].booktype = booktype
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:EnableMouse(true)
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].spellId = spellID
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].requiredLevel = level
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].icon:SetTexture(icon)
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAlpha(1)
+    btn.rank:SetText(rank and rank or "")
+    btn.autocast:SetShown(autostate)
+    btn.arrow:SetShown(btn.isFlyout)
 
-    if rank ~= nil then
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].rank:SetText(rank)
-    else
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].rank:SetText("")
-    end
-    if level ~= nil then
+    if level then
         if level > GW.mylevel then
-            _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].lock:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spell-lock");
+            btn.lock:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spell-lock");
         else
-            _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].lock:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spell-unlock");
+            btn.lock:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\spell-unlock");
         end
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].lock:Show()
+        btn.lock:Show()
     else
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].lock:Hide()
+        btn.lock:Hide()
     end
 
-    if booktype == 'pet' then
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("type", "spell")
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("*spell", spellID)
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("type2", "macro")
+    btn:SetScript('OnEvent', spellbookButton_onEvent)
+
+    if btn.isFlyout then
+        btn:SetAttribute("type1", "flyout")
+        btn:SetAttribute("type2", "flyout")
+        btn:SetAttribute("spell", spellID)
+        btn:SetAttribute("flyout", spellID)
+        btn:SetAttribute("flyoutDirection", 'RIGHT')
+    elseif not btn.isFuture and booktype == BOOKTYPE_PET then
+        btn:SetAttribute("type1", "spell")
+        btn:SetAttribute("type2", "macro")
+        btn:SetAttribute("spell", spellID)
         if name ~= nil then
-            _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("*macrotext2", "/petautocasttoggle " .. name)
+            btn:SetAttribute("*macrotext2", "/petautocasttoggle " .. name)
         end
+        btn:SetAttribute("shift-type1", "modifiedClick")
+        btn:SetAttribute("shift-type2", "modifiedClick")
+    elseif not btn.isFuture then
+        btn:SetAttribute("ispickable", true)
+        btn:SetAttribute("type1", "spell")
+        btn:SetAttribute("type2", "spell")
+        btn:SetAttribute("spell", spellID)
+        btn:SetAttribute("shift-type1", "modifiedClick")
+        btn:SetAttribute("shift-type2", "modifiedClick")
     else
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("type", "spell")
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("spell", spellID)
+        btn:SetAttribute("shift-type1", "modifiedClick")
+        btn:SetAttribute("shift-type2", "modifiedClick")
     end
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].arrow:Hide()
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetScript('OnEvent', spellbookButton_onEvent)
+
 
     if skillType == 'FUTURESPELL' then
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].icon:SetDesaturated(true)
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].icon:SetAlpha(0.5)
+        btn.icon:SetDesaturated(true)
+        btn.icon:SetAlpha(0.5)
     elseif skillType == 'FLYOUT' then
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].arrow:Show()
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("type", "flyout")
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("flyout", spellID)
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:SetAttribute("flyoutDirection", 'RIGHT')
-
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].icon:SetDesaturated(false)
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].icon:SetAlpha(1)
+        btn.icon:SetDesaturated(false)
+        btn.icon:SetAlpha(1)
     else
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].icon:SetDesaturated(false)
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].icon:SetAlpha(1)
+        btn.icon:SetDesaturated(false)
+        btn.icon:SetAlpha(1)
     end
 
     if ispassive then
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight' )
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].icon:AddMaskTexture(_G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].mask)
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_outline')
+        btn.highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight')
+        btn.icon:AddMaskTexture(btn.mask)
+        btn.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_outline')
     else
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\active_highlight' )
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].icon:RemoveMaskTexture(_G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].mask)
-        _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex].outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border')
+        btn.highlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\active_highlight')
+        btn.icon:RemoveMaskTexture(btn.mask)
+        btn.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border')
     end
-    spellbookButton_onEvent(_G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex])
-    _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]:Show()
+    spellbookButton_onEvent(btn)
+    btn:Show()
 
-    return _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]
+    return btn
 end
 
 local function findHigherRank(t,spellID)
@@ -605,6 +638,7 @@ local function updateSpellbookTab()
             end
 
             local mainButton = setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name, rank)
+            mainButton.modifiedClick = SpellButton_OnModifiedClick
             spellButtonIndex = spellButtonIndex + 1
             boxIndex = boxIndex + 1
 

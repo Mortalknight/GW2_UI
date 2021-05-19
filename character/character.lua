@@ -142,9 +142,8 @@ local function PaperDollPetStats_OnEvent(self, event, ...)
     end
 
     local unit = ...
-    local hasUI = HasPetUI()
     if event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or (event == "UNIT_PET" and unit == "player") then
-        if GwPetContainer:IsVisible() and not hasUI then
+        if GwPetContainer:IsVisible() and not HasPetUI() then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
             GwCharacterMenu.petMenu:Hide()
             return
@@ -247,8 +246,9 @@ local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y
     grid, x, y = statGridPos(grid, x, y)
     return grid, x, y, index + 1
 end
+
 local function setPetStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y)
-    local statFrame = gwPaperDollPetGetStatListFrame(GwPapaerDollStatsPet, index)
+    local statFrame = PaperDollPetGetStatListFrame(GwPapaerDollStatsPet, index)
     statFrame.tooltip = tooltip
     statFrame.tooltip2 = tooltip2
     statFrame.stat = stat
@@ -1351,7 +1351,7 @@ local function LoadPaperDoll()
     CreateFrame("Button", "GwDressingRoomPet", GwPetContainer, "GwPetPaperdoll")
 
     GwPapaerDollStats:SetScript("OnEvent", PaperDollStats_OnEvent)
-    GwDressingRoomPet:SetScript("OnEvent", PaperDollPetStats_OnEvent)
+    GwPapaerDollStatsPet:SetScript("OnEvent", PaperDollPetStats_OnEvent)
 
     grabDefaultSlots(CharacterHeadSlot, {"TOPLEFT", GwDressingRoom.gear, "TOPLEFT", 0, 0}, GwDressingRoom, 50)
     grabDefaultSlots(CharacterShoulderSlot, {"TOPLEFT", CharacterHeadSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
@@ -1451,6 +1451,10 @@ local function LoadPaperDoll()
         GwDressingRoom.model:SetPosition(0.4, 0, -0.05)
     elseif GW.myrace == "Tauren" then
         GwDressingRoom.model:SetPosition(0.6, 0, 0)
+    elseif GW.myrace == "BloodElf" then
+        GwDressingRoom.model:SetPosition(0.5, 0, 0)
+    elseif GW.myrace == "Draenei" then
+        GwDressingRoom.model:SetPosition(0.3, 0, -0.15)
     elseif GW.myrace == "NightElf" then
         GwDressingRoom.model:SetPosition(0.3, 0, -0.15)
     elseif GW.myrace == "Troll" then
