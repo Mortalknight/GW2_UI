@@ -41,7 +41,7 @@ local function MirrorTimer_Show(timer, value, maxvalue, scale, paused, label)
     local color = MirrorTimerColors[timer]
     dialog.bar:SetMinMaxValues(0, (maxvalue / 1000))
     dialog.bar:SetValue(dialog.value)
-    dialog.bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
+    dialog.bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/castinbar-white")
     dialog.bar:SetStatusBarColor(color.r, color.g, color.b)
     dialog:Show()
 end
@@ -49,7 +49,7 @@ GW.MirrorTimer_Show = MirrorTimer_Show
 
 local function mirrorTimerFrame_OnEvent(self, event, arg1)
     if event == "PLAYER_ENTERING_WORLD" then
-        for index = 1, _G.MIRRORTIMER_NUMTIMERS do
+        for index = 1, MIRRORTIMER_NUMTIMERS do
             local timer, value, maxvalue, scale, paused, label = GetMirrorTimerInfo(index)
             if timer == "UNKNOWN" then
                 self:Hide()

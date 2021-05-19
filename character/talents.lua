@@ -65,7 +65,7 @@ local function drawLegacyLine(path, frame, teir, column, requirementsMet)
             if path[i].x > 0 then
                 arrow.right:Show()
             else
-                arrow.left:Down()
+                arrow.left:Show()
             end
         end
         colorTalentArrow(arrow, requirementsMet)
@@ -94,7 +94,6 @@ local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requir
         if not blocked then
             return drawLegacyLine(path, frame, tier, column, requirementsMet)
         end
-        path = {}
     end
 
     blocked= false
@@ -112,13 +111,16 @@ local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requir
                 end
             end
         else
-            path[#path + 1] = {x = 1, y = 0}
+            if buttonColumn < column then
+                path[#path + 1] = {x = -1, y = 0}
+            else
+                path[#path + 1] = {x = 1, y = 0}
+            end
         end
         if not blocked then
             return drawLegacyLine(path, frame, tier, column, requirementsMet)
         end
     end
-    path = {}
     path[#path + 1] = {x = 1, y = 0}
     path[#path + 1] = {x = 0, y = 1}
 
@@ -256,7 +258,7 @@ end
 local function loadTalentsFrames()
     local _, _, classID = UnitClass('player')
     local mask = UIParent:CreateMaskTexture()
-    
+
     mask:SetPoint("TOPLEFT", GwCharacterWindow, 'TOPLEFT', 0, 0)
     mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\windowbg-mask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(853, 853)

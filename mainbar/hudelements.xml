@@ -408,7 +408,7 @@
         </Anchors>
         <Layers>
             <Layer>
-                <Texture file="Interface/AddOns/GW2_UI/textures/hud/breathmeter">
+                <Texture file="Interface/AddOns/GW2_UI/textures/breathmeter">
                     <Color r="0.2" b="0.2" g="0.2" a="0.5"></Color>
                     <Size x="258" y="22"></Size>
                     <Anchors>
@@ -423,7 +423,7 @@
                 <Anchors>
                     <Anchor point="LEFT" x="1"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/hud/breathmeter"/>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/breathmeter"/>
                 <Layers>
                     <Layer level="OVERLAY" textureSubLevel="2">
                         <FontString parentKey="name" text="" justifyH="CENTER">

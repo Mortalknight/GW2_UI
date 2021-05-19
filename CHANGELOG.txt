@@ -1,3 +1,9 @@
+1.0.2
+FIXES
+    - Show mirror timers (breath/fatigue) correctly
+    - Fix talentframe requirment talent linked
+    - Bring back HUD Scale slider
+
 1.0.1-TBC
 FIXES
     - Fix combopoint issue while target frame is inverted and combopoints hooked on target frame

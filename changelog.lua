@@ -1,6 +1,13 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.0.2 TBC", [=[
+FIXES
+    - Show mirror timers (breath/fatigue) correctly
+    - Fix talentframe requirment talent linked
+    - Bring back HUD Scale slider
+]=])
+
 v("1.0.1 TBC", [=[
 FIXES
     - Fix combopoint issue while target frame is inverted and combopoints hooked on target frame

@@ -550,6 +550,9 @@ local function hud_OnEvent(self, event, ...)
         if unit == "player" then
             combatHealthState(self)
         end
+    elseif event == "MIRROR_TIMER_START" then
+        local arg1, arg2, arg3, arg4, arg5, arg6 = ...
+        GW.MirrorTimer_Show(arg1, arg2, arg3, arg4, arg5, arg6)
     end
 end
 GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
@@ -577,6 +580,7 @@ local function LoadHudArt()
     hudArtFrame:RegisterEvent("PLAYER_ALIVE")
     hudArtFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     hudArtFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    hudArtFrame:RegisterEvent("MIRROR_TIMER_START")
     hudArtFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
     hudArtFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     selectBg(hudArtFrame)
