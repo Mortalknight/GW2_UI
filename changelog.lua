@@ -1,6 +1,18 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.1.0 TBC", [=[
+NEW
+    - Added Focus and Focus target frame
+    - Show cooldown at bags, character and spellbook correct by using our own cooldown system
+    - Added GearQuipper TBC support: Thanks to Prayos for the quick support and add the GW2 compability on GearQuipper side :)
+        (https://www.curseforge.com/wow/addons/gearquipper)
+
+FIXES
+    - Fix partyframe layout issue
+    - Petbar: You can now see if a auto cast spell is active or not
+]=])
+
 v("1.0.2 TBC", [=[
 FIXES
     - Show mirror timers (breath/fatigue) correctly

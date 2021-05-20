@@ -548,9 +548,11 @@ local function addAddonButton(name, setting, shadow, anchor, showFunction, hideO
         nextAnchor = GwCharacterMenu.buttonName
 
         if name == "GearQuipper-TBC" then
+            GwCharacterMenu.buttonName:SetText("GearQuipper TBC")
             GqUiFrame:ClearAllPoints()
             GqUiFrame:SetParent(GwCharacterWindow)
             GqUiFrame:SetPoint("TOPRIGHT", GwCharacterWindow, "TOPRIGHT", 350, -12)
+            GW.SkinGearQuipper()
         end
     end
 end
@@ -626,10 +628,14 @@ local function LoadWindows()
                 styleCharacterMenuBackButton(GwDressingRoomPet.backButton)
 
                 -- add addon buttons here
-                nextShadow = true
-                nextAnchor = GwCharacterMenu.petMenu
+                if GW.myClassID == 3 or GW.myClassID == 9 then
+                    nextShadow = false
+                else
+                    nextShadow = true
+                end
+                nextAnchor = (GW.myClassID == 3 or GW.myClassID == 9) and GwCharacterMenu.petMenu or GwCharacterMenu.honorMenu
                 addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end, true)
-                --addAddonButton("GearQuipper-TBC", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() gearquipper:ToggleUI() end, false)
+                addAddonButton("GearQuipper-TBC", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() gearquipper:ToggleUI() end, false)
                 addAddonButton("Clique", GetSetting("USE_SPELLBOOK_WINDOW"), nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end, true)
 
                 GwCharacterMenu.skillsMenu:SetAttribute("_onclick", [=[

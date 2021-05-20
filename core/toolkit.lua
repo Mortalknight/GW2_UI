@@ -142,7 +142,7 @@ function SkinSliderFrame(frame)
 
     local thumb = frame:GetThumbTexture()
     thumb:SetSize(SIZE - 2, SIZE - 2)
-    
+
     local tex = frame:CreateTexture("bg", "BACKGROUND")
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/sliderbg")
     frame.tex = tex
@@ -168,7 +168,7 @@ function SkinSliderFrame(frame)
     end
 end
 
-local function CreateBackdrop(frame, backdropTexture)
+local function CreateBackdrop(frame, backdropTexture, isBorder, setOffset)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
     local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
     if not frame.backdrop then frame.backdrop = backdrop end
@@ -181,7 +181,18 @@ local function CreateBackdrop(frame, backdropTexture)
         backdrop:SetFrameLevel(0)
     end
 
-    backdrop:SetAllPoints()
+    if isBorder then
+        local trunc = function(s) return s >= 0 and s-s%01 or s-s%-1 end
+        local round = function(s) return s >= 0 and s-s%-1 or s-s%01 end
+        local x = setOffset and setOffset or ((GW.mult == 1 or 2 == 0) and 2 or ((GW.mult < 1 and trunc(2 / GW.mult) or round(2 / GW.mult)) * GW.mult))
+        local y = setOffset and setOffset or ((GW.mult == 1 or 2 == 0) and 2 or ((GW.mult < 1 and trunc(2 / GW.mult) or round(2 / GW.mult)) * GW.mult))
+
+        backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -x, y)
+        backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", x, -y)
+
+    else
+        backdrop:SetAllPoints()
+    end
 
     if backdropTexture then
         backdrop:SetBackdrop(backdropTexture)
@@ -320,7 +331,7 @@ local function SkinScrollBar(frame)
     end
 end
 
-local function SkinDropDownMenu(frame)
+local function SkinDropDownMenu(frame, buttonPaddindX)
     local frameName = frame.GetName and frame:GetName()
     local button = frame.Button or frameName and (_G[frameName .. "Button"] or _G[frameName .. "_Button"])
     local text = frameName and _G[frameName .. "Text"] or frame.Text
@@ -329,8 +340,7 @@ local function SkinDropDownMenu(frame)
     frame:StripTextures()
     frame:SetWidth(155)
 
-    frame:CreateBackdrop()
-    frame.backdrop:SetBackdrop(constBackdropDropDown)
+    frame:CreateBackdrop(constBackdropDropDown)
     frame.backdrop:SetBackdropColor(0, 0, 0)
 
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)
@@ -338,14 +348,11 @@ local function SkinDropDownMenu(frame)
     frame.backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 2, -2)
 
     button:ClearAllPoints()
-
-    if pos then
-        button:SetPoint("TOPRIGHT", frame.Right, -20, -21)
-    else
-        button:SetPoint("RIGHT", frame, "RIGHT", -10, 3)
-    end
+    button:SetPoint("RIGHT", frame, "RIGHT", buttonPaddindX or -10, 3)
 
     button.SetPoint = GW.NoOp
+    button:StripTextures()
+
     button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
     button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
     button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
@@ -353,7 +360,7 @@ local function SkinDropDownMenu(frame)
 
     if text then
         text:ClearAllPoints()
-        text:SetPoint("RIGHT", button, "LEFT", -2, 0)
+        text:SetPoint("RIGHT", button, "LEFT", 4, 0)
     end
 
     if icon then
