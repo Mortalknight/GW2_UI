@@ -239,7 +239,7 @@ local function powerCombo(self, event, ...)
     local pwr = UnitPower("player", Enum.PowerType.ComboPoints)
     local chargedPowerPoints = GetUnitChargedPowerPoints("player")
     local chargedPowerPointIndex = chargedPowerPoints and chargedPowerPoints[1]
-    local old_power = self.gwPower 
+    local old_power = self.gwPower
     self.gwPower = pwr
 
     if pwr > 0 and not self:IsShown() and UnitExists("target") then

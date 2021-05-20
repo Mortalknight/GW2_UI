@@ -516,7 +516,7 @@ local function createPartyFrame(i)
     frame:SetAttribute("*type2", "togglemenu")
 
     if i > 0 then
-        RegisterUnitWatch(frame)
+        RegisterStateDriver(frame, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(registerUnit))
     else
         RegisterStateDriver(frame, "visibility", "[group:raid] hide; [group:party] show; hide")
     end
