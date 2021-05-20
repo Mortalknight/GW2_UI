@@ -1,3 +1,12 @@
+1.1.0
+NEW
+    - Added Focus and Focus target frame
+    - Show cooldown at bags, character and spellbook correct by using our own cooldown system
+
+FIXES
+    - Fix partyframe layout issue
+    - Petbar: You can now see if a auto cast spell is active or not
+
 1.0.2
 FIXES
     - Show mirror timers (breath/fatigue) correctly

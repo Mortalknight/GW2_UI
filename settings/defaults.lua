@@ -141,6 +141,19 @@ GW_DEFAULT["target_CLASS_COLOR"] = true
 GW_DEFAULT["TARGET_FLOATING_COMBAT_TEXT"] = true
 GW_DEFAULT["target_FRAME_INVERT"] = false
 
+GW_DEFAULT["focus_TARGET_ENABLED"] = true
+GW_DEFAULT["focus_DEBUFFS"] = true
+GW_DEFAULT["focus_DEBUFFS_FILTER"] = true
+GW_DEFAULT["focus_BUFFS"] = true
+GW_DEFAULT["focus_BUFFS_FILTER"] = true
+GW_DEFAULT["focus_BUFFS_FILTER_ALL"] = false
+GW_DEFAULT["focus_BUFFS_FILTER_IMPORTANT"] = false
+
+GW_DEFAULT["focus_HEALTH_VALUE_ENABLED"] = false
+GW_DEFAULT["focus_HEALTH_VALUE_TYPE"] = false
+GW_DEFAULT["focus_CLASS_COLOR"] = true
+GW_DEFAULT["focus_FRAME_INVERT"] = false
+
 GW_DEFAULT["multibarleft_pos"] = {}
 GW_DEFAULT["multibarleft_pos"]["point"] = "RIGHT"
 GW_DEFAULT["multibarleft_pos"]["relativePoint"] = "RIGHT"
@@ -180,6 +193,20 @@ GW_DEFAULT["targettarget_pos"]["relativePoint"] = "TOP"
 GW_DEFAULT["targettarget_pos"]["xOfs"] = 250
 GW_DEFAULT["targettarget_pos"]["yOfs"] = -100
 GW_DEFAULT["targettarget_pos_scale"] = 1
+
+GW_DEFAULT["focus_pos"] = {}
+GW_DEFAULT["focus_pos"]["point"] = "CENTER"
+GW_DEFAULT["focus_pos"]["relativePoint"] = "CENTER"
+GW_DEFAULT["focus_pos"]["xOfs"] = -350
+GW_DEFAULT["focus_pos"]["yOfs"] = 0
+GW_DEFAULT["focus_pos_scale"] = 1
+
+GW_DEFAULT["focustarget_pos"] = {}
+GW_DEFAULT["focustarget_pos"]["point"] = "CENTER"
+GW_DEFAULT["focustarget_pos"]["relativePoint"] = "CENTER"
+GW_DEFAULT["focustarget_pos"]["xOfs"] = -80
+GW_DEFAULT["focustarget_pos"]["yOfs"] = -10
+GW_DEFAULT["focustarget_pos_scale"] = 1
 
 GW_DEFAULT["MultiBarBottomLeft"] = {}
 GW_DEFAULT["MultiBarBottomLeft"]["point"] = "BOTTOMLEFT"

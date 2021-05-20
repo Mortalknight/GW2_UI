@@ -38,7 +38,7 @@ local function spell_buttonOnEnter(self)
         if not self.isFlyout then
             GameTooltip:SetSpellBookItem(self.spellbookIndex,self.booktype)
         else
-            local name, desc, numSlots, isKnown = GetFlyoutInfo(self.spellId)
+            local name, desc = GetFlyoutInfo(self.spellId)
             GameTooltip:AddLine(name)
             GameTooltip:AddLine(desc)
         end
@@ -54,21 +54,24 @@ local function spell_buttonOnEnter(self)
     GameTooltip:Show()
 end
 
-local function spell_buttonOnLeave(self)
-    GameTooltip:Hide()
-end
-
 local function spellbookButton_onEvent(self)
-    if not GwSpellbook:IsShown() then return end
+    if not GwSpellbook:IsShown() or not self.cooldown or not self.spellId then return end
 
-    local start, duration, enable = GetSpellCooldown(self.spellbookIndex, self.booktype)
+    local start, duration, enable, modRate = GetSpellCooldown(self.spellId)
 
-    if start ~= nil and duration ~= nil and IsSpellKnown(self.spellId) then
-        self.cooldown:SetCooldown(start, duration)
+    if start and duration then
+        if (enable == 1) then
+            self.cooldown:Hide();
+        else
+            self.cooldown:Show();
+        end
+        CooldownFrame_Set(self.cooldown, start, duration, enable, false, modRate)
+    else
+        self.cooldown:Hide();
     end
 end
 
-local function  spellBookMenu_onLoad(self)
+local function spellBookMenu_onLoad(self)
     self:RegisterEvent("SPELLS_CHANGED")
     self:RegisterEvent("LEARNED_SPELL_IN_TAB")
     self:RegisterEvent("SKILL_LINES_CHANGED")
@@ -77,35 +80,31 @@ local function  spellBookMenu_onLoad(self)
 end
 
 local SpellbookHeaderIndex = 1
-local function getSpellBookHeader(tab,pagingContainer)
-    if _G['GwSpellbookContainerTab' .. tab .. 'GwSpellbookActionBackground' .. SpellbookHeaderIndex] ~= nil then
-        local f = _G['GwSpellbookContainerTab' .. tab .. 'GwSpellbookActionBackground' .. SpellbookHeaderIndex]
-        return f
+local function getSpellBookHeader(tab)
+    if _G['GwSpellbookContainerTab' .. tab .. 'GwSpellbookActionBackground' .. SpellbookHeaderIndex] then
+        return _G['GwSpellbookContainerTab' .. tab .. 'GwSpellbookActionBackground' .. SpellbookHeaderIndex]
     end
 
-    local f = CreateFrame("Frame", 'GwSpellbookContainerTab' .. tab .. 'GwSpellbookActionBackground' .. SpellbookHeaderIndex,  _G['GwSpellbookContainerTab' .. tab], "GwSpellbookActionBackground"   )
-
-
-    return f
+    return CreateFrame("Frame", 'GwSpellbookContainerTab' .. tab .. 'GwSpellbookActionBackground' .. SpellbookHeaderIndex, _G['GwSpellbookContainerTab' .. tab], "GwSpellbookActionBackground")
 end
 
-local function setHeaderLocation(self,tab,pagingContainer)
+local function setHeaderLocation(self, pagingContainer)
     local prev
 
-    if pagingContainer.headers[#pagingContainer.headers] ~=nil then
+    if pagingContainer.headers[#pagingContainer.headers] then
         prev = pagingContainer.headers[#pagingContainer.headers]
     end
     self:ClearAllPoints()
     self:SetParent(pagingContainer)
 
-    if prev~= nil then
-        if ((#pagingContainer.headers+1) % 2)==0 then
+    if prev then
+        if ((#pagingContainer.headers + 1) % 2) == 0 then
             local prev2
 
-            if pagingContainer.headers[#pagingContainer.headers - 1]~=nil then
+            if pagingContainer.headers[#pagingContainer.headers - 1] then
                 prev2 = pagingContainer.headers[#pagingContainer.headers - 1]
             end
-            if prev2 ~= nil then
+            if prev2 then
                 self:SetPoint("TOPLEFT", prev2, "BOTTOMLEFT", 0, -5)
                 self.column = 2
             else
@@ -113,7 +112,7 @@ local function setHeaderLocation(self,tab,pagingContainer)
                 self.column = 2
             end
         else
-            prev =  pagingContainer.headers[#pagingContainer.headers - 1]
+            prev = pagingContainer.headers[#pagingContainer.headers - 1]
             self:SetPoint("TOPLEFT", prev, "BOTTOMLEFT", 0, -5)
             self.column = 1
         end
@@ -255,11 +254,6 @@ local function getHeaderHeight(pagingContainer,lastHeader)
 end
 
 local function setUpPaging(self)
-        --self:SetFrameRef('GwSpellbookMenu', GwSpellbookMenu)
-    local numPages = self.tabs
-
-
-
     self.left:SetFrameRef('tab', self.attrDummy)
     self.left:SetAttribute("_onclick", [=[
         self:GetFrameRef('tab'):SetAttribute('page', 'left')
@@ -276,70 +270,60 @@ local function setUpPaging(self)
     self.attrDummy:SetFrameRef('container4', self.container4)
     self.attrDummy:SetFrameRef('left', self.left)
     self.attrDummy:SetFrameRef('right', self.right)
+    self.attrDummy:SetAttribute('_onattributechanged', ([=[
+        if name ~= 'page' then return end
 
-    local glueMethod = [=[
+        local p1 = self:GetFrameRef('container1')
+        local p2 = self:GetFrameRef('container2')
+        local p3 = self:GetFrameRef('container3')
+        local p4 = self:GetFrameRef('container4')
+        local left = self:GetFrameRef('left')
+        local right = self:GetFrameRef('right')
+        local numPages = %s
+        local currentPage = 1
 
-    if name~='page' then return end
-
-    local p1 = self:GetFrameRef('container1')
-    local p2 = self:GetFrameRef('container2')
-    local p3 = self:GetFrameRef('container3')
-    local p4 = self:GetFrameRef('container4')
-    local left = self:GetFrameRef('left')
-    local right = self:GetFrameRef('right')
-    ]=]
-    glueMethod = glueMethod.."local numPages = "..numPages.." "
-    glueMethod=glueMethod..[=[
-
-    local currentPage = 1
-
-    if value=="left" then
-        if p4:IsVisible() then
-            p4:Hide()
-            p3:Show()
-            currentPage = 3
-        elseif p3:IsVisible() then
-            p3:Hide()
-            p2:Show()
-            currentPage = 2
-        elseif p2:IsVisible() then
-            p2:Hide()
-            p1:Show()
-            currentPage = 1
+        if value == "left" then
+            if p4:IsVisible() then
+                p4:Hide()
+                p3:Show()
+                currentPage = 3
+            elseif p3:IsVisible() then
+                p3:Hide()
+                p2:Show()
+                currentPage = 2
+            elseif p2:IsVisible() then
+                p2:Hide()
+                p1:Show()
+                currentPage = 1
+            end
         end
-    end
-    if value=="right" then
-        if p1:IsVisible()  then
-            p1:Hide()
-            p2:Show()
-            currentPage = 2
-        elseif p2:IsVisible() then
-            p2:Hide()
-            p3:Show()
-            currentPage = 3
-        elseif p3:IsVisible() then
-            p3:Hide()
-            p4:Show()
-            currentPage = 4
+        if value == "right" then
+            if p1:IsVisible()  then
+                p1:Hide()
+                p2:Show()
+                currentPage = 2
+            elseif p2:IsVisible() then
+                p2:Hide()
+                p3:Show()
+                currentPage = 3
+            elseif p3:IsVisible() then
+                p3:Hide()
+                p4:Show()
+                currentPage = 4
+            end
         end
-    end
 
-    if currentPage>=numPages then
-        right:Hide()
-    else
-        right:Show()
-    end
-    if currentPage==1 then
-        left:Hide()
-    else
-        left:Show()
-    end
-
-
-    ]=]
-
-
-    self.attrDummy:SetAttribute('_onattributechanged',glueMethod)
+        if currentPage >= numPages then
+            right:Hide()
+        else
+            right:Show()
+        end
+        if currentPage == 1 then
+            left:Hide()
+        else
+            left:Show()
+        end
+    ]=]):format(self.tabs))
     self.attrDummy:SetAttribute('page', 'left')
 end
 
@@ -398,8 +382,8 @@ local function setUnknowSpellButton(self,icon,spellID,rank,ispassive,level)
         self.icon:RemoveMaskTexture(self.mask)
         self.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border')
     end
-    self:SetScript("OnEnter",spell_buttonOnEnter)
-    self:SetScript("OnLeave",spell_buttonOnLeave)
+    self:SetScript("OnEnter", spell_buttonOnEnter)
+    self:SetScript("OnLeave", GameTooltip_Hide)
 end
 
 local function filterUnknownSpell(knownSpellID,spell)
@@ -604,7 +588,7 @@ local function updateSpellbookTab()
             local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
             local name, rank, spellID = GetSpellBookItemName(spellIndex, BOOKTYPE)
 
-            rank = string.match(rank, "[%d]")
+            rank = rank and string.match(rank, "[%d]") or ""
             knownSpellID[#knownSpellID + 1] = spellID
 
             --[[ --TODO: Need new spells for TBC
@@ -639,6 +623,7 @@ local function updateSpellbookTab()
 
             local mainButton = setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name, rank)
             mainButton.modifiedClick = SpellButton_OnModifiedClick
+            if not ispassive then GW.RegisterCooldown(mainButton.cooldown) end
             spellButtonIndex = spellButtonIndex + 1
             boxIndex = boxIndex + 1
 
@@ -656,8 +641,8 @@ local function updateSpellbookTab()
                     _G['GwSpellbookContainerTab' .. spellBookTabs].tabs = pagingID
 
                 end
-                header = getSpellBookHeader(spellBookTabs,pagingContainer)
-                setHeaderLocation(header,spellBookTabs,pagingContainer)
+                header = getSpellBookHeader(spellBookTabs)
+                setHeaderLocation(header, pagingContainer)
                 header.title:SetText(name)
                 header.buttons = 1
                 header.height = 80
@@ -783,7 +768,7 @@ local function LoadSpellBook()
             f:RegisterEvent("SPELL_UPDATE_COOLDOWN")
             f:RegisterEvent("PET_BAR_UPDATE")
             f:HookScript('OnEnter', spell_buttonOnEnter)
-            f:HookScript('OnLeave', spell_buttonOnLeave)
+            f:HookScript('OnLeave', GameTooltip_Hide)
             f:Hide()
 
             line = line + 1
@@ -871,7 +856,6 @@ local function LoadSpellBook()
         self:GetFrameRef('GwSpellbookContainerTab4'):Hide()
         self:GetFrameRef('GwSpellbookContainerTab5'):Hide()
         --self:GetFrameRef('GwSpellbookUnknown'):Hide()
-
 
         if value == 1 then
             self:GetFrameRef('GwSpellbookContainerTab1'):Show()

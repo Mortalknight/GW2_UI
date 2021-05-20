@@ -525,25 +525,33 @@ local function CharacterMenuButton_OnLoad(self, odd)
 end
 
 local nextShadow, nextAnchor
-local function addAddonButton(name, setting, shadow, anchor, showFunction)
+local function addAddonButton(name, setting, shadow, anchor, showFunction, hideOurFrame)
     if IsAddOnLoaded(name) and (setting == nil or setting == true) then
         GwCharacterMenu.buttonName = CreateFrame("Button", nil, GwCharacterMenu, shadow and "GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" or "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate2")
-        GwCharacterMenu.buttonName:SetText(name)
+        GwCharacterMenu.buttonName:SetText(select(2, GetAddOnInfo(name)))
         GwCharacterMenu.buttonName:SetSize(231, 36)
         GwCharacterMenu.buttonName:ClearAllPoints()
         GwCharacterMenu.buttonName:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT")
         CharacterMenuButton_OnLoad(GwCharacterMenu.buttonName, shadow)
         GwCharacterMenu.buttonName:SetFrameRef("charwin", GwCharacterWindow)
         GwCharacterMenu.buttonName.ui_show = showFunction
+        GwCharacterMenu.buttonName:SetAttribute("hideOurFrame", hideOurFrame)
         GwCharacterMenu.buttonName:SetAttribute("_onclick", [=[
             local fchar = self:GetFrameRef("charwin")
-            if fchar then
+            local hideOurFrame = self:GetAttribute("hideOurFrame")
+            if fchar and hideOurFrame == true then
                 fchar:SetAttribute("windowpanelopen", nil)
             end
             self:CallMethod("ui_show")
         ]=])
         nextShadow = not nextShadow
         nextAnchor = GwCharacterMenu.buttonName
+
+        if name == "GearQuipper-TBC" then
+            GqUiFrame:ClearAllPoints()
+            GqUiFrame:SetParent(GwCharacterWindow)
+            GqUiFrame:SetPoint("TOPRIGHT", GwCharacterWindow, "TOPRIGHT", 350, -12)
+        end
     end
 end
 
@@ -620,8 +628,9 @@ local function LoadWindows()
                 -- add addon buttons here
                 nextShadow = true
                 nextAnchor = GwCharacterMenu.petMenu
-                addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end)
-                addAddonButton("Clique", GetSetting("USE_SPELLBOOK_WINDOW"), nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end)
+                addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end, true)
+                --addAddonButton("GearQuipper-TBC", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() gearquipper:ToggleUI() end, false)
+                addAddonButton("Clique", GetSetting("USE_SPELLBOOK_WINDOW"), nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end, true)
 
                 GwCharacterMenu.skillsMenu:SetAttribute("_onclick", [=[
                     local f = self:GetFrameRef("GwCharacterWindow")
@@ -699,6 +708,8 @@ local function LoadWindows()
             end
             hideCharframe = true
         end)
+
+        CharacterFrame:UnregisterAllEvents()
     end
 
     -- set bindings on secure instead of char win to not interfere with secure ESC binding on char win

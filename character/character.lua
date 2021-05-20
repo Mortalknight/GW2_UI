@@ -1320,6 +1320,8 @@ local function grabDefaultSlots(slot, anchor, parent, size)
 
     slot:GetNormalTexture():SetTexture(nil)
 
+    GW.RegisterCooldown(_G[slot:GetName() .. "Cooldown"])
+
     local high = slot:GetHighlightTexture()
     high:SetAllPoints(slot)
     high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
@@ -1471,7 +1473,6 @@ local function LoadPaperDoll()
     GwDressingRoom.model:SetRotation(-0.15)
     Model_OnLoad(GwDressingRoom.model, 4, 0, -0.1, CharacterModelFrame_OnMouseUp)
 
-    CharacterFrame:UnregisterAllEvents()
     hooksecurefunc("ToggleCharacter", GwToggleCharacter)
 
     PaperDollUpdateStats()

@@ -33,6 +33,7 @@ local function petBarUpdate()
     for i = 1, 12 do
         if _G["PetActionButton" .. i] ~= nil then
             _G["PetActionButton" .. i .. "NormalTexture2"]:SetTexture(nil)
+            setActionButtonAutocast(i)
         end
     end
 end

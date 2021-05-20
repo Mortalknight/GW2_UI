@@ -463,7 +463,7 @@ local function updateHealthValues(self, event)
 
     local animationSpeed
 
-    if event == "UNIT_TARGET" or event == "PLAYER_TARGET_CHANGED" then
+    if event == "UNIT_TARGET" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_TARGET_CHANGED" then
         animationSpeed = 0
         self.healthValue = healthPrecentage
         StopAnimation(self:GetName() .. self.unit)
@@ -585,6 +585,65 @@ local function target_OnEvent(self, event, unit)
     end
 end
 GW.AddForProfiling("unitframes", "target_OnEvent", target_OnEvent)
+
+local function focus_OnEvent(self, event, unit)
+    local ttf = GwFocusTargetUnitFrame
+
+    if event == "PLAYER_FOCUS_CHANGED" or event == "ZONE_CHANGED" then
+        unitFrameData(self, event)
+        if (ttf) then unitFrameData(ttf, event) end
+        updateHealthValues(self, event)
+        if (ttf) then updateHealthValues(ttf, event) end
+        updatePowerValues(self)
+        if (ttf) then updatePowerValues(ttf) end
+        updateCastValues(self, event)
+        if (ttf) then updateCastValues(ttf, event) end
+        updateRaidMarkers(self, event)
+        if (ttf) then updateRaidMarkers(ttf, event) end
+        UpdateBuffLayout(self, event)
+
+        if event == "PLAYER_FOCUS_CHANGED" then
+            if UnitExists(self.unit) and not IsReplacingUnit() then
+                if UnitIsEnemy(self.unit, "player") then
+                    PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
+                elseif UnitIsFriend("player", self.unit) then
+                    PlaySound(SOUNDKIT.IG_CHARACTER_NPC_SELECT)
+                else
+                    PlaySound(SOUNDKIT.IG_CREATURE_NEUTRAL_SELECT)
+                end
+            else
+                PlaySound(SOUNDKIT.INTERFACE_SOUND_LOST_TARGET_UNIT)
+            end
+        end
+    elseif event == "UNIT_TARGET" and unit == "focus" then
+        if (ttf ~= nil) then
+            if UnitExists("focustarget") then
+                unitFrameData(ttf, event)
+                updateHealthValues(ttf, event)
+                updatePowerValues(ttf)
+                updateCastValues(ttf, event)
+                updateRaidMarkers(ttf)
+            end
+        end
+    elseif event == "RAID_TARGET_UPDATE" then
+        updateRaidMarkers(self)
+    elseif UnitIsUnit(unit, self.unit) then
+        if event == "UNIT_AURA" then
+            UpdateBuffLayout(self, event)
+        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH") then
+            updateHealthValues(self, event)
+        elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
+            updatePowerValues(self)
+        elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START") then
+            updateCastValues(self, event)
+        elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
+            hideCastBar(self, event)
+        elseif event == "UNIT_FACTION" then
+            updateHealthbarColor(self)
+        end
+    end
+end
+GW.AddForProfiling("unitframes", "focus_OnEvent", focus_OnEvent)
 
 local function unittarget_OnUpdate(self, elapsed)
     if self.unit == nil then
@@ -735,13 +794,94 @@ local function LoadTarget()
 end
 GW.LoadTarget = LoadTarget
 
+local function LoadFocus()
+    local NewUnitFrame = createNormalUnitFrame("GwFocusUnitFrame", GetSetting("focus_FRAME_INVERT"))
+    NewUnitFrame.unit = "focus"
+    NewUnitFrame.type = "NormalTarget"
+
+    RegisterMovableFrame(NewUnitFrame, FOCUS, "focus_pos", "GwTargetFrameTemplateDummy", nil, nil, {"default", "scaleable"})
+
+    NewUnitFrame:ClearAllPoints()
+    NewUnitFrame:SetPoint("TOPLEFT", NewUnitFrame.gwMover)
+
+    NewUnitFrame.portrait.mask = NewUnitFrame:CreateMaskTexture()
+    NewUnitFrame.portrait.mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
+    NewUnitFrame.portrait.mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    NewUnitFrame.portrait.mask:SetSize(58, 58)
+    NewUnitFrame.portrait:AddMaskTexture(NewUnitFrame.portrait.mask)
+
+    NewUnitFrame:SetAttribute("*type1", "target")
+    NewUnitFrame:SetAttribute("*type2", "togglemenu")
+    NewUnitFrame:SetAttribute("unit", "focus")
+    RegisterUnitWatch(NewUnitFrame)
+    NewUnitFrame:EnableMouse(true)
+    NewUnitFrame:RegisterForClicks("AnyDown")
+
+    AddToClique(NewUnitFrame)
+
+    NewUnitFrame.showHealthValue = GetSetting("focus_HEALTH_VALUE_ENABLED")
+    NewUnitFrame.showHealthPrecentage = GetSetting("focus_HEALTH_VALUE_TYPE")
+
+    NewUnitFrame.classColor = GetSetting("focus_CLASS_COLOR")
+
+    NewUnitFrame.displayBuffs = GetSetting("focus_BUFFS")
+    NewUnitFrame.displayDebuffs = GetSetting("focus_DEBUFFS")
+
+    -- priority: All > Important > Player
+    NewUnitFrame.debuffFilter = "PLAYER"
+    if GetSetting("focus_BUFFS_FILTER_IMPORTANT") then
+        NewUnitFrame.debuffFilter = "IMPORTANT"
+    end
+    if GetSetting("focus_BUFFS_FILTER_ALL") then
+        NewUnitFrame.debuffFilter = nil
+    end
+
+    NewUnitFrame:SetScript("OnEvent", focus_OnEvent)
+
+    NewUnitFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
+    NewUnitFrame:RegisterEvent("ZONE_CHANGED")
+    NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
+
+    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_TARGET", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_MAXPOWER", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_AURA", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "focus")
+
+    -- Handle callbacks from HealComm
+    local HealCommEventHandler = function ()
+        local self = NewUnitFrame
+        return UpdateIncomingPredictionAmount(self)
+    end
+
+    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealStarted", HealCommEventHandler)
+    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealUpdated", HealCommEventHandler)
+    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealStopped", HealCommEventHandler)
+    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealDelayed", HealCommEventHandler)
+    LHC.RegisterCallback(NewUnitFrame, "HealComm_ModifierChanged", HealCommEventHandler)
+    LHC.RegisterCallback(NewUnitFrame, "HealComm_GUIDDisappeared", HealCommEventHandler)
+
+    LoadAuras(NewUnitFrame)
+
+    FocusFrame:Kill()
+end
+GW.LoadFocus = LoadFocus
+
 local function LoadTargetOfUnit(unit)
     local f = createNormalUnitFrameSmall("Gw" .. unit .. "TargetUnitFrame")
     local unitID = string.lower(unit) .. "target"
 
     f.unit = unitID
 
-    RegisterMovableFrame(f, SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "GwTargetFrameSmallTemplateDummy", nil, nil, {"default", "scaleable"})
+    RegisterMovableFrame(f, unit == "Focus" and MINIMAP_TRACKING_FOCUS or SHOW_TARGET_OF_TARGET_TEXT, unitID .. "_pos", "GwTargetFrameSmallTemplateDummy", nil, nil, {"default", "scaleable"})
 
     f:ClearAllPoints()
     f:SetPoint("TOPLEFT", f.gwMover)

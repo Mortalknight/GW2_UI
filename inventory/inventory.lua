@@ -55,6 +55,8 @@ local function reskinItemButton(iname, b)
         b.junkIcon:SetPoint("TOPLEFT", -3, 3)
         b.junkIcon:Hide()
     end
+
+    GW.RegisterCooldown(_G[b:GetName() .. "Cooldown"])
 end
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
 

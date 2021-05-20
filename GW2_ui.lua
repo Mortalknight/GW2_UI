@@ -529,6 +529,12 @@ local function loadAddon(self)
     GW.LoadAutoRepair()
 
     --Create unitframes
+    if GetSetting("FOCUS_ENABLED") then
+        GW.LoadFocus()
+        if GetSetting("focus_TARGET_ENABLED") then
+            GW.LoadTargetOfUnit("Focus")
+        end
+    end
     if GetSetting("TARGET_ENABLED") then
         GW.LoadTarget()
         if GetSetting("target_TARGET_ENABLED") then
