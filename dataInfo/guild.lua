@@ -20,7 +20,7 @@ local mobilestatus = {
     [2] = [[|TInterface\ChatFrame\UI-ChatIcon-ArmoryChat-BusyMobile:14:14:0:0:16:16:0:16:0:16|t]],
 }
 
-local tthead = {r = 1, g = 0.93, b = 0.73}
+local tthead = GW.myfaction == "Alliance" and GW.FACTION_COLOR[2] or GW.FACTION_COLOR[1]
 local ttsubh = {r = 1, g = 0.93, b = 0.73}
 local ttoff = {r = 0.3, g = 1, b = 0.3}
 local activezone = {r = 0.3, g = 1.0, b = 0.3}
@@ -119,7 +119,7 @@ local function Guild_OnEnter(self)
 
     if GetGuildRosterMOTD() ~= "" then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(GUILD_MOTD .. " |cffaaaaaa- |cffffffff" .. GetGuildRosterMOTD(), ttsubh.r, ttsubh.g, ttsubh.b, 1)
+        GameTooltip:AddLine(GUILD_MOTD .. " |cffaaaaaa- |cffffffff" .. GetGuildRosterMOTD(), tthead.r, tthead.g, tthead.b, 1)
     end
 
     local _, _, standingID, barMin, barMax, barValue = GetGuildFactionInfo()

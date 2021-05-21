@@ -130,10 +130,10 @@ local function Money_OnEnter(self)
         -- add total gold on realm
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine(FRIENDS_LIST_REALM)
-        
+
         if totalAlliance > 0 and totalHorde > 0 then
-            if totalAlliance ~= 0 then GameTooltip:AddDoubleLine(FACTION_ALLIANCE, FormatMoneyForChat(totalAlliance), 0, 0.376, 1, 1, 1, 1) end
-            if totalHorde ~= 0 then GameTooltip:AddDoubleLine(FACTION_HORDE, FormatMoneyForChat(totalHorde), 1, 0.2, 0.2, 1, 1, 1) end
+            if totalAlliance ~= 0 then GameTooltip:AddDoubleLine(FACTION_ALLIANCE, FormatMoneyForChat(totalAlliance), GW.FACTION_COLOR[2].r, GW.FACTION_COLOR[2].g, GW.FACTION_COLOR[2].b, 1, 1, 1) end
+            if totalHorde ~= 0 then GameTooltip:AddDoubleLine(FACTION_HORDE, FormatMoneyForChat(totalHorde), GW.FACTION_COLOR[1].r, GW.FACTION_COLOR[1].g, GW.FACTION_COLOR[1].b, 1, 1, 1) end
             GameTooltip:AddLine(" ")
         end
 
