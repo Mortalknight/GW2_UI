@@ -2,6 +2,7 @@
 FIXES
     - Fix missing focus setting
     - Start fixing bag sorting
+    - Fix zhTW font issue
 
 1.1.0
 NEW

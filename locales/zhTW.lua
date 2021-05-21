@@ -3,12 +3,12 @@ local L = LibStub("AceLocale-3.0"):NewLocale("GW2_UI", "zhTW")
 if not L then return end
 
 --Fonts
-L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
-L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
-L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
-L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
-L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"
-L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/chinese.ttf"        
+L["FONT_NORMAL"] = "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf"
+L["FONT_BOLD"] = "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf"
+L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf"
+L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf"
+L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf"
+L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf"
 
 --classic ones
 L["FPS "] = "每秒幀數 "
@@ -19,6 +19,17 @@ L["Bandwidth (Upload) "] = "頻寬 (上傳) "
 L["Memory for Addons: "] = "插件記憶體用量: "
 L["Future Spells"] = "Future Spells"
 L["Ranged"] = "遠程"
+L["5 secound rule: display remaning time"] = true
+L["Energy/Mana Ticker"] = true
+L["Show Energy/Mana Ticker only in combat"] = true
+L["All key bindings have been saved."] = true
+L["All newly set key bindings have been discarded."] = true
+L["Hover your mouse over any action button to bind it. Press the esc key or right click to clear the current action button's keybinding."] = true
+L["Trigger"] = true
+L["Key"] = true
+L["All key bindings cleared for"] = true
+L["bound to"] = true
+L["Sold Junk for: %s"] = true
 
 --Strings
 L["Use the GW2 UI improved action bars."] = "使用 GW2 UI 風格加強型的快捷列。"

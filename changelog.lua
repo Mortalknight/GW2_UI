@@ -5,6 +5,7 @@ v("1.1.1 TBC", [=[
 FIXES
     - Fix missing focus setting
     - Start fixing bag sorting
+    - Fix zhTW font issue
 ]=])
 
 v("1.1.0 TBC", [=[

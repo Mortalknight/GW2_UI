@@ -11,7 +11,7 @@ L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
 L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
 
 --classic ones
-L["FPS "] = "FPS"
+L["FPS "] = "FPS "
 L["Latency (Home) "] = "대기시간 (서버): "
 L["Latency (World) "] = "대기시간 (세계): "
 L["Bandwidth (Download) "] = "대역폭 (다운로드): "
@@ -19,6 +19,18 @@ L["Bandwidth (Upload) "] = "대역폭 (업로드): "
 L["Memory for Addons: "] = "애드온 메모리: "
 L["Future Spells"] = "Future Spells"
 L["Ranged"] = "원거리 장비"
+L["FPS "] = true
+L["5 secound rule: display remaning time"] = true
+L["Energy/Mana Ticker"] = true
+L["Show Energy/Mana Ticker only in combat"] = true
+L["All key bindings have been saved."] = true
+L["All newly set key bindings have been discarded."] = true
+L["Hover your mouse over any action button to bind it. Press the esc key or right click to clear the current action button's keybinding."] = true
+L["Trigger"] = true
+L["Key"] = true
+L["All key bindings cleared for"] = true
+L["bound to"] = true
+L["Sold Junk for: %s"] = true
 
 --Strings
 L["Fade Action Bars"] = "액션바 숨기기"

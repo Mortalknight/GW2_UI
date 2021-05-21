@@ -10,25 +10,25 @@ L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
 L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
 
 --classic ones
-L["FPS "] = "FPS "
-L["Latency (Home) "] = "Latency (Home) "
-L["Latency (World) "] = "Latency (World) "
-L["Bandwidth (Download) "] = "Bandwidth (Download) "
-L["Bandwidth (Upload) "] = "Bandwidth (Upload) "
-L["Memory for Addons: "] = "Memory for Addons: "
-L["Future Spells"] = "Future Spells"
-L["Ranged"] = "Ranged"
-L["5 secound rule: display remaning time"] = "5 secound rule: display remaning time"
-L["Energy/Mana Ticker"] = "Energy/Mana Ticker"
-L["Show Energy/Mana Ticker only in combat"] = "Show Energy/Mana Ticker only in combat"
-L["All key bindings have been saved."] = "All key bindings have been saved."
-L["All newly set key bindings have been discarded."] = "All newly set key bindings have been discarded."
-L["Hover your mouse over any action button to bind it. Press the esc key or right click to clear the current action button's keybinding."] = "Hover your mouse over any action button to bind it. Press the esc key or right click to clear the current action button's keybinding."
-L["Trigger"] = "Trigger"
-L["Key"] = "Key"
-L["All key bindings cleared for"] = "All key bindings cleared for"
-L["bound to"] = "bound to"
-L["Sold Junk for: %s"] = "Sold Junk for: %s"
+L["FPS "] = true
+L["Latency (Home) "] = true
+L["Latency (World) "] = true
+L["Bandwidth (Download) "] = true
+L["Bandwidth (Upload) "] = true
+L["Memory for Addons: "] = true
+L["Future Spells"] = true
+L["Ranged"] = true
+L["5 secound rule: display remaning time"] = true
+L["Energy/Mana Ticker"] = true
+L["Show Energy/Mana Ticker only in combat"] = true
+L["All key bindings have been saved."] = true
+L["All newly set key bindings have been discarded."] = true
+L["Hover your mouse over any action button to bind it. Press the esc key or right click to clear the current action button's keybinding."] = true
+L["Trigger"] = true
+L["Key"] = true
+L["All key bindings cleared for"] = true
+L["bound to"] = true
+L["Sold Junk for: %s"] = true
 
 --Strings
 L["Use the GW2 UI improved action bars."] = true

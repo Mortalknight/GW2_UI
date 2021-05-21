@@ -11,14 +11,25 @@ L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
 L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
 
 --classic ones
-L['FPS_TOOLTIP_1'] = 'FPS ' 
-L['FPS_TOOLTIP_2'] = 'Latency (Home) ' 
-L['FPS_TOOLTIP_3'] = 'Latency (World) ' 
-L['FPS_TOOLTIP_4'] = 'Bandwidth (Download) '
-L['FPS_TOOLTIP_5'] = 'Bandwidth (Upload) '
-L['FPS_TOOLTIP_6'] = 'Memory for Addons: '
-L["Future Spells"] = "Future Spells"
-L["Ranged"] = "A distanza"
+L["FPS "] = true
+L["Latency (Home) "] = true
+L["Latency (World) "] = true
+L["Bandwidth (Download) "] = true
+L["Bandwidth (Upload) "] = true
+L["Memory for Addons: "] = true
+L["Future Spells"] = true
+L["Ranged"] = true
+L["5 secound rule: display remaning time"] = true
+L["Energy/Mana Ticker"] = true
+L["Show Energy/Mana Ticker only in combat"] = true
+L["All key bindings have been saved."] = true
+L["All newly set key bindings have been discarded."] = true
+L["Hover your mouse over any action button to bind it. Press the esc key or right click to clear the current action button's keybinding."] = true
+L["Trigger"] = true
+L["Key"] = true
+L["All key bindings cleared for"] = true
+L["bound to"] = true
+L["Sold Junk for: %s"] = true
 
 --Strings
 L[" (Resting)"] = " (Riposando)"

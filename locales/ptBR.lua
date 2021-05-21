@@ -19,6 +19,17 @@ L["Bandwidth (Upload) "] = "Banda (Upload) "
 L["Memory for Addons: "] = "Memória dos Addons: "
 L["Future Spells"] = "Future Spells"
 L["Ranged"] = "Longo alcance"
+L["5 secound rule: display remaning time"] = true
+L["Energy/Mana Ticker"] = true
+L["Show Energy/Mana Ticker only in combat"] = true
+L["All key bindings have been saved."] = true
+L["All newly set key bindings have been discarded."] = true
+L["Hover your mouse over any action button to bind it. Press the esc key or right click to clear the current action button's keybinding."] = true
+L["Trigger"] = true
+L["Key"] = true
+L["All key bindings cleared for"] = true
+L["bound to"] = true
+L["Sold Junk for: %s"] = true
 
 --Strings
 L["Use the GW2 UI improved action bars."] = "Usar as Barras de Ações melhoradas pelo GW2 ui"
