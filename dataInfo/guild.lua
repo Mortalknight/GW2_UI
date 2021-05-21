@@ -20,7 +20,7 @@ local mobilestatus = {
     [2] = [[|TInterface\ChatFrame\UI-ChatIcon-ArmoryChat-BusyMobile:14:14:0:0:16:16:0:16:0:16|t]],
 }
 
-local tthead = {r = 1, g = 0.93, b = 0.73}
+local tthead = GW.myfaction == "Alliance" and GW.FACTION_COLOR[2] or GW.FACTION_COLOR[1]
 local ttsubh = {r = 1, g = 0.93, b = 0.73}
 local ttoff = {r = 0.3, g = 1, b = 0.3}
 local activezone = {r = 0.3, g = 1.0, b = 0.3}
@@ -108,25 +108,24 @@ local function Guild_OnEnter(self)
     SortGuildTable(shiftDown)
 
     local guildName, guildRank = GetGuildInfo("player")
-    local applicants = GetNumGuildApplicants()
 
     if guildName and guildRank then
-        GameTooltip:AddDoubleLine(guildName, GUILD .. ": " .. online .. "/" .. total .. (applicants > 0 and " |cFFFFFFFF(|cff33ff33%d|r|cFFFFFFFF)|r" or ""), tthead.r, tthead.g, tthead.b, tthead.r, tthead.g, tthead.b)
+        GameTooltip:AddDoubleLine(guildName, GUILD .. ": " .. online .. "/" .. total, tthead.r, tthead.g, tthead.b, tthead.r, tthead.g, tthead.b)
         GameTooltip:AddLine(guildRank, 1, 1, 1, 1)
     end
 
     if GetGuildRosterMOTD() ~= "" then
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(GUILD_MOTD .. " |cffaaaaaa- |cffffffff" .. GetGuildRosterMOTD(), ttsubh.r, ttsubh.g, ttsubh.b, 1)
+        GameTooltip:AddLine(GUILD_MOTD .. " |cffaaaaaa- |cffffffff" .. GetGuildRosterMOTD(), tthead.r, tthead.g, tthead.b, 1)
     end
 
-    local _, _, standingID, barMin, barMax, barValue = GetGuildFactionInfo()
+    --local _, _, standingID, barMin, barMax, barValue = GetGuildFactionInfo()
     -- Show only if not on max rep
-    if standingID ~= 8 then
-        barMax = barMax - barMin
-        barValue = barValue - barMin
-        GameTooltip:AddLine(GW.RGBToHex(ttsubh.r, ttsubh.g, ttsubh.b) .. COMBAT_FACTION_CHANGE .. ":|r |cFFFFFFFF" .. CommaValue(barValue) .. "/" .. CommaValue(barMax) .. "(" .. ceil((barValue / barMax) * 100) .. "%)")
-    end
+    --if standingID ~= 8 then
+    --    barMax = barMax - barMin
+    --    barValue = barValue - barMin
+    --    GameTooltip:AddLine(GW.RGBToHex(ttsubh.r, ttsubh.g, ttsubh.b) .. COMBAT_FACTION_CHANGE .. ":|r |cFFFFFFFF" .. CommaValue(barValue) .. "/" .. CommaValue(barMax) .. "(" .. ceil((barValue / barMax) * 100) .. "%)")
+    --end
 
     local zonec
 

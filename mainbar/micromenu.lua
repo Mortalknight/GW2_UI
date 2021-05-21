@@ -78,7 +78,7 @@ end
 
 local function updateGuildButton(self, event)
     if event == "GUILD_ROSTER_UPDATE" then
-        local gmb = GuildMicroButton
+        local gmb = SocialsMicroButton
         if gmb == nil then
             return
         end
@@ -106,8 +106,8 @@ local function updateGuildButton(self, event)
         end
     elseif event == "MODIFIER_STATE_CHANGED" then
         if not IsAltKeyDown() and GetMouseFocus() == self then
-			GW.Guild_OnEnter(self)
-		end
+            GW.Guild_OnEnter(self)
+        end
     elseif event == "GUILD_MOTD" then
         if GetMouseFocus() == self then
             GW.Guild_OnEnter(self)
@@ -373,25 +373,14 @@ local function setupMicroButtons(mbf)
     -- SocialsMicroButton
     SocialsMicroButton:ClearAllPoints()
     SocialsMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
-    SocialsMicroButton.interval = 0
-    SocialsMicroButton:SetScript(
-        "OnUpdate",
-        function(self, elapsed)
-            if self.interval > 0 then
-                self.interval = self.interval - elapsed
-                return
-            end
-            self.interval = 15.0
-            GuildRoster()
-        end
-    )
+    SocialsMicroButton.Ticker = C_Timer.NewTicker(15, function() GuildRoster() end)
     SocialsMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
     SocialsMicroButton:RegisterEvent("MODIFIER_STATE_CHANGED")
     SocialsMicroButton:RegisterEvent("GUILD_MOTD")
     SocialsMicroButton:HookScript("OnEnter", GW.Guild_OnEnter)
     SocialsMicroButton:SetScript("OnClick", GW.Guild_OnClick)
     SocialsMicroButton:HookScript("OnEvent", updateGuildButton)
-    updateGuildButton(GuildMicroButton, "GUILD_ROSTER_UPDATE")
+    updateGuildButton(SocialsMicroButton, "GUILD_ROSTER_UPDATE")
 
     -- WorldMapMicroButton
     WorldMapMicroButton:ClearAllPoints()

@@ -46,8 +46,8 @@ local function SkinGearQuipper()
     GqUiEventBindingsScrollFrameVSlider.Center:SetWidth(3)
 
     hooksecurefunc(gearquipper, "InitUI", function()
-        GwCharacterWindow.paperDollButton:Hide()
-        GwCharacterWindow.paperDollLabel:Hide()
+        GwCharacterWindow.paperDollButton:Kill()
+        GwCharacterWindow.paperDollLabel:Kill()
     end)
 
     GqUiEventBindingsScrollFrameVSlider:SkinScrollBar()
