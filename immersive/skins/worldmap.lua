@@ -73,9 +73,6 @@ local function SkinWorldMap()
     WorldMapFrame:SetIgnoreParentScale(false)
     WorldMapFrame.ScrollContainer:SetIgnoreParentScale(false)
     WorldMapFrame.IsMaximized = function() return false end
-    WorldMapFrame.HandleUserActionToggleSelf = function()
-        if WorldMapFrame:IsShown() then WorldMapFrame:Hide() else WorldMapFrame:Show() end
-    end
     HideUIPanel(WorldMapFrame)
 
     WorldMapFrame:SetScale(0.8)
