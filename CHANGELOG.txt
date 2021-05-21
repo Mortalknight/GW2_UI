@@ -1,3 +1,8 @@
+1.1.1
+FIXES
+    - Fix missing focus setting
+    - Start fixing bag sorting
+
 1.1.0
 NEW
     - Added Focus and Focus target frame

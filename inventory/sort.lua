@@ -3,7 +3,7 @@ local _G, _M = getfenv(0), {}
 setfenv(1, setmetatable(_M, {__index=_G}))
 local GetSetting = GW.GetSetting
 
-CreateFrame("GameTooltip", "SortBagsTooltip", nil, "GameTooltipTemplate")
+CreateFrame('GameTooltip', 'SortBagsTooltip', nil, 'GameTooltipTemplate')
 
 BAG_CONTAINERS = {0, 1, 2, 3, 4}
 BANK_BAG_CONTAINERS = {-1, 5, 6, 7, 8, 9, 10}
@@ -30,7 +30,7 @@ end
 
 local function set(...)
     local t = {}
-    local n = select("#", ...)
+    local n = select('#', ...)
     for i = 1, n do
         t[select(i, ...)] = true
     end
@@ -39,7 +39,7 @@ end
 
 local function union(...)
     local t = {}
-    local n = select("#", ...)
+    local n = select('#', ...)
     for i = 1, n do
         for k in pairs(select(i, ...)) do
             t[k] = true
@@ -48,47 +48,33 @@ local function union(...)
     return t
 end
 
-local MOUNTS = set(
-    -- rams
-    5864, 5872, 5873, 18785, 18786, 18787, 18244, 19030, 13328, 13329,
-    -- horses
-    2411, 2414, 5655, 5656, 18778, 18776, 18777, 18241, 12353, 12354,
-    -- sabers
-    8629, 8631, 8632, 18766, 18767, 18902, 18242, 13086, 19902, 12302, 12303, 8628, 12326,
-    -- mechanostriders
-    8563, 8595, 13321, 13322, 18772, 18773, 18774, 18243, 13326, 13327,
-    -- kodos
-    15277, 15290, 18793, 18794, 18795, 18247, 15292, 15293,
-    -- wolves
-    1132, 5665, 5668, 18796, 18797, 18798, 18245, 12330, 12351,
-    -- raptors
-    8588, 8591, 8592, 18788, 18789, 18790, 18246, 19872, 8586, 13317,
-    -- undead horses
-    13331, 13332, 13333, 13334, 18791, 18248, 13335,
-    -- qiraji battle tanks
-    21218, 21321, 21323, 21324, 21176
-)
-
 local SPECIAL = set(5462, 17696, 17117, 13347, 13289, 11511)
 
 local KEYS = set(9240, 17191, 13544, 12324, 16309, 12384, 20402)
 
-local TOOLS = set(7005, 12709, 19727, 5956, 2901, 6219, 10498, 6218, 6339, 11130, 11145, 16207, 9149, 15846, 6256, 6365, 6367)
+local RODS = set(6218, 6339, 11130, 11145, 16207, 22461, 22462, 22463)
+
+local TOOLS = union(
+    RODS,
+    set(5060, 7005, 12709, 19727, 5956, 2901, 6219, 10498, 9149, 15846, 6256, 6365, 6367)
+);
 
 local ENCHANTING_MATERIALS = set(
     -- dust
-    10940, 11083, 11137, 11176, 16204,
+    10940, 11083, 11137, 11176, 16204, 22445,
     -- essence
-    10938, 10939, 10998, 11082, 11134, 11135, 11174, 11175, 16202, 16203,
+    10938, 10939, 10998, 11082, 11134, 11135, 11174, 11175, 16202, 16203, 22447, 22446,
     -- shard
-    10978, 11084, 11138, 11139, 11177, 11178, 14343, 14344,
+    10978, 11084, 11138, 11139, 11177, 11178, 14343, 14344, 22448, 22449,
     -- crystal
-    20725
+    20725, 22450
 )
 
-local HERBS = set(765, 785, 2447, 2449, 2450, 2452, 2453, 3355, 3356, 3357, 3358, 3369, 3818, 3819, 3820, 3821, 4625, 8153, 8831, 8836, 8838, 8839, 8845, 8846, 13463, 13464, 13465, 13466, 13467, 13468)
+local HERBS = set(765, 785, 2447, 2449, 2450, 2452, 2453, 3355, 3356, 3357, 3358, 3369, 3818, 3819, 3820, 3821, 4625, 8153, 8831, 8836, 8838, 8839, 8845, 8846, 11040, 13463, 13464, 13465, 13466, 13467, 13468, 22710, 22785, 22786, 22787, 22788, 22789, 22790, 22791, 22792, 22793, 22794, 22795, 23501)
 
-local SEEDS = set(17034, 17035, 17036, 17037, 17038)
+local SEEDS = set(17034, 17035, 17036, 17037, 17038, 18297, 22147)
+
+local LEATHER = set(5116, 6470, 6471, 7286, 7287, 7392, 11512, 12607, 12731, 2934, 783, 2318, 4231, 5082, 5784, 2319, 4232, 4233, 4234, 4235, 4236, 4461, 8167, 4304, 8169, 8172, 8368, 8154, 8165, 8170, 8171, 15407, 15412, 15415, 15417, 15419, 15420, 17056, 15422, 15423)
 
 local CLASSES = {
     -- arrow
@@ -103,56 +89,82 @@ local CLASSES = {
     },
     -- soul
     {
-        containers = {22243, 22244, 21340, 21341, 21342},
+        containers = {22243, 22244, 21340, 21341, 21342, 21872},
         items = set(6265),
     },
     -- ench
     {
-        containers = {22246, 22248, 22249},
+        containers = {22246, 22248, 22249, 22249, 21858},
         items = union(
             ENCHANTING_MATERIALS,
-            -- rods
-            set(6218, 6339, 11130, 11145, 16207)
+            RODS
         ),
     },
     -- herb
     {
-        containers = {22250, 22251, 22252},
-        items = union(HERBS, SEEDS)
+        containers = {22250, 22251, 22252, 38225},
+        items = union(
+            HERBS,
+            SEEDS,
+            set(2263, 5168, 11020, 11022, 11024, 10286, 11018, 11514, 11951, 11952, 16205, 16208, 17760, 19727, 21886, 22094, 22575, 23788, 24246, 24401, 24245, 31300)
+        ),
+    },
+    -- mining
+    {
+        containers = {29540, 30746},
+        items = {},
+    },
+    -- leather
+    {
+        containers = {34482, 34490},
+        items = union(
+            LEATHER,
+            set(4096, 12753, 18240, 18662, 7005, 2304, 2320, 2324, 2604, 4289, 6260, 2313, 2605, 2321, 3182, 4340, 4341, 7070, 7067, 4265, 4291, 5637, 7071, 7428, 3824, 4337, 5785, 6261, 2325, 8150, 8151, 8173, 8343, 8153, 8146, 8168, 7081, 7075, 7077, 4342, 10290, 14341, 15409, 15564, 15846)
+        ),
+    },
+    -- gems
+    {
+        containers = {24270, 30747},
+        items = {},
+    },
+    -- engineering
+    {
+        containers = {23774, 23775, 30745},
+        items = {},
     },
 }
 
 do
-    local f = CreateFrame"Frame"
-    f:SetScript("OnEvent", function()
-        f:SetScript("OnUpdate", function()
+    local f = CreateFrame'Frame'
+    f:SetScript('OnEvent', function()
+        f:SetScript('OnUpdate', function()
             for _, container in pairs(BAG_CONTAINERS) do
                 for position = 1, GetContainerNumSlots(container) do
                     SetScanTooltip(container, position)
                 end
             end
-            f:SetScript("OnUpdate", nil)
+            f:SetScript('OnUpdate', nil)
         end)
     end)
-    f:RegisterEvent"PLAYER_LOGIN"
+    f:RegisterEvent'PLAYER_LOGIN'
 end
 
 do
-    local f = CreateFrame"Frame"
-    f:SetScript("OnEvent", function()
+    local f = CreateFrame'Frame'
+    f:SetScript('OnEvent', function()
         for _, container in pairs(BANK_BAG_CONTAINERS) do
             for position = 1, GetContainerNumSlots(container) do
                 SetScanTooltip(container, position)
             end
         end
     end)
-    f:RegisterEvent"BANKFRAME_OPENED"
+    f:RegisterEvent'BANKFRAME_OPENED'
 end
 
 local model, itemStacks, itemClasses, itemSortKeys
 
 do
-    local f = CreateFrame"Frame"
+    local f = CreateFrame'Frame'
 
     local process = coroutine.create(function() end);
 
@@ -181,12 +193,12 @@ do
         f:Show()
     end
 
-    f:SetScript("OnUpdate", function(_, arg1)
-        if coroutine.status(process) == "suspended" then
+    f:SetScript('OnUpdate', function(_, arg1)
+        if coroutine.status(process) == 'suspended' then
             suspended = true
             coroutine.resume(process)
         end
-        if coroutine.status(process) == "dead" then
+        if coroutine.status(process) == 'dead' then
             f:Hide()
         end
     end)
@@ -235,11 +247,11 @@ end
 do
     local patterns = {}
     for i = 1, 10 do
-        local text = gsub(format(ITEM_SPELL_CHARGES, i), "(-?%d+)(.-)|4([^;]-);", function(numberString, gap, numberForms)
+        local text = gsub(format(ITEM_SPELL_CHARGES, i), '(-?%d+)(.-)|4([^;]-);', function(numberString, gap, numberForms)
             local singular, dual, plural
-            _, _, singular, dual, plural = strfind(numberForms, "(.+):(.+):(.+)");
+            _, _, singular, dual, plural = strfind(numberForms, '(.+):(.+):(.+)');
             if not singular then
-                _, _, singular, plural = strfind(numberForms, "(.+):(.+)")
+                _, _, singular, plural = strfind(numberForms, '(.+):(.+)')
             end
             local i = abs(tonumber(numberString))
             local numberForm
@@ -263,14 +275,14 @@ end
 function TooltipInfo(container, position)
     SetScanTooltip(container, position)
 
-    local charges, usable, soulbound, quest, conjured
+    local charges, usable, soulbound, quest, conjured, mount
     for i = 1, SortBagsTooltip:NumLines() do
-        local text = getglobal("SortBagsTooltipTextLeft" .. i):GetText()
+        local text = getglobal('SortBagsTooltipTextLeft' .. i):GetText()
 
         local extractedCharges = itemCharges(text)
         if extractedCharges then
             charges = extractedCharges
-        elseif strfind(text, "^" .. ITEM_SPELL_TRIGGER_ONUSE) then
+        elseif strfind(text, '^' .. ITEM_SPELL_TRIGGER_ONUSE) then
             usable = true
         elseif text == ITEM_SOULBOUND then
             soulbound = true
@@ -278,18 +290,20 @@ function TooltipInfo(container, position)
             quest = true
         elseif text == ITEM_CONJURED then
             conjured = true
+        elseif text == MOUNT then
+            mount = true
         end
     end
 
-    return charges or 1, usable, soulbound, quest, conjured
+    return charges or 1, usable, soulbound, quest, conjured, mount
 end
 
 function SetScanTooltip(container, position)
-    SortBagsTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+    SortBagsTooltip:SetOwner(UIParent, 'ANCHOR_NONE')
     SortBagsTooltip:ClearLines()
 
     if container == BANK_CONTAINER then
-        SortBagsTooltip:SetInventoryItem("player", BankButtonIDToInvSlotID(position))
+        SortBagsTooltip:SetInventoryItem('player', BankButtonIDToInvSlotID(position))
     else
         SortBagsTooltip:SetBagItem(container, position)
     end
@@ -451,11 +465,10 @@ end
 function Item(container, position)
     local link = GetContainerItemLink(container, position)
     if link then
-        local _, _, itemID, enchantID, suffixID, uniqueID = strfind(link, "item:(%d+):(%d*):::::(%d*):(%d*)")
+        local _, _, itemID, enchantID, suffixID, uniqueID = strfind(link, 'item:(%d+):(%d*):::::(%-?%d*):(%-?%d*)')
         itemID = tonumber(itemID)
-        local itemName, _, quality, _, _, _, _, stack, slot, _, sellPrice, classId, subClassId = GetItemInfo("item:" .. itemID)
-        local charges, usable, soulbound, quest, conjured = TooltipInfo(container, position)
-
+        local itemName, _, quality, _, _, _, _, stack, slot, _, sellPrice, classId, subClassId = GetItemInfo('item:' .. itemID)
+        local charges, usable, soulbound, quest, conjured, mount = TooltipInfo(container, position)
         local sortKey = {}
 
         -- hearthstone
@@ -463,7 +476,7 @@ function Item(container, position)
             tinsert(sortKey, 1)
 
         -- mounts
-        elseif MOUNTS[itemID] then
+        elseif mount then
             tinsert(sortKey, 2)
 
         -- special items
@@ -536,7 +549,7 @@ function Item(container, position)
         tinsert(sortKey, enchantID)
         tinsert(sortKey, uniqueID)
 
-        local key = format("%s:%s:%s:%s:%s:%s", itemID, enchantID, suffixID, uniqueID, charges, (soulbound and 1 or 0))
+        local key = format('%s:%s:%s:%s:%s:%s', itemID, enchantID, suffixID, uniqueID, charges, (soulbound and 1 or 0))
 
         itemStacks[key] = stack
         itemSortKeys[key] = sortKey

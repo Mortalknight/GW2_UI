@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.1.1 TBC", [=[
+FIXES
+    - Fix missing focus setting
+    - Start fixing bag sorting
+]=])
+
 v("1.1.0 TBC", [=[
 NEW
     - Added Focus and Focus target frame
