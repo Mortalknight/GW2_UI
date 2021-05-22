@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.14.3", [=[
+FIXES
+    - Fix stancebar issue
+    - Fix group layout
+]=])
+
 v("5.14.2", [=[
 FIXES
     - Fix buff layout issue

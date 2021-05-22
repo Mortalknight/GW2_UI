@@ -74,6 +74,7 @@ end
 local function CreateStanceBarButton()
     local StanceButton = CreateFrame("Button", "GwStanceBarButton", UIParent, "GwStanceBarButton")
 
+    StanceButton:RegisterEvent("PLAYER_ENTERING_WORLD")
     StanceButton:RegisterEvent("CHARACTER_POINTS_CHANGED")
     StanceButton:RegisterEvent("PLAYER_ALIVE")
     StanceButton:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
