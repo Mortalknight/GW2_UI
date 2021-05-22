@@ -82,7 +82,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
 
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="-5" y="3"></Anchor>
