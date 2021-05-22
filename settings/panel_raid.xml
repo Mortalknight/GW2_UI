@@ -3,7 +3,7 @@
 
     <Frame name="GwSettingsRaidPanelTmpl" inherits="GwSettingsPanelTmpl" virtual="true">
         <Frames>
-            <Button name="GwToggleRaidPreview" inherits="GwStandardButton" text="-">
+            <Button parentKey="buttonRaidPreview" inherits="GwStandardButton" text="-">
                 <Size x="24" y="24" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" x="-10" y="-10" />

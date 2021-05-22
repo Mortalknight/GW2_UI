@@ -9,6 +9,7 @@ FIXES
     - You can now close the worlmap with ESC
     - Fix social data text
     - Fix auto repair
+    - Fix stancebar issue
 ]=])
 
 v("1.1.1 TBC", [=[

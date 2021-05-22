@@ -664,7 +664,7 @@ GW.AddForProfiling("reputation", "detailsInactive_OnEnter", detailsInactive_OnEn
 local function getNewReputationDetail(i)
     if _G["GwReputationDetails" .. i] ~= nil then return _G["GwReputationDetails" .. i] end
 
-    local f = CreateFrame("Button", "GwReputationDetails" .. i, GwPaperReputationScrollFrame.scrollchild, "GwReputationDetails")
+    local f = CreateFrame("Button", "GwReputationDetails" .. i, GwPaperReputation.repuScrollFrame.scrollchild, "GwReputationDetails")
 
     f.details:SetPoint("TOPLEFT", f.StatusBar, "BOTTOMLEFT", 0, -15)
 
@@ -713,7 +713,7 @@ local function getNewReputationDetail(i)
     if i > 1 then
         _G["GwReputationDetails" .. i]:SetPoint("TOPLEFT", _G["GwReputationDetails" .. (i - 1)],"BOTTOMLEFT", 0, -1)
     else
-        _G["GwReputationDetails" .. i]:SetPoint("TOPLEFT", GwPaperReputationScrollFrame.scrollchild, "TOPLEFT", 2, -10)
+        _G["GwReputationDetails" .. i]:SetPoint("TOPLEFT", GwPaperReputation.repuScrollFrame.scrollchild, "TOPLEFT", 2, -10)
     end
     GwPaperReputation.detailFrames =  GwPaperReputation.detailFrames + 1
 
@@ -923,13 +923,13 @@ function GwUpdateReputationDetails()
         _G["GwReputationDetails" .. i]:Hide()
     end
 
-    GwPaperReputationScrollFrame:SetVerticalScroll(0)
-    GwPaperReputationScrollFrame:SetVerticalScroll(0)
+    GwPaperReputation.repuScrollFrame:SetVerticalScroll(0)
+    GwPaperReputation.repuScrollFrame:SetVerticalScroll(0)
 
-    GwPaperReputationScrollFrame.slider.thumb:SetHeight(100)
-    GwPaperReputationScrollFrame.slider:SetValue(1)
-    GwPaperReputationScrollFrame:SetVerticalScroll(0)
-    GwPaperReputationScrollFrame.savedHeight = savedHeight - 590
+    GwPaperReputation.repuScrollFrame.slider.thumb:SetHeight(100)
+    GwPaperReputation.repuScrollFrame.slider:SetValue(1)
+    GwPaperReputation.repuScrollFrame:SetVerticalScroll(0)
+    GwPaperReputation.repuScrollFrame.savedHeight = savedHeight - 590
 
     reputationLastUpdateMethod = GwUpdateReputationDetails
 end
@@ -976,24 +976,24 @@ function GwUpdateReputationDetailsSearch(s)
         _G["GwReputationDetails" .. i]:Hide()
     end
 
-    GwPaperReputationScrollFrame:SetVerticalScroll(0)
-    GwPaperReputationScrollFrame.slider.thumb:SetHeight(100)
-    GwPaperReputationScrollFrame.slider:SetValue(1)
-    GwPaperReputationScrollFrame:SetVerticalScroll(0)
-    GwPaperReputationScrollFrame.savedHeight = savedHeight - 590
+    GwPaperReputation.repuScrollFrame:SetVerticalScroll(0)
+    GwPaperReputation.repuScrollFrame.slider.thumb:SetHeight(100)
+    GwPaperReputation.repuScrollFrame.slider:SetValue(1)
+    GwPaperReputation.repuScrollFrame:SetVerticalScroll(0)
+    GwPaperReputation.repuScrollFrame.savedHeight = savedHeight - 590
 
     reputationLastUpdateMethod = GwUpdateReputationDetailsSearch
     reputationLastUpdateMethodParams = s
 end
 
 function GwUpdateReputationDisplayOldData()
-    if reputationLastUpdateMethod ~= nil then
-    reputationLastUpdateMethod(reputationLastUpdateMethodParams)
+    if reputationLastUpdateMethod then
+        reputationLastUpdateMethod(reputationLastUpdateMethodParams)
     end
 end
 
 local function getSkillElement(index)
-    if _G["GwPaperSkillsItem" .. index] ~= nil then return _G["GwPaperSkillsItem" .. index] end
+    if _G["GwPaperSkillsItem" .. index] then return _G["GwPaperSkillsItem" .. index] end
     local f = CreateFrame("Button", "GwPaperSkillsItem" .. index, GwPaperSkills.scroll.scrollchild, "GwPaperSkillsItem")
     f.name:SetFont(DAMAGE_TEXT_FONT, 12)
     f.name:SetText(UNKNOWN)
@@ -1404,7 +1404,7 @@ local function LoadPaperDoll()
 
     GW.RegisterScaleFrame(GwCharacterWindow)
     GwUpdateSavedReputation()
-    GwPaperReputationScrollFrame:SetScrollChild(GwPaperReputationScrollFrame.scrollchild)
+    GwPaperReputation.repuScrollFrame:SetScrollChild(GwPaperReputation.repuScrollFrame.scrollchild)
     GwPaperDollUpdateReputations()
 
     GwPaperSkills.scroll:SetScrollChild(GwPaperSkills.scroll.scrollchild)

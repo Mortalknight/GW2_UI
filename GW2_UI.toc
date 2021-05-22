@@ -81,6 +81,7 @@ character/data/Shaman.lua
 character/data/Warlock.lua
 character/data/Warrior.lua
 
+units/raidControl.xml
 units/aurabar.xml
 units/aurabar.lua
 units/target.xml
@@ -88,6 +89,7 @@ units/target.lua
 units/party.xml
 units/raidframes.xml
 units/unitframes.xml
+units/raidControl.lua
 units/raidframes.lua
 units/unitframes.lua
 units/party.lua

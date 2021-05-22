@@ -3,7 +3,7 @@
 
     <Frame name="GwSettingsProfilesPanelTmpl" inherits="GwSettingsPanelTmpl" virtual="true">
         <Frames>
-            <Slider parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
+            <Slider parentKey="slider" orientation="VERTICAL" enableMouse="true">
                 <Size x="12" y="12"/>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-12" y="-32"/>

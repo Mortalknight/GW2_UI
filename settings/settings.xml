@@ -244,7 +244,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true" virtual="true">
+            <Slider parentKey="slider" orientation="HORIZONTAL" enableMouse="true">
                 <Size x="205" y="16"/>
                 <Anchors>
                     <Anchor point="RIGHT" relativePoint="RIGHT" x="-55"/>

@@ -901,7 +901,7 @@ local function ToggleRaidFramesPreview()
         GwRaidFrameContainer.gwMover:SetMovable(true)
         UpdateRaidFramesPosition()
     end
-    GwToggleRaidPreview:SetText(previewStep == 0 and "-" or previewSteps[previewStep])
+    GwSettingsRaidPanel.buttonRaidPreview:SetText(previewStep == 0 and "-" or previewSteps[previewStep])
 end
 
 local grpPos, noGrp = {}, {}
@@ -1077,7 +1077,7 @@ end
 GW.AddForProfiling("raidframes", "createRaidFrame", createRaidFrame)
 
 local function LoadRaidFrames()
-    if not _G.GwManageGroupButton then
+    if not GwManageGroupButton then
         GW.manageButton()
     end
 
@@ -1145,15 +1145,15 @@ local function LoadRaidFrames()
     UpdateRaidFramesPosition()
     UpdateRaidFramesLayout()
 
-    GwToggleRaidPreview:SetScript("OnClick", ToggleRaidFramesPreview)
-    GwToggleRaidPreview:SetScript("OnEnter", function(self)
+    GwSettingsRaidPanel.buttonRaidPreview:SetScript("OnClick", ToggleRaidFramesPreview)
+    GwSettingsRaidPanel.buttonRaidPreview:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
             GameTooltip:ClearLines()
             GameTooltip:AddLine(L["Preview Raid Frames"], 1, 1, 1)
             GameTooltip:AddLine(L["Click to toggle raid frame preview and cycle through different group sizes."], 1, 1, 1)
             GameTooltip:Show()
         end)
-    GwToggleRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
+        GwSettingsRaidPanel.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
 
     GwSettingsWindowMoveHud:HookScript("OnClick", function ()
         hudMoving = true
@@ -1161,7 +1161,7 @@ local function LoadRaidFrames()
             ToggleRaidFramesPreview()
         end
     end)
-    GwToggleRaidPreview.label:SetText(PREVIEW)
+    GwSettingsRaidPanel.buttonRaidPreview.label:SetText(PREVIEW)
 
     GwRaidFrameContainer:RegisterEvent("RAID_ROSTER_UPDATE")
     GwRaidFrameContainer:RegisterEvent("GROUP_ROSTER_UPDATE")
