@@ -430,10 +430,7 @@ local function PaperDollUpdatePetStats()
         GwDressingRoomPet.model:SetPosition(-2,0,-0.5)
         GwDressingRoomPet.model:SetRotation(-0.15)
 
-        GwPetFrameHappinessInvisibleFrame2:ClearAllPoints()
-        GwPetFrameHappinessInvisibleFrame2:SetPoint(GwDressingRoomPet.classIcon:GetPoint())
-        GwPetFrameHappinessInvisibleFrame2:SetSize(GwDressingRoomPet.classIcon:GetSize())
-        GwPetFrameHappinessInvisibleFrame2:Show()
+        GwDressingRoomPet.happiness:Show()
     else
         GwDressingRoomPet.model.expBar:Hide()
         GwDressingRoomPet.characterData:Hide()

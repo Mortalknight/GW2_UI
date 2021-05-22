@@ -307,7 +307,7 @@ local function createFaderAnim(self, state)
     bar.fadeTimer = -1
 end
 
-local function updateHotkey(self, actionButtonType)
+local function updateHotkey(self)
     local hotkey = self.HotKey
     local text = hotkey:GetText()
 
@@ -332,16 +332,13 @@ local function updateHotkey(self, actionButtonType)
     text = string.gsub(text, "(Up Arrow)", "UP")
     text = string.gsub(text, "(Down Arrow)", "DN")
 
-    if hotkey:GetText() == RANGE_INDICATOR then
+    if hotkey:GetText() == RANGE_INDICATOR or not GetSetting("BUTTON_ASSIGNMENTS") then
         hotkey:SetText("")
     else
-        if GetSetting("BUTTON_ASSIGNMENTS") then
-            hotkey:SetText(text)
-        else
-            hotkey:SetText("")
-        end
+        hotkey:SetText(text)
     end
 end
+GW.updateHotkey = updateHotkey
 GW.AddForProfiling("Actionbars2", "updateHotkey", updateHotkey)
 
 local function hideBackdrop(self)
@@ -394,13 +391,22 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         _G[buttonName .. "NormalTexture2"]:SetTexture(nil)
         _G[buttonName .. "NormalTexture2"]:Hide()
     end
-    if btn.AutoCastable ~= nil then
-        btn.AutoCastable:SetSize(btn:GetWidth(), btn:GetWidth())
+    if btn.AutoCastable then
+        btn.AutoCastable:SetSize(btn:GetWidth() * 2, btn:GetWidth() * 2)
+    end
+    if btn.AutoCastShine then
+        btn.AutoCastShine:SetSize(btn:GetWidth(), btn:GetWidth())
+    end
+    if btn.NewActionTexture then
+        btn.NewActionTexture:SetSize(btn:GetWidth(), btn:GetWidth())
+    end
+    if btn.SpellHighlightTexture then
+        btn.SpellHighlightTexture:SetSize(btn:GetWidth(), btn:GetWidth())
     end
 
-    btn:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
-    btn:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress")
-    btn:SetCheckedTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress")
+    btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/actionbutton-pressed")
+    btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+    btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
     btn.Name:SetAlpha(0) --Hide Marco Name on Actionbutton
 
     if noBackDrop == nil or noBackDrop == false then
@@ -422,7 +428,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         btn:HookScript("OnShow", showBackdrop)
     end
 end
-GW.setActionButtonStyle= setActionButtonStyle
+GW.setActionButtonStyle = setActionButtonStyle
 GW.AddForProfiling("Actionbars2", "setActionButtonStyle", setActionButtonStyle)
 
 local function main_OnEvent(self, event, ...)

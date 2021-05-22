@@ -71,11 +71,8 @@ local function fsr_OnEvent(self, event, ...)
             self:Hide()
             fsrMana:Show()
         end
-    
         self.powerType, self.powerName = UnitPowerType("player")
-    end
-
-    if event == "PLAYER_REGEN_ENABLED" then
+    elseif event == "PLAYER_REGEN_ENABLED" then
         self:Hide()
     elseif event == "PLAYER_REGEN_DISABLED" then
         self:Show()
@@ -100,7 +97,7 @@ local function fsr_OnEvent(self, event, ...)
         if (self.CurrentValue < self.LastValue) and (not spellCost or Mp5IgnoredSpells[spellID]) then
             return
         end
-        
+
         if spellCost and self.powerType == Enum.PowerType.Mana then
             -- reset Tickerbar and start ticker
             self.statusBar:SetValue(0)
@@ -127,11 +124,18 @@ local function fsr_OnEvent(self, event, ...)
     end
 end
 
-local function createStatusbar()
-    local fsr = CreateFrame("Frame", nil, _G.GwPlayerPowerBar)
-    fsr:SetSize(316, 1)
+local function createStatusbar(playerFrame)
+    local fsr = CreateFrame("Frame", nil, playerFrame and playerFrame or GwPlayerPowerBar)
+    local width = playerFrame and 215 or 316
+
     fsr:ClearAllPoints()
-    fsr:SetPoint("TOPLEFT", "GwPlayerPowerBar", "TOPLEFT", 2, 1)
+    if playerFrame then
+        fsr:SetPoint("LEFT", playerFrame.powerbarBackground, "LEFT", 2, -3)
+    else
+        fsr:SetPoint("TOPLEFT", GwPlayerPowerBar, "TOPLEFT", 2, 1)
+    end
+    fsr:SetSize(width, 1)
+
     fsr:SetFrameStrata("MEDIUM")
 
     fsr.background = fsr:CreateTexture(nil, "BACKGROUND")
@@ -139,13 +143,13 @@ local function createStatusbar()
     fsr.background:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
 
     fsr.bar = fsr:CreateTexture(nil, "BORDER")
-    fsr.bar:SetSize(316, 1)
+    fsr.bar:SetSize(width, 1)
     fsr.bar:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar")
     fsr.bar:SetPoint("LEFT", 0, 0)
     fsr.bar:SetPoint("RIGHT", fsr, "LEFT", 0, 0)
 
     fsr.statusBar = CreateFrame("StatusBar", nil, fsr)
-    fsr.statusBar:SetSize(315, 1)
+    fsr.statusBar:SetSize(width - 1, 1)
     fsr.statusBar:SetPoint("LEFT", fsr, "LEFT", 0, 0)
     fsr.statusBar:SetMinMaxValues(0, 5)
     fsr.statusBar:SetValue(0)
@@ -154,7 +158,7 @@ local function createStatusbar()
     fsr.statusBar.label = fsr.statusBar:CreateFontString(nil, "OVERLAY")
     fsr.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
     fsr.statusBar.label:SetText("")
-    fsr.statusBar.label:SetPoint("CENTER", fsr.statusBar, "CENTER", 0, 0)
+    fsr.statusBar.label:SetPoint("CENTER", 0, 0)
     fsr.statusBar.label:SetTextColor(1, 1, 1)
 
     fsr.showTimer = GW.GetSetting("PLAYER_5SR_TIMER")
@@ -172,11 +176,11 @@ local function createStatusbar()
     return fsr
 end
 
-local function load5SR()
+local function load5SR(playerFrame)
     local hide_ofc = GW.GetSetting("PLAYER_ENERGY_MANA_TICK_HIDE_OFC")
     local powerType, powerName = UnitPowerType("player")
     -- Setup bar
-    fsrMana = createStatusbar()
+    fsrMana = createStatusbar(playerFrame)
 
     fsrMana:SetScript("OnEvent", fsr_OnEvent)
     fsrMana:SetScript("OnUpdate", fsr_OnUpdate)
@@ -191,7 +195,7 @@ local function load5SR()
 
     -- if class is DRUID we need a secound statusbar and eventhandler for energybar
     if GW.myclass == "DRUID" then
-        fsrEnergy = createStatusbar()
+        fsrEnergy = createStatusbar(playerFrame)
         fsrEnergy:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
         fsrEnergy:SetScript("OnEvent", fsr_OnEvent)
         fsrEnergy:SetScript("OnUpdate", fsr_OnUpdate)

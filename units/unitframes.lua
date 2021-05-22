@@ -772,7 +772,7 @@ local function LoadTarget()
         local fctf = CreateFrame("Frame", nil, NewUnitFrame)
         fctf:SetFrameLevel(NewUnitFrame:GetFrameLevel() + 3)
         fctf:RegisterEvent("UNIT_COMBAT")
-        fctf:SetScript("OnEvent", function(self, event, unit, ...)
+        fctf:SetScript("OnEvent", function(self, _, unit, ...)
             if self.unit == unit then
                 CombatFeedback_OnCombatEvent(self, ...)
             end

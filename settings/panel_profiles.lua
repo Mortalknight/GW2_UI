@@ -237,19 +237,6 @@ local function buttons_OnLeave(self)
 end
 AddForProfiling("panel_profiles", "buttons_OnLeave", buttons_OnLeave)
 
-local function activate_export_OnEnter(self)
-    if self:GetParent().activateAble ~= nil and self:GetParent().activateAble == true then
-        self:GetParent().activateButton:Show()
-    end
-    if self:GetParent().deleteable ~= nil and self:GetParent().deleteable == true then
-        self:GetParent().deleteButton:Show()
-    end
-    if self:GetParent().exportable ~= nil and self:GetParent().exportable == true then
-        self:GetParent().exportButton:Show()
-    end
-end
-AddForProfiling("panel_profiles", "activate_OnEnter", activate_OnEnter)
-
 local function activate_OnClick(self, button)
     local p = self:GetParent()
     setProfile(p.profileID)
@@ -313,13 +300,13 @@ local function item_OnLoad(self)
     self.activateButton:SetText(ACTIVATE)
     self.exportButton:SetText(L["Export"])
 
-    self.deleteButton:SetScript("OnEnter", delete_OnEnter)
+    self.deleteButton:SetScript("OnEnter", buttons_OnEnter)
     self.deleteButton:SetScript("OnLeave", buttons_OnLeave)
     self.deleteButton:SetScript("OnClick", delete_OnClick)
-    self.activateButton:SetScript("OnEnter", activate_export_OnEnter)
+    self.activateButton:SetScript("OnEnter", buttons_OnEnter)
     self.activateButton:SetScript("OnLeave", buttons_OnLeave)
     self.activateButton:SetScript("OnClick", activate_OnClick)
-    self.exportButton:SetScript("OnEnter", activate_export_OnEnter)
+    self.exportButton:SetScript("OnEnter", buttons_OnEnter)
     self.exportButton:SetScript("OnLeave", buttons_OnLeave)
     self.exportButton:SetScript("OnClick", export_OnClick)
     self.renameButton:SetScript("OnEnter", buttons_OnEnter)
@@ -576,7 +563,7 @@ local function LoadProfilesPanel(sWindow)
     fmGCNP:SetPoint("TOPLEFT", 15, -80)
 
     local fmIP = CreateFrame("Button", nil, p.scrollchild, "GwCreateNewProfileTmpl")
-    fmIP:SetText(L["IMPORT_POFILE_BUTTON"])
+    fmIP:SetText(L["Import Profile"]) 
     fmIP:SetWidth(fmIP:GetTextWidth() + 10)
     local fnGCNP_OnClick = function(self, button)
         ImportExportFrame:Show()

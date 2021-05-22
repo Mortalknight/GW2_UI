@@ -41,7 +41,7 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <FontString name="$parentString" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
+                        <FontString name="$parentString" parentKey="text" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
                             <Color r="1" g="1" b="1"></Color>
                             <Size x="180" y="16"/>
                             <Anchors>
@@ -65,7 +65,12 @@
                     <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-85" y="0"></Anchor>
                 </Anchors>
             </Frame>
-            <Frame name="GwPetFrameHappinessInvisibleFrame" enableMouse="false" hidden="true"/>
+            <Frame parentKey="happiness" enableMouse="false" hidden="true">
+                <Size x="60" y="60"></Size>
+                <Anchors>
+                    <Anchor point="CENTER" relativePoint="CENTER" relativeKey="$parent.portraitBackground" x="0" y="0"></Anchor>
+                </Anchors>
+            </Frame>
         </Frames>
     </Button>
     

@@ -1,6 +1,16 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.2.0 TBC", [=[
+NEW
+    - Added combat text to pet frame portrait
+
+FIXES
+    - You can now close the worlmap with ESC
+    - Fix social data text
+    - Fix auto repair
+]=])
+
 v("1.1.1 TBC", [=[
 FIXES
     - Fix missing focus setting

@@ -1,3 +1,12 @@
+1.2.0
+NEW
+    - Added combat text to pet frame portrait
+
+FIXES
+    - You can now close the worlmap with ESC
+    - Fix social data text
+    - Fix auto repair
+
 1.1.1
 FIXES
     - Fix missing focus setting

@@ -551,11 +551,15 @@
             </Layer>
         </Layers>
         <Frames>
-            <Frame name="GwPetFrameHappinessInvisibleFrame2" enableMouse="true" hidden="true">
+            <Frame parentKey = "happiness" enableMouse="true" hidden="true">
+                <Size x="64" y="64"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-145" y="-45"></Anchor>
+                </Anchors>
                 <Scripts>
                     <OnEnter>
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                        GameTooltip:SetText(format(PET_DIET_TEMPLATE,BuildListString(GetPetFoodTypes())))
+                        GameTooltip:SetText(format(PET_DIET_TEMPLATE, BuildListString(GetPetFoodTypes())))
                         GameTooltip:Show()
                     </OnEnter>
                     <OnLeave>
