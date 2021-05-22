@@ -159,13 +159,13 @@ local function SetPetHappiness(self)
     end
 end
 
-local function updatePetData(self, event, unit)
+local function updatePetData(self, event)
     if not UnitExists("pet") then
         return
     end
 
     if event == "UNIT_AURA" then
-        UpdateBuffLayout(self, event, unit)
+        UpdateBuffLayout(self, event, "pet")
     elseif event == "UNIT_HAPPINESS" then 
         SetPetHappiness(self)
     elseif event == "UNIT_PET" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then

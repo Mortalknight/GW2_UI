@@ -2,7 +2,7 @@
 ## Title: |cffffedbaGW2 UI|r
 ## Notes: Hud Replacement addon.
 ## OptionalDeps: MoveAnything, HonorSpy, TitanClassic, Clique, LibHealComm-4.0, LibClassicCasterino, LibSharedMedia-3.0
-## Author: deadend06
+## Author: deadend06, Nils89, nezroy
 ## Version: @project-version@
 
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
