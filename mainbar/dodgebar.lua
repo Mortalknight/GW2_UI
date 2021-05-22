@@ -88,7 +88,7 @@ local function initBar(self, pew)
     local overrideSpellID = tonumber(GetSetting("PLAYER_TRACKED_DODGEBAR_SPELL_ID"))
 
     self.gwMaxCharges = nil
-    self.spellId = nil
+    self.spellId = overrideSpellID and overrideSpellID > 0 and overrideSpellID or nil
     if pew or not InCombatLockdown() then
         self:Hide()
     end

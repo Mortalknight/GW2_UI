@@ -499,7 +499,7 @@ local function InitPanel(panel, hasScroll)
                     self:ClearFocus()
                     SetSetting(v.optionName, self:GetText())
                     if v.callback ~= nil then
-                        v.callback()
+                        v.callback(self)
                     end
                 end
             )
