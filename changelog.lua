@@ -1,6 +1,13 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.2.1 TBC", [=[
+FIXES
+    - Fix auto repair
+    - Fix pet portrait background
+    - Fix raid control
+]=])
+
 v("1.2.0 TBC", [=[
 NEW
     - Added combat text to pet frame portrait

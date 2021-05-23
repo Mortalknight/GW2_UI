@@ -48,7 +48,7 @@ local function manageButton()
 
         if PlayerInGroup() ~= false then
             ref:Show()
-            self:SetHeight(280)
+            self:SetHeight(230)
         else
             ref:Hide()
             self:SetHeight(80)
@@ -59,7 +59,7 @@ local function manageButton()
         local state = self:GetAttribute("state")
 
         if newstate == "show" and state == "open" then
-            self:SetHeight(280)
+            self:SetHeight(230)
             ref:Show()
         elseif newstate == "hide" and state == "open" then
             self:SetHeight(80)
@@ -86,7 +86,7 @@ local function manageButton()
         end
     end
     local fnGMGIB_OnEnterPressed = function(self)
-        C_PartyInfo.InviteUnit(self:GetText())
+        InviteUnit(self:GetText())
         self:SetText("")
         self:ClearFocus()
     end
@@ -101,20 +101,20 @@ local function manageButton()
     end
 
     GwGroupManage.inviteToParty:SetScript("OnClick", function(self)
-        C_PartyInfo.InviteUnit(self:GetParent().groupInviteBox:GetText())
+        InviteUnit(self:GetParent().groupInviteBox:GetText())
         self:GetParent().groupInviteBox:SetText("")
         self:GetParent().groupInviteBox:ClearFocus()
     end)
 
     GwGroupManage.groupLeaveButton:SetScript("OnClick", function()
-        C_PartyInfo.LeaveParty()
+        LeaveParty()
     end)
 
     local fnGGMC_OnClick = function()
         if IsInRaid() then
-            C_PartyInfo.ConvertToParty()
+            ConvertToParty()
         else
-            C_PartyInfo.ConvertToRaid()
+            ConvertToRaid()
         end
     end
     GwGroupManage.inGroup.convert:SetScript("OnClick", fnGGMC_OnClick)

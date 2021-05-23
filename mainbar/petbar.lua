@@ -119,6 +119,7 @@ local function SetPetHappiness(self)
 
     if not happiness or not isHunterPet then
         self.portraitBackground:SetTexCoord(0, 0.25, 0, 1)
+        self.happiness:Hide()
         return
     end
     self.happiness:Show()
@@ -260,7 +261,8 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterUnitEvent("UNIT_MODEL_CHANGED", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_HAPPINESS", "pet")
 
-    updatePetData(playerPetFrame, "UNIT_PET", "player")
+    updatePetData(playerPetFrame, "UNIT_PET")
+    SetPetHappiness(playerPetFrame)
 
     RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, true, {"default", "scaleable"}, true)
 

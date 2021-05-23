@@ -26,7 +26,7 @@ end
 
 local function ar_frame_OnEvent(self, event, ...)
     if event == "MERCHANT_SHOW" then
-        if GetSetting("AUTO_REPAIR") or IsShiftKeyDown() or not CanMerchantRepair() then
+        if not GetSetting("AUTO_REPAIR") or IsShiftKeyDown() or not CanMerchantRepair() then
             return
         end
 

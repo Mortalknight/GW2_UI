@@ -180,10 +180,10 @@ local function handleChatFrameFadeIn(chatFrame)
                 end
             else
                 UIFrameFadeIn(v, 0.5, v:GetAlpha(), 1)
-            end   
+            end
         end
 
-        UIFrameFadeIn(_G["GwChatContainer1"], 0.5, _G["GwChatContainer1"]:GetAlpha(), 1)
+        if GwChatContainer1 then UIFrameFadeIn(GwChatContainer1, 0.5, GwChatContainer1:GetAlpha(), 1) end
         UIFrameFadeIn(ChatFrameMenuButton, 0.5, ChatFrameMenuButton:GetAlpha(), 1)
     elseif chatFrame.isDocked == nil then
         if chatFrame.Container then
@@ -214,8 +214,8 @@ local function handleChatFrameFadeOut(chatFrame)
 
     local chatAlpha = select(6, GetChatWindowInfo(chatFrame:GetID()))
     local frameName = chatFrame:GetName()
-    
-    for k, v in pairs(CHAT_FRAME_TEXTURES) do
+
+    for _, v in pairs(CHAT_FRAME_TEXTURES) do
         local object = _G[chatFrame:GetName() .. v]
         if object and object:IsShown() then
             UIFrameFadeOut(object, 2, object:GetAlpha(), 0)
@@ -233,7 +233,7 @@ local function handleChatFrameFadeOut(chatFrame)
                 UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
             end
         end
-        UIFrameFadeOut(_G["GwChatContainer1"], 2, _G["GwChatContainer1"]:GetAlpha(), chatAlpha)
+        if GwChatContainer1 then UIFrameFadeOut(GwChatContainer1, 2, GwChatContainer1:GetAlpha(), chatAlpha) end
     elseif chatFrame.isDocked == nil then
         if chatFrame.Container then
             UIFrameFadeOut(chatFrame.Container, 2, chatFrame.Container:GetAlpha(), chatAlpha)
@@ -288,13 +288,13 @@ local function styleChatWindow(frame)
         frame.Container = fmGCC
         frame.hasContainer = true
     end
-    
+
     for _, texName in pairs(tabTexs) do
         if texName == "Selected" then
             _G[tab:GetName()..texName.."Right"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveright")
             _G[tab:GetName()..texName.."Left"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveleft")
             _G[tab:GetName()..texName.."Middle"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactive")
-            
+
             _G[tab:GetName()..texName.."Right"]:SetBlendMode("BLEND")
             _G[tab:GetName()..texName.."Left"]:SetBlendMode("BLEND")
             _G[tab:GetName()..texName.."Middle"]:SetBlendMode("BLEND")

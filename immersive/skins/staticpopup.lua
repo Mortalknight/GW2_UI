@@ -53,7 +53,7 @@ local function SkinStaticPopup()
     --Movie skip Frame
     hooksecurefunc("CinematicFrame_OnDisplaySizeChanged", function(self)
         if self and self.closeDialog and not self.closeDialog.template then
-            self.closeDialog.Border:Hide()
+            self.closeDialog:StripTextures()
 
             local tex = self.closeDialog:CreateTexture("bg", "BACKGROUND")
             tex:SetPoint("TOP", self.closeDialog, "TOP", 0, 0)
@@ -64,12 +64,8 @@ local function SkinStaticPopup()
             local dialogName = self.closeDialog.GetName and self.closeDialog:GetName()
             local closeButton = self.closeDialog.ConfirmButton or (dialogName and _G[dialogName .. "ConfirmButton"])
             local resumeButton = self.closeDialog.ResumeButton or (dialogName and _G[dialogName .. "ResumeButton"])
-            if closeButton then 
-                closeButton:SkinButton(false, true)
-            end
-            if resumeButton then
-                resumeButton:SkinButton(false, true)
-            end
+            if closeButton then closeButton:SkinButton(false, true) end
+            if resumeButton then resumeButton:SkinButton(false, true) end
         end
     end)
 

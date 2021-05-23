@@ -125,14 +125,14 @@
                 </Layers>
                 <Frames>
                     <Button parentKey="readyCheck" inherits="GwStandardButton" text="READY_CHECK">
-                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button"></NormalTexture>
+                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/readycheck-button"></NormalTexture>
                         <Size x="190" y="20" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-280"></Anchor>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-135"></Anchor>
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY">
-                                <Texture file="Interface/AddOns/GW2_UI/textures/party/readycheck-icon">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/readycheck-icon">
                                     <Size x="15" y="15"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="2" y="-1"></Anchor>
@@ -144,7 +144,7 @@
                     <Button parentKey="convert" inherits="GwStandardButton" text="112">
                         <Size x="190" y="20" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-355"></Anchor>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-160"></Anchor>
                         </Anchors>
                     </Button>
                 </Frames>

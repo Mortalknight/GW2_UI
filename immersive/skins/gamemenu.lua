@@ -104,13 +104,13 @@ local function SkinMainMenu()
     tex:SetSize(256, 464)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/mainmenubg")
 
-    _G.GameMenuFrameHeader:Hide()
+    GameMenuFrameHeader:Hide()
 
     applyButtonStyle()
 
     -- remove elvui transparent bg if ours is enabled
-    if IsAddOnLoaded("ElvUI") then
-        _G.GameMenuFrame.backdrop:Hide()
+    if IsAddOnLoaded("ElvUI") and GameMenuFrame.backdrop then
+        GameMenuFrame.backdrop:Hide()
     end
 end
 GW.SkinMainMenu = SkinMainMenu

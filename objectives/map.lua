@@ -343,14 +343,16 @@ local function stackIcons(self, event, ...)
 end
 GW.AddForProfiling("map", "stackIcons", stackIcons)
 
-local function stack_OnEvent(self, event, ...)
+local function stack_OnEvent(self, event)
     if event == "PLAYER_ENTERING_WORLD" then
         stackIcons(self)
+        C_Timer.After(4, function() stackIcons(self) end)
+        self:UnregisterEvent(event)
     end
 end
 GW.AddForProfiling("map", "stack_OnEvent", stack_OnEvent)
 
-local function stack_OnClick(self, button)
+local function stack_OnClick(self)
     if not self.container:IsShown() then
         stackIcons(self)
         self.container:Show()
