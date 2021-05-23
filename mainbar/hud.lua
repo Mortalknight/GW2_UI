@@ -296,7 +296,7 @@ local function xpbar_OnEvent(self, event)
     else
         local texture = (maxPlayerLevel == GW.mylevel) and "Interface/AddOns/GW2_UI/textures/hud/level-label-azerit" or "Interface/AddOns/GW2_UI/textures/hud/level-label"
         self.NextLevel:SetTextColor(1, 1, 1)
-        self.CurrentLevel:SetText(1, 1, 1)
+        self.CurrentLevel:SetTextColor(1, 1, 1)
         self.labelRight:SetTexture(texture)
         self.labelLeft:SetTexture(texture)
     end
@@ -430,7 +430,7 @@ local function xpbar_OnEvent(self, event)
     end
 
     if GW.mylevel ~= UnitEffectiveLevel("player") then
-      level = level.. " |cFF00FF00(" .. UnitEffectiveLevel("player") .. ")|r"
+        level = level.. " |cFF00FF00(" .. UnitEffectiveLevel("player") .. ")|r"
     end
 
     self.NextLevel:SetText(Nextlevel)

@@ -285,6 +285,7 @@ local function updateAwayData(self)
 
     if iconState == 1 then
         self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
+        self.classicon:SetShown(true)
         self.healthbar:SetStatusBarColor(0.207, 0.392, 0.168)
         SetClassIcon(self.classicon, classIndex)
     end

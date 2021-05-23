@@ -425,7 +425,7 @@ local function layoutContainerFrame(cf, max_col, row, col, rev, item_off)
     if not cf or not cf.gw_num_slots or cf.gw_num_slots <= 0 then
         return col, row, false, 0
     end
-    
+
     local unfinishedRow = false
     local startNewRow = false
     local finishedRows = 0
@@ -494,8 +494,8 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
         return
     end
 
-    local cols = f == _G.GwBagFrame and f.gw_bag_cols or f.gw_bank_cols
-    local sep = f == _G.GwBagFrame and GetSetting("BAG_SEPARATE_BAGS") or false
+    local cols = f == GwBagFrame and f.gw_bag_cols or f.gw_bank_cols
+    local sep = f == GwBagFrame and GetSetting("BAG_SEPARATE_BAGS") or false
 
     if not cfs then
         f:SetHeight(min_height)
@@ -544,7 +544,7 @@ local function onMoved(self, setting, snap_size)
     end
 
     self:StopMovingOrSizing()
-    
+
     local x = self:GetLeft()
     local y = self:GetTop()
 
