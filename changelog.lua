@@ -1,7 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("1.2.1 TBC", [=[
+v("1.3.0 TBC", [=[
+NEW
+    - Added option to separate bags
+
 FIXES
     - Fix auto repair
     - Fix pet portrait background

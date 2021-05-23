@@ -372,9 +372,12 @@ GW.AddForProfiling("inventory", "bag_OnMouseDown", bag_OnMouseDown)
 -- positions ItemButtons fluidly for this container
 local function layoutContainerFrame(cf, max_col, row, col, rev, item_off)
     if not cf or not cf.gw_num_slots or cf.gw_num_slots <= 0 then
-        return col, row
+        return col, row, false, 0
     end
 
+    local unfinishedRow = false
+    local startNewRow = false
+    local finishedRows = 0
     local nS = cf.gw_num_slots
     local nE = 1
     local nD = -1
@@ -393,11 +396,17 @@ local function layoutContainerFrame(cf, max_col, row, col, rev, item_off)
             if col >= max_col then
                 col = 0
                 row = row + 1
+                finishedRows = finishedRows + 1
+                startNewRow = true
             end
         end
     end
 
-    return col, row
+    if (startNewRow and col > 0 and col < max_col) or (not startNewRow and col < max_col) then
+        unfinishedRow = true
+    end
+
+    return col, row, unfinishedRow, finishedRows
 end
 GW.AddForProfiling("inventory", "layoutContainerFrame", layoutContainerFrame)
 
@@ -435,7 +444,8 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
         return
     end
 
-    local cols = f.gw_bag_cols
+    local cols = f == GwBagFrame and f.gw_bag_cols or f.gw_bank_cols
+    local sep = f == GwBagFrame and GetSetting("BAG_SEPARATE_BAGS") or false
 
     if not cfs then
         f:SetHeight(min_height)
@@ -449,10 +459,33 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
         end
     end
 
-    local rows = math.ceil(slots / cols)
+    local rows = 0
     local isize = size + padding
+    if sep then
+        local bags_equipped = 0
+        for i = 1, 4 do
+            local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
+            local itemID = GetInventoryItemID("player", slotID)
+
+            if itemID then
+                bags_equipped = bags_equipped + 1
+            end
+        end
+        bags_equipped = bags_equipped + 1 --Keyring
+        f.finishedRow = f.finishedRow and f.finishedRow or 0
+        f.unfinishedRow = f.unfinishedRow and f.unfinishedRow or 0
+        rows = f.finishedRow + bags_equipped + 1 + f.unfinishedRow
+    else
+        rows = math.ceil(slots / cols)
+    end
     f:SetHeight(max((isize * rows) + 75, min_height))
     f:SetWidth((isize * cols) + padding + 2)
+    for i = 0, 5 do
+        if _G["GwBagFrameGwBagHeader" .. i] and sep then
+            _G["GwBagFrameGwBagHeader" .. i]:SetWidth((isize * cols) + padding + 2 - 5)
+            _G["GwBagFrameGwBagHeader" .. i].background:SetWidth((isize * cols) + padding + 2 - 5)
+        end
+    end
 end
 GW.AddForProfiling("inventory", "snapFrameSize", snapFrameSize)
 
@@ -574,7 +607,7 @@ local function LoadInventory()
     helpers.onSizerMouseUp = onSizerMouseUp
     helpers.onMoverDragStart = onMoverDragStart
     helpers.onMoverDragStop = onMoverDragStop
-    
+
     bag_resize = GW.LoadBag(helpers)
     bank_resize = GW.LoadBank(helpers)
 end

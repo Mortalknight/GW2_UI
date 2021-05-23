@@ -1,4 +1,7 @@
-1.2.1
+1.3.0
+NEW
+    - Added option to separate bags
+
 FIXES
     - Fix auto repair
     - Fix pet portrait background
