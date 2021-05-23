@@ -236,7 +236,7 @@ local function xpbar_OnEvent(self, event)
                 0
             )
 
-            if GainBigExp and GwXpFlare.soundCooldown < GetTime() then
+            if GainBigExp and self.barOverlay.flare.soundCooldown < GetTime() then
                 expSoundCooldown = math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
 
                 self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)

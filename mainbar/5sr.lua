@@ -139,7 +139,7 @@ local function createStatusbar(playerFrame)
     fsr:SetFrameStrata("MEDIUM")
 
     fsr.background = fsr:CreateTexture(nil, "BACKGROUND")
-    fsr.background:SetSize(316, 20)
+    fsr.background:SetSize(width, 20)
     fsr.background:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
 
     fsr.bar = fsr:CreateTexture(nil, "BORDER")
