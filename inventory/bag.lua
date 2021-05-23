@@ -1014,16 +1014,21 @@ local function LoadBag(helpers)
             SetSetting("BAG_HEADER_NAME" .. data, "")
 
             if tonumber(data) > 0 then
-                local slotID = GetInventorySlotInfo("Bag" .. data - 1 .. "Slot")
-                local itemID = GetInventoryItemID("player", slotID)
+                if tonumber(data) == 5 then
+                    _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(KEYRING)
+                    _G["GwBagFrameGwBagHeader" .. data].nameString:SetTextColor(1, 1, 1, 1)
+                else
+                    local slotID = GetInventorySlotInfo("Bag" .. data - 1 .. "Slot")
+                    local itemID = GetInventoryItemID("player", slotID)
 
-                if itemID then
-                    local r, g, b = 1, 1, 1
-                    local itemName, _, itemRarity = GetItemInfo(itemID)
-                    if itemRarity then r, g, b = GetItemQualityColor(itemRarity) end
+                    if itemID then
+                        local r, g, b = 1, 1, 1
+                        local itemName, _, itemRarity = GetItemInfo(itemID)
+                        if itemRarity then r, g, b = GetItemQualityColor(itemRarity) end
 
-                    _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(itemName or UNKNOWN)
-                    _G["GwBagFrameGwBagHeader" .. data].nameString:SetTextColor(r, g, b, 1)
+                        _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(itemName or UNKNOWN)
+                        _G["GwBagFrameGwBagHeader" .. data].nameString:SetTextColor(r, g, b, 1)
+                    end
                 end
             else
                 _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(BACKPACK_TOOLTIP)
