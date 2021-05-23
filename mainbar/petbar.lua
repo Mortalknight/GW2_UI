@@ -262,7 +262,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterUnitEvent("UNIT_HAPPINESS", "pet")
 
     updatePetData(playerPetFrame, "UNIT_PET")
-    SetPetHappiness(playerPetFrame)
+    C_Timer.After(0.5, function() SetPetHappiness(playerPetFrame) end)
 
     RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, true, {"default", "scaleable"}, true)
 
