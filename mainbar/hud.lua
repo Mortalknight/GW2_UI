@@ -12,8 +12,8 @@ local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 local experiencebarAnimation = 0
 local gw_reputation_vals = nil
 
-local function xpbar_OnEnter()
-    GameTooltip:SetOwner(_G["GwExperienceFrame"], "ANCHOR_CURSOR")
+local function xpbar_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
 
     local valCurrent = UnitXP("Player")
@@ -49,8 +49,8 @@ local function xpbar_OnEnter()
         )
     end
 
-    UIFrameFadeOut(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(), 0)
-    UIFrameFadeOut(GwExperienceFrameRepuBar, 0.2, GwExperienceFrameRepuBar:GetAlpha(), 0)
+    UIFrameFadeOut(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 0)
+    UIFrameFadeOut(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 0)
 
     if gw_reputation_vals ~= nil then
         GameTooltip:AddLine(gw_reputation_vals, 1, 1, 1)
@@ -60,8 +60,8 @@ local function xpbar_OnEnter()
 end
 GW.AddForProfiling("hud", "xpbar_OnEnter", xpbar_OnEnter)
 
-local function flareAnim()
-    GwXpFlare:Show()
+local function flareAnim(self)
+    self.barOverlay.flare:Show()
 
     AddToAnimation(
         "GwXpFlare",
@@ -70,15 +70,15 @@ local function flareAnim()
         GetTime(),
         1,
         function(prog)
-            GwXpFlare.texture:SetAlpha(1)
-            GwXpFlare.texture:SetRotation(lerp(0, 3, prog))
+            self.barOverlay.flare.texture:SetAlpha(1)
+            self.barOverlay.flare.texture:SetRotation(lerp(0, 3, prog))
             if prog > 0.75 then
-                GwXpFlare.texture:SetAlpha(lerp(1, 0, math.sin(((prog - 0.75) / 0.25) * math.pi * 0.5)))
+                self.barOverlay.flare.texture:SetAlpha(lerp(1, 0, math.sin(((prog - 0.75) / 0.25) * math.pi * 0.5)))
             end
         end,
         nil,
         function()
-            GwXpFlare:Hide()
+            self.barOverlay.flare:Hide()
         end
     )
 end
@@ -122,7 +122,7 @@ local function xpbar_OnEvent(self, event)
 
     local animationSpeed = 15
 
-    _G["GwExperienceFrameBar"]:SetStatusBarColor(0.83, 0.57, 0)
+    self.ExpBar:SetStatusBarColor(0.83, 0.57, 0)
 
     gw_reputation_vals = nil
     local standingId, bottomValue, topValue, earnedValue, isWatched
@@ -160,7 +160,7 @@ local function xpbar_OnEvent(self, event)
                     1,
                     1
             end
-            _G["GwExperienceFrameRepuBar"]:SetStatusBarColor(
+            self.RepuBar:SetStatusBarColor(
                 FACTION_BAR_COLORS[reaction].r,
                 FACTION_BAR_COLORS[reaction].g,
                 FACTION_BAR_COLORS[reaction].b
@@ -179,23 +179,23 @@ local function xpbar_OnEvent(self, event)
         end
     end
 
-    _G["GwExperienceFrameNextLevel"]:SetTextColor(1, 1, 1)
-    _G["GwExperienceFrameCurrentLevel"]:SetText(1, 1, 1)
-    GwExperienceFrame.labelRight:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label")
-    GwExperienceFrame.labelLeft:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label")
+    self.NextLevel:SetTextColor(1, 1, 1)
+    self.CurrentLevel:SetTextColor(1, 1, 1)
+    self.labelRight:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label")
+    self.labelLeft:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label")
 
     local GainBigExp = false
     local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (GW.mylevel / GetMaxPlayerLevel())))
     if (valPrec - experiencebarAnimation) > FlareBreakPoint then
         GainBigExp = true
-        flareAnim()
+        flareAnim(self)
     end
 
     if experiencebarAnimation > valPrec then
         experiencebarAnimation = 0
     end
 
-    GwXpFlare.soundCooldown = 0
+    self.barOverlay.flare.soundCooldown = 0
     local expSoundCooldown = 0
     local startTime = GetTime()
 
@@ -209,168 +209,157 @@ local function xpbar_OnEvent(self, event)
         GetTime(),
         animationSpeed,
         function(step)
-            ExperienceBarSpark:SetWidth(
+            self.ExpBar.Spark:SetWidth(
                 math.max(
                     8,
-                    math.min(
-                        9,
-                        _G["GwExperienceFrameBar"]:GetWidth() * animations["experiencebarAnimation"]["progress"]
-                    )
+                    math.min(9,self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress)
                 )
             )
 
             if not GainBigExp then
-                _G["GwExperienceFrameBar"]:SetValue(animations["experiencebarAnimation"]["progress"])
-                ExperienceBarSpark:SetPoint(
+                self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
+                self.ExpBar.Spark:SetPoint(
                     "LEFT",
-                    _G["GwExperienceFrameBar"]:GetWidth() * animations["experiencebarAnimation"]["progress"] - 8,
+                    self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8,
                     0
                 )
 
-                local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"]["progress"]) + 90
-                GwXpFlare:SetPoint("CENTER", GwExperienceFrame, "LEFT", flarePoint, 0)
+                local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"].progress) + 90
+                self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
             end
-            _G["GwExperienceFrameBarRested"]:SetValue(rested)
-            _G["GwExperienceFrameBarRested"]:SetPoint(
+            self.ExpBar.Rested:SetValue(rested)
+            self.ExpBar.Rested:SetPoint(
                 "LEFT",
-                _G["GwExperienceFrameBar"],
+                self.ExpBar,
                 "LEFT",
-                _G["GwExperienceFrameBar"]:GetWidth() * animations["experiencebarAnimation"]["progress"],
+                self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress,
                 0
             )
 
             if GainBigExp and GwXpFlare.soundCooldown < GetTime() then
-                expSoundCooldown =
-                    math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
+                expSoundCooldown = math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
 
-                _G["GwExperienceFrameBar"]:SetValue(animations["experiencebarAnimation"]["progress"])
-                ExperienceBarSpark:SetPoint(
+                self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
+                self.ExpBar.Spark:SetPoint(
                     "LEFT",
-                    _G["GwExperienceFrameBar"]:GetWidth() * animations["experiencebarAnimation"]["progress"] - 8,
+                    self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8,
                     0
                 )
 
-                local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"]["progress"]) + 90
-                GwXpFlare:SetPoint("CENTER", GwExperienceFrame, "LEFT", flarePoint, 0)
+                local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"].progress) + 90
+                self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
 
-                GwXpFlare.soundCooldown = GetTime() + expSoundCooldown
+                self.barOverlay.flare.soundCooldown = GetTime() + expSoundCooldown
                 PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
 
-                animations["experiencebarAnimation"]["from"] = step
+                animations["experiencebarAnimation"].from = step
             end
         end
     )
     AddToAnimation(
-        "GwExperienceFrameBarCandy",
+        "GwExperienceBarCandy",
         experiencebarAnimation,
         valPrec,
         GetTime(),
         0.3,
         function()
-            local prog = animations["GwExperienceFrameBarCandy"]["progress"]
-            _G["GwExperienceFrameBarCandy"]:SetValue(prog)
+            local prog = animations["GwExperienceBarCandy"].progress
+            self.ExpBarCandy:SetValue(prog)
         end
     )
 
     if showBar2 then
-        _G["GwExperienceFrameRepuBarCandy"]:SetValue(valPrecRepu)
+        self.RepuBarCandy:SetValue(valPrecRepu)
 
         AddToAnimation(
             "repuBarAnimation",
-            _G["GwExperienceFrameRepuBar"].repuBarAnimation,
+            self.RepuBar.repuBarAnimation,
             valPrecRepu,
             GetTime(),
             animationSpeed,
             function()
-                ExperienceRepuBarSpark:SetWidth(
+                self.RepuBar.Spark:SetWidth(
                     math.max(
                         8,
-                        math.min(
-                            9,
-                            _G["GwExperienceFrameRepuBar"]:GetWidth() * animations["repuBarAnimation"]["progress"]
-                        )
+                        math.min(9, self.RepuBar:GetWidth() * animations["repuBarAnimation"].progress)
                     )
                 )
 
-                _G["GwExperienceFrameRepuBar"]:SetValue(animations["repuBarAnimation"]["progress"])
-                ExperienceRepuBarSpark:SetPoint(
-                    "LEFT",
-                    _G["GwExperienceFrameRepuBar"]:GetWidth() * animations["repuBarAnimation"]["progress"] - 8,
-                    0
-                )
+                self.RepuBar:SetValue(animations["repuBarAnimation"].progress)
+                self.RepuBar.Spark:SetPoint("LEFT", self.RepuBar:GetWidth() * animations["repuBarAnimation"].progress - 8, 0)
             end
         )
-        _G["GwExperienceFrameRepuBar"].repuBarAnimation = valPrecRepu
+        self.RepuBar.repuBarAnimation = valPrecRepu
     end
 
     experiencebarAnimation = valPrec
 
-    _G["GwExperienceFrameNextLevel"]:SetText(Nextlevel)
-    _G["GwExperienceFrameCurrentLevel"]:SetText(restingIconString .. level)
+    self.NextLevel:SetText(Nextlevel)
+    self.CurrentLevel:SetText(restingIconString .. level)
     if showBar1 and showBar2 then
-        _G["GwExperienceFrameBar"]:Show()
-        _G["GwExperienceFrameBarCandy"]:Show()
-        _G["GwExperienceFrameBar"]:SetHeight(4)
-        _G["GwExperienceFrameBarCandy"]:SetHeight(4)
-        _G["ExperienceBarSpark"]:SetHeight(4)
-        ExperienceBarSpark:Show()
-        _G["GwExperienceFrameBarCandy"]:SetPoint("TOPLEFT", 90, -4)
-        _G["GwExperienceFrameBarCandy"]:SetPoint("TOPRIGHT", -90, -4)
-        _G["GwExperienceFrameBar"]:SetPoint("TOPLEFT", 90, -4)
-        _G["GwExperienceFrameBar"]:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBar:Show()
+        self.ExpBarCandy:Show()
+        self.ExpBar:SetHeight(4)
+        self.ExpBarCandy:SetHeight(4)
+        self.ExpBar.Spark:SetHeight(4)
+        self.ExpBar.Spark:Show()
+        self.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBar:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
 
-        _G["GwExperienceFrameRepuBar"]:Show()
-        _G["GwExperienceFrameRepuBarCandy"]:Show()
-        _G["GwExperienceFrameRepuBar"]:SetHeight(4)
-        _G["GwExperienceFrameRepuBarCandy"]:SetHeight(4)
-        _G["ExperienceRepuBarSpark"]:SetHeight(4)
-        ExperienceRepuBarSpark:Show()
-        _G["GwExperienceFrameRepuBarCandy"]:SetPoint("TOPLEFT", 90, -8)
-        _G["GwExperienceFrameRepuBarCandy"]:SetPoint("TOPRIGHT", -90, -8)
-        _G["GwExperienceFrameRepuBar"]:SetPoint("TOPLEFT", 90, -8)
-        _G["GwExperienceFrameRepuBar"]:SetPoint("TOPRIGHT", -90, -8)
+        self.RepuBar:Show()
+        self.RepuBarCandy:Show()
+        self.RepuBar:SetHeight(4)
+        self.RepuBarCandy:SetHeight(4)
+        self.RepuBar.Spark:SetHeight(4)
+        self.RepuBar.Spark:Show()
+        self.RepuBarCandy:SetPoint("TOPLEFT", 90, -8)
+        self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -8)
+        self.RepuBar:SetPoint("TOPLEFT", 90, -8)
+        self.RepuBar:SetPoint("TOPRIGHT", -90, -8)
     elseif showBar1 and not showBar2 then
-        _G["GwExperienceFrameBar"]:Show()
-        _G["GwExperienceFrameBarCandy"]:Show()
-        _G["GwExperienceFrameBar"]:SetHeight(8)
-        _G["GwExperienceFrameBarCandy"]:SetHeight(8)
-        _G["ExperienceBarSpark"]:SetHeight(8)
-        ExperienceBarSpark:Show()
+        self.ExpBar:Show()
+        self.ExpBarCandy:Show()
+        self.ExpBar:SetHeight(8)
+        self.ExpBarCandy:SetHeight(8)
+        self.ExpBar.Spark:SetHeight(8)
+        self.ExpBar.Spark:Show()
 
-        _G["GwExperienceFrameRepuBar"]:Hide()
-        _G["GwExperienceFrameRepuBarCandy"]:Hide()
-        _G["GwExperienceFrameRepuBar"]:SetValue(0)
-        _G["GwExperienceFrameRepuBarCandy"]:SetValue(0)
-        ExperienceRepuBarSpark:Hide()
+        self.RepuBar:Hide()
+        self.RepuBarCandy:Hide()
+        self.RepuBar:SetValue(0)
+        self.RepuBarCandy:SetValue(0)
+        self.RepuBar.Spark:Hide()
     elseif not showBar1 and showBar2 then
-        _G["GwExperienceFrameBar"]:Hide()
-        _G["GwExperienceFrameBarCandy"]:Hide()
-        _G["GwExperienceFrameBar"]:SetValue(0)
-        _G["GwExperienceFrameBarCandy"]:SetValue(0)
-        ExperienceBarSpark:Hide()
+        self.ExpBar:Hide()
+        self.ExpBarCandy:Hide()
+        self.ExpBar:SetValue(0)
+        self.ExpBarCandy:SetValue(0)
+        self.ExpBar.Spark:Hide()
 
-        _G["GwExperienceFrameRepuBar"]:Show()
-        _G["GwExperienceFrameRepuBarCandy"]:Show()
-        _G["GwExperienceFrameRepuBar"]:SetHeight(8)
-        _G["GwExperienceFrameRepuBarCandy"]:SetHeight(8)
-        _G["ExperienceRepuBarSpark"]:SetHeight(8)
-        ExperienceRepuBarSpark:Show()
-        _G["GwExperienceFrameRepuBarCandy"]:SetPoint("TOPLEFT", 90, -4)
-        _G["GwExperienceFrameRepuBarCandy"]:SetPoint("TOPRIGHT", -90, -4)
-        _G["GwExperienceFrameRepuBar"]:SetPoint("TOPLEFT", 90, -4)
-        _G["GwExperienceFrameRepuBar"]:SetPoint("TOPRIGHT", -90, -4)
+        self.RepuBar:Show()
+        self.RepuBarCandy:Show()
+        self.RepuBar:SetHeight(8)
+        self.RepuBarCandy:SetHeight(8)
+        self.RepuBar.Spark:SetHeight(8)
+        self.RepuBar.Spark:Show()
+        self.RepuBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -4)
+        self.RepuBar:SetPoint("TOPLEFT", 90, -4)
+        self.RepuBar:SetPoint("TOPRIGHT", -90, -4)
     elseif not showBar1 and not showBar2 then
-        _G["GwExperienceFrameBar"]:Hide()
-        _G["GwExperienceFrameBarCandy"]:Hide()
-        _G["GwExperienceFrameBar"]:SetValue(0)
-        _G["GwExperienceFrameBarCandy"]:SetValue(0)
-        ExperienceBarSpark:Hide()
+        self.ExpBar:Hide()
+        self.ExpBarCandy:Hide()
+        self.ExpBar:SetValue(0)
+        self.ExpBarCandy:SetValue(0)
+        self.ExpBar.Spark:Hide()
 
-        _G["GwExperienceFrameRepuBar"]:Hide()
-        _G["GwExperienceFrameRepuBarCandy"]:Hide()
-        _G["GwExperienceFrameRepuBar"]:SetValue(0)
-        _G["GwExperienceFrameRepuBarCandy"]:SetValue(0)
-        ExperienceRepuBarSpark:Hide()
+        self.RepuBar:Hide()
+        self.RepuBarCandy:Hide()
+        self.RepuBar:SetValue(0)
+        self.RepuBarCandy:SetValue(0)
+        self.RepuBar.Spark:Hide()
     end
 
     if experiencebarAnimation > valPrec then
@@ -379,18 +368,20 @@ local function xpbar_OnEvent(self, event)
 end
 GW.AddForProfiling("hud", "xpbar_OnEvent", xpbar_OnEvent)
 
-local function updateBarSize()
+local function updateBarSize(self)
     local m = (UIParent:GetWidth() - 180) / 10
-    for i = 1, 9 do
+    local i = 1
+    for _, v in ipairs(self.barOverlay.barSep) do
         local rm = (m * i) + 90
-        _G["barsep" .. i]:ClearAllPoints()
-        _G["barsep" .. i]:SetPoint("LEFT", "GwExperienceFrame", "LEFT", rm, 0)
+        v:ClearAllPoints()
+        v:SetPoint("LEFT", self, "LEFT", rm, 0)
+        i = i + 1
     end
 
     m = (UIParent:GetWidth() - 180)
-    dubbleBarSep:SetWidth(m)
-    dubbleBarSep:ClearAllPoints()
-    dubbleBarSep:SetPoint("LEFT", "GwExperienceFrame", "LEFT", 90, 0)
+    self.barOverlay.dubbleBarSep:SetWidth(m)
+    self.barOverlay.dubbleBarSep:ClearAllPoints()
+    self.barOverlay.dubbleBarSep:SetPoint("LEFT", self, "LEFT", 90, 0)
 end
 GW.AddForProfiling("hud", "updateBarSize", updateBarSize)
 
@@ -595,12 +586,12 @@ local function LoadXPBar()
 
     experiencebarAnimation = UnitXP("Player") / UnitXPMax("Player")
 
-    _G["GwExperienceFrameRepuBar"].repuBarAnimation = 0
-    _G["GwExperienceFrameNextLevel"]:SetFont(UNIT_NAME_FONT, 12)
-    _G["GwExperienceFrameCurrentLevel"]:SetFont(UNIT_NAME_FONT, 12)
+    experiencebar.RepuBar.repuBarAnimation = 0
+    experiencebar.NextLevel:SetFont(UNIT_NAME_FONT, 12)
+    experiencebar.CurrentLevel:SetFont(UNIT_NAME_FONT, 12)
 
-    updateBarSize()
-    xpbar_OnEvent()
+    updateBarSize(experiencebar)
+    xpbar_OnEvent(experiencebar)
 
     experiencebar:SetScript("OnEvent", xpbar_OnEvent)
 
@@ -609,15 +600,14 @@ local function LoadXPBar()
     experiencebar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
     experiencebar:RegisterEvent("PLAYER_UPDATE_RESTING")
     experiencebar:RegisterEvent("PLAYER_ENTERING_WORLD")
+    experiencebar:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+    experiencebar:RegisterEvent("UPDATE_EXHAUSTION")
 
     experiencebar:SetScript("OnEnter", xpbar_OnEnter)
-    experiencebar:SetScript(
-        "OnLeave",
-        function()
-            GameTooltip_Hide()
-            UIFrameFadeIn(GwExperienceFrameBar, 0.2, GwExperienceFrameBar:GetAlpha(), 1)
-            UIFrameFadeIn(GwExperienceFrameRepuBar, 0.2, GwExperienceFrameRepuBar:GetAlpha(), 1)
-        end
-    )
+    experiencebar:SetScript("OnLeave", function(self)
+        GameTooltip_Hide()
+        UIFrameFadeIn(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 1)
+        UIFrameFadeIn(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 1)
+    end)
 end
 GW.LoadXPBar = LoadXPBar

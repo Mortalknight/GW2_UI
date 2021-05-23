@@ -628,7 +628,7 @@
                     </StatusBar>
                 </Frames>
             </PlayerModel>
-            <Frame name="GwPapaerDollStatsPet">
+            <Frame parentKey="stats">
                 <Size x="184" y="301"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-110"></Anchor>
@@ -835,7 +835,7 @@
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                         </Anchors>
                     </Frame>
-                    <Slider parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
+                    <Slider parentKey="slider" orientation="VERTICAL" enableMouse="true">
                         <Size x="12" y="12"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-12"></Anchor>
@@ -1048,7 +1048,7 @@
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                         </Anchors>
                     </Frame>
-                    <Slider name="$parentSlider" parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
+                    <Slider parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
                         <Size x="12" y="12"></Size>
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-12"></Anchor>
@@ -1228,7 +1228,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Frame name="GwPapaerDollStats">
+            <Frame parentKey="stats">
                 <Size x="184" y="301"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-105"></Anchor>

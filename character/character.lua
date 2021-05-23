@@ -229,7 +229,7 @@ local function PaperDollPetGetStatListFrame(self, i)
 end
 
 local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y)
-    local statFrame = PaperDollGetStatListFrame(GwPapaerDollStats, index)
+    local statFrame = PaperDollGetStatListFrame(GwDressingRoom.stats, index)
     statFrame.tooltip = tooltip
     statFrame.tooltip2 = tooltip2
     statFrame.stat = stat
@@ -238,7 +238,7 @@ local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y
 
     statFrame:ClearAllPoints()
     if stat == "DURABILITY" then
-        statFrame:SetPoint("TOPRIGHT", GwPapaerDollStats, "TOPRIGHT", 22, -1)
+        statFrame:SetPoint("TOPRIGHT", GwDressingRoom.stats, "TOPRIGHT", 22, -1)
         statFrame.icon:SetSize(25, 25)
     else
         statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
@@ -248,7 +248,7 @@ local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y
 end
 
 local function setPetStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y)
-    local statFrame = PaperDollPetGetStatListFrame(GwPapaerDollStatsPet, index)
+    local statFrame = PaperDollPetGetStatListFrame(GwDressingRoomPet.stats, index)
     statFrame.tooltip = tooltip
     statFrame.tooltip2 = tooltip2
     statFrame.stat = stat
@@ -1349,8 +1349,8 @@ local function LoadPaperDoll()
     CreateFrame("Frame", "GwPetContainer", GwCharacterWindowContainer, "GwPetContainer")
     CreateFrame("Button", "GwDressingRoomPet", GwPetContainer, "GwPetPaperdoll")
 
-    GwPapaerDollStats:SetScript("OnEvent", PaperDollStats_OnEvent)
-    GwPapaerDollStatsPet:SetScript("OnEvent", PaperDollPetStats_OnEvent)
+    GwDressingRoom.stats:SetScript("OnEvent", PaperDollStats_OnEvent)
+    GwDressingRoomPet.stats:SetScript("OnEvent", PaperDollPetStats_OnEvent)
 
     grabDefaultSlots(CharacterHeadSlot, {"TOPLEFT", GwDressingRoom.gear, "TOPLEFT", 0, 0}, GwDressingRoom, 50)
     grabDefaultSlots(CharacterShoulderSlot, {"TOPLEFT", CharacterHeadSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
@@ -1365,7 +1365,7 @@ local function LoadPaperDoll()
     grabDefaultSlots(CharacterRangedSlot, {"TOPLEFT", CharacterMainHandSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
     grabDefaultSlots(CharacterAmmoSlot, {"TOPLEFT", CharacterRangedSlot, "TOPRIGHT", 5, 0}, GwDressingRoom, 50)
 
-    grabDefaultSlots(CharacterTabardSlot, {"TOPRIGHT", GwPapaerDollStats, "BOTTOMRIGHT", -5, -20}, GwDressingRoom, 40)
+    grabDefaultSlots(CharacterTabardSlot, {"TOPRIGHT", GwDressingRoom.stats, "BOTTOMRIGHT", -5, -20}, GwDressingRoom, 40)
     grabDefaultSlots(CharacterShirtSlot, {"TOPRIGHT", CharacterTabardSlot, "BOTTOMRIGHT", 0, -5}, GwDressingRoom, 40)
     grabDefaultSlots(CharacterTrinket0Slot, {"TOPRIGHT", CharacterTabardSlot, "TOPLEFT", -5, 0}, GwDressingRoom, 40)
     grabDefaultSlots(CharacterTrinket1Slot, {"TOPRIGHT", CharacterTrinket0Slot, "BOTTOMRIGHT", 0, -5}, GwDressingRoom, 40)
@@ -1478,19 +1478,19 @@ local function LoadPaperDoll()
 
     LoadPVPTab()
 
-    GwPapaerDollStats.advancedChatStatsFrame = CreateFrame("Frame", nil, GwPapaerDollStats)
-    GwPapaerDollStats.advancedChatStatsFrame:SetPoint("TOPLEFT", GwPapaerDollStats, "TOPLEFT", 0, -1)
-    GwPapaerDollStats.advancedChatStatsFrame:SetSize(180, 40)
-    GwPapaerDollStats.advancedChatStatsFrame:SetScript("OnMouseUp", function(self)
+    GwDressingRoom.stats.advancedChatStatsFrame = CreateFrame("Frame", nil, GwDressingRoom.stats)
+    GwDressingRoom.stats.advancedChatStatsFrame:SetPoint("TOPLEFT", GwDressingRoom.stats, "TOPLEFT", 0, -1)
+    GwDressingRoom.stats.advancedChatStatsFrame:SetSize(180, 40)
+    GwDressingRoom.stats.advancedChatStatsFrame:SetScript("OnMouseUp", function(self)
         GW.ShowAdvancedChatStats(self:GetParent())
     end)
-    GwPapaerDollStats.advancedChatStatsFrame:SetScript("OnEnter", function(self)
+    GwDressingRoom.stats.advancedChatStatsFrame:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:ClearLines()
         GameTooltip:SetText(ADVANCED_LABEL .. " " .. STAT_CATEGORY_ATTRIBUTES, nil, nil, nil, nil, true)
         GameTooltip:Show()
     end)
-    GwPapaerDollStats.advancedChatStatsFrame:SetScript("OnLeave", GameTooltip_Hide)
+    GwDressingRoom.stats.advancedChatStatsFrame:SetScript("OnLeave", GameTooltip_Hide)
 
     return GwCharacterWindowContainer
 end

@@ -262,7 +262,7 @@ local function updateAwayData(self)
     end
 
     if iconState == 2 then
-        if classColor == true then
+        if classColor then
             self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
         end
         SetDeadIcon(self.classicon)

@@ -961,11 +961,7 @@ local function adjustFixedAnchors(self, relativeAlert)
                 self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
             elseif name == "GroupLootContainer" then
                 self.anchorFrame:ClearAllPoints()
-                if TalkingHeadFrame and TalkingHeadFrame:IsShown() then
-                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight() + 140)
-                else
-                    self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
-                end
+                self.anchorFrame:SetPoint(pt, relTo, relPt, xOf, GwAlertFrameOffsetter:GetHeight())
             end
         end
         return self.anchorFrame
@@ -978,7 +974,7 @@ local function updateAnchors(self)
     self:CleanAnchorPriorities()
 
     local relativeFrame = GwAlertFrameOffsetter
-    for i, alertFrameSubSystem in ipairs(self.alertFrameSubSystems) do
+    for _, alertFrameSubSystem in ipairs(self.alertFrameSubSystems) do
         if alertFrameSubSystem.AdjustAnchors == AlertFrameExternallyAnchoredMixin.AdjustAnchors then
             relativeFrame = adjustFixedAnchors(alertFrameSubSystem, relativeFrame)
         else
@@ -992,7 +988,7 @@ local function changeFlyoutStyle(self)
     if not self.FlyoutArrow then
         return
     end
-    
+
     self.FlyoutBorder:Hide()
     self.FlyoutBorderShadow:Hide()
     SpellFlyoutHorizontalBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background")

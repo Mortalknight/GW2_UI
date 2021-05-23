@@ -34,7 +34,7 @@
         </Anchors>
         <Layers>
             <Layer Level="BACKGROUND">
-                <Texture name="compassBG" file="Interface\AddOns\GW2_UI\textures\compas-bg">
+                <Texture parentKey="compassBG" file="Interface\AddOns\GW2_UI\textures\compas-bg">
                     <Color r="1" g="1" b="1" a="0.3"></Color>
                     <Size x="250" y="70"></Size>
                     <Anchors>
@@ -71,7 +71,7 @@
                 </Anchors>
                 <Layers>
                     <Layer textureSubLevel="2" Level="BACKGROUND">
-                        <Texture name="GwCompassRound" file="Interface\AddOns\GW2_UI\textures\compass-rad-bg">
+                        <Texture parentKey="roundTexture" file="Interface\AddOns\GW2_UI\textures\compass-rad-bg">
                             <Size x="60" y="60"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>
@@ -79,7 +79,7 @@
                         </Texture>
                     </Layer>
                     <Layer textureSubLevel="3" Level="BACKGROUND">
-                        <Texture name="GwCompassArrow" parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\compass-arrow">
+                        <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\compass-arrow">
                             <Size x="60" y="60"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="-15"></Anchor>

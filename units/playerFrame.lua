@@ -88,9 +88,13 @@ local function UpdateIncomingPredictionAmount(self)
     updateHealthData(self)
 end
 
-local function unitFrameData(self)
+local function unitFrameData(self, event, ...)
     local level = UnitLevel(self.unit)
     local name = UnitName(self.unit)
+
+    if event == "PLAYER_LEVEL_UP" then
+        level = ...
+    end
 
     if UnitIsGroupLeader(self.unit) then
         name = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:18:18|t" .. name
@@ -120,13 +124,13 @@ local function unitFrameData(self)
     SetPortraitTexture(self.portrait, self.unit)
 end
 
-local function player_OnEvent(self, event)
+local function player_OnEvent(self, event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         unitFrameData(self)
-        updateHealthData(self, event)
+        updateHealthData(self)
         GW.updatePowerValues(self, false)
     elseif IsIn(event, "PLAYER_LEVEL_UP", "GROUP_ROSTER_UPDATE", "UNIT_PORTRAIT_UPDATE") then
-        unitFrameData(self)
+        unitFrameData(self, event, ...)
     elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
         updateHealthData(self)
     elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT", "UPDATE_SHAPESHIFT_FORM") then
