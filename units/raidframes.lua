@@ -236,6 +236,9 @@ local function updateAwayData(self)
         self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
         self.classicon:SetShown(false)
     end
+    if not classColor and not readyCheckStatus then
+        iconState = 1
+    end
     if UnitIsDeadOrGhost(self.unit) then
         iconState = 2
     end
@@ -243,15 +246,9 @@ local function updateAwayData(self)
         iconState = 3
     end
 
-    if iconState == 0 then
-        local color = GWGetClassColor(englishClass, true)
-        self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
-        if self.classicon:IsShown() then
-            self.classicon:Hide()
-        end
-    end
     if iconState == 1 then
         self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
+        self.classicon:SetShown(true)
         self.healthbar:SetStatusBarColor(0.207, 0.392, 0.168)
         SetClassIcon(self.classicon, classIndex)
     end

@@ -6,9 +6,8 @@ NEW
     - Added option to separate bags
 
 FIXES
+    - Fix an issue with raid frames are always in class color
     - Fix auto repair
-    - Fix pet portrait background
-    - Fix raid control
 ]=])
 
 v("1.2.0 TBC", [=[
