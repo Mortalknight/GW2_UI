@@ -170,9 +170,9 @@ local function inviteClick(_, name, guid)
     if guid then
         local inviteType = GetDisplayedInviteType(guid)
         if inviteType == "INVITE" or inviteType == "SUGGEST_INVITE" then
-            C_PartyInfo.InviteUnit(name)
+            InviteUnit(name)
         elseif inviteType == "REQUEST_INVITE" then
-            C_PartyInfo.RequestInviteFromUnit(name)
+            RequestInviteFromUnit(name)
         end
     end
 end
@@ -208,9 +208,9 @@ local function Guild_OnClick(self, button)
             end
         end
         GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-        _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+        EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
     elseif InCombatLockdown() then
-        UIErrorsFrame:AddMessage(E.InfoColor.._G.ERR_NOT_IN_COMBAT)
+        UIErrorsFrame:AddMessage(ERR_NOT_IN_COMBAT)
     else
         --Workaround until blizz fixes ToggleGuildFrame correctly
         if IsInGuild() then
