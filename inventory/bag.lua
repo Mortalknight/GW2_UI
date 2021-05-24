@@ -166,10 +166,10 @@ local function layoutBagItems(f)
     for i = iS, iE, iD do
         local bag_id = i
         local slotID, itemID
-        local cf = IsBagOpen(KEYRING_CONTAINER) and i > NUM_BAG_SLOTS and f.Containers[KEYRING_CONTAINER] or f.Containers[bag_id]
+        local cf = IsBagOpen(KEYRING_CONTAINER) and bag_id == 5 and f.Containers[KEYRING_CONTAINER] or f.Containers[bag_id]
 
         if sep then
-            if bag_id == 5 then
+            if bag_id == 5 and not rev then
                 if col ~= 0 then
                     row = row + 2
                 else
@@ -184,9 +184,12 @@ local function layoutBagItems(f)
         else
             _G["GwBagFrameGwBagHeader" .. bag_id] :Hide()
         end
+        if rev and bag_id == 5 and not cf then
+            row = 2
+        end
         if cf then
             if sep and cf.shouldShow then
-                if IsBagOpen(KEYRING_CONTAINER) and bag_id > NUM_BAG_SLOTS then
+                if IsBagOpen(KEYRING_CONTAINER) and bag_id == 5 then
                     if col ~= 0 then col = 0 end
                 end
                 col, row, unfinishedRow, finishedRows = lcf(cf, max_col, row, col, false, item_off)
@@ -204,12 +207,12 @@ local function layoutBagItems(f)
             if not rev and bag_id < 4 then
                 slotID = GetInventorySlotInfo("Bag" .. bag_id .. "Slot")
                 itemID = GetInventoryItemID("player", slotID)
-            elseif rev and bag_id <= 5 and bag_id > 0 then
+            elseif rev and bag_id < 5 and bag_id > 0 then
                 slotID = GetInventorySlotInfo("Bag" .. bag_id - 1 .. "Slot")
                 itemID = GetInventoryItemID("player", slotID)
             end
 
-            if (sep and bag_id == 0) or (sep and itemID) then
+            if (sep and bag_id == 0) or (sep and itemID) or (rev and bag_id == 5) then
                 if col ~= 0 then
                     row = row + 2
                     col = 0

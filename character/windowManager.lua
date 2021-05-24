@@ -1,10 +1,12 @@
 local _, GW = ...
+local L = GW.L
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 
 local windowsList = {}
 local hasBeenLoaded = false
 local hideCharframe = true
+local moveDistance, heroFrameX, heroFrameY, heroFrameLeft, heroFrameTop, heroFrameNormalScale, heroFrameEffectiveScale = 0, 0, 0, 0, 0, 1, 0
 
 windowsList[1] = {
     ['OnLoad'] = "LoadPaperDoll",
@@ -386,7 +388,7 @@ local function click_OnEvent(self, event)
     end
     ClearOverrideBindings(self)
 
-    for k, win in pairs(windowsList) do
+    for _, win in pairs(windowsList) do
         if win.TabFrame and win.Bindings then
             for key, click in pairs(win.Bindings) do
                 local keyBind = GetBindingKey(key)
@@ -398,6 +400,15 @@ local function click_OnEvent(self, event)
     end
 end
 GW.AddForProfiling("character", "mover_OnEvent", mover_OnEvent)
+
+local function GetScaleDistance()
+    local left, top = heroFrameLeft, heroFrameTop
+    local scale = heroFrameEffectiveScale
+    local x, y = GetCursorPosition()
+    x = x / scale - left
+    y = top - y / scale
+    return sqrt(x * x + y * y)
+end
 
 local function loadBaseFrame()
     if hasBeenLoaded then
@@ -436,7 +447,55 @@ local function loadBaseFrame()
     fmGCW.mover.savePosition = mover_SavePosition
     fmGCW.mover:SetAttribute("_onmousedown", mover_OnDragStart)
     fmGCW.mover:SetAttribute("_onmouseup", mover_OnDragStop)
-
+    fmGCW.sizer.texture:SetDesaturated(true)
+    fmGCW.sizer:SetScript("OnEnter", function(self)
+        fmGCW.sizer.texture:SetDesaturated(false)
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 10, 30)
+        GameTooltip:ClearLines()
+        GameTooltip_SetTitle(GameTooltip, L["Scale with Right Click"])
+        GameTooltip:Show()
+    end)
+    fmGCW.sizer:SetScript("OnLeave", function()
+        fmGCW.sizer.texture:SetDesaturated(true)
+        GameTooltip_Hide()
+    end)
+    fmGCW.sizer:SetFrameStrata(fmGCW:GetFrameStrata())
+    fmGCW.sizer:SetFrameLevel(fmGCW:GetFrameLevel() + 15)
+    fmGCW.sizer:SetScript("OnMouseDown", function(self, btn)
+        if btn ~= "RightButton" then
+            return
+        end
+        heroFrameLeft, heroFrameTop = GwCharacterWindow:GetLeft(), GwCharacterWindow:GetTop()
+        heroFrameNormalScale = GwCharacterWindow:GetScale()
+        heroFrameX,heroFrameY = heroFrameLeft, heroFrameTop - (UIParent:GetHeight() / heroFrameNormalScale)
+        heroFrameEffectiveScale = GwCharacterWindow:GetEffectiveScale()
+        moveDistance = GetScaleDistance()
+        self:SetScript("OnUpdate", function()
+            local scale = GetScaleDistance() / moveDistance * heroFrameNormalScale
+            if scale < 0.2 then scale = 0.2 elseif scale > 3.0 then scale = 3.0 end
+            GwCharacterWindow:SetScale(scale)
+            local s = heroFrameNormalScale / GwCharacterWindow:GetScale()
+            local x = heroFrameX * s
+            local y = heroFrameY * s
+            GwCharacterWindow:ClearAllPoints()
+            GwCharacterWindow:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
+        end)
+    end)
+    fmGCW.sizer:SetScript("OnMouseUp", function(self)
+        self:SetScript("OnUpdate", nil)
+        SetSetting("HERO_POSITION_SCALE", GwCharacterWindow:GetScale())
+        -- Save hero frame position
+        local pos = GetSetting("HERO_POSITION")
+        if pos then
+            wipe(pos)
+        else
+            pos = {}
+        end
+        pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = GwCharacterWindow:GetPoint()
+        SetSetting("HERO_POSITION", pos)
+        --Reset Model Camera
+        GwDressingRoom.model:RefreshCamera()
+    end)
     -- set binding change handlers
     fmGCW.secure:HookScript("OnEvent", click_OnEvent)
     fmGCW.secure:RegisterEvent("UPDATE_BINDINGS")
