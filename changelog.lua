@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.4.1 TBC", [=[
+FIXES
+    - Fix separate bags in reversed order
+]=])
+
 v("1.4.0 TBC", [=[
 NEW
     - added scaler to hero panel

@@ -184,7 +184,7 @@ local function layoutBagItems(f)
         else
             _G["GwBagFrameGwBagHeader" .. bag_id] :Hide()
         end
-        if rev and bag_id == 5 and not cf then
+        if sep and rev and bag_id == 5 and not cf then
             row = 2
         end
         if cf then
@@ -212,7 +212,7 @@ local function layoutBagItems(f)
                 itemID = GetInventoryItemID("player", slotID)
             end
 
-            if (sep and bag_id == 0) or (sep and itemID) or (rev and bag_id == 5) then
+            if (sep and bag_id == 0) or (sep and itemID) or (sep and rev and bag_id == 5) then
                 if col ~= 0 then
                     row = row + 2
                     col = 0

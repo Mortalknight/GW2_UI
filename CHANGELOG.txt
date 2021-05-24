@@ -1,3 +1,7 @@
+1.4.1
+FIXES
+    - Fix separate bags in reversed order
+
 1.4.0
 NEW
     - Added scaler to hero panel
