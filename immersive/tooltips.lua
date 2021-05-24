@@ -28,47 +28,53 @@ local genderTable = {
 }
 
 local UNSTYLED = {
-    "GameTooltip",
-    "ShoppingTooltip1",
-    "ShoppingTooltip2",
-    "ShoppingTooltip3",
-    "ItemRefTooltip",
-    "ItemRefShoppingTooltip1",
-    "ItemRefShoppingTooltip2",
-    "ItemRefShoppingTooltip3",
-    "WorldMapTooltip",
-    "WorldMapCompareTooltip1",
-    "WorldMapCompareTooltip2",
-    "WorldMapCompareTooltip3",
-    "AtlasLootTooltip",
-    "QuestHelperTooltip",
-    "QuestGuru_QuestWatchTooltip",
-    "TRP2_MainTooltip",
-    "TRP2_ObjetTooltip",
-    "TRP2_StaticPopupPersoTooltip",
-    "TRP2_PersoTooltip",
-    "TRP2_MountTooltip",
-    "AltoTooltip",
-    "AltoScanningTooltip",
-    "ArkScanTooltipTemplate",
-    "NxTooltipItem",
-    "NxTooltipD",
-    "DBMInfoFrame",
-    "DBMRangeCheck",
-    "DatatextTooltip",
-    "VengeanceTooltip",
-    "FishingBuddyTooltip",
-    "FishLibTooltip",
-    "HealBot_ScanTooltip",
-    "hbGameTooltip",
-    "PlateBuffsTooltip",
-    "LibGroupInSpecTScanTip",
-    "RecountTempTooltip",
-    "VuhDoScanTooltip",
-    "XPerl_BottomTip",
-    "EventTraceTooltip",
-    "FrameStackTooltip",
-    "LibDBIconTooltip"
+    GameTooltip,
+    ShoppingTooltip1,
+    ShoppingTooltip2,
+    ShoppingTooltip3,
+    ItemRefShoppingTooltip1,
+    ItemRefShoppingTooltip2,
+    ItemRefShoppingTooltip3,
+    WorldMapTooltip,
+    WorldMapCompareTooltip1,
+    WorldMapCompareTooltip2,
+    WorldMapCompareTooltip3,
+    AtlasLootTooltip,
+    QuestHelperTooltip,
+    QuestGuru_QuestWatchTooltip,
+    TRP2_MainTooltip,
+    TRP2_ObjetTooltip,
+    TRP2_StaticPopupPersoTooltip,
+    TRP2_PersoTooltip,
+    TRP2_MountTooltip,
+    AltoTooltip,
+    AltoScanningTooltip,
+    ArkScanTooltipTemplate,
+    NxTooltipItem,
+    NxTooltipD,
+    DBMInfoFrame,
+    DBMRangeCheck,
+    DatatextTooltip,
+    VengeanceTooltip,
+    FishingBuddyTooltip,
+    FishLibTooltip,
+    HealBot_ScanTooltip,
+    hbGameTooltip,
+    PlateBuffsTooltip,
+    LibGroupInSpecTScanTip,
+    RecountTempTooltip,
+    VuhDoScanTooltip,
+    XPerl_BottomTip,
+    EventTraceTooltip,
+    FrameStackTooltip,
+    PetBattlePrimaryUnitTooltip,
+    PetBattlePrimaryAbilityTooltip,
+    LibDBIconTooltip,
+    FriendsTooltip,
+    EmbeddedItemTooltip,
+    RepurationParagonTooltip,
+    WarCampaignTooltip,
+    QuickKeybindTooltip
 }
 
 local function GetLevelLine(self, offset)
@@ -370,7 +376,7 @@ local function styleTooltip(self)
         _G[self:GetName() .. "StatusBarTexture"]:SetTexture("Interface/Addons/GW2_UI/Textures/castinbar-white")
     end
 end
-GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
+--GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
 
 local function tooltip_SetBackdropStyle(self, args)
     --if args and args == GAME_TOOLTIP_BACKDROP_STYLE_EMBEDDED then
@@ -381,7 +387,7 @@ local function tooltip_SetBackdropStyle(self, args)
     end
     self:SetBackdrop(constBackdropArgs)
 end
-GW.AddForProfiling("tooltips", "tooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
+--GW.AddForProfiling("tooltips", "tooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
 
 local function anchorTooltip(self, p)
     self:SetOwner(p, GetSetting("CURSOR_ANCHOR_TYPE"), GetSetting("ANCHOR_CURSOR_OFFSET_X"), GetSetting("ANCHOR_CURSOR_OFFSET_Y"))
@@ -409,7 +415,38 @@ local function SkinItemRefTooltip()
     hooksecurefunc("SetItemRef", SkinItemRefTooltip_Update)
 end
 
+local function SkinProgressbar(self)
+    if not self or self:IsForbidden() or not self.progressBarPool then return end
+
+    local sb = self.progressBarPool:GetNextActive()
+    if (not sb or not sb.Bar) or sb.Bar.backdrop then return end
+
+    sb.Bar:StripTextures()
+    sb.Bar:CreateBackdrop()
+    sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/gwstatusbar")
+    sb.Bar.BorderLeft:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+    sb.Bar.BorderRight:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+    sb.Bar.BorderMid:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+    sb.Bar.LeftDivider:Hide()
+    sb.Bar.RightDivider:Hide()
+
+    self.pbBar = sb.Bar
+end
+
+local function SetStyle(tooltip)
+    if not tooltip or (tooltip == GW.ScanTooltip or tooltip.IsEmbedded) or tooltip:IsForbidden() then return end
+    tooltip:SetBackdrop(constBackdropArgs)
+end
+
 local function LoadTooltips()
+    -- Style Tooltips first
+    for _, tooltip in pairs(UNSTYLED) do
+        SetStyle(tooltip)
+    end
+    hooksecurefunc("GameTooltip_SetBackdropStyle", SetStyle)
+    GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/castinbar-white")
+    hooksecurefunc("GameTooltip_ShowProgressBar", SkinProgressbar)
+
     if GetSetting("TOOLTIP_MOUSE") then
         hooksecurefunc("GameTooltip_SetDefaultAnchor", anchorTooltip)
     else
@@ -455,12 +492,13 @@ local function LoadTooltips()
         end)
     end
 
-    hooksecurefunc("GameTooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
-    for _, toStyle in ipairs(UNSTYLED) do
-        local f = _G[toStyle]
-        if f then
-            f:HookScript("OnUpdate", styleTooltip)
-        end
+    if IsAddOnLoaded("Pawn") then
+        hooksecurefunc("GameTooltip_ShowCompareItem", function(self)
+            if not self then return end
+            local tt1, tt2 = unpack(self.shoppingTooltips)
+            if tt1.PawnIconFrame then tt1.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
+            if tt2.PawnIconFrame then tt2.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
+        end)
     end
 end
 GW.LoadTooltips = LoadTooltips

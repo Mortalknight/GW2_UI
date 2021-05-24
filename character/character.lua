@@ -1402,7 +1402,6 @@ local function LoadPaperDoll()
         end
     end)
 
-    GW.RegisterScaleFrame(GwCharacterWindow)
     GwUpdateSavedReputation()
     GwPaperReputation.repuScrollFrame:SetScrollChild(GwPaperReputation.repuScrollFrame.scrollchild)
     GwPaperDollUpdateReputations()

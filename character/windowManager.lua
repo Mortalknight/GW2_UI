@@ -442,6 +442,9 @@ local function loadBaseFrame()
 
     -- setup movable stuff
     local pos = GetSetting("HERO_POSITION")
+    local scale = GetSetting("HERO_POSITION_SCALE")
+
+    fmGCW:SetScale(scale)
     fmGCW:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     fmGCW.mover.onMoveSetting = "HERO_POSITION"
     fmGCW.mover.savePosition = mover_SavePosition
@@ -696,6 +699,7 @@ local function LoadWindows()
                 addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end, true)
                 addAddonButton("GearQuipper-TBC", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() gearquipper:ToggleUI() end, false)
                 addAddonButton("Clique", GetSetting("USE_SPELLBOOK_WINDOW"), nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end, true)
+                addAddonButton("Pawn", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, PawnUIShow, false)
 
                 GwCharacterMenu.skillsMenu:SetAttribute("_onclick", [=[
                     local f = self:GetFrameRef("GwCharacterWindow")

@@ -1,3 +1,7 @@
+1.4.2
+FIXES
+    - Fix hero frame sizer
+
 1.4.1
 FIXES
     - Fix separate bags in reversed order

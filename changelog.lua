@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.4.2 TBC", [=[
+FIXES
+    - Fix hero frame sizer
+]=])
+
 v("1.4.1 TBC", [=[
 FIXES
     - Fix separate bags in reversed order
