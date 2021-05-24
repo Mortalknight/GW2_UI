@@ -30,7 +30,7 @@ FIXES
 v("5.13.4", [=[
 FIXES
     - Fix interaction with Dominos
-    - Totem fram is now shown with player frame in target frame style
+    - Totem frame is now shown with player frame in target frame style
 ]=])
 
 v("5.13.3", [=[
