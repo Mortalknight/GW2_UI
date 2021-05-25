@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.6.0 TBC", [=[
+NEW
+    - Added option to show quest XP to quest tracker
+]=])
+
 v("1.5.1 TBC", [=[
 MISC
     - Many repu fixes

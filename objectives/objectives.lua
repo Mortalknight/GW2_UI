@@ -468,7 +468,7 @@ GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
 local function getQuestInfoLevel(questID, block)
     for i = 1, GetNumQuestLogEntries() do
-        local title, level, group, _, _, _, _, questID2 = GetQuestLogTitle(i)
+        local _, level, group, _, _, _, _, questID2 = GetQuestLogTitle(i)
         if questID == questID2 then
             block.level = level
             block.group = group
@@ -482,8 +482,7 @@ local function updateQuest(block, questWatchId)
     block.numObjectives = 0
     block.turnin:Hide()
 
-    local questID, title, questLogIndex, numObjectives, requiredMoney, isComplete, startEvent, isAutoComplete, _ =
-        GetQuestWatchInfo(questWatchId)
+    local questID, title, questLogIndex, numObjectives, requiredMoney, isComplete, startEvent, isAutoComplete = GetQuestWatchInfo(questWatchId)
 
     if questID then
         if savedQuests[questID] == nil then
@@ -503,6 +502,11 @@ local function updateQuest(block, questWatchId)
         block.questID = questID
         block.questLogIndex = questLogIndex
         block.Header:SetText(text .. title)
+
+        local rewardXP = GetQuestLogRewardXP(questID)
+        if rewardXP and GetSetting("QUESTTRACKER_SHOW_XP") and not GetMaxPlayerLevel() == GW.mylevel then
+            block.Header:SetText(text .. title .. " |cFF888888(" .. CommaValue(rewardXP) .. XP .. ")|r")
+        end
 
         if isComplete and isComplete < 0 then
             isComplete = false

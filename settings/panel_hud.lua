@@ -37,6 +37,7 @@ local function LoadHudPanel(sWindow)
         1
     )
     addOption(p.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Show Quest XP on Quest Tracker"], nil, "QUESTTRACKER_SHOW_XP", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], "CASTINGBAR_DATA", nil, nil, {["CASTINGBAR_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU")
     addOption(p.scroll.scrollchild, L["Auto Repair"], L["Automatically repair using the following method when visiting a merchant."], "AUTO_REPAIR")

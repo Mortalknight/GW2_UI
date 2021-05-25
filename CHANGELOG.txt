@@ -1,3 +1,7 @@
+1.6.0
+NEW
+    - Added option to show quest XP to quest tracker
+
 1.5.1
 MISC
     - Many repu fixes
