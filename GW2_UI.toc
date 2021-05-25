@@ -135,9 +135,13 @@ inventory/bank.lua
 inventory/lootframe.xml
 inventory/lootframe.lua
 
+character/title.xml
+character/reputation.xml
 character/reputation_table.lua
 character/stats.lua
 character/advanced_stats.lua
+character/titles.lua
+character/reputation.lua
 character/character.lua
 character/character.xml
 character/spellbook.lua

@@ -1,6 +1,16 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.5.1 TBC", [=[
+MISC
+    - Many repu fixes
+    - Ruputation has now a own menu button at the hero panel
+
+FIXES
+    - Fix hero frame sizer
+    - Fix actionbar scaling
+]=])
+
 v("1.5.0 TBC", [=[
 NEW
     - Added option to show item level at bags
