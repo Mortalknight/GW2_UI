@@ -389,21 +389,16 @@ GW.AddForProfiling("inventory", "relocateSearchBox", relocateSearchBox)
 
 -- on right click, open the bag filter dropdown (if valid) for this bag slot
 local function bag_OnMouseDown(self, button)
-    if button ~= "RightButton" then
-        return
-    end
-    if not self.GetBagID then
+    if button ~= "RightButton" or not self.gwHasBag or not ((self:GetID() - CharacterBag0Slot:GetID() + 1) > 0 and (self:GetID() - CharacterBag0Slot:GetID() + 1) < 5) then
         return
     end
 
-    local bag_id = self:GetBagID()
-    if self.gwHasBag or bag_id == BACKPACK_CONTAINER then
-        local cf = getContainerFrame(bag_id)
-        if cf and cf.FilterDropDown then
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            ToggleDropDownMenu(1, nil, cf.FilterDropDown, self, 32, 32)
-        end
-    end
+    local bag_id = self:GetID() - CharacterBag0Slot:GetID() + 1
+    local menuList = {}
+    tinsert(menuList, { text = BAG_FILTER_CLEANUP, isTitle = true, notCheckable = true })
+    tinsert(menuList, { text = BAG_FILTER_IGNORE, ichecked = function() return GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) end, func = function() SetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)) end })
+    GW.SetEasyMenuAnchor(GW.EasyMenu, self)
+    _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
 end
 GW.AddForProfiling("inventory", "bag_OnMouseDown", bag_OnMouseDown)
 

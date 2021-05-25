@@ -5,6 +5,7 @@ v("1.5.1 TBC", [=[
 MISC
     - Many repu fixes
     - Ruputation has now a own menu button at the hero panel
+    - Added option to ignore bags from sorting (right click the bag)
 
 FIXES
     - Fix hero frame sizer
