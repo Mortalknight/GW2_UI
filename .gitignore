@@ -27,6 +27,7 @@ $RECYCLE.BIN/
 .DS_Store
 .AppleDouble
 .LSOverride
+._MACOSX
 
 # Thumbnails
 ._*
@@ -42,6 +43,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 *.psd
+*.vs
 
 # =========================
 # Editor Files
