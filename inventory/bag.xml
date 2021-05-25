@@ -356,7 +356,7 @@
                 <HighlightFont style="ChatBubbleFont"></HighlightFont>
                 <Frames>
                     <Frame parentKey="dropdown" hidden="true" frameLevel="58">
-                        <Size x="200" y="205"></Size>
+                        <Size x="200" y="230"></Size>
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" y="-5"></Anchor>
                         </Anchors>
@@ -557,10 +557,38 @@
                                     </CheckButton>
                                 </Frames>
                             </Button>
-                            <Button parentKey="separateBags">
+                            <Button parentKey="showItemLvl">
                                 <Size x="200" y="30"></Size>
                                 <Anchors>
                                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-175"></Anchor>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="title" text="Show Itemlevel" inherits="ChatBubbleFont" justifyH="LEFT">
+                                            <Size x="170" y="30"/>
+                                            <Color r="1" b="1" g="1"/>
+                                            <Anchors>
+                                                <Anchor point="LEFT" x="25" y="0"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
+                            </Button>
+                            <Button parentKey="separateBags">
+                                <Size x="200" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-200"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">

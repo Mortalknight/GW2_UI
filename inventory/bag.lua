@@ -917,6 +917,18 @@ local function LoadBag(helpers)
             end
         )
 
+        dd.showItemLvl.checkbutton:HookScript(
+            "OnClick",
+            function()
+                local newStatus = not GetSetting("BAG_SHOW_ILVL")
+                dd.showItemLvl.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_SHOW_ILVL", newStatus)
+
+                ContainerFrame_UpdateAll()
+            end
+        )
+
+
         dd.separateBags.checkbutton:HookScript(
             "OnClick",
             function()
@@ -937,6 +949,7 @@ local function LoadBag(helpers)
         dd.junkIcon.checkbutton:SetChecked(GetSetting("BAG_ITEM_JUNK_ICON_SHOW"))
         dd.professionColor.checkbutton:SetChecked(GetSetting("BAG_PROFESSION_BAG_COLOR"))
         dd.vendorGrays.checkbutton:SetChecked(GetSetting("BAG_VENDOR_GRAYS"))
+        dd.showItemLvl.checkbutton:SetChecked(GetSetting("BAG_SHOW_ILVL"))
         dd.separateBags.checkbutton:SetChecked(GetSetting("BAG_SEPARATE_BAGS"))
 
         setupVendorJunk(dd.vendorGrays.checkbutton:GetChecked())
@@ -949,6 +962,7 @@ local function LoadBag(helpers)
         dd.professionColor.title:SetText(L["Show Profession Bag Coloring"])
         dd.bagOrder.title:SetText(L["Reverse Bag Order"])
         dd.vendorGrays.title:SetText(L["Sell junk automatically"])
+        dd.showItemLvl.title:SetText(SHOW_ITEM_LEVEL)
         dd.separateBags.title:SetText(L["Separate bags"])
     end
 

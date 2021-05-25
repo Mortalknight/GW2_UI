@@ -56,6 +56,13 @@ local function reskinItemButton(iname, b)
         b.junkIcon:Hide()
     end
 
+    if not b.itemlevel then
+        b.itemlevel = b:CreateFontString(nil, "OVERLAY")
+        b.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
+        b.itemlevel:SetPoint("BOTTOMRIGHT", 0, 0)
+        b.itemlevel:SetText("")
+    end
+
     GW.RegisterCooldown(_G[b:GetName() .. "Cooldown"])
 end
 GW.AddForProfiling("inventory", "reskinItemButton", reskinItemButton)
@@ -118,6 +125,16 @@ local function SetItemButtonQualityForBags(button, quality, itemIDOrLink)
 end
 GW.SetItemButtonQualityForBags = SetItemButtonQualityForBags
 
+local function IsItemEligibleForItemLevelDisplay(equipLoc, rarity)
+    if ((equipLoc ~= nil and equipLoc ~= "" and equipLoc ~= "INVTYPE_BAG"
+        and equipLoc ~= "INVTYPE_QUIVER" and equipLoc ~= "INVTYPE_TABARD"))
+    and (rarity and rarity > 1) then
+        return true
+    end
+
+    return false
+end
+
 local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
     if not button.gwBackdrop then
         return
@@ -126,6 +143,11 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
     t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     t:SetAlpha(0.9)
     button.IconOverlay:Hide()
+
+    local bag_id = button:GetParent():GetID()
+    local keyring = (bag_id == KEYRING_CONTAINER)
+    local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or BAG_TYP_COLORS[select(2, GetContainerNumFreeSlots(bag_id))]
+    local showItemLevel = button.itemlevel and itemIDOrLink and GetSetting("BAG_SHOW_ILVL") and not professionColors
 
     if itemIDOrLink then
         local isQuestItem = select(12, GetItemInfo(itemIDOrLink))
@@ -143,7 +165,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         end
 
         -- Show junk icon if active
-        local _, _, _, rarity, _, _, _, _, noValue = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
+        local _, _, _, rarity, _, _, _, _, noValue = GetContainerItemInfo(bag_id, button:GetID())
         button.isJunk = (rarity and rarity == LE_ITEM_QUALITY_POOR) and not noValue
 
         if button.junkIcon then
@@ -153,9 +175,26 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
                 button.junkIcon:Hide()
             end
         end
+
+        -- Show ilvl if active
+        if showItemLevel then
+            local canShowItemLevel = IsItemEligibleForItemLevelDisplay(select(9, GetItemInfo(itemIDOrLink)), quality)
+            local iLvl = GetDetailedItemLevelInfo(itemIDOrLink)
+            if canShowItemLevel and iLvl then
+                local r, g, b = GetItemQualityColor(quality or 1)
+                if quality >= LE_ITEM_QUALITY_COMMON and GetItemQualityColor(quality) then
+                    r, g, b = GetItemQualityColor(quality)
+                    button.itemlevel:SetTextColor(r, g, b, 1)
+                end
+                button.itemlevel:SetText(iLvl)
+            end
+        elseif button.itemlevel then
+            button.itemlevel:SetText("")
+        end
     else
         t:Hide()
         if button.junkIcon then button.junkIcon:Hide() end
+        if button.itemlevel then button.itemlevel:SetText("") end
     end
 
     if not GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
@@ -163,16 +202,15 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_COMMON].b)
     end
 
-    local professionColors = BAG_TYP_COLORS[select(2, GetContainerNumFreeSlots(button:GetParent():GetID()))]
     if GetSetting("BAG_PROFESSION_BAG_COLOR") and professionColors then
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
     end
 
     --Keyring
-    if button:GetParent():GetID() == KEYRING_CONTAINER then
+    if keyring then
         t:Show()
-        t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].r, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].g, BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN].b)
+        t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
     end
 end
 

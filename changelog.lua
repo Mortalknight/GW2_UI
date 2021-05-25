@@ -1,9 +1,13 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("1.4.2 TBC", [=[
+v("1.5.0 TBC", [=[
+NEW
+    - Added option to show item level at bags
+
 FIXES
     - Fix hero frame sizer
+    - Fix actionbar scaling
 ]=])
 
 v("1.4.1 TBC", [=[
