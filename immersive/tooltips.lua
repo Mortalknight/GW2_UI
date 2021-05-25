@@ -358,7 +358,7 @@ local function SetUnitText(self, unit, isShiftKeyDown)
                 if isGroupLeader or isGroupAssist then
                     local roleString
                     if isGroupLeader then
-                        roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:0:0:0:-2:64:64:4:60:4:60|t " .. UnitInRaid(unit) and RAID_LEADER or PARTY_LEADER
+                        roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:0:0:0:-2:64:64:4:60:4:60|t " .. (IsInRaid() and RAID_LEADER or PARTY_LEADER)
                     else
                         roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-assist:0:0:0:-2:64:64:4:60:4:60|t " .. RAID_ASSISTANT
                     end

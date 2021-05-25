@@ -1,3 +1,7 @@
+5.14.5
+FIXES
+    - Fix a tooltip lua error
+
 5.14.4
 FIXES
     - Fix microbar lua error
