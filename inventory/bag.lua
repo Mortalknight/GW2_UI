@@ -378,7 +378,7 @@ local function createBagBar(f)
         b:HookScript("OnMouseDown", inv.bag_OnMouseDown)
 
         inv.reskinBagBar(b)
-        local invID = ContainerIDToInventoryID(bag_idx)  
+        local invID = ContainerIDToInventoryID(bag_idx)
         local bagLink = GetInventoryItemLink("player", invID)
         if bagLink then
             GW.SetItemButtonQualityForBags(b, select(3, GetItemInfo(bagLink)))

@@ -3,6 +3,13 @@ local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local BAG_TYP_COLORS = GW.BAG_TYP_COLORS
 
+BAG_FILTER_LABELS = {
+    [LE_BAG_FILTER_FLAG_EQUIPMENT] = BAG_FILTER_EQUIPMENT,
+    [LE_BAG_FILTER_FLAG_CONSUMABLES] = BAG_FILTER_CONSUMABLES,
+    [LE_BAG_FILTER_FLAG_TRADE_GOODS] = BAG_FILTER_TRADE_GOODS,
+    [LE_BAG_FILTER_FLAG_JUNK] = BAG_FILTER_JUNK,
+};
+
 -- reskins an ItemButton to use GW2_UI styling
 local item_size
 local function reskinItemButton(iname, b)
@@ -261,7 +268,7 @@ local function takeItemButtons(p, bag_id)
     if not cf then
         return
     end
-    
+
     -- NOTE: taking ownership of CF ItemButtons seems to work without causing taint,
     -- amazingly; this is probably brittle in the long-term though and we should
     -- someday re-implemenent all the ItemButton functionality ourselves
@@ -296,7 +303,7 @@ local function takeItemButtons(p, bag_id)
         iname = b:GetName() .. "Item"
     end
     cf.gw_owner = p
-    
+
     local num_slots = GetContainerNumSlots(bag_id)
     cf.gw_num_slots = num_slots
     for i = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
@@ -315,7 +322,7 @@ local function reskinBagBar(b)
 
     b:SetSize(bag_size, bag_size)
     b.tooltipText = BANK_BAG
-    
+
     if b.Count then
         b.Count:ClearAllPoints()
         b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
@@ -396,7 +403,7 @@ local function bag_OnMouseDown(self, button)
     local bag_id = self:GetID() - CharacterBag0Slot:GetID() + 1
     local menuList = {}
     tinsert(menuList, { text = BAG_FILTER_CLEANUP, isTitle = true, notCheckable = true })
-    tinsert(menuList, { text = BAG_FILTER_IGNORE, ichecked = function() return GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) end, func = function() SetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)) end })
+    tinsert(menuList, { text = BAG_FILTER_IGNORE, checked = function() return GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) end, func = function() SetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)) end })
     GW.SetEasyMenuAnchor(GW.EasyMenu, self)
     _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
 end
