@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.14.4", [=[
+FIXES
+    - Fix microbar lua error
+]=])
+
 v("5.14.3", [=[
 FIXES
     - Fix stancebar issue

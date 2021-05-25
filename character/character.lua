@@ -439,7 +439,7 @@ local function loadBaseFrame()
         --Reset Model Camera
         GwDressingRoom.model:RefreshCamera()
     end)
-    
+
     -- set binding change handlers
     fmGCW.secure:HookScript("OnEvent", click_OnEvent)
     fmGCW.secure:RegisterEvent("UPDATE_BINDINGS")
