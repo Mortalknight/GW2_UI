@@ -114,7 +114,7 @@ local function hookUpdateAnchors()
 end
 GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
 
-local function SetItemButtonQualityForBags(button, quality, itemIDOrLink)
+local function SetItemButtonQualityForBags(button, quality)
     button.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     button.IconOverlay:Hide()
     button.IconBorder:SetAlpha(0.9)
@@ -239,7 +239,7 @@ local function resizeInventory()
 end
 GW.AddForProfiling("inventory", "resizeInventory", resizeInventory)
 
-local function freeItemButtons(cf, p, bag_id)
+local function freeItemButtons(cf, p)
     -- return all of the ItemButtons we previously took before taking new ones, as long as
     -- we are still the frame that took them to start with (bank/bag might have grabbed
     -- them from each other in the mean-time)
@@ -402,7 +402,7 @@ local function bag_OnMouseDown(self, button)
 
     local bag_id = self:GetID() - CharacterBag0Slot:GetID() + 1
     local menuList = {}
-    tinsert(menuList, { text = BAG_FILTER_CLEANUP, isTitle = true, notCheckable = true })
+    tinsert(menuList, { text = BAG_FILTER_ASSIGN_TO, isTitle = true, notCheckable = true })
     tinsert(menuList, { text = BAG_FILTER_IGNORE, checked = function() return GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) end, func = function() SetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)) end })
     GW.SetEasyMenuAnchor(GW.EasyMenu, self)
     _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
