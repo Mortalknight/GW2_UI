@@ -30,7 +30,7 @@
     <Frame name="GwObjectivesNotification" hidden="true" virtual="true" parent="UIParent" frameStrata="LOW">
         <Size x="300" y="1"></Size>
         <Anchors>
-            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"/>
         </Anchors>
         <Layers>
             <Layer Level="BACKGROUND">
