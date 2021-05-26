@@ -386,23 +386,6 @@ local function getBlockQuest(blockIndex, isFrequency)
     setBlockColor(newBlock, isFrequency and "DAILY" or "QUEST")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.joingroup:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-    newBlock.joingroup:SetScript(
-        "OnClick",
-        function (self)
-            local p = self:GetParent()
-            LFGListUtil_FindQuestGroup(p.questID)
-        end
-    )
-    newBlock.joingroup:SetScript(
-        "OnEnter",
-        function (self)
-            GameTooltip:SetOwner(self)
-            GameTooltip:AddLine(TOOLTIP_TRACKER_FIND_GROUP_BUTTON, HIGHLIGHT_FONT_COLOR:GetRGB())
-            GameTooltip:Show()
-        end
-    )
-    newBlock.joingroup:SetScript("OnLeave", GameTooltip_Hide)
 
     -- quest item button here
     newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
@@ -437,23 +420,6 @@ local function getBlockCampaign(blockIndex)
     setBlockColor(newBlock, "CAMPAIGN")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.joingroup:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-    newBlock.joingroup:SetScript(
-        "OnClick",
-        function (self)
-            local p = self:GetParent()
-            LFGListUtil_FindQuestGroup(p.questID)
-        end
-    )
-    newBlock.joingroup:SetScript(
-        "OnEnter",
-        function (self)
-            GameTooltip:SetOwner(self)
-            GameTooltip:AddLine(TOOLTIP_TRACKER_FIND_GROUP_BUTTON, HIGHLIGHT_FONT_COLOR:GetRGB())
-            GameTooltip:Show()
-        end
-    )
-    newBlock.joingroup:SetScript("OnLeave", GameTooltip_Hide)
 
     -- quest item button here
     newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
@@ -710,12 +676,7 @@ local function updateQuest(self, block, quest)
         end
         block.clickHeader:SetScript("OnClick", OnBlockClickHandler)
         block:SetScript("OnClick", OnBlockClickHandler)
-        --add groupfinder button
-        if C_LFGList.CanCreateQuestGroup(block.questID) then
-            block.joingroup:Show()
-        else
-            block.joingroup:Hide()
-        end
+
         wipe(questInfo)
     end
     if block.objectiveBlocks == nil then
@@ -791,12 +752,6 @@ local function updateQuestByID(self, block, quest, questID, questLogIndex)
     end
     block.clickHeader:SetScript("OnClick", OnBlockClickHandler)
     block:SetScript("OnClick", OnBlockClickHandler)
-    --add groupfinder button
-    if C_LFGList.CanCreateQuestGroup(block.questID) then
-        block.joingroup:Show()
-    else
-        block.joingroup:Hide()
-    end
 
     if block.objectiveBlocks == nil then
         block.objectiveBlocks = {}
@@ -1402,6 +1357,27 @@ local function LoadQuestTracker()
     GW.LoadAchievementFrame()
     GW.LoadBonusFrame()
     GW.LoadWQTAddonSkin()
+
+    hooksecurefunc("QuestObjectiveSetupBlockButton_FindGroup", function(self, questID)
+        local button = self.hasGroupFinderButton and self.groupFinderButton
+
+        if button then
+            local block = getBlockById(questID)
+            local blockBonus = GW.getBonusBlockById(questID)
+            if block or blockBonus then
+                button:SetParent(block or blockBonus)
+                button:ClearAllPoints()
+                button:SetPoint("TOPRIGHT", block or blockBonus, "TOPLEFT", 0, -25)
+                button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
+                button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
+                button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
+                button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
+                button.Icon:Hide()
+                button.Icon:SetAtlas(nil)
+                button:SetSize(25, 25)
+            end
+        end
+    end)
 
     fNotify.shouldDisplay = false
     -- only update the tracker on Events or if player moves

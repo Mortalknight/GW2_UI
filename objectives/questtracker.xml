@@ -292,22 +292,6 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Button name="$parentJoinGroup" hidden="true" enableMouse="true" registerForClicks="AnyDown" parentKey="joingroup">
-                <Size x="25" y="25"></Size>
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="-25"></Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="ARTWORK" textureSubLevel="1">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down">
-                            <Anchors>
-                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
-                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </Button>
         </Frames>
     </Button>
     <Frame name="GwQuesttrackerObjectiveNormal" enableMouse="false" virtual="true">

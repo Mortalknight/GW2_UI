@@ -13,6 +13,20 @@ local QuestTrackerLayoutChanged = GW.QuestTrackerLayoutChanged
 local savedQuests = {}
 local trackedEventIDs = {}
 
+local function getBonusBlockById(questID)
+    for i = 1, 20 do -- loop bonus blocks
+        local block = _G["GwBonusObjectiveBlock" .. i]
+        if block then
+            if block.questID == questID then
+                return block
+            end
+        end
+    end
+
+    return nil
+end
+GW.getBonusBlockById = getBonusBlockById
+
 local function getObjectiveBlock(self, index)
     if _G[self:GetName() .. "GwQuestObjective" .. index] ~= nil then
         return _G[self:GetName() .. "GwQuestObjective" .. index]
@@ -142,24 +156,6 @@ local function createNewBonusObjectiveBlock(blockIndex)
     newBlock.color = TRACKER_TYPE_COLOR["EVENT"]
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-
-    newBlock.joingroup:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-    newBlock.joingroup:SetScript(
-        "OnClick",
-        function (self)
-            local p = self:GetParent()
-            LFGListUtil_FindQuestGroup(p.questID)
-        end
-    )
-    newBlock.joingroup:SetScript(
-        "OnEnter",
-        function (self)
-            GameTooltip:SetOwner(self)
-            GameTooltip:AddLine(TOOLTIP_TRACKER_FIND_GROUP_BUTTON, HIGHLIGHT_FONT_COLOR:GetRGB())
-            GameTooltip:Show()
-        end
-    )
-    newBlock.joingroup:SetScript("OnLeave", GameTooltip_Hide)
 
     -- quest item button here
     newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
@@ -296,12 +292,6 @@ local function setUpBlock(questIDs, collapsed)
                 end
 
                 if not GwQuesttrackerContainerBonusObjectives.collapsed then
-                    --add groupfinder button
-                    if C_LFGList.CanCreateQuestGroup(GwBonusObjectiveBlock.questID) then
-                        GwBonusObjectiveBlock.joingroup:Show()
-                    else
-                        GwBonusObjectiveBlock.joingroup:Hide()
-                    end
                     GwBonusObjectiveBlock:Show()
                 end
                 for i = GwBonusObjectiveBlock.numObjectives + 1, 20 do
