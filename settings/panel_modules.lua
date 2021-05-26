@@ -83,7 +83,7 @@ local function LoadModulesPanel(sWindow)
     addOption(p.scroll.scrollchild, CAMERA_FOLLOWING_STYLE .. ": " .. DYNAMIC, nil, "DYNAMIC_CAM", nil, nil, nil, "DynamicCam")
     addOption(p.scroll.scrollchild, CHAT_BUBBLES_TEXT, L["Replace the default UI chat bubbles. (Only in not protected areas)"], "CHATBUBBLES_ENABLED")
     addOption(p.scroll.scrollchild, L["Alert Frames"], nil, "ALERTFRAME_ENABLED")
-    --addOption(p.scroll.scrollchild, FRIENDS, nil, "USE_SOCIAL_WINDOW")
+    addOption(p.scroll.scrollchild, FRIENDS, nil, "USE_SOCIAL_WINDOW")
 
     InitPanel(p, true)
 end

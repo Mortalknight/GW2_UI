@@ -1,3 +1,7 @@
+5.15.0
+NEW
+    - Added social module
+
 5.14.5
 FIXES
     - Fix a tooltip lua error

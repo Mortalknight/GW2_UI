@@ -11,7 +11,7 @@ windowsList[1] = {
     ["OnLoad"] = "LoadFriendList",
     ["SettingName"] = "USE_SOCIAL_WINDOW",
     ["RefName"] = "GwFriendList",
-    ["TabIcon"] = "tabicon_character",
+    ["TabIcon"] = "tabicon_friends",
     ["HeaderText"] = FRIENDS_LIST,
     ["HeaderTipText"] = FRIENDS,
     ["Bindings"] = {
@@ -27,7 +27,7 @@ windowsList[2] = {
     ["OnLoad"] = "LoadIgnoreList",
     ["SettingName"] = "USE_SOCIAL_WINDOW",
     ["RefName"] = "GwIgnoreList",
-    ["TabIcon"] = "tabicon_currency",
+    ["TabIcon"] = "tabicon_ignore",
     ["HeaderText"] = IGNORE_LIST,
     ["HeaderTipText"] = IGNORE,
     ["Bindings"] = {},
@@ -40,7 +40,7 @@ windowsList[3] = {
     ["OnLoad"] = "LoadRecruitAFriendList",
     ["SettingName"] = "USE_SOCIAL_WINDOW",
     ["RefName"] = "GwRecruitAFriendList",
-    ["TabIcon"] = "tabicon_professions",
+    ["TabIcon"] = "tabicon_reqruit",
     ["HeaderText"] = RECRUIT_A_FRIEND,
     ["HeaderTipText"] = RECRUIT_A_FRIEND,
     ["Bindings"] = {},
@@ -53,7 +53,7 @@ windowsList[4] = {
     ["OnLoad"] = "LoadWhoList",
     ["SettingName"] = "USE_SOCIAL_WINDOW",
     ["RefName"] = "GwWhoList",
-    ["TabIcon"] = "tabicon_reputation",
+    ["TabIcon"] = "tabicon_who",
     ["HeaderText"] = WHO_LIST,
     ["HeaderTipText"] = WHO,
     ["Bindings"] = {
@@ -68,7 +68,7 @@ windowsList[5] = {
     ["OnLoad"] = "LoadQuickJoinList",
     ["SettingName"] = "USE_SOCIAL_WINDOW",
     ["RefName"] = "GwQuickList",
-    ["TabIcon"] = "tabicon_reputation",
+    ["TabIcon"] = "tabicon_quickjoin",
     ["HeaderText"] = QUICK_JOIN,
     ["HeaderTipText"] = QUICK_JOIN,
     ["Bindings"] = {
@@ -83,7 +83,7 @@ windowsList[6] = {
     ["OnLoad"] = "LoadRaidList",
     ["SettingName"] = "USE_SOCIAL_WINDOW",
     ["RefName"] = "GwRaidList",
-    ["TabIcon"] = "tabicon_reputation",
+    ["TabIcon"] = "tabicon_raid",
     ["HeaderText"] = RAID,
     ["HeaderTipText"] = RAID,
     ["Bindings"] = {
@@ -459,7 +459,7 @@ GW.AddForProfiling("social", "setTabIconState", setTabIconState)
 
 local function createTabIcon(iconName, tabIndex, notify)
     local f = CreateFrame("Button", nil, GwSocialWindow, "GwSocialTabSelect")
-    f.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/" .. iconName)
+    f.icon:SetTexture("Interface/AddOns/GW2_UI/textures/social/" .. iconName)
     f:SetPoint("TOP", GwSocialWindow, "TOPLEFT", -32, -25 + -((tabIndex - 1) * 45))
     setTabIconState(f, false)
 

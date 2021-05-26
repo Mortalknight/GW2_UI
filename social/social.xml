@@ -60,7 +60,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="windowIcon" file="Interface\AddOns\GW2_UI\textures\icons\LFDMicroButton-Down">
+                <Texture parentKey="windowIcon" file="Interface\AddOns\GW2_UI\textures\social\social-windowheader">
                     <Size x="84" y="84"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPLEFT" x="18" y="-22" />
@@ -76,7 +76,7 @@
                     <Size x="512" y="40"></Size>
                     <Color r="1" b="0.73" g="0.93"></Color>
                     <Anchors>
-                        <Anchor point="TOPLEFT" x="10" y="38"></Anchor>
+                        <Anchor point="TOPLEFT" x="20" y="38"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>

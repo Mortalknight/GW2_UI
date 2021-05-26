@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.15.0", [=[
+FIXES
+    - Added social module
+]=])
+
 v("5.14.5", [=[
 FIXES
     - Fix a tooltip lua error
