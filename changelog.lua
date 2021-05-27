@@ -4,6 +4,7 @@ local v = GW.vernotes
 v("1.6.01TBC", [=[
 FIXES
     - Fix quest log issue
+    - Redo raid frame aura icon tooltip: New option to set when the aura get a tooltip on mouse over or is click through (no tooltip = click through)
 ]=])
 
 v("1.6.0 TBC", [=[

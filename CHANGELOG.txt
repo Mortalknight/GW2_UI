@@ -1,6 +1,7 @@
 1.6.1
 FIXES
     - Fix quest log issue
+    - Redo raid frame aura icon tooltip: New option to set when the aura get a tooltip on mouse over or is click through (no tooltip = click through)
 
 1.6.0
 NEW
