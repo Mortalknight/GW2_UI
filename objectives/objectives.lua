@@ -503,7 +503,7 @@ local function updateQuest(block, questWatchId)
         block.questLogIndex = questLogIndex
         block.Header:SetText(text .. title)
 
-        local rewardXP = GetQuestLogRewardXP(questID)
+        local rewardXP = GetQuestLogRewardXP and GetQuestLogRewardXP(questID) or nil
         if rewardXP and GetSetting("QUESTTRACKER_SHOW_XP") and not GetMaxPlayerLevel() == GW.mylevel then
             block.Header:SetText(text .. title .. " |cFF888888(" .. CommaValue(rewardXP) .. XP .. ")|r")
         end
