@@ -101,7 +101,7 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.groupInviteBox" relativePoint="BOTTOMLEFT" x="-5" y="-10"></Anchor>
                 </Anchors>
             </Button>
-            <Button parentKey="groupLeaveButton" inherits="GwStandardButton" text="EXIT">
+            <Button parentKey="groupLeaveButton" inherits="GwStandardButton" text="CHAT_LEAVE">
                 <Size x="80" y="20" />
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.groupInviteBox" x="5" y="-10"></Anchor>
