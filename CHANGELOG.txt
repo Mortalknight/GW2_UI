@@ -2,6 +2,9 @@
 NEW
     - Added social module
 
+FIXES
+    - Redo raid frame aura icon tooltip: New option to set when the aura get a tooltip on mouse over or is click through (no tooltip = click through)
+
 5.14.5
 FIXES
     - Fix a tooltip lua error

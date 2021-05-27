@@ -397,8 +397,9 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
         frame:SetScript("OnEnter", onDebuffEnter)
         frame:SetScript("OnLeave", GameTooltip_Hide)
         frame:SetScript("OnMouseUp", onDebuffMouseUp)
-        frame:EnableMouse(not InCombatLockdown() or GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT"))
         frame:RegisterForClicks("RightButtonUp")
+
+        frame.tooltipSetting = GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT")
     end
 
     if debuffType and DEBUFF_COLOR[debuffType] then
@@ -534,8 +535,9 @@ local function showBuffIcon(parent, i, btnIndex, x, y, icon, isMissing)
         frame:SetScript("OnEnter", onBuffEnter)
         frame:SetScript("OnLeave", GameTooltip_Hide)
         frame:SetScript("OnMouseUp", onBuffMouseUp)
-        frame:EnableMouse(not InCombatLockdown() or GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT"))
         frame:RegisterForClicks("RightButtonUp")
+
+        frame.tooltipSetting = GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT")
     end
 
     frame.index = i
@@ -692,14 +694,28 @@ GW.AddForProfiling("raidframes", "updateAuras", updateAuras)
 local function raidframe_OnEvent(self, event, unit)
     if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         -- Enable or disable mouse handling on aura frames
-        local name, enable = self:GetName(), event == "PLAYER_REGEN_ENABLED" or GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT")
+        local name = self:GetName()
         for j = 1, 2 do
-            local i, aura, frame = 1, j == 1 and "Buff" or "Debuff", nil
+            local i, aura = 1, j == 1 and "Buff" or "DeBuff"
+            local frame = nil
             repeat
-                frame, i = _G["Gw" .. name .. aura .. "ItemFrame" .. i], i + 1
+                frame = _G["Gw" .. name .. aura .. "ItemFrame" .. i]
                 if frame then
-                    frame:EnableMouse(enable)
+                    if frame.tooltipSetting == "NEVER" then
+                        frame:EnableMouse(false)
+                    elseif frame.tooltipSetting == "ALWAYS" then
+                        frame:EnableMouse(true)
+                    elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
+                        frame:EnableMouse(false)
+                    elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
+                        frame:EnableMouse(true)
+                    elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
+                        frame:EnableMouse(true)
+                    elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
+                        frame:EnableMouse(false)
+                    end
                 end
+                i = i + 1
             until not frame
         end
     end

@@ -41,7 +41,17 @@ local function LoadRaidPanel(sWindow)
         nil,
         {["RAID_FRAMES"] = true}
     )
-    addOption(p, L["Show Aura Tooltips in Combat"], L["Show tooltips of buffs and debuffs even when you are in combat."], "RAID_AURA_TOOLTIP_IN_COMBAT", nil, nil, {["RAID_FRAMES"] = true})
+    addOptionDropdown(
+        p,
+        L["Show Aura Tooltips in Combat"],
+        L["Show tooltips of buffs and debuffs even when you are in combat."],
+        "RAID_AURA_TOOLTIP_IN_COMBAT",
+        nil,
+        {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"},
+        {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]},
+        nil,
+        {["RAID_FRAMES"] = true}
+    )
 
     addOptionDropdown(
         p,

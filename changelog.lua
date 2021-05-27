@@ -2,8 +2,11 @@ local _, GW = ...
 local v = GW.vernotes
 
 v("5.15.0", [=[
-FIXES
+NEW
     - Added social module
+
+FIXES
+    - Redo raid frame aura icon tooltip: New option to set when the aura get a tooltip on mouse over or is click through (no tooltip = click through)
 ]=])
 
 v("5.14.5", [=[

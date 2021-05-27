@@ -342,3 +342,4 @@ L["Set the growth direction of the stance bar"] = "Setze die Wachstumsrichtung d
 L["Ctrl + Click to toggle override"] = "Strg. + Klick um die Einstellung zu überschreiben"
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = "Inkompatibles Addons-Verhalten überschrieben. Benötigt ein Nachladen, um wirksam zu werden."
 L["You have overridden this behavior."] = "Du hast dieses Verhalten überschrieben."
+L["Out of combat"] = "Nicht im Kampf"
