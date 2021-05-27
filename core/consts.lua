@@ -283,6 +283,7 @@ local AURAS_INDICATORS = {
     },
     PALADIN = {
         [1044]    = {0.89, 0.45, 0}, -- Blessing of Freedom
+        [1038]    = {0.11, 1.00, 0.45}, --Blessing of Salvation
         [6940]    = {0.89, 0.1, 0.1}, -- Blessing Sacrifice(Rank 1)
         [20729]   = {0.89, 0.1, 0.1}, -- Blessing Sacrifice(Rank 2)
         [27147]   = {0.89, 0.1, 0.1}, -- Blessing Sacrifice(Rank 3)
@@ -329,7 +330,6 @@ local AURAS_INDICATORS = {
     SHAMAN = {
         [29203]   = {0.7, 0.3, 0.7}, -- Healing Way
         [16237]   = {0.2, 0.2, 1}, -- Ancestral Fortitude
-        [25909]   = {0.00, 0.00, 0.50}, -- Tranquil Air
         [8185]    = {0.05, 1.00, 0.50}, -- Fire Resistance Totem(Rank 1)
         [10534]   = {0.05, 1.00, 0.50}, -- Fire Resistance Totem(Rank 2)
         [10535]   = {0.05, 1.00, 0.50}, -- Fire Resistance Totem(Rank 3)
@@ -364,6 +364,9 @@ local AURAS_INDICATORS = {
         [10405]   = {0.00, 0.00, 0.26}, -- Stoneskin Totem(Rank 6)
         [25508]   = {0.00, 0.00, 0.26}, -- Stoneskin Totem(Rank 7)
         [25509]   = {0.00, 0.00, 0.26}, -- Stoneskin Totem(Rank 8)
+        [974]     = {0.08, 0.21, 0.43}, -- Earth Shield(Rank 1)
+        [32593]   = {0.08, 0.21, 0.43}, -- Earth Shield(Rank 2)
+        [32594]   = {0.08, 0.21, 0.43}, -- Earth Shield(Rank 3)
     },
     ROGUE = {}, --No buffs
     WARRIOR = {
