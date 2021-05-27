@@ -363,3 +363,4 @@ L["Set the growth direction of the stance bar"] = "Definir a direção de distri
 L["Ctrl + Click to toggle override"] = "Ctrl + Clique para ignorar/evitar o conflito"
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = "Recarregue após ativar/desativar esta opção para que ela tenha efeito."
 L["You have overridden this behavior."] = "Você optou por ignorar o conflito e habilitar esta opção."
+L["Out of combat"] = true

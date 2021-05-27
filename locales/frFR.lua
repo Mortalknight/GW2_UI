@@ -32,7 +32,7 @@ L["bound to"] = true
 L["Sold Junk for: %s"] = true
 
 --Strings
-L[" (Resting)"] = " (Se repose)"
+L[" (Resting)"] = " (Au repos)"
 L["\nCreated by: "] = "\nCréé par: "
 L["\nLast updated: "] = "\nDernière mise à jour: "
 L["%s and then %s"] = "%s puis %s"
@@ -363,3 +363,4 @@ L["Set the growth direction of the stance bar"] = "Définit la direction de dép
 L["Ctrl + Click to toggle override"] = "Ctrl + Click pour activer la priorité à GW2 UI"
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = "Comportement d'incompatibilité d'extension remplacé. Un rechargement est nécessaire pour prendre effet."
 L["You have overridden this behavior."] = "Ce comportement a été outrepassé par un add-on."
+L["Out of combat"] = true

@@ -27,7 +27,17 @@ local function LoadRaidPanel(sWindow)
     addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
     addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p, L["Show Aura Tooltips in Combat"], L["Show tooltips of buffs and debuffs even when you are in combat."], "RAID_AURA_TOOLTIP_IN_COMBAT", nil, nil, {["RAID_FRAMES"] = true})
+    addOptionDropdown(
+        p,
+        L["Show Aura Tooltips in Combat"],
+        L["Show tooltips of buffs and debuffs even when you are in combat."],
+        "RAID_AURA_TOOLTIP_IN_COMBAT",
+        nil,
+        {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"},
+        {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]},
+        nil,
+        {["RAID_FRAMES"] = true}
+    )
     addOptionDropdown(
         p,
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
