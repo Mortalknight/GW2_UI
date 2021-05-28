@@ -2,7 +2,7 @@
 ..\FrameXML\UI.xsd">
 
     <Frame name="GwMicroButtonFrameTmpl" topLevel="true" frameStrata="HIGH" inherits="SecureHandlerEnterLeaveTemplate" virtual="true">
-        <Size x="380" y="61"/>
+        <Size x="280" y="40"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="1"></Anchor>
         </Anchors>

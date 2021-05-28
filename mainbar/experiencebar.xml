@@ -127,6 +127,37 @@
                     </Frame>
                 </Frames>
             </StatusBar>
+            <StatusBar name="$parentPetBarCandy" parentKey="PetBarCandy" defaultValue="1" frameLevel="2" minValue="0" maxValue="1">
+                <Size x="1" y="8" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-6" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-6"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
+            </StatusBar>
+            <StatusBar name="$parentPetBar" parentKey="PetBar" defaultValue="1" frameLevel="3" minValue="0" maxValue="1">
+                <Size x="1" y="8" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="6" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="6"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
+                <Frames>
+                    <Frame name="$parentPetBarSpark" parentKey="Spark" frameLevel="4">
+                        <Size x="8" y="8" />
+                        <Anchors>
+                            <Anchor point="LEFT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer>
+                                <Texture parentKey="SparkTexture" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                                    <Size x="8" y="8"></Size>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                </Frames>
+            </StatusBar>
             <Frame parentKey="barOverlay" frameLevel="5" toplevel="true">
                 <Size x="1" y="13"></Size>
                 <Anchors>

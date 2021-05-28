@@ -160,7 +160,7 @@ local function LoadMainbarLayout()
     RegisterStateDriver(l, "barlayout", "[overridebar] obar; [vehicleui] vbar; [petbattle] petb; [combat] incombat; none")
 
     l:RegisterEvent("PLAYER_REGEN_ENABLED")
-    l:SetScript("OnEvent", function(self, event)
+    l:SetScript("OnEvent", function(self)
         self:SetAttribute("currentHandlerState", "none")
         self:oocHandler()
     end)

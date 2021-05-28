@@ -83,27 +83,29 @@ local function SkinWorldMap()
     _G.WorldMapTooltip:SetFrameLevel(WorldMapFrame.ScrollContainer:GetFrameLevel() + 110)
 
     -- Added Coords to Worldmap
-    local CoordsTimer = nil
-    CoordsFrame = CreateFrame("Frame", nil, WorldMapFrame)
-    CoordsFrame:SetFrameLevel(WorldMapFrame.BorderFrame:GetFrameLevel() + 2)
-    CoordsFrame:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
-    CoordsFrame.Coords = CoordsFrame:CreateFontString(nil, "OVERLAY")
-    CoordsFrame.Coords:SetTextColor(1, 1 ,1)
-    CoordsFrame.Coords:SetFontObject(_G.NumberFontNormal)
+    if GW.GetSetting("WORLDMAP_COORDS_TOGGLE") then
+        local CoordsTimer = nil
+        CoordsFrame = CreateFrame("Frame", nil, WorldMapFrame)
+        CoordsFrame:SetFrameLevel(WorldMapFrame.BorderFrame:GetFrameLevel() + 2)
+        CoordsFrame:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
+        CoordsFrame.Coords = CoordsFrame:CreateFontString(nil, "OVERLAY")
+        CoordsFrame.Coords:SetTextColor(1, 1 ,1)
+        CoordsFrame.Coords:SetFontObject(_G.NumberFontNormal)
 
-    WorldMapFrame:HookScript("OnShow", function()
-        if not CoordsTimer then
-            UpdateCoords()
-            CoordsTimer = C_Timer.NewTicker(0.1, function() UpdateCoords() end)
-        end
-    end)
-    WorldMapFrame:HookScript("OnHide", function()
-        CoordsTimer:Cancel()
-        CoordsTimer = nil
-    end)
+        WorldMapFrame:HookScript("OnShow", function()
+            if not CoordsTimer then
+                UpdateCoords()
+                CoordsTimer = C_Timer.NewTicker(0.1, function() UpdateCoords() end)
+            end
+        end)
+        WorldMapFrame:HookScript("OnHide", function()
+            CoordsTimer:Cancel()
+            CoordsTimer = nil
+        end)
 
-    CoordsFrame.Coords:ClearAllPoints()
-    CoordsFrame.Coords:SetPoint("TOP", _G.WorldMapFrame.ScrollContainer, "TOP", 0, 0)
+        CoordsFrame.Coords:ClearAllPoints()
+        CoordsFrame.Coords:SetPoint("TOP", _G.WorldMapFrame.ScrollContainer, "TOP", 0, 0)
+    end
 
     -- Enable movement
     WorldMapFrame:SetMovable(true)

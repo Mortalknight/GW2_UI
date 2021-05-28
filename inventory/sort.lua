@@ -193,7 +193,7 @@ do
         f:Show()
     end
 
-    f:SetScript('OnUpdate', function(_, arg1)
+    f:SetScript('OnUpdate', function()
         if coroutine.status(process) == 'suspended' then
             suspended = true
             coroutine.resume(process)

@@ -66,35 +66,33 @@ local Minimap_Addon_Buttons = {
 }
 
 local MAP_FRAMES_HOVER = {}
-
-local animationIndex = 0
-local animationIndexY = 0
-local anim_thro = 0
 local framesToAdd = {}
 
 local function SetMinimapHover()
-    if GetSetting("MINIMAP_HOVER") == "NONE" then
+    local hoverSetting = GetSetting("MINIMAP_HOVER")
+
+    if hoverSetting == "NONE" then
         MAP_FRAMES_HOVER[1] = "GwMapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
         MAP_FRAMES_HOVER[3] = "GwMapTime"
         MAP_FRAMES_HOVER[4] = "GwMapCoords"
-    elseif GetSetting("MINIMAP_HOVER") == "CLOCK" then
+    elseif hoverSetting == "CLOCK" then
         MAP_FRAMES_HOVER[1] = "GwMapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
         MAP_FRAMES_HOVER[3] = "GwMapCoords"
-    elseif GetSetting("MINIMAP_HOVER") == "ZONE" then
+    elseif hoverSetting == "ZONE" then
         MAP_FRAMES_HOVER[1] = "GwMapTime"
         MAP_FRAMES_HOVER[2] = "GwMapCoords"
-    elseif GetSetting("MINIMAP_HOVER") == "COORDS" then
+    elseif hoverSetting == "COORDS" then
         MAP_FRAMES_HOVER[1] = "GwMapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
         MAP_FRAMES_HOVER[3] = "GwMapTime"
-    elseif GetSetting("MINIMAP_HOVER") == "CLOCKZONE" then
+    elseif hoverSetting == "CLOCKZONE" then
         MAP_FRAMES_HOVER[1] = "GwMapCoords"
-    elseif GetSetting("MINIMAP_HOVER") == "CLOCKCOORDS" then
+    elseif hoverSetting == "CLOCKCOORDS" then
         MAP_FRAMES_HOVER[1] = "GwMapGradient"
         MAP_FRAMES_HOVER[2] = "MinimapZoneText"
-    elseif GetSetting("MINIMAP_HOVER") == "ZONECOORDS" then
+    elseif hoverSetting == "ZONECOORDS" then
         MAP_FRAMES_HOVER[1] = "GwMapTime"
     end
 end
@@ -167,7 +165,7 @@ end
 GW.AddForProfiling("map", "lfgAnim", lfgAnim)
 
 local function hideMiniMapIcons()
-    for k, v in pairs(MAP_FRAMES_HIDE) do
+    for _, v in pairs(MAP_FRAMES_HIDE) do
         if v then
             v:Hide()
             v:SetScript(
@@ -197,7 +195,7 @@ local function hideMiniMapIcons()
 end
 GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 
-local function MapCoordsMiniMap_OnEnter(self) 
+local function MapCoordsMiniMap_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
     GameTooltip:AddLine(L["Map Coordinates"])
     GameTooltip:AddLine(L["Left Click to toggle higher precision coordinates."], 1, 1, 1, true)
@@ -215,15 +213,15 @@ local function mapCoordsMiniMap_setCoords(self)
 end
 GW.AddForProfiling("map", "mapCoordsMiniMap_setCoords", mapCoordsMiniMap_setCoords)
 
-local function MapCoordsMiniMap_OnClick(self, button) 
+local function MapCoordsMiniMap_OnClick(self, button)
     if button == "LeftButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
-        if self.MapCoordsMiniMapPrecision == 0 then 
+        if self.MapCoordsMiniMapPrecision == 0 then
             self.MapCoordsMiniMapPrecision = 2
         else
             self.MapCoordsMiniMapPrecision = 0
-        end  
+        end
 
         SetSetting("MINIMAP_COORDS_PRECISION", self.MapCoordsMiniMapPrecision)
         mapCoordsMiniMap_setCoords(self)
@@ -231,21 +229,14 @@ local function MapCoordsMiniMap_OnClick(self, button)
 end
 GW.AddForProfiling("map", "MapCoordsMiniMap_OnClick", MapCoordsMiniMap_OnClick)
 
-local function MapCoordsMiniMap_OnUpdate(self, elapsed)
-    self.elapsedTimer = self.elapsedTimer - elapsed
-    if self.elapsedTimer > 0 then
-        return
-    end
-    self.elapsedTimer = self.updateCap
-    mapCoordsMiniMap_setCoords(self)
-end
-
 local function hoverMiniMap()
     for _, v in ipairs(MAP_FRAMES_HOVER) do
         local child = _G[v]
-        UIFrameFadeIn(child, 0.2, child:GetAlpha(), 1)
-        if child == GwMapCoords then
-            GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
+        if child ~= nil then
+            UIFrameFadeIn(child, 0.2, child:GetAlpha(), 1)
+            if child == GwMapCoords then
+                GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
+            end
         end
     end
     MinimapNorthTag:Hide()
@@ -253,17 +244,25 @@ end
 GW.AddForProfiling("map", "hoverMiniMap", hoverMiniMap)
 
 local function hoverMiniMapOut()
+    local shouldShowNorthTag = false
+
     for _, v in ipairs(MAP_FRAMES_HOVER) do
         local child = _G[v]
         if child ~= nil then
             UIFrameFadeOut(child, 0.2, child:GetAlpha(), 0)
             if child == GwMapCoords then
                 GwMapCoords:SetScript("OnUpdate", nil)
+                if GwMapCoords.CoordsTimer then
+                    GwMapCoords.CoordsTimer:Cancel()
+                    GwMapCoords.CoordsTimer = nil
+                end
             end
         end
+        if v == "MinimapZoneText" then
+            shouldShowNorthTag = true
+        end
     end
-    Minimap_UpdateRotationSetting()
-    MinimapCompassTexture:SetSize(300, 300)
+    MinimapNorthTag:SetShown(shouldShowNorthTag)
 end
 GW.AddForProfiling("map", "hoverMiniMapOut", hoverMiniMapOut)
 
@@ -303,9 +302,7 @@ local function getMinimapShape()
     return "SQUARE"
 end
 
-local function stackIcons(self, event, ...)
-    local foundFrames = false
-
+local function stackIcons(self)
     local children = {Minimap:GetChildren()}
     for _, child in ipairs(children) do
         if child:HasScript("OnClick") and child:IsShown() and child:GetName() then
@@ -319,7 +316,6 @@ local function stackIcons(self, event, ...)
                 end
             end
             if not ignore then
-                foundFrames = true
                 framesToAdd[child:GetName()] = child
             end
         end
@@ -330,7 +326,7 @@ local function stackIcons(self, event, ...)
         if frame:IsShown() then
             frame:SetParent(self.container)
             frame:ClearAllPoints()
-            frame:SetPoint("RIGHT", self.container, "RIGHT", frameIndex * -36, 0)
+            frame:SetPoint("RIGHT", self.container, "RIGHT", frameIndex * -35, 0)
             frameIndex = frameIndex + 1
             frame:SetScript("OnDragStart", nil)
         end
@@ -343,27 +339,18 @@ local function stackIcons(self, event, ...)
 end
 GW.AddForProfiling("map", "stackIcons", stackIcons)
 
-local function stack_OnEvent(self, event)
-    if event == "PLAYER_ENTERING_WORLD" then
-        stackIcons(self)
-        C_Timer.After(4, function() stackIcons(self) end)
-        self:UnregisterEvent(event)
-    end
+local function stack_OnEvent(self)
+    stackIcons(self)
 end
 GW.AddForProfiling("map", "stack_OnEvent", stack_OnEvent)
 
 local function stack_OnClick(self)
-    if not self.container:IsShown() then
-        stackIcons(self)
-        self.container:Show()
-    else
-        stackIcons(self)
-        self.container:Hide()
-    end
+    stackIcons(self)
+    self.container:SetShown(not self.containe:IsShown())
 end
 GW.AddForProfiling("map", "stack_OnClick", stack_OnClick)
 
-local function minimap_OnShow(self)
+local function minimap_OnShow()
     if GwAddonToggle and GwAddonToggle.gw_Showing then
         GwAddonToggle:Show()
     end
@@ -373,7 +360,7 @@ local function minimap_OnShow(self)
 end
 GW.AddForProfiling("map", "minimap_OnShow", minimap_OnShow)
 
-local function minimap_OnHide(self)
+local function minimap_OnHide()
     if GwAddonToggle then
         GwAddonToggle:Hide()
     end
@@ -452,16 +439,21 @@ local function LoadMinimap()
     GwMapTime:SetScript("OnEnter", time_OnEnter)
     GwMapTime:SetScript("OnLeave", GameTooltip_Hide)
 
-    GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
-    GwMapCoords.Coords:SetText(NOT_APPLICABLE)
-    GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
-    GwMapCoords.elapsedTimer = -1
-    GwMapCoords.updateCap = 1 / 5 -- cap coord update to 5 FPS
-    GwMapCoords.MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
-    GwMapCoords:SetScript("OnUpdate", MapCoordsMiniMap_OnUpdate)
-    GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
-    GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
-    GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
+    if GetSetting("MINIMAP_COORDS_TOGGLE") then
+        GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
+        GwMapCoords.Coords:SetText(NOT_APPLICABLE)
+        GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
+        GwMapCoords.MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
+        GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
+        GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
+        GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
+
+        -- only set the coords updater here if they are showen always
+        local hoverSetting = GetSetting("MINIMAP_HOVER")
+        if hoverSetting == "COORDS" or hoverSetting == "CLOCKCOORDS" or hoverSetting == "ZONECOORDS" or hoverSetting == "ALL" then
+            GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
+        end
+    end
 
     --FPS
     if GetSetting("MINIMAP_FPS") then
@@ -487,7 +479,7 @@ local function LoadMinimap()
 
     MinimapCluster:SetAlpha(0.0)
     MinimapBorder:Hide()
-    MiniMapWorldMapButton:Hide()
+    MiniMapWorldMapButton:Kill()
 
     MiniMapMailFrame:ClearAllPoints()
     MinimapZoneText:ClearAllPoints()
@@ -557,7 +549,6 @@ local function LoadMinimap()
     fmGAT:SetScript("OnClick", stack_OnClick)
     fmGAT:SetScript("OnEvent", stack_OnEvent)
     fmGAT:RegisterEvent("PLAYER_ENTERING_WORLD")
-    fmGAT:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5.5, -127)
     fmGAT:SetFrameStrata("MEDIUM")
     fmGAT.gw_Showing = true
     stackIcons(fmGAT)
@@ -577,7 +568,7 @@ local function LoadMinimap()
 
     Minimap:SetScript(
         "OnEnter",
-        function(self)
+        function()
             hoverMiniMap()
             Minimap:SetScript(
                 "OnUpdate",
@@ -596,9 +587,9 @@ local function LoadMinimap()
         "OnMouseWheel",
         function(self, delta)
             if delta > 0 and self:GetZoom() < 5 then
-                self:SetZoom(self:GetZoom() + 1)
+                MinimapZoomIn:Click()
             elseif delta < 0 and self:GetZoom() > 0 then
-                self:SetZoom(self:GetZoom() - 1)
+                MinimapZoomOut:Click()
             end
         end
     )
@@ -614,7 +605,7 @@ local function LoadMinimap()
         end
     )
 
-    local Minimap_OnEvent = function(self, event, ...)
+    local Minimap_OnEvent = function(_, event)
         if event == "CVAR_UPDATE" then
             Minimap_UpdateRotationSetting()
             MinimapCompassTexture:SetSize(300, 300)

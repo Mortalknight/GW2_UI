@@ -158,7 +158,7 @@ local function LatencyInfoToolTip()
 
     table.sort(AddonMemoryArray, function(a, b) return a["addonMemory"] > b["addonMemory"] end)
 
-    for k, v in pairs(AddonMemoryArray) do
+    for _, v in pairs(AddonMemoryArray) do
             if v["addonIndex"] ~= 0 and (IsAddOnLoaded(v["addonIndex"]) and v["addonMemory"] ~= 0) then
                 addonMemory = RoundDec(v["addonMemory"] / 1024, 2)
                 if addonMemory ~= "0.00" then
@@ -580,7 +580,7 @@ local function LoadMicroMenu()
         fadeIn:SetFromAlpha(0.0)
         fadeIn:SetToAlpha(1.0)
         fadeIn:SetDuration(mbf.cf:GetAttribute("fadeTime"))
-        mbf.cf.fadeOut = function(self)
+        mbf.cf.fadeOut = function()
             fi:Stop()
             fo:Stop()
             fo:Play()

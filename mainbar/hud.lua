@@ -19,38 +19,21 @@ local function xpbar_OnEnter(self)
     local valCurrent = UnitXP("Player")
     local valMax = UnitXPMax("Player")
     local rested = GetXPExhaustion()
-    local isRestingString = ""
-    if IsResting() then
-        isRestingString = L[" (Resting)"]
-    end
+    local isRestingString = IsResting() and L[" (Resting)"] or ""
 
     GameTooltip:AddLine(COMBAT_XP_GAIN .. isRestingString, 1, 1, 1)
 
     if GW.mylevel < GetMaxPlayerLevel() then
-        GameTooltip:AddLine(
-            COMBAT_XP_GAIN ..
-                " " ..
-                    CommaValue(valCurrent) ..
-                        " / " ..
-                            CommaValue(valMax) .. " |cffa6a6a6 (" .. math.floor((valCurrent / valMax) * 100) .. "%)|r",
-            1,
-            1,
-            1
-        )
+        GameTooltip:AddLine(COMBAT_XP_GAIN .. " " .. CommaValue(valCurrent) .. " / " .. CommaValue(valMax) .. " |cffa6a6a6 (" .. math.floor((valCurrent / valMax) * 100) .. "%)|r", 1, 1, 1)
     end
 
     if rested ~= nil and rested ~= 0 then
-        GameTooltip:AddLine(
-            L["Rested "] ..
-                CommaValue(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
-            1,
-            1,
-            1
-        )
+        GameTooltip:AddLine(L["Rested "] .. CommaValue(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r", 1, 1, 1)
     end
 
     UIFrameFadeOut(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 0)
     UIFrameFadeOut(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 0)
+    UIFrameFadeOut(self.PetBar, 0.2, self.PetBar:GetAlpha(), 0)
 
     if gw_reputation_vals ~= nil then
         GameTooltip:AddLine(gw_reputation_vals, 1, 1, 1)
@@ -89,94 +72,83 @@ local function xpbar_OnEvent(self, event)
         return
     end
 
-    local valCurrent = UnitXP("Player")
-    local valMax = UnitXPMax("Player")
-    local valPrec = valCurrent / valMax
-    local valPrecRepu = 0
-
     local level = GW.mylevel
     local Nextlevel = math.min(GetMaxPlayerLevel(), GW.mylevel + 1)
-    local lockLevelTextUnderMaxLevel = false
+    local lockLevelTextUnderMaxLevel = level < Nextlevel
+
+    local valCurrent = UnitXP("Player")
+    local valMax = UnitXPMax("Player")
+    local valPrec = level < Nextlevel and valCurrent / valMax or 0
+    local valPrecRepu = 0
 
     local rested = GetXPExhaustion()
-    local showBar1 = false
-    local showBar2 = false
-    local restingIconString = " |TInterface\\AddOns\\GW2_UI\\textures\\resting-icon:16:16:0:0|t "
+    local showBar1 = level < Nextlevel -- Player
+    local showBar2 = select(2, HasPetUI()) and UnitLevel("pet") < level -- Pet
+    local showBar3 = false -- Repu
 
-    if not IsResting() then
-        restingIconString = ""
-    end
+    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\resting-icon:16:16:0:0|t " or ""
+
     if rested == nil or (rested / valMax) == 0 then
         rested = 0
     else
-        rested = rested / (valMax - valCurrent)
-    end
-    if rested > 1 then
-        rested = 1
-    end
-
-    if level < Nextlevel then
-        showBar1 = true
-        lockLevelTextUnderMaxLevel = true
+        rested = math.min((rested / (valMax - valCurrent)), 1)
     end
 
     local animationSpeed = 15
 
     self.ExpBar:SetStatusBarColor(0.83, 0.57, 0)
+    self.PetBar:SetStatusBarColor(240/255, 240/255, 155/255)
 
     gw_reputation_vals = nil
-    local standingId, bottomValue, topValue, earnedValue, isWatched
-    for factionIndex = 1, GetNumFactions() do
-        _, _, standingId, bottomValue, topValue, earnedValue, _, _, _, _, _, isWatched, _ = GetFactionInfo(factionIndex)
-        if isWatched == true then
-            local name, reaction = GetWatchedFactionInfo()
-            local currentRank =
-                GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
-            local nextRank =
-                GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
+    local name, reaction, _, _, _, factionID = GetWatchedFactionInfo()
+    if factionID and factionID > 0 then
+        local _, _, standingId, bottomValue, topValue, earnedValue = GetFactionInfoByID(factionID)
+        local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
+        local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
 
-            if currentRank == nextRank and earnedValue - bottomValue == 0 then
-                valPrecRepu = 1
-                gw_reputation_vals =
-                    name ..
-                        " " ..
-                            REPUTATION ..
-                                " " .. "21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r",
-                    1,
-                    1,
-                    1
-            else
-                valPrecRepu = (earnedValue - bottomValue) / (topValue - bottomValue)
-                gw_reputation_vals =
-                    name ..
-                        " " ..
-                            REPUTATION ..
-                                " " ..
-                                    CommaValue((earnedValue - bottomValue)) ..
-                                        " / " ..
-                                            CommaValue((topValue - bottomValue)) ..
-                                                " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r",
-                    1,
-                    1,
-                    1
-            end
-            self.RepuBar:SetStatusBarColor(
-                FACTION_BAR_COLORS[reaction].r,
-                FACTION_BAR_COLORS[reaction].g,
-                FACTION_BAR_COLORS[reaction].b
-            )
-
-            local nextId = standingId + 1
-            if nextId == nil then
-                nextId = standingId
-            end
-            if not lockLevelTextUnderMaxLevel then
-                level = getglobal("FACTION_STANDING_LABEL" .. standingId)
-                Nextlevel = getglobal("FACTION_STANDING_LABEL" .. nextId)
-            end
-
-            showBar2 = true
+        if currentRank == nextRank and earnedValue - bottomValue == 0 then
+            valPrecRepu = 1
+            gw_reputation_vals = name .. " " .. REPUTATION .. " " .. "21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+        else
+            valPrecRepu = (earnedValue - bottomValue) / (topValue - bottomValue)
+            gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((earnedValue - bottomValue)) .. " / " .. CommaValue((topValue - bottomValue)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
         end
+        self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
+
+        local nextId = standingId and standingId + 1 or standingId
+        if not lockLevelTextUnderMaxLevel then
+            level = getglobal("FACTION_STANDING_LABEL" .. standingId)
+            Nextlevel = getglobal("FACTION_STANDING_LABEL" .. nextId)
+        end
+
+        showBar3 = true
+    end
+
+    if showBar2 then
+        local currXP, nextXP = GetPetExperience()
+        local valPrecPet = currXP / nextXP
+
+        if gw_reputation_vals then
+            gw_reputation_vals = gw_reputation_vals .. "\n" .. PET .. " " .. CommaValue(currXP) .. " / " .. CommaValue(nextXP) .. " |cffa6a6a6 (" .. math.floor(valPrecPet * 100) .. "%)|r"
+        else
+            gw_reputation_vals = PET .. " " .. CommaValue(currXP) .. " / " .. CommaValue(nextXP) .. " |cffa6a6a6 (" .. math.floor(valPrecPet * 100) .. "%)|r"
+        end
+        self.PetBarCandy:SetValue(valPrecPet)
+
+        AddToAnimation(
+            "petBarAnimation",
+            self.PetBar.petBarAnimation,
+            valPrecPet,
+            GetTime(),
+            animationSpeed,
+            function()
+                self.PetBar.Spark:SetWidth(math.max(8, math.min(9, self.PetBar:GetWidth() * animations["petBarAnimation"].progress)))
+
+                self.PetBar:SetValue(animations["petBarAnimation"].progress)
+                self.PetBar.Spark:SetPoint("LEFT", self.PetBar:GetWidth() * animations["petBarAnimation"].progress - 8, 0)
+            end
+        )
+        self.PetBar.petBarAnimation = valPrecPet
     end
 
     self.NextLevel:SetTextColor(1, 1, 1)
@@ -202,73 +174,56 @@ local function xpbar_OnEvent(self, event)
     animationSpeed = Diff(experiencebarAnimation, valPrec)
     animationSpeed = math.min(15, math.max(5, 10 * animationSpeed))
 
-    AddToAnimation(
-        "experiencebarAnimation",
-        experiencebarAnimation,
-        valPrec,
-        GetTime(),
-        animationSpeed,
-        function(step)
-            self.ExpBar.Spark:SetWidth(
-                math.max(
-                    8,
-                    math.min(9,self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress)
-                )
-            )
+    --if showBar1 then
+        AddToAnimation(
+            "experiencebarAnimation",
+            experiencebarAnimation,
+            valPrec,
+            GetTime(),
+            animationSpeed,
+            function(step)
+                self.ExpBar.Spark:SetWidth(math.max(8, math.min(9,self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress)))
 
-            if not GainBigExp then
-                self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
-                self.ExpBar.Spark:SetPoint(
-                    "LEFT",
-                    self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8,
-                    0
-                )
+                if not GainBigExp then
+                    self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
+                    self.ExpBar.Spark:SetPoint("LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8, 0)
 
-                local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"].progress) + 90
-                self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
+                    local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"].progress) + 90
+                    self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
+                end
+                self.ExpBar.Rested:SetValue(rested)
+                self.ExpBar.Rested:SetPoint("LEFT", self.ExpBar, "LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress, 0)
+
+                if GainBigExp and self.barOverlay.flare.soundCooldown < GetTime() then
+                    expSoundCooldown = math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
+
+                    self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
+                    self.ExpBar.Spark:SetPoint("LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8, 0)
+
+                    local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"].progress) + 90
+                    self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
+
+                    self.barOverlay.flare.soundCooldown = GetTime() + expSoundCooldown
+                    PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
+
+                    animations["experiencebarAnimation"].from = step
+                end
             end
-            self.ExpBar.Rested:SetValue(rested)
-            self.ExpBar.Rested:SetPoint(
-                "LEFT",
-                self.ExpBar,
-                "LEFT",
-                self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress,
-                0
-            )
-
-            if GainBigExp and self.barOverlay.flare.soundCooldown < GetTime() then
-                expSoundCooldown = math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
-
-                self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
-                self.ExpBar.Spark:SetPoint(
-                    "LEFT",
-                    self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8,
-                    0
-                )
-
-                local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"].progress) + 90
-                self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
-
-                self.barOverlay.flare.soundCooldown = GetTime() + expSoundCooldown
-                PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
-
-                animations["experiencebarAnimation"].from = step
+        )
+        AddToAnimation(
+            "GwExperienceBarCandy",
+            experiencebarAnimation,
+            valPrec,
+            GetTime(),
+            0.3,
+            function()
+                local prog = animations["GwExperienceBarCandy"].progress
+                self.ExpBarCandy:SetValue(prog)
             end
-        end
-    )
-    AddToAnimation(
-        "GwExperienceBarCandy",
-        experiencebarAnimation,
-        valPrec,
-        GetTime(),
-        0.3,
-        function()
-            local prog = animations["GwExperienceBarCandy"].progress
-            self.ExpBarCandy:SetValue(prog)
-        end
-    )
+        )
+    --end
 
-    if showBar2 then
+    if showBar3 then
         self.RepuBarCandy:SetValue(valPrecRepu)
 
         AddToAnimation(
@@ -278,12 +233,7 @@ local function xpbar_OnEvent(self, event)
             GetTime(),
             animationSpeed,
             function()
-                self.RepuBar.Spark:SetWidth(
-                    math.max(
-                        8,
-                        math.min(9, self.RepuBar:GetWidth() * animations["repuBarAnimation"].progress)
-                    )
-                )
+                self.RepuBar.Spark:SetWidth(math.max(8, math.min(9, self.RepuBar:GetWidth() * animations["repuBarAnimation"].progress)))
 
                 self.RepuBar:SetValue(animations["repuBarAnimation"].progress)
                 self.RepuBar.Spark:SetPoint("LEFT", self.RepuBar:GetWidth() * animations["repuBarAnimation"].progress - 8, 0)
@@ -296,7 +246,40 @@ local function xpbar_OnEvent(self, event)
 
     self.NextLevel:SetText(Nextlevel)
     self.CurrentLevel:SetText(restingIconString .. level)
-    if showBar1 and showBar2 then
+    if showBar1 and showBar2 and showBar3 then
+        self.ExpBar:Show()
+        self.ExpBarCandy:Show()
+        self.ExpBar:SetHeight(2.66)
+        self.ExpBarCandy:SetHeight(2.66)
+        self.ExpBar.Spark:SetHeight(2.66)
+        self.ExpBar.Spark:Show()
+        self.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBar:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
+
+        self.PetBar:Show()
+        self.PetBarCandy:Show()
+        self.PetBar:SetHeight(2.66)
+        self.PetBarCandy:SetHeight(2.66)
+        self.PetBar.Spark:SetHeight(2.66)
+        self.PetBar.Spark:Show()
+        self.PetBarCandy:SetPoint("TOPLEFT", 90, -8)
+        self.PetBarCandy:SetPoint("TOPRIGHT", -90, -8)
+        self.PetBar:SetPoint("TOPLEFT", 90, -8)
+        self.PetBar:SetPoint("TOPRIGHT", -90, -8)
+
+        self.RepuBar:Show()
+        self.RepuBarCandy:Show()
+        self.RepuBar:SetHeight(2.66)
+        self.RepuBarCandy:SetHeight(2.66)
+        self.RepuBar.Spark:SetHeight(2.66)
+        self.RepuBar.Spark:Show()
+        self.RepuBarCandy:SetPoint("TOPLEFT", 90, -12)
+        self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -12)
+        self.RepuBar:SetPoint("TOPLEFT", 90, -12)
+        self.RepuBar:SetPoint("TOPRIGHT", -90, -12)
+    elseif showBar1 and not showBar2 and showBar3 then
         self.ExpBar:Show()
         self.ExpBarCandy:Show()
         self.ExpBar:SetHeight(4)
@@ -308,6 +291,12 @@ local function xpbar_OnEvent(self, event)
         self.ExpBar:SetPoint("TOPLEFT", 90, -4)
         self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
 
+        self.PetBar:Hide()
+        self.PetBarCandy:Hide()
+        self.PetBar:SetValue(0)
+        self.PetBarCandy:SetValue(0)
+        self.PetBar.Spark:Hide()
+
         self.RepuBar:Show()
         self.RepuBarCandy:Show()
         self.RepuBar:SetHeight(4)
@@ -318,25 +307,46 @@ local function xpbar_OnEvent(self, event)
         self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -8)
         self.RepuBar:SetPoint("TOPLEFT", 90, -8)
         self.RepuBar:SetPoint("TOPRIGHT", -90, -8)
-    elseif showBar1 and not showBar2 then
-        self.ExpBar:Show()
-        self.ExpBarCandy:Show()
-        self.ExpBar:SetHeight(8)
-        self.ExpBarCandy:SetHeight(8)
-        self.ExpBar.Spark:SetHeight(8)
-        self.ExpBar.Spark:Show()
-
-        self.RepuBar:Hide()
-        self.RepuBarCandy:Hide()
-        self.RepuBar:SetValue(0)
-        self.RepuBarCandy:SetValue(0)
-        self.RepuBar.Spark:Hide()
-    elseif not showBar1 and showBar2 then
+    elseif not showBar1 and showBar2 and showBar3 then
         self.ExpBar:Hide()
         self.ExpBarCandy:Hide()
         self.ExpBar:SetValue(0)
         self.ExpBarCandy:SetValue(0)
         self.ExpBar.Spark:Hide()
+
+        self.PetBar:Show()
+        self.PetBarCandy:Show()
+        self.PetBar:SetHeight(4)
+        self.PetBarCandy:SetHeight(4)
+        self.PetBar.Spark:SetHeight(4)
+        self.PetBar.Spark:Show()
+        self.PetBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.PetBarCandy:SetPoint("TOPRIGHT", -90, -4)
+        self.PetBar:SetPoint("TOPLEFT", 90, -4)
+        self.PetBar:SetPoint("TOPRIGHT", -90, -4)
+
+        self.RepuBar:Show()
+        self.RepuBarCandy:Show()
+        self.RepuBar:SetHeight(4)
+        self.RepuBarCandy:SetHeight(4)
+        self.RepuBar.Spark:SetHeight(4)
+        self.RepuBar.Spark:Show()
+        self.RepuBarCandy:SetPoint("TOPLEFT", 90, -8)
+        self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -8)
+        self.RepuBar:SetPoint("TOPLEFT", 90, -8)
+        self.RepuBar:SetPoint("TOPRIGHT", -90, -8)
+    elseif not showBar1 and not showBar2 and showBar3 then
+        self.ExpBar:Hide()
+        self.ExpBarCandy:Hide()
+        self.ExpBar:SetValue(0)
+        self.ExpBarCandy:SetValue(0)
+        self.ExpBar.Spark:Hide()
+
+        self.PetBar:Hide()
+        self.PetBarCandy:Hide()
+        self.PetBar:SetValue(0)
+        self.PetBarCandy:SetValue(0)
+        self.PetBar.Spark:Hide()
 
         self.RepuBar:Show()
         self.RepuBarCandy:Show()
@@ -348,12 +358,92 @@ local function xpbar_OnEvent(self, event)
         self.RepuBarCandy:SetPoint("TOPRIGHT", -90, -4)
         self.RepuBar:SetPoint("TOPLEFT", 90, -4)
         self.RepuBar:SetPoint("TOPRIGHT", -90, -4)
-    elseif not showBar1 and not showBar2 then
+    elseif not showBar1 and not showBar2 and not showBar3 then
         self.ExpBar:Hide()
         self.ExpBarCandy:Hide()
         self.ExpBar:SetValue(0)
         self.ExpBarCandy:SetValue(0)
         self.ExpBar.Spark:Hide()
+
+        self.PetBar:Hide()
+        self.PetBarCandy:Hide()
+        self.PetBar:SetValue(0)
+        self.PetBarCandy:SetValue(0)
+        self.PetBar.Spark:Hide()
+
+        self.RepuBar:Hide()
+        self.RepuBarCandy:Hide()
+        self.RepuBar:SetValue(0)
+        self.RepuBarCandy:SetValue(0)
+        self.RepuBar.Spark:Hide()
+    elseif showBar1 and not showBar2 and not showBar3 then
+        self.ExpBar:Show()
+        self.ExpBarCandy:Show()
+        self.ExpBar:SetHeight(8)
+        self.ExpBarCandy:SetHeight(8)
+        self.ExpBar.Spark:SetHeight(8)
+        self.ExpBar.Spark:Show()
+        self.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBar:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
+
+        self.PetBar:Hide()
+        self.PetBarCandy:Hide()
+        self.PetBar:SetValue(0)
+        self.PetBarCandy:SetValue(0)
+        self.PetBar.Spark:Hide()
+
+        self.RepuBar:Hide()
+        self.RepuBarCandy:Hide()
+        self.RepuBar:SetValue(0)
+        self.RepuBarCandy:SetValue(0)
+        self.RepuBar.Spark:Hide()
+    elseif showBar1 and showBar2 and not showBar3 then
+        self.ExpBar:Show()
+        self.ExpBarCandy:Show()
+        self.ExpBar:SetHeight(4)
+        self.ExpBarCandy:SetHeight(4)
+        self.ExpBar.Spark:SetHeight(4)
+        self.ExpBar.Spark:Show()
+        self.ExpBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBarCandy:SetPoint("TOPRIGHT", -90, -4)
+        self.ExpBar:SetPoint("TOPLEFT", 90, -4)
+        self.ExpBar:SetPoint("TOPRIGHT", -90, -4)
+
+        self.PetBar:Show()
+        self.PetBarCandy:Show()
+        self.PetBar:SetHeight(4)
+        self.PetBarCandy:SetHeight(4)
+        self.PetBar.Spark:SetHeight(4)
+        self.PetBar.Spark:Show()
+        self.PetBarCandy:SetPoint("TOPLEFT", 90, -8)
+        self.PetBarCandy:SetPoint("TOPRIGHT", -90, -8)
+        self.PetBar:SetPoint("TOPLEFT", 90, -8)
+        self.PetBar:SetPoint("TOPRIGHT", -90, -8)
+
+        self.RepuBar:Hide()
+        self.RepuBarCandy:Hide()
+        self.RepuBar:SetValue(0)
+        self.RepuBarCandy:SetValue(0)
+        self.RepuBar.Spark:Hide()
+    elseif not showBar1 and showBar2 and not showBar3 then
+        self.ExpBar:Hide()
+        self.ExpBarCandy:Hide()
+        self.ExpBar:SetValue(0)
+        self.ExpBarCandy:SetValue(0)
+        self.ExpBar.Spark:Hide()
+
+        self.PetBar:Show()
+        self.PetBarCandy:Show()
+        self.PetBar:SetHeight(8)
+        self.PetBarCandy:SetHeight(8)
+        self.PetBar.Spark:SetHeight(8)
+        self.PetBar.Spark:Show()
+        self.PetBarCandy:SetPoint("TOPLEFT", 90, -4)
+        self.PetBarCandy:SetPoint("TOPRIGHT", -90, -4)
+        self.PetBar:SetPoint("TOPLEFT", 90, -4)
+        self.PetBar:SetPoint("TOPRIGHT", -90, -4)
 
         self.RepuBar:Hide()
         self.RepuBarCandy:Hide()
@@ -587,6 +677,7 @@ local function LoadXPBar()
     experiencebarAnimation = UnitXP("Player") / UnitXPMax("Player")
 
     experiencebar.RepuBar.repuBarAnimation = 0
+    experiencebar.PetBar.petBarAnimation = 0
     experiencebar.NextLevel:SetFont(UNIT_NAME_FONT, 12)
     experiencebar.CurrentLevel:SetFont(UNIT_NAME_FONT, 12)
 
@@ -602,12 +693,16 @@ local function LoadXPBar()
     experiencebar:RegisterEvent("PLAYER_ENTERING_WORLD")
     experiencebar:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     experiencebar:RegisterEvent("UPDATE_EXHAUSTION")
+    experiencebar:RegisterEvent("UNIT_PET_EXPERIENCE")
+    experiencebar:RegisterEvent("PET_UI_UPDATE")
+    experiencebar:RegisterEvent("PET_BAR_UPDATE")
 
     experiencebar:SetScript("OnEnter", xpbar_OnEnter)
     experiencebar:SetScript("OnLeave", function(self)
         GameTooltip_Hide()
         UIFrameFadeIn(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 1)
         UIFrameFadeIn(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 1)
+        UIFrameFadeIn(self.PetBar, 0.2, self.PetBar:GetAlpha(), 1)
     end)
 end
 GW.LoadXPBar = LoadXPBar

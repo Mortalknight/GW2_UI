@@ -116,7 +116,7 @@
                             <Button parentKey="compactBank">
                                 <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="LEFT" relativePoint="LEFT" y="25"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="0"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">
@@ -144,7 +144,7 @@
                             <Button parentKey="bagOrder">
                                 <Size x="200" y="30"></Size>
                                 <Anchors>
-                                    <Anchor point="LEFT" relativePoint="LEFT" y="0"></Anchor>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-25"></Anchor>
                                 </Anchors>
                                 <Layers>
                                     <Layer level="OVERLAY" textureSubLevel="2">

@@ -6,7 +6,6 @@ local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 
 local savedQuests = {}
-local mapID = ""
 
 local TRACKER_TYPE_COLOR = {}
 GW.TRACKER_TYPE_COLOR = TRACKER_TYPE_COLOR
@@ -64,8 +63,8 @@ local function NewQuestAnimation(block)
         GetTime(),
         1,
         function(step)
-            block:SetWidth(250 * step)
-            block.flare:SetSize(250 * (1 - step), 250 * (1 - step))
+            block:SetWidth(300 * step)
+            block.flare:SetSize(300 * (1 - step), 300 * (1 - step))
             block.flare:SetRotation(2 * step)
 
             if step > 0.75 then
@@ -163,7 +162,7 @@ local function statusBar_OnShow(self)
         return
     end
     f:SetHeight(50)
-    f.statusbarBg:Show()
+    f.StatusBar.statusbarBg:Show()
 end
 GW.AddForProfiling("objectives", "statusBar_OnShow", statusBar_OnShow)
 
@@ -173,7 +172,7 @@ local function statusBar_OnHide(self)
         return
     end
     f:SetHeight(20)
-    f.statusbarBg:Hide()
+    f.StatusBar.statusbarBg:Hide()
 end
 GW.AddForProfiling("objectives", "statusBar_OnHide", statusBar_OnHide)
 
@@ -182,15 +181,15 @@ local function statusBarSetValue(self)
     if not f then
         return
     end
-    local _, mx = self:GetMinMaxValues()
-    local v = self:GetValue()
+    local _, mx = f.StatusBar:GetMinMaxValues()
+    local v = f.StatusBar:GetValue()
     local width = math.max(1, math.min(10, 10 * ((v / mx) / 0.1)))
-    f.StatusBar.Spark:SetPoint("RIGHT", self, "LEFT", 230 * (v / mx), 0)
+    f.StatusBar.Spark:SetPoint("RIGHT", f.StatusBar, "LEFT", 280 * (v / mx), 0)
     f.StatusBar.Spark:SetWidth(width)
-    if self.precentage == nil or self.precentage == false then
-        self.progress:SetText(v .. " / " .. mx)
+    if f.StatusBar.precentage == nil or f.StatusBar.precentage == false then
+        f.StatusBar.progress:SetText(v .. " / " .. mx)
     else
-        self.progress:SetText(math.floor((v / mx) * 100) .. "%")
+        f.StatusBar.progress:SetText(math.floor((v / mx) * 100) .. "%")
     end
 end
 GW.AddForProfiling("objectives", "statusBarSetValue", statusBarSetValue)
@@ -225,7 +224,7 @@ local function CreateTrackerObject(name, parent)
             if self.objectiveBlocks == nil then
                 self.objectiveBlocks = {}
             end
-            for k, v in pairs(self.objectiveBlocks) do
+            for _, v in pairs(self.objectiveBlocks) do
                 v.StatusBar.progress:Show()
             end
             AddToAnimation(
@@ -248,7 +247,7 @@ local function CreateTrackerObject(name, parent)
             if self.objectiveBlocks == nil then
                 self.objectiveBlocks = {}
             end
-            for k, v in pairs(self.objectiveBlocks) do
+            for _, v in pairs(self.objectiveBlocks) do
                 v.StatusBar.progress:Hide()
             end
             if animations[self:GetName() .. "hover"] ~= nil then
@@ -355,6 +354,7 @@ local function addObjective(block, text, finished, objectiveIndex, objectiveType
     if text then
         objectiveBlock:Show()
         objectiveBlock.ObjectiveText:SetText(text)
+        objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
         if finished then
             objectiveBlock.ObjectiveText:SetTextColor(0.8, 0.8, 0.8)
         else
@@ -367,25 +367,28 @@ local function addObjective(block, text, finished, objectiveIndex, objectiveType
                 objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
                 objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
                 objectiveBlock.progress = GetQuestProgressBarPercent(block.questID) / 100
+                objectiveBlock.StatusBar.precentage = true
             end
         else
             objectiveBlock.StatusBar:Hide()
         end
-        local h = 20
+        local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10
+        objectiveBlock:SetHeight(h)
         if objectiveBlock.StatusBar:IsShown() then
             if block.numObjectives >= 1 then
-                h = 50
+                h = h + objectiveBlock.StatusBar:GetHeight() + 10
             else
-                h = 40
+                h = h + objectiveBlock.StatusBar:GetHeight() + 5
             end
+            objectiveBlock:SetHeight(h)
         end
-        block.height = block.height + h
+        block.height = block.height + objectiveBlock:GetHeight()
         block.numObjectives = block.numObjectives + 1
     end
 end
 GW.AddForProfiling("objectives", "addObjective", addObjective)
 
-local function updateQuestObjective(block, numObjectives, isComplete, title)
+local function updateQuestObjective(block, numObjectives)
     local addedObjectives = 1
     local objectives = {}
     for objectiveIndex = 1, numObjectives do
@@ -402,7 +405,7 @@ local function updateQuestObjective(block, numObjectives, isComplete, title)
 end
 GW.AddForProfiling("objectives", "updateQuestObjective", updateQuestObjective)
 
-local function OnBlockClick(self, button, isHeader)
+local function OnBlockClick(self, button)
     if IsShiftKeyDown() and ChatEdit_GetActiveWindow() then
         if button == "LeftButton" then
             ChatEdit_InsertLink(gsub(self.title, " *(.*)", "%1"))
@@ -492,7 +495,7 @@ local function updateQuest(block, questWatchId)
         block.title = title
         getQuestInfoLevel(questID, block)
         local text = ""
-        if block.group == "Elite" then       
+        if block.group == "Elite" then
             text = "[" .. block.level .."|TInterface\\AddOns\\GW2_UI\\textures\\quest-group-icon:12:12:0:0|t] "
         elseif block.group == "Dungeon" then
             text = "[" .. block.level .."|TInterface\\AddOns\\GW2_UI\\textures\\quest-dungeon-icon:12:12:0:0|t] "
@@ -504,7 +507,7 @@ local function updateQuest(block, questWatchId)
         block.Header:SetText(text .. title)
 
         local rewardXP = GetQuestLogRewardXP and GetQuestLogRewardXP(questID) or nil
-        if rewardXP and GetSetting("QUESTTRACKER_SHOW_XP") and not GetMaxPlayerLevel() == GW.mylevel then
+        if rewardXP and GetSetting("QUESTTRACKER_SHOW_XP") and GW.mylevel < GetMaxPlayerLevel() then
             block.Header:SetText(text .. title .. " |cFF888888(" .. CommaValue(rewardXP) .. XP .. ")|r")
         end
 
@@ -514,7 +517,7 @@ local function updateQuest(block, questWatchId)
             isComplete = true
         end
 
-        updateQuestObjective(block, numObjectives, isComplete, title)
+        updateQuestObjective(block, numObjectives)
 
         if requiredMoney ~= nil and requiredMoney > GetMoney() then
             addObjective(

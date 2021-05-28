@@ -81,13 +81,13 @@ local function SellJunkFrame_OnEvent(self, event)
         if SellJunkTicker then SellJunkTicker:Cancel() end
         -- Sell grey items using ticker (ends when all grey items are sold or iteration count reached)
         SellJunkTicker = C_Timer.NewTicker(0.2, sellJunk, IterationCount)
-        SellJunkFrame:RegisterEvent("ITEM_LOCKED")
-        SellJunkFrame:RegisterEvent("ITEM_UNLOCKED")
+        self:RegisterEvent("ITEM_LOCKED")
+        self:RegisterEvent("ITEM_UNLOCKED")
     elseif event == "ITEM_LOCKED" then
         GwBagFrame.smsj:Show()
-        SellJunkFrame:UnregisterEvent("ITEM_LOCKED")
+        self:UnregisterEvent("ITEM_LOCKED")
     elseif event == "ITEM_UNLOCKED" then
-        SellJunkFrame:UnregisterEvent("ITEM_UNLOCKED")
+        self:UnregisterEvent("ITEM_UNLOCKED")
         -- Check whether vendor refuses to buy items
         if mBagID and mBagSlot and mBagID ~= -1 and mBagSlot ~= -1 then
             local _, count, locked = GetContainerItemInfo(mBagID, mBagSlot)
@@ -323,7 +323,7 @@ local function setBagBarOrder(f)
 end
 GW.AddForProfiling("bag", "setBagBarOrder", setBagBarOrder)
 
-local function bag_OnClick(self, button, down)
+local function bag_OnClick(self, button)
     -- on left click, ensure that the bag stays open despite default toggle behavior
     if button == "LeftButton" then
         if self.gwHasBag and not IsBagOpen(self:GetID() - CharacterBag0Slot:GetID() + 1) then
@@ -470,7 +470,7 @@ local function onBagResizeStop(self)
 end
 GW.AddForProfiling("bag", "onBagResizeStop", onBagResizeStop)
 
-local function onBagFrameChangeSize(self, width, height, skip)
+local function onBagFrameChangeSize(self, _, _, skip)
     local cols = inv.colCount(BAG_ITEM_SIZE, BAG_ITEM_PADDING, self:GetWidth())
 
     self.Header:SetWidth(self:GetWidth())
@@ -772,14 +772,14 @@ local function LoadBag(helpers)
     f.ItemFrame.Containers[KEYRING_CONTAINER] = cf
 
     -- anytime a ContainerFrame is populated with a backpack bagId, we take its buttons
-    hooksecurefunc("ContainerFrame_GenerateFrame", function(frame, size, id)
+    hooksecurefunc("ContainerFrame_GenerateFrame", function(_, _, id)
         if (id >= BACKPACK_CONTAINER and id <= NUM_BAG_SLOTS) or id == KEYRING_CONTAINER then
             rescanBagContainers(f)
         end
     end)
 
     -- anytime a ContainerFrame shown we set it to unchecked and set the border
-    hooksecurefunc("ContainerFrame_OnShow", function(self)
+    hooksecurefunc("ContainerFrame_OnShow", function()
         MainMenuBarBackpackButton:SetChecked(false)
         GW.SetItemButtonQualityForBags(MainMenuBarBackpackButton, 1)
     end)
@@ -813,7 +813,7 @@ local function LoadBag(helpers)
     -- setup settings button and its dropdown items
     f.buttonSort:HookScript(
         "OnClick",
-        function(self)
+        function()
             PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
             GW_SortBags()
         end

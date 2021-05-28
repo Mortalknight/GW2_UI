@@ -1,6 +1,15 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.7.0 TBC", [=[
+NEW
+    - Added hunter pet exp to experience bar, if pet is not player level
+
+FIXES
+    - Quest tracker layout issue
+    - Many tweaks
+]=])
+
 v("1.6.01TBC", [=[
 FIXES
     - Fix quest log issue
