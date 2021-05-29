@@ -4,7 +4,6 @@ local CoordsFrame
 local moveDistance, mapX, mapY, mapLeft, mapTop, mapNormalScale, mapEffectiveScale = 0, 0, 0, 0, 0, 1, 0
 
 local function UpdateCoords()
-    local WorldMapFrame = _G.WorldMapFrame
     if not WorldMapFrame:IsShown() then
         return
     end
@@ -33,7 +32,6 @@ local function GetScaleDistance()
 end
 
 local function SkinWorldMap()
-    local WorldMapFrame = _G.WorldMapFrame
     WorldMapFrame:StripTextures()
     WorldMapFrame.BlackoutFrame:Hide()
 
@@ -44,27 +42,27 @@ local function SkinWorldMap()
     tex:SetSize(w + 110, h + 50)
     WorldMapFrame.tex = tex
 
-    _G.WorldMapContinentDropDown:SkinDropDownMenu()
-    _G.WorldMapZoneDropDown:SkinDropDownMenu()
+    WorldMapContinentDropDown:SkinDropDownMenu()
+    WorldMapZoneDropDown:SkinDropDownMenu()
     WorldMapZoneMinimapDropDown:SkinDropDownMenu()
 
-    _G.WorldMapContinentDropDown:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 330, -35)
-    _G.WorldMapContinentDropDown:SetWidth(205)
-    _G.WorldMapContinentDropDown:SetHeight(33)
-    _G.WorldMapZoneDropDown:SetPoint("LEFT", _G.WorldMapContinentDropDown, "RIGHT", -20, 0)
-    _G.WorldMapZoneDropDown:SetWidth(205)
-    _G.WorldMapZoneDropDown:SetHeight(33)
+    WorldMapContinentDropDown:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 330, -35)
+    WorldMapContinentDropDown:SetWidth(205)
+    WorldMapContinentDropDown:SetHeight(33)
+    WorldMapZoneDropDown:SetPoint("LEFT", WorldMapContinentDropDown, "RIGHT", -20, 0)
+    WorldMapZoneDropDown:SetWidth(205)
+    WorldMapZoneDropDown:SetHeight(33)
 
-    _G.WorldMapZoomOutButton:SetPoint("LEFT", _G.WorldMapZoneDropDown, "RIGHT", 3, 3)
-    _G.WorldMapZoomOutButton:SetHeight(21)
+    WorldMapZoomOutButton:SetPoint("LEFT", WorldMapZoneDropDown, "RIGHT", 3, 3)
+    WorldMapZoomOutButton:SetHeight(21)
 
-    _G.WorldMapZoomOutButton:SkinButton(false, true)
+    WorldMapZoomOutButton:SkinButton(false, true)
 
-    _G.WorldMapFrameCloseButton:SkinButton(true)
-    _G.WorldMapFrameCloseButton:SetSize(25, 25)
-    _G.WorldMapFrameCloseButton:ClearAllPoints()
-    _G.WorldMapFrameCloseButton:SetPoint("TOPRIGHT", WorldMapFrame, "TOPRIGHT", 20, -25)
-    _G.WorldMapFrameCloseButton:SetFrameLevel(_G.WorldMapFrameCloseButton:GetFrameLevel() + 2)
+    WorldMapFrameCloseButton:SkinButton(true)
+    WorldMapFrameCloseButton:SetSize(25, 25)
+    WorldMapFrameCloseButton:ClearAllPoints()
+    WorldMapFrameCloseButton:SetPoint("TOPRIGHT", WorldMapFrame, "TOPRIGHT", 20, -25)
+    WorldMapFrameCloseButton:SetFrameLevel(WorldMapFrameCloseButton:GetFrameLevel() + 2)
 
     ShowUIPanel(WorldMapFrame)
     WorldMapFrame:SetAttribute("UIPanelLayout-area", "center")
@@ -73,6 +71,10 @@ local function SkinWorldMap()
     WorldMapFrame:SetIgnoreParentScale(false)
     WorldMapFrame.ScrollContainer:SetIgnoreParentScale(false)
     WorldMapFrame.IsMaximized = function() return false end
+    WorldMapFrame.HandleUserActionToggleSelf = function()
+        if WorldMapFrame:IsShown() then WorldMapFrame:Hide() else WorldMapFrame:Show() end
+    end
+    table.insert(UISpecialFrames, "WorldMapFrame")
     HideUIPanel(WorldMapFrame)
 
     WorldMapFrame:SetScale(0.8)
@@ -80,7 +82,7 @@ local function SkinWorldMap()
     WorldMapFrame:EnableMouse(true)
     WorldMapFrame:SetFrameStrata("HIGH")
 
-    _G.WorldMapTooltip:SetFrameLevel(WorldMapFrame.ScrollContainer:GetFrameLevel() + 110)
+    WorldMapTooltip:SetFrameLevel(WorldMapFrame.ScrollContainer:GetFrameLevel() + 110)
 
     -- Added Coords to Worldmap
     if GW.GetSetting("WORLDMAP_COORDS_TOGGLE") then
@@ -90,7 +92,7 @@ local function SkinWorldMap()
         CoordsFrame:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
         CoordsFrame.Coords = CoordsFrame:CreateFontString(nil, "OVERLAY")
         CoordsFrame.Coords:SetTextColor(1, 1 ,1)
-        CoordsFrame.Coords:SetFontObject(_G.NumberFontNormal)
+        CoordsFrame.Coords:SetFontObject(NumberFontNormal)
 
         WorldMapFrame:HookScript("OnShow", function()
             if not CoordsTimer then
@@ -104,7 +106,7 @@ local function SkinWorldMap()
         end)
 
         CoordsFrame.Coords:ClearAllPoints()
-        CoordsFrame.Coords:SetPoint("TOP", _G.WorldMapFrame.ScrollContainer, "TOP", 0, 0)
+        CoordsFrame.Coords:SetPoint("TOP", WorldMapFrame.ScrollContainer, "TOP", 0, 0)
     end
 
     -- Enable movement
@@ -200,6 +202,47 @@ local function SkinWorldMap()
     end)
 
     WorldMapFrame:SetScale(GW.GetSetting("WORLDMAP_SCALE"))
+
+    -- Function to set position after Leatrix_Maps has loaded
+    local function LeatrixMapsFix()
+        hooksecurefunc(WorldMapFrame, "Show", function()
+            local pos = GW.GetSetting("WORLDMAP_POSITION")
+            WorldMapFrame:ClearAllPoints()
+            WorldMapFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+
+            WorldMapFrame:SetScript("OnDragStart", function()
+                WorldMapFrame:StartMoving()
+            end)
+
+            WorldMapFrame:SetScript("OnDragStop", function()
+                WorldMapFrame:StopMovingOrSizing()
+                WorldMapFrame:SetUserPlaced(false)
+                -- Save map frame position
+                local pos = GW.GetSetting("WORLDMAP_POSITION")
+                if pos then
+                    wipe(pos)
+                else
+                    pos = {}
+                end
+                pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = WorldMapFrame:GetPoint()
+                GW.SetSetting("WORLDMAP_POSITION", pos)
+            end)
+        end)
+    end
+
+    -- Run function when Carbonite has loaded
+    if IsAddOnLoaded("Leatrix_Maps") then
+        LeatrixMapsFix()
+    else
+        local waitFrame = CreateFrame("FRAME")
+        waitFrame:RegisterEvent("ADDON_LOADED")
+        waitFrame:SetScript("OnEvent", function(_, _, arg1)
+            if arg1 == "Leatrix_Maps" then
+                LeatrixMapsFix()
+                waitFrame:UnregisterAllEvents()
+            end
+        end)
+    end
 
 end
 GW.SkinWorldMap = SkinWorldMap

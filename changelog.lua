@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.7.2 TBC", [=[
+FIXES
+    - Fix worldmap mover
+]=])
+
 v("1.7.1 TBC", [=[
 FIXES
     - Fix minmap addon toggle

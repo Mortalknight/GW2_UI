@@ -1,3 +1,7 @@
+1.7.2
+FIXES
+    - Fix worldmap mover
+
 1.7.1
 FIXES
     - Fix minimap addon toggle
