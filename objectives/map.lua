@@ -107,7 +107,7 @@ local function setMinimapButtons(side)
 
     if side == "left" then
         MiniMapBattlefieldIcon:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -8.5, -69)
-        GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -16, -47)
+        GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -10, -47)
         GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -127)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
         GwMiniMapTrackingFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
@@ -121,8 +121,8 @@ local function setMinimapButtons(side)
 end
 
 local function MinimapPostDrag(self)
-    _G.MinimapBackdrop:ClearAllPoints()
-    _G.MinimapBackdrop:SetAllPoints(_G.Minimap)
+    MinimapBackdrop:ClearAllPoints()
+    MinimapBackdrop:SetAllPoints(Minimap)
 
     local x = self.gwMover:GetCenter()
     local screenWidth = UIParent:GetRight()
@@ -147,8 +147,7 @@ local function lfgAnim(elapse)
         MiniMapBattlefieldIcon:SetAlpha(0)
         return
     end
-    local status = GetBattlefieldStatus(1)
-    if status == "active" then
+    if GetBattlefieldStatus(1) == "active" then
         lfgAnimStop()
         return
     end
@@ -156,8 +155,7 @@ local function lfgAnim(elapse)
 
     MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFDMicroButton-Down")
 
-    local speed = 1.5
-    local rot = MiniMapBattlefieldFrame.animationCircle.background:GetRotation() + (speed * elapse)
+    local rot = MiniMapBattlefieldFrame.animationCircle.background:GetRotation() + (1.5 * elapse)
 
     MiniMapBattlefieldFrame.animationCircle.background:SetRotation(rot)
     MiniMapBattlefieldIcon:SetTexCoord(unpack(GW.TexCoords))
@@ -346,7 +344,7 @@ GW.AddForProfiling("map", "stack_OnEvent", stack_OnEvent)
 
 local function stack_OnClick(self)
     stackIcons(self)
-    self.container:SetShown(not self.containe:IsShown())
+    self.container:SetShown(not self.container:IsShown())
 end
 GW.AddForProfiling("map", "stack_OnClick", stack_OnClick)
 
@@ -372,7 +370,7 @@ GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
 
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
-    _G["GetMinimapShape"] = getMinimapShape
+    GetMinimapShape = getMinimapShape
 
     local GwMinimapShadow = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")
 
@@ -419,22 +417,14 @@ local function LoadMinimap()
         end
     end)
 
-
     GwMapTime = CreateFrame("Button", "GwMapTime", Minimap, "GwMapTime")
     TimeManager_LoadUI()
     TimeManagerClockButton:Hide()
     StopwatchFrame:SetParent("UIParent")
     GwMapTime:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    GwMapTime.total_elapsed = 0
-    local fnGwMapTime_OnUpdate = function(self, elapsed)
-        if self.total_elapsed > 0 then
-            self.total_elapsed = self.total_elapsed - elapsed
-            return
-        end
-        self.total_elapsed = 0.1
-        self.Time:SetText(GameTime_GetTime(false))
-    end
-    GwMapTime:SetScript("OnUpdate", fnGwMapTime_OnUpdate)
+    GwMapTime.timeTimer = C_Timer.NewTicker(0.2, function()
+        GwMapTime.Time:SetText(GameTime_GetTime(false))
+    end)
     GwMapTime:SetScript("OnClick", time_OnClick)
     GwMapTime:SetScript("OnEnter", time_OnEnter)
     GwMapTime:SetScript("OnLeave", GameTooltip_Hide)
@@ -460,18 +450,9 @@ local function LoadMinimap()
         GwMapFPS = CreateFrame("Button", "GwMapFPS", Minimap, "GwMapFPS")
         GwMapFPS.fps:SetText(NOT_APPLICABLE)
         GwMapFPS.fps:SetFont(STANDARD_TEXT_FONT, 12)
-        GwMapFPS.elapsedTimer = -1
-        local updateCap = 1 / 5 -- cap fps update to 5 FPS
-        local MapFPSMiniMap_OnUpdate = function(self, elapsed)
-            self.elapsedTimer = self.elapsedTimer - elapsed
-            if self.elapsedTimer > 0 then
-                return
-            end
-            self.elapsedTimer = updateCap
-            local framerate = GetFramerate()
-            self.fps:SetText(RoundDec(framerate) .. " FPS")
-        end
-        GwMapFPS:SetScript("OnUpdate", MapFPSMiniMap_OnUpdate)
+        GwMapFPS.fpsTimer = C_Timer.NewTicker(0.5, function()
+            GwMapFPS.fps:SetText(RoundDec(GetFramerate()) .. " FPS")
+        end)
     end
 
     MinimapNorthTag:ClearAllPoints()

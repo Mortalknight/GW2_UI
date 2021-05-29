@@ -1,3 +1,7 @@
+1.7.1
+FIXES
+    - Fix minimap addon toggle
+
 1.7.0
 NEW
     - Added hunter pet exp to experience bar, if pet is not player level

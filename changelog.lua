@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.7.1 TBC", [=[
+FIXES
+    - Fix minmap addon toggle
+]=])
+
 v("1.7.0 TBC", [=[
 NEW
     - Added hunter pet exp to experience bar, if pet is not player level
@@ -10,7 +15,7 @@ FIXES
     - Many tweaks
 ]=])
 
-v("1.6.01TBC", [=[
+v("1.6.1 TBC", [=[
 FIXES
     - Fix quest log issue
     - Redo raid frame aura icon tooltip: New option to set when the aura get a tooltip on mouse over or is click through (no tooltip = click through)
