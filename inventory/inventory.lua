@@ -135,7 +135,7 @@ GW.SetItemButtonQualityForBags = SetItemButtonQualityForBags
 local function IsItemEligibleForItemLevelDisplay(equipLoc, rarity)
     if ((equipLoc ~= nil and equipLoc ~= "" and equipLoc ~= "INVTYPE_BAG"
         and equipLoc ~= "INVTYPE_QUIVER" and equipLoc ~= "INVTYPE_TABARD"))
-    and (rarity and rarity > 1) then
+    and (rarity and rarity >= 1) then
         return true
     end
 
@@ -194,6 +194,8 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
                     button.itemlevel:SetTextColor(r, g, b, 1)
                 end
                 button.itemlevel:SetText(iLvl)
+            else
+                button.itemlevel:SetText("")
             end
         elseif button.itemlevel then
             button.itemlevel:SetText("")

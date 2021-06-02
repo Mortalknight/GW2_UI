@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.7.3 TBC", [=[
+FIXES
+    - Change petbar autocast border
+    - Change pet happines indicator
+]=])
+
 v("1.7.2 TBC", [=[
 FIXES
     - Fix worldmap mover

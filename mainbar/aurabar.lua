@@ -274,7 +274,7 @@ local function cancelAura(self)
     end
 end
 
-local function auraFrame_OnClick(self, button, down)
+local function auraFrame_OnClick(self, button)
     if not InCombatLockdown() and button == "RightButton" and self.atype ~= 0 then
         cancelAura(self)
     end
@@ -340,7 +340,7 @@ local function getSecureTempEnchant(self, idx)
 end
 GW.AddForProfiling("aurabar_secure", "getSecureTempEnchant", getSecureTempEnchant)
 
-local function getSecureFilter(self, btn)
+local function getSecureFilter(_, btn)
     return btn:GetAttribute("filter")
 end
 GW.AddForProfiling("aurabar_secure", "getSecureFilter", getSecureFilter)
@@ -355,7 +355,7 @@ local function getLegacyAura(self, idx)
 end
 GW.AddForProfiling("aurabar_secure", "getLegacyAura", getLegacyAura)
 
-local function getLegacyFilter(self, btn)
+local function getLegacyFilter(_, btn)
     return btn.filter
 end
 GW.AddForProfiling("aurabar_secure", "getLegacyFilter", getLegacyFilter)

@@ -52,7 +52,7 @@ local actionBarEquipUpdate
 local actionBar_OnUpdate
 
 local function hideBlizzardsActionbars()
-    for k, v in pairs(GW_BLIZZARD_HIDE_FRAMES) do
+    for _, v in pairs(GW_BLIZZARD_HIDE_FRAMES) do
         if v and v.Hide ~= nil then
             v:Hide()
             if v.UnregisterAllEvents ~= nil then
@@ -60,7 +60,7 @@ local function hideBlizzardsActionbars()
             end
         end
     end
-    for k, object in pairs(GW_BLIZZARD_FORCE_HIDE) do
+    for _, object in pairs(GW_BLIZZARD_FORCE_HIDE) do
         if object:IsObjectType("Frame") then
             object:UnregisterAllEvents()
             object:SetScript("OnEnter", nil)
@@ -89,7 +89,7 @@ end
 GW.AddActionBarCallback = AddActionBarCallback
 
 local function stateChanged()
-    for k, v in pairs(callback) do
+    for _, v in pairs(callback) do
         v()
     end
 end
@@ -441,7 +441,7 @@ local function main_OnEvent(self, event, ...)
 end
 GW.AddForProfiling("Actionbars2", "main_OnEvent", main_OnEvent)
 
-local function updateMainBar(toggle)
+local function updateMainBar()
     local fmActionbar = MainMenuBarArtFrame
 
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
@@ -1037,7 +1037,7 @@ local function LoadActionBars(lm)
     end
 
     -- init our bars
-    local fmActionbar = updateMainBar(showBotRight)
+    local fmActionbar = updateMainBar()
     fmActionbar.gw_Bar1 = updateMultiBar(lm, "MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true)
     fmActionbar.gw_Bar2 = updateMultiBar(lm, "MultiBarBottomRight", "MultiBarBottomRightButton", BOTTOMRIGHT_ACTIONBAR_PAGE, true)
     fmActionbar.gw_Bar3 = updateMultiBar(lm, "MultiBarRight", "MultiBarRightButton", RIGHT_ACTIONBAR_PAGE)

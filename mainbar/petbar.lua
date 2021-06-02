@@ -10,17 +10,12 @@ local AddToAnimation = GW.AddToAnimation
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local AddActionBarCallback = GW.AddActionBarCallback
 
-local function setActionButtonAutocast(id)
-    local btn = _G["PetActionButton" .. id]
-    local autoCastEnabled = select(6, GetPetActionInfo(id))
-
-    if btn then
-        for _, v in pairs(_G["PetActionButton" .. id .. "Shine"].sparkles) do
-            v:SetShown(autoCastEnabled)
-        end
-        _G["PetActionButton" .. id .. "AutoCastable"]:SetShown(autoCastEnabled)
-    end
-end
+local  petStateSprite = {
+    width = 512,
+    height = 128,
+    colums = 4,
+    rows = 1
+}
 
 local function petBarUpdate()
     PetActionButton1Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
@@ -30,12 +25,6 @@ local function petBarUpdate()
     PetActionButton8Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist")
     PetActionButton9Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
     PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
-    for i = 1, 12 do
-        if _G["PetActionButton" .. i] then
-            _G["PetActionButton" .. i .. "NormalTexture2"]:SetTexture(nil)
-            setActionButtonAutocast(i)
-        end
-    end
 end
 GW.AddForProfiling("petbar", "petBarUpdate", petBarUpdate)
 
@@ -49,7 +38,6 @@ local function setPetBar(fmPet)
     for i = 1, 12 do
         local btn = _G["PetActionButton" .. i]
         local btnPrev = _G["PetActionButton" .. (i - 1)]
-        local btnShine = _G["PetActionButton" .. i .. "Shine"]
 
         if btn then
             btn:SetParent(fmPet)
@@ -65,20 +53,8 @@ local function setPetBar(fmPet)
                 btn:SetPoint("BOTTOM", PetActionButton5, "TOP", 0, BUTTON_MARGIN)
             end
 
-            if btnShine then
-                btnShine:SetSize(btn:GetSize())
-                for _, v in pairs(_G["PetActionButton" .. i .. "Shine"].sparkles) do
-                    v:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
-                    v:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
-                end
-
-                _G["PetActionButton" .. i .. "AutoCastable"]:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
-                _G["PetActionButton" .. i .. "AutoCastable"]:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
-            end
-
             if i == 1 then
                 hooksecurefunc("PetActionBar_Update", petBarUpdate)
-                hooksecurefunc("TogglePetAutocast", setActionButtonAutocast)
             end
 
             if i <= 3 or i >= 8 then
@@ -89,6 +65,7 @@ local function setPetBar(fmPet)
             end
 
             GW.setActionButtonStyle("PetActionButton" .. i)
+            GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])
         end
     end
 end
@@ -118,35 +95,12 @@ local function SetPetHappiness(self)
     local _, isHunterPet = HasPetUI()
 
     if not happiness or not isHunterPet then
-        self.portraitBackground:SetTexCoord(0, 0.25, 0, 1)
         self.happiness:Hide()
         return
     end
     self.happiness:Show()
 
-    --Add tooltip to invisible frame
-    self.happiness:SetScript("OnEnter", function(self)
-        if self.tooltip then
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetText(self.tooltip)
-            if self.tooltipDamage then
-                GameTooltip:AddLine(self.tooltipDamage, 1, 1, 1, true)
-            end
-            if self.tooltipLoyalty then
-                GameTooltip:AddLine(self.tooltipLoyalty, 1, 1, 1, true)
-            end
-            GameTooltip:Show()
-        end
-    end)
-    self.happiness:SetScript("OnLeave", GameTooltip_Hide)
-
-    if happiness == 1 then
-        self.portraitBackground:SetTexCoord(0.75, 1, 0, 1)
-    elseif happiness == 2 then
-        self.portraitBackground:SetTexCoord(0.25, 0.5, 0, 1)
-    elseif happiness == 3 then
-        self.portraitBackground:SetTexCoord(0.5, 0.75, 0, 1)
-    end
+    self.happiness.icon:SetTexCoord(GW.getSprite(petStateSprite, happiness, 1))
 
     self.happiness.tooltip = _G["PET_HAPPINESS"  ..  happiness]
     self.happiness.tooltipDamage = format(PET_DAMAGE_PERCENTAGE, damagePercentage)
@@ -248,6 +202,23 @@ local function LoadPetFrame(lm)
     playerPetFrame.displayBuffs = true
     playerPetFrame.displayDebuffs = true
     playerPetFrame.debuffFilter = nil --"player"
+
+    playerPetFrame.portraitBackground:SetTexCoord(0, 0.25, 0, 1)
+    --Add tooltip to invisible frame
+    playerPetFrame.happiness:SetScript("OnEnter", function(self)
+        if self.tooltip then
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(self.tooltip)
+            if self.tooltipDamage then
+                GameTooltip:AddLine(self.tooltipDamage, 1, 1, 1, true)
+            end
+            if self.tooltipLoyalty then
+                GameTooltip:AddLine(self.tooltipLoyalty, 1, 1, 1, true)
+            end
+            GameTooltip:Show()
+        end
+    end)
+    playerPetFrame.happiness:SetScript("OnLeave", GameTooltip_Hide)
 
     LoadAuras(playerPetFrame)
 
