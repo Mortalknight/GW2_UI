@@ -5,6 +5,7 @@ v("1.7.3 TBC", [=[
 FIXES
     - Change petbar autocast border
     - Change pet happines indicator
+    - Spellbook is now open correctly in combat
 ]=])
 
 v("1.7.2 TBC", [=[

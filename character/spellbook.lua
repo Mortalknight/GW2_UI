@@ -126,7 +126,7 @@ local function setHeaderLocation(self, pagingContainer)
 end
 
 local spellButtonIndex = 1
-local function setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spellbookIndex, booktype, tab, name, rank, level)
+local function setButtonStyle(ispassive, spellID, skillType, icon, spellbookIndex, booktype, tab, name, rank, level)
     local _, autostate = GetSpellAutocast(spellbookIndex, booktype)
     local btn =  _G['GwSpellbookTab' .. tab .. 'Actionbutton' .. spellButtonIndex]
 
@@ -327,6 +327,7 @@ local function setUpPaging(self)
     self.attrDummy:SetAttribute('page', 'left')
 end
 
+--[[
 local UNKNOW_SPELL_MAX_INDEX = 0
 local function getUnknownSpellItem(index)
     if _G["GwSpellbookUnknownSpell"..index]~=nil then
@@ -415,8 +416,8 @@ local function filterUnknownSpell(knownSpellID,spell)
 
     return show
 end
-local function updateUnknownTab(knownSpellID)
 
+local function updateUnknownTab(knownSpellID)
     UNKNOW_SPELL_MAX_INDEX = 0
     for i=1,UNKNOW_SPELL_MAX_INDEX do
         _G["GwSpellbookUnknownSpell"..i]:Hide()
@@ -446,7 +447,7 @@ local function updateUnknownTab(knownSpellID)
             if  filterUnknownSpell(knownSpellID,spell) then
                 local f =  getUnknownSpellItem(SPELL_INDEX)
                 f:Show()
-                local name, rank, icon, castingTime, minRange, maxRange, spellID =  GetSpellInfo(spell.id)
+                local _, _, icon, _, _, _, spellID =  GetSpellInfo(spell.id)
                 local ispassive = IsPassiveSpell(spellID)
 
                 buttons[#buttons + 1] = f
@@ -539,6 +540,7 @@ local function updateUnknownTab(knownSpellID)
         GwSpellbookUnknown.slider:SetValue(0)
     end
 end
+]]
 
 local function updateSpellbookTab()
     if InCombatLockdown() then return end
@@ -571,7 +573,7 @@ local function updateSpellbookTab()
         _G['GwSpellbookContainerTab' .. spellBookTabs].title:SetText(name)
 
         local boxIndex = 1
-        local lastSkillid = 0
+        --local lastSkillid = 0
         local lastName = ""
         local lastButton
         local header
@@ -621,13 +623,13 @@ local function updateSpellbookTab()
                 needNewHeader = false
             end
 
-            local mainButton = setButtonStyle(ispassive, isFuture, spellID, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name, rank)
+            local mainButton = setButtonStyle(ispassive, spellID, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name, rank)
             mainButton.modifiedClick = SpellButton_OnModifiedClick
             if not ispassive then GW.RegisterCooldown(mainButton.cooldown) end
             spellButtonIndex = spellButtonIndex + 1
             boxIndex = boxIndex + 1
 
-            local unlearnd = {}
+            --local unlearnd = {}
             --unlearnd = findHigherRank(unlearnd, spellID)  --TODO: Need new spells for TBC
 
             if needNewHeader then
@@ -667,7 +669,7 @@ local function updateSpellbookTab()
             local lastBox = mainButton
             for _, unknownSpellID in pairs(unlearnd) do
 
-                local unKnownChildButton = setButtonStyle(ispassive, isFuture, unknownSpellID.id, 'FUTURESPELL', icon, spellIndex, BOOKTYPE, spellBookTabs, name, unknownSpellID.rank, unknownSpellID.level)
+                local unKnownChildButton = setButtonStyle(ispassive, unknownSpellID.id, 'FUTURESPELL', icon, spellIndex, BOOKTYPE, spellBookTabs, name, unknownSpellID.rank, unknownSpellID.level)
 
 
                 unKnownChildButton:ClearAllPoints()
@@ -902,6 +904,8 @@ local function LoadSpellBook()
     --hooksecurefunc('ToggleSpellBook',gwToggleSpellbook)
 
     SpellBookFrame:UnregisterAllEvents()
+
+    updateSpellbookTab()
 
     return GwSpellbook
 end

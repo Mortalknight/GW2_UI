@@ -270,6 +270,7 @@ local charSecure_OnAttributeChanged = [=[
             fmDoll:Show()
             fmDollHonor:Show()
 
+            fmDollSkills:Hide()
             fmDollMenu:Hide()
             fmDollDress:Hide()
             fmDollPetCont:Hide()
@@ -424,13 +425,13 @@ local function loadBaseFrame()
     fmGCW.secure:SetAttribute("_onclick", charSecure_OnClick)
     fmGCW.secure:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
     fmGCW:SetAttribute("_onattributechanged", charSecure_OnAttributeChanged)
-    fmGCW.SoundOpen = function(self)
+    fmGCW.SoundOpen = function()
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
     end
-    fmGCW.SoundSwap = function(self)
+    fmGCW.SoundSwap = function()
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
     end
-    fmGCW.SoundExit = function(self)
+    fmGCW.SoundExit = function()
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
     end
 
@@ -625,7 +626,7 @@ local function LoadWindows()
     if InCombatLockdown() then
         LoadCharWindowAfterCombat:SetScript(
             "OnUpdate",
-            function(self, event, ...)
+            function()
                 local inCombat = UnitAffectingCombat("player")
                 if inCombat == true then
                     return
@@ -637,7 +638,7 @@ local function LoadWindows()
     end
 
     local anyThingToLoad = false
-    for k, v in pairs(windowsList) do
+    for _, v in pairs(windowsList) do
         if GetSetting(v.SettingName) then
             anyThingToLoad = true
         end

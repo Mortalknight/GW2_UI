@@ -2,6 +2,7 @@
 MISC
     - Change petbar autocast border
     - Change pet happines indicator
+    - Spellbook is now open correctly in combat
 
 1.7.2
 FIXES
