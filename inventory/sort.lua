@@ -48,15 +48,15 @@ local function union(...)
     return t
 end
 
-local SPECIAL = set(5462, 17696, 17117, 13347, 13289, 11511)
+local SPECIAL = set(5462, 13347, 11511, 38233)
 
-local KEYS = set(9240, 17191, 13544, 12324, 16309, 12384, 20402)
+local KEYS = set(9240, 11511, 17191, 13544, 12324, 16309, 12384, 20402)
 
 local RODS = set(6218, 6339, 11130, 11145, 16207, 22461, 22462, 22463)
 
 local TOOLS = union(
     RODS,
-    set(5060, 7005, 12709, 19727, 5956, 2901, 6219, 10498, 9149, 15846, 6256, 6365, 6367)
+    set(5060, 7005, 12709, 19727, 5956, 2901, 6219, 10498, 9149, 15846, 6256, 6365, 6367, 20815, 20824)
 );
 
 local ENCHANTING_MATERIALS = set(
@@ -79,13 +79,13 @@ local LEATHER = set(5116, 6470, 6471, 7286, 7287, 7392, 11512, 12607, 12731, 293
 local CLASSES = {
     -- arrow
     {
-        containers = {2101, 5439, 7278, 11362, 3573, 3605, 7371, 8217, 2662, 19319, 18714, 29143, 29144, 34105},
-        items = set(2512, 2515, 3030, 3464, 9399, 11285, 12654, 18042, 19316, 28053, 28056, 34581, 33803, 31737, 32760, 30611, 31949, 24412, 24417),
+        containers = {2101, 5439, 7278, 11362, 3573, 3605, 7371, 8217, 2662, 19319, 18714, 29143, 29144, 34105, 34100},
+        items = set(2512, 2515, 3030, 3464, 9399, 11285, 12654, 18042, 19316, 28053, 31737, 10579, 34581, 28056, 31949, 24412, 24417, 30611, 33803, 30319, 32760),
     },
     -- bullet
     {
-        containers = {2102, 5441, 7279, 11363, 3574, 3604, 7372, 8218, 2663, 19320, 29118, 34106},
-        items = set(2516, 2519, 3033, 3465, 4960, 5568, 8067, 8068, 8069, 10512, 10513, 11284, 11630, 13377, 15997, 19317, 28060, 30612, 32883, 32882, 28061, 32761, 34582, 31735, 23773),
+        containers = {2102, 5441, 7279, 11363, 3574, 3604, 7372, 8218, 2663, 19320, 29118, 34106, 34099},
+        items = set(2516, 2519, 3033, 3465, 4960, 5568, 8067, 8068, 8069, 10512, 10513, 11284, 11630, 13377, 15997, 19317, 30612, 32883, 32882, 28060, 28061, 23772, 23773, 34582, 31735, 32761),
     },
     -- soul
     {
@@ -136,28 +136,27 @@ local CLASSES = {
 
 do
     local f = CreateFrame'Frame'
-    f:SetScript('OnEvent', function()
-        f:SetScript('OnUpdate', function()
+    local lastUpdate = 0
+    local function updateHandler()
+        if GetTime() - lastUpdate > 1 then
             for _, container in pairs(BAG_CONTAINERS) do
                 for position = 1, GetContainerNumSlots(container) do
                     SetScanTooltip(container, position)
                 end
             end
-            f:SetScript('OnUpdate', nil)
-        end)
-    end)
-    f:RegisterEvent'PLAYER_LOGIN'
-end
-
-do
-    local f = CreateFrame'Frame'
-    f:SetScript('OnEvent', function()
-        for _, container in pairs(BANK_BAG_CONTAINERS) do
-            for position = 1, GetContainerNumSlots(container) do
-                SetScanTooltip(container, position)
+            for _, container in pairs(BANK_BAG_CONTAINERS) do
+                for position = 1, GetContainerNumSlots(container) do
+                    SetScanTooltip(container, position)
+                end
             end
+            f:SetScript('OnUpdate', nil)
         end
+    end
+    f:SetScript('OnEvent', function()
+        lastUpdate = GetTime()
+        f:SetScript('OnUpdate', updateHandler)
     end)
+    f:RegisterEvent'BAG_UPDATE'
     f:RegisterEvent'BANKFRAME_OPENED'
 end
 
