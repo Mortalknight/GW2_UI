@@ -600,7 +600,7 @@ local function updateQuestLogLayout(self)
     local numQuests = track_all_quests and GetNumQuestLogEntries() or GetNumQuestWatches()
     if numQuests == 0 then GwQuestHeader:Hide() end
 
-    if GwQuesttrackerContainerQuests.collapsed == true then
+    if GwQuesttrackerContainerQuests.collapsed then
         GwQuestHeader:Show()
         numQuests = 0
         savedHeight = 20
@@ -624,7 +624,7 @@ local function updateQuestLogLayout(self)
         end
     end
     GwQuesttrackerContainerQuests:SetHeight(savedHeight)
-    for i = (track_all_quests and select(2, GetNumQuestLogEntries()) or numQuests) + 1, 25 do
+    for i = (GwQuesttrackerContainerQuests.collapsed and 0 or track_all_quests and select(2, GetNumQuestLogEntries()) or numQuests) + 1, 25 do
         if _G["GwQuestBlock" .. i] ~= nil then
             _G["GwQuestBlock" .. i]:Hide()
         end
@@ -775,11 +775,7 @@ local function LoadQuestTracker()
             QuestTrackerLayoutChanged()
         end
     )
-    header.title:SetTextColor(
-        TRACKER_TYPE_COLOR["QUEST"].r,
-        TRACKER_TYPE_COLOR["QUEST"].g,
-        TRACKER_TYPE_COLOR["QUEST"].b
-    )
+    header.title:SetTextColor(TRACKER_TYPE_COLOR["QUEST"].r, TRACKER_TYPE_COLOR["QUEST"].g, TRACKER_TYPE_COLOR["QUEST"].b)
 
     fQuest.init = false
     tracker_OnEvent(fQuest)
