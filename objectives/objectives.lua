@@ -484,12 +484,23 @@ local function getQuestInfoLevel(questID, block)
     end
 end
 
-local function updateQuest(block, questWatchId)
+local function updateQuest(block, questWatchId, track_all_quests)
     block.height = 25
     block.numObjectives = 0
     block.turnin:Hide()
 
-    local questID, title, questLogIndex, numObjectives, requiredMoney, isComplete, startEvent, isAutoComplete = GetQuestWatchInfo(questWatchId)
+    local questID, title, questLogIndex, numObjectives, requiredMoney, isComplete, startEvent, isAutoComplete
+
+    if track_all_quests then
+        title, _, _, _, _, isComplete, _, questID, startEvent = GetQuestLogTitle(questWatchId)
+        questLogIndex = questWatchId
+        numObjectives = GetNumQuestLeaderBoards(questWatchId)
+        requiredMoney = GetQuestLogRequiredMoney(questID)
+        isAutoComplete = false
+    else
+        questID, title, questLogIndex, numObjectives, requiredMoney, isComplete, startEvent, isAutoComplete = GetQuestWatchInfo(questWatchId)
+    end
+
 
     if questID then
         if savedQuests[questID] == nil then
@@ -582,9 +593,11 @@ local function updateQuestLogLayout(self)
         return
     end
     self.isUpdating = true
+    local track_all_quests = GetSetting("TRACK_ALL_QUESTS")
 
     local savedHeight = 1
-    local numQuests = GetNumQuestWatches()
+    local counter = 1
+    local numQuests = track_all_quests and GetNumQuestLogEntries() or GetNumQuestWatches()
     if numQuests == 0 then GwQuestHeader:Hide() end
 
     if GwQuesttrackerContainerQuests.collapsed == true then
@@ -594,21 +607,24 @@ local function updateQuestLogLayout(self)
     end
 
     for i = 1, numQuests do
-        if i == 1 then
-            savedHeight = 20
-        end
-        GwQuestHeader:Show()
-        local block = getBlock(i)
-        if block == nil then
-            return
-        end
-        updateQuest(block, i)
-        block:Show()
+        if track_all_quests and not select(4, GetQuestLogTitle(i)) or not track_all_quests then
+            if (track_all_quests and counter or i) == 1 then
+                savedHeight = 20
+            end
+            GwQuestHeader:Show()
+            local block = getBlock((track_all_quests and counter or i))
+            if block == nil then
+                return
+            end
+            updateQuest(block, i, track_all_quests)
+            block:Show()
 
-        savedHeight = savedHeight + block.height
+            savedHeight = savedHeight + block.height
+            counter = counter + 1
+        end
     end
     GwQuesttrackerContainerQuests:SetHeight(savedHeight)
-    for i = numQuests + 1, 25 do
+    for i = (track_all_quests and select(2, GetNumQuestLogEntries()) or numQuests) + 1, 25 do
         if _G["GwQuestBlock" .. i] ~= nil then
             _G["GwQuestBlock" .. i]:Hide()
         end

@@ -737,7 +737,7 @@ local function LoadSpellBook()
         if not GwSpellbook:IsShown() then
             return
         end
-        --updateSpellbookTab()
+        updateSpellbookTab()
     end)
 
     local mask = UIParent:CreateMaskTexture()
@@ -908,7 +908,7 @@ local function LoadSpellBook()
     --GwspellbookTab6:HookScript('OnClick', spellBookTab_onClick)
     GwSpellbookMenu:SetScript('OnShow', function()
         if InCombatLockdown() then return end
-        --updateSpellbookTab()
+        updateSpellbookTab()
     end)
     hooksecurefunc('ToggleSpellBook', function()
         if InCombatLockdown() then return end

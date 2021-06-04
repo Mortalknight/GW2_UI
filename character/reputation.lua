@@ -2,7 +2,6 @@ local _, GW = ...
 local L = GW.L
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
-local CharacterMenuBlank_OnLoad = GW.CharacterMenuBlank_OnLoad
 local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 local RT = GW.REP_TEXTURES
 

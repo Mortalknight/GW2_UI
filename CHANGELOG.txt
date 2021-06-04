@@ -1,3 +1,12 @@
+1.9.0
+NEW
+    - Option to track all quests
+
+FIXES
+    - Pet frame text overlapping
+    - Spellbook updating
+    - Sorting items with socket
+
 1.8.0
 NEW
     - Added option for linking quest from questtracker with Questie support

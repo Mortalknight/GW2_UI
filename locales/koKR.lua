@@ -31,6 +31,8 @@ L["Key"] = true
 L["All key bindings cleared for"] = true
 L["bound to"] = true
 L["Sold Junk for: %s"] = true
+L["Track all Quests"] = true
+L["Show Quest XP on Quest Tracker"] = true
 
 --Strings
 L["Fade Action Bars"] = "액션바 숨기기"

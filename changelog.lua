@@ -1,6 +1,16 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.9.0 TBC", [=[
+NEW
+    - Option to track all quests
+
+FIXES
+    - Pet frame text overlapping
+    - Spellbook updating
+    - Sorting items with socket
+]=])
+
 v("1.8.0 TBC", [=[
 NEW
     - Added option for linking quest from questtracker with Questie support

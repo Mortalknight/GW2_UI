@@ -388,7 +388,7 @@ GW.PaperDollUpdateStats = PaperDollUpdateStats
 
 local function PaperDollUpdatePetStats()
     local hasUI, isHunterPet = HasPetUI()
-    local statName, statText, tooltip1, tooltip2
+    local statText, tooltip1, tooltip2
     GwCharacterMenu.petMenu:Hide()
     if not hasUI then return end
 
@@ -399,7 +399,7 @@ local function PaperDollUpdatePetStats()
 
     GwCharacterMenu.petMenu:Show()
     GwDressingRoomPet.model:SetUnit("pet")
-    GwDressingRoomPet.characterName:SetText(UnitPVPName("pet") .. " - " .. LEVEL .. " " .. UnitLevel("pet"))
+    GwDressingRoomPet.characterName:SetText(UnitPVPName("pet") .. " - " .. GUILD_RECRUITMENT_LEVEL .. " " .. UnitLevel("pet"))
     GwCharacterWindow:SetAttribute("HasPetUI", hasUI)
     if isHunterPet then
         local happiness = GetPetHappiness()
@@ -407,6 +407,7 @@ local function PaperDollUpdatePetStats()
         local currXP, nextXP = GetPetExperience()
 
         GwDressingRoomPet.model.expBar:SetValue(currXP / nextXP)
+        GwDressingRoomPet.model.expBar.value:SetText(GW.CommaValue(currXP) .. " / " .. GW.CommaValue(nextXP) .. " - " .. math.floor(currXP / nextXP * 100) .. "%")
         GwDressingRoomPet.classIcon:SetTexCoord(GW.getSprite(petStateSprite, happiness, 1))
         GwDressingRoomPet.itemLevel:SetText(totalPoints - spent)
         GwDressingRoomPet.characterData:SetText(GetPetLoyalty())
@@ -431,7 +432,7 @@ local function PaperDollUpdatePetStats()
     end
 
     for primaryStatIndex = 1, 5 do
-        statName, statText, tooltip1, tooltip2 = GW.stats.getPrimary(primaryStatIndex, "pet")
+        _, statText, tooltip1, tooltip2 = GW.stats.getPrimary(primaryStatIndex, "pet")
         grid, x, y, numShownStats = setPetStatFrame(GW.stats.PRIMARY_STATS[primaryStatIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 
@@ -445,7 +446,7 @@ local function PaperDollUpdatePetStats()
     grid, x, y, numShownStats = setPetStatFrame("ARMOR", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
 
     for resistanceIndex = 2, 6 do
-        statName, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex, "pet")
+        _, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex, "pet")
         grid, x, y, numShownStats = setPetStatFrame(GW.stats.RESITANCE_STATS[resistanceIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 end
@@ -892,6 +893,13 @@ local function LoadPaperDoll()
     PaperDollUpdatePetStats()
 
     LoadPVPTab()
+
+    GwDressingRoomPet.model.expBar:SetScript("OnEnter", function(self)
+        self.value:Show()
+    end)
+    GwDressingRoomPet.model.expBar:SetScript("OnLeave", function(self)
+        self.value:Hide()
+    end)
 
     GwDressingRoom.stats.advancedChatStatsFrame = CreateFrame("Frame", nil, GwDressingRoom.stats)
     GwDressingRoom.stats.advancedChatStatsFrame:SetPoint("TOPLEFT", GwDressingRoom.stats, "TOPLEFT", 0, -1)

@@ -220,7 +220,7 @@ end
 function Move(src, dst)
     local texture, _, srcLocked = GetContainerItemInfo(src.container, src.position)
     local _, _, dstLocked = GetContainerItemInfo(dst.container, dst.position)
-    
+
     if texture and not srcLocked and not dstLocked then
         ClearCursor()
            PickupContainerItem(src.container, src.position)
@@ -449,13 +449,13 @@ end
 function ContainerClass(container)
     if container ~= 0 and container ~= BANK_CONTAINER then
         local name = GetBagName(container)
-        if name then        
+        if name then
             for class, info in pairs(CLASSES) do
                 for _, itemID in pairs(info.containers) do
                     if name == GetItemInfo(itemID) then
                         return class
                     end
-                end    
+                end
             end
         end
     end
@@ -464,7 +464,7 @@ end
 function Item(container, position)
     local link = GetContainerItemLink(container, position)
     if link then
-        local _, _, itemID, enchantID, suffixID, uniqueID = strfind(link, 'item:(%d+):(%d*):::::(%-?%d*):(%-?%d*)')
+        local _, _, itemID, enchantID, suffixID, uniqueID = strfind(link, 'item:(%d+):(%d*):%d*:%d*:%d*:%d*:(%-?%d*):(%-?%d*)')
         itemID = tonumber(itemID)
         local itemName, _, quality, _, _, _, _, stack, slot, _, sellPrice, classId, subClassId = GetItemInfo('item:' .. itemID)
         local charges, usable, soulbound, quest, conjured, mount = TooltipInfo(container, position)
@@ -536,7 +536,7 @@ function Item(container, position)
             tinsert(sortKey, 14)
             tinsert(sortKey, sellPrice)
         end
-        
+
         tinsert(sortKey, classId)
         tinsert(sortKey, slot)
         tinsert(sortKey, subClassId)

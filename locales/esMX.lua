@@ -30,6 +30,8 @@ L["Key"] = true
 L["All key bindings cleared for"] = true
 L["bound to"] = true
 L["Sold Junk for: %s"] = true
+L["Track all Quests"] = true
+L["Show Quest XP on Quest Tracker"] = true
 
 --Strings
 L["Use the GW2 UI improved action bars."] = "Usar las barras de acción mejoradas de Gw2 UI"

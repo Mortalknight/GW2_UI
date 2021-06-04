@@ -193,31 +193,32 @@
             </Layer>
             <Layer level="OVERLAY">
                 <FontString parentKey="characterName" text="Unknown" justifyH="LEFT">
-                    <Size x="180" y="20"></Size>
+                    <Size x="170" y="20"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-10"></Anchor>
                     </Anchors>
                 </FontString>
-                <FontString parentKey="characterData" text="Level %d class" justifyH="LEFT">
-                    <Size x="180" y="20"></Size>
+                <FontString parentKey="characterData" text="Level %d class" justifyH="LEFT" justifyV="TOP">
+                    <Size x="170" y="40"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-30"></Anchor>
                     </Anchors>
                 </FontString>
                 <FontString parentKey="itemLevel" text="100" justifyH="LEFT">
                     <Anchors>
-                        <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.classIcon" x="10" y="0"></Anchor>
+                        <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.classIcon" x="-5" y="-5"></Anchor>
                     </Anchors>
                 </FontString>
-                <FontString parentKey="itemLevelLabel" text="Level %d class" justifyH="LEFT">
+                <FontString parentKey="itemLevelLabel" text="Level %d class" justifyH="LEFT" justifyV="BOTTOM">
+                    <Size x="110" y="40"></Size>
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.itemLevel" x="5" y="0"></Anchor>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.itemLevel" x="5" y="4"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
         </Layers>
         <Frames>
-            <Frame parentKey = "happiness" enableMouse="true" hidden="true">
+            <Frame parentKey="happiness" enableMouse="true" hidden="true">
                 <Size x="64" y="64"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-145" y="-45"></Anchor>
@@ -252,7 +253,7 @@
                     </OnLoad>
                 </Scripts>
                 <Frames>
-                    <StatusBar name="$parentExpBar"  minValue="0" maxValue="1" hidden="false" parentKey="expBar">
+                    <StatusBar name="$parentExpBar" minValue="0" maxValue="1" hidden="false" parentKey="expBar">
                         <Size x="380" y="10"></Size>
                         <Anchors>
                             <Anchor point="BOTTOM" relativePoint="BOTTOM"  x="0" y="40"></Anchor>
@@ -262,24 +263,34 @@
                             <Layer level="BACKGROUND">
                                 <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
                                     <Anchors>
-                                    <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="-3" y="0"></Anchor>
-                                    <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="3" y="0"></Anchor>
+                                    <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="-2" y="2"></Anchor>
+                                    <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="2" y="-2"></Anchor>
                                 </Anchors>
                             </Texture>
                         </Layer>
                             <Layer level="ARTWORK">
-                                <Texture name="$parentSpark"  file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                                <Texture name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
                                     <Size x="10" y="4"></Size>
                                     <Anchors>
                                         <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
                                     </Anchors>
                                 </Texture>
+                                <FontString parentKey="value" text="%s / %s" justifyH="CENTER" hidden="true">
+                                    <Size x="380" y="8"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER"></Anchor>
+                                    </Anchors>
+                                </FontString>
                             </Layer>
                         </Layers>
                         <Scripts>
                             <OnLoad>
                                 self:SetMinMaxValues(0, 1)
                                 self:SetStatusBarColor(240/255, 240/255, 155/255)
+                                self.value:SetFont(UNIT_NAME_FONT, 12)
+                                self.value:SetShadowColor(0.8, 0.8, 0.8, 1)
+                                self.value:SetShadowOffset(1, -1)
+                                self.value:SetTextColor(0, 0, 0, 1)
 
                                 local BNAME = self:GetName()
                                 hooksecurefunc(self, "SetValue", function(self)
@@ -297,7 +308,7 @@
             <Frame parentKey="stats">
                 <Size x="184" y="301"></Size>
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-110"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-120"></Anchor>
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
