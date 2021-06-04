@@ -1,6 +1,15 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.8.0 TBC", [=[
+NEW
+    - Added option for linking quest from questtracker with Questie support
+    - Added compass, to track the nearest quest, works only with Questie
+
+FIXES
+    - Spellbook error
+]=])
+
 v("1.7.3 TBC", [=[
 FIXES
     - Change petbar autocast border

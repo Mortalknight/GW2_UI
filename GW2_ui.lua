@@ -648,8 +648,6 @@ end
 GW.AddForProfiling("index", "loadAddon", loadAddon)
 
 -- handles addon loading
-local setHasPetUI = false
-local setAttributeAfterCombat = CreateFrame("Frame", nil, UIParent)
 local function gw_OnEvent(self, event, ...)
     if event == "PLAYER_LOGIN" then
         if not loaded then

@@ -8,13 +8,96 @@ local notifications = {}
 local questCompass = {}
 
 local icons = {
-    QUEST = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
+    QUEST = {tex = "icon-objective", l = 0, r = 1, t = 0.25, b = 0.5},
     DEAD = {tex = "party/icon-dead", l = 0, r = 1, t = 0, b = 1},
 }
 
 local notification_priority = {
     EVENT = 1
 }
+
+
+--- QUESTIE HELPERS
+local QuestieMap = QuestieLoader and QuestieLoader:ImportModule("QuestieMap")
+local QuestieDB = QuestieLoader and QuestieLoader:ImportModule("QuestieDB")
+local ZoneDB = QuestieLoader and QuestieLoader:ImportModule("ZoneDB")
+
+function GW_GetContinent(uiMapId)
+    if (not uiMapId) then
+        return
+    end
+
+    if (uiMapId == 947) or (uiMapId == 1459) or (uiMapId == 1460) or (uiMapId == 1461) then
+        return "Azeroth"
+    elseif ((uiMapId >= 1415) and (uiMapId <= 1437)) or (uiMapId == 1453) or (uiMapId == 1455) or (uiMapId == 1458) or (uiMapId == 1463) then
+        return "Eastern Kingdoms"
+    elseif ((uiMapId >= 1411) and (uiMapId <= 1414)) or ((uiMapId >= 1438) and (uiMapId <= 1452)) or (uiMapId == 1454) or (uiMapId == 1456) or (uiMapId == 1457) then
+        return "Kalimdor"
+    elseif uiMapId > 1900 and uiMapId < 2000 then
+        return "Outland"
+    end
+end
+
+local function _GetDistance(x1, y1, x2, y2)
+    -- Basic proximity distance calculation to compare two locs (normally player position and provided loc)
+    return math.sqrt( (x2-x1)^2 + (y2-y1)^2 );
+end
+
+local function _GetDistanceToClosestObjective(questId)
+    -- main function for proximity sorting
+    if not GW.locationData.mapPosition or not GW.locationData.mapPosition.x or not GW.locationData.mapID then
+        return nil
+    end
+    local _, player = C_Map.GetWorldPosFromMapPos(GW.locationData.mapID, GW.locationData.mapPosition)
+
+    if (not player) then
+        return nil
+    end
+
+    local coordinates = {};
+    local quest = QuestieDB:GetQuest(questId)
+
+    if (not quest) then
+        return nil
+    end
+
+    local spawn, zone, name = QuestieMap:GetNearestQuestSpawn(quest)
+
+    if (not spawn) or (not zone) or (not name) then
+        return nil
+    end
+
+    local uiMapId = ZoneDB:GetUiMapIdByAreaId(zone)
+    if not uiMapId then
+        return nil
+    end
+    local _, worldPosition = C_Map.GetWorldPosFromMapPos(uiMapId, {
+        x = spawn[1] / 100,
+        y = spawn[2] / 100
+    });
+
+    tinsert(coordinates, {
+        x = worldPosition.x,
+        y = worldPosition.y
+    });
+
+    if (not coordinates) then
+        return nil
+    end
+
+    local closestDistance;
+    for _, _ in pairs(coordinates) do
+        local distance = _GetDistance(player.x, player.y, worldPosition.x, worldPosition.y);
+        if closestDistance == nil or distance < closestDistance then
+            closestDistance = distance;
+        end
+    end
+
+    return closestDistance;
+end
+
+
+
 
 local function prioritys(a, b)
     if a == nil or a == "" then
@@ -62,34 +145,44 @@ local function getNearestQuestPOI()
         return nil
     end
 
-    local numQuests = GetNumQuestLogEntries()
+    local numQuests = GetNumQuestWatches()
     if (GW.locationData.x == nil or GW.locationData.y == nil) and numQuests == 0 then
         return nil
     end
 
     local closestQuestID
-    local minDistSqr = math.huge
+    local minDist = math.huge
+    local spawnInfo
     wipe(questCompass)
 
-    for i = 1, numQuests do
-        local _, _, _, isHeader, _, isComplete, _, questID, _, _, _, hasLocalPOI = GetQuestLogTitle(i)
-        if not isHeader and not isComplete and hasLocalPOI then
-            local distSqr, onContinent = GetDistanceSqToQuest(i) --Index
-            if onContinent and distSqr <= minDistSqr then
-                minDistSqr = distSqr
-                closestQuestID = questID
+    if QuestieDB and QuestieMap and ZoneDB and QuestieDB.QueryQuest then
+        for i = 1, numQuests do
+            local questID = GetQuestWatchInfo(i)
+            if questID and not isHeader then
+                local quest = QuestieDB:GetQuest(questID)
+                local spawn, zone, name = QuestieMap:GetNearestQuestSpawn(quest)
+
+                if spawn and zone and name then
+                    if ZoneDB:GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
+                        local distance = _GetDistanceToClosestObjective(questID)
+                        if distance < minDist then
+                            minDist = distance
+                            closestQuestID = questID
+                            spawnInfo = spawn
+                        end
+                    end
+                end
             end
         end
     end
 
     if closestQuestID then
-        local _, poiX, poiY = QuestPOIGetIconInfo(closestQuestID)
-        if poiX then
+        if spawnInfo[1] then
             questCompass.DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID))
             questCompass.TITLE = GetQuestLogTitle(GetQuestLogIndexByID(closestQuestID))
-            questCompass.ID = questID
-            questCompass.X = poiX
-            questCompass.Y = poiY
+            questCompass.ID = closestQuestID
+            questCompass.X = spawnInfo[1] / 100
+            questCompass.Y = spawnInfo[2] / 100
             questCompass.TYPE = "QUEST"
             questCompass.COLOR = TRACKER_TYPE_COLOR.QUEST
             questCompass.COMPASS = true
@@ -267,12 +360,7 @@ local function SetObjectiveNotification()
 
     if icons[data.TYPE] ~= nil then
         GwObjectivesNotification.icon:SetTexture("Interface/AddOns/GW2_UI/textures/" .. icons[data.TYPE].tex)
-        GwObjectivesNotification.icon:SetTexCoord(
-            icons[data.TYPE].l,
-            icons[data.TYPE].r,
-            icons[data.TYPE].t,
-            icons[data.TYPE].b
-        )
+        GwObjectivesNotification.icon:SetTexCoord(icons[data.TYPE].l, icons[data.TYPE].r, icons[data.TYPE].t, icons[data.TYPE].b)
 
         if progress ~= nil and icons[data.TYPE] then
             GwObjectivesNotification.icon:SetTexture(nil)
@@ -288,12 +376,7 @@ local function SetObjectiveNotification()
 
         if icons[data.TYPE] ~= nil then
             GwObjectivesNotification.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/" .. icons[data.TYPE].tex)
-            GwObjectivesNotification.compass.icon:SetTexCoord(
-                icons[data.TYPE].l,
-                icons[data.TYPE].r,
-                icons[data.TYPE].t,
-                icons[data.TYPE].b
-            )
+            GwObjectivesNotification.compass.icon:SetTexCoord(icons[data.TYPE].l, icons[data.TYPE].r, icons[data.TYPE].t, icons[data.TYPE].b)
         else
             GwObjectivesNotification.compass.icon:SetTexture(nil)
         end

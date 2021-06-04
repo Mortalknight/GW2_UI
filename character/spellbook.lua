@@ -543,7 +543,10 @@ end
 ]]
 
 local function updateSpellbookTab()
-    if InCombatLockdown() then return end
+    if InCombatLockdown() then
+        GwSpellbookMenu:RegisterEvent("PLAYER_REGEN_ENABLED")
+        return
+    end
 
     local knownSpellID = {}
 
@@ -551,22 +554,19 @@ local function updateSpellbookTab()
         local name, texture, offset, numSpells = GetSpellTabInfo(spellBookTabs)
         local BOOKTYPE = 'spell'
 
-        local pagingID = 1;
-        local pagingContainer = _G['GwSpellbookContainerTab' .. spellBookTabs..'container'..pagingID]
+        local pagingID = 1
+        local pagingContainer = _G['GwSpellbookContainerTab' .. spellBookTabs .. 'container' .. pagingID]
         _G['GwSpellbookContainerTab' .. spellBookTabs].tabs = 1
 
         SpellbookHeaderIndex = 1
         spellButtonIndex = 1
 
         if spellBookTabs == 5 then
-            BOOKTYPE='pet'
-            numSpells = HasPetSpells()
+            BOOKTYPE = 'pet'
+            numSpells = HasPetSpells() or 0
             offset = 0
             name = PET
             texture = "Interface\\AddOns\\GW2_UI\\textures\\talents\\tabicon_pet"
-            if numSpells == nil then
-                numSpells = 0
-            end
         end
         _G['GwspellbookTab' .. spellBookTabs].icon:SetTexture(texture)
         _G['GwspellbookTab' .. spellBookTabs].title:SetText(name)
@@ -617,7 +617,6 @@ local function updateSpellbookTab()
                 end
             end
             ]]
-
             needNewHeader = true
             if lastName == name then
                 needNewHeader = false
@@ -633,10 +632,10 @@ local function updateSpellbookTab()
             --unlearnd = findHigherRank(unlearnd, spellID)  --TODO: Need new spells for TBC
 
             if needNewHeader then
-                local currentHeight = getHeaderHeight(pagingContainer,header)
-                if currentHeight>(pagingContainer:GetHeight() - 120 ) then
-                    pagingID = pagingID + 1;
-                    pagingContainer = _G['GwSpellbookContainerTab' .. spellBookTabs..'container'..pagingID]
+                local currentHeight = getHeaderHeight(pagingContainer, header)
+                if currentHeight > (pagingContainer:GetHeight() - 120) then
+                    pagingID = pagingID + 1
+                    pagingContainer = _G['GwSpellbookContainerTab' .. spellBookTabs .. 'container' .. pagingID]
                     pagingContainer.headers = {}
                     pagingContainer.column1 = 0
                     pagingContainer.column2 = 0
@@ -699,6 +698,11 @@ local function updateSpellbookTab()
             _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. i]:EnableMouse(false)
             _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. boxIndex]:SetScript('OnEvent', nil)
         end
+        for i = SpellbookHeaderIndex + 1, 100 do
+            if _G['GwSpellbookContainerTab' .. spellBookTabs .. 'GwSpellbookActionBackground' .. i] then
+                _G['GwSpellbookContainerTab' .. spellBookTabs .. 'GwSpellbookActionBackground' .. i]:Hide()
+            end
+        end
     end
 
     --updateUnknownTab(knownSpellID)
@@ -719,12 +723,21 @@ local function LoadSpellBook()
     CreateFrame('Frame', 'GwSpellbookMenu', GwSpellbook, 'GwSpellbookMenu')
 
     spellBookMenu_onLoad(GwSpellbookMenu)
+    GwSpellbookMenu:RegisterEvent("PLAYER_ENTERING_WORLD")
     GwSpellbook:Hide()
-    GwSpellbookMenu:SetScript('OnEvent', function()
+    GwSpellbookMenu:SetScript('OnEvent', function(self, event)
+        if event == "PLAYER_ENTERING_WORLD" then
+            self:UnregisterEvent(event)
+            C_Timer.After(0.1, updateSpellbookTab)
+        elseif event == "PLAYER_REGEN_ENABLED" then
+            self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+            updateSpellbookTab()
+        end
+
         if not GwSpellbook:IsShown() then
             return
         end
-        updateSpellbookTab()
+        --updateSpellbookTab()
     end)
 
     local mask = UIParent:CreateMaskTexture()
@@ -895,7 +908,7 @@ local function LoadSpellBook()
     --GwspellbookTab6:HookScript('OnClick', spellBookTab_onClick)
     GwSpellbookMenu:SetScript('OnShow', function()
         if InCombatLockdown() then return end
-        updateSpellbookTab()
+        --updateSpellbookTab()
     end)
     hooksecurefunc('ToggleSpellBook', function()
         if InCombatLockdown() then return end
@@ -904,8 +917,6 @@ local function LoadSpellBook()
     --hooksecurefunc('ToggleSpellBook',gwToggleSpellbook)
 
     SpellBookFrame:UnregisterAllEvents()
-
-    updateSpellbookTab()
 
     return GwSpellbook
 end

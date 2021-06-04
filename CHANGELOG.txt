@@ -1,3 +1,11 @@
+1.8.0
+NEW
+    - Added option for linking quest from questtracker with Questie support
+    - Added compass, to track the nearest quest, works only with Questie
+
+FIXES
+    - Spellbook error
+
 1.7.3
 MISC
     - Change petbar autocast border

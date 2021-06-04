@@ -408,7 +408,11 @@ GW.AddForProfiling("objectives", "updateQuestObjective", updateQuestObjective)
 local function OnBlockClick(self, button)
     if IsShiftKeyDown() and ChatEdit_GetActiveWindow() then
         if button == "LeftButton" then
-            ChatEdit_InsertLink(gsub(self.title, " *(.*)", "%1"))
+            if IsAddOnLoaded("Questie") then
+                ChatEdit_InsertLink("[" .. self.title .. " (" .. self.questID .. ")]")
+            else
+                ChatEdit_InsertLink(gsub(self.title, " *(.*)", "%1"))
+            end
         else
             SelectQuestLogEntry(self.questLogIndex)
             local chat = ""
@@ -461,7 +465,7 @@ end
 GW.AddForProfiling("objectives", "OnBlockClick", OnBlockClick)
 
 local function OnBlockClickHandler(self, button)
-    if self.questID == nil then 
+    if self.questID == nil then
         OnBlockClick(self:GetParent(), button, true)
     else
         OnBlockClick(self, button, false)
@@ -766,7 +770,6 @@ local function LoadQuestTracker()
     fQuest.init = true
 
     fNotify.shouldDisplay = false
-    fTracker:SetScript("OnUpdate", tracker_OnUpdate)
 
     -- only update the tracker on Events or if player moves
     local compassUpdateFrame = CreateFrame("Frame")
