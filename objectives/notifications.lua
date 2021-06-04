@@ -145,7 +145,8 @@ local function getNearestQuestPOI()
         return nil
     end
 
-    local numQuests = GetNumQuestWatches()
+    local track_all_quests = GetSetting("TRACK_ALL_QUESTS")
+    local numQuests = track_all_quests and GetNumQuestLogEntries() or GetNumQuestWatches()
     if (GW.locationData.x == nil or GW.locationData.y == nil) and numQuests == 0 then
         return nil
     end
@@ -157,8 +158,14 @@ local function getNearestQuestPOI()
 
     if QuestieDB and QuestieMap and ZoneDB and QuestieDB.QueryQuest then
         for i = 1, numQuests do
-            local questID = GetQuestWatchInfo(i)
-            if questID and not isHeader then
+            local questID, isHeader
+            if track_all_quests then
+                _, _, _, isHeader, _, _, _, questID = GetQuestLogTitle(i)
+            else
+                questID = GetQuestWatchInfo(i)
+            end
+
+            if questID and (track_all_quests and not isHeader or not track_all_quests) then
                 local quest = QuestieDB:GetQuest(questID)
                 local spawn, zone, name = QuestieMap:GetNearestQuestSpawn(quest)
 
