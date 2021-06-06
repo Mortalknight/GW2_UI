@@ -400,6 +400,19 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
         frame:RegisterForClicks("RightButtonUp")
 
         frame.tooltipSetting = GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT")
+        if frame.tooltipSetting == "NEVER" then
+            frame:EnableMouse(false)
+        elseif frame.tooltipSetting == "ALWAYS" then
+            frame:EnableMouse(true)
+        elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
+            frame:EnableMouse(false)
+        elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
+            frame:EnableMouse(true)
+        elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
+            frame:EnableMouse(true)
+        elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
+            frame:EnableMouse(false)
+        end
     end
 
     if debuffType and DEBUFF_COLOR[debuffType] then
@@ -538,6 +551,19 @@ local function showBuffIcon(parent, i, btnIndex, x, y, icon, isMissing)
         frame:RegisterForClicks("RightButtonUp")
 
         frame.tooltipSetting = GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT")
+        if frame.tooltipSetting == "NEVER" then
+            frame:EnableMouse(false)
+        elseif frame.tooltipSetting == "ALWAYS" then
+            frame:EnableMouse(true)
+        elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
+            frame:EnableMouse(false)
+        elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
+            frame:EnableMouse(true)
+        elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
+            frame:EnableMouse(true)
+        elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
+            frame:EnableMouse(false)
+        end
     end
 
     frame.index = i

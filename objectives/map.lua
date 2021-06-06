@@ -101,8 +101,7 @@ local function lfgAnim(_, elapse)
 
     QueueStatusMinimapButtonIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
 
-    local speed = 1.5
-    local rot = QueueStatusMinimapButton.animationCircle.background:GetRotation() + (speed * elapse)
+    local rot = QueueStatusMinimapButton.animationCircle.background:GetRotation() + (1.5 * elapse)
 
     QueueStatusMinimapButton.animationCircle.background:SetRotation(rot)
     QueueStatusMinimapButtonIconTexture:SetTexCoord(unpack(GW.TexCoords))
@@ -147,9 +146,9 @@ local function hideMiniMapIcons()
 end
 GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 
-local function MapCoordsMiniMap_OnEnter(self) 
+local function MapCoordsMiniMap_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
-    GameTooltip:AddLine(L["Map Coordinates"])  
+    GameTooltip:AddLine(L["Map Coordinates"])
     GameTooltip:AddLine(L["Left Click to toggle higher precision coordinates."], 1, 1, 1, true) 
     GameTooltip:SetMinimumWidth(100)
     GameTooltip:Show()
@@ -165,7 +164,7 @@ local function mapCoordsMiniMap_setCoords(self)
 end
 GW.AddForProfiling("map", "mapCoordsMiniMap_setCoords", mapCoordsMiniMap_setCoords)
 
-local function MapCoordsMiniMap_OnClick(self, button) 
+local function MapCoordsMiniMap_OnClick(self, button)
     if button == "LeftButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 
@@ -274,13 +273,8 @@ end
 GW.AddForProfiling("map", "stack_OnEvent", stack_OnEvent)
 
 local function stack_OnClick(self)
-    if not self.container:IsShown() then
-        stackIcons(self)
-        self.container:Show()
-    else
-        stackIcons(self)
-        self.container:Hide()
-    end
+    stackIcons(self)
+    self.container:SetShown(not self.container:IsShown())
 end
 GW.AddForProfiling("map", "stack_OnClick", stack_OnClick)
 
@@ -336,8 +330,8 @@ end
 GW.setMinimapButtons = setMinimapButtons
 
 local function MinimapPostDrag(self)
-    _G.MinimapBackdrop:ClearAllPoints()
-    _G.MinimapBackdrop:SetAllPoints(_G.Minimap)
+    MinimapBackdrop:ClearAllPoints()
+    MinimapBackdrop:SetAllPoints(Minimap)
 
     local x = self.gwMover:GetCenter()
     local screenWidth = UIParent:GetRight()
@@ -350,7 +344,7 @@ end
 
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
-    _G.GetMinimapShape = getMinimapShape
+    GetMinimapShape = getMinimapShape
 
     local GwMinimapShadow = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")
 
@@ -374,17 +368,17 @@ local function LoadMinimap()
     GwMapGradient:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
     GwMapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
 
-    if _G.MiniMapInstanceDifficulty then
-        _G.MiniMapInstanceDifficulty:SetParent(_G.UIParent)
-        _G.MiniMapInstanceDifficulty:SetPoint("TOPLEFT", _G.Minimap, "TOPLEFT", 10, -10)
+    if MiniMapInstanceDifficulty then
+        MiniMapInstanceDifficulty:SetParent(UIParent)
+        MiniMapInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
     end
-    if _G.GuildInstanceDifficulty then
-        _G.GuildInstanceDifficulty:SetParent(_G.UIParent)
-        _G.GuildInstanceDifficulty:SetPoint("TOPLEFT", _G.Minimap, "TOPLEFT", 10, -10)
+    if GuildInstanceDifficulty then
+        GuildInstanceDifficulty:SetParent(UIParent)
+        GuildInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
     end
-    if _G.MiniMapChallengeMode then
-        _G.MiniMapChallengeMode:SetParent(_G.UIParent)
-        _G.MiniMapChallengeMode:SetPoint("TOPLEFT", _G.Minimap, "TOPLEFT", 10, -10)
+    if MiniMapChallengeMode then
+        MiniMapChallengeMode:SetParent(UIParent)
+        MiniMapChallengeMode:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
     end
 
     GwMapTime = CreateFrame("Button", "GwMapTime", Minimap, "GwMapTime")
@@ -392,17 +386,10 @@ local function LoadMinimap()
     TimeManagerClockButton:Hide()
     StopwatchFrame:SetParent("UIParent")
     GwMapTime:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    GwMapTime.total_elapsed = 0
-    local fnGwMapTime_OnUpdate = function(self, elapsed)
-        if self.total_elapsed > 0 then
-            self.total_elapsed = self.total_elapsed - elapsed
-            return
-        end
-        self.total_elapsed = 0.1
-        self.Time:SetText(GameTime_GetTime(false))
-    end
+    GwMapTime.timeTimer = C_Timer.NewTicker(0.2, function()
+        GwMapTime.Time:SetText(GameTime_GetTime(false))
+    end)
     GwMapTime:RegisterEvent("UPDATE_INSTANCE_INFO")
-    GwMapTime:SetScript("OnUpdate", fnGwMapTime_OnUpdate)
     GwMapTime:SetScript("OnClick", GW.Time_OnClick)
     GwMapTime:SetScript("OnEnter", GW.Time_OnEnter)
     GwMapTime:SetScript("OnLeave", GW.Time_OnLeave)
@@ -430,18 +417,9 @@ local function LoadMinimap()
         GwMapFPS = CreateFrame("Button", "GwMapFPS", Minimap, "GwMapFPS")
         GwMapFPS.fps:SetText(NOT_APPLICABLE)
         GwMapFPS.fps:SetFont(STANDARD_TEXT_FONT, 12)
-        GwMapFPS.elapsedTimer = -1
-        local updateCap = 1 / 5 -- cap fps update to 5 FPS
-        local MapFPSMiniMap_OnUpdate = function(self, elapsed)
-            self.elapsedTimer = self.elapsedTimer - elapsed
-            if self.elapsedTimer > 0 then
-                return
-            end
-            self.elapsedTimer = updateCap
-            local framerate = GetFramerate()
-            self.fps:SetText(FPS_FORMAT:format(RoundDec(framerate)))
-        end
-        GwMapFPS:SetScript("OnUpdate", MapFPSMiniMap_OnUpdate)
+        GwMapFPS.fpsTimer = C_Timer.NewTicker(0.5, function()
+            GwMapFPS.fps:SetText(RoundDec(GetFramerate()) .. " FPS")
+        end)
     end
 
     MinimapNorthTag:ClearAllPoints()
