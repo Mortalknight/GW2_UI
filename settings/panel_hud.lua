@@ -38,7 +38,18 @@ local function LoadHudPanel(sWindow)
     )
     addOption(p.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Show Quest XP on Quest Tracker"], nil, "QUESTTRACKER_SHOW_XP", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Track all Quests"], nil, "TRACK_ALL_QUESTS", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        L["Quest Tracker sorting"],
+        nil,
+        "QUESTTRACKER_SORTING",
+        function() GW.UpdateQuestTracker(GwQuesttrackerContainerQuests) end,
+        {"DEFAULT", "LEVEL", "ZONE"},
+        {DEFAULT, GUILD_RECRUITMENT_LEVEL, ZONE .. L[" |cFF888888(required Questie)|r"]},
+        nil,
+        {["QUESTTRACKER_ENABLED"] = true},
+        nil
+    )
     addOption(p.scroll.scrollchild, L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], "CASTINGBAR_DATA", nil, nil, {["CASTINGBAR_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU")
     addOption(p.scroll.scrollchild, L["Auto Repair"], L["Automatically repair using the following method when visiting a merchant."], "AUTO_REPAIR")
@@ -67,11 +78,10 @@ local function LoadHudPanel(sWindow)
         {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS},
         nil,
         nil,
-        nil,
-        "FloatingCombatText"
+        nil
     )
-    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
-    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"})
+    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"})
     addOptionSlider(
         p.scroll.scrollchild,
         L["HUD Scale"],
@@ -110,8 +120,7 @@ local function LoadHudPanel(sWindow)
         },
         nil,
         {["MINIMAP_ENABLED"] = true},
-        nil,
-        "Minimap"
+        nil
     )
     addOptionDropdown(
         p.scroll.scrollchild,

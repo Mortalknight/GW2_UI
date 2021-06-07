@@ -53,7 +53,9 @@ local function MapInfoFrameOnEvent()
     GW.locationData.mapID = C_Map.GetBestMapForUnit("player")
     GW.locationData.instanceMapID = select(8, GetInstanceInfo())
     GW.locationData.ZoneText = GetRealZoneText()
-    GW.locationData.mapPosition = C_Map.GetPlayerMapPosition(GW.locationData.mapID, "player")
+    if GW.locationData.mapID then
+        GW.locationData.mapPosition = C_Map.GetPlayerMapPosition(GW.locationData.mapID, "player")
+    end
     GW.Debug("Zone change mapID: ", GW.locationData.instanceMapID, "; Instance mapID: ", GW.locationData.instanceMapID, " Zonename: ", GW.locationData.ZoneText)
 
     -- update also the coords in new area

@@ -22,22 +22,6 @@ local QuestieMap = QuestieLoader and QuestieLoader:ImportModule("QuestieMap")
 local QuestieDB = QuestieLoader and QuestieLoader:ImportModule("QuestieDB")
 local ZoneDB = QuestieLoader and QuestieLoader:ImportModule("ZoneDB")
 
-function GW_GetContinent(uiMapId)
-    if (not uiMapId) then
-        return
-    end
-
-    if (uiMapId == 947) or (uiMapId == 1459) or (uiMapId == 1460) or (uiMapId == 1461) then
-        return "Azeroth"
-    elseif ((uiMapId >= 1415) and (uiMapId <= 1437)) or (uiMapId == 1453) or (uiMapId == 1455) or (uiMapId == 1458) or (uiMapId == 1463) then
-        return "Eastern Kingdoms"
-    elseif ((uiMapId >= 1411) and (uiMapId <= 1414)) or ((uiMapId >= 1438) and (uiMapId <= 1452)) or (uiMapId == 1454) or (uiMapId == 1456) or (uiMapId == 1457) then
-        return "Kalimdor"
-    elseif uiMapId > 1900 and uiMapId < 2000 then
-        return "Outland"
-    end
-end
-
 local function _GetDistance(x1, y1, x2, y2)
     -- Basic proximity distance calculation to compare two locs (normally player position and provided loc)
     return math.sqrt( (x2-x1)^2 + (y2-y1)^2 );
@@ -96,9 +80,6 @@ local function _GetDistanceToClosestObjective(questId)
     return closestDistance;
 end
 
-
-
-
 local function prioritys(a, b)
     if a == nil or a == "" then
         return true
@@ -145,8 +126,6 @@ local function getNearestQuestPOI()
         return nil
     end
 
-    local track_all_quests = GetSetting("TRACK_ALL_QUESTS")
-    local numQuests = track_all_quests and GetNumQuestLogEntries() or GetNumQuestWatches()
     if (GW.locationData.x == nil or GW.locationData.y == nil) and numQuests == 0 then
         return nil
     end
@@ -157,24 +136,17 @@ local function getNearestQuestPOI()
     wipe(questCompass)
 
     if QuestieDB and QuestieMap and ZoneDB and QuestieDB.QueryQuest then
-        for i = 1, numQuests do
-            local questID, isHeader
-            if track_all_quests then
-                _, _, _, isHeader, _, _, _, questID = GetQuestLogTitle(i)
-            else
-                questID = GetQuestWatchInfo(i)
-            end
-
-            if questID and (track_all_quests and not isHeader or not track_all_quests) then
-                local quest = QuestieDB:GetQuest(questID)
-                local spawn, zone, name = QuestieMap:GetNearestQuestSpawn(quest)
+        for _, quest in pairs(GW.trackedQuests) do
+            if quest.questId then
+                local questQ = QuestieDB:GetQuest(quest.questId)
+                local spawn, zone, name = QuestieMap:GetNearestQuestSpawn(questQ)
 
                 if spawn and zone and name then
                     if ZoneDB:GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
-                        local distance = _GetDistanceToClosestObjective(questID)
+                        local distance = _GetDistanceToClosestObjective(quest.questId)
                         if distance < minDist then
                             minDist = distance
-                            closestQuestID = questID
+                            closestQuestID = quest.questId
                             spawnInfo = spawn
                         end
                     end

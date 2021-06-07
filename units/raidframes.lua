@@ -350,6 +350,13 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
         frame:RegisterForClicks("RightButtonUp")
 
         frame.tooltipSetting = GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT")
+        if frame.tooltipSetting == "NEVER" then
+            frame:EnableMouse(false)
+        elseif frame.tooltipSetting == "ALWAYS" then
+            frame:EnableMouse(true)
+        elseif frame.tooltipSetting == "OUT_COMBAT" then
+            frame:EnableMouse(true)
+        end
     end
 
     if debuffType and DEBUFF_COLOR[debuffType] then
@@ -494,6 +501,13 @@ local function showBuffIcon(parent, i, btnIndex, x, y, icon, isMissing)
         frame:RegisterForClicks("RightButtonUp")
 
         frame.tooltipSetting = GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT")
+        if frame.tooltipSetting == "NEVER" then
+            frame:EnableMouse(false)
+        elseif frame.tooltipSetting == "ALWAYS" then
+            frame:EnableMouse(true)
+        elseif frame.tooltipSetting == "OUT_COMBAT" then
+            frame:EnableMouse(true)
+        end
     end
 
     frame.index = i
@@ -571,7 +585,7 @@ local function updateBuffs(self)
 
         -- show buffs
         if not aurasDone then
-            local name, icon, count, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitAura(self.unit, i, "HELPFUL")
+            local name, icon, count, _, duration, expires, caster, _, _, spellID = UnitAura(self.unit, i, "HELPFUL")
             if name then
                 -- visibility
                 local shouldDisplay
@@ -579,7 +593,7 @@ local function updateBuffs(self)
                 if (hasCustom) then
                     shouldDisplay = showForMySpec or (alwaysShowMine and (caster == "player" or caster == "pet" or caster == "vehicle"))
                 else
-                    shouldDisplay = (caster == "player" or caster == "pet" or caster == "vehicle") and canApplyAura and not SpellIsSelfBuff(spellID)
+                    shouldDisplay = (caster == "player" or caster == "pet" or caster == "vehicle") and not SpellIsSelfBuff(spellID)
                 end
 
                 if shouldDisplay then
@@ -646,7 +660,7 @@ local function updateAuras(self)
 end
 GW.AddForProfiling("raidframes", "updateAuras", updateAuras)
 
-local function raidframe_OnEvent(self, event, unit, arg1)
+local function raidframe_OnEvent(self, event, unit)
     if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         -- Enable or disable mouse handling on aura frames
         local name = self:GetName()

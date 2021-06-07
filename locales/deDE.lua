@@ -30,8 +30,9 @@ L["Key"] = "Taste"
 L["All key bindings cleared for"] = "Alle Tastenbelegungen verworfen für "
 L["bound to"] = "gebunden an"
 L["Sold Junk for: %s"] = "Müll verkauft für: %s"
-L["Track all Quests"] = "Zeige alle Quests im Quest Tracker"
 L["Show Quest XP on Quest Tracker"] = "Zeige Quest EP im Quest Tracker"
+L["Quest Tracker sorting"] = "Quest Listen Sortierung"
+
 --Strings
 L["Use the GW2 UI improved action bars."] = "Benutze die verbesserten GW2 UI Aktionsleisten."
 L["Fade Action Bars"] = "Aktionsleisten ausblenden"

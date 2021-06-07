@@ -5,7 +5,7 @@
 ## Author: deadend06, Nils89, nezroy
 ## Version: @project-version@
 
-## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
+## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03, GW2UI_QUEST_WATCH_DB
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES, GW2UI_STORAGE2
 
 core/TaintLess.xml

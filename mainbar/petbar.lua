@@ -64,7 +64,7 @@ local function setPetBar(fmPet)
                 btn:SetAttribute("_onreceivedrag", nil)
             end
 
-            GW.setActionButtonStyle("PetActionButton" .. i)
+            GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, nil, true)
             GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])
         end
     end

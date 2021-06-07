@@ -1,6 +1,15 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.10.0 TBC", [=[
+NEW
+    - You can now track as many quests as you want and untrack them
+    - Quest sorting by: Default, Level, Zone (required Questie)
+
+FIXES
+    - Raidframe aura indicator not show correctly
+]=])
+
 v("1.9.0 TBC", [=[
 NEW
     - Option to track all quests
