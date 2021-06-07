@@ -8,7 +8,7 @@ CreateFrame('GameTooltip', 'SortBagsTooltip', nil, 'GameTooltipTemplate')
 BAG_CONTAINERS = {0, 1, 2, 3, 4}
 BANK_BAG_CONTAINERS = {-1, 5, 6, 7, 8, 9, 10, 11}
 
-function GW_SortBags()
+function _G.GW_SortBags()
     CONTAINERS = {unpack(BAG_CONTAINERS)}
     for i = #CONTAINERS, 1, -1 do
         if GetBagSlotFlag(i - 1, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
@@ -18,7 +18,7 @@ function GW_SortBags()
     Start()
 end
 
-function GW_SortBankBags()
+function _G.GW_SortBankBags()
     CONTAINERS = {unpack(BANK_BAG_CONTAINERS)}
     for i = #CONTAINERS, 1, -1 do
         if GetBankBagSlotFlag(i - 1, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
