@@ -480,7 +480,7 @@ end
 GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
 local function AddQuestInfos(questId, questLogIndex, watchId)
-    local title, level, group = GetQuestLogTitle(questLogIndex)
+    local title, level, group, _, _, isComplete, _, _, startEvent = GetQuestLogTitle(questLogIndex)
 
     return {
         questId = questId,
@@ -488,7 +488,12 @@ local function AddQuestInfos(questId, questLogIndex, watchId)
         questLogIndex = questLogIndex,
         questLevel = level,
         questGroup = group,
-        title = title
+        title = title,
+        isComplete = isComplete,
+        startEvent = startEvent,
+        numObjectives = GetNumQuestLeaderBoards(questLogIndex),
+        requiredMoney = GetQuestLogRequiredMoney(questId),
+        isAutoComplete = false
     }
 end
 
@@ -497,17 +502,12 @@ local function updateQuest(block, quest)
     block.numObjectives = 0
     block.turnin:Hide()
 
-    local title, _, _, _, _, isComplete, _, _, startEvent = GetQuestLogTitle(quest.questLogIndex)
-    local numObjectives = GetNumQuestLeaderBoards(quest.questLogIndex)
-    local requiredMoney = GetQuestLogRequiredMoney(quest.questId)
-    local isAutoComplete = false
-
     if quest.questId then
         if savedQuests[quest.questId] == nil then
             NewQuestAnimation(block)
             savedQuests[quest.questId] = true
         end
-        block.title = title
+        block.title = quest.title
         local text = ""
         if quest.questGroup == "Elite" then
             text = "[" .. quest.questLevel .. "|TInterface\\AddOns\\GW2_UI\\textures\\quest-group-icon:12:12:0:0|t] "
@@ -520,33 +520,33 @@ local function updateQuest(block, quest)
         end
         block.questID = quest.questId
         block.questLogIndex = quest.questLogIndex
-        block.Header:SetText(text .. title)
+        block.Header:SetText(text .. quest.title)
 
         local rewardXP = GetQuestLogRewardXP and GetQuestLogRewardXP(quest.questId) or nil
         if rewardXP and GetSetting("QUESTTRACKER_SHOW_XP") and GW.mylevel < GetMaxPlayerLevel() then
-            block.Header:SetText(text .. title .. " |cFF888888(" .. CommaValue(rewardXP) .. XP .. ")|r")
+            block.Header:SetText(text .. quest.title .. " |cFF888888(" .. CommaValue(rewardXP) .. XP .. ")|r")
         end
 
-        if isComplete and isComplete < 0 then
-            isComplete = false
-        elseif numObjectives == 0 and GetMoney() >= requiredMoney and not startEvent then
-            isComplete = true
+        if quest.isComplete and quest.isComplete < 0 then
+            quest.isComplete = false
+        elseif quest.numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent then
+            quest.isComplete = true
         end
 
-        updateQuestObjective(block, numObjectives)
+        updateQuestObjective(block, quest.numObjectives)
 
-        if requiredMoney ~= nil and requiredMoney > GetMoney() then
+        if quest.requiredMoney ~= nil and quest.requiredMoney > GetMoney() then
             addObjective(
                 block,
-                GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(requiredMoney),
-                isComplete,
+                GetMoneyString(GetMoney()) .. " / " .. GetMoneyString(quest.requiredMoney),
+                quest.isComplete,
                 block.numObjectives + 1,
                 nil
             )
         end
 
-        if isComplete then
-            if isAutoComplete then
+        if quest.isComplete then
+            if quest.isAutoComplete then
                 addObjective(block, QUEST_WATCH_CLICK_TO_COMPLETE, false, block.numObjectives + 1, nil)
                 block.turnin:Show()
                 block.turnin:SetScript(
