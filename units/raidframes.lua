@@ -404,14 +404,8 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
             frame:EnableMouse(false)
         elseif frame.tooltipSetting == "ALWAYS" then
             frame:EnableMouse(true)
-        elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
-            frame:EnableMouse(false)
-        elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
+        elseif frame.tooltipSetting == "OUT_COMBAT" then
             frame:EnableMouse(true)
-        elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
-            frame:EnableMouse(true)
-        elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
-            frame:EnableMouse(false)
         end
     end
 
@@ -555,14 +549,8 @@ local function showBuffIcon(parent, i, btnIndex, x, y, icon, isMissing)
             frame:EnableMouse(false)
         elseif frame.tooltipSetting == "ALWAYS" then
             frame:EnableMouse(true)
-        elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
-            frame:EnableMouse(false)
-        elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
+        elseif frame.tooltipSetting == "OUT_COMBAT" then
             frame:EnableMouse(true)
-        elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
-            frame:EnableMouse(true)
-        elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
-            frame:EnableMouse(false)
         end
     end
 
