@@ -360,7 +360,7 @@ local function showBackdrop(self)
 end
 GW.AddForProfiling("Actionbars2", "showBackdrop", showBackdrop)
 
-local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton)
+local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton, isPet)
     local btn = _G[buttonName]
 
     if btn.icon ~= nil then
@@ -368,7 +368,11 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
     end
     if btn.HotKey ~= nil then
         btn.HotKey:ClearAllPoints()
-        btn.HotKey:SetPoint("CENTER", btn, "BOTTOM", 0, 0)
+        if isPet then
+            btn.HotKey:SetPoint("CENTER", btn, "BOTTOM", 0, 5)
+        else
+            btn.HotKey:SetPoint("CENTER", btn, "BOTTOM", 0, 0)
+        end
         btn.HotKey:SetJustifyH("CENTER")
     end
     if btn.Count ~= nil then
