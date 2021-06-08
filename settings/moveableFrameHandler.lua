@@ -278,6 +278,10 @@ local function mover_OnDragStop(self)
     -- check if we need to know if the frame is on its default position
     CheckIfMoved(self, settingsName, new_point)
 
+    if self.gw_positionAfter then
+        self.gw_frame:ClearAllPoints()
+        self.gw_frame:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
+    end
     if self.gw_postdrag then
         self.gw_postdrag(self.gw_frame)
     end
@@ -408,8 +412,8 @@ local function moverframe_OnLeave(self)
     end
 end
 
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, isMoved, smallOptions, mhf, postdrag)
-    local moveframe = CreateFrame("Frame", nil, UIParent, dummyFrame)
+local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, isMoved, smallOptions, mhf, postdrag, positionFrameAfterMove)
+    local moveframe = CreateFrame("Frame", settingsName .. "Mover", UIParent, dummyFrame)
     frame.gwMover = moveframe
     if size then
         moveframe:SetSize(unpack(size))
@@ -422,6 +426,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     moveframe.gw_frame = frame
     moveframe.gw_mhf = mhf
     moveframe.gw_postdrag = postdrag
+    moveframe.gw_positionAfter = positionFrameAfterMove
 
     if moveframe.frameName and moveframe.frameName.SetText then
         moveframe.frameName:SetSize(moveframe:GetSize())

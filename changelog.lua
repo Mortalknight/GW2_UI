@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.10.1 TBC", [=[
+FIXES
+    - Minimap can now be moved
+]=])
+
 v("1.10.0 TBC", [=[
 NEW
     - You can now track as many quests as you want and untrack them

@@ -385,7 +385,7 @@ local function LoadMinimap()
     end)
     MiniMapBattlefieldFrame.animationCircle = CreateFrame("Frame", "GwLFDAnimation", MiniMapBattlefieldFrame, "GwLFDAnimation")
 
-    Minimap:SetMaskTexture("Interface\\ChatFrame\\ChatFrameBackground")
+    Minimap:SetMaskTexture("Interface/ChatFrame/ChatFrameBackground")
     Minimap:SetParent(UIParent)
     Minimap:SetFrameStrata("LOW")
 
@@ -602,9 +602,16 @@ local function LoadMinimap()
     Minimap:SetSize(size, size)
 
     -- mobeable stuff
-    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "VerticalActionBarDummy", {size, size}, nil, {"default"}, nil, MinimapPostDrag)
+    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "VerticalActionBarDummy", {size, size}, nil, {"default"}, nil, MinimapPostDrag, true)
+    local framePoint = GetSetting("MinimapPos")
+    local defaultPoint = GW.GetDefault("MinimapPos")
     Minimap:ClearAllPoints()
-    Minimap:SetPoint("TOPLEFT", Minimap.gwMover)
+    if not framePoint.point or not framePoint.relativePoint or not framePoint.xOfs or not framePoint.yOfs then
+        -- use default position
+        Minimap:SetPoint(defaultPoint.point, UIParent, defaultPoint.relativePoint, defaultPoint.xOfs, defaultPoint.yOfs)
+    else
+        Minimap:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs)
+    end
     -- check on which side we need to set the buttons
     local x = Minimap:GetCenter()
     local screenWidth = UIParent:GetRight()

@@ -1,7 +1,5 @@
 local _, GW = ...
-local SkinButton = GW.skins.SkinButton
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local GetSetting = GW.GetSetting
 
 local function SkinBNToastFrame()
     local BNToastFrame = _G.BNToastFrame
