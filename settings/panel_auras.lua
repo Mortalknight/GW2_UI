@@ -77,9 +77,10 @@ local function LoadAurasPanel(sWindow)
     local auraKeys, auraVals = {0}, {NONE_KEY}
     for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
         if not indicator[4] and GetSpellInfo(spellID) then
-            local name = format("%s |cFF888888(%d)|r", GetSpellInfo(spellID), spellID)
+            local name = GetSpellInfo(spellID)
             tinsert(auraKeys, spellID)
             tinsert(auraVals, name)
+            C_Spell.RequestLoadSpellData(spellID)
         end
     end
 
@@ -101,6 +102,25 @@ local function LoadAurasPanel(sWindow)
             nil
         )
     end
+
+    -- Rank info are not there after game start
+    C_Timer.After(3, function()
+        for _, pos in ipairs(GW.INDICATORS) do
+            local frame = _G["INDICATOR_" .. pos]
+            local num = frame.container.contentScroll.numEntries
+            if num and num > 0 then
+                for i = 1, num do
+                    local spellId = frame.container.contentScroll.data.options[i]
+                    local name = frame.container.contentScroll.data.options_names[i]
+                    local rank = GetSpellSubtext(spellId)
+                    rank = rank and string.match(rank, "[%d]") or nil
+                    name = name .. (rank and " |cFF888888(" .. RANK .. " " .. rank .. ")|r" or "")
+                    frame.container.contentScroll.data.options_names[i] = name
+                end
+                frame.container.contentScroll.update(frame.container.contentScroll)
+            end
+        end
+    end)
     InitPanel(p_auras, true)
     InitPanel(p_indicator, true)
 end

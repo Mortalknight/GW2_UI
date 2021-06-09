@@ -133,13 +133,13 @@ local function PaperDollPetStats_OnEvent(self, event, ...)
     if event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or (event == "UNIT_PET" and unit == "player") then
         if GwPetContainer:IsVisible() and not HasPetUI() then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
-            GwCharacterMenu.petMenu:Hide()
+            GwCharacterMenu.petMenu:Disable()
             return
         end
     elseif event == "PET_UI_CLOSE" then
         if GwPetContainer:IsVisible() then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
-            GwCharacterMenu.petMenu:Hide()
+            GwCharacterMenu.petMenu:Disable()
             return
         end
     end
@@ -389,7 +389,7 @@ GW.PaperDollUpdateStats = PaperDollUpdateStats
 local function PaperDollUpdatePetStats()
     local hasUI, isHunterPet = HasPetUI()
     local statText, tooltip1, tooltip2
-    GwCharacterMenu.petMenu:Hide()
+    GwCharacterMenu.petMenu:SetShown(GW.myClassID == 3 or GW.myClassID == 9)
     if not hasUI then return end
 
     local numShownStats = 1
@@ -397,7 +397,7 @@ local function PaperDollUpdatePetStats()
     local x = 0
     local y = 0
 
-    GwCharacterMenu.petMenu:Show()
+    GwCharacterMenu.petMenu:Enable()
     GwDressingRoomPet.model:SetUnit("pet")
     GwDressingRoomPet.characterName:SetText(UnitPVPName("pet") .. " - " .. GUILD_RECRUITMENT_LEVEL .. " " .. UnitLevel("pet"))
     GwCharacterWindow:SetAttribute("HasPetUI", hasUI)

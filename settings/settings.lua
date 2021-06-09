@@ -311,7 +311,7 @@ local function InitPanel(panel, hasScroll)
     local padding = {x = box_padding, y = (hasScroll and panel.scroll.scrollchild.sub:GetText() or panel.sub:GetText()) and -55 or -35}
     local first = true
 
-    for k, v in pairs(options) do
+    for _, v in pairs(options) do
         local newLine = false
         local optionFrameType = "GwOptionBoxTmpl"
         if v.optionType == "slider" then

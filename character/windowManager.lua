@@ -744,10 +744,10 @@ local function LoadWindows()
                 -- pet GwDressingRoom
                 GwCharacterMenu.petMenu:SetAttribute("_onstate-petstate", [=[
                     if newstate == "nopet" then
-                        self:Hide()
+                        self:Disable()
                         self:GetFrameRef("GwCharacterWindow"):SetAttribute("HasPetUI", false)
                     elseif newstate == "hasPet" then
-                        self:Show()
+                        self:Enable()
                         self:GetFrameRef("GwCharacterWindow"):SetAttribute("HasPetUI", true)
                     end
                 ]=])
