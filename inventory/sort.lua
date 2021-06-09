@@ -39,7 +39,7 @@ end
 
 local function arrayToSet(array)
     local t = {}
-    for i = 1, #t do
+    for i = 1, #array do
         t[array[i]] = true
     end
     return t

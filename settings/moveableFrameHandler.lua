@@ -217,6 +217,11 @@ local function smallSettings_resetToDefault(self)
     -- check if we need to know if the frame is on its default position
     CheckIfMoved(mf, settingsName, new_point)
 
+    if mf.gw_positionAfter then
+        mf.gw_frame:ClearAllPoints()
+        mf.gw_frame:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
+    end
+
     -- Set Scale back to default
     if mf.optionScaleable then
         local scale

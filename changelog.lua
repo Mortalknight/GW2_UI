@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.10.2 TBC", [=[
+FIXES
+    - Sorting for special bags
+]=])
+
 v("1.10.1 TBC", [=[
 FIXES
     - Minimap can now be moved

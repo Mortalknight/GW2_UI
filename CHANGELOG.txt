@@ -1,3 +1,7 @@
+1.10.2
+FIXES
+    - Sorting for special bags
+
 1.10.1
 FIXES
     - Minimap can now be moved
