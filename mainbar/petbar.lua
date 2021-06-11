@@ -160,7 +160,7 @@ local function updatePetData(self, event)
     self.resource:SetValue(resourcePrec)
 
     if self.health.animationCurrent == nil then
-        self.health.animationCurrent = 0
+        self.health.animationCurrent = healthprec
     end
     AddToAnimation(
         "petBarAnimation",
