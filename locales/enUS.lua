@@ -341,3 +341,4 @@ L["Ctrl + Click to toggle override"] = true
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = true
 L["You have overridden this behavior."] = true
 L["Out of combat"] = true
+L["Show an additional ressoucebar"] = true

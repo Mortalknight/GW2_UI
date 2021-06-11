@@ -343,3 +343,4 @@ L["Ctrl + Click to toggle override"] = "Ctrl + 左鍵點擊來取代"
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = "已被不相容的插件功能取代，重新載入介面後才會生效。"
 L["You have overridden this behavior."] = "你已選擇使用其他插件取代此功能。"
 L["Out of combat"] = true
+L["Show an additional ressoucebar"] = true

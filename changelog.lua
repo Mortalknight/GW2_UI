@@ -4,6 +4,7 @@ local v = GW.vernotes
 v("5.16.0", [=[
 NEW
     - Added social module
+    - Added option to show a additional ressourcebar with player as target frame
 
 FIXES
     - Redo raid frame aura icon tooltip: New option to set when the aura get a tooltip on mouse over or is click through (no tooltip = click through)
