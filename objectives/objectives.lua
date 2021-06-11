@@ -533,20 +533,7 @@ local function updateQuestObjective(block, numObjectives)
 end
 GW.AddForProfiling("objectives", "updateQuestObjective", updateQuestObjective)
 
-local itemButtonUpdateAfterCombat = CreateFrame("Frame")
-itemButtonUpdateAfterCombat:SetScript("OnEvent", function(self)
-    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    GW.updateQuestLogLayout(GwQuesttrackerContainerQuests)
-end)
-
 local function UpdateQuestItem(block)
-    if InCombatLockdown() then
-        if block.questLogIndex and block.questLogIndex > 0 and GetQuestLogSpecialItemInfo(block.questLogIndex) then
-            itemButtonUpdateAfterCombat:RegisterEvent("PLAYER_REGEN_ENABLED")
-        end
-        return
-    end
-
     local link, item, charges, showItemWhenComplete = nil, nil, nil, false
 
     if block.questLogIndex then
@@ -588,7 +575,7 @@ local function OnBlockClick(self, button, isHeader)
     if ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
         return
     end
-    
+
     if isHeader and not IsModifiedClick("QUESTWATCHTOGGLE") then
         C_SuperTrack.SetSuperTrackedQuestID(self.questID)
         return
@@ -641,7 +628,7 @@ local function updateQuest(self, block, quest)
         block.Header:SetText(quest.title)
 
         --Quest item
-        UpdateQuestItem(block)
+        GW.CombatQueue_Queue(UpdateQuestItem, {block})
 
         if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
             isComplete = true
@@ -717,7 +704,7 @@ local function updateQuestByID(self, block, quest, questID, questLogIndex)
     block.Header:SetText(quest.title)
 
     --Quest item
-    UpdateQuestItem(block)
+    GW.CombatQueue_Queue(UpdateQuestItem, {block})
 
     if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
         isComplete = true
@@ -768,25 +755,11 @@ local function updateQuestByID(self, block, quest, questID, questLogIndex)
 end
 GW.AddForProfiling("objectives", "updateQuestByID", updateQuestByID)
 
-local questButtonHelperFrame = CreateFrame("Frame")
-questButtonHelperFrame:SetScript("OnEvent", function(self)
-    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    GW.updateQuestItemPositions(self.button, self.height, self.type, self.block)
-end)
-
 local function updateQuestItemPositions(button, height, type, block)
     if not button or not block.hasItem then
         return
     end
 
-    if InCombatLockdown() then
-        questButtonHelperFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-        questButtonHelperFrame.button = button
-        questButtonHelperFrame.height = height
-        questButtonHelperFrame.type = type
-        questButtonHelperFrame.block = block
-        return
-    end
     local height = height + GwQuesttrackerContainerScenario:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerBossFrames:GetHeight() + GwQuesttrackerContainerArenaBGFrames:GetHeight()
     if GwObjectivesNotification:IsShown() then
         height = height + GwObjectivesNotification.desc:GetHeight()
@@ -921,13 +894,13 @@ local function updateQuestLogLayout(self)
                     updateQuest(self, block, q)
                     block:Show()
                     savedHeightCampagin = savedHeightCampagin + block.height
-                    updateQuestItemPositions(block.actionButton, savedHeightCampagin, nil, block)
+                    GW.CombatQueue_Queue(updateQuestItemPositions, {block.actionButton, savedHeightCampagin, nil, block})
                 else
                     counterCampaign = counterCampaign + 1
                     if _G["GwCampaignBlock" .. counterCampaign] ~= nil then
                         _G["GwCampaignBlock" .. counterCampaign]:Hide()
                         _G["GwCampaignBlock" .. counterCampaign].questLogIndex = 0
-                        UpdateQuestItem(_G["GwCampaignBlock" .. counterCampaign])
+                        GW.CombatQueue_Queue(UpdateQuestItem, {_G["GwCampaignBlock" .. counterCampaign]})
                     end
                 end
             elseif q then
@@ -958,13 +931,13 @@ local function updateQuestLogLayout(self)
                     block.isFrequency = isFrequency
                     block:Show()
                     savedHeightQuest = savedHeightQuest + block.height
-                    updateQuestItemPositions(block.actionButton, savedHeightQuest, "QUEST", block)
+                    GW.CombatQueue_Queue(updateQuestItemPositions, {block.actionButton, savedHeightCampagin, "QUEST", block})
                 else
                     counterQuest = counterQuest + 1
                     if _G["GwQuestBlock" .. counterQuest] ~= nil then
                         _G["GwQuestBlock" .. counterQuest]:Hide()
                         _G["GwQuestBlock" .. counterQuest].questLogIndex = 0
-                        UpdateQuestItem(_G["GwQuestBlock" .. counterQuest])
+                        GW.CombatQueue_Queue(UpdateQuestItem, {_G["GwQuestBlock" .. counterQuest]})
                     end
                 end
             end
@@ -980,7 +953,7 @@ local function updateQuestLogLayout(self)
             _G["GwCampaignBlock" .. i].questID = nil
             _G["GwCampaignBlock" .. i].questLogIndex = 0
             _G["GwCampaignBlock" .. i]:Hide()
-            UpdateQuestItem(_G["GwCampaignBlock" .. i])
+            GW.CombatQueue_Queue(UpdateQuestItem, {_G["GwCampaignBlock" .. i]})
         end
     end
     for i = counterQuest + 1, 25 do
@@ -988,7 +961,7 @@ local function updateQuestLogLayout(self)
             _G["GwQuestBlock" .. i].questID = nil
             _G["GwQuestBlock" .. i].questLogIndex = 0
             _G["GwQuestBlock" .. i]:Hide()
-            UpdateQuestItem(_G["GwQuestBlock" .. i])
+            GW.CombatQueue_Queue(UpdateQuestItem, {_G["GwQuestBlock" .. i]})
         end
     end
 
@@ -1063,7 +1036,7 @@ local function updateQuestLogLayoutSingle(self, questID, added)
                     break
                 end
             end
-            updateQuestItemPositions(questBlockOfIdOrNew.actionButton, heightForQuestItem, isCampaign and nil or "QUEST", questBlockOfIdOrNew)
+            GW.CombatQueue_Queue(updateQuestItemPositions, {questBlockOfIdOrNew.actionButton, heightForQuestItem, isCampaign and nil or "QUEST", questBlockOfIdOrNew})
         end
 
         -- Set number of quest to the Header

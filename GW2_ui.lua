@@ -384,6 +384,7 @@ local function loadAddon(self)
     if GW.inDebug then
         GW.AlertTestsSetup()
     end
+    GW.CombatQueue_Initialize()
 
     --Create Settings window
     GW.LoadMovers()
