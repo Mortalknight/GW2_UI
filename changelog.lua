@@ -4,6 +4,7 @@ local v = GW.vernotes
 v("1.12.0 TBC", [=[
 NEW
     - Added option to show pet auras under the frame
+    - Added option to show a additional ressourcebar with player as target frame
 
 FIXES
     - Some stats tooltips

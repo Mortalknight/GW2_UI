@@ -75,10 +75,9 @@ local function powerBar_OnUpdate(self)
 end
 GW.AddForProfiling("playerhud", "powerBar_OnUpdate", powerBar_OnUpdate)
 
-local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationName)
+local function UpdatePowerData(self, forcePowerType, powerToken)
     if forcePowerType == nil then
         forcePowerType, powerToken = UnitPowerType("player")
-        forceAnimationName = "powerBarAnimation"
     end
 
     self.animating = true
@@ -122,7 +121,7 @@ local function UpdatePowerData(self, forcePowerType, powerToken, forceAnimationN
         GetTime(),
         0.2,
         function()
-            local powerPrec = animations[f.animKey]["progress"]
+            local powerPrec = animations[f.animKey].progress
             local bit = powerBarWidth / 15
             local spark = bit * math.floor(15 * (powerPrec))
 
@@ -171,11 +170,12 @@ local function LoadPowerBar()
     playerPowerBar:SetPoint("TOPLEFT", playerPowerBar.gwMover)
 
     -- position mover
-    if not playerPowerBar.isMoved  then
+    if (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not playerPowerBar.isMoved  then
         local framePoint = GetSetting("PowerBar_pos")
         local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
+        local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and -52 or 0
         playerPowerBar.gwMover:ClearAllPoints()
-        playerPowerBar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs - yOff)
+        playerPowerBar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
     end
 
     _G[playerPowerBar:GetName() .. "CandySpark"]:ClearAllPoints()

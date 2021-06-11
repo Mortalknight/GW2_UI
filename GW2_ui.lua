@@ -515,7 +515,7 @@ local function loadAddon(self)
         end
     end
 
-    if GetSetting("POWERBAR_ENABLED") and not GetSetting("PLAYER_AS_TARGET_FRAME") then
+    if GetSetting("POWERBAR_ENABLED") and (GetSetting("PLAYER_AS_TARGET_FRAME") and GetSetting("PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR") or not GetSetting("PLAYER_AS_TARGET_FRAME")) then
         GW.LoadPowerBar()
         if GetSetting("PLAYER_ENERGY_MANA_TICK") then
             GW.load5SR()
