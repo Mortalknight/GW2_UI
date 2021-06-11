@@ -3,9 +3,6 @@
 
     <Button name="GwPlayerPetFrameTmpl" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="MEDIUM" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate" virtual="true">
         <Size x="316" y="100"></Size>
-        <HitRectInsets>
-            <AbsInset left="0" right="0" top="0" bottom="30"/>
-        </HitRectInsets>
         <Layers>
             <Layer level="ARTWORK">
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" parentKey="Background">
@@ -59,10 +56,9 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
             </StatusBar>
             <Frame parentKey="auras">
-                <Size x="0" y="10"></Size>
+                <Size x="230" y="100"/>
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-85" y="0"></Anchor>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Background" relativePoint="BOTTOMRIGHT" x="-3" y="100"></Anchor>
                 </Anchors>
             </Frame>
             <Frame parentKey="happiness" enableMouse="false" hidden="true">

@@ -119,9 +119,14 @@ local function updatePetData(self, event)
         return
     end
 
-    if event == "UNIT_AURA" then
+    if event == "PLAYER_ENTERING_WORLD" then
         UpdateBuffLayout(self, event, "pet")
-    elseif event == "UNIT_HAPPINESS" then 
+        SetPetHappiness(self)
+        SetPortraitTexture(self.portrait, "pet")
+        self:UnregisterEvent(event)
+    elseif event == "UNIT_AURA" then
+        UpdateBuffLayout(self, event, "pet")
+    elseif event == "UNIT_HAPPINESS" then
         SetPetHappiness(self)
     elseif event == "UNIT_PET" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
         SetPortraitTexture(self.portrait, "pet")
@@ -190,11 +195,18 @@ local function LoadPetFrame(lm)
     playerPetFrame.health:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
     playerPetFrame.health.text:SetFont(UNIT_NAME_FONT, 11)
 
+    playerPetFrame.auraPositionUnder = GetSetting("PET_AURAS_UNDER")
+
+    if playerPetFrame.auraPositionUnder then
+        playerPetFrame.auras:ClearAllPoints()
+        playerPetFrame.auras:SetPoint("TOPLEFT", playerPetFrame.resource, "BOTTOMLEFT", 0, -5)
+    end
+
     playerPetFrame:SetScript("OnEvent", updatePetData)
     playerPetFrame:HookScript(
         "OnShow",
         function(self)
-            updatePetData(self, "UNIT_PET", "player")
+            updatePetData(self, "UNIT_PET")
         end
     )
     playerPetFrame.unit = "pet"
@@ -231,9 +243,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MODEL_CHANGED", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_HAPPINESS", "pet")
-
-    updatePetData(playerPetFrame, "UNIT_PET")
-    C_Timer.After(0.5, function() SetPetHappiness(playerPetFrame) end)
+    playerPetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, true, {"default", "scaleable"}, true)
 

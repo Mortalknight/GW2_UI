@@ -1,6 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.12.0 TBC", [=[
+NEW
+    - Added option to show pet auras under the frame
+
+FIXES
+    - Some stats tooltips
+]=])
+
 v("1.11.0 TBC", [=[
 NEW
     - Added quest items to quest tracker (required Questie)

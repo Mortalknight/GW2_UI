@@ -31,6 +31,7 @@ L["bound to"] = true
 L["Sold Junk for: %s"] = true
 L["Show Quest XP on Quest Tracker"] = true
 L["Quest Tracker sorting"] = true
+L["Show auras under"] = true
 
 --Strings
 L["Use the GW2 UI improved action bars."] = true

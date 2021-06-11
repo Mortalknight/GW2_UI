@@ -314,7 +314,7 @@ GW.AddForProfiling("paperdoll_equipment", "DurabilityTooltip", DurabilityTooltip
 
 local function PaperDollUpdateStats()
     local avgItemLevel, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
-    local statName, statText, tooltip1, tooltip2
+    local statText, tooltip1, tooltip2
 
     avgItemLevel = nil or 0
     avgItemLevelEquipped = nil or 0
@@ -333,7 +333,7 @@ local function PaperDollUpdateStats()
     local y = 0
 
     for primaryStatIndex = 1, 5 do
-        statName, statText, tooltip1, tooltip2 = GW.stats.getPrimary(primaryStatIndex)
+        _, statText, tooltip1, tooltip2 = GW.stats.getPrimary(primaryStatIndex)
         grid, x, y, numShownStats = setStatFrame(GW.stats.PRIMARY_STATS[primaryStatIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 
@@ -345,10 +345,6 @@ local function PaperDollUpdateStats()
     statText, tooltip1, tooltip2 = GW.stats.getDefense()
     grid, x, y, numShownStats = setStatFrame("DEFENSE", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
 
-    --getAttackBothHands
-    statText, tooltip1, tooltip2 = GW.stats.getAttackBothHands()
-    grid, x, y, numShownStats = setStatFrame("ATTACKRATING", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-
     --damage
     statText, tooltip1, tooltip2 = GW.stats.getDamage()
     grid, x, y, numShownStats = setStatFrame("DAMAGE", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
@@ -356,12 +352,6 @@ local function PaperDollUpdateStats()
     --attack power
     statText, tooltip1, tooltip2 = GW.stats.getAttackPower()
     grid, x, y, numShownStats = setStatFrame("ATTACKPOWER", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-
-    --ranged attack
-    statText, tooltip1, tooltip2 = GW.stats.getRangedAttack()
-    if statText ~= nil then
-        grid, x, y, numShownStats = setStatFrame("RANGEDATTACK", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-    end
 
     --ranged damage
     statText, tooltip1, tooltip2 = GW.stats.getRangedDamage()
@@ -377,7 +367,7 @@ local function PaperDollUpdateStats()
 
     --resitance 
     for resistanceIndex = 2, 6 do
-        statName, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex)
+        _, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex)
         grid, x, y, numShownStats = setStatFrame(GW.stats.RESITANCE_STATS[resistanceIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 
