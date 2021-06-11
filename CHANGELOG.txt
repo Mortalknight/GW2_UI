@@ -1,4 +1,7 @@
-1.10.2
+1.11.0
+NEW
+    - Added quest items to quest tracker (required Questie)
+
 FIXES
     - Sorting for special bags
 

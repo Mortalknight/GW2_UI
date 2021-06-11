@@ -94,6 +94,7 @@ GW.AddForProfiling("notifications", "prioritys", prioritys)
 local function getQuestPOIText(questLogIndex)
     local finalText = ""
     local text, finished
+    local numFinished = 0
     local numItemDropTooltips = GetNumQuestItemDrops(questLogIndex)
     if numItemDropTooltips and numItemDropTooltips > 0 then
         for i = 1, numItemDropTooltips do
@@ -101,21 +102,22 @@ local function getQuestPOIText(questLogIndex)
             if text and not finished then
                 finalText = finalText .. text .. "\n"
             end
+            if finished then numFinished = numFinished + 1 end
         end
+        if finalText == "" and numItemDropTooltips == numFinished then finalText = QUEST_WATCH_QUEST_READY end
     else
-        --local numPOITooltips = QuestBlobDataProvider:GetNumTooltips()
         local numObjectives = GetNumQuestLeaderBoards(questLogIndex)
         for i = 1, numObjectives do
-            if numPOITooltips and (numPOITooltips == numObjectives) then
-                local questPOIIndex = QuestBlobDataProvider:GetTooltipIndex(i)
-                text, _, finished = GetQuestPOILeaderBoard(questPOIIndex, questLogIndex)
-            else
-                text, _, finished = GetQuestLogLeaderBoard(i, questLogIndex)
-            end
+            text, _, finished = GetQuestLogLeaderBoard(i, questLogIndex)
+
             if text and not finished then
                 finalText = finalText .. text .. "\n"
+            elseif text and numObjectives == 1  and finished then
+                finalText = QUEST_WATCH_QUEST_READY
             end
+            if finished then numFinished = numFinished + 1 end
         end
+        if finalText == "" and numObjectives == numFinished then finalText = QUEST_WATCH_QUEST_READY end
     end
     return finalText
 end

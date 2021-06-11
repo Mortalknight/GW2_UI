@@ -7,6 +7,7 @@ local AddToAnimation = GW.AddToAnimation
 
 local savedQuests = {}
 local lastAQW = GetTime()
+local QuestieDB = QuestieLoader and QuestieLoader:ImportModule("QuestieDB")
 
 local TRACKER_TYPE_COLOR = {}
 GW.TRACKER_TYPE_COLOR = TRACKER_TYPE_COLOR
@@ -27,7 +28,7 @@ local function wiggleAnim(self)
         GetTime(),
         2,
         function()
-            local prog = animations[self:GetName()]["progress"]
+            local prog = animations[self:GetName()].progress
 
             self.flare:SetRotation(lerp(0, 1, prog))
 
@@ -102,25 +103,33 @@ GW.ParseSimpleObjective = ParseSimpleObjective
 
 local function ParseCriteria(quantity, totalQuantity, criteriaString)
     if quantity ~= nil and totalQuantity ~= nil and criteriaString ~= nil then
-        return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
+        if totalQuantity == 0 then
+            return string.format("%d %s", quantity, criteriaString)
+        else
+            return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
+        end
     end
 
     return criteriaString
 end
 GW.ParseCriteria = ParseCriteria
 
-local function ParseObjectiveString(block, text, objectiveType, quantity)
+local function ParseObjectiveString(block, text, objectiveType, quantity, numItems, numNeeded)
     if objectiveType == "progressbar" then
         block.StatusBar:SetMinMaxValues(0, 100)
-        block.StatusBar:SetValue(quantity)
+        block.StatusBar:SetValue(quantity or 0)
         block.StatusBar:Show()
         block.StatusBar.precentage = true
         return true
     end
     block.StatusBar.precentage = false
-    local _, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)")
-    if numItems == nil then
-        numItems, numNeeded, _ = string.match(text, "(%d+)/(%d+) (%S+)")
+
+    local numItems, numNeeded = numItems, numNeeded
+    if not numItems and not numNeeded then
+        _, numItems, numNeeded = string.match(text, "(.*):%s*([%d]+)%s*/%s*([%d]+)")
+        if numItems == nil then
+            numItems, numNeeded, _ = string.match(text, "(%d+)/(%d+) (%S+)")
+        end
     end
     numItems = tonumber(numItems)
     numNeeded = tonumber(numNeeded)
@@ -212,67 +221,70 @@ local function CreateObjectiveNormal(name, parent)
 end
 GW.CreateObjectiveNormal = CreateObjectiveNormal
 
+local function blockOnEnter(self)
+    if not self.hover then
+        self.oldColor = {}
+        self.oldColor.r, self.oldColor.g, self.oldColor.b = self:GetParent().Header:GetTextColor()
+        self:GetParent().Header:SetTextColor(self.oldColor.r * 2, self.oldColor.g * 2, self.oldColor.b * 2)
+
+        self = self:GetParent()
+    end
+
+    self.hover:Show()
+    if self.objectiveBlocks == nil then
+        self.objectiveBlocks = {}
+    end
+    for _, v in pairs(self.objectiveBlocks) do
+        v.StatusBar.progress:Show()
+    end
+    AddToAnimation(
+        self:GetName() .. "hover",
+        0,
+        1,
+        GetTime(),
+        0.2,
+        function(step)
+            self.hover:SetAlpha(step - 0.3)
+            self.hover:SetTexCoord(0, step, 0, 1)
+        end
+    )
+    if self.event then
+        BonusObjectiveTracker_ShowRewardsTooltip(self)
+    end
+end
+
+local function blockOnLeave(self)
+    if not self.hover then
+        if self.oldColor ~= nil then
+            self:GetParent().Header:SetTextColor(self.oldColor.r, self.oldColor.g, self.oldColor.b)
+        end
+
+        self = self:GetParent()
+    end
+
+    self.hover:Hide()
+    if self.objectiveBlocks == nil then
+        self.objectiveBlocks = {}
+    end
+    for _, v in pairs(self.objectiveBlocks) do
+        v.StatusBar.progress:Hide()
+    end
+    if animations[self:GetName() .. "hover"] then
+        animations[self:GetName() .. "hover"].complete = true
+    end
+    GameTooltip_Hide()
+end
+
 local function CreateTrackerObject(name, parent)
     local f = CreateFrame("Button", name, parent, "GwQuesttrackerObject")
     f.Header:SetFont(UNIT_NAME_FONT, 14)
     f.SubHeader:SetFont(UNIT_NAME_FONT, 12)
     f.Header:SetShadowOffset(1, -1)
     f.SubHeader:SetShadowOffset(1, -1)
-    f:SetScript(
-        "OnEnter",
-        function(self)
-            self.hover:Show()
-            if self.objectiveBlocks == nil then
-                self.objectiveBlocks = {}
-            end
-            for _, v in pairs(self.objectiveBlocks) do
-                v.StatusBar.progress:Show()
-            end
-            AddToAnimation(
-                self:GetName() .. "hover",
-                0,
-                1,
-                GetTime(),
-                0.2,
-                function(step)
-                    self.hover:SetAlpha(step - 0.3)
-                    self.hover:SetTexCoord(0, step, 0, 1)
-                end
-            )
-        end
-    )
-    f:SetScript(
-        "OnLeave",
-        function(self)
-            self.hover:Hide()
-            if self.objectiveBlocks == nil then
-                self.objectiveBlocks = {}
-            end
-            for _, v in pairs(self.objectiveBlocks) do
-                v.StatusBar.progress:Hide()
-            end
-            if animations[self:GetName() .. "hover"] ~= nil then
-                animations[self:GetName() .. "hover"]["complete"] = true
-            end
-        end
-    )
-    f.clickHeader:SetScript(
-        "OnEnter",
-        function(self)
-            self.oldColor = {}
-            self.oldColor.r, self.oldColor.g, self.oldColor.b = self:GetParent().Header:GetTextColor()
-            self:GetParent().Header:SetTextColor(self.oldColor.r * 2, self.oldColor.g * 2, self.oldColor.b * 2)
-        end
-    )
-    f.clickHeader:SetScript(
-        "OnLeave",
-        function(self)
-            if self.oldColor == nil then
-                return
-            end
-            self:GetParent().Header:SetTextColor(self.oldColor.r, self.oldColor.g, self.oldColor.b)
-        end
-    )
+    f:SetScript("OnEnter", blockOnEnter)
+    f:SetScript("OnLeave", blockOnLeave)
+    f.clickHeader:SetScript("OnEnter", blockOnEnter)
+    f.clickHeader:SetScript("OnLeave", blockOnLeave)
     f.turnin:SetScript(
         "OnShow",
         function(self)
@@ -327,7 +339,17 @@ GW.AddForProfiling("objectives", "getObjectiveBlock", getObjectiveBlock)
 
 local function getBlock(blockIndex)
     if _G["GwQuestBlock" .. blockIndex] ~= nil then
-        return _G["GwQuestBlock" .. blockIndex]
+        local block = _G["GwQuestBlock" .. blockIndex]
+        -- set the correct block color for an existing block here
+        setBlockColor(block, "QUEST")
+        block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
+        block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
+        for i = 1, 20 do
+            if _G[block:GetName() .. "GwQuestObjective" .. i] ~= nil then
+                _G[block:GetName() .. "GwQuestObjective" .. i].StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
+            end
+        end
+        return block
     end
 
     local newBlock = CreateTrackerObject("GwQuestBlock" .. blockIndex, GwQuesttrackerContainerQuests)
@@ -338,10 +360,213 @@ local function getBlock(blockIndex)
     else
         newBlock:SetPoint("TOPRIGHT", _G["GwQuestBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
     end
+
     newBlock.clickHeader:Show()
     setBlockColor(newBlock, "QUEST")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
+
+    -- quest item button here
+    newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
+    newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    newBlock.actionButton.NormalTexture:SetTexture(nil)
+
+    newBlock.actionButton:SetAttribute("type1", "item")
+    newBlock.actionButton:SetAttribute("type2", "stop")
+    newBlock.actionButton:Hide()
+
+    newBlock.actionButton.SetItem = function(self, block)
+        local validTexture
+        local isFound = false
+
+        for bag = 0 , 5 do
+            for slot = 0 , 24 do
+                local texture, _, _, _, _, _, _, _, _, itemID = GetContainerItemInfo(bag, slot)
+                if block.sourceItemId == itemID then
+                    validTexture = texture
+                    itemID = tonumber(itemID)
+                    isFound = true
+                    break
+                end
+            end
+        end
+
+        -- Edge case to find "equipped" quest items since they will no longer be in the players bag
+        if (not isFound) then
+            for j = 13, 18 do
+                local itemID = GetInventoryItemID("player", j)
+                local texture = GetInventoryItemTexture("player", j)
+                if block.sourceItemId == itemID then
+                    validTexture = texture
+                    itemID = tonumber(itemID)
+                    isFound = true
+                    break
+                end
+            end
+        end
+
+        if validTexture and isFound then
+            self.itemID = block.sourceItemId
+            self.questID = block.questID
+            self.charges = GetItemCount(self.itemID, nil, true)
+            self.rangeTimer = -1
+
+            self:SetAttribute("item", "item:" .. tostring(self.itemID))
+            self:SetNormalTexture(validTexture)
+            self:SetPushedTexture(validTexture)
+            self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+            self:GetNormalTexture():SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            self:GetPushedTexture():SetTexCoord(0.1, 0.9, 0.1, 0.9)
+
+            self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+
+            self:HookScript("OnClick", self.OnClick)
+            self:SetScript("OnEvent", self.OnEvent)
+            self:SetScript("OnShow", self.OnShow)
+            self:SetScript("OnHide", self.OnHide)
+            self:SetScript("OnEnter", self.OnEnter)
+            self:SetScript("OnLeave", self.OnLeave)
+
+            -- Cooldown Updates
+            self.cooldown:SetPoint("CENTER", self, "CENTER", 0, 0)
+            self.cooldown:Hide()
+
+            -- Range Updates
+            self.HotKey:SetText("●")
+            self.HotKey:Hide()
+
+            -- Charges Updates
+            self.count:Hide()
+            if self.charges > 1 then
+                self.count:SetText(self.charges)
+                self.count:Show()
+            end
+
+            self.UpdateButton(self)
+
+            return true
+        end
+
+        return false
+    end
+
+    newBlock.actionButton.UpdateButton = function(self)
+        if not self.itemID or not self:IsVisible() then
+            return
+        end
+
+        local start, duration, enabled = GetItemCooldown(self.itemID)
+
+        if enabled and duration > 3 and enabled == 1 then
+            self.cooldown:Show()
+            self.cooldown:SetCooldown(start, duration)
+        else
+            self.cooldown:Hide()
+        end
+    end
+
+    newBlock.actionButton.OnClick = function(_, button)
+        if InCombatLockdown() then
+            return
+        end
+
+        if button == "LeftButton" then
+            return
+        end
+    end
+
+    newBlock.actionButton.OnEvent = function(self, event, ...)
+        if (event == "PLAYER_TARGET_CHANGED") then
+            self.rangeTimer = -1
+            self.HotKey:Hide()
+
+        elseif (event == "BAG_UPDATE_COOLDOWN") then
+            self.UpdateButton(self)
+        end
+    end
+
+    newBlock.actionButton.OnUpdate = function(self, elapsed)
+        if not self.itemID or not self:IsVisible() then
+            return
+        end
+
+        local valid
+        local rangeTimer = self.rangeTimer
+        local charges = GetItemCount(self.itemID, nil, true)
+
+        if (not charges or charges ~= self.charges) then
+            self.count:Hide()
+            self.charges = GetItemCount(self.itemID, nil, true)
+            if self.charges > 1 then
+                self.count:SetText(self.charges)
+                self.count:Show()
+            end
+        end
+
+        if UnitExists("target") then
+
+            if not self.itemName then
+                self.itemName = GetItemInfo(self.itemID)
+            end
+
+            if (rangeTimer) then
+                rangeTimer = rangeTimer - elapsed
+
+                if (rangeTimer <= 0) then
+
+                    valid = IsItemInRange(self.itemName, "target")
+
+                    if valid == false then
+                        self.HotKey:SetVertexColor(1.0, 0.1, 0.1)
+                        self.HotKey:Show()
+
+                    elseif valid == true then
+                        self.HotKey:SetVertexColor(0.6, 0.6, 0.6)
+                        self.HotKey:Show()
+                    end
+
+                    rangeTimer = 0.3
+                end
+
+                self.rangeTimer = rangeTimer
+            end
+        end
+    end
+
+    newBlock.actionButton.OnShow = function(self)
+        self:RegisterEvent("PLAYER_TARGET_CHANGED")
+        self:RegisterEvent("BAG_UPDATE_COOLDOWN")
+    end
+
+    newBlock.actionButton.OnHide = function(self)
+        self:UnregisterEvent("PLAYER_TARGET_CHANGED")
+        self:UnregisterEvent("BAG_UPDATE_COOLDOWN")
+    end
+
+    newBlock.actionButton.OnEnter = function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+        GameTooltip:SetHyperlink("item:"..tostring(self.itemID)..":0:0:0:0:0:0:0")
+        GameTooltip:Show()
+    end
+
+    newBlock.actionButton.OnLeave = function()
+        GameTooltip:Hide()
+    end
+
+    newBlock.actionButton.FakeHide = function(self)
+        self:RegisterForClicks(nil)
+        self:SetScript("OnEnter", nil)
+        self:SetScript("OnLeave", nil)
+
+        self:SetNormalTexture(nil)
+        self:SetPushedTexture(nil)
+        self:SetHighlightTexture(nil)
+    end
+
+    newBlock.actionButton:HookScript("OnUpdate", newBlock.actionButton.OnUpdate)
+
+    newBlock.actionButton:FakeHide()
+
     return newBlock
 end
 GW.AddForProfiling("objectives", "getBlock", getBlock)
@@ -405,6 +630,42 @@ local function updateQuestObjective(block, numObjectives)
     end
 end
 GW.AddForProfiling("objectives", "updateQuestObjective", updateQuestObjective)
+
+local function UpdateQuestItem(block)
+    if block.sourceItemId and not block.isComplete then
+        if block.actionButton:SetItem(block) and not GwQuesttrackerContainerQuests.collapsed then
+            block.actionButton:Show()
+            block.hasItem = true
+        else
+            block.actionButton:FakeHide()
+            block.hasItem = false
+            block.itemID = nil
+            block.itemName = nil
+            block.actionButton:Hide()
+        end
+    else
+        block.actionButton:FakeHide()
+        block.hasItem = false
+        block.itemID = nil
+        block.itemName = nil
+        block.actionButton:Hide()
+    end
+end
+
+local function updateQuestItemPositions(height, block)
+    if not block.actionButton or not block.hasItem then
+        return
+    end
+
+    if GwObjectivesNotification:IsShown() then
+        height = height + GwObjectivesNotification.desc:GetHeight()
+    else
+        height = height - 40
+    end
+
+    block.actionButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
+end
+GW.AddForProfiling("objectives", "updateQuestItemPositions", updateQuestItemPositions)
 
 local function OnBlockClick(self, button)
     if IsShiftKeyDown() and ChatEdit_GetActiveWindow() then
@@ -481,6 +742,17 @@ GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
 local function AddQuestInfos(questId, questLogIndex, watchId)
     local title, level, group, _, _, isComplete, _, _, startEvent = GetQuestLogTitle(questLogIndex)
+    local sourceItemId = QuestieDB and QuestieDB.QueryQuest and QuestieDB:GetQuest(questId).sourceItemId or nil
+    local isFailed = false
+
+    if isComplete == nil then
+        isComplete = false
+    elseif isComplete == 1 then
+        isComplete = true
+    else
+        isComplete = false
+        isFailed = true
+    end
 
     return {
         questId = questId,
@@ -493,7 +765,9 @@ local function AddQuestInfos(questId, questLogIndex, watchId)
         startEvent = startEvent,
         numObjectives = GetNumQuestLeaderBoards(questLogIndex),
         requiredMoney = GetQuestLogRequiredMoney(questId),
-        isAutoComplete = false
+        isAutoComplete = false,
+        sourceItemId = sourceItemId,
+        isFailed = isFailed
     }
 end
 
@@ -520,20 +794,26 @@ local function updateQuest(block, quest)
         end
         block.questID = quest.questId
         block.questLogIndex = quest.questLogIndex
+        block.sourceItemId = quest.sourceItemId
+        block.isComplete = quest.isComplete
         block.Header:SetText(text .. quest.title)
+
+        --Quest item
+        GW.CombatQueue_Queue(UpdateQuestItem, {block})
 
         local rewardXP = GetQuestLogRewardXP and GetQuestLogRewardXP(quest.questId) or nil
         if rewardXP and GetSetting("QUESTTRACKER_SHOW_XP") and GW.mylevel < GetMaxPlayerLevel() then
             block.Header:SetText(text .. quest.title .. " |cFF888888(" .. CommaValue(rewardXP) .. XP .. ")|r")
         end
 
-        if quest.isComplete and quest.isComplete < 0 then
-            quest.isComplete = false
-        elseif quest.numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent then
+        if quest.numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent then
             quest.isComplete = true
+            block.isComplete = true
         end
 
-        updateQuestObjective(block, quest.numObjectives)
+        if not quest.isComplete then
+            updateQuestObjective(block, quest.numObjectives)
+        end
 
         if quest.requiredMoney ~= nil and quest.requiredMoney > GetMoney() then
             addObjective(
@@ -558,6 +838,8 @@ local function updateQuest(block, quest)
             else
                 addObjective(block, QUEST_WATCH_QUEST_READY, false, block.numObjectives + 1, nil)
             end
+        elseif quest.isFailed then
+            addObjective(block, FAILED, false, block.numObjectives + 1, nil)
         end
         block.clickHeader:SetScript("OnClick", OnBlockClickHandler)
         block:SetScript("OnClick", OnBlockClickHandler)
@@ -670,6 +952,7 @@ local function updateQuestLogLayout(self)
             block:Show()
             savedHeight = savedHeight + block.height
             counter = counter + 1
+            GW.CombatQueue_Queue(updateQuestItemPositions, {savedHeight, block})
             GW.trackedQuests[counter - 1] = quest
         end
     end
@@ -684,7 +967,11 @@ local function updateQuestLogLayout(self)
     GwQuesttrackerContainerQuests:SetHeight(savedHeight)
     for i = (GwQuesttrackerContainerQuests.collapsed and 0 or #GW.trackedQuests + 1), 25 do
         if _G["GwQuestBlock" .. i] then
+            _G["GwQuestBlock" .. i].questID = nil
+            _G["GwQuestBlock" .. i].questLogIndex = 0
+            _G["GwQuestBlock" .. i].sourceItemId = nil
             _G["GwQuestBlock" .. i]:Hide()
+            GW.CombatQueue_Queue(UpdateQuestItem, {_G["GwQuestBlock" .. i]})
         end
     end
 
@@ -993,5 +1280,9 @@ local function LoadQuestTracker()
         GetNumQuestWatches = function()
             return 0
         end
+
+
+    fNotify:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
+    fNotify:HookScript("OnHide", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
 end
 GW.LoadQuestTracker = LoadQuestTracker

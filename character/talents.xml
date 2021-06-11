@@ -96,10 +96,6 @@
             <OnLeave>
                 GameTooltip:Hide()
             </OnLeave>
-            <OnDragStart>
-                if InCombatLockdown() or self.isPassive then return end
-                --PickupSpell(self.spellId)
-            </OnDragStart>
             <OnClick>
                 LearnTalent(self.talentFrameId, self.talentid)
             </OnClick>

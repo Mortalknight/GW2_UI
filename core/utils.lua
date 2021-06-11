@@ -1,6 +1,34 @@
 local _, GW = ...
 local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
 
+local afterCombatQueue = {}
+local maxUpdatesPerCircle = 5
+
+local function CombatQueue_Initialize()
+    C_Timer.NewTicker(0.1, function()
+        if InCombatLockdown() then
+            return
+        end
+
+        local func = tremove(afterCombatQueue, 1)
+        local count = 0
+        while func do
+            func.func(unpack(func.obj))
+            if InCombatLockdown() or count >= maxUpdatesPerCircle then
+                break
+            end
+            func = tremove(afterCombatQueue, 1)
+            count = count + 1
+        end
+    end)
+end
+GW.CombatQueue_Initialize = CombatQueue_Initialize
+
+local function CombatQueue_Queue(func, obj)
+    tinsert(afterCombatQueue, {func = func, obj = obj})
+end
+GW.CombatQueue_Queue = CombatQueue_Queue
+
 -- Easy menu
 GW.EasyMenu = CreateFrame("Frame", "GWEasyMenu", UIParent, "UIDropDownMenuTemplate")
 

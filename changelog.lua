@@ -1,7 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("1.10.2 TBC", [=[
+v("1.11.0 TBC", [=[
+NEW
+    - Added quest items to quest tracker (required Questie)
+
 FIXES
     - Sorting for special bags
 ]=])

@@ -10,9 +10,7 @@ local Debug = GW.Debug
 local animations = GW.animations
 local LibSharedMedia = GW.Libs.LSM
 
-local l = CreateFrame("Frame", nil, UIParent) -- Main event frame
-local HasPetUIFrame = CreateFrame("Frame", nil, UIParent)
-local OnUpdateActionBars = nil
+local l = CreateFrame("Frame", nil, UIParent) -- Main event frame nil
 
 GW.VERSION_STRING = "@project-version@ TBC Classic"
 
@@ -316,7 +314,7 @@ GW.PixelPerfection = PixelPerfection
 local SCALE_HUD_FRAMES = {}
 local function UpdateHudScale()
     local hudScale = GetSetting("HUD_SCALE")
-    for i, f in ipairs(SCALE_HUD_FRAMES) do
+    for _, f in ipairs(SCALE_HUD_FRAMES) do
         if f then
             local fm = f.gwMover
             local sf = 1.0
@@ -354,6 +352,7 @@ GW.RegisterScaleFrame = RegisterScaleFrame
 
 local function loadAddon(self)
     --Create Settings window
+    GW.CombatQueue_Initialize()
     GW.LoadMovers()
     GW.LoadSettings()
     GW.LoadHoverBinds()
