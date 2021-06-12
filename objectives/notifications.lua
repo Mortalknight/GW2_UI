@@ -17,11 +17,7 @@ local notification_priority = {
 }
 
 
---- QUESTIE HELPERS
-local QuestieMap = QuestieLoader and QuestieLoader:ImportModule("QuestieMap")
-local QuestieDB = QuestieLoader and QuestieLoader:ImportModule("QuestieDB")
-local ZoneDB = QuestieLoader and QuestieLoader:ImportModule("ZoneDB")
-
+--- QUESTIE HELPER
 local function _GetDistance(x1, y1, x2, y2)
     -- Basic proximity distance calculation to compare two locs (normally player position and provided loc)
     return math.sqrt( (x2-x1)^2 + (y2-y1)^2 );
@@ -39,19 +35,19 @@ local function _GetDistanceToClosestObjective(questId)
     end
 
     local coordinates = {};
-    local quest = QuestieDB:GetQuest(questId)
+    local quest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(questId)
 
     if (not quest) then
         return nil
     end
 
-    local spawn, zone, name = QuestieMap:GetNearestQuestSpawn(quest)
+    local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(quest)
 
     if (not spawn) or (not zone) or (not name) then
         return nil
     end
 
-    local uiMapId = ZoneDB:GetUiMapIdByAreaId(zone)
+    local uiMapId = QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone)
     if not uiMapId then
         return nil
     end
@@ -137,14 +133,14 @@ local function getNearestQuestPOI()
     local spawnInfo
     wipe(questCompass)
 
-    if QuestieDB and QuestieMap and ZoneDB and QuestieDB.QueryQuest then
+    if Questie and Questie.started then
         for _, quest in pairs(GW.trackedQuests) do
             if quest.questId then
-                local questQ = QuestieDB:GetQuest(quest.questId)
-                local spawn, zone, name = QuestieMap:GetNearestQuestSpawn(questQ)
+                local questQ = QuestieLoader:ImportModule("QuestieDB"):GetQuest(quest.questId)
+                local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(questQ)
 
                 if spawn and zone and name then
-                    if ZoneDB:GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
+                    if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
                         local distance = _GetDistanceToClosestObjective(quest.questId)
                         if distance < minDist then
                             minDist = distance

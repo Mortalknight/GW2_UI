@@ -63,6 +63,15 @@ local function reskinItemButton(iname, b)
         b.junkIcon:Hide()
     end
 
+    if not b.questIcon then
+        b.questIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
+        b.questIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icon-quest")
+        b.questIcon:SetSize(25, 25)
+        b.questIcon:SetPoint("TOPLEFT", -7, 1)
+        b.questIcon:SetVertexColor(221 / 255, 198 / 255, 68 / 255)
+        b.questIcon:Hide()
+    end
+
     if not b.itemlevel then
         b.itemlevel = b:CreateFontString(nil, "OVERLAY")
         b.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
@@ -169,6 +178,9 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         if isQuestItem == LE_ITEM_CLASS_QUESTITEM then
             t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border")
             t:Show()
+            button.questIcon:Show()
+        else
+            button.questIcon:Hide()
         end
 
         -- Show junk icon if active
@@ -203,6 +215,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
     else
         t:Hide()
         if button.junkIcon then button.junkIcon:Hide() end
+        if button.questIcon then button.questIcon:Hide() end
         if button.itemlevel then button.itemlevel:SetText("") end
     end
 

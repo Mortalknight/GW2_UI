@@ -670,7 +670,7 @@ GW.AddForProfiling("objectives", "updateQuestItemPositions", updateQuestItemPosi
 local function OnBlockClick(self, button)
     if IsShiftKeyDown() and ChatEdit_GetActiveWindow() then
         if button == "LeftButton" then
-            if IsAddOnLoaded("Questie") then
+            if Questie and Questie.started then
                 ChatEdit_InsertLink("[" .. self.title .. " (" .. self.questID .. ")]")
             else
                 ChatEdit_InsertLink(gsub(self.title, " *(.*)", "%1"))
@@ -904,23 +904,21 @@ local function updateQuestLogLayout(self)
         end)
     elseif GetSetting("QUESTTRACKER_SORTING") == "ZONE" then
         -- Sort by Zone
-        local QuestieDB = QuestieLoader and QuestieLoader:ImportModule("QuestieDB")
-        local QuestieTracker = QuestieLoader and QuestieLoader:ImportModule("QuestieTracker")
-        if QuestieDB and QuestieDB.QueryQuest and QuestieTracker then
+        if Questie and Questie.started then
             table.sort(sorted, function(a, b)
-                local qA = QuestieDB:GetQuest(a.questId)
-                local qB = QuestieDB:GetQuest(b.questId)
+                local qA = QuestieLoader:ImportModule("QuestieDB"):GetQuest(a.questId)
+                local qB = QuestieLoader:ImportModule("QuestieDB"):GetQuest(b.questId)
                 local qAZone, qBZone
                 if qA.zoneOrSort > 0 then
-                    qAZone = QuestieTracker.utils:GetZoneNameByID(qA.zoneOrSort)
+                    qAZone = QuestieLoader:ImportModule("QuestieTracker").utils:GetZoneNameByID(qA.zoneOrSort)
                 elseif qA.zoneOrSort < 0 then
-                    qAZone = QuestieTracker.utils:GetCategoryNameByID(qA.zoneOrSort)
+                    qAZone = QuestieLoader:ImportModule("QuestieTracker").utils:GetCategoryNameByID(qA.zoneOrSort)
                 end
 
                 if qB.zoneOrSort > 0 then
-                    qBZone = QuestieTracker.utils:GetZoneNameByID(qB.zoneOrSort)
+                    qBZone = QuestieLoader:ImportModule("QuestieTracker").utils:GetZoneNameByID(qB.zoneOrSort)
                 elseif qB.zoneOrSort < 0 then
-                    qBZone = QuestieTracker.utils:GetCategoryNameByID(qB.zoneOrSort)
+                    qBZone = QuestieLoader:ImportModule("QuestieTracker").utils:GetCategoryNameByID(qB.zoneOrSort)
                 end
 
                 -- Sort by Zone then by Level to mimic QuestLog sorting
