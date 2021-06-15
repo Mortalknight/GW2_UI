@@ -35,6 +35,7 @@ core/storage.lua
 core/statusReport.lua
 core/slashcommands.lua
 core/cooldowns.lua
+core/playerAbsorb.lua
 
 settings/defaults.lua
 settings/api.lua

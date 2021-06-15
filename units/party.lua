@@ -231,7 +231,7 @@ local function updatePartyAuras(self)
     local y = 0
     local unit = self.unit
 
-    local buffList = getUnitBuffs(unit)
+    local buffList = getUnitBuffs(self.unit)
 
     for i, buffFrame in pairs(self.buffFrames) do
         if buffList[i] then
@@ -418,10 +418,12 @@ local function party_OnEvent(self, event, unit)
         updatePartyData(self)
     elseif event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
         updateAwayData(self)
+    elseif event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" or event == "UNIT_PHASE" then
+        updateUnitPortrait(self)
     elseif event == "UNIT_NAME_UPDATE" then
         setUnitName(self)
     elseif event == "UNIT_AURA" then
-        updatePartyAuras(self, self.unit)
+        updatePartyAuras(self)
     elseif event == "READY_CHECK" or (event == "READY_CHECK_CONFIRM" and unit == self.unit) then
         updateAwayData(self)
     elseif event == "READY_CHECK_FINISHED" then
@@ -523,6 +525,8 @@ local function createPartyFrame(i)
     frame:RegisterEvent("READY_CHECK")
     frame:RegisterEvent("READY_CHECK_CONFIRM")
     frame:RegisterEvent("READY_CHECK_FINISHED")
+    frame:RegisterEvent("PORTRAITS_UPDATED")
+    frame:RegisterEvent("PLAYER_TARGET_CHANGED")
 
     frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
@@ -533,6 +537,7 @@ local function createPartyFrame(i)
     frame:RegisterUnitEvent("UNIT_POWER_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXPOWER", registerUnit)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
+    frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
 
     LHC.RegisterCallback(frame, "HealComm_HealStarted", HealCommEventHandler)

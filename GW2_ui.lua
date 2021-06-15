@@ -503,6 +503,9 @@ local function loadAddon(self)
         GW.LoadChat()
     end
 
+    GW.LoadPlayerAbsorbCalculation()
+
+
     --Create player hud
     if GetSetting("HEALTHGLOBE_ENABLED") and not GetSetting("PLAYER_AS_TARGET_FRAME") then
         local hg = GW.LoadHealthGlobe()

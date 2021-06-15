@@ -2,6 +2,7 @@
 NEW
     - Added option to show pet auras under the frame
     - Added option to show a additional ressourcebar with player as target frame
+    - Added aborb value to healtglobe (we calculate the player absorb based on buffs)
 
 FIXES
     - Some stats tooltips

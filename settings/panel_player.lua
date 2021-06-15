@@ -109,6 +109,17 @@ local function LoadPlayerPanel(sWindow)
         nil,
         {["HEALTHGLOBE_ENABLED"] = true}
     )
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        L["Show Shield Value"],
+        nil,
+        "PLAYER_UNIT_ABSORB",
+        nil,
+        {"NONE", "PREC", "VALUE", "BOTH"},
+        {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH},
+        nil,
+        {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = false}
+    )
 
     addOptionDropdown(
         p.scroll.scrollchild,

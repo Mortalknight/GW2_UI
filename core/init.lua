@@ -47,7 +47,7 @@ do
     GW.Libs = {}
     local function AddLib(name, libname, silent)
         if not name then return end
-        GW.Libs[name] = _G.LibStub(libname, silent)
+        GW.Libs[name] = LibStub(libname, silent)
     end
 
     AddLib("LHC", "LibHealComm-4.0", true)

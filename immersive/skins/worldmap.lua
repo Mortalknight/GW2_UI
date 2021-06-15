@@ -244,5 +244,6 @@ local function SkinWorldMap()
         end)
     end
 
+    if Questie_Toggle then Questie_Toggle:SkinButton(false, true) end
 end
 GW.SkinWorldMap = SkinWorldMap
