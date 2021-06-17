@@ -384,7 +384,6 @@ local function getBlock(blockIndex)
                 local texture, _, _, _, _, _, _, _, _, itemID = GetContainerItemInfo(bag, slot)
                 if block.sourceItemId == itemID then
                     validTexture = texture
-                    itemID = tonumber(itemID)
                     isFound = true
                     break
                 end
@@ -398,7 +397,6 @@ local function getBlock(blockIndex)
                 local texture = GetInventoryItemTexture("player", j)
                 if block.sourceItemId == itemID then
                     validTexture = texture
-                    itemID = tonumber(itemID)
                     isFound = true
                     break
                 end
@@ -406,7 +404,7 @@ local function getBlock(blockIndex)
         end
 
         if validTexture and isFound then
-            self.itemID = block.sourceItemId
+            self.itemID = tonumber(block.sourceItemId)
             self.questID = block.questID
             self.charges = GetItemCount(self.itemID, nil, true)
             self.rangeTimer = -1
@@ -639,15 +637,17 @@ local function UpdateQuestItem(block)
         else
             block.actionButton:FakeHide()
             block.hasItem = false
-            block.itemID = nil
-            block.itemName = nil
+            block.actionButton.itemID = nil
+            block.actionButton.questID = nil
+            block.actionButton.itemName = nil
             block.actionButton:Hide()
         end
     else
         block.actionButton:FakeHide()
         block.hasItem = false
-        block.itemID = nil
-        block.itemName = nil
+        block.actionButton.itemID = nil
+        block.actionButton.questID = nil
+        block.actionButton.itemName = nil
         block.actionButton:Hide()
     end
 end

@@ -251,9 +251,8 @@ end
 local Slots = {"HeadSlot", "ShoulderSlot", "ChestSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "MainHandSlot", "SecondaryHandSlot", "RangedSlot"}
 local SlotsFriendly = {INVTYPE_HEAD, INVTYPE_SHOULDER, INVTYPE_CHEST, INVTYPE_WRIST, INVTYPE_HAND, INVTYPE_WAIST, INVTYPE_LEGS, INVTYPE_FEET, INVTYPE_WEAPONMAINHAND, INVTYPE_WEAPONOFFHAND, L["Ranged"]}
 
-function GW_DurabilityTooltip(self)
+function GW_DurabilityTooltip()
     local duravaltotal, duramaxtotal, durapercent = 0, 0, 0
-    local id
     local valcol, id, duraval, duramax
     local validItems = false
 
@@ -272,7 +271,7 @@ function GW_DurabilityTooltip(self)
             if duraval ~= nil then
                 -- At least one item has durability stat
                 validItems = true
-                
+
                 -- Add to tooltip
                 durapercent = tonumber(GW.RoundDec(duraval / duramax * 100))
                 valcol = (durapercent >= 80 and "|cff00FF00") or (durapercent >= 60 and "|cff99FF00") or (durapercent >= 40 and "|cffFFFF00") or (durapercent >= 20 and "|cffFF9900") or (durapercent >= 0 and "|cffFF2000") or ("|cffFFFFFF")

@@ -45,7 +45,6 @@ local function updateValues(self)
 
     self.spellSection.spellBonus.TextL:SetText(BONUS_DAMAGE)
     self.spellSection.spellBonus.TextR:SetText(GW.stats.getSpellBonusDamage(self.spellSection.spellBonus))
-    self.spellSection.spellBonus:HookScript("OnEnter", CharacterSpellBonusDamage_OnEnter)
 
     local bonusHealing, tt1, tt2 = GW.stats.getBonusHealing()
     self.spellSection.bonusHealing.tt1 = tt1
@@ -61,7 +60,6 @@ local function updateValues(self)
 
     self.spellSection.crit.TextL:SetText(SPELL_CRIT_CHANCE)
     self.spellSection.crit.TextR:SetText(GW.stats.getSpellCritChance(self.spellSection.crit))
-    self.spellSection.crit:HookScript("OnEnter", CharacterSpellCritChance_OnEnter)
 
     local spellRating, tt1, tt2 = GW.stats.getSpellHaste()
     self.spellSection.hast.tt1 = tt1
@@ -123,7 +121,7 @@ local function CreateSection(width, height, parent, anchor1, anchorTo, anchor2, 
     return section
 end
 
-local function CreateStatsFrame(parent, anchorTo, width)
+local function CreateStatsFrame(parent, anchorTo, width, specialOnEnter)
     local statFrame = CreateFrame("Frame", nil, parent)
     statFrame:SetSize(width, 15)
     statFrame:SetPoint("TOP", anchorTo, "BOTTOM", 0, -5)
@@ -141,16 +139,20 @@ local function CreateStatsFrame(parent, anchorTo, width)
     statFrame.TextR = textR
 
     statFrame:SetScript("OnLeave", GameTooltip_Hide)
-    statFrame:SetScript("OnEnter", function(self)
-        if not self.tt1 then return end
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:ClearLines()
-        GameTooltip:SetText(self.tt1, nil, nil, nil, nil, true)
-        if self.tt2 then
-            GameTooltip:AddLine(self.tt2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
-        end
-        GameTooltip:Show()
-    end)
+    if specialOnEnter then
+        statFrame:SetScript("OnEnter", specialOnEnter)
+    else
+        statFrame:SetScript("OnEnter", function(self)
+            if not self.tt1 then return end
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:ClearLines()
+            GameTooltip:SetText(self.tt1, nil, nil, nil, nil, true)
+            if self.tt2 then
+                GameTooltip:AddLine(self.tt2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+            end
+            GameTooltip:Show()
+        end)
+    end
 
     return statFrame
 end
@@ -191,10 +193,10 @@ local function CreateAdvancedChatStats(parent)
 
     as.spellSection =  CreateSection(200, 120, as, "TOP", as.rangeSection, "BOTTOM", -25)
     as.spellSection.Header.Text:SetText(PLAYERSTAT_SPELL_COMBAT)
-    as.spellSection.spellBonus = CreateStatsFrame(as.spellSection, as.spellSection.Header, 180)
+    as.spellSection.spellBonus = CreateStatsFrame(as.spellSection, as.spellSection.Header, 180, CharacterSpellBonusDamage_OnEnter)
     as.spellSection.bonusHealing = CreateStatsFrame(as.spellSection, as.spellSection.spellBonus, 180)
     as.spellSection.rating = CreateStatsFrame(as.spellSection, as.spellSection.bonusHealing, 180)
-    as.spellSection.crit = CreateStatsFrame(as.spellSection, as.spellSection.rating, 180)
+    as.spellSection.crit = CreateStatsFrame(as.spellSection, as.spellSection.rating, 180, CharacterSpellCritChance_OnEnter)
     as.spellSection.hast = CreateStatsFrame(as.spellSection, as.spellSection.crit, 180)
     as.spellSection.reg = CreateStatsFrame(as.spellSection, as.spellSection.hast, 180)
 

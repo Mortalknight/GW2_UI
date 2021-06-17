@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.12.1 TBC", [=[
+FIXES
+    - Stats issue
+]=])
+
+
 v("1.12.0 TBC", [=[
 NEW
     - Added option to show pet auras under the frame

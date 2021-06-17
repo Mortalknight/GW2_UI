@@ -407,11 +407,11 @@ GW.stats.getMeleeCritChance = getMeleeCritChance
 local function getSpellCritChance(frame)
     local holySchool = 2;
     -- Start at 2 to skip physical damage
-    local minCrit = GetSpellCritChance(holySchool);
-    frame.spellCrit = {};
+    local minCrit = GetSpellCritChance(holySchool)
+    frame.spellCrit = frame.spellCrit or {}
     frame.spellCrit[holySchool] = minCrit;
     local spellCrit;
-    for i=(holySchool+1), MAX_SPELL_SCHOOLS do
+    for i = (holySchool + 1), MAX_SPELL_SCHOOLS do
         spellCrit = GetSpellCritChance(i);
         minCrit = min(minCrit, spellCrit);
         frame.spellCrit[i] = spellCrit;
@@ -428,7 +428,7 @@ GW.stats.getSpellCritChance = getSpellCritChance
 local function getRangedCritChance()
     local critChance = GetRangedCritChance()
     critChance = format("%.2f%%", critChance);
-    local tooltip = HIGHLIGHT_FONT_COLOR_CODE..RANGED_CRIT_CHANCE.." "..critChance..FONT_COLOR_CODE_CLOSE;
+    local tooltip = HIGHLIGHT_FONT_COLOR_CODE .. RANGED_CRIT_CHANCE .. " " .. critChance .. FONT_COLOR_CODE_CLOSE;
     local tooltip2 = format(CR_CRIT_RANGED_TOOLTIP, GetCombatRating(CR_CRIT_RANGED), GetCombatRatingBonus(CR_CRIT_RANGED));
 
     return critChance, tooltip, tooltip2
@@ -440,7 +440,7 @@ local function getMeleeExpertise()
     local _, offhandSpeed = UnitAttackSpeed("player");
     local exp;
     if( offhandSpeed ) then
-        exp = expertise.." / "..offhandExpertise;
+        exp = expertise .. " / " .. offhandExpertise;
     else
         exp = expertise;
     end
@@ -474,7 +474,7 @@ local function getManaReg()
     if ( not UnitHasMana("player") ) then
         return NOT_APPLICABLE, nil, nil
     end
-    
+
     local base, casting = GetManaRegen(); 
     -- All mana regen stats are displayed as mana/5 sec.
     base = floor( base * 5.0 );
@@ -489,14 +489,14 @@ GW.stats.getManaReg = getManaReg
 local function getSpellBonusDamage(frame)
     local holySchool = 2;
     -- Start at 2 to skip physical damage
-    local minModifier = GetSpellBonusDamage(holySchool);
-    frame.bonusDamage = {};
-    frame.bonusDamage[holySchool] = minModifier;
-    local bonusDamage;
-    for i=(holySchool+1), MAX_SPELL_SCHOOLS do
-        bonusDamage = GetSpellBonusDamage(i);
-        minModifier = min(minModifier, bonusDamage);
-        frame.bonusDamage[i] = bonusDamage;
+    local minModifier = GetSpellBonusDamage(holySchool)
+    frame.bonusDamage = frame.bonusDamage or {}
+    frame.bonusDamage[holySchool] = minModifier
+    local bonusDamage
+    for i = (holySchool + 1), MAX_SPELL_SCHOOLS do
+        bonusDamage = GetSpellBonusDamage(i)
+        minModifier = min(minModifier, bonusDamage)
+        frame.bonusDamage[i] = bonusDamage
     end
     frame.minModifier = minModifier;
 
