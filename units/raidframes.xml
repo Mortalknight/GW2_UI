@@ -114,8 +114,8 @@
             <StatusBar parentKey="manabar" hidden="true" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="65" y="3"></Size>
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="1" y="2"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="-1"></Anchor>
                 </Anchors>
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
                 <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
