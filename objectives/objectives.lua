@@ -1131,6 +1131,7 @@ local function LoadQuestTracker()
 
     local fQuest = CreateFrame("Frame", "GwQuesttrackerContainerQuests", fScroll, "GwQuesttrackerContainer")
 
+    fNotify:SetParent(fTracker)
     fQuest:SetParent(fScroll)
 
     fNotify:SetPoint("TOPRIGHT", fTracker, "TOPRIGHT")
