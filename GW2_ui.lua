@@ -8,6 +8,7 @@ local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local animations = GW.animations
+local IsIncompatibleAddonLoadedOrOverride = GW.IsIncompatibleAddonLoadedOrOverride
 local LibSharedMedia = GW.Libs.LSM
 
 local l = CreateFrame("Frame", nil, UIParent) -- Main event frame nil
@@ -20,8 +21,8 @@ _G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
 -- Make a global GW variable , so others cann access out functions
 GW2_ADDON = GW
 
-if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") then 
-    DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
+if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
+    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r"):gsub("*", GW.Gw2Color))
 end
 
 local loaded = false
@@ -37,7 +38,7 @@ if Profiler then
 end
 
 local function disableMABags()
-    local bags = GetSetting("BAGS_ENABLED")
+    local bags = GetSetting("BAGS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Inventory", true)
     if not bags or not MovAny or not MADB then
         return
     end
@@ -372,21 +373,6 @@ local function loadAddon(self)
     --disbale TitanPanelClaissc Adjustment
     disableTitanPanelBarAdjusting()
 
-    -- hook debug output if relevant
-    --@debug@
-    local dev_dbg_tab = GetSetting("DEV_DBG_CHAT_TAB")
-    if dev_dbg_tab and dev_dbg_tab > 0 and _G["ChatFrame" .. dev_dbg_tab] then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r hooking Debug to chat tab #" .. dev_dbg_tab)
-        GW.dbgTab = dev_dbg_tab
-        GW.inDebug = true
-    else
-        GW.inDebug = false
-    end
-    --@end-debug@
-    --[===[@non-debug@
-    GW.inDebug = false
-    --@end-non-debug@]===]
-
     -- Load Slash commands
     GW.LoadSlashCommands()
 
@@ -467,13 +453,15 @@ local function loadAddon(self)
         GW.LoadFonts()
     end
 
-    if GetSetting("GW_COMBAT_TEXT_MODE") == "GW2" then
-        SetCVar("floatingCombatTextCombatDamage", 0)
-        GW.LoadDamageText()
-    elseif GetSetting("GW_COMBAT_TEXT_MODE") == "BLIZZARD" then
-        SetCVar("floatingCombatTextCombatDamage", 1)
-    else
-        SetCVar("floatingCombatTextCombatDamage", 0)
+    if not IsIncompatibleAddonLoadedOrOverride("FloatingCombatText", true) then -- Only touch this setting if no other addon for this is loaded
+        if GetSetting("GW_COMBAT_TEXT_MODE") == "GW2" then
+            SetCVar("floatingCombatTextCombatDamage", 0)
+            GW.LoadDamageText()
+        elseif GetSetting("GW_COMBAT_TEXT_MODE") == "BLIZZARD" then
+            SetCVar("floatingCombatTextCombatDamage", 1)
+        else
+            SetCVar("floatingCombatTextCombatDamage", 0)
+        end
     end
 
     if GetSetting("CASTINGBAR_ENABLED") then
@@ -481,21 +469,21 @@ local function loadAddon(self)
         GW.LoadCastingBar(PetCastingBarFrame, "GwCastingBarPet", "pet", false)
     end
 
-    if GetSetting("MINIMAP_ENABLED") then
+    if GetSetting("MINIMAP_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Minimap", true) then
         GW.LoadMinimap()
     end
 
-    if GetSetting("QUESTTRACKER_ENABLED") then
+    if GetSetting("QUESTTRACKER_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
         GW.LoadQuestTracker()
     else
-        GW.AdjustQuestTracker(GetSetting("ACTIONBARS_ENABLED"), GetSetting("MINIMAP_ENABLED"))
+        GW.AdjustQuestTracker((GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true)), (GetSetting("MINIMAP_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Minimap", true)))
     end
 
     if GetSetting("TOOLTIPS_ENABLED") then
         GW.LoadTooltips()
     end
 
-    if GetSetting("QUESTVIEW_ENABLED") then
+    if GetSetting("QUESTVIEW_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("ImmersiveQuesting", true) then
         GW.LoadQuestview()
     end
 
@@ -504,7 +492,6 @@ local function loadAddon(self)
     end
 
     GW.LoadPlayerAbsorbCalculation()
-
 
     --Create player hud
     if GetSetting("HEALTHGLOBE_ENABLED") and not GetSetting("PLAYER_AS_TARGET_FRAME") then
@@ -525,9 +512,23 @@ local function loadAddon(self)
         end
     end
 
-    if GetSetting("BAGS_ENABLED") then
-        GW.LoadInventory()
-        GW.SkinLooTFrame()
+    if not IsIncompatibleAddonLoadedOrOverride("Inventory", true) then -- Only touch this setting if no other addon for this is loaded
+        if GetSetting("BAGS_ENABLED") then
+            GW.LoadInventory()
+            GW.SkinLooTFrame()
+        else
+            -- if not our bags, we need to cut the bagbar frame out of the micromenu
+            CharacterBag0Slot:ClearAllPoints()
+            CharacterBag1Slot:ClearAllPoints()
+            CharacterBag2Slot:ClearAllPoints()
+            CharacterBag3Slot:ClearAllPoints()
+
+            MainMenuBarBackpackButton:SetPoint("RIGHT", ActionButton12, "RIGHT", ActionButton12:GetWidth() + 64, 0)
+            CharacterBag0Slot:SetPoint("LEFT", MainMenuBarBackpackButton, "RIGHT", 0, 0)
+            CharacterBag1Slot:SetPoint("LEFT", CharacterBag0Slot, "RIGHT", 0, 0)
+            CharacterBag2Slot:SetPoint("LEFT", CharacterBag1Slot, "RIGHT", 0, 0)
+            CharacterBag3Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
+        end
     end
 
     GW.LoadMirrorTimers()
@@ -565,7 +566,7 @@ local function loadAddon(self)
     end
 
     -- create action bars
-    if GetSetting("ACTIONBARS_ENABLED") then
+    if GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
         GW.LoadActionBars(lm)
     end
 
@@ -580,18 +581,20 @@ local function loadAddon(self)
         GW.LoadPlayerAuras(lm)
     end
 
-    if GetSetting("DYNAMIC_CAM") then
-        if GetCVar("test_cameraDynamicPitch") == "0" then
-            SetCVar("test_cameraDynamicPitch", true)
-        end
-        hooksecurefunc("StaticPopup_Show", function(which)
-            if which == "EXPERIMENTAL_CVAR_WARNING" then
-                StaticPopup_Hide("EXPERIMENTAL_CVAR_WARNING")
+    if not IsIncompatibleAddonLoadedOrOverride("DynamicCam", true) then -- Only touch this setting if no other addon for this is loaded
+        if GetSetting("DYNAMIC_CAM") then
+            if GetCVar("test_cameraDynamicPitch") == "0" then
+                SetCVar("test_cameraDynamicPitch", true)
             end
-        end)
-    else
-        if GetCVar("test_cameraDynamicPitch") == "1" then
-            SetCVar("test_cameraDynamicPitch", false)
+            hooksecurefunc("StaticPopup_Show", function(which)
+                if which == "EXPERIMENTAL_CVAR_WARNING" then
+                    StaticPopup_Hide("EXPERIMENTAL_CVAR_WARNING")
+                end
+            end)
+        else
+            if GetCVar("test_cameraDynamicPitch") == "1" then
+                SetCVar("test_cameraDynamicPitch", false)
+            end
         end
     end
 

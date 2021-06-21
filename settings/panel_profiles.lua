@@ -34,7 +34,7 @@ local function createImportExportFrame(settingsWindow)
     frame.bg = frame:CreateTexture(nil, "ARTWORK")
     frame.bg:SetAllPoints()
     frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/welcome-bg")
-    
+
     frame.header = frame:CreateFontString(nil, "OVERLAY")
     frame.header:SetFont(DAMAGE_TEXT_FONT, 30, "OUTLINE")
     frame.header:SetTextColor(1, 0.95, 0.8, 1)
@@ -237,14 +237,14 @@ local function buttons_OnLeave(self)
 end
 AddForProfiling("panel_profiles", "buttons_OnLeave", buttons_OnLeave)
 
-local function activate_OnClick(self, button)
+local function activate_OnClick(self)
     local p = self:GetParent()
     setProfile(p.profileID)
     updateProfiles(p:GetParent():GetParent():GetParent())
 end
 AddForProfiling("panel_profiles", "activate_OnClick", activate_OnClick)
 
-local function export_OnClick(self, button)
+local function export_OnClick(self)
     local p = self:GetParent()
     local exportString = GW.GetExportString(p.profileID, GW2UI_SETTINGS_PROFILES[p.profileID]["profilename"])
 

@@ -1,14 +1,22 @@
 ## Interface: 20501
-## Title: |cffffedbaGW2 UI|r
-## Notes: Hud Replacement addon.
-## OptionalDeps: MoveAnything, Questie, TitanClassic, Clique, LibHealComm-4.0, LibClassicCasterino, LibSharedMedia-3.0
-## Author: deadend06, Nils89, nezroy
+## Title: |cffffedbaGW2 UI|r |cFF888888(@project-version@) - TBC|r
+## Notes: Hud Replacement addon
+## Notes-deDE: Ersetzt die Benutzeroberfläche
+## OptionalDeps: MoveAnything, Questie, TitanClassic, Clique, _DebugLog, BugSack, !Stragglers, ACU
 ## Version: @project-version@
+## X-Website: https://www.curseforge.com/wow/addons/gw2-ui
+## X-Curse-Project-ID: 94310
+## DefaultState: Enabled
+
+## Author: deadend06, Nils89, nezroy
 
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03, GW2UI_QUEST_WATCH_DB
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES, GW2UI_STORAGE2
 
 core/TaintLess.xml
+core/debug.lua
+core/incompatibleAddons.lua
+core/errorHandler.lua
 core/locationData.lua
 libs/libs.xml
 

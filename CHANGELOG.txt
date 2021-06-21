@@ -1,3 +1,8 @@
+1.12.2
+ADDED
+    - Error handler
+    - Incompatible Addon check
+
 1.12.1
 FIXES
     - Stats issue

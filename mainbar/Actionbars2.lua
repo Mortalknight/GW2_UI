@@ -1075,19 +1075,5 @@ local function LoadActionBars(lm)
     UIPARENT_MANAGED_FRAME_POSITIONS["TalkingHeadFrame"] = nil
 
     AlertFrame.UpdateAnchors = updateAnchors
-
-    --replace bags if our inventory is disabled
-    if not GetSetting("BAGS_ENABLED") then
-        CharacterBag0Slot:ClearAllPoints()
-        CharacterBag1Slot:ClearAllPoints()
-        CharacterBag2Slot:ClearAllPoints()
-        CharacterBag3Slot:ClearAllPoints()
-
-        MainMenuBarBackpackButton:SetPoint("RIGHT", ActionButton12, "RIGHT", ActionButton12:GetWidth() + 64, 0)
-        CharacterBag0Slot:SetPoint("LEFT", MainMenuBarBackpackButton, "RIGHT", 0, 0)
-        CharacterBag1Slot:SetPoint("LEFT", CharacterBag0Slot, "RIGHT", 0, 0)
-        CharacterBag2Slot:SetPoint("LEFT", CharacterBag1Slot, "RIGHT", 0, 0)
-        CharacterBag3Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
-    end
 end
 GW.LoadActionBars = LoadActionBars

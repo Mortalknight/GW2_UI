@@ -450,3 +450,60 @@ GW_DEFAULT["PLAYER_AS_TARGET_FRAME"] = false
 GW_DEFAULT["PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR"] = false
 GW_DEFAULT["player_CLASS_COLOR"] = false
 GW_DEFAULT["PLAYER_SHOW_PVP_INDICATOR"] = true
+
+-- incompatible addons
+GW_DEFAULT.IncompatibleAddons = {
+    Actionbars = {
+        Override = false,
+        Addons = {
+            "Bartender4",
+            "Dominos",
+        },
+    },
+    ImmersiveQuesting = {
+        Override = false,
+        Addons = {
+            "Storyline",
+            "Immersive",
+            "Immersion",
+            "Tofu",
+            "Queso",
+        },
+    },
+    DynamicCam = {
+        Override = false,
+        Addons = {
+            "DynamicCam",
+            "Queso",
+        },
+    },
+    Inventory = {
+        Override = false,
+        Addons = {
+            "AdiBags",
+            "ArkInventory",
+            "Bagnon",
+            "Sorted",
+        },
+    },
+    Minimap = {
+        Override = false,
+        Addons = {
+            "SexyMap",
+        },
+    },
+    FloatingCombatText = {
+        Override = false,
+        Addons = {
+            "ClassicFCT",
+            "xCT+",
+            "NameplateSCT",
+        },
+    },
+    Objectives = {
+        Override = false,
+        Addons = {
+            "!KalielsTracker",
+        },
+    },
+}

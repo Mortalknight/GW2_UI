@@ -105,6 +105,18 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
     local i = #(all_options) + 1
     all_options[i] = opt
 
+    if incompatibleAddons then
+        local isIncompatibleAddonLoaded, whichAddonsLoaded, isOverride = GW.IsIncompatibleAddonLoadedOrOverride(incompatibleAddons)
+        if isIncompatibleAddonLoaded and not isOverride then
+            opt["desc"] = (desc and desc or "") .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
+            opt["isIncompatibleAddonLoaded"] = true
+        elseif isIncompatibleAddonLoaded and isOverride then
+            opt["desc"] = (desc and desc or "") .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffffa500" ..  L["You have overridden this behavior."] .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
+            opt["isIncompatibleAddonLoaded"] = false
+            opt["isIncompatibleAddonLoadedButOverride"] = true
+        end
+    end
+
     return opt
 end
 GW.AddOption = AddOption
@@ -134,6 +146,18 @@ local function AddOptionButton(panel, name, desc, optionName, callback, params, 
 
     local i = #(all_options) + 1
     all_options[i] = opt
+
+    if incompatibleAddons then
+        local isIncompatibleAddonLoaded, whichAddonsLoaded, isOverride = GW.IsIncompatibleAddonLoadedOrOverride(incompatibleAddons)
+        if isIncompatibleAddonLoaded and not isOverride then
+            opt["desc"] = (desc and desc or "") .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
+            opt["isIncompatibleAddonLoaded"] = true
+        elseif  isIncompatibleAddonLoaded and isOverride then
+            opt["desc"] = (desc and desc or "") .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffffa500" ..  L["You have overridden this behavior."] .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
+            opt["isIncompatibleAddonLoaded"] = false
+            opt["isIncompatibleAddonLoadedButOverride"] = true
+        end
+    end
 
     return opt
 end
@@ -179,8 +203,27 @@ local function WarningPrompt(text, method)
 end
 GW.WarningPrompt = WarningPrompt
 
-local function setDependenciesOption(type, name, SetEnable)
-    if SetEnable then
+local function setDependenciesOption(type, name, SetEnable, deactivateColor, overrideColor)
+    if deactivateColor then
+        _G[name].title:SetTextColor(0.82, 0, 0)
+        if type == "slider" then
+            _G[name].input:SetTextColor(0.82, 0, 0)
+        elseif type == "text" then
+            _G[name].input:SetTextColor(0.82, 0, 0)
+        elseif type == "dropdown" then
+            _G[name].button.string:SetTextColor(0.82, 0, 0)
+        end
+    elseif overrideColor then
+        _G[name].title:SetTextColor(1, 0.65, 0)
+        if type == "slider" then
+            _G[name].input:SetTextColor(1, 0.65, 0)
+        elseif type == "text" then
+            _G[name].input:SetTextColor(1, 0.65, 0)
+        elseif type == "dropdown" then
+            _G[name].button.string:SetTextColor(1, 0.65, 0)
+        end
+    elseif SetEnable then
+        _G[name].title:SetTextColor(1, 1, 1)
         if type == "boolean" then
             _G[name]:Enable()
             _G[name].checkbutton:Enable()
@@ -194,9 +237,12 @@ local function setDependenciesOption(type, name, SetEnable)
         elseif type == "dropdown" then
             _G[name].button:Enable()
             _G[name].button.string:SetTextColor(1, 1, 1)
+        elseif type == "button" then
+            _G[name]:Enable()
+            _G[name].title:SetTextColor(0, 0, 0)
         end
-        _G[name].title:SetTextColor(1, 1, 1)
     else
+        _G[name].title:SetTextColor(0.82, 0.82, 0.82)
         if type == "boolean" then
             _G[name]:Disable()
             _G[name].checkbutton:Disable()
@@ -210,8 +256,9 @@ local function setDependenciesOption(type, name, SetEnable)
         elseif type == "dropdown" then
             _G[name].button:Disable()
             _G[name].button.string:SetTextColor(0.82, 0.82, 0.82)
+        elseif type == "button" then
+            _G[name]:Disable()
         end
-        _G[name].title:SetTextColor(0.82, 0.82, 0.82)
     end
 end
 
@@ -219,8 +266,14 @@ local function checkDependenciesOnLoad()
     local options = all_options
     local allOptionsSet = false
 
-    for k, v in pairs(options) do
-        if v.dependence then
+    for _, v in pairs(options) do
+        if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
+            if v.isIncompatibleAddonLoadedButOverride then
+                setDependenciesOption(v.optionType, v.optionName, false, false, true)
+            else
+                setDependenciesOption(v.optionType, v.optionName, false, true)
+            end
+        elseif v.dependence then
             allOptionsSet = false
             for sn, sv in pairs(v.dependence) do
                 if type(sv) == "table" then
@@ -433,7 +486,19 @@ local function InitPanel(panel, hasScroll)
             of.button.string:SetFont(UNIT_NAME_FONT, 12)
             of.button:SetScript(
                 "OnClick",
-                function(self)
+                function(self, button) -- if incompatible addons is loaded, check for override click
+                    if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
+                        if IsControlKeyDown() and button == "LeftButton" then
+                            if v.isIncompatibleAddonLoaded and not v.isIncompatibleAddonLoadedButOverride then
+                                -- Set override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, true)
+                            elseif not v.isIncompatibleAddonLoaded and v.isIncompatibleAddonLoadedButOverride then
+                                -- Remove override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
+                            end
+                        end
+                        return
+                    end
                     local dd = self:GetParent()
                     if dd.container:IsShown() then
                         dd.container:Hide()
@@ -460,6 +525,19 @@ local function InitPanel(panel, hasScroll)
             of.slider:SetScript(
                 "OnValueChanged",
                 function(self)
+                    if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
+                        if IsControlKeyDown() then
+                            if v.isIncompatibleAddonLoaded and not v.isIncompatibleAddonLoadedButOverride then
+                                -- Set override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, true)
+                            elseif not v.isIncompatibleAddonLoaded and v.isIncompatibleAddonLoadedButOverride then
+                                -- Remove override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
+                            end
+                        end
+                        self:SetValue(GetSetting(v.optionName))
+                        return
+                    end
                     local roundValue = RoundDec(self:GetValue(), v.decimalNumbers)
 
                     SetSetting(v.optionName, roundValue)
@@ -473,6 +551,19 @@ local function InitPanel(panel, hasScroll)
             of.input:SetScript(
                 "OnEnterPressed",
                 function(self)
+                    if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
+                        if IsControlKeyDown() then
+                            if v.isIncompatibleAddonLoaded and not v.isIncompatibleAddonLoadedButOverride then
+                                -- Set override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, true)
+                            elseif not v.isIncompatibleAddonLoaded and v.isIncompatibleAddonLoadedButOverride then
+                                -- Remove override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
+                            end
+                        end
+                        self:SetNumber(RoundDec(GetSetting(v.optionName), v.decimalNumbers))
+                        return
+                    end
                     local roundValue = RoundDec(self:GetNumber(), v.decimalNumbers) or v.min
 
                     self:ClearFocus()
@@ -496,6 +587,19 @@ local function InitPanel(panel, hasScroll)
             of.input:SetScript(
                 "OnEnterPressed",
                 function(self)
+                    if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
+                        if IsControlKeyDown() then
+                            if v.isIncompatibleAddonLoaded and not v.isIncompatibleAddonLoadedButOverride then
+                                -- Set override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, true)
+                            elseif not v.isIncompatibleAddonLoaded and v.isIncompatibleAddonLoadedButOverride then
+                                -- Remove override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
+                            end
+                        end
+                        self:SetText(GetSetting(v.optionName, v.perSpec) or "")
+                        return
+                    end
                     self:ClearFocus()
                     SetSetting(v.optionName, self:GetText())
                     if v.callback ~= nil then
@@ -507,7 +611,21 @@ local function InitPanel(panel, hasScroll)
             of.checkbutton:SetChecked(GetSetting(v.optionName))
             of.checkbutton:SetScript(
                 "OnClick",
-                function(self)
+                function(self, button)
+                    if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
+                        if IsControlKeyDown() and button == "LeftButton" then
+                            if v.isIncompatibleAddonLoaded and not v.isIncompatibleAddonLoadedButOverride then
+                                -- Set override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, true)
+                            elseif not v.isIncompatibleAddonLoaded and v.isIncompatibleAddonLoadedButOverride then
+                                -- Remove override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
+                            end
+                        end
+                        self:SetChecked(not self:GetChecked())
+                        return
+                    end
+
                     local toSet = false
                     if self:GetChecked() then
                         toSet = true
@@ -523,7 +641,19 @@ local function InitPanel(panel, hasScroll)
             )
             of:SetScript(
                 "OnClick",
-                function(self)
+                function(self, button)
+                    if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
+                        if IsControlKeyDown() and button == "LeftButton" then
+                            if v.isIncompatibleAddonLoaded and not v.isIncompatibleAddonLoadedButOverride then
+                                -- Set override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, true)
+                            elseif not v.isIncompatibleAddonLoaded and v.isIncompatibleAddonLoadedButOverride then
+                                -- Remove override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
+                            end
+                        end
+                        return
+                    end
                     local toSet = true
                     if self.checkbutton:GetChecked() then
                         toSet = false
@@ -541,7 +671,19 @@ local function InitPanel(panel, hasScroll)
         elseif v.optionType == "button" then
             of:SetScript(
                 "OnClick",
-                function()
+                function(_, button)
+                    if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
+                        if IsControlKeyDown() and button == "LeftButton" then
+                            if v.isIncompatibleAddonLoaded and not v.isIncompatibleAddonLoadedButOverride then
+                                -- Set override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, true)
+                            elseif not v.isIncompatibleAddonLoaded and v.isIncompatibleAddonLoadedButOverride then
+                                -- Remove override value
+                                SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
+                            end
+                        end
+                        return
+                    end
                     if v.callback ~= nil then
                         v.callback()
                     end

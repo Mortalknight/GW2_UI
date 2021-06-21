@@ -42,6 +42,9 @@ GW.spentMoney = 0
 -- Init global function
 GW.InitLocationDataHandler()
 
+-- Init error handler
+GW.RegisterErrorHandler()
+
 --register libs
 do
     GW.Libs = {}

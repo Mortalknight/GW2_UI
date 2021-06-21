@@ -55,6 +55,16 @@ local function LoadSlashCommands()
                     C_UI.Reload()
                 end
             )
+        elseif msg == "error" then
+            local txt = ("~ GW2 UI ~ Version: %s ~ Date: %s ~ Locale: %s  ~"):format(GW.VERSION_STRING or "?", date() or "?", GW.mylocal or "?")
+            txt = txt .. "\n" .. GW.Join("\n", GW.ErrorHandler.log)
+
+            local errorlogFrame = GW.CreateErrorLogWindow ()
+            errorlogFrame.editBox:SetText(txt)
+            errorlogFrame.editBox:HighlightText()
+            errorlogFrame.editBox:SetFocus()
+
+            errorlogFrame:Show()
         else
             DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r \"" .. msg .. "\" is not a valid GW2 UI slash command."):gsub("*", GW.Gw2Color))
         end

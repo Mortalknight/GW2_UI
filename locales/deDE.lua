@@ -32,7 +32,7 @@ L["bound to"] = "gebunden an"
 L["Sold Junk for: %s"] = "Müll verkauft für: %s"
 L["Show Quest XP on Quest Tracker"] = "Zeige Quest EP im Quest Tracker"
 L["Quest Tracker sorting"] = "Quest Listen Sortierung"
-L["Show auras under"] = "Auras unterhalb des Frames anzeigen"
+L["Show auras under"] = "Auren unterhalb des Frames anzeigen"
 
 --Strings
 L["Use the GW2 UI improved action bars."] = "Benutze die verbesserten GW2 UI Aktionsleisten."

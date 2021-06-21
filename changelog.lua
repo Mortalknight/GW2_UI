@@ -1,11 +1,16 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.12.2 TBC", [=[
+ADDED
+    - Error handler
+    - Incompatible Addon check
+]=])
+
 v("1.12.1 TBC", [=[
 FIXES
     - Stats issue
 ]=])
-
 
 v("1.12.0 TBC", [=[
 NEW

@@ -295,7 +295,7 @@ local function LoadHealthGlobe()
     GW.RegisterScaleFrame(hg, 1.1)
 
     -- position based on XP bar space and make it movable if your actionbars are off
-    if GetSetting("ACTIONBARS_ENABLED") then
+    if GetSetting("ACTIONBARS_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
         if GetSetting("XPBAR_ENABLED") then
             hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 17)
         else
