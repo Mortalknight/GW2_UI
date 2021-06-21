@@ -127,6 +127,11 @@ local function SkinBlizzardOptions()
     _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_up")
     _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
 
+    -- Voice Sliders
+    UnitPopupVoiceSpeakerVolume.Slider:SkinSliderFrame()
+    UnitPopupVoiceMicrophoneVolume.Slider:SkinSliderFrame()
+    UnitPopupVoiceUserVolume.Slider:SkinSliderFrame()
+
     --Create New Raid Profle
     local newProfileDialog = _G.CompactUnitFrameProfilesNewProfileDialog
     if newProfileDialog then

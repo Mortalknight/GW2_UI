@@ -1,7 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("1.12.2 TBC", [=[
+v("1.13.0 TBC", [=[
+NEW
+    - Added option to show party pets 
+
 ADDED
     - Error handler
     - Incompatible Addon check

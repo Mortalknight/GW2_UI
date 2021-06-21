@@ -1,4 +1,7 @@
-1.12.2
+1.13.0
+NEW
+    - Added option to show party pets 
+
 ADDED
     - Error handler
     - Incompatible Addon check
