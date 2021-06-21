@@ -202,6 +202,15 @@ local function LoadPetFrame(lm)
         playerPetFrame.auras:SetPoint("TOPLEFT", playerPetFrame.resource, "BOTTOMLEFT", 0, -5)
     end
 
+    playerPetFrame:SetScript("OnEnter", function(self)
+        if self.unit then
+            GameTooltip:ClearLines()
+            GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+            GameTooltip:SetUnit(self.unit)
+            GameTooltip:Show()
+        end
+    end)
+    playerPetFrame:SetScript("OnLeave", GameTooltip_Hide)
     playerPetFrame:SetScript("OnEvent", updatePetData)
     playerPetFrame:HookScript(
         "OnShow",

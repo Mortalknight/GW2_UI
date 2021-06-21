@@ -338,7 +338,7 @@ end
 GW.AddForProfiling("objectives", "getObjectiveBlock", getObjectiveBlock)
 
 local function getBlock(blockIndex)
-    if _G["GwQuestBlock" .. blockIndex] ~= nil then
+    if _G["GwQuestBlock" .. blockIndex] then
         local block = _G["GwQuestBlock" .. blockIndex]
         -- set the correct block color for an existing block here
         setBlockColor(block, "QUEST")
@@ -416,15 +416,6 @@ local function getBlock(blockIndex)
             self:GetNormalTexture():SetTexCoord(0.1, 0.9, 0.1, 0.9)
             self:GetPushedTexture():SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
-            self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-
-            self:HookScript("OnClick", self.OnClick)
-            self:SetScript("OnEvent", self.OnEvent)
-            self:SetScript("OnShow", self.OnShow)
-            self:SetScript("OnHide", self.OnHide)
-            self:SetScript("OnEnter", self.OnEnter)
-            self:SetScript("OnLeave", self.OnLeave)
-
             -- Cooldown Updates
             self.cooldown:SetPoint("CENTER", self, "CENTER", 0, 0)
             self.cooldown:Hide()
@@ -460,16 +451,6 @@ local function getBlock(blockIndex)
             self.cooldown:SetCooldown(start, duration)
         else
             self.cooldown:Hide()
-        end
-    end
-
-    newBlock.actionButton.OnClick = function(_, button)
-        if InCombatLockdown() then
-            return
-        end
-
-        if button == "LeftButton" then
-            return
         end
     end
 
@@ -532,6 +513,9 @@ local function getBlock(blockIndex)
     end
 
     newBlock.actionButton.OnShow = function(self)
+        self:SetScript("OnEnter", self.OnEnter)
+        self:SetScript("OnLeave", GameTooltip_Hide)
+        self:RegisterForClicks("LeftButtonUp", "RightButtonUp")
         self:RegisterEvent("PLAYER_TARGET_CHANGED")
         self:RegisterEvent("BAG_UPDATE_COOLDOWN")
     end
@@ -547,10 +531,6 @@ local function getBlock(blockIndex)
         GameTooltip:Show()
     end
 
-    newBlock.actionButton.OnLeave = function()
-        GameTooltip:Hide()
-    end
-
     newBlock.actionButton.FakeHide = function(self)
         self:RegisterForClicks(nil)
         self:SetScript("OnEnter", nil)
@@ -560,6 +540,10 @@ local function getBlock(blockIndex)
         self:SetPushedTexture(nil)
         self:SetHighlightTexture(nil)
     end
+
+    newBlock.actionButton:SetScript("OnEvent", newBlock.actionButton.OnEvent)
+    newBlock.actionButton:SetScript("OnShow", newBlock.actionButton.OnShow)
+    newBlock.actionButton:SetScript("OnHide", newBlock.actionButton.OnHide)
 
     newBlock.actionButton:HookScript("OnUpdate", newBlock.actionButton.OnUpdate)
 
