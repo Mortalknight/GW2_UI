@@ -225,7 +225,6 @@ local function LoadPetFrame(lm)
     playerPetFrame.debuffFilter = nil --"player"
 
     playerPetFrame.portraitBackground:SetTexCoord(0, 0.25, 0, 1)
-    --Add tooltip to invisible frame
     playerPetFrame.happiness:SetScript("OnEnter", function(self)
         if self.tooltip then
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")

@@ -399,11 +399,11 @@ local function updateCastValues(self)
             if castType == 0 then
                 step = 1 - step
             end
-            if notInterruptible then
-                protectedCastAnimation(self, step)
-            else
+            --if notInterruptible then
+                --protectedCastAnimation(self, step)
+            --else
                 normalCastBarAnimation(self, step)
-            end
+            --end
         end,
         "noease"
     )
