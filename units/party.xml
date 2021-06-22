@@ -198,7 +198,7 @@
             <Frame name="$parentAuras" parentKey="auras">
                 <Size x="20" y="20"></Size>
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="0" y="-6"></Anchor>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="0" y="-7"></Anchor>
                 </Anchors>
             </Frame>
         </Frames>

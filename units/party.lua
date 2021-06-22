@@ -154,6 +154,7 @@ local function updatePartyDebuffs(self, x, y)
     for i, debuffFrame in pairs(self.debuffFrames) do
         if debuffList[i] then
             local margin = -debuffFrame:GetWidth() + -2
+            local marginy = debuffFrame:GetWidth() + 1
             debuffFrame.icon:SetTexture(debuffList[i].icon)
             debuffFrame.icon:SetParent(debuffFrame)
 
@@ -169,7 +170,7 @@ local function updatePartyDebuffs(self, x, y)
             debuffFrame.debuffIcon.stacks:SetText((debuffList[i].count or 1) > 1 and debuffList[i].count or "")
             debuffFrame.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, (debuffList[i].count or 1) > 9 and 11 or 14, "OUTLINE")
             debuffFrame:ClearAllPoints()
-            debuffFrame:SetPoint("BOTTOMRIGHT", (self.isPet and (-margin * x) or 26 * x), 26 * y)
+            debuffFrame:SetPoint("BOTTOMRIGHT", (self.isPet and (-margin * x) or (26 * x)), (self.isPet and (marginy * y) or (26 * y)))
 
             debuffFrame:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
@@ -182,7 +183,7 @@ local function updatePartyDebuffs(self, x, y)
             debuffFrame:Show()
 
             x = x + 1
-            if x > 8 then
+            if (x > 8 and not self.isPet) or (x > 13 and self.isPet) then
                 y = y + 1
                 x = 0
             end
@@ -238,7 +239,7 @@ local function updatePartyAuras(self)
     for i, buffFrame in pairs(self.buffFrames) do
         if buffList[i] then
             local margin = -buffFrame:GetWidth() + -2
-            local marginy = buffFrame:GetWidth() + 5
+            local marginy = self.isPet and buffFrame:GetWidth() + 1 or buffFrame:GetWidth() + 5
             buffFrame.buffIcon:SetTexture(buffList[i].icon)
             buffFrame.buffIcon:SetParent(buffFrame)
 
@@ -261,7 +262,7 @@ local function updatePartyAuras(self)
             buffFrame:Show()
 
             x = x + 1
-            if x > 8 then
+            if (x > 8 and not self.isPet) or (x > 13 and self.isPet) then
                 y = y + 1
                 x = 0
             end
@@ -544,17 +545,17 @@ local function CreatePartyPetFrame(frame, i)
         debuffFrame.cooldown:SetDrawSwipe(1)
         debuffFrame.cooldown:SetReverse(1)
         debuffFrame.cooldown:SetHideCountdownNumbers(true)
-        debuffFrame:SetSize(16, 16)
+        debuffFrame:SetSize(10, 10)
 
         f.debuffFrames[k] = debuffFrame
 
         local buffFrame = CreateFrame("Button", nil, f.auras, "GwBuffIconBig")
         buffFrame.buffDuration:SetFont(UNIT_NAME_FONT, 11)
         buffFrame.buffDuration:SetTextColor(1, 1, 1)
-        buffFrame.buffStacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
+        buffFrame.buffStacks:SetFont(UNIT_NAME_FONT, 6, "OUTLINED")
         buffFrame.buffStacks:SetTextColor(1, 1, 1)
         buffFrame:SetParent(f.auras)
-        buffFrame:SetSize(12, 12)
+        buffFrame:SetSize(10, 10)
 
         f.buffFrames[k] = buffFrame
     end
