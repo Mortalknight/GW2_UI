@@ -342,5 +342,6 @@ L["Set the growth direction of the stance bar"] = "Imposta la direzione di cresc
 L["Ctrl + Click to toggle override"] = "Ctrl + Click per attivare la sovrascrittura"
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = "Funzionamento di Addon incompatibile sovrascritto. Serve un ricaricamento per avere effetto."
 L["You have overridden this behavior."] = "Hai sovrascritto questo funzionamento"
-L["Out of combat"] = true
+L["Out of combat"] = "Fuori dal combattimento"
 L["Show an additional ressoucebar"] = true
+L["Show auras below"] = true

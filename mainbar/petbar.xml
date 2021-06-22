@@ -62,10 +62,9 @@
 
             </StatusBar>
             <Frame parentKey="auras">
-                <Size x="0" y="30"></Size>
+                <Size x="230" y="100"/>
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-85" y="0"></Anchor>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Background" relativePoint="BOTTOMRIGHT" x="-3" y="100"></Anchor>
                 </Anchors>
             </Frame>
         </Frames>

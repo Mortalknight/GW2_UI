@@ -189,6 +189,22 @@ local function LoadPetFrame(lm)
     playerPetFrame.health:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
     playerPetFrame.health.text:SetFont(UNIT_NAME_FONT, 11)
 
+    playerPetFrame.auraPositionUnder = GetSetting("PET_AURAS_UNDER")
+
+    if playerPetFrame.auraPositionUnder then
+        playerPetFrame.auras:ClearAllPoints()
+        playerPetFrame.auras:SetPoint("TOPLEFT", playerPetFrame.resource, "BOTTOMLEFT", 0, -5)
+    end
+
+    playerPetFrame:SetScript("OnEnter", function(self)
+        if self.unit then
+            GameTooltip:ClearLines()
+            GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+            GameTooltip:SetUnit(self.unit)
+            GameTooltip:Show()
+        end
+    end)
+    playerPetFrame:SetScript("OnLeave", GameTooltip_Hide)
     playerPetFrame:SetScript("OnEvent", updatePetData)
     playerPetFrame:HookScript(
         "OnShow",
@@ -228,5 +244,27 @@ local function LoadPetFrame(lm)
     lm:RegisterPetFrame(playerPetFrame)
 
     setPetBar(playerPetFrame)
+
+    -- create floating combat text
+    if GetSetting("PET_FLOATING_COMBAT_TEXT") then
+        local fctf = CreateFrame("Frame", nil, playerPetFrame)
+        fctf:SetFrameLevel(playerPetFrame:GetFrameLevel() + 3)
+        fctf:RegisterEvent("UNIT_COMBAT")
+        fctf:SetScript("OnEvent", function(self, _, unit, ...)
+            if self.unit == unit then
+                CombatFeedback_OnCombatEvent(self, ...)
+            end
+        end)
+        fctf:SetScript("OnUpdate", CombatFeedback_OnUpdate)
+        fctf.unit = playerPetFrame.unit
+
+        local font = fctf:CreateFontString(nil, "OVERLAY")
+        font:SetFont(DAMAGE_TEXT_FONT, 30)
+        fctf.fontString = font
+        font:SetPoint("CENTER", playerPetFrame.portrait, "CENTER")
+        font:Hide()
+
+        CombatFeedback_Initialize(fctf, font, 30)
+    end
 end
 GW.LoadPetFrame = LoadPetFrame

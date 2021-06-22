@@ -166,15 +166,14 @@ local function LoadBlizzardOptionsSkin()
     end
 
     --Delete Raid Profile
-    local deleteProfileDialog = _G.CompactUnitFrameProfilesDeleteProfileDialog
-    if deleteProfileDialog then
-        local tex = deleteProfileDialog:CreateTexture("bg", "BACKGROUND")
-        tex:SetPoint("TOP", deleteProfileDialog, "TOP", 0, 0)
-        tex:SetSize(deleteProfileDialog:GetSize())
+    if CompactUnitFrameProfilesDeleteProfileDialog then
+        local tex = CompactUnitFrameProfilesDeleteProfileDialog:CreateTexture("bg", "BACKGROUND")
+        tex:SetPoint("TOP", deletePrCompactUnitFrameProfilesDeleteProfileDialogofileDialog, "TOP", 0, 0)
+        tex:SetSize(CompactUnitFrameProfilesDeleteProfileDialog:GetSize())
         tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-        deleteProfileDialog.tex = tex
+        CompactUnitFrameProfilesDeleteProfileDialog.tex = tex
 
-        deleteProfileDialog.Border:Hide()
+        CompactUnitFrameProfilesDeleteProfileDialog.Border:Hide()
 
         _G.CompactUnitFrameProfilesDeleteProfileDialogDeleteButton:SkinButton(false, true)
         _G.CompactUnitFrameProfilesDeleteProfileDialogCancelButton:SkinButton(false, true)
@@ -187,10 +186,9 @@ local function LoadBlizzardOptionsSkin()
     SplashFrame.TopCloseButton:SkinButton(true)
 
     -- Voice Sliders
-    _G.UnitPopupVoiceSpeakerVolume.Slider:SkinSliderFrame()
-    _G.UnitPopupVoiceMicrophoneVolume.Slider:SkinSliderFrame()
-    _G.UnitPopupVoiceUserVolume.Slider:SkinSliderFrame()
-
+    UnitPopupVoiceSpeakerVolume.Slider:SkinSliderFrame()
+    UnitPopupVoiceMicrophoneVolume.Slider:SkinSliderFrame()
+    UnitPopupVoiceUserVolume.Slider:SkinSliderFrame()
 
     -- Chat Settings
     local ChatFrames = {
@@ -257,7 +255,7 @@ local function LoadBlizzardOptionsSkin()
     for _, frame in pairs(ChatFrames) do
         frame:StripTextures()
     end
-    
+
     _G.ChatConfigFrame:SetClampedToScreen(true)
     _G.ChatConfigFrame:SetMovable(true)
     _G.ChatConfigFrame:EnableMouse(true)
@@ -300,7 +298,7 @@ local function LoadBlizzardOptionsSkin()
     for i in pairs(_G.COMBAT_CONFIG_TABS) do
         _G["CombatConfigTab" .. i]:SkinTab()
     end
-    
+
     GW.SkinTextBox(_G.CombatConfigSettingsNameEditBox.Left, _G.CombatConfigSettingsNameEditBox.Middle, _G.CombatConfigSettingsNameEditBox.Right)
 
     _G.ChatConfigMoveFilterUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_up")
@@ -362,7 +360,7 @@ local function LoadBlizzardOptionsSkin()
             _G[self:GetName() .. "Swatch" .. index]:StripTextures()
         end
     end)
-    
+
     hooksecurefunc(_G.ChatConfigFrameChatTabManager, "UpdateWidth", function(self)
         for tab in self.tabPool:EnumerateActive() do
             if not tab.IsSkinned then

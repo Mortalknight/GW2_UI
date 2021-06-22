@@ -1,7 +1,7 @@
 ## Interface: 90005
-## Title: |cffffedbaGW2 UI|r
-## Notes: HUD Replacement addon.
-## Notes-deDE: Ersetzt die Benutzeroberfläche.
+## Title: |cffffedbaGW2 UI|r |cFF888888(@project-version@)|r
+## Notes: HUD Replacement addon
+## Notes-deDE: Ersetzt die Benutzeroberfläche
 ## OptionalDeps: MoveAnything, _DebugLog, BugSack, !Stragglers, ACU
 ## Version: @project-version@
 ## X-Website: https://www.curseforge.com/wow/addons/gw2-ui

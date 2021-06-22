@@ -8,17 +8,40 @@ local function SetDefaultOnTheFly(id)
     GW.ImportendRaidDebuff[id] = true
 end
 
--- Mythic+ Dungeons
-    -- General Affix
+-------------------- Mythic+ Specific --------------------
+-- General Affix
     SetDefaultOnTheFly(209858) -- Necrotic
     SetDefaultOnTheFly(226512) -- Sanguine
     SetDefaultOnTheFly(240559) -- Grievous
     SetDefaultOnTheFly(240443) -- Bursting
-    -- Shadowlands Season 1
+-- Shadowlands Season 1
     SetDefaultOnTheFly(342494) -- Belligerent Boast (Prideful)
+-- Shadowlands Season 2
 
--- Shadowlands Dungeons
-    -- Halls of Atonement
+------------------ Shadowlands Dungeons ------------------
+-- Tazavesh, the Veiled Market
+    SetDefaultOnTheFly(350804) -- Collapsing Energy
+    SetDefaultOnTheFly(350885) -- Hyperlight Jolt
+    SetDefaultOnTheFly(351101) -- Energy Fragmentation
+    SetDefaultOnTheFly(346828) -- Sanitizing Field
+    SetDefaultOnTheFly(355641) -- Scintillate
+    SetDefaultOnTheFly(355451) -- Undertow
+    SetDefaultOnTheFly(355581) -- Crackle
+    SetDefaultOnTheFly(349999) -- Anima Detonation
+    SetDefaultOnTheFly(346961) -- Purging Field
+    SetDefaultOnTheFly(351956) -- High-Value Target
+    SetDefaultOnTheFly(346297) -- Unstable Explosion
+    SetDefaultOnTheFly(347728) -- Flock!
+    SetDefaultOnTheFly(356408) -- Ground Stomp
+    SetDefaultOnTheFly(347744) -- Quickblade
+    SetDefaultOnTheFly(347481) -- Shuri
+    SetDefaultOnTheFly(355915) -- Glyph of Restraint
+    SetDefaultOnTheFly(350134) -- Infinite Breath
+    SetDefaultOnTheFly(350013) -- Gluttonous Feast
+    SetDefaultOnTheFly(355465) -- Boulder Throw
+    SetDefaultOnTheFly(346116) -- Shearing Swings
+    SetDefaultOnTheFly(356011) -- Beam Splicer
+-- Halls of Atonement
     SetDefaultOnTheFly(335338) -- Ritual of Woe
     SetDefaultOnTheFly(326891) -- Anguish
     SetDefaultOnTheFly(329321) -- Jagged Swipe 1
@@ -30,7 +53,7 @@ end
     SetDefaultOnTheFly(323650) -- Haunting Fixation
     SetDefaultOnTheFly(326874) -- Ankle Bites
     SetDefaultOnTheFly(340446) -- Mark of Envy
-    -- Mists of Tirna Scithe
+-- Mists of Tirna Scithe
     SetDefaultOnTheFly(325027) -- Bramble Burst
     SetDefaultOnTheFly(323043) -- Bloodletting
     SetDefaultOnTheFly(322557) -- Soul Split
@@ -44,7 +67,7 @@ end
     SetDefaultOnTheFly(325224) -- Anima Injection
     SetDefaultOnTheFly(326092) -- Debilitating Poison
     SetDefaultOnTheFly(325418) -- Volatile Acid
-    -- Plaguefall
+-- Plaguefall
     SetDefaultOnTheFly(336258) -- Solitary Prey
     SetDefaultOnTheFly(331818) -- Shadow Ambush
     SetDefaultOnTheFly(329110) -- Slime Injection
@@ -60,7 +83,7 @@ end
     SetDefaultOnTheFly(333406) -- Assassinate
     SetDefaultOnTheFly(332397) -- Shroudweb
     SetDefaultOnTheFly(330069) -- Concentrated Plague
-    -- The Necrotic Wake
+-- The Necrotic Wake
     SetDefaultOnTheFly(321821) -- Disgusting Guts
     SetDefaultOnTheFly(323365) -- Clinging Darkness
     SetDefaultOnTheFly(338353) -- Goresplatter
@@ -79,7 +102,7 @@ end
     SetDefaultOnTheFly(334748) -- Drain FLuids
     SetDefaultOnTheFly(333489) -- Necrotic Breath
     SetDefaultOnTheFly(320717) -- Blood Hunger
-    -- Theater of Pain
+-- Theater of Pain
     SetDefaultOnTheFly(333299) -- Curse of Desolation 1
     SetDefaultOnTheFly(333301) -- Curse of Desolation 2
     SetDefaultOnTheFly(319539) -- Soulless
@@ -96,7 +119,7 @@ end
     SetDefaultOnTheFly(319626) -- Phantasmal Parasite
     SetDefaultOnTheFly(324449) -- Manifest Death
     SetDefaultOnTheFly(341949) -- Withering Blight
-    -- Sanguine Depths
+-- Sanguine Depths
     SetDefaultOnTheFly(326827) -- Dread Bindings
     SetDefaultOnTheFly(326836) -- Curse of Suppression
     SetDefaultOnTheFly(322554) -- Castigate
@@ -106,7 +129,7 @@ end
     SetDefaultOnTheFly(335306) -- Barbed Shackles
     SetDefaultOnTheFly(322429) -- Severing Slice
     SetDefaultOnTheFly(334653) -- Engorge
-    -- Spires of Ascension
+-- Spires of Ascension
     SetDefaultOnTheFly(338729) -- Charged Stomp
     SetDefaultOnTheFly(338747) -- Purifying Blast
     SetDefaultOnTheFly(327481) -- Dark Lance
@@ -120,7 +143,7 @@ end
     SetDefaultOnTheFly(317661) -- Insidious Venom
     SetDefaultOnTheFly(330683) -- Raw Anima
     SetDefaultOnTheFly(328434) -- Intimidated
-    -- De Other Side
+-- De Other Side
     SetDefaultOnTheFly(320786) -- Power Overwhelming
     SetDefaultOnTheFly(334913) -- Master of Death
     SetDefaultOnTheFly(325725) -- Cosmic Artifice
@@ -140,15 +163,42 @@ end
     SetDefaultOnTheFly(323877) -- Echo Finger Laser X-treme
     SetDefaultOnTheFly(334535) -- Beak Slice
 
--- Castle Nathria
-    -- Shriekwing
+---------------- Sanctum of Domination -----------------
+-- The Tarragrue
+    SetDefaultOnTheFly(347283) -- Predator's Howl
+    SetDefaultOnTheFly(347286) -- Unshakeable Dread
+    SetDefaultOnTheFly(346986) -- Crushed Armor
+    SetDefaultOnTheFly(347991) -- Ten of Towers
+    SetDefaultOnTheFly(347269) -- Chains of Eternity
+    SetDefaultOnTheFly(346985) -- Overpower
+    SetDefaultOnTheFly(347274) -- Annihilating Smash
+-- Eye of the Jailer
+    SetDefaultOnTheFly(350606) -- Hopeless Lethargy
+    SetDefaultOnTheFly(355240) -- Scorn
+    SetDefaultOnTheFly(355245) -- Ire
+    SetDefaultOnTheFly(349979) -- Dragging Chains
+    SetDefaultOnTheFly(348074) -- Assailing Lance
+    SetDefaultOnTheFly(351827) -- Spreading Misery
+    SetDefaultOnTheFly(355143) -- Deathlink
+    SetDefaultOnTheFly(350763) -- Annihilating Glare
+-- The Nine
+-- Remnant of Ner'zhul
+-- Soulrender Dormazain
+-- Painsmith Raznal
+-- Guardian of the First Ones
+-- Fatescribe Roh-Kalo
+-- Kel'Thuzad
+-- Sylvanas Windrunner
+
+-------------------- Castle Nathria --------------------
+-- Shriekwing
     SetDefaultOnTheFly(328897) -- Exsanguinated
     SetDefaultOnTheFly(330713) -- Reverberating Pain
     SetDefaultOnTheFly(329370) -- Deadly Descent
     SetDefaultOnTheFly(336494) -- Echo Screech
     SetDefaultOnTheFly(346301) -- Bloodlight
     SetDefaultOnTheFly(342077) -- Echolocation
-    -- Huntsman Altimor
+-- Huntsman Altimor
     SetDefaultOnTheFly(335304) -- Sinseeker
     SetDefaultOnTheFly(334971) -- Jagged Claws
     SetDefaultOnTheFly(335111) -- Huntsman's Mark 3
@@ -157,17 +207,17 @@ end
     SetDefaultOnTheFly(334945) -- Vicious Lunge
     SetDefaultOnTheFly(334852) -- Petrifying Howl
     SetDefaultOnTheFly(334695) -- Destabilize
-    -- Hungering Destroyer
+-- Hungering Destroyer
     SetDefaultOnTheFly(334228) -- Volatile Ejection
     SetDefaultOnTheFly(329298) -- Gluttonous Miasma
-    -- Lady Inerva Darkvein
+-- Lady Inerva Darkvein
     SetDefaultOnTheFly(325936) -- Shared Cognition
     SetDefaultOnTheFly(335396) -- Hidden Desire
     SetDefaultOnTheFly(324983) -- Shared Suffering
     SetDefaultOnTheFly(324982) -- Shared Suffering (Partner)
     SetDefaultOnTheFly(332664) -- Concentrate Anima
     SetDefaultOnTheFly(325382) -- Warped Desires
-    -- Sun King's Salvation
+-- Sun King's Salvation
     SetDefaultOnTheFly(333002) -- Vulgar Brand
     SetDefaultOnTheFly(326078) -- Infuser's Boon
     SetDefaultOnTheFly(325251) -- Sin of Pride
@@ -175,7 +225,7 @@ end
     SetDefaultOnTheFly(341473) -- Crimson Flurry Teleport
     SetDefaultOnTheFly(328479) -- Eyes on Target
     SetDefaultOnTheFly(328889) -- Greater Castigation
-    -- Artificer Xy'mox
+-- Artificer Xy'mox
     SetDefaultOnTheFly(327902) -- Fixate
     SetDefaultOnTheFly(326302) -- Stasis Trap
     SetDefaultOnTheFly(325236) -- Glyph of Destruction
@@ -183,7 +233,7 @@ end
     SetDefaultOnTheFly(328468) -- Dimensional Tear 1
     SetDefaultOnTheFly(328448) -- Dimensional Tear 2
     SetDefaultOnTheFly(340860) -- Withering Touch
-    -- The Council of Blood
+-- The Council of Blood
     SetDefaultOnTheFly(327052) -- Drain Essence 1
     SetDefaultOnTheFly(327773) -- Drain Essence 2
     SetDefaultOnTheFly(346651) -- Drain Essence Mythic
@@ -192,7 +242,7 @@ end
     SetDefaultOnTheFly(331706) -- Scarlet Letter
     SetDefaultOnTheFly(331636) -- Dark Recital 1
     SetDefaultOnTheFly(331637) -- Dark Recital 2
-    -- Sludgefist
+-- Sludgefist
     SetDefaultOnTheFly(335470) -- Chain Slam
     SetDefaultOnTheFly(339181) -- Chain Slam (Root)
     SetDefaultOnTheFly(331209) -- Hateful Gaze
@@ -202,7 +252,7 @@ end
     SetDefaultOnTheFly(342420) -- Chain Them! 2
     SetDefaultOnTheFly(335295) -- Shattering Chain
     SetDefaultOnTheFly(332572) -- Falling Rubble
-    -- Stone Legion Generals
+-- Stone Legion Generals
     SetDefaultOnTheFly(334498) -- Seismic Upheaval
     SetDefaultOnTheFly(337643) -- Unstable Footing
     SetDefaultOnTheFly(334765) -- Heart Rend
@@ -213,7 +263,7 @@ end
     SetDefaultOnTheFly(342655) -- Volatile Anima Infusion
     SetDefaultOnTheFly(342698) -- Volatile Anima Infection
     SetDefaultOnTheFly(343881) -- Serrated Tear
-    -- Sire Denathrius
+-- Sire Denathrius
     SetDefaultOnTheFly(326851) -- Blood Price
     SetDefaultOnTheFly(327796) -- Night Hunter
     SetDefaultOnTheFly(327992) -- Desolation

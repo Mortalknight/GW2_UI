@@ -26,6 +26,7 @@ end
 GW.AddForProfiling("party", "setPortraitBackground", setPortraitBackground)
 
 local function updateAwayData(self)
+    if not self.classicon then return end
     local playerInstanceId = select(4, UnitPosition("player"))
     local instanceId = select(4, UnitPosition(self.unit))
     local readyCheckStatus = GetReadyCheckStatus(self.unit)
@@ -158,15 +159,17 @@ end
 GW.AddForProfiling("party", "getUnitDebuffs", getUnitDebuffs)
 
 local function updatePartyDebuffs(self, x, y)
-    if x ~= 0 then
+    if x ~= 0 and not self.isPet then
         y = y + 1
     end
-    x = 0
+    x = self.isPet and x or 0
     local unit = self.unit
     local debuffList = getUnitDebuffs(unit)
 
     for i, debuffFrame in pairs(self.debuffFrames) do
         if debuffList[i] then
+            local margin = -debuffFrame:GetWidth() + -2
+            local marginy = debuffFrame:GetWidth() + 1
             debuffFrame.icon:SetTexture(debuffList[i].icon)
             debuffFrame.icon:SetParent(debuffFrame)
 
@@ -182,7 +185,7 @@ local function updatePartyDebuffs(self, x, y)
             debuffFrame.debuffIcon.stacks:SetText((debuffList[i].count or 1) > 1 and debuffList[i].count or "")
             debuffFrame.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, (debuffList[i].count or 1) > 9 and 11 or 14, "OUTLINE")
             debuffFrame:ClearAllPoints()
-            debuffFrame:SetPoint("BOTTOMRIGHT", (26 * x), 26 * y)
+            debuffFrame:SetPoint("BOTTOMRIGHT", (self.isPet and (-margin * x) or (26 * x)), (self.isPet and (marginy * y) or (26 * y)))
 
             debuffFrame:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
@@ -195,7 +198,7 @@ local function updatePartyDebuffs(self, x, y)
             debuffFrame:Show()
 
             x = x + 1
-            if x > 8 then
+            if (x > 8 and not self.isPet) or (x > 13 and self.isPet) then
                 y = y + 1
                 x = 0
             end
@@ -251,7 +254,7 @@ local function updatePartyAuras(self)
     for i, buffFrame in pairs(self.buffFrames) do
         if buffList[i] then
             local margin = -buffFrame:GetWidth() + -2
-            local marginy = buffFrame:GetWidth() + 5
+            local marginy = self.isPet and buffFrame:GetWidth() + 1 or buffFrame:GetWidth() + 5
             buffFrame.buffIcon:SetTexture(buffList[i].icon)
             buffFrame.buffIcon:SetParent(buffFrame)
 
@@ -274,7 +277,7 @@ local function updatePartyAuras(self)
             buffFrame:Show()
 
             x = x + 1
-            if x > 8 then
+            if (x > 8 and not self.isPet) or (x > 13 and self.isPet) then
                 y = y + 1
                 x = 0
             end
@@ -407,9 +410,13 @@ local function updatePartyData(self)
     updateAwayData(self)
     updateUnitPortrait(self)
 
-    self.level:SetText(UnitLevel(self.unit))
+    if self.level then
+        self.level:SetText(UnitLevel(self.unit))
+    end
 
-    SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
+    if self.classicon then
+        SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
+    end
 
     updatePartyAuras(self)
 end
@@ -483,9 +490,97 @@ local function TogglePartyRaid(b)
 end
 GW.TogglePartyRaid = TogglePartyRaid
 
-local function createPartyFrame(i)
+local function CreatePartyPetFrame(frame, i)
+    local unit = frame.unit == "player" and "pet" or "partypet" .. i
+    local f = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, "GwPartyPetFrame")
+
+    f:SetAttribute("*type1", "target")
+    f:SetAttribute("*type2", "togglemenu")
+    f:SetAttribute("unit", unit)
+    f:EnableMouse(true)
+    f:RegisterForClicks("AnyDown")
+    f.unit = unit
+    f.isPet = true
+
+    if GetSetting("PARTY_SHOW_PETS") then
+        RegisterStateDriver(f, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(unit))
+    else
+        RegisterStateDriver(f, "visibility", ("hide"):format(unit))
+    end
+
+    f.healthbar = f.predictionbar.healthbar
+    f.healthstring = f.healthbar.healthstring
+
+    f:ClearAllPoints()
+    f:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 15, -17)
+
+    f:SetScript("OnLeave", GameTooltip_Hide)
+    f:SetScript("OnEnter", function()
+        GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+        GameTooltip:SetUnit(unit)
+        GameTooltip:Show()
+    end)
+
+    AddToClique(f)
+
+    f.healthbar.spark:SetVertexColor(COLOR_FRIENDLY[1].r, COLOR_FRIENDLY[1].g, COLOR_FRIENDLY[1].b)
+
+    f.healthbar.animationName = unit .. "animation"
+    f.healthbar.animationValue = 0
+
+    f:SetScript("OnEvent", party_OnEvent)
+
+    f:RegisterEvent("GROUP_ROSTER_UPDATE")
+    f:RegisterEvent("PARTY_MEMBER_DISABLE")
+    f:RegisterEvent("PARTY_MEMBER_ENABLE")
+    f:RegisterEvent("PORTRAITS_UPDATED")
+    f:RegisterEvent("PLAYER_TARGET_CHANGED")
+
+    f:RegisterUnitEvent("UNIT_PET", frame.unit)
+    f:RegisterUnitEvent("UNIT_AURA", unit)
+    f:RegisterUnitEvent("UNIT_LEVEL", unit)
+    f:RegisterUnitEvent("UNIT_PHASE", unit)
+    f:RegisterUnitEvent("UNIT_HEALTH", unit)
+    f:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
+    f:RegisterUnitEvent("UNIT_POWER_UPDATE", unit)
+    f:RegisterUnitEvent("UNIT_MAXPOWER", unit)
+    f:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)
+    f:RegisterUnitEvent("UNIT_HEAL_PREDICTION", unit)
+
+    -- create de/buff frames
+    f.buffFrames = {}
+    f.debuffFrames = {}
+    for k = 1, 40 do
+        local debuffFrame = CreateFrame("Frame", nil, f.auras,  "GwDeBuffIcon")
+        debuffFrame:SetParent(f.auras)
+        debuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
+        debuffFrame.cooldown:SetDrawEdge(0)
+        debuffFrame.cooldown:SetDrawSwipe(1)
+        debuffFrame.cooldown:SetReverse(1)
+        debuffFrame.cooldown:SetHideCountdownNumbers(true)
+        debuffFrame:SetSize(10, 10)
+
+        f.debuffFrames[k] = debuffFrame
+
+        local buffFrame = CreateFrame("Button", nil, f.auras, "GwBuffIconBig")
+        buffFrame.buffDuration:SetFont(UNIT_NAME_FONT, 11)
+        buffFrame.buffDuration:SetTextColor(1, 1, 1)
+        buffFrame.buffStacks:SetFont(UNIT_NAME_FONT, 6, "OUTLINED")
+        buffFrame.buffStacks:SetTextColor(1, 1, 1)
+        buffFrame:SetParent(f.auras)
+        buffFrame:SetSize(10, 10)
+
+        f.buffFrames[k] = buffFrame
+    end
+
+    party_OnEvent(f, "load")
+
+    updatePartyData(f)
+end
+
+local function createPartyFrame(i, isFirstFrame)
     local registerUnit
-    if i > 0 then 
+    if i > 0 then
         registerUnit = "party" .. i
     else
         registerUnit = "player"
@@ -504,22 +599,25 @@ local function createPartyFrame(i)
 
     frame:SetScript("OnEvent", party_OnEvent)
 
-    frame:SetPoint("TOPLEFT", 20, -104 + (-85 * (i + multiplier)) + 85)
-
     frame.unit = registerUnit
     frame.guid = UnitGUID(frame.unit)
     frame.ready = -1
     frame.nameNotLoaded = false
 
+    frame:ClearAllPoints()
+    if isFirstFrame then
+        frame:SetPoint("TOPLEFT", 20, -104 + (-85 * (i + multiplier)) + 85)
+    else
+        frame:SetPoint("BOTTOMLEFT", _G["GwPartyPetFrame" .. (i - 1)], "BOTTOMLEFT", -15, -90)
+    end
+
+    CreatePartyPetFrame(frame, i)
+
     frame:SetAttribute("unit", registerUnit)
     frame:SetAttribute("*type1", "target")
     frame:SetAttribute("*type2", "togglemenu")
 
-    if i > 0 then
-        RegisterStateDriver(frame, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(registerUnit))
-    else
-        RegisterStateDriver(frame, "visibility", "[group:raid] hide; [group:party] show; hide")
-    end
+    RegisterStateDriver(frame, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(registerUnit))
 
     frame:EnableMouse(true)
     frame:RegisterForClicks("AnyUp")
@@ -624,13 +722,16 @@ local function LoadPartyFrames()
     if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
         return
     end
+    local isFirstFrame = GetSetting("PARTY_PLAYER_FRAME")
 
     if GetSetting("PARTY_PLAYER_FRAME") then
-        createPartyFrame(0)
+        createPartyFrame(0, isFirstFrame)
     end
 
+    isFirstFrame = not GetSetting("PARTY_PLAYER_FRAME")
     for i = 1, MAX_PARTY_MEMBERS do
-        createPartyFrame(i)
+        createPartyFrame(i, isFirstFrame)
+        isFirstFrame = false
     end
 end
 GW.LoadPartyFrames = LoadPartyFrames

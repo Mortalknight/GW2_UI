@@ -2,6 +2,9 @@
 NEW
     - Added social module
     - Added option to show a additional ressourcebar with player as target frame
+    - Added option to show party Partyframes
+    - Added option to show pets portrait damage
+    - Added option to show pet auras below the frame
 
 FIXES
     - Redo raid frame aura icon tooltip: New option to set when the aura get a tooltip on mouse over or is click through (no tooltip = click through)

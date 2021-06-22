@@ -344,3 +344,4 @@ L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = "
 L["You have overridden this behavior."] = "Has sobrescrito este parámetro."
 L["Out of combat"] = true
 L["Show an additional ressoucebar"] = true
+L["Show auras below"] = true

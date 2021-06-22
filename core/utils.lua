@@ -3,6 +3,8 @@ local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
 
 local afterCombatQueue = {}
 local maxUpdatesPerCircle = 5
+local EMPTY = {}
+local NIL = {}
 
 local function CombatQueue_Initialize()
     C_Timer.NewTicker(0.1, function()
@@ -649,3 +651,99 @@ local function ColorGradient(perc, ...)
     return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
 end
 GW.ColorGradient = ColorGradient
+
+local Fn = function (...) return not GW.Matches(...) end
+
+local function Tmp(...)
+    local t = {}
+    for i=1, select("#", ...) do
+        local v = select(i, ...)
+        t[i] = v == nil and NIL or v
+    end
+    return setmetatable(t, EMPTY)
+end
+
+local function Each(...)
+    if ... and type(...) == "table" then
+        return next, ...
+    elseif select("#", ...) == 0 then
+        return GW.NoOp
+    else
+        return Fn, Tmp(...)
+    end
+end
+
+local function Contains(t, u, deep)
+    if t == u then
+        return true
+    elseif (t == nil) ~= (u == nil) then
+        return false
+    end
+
+    for i,v in pairs(u) do
+        if deep and type(t[i]) == "table" and type(v) == "table" then
+            if not Contains(t[i], v, true) then
+                return false
+            end
+        elseif t[i] ~= v then
+            return false
+        end
+    end
+    return true
+end
+
+local function IEach(...)
+    if ... and type(...) == "table" then
+        return Fn, ...
+    else
+        return Each(...)
+    end
+end
+
+local function Get(t, ...)
+    local n, path = select("#", ...), ...
+
+    if n == 1 and type(path) == "string" and path:find("%.") then
+        path = Tmp(("."):split((...)))
+    elseif type(path) ~= "table" then
+        path = Tmp(...)
+    end
+
+    for _, k in IEach(path) do
+        if k == nil then
+            break
+        elseif t ~= nil then
+            t = t[k]
+        end
+    end
+
+    return t
+end
+
+local function Matches(t, ...)
+    if type(...) == "table" then
+        return Contains(t, ...)
+    else
+        for i=1, select("#", ...), 2 do
+            local key, val = select(i, ...)
+            local v = Get(t, key)
+            if v == nil or val ~= nil and v ~= val then
+                return false
+            end
+        end
+
+        return true
+    end
+end
+GW.Matches = Matches
+
+local function Join(del, ...)
+    local s = ""
+    for _, v in Each(...) do
+        if not not (type(v) == "string" and v:trim() ~= "") then
+            s = s .. (s == "" and "" or del or " ") .. v
+        end
+    end
+    return s
+end
+GW.Join = Join

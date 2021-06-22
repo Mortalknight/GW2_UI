@@ -4,19 +4,93 @@ local Debug = GW.Debug
 -- Thanks at Shrugal for the ErrorHandler
 
 local ErrorHandler = CreateFrame("Frame")
+GW.ErrorHandler = ErrorHandler
 -- Max # of logged addon error messages
 ErrorHandler.LOG_MAX_ERRORS = 10
 -- Max # of handled errors per second
 ErrorHandler.LOG_MAX_ERROR_RATE = 10
+ErrorHandler.LOG_MAX_ENTRIES = 500
 
 ErrorHandler.errors = 0
 ErrorHandler.errorPrev = 0
 ErrorHandler.errorRate = 0
+ErrorHandler.log = {}
+
+local function CreateErrorLogWindow()
+    if GW2_ERRORLOG then return GW2_ERRORLOG end
+
+    local frame = CreateFrame("Frame", "GW2_ERRORLOG", UIParent)
+
+    frame:SetSize(700, 600)
+    frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    frame:Hide()
+    frame:SetFrameStrata("DIALOG")
+
+    tinsert(UISpecialFrames, "GW2_ERRORLOG")
+
+    frame.bg = frame:CreateTexture(nil, "ARTWORK")
+    frame.bg:SetAllPoints()
+    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/welcome-bg")
+
+    frame.header = frame:CreateFontString(nil, "OVERLAY")
+    frame.header:SetFont(DAMAGE_TEXT_FONT, 30, "OUTLINE")
+    frame.header:SetTextColor(1, 0.95, 0.8, 1)
+    frame.header:SetPoint("TOP", 0, -20)
+    frame.header:SetText("GW2 Error Log")
+
+    frame.result = frame:CreateFontString(nil, "OVERLAY")
+    frame.result:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
+    frame.result:SetTextColor(0.9, 0.85, 0.7, 1)
+    frame.result:SetPoint("TOP", frame.subheader, "BOTTOM", 0, -40)
+
+    frame.scrollArea = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
+    frame.scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", 15, -170)
+    frame.scrollArea:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 40)
+    frame.scrollArea.ScrollBar:SkinScrollBar()
+    frame.scrollArea:SetScript("OnSizeChanged", function(scroll)
+        frame.editBox:SetWidth(scroll:GetWidth())
+        frame.editBox:SetHeight(scroll:GetHeight())
+    end)
+    frame.scrollArea:HookScript("OnVerticalScroll", function(scroll, offset)
+        frame.editBox:SetHitRectInsets(0, 0, offset, (frame.editBox:GetHeight() - offset - scroll:GetHeight()))
+    end)
+    frame.scrollArea.bg = frame.scrollArea:CreateTexture(nil, "ARTWORK")
+    frame.scrollArea.bg:SetAllPoints()
+    frame.scrollArea.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chatframebackground")
+
+    frame.editBox = CreateFrame("EditBox", nil, frame)
+    frame.editBox:SetMultiLine(true)
+    frame.editBox:EnableMouse(true)
+    frame.editBox:SetAutoFocus(false)
+    frame.editBox:SetFontObject(ChatFontNormal)
+    frame.editBox:SetWidth(frame.scrollArea:GetWidth())
+    frame.editBox:SetHeight(500)
+
+    frame.editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
+    frame.scrollArea:SetScrollChild(frame.editBox)
+    frame.editBox:SetScript("OnTextChanged", function(_, userInput)
+        if userInput then return end
+        local _, max = frame.scrollArea.ScrollBar:GetMinMaxValues()
+        for _ = 1, max do
+            ScrollFrameTemplate_OnMouseWheel(frame.scrollArea, -1)
+        end
+    end)
+
+    frame.close = CreateFrame("Button", nil, frame, "GwStandardButton")
+    frame.close:SetPoint("BOTTOMRIGHT")
+    frame.close:SetFrameLevel(frame.close:GetFrameLevel() + 1)
+    frame.close:EnableMouse(true)
+    frame.close:SetSize(128, 28)
+    frame.close:SetText(CLOSE)
+    frame.close:SetScript("OnClick", function() frame:Hide() end)
+
+    return frame
+end
+GW.CreateErrorLogWindow = CreateErrorLogWindow
 
 local function StartsWith(str, str2)
     return type(str) == "string" and str:sub(1, str2:len()) == str2
 end
-
 
 -- Check if we should handle errors
 local function ShouldHandleError()
@@ -49,9 +123,13 @@ local function HandleError(msg, stack)
                     ErrorHandler.errors = ErrorHandler.errors + 1
 
                     Debug("ERROR", msg .. "\n" .. stack)
+                    tinsert(ErrorHandler.log, ("[%.1f] |cffff0000[ERROR]|r: %s"):format(GetTime(), (msg .. "\n" .. stack) or "-"))
+                    while #ErrorHandler.log > ErrorHandler.LOG_MAX_ENTRIES do
+                        Util.Tbl.Shift(ErrorHandler.log)
+                    end
 
                     if ErrorHandler.errors == 1 then
-                        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000[ERROR]|r " .. msg .. "\n\nPlease create a new ticket on Curse, Discord or GitHub, copy & paste the log in there and add any additional info you might have. Thank you! =)"):gsub("*", GW.Gw2Color))
+                        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000[ERROR]|r " .. msg .. "\n\nPlease type in |cffbbbbbb/gw2 error|r, create a new ticket on Curse or GitHub, copy & paste the log in there and add any additional info you might have. Thank you! =)"):gsub("*", GW.Gw2Color))
                     end
 
                     break
@@ -65,7 +143,7 @@ end
 local function RegisterErrorHandler()
     if BugGrabber and BugGrabber.RegisterCallback then
         BugGrabber.RegisterCallback(ErrorHandler, "BugGrabber_BugGrabbed", function (_, err)
-            HandleError(err.message, err.stack, err.locals ~= "InCombatSkipped" and err.locals or "")
+            HandleError(err.message, err.stack)
         end)
     else
         local origHandler = geterrorhandler()
@@ -75,9 +153,8 @@ local function RegisterErrorHandler()
 
             if ShouldHandleError() then
                 local stack = debugstack(2 + lvl)
-                local locals = not (InCombatLockdown() or UnitAffectingCombat("player")) and debuglocals(2 + lvl) or ""
 
-                HandleError(msg, stack, locals)
+                HandleError(msg, stack)
             end
 
             return r

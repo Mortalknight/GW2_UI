@@ -342,5 +342,6 @@ L["Set the growth direction of the stance bar"] = "Установить напр
 L["Ctrl + Click to toggle override"] = "Нажмите Ctrl + левую кнопку мыши для переопределения"
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = "Поведение несовместимых аддонов переопределено. Чтобы изменения вступили в силу, необходима перезагрузка."
 L["You have overridden this behavior."] = "Эта настройка переопределена вами"
-L["Out of combat"] = true
+L["Out of combat"] = "Вне боя"
 L["Show an additional ressoucebar"] = true
+L["Show auras below"] = true
