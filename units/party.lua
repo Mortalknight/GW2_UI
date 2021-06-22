@@ -720,11 +720,12 @@ local function LoadPartyFrames()
 
     if GetSetting("PARTY_PLAYER_FRAME") then
         createPartyFrame(0, isFirstFrame)
-        isFirstFrame = false
     end
 
+    isFirstFrame = not GetSetting("PARTY_PLAYER_FRAME")
     for i = 1, MAX_PARTY_MEMBERS do
         createPartyFrame(i, isFirstFrame)
+        isFirstFrame = false
     end
 end
 GW.LoadPartyFrames = LoadPartyFrames
