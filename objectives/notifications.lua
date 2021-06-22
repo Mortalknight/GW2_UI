@@ -23,27 +23,18 @@ local function _GetDistance(x1, y1, x2, y2)
     return math.sqrt( (x2-x1)^2 + (y2-y1)^2 );
 end
 
-local function _GetDistanceToClosestObjective(questId)
-    -- main function for proximity sorting
+local function _GetDistanceToClosestObjective(spawn, zone, name)
+    -- main function for proximity
     if not GW.locationData.mapPosition or not GW.locationData.mapPosition.x or not GW.locationData.mapID then
         return nil
     end
     local _, player = C_Map.GetWorldPosFromMapPos(GW.locationData.mapID, GW.locationData.mapPosition)
 
-    if (not player) then
+    if not player then
         return nil
     end
 
-    local coordinates = {};
-    local quest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(questId)
-
-    if (not quest) then
-        return nil
-    end
-
-    local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(quest)
-
-    if (not spawn) or (not zone) or (not name) then
+    if not spawn or not zone or not name then
         return nil
     end
 
@@ -54,26 +45,27 @@ local function _GetDistanceToClosestObjective(questId)
     local _, worldPosition = C_Map.GetWorldPosFromMapPos(uiMapId, {
         x = spawn[1] / 100,
         y = spawn[2] / 100
-    });
+    })
 
+    local coordinates = {}
     tinsert(coordinates, {
         x = worldPosition.x,
         y = worldPosition.y
-    });
+    })
 
     if (not coordinates) then
         return nil
     end
 
-    local closestDistance;
+    local closestDistance
     for _, _ in pairs(coordinates) do
-        local distance = _GetDistance(player.x, player.y, worldPosition.x, worldPosition.y);
+        local distance = _GetDistance(player.x, player.y, worldPosition.x, worldPosition.y)
         if closestDistance == nil or distance < closestDistance then
             closestDistance = distance;
         end
     end
 
-    return closestDistance;
+    return closestDistance
 end
 
 local function prioritys(a, b)
@@ -136,16 +128,18 @@ local function getNearestQuestPOI()
     if Questie and Questie.started then
         for _, quest in pairs(GW.trackedQuests) do
             if quest.questId then
-                local questQ = QuestieLoader:ImportModule("QuestieDB"):GetQuest(quest.questId)
-                local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(questQ)
+                local questQuestie = QuestieLoader:ImportModule("QuestieDB"):GetQuest(quest.questId)
+                if questQuestie then
+                    local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(questQuestie)
 
-                if spawn and zone and name then
-                    if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
-                        local distance = _GetDistanceToClosestObjective(quest.questId)
-                        if distance < minDist then
-                            minDist = distance
-                            closestQuestID = quest.questId
-                            spawnInfo = spawn
+                    if spawn and zone and name then
+                        if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
+                            local distance = _GetDistanceToClosestObjective(spawn, zone, name)
+                            if distance < minDist then
+                                minDist = distance
+                                closestQuestID = quest.questId
+                                spawnInfo = spawn
+                            end
                         end
                     end
                 end
@@ -153,20 +147,18 @@ local function getNearestQuestPOI()
         end
     end
 
-    if closestQuestID then
-        if spawnInfo[1] then
-            questCompass.DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID))
-            questCompass.TITLE = GetQuestLogTitle(GetQuestLogIndexByID(closestQuestID))
-            questCompass.ID = closestQuestID
-            questCompass.X = spawnInfo[1] / 100
-            questCompass.Y = spawnInfo[2] / 100
-            questCompass.TYPE = "QUEST"
-            questCompass.COLOR = TRACKER_TYPE_COLOR.QUEST
-            questCompass.COMPASS = true
-            questCompass.ID = closestQuestID
+    if closestQuestID and spawnInfo and spawnInfo[1] then
+        questCompass.DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID))
+        questCompass.TITLE = GetQuestLogTitle(GetQuestLogIndexByID(closestQuestID))
+        questCompass.ID = closestQuestID
+        questCompass.X = spawnInfo[1] / 100
+        questCompass.Y = spawnInfo[2] / 100
+        questCompass.TYPE = "QUEST"
+        questCompass.COLOR = TRACKER_TYPE_COLOR.QUEST
+        questCompass.COMPASS = true
+        questCompass.ID = closestQuestID
 
-            return questCompass
-        end
+        return questCompass
     end
 
     return nil
