@@ -365,5 +365,5 @@ L["Ctrl + Click to toggle override"] = "Нажмите Ctrl + левую кно�
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = "Поведение несовместимых аддонов переопределено. Чтобы изменения вступили в силу, необходима перезагрузка."
 L["You have overridden this behavior."] = "Эта настройка переопределена вами"
 L["Out of combat"] = "Вне боя"
-L["Show an additional ressoucebar"] = true
+L["Show an additional resource bar"] = true
 L["Show auras below"] = true

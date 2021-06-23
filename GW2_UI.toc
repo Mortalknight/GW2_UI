@@ -79,17 +79,6 @@ core/auras.lua
 changelog.lua
 GW2_ui.lua
 
-character/data/ClassLoader.lua
-character/data/Druid.lua
-character/data/Hunter.lua
-character/data/Mage.lua
-character/data/Paladin.lua
-character/data/Priest.lua
-character/data/Rogue.lua
-character/data/Shaman.lua
-character/data/Warlock.lua
-character/data/Warrior.lua
-
 units/raidControl.xml
 units/aurabar.xml
 units/aurabar.lua
@@ -144,6 +133,7 @@ inventory/bank.lua
 inventory/lootframe.xml
 inventory/lootframe.lua
 
+character/skills.lua
 character/title.xml
 character/reputation.xml
 character/reputation_table.lua

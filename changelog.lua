@@ -3,7 +3,8 @@ local v = GW.vernotes
 
 v("1.13.0 TBC", [=[
 NEW
-    - Added option to show party pets 
+    - Added option to show party pets
+    - Added unknown spells tab
 
 ADDED
     - Error handler

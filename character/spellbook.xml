@@ -122,9 +122,9 @@
         <Scripts>
             <OnMouseWheel>
                 if InCombatLockdown() then return end
-                delta = -delta * 15
+                delta = -delta * 60
                 local min, max = self.slider:GetMinMaxValues()
-                local s = math.min(max,math.max(self:GetVerticalScroll()+delta,min))
+                local s = math.min(max, math.max(self:GetVerticalScroll() + delta, min))
                 self.slider:SetValue(s)
                 self:SetVerticalScroll(s)
             </OnMouseWheel>

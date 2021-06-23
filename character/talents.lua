@@ -3,23 +3,45 @@ local _, GW = ...
 local MAX_NUM_TALENT_TIERS = 9
 local TALENT_BRANCH_ARRAY = {}
 
-local function hookTalentButton(self, container, row, index)
+local function talentBunnton_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
+    GameTooltip:ClearLines()
+
+    GameTooltip:SetTalent(self.talentFrameId, self.talentid)
+    self.UpdateTooltip = talentBunnton_OnEnter
+end
+
+local function hookTalentButton(talentButton, container, row, index)
     local w = container:GetWidth()
     local h = container:GetHeight()
     local x = (w / NUM_TALENT_COLUMNS) * (index - 1)
     local y = (h / MAX_NUM_TALENT_TIERS) * (row - 1)
 
-    self:RegisterForClicks("AnyUp")
-    self:SetPoint('TOPLEFT', container, 'TOPLEFT', x + (self:GetWidth() / 4), -(y + (self:GetHeight() / 4)))
+    talentButton:RegisterForClicks("AnyUp")
+    talentButton:SetPoint('TOPLEFT', container, 'TOPLEFT', x + (talentButton:GetWidth() / 4), -(y + (talentButton:GetHeight() / 4)))
+
+    talentButton:SetScript("OnEnter", talentBunnton_OnEnter)
+    talentButton:SetScript("OnLeave", GameTooltip_Hide)
+    talentButton:SetScript("OnClick", function(self)
+        LearnTalent(self.talentFrameId, self.talentid)
+    end)
+    talentButton:SetScript("OnEvent", function(self)
+        if GameTooltip:IsOwned(self) then
+            GameTooltip:SetTalent(self.talentFrameId, self.talentid)
+        end
+    end)
+    talentButton:RegisterEvent("CHARACTER_POINTS_CHANGED")
+    --talentButton:RegisterEvent("")
+    --talentButton:RegisterEvent("")
 
     local mask = UIParent:CreateMaskTexture()
 
-    mask:SetPoint("CENTER", self, 'CENTER', 0, 0)
+    mask:SetPoint("CENTER", talentButton, 'CENTER', 0, 0)
     mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    mask:SetSize(self:GetSize())
-    self.mask = mask
-    self.points:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
-    self.points:SetTextColor(1, 1, 1, 1)
+    mask:SetSize(talentButton:GetSize())
+    talentButton.mask = mask
+    talentButton.points:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
+    talentButton.points:SetTextColor(1, 1, 1, 1)
 end
 
 local function getArrow(frame, teir, column, i)
@@ -292,10 +314,12 @@ local function loadTalentsFrames()
 end
 
 local function LoadTalents()
+    TalentFrame_LoadUI()
+
     CreateFrame('Frame','GwTalentFrame', GwCharacterWindow,'GwLegacyTalentFrame')
 
     loadTalentsFrames()
-    GwTalentFrame:SetScript('OnEvent', function(self, event)
+    GwTalentFrame:SetScript('OnEvent', function(_, event)
         if event == "CHARACTER_POINTS_CHANGED" then
             GwTalentFrame.bottomBar.unspentPoints:SetText(UnitCharacterPoints("player"))
         end

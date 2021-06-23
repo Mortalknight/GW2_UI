@@ -1,6 +1,7 @@
 1.13.0
 NEW
     - Added option to show party pets 
+    - Added unknown spells tab
 
 ADDED
     - Error handler

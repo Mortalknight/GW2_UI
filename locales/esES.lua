@@ -365,5 +365,5 @@ L["Ctrl + Click to toggle override"] = "Ctrl + Click para sobrescribir"
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = "Parámetro de Addons incompatibles sobrescritos. Necesita recargar para que surta efecto."
 L["You have overridden this behavior."] = "Has sobrescrito este parámetro."
 L["Out of combat"] = true
-L["Show an additional ressoucebar"] = true
+L["Show an additional resource bar"] = true
 L["Show auras below"] = true
