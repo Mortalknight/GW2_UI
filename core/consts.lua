@@ -213,6 +213,7 @@ local AURAS_INDICATORS = {
         [10958]   = {0.7, 0.7, 0.7}, -- Shadow Protection(Rank 3)
         [25433]   = {0.7, 0.7, 0.7}, -- Shadow Protection(Rank 4)
         [27683]   = {0.7, 0.7, 0.7}, -- Prayer of Shadow Protection(Rank 1)
+        [39374]   = {0.7, 0.7, 0.7}, -- Prayer of Shadow Protection(Rank 2)
         [17]      = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 1)
         [592]     = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 2)
         [600]     = {0.00, 0.00, 1.00}, -- Power Word: Shield(Rank 3)
