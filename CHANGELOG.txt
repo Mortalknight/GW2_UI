@@ -1,3 +1,11 @@
+1.13.1
+FIXES
+    - If incompatible addons are loaded that is now mentioned at the gw2 settings
+
+MISC
+    - The setting "Dungeon & Raid Debuffs" has now tooltips
+    - Added and exeption for incompatible bag addons
+
 1.13.0
 NEW
     - Added option to show party pets 

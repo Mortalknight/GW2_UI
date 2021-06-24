@@ -46,7 +46,7 @@ local fnF_OnLeave = function(self)
 end
 AddForProfiling("settings", "fnF_OnLeave", fnF_OnLeave)
 
-local fnF_OnClick = function(self, button)
+local fnF_OnClick = function(self)
     switchCat(self.cat_id)
 end
 AddForProfiling("settings", "fnF_OnClick", fnF_OnClick)
@@ -79,7 +79,7 @@ local function CreateCat(name, desc, panel, icon, bg, scrollFrames)
 end
 GW.CreateCat = CreateCat
 
-local function AddOption(panel, name, desc, optionName, callback, params, dependence)
+local function AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
     if not panel then
         return
     end
@@ -94,6 +94,9 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
     opt["optionType"] = "boolean"
     opt["callback"] = callback
     opt["dependence"] = dependence
+    opt["incompatibleAddonsType"] = incompatibleAddons
+    opt["isIncompatibleAddonLoaded"] = false
+    opt["isIncompatibleAddonLoadedButOverride"] = false
 
     if params then
         for k,v in pairs(params) do opt[k] = v end
@@ -121,7 +124,7 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
 end
 GW.AddOption = AddOption
 
-local function AddOptionButton(panel, name, desc, optionName, callback, params, dependence)
+local function AddOptionButton(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
     if not panel then
         return
     end
@@ -136,6 +139,9 @@ local function AddOptionButton(panel, name, desc, optionName, callback, params, 
     opt["optionType"] = "button"
     opt["callback"] = callback
     opt["dependence"] = dependence
+    opt["incompatibleAddonsType"] = incompatibleAddons
+    opt["isIncompatibleAddonLoaded"] = false
+    opt["isIncompatibleAddonLoadedButOverride"] = false
 
     if params then
         for k, v in pairs(params) do opt[k] = v end
@@ -184,7 +190,7 @@ local function AddOptionText(panel, name, desc, optionName, callback, multiline,
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, tooltipType)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence)
 
     opt["options"] = {}
@@ -192,6 +198,7 @@ local function AddOptionDropdown(panel, name, desc, optionName, callback, option
     opt["options_names"] = option_names
     opt["hasCheckbox"] = checkbox
     opt["optionType"] = "dropdown"
+    opt["tooltipType"] = tooltipType
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
@@ -342,7 +349,7 @@ local function loadDropDown(scrollFrame)
                 slot:Show()
             else
                 slot:Hide()
-            end    
+            end
         end
     end
 
@@ -471,6 +478,16 @@ local function InitPanel(panel, hasScroll)
                         --Check all dependencies on this option
                         checkDependenciesOnLoad()
                     end)
+                    if v.tooltipType then
+                        if v.tooltipType == "spell" then
+                            slot:HookScript("OnEnter", function(self)
+                                -- show the spell tooltip
+                                GameTooltip_SetDefaultAnchor(GameTooltip, self)
+                                GameTooltip:SetSpellByID(self.option)
+                                GameTooltip:Show()
+                            end)
+                        end
+                    end
                     slot.ScriptsHooked = true
                 end
             end

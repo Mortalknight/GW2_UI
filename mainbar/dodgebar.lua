@@ -230,7 +230,7 @@ GW.AddForProfiling("dodgebar", "dodge_OnEvent", dodge_OnEvent)
 local function dodge_OnEnter(self)
     -- change the masks/art to the hover version
     local af = self.arcfill
-    for i, v in ipairs(af.masked) do
+    for _, v in ipairs(af.masked) do
         v:AddMaskTexture(af.mask_hover)
         v:RemoveMaskTexture(af.mask_normal)
     end

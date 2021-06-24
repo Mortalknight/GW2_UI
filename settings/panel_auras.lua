@@ -4,11 +4,9 @@ local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionText = GW.AddOptionText
 local createCat = GW.CreateCat
-local StrUpper = GW.StrUpper
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local InitPanel = GW.InitPanel
-local AddForProfiling = GW.AddForProfiling
 
 local function LoadAurasPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
@@ -68,7 +66,8 @@ local function LoadAurasPanel(sWindow)
         raidDebuffVales,
         nil,
         nil,
-        true
+        true,
+        "spell"
     )
 
     addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", nil, nil, nil, {["RAID_FRAMES"] = true})

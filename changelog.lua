@@ -1,6 +1,15 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.13.1 TBC", [=[
+FIXES
+    - If incompatible addons are loaded that is now mentioned at the gw2 settings
+
+MISC
+    - The setting "Dungeon & Raid Debuffs" has now tooltips
+    - Added and exeption for incompatible bag addons
+]=])
+
 v("1.13.0 TBC", [=[
 NEW
     - Added option to show party pets
