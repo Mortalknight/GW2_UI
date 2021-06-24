@@ -481,7 +481,7 @@ local function filterUnknownSpell(spellData, level)
             if isTalent then
                 show = learned
             end
-            show = not isAnyDependencieKnown(spellData, level) and not isTalent
+            show = not isAnyDependencieKnown(spellData, level) and (not isTalent or learned)
         end
     elseif isHigherKnownAndThisNot then
         show = false
