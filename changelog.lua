@@ -1,6 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.13.2 TBC", [=[
+FIXES
+    - Fix and issues with unknown spells
+
+MISC
+    - You can now link talents into the chat
+]=])
+
 v("1.13.1 TBC", [=[
 FIXES
     - If incompatible addons are loaded that is now mentioned at the gw2 settings

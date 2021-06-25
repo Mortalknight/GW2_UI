@@ -1,3 +1,10 @@
+1.13.2
+FIXES
+    - Fix and issues with unknown spells
+
+MISC
+    - You can now link talents into the chat
+
 1.13.1
 FIXES
     - If incompatible addons are loaded that is now mentioned at the gw2 settings

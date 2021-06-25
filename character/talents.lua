@@ -22,8 +22,17 @@ local function hookTalentButton(talentButton, container, row, index)
 
     talentButton:SetScript("OnEnter", talentBunnton_OnEnter)
     talentButton:SetScript("OnLeave", GameTooltip_Hide)
-    talentButton:SetScript("OnClick", function(self)
-        LearnTalent(self.talentFrameId, self.talentid)
+    talentButton:SetScript("OnClick", function(self, button)
+        if button == "LeftButton" then
+            if IsModifiedClick("CHATLINK") then
+                local link = GetTalentLink(self.talentFrameId, self.talentid)
+                if link then
+                    ChatEdit_InsertLink(link)
+                end
+            else
+                LearnTalent(self.talentFrameId, self.talentid)
+            end
+        end
     end)
     talentButton:SetScript("OnEvent", function(self)
         if GameTooltip:IsOwned(self) then
