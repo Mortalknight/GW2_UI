@@ -1,9 +1,13 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("1.13.2 TBC", [=[
+v("1.14.0 TBC", [=[
+NEW
+    - Added preview mode for party and raidframes
+
 FIXES
     - Fix and issues with unknown spells
+    - Healtglobe now works with mouseover addons
 
 MISC
     - You can now link talents into the chat

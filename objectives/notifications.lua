@@ -130,15 +130,29 @@ local function getNearestQuestPOI()
             if quest.questId then
                 local questQuestie = QuestieLoader:ImportModule("QuestieDB"):GetQuest(quest.questId)
                 if questQuestie then
-                    local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(questQuestie)
+                    -- do this to prevent a questie error
+                    local shouldCheck = false
+                    if questQuestie.Objectives then
+                        for _, objective in pairs(questQuestie.Objectives) do
+                            if objective.spawnList and next(objective.spawnList) then
+                                shouldCheck = true
+                            else
+                                shouldCheck = false
+                                break
+                            end
+                        end
+                    end
+                    if shouldCheck then
+                        local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(questQuestie)
 
-                    if spawn and zone and name then
-                        if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
-                            local distance = _GetDistanceToClosestObjective(spawn, zone, name)
-                            if distance < minDist then
-                                minDist = distance
-                                closestQuestID = quest.questId
-                                spawnInfo = spawn
+                        if spawn and zone and name then
+                            if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
+                                local distance = _GetDistanceToClosestObjective(spawn, zone, name)
+                                if distance < minDist then
+                                    minDist = distance
+                                    closestQuestID = quest.questId
+                                    spawnInfo = spawn
+                                end
                             end
                         end
                     end

@@ -498,6 +498,10 @@ local function PaperDollSlotButton_Update(self)
         if self.repairIcon then self.repairIcon:Hide() end
     end
 
+    if self.itemlevel then
+        GW.setItemLevel(self, GetInventoryItemQuality("player", slot), GetInventoryItemLink("player", slot))
+    end
+
     if self.IconBorder then
         local quality = GetInventoryItemQuality("player", slot)
         GwSetItemButtonQuality(self, quality)
@@ -750,6 +754,8 @@ local function grabDefaultSlots(slot, anchor, parent, size)
         slot.IconBorder:SetParent(slot)
     end
 
+
+
     slot:GetNormalTexture():SetTexture(nil)
 
     GW.RegisterCooldown(_G[slot:GetName() .. "Cooldown"])
@@ -766,6 +772,12 @@ local function grabDefaultSlots(slot, anchor, parent, size)
         slot.repairIcon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
         slot.repairIcon:SetTexCoord(0, 1, 0.5, 1)
         slot.repairIcon:SetSize(20, 20)
+
+        slot.itemlevel = slot:CreateFontString(nil, "OVERLAY")
+        slot.itemlevel:SetSize(size, 10)
+        slot.itemlevel:SetPoint("BOTTOMLEFT", 1, 2)
+        slot.itemlevel:SetTextColor(1, 1, 1)
+        slot.itemlevel:SetJustifyH("LEFT")
     end
 
     slot.IsGW2Hooked = true

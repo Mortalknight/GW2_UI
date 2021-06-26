@@ -1,6 +1,10 @@
-1.13.2
+1.14.0
+NEW
+    - Added preview mode for party and raidframes
+
 FIXES
     - Fix and issues with unknown spells
+    - Healtglobe now works with mouseover addons
 
 MISC
     - You can now link talents into the chat

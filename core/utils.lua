@@ -579,6 +579,25 @@ local function GetScreenQuadrant(frame)
 end
 GW.GetScreenQuadrant = GetScreenQuadrant
 
+local function setItemLevel(button, quality, itemlink)
+    button.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
+    if quality then
+        local r, g, b = GetItemQualityColor(quality or 1)
+        if quality >= LE_ITEM_QUALITY_COMMON and GetItemQualityColor(quality) then
+            r, g, b = GetItemQualityColor(quality)
+            button.itemlevel:SetTextColor(r, g, b, 1)
+        end
+        local _, _, _, ItemLevel = GetItemInfo(itemlink)
+        button.itemlevel:SetText(ItemLevel)
+        button.itemlevel:SetTextColor(r, g, b, 1)
+    else
+        local r, g, b = GetItemQualityColor(1)
+        button.itemlevel:SetText("")
+        button.itemlevel:SetTextColor(r, g, b, 1)
+    end
+end
+GW.setItemLevel = setItemLevel
+
 local function ColorGradient(perc, ...)
     if perc >= 1 then
         return select(select("#", ...) - 2, ...)
