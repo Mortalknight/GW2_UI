@@ -928,14 +928,13 @@ GW.AddForProfiling("raidframes", "UpdateRaidFramesPosition", UpdateRaidFramesPos
 
 local function ToggleRaidFramesPreview(_, _, moveHudMode)
     previewStep = max((previewStep + 1) % (#previewSteps + 1), hudMoving and 1 or 0)
-    print(previewStep, moveHudMode)
+
     if previewStep == 0 or moveHudMode then
         for i = 1, MAX_RAID_MEMBERS do
             if _G["GwCompactraid" .. i] then
                 _G["GwCompactraid" .. i].unit = "raid" .. i
                 _G["GwCompactraid" .. i].guid = UnitGUID("raid" .. i)
                 _G["GwCompactraid" .. i]:SetAttribute("unit", "raid" .. i)
-                RegisterUnitWatch(_G["GwCompactraid" .. i])
                 raidframe_OnEvent(_G["GwCompactraid" .. i], "load")
             end
         end
@@ -946,13 +945,10 @@ local function ToggleRaidFramesPreview(_, _, moveHudMode)
                     _G["GwCompactraid" .. i].unit = "player"
                     _G["GwCompactraid" .. i].guid = UnitGUID("player")
                     _G["GwCompactraid" .. i]:SetAttribute("unit", "player")
-                    UnregisterUnitWatch(_G["GwCompactraid" .. i])
-                    RegisterStateDriver(_G["GwCompactraid" .. i], "visibility", "show")
                 else
                     _G["GwCompactraid" .. i].unit = "raid" .. i
                     _G["GwCompactraid" .. i].guid = UnitGUID("raid" .. i)
                     _G["GwCompactraid" .. i]:SetAttribute("unit", "raid" .. i)
-                    RegisterUnitWatch(_G["GwCompactraid" .. i])
                 end
                 raidframe_OnEvent(_G["GwCompactraid" .. i], "load")
             end
