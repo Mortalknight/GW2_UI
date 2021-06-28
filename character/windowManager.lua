@@ -383,7 +383,6 @@ local function mover_SavePosition(self, x, y)
     end
 end
 
- -- TODO: this doesn't work if bindings are updated in combat, but who does that?!
 local function click_OnEvent(self, event)
     if event ~= "UPDATE_BINDINGS" then
         return
@@ -502,7 +501,9 @@ local function loadBaseFrame()
         GwDressingRoom.model:RefreshCamera()
     end)
     -- set binding change handlers
-    fmGCW.secure:HookScript("OnEvent", click_OnEvent)
+    fmGCW.secure:HookScript("OnEvent", function(self, event)
+        GW.CombatQueue_Queue(click_OnEvent, {self, event})
+    end)
     fmGCW.secure:RegisterEvent("UPDATE_BINDINGS")
 end
 
