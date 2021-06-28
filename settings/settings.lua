@@ -4,6 +4,7 @@ local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
 local AddForProfiling = GW.AddForProfiling
+local SetOverrideIncompatibleAddons = GW.SetOverrideIncompatibleAddons
 
 local settings_cat = {}
 local all_options = {}

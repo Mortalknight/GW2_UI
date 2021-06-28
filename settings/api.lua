@@ -71,6 +71,20 @@ local function SetSetting(name, state, tableID)
 end
 GW.SetSetting = SetSetting
 
+local function SetOverrideIncompatibleAddons(setting, value)
+    local profileIndex = GetActiveProfile()
+
+    local settings = GW2UI_SETTINGS_DB_03
+    if profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] then
+        settings = GW2UI_SETTINGS_PROFILES[profileIndex]
+        settings["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
+    end
+
+    settings.IncompatibleAddons[setting].Override = value
+    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. GW.L["Incompatible Addons behavior Overridden. Needs a reload to take effect."]):gsub("*", GW.Gw2Color))
+end
+GW.SetOverrideIncompatibleAddons = SetOverrideIncompatibleAddons
+
 local function ResetToDefault()
     local profileIndex = GetActiveProfile()
 

@@ -1,3 +1,7 @@
+1.14.1
+FIXES
+    - Fix issue with override incompatible addon function
+
 1.14.0
 NEW
     - Added preview mode for party and raidframes

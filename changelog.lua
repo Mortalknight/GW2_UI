@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.14.01TBC", [=[
+FIXES
+    - Fix issue with override incompatible addon function
+]=])
+
 v("1.14.0 TBC", [=[
 NEW
     - Added preview mode for party and raidframes
