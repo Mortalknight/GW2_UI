@@ -24,22 +24,12 @@
                 </Layers>
                 <FontString inherits="ChatFontNormal" />
             </EditBox>
-            <Frame parentKey="categories">
-                <Size x="220" y="587"></Size>
+            <ScrollFrame parentKey="categories" inherits="GwHybridScrollFrameTemplate">
+                <Size x="220" y="540"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-50"></Anchor>
                 </Anchors>
-                <Layers>
-                    <Layer level="ARTWORK">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
-                            <Size x="256" y="512"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-3" y="7"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </Frame>
+            </ScrollFrame>
         </Frames>
     </Frame>
 
@@ -68,39 +58,84 @@
         </Frames>
     </Frame>
 
-    <Button name="GwPaperDollReputationCat" inherits="GwCharacterMenuBlank" text="notyetloaded" virtual="true">
+<Button name="GwPaperDollReputationCat" virtual="true">
         <Size x="231" y="44"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="ARTWORK">
-                <Texture parentKey="statusbarbg" file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
-                    <Size x="205" y="8"></Size>
-                    <Anchors>
-                        <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="6"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
         <Frames>
-            <StatusBar name="$parentStatusBar" minValue="0" maxValue="1" hidden="false" parentKey="StatusBar">
-                <Size x="201" y="4"></Size>
+            <Button parentKey="item" text="notyetloaded" setAllPoints="true" hidden="true">
+            <Size x="231" y="44"/>
                 <Anchors>
-                    <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="8"></Anchor>
+                    <Anchor point="TOPLEFT"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/gwstatusbar"/>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture name="$parentSpark" file="Interface/AddOns/GW2_UI/textures/statusbar-spark-white">
-                            <Size x="10" y="4"></Size>
+                        <Texture parentKey="statusbarbg" file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                            <Size x="205" y="8"></Size>
                             <Anchors>
-                                <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                                <Anchor point="BOTTOM" relativePoint="BOTTOM" x="-5" y="6"></Anchor>
+                            </Anchors>
+                        </Texture>       
+                        <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                            <Size x="2" y="2"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-2" y="0"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="2" y="2"></Anchor>
+                                <Color r="0" g="0" b="0" a="0.5"></Color>
                             </Anchors>
                         </Texture>
                     </Layer>
+                    <Layer level="ARTWORK" textureSubLevel="2">
+                        <Texture parentKey="backgroundHover" file="Interface\AddOns\GW2_UI\textures\character\menu-hover">
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                                <Anchor point="BOTTOMRIGHT"></Anchor>
+                            </Anchors>
+                            <Color r="1" g="1" b="1" a="0.33"></Color>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <FontString parentKey="name" text="Amount Could not be loaded" inherits="GameFontNormalSmall" justifyV="MIDDLE" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="10" y="-10"/>
+                            </Anchors>
+                            <Size x="400" y="24"/>
+                        </FontString>
+                    </Layer>
                 </Layers>
-            </StatusBar>
+                <Frames>
+                    <StatusBar minValue="0" maxValue="1" hidden="false" parentKey="StatusBar">
+                        <Size x="201" y="4"></Size>
+                        <Anchors>
+                            <Anchor point="BOTTOM" relativePoint="BOTTOM" x="-5" y="8"></Anchor>
+                        </Anchors>
+                        <BarTexture file="Interface/AddOns/GW2_UI/textures/gwstatusbar"/>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <Texture parentKey="Spark" file="Interface/AddOns/GW2_UI/textures/statusbar-spark-white">
+                                    <Size x="10" y="4"></Size>
+                                    <Anchors>
+                                        <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString parentKey="percentage" hidden="true" text="Unknown" justifyH="CENTER">
+                                    <Size x="180" y="20"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </StatusBar>
+                </Frames>
+            </Button>
         </Frames>
     </Button>
 
