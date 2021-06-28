@@ -382,6 +382,7 @@ local function getBlockQuest(blockIndex, isFrequency)
         newBlock:SetPoint("TOPRIGHT", _G["GwQuestBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
     end
 
+    newBlock.index = blockIndex
     newBlock.clickHeader:Show()
     setBlockColor(newBlock, isFrequency and "DAILY" or "QUEST")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
@@ -416,6 +417,7 @@ local function getBlockCampaign(blockIndex)
         newBlock:SetPoint("TOPRIGHT", _G["GwCampaignBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
     end
 
+    newBlock.index = blockIndex
     newBlock.clickHeader:Show()
     setBlockColor(newBlock, "CAMPAIGN")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
@@ -628,7 +630,7 @@ local function updateQuest(self, block, quest)
         block.Header:SetText(quest.title)
 
         --Quest item
-        GW.CombatQueue_Queue(UpdateQuestItem, {block})
+        GW.CombatQueue_Queue("update_tracker_quest_itembutton" .. block.index, UpdateQuestItem, {block})
 
         if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
             isComplete = true
@@ -704,7 +706,7 @@ local function updateQuestByID(self, block, quest, questID, questLogIndex)
     block.Header:SetText(quest.title)
 
     --Quest item
-    GW.CombatQueue_Queue(UpdateQuestItem, {block})
+    GW.CombatQueue_Queue("update_tracker_quest_itembutton" .. block.index, UpdateQuestItem, {block})
 
     if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
         isComplete = true
@@ -873,7 +875,7 @@ local function updateQuestLogLayout(self)
 
     for i = 1, numQuests do
         local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
-        
+
         -- check if we have a quest id to prevent errors
         if questID then
             local q = QuestCache:Get(questID)
@@ -894,13 +896,13 @@ local function updateQuestLogLayout(self)
                     updateQuest(self, block, q)
                     block:Show()
                     savedHeightCampagin = savedHeightCampagin + block.height
-                    GW.CombatQueue_Queue(updateQuestItemPositions, {block.actionButton, savedHeightCampagin, nil, block})
+                    GW.CombatQueue_Queue("update_tracker_campaign_itembutton_position" .. block.index, updateQuestItemPositions, {block.actionButton, savedHeightCampagin, nil, block})
                 else
                     counterCampaign = counterCampaign + 1
                     if _G["GwCampaignBlock" .. counterCampaign] ~= nil then
                         _G["GwCampaignBlock" .. counterCampaign]:Hide()
                         _G["GwCampaignBlock" .. counterCampaign].questLogIndex = 0
-                        GW.CombatQueue_Queue(UpdateQuestItem, {_G["GwCampaignBlock" .. counterCampaign]})
+                        GW.CombatQueue_Queue("update_tracker_campaign_itembutton" .. counterCampaign, UpdateQuestItem, {_G["GwCampaignBlock" .. counterCampaign]})
                     end
                 end
             elseif q then
@@ -931,13 +933,13 @@ local function updateQuestLogLayout(self)
                     block.isFrequency = isFrequency
                     block:Show()
                     savedHeightQuest = savedHeightQuest + block.height
-                    GW.CombatQueue_Queue(updateQuestItemPositions, {block.actionButton, savedHeightCampagin, "QUEST", block})
+                    GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. block.index, updateQuestItemPositions, {block.actionButton, savedHeightQuest, "QUEST", block})
                 else
                     counterQuest = counterQuest + 1
                     if _G["GwQuestBlock" .. counterQuest] ~= nil then
                         _G["GwQuestBlock" .. counterQuest]:Hide()
                         _G["GwQuestBlock" .. counterQuest].questLogIndex = 0
-                        GW.CombatQueue_Queue(UpdateQuestItem, {_G["GwQuestBlock" .. counterQuest]})
+                        GW.CombatQueue_Queue("update_tracker_quest_itembutton" .. counterQuest, UpdateQuestItem, {_G["GwQuestBlock" .. counterQuest]})
                     end
                 end
             end
@@ -953,7 +955,7 @@ local function updateQuestLogLayout(self)
             _G["GwCampaignBlock" .. i].questID = nil
             _G["GwCampaignBlock" .. i].questLogIndex = 0
             _G["GwCampaignBlock" .. i]:Hide()
-            GW.CombatQueue_Queue(UpdateQuestItem, {_G["GwCampaignBlock" .. i]})
+            GW.CombatQueue_Queue("update_tracker_campaign_itembutton" .. i, UpdateQuestItem, {_G["GwCampaignBlock" .. i]})
         end
     end
     for i = counterQuest + 1, 25 do
@@ -961,7 +963,7 @@ local function updateQuestLogLayout(self)
             _G["GwQuestBlock" .. i].questID = nil
             _G["GwQuestBlock" .. i].questLogIndex = 0
             _G["GwQuestBlock" .. i]:Hide()
-            GW.CombatQueue_Queue(UpdateQuestItem, {_G["GwQuestBlock" .. i]})
+            GW.CombatQueue_Queue("update_tracker_quest_itembutton" .. i, UpdateQuestItem, {_G["GwQuestBlock" .. i]})
         end
     end
 
@@ -1014,7 +1016,7 @@ local function updateQuestLogLayoutSingle(self, questID, added)
                 NewQuestAnimation(questBlockOfIdOrNew)
             end)
         end
-    
+
         for i = 1, 25 do
             if _G[blockName .. i] and _G[blockName .. i]:IsShown() and _G[blockName .. i].questID ~= nil then
                 savedHeight = savedHeight + _G[blockName .. i].height
@@ -1023,7 +1025,7 @@ local function updateQuestLogLayoutSingle(self, questID, added)
                 _G[blockName .. i]:Hide()
             end
         end
-        
+
         containerName:SetHeight(savedHeight)
         header:Show()
 
@@ -1036,7 +1038,7 @@ local function updateQuestLogLayoutSingle(self, questID, added)
                     break
                 end
             end
-            GW.CombatQueue_Queue(updateQuestItemPositions, {questBlockOfIdOrNew.actionButton, heightForQuestItem, isCampaign and nil or "QUEST", questBlockOfIdOrNew})
+            GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. questBlockOfIdOrNew.index, updateQuestItemPositions, {questBlockOfIdOrNew.actionButton, heightForQuestItem, isCampaign and nil or "QUEST", questBlockOfIdOrNew})
         end
 
         -- Set number of quest to the Header

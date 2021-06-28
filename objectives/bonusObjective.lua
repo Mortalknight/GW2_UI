@@ -214,7 +214,7 @@ local function setUpBlock(questIDs, collapsed)
                 GwBonusObjectiveBlock.tickerSeconds = 0
                 GwBonusObjectiveBlock.height = 20
                 GwBonusObjectiveBlock.numObjectives = 0
-                
+
                 GwBonusObjectiveBlock.Header:SetText(text)
 
                 if savedQuests[questID] == nil then
@@ -233,7 +233,7 @@ local function setUpBlock(questIDs, collapsed)
                 module.ShowWorldQuests = true
                 GwBonusObjectiveBlock.module = module
 
-                GW.CombatQueue_Queue(UpdateQuestItem, {GwBonusObjectiveBlock})
+                GW.CombatQueue_Queue("update_tracker_bonus_itembutton" .. blockIndex, UpdateQuestItem, {GwBonusObjectiveBlock})
 
                 foundEvent = true
 
@@ -288,7 +288,7 @@ local function setUpBlock(questIDs, collapsed)
 
                 savedContainerHeight = savedContainerHeight + GwBonusObjectiveBlock.height + 10
                 if GwBonusObjectiveBlock.hasItem then
-                    GW.CombatQueue_Queue(GW.updateQuestItemPositions, {GwBonusObjectiveBlock.actionButton, savedContainerHeight, "EVENT", GwBonusObjectiveBlock})
+                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. blockIndex, GW.updateQuestItemPositions, {GwBonusObjectiveBlock.actionButton, savedContainerHeight, "EVENT", GwBonusObjectiveBlock})
                 end
 
                 if not GwQuesttrackerContainerBonusObjectives.collapsed then
@@ -320,7 +320,7 @@ local function updateBonusObjective(self)
         if _G["GwBonusObjectiveBlock" .. i] ~= nil then
             _G["GwBonusObjectiveBlock" .. i].questID = false
             _G["GwBonusObjectiveBlock" .. i].questLogIndex = 0
-            GW.CombatQueue_Queue(UpdateQuestItem, {_G["GwBonusObjectiveBlock" .. i]})
+            GW.CombatQueue_Queue("update_tracker_bonus_itembutton" .. i, UpdateQuestItem, {_G["GwBonusObjectiveBlock" .. i]})
         end
     end
 

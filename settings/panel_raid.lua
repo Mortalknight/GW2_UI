@@ -45,7 +45,7 @@ local function LoadRaidPanel(sWindow)
         p,
         L["Show Aura Tooltips in Combat"],
         L["Show tooltips of buffs and debuffs even when you are in combat."],
-        "RAID_AURA_TOOLTIP_IN_COMBAT",
+        "RAID_AURA_TOOLTIP_INCOMBAT",
         nil,
         {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"},
         {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]},

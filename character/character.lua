@@ -441,7 +441,7 @@ local function loadBaseFrame()
 
     -- set binding change handlers
     fmGCW.secure:HookScript("OnEvent", function(self, event)
-        GW.CombatQueue_Queue(click_OnEvent, {self, event})
+        GW.CombatQueue_Queue("character_update_keybind", click_OnEvent, {self, event})
     end)
     fmGCW.secure:RegisterEvent("UPDATE_BINDINGS")
 

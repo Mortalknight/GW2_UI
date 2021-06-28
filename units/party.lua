@@ -770,7 +770,7 @@ local function LoadPartyFrames()
                     _G["GwPartyFrame" .. i].unit = "player"
                     _G["GwPartyFrame" .. i].guid = UnitGUID("player")
                     _G["GwPartyFrame" .. i]:SetAttribute("unit", "player")
-                    UnregisterStateDriver(G["GwPartyFrame" .. i], "visibility")
+                    UnregisterStateDriver(_G["GwPartyFrame" .. i], "visibility")
                     RegisterStateDriver(_G["GwPartyFrame" .. i], "visibility", "show")
                     party_OnEvent(_G["GwPartyFrame" .. i], "load")
                     updatePartyData(_G["GwPartyFrame" .. i])

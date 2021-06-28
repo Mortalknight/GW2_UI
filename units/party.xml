@@ -128,13 +128,13 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                     <Size x="67" y="10"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-9"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                     <Size x="67" y="3"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-19"></Anchor>
@@ -157,7 +157,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-10"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\incominghealing"/>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/units/incominghealing"/>
                 <Frames>
                     <StatusBar parentKey="healthbar" defaultValue="1" minValue="0" maxValue="1">
                         <Size x="65" y="8"></Size>
@@ -165,10 +165,10 @@
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface\AddOns\GW2_UI\textures\statusbarcolored_green"/>
+                        <BarTexture file="Interface/AddOns/GW2_UI/textures/party/statusbarcolored_green"/>
                         <Layers>
                             <Layer>
-                                <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
+                                <Texture parentKey="spark" file="Interface/AddOns/GW2_UI/textures/hud/bloodspark">
                                     <Anchors>
                                         <Anchor point="RIGHT" x="0" y="0"/>
                                     </Anchors>
@@ -193,7 +193,7 @@
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-19"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
             </StatusBar>
             <Frame name="$parentAuras" parentKey="auras">
                 <Size x="20" y="20"></Size>

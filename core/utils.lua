@@ -26,8 +26,16 @@ local function CombatQueue_Initialize()
 end
 GW.CombatQueue_Initialize = CombatQueue_Initialize
 
-local function CombatQueue_Queue(func, obj)
-    tinsert(afterCombatQueue, {func = func, obj = obj})
+local function CombatQueue_Queue(key, func, obj)
+    local alreadyIn = false
+    for _, v in pairs(afterCombatQueue) do
+        if v.key == key and v.func == func and v.obj == obj then
+            alreadyIn = true
+        end
+    end
+    if not alreadyIn then
+        tinsert(afterCombatQueue, {key = key, func = func, obj = obj})
+    end
 end
 GW.CombatQueue_Queue = CombatQueue_Queue
 

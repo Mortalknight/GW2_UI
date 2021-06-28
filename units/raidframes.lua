@@ -399,7 +399,7 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
         frame:SetScript("OnMouseUp", onDebuffMouseUp)
         frame:RegisterForClicks("RightButtonUp")
 
-        frame.tooltipSetting = GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT")
+        frame.tooltipSetting = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT")
         if frame.tooltipSetting == "NEVER" then
             frame:EnableMouse(false)
         elseif frame.tooltipSetting == "ALWAYS" then
@@ -544,7 +544,7 @@ local function showBuffIcon(parent, i, btnIndex, x, y, icon, isMissing)
         frame:SetScript("OnMouseUp", onBuffMouseUp)
         frame:RegisterForClicks("RightButtonUp")
 
-        frame.tooltipSetting = GetSetting("RAID_AURA_TOOLTIP_IN_COMBAT")
+        frame.tooltipSetting = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT")
         if frame.tooltipSetting == "NEVER" then
             frame:EnableMouse(false)
         elseif frame.tooltipSetting == "ALWAYS" then
