@@ -288,7 +288,7 @@ end
 GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)
 
 local function LoadHealthGlobe()
-    local hg = CreateFrame("Button", nil, UIParent, "GwHealthGlobeTmpl")
+    local hg = CreateFrame("Button", "GW2_PlayerFrame", UIParent, "GwHealthGlobeTmpl")
     GW.RegisterScaleFrame(hg, 1.1)
 
     -- position based on XP bar space and make it movable if your actionbars are off

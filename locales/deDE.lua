@@ -343,5 +343,5 @@ L["Ctrl + Click to toggle override"] = "Strg. + Klick um die Einstellung zu übe
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = "Inkompatibles Addons-Verhalten überschrieben. Benötigt ein Nachladen, um wirksam zu werden."
 L["You have overridden this behavior."] = "Du hast dieses Verhalten überschrieben."
 L["Out of combat"] = "Nicht im Kampf"
-L["Show an additional ressoucebar"] = "Zeige eine zusätzliche Ressourcenbar"
+L["Show an additional resource bar"] = "Zeige eine zusätzliche Ressourcenbar"
 L["Show auras below"] = "Auren unterhalb anzeigen"

@@ -343,5 +343,5 @@ L["Ctrl + Click to toggle override"] = "Ctrl + Click pour activer la priorité �
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = "Comportement d'incompatibilité d'extension remplacé. Un rechargement est nécessaire pour prendre effet."
 L["You have overridden this behavior."] = "Ce comportement a été outrepassé par un add-on."
 L["Out of combat"] = true
-L["Show an additional ressoucebar"] = true
+L["Show an additional resource bar"] = true
 L["Show auras below"] = true

@@ -191,7 +191,7 @@ local function AddOptionText(panel, name, desc, optionName, callback, multiline,
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
 
     opt["options"] = {}
@@ -199,6 +199,7 @@ local function AddOptionDropdown(panel, name, desc, optionName, callback, option
     opt["options_names"] = option_names
     opt["hasCheckbox"] = checkbox
     opt["optionType"] = "dropdown"
+    opt["tooltipType"] = tooltipType
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
@@ -476,6 +477,16 @@ local function InitPanel(panel, hasScroll)
                         --Check all dependencies on this option
                         checkDependenciesOnLoad()
                     end)
+                    if v.tooltipType then
+                        if v.tooltipType == "spell" then
+                            slot:HookScript("OnEnter", function(self)
+                                -- show the spell tooltip
+                                GameTooltip_SetDefaultAnchor(GameTooltip, self)
+                                GameTooltip:SetSpellByID(self.option)
+                                GameTooltip:Show()
+                            end)
+                        end
+                    end
                     slot.ScriptsHooked = true
                 end
             end

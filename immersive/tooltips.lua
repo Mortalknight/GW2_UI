@@ -282,6 +282,7 @@ local function SetUnitText(self, unit, isShiftKeyDown)
         local guildRanks = GetSetting("ADVANCED_TOOLTIP_SHOW_GUILD_RANKS")
         local showRole = GetSetting("ADVANCED_TOOLTIP_SHOW_ROLE")
         local showGender = GetSetting("ADVANCED_TOOLTIP_SHOW_GENDER")
+        local showDungeonScore = GetSetting("ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE")
 
         local nameColor = GWGetClassColor(class, showClassColor, true)
 
@@ -364,6 +365,15 @@ local function SetUnitText(self, unit, isShiftKeyDown)
                     end
                     GameTooltip:AddDoubleLine(" ", roleString, nil, nil, nil, r, g, b)
                 end
+            end
+        end
+
+        if showDungeonScore then
+            local data = C_PlayerInfo.GetPlayerMythicPlusRatingSummary(unit)
+            if data and data.currentSeasonScore then
+                local color = C_ChallengeMode.GetDungeonScoreRarityColor(data.currentSeasonScore)
+
+                GameTooltip:AddDoubleLine(DUNGEON_SCORE_LEADER, data.currentSeasonScore, nil, nil, nil, color.r or 1, color.g or 1, color.b or 1)
             end
         end
 

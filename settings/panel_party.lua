@@ -6,7 +6,7 @@ local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 
 local function LoadPartyPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
+    local p = CreateFrame("Frame", "GwSettingsPartyPanel", sWindow.panels, "GwSettingsPartyPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.header:SetText(CHAT_MSG_PARTY)

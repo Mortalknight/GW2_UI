@@ -8,9 +8,11 @@ NEW
     - Added option to show party Partyframes
     - Added option to show pets portrait damage
     - Added option to show pet auras below the frame
+    - Added option to show M+ score at unit tooltips
 
 FIXES
     - Redo raid frame aura icon tooltip: New option to set when the aura get a tooltip on mouse over or is click through (no tooltip = click through)
+    - Healtglobe now works with mouseover addons
 ]=])
 
 v("5.15.5", [=[

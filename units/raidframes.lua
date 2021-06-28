@@ -705,6 +705,21 @@ local function updateAuras(self)
 end
 GW.AddForProfiling("raidframes", "updateAuras", updateAuras)
 
+local function updatePower(self)
+    local power = UnitPower(self.unit, UnitPowerType(self.unit))
+    local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
+    local powerPrecentage = 0
+    if powerMax > 0 then
+        powerPrecentage = power / powerMax
+    end
+    self.manabar:SetValue(powerPrecentage)
+    local _, powerToken = UnitPowerType(self.unit)
+    if PowerBarColorCustom[powerToken] then
+        local pwcolor = PowerBarColorCustom[powerToken]
+        self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+    end
+end
+
 local function raidframe_OnEvent(self, event, unit)
     if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         -- Enable or disable mouse handling on aura frames
@@ -744,21 +759,13 @@ local function raidframe_OnEvent(self, event, unit)
         setAbsorbAmount(self)
         setPredictionAmount(self)
         setHealth(self)
+        updateAwayData(self)
+        updateAuras(self)
+        updatePower(self)
     elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
         setHealth(self)
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
-        local power = UnitPower(self.unit, UnitPowerType(self.unit))
-        local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
-        local powerPrecentage = 0
-        if powerMax > 0 then
-            powerPrecentage = power / powerMax
-        end
-        self.manabar:SetValue(powerPrecentage)
-        local _, powerToken = UnitPowerType(self.unit)
-        if PowerBarColorCustom[powerToken] then
-            local pwcolor = PowerBarColorCustom[powerToken]
-            self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
-        end
+        updatePower(self)
     elseif event == "UNIT_ABSORB_AMOUNT_CHANGED" then
         setAbsorbAmount(self)
     elseif event == "UNIT_HEAL_PREDICTION" then
@@ -972,21 +979,41 @@ local function UpdateRaidFramesPosition()
     for i = 1, MAX_RAID_MEMBERS do
         PositionRaidFrame(_G["GwRaidGridDisplay" .. i], GwRaidFrameContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
         if i > players then _G["GwRaidGridDisplay" .. i]:Hide() else _G["GwRaidGridDisplay" .. i]:Show() end
+
+        PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+        if i > players then _G["GwCompactraid" .. i]:Hide() else _G["GwCompactraid" .. i]:Show() end
     end
 end
 GW.UpdateRaidFramesPosition = UpdateRaidFramesPosition
 GW.AddForProfiling("raidframes", "UpdateRaidFramesPosition", UpdateRaidFramesPosition)
 
-local function ToggleRaidFramesPreview()
+local function ToggleRaidFramesPreview(_, _, moveHudMode)
     previewStep = max((previewStep + 1) % (#previewSteps + 1), hudMoving and 1 or 0)
-    if previewStep == 0 then
-        GwRaidFrameContainer.gwMover:EnableMouse(false)
-        GwRaidFrameContainer.gwMover:SetMovable(false)
-        GwRaidFrameContainer.gwMover:Hide()
+    print(previewStep, moveHudMode)
+    if previewStep == 0 or moveHudMode then
+        for i = 1, MAX_RAID_MEMBERS do
+            if _G["GwCompactraid" .. i] then
+                _G["GwCompactraid" .. i].unit = "raid" .. i
+                _G["GwCompactraid" .. i].guid = UnitGUID("raid" .. i)
+                _G["GwCompactraid" .. i]:SetAttribute("unit", "raid" .. i)
+                raidframe_OnEvent(_G["GwCompactraid" .. i], "load")
+            end
+        end
     else
-        GwRaidFrameContainer.gwMover:Show()
-        GwRaidFrameContainer.gwMover:EnableMouse(true)
-        GwRaidFrameContainer.gwMover:SetMovable(true)
+        for i = 1, MAX_RAID_MEMBERS do
+            if _G["GwCompactraid" .. i] then
+                if i <= (previewStep == 0 and 40 or previewSteps[previewStep]) then
+                    _G["GwCompactraid" .. i].unit = "player"
+                    _G["GwCompactraid" .. i].guid = UnitGUID("player")
+                    _G["GwCompactraid" .. i]:SetAttribute("unit", "player")
+                else
+                    _G["GwCompactraid" .. i].unit = "raid" .. i
+                    _G["GwCompactraid" .. i].guid = UnitGUID("raid" .. i)
+                    _G["GwCompactraid" .. i]:SetAttribute("unit", "raid" .. i)
+                end
+                raidframe_OnEvent(_G["GwCompactraid" .. i], "load")
+            end
+        end
         UpdateRaidFramesPosition()
     end
     GwSettingsRaidPanel.buttonRaidPreview:SetText(previewStep == 0 and "-" or previewSteps[previewStep])
@@ -1251,9 +1278,12 @@ local function LoadRaidFrames()
     GwSettingsRaidPanel.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
     GwSettingsWindowMoveHud:HookScript("OnClick", function ()
         hudMoving = true
-        if previewStep == 0 then
-            ToggleRaidFramesPreview()
-        end
+        ToggleRaidFramesPreview(_, _, true)
+    end)
+    GwSmallSettingsWindow.lockHud:HookScript("OnClick", function()
+        hudMoving = false
+        previewStep = 4
+        ToggleRaidFramesPreview(_, _, false)
     end)
 
     GwRaidFrameContainer:RegisterEvent("RAID_ROSTER_UPDATE")

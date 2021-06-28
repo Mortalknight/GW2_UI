@@ -1,4 +1,4 @@
-## Interface: 90005
+## Interface: 90100
 ## Title: |cffffedbaGW2 UI|r |cFF888888(@project-version@)|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
@@ -51,6 +51,7 @@ settings/settings.xml
 settings/panel_modules.xml
 settings/panel_profiles.xml
 settings/panel_raid.xml
+settings/panel_party.xml
 settings/settings.lua
 settings/panel_modules.lua
 settings/panel_player.lua

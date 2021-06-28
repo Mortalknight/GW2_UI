@@ -317,7 +317,6 @@ local function mover_SavePosition(self, x, y)
 end
 GW.AddForProfiling("character", "mover_SavePosition", mover_SavePosition)
 
--- TODO: this doesn't work if bindings are updated in combat, but who does that?!
 local function click_OnEvent(self, event)
     if event ~= "UPDATE_BINDINGS" then
         return
@@ -441,7 +440,9 @@ local function loadBaseFrame()
     end)
 
     -- set binding change handlers
-    fmGCW.secure:HookScript("OnEvent", click_OnEvent)
+    fmGCW.secure:HookScript("OnEvent", function(self, event)
+        GW.CombatQueue_Queue(click_OnEvent, {self, event})
+    end)
     fmGCW.secure:RegisterEvent("UPDATE_BINDINGS")
 
     -- hook into inventory currency button

@@ -65,7 +65,8 @@ local function LoadAurasPanel(sWindow)
         raidDebuffVales,
         nil,
         nil,
-        true
+        true,
+        "spell"
     )
 
     addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", nil, nil, {["RAID_FRAMES"] = true})

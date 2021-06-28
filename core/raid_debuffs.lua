@@ -182,13 +182,82 @@ end
     SetDefaultOnTheFly(355143) -- Deathlink
     SetDefaultOnTheFly(350763) -- Annihilating Glare
 -- The Nine
+    SetDefaultOnTheFly(350287) -- Song of Dissolution
+    SetDefaultOnTheFly(350542) -- Fragments of Destiny
+    SetDefaultOnTheFly(350202) -- Unending Strike
+    SetDefaultOnTheFly(350475) -- Pierce Soul
+    SetDefaultOnTheFly(350555) -- Shard of Destiny
+    SetDefaultOnTheFly(350109) -- Brynja's Mournful Dirge
+    SetDefaultOnTheFly(350483) -- Link Essence
+    SetDefaultOnTheFly(350039) -- Arthura's Crushing Gaze
+    SetDefaultOnTheFly(350184) -- Daschla's Mighty Impact
+    SetDefaultOnTheFly(350374) -- Wings of Rage
 -- Remnant of Ner'zhul
+    SetDefaultOnTheFly(350073) -- Torment
+    SetDefaultOnTheFly(349890) -- Suffering
+    SetDefaultOnTheFly(350469) -- Malevolence
+    SetDefaultOnTheFly(354634) -- Spite 1
+    SetDefaultOnTheFly(354479) -- Spite 2
+    SetDefaultOnTheFly(354534) -- Spite 3
 -- Soulrender Dormazain
+    SetDefaultOnTheFly(353429) -- Tormented
+    SetDefaultOnTheFly(353023) -- Torment
+    SetDefaultOnTheFly(351787) -- Agonizing Spike
+    SetDefaultOnTheFly(350647) -- Brand of Torment
+    SetDefaultOnTheFly(350422) -- Ruinblade
+    SetDefaultOnTheFly(350851) -- Vessel of Torment
+    SetDefaultOnTheFly(354231) -- Soul Manacles
+    SetDefaultOnTheFly(348987) -- Warmonger Shackle 1
+    SetDefaultOnTheFly(350927) -- Warmonger Shackle 2
 -- Painsmith Raznal
+    SetDefaultOnTheFly(356472) -- Lingering Flames
+    SetDefaultOnTheFly(355505) -- Shadowsteel Chains 1
+    SetDefaultOnTheFly(355506) -- Shadowsteel Chains 2
+    SetDefaultOnTheFly(348456) -- Flameclasp Trap
+    SetDefaultOnTheFly(356870) -- Flameclasp Eruption
+    SetDefaultOnTheFly(355568) -- Cruciform Axe
+    SetDefaultOnTheFly(355786) -- Blackened Armor
+    SetDefaultOnTheFly(348255) -- Spiked
 -- Guardian of the First Ones
+    SetDefaultOnTheFly(352394) -- Radiant Energy
+    SetDefaultOnTheFly(350496) -- Threat Neutralization
+    SetDefaultOnTheFly(347359) -- Suppression Field
+    SetDefaultOnTheFly(355357) -- Obliterate
+    SetDefaultOnTheFly(350732) -- Sunder
+    SetDefaultOnTheFly(352833) -- Disintegration
 -- Fatescribe Roh-Kalo
+    SetDefaultOnTheFly(354365) -- Grim Portent
+    SetDefaultOnTheFly(350568) -- Call of Eternity
+    SetDefaultOnTheFly(353435) -- Overwhelming Burden
+    SetDefaultOnTheFly(351680) -- Invoke Destiny
+    SetDefaultOnTheFly(353432) -- Burden of Destiny
+    SetDefaultOnTheFly(353693) -- Unstable Accretion
+    SetDefaultOnTheFly(350355) -- Fated Conjunction
+    SetDefaultOnTheFly(353931) -- Twist Fate
 -- Kel'Thuzad
+    SetDefaultOnTheFly(346530) -- Frozen Destruction
+    SetDefaultOnTheFly(354289) -- Sinister Miasma
+    SetDefaultOnTheFly(347454) -- Oblivion's Echo 1
+    SetDefaultOnTheFly(347518) -- Oblivion's Echo 2
+    SetDefaultOnTheFly(347292) -- Oblivion's Echo 3
+    SetDefaultOnTheFly(348978) -- Soul Exhaustion
+    SetDefaultOnTheFly(355389) -- Relentless Haunt (Fixate)
+    SetDefaultOnTheFly(357298) -- Frozen Binds
+    SetDefaultOnTheFly(355137) -- Shadow Pool
+    SetDefaultOnTheFly(348638) -- Return of the Damned
+    SetDefaultOnTheFly(348760) -- Frost Blast
 -- Sylvanas Windrunner
+    SetDefaultOnTheFly(349458) -- Domination Chains
+    SetDefaultOnTheFly(347704) -- Veil of Darkness
+    SetDefaultOnTheFly(347607) -- Banshee's Mark
+    SetDefaultOnTheFly(347670) -- Shadow Dagger
+    SetDefaultOnTheFly(351117) -- Crushing Dread
+    SetDefaultOnTheFly(351870) -- Haunting Wave
+    SetDefaultOnTheFly(351253) -- Banshee Wail
+    SetDefaultOnTheFly(351451) -- Curse of Lethargy
+    SetDefaultOnTheFly(351092) -- Destabilize 1
+    SetDefaultOnTheFly(351091) -- Destabilize 2
+    SetDefaultOnTheFly(348064) -- Wailing Arrow
 
 -------------------- Castle Nathria --------------------
 -- Shriekwing
