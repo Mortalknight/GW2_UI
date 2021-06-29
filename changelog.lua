@@ -8,11 +8,15 @@ NEW
     - Added option to show party Partyframes
     - Added option to show pets portrait damage
     - Added option to show pet auras below the frame
-    - Added option to show M+ score at unit tooltips
+    - Added option to show M+ score at unit tooltips (Based on Blizzards new score API)
 
 FIXES
     - Redo raid frame aura icon tooltip: New option to set when the aura get a tooltip on mouse over or is click through (no tooltip = click through)
     - Healtglobe now works with mouseover addons
+
+MISC
+    - Updated raid debuffs for Sanctum of Domination (All difficulties)  
+    - Updated raid debuffs for Tazavesh, the Veiled Market (Mythic) 
 ]=])
 
 v("5.15.5", [=[

@@ -66,6 +66,7 @@ local function LoadAurasPanel(sWindow)
         nil,
         nil,
         true,
+        nil,
         "spell"
     )
 
