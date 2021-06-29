@@ -486,6 +486,9 @@ local function InitPanel(panel, hasScroll)
                                 GameTooltip:Show()
                             end)
                         end
+                        slot:HookScript("OnLeave", function()
+                            GameTooltip:Hide()
+                        end)
                     end
                     slot.ScriptsHooked = true
                 end
