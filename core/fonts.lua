@@ -110,15 +110,15 @@ local function LoadFonts()
     setFont(InvoiceFont_Small, normal)
     setFont(MailFont_Large, normal)
 
-    RaidBossEmoteFrame.timings["RAID_NOTICE_MIN_HEIGHT"] = 12
-    RaidBossEmoteFrame.timings["RAID_NOTICE_MAX_HEIGHT"] = 12
-    RaidBossEmoteFrame.timings["RAID_NOTICE_SCALE_UP_TIME"] = 0
-    RaidBossEmoteFrame.timings["RAID_NOTICE_SCALE_DOWN_TIME"] = 0
+    --RaidBossEmoteFrame.timings["RAID_NOTICE_MIN_HEIGHT"] = 12
+    --RaidBossEmoteFrame.timings["RAID_NOTICE_MAX_HEIGHT"] = 12
+    --RaidBossEmoteFrame.timings["RAID_NOTICE_SCALE_UP_TIME"] = 0
+    --RaidBossEmoteFrame.timings["RAID_NOTICE_SCALE_DOWN_TIME"] = 0
 
-    RaidWarningFrame.timings["RAID_NOTICE_MIN_HEIGHT"] = 12
-    RaidWarningFrame.timings["RAID_NOTICE_MAX_HEIGHT"] = 12
-    RaidWarningFrame.timings["RAID_NOTICE_SCALE_UP_TIME"] = 0
-    RaidWarningFrame.timings["RAID_NOTICE_SCALE_DOWN_TIME"] = 0
+    --RaidWarningFrame.timings["RAID_NOTICE_MIN_HEIGHT"] = 12
+    --RaidWarningFrame.timings["RAID_NOTICE_MAX_HEIGHT"] = 12
+    --RaidWarningFrame.timings["RAID_NOTICE_SCALE_UP_TIME"] = 0
+    --RaidWarningFrame.timings["RAID_NOTICE_SCALE_DOWN_TIME"] = 0
 
     RaidWarningFrame:SetSize(640, 48)
     RaidBossEmoteFrame:SetSize(640, 56)
