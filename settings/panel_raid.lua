@@ -43,8 +43,8 @@ local function LoadRaidPanel(sWindow)
     )
     addOptionDropdown(
         p,
-        L["Show Aura Tooltips in Combat"],
-        L["Show tooltips of buffs and debuffs even when you are in combat."],
+        L["Show Aura Tooltips"],
+        L["Show tooltips of buffs and debuffs."],
         "RAID_AURA_TOOLTIP_INCOMBAT",
         nil,
         {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"},

@@ -21,7 +21,7 @@ Not compatible with the *"Paste"* addon (action bars will appear empty). This ma
 
 [![GW2 UI on Discord](https://discord.com/api/guilds/243035988614578176/widget.png?style=banner2)](https://discord.gg/MZZtRWt)
 
-[![GW2 UI on Patreon](http://i.imgur.com/gyn76CI.png)](https://www.patreon.com/gw2ui)[![GW2 UI on PayPal](http://i.imgur.com/xSSjpwd.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=WBGL5GPMTNEL4)
+[![GW2 UI on Patreon](http://i.imgur.com/gyn76CI.png)](https://www.patreon.com/gw2ui)[![GW2 UI on PayPal](http://i.imgur.com/xSSjpwd.png)](https://www.paypal.com/donate?hosted_button_id=H7E9W75TYRWX4)
 
 ### SCREENSHOTS
 ![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/overview.jpg?raw=true)
