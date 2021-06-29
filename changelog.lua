@@ -1,7 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("1.14.01TBC", [=[
+v("1.14.2T BC", [=[
+FIXES
+    - Some smaller bugs
+]=])
+
+v("1.14.1 TBC", [=[
 FIXES
     - Fix issue with override incompatible addon function
 ]=])

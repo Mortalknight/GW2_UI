@@ -170,8 +170,8 @@ local function AddOptionButton(panel, name, desc, optionName, callback, params, 
 end
 GW.AddOptionButton = AddOptionButton
 
-local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence)
+local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
 
     opt["min"] = min
     opt["max"] = max
@@ -183,16 +183,16 @@ local function AddOptionSlider(panel, name, desc, optionName, callback, min, max
 end
 GW.AddOptionSlider = AddOptionSlider
 
-local function AddOptionText(panel, name, desc, optionName, callback, multiline, params, dependence)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence)
+local function AddOptionText(panel, name, desc, optionName, callback, multiline, params, dependence, incompatibleAddons)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
 
     opt["multiline"] = multiline
     opt["optionType"] = "text"
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, tooltipType)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
 
     opt["options"] = {}
     opt["options"] = options_list

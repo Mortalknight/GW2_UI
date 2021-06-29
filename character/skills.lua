@@ -298,7 +298,6 @@ GW.Skills = {
             {3127, 100}, -- Parry  ----CHECK THIS
         },
         [10] = {
-            {674, 300}, -- Dual Wield
             {2687, 600}, -- Bloodrage
             {6546, 600, req=772, rank=2}, -- Rend rank 2
         },
@@ -321,6 +320,7 @@ GW.Skills = {
             {8198, 3000, req=6343, rank=2}, -- Thunder Clap rank 2
         },
         [20] = {
+            {674, 300}, -- Dual Wield
             {200, 10000}, -- Polearms
             {845, 4000, rank=1}, -- Cleave rank 1
             {6547, 4000, req=6546, rank=3}, -- Rend rank 3
