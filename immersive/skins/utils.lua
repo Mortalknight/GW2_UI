@@ -25,7 +25,7 @@ local constBackdropFrameSmallerBorder = {
     edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
     tile = false,
     tileSize = 64,
-    edgeSize = 22,
+    edgeSize = 18,
     insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
 GW.skins.constBackdropFrameSmallerBorder = constBackdropFrameSmallerBorder

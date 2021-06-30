@@ -187,7 +187,7 @@ local function updateCurrentScenario(self, event, ...)
             local level, type, textureKit = ...
             self.jailersTowerLevelUpdateInfo = {level = level, type = type, textureKit = textureKit}
         end
-        local widgetInfo = C_UIWidgetManager.GetScenarioHeaderCurrenciesAndBackgroundWidgetVisualizationInfo(2319)
+        local widgetInfo = C_UIWidgetManager.GetScenarioHeaderCurrenciesAndBackgroundWidgetVisualizationInfo(3302)
         if widgetInfo then floor = widgetInfo.headerText or "" end
 
         if self.jailersTowerLevelUpdateInfo ~= nil and self.jailersTowerLevelUpdateInfo.type ~= nil then

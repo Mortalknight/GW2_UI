@@ -57,7 +57,7 @@ local function LoadSlashCommands()
                 end
             )
         elseif msg == "error" then
-            local txt = ("~ GW2 UI ~ Version: %s ~ Date: %s ~ Locale: %s  ~"):format(GW.VERSION_STRING or "?", date() or "?", GW.mylocal or "?")
+            local txt = ("~ GW2 UI Version: %s ~ Date: %s ~ Locale: %s ~ %s %s"):format(GW.VERSION_STRING or "?", date() or "?", GW.mylocal or "?", GW.wowpatch, GW.wowbuild)
             txt = txt .. "\n" .. GW.Join("\n", GW.ErrorHandler.log)
 
             local errorlogFrame = GW.CreateErrorLogWindow ()

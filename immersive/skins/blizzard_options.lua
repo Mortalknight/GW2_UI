@@ -5,54 +5,55 @@ local function LoadBlizzardOptionsSkin()
     if not GW.GetSetting("BLIZZARD_OPTIONS_SKIN_ENABLED") then return end
 
     --Interface and System Options
-    local OptionsFrames = {_G.InterfaceOptionsFrameCategories, _G.InterfaceOptionsFramePanelContainer, _G.InterfaceOptionsFrameAddOns, _G.VideoOptionsFrameCategoryFrame, _G.VideoOptionsFramePanelContainer, _G.Display_, _G.Graphics_, _G.RaidGraphics_, _G.AudioOptionsSoundPanelHardware, _G.AudioOptionsSoundPanelVolume, _G.AudioOptionsSoundPanelPlayback, _G.AudioOptionsVoicePanelTalking, _G.AudioOptionsVoicePanelListening, _G.AudioOptionsVoicePanelBinding}
-    local OptionsButtons = {_G.GraphicsButton, _G.RaidButton}
+    local OptionsFrames = {InterfaceOptionsFrameCategories, InterfaceOptionsFramePanelContainer, InterfaceOptionsFrameAddOns, VideoOptionsFrameCategoryFrame, VideoOptionsFramePanelContainer, Display_, Graphics_, RaidGraphics_, AudioOptionsSoundPanelHardware, AudioOptionsSoundPanelVolume, AudioOptionsSoundPanelPlayback, AudioOptionsVoicePanelTalking, AudioOptionsVoicePanelListening, AudioOptionsVoicePanelBinding}
+    local OptionsButtons = {GraphicsButton, RaidButton}
 
     local InterfaceOptions = {
-        _G.InterfaceOptionsFrame, 
-        _G.InterfaceOptionsControlsPanel,
-        _G.InterfaceOptionsCombatPanel,
-        _G.InterfaceOptionsCombatPanelEnemyCastBars,
-        _G.InterfaceOptionsCombatTextPanel,
-        _G.InterfaceOptionsDisplayPanel,
-        _G.InterfaceOptionsObjectivesPanel,
-        _G.InterfaceOptionsSocialPanel,
-        _G.InterfaceOptionsActionBarsPanel,
-        _G.InterfaceOptionsNamesPanel,
-        _G.InterfaceOptionsNamesPanelFriendly,
-        _G.InterfaceOptionsNamesPanelEnemy,
-        _G.InterfaceOptionsNamesPanelUnitNameplates,
-        _G.InterfaceOptionsBattlenetPanel,
-        _G.InterfaceOptionsCameraPanel,
-        _G.InterfaceOptionsMousePanel,
-        _G.InterfaceOptionsHelpPanel,
-        _G.InterfaceOptionsAccessibilityPanel,
-        _G.CompactUnitFrameProfiles,
-        _G.CompactUnitFrameProfilesGeneralOptionsFrame,
-        _G.VideoOptionsFrame,
-        _G.Display_,
-        _G.Graphics_,
-        _G.RaidGraphics_,
-        _G.Advanced_,
-        _G.NetworkOptionsPanel,
-        _G.InterfaceOptionsLanguagesPanel,
-        _G.MacKeyboardOptionsPanel,
-        _G.AudioOptionsSoundPanel,
-        _G.AudioOptionsSoundPanelHardware,
-        _G.AudioOptionsSoundPanelVolume,
-        _G.AudioOptionsSoundPanelPlayback,
-        _G.AudioOptionsVoicePanel,
-        _G.AudioOptionsVoicePanelTalking,
-        _G.AudioOptionsVoicePanelListening,
-        _G.AudioOptionsVoicePanelBinding,
-        _G.AudioOptionsVoicePanelMicTest,
-        _G.AudioOptionsVoicePanelChatMode1,
-        _G.AudioOptionsVoicePanelChatMode2,
+        InterfaceOptionsFrame, 
+        InterfaceOptionsControlsPanel,
+        InterfaceOptionsColorblindPanel,
+        InterfaceOptionsCombatPanel,
+        InterfaceOptionsCombatPanelEnemyCastBars,
+        InterfaceOptionsCombatTextPanel,
+        InterfaceOptionsDisplayPanel,
+        InterfaceOptionsObjectivesPanel,
+        InterfaceOptionsSocialPanel,
+        InterfaceOptionsActionBarsPanel,
+        InterfaceOptionsNamesPanel,
+        InterfaceOptionsNamesPanelFriendly,
+        InterfaceOptionsNamesPanelEnemy,
+        InterfaceOptionsNamesPanelUnitNameplates,
+        InterfaceOptionsBattlenetPanel,
+        InterfaceOptionsCameraPanel,
+        InterfaceOptionsMousePanel,
+        InterfaceOptionsHelpPanel,
+        InterfaceOptionsAccessibilityPanel,
+        CompactUnitFrameProfiles,
+        CompactUnitFrameProfilesGeneralOptionsFrame,
+        VideoOptionsFrame,
+        Display_,
+        Graphics_,
+        RaidGraphics_,
+        Advanced_,
+        NetworkOptionsPanel,
+        InterfaceOptionsLanguagesPanel,
+        MacKeyboardOptionsPanel,
+        AudioOptionsSoundPanel,
+        AudioOptionsSoundPanelHardware,
+        AudioOptionsSoundPanelVolume,
+        AudioOptionsSoundPanelPlayback,
+        AudioOptionsVoicePanel,
+        AudioOptionsVoicePanelTalking,
+        AudioOptionsVoicePanelListening,
+        AudioOptionsVoicePanelBinding,
+        AudioOptionsVoicePanelMicTest,
+        AudioOptionsVoicePanelChatMode1,
+        AudioOptionsVoicePanelChatMode2,
         }
 
-    _G.RolePollPopup:StripTextures()
-    _G.RolePollPopup:CreateBackdrop(GW.skins.constBackdropFrame)
-    _G.RolePollPopupCloseButton:SkinButton(true)
+    RolePollPopup:StripTextures()
+    RolePollPopup:CreateBackdrop(GW.skins.constBackdropFrame)
+    RolePollPopupCloseButton:SkinButton(true)
 
 
     local InterfaceOptionsFrame = _G.InterfaceOptionsFrame

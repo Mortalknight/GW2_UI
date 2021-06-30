@@ -82,7 +82,7 @@ local function skinAchievementAlert(frame)
 
     -- Background
     frame.Background:SetTexture()
-    frame.OldAchievement:Kill()
+    if frame.OldAchievement then frame.OldAchievement:Kill() end
     frame.glow:Kill()
     frame.shine:Kill()
     frame.GuildBanner:Kill()
@@ -991,7 +991,7 @@ local function skinGarrisonRandomMissionAlert(frame, _, _, _, _, _, quality)
 end
 
 local function skinBonusRollMoney()
-    local frame = _G.BonusRollMoneyWonFrame
+    local frame = BonusRollMoneyWonFrame
     frame:SetAlpha(1)
     hooksecurefunc(frame, "SetAlpha", forceAlpha)
 
@@ -1019,7 +1019,7 @@ local function skinBonusRollMoney()
 end
 
 local function skinBonusRollLoot()
-    local frame = _G.BonusRollLootWonFrame
+    local frame = BonusRollLootWonFrame
     frame:SetAlpha(1)
     hooksecurefunc(frame, "SetAlpha", forceAlpha)
 
@@ -1030,7 +1030,7 @@ local function skinBonusRollLoot()
     local lootItem = frame.lootItem or frame
     lootItem.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     lootItem.IconBorder:Kill()
-    
+
     -- Icon border
     lootItem.Icon.b = CreateFrame("Frame", nil, frame)
     lootItem.Icon.b:SetPoint("TOPLEFT", lootItem.Icon, "TOPLEFT", -2, 2)
@@ -1106,7 +1106,7 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
 
     -- Background
     frame.Background:SetTexture()
-    frame.OldAchievement:Kill()
+    if frame.OldAchievement then frame.OldAchievement:Kill() end
     frame.glow:Kill()
     frame.shine:Kill()
     frame.GuildBanner:Kill()
@@ -1183,44 +1183,44 @@ local function LoadAlertSystemFrameSkins()
     end
 
     -- Achievements
-    hooksecurefunc(_G.AchievementAlertSystem, "setUpFunction", skinAchievementAlert)
-    hooksecurefunc(_G.CriteriaAlertSystem, "setUpFunction", skinCriteriaAlert)
+    hooksecurefunc(AchievementAlertSystem, "setUpFunction", skinAchievementAlert)
+    hooksecurefunc(CriteriaAlertSystem, "setUpFunction", skinCriteriaAlert)
 
     -- Encounters
-    hooksecurefunc(_G.DungeonCompletionAlertSystem, "setUpFunction", skinDungeonCompletionAlert)
-    hooksecurefunc(_G.WorldQuestCompleteAlertSystem, "setUpFunction", skinWorldQuestCompleteAlert)
-    hooksecurefunc(_G.GuildChallengeAlertSystem, "setUpFunction", skinGuildChallengeAlert)
-    hooksecurefunc(_G.InvasionAlertSystem, "setUpFunction", skinInvasionAlert)
-    hooksecurefunc(_G.ScenarioAlertSystem, "setUpFunction", skinScenarioAlert)
+    hooksecurefunc(DungeonCompletionAlertSystem, "setUpFunction", skinDungeonCompletionAlert)
+    hooksecurefunc(WorldQuestCompleteAlertSystem, "setUpFunction", skinWorldQuestCompleteAlert)
+    hooksecurefunc(GuildChallengeAlertSystem, "setUpFunction", skinGuildChallengeAlert)
+    hooksecurefunc(InvasionAlertSystem, "setUpFunction", skinInvasionAlert)
+    hooksecurefunc(ScenarioAlertSystem, "setUpFunction", skinScenarioAlert)
 
     -- Loot
-    hooksecurefunc(_G.LegendaryItemAlertSystem, "setUpFunction", skinLegendaryItemAlert)
-    hooksecurefunc(_G.LootAlertSystem, "setUpFunction", skinLootWonAlert)
-    hooksecurefunc(_G.LootUpgradeAlertSystem, "setUpFunction", skinLootUpgradeAlert)
-    hooksecurefunc(_G.MoneyWonAlertSystem, "setUpFunction", skinMoneyWonAlert)
-    hooksecurefunc(_G.EntitlementDeliveredAlertSystem, "setUpFunction", skinEntitlementDeliveredAlert)
-    hooksecurefunc(_G.RafRewardDeliveredAlertSystem, "setUpFunction", skinRafRewardDeliveredAlert)
+    hooksecurefunc(LegendaryItemAlertSystem, "setUpFunction", skinLegendaryItemAlert)
+    hooksecurefunc(LootAlertSystem, "setUpFunction", skinLootWonAlert)
+    hooksecurefunc(LootUpgradeAlertSystem, "setUpFunction", skinLootUpgradeAlert)
+    hooksecurefunc(MoneyWonAlertSystem, "setUpFunction", skinMoneyWonAlert)
+    hooksecurefunc(EntitlementDeliveredAlertSystem, "setUpFunction", skinEntitlementDeliveredAlert)
+    hooksecurefunc(RafRewardDeliveredAlertSystem, "setUpFunction", skinRafRewardDeliveredAlert)
 
     -- Professions
-    hooksecurefunc(_G.DigsiteCompleteAlertSystem, "setUpFunction", skinDigsiteCompleteAlert)
-    hooksecurefunc(_G.NewRecipeLearnedAlertSystem, "setUpFunction", skinNewRecipeLearnedAlert)
+    hooksecurefunc(DigsiteCompleteAlertSystem, "setUpFunction", skinDigsiteCompleteAlert)
+    hooksecurefunc(NewRecipeLearnedAlertSystem, "setUpFunction", skinNewRecipeLearnedAlert)
 
     -- Honor
-    hooksecurefunc(_G.HonorAwardedAlertSystem, "setUpFunction", skinHonorAwardedAlert)
+    hooksecurefunc(HonorAwardedAlertSystem, "setUpFunction", skinHonorAwardedAlert)
 
     -- Pets/Mounts
-    hooksecurefunc(_G.NewPetAlertSystem, "setUpFunction", skinNewPetAlert)
-    hooksecurefunc(_G.NewMountAlertSystem, "setUpFunction", skinNewPetAlert)
-    hooksecurefunc(_G.NewToyAlertSystem, "setUpFunction", skinNewPetAlert)
+    hooksecurefunc(NewPetAlertSystem, "setUpFunction", skinNewPetAlert)
+    hooksecurefunc(NewMountAlertSystem, "setUpFunction", skinNewPetAlert)
+    hooksecurefunc(NewToyAlertSystem, "setUpFunction", skinNewPetAlert)
 
     -- Garrisons
-    hooksecurefunc(_G.GarrisonFollowerAlertSystem, "setUpFunction", skinGarrisonFollowerAlert)
-    hooksecurefunc(_G.GarrisonShipFollowerAlertSystem, "setUpFunction", skinGarrisonShipFollowerAlert)
-    hooksecurefunc(_G.GarrisonTalentAlertSystem, "setUpFunction", skinGarrisonTalentAlert)
-    hooksecurefunc(_G.GarrisonBuildingAlertSystem, "setUpFunction", skinGarrisonBuildingAlert)
-    hooksecurefunc(_G.GarrisonMissionAlertSystem, "setUpFunction", skinGarrisonMissionAlert)
-    hooksecurefunc(_G.GarrisonShipMissionAlertSystem, "setUpFunction", skinGarrisonShipMissionAlert)
-    hooksecurefunc(_G.GarrisonRandomMissionAlertSystem, "setUpFunction", skinGarrisonRandomMissionAlert)
+    hooksecurefunc(GarrisonFollowerAlertSystem, "setUpFunction", skinGarrisonFollowerAlert)
+    hooksecurefunc(GarrisonShipFollowerAlertSystem, "setUpFunction", skinGarrisonShipFollowerAlert)
+    hooksecurefunc(GarrisonTalentAlertSystem, "setUpFunction", skinGarrisonTalentAlert)
+    hooksecurefunc(GarrisonBuildingAlertSystem, "setUpFunction", skinGarrisonBuildingAlert)
+    hooksecurefunc(GarrisonMissionAlertSystem, "setUpFunction", skinGarrisonMissionAlert)
+    hooksecurefunc(GarrisonShipMissionAlertSystem, "setUpFunction", skinGarrisonShipMissionAlert)
+    hooksecurefunc(GarrisonRandomMissionAlertSystem, "setUpFunction", skinGarrisonRandomMissionAlert)
 
     --Bonus Roll Money
     skinBonusRollMoney() --TODO: position
@@ -1254,7 +1254,7 @@ local function LoadAlertSystemFrameSkins()
     GW.AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
     GW.AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
     GW.AlertContainerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-    
+
     GW.AlertContainerFrame:SetScript("OnEvent", AlertContainerFrameOnEvent)
 
     -- add flare animation

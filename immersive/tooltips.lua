@@ -370,10 +370,10 @@ local function SetUnitText(self, unit, isShiftKeyDown)
 
         if showDungeonScore then
             local data = C_PlayerInfo.GetPlayerMythicPlusRatingSummary(unit)
-            if data and data.currentSeasonScore then
+            if data and data.currentSeasonScore and data.currentSeasonScore > 0 then
                 local color = C_ChallengeMode.GetDungeonScoreRarityColor(data.currentSeasonScore)
 
-                GameTooltip:AddDoubleLine(DUNGEON_SCORE_LEADER, data.currentSeasonScore, nil, nil, nil, color.r or 1, color.g or 1, color.b or 1)
+                GameTooltip:AddDoubleLine(DUNGEON_SCORE_LEADER:format("@"):gsub(": @", ""), GW.CommaValue(data.currentSeasonScore), nil, nil, nil, color.r or 1, color.g or 1, color.b or 1)
             end
         end
 

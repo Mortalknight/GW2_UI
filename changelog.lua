@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.16.1", [=[
+FIXES
+    - Torghast tracker fixes
+]=])
+
 v("5.16.0", [=[
 NEW
     - Added social module
