@@ -683,6 +683,7 @@ local function CollectCategories()
                 cCur = cCur + standingId
                 if friendID then
                     cMax = cMax + 7
+                    if not factionTbl then factionTbl = {} end
                     for _, v in pairs(factionTbl) do
                         if v.isFriend == true and v.standingText == friendTextLevel then
                             v.counter = v.counter + 1
@@ -696,6 +697,7 @@ local function CollectCategories()
                 else
                     local standing = getglobal("FACTION_STANDING_LABEL" .. standingId)
                     cMax = cMax + 8
+                    if not factionTbl then factionTbl = {} end
                     for _, v in pairs(factionTbl) do
                         if v.isFriend == false and v.standingText == standing then
                             v.counter = v.counter + 1

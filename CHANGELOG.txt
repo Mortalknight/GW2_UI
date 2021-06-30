@@ -1,6 +1,8 @@
 5.16.2
 FIXES
     - Gossip skin issue
+    - Issue with bag bars
+    - Some Torghast issues
 
 5.16.1
 FIXES

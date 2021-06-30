@@ -4,6 +4,8 @@ local v = GW.vernotes
 v("5.16.2", [=[
 FIXES
     - Gossip skin issue
+    - Issue with bag bars
+    - Some Torghast issues
 ]=])
 
 v("5.16.1", [=[

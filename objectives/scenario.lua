@@ -88,7 +88,7 @@ local function updateCurrentScenario(self, event, ...)
     if event == "UPDATE_UI_WIDGET" then
         -- we need this event only for torghast atm, so only update this we it is the torghast widget
         local w = ...
-        if not w or (w and w.widgetID ~= 2319) then
+        if not w or (w and w.widgetID ~= 3302) then
             return
         end
     end

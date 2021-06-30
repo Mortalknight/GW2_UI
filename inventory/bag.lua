@@ -314,7 +314,9 @@ GW.AddForProfiling("bag", "setBagBarOrder", setBagBarOrder)
 local function bag_OnClick(self, button)
     -- on left click, ensure that the bag stays open despite default toggle behavior
     if button == "LeftButton" then
-        if self.gwHasBag and not IsBagOpen(self:GetBagID()) then
+        local id = self:GetID();
+        local hadItem = PutItemInBag(id)
+        if not hadItem and self.gwHasBag and not IsBagOpen(self:GetBagID()) then
             OpenBag(self:GetBagID())
         end
     end
@@ -362,8 +364,8 @@ local function createBagBar(f)
 
         -- remove default of capturing right-click also (we handle right-click separately)
         b:RegisterForClicks("LeftButtonUp")
-        b:HookScript("OnClick", bag_OnClick)
-        b:HookScript("OnMouseDown", inv.bag_OnMouseDown)
+        b:SetScript("OnClick", bag_OnClick)
+        b:SetScript("OnMouseDown", inv.bag_OnMouseDown)
 
         inv.reskinBagBar(b)
 
