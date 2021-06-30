@@ -1,3 +1,7 @@
+5.16.2
+FIXES
+    - Gossip skin issue
+
 5.16.1
 FIXES
     - Torghast tracker fixes

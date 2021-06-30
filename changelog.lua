@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.16.2", [=[
+FIXES
+    - Gossip skin issue
+]=])
+
 v("5.16.1", [=[
 FIXES
     - Torghast tracker fixes

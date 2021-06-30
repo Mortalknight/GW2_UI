@@ -114,7 +114,7 @@ local function LoadGossipSkin()
     QuestFrame.CloseButton:SkinButton(true)
     QuestFrame.CloseButton:SetSize(20, 20)
 
-    QuestFrameDetailPanel:StripTextures()
+    QuestFrameDetailPanel:StripTextures(nil, true)
     QuestDetailScrollFrame:StripTextures()
     QuestProgressScrollFrame:StripTextures()
     QuestGreetingScrollFrame:StripTextures()
