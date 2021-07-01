@@ -34,8 +34,6 @@ local function createNewWQTObjectiveBlock(blockIndex)
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
 
-    newBlock.joingroup:Hide()
-
     newBlock:Hide()
 
     return newBlock

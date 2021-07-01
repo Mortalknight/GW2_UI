@@ -105,38 +105,23 @@ local function ChatBubble_OnUpdate(self, elapsed)
     self.lastUpdate = 0
 
     for _, chatBubble in pairs(C_ChatBubbles.GetAllChatBubbles()) do
-        local backdrop = chatBubble:GetChildren(1)
+        local backdrop = chatBubble:GetChildren()
         if backdrop and not backdrop:IsForbidden() and not chatBubble.isSkinnedGW2_UI then
             SkinBubble(chatBubble, backdrop)
         end
     end
 end
 
-local function ToggleChatBubbleScript(self)
-    local _, instanceType = GetInstanceInfo()
-    if instanceType == "none" then
-        self.BubbleFrame:SetScript("OnEvent", ChatBubble_OnEvent)
-        self.BubbleFrame:SetScript("OnUpdate", ChatBubble_OnUpdate)
-    else
-        self.BubbleFrame:SetScript("OnEvent", nil)
-        self.BubbleFrame:SetScript("OnUpdate", nil)
-
-        --Clear caches
-        wipe(messageToSender)
-    end
-end
-
 local function LoadChatBubbles()
     local f = CreateFrame("Frame")
 
-    f:RegisterEvent("PLAYER_ENTERING_WORLD")
-    f:SetScript("OnEvent", ToggleChatBubbleScript)
+    f:SetScript("OnEvent", ChatBubble_OnEvent)
+    f:SetScript("OnUpdate", ChatBubble_OnUpdate)
 
-    f.BubbleFrame = CreateFrame("Frame")
-    f.BubbleFrame:RegisterEvent("CHAT_MSG_SAY")
-    f.BubbleFrame:RegisterEvent("CHAT_MSG_YELL")
-    f.BubbleFrame:RegisterEvent("CHAT_MSG_MONSTER_SAY")
-    f.BubbleFrame:RegisterEvent("CHAT_MSG_MONSTER_YELL")
-    f.BubbleFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    f:RegisterEvent("CHAT_MSG_SAY")
+    f:RegisterEvent("CHAT_MSG_YELL")
+    f:RegisterEvent("CHAT_MSG_MONSTER_SAY")
+    f:RegisterEvent("CHAT_MSG_MONSTER_YELL")
+    f:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
 GW.LoadChatBubbles = LoadChatBubbles

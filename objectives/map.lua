@@ -582,9 +582,12 @@ local function LoadMinimap()
     else
         setMinimapButtons("right")
     end
-    MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
-    MinimapCluster:ClearAllPoints()
-    MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
+
+    if not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
+        MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
+        MinimapCluster:ClearAllPoints()
+        MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
+    end
 
     C_Timer.After(0.1, hoverMiniMapOut)
 end
