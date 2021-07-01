@@ -30,7 +30,7 @@ local function CreateErrorLogWindow()
 
     frame.bg = frame:CreateTexture(nil, "ARTWORK")
     frame.bg:SetAllPoints()
-    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/welcome-bg")
+    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg")
 
     frame.header = frame:CreateFontString(nil, "OVERLAY")
     frame.header:SetFont(DAMAGE_TEXT_FONT, 30, "OUTLINE")
@@ -56,7 +56,7 @@ local function CreateErrorLogWindow()
     end)
     frame.scrollArea.bg = frame.scrollArea:CreateTexture(nil, "ARTWORK")
     frame.scrollArea.bg:SetAllPoints()
-    frame.scrollArea.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chatframebackground")
+    frame.scrollArea.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatframebackground")
 
     frame.editBox = CreateFrame("EditBox", nil, frame)
     frame.editBox:SetMultiLine(true)
@@ -123,7 +123,7 @@ local function HandleError(msg, stack)
                     ErrorHandler.errors = ErrorHandler.errors + 1
 
                     Debug("ERROR", msg .. "\n" .. stack)
-                    tinsert(ErrorHandler.log, ("[%.1f] |cffff0000[ERROR]|r: %s"):format(GetTime(), (msg .. "\n" .. stack) or "-"))
+                    tinsert(ErrorHandler.log, ("[%s] |cffff0000[ERROR]|r: %s"):format(date("%H:%M:%S"), (msg .. "\n" .. stack) or "-"))
                     while #ErrorHandler.log > ErrorHandler.LOG_MAX_ENTRIES do
                         Util.Tbl.Shift(ErrorHandler.log)
                     end

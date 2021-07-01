@@ -231,7 +231,7 @@ local function LoadGossipSkin()
         self:StopMovingOrSizing()
     end)
 
-    QuestLogPopupDetailFrame:StripTextures()
+    QuestLogPopupDetailFrame:StripTextures(nil, true)
     QuestLogPopupDetailFrame:CreateBackdrop()
     tex = QuestLogPopupDetailFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     w, h = QuestLogPopupDetailFrame:GetSize()
