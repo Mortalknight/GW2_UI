@@ -1,3 +1,6 @@
+1.14.3
+    - Fix a Questie bug
+
 1.14.2
 FIXES
     - Some smaller bugs

@@ -1,7 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("1.14.2T BC", [=[
+v("1.14.3 TBC", [=[
+FIXES
+    - Fix a Questie bug
+]=])
+
+v("1.14.2 TBC", [=[
 FIXES
     - Some smaller bugs
 ]=])

@@ -7,7 +7,6 @@ local AddToAnimation = GW.AddToAnimation
 
 local savedQuests = {}
 local lastAQW = GetTime()
-local QuestieDB = QuestieLoader and QuestieLoader:ImportModule("QuestieDB")
 
 local TRACKER_TYPE_COLOR = {}
 GW.TRACKER_TYPE_COLOR = TRACKER_TYPE_COLOR
@@ -726,8 +725,15 @@ GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
 
 local function AddQuestInfos(questId, questLogIndex, watchId)
     local title, level, group, _, _, isComplete, _, _, startEvent = GetQuestLogTitle(questLogIndex)
-    local sourceItemId = QuestieDB and QuestieDB.QueryQuest and QuestieDB:GetQuest(questId).sourceItemId or nil
+    local sourceItemId = nil
     local isFailed = false
+
+    if Questie and Questie.started then
+        local questieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(questId)
+        if questieQuest and questieQuest.sourceItemId then
+            sourceItemId = questieQuest.sourceItemId
+        end
+    end
 
     if isComplete == nil then
         isComplete = false
