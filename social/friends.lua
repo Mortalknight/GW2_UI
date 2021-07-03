@@ -73,6 +73,8 @@ local function LoadFriendList(tabContainer)
 
     HybridScrollFrame_CreateButtons(FriendsListFrameScrollFrame, "FriendsListButtonTemplate")
 
+    FriendsTooltip:SetParent(GWFriendFrame.list)
+
     local buttons = FriendsListFrameScrollFrame.buttons
     for i = 1, #buttons do
         local button = buttons[i]

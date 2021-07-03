@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.16.4", [=[
+FIXES
+    - Social tab fixes
+]=])
+
 v("5.16.3", [=[
 FIXES
     - Gossip skin issue

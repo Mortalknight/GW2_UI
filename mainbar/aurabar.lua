@@ -6,14 +6,19 @@ local GetSetting = GW.GetSetting
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
-local function setLongCD(self)
+local function setLongCD(self, stackCount)
     self.cooldown:Hide()
     self.status.duration:SetFont(UNIT_NAME_FONT, 11)
     self.status.duration:SetShadowColor(0, 0, 0, 1)
     self.status.duration:SetShadowOffset(1, -1)
-    self.status.stacks:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
     self.status.stacks:SetShadowColor(0, 0, 0, 1)
     self.status.stacks:SetShadowOffset(1, -1)
+
+    if stackCount and stackCount > 99 then
+        self.status.stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINED")
+    else
+        self.status.stacks:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
+    end
 
     self.status:ClearAllPoints()
     self.status:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -6)
@@ -24,14 +29,19 @@ local function setLongCD(self)
 end
 GW.AddForProfiling("aurabar_secure", "setLongCD", setLongCD)
 
-local function setShortCD(self, expires, duration)
+local function setShortCD(self, expires, duration, stackCount)
     self.cooldown:SetCooldown(expires - duration, duration)
     self.status.duration:SetFont(UNIT_NAME_FONT, 13)
     self.status.duration:SetShadowColor(0, 0, 0, 1)
     self.status.duration:SetShadowOffset(1, -1)
-    self.status.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
     self.status.stacks:SetShadowColor(0, 0, 0, 1)
     self.status.stacks:SetShadowOffset(1, -1)
+
+    if stackCount and stackCount > 99 then
+        self.status.stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINED")
+    else
+        self.status.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
+    end
 
     self.status:ClearAllPoints()
     self.status:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -4)
@@ -42,7 +52,7 @@ local function setShortCD(self, expires, duration)
 end
 GW.AddForProfiling("aurabar_secure", "setShortCD", setShortCD)
 
-local function SetCD(self, expires, duration)
+local function SetCD(self, expires, duration, stackCount)
     if not self or not self.status or not self.gwInit then
         return
     end
@@ -50,25 +60,25 @@ local function SetCD(self, expires, duration)
     if self.atype == 2 then
         -- temp weapon enchant
         local remains = expires/1000
-        setLongCD(self)
+        setLongCD(self, stackCount)
         self.status.duration:SetText(TimeCount(remains))
         self.status.duration:Show()
     elseif duration and duration ~= 0 then
         -- normal aura with duration
         local remains = expires - GetTime()
         if duration < 121 then
-            setShortCD(self, expires, duration)
+            setShortCD(self, expires, duration, stackCount)
             if duration - remains < 0.1 then
                 self.agZoomIn:Play()
             end
         else
-            setLongCD(self)
+            setLongCD(self, stackCount)
         end
         self.status.duration:SetText(TimeCount(remains))
         self.status.duration:Show()
     else
         -- aura without duration or invalid
-        setLongCD(self)
+        setLongCD(self, stackCount)
         self.status.duration:Hide()
     end
 end
@@ -143,7 +153,7 @@ local function header_OnEvent(self, event, ...)
         valid = true
     end
     if not valid then return end
-    
+
     -- set info for each aura button (on aura change events)
     if event == "UNIT_AURA" or event == "PLAYER_ENTERING_WORLD" then
         local atype = self:GetAType()
@@ -158,7 +168,7 @@ local function header_OnEvent(self, event, ...)
             if name then
                 btn.atype = atype
                 btn:SetIcon(icon, dtype)
-                btn:SetCD(expires, duration)
+                btn:SetCD(expires, duration, count)
                 btn:SetCount(count)
             end
         end

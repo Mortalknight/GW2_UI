@@ -993,6 +993,7 @@ local function LoadReputation(tabContainer)
 
     fmGPR.categories.detailFrames = 0
     fmGPR.categories:RegisterEvent("UPDATE_FACTION")
+    fmGPR.categories:RegisterEvent("QUEST_LOG_UPDATE")
     local fnGPR_OnEvent = function(self)
         if not GW.inWorld then
             return

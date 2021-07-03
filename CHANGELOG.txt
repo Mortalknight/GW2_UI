@@ -1,3 +1,7 @@
+5.16.4
+FIXES
+    - Social tab fixes
+
 5.16.3
 FIXES
     - Gossip skin issue

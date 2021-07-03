@@ -989,7 +989,7 @@ GW.AddForProfiling("raidframes", "UpdateRaidFramesPosition", UpdateRaidFramesPos
 
 local function ToggleRaidFramesPreview(_, _, moveHudMode)
     previewStep = max((previewStep + 1) % (#previewSteps + 1), hudMoving and 1 or 0)
-    print(previewStep, moveHudMode)
+
     if previewStep == 0 or moveHudMode then
         for i = 1, MAX_RAID_MEMBERS do
             if _G["GwCompactraid" .. i] then
