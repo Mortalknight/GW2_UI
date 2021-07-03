@@ -365,5 +365,5 @@ L["Ctrl + Click to toggle override"] = "Ctrl + 左鍵點擊來取代"
 L["Incompatible Addons behavior Overridden. Needs a reload to take effect."] = "已被不相容的插件功能取代，重新載入介面後才會生效。"
 L["You have overridden this behavior."] = "你已選擇使用其他插件取代此功能。"
 L["Out of combat"] = "非戰鬥中"
-L["Show an additional resource bar"] = true
-L["Show auras below"] = true
+L["Show an additional resource bar"] = "顯示額外資訊條"
+L["Show auras below"] = "在下方顯示光環"
