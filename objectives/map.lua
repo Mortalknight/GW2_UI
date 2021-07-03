@@ -543,9 +543,9 @@ local function LoadMinimap()
         "OnMouseWheel",
         function(self, delta)
             if delta > 0 and self:GetZoom() < 5 then
-                self:SetZoom(self:GetZoom() + 1)
+                MinimapZoomIn:Click()
             elseif delta < 0 and self:GetZoom() > 0 then
-                self:SetZoom(self:GetZoom() - 1)
+                MinimapZoomOut:Click()
             end
         end
     )
