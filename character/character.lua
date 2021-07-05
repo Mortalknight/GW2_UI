@@ -313,7 +313,7 @@ GW.AddForProfiling("paperdoll_equipment", "DurabilityTooltip", DurabilityTooltip
 
 local function PaperDollUpdateStats()
     local avgItemLevel, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
-    local r, g,b = GW.api.GetItemLevelColor(avgItemLevelcc)
+    local r, g,b = GW.api.GetItemLevelColor(avgItemLevel)
     local statText, tooltip1, tooltip2
 
     avgItemLevelEquipped = avgItemLevelEquipped and avgItemLevelEquipped or 0
