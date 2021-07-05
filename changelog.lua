@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.15.0 TBC", [=[
+NEW
+    - Added support for GearScore Addon at player hero panel
+]=])
+
 v("1.14.3 TBC", [=[
 FIXES
     - Fix a Questie bug

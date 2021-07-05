@@ -3,18 +3,24 @@ local _,_, _, version = GetBuildInfo()
 GW.api = {}
 
 local function GetAverageItemLevel()
-    if version>40000 then
+    if version > 40000 then
         return _G.GetAverageItemLevel()
+    elseif GearScore_GetScore then
+        local MyGearScore, MyItemLevel  = GearScore_GetScore(UnitName("player"), "player")
+        return MyGearScore, MyItemLevel
     end
-    return nil,nil
+    return nil, nil
 end
 GW.api.GetAverageItemLevel = GetAverageItemLevel
 
-local function GetItemLevelColor()
-    if version>40000 then
+local function GetItemLevelColor(MyGearScore)
+    if version > 40000 then
         return _G.GetItemLevelColor()
+    elseif GearScore_GetQuality then
+	    local r, b, g = GearScore_GetQuality(MyGearScore)
+        return r, g, b
     end
-    return 0,0,0
+    return 0, 0, 0
 end
 GW.api.GetItemLevelColor = GetItemLevelColor
 

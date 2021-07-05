@@ -313,18 +313,19 @@ GW.AddForProfiling("paperdoll_equipment", "DurabilityTooltip", DurabilityTooltip
 
 local function PaperDollUpdateStats()
     local avgItemLevel, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
+    local r, g,b = GW.api.GetItemLevelColor(avgItemLevelcc)
     local statText, tooltip1, tooltip2
 
-    avgItemLevel = nil or 0
-    avgItemLevelEquipped = nil or 0
+    avgItemLevelEquipped = avgItemLevelEquipped and avgItemLevelEquipped or 0
+    avgItemLevel = avgItemLevel and avgItemLevel or 0
     avgItemLevelEquipped = math.floor(avgItemLevelEquipped)
     avgItemLevel = math.floor(avgItemLevel)
     if avgItemLevelEquipped < avgItemLevel then
-        avgItemLevelEquipped = math.floor(avgItemLevelEquipped) .. "(" .. math.floor(avgItemLevel) .. ")"
+        avgItemLevelEquipped = math.floor(avgItemLevel) .. " (" .. math.floor(avgItemLevelEquipped) .. ")"
     end
-    avgItemLevelEquipped = nil or ""
+    avgItemLevelEquipped = avgItemLevelEquipped == 0 and "" or avgItemLevelEquipped
     GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped)
-    GwDressingRoom.itemLevel:SetTextColor(GW.api.GetItemLevelColor())
+    GwDressingRoom.itemLevel:SetTextColor(r, g,b)
 
     local numShownStats = 1
     local grid = 1

@@ -123,9 +123,9 @@ local function HandleError(msg, stack)
                     ErrorHandler.errors = ErrorHandler.errors + 1
 
                     Debug("ERROR", msg .. "\n" .. stack)
-                    tinsert(ErrorHandler.log, ("[%.1f] |cffff0000[ERROR]|r: %s"):format(GetTime(), (msg .. "\n" .. stack) or "-"))
+                    tinsert(ErrorHandler.log, ("[%s] |cffff0000[ERROR]|r: %s"):format(date("%H:%M:%S"), (msg .. "\n" .. stack) or "-"))
                     while #ErrorHandler.log > ErrorHandler.LOG_MAX_ENTRIES do
-                        Util.Tbl.Shift(ErrorHandler.log)
+                        tremove(ErrorHandler.log, 1)
                     end
 
                     if ErrorHandler.errors == 1 then
