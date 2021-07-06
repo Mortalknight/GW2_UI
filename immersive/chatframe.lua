@@ -108,9 +108,9 @@ local tabTexs = {
 }
 
 local rolePaths = {
-    TANK = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank:15:15:0:0:64:64:2:56:2:56|t",
-    HEALER = "TInterface/AddOns/GW2_UI/textures/party/roleicon-healer:15:15:0:0:64:64:2:56:2:56|t",
-    DAMAGER = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:15:15|t"
+    TANK = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-tank:12:12:0:0:64:64:2:56:2:56|t ",
+    HEALER = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-healer:12:12:0:0:64:64:2:56:2:56|t ",
+    DAMAGER = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-dps:15:15:-2:0|t"
 }
 
 local gw_fade_frames = {
@@ -1655,7 +1655,7 @@ local function LoadChat()
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "GROUP_ROSTER_UPDATE" or event == "PLAYER_ENTERING_WORLD" then
-            if GetSetting("CHAT_SHOW_LFG_ICONS") or not IsInGroup() then return end
+            if not GetSetting("CHAT_SHOW_LFG_ICONS") or not IsInGroup() then return end
             wipe(lfgRoles)
 
             local playerRole = UnitGroupRolesAssigned("player")
