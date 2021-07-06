@@ -93,7 +93,10 @@ local throttle = {}
 local lfgRoles = {}
 local GuidCache = {}
 local ClassNames = {}
+local Keywords = {}
 local hooks = {}
+
+local SoundTimer
 
 local PLAYER_REALM = gsub(GW.myrealm , "[%s%-]", "")
 local PLAYER_NAME = format("%s-%s", GW.myname, PLAYER_REALM)
@@ -429,6 +432,95 @@ local function ToggleHyperlink(enabled)
     end
 end
 
+local function UpdateChatKeywords()
+	wipe(Keywords)
+
+	local keywords = GetSetting("CHAT_KEYWORDS")
+	keywords = gsub(keywords, ',%s', ',')
+
+	for stringValue in gmatch(keywords, '[^,]+') do
+		if stringValue ~= "" then
+			Keywords[stringValue] = true
+		end
+	end
+end
+GW.UpdateChatKeywords = UpdateChatKeywords
+
+local protectLinks = {}
+local function CheckKeyword(message, author)
+	local letSound = not SoundTimer and author ~= PLAYER_NAME and GetSetting("CHAT_KEYWORDS_ALERT")
+
+	for hyperLink in gmatch(message, '|c%x-|H.-|h.-|h|r') do
+		protectLinks[hyperLink] = gsub(hyperLink,'%s','|s')
+
+		if letSound then
+			for keyword in pairs(Keywords) do
+				if hyperLink == keyword then
+					SoundTimer = C_Timer.NewTimer(5, function() SoundTimer = nil end)
+					PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
+					letSound = false
+					break
+				end
+			end
+		end
+	end
+
+	for hyperLink, tempLink in pairs(protectLinks) do
+		message = gsub(message, GW.EscapeString(hyperLink), tempLink)
+	end
+
+	local rebuiltString
+	local isFirstWord = true
+	for word in gmatch(message, '%s-%S+%s*') do
+		if not next(protectLinks) or not protectLinks[gsub(gsub(word, '%s', ''), '|s', ' ')] then
+			local tempWord = gsub(word, '[%s%p]', '')
+			local lowerCaseWord = strlower(tempWord)
+
+			for keyword in pairs(Keywords) do
+				if lowerCaseWord == strlower(keyword) or (lowerCaseWord == strlower(GW.myname) and keyword == "%MYNAME%") then
+                    local keywordColor = GetSetting("CHAT_KEYWORDS_ALERT_COLOR")
+					word = gsub(word, tempWord, format('%s%s|r',GW.RGBToHex(keywordColor.r, keywordColor.g, keywordColor.b), tempWord))
+
+					if letSound then
+						SoundTimer = C_Timer.NewTimer(5, function() SoundTimer = nil end)
+						PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
+						letSound = false
+					end
+				end
+			end
+
+			if GetSetting("CHAT_CLASS_COLOR_MENTIONS") then
+				tempWord = gsub(word, '^[%s%p]-([^%s%p]+)([%-]?[^%s%p]-)[%s%p]*$', '%1%2')
+				lowerCaseWord = strlower(tempWord)
+                GW_ClassNames = ClassNames
+				local classMatch = ClassNames[lowerCaseWord]
+				local wordMatch = classMatch and lowerCaseWord
+
+				if wordMatch then
+					local classColorTable = GW.GWGetClassColor(classMatch, true, true)
+					if classColorTable then
+						word = gsub(word, gsub(tempWord, '%-','%%-'), format('\124cff%.2x%.2x%.2x%s\124r', classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, tempWord))
+					end
+				end
+			end
+		end
+
+		if isFirstWord then
+			rebuiltString = word
+			isFirstWord = false
+		else
+			rebuiltString = rebuiltString .. word
+		end
+	end
+
+	for hyperLink, tempLink in pairs(protectLinks) do
+		rebuiltString = gsub(rebuiltString, GW.EscapeString(tempLink), hyperLink)
+		protectLinks[hyperLink] = nil
+	end
+
+	return rebuiltString
+end
+
 local function GetSmileyReplacementText(message)
     return message
 end
@@ -439,7 +531,7 @@ end
 
 local function FindURL(msg, author, ...)
     if not GetSetting("CHAT_FIND_URL") then -- find url setting here
-        --msg = CH:CheckKeyword(msg, author)
+        msg = CheckKeyword(msg, author)
         msg = GetSmileyReplacementText(msg)
         return false, msg, author, ...
     end
@@ -452,21 +544,21 @@ local function FindURL(msg, author, ...)
     text = gsub(gsub(text, "(%S)(|c.-|H.-|h.-|h|r)", "%1 %2"), "(|c.-|H.-|h.-|h|r)(%S)", "%1 %2")
     -- http://example.com
     local newMsg, found = gsub(text, "(%a+)://(%S+)%s?", PrintURL("%1://%2"))
-    if found > 0 then return false, GetSmileyReplacementText(newMsg), author, ... end
+    if found > 0 then return false, GetSmileyReplacementText(CheckKeyword(newMsg, author)), author, ... end
     -- www.example.com
     newMsg, found = gsub(text, "www%.([_A-Za-z0-9-]+)%.(%S+)%s?", PrintURL("www.%1.%2"))
-    if found > 0 then return false, GetSmileyReplacementText(newMsg), author, ... end
+    if found > 0 then return false, GetSmileyReplacementText(CheckKeyword(newMsg, author)), author, ... end
     -- example@example.com
     newMsg, found = gsub(text, "([_A-Za-z0-9-%.]+)@([_A-Za-z0-9-]+)(%.+)([_A-Za-z0-9-%.]+)%s?", PrintURL("%1@%2%3%4"))
-    if found > 0 then return false, GetSmileyReplacementText(newMsg), author, ... end
+    if found > 0 then return false, GetSmileyReplacementText(CheckKeyword(newMsg, author)), author, ... end
     -- IP address with port 1.1.1.1:1
     newMsg, found = gsub(text, "(%d%d?%d?)%.(%d%d?%d?)%.(%d%d?%d?)%.(%d%d?%d?)(:%d+)%s?", PrintURL("%1.%2.%3.%4%5"))
-    if found > 0 then return false, GetSmileyReplacementText(newMsg), author, ... end
+    if found > 0 then return false, GetSmileyReplacementText(CheckKeyword(newMsg, author)), author, ... end
     -- IP address 1.1.1.1
     newMsg, found = gsub(text, "(%d%d?%d?)%.(%d%d?%d?)%.(%d%d?%d?)%.(%d%d?%d?)%s?", PrintURL("%1.%2.%3.%4"))
-    if found > 0 then return false, GetSmileyReplacementText(newMsg), author, ... end
+    if found > 0 then return false, GetSmileyReplacementText(CheckKeyword(newMsg, author)), author, ... end
 
-    --msg = CheckKeyword(msg, author)
+    msg = CheckKeyword(msg, author)
     msg = GetSmileyReplacementText(msg)
 
     return false, msg, author, ...
@@ -587,15 +679,15 @@ local function GetPFlag(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, ar
             -- Add Blizzard Icon if this was sent by a GM/DEV
             return "|TInterface\\ChatFrame\\UI-ChatIcon-Blizz:12:20:0:0:32:16:4:28:0:16|t "
         elseif specialFlag == "GUIDE" then
-            if _G.ChatFrame_GetMentorChannelStatus(CHATCHANNELRULESET_MENTOR, C_ChatInfo_GetChannelRulesetForChannelID(zoneChannelID)) == CHATCHANNELRULESET_MENTOR then
+            if ChatFrame_GetMentorChannelStatus(CHATCHANNELRULESET_MENTOR, C_ChatInfo.GetChannelRulesetForChannelID(zoneChannelID)) == CHATCHANNELRULESET_MENTOR then
                 return _G.NPEV2_CHAT_USER_TAG_GUIDE .. " " -- possibly unable to save global string with trailing whitespace...
             end
         elseif specialFlag == "NEWCOMER" then
-            if _G.ChatFrame_GetMentorChannelStatus(PLAYERMENTORSHIPSTATUS_NEWCOMER, C_ChatInfo_GetChannelRulesetForChannelID(zoneChannelID)) == PLAYERMENTORSHIPSTATUS_NEWCOMER then
+            if ChatFrame_GetMentorChannelStatus(PLAYERMENTORSHIPSTATUS_NEWCOMER, C_ChatInf.GetChannelRulesetForChannelID(zoneChannelID)) == PLAYERMENTORSHIPSTATUS_NEWCOMER then
                 return _G.NPEV2_CHAT_USER_TAG_NEWCOMER
             end
         else
-            return _G["CHAT_FLAG_"..specialFlag]
+            return _G["CHAT_FLAG_" .. specialFlag]
         end
     end
 
@@ -637,7 +729,7 @@ local function GW_GetPlayerInfoByGUID(guid)
 		GuidCache[guid] = data
 	end
 
-	if data then data.classColor = GW.GWGetClassColor(data.englishClass) end
+	if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true) end
 
 	return data
 end
@@ -1089,11 +1181,7 @@ local function styleChatWindow(frame)
     frame:SetFrameLevel(4)
 
     local id = frame:GetID()
-    local _, fontSize, _, _, _, _, shown, _, isDocked = GetChatWindowInfo(id)
-    if not shown and not isDocked then
-        FCF_Close(frame)
-        return
-    end
+    local _, fontSize, _, _, _, _, _, _, isDocked = GetChatWindowInfo(id)
 
     local tab = _G[name.."Tab"]
     local editbox = _G[name.."EditBox"]
@@ -1404,8 +1492,8 @@ local function LoadChat()
         QuickJoinToastButton.SetPoint = GW.NoOp
     end
 
-    for _, frameName in ipairs(CHAT_FRAMES) do
-        local frame = _G[frameName]
+    for i = 1, FCF_GetNumActiveChatFrames() do
+        local frame = _G["ChatFrame" .. i]
         -- possible fix for chatframe floating max error
         frame.oldAlpha = frame.oldAlpha and frame.oldAlpha or DEFAULT_CHATFRAME_ALPHA
         styleChatWindow(frame)
@@ -1439,8 +1527,8 @@ local function LoadChat()
     end)
 
     hooksecurefunc("FCF_DockUpdate", function()
-        for _, frameName in ipairs(CHAT_FRAMES) do
-            local frame = _G[frameName]
+        for i = 1, FCF_GetNumActiveChatFrames() do
+            local frame = _G["ChatFrame" .. i]
             styleChatWindow(frame)
             FCFTab_UpdateAlpha(frame)
             frame:SetTimeVisible(100)
@@ -1449,6 +1537,8 @@ local function LoadChat()
     end)
 
     ToggleHyperlink(GetSetting("CHAT_HYPERLINK_TOOLTIP"))
+    UpdateChatKeywords()
+
     hooksecurefunc("FCF_Close", function(frame)
         if frame.Container then
             frame.Container:Hide()
@@ -1496,8 +1586,8 @@ local function LoadChat()
             frame.Container:Show()
         end
         --Set Button and container position after drag for every container
-        for _, frameName in ipairs(CHAT_FRAMES) do
-            if _G[frameName].hasContainer then setButtonPosition(_G[frameName]) end
+        for i = 1, FCF_GetNumActiveChatFrames() do
+            if _G["ChatFrame" .. i].hasContainer then setButtonPosition(_G["ChatFrame" .. i]) end
         end
     end)
 
@@ -1528,15 +1618,14 @@ local function LoadChat()
         end
     end
 
-    for _, frameName in ipairs(CHAT_FRAMES) do
-        local frame = _G[frameName]
-        if frame then
-            FCF_FadeOutChatFrame(frame)
+    for i = 1, FCF_GetNumActiveChatFrames() do
+        if _G["ChatFrame" .. i] then
+            FCF_FadeOutChatFrame(_G["ChatFrame" .. i])
         end
     end
     FCF_FadeOutChatFrame(ChatFrame1)
 
-    for _, frameName in ipairs(CHAT_FRAMES) do
+    for _, frameName in pairs(CHAT_FRAMES) do
         _G[frameName .. "Tab"]:SetScript("OnDoubleClick", nil)
     end
 

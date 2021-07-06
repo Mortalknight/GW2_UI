@@ -52,7 +52,7 @@ local fnF_OnClick = function(self)
 end
 AddForProfiling("settings", "fnF_OnClick", fnF_OnClick)
 
-local function CreateCat(name, desc, panel, icon, bg, scrollFrames)
+local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon)
     local i = #settings_cat + 1
 
     -- create and position a new button/label for this category
@@ -67,6 +67,10 @@ local function CreateCat(name, desc, panel, icon, bg, scrollFrames)
 
     -- set the icon requested
     f.icon:SetTexCoord(0.25 * floor(icon / 4), 0.25 * (floor(icon / 4) + 1), 0.25 * (icon % 4), 0.25 * ((icon % 4) + 1))
+    if specialIcon then
+        f.icon:SetTexCoord(0, 1, 0, 1)
+        f.icon:SetTexture(specialIcon)
+    end
 
     -- set the bg requested
     if bg then
@@ -169,6 +173,15 @@ local function AddOptionButton(panel, name, desc, optionName, callback, params, 
     return opt
 end
 GW.AddOptionButton = AddOptionButton
+
+local function AddOptionColorPicker(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+
+    opt["optionType"] = "colorPicker"
+
+    return opt
+end
+GW.AddOptionColorPicker = AddOptionColorPicker
 
 local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
@@ -358,6 +371,16 @@ local function loadDropDown(scrollFrame)
     HybridScrollFrame_Update(scrollFrame, USED_DROPDOWN_HEIGHT, 120)
 end
 
+local function ShowColorPicker(r, g, b, a, changedCallback)
+    ColorPickerFrame:SetColorRGB(r,g,b);
+    ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = (a ~= nil), a;
+    ColorPickerFrame.previousValues = {r,g,b,a};
+    ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.cancelFunc = 
+     changedCallback, changedCallback, changedCallback;
+    ColorPickerFrame:Hide(); -- Need to run the OnShow handler.
+    ColorPickerFrame:Show();
+   end
+
 local function InitPanel(panel, hasScroll)
     if not panel or not (hasScroll and panel.scroll.scrollchild.gwOptions or panel.gwOptions) then
         return
@@ -386,6 +409,9 @@ local function InitPanel(panel, hasScroll)
             newLine = true
         elseif v.optionType == "button" then
             optionFrameType = "GwButtonTextTmpl"
+            newLine = true
+        elseif v.optionType == "colorPicker" then
+            optionFrameType = "GwOptionBoxColorPickerTmpl"
             newLine = true
         end
 
@@ -423,7 +449,36 @@ local function InitPanel(panel, hasScroll)
         )
         of:SetScript("OnLeave", GameTooltip_Hide)
 
-        if v.optionType == "dropdown" then
+        if v.optionType == "colorPicker" then
+            local color = GetSetting(v.optionName)
+            of.button.bg:SetColorTexture(color.r, color.g, color.b)
+            of.button:SetScript("OnClick", function()
+                if ColorPickerFrame:IsShown() then
+                    HideUIPanel(ColorPickerFrame)
+                else
+                    color = GetSetting(v.optionName)
+                    ShowColorPicker(color.r, color.g, color.b, nil, function(restore)
+                        local newR, newG, newB
+                        if restore then
+                         -- The user bailed, we extract the old color from the table created by ShowColorPicker.
+                         newR, newG, newB = unpack(restore)
+                        else
+                         -- Something changed
+                          newR, newG, newB = ColorPickerFrame:GetColorRGB()
+                        end
+                        -- Update our internal storage.
+
+                        local color = GetSetting(v.optionName)
+                        color.r = newR
+                        color.g = newG
+                        color.b = newB
+                        SetSetting(v.optionName, color)
+                        of.button.bg:SetColorTexture(newR, newG, newB)
+                    end)
+                end
+            end)
+
+        elseif v.optionType == "dropdown" then
             local scrollFrame = of.container.contentScroll
             scrollFrame.numEntries = #v.options
             scrollFrame.scrollBar.thumbTexture:SetSize(12, 30)

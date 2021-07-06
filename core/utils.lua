@@ -755,3 +755,8 @@ local function Join(del, ...)
     return s
 end
 GW.Join = Join
+
+local function EscapeString(s)
+    return gsub(s, "([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1")
+end
+GW.EscapeString = EscapeString
