@@ -182,7 +182,7 @@ local function updateCurrentScenario(self, event, ...)
     end
 
     if IsInJailersTower() then
-        local floor
+        local floor = ""
         if event == "JAILERS_TOWER_LEVEL_UPDATE" then
             local level, type, textureKit = ...
             self.jailersTowerLevelUpdateInfo = {level = level, type = type, textureKit = textureKit}

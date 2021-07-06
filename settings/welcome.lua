@@ -89,6 +89,15 @@ local function button1_OnClick()
                 FCF_SavePositionAndDimensions(frame)
                 FCF_StopDragging(frame)
                 FCF_SetChatWindowFontSize(nil, frame, 12)
+
+                if id == 2 then
+                    FCF_SetWindowName(frame, GUILD_EVENT_LOG)
+                end
+                if id == 3 then
+                    --VoiceTranscriptionFrame_UpdateVisibility(frame)
+                    VoiceTranscriptionFrame_UpdateVoiceTab(frame)
+                    VoiceTranscriptionFrame_UpdateEditBox(frame)
+                end
             end
 
             -- keys taken from "ChatTypeGroup" but doesnt add: "OPENING", "TRADESKILLS", "PET_INFO", "COMBAT_MISC_INFO", "COMMUNITIES_CHANNEL", "PET_BATTLE_COMBAT_LOG", "PET_BATTLE_INFO", "TARGETICONS"
@@ -102,18 +111,18 @@ local function button1_OnClick()
 
             -- keys taken from "ChatTypeGroup" which weren't added above to ChatFrame1
             chatGroup = {"COMBAT_XP_GAIN", "COMBAT_HONOR_GAIN", "COMBAT_FACTION_CHANGE", "SKILL", "LOOT", "CURRENCY", "MONEY"}
-            ChatFrame_RemoveAllMessageGroups(trandeChat)
+            ChatFrame_RemoveAllMessageGroups(ChatFrame4)
             for _, v in ipairs(chatGroup) do
-                ChatFrame_AddMessageGroup(trandeChat, v)
+                ChatFrame_AddMessageGroup(ChatFrame4, v)
             end
 
             ChatFrame_AddChannel(ChatFrame1, GENERAL)
             ChatFrame_RemoveChannel(ChatFrame1, TRADE)
-            ChatFrame_AddChannel(trandeChat, TRADE)
+            ChatFrame_AddChannel(ChatFrame4, TRADE)
 
             -- set the chat groups names in class color to enabled for all chat groups which players names appear
             chatGroup = {"SAY", "EMOTE", "YELL", "WHISPER", "PARTY", "PARTY_LEADER", "RAID", "RAID_LEADER", "RAID_WARNING", "INSTANCE_CHAT", "INSTANCE_CHAT_LEADER", "GUILD", "OFFICER", "ACHIEVEMENT", "GUILD_ACHIEVEMENT", "COMMUNITIES_CHANNEL"}
-            for i = 1, _G.MAX_WOW_CHAT_CHANNELS do
+            for i = 1, MAX_WOW_CHAT_CHANNELS do
                 tinsert(chatGroup, "CHANNEL" .. i)
             end
             for _, v in ipairs(chatGroup) do

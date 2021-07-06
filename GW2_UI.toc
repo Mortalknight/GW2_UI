@@ -53,6 +53,7 @@ settings/panel_profiles.xml
 settings/panel_raid.xml
 settings/panel_party.xml
 settings/settings.lua
+settings/panel_chat.lua
 settings/panel_modules.lua
 settings/panel_player.lua
 settings/panel_target.lua

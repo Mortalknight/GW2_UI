@@ -369,6 +369,7 @@ GW_DEFAULT["StanceBar_pos"]["xOfs"] = -405
 GW_DEFAULT["StanceBar_pos"]["yOfs"] = 31
 GW_DEFAULT["StanceBar_pos_scale"] = 1
 GW_DEFAULT["StanceBar_GrowDirection"] = "UP"
+GW_DEFAULT["StanceBarContainerState"] = "close"
 
 GW_DEFAULT["PowerBar_pos"] = {}
 GW_DEFAULT["PowerBar_pos"]["point"] = "BOTTOMLEFT"
@@ -376,6 +377,13 @@ GW_DEFAULT["PowerBar_pos"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["PowerBar_pos"]["xOfs"] = 53
 GW_DEFAULT["PowerBar_pos"]["yOfs"] = 86
 GW_DEFAULT["PowerBar_pos_scale"] = 1
+
+GW_DEFAULT["CHAT_FIND_URL"] = true
+GW_DEFAULT["CHAT_HYPERLINK_TOOLTIP"] = true
+GW_DEFAULT["CHAT_SHORT_CHANNEL_NAMES"] = false
+GW_DEFAULT["CHAT_SHOW_LFG_ICONS"] = true
+GW_DEFAULT["CHAT_SPAM_INTERVAL_TIMER"] = 5
+GW_DEFAULT["CHAT_INCOMBAT_TEXT_REPEAT"] = 5
 
 GW_DEFAULT["ClasspowerBar_pos"] = {}
 GW_DEFAULT["ClasspowerBar_pos"]["point"] = "BOTTOMLEFT"

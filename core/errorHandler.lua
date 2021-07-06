@@ -125,7 +125,7 @@ local function HandleError(msg, stack)
                     Debug("ERROR", msg .. "\n" .. stack)
                     tinsert(ErrorHandler.log, ("[%s] |cffff0000[ERROR]|r: %s"):format(date("%H:%M:%S"), (msg .. "\n" .. stack) or "-"))
                     while #ErrorHandler.log > ErrorHandler.LOG_MAX_ENTRIES do
-                        Util.Tbl.Shift(ErrorHandler.log)
+                        tremove(ErrorHandler.log, 1)
                     end
 
                     if ErrorHandler.errors == 1 then

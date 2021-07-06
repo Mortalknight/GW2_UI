@@ -56,6 +56,9 @@ end
 GW.SetStanceButtons = SetStanceButtons
 
 local function StanceButton_OnEvent(self, event)
+    if event == "PLAYER_ENTERING_WORLD" and not InCombatLockdown() then
+        self.container:SetShown(GW.GetSetting("StanceBarContainerState") == "open" and true or false)
+    end
     if InCombatLockdown() then
         self:RegisterEvent("PLAYER_REGEN_ENABLED")
         return
@@ -99,6 +102,9 @@ local function CreateStanceBar()
         end
     ]=]
     )
+    StanceBarButton:HookScript("OnClick", function(self)
+        GW.SetSetting("StanceBarContainerState", self.container:IsShown() and "open" or "close")
+    end)
 
     GW.RegisterMovableFrame(StanceBarButton, GW.L["StanceBar"], "StanceBar_pos", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"})
     StanceBarButton:ClearAllPoints()

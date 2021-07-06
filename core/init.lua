@@ -27,6 +27,7 @@ GW.CheckRole = CheckRole
 
 --Constants
 local gameLocale = GetLocale()
+GW.myguid = UnitGUID("player")
 GW.addonName = addonName:gsub("_", " ")
 GW.mylocal = gameLocale == "enGB" and "enUS" or gameLocale
 GW.NoOp = function() end
