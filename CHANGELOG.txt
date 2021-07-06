@@ -2,6 +2,9 @@
 NEW
     - Added support for GearScore Addon at player hero panel
 
+FIXES
+    - Tooltip issue
+
 1.14.3
     - Fix a Questie bug
 

@@ -138,6 +138,7 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
 
         _G.GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColor.colorStr, name or UNKNOWN)
 
+        local lineOffset = 2
         if guildName then
             if guildRealm and isShiftKeyDown then
                 guildName = guildName .. "-" .. guildRealm
@@ -148,11 +149,13 @@ local function SetUnitText(self, unit, level, isShiftKeyDown)
             else
                 _G.GameTooltipTextLeft2:SetFormattedText("<|cff00ff10%s|r>", guildName)
             end
+            lineOffset = 3
         end
 
         local diffColor = GetCreatureDifficultyColor(level)
         local race = UnitRace(unit)
         local unitGender = showGender and genderTable[gender]
+        local levelLine = GetLevelLine(self, lineOffset)
         local levelString = format("|cff%02x%02x%02x%s|r %s%s |c%s%s|r", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", unitGender or "", race or "", nameColor.colorStr, localeClass)
 
         if levelLine then
