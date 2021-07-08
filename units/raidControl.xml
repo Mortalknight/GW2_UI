@@ -114,41 +114,31 @@
                 </Anchors>
                 <Layers>
                     <layer level="OVERLAY">
-                        <FontString parentKey="header" text="RAID_TARGET_ICON" inherits="GameFontNormalSmall" justifyH="LEFT">
+                        <FontString parentKey="groupCounter" text="Counter 123" inherits="GameFontNormalSmall" justifyH="LEFT">
                             <Size x="512" y="25"></Size>
                             <Color r="1" g="0.95" b="0.82"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="5" y="5"></Anchor>
                             </Anchors>
                         </FontString>
+                        <FontString parentKey="header" text="RAID_TARGET_ICON" inherits="GameFontNormalSmall" justifyH="LEFT">
+                            <Size x="512" y="25"></Size>
+                            <Color r="1" g="0.95" b="0.82"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="5" y="-20"></Anchor>
+                            </Anchors>
+                        </FontString>
                         <FontString parentKey="header2" inherits="GameFontNormalSmall" justifyH="LEFT">
                             <Size x="512" y="25"></Size>
                             <Color r="1" g="0.95" b="0.82"/>
                             <Anchors>
-                                <Anchor point="TOPLEFT" x="5" y="-100"></Anchor>
+                                <Anchor point="TOPLEFT" x="5" y="-125"></Anchor>
                             </Anchors>
                         </FontString>
                     </layer>
                 </Layers>
                 <Frames>
                     <Button parentKey="readyCheck" inherits="GwStandardButton" text="READY_CHECK">
-                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button"></NormalTexture>
-                        <Size x="190" y="20" />
-                        <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-280"></Anchor>
-                        </Anchors>
-                        <Layers>
-                            <Layer level="OVERLAY">
-                                <Texture file="Interface/AddOns/GW2_UI/textures/party/readycheck-icon">
-                                    <Size x="15" y="15"></Size>
-                                    <Anchors>
-                                        <Anchor point="LEFT" relativePoint="LEFT" x="2" y="-1"></Anchor>
-                                    </Anchors>
-                                </Texture>
-                            </Layer>
-                        </Layers>
-                    </Button>
-                    <Button parentKey="countdown" inherits="GwStandardButton" text="PLAYER_COUNTDOWN_BUTTON">
                         <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button"></NormalTexture>
                         <Size x="190" y="20" />
                         <Anchors>
@@ -165,16 +155,33 @@
                             </Layer>
                         </Layers>
                     </Button>
-                    <Button parentKey="roleCheck" inherits="GwStandardButton" text="ROLE_POLL">
+                    <Button parentKey="countdown" inherits="GwStandardButton" text="PLAYER_COUNTDOWN_BUTTON">
+                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button"></NormalTexture>
                         <Size x="190" y="20" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-330"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/party/readycheck-icon">
+                                    <Size x="15" y="15"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="2" y="-1"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Button>
+                    <Button parentKey="roleCheck" inherits="GwStandardButton" text="ROLE_POLL">
+                        <Size x="190" y="20" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-355"></Anchor>
                         </Anchors>
                     </Button>
                     <Button parentKey="convert" inherits="GwStandardButton" text="112">
                         <Size x="190" y="20" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-355"></Anchor>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-380"></Anchor>
                         </Anchors>
                     </Button>
                 </Frames>

@@ -80,7 +80,7 @@ local function LoadHudPanel(sWindow)
         nil,
         2
     )
-    addOptionButton(p.scroll.scrollchild, L["Apply UI scale to all scaleable frames"], L["Applies the UI scale to all frames, which can be scaled in 'Move HUD' mode."], nil, function()
+    addOptionButton(p.scroll.scrollchild, L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], nil, function()
         local scale = GetSetting("HUD_SCALE")
         for _, mf in pairs(GW.scaleableFrames) do
             mf.gw_frame:SetScale(scale)
@@ -88,6 +88,21 @@ local function LoadHudPanel(sWindow)
             GW.SetSetting(mf.gw_Settings .."_scale", scale)
         end
     end)
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        L["Show Role Bar"],
+        L["Whether to display a floating bar showing your group or raid's role composition. This can be moved via the 'Move HUD' interface."],
+        "ROLE_BAR",
+        GW.SetMinimapHover,
+        {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"},
+        {
+            ALWAYS,
+            NEVER,
+            AGGRO_WARNING_IN_PARTY,
+            L["In raid"],
+            L["In group or in raid"],
+        }
+    )
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Minimap details"],

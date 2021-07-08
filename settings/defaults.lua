@@ -378,6 +378,14 @@ GW_DEFAULT["PowerBar_pos"]["xOfs"] = 53
 GW_DEFAULT["PowerBar_pos"]["yOfs"] = 86
 GW_DEFAULT["PowerBar_pos_scale"] = 1
 
+GW_DEFAULT["ROLE_BAR_pos"] = {}
+GW_DEFAULT["ROLE_BAR_pos"]["point"] = "TOPLEFT"
+GW_DEFAULT["ROLE_BAR_pos"]["relativePoint"] = "TOPLEFT"
+GW_DEFAULT["ROLE_BAR_pos"]["xOfs"] = 500
+GW_DEFAULT["ROLE_BAR_pos"]["yOfs"] = 0
+GW_DEFAULT["ROLE_BAR_pos_scale"] = 1
+GW_DEFAULT["ROLE_BAR"] = "IN_RAID"
+
 GW_DEFAULT["CHAT_FIND_URL"] = true
 GW_DEFAULT["CHAT_HYPERLINK_TOOLTIP"] = true
 GW_DEFAULT["CHAT_SHORT_CHANNEL_NAMES"] = false

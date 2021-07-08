@@ -37,8 +37,8 @@ L["Only takes effect if the option 'Cursor Tooltips' is activated and the cursor
 L["Cursor Anchor Offset X"] = "Смещение крепления курсора по X"
 L["Cursor Anchor Offset Y"] = "Смещение крепления курсора по Y"
 L["Cursor Anchor Right"] = "Крепление справа от курсора"
-L["Apply UI scale to all scaleable frames"] = "Глобальный масштаб HUD"
-L["Applies the UI scale to all frames, which can be scaled in 'Move HUD' mode."] = "Применение масштаба пользовательского интерфейса ко всем элементам интерфейса, которые можно масштабировать в режиме \"Интерфейс\"."
+L["Apply to all"] = true
+L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."] = "Применение масштаба пользовательского интерфейса ко всем элементам интерфейса, которые можно масштабировать в режиме \"Интерфейс\"."
 L["Ascending"] = "По возрастанию"
 L["Auras per row"] = "Ауры в ряд"
 L["Aura Style"] = "Стиль ауры"

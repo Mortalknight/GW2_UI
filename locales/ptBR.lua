@@ -37,8 +37,8 @@ L["Only takes effect if the option 'Cursor Tooltips' is activated and the cursor
 L["Cursor Anchor Offset X"] = "Deslocamento da Âncora do Cursor em X"
 L["Cursor Anchor Offset Y"] = "Deslocamento da Âncora do Cursor em Y"
 L["Cursor Anchor Right"] = "Ancorar à Direita do Cursor"
-L["Apply UI scale to all scaleable frames"] = "Aplicar escala da Interface a todos as unidades de escala ajustável"
-L["Applies the UI scale to all frames, which can be scaled in 'Move HUD' mode."] = "Aplica a escala da Interface a todas as unidades que podem ter a escala alterada no modo de Mover Interface."
+L["Apply to all"] = true
+L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."] = "Aplica a escala da Interface a todas as unidades que podem ter a escala alterada no modo de Mover Interface."
 L["Ascending"] = "Ascendente"
 L["Auras per row"] = "Auras por Linha"
 L["Aura Style"] = "Estilo de Aura"

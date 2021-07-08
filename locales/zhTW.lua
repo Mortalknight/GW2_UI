@@ -37,8 +37,8 @@ L["Only takes effect if the option 'Cursor Tooltips' is activated and the cursor
 L["Cursor Anchor Offset X"] = "跟隨游標水平偏移"
 L["Cursor Anchor Offset Y"] = "跟隨游標垂直偏移"
 L["Cursor Anchor Right"] = "游標右側"
-L["Apply UI scale to all scaleable frames"] = "套用介面縮放到所有可縮放的框架"
-L["Applies the UI scale to all frames, which can be scaled in 'Move HUD' mode."] = "介面縮放大小套用到所有在 '移動介面' 模式中能夠縮放大小的框架。"
+L["Apply to all"] = true
+L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."] = "介面縮放大小套用到所有在 '移動介面' 模式中能夠縮放大小的框架。"
 L["Ascending"] = "遞增"
 L["Auras per row"] = "每列光環數量"
 L["Aura Style"] = "光環樣式"

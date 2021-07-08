@@ -274,7 +274,7 @@ local function setupMicroButtons(mbf)
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
         reskinMicroButton(cref, "CharacterMicroButton", mbf)
-    
+
         cref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         cref:SetAttribute(
             "_onclick",
@@ -290,7 +290,7 @@ local function setupMicroButtons(mbf)
             self:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
         end
         cref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
-        cref:SetScript("OnHide", GameTooltip_Hide)
+        cref:SetScript("OnLeave", GameTooltip_Hide)
     else
         cref = CharacterMicroButton
         MicroButtonPortrait:Hide()

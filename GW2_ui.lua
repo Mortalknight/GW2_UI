@@ -475,6 +475,8 @@ local function loadAddon(self)
     GW.MakeAltPowerBarMovable()
     GW.WidgetUISetup()
 
+    GW.Create_Raid_Counter()
+
     --Create hud art
     hudArtFrame = GW.LoadHudArt()
 
