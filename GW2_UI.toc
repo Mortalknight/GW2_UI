@@ -83,6 +83,21 @@ core/auras.lua
 changelog.lua
 GW2_ui.lua
 
+social/social.xml
+social/ignoreList.xml
+social/raf.xml
+social/friends.xml
+social/who.xml
+social/quickjoin.xml
+social/raid.xml
+social/raid.lua
+social/quickjoin.lua
+social/who.lua
+social/friends.lua
+social/raf.lua
+social/ignoreList.lua
+social/social.lua
+
 units/raidControl.xml
 units/aurabar.xml
 units/target.xml
@@ -167,21 +182,6 @@ objectives/vehicleButton.lua
 objectives/extraAB_bossAB.lua
 objectives/altPowerBar.lua
 objectives/widgetUI.lua
-
-social/social.xml
-social/ignoreList.xml
-social/raf.xml
-social/friends.xml
-social/who.xml
-social/quickjoin.xml
-social/raid.xml
-social/raid.lua
-social/quickjoin.lua
-social/who.lua
-social/friends.lua
-social/raf.lua
-social/ignoreList.lua
-social/social.lua
 
 character/character.xml
 character/paperdoll.xml

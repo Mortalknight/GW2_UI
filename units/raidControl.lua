@@ -300,7 +300,25 @@ GW.manageButton = manageButton
 GW.AddForProfiling("raidControl", "manageButton", manageButton)
 
 local function Create_Raid_Counter()
-    local raidCounterFrame = CreateFrame("Frame", "GW_RaidCounter_Frame", UIParent)
+    local raidCounterFrame = CreateFrame("Button", "GW_RaidCounter_Frame", UIParent, "SecureHandlerClickTemplate")
+
+    if GwSocialWindow then
+        raidCounterFrame:SetFrameRef("GwSocialWindow", GwSocialWindow)
+    end
+    raidCounterFrame:SetAttribute("ourWindow", GetSetting("USE_SOCIAL_WINDOW"))
+    raidCounterFrame.func = function() ToggleRaidFrame() end
+    raidCounterFrame:SetAttribute(
+        "_onclick",
+        [=[
+            if self:GetAttribute("ourWindow") then
+                local f = self:GetFrameRef("GwSocialWindow")
+                f:SetAttribute("keytoggle", true)
+                f:SetAttribute("windowpanelopen", "raidlist")
+            else
+                self:CallMethod("func")
+            end
+        ]=]
+    )
     raidCounterFrame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
 
     raidCounterFrame:SetSize(100, 25)
