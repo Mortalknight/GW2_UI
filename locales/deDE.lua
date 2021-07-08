@@ -374,6 +374,7 @@ L["Keyword highlight color"] = true
 L["In raid"] = "Im Schlachtzug"
 L["In group or in raid"] = "In Gruppe oder im Schlachtzug"
 L["Show Role Bar"] = "Zeige Rollenbar"
+L["Role Bar"] = "Rollenbar"
 L["Whether to display a floating bar showing your group or raid's role composition. This can be moved via the 'Move HUD' interface."] = "Zeigt eine schwebende Leiste an, welche dir deine Gruppen oder Schlachtzug Rollenzusammensetzung anzeigt. Dieses kann über die 'Move HUD'-Oberfläche verschoben werden."
 L["Show Missing Raid Buffs Bar"] = "Zeige fehlende 'Schlechtzug-Buffs' Bar"
 L["Whether to display a floating bar showing your missing buffs. This can be moved via the 'Move HUD' interface."] = true

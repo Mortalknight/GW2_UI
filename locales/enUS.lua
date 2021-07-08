@@ -372,6 +372,7 @@ L["Keyword highlight color"] = true
 L["In raid"] = true
 L["In group or in raid"] = true
 L["Show Role Bar"] = true
+L["Role Bar"] = true
 L["Whether to display a floating bar showing your group or raid's role composition. This can be moved via the 'Move HUD' interface."] = true
 L["Show Missing Raid Buffs Bar"] = true
 L["Whether to display a floating bar showing your missing buffs. This can be moved via the 'Move HUD' interface."] = true

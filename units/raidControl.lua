@@ -354,12 +354,26 @@ local function Create_Raid_Counter()
             end
         end
 
+        if GetNumGroupMembers() == 0 then
+            local plyerRole = UnitGroupRolesAssigned("player")
+            if plyerRole then
+                if GW.myrole == "TANK" then
+                    tank = tank + 1
+                elseif GW.myrole == "HEALER" then
+                    heal = heal + 1
+                elseif GW.myrole == "DAMAGER" then
+                    damage = damage + 1
+                end
+            end
+        end
+
+
         raidCounterFrame.tank:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank:0:0:0:2:64:64:4:60:4:60|t " .. tank)
         raidCounterFrame.heal:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-healer:0:0:0:1:64:64:4:60:4:60|t " .. heal)
         raidCounterFrame.damager:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:15:15:0:0:64:64:4:60:4:60|t" .. damage)
     end)
 
-    GW.RegisterMovableFrame(raidCounterFrame, GW.L["Class Totems"], "ROLE_BAR_pos", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"})
+    GW.RegisterMovableFrame(raidCounterFrame, GW.L["Role Bar"], "ROLE_BAR_pos", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"})
     raidCounterFrame:ClearAllPoints()
     raidCounterFrame:SetPoint("TOPLEFT", raidCounterFrame.gwMover)
 end
