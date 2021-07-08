@@ -469,6 +469,7 @@ local function loadAddon(self)
 
     GW.LoadImmersionAddonSkin()
 
+    GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()
     GW.LoadVehicleButton()
     GW.MakeAltPowerBarMovable()

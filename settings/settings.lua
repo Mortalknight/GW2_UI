@@ -371,14 +371,36 @@ local function loadDropDown(scrollFrame)
     HybridScrollFrame_Update(scrollFrame, USED_DROPDOWN_HEIGHT, 120)
 end
 
+local function ColorCallback(self, r, g, b, a, isAlpha)
+	-- this will block an infinite loop from `E.GrabColorPickerValues`
+	-- which is caused when we set values into the color picker again on `OnValueChanged`
+	if ColorPickerFrame.noColorCallback then return end
+
+	if not self.HasAlpha then
+		a = 1
+	end
+	self:SetColor(r, g, b, a)
+	if ColorPickerFrame:IsVisible() then
+		--colorpicker is still open
+		self:Fire("OnValueChanged", r, g, b, a)
+	else
+		--colorpicker is closed, color callback is first, ignore it,
+		--alpha callback is the final call after it closes so confirm now
+		if isAlpha then
+			self:Fire("OnValueConfirmed", r, g, b, a)
+		end
+	end
+end
+
 local function ShowColorPicker(r, g, b, a, changedCallback)
-    ColorPickerFrame:SetColorRGB(r,g,b);
-    ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = (a ~= nil), a;
-    ColorPickerFrame.previousValues = {r,g,b,a};
-    ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.cancelFunc = 
-     changedCallback, changedCallback, changedCallback;
-    ColorPickerFrame:Hide(); -- Need to run the OnShow handler.
-    ColorPickerFrame:Show();
+    ColorPickerFrame:SetColorRGB(r, g, b)
+    ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = (a ~= nil), a
+    ColorPickerFrame.previousValues = {r, g, b, a}
+    ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.cancelFunc = changedCallback, changedCallback, changedCallback
+    ColorPickerFrame:Show()
+    ColorPickerFrame:SetFrameStrata('FULLSCREEN_DIALOG')
+    ColorPickerFrame:SetClampedToScreen(true)
+    ColorPickerFrame:Raise()
    end
 
 local function InitPanel(panel, hasScroll)
@@ -458,6 +480,7 @@ local function InitPanel(panel, hasScroll)
                 else
                     color = GetSetting(v.optionName)
                     ShowColorPicker(color.r, color.g, color.b, nil, function(restore)
+                        if ColorPickerFrame.noColorCallback then return end
                         local newR, newG, newB
                         if restore then
                          -- The user bailed, we extract the old color from the table created by ShowColorPicker.

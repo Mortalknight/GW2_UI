@@ -110,7 +110,7 @@ local tabTexs = {
 local rolePaths = {
     TANK = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-tank:12:12:0:0:64:64:2:56:2:56|t ",
     HEALER = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-healer:12:12:0:0:64:64:2:56:2:56|t ",
-    DAMAGER = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-dps:15:15:-2:0|t"
+    DAMAGER = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-dps:15:15:-2:0:64:64:2:56:2:56|t"
 }
 
 local gw_fade_frames = {
@@ -641,22 +641,9 @@ local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
     return ChatFrame_AddChannel(chatFrame, C_ChatInfo.GetChannelShortcutForChannelID(channelID)) ~= nil;
 end
 
-local function GetChatTime()
-    local unix = time()
-    local realm = C_DateAndTime.GetCurrentCalendarTime()
-    if realm then
-        realm.day = realm.monthDay
-        realm.min = date("%M", unix)
-        realm.sec = date("%S", unix)
-        realm = time(realm)
-    end
-
-    return realm or unix
-end
-
 local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID)
     if CHAT_TIMESTAMP_FORMAT then
-        local timeStamp = BetterDate(CHAT_TIMESTAMP_FORMAT, GetChatTime())
+        local timeStamp = BetterDate(CHAT_TIMESTAMP_FORMAT, time())
 
         timeStamp = gsub(timeStamp, " ", "")
         timeStamp = gsub(timeStamp, "AM", " AM")

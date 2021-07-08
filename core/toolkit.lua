@@ -206,8 +206,8 @@ local function SkinSliderFrame(frame)
 
     if orientation == "VERTICAL" then
         frame:SetWidth(SIZE)
-        frame.tex:SetPoint("TOP", frame, "TOP")
-        frame.tex:SetPoint("BOTTOM", frame, "BOTTOM")
+        --frame.tex:SetPoint("TOP", frame, "TOP")
+        --frame.tex:SetPoint("BOTTOM", frame, "BOTTOM")
     else
         frame:SetHeight(SIZE)
         frame.tex:SetPoint("TOPLEFT", frame, "TOPLEFT")
