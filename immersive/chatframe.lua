@@ -614,6 +614,8 @@ end
 local function HandleChatMessageFilter(_, event, message, author, ...)
     if GW.IsIn(event, "CHAT_MSG_CHANNEL", "CHAT_MSG_YELL", "CHAT_MSG_SAY") then
         return ChatThrottleIntervalHandler(message, author, ...)
+    else
+        return FindURL(message, author, ...)
     end
 end
 
