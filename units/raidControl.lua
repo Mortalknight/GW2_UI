@@ -32,11 +32,11 @@ local function fnGMIG_OnEvent(self)
         local role = UnitGroupRolesAssigned(unit .. i)
 
         if role then
-            if role == TANK then
+            if role == "TANK" then
                 tank = tank + 1
-            elseif role == HEALER then
+            elseif role == "HEALER" then
                 heal = heal + 1
-            elseif role == DAMAGER then
+            elseif role == "DAMAGER" then
                 damage = damage + 1
             end
         end
@@ -340,19 +340,21 @@ local function Create_Raid_Counter()
 
     raidCounterFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     raidCounterFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    raidCounterFrame:SetScript("OnEvent", function(self, event, ...)
+    raidCounterFrame:SetScript("OnEvent", function(self)
         local setting = GetSetting("ROLE_BAR")
 
-        if setting == "NEVER" then
-            self:SetShown(false)
-        elseif setting == "ALWAYS" then
-            self:SetShown(true)
-        elseif setting == "IN_GROUP" then
-            self:SetShown(IsInGroup() and not IsInRaid())
-        elseif setting == "IN_RAID" then
-            self:SetShown(IsInRaid())
-        elseif setting == "IN_RAID_IN_PARTY" then
-            self:SetShown(IsInRaid() or IsInGroup())
+        if not InCombatLockdown() then
+            if setting == "NEVER" then
+                self:SetShown(false)
+            elseif setting == "ALWAYS" then
+                self:SetShown(true)
+            elseif setting == "IN_GROUP" then
+                self:SetShown(IsInGroup() and not IsInRaid())
+            elseif setting == "IN_RAID" then
+                self:SetShown(IsInRaid())
+            elseif setting == "IN_RAID_IN_PARTY" then
+                self:SetShown(IsInRaid() or IsInGroup())
+            end
         end
         if not self:IsShown() then return end
 
@@ -362,11 +364,11 @@ local function Create_Raid_Counter()
             local role = UnitGroupRolesAssigned(unit .. i)
 
             if role then
-                if role == TANK then
+                if role == "TANK" then
                     tank = tank + 1
-                elseif role == HEALER then
+                elseif role == "HEALER" then
                     heal = heal + 1
-                elseif role == DAMAGER then
+                elseif role == "DAMAGER" then
                     damage = damage + 1
                 end
             end

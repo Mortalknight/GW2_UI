@@ -331,7 +331,7 @@ local function click_OnEvent(self, event)
                     SetOverrideBinding(self, false, keyBind, "CLICK GwSocialWindowClick:" .. click)
                 end
                 if keyBind2 then
-                    --SetOverrideBinding(self, false, keyBind2, "CLICK GwSocialWindowClick:" .. click)
+                    SetOverrideBinding(self, false, keyBind2, "CLICK GwSocialWindowClick:" .. click)
                 end
             end
         end
