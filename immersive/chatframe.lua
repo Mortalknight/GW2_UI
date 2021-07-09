@@ -668,11 +668,11 @@ local function GetPFlag(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, ar
             -- Add Blizzard Icon if this was sent by a GM/DEV
             return "|TInterface\\ChatFrame\\UI-ChatIcon-Blizz:12:20:0:0:32:16:4:28:0:16|t "
         elseif specialFlag == "GUIDE" then
-            if ChatFrame_GetMentorChannelStatus(CHATCHANNELRULESET_MENTOR, C_ChatInfo.GetChannelRulesetForChannelID(zoneChannelID)) == CHATCHANNELRULESET_MENTOR then
+            if ChatFrame_GetMentorChannelStatus(Enum.PlayerMentorshipStatus.Mentor, C_ChatInfo.GetChannelRulesetForChannelID(zoneChannelID)) == Enum.PlayerMentorshipStatus.Mentor then
                 return _G.NPEV2_CHAT_USER_TAG_GUIDE .. " " -- possibly unable to save global string with trailing whitespace...
             end
         elseif specialFlag == "NEWCOMER" then
-            if ChatFrame_GetMentorChannelStatus(PLAYERMENTORSHIPSTATUS_NEWCOMER, C_ChatInf.GetChannelRulesetForChannelID(zoneChannelID)) == PLAYERMENTORSHIPSTATUS_NEWCOMER then
+            if ChatFrame_GetMentorChannelStatus(Enum.PlayerMentorshipStatus.Newcomer, C_ChatInfo.GetChannelRulesetForChannelID(zoneChannelID)) == Enum.PlayerMentorshipStatus.Newcomer then
                 return _G.NPEV2_CHAT_USER_TAG_NEWCOMER
             end
         else
@@ -923,7 +923,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             local accessID = ChatHistory_GetAccessID(chatGroup, arg8)
             local typeID = ChatHistory_GetAccessID(infoType, arg8, arg12)
 
-            if arg1 == "YOU_CHANGED" and C_ChatInfo.GetChannelRuleset(arg8) == CHATCHANNELRULESET_MENTOR then
+            if arg1 == "YOU_CHANGED" and C_ChatInfo.GetChannelRuleset(arg8) == Enum.ChatChannelRuleset.Mentor then
                 ChatFrame_UpdateDefaultChatTarget(frame)
                 ChatEdit_UpdateNewcomerEditBoxHint(frame.editBox)
             else
@@ -1298,7 +1298,9 @@ local function styleChatWindow(frame)
         frame:SetScript("OnUpdate", nil)
         frame.editboxHasFocus = false
         FCF_FadeOutChatFrame(frame)
-        editBox:Hide()
+        if GetSetting("CHATFRAME_EDITBOX_HIDE") then
+            editBox:Hide()
+        end
     end)
     local repeatedText
 
