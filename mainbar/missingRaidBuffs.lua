@@ -250,9 +250,13 @@ local function OnAuraChange(self, event, arg1)
                 setButtonStyle(GW_CustomFrame, "MISSING")
             end
         end
+        if not GW_CustomFrame:IsShown() then GW_CustomFrame:Show() end
+        if not GW_CustomFrameanimation:IsShown() then GW_CustomFrameanimation:Show() end
     else
         self:SetSize(218, 32)
         GW_CustomFrame:Hide()
+        GW_CustomFrameanimation:Hide()
+        LibCustomGlow.PixelGlow_Stop(GW_CustomFrameanimation)
     end
 end
 
