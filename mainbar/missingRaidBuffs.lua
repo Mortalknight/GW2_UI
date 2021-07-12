@@ -277,7 +277,7 @@ local function CreateIconBuff(name, relativeTo, firstbutton, frame)
     button.t:SetPoint("TOPLEFT", 2, -2)
     button.t:SetPoint("BOTTOMRIGHT", -2, 2)
 
-    button.animationButton = CreateFrame("Button", name .. "animation")
+    button.animationButton = CreateFrame("Button", name .. "animation", GW_RaidBuffReminder)
     button.animationButton:SetSize(30, 30)
     GW.setActionButtonStyle(name .. "animation", true)
     button.animationButton:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
@@ -349,7 +349,5 @@ local function LoadRaidbuffReminder()
     rbr:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     rbr:RegisterEvent("GROUP_ROSTER_UPDATE")
     rbr:SetScript("OnEvent", OnAuraChange)
-
-
 end
 GW.LoadRaidbuffReminder = LoadRaidbuffReminder

@@ -388,3 +388,5 @@ L["Invert raid buff bar"] = true
 L["If enabled, the above settings will apply to buffs you have, instead of buffs you are missing"] = true
 L["Edit raid buff bar."] = true
 L["Edit chat settings."] = true
+L["Emotion Icons"] = true
+L["Display emotion icons in chat"] = true
