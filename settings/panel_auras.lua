@@ -135,6 +135,14 @@ local function LoadAurasPanel(sWindow)
 
     addOption(p_missingBuffs.scroll.scrollchild, L["Invert raid buff bar"], L["If enabled, the above settings will apply to buffs you have, instead of buffs you are missing"], "MISSING_RAID_BUFF_INVERT", nil, nil, nil, nil, true)
 
+    addOptionText(
+        p_missingBuffs.scroll.scrollchild,
+        L["Ignored Auras"],
+        nil,
+        "MISSING_RAID_BUFF_custom_id",
+        GW.UpdateMissingRaidBuffCustomSpell
+    )
+
     InitPanel(p_auras, true)
     InitPanel(p_indicator, true)
     InitPanel(p_missingBuffs, true)

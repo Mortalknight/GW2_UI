@@ -433,92 +433,92 @@ local function ToggleHyperlink(enabled)
 end
 
 local function UpdateChatKeywords()
-	wipe(Keywords)
+    wipe(Keywords)
 
-	local keywords = GetSetting("CHAT_KEYWORDS")
-	keywords = gsub(keywords, ',%s', ',')
+    local keywords = GetSetting("CHAT_KEYWORDS")
+    keywords = gsub(keywords, ',%s', ',')
 
-	for stringValue in gmatch(keywords, '[^,]+') do
-		if stringValue ~= "" then
-			Keywords[stringValue] = true
-		end
-	end
+    for stringValue in gmatch(keywords, '[^,]+') do
+        if stringValue ~= "" then
+            Keywords[stringValue] = true
+        end
+    end
 end
 GW.UpdateChatKeywords = UpdateChatKeywords
 
 local protectLinks = {}
 local function CheckKeyword(message, author)
-	local letSound = not SoundTimer and author ~= PLAYER_NAME and GetSetting("CHAT_KEYWORDS_ALERT")
+    local letSound = not SoundTimer and author ~= PLAYER_NAME and GetSetting("CHAT_KEYWORDS_ALERT")
 
-	for hyperLink in gmatch(message, '|c%x-|H.-|h.-|h|r') do
-		protectLinks[hyperLink] = gsub(hyperLink,'%s','|s')
+    for hyperLink in gmatch(message, '|c%x-|H.-|h.-|h|r') do
+        protectLinks[hyperLink] = gsub(hyperLink,'%s','|s')
 
-		if letSound then
-			for keyword in pairs(Keywords) do
-				if hyperLink == keyword then
-					SoundTimer = C_Timer.NewTimer(5, function() SoundTimer = nil end)
-					PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
-					letSound = false
-					break
-				end
-			end
-		end
-	end
+        if letSound then
+            for keyword in pairs(Keywords) do
+                if hyperLink == keyword then
+                    SoundTimer = C_Timer.NewTimer(5, function() SoundTimer = nil end)
+                    PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
+                    letSound = false
+                    break
+                end
+            end
+        end
+    end
 
-	for hyperLink, tempLink in pairs(protectLinks) do
-		message = gsub(message, GW.EscapeString(hyperLink), tempLink)
-	end
+    for hyperLink, tempLink in pairs(protectLinks) do
+        message = gsub(message, GW.EscapeString(hyperLink), tempLink)
+    end
 
-	local rebuiltString
-	local isFirstWord = true
-	for word in gmatch(message, '%s-%S+%s*') do
-		if not next(protectLinks) or not protectLinks[gsub(gsub(word, '%s', ''), '|s', ' ')] then
-			local tempWord = gsub(word, '[%s%p]', '')
-			local lowerCaseWord = strlower(tempWord)
+    local rebuiltString
+    local isFirstWord = true
+    for word in gmatch(message, '%s-%S+%s*') do
+        if not next(protectLinks) or not protectLinks[gsub(gsub(word, '%s', ''), '|s', ' ')] then
+            local tempWord = gsub(word, '[%s%p]', '')
+            local lowerCaseWord = strlower(tempWord)
 
-			for keyword in pairs(Keywords) do
-				if lowerCaseWord == strlower(keyword) or (lowerCaseWord == strlower(GW.myname) and keyword == "%MYNAME%") then
+            for keyword in pairs(Keywords) do
+                if lowerCaseWord == strlower(keyword) or (lowerCaseWord == strlower(GW.myname) and keyword == "%MYNAME%") then
                     local keywordColor = GetSetting("CHAT_KEYWORDS_ALERT_COLOR")
-					word = gsub(word, tempWord, format('%s%s|r',GW.RGBToHex(keywordColor.r, keywordColor.g, keywordColor.b), tempWord))
+                    word = gsub(word, tempWord, format('%s%s|r',GW.RGBToHex(keywordColor.r, keywordColor.g, keywordColor.b), tempWord))
 
-					if letSound then
-						SoundTimer = C_Timer.NewTimer(5, function() SoundTimer = nil end)
-						PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
-						letSound = false
-					end
-				end
-			end
+                    if letSound then
+                        SoundTimer = C_Timer.NewTimer(5, function() SoundTimer = nil end)
+                        PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
+                        letSound = false
+                    end
+                end
+            end
 
-			if GetSetting("CHAT_CLASS_COLOR_MENTIONS") then
-				tempWord = gsub(word, '^[%s%p]-([^%s%p]+)([%-]?[^%s%p]-)[%s%p]*$', '%1%2')
-				lowerCaseWord = strlower(tempWord)
+            if GetSetting("CHAT_CLASS_COLOR_MENTIONS") then
+                tempWord = gsub(word, '^[%s%p]-([^%s%p]+)([%-]?[^%s%p]-)[%s%p]*$', '%1%2')
+                lowerCaseWord = strlower(tempWord)
                 GW_ClassNames = ClassNames
-				local classMatch = ClassNames[lowerCaseWord]
-				local wordMatch = classMatch and lowerCaseWord
+                local classMatch = ClassNames[lowerCaseWord]
+                local wordMatch = classMatch and lowerCaseWord
 
-				if wordMatch then
-					local classColorTable = GW.GWGetClassColor(classMatch, true, true)
-					if classColorTable then
-						word = gsub(word, gsub(tempWord, '%-','%%-'), format('\124cff%.2x%.2x%.2x%s\124r', classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, tempWord))
-					end
-				end
-			end
-		end
+                if wordMatch then
+                    local classColorTable = GW.GWGetClassColor(classMatch, true, true)
+                    if classColorTable then
+                        word = gsub(word, gsub(tempWord, '%-','%%-'), format('\124cff%.2x%.2x%.2x%s\124r', classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, tempWord))
+                    end
+                end
+            end
+        end
 
-		if isFirstWord then
-			rebuiltString = word
-			isFirstWord = false
-		else
-			rebuiltString = rebuiltString .. word
-		end
-	end
+        if isFirstWord then
+            rebuiltString = word
+            isFirstWord = false
+        else
+            rebuiltString = rebuiltString .. word
+        end
+    end
 
-	for hyperLink, tempLink in pairs(protectLinks) do
-		rebuiltString = gsub(rebuiltString, GW.EscapeString(tempLink), hyperLink)
-		protectLinks[hyperLink] = nil
-	end
+    for hyperLink, tempLink in pairs(protectLinks) do
+        rebuiltString = gsub(rebuiltString, GW.EscapeString(tempLink), hyperLink)
+        protectLinks[hyperLink] = nil
+    end
 
-	return rebuiltString
+    return rebuiltString
 end
 
 local function GetSmileyReplacementText(message)
@@ -684,43 +684,43 @@ local function GetPFlag(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, ar
 end
 
 local function GW_GetPlayerInfoByGUID(guid)
-	local data = GuidCache[guid]
-	if not data then
-		local ok, localizedClass, englishClass, localizedRace, englishRace, sex, name, realm = pcall(GetPlayerInfoByGUID, guid)
-		if not (ok and englishClass) then return end
+    local data = GuidCache[guid]
+    if not data then
+        local ok, localizedClass, englishClass, localizedRace, englishRace, sex, name, realm = pcall(GetPlayerInfoByGUID, guid)
+        if not (ok and englishClass) then return end
 
-		if realm == "" then realm = nil end
-		local shortRealm, nameWithRealm = realm and gsub(realm, "[%s%-]", ""), nil
-		if name and name ~= "" then
-			nameWithRealm = (shortRealm and name .. "-" .. shortRealm) or name .. "-" .. PLAYER_REALM
-		end
+        if realm == "" then realm = nil end
+        local shortRealm, nameWithRealm = realm and gsub(realm, "[%s%-]", ""), nil
+        if name and name ~= "" then
+            nameWithRealm = (shortRealm and name .. "-" .. shortRealm) or name .. "-" .. PLAYER_REALM
+        end
 
-		data = {
-			localizedClass = localizedClass,
-			englishClass = englishClass,
-			localizedRace = localizedRace,
-			englishRace = englishRace,
-			sex = sex,
-			name = name,
-			realm = realm,
-			nameWithRealm = nameWithRealm
-		}
+        data = {
+            localizedClass = localizedClass,
+            englishClass = englishClass,
+            localizedRace = localizedRace,
+            englishRace = englishRace,
+            sex = sex,
+            name = name,
+            realm = realm,
+            nameWithRealm = nameWithRealm
+        }
 
-		-- add it to ClassNames
-		if name then
-			ClassNames[strlower(name)] = englishClass
-		end
-		if nameWithRealm then
-			ClassNames[strlower(nameWithRealm)] = englishClass
-		end
+        -- add it to ClassNames
+        if name then
+            ClassNames[strlower(name)] = englishClass
+        end
+        if nameWithRealm then
+            ClassNames[strlower(nameWithRealm)] = englishClass
+        end
 
-		-- push into the cache
-		GuidCache[guid] = data
-	end
+        -- push into the cache
+        GuidCache[guid] = data
+    end
 
-	if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true) end
+    if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true) end
 
-	return data
+    return data
 end
 
 local function ShortChannel(self)
@@ -759,8 +759,8 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         local nameWithRealm, realm
         local data = GW_GetPlayerInfoByGUID(arg12)
         if data then
-        	realm = data.realm
-        	nameWithRealm = data.nameWithRealm
+            realm = data.realm
+            nameWithRealm = data.nameWithRealm
         end
 
         -- fetch the name color to use
