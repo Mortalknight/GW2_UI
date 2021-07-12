@@ -114,6 +114,7 @@ units/playerFrame.lua
 
 mainbar/micromenu.xml
 mainbar/micromenu.lua
+mainbar/missingRaidBuffs.lua
 mainbar/orderbar.xml
 mainbar/orderbar.lua
 mainbar/mirrortimer.lua

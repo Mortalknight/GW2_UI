@@ -22,8 +22,6 @@ local function LoadHudPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND")
     addOption(p.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
     addOption(p.scroll.scrollchild, L["AFK Mode"], L["When you go AFK, display the AFK screen."], "AFK_MODE")
-    addOption(p.scroll.scrollchild, L["Fade Chat"], L["Allow the chat to fade when not in use."], "CHATFRAME_FADE", nil, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Hide Editbox"], L["Hide the chat editbox when not in focus."], "CHATFRAME_EDITBOX_HIDE", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOptionSlider(
         p.scroll.scrollchild,
         L["Maximum lines of 'Copy Chat Frame'"],
@@ -94,7 +92,7 @@ local function LoadHudPanel(sWindow)
         L["Show Role Bar"],
         L["Whether to display a floating bar showing your group or raid's role composition. This can be moved via the 'Move HUD' interface."],
         "ROLE_BAR",
-        GW.SetMinimapHover,
+        GW.UpdateRaidCounterVisibility,
         {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"},
         {
             ALWAYS,

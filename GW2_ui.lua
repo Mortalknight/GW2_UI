@@ -566,6 +566,7 @@ local function loadAddon(self)
     GW.LoadSocialFrame()
 
     GW.Create_Raid_Counter()
+    GW.LoadRaidbuffReminder()
 
     GW.LoadMirrorTimers()
     GW.LoadAutoRepair()

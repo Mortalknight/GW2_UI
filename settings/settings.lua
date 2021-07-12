@@ -84,7 +84,7 @@ local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon)
 end
 GW.CreateCat = CreateCat
 
-local function AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+local function AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine)
     if not panel then
         return
     end
@@ -99,6 +99,7 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
     opt["optionType"] = "boolean"
     opt["callback"] = callback
     opt["dependence"] = dependence
+    opt["forceNewLine"] = forceNewLine
     opt["incompatibleAddonsType"] = incompatibleAddons
     opt["isIncompatibleAddonLoaded"] = false
     opt["isIncompatibleAddonLoadedButOverride"] = false
@@ -371,27 +372,6 @@ local function loadDropDown(scrollFrame)
     HybridScrollFrame_Update(scrollFrame, USED_DROPDOWN_HEIGHT, 120)
 end
 
-local function ColorCallback(self, r, g, b, a, isAlpha)
-	-- this will block an infinite loop from `E.GrabColorPickerValues`
-	-- which is caused when we set values into the color picker again on `OnValueChanged`
-	if ColorPickerFrame.noColorCallback then return end
-
-	if not self.HasAlpha then
-		a = 1
-	end
-	self:SetColor(r, g, b, a)
-	if ColorPickerFrame:IsVisible() then
-		--colorpicker is still open
-		self:Fire("OnValueChanged", r, g, b, a)
-	else
-		--colorpicker is closed, color callback is first, ignore it,
-		--alpha callback is the final call after it closes so confirm now
-		if isAlpha then
-			self:Fire("OnValueConfirmed", r, g, b, a)
-		end
-	end
-end
-
 local function ShowColorPicker(r, g, b, a, changedCallback)
     ColorPickerFrame:SetColorRGB(r, g, b)
     ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = (a ~= nil), a
@@ -419,8 +399,14 @@ local function InitPanel(panel, hasScroll)
 
     for _, v in pairs(options) do
         local newLine = false
-        local optionFrameType = "GwOptionBoxTmpl"
-        if v.optionType == "slider" then
+        local optionFrameType
+        if v.optionType == "boolean" then
+            optionFrameType = "GwOptionBoxTmpl"
+            newLine = false
+            if v.forceNewLine and v.forceNewLine == true then
+                newLine = true
+            end
+        elseif v.optionType == "slider" then
             optionFrameType = "GwOptionBoxSliderTmpl"
             newLine = true
         elseif v.optionType == "dropdown" then

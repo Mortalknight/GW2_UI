@@ -1,139 +1,321 @@
 local _, GW = ...
+local L = GW.L
+local GetSetting = GW.GetSetting
 
--- Food
-local tableFood = {
-   --Haste		Mastery		Crit		Versa		Int		Str 		Agi		Stam		Stam		Special
-	[308474]=18,	[308504]=18,	[308430]=18,	[308509]=18,	[327704]=18,	[327701]=18,	[327705]=18,	[327702]=18,
-    [308488]=30,	[308506]=30,	[308434]=30,	[308514]=30,	[327708]=30,	[327706]=30,	[327709]=30,	[308525]=30,	[327707]=30,	[308637]=30,
-    [341449]=30,
+local LibCustomGlow = GW.Libs.CustomGlows
+local ALPHA = 0.3
+local classColor = GW.GWGetClassColor(GW.myclass, true)
+local color = {classColor.r, classColor.g, classColor.b, 1}
+
+-- tables
+local ReminderBuffs = {
+    Flask = {
+        -- BFA
+        251836,			-- Flask of the Currents (238 agi)
+        251837,			-- Flask of Endless Fathoms (238 int)
+        251838,			-- Flask of the Vast Horizon (357 sta)
+        251839,			-- Flask of the Undertow (238 str)
+        298836,			-- Greater Flask of the Currents
+        298837,			-- Greater Flask of Endless Fathoms
+        298839,			-- Greater Flask of the Vast Horizon
+        298841,			-- Greater Flask of the Undertow
+
+        -- Shadowlands
+        307166,			-- Eternal FLask (190 stat)
+        307185,			-- Spectral Flask of Power (73 stat)
+        307187,			-- Spectral Flask of Stamina (109 sta)
+    },
+    DefiledAugmentRune = {
+        224001,			-- Defiled Augumentation (15 primary stat)
+        270058,			-- Battle Scarred Augmentation (60 primary stat)
+        347901,			-- Veiled Augmentation (18 primary stat)
+    },
+    Food = {
+        104280,	-- Well Fed
+
+        -- Shadowlands
+        259455,	-- Well Fed
+        308434,	-- Well Fed
+        308488,	-- Well Fed
+        308506,	-- Well Fed
+        308514,	-- Well Fed
+        308637,	-- Well Fed
+        327715,	-- Well Fed
+        327851,	-- Well Fed
+    },
+    Intellect = {
+        1459, -- Arcane Intellect
+        264760, -- War-Scroll of Intellect
+    },
+    Stamina = {
+        6307, -- Blood Pact
+        21562, -- Power Word: Fortitude
+        264764, -- War-Scroll of Fortitude
+    },
+    AttackPower = {
+        6673, -- Battle Shout
+        264761, -- War-Scroll of Battle
+    },
+    Weapon = {
+        1, -- just a fallback
+    },
+    Custom = {
+        -- spellID,	-- Spell name
+    },
 }
 
-local staminaFood = {[201638]=true,[259457]=true,[288075]=true,[288074]=true,[297119]=true,[297040]=true,}
-
-local tableFlask = {
-	--Stamina,	Main stat,
-	[307187]=70,	[307185]=70,	[307166]=70,
+local Weapon_Enchants = {
+    6188, -- Shadowcore Oil
+    6190, -- Embalmer's Oil
+    6200, -- Shaded Sharpening Stone
 }
 
-local tablePotion = {
-	[188024]=true,	--Run haste
-	[250871]=true,	--Mana
-	[252753]=true,	--Mana channel
-	[250872]=true,	--Mana+hp
+local function EnchantsID(id)
+    for _, v in ipairs(Weapon_Enchants) do
+        if id == v then
+            return true
+        end
+    end
+    return false
+end
 
-	[279152]=true,	--Agi
-	[279151]=true,	--Int
-	[279154]=true,	--Stamina
-	[279153]=true,	--Str
-	[251231]=true,	--Armor
+local function CheckPlayerBuff(spell)
+    for i = 1, 40 do
+        local name, _, _, _, _, _, unitCaster = UnitBuff("player", i)
+        if not name then break end
+        if name == spell then
+            return i, unitCaster
+        end
+    end
+    return nil
+end
 
-	[298152]=true,	--Int
-	[298146]=true,	--Agi
-	[298153]=true,	--Stamina
-	[298154]=true,	--Str
-	[298155]=true,	--Armor
+local flaskbuffs = ReminderBuffs["Flask"]
+local foodbuffs = ReminderBuffs["Food"]
+local darunebuffs = ReminderBuffs["DefiledAugmentRune"]
+local intellectbuffs = ReminderBuffs["Intellect"]
+local staminabuffs = ReminderBuffs["Stamina"]
+local attackpowerbuffs = ReminderBuffs["AttackPower"]
+local custombuffs = ReminderBuffs["Custom"]
+local weaponEnch = ReminderBuffs["Weapon"]
 
-	[298225]=true,	--Potion of Empowered Proximity
-	[298317]=true,	--Potion of Focused Resolve
-	[300714]=true,	--Potion of Unbridled Fury
-	[300741]=true,	--Potion of Wild Mending
+local function setButtonStyle(button, state)
+    local invert = GetSetting("MISSING_RAID_BUFF_INVERT")
+    local animated = GetSetting("MISSING_RAID_BUFF_animated")
+    local dimmed = GetSetting("MISSING_RAID_BUFF_dimmed")
+    local grayedout = GetSetting("MISSING_RAID_BUFF_grayed_out")
 
+    if state == "MISSING" then
+        if not invert then
+            button.t:SetDesaturated(false)
+        else
+            if grayedout then
+                button.t:SetDesaturated(true)
+            else
+                button.t:SetDesaturated(false)
+            end
+        end
+        button:SetAlpha(not invert and 1 or dimmed and ALPHA or 1)
+        if animated then
+            LibCustomGlow.PixelGlow_Start(button, color, nil, -0.25, nil, 1)
+        end
+    else
+        button:SetAlpha(invert and 1 or dimmed and ALPHA or 1)
+        LibCustomGlow.PixelGlow_Stop(button)
 
-	[251316]=true,	--Potion of Bursting Blood
-	[269853]=true,	--Potion of Rising Death
+        if grayedout then
+            button.t:SetDesaturated(true)
+        else
+            button.t:SetDesaturated(false)
+        end
+    end
+end
 
-	[250873]=true,	--Invis
-	[250878]=true,	--Run haste
-	[251143]=true,	--Fall
+local function OnAuraChange(_, event, arg1)
+    if event == "UNIT_AURA" and arg1 ~= "player" then return end
 
-	[307159]=true,	--Agi
-	[307162]=true,	--Int
-	[307163]=true,	--Stam
-	[307164]=true,	--Str
-	[307160]=true,	--Armor
+    if (flaskbuffs and flaskbuffs[1]) then
+        FlaskFrame.t:SetTexture(select(3, GetSpellInfo(flaskbuffs[1])))
+        for _, flaskbuffs in pairs(flaskbuffs) do
+            local spellname = select(1, GetSpellInfo(flaskbuffs))
+            if AuraUtil.FindAuraByName(spellname, "player") then
+                FlaskFrame.t:SetTexture(select(3, GetSpellInfo(flaskbuffs)))
+                setButtonStyle(FlaskFrame, "HAVE")
+                break
+            else
+                setButtonStyle(FlaskFrame, "MISSING")
+            end
+        end
+    end
 
-	[307161]=true,	--Mana sleep
-	[307194]=true,	--Mana+hp
-	[307193]=true,	--Mana
+    if (foodbuffs and foodbuffs[1]) then
+        FoodFrame.t:SetTexture(select(3, GetSpellInfo(foodbuffs[1])))
+        for _, foodbuffs in pairs(foodbuffs) do
+            local spellname = select(1, GetSpellInfo(foodbuffs))
+            FoodFrame.t:SetTexture(select(3, GetSpellInfo(foodbuffs)))
+            if AuraUtil.FindAuraByName(spellname, "player") then
+                setButtonStyle(FoodFrame, "HAVE")
+                break
+            else
+                FoodFrame.t:SetTexture(select(3, GetSpellInfo(foodbuffs)))
+                setButtonStyle(FoodFrame, "MISSING")
+            end
+        end
+    end
 
-	[307497]=true,	--Potion of Deathly Fixation
-	[307494]=true,	--Potion of Empowered Exorcisms
-	[307496]=true,	--Potion of Divine Awakening
-	[307495]=true,	--Potion of Phantom Fire
-	[322302]=true,	--Potion of Sacrificial Anima
-	[344314]=true,	--Run
-	[307199]=true,	--Potion of Soul Purity
-	[342890]=true,	--Potion of Unhindered Passing
-	[307196]=true,	--Potion of Shadow Sight
-	[307195]=true,	--Invis
-}
+    if (darunebuffs and darunebuffs[1]) then
+    DARuneFrame.t:SetTexture(select(3, GetSpellInfo(darunebuffs[1])))
+        for _, darunebuffs in pairs(darunebuffs) do
+            local spellname = select(1, GetSpellInfo(darunebuffs))
+            DARuneFrame.t:SetTexture(select(3, GetSpellInfo(darunebuffs)))
+            if AuraUtil.FindAuraByName(spellname, "player") then
+                setButtonStyle(DARuneFrame, "HAVE")
+                break
+            else
+                setButtonStyle(DARuneFrame, "MISSING")
+            end
+        end
+    end
 
-local raidBuffs = {
-	{ATTACK_POWER_TOOLTIP or "AP","WARRIOR",6673},
-	{SPELL_STAT3_NAME or "Stamina","PRIEST",21562},
-	{SPELL_STAT4_NAME or "Int","MAGE",1459},
-}
+    if (intellectbuffs and intellectbuffs[1]) then
+    IntellectFrame.t:SetTexture(select(3, GetSpellInfo(intellectbuffs[1])))
+        for _, intellectbuffs in pairs(intellectbuffs) do
+            local spellname = select(1, GetSpellInfo(intellectbuffs))
+            if AuraUtil.FindAuraByName(spellname, "player") then
+                IntellectFrame.t:SetTexture(select(3, GetSpellInfo(intellectbuffs)))
+                setButtonStyle(IntellectFrame, "HAVE")
+                break
+            else
+                IntellectFrame.t:SetTexture(select(3, GetSpellInfo(1459)))
+                setButtonStyle(IntellectFrame, "MISSING")
+            end
+        end
+    end
 
-local tableInt = {[1459]=true,}
-local tableStamina = {[21562]=true,}
-local ableAP = {[6673]=true,}
+    if (staminabuffs and staminabuffs[1]) then
+        StaminaFrame.t:SetTexture(select(3, GetSpellInfo(staminabuffs[1])))
+        for _, staminabuffs in pairs(staminabuffs) do
+            local spellname = select(1, GetSpellInfo(staminabuffs))
+            if AuraUtil.FindAuraByName(spellname, "player") then
+                StaminaFrame.t:SetTexture(select(3, GetSpellInfo(staminabuffs)))
+                setButtonStyle(StaminaFrame, "HAVE")
+                break
+            else
+                StaminaFrame.t:SetTexture(select(3, GetSpellInfo(21562)))
+                setButtonStyle(StaminaFrame, "MISSING"  )
+            end
+        end
+    end
 
-local tableVantus = {
-	--uldir
-	[269276] = 1,
-	[269405] = 2,
-	[269408] = 3,
-	[269407] = 4,
-	[269409] = 5,
-	[269411] = 6,
-	[269412] = 7,
-	[269413] = 8,
+    if (attackpowerbuffs and attackpowerbuffs[1]) then
+    AttackPowerFrame.t:SetTexture(select(3, GetSpellInfo(attackpowerbuffs[1])))
+        for _, attackpowerbuffs in pairs(attackpowerbuffs) do
+            local spellname = select(1, GetSpellInfo(attackpowerbuffs))
+            if AuraUtil.FindAuraByName(spellname, "player") then
+                AttackPowerFrame.t:SetTexture(select(3, GetSpellInfo(attackpowerbuffs)))
+                setButtonStyle(AttackPowerFrame, "HAVE")
+                break
+            else
+                AttackPowerFrame.t:SetTexture(select(3, GetSpellInfo(6673)))
+                setButtonStyle(AttackPowerFrame, "MISSING")
+            end
+        end
+    end
 
-	--ep
-	[298622] = 1,
-	[298640] = 2,
-	[298642] = 3,
-	[298643] = 4,
-	[298644] = 5,
-	[298645] = 6,
-	[298646] = 7,
-	[302914] = 8,
+    if (weaponEnch and weaponEnch[1]) then
+        local hasMainHandEnchant, _, _, mainHandEnchantID, hasOffHandEnchant, _, _, offHandEnchantId = GetWeaponEnchantInfo()
+        WeaponFrame.t:SetTexture(GetInventoryItemTexture('player', 16))
+        if (hasMainHandEnchant and EnchantsID(mainHandEnchantID)) or (hasOffHandEnchant and EnchantsID(offHandEnchantId)) then
+            setButtonStyle(WeaponFrame, "HAVE", GetInventoryItemTexture('player', 16))
+        else
+            setButtonStyle(WeaponFrame, "MISSING", GetInventoryItemTexture('player', 16), true)
+        end
+    end
 
-	--Nyl
-	[306475] = 1,
-	[306480] = 2,
-	[306476] = 3,
-	[306477] = 4,
-	[306478] = 5,
-	[306484] = 6,
-	[306485] = 7,
-	[306479] = 8,
-	[313550] = 9,
-	[313551] = 10,
-	[313554] = 11,
-	[313556] = 12,
+    if custombuffs and custombuffs[1] then
+        for i, custombuffs in pairs(custombuffs) do
+            local name, _, icon = GetSpellInfo(custombuffs)
+            if i == 1 then
+                CustomFrame.t:SetTexture(icon)
+            end
 
-	--CN
-	[311445] = 1,
-	[334132] = 2,
-	[311448] = 3,
-	[311446] = 4,
-	[311447] = 5,
-	[311449] = 6,
-	[311450] = 7,
-	[311451] = 8,
-	[311452] = 9,
-	[334131] = 10,
+            if CheckPlayerBuff(name) then
+                CustomFrame:SetAlpha(ALPHA)
+                LibCustomGlow.PixelGlow_Stop(CustomFrame)
+                break
+            else
+                CustomFrame:SetAlpha(1)
+                LibCustomGlow.PixelGlow_Start(CustomFrame, color, nil, -0.25, nil, 1)
+            end
+        end
+    else
+        CustomFrame:Hide()
+    end
+end
 
-	--SoD
-	[354384] = 1,
-	[354385] = 2,
-	[354386] = 3,
-	[354387] = 4,
-	[354388] = 5,
-	[354389] = 6,
-	[354390] = 7,
-	[354391] = 8,
-	[354392] = 9,
-	[354393] = 10,
-}
+local function CreateIconBuff(name, relativeTo, firstbutton, frame)
+    local button = CreateFrame("Button", name, frame)
+    button:SetSize(30, 30)
+    GW.setActionButtonStyle(name)
+
+    if firstbutton then
+        button:SetPoint("BOTTOMLEFT", relativeTo, "BOTTOMLEFT", 1, 1)
+    else
+        button:SetPoint("LEFT", relativeTo, "RIGHT", 3, 0)
+    end
+    button:SetFrameLevel(frame:GetFrameLevel() + 10)
+
+    button.t = button:CreateTexture(name .. ".t", "OVERLAY")
+    button.t:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    button.t:SetPoint("TOPLEFT", 2, -2)
+    button.t:SetPoint("BOTTOMRIGHT", -2, 2)
+end
+
+local function UpdateMissingRaidBuffVisibility()
+    local VisibilityStates = {
+        ["NEVER"] = "hide",
+        ["ALWAYS"] = "[petbattle] hide; show",
+        ["IN_GROUP"] = "[group] show; [petbattle] hide; hide",
+        ["IN_RAID"] = "[raid] show; [group] hide; [petbattle] hide; hide",
+        ["IN_RAID_IN_PARTY"] = "[raid] show; [group] show; [petbattle] hide; hide",
+    }
+
+    RegisterStateDriver(GW_RaidBuffReminder, "visibility", VisibilityStates[GetSetting("MISSING_RAID_BUFF")])
+end
+GW. UpdateMissingRaidBuffVisibility = UpdateMissingRaidBuffVisibility
+
+local function LoadRaidbuffReminder()
+    local rbr = CreateFrame("Frame", "GW_RaidBuffReminder", UIParent)
+
+    rbr:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+
+    rbr:SetSize(230, 32)
+
+    GW.RegisterMovableFrame(rbr, L["Missing Raid Buffs Bar"], "MISSING_RAID_BUFF_pos", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"})
+    rbr:ClearAllPoints()
+    rbr:SetPoint("TOPLEFT", rbr.gwMover)
+
+    CreateIconBuff("IntellectFrame", rbr, true, rbr)
+    CreateIconBuff("StaminaFrame", IntellectFrame, false, rbr)
+    CreateIconBuff("AttackPowerFrame", StaminaFrame, false, rbr)
+    CreateIconBuff("FlaskFrame", AttackPowerFrame, false, rbr)
+    CreateIconBuff("FoodFrame", FlaskFrame, false, rbr)
+    CreateIconBuff("DARuneFrame", FoodFrame, false, rbr)
+    CreateIconBuff("WeaponFrame", DARuneFrame, false, rbr)
+    CreateIconBuff("CustomFrame", WeaponFrame, false, rbr)
+
+    rbr:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    rbr:RegisterEvent("UNIT_INVENTORY_CHANGED")
+    rbr:RegisterEvent("UNIT_AURA")
+    rbr:RegisterEvent("PLAYER_REGEN_ENABLED")
+    rbr:RegisterEvent("PLAYER_REGEN_DISABLED")
+    rbr:RegisterEvent("PLAYER_ENTERING_WORLD")
+    rbr:RegisterEvent("UPDATE_BONUS_ACTIONBAR")
+    rbr:RegisterEvent("CHARACTER_POINTS_CHANGED")
+    rbr:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+    rbr:RegisterEvent("GROUP_ROSTER_UPDATE")
+    rbr:SetScript("OnEvent", OnAuraChange)
+
+    UpdateMissingRaidBuffVisibility()
+end
+GW.LoadRaidbuffReminder = LoadRaidbuffReminder

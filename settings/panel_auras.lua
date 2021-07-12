@@ -26,7 +26,7 @@ local function LoadAurasPanel(sWindow)
     p_auras.scroll.scrollchild.sub:SetText(L["Edit which buffs and debuffs are shown."])
 
     local p_indicator = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
-    p_indicator:SetHeight(445)
+    p_indicator:SetHeight(245)
     p_indicator:SetWidth(512)
     p_indicator:ClearAllPoints()
     p_indicator:SetPoint("TOPLEFT", p_auras, "BOTTOMLEFT", 0, 0)
@@ -37,7 +37,19 @@ local function LoadAurasPanel(sWindow)
     p_indicator.scroll.scrollchild.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p_indicator.scroll.scrollchild.sub:SetText(L["Edit raid aura indicators."])
 
-    createCat(L["Raid Auras"], L["Show or hide auras and edit raid aura indicators."], p, 2, nil, {p_auras, p_indicator})
+    local p_missingBuffs = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
+    p_missingBuffs:SetHeight(200)
+    p_missingBuffs:SetWidth(512)
+    p_missingBuffs:ClearAllPoints()
+    p_missingBuffs:SetPoint("TOPLEFT", p_indicator, "BOTTOMLEFT", 0, 0)
+    p_missingBuffs.scroll.scrollchild.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    p_missingBuffs.scroll.scrollchild.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p_missingBuffs.scroll.scrollchild.header:SetText(L["Missing Raid Buffs"])
+    p_missingBuffs.scroll.scrollchild.sub:SetFont(UNIT_NAME_FONT, 12)
+    p_missingBuffs.scroll.scrollchild.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    p_missingBuffs.scroll.scrollchild.sub:SetText(L["Edit raid buff bar."])
+
+    createCat(L["Raid Auras"], L["Show or hide auras and edit raid aura indicators."], p, 2, nil, {p_auras, p_indicator, p_missingBuffs})
 
     addOptionText(p_auras.scroll.scrollchild, L["Ignored Auras"], L["A list of auras that should never be shown."], "AURAS_IGNORED", nil, nil, nil, {["RAID_FRAMES"] = true})
     addOptionText(p_auras.scroll.scrollchild, L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], "AURAS_MISSING", nil, nil, nil, {["RAID_FRAMES"] = true})
@@ -101,7 +113,30 @@ local function LoadAurasPanel(sWindow)
         )
     end
 
+    addOptionDropdown(
+        p_missingBuffs.scroll.scrollchild,
+        L["Show Missing Raid Buffs Bar"],
+        L["Whether to display a floating bar showing your missing buffs. This can be moved via the 'Move HUD' interface."],
+        "MISSING_RAID_BUFF",
+        GW.UpdateMissingRaidBuffVisibility,
+        {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"},
+        {
+            ALWAYS,
+            NEVER,
+            AGGRO_WARNING_IN_PARTY,
+            L["In raid"],
+            L["In group or in raid"],
+        }
+    )
+
+    addOption(p_missingBuffs.scroll.scrollchild, L["Dimmed"], nil, "MISSING_RAID_BUFF_dimmed")
+    addOption(p_missingBuffs.scroll.scrollchild, L["Greyed out"], nil, "MISSING_RAID_BUFF_grayed_out")
+    addOption(p_missingBuffs.scroll.scrollchild, L["Animated"], L["If enabled, an animated border will surround the missing raid buffs"], "MISSING_RAID_BUFF_animated")
+
+    addOption(p_missingBuffs.scroll.scrollchild, L["Invert raid buff bar"], L["If enabled, the above settings will apply to buffs you have, instead of buffs you are missing"], "MISSING_RAID_BUFF_INVERT", nil, nil, nil, nil, true)
+
     InitPanel(p_auras, true)
     InitPanel(p_indicator, true)
+    InitPanel(p_missingBuffs, true)
 end
 GW.LoadAurasPanel = LoadAurasPanel

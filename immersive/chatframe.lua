@@ -669,11 +669,11 @@ local function GetPFlag(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, ar
             return "|TInterface\\ChatFrame\\UI-ChatIcon-Blizz:12:20:0:0:32:16:4:28:0:16|t "
         elseif specialFlag == "GUIDE" then
             if ChatFrame_GetMentorChannelStatus(Enum.PlayerMentorshipStatus.Mentor, C_ChatInfo.GetChannelRulesetForChannelID(zoneChannelID)) == Enum.PlayerMentorshipStatus.Mentor then
-                return _G.NPEV2_CHAT_USER_TAG_GUIDE .. " " -- possibly unable to save global string with trailing whitespace...
+                return gsub(NPEV2_CHAT_USER_TAG_GUIDE, "(|A.-|a).+", "%1") .. " "
             end
         elseif specialFlag == "NEWCOMER" then
             if ChatFrame_GetMentorChannelStatus(Enum.PlayerMentorshipStatus.Newcomer, C_ChatInfo.GetChannelRulesetForChannelID(zoneChannelID)) == Enum.PlayerMentorshipStatus.Newcomer then
-                return _G.NPEV2_CHAT_USER_TAG_NEWCOMER
+                return NPEV2_CHAT_USER_TAG_NEWCOMER
             end
         else
             return _G["CHAT_FLAG_" .. specialFlag]

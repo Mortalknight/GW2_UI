@@ -299,6 +299,19 @@ end
 GW.manageButton = manageButton
 GW.AddForProfiling("raidControl", "manageButton", manageButton)
 
+local function UpdateRaidCounterVisibility()
+    local VisibilityStates = {
+        ["NEVER"] = "hide",
+        ["ALWAYS"] = "[petbattle] hide; show",
+        ["IN_GROUP"] = "[group] show; [petbattle] hide; hide",
+        ["IN_RAID"] = "[raid] show; [group] hide; [petbattle] hide; hide",
+        ["IN_RAID_IN_PARTY"] = "[raid] show; [group] show; [petbattle] hide; hide",
+    }
+
+    RegisterStateDriver(GW_RaidCounter_Frame, "visibility", VisibilityStates[GetSetting("ROLE_BAR")])
+end
+GW.UpdateRaidCounterVisibility = UpdateRaidCounterVisibility
+
 local function Create_Raid_Counter()
     local raidCounterFrame = CreateFrame("Button", "GW_RaidCounter_Frame", UIParent, "SecureHandlerClickTemplate")
 
@@ -341,21 +354,6 @@ local function Create_Raid_Counter()
     raidCounterFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     raidCounterFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     raidCounterFrame:SetScript("OnEvent", function(self)
-        local setting = GetSetting("ROLE_BAR")
-
-        if not InCombatLockdown() then
-            if setting == "NEVER" then
-                self:SetShown(false)
-            elseif setting == "ALWAYS" then
-                self:SetShown(true)
-            elseif setting == "IN_GROUP" then
-                self:SetShown(IsInGroup() and not IsInRaid())
-            elseif setting == "IN_RAID" then
-                self:SetShown(IsInRaid())
-            elseif setting == "IN_RAID_IN_PARTY" then
-                self:SetShown(IsInRaid() or IsInGroup())
-            end
-        end
         if not self:IsShown() then return end
 
         local unit = (IsInRaid() and "raid" or "party")
@@ -396,6 +394,8 @@ local function Create_Raid_Counter()
     GW.RegisterMovableFrame(raidCounterFrame, GW.L["Role Bar"], "ROLE_BAR_pos", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"})
     raidCounterFrame:ClearAllPoints()
     raidCounterFrame:SetPoint("TOPLEFT", raidCounterFrame.gwMover)
+
+    UpdateRaidCounterVisibility()
 end
 GW.Create_Raid_Counter = Create_Raid_Counter
 
