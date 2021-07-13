@@ -1,6 +1,30 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.17.0", [=[
+NEW
+    - CHAT:
+        Added lots of new settings to the chat module
+            - Detacting URL Links and make them clickable
+            - A Keyword System, which marks your keywords in the chat and plays a sound
+            - Classcoloring char names
+            - Short Channel names
+            - Emoticon's
+            - Show role icons before the names (if you are in a raid or party)
+            - Spam Intervall: Hides the same messages in a given time
+            - Combat Repeate: Close the chat editbox if you type in the same char for a given number while in combat
+            - Link Hovering: Shows the tooltip of eg a Achivment while hovering
+    - Added a new "Role Bar" which shows your group or raid's role composition
+    - Added a new "Missing Raud Buff Bar" which shows you your missing raind buffs. You can also track one custom buff
+    - Added tooltipt to the "Important Debuff" Dropdown
+    - Added Season 2 "Important Debuffs"
+
+FIXES
+    - Display Animapower frame in M+ and raids correctly
+    - Fix a lua error in Torghast
+    - Small layout fixes
+]=])
+
 v("5.16.4", [=[
 FIXES
     - Social tab fixes

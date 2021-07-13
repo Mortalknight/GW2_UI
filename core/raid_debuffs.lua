@@ -17,6 +17,12 @@ end
 -- Shadowlands Season 1
     SetDefaultOnTheFly(342494) -- Belligerent Boast (Prideful)
 -- Shadowlands Season 2
+    SetDefaultOnTheFly(356667) -- Biting Cold 1
+    SetDefaultOnTheFly(356666) -- Biting Cold 2
+    SetDefaultOnTheFly(355732) -- Melt Soul
+    SetDefaultOnTheFly(356925) -- Carnage
+    SetDefaultOnTheFly(358777) -- Bindings of Misery
+
 
 ------------------ Shadowlands Dungeons ------------------
 -- Tazavesh, the Veiled Market
