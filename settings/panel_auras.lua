@@ -137,8 +137,8 @@ local function LoadAurasPanel(sWindow)
 
     addOptionText(
         p_missingBuffs.scroll.scrollchild,
-        L["Ignored Auras"],
-        nil,
+        L["Custom buff"],
+        L["Enter the spell ID of the buff you wish to track. Only one spell ID is supported. To find the spell ID of the buff you want to track, enable IDs in the tooltip settings and mouse over the icon in your aura bar."],
         "MISSING_RAID_BUFF_custom_id",
         GW.UpdateMissingRaidBuffCustomSpell
     )

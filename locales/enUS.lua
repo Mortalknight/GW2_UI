@@ -390,3 +390,5 @@ L["Edit raid buff bar."] = true
 L["Edit chat settings."] = true
 L["Emotion Icons"] = true
 L["Display emotion icons in chat"] = true
+L["Custom buff"] = true
+L["Enter the spell ID of the buff you wish to track. Only one spell ID is supported. To find the spell ID of the buff you want to track, enable IDs in the tooltip settings and mouse over the icon in your aura bar."] = true
