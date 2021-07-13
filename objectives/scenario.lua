@@ -238,24 +238,14 @@ local function updateCurrentScenario(self, event, ...)
     if MawBuffsBelowMinimapFrame:IsShown() then
         numCriteria = numCriteria + 1
         local objectiveBlock = getObjectiveBlock(GwScenarioBlock, numCriteria)
-        local mawholder = GW2_MawHolder or CreateFrame("Frame", "GW2_MawHolder")
-        mawholder:SetParent(objectiveBlock)
-        mawholder:SetHeight(MawBuffsBelowMinimapFrame:GetHeight())
-        objectiveBlock:SetHeight(MawBuffsBelowMinimapFrame:GetHeight())
-        MawBuffsBelowMinimapFrame:ClearAllPoints()
-        MawBuffsBelowMinimapFrame:SetPoint("Center", mawholder)
-        MawBuffsBelowMinimapFrame.containerHolder = mawholder
-        if not MawBuffsBelowMinimapFrame.isGwHooked then
-            hooksecurefunc(MawBuffsBelowMinimapFrame, "SetPoint", function(frame, _, anchor)
-                local holder = frame.containerHolder
-                if holder and anchor and anchor ~= holder then
-                    frame:ClearAllPoints()
-                    frame:SetPoint("CENTER", holder)
-                    frame:SetParent(holder)
-                end
-            end)
-        end
+        objectiveBlock:SetHeight(MawBuffsBelowMinimapFrame.Container:GetHeight())
+        MawBuffsBelowMinimapFrame.Container:SetParent(objectiveBlock)
+        MawBuffsBelowMinimapFrame.Container:ClearAllPoints()
+        MawBuffsBelowMinimapFrame.Container:SetAllPoints()
         objectiveBlock:Show()
+        objectiveBlock.ObjectiveText:SetText("")
+        GwScenarioBlock.height = GwScenarioBlock.height + objectiveBlock:GetHeight()
+        GwScenarioBlock.numObjectives = GwScenarioBlock.numObjectives + 1
     end
 
     local GwQuestTrackerTimerSavedHeight = 1

@@ -328,7 +328,7 @@ local function setDetailEx(
 
         frame.name:SetText(hasRewardPending and name .. "|TInterface/AddOns/GW2_UI/textures/icons/rewards-icon:32:32:0:0|t" or name)
 
-        frame.currentRank:SetText(currentRank)
+        frame.currentRank:SetText(friendID and friendTextLevel or currentRank)
         frame.nextRank:SetText(L["Paragon"])
 
         frame.currentValue:SetText(CommaValue(currentValue))
