@@ -1143,7 +1143,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
 
             if GetSetting("CHAT_SHORT_CHANNEL_NAMES") and (chatType ~= "EMOTE" and chatType ~= "TEXT_EMOTE") then
                 if chatType == "RAID_LEADER" or chatType == "PARTY_LEADER" or chatType == "INSTANCE_CHAT_LEADER" then
-                    body = gsub(body, "|Hchannel:(.-)|h%[(.-)%]|h", format("|Hchannel:%s|h[%s]|h", chatType, DEFAULT_STRINGS[strupper(chatType)] or gsub(chatType, "channel:", "")))
+                    body = gsub(body, "|Hchannel:(.-)|h%[(.-)%]|h", format("|Hchannel:%s|h[%s]|h", (chatType == "PARTY_LEADER" and "PARTY" or chatType == "RAID_LEADER" and "RAID" or chatType == "INSTANCE_CHAT_LEADER" and "INSTANCE_CHAT") , DEFAULT_STRINGS[strupper(chatType)] or gsub(chatType, "channel:", "")))
                 else
                     body = gsub(body, "|Hchannel:(.-)|h%[(.-)%]|h", ShortChannel)
                 end
