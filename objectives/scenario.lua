@@ -84,6 +84,24 @@ end
 GW.AddScenarioObjectivesBlock = addObjectiveBlock
 GW.AddForProfiling("scenario", "addObjectiveBlock", addObjectiveBlock)
 
+local function AddMawBuffsBelowMinimapFrame(block, numCriteria)
+    -- SL Season 2 Maw Buff Containers
+    if MawBuffsBelowMinimapFrame:IsShown() then
+        numCriteria = numCriteria + 1
+        local objectiveBlock = getObjectiveBlock(block, numCriteria)
+        objectiveBlock:SetHeight(MawBuffsBelowMinimapFrame.Container:GetHeight())
+        MawBuffsBelowMinimapFrame.Container:SetParent(objectiveBlock)
+        MawBuffsBelowMinimapFrame.Container:ClearAllPoints()
+        MawBuffsBelowMinimapFrame.Container:SetAllPoints()
+        objectiveBlock:Show()
+        objectiveBlock.ObjectiveText:SetText("")
+        block.height = block.height + objectiveBlock:GetHeight()
+        block.numObjectives = block.numObjectives + 1
+    end
+
+    return numCriteria
+end
+
 local function updateCurrentScenario(self, event, ...)
     if event == "UPDATE_UI_WIDGET" then
         -- we need this event only for torghast atm, so only update this we it is the torghast widget
@@ -155,6 +173,7 @@ local function updateCurrentScenario(self, event, ...)
                 _G[GwScenarioBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
             end
         end
+        AddMawBuffsBelowMinimapFrame(GwScenarioBlock, 0)
 
         GwScenarioBlock:SetHeight(GwScenarioBlock.height)
         GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
@@ -234,19 +253,7 @@ local function updateCurrentScenario(self, event, ...)
         )
     end
 
-    -- SL Season 2 Maw Buff Containers
-    if MawBuffsBelowMinimapFrame:IsShown() then
-        numCriteria = numCriteria + 1
-        local objectiveBlock = getObjectiveBlock(GwScenarioBlock, numCriteria)
-        objectiveBlock:SetHeight(MawBuffsBelowMinimapFrame.Container:GetHeight())
-        MawBuffsBelowMinimapFrame.Container:SetParent(objectiveBlock)
-        MawBuffsBelowMinimapFrame.Container:ClearAllPoints()
-        MawBuffsBelowMinimapFrame.Container:SetAllPoints()
-        objectiveBlock:Show()
-        objectiveBlock.ObjectiveText:SetText("")
-        GwScenarioBlock.height = GwScenarioBlock.height + objectiveBlock:GetHeight()
-        GwScenarioBlock.numObjectives = GwScenarioBlock.numObjectives + 1
-    end
+    numCriteria = AddMawBuffsBelowMinimapFrame(GwScenarioBlock, numCriteria)
 
     local GwQuestTrackerTimerSavedHeight = 1
     local isEmberCourtWidget = false
