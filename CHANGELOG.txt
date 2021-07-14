@@ -15,6 +15,7 @@ NEW
     - Added a new "Missing Raud Buff Bar" which shows you your missing raind buffs. You can also track one custom buff
     - Added tooltipt to the "Important Debuff" Dropdown
     - Added Season 2 "Important Debuffs"
+    - Merchant skin
 
 FIXES
     - Display Animapower frame in M+ and raids correctly

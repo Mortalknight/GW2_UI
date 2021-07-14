@@ -40,6 +40,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Gossip Frame"], nil, "GOSSIP_SKIN_ENABLED")
     addOption(p.scroll.scrollchild, ITEM_UPGRADE, nil, "ITEMUPGRADE_SKIN_ENABLED")
     addOption(p.scroll.scrollchild, TIMEMANAGER_TITLE, nil, "TIMEMANAGER_SKIN_ENABLED")
+    addOption(p.scroll.scrollchild, MERCHANT, nil, "MERCHANT_SKIN_ENABLED")
 
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r World Quest Tracker", nil, "SKIN_WQT_ENABLED", nil, nil, {["QUESTTRACKER_ENABLED"] = true}, "Objectives")
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Immersion", nil, "IMMERSIONADDON_SKIN_ENABLED")
