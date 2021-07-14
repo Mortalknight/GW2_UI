@@ -6,12 +6,12 @@ local InitPanel = GW.InitPanel
 
 local function LoadSkinsPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
-    p.scroll.scrollchild.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    p.scroll.scrollchild.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.scroll.scrollchild.header:SetText(L["Skins"])
-    p.scroll.scrollchild.sub:SetFont(UNIT_NAME_FONT, 12)
-    p.scroll.scrollchild.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.scroll.scrollchild.sub:SetText(L["Adjust Skin settings."])
+    p.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.header:SetText(L["Skins"])
+    p.sub:SetFont(UNIT_NAME_FONT, 12)
+    p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    p.sub:SetText(L["Adjust Skin settings."])
 
     createCat(L["Skins"], L["Adjust Skin settings."], p, 6, nil, {p})
 

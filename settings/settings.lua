@@ -264,20 +264,20 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
             _G[name].title:SetTextColor(0, 0, 0)
         end
     else
-        _G[name].title:SetTextColor(0.82, 0.82, 0.82)
+        _G[name].title:SetTextColor(0.4, 0.4, 0.4)
         if type == "boolean" then
             _G[name]:Disable()
             _G[name].checkbutton:Disable()
         elseif type == "slider" then
             _G[name].slider:Disable()
             _G[name].input:Disable()
-            _G[name].input:SetTextColor(0.82, 0.82, 0.82)
+            _G[name].input:SetTextColor(0.4, 0.4, 0.4)
         elseif type == "text" then
             _G[name].input:Disable()
-            _G[name].input:SetTextColor(0.82, 0.82, 0.82)
+            _G[name].input:SetTextColor(0.4, 0.4, 0.4)
         elseif type == "dropdown" then
             _G[name].button:Disable()
-            _G[name].button.string:SetTextColor(0.82, 0.82, 0.82)
+            _G[name].button.string:SetTextColor(0.4, 0.4, 0.4)
         elseif type == "button" then
             _G[name]:Disable()
         end
@@ -381,7 +381,7 @@ local function ShowColorPicker(r, g, b, a, changedCallback)
     ColorPickerFrame:SetFrameStrata('FULLSCREEN_DIALOG')
     ColorPickerFrame:SetClampedToScreen(true)
     ColorPickerFrame:Raise()
-   end
+end
 
 local function InitPanel(panel, hasScroll)
     if not panel or not (hasScroll and panel.scroll.scrollchild.gwOptions or panel.gwOptions) then
@@ -394,7 +394,7 @@ local function InitPanel(panel, hasScroll)
 
     local numRows = 1
 
-    local padding = {x = box_padding, y = (hasScroll and panel.scroll.scrollchild.sub:GetText() or panel.sub:GetText()) and -55 or -35}
+    local padding = {x = box_padding, y = hasScroll and 0 or panel.sub:GetText() and -55 or -35}
     local first = true
 
     for _, v in pairs(options) do

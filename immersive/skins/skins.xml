@@ -27,7 +27,8 @@
     <Script file="immersive\skins\misc.lua"/>
     <Script file="immersive\skins\itemUpgrade.lua"/>
     <Script file="immersive\skins\timeManager.lua"/>
-     <Script file="immersive\skins\colorPicker.lua"/>
+    <Script file="immersive\skins\colorPicker.lua"/>
+    <Script file="immersive\skins\merchant.lua"/>
     
     <Script file="immersive\skins\addons\immersion.lua"/>
     <Script file="immersive\skins\addons\postal.lua"/>

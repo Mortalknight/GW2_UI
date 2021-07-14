@@ -629,11 +629,29 @@
             <Anchor point="TOPLEFT" x="0" y="0"/>
             <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
         </Anchors>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString parentKey="header" text="Header" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="512" y="25"/>
+                    <Color r="1" b="1" g="1"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="5" y="-10"/>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="sub" text="Subheader" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="512" y="25"/>
+                    <Color r="0.6" b="0.6" g="0.6"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="5" y="-30"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
         <Frames>
             <ScrollFrame parentKey="scroll" enableMouse="true">
                 <Size x="231" y="600"/>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-50" />
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                 </Anchors>
                 <Frames>
@@ -643,24 +661,7 @@
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                         </Anchors>
-                        <Layers>
-                            <Layer level="OVERLAY">
-                                <FontString parentKey="header" text="Header" inherits="GameFontNormalSmall" justifyH="LEFT">
-                                    <Size x="512" y="25"/>
-                                    <Color r="1" b="1" g="1"/>
-                                    <Anchors>
-                                        <Anchor point="TOPLEFT" x="5" y="-10"/>
-                                    </Anchors>
-                                </FontString>
-                                <FontString parentKey="sub" text="Subheader" inherits="GameFontNormalSmall" justifyH="LEFT">
-                                    <Size x="512" y="25"/>
-                                    <Color r="0.6" b="0.6" g="0.6"/>
-                                    <Anchors>
-                                        <Anchor point="TOPLEFT" x="5" y="-30"/>
-                                    </Anchors>
-                                </FontString>
-                            </Layer>
-                        </Layers>
+                        
                     </Frame>
                     <Slider parentKey="slider" orientation="VERTICAL" enableMouse="true">
                         <Size x="12" y="12"/>

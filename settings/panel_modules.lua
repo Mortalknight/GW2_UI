@@ -34,24 +34,24 @@ AddForProfiling("panel_modules", "creditst_OnClick", creditst_OnClick)
 
 local function LoadModulesPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsModulePanelTmpl")
-    p.scroll.scrollchild.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    p.scroll.scrollchild.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.scroll.scrollchild.header:SetText(L["Modules"])
-    p.scroll.scrollchild.sub:SetFont(UNIT_NAME_FONT, 12)
-    p.scroll.scrollchild.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.scroll.scrollchild.sub:SetText(L["Enable or disable the modules you need and don't need."])
+    p.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.header:SetText(L["Modules"])
+    p.sub:SetFont(UNIT_NAME_FONT, 12)
+    p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    p.sub:SetText(L["Enable or disable the modules you need and don't need."])
 
-    p.welcome:SetParent(p.scroll.scrollchild)
+    p.welcome:SetParent(p)
     p.welcome.settings = sWindow
     p.welcome:SetText(L["Welcome"])
     p.welcome:SetScript("OnClick", welcome_OnClick)
 
-    p.statusReport:SetParent(p.scroll.scrollchild)
+    p.statusReport:SetParent(p)
     p.statusReport.settings = sWindow
     p.statusReport:SetText(LANDING_PAGE_REPORT)
     p.statusReport:SetScript("OnClick", statusReport_OnClick)
 
-    p.credits:SetParent(p.scroll.scrollchild)
+    p.credits:SetParent(p)
     p.credits.settings = sWindow
     p.credits:SetText(L["Credits"])
     p.credits:SetScript("OnClick", creditst_OnClick)
