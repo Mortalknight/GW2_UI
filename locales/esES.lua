@@ -353,6 +353,7 @@ L["PL"] = "LG"
 L["RL"] = "LB"
 L["I"] = "E"
 L["IL"] = "LE"
+L["RW"] = true
 L["Combat Repeat"] = "Repetir combate"
 L["Number of repeat characters while in combat before the chat editbox is automatically closed, set to zero to disable."] = "Número de caracteres repetidos mientras estés en combate antes de que el cuadro de edición de chat sea automáticamente cerrado, establecer en 0 para deshabilitar."
 L["Hyperlink Hover"] = "Mostrar hipervínculo"

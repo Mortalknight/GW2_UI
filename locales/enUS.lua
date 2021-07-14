@@ -353,6 +353,7 @@ L["PL"] = true
 L["RL"] = true
 L["I"] = true
 L["IL"] = true
+L["RW"] = true
 L["Combat Repeat"] = true
 L["Number of repeat characters while in combat before the chat editbox is automatically closed, set to zero to disable."] = true
 L["Hyperlink Hover"] = true
