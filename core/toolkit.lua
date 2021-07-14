@@ -225,7 +225,7 @@ local function SkinSliderFrame(frame)
     end
 end
 
-local function CreateBackdrop(frame, backdropTexture, isBorder)
+local function CreateBackdrop(frame, backdropTexture, isBorder, xOffset, yOffset)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
     local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
     if not frame.backdrop then frame.backdrop = backdrop end
@@ -241,8 +241,8 @@ local function CreateBackdrop(frame, backdropTexture, isBorder)
     if isBorder then
         local trunc = function(s) return s >= 0 and s-s%01 or s-s%-1 end
         local round = function(s) return s >= 0 and s-s%-1 or s-s%01 end
-        local x = (GW.mult == 1 or 2 == 0) and 2 or ((GW.mult < 1 and trunc(2 / GW.mult) or round(2 / GW.mult)) * GW.mult)
-        local y = (GW.mult == 1 or 2 == 0) and 2 or ((GW.mult < 1 and trunc(2 / GW.mult) or round(2 / GW.mult)) * GW.mult)
+        local x = (GW.mult == 1 or (xOffset or 2) == 0) and (xOffset or 2) or ((GW.mult < 1 and trunc((xOffset or 2) / GW.mult) or round((xOffset or 2) / GW.mult)) * GW.mult)
+        local y = (GW.mult == 1 or (yOffset or 2) == 0) and (yOffset or 2) or ((GW.mult < 1 and trunc((yOffset or 2) / GW.mult) or round((yOffset or 2) / GW.mult)) * GW.mult)
 
         backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -x, y)
         backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", x, -y)
@@ -470,7 +470,9 @@ local function HandleMaxMinFrame(frame)
     frame.isSkinned = true
 end
 
-local function HandleNextPrevButton(button, arrowDir)
+
+
+local function HandleNextPrevButton(button, arrowDir, noBackdrop)
     if button.isSkinned then return end
 
     if not arrowDir then
@@ -492,12 +494,18 @@ local function HandleNextPrevButton(button, arrowDir)
 
     button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
     button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
-    button:SetDisabledTexture("Interface/AddOns/GW2_UI/Textures/uistuff//arrowup_down")
+    button:SetDisabledTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
 
     local Normal, Disabled, Pushed = button:GetNormalTexture(), button:GetDisabledTexture(), button:GetPushedTexture()
 
-    button:SetSize(20, 20)
-    Disabled:SetVertexColor(.3, .3, .3)
+    if noBackdrop then
+        button:SetSize(20, 20)
+        Disabled:SetVertexColor(.5, .5, .5)
+        button.Texture = Normal
+    else
+        button:SetSize(20, 20)
+        Disabled:SetVertexColor(.3, .3, .3)
+    end
 
     Normal:SetTexCoord(0, 1, 0, 1)
     Pushed:SetTexCoord(0, 1, 0, 1)
