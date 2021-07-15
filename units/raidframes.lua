@@ -986,11 +986,8 @@ local function UpdateRaidFramesPosition()
 
         -- Update unit frames
         for i = 1, 5 do
-            PositionRaidFrame(_G["GwRaidPartyGridDisplay" .. i], GwRaidFramePartyContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-            --if i > players then _G["GwRaidPartyGridDisplay" .. i]:Hide() else _G["GwRaidPartyGridDisplay" .. i]:Show() end
-
-            PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFramePartyContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-            --if i > players then _G["GwCompactraid" .. i]:Hide() else _G["GwCompactraid" .. i]:Show() end
+            PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFramePartyContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+            if i > (IsInGroup() and GetNumGroupMembers() or players) then _G["GwCompactraid" .. i]:Hide() else _G["GwCompactraid" .. i]:Show() end
         end
     end
     if GW.GROUPD_TYPE == "RAID" or onLoad then
@@ -1007,11 +1004,8 @@ local function UpdateRaidFramesPosition()
 
         -- Update unit frames
         for i = 1, MAX_RAID_MEMBERS do
-            PositionRaidFrame(_G["GwRaidGridDisplay" .. i], GwRaidFrameContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-            --if i > players then _G["GwRaidGridDisplay" .. i]:Hide() else _G["GwRaidGridDisplay" .. i]:Show() end
-
-            PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-            --if i > players then _G["GwCompactraid" .. i]:Hide() else _G["GwCompactraid" .. i]:Show() end
+            PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+            if i > (IsInGroup() and GetNumGroupMembers() or players) then _G["GwCompactraid" .. i]:Hide() else _G["GwCompactraid" .. i]:Show() end
         end
     end
 
@@ -1367,22 +1361,6 @@ local function LoadRaidFrames()
         end
     end)
 
-    for i = 1, MAX_RAID_MEMBERS do
-        local f = CreateFrame("Frame", "GwRaidGridDisplay" .. i, GwRaidFrameContainer.gwMover, "VerticalActionBarDummy")
-        f:SetParent(GwRaidFrameContainer.gwMover)
-        f.frameName:SetText("")
-        f.Background:SetVertexColor(0.2, 0.2, 0.2, 1)
-        f:SetPoint("TOPLEFT", GwRaidFrameContainer.gwMover, "TOPLEFT", 0, 0)
-    end
-
-    for i = 1, 5 do
-        local f = CreateFrame("Frame", "GwRaidPartyGridDisplay" .. i, GwRaidFramePartyContainer.gwMover, "VerticalActionBarDummy")
-        f:SetParent(GwRaidFramePartyContainer.gwMover)
-        f.frameName:SetText("")
-        f.Background:SetVertexColor(0.2, 0.2, 0.2, 1)
-        f:SetPoint("TOPLEFT", GwRaidFramePartyContainer.gwMover, "TOPLEFT", 0, 0)
-    end
-
     createRaidFrame("player", nil)
     for i = 1, 4 do
         createRaidFrame("party" .. i, i)
@@ -1465,7 +1443,6 @@ local function LoadRaidFrames()
                     GwRaidFrameContainer:ClearAllPoints()
                     GwRaidFrameContainer:SetPoint("TOPLEFT", GwRaidFramePartyContainer.gwMover)
                 end
-                UpdateRaidFramesAnchor()
             end,
             {GW.GROUPD_TYPE}
         )
