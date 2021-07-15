@@ -347,7 +347,7 @@
                 </FontString>
             </Layer>
         </Layers>
-        <Frames>
+       <Frames>
             <Frame hidden="true" frameStrata="HIGH" parentKey="container">
                 <Size x="250" y="20"/>
                 <Anchors>

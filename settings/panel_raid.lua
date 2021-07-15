@@ -9,6 +9,111 @@ local StrUpper = GW.StrUpper
 local StrLower = GW.StrLower
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
+local RoundDec = GW.RoundDec
+
+local function switchProfile(profile)
+    local settingProfils = GW.settingProfils
+
+    if profile == "RAID" then
+        for _, tbl in pairs(settingProfils.GROUPS) do
+            _G[tbl.buttonName].optionName = tbl.optionName
+            if tbl.optionType == "boolean" then
+                _G[tbl.buttonName].checkbutton:SetChecked(GetSetting(tbl.optionName, tbl.perSpec))
+            elseif tbl.optionType == "slider" then
+                _G[tbl.buttonName].slider:SetValue(GetSetting(tbl.optionName, tbl.perSpec))
+                _G[tbl.buttonName].input:SetNumber(RoundDec(GetSetting(tbl.optionName), tbl.decimalNumbers))
+            elseif tbl.optionType == "dropdown" then
+                for key, val in pairs(_G[tbl.buttonName].options) do
+                    if GetSetting(tbl.optionName, tbl.perSpec) == val then
+                        _G[tbl.buttonName].button.string:SetText(_G[tbl.buttonName].options_names[key])
+                        break
+                    end
+                end
+            end
+        end
+    elseif profile == "PARTY" then
+        for _, tbl in pairs(settingProfils.GROUPS) do
+            _G[tbl.buttonName].optionName = tbl.optionName .. "_PARTY"
+            if tbl.optionType == "boolean" then
+                _G[tbl.buttonName].checkbutton:SetChecked(GetSetting(tbl.optionName .. "_PARTY", tbl.perSpec))
+            elseif tbl.optionType == "slider" then
+                _G[tbl.buttonName].slider:SetValue(GetSetting(tbl.optionName .. "_PARTY", tbl.perSpec))
+                _G[tbl.buttonName].input:SetNumber(RoundDec(GetSetting(tbl.optionName .. "_PARTY"), tbl.decimalNumbers))
+            elseif tbl.optionType == "dropdown" then
+                for key, val in pairs(_G[tbl.buttonName].options) do
+                    if GetSetting(tbl.optionName  .. "_PARTY", tbl.perSpec) == val then
+                        _G[tbl.buttonName].button.string:SetText(_G[tbl.buttonName].options_names[key])
+                        break
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function CreateRaidProfiles(panel)
+    panel.selectProfile.string:SetFont(UNIT_NAME_FONT, 12)
+    panel.selectProfile.string:SetText(RAID)
+    panel.selectProfile.container:SetParent(panel)
+    panel.selectProfile.type = "RAID"
+
+    panel.selectProfile.raid = CreateFrame("Button", "b", panel.selectProfile.container, "GwDropDownItemTmpl")
+    panel.selectProfile.raid:SetWidth(120)
+    panel.selectProfile.raid:SetPoint("TOPRIGHT", panel.selectProfile.container, "BOTTOMRIGHT")
+    panel.selectProfile.raid.string:SetFont(UNIT_NAME_FONT, 12)
+    panel.selectProfile.raid.string:SetText(RAID)
+    panel.selectProfile.raid.checkbutton:Hide()
+    panel.selectProfile.raid.string:ClearAllPoints()
+    panel.selectProfile.raid.string:SetPoint("LEFT", 5, 0)
+    panel.selectProfile.raid.type = "RAID"
+    panel.selectProfile.raid:SetScript("OnClick", function(self)
+        panel.selectProfile.type = self.type
+        GW.GROUPD_TYPE = self.type
+
+        panel.selectProfile.string:SetText(self.string:GetText())
+        if panel.selectProfile.container:IsShown() then
+            panel.selectProfile.container:Hide()
+        else
+            panel.selectProfile.container:Show()
+        end
+
+        switchProfile(panel.selectProfile.type)
+    end)
+
+    panel.selectProfile.party = CreateFrame("Button", "ff", panel.selectProfile.container, "GwDropDownItemTmpl")
+    panel.selectProfile.party:SetWidth(120)
+    panel.selectProfile.party:SetPoint("TOPRIGHT", panel.selectProfile.raid, "BOTTOMRIGHT")
+    panel.selectProfile.party.string:SetFont(UNIT_NAME_FONT, 12)
+    panel.selectProfile.party.string:SetText(PARTY)
+    panel.selectProfile.party.checkbutton:Hide()
+    panel.selectProfile.party.string:ClearAllPoints()
+    panel.selectProfile.party.string:SetPoint("LEFT", 5, 0)
+    panel.selectProfile.party.type = "PARTY"
+    panel.selectProfile.party:SetScript("OnClick", function(self)
+        panel.selectProfile.type = self.type
+        GW.GROUPD_TYPE = self.type
+
+        panel.selectProfile.string:SetText(self.string:GetText())
+        if panel.selectProfile.container:IsShown() then
+            panel.selectProfile.container:Hide()
+        else
+            panel.selectProfile.container:Show()
+        end
+
+        switchProfile(panel.selectProfile.type)
+    end)
+
+    panel.selectProfile:SetScript("OnClick", function(self)
+        if self.container:IsShown() then
+            self.container:Hide()
+        else
+            self.container:Show()
+        end
+
+        switchProfile(panel.selectProfile.type)
+    end)
+
+end
 
 local function LoadRaidPanel(sWindow)
     local p = CreateFrame("Frame", "GwSettingsRaidPanel", sWindow.panels, "GwSettingsRaidPanelTmpl")
@@ -19,14 +124,59 @@ local function LoadRaidPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit the party and raid options to suit your needs."])
 
+    -- profile default
+    CreateRaidProfiles(p)
+
     createCat(RAID, L["Edit the group settings."], p, 8)
 
-    addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
-    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", nil, nil, {["RAID_FRAMES"] = true}, nil, nil, {"RAID", "PARTY"})
+    addOption(p,
+        DISPLAY_POWER_BARS,
+        L["Display the power bars on the raid units."],
+        "RAID_POWER_BARS",
+        function(_, SettingName)
+            local frame = _G["GwCompactplayer"]
+            local settingValue = GetSetting(SettingName)
+
+            if settingValue then
+                frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 5)
+                frame.manabar:Show()
+            else
+                frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 0)
+                frame.manabar:Hide()
+            end
+            for i = 1, 4 do
+                frame = _G["GwCompactparty" .. i]
+                if settingValue then
+                    frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 5)
+                    frame.manabar:Show()
+                else
+                    frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 0)
+                    frame.manabar:Hide()
+                end
+            end
+
+            for i = 1, MAX_RAID_MEMBERS do
+                frame = _G["GwCompactraid" .. i]
+                if settingValue then
+                    frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 5)
+                    frame.manabar:Show()
+                else
+                    frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 0)
+                    frame.manabar:Hide()
+                end
+            end
+        end,
+        nil,
+        {["RAID_FRAMES"] = true},
+        nil,
+        nil,
+        {"RAID", "PARTY"}
+    )
+    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true}, nil, nil, {"RAID", "PARTY"})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true}, nil, nil, {"RAID", "PARTY"})
+    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["RAID_FRAMES"] = true}, nil, nil, {"RAID", "PARTY"})
+    addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS", nil, nil, {["RAID_FRAMES"] = true}, nil, nil, {"RAID", "PARTY"})
     addOption(
         p,
         L["Sort Raid Frames by Role"],
@@ -39,7 +189,10 @@ local function LoadRaidPanel(sWindow)
             end
         end,
         nil,
-        {["RAID_FRAMES"] = true}
+        {["RAID_FRAMES"] = true},
+        nil,
+        nil,
+        {"RAID", "PARTY"}
     )
     addOptionDropdown(
         p,
@@ -50,7 +203,11 @@ local function LoadRaidPanel(sWindow)
         {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"},
         {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]},
         nil,
-        {["RAID_FRAMES"] = true}
+        {["RAID_FRAMES"] = true},
+        nil,
+        nil,
+        nil,
+        {"RAID", "PARTY"}
     )
 
     addOptionDropdown(
@@ -68,7 +225,10 @@ local function LoadRaidPanel(sWindow)
         },
         nil,
         {["RAID_FRAMES"] = true},
-        nil
+        nil,
+        nil,
+        nil,
+        {"RAID", "PARTY"}
     )
 
     addOptionDropdown(
@@ -81,7 +241,10 @@ local function LoadRaidPanel(sWindow)
         {NONE_KEY, L["Different Than Own"], ALL},
         nil,
         {["RAID_FRAMES"] = true},
-        nil
+        nil,
+        nil,
+        nil,
+        {"RAID", "PARTY"}
     )
 
     local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
@@ -114,7 +277,10 @@ local function LoadRaidPanel(sWindow)
         ),
         nil,
         {["RAID_FRAMES"] = true},
-        nil
+        nil,
+        nil,
+        nil,
+        {"RAID", "PARTY"}
     )
 
     addOptionDropdown(
@@ -131,7 +297,10 @@ local function LoadRaidPanel(sWindow)
         {L["By position on screen"], L["By growth direction"], "TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
         nil,
         {["RAID_FRAMES"] = true},
-        nil
+        nil,
+        nil,
+        nil,
+        {"RAID", "PARTY"}
     )
 
     addOptionSlider(
@@ -150,7 +319,9 @@ local function LoadRaidPanel(sWindow)
         nil,
         0,
         {["RAID_FRAMES"] = true},
-        nil
+        nil,
+        nil,
+        {"RAID", "PARTY"}
     )
 
     addOptionSlider(
@@ -169,7 +340,9 @@ local function LoadRaidPanel(sWindow)
         nil,
         0,
         {["RAID_FRAMES"] = true},
-        nil
+        nil,
+        nil,
+        {"RAID", "PARTY"}
     )
 
     addOptionSlider(
@@ -188,7 +361,9 @@ local function LoadRaidPanel(sWindow)
         nil,
         0,
         {["RAID_FRAMES"] = true},
-        nil
+        nil,
+        nil,
+        {"RAID", "PARTY"}
     )
 
     addOptionSlider(
@@ -207,7 +382,9 @@ local function LoadRaidPanel(sWindow)
         nil,
         0,
         {["RAID_FRAMES"] = true},
-        nil
+        nil,
+        nil,
+        {"RAID", "PARTY"}
     )
 
     addOptionSlider(
@@ -226,9 +403,11 @@ local function LoadRaidPanel(sWindow)
         nil,
         0,
         {["RAID_FRAMES"] = true},
-        nil
+        nil,
+        nil,
+        {"RAID", "PARTY"}
     )
 
-    InitPanel(p)
+    InitPanel(p, false, "GROUPS")
 end
 GW.LoadRaidPanel = LoadRaidPanel

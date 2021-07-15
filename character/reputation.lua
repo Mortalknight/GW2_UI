@@ -717,7 +717,6 @@ local function CollectCategories()
         tinsert(catagories, {idx = idx, idxLast = GetNumFactions(), name = headerName, standingCur = cCur, standingMax = cMax, fctTbl = sortFactionsStatus(factionTbl)})
     end
 
-    GW2_CAT = catagories
     return catagories
 end
 
