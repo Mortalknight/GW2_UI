@@ -987,10 +987,10 @@ local function UpdateRaidFramesPosition()
         -- Update unit frames
         for i = 1, 5 do
             PositionRaidFrame(_G["GwRaidPartyGridDisplay" .. i], GwRaidFramePartyContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-            if i > players then _G["GwRaidPartyGridDisplay" .. i]:Hide() else _G["GwRaidPartyGridDisplay" .. i]:Show() end
+            --if i > players then _G["GwRaidPartyGridDisplay" .. i]:Hide() else _G["GwRaidPartyGridDisplay" .. i]:Show() end
 
             PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFramePartyContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-            if i > players then _G["GwCompactraid" .. i]:Hide() else _G["GwCompactraid" .. i]:Show() end
+            --if i > players then _G["GwCompactraid" .. i]:Hide() else _G["GwCompactraid" .. i]:Show() end
         end
     end
     if GW.GROUPD_TYPE == "RAID" or onLoad then
@@ -1008,10 +1008,10 @@ local function UpdateRaidFramesPosition()
         -- Update unit frames
         for i = 1, MAX_RAID_MEMBERS do
             PositionRaidFrame(_G["GwRaidGridDisplay" .. i], GwRaidFrameContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-            if i > players then _G["GwRaidGridDisplay" .. i]:Hide() else _G["GwRaidGridDisplay" .. i]:Show() end
+            --if i > players then _G["GwRaidGridDisplay" .. i]:Hide() else _G["GwRaidGridDisplay" .. i]:Show() end
 
             PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-            if i > players then _G["GwCompactraid" .. i]:Hide() else _G["GwCompactraid" .. i]:Show() end
+            --if i > players then _G["GwCompactraid" .. i]:Hide() else _G["GwCompactraid" .. i]:Show() end
         end
     end
 
@@ -1429,7 +1429,7 @@ local function LoadRaidFrames()
         if not IsInRaid() and IsInGroup() and GW.GROUPD_TYPE == "RAID" then
             togglePartyFrames(true)
             GW.GROUPD_TYPE = "PARTY"
-        elseif IsInRaid() and GW.GROUPD_TYPE == "PARTY" then
+        elseif IsInRaid() then
             togglePartyFrames(false)
             GW.GROUPD_TYPE = "RAID"
         end
@@ -1454,7 +1454,6 @@ local function LoadRaidFrames()
         end
 
         GwSettingsRaidPanel.selectProfile.container:Hide()
-        
 
         -- update positions
         GW.CombatQueue_Queue("raidframePosUpdate",
@@ -1466,6 +1465,7 @@ local function LoadRaidFrames()
                     GwRaidFrameContainer:ClearAllPoints()
                     GwRaidFrameContainer:SetPoint("TOPLEFT", GwRaidFramePartyContainer.gwMover)
                 end
+                UpdateRaidFramesAnchor()
             end,
             {GW.GROUPD_TYPE}
         )
