@@ -59,6 +59,12 @@ local function LoadMerchantFrameSkin()
     MerchantFrameTab2:ClearAllPoints()
     MerchantFrameTab2:SetPoint("RIGHT",  MerchantFrameTab1, "RIGHT", 75, 0)
 
+    hooksecurefunc("PanelTemplates_SelectTab", function(tab)
+        local name = tab:GetName()
+        local text = tab.Text or _G[name .. "Text"]
+        text:SetPoint("CENTER", tab, "CENTER", (tab.deselectedTextX or 0), (tab.deselectedTextY or 2))
+    end)
+
     for i = 1, BUYBACK_ITEMS_PER_PAGE do
         local button = _G["MerchantItem" .. i .. "ItemButton"]
         local icon = button.icon
