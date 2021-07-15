@@ -533,7 +533,7 @@ local function InitPanel(panel, hasScroll, settingModule)
                             of.container:Show()
                         end
 
-                        SetSetting(self.optionName, self.option, self:GetParent():GetParent().data.perSpec)
+                        SetSetting(self.optionName .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or ""), self.option, self:GetParent():GetParent().data.perSpec)
 
                         if v.callback ~= nil then
                             v.callback()

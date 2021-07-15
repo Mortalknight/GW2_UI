@@ -57,7 +57,7 @@ local function CreateRaidProfiles(panel)
     panel.selectProfile.container:SetParent(panel)
     panel.selectProfile.type = "RAID"
 
-    panel.selectProfile.raid = CreateFrame("Button", "b", panel.selectProfile.container, "GwDropDownItemTmpl")
+    panel.selectProfile.raid = CreateFrame("Button", nil, panel.selectProfile.container, "GwDropDownItemTmpl")
     panel.selectProfile.raid:SetWidth(120)
     panel.selectProfile.raid:SetPoint("TOPRIGHT", panel.selectProfile.container, "BOTTOMRIGHT")
     panel.selectProfile.raid.string:SetFont(UNIT_NAME_FONT, 12)
@@ -80,7 +80,7 @@ local function CreateRaidProfiles(panel)
         switchProfile(panel.selectProfile.type)
     end)
 
-    panel.selectProfile.party = CreateFrame("Button", "ff", panel.selectProfile.container, "GwDropDownItemTmpl")
+    panel.selectProfile.party = CreateFrame("Button", nil, panel.selectProfile.container, "GwDropDownItemTmpl")
     panel.selectProfile.party:SetWidth(120)
     panel.selectProfile.party:SetPoint("TOPRIGHT", panel.selectProfile.raid, "BOTTOMRIGHT")
     panel.selectProfile.party.string:SetFont(UNIT_NAME_FONT, 12)
@@ -215,7 +215,24 @@ local function LoadRaidPanel(sWindow)
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         nil,
         "RAID_UNIT_HEALTH",
-        nil,
+        function()
+            if GW.GROUPD_TYPE == "PARTY" then
+                if _G["GwCompactplayer"] then
+                    GW.raidframe_OnEvent(_G["GwCompactplayer"], "load")
+                end
+                for i = 1, 5 do
+                    if _G["GwCompactparty" .. i] then
+                        GW.raidframe_OnEvent(_G["GwCompactparty".. i], "load")
+                    end
+                end
+            else
+                for i = 1, MAX_RAID_MEMBERS do
+                    if _G["GwCompactraid" .. i] then
+                        GW.raidframe_OnEvent(_G["GwCompactraid" .. i], "load")
+                    end
+                end
+            end
+        end,
         {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
         {
             COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE,
@@ -236,7 +253,24 @@ local function LoadRaidPanel(sWindow)
         L["Show Country Flag"],
         L["Display a country flag based on the unit's language"],
         "RAID_UNIT_FLAGS",
-        nil,
+        function()
+            if GW.GROUPD_TYPE == "PARTY" then
+                if _G["GwCompactplayer"] then
+                    GW.raidframe_OnEvent(_G["GwCompactplayer"], "UNIT_NAME_UPDATE")
+                end
+                for i = 1, 5 do
+                    if _G["GwCompactparty" .. i] then
+                        GW.raidframe_OnEvent(_G["GwCompactparty".. i], "UNIT_NAME_UPDATE")
+                    end
+                end
+            else
+                for i = 1, MAX_RAID_MEMBERS do
+                    if _G["GwCompactraid" .. i] then
+                        GW.raidframe_OnEvent(_G["GwCompactraid" .. i], "UNIT_NAME_UPDATE")
+                    end
+                end
+            end
+        end,
         {"NONE", "DIFFERENT", "ALL"},
         {NONE_KEY, L["Different Than Own"], ALL},
         nil,

@@ -808,6 +808,7 @@ local function raidframe_OnEvent(self, event, unit)
         end)
     end
 end
+GW.raidframe_OnEvent = raidframe_OnEvent
 GW.AddForProfiling("raidframes", "raidframe_OnEvent", raidframe_OnEvent)
 
 local function updateFrameData(self, index)
@@ -1444,6 +1445,16 @@ local function LoadRaidFrames()
             end
             updateFrameData(_G["GwCompactraid" .. i], i)
         end
+
+        GwSettingsRaidPanel.selectProfile.string:SetText(getglobal(GW.GROUPD_TYPE))
+        if GW.GROUPD_TYPE == "RAID" then
+            GwSettingsRaidPanel.selectProfile.raid:GetScript("OnClick")(GwSettingsRaidPanel.selectProfile.raid)
+        else
+            GwSettingsRaidPanel.selectProfile.party:GetScript("OnClick")(GwSettingsRaidPanel.selectProfile.party)
+        end
+
+        GwSettingsRaidPanel.selectProfile.container:Hide()
+        
 
         -- update positions
         GW.CombatQueue_Queue("raidframePosUpdate",
