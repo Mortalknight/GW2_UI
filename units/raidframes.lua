@@ -1315,7 +1315,7 @@ local function LoadRaidFrames()
     )
 
     RegisterMovableFrame(GwRaidFrameContainer, RAID_FRAMES_LABEL, "raid_pos", "VerticalActionBarDummy", nil, true, {"default", "default"})
-    RegisterMovableFrame(GwRaidFramePartyContainer, RAID_FRAMES_LABEL, "raid_party_pos", "VerticalActionBarDummy", nil, true, {"default", "default"})
+    RegisterMovableFrame(GwRaidFramePartyContainer, L["Group Frames"], "raid_party_pos", "VerticalActionBarDummy", nil, true, {"default", "default"})
 
     hooksecurefunc(GwRaidFrameContainer.gwMover, "StopMovingOrSizing", function (frame)
         local anchor = GetSetting("RAID_ANCHOR" .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or ""))
