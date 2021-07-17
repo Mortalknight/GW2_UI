@@ -36,6 +36,8 @@ local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHei
             objectiveBlock.ObjectiveText:SetText("")
             block.height = block.height + objectiveBlock:GetHeight() + 15
             block.numObjectives = block.numObjectives + 1
+            objectiveBlock.hasObjectToHide = true
+            objectiveBlock.objectToHide = container
         end
 
         local w2 = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904) and C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2904) or C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(2906)

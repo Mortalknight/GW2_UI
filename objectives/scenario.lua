@@ -11,7 +11,7 @@ local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8
 
 local function getObjectiveBlock(self, index)
-    if _G[self:GetName() .. "GwQuestObjective" .. index] ~= nil then
+    if _G[self:GetName() .. "GwQuestObjective" .. index] then
         _G[self:GetName() .. "GwQuestObjective" .. index]:SetScript("OnEnter", nil)
         _G[self:GetName() .. "GwQuestObjective" .. index]:SetScript("OnLeave", nil)
         _G[self:GetName() .. "GwQuestObjective" .. index].StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
@@ -42,6 +42,7 @@ local function getObjectiveBlock(self, index)
         )
     end
 
+    newBlock.hasObjectToHide = false
     newBlock:SetScript("OnEnter", nil)
     newBlock:SetScript("OnLeave", nil)
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
@@ -55,6 +56,11 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
     local objectiveBlock = getObjectiveBlock(block, objectiveIndex)
 
     if text then
+        if objectiveBlock.hasObjectToHide then
+            objectiveBlock.objectToHide.SetParent = nil
+            objectiveBlock.objectToHide:SetParent(GW.HiddenFrame)
+            objectiveBlock.objectToHide.SetParent = GW.NoOp
+        end
         objectiveBlock:Show()
         objectiveBlock.ObjectiveText:SetText(text)
         objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
@@ -86,17 +92,20 @@ GW.AddForProfiling("scenario", "addObjectiveBlock", addObjectiveBlock)
 
 local function AddMawBuffsBelowMinimapFrame(block, numCriteria)
     -- SL Season 2 Maw Buff Containers
-    if MawBuffsBelowMinimapFrame:IsShown() then
+    if MawBuffsBelowMinimapFrame:IsShown() and not IsInJailersTower() then
         numCriteria = numCriteria + 1
         local objectiveBlock = getObjectiveBlock(block, numCriteria)
-        objectiveBlock:SetHeight(MawBuffsBelowMinimapFrame.Container:GetHeight())
+        objectiveBlock:SetHeight(MawBuffsBelowMinimapFrame:GetHeight())
         MawBuffsBelowMinimapFrame.Container:SetParent(objectiveBlock)
         MawBuffsBelowMinimapFrame.Container:ClearAllPoints()
         MawBuffsBelowMinimapFrame.Container:SetAllPoints()
+        MawBuffsBelowMinimapFrame.Container:Show()
         objectiveBlock:Show()
         objectiveBlock.ObjectiveText:SetText("")
         block.height = block.height + objectiveBlock:GetHeight()
         block.numObjectives = block.numObjectives + 1
+        objectiveBlock.hasObjectToHide = true
+        objectiveBlock.objectToHide = MawBuffsBelowMinimapFrame.Container
     end
 
     return numCriteria

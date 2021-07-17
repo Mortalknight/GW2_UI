@@ -42,6 +42,8 @@ local function addJailersTowerData(block, numCriteria)
         objectiveBlock.ObjectiveText:SetText("")
         block.height = block.height + objectiveBlock:GetHeight()
         block.numObjectives = block.numObjectives + 1
+        objectiveBlock.hasObjectToHide = true
+        objectiveBlock.objectToHide = TopScenarioWidgetContainerBlock
 
         if not TopScenarioWidgetContainerBlock.gwHooked then
             hooksecurefunc(TopScenarioWidgetContainerBlock, "SetHeight", function()
@@ -62,7 +64,7 @@ local function addJailersTowerData(block, numCriteria)
         -- grab the MawBuffs Button from here
         numCriteria = numCriteria + 1
         objectiveBlock = GW.GetScenarioObjectivesBlock(block, numCriteria)
-        objectiveBlock:SetHeight(ScenarioBlocksFrame.MawBuffsBlock.Container:GetHeight())
+        objectiveBlock:SetHeight(ScenarioBlocksFrame.MawBuffsBlock:GetHeight()) --.Container
         ScenarioBlocksFrame.MawBuffsBlock.Container:SetParent(objectiveBlock)
         ScenarioBlocksFrame.MawBuffsBlock.Container:ClearAllPoints()
         ScenarioBlocksFrame.MawBuffsBlock.Container:SetAllPoints()
@@ -70,6 +72,8 @@ local function addJailersTowerData(block, numCriteria)
         objectiveBlock.ObjectiveText:SetText("")
         block.height = block.height + objectiveBlock:GetHeight()
         block.numObjectives = block.numObjectives + 1
+        objectiveBlock.hasObjectToHide = true
+        objectiveBlock.objectToHide = ScenarioBlocksFrame.MawBuffsBlock
 
         -- grab new auras
         numCriteria = numCriteria + 1
@@ -89,6 +93,8 @@ local function addJailersTowerData(block, numCriteria)
         objectiveBlock.ObjectiveText:SetText("")
         block.height = block.height + objectiveBlock:GetHeight() + 15
         block.numObjectives = block.numObjectives + 1
+        objectiveBlock.hasObjectToHide = true
+        objectiveBlock.objectToHide = BottomScenarioWidgetContainerBlock
 
         if not BottomScenarioWidgetContainerBlock.gwHooked then
             hooksecurefunc(BottomScenarioWidgetContainerBlock, "SetHeight", function()
