@@ -1348,7 +1348,7 @@ local function styleChatWindow(frame)
     editbox:HookScript("OnTextChanged", function(self)
         local userInput = self:GetText()
 
-        if tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT")) ~= 0 and not InCombatLockdown() and (not repeatedText or not strfind(userInput, repeatedText, 1, true)) then
+        if tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT")) ~= 0 and InCombatLockdown() and (not repeatedText or not strfind(userInput, repeatedText, 1, true)) then
             local MIN_REPEAT_CHARACTERS = tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT"))
             if strlen(userInput) > MIN_REPEAT_CHARACTERS then
                 local repeatChar = true
