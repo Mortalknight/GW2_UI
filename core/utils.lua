@@ -110,14 +110,8 @@ local function GWGetClassColor(class, useClassColor, forNameString)
     end
 
     local useBlizzardClassColor = GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
-    local color
+    local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or CLASS_COLORS_RAIDFRAME[class]
     local colorForNameString
-
-    if useBlizzardClassColor then
-        color = RAID_CLASS_COLORS[class]
-    else
-        color = CLASS_COLORS_RAIDFRAME[class]
-    end
 
     if type(color) ~= "table" then return end
 
@@ -128,7 +122,7 @@ local function GWGetClassColor(class, useClassColor, forNameString)
     end
 
     if forNameString and not useBlizzardClassColor then
-        colorForNameString = {r = color.r + 0.3, g = color.g + 0.3, b = color.b + 0.3, a = color.a, colorStr = GW.RGBToHex(color.r + 0.3, color.g + 0.3, color.b + 0.3, "ff")}
+        colorForNameString = {r = min(color.r + 0.3, 1), g = min(color.g + 0.3, 1), b = min(color.g + 0.3, 1), a = color.a, colorStr = GW.RGBToHex(min(color.r + 0.3, 1), min(color.g + 0.3, 1), min(color.b + 0.3, 1), "ff")}
     end
 
     return forNameString and colorForNameString or color

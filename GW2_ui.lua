@@ -94,9 +94,9 @@ GW.AddToAnimation = AddToAnimation
 
 local function buttonAnim(self, name, w, hover)
     local prog = animations[name].progress
-    local l = GW.lerp(0, w, prog)
+    local lerp = GW.lerp(0, w, prog)
 
-    hover:SetPoint("RIGHT", self, "LEFT", l, 0)
+    hover:SetPoint("RIGHT", self, "LEFT", lerp, 0)
     hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, GW.lerp(0, 1, ((prog) - 0.5) / 0.5))
 end
 GW.AddForProfiling("index", "buttonAnim", buttonAnim)
@@ -251,7 +251,6 @@ GW.SetDeadIcon = SetDeadIcon
 local function StopAnimation(name)
     if animations[name] then
         animations[name].completed = true
-        animations[name].duration = 0
     end
 end
 GW.StopAnimation = StopAnimation

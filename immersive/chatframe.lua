@@ -497,8 +497,10 @@ local function CheckKeyword(message, author)
                 local classMatch = ClassNames[lowerCaseWord]
                 local wordMatch = classMatch and lowerCaseWord
 
+                print(classMatch, word)
                 if wordMatch then
                     local classColorTable = GW.GWGetClassColor(classMatch, true, true)
+                    GW_classColorTable = classColorTable
                     if classColorTable then
                         word = gsub(word, gsub(tempWord, "%-","%%-"), format("\124cff%.2x%.2x%.2x%s\124r", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, tempWord))
                     end
