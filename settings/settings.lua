@@ -834,7 +834,7 @@ local function InitPanel(panel, hasScroll, settingModule)
         panel.scroll.scrollchild:SetHeight(panel:GetHeight())
         panel.scroll.scrollchild:SetWidth(panel.scroll:GetWidth() - 20)
         panel.scroll.slider:SetMinMaxValues(0, max(0, numRows * 40 - panel:GetHeight() + 50))
-        panel.scroll.slider.thumb:SetHeight(100)
+        panel.scroll.slider.thumb:SetHeight(50)
         panel.scroll.slider:SetValue(1)
         panel.scroll.maxScroll = max(0, numRows * 40 - panel:GetHeight() + 50)
     end
