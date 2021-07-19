@@ -59,9 +59,9 @@ end
 GW.HandleReward = HandleReward
 
 local function QuestInfo_Display(template)
-    if not GetSetting("GOSSIP_SKIN_ENABLED") and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD) then return end
+    if not GetSetting("GOSSIP_SKIN_ENABLED") and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then return end
     if not GetSetting("WORLDMAP_SKIN_ENABLED") and (template == QUEST_TEMPLATE_MAP_DETAILS or template == QUEST_TEMPLATE_MAP_REWARDS) then return end
-    
+
     local rewardsFrame = _G.QuestInfoFrame.rewardsFrame
     local isQuestLog = _G.QuestInfoFrame.questLog ~= nil
 
@@ -265,7 +265,7 @@ local function LoadWorldMapSkin()
             self:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
             self:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
         end
-    
+
         self:SetSize(16, 16)
     end)
 
