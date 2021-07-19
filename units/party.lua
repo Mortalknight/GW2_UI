@@ -202,8 +202,8 @@ local function updatePartyDebuffs(self, x, y)
             end)
             debuffFrame:SetScript("OnLeave", GameTooltip_Hide)
 
+            local size = self.isPet and 10 or 24
             if debuffList[i].isImportant or debuffList[i].isDispellable then
-                local size = self.isPet and 10 or 24
                 if debuffList[i].isImportant then
                     size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
                 else
@@ -211,7 +211,7 @@ local function updatePartyDebuffs(self, x, y)
                 end
                 debuffFrame:SetSize(size, size)
             else
-                debuffFrame:SetSize(self.isPet and 10 or 24, self.isPet and 10 or 24)
+                debuffFrame:SetSize(size, size)
             end
 
             debuffFrame:Show()
