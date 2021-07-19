@@ -630,7 +630,7 @@ local function updateQuest(self, block, quest)
         block.Header:SetText(quest.title)
 
         --Quest item
-        GW.CombatQueue_Queue("update_tracker_quest_itembutton" .. block.index, UpdateQuestItem, {block})
+        GW.CombatQueue_Queue(nil, UpdateQuestItem, {block})
 
         if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
             isComplete = true
@@ -706,7 +706,7 @@ local function updateQuestByID(self, block, quest, questID, questLogIndex)
     block.Header:SetText(quest.title)
 
     --Quest item
-    GW.CombatQueue_Queue("update_tracker_quest_itembutton" .. block.index, UpdateQuestItem, {block})
+    GW.CombatQueue_Queue(nil, UpdateQuestItem, {block})
 
     if numObjectives == 0 and GetMoney() >= requiredMoney and not quest.startEvent then
         isComplete = true
@@ -902,7 +902,7 @@ local function updateQuestLogLayout(self)
                     if _G["GwCampaignBlock" .. counterCampaign] ~= nil then
                         _G["GwCampaignBlock" .. counterCampaign]:Hide()
                         _G["GwCampaignBlock" .. counterCampaign].questLogIndex = 0
-                        GW.CombatQueue_Queue("update_tracker_campaign_itembutton" .. counterCampaign, UpdateQuestItem, {_G["GwCampaignBlock" .. counterCampaign]})
+                        GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. counterCampaign, UpdateQuestItem, {_G["GwCampaignBlock" .. counterCampaign]})
                     end
                 end
             elseif q then
@@ -939,7 +939,7 @@ local function updateQuestLogLayout(self)
                     if _G["GwQuestBlock" .. counterQuest] ~= nil then
                         _G["GwQuestBlock" .. counterQuest]:Hide()
                         _G["GwQuestBlock" .. counterQuest].questLogIndex = 0
-                        GW.CombatQueue_Queue("update_tracker_quest_itembutton" .. counterQuest, UpdateQuestItem, {_G["GwQuestBlock" .. counterQuest]})
+                        GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. counterQuest, UpdateQuestItem, {_G["GwQuestBlock" .. counterQuest]})
                     end
                 end
             end
@@ -956,7 +956,7 @@ local function updateQuestLogLayout(self)
             _G["GwCampaignBlock" .. i].questLogIndex = 0
             if _G["GwCampaignBlock" .. i].groupButton then _G["GwCampaignBlock" .. i].groupButton:SetParent(GW.HiddenFrame) end
             _G["GwCampaignBlock" .. i]:Hide()
-            GW.CombatQueue_Queue("update_tracker_campaign_itembutton" .. i, UpdateQuestItem, {_G["GwCampaignBlock" .. i]})
+            GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. i, UpdateQuestItem, {_G["GwCampaignBlock" .. i]})
         end
     end
     for i = counterQuest + 1, 25 do
@@ -965,7 +965,7 @@ local function updateQuestLogLayout(self)
             _G["GwQuestBlock" .. i].questLogIndex = 0
             if _G["GwQuestBlock" .. i].groupButton then _G["GwQuestBlock" .. i].groupButton:SetParent(GW.HiddenFrame) end
             _G["GwQuestBlock" .. i]:Hide()
-            GW.CombatQueue_Queue("update_tracker_quest_itembutton" .. i, UpdateQuestItem, {_G["GwQuestBlock" .. i]})
+            GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. i, UpdateQuestItem, {_G["GwQuestBlock" .. i]})
         end
     end
 

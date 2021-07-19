@@ -33,7 +33,7 @@ local function CombatQueue_Queue(key, func, obj)
             alreadyIn = true
         end
     end
-    if not alreadyIn then
+    if not alreadyIn or key == nil then
         tinsert(afterCombatQueue, {key = key, func = func, obj = obj})
     end
 end

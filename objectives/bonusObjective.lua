@@ -233,7 +233,7 @@ local function setUpBlock(questIDs, collapsed)
                 module.ShowWorldQuests = true
                 GwBonusObjectiveBlock.module = module
 
-                GW.CombatQueue_Queue("update_tracker_bonus_itembutton" .. blockIndex, UpdateQuestItem, {GwBonusObjectiveBlock})
+                GW.CombatQueue_Queue(nil, UpdateQuestItem, {GwBonusObjectiveBlock})
 
                 foundEvent = true
 
@@ -321,7 +321,7 @@ local function updateBonusObjective(self)
             _G["GwBonusObjectiveBlock" .. i].questID = false
             _G["GwBonusObjectiveBlock" .. i].questLogIndex = 0
             if _G["GwBonusObjectiveBlock" .. i].groupButton then _G["GwBonusObjectiveBlock" .. i].groupButton:SetParent(GW.HiddenFrame) end
-            GW.CombatQueue_Queue("update_tracker_bonus_itembutton" .. i, UpdateQuestItem, {_G["GwBonusObjectiveBlock" .. i]})
+            GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, UpdateQuestItem, {_G["GwBonusObjectiveBlock" .. i]})
         end
     end
 
@@ -353,7 +353,7 @@ local function updateBonusObjective(self)
             _G["GwBonusObjectiveBlock" .. i].questLogIndex = 0
             _G["GwBonusObjectiveBlock" .. i]:Hide()
             if _G["GwBonusObjectiveBlock" .. i].groupButton then _G["GwBonusObjectiveBlock" .. i].groupButton:SetParent(GW.HiddenFrame) end
-            GW.CombatQueue_Queue("update_tracker_bonus_itembutton" .. i, UpdateQuestItem, {_G["GwBonusObjectiveBlock" .. i]})
+            GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, UpdateQuestItem, {_G["GwBonusObjectiveBlock" .. i]})
             if _G["GwBonusObjectiveBlock" .. i].ticker then
                 _G["GwBonusObjectiveBlock" .. i].ticker:Cancel()
                 _G["GwBonusObjectiveBlock" .. i].ticker = nil

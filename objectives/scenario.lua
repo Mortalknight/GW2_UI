@@ -173,7 +173,7 @@ local function updateCurrentScenario(self, event, ...)
             GW.RemoveTrackerNotificationOfType("TORGHAST")
             GwScenarioBlock:Hide()
         end
-        GW.CombatQueue_Queue("update_tracker_scenario_itembutton", UpdateQuestItem, {GwScenarioBlock})
+        GW.CombatQueue_Queue(nil, UpdateQuestItem, {GwScenarioBlock})
         if GwScenarioBlock.hasItem then
             GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", GW.updateQuestItemPositions, {GwScenarioBlock.actionButton, GwScenarioBlock.height, "SCENARIO", GwScenarioBlock})
         end
@@ -241,7 +241,7 @@ local function updateCurrentScenario(self, event, ...)
         GwScenarioBlock.questLogIndex = C_QuestLog.GetLogIndexForQuestID(questID)
     end
 
-    GW.CombatQueue_Queue("update_tracker_scenario_itembutton", UpdateQuestItem, {GwScenarioBlock})
+    GW.CombatQueue_Queue(nil, UpdateQuestItem, {GwScenarioBlock})
 
     for criteriaIndex = 1, numCriteria do
         local criteriaString, _, _, quantity, totalQuantity, _, _, _, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
