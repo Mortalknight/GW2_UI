@@ -954,6 +954,7 @@ local function updateQuestLogLayout(self)
         if _G["GwCampaignBlock" .. i] ~= nil then
             _G["GwCampaignBlock" .. i].questID = nil
             _G["GwCampaignBlock" .. i].questLogIndex = 0
+            if _G["GwCampaignBlock" .. i].groupButton then _G["GwCampaignBlock" .. i].groupButton:SetParent(GW.HiddenFrame) end
             _G["GwCampaignBlock" .. i]:Hide()
             GW.CombatQueue_Queue("update_tracker_campaign_itembutton" .. i, UpdateQuestItem, {_G["GwCampaignBlock" .. i]})
         end
@@ -962,6 +963,7 @@ local function updateQuestLogLayout(self)
         if _G["GwQuestBlock" .. i] ~= nil then
             _G["GwQuestBlock" .. i].questID = nil
             _G["GwQuestBlock" .. i].questLogIndex = 0
+            if _G["GwQuestBlock" .. i].groupButton then _G["GwQuestBlock" .. i].groupButton:SetParent(GW.HiddenFrame) end
             _G["GwQuestBlock" .. i]:Hide()
             GW.CombatQueue_Queue("update_tracker_quest_itembutton" .. i, UpdateQuestItem, {_G["GwQuestBlock" .. i]})
         end
@@ -1350,6 +1352,8 @@ local function LoadQuestTracker()
                 button.Icon:Hide()
                 button.Icon:SetAtlas(nil)
                 button:SetSize(25, 25)
+                if block then block.groupButton = button end
+                if blockBonus then blockBonus.groupButton = button end
             end
         end
     end)

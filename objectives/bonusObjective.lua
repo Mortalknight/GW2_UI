@@ -317,9 +317,10 @@ local function updateBonusObjective(self)
     RemoveTrackerNotificationOfType("EVENT")
 
     for i = 1, 20 do
-        if _G["GwBonusObjectiveBlock" .. i] ~= nil then
+        if _G["GwBonusObjectiveBlock" .. i] then
             _G["GwBonusObjectiveBlock" .. i].questID = false
             _G["GwBonusObjectiveBlock" .. i].questLogIndex = 0
+            if _G["GwBonusObjectiveBlock" .. i].groupButton then _G["GwBonusObjectiveBlock" .. i].groupButton:SetParent(GW.HiddenFrame) end
             GW.CombatQueue_Queue("update_tracker_bonus_itembutton" .. i, UpdateQuestItem, {_G["GwBonusObjectiveBlock" .. i]})
         end
     end
@@ -351,6 +352,8 @@ local function updateBonusObjective(self)
             _G["GwBonusObjectiveBlock" .. i].questID = false
             _G["GwBonusObjectiveBlock" .. i].questLogIndex = 0
             _G["GwBonusObjectiveBlock" .. i]:Hide()
+            if _G["GwBonusObjectiveBlock" .. i].groupButton then _G["GwBonusObjectiveBlock" .. i].groupButton:SetParent(GW.HiddenFrame) end
+            GW.CombatQueue_Queue("update_tracker_bonus_itembutton" .. i, UpdateQuestItem, {_G["GwBonusObjectiveBlock" .. i]})
             if _G["GwBonusObjectiveBlock" .. i].ticker then
                 _G["GwBonusObjectiveBlock" .. i].ticker:Cancel()
                 _G["GwBonusObjectiveBlock" .. i].ticker = nil
@@ -412,7 +415,7 @@ local function LoadBonusFrame()
             trackedEventIDs[questID].tracked = false
         end
     end)
-    
+
     updateBonusObjective(GwQuesttrackerContainerBonusObjectives)
 end
 GW.LoadBonusFrame = LoadBonusFrame
