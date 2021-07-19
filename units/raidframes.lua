@@ -83,7 +83,7 @@ local function togglePartyFrames(b)
     end
 
     if b then
-        if GetSetting("RAID_STYLE_PARTY") then
+        if GetSetting("RAID_STYLE_PARTY") or GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
             _G["GwCompactplayer"]:Show()
             RegisterUnitWatch(_G["GwCompactplayer"])
 
@@ -113,7 +113,7 @@ local function unhookPlayerFrame()
         return
     end
 
-    if IsInGroup() and GetSetting("RAID_STYLE_PARTY") then
+    if IsInGroup() and (GetSetting("RAID_STYLE_PARTY") or GetSetting("RAID_STYLE_PARTY_AND_FRAMES")) then
         _G["GwCompactplayer"]:Show()
         RegisterUnitWatch(_G["GwCompactplayer"])
     else
@@ -1455,7 +1455,7 @@ local function LoadRaidFrames()
 
     onLoad = false
 
-    if not GetSetting("RAID_STYLE_PARTY") then
+    if not GetSetting("RAID_STYLE_PARTY") and not GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
         UnregisterUnitWatch(_G["GwCompactplayer"])
         _G["GwCompactplayer"]:Hide()
         for i = 1, 4 do

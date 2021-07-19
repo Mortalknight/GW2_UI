@@ -22,6 +22,7 @@ NEW
     - Added grid layouts for raid and party
     - Added option to set a scale value for important dungeon and raid debuffs
     - Added option to set a scale value for dispellable debuffs
+    - Added option "Show both party frames and party grid"
 
 FIXES
     - Display Animapower frame in M+ and raids correctly
