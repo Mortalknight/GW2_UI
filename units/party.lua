@@ -102,7 +102,6 @@ GW.AddForProfiling("party", "updateUnitPortrait", updateUnitPortrait)
 
 local function getUnitDebuffs(unit)
     local debuffList = {}
-    local isImportant, isDispellable = false, false
     local showDebuffs = GetSetting("PARTY_SHOW_DEBUFFS")
     local onlyDispellableDebuffs = GetSetting("PARTY_ONLY_DISPELL_DEBUFFS")
     local showImportendInstanceDebuffs = GetSetting("PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
@@ -112,6 +111,7 @@ local function getUnitDebuffs(unit)
         if UnitDebuff(unit, i, "HARMFUL") then
             local debuffName, icon, count, debuffType, duration, expires, caster, isStealable, shouldConsolidate, spellId = UnitDebuff(unit, i, "HARMFUL")
             local shouldDisplay = false
+            local isImportant, isDispellable = false, false
 
             if showDebuffs then
                 if onlyDispellableDebuffs then

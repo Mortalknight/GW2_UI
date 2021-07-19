@@ -446,7 +446,6 @@ end
 local function updateDebuffs(self)
     local btnIndex, x, y = 1, 0, 0
     local filter = "HARMFUL"
-    local isImportant, isDispellable = false, false
     local showDebuffs = GetSetting("RAID_SHOW_DEBUFFS" .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or ""))
     local onlyDispellableDebuffs = GetSetting("RAID_ONLY_DISPELL_DEBUFFS" .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or ""))
     local showImportendInstanceDebuffs = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF" .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or ""))
@@ -469,6 +468,7 @@ local function updateDebuffs(self)
         if not aurasDone then
             local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitDebuff(self.unit, i, filter)
             local shouldDisplay = false
+            local isImportant, isDispellable = false, false
 
             if showDebuffs then
                 if onlyDispellableDebuffs then
