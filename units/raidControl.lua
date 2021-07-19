@@ -322,6 +322,7 @@ local function UpdateRaidCounterVisibility()
     }
 
     RegisterStateDriver(GW_RaidCounter_Frame, "visibility", VisibilityStates[GetSetting("ROLE_BAR")])
+    GW_RaidCounter_Frame:GetScript("OnEvent")(GW_RaidCounter_Frame)
 end
 GW.UpdateRaidCounterVisibility = UpdateRaidCounterVisibility
 

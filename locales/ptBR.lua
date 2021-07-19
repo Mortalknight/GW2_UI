@@ -395,3 +395,8 @@ L["Custom buff"] = "Buff customizado"
 L["Enter the spell ID of the buff you wish to track. Only one spell ID is supported. To find the spell ID of the buff you want to track, enable IDs in the tooltip settings and mouse over the icon in your aura bar."] = "Adicione a ID da Habilidade ou buff que você deseja rastrear. Suporta apenas uma Habilidade. Para encontrar a ID do buff que você deseja rastrear, ative as IDs nas configurações de descrições e passe o mouse sobre o ícone do buff na sua barra de auras."
 L["Hide Editbox"] = "Ocultar Caixa de edição"
 L["Hide the chat editbox when not in focus."] = "Ocultar a caixa de edição do bate-papo quando não estiver em foco."
+L["Set important Dungeon & Raid debuff scale"] = "Definir a escala dos efeitos negativos importantes de Masmorras e Raides."
+L["Set dispellable debuff scale"] = "Definir a escala dos efeitos negativos dissipáveis."
+L["Show both party frames and party grid"] = "Exibir ambos os quadros de grupo e a grade de grupo"
+L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."] = "Se for habilitado, exibirá ambos os quadros de grupo estilizados e a grade. Esta configuração não tem efeito se '%s' estiver habilitado."
+
