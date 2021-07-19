@@ -395,3 +395,5 @@ L["Hide Editbox"] = true
 L["Hide the chat editbox when not in focus."] = true
 L["Set important Dungeon & Raid debuff scale"] = true
 L["Set dispellable debuff scale"] = true
+L["Show both party frames and party grid"] = true
+L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."] = true
