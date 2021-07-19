@@ -93,6 +93,17 @@ local function LoadAurasPanel(sWindow)
         nil,
         2
     )
+    addOptionSlider(
+        p_auras.scroll.scrollchild,
+        L["Set dispellable debuff scale"],
+        nil,
+        "DISPELL_DEBUFFS_Scale",
+        nil,
+        0.5,
+        2,
+        nil,
+        2
+    )
 
     addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p_indicator.scroll.scrollchild, L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], "INDICATORS_TIME", nil, nil, {["RAID_FRAMES"] = true})
