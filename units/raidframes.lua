@@ -379,8 +379,8 @@ local function onDebuffMouseUp(self, btn)
     end
 end
 
-local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires)
-    local size = 16
+local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires, isImportant, isDispellable)
+    local size = isImportant and (16 * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))) or isDispellable and (16 * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))) or 16
     local marginX, marginY = x * (size + 2), y * (size + 2)
     local frame = _G["Gw" .. parent:GetName() .. "DeBuffItemFrame" .. btnIndex]
 
@@ -446,6 +446,7 @@ end
 local function updateDebuffs(self)
     local btnIndex, x, y = 1, 0, 0
     local filter = "HARMFUL"
+    local isImportant, isDispellable = false, false
     local showDebuffs = GetSetting("RAID_SHOW_DEBUFFS" .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or ""))
     local onlyDispellableDebuffs = GetSetting("RAID_ONLY_DISPELL_DEBUFFS" .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or ""))
     local showImportendInstanceDebuffs = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF" .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or ""))
@@ -477,14 +478,18 @@ local function updateDebuffs(self)
                 else
                     shouldDisplay = debuffName and not (ignored[debuffName] or spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                 end
+
+                isDispellable = GW.IsDispellableByMe(debuffType)
             end
+
+            isImportant = (GW.ImportendRaidDebuff[spellId] and showImportendInstanceDebuffs) or false
 
             if showImportendInstanceDebuffs and not shouldDisplay then
                 shouldDisplay = GW.ImportendRaidDebuff[spellId] or false
             end
 
             if shouldDisplay then
-                btnIndex, x, y = showDebuffIcon(self, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires)
+                btnIndex, x, y = showDebuffIcon(self, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires, isImportant, isDispellable)
             end
 
             aurasDone = not debuffName or y > 0

@@ -102,6 +102,7 @@ GW.AddForProfiling("party", "updateUnitPortrait", updateUnitPortrait)
 
 local function getUnitDebuffs(unit)
     local debuffList = {}
+    local isImportant, isDispellable = false, false
     local showDebuffs = GetSetting("PARTY_SHOW_DEBUFFS")
     local onlyDispellableDebuffs = GetSetting("PARTY_ONLY_DISPELL_DEBUFFS")
     local showImportendInstanceDebuffs = GetSetting("PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
@@ -120,7 +121,11 @@ local function getUnitDebuffs(unit)
                 else
                     shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                 end
+
+                isDispellable = GW.IsDispellableByMe(debuffType)
             end
+
+            isImportant = (GW.ImportendRaidDebuff[spellId] and showImportendInstanceDebuffs) or false
 
             if showImportendInstanceDebuffs and not shouldDisplay then
                 shouldDisplay = GW.ImportendRaidDebuff[spellId] or false
@@ -139,6 +144,8 @@ local function getUnitDebuffs(unit)
                 debuffList[counter].isStealable = isStealable
                 debuffList[counter].shouldConsolidate = shouldConsolidate
                 debuffList[counter].spellID = spellId
+                debuffList[counter].isImportant = isImportant
+                debuffList[counter].isDispellable = isDispellable
                 debuffList[counter].key = i
                 debuffList[counter].timeRemaining = duration <= 0 and 500000 or expires - GetTime()
 
@@ -194,6 +201,18 @@ local function updatePartyDebuffs(self, x, y)
                 GameTooltip:Show()
             end)
             debuffFrame:SetScript("OnLeave", GameTooltip_Hide)
+
+            if debuffList[i].isImportant or debuffList[i].isDispellable then
+                local size = 24
+                if debuffList[i].isImportant then
+                    size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
+                else
+                    size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
+                end
+                debuffFrame:SetSize(size, size)
+            else
+                debuffFrame:SetSize(self.isPet and 10 or 24, self.isPet and 10 or 24)
+            end
 
             debuffFrame:Show()
 

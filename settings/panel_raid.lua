@@ -52,6 +52,7 @@ local function switchProfile(profile)
 end
 
 local function CreateRaidProfiles(panel)
+    panel.selectProfile.label:SetText(L["Profiles"])
     panel.selectProfile.string:SetFont(UNIT_NAME_FONT, 12)
     panel.selectProfile.string:SetText(RAID)
     panel.selectProfile.container:SetParent(panel)
@@ -199,7 +200,24 @@ local function LoadRaidPanel(sWindow)
         L["Show Aura Tooltips"],
         L["Show tooltips of buffs and debuffs."],
         "RAID_AURA_TOOLTIP_INCOMBAT",
-        nil,
+        function()
+            if GW.GROUPD_TYPE == "PARTY" then
+                if _G["GwCompactplayer"] then
+                    GW.raidframe_OnEvent(_G["GwCompactplayer"], "UNIT_AURA")
+                end
+                for i = 1, 5 do
+                    if _G["GwCompactparty" .. i] then
+                        GW.raidframe_OnEvent(_G["GwCompactparty" .. i], "UNIT_AURA")
+                    end
+                end
+            else
+                for i = 1, MAX_RAID_MEMBERS do
+                    if _G["GwCompactraid" .. i] then
+                        GW.raidframe_OnEvent(_G["GwCompactraid" .. i], "UNIT_AURA")
+                    end
+                end
+            end
+        end,
         {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"},
         {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]},
         nil,
@@ -222,7 +240,7 @@ local function LoadRaidPanel(sWindow)
                 end
                 for i = 1, 5 do
                     if _G["GwCompactparty" .. i] then
-                        GW.raidframe_OnEvent(_G["GwCompactparty".. i], "load")
+                        GW.raidframe_OnEvent(_G["GwCompactparty" .. i], "load")
                     end
                 end
             else
@@ -260,7 +278,7 @@ local function LoadRaidPanel(sWindow)
                 end
                 for i = 1, 5 do
                     if _G["GwCompactparty" .. i] then
-                        GW.raidframe_OnEvent(_G["GwCompactparty".. i], "UNIT_NAME_UPDATE")
+                        GW.raidframe_OnEvent(_G["GwCompactparty" .. i], "UNIT_NAME_UPDATE")
                     end
                 end
             else

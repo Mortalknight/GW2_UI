@@ -109,9 +109,7 @@ local function setAuraType(self, typeAura)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -1, 1)
         self.duration:SetFont(UNIT_NAME_FONT, 11)
         self.stacks:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
-    end
-
-    if typeAura == "bigBuff" then
+    elseif typeAura == "bigBuff" then
         self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 3, -3)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -3, 3)
         self.duration:SetFont(UNIT_NAME_FONT, 14)
@@ -257,6 +255,14 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 end
                 self.animating = false
                 saveAuras[frame.auraType][#saveAuras[frame.auraType] + 1] = list[index].name
+            else
+                -- debuffs
+                if GW.ImportendRaidDebuff[list[index].spellID] then
+                    size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
+                end
+                if GW.IsDispellableByMe(list[index].dispelType) then
+                    size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
+                end
             end
 
             usedWidth = usedWidth + size + marginX
@@ -265,7 +271,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 usedHeight = usedHeight + lineSize + marginY
                 lineSize = smallSize
             end
-            if usedWidth > 0 then 
+            if usedWidth > 0 then
                 usedWidth2 = usedWidth - size - marginX
             else
                 usedWidth2 = usedWidth

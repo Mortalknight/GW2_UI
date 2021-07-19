@@ -393,3 +393,5 @@ L["Custom buff"] = true
 L["Enter the spell ID of the buff you wish to track. Only one spell ID is supported. To find the spell ID of the buff you want to track, enable IDs in the tooltip settings and mouse over the icon in your aura bar."] = true
 L["Hide Editbox"] = true
 L["Hide the chat editbox when not in focus."] = true
+L["Set important Dungeon & Raid debuff scale"] = true
+L["Set dispellable debuff scale"] = true

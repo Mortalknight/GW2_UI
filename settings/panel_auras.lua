@@ -3,6 +3,7 @@ local L = GW.L
 local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionText = GW.AddOptionText
+local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
@@ -80,6 +81,17 @@ local function LoadAurasPanel(sWindow)
         true,
         nil,
         "spell"
+    )
+    addOptionSlider(
+        p_auras.scroll.scrollchild,
+        L["Set important Dungeon & Raid debuff scale"],
+        nil,
+        "RAIDDEBUFFS_Scale",
+        nil,
+        0.5,
+        2,
+        nil,
+        2
     )
 
     addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", nil, nil, {["RAID_FRAMES"] = true})
