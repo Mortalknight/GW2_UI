@@ -497,7 +497,6 @@ local function CheckKeyword(message, author)
                 local classMatch = ClassNames[lowerCaseWord]
                 local wordMatch = classMatch and lowerCaseWord
 
-                print(classMatch, word)
                 if wordMatch then
                     local classColorTable = GW.GWGetClassColor(classMatch, true, true)
                     GW_classColorTable = classColorTable
