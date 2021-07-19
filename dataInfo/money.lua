@@ -116,14 +116,14 @@ local function Money_OnEnter(self)
         GameTooltip:AddLine(CHARACTER .. ":")
         for _, g in pairs(myGold) do
             local color = GW.GWGetClassColor(g.class, true, true)
-            local nameLine = ""
+            local factionTexture = ""
             if g.faction and g.faction ~= "" and g.faction ~= "Neutral" then
-                nameLine = format("|TInterface/FriendsFrame/PlusManz-%s:14|t ", g.faction)
+                factionTexture = format("|TInterface/FriendsFrame/PlusManz-%s:14|t ", g.faction)
             elseif g.faction and g.faction ~= "" and g.faction == "Neutral" then
-                nameLine = format("|TInterface/Timer/%s-Logo:14|t ", "Panda")
+                factionTexture = "|TInterface/Timer/Panda-Logo:14|t "
             end
 
-            local toonName = format("%s%s", nameLine, g.name)
+            local toonName = format("%s%s", factionTexture, g.name)
             GameTooltip:AddDoubleLine((g.name == GW.myname and toonName .. " |TInterface/COMMON/Indicator-Green:14:14:0:-2|t") or toonName, GW.FormatMoneyForChat(g.amount), color.r, color.g, color.b, 1, 1, 1)
         end
 

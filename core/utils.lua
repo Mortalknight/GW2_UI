@@ -122,7 +122,7 @@ local function GWGetClassColor(class, useClassColor, forNameString)
     end
 
     if forNameString and not useBlizzardClassColor then
-        colorForNameString = {r = min(color.r + 0.3, 1), g = min(color.g + 0.3, 1), b = min(color.g + 0.3, 1), a = color.a, colorStr = GW.RGBToHex(min(color.r + 0.3, 1), min(color.g + 0.3, 1), min(color.b + 0.3, 1), "ff")}
+        colorForNameString = {r = min(color.r + 0.3, 1), g = min(color.g + 0.3, 1), b = min(color.b + 0.3, 1), a = color.a, colorStr = GW.RGBToHex(min(color.r + 0.3, 1), min(color.g + 0.3, 1), min(color.b + 0.3, 1), "ff")}
     end
 
     return forNameString and colorForNameString or color

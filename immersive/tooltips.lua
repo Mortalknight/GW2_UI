@@ -445,7 +445,6 @@ local function GameTooltip_OnTooltipSetUnit(self)
 
     RemoveTrashLines(self) -- keep an eye on this may be buggy
 
-    local color = SetUnitText(self, unit, isShiftKeyDown)
     local showMount = GetSetting("ADVANCED_TOOLTIP_SHOW_MOUNT")
     local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
 
@@ -458,14 +457,15 @@ local function GameTooltip_OnTooltipSetUnit(self)
                 local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(MountIDs[id])
                 self:AddDoubleLine(format("%s:", MOUNT), name, nil, nil, nil, 1, 1, 1)
 
-                if sourceText and isControlKeyDown then
-                    local sourceModified = gsub(sourceText, "|n", "\10")
+                local mountText = isControlKeyDown and sourceText and gsub(sourceText, "|n%s+|n", "|n")
+                if mountText then
+                    local sourceModified = gsub(mountText, "|n", "\10")
                     for x in gmatch(sourceModified, "[^\10]+\10?") do
                         local left, right = strmatch(x, "(.-|r)%s?([^\10]+)\10?")
                         if left and right then
                             self:AddDoubleLine(left, right, nil, nil, nil, 1, 1, 1)
                         else
-                            self:AddDoubleLine(FROM, gsub(sourceText, "|c%x%x%x%x%x%x%x%x",""), nil, nil, nil, 1, 1, 1)
+                            self:AddDoubleLine(FROM, gsub(mountText, "|c%x%x%x%x%x%x%x%x",""), nil, nil, nil, 1, 1, 1)
                         end
                     end
                 end
@@ -512,6 +512,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
         end
     end
 
+    local color = SetUnitText(self, unit, isShiftKeyDown)
     if isShiftKeyDown and isPlayerUnit then
         AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
     end
@@ -589,15 +590,24 @@ end
 
 local function SetUnitAuraData(self, id, caster)
     if id then
+        local mountText
         if MountIDs[id] then
             local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(MountIDs[id])
-            self:AddLine(" ")
-            self:AddLine(sourceText, 1, 1, 1)
+            mountText = sourceText and gsub(sourceText, "|n%s+|n", "|n")
+
+            if mountText then
+				self:AddLine(" ")
+				self:AddLine(mountText, 1, 1, 1)
+			end
         end
 
         local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
 
         if IsModKeyDown() then
+            if mountText then
+				self:AddLine(" ")
+			end
+
             if caster then
                 local name = UnitName(caster)
                 local _, class = UnitClass(caster)
