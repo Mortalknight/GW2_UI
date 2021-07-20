@@ -399,3 +399,5 @@ L["Set important Dungeon & Raid debuff scale"] = "設定重要的地城 & 團隊
 L["Set dispellable debuff scale"] = "設定可驅散減益的縮放大小"
 L["Show both party frames and party grid"] = "同時顯示隊伍和團隊框架"
 L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."] = "啟用時，會同時顯示美化的隊伍框架和團隊框架。如果已啟用 '%s' 則此選項不會有效果。"
+L["Adds descriptions for mythic keystone properties to their tooltips."] = "在傳奇鑰石的滑鼠提示中加入鑰石屬性說明。"
+L["Click to open Emoticon Frame"] = "點一下打開表情圖案視窗"

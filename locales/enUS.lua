@@ -399,3 +399,7 @@ L["Show both party frames and party grid"] = true
 L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."] = true
 L["Adds descriptions for mythic keystone properties to their tooltips."] = true
 L["Click to open Emoticon Frame"] = true
+L["Quick Join Messages"] = true
+L["Show clickable Quick Join messages inside of the chat."] = true
+L["is looking for members"] = true
+L["joined a group"] = true

@@ -401,3 +401,7 @@ L["Show both party frames and party grid"] = "Gruppen-Rahmen und Gruppen-Gitter 
 L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."] = "Wenn aktiviert, zeigt dies sowohl die stilisierten Gruppen-Rahmen als auch die Gruppen-Gitter an. Diese Einstellung hat keinen Effekt, wenn '%s' aktiviert ist."
 L["Adds descriptions for mythic keystone properties to their tooltips."] = "Fügt eine Beschreibung für mythische Schlüsselsteineigenschaften dem Tooltip hinzu."
 L["Click to open Emoticon Frame"] = "Öffnet ein Fenster mit Emotesymbolen"
+L["Quick Join Messages"] = "Schnellbeitritt Nachricht"
+L["Show clickable Quick Join messages inside of the chat."] = "Zeige eine anklickbare Schnellbeitritt Nachricht im Chat."
+L["is looking for members"] = "ucht nach Mitgliedern"
+L["joined a group"] = "ist einer Gruppe beigetreten"
