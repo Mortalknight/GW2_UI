@@ -399,3 +399,5 @@ L["Set important Dungeon & Raid debuff scale"] = "Establece la escala de los per
 L["Set dispellable debuff scale"] = "Establece la escala de los perjuicios disipables."
 L["Show both party frames and party grid"] = "Muestra ambos marcos de grupo y cuadrícula"
 L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."] = "Si se habilita, mostrará ambos marcos de estilo de grupo al igual que el marco de cuadrícula. Esta configuración no tiene efecto si '%s' está habilitado."
+L["Adds descriptions for mythic keystone properties to their tooltips."] = "Añade descripciones de las propiedades de las piedras angulares míticas a su cuadro de sugerencia."
+L["Click to open Emoticon Frame"] = "Clic para abrir el marco de emoticono"
