@@ -37,7 +37,9 @@ local function SetAFK(self, status)
         self.bottom.model:SetUnit("player")
         self.bottom.model.isIdle = nil
         self.bottom.model:SetAnimation(67)
-        self.bottom.model.idleDuration = 30
+        self.bottom.model:SetFacing(6)
+        self.bottom.model:SetCamDistanceScale(4.5)
+        self.bottom.model.idleDuration = 1
         self.startTime = GetTime()
         self.timer = C_Timer.NewTicker(1, function() UpdateTimer(self) end)
 
@@ -53,12 +55,12 @@ local function SetAFK(self, status)
 
         self.timer:Cancel()
         if self.animTimer then self.animTimer:Cancel() end
-        
+
         self.bottom.time:SetText("00:00")
 
         self.chat:UnregisterAllEvents()
         self.chat:Clear()
-        if PVEFrame:IsShown() then --odd bug, frame is blank
+        if PVEFrame:IsShown() then
             PVEFrame_ToggleFrame()
             PVEFrame_ToggleFrame()
         end
@@ -178,13 +180,22 @@ local function LoopAnimations(self)
         self.duration = 300
         self.isIdle = false
         self.idleDuration = 120
+    elseif self.curAnimation == "dance" then
+        self:SetAnimation(71)
+        self:SetCamDistanceScale(5.5)
+        self:SetFacing(1)
+        self.curAnimation = "sleep"
+        self.startTime = GetTime()
+        self.duration = 3000
+        self.isIdle = false
+        self.idleDuration = 120
     end
 end
 
 local function loadAFKAnimation()
     local classColor = GWGetClassColor(GW.myclass, true, true)
     local playerName = GW.myname
-    
+
     local BackdropFrame = {
         bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg",
         edgeFile = "",
