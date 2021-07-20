@@ -397,3 +397,5 @@ L["Set important Dungeon & Raid debuff scale"] = true
 L["Set dispellable debuff scale"] = true
 L["Show both party frames and party grid"] = true
 L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."] = true
+L["Adds descriptions for mythic keystone properties to their tooltips."] = true
+L["Click to open Emoticon Frame"] = true
