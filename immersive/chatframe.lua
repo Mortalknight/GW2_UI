@@ -1439,7 +1439,6 @@ local function styleChatWindow(frame)
         frame.buttonEmote.tex:SetDesaturated(true)
 
         frame.buttonEmote:SetScript("OnMouseUp", function()
-            if InCombatLockdown() then return end
             if not GW_EmoteFrame:IsShown() then
                 GW_EmoteFrame:Show()
             else
@@ -1587,12 +1586,25 @@ local function BuildEmoticonTableFrame()
                     end
                     ChatFrameEditBox:Insert(self.text)
                 end
-                if InCombatLockdown() then return end
                 if not GW_EmoteFrame:IsShown() then
                     GW_EmoteFrame:Show()
                 else
                     GW_EmoteFrame:Hide()
                 end
+            end)
+            icon:SetScript("OnEnter", function(self)
+                self:SetSize(28, 28)
+                local point, anchorFrame, anchorPoint, x, y = self:GetPoint()
+                self:ClearAllPoints()
+                self:SetPoint(point, anchorFrame, anchorPoint, x - 2, y + 2)
+                self.texture:SetBlendMode("ADD")
+            end)
+            icon:SetScript("OnLeave", function(self)
+                self:SetSize(24, 24)
+                local point, anchorFrame, anchorPoint, x, y = self:GetPoint()
+                self:ClearAllPoints()
+                self:SetPoint(point, anchorFrame, anchorPoint, x + 2, y - 2)
+                self.texture:SetBlendMode("BLEND")
             end)
             icon:EnableMouse(true)
             col = col + 1
