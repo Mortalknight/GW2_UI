@@ -294,6 +294,13 @@ local function handleChatFrameFadeIn(chatFrame)
     if chatFrame.button then
         UIFrameFadeIn(chatFrame.button, 0.5, chatFrame.button:GetAlpha(), 0.35)
     end
+    if chatFrame.buttonEmote then
+        UIFrameFadeIn(chatFrame.buttonEmote, 0.5, chatFrame.buttonEmote:GetAlpha(), 0.35)
+    end
+    if GW_EmoteFrame and GW_EmoteFrame:IsShown() then
+        UIFrameFadeIn(GW_EmoteFrame, 0.5, GW_EmoteFrame:GetAlpha(), 1)
+    end
+
 
     local chatTab = _G[frameName .. "Tab"]
     UIFrameFadeIn(chatTab, 0.5, chatTab:GetAlpha(), 1)
@@ -341,6 +348,12 @@ local function handleChatFrameFadeOut(chatFrame)
 
     if chatFrame.button then
         UIFrameFadeOut(chatFrame.button, 2, chatFrame.button:GetAlpha(), 0)
+    end
+    if chatFrame.buttonEmote then
+        UIFrameFadeOut(chatFrame.buttonEmote, 2, chatFrame.buttonEmote:GetAlpha(), 0)
+    end
+    if GW_EmoteFrame and GW_EmoteFrame:IsShown() then
+        UIFrameFadeOut(GW_EmoteFrame, 2, GW_EmoteFrame:GetAlpha(), 0)
     end
 
     local chatTab = _G[frameName .. "Tab"]
@@ -525,42 +538,42 @@ end
 
 
 local function InsertEmotions(msg)
-	for word in gmatch(msg, "%s-%S+%s*") do
-		word = strtrim(word)
-		local pattern = GW.EscapeString(word)
-		local emoji = Smileys[pattern]
-		if emoji and strmatch(msg, "[%s%p]-" .. pattern .. "[%s%p]*") then
-			local base64 = GW.Libs.LibBase64:Encode(word)
-			msg = gsub(msg, "([%s%p]-)" .. pattern .. "([%s%p]*)", (base64 and ("%1|Helvmoji:%%" .. base64 .. "|h|cFFffffff|r|h") or "%1") .. emoji .. "%2")
-		end
-	end
+    for word in gmatch(msg, "%s-%S+%s*") do
+        word = strtrim(word)
+        local pattern = GW.EscapeString(word)
+        local emoji = Smileys[pattern]
+        if emoji and strmatch(msg, "[%s%p]-" .. pattern .. "[%s%p]*") then
+            local base64 = GW.Libs.LibBase64:Encode(word)
+            msg = gsub(msg, "([%s%p]-)" .. pattern .. "([%s%p]*)", (base64 and ("%1|Helvmoji:%%" .. base64 .. "|h|cFFffffff|r|h") or "%1") .. emoji .. "%2")
+        end
+    end
 
-	return msg
+    return msg
 end
 
 local function GetSmileyReplacementText(msg)
-	if not msg or not GetSetting("CHAT_KEYWORDS_EMOJI") or strfind(msg, "/run") or strfind(msg, "/dump") or strfind(msg, "/script") then return msg end
-	local outstr = ""
-	local origlen = strlen(msg)
-	local startpos = 1
-	local endpos
+    if not msg or not GetSetting("CHAT_KEYWORDS_EMOJI") or strfind(msg, "/run") or strfind(msg, "/dump") or strfind(msg, "/script") then return msg end
+    local outstr = ""
+    local origlen = strlen(msg)
+    local startpos = 1
+    local endpos
 
-	while(startpos <= origlen) do
-		local pos = strfind(msg,"|H",startpos,true)
-		endpos = pos or origlen
-		outstr = outstr .. InsertEmotions(strsub(msg,startpos,endpos))
-		startpos = endpos + 1
-		if pos ~= nil then
-			_, endpos = strfind(msg,"|h.-|h",startpos)
-			endpos = endpos or origlen
-			if startpos < endpos then
-				outstr = outstr .. strsub(msg,startpos,endpos)
-				startpos = endpos + 1
-			end
-		end
-	end
+    while(startpos <= origlen) do
+        local pos = strfind(msg,"|H",startpos,true)
+        endpos = pos or origlen
+        outstr = outstr .. InsertEmotions(strsub(msg,startpos,endpos))
+        startpos = endpos + 1
+        if pos ~= nil then
+            _, endpos = strfind(msg,"|h.-|h",startpos)
+            endpos = endpos or origlen
+            if startpos < endpos then
+                outstr = outstr .. strsub(msg,startpos,endpos)
+                startpos = endpos + 1
+            end
+        end
+    end
 
-	return outstr
+    return outstr
 end
 
 local function PrintURL(url)
@@ -1168,16 +1181,6 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             FlashClientIcon()
         end
 
-        if not frame:IsShown() then
-            if (frame == DEFAULT_CHAT_FRAME and info.flashTabOnGeneral) or (frame ~= DEFAULT_CHAT_FRAME and info.flashTab) then
-                if not CHAT_OPTIONS.HIDE_FRAME_ALERTS or chatType == "WHISPER" or chatType == "BN_WHISPER" then
-                    if not FCFManager_ShouldSuppressMessageFlash(frame, chatGroup, chatTarget) then
-                        --FCF_StartAlertFlash(frame) --This would taint if we were not using LibChatAnims
-                    end
-                end
-            end
-        end
-
         return true
     end
 end
@@ -1421,6 +1424,46 @@ local function styleChatWindow(frame)
         end
     end)
 
+    --emote bar button
+    if GetSetting("CHAT_KEYWORDS_EMOJI") then
+        frame.buttonEmote = CreateFrame("Frame", nil, frame)
+        frame.buttonEmote:EnableMouse(true)
+        frame.buttonEmote:SetAlpha(0.35)
+        frame.buttonEmote:SetSize(12, 12)
+        frame.buttonEmote:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 0, -5)
+        frame.buttonEmote:SetFrameLevel(frame:GetFrameLevel() + 5)
+
+        frame.buttonEmote.tex = frame.buttonEmote:CreateTexture(nil, "OVERLAY")
+        frame.buttonEmote.tex:SetAllPoints()
+        frame.buttonEmote.tex:SetTexture("Interface/AddOns/GW2_UI/textures/emoji/Smile")
+        frame.buttonEmote.tex:SetDesaturated(true)
+
+        frame.buttonEmote:SetScript("OnMouseUp", function()
+            if InCombatLockdown() then return end
+            if not GW_EmoteFrame:IsShown() then
+                GW_EmoteFrame:Show()
+            else
+                GW_EmoteFrame:Hide()
+            end
+        end)
+
+        frame.buttonEmote:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 6)
+            GameTooltip:AddLine(L["Click to open Emoticon Frame"])
+            GameTooltip:Show()
+            frame.buttonEmote.tex:SetTexture("Interface/AddOns/GW2_UI/textures/emoji/OpenMouth")
+            frame.buttonEmote.tex:SetDesaturated(false)
+            frame.buttonEmote.tex:SetAlpha(1)
+        end)
+
+        frame.buttonEmote:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+            frame.buttonEmote.tex:SetTexture("Interface/AddOns/GW2_UI/textures/emoji/Smile")
+            frame.buttonEmote.tex:SetDesaturated(true)
+            frame.buttonEmote.tex:SetAlpha(.45)
+        end)
+    end
+
     frame.styled = true
 end
 
@@ -1505,85 +1548,143 @@ local function BuildCopyChatFrame()
     frame.close:SkinButton(true)
 end
 
+local function BuildEmoticonTableFrame()
+    if not GetSetting("CHAT_KEYWORDS_EMOJI") then return end
+
+    local frame = CreateFrame("Frame", "GW_EmoteFrame", UIParent)
+    frame:CreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
+    frame:SetWidth(160)
+    frame:SetHeight(134)
+    frame:SetPoint("BOTTOMLEFT", QuickJoinToastButton, "TOPLEFT", 0, 5)
+    frame:Hide()
+    frame:SetFrameStrata("DIALOG")
+    tinsert(UISpecialFrames, "GW_EmoteFrame")
+
+    local icon, row, col, i = nil, 1, 1, 1
+    local isIn, alreadyIn = {}, false
+    for text, texture in pairs(Smileys) do
+        alreadyIn = false
+        for _, v in pairs(isIn) do
+            if v.tex == texture then
+                alreadyIn = true
+                break
+            end
+        end
+        if not alreadyIn then
+            icon = CreateFrame("Frame", format("IconButton%d", i), frame)
+            icon:SetSize(24, 24)
+            icon.text = text
+            icon.texture = icon:CreateTexture(nil, "ARTWORK")
+            icon.texture:SetTexture(texture:gsub("|T", ""):gsub(":16:16|t", ""))
+            icon.texture:SetAllPoints(icon)
+            icon:Show()
+            icon:SetPoint("TOPLEFT", (col - 1) * 26 + 2, -(row - 1) * 26 - 2)
+            icon:SetScript("OnMouseUp",function(self, button)
+                if button == "LeftButton" then
+                    local ChatFrameEditBox = ChatEdit_ChooseBoxForSend()
+                    if not ChatFrameEditBox:IsShown() then
+                        ChatEdit_ActivateChat(ChatFrameEditBox)
+                    end
+                    ChatFrameEditBox:Insert(self.text)
+                end
+                if InCombatLockdown() then return end
+                if not GW_EmoteFrame:IsShown() then
+                    GW_EmoteFrame:Show()
+                else
+                    GW_EmoteFrame:Hide()
+                end
+            end)
+            icon:EnableMouse(true)
+            col = col + 1
+            if col > 6 then
+                row = row + 1
+                col = 1
+            end
+            i = i + 1
+            tinsert(isIn, {tex = texture})
+        end
+    end
+end
+
 local function AddSmiley(key, texture)
-	if key and (type(key) == "string" and not strfind(key, ":%%", 1, true)) and texture then
-		Smileys[key] = texture
-	end
+    if key and (type(key) == "string" and not strfind(key, ":%%", 1, true)) and texture then
+        Smileys[key] = texture
+    end
 end
 
 local function SetupSmileys()
-	if next(Smileys) then
-		wipe(Smileys)
-	end
-	-- new keys
-	AddSmiley(":angry:", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t")
-	AddSmiley(":blush:", "|TInterface/AddOns/GW2_UI/textures/emoji/Blush:16:16|t")
-	AddSmiley(":broken_heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/BrokenHeart:16:16|t")
-	AddSmiley(":call_me:", "|TInterface/AddOns/GW2_UI/textures/emoji/CallMe:16:16|t")
-	AddSmiley(":cry:", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
-	AddSmiley(":grin:", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-	AddSmiley(":heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/Heart:16:16|t")
-	AddSmiley(":heart_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/HeartEyes:16:16|t")
-	AddSmiley(":joy:", "|TInterface/AddOns/GW2_UI/textures/emoji/Joy:16:16|t")
-	AddSmiley(":middle_finger:", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t")
-	AddSmiley(":ok_hand:", "|TInterface/AddOns/GW2_UI/textures/emoji/OkHand:16:16|t")
-	AddSmiley(":open_mouth:", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
-	AddSmiley(":poop:", "|TInterface/AddOns/GW2_UI/textures/emoji/Poop:16:16|t")
-	AddSmiley(":rage:", "|TInterface/AddOns/GW2_UI/textures/emoji/Rage:16:16|t")
-	AddSmiley(":scream:", "|TInterface/AddOns/GW2_UI/textures/emoji/Scream:16:16|t")
-	AddSmiley(":scream_cat:", "|TInterface/AddOns/GW2_UI/textures/emoji/ScreamCat:16:16|t")
-	AddSmiley(":slight_frown:", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t")
-	AddSmiley(":smile:", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t")
-	AddSmiley(":smirk:", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t")
-	AddSmiley(":sob:", "|TInterface/AddOns/GW2_UI/textures/emoji/Sob:16:16|t")
-	AddSmiley(":sunglasses:", "|TInterface/AddOns/GW2_UI/textures/emoji/Sunglasses:16:16|t")
-	AddSmiley(":thinking:", "|TInterface/AddOns/GW2_UI/textures/emoji/Thinking:16:16|t")
-	AddSmiley(":thumbs_up:", "|TInterface/AddOns/GW2_UI/textures/emoji/ThumbsUp:16:16|t")
-	AddSmiley(":wink:", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t")
-	AddSmiley(":zzz:", "|TInterface/AddOns/GW2_UI/textures/emoji/ZZZ:16:16|t")
-	AddSmiley(":stuck_out_tongue:", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-	AddSmiley(":stuck_out_tongue_closed_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
+    if next(Smileys) then
+        wipe(Smileys)
+    end
+    -- new keys
+    AddSmiley(":angry:", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t")
+    AddSmiley(":blush:", "|TInterface/AddOns/GW2_UI/textures/emoji/Blush:16:16|t")
+    AddSmiley(":broken_heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/BrokenHeart:16:16|t")
+    AddSmiley(":call_me:", "|TInterface/AddOns/GW2_UI/textures/emoji/CallMe:16:16|t")
+    AddSmiley(":cry:", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
+    AddSmiley(":grin:", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley(":heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/Heart:16:16|t")
+    AddSmiley(":heart_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/HeartEyes:16:16|t")
+    AddSmiley(":joy:", "|TInterface/AddOns/GW2_UI/textures/emoji/Joy:16:16|t")
+    AddSmiley(":middle_finger:", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t")
+    AddSmiley(":ok_hand:", "|TInterface/AddOns/GW2_UI/textures/emoji/OkHand:16:16|t")
+    AddSmiley(":open_mouth:", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
+    AddSmiley(":poop:", "|TInterface/AddOns/GW2_UI/textures/emoji/Poop:16:16|t")
+    AddSmiley(":rage:", "|TInterface/AddOns/GW2_UI/textures/emoji/Rage:16:16|t")
+    AddSmiley(":scream:", "|TInterface/AddOns/GW2_UI/textures/emoji/Scream:16:16|t")
+    AddSmiley(":scream_cat:", "|TInterface/AddOns/GW2_UI/textures/emoji/ScreamCat:16:16|t")
+    AddSmiley(":slight_frown:", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t")
+    AddSmiley(":smile:", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t")
+    AddSmiley(":smirk:", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t")
+    AddSmiley(":sob:", "|TInterface/AddOns/GW2_UI/textures/emoji/Sob:16:16|t")
+    AddSmiley(":sunglasses:", "|TInterface/AddOns/GW2_UI/textures/emoji/Sunglasses:16:16|t")
+    AddSmiley(":thinking:", "|TInterface/AddOns/GW2_UI/textures/emoji/Thinking:16:16|t")
+    AddSmiley(":thumbs_up:", "|TInterface/AddOns/GW2_UI/textures/emoji/ThumbsUp:16:16|t")
+    AddSmiley(":wink:", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t")
+    AddSmiley(":zzz:", "|TInterface/AddOns/GW2_UI/textures/emoji/ZZZ:16:16|t")
+    AddSmiley(":stuck_out_tongue:", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
+    AddSmiley(":stuck_out_tongue_closed_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
 
-	AddSmiley(",,!,,", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t")
-	AddSmiley(":%-@", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t")
-	AddSmiley(":@", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t")
-	AddSmiley(":%-%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t")
-	AddSmiley(":%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t")
-	AddSmiley(":D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-	AddSmiley(":%-D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-	AddSmiley(";%-D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-	AddSmiley(";D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-	AddSmiley("=D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-	AddSmiley("xD", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-	AddSmiley("XD", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-	AddSmiley(":%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t")
-	AddSmiley(":%(", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t")
-	AddSmiley(":o", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
-	AddSmiley(":%-o", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
-	AddSmiley(":%-O", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
-	AddSmiley(":O", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
-	AddSmiley(":%-0", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
-	AddSmiley(":P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-	AddSmiley(":%-P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-	AddSmiley(":p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-	AddSmiley(":%-p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-	AddSmiley("=P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-	AddSmiley("=p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-	AddSmiley(";%-p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
-	AddSmiley(";p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
-	AddSmiley(";P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
-	AddSmiley(";%-P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
-	AddSmiley(";%-%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t")
-	AddSmiley(";%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t")
-	AddSmiley(":S", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t")
-	AddSmiley(":%-S", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t")
-	AddSmiley(":,%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
-	AddSmiley(":,%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
-	AddSmiley(":\"%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
-	AddSmiley(":\"%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
-	AddSmiley(":F", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t")
-	AddSmiley("<3", "|TInterface/AddOns/GW2_UI/textures/emoji/Heart:16:16|t")
-	AddSmiley("</3", "|TInterface/AddOns/GW2_UI/textures/emoji/BrokenHeart:16:16|t")
+    AddSmiley(",,!,,", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t")
+    AddSmiley(":%-@", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t")
+    AddSmiley(":@", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t")
+    AddSmiley(":%-%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t")
+    AddSmiley(":%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t")
+    AddSmiley(":D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley(":%-D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley(";%-D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley(";D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley("=D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley("xD", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley("XD", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley(":%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t")
+    AddSmiley(":%(", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t")
+    AddSmiley(":o", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
+    AddSmiley(":%-o", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
+    AddSmiley(":%-O", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
+    AddSmiley(":O", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
+    AddSmiley(":%-0", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
+    AddSmiley(":P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
+    AddSmiley(":%-P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
+    AddSmiley(":p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
+    AddSmiley(":%-p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
+    AddSmiley("=P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
+    AddSmiley("=p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
+    AddSmiley(";%-p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
+    AddSmiley(";p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
+    AddSmiley(";P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
+    AddSmiley(";%-P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
+    AddSmiley(";%-%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t")
+    AddSmiley(";%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t")
+    AddSmiley(":S", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t")
+    AddSmiley(":%-S", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t")
+    AddSmiley(":,%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
+    AddSmiley(":,%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
+    AddSmiley(":\"%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
+    AddSmiley(":\"%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
+    AddSmiley(":F", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t")
+    AddSmiley("<3", "|TInterface/AddOns/GW2_UI/textures/emoji/Heart:16:16|t")
+    AddSmiley("</3", "|TInterface/AddOns/GW2_UI/textures/emoji/BrokenHeart:16:16|t")
 end
 
 local ignoreChats = {[2] = "Log", [3] = "Voice"}
@@ -1764,6 +1865,7 @@ local function LoadChat()
 
     CombatLogQuickButtonFrame_CustomTexture:Hide()
     BuildCopyChatFrame()
+    BuildEmoticonTableFrame()
 
     -- events for functions
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")

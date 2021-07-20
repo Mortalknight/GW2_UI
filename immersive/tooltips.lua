@@ -683,17 +683,17 @@ local function SetUnitAuraData(self, id, caster)
             mountText = sourceText and gsub(sourceText, "|n%s+|n", "|n")
 
             if mountText then
-				self:AddLine(" ")
-				self:AddLine(mountText, 1, 1, 1)
-			end
+                self:AddLine(" ")
+                self:AddLine(mountText, 1, 1, 1)
+            end
         end
 
         local showClassColor = GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR")
 
         if IsModKeyDown() then
             if mountText then
-				self:AddLine(" ")
-			end
+                self:AddLine(" ")
+            end
 
             if caster then
                 local name = UnitName(caster)
