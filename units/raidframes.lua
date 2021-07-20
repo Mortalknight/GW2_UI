@@ -422,6 +422,7 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
     frame.cooldown:SetHideCountdownNumbers(true)
 
     frame.icon:SetTexture(icon)
+    frame:SetSize(size, size)
 
     frame.expires = expires
     frame.duration = duration

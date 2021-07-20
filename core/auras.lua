@@ -255,7 +255,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 end
                 self.animating = false
                 saveAuras[frame.auraType][#saveAuras[frame.auraType] + 1] = list[index].name
-            else
+            elseif UnitIsFriend(self.unit, "player") then
                 -- debuffs
                 if GW.ImportendRaidDebuff[list[index].spellID] then
                     size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
