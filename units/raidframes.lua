@@ -388,9 +388,6 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
         frame = CreateFrame("Button", "Gw" .. parent:GetName() .. "DeBuffItemFrame" .. btnIndex, parent, "GwDeBuffIcon")
         frame:SetParent(parent)
         frame:SetFrameStrata("MEDIUM")
-        frame:SetSize(size, size)
-        frame:ClearAllPoints()
-        frame:SetPoint("BOTTOMLEFT", parent.healthbar, "BOTTOMLEFT", marginX + 3, marginY + 3)
 
         frame.debuffIcon:SetPoint("TOPLEFT", frame, "TOPLEFT", 1, -1)
         frame.debuffIcon:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
@@ -422,6 +419,8 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
     frame.cooldown:SetHideCountdownNumbers(true)
 
     frame.icon:SetTexture(icon)
+    frame:ClearAllPoints()
+    frame:SetPoint("BOTTOMLEFT", parent.healthbar, "BOTTOMLEFT", marginX + 3, marginY + 3)
     frame:SetSize(size, size)
 
     frame.expires = expires

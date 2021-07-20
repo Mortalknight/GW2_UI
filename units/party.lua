@@ -157,7 +157,7 @@ local function getUnitDebuffs(unit)
     table.sort(
         debuffList,
         function(a, b)
-            return a.timeRemaining < b.timeRemaining
+            return a.timeRemaining > b.timeRemaining
         end
     )
 
@@ -175,8 +175,6 @@ local function updatePartyDebuffs(self, x, y)
 
     for i, debuffFrame in pairs(self.debuffFrames) do
         if debuffList[i] then
-            local margin = -debuffFrame:GetWidth() + -2
-            local marginy = debuffFrame:GetWidth() + 1
             debuffFrame.icon:SetTexture(debuffList[i].icon)
             debuffFrame.icon:SetParent(debuffFrame)
 
@@ -191,8 +189,6 @@ local function updatePartyDebuffs(self, x, y)
             debuffFrame.cooldown.duration:SetText(debuffList[i].duration > 0 and TimeCount(debuffList[i].timeRemaining) or "")
             debuffFrame.debuffIcon.stacks:SetText((debuffList[i].count or 1) > 1 and debuffList[i].count or "")
             debuffFrame.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, (debuffList[i].count or 1) > 9 and 11 or 14, "OUTLINE")
-            debuffFrame:ClearAllPoints()
-            debuffFrame:SetPoint("BOTTOMRIGHT", (self.isPet and (-margin * x) or (26 * x)), (self.isPet and (marginy * y) or (26 * y)))
 
             debuffFrame:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
@@ -209,10 +205,12 @@ local function updatePartyDebuffs(self, x, y)
                 else
                     size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
                 end
-                debuffFrame:SetSize(size, size)
-            else
-                debuffFrame:SetSize(size, size)
             end
+            debuffFrame:SetSize(size, size)
+            local margin = -size + -2
+            local marginy = size + 1
+            debuffFrame:ClearAllPoints()
+            debuffFrame:SetPoint("BOTTOMRIGHT", (self.isPet and (-margin * x) or (26 * x)), (self.isPet and (marginy * y) or (26 * y)))
 
             debuffFrame:Show()
 
