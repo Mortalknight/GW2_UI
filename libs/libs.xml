@@ -10,4 +10,5 @@
     <Script file="libs\AceLocale-3.0\AceLocale-3.0.lua"/>
     <Script file="libs\LibBase64-1.0\LibBase64-1.0.lua"/>
     <Script file="libs\LibCustomGlow\LibCustomGlow-1.0.lua"/>
+    <Script file="libs\LibChatAnims\LibChatAnims.lua"/>
 </Ui>

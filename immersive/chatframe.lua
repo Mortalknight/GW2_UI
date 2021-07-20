@@ -96,6 +96,7 @@ local ClassNames = {}
 local Keywords = {}
 local hooks = {}
 local Smileys = {}
+local socialQueueCache = {}
 
 local SoundTimer
 
@@ -401,6 +402,24 @@ function _G.ItemRefTooltip:SetHyperlink(data, ...)
         local currentLink = strsub(data, 5)
         if currentLink and currentLink ~= "" then
             SetChatEditBoxMessage(currentLink)
+        end
+    elseif strsub(data, 1, 3) == "squ" then
+        local guid = strsub(data, 5)
+        if GetSetting("USE_SOCIAL_WINDOW") then
+            if guid and guid ~= "" then
+                if InCombatLockdown() then return end
+                GwSocialWindow:SetAttribute("windowpanelopen", "quicklist")
+                QuickJoinFrame:SelectGroup(guid)
+                QuickJoinFrame:ScrollToGroup(guid)
+            end
+        else
+            if not QuickJoinFrame:IsShown() then
+                ToggleQuickJoinPanel()
+            end
+            if guid and guid ~= "" then
+                QuickJoinFrame:SelectGroup(guid)
+                QuickJoinFrame:ScrollToGroup(guid)
+            end
         end
     else
         SetHyperlink(self, data, ...)
@@ -1181,6 +1200,16 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             FlashClientIcon()
         end
 
+        if not frame:IsShown() then
+            if (frame == DEFAULT_CHAT_FRAME and info.flashTabOnGeneral) or (frame ~= DEFAULT_CHAT_FRAME and info.flashTab) then
+                if not CHAT_OPTIONS.HIDE_FRAME_ALERTS or chatType == "WHISPER" or chatType == "BN_WHISPER" then
+                    if not FCFManager_ShouldSuppressMessageFlash(frame, chatGroup, chatTarget) then
+                        FCF_StartAlertFlash(frame)
+                    end
+                end
+            end
+        end
+
         return true
     end
 end
@@ -1699,6 +1728,126 @@ local function SetupSmileys()
     AddSmiley("</3", "|TInterface/AddOns/GW2_UI/textures/emoji/BrokenHeart:16:16|t")
 end
 
+local function SocialQueueIsLeader(playerName, leaderName)
+    if leaderName == playerName then
+        return true
+    end
+
+    for i = 1, BNGetNumFriends() do
+        local accountInfo = C_BattleNet.GetFriendAccountInfo(i)
+        if accountInfo and accountInfo.gameAccountInfo and accountInfo.gameAccountInfo.isOnline then
+            local numGameAccounts = C_BattleNet.GetFriendNumGameAccounts(i)
+            if numGameAccounts then
+                for y = 1, numGameAccounts do
+                    local gameAccountInfo = C_BattleNet.GetFriendGameAccountInfo(i, y)
+                    if gameAccountInfo and (gameAccountInfo.clientProgram == BNET_CLIENT_WOW) and (accountInfo.accountName == playerName) then
+                        playerName = gameAccountInfo.characterName
+                        if gameAccountInfo.realmName and gameAccountInfo.realmName ~= GW.myrealm then
+                            playerName = format("%s-%s", playerName, gsub(gameAccountInfo.realmName, "[%s%-]", ""))
+                        end
+                        if leaderName == playerName then
+                            return true
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+
+local function RecentSocialQueue(currentTime, msg)
+    local previousMessage = false
+    if next(socialQueueCache) then
+        for guid, tbl in pairs(socialQueueCache) do
+            if currentTime and (difftime(currentTime, tbl[1]) >= 180) then
+                socialQueueCache[guid] = nil
+            elseif msg and (msg == tbl[2]) then
+                previousMessage = true
+            end
+        end
+    end
+    return previousMessage
+end
+
+local function SocialQueueMessage(guid, message)
+    if not (guid and message) then return end
+
+    local currentTime = time()
+    if RecentSocialQueue(currentTime, message) then return end
+    socialQueueCache[guid] = {currentTime, message}
+
+    PlaySound(7355)
+
+    DEFAULT_CHAT_FRAME:AddMessage(strjoin("",  GW.Gw2Color, "GW2 UI:|r ", format("|Hsqu:%s|h%s|h", guid, strtrim(message))))
+end
+
+local function SocialQueueEvent(...)
+    if not GetSetting("CHAT_SOCIAL_LINK") then return end
+    local guid = select(1, ...)
+    local numAddedItems = select(2, ...)
+    if numAddedItems == 0 or not guid then return end
+
+    local players = C_SocialQueue.GetGroupMembers(guid)
+    if not players then return end
+
+    local firstMember, numMembers, extraCount, coloredName = players[1], #players, "", ""
+    local playerName, nameColor = SocialQueueUtil_GetRelationshipInfo(firstMember.guid, nil, firstMember.clubId)
+    if numMembers > 1 then
+        extraCount = format(" +%s", numMembers - 1)
+    end
+    if playerName and playerName ~= "" then
+        coloredName = format("%s%s|r%s", nameColor, playerName, extraCount)
+    else
+        coloredName = format("{%s%s}", UNKNOWN, extraCount)
+    end
+
+    local queues = C_SocialQueue.GetGroupQueues(guid)
+    local firstQueue = queues and queues[1]
+    local isLFGList = firstQueue and firstQueue.queueData and firstQueue.queueData.queueType == "lfglist"
+
+    if isLFGList and firstQueue and firstQueue.eligible then
+        local activityID, name, leaderName, fullName, isLeader
+
+        if firstQueue.queueData.lfgListID then
+            local searchResultInfo = C_LFGList.GetSearchResultInfo(firstQueue.queueData.lfgListID)
+            if searchResultInfo then
+                activityID, name, leaderName = searchResultInfo.activityID, searchResultInfo.name, searchResultInfo.leaderName
+                isLeader = SocialQueueIsLeader(playerName, leaderName)
+            end
+        end
+
+        if activityID or firstQueue.queueData.activityID then
+            fullName = C_LFGList.GetActivityInfo(activityID or firstQueue.queueData.activityID)
+        end
+
+        if name then
+            SocialQueueMessage(guid, format("%s %s: [%s] |cffFFFF00%s|r", coloredName, (isLeader and L["is looking for members"]) or L["joined a group"], fullName or UNKNOWN, name))
+        else
+            SocialQueueMessage(guid, format("%s %s: |cffFFFF00%s|r", coloredName, (isLeader and L["is looking for members"]) or L["joined a group"], fullName or UNKNOWN))
+        end
+    elseif firstQueue then
+        local output, outputCount, queueCount = "", "", 0
+        for _, queue in pairs(queues) do
+            if type(queue) == "table" and queue.eligible then
+                local queueName = (queue.queueData and SocialQueueUtil_GetQueueName(queue.queueData)) or ""
+                if queueName ~= "" then
+                    if output == "" then
+                        output = gsub(queueName, "\n.+","")
+                        queueCount = queueCount + select(2, gsub(queueName, "\n",""))
+                    else
+                        queueCount = queueCount + 1 + select(2, gsub(queueName, "\n",""))
+                    end
+                end
+            end
+        end
+        if output ~= "" then
+            if queueCount > 0 then outputCount = format(LFG_LIST_AND_MORE, queueCount) end
+            SocialQueueMessage(guid, format("%s %s: |cffFFFF00%s|r %s", coloredName, gsub(SOCIAL_QUEUE_QUEUED_FOR, ":%s?$", ""), output, outputCount))
+        end
+    end
+end
+
 local ignoreChats = {[2] = "Log", [3] = "Voice"}
 local function LoadChat()
     local shouldFading = GetSetting("CHATFRAME_FADE")
@@ -1882,6 +2031,7 @@ local function LoadChat()
     -- events for functions
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+    eventFrame:RegisterEvent("SOCIAL_QUEUE_UPDATE")
     eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "GROUP_ROSTER_UPDATE" or event == "PLAYER_ENTERING_WORLD" then
             if not GetSetting("CHAT_SHOW_LFG_ICONS") or not IsInGroup() then return end
@@ -1904,6 +2054,8 @@ local function LoadChat()
                     end
                 end
             end
+        elseif event == "SOCIAL_QUEUE_UPDATE" then
+            SocialQueueEvent(...)
         elseif tonumber(GetSetting("CHAT_SPAM_INTERVAL_TIMER")) ~= 0 and (event == "CHAT_MSG_SAY" or event == "CHAT_MSG_YELL" or event == "CHAT_MSG_CHANNEL") then
             local message, author = ...
             local when = time()

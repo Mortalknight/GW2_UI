@@ -27,6 +27,7 @@ local function LoadChatPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Class Color Mentions"], L["Use class color for the names of players when they are mentioned."], "CHAT_CLASS_COLOR_MENTIONS", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Keyword Alert"], nil, "CHAT_KEYWORDS_ALERT", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Emotion Icons"], L["Display emotion icons in chat"], "CHAT_KEYWORDS_EMOJI", nil, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Quick Join Messages"], L["Show clickable Quick Join messages inside of the chat."], "CHAT_SOCIAL_LINK", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOptionSlider(
         p.scroll.scrollchild,
         L["Spam Interval"] ,
