@@ -44,6 +44,7 @@ local function addJailersTowerData(block, numCriteria)
         block.numObjectives = block.numObjectives + 1
         objectiveBlock.hasObjectToHide = true
         objectiveBlock.objectToHide = TopScenarioWidgetContainerBlock
+        objectiveBlock.resetParent = true
 
         if not TopScenarioWidgetContainerBlock.gwHooked then
             hooksecurefunc(TopScenarioWidgetContainerBlock, "SetHeight", function()
@@ -95,6 +96,7 @@ local function addJailersTowerData(block, numCriteria)
         block.numObjectives = block.numObjectives + 1
         objectiveBlock.hasObjectToHide = true
         objectiveBlock.objectToHide = BottomScenarioWidgetContainerBlock
+        objectiveBlock.resetParent = true
 
         if not BottomScenarioWidgetContainerBlock.gwHooked then
             hooksecurefunc(BottomScenarioWidgetContainerBlock, "SetHeight", function()

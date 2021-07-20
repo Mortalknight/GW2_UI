@@ -14,6 +14,9 @@ local function getObjectiveBlock(self, index)
     if _G[self:GetName() .. "GwQuestObjective" .. index] then
         _G[self:GetName() .. "GwQuestObjective" .. index]:SetScript("OnEnter", nil)
         _G[self:GetName() .. "GwQuestObjective" .. index]:SetScript("OnLeave", nil)
+        _G[self:GetName() .. "GwQuestObjective" .. index].hasObjectToHide = false
+        _G[self:GetName() .. "GwQuestObjective" .. index].objectToHide = nil
+        _G[self:GetName() .. "GwQuestObjective" .. index].resetParent = false
         _G[self:GetName() .. "GwQuestObjective" .. index].StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
         return _G[self:GetName() .. "GwQuestObjective" .. index]
     end
@@ -43,6 +46,8 @@ local function getObjectiveBlock(self, index)
     end
 
     newBlock.hasObjectToHide = false
+    newBlock.objectToHide = nil
+    newBlock.resetParent = false
     newBlock:SetScript("OnEnter", nil)
     newBlock:SetScript("OnLeave", nil)
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
@@ -57,9 +62,9 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
 
     if text then
         if objectiveBlock.hasObjectToHide then
-            objectiveBlock.objectToHide.SetParent = nil
+            if objectiveBlock.resetParent then objectiveBlock.objectToHide.SetParent = nil end
             objectiveBlock.objectToHide:SetParent(GW.HiddenFrame)
-            objectiveBlock.objectToHide.SetParent = GW.NoOp
+            if objectiveBlock.resetParent then objectiveBlock.objectToHide.SetParent = GW.NoOp end
         end
         objectiveBlock:Show()
         objectiveBlock.ObjectiveText:SetText(text)
