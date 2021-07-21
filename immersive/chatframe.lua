@@ -405,21 +405,17 @@ function _G.ItemRefTooltip:SetHyperlink(data, ...)
         end
     elseif strsub(data, 1, 3) == "squ" then
         local guid = strsub(data, 5)
-        if GetSetting("USE_SOCIAL_WINDOW") then
-            if guid and guid ~= "" then
+        if guid and guid ~= "" then
+            if GetSetting("USE_SOCIAL_WINDOW") then
                 if InCombatLockdown() then return end
                 GwSocialWindow:SetAttribute("windowpanelopen", "quicklist")
-                QuickJoinFrame:SelectGroup(guid)
-                QuickJoinFrame:ScrollToGroup(guid)
+            else
+                if not QuickJoinFrame:IsShown() then
+                    ToggleQuickJoinPanel()
+                end
             end
-        else
-            if not QuickJoinFrame:IsShown() then
-                ToggleQuickJoinPanel()
-            end
-            if guid and guid ~= "" then
-                QuickJoinFrame:SelectGroup(guid)
-                QuickJoinFrame:ScrollToGroup(guid)
-            end
+            QuickJoinFrame:SelectGroup(guid)
+            QuickJoinFrame:ScrollToGroup(guid)
         end
     else
         SetHyperlink(self, data, ...)
@@ -1822,9 +1818,9 @@ local function SocialQueueEvent(...)
         end
 
         if name then
-            SocialQueueMessage(guid, format("%s %s: [%s] |cffFFFF00%s|r", coloredName, (isLeader and L["is looking for members"]) or L["joined a group"], fullName or UNKNOWN, name))
+            SocialQueueMessage(guid, format("%s %s: |cffFFFF00[%s: %s]|r", coloredName, (isLeader and L["is looking for members"]) or L["joined a group"], fullName or UNKNOWN, name))
         else
-            SocialQueueMessage(guid, format("%s %s: |cffFFFF00%s|r", coloredName, (isLeader and L["is looking for members"]) or L["joined a group"], fullName or UNKNOWN))
+            SocialQueueMessage(guid, format("%s %s: |cffFFFF00[%s]|r", coloredName, (isLeader and L["is looking for members"]) or L["joined a group"], fullName or UNKNOWN))
         end
     elseif firstQueue then
         local output, outputCount, queueCount = "", "", 0
@@ -1843,7 +1839,7 @@ local function SocialQueueEvent(...)
         end
         if output ~= "" then
             if queueCount > 0 then outputCount = format(LFG_LIST_AND_MORE, queueCount) end
-            SocialQueueMessage(guid, format("%s %s: |cffFFFF00%s|r %s", coloredName, gsub(SOCIAL_QUEUE_QUEUED_FOR, ":%s?$", ""), output, outputCount))
+            SocialQueueMessage(guid, format("%s %s: |cffFFFF00[%s]|r %s", coloredName, gsub(SOCIAL_QUEUE_QUEUED_FOR, ":%s?$", ""), output, outputCount))
         end
     end
 end
