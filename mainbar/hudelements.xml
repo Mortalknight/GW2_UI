@@ -26,7 +26,7 @@
                 <Texture name="$parentTexture" parentKey="Texture" file="Interface/AddOns/GW2_UI/textures/icons/icon-module">
                     <Size x="35" y="35"></Size>
                     <Anchors>
-                        <Anchor point="CENTER" x="0" y="0"></Anchor>
+                        <Anchor point="CENTER"></Anchor>
                     </Anchors>
                     <TexCoords left="0" right="0.25" top="0" bottom="0.25" />
                 </Texture>

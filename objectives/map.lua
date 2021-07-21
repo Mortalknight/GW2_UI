@@ -54,7 +54,8 @@ local Minimap_Addon_Buttons = {
     [41] = "GwMapTime",
     [42] = "GwMapCoords",
     [43] = "WarfrontRareTrackerPin",
-    [44] = "GwMapFPS"
+    [44] = "GwMapFPS",
+    [45] = "HandyNotes"
 }
 
 local MAP_FRAMES_HOVER = {}
