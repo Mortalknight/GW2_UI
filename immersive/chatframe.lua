@@ -1773,7 +1773,7 @@ local function SocialQueueMessage(guid, message)
     if RecentSocialQueue(currentTime, message) then return end
     socialQueueCache[guid] = {currentTime, message}
 
-    PlaySound(7355)
+    PlaySound(SOUNDKIT.UI_71_SOCIAL_QUEUEING_TOAST)
 
     DEFAULT_CHAT_FRAME:AddMessage(strjoin("",  GW.Gw2Color, "GW2 UI:|r ", format("|Hsqu:%s|h%s|h", guid, strtrim(message))))
 end
@@ -1839,7 +1839,7 @@ local function SocialQueueEvent(...)
         end
         if output ~= "" then
             if queueCount > 0 then outputCount = format(LFG_LIST_AND_MORE, queueCount) end
-            SocialQueueMessage(guid, format("%s %s: |cffFFFF00[%s]|r %s", coloredName, gsub(SOCIAL_QUEUE_QUEUED_FOR, ":%s?$", ""), output, outputCount))
+            SocialQueueMessage(guid, format("%s %s: |cffFFFF00[%s %s]|r", coloredName, gsub(SOCIAL_QUEUE_QUEUED_FOR, ":%s?$", ""), output, outputCount))
         end
     end
 end
@@ -1859,6 +1859,10 @@ local function LoadChat()
         QuickJoinToastButton:ClearAllPoints()
         QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, -3)
         QuickJoinToastButton.FriendsButton:Hide()
+
+        if GetSetting("CHAT_SOCIAL_LINK") then
+            QuickJoinToastButton:Kill()
+        end
 
         QuickJoinToastButton.ClearAllPoints = GW.NoOp
         QuickJoinToastButton.SetPoint = GW.NoOp
@@ -2017,6 +2021,7 @@ local function LoadChat()
                 self:CreateBackdrop(GW.skins.constBackdropFrame)
             end)
     end
+
 
     CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
 
