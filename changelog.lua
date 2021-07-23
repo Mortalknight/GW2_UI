@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.17.1", [=[
+FIXES
+    - Tweak raid/party profiles and fix some bugs
+    - You can now change raid/party profile settings while in a party/raid
+]=])
+
 v("5.17.0", [=[
 NEW
     - CHAT:

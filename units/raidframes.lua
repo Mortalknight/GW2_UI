@@ -359,6 +359,12 @@ local function updateAwayData(self)
     else
         self.aggroborder:Hide()
     end
+
+    -- manabar
+    local showRessourbar = GetSetting("RAID_POWER_BARS" .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or ""))
+
+    self.predictionbar:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, (showRessourbar and 5 or 0))
+    self.manabar:SetShown(showRessourbar)
 end
 GW.AddForProfiling("raidframes", "updateAwayData", updateAwayData)
 
@@ -1276,7 +1282,7 @@ local function createRaidFrame(registerUnit, index)
 
     raidframe_OnEvent(frame, "load")
 
-    if GetSetting("RAID_POWER_BARS") then
+    if GetSetting("RAID_POWER_BARS" .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or "")) then
         frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 5)
         frame.manabar:Show()
     end
@@ -1408,6 +1414,7 @@ local function LoadRaidFrames()
         else
             self:UnregisterEvent("PLAYER_REGEN_ENABLED")
         end
+        local profileBefore = GW.GROUPD_TYPE
 
         if not IsInRaid() and IsInGroup() and GW.GROUPD_TYPE == "RAID" then
             togglePartyFrames(true)
@@ -1429,28 +1436,30 @@ local function LoadRaidFrames()
             updateFrameData(_G["GwCompactraid" .. i], i)
         end
 
-        GwSettingsRaidPanel.selectProfile.string:SetText(getglobal(GW.GROUPD_TYPE))
-        if GW.GROUPD_TYPE == "RAID" then
-            GwSettingsRaidPanel.selectProfile.raid:GetScript("OnClick")(GwSettingsRaidPanel.selectProfile.raid)
-        else
-            GwSettingsRaidPanel.selectProfile.party:GetScript("OnClick")(GwSettingsRaidPanel.selectProfile.party)
+        -- update positions and setting
+        if profileBefore ~= GW.GROUPD_TYPE then
+            GwSettingsRaidPanel.selectProfile.string:SetText(getglobal(GW.GROUPD_TYPE))
+            if GW.GROUPD_TYPE == "RAID" then
+                GwSettingsRaidPanel.selectProfile.raid:GetScript("OnClick")(GwSettingsRaidPanel.selectProfile.raid, _, true)
+            else
+                GwSettingsRaidPanel.selectProfile.party:GetScript("OnClick")(GwSettingsRaidPanel.selectProfile.party, _, true)
+            end
+
+            GwSettingsRaidPanel.selectProfile.container:Hide()
+
+            GW.CombatQueue_Queue("raidframePosUpdate",
+                function(profileType)
+                    if profileType == "RAID" then
+                        GwRaidFrameContainer:ClearAllPoints()
+                        GwRaidFrameContainer:SetPoint("TOPLEFT", GwRaidFrameContainer.gwMover)
+                    elseif profileType == "PARTY" then
+                        GwRaidFrameContainer:ClearAllPoints()
+                        GwRaidFrameContainer:SetPoint("TOPLEFT", GwRaidFramePartyContainer.gwMover)
+                    end
+                end,
+                {GW.GROUPD_TYPE}
+            )
         end
-
-        GwSettingsRaidPanel.selectProfile.container:Hide()
-
-        -- update positions
-        GW.CombatQueue_Queue("raidframePosUpdate",
-            function(profileType)
-                if profileType == "RAID" then
-                    GwRaidFrameContainer:ClearAllPoints()
-                    GwRaidFrameContainer:SetPoint("TOPLEFT", GwRaidFrameContainer.gwMover)
-                elseif profileType == "PARTY" then
-                    GwRaidFrameContainer:ClearAllPoints()
-                    GwRaidFrameContainer:SetPoint("TOPLEFT", GwRaidFramePartyContainer.gwMover)
-                end
-            end,
-            {GW.GROUPD_TYPE}
-        )
     end)
 
     onLoad = false

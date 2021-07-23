@@ -67,9 +67,11 @@ local function CreateRaidProfiles(panel)
     panel.selectProfile.raid.string:ClearAllPoints()
     panel.selectProfile.raid.string:SetPoint("LEFT", 5, 0)
     panel.selectProfile.raid.type = "RAID"
-    panel.selectProfile.raid:SetScript("OnClick", function(self)
+    panel.selectProfile.raid:SetScript("OnClick", function(self, _, force)
         panel.selectProfile.type = self.type
-        GW.GROUPD_TYPE = self.type
+        if not IsInGroup() or force then
+            GW.GROUPD_TYPE = self.type
+        end
 
         panel.selectProfile.string:SetText(self.string:GetText())
         if panel.selectProfile.container:IsShown() then
@@ -90,9 +92,11 @@ local function CreateRaidProfiles(panel)
     panel.selectProfile.party.string:ClearAllPoints()
     panel.selectProfile.party.string:SetPoint("LEFT", 5, 0)
     panel.selectProfile.party.type = "PARTY"
-    panel.selectProfile.party:SetScript("OnClick", function(self)
+    panel.selectProfile.party:SetScript("OnClick", function(self, _, force)
         panel.selectProfile.type = self.type
-        GW.GROUPD_TYPE = self.type
+        if not IsInRaid() or force then
+            GW.GROUPD_TYPE = self.type
+        end
 
         panel.selectProfile.string:SetText(self.string:GetText())
         if panel.selectProfile.container:IsShown() then
@@ -131,49 +135,7 @@ local function LoadRaidPanel(sWindow)
     createCat(RAID, L["Edit the group settings."], p, 8)
 
     addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", nil, nil, {["RAID_FRAMES"] = true}, nil, nil, {"RAID", "PARTY"})
-    addOption(p,
-        DISPLAY_POWER_BARS,
-        L["Display the power bars on the raid units."],
-        "RAID_POWER_BARS",
-        function(_, SettingName)
-            local frame = _G["GwCompactplayer"]
-            local settingValue = GetSetting(SettingName)
-
-            if settingValue then
-                frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 5)
-                frame.manabar:Show()
-            else
-                frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 0)
-                frame.manabar:Hide()
-            end
-            for i = 1, 4 do
-                frame = _G["GwCompactparty" .. i]
-                if settingValue then
-                    frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 5)
-                    frame.manabar:Show()
-                else
-                    frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 0)
-                    frame.manabar:Hide()
-                end
-            end
-
-            for i = 1, MAX_RAID_MEMBERS do
-                frame = _G["GwCompactraid" .. i]
-                if settingValue then
-                    frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 5)
-                    frame.manabar:Show()
-                else
-                    frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 0)
-                    frame.manabar:Hide()
-                end
-            end
-        end,
-        nil,
-        {["RAID_FRAMES"] = true},
-        nil,
-        nil,
-        {"RAID", "PARTY"}
-    )
+    addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS", nil, nil, {["RAID_FRAMES"] = true}, nil, nil, {"RAID", "PARTY"})
     addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true}, nil, nil, {"RAID", "PARTY"})
     addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true}, nil, nil, {"RAID", "PARTY"})
     addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["RAID_FRAMES"] = true}, nil, nil, {"RAID", "PARTY"})

@@ -759,7 +759,7 @@ local function InitPanel(panel, hasScroll, settingModule)
                     SetSetting(of.optionName, toSet, of.perSpec)
 
                     if v.callback ~= nil then
-                        v.callback(toSet)
+                        v.callback(toSet, of.optionName)
                     end
                     --Check all dependencies on this option
                     checkDependenciesOnLoad()
