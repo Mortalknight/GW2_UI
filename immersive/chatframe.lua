@@ -477,7 +477,7 @@ GW.UpdateChatKeywords = UpdateChatKeywords
 
 local protectLinks = {}
 local function CheckKeyword(message, author)
-    local letSound = not SoundTimer and author ~= PLAYER_NAME and GetSetting("CHAT_KEYWORDS_ALERT")
+    local letSound = not SoundTimer and author ~= PLAYER_NAME and GetSetting("CHAT_KEYWORDS_ALERT_NEW")
 
     for hyperLink in gmatch(message, "|c%x-|H.-|h.-|h|r") do
         protectLinks[hyperLink] = gsub(hyperLink,"%s","|s")
@@ -486,7 +486,7 @@ local function CheckKeyword(message, author)
             for keyword in pairs(Keywords) do
                 if hyperLink == keyword then
                     SoundTimer = C_Timer.NewTimer(5, function() SoundTimer = nil end)
-                    PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
+                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("CHAT_KEYWORDS_ALERT_NEW")), "Master")
                     letSound = false
                     break
                 end
@@ -512,7 +512,7 @@ local function CheckKeyword(message, author)
 
                     if letSound then
                         SoundTimer = C_Timer.NewTimer(5, function() SoundTimer = nil end)
-                        PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
+                        PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("CHAT_KEYWORDS_ALERT_NEW")), "Master")
                         letSound = false
                     end
                 end

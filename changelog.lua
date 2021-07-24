@@ -8,6 +8,7 @@ FIXES
 
     MISC
     - Added option to show chat timestamps for all messages
+    - Added ability to add a custom sound for chat keyword alert
 ]=])
 
 v("5.17.0", [=[

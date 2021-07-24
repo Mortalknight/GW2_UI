@@ -662,23 +662,6 @@ local function loadAddon(self)
         GW.Notice(L["MoveAnything bag handling disabled."])
     end
 
-    --Add Shared Media
-    --Font
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface/AddOns/GW2_UI/fonts/menomonia.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI Light", "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI Headlines", "Interface/AddOns/GW2_UI/fonts/headlines.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface/AddOns/GW2_UI/fonts/chinese.ttf", LibSharedMedia.LOCALE_BIT_zhCN + LibSharedMedia.LOCALE_BIT_zhTW)
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface/AddOns/GW2_UI/fonts/korean.ttf", LibSharedMedia.LOCALE_BIT_koKR)
-
-    --Texture
-    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI", "Interface/AddOns/GW2_UI/textures/uistuff/windowborder")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI_2", "Interface/Addons/GW2_UI/textures/uistuff/UI-Tooltip-Background")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Yellow", "Interface/Addons/GW2_UI/textures/hud/castingbar")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Blue", "Interface/Addons/GW2_UI/textures/hud/breathmeter")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI", "Interface/Addons/GW2_UI/textures/hud/castinbar-white")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_2", "Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.BORDER, "GW2_UI", "Interface/Addons/GW2_UI/textures/uistuff/UI-Tooltip-Border")
-
     --Check if we should show Welcomepage or Changelog
     if GetSetting("GW2_UI_VERSION") == "WELCOME" then
         GW.ShowWelcomePanel()

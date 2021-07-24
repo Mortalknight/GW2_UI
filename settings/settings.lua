@@ -209,7 +209,7 @@ local function AddOptionText(panel, name, desc, optionName, callback, multiline,
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, hasProfile)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, hasProfile, isSound)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, nil, hasProfile)
 
     opt["options"] = {}
@@ -218,6 +218,7 @@ local function AddOptionDropdown(panel, name, desc, optionName, callback, option
     opt["hasCheckbox"] = checkbox
     opt["optionType"] = "dropdown"
     opt["tooltipType"] = tooltipType
+    opt["hasSound"] = isSound
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
@@ -350,6 +351,11 @@ local function loadDropDown(scrollFrame)
                 else
                     slot.checkbutton:Show()
                 end
+                if not scrollFrame.data.hasSound then
+                    slot.soundButton:Hide()
+                else
+                    slot.soundButton:Show()
+                end
 
                 slot.string:SetText(scrollFrame.data.options_names[idx])
                 slot.option = scrollFrame.data.options[idx]
@@ -368,7 +374,7 @@ local function loadDropDown(scrollFrame)
                 slot:Show()
             else
                 slot:Hide()
-            end    
+            end
         end
     end
 
@@ -533,7 +539,7 @@ local function InitPanel(panel, hasScroll, settingModule)
                             of.container:Show()
                         end
 
-                        SetSetting(self.optionName .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or ""), self.option, self:GetParent():GetParent().data.perSpec)
+                        SetSetting(self.optionName .. (v.hasProfile and (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or "") or ""), self.option, self:GetParent():GetParent().data.perSpec)
 
                         if v.callback ~= nil then
                             v.callback()
@@ -547,7 +553,7 @@ local function InitPanel(panel, hasScroll, settingModule)
                             toSet = true
                         end
 
-                        SetSetting(self:GetParent().optionName, toSet, self:GetParent():GetParent():GetParent().data.perSpec, self:GetParent().option)
+                        SetSetting(self:GetParent().optionName .. (v.hasProfile and (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or "") or ""), toSet, self:GetParent():GetParent():GetParent().data.perSpec, self:GetParent().option)
 
                         if v.callback ~= nil then
                             v.callback(toSet, self:GetParent().option)
@@ -568,6 +574,9 @@ local function InitPanel(panel, hasScroll, settingModule)
                             GameTooltip:Hide()
                         end)
                     end
+                    slot.soundButton:HookScript("OnClick", function(self)
+                        PlaySoundFile(GW.Libs.LSM:Fetch("sound", self:GetParent().option), "Master")
+                    end)
                     slot.ScriptsHooked = true
                 end
             end

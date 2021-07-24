@@ -4,6 +4,7 @@ local addOption = GW.AddOption
 local addOptionColorPicker = GW.AddOptionColorPicker
 local addOptionSlider = GW.AddOptionSlider
 local addOptionText = GW.AddOptionText
+local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 
@@ -25,10 +26,30 @@ local function LoadChatPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Short Channels"], L["Shorten the channel names in chat."], "CHAT_SHORT_CHANNEL_NAMES", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Role Icon"], L["Display LFG Icons in group chat."], "CHAT_SHOW_LFG_ICONS", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Class Color Mentions"], L["Use class color for the names of players when they are mentioned."], "CHAT_CLASS_COLOR_MENTIONS", nil, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Keyword Alert"], nil, "CHAT_KEYWORDS_ALERT", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Emotion Icons"], L["Display emotion icons in chat"], "CHAT_KEYWORDS_EMOJI", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Quick Join Messages"], L["Show clickable Quick Join messages inside of the chat."], "CHAT_SOCIAL_LINK", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Add timestamp to all messages"], nil, "CHAT_ADD_TIMESTAMP_TO_ALL", nil, nil, {["CHATFRAME_ENABLED"] = true})
+
+    local soundKeys = {}
+    for _, sound in next, GW.Libs.LSM:List("sound") do
+        tinsert(soundKeys, sound)
+    end
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        L["Keyword Alert"],
+        nil,
+        "CHAT_KEYWORDS_ALERT_NEW",
+        nil,
+        soundKeys,
+        soundKeys,
+        nil,
+        {["CHATFRAME_ENABLED"] = true},
+        nil,
+        nil,
+        nil,
+        nil,
+        true
+    )
     addOptionSlider(
         p.scroll.scrollchild,
         L["Spam Interval"] ,
