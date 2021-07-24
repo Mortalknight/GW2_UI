@@ -1859,9 +1859,13 @@ local function LoadChat()
         QuickJoinToastButton:ClearAllPoints()
         QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, -3)
         QuickJoinToastButton.FriendsButton:Hide()
+        QuickJoinToastButton.FriendCount:SetTextColor(0, 0, 0)
+        QuickJoinToastButton.QueueCount:SetTextColor(0, 0, 0)
+        QuickJoinToastButton.QueueCount:SetShadowOffset(1, 1)
 
         if GetSetting("CHAT_SOCIAL_LINK") then
-            QuickJoinToastButton:Kill()
+            QuickJoinToastButton.Toast:Kill()
+            QuickJoinToastButton.Toast2:Kill()
         end
 
         QuickJoinToastButton.ClearAllPoints = GW.NoOp

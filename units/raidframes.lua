@@ -996,10 +996,17 @@ local function UpdateRaidFramesPosition()
         GwRaidFramePartyContainer.gwMover:SetSize(isV and size2 or size1, isV and size1 or size2)
 
         -- Update unit frames
-        for i = 1, 5 do
-            PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFramePartyContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-            if i > (IsInGroup() and GetNumGroupMembers() or players) then _G["GwCompactraid" .. i]:Hide() else _G["GwCompactraid" .. i]:Show() end
-        end
+        GW.CombatQueue_Queue("updateRaidFrames_Party", function(players, grow2, cells1, sizePer1, sizePer2, m)
+            for i = 1, 5 do
+                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFramePartyContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+                if i > (IsInGroup() and GetNumGroupMembers() or tonumber(players)) then
+                    _G["GwCompactraid" .. i]:Hide()
+                else
+                    _G["GwCompactraid" .. i]:Show()
+                end
+            end
+        end,
+        {players, grow2, cells1, sizePer1, sizePer2, m})
     end
     if GW.GROUPD_TYPE == "RAID" or onLoad then
         if onLoad then GW.GROUPD_TYPE = "RAID" end
@@ -1014,10 +1021,17 @@ local function UpdateRaidFramesPosition()
         GwRaidFrameContainer.gwMover:SetSize(isV and size2 or size1, isV and size1 or size2)
 
         -- Update unit frames
-        for i = 1, MAX_RAID_MEMBERS do
-            PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-            if i > (IsInGroup() and GetNumGroupMembers() or players) then _G["GwCompactraid" .. i]:Hide() else _G["GwCompactraid" .. i]:Show() end
-        end
+        GW.CombatQueue_Queue("updateRaidFrames_Raid", function(players, grow2, cells1, sizePer1, sizePer2, m)
+            for i = 1, MAX_RAID_MEMBERS do
+                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+                if i > (IsInGroup() and GetNumGroupMembers() or tonumber(players)) then
+                    _G["GwCompactraid" .. i]:Hide()
+                else
+                    _G["GwCompactraid" .. i]:Show()
+                end
+            end
+        end,
+        {players, grow2, cells1, sizePer1, sizePer2, m})
     end
 
     GW.GROUPD_TYPE = g_type_old
