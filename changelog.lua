@@ -5,6 +5,9 @@ v("5.17.1", [=[
 FIXES
     - Tweak raid/party profiles and fix some bugs
     - You can now change raid/party profile settings while in a party/raid
+
+    MISC
+    - Added option to show chat timestamps for all messages
 ]=])
 
 v("5.17.0", [=[

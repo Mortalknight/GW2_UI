@@ -709,8 +709,8 @@ local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
     return ChatFrame_AddChannel(chatFrame, C_ChatInfo.GetChannelShortcutForChannelID(channelID)) ~= nil;
 end
 
-local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID)
-    if CHAT_TIMESTAMP_FORMAT then
+local function AddTimestamp(msg)
+   if CHAT_TIMESTAMP_FORMAT then
         local timeStamp = BetterDate(CHAT_TIMESTAMP_FORMAT, time())
 
         timeStamp = gsub(timeStamp, " ", "")
@@ -718,6 +718,12 @@ local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, type
         timeStamp = gsub(timeStamp, "PM", " PM")
         msg = format("[%s] %s", timeStamp, msg)
     end
+
+    return msg
+end
+
+local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID)
+    msg = AddTimestamp(msg)
 
     self.OldAddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID)
 end
@@ -1183,6 +1189,10 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                 body = gsub(body, "<" .. AFK .. ">", "[|cffFF0000" .. AFK .. "|r] ")
                 body = gsub(body, "<" .. DND .. ">", "[|cffE7E716" .. DND .. "|r] ")
                 body = gsub(body, "^%[" .. RAID_WARNING .. "%]", "[" .. L["RW"] .. "]")
+            end
+
+            if not GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL") then
+                body = AddTimestamp(body)
             end
 
             local accessID = ChatHistory_GetAccessID(chatGroup, chatTarget)
@@ -1886,8 +1896,10 @@ local function LoadChat()
         if allowHooks and not frame.OldAddMessage then
             --Don"t add timestamps to combat log, they don"t work.
             --This usually taints, but LibChatAnims should make sure it doesn"t.
-            frame.OldAddMessage = frame.AddMessage
-            frame.AddMessage = AddMessage
+            if GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL") then
+                frame.OldAddMessage = frame.AddMessage
+                frame.AddMessage = AddMessage
+            end
         end
 
         if not frame.scriptsSet then

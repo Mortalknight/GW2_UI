@@ -403,3 +403,4 @@ L["Quick Join Messages"] = true
 L["Show clickable Quick Join messages inside of the chat."] = true
 L["is looking for members"] = true
 L["joined a group"] = true
+L["Add timestamp to all messages"] = true
