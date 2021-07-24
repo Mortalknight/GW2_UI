@@ -437,7 +437,7 @@ local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, de
 
     frame.cooldown.duration:SetText(expires and TimeCount(expires - GetTime()) or 0)
     frame.debuffIcon.stacks:SetText((count or 1) > 1 and count or "")
-    frame.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, (count or 1) > 9 and 9 or 14)
+    frame.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, ((count or 1) > 9 and 8 or 14))
 
     frame:Show()
 
