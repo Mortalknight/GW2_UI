@@ -1460,7 +1460,7 @@ local function styleChatWindow(frame)
     end)
 
     --emote bar button
-    if GetSetting("CHAT_KEYWORDS_EMOJI") then
+    if GetSetting("CHAT_KEYWORDS_EMOJI") and (id ~= 2 and id ~= 3) then
         frame.buttonEmote = CreateFrame("Frame", nil, frame)
         frame.buttonEmote:EnableMouse(true)
         frame.buttonEmote:SetAlpha(0.35)

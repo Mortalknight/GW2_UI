@@ -58,6 +58,19 @@ local Minimap_Addon_Buttons = {
     [45] = "HandyNotes"
 }
 
+local RemoveTextureID = {
+    [136430] = true,
+    [136467] = true,
+    [136468] = true,
+    [130924] = true,
+}
+
+local RemoveTextureFile = {
+    ["interface/minimap/minimap-trackingborder"] = true,
+    ["interface/minimap/ui-minimap-border"] = true,
+    ["interface/minimap/ui-minimap-background"] = true,
+}
+
 local MAP_FRAMES_HOVER = {}
 local framesToAdd = {}
 
@@ -231,10 +244,53 @@ local function getMinimapShape()
     return "SQUARE"
 end
 
+local function SkinMinimapButton(button)
+    if not button then return end
+
+    for i = 1, button:GetNumRegions() do
+        local region = select(i, button:GetRegions())
+        if region.IsObjectType and region:IsObjectType("Texture") then
+            local texture = region.GetTextureFileID and region:GetTextureFileID()
+
+            if RemoveTextureID[texture] then
+                region:SetTexture()
+            else
+                texture = strlower(tostring(region:GetTexture()))
+                if RemoveTextureFile[texture] or (strfind(texture, [[interface\characterframe]]) or (strfind(texture, [[interface\minimap]]) and not strfind(texture, [[interface\minimap\tracking\]])) or strfind(texture, "border") or strfind(texture, "background") or strfind(texture, "alphamask") or strfind(texture, "highlight")) then
+                    region:SetTexture()
+                    region:SetAlpha(0)
+                else
+                    region:ClearAllPoints()
+                    region:SetDrawLayer("ARTWORK")
+                    region:SetPoint("TOPLEFT", region:GetParent(), "TOPLEFT", 2, -2)
+                    region:SetPoint("BOTTOMRIGHT", region:GetParent(), "BOTTOMRIGHT", -2, 2)
+
+                    region.SetPoint = GW.NoOp
+                end
+            end
+        end
+    end
+
+    button:SetFrameLevel(Minimap:GetFrameLevel() + 10)
+	button:SetFrameStrata(Minimap:GetFrameStrata())
+	button:SetSize(25, 25)
+    button:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
+    button:HookScript("OnEnter", function(self)
+        if self.icon then self.icon:SetBlendMode("ADD") end
+        if self.texture then self.texture:SetBlendMode("ADD") end
+    end)
+    button:HookScript("OnLeave", function(self)
+        if self.icon then self.icon:SetBlendMode("BLEND") end
+        if self.texture then self.texture:SetBlendMode("BLEND") end
+    end)
+
+	button.isSkinnedGW2_UI = true
+end
+
 local function stackIcons(self)
     local children = {Minimap:GetChildren()}
     for _, child in ipairs(children) do
-        if child:HasScript("OnClick") and child:IsShown() and child:GetName() then
+        if child:HasScript("OnClick") and child:IsShown() and child:GetName() and (child:IsObjectType("Button") or child:IsObjectType("Frame")) then
             local ignore = false
             local childName = child:GetName()
             for _, v in pairs(Minimap_Addon_Buttons) do
@@ -250,14 +306,19 @@ local function stackIcons(self)
         end
     end
 
-    local frameIndex = 0
+    local frameIndex, prevFrame = 0, self.container
     for _, frame in pairs(framesToAdd) do
         if frame:IsShown() then
+            if not frame.isSkinnedGW2_UI then
+                SkinMinimapButton(frame)
+            end
             frame:SetParent(self.container)
             frame:ClearAllPoints()
-            frame:SetPoint("RIGHT", self.container, "RIGHT", frameIndex * -35, 0)
+            frame:SetPoint("RIGHT", prevFrame, "RIGHT", frameIndex == 0 and -5 or -35, 0)
             frameIndex = frameIndex + 1
-            frame:SetScript("OnDragStart", nil)
+            prevFrame = frame
+            if frame:HasScript("OnDragStart") then frame:SetScript("OnDragStart", nil) end
+            if frame:HasScript("OnDragStop") then frame:SetScript("OnDragStop", nil) end
         end
     end
     self.container:SetWidth(frameIndex * 35)
@@ -275,7 +336,14 @@ GW.AddForProfiling("map", "stack_OnEvent", stack_OnEvent)
 
 local function stack_OnClick(self)
     stackIcons(self)
-    self.container:SetShown(not self.container:IsShown())
+
+    if self.container:IsShown() then
+        UIFrameFadeOut(self.container, 0.2, 1, 0)
+        C_Timer.After(0.2, function() self.container:Hide() end)
+    else
+        UIFrameFadeIn(self.container, 0.2, 0, 1)
+    end
+
 end
 GW.AddForProfiling("map", "stack_OnClick", stack_OnClick)
 
@@ -370,15 +438,15 @@ local function LoadMinimap()
     GwMapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
 
     if MiniMapInstanceDifficulty then
-        MiniMapInstanceDifficulty:SetParent(UIParent)
+        MiniMapInstanceDifficulty:SetParent(Minimap)
         MiniMapInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
     end
     if GuildInstanceDifficulty then
-        GuildInstanceDifficulty:SetParent(UIParent)
+        GuildInstanceDifficulty:SetParent(Minimap)
         GuildInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
     end
     if MiniMapChallengeMode then
-        MiniMapChallengeMode:SetParent(UIParent)
+        MiniMapChallengeMode:SetParent(UIParMinimapent)
         MiniMapChallengeMode:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
     end
 
@@ -506,15 +574,12 @@ local function LoadMinimap()
     fmGAT:SetScript("OnEvent", stack_OnEvent)
     fmGAT:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmGAT:SetFrameStrata("MEDIUM")
+    fmGAT.container:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
     fmGAT.gw_Showing = true
     stackIcons(fmGAT)
+    C_Timer.NewTimer(6, function() stackIcons(fmGAT) end)
 
-    hooksecurefunc(
-        Minimap,
-        "SetScale",
-        function()
-        end
-    )
+    hooksecurefunc(Minimap, "SetScale", GW.NoOp)
 
     Minimap:SetScale(1.2)
 
