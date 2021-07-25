@@ -314,14 +314,14 @@ local function stackIcons(self)
             end
             frame:SetParent(self.container)
             frame:ClearAllPoints()
-            frame:SetPoint("RIGHT", prevFrame, "RIGHT", frameIndex == 0 and -5 or -35, 0)
+            frame:SetPoint("RIGHT", prevFrame, "RIGHT", frameIndex == 0 and -5 or -27, 0)
             frameIndex = frameIndex + 1
             prevFrame = frame
             if frame:HasScript("OnDragStart") then frame:SetScript("OnDragStart", nil) end
             if frame:HasScript("OnDragStop") then frame:SetScript("OnDragStop", nil) end
         end
     end
-    self.container:SetWidth(frameIndex * 35)
+    self.container:SetWidth(frameIndex * 25 + (frameIndex - 1) * 2 + 10)
 
     if frameIndex == 0 then
         self:Hide()
