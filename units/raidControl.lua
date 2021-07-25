@@ -316,9 +316,9 @@ local function UpdateRaidCounterVisibility()
     local VisibilityStates = {
         ["NEVER"] = "hide",
         ["ALWAYS"] = "[petbattle] hide; show",
-        ["IN_GROUP"] = "[group:raid] hide; [group:party] show; [petbattle] hide; hide",
-        ["IN_RAID"] = "[group:raid] show; [group:party] hide; [petbattle] hide; hide",
-        ["IN_RAID_IN_PARTY"] = "[group] show; [petbattle] hide; hide",
+        ["IN_GROUP"] = "[petbattle] hide; [group:raid] hide; [group:party] show; hide",
+        ["IN_RAID"] = "[petbattle] hide; [group:raid] show; [group:party] hide; hide",
+        ["IN_RAID_IN_PARTY"] = "[petbattle] hide; [group] show; hide",
     }
 
     RegisterStateDriver(GW_RaidCounter_Frame, "visibility", VisibilityStates[GetSetting("ROLE_BAR")])
