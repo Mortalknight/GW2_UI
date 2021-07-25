@@ -8,7 +8,6 @@ local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local IsIncompatibleAddonLoadedOrOverride = GW.IsIncompatibleAddonLoadedOrOverride
 local Debug = GW.Debug
-local LibSharedMedia = GW.Libs.LSM
 
 local animations = GW.animations
 

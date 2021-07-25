@@ -477,7 +477,7 @@ GW.UpdateChatKeywords = UpdateChatKeywords
 
 local protectLinks = {}
 local function CheckKeyword(message, author)
-    local letSound = not SoundTimer and author ~= PLAYER_NAME and GetSetting("CHAT_KEYWORDS_ALERT_NEW")
+    local letSound = not SoundTimer and author ~= PLAYER_NAME and GetSetting("CHAT_KEYWORDS_ALERT_NEW") ~= "None"
 
     for hyperLink in gmatch(message, "|c%x-|H.-|h.-|h|r") do
         protectLinks[hyperLink] = gsub(hyperLink,"%s","|s")
