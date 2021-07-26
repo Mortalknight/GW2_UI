@@ -148,10 +148,8 @@ local function LoadRaidPanel(sWindow)
         L["Sort raid unit frames by role (tank, heal, damage) instead of group."],
         "RAID_SORT_BY_ROLE",
         function()
-            if GetSetting("RAID_FRAMES") then
-                GW.UpdateRaidFramesLayout()
-                GW.UpdateRaidFramesPosition()
-            end
+            GW.UpdateRaidFramesLayout()
+            GW.UpdateRaidFramesPosition()
         end,
         nil,
         {["RAID_FRAMES"] = true},
@@ -277,11 +275,9 @@ local function LoadRaidPanel(sWindow)
         L["Set the grow direction for raid frames."],
         "RAID_GROW",
         function()
-            if GetSetting("RAID_FRAMES") then
-                GW.UpdateRaidFramesAnchor()
-                GW.UpdateRaidFramesLayout()
-                GW.UpdateRaidFramesPosition()
-            end
+            GW.UpdateRaidFramesAnchor()
+            GW.UpdateRaidFramesLayout()
+            GW.UpdateRaidFramesPosition()
         end,
         grow,
         MapTable(
@@ -325,10 +321,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the number of raid unit frames per column or row, depending on grow directions."],
         "RAID_UNITS_PER_COLUMN",
         function()
-            if GetSetting("RAID_FRAMES") then
-                GW.UpdateRaidFramesLayout()
-                GW.UpdateRaidFramesPosition()
-            end
+            GW.UpdateRaidFramesLayout()
+            GW.UpdateRaidFramesPosition()
         end,
         0,
         40,
@@ -346,10 +340,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the width of the raid units."],
         "RAID_WIDTH",
         function()
-            if GetSetting("RAID_FRAMES") then
-                GW.UpdateRaidFramesLayout()
-                GW.UpdateRaidFramesPosition()
-            end
+            GW.UpdateRaidFramesLayout()
+            GW.UpdateRaidFramesPosition()
         end,
         45,
         300,
@@ -367,10 +359,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the height of the raid units."],
         "RAID_HEIGHT",
         function()
-            if GetSetting("RAID_FRAMES") then
-                GW.UpdateRaidFramesLayout()
-                GW.UpdateRaidFramesPosition()
-            end
+            GW.UpdateRaidFramesLayout()
+            GW.UpdateRaidFramesPosition()
         end,
         15,
         100,
@@ -388,10 +378,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the maximum width that the raid frames can be displayed.\n\nThis will cause unit frames to shrink or move to the next row."],
         "RAID_CONT_WIDTH",
         function()
-            if GetSetting("RAID_FRAMES")  then
-                GW.UpdateRaidFramesLayout()
-                GW.UpdateRaidFramesPosition()
-            end
+            GW.UpdateRaidFramesLayout()
+            GW.UpdateRaidFramesPosition()
         end,
         0,
         GetScreenWidth(),
@@ -409,10 +397,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the maximum height that the raid frames can be displayed.\n\nThis will cause unit frames to shrink or move to the next column."],
         "RAID_CONT_HEIGHT",
         function()
-            if GetSetting("RAID_FRAMES") then
-                GW.UpdateRaidFramesLayout()
-                GW.UpdateRaidFramesPosition()
-            end
+            GW.UpdateRaidFramesLayout()
+            GW.UpdateRaidFramesPosition()
         end,
         0,
         GetScreenHeight(),

@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.17.2", [=[
+FIXES
+    - Missing raid buff pet battle overlapping
+    - Raid frame sort by role
+]=])
+
 v("5.17.1", [=[
 FIXES
     - Tweak raid/party profiles and fix some bugs

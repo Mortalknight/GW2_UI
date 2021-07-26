@@ -988,25 +988,11 @@ local function UpdateRaidFramesPosition()
         players = previewStep == 0 and 5 or previewSteps[previewStep]
 
         -- Get directions, rows, cols and sizing
-        local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures(players)
+        local grow1, _, _, _, size1, size2 = GetRaidFramesMeasures(players)
         local isV = grow1 == "DOWN" or grow1 == "UP"
 
         -- Update size
-        --print(isV and size2 or size1, isV and size1 or size2)
         GwRaidFramePartyContainer.gwMover:SetSize(isV and size2 or size1, isV and size1 or size2)
-
-        -- Update unit frames
-        GW.CombatQueue_Queue("updateRaidFrames_Party", function(players, grow2, cells1, sizePer1, sizePer2, m)
-            for i = 1, 5 do
-                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFramePartyContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-                if i > (IsInGroup() and GetNumGroupMembers() or tonumber(players)) then
-                    _G["GwCompactraid" .. i]:Hide()
-                else
-                    _G["GwCompactraid" .. i]:Show()
-                end
-            end
-        end,
-        {players, grow2, cells1, sizePer1, sizePer2, m})
     end
     if GW.GROUPD_TYPE == "RAID" or onLoad then
         if onLoad then GW.GROUPD_TYPE = "RAID" end
@@ -1014,24 +1000,11 @@ local function UpdateRaidFramesPosition()
         players = previewStep == 0 and 40 or previewSteps[previewStep]
 
         -- Get directions, rows, cols and sizing
-        local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures(players)
+        local grow1, _, _, _, size1, size2 = GetRaidFramesMeasures(players)
         local isV = grow1 == "DOWN" or grow1 == "UP"
 
         -- Update size
         GwRaidFrameContainer.gwMover:SetSize(isV and size2 or size1, isV and size1 or size2)
-
-        -- Update unit frames
-        GW.CombatQueue_Queue("updateRaidFrames_Raid", function(players, grow2, cells1, sizePer1, sizePer2, m)
-            for i = 1, MAX_RAID_MEMBERS do
-                PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-                if i > (IsInGroup() and GetNumGroupMembers() or tonumber(players)) then
-                    _G["GwCompactraid" .. i]:Hide()
-                else
-                    _G["GwCompactraid" .. i]:Show()
-                end
-            end
-        end,
-        {players, grow2, cells1, sizePer1, sizePer2, m})
     end
 
     GW.GROUPD_TYPE = g_type_old
@@ -1093,7 +1066,6 @@ GW.AddForProfiling("raidframes", "sortByRole", sortByRole)
 
 local grpPos, noGrp = {}, {}
 local function UpdateRaidFramesLayout()
-
     local g_type_old = GW.GROUPD_TYPE
     -- Get directions, rows, cols and sizing
     local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures()
@@ -1112,7 +1084,6 @@ local function UpdateRaidFramesLayout()
             GwRaidFrameContainer:SetSize(isV and size2 or size1, isV and size1 or size2)
         end
     end
-
 
     if GW.GROUPD_TYPE == "PARTY" or onLoad then
         if onLoad then GW.GROUPD_TYPE = "PARTY" end
@@ -1159,7 +1130,6 @@ local function UpdateRaidFramesLayout()
         end
 
         wipe(grpPos) wipe(noGrp)
-
 
         -- Position by group
         for i = 1, MAX_RAID_MEMBERS do
