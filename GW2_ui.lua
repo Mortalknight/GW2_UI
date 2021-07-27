@@ -41,6 +41,30 @@ if Profiler then
     _G.GW_Addon_Scope = GW
 end
 
+local function AddOmniCDSupport()
+    if IsAddOnLoaded("OmniCD") then
+        local E = OmniCD[1]
+        tinsert(E.unitFrameData, 1, {
+            [1] = "GW2_UI",
+            [2] = "GwPartyFrame",
+            [3] = "unit",
+            [4] = 1,
+        })
+
+        if not E.customUF.optionTable.GW2_UI then
+            E.customUF.optionTable.GW2_UI = "GW2_UI"
+            E.customUF.enabled = E.customUF.enabled or {}
+            E.customUF.enabled["GW2_UI"] = {
+                ["delay"] = 1,
+                ["frame"] = "GwPartyFrame",
+                ["unit"] = "unit",
+                ["index"] = 5
+            }
+            E.customUF.prio = "GW2_UI"
+        end
+    end
+end
+
 local function disableMABags()
     local bags = GetSetting("BAGS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Inventory", true)
     if not bags or not MovAny or not MADB then
@@ -669,6 +693,9 @@ local function loadAddon(self)
         GW.ShowChangelogPanel()
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     end
+
+    --Added OmicCD support
+    AddOmniCDSupport()
 
     self:SetScript("OnUpdate", gw_OnUpdate)
 end

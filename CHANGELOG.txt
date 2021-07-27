@@ -3,6 +3,9 @@ FIXES
     - Missing raid buff pet battle overlapping
     - Raid frame sort by role
 
+MISC
+    - Added OmniCD support
+
 5.17.1
 FIXES
     - Tweak raid/party profiles and fix some bugs

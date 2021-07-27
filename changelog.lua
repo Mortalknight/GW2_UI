@@ -5,6 +5,9 @@ v("5.17.2", [=[
 FIXES
     - Missing raid buff pet battle overlapping
     - Raid frame sort by role
+
+    MISC
+    - Added OmniCD support
 ]=])
 
 v("5.17.1", [=[
