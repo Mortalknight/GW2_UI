@@ -45,22 +45,54 @@ local function AddOmniCDSupport()
     if IsAddOnLoaded("OmniCD") then
         local E = OmniCD[1]
         tinsert(E.unitFrameData, 1, {
-            [1] = "GW2_UI",
+            [1] = "GW2_UI-Party",
+            [2] = "GwPartyFrame",
+            [3] = "unit",
+            [4] = 1,
+        })
+        tinsert(E.unitFrameData, 1, {
+            [1] = "GW2_UI-Party-Grid",
+            [2] = "GwPartyFrame",
+            [3] = "unit",
+            [4] = 1,
+        })
+        tinsert(E.unitFrameData, 1, {
+            [1] = "GW2_UI-Raid",
             [2] = "GwPartyFrame",
             [3] = "unit",
             [4] = 1,
         })
 
-        if not E.customUF.optionTable.GW2_UI then
-            E.customUF.optionTable.GW2_UI = "GW2_UI"
+        if not E.customUF.optionTable["GW2_UI-Party"] then
+            E.customUF.optionTable["GW2_UI-Party"] = "GW2_UI-Party"
             E.customUF.enabled = E.customUF.enabled or {}
-            E.customUF.enabled["GW2_UI"] = {
+            E.customUF.enabled["GW2_UI-Party"] = {
                 ["delay"] = 1,
                 ["frame"] = "GwPartyFrame",
                 ["unit"] = "unit",
                 ["index"] = 5
             }
-            E.customUF.prio = "GW2_UI"
+            E.customUF.prio = "GW2_UI-Party"
+        end
+        if not E.customUF.optionTable["GW2_UI-Party-Grid"] then
+            E.customUF.optionTable["GW2_UI-Party-Grid"] = "GW2_UI-Party-Grid"
+            E.customUF.enabled = E.customUF.enabled or {}
+            E.customUF.enabled["GW2_UI-Party-Grid"] = {
+                ["delay"] = 1,
+                ["frame"] = "GwCompactPartyFrame",
+                ["unit"] = "unit",
+                ["index"] = 5
+            }
+        end
+        if not E.customUF.optionTable["GW2_UI-Raid"] then
+            E.customUF.optionTable["GW2_UI-Raid"] = "GW2_UI-Raid"
+            E.customUF.enabled = E.customUF.enabled or {}
+            E.customUF.enabled["GW2_UI-Raid"] = {
+                ["delay"] = 1,
+                ["frame"] = "GwCompactRaidFrame",
+                ["unit"] = "unit",
+                ["index"] = 40
+            }
         end
     end
 end

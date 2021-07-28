@@ -84,41 +84,34 @@ local function togglePartyFrames(b)
 
     if b then
         if GetSetting("RAID_STYLE_PARTY") or GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
-            _G["GwCompactplayer"]:Show()
-            RegisterUnitWatch(_G["GwCompactplayer"])
-
-            for i = 1, 4 do
-                _G["GwCompactparty" .. i]:Show()
-                RegisterUnitWatch(_G["GwCompactparty" .. i])
+            for i = 1, 5 do
+                _G["GwCompactPartyFrame" .. i]:Show()
+                print(_G["GwCompactPartyFrame" .. i].unit)
+                RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(_G["GwCompactPartyFrame" .. i].unit))
             end
         end
         GW.TogglePartyRaid(true)
     else
         GW.TogglePartyRaid(false)
-        UnregisterUnitWatch(_G["GwCompactplayer"])
-        _G["GwCompactplayer"]:Hide()
         for i = 1, 4 do
-            UnregisterUnitWatch(_G["GwCompactparty" .. i])
-            _G["GwCompactparty" .. i]:Hide()
+            UnregisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility")
+            _G["GwCompactPartyFrame" .. i]:Hide()
         end
     end
 end
 GW.AddForProfiling("raidframes", "togglePartyFrames", togglePartyFrames)
 
 local function unhookPlayerFrame()
-    if InCombatLockdown() then
-        return
-    end
-    if IsInRaid() then
+    if InCombatLockdown() or IsInRaid() then
         return
     end
 
     if IsInGroup() and (GetSetting("RAID_STYLE_PARTY") or GetSetting("RAID_STYLE_PARTY_AND_FRAMES")) then
-        _G["GwCompactplayer"]:Show()
-        RegisterUnitWatch(_G["GwCompactplayer"])
+        GwCompactPartyFrame1:Show()
+        RegisterStateDriver(GwCompactPartyFrame1, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(GwCompactPartyFrame1.unit))
     else
-        UnregisterUnitWatch(_G["GwCompactplayer"])
-        _G["GwCompactplayer"]:Hide()
+        UnregisterStateDriver(GwCompactPartyFrame1, "visibility")
+        GwCompactPartyFrame1:Hide()
     end
 end
 GW.AddForProfiling("raidframes", "unhookPlayerFrame", unhookPlayerFrame)
@@ -1017,26 +1010,26 @@ local function ToggleRaidFramesPreview(_, _, moveHudMode)
 
     if previewStep == 0 or moveHudMode then
         for i = 1, MAX_RAID_MEMBERS do
-            if _G["GwCompactraid" .. i] then
-                _G["GwCompactraid" .. i].unit = "raid" .. i
-                _G["GwCompactraid" .. i].guid = UnitGUID("raid" .. i)
-                _G["GwCompactraid" .. i]:SetAttribute("unit", "raid" .. i)
-                raidframe_OnEvent(_G["GwCompactraid" .. i], "load")
+            if _G["GwCompactRaidFrame" .. i] then
+                _G["GwCompactRaidFrame" .. i].unit = "raid" .. i
+                _G["GwCompactRaidFrame" .. i].guid = UnitGUID("raid" .. i)
+                _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "raid" .. i)
+                raidframe_OnEvent(_G["GwCompactRaidFrame" .. i], "load")
             end
         end
     else
         for i = 1, MAX_RAID_MEMBERS do
-            if _G["GwCompactraid" .. i] then
+            if _G["GwCompactRaidFrame" .. i] then
                 if i <= (previewStep == 0 and (GW.GROUPD_TYPE == "PARTY" and 5 or 40) or previewSteps[previewStep]) then
-                    _G["GwCompactraid" .. i].unit = "player"
-                    _G["GwCompactraid" .. i].guid = UnitGUID("player")
-                    _G["GwCompactraid" .. i]:SetAttribute("unit", "player")
+                    _G["GwCompactRaidFrame" .. i].unit = "player"
+                    _G["GwCompactRaidFrame" .. i].guid = UnitGUID("player")
+                    _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "player")
                 else
-                    _G["GwCompactraid" .. i].unit = "raid" .. i
-                    _G["GwCompactraid" .. i].guid = UnitGUID("raid" .. i)
-                    _G["GwCompactraid" .. i]:SetAttribute("unit", "raid" .. i)
+                    _G["GwCompactRaidFrame" .. i].unit = "raid" .. i
+                    _G["GwCompactRaidFrame" .. i].guid = UnitGUID("raid" .. i)
+                    _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "raid" .. i)
                 end
-                raidframe_OnEvent(_G["GwCompactraid" .. i], "load")
+                raidframe_OnEvent(_G["GwCompactRaidFrame" .. i], "load")
             end
         end
         UpdateRaidFramesPosition()
@@ -1047,16 +1040,16 @@ end
 local function sortByRole()
     local sorted = {}
     local roleIndex = {"TANK", "HEALER", "DAMAGER", "NONE"}
-    local unitString = IsInRaid() and "raid" or "party"
+    local unitString = IsInRaid() and "Raid" or "Party"
 
     for _, v in pairs(roleIndex) do
         if unitString == "party" and UnitGroupRolesAssigned("player") == v then
-            tinsert(sorted, "player")
+            tinsert(sorted, "PartyFrame1")
         end
 
         for i = 1, MAX_RAID_MEMBERS do
             if UnitExists(unitString .. i) and UnitGroupRolesAssigned(unitString .. i) == v then
-                tinsert(sorted, unitString .. i)
+                tinsert(sorted, unitString .. "Frame" .. (unitString == "party" and i + 1 or i))
             end
         end
     end
@@ -1071,9 +1064,9 @@ local function UpdateRaidFramesLayout()
     local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures()
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
-    local unitString = IsInRaid() and "raid" or "party"
-    local sorted = (unitString == "party" or GetSetting("RAID_SORT_BY_ROLE" .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or ""))) and sortByRole() or {}
-
+    local unitString = IsInRaid() and "Raid" or "Party"
+    local sorted = (unitString == "Party" or GetSetting("RAID_SORT_BY_ROLE" .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or ""))) and sortByRole() or {}
+GW_sorted = sorted
     if not InCombatLockdown() then
         if GW.GROUPD_TYPE == "PARTY" or onLoad then
             if onLoad then GW.GROUPD_TYPE = "PARTY" end
@@ -1096,15 +1089,15 @@ local function UpdateRaidFramesLayout()
 
         -- Position by group
         for i = 1, MAX_RAID_MEMBERS do
-            if not tContains(sorted, unitString .. i) then
-                if i < MEMBERS_PER_RAID_GROUP then
-                    PositionRaidFrame(_G["GwCompactparty" .. i], GwRaidFramePartyContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+            if not tContains(sorted, unitString .. "Frame" .. i) then
+                if i <= MEMBERS_PER_RAID_GROUP then --CHECK
+                    PositionRaidFrame(_G["GwCompactPartyFrame" .. i], GwRaidFramePartyContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
                 end
 
                 local name, _, grp = GetRaidRosterInfo(i)
                 if name or grp > 1 then
                     grpPos[grp] = (grpPos[grp] or 0) + 1
-                    PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFramePartyContainer , (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+                    PositionRaidFrame(_G["GwCompactRaidFrame" .. i], GwRaidFramePartyContainer , (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
                 else
                     tinsert(noGrp, i)
                 end
@@ -1116,7 +1109,7 @@ local function UpdateRaidFramesLayout()
             for grp = 1, NUM_RAID_GROUPS do
                 if (grpPos[grp] or 0) < MEMBERS_PER_RAID_GROUP then
                     grpPos[grp] = (grpPos[grp] or 0) + 1
-                    PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFramePartyContainer, (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+                    PositionRaidFrame(_G["GwCompactRaidFrame" .. i], GwRaidFramePartyContainer, (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
                     break
                 end
             end
@@ -1133,15 +1126,15 @@ local function UpdateRaidFramesLayout()
 
         -- Position by group
         for i = 1, MAX_RAID_MEMBERS do
-            if not tContains(sorted, unitString .. i) then
-                if i < MEMBERS_PER_RAID_GROUP then
-                    PositionRaidFrame(_G["GwCompactparty" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+            if not tContains(sorted, unitString .. "Frame" .. i) then
+                if i <= MEMBERS_PER_RAID_GROUP then --CHECK
+                    PositionRaidFrame(_G["GwCompactPartyFrame" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
                 end
 
                 local name, _, grp = GetRaidRosterInfo(i)
                 if name or grp > 1 then
                     grpPos[grp] = (grpPos[grp] or 0) + 1
-                    PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer , (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+                    PositionRaidFrame(_G["GwCompactRaidFrame" .. i], GwRaidFrameContainer , (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
                 else
                     tinsert(noGrp, i)
                 end
@@ -1153,7 +1146,7 @@ local function UpdateRaidFramesLayout()
             for grp = 1, NUM_RAID_GROUPS do
                 if (grpPos[grp] or 0) < MEMBERS_PER_RAID_GROUP then
                     grpPos[grp] = (grpPos[grp] or 0) + 1
-                    PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+                    PositionRaidFrame(_G["GwCompactRaidFrame" .. i], GwRaidFrameContainer, (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
                     break
                 end
             end
@@ -1165,56 +1158,65 @@ end
 GW.UpdateRaidFramesLayout = UpdateRaidFramesLayout
 GW.AddForProfiling("raidframes", "UpdateRaidFramesLayout", UpdateRaidFramesLayout)
 
-local function createRaidFrame(registerUnit, index)
-    local frame = _G["GwCompact" .. registerUnit]
-    if not frame then
-        frame = CreateFrame("Button", "GwCompact" .. registerUnit, GwRaidFrameContainer, "GwRaidFrame")
-        frame.name = _G[frame:GetName() .. "Data"].name
-        frame.healthstring = _G[frame:GetName() .. "Data"].healthstring
-        frame.classicon = _G[frame:GetName() .. "Data"].classicon
-        frame.healthbar = frame.predictionbar.healthbar
-        frame.absorbbar = frame.healthbar.absorbbar
-        frame.aggroborder = frame.absorbbar.aggroborder
-        frame.nameNotLoaded = false
-
-        if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
-            frame.name:SetFont(UNIT_NAME_FONT, 12)
-        end
-        frame.name:SetShadowOffset(-1, -1)
-        frame.name:SetShadowColor(0, 0, 0, 1)
-
-        frame.healthstring:SetFont(UNIT_NAME_FONT, 11)
-        frame.healthstring:SetShadowOffset(-1, -1)
-        frame.healthstring:SetShadowColor(0, 0, 0, 1)
-
-        hooksecurefunc(
-            frame.healthbar,
-            "SetStatusBarColor",
-            function(_, r, g, b, a)
-                frame.healthbar.spark:SetVertexColor(r, g, b, a)
-            end
-        )
+local function createRaidFrame(index, isParty)
+    local frame, unit = nil, ""
+    if isParty then
+        frame = CreateFrame("Button", "GwCompactPartyFrame" .. index, GwRaidFrameContainer, "GwRaidFrame")
+        unit = index == 1 and "player" or "party" .. index - 1
+    else
+        frame = CreateFrame("Button", "GwCompactRaidFrame" .. index, GwRaidFrameContainer, "GwRaidFrame")
+        unit = "raid" .. index
     end
 
-    frame.unit = registerUnit
+    frame.name = _G[frame:GetName() .. "Data"].name
+    frame.healthstring = _G[frame:GetName() .. "Data"].healthstring
+    frame.classicon = _G[frame:GetName() .. "Data"].classicon
+    frame.healthbar = frame.predictionbar.healthbar
+    frame.absorbbar = frame.healthbar.absorbbar
+    frame.aggroborder = frame.absorbbar.aggroborder
+    frame.nameNotLoaded = false
+
+    if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
+        frame.name:SetFont(UNIT_NAME_FONT, 12)
+    end
+    frame.name:SetShadowOffset(-1, -1)
+    frame.name:SetShadowColor(0, 0, 0, 1)
+
+    frame.healthstring:SetFont(UNIT_NAME_FONT, 11)
+    frame.healthstring:SetShadowOffset(-1, -1)
+    frame.healthstring:SetShadowColor(0, 0, 0, 1)
+
+    hooksecurefunc(
+        frame.healthbar,
+        "SetStatusBarColor",
+        function(_, r, g, b, a)
+            frame.healthbar.spark:SetVertexColor(r, g, b, a)
+        end
+    )
+
+    frame.unit = unit
     frame.guid = UnitGUID(frame.unit)
     frame.ready = -1
     frame.targetmarker = GetRaidTargetIndex(frame.unit)
     frame.index = index
 
-    frame.healthbar.animationName = "GwCompact" .. registerUnit .. "animation"
+    frame.healthbar.animationName = frame:GetName() .. "animation"
     frame.healthbar.animationValue = 0
 
-    frame.manabar.animationName = "GwCompact" .. registerUnit .. "manabaranimation"
+    frame.manabar.animationName = frame:GetName() .. "manabaranimation"
     frame.manabar.animationValue = 0
 
-    frame:SetAttribute("unit", registerUnit)
+    frame:SetAttribute("unit", frame.unit)
     frame:SetAttribute("*type1", "target")
     frame:SetAttribute("*type2", "togglemenu")
 
     AddToClique(frame)
 
-    RegisterUnitWatch(frame)
+    if isParty then
+        RegisterStateDriver(frame, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(frame.unit))
+    else
+        RegisterUnitWatch(frame)
+    end
     frame:EnableMouse(true)
     frame:RegisterForClicks("AnyUp")
 
@@ -1228,7 +1230,7 @@ local function createRaidFrame(registerUnit, index)
         "OnEnter",
         function(self)
             GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
-            GameTooltip:SetUnit(registerUnit)
+            GameTooltip:SetUnit(frame.unit)
             GameTooltip:Show()
             self.targetHighlight:SetVertexColor(1, 1, 1, 1)
         end
@@ -1251,18 +1253,18 @@ local function createRaidFrame(registerUnit, index)
     frame:RegisterEvent("INCOMING_RESURRECT_CHANGED")
     frame:RegisterEvent("INCOMING_SUMMON_CHANGED")
 
-    frame:RegisterUnitEvent("UNIT_HEALTH", registerUnit)
-    frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
-    frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
-    frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", registerUnit)
-    frame:RegisterUnitEvent("UNIT_MAXPOWER", registerUnit)
-    frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", registerUnit)
-    frame:RegisterUnitEvent("UNIT_PHASE", registerUnit)
-    frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
-    frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
-    frame:RegisterUnitEvent("UNIT_TARGET", registerUnit)
-    frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
-    frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
+    frame:RegisterUnitEvent("UNIT_HEALTH", frame.unit)
+    frame:RegisterUnitEvent("UNIT_MAXHEALTH", frame.unit)
+    frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", frame.unit)
+    frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", frame.unit)
+    frame:RegisterUnitEvent("UNIT_MAXPOWER", frame.unit)
+    frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", frame.unit)
+    frame:RegisterUnitEvent("UNIT_PHASE", frame.unit)
+    frame:RegisterUnitEvent("UNIT_AURA", frame.unit)
+    frame:RegisterUnitEvent("UNIT_LEVEL", frame.unit)
+    frame:RegisterUnitEvent("UNIT_TARGET", frame.unit)
+    frame:RegisterUnitEvent("UNIT_NAME_UPDATE", frame.unit)
+    frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", frame.unit)
 
     raidframe_OnEvent(frame, "load")
 
@@ -1356,13 +1358,12 @@ local function LoadRaidFrames()
         end
     end)
 
-    createRaidFrame("player", nil)
-    for i = 1, 4 do
-        createRaidFrame("party" .. i, i)
+    for i = 1, 5 do
+        createRaidFrame(i, true)
     end
 
     for i = 1, MAX_RAID_MEMBERS do
-        createRaidFrame("raid" .. i, i)
+        createRaidFrame(i, false)
     end
 
     UpdateRaidFramesPosition()
@@ -1412,12 +1413,11 @@ local function LoadRaidFrames()
 
         UpdateRaidFramesLayout()
 
-        updateFrameData(_G["GwCompactplayer"], nil)
         for i = 1, MAX_RAID_MEMBERS do
-            if i < MEMBERS_PER_RAID_GROUP then
-                updateFrameData(_G["GwCompactparty" .. i], i)
+            if i <= 5 then
+                updateFrameData(_G["GwCompactPartyFrame" .. i], i)
             end
-            updateFrameData(_G["GwCompactraid" .. i], i)
+            updateFrameData(_G["GwCompactRaidFrame" .. i], i)
         end
 
         -- update positions and setting
@@ -1449,17 +1449,10 @@ local function LoadRaidFrames()
     onLoad = false
 
     if not GetSetting("RAID_STYLE_PARTY") and not GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
-        UnregisterUnitWatch(_G["GwCompactplayer"])
-        _G["GwCompactplayer"]:Hide()
-        for i = 1, 4 do
-            UnregisterUnitWatch(_G["GwCompactparty" .. i])
-            _G["GwCompactparty" .. i]:Hide()
+        for i = 1, 5 do
+            UnregisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility")
+            _G["GwCompactPartyFrame" .. i]:Hide()
         end
-        return
-    end
-    if not UnitExists("party1") then
-        UnregisterUnitWatch(_G["GwCompactplayer"])
-        _G["GwCompactplayer"]:Hide()
     end
 end
 GW.LoadRaidFrames = LoadRaidFrames
