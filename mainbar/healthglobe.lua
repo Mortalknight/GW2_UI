@@ -48,8 +48,8 @@ local X_MIN = -20
 local function updateHealthData(self, anims)
     local health = UnitHealth("Player")
     local healthMax = UnitHealthMax("Player")
-    local absorb = self.absorbAmount --UnitGetTotalAbsorbs("Player")
-    local prediction = self.healPredictionAmount or 0 --UnitGetIncomingHeals("Player") or 0
+    local absorb = GW.GetPlayerAbsorbValue() or 0 --UnitGetTotalAbsorbs("Player")
+    local prediction = ((LHC:GetHealAmount(self.guid, LHC.ALL_HEALS) or 0) * (LHC:GetHealModifier(self.guid) or 1)) or 0 --UnitGetIncomingHeals("Player") or 0
 
     local health_def = healthMax - health
     local absorb_over = absorb - health_def
@@ -203,7 +203,7 @@ local function globe_OnEvent(self, event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         updateHealthData(self, false)
         selectPvp(self)
-    elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH") then
+    elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
         updateHealthData(self, true)
     elseif IsIn(event, "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         selectPvp(self)
@@ -281,14 +281,6 @@ local function repair_OnEnter(self)
     GameTooltip:Show()
 end
 GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)
-
-local function setPredictionAmount(self)
-    local prediction = (LHC:GetHealAmount(self.guid, LHC.ALL_HEALS) or 0) * (LHC:GetHealModifier(self.guid) or 1)
-
-    self.healPredictionAmount = prediction
-    updateHealthData(self)
-end
-GW.AddForProfiling("healthglobe", "setPredictionAmount", setPredictionAmount)
 
 local function LoadHealthGlobe()
     local hg = CreateFrame("Button", "GW2_PlayerFrame", UIParent, "GwHealthGlobeTmpl")
@@ -411,16 +403,15 @@ local function LoadHealthGlobe()
     hg:RegisterUnitEvent("UNIT_FACTION", "player")
 
     -- Handle callbacks from GW2 Absorb
-    local GW2AbsorfEventHandler = function(_, totalAbsorb)
-        hg.absorbAmount = totalAbsorb
-        updateHealthData(hg)
+    local GW2AbsorfEventHandler = function()
+        globe_OnEvent(hg, "UNIT_ABSORB_AMOUNT_CHANGED")
     end
 
     LibStub:GetLibrary("GW2_Absorb", true).RegisterCallback(hg, "GW2_UPDATE_ABSORB_PLAYER", GW2AbsorfEventHandler)
 
     -- Handle callbacks from HealComm
     local HealCommEventHandler = function ()
-        setPredictionAmount(hg)
+        globe_OnEvent(hg, "UNIT_HEAL_PREDICTION")
     end
     --libHealComm setup
     LHC.RegisterCallback(hg, "HealComm_HealStarted", HealCommEventHandler)
@@ -429,8 +420,6 @@ local function LoadHealthGlobe()
     LHC.RegisterCallback(hg, "HealComm_HealDelayed", HealCommEventHandler)
     LHC.RegisterCallback(hg, "HealComm_ModifierChanged", HealCommEventHandler)
     LHC.RegisterCallback(hg, "HealComm_GUIDDisappeared", HealCommEventHandler)
-    hg.healPredictionAmount = 0
-    hg.absorbAmount = 0
     hg.unit = "Player"
     hg.guid = UnitGUID("Player")
 

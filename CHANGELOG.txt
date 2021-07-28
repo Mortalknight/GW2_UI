@@ -1,3 +1,7 @@
+1.15.1
+FIXES
+ - Healthglobe fixes
+
 1.15.0
 NEW
     - Added support for GearScore Addon at player hero panel

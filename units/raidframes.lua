@@ -140,7 +140,7 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
         if healthMax - healthCur > 0 then healthstring = CommaValue(healthMax - healthCur) end
         self.healthstring:SetText(healthstring)
     end
-    if healthCur == 0 then 
+    if healthCur == 0 then
         self.healthstring:SetTextColor(255, 0, 0)
     else
         self.healthstring:SetTextColor(1, 1, 1)
@@ -156,14 +156,15 @@ end
 local function setHealth(self)
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
+    local prediction = ((LHC:GetHealAmount(self.guid, LHC.ALL_HEALS) or 0) * (LHC:GetHealModifier(self.guid) or 1)) or 0
     local healthPrec = 0
     local predictionPrecentage = 0
 
     if healthMax > 0 then
         healthPrec = health / healthMax
     end
-    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax ~= 0 then
-        predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
+    if (prediction ~= nil or prediction == 0) and healthMax ~= 0 then
+        predictionPrecentage = math.min(healthPrec + (prediction / healthMax), 1)
     end
 
     setHealPrediction(self, predictionPrecentage)
@@ -171,14 +172,6 @@ local function setHealth(self)
     Bar(self.healthbar, healthPrec)
 end
 GW.AddForProfiling("raidframes", "setHealth", setHealth)
-
-local function setPredictionAmount(self)
-    local prediction = (LHC:GetHealAmount(self.guid, LHC.ALL_HEALS) or 0) * (LHC:GetHealModifier(self.guid) or 1)
-
-    self.healPredictionAmount = prediction
-    setHealth(self)
-end
-GW.AddForProfiling("raidframes", "setPredictionAmount", setPredictionAmount)
 
 local function setUnitName(self)
     if self == nil or self.unit == nil then
@@ -712,11 +705,12 @@ local function raidframe_OnEvent(self, event, unit)
 
     if event == "load" then
         setHealth(self)
-        setPredictionAmount(self)
         updateAwayData(self)
         updateAuras(self)
         updatePower(self)
     elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
+        setHealth(self)
+    elseif event == "UNIT_HEAL_PREDICTION" then
         setHealth(self)
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" and unit == self.unit then
         updatePower(self)
@@ -766,7 +760,6 @@ local function updateFrameData(self, index)
 
     self.guid = UnitGUID(self.unit)
     self.index = index
-    self.healPredictionAmount = 0
 
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
@@ -916,11 +909,8 @@ local function UpdateRaidFramesPosition()
 
     -- Update unit frames
     for i = 1, MAX_RAID_MEMBERS do
-        PositionRaidFrame(_G["GwRaidGridDisplay" .. i], GwRaidFrameContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-        if i > players then _G["GwRaidGridDisplay" .. i]:Hide() else _G["GwRaidGridDisplay" .. i]:Show() end
-
-        PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-        if i > players then _G["GwCompactraid" .. i]:Hide() else _G["GwCompactraid" .. i]:Show() end
+        PositionRaidFrame(_G["GwCompactraid" .. i], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+        if i > (IsInGroup() and GetNumGroupMembers() or players) then _G["GwCompactraid" .. i]:Hide() else _G["GwCompactraid" .. i]:Show() end
     end
 end
 GW.UpdateRaidFramesPosition = UpdateRaidFramesPosition
@@ -1083,8 +1073,7 @@ local function createRaidFrame(registerUnit, index)
 
     -- Handle callbacks from HealComm
     local HealCommEventHandler = function ()
-        local self = frame
-        return setPredictionAmount(self)
+        raidframe_OnEvent(frame, "UNIT_HEAL_PREDICTION")
     end
 
     frame:SetScript("OnEvent", raidframe_OnEvent)
@@ -1178,14 +1167,6 @@ local function LoadRaidFrames()
             GwRaidFrameContainer:SetPoint(frame:GetPoint())
         end
     end)
-
-    for i = 1, MAX_RAID_MEMBERS do
-        local f = CreateFrame("Frame", "GwRaidGridDisplay" .. i, GwRaidFrameContainer.gwMover, "VerticalActionBarDummy")
-        f:SetParent(GwRaidFrameContainer.gwMover)
-        f.frameName:SetText("")
-        f.Background:SetVertexColor(0.2, 0.2, 0.2, 1)
-        f:SetPoint("TOPLEFT", GwRaidFrameContainer.gwMover, "TOPLEFT", 0, 0)
-    end
 
     createRaidFrame("player", nil)
     for i = 1, 4 do

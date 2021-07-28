@@ -242,15 +242,16 @@ local absorbDb = {
     [27273] = {127, 2854, 7.5, 64, 70, 64, 0}, -- [Warlock] Sacrifice (Rank 7)
 }
 
-local function UpdateValues()
+local function GetPlayerAbsorbValue()
     local total = 0
 
     for _, currentValue in pairs(currentAbsorb) do
         total = total + currentValue
     end
 
-    GW2_Absorb.callback:Fire("GW2_UPDATE_ABSORB_PLAYER", total)
+    return total
 end
+GW.GetPlayerAbsorbValue = GetPlayerAbsorbValue
 
 local function CalculateAbsorbValue(spellId, absorbInfo)
     local keys = absorbDbKeys
@@ -274,7 +275,7 @@ local function ApplyDamage(spellName, value)
     local newValue = (currentAbsorb[spellName] or 0) - value
     if maxAbsorb[spellName] then
         currentAbsorb[spellName] = max(0, newValue)
-        UpdateValues()
+        GW2_Absorb.callback:Fire("GW2_UPDATE_ABSORB_PLAYER")
     else
         currentAbsorb[spellName] = newValue
     end
@@ -288,7 +289,7 @@ local function RemoveAura(spellName)
             active = 0
             wipe(maxAbsorb)
         end
-        UpdateValues()
+        GW2_Absorb.callback:Fire("GW2_UPDATE_ABSORB_PLAYER")
     end
 end
 
@@ -317,7 +318,7 @@ local function ApplyAura(spellId, spellName)
             end
 
             maxAbsorb[spellName] = value
-            UpdateValues()
+            GW2_Absorb.callback:Fire("GW2_UPDATE_ABSORB_PLAYER")
         end
     end
 end
@@ -334,7 +335,7 @@ local function ResetValues()
         end
         ApplyAura(spell_id, spellName)
     end
-    UpdateValues()
+    GW2_Absorb.callback:Fire("GW2_UPDATE_ABSORB_PLAYER")
 end
 
 local function handleCombatLogEvent(self, _, ...)
