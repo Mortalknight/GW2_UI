@@ -1430,7 +1430,7 @@ local function LoadRaidFrames()
 
             GwSettingsRaidPanel.selectProfile.container:Hide()
 
-            GW.CombatQueue_Queue("raidframePosUpdate",
+            GW.CombatQueue_Queue(nil,
                 function(profileType)
                     if profileType == "RAID" then
                         GwRaidFrameContainer:ClearAllPoints()
