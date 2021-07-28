@@ -86,7 +86,6 @@ local function togglePartyFrames(b)
         if GetSetting("RAID_STYLE_PARTY") or GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
             for i = 1, 5 do
                 _G["GwCompactPartyFrame" .. i]:Show()
-                print(_G["GwCompactPartyFrame" .. i].unit)
                 RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(_G["GwCompactPartyFrame" .. i].unit))
             end
         end
