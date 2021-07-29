@@ -52,13 +52,13 @@ local function AddOmniCDSupport()
         })
         tinsert(E.unitFrameData, 1, {
             [1] = "GW2_UI-Party-Grid",
-            [2] = "GwPartyFrame",
+            [2] = "GwCompactPartyFrame",
             [3] = "unit",
             [4] = 1,
         })
         tinsert(E.unitFrameData, 1, {
             [1] = "GW2_UI-Raid",
-            [2] = "GwPartyFrame",
+            [2] = "GwCompactRaidFrame",
             [3] = "unit",
             [4] = 1,
         })
