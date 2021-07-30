@@ -213,10 +213,9 @@ local function LoadEncounterJournalSkin()
     GW.HandlePortraitFrame(EncounterJournal, true)
     EncounterJournalTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     EncounterJournal.navBar:StripTextures(true)
-    EncounterJournal.navBar:StripTextures(true)
     EncounterJournal.navBar.overlay:StripTextures(true)
 
-
+    EncounterJournalPortrait:Show()
     GW.SkinTextBox(EncounterJournal.searchBox.Middle, EncounterJournal.searchBox.Left, EncounterJournal.searchBox.Right)
     EncounterJournal.searchBox:ClearAllPoints()
     EncounterJournal.searchBox:SetPoint("TOPLEFT", EncounterJournal.navBar, "TOPRIGHT", 4, 0)
@@ -243,17 +242,11 @@ local function LoadEncounterJournalSkin()
         end
     end)
 
-    EncounterJournal.instanceSelect.suggestTab:ClearAllPoints()
-    EncounterJournal.instanceSelect.suggestTab:SetWidth(175)
-    EncounterJournal.instanceSelect.suggestTab:SetPoint("BOTTOMLEFT", EncounterJournal.instanceSelect, "TOPLEFT", 2, -43)
     EncounterJournal.instanceSelect.dungeonsTab:ClearAllPoints()
-    EncounterJournal.instanceSelect.dungeonsTab:SetWidth(125)
     EncounterJournal.instanceSelect.dungeonsTab:SetPoint("BOTTOMLEFT", EncounterJournal.instanceSelect.suggestTab, "BOTTOMRIGHT", 2, 0)
     EncounterJournal.instanceSelect.raidsTab:ClearAllPoints()
-    EncounterJournal.instanceSelect.raidsTab:SetWidth(125)
     EncounterJournal.instanceSelect.raidsTab:SetPoint("BOTTOMLEFT", EncounterJournal.instanceSelect.dungeonsTab, "BOTTOMRIGHT", 2, 0)
     EncounterJournal.instanceSelect.LootJournalTab:ClearAllPoints()
-    EncounterJournal.instanceSelect.LootJournalTab:SetWidth(125)
     EncounterJournal.instanceSelect.LootJournalTab:SetPoint("BOTTOMLEFT", EncounterJournal.instanceSelect.raidsTab, "BOTTOMRIGHT", 2, 0)
 
     for i = 1, #EncounterJournal.instanceSelect.Tabs do
