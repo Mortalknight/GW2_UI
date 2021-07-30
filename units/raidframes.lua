@@ -1060,12 +1060,12 @@ local grpPos, noGrp = {}, {}
 local function UpdateRaidFramesLayout()
     local g_type_old = GW.GROUPD_TYPE
     -- Get directions, rows, cols and sizing
-    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures()
+    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures(players)
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     local unitString = IsInRaid() and "Raid" or "Party"
     local sorted = (unitString == "Party" or GetSetting("RAID_SORT_BY_ROLE" .. (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or ""))) and sortByRole() or {}
-GW_sorted = sorted
+
     if not InCombatLockdown() then
         if GW.GROUPD_TYPE == "PARTY" or onLoad then
             if onLoad then GW.GROUPD_TYPE = "PARTY" end
