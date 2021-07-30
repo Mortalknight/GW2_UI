@@ -521,6 +521,7 @@ local function loadAddon(self)
     GW.LoadItemUpgradeSkin()
     GW.LoadTimeManagerSkin()
     GW.LoadMerchantFrameSkin()
+    GW.LoadEncounterJournalSkin()
 
     GW.LoadImmersionAddonSkin()
 

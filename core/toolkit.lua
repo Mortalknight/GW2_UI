@@ -156,7 +156,7 @@ GW.HandleBlizzardRegions = HandleBlizzardRegions
 
 local function AddHover(self)
     if not self.hover then
-        local hover = self:CreateTexture(nil, "ARTWORK")
+        local hover = self:CreateTexture(nil, "ARTWORK", nil, 7)
         hover:SetPoint("LEFT", self, "LEFT")
         hover:SetPoint("TOP", self, "TOP")
         hover:SetPoint("BOTTOM", self, "BOTTOM")
@@ -258,8 +258,10 @@ local function CreateBackdrop(frame, backdropTexture, isBorder, xOffset, yOffset
     end
 end
 
-local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover)
+local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover, strip)
     if not button then return end
+
+    if strip then button:StripTextures(nil, true) end
 
     local name = button.GetName and button:GetName()
     for _, area in pairs(BlizzardRegions) do
@@ -277,12 +279,19 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover)
             if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal") end
         else
             if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/button") end
-            if button.SetHighlightTexture then 
+            if button.SetHighlightTexture then
                 button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
                 button:GetHighlightTexture():SetVertexColor(0, 0, 0)
             end
             if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/button") end
             if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_disable") end
+
+            if strip then
+                if button.SetNormalTexture then button:GetNormalTexture():Show() end
+                if button.SetHighlightTexture then button:GetHighlightTexture():Show() end
+                if button.SetPushedTexture then button:GetPushedTexture():Show() end
+                if button.SetDisabledTexture then button:GetDisabledTexture():Show() end
+            end
             button:DisableDrawLayer("BACKGROUND")
         end
 

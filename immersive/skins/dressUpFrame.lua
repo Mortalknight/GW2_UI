@@ -34,7 +34,7 @@ local function LoadDressUpFrameSkin()
     DressUpFrame.ModelBackground:SetDrawLayer("BACKGROUND", 2)
 
     DressUpFrame.MaximizeMinimizeFrame.MaximizeButton:HookScript("OnClick", BG_Resize)
-    
+
     DressUpFrame.MaximizeMinimizeFrame.MinimizeButton:HookScript("OnClick", BG_Resize)
 
     DressUpFrame:HookScript("OnShow", function()
