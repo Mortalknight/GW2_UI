@@ -209,7 +209,7 @@ function GwStandardButton_OnEnter(self)
     end
 
     hover:SetAlpha(1)
-    self.animationValue = 0
+    self.animationValue = hover.skipHover and 1 or 0
 
     AddToAnimation(
         name,
