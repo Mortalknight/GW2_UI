@@ -165,16 +165,16 @@ local function AddHover(self)
         self.hover = hover
         self.hover:SetAlpha(0)
 
-        if self.OnEnter then
+        --if self.OnEnter then
             self:HookScript("OnEnter", GwStandardButton_OnEnter)
-        else
-            self:SetScript("OnEnter", GwStandardButton_OnEnter)
-        end
-        if self.OnLeave then
+        --else
+        --    self:SetScript("OnEnter", GwStandardButton_OnEnter)
+        --end
+        --if self.OnLeave then
             self:HookScript("OnLeave", GwStandardButton_OnLeave)
-        else
-            self:SetScript("OnLeave", GwStandardButton_OnLeave)
-        end
+        --else
+        --    self:SetScript("OnLeave", GwStandardButton_OnLeave)
+        --end
     end
 end
 
@@ -225,7 +225,7 @@ local function SkinSliderFrame(frame)
     end
 end
 
-local function CreateBackdrop(frame, backdropTexture, isBorder, xOffset, yOffset)
+local function CreateBackdrop(frame, backdropTexture, isBorder, xOffset, yOffset, xShift, yShift)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
     local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
     if not frame.backdrop then frame.backdrop = backdrop end
@@ -244,8 +244,10 @@ local function CreateBackdrop(frame, backdropTexture, isBorder, xOffset, yOffset
         local x = (GW.mult == 1 or (xOffset or 2) == 0) and (xOffset or 2) or ((GW.mult < 1 and trunc((xOffset or 2) / GW.mult) or round((xOffset or 2) / GW.mult)) * GW.mult)
         local y = (GW.mult == 1 or (yOffset or 2) == 0) and (yOffset or 2) or ((GW.mult < 1 and trunc((yOffset or 2) / GW.mult) or round((yOffset or 2) / GW.mult)) * GW.mult)
 
-        backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -x, y)
-        backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", x, -y)
+        xShift = xShift or 0
+        yShift = yShift or 0
+        backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -(x + xShift), (y - yShift))
+        backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", (x - xShift), -(y + yShift))
 
     else
         backdrop:SetAllPoints()
@@ -283,7 +285,7 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover, s
                 button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
                 button:GetHighlightTexture():SetVertexColor(0, 0, 0)
             end
-            if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/button") end
+            if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover") end
             if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_disable") end
 
             if strip then

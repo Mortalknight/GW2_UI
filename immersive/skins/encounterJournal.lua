@@ -210,6 +210,7 @@ local function LoadEncounterJournalSkin()
     if not EncounterJournal then
         EncounterJournal_LoadUI()
     end
+
     GW.HandlePortraitFrame(EncounterJournal, true)
     EncounterJournalTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     EncounterJournal.navBar:StripTextures(true)
@@ -256,7 +257,7 @@ local function LoadEncounterJournalSkin()
         text:SetPoint("CENTER")
     end
 
-    EncounterJournal.encounter.info:CreateBackdrop(GW.skins.constBackdropFrame)
+    EncounterJournal.encounter.info:CreateBackdrop(GW.skins.constBackdropFrame, true)
     EncounterJournal.encounter.info.encounterTitle:Kill()
 
     GW.HandleIcon(EncounterJournal.encounter.info.instanceButton.icon, true)
@@ -271,7 +272,7 @@ local function LoadEncounterJournalSkin()
     EncounterJournalEncounterFrameInfoModelFrameShadow:Kill()
 
     EncounterJournal.encounter.info.instanceButton:ClearAllPoints()
-    EncounterJournal.encounter.info.instanceButton:SetPoint("TOPLEFT", EncounterJournal.encounter.info, "TOPLEFT", 0, 15)
+    EncounterJournal.encounter.info.instanceButton:SetPoint("TOPLEFT", EncounterJournal.encounter.info, "TOPLEFT", 0, 0)
 
     EncounterJournal.encounter.info.instanceTitle:ClearAllPoints()
     EncounterJournal.encounter.info.instanceTitle:SetPoint("BOTTOM", EncounterJournal.encounter.info.bossesScroll, "TOP", 10, 15)
@@ -547,6 +548,28 @@ local function LoadEncounterJournalSkin()
     EncounterJournal_ListInstances()
 
     hooksecurefunc("EncounterJournal_DisplayInstance", SkinBosses)
+    hooksecurefunc("EncounterJournalBossButton_OnClick", function()
+        local bossIndex = 1
+        local _, _, bossID = EJ_GetEncounterInfoByIndex(bossIndex)
+        local bossButton
+
+        local encounter = EncounterJournal.encounter
+
+        while bossID do
+            bossButton = _G["EncounterJournalBossButton" .. bossIndex]
+            if (encounter.infoFrame.encounterID == bossID) then
+                bossButton.hover.skipHover = true
+                bossButton.hover:SetAlpha(1)
+                bossButton.hover:SetPoint("RIGHT", bossButton, "LEFT", bossButton:GetWidth(), 0)
+            else
+                bossButton.hover.skipHover = false
+                bossButton.hover:SetAlpha(1)
+                bossButton.hover:SetPoint("RIGHT", bossButton, "LEFT", 0, 0)
+            end
+            bossIndex = bossIndex + 1
+            _, _, bossID = EJ_GetEncounterInfoByIndex(bossIndex)
+        end
+    end)
     hooksecurefunc("EncounterJournal_SetUpOverview", SkinOverviewInfo)
     hooksecurefunc("EncounterJournal_SetBullets", SkinOverviewInfoBullets)
     hooksecurefunc("EncounterJournal_ToggleHeaders", SkinAbilitiesInfo)

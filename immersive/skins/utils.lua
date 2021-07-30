@@ -30,7 +30,7 @@ local constBackdropFrameSmallerBorder = {
 }
 GW.skins.constBackdropFrameSmallerBorder = constBackdropFrameSmallerBorder
 
-local constBackdropFrameColorBorder ={
+local constBackdropFrameColorBorder = {
     edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
     bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
     edgeSize = 1
@@ -229,13 +229,18 @@ local function HandlePortraitFrame(frame, createBackdrop)
         frame.CloseButton:SetSize(20, 20)
 	end
 
-	if createBackdrop then
-		local tex = frame:CreateTexture("bg", "BACKGROUND")
-        tex:SetPoint("TOP", frame, "TOP", 0, 25)
-        tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-        local w, h = frame:GetSize()
-        tex:SetSize(w + 50, h + 50)
-        frame.tex = tex
+	if createBackdrop and not frame.backdrop then
+		--local tex = frame:CreateTexture("bg", "BACKGROUND", -7)
+        --tex:SetPoint("TOP", frame, "TOP", 0, 25)
+        --tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+        --local w, h = frame:GetSize()
+        --tex:SetSize(w + 50, h + 50)
+        --frame.tex = tex
+        frame:CreateBackdrop({
+            edgeFile = "",
+            bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
+            edgeSize = 1
+        }, true, 50, 50, nil, 25)
 	end
 
 end

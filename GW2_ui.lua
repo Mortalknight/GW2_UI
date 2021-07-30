@@ -230,6 +230,7 @@ function GwStandardButton_OnLeave(self)
     if not hover then
         return
     end
+    if self.hover.skipHover then return end
 
     hover:SetAlpha(1)
     self.animationValue = 1
@@ -522,6 +523,7 @@ local function loadAddon(self)
     GW.LoadTimeManagerSkin()
     GW.LoadMerchantFrameSkin()
     GW.LoadEncounterJournalSkin()
+    GW.LoadCovenantSanctumSkin()
 
     GW.LoadImmersionAddonSkin()
 

@@ -1,0 +1,102 @@
+local _, GW = ...
+
+local function HandleIconString(self, text)
+    if not text then text = self:GetText() end
+    if not text or text == "" then return end
+
+    local new, count = gsub(text, "|T([^:]-):[%d+:]+|t", "|T%1:14:14:0:0:64:64:5:59:5:59|t")
+    if count > 0 then self:SetFormattedText("%s", new) end
+end
+
+local function ReskinTalents(self)
+    for frame in self.talentPool:EnumerateActive() do
+        if not frame.IsSkinned then
+            frame.Border:SetAlpha(0)
+            frame.IconBorder:SetAlpha(0)
+            frame.TierBorder:SetAlpha(0)
+            frame.Background:SetAlpha(0)
+
+            if not frame.SetBackdrop then
+                _G.Mixin(frame, _G.BackdropTemplateMixin)
+                frame:HookScript("OnSizeChanged", frame.OnBackdropSizeChanged)
+            end
+            frame:SetBackdrop(GW.constBackdropFrameColorBorder)
+            frame:SetBackdropBorderColor(1, 0.99, 0.85)
+
+            GW.HandleIcon(frame.Icon, true)
+            frame.Icon:SetPoint("TOPLEFT", 7, -7)
+            frame.Highlight:SetColorTexture(1, 1, 1, 0.25)
+
+            HandleIconString(frame.InfoText)
+            hooksecurefunc(frame.InfoText, "SetText", HandleIconString)
+
+            frame.IsSkinned = true
+        end
+    end
+end
+
+local function ReplaceCurrencies(displayGroup)
+    for frame in displayGroup.currencyFramePool:EnumerateActive() do
+        if not frame.IsSkinned then
+            HandleIconString(frame.Text)
+            hooksecurefunc(frame.Text, "SetText", HandleIconString)
+
+            frame.IsSkinned = true
+        end
+    end
+end
+
+local function LoadCovenantSanctumSkin()
+    if not GW.GetSetting("CONCENANT_SANCTUM_SKIN_ENABLED") then return end
+    CovenantSanctum_LoadUI()
+
+    CovenantSanctumFrame.LevelFrame.Level:SetFont(UNIT_NAME_FONT, 20)
+
+    CovenantSanctumFrame.LevelFrame.Background:SetAlpha(0)
+
+    local UpgradesTab = CovenantSanctumFrame.UpgradesTab
+    UpgradesTab.Background:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    UpgradesTab.DepositButton:SkinButton(false, true)
+    UpgradesTab.DepositButton:SetFrameLevel(10)
+    UpgradesTab.CurrencyBackground:SetAlpha(0)
+    ReplaceCurrencies(UpgradesTab.CurrencyDisplayGroup)
+
+    for _, upgrade in ipairs(UpgradesTab.Upgrades) do
+        if upgrade.TierBorder then
+            upgrade.TierBorder:SetAlpha(0)
+        end
+    end
+
+    local TalentList = CovenantSanctumFrame.UpgradesTab.TalentsList
+    TalentList:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    TalentList.UpgradeButton:SkinButton(false, true)
+    TalentList.UpgradeButton:SetFrameLevel(10)
+    TalentList.IntroBox.Background:Hide()
+    hooksecurefunc(TalentList, "Refresh", ReskinTalents)
+
+    TalentList.Divider:SetAlpha(0)
+    TalentList.BackgroundTile:SetAlpha(0)
+
+    CovenantSanctumFrame:HookScript("OnShow", function()
+        if not CovenantSanctumFrame.IsSkinned then
+            --CovenantSanctumFrame:CreateBackdrop(GW.skins.constBackdropFrame, true)
+
+            local tex = CovenantSanctumFrame:CreateTexture("bg", "BACKGROUND")
+        tex:SetPoint("TOP", CovenantSanctumFrame, "TOP", 0, 25)
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+        local w, h = CovenantSanctumFrame:GetSize()
+        tex:SetSize(w + 50, h + 50)
+        CovenantSanctumFrame.tex = tex
+            CovenantSanctumFrame.NineSlice:SetAlpha(0)
+
+            CovenantSanctumFrame.CloseButton.Border:SetAlpha(0)
+            CovenantSanctumFrame.CloseButton:SkinButton(true)
+            CovenantSanctumFrame.CloseButton:SetSize(20, 20)
+            CovenantSanctumFrame.CloseButton:ClearAllPoints()
+            CovenantSanctumFrame.CloseButton:SetPoint("TOPRIGHT", CovenantSanctumFrame, "TOPRIGHT", 2, 2)
+
+            CovenantSanctumFrame.IsSkinned = true
+        end
+    end)
+end
+GW.LoadCovenantSanctumSkin = LoadCovenantSanctumSkin
