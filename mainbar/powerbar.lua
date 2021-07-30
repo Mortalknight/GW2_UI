@@ -74,7 +74,7 @@ GW.AddForProfiling("playerhud", "powerBar_OnUpdate", powerBar_OnUpdate)
 
 local function UpdatePowerData(self, forcePowerType, powerToken)
     if forcePowerType == nil then
-        forcePowerType, powerToken, _ = UnitPowerType("player")
+        forcePowerType, powerToken = UnitPowerType("player")
     end
 
     self.animating = true
@@ -198,12 +198,15 @@ local function LoadPowerBar()
 
     playerPowerBar:SetScript(
         "OnEvent",
-        function(_, event, unit)
+        function(self, event, unit)
             if (event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER") and unit == "player" then
                 UpdatePowerData(playerPowerBar)
             elseif event == "UPDATE_SHAPESHIFT_FORM" or event == "ACTIVE_TALENT_GROUP_CHANGED" then
                 playerPowerBar.lastPowerType = nil
                 UpdatePowerData(playerPowerBar)
+            elseif event == "PLAYER_ENTERING_WORLD" then
+                C_Timer.After(0.5, function() UpdatePowerData(playerPowerBar) end)
+                self:UnregisterEvent(event)
             end
         end
     )
@@ -213,6 +216,7 @@ local function LoadPowerBar()
     playerPowerBar:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
     playerPowerBar:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     playerPowerBar:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    playerPowerBar:RegisterEvent("PLAYER_ENTERING_WORLD")
     playerPowerBar:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
     UpdatePowerData(playerPowerBar)

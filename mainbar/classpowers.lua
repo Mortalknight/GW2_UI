@@ -211,7 +211,7 @@ local function setManaBar(f)
     f:Hide()
 
     f:SetScript("OnEvent", powerMana)
-    powerMana(f, "CLASS_POWER_INIT")
+    C_Timer.After(0.5, function() powerMana(f, "CLASS_POWER_INIT") end)
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 end
