@@ -1,9 +1,7 @@
 local _, GW = ...
 
-local function LoadFlightMapSkin()
+local function ApplyFlightMapSkin()
     if not GW.GetSetting("FLIGHTMAP_SKIN_ENABLED") then return end
-
-    FlightMap_LoadUI()
 
     local FlightMapFrame = _G.FlightMapFrame
 
@@ -38,5 +36,9 @@ local function LoadFlightMapSkin()
     TaxiFrame.CloseButton:ClearAllPoints()
     TaxiFrame.CloseButton:SetPoint("TOPRIGHT", TaxiFrame, "TOPRIGHT", 20, 4)
     TaxiFrame.CloseButton:SetParent(TaxiFrame)
+end
+
+local function LoadFlightMapSkin()
+    GW.RegisterSkin("Blizzard_FlightMap", function() ApplyFlightMapSkin() end)
 end
 GW.LoadFlightMapSkin = LoadFlightMapSkin

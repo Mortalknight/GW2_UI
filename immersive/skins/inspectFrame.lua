@@ -22,6 +22,8 @@ local InscpectSlots = {
 }
 
 local function SkinInspectFrameOnLoad()
+    if not GW.GetSetting("INSPECTION_SKIN_ENABLED") then return end
+
     local w, h = InspectFrame:GetSize()
     InspectFrame:StripTextures()
     InspectFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
@@ -136,8 +138,6 @@ local function SkinInspectFrameOnLoad()
 end
 
 local function LoadInspectFrameSkin()
-    if not GW.GetSetting("INSPECTION_SKIN_ENABLED") then return end
-
-    hooksecurefunc("InspectFrame_LoadUI", SkinInspectFrameOnLoad)
+    GW.RegisterSkin("Blizzard_InspectUI", function() SkinInspectFrameOnLoad() end)
 end
 GW.LoadInspectFrameSkin = LoadInspectFrameSkin

@@ -1,10 +1,8 @@
 local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 
-local function LoadBindingsUISkin()
+local function ApplyBindingsUISkin()
     if not GW.GetSetting("BINDINGS_SKIN_ENABLED") then return end
-
-    KeyBindingFrame_LoadUI()
 
     local buttons = {
         "defaultsButton",
@@ -107,5 +105,9 @@ local function LoadBindingsUISkin()
         end
     )
 
+end
+
+local function LoadBindingsUISkin()
+    GW.RegisterSkin("Blizzard_BindingUI", function() ApplyBindingsUISkin() end)
 end
 GW.LoadBindingsUISkin = LoadBindingsUISkin

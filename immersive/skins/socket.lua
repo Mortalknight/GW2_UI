@@ -1,9 +1,8 @@
 local _, GW = ...
 
-local function LoadSocketUISkin()
+local function ApplyocketUISkin()
     if not GW.GetSetting("SOCKET_SKIN_ENABLED") then return end
 
-    ItemSocketingFrame_LoadUI()
     local ItemSocketingFrame = _G.ItemSocketingFrame
 
     ItemSocketingFrame:StripTextures()
@@ -56,5 +55,9 @@ local function LoadSocketUISkin()
 
         self:StopMovingOrSizing()
     end)
+end
+
+local function LoadSocketUISkin()
+    GW.RegisterSkin("Blizzard_ItemSocketingUI", function() ApplyocketUISkin() end)
 end
 GW.LoadSocketUISkin = LoadSocketUISkin

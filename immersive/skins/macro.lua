@@ -2,10 +2,8 @@ local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 local constBackdropFrame = GW.skins.constBackdropFrame
 
-local function LoadMacroOptionsSkin()
+local function ApplyMacroOptionsSkin()
     if not GW.GetSetting("MACRO_SKIN_ENABLED") then return end
-
-    MacroFrame_LoadUI()
 
     local MacroFrame = _G.MacroFrame
 
@@ -160,5 +158,9 @@ local function LoadMacroOptionsSkin()
         self:ClearAllPoints()
         self:SetPoint("TOPLEFT", MacroFrame, "TOPRIGHT", 10, 0)
     end)
+end
+
+local function LoadMacroOptionsSkin()
+    GW.RegisterSkin("Blizzard_MacroUI", function() ApplyMacroOptionsSkin() end)
 end
 GW.LoadMacroOptionsSkin = LoadMacroOptionsSkin

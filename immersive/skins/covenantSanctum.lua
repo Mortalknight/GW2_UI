@@ -46,58 +46,60 @@ local function ReplaceCurrencies(displayGroup)
     end
 end
 
-local function LoadCovenantSanctumSkin()
+local function ApplyCovenantSanctumSkin()
     if not GW.GetSetting("CONCENANT_SANCTUM_SKIN_ENABLED") then return end
 
-    hooksecurefunc("CovenantSanctum_LoadUI", function()
-        CovenantSanctumFrame.LevelFrame.Level:SetFont(UNIT_NAME_FONT, 20)
+    CovenantSanctumFrame.LevelFrame.Level:SetFont(UNIT_NAME_FONT, 20)
 
-        CovenantSanctumFrame.LevelFrame.Background:SetAlpha(0)
+    CovenantSanctumFrame.LevelFrame.Background:SetAlpha(0)
 
-        local UpgradesTab = CovenantSanctumFrame.UpgradesTab
-        UpgradesTab.Background:CreateBackdrop(GW.skins.constBackdropFrame, true)
-        UpgradesTab.DepositButton:SkinButton(false, true)
-        UpgradesTab.DepositButton:SetFrameLevel(10)
-        UpgradesTab.CurrencyBackground:SetAlpha(0)
-        ReplaceCurrencies(UpgradesTab.CurrencyDisplayGroup)
+    local UpgradesTab = CovenantSanctumFrame.UpgradesTab
+    UpgradesTab.Background:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    UpgradesTab.DepositButton:SkinButton(false, true)
+    UpgradesTab.DepositButton:SetFrameLevel(10)
+    UpgradesTab.CurrencyBackground:SetAlpha(0)
+    ReplaceCurrencies(UpgradesTab.CurrencyDisplayGroup)
 
-        for _, upgrade in ipairs(UpgradesTab.Upgrades) do
-            if upgrade.TierBorder then
-                upgrade.TierBorder:SetAlpha(0)
-            end
+    for _, upgrade in ipairs(UpgradesTab.Upgrades) do
+        if upgrade.TierBorder then
+            upgrade.TierBorder:SetAlpha(0)
         end
+    end
 
-        local TalentList = CovenantSanctumFrame.UpgradesTab.TalentsList
-        TalentList:CreateBackdrop(GW.skins.constBackdropFrame, true)
-        TalentList.UpgradeButton:SkinButton(false, true)
-        TalentList.UpgradeButton:SetFrameLevel(10)
-        TalentList.IntroBox.Background:Hide()
-        hooksecurefunc(TalentList, "Refresh", ReskinTalents)
+    local TalentList = CovenantSanctumFrame.UpgradesTab.TalentsList
+    TalentList:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    TalentList.UpgradeButton:SkinButton(false, true)
+    TalentList.UpgradeButton:SetFrameLevel(10)
+    TalentList.IntroBox.Background:Hide()
+    hooksecurefunc(TalentList, "Refresh", ReskinTalents)
 
-        TalentList.Divider:SetAlpha(0)
-        TalentList.BackgroundTile:SetAlpha(0)
+    TalentList.Divider:SetAlpha(0)
+    TalentList.BackgroundTile:SetAlpha(0)
 
-        CovenantSanctumFrame:HookScript("OnShow", function()
-            if not CovenantSanctumFrame.IsSkinned then
-                --CovenantSanctumFrame:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    CovenantSanctumFrame:HookScript("OnShow", function()
+        if not CovenantSanctumFrame.IsSkinned then
+            --CovenantSanctumFrame:CreateBackdrop(GW.skins.constBackdropFrame, true)
 
-                local tex = CovenantSanctumFrame:CreateTexture("bg", "BACKGROUND")
-                tex:SetPoint("TOP", CovenantSanctumFrame, "TOP", 0, 25)
-                tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-                local w, h = CovenantSanctumFrame:GetSize()
-                tex:SetSize(w + 50, h + 50)
-                CovenantSanctumFrame.tex = tex
-                CovenantSanctumFrame.NineSlice:SetAlpha(0)
+            local tex = CovenantSanctumFrame:CreateTexture("bg", "BACKGROUND")
+            tex:SetPoint("TOP", CovenantSanctumFrame, "TOP", 0, 25)
+            tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+            local w, h = CovenantSanctumFrame:GetSize()
+            tex:SetSize(w + 50, h + 50)
+            CovenantSanctumFrame.tex = tex
+            CovenantSanctumFrame.NineSlice:SetAlpha(0)
 
-                CovenantSanctumFrame.CloseButton.Border:SetAlpha(0)
-                CovenantSanctumFrame.CloseButton:SkinButton(true)
-                CovenantSanctumFrame.CloseButton:SetSize(20, 20)
-                CovenantSanctumFrame.CloseButton:ClearAllPoints()
-                CovenantSanctumFrame.CloseButton:SetPoint("TOPRIGHT", CovenantSanctumFrame, "TOPRIGHT", 2, 2)
+            CovenantSanctumFrame.CloseButton.Border:SetAlpha(0)
+            CovenantSanctumFrame.CloseButton:SkinButton(true)
+            CovenantSanctumFrame.CloseButton:SetSize(20, 20)
+            CovenantSanctumFrame.CloseButton:ClearAllPoints()
+            CovenantSanctumFrame.CloseButton:SetPoint("TOPRIGHT", CovenantSanctumFrame, "TOPRIGHT", 2, 2)
 
-                CovenantSanctumFrame.IsSkinned = true
-            end
-        end)
+            CovenantSanctumFrame.IsSkinned = true
+        end
     end)
+end
+
+local function LoadCovenantSanctumSkin()
+    GW.RegisterSkin("Blizzard_CovenantSanctum", function() ApplyCovenantSanctumSkin() end)
 end
 GW.LoadCovenantSanctumSkin = LoadCovenantSanctumSkin

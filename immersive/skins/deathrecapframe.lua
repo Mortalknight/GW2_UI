@@ -2,6 +2,8 @@ local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
 
 local function SkinDeathRecapFrame_Loaded()
+    if not GW.GetSetting("DEATHRECAPFRAME_SKIN_ENABLED") then return end
+
     local DeathRecapFrame = _G.DeathRecapFrame
 
     DeathRecapFrame.CloseButton:SkinButton(false, true)
@@ -65,8 +67,6 @@ local function SkinDeathRecapFrame_Loaded()
 end
 
 local function LoadDeathRecapSkin()
-    if not GW.GetSetting("DEATHRECAPFRAME_SKIN_ENABLED") then return end
-
-    hooksecurefunc("OpenDeathRecapUI", SkinDeathRecapFrame_Loaded)
+    GW.RegisterSkin("Blizzard_DeathRecap", function() SkinDeathRecapFrame_Loaded() end)
 end
 GW.LoadDeathRecapSkin = LoadDeathRecapSkin

@@ -1,9 +1,7 @@
 local _, GW = ...
 
-local function LoadItemUpgradeSkin()
+local function ApplyItemUpgradeSkin()
     if not GW.GetSetting("ITEMUPGRADE_SKIN_ENABLED") then return end
-
-    ItemUpgrade_LoadUI()
 
     local ItemUpgradeFrame = _G.ItemUpgradeFrame
     _G.ItemUpgradeFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
@@ -28,5 +26,9 @@ local function LoadItemUpgradeSkin()
     _G.ItemUpgradeFrameUpgradeButton:SkinButton(false, true)
     ItemUpgradeFrame.FinishedGlow:Kill()
     ItemUpgradeFrame.ButtonFrame:DisableDrawLayer("BORDER")
+end
+
+local function LoadItemUpgradeSkin()
+    GW.RegisterSkin("Blizzard_ItemUpgradeUI", function() ApplyItemUpgradeSkin() end)
 end
 GW.LoadItemUpgradeSkin = LoadItemUpgradeSkin

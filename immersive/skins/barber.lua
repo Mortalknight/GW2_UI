@@ -2,6 +2,7 @@ local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
 
 local function SkinBarShop()
+    if not GW.GetSetting("BARBERSHOP_SKIN_ENABLED") then return end
     _G.BarberShopFrame.ResetButton:SkinButton(false, true)
     _G.BarberShopFrame.CancelButton:SkinButton(false, true)
     _G.BarberShopFrame.AcceptButton:SkinButton(false, true)
@@ -46,8 +47,6 @@ local function SkinBarShop()
 end
 
 local function LoadBarShopUISkin()
-    if not GW.GetSetting("BARBERSHOP_SKIN_ENABLED") then return end
-
-    hooksecurefunc("BarberShopFrame_LoadUI", SkinBarShop)
+    GW.RegisterSkin("Blizzard_CharacterCustomize", function() SkinBarShop() end)
 end
 GW.LoadBarShopUISkin = LoadBarShopUISkin

@@ -442,6 +442,7 @@ local function loadAddon(self)
     GW.CombatQueue_Initialize()
 
     --Create Settings window
+    GW.SkinLoading ()
     GW.LoadMovers()
     GW.LoadSettings()
 
@@ -524,6 +525,7 @@ local function loadAddon(self)
     GW.LoadMerchantFrameSkin()
     GW.LoadEncounterJournalSkin()
     GW.LoadCovenantSanctumSkin()
+    GW.LoadSoulbindsSkin()
 
     GW.LoadImmersionAddonSkin()
 

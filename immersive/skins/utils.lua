@@ -37,6 +37,37 @@ local constBackdropFrameColorBorder = {
 }
 GW.constBackdropFrameColorBorder = constBackdropFrameColorBorder
 
+local function errorhandler(err)
+    return _G.geterrorhandler()(err)
+end
+
+local addonsToLoad = {}
+local function SkinLoading()
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("ADDON_LOADED")
+    f:SetScript("OnEvent", function(_, _, AddonName)
+        local object = addonsToLoad[AddonName]
+        if object then
+            for _, func in next, object do
+                xpcall(func, errorhandler)
+            end
+            addonsToLoad[AddonName] = nil
+        end
+    end)
+
+end
+GW.SkinLoading = SkinLoading
+
+local function RegisterSkin(AddonName, func)
+    local addon = addonsToLoad[AddonName]
+    if not addon then
+        addonsToLoad[AddonName] = {}
+        addon = addonsToLoad[AddonName]
+    end
+    tinsert(addon, func)
+end
+GW.RegisterSkin = RegisterSkin
+
 local function SkinUIDropDownMenu()
     hooksecurefunc("UIDropDownMenu_CreateFrames", function(level, index)
         local listFrame = _G["DropDownList" .. level]
