@@ -30,6 +30,13 @@ local constBackdropFrameSmallerBorder = {
 }
 GW.skins.constBackdropFrameSmallerBorder = constBackdropFrameSmallerBorder
 
+local constBackdropFrameColorBorder ={
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+    edgeSize = 1
+}
+GW.constBackdropFrameColorBorder = constBackdropFrameColorBorder
+
 local function SkinUIDropDownMenu()
     hooksecurefunc("UIDropDownMenu_CreateFrames", function(level, index)
         local listFrame = _G["DropDownList" .. level]
@@ -238,7 +245,7 @@ local function HandleIcon(icon, backdrop)
 	icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
 	if backdrop and not icon.backdrop then
-		icon:CreateBackdrop(nil)
+		icon:CreateBackdrop()
 	end
 end
 GW.HandleIcon = HandleIcon

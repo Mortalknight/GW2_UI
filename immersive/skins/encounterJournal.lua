@@ -478,7 +478,8 @@ local function LoadEncounterJournalSkin()
         local rewardData = sugg.reward.data
         if rewardData then
             if not sugg.reward.icon.backdrop then
-                sugg.reward.icon:CreateBackdrop()
+                sugg.reward.icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+                sugg.reward.icon.backdrop:SetFrameLevel(3)
             end
 
             sugg.reward.icon:SetMask("")
@@ -492,13 +493,7 @@ local function LoadEncounterJournalSkin()
                     r, g, b = GetItemQualityColor(quality)
                 end
             end
-            if not sugg.reward.icon.iconBorder then
-                sugg.reward.icon.iconBorder = sugg.reward:CreateTexture(nil, "ARTWORK")
-                sugg.reward.icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-                sugg.reward.icon.iconBorder:SetPoint("TOPLEFT", sugg.reward.icon, "TOPLEFT", -1, 1)
-                sugg.reward.icon.iconBorder:SetPoint("BOTTOMRIGHT", sugg.reward.icon, "BOTTOMRIGHT", 1, -1)
-            end
-            sugg.reward.icon.iconBorder:SetVertexColor(r, g, b)
+            sugg.reward.icon.backdrop:SetBackdropBorderColor(r, g, b)
         end
     end)
 
@@ -536,11 +531,8 @@ local function LoadEncounterJournalSkin()
                 btn.BackgroundOverlay:SetAlpha(0)
                 btn.CircleMask:Hide()
                 GW.HandleIcon(btn.Icon)
-
-                btn.Icon.iconBorder = btn:CreateTexture(nil, "ARTWORK")
-                btn.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-                btn.Icon.iconBorder:SetAllPoints(btn.Icon)
-                btn.Icon.iconBorder:SetVertexColor(r, g, b)
+                btn.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+                btn.Icon.backdrop:SetBackdropBorderColor(r, g, b)
 
                 btn:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
                 btn.backdrop:SetPoint("TOPLEFT", 3, 0)
