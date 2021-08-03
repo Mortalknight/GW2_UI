@@ -1,6 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.17.3", [=[
+FIXES
+    - Raid frame sort by role
+
+    MISC
+    - Added Encounter Journal, Soulbinds and Convenant Sanctum Skin
+]=])
+
 v("5.17.2", [=[
 FIXES
     - Missing raid buff pet battle overlapping

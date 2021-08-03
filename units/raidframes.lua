@@ -1042,13 +1042,13 @@ local function sortByRole()
     local unitString = IsInRaid() and "Raid" or "Party"
 
     for _, v in pairs(roleIndex) do
-        if unitString == "party" and UnitGroupRolesAssigned("player") == v then
+        if unitString == "Party" and UnitGroupRolesAssigned("player") == v then
             tinsert(sorted, "PartyFrame1")
         end
 
         for i = 1, MAX_RAID_MEMBERS do
             if UnitExists(unitString .. i) and UnitGroupRolesAssigned(unitString .. i) == v then
-                tinsert(sorted, unitString .. "Frame" .. (unitString == "party" and i + 1 or i))
+                tinsert(sorted, unitString .. "Frame" .. (unitString == "Party" and i + 1 or i))
             end
         end
     end
