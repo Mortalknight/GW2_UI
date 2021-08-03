@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.15.2 TBC", [=[
+FIXES
+    - Ready Check-Button is now working
+]=])
+
 v("1.15.1 TBC", [=[
 FIXES
     - Healthglobe fixes

@@ -1,6 +1,10 @@
+1.15.2
+FIXES
+    - Ready Check-Button is now working
+
 1.15.1
 FIXES
- - Healthglobe fixes
+    - Healthglobe fixes
 
 1.15.0
 NEW

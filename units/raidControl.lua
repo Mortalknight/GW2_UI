@@ -110,6 +110,18 @@ local function manageButton()
         LeaveParty()
     end)
 
+    local fnGGRC_OnClick = function()
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+        DoReadyCheck()
+    end
+    GwGroupManage.inGroup.readyCheck:SetScript("OnClick", fnGGRC_OnClick)
+    GwGroupManage.inGroup.readyCheck.hover:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck-button-hover")
+    GwGroupManage.inGroup.readyCheck:GetFontString():SetTextColor(218 / 255, 214 / 255, 200 / 255)
+    GwGroupManage.inGroup.readyCheck:GetFontString():SetShadowColor(0, 0, 0, 1)
+    GwGroupManage.inGroup.readyCheck:GetFontString():SetShadowOffset(1, -1)
+    GwGroupManage.inGroup.readyCheck:SetEnabled(UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
+
+
     local fnGGMC_OnClick = function()
         if IsInRaid() then
             ConvertToParty()
