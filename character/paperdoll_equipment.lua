@@ -849,6 +849,19 @@ local function LoadPDBagList(fmMenu)
     local fmPD3M = GwDressingRoom.model
     local fmGPDS = GwDressingRoom.stats
 
+    -- to prevent ALT click lua error
+    fmGDR.flyoutSettings = {
+		onClickFunc = PaperDollFrameItemFlyoutButton_OnClick,
+		getItemsFunc = PaperDollFrameItemFlyout_GetItems,
+		postGetItemsFunc = PaperDollFrameItemFlyout_PostGetItems,
+		hasPopouts = true,
+		parent = PaperDollFrame,
+		anchorX = 0,
+		anchorY = -3,
+		verticalAnchorX = 0,
+		verticalAnchorY = 0,
+	};
+
     grabDefaultSlots(CharacterHeadSlot, {"TOPLEFT", fmGDR.gear, "TOPLEFT", 0, 0}, fmGDR, 50)
     grabDefaultSlots(CharacterShoulderSlot, {"TOPLEFT", CharacterHeadSlot, "BOTTOMLEFT", 0, -5}, fmGDR, 50)
     grabDefaultSlots(CharacterChestSlot, {"TOPLEFT", CharacterShoulderSlot, "BOTTOMLEFT", 0, -5}, fmGDR, 50)
@@ -879,7 +892,7 @@ local function LoadPDBagList(fmMenu)
         else
             button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
             updateItemSlot(button)
-        end  
+        end
     end)
 
     EquipmentFlyoutFrame:Kill()
