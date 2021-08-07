@@ -1391,12 +1391,10 @@ local function LoadRaidFrames()
     GwRaidFrameContainer:RegisterEvent("GROUP_ROSTER_UPDATE")
     GwRaidFrameContainer:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    GwRaidFrameContainer:SetScript("OnEvent", function(self)
+    GwRaidFrameContainer:SetScript("OnEvent", function(self, event)
         if InCombatLockdown() then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
             --return
-        else
-            self:UnregisterEvent("PLAYER_REGEN_ENABLED")
         end
         local profileBefore = GW.GROUPD_TYPE
 
@@ -1420,7 +1418,7 @@ local function LoadRaidFrames()
         end
 
         -- update positions and setting
-        if profileBefore ~= GW.GROUPD_TYPE then
+        if (profileBefore ~= GW.GROUPD_TYPE or event == "PLAYER_REGEN_ENABLED") and not InCombatLockdown() then
             GwSettingsRaidPanel.selectProfile.string:SetText(getglobal(GW.GROUPD_TYPE))
             if GW.GROUPD_TYPE == "RAID" then
                 GwSettingsRaidPanel.selectProfile.raid:GetScript("OnClick")(GwSettingsRaidPanel.selectProfile.raid, _, true)
@@ -1430,19 +1428,16 @@ local function LoadRaidFrames()
 
             GwSettingsRaidPanel.selectProfile.container:Hide()
 
-            GW.CombatQueue_Queue(nil,
-                function(profileType)
-                    if profileType == "RAID" then
-                        GwRaidFrameContainer:ClearAllPoints()
-                        GwRaidFrameContainer:SetPoint("TOPLEFT", GwRaidFrameContainer.gwMover)
-                    elseif profileType == "PARTY" then
-                        GwRaidFrameContainer:ClearAllPoints()
-                        GwRaidFrameContainer:SetPoint("TOPLEFT", GwRaidFramePartyContainer.gwMover)
-                    end
-                end,
-                {GW.GROUPD_TYPE}
-            )
+            if GW.GROUPD_TYPE == "RAID" then
+                GwRaidFrameContainer:ClearAllPoints()
+                GwRaidFrameContainer:SetPoint("TOPLEFT", GwRaidFrameContainer.gwMover)
+            elseif GW.GROUPD_TYPE == "PARTY" then
+                GwRaidFrameContainer:ClearAllPoints()
+                GwRaidFrameContainer:SetPoint("TOPLEFT", GwRaidFramePartyContainer.gwMover)
+            end
         end
+
+        if event == "PLAYER_REGEN_ENABLED" then self:UnregisterEvent("PLAYER_REGEN_ENABLED") end
     end)
 
     onLoad = false

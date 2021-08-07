@@ -66,15 +66,12 @@ GW.AddForProfiling("auras", "getBuffs", getBuffs)
 
 local function getDebuffs(unit, filter, revert)
     local debuffList = {}
-    local showImportant = false
+    local showImportant = filter == "IMPORTANT"
     local counter = 0
-    if filter == "IMPORTANT" then
-        filter = nil
-        showImportant = true
-    end
+    local filterToUse = filter == "IMPORTANT" and nil or filter
 
     for i = 1, 40 do
-        if UnitDebuff(unit, i, filter) and ((showImportant and (select(7, UnitDebuff(unit, i, filter)) == "player" or GW.ImportendRaidDebuff[select(10, UnitDebuff(unit, i, filter))])) or not showImportant) then
+        if UnitDebuff(unit, i, filterToUse) and ((showImportant and (select(7, UnitDebuff(unit, i, filterToUse)) == "player" or GW.ImportendRaidDebuff[select(10, UnitDebuff(unit, i, filterToUse))])) or not showImportant) then
             counter = #debuffList + 1
             debuffList[counter] = {}
             local dbi = debuffList[counter]
