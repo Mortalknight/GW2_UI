@@ -179,15 +179,17 @@ local function LoadRaidList(tabContainer)
 
     RaidFrameConvertToRaidButton:SkinButton(false, true)
     RaidFrameRaidInfoButton:SkinButton(false, true)
-    RaidFrameRaidInfoButton:SetScript("OnClick", function()
-        if InCombatLockdown() then return end
-        if GWCharacterCurrenyRaidInfoFrame.RaidScroll:IsVisible() then
-            GwCharacterWindow:SetAttribute("windowpanelopen", "nil")
-            return
-        end
-        GwCharacterWindow:SetAttribute("windowpanelopen", "currency")
-        GWCurrencyMenu.items.raidinfo:Click()
-    end)
+    if GW.GetSetting("USE_CHARACTER_WINDOW") then
+        RaidFrameRaidInfoButton:SetScript("OnClick", function()
+            if InCombatLockdown() then return end
+            if GWCharacterCurrenyRaidInfoFrame.RaidScroll:IsVisible() then
+                GwCharacterWindow:SetAttribute("windowpanelopen", "nil")
+                return
+            end
+            GwCharacterWindow:SetAttribute("windowpanelopen", "currency")
+            GWCurrencyMenu.items.raidinfo:Click()
+        end)
+    end
 
     ClaimRaidFrame = GW.NoOp
 
