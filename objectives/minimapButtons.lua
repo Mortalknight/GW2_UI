@@ -80,7 +80,7 @@ local function SkinMinimapButton(button)
 	end
 
 	for i = 1, #partialIgnore do
-		if strfind(name, partialIgnore[i]) ~= nil then return end
+		if strfind(name, "LibDBIcon") == nil and strfind(name, partialIgnore[i]) ~= nil then return end
 	end
 
     for i = 1, button:GetNumRegions() do
