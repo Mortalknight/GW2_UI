@@ -2,6 +2,10 @@
 FIXES
     - Ready Check-Button is now working
 
+MISC
+    - Added Nether Portal - Perseverence to important debuffs
+    - Disable player absorb
+
 1.15.1
 FIXES
     - Healthglobe fixes

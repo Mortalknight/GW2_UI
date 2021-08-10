@@ -4,6 +4,10 @@ local v = GW.vernotes
 v("1.15.2 TBC", [=[
 FIXES
     - Ready Check-Button is now working
+
+    MISC
+    - Added Nether Portal - Perseverence to important debuffs
+    - Disable player absorb
 ]=])
 
 v("1.15.1 TBC", [=[

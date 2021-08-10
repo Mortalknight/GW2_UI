@@ -48,6 +48,7 @@ end
     SetDefaultOnTheFly(30421) -- Nether Portal - Perseverence
     SetDefaultOnTheFly(30422) -- Nether Portal - Serenity
     SetDefaultOnTheFly(30423) -- Nether Portal - Dominance
+    SetDefaultOnTheFly(30466) -- Nether Portal - Perseverence
     -- Chess Event
     SetDefaultOnTheFly(30529) -- Recently In Game
     -- Prince Malchezaar
