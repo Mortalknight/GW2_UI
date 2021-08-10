@@ -4,7 +4,7 @@ local GetSetting = GW.GetSetting
 local updateIcon
 
 do
-    local SendMessageWaiting 
+    local SendMessageWaiting
     local function SendMessage()
         if IsInRaid() then
             C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, (not IsInRaid(LE_PARTY_CATEGORY_HOME) and IsInRaid(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "RAID")
@@ -274,14 +274,15 @@ local function setupMicroButtons(mbf)
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
         reskinMicroButton(cref, "CharacterMicroButton", mbf)
-
+        cref:RegisterForClicks("AnyUp")
         cref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         cref:SetAttribute(
             "_onclick",
             [=[
-            local f = self:GetFrameRef("GwCharacterWindow")
-            f:SetAttribute("keytoggle", "1")
-            f:SetAttribute("windowpanelopen", "paperdoll")
+                if button ~= "LeftButton" then return end
+                local f = self:GetFrameRef("GwCharacterWindow")
+                f:SetAttribute("keytoggle", "1")
+                f:SetAttribute("windowpanelopen", "paperdoll")
             ]=]
         )
         disableMicroButton(CharacterMicroButton, true)
@@ -291,6 +292,15 @@ local function setupMicroButtons(mbf)
         end
         cref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
         cref:SetScript("OnLeave", GameTooltip_Hide)
+        cref:HookScript("OnEnter", GW.Friends_OnEnter)
+        cref:HookScript("OnEvent", GW.Friends_OnEvent)
+        cref:HookScript("OnClick", GW.Friends_OnClick)
+        cref:RegisterEvent("BN_FRIEND_ACCOUNT_ONLINE")
+        cref:RegisterEvent("BN_FRIEND_ACCOUNT_OFFLINE")
+        cref:RegisterEvent("BN_FRIEND_INFO_CHANGED")
+        cref:RegisterEvent("FRIENDLIST_UPDATE")
+        cref:RegisterEvent("CHAT_MSG_SYSTEM")
+        cref:RegisterEvent("MODIFIER_STATE_CHANGED")
     else
         cref = CharacterMicroButton
         MicroButtonPortrait:Hide()

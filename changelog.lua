@@ -1,12 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("5.17.3", [=[
+v("5.18.0", [=[
+NEW
+    - Added Encounter Journal, Soulbinds and Convenant Sanctum Skin
+    - Added 'Friends' tooltip to character micro menu button
 FIXES
     - Raid frame sort by role
-
-    MISC
-    - Added Encounter Journal, Soulbinds and Convenant Sanctum Skin
 ]=])
 
 v("5.17.2", [=[
