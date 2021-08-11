@@ -1,11 +1,17 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.15.3 TBC", [=[
+MISC
+    - Update TOC
+    - Update libs
+]=])
+
 v("1.15.2 TBC", [=[
 FIXES
     - Ready Check-Button is now working
 
-    MISC
+MISC
     - Added Nether Portal - Perseverence to important debuffs
     - Disable player absorb
 ]=])

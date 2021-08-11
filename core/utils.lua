@@ -540,7 +540,7 @@ end
 GW.FrameFlash = FrameFlash
 
 local function IsDispellableByMe(debuffType)
-    local dispel = GW.DispelClasses[GW.myclass] 
+    local dispel = GW.DispelClasses[GW.myclass]
     return dispel and dispel[debuffType]
 end
 GW.IsDispellableByMe = IsDispellableByMe

@@ -1,11 +1,11 @@
 local _, GW = ...
 
 GW.DispelClasses = {
-    DRUID = { Curse = true, Poison = true },
+    DRUID = { Magic = false, Curse = true, Poison = true, Disease = false },
     MAGE = { Curse = true },
     PALADIN = { Magic = true, Poison = true, Disease = true },
     PRIEST = { Magic = true, Disease = true },
-    SHAMAN = { Poison = true, Disease = true },
+    SHAMAN = { Magic = false, Poison = true, Disease = true, Curse = false },
     WARLOCK = { Magic = true }
 }
 
