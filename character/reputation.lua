@@ -318,27 +318,22 @@ local function setDetailEx(
     end
 
     if factionID and C_Reputation.IsFactionParagon(factionID) then
-        local currentValue, maxValueParagon, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID)
-
-        if currentValue > 10000 then
-            repeat
-                currentValue = currentValue - 10000
-            until (currentValue < 10000)
-        end
+        local currentValue, threshold, _, hasRewardPending = C_Reputation.GetFactionParagonInfo(factionID)
+        local value = currentValue % threshold
 
         frame.name:SetText(hasRewardPending and name .. "|TInterface/AddOns/GW2_UI/textures/icons/rewards-icon:32:32:0:0|t" or name)
 
         frame.currentRank:SetText(friendID and friendTextLevel or currentRank)
-        frame.nextRank:SetText(L["Paragon"])
+        frame.nextRank:SetText(L["Paragon"] .. (currentValue > threshold and (" (" .. RoundDec(currentValue / threshold, 0) .. "x)") or ""))
 
-        frame.currentValue:SetText(CommaValue(currentValue))
-        frame.nextValue:SetText(CommaValue(maxValueParagon))
+        frame.currentValue:SetText(CommaValue(value))
+        frame.nextValue:SetText(CommaValue(threshold))
 
-        local percent = math.floor(RoundDec(((currentValue - 0) / (maxValueParagon - 0)) * 100), 0)
+        local percent = math.floor(RoundDec(((value - 0) / (threshold - 0)) * 100), 0)
         frame.percentage:SetText(percent .. "%")
 
         frame.StatusBar:SetMinMaxValues(0, 1)
-        frame.StatusBar:SetValue((currentValue - 0) / (maxValueParagon - 0))
+        frame.StatusBar:SetValue((value - 0) / (threshold - 0))
 
         frame.background2:SetVertexColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
         frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
