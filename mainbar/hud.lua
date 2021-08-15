@@ -207,8 +207,8 @@ local function xpbar_OnEvent(self, event)
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
             isFriend = true
         else
-            local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
-            local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
+            local currentRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (standingId or 0))), GW.mysex)
+            local nextRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (standingId or 0) + 1)), GW.mysex)
 
             if currentRank == nextRank and earnedValue - bottomValue == 0 then
                 valPrecRepu = 1
