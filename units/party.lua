@@ -172,6 +172,7 @@ local function updatePartyDebuffs(self, x, y)
     x = self.isPet and x or 0
     local unit = self.unit
     local debuffList = getUnitDebuffs(unit)
+    local debuffScale = GW.GetDebuffScaleBasedOnPrio()
 
     for i, debuffFrame in pairs(self.debuffFrames) do
         if debuffList[i] then
@@ -200,9 +201,11 @@ local function updatePartyDebuffs(self, x, y)
 
             local size = self.isPet and 10 or 24
             if debuffList[i].isImportant or debuffList[i].isDispellable then
-                if debuffList[i].isImportant then
+                if debuffList[i].isImportant and debuffList[i].isDispellable then
+                    size = size * debuffScale
+                elseif debuffList[i].isImportant then
                     size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
-                else
+                elseif debuffList[i].isDispellable then
                     size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
                 end
             end

@@ -104,6 +104,15 @@ local function LoadAurasPanel(sWindow)
         nil,
         2
     )
+    addOptionDropdown(
+        p_auras.scroll.scrollchild,
+        L["Important & dispellable debuff scale priority"],
+        L["If both scales could apply to a debuff, which one should be used"],
+        "RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO",
+        nil,
+        {"DISPELL", "IMPORTANT", "OFF"},
+        {L["Dispell < Important"], L["Important < Dispell"]}
+    )
 
     addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p_indicator.scroll.scrollchild, L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], "INDICATORS_TIME", nil, nil, {["RAID_FRAMES"] = true})

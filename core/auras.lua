@@ -3,6 +3,20 @@ local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local TimeCount = GW.TimeCount
 
+local function GetDebuffScaleBasedOnPrio()
+    local debuffScalePrio = GW.GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO")
+    local scale = 1
+
+    if debuffScalePrio == "DISPELL" then
+        return tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
+    elseif debuffScalePrio == "IMPORTANT" then
+        return tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
+    end
+
+    return scale
+end
+GW.GetDebuffScaleBasedOnPrio = GetDebuffScaleBasedOnPrio
+
 local function sortAuras(a, b)
     if a.caster and b.caster and a.caster == b.caster then
         return tonumber(a.timeremaning) < tonumber(b.timeremaning)
@@ -205,6 +219,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local dbList = getDebuffs(self.unit, self.debuffFilter, self.frameInvert)
     local lineSize = smallSize
     local saveAuras = {}
+    local debuffScale = GetDebuffScaleBasedOnPrio()
 
     saveAuras.buff = {}
     saveAuras.debuff = {}
@@ -252,12 +267,13 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 end
                 self.animating = false
                 saveAuras[frame.auraType][#saveAuras[frame.auraType] + 1] = list[index].name
-            elseif UnitIsFriend(self.unit, "player") then
+            elseif UnitIsFriend(self.unit, "player") and not isBuff then
                 -- debuffs
-                if GW.ImportendRaidDebuff[list[index].spellID] then
+                if GW.ImportendRaidDebuff[list[index].spellID] and GW.IsDispellableByMe(list[index].dispelType) then
+                    size = size * debuffScale
+                elseif GW.ImportendRaidDebuff[list[index].spellID] then
                     size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
-                end
-                if GW.IsDispellableByMe(list[index].dispelType) then
+                elseif GW.IsDispellableByMe(list[index].dispelType) then
                     size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
                 end
             end

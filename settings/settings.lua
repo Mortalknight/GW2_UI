@@ -10,7 +10,6 @@ local settings_cat = {}
 local all_options = {}
 local settingProfils = {}
 GW.settingProfils = settingProfils
-GW_settingProfils = settingProfils
 
 local function switchCat(index)
     for _, l in ipairs(settings_cat) do
@@ -539,7 +538,7 @@ local function InitPanel(panel, hasScroll, settingModule)
                             of.container:Show()
                         end
 
-                        SetSetting(self.optionName .. (v.hasProfile and (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or "") or ""), self.option, self:GetParent():GetParent().data.perSpec)
+                        SetSetting(self.optionName .. (v.hasProfile and (panel.selectProfile.type == "PARTY" and "_PARTY" or "") or ""), self.option, self:GetParent():GetParent().data.perSpec)
 
                         if v.callback ~= nil then
                             v.callback()
@@ -553,7 +552,7 @@ local function InitPanel(panel, hasScroll, settingModule)
                             toSet = true
                         end
 
-                        SetSetting(self:GetParent().optionName .. (v.hasProfile and (GW.GROUPD_TYPE == "PARTY" and "_PARTY" or "") or ""), toSet, self:GetParent():GetParent():GetParent().data.perSpec, self:GetParent().option)
+                        SetSetting(self:GetParent().optionName .. (v.hasProfile and (panel.selectProfile.type == "PARTY" and "_PARTY" or "") or ""), toSet, self:GetParent():GetParent():GetParent().data.perSpec, self:GetParent().option)
 
                         if v.callback ~= nil then
                             v.callback(toSet, self:GetParent().option)

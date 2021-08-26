@@ -505,9 +505,6 @@ GW.AddForProfiling("social", "socialTab_OnEnter", socialTab_OnEnter)
 
 -- Change blizzard OnEvent Handler to work with our frame
 local function GWFriendsFrame_OnEvent(_, event, ...)
-    if not GwSocialWindow then
-        print(event, ...)
-    end
     if ( event == "SPELL_UPDATE_COOLDOWN" ) then
         if ( GwSocialWindow:IsShown() ) then
             local buttons = FriendsListFrameScrollFrame.buttons;

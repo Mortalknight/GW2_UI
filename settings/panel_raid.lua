@@ -68,11 +68,8 @@ local function CreateRaidProfiles(panel)
     panel.selectProfile.raid.string:ClearAllPoints()
     panel.selectProfile.raid.string:SetPoint("LEFT", 5, 0)
     panel.selectProfile.raid.type = "RAID"
-    panel.selectProfile.raid:SetScript("OnClick", function(self, _, force)
+    panel.selectProfile.raid:SetScript("OnClick", function(self)
         panel.selectProfile.type = self.type
-        if not IsInGroup() or force then
-            GW.GROUPD_TYPE = self.type
-        end
 
         panel.selectProfile.string:SetText(self.string:GetText())
         if panel.selectProfile.container:IsShown() then
@@ -94,11 +91,8 @@ local function CreateRaidProfiles(panel)
     panel.selectProfile.party.string:ClearAllPoints()
     panel.selectProfile.party.string:SetPoint("LEFT", 5, 0)
     panel.selectProfile.party.type = "PARTY"
-    panel.selectProfile.party:SetScript("OnClick", function(self, _, force)
+    panel.selectProfile.party:SetScript("OnClick", function(self)
         panel.selectProfile.type = self.type
-        if not IsInRaid() or force then
-            GW.GROUPD_TYPE = self.type
-        end
 
         panel.selectProfile.string:SetText(self.string:GetText())
         if panel.selectProfile.container:IsShown() then
@@ -148,8 +142,8 @@ local function LoadRaidPanel(sWindow)
         L["Sort raid unit frames by role (tank, heal, damage) instead of group."],
         "RAID_SORT_BY_ROLE",
         function()
-            GW.UpdateRaidFramesLayout()
-            GW.UpdateRaidFramesPosition()
+            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
+            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
         end,
         nil,
         {["RAID_FRAMES"] = true},
@@ -163,19 +157,16 @@ local function LoadRaidPanel(sWindow)
         L["Show tooltips of buffs and debuffs."],
         "RAID_AURA_TOOLTIP_INCOMBAT",
         function()
-            if GW.GROUPD_TYPE == "PARTY" then
-                if _G["GwCompactplayer"] then
-                    GW.raidframe_OnEvent(_G["GwCompactplayer"], "UNIT_AURA")
-                end
+            if p.selectProfile.type == "PARTY" then
                 for i = 1, 5 do
-                    if _G["GwCompactparty" .. i] then
-                        GW.raidframe_OnEvent(_G["GwCompactparty" .. i], "UNIT_AURA")
+                    if _G["GwCompactPartyFrame" .. i] then
+                        GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "UNIT_AURA")
                     end
                 end
             else
                 for i = 1, MAX_RAID_MEMBERS do
-                    if _G["GwCompactraid" .. i] then
-                        GW.raidframe_OnEvent(_G["GwCompactraid" .. i], "UNIT_AURA")
+                    if _G["GwCompactRaidFrame" .. i] then
+                        GW.GridOnEvent(_G["GwCompactRaidFrame" .. i], "UNIT_AURA")
                     end
                 end
             end
@@ -196,19 +187,16 @@ local function LoadRaidPanel(sWindow)
         nil,
         "RAID_UNIT_HEALTH",
         function()
-            if GW.GROUPD_TYPE == "PARTY" then
-                if _G["GwCompactplayer"] then
-                    GW.raidframe_OnEvent(_G["GwCompactplayer"], "load")
-                end
+            if p.selectProfile.type == "PARTY" then
                 for i = 1, 5 do
-                    if _G["GwCompactparty" .. i] then
-                        GW.raidframe_OnEvent(_G["GwCompactparty" .. i], "load")
+                    if _G["GwCompactPartyFrame" .. i] then
+                        GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
                     end
                 end
             else
                 for i = 1, MAX_RAID_MEMBERS do
-                    if _G["GwCompactraid" .. i] then
-                        GW.raidframe_OnEvent(_G["GwCompactraid" .. i], "load")
+                    if _G["GwCompactRaidFrame" .. i] then
+                        GW.GridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
                     end
                 end
             end
@@ -234,19 +222,16 @@ local function LoadRaidPanel(sWindow)
         L["Display a country flag based on the unit's language"],
         "RAID_UNIT_FLAGS",
         function()
-            if GW.GROUPD_TYPE == "PARTY" then
-                if _G["GwCompactplayer"] then
-                    GW.raidframe_OnEvent(_G["GwCompactplayer"], "UNIT_NAME_UPDATE")
-                end
+            if p.selectProfile.type == "PARTY" then
                 for i = 1, 5 do
-                    if _G["GwCompactparty" .. i] then
-                        GW.raidframe_OnEvent(_G["GwCompactparty" .. i], "UNIT_NAME_UPDATE")
+                    if _G["GwCompactPartyFrame" .. i] then
+                        GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "UNIT_NAME_UPDATE")
                     end
                 end
             else
                 for i = 1, MAX_RAID_MEMBERS do
-                    if _G["GwCompactraid" .. i] then
-                        GW.raidframe_OnEvent(_G["GwCompactraid" .. i], "UNIT_NAME_UPDATE")
+                    if _G["GwCompactRaidFrame" .. i] then
+                        GW.GridOnEvent(_G["GwCompactRaidFrame" .. i], "UNIT_NAME_UPDATE")
                     end
                 end
             end
@@ -275,9 +260,9 @@ local function LoadRaidPanel(sWindow)
         L["Set the grow direction for raid frames."],
         "RAID_GROW",
         function()
-            GW.UpdateRaidFramesAnchor()
-            GW.UpdateRaidFramesLayout()
-            GW.UpdateRaidFramesPosition()
+            GW.GridContainerUpdateAnchor(p.selectProfile.type)
+            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
+            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
         end,
         grow,
         MapTable(
@@ -302,7 +287,7 @@ local function LoadRaidPanel(sWindow)
         "RAID_ANCHOR",
         function()
             if GetSetting("RAID_FRAMES") then
-                GW.UpdateRaidFramesAnchor()
+                GW.GridContainerUpdateAnchor()
             end
         end,
         {"POSITION", "GROWTH", "TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
@@ -321,8 +306,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the number of raid unit frames per column or row, depending on grow directions."],
         "RAID_UNITS_PER_COLUMN",
         function()
-            GW.UpdateRaidFramesLayout()
-            GW.UpdateRaidFramesPosition()
+            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
+            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
         end,
         0,
         40,
@@ -340,8 +325,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the width of the raid units."],
         "RAID_WIDTH",
         function()
-            GW.UpdateRaidFramesLayout()
-            GW.UpdateRaidFramesPosition()
+            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
+            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
         end,
         45,
         300,
@@ -359,8 +344,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the height of the raid units."],
         "RAID_HEIGHT",
         function()
-            GW.UpdateRaidFramesLayout()
-            GW.UpdateRaidFramesPosition()
+            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
+            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
         end,
         15,
         100,
@@ -378,8 +363,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the maximum width that the raid frames can be displayed.\n\nThis will cause unit frames to shrink or move to the next row."],
         "RAID_CONT_WIDTH",
         function()
-            GW.UpdateRaidFramesLayout()
-            GW.UpdateRaidFramesPosition()
+            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
+            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
         end,
         0,
         GetScreenWidth(),
@@ -397,8 +382,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the maximum height that the raid frames can be displayed.\n\nThis will cause unit frames to shrink or move to the next column."],
         "RAID_CONT_HEIGHT",
         function()
-            GW.UpdateRaidFramesLayout()
-            GW.UpdateRaidFramesPosition()
+            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
+            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
         end,
         0,
         GetScreenHeight(),
