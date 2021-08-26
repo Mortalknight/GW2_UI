@@ -41,62 +41,6 @@ if Profiler then
     _G.GW_Addon_Scope = GW
 end
 
-local function AddOmniCDSupport()
-    if IsAddOnLoaded("OmniCD") then
-        local E = OmniCD[1]
-        tinsert(E.unitFrameData, 1, {
-            [1] = "GW2_UI-Party",
-            [2] = "GwPartyFrame",
-            [3] = "unit",
-            [4] = 1,
-        })
-        tinsert(E.unitFrameData, 1, {
-            [1] = "GW2_UI-Party-Grid",
-            [2] = "GwCompactPartyFrame",
-            [3] = "unit",
-            [4] = 1,
-        })
-        tinsert(E.unitFrameData, 1, {
-            [1] = "GW2_UI-Raid",
-            [2] = "GwCompactRaidFrame",
-            [3] = "unit",
-            [4] = 1,
-        })
-
-        if not E.customUF.optionTable["GW2_UI-Party"] then
-            E.customUF.optionTable["GW2_UI-Party"] = "GW2_UI-Party"
-            E.customUF.enabled = E.customUF.enabled or {}
-            E.customUF.enabled["GW2_UI-Party"] = {
-                ["delay"] = 1,
-                ["frame"] = "GwPartyFrame",
-                ["unit"] = "unit",
-                ["index"] = 5
-            }
-            E.customUF.prio = "GW2_UI-Party"
-        end
-        if not E.customUF.optionTable["GW2_UI-Party-Grid"] then
-            E.customUF.optionTable["GW2_UI-Party-Grid"] = "GW2_UI-Party-Grid"
-            E.customUF.enabled = E.customUF.enabled or {}
-            E.customUF.enabled["GW2_UI-Party-Grid"] = {
-                ["delay"] = 1,
-                ["frame"] = "GwCompactPartyFrame",
-                ["unit"] = "unit",
-                ["index"] = 5
-            }
-        end
-        if not E.customUF.optionTable["GW2_UI-Raid"] then
-            E.customUF.optionTable["GW2_UI-Raid"] = "GW2_UI-Raid"
-            E.customUF.enabled = E.customUF.enabled or {}
-            E.customUF.enabled["GW2_UI-Raid"] = {
-                ["delay"] = 1,
-                ["frame"] = "GwCompactRaidFrame",
-                ["unit"] = "unit",
-                ["index"] = 40
-            }
-        end
-    end
-end
-
 local function disableMABags()
     local bags = GetSetting("BAGS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Inventory", true)
     if not bags or not MovAny or not MADB then
@@ -732,9 +676,6 @@ local function loadAddon(self)
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     end
 
-    --Added OmicCD support
-    AddOmniCDSupport()
-
     self:SetScript("OnUpdate", gw_OnUpdate)
 end
 GW.AddForProfiling("index", "loadAddon", loadAddon)
@@ -775,6 +716,17 @@ local function gw_OnEvent(self, event, ...)
         Debug("New faction:", GW.myfaction, GW.myLocalizedFaction)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
         GW.CheckRole()
+    elseif event == "ADDON_LOADED" then
+        -- temp
+        if ... == "GW_UI" or ... == "OmniCD" then
+            local func = OmniCD and OmniCD.AddUnitFrameData
+            if func then
+                func("GW2_UI-Party-Grid", "GwCompactPartyFrame", "unit", 1)
+                func("GW2_UI-Party", "GwPartyFrame", "unit", 1)
+                func("GW2_UI-Raid", "GwCompactRaidFrame", "unit", 1, nil, 40)
+                self:UnregisterEvent(event)
+            end
+        end
     end
 end
 GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)
@@ -787,6 +739,7 @@ l:RegisterEvent("UI_SCALE_CHANGED")
 l:RegisterEvent("PLAYER_LEVEL_UP")
 l:RegisterEvent("NEUTRAL_FACTION_SELECT_RESULT")
 l:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+l:RegisterEvent("ADDON_LOADED")
 
 local function AddToClique(frame)
     if type(frame) == "string" then

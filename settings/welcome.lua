@@ -92,8 +92,7 @@ local function button1_OnClick()
 
                 if id == 2 then
                     FCF_SetWindowName(frame, GUILD_EVENT_LOG)
-                end
-                if id == 3 then
+                elseif id == 3 then
                     --VoiceTranscriptionFrame_UpdateVisibility(frame)
                     VoiceTranscriptionFrame_UpdateVoiceTab(frame)
                     VoiceTranscriptionFrame_UpdateEditBox(frame)
@@ -106,8 +105,6 @@ local function button1_OnClick()
             for _, v in ipairs(chatGroup) do
                 ChatFrame_AddMessageGroup(ChatFrame1, v)
             end
-
-            local trandeChat = IsVoiceTranscription(ChatFrame3) and ChatFrame4 or ChatFrame3
 
             -- keys taken from "ChatTypeGroup" which weren't added above to ChatFrame1
             chatGroup = {"COMBAT_XP_GAIN", "COMBAT_HONOR_GAIN", "COMBAT_FACTION_CHANGE", "SKILL", "LOOT", "CURRENCY", "MONEY"}

@@ -407,5 +407,5 @@ L["Add timestamp to all messages"] = true
 
 L["Important & dispellable debuff scale priority"] = true
 L["If both scales could apply to a debuff, which one should be used"] = true
-L["Dispell < Important"] = true
-L["Important < Dispell"] = true
+L["Dispell > Important"] = true
+L["Important > Dispell"] = true
