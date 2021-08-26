@@ -44,6 +44,9 @@ local function LoadQuickJoinList(tabContainer)
     QuickJoinFrame.JoinQueueButton:ClearAllPoints()
     QuickJoinFrame.JoinQueueButton:SetPoint("BOTTOMRIGHT", quickjoin, "BOTTOMRIGHT", 0, -30)
     QuickJoinFrame.JoinQueueButton:SkinButton(false, true)
+    QuickJoinFrame.JoinQueueButton:SetScript("OnClick", function()
+        QuickJoinFrame:JoinQueue()
+    end)
 
     HybridScrollFrame_CreateButtons(QuickJoinFrame.ScrollFrame, "QuickJoinButtonTemplate")
 
