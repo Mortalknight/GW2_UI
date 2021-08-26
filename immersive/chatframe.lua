@@ -96,6 +96,7 @@ local ClassNames = {}
 local Keywords = {}
 local hooks = {}
 local Smileys = {}
+local SmileysForMenu = {}
 local socialQueueCache = {}
 
 local SoundTimer
@@ -573,16 +574,16 @@ local function GetSmileyReplacementText(msg)
     local startpos = 1
     local endpos
 
-    while(startpos <= origlen) do
-        local pos = strfind(msg,"|H",startpos,true)
+    while (startpos <= origlen) do
+        local pos = strfind(msg, "|H", startpos, true)
         endpos = pos or origlen
-        outstr = outstr .. InsertEmotions(strsub(msg,startpos,endpos))
+        outstr = outstr .. InsertEmotions(strsub(msg, startpos, endpos))
         startpos = endpos + 1
         if pos ~= nil then
-            _, endpos = strfind(msg,"|h.-|h",startpos)
+            _, endpos = strfind(msg, "|h.-|h", startpos)
             endpos = endpos or origlen
             if startpos < endpos then
-                outstr = outstr .. strsub(msg,startpos,endpos)
+                outstr = outstr .. strsub(msg, startpos, endpos)
                 startpos = endpos + 1
             end
         end
@@ -592,7 +593,7 @@ local function GetSmileyReplacementText(msg)
 end
 
 local function PrintURL(url)
-    return "|cFFFFFFFF[|Hurl:"..url.."|h"..url.."|h]|r "
+    return "|cFFFFFFFF[|Hurl:" .. url .. "|h" .. url .. "|h]|r "
 end
 
 local function FindURL(msg, author, ...)
@@ -1596,7 +1597,7 @@ local function BuildEmoticonTableFrame()
 
     local icon, row, col, i = nil, 1, 1, 1
     local isIn, alreadyIn = {}, false
-    for text, texture in pairs(Smileys) do
+    for text, texture in pairs(SmileysForMenu) do
         alreadyIn = false
         for _, v in pairs(isIn) do
             if v.tex == texture then
@@ -1653,9 +1654,12 @@ local function BuildEmoticonTableFrame()
     end
 end
 
-local function AddSmiley(key, texture)
+local function AddSmiley(key, texture, showAtMenu)
     if key and (type(key) == "string" and not strfind(key, ":%%", 1, true)) and texture then
         Smileys[key] = texture
+        if showAtMenu then
+            SmileysForMenu[key] = texture
+        end
     end
 end
 
@@ -1663,34 +1667,37 @@ local function SetupSmileys()
     if next(Smileys) then
         wipe(Smileys)
     end
+    if next(SmileysForMenu) then
+        wipe(SmileysForMenu)
+    end
     -- new keys
-    AddSmiley(":angry:", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t")
-    AddSmiley(":blush:", "|TInterface/AddOns/GW2_UI/textures/emoji/Blush:16:16|t")
-    AddSmiley(":broken_heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/BrokenHeart:16:16|t")
-    AddSmiley(":call_me:", "|TInterface/AddOns/GW2_UI/textures/emoji/CallMe:16:16|t")
-    AddSmiley(":cry:", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
-    AddSmiley(":grin:", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
-    AddSmiley(":heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/Heart:16:16|t")
-    AddSmiley(":heart_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/HeartEyes:16:16|t")
-    AddSmiley(":joy:", "|TInterface/AddOns/GW2_UI/textures/emoji/Joy:16:16|t")
-    AddSmiley(":middle_finger:", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t")
-    AddSmiley(":ok_hand:", "|TInterface/AddOns/GW2_UI/textures/emoji/OkHand:16:16|t")
-    AddSmiley(":open_mouth:", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
-    AddSmiley(":poop:", "|TInterface/AddOns/GW2_UI/textures/emoji/Poop:16:16|t")
-    AddSmiley(":rage:", "|TInterface/AddOns/GW2_UI/textures/emoji/Rage:16:16|t")
-    AddSmiley(":scream:", "|TInterface/AddOns/GW2_UI/textures/emoji/Scream:16:16|t")
-    AddSmiley(":scream_cat:", "|TInterface/AddOns/GW2_UI/textures/emoji/ScreamCat:16:16|t")
-    AddSmiley(":slight_frown:", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t")
-    AddSmiley(":smile:", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t")
-    AddSmiley(":smirk:", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t")
-    AddSmiley(":sob:", "|TInterface/AddOns/GW2_UI/textures/emoji/Sob:16:16|t")
-    AddSmiley(":sunglasses:", "|TInterface/AddOns/GW2_UI/textures/emoji/Sunglasses:16:16|t")
-    AddSmiley(":thinking:", "|TInterface/AddOns/GW2_UI/textures/emoji/Thinking:16:16|t")
-    AddSmiley(":thumbs_up:", "|TInterface/AddOns/GW2_UI/textures/emoji/ThumbsUp:16:16|t")
-    AddSmiley(":wink:", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t")
-    AddSmiley(":zzz:", "|TInterface/AddOns/GW2_UI/textures/emoji/ZZZ:16:16|t")
-    AddSmiley(":stuck_out_tongue:", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
-    AddSmiley(":stuck_out_tongue_closed_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
+    AddSmiley(":angry:", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t", true)
+    AddSmiley(":blush:", "|TInterface/AddOns/GW2_UI/textures/emoji/Blush:16:16|t", true)
+    AddSmiley(":broken_heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/BrokenHeart:16:16|t", true)
+    AddSmiley(":call_me:", "|TInterface/AddOns/GW2_UI/textures/emoji/CallMe:16:16|t", true)
+    AddSmiley(":cry:", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t", true)
+    AddSmiley(":grin:", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t", true)
+    AddSmiley(":heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/Heart:16:16|t", true)
+    AddSmiley(":heart_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/HeartEyes:16:16|t", true)
+    AddSmiley(":joy:", "|TInterface/AddOns/GW2_UI/textures/emoji/Joy:16:16|t", true)
+    AddSmiley(":middle_finger:", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t", true)
+    AddSmiley(":ok_hand:", "|TInterface/AddOns/GW2_UI/textures/emoji/OkHand:16:16|t", true)
+    AddSmiley(":open_mouth:", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t", true)
+    AddSmiley(":poop:", "|TInterface/AddOns/GW2_UI/textures/emoji/Poop:16:16|t", true)
+    AddSmiley(":rage:", "|TInterface/AddOns/GW2_UI/textures/emoji/Rage:16:16|t", true)
+    AddSmiley(":scream:", "|TInterface/AddOns/GW2_UI/textures/emoji/Scream:16:16|t", true)
+    AddSmiley(":scream_cat:", "|TInterface/AddOns/GW2_UI/textures/emoji/ScreamCat:16:16|t", true)
+    AddSmiley(":slight_frown:", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t", true)
+    AddSmiley(":smile:", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t", true)
+    AddSmiley(":smirk:", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t", true)
+    AddSmiley(":sob:", "|TInterface/AddOns/GW2_UI/textures/emoji/Sob:16:16|t", true)
+    AddSmiley(":sunglasses:", "|TInterface/AddOns/GW2_UI/textures/emoji/Sunglasses:16:16|t", true)
+    AddSmiley(":thinking:", "|TInterface/AddOns/GW2_UI/textures/emoji/Thinking:16:16|t", true)
+    AddSmiley(":thumbs_up:", "|TInterface/AddOns/GW2_UI/textures/emoji/ThumbsUp:16:16|t", true)
+    AddSmiley(":wink:", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t", true)
+    AddSmiley(":zzz:", "|TInterface/AddOns/GW2_UI/textures/emoji/ZZZ:16:16|t", true)
+    AddSmiley(":stuck_out_tongue:", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t", true)
+    AddSmiley(":stuck_out_tongue_closed_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t", true)
 
     AddSmiley(",,!,,", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t")
     AddSmiley(":%-@", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t")
