@@ -40,7 +40,7 @@
         <Layers>
             <Layer Level="BACKGROUND">
                 <Texture name="$parentIcon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-objective">
-                    <Size x="30" y="30"></Size>
+                    <Size x="26" y="26"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="LEFT" x="-20" y="0"></Anchor>
                     </Anchors>
