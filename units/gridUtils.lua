@@ -1070,7 +1070,7 @@ local function GridUpdateRaidFramesLayout(profile)
 
     -- Position by group
     for i = 1, profile == "PARTY" and 5 or 40 do
-        if not tContains(sorted, unitString .. i) then
+        if not tContains(sorted, unitString .. "Frame" .. i) then
             if i <= 5 and profile == "PARTY" then -- <= ??
                 GridPositionRaidFrame(_G["GwCompactPartyFrame" .. i], i, grow1, grow2, cells1, sizePer1, sizePer2, m)
             end
