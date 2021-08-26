@@ -178,7 +178,6 @@ local function LoadPartyGrid()
     GwRaidFramePartyContainer:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     GwRaidFramePartyContainer:SetScript("OnEvent", function(self, event)
-        print(event)
         if InCombatLockdown() then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
         end
