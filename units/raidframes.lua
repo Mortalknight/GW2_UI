@@ -28,33 +28,6 @@ local function hideBlizzardRaidFrame()
 end
 GW.AddForProfiling("raidframes", "hideBlizzardRaidFrame", hideBlizzardRaidFrame)
 
-local function togglePartyFrames(b)
-    if InCombatLockdown() then
-        return
-    end
-
-    if IsInRaid() then
-        b = false
-    end
-
-    if b then
-        if GetSetting("RAID_STYLE_PARTY") or GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
-            for i = 1, 5 do
-                _G["GwCompactPartyFrame" .. i]:Show()
-                RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(_G["GwCompactPartyFrame" .. i].unit))
-            end
-        end
-        GW.TogglePartyRaid(true)
-    else
-        GW.TogglePartyRaid(false)
-        for i = 1, 5 do
-            UnregisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility")
-            _G["GwCompactPartyFrame" .. i]:Hide()
-        end
-    end
-end
-GW.AddForProfiling("raidframes", "togglePartyFrames", togglePartyFrames)
-
 local function GridOnEvent(self, event, unit)
     if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         -- Enable or disable mouse handling on aura frames
@@ -205,7 +178,7 @@ local function LoadRaidFrames()
     end)
 
     for i = 1, MAX_RAID_MEMBERS do
-        GW.CreateGridFrame(i, false, GridOnEvent, GridOnUpdate)
+        GW.CreateGridFrame(i, false, GwRaidFrameContainer, GridOnEvent, GridOnUpdate)
     end
 
     GW.GridUpdateRaidFramesPosition() -- profile
@@ -239,17 +212,11 @@ local function LoadRaidFrames()
     GwRaidFrameContainer:RegisterEvent("GROUP_ROSTER_UPDATE")
     GwRaidFrameContainer:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    GwRaidFrameContainer:SetScript("OnEvent", function(self)
+    GwRaidFrameContainer:SetScript("OnEvent", function(self, event)
         if InCombatLockdown() then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
-            --return
         end
-
-        if not IsInRaid() and IsInGroup() then
-            togglePartyFrames(true)
-        elseif IsInRaid() then
-            togglePartyFrames(false)
-        end
+        if event == "PLAYER_REGEN_ENABLED" then self:UnregisterEvent("PLAYER_REGEN_ENABLED") end
 
         GW.GridUpdateRaidFramesLayout() -- profile
 

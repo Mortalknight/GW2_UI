@@ -141,7 +141,7 @@ local function LoadPartyGrid()
         GetSetting("raid_party_pos")["yOfs"]
     )
 
-     RegisterMovableFrame(GwRaidFramePartyContainer, L["Group Frames"], "raid_party_pos", "VerticalActionBarDummy", nil, true, {"default", "default"})
+    RegisterMovableFrame(GwRaidFramePartyContainer, L["Group Frames"], "raid_party_pos", "VerticalActionBarDummy", nil, true, {"default", "default"})
 
 
     hooksecurefunc(GwRaidFramePartyContainer.gwMover, "StopMovingOrSizing", function (frame)
@@ -167,7 +167,7 @@ local function LoadPartyGrid()
     end)
 
     for i = 1, 5 do
-        GW.CreateGridFrame(i, true, GridOnEvent, GridOnUpdate, "PARTY")
+        GW.CreateGridFrame(i, true, GwRaidFramePartyContainer, GridOnEvent, GridOnUpdate, "PARTY")
     end
 
     GW.GridUpdateRaidFramesPosition("PARTY") -- profile
@@ -177,11 +177,12 @@ local function LoadPartyGrid()
     GwRaidFramePartyContainer:RegisterEvent("GROUP_ROSTER_UPDATE")
     GwRaidFramePartyContainer:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    GwRaidFramePartyContainer:SetScript("OnEvent", function(self)
+    GwRaidFramePartyContainer:SetScript("OnEvent", function(self, event)
+        print(event)
         if InCombatLockdown() then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
-            --return
         end
+        if event == "PLAYER_REGEN_ENABLED" then self:UnregisterEvent("PLAYER_REGEN_ENABLED") end
 
         unhookPlayerFrame()
 

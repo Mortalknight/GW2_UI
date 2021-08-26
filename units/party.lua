@@ -489,27 +489,6 @@ local function party_OnEvent(self, event, unit)
 end
 GW.AddForProfiling("party", "party_OnEvent", party_OnEvent)
 
-local function TogglePartyRaid(b)
-    if b and not IsInRaid() then
-        for i = 1, 5 do
-            if _G["GwPartyFrame" .. i] then
-                _G["GwPartyFrame" .. i]:Show()
-                RegisterUnitWatch(_G["GwPartyFrame" .. i])
-                _G["GwPartyFrame" .. i]:SetScript("OnEvent", party_OnEvent)
-            end
-        end
-    else
-        for i = 1, 5 do
-            if _G["GwPartyFrame" .. i] then
-                _G["GwPartyFrame" .. i]:Hide()
-                _G["GwPartyFrame" .. i]:SetScript("OnEvent", nil)
-                UnregisterUnitWatch(_G["GwPartyFrame" .. i])
-            end
-        end
-    end
-end
-GW.TogglePartyRaid = TogglePartyRaid
-
 local function CreatePartyPetFrame(frame, i)
     local unit = frame.unit == "player" and "pet" or "partypet" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0))
     local f = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, "GwPartyPetFrame")

@@ -24,15 +24,16 @@ local previewStepRaid = 0
 local previewStepsParty = {5}
 local previewStepParty = 0
 
-local function CreateGridFrame(index, isParty, OnEvent, OnUpdate, profile)
+local function CreateGridFrame(index, isParty, parent, OnEvent, OnUpdate, profile)
     local frame, unit = nil, ""
     if isParty then
-        frame = CreateFrame("Button", "GwCompactPartyFrame" .. index, GwRaidFramePartyContainer, "GwRaidFrame")
+        frame = CreateFrame("Button", "GwCompactPartyFrame" .. index, parent, "GwRaidFrame")
         unit = index == 1 and "player" or "party" .. index - 1
     else
-        frame = CreateFrame("Button", "GwCompactRaidFrame" .. index, GwRaidFrameContainer, "GwRaidFrame")
+        frame = CreateFrame("Button", "GwCompactRaidFrame" .. index, parent, "GwRaidFrame")
         unit = "raid" .. index
     end
+    frame:SetParent(parent)
 
     frame.name = _G[frame:GetName() .. "Data"].name
     frame.healthstring = _G[frame:GetName() .. "Data"].healthstring
@@ -918,7 +919,7 @@ local function GridContainerUpdateAnchor(profile)
 end
 GW.GridContainerUpdateAnchor = GridContainerUpdateAnchor
 
-local function GridPositionRaidFrame(frame, parent, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+local function GridPositionRaidFrame(frame, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
     if not frame then return end
 
     local isV = grow1 == "DOWN" or grow1 == "UP"
@@ -940,7 +941,7 @@ local function GridPositionRaidFrame(frame, parent, i, grow1, grow2, cells1, siz
 
     if not InCombatLockdown() then
         frame:ClearAllPoints()
-        frame:SetPoint(a, parent, a, x, y)
+        frame:SetPoint(a, frame:GetParent(), a, x, y)
         frame:SetSize(w, h)
     end
 
@@ -1022,7 +1023,7 @@ local function GridUpdateRaidFramesPosition(profile, force)
         -- Update unit frames
         if IsInGroup() or force then
             for i = 1, 5 do
-                GridPositionRaidFrame(_G["GwCompactPartyFrame" .. i], GwRaidFramePartyContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+                GridPositionRaidFrame(_G["GwCompactPartyFrame" .. i], i, grow1, grow2, cells1, sizePer1, sizePer2, m)
                 if i > players then _G["GwCompactPartyFrame" .. i]:Hide() else _G["GwCompactPartyFrame" .. i]:Show() end
             end
         end
@@ -1038,7 +1039,7 @@ local function GridUpdateRaidFramesPosition(profile, force)
 
         -- Update unit frames
         for i = 1, MAX_RAID_MEMBERS do
-            GridPositionRaidFrame(_G["GwCompactRaidFrame" .. i], GwRaidFrameContainer.gwMover, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+            GridPositionRaidFrame(_G["GwCompactRaidFrame" .. i], i, grow1, grow2, cells1, sizePer1, sizePer2, m)
             if i > players then _G["GwCompactRaidFrame" .. i]:Hide() else _G["GwCompactRaidFrame" .. i]:Show() end
         end
     end
@@ -1051,7 +1052,7 @@ local function GridUpdateRaidFramesLayout(profile)
     -- Get directions, rows, cols and sizing
     local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GridGetRaidFramesMeasures(nil, profile)
     local isV = grow1 == "DOWN" or grow1 == "UP"
-    local container = (profile == "PARTY" and GwRaidFramePartyContainer or GwRaidFrameContainer)
+    local container = profile == "PARTY" and GwRaidFramePartyContainer or GwRaidFrameContainer
 
     if not InCombatLockdown() then
         container:SetSize(isV and size2 or size1, isV and size1 or size2)
@@ -1062,7 +1063,7 @@ local function GridUpdateRaidFramesLayout(profile)
 
     -- Position by role
     for i, v in ipairs(sorted) do
-        GridPositionRaidFrame(_G["GwCompact" .. v], container, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+        GridPositionRaidFrame(_G["GwCompact" .. v], i, grow1, grow2, cells1, sizePer1, sizePer2, m)
     end
 
     wipe(grpPos) wipe(noGrp)
@@ -1071,14 +1072,14 @@ local function GridUpdateRaidFramesLayout(profile)
     for i = 1, profile == "PARTY" and 5 or 40 do
         if not tContains(sorted, unitString .. i) then
             if i <= 5 and profile == "PARTY" then -- <= ??
-                GridPositionRaidFrame(_G["GwCompactPartyFrame" .. i], container, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+                GridPositionRaidFrame(_G["GwCompactPartyFrame" .. i], i, grow1, grow2, cells1, sizePer1, sizePer2, m)
             end
 
             if not profile == "PARTY" then
                 local name, _, grp = GetRaidRosterInfo(i)
                 if name or grp > 1 then
                     grpPos[grp] = (grpPos[grp] or 0) + 1
-                    GridPositionRaidFrame(_G["GwCompactRaidFrame" .. i], container , (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+                    GridPositionRaidFrame(_G["GwCompactRaidFrame" .. i], (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
                 else
                     tinsert(noGrp, i)
                 end
@@ -1092,7 +1093,7 @@ local function GridUpdateRaidFramesLayout(profile)
             for grp = 1, NUM_RAID_GROUPS do
                 if (grpPos[grp] or 0) < MEMBERS_PER_RAID_GROUP then
                     grpPos[grp] = (grpPos[grp] or 0) + 1
-                    GridPositionRaidFrame(_G["GwCompactRaidFrame" .. i], container, (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+                    GridPositionRaidFrame(_G["GwCompactRaidFrame" .. i], (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
                     break
                 end
             end
