@@ -22,6 +22,12 @@ end
 GW.AddForProfiling("raidframes", "unhookPlayerFrame", unhookPlayerFrame)
 
 local function GridOnEvent(self, event, unit)
+    if not UnitExists(self.unit) then
+        return
+    elseif not self.nameNotLoaded then
+        GW.GridSetUnitName(self, "PARTY")
+    end
+
     if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         -- Enable or disable mouse handling on aura frames
         local name = self:GetName()
@@ -48,12 +54,6 @@ local function GridOnEvent(self, event, unit)
                 i = i + 1
             until not frame
         end
-    end
-
-    if not UnitExists(self.unit) then
-        return
-    elseif not self.nameNotLoaded then
-        GW.GridSetUnitName(self, "PARTY")
     end
 
     if event == "load" then
