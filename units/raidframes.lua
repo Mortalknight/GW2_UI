@@ -60,43 +60,43 @@ local function GridOnEvent(self, event, unit)
     if not UnitExists(self.unit) then
         return
     elseif not self.nameNotLoaded then
-        GW.GridSetUnitName(self)
+        GW.GridSetUnitName(self, "RAID")
     end
 
     if event == "load" then
         GW.GridSetAbsorbAmount(self)
-        GW.GridSetPredictionAmount(self)
-        GW.GridSetHealth(self)
-        GW.GridUpdateAwayData(self)
-        GW.GridUpdateAuras(self)
+        GW.GridSetPredictionAmount(self, "RAID")
+        GW.GridSetHealth(self, "RAID")
+        GW.GridUpdateAwayData(self, "RAID")
+        GW.GridUpdateAuras(self, "RAID")
         GW.GridUpdatePower(self)
     elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
-        GW.GridSetHealth(self)
+        GW.GridSetHealth(self, "RAID")
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
         GW.GridUpdatePower(self)
     elseif event == "UNIT_ABSORB_AMOUNT_CHANGED" then
         GW.GridSetAbsorbAmount(self)
     elseif event == "UNIT_HEAL_PREDICTION" then
-        GW.GridSetPredictionAmount(self)
+        GW.GridSetPredictionAmount(self, "RAID")
     elseif event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
-        GW.GridUpdateAwayData(self)
+        GW.GridUpdateAwayData(self, "RAID")
     elseif event == "PLAYER_TARGET_CHANGED" then
         GW.GridHighlightTargetFrame(self)
     elseif event == "UNIT_NAME_UPDATE" then
-        GW.GridSetUnitName(self)
+        GW.GridSetUnitName(self, "RAID")
     elseif event == "UNIT_AURA" then
-        GW.GridUpdateAuras(self)
+        GW.GridUpdateAuras(self, "RAID")
     elseif event == "PLAYER_ENTERING_WORLD" then
         RequestRaidInfo()
     elseif event == "UPDATE_INSTANCE_INFO" then
-        GW.GridUpdateAuras(self)
-        GW.GridUpdateAwayData(self)
+        GW.GridUpdateAuras(self, "RAID")
+        GW.GridUpdateAwayData(self, "RAID")
     elseif (event == "INCOMING_RESURRECT_CHANGED" or event == "INCOMING_SUMMON_CHANGED") and unit == self.unit then
-        GW.GridUpdateAwayData(self)
+        GW.GridUpdateAwayData(self, "RAID")
     elseif event == "RAID_TARGET_UPDATE" and GetSetting("RAID_UNIT_MARKERS") then
-        GW.GridUpdateRaidMarkers(self)
+        GW.GridUpdateRaidMarkers(self, "RAID")
     elseif event == "READY_CHECK" or (event == "READY_CHECK_CONFIRM" and unit == self.unit) then
-        GW.GridUpdateAwayData(self)
+        GW.GridUpdateAwayData(self, "RAID")
     elseif event == "READY_CHECK_FINISHED" then
         C_Timer.After(1.5, function()
             if UnitInRaid(self.unit) then
@@ -178,11 +178,11 @@ local function LoadRaidFrames()
     end)
 
     for i = 1, MAX_RAID_MEMBERS do
-        GW.CreateGridFrame(i, false, GwRaidFrameContainer, GridOnEvent, GridOnUpdate)
+        GW.CreateGridFrame(i, false, GwRaidFrameContainer, GridOnEvent, GridOnUpdate, "RAID")
     end
 
-    GW.GridUpdateRaidFramesPosition() -- profile
-    GW.GridUpdateRaidFramesLayout() -- profile
+    GW.GridUpdateRaidFramesPosition("RAID")
+    GW.GridUpdateRaidFramesLayout("RAID")
 
     GwSettingsRaidPanel.buttonRaidPreview:SetScript("OnClick", function()
         if GwSettingsRaidPanel.selectProfile.type == "RAID" then
@@ -218,7 +218,7 @@ local function LoadRaidFrames()
         end
         if event == "PLAYER_REGEN_ENABLED" then self:UnregisterEvent("PLAYER_REGEN_ENABLED") end
 
-        GW.GridUpdateRaidFramesLayout() -- profile
+        GW.GridUpdateRaidFramesLayout("RAID")
 
         for i = 1, MAX_RAID_MEMBERS do
             GW.GridUpdateFrameData(_G["GwCompactRaidFrame" .. i], i)

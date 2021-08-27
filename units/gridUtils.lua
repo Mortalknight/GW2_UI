@@ -33,7 +33,7 @@ local function CreateGridFrame(index, isParty, parent, OnEvent, OnUpdate, profil
         frame = CreateFrame("Button", "GwCompactRaidFrame" .. index, parent, "GwRaidFrame")
         unit = "raid" .. index
     end
-    frame:SetParent(parent)
+    frame.parent = parent
 
     frame.name = _G[frame:GetName() .. "Data"].name
     frame.healthstring = _G[frame:GetName() .. "Data"].healthstring
@@ -53,9 +53,7 @@ local function CreateGridFrame(index, isParty, parent, OnEvent, OnUpdate, profil
     frame.healthstring:SetShadowOffset(-1, -1)
     frame.healthstring:SetShadowColor(0, 0, 0, 1)
 
-    hooksecurefunc(
-        frame.healthbar,
-        "SetStatusBarColor",
+    hooksecurefunc(frame.healthbar, "SetStatusBarColor",
         function(_, r, g, b, a)
             frame.healthbar.spark:SetVertexColor(r, g, b, a)
         end
@@ -82,7 +80,7 @@ local function CreateGridFrame(index, isParty, parent, OnEvent, OnUpdate, profil
     if isParty then
         RegisterStateDriver(frame, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(frame.unit))
     else
-        RegisterUnitWatch(frame)
+        RegisterStateDriver(frame, "visibility", ("[group:raid,@%s,exists] show; [group:party] hide; hide"):format(frame.unit))
     end
     frame:EnableMouse(true)
     frame:RegisterForClicks("AnyUp")
@@ -318,7 +316,7 @@ local function GridUpdateAwayData(self, profile)
         GW.SetClassIcon(self.classicon, classIndex)
     end
 
-    if self.targetmarker and not readyCheckStatus and GetSetting("RAID_UNIT_MARKERS"  .. (profile == "PARTY" and "_PARTY" or "")) then
+    if self.targetmarker and not readyCheckStatus and GetSetting("RAID_UNIT_MARKERS" .. (profile == "PARTY" and "_PARTY" or "")) then
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
         GW.GridUpdateRaidMarkers(self)
     end
@@ -839,27 +837,25 @@ local function GridToggleFramesPreviewRaid(_, _, moveHudMode, hudMoving)
                 _G["GwCompactRaidFrame" .. i].unit = "raid" .. i
                 _G["GwCompactRaidFrame" .. i].guid = UnitGUID("raid" .. i)
                 _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "raid" .. i)
+                UnregisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility")
+                RegisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility", ("[group:raid,@%s,exists] show; [group:party] hide; hide"):format(_G["GwCompactRaidFrame" .. i].unit))
                 GW.GridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
             end
         end
     else
         for i = 1, MAX_RAID_MEMBERS do
             if _G["GwCompactRaidFrame" .. i] then
-                if i <= (previewStepRaid == 0 and 40 or previewStepsRaid[previewStepRaid]) then
-                    _G["GwCompactRaidFrame" .. i].unit = "player"
-                    _G["GwCompactRaidFrame" .. i].guid = UnitGUID("player")
-                    _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "player")
-                else
-                    _G["GwCompactRaidFrame" .. i].unit = "raid" .. i
-                    _G["GwCompactRaidFrame" .. i].guid = UnitGUID("raid" .. i)
-                    _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "raid" .. i)
-                end
+                _G["GwCompactRaidFrame" .. i].unit = "player"
+                _G["GwCompactRaidFrame" .. i].guid = UnitGUID("player")
+                _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "player")
+                UnregisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility")
+                RegisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility", ("%s"):format((i > previewStepsRaid[previewStepRaid] and "hide" or "show")))
                 GW.GridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
             end
         end
-        GW.GridUpdateRaidFramesPosition(nil, true)
+        GW.GridUpdateRaidFramesPosition("RAID", true)
     end
-    GwSettingsRaidPanel.buttonRaidPreview:SetText(previewStepRaid == 0 and "-" or previewStepsRaid[previewStepRaid])
+    GwSettingsRaidPanel.buttonRaidPreview:SetText((previewStepRaid == 0 or moveHudMode) and "-" or previewStepsRaid[previewStepRaid])
 end
 GW.GridToggleFramesPreviewRaid = GridToggleFramesPreviewRaid
 
@@ -872,6 +868,7 @@ local function GridToggleFramesPreviewParty(_, _, moveHudMode, hudMoving)
                 _G["GwCompactPartyFrame" .. i].unit = i == 1 and "player" or "party" .. i - 1
                 _G["GwCompactPartyFrame" .. i].guid = UnitGUID(i == 1 and "player" or "party" .. i - 1)
                 _G["GwCompactPartyFrame" .. i]:SetAttribute("unit", i == 1 and "player" or "party" .. i - 1)
+                UnregisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility")
                 RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(_G["GwCompactPartyFrame" .. i].unit))
                 GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
             end
@@ -882,13 +879,14 @@ local function GridToggleFramesPreviewParty(_, _, moveHudMode, hudMoving)
                 _G["GwCompactPartyFrame" .. i].unit = "player"
                 _G["GwCompactPartyFrame" .. i].guid = UnitGUID("player")
                 _G["GwCompactPartyFrame" .. i]:SetAttribute("unit", "player")
-                RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("show"):format(_G["GwCompactPartyFrame" .. i].unit))
+                UnregisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility")
+                RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("show"))
                 GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
             end
         end
         GW.GridUpdateRaidFramesPosition("PARTY", true)
     end
-    GwSettingsRaidPanel.buttonRaidPreview:SetText(previewStepParty == 0 and "-" or previewStepsParty[previewStepParty])
+    GwSettingsRaidPanel.buttonRaidPreview:SetText((previewStepParty == 0 or moveHudMode) and "-" or previewStepsParty[previewStepParty])
 end
 GW.GridToggleFramesPreviewParty = GridToggleFramesPreviewParty
 
@@ -941,7 +939,7 @@ local function GridPositionRaidFrame(frame, i, grow1, grow2, cells1, sizePer1, s
 
     if not InCombatLockdown() then
         frame:ClearAllPoints()
-        frame:SetPoint(a, frame:GetParent(), a, x, y)
+        frame:SetPoint(a, frame.parent, a, x, y)
         frame:SetSize(w, h)
     end
 
@@ -1010,7 +1008,7 @@ end
 GW.GridGetRaidFramesMeasures = GridGetRaidFramesMeasures
 
 local function GridUpdateRaidFramesPosition(profile, force)
-    if profile == "PARTY"  then
+    if profile == "PARTY" then
         players = previewStepParty == 0 and 5 or previewStepsParty[previewStepParty]
 
         -- Get directions, rows, cols and sizing
@@ -1027,7 +1025,7 @@ local function GridUpdateRaidFramesPosition(profile, force)
                 if i > players then _G["GwCompactPartyFrame" .. i]:Hide() else _G["GwCompactPartyFrame" .. i]:Show() end
             end
         end
-    else
+    elseif profile == "RAID" then
         players = previewStepRaid == 0 and 40 or previewStepsRaid[previewStepRaid]
 
         -- Get directions, rows, cols and sizing
