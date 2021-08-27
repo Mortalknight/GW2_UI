@@ -142,8 +142,8 @@ local function LoadRaidPanel(sWindow)
         L["Sort raid unit frames by role (tank, heal, damage) instead of group."],
         "RAID_SORT_BY_ROLE",
         function()
-            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
-            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesLayout(p.selectProfile.type)
         end,
         nil,
         {["RAID_FRAMES"] = true},
@@ -261,8 +261,8 @@ local function LoadRaidPanel(sWindow)
         "RAID_GROW",
         function()
             GW.GridContainerUpdateAnchor(p.selectProfile.type)
-            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
-            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesLayout(p.selectProfile.type)
         end,
         grow,
         MapTable(
@@ -287,7 +287,7 @@ local function LoadRaidPanel(sWindow)
         "RAID_ANCHOR",
         function()
             if GetSetting("RAID_FRAMES") then
-                GW.GridContainerUpdateAnchor()
+                GW.GridContainerUpdateAnchor(p.selectProfile.type)
             end
         end,
         {"POSITION", "GROWTH", "TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
@@ -306,8 +306,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the number of raid unit frames per column or row, depending on grow directions."],
         "RAID_UNITS_PER_COLUMN",
         function()
-            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
-            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesLayout(p.selectProfile.type)
         end,
         0,
         40,
@@ -325,8 +325,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the width of the raid units."],
         "RAID_WIDTH",
         function()
-            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
-            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesLayout(p.selectProfile.type)
         end,
         45,
         300,
@@ -344,8 +344,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the height of the raid units."],
         "RAID_HEIGHT",
         function()
-            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
-            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesLayout(p.selectProfile.type)
         end,
         15,
         100,
@@ -363,8 +363,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the maximum width that the raid frames can be displayed.\n\nThis will cause unit frames to shrink or move to the next row."],
         "RAID_CONT_WIDTH",
         function()
-            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
-            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesLayout(p.selectProfile.type)
         end,
         0,
         GetScreenWidth(),
@@ -382,8 +382,8 @@ local function LoadRaidPanel(sWindow)
         L["Set the maximum height that the raid frames can be displayed.\n\nThis will cause unit frames to shrink or move to the next column."],
         "RAID_CONT_HEIGHT",
         function()
-            GW.GridUpdateRaidFramesLayout(p.selectProfile.type)
-            GW.GridUpdateRaidFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesPosition(p.selectProfile.type)
+            GW.GridUpdateFramesLayout(p.selectProfile.type)
         end,
         0,
         GetScreenHeight(),

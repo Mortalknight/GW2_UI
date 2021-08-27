@@ -18,11 +18,6 @@ local AddToClique = GW.AddToClique
 local missing, ignored = {}, {}
 local spellIDs = {}
 local spellBookSearched = 0
-local players
-local previewStepsRaid = {40, 20, 10, 5}
-local previewStepRaid = 0
-local previewStepsParty = {5}
-local previewStepParty = 0
 
 local function CreateGridFrame(index, isParty, parent, OnEvent, OnUpdate, profile)
     local frame, unit = nil, ""
@@ -828,274 +823,30 @@ local function GridUpdateFrameData(self, index, profile)
 end
 GW.GridUpdateFrameData = GridUpdateFrameData
 
-local function GridToggleFramesPreviewRaid(_, _, moveHudMode, hudMoving)
-    previewStepRaid = max((previewStepRaid + 1) % (#previewStepsRaid + 1), hudMoving and 1 or 0)
-
-    if previewStepRaid == 0 or moveHudMode then
-        for i = 1, MAX_RAID_MEMBERS do
-            if _G["GwCompactRaidFrame" .. i] then
-                _G["GwCompactRaidFrame" .. i].unit = "raid" .. i
-                _G["GwCompactRaidFrame" .. i].guid = UnitGUID("raid" .. i)
-                _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "raid" .. i)
-                UnregisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility")
-                RegisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility", ("[group:raid,@%s,exists] show; [group:party] hide; hide"):format(_G["GwCompactRaidFrame" .. i].unit))
-                GW.GridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
-            end
-        end
-    else
-        for i = 1, MAX_RAID_MEMBERS do
-            if _G["GwCompactRaidFrame" .. i] then
-                _G["GwCompactRaidFrame" .. i].unit = "player"
-                _G["GwCompactRaidFrame" .. i].guid = UnitGUID("player")
-                _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "player")
-                UnregisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility")
-                RegisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility", ("%s"):format((i > previewStepsRaid[previewStepRaid] and "hide" or "show")))
-                GW.GridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
-            end
-        end
-        GW.GridUpdateRaidFramesPosition("RAID", true)
+---- Settings Function Functions
+local function GridUpdateFramesLayout(profile)
+    if profile == "RAID" then
+        GW.GridRaidUpdateFramesLayout()
+    elseif profile == "PARTY" then
+        GW.GridPartyUpdateFramesLayout()
     end
-    GwSettingsRaidPanel.buttonRaidPreview:SetText((previewStepRaid == 0 or moveHudMode) and "-" or previewStepsRaid[previewStepRaid])
 end
-GW.GridToggleFramesPreviewRaid = GridToggleFramesPreviewRaid
+GW.GridUpdateFramesLayout = GridUpdateFramesLayout
 
-local function GridToggleFramesPreviewParty(_, _, moveHudMode, hudMoving)
-    previewStepParty = max((previewStepParty + 1) % (#previewStepsParty + 1), hudMoving and 1 or 0)
-
-    if previewStepParty == 0 or moveHudMode then
-        for i = 1, 5 do
-            if _G["GwCompactPartyFrame" .. i] then
-                _G["GwCompactPartyFrame" .. i].unit = i == 1 and "player" or "party" .. i - 1
-                _G["GwCompactPartyFrame" .. i].guid = UnitGUID(i == 1 and "player" or "party" .. i - 1)
-                _G["GwCompactPartyFrame" .. i]:SetAttribute("unit", i == 1 and "player" or "party" .. i - 1)
-                UnregisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility")
-                RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(_G["GwCompactPartyFrame" .. i].unit))
-                GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
-            end
-        end
-    else
-        for i = 1, 5 do
-            if _G["GwCompactPartyFrame" .. i] then
-                _G["GwCompactPartyFrame" .. i].unit = "player"
-                _G["GwCompactPartyFrame" .. i].guid = UnitGUID("player")
-                _G["GwCompactPartyFrame" .. i]:SetAttribute("unit", "player")
-                UnregisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility")
-                RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("show"))
-                GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
-            end
-        end
-        GW.GridUpdateRaidFramesPosition("PARTY", true)
+local function GridUpdateFramesPosition(profile)
+    if profile == "RAID" then
+        GW.GridRaidUpdateFramesPosition()
+    elseif profile == "PARTY" then
+        GW.GridPartyUpdateFramesPosition()
     end
-    GwSettingsRaidPanel.buttonRaidPreview:SetText((previewStepParty == 0 or moveHudMode) and "-" or previewStepsParty[previewStepParty])
 end
-GW.GridToggleFramesPreviewParty = GridToggleFramesPreviewParty
+GW.GridUpdateFramesPosition = GridUpdateFramesPosition
 
-local function GridSortByRole()
-    local sorted = {}
-    local roleIndex = {"TANK", "HEALER", "DAMAGER", "NONE"}
-    local unitString = IsInRaid() and "Raid" or "Party"
-
-    for _, v in pairs(roleIndex) do
-        if unitString == "Party" and UnitGroupRolesAssigned("player") == v then
-            tinsert(sorted, "PartyFrame1")
-        end
-
-        for i = 1, MAX_RAID_MEMBERS do
-            if UnitExists(unitString .. i) and UnitGroupRolesAssigned(unitString .. i) == v then
-                tinsert(sorted, unitString .. "Frame" .. (unitString == "Party" and i + 1 or i))
-            end
-        end
-    end
-    return sorted
-end
-
----- CALC Functions
 local function GridContainerUpdateAnchor(profile)
-    local container = (profile == "PARTY" and GwRaidFramePartyContainer or GwRaidFrameContainer)
-
-    container.gwMover:GetScript("OnDragStop")(container.gwMover)
+    if profile == "RAID" then
+        GwRaidFrameContainer.gwMover:GetScript("OnDragStop")(GwRaidFrameContainer.gwMover)
+    elseif profile == "PARTY" then
+        GwRaidFramePartyContainer.gwMover:GetScript("OnDragStop")(GwRaidFramePartyContainer.gwMover)
+    end
 end
 GW.GridContainerUpdateAnchor = GridContainerUpdateAnchor
-
-local function GridPositionRaidFrame(frame, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-    if not frame then return end
-
-    local isV = grow1 == "DOWN" or grow1 == "UP"
-    local isU = grow1 == "UP" or grow2 == "UP"
-    local isR = grow1 == "RIGHT" or grow2 == "RIGHT"
-
-    local dir1, dir2 = isU and 1 or -1, isR and 1 or -1
-    if not isV then
-        dir1, dir2 = dir2, dir1
-    end
-
-    local pos1, pos2 = dir1 * ((i - 1) % cells1), dir2 * (ceil(i / cells1) - 1)
-
-    local a = (isU and "BOTTOM" or "TOP") .. (isR and "LEFT" or "RIGHT")
-    local w = isV and sizePer2 or sizePer1
-    local h = isV and sizePer1 or sizePer2
-    local x = (isV and pos2 or pos1) * (w + m)
-    local y = (isV and pos1 or pos2) * (h + m)
-
-    if not InCombatLockdown() then
-        frame:ClearAllPoints()
-        frame:SetPoint(a, frame.parent, a, x, y)
-        frame:SetSize(w, h)
-    end
-
-    if frame.healthbar then
-        frame.healthbar.spark:SetHeight(frame.healthbar:GetHeight())
-    end
-end
-GW.GridPositionRaidFrame = GridPositionRaidFrame
-
-local function GridGetRaidFramesMeasures(players, profile)
-    -- Get settings
-    local grow = GetSetting("RAID_GROW" .. (profile == "PARTY" and "_PARTY" or ""))
-    local w = GetSetting("RAID_WIDTH" .. (profile == "PARTY" and "_PARTY" or ""))
-    local h = GetSetting("RAID_HEIGHT" .. (profile == "PARTY" and "_PARTY" or ""))
-    local cW = GetSetting("RAID_CONT_WIDTH" .. (profile == "PARTY" and "_PARTY" or ""))
-    local cH = GetSetting("RAID_CONT_HEIGHT" .. (profile == "PARTY" and "_PARTY" or ""))
-    local per = ceil(GetSetting("RAID_UNITS_PER_COLUMN" .. (profile == "PARTY" and "_PARTY" or "")))
-    local byRole = GetSetting("RAID_SORT_BY_ROLE" .. (profile == "PARTY" and "_PARTY" or ""))
-    local m = 2
-
-    -- Determine # of players
-    if players or byRole or not IsInRaid() then
-        players = players or max(1, GetNumGroupMembers())
-    else
-        players = 0
-        for i = 1, MAX_RAID_MEMBERS do
-            local _, _, grp = GetRaidRosterInfo(i)
-            if grp >= ceil(players / MEMBERS_PER_RAID_GROUP) then
-                players = max((grp - 1) * MEMBERS_PER_RAID_GROUP, players) + 1
-            end
-        end
-        players = max(1, players, GetNumGroupMembers())
-    end
-
-    -- Directions
-    local grow1, grow2 = strsplit("+", grow)
-    local isV = grow1 == "DOWN" or grow1 == "UP"
-
-    -- Rows, cols and cell size
-    local sizeMax1, sizePer1 = isV and cH or cW, isV and h or w
-    local sizeMax2, sizePer2 = isV and cW or cH, isV and w or h
-
-    local cells1 = players
-
-    if per > 0 then
-        cells1 = min(cells1, per)
-        if tonumber(sizeMax1) > 0 then
-            sizePer1 = min(sizePer1, (sizeMax1 + m) / cells1 - m)
-        end
-    elseif tonumber(sizeMax1) > 0 then
-        cells1 = max(1, min(players, floor((sizeMax1 + m) / (sizePer1 + m))))
-    end
-
-    local cells2 = ceil(players / cells1)
-
-    if tonumber(sizeMax2) > 0 then
-        sizePer2 = min(sizePer2, (sizeMax2 + m) / cells2 - m)
-    end
-
-    -- Container size
-    local size1, size2 = cells1 * (sizePer1 + m) - m, cells2 * (sizePer2 + m) - m
-    sizeMax1, sizeMax2 = max(size1, sizeMax1), max(size2, sizeMax2)
-
-    return grow1, grow2, cells1, cells2, size1, size2, sizeMax1, sizeMax2, sizePer1, sizePer2, m
-end
-GW.GridGetRaidFramesMeasures = GridGetRaidFramesMeasures
-
-local function GridUpdateRaidFramesPosition(profile, force)
-    if profile == "PARTY" then
-        players = previewStepParty == 0 and 5 or previewStepsParty[previewStepParty]
-
-        -- Get directions, rows, cols and sizing
-        local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GW.GridGetRaidFramesMeasures(players, profile)
-        local isV = grow1 == "DOWN" or grow1 == "UP"
-
-        -- Update size
-        GwRaidFramePartyContainer.gwMover:SetSize(isV and size2 or size1, isV and size1 or size2)
-
-        -- Update unit frames
-        if IsInGroup() or force then
-            for i = 1, 5 do
-                GridPositionRaidFrame(_G["GwCompactPartyFrame" .. i], i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-                if i > players then _G["GwCompactPartyFrame" .. i]:Hide() else _G["GwCompactPartyFrame" .. i]:Show() end
-            end
-        end
-    elseif profile == "RAID" then
-        players = previewStepRaid == 0 and 40 or previewStepsRaid[previewStepRaid]
-
-        -- Get directions, rows, cols and sizing
-        local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GW.GridGetRaidFramesMeasures(players, profile)
-        local isV = grow1 == "DOWN" or grow1 == "UP"
-
-        -- Update size
-        GwRaidFrameContainer.gwMover:SetSize(isV and size2 or size1, isV and size1 or size2)
-
-        -- Update unit frames
-        for i = 1, MAX_RAID_MEMBERS do
-            GridPositionRaidFrame(_G["GwCompactRaidFrame" .. i], i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-            if i > players then _G["GwCompactRaidFrame" .. i]:Hide() else _G["GwCompactRaidFrame" .. i]:Show() end
-        end
-    end
-end
-GW.GridUpdateRaidFramesPosition = GridUpdateRaidFramesPosition
-
-
-local grpPos, noGrp = {}, {}
-local function GridUpdateRaidFramesLayout(profile)
-    -- Get directions, rows, cols and sizing
-    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GridGetRaidFramesMeasures(nil, profile)
-    local isV = grow1 == "DOWN" or grow1 == "UP"
-    local container = profile == "PARTY" and GwRaidFramePartyContainer or GwRaidFrameContainer
-
-    if not InCombatLockdown() then
-        container:SetSize(isV and size2 or size1, isV and size1 or size2)
-    end
-
-    local unitString = IsInRaid() and "Raid" or "Party"
-    local sorted = (unitString == "Party" or GetSetting("RAID_SORT_BY_ROLE" .. (profile == "PARTY" and "_PARTY" or ""))) and GridSortByRole() or {}
-
-    -- Position by role
-    for i, v in ipairs(sorted) do
-        GridPositionRaidFrame(_G["GwCompact" .. v], i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-    end
-
-    wipe(grpPos) wipe(noGrp)
-
-    -- Position by group
-    for i = 1, profile == "PARTY" and 5 or 40 do
-        if not tContains(sorted, unitString .. "Frame" .. i) then
-            if i <= 5 and profile == "PARTY" then -- <= ??
-                GridPositionRaidFrame(_G["GwCompactPartyFrame" .. i], i, grow1, grow2, cells1, sizePer1, sizePer2, m)
-            end
-
-            if not profile == "PARTY" then
-                local name, _, grp = GetRaidRosterInfo(i)
-                if name or grp > 1 then
-                    grpPos[grp] = (grpPos[grp] or 0) + 1
-                    GridPositionRaidFrame(_G["GwCompactRaidFrame" .. i], (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
-                else
-                    tinsert(noGrp, i)
-                end
-            end
-        end
-    end
-
-    -- Find spots for units with missing group info
-    if not profile == "PARTY" then
-        for _,i in ipairs(noGrp) do
-            for grp = 1, NUM_RAID_GROUPS do
-                if (grpPos[grp] or 0) < MEMBERS_PER_RAID_GROUP then
-                    grpPos[grp] = (grpPos[grp] or 0) + 1
-                    GridPositionRaidFrame(_G["GwCompactRaidFrame" .. i], (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
-                    break
-                end
-            end
-        end
-    end
-end
-GW.GridUpdateRaidFramesLayout = GridUpdateRaidFramesLayout
