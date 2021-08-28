@@ -8,13 +8,18 @@ local AddForProfiling = GW.AddForProfiling
 
 local settings_cat = {}
 local all_options = {}
-local settingProfils = {}
-GW.settingProfils = settingProfils
 
 local function switchCat(index)
     for _, l in ipairs(settings_cat) do
         l.iconbg:Hide()
         l.cat_panel:Hide()
+
+        -- hide all profiles
+        if l.cat_profilePanels then
+            for _, pp in ipairs(l.cat_profilePanels) do
+                pp:Hide()
+            end
+        end
     end
 
     local l = settings_cat[index]
@@ -28,7 +33,27 @@ local function switchCat(index)
                 v.scroll.scrollDown:SetShown(v.scroll.maxScroll > 0)
             end
         end
-        UIFrameFadeIn(l.cat_panel, 0.2, 0, 1)
+
+        -- open the last shown profile
+        if l.cat_profilePanels then
+            l.cat_panel:Hide()
+            if l.cat_panel == l.cat_panel.selectProfile.active then
+                l.cat_panel:Show()
+                l.cat_panel.selectProfile.string:SetText(getglobal(l.cat_panel.selectProfile.type))
+                UIFrameFadeIn(l.cat_panel, 0.2, 0, 1)
+            else
+                for _, pp in ipairs(l.cat_profilePanels) do
+                    if pp == l.cat_panel.selectProfile.active then
+                        pp:Show()
+                        pp.selectProfile.string:SetText(getglobal(pp.selectProfile.type))
+                        UIFrameFadeIn(pp, 0.2, 0, 1)
+                        break
+                    end
+                end
+            end
+        else
+            UIFrameFadeIn(l.cat_panel, 0.2, 0, 1)
+        end
     end
 end
 AddForProfiling("settings", "switchCat", switchCat)
@@ -54,12 +79,13 @@ local fnF_OnClick = function(self)
 end
 AddForProfiling("settings", "fnF_OnClick", fnF_OnClick)
 
-local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon)
+local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon, profilePanles)
     local i = #settings_cat + 1
 
     -- create and position a new button/label for this category
     local f = CreateFrame("Button", nil, GwSettingsWindow, "GwSettingsLabelTmpl")
     f.cat_panel = panel
+    f.cat_profilePanels = profilePanles
     f.cat_name = name
     f.cat_desc = desc
     f.cat_id = i
@@ -392,7 +418,7 @@ local function ShowColorPicker(r, g, b, a, changedCallback)
     ColorPickerFrame:Raise()
 end
 
-local function InitPanel(panel, hasScroll, settingModule)
+local function InitPanel(panel, hasScroll)
     if not panel or not (hasScroll and panel.scroll.scrollchild.gwOptions or panel.gwOptions) then
         return
     end
@@ -447,11 +473,6 @@ local function InitPanel(panel, hasScroll, settingModule)
         end
         if first then
             first = false
-        end
-
-        if v.hasProfile then
-            settingProfils[settingModule] = settingProfils[settingModule] or {}
-            tinsert(settingProfils[settingModule], {buttonName = v.optionName, optionName = v.optionName, profile = v.hasProfile, optionType = v.optionType})
         end
 
         of:ClearAllPoints()

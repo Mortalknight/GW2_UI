@@ -381,21 +381,6 @@ local function LoadRaidFrames()
     GridRaidUpdateFramesPosition()
     GridRaidUpdateFramesLayout()
 
-    GwSettingsRaidPanel.buttonRaidPreview:SetScript("OnClick", function()
-        if GwSettingsRaidPanel.selectProfile.type == "RAID" then
-            GW.GridToggleFramesPreviewRaid(_, _, false, false)
-        else
-            GW.GridToggleFramesPreviewParty(_, _, false, false)
-        end
-    end)
-    GwSettingsRaidPanel.buttonRaidPreview:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
-        GameTooltip:ClearLines()
-        GameTooltip:AddLine(L["Preview Raid Frames"], 1, 1, 1)
-        GameTooltip:AddLine(L["Click to toggle raid frame preview and cycle through different group sizes."], 1, 1, 1)
-        GameTooltip:Show()
-    end)
-    GwSettingsRaidPanel.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
     GwSettingsWindowMoveHud:HookScript("OnClick", function ()
         GW.GridToggleFramesPreviewRaid(_, _, true, true)
         GW.GridToggleFramesPreviewParty(_, _, true, true)

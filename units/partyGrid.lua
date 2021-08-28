@@ -324,7 +324,7 @@ local function GridToggleFramesPreviewParty(_, _, moveHudMode, hudMoving)
         end
         GridPartyUpdateFramesPosition()
     end
-    GwSettingsRaidPanel.buttonRaidPreview:SetText((previewStep == 0 or moveHudMode) and "-" or previewSteps[previewStep])
+    GwSettingsRaidPartyPanel.buttonRaidPreview:SetText((previewStep == 0 or moveHudMode) and "-" or previewSteps[previewStep])
     if previewStep == 0 or moveHudMode then
         GridPartyUpdateFramesLayout()
     end
