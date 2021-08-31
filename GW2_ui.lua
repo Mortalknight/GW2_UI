@@ -411,6 +411,9 @@ local function loadAddon(self)
     -- Load Slash commands
     GW.LoadSlashCommands()
 
+    -- Misc
+    GW.LoadRaidMarker()
+
     --Create the mainbar layout manager
     local lm = GW.LoadMainbarLayout()
 

@@ -404,7 +404,6 @@ L["Show clickable Quick Join messages inside of the chat."] = true
 L["is looking for members"] = true
 L["joined a group"] = true
 L["Add timestamp to all messages"] = true
-
 L["Important & dispellable debuff scale priority"] = true
 L["If both scales could apply to a debuff, which one should be used"] = true
 L["Dispell > Important"] = true
