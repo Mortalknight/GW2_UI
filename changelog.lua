@@ -1,6 +1,16 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.19.0", [=[
+NEW
+    - Added 'Smart' Raid Markers: Use a defined key (via keybinds) to open the smart raid marker menu.
+        This opens a circle with all raid markers directly under your mouse
+    - Added a prio for scaling important and dispellable debuffs
+
+MISC
+    - Redo raid and party grid profiling
+]=])
+
 v("5.18.0", [=[
 NEW
     - Added Encounter Journal, Soulbinds and Convenant Sanctum Skin
