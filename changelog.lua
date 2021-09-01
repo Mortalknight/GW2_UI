@@ -4,7 +4,7 @@ local v = GW.vernotes
 v("5.19.0", [=[
 NEW
     - Added 'Smart' Raid Markers: Use a defined key (via keybinds) to open the smart raid marker menu.
-        This opens a circle with all raid markers directly under your mouse
+        This opens a circle with all raid markers directly under your cursor
     - Added a prio for scaling important and dispellable debuffs
 
 MISC
@@ -24,7 +24,7 @@ FIXES
     - Missing raid buff pet battle overlapping
     - Raid frame sort by role
 
-    MISC
+MISC
     - Added OmniCD support
 ]=])
 

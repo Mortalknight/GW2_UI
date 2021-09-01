@@ -406,3 +406,7 @@ L["Show clickable Quick Join messages inside of the chat."] = "在聊天視窗�
 L["is looking for members"] = "正在徵求會員"
 L["joined a group"] = "已加入群組"
 L["Add timestamp to all messages"] = "所有訊息加上時間標記"
+L["Important & dispellable debuff scale priority"] = "重要 & 可驅散的減益效果縮放優先順序"
+L["If both scales could apply to a debuff, which one should be used"] = "兩種縮放大小都符合套用條件時，要使用哪一種。"
+L["Dispell > Important"] = "可驅散 > 重要"
+L["Important > Dispell"] = "重要 > 可驅散"

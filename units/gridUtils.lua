@@ -555,7 +555,7 @@ local function GridUpdateDebuffs(self, profile)
             end
 
             if shouldDisplay then
-                btnIndex, x, y = GridShowDebuffIcon(self, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires, isImportant, isDispellable)
+                btnIndex, x, y = GridShowDebuffIcon(self, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires, isImportant, isDispellable, profile)
             end
 
             aurasDone = not debuffName or y > 0

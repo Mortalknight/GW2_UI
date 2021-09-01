@@ -26,8 +26,7 @@ local function RaidMarkShowIcons()
         return
     end
     local x, y = GetCursorPosition()
-    local scale = UIParent:GetEffectiveScale()
-    RaidMarkFrame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x / scale, y / scale)
+    RaidMarkFrame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x, y)
     RaidMarkFrame:Show()
 end
 
