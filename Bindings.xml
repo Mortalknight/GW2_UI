@@ -8,4 +8,7 @@
         PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
         GW_SortBankBags()
     </Binding>
+     <Binding category="BINDING_HEADER_GW2UI" name="GW2UI_RAID_MARKER" runOnUp="true">
+        GW_RaidMark_HotkeyPressed(keystate)
+    </Binding>
 </Bindings>

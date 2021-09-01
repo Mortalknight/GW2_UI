@@ -321,8 +321,17 @@ local function onDebuffMouseUp(self, btn)
     end
 end
 
-local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires)
+local function showDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires, isImportant, isDispellable)
     local size = 16
+    if isImportant or isDispellable then
+        if isImportant and isDispellable then
+            size = size * GW.GetDebuffScaleBasedOnPrio()
+        elseif isImportant then
+            size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
+        elseif isDispellable then
+            size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
+        end
+    end
     local marginX, marginY = x * (size + 2), y * (size + 2)
     local frame = _G["Gw" .. parent:GetName() .. "DeBuffItemFrame" .. btnIndex]
 
@@ -410,6 +419,7 @@ local function updateDebuffs(self)
         if not aurasDone then
             local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitAura(self.unit, i, "HARMFUL")
             local shouldDisplay = false
+            local isImportant, isDispellable = false, false
 
             if show_debuffs then
                 if only_dispellable_debuffs then
@@ -425,14 +435,17 @@ local function updateDebuffs(self)
                         or spellId == 6788 and caster and not UnitIsUnit(caster, "player") -- Don't show "Weakened Soul" from other players
                     )
                 end
+                isDispellable = GW.IsDispellableByMe(debuffType)
             end
+
+            isImportant = (GW.ImportendRaidDebuff[spellId] and show_importend_raid_instance_debuffs) or false
 
             if show_importend_raid_instance_debuffs and not shouldDisplay then
                 shouldDisplay = GW.ImportendRaidDebuff[spellId] or false
             end
 
             if shouldDisplay then
-                btnIndex, x, y = showDebuffIcon(self, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires)
+                btnIndex, x, y = showDebuffIcon(self, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires, isImportant, isDispellable)
             end
 
             aurasDone = not debuffName or y > 0

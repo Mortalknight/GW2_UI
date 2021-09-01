@@ -152,6 +152,7 @@ GW_DEFAULT["target_HEALTH_VALUE_TYPE"] = false
 GW_DEFAULT["target_CLASS_COLOR"] = true
 GW_DEFAULT["TARGET_FLOATING_COMBAT_TEXT"] = true
 GW_DEFAULT["target_FRAME_INVERT"] = false
+GW_DEFAULT["target_BUFFS_FILTER_IMPORTANT"] = false
 
 GW_DEFAULT["focus_TARGET_ENABLED"] = true
 GW_DEFAULT["focus_DEBUFFS"] = true
@@ -253,6 +254,7 @@ GW_DEFAULT["StanceBar_pos"]["xOfs"] = -405
 GW_DEFAULT["StanceBar_pos"]["yOfs"] = 31
 GW_DEFAULT["StanceBar_pos_scale"] = 1
 GW_DEFAULT["StanceBar_GrowDirection"] = "UP"
+GW_DEFAULT["StanceBarContainerState"] = "close"
 
 GW_DEFAULT["MultiBarRight"] = {}
 GW_DEFAULT["MultiBarRight"]["point"] = "RIGHT"
@@ -391,6 +393,10 @@ GW_DEFAULT["PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF"] = false
 GW_DEFAULT["PARTY_PLAYER_FRAME"] = false
 GW_DEFAULT["PARTY_SHOW_PETS"] = false
 GW_DEFAULT["FADE_GROUP_MANAGE_FRAME"] = false
+
+GW_DEFAULT["RAIDDEBUFFS_Scale"] = 1
+GW_DEFAULT["DISPELL_DEBUFFS_Scale"] = 1
+GW_DEFAULT["RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO"] = "DISPELL"
 
 GW_DEFAULT["AUTO_REPAIR"] = false
 GW_DEFAULT["HUD_SCALE"] = 1

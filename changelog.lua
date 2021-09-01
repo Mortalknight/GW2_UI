@@ -1,7 +1,18 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("1.15.3 TBC", [=[
+v("1.16.0 TBC", [=[
+NEW
+    - Added 'Smart' Raid Markers: Use a defined key (via keybinds) to open the smart raid marker menu.
+        This opens a circle with all raid markers directly under your cursor
+    - StanceBar saves show state during sessions
+    - Added option to set a scale value for important dungeon and raid debuffs
+    - Added option to set a scale value for dispellable debuffs
+    - Added a prio for scaling important and dispellable debuffs
+
+FIXES
+    - Fix a lua error with 2.5.2
+
 MISC
     - Update TOC
     - Update libs

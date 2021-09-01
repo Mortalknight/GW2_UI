@@ -96,6 +96,7 @@ local function getUnitDebuffs(unit)
         if UnitAura(unit, i, "HARMFUL") then
             local debuffName, icon, count, debuffType, duration, expires, caster, isStealable, shouldConsolidate, spellId = UnitAura(unit, i, "HARMFUL")
             local shouldDisplay = false
+            local isImportant, isDispellable = false, false
 
             if show_debuffs then
                 if only_dispellable_debuffs then
@@ -105,7 +106,11 @@ local function getUnitDebuffs(unit)
                 else
                     shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                 end
+
+                isDispellable = GW.IsDispellableByMe(debuffType)
             end
+
+            isImportant = (GW.ImportendRaidDebuff[spellId] and show_importend_raid_instance_debuffs) or false
 
             if show_importend_raid_instance_debuffs and not shouldDisplay then
                 shouldDisplay = GW.ImportendRaidDebuff[spellId] or false
@@ -124,6 +129,8 @@ local function getUnitDebuffs(unit)
                 debuffList[counter].isStealable = isStealable
                 debuffList[counter].shouldConsolidate = shouldConsolidate
                 debuffList[counter].spellID = spellId
+                debuffList[counter].isImportant = isImportant
+                debuffList[counter].isDispellable = isDispellable
                 debuffList[counter].key = i
                 debuffList[counter].timeRemaining = duration <= 0 and 500000 or expires - GetTime()
 
@@ -153,8 +160,6 @@ local function updatePartyDebuffs(self, x, y)
 
     for i, debuffFrame in pairs(self.debuffFrames) do
         if debuffList[i] then
-            local margin = -debuffFrame:GetWidth() + -2
-            local marginy = debuffFrame:GetWidth() + 1
             debuffFrame.icon:SetTexture(debuffList[i].icon)
             debuffFrame.icon:SetParent(debuffFrame)
 
@@ -169,8 +174,6 @@ local function updatePartyDebuffs(self, x, y)
             debuffFrame.cooldown.duration:SetText(debuffList[i].duration > 0 and TimeCount(debuffList[i].timeRemaining) or "")
             debuffFrame.debuffIcon.stacks:SetText((debuffList[i].count or 1) > 1 and debuffList[i].count or "")
             debuffFrame.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, (debuffList[i].count or 1) > 9 and 11 or 14, "OUTLINE")
-            debuffFrame:ClearAllPoints()
-            debuffFrame:SetPoint("BOTTOMRIGHT", (self.isPet and (-margin * x) or (26 * x)), (self.isPet and (marginy * y) or (26 * y)))
 
             debuffFrame:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
@@ -179,6 +182,22 @@ local function updatePartyDebuffs(self, x, y)
                 GameTooltip:Show()
             end)
             debuffFrame:SetScript("OnLeave", GameTooltip_Hide)
+
+            local size = self.isPet and 10 or 24
+            if debuffList[i].isImportant or debuffList[i].isDispellable then
+                if debuffList[i].isImportant and debuffList[i].isDispellable then
+                    size = size * debuffScale
+                elseif debuffList[i].isImportant then
+                    size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
+                elseif debuffList[i].isDispellable then
+                    size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
+                end
+            end
+            debuffFrame:SetSize(size, size)
+            local margin = -size + -2
+            local marginy = size + 1
+            debuffFrame:ClearAllPoints()
+            debuffFrame:SetPoint("BOTTOMRIGHT", (self.isPet and (-margin * x) or (26 * x)), (self.isPet and (marginy * y) or (26 * y)))
 
             debuffFrame:Show()
 

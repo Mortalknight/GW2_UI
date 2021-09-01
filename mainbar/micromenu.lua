@@ -382,13 +382,13 @@ local function setupMicroButtons(mbf)
     SocialsMicroButton:HookScript("OnEvent", updateGuildButton)
     updateGuildButton(SocialsMicroButton, "GUILD_ROSTER_UPDATE")
 
-    -- WorldMapMicroButton
-    WorldMapMicroButton:ClearAllPoints()
-    WorldMapMicroButton:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
+    -- LFGMicroButton
+    LFGMicroButton:ClearAllPoints()
+    LFGMicroButton:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- MainMenuMicroButton
     MainMenuMicroButton:ClearAllPoints()
-    MainMenuMicroButton:SetPoint("BOTTOMLEFT", WorldMapMicroButton, "BOTTOMRIGHT", 4, 0)
+    MainMenuMicroButton:SetPoint("BOTTOMLEFT", LFGMicroButton, "BOTTOMRIGHT", 4, 0)
     MainMenuBarPerformanceBar:Hide()
     MainMenuBarDownload:Hide()
     MainMenuMicroButton:HookScript(

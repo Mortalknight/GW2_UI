@@ -1,4 +1,4 @@
-## Interface: 20501
+## Interface: 20502
 ## Title: |cffffedbaGW2 UI|r |cFF888888(@project-version@) - TBC|r
 ## Notes: Hud Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
@@ -43,7 +43,6 @@ core/storage.lua
 core/statusReport.lua
 core/slashcommands.lua
 core/cooldowns.lua
-core/playerAbsorb.lua
 
 settings/defaults.lua
 settings/api.lua
@@ -93,6 +92,7 @@ units/raidframes.lua
 units/unitframes.lua
 units/party.lua
 units/playerFrame.lua
+units/raidMarker.lua
 
 mainbar/micromenu.xml
 mainbar/micromenu.lua

@@ -376,6 +376,9 @@ local function loadAddon(self)
     -- Load Slash commands
     GW.LoadSlashCommands()
 
+    -- Misc
+    GW.LoadRaidMarker()
+
     --Create the mainbar layout manager
     local lm = GW.LoadMainbarLayout()
 
@@ -490,8 +493,6 @@ local function loadAddon(self)
     if GetSetting("CHATFRAME_ENABLED") then
         GW.LoadChat()
     end
-
-    GW.LoadPlayerAbsorbCalculation()
 
     --Create player hud
     if GetSetting("HEALTHGLOBE_ENABLED") and not GetSetting("PLAYER_AS_TARGET_FRAME") then
@@ -626,21 +627,6 @@ local function loadAddon(self)
     if (forcedMABags) then
         GW.Notice(L["Disabled MoveAnything's bag handling."])
     end
-
-    --Add Shared Media
-    --Font
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface/AddOns/GW2_UI/fonts/menomonia.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI Light", "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI Headlines", "Interface/AddOns/GW2_UI/fonts/headlines.ttf", LibSharedMedia.LOCALE_BIT_western + LibSharedMedia.LOCALE_BIT_ruRU)
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface/AddOns/GW2_UI/fonts/chinese.ttf", LibSharedMedia.LOCALE_BIT_zhCN + LibSharedMedia.LOCALE_BIT_zhTW)
-    LibSharedMedia:Register(LibSharedMedia.MediaType.FONT, "GW2_UI", "Interface/AddOns/GW2_UI/fonts/korean.ttf", LibSharedMedia.LOCALE_BIT_koKR)
-
-    --Texture
-    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI_White", "Interface/AddOns/GW2_UI/Textures/ChatBubble-Background.tga")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.BACKGROUND, "GW2_UI", "Interface/Addons/GW2_UI/Textures/UI-Tooltip-Background.tga")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Yellow", "Interface/Addons/GW2_UI/Textures/castingbar.tga")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI_Blue", "Interface/Addons/GW2_UI/Textures/breathmeter.tga")
-    LibSharedMedia:Register(LibSharedMedia.MediaType.STATUSBAR, "GW2_UI", "Interface/Addons/GW2_UI/Textures/castinbar-white.tga")
 
     --Check if we should show Welcomepage or Changelog
     if GetSetting("GW2_UI_VERSION") == "WELCOME" then
