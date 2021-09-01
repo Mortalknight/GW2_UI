@@ -334,54 +334,6 @@ local function getMinimapShape()
     return "SQUARE"
 end
 
-local function stackIcons(self)
-    local children = {Minimap:GetChildren()}
-    for _, child in ipairs(children) do
-        if child:HasScript("OnClick") and child:IsShown() and child:GetName() then
-            local ignore = false
-            local childName = child:GetName()
-            for _, v in pairs(Minimap_Addon_Buttons) do
-                local namecompare = string.sub(childName, 1, string.len(v))
-                if v == namecompare then
-                    ignore = true
-                    break
-                end
-            end
-            if not ignore then
-                framesToAdd[child:GetName()] = child
-            end
-        end
-    end
-
-    local frameIndex = 0
-    for _, frame in pairs(framesToAdd) do
-        if frame:IsShown() then
-            frame:SetParent(self.container)
-            frame:ClearAllPoints()
-            frame:SetPoint("RIGHT", self.container, "RIGHT", frameIndex * -35, 0)
-            frameIndex = frameIndex + 1
-            frame:SetScript("OnDragStart", nil)
-        end
-    end
-    self.container:SetWidth(frameIndex * 35)
-
-    if frameIndex == 0 then
-        self:Hide()
-    end
-end
-GW.AddForProfiling("map", "stackIcons", stackIcons)
-
-local function stack_OnEvent(self)
-    stackIcons(self)
-end
-GW.AddForProfiling("map", "stack_OnEvent", stack_OnEvent)
-
-local function stack_OnClick(self)
-    stackIcons(self)
-    self.container:SetShown(not self.container:IsShown())
-end
-GW.AddForProfiling("map", "stack_OnClick", stack_OnClick)
-
 local function minimap_OnShow()
     if GwAddonToggle and GwAddonToggle.gw_Showing then
         GwAddonToggle:Show()
@@ -577,13 +529,7 @@ local function LoadMinimap()
     GwMailButton:SetFrameLevel(GwMailButton:GetFrameLevel() + 1)
     GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -12, -47)
 
-    local fmGAT = CreateFrame("Button", "GwAddonToggle", UIParent, "GwAddonToggle")
-    fmGAT:SetScript("OnClick", stack_OnClick)
-    fmGAT:SetScript("OnEvent", stack_OnEvent)
-    fmGAT:RegisterEvent("PLAYER_ENTERING_WORLD")
-    fmGAT:SetFrameStrata("MEDIUM")
-    fmGAT.gw_Showing = true
-    stackIcons(fmGAT)
+    GW.CreateMinimapButtonsSack()
 
     hooksecurefunc(
         Minimap,

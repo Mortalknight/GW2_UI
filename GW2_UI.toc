@@ -87,8 +87,10 @@ units/target.lua
 units/party.xml
 units/raidframes.xml
 units/unitframes.xml
+units/gridUtils.lua
 units/raidControl.lua
 units/raidframes.lua
+units/partyGrid.lua
 units/unitframes.lua
 units/party.lua
 units/playerFrame.lua
@@ -162,5 +164,6 @@ immersive/damagetext.lua
 
 objectives/map.lua
 objectives/questtracker.xml
+objectives/minimapButtons.lua
 objectives/objectives.lua
 objectives/notifications.lua

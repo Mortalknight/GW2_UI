@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.17.0 TBC", [=[
+NEW
+    - Added option "Show both party frames and party grid"
+    - Added grid layouts for raid and party
+]=])
+
 v("1.16.0 TBC", [=[
 NEW
     - Added 'Smart' Raid Markers: Use a defined key (via keybinds) to open the smart raid marker menu.
