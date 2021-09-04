@@ -489,7 +489,7 @@ local function LoadPartyProfile(sWindow)
             GW.GridUpdateFramesLayout("PARTY")
         end,
         0,
-        40,
+        5,
         nil,
         0,
         {["RAID_FRAMES"] = true}

@@ -99,6 +99,7 @@ local function PositionPartyFrame(frame, parent, i, grow1, grow2, cells1, sizePe
 end
 
 local function GridPartyUpdateFramesPosition()
+    if not GwRaidFramePartyContainer then return end
     players = previewStep == 0 and 5 or previewSteps[previewStep]
 
     -- Get directions, rows, cols and sizing
@@ -138,6 +139,7 @@ end
 
 local grpPos, noGrp = {}, {}
 local function GridPartyUpdateFramesLayout()
+    if not GwRaidFramePartyContainer then return end
     -- Get directions, rows, cols and sizing
     local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetPartyFramesMeasures()
     local isV = grow1 == "DOWN" or grow1 == "UP"
