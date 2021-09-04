@@ -73,7 +73,7 @@ local function addJailersTowerData(block, numCriteria)
         objectiveBlock.objectToHide = ScenarioBlocksFrame.MawBuffsBlock
         --BottomScenarioWidgetContainerBlock.isHeader
         -- grab new auras
-        if  BottomScenarioWidgetContainerBlock.gwHooked then
+        if BottomScenarioWidgetContainerBlock.gwHooked then
             numCriteria = numCriteria + 1
             objectiveBlock = GW.GetScenarioObjectivesBlock(block, numCriteria)
             BottomScenarioWidgetContainerBlock.gwBlock = objectiveBlock

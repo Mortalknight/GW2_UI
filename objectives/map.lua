@@ -203,9 +203,6 @@ end
 GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
 
 local function setMinimapButtons(side)
-    GarrisonLandingPageMinimapButton.SetPoint = nil
-    GarrisonLandingPageMinimapButton.ClearAllPoints = nil
-
     QueueStatusMinimapButton:ClearAllPoints()
     GameTimeFrame:ClearAllPoints()
     GarrisonLandingPageMinimapButton:ClearAllPoints()
@@ -228,8 +225,6 @@ local function setMinimapButtons(side)
         GwAddonToggle:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -127)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
     end
-    GarrisonLandingPageMinimapButton.SetPoint = GW.NoOp
-    GarrisonLandingPageMinimapButton.ClearAllPoints = GW.NoOp
 end
 GW.setMinimapButtons = setMinimapButtons
 
@@ -364,14 +359,31 @@ local function LoadMinimap()
     GameTimeFrame:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
     GameTimeFrame:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
 
+    GarrisonLandingPageMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
+    GarrisonLandingPageMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
+    GarrisonLandingPageMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
+    GarrisonLandingPageMinimapButton.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
     GarrisonLandingPageMinimapButton:SetSize(50, 50)
-    hooksecurefunc("GarrisonLandingPageMinimapButton_UpdateIcon", function(self)
-        self:SetSize(50, 50)
-        self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
-        self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
-        self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
-        self.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
-    end)
+    -- override blizzard function to prevent texture changes
+    GarrisonLandingPageMinimapButton_UpdateIcon = function(self)
+        local garrisonType = C_Garrison.GetLandingPageGarrisonType()
+        self.garrisonType = garrisonType
+
+        if (garrisonType == Enum.GarrisonType.Type_6_0) then
+            self.faction = UnitFactionGroup("player")
+            self.title = GARRISON_LANDING_PAGE_TITLE;
+            self.description = MINIMAP_GARRISON_LANDING_PAGE_TOOLTIP;
+        elseif (garrisonType == Enum.GarrisonType.Type_7_0) then
+            self.title = ORDER_HALL_LANDING_PAGE_TITLE;
+            self.description = MINIMAP_ORDER_HALL_LANDING_PAGE_TOOLTIP;
+        elseif (garrisonType == Enum.GarrisonType.Type_8_0) then
+            self.title = GARRISON_TYPE_8_0_LANDING_PAGE_TITLE;
+            self.description = GARRISON_TYPE_8_0_LANDING_PAGE_TOOLTIP;
+        elseif (garrisonType == Enum.GarrisonType.Type_9_0) then   
+            self.title = GARRISON_TYPE_9_0_LANDING_PAGE_TITLE;
+            self.description = GARRISON_TYPE_9_0_LANDING_PAGE_TOOLTIP;
+        end
+    end
     GarrisonLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter)
 
     local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")

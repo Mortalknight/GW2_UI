@@ -2,9 +2,9 @@ local _, GW = ...
 
 local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget)
     if GW.locationData.mapID == 1644 then
-        if ScenarioWidgetContainerBlock.WidgetContainer:GetHeight() > 1.1 then
+        if BottomScenarioWidgetContainerBlock.WidgetContainer:GetHeight() > 1.1 then
             numCriteria = numCriteria + 1
-            local container = ScenarioWidgetContainerBlock
+            local container = BottomScenarioWidgetContainerBlock
             local objectiveBlock = GW.GetScenarioObjectivesBlock(block, numCriteria)
             container.gwBlock = objectiveBlock
             objectiveBlock:SetHeight(container:GetHeight())
@@ -14,14 +14,14 @@ local function addEmberCourtData(block, numCriteria, GwQuestTrackerTimerSavedHei
             container:SetAllPoints()
 
             if not container.gwHooked then
-                hooksecurefunc(ScenarioWidgetContainerBlock, "SetHeight", function()
-                    if ScenarioWidgetContainerBlock:IsShown() and ScenarioWidgetContainerBlock.gwBlock then
+                hooksecurefunc(BottomScenarioWidgetContainerBlock, "SetHeight", function()
+                    if BottomScenarioWidgetContainerBlock:IsShown() and BottomScenarioWidgetContainerBlock.gwBlock then
                         GW.updateCurrentScenario(GwQuesttrackerContainerScenario)
                     end
                 end)
 
-                hooksecurefunc(ScenarioWidgetContainerBlock.WidgetContainer, "SetHeight", function()
-                    if ScenarioWidgetContainerBlock:IsShown() and ScenarioWidgetContainerBlock.gwBlock then
+                hooksecurefunc(BottomScenarioWidgetContainerBlock.WidgetContainer, "SetHeight", function()
+                    if BottomScenarioWidgetContainerBlock:IsShown() and BottomScenarioWidgetContainerBlock.gwBlock then
                         GW.updateCurrentScenario(GwQuesttrackerContainerScenario)
                     end
                 end)

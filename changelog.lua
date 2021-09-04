@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.19.1", [=[
+FIXES
+    - Ember court issue
+    - Garrision minimap icon tweaks
+]=])
+
 v("5.19.0", [=[
 NEW
     - Added 'Smart' Raid Markers: Use a defined key (via keybinds) to open the smart raid marker menu.
