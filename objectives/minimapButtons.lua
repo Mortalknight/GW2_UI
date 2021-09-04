@@ -19,7 +19,8 @@ local ignoreButton = {
 	"InstanceDifficultyFrame",
     "GwMapFPS",
     "GwMapCoords",
-    "GwMapTime"
+    "GwMapTime",
+    "GwMiniMapTrackingFrame"
 }
 local genericIgnore = {
 	"Archy",

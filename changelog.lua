@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.17.1 TBC", [=[
+FIXES
+    - Minimap button issue
+]=])
+
 v("1.17.0 TBC", [=[
 NEW
     - Added option "Show both party frames and party grid"
