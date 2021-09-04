@@ -5,6 +5,9 @@ v("1.17.0 TBC", [=[
 NEW
     - Added option "Show both party frames and party grid"
     - Added grid layouts for raid and party
+
+FIXES
+    - CN/TW font issue
 ]=])
 
 v("1.16.0 TBC", [=[

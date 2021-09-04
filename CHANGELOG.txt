@@ -3,6 +3,9 @@ NEW
     - Added option "Show both party frames and party grid"
     - Added grid layouts for raid and party
 
+FIXES
+    - CN/TW font issue
+
 1.16.0
 NEW
     - Added 'Smart' Raid Markers: Use a defined key (via keybinds) to open the smart raid marker menu.
