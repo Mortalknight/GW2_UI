@@ -7,7 +7,6 @@ local createNormalUnitFrame = GW.createNormalUnitFrame
 local IsIn = GW.IsIn
 local CommaValue = GW.CommaValue
 local Diff = GW.Diff
-local LHC = GW.Libs.LHC
 
 local function updateHealthTextString(self, health, healthPrecentage)
     local healthString = ""
@@ -27,6 +26,7 @@ GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextStrin
 local function updateHealthData(self)
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
+    local healPredictionAmount = UnitGetIncomingHeals(self.unit) or 0
     local healthPrecentage = 0
     local predictionPrecentage = 0
 
@@ -34,8 +34,8 @@ local function updateHealthData(self)
         healthPrecentage = health / healthMax
     end
 
-    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax ~= 0 then
-        predictionPrecentage = self.healPredictionAmount / healthMax
+    if (healPredictionAmount ~= nil or healPredictionAmount == 0) and healthMax ~= 0 then
+        predictionPrecentage = healPredictionAmount / healthMax
     end
 
     local animationSpeed = math.min(1, math.max(0.2, 2 * Diff(self.healthValue, healthPrecentage)))
@@ -80,12 +80,6 @@ local function updateHealthData(self)
             end
         )
     end
-end
-
-local function UpdateIncomingPredictionAmount(self)
-    local amount = (LHC:GetHealAmount(self.guid, LHC.ALL_HEALS) or 0) * (LHC:GetHealModifier(self.guid) or 1)
-    self.healPredictionAmount = amount
-    updateHealthData(self)
 end
 
 local function unitFrameData(self, event, ...)
@@ -205,6 +199,7 @@ local function LoadPlayerFrame()
     NewUnitFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     NewUnitFrame:RegisterEvent("UNIT_PORTRAIT_UPDATE")
     NewUnitFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    NewUnitFrame:RegisterEvent("UNIT_HEAL_PREDICTION")
     NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "player")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "player")
@@ -217,19 +212,6 @@ local function LoadPlayerFrame()
             self.pvp:fadeOut()
         end
     end)
-
-    -- Handle callbacks from HealComm
-    local HealCommEventHandler = function ()
-        local self = NewUnitFrame
-        return UpdateIncomingPredictionAmount(self)
-    end
-
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealStarted", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealUpdated", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealStopped", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealDelayed", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_ModifierChanged", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_GUIDDisappeared", HealCommEventHandler)
 
     -- grab the TotemFramebuttons to our own Totem Frame
     if PlayerFrame and TotemFrame then

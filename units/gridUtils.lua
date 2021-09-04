@@ -3,9 +3,6 @@ local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
-local REALM_FLAGS = GW.REALM_FLAGS
-local nameRoleIcon = GW.nameRoleIcon
-local LRI = GW.Libs.LRI
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local FillTable = GW.FillTable
@@ -14,7 +11,6 @@ local INDICATORS = GW.INDICATORS
 local AURAS_INDICATORS = GW.AURAS_INDICATORS
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local AddToClique = GW.AddToClique
-local LHC = GW.Libs.LHC
 
 local missing, ignored = {}, {}
 local spellIDs = {}
@@ -111,6 +107,7 @@ local function CreateGridFrame(index, isParty, parent, OnEvent, OnUpdate, profil
     frame:RegisterEvent("PARTY_MEMBER_DISABLE")
     frame:RegisterEvent("PARTY_MEMBER_ENABLE")
     frame:RegisterEvent("INCOMING_RESURRECT_CHANGED")
+    frame:RegisterEvent("UNIT_HEAL_PREDICTION")
 
     frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", frame.unit)
     frame:RegisterUnitEvent("UNIT_MAXHEALTH", frame.unit)
@@ -123,16 +120,7 @@ local function CreateGridFrame(index, isParty, parent, OnEvent, OnUpdate, profil
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", frame.unit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", frame.unit)
 
-    local HealCommEventHandler = function()
-        OnEvent(frame, "UNIT_HEAL_PREDICTION")
-    end
 
-    LHC.RegisterCallback(frame, "HealComm_HealStarted", HealCommEventHandler)
-    LHC.RegisterCallback(frame, "HealComm_HealUpdated", HealCommEventHandler)
-    LHC.RegisterCallback(frame, "HealComm_HealStopped", HealCommEventHandler)
-    LHC.RegisterCallback(frame, "HealComm_HealDelayed", HealCommEventHandler)
-    LHC.RegisterCallback(frame, "HealComm_ModifierChanged", HealCommEventHandler)
-    LHC.RegisterCallback(frame, "HealComm_GUIDDisappeared", HealCommEventHandler)
 
     OnEvent(frame, "load")
 
@@ -224,7 +212,7 @@ end
 GW.GridSetHealth = GridSetHealth
 
 local function GridSetPredictionAmount(self, profile)
-    local prediction = ((LHC:GetHealAmount(self.guid, LHC.ALL_HEALS) or 0) * (LHC:GetHealModifier(self.guid) or 1)) or 0
+    local prediction = UnitGetIncomingHeals(self.unit) or 0
 
     self.healPredictionAmount = prediction
     GridSetHealth(self, profile)
@@ -756,7 +744,7 @@ local function GridUpdateFrameData(self, index, profile)
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
     local healthPrec = 0
-    local prediction = ((LHC:GetHealAmount(self.guid, LHC.ALL_HEALS) or 0) * (LHC:GetHealModifier(self.guid) or 1)) or 0
+    local prediction = UnitGetIncomingHeals(self.unit) or 0
     local predictionPrecentage = 0
 
     local power = UnitPower(self.unit, UnitPowerType(self.unit))

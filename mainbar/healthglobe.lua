@@ -5,7 +5,6 @@ local Self_Hide = GW.Self_Hide
 local TimeParts = GW.TimeParts
 local IsIn = GW.IsIn
 local GetSetting = GW.GetSetting
-local LHC = GW.Libs.LHC
 
 local function repair_OnEvent(self, event, ...)
     if event ~= "PLAYER_ENTERING_WORLD" and not GW.inWorld then
@@ -48,7 +47,7 @@ local X_MIN = -20
 local function updateHealthData(self, anims)
     local health = UnitHealth("Player")
     local healthMax = UnitHealthMax("Player")
-    local prediction = ((LHC:GetHealAmount(self.guid, LHC.ALL_HEALS) or 0) * (LHC:GetHealModifier(self.guid) or 1)) or 0 --UnitGetIncomingHeals("Player") or 0
+    local prediction = UnitGetIncomingHeals("Player") or 0
 
     local health_def = healthMax - health
     local prediction_over = prediction - health_def
@@ -327,21 +326,11 @@ local function LoadHealthGlobe()
     hg:RegisterEvent("PLAYER_ENTERING_WORLD")
     hg:RegisterEvent("PLAYER_FLAGS_CHANGED")
     hg:RegisterEvent("RESURRECT_REQUEST")
+    hg:RegisterEvent("UNIT_HEAL_PREDICTION")
     hg:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
     hg:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     hg:RegisterUnitEvent("UNIT_FACTION", "player")
 
-    -- Handle callbacks from HealComm
-    local HealCommEventHandler = function ()
-        globe_OnEvent(hg, "UNIT_HEAL_PREDICTION")
-    end
-    --libHealComm setup
-    LHC.RegisterCallback(hg, "HealComm_HealStarted", HealCommEventHandler)
-    LHC.RegisterCallback(hg, "HealComm_HealUpdated", HealCommEventHandler)
-    LHC.RegisterCallback(hg, "HealComm_HealStopped", HealCommEventHandler)
-    LHC.RegisterCallback(hg, "HealComm_HealDelayed", HealCommEventHandler)
-    LHC.RegisterCallback(hg, "HealComm_ModifierChanged", HealCommEventHandler)
-    LHC.RegisterCallback(hg, "HealComm_GUIDDisappeared", HealCommEventHandler)
     hg.unit = "Player"
     hg.guid = UnitGUID("Player")
 

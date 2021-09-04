@@ -53,7 +53,6 @@ do
         GW.Libs[name] = _G.LibStub(libname, silent)
     end
 
-    AddLib("LHC", "LibHealComm-4.0", true)
     AddLib("LSM", "LibSharedMedia-3.0", true)
     AddLib("Compress", "LibCompress", true)
     AddLib("Serializer", "AceSerializer-3.0", true)

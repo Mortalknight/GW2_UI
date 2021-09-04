@@ -9,7 +9,6 @@ local SetClassIcon = GW.SetClassIcon
 local AddToClique = GW.AddToClique
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
-local LHC = GW.Libs.LHC
 
 local GW_PORTRAIT_BACKGROUND = {
     [1] = {l = 0, r = 0.828, t = 0, b = 0.166015625},
@@ -365,7 +364,7 @@ end
 GW.AddForProfiling("party", "setHealth", setHealth)
 
 local function setPredictionAmount(self)
-    local prediction = (LHC:GetHealAmount(self.guid, LHC.ALL_HEALS) or 0) * (LHC:GetHealModifier(self.guid) or 1)
+    local prediction = UnitGetIncomingHeals(self.unit) or 0
 
     self.healPredictionAmount = prediction
     setHealth(self)
@@ -522,12 +521,6 @@ local function CreatePartyPetFrame(frame, i)
     f.healthbar.animationName = unit .. "animation"
     f.healthbar.animationValue = 0
 
-    -- Handle callbacks from HealComm
-    local HealCommEventHandler = function ()
-        local self = f
-        return setPredictionAmount(self)
-    end
-
     f:SetScript("OnEvent", party_OnEvent)
 
     f:RegisterEvent("GROUP_ROSTER_UPDATE")
@@ -535,6 +528,7 @@ local function CreatePartyPetFrame(frame, i)
     f:RegisterEvent("PARTY_MEMBER_ENABLE")
     f:RegisterEvent("PORTRAITS_UPDATED")
     f:RegisterEvent("PLAYER_TARGET_CHANGED")
+    f:RegisterEvent("UNIT_HEAL_PREDICTION")
 
     f:RegisterUnitEvent("UNIT_AURA", unit)
     f:RegisterUnitEvent("UNIT_PET", frame.unit)
@@ -545,13 +539,6 @@ local function CreatePartyPetFrame(frame, i)
     f:RegisterUnitEvent("UNIT_POWER_UPDATE", unit)
     f:RegisterUnitEvent("UNIT_MAXPOWER", unit)
     f:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)
-
-    LHC.RegisterCallback(f, "HealComm_HealStarted", HealCommEventHandler)
-    LHC.RegisterCallback(f, "HealComm_HealUpdated", HealCommEventHandler)
-    LHC.RegisterCallback(f, "HealComm_HealStopped", HealCommEventHandler)
-    LHC.RegisterCallback(f, "HealComm_HealDelayed", HealCommEventHandler)
-    LHC.RegisterCallback(f, "HealComm_ModifierChanged", HealCommEventHandler)
-    LHC.RegisterCallback(f, "HealComm_GUIDDisappeared", HealCommEventHandler)
 
     -- create de/buff frames
     f.buffFrames = {}
@@ -640,12 +627,6 @@ local function createPartyFrame(i, isFirstFrame)
     frame.healthbar.animationName = registerUnit .. "animation"
     frame.healthbar.animationValue = 0
 
-    -- Handle callbacks from HealComm
-    local HealCommEventHandler = function ()
-        local self = frame
-        return setPredictionAmount(self)
-    end
-
     frame:SetScript("OnEvent", party_OnEvent)
 
     frame:RegisterEvent("GROUP_ROSTER_UPDATE")
@@ -656,6 +637,7 @@ local function createPartyFrame(i, isFirstFrame)
     frame:RegisterEvent("READY_CHECK_FINISHED")
     frame:RegisterEvent("PORTRAITS_UPDATED")
     frame:RegisterEvent("PLAYER_TARGET_CHANGED")
+    frame:RegisterEvent("UNIT_HEAL_PREDICTION")
 
     frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
@@ -668,13 +650,6 @@ local function createPartyFrame(i, isFirstFrame)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
-
-    LHC.RegisterCallback(frame, "HealComm_HealStarted", HealCommEventHandler)
-    LHC.RegisterCallback(frame, "HealComm_HealUpdated", HealCommEventHandler)
-    LHC.RegisterCallback(frame, "HealComm_HealStopped", HealCommEventHandler)
-    LHC.RegisterCallback(frame, "HealComm_HealDelayed", HealCommEventHandler)
-    LHC.RegisterCallback(frame, "HealComm_ModifierChanged", HealCommEventHandler)
-    LHC.RegisterCallback(frame, "HealComm_GUIDDisappeared", HealCommEventHandler)
 
     -- create de/buff frames
     frame.buffFrames = {}

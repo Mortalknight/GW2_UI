@@ -17,7 +17,6 @@ local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
 local LoadAuras = GW.LoadAuras
 local UpdateBuffLayout = GW.UpdateBuffLayout
-local LHC = GW.Libs.LHC
 
 local function normalUnitFrame_OnEnter(self)
     if self.unit ~= nil then
@@ -261,7 +260,6 @@ GW.AddForProfiling("unitframes", "setUnitPortrait", setUnitPortrait)
 local function unitFrameData(self)
     local level = UnitLevel(self.unit)
     self.guid = UnitGUID(self.unit)
-    self.healPredictionAmount = 0
     if level == -1 then
         level = "??"
     end
@@ -454,6 +452,7 @@ GW.AddForProfiling("unitframes", "updateThreatValues", updateThreatValues)
 local function updateHealthValues(self, event)
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
+    local healPredictionAmount = UnitGetIncomingHeals(self.unit) or 0
     local healthPrecentage = 0
     local predictionPrecentage = 0
 
@@ -473,12 +472,12 @@ local function updateHealthValues(self, event)
     end
 
     --prediction calc
-    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax ~= 0 then
-        predictionPrecentage = self.healPredictionAmount / healthMax
+    if (healPredictionAmount ~= nil or healPredictionAmount == 0) and healthMax ~= 0 then
+        predictionPrecentage = healPredictionAmount / healthMax
     end
 
     local predictionbar = self.predictionbar
-    if self.healPredictionAmount == 0 then
+    if healPredictionAmount == 0 then
         predictionbar:SetAlpha(0.0)
     else
         local predictionAmount = healthPrecentage + predictionPrecentage
@@ -571,7 +570,7 @@ local function target_OnEvent(self, event, unit)
     elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
             UpdateBuffLayout(self, event)
-        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH") then
+        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_UPDATE") then
             updatePowerValues(self)
@@ -630,7 +629,7 @@ local function focus_OnEvent(self, event, unit)
     elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
             UpdateBuffLayout(self, event)
-        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH") then
+        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
             updatePowerValues(self)
@@ -664,12 +663,6 @@ local function unittarget_OnUpdate(self, elapsed)
     updateCastValues(self)
 end
 GW.AddForProfiling("unitframes", "unittarget_OnUpdate", unittarget_OnUpdate)
-
-local function UpdateIncomingPredictionAmount(self)
-    local amount = (LHC:GetHealAmount(self.guid, LHC.ALL_HEALS) or 0) * (LHC:GetHealModifier(self.guid) or 1)
-    self.healPredictionAmount = amount
-    updateHealthValues(self)
-end
 
 local function LoadTarget()
     local NewUnitFrame = createNormalUnitFrame("GwTargetUnitFrame", GetSetting("target_FRAME_INVERT"))
@@ -733,6 +726,7 @@ local function LoadTarget()
     NewUnitFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
+    NewUnitFrame:RegisterEvent("UNIT_HEAL_PREDICTION")
     NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "target")
 
     NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "target")
@@ -751,19 +745,6 @@ local function LoadTarget()
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "target")
-
-    -- Handle callbacks from HealComm
-    local HealCommEventHandler = function ()
-        local self = NewUnitFrame
-        return UpdateIncomingPredictionAmount(self)
-    end
-
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealStarted", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealUpdated", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealStopped", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealDelayed", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_ModifierChanged", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_GUIDDisappeared", HealCommEventHandler)
 
     LoadAuras(NewUnitFrame)
 
@@ -841,6 +822,7 @@ local function LoadFocus()
     NewUnitFrame:RegisterEvent("PLAYER_FOCUS_CHANGED")
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
+    NewUnitFrame:RegisterEvent("UNIT_HEAL_PREDICTION")
 
     NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "focus")
@@ -855,19 +837,6 @@ local function LoadFocus()
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "focus")
-
-    -- Handle callbacks from HealComm
-    local HealCommEventHandler = function ()
-        local self = NewUnitFrame
-        return UpdateIncomingPredictionAmount(self)
-    end
-
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealStarted", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealUpdated", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealStopped", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_HealDelayed", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_ModifierChanged", HealCommEventHandler)
-    LHC.RegisterCallback(NewUnitFrame, "HealComm_GUIDDisappeared", HealCommEventHandler)
 
     LoadAuras(NewUnitFrame)
 
