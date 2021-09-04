@@ -163,15 +163,7 @@ end
 
 local function SkinBattlePetTooltip()
     local skin_battle_pet_tt = function(self)
-        self.BorderTopLeft:Hide()
-        self.BorderTopRight:Hide()
-        self.BorderBottomRight:Hide()
-        self.BorderBottomLeft:Hide()
-        self.BorderTop:Hide()
-        self.BorderRight:Hide()
-        self.BorderBottom:Hide()
-        self.BorderLeft:Hide()
-        self.Background:Hide()
+        self.NineSlice:Hide()
         self:CreateBackdrop(constBackdropArgs)
     end
 
@@ -460,7 +452,7 @@ end
 local function GameTooltip_OnTooltipSetUnit(self)
     if self:IsForbidden() then return end
 
-    local unit = select(2, self:GetUnit())
+    local _, unit = self:GetUnit()
     local isShiftKeyDown = IsShiftKeyDown()
     local isControlKeyDown = IsControlKeyDown()
     local isPlayerUnit = UnitIsPlayer(unit)
@@ -774,27 +766,36 @@ local function SetBackpackToken(self, id)
 end
 
 local function SkinProgressbar(self)
-    if not self or self:IsForbidden() or not self.progressBarPool then return end
+    if not self or not self.progressBarPool or self:IsForbidden() then return end
 
     local sb = self.progressBarPool:GetNextActive()
-    if (not sb or not sb.Bar) or sb.Bar.backdrop then return end
+    if not sb or not sb.Bar then return end
 
-    sb.Bar:StripTextures()
-    sb.Bar:CreateBackdrop()
-    sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
-    sb.Bar.BorderLeft:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-    sb.Bar.BorderRight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-    sb.Bar.BorderMid:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-    sb.Bar.LeftDivider:Hide()
-    sb.Bar.RightDivider:Hide()
-
-    self.pbBar = sb.Bar
+    self.progressBar = sb.Bar
+    if not sb.Bar.backdrop then
+        sb.Bar:StripTextures()
+        sb.Bar:CreateBackdrop()
+        sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
+        sb.Bar.BorderLeft:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+        sb.Bar.BorderRight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+        sb.Bar.BorderMid:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+        sb.Bar.LeftDivider:Hide()
+        sb.Bar.RightDivider:Hide()
+    end
 end
 
-local function SetStyle(tooltip)
-    if not tooltip or (tooltip == GW.ScanTooltip or tooltip.IsEmbedded or not tooltip.SetBackdrop) or tooltip:IsForbidden() then return end
+local function SetStyle(tooltip, _, isEmbedded)
+    if not tooltip or (tooltip == GW.ScanTooltip or isEmbedded or tooltip.IsEmbedded or not tooltip.NineSlice) or tooltip:IsForbidden() then return end
 
-    tooltip:SetBackdrop(constBackdropArgs)
+    if tooltip.Delimiter1 then tooltip.Delimiter1:SetTexture() end
+	if tooltip.Delimiter2 then tooltip.Delimiter2:SetTexture() end
+
+    if not tooltip.NineSlice.SetBackdrop then
+        tooltip.NineSlice:Hide()
+		Mixin(tooltip, BackdropTemplateMixin)
+		tooltip:HookScript("OnSizeChanged", tooltip.OnBackdropSizeChanged)
+        tooltip:SetBackdrop(constBackdropArgs)
+	end
 end
 
 local function LoadTooltips()

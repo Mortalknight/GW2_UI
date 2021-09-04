@@ -51,6 +51,7 @@ local RemoveTextureID = {
     [136467] = true,
     [136468] = true,
     [130924] = true,
+    [136477] = true,
 }
 local RemoveTextureFile = {
     ["interface/minimap/minimap-trackingborder"] = true,
