@@ -70,10 +70,9 @@ local buttonFunctions = {
 }
 
 local function SkinMinimapButton(button)
-    if not button then return end
+    if button.isSkinnedGW2_UI then return end
 
     local name = button.GetName and button:GetName()
-	if not name then return end
 
     if tContains(ignoreButton, name) then return end
 
