@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.17.2 TBC", [=[
+FIXES
+    - Raid / Party grid HP issue
+]=])
+
 v("1.17.1 TBC", [=[
 FIXES
     - Minimap button issue

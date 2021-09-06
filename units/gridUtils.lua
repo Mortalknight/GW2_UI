@@ -120,8 +120,6 @@ local function CreateGridFrame(index, isParty, parent, OnEvent, OnUpdate, profil
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", frame.unit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", frame.unit)
 
-
-
     OnEvent(frame, "load")
 
     if GetSetting("RAID_POWER_BARS" .. (profile == "PARTY" and "_PARTY" or "")) then
