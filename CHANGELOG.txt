@@ -1,3 +1,10 @@
+5.19.2
+FIXES
+    - Minimap button issue
+
+MISC
+    - Update locals
+
 5.19.1
 FIXES
     - Ember court issue

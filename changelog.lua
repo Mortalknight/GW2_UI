@@ -1,6 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.19.2", [=[
+FIXES
+    - Minimap button issue
+
+MISC
+    - Update locals
+]=])
+
 v("5.19.1", [=[
 FIXES
     - Ember court issue
