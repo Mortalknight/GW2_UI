@@ -13,7 +13,7 @@ local LibSharedMedia = GW.Libs.LSM
 
 local l = CreateFrame("Frame", nil, UIParent) -- Main event frame nil
 
-GW.VERSION_STRING = "@project-version@ TBC Classic"
+GW.VERSION_STRING = "@project-version@ Classic"
 
 -- setup Binding Header color
 _G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")

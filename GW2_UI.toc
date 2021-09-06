@@ -1,5 +1,5 @@
 ## Interface: 20502
-## Title: |cffffedbaGW2 UI|r |cFF888888(@project-version@) - TBC|r
+## Title: |cffffedbaGW2 UI|r |cFF888888(@project-version@)|r
 ## Notes: Hud Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
 ## OptionalDeps: MoveAnything, Questie, TitanClassic, Clique, _DebugLog, BugSack, !Stragglers, ACU
