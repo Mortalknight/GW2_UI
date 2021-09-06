@@ -428,3 +428,7 @@ L["Show clickable Quick Join messages inside of the chat."] = "Mostrar mensagens
 L["is looking for members"] = "está buscando membros"
 L["joined a group"] = "juntou-se a um grupo"
 L["Add timestamp to all messages"] = "Mostrar horário em todas as mensagens"
+L["Important & dispellable debuff scale priority"] = "Escala de prioridade de efeitos negativos importantes e dissipáveis"
+L["If both scales could apply to a debuff, which one should be used"] = "Se ambas as escalas se aplicarem a um efeito negativo, qual deve ser usada"
+L["Dispell > Important"] = "Dissipar > Importante"
+L["Important > Dispell"] = "Importante > Dissipar"
