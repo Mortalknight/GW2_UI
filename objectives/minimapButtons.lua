@@ -1,43 +1,44 @@
 local _, GW = ...
 
 local buttons = {}
+
 local ignoreButton = {
-	"GameTimeFrame",
-	"HelpOpenWebTicketButton",
-	"MiniMapVoiceChatFrame",
-	"TimeManagerClockButton",
-	"BattlefieldMinimap",
-	"ButtonCollectFrame",
-	"GameTimeFrame",
-	"QueueStatusMinimapButton",
-	"GarrisonLandingPageMinimapButton",
-	"MiniMapMailFrame",
-	"MiniMapTracking",
-	"MinimapZoomIn",
-	"MinimapZoomOut",
-	"RecipeRadarMinimapButtonFrame",
-	"InstanceDifficultyFrame",
+    "GameTimeFrame",
+    "HelpOpenWebTicketButton",
+    "MiniMapVoiceChatFrame",
+    "TimeManagerClockButton",
+    "BattlefieldMinimap",
+    "ButtonCollectFrame",
+    "GameTimeFrame",
+    "QueueStatusMinimapButton",
+    "GarrisonLandingPageMinimapButton",
+    "MiniMapMailFrame",
+    "MiniMapTracking",
+    "MinimapZoomIn",
+    "MinimapZoomOut",
+    "RecipeRadarMinimapButtonFrame",
+    "InstanceDifficultyFrame",
     "GwMapFPS",
     "GwMapCoords",
     "GwMapTime"
 }
 local genericIgnore = {
-	"Archy",
-	"GatherMatePin",
-	"GatherNote",
-	"GuildInstance",
-	"HandyNotesPin",
-	"MiniMap",
-	"Spy_MapNoteList_mini",
-	"ZGVMarker",
-	"poiMinimap",
-	"GuildMap3Mini",
-	"LibRockConfig-1.0_MinimapButton",
-	"NauticusMiniIcon",
-	"WestPointer",
-	"Cork",
-	"DugisArrowMinimapPoint",
-	"QuestieFrame",
+    "Archy",
+    "GatherMatePin",
+    "GatherNote",
+    "GuildInstance",
+    "HandyNotesPin",
+    "MiniMap",
+    "Spy_MapNoteList_mini",
+    "ZGVMarker",
+    "poiMinimap",
+    "GuildMap3Mini",
+    "LibRockConfig-1.0_MinimapButton",
+    "NauticusMiniIcon",
+    "WestPointer",
+    "Cork",
+    "DugisArrowMinimapPoint",
+    "QuestieFrame",
     "ElvConfigToggle"
 }
 local partialIgnore = {
@@ -68,20 +69,19 @@ local buttonFunctions = {
 }
 
 local function SkinMinimapButton(button)
-    if not button then return end
+    if button.isSkinnedGW2_UI then return end
 
     local name = button.GetName and button:GetName()
-	if not name then return end
 
     if tContains(ignoreButton, name) then return end
 
-	for i = 1, #genericIgnore do
-		if strsub(name, 1, strlen(genericIgnore[i])) == genericIgnore[i] then return end
-	end
+    for i = 1, #genericIgnore do
+        if strsub(name, 1, strlen(genericIgnore[i])) == genericIgnore[i] then return end
+    end
 
-	for i = 1, #partialIgnore do
-		if strfind(name, "LibDBIcon") == nil and strfind(name, partialIgnore[i]) ~= nil then return end
-	end
+    for i = 1, #partialIgnore do
+        if strfind(name, "LibDBIcon") == nil and strfind(name, partialIgnore[i]) ~= nil then return end
+    end
 
     for i = 1, button:GetNumRegions() do
         local region = select(i, button:GetRegions())
@@ -108,8 +108,8 @@ local function SkinMinimapButton(button)
     end
 
     button:SetFrameLevel(Minimap:GetFrameLevel() + 10)
-	button:SetFrameStrata(Minimap:GetFrameStrata())
-	button:SetSize(25, 25)
+    button:SetFrameStrata(Minimap:GetFrameStrata())
+    button:SetSize(25, 25)
     button:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
     button:HookScript("OnEnter", function(self)
         if self.icon then self.icon:SetBlendMode("ADD") end
@@ -120,20 +120,20 @@ local function SkinMinimapButton(button)
         if self.texture then self.texture:SetBlendMode("BLEND") end
     end)
 
-	button.isSkinnedGW2_UI = true
+    button.isSkinnedGW2_UI = true
     tinsert(buttons, button)
 end
 
 local function LockButton(self)
-	for _, func in pairs(buttonFunctions) do
-		self[func] = GW.NoOp
-	end
+    for _, func in pairs(buttonFunctions) do
+        self[func] = GW.NoOp
+    end
 end
 
 local function UnlockButton(self)
-	for _, func in pairs(buttonFunctions) do
-		self[func] = nil
-	end
+    for _, func in pairs(buttonFunctions) do
+        self[func] = nil
+    end
 end
 
 local function UpdateButtons(self)
@@ -141,23 +141,23 @@ local function UpdateButtons(self)
 
     for _, button in pairs(buttons) do
         if button:IsShown() then
-			UnlockButton(button)
+            UnlockButton(button)
 
-			button:SetParent(self.container)
+            button:SetParent(self.container)
             button:ClearAllPoints()
             button:SetPoint("RIGHT", prevFrame, "RIGHT", frameIndex == 0 and -5 or -27, 0)
             frameIndex = frameIndex + 1
             prevFrame = button
 
-			button:SetScale(1)
-			button:SetFrameStrata("MEDIUM")
-			button:SetFrameLevel(self.container:GetFrameLevel() + 1)
+            button:SetScale(1)
+            button:SetFrameStrata("MEDIUM")
+            button:SetFrameLevel(self.container:GetFrameLevel() + 1)
 
-			if button:HasScript("OnDragStart") then button:SetScript("OnDragStart", nil) end
-			if button:HasScript("OnDragStop") then button:SetScript("OnDragStop", nil) end
+            if button:HasScript("OnDragStart") then button:SetScript("OnDragStart", nil) end
+            if button:HasScript("OnDragStop") then button:SetScript("OnDragStop", nil) end
 
-			LockButton(button)
-		end
+            LockButton(button)
+        end
     end
 
     self.container:SetWidth(frameIndex * 25 + (frameIndex - 1) * 2 + 10)
