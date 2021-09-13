@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.17.3 TBC", [=[
+MISC
+    - Added possible taind bg and arena taint fix
+]=])
+
 v("1.17.2 TBC", [=[
 FIXES
     - Raid / Party grid HP issue
