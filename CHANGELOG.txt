@@ -1,6 +1,10 @@
+1.17.4
+FIXES
+    - Raid frame issue
+
 1.17.3
 MISC
-    - Added possible taind bg and arena taint fix
+    - Added possible bg and arena taint fix
 
 1.17.2
 FIXES
