@@ -100,7 +100,7 @@ end
 
 local function GridPartyUpdateFramesPosition()
     if not GwRaidFramePartyContainer then return end
-    players = previewStep == 0 and 5 or previewSteps[previewStep]
+    players = IsInGroup() and max(1, GetNumGroupMembers()) or previewStep == 0 and 5 or previewSteps[previewStep]
 
     -- Get directions, rows, cols and sizing
     local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetPartyFramesMeasures(players)
@@ -141,7 +141,7 @@ local grpPos, noGrp = {}, {}
 local function GridPartyUpdateFramesLayout()
     if not GwRaidFramePartyContainer then return end
     -- Get directions, rows, cols and sizing
-    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetPartyFramesMeasures()
+    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetPartyFramesMeasures(IsInGroup() and max(1, GetNumGroupMembers()) or previewStep == 0 and 5 or previewSteps[previewStep])
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     if not InCombatLockdown() then
@@ -199,7 +199,7 @@ local function unhookPlayerFrame()
 end
 GW.AddForProfiling("raidframes", "unhookPlayerFrame", unhookPlayerFrame)
 
-local function GridOnEvent(self, event, unit)
+local function PartyGridOnEvent(self, event, unit)
     if not UnitExists(self.unit) then
         return
     elseif not self.nameNotLoaded then
@@ -286,7 +286,7 @@ local function GridOnEvent(self, event, unit)
         end)
     end
 end
-GW.GridOnEvent = GridOnEvent
+GW.PartyGridOnEvent = PartyGridOnEvent
 
 local function GridOnUpdate(self, elapsed)
     if self.onUpdateDelay ~= nil and self.onUpdateDelay > 0 then
@@ -310,7 +310,7 @@ local function GridToggleFramesPreviewParty(_, _, moveHudMode, hudMoving)
                 _G["GwCompactPartyFrame" .. i]:SetAttribute("unit", i == 1 and "player" or "party" .. i - 1)
                 UnregisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility")
                 RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(_G["GwCompactPartyFrame" .. i].unit))
-                GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
+                GW.PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
             end
         end
     else
@@ -321,7 +321,7 @@ local function GridToggleFramesPreviewParty(_, _, moveHudMode, hudMoving)
                 _G["GwCompactPartyFrame" .. i]:SetAttribute("unit", "player")
                 UnregisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility")
                 RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("%s"):format((i > previewSteps[previewStep] and "hide" or "show")))
-                GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
+                GW.PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
             end
         end
         GridPartyUpdateFramesPosition()
@@ -373,7 +373,7 @@ local function LoadPartyGrid()
     end)
 
     for i = 1, 5 do
-        GW.CreateGridFrame(i, true, container, GridOnEvent, GridOnUpdate, "PARTY")
+        GW.CreateGridFrame(i, container, PartyGridOnEvent, GridOnUpdate, "PARTY")
     end
 
     GridPartyUpdateFramesPosition()
@@ -394,7 +394,7 @@ local function LoadPartyGrid()
         GridPartyUpdateFramesLayout()
 
         for i = 1, 5 do
-            GW.GridUpdateFrameData(_G["GwCompactPartyFrame" .. i], i)
+            GW.GridUpdateFrameData(_G["GwCompactPartyFrame" .. i], i, "PARTY")
         end
     end)
 end
