@@ -135,9 +135,13 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
 
     OnEvent(frame, "load")
 
-    if GetSetting("RAID_POWER_BARS" .. (profile == "PARTY" and "_PARTY" or "")) then
+    if GetSetting("RAID_POWER_BARS" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or "")) then
         frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 5)
         frame.manabar:Show()
+    end
+
+    if profile == "RAID_PET" then
+        frame.classicon:SetTexture(nil)
     end
 end
 GW.CreateGridFrame = CreateGridFrame
@@ -152,11 +156,11 @@ local function GridUpdateRaidMarkers(self, profile)
         self.classicon:SetShown(true)
     else
         self.targetmarker = nil
-        if not GetSetting("RAID_CLASS_COLOR" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or "")) then
+        if GetSetting("RAID_CLASS_COLOR" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or "")) or profile == "RAID_PET" then -- Raid pets have always colors
+            self.classicon:SetTexture(nil)
+        else
             self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
             GW.SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
-        else
-            self.classicon:SetTexture(nil)
         end
     end
 end
@@ -279,7 +283,7 @@ end
 GW.GridSetUnitName = GridSetUnitName
 
 local function GridUpdateAwayData(self, profile)
-    local classColor = GetSetting("RAID_CLASS_COLOR" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
+    local classColor = GetSetting("RAID_CLASS_COLOR" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or "")) or profile == "RAID_PET"
     local readyCheckStatus = GetReadyCheckStatus(self.unit)
     local iconState = 0
     local _, englishClass, classIndex = UnitClass(self.unit)

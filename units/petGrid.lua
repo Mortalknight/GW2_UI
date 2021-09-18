@@ -110,9 +110,6 @@ local function GridRaidPetUpdateFramesPosition()
         if UnitExists(_G["GwCompactRaidPetFrame" .. i].unit) then
             PositionRaidPetFrame(_G["GwCompactRaidPetFrame" .. i], GwRaidFramePetContainer.gwMover, counter, grow1, grow2, cells1, sizePer1, sizePer2, m)
             counter = counter + 1
-            _G["GwCompactRaidPetFrame" .. i]:Show()
-        else
-            _G["GwCompactRaidPetFrame" .. i]:Hide()
         end
         if i > players then _G["GwCompactRaidPetFrame" .. i]:Hide() else _G["GwCompactRaidPetFrame" .. i]:Show() end
     end
@@ -137,7 +134,6 @@ local function GridRaidPetUpdateFramesLayout()
             counter = counter + 1
         end
     end
-
 end
 GW.GridRaidPetUpdateFramesLayout = GridRaidPetUpdateFramesLayout
 
@@ -183,6 +179,21 @@ local function PetGridOnEvent(self, event, unit)
         GW.GridUpdateAwayData(self, "RAID_PET")
         GW.GridUpdateAuras(self, "RAID_PET")
         GW.GridUpdatePower(self)
+        if event == "UNIT_PET" then
+            if InCombatLockdown() then
+                self:RegisterEvent("PLAYER_REGEN_ENABLED")
+            end
+            GW.GridRaidPetUpdateFramesLayout()
+            for i = 1, MAX_RAID_MEMBERS do
+                GW.GridUpdateFrameData(_G["GwCompactRaidPetFrame" .. i], i, "RAID_PET")
+            end
+        end
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        if event == "PLAYER_REGEN_ENABLED" then self:UnregisterEvent("PLAYER_REGEN_ENABLED") end
+        GW.GridRaidPetUpdateFramesLayout()
+        for i = 1, MAX_RAID_MEMBERS do
+            GW.GridUpdateFrameData(_G["GwCompactRaidPetFrame" .. i], i, "RAID_PET")
+        end
     elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
         GW.GridSetHealth(self, "RAID_PET")
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
@@ -296,8 +307,15 @@ local function LoadPetGrid()
         end
     end)
 
+    -- create and position frame at start
+    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidPetFramesMeasures(40)
+    local isV = grow1 == "DOWN" or grow1 == "UP"
+
+    container:SetSize(isV and size2 or size1, isV and size1 or size2)
+    container.gwMover:SetSize(isV and size2 or size1, isV and size1 or size2)
     for i = 1, MAX_RAID_MEMBERS do
         GW.CreateGridFrame(i, container, PetGridOnEvent, GridOnUpdate, "RAID_PET")
+        PositionRaidPetFrame(_G["GwCompactRaidPetFrame" .. i], container, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
     end
 
     GridRaidPetUpdateFramesPosition()
