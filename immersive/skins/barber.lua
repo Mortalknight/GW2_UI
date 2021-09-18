@@ -47,6 +47,6 @@ local function SkinBarShop()
 end
 
 local function LoadBarShopUISkin()
-    GW.RegisterSkin("Blizzard_CharacterCustomize", function() SkinBarShop() end)
+    GW.RegisterSkin("Blizzard_BarbershopUI", function() SkinBarShop() end)
 end
 GW.LoadBarShopUISkin = LoadBarShopUISkin
