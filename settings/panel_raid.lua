@@ -75,6 +75,7 @@ local function LoadRaidProfile(sWindow)
     end)
     p.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
 
+    addOption(p, PET, L["Show a separate grid for raid pets"], "RAID_PET_FRAMES", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true})
@@ -99,17 +100,9 @@ local function LoadRaidProfile(sWindow)
         L["Show tooltips of buffs and debuffs."],
         "RAID_AURA_TOOLTIP_INCOMBAT",
         function()
-            if "RAID" == "PARTY" then
-                for i = 1, 5 do
-                    if _G["GwCompactPartyFrame" .. i] then
-                        GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "UNIT_AURA")
-                    end
-                end
-            else
-                for i = 1, MAX_RAID_MEMBERS do
-                    if _G["GwCompactRaidFrame" .. i] then
-                        GW.GridOnEvent(_G["GwCompactRaidFrame" .. i], "UNIT_AURA")
-                    end
+            for i = 1, MAX_RAID_MEMBERS do
+                if _G["GwCompactRaidFrame" .. i] then
+                    GW.RaidGridOnEvent(_G["GwCompactRaidFrame" .. i], "UNIT_AURA")
                 end
             end
         end,
@@ -125,17 +118,9 @@ local function LoadRaidProfile(sWindow)
         nil,
         "RAID_UNIT_HEALTH",
         function()
-            if "RAID" == "PARTY" then
-                for i = 1, 5 do
-                    if _G["GwCompactPartyFrame" .. i] then
-                        GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
-                    end
-                end
-            else
-                for i = 1, MAX_RAID_MEMBERS do
-                    if _G["GwCompactRaidFrame" .. i] then
-                        GW.GridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
-                    end
+            for i = 1, MAX_RAID_MEMBERS do
+                if _G["GwCompactRaidFrame" .. i] then
+                    GW.RaidGridOnEvent(_G["GwCompactRaidFrame" .. i], "UNIT_AURA")
                 end
             end
         end,
@@ -156,17 +141,9 @@ local function LoadRaidProfile(sWindow)
         L["Display a country flag based on the unit's language"],
         "RAID_UNIT_FLAGS",
         function()
-            if "RAID" == "PARTY" then
-                for i = 1, 5 do
-                    if _G["GwCompactPartyFrame" .. i] then
-                        GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "UNIT_NAME_UPDATE")
-                    end
-                end
-            else
-                for i = 1, MAX_RAID_MEMBERS do
-                    if _G["GwCompactRaidFrame" .. i] then
-                        GW.GridOnEvent(_G["GwCompactRaidFrame" .. i], "UNIT_NAME_UPDATE")
-                    end
+            for i = 1, MAX_RAID_MEMBERS do
+                if _G["GwCompactRaidFrame" .. i] then
+                    GW.RaidGridOnEvent(_G["GwCompactRaidFrame" .. i], "UNIT_AURA")
                 end
             end
         end,
@@ -305,6 +282,207 @@ local function LoadRaidProfile(sWindow)
     return p
 end
 
+local function LoadRaidPetProfile(sWindow)
+    local p = CreateFrame("Frame", "GwSettingsRaidPetPanel", sWindow.panels, "GwSettingsRaidPanelTmpl")
+    p.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.header:SetText(PET)
+    p.sub:SetFont(UNIT_NAME_FONT, 12)
+    p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    p.sub:SetText(L["Edit the party and raid options to suit your needs."])
+
+    p.selectProfile.label:SetText(L["Profiles"])
+    p.selectProfile.string:SetFont(UNIT_NAME_FONT, 12)
+    p.selectProfile.string:SetText(PET)
+    p.selectProfile.container:SetParent(p)
+    p.selectProfile.type = "RAID_PET"
+
+    p.buttonRaidPreview:SetScript("OnClick", function()
+        GW.GridToggleFramesPreviewRaidPet(_, _, false, false)
+    end)
+    p.buttonRaidPreview:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
+        GameTooltip:ClearLines()
+        GameTooltip:AddLine(L["Preview Raid Frames"], 1, 1, 1)
+        GameTooltip:AddLine(L["Click to toggle raid frame preview and cycle through different group sizes."], 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    p.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
+
+    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_PET", nil, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PET", nil, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
+    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", nil, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
+    addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_PET", nil, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
+    addOptionDropdown(
+        p,
+        L["Show Aura Tooltips"],
+        L["Show tooltips of buffs and debuffs."],
+        "RAID_AURA_TOOLTIP_INCOMBAT_PET",
+        function()
+            for i = 1, 40 do
+                if _G["GwCompactRaidPetFrame" .. i] then
+                    GW.PetGridOnEvent(_G["GwCompactRaidPetFrame" .. i], "UNIT_AURA")
+                end
+            end
+        end,
+        {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"},
+        {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]},
+        nil,
+        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
+    )
+
+    addOptionDropdown(
+        p,
+        COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
+        nil,
+        "RAID_UNIT_HEALTH_PET",
+        function()
+            for i = 1, 40 do
+                if _G["GwCompactRaidPetFrame" .. i] then
+                    GW.PetGridOnEvent(_G["GwCompactRaidPetFrame" .. i], "UNIT_AURA")
+                end
+            end
+        end,
+        {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
+        {
+            COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE,
+            COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC,
+            COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH,
+            COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH
+        },
+        nil,
+        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
+    )
+
+    local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
+    for i in pairs(dirs) do
+        local k = i <= 2 and 3 or 1
+        for j = k, k + 1 do
+            tinsert(grow, StrUpper(dirs[i] .. "+" .. dirs[j]))
+        end
+    end
+
+    addOptionDropdown(
+        p,
+        L["Set Raid Growth Direction"],
+        L["Set the grow direction for raid frames."],
+        "RAID_GROW_PET",
+        function()
+            GW.GridContainerUpdateAnchor("RAID_PET")
+            GW.GridUpdateFramesPosition("RAID_PET")
+            GW.GridUpdateFramesLayout("RAID_PET")
+        end,
+        grow,
+        MapTable(
+            grow,
+            function(dir)
+                local g1, g2 = strsplit("+", dir)
+                return L["%s and then %s"]:format(L[StrLower(g1, 2)], L[StrLower(g2, 2)])
+            end
+        ),
+        nil,
+        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
+    )
+
+    addOptionDropdown(
+        p,
+        L["Set Raid Anchor"],
+        L["Set where the raid frame container should be anchored.\n\nBy position: Always the same as the container's position on screen.\nBy growth: Always opposite to the growth direction."],
+        "RAID_ANCHOR_PET",
+        function()
+            if GetSetting("RAID_FRAMES") then
+                GW.GridContainerUpdateAnchor("RAID_PET")
+            end
+        end,
+        {"POSITION", "GROWTH", "TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
+        {L["By position on screen"], L["By growth direction"], "TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
+        nil,
+        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
+    )
+
+    addOptionSlider(
+        p,
+        L["Set Raid Units per Column"],
+        L["Set the number of raid unit frames per column or row, depending on grow directions."],
+        "RAID_UNITS_PER_COLUMN_PET",
+        function()
+            GW.GridUpdateFramesPosition("RAID_PET")
+            GW.GridUpdateFramesLayout("RAID_PET")
+        end,
+        0,
+        40,
+        nil,
+        0,
+        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
+    )
+
+    addOptionSlider(
+        p,
+        L["Set Raid Unit Width"],
+        L["Set the width of the raid units."],
+        "RAID_WIDTH_PET",
+        function()
+            GW.GridUpdateFramesPosition("RARAID_PETD")
+            GW.GridUpdateFramesLayout("RAID_PET")
+        end,
+        45,
+        300,
+        nil,
+        0,
+        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
+    )
+
+    addOptionSlider(
+        p,
+        L["Set Raid Unit Height"],
+        L["Set the height of the raid units."],
+        "RAID_HEIGHT_PET",
+        function()
+            GW.GridUpdateFramesPosition("RAID_PET")
+            GW.GridUpdateFramesLayout("RAID_PET")
+        end,
+        15,
+        100,
+        nil,
+        0,
+        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
+    )
+
+    addOptionSlider(
+        p,
+        L["Set Raid Frame Container Width"],
+        L["Set the maximum width that the raid frames can be displayed.\n\nThis will cause unit frames to shrink or move to the next row."],
+        "RAID_CONT_WIDTH_PET",
+        function()
+            GW.GridUpdateFramesPosition("RAID_PET")
+            GW.GridUpdateFramesLayout("RAID_PET")
+        end,
+        0,
+        GetScreenWidth(),
+        nil,
+        0,
+        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
+    )
+
+    addOptionSlider(
+        p,
+        L["Set Raid Frame Container Height"],
+        L["Set the maximum height that the raid frames can be displayed.\n\nThis will cause unit frames to shrink or move to the next column."],
+        "RAID_CONT_HEIGHT_PET",
+        function()
+            GW.GridUpdateFramesPosition("RAID_PET")
+            GW.GridUpdateFramesLayout("RAID_PET")
+        end,
+        0,
+        GetScreenHeight(),
+        nil,
+        0,
+        {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
+    )
+
+    return p
+end
+
 local function LoadPartyProfile(sWindow)
     local p = CreateFrame("Frame", "GwSettingsRaidPartyPanel", sWindow.panels, "GwSettingsRaidPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
@@ -356,17 +534,9 @@ local function LoadPartyProfile(sWindow)
         L["Show tooltips of buffs and debuffs."],
         "RAID_AURA_TOOLTIP_INCOMBAT_PARTY",
         function()
-            if "PARTY" == "PARTY" then
-                for i = 1, 5 do
-                    if _G["GwCompactPartyFrame" .. i] then
-                        GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "UNIT_AURA")
-                    end
-                end
-            else
-                for i = 1, MAX_RAID_MEMBERS do
-                    if _G["GwCompactRaidFrame" .. i] then
-                        GW.GridOnEvent(_G["GwCompactRaidFrame" .. i], "UNIT_AURA")
-                    end
+            for i = 1, 5 do
+                if _G["GwCompactPartyFrame" .. i] then
+                    GW.PartyGridOnEvent (_G["GwCompactPartyFrame" .. i], "UNIT_AURA")
                 end
             end
         end,
@@ -382,17 +552,9 @@ local function LoadPartyProfile(sWindow)
         nil,
         "RAID_UNIT_HEALTH_PARTY",
         function()
-            if "PARTY" == "PARTY" then
-                for i = 1, 5 do
-                    if _G["GwCompactPartyFrame" .. i] then
-                        GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
-                    end
-                end
-            else
-                for i = 1, MAX_RAID_MEMBERS do
-                    if _G["GwCompactRaidFrame" .. i] then
-                        GW.GridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
-                    end
+            for i = 1, 5 do
+                if _G["GwCompactPartyFrame" .. i] then
+                    GW.PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
                 end
             end
         end,
@@ -413,17 +575,9 @@ local function LoadPartyProfile(sWindow)
         L["Display a country flag based on the unit's language"],
         "RAID_UNIT_FLAGS_PARTY",
         function()
-            if "PARTY" == "PARTY" then
-                for i = 1, 5 do
-                    if _G["GwCompactPartyFrame" .. i] then
-                        GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "UNIT_NAME_UPDATE")
-                    end
-                end
-            else
-                for i = 1, MAX_RAID_MEMBERS do
-                    if _G["GwCompactRaidFrame" .. i] then
-                        GW.GridOnEvent(_G["GwCompactRaidFrame" .. i], "UNIT_NAME_UPDATE")
-                    end
+            for i = 1, 5 do
+                if _G["GwCompactPartyFrame" .. i] then
+                    GW.PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "UNIT_NAME_UPDATE")
                 end
             end
         end,
@@ -563,17 +717,20 @@ local function LoadPartyProfile(sWindow)
 end
 
 local function LoadRaidPanel(sWindow)
-    local profileNames = {"RAID", "PARTY"}
-    local profilePanles = {LoadRaidProfile(sWindow), LoadPartyProfile(sWindow)}
+    local profileNames = {"RAID", "PARTY", "PET"}
+    local profilePanles = {LoadRaidProfile(sWindow), LoadPartyProfile(sWindow), LoadRaidPetProfile(sWindow)}
 
     createCat(RAID, L["Edit the group settings."], profilePanles[1], 8, nil, nil, nil, profilePanles)
 
     CreateProfileSwitcher(profilePanles[1], profileNames, profilePanles)
     CreateProfileSwitcher(profilePanles[2], profileNames, profilePanles)
+    CreateProfileSwitcher(profilePanles[3], profileNames, profilePanles)
 
     InitPanel(profilePanles[1], false)
     InitPanel(profilePanles[2], false)
+    InitPanel(profilePanles[3], false)
 
     profilePanles[2]:Hide()
+    profilePanles[3]:Hide()
 end
 GW.LoadRaidPanel = LoadRaidPanel

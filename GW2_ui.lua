@@ -662,6 +662,7 @@ local function loadAddon(self)
     if GetSetting("RAID_FRAMES") then
         GW.LoadRaidFrames()
         GW.LoadPartyGrid()
+        GW.LoadPetGrid()
     end
 
     GW.UpdateHudScale()

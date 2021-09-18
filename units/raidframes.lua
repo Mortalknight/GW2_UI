@@ -1,5 +1,4 @@
 local _, GW = ...
-local L = GW.L
 local GetSetting = GW.GetSetting
 local GWGetClassColor = GW.GWGetClassColor
 local RegisterMovableFrame = GW.RegisterMovableFrame
@@ -11,7 +10,7 @@ local previewSteps = {40, 20, 10, 5}
 local previewStep = 0
 
 -- functions
-local function GetRaidFramesMeasures(players)
+local function GetRaidFramesMeasures(Players)
     -- Get settings
     local grow = GetSetting("RAID_GROW")
     local w = GetSetting("RAID_WIDTH")
@@ -23,17 +22,17 @@ local function GetRaidFramesMeasures(players)
     local m = 2
 
     -- Determine # of players
-    if players or byRole or not IsInRaid() then
-        players = players or max(1, GetNumGroupMembers())
+    if Players or byRole then
+        Players = Players or max(1, GetNumGroupMembers())
     else
-        players = 0
+        Players = 0
         for i = 1, MAX_RAID_MEMBERS do
             local _, _, grp = GetRaidRosterInfo(i)
-            if grp >= ceil(players / MEMBERS_PER_RAID_GROUP) then
-                players = max((grp - 1) * MEMBERS_PER_RAID_GROUP, players) + 1
+            if grp >= ceil(Players / MEMBERS_PER_RAID_GROUP) then
+                Players = max((grp - 1) * MEMBERS_PER_RAID_GROUP, Players) + 1
             end
         end
-        players = max(1, players, GetNumGroupMembers())
+        Players = max(1, Players, GetNumGroupMembers())
     end
 
     -- Directions
@@ -44,7 +43,7 @@ local function GetRaidFramesMeasures(players)
     local sizeMax1, sizePer1 = isV and cH or cW, isV and h or w
     local sizeMax2, sizePer2 = isV and cW or cH, isV and w or h
 
-    local cells1 = players
+    local cells1 = Players
 
     if per > 0 then
         cells1 = min(cells1, per)
@@ -52,10 +51,10 @@ local function GetRaidFramesMeasures(players)
             sizePer1 = min(sizePer1, (sizeMax1 + m) / cells1 - m)
         end
     elseif tonumber(sizeMax1) > 0 then
-        cells1 = max(1, min(players, floor((sizeMax1 + m) / (sizePer1 + m))))
+        cells1 = max(1, min(Players, floor((sizeMax1 + m) / (sizePer1 + m))))
     end
 
-    local cells2 = ceil(players / cells1)
+    local cells2 = ceil(Players / cells1)
 
     if tonumber(sizeMax2) > 0 then
         sizePer2 = min(sizePer2, (sizeMax2 + m) / cells2 - m)
@@ -98,7 +97,7 @@ local function PositionRaidFrame(frame, parent, i, grow1, grow2, cells1, sizePer
 end
 
 local function GridRaidUpdateFramesPosition()
-    players = previewStep == 0 and 40 or previewSteps[previewStep]
+    players = IsInRaid() and max(1, GetNumGroupMembers()) or previewStep == 0 and 40 or previewSteps[previewStep]
 
     -- Get directions, rows, cols and sizing
     local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures(players)
@@ -134,7 +133,7 @@ end
 local grpPos, noGrp = {}, {}
 local function GridRaidUpdateFramesLayout()
     -- Get directions, rows, cols and sizing
-    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures()
+    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures(IsInRaid() and max(1, GetNumGroupMembers()) or previewStep == 0 and 40 or previewSteps[previewStep])
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     if not InCombatLockdown() then
@@ -165,6 +164,7 @@ local function GridRaidUpdateFramesLayout()
     end
 
     -- Find spots for units with missing group info
+    GW_noGrp = noGrp
     for _,i in ipairs(noGrp) do
         for grp = 1, NUM_RAID_GROUPS do
             if (grpPos[grp] or 0) < MEMBERS_PER_RAID_GROUP then
@@ -198,7 +198,7 @@ local function hideBlizzardRaidFrame()
 end
 GW.AddForProfiling("raidframes", "hideBlizzardRaidFrame", hideBlizzardRaidFrame)
 
-local function GridOnEvent(self, event, unit)
+local function RaidGridOnEvent(self, event, unit)
     if not UnitExists(self.unit) then
         return
     elseif not self.nameNotLoaded then
@@ -285,6 +285,7 @@ local function GridOnEvent(self, event, unit)
         end)
     end
 end
+GW.RaidGridOnEvent = RaidGridOnEvent
 
 local function GridOnUpdate(self, elapsed)
     if self.onUpdateDelay ~= nil and self.onUpdateDelay > 0 then
@@ -308,7 +309,7 @@ local function GridToggleFramesPreviewRaid(_, _, moveHudMode, hudMoving)
                 _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "raid" .. i)
                 UnregisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility")
                 RegisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility", ("[group:raid,@%s,exists] show; [group:party] hide; hide"):format(_G["GwCompactRaidFrame" .. i].unit))
-                GridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
+                RaidGridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
             end
         end
     else
@@ -319,7 +320,7 @@ local function GridToggleFramesPreviewRaid(_, _, moveHudMode, hudMoving)
                 _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "player")
                 UnregisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility")
                 RegisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility", ("%s"):format((i > previewSteps[previewStep] and "hide" or "show")))
-                GridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
+                RaidGridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
             end
         end
         GridRaidUpdateFramesPosition()
@@ -375,7 +376,7 @@ local function LoadRaidFrames()
     end)
 
     for i = 1, MAX_RAID_MEMBERS do
-        GW.CreateGridFrame(i, false, container, GridOnEvent, GridOnUpdate, "RAID")
+        GW.CreateGridFrame(i, container, RaidGridOnEvent, GridOnUpdate, "RAID")
     end
 
     GridRaidUpdateFramesPosition()
