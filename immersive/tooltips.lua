@@ -76,7 +76,8 @@ local UNSTYLED = {
     WarCampaignTooltip,
     QuestScrollFrame.StoryTooltip,
     QuestScrollFrame.CampaignTooltip,
-    QuickKeybindTooltip
+    QuickKeybindTooltip,
+    GameSmallHeaderTooltip
 }
 
 local LEVEL1 = strlower(TOOLTIP_UNIT_LEVEL:gsub("%s?%%s%s?%-?", ""))
