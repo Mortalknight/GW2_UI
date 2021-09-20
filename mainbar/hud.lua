@@ -733,6 +733,7 @@ local function selectBg(self)
             if spellID ~= nil and action_hud_auras[spellID] ~= nil and action_hud_auras[spellID].unit == "player" then
                 right = action_hud_auras[spellID].right
                 left = action_hud_auras[spellID].left
+                bolFound = true
                 break
             end
         end
