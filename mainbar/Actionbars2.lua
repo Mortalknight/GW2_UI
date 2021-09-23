@@ -211,8 +211,9 @@ local function fadeCheck(self, forceCombat)
     local inLockdown = InCombatLockdown()
     local isDirty = self.gw_DirtySetting
 
-    for i = 1, 4 do
+    for i = 1, 5 do
         local f = self["gw_Bar" .. i]
+        if i == 5 then f = self end
         local fadeOption = GetSetting("FADE_MULTIACTIONBAR_" .. i)
         if f then
             if isDirty and not inLockdown then
@@ -543,6 +544,9 @@ local function updateMainBar()
     MainMenuBar:SetMovable(0)
     -- even with IsUserPlaced set, the Blizz multibar handlers mess with the width so reset in fadeCheck DirtySetting
 
+    -- set fader logic
+    createFaderAnim(fmActionbar, true)
+
     return fmActionbar
 end
 GW.AddForProfiling("Actionbars2", "updateMainBar", updateMainBar)
@@ -586,13 +590,15 @@ local function trackBarChanges()
     fmActionbar.gw_Bar2.gw_IsEnabled = show2
     fmActionbar.gw_Bar3.gw_IsEnabled = show3
     fmActionbar.gw_Bar4.gw_IsEnabled = show4
+
+    fmActionbar.gw_IsEnabled = true
 end
 
 local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local multibar = _G[barName]
     local settings = GetSetting(barName)
     local used_width = 0
-    local used_height = settings["size"]
+    local used_height = settings.size
     local btn_padding = 0
     local btn_padding_y = 0
     local btn_this_row = 0
@@ -923,7 +929,9 @@ actionBar_OnUpdate = function(self, elapsed)
     end
 
     -- update action bar buttons
-    actionButtons_OnUpdate(self, elapsed, testRange)
+    if self.gw_FadeShowing then
+        actionButtons_OnUpdate(self, elapsed, testRange)
+    end
 
     -- update multibar buttons
     if self.gw_Bar1.gw_FadeShowing then
