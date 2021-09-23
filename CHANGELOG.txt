@@ -1,3 +1,10 @@
+5.20.0
+NEW
+    - Added raid pet grid
+
+FIXES
+    - Raid buff indicators should now show as expected
+
 5.19.2
 FIXES
     - Minimap button issue

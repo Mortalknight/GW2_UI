@@ -1,6 +1,15 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.19.0", [=[
+NEW
+    - Added raid pet grid
+
+FIXES
+    - Raid buff indicators should now show as expected
+
+]=])
+
 v("5.19.2", [=[
 FIXES
     - Minimap button issue
