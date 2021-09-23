@@ -8,6 +8,7 @@ NEW
 
 FIXES
     - Raid buff indicators should now show as expected
+    - Fix charged combo points
 
 ]=])
 

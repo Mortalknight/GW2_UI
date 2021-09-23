@@ -238,7 +238,6 @@ local function powerCombo(self, event, ...)
     local pwrMax = UnitPowerMax("player", Enum.PowerType.ComboPoints)
     local pwr = UnitPower("player", Enum.PowerType.ComboPoints)
     local chargedPowerPoints = GetUnitChargedPowerPoints("player")
-    local chargedPowerPointIndex = chargedPowerPoints and chargedPowerPoints[1]
     local old_power = self.gwPower
     self.gwPower = pwr
 
@@ -254,7 +253,7 @@ local function powerCombo(self, event, ...)
 
     for i = 1, pwrMax do
         if pwr >= i then
-            local isCharged = i == chargedPowerPointIndex
+            local isCharged = chargedPowerPoints and tContains(chargedPowerPoints, i)
             if isCharged then
                 self.combopoints["combo" .. i]:SetTexCoord(0, 0.5, 0.5, 1)
             else
