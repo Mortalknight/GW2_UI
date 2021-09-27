@@ -81,8 +81,8 @@ local function SkinBosses()
     local _, _, bossID = EJ_GetEncounterInfoByIndex(bossIndex)
     local bossButton
 
-    local encounter = EncounterJournal.encounter
-    encounter.info.instanceButton.icon:SetMask("")
+    --local encounter = EncounterJournal.encounter
+    --encounter.info.instanceButton.icon:SetMask(nil) --buggyc
 
     while bossID do
         bossButton = _G["EncounterJournalBossButton" .. bossIndex]
