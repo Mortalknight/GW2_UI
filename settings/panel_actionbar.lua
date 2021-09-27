@@ -116,7 +116,20 @@ local function LoadActionbarPanel(sWindow)
     )
     addOptionDropdown(
         p,
-        BINDING_HEADER_ACTIONBAR .. ": '" .. SHOW_MULTIBAR1_TEXT .. "' " .. SHOW,
+        BINDING_HEADER_ACTIONBAR .. ": '" .. BINDING_HEADER_ACTIONBAR .. "' " .. SHOW,
+        nil,
+        "FADE_MULTIACTIONBAR_5",
+        nil,
+        {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
+        {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
+        nil,
+        {["ACTIONBARS_ENABLED"] = true},
+        nil,
+        "Actionbars"
+    )
+    addOptionDropdown(
+        p,
+        BINDING_HEADER_MULTIACTIONBAR .. ": '" .. SHOW_MULTIBAR1_TEXT .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_1",
         nil,
@@ -129,7 +142,7 @@ local function LoadActionbarPanel(sWindow)
     )
     addOptionDropdown(
         p,
-        BINDING_HEADER_ACTIONBAR .. ": '" .. SHOW_MULTIBAR2_TEXT .. "' " .. SHOW,
+        BINDING_HEADER_MULTIACTIONBAR .. ": '" .. SHOW_MULTIBAR2_TEXT .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_2",
         nil,
@@ -142,7 +155,7 @@ local function LoadActionbarPanel(sWindow)
     )
     addOptionDropdown(
         p,
-        BINDING_HEADER_ACTIONBAR .. ": '" .. SHOW_MULTIBAR3_TEXT .. "' " .. SHOW,
+        BINDING_HEADER_MULTIACTIONBAR .. ": '" .. SHOW_MULTIBAR3_TEXT .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_3",
         nil,
@@ -155,7 +168,7 @@ local function LoadActionbarPanel(sWindow)
     )
     addOptionDropdown(
         p,
-        BINDING_HEADER_ACTIONBAR .. ": '" .. SHOW_MULTIBAR4_TEXT .. "' " .. SHOW,
+        BINDING_HEADER_MULTIACTIONBAR .. ": '" .. SHOW_MULTIBAR4_TEXT .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_4",
         nil,

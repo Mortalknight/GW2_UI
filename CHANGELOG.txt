@@ -1,3 +1,12 @@
+5.20.0
+NEW
+    - Added raid pet grid
+    - Added option to fade main actionbar
+
+FIXES
+    - Raid buff indicators should now show as expected
+    - Fix charged combo points
+
 5.19.2
 FIXES
     - Minimap button issue

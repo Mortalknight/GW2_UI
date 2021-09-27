@@ -1,6 +1,17 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.19.0", [=[
+NEW
+    - Added raid pet grid
+    - Added option to fade main actionbar
+
+FIXES
+    - Raid buff indicators should now show as expected
+    - Fix charged combo points
+
+]=])
+
 v("5.19.2", [=[
 FIXES
     - Minimap button issue

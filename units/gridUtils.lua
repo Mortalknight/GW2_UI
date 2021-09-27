@@ -683,15 +683,15 @@ local function GridUpdateBuffs(self, profile)
 
         -- show buffs
         if not aurasDone then
-            local name, icon, count, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitBuff(self.unit, i)
+            local name, icon, count, _, duration, expires, caster, _, _, spellID, canApplyAura, _, castByPlayer = UnitBuff(self.unit, i)
             if name then
                 -- visibility
                 local shouldDisplay
                 local hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
-                if (hasCustom) then
+                if hasCustom then
                     shouldDisplay = showForMySpec or (alwaysShowMine and (caster == "player" or caster == "pet" or caster == "vehicle"))
                 else
-                    shouldDisplay = (caster == "player" or caster == "pet" or caster == "vehicle") and canApplyAura and not SpellIsSelfBuff(spellID)
+                    shouldDisplay = (caster == "player" or caster == "pet" or caster == "vehicle") and (canApplyAura or castByPlayer) and not SpellIsSelfBuff(spellID)
                 end
 
                 if shouldDisplay then

@@ -744,14 +744,17 @@ local function SetCurrencyTokenByID(self, id)
     end
 end
 
-local function QuestID(self)
-    if not self or self:IsForbidden() then return end
+local function AddQuestID(frame)
+    if GameTooltip:IsForbidden() then return end
 
-    local id = self.questLogIndex and C_QuestLog.GetQuestIDForLogIndex(self.questLogIndex) or self.questID
-    if id and IsModKeyDown() then
-        GameTooltip:AddLine(format(("*%s|r %d"):gsub("*", GW.Gw2Color), _G.ID, id))
-        GameTooltip:Show()
+    local questID = IsModKeyDown() and (frame.questLogIndex and C_QuestLog.GetQuestIDForLogIndex(frame.questLogIndex) or frame.questID)
+ 	if not questID then return end
+    GameTooltip:AddLine(format(("*%s|r %d"):gsub("*", GW.Gw2Color), _G.ID, frame.questID))
+
+    if GameTooltip.ItemTooltip:IsShown() then
+        GameTooltip:AddLine(" ")
     end
+    GameTooltip:Show()
 end
 
 local function SetBackpackToken(self, id)
@@ -862,7 +865,8 @@ local function LoadTooltips()
         hooksecurefunc(GameTooltip, "SetCurrencyToken", SetCurrencyToken)
         hooksecurefunc(GameTooltip, "SetCurrencyTokenByID", SetCurrencyTokenByID)
         hooksecurefunc(GameTooltip, "SetBackpackToken", SetBackpackToken)
-        hooksecurefunc("QuestMapLogTitleButton_OnEnter", QuestID)
+        hooksecurefunc("QuestMapLogTitleButton_OnEnter", AddQuestID)
+        hooksecurefunc("TaskPOI_OnEnter", AddQuestID)
         hooksecurefunc(GameTooltip, "SetHyperlink", SetHyperlink)
         hooksecurefunc(ItemRefTooltip, "SetHyperlink", SetHyperlink)
 
