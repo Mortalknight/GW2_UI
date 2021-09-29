@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("2.0.0 Era", [=[
+    Update for 1.14.0
+
+    Added all features from BC Classic
+]=])
+
 v(
     "1.10.8",
     [=[
