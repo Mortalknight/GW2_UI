@@ -47,7 +47,7 @@ GW.SetMinimapHover = SetMinimapHover
 
 local function setMinimapButtons(side)
     MiniMapBattlefieldIcon:ClearAllPoints()
-    MiniMapLFGFrame:ClearAllPoints()
+    --MiniMapLFGFrame:ClearAllPoints()
     GwMailButton:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
@@ -55,14 +55,14 @@ local function setMinimapButtons(side)
 
     if side == "left" then
         MiniMapBattlefieldIcon:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -8.5, -69)
-        MiniMapLFGFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -5, -7)
+        --MiniMapLFGFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -5, -7)
         GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -10, -47)
         GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -127)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
         GwMiniMapTrackingFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
     else
         MiniMapBattlefieldIcon:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -69)
-        MiniMapLFGFrame:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 5, -7)
+        --MiniMapLFGFrame:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 5, -7)
         GwMailButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 14, -47)
         GwAddonToggle:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -127)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
@@ -309,29 +309,29 @@ local function LoadMinimap()
 
     SetMinimapHover()
 
-    MiniMapLFGFrameIcon:HookScript("OnUpdate", lfgAnim)
-    MiniMapLFGFrame:HookScript("OnHide", lfgAnimStop)
-    MiniMapLFGFrameIconTexture:SetSize(20, 20)
-    MiniMapLFGFrameIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMicroButton-Down")
-    MiniMapLFGFrameIcon:SetSize(20, 20)
+    --MiniMapLFGFrameIcon:HookScript("OnUpdate", lfgAnim)
+    --MiniMapLFGFrame:HookScript("OnHide", lfgAnimStop)
+    --MiniMapLFGFrameIconTexture:SetSize(20, 20)
+    --MiniMapLFGFrameIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMicroButton-Down")
+    --MiniMapLFGFrameIcon:SetSize(20, 20)
 
     hooksecurefunc("BattlefieldFrame_OnUpdate", lfgAnimPvP)
-    hooksecurefunc("MiniMapBattlefieldFrame_isArena", function()
-        local _, _, _, _, _, _, isRankedArena  = GetBattlefieldStatus(1)
-        if isRankedArena then
-            MiniMapBattlefieldIcon:SetTexture("Interface\\PVPFrame\\PVP-ArenaPoints-Icon")
-            MiniMapBattlefieldIcon:ClearAllPoints()
-            MiniMapBattlefieldIcon:SetPoint("CENTER", MiniMapBattlefieldFrame, "CENTER", -1, 2)
-        elseif ( UnitFactionGroup("player") ) then
-            MiniMapBattlefieldIcon:SetTexture("Interface\\BattlefieldFrame\\Battleground-" .. UnitFactionGroup("player"))
-            MiniMapBattlefieldIcon:SetTexCoord(0, 1, 0, 1)
-            MiniMapBattlefieldIcon:SetSize(30, 30)
-            MiniMapBattlefieldIcon:ClearAllPoints()
-            MiniMapBattlefieldIcon:SetPoint("CENTER", MiniMapBattlefieldFrame, "CENTER", 0, 0);
-        end
-    end)
+    --hooksecurefunc("MiniMapBattlefieldFrame_isArena", function()
+    --    local _, _, _, _, _, _, isRankedArena  = GetBattlefieldStatus(1)
+    --    if isRankedArena then
+    --        MiniMapBattlefieldIcon:SetTexture("Interface\\PVPFrame\\PVP-ArenaPoints-Icon")
+    --        MiniMapBattlefieldIcon:ClearAllPoints()
+    --        MiniMapBattlefieldIcon:SetPoint("CENTER", MiniMapBattlefieldFrame, "CENTER", -1, 2)
+    --    elseif ( UnitFactionGroup("player") ) then
+    --        MiniMapBattlefieldIcon:SetTexture("Interface\\BattlefieldFrame\\Battleground-" .. UnitFactionGroup("player"))
+    --        MiniMapBattlefieldIcon:SetTexCoord(0, 1, 0, 1)
+    --        MiniMapBattlefieldIcon:SetSize(30, 30)
+    --        MiniMapBattlefieldIcon:ClearAllPoints()
+    --        MiniMapBattlefieldIcon:SetPoint("CENTER", MiniMapBattlefieldFrame, "CENTER", 0, 0);
+    --    end
+    --end)
     MiniMapBattlefieldFrame.animationCircle = CreateFrame("Frame", "GwLFDAnimation", MiniMapBattlefieldFrame, "GwLFDAnimation")
-    MiniMapLFGFrame.animationCircle = CreateFrame("Frame", "GwLFGAnimation", MiniMapLFGFrame, "GwLFDAnimation")
+    --MiniMapLFGFrame.animationCircle = CreateFrame("Frame", "GwLFGAnimation", MiniMapLFGFrame, "GwLFDAnimation")
 
     Minimap:SetMaskTexture("Interface/ChatFrame/ChatFrameBackground")
     Minimap:SetParent(UIParent)
@@ -415,7 +415,7 @@ local function LoadMinimap()
 
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
-    MiniMapTracking:SetPoint("TOPLEFT", Minimap, -15, -30)
+    --MiniMapTracking:SetPoint("TOPLEFT", Minimap, -15, -30)
     GameTimeFrame:SetPoint("TOPLEFT", Minimap, -42, 0)
     MiniMapMailFrame:SetPoint("TOPLEFT", Minimap, 45, 15)
     MiniMapBattlefieldFrame:ClearAllPoints()

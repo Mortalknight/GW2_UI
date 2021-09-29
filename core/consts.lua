@@ -66,11 +66,11 @@ local FACTION_BAR_COLORS = {
 GW.FACTION_BAR_COLORS = FACTION_BAR_COLORS
 
 local BAG_TYP_COLORS = {
-    [1] = {r = 1, g = 1, b = 1},            --Quivers       1
-    [2] = {r = 1, g = 1, b = 1},            --Quivers       2
-    [3] = {r = 0.251, g = 0.878, b = 0.816},--Soul          3
-    [6] = {r = 0.451, g = 1, b = 0},        --Herbs         6
-    [7] = {r = 1, g = 0, b = 1}             --Enchanting    7
+    [0x0001] = {r = 1, g = 1, b = 1},            --Quivers       1
+    [0x0002] = {r = 1, g = 1, b = 1},            --Quivers       2
+    [0x0004] = {r = 0.251, g = 0.878, b = 0.816},--Soul          3
+    [0x0020] = {r = 0.451, g = 1, b = 0},        --Herbs         6
+    [0x0040] = {r = 1, g = 0, b = 1}             --Enchanting    7
 
 }
 GW.BAG_TYP_COLORS = BAG_TYP_COLORS
@@ -196,8 +196,10 @@ local TARGET_FRAME_ART = {
 }
 GW.TARGET_FRAME_ART = TARGET_FRAME_ART
 
-local INDICATORS = {"BAR", "TOPLEFT","TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT"}
+local INDICATORS = {"BAR", "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT"}
+local indicatorsText = {"Bar", "Top Left", "Top", "Top Right", "Left", "Center", "Right"}
 GW.INDICATORS = INDICATORS
+GW.indicatorsText = indicatorsText
 
 -- Taken from ElvUI: https://git.tukui.org/elvui/elvui/blob/master/ElvUI/Settings/Filters/UnitFrame.lua
 -- Format: {class = {id = {r, g, b[, <spell-id-same-slot>]} ...}, ...}

@@ -9,7 +9,6 @@ local function SkinAddonList()
     _G.AddonListBg:Hide()
     AddonList.TitleBg:Hide()
     AddonList.TopTileStreaks:Hide()
-    AddonList:SetBackdrop(nil)
     _G.AddonListInsetInsetTopBorder:Hide()
     _G.AddonListInsetInsetBottomBorder:Hide()
     _G.AddonListInsetInsetLeftBorder:Hide()
@@ -18,7 +17,7 @@ local function SkinAddonList()
     _G.AddonListInsetInsetTopRightCorner:Hide()
     _G.AddonListInsetInsetBotRightCorner:Hide()
     _G.AddonListInsetInsetBotLeftCorner:Hide()
-    _G.AddonListInset:SetBackdrop(constBackdropFrameBorder)
+    AddonListInset:CreateBackdrop(constBackdropFrameBorder)
 
     AddonList.TitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
 
@@ -41,8 +40,6 @@ local function SkinAddonList()
     AddonList.CloseButton:SetSize(25, 25)
     AddonList.CloseButton:ClearAllPoints()
     AddonList.CloseButton:SetPoint("TOPRIGHT", 0, 0)
-
-    _G.AddonListScrollFrame:SetBackdrop(nil)
 
     for i = 1, _G.MAX_ADDONS_DISPLAYED do
         _G["AddonListEntry" .. i .. "Enabled"]:SkinCheckButton()

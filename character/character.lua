@@ -1,13 +1,7 @@
 local _, GW = ...
 local L = GW.L
-local comma_value = GW.comma_value
-local AddToAnimation = GW.AddToAnimation
-local RoundDec = GW.RoundDec
 local GWGetClassColor = GW.GWGetClassColor
-local RT = GW.REP_TEXTURES
-local REPBG_T = 0
-local REPBG_B = 0.464
-local hasRanged = false
+
 
 local PlayerSlots = {
     ["CharacterHeadSlot"] = {0, 0.25, 0, 0.125},
@@ -81,40 +75,37 @@ local STATS_ICONS ={
     Arcane = {x = 2, y = 8},
 }
 
-local savedItemSlots = {}
-local savedPlayerTitles = {}
-local savedReputation = {}
-local selectedReputationCat = 1
-local reputationLastUpdateMethod = function() end
-local reputationLastUpdateMethodParams = nil
 local durabilityFrame = nil
-local expandedFactions = {}
 
 local function collectDurability(self)
     local completeDurability = 0
     local completeDurabilityNumItems = 0
     for i = 1, 23 do
         local current, maximum = GetInventoryItemDurability(i)
-            
+
         if current ~= nil then
             completeDurability = completeDurability + (current / maximum)
             completeDurabilityNumItems = completeDurabilityNumItems + 1
         end
     end
-    self.Value:SetText(GW.RoundDec(completeDurability / completeDurabilityNumItems * 100) .. "%")
+    if completeDurabilityNumItems > 0 then
+        self.Value:SetText(GW.RoundDec(completeDurability / completeDurabilityNumItems * 100) .. "%")
+    else
+        self.Value:SetText(NOT_APPLICABLE)
+    end
 end
 GW.AddForProfiling("paperdoll_equipment", "collectDurability", collectDurability)
 
-function gwPaperDollStats_QueuedUpdate(self)
+local function PaperDollStats_QueuedUpdate(self)
     self:SetScript("OnUpdate", nil)
-    gwPaperDollUpdateStats()
+    GW.PaperDollUpdateStats()
     collectDurability(durabilityFrame)
 end
 
-function gwPaperDollUpdateUnitData()
+local function PaperDollUpdateUnitData()
     GwDressingRoom.characterName:SetText(UnitPVPName("player"))
     local spec = GW.api.GetSpecialization()
-    local id, name, description, icon, background, role = GW.api.GetSpecializationInfo(spec, nil, nil, nil, GW.mysex)
+    local _, name = GW.api.GetSpecializationInfo(spec, nil, nil, nil, GW.mysex)
     local color = GWGetClassColor(GW.myclass, true)
     GW.SetClassIcon(GwDressingRoom.classIcon, GW.myclass)
 
@@ -128,53 +119,46 @@ function gwPaperDollUpdateUnitData()
     end
 end
 
-local ShowPetFrameAfterCombat = CreateFrame("Frame", nil, UIParent)
-function gwPaperDollPetStats_OnEvent(self, event, ...)
+local function PaperDollPetStats_OnEvent(self, event, ...)
     if InCombatLockdown() then
-        ShowPetFrameAfterCombat:SetScript(
-            "OnUpdate",
-            function(self, event, ...)
-                local inCombat = UnitAffectingCombat("player")
-                if inCombat == true then
-                    return
-                end
-                gwPaperDollPetStats_OnEvent(self, event, ...)
-                ShowPetFrameAfterCombat:SetScript("OnUpdate", nil)
-            end
-        )
+        self:RegisterEvent("PLAYER_REGEN_ENABLED")
+        self.prevEvent = event
         return
+    end
+    if event == "PLAYER_REGEN_ENABLED" then
+        event = self.prevEvent
+        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     end
 
     local unit = ...
-    local hasUI = HasPetUI()
-    if event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or (event == "UNIT_PET" and arg1 == "player") then
-        if GwPetContainer:IsVisible() and not hasUI then
+    if event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or (event == "UNIT_PET" and unit == "player") then
+        if GwPetContainer:IsVisible() and not HasPetUI() then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
-            GwCharacterMenu.petMenu:Hide()
+            GwCharacterMenu.petMenu:Disable()
             return
         end
     elseif event == "PET_UI_CLOSE" then
         if GwPetContainer:IsVisible() then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
-            GwCharacterMenu.petMenu:Hide()
+            GwCharacterMenu.petMenu:Disable()
             return
         end
     end
-    gwPaperDollUpdatePetStats()
+    GW.PaperDollUpdatePetStats()
 end
 
-function gwPaperDollStats_OnEvent(self, event, ...)
+local function PaperDollStats_OnEvent(self, event, ...)
     local unit = ...
     if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MODEL_CHANGED" or event=="UNIT_NAME_UPDATE" or event=="PLAYER_PVP_RANK_CHANGED" and unit == "player" then
         GwDressingRoom.model:SetUnit("player", false)
-        gwPaperDollUpdateUnitData()
+        PaperDollUpdateUnitData()
         collectDurability(durabilityFrame)
         return
     end
 
     if unit == "player" then
         if event == "UNIT_LEVEL" then
-            gwPaperDollUpdateUnitData()
+            PaperDollUpdateUnitData()
         elseif event == "UNIT_DAMAGE" or
                 event == "UNIT_ATTACK_SPEED" or
                 event == "UNIT_RANGEDDAMAGE" or
@@ -187,7 +171,7 @@ function gwPaperDollStats_OnEvent(self, event, ...)
                 event == "UNIT_RESISTANCES" or
                 event == "UPDATE_INVENTORY_ALERTS" or
                 IsMounted() then
-            self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
+            self:SetScript("OnUpdate", PaperDollStats_QueuedUpdate)
         end
     end
 
@@ -201,14 +185,14 @@ function gwPaperDollStats_OnEvent(self, event, ...)
             event == "PLAYER_AVG_ITEM_LEVEL_UPDATE" or
             event == "PLAYER_DAMAGE_DONE_MODS" or
             IsMounted() then
-        self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
+        self:SetScript("OnUpdate", PaperDollStats_QueuedUpdate)
     elseif event == "PLAYER_TALENT_UPDATE" then
-        gwPaperDollUpdateUnitData()
-        self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
+        PaperDollUpdateUnitData()
+        self:SetScript("OnUpdate", PaperDollStats_QueuedUpdate)
     elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
-        gwPaperDollUpdateStats()
+        GW.PaperDollUpdateStats()
     elseif event == "SPELL_POWER_CHANGED" then
-        self:SetScript("OnUpdate", gwPaperDollStats_QueuedUpdate)
+        self:SetScript("OnUpdate", PaperDollStats_QueuedUpdate)
     end
 end
 
@@ -223,17 +207,27 @@ local function statGridPos(grid, x, y)
     return grid, x, y
 end
 
+local function PaperDollGetStatListFrame(self, i)
+    if _G["GwPaperDollStat" .. i] ~= nil then return _G["GwPaperDollStat" .. i] end
+    return CreateFrame("Frame", "GwPaperDollStat" .. i, self, "GwPaperDollStat")
+end
+
+local function PaperDollPetGetStatListFrame(self, i)
+    if _G["GwPaperDollPetStat" .. i] ~= nil then return _G["GwPaperDollPetStat" .. i] end
+    return CreateFrame("Frame", "GwPaperDollPetStat" .. i, self, "GwPaperDollStat")
+end
+
 local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y)
-    local statFrame = gwPaperDollGetStatListFrame(GwPapaerDollStats, index)
+    local statFrame = PaperDollGetStatListFrame(GwDressingRoom.stats, index)
     statFrame.tooltip = tooltip
     statFrame.tooltip2 = tooltip2
     statFrame.stat = stat
     statFrame.Value:SetText(statText)
-    gwPaperDollSetStatIcon(statFrame, stat)
+    GW.PaperDollSetStatIcon(statFrame, stat)
 
     statFrame:ClearAllPoints()
     if stat == "DURABILITY" then
-        statFrame:SetPoint("TOPRIGHT", GwPapaerDollStats, "TOPRIGHT", 22, -1)
+        statFrame:SetPoint("TOPRIGHT", GwDressingRoom.stats, "TOPRIGHT", 22, -1)
         statFrame.icon:SetSize(25, 25)
     else
         statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
@@ -242,12 +236,12 @@ local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y
     return grid, x, y, index + 1
 end
 local function setPetStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y)
-    local statFrame = gwPaperDollPetGetStatListFrame(GwPapaerDollStatsPet, index)
+    local statFrame = PaperDollPetGetStatListFrame(GwDressingRoomPet.stats, index)
     statFrame.tooltip = tooltip
     statFrame.tooltip2 = tooltip2
     statFrame.stat = stat
     statFrame.Value:SetText(statText)
-    gwPaperDollSetStatIcon(statFrame, stat)
+    GW.PaperDollSetStatIcon(statFrame, stat)
 
     statFrame:SetPoint("TOPLEFT", 5 + x, -35 + -y)
     grid, x, y = statGridPos(grid, x, y)
@@ -257,9 +251,8 @@ end
 local Slots = {"HeadSlot", "ShoulderSlot", "ChestSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "MainHandSlot", "SecondaryHandSlot", "RangedSlot"}
 local SlotsFriendly = {INVTYPE_HEAD, INVTYPE_SHOULDER, INVTYPE_CHEST, INVTYPE_WRIST, INVTYPE_HAND, INVTYPE_WAIST, INVTYPE_LEGS, INVTYPE_FEET, INVTYPE_WEAPONMAINHAND, INVTYPE_WEAPONOFFHAND, L["INVTYPE_RANGED"]}
 
-function GW_DurabilityTooltip(self)
+function GW_DurabilityTooltip()
     local duravaltotal, duramaxtotal, durapercent = 0, 0, 0
-    local id
     local valcol, id, duraval, duramax
     local validItems = false
 
@@ -318,20 +311,21 @@ function GW_DurabilityTooltip(self)
 end
 GW.AddForProfiling("paperdoll_equipment", "DurabilityTooltip", DurabilityTooltip)
 
-function gwPaperDollUpdateStats()
+local function PaperDollUpdateStats()
     local avgItemLevel, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
-    local statName, statText, tooltip1, tooltip2
+    local r, g,b = GW.api.GetItemLevelColor(avgItemLevel)
+    local statText, tooltip1, tooltip2
 
-    avgItemLevel = nil or 0
-    avgItemLevelEquipped = nil or 0
+    avgItemLevelEquipped = avgItemLevelEquipped and avgItemLevelEquipped or 0
+    avgItemLevel = avgItemLevel and avgItemLevel or 0
     avgItemLevelEquipped = math.floor(avgItemLevelEquipped)
     avgItemLevel = math.floor(avgItemLevel)
     if avgItemLevelEquipped < avgItemLevel then
-        avgItemLevelEquipped = math.floor(avgItemLevelEquipped) .. "(" .. math.floor(avgItemLevel) .. ")"
+        avgItemLevelEquipped = math.floor(avgItemLevel) .. " (" .. math.floor(avgItemLevelEquipped) .. ")"
     end
-    avgItemLevelEquipped = nil or ""
+    avgItemLevelEquipped = avgItemLevelEquipped == 0 and "" or avgItemLevelEquipped
     GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped)
-    GwDressingRoom.itemLevel:SetTextColor(GW.api.GetItemLevelColor())
+    GwDressingRoom.itemLevel:SetTextColor(r, g,b)
 
     local numShownStats = 1
     local grid = 1
@@ -339,7 +333,7 @@ function gwPaperDollUpdateStats()
     local y = 0
 
     for primaryStatIndex = 1, 5 do
-        statName, statText, tooltip1, tooltip2 = GW.stats.getPrimary(primaryStatIndex)
+        _, statText, tooltip1, tooltip2 = GW.stats.getPrimary(primaryStatIndex)
         grid, x, y, numShownStats = setStatFrame(GW.stats.PRIMARY_STATS[primaryStatIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 
@@ -367,37 +361,37 @@ function gwPaperDollUpdateStats()
 
     --ranged attack
     statText, tooltip1, tooltip2 = GW.stats.getRangedAttack()
-    if statText ~= nil then
-    grid, x, y, numShownStats = setStatFrame("RANGEDATTACK", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
+    if statTextthen then
+        grid, x, y, numShownStats = setStatFrame("RANGEDATTACK", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 
     --ranged damage
     statText, tooltip1, tooltip2 = GW.stats.getRangedDamage()
-    if statText ~= nil then
+    if statText then
         grid, x, y, numShownStats = setStatFrame("RANGEDDAMAGE", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
-        hasRanged = true
     end
 
     --ranged attack power
-    if statText ~= nil then
+    if statText then
         statText, tooltip1, tooltip2 = GW.stats.getRangedAttackPower()
         grid, x, y, numShownStats = setStatFrame("RANGEDATTACKPOWER", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 
     --resitance 
     for resistanceIndex = 2, 6 do
-        statName, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex)
+        _, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex)
         grid, x, y, numShownStats = setStatFrame(GW.stats.RESITANCE_STATS[resistanceIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 
     --durability
     grid, x, y, numShownStats = setStatFrame("DURABILITY", numShownStats, "DURABILITY", nil, nil, grid, x, y)
 end
+GW.PaperDollUpdateStats = PaperDollUpdateStats
 
-function gwPaperDollUpdatePetStats()
+local function PaperDollUpdatePetStats()
     local hasUI, isHunterPet = HasPetUI()
-    local statName, statText, tooltip1, tooltip2
-    GwCharacterMenu.petMenu:Hide()
+    local statText, tooltip1, tooltip2
+    GwCharacterMenu.petMenu:SetShown(GW.myClassID == 3 or GW.myClassID == 9)
     if not hasUI then return end
 
     local numShownStats = 1
@@ -405,9 +399,9 @@ function gwPaperDollUpdatePetStats()
     local x = 0
     local y = 0
 
-    GwCharacterMenu.petMenu:Show()
+    GwCharacterMenu.petMenu:Enable()
     GwDressingRoomPet.model:SetUnit("pet")
-    GwDressingRoomPet.characterName:SetText(UnitPVPName("pet") .. " - " .. LEVEL .. " " .. UnitLevel("pet"))
+    GwDressingRoomPet.characterName:SetText(UnitPVPName("pet") .. " - " .. GUILD_RECRUITMENT_LEVEL .. " " .. UnitLevel("pet"))
     GwCharacterWindow:SetAttribute("HasPetUI", hasUI)
     if isHunterPet then
         local happiness = GetPetHappiness()
@@ -415,6 +409,7 @@ function gwPaperDollUpdatePetStats()
         local currXP, nextXP = GetPetExperience()
 
         GwDressingRoomPet.model.expBar:SetValue(currXP / nextXP)
+        GwDressingRoomPet.model.expBar.value:SetText(GW.CommaValue(currXP) .. " / " .. GW.CommaValue(nextXP) .. " - " .. math.floor(currXP / nextXP * 100) .. "%")
         GwDressingRoomPet.classIcon:SetTexCoord(GW.getSprite(petStateSprite, happiness, 1))
         GwDressingRoomPet.itemLevel:SetText(totalPoints - spent)
         GwDressingRoomPet.characterData:SetText(GetPetLoyalty())
@@ -426,10 +421,7 @@ function gwPaperDollUpdatePetStats()
         GwDressingRoomPet.model:SetPosition(-2,0,-0.5)
         GwDressingRoomPet.model:SetRotation(-0.15)
 
-        GwPetFrameHappinessInvisibleFrame2:ClearAllPoints()
-        GwPetFrameHappinessInvisibleFrame2:SetPoint(GwDressingRoomPet.classIcon:GetPoint())
-        GwPetFrameHappinessInvisibleFrame2:SetSize(GwDressingRoomPet.classIcon:GetSize())
-        GwPetFrameHappinessInvisibleFrame2:Show()
+        GwDressingRoomPet.happiness:Show()
     else
         GwDressingRoomPet.model.expBar:Hide()
         GwDressingRoomPet.characterData:Hide()
@@ -442,7 +434,7 @@ function gwPaperDollUpdatePetStats()
     end
 
     for primaryStatIndex = 1, 5 do
-        statName, statText, tooltip1, tooltip2 = GW.stats.getPrimary(primaryStatIndex, "pet")
+        _, statText, tooltip1, tooltip2 = GW.stats.getPrimary(primaryStatIndex, "pet")
         grid, x, y, numShownStats = setPetStatFrame(GW.stats.PRIMARY_STATS[primaryStatIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 
@@ -456,12 +448,13 @@ function gwPaperDollUpdatePetStats()
     grid, x, y, numShownStats = setPetStatFrame("ARMOR", numShownStats, statText, tooltip1, tooltip2, grid, x, y)
 
     for resistanceIndex = 2, 6 do
-        statName, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex, "pet")
+        _, statText, tooltip1, tooltip2 = GW.stats.getResitance(resistanceIndex, "pet")
         grid, x, y, numShownStats = setPetStatFrame(GW.stats.RESITANCE_STATS[resistanceIndex], numShownStats, statText, tooltip1, tooltip2, grid, x, y)
     end
 end
+GW.PaperDollUpdatePetStats = PaperDollUpdatePetStats
 
-function gwPaperDollSetStatIcon(self, stat)
+local function PaperDollSetStatIcon(self, stat)
     local newTexture = "Interface\\AddOns\\GW2_UI\\textures\\character\\statsicon"
 
     if STATS_ICONS[stat] ~= nil then
@@ -481,18 +474,9 @@ function gwPaperDollSetStatIcon(self, stat)
         end
     end
 end
+GW.PaperDollSetStatIcon = PaperDollSetStatIcon
 
-function gwPaperDollGetStatListFrame(self, i)
-    if _G["GwPaperDollStat" .. i] ~= nil then return _G["GwPaperDollStat" .. i] end
-    return CreateFrame("Frame", "GwPaperDollStat" .. i, self, "GwPaperDollStat")
-end
-
-function gwPaperDollPetGetStatListFrame(self, i)
-    if _G["GwPaperDollPetStat" .. i] ~= nil then return _G["GwPaperDollPetStat" .. i] end
-    return CreateFrame("Frame", "GwPaperDollPetStat" .. i, self, "GwPaperDollStat")
-end
-
-function gwPaperDollSlotButton_Update(self)
+local function PaperDollSlotButton_Update(self)
     local slot = self:GetID()
     local textureName = GetInventoryItemTexture("player", slot)
     local cooldown = _G[self:GetName() .. "Cooldown"]
@@ -527,13 +511,17 @@ function gwPaperDollSlotButton_Update(self)
         if self.repairIcon then self.repairIcon:Hide() end
     end
 
+    --if self.itemlevel then
+    --    GW.setItemLevel(self, GetInventoryItemQuality("player", slot), GetInventoryItemLink("player", slot))
+    --end
+
     if self.IconBorder then
         local quality = GetInventoryItemQuality("player", slot)
         GwSetItemButtonQuality(self, quality, GetInventoryItemID("player", slot))
     end
 end
 
-function GwSetItemButtonQuality(button, quality, itemIDOrLink)
+function GwSetItemButtonQuality(button, quality)
     if quality then
         if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
             button.IconBorder:Show();
@@ -546,459 +534,8 @@ function GwSetItemButtonQuality(button, quality, itemIDOrLink)
     end
 end
 
-local function getNewReputationCat(i)
-    if _G["GwPaperDollReputationCat" .. i] ~= nil then return _G["GwPaperDollReputationCat" .. i] end
-
-    local f = CreateFrame("Button","GwPaperDollReputationCat"..i,GwPaperReputation,"GwPaperDollReputationCat")
-
-    if i > 1 then
-        _G["GwPaperDollReputationCat" .. i]:SetPoint("TOPLEFT", _G["GwPaperDollReputationCat" .. (i - 1)], "BOTTOMLEFT")
-    else
-        _G["GwPaperDollReputationCat" .. i]:SetPoint("TOPLEFT", GwPaperReputation, "TOPLEFT")
-    end
-    f:SetWidth(231)
-    f:GetFontString():SetPoint("TOPLEFT",10 ,-10)
-    GwPaperReputation.buttons = GwPaperReputation.buttons + 1
-
-    return f
-end
-
-function GwUpdateSavedReputation()
-    for factionIndex = GwPaperReputation.scroll, GetNumFactions() do
-        savedReputation[factionIndex] = {}
-        savedReputation[factionIndex].name, savedReputation[factionIndex].description, savedReputation[factionIndex].standingId, savedReputation[factionIndex].bottomValue, savedReputation[factionIndex].topValue,savedReputation[factionIndex].earnedValue, savedReputation[factionIndex].atWarWith, savedReputation[factionIndex].canToggleAtWar, savedReputation[factionIndex].isHeader, savedReputation[factionIndex].isCollapsed, savedReputation[factionIndex].hasRep, savedReputation[factionIndex].isWatched, savedReputation[factionIndex].isChild,  savedReputation[factionIndex].factionID, savedReputation[factionIndex].hasBonusRepGain, savedReputation[factionIndex].canBeLFGBonus = GetFactionInfo(factionIndex)
-    end
-end
-
-local function returnReputationData(factionIndex)
-    if savedReputation[factionIndex] == nil then return nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil end
-    return savedReputation[factionIndex].name, savedReputation[factionIndex].description, savedReputation[factionIndex].standingId, savedReputation[factionIndex].bottomValue, savedReputation[factionIndex].topValue,savedReputation[factionIndex].earnedValue, savedReputation[factionIndex].atWarWith, savedReputation[factionIndex].canToggleAtWar, savedReputation[factionIndex].isHeader, savedReputation[factionIndex].isCollapsed, savedReputation[factionIndex].hasRep, savedReputation[factionIndex].isWatched, savedReputation[factionIndex].isChild, savedReputation[factionIndex].factionID, savedReputation[factionIndex].hasBonusRepGain, savedReputation[factionIndex].canBeLFGBonus
-end
-
-function GwPaperDollUpdateReputations()
-    ExpandAllFactionHeaders()
-    local headerIndex = 1
-    local CurrentOwner =nil
-    local cMax = 0
-    local cCur = 0
-    local textureC = 1
-
-    for factionIndex = GwPaperReputation.scroll, GetNumFactions() do
-        local  name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID = returnReputationData(factionIndex)
-        if name ~= nil then
-            cCur = cCur + standingId
-            cMax = cMax + 8
-            if isHeader and not isChild then
-                local header = getNewReputationCat(headerIndex)
-                header:Show()
-                CurrentOwner = header
-                header:SetText(name)
-
-                if CurrentOwner ~= nil then
-                    CurrentOwner.StatusBar:SetValue(cCur / cMax)
-                end
-
-                cCur = 0
-                cMax = 0
-                headerIndex = headerIndex + 1
-
-                header:SetScript("OnClick", function() GwReputationShowReputationHeader(factionIndex ) GwUpdateReputationDetails() end)
-
-                if textureC == 1 then
-                    header:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
-                    textureC = 2
-                else
-                    header:SetNormalTexture(nil)
-                    textureC = 1
-                end
-            end
-        end
-
-        if CurrentOwner ~= nil then
-            if cMax ~= 0 and cMax ~= nil then
-                CurrentOwner.StatusBar:SetValue(cCur / cMax)
-                if cCur / cMax >= 1 and cMax ~= 0 then
-                    CurrentOwner.StatusBar:SetStatusBarColor(171/255, 37/255, 240/255)
-                else
-                    CurrentOwner.StatusBar:SetStatusBarColor(240/255, 240/255, 155/255)
-                end
-            end
-        end
-    end
-
-    for i=headerIndex,GwPaperReputation.buttons do
-        _G["GwPaperDollReputationCat" .. i]:Hide()
-    end
-end
-
-function GwReputationShowReputationHeader(i)
-    selectedReputationCat = i
-end
-
-local function detailsAtwar_OnEnter(self)
-    self.icon:SetTexCoord(0.5, 1, 0, 0.5)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:ClearLines()
-    GameTooltip:SetText(REPUTATION_AT_WAR_DESCRIPTION, nil, nil, nil, nil, true)
-    GameTooltip:Show()
-end
-GW.AddForProfiling("reputation", "detailsAtwar_OnEnter", detailsAtwar_OnEnter)
-
-local function detailsAtwar_OnLeave(self)
-    if not self.isActive then
-        self.icon:SetTexCoord(0, 0.5, 0, 0.5)
-    end
-    GameTooltip:Hide()
-end
-GW.AddForProfiling("reputation", "detailsAtwar_OnLeave", detailsAtwar_OnLeave)
-
-local function detailsShowAsBar_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:ClearLines()
-    GameTooltip:SetText(REPUTATION_SHOW_AS_XP, nil, nil, nil, nil, true)
-    GameTooltip:Show()
-end
-GW.AddForProfiling("reputation", "detailsShowAsBar_OnEnter", detailsShowAsBar_OnEnter)
-
-local function detailsInactive_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:ClearLines()
-    GameTooltip:SetText(REPUTATION_MOVE_TO_INACTIVE, nil, nil, nil, nil, true)
-    GameTooltip:Show()
-end
-GW.AddForProfiling("reputation", "detailsInactive_OnEnter", detailsInactive_OnEnter)
-
-local function getNewReputationDetail(i)
-    if _G["GwReputationDetails" .. i] ~= nil then return _G["GwReputationDetails" .. i] end
-
-    local f = CreateFrame("Button", "GwReputationDetails" .. i, GwPaperReputationScrollFrame.scrollchild, "GwReputationDetails")
-
-    f.details:SetPoint("TOPLEFT", f.StatusBar, "BOTTOMLEFT", 0, -15)
-
-    f.statusbarbg:SetPoint("TOPLEFT", f.StatusBar, "TOPLEFT", -2, 2)
-    f.statusbarbg:SetPoint("BOTTOMRIGHT", f.StatusBar, "BOTTOMRIGHT", 0, -2)
-
-    f.currentRank:SetPoint("TOPLEFT", f.StatusBar, "BOTTOMLEFT", 0, -5)
-    f.nextRank:SetPoint("TOPRIGHT", f.StatusBar, "BOTTOMRIGHT", 0, -5)
-
-    f.currentRank:SetFont(DAMAGE_TEXT_FONT, 11)
-    f.currentRank:SetTextColor(0.6, 0.6, 0.6)
-
-    f.nextRank:SetFont(DAMAGE_TEXT_FONT, 11)
-    f.nextRank:SetTextColor(0.6, 0.6, 0.6)
-
-    f.name:SetFont(DAMAGE_TEXT_FONT, 14)
-    f.name:SetTextColor(1, 1, 1, 1)
-
-    f.details:SetFont(UNIT_NAME_FONT, 12)
-    f.details:SetTextColor(0.8, 0.8, 0.8, 1)
-
-    f.controles.inactive:SetScript("OnEnter", detailsInactive_OnEnter)
-    f.controles.inactive:SetScript("OnLeave", GameTooltip_Hide)
-    f.controles.inactive.checkbutton:SetScript("OnEnter", detailsInactive_OnEnter)
-    f.controles.inactive.checkbutton:SetScript("OnLeave", GameTooltip_Hide)
-
-    f.controles.showAsBar:SetScript("OnEnter", detailsShowAsBar_OnEnter)
-    f.controles.showAsBar:SetScript("OnLeave", GameTooltip_Hide)
-    f.controles.showAsBar.checkbutton:SetScript("OnEnter", detailsShowAsBar_OnEnter)
-    f.controles.showAsBar.checkbutton:SetScript("OnLeave", GameTooltip_Hide)
-
-    f.controles.inactive.string:SetFont(UNIT_NAME_FONT, 12)
-    f.controles.inactive.string:SetText(FACTION_INACTIVE)
-    f.controles.inactive:SetWidth(f.controles.inactive.string:GetWidth())
-    f.controles.showAsBar.string:SetFont(UNIT_NAME_FONT, 12)
-    f.controles.showAsBar.string:SetText(SHOW_FACTION_ON_MAINSCREEN)
-    f.controles.showAsBar:SetWidth(f.controles.showAsBar.string:GetWidth())
-
-    f.controles.atwar:SetScript("OnEnter", detailsAtwar_OnEnter)
-    f.controles.atwar:SetScript("OnLeave", detailsAtwar_OnLeave)
-
-    f.details:Hide()
-    f.currentRank:SetText(L["CHARACTER_CURRENT_RANK"])
-    f.nextRank:SetText(L["CHARACTER_NEXT_RANK"])
-
-    if i > 1 then
-        _G["GwReputationDetails" .. i]:SetPoint("TOPLEFT", _G["GwReputationDetails" .. (i - 1)],"BOTTOMLEFT", 0, -1)
-    else
-        _G["GwReputationDetails" .. i]:SetPoint("TOPLEFT", GwPaperReputationScrollFrame.scrollchild, "TOPLEFT", 2, -10)
-    end
-    GwPaperReputation.detailFrames =  GwPaperReputation.detailFrames + 1
-
-    return f
-end
-
-local function SetReputationDetailFrameData(frame, factionIndex, savedHeaderName, name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain, canBeLFGBonus)
-    frame:Show()
-    frame.factionIndex = factionIndex
-    local textureC
-
-    if factionID and RT[factionID] then
-        frame.repbg:SetTexture("Interface/AddOns/GW2_UI/textures/rep/" .. RT[factionID])
-        if isExpanded then
-            frame.repbg:SetTexCoord(unpack(GW.TexCoords))
-            frame.repbg:SetAlpha(0.85)
-            frame.repbg:SetDesaturated(false)
-        else
-            frame.repbg:SetTexCoord(0, 1, REPBG_T, REPBG_B)
-            frame.repbg:SetAlpha(0.33)
-            frame.repbg:SetDesaturated(true)
-        end
-    end
-
-    if expandedFactions[factionIndex] == nil then
-        frame.controles:Hide()
-        frame:SetHeight(80)
-    else
-        frame:SetHeight(140)
-        frame.controles:Show()
-    end
-
-    local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
-    local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
-    local friendID, friendRep, friendMaxRep, friendName, friendText, friendTexture, friendTextLevel, friendThreshold, nextFriendThreshold = GW.api.GetFriendshipReputation(factionID)
-
-    if textureC == 1 then
-        frame.background:SetTexture(nil)
-        textureC = 2
-    else
-        frame.background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
-        textureC = 1
-    end
-
-    frame.name:SetText(name .. savedHeaderName)
-    frame.details:SetText(description)
-
-    if atWarWith then
-        frame.controles.atwar.isActive = true
-        frame.controles.atwar.icon:SetTexCoord(0.5, 1, 0, 0.5)
-    else
-        frame.controles.atwar.isActive = false
-        frame.controles.atwar.icon:SetTexCoord(0, 0.5, 0, 0.5)
-    end
-
-    if canToggleAtWar then
-        frame.controles.atwar.isShowAble = true
-    else
-        frame.controles.atwar.isShowAble = false
-    end
-
-    if isWatched then
-        frame.controles.showAsBar.checkbutton:SetChecked(true)
-    else
-        frame.controles.showAsBar.checkbutton:SetChecked(false)
-    end
-
-    if IsFactionInactive(factionIndex) then
-        frame.controles.inactive.checkbutton:SetChecked(true)
-    else
-        frame.controles.inactive.checkbutton:SetChecked(false)
-    end
-
-    frame.controles.inactive:SetScript("OnClick", function()
-        if IsFactionInactive(factionIndex) then
-            SetFactionActive(factionIndex)
-        else
-            SetFactionInactive(factionIndex)
-        end
-        GwUpdateSavedReputation()
-        GwPaperDollUpdateReputations()
-        GwUpdateReputationDisplayOldData()
-    end)
-
-    frame.controles.inactive.checkbutton:SetScript("OnClick", function()
-        if IsFactionInactive(factionIndex) then
-            SetFactionActive(factionIndex)
-        else
-            SetFactionInactive(factionIndex)
-        end
-        GwUpdateSavedReputation()
-        GwPaperDollUpdateReputations()
-        GwUpdateReputationDisplayOldData()
-    end)
-
-    frame.controles.atwar:SetScript("OnClick", function()
-        FactionToggleAtWar(factionIndex)
-        if canToggleAtWar then
-            GwUpdateSavedReputation()
-            GwUpdateReputationDisplayOldData()
-        end
-    end)
-
-    frame.controles.showAsBar:SetScript("OnClick", function()
-        if isWatched then
-            SetWatchedFactionIndex(0)
-        else
-            SetWatchedFactionIndex(factionIndex)
-        end
-        GwUpdateSavedReputation()
-        GwUpdateReputationDisplayOldData()
-    end)
-
-    frame.controles.showAsBar.checkbutton:SetScript("OnClick", function()
-        if isWatched then
-            SetWatchedFactionIndex(0)
-        else
-            SetWatchedFactionIndex(factionIndex)
-        end
-        GwUpdateSavedReputation()
-        GwUpdateReputationDisplayOldData()
-    end)
-
-    SetFactionInactive(GetSelectedFaction())
-
-    if friendID ~= nil then
-        frame.StatusBar:SetMinMaxValues(0, 1)
-        frame.currentRank:SetText(friendTextLevel)
-        frame.nextRank:SetText()
-
-        frame.background2:SetVertexColor(GW.FACTION_BAR_COLORS[5].r,GW.FACTION_BAR_COLORS[5].g,GW.FACTION_BAR_COLORS[5].b)
-        frame.StatusBar:SetStatusBarColor(GW.FACTION_BAR_COLORS[5].r,GW.FACTION_BAR_COLORS[5].g,GW.FACTION_BAR_COLORS[5].b)
-
-        if nextFriendThreshold then
-            frame.currentValue:SetText(comma_value(friendRep - friendThreshold))
-            frame.nextValue:SetText(comma_value(nextFriendThreshold - friendThreshold))
-
-            local percent = math.floor(RoundDec(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)) * 100), 0)
-            if percent == -1 then
-                frame.percentage:SetText("0%")
-            else
-                frame.percentage:SetText((math.floor(RoundDec(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)) * 100), 0)) .. "%")
-            end
-            frame.StatusBar:SetValue((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold))
-        else
-            --max rank
-            frame.StatusBar:SetValue(1)
-            frame.nextValue:SetText()
-            frame.currentValue:SetText()
-            frame.percentage:SetText("100%")
-        end
-    else
-        frame.currentRank:SetText(currentRank)
-        frame.nextRank:SetText(nextRank)
-        frame.currentValue:SetText(GW.CommaValue(earnedValue - bottomValue))
-        local percent = math.floor(GW.RoundInt(((earnedValue - bottomValue) / (topValue - bottomValue)) * 100), 0)
-        if percent == -1 then
-            frame.percentage:SetText("0%")
-        else
-            frame.percentage:SetText((math.floor( GW.RoundInt(((earnedValue - bottomValue) / (topValue - bottomValue)) * 100), 0)) .. "%")
-        end
-
-        frame.nextValue:SetText(GW.CommaValue(topValue - bottomValue))
-        frame.StatusBar:SetMinMaxValues(0, 1)
-        frame.StatusBar:SetValue((earnedValue - bottomValue) / (topValue - bottomValue))
-
-        if currentRank == nextRank and earnedValue - bottomValue == 0 then
-            frame.percentage:SetText("100%")
-            frame.StatusBar:SetValue(1)
-            frame.nextValue:SetText()
-            frame.currentValue:SetText()
-        end
-
-        frame.background2:SetVertexColor(GW.FACTION_BAR_COLORS[standingId].r, GW.FACTION_BAR_COLORS[standingId].g, GW.FACTION_BAR_COLORS[standingId].b)
-        frame.StatusBar:SetStatusBarColor(GW.FACTION_BAR_COLORS[standingId].r, GW.FACTION_BAR_COLORS[standingId].g, GW.FACTION_BAR_COLORS[standingId].b)
-    end
-end
-
-function GwUpdateReputationDetails()
-    local buttonIndex = 1
-    local savedHeaderName = ""
-    local savedHeight = 0
-
-    for factionIndex = selectedReputationCat + 1, GetNumFactions() do
-        local  name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain, canBeLFGBonus = returnReputationData(factionIndex)
-        if name ~= nil then
-            if isHeader and not isChild then break end
-            if isHeader and isChild then
-                savedHeaderName = " |cFFa0a0a0" .. name .. "|r"
-            end
-
-            if not isChild then
-                savedHeaderName = ""
-            end
-
-            local frame = getNewReputationDetail(buttonIndex)
-
-            SetReputationDetailFrameData(frame, factionIndex, savedHeaderName, name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain, canBeLFGBonus)
-            savedHeight = savedHeight + frame:GetHeight()
-            buttonIndex = buttonIndex + 1
-        end
-    end
-
-    for i=buttonIndex, GwPaperReputation.detailFrames do
-        _G["GwReputationDetails" .. i]:Hide()
-    end
-
-    GwPaperReputationScrollFrame:SetVerticalScroll(0)
-    GwPaperReputationScrollFrame:SetVerticalScroll(0)
-
-    GwPaperReputationScrollFrame.slider.thumb:SetHeight(100)
-    GwPaperReputationScrollFrame.slider:SetValue(1)
-    GwPaperReputationScrollFrame:SetVerticalScroll(0)
-    GwPaperReputationScrollFrame.savedHeight = savedHeight - 590
-
-    reputationLastUpdateMethod = GwUpdateReputationDetails
-end
-
-function GwReputationSearch(a, b)
-    return string.find(a, b)
-end
-
-function GwDetailFaction(factionIndex, boolean)
-    if boolean then
-        expandedFactions[factionIndex] = true
-        return
-    end
-    expandedFactions[factionIndex] = nil
-end
-
-function GwUpdateReputationDetailsSearch(s)
-    local buttonIndex = 1
-    local savedHeaderName = ""
-    local savedHeight = 0
-
-    for factionIndex = 1, GetNumFactions() do
-        local name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain, canBeLFGBonus = returnReputationData(factionIndex)
-        local lower1 = string.lower(name)
-        local lower2 = string.lower(s)
-        local show = true
-
-        if isHeader then
-            if not isChild then
-                show = false
-            end
-        end
-
-        if  (name ~= nil and GwReputationSearch(lower1, lower2) ~= nil) and show then
-            local frame = getNewReputationDetail(buttonIndex)
-
-            SetReputationDetailFrameData(frame, factionIndex, savedHeaderName, name, description, standingId, bottomValue, topValue, earnedValue, atWarWith, canToggleAtWar, isHeader, isCollapsed, hasRep, isWatched, isChild, factionID, hasBonusRepGain, canBeLFGBonus)
-            savedHeight = savedHeight + frame:GetHeight()
-            buttonIndex = buttonIndex + 1
-        end
-    end
-
-    for i = buttonIndex, GwPaperReputation.detailFrames do
-        _G["GwReputationDetails" .. i]:Hide()
-    end
-
-    GwPaperReputationScrollFrame:SetVerticalScroll(0)
-    GwPaperReputationScrollFrame.slider.thumb:SetHeight(100)
-    GwPaperReputationScrollFrame.slider:SetValue(1)
-    GwPaperReputationScrollFrame:SetVerticalScroll(0)
-    GwPaperReputationScrollFrame.savedHeight = savedHeight - 590
-
-    reputationLastUpdateMethod = GwUpdateReputationDetailsSearch
-    reputationLastUpdateMethodParams = s
-end
-
-function GwUpdateReputationDisplayOldData()
-    if reputationLastUpdateMethod ~= nil then
-    reputationLastUpdateMethod(reputationLastUpdateMethodParams)
-    end
-end
-
 local function getSkillElement(index)
-    if _G["GwPaperSkillsItem" .. index] ~= nil then return _G["GwPaperSkillsItem" .. index] end
+    if _G["GwPaperSkillsItem" .. index] then return _G["GwPaperSkillsItem" .. index] end
     local f = CreateFrame("Button", "GwPaperSkillsItem" .. index, GwPaperSkills.scroll.scrollchild, "GwPaperSkillsItem")
     f.name:SetFont(DAMAGE_TEXT_FONT, 12)
     f.name:SetText(UNKNOWN)
@@ -1049,7 +586,6 @@ local function abandonProffesionOnEnter(self)
     GameTooltip:Show()
 end
 
-local skillsMaxValueScrollbar = 0
 function GWupdateSkills()
     local height = 50
     local y = 0
@@ -1087,6 +623,7 @@ function GWupdateSkills()
             f.abandon:SetScript("OnLeave", nil)
         end
 
+        if skillMaxRank == 0 then skillMaxRank = 1 end
 
         LastElement = f
         y = y + height
@@ -1398,6 +935,12 @@ local function grabDefaultSlots(slot, anchor, parent, size)
         slot.repairIcon:SetTexture("Interface/AddOns/GW2_UI/textures/globe/repair")
         slot.repairIcon:SetTexCoord(0, 1, 0.5, 1)
         slot.repairIcon:SetSize(20, 20)
+
+        slot.itemlevel = slot:CreateFontString(nil, "OVERLAY")
+        slot.itemlevel:SetSize(size, 10)
+        slot.itemlevel:SetPoint("BOTTOMLEFT", 1, 2)
+        slot.itemlevel:SetTextColor(1, 1, 1)
+        slot.itemlevel:SetJustifyH("LEFT")
     end
 
     slot.IsGW2Hooked = true
@@ -1407,13 +950,15 @@ local function LoadPaperDoll()
     CreateFrame("Frame", "GwCharacterWindowContainer", GwCharacterWindow, "GwCharacterWindowContainer")
     CreateFrame("Button", "GwDressingRoom", GwCharacterWindowContainer, "GwDressingRoom")
     CreateFrame("Frame", "GwCharacterMenu", GwCharacterWindowContainer, "GwCharacterMenu")
-    CreateFrame("Frame", "GwPaperReputation", GwCharacterWindowContainer, "GwPaperReputation")
     CreateFrame("Frame", "GwPaperHonor", GwCharacterWindowContainer, "GwPaperHonor")
     CreateFrame("Frame", "GwPaperSkills", GwCharacterWindowContainer, "GwPaperSkills")
 
     --Legacy pet window
     CreateFrame("Frame", "GwPetContainer", GwCharacterWindowContainer, "GwPetContainer")
     CreateFrame("Button", "GwDressingRoomPet", GwPetContainer, "GwPetPaperdoll")
+
+    GwDressingRoom.stats:SetScript("OnEvent", PaperDollStats_OnEvent)
+    GwDressingRoomPet.stats:SetScript("OnEvent", PaperDollPetStats_OnEvent)
 
     grabDefaultSlots(CharacterHeadSlot, {"TOPLEFT", GwDressingRoom.gear, "TOPLEFT", 0, 0}, GwDressingRoom, 50)
     grabDefaultSlots(CharacterShoulderSlot, {"TOPLEFT", CharacterHeadSlot, "BOTTOMLEFT", 0, -5}, GwDressingRoom, 50)
@@ -1458,17 +1003,12 @@ local function LoadPaperDoll()
                     CharacterRangedSlot.icon:SetTexCoord(0, 0.25, 0.5, 0.625)
                 end
             end
-            gwPaperDollSlotButton_Update(button)
+            PaperDollSlotButton_Update(button)
         else
             button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-            gwPaperDollSlotButton_Update(button)
-        end  
+            PaperDollSlotButton_Update(button)
+        end
     end)
-
-    GW.RegisterScaleFrame(GwCharacterWindow)
-    GwUpdateSavedReputation()
-    GwPaperReputationScrollFrame:SetScrollChild(GwPaperReputationScrollFrame.scrollchild)
-    GwPaperDollUpdateReputations()
 
     GwPaperSkills.scroll:SetScrollChild(GwPaperSkills.scroll.scrollchild)
     GWupdateSkills()
@@ -1489,6 +1029,10 @@ local function LoadPaperDoll()
         GwDressingRoom.model:SetPosition(0.4, 0, -0.05)
     elseif GW.myrace == "Tauren" then
         GwDressingRoom.model:SetPosition(0.6, 0, 0)
+    elseif GW.myrace == "BloodElf" then
+        GwDressingRoom.model:SetPosition(0.5, 0, 0)
+    elseif GW.myrace == "Draenei" then
+        GwDressingRoom.model:SetPosition(0.3, 0, -0.15)
     elseif GW.myrace == "NightElf" then
         GwDressingRoom.model:SetPosition(0.3, 0, -0.15)
     elseif GW.myrace == "Troll" then
@@ -1508,29 +1052,26 @@ local function LoadPaperDoll()
     CharacterFrame:UnregisterAllEvents()
     hooksecurefunc("ToggleCharacter", GwToggleCharacter)
 
-    gwPaperDollUpdateStats()
-    gwPaperDollUpdatePetStats()
-    GwUpdateReputationDetails()
+    PaperDollUpdateStats()
+    PaperDollUpdatePetStats()
 
     GwPaperHonor.buttons = {}
     LoadHonorTab()
 
-    GwPapaerDollStats.advancedChatStatsFrame = CreateFrame("Frame", nil, GwPapaerDollStats)
-    GwPapaerDollStats.advancedChatStatsFrame:SetPoint("TOPLEFT", GwPapaerDollStats, "TOPLEFT", 0, -1)
-    GwPapaerDollStats.advancedChatStatsFrame:SetSize(180, 40)
-    GwPapaerDollStats.advancedChatStatsFrame:SetScript("OnEnter", function(self)
+    GwDressingRoomPet.model.expBar:SetScript("OnEnter", function(self)
+        self.value:Show()
+    end)
+    GwDressingRoomPet.model.expBar:SetScript("OnLeave", function(self)
+        self.value:Hide()
+    end)
+
+    GwDressingRoom.stats.advancedChatStatsFrame = CreateFrame("Frame", nil, GwDressingRoom.stats)
+    GwDressingRoom.stats.advancedChatStatsFrame:SetPoint("TOPLEFT", GwDressingRoom.stats, "TOPLEFT", 0, -1)
+    GwDressingRoom.stats.advancedChatStatsFrame:SetSize(180, 40)
+    GwDressingRoom.stats.advancedChatStatsFrame:SetScript("OnEnter", function(self)
         GW.showAdvancedChatStats(self)
     end)
-    GwPapaerDollStats.advancedChatStatsFrame:SetScript("OnLeave", GameTooltip_Hide)
-
-    StaticPopupDialogs["UNEQUIP_LEGENDARY"] = {
-        text = L["UNEQUIP_LEGENDARY"],
-        button1 = CANCEL,
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        preferredIndex = 3
-    }
+    GwDressingRoom.stats.advancedChatStatsFrame:SetScript("OnLeave", GameTooltip_Hide)
 
     return GwCharacterWindowContainer
 end

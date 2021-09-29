@@ -17,5 +17,7 @@
 
     <Script file="libs\LibCompress\LibCompress.lua"/>
     <Script file="libs\AceSerializer-3.0\AceSerializer-3.0.lua"/>
+    <Script file="libs\AceLocale-3.0\AceLocale-3.0.lua"/>
     <Script file="libs\LibBase64-1.0\LibBase64-1.0.lua"/>
+    <Script file="libs\LibFrameFade\LibFrameFade.lua"/>
 </Ui>

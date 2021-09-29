@@ -150,8 +150,12 @@ character/data/Warrior.lua
 
 
 character/reputation_table.lua
+character/reputation.xml
+##character/title.xml
 character/stats.lua
 character/advanced_stats.lua
+##character/titles.lua
+character/reputation.lua
 character/character.lua
 character/character.xml
 character/spellbook.lua

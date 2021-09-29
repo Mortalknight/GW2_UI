@@ -53,7 +53,7 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
                 </Anchors>
             </Frame>
-            <Slider name="$parentSlider" parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
+            <Slider parentKey="slider" orientation="VERTICAL" enableMouse="true" virtual="true">
                 <Size x="12" y="12"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-12"></Anchor>
@@ -122,9 +122,9 @@
         <Scripts>
             <OnMouseWheel>
                 if InCombatLockdown() then return end
-                delta = -delta * 15
+                delta = -delta * 60
                 local min, max = self.slider:GetMinMaxValues()
-                local s = math.min(max,math.max(self:GetVerticalScroll()+delta,min))
+                local s = math.min(max, math.max(self:GetVerticalScroll() + delta, min))
                 self.slider:SetValue(s)
                 self:SetVerticalScroll(s)
             </OnMouseWheel>

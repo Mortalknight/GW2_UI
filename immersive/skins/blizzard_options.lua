@@ -55,47 +55,22 @@ local function SkinBlizzardOptions()
 
     local InterfaceOptionsFrame = _G.InterfaceOptionsFrame
     InterfaceOptionsFrameHeader:Hide()
-    _G.InterfaceOptionsFrameCategoriesTopRight:Hide()
-    _G.InterfaceOptionsFrameCategoriesTopLeft:Hide()
-    _G.InterfaceOptionsFrameCategoriesBottomRight:Hide()
-    _G.InterfaceOptionsFrameCategoriesBottomLeft:Hide()
-    _G.InterfaceOptionsFrameCategoriesTop:Hide()
-    _G.InterfaceOptionsFrameCategoriesRight:Hide()
-    _G.InterfaceOptionsFrameCategoriesLeft:Hide()
-    _G.InterfaceOptionsFrameCategoriesBottom:Hide()
 
-    _G.InterfaceOptionsFrameAddOnsTopRight:Hide()
-    _G.InterfaceOptionsFrameAddOnsTopLeft:Hide()
-    _G.InterfaceOptionsFrameAddOnsBottomRight:Hide()
-    _G.InterfaceOptionsFrameAddOnsBottomLeft:Hide()
-    _G.InterfaceOptionsFrameAddOnsTop:Hide()
-    _G.InterfaceOptionsFrameAddOnsRight:Hide()
-    _G.InterfaceOptionsFrameAddOnsLeft:Hide()
-    _G.InterfaceOptionsFrameAddOnsBottom:Hide()
-    
-    _G.InterfaceOptionsFrameTab1TabSpacer:Hide()
-    _G.InterfaceOptionsFrameTab2TabSpacer1:Hide()
-    _G.InterfaceOptionsFrameTab2TabSpacer2:Hide()
+    -- _G.InterfaceOptionsFrameTab1TabSpacer:Hide()
+    -- _G.InterfaceOptionsFrameTab2TabSpacer1:Hide()
+    -- _G.InterfaceOptionsFrameTab2TabSpacer2:Hide()
     InterfaceOptionsFrameHeaderText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     _G.InterfaceOptionsDisplayPanelResetTutorials:ClearAllPoints()
     _G.InterfaceOptionsDisplayPanelResetTutorials:SetPoint("LEFT", _G.InterfaceOptionsDisplayPanelShowTutorials, "RIGHT", 150, 0)
 
-    hooksecurefunc("InterfaceOptionsFrame_TabOnClick", function()
-        _G.InterfaceOptionsFrameTab1TabSpacer:Hide()
-        _G.InterfaceOptionsFrameTab2TabSpacer1:Hide()
-        _G.InterfaceOptionsFrameTab2TabSpacer2:Hide()
-    end)
+    --hooksecurefunc("InterfaceOptionsFrame_TabOnClick", function()
+    --    _G.InterfaceOptionsFrameTab1TabSpacer:Hide()
+    --   _G.InterfaceOptionsFrameTab2TabSpacer1:Hide()
+    --    _G.InterfaceOptionsFrameTab2TabSpacer2:Hide()
+    --end)
 
     local VideoOptionsFrame = _G.VideoOptionsFrame
     VideoOptionsFrameHeader:Hide()
-    _G.VideoOptionsFrameCategoryFrameTopRight:Hide()
-    _G.VideoOptionsFrameCategoryFrameTopLeft:Hide()
-    _G.VideoOptionsFrameCategoryFrameBottomRight:Hide()
-    _G.VideoOptionsFrameCategoryFrameBottomLeft:Hide()
-    _G.VideoOptionsFrameCategoryFrameTop:Hide()
-    _G.VideoOptionsFrameCategoryFrameRight:Hide()
-    _G.VideoOptionsFrameCategoryFrameLeft:Hide()
-    _G.VideoOptionsFrameCategoryFrameBottom:Hide()
     VideoOptionsFrameHeaderText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
 
     InterfaceOptionsFrame:SetBackdrop(nil)
@@ -151,6 +126,11 @@ local function SkinBlizzardOptions()
     _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
     _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_up")
     _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
+
+    -- Voice Sliders
+    UnitPopupVoiceSpeakerVolume.Slider:SkinSliderFrame()
+    UnitPopupVoiceMicrophoneVolume.Slider:SkinSliderFrame()
+    UnitPopupVoiceUserVolume.Slider:SkinSliderFrame()
 
     --Create New Raid Profle
     local newProfileDialog = _G.CompactUnitFrameProfilesNewProfileDialog

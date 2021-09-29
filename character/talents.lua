@@ -1,30 +1,58 @@
 local _, GW = ...
-local maxTalentRows = 7
-local talentsPerRow = 3
---Legacy
-local MAX_NUM_TALENTS = 20
 -- Default 8 but none uses 8 talent rows in classic
-local MAX_NUM_TALENT_TIERS = 8
+local MAX_NUM_TALENTS = 20
 local NUM_TALENT_COLUMNS = 4
+local MAX_NUM_TALENT_TIERS = 9
 local TALENT_BRANCH_ARRAY = {}
 
-local function hookTalentButton(self, container, row, index)
+local function talentBunnton_OnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
+    GameTooltip:ClearLines()
+
+    GameTooltip:SetTalent(self.talentFrameId, self.talentid)
+    self.UpdateTooltip = talentBunnton_OnEnter
+end
+
+local function hookTalentButton(talentButton, container, row, index)
     local w = container:GetWidth()
     local h = container:GetHeight()
     local x = (w / NUM_TALENT_COLUMNS) * (index - 1)
     local y = (h / MAX_NUM_TALENT_TIERS) * (row - 1)
 
-    self:RegisterForClicks("AnyUp")
-    self:SetPoint('TOPLEFT', container, 'TOPLEFT', x + (self:GetWidth() / 4), -(y + (self:GetHeight() / 4)))
+    talentButton:RegisterForClicks("AnyUp")
+    talentButton:SetPoint('TOPLEFT', container, 'TOPLEFT', x + (talentButton:GetWidth() / 4), -(y + (talentButton:GetHeight() / 4)))
+
+    talentButton:SetScript("OnEnter", talentBunnton_OnEnter)
+    talentButton:SetScript("OnLeave", GameTooltip_Hide)
+    talentButton:SetScript("OnClick", function(self, button)
+        if button == "LeftButton" then
+            if IsModifiedClick("CHATLINK") then
+                local link = GetTalentLink(self.talentFrameId, self.talentid)
+                if link then
+                    ChatEdit_InsertLink(link)
+                end
+            else
+                LearnTalent(self.talentFrameId, self.talentid)
+            end
+        end
+    end)
+    talentButton:SetScript("OnEvent", function(self)
+        if GameTooltip:IsOwned(self) then
+            GameTooltip:SetTalent(self.talentFrameId, self.talentid)
+        end
+    end)
+    talentButton:RegisterEvent("CHARACTER_POINTS_CHANGED")
+    --talentButton:RegisterEvent("")
+    --talentButton:RegisterEvent("")
 
     local mask = UIParent:CreateMaskTexture()
 
-    mask:SetPoint("CENTER", self, 'CENTER', 0, 0)
+    mask:SetPoint("CENTER", talentButton, 'CENTER', 0, 0)
     mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    mask:SetSize(self:GetSize())
-    self.mask = mask
-    self.points:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
-    self.points:SetTextColor(1, 1, 1, 1)
+    mask:SetSize(talentButton:GetSize())
+    talentButton.mask = mask
+    talentButton.points:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
+    talentButton.points:SetTextColor(1, 1, 1, 1)
 end
 
 local function getArrow(frame, teir, column, i)
@@ -70,7 +98,7 @@ local function drawLegacyLine(path, frame, teir, column, requirementsMet)
             if path[i].x > 0 then
                 arrow.right:Show()
             else
-                arrow.left:Down()
+                arrow.left:Show()
             end
         end
         colorTalentArrow(arrow, requirementsMet)
@@ -99,7 +127,6 @@ local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requir
         if not blocked then
             return drawLegacyLine(path, frame, tier, column, requirementsMet)
         end
-        path = {}
     end
 
     blocked= false
@@ -117,13 +144,16 @@ local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requir
                 end
             end
         else
-            path[#path + 1] = {x = 1, y = 0}
+            if buttonColumn < column then
+                path[#path + 1] = {x = -1, y = 0}
+            else
+                path[#path + 1] = {x = 1, y = 0}
+            end
         end
         if not blocked then
             return drawLegacyLine(path, frame, tier, column, requirementsMet)
         end
     end
-    path = {}
     path[#path + 1] = {x = 1, y = 0}
     path[#path + 1] = {x = 0, y = 1}
 
@@ -155,9 +185,9 @@ local function updateTalentTrees()
     if InCombatLockdown() then return end
 
     for f = 1, GW.api.GetNumSpecializations() do
-        local forceDesaturated, tierUnlocked
+        local forceDesaturated
         local talentPoints = UnitCharacterPoints("player")
-        local name, iconTexture, pointsSpent = GetTalentTabInfo(f)
+        local name, _, pointsSpent = GetTalentTabInfo(f)
         local TalentFrame = _G["GwLegacyTalentTree" .. f]
 
         TalentFrame.pointsSpent = pointsSpent
@@ -179,7 +209,7 @@ local function updateTalentTrees()
         local numTalents = GetNumTalents(f)
         for i = 1, MAX_NUM_TALENTS do
             if i <= numTalents then
-                local name, texture, tier, column, rank, maxRank, isExceptional, available, spellid = GetTalentInfo(f, i)
+                local name, texture, tier, column, rank, maxRank, isExceptional, available = GetTalentInfo(f, i)
 
                 TALENT_BRANCH_ARRAY[f][tier][column].id = i
                 local button = _G['GwLegacyTalentTree' .. f .. 'Teir' .. tier .. 'index' .. column]
@@ -259,19 +289,9 @@ local function updateTalentTrees()
 end
 
 local function loadTalentsFrames()
-    local classDisplayName, class, classID = UnitClass('player')
-    local txR, txT, txH, txMH
-
-    txR = 588 / 1024
-    txT = 0
-    txH = 140
-    txMH = 512
-    local specs = GW.api.GetNumSpecializations()
-    if specs > 3 then
-        txMH = 1024
-    end
-
+    local _, _, classID = UnitClass('player')
     local mask = UIParent:CreateMaskTexture()
+
     mask:SetPoint("TOPLEFT", GwCharacterWindow, 'TOPLEFT', 0, 0)
     mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\windowbg-mask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(853, 853)
@@ -284,7 +304,6 @@ local function loadTalentsFrames()
         container:SetPoint('TOPLEFT', GwTalentFrame, 'TOPLEFT', (284 * (i - 1)) + 5, -92)
         container.spec = i
 
-        local id, name, description, icon, background, role, primaryStat = GW.api.GetSpecializationInfo(i)
         container.background:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\art\\legacy\\' .. classID)
         container.background:SetTexCoord(0.27734375 * (i - 1), 0.27734375 * i, 0, 0.611328125)
         container.background:AddMaskTexture(mask)
@@ -309,7 +328,7 @@ local function LoadTalents()
     CreateFrame('Frame','GwTalentFrame', GwCharacterWindow,'GwLegacyTalentFrame')
 
     loadTalentsFrames()
-    GwTalentFrame:SetScript('OnEvent', function(self, event)
+    GwTalentFrame:SetScript('OnEvent', function(_, event)
         if event == "CHARACTER_POINTS_CHANGED" then
             GwTalentFrame.bottomBar.unspentPoints:SetText(UnitCharacterPoints("player"))
         end

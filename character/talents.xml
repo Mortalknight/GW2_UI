@@ -85,25 +85,6 @@
                 </FontString>
             </Layer>
         </Layers>
-        <Scripts>
-            <OnEnter>
-                GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
-                GameTooltip:ClearLines()
-
-                GameTooltip:SetTalent(self.talentFrameId, self.talentid)
-                GameTooltip:Show()
-            </OnEnter>
-            <OnLeave>
-                GameTooltip:Hide()
-            </OnLeave>
-            <OnDragStart>
-                if InCombatLockdown() or self.isPassive then return end
-                --PickupSpell(self.spellId)
-            </OnDragStart>
-            <OnClick>
-                LearnTalent(self.talentFrameId, self.talentid)
-            </OnClick>
-        </Scripts>
     </Button>
 
     <Frame name="GwSpellbookMenu" inherits="SecureHandlerAttributeTemplate" virtual="true">
@@ -169,14 +150,6 @@
                 </FontString>
             </Layer>
         </Layers>
-        <Scripts>
-            <OnEnter>
-                --GwStandardButton_OnEnter(self)
-            </OnEnter>
-            <OnLeave>
-                --GwStandardButton_OnLeave(self)
-            </OnLeave>
-        </Scripts>
     </Button>
 
     <Frame name="GwSpellbookContainerTab" inherits="SecureHandlerShowHideTemplate,SecureHandlerStateTemplate" virtual="true">

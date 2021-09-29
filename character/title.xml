@@ -1,0 +1,62 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Button name="GwTitleRow" virtual="true">
+        <Size x="200" y="32"/>
+        <Frames>
+        <Button parentKey="item" setAllPoints="true" hidden="true">
+            <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
+                <Size x="32" y="32"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="2">
+                <FontString parentKey="name" text="Amount Could not be loaded" inherits="GameFontNormalSmall" justifyV="MIDDLE" justifyH="LEFT">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5"/>
+                </Anchors>
+                <Size x="190" y="24"/>
+                </FontString>
+            </Layer>
+            </Layers>
+        </Button>
+        </Frames>
+    </Button>
+
+    <Frame name="GwPaperTitles" virtual="true" hidden ="true">
+        <Size x="231" y="478"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-105"/>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+                    <Size x="231" y="478"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-3" y="7"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack,SecureHandlerClickTemplate" text="CHARACTER: PAPERDOLL_SIDEBAR_TITLES" >
+                <Size x="231" y="50"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
+                </Anchors>
+            </Button>
+        
+            <ScrollFrame parentKey="TitleScroll" inherits="GwHybridScrollFrameTemplate">
+                <Size x="205" y="433"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-10"></Anchor>
+                </Anchors>
+            </ScrollFrame>
+        </Frames>
+    </Frame>
+</Ui>
