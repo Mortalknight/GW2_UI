@@ -1,0 +1,11 @@
+<Bindings>
+    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GwDodgeBar:LeftButton" header="GW2UI_MOVE_BINDINGS" runOnUp="false"/>
+    <Binding category="BINDING_HEADER_GW2UI" name="GW2UI_BAG_SORT" header="GW2UI_INVENTORY_BINDINGS" runOnUp="false">
+        PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
+        GW_SortBags()
+    </Binding>
+    <Binding category="BINDING_HEADER_GW2UI" name="GW2UI_BANK_SORT" runOnUp="false">
+        PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
+        GW_SortBankBags()
+    </Binding>
+</Bindings>

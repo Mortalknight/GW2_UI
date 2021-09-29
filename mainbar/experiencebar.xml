@@ -1,0 +1,218 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwExperienceBar" frameStrata="MEDIUM" toplevel="true" parent="UIParent" virtual="true">
+        <Size x="1" y="16"></Size>
+        <Anchors>
+            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\xpbarbg" parentKey="Background">
+                    <Color r="0" b="0" g="0" a="0.01"></Color>
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="2">
+                <Texture name="$parentBarBgGray" file="Interface\AddOns\GW2_UI\textures\xpbarbggray" parentKey="Background">
+                    <Color r="1" b="1" g="1" a="1"></Color>
+                    <Size x="1" y="16" />
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="90" y="0" />
+                        <Anchor point="RIGHT" relativePoint="RIGHT" x="-90" y="0"/>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="labelLeft" name="$parentLevelLableTextureLeft" file="Interface\AddOns\GW2_UI\textures\level-label">
+                    <Size x="128" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="labelRight" name="$parentLevelLableTextureRight" file="Interface\AddOns\GW2_UI\textures\level-label">
+                    <TexCoords left="1" right="0" top="0" bottom="1"/>
+                    <Size x="128" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString name="$parentCurrentLevel" parentKey="CurrentLevel" text="100" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="80" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-5" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentNextLevel" parentKey="NextLevel" text="100" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="80" y="25"/>
+                    <Color r="1" b="1" g="1"></Color>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="5" y="0"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <StatusBar name="$parentBarCandy" parentKey="ExpBarCandy" defaultValue="1" frameLevel="2" minValue="0" maxValue="1">
+                <Size x="1" y="8" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-4" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-4"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
+            </StatusBar>
+            <StatusBar name="$parentBar" parentKey="ExpBar" defaultValue="1" frameLevel="3" minValue="0" maxValue="1">
+                <Size x="1" y="8" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-4" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-4"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
+                <Frames>
+                    <Frame name="$parentExpBarSpark" parentKey="Spark" frameLevel="4">
+                        <Size x="8" y="8" />
+                        <Anchors>
+                            <Anchor point="LEFT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer>
+                                <Texture  parentKey="ExpBarSpark" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                                    <Size x="8" y="8"></Size>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                    <StatusBar name="$parentRested" parentKey="Rested" defaultValue="1" frameLevel="3" minValue="0" maxValue="1">
+                        <Size x="1" y="8" />
+                        <Anchors>
+                            <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" />
+                            <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"/>
+                            <Anchor point="TOP" relativePoint="TOP" x="0" y="0"/>
+                            <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"/>
+                        </Anchors>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
+                        <BarColor r="0.5" b="0.5" g="0" a="0.5"></BarColor>
+                    </StatusBar>
+                </Frames>
+            </StatusBar>
+            <StatusBar name="$parentRepuBarCandy" parentKey="RepuBarCandy" defaultValue="1" frameLevel="2" minValue="0" maxValue="1">
+                <Size x="1" y="8" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-6" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-6"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
+            </StatusBar>
+            <StatusBar name="$parentRepuBar" parentKey="RepuBar" defaultValue="1" frameLevel="3" minValue="0" maxValue="1">
+                <Size x="1" y="8" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="6" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="6"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
+                <Frames>
+                    <Frame name="$parentRepuBarSpark" parentKey="Spark" frameLevel="4">
+                        <Size x="8" y="8" />
+                        <Anchors>
+                            <Anchor point="LEFT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer>
+                                <Texture parentKey="SparkTexture" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                                    <Size x="8" y="8"></Size>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                </Frames>
+            </StatusBar>
+            <StatusBar name="$parentPetBarCandy" parentKey="PetBarCandy" defaultValue="1" frameLevel="2" minValue="0" maxValue="1">
+                <Size x="1" y="8" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-6" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-6"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
+            </StatusBar>
+            <StatusBar name="$parentPetBar" parentKey="PetBar" defaultValue="1" frameLevel="3" minValue="0" maxValue="1">
+                <Size x="1" y="8" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="6" />
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="6"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\xpbarCandy" />
+                <Frames>
+                    <Frame name="$parentPetBarSpark" parentKey="Spark" frameLevel="4">
+                        <Size x="8" y="8" />
+                        <Anchors>
+                            <Anchor point="LEFT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer>
+                                <Texture parentKey="SparkTexture" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                                    <Size x="8" y="8"></Size>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                </Frames>
+            </StatusBar>
+            <Frame parentKey="barOverlay" frameLevel="5" toplevel="true">
+                <Size x="1" y="13"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="dubbleBarSep" hidden="true" file="Interface/AddOns/GW2_UI/textures/xpbarbg">
+                            <Size x="1" y="2"></Size>
+                        </Texture>
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/xpbarbg">
+                            <Size x="4" y="12"></Size>
+                        </Texture>
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/xpbarbg">
+                            <Size x="4" y="12"></Size>
+                        </Texture>
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/xpbarbg">
+                            <Size x="4" y="12"></Size>
+                        </Texture>
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/xpbarbg">
+                            <Size x="4" y="12"></Size>
+                        </Texture>
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/xpbarbg">
+                            <Size x="4" y="12"></Size>
+                        </Texture>
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/xpbarbg">
+                            <Size x="4" y="12"></Size>
+                        </Texture>
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/xpbarbg">
+                            <Size x="4" y="12"></Size>
+                        </Texture>
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/xpbarbg">
+                            <Size x="4" y="12"></Size>
+                        </Texture>
+                        <Texture parentArray="barSep" file="Interface/AddOns/GW2_UI/textures/xpbarbg">
+                            <Size x="4" y="12"></Size>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <Frame hidden="true" parentKey="flare">
+                        <Size x="200" y="200"></Size>
+                        <Anchors>
+                            <Anchor point="CENTER" relativePoint="LEFT" x="200"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\expflare"/>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+
+</Ui>

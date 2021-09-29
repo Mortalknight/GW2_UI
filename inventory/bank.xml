@@ -1,0 +1,286 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwBankFrameTemplate" frameStrata="HIGH" movable="true" resizable="true" virtual="true" hidden="true" toplevel="true" enablemouse="true">
+        <HitRectInsets>
+            <AbsInset left="-40" right="0" top="-40" bottom="-40"/>
+        </HitRectInsets>
+        <Size x="768" y="512"></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="Texture" file="Interface/AddOns/GW2_UI/textures/bag/bankbg">
+                    <Size x="768" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagheader">
+                    <Size x="512" y="64"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagheader-right">
+                    <Size x="512" y="64"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagfooter">
+                    <Size x="512" y="70"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="2" />
+                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="2" />
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel">
+                    <Size x="40" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagicon">
+                    <Size x="128" y="128"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="TOPLEFT" x="-16" y="16" />
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bottom-right">
+                    <Size x="128" y="128"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <FontString parentKey="headerString" text="Bank" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="512" y="40"></Size>
+                    <Color r="1" b="0.73" g="0.93"></Color>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="30" y="40"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="spaceString" text="100/100" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="8" y="-8" />
+                    </Anchors>
+                    <Size x="200" y="24" />
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentkey="mover" enableMouse="true">
+                <Size y="40" />
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-40" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="-30" y="0"></Anchor>
+                </Anchors>
+            </Frame>
+            <Frame parentKey="sizer" enableMouse="true">
+                <Size x="20" y="20"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/resize">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Button parentKey="buttonSettings" text="">
+                <Size x="24" y="24" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-8" y="-8"/>
+                </Anchors>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Down"></PushedTexture>
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Down"></HighlightTexture>
+                <NormalFont style="ChatBubbleFont"></NormalFont>
+                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+                <Frames>
+                    <Frame parentKey="dropdown" hidden="true" frameLevel="28">
+                        <Size x="200" y="60"></Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" y="-5"></Anchor>
+                        </Anchors>
+                        <Frames>
+                            <Button parentKey="compactBank">
+                                <Size x="200" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="0"></Anchor>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="title" text="Compact view" inherits="ChatBubbleFont" justifyH="LEFT">
+                                            <Size x="170" y="30"/>
+                                            <Color r="1" b="1" g="1"/>
+                                            <Anchors>
+                                                <Anchor point="LEFT" x="25" y="0"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
+                            </Button>
+                            <Button parentKey="bagOrder">
+                                <Size x="200" y="30"></Size>
+                                <Anchors>
+                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-25"></Anchor>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <FontString parentKey="title" text="Reverse Bag Order" inherits="ChatBubbleFont" justifyH="LEFT">
+                                            <Size x="170" y="30"/>
+                                            <Color r="1" b="1" g="1"/>
+                                            <Anchors>
+                                                <Anchor point="LEFT" x="25" y="0"/>
+                                            </Anchors>
+                                        </FontString>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <CheckButton parentKey="checkbutton" checked="false">
+                                        <HitRectInsets left="0" right="0" top="0" bottom="0"/>
+                                        <Size x="16" y="16"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
+                                        </Anchors>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                    </CheckButton>
+                                </Frames>
+                            </Button>
+                        </Frames>
+                    </Frame>
+                </Frames>
+            </Button>
+            <Button parentKey="buttonSort" text="">
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-40" y="-8" />
+                </Anchors>
+                <Size x="24" y="24" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
+                </Anchors>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Up"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Down"></PushedTexture>
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/BagMicroButton-Down"></HighlightTexture >
+                <NormalFont style="ChatBubbleFont"></NormalFont>
+                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+            </Button>
+            <Button name="$parentClose" parentKey="buttonClose" text="">
+                <Size x="20" y="20" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="30"/>
+                </Anchors>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-normal"></NormalTexture>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-hover"></PushedTexture>
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/window-close-button-hover"></HighlightTexture>
+                <NormalFont style="ChatBubbleFont"></NormalFont>
+                <HighlightFont style="ChatBubbleFont"></HighlightFont>
+            </Button>
+            <Frame parentKey="ItemFrame">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="6" y="-73"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-4" y="3"></Anchor>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+
+    <Button name="GwBankBagTemplate" inherits="BankItemButtonBagTemplate" virtual="true">
+        <Size x="28" y="28"></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="gwBackdrop" file="Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop">
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Button>
+
+    <Button name="GwBankBaseBagTemplate" virtual="true">
+        <Size x="28" y="28"></Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="gwBackdrop" file="Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop">
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture name="$parentIconTexture" parentKey="icon"/>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture parentKey="IconBorder" file="Interface\Common\WhiteIconFrame" hidden="true">
+                    <Size x="37" y="37"/>
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="1">
+                <Texture parentKey="IconOverlay" hidden="true">
+                    <Size x="37" y="37"/>
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <FontString name="$parentCount" inherits="NumberFontNormal" justifyH="RIGHT" hidden="true" parentKey="Count">
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT">
+                            <Offset>
+                                <AbsDimension x="-5" y="2"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <NormalTexture name="$parentNormalTexture" file="Interface\Buttons\UI-Quickslot2">
+            <Size>
+                <AbsDimension x="64" y="64"/>
+            </Size>
+            <Anchors>
+                <Anchor point="CENTER">
+                    <Offset>
+                        <AbsDimension x="0" y="-1"/>
+                    </Offset>
+                </Anchor>
+            </Anchors>
+        </NormalTexture>
+        <PushedTexture file="Interface\Buttons\UI-Quickslot-Depress"/>
+        <HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
+    </Button>
+
+</Ui>

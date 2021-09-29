@@ -1,0 +1,173 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Button name="GwManageGroupButtonTmpl" enableMouse="true" topLevel="true" frameStrata="LOW" virtual="true" inherits="SecureHandlerClickTemplate">
+        <Size x="50" y="38"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-60"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\party\manage-group-icons">
+                    <Size x="38" y="38"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0" right="0.59375" top="0" bottom="0.2968"/>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow">
+                    <Size x="16" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="RIGHT" x="-15"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Button>
+
+    <Frame name="GwGroupManage" enableMouse="true" hidden="true" virtual="true" parent="UIParent" inherits="SecureHandlerShowHideTemplate,SecureHandlerStateTemplate">
+        <Size x="200" y="80"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="62" y="-60"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                    <Size x="200" y="80"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-10" y="10"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="10" y="-10"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
+                        <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
+                    <Size x="2" y="2"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <EditBox parentKey="groupInviteBox" autoFocus="false">
+                <Size x="110" y="20"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-10"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="-5" y="3"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" x="5" y="-3"></Anchor>
+                            </Anchors>
+                            <TexCoords left="0" right="0.2" top="0" bottom="1.0"/>
+                        </Texture>
+
+                    </Layer>
+                </Layers>
+                <FontString inherits="ChatFontNormal" />
+            </EditBox>
+            <Button parentKey="inviteToParty" inherits="GwStandardButton" text="INVITE">
+                <Size x="80" y="20" />
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.groupInviteBox" relativePoint="BOTTOMLEFT" x="-5" y="-10"></Anchor>
+                </Anchors>
+            </Button>
+            <Button parentKey="groupLeaveButton" inherits="GwStandardButton" text="CHAT_LEAVE">
+                <Size x="80" y="20" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.groupInviteBox" x="5" y="-10"></Anchor>
+                </Anchors>
+            </Button>
+            <Frame parentKey="inGroup">
+                <Size x="80" y="240"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.inviteToParty" x="0" y="-10"></Anchor>
+                </Anchors>
+                <Layers>
+                    <layer level="OVERLAY">
+                        <FontString parentKey="header" text="RAID_TARGET_ICON" inherits="GameFontNormalSmall" justifyH="LEFT">
+                            <Size x="512" y="25"></Size>
+                            <Color r="1" g="0.95" b="0.82"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="5" y="5"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </layer>
+                </Layers>
+                <Frames>
+                    <Button parentKey="readyCheck" inherits="GwStandardButton" text="READY_CHECK">
+                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/readycheck-button"></NormalTexture>
+                        <Size x="190" y="20" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-135"></Anchor>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/readycheck-icon">
+                                    <Size x="15" y="15"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="LEFT" x="2" y="-1"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </Button>
+                    <Button parentKey="convert" inherits="GwStandardButton" text="112">
+                        <Size x="190" y="20" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-160"></Anchor>
+                        </Anchors>
+                    </Button>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+
+    <Button name="GwRaidMarkerButton" virtual="true">
+        <Size x="28" y="28" />
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="texture" file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
+                    <Size x="35" y="35" />
+                    <Anchors>
+                        <Anchor point="CENTER"></Anchor>
+                    </Anchors>
+                    <Color r="0.5" g="0.5" b="0.5"></Color>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Button>
+
+</Ui>

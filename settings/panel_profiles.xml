@@ -1,0 +1,190 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwSettingsProfilesPanelTmpl" inherits="GwSettingsPanelTmpl" virtual="true">
+        <Frames>
+            <Slider parentKey="slider" orientation="VERTICAL" enableMouse="true">
+                <Size x="12" y="12"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-12" y="-32"/>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-12" y="32"/>
+                </Anchors>
+                <ThumbTexture parentKey="thumb" file="Interface/AddOns/GW2_UI/textures/scrollbarmiddle">
+                    <Size x="12" y="100"/>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP"/>
+                    </Anchors>
+                </ThumbTexture>
+                <Layers>
+                    <Layer>
+                        <Texture file="Interface/AddOns/GW2_UI/textures/scrollbg">
+                            <Anchors>
+                                <Anchor point="TOP" relativePoint="TOP"/>
+                                <Anchor point="BOTTOM" relativePoint="BOTTOM"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Slider>
+            <Button parentKey="scrollUp">
+                <Size x="12" y="12"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-12" y="-22"/>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture file="Interface/AddOns/GW2_UI/textures/scrollbutton">
+                            <Size x="12" y="12"/>
+                            <Anchors>
+                                <Anchor point="TOP" relativePoint="TOP"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button parentKey="scrollDown">
+                <Size x="12" y="12"/>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-12" y="18"/>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture file="Interface/AddOns/GW2_UI/textures/scrollbutton">
+                            <Size x="12" y="12"/>
+                            <Anchors>
+                                <Anchor point="TOP" relativePoint="TOP"/>
+                            </Anchors>
+                            <TexCoords left="0" right="1" top="1" bottom="0" />
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
+            <ScrollFrame parentKey="scrollFrame">
+                <Size x="480" y="500"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="0" y="-70"/>
+                </Anchors>
+            </ScrollFrame>
+            <Frame parentKey="scrollchild">
+                <Size x="480" y="500"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="0" y="0"/>
+                    <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
+
+    <Button name="GwProfileItemTmpl" virtual="true">
+        <size x="470" y="66"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" x="10" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/profiles/profile-item">
+                    <size x="480" y="66"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                    </Anchors>
+                    <TexCoords left="0" right="1" top="0" bottom="0.5" />
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="2">
+                <Texture parentKey="icon" file="Interface/icons/inv_helmet_151">
+                    <size x="56" y="56"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="5"/>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+            </Layer>
+            <Layer textureSubLevel="3">
+                <Texture parentKey="portraitframe" file="Interface/AddOns/GW2_UI/textures/profiles/portraitframe">
+                    <size x="64" y="64"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="1"/>
+                    </Anchors>
+                </Texture>
+                <FontString parentKey="name" text="Name not yet loaded" justifyH="LEFT">
+                    <Size x="200" y="15"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="65" y="-5"/>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="desc" text="If you see this message. We forgot to load some text. Dont worry we have very capable sample text just like this one to fill you with the information." justifyV="TOP" justifyH="LEFT">
+                    <Size x="200" y="50"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="65" y="-25"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-100" y="-10"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button hidden="true" parentKey="copyButton">
+                <Size x="20" y="20"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.name" relativePoint="RIGHT" x="10" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/maximize_button" SetAllPoints="true"/>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button hidden="true" parentKey="deleteButton">
+                <size x="56" y="20"/>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-10" y="5"/>
+                </Anchors>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/profiles/profile-item">
+                            <size x="56" y="20"/>
+                            <Anchors>
+                                <Anchor point="BOTTOMRIGHT" x="0"/>
+                            </Anchors>
+                            <Color r="1" g="0.5" b="0.5" a="1"/>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <FontString parentKey="string" text="Delete" justifyH="CENTER">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Button>
+            <Button hidden="true" inherits="GwStandardButton" text="PET_RENAME" parentKey="renameButton">
+                <Size x="90" y="20" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-90" y="35"/>
+                </Anchors>
+            </Button>
+            <Button hidden="true" inherits="GwStandardButton" text="Activate" parentKey="activateButton">
+                <Size x="70" y="20" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="35"/>
+                </Anchors>
+            </Button>
+            <Button hidden="true" inherits="GwStandardButton" text="EXPORT" parentKey="exportButton">
+                <Size x="80" y="20" />
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-90" y="5"/>
+                </Anchors>
+            </Button>
+        </Frames>
+    </Button>
+
+    <Button name="GwCreateNewProfileTmpl" inherits="GwStandardButton" virtual="true" text="New Profile">
+        <Size x="70" y="20" />
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+    </Button>
+
+</Ui>

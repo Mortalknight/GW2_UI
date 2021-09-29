@@ -1,0 +1,207 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Button name="GwPartyFrame" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
+        <Size x="82" y="80"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="portraitBackground" file="Interface\AddOns\GW2_UI\textures\party\portraits">
+                    <Size x="81" y="66"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0" right="0.828" top="0.332" bottom="0.664"/>
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                    <Size x="67" y="10"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-66"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                    <Size x="67" y="5"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-76"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="portrait" alphaMode="add">
+                    <Size x="55" y="55"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" y="-9"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="3">
+                <Texture parentKey="iconbg" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Size x="20" y="40"></Size>
+                    <Color r="0" b="0" g="0" a="0.8"></Color>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOPLEFT" y="-10"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture parentKey="classicon" file="Interface\AddOns\GW2_UI\textures\party\classicons">
+                    <Size x="22" y="22"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOPLEFT" y="-10"></Anchor>
+                    </Anchors>
+                </Texture>
+                <FontString name="$parentLevel" text="??" parentKey="level" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="30" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOPLEFT" y="-30"></Anchor>
+                    </Anchors>
+                    <Color r="1" g="1" b="1"></Color>
+                </FontString>
+                <FontString name="$parentName" text="unknown" parentKey="name" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="100" y="10"/>
+                    <Color r="1" g="1" b="1"></Color>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="-10"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <StatusBar parentKey="predictionbar" defaultValue="1" minValue="0" maxValue="1">
+                <Size x="65" y="8"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-68"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\incominghealing"/>
+                <Frames>
+                    <StatusBar parentKey="healthbar" defaultValue="1" minValue="0" maxValue="1">
+                        <Size x="65" y="8"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                        </Anchors>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\statusbarcolored_green"/>
+                        <Layers>
+                            <Layer>
+                                <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
+                                    <Anchors>
+                                        <Anchor point="RIGHT" x="0" y="0"/>
+                                    </Anchors>
+                                    <Size x="7" y="8"></Size>
+                                </Texture>
+                            </Layer>
+                            <Layer level="OVERLAY">
+                                <FontString name="$parenthealthstring" parentKey="healthstring" text="50%" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="65" y="8"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </StatusBar>
+                </Frames>
+            </StatusBar>
+            <StatusBar parentKey="powerbar" name="$parentPowerBar" defaultValue="1" minValue="0" maxValue="1">
+                <Size x="65" y="3"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-77"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+            </StatusBar>
+            <Frame name="$parentAuras" parentKey="auras">
+                <Size x="20" y="20"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Button>
+
+    <Button name="GwPartyPetFrame" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
+        <Size x="65" y="15"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                    <Size x="67" y="10"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-9"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                    <Size x="67" y="3"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-19"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString name="$parentName" text="UNKNOWN" parentKey="name" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="100" y="10"/>
+                    <Color r="1" g="1" b="1"></Color>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="1" y="-10"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <StatusBar parentKey="predictionbar" defaultValue="1" minValue="0" maxValue="1">
+                <Size x="65" y="8"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-10"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\incominghealing"/>
+                <Frames>
+                    <StatusBar parentKey="healthbar" defaultValue="1" minValue="0" maxValue="1">
+                        <Size x="65" y="8"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                        </Anchors>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\statusbarcolored_green"/>
+                        <Layers>
+                            <Layer>
+                                <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
+                                    <Anchors>
+                                        <Anchor point="RIGHT" x="0" y="0"/>
+                                    </Anchors>
+                                    <Size x="7" y="8"></Size>
+                                </Texture>
+                            </Layer>
+                            <Layer level="OVERLAY">
+                                <FontString name="$parenthealthstring" parentKey="healthstring" text="50%" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                    <Size x="65" y="8"/>
+                                    <Color r="1" g="1" b="1"></Color>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </StatusBar>
+                </Frames>
+            </StatusBar>
+            <StatusBar parentKey="powerbar" name="$parentPowerBar" defaultValue="1" minValue="0" maxValue="1">
+                <Size x="65" y="1"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-19"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+            </StatusBar>
+            <Frame name="$parentAuras" parentKey="auras">
+                <Size x="20" y="20"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="0" y="-7"></Anchor>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Button>
+
+</Ui>

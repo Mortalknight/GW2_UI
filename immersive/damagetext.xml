@@ -1,0 +1,25 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwDamageText" enableMouse="false" virtual="true">
+        <Size x="50" y="30"></Size>
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="-8">
+                <Texture parentKey="critTexture" hidden="true" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash">
+                    <Size x="64" y="64"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BACKGROUND" textureSubLevel="-7">
+                <FontString parentKey="string" inherits="GameFontNormal" text="100" justifyV="MIDDLE">
+                    <Size x="500" y="30"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0" />
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>

@@ -1,0 +1,124 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwHudArtFrame" frameStrata="BACKGROUND" parent="UIParent" virtual="true">
+        <Size x="1" y="1"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
+            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentArray="edgeTint" file="Interface\AddOns\GW2_UI\textures\windowcorner">
+                    <Size x="512" y="256"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture parentArray="edgeTint" file="Interface\AddOns\GW2_UI\textures\windowcorner">
+                    <Size x="512" y="256"></Size>
+                    <TexCoords left="1" right="0" top="0" bottom="1" />
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture parentArray="edgeTint" file="Interface\AddOns\GW2_UI\textures\windowborder">
+                    <Size x="512" y="256"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="512" y="0" />
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-512" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture parentArray="edgeTint" file="Interface\AddOns\GW2_UI\textures\windowborder-side">
+                    <Size x="256" y="512"></Size>
+                    <TexCoords left="0" right="1" top="1" bottom="0" />
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture parentArray="edgeTint" file="Interface\AddOns\GW2_UI\textures\windowborder-side">
+                    <Size x="256" y="512"></Size>
+                    <TexCoords left="1" right="0" top="1" bottom="0" />
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BACKGROUND" textureSubLevel="5">
+                <Texture parentArray="edgeTint" file="Interface\AddOns\GW2_UI\textures\windowborder-bottom1" parentKey="edgeTintBottom1">
+                    <Size x="1024" y="128"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="14" />
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" x="0" y="14" />
+                    </Anchors>
+                </Texture>
+                <Texture parentArray="edgeTint" file="Interface\AddOns\GW2_UI\textures\windowborder-bottom1" parentKey="edgeTintBottom2">
+                    <Size x="1024" y="128"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="14" />
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="0" y="14" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentKey="actionBarHud" frameStrata="BACKGROUND">
+                <Size x="1024" y="256"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="14" />
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentArray="HUDBG" parentKey="Left" file="Interface\AddOns\GW2_UI\textures\leftshadow">
+                            <Size x="512" y="256"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" />
+                            </Anchors>
+                        </Texture>
+                        <Texture parentArray="HUDBG" parentKey="Right" file="Interface\AddOns\GW2_UI\textures\rightshadow">
+                            <Size x="512" y="256"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="3" level="BACKGROUND">
+                        <Texture parentArray="HUDBG" parentKey="LeftSwim" file="Interface\AddOns\GW2_UI\textures\leftshadowswim">
+                            <Size x="512" y="256"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" />
+                            </Anchors>
+                        </Texture>
+                        <Texture parentArray="HUDBG" parentKey="RightSwim" file="Interface\AddOns\GW2_UI\textures\rightshadowswim">
+                            <Size x="512" y="256"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="4" level="BACKGROUND">
+                        <Texture parentArray="HUDBG" parentKey="LeftBlood" file="Interface\AddOns\GW2_UI\textures\bloodLeft">
+                            <Size x="512" y="256"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" />
+                            </Anchors>
+                        </Texture>
+                        <Texture parentArray="HUDBG" parentKey="RightBlood" file="Interface\AddOns\GW2_UI\textures\bloodRight">
+                            <Size x="512" y="256"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="5" level="BACKGROUND">
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+    </Frame>
+
+</Ui>

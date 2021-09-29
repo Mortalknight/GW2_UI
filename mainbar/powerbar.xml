@@ -1,0 +1,64 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwPlayerPowerBar" virtual="true">
+        <Size x="318" y="20"></Size>
+        <Anchors>
+            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="86"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                    <Size x="318" y="20"></Size>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Size x="314" y="16"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="2" y="0"/>
+                        <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <StatusBar parentKey="candy" name="$parentCandy" frameLevel="1" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+                <Size x="314" y="16"/>
+                <Anchors>
+                    <Anchor point="LEFT" x="2" y="0"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbarCandy"/>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="spark" name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
+                            <Anchors>
+                                <Anchor point="RIGHT" x="0" y="0"/>
+                            </Anchors>
+                            <Size x="21" y="16"></Size>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </StatusBar>
+            <StatusBar parentKey="statusBar" name="$parentBar" defaultValue="1" minValue="0" maxValue="1">
+                <Size x="314" y="16"/>
+                <Anchors>
+                    <Anchor point="LEFT" x="2" y="0"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString parentKey="label" name="$parentString" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
+                            <Color r="1" b="1" g="1"></Color>
+                            <Size x="316" y="16"/>
+                            <Anchors>
+                                <Anchor point="CENTER" x="5" y="0"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </StatusBar>
+        </Frames>
+    </Frame>
+
+</Ui>

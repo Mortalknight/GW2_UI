@@ -1,0 +1,90 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwPlayerAuraFrame" inherits="SecureHandlerStateTemplate" protected="true" frameStrata="MEDIUM" parent="UIParent" virtual="true">
+        <Size x="316" y="18"></Size>
+        <Anchors>
+            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="110"></Anchor>
+        </Anchors>
+    </Frame>
+
+    <Button name="GwAuraFrame" registerForClicks="RightButtonDown" hidden="true" virtual="true">
+        <Size x="32" y="32"></Size>
+        <Anchors>
+            <Anchor point="CENTER" relativePoint="TOPLEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK" textureSubLevel="-1">
+                <Texture parentKey="backdrop" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
+                    </Anchors>
+                    <Color r="0" g="0" b="0"></Color>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                    <Color r="0" g="0" b="0"></Color>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Cooldown parentKey="cooldown" inherits="ActionButtonTemplate">
+                <SwipeTexture>
+                    <Color r="1" g="1" b="1" a="1"/>
+                </SwipeTexture>
+
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"/>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
+                </Anchors>
+            </Cooldown>
+            <Frame parentKey="status">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                            </Anchors>
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY" textureSubLevel="1">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\icon-overlay">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.icon" relativePoint="TOPLEFT" x="0" y="0"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.icon" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY" textureSubLevel="2">
+                        <FontString parentKey="stacks" text="20" justifyH="CENTER" justifyV="BOTTOM">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.icon" relativePoint="TOPLEFT" x="-10" y="0"/>
+                                <Anchor point="BOTTOMRIGHT" relativeKey="$parent.icon" relativePoint="BOTTOMRIGHT" x="10" y="0"/>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="duration" text="0.00" justifyH="CENTER" justifyV="BOTTOM">
+                            <Size x="1" y="14"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="-10" y="0"/>
+                                <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="10" y="0"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+    </Button>
+
+</Ui>

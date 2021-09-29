@@ -1,0 +1,92 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Button name="GwPlayerPetFrameTmpl" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="MEDIUM" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate" virtual="true">
+        <Size x="316" y="100"></Size>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" parentKey="Background">
+                    <Color r="0" g="0" b="0" a="0.8"/>
+                    <Size x="232" y="18"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" x="0" y="4"/>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="portraitBackground" file="Interface\AddOns\GW2_UI\textures\petportrait">
+                    <Size x="60" y="60"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.Background" x="0" y="-3"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="2">
+                <Texture parentKey="portrait" alphaMode="add" name="$parentPortrait">
+                    <Size x="60" y="60"></Size>
+                    <TexCoords left="1" right="0" top="0" bottom="1" />
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" relativeKey="$parent.portraitBackground" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <StatusBar name="$parentHealth" parentKey="health" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+                <Size x="230" y="16"/>
+                <Anchors>
+                    <Anchor point="left" relativePoint="LEFT" relativeKey="$parent.Background" x="1" y="0"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentString" parentKey="text" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
+                            <Color r="1" g="1" b="1"></Color>
+                            <Size x="180" y="16"/>
+                            <Anchors>
+                                <Anchor point="CENTER" x="0" y="0"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </StatusBar>
+            <StatusBar parentKey="resource" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+                <Size x="230" y="2"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.health" x="0" y="-2"/>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+            </StatusBar>
+            <Frame parentKey="auras">
+                <Size x="230" y="100"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.Background" relativePoint="BOTTOMRIGHT" x="-3" y="100"></Anchor>
+                </Anchors>
+            </Frame>
+            <Frame parentKey="happiness" enableMouse="false" hidden="true">
+                <Size x="25" y="25"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.portraitBackground" x="0" y="22"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar" parentKey="Background">
+                            <Color r="0" g="0" b="0" a="0.8"/>
+                            <Size x="25" y="25"/>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" relativeKey="$parent.happiness" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK" textureSubLevel="2">
+                        <Texture parentKey="icon" alphaMode="add" file="Interface\AddOns\GW2_UI\textures\character\pet-happiness">
+                            <Size x="25" y="25"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER" relativeKey="$parent.Background" x="0" y="1"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+    </Button>
+    
+</Ui>

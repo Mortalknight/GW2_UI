@@ -1,0 +1,202 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwRaidFrameContainer" virtual="true" parent="UIParent">
+        <Size x="300" y="400">
+        </Size>
+        <Anchors>
+            <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+        </Anchors>
+    </Frame>
+
+    <Frame name="GwRaidFrameIndicator" frameLevel="6" hidden="true" virtual="true">
+        <Size x="13" y="13"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Color r="0" g="0" b="0" a="1"></Color>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="0" y="0.3"></Anchor>
+                        <Anchor point="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="icon">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x=".7" y="-0.7"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="-0.7" y="0.7"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString name="$parentText" parentKey="text" inherits="GameFontNormalSmall" justifyH="CENTER" justifyV="MIDDLE" outline="NORMAL">
+                    <Color r="1" g="1" b="1"></Color>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Cooldown name="$parentCooldown" parentKey="cooldown" reverse="true" hideCountdownNumbers="true" hidden="true" inherits="CooldownFrameTemplate">
+                <SwipeTexture>
+                    <Color r="0" g="0" b="0" a="0.7"/>
+                </SwipeTexture>
+            </Cooldown>
+        </Frames>
+    </Frame>
+
+    <Button name="GwRaidFrame" frameStrata="LOW" toplevel="true" parent="GwRaidFrameContainer" inherits="SecureUnitButtonTemplate" virtual="true">
+        <Size x="55" y="47"></Size>
+        <Anchors>
+            <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK" textureSubLevel="-1">
+                <Texture parentKey="targetHighlight" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Color r="0" g="0" b="0" a="1"></Color>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusba">
+                    <Color r="0" g="0" b="0" a="1"></Color>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="1" y="-1"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="-1" y="1"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <StatusBar parentKey="predictionbar" defaultValue="1" minValue="0" maxValue="1">
+                <Size x="65" y="8"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\incominghealing"/>
+                <Frames>
+                    <StatusBar parentKey="healthbar" defaultValue="1" minValue="0" maxValue="1">
+                        <Size x="65" y="8"></Size>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                        </Anchors>
+                        <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                        <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
+                        <Layers>
+                            <Layer>
+                                <Texture parentKey="spark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
+                                    <Color r="0.207" g="0.392" b="0.168"></Color>
+                                    <Anchors>
+                                        <Anchor point="RIGHT" x="0" y="0"/>
+                                    </Anchors>
+                                    <Size x="7" y="8"></Size>
+                                </Texture>
+                                <Texture parentKey="aggroborder" file="Interface\AddOns\GW2_UI\textures\party\aggroborder">
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                                        <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                    </StatusBar>
+                </Frames>
+            </StatusBar>
+            <StatusBar parentKey="manabar" hidden="true" defaultValue="1" minValue="0" maxValue="1">
+                <Size x="65" y="3"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="1" y="2"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="-1"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
+            </StatusBar>
+            <StatusBar parentKey="indicatorBAR" orientation="VERTICAL" defaultValue="1" minValue="0" maxValue="1">
+                <Size x="3" y="3"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="2" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="3"></Anchor>
+                </Anchors>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarColor r="1" g="0.5" b="0"></BarColor>
+                <Layers>
+                    <Layer>
+                        <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="1"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" x="0" y="-1"></Anchor>
+                            </Anchors>
+                            <Color r="0" g="0" b="0"></Color>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnUpdate>
+                        if self:IsShown() and self.expires and self.duration then
+                            self:SetValue((self.expires - GetTime()) / self.duration)
+                        end
+                    </OnUpdate>
+                </Scripts>
+            </StatusBar>
+            <Frame parentKey="indicatorTOPLEFT" inherits="GwRaidFrameIndicator">
+                <Anchors><Anchor point="TOPLEFT" x="0.3" y="-0.3"></Anchor></Anchors>
+            </Frame>
+            <Frame parentKey="indicatorTOP" inherits="GwRaidFrameIndicator">
+                <Anchors><Anchor point="TOP" y="-0.3"></Anchor></Anchors>
+            </Frame>
+            <Frame parentKey="indicatorTOPRIGHT" inherits="GwRaidFrameIndicator">
+                <Anchors><Anchor point="TOPRIGHT" x="-0.3" y="-0.3"></Anchor></Anchors>
+            </Frame>
+            <Frame parentKey="indicatorLEFT" inherits="GwRaidFrameIndicator">
+                <Anchors><Anchor point="LEFT" x="0.3"></Anchor></Anchors>
+            </Frame>
+            <Frame parentKey="indicatorCENTER" inherits="GwRaidFrameIndicator">
+                <Anchors><Anchor point="CENTER"></Anchor></Anchors>
+            </Frame>
+            <Frame parentKey="indicatorRIGHT" inherits="GwRaidFrameIndicator">
+                <Anchors><Anchor point="RIGHT" x="-0.3"></Anchor></Anchors>
+            </Frame>
+            <Frame name="$parentData" frameLevel="5">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="classicon" file="Interface\AddOns\GW2_UI\textures\party\classicons">
+                            <Size x="25" y="25"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString name="$parentName" text="Unkown" parentKey="name" inherits="GameFontNormalSmall" justifyH="LEFT">
+                            <Size x="100" y="10"/>
+                            <Color r="1" g="1" b="1"></Color>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="2" y="-2"></Anchor>
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-2" y="-2"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentHealth" text="" parentKey="healthstring" inherits="GameFontNormalSmall" justifyH="LEFT">
+                            <Size x="100" y="10"/>
+                            <Color r="1" g="1" b="1"></Color>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.name" relativePoint="TOPLEFT" x="2" y="-14"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+    </Button>
+
+</Ui>

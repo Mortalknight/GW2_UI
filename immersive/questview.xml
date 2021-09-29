@@ -1,0 +1,108 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwQuestviewFrame" hidden="true" frameStrata="DIALOG" enableMouse="true" virtual="true">
+        <Size x="1024" y="512"></Size>
+        <Anchors>
+            <Anchor point="center" x="0" y="0" />
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="1">
+                <Texture file="Interface\AddOns\GW2_UI\textures\questview\border">
+                    <Size x="1024" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="center" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BACKGROUND" textureSubLevel="2">
+                <Texture file="Interface\AddOns\GW2_UI\textures\questview\bg_default">
+                    <Size x="950" y="475"></Size>
+                    <Anchors>
+                        <Anchor point="center" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BACKGROUND" textureSubLevel="3">
+                <Texture file="Interface\AddOns\GW2_UI\textures\questview\overlay_top">
+                    <Size x="950" y="237"></Size>
+                    <Anchors>
+                        <Anchor point="center" x="0" y="119" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame name="$parentContainer">
+                <Size x="950" y="474"></Size>
+                <Anchors>
+                    <Anchor point="center" x="0" y="0" />
+                </Anchors>
+                <Frames>
+                    <PlayerModel frameStrata="DIALOG" name="$parentPlayerModel">
+                        <Size x="750" y="474"></Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="1" />
+                        </Anchors>
+                    </PlayerModel>
+                    <PlayerModel name="$parentGiverModel">
+                        <Size x="750" y="474"></Size>
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="1" />
+                        </Anchors>
+                    </PlayerModel>
+                    <Button name="$parentDialog" frameStrata="DIALOG">
+                        <Size x="950" y="474"></Size>
+                        <Anchors>
+                            <Anchor point="center" x="0" y="0" />
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture file="Interface\AddOns\GW2_UI\textures\questview\overlay_bottom">
+                                    <Size x="952" y="475"></Size>
+                                    <Anchors>
+                                        <Anchor point="center" x="0" y="0" />
+                                    </Anchors>
+                                </Texture>
+                            </Layer>
+                            <Layer level="OVERLAY" textureSubLevel="2">
+                                <FontString name="$parentString" inherits="GameFontNormal" text="Test text" justifyV="MIDDLE">
+                                    <Size x="850" y="100"></Size>
+                                    <Anchors>
+                                        <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0" />
+                                    </Anchors>
+                                </FontString>
+                                <FontString name="$parentQuestTitle" inherits="GameFontNormal" text="Test text" justifyV="MIDDLE">
+                                    <Size x="950" y="100"></Size>
+                                    <Anchors>
+                                        <Anchor point="TOP" relativePoint="TOP" x="0" y="0" />
+                                    </Anchors>
+                                </FontString>
+                                <FontString name="$parentRequired" inherits="QuestTitleFont" text="Test text" justifyH="LEFT" hidden="true">
+                                    <Size x="400" y="100"></Size>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativePoint="CENTER" x="40" y="-30" />
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </Button>
+                    <Button name="$parentAcceptButton" inherits="GwStandardButton">
+                        <Size x="120" y="24" />
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
+                        </Anchors>
+                    </Button>
+                    <Button name="$parentDeclineQuest" text="Decline" inherits="GwStandardButton">
+                        <Size x="120" y="24" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                        </Anchors>
+                    </Button>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+
+
+</Ui>

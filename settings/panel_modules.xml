@@ -1,0 +1,27 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwSettingsModulePanelTmpl" inherits="GwSettingsPanelScrollTmpl" virtual="true">
+        <Frames>
+            <Button parentKey="welcome" inherits="GwStandardButton" text="Welcome">
+                <Size x="120" y="22" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" x="-10" y="-10"/>
+                </Anchors>
+            </Button>
+            <Button parentKey="statusReport" inherits="GwStandardButton" text="StatusReport">
+                <Size x="120" y="22" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.welcome" x="-130" y="0"></Anchor>
+                </Anchors>
+            </Button>
+            <Button parentKey="credits" inherits="GwStandardButton" text="Credits">
+                <Size x="120" y="22" />
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativeKey="$parent.statusReport" x="-130" y="0"></Anchor>
+                </Anchors>
+            </Button>
+        </Frames>
+    </Frame>
+
+</Ui>

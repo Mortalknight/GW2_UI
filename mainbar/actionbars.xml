@@ -1,0 +1,66 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwActionbarTmpl" virtual="true" protected="true" parent="UIParent" enableMouse="true" inherits="SecureHandlerStateTemplate">
+        <Anchors>
+            <Anchor point="BOTTOM" y="30"/>
+        </Anchors>
+    </Frame>
+
+    <Frame name="GwMultibarTmpl" virtual="true" protected="true" parent="UIParent" hidden="true" enableMouse="true" inherits="SecureHandlerStateTemplate">
+    </Frame>
+
+    <Frame name="GwActionButtonBackdropTmpl" virtual="true" frameLevel="1">
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
+            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture file="Interface\AddOns\GW2_UI\textures\spelliconempty">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+
+    <Frame name="GwActionHotkeyBackdropTmpl" virtual="true">
+        <Size x="18" y="18"></Size>
+        <Anchors>
+            <Anchor point="CENTER"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK" textureSubLevel="1">
+                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\notification-backdrop">
+                    <Color r="0" g="0" b="0" a="0.9"></Color>
+                    <Size x="20" y="20">
+                    </Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+
+    <Frame name="GwActionRangeIndicatorTmpl" virtual="true">
+        <Size x="20" y="4"></Size>
+        <Layers>
+            <Layer level="BACKGROUND" textureSubLevel="-1">
+                <Texture name="$parentTexture" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Color r="0" g="0" b="0" a="1"></Color>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                        <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                        <Anchor point="TOP" relativePoint="TOP" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+
+</Ui>
