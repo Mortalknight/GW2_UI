@@ -9,6 +9,8 @@ local SetClassIcon = GW.SetClassIcon
 local AddToClique = GW.AddToClique
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
+local UnitAura = GW.Libs.LCD.UnitAuraWithBuffs
+local LCD = GW.Libs.LCD
 
 local GW_PORTRAIT_BACKGROUND = {
     [1] = {l = 0, r = 0.828, t = 0, b = 0.166015625},
@@ -640,7 +642,7 @@ local function createPartyFrame(i, isFirstFrame)
     frame:RegisterEvent("UNIT_HEAL_PREDICTION")
 
     frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
-    frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
+    --frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
     frame:RegisterUnitEvent("UNIT_PHASE", registerUnit)
     frame:RegisterUnitEvent("UNIT_HEALTH", registerUnit)
@@ -650,6 +652,10 @@ local function createPartyFrame(i, isFirstFrame)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
+
+    LCD.RegisterCallback("GW2_UI", "UNIT_BUFF", function(_, unit)
+        party_OnEvent(frame, "UNIT_AURA", unit)
+    end)
 
     -- create de/buff frames
     frame.buffFrames = {}

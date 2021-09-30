@@ -222,7 +222,7 @@ local function LoadPetFrame(lm)
 
     playerPetFrame.displayBuffs = true
     playerPetFrame.displayDebuffs = true
-    playerPetFrame.debuffFilter = nil --"player"
+    playerPetFrame.debuffFilter = "HARMFUL" --"player"
 
     playerPetFrame.portraitBackground:SetTexCoord(0, 0.25, 0, 1)
     playerPetFrame.happiness:SetScript("OnEnter", function(self)

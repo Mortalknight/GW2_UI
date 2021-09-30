@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("2.0.1 Era", [=[
+FIXES
+    - Remove a bunch of migration errors
+]=])
+
+
 v("2.0.0 Era", [=[
     Update for 1.14.0
 

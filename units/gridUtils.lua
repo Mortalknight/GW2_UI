@@ -11,6 +11,8 @@ local INDICATORS = GW.INDICATORS
 local AURAS_INDICATORS = GW.AURAS_INDICATORS
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local AddToClique = GW.AddToClique
+local UnitAura = GW.Libs.LCD.UnitAuraWithBuffs
+local LCD = GW.Libs.LCD
 
 local missing, ignored = {}, {}
 local spellIDs = {}
@@ -114,11 +116,15 @@ local function CreateGridFrame(index, isParty, parent, OnEvent, OnUpdate, profil
     frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", frame.unit)
     frame:RegisterUnitEvent("UNIT_MAXPOWER", frame.unit)
     frame:RegisterUnitEvent("UNIT_PHASE", frame.unit)
-    frame:RegisterUnitEvent("UNIT_AURA", frame.unit)
+    --frame:RegisterUnitEvent("UNIT_AURA", frame.unit)
     frame:RegisterUnitEvent("UNIT_LEVEL", frame.unit)
     frame:RegisterUnitEvent("UNIT_TARGET", frame.unit)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", frame.unit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", frame.unit)
+
+    LCD.RegisterCallback("GW2_UI", "UNIT_BUFF", function(_, LCDUnit)
+        OnEvent(frame, "UNIT_AURA", LCDUnit)
+    end)
 
     OnEvent(frame, "load")
 
@@ -355,7 +361,7 @@ end
 
 local function onDebuffMouseUp(self, btn)
     if btn == "RightButton" and IsShiftKeyDown() then
-        local name = UnitDebuff(self:GetParent().unit, self.index, self.filter)
+        local name = UnitAura(self:GetParent().unit, self.index, self.filter)
         if name then
             local s = GetSetting("AURAS_IGNORED") or ""
             SetSetting("AURAS_IGNORED", s .. (s == "" and "" or ", ") .. name)
@@ -383,7 +389,7 @@ local function onBuffMouseUp(self, btn)
                 SetSetting("AURAS_MISSING", s)
             end
         else
-            local name =  UnitBuff(self:GetParent().unit, self.index)
+            local name =  UnitAura(self:GetParent().unit, self.index, "HELPFUL")
             if name then
                 local s = GetSetting("AURAS_IGNORED") or ""
                 SetSetting("AURAS_IGNORED", s .. (s == "" and "" or ", ") .. name)
@@ -489,7 +495,7 @@ local function GridUpdateDebuffs(self, profile)
 
         -- show current debuffs
         if not aurasDone then
-            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitDebuff(self.unit, i, filter)
+            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitAura(self.unit, i, filter)
             local shouldDisplay = false
             local isImportant, isDispellable = false, false
 
@@ -586,7 +592,7 @@ local function GridUpdateBuffs(self, profile)
     if not UnitIsDeadOrGhost(self.unit) then
 
         repeat
-            i, name = i + 1, UnitBuff(self.unit, i)
+            i, name = i + 1, UnitAura(self.unit, i, "HELPFUL")
             if name and missing[name] then
                 missing[name] = false
             end
@@ -629,7 +635,7 @@ local function GridUpdateBuffs(self, profile)
 
         -- show buffs
         if not aurasDone then
-            local name, icon, count, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitBuff(self.unit, i)
+            local name, icon, count, _, duration, expires, caster, _, _, spellID, canApplyAura, _ = UnitAura(self.unit, i, "HELPFUL")
             if name then
                 -- visibility
                 local shouldDisplay

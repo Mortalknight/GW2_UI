@@ -1,3 +1,7 @@
+2.0.1
+FIXES
+    - Remove a bunch of migration errors
+
 2.0.0
 Update for 1.14.0
 

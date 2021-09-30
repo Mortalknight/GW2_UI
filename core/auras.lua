@@ -2,6 +2,7 @@ local _, GW = ...
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local TimeCount = GW.TimeCount
+local UnitAura = GW.Libs.LCD.UnitAuraWithBuffs
 
 local function GetDebuffScaleBasedOnPrio()
     local debuffScalePrio = GW.GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO")
@@ -53,7 +54,7 @@ local function getBuffs(unit, filter, revert)
         filter = ""
     end
     for i = 1, 40 do
-        if UnitBuff(unit, i, filter) then
+        if UnitAura(unit, i, "HELPFUL") then
             buffList[i] = {}
             local bli = buffList[i]
             bli.id = i
@@ -67,7 +68,7 @@ local function getBuffs(unit, filter, revert)
             bli.caster,
             bli.isStealable,
             bli.shouldConsolidate,
-            bli.spellID = UnitBuff(unit, i, filter)
+            bli.spellID = UnitAura(unit, i, "HELPFUL")
 
             bli.timeremaning = bli.duration <= 0 and 500001 or bli.expires - GetTime()
         end
@@ -81,10 +82,10 @@ local function getDebuffs(unit, filter, revert)
     local debuffList = {}
     local showImportant = filter == "IMPORTANT"
     local counter = 0
-    local filterToUse = filter == "IMPORTANT" and nil or filter
+    local filterToUse = filter == "IMPORTANT" and "HARMFUL" or filter
 
     for i = 1, 40 do
-        if UnitDebuff(unit, i, filterToUse) and ((showImportant and (select(7, UnitDebuff(unit, i, filterToUse)) == "player" or GW.ImportendRaidDebuff[select(10, UnitDebuff(unit, i, filterToUse))])) or not showImportant) then
+        if UnitAura(unit, i, filterToUse) and ((showImportant and (select(7, UnitAura(unit, i, filterToUse)) == "player" or GW.ImportendRaidDebuff[select(10, UnitDebuff(unit, i, filterToUse))])) or not showImportant) then
             counter = #debuffList + 1
             debuffList[counter] = {}
             local dbi = debuffList[counter]
@@ -99,7 +100,7 @@ local function getDebuffs(unit, filter, revert)
             dbi.caster,
             dbi.isStealable,
             dbi.shouldConsolidate,
-            dbi.spellID = UnitDebuff(unit, i, filter)
+            dbi.spellID = UnitAura(unit, i, filter)
 
             dbi.timeremaning = dbi.duration <= 0 and 500001 or dbi.expires - GetTime()
         end

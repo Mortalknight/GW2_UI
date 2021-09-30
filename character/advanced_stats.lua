@@ -603,7 +603,8 @@ local function GetSpellCrit(school)
     local crit = _GetTalentModifier(school)
     local itemBonus = _GetItemModifierBySchool(school)
     local setBonus = _GetSetBonus(school)
-    crit = crit + GetSpellCritChance() + itemBonus + setBonus
+    local spellCrit = school and GetSpellCritChance(school) or GetSpellCritChanceFromIntellect("player")
+    crit = crit + spellCrit + itemBonus + setBonus
     return RoundDec(crit, 2) .. "%"
 end
 
