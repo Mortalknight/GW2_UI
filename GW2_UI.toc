@@ -1,5 +1,5 @@
 ## Interface: 11400
-## Title: |cffffedbaGW2 UI|r |cFF888888(@project-version@)|r
+## Title: |cffffedbaGW2 UI|r |cFF888888Era|r
 ## Notes: Hud Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
 ## OptionalDeps: MoveAnything, HonorSpy, TitanClassic, LibClassicDurations, Clique, LibHealComm-4.0, LibClassicCasterino, LibSharedMedia-3.0

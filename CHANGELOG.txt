@@ -1,3 +1,8 @@
+2.0.2
+FIXES
+    - Fix target debuffs not shown correctly
+    - Minimap tracking icon lua error
+
 2.0.1
 FIXES
     - Remove a bunch of migration errors

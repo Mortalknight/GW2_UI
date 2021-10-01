@@ -715,7 +715,7 @@ local function LoadTarget()
     NewUnitFrame.showThreat = GetSetting("target_THREAT_VALUE_ENABLED")
 
     -- priority: All > Important > Player
-    NewUnitFrame.debuffFilter = "PLAYER"
+    NewUnitFrame.debuffFilter = "PLAYER|HARMFUL"
     if GetSetting("target_BUFFS_FILTER_IMPORTANT") then
         NewUnitFrame.debuffFilter = "IMPORTANT"
     end

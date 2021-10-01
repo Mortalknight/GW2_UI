@@ -85,7 +85,7 @@ local function getDebuffs(unit, filter, revert)
     local filterToUse = filter == "IMPORTANT" and "HARMFUL" or filter
 
     for i = 1, 40 do
-        if UnitAura(unit, i, filterToUse) and ((showImportant and (select(7, UnitAura(unit, i, filterToUse)) == "player" or GW.ImportendRaidDebuff[select(10, UnitDebuff(unit, i, filterToUse))])) or not showImportant) then
+        if UnitAura(unit, i, filterToUse) and ((showImportant and (select(7, UnitAura(unit, i, filterToUse)) == "player" or GW.ImportendRaidDebuff[select(10, UnitAura(unit, i, filterToUse))])) or not showImportant) then
             counter = #debuffList + 1
             debuffList[counter] = {}
             local dbi = debuffList[counter]
@@ -100,7 +100,7 @@ local function getDebuffs(unit, filter, revert)
             dbi.caster,
             dbi.isStealable,
             dbi.shouldConsolidate,
-            dbi.spellID = UnitAura(unit, i, filter)
+            dbi.spellID = UnitAura(unit, i, filterToUse)
 
             dbi.timeremaning = dbi.duration <= 0 and 500001 or dbi.expires - GetTime()
         end

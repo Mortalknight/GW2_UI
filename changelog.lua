@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("2.0.2 Era", [=[
+FIXES
+    - Fix target debuffs not shown correctly
+    - Minimap tracking icon lua error
+]=])
+
 v("2.0.1 Era", [=[
 FIXES
     - Remove a bunch of migration errors

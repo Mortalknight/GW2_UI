@@ -344,6 +344,9 @@ local function LoadMinimap()
 
     GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
 
+    MiniMapTrackingFrame:UnregisterAllEvents()
+    MiniMapTrackingFrame:SetScript("OnEvent", nil)
+    MiniMapTrackingFrame:Hide()
     local icontype = MiniMapTrackingIcon:GetTexture()
     if icontype == 132328 then icontype = icontype .. GW.myClassID end
     if icontype and trackingTypes[icontype] then
@@ -353,15 +356,17 @@ local function LoadMinimap()
         GwMiniMapTrackingFrame:Hide()
     end
 
-    GwMiniMapTrackingFrame:RegisterEvent("MINIMAP_UPDATE_TRACKING")
-    GwMiniMapTrackingFrame:SetScript("OnEvent", function(self)
-        local icontype = MiniMapTrackingIcon:GetTexture()
-        if icontype == 132328 then icontype = icontype .. GW.myClassID end
-        if icontype and trackingTypes[icontype] then
-            self.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
-            self:Show()
-        else
-            self:Hide()
+    GwMiniMapTrackingFrame:RegisterEvent("UNIT_AURA")
+    GwMiniMapTrackingFrame:SetScript("OnEvent", function(self,event)
+        if event == "UNIT_AURA" then
+            local icontype = GetTrackingTexture()
+            if icontype == 132328 then icontype = icontype .. GW.myClassID end
+            if icontype and trackingTypes[icontype] then     
+                GwMiniMapTrackingFrame.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
+                GwMiniMapTrackingFrame:Show()
+            else
+                GwMiniMapTrackingFrame:Hide()
+            end
         end
     end)
 
@@ -519,16 +524,15 @@ local function LoadMinimap()
         end
     )
 
-    Minimap:SetScript(
-        "OnMouseDown",
-        function(_, button)
-            if button == "RightButton" then
-                ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "MiniMapTracking", 0, -5)
-
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            end
-        end
-    )
+    --Minimap:SetScript(
+    --    "OnMouseDown",
+    --    function(_, button)
+    --        if button == "RightButton" then
+    --            ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "MiniMapTracking", 0, -5)
+    --            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    --        end
+    --    end
+    --)
 
     local Minimap_OnEvent = function(_, event)
         if event == "CVAR_UPDATE" then

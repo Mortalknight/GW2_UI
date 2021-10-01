@@ -146,12 +146,13 @@
         </Layers>
         <Scripts>
             <OnMouseUp>
-                ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "MiniMapTracking", 0, -5)
+                if button == "RightButton" then
+                    CancelTrackingBuff()
+                end
             </OnMouseUp> 
             <OnEnter>
                 GameTooltip:SetOwner(self, "ANCHOR_LEFT");
-                GameTooltip:SetText(TRACKING, 1, 1, 1);
-                GameTooltip:AddLine(MINIMAP_TRACKING_TOOLTIP_NONE, nil, nil, nil, true);
+                GameTooltip:SetTrackingSpell()
                 GameTooltip:Show();
             </OnEnter>
             <OnLeave>
