@@ -408,3 +408,5 @@ L["Important & dispellable debuff scale priority"] = true
 L["If both scales could apply to a debuff, which one should be used"] = true
 L["Dispell > Important"] = true
 L["Important > Dispell"] = true
+L["Show Macro Name"] = true
+L["Show Macro Name on Action Button"] = true

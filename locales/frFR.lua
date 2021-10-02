@@ -345,3 +345,5 @@ L["You have overridden this behavior."] = "Ce comportement a été outrepassé p
 L["Out of combat"] = true
 L["Show an additional resource bar"] = true
 L["Show auras below"] = true
+L["Show Macro Name"] = "Montrer le nom de la macro"
+L["Show Macro Name on Action Button"] = "Afficher le nom de la macro sur le bouton Action"

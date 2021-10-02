@@ -410,3 +410,5 @@ L["Important & dispellable debuff scale priority"] = "Escala de prioridade de ef
 L["If both scales could apply to a debuff, which one should be used"] = "Se ambas as escalas se aplicarem a um efeito negativo, qual deve ser usada"
 L["Dispell > Important"] = "Dissipar > Importante"
 L["Important > Dispell"] = "Importante > Dissipar"
+L["Show Macro Name"] = "Mostrar nome de macro"
+L["Show Macro Name on Action Button"] = "Mostrar nome de macro no botão de ação"
