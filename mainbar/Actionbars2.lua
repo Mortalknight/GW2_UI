@@ -1014,7 +1014,7 @@ local function LoadActionBars(lm)
 
     -- init our bars
     local fmActionbar = updateMainBar(showBotRight)
-
+    local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
     fmActionbar.gw_Bar1 = updateMultiBar(lm, "MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true, showName)
     fmActionbar.gw_Bar2 = updateMultiBar(lm, "MultiBarBottomRight", "MultiBarBottomRightButton", BOTTOMRIGHT_ACTIONBAR_PAGE, true, showName)
     fmActionbar.gw_Bar3 = updateMultiBar(lm, "MultiBarRight", "MultiBarRightButton", RIGHT_ACTIONBAR_PAGE, nil, showName)
