@@ -345,7 +345,7 @@ local function showBackdrop(self)
 end
 GW.AddForProfiling("Actionbars2", "showBackdrop", showBackdrop)
 
-local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, showName, isStanceButton, isPet)
+local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton, isPet)
     local btn = _G[buttonName]
 
     if btn.icon ~= nil then
@@ -407,7 +407,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, showName
     if btn.SetCheckedTexture then btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress") end
 
     if btn.Name then
-        if showName then
+        if btn.showMacroName then
             btn.Name:SetPoint("TOPLEFT", btn, "TOPLEFT")
             btn.Name:SetJustifyH("LEFT")
             local font, fontHeight, fontFlags = btn.Name:GetFont()
@@ -454,6 +454,7 @@ local function updateMainBar()
 
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
     local btn_padding = MAIN_MENU_BAR_BUTTON_MARGIN
+    local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
 
     fmActionbar.gw_Buttons = {}
     fmActionbar.gw_Backdrops = {}
@@ -482,9 +483,9 @@ local function updateMainBar()
             local hotkey = _G["ActionButton" .. i .. "HotKey"]
             btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + MAIN_MENU_BAR_BUTTON_MARGIN
             btn:SetSize(MAIN_MENU_BAR_BUTTON_SIZE, MAIN_MENU_BAR_BUTTON_SIZE)
+            btn.showMacroName = showName
 
-            local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
-            setActionButtonStyle("ActionButton" .. i, true, nil, showName)
+            setActionButtonStyle("ActionButton" .. i, true, nil)
             updateHotkey(btn)
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
@@ -605,7 +606,7 @@ local function trackBarChanges()
     fmActionbar.gw_IsEnabled = true
 end
 
-local function updateMultiBar(lm, barName, buttonName, actionPage, state, showName)
+local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local multibar = _G[barName]
     local settings = GetSetting(barName)
     local used_width = 0
@@ -613,6 +614,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state, showNa
     local btn_padding = 0
     local btn_padding_y = 0
     local btn_this_row = 0
+    local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
 
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
     GW.MixinHideDuringPetAndOverride(fmMultibar)
@@ -636,7 +638,10 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state, showNa
 
             btn:SetSize(settings.size, settings.size)
             updateHotkey(btn)
-            setActionButtonStyle(buttonName .. i, nil, hideActionBarBG, showName)
+
+            btn.showMacroName = showName
+
+            setActionButtonStyle(buttonName .. i, nil, hideActionBarBG)
 
             btn:ClearAllPoints()
             btn:SetPoint("TOPLEFT", fmMultibar, "TOPLEFT", btn_padding, -btn_padding_y)
@@ -1014,11 +1019,10 @@ local function LoadActionBars(lm)
 
     -- init our bars
     local fmActionbar = updateMainBar(showBotRight)
-    local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
-    fmActionbar.gw_Bar1 = updateMultiBar(lm, "MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true, showName)
-    fmActionbar.gw_Bar2 = updateMultiBar(lm, "MultiBarBottomRight", "MultiBarBottomRightButton", BOTTOMRIGHT_ACTIONBAR_PAGE, true, showName)
-    fmActionbar.gw_Bar3 = updateMultiBar(lm, "MultiBarRight", "MultiBarRightButton", RIGHT_ACTIONBAR_PAGE, nil, showName)
-    fmActionbar.gw_Bar4 = updateMultiBar(lm, "MultiBarLeft", "MultiBarLeftButton", LEFT_ACTIONBAR_PAGE, nil, showName)
+    fmActionbar.gw_Bar1 = updateMultiBar(lm, "MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true)
+    fmActionbar.gw_Bar2 = updateMultiBar(lm, "MultiBarBottomRight", "MultiBarBottomRightButton", BOTTOMRIGHT_ACTIONBAR_PAGE, true)
+    fmActionbar.gw_Bar3 = updateMultiBar(lm, "MultiBarRight", "MultiBarRightButton", RIGHT_ACTIONBAR_PAGE, nil)
+    fmActionbar.gw_Bar4 = updateMultiBar(lm, "MultiBarLeft", "MultiBarLeftButton", LEFT_ACTIONBAR_PAGE, nil)
 
     GW.RegisterScaleFrame(MainMenuBarArtFrame)
 
