@@ -106,6 +106,7 @@ end
 
 local function OnKeyDown(self, key)
     if ignoreKeys[key] then return end
+
     if printKeys[key] then
         Screenshot()
     else
@@ -128,8 +129,8 @@ end
 
 local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
     local coloredName = GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
-    local type = strsub(event, 10)
-    local info = ChatTypeInfo[type]
+    local chatType = strsub(event, 10)
+    local info = ChatTypeInfo[chatType]
 
     if event == "CHAT_MSG_BN_WHISPER" then
         coloredName = format("|c%s%s|r", RAID_CLASS_COLORS.PRIEST.colorStr, arg2)
@@ -137,8 +138,8 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
 
     arg1 = RemoveExtraSpaces(arg1)
 
-    local chatGroup = Chat_GetChatCategory(type)
-    local chatTarget, body
+    local chatGroup = Chat_GetChatCategory(chatType)
+    local chatTarget
     if chatGroup == "BN_CONVERSATION" then
         chatTarget = tostring(arg8)
     elseif chatGroup == "WHISPER" or chatGroup == "BN_WHISPER" then
@@ -150,24 +151,35 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
     end
 
     local playerLink
-    if type ~= "BN_WHISPER" and type ~= "BN_CONVERSATION" then
+    if chatType ~= "BN_WHISPER" and chatType ~= "BN_CONVERSATION" then
         playerLink = "|Hplayer:" .. arg2 .. ":" .. arg11 .. ":" .. chatGroup .. (chatTarget and ":" .. chatTarget or "") .. "|h"
     else
         playerLink = "|HBNplayer:" .. arg2 .. ":" .. arg13 .. ":" .. arg11 .. ":" .. chatGroup .. (chatTarget and ":" .. chatTarget or "") .. "|h"
     end
 
-    local message = arg1
-    if arg14 then --isMobile
-        message = ChatFrame_GetMobileEmbeddedTexture(info.r, info.g, info.b) .. message
+    --Escape any % characters, as it may otherwise cause an "invalid option in format" error in the next step
+    arg1 = gsub(arg1, "%%", "%%%%")
+
+    --Remove groups of many spaces
+    arg1 = RemoveExtraSpaces(arg1)
+
+    -- isMobile
+    if arg14 then
+        arg1 = ChatFrame_GetMobileEmbeddedTexture(info.r, info.g, info.b) .. arg1
     end
 
-    --Escape any % characters, as it may otherwise cause an "invalid option in format" error in the next step
-    message = gsub(message, "%%", "%%%%")
-
-    _, body = pcall(format, _G["CHAT_" .. type .. "_GET"]..message, playerLink .. "[" .. coloredName .. "]" .. "|h")
+    local _, body = pcall(format, _G["CHAT_" .. chatType .. "_GET"] .. arg1, playerLink .. "[" .. coloredName .. "]" .. "|h")
 
     local accessID = ChatHistory_GetAccessID(chatGroup, chatTarget)
-    local typeID = ChatHistory_GetAccessID(type, chatTarget, arg12 == "" and arg13 or arg12)
+    local typeID = ChatHistory_GetAccessID(chatType, chatTarget, arg12 == "" and arg13 or arg12)
+
+    if GW.GetSetting("CHAT_SHORT_CHANNEL_NAMES") then
+        body = body:gsub("|Hchannel:(.-)|h%[(.-)%]|h", GW.ShortChannel)
+        body = body:gsub("^(.-|h) " .. CHAT_WHISPER_GET:format("~"):gsub("~ ", ""):gsub(": ", ""), "%1")
+        body = body:gsub("<" .. AFK .. ">", "[|cffFF0000" .. AFK .. "|r] ")
+        body = body:gsub("<" .. DND .. ">", "[|cffE7E716" .. DND .. "|r] ")
+        body = body:gsub("%[BN_CONVERSATION:", "%[".."")
+    end
 
     self:AddMessage(body, info.r, info.g, info.b, info.id, false, accessID, typeID)
 end

@@ -799,6 +799,7 @@ end
 local function ShortChannel(self)
     return format("|Hchannel:%s|h[%s]|h", self, DEFAULT_STRINGS[strupper(self)] or gsub(self, "channel:", ""))
 end
+GW.ShortChannel = ShortChannel
 
 local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
     if TextToSpeechFrame_MessageEventHandler then
