@@ -192,6 +192,7 @@ local function LoadActionbarPanel(sWindow)
         nil,
         "Actionbars"
     )
+    addOption(p, L["Show Macro Name"], L["Show Macro Name on Action Button"], "SHOWACTIONBAR_MACRO_NAME_ENABLED", nil, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
 
     InitPanel(p)
 end

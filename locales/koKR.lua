@@ -347,3 +347,5 @@ L["You have overridden this behavior."] = true
 L["Out of combat"] = true
 L["Show an additional resource bar"] = true
 L["Show auras below"] = true
+L["Show Macro Name"] = "매크로 이름 표시"
+L["Show Macro Name on Action Button"] = "조치 버튼에 매크로 이름 표시"

@@ -345,7 +345,7 @@ local function showBackdrop(self)
 end
 GW.AddForProfiling("Actionbars2", "showBackdrop", showBackdrop)
 
-local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton, isPet)
+local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, showName, isStanceButton, isPet)
     local btn = _G[buttonName]
 
     if btn.icon ~= nil then
@@ -405,7 +405,17 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
     btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
     btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
     if btn.SetCheckedTexture then btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress") end
-    if btn.Name then btn.Name:SetAlpha(0) end --Hide Marco Name on Actionbutton
+
+    if btn.Name then
+        if showName then
+            btn.Name:SetPoint("TOPLEFT", btn, "TOPLEFT")
+            btn.Name:SetJustifyH("LEFT")
+            local font, fontHeight, fontFlags = btn.Name:GetFont()
+            btn.Name:SetFont(font, fontHeight, "OUTLINED")
+        else
+            btn.Name:SetAlpha(0)
+        end
+    end
 
     if noBackDrop == nil or noBackDrop == false then
         local backDrop = CreateFrame("Frame", nil, btn, "GwActionButtonBackdropTmpl")
@@ -473,7 +483,8 @@ local function updateMainBar()
             btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + MAIN_MENU_BAR_BUTTON_MARGIN
             btn:SetSize(MAIN_MENU_BAR_BUTTON_SIZE, MAIN_MENU_BAR_BUTTON_SIZE)
 
-            setActionButtonStyle("ActionButton" .. i, true)
+            local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
+            setActionButtonStyle("ActionButton" .. i, true, nil, showName)
             updateHotkey(btn)
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
@@ -594,7 +605,7 @@ local function trackBarChanges()
     fmActionbar.gw_IsEnabled = true
 end
 
-local function updateMultiBar(lm, barName, buttonName, actionPage, state)
+local function updateMultiBar(lm, barName, buttonName, actionPage, state, showName)
     local multibar = _G[barName]
     local settings = GetSetting(barName)
     local used_width = 0
@@ -625,7 +636,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 
             btn:SetSize(settings.size, settings.size)
             updateHotkey(btn)
-            setActionButtonStyle(buttonName .. i, nil, hideActionBarBG)
+            setActionButtonStyle(buttonName .. i, nil, hideActionBarBG, showName)
 
             btn:ClearAllPoints()
             btn:SetPoint("TOPLEFT", fmMultibar, "TOPLEFT", btn_padding, -btn_padding_y)
@@ -794,7 +805,7 @@ local function actionButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
         local btn = self.gw_Buttons[i]
         -- override of /Interface/FrameXML/ActionButton.lua ActionButton_OnUpdate
-        if (btn:IsFlashing()) then 
+        if (btn:IsFlashing()) then
             actionButtonFlashing(btn, elapsed)
         end
 
@@ -863,7 +874,7 @@ local function changeVertexColorActionbars()
                 if btn.changedColor then
                     local valid = IsActionInRange(btn.action)
                     local checksRange = (valid ~= nil)
-                    local inRange = checksRange and valid                
+                    local inRange = checksRange and valid
                     if checksRange and not inRange then
                         btn.icon:SetVertexColor(out_R, out_G, out_B)
                     end
@@ -878,7 +889,7 @@ local function multiButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
         local btn = self.gw_Buttons[i]
         -- override of /Interface/FrameXML/ActionButton.lua ActionButton_OnUpdate
-        if (btn:IsFlashing()) then 
+        if (btn:IsFlashing()) then
             actionButtonFlashing(btn, elapsed)
         end
 
@@ -1003,10 +1014,11 @@ local function LoadActionBars(lm)
 
     -- init our bars
     local fmActionbar = updateMainBar(showBotRight)
-    fmActionbar.gw_Bar1 = updateMultiBar(lm, "MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true)
-    fmActionbar.gw_Bar2 = updateMultiBar(lm, "MultiBarBottomRight", "MultiBarBottomRightButton", BOTTOMRIGHT_ACTIONBAR_PAGE, true)
-    fmActionbar.gw_Bar3 = updateMultiBar(lm, "MultiBarRight", "MultiBarRightButton", RIGHT_ACTIONBAR_PAGE)
-    fmActionbar.gw_Bar4 = updateMultiBar(lm, "MultiBarLeft", "MultiBarLeftButton", LEFT_ACTIONBAR_PAGE)
+    local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
+    fmActionbar.gw_Bar1 = updateMultiBar(lm, "MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true, showName)
+    fmActionbar.gw_Bar2 = updateMultiBar(lm, "MultiBarBottomRight", "MultiBarBottomRightButton", BOTTOMRIGHT_ACTIONBAR_PAGE, true, showName)
+    fmActionbar.gw_Bar3 = updateMultiBar(lm, "MultiBarRight", "MultiBarRightButton", RIGHT_ACTIONBAR_PAGE, nil, showName)
+    fmActionbar.gw_Bar4 = updateMultiBar(lm, "MultiBarLeft", "MultiBarLeftButton", LEFT_ACTIONBAR_PAGE, nil, showName)
 
     GW.RegisterScaleFrame(MainMenuBarArtFrame)
 

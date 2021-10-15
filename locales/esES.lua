@@ -406,3 +406,5 @@ L["Show clickable Quick Join messages inside of the chat."] = "Muestra mensajes 
 L["is looking for members"] = "está buscando miembros para el grupo"
 L["joined a group"] = "se unió a un grupo"
 L["Add timestamp to all messages"] = "Añade marca de tiempo a todos los mensajes."
+L["Show Macro Name"] = "Mostrar nombre de macro"
+L["Show Macro Name on Action Button"] = "Mostrar nombre de macro en el botón de acción"

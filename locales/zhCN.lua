@@ -406,3 +406,5 @@ L["Show clickable Quick Join messages inside of the chat."] = "在聊天窗口�
 L["is looking for members"] = "正在征收会员"
 L["joined a group"] = "已加入群组"
 L["Add timestamp to all messages"] = "所有消息添加时间标记"
+L["Show Macro Name"] = "显示宏名称"
+L["Show Macro Name on Action Button"] = "在操作按钮上显示宏名称"

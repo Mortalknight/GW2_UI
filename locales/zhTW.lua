@@ -410,3 +410,5 @@ L["Important & dispellable debuff scale priority"] = "重要 & 可驅散的減�
 L["If both scales could apply to a debuff, which one should be used"] = "兩種縮放大小都符合套用條件時，要使用哪一種。"
 L["Dispell > Important"] = "可驅散 > 重要"
 L["Important > Dispell"] = "重要 > 可驅散"
+L["Show Macro Name"] = "顯示宏名稱"
+L["Show Macro Name on Action Button"] = "在操作按鈕上顯示宏名稱"

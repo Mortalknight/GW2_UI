@@ -3,8 +3,8 @@ local L = LibStub("AceLocale-3.0"):NewLocale("GW2_UI", "ruRU")
 if not L then return end
 
 --Fonts
-L['FONT_NORMAL'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf' 
-L['FONT_BOLD'] = 'Interface/AddOns/GW2_UI/fonts/headlines.ttf' 
+L['FONT_NORMAL'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf'
+L['FONT_BOLD'] = 'Interface/AddOns/GW2_UI/fonts/headlines.ttf'
 L['FONT_NARROW'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf'
 L['FONT_NARROW_BOLD'] = 'Interface/AddOns/GW2_UI/fonts/menomonia.ttf'
 L['FONT_LIGHT'] = 'Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf'
@@ -406,3 +406,5 @@ L["Show clickable Quick Join messages inside of the chat."] = "Отобража�
 L["is looking for members"] = "ищет игроков"
 L["joined a group"] = "вступил(а) в группу"
 L["Add timestamp to all messages"] = "Добавить время отправки ко всем сообщениям"
+L["Show Macro Name"] = "Показать имя макроса"
+L["Show Macro Name on Action Button"] = "Показать имя макроса на кнопку действия"
