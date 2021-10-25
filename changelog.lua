@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("2.0.3 Era", [=[
+FIXES
+    - Fix a PTR bug
+]=])
+
 v("2.0.2 Era", [=[
 FIXES
     - Fix target debuffs not shown correctly

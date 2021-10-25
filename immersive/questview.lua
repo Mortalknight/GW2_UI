@@ -626,6 +626,17 @@ local function LoadQuestview()
             end
         end
     )
+
+    GwQuestviewFrame:SetMovable(true)
+    GwQuestviewFrame:SetClampedToScreen(true)
+    GwQuestviewFrame:RegisterForDrag("LeftButton")
+    GwQuestviewFrame:SetScript("OnDragStart", function(self)
+        self:StartMoving()
+    end)
+    GwQuestviewFrame:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+    end)
+
     GwQuestviewFrameContainerDeclineQuest:SetScript(
         "OnClick",
         function()

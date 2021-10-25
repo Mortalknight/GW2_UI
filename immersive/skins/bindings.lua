@@ -1,9 +1,5 @@
 local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
-local SkinButton = GW.skins.SkinButton
-local SkinCheckButton = GW.skins.SkinCheckButton
-local SkinScrollBar = GW.skins.SkinScrollBar
-local SkinScrollFrame = GW.skins.SkinScrollFrame
 
 local function SkinBindingsUI()
     KeyBindingFrame_LoadUI()
@@ -41,8 +37,10 @@ local function SkinBindingsUI()
 
     KeyBindingFrame.bottomSeparator:Hide()
 
-    _G.KeyBindingFrameCategoryList:SetBackdrop(constBackdropFrameBorder)
-    KeyBindingFrame.bindingsContainer:SetBackdrop(constBackdropFrameBorder)
+    KeyBindingFrameCategoryList:StripTextures()
+    _G.KeyBindingFrameCategoryList:CreateBackdrop(constBackdropFrameBorder)
+    KeyBindingFrame.bindingsContainer:StripTextures()
+    KeyBindingFrame.bindingsContainer:CreateBackdrop(constBackdropFrameBorder)
 
     KeyBindingFrame.characterSpecificButton:SkinCheckButton()
     KeyBindingFrame.characterSpecificButton:SetSize(15, 15)
@@ -50,7 +48,7 @@ local function SkinBindingsUI()
     _G.KeyBindingFrameScrollFrame:SkinScrollFrame()
     _G.KeyBindingFrameScrollFrameScrollBar:SkinScrollBar()
 
-    hooksecurefunc("BindingButtonTemplate_SetupBindingButton", function(binding, button)
+    hooksecurefunc("BindingButtonTemplate_SetupBindingButton", function(_, button)
         button:SkinButton(false, true)
     end)
 
