@@ -81,8 +81,8 @@ local function SkinBosses()
     local _, _, bossID = EJ_GetEncounterInfoByIndex(bossIndex)
     local bossButton
 
-    local encounter = EncounterJournal.encounter
-    encounter.info.instanceButton.icon:SetMask("")
+    --local encounter = EncounterJournal.encounter
+    --encounter.info.instanceButton.icon:SetMask(nil) --buggyc
 
     while bossID do
         bossButton = _G["EncounterJournalBossButton" .. bossIndex]
@@ -365,7 +365,7 @@ local function LoadEncounterJournalSkin()
 
     local items = EncounterJournal.encounter.info.lootScroll.buttons
     for i = 1, #items do
-        local item = items[i]
+        local item = items[i].lootFrame
 
         item.bossTexture:SetAlpha(0)
         item.bosslessTexture:SetAlpha(0)
@@ -401,10 +401,10 @@ local function LoadEncounterJournalSkin()
         item.slot:SetTextColor(1, 1, 1)
         item.armorType:SetTextColor(1, 1, 1)
 
-        if i == 1 then
-            item:ClearAllPoints()
-            item:SetPoint("TOPLEFT", EncounterJournal.encounter.info.lootScroll.scrollChild, "TOPLEFT", 5, 0)
-        end
+        --if i == 1 then
+        --    item:ClearAllPoints()
+        --    item:SetPoint("TOPLEFT", EncounterJournal.encounter.info.lootScroll.scrollChild, "TOPLEFT", 5, 0)
+        --end
     end
 
     EncounterJournalSearchResults:StripTextures()

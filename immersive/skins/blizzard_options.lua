@@ -221,6 +221,7 @@ local function LoadBlizzardOptionsSkin()
     local ChatButtons = {
         _G.ChatConfigFrameDefaultButton,
         _G.ChatConfigFrameRedockButton,
+        _G.ChatConfigFrame.ToggleChatButton,
         _G.ChatConfigFrameOkayButton,
         _G.ChatConfigCombatSettingsFiltersDeleteButton,
         _G.ChatConfigCombatSettingsFiltersAddFilterButton,

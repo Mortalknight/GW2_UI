@@ -5,6 +5,14 @@ local function BG_Resize(self)
     self:GetParent():GetParent().tex:SetSize(w + 50, h + 30)
 end
 
+local function SetItemQuality(slot)
+    if not slot.slotState and not slot.isHiddenVisual and slot.transmogID then
+        slot.Icon.backdrop:SetBackdropBorderColor(slot.Name:GetTextColor())
+    else
+        slot.Icon.backdrop:SetBackdropBorderColor(0, 0, 0)
+    end
+end
+
 local function LoadDressUpFrameSkin()
     if not GW.GetSetting("INSPECTION_SKIN_ENABLED") then return end
 
@@ -14,6 +22,20 @@ local function LoadDressUpFrameSkin()
     DressUpFrameCloseButton:SetSize(20, 20)
     DressUpFrameResetButton:SkinButton(false, true)
     DressUpFrameCancelButton:SkinButton(false, true)
+    DressUpFrame.LinkButton:SkinButton(false, true)
+    DressUpFrame.ToggleOutfitDetailsButton:CreateBackdrop()
+    DressUpFrame.ToggleOutfitDetailsButton:SkinButton(false, true, false, true)
+
+    local icon = DressUpFrame.ToggleOutfitDetailsButton:CreateTexture(nil, "OVERLAY")
+    icon:SetPoint("TOPLEFT", 0, 0)
+    icon:SetPoint("BOTTOMRIGHT", 0, 0)
+    icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    icon:SetTexture(1392954)
+
+    DressUpFrame.OutfitDetailsPanel:DisableDrawLayer("BACKGROUND")
+    DressUpFrame.OutfitDetailsPanel:DisableDrawLayer("OVERLAY")
+    DressUpFrame.OutfitDetailsPanel:CreateBackdrop(GW.skins.constBackdropFrame)
+
     DressUpFrameOutfitDropDown:SkinDropDownMenu()
     DressUpFrameOutfitDropDown.backdrop:ClearAllPoints()
     DressUpFrameOutfitDropDown.backdrop:SetPoint("TOPLEFT", 0, 5)
@@ -39,6 +61,24 @@ local function LoadDressUpFrameSkin()
 
     DressUpFrame:HookScript("OnShow", function()
         BG_Resize(DressUpFrame.MaximizeMinimizeFrame.MaximizeButton)
+    end)
+
+    hooksecurefunc(DressUpFrame.OutfitDetailsPanel, "Refresh", function(self)
+        if not self.slotPool then return end
+
+        for slot in self.slotPool:EnumerateActive() do
+            if not slot.backdrop then
+                slot.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true, 1, 1)
+                slot.IconBorder:SetAlpha(0)
+                GW.HandleIcon(slot.Icon)
+            end
+
+            SetItemQuality(slot)
+        end
+    end)
+    hooksecurefunc(DressUpFrame, "ConfigureSize", function(self)
+        self.OutfitDetailsPanel:ClearAllPoints()
+        self.OutfitDetailsPanel:SetPoint("TOPLEFT", self, "TOPRIGHT", 4, 0)
     end)
 
     -- Wardrobe edit frame
