@@ -365,7 +365,13 @@ local function LoadEncounterJournalSkin()
 
     local items = EncounterJournal.encounter.info.lootScroll.buttons
     for i = 1, #items do
-        local item = items[i].lootFrame
+        -- 9.1.5 changes
+        local item
+        if GW.wowToc == "90105" then -- 9.1.5
+            item = items[i].lootFrame
+        else
+            item = items[i]
+        end
 
         item.bossTexture:SetAlpha(0)
         item.bosslessTexture:SetAlpha(0)
@@ -401,10 +407,13 @@ local function LoadEncounterJournalSkin()
         item.slot:SetTextColor(1, 1, 1)
         item.armorType:SetTextColor(1, 1, 1)
 
-        --if i == 1 then
-        --    item:ClearAllPoints()
-        --    item:SetPoint("TOPLEFT", EncounterJournal.encounter.info.lootScroll.scrollChild, "TOPLEFT", 5, 0)
-        --end
+        -- 9.1.5 changes
+        if GW.wowToc == "90100" then -- 9.1.0
+            if i == 1 then
+                item:ClearAllPoints()
+                item:SetPoint("TOPLEFT", EncounterJournal.encounter.info.lootScroll.scrollChild, "TOPLEFT", 5, 0)
+            end
+        end
     end
 
     EncounterJournalSearchResults:StripTextures()

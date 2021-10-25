@@ -22,19 +22,23 @@ local function LoadDressUpFrameSkin()
     DressUpFrameCloseButton:SetSize(20, 20)
     DressUpFrameResetButton:SkinButton(false, true)
     DressUpFrameCancelButton:SkinButton(false, true)
-    DressUpFrame.LinkButton:SkinButton(false, true)
-    DressUpFrame.ToggleOutfitDetailsButton:CreateBackdrop()
-    DressUpFrame.ToggleOutfitDetailsButton:SkinButton(false, true, false, true)
 
-    local icon = DressUpFrame.ToggleOutfitDetailsButton:CreateTexture(nil, "OVERLAY")
-    icon:SetPoint("TOPLEFT", 0, 0)
-    icon:SetPoint("BOTTOMRIGHT", 0, 0)
-    icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-    icon:SetTexture(1392954)
+    -- 9.1.5 part
+    if DressUpFrame.LinkButton then
+        DressUpFrame.LinkButton:SkinButton(false, true)
+        DressUpFrame.ToggleOutfitDetailsButton:CreateBackdrop()
+        DressUpFrame.ToggleOutfitDetailsButton:SkinButton(false, true, false, true)
 
-    DressUpFrame.OutfitDetailsPanel:DisableDrawLayer("BACKGROUND")
-    DressUpFrame.OutfitDetailsPanel:DisableDrawLayer("OVERLAY")
-    DressUpFrame.OutfitDetailsPanel:CreateBackdrop(GW.skins.constBackdropFrame)
+        local icon = DressUpFrame.ToggleOutfitDetailsButton:CreateTexture(nil, "OVERLAY")
+        icon:SetPoint("TOPLEFT", 0, 0)
+        icon:SetPoint("BOTTOMRIGHT", 0, 0)
+        icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+        icon:SetTexture(1392954)
+
+        DressUpFrame.OutfitDetailsPanel:DisableDrawLayer("BACKGROUND")
+        DressUpFrame.OutfitDetailsPanel:DisableDrawLayer("OVERLAY")
+        DressUpFrame.OutfitDetailsPanel:CreateBackdrop(GW.skins.constBackdropFrame)
+    end
 
     DressUpFrameOutfitDropDown:SkinDropDownMenu()
     DressUpFrameOutfitDropDown.backdrop:ClearAllPoints()
@@ -63,23 +67,26 @@ local function LoadDressUpFrameSkin()
         BG_Resize(DressUpFrame.MaximizeMinimizeFrame.MaximizeButton)
     end)
 
-    hooksecurefunc(DressUpFrame.OutfitDetailsPanel, "Refresh", function(self)
-        if not self.slotPool then return end
+    -- 9.1.5 part
+    if DressUpFrame.OutfitDetailsPanel then
+        hooksecurefunc(DressUpFrame.OutfitDetailsPanel, "Refresh", function(self)
+            if not self.slotPool then return end
 
-        for slot in self.slotPool:EnumerateActive() do
-            if not slot.backdrop then
-                slot.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true, 1, 1)
-                slot.IconBorder:SetAlpha(0)
-                GW.HandleIcon(slot.Icon)
+            for slot in self.slotPool:EnumerateActive() do
+                if not slot.backdrop then
+                    slot.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true, 1, 1)
+                    slot.IconBorder:SetAlpha(0)
+                    GW.HandleIcon(slot.Icon)
+                end
+
+                SetItemQuality(slot)
             end
-
-            SetItemQuality(slot)
-        end
-    end)
-    hooksecurefunc(DressUpFrame, "ConfigureSize", function(self)
-        self.OutfitDetailsPanel:ClearAllPoints()
-        self.OutfitDetailsPanel:SetPoint("TOPLEFT", self, "TOPRIGHT", 4, 0)
-    end)
+        end)
+        hooksecurefunc(DressUpFrame, "ConfigureSize", function(self)
+            self.OutfitDetailsPanel:ClearAllPoints()
+            self.OutfitDetailsPanel:SetPoint("TOPLEFT", self, "TOPRIGHT", 4, 0)
+        end)
+    end
 
     -- Wardrobe edit frame
     WardrobeOutfitFrame:StripTextures(true)

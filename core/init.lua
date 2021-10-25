@@ -42,7 +42,8 @@ GW.myspec = GetSpecialization()
 GW.CheckRole()
 GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
 GW.resolution = format("%dx%d", GW.screenwidth, GW.screenHeight)
-GW.wowpatch, GW.wowbuild = GetBuildInfo()
+GW.wowpatch, GW.wowbuild, _ , GW.wowToc = GetBuildInfo()
+
 GW.wowbuild = tonumber(GW.wowbuild)
 GW.Gw2Color = "|cffffedba" -- Color used for chat prints or buttons
 
