@@ -164,7 +164,7 @@ end
 
 local function SkinBattlePetTooltip()
     local skin_battle_pet_tt = function(self)
-        if GW.wowToc == "90105" then -- 9.1.5
+        if GW.wowToc == 90105 then -- 9.1.5
             self.NineSlice:Hide()
         else
             self.BorderTopLeft:Hide()
@@ -623,7 +623,7 @@ local function SetHyperlink(self, link)
     ScanKeystone(self, link)
 end
 
-local function GameTooltip_OnTooltipSetItem(self, link)
+local function GameTooltip_OnTooltipSetItem(self)
     if self:IsForbidden() then return end
 
     if not self.itemCleared then
@@ -801,8 +801,8 @@ local function SkinProgressbar(self)
 end
 
 local function SetStyle(tooltip, _, isEmbedded)
-    if GW.wowToc == "90105" then -- 9.1.5
-        self.NineSlice:Hide()
+    if GW.wowToc == 90105 then -- 9.1.5
+        tooltip.NineSlice:Hide()
         if not tooltip or (tooltip == GW.ScanTooltip or isEmbedded or tooltip.IsEmbedded or not tooltip.NineSlice) or tooltip:IsForbidden() then return end
 
         if tooltip.Delimiter1 then tooltip.Delimiter1:SetTexture() end

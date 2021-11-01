@@ -367,7 +367,7 @@ local function LoadEncounterJournalSkin()
     for i = 1, #items do
         -- 9.1.5 changes
         local item
-        if GW.wowToc == "90105" then -- 9.1.5
+        if GW.wowToc == 90105 then -- 9.1.5
             item = items[i].lootFrame
         else
             item = items[i]
@@ -408,7 +408,7 @@ local function LoadEncounterJournalSkin()
         item.armorType:SetTextColor(1, 1, 1)
 
         -- 9.1.5 changes
-        if GW.wowToc == "90100" then -- 9.1.0
+        if GW.wowToc == 90100 then -- 9.1.0
             if i == 1 then
                 item:ClearAllPoints()
                 item:SetPoint("TOPLEFT", EncounterJournal.encounter.info.lootScroll.scrollChild, "TOPLEFT", 5, 0)
