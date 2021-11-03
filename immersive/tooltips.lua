@@ -164,19 +164,7 @@ end
 
 local function SkinBattlePetTooltip()
     local skin_battle_pet_tt = function(self)
-        if GW.wowToc == 90105 then -- 9.1.5
-            self.NineSlice:Hide()
-        else
-            self.BorderTopLeft:Hide()
-            self.BorderTopRight:Hide()
-            self.BorderBottomRight:Hide()
-            self.BorderBottomLeft:Hide()
-            self.BorderTop:Hide()
-            self.BorderRight:Hide()
-            self.BorderBottom:Hide()
-            self.BorderLeft:Hide()
-            self.Background:Hide()
-        end
+        self.NineSlice:Hide()
         self:CreateBackdrop(constBackdropArgs)
     end
 
@@ -801,8 +789,6 @@ local function SkinProgressbar(self)
 end
 
 local function SetStyle(tooltip, _, isEmbedded)
-    if GW.wowToc == 90105 then -- 9.1.5
-        tooltip.NineSlice:Hide()
         if not tooltip or (tooltip == GW.ScanTooltip or isEmbedded or tooltip.IsEmbedded or not tooltip.NineSlice) or tooltip:IsForbidden() then return end
 
         if tooltip.Delimiter1 then tooltip.Delimiter1:SetTexture() end
@@ -814,10 +800,6 @@ local function SetStyle(tooltip, _, isEmbedded)
             tooltip:HookScript("OnSizeChanged", tooltip.OnBackdropSizeChanged)
             tooltip:SetBackdrop(constBackdropArgs)
         end
-    else
-        if not tooltip or (tooltip == GW.ScanTooltip or tooltip.IsEmbedded or not tooltip.SetBackdrop) or tooltip:IsForbidden() then return end
-        tooltip:SetBackdrop(constBackdropArgs)
-    end
 end
 
 local function LoadTooltips()
