@@ -110,10 +110,9 @@ local function Guild_OnEnter(self)
     SortGuildTable(shiftDown)
 
     local guildName, guildRank = GetGuildInfo("player")
-    local applicants = GetNumGuildApplicants()
 
     if guildName and guildRank then
-        GameTooltip:AddDoubleLine(guildName, GUILD .. ": " .. online .. "/" .. total .. (applicants > 0 and " |cFFFFFFFF(|cff33ff33%d|r|cFFFFFFFF)|r" or ""), tthead.r, tthead.g, tthead.b, tthead.r, tthead.g, tthead.b)
+        GameTooltip:AddDoubleLine(guildName, GUILD .. ": " .. online .. "/" .. total, tthead.r, tthead.g, tthead.b, tthead.r, tthead.g, tthead.b)
         GameTooltip:AddLine(guildRank, 1, 1, 1, 1)
     end
 
