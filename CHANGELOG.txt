@@ -1,3 +1,7 @@
+5.20.1
+FIXES
+    - 9.1.5 tooltip issue
+
 5.20.0
 NEW
     - Added raid pet grid
