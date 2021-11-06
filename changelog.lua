@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.20.2", [=[
+FIXES
+    - 9.1.5 tooltip issue
+]=])
+
 v("5.20.1", [=[
 FIXES
     - 9.1.5 tooltip issue

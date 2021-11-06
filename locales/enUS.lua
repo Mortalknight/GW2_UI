@@ -410,3 +410,4 @@ L["Dispell > Important"] = true
 L["Important > Dispell"] = true
 L["Show Macro Name"] = true
 L["Show Macro Name on Action Button"] = true
+L["Show Health bar text"] = true

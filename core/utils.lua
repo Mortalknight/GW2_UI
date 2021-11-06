@@ -82,6 +82,13 @@ local function CountTable(T)
 end
 GW.CountTable = CountTable
 
+local function SetPointsRestricted(frame)
+	if frame and not pcall(frame.GetPoint, frame) then
+		return true
+	end
+end
+GW.SetPointsRestricted = SetPointsRestricted
+
 local function FormatMoneyForChat(amount)
     local str, coppercolor, silvercolor, goldcolor = "", "|cffb16022", "|cffaaaaaa", "|cffddbc44"
 
@@ -653,6 +660,29 @@ local function ColorGradient(perc, ...)
     return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
 end
 GW.ColorGradient = ColorGradient
+
+local function StatusBarColorGradient(bar, value, max, backdrop)
+	if not (bar and value) then return end
+
+	local current = (not max and value) or (value and max and max ~= 0 and value / max)
+	if not current then return end
+
+	local r, g, b = ColorGradient(current, 0.8, 0, 0, 0.8, 0.8, 0, 0, 0.8,  0)
+	bar:SetStatusBarColor(r, g, b)
+
+	if not backdrop then
+		backdrop = bar.backdrop
+	end
+
+	if backdrop then
+		backdrop:SetBackdropColor(r * 0.25, g * 0.25, b * 0.25)
+	end
+end
+GW.StatusBarColorGradient = StatusBarColorGradient
+
+
+
+
 
 local Fn = function (...) return not GW.Matches(...) end
 

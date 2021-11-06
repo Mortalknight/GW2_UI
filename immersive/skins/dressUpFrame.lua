@@ -74,7 +74,7 @@ local function LoadDressUpFrameSkin()
 
             for slot in self.slotPool:EnumerateActive() do
                 if not slot.backdrop then
-                    slot.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true, 1, 1)
+                    slot.Icon:CreateBackdrop("Transparent", true, 1, 1)
                     slot.IconBorder:SetAlpha(0)
                     GW.HandleIcon(slot.Icon)
                 end

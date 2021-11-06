@@ -228,20 +228,20 @@ end
 GW.SkinNavBarButtons = SkinNavBarButtons
 
 local function HandlePortraitFrame(frame, createBackdrop)
-	local name = frame and frame.GetName and frame:GetName()
-	local insetFrame = name and _G[name .. "Inset"] or frame.Inset
-	local portraitFrame = name and _G[name .. "Portrait"] or frame.Portrait or frame.portrait
-	local portraitFrameOverlay = name and _G[name .. "PortraitOverlay"] or frame.PortraitOverlay
-	local artFrameOverlay = name and _G[name .. "ArtOverlayFrame"] or frame.ArtOverlayFrame
+    local name = frame and frame.GetName and frame:GetName()
+    local insetFrame = name and _G[name .. "Inset"] or frame.Inset
+    local portraitFrame = name and _G[name .. "Portrait"] or frame.Portrait or frame.portrait
+    local portraitFrameOverlay = name and _G[name .. "PortraitOverlay"] or frame.PortraitOverlay
+    local artFrameOverlay = name and _G[name .. "ArtOverlayFrame"] or frame.ArtOverlayFrame
 
-	frame:StripTextures()
+    frame:StripTextures()
 
-	if portraitFrame then portraitFrame:SetAlpha(0) end
-	if portraitFrameOverlay then portraitFrameOverlay:SetAlpha(0) end
-	if artFrameOverlay then artFrameOverlay:SetAlpha(0) end
+    if portraitFrame then portraitFrame:SetAlpha(0) end
+    if portraitFrameOverlay then portraitFrameOverlay:SetAlpha(0) end
+    if artFrameOverlay then artFrameOverlay:SetAlpha(0) end
 
-	if insetFrame then
-		if insetFrame.InsetBorderTop then insetFrame.InsetBorderTop:Hide() end
+    if insetFrame then
+        if insetFrame.InsetBorderTop then insetFrame.InsetBorderTop:Hide() end
         if insetFrame.InsetBorderTopLeft then insetFrame.InsetBorderTopLeft:Hide() end
         if insetFrame.InsetBorderTopRight then insetFrame.InsetBorderTopRight:Hide() end
 
@@ -253,15 +253,15 @@ local function HandlePortraitFrame(frame, createBackdrop)
         if insetFrame.InsetBorderRight then insetFrame.InsetBorderRight:Hide() end
 
         if insetFrame.Bg then insetFrame.Bg:Hide() end
-	end
+    end
 
-	if frame.CloseButton then
-	    frame.CloseButton:SkinButton(true)
+    if frame.CloseButton then
+        frame.CloseButton:SkinButton(true)
         frame.CloseButton:SetSize(20, 20)
-	end
+    end
 
-	if createBackdrop and not frame.backdrop then
-		--local tex = frame:CreateTexture("bg", "BACKGROUND", -7)
+    if createBackdrop and not frame.backdrop then
+        --local tex = frame:CreateTexture("bg", "BACKGROUND", -7)
         --tex:SetPoint("TOP", frame, "TOP", 0, 25)
         --tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
         --local w, h = frame:GetSize()
@@ -272,89 +272,81 @@ local function HandlePortraitFrame(frame, createBackdrop)
             bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
             edgeSize = 1
         }, true, 50, 50, nil, 25)
-	end
+    end
 
 end
 GW.HandlePortraitFrame = HandlePortraitFrame
 
 local function HandleIcon(icon, backdrop)
-	icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
-	if backdrop and not icon.backdrop then
-		icon:CreateBackdrop()
-	end
+    if backdrop and not icon.backdrop then
+        icon:CreateBackdrop()
+    end
 end
 GW.HandleIcon = HandleIcon
 
 do
-	local function iconBorderColor(border, r, g, b, a)
-		border:StripTextures()
+    local function iconBorderColor(border, r, g, b, a)
+        border:StripTextures()
 
-		if border.customFunc then
-			local br, bg, bb = unpack(1, 1, 1)
-			border.customFunc(border, r, g, b, a, br, bg, bb)
-		elseif border.customBackdrop then
-			border.customBackdrop:SetBackdropBorderColor(r, g, b)
-		end
-	end
+        if border.customFunc then
+            local br, bg, bb = 1, 1, 1
+            border.customFunc(border, r, g, b, a, br, bg, bb)
+        elseif border.customBackdrop then
+            border.customBackdrop:SetBackdropBorderColor(r, g, b)
+        end
+    end
 
-	local function iconBorderHide(border)
-		local br, bg, bb = unpack(1, 1, 1)
-		if border.customFunc then
-			local r, g, b, a = border:GetVertexColor()
-			border.customFunc(border, r, g, b, a, br, bg, bb)
-		elseif border.customBackdrop then
-			border.customBackdrop:SetBackdropBorderColor(br, bg, bb)
-		end
-	end
+    local function iconBorderHide(border)
+        local br, bg, bb = 1, 1, 1
+        if border.customFunc then
+            local r, g, b, a = border:GetVertexColor()
+            border.customFunc(border, r, g, b, a, br, bg, bb)
+        elseif border.customBackdrop then
+            border.customBackdrop:SetBackdropBorderColor(br, bg, bb)
+        end
+    end
 
-	local function HandleIconBorder(border, backdrop, customFunc)
-		if not backdrop then
-			local parent = border:GetParent()
-			backdrop = parent.backdrop or parent
-		end
+    local function HandleIconBorder(border, backdrop, customFunc)
+        if not backdrop then
+            local parent = border:GetParent()
+            backdrop = parent.backdrop or parent
+        end
 
-		border.customBackdrop = backdrop
+        border.customBackdrop = backdrop
 
-		if not border.IconBorderHooked then
-			border:StripTextures()
+        if not border.IconBorderHooked then
+            border:StripTextures()
 
-			hooksecurefunc(border, 'SetVertexColor', iconBorderColor)
-			hooksecurefunc(border, 'Hide', iconBorderHide)
+            hooksecurefunc(border, "SetVertexColor", iconBorderColor)
+            hooksecurefunc(border, "Hide", iconBorderHide)
 
-			border.IconBorderHooked = true
-		end
+            border.IconBorderHooked = true
+        end
 
-		local r, g, b, a = border:GetVertexColor()
-		if customFunc then
-			border.customFunc = customFunc
-			local br, bg, bb = unpack(1, 1, 1)
-			customFunc(border, r, g, b, a, br, bg, bb)
-		elseif r then
-			backdrop:SetBackdropBorderColor(r, g, b, a)
-		else
-			local br, bg, bb = unpack(1, 1, 1)
-			backdrop:SetBackdropBorderColor(br, bg, bb)
-		end
-	end
+        local r, g, b, a = border:GetVertexColor()
+        if customFunc then
+            border.customFunc = customFunc
+            local br, bg, bb = unpack(1, 1, 1)
+            customFunc(border, r, g, b, a, br, bg, bb)
+        elseif r then
+            backdrop:SetBackdropBorderColor(r, g, b, a)
+        else
+            local br, bg, bb = unpack(1, 1, 1)
+            backdrop:SetBackdropBorderColor(br, bg, bb)
+        end
+    end
     GW.HandleIconBorder = HandleIconBorder
 end
 
-local function SetInside(frame)
-    local anchor = frame:GetParent()
-
-	local xOffset = 2
-	local yOffset = 2
-	local trunc = function(s) return s >= 0 and s-s%01 or s-s%-1 end
-    local round = function(s) return s >= 0 and s-s%-1 or s-s%01 end
-    local x = (GW.mult == 1 or (xOffset or 2) == 0) and (xOffset or 2) or ((GW.mult < 1 and trunc((xOffset or 2) / GW.mult) or round((xOffset or 2) / GW.mult)) * GW.mult)
-    local y = (GW.mult == 1 or (yOffset or 2) == 0) and (yOffset or 2) or ((GW.mult < 1 and trunc((yOffset or 2) / GW.mult) or round((yOffset or 2) / GW.mult)) * GW.mult)
-
-	if frame:GetPoint() then
-		frame:ClearAllPoints()
-	end
-
-	frame:SetPoint('TOPLEFT', anchor, 'TOPLEFT', x, -y)
-	frame:SetPoint('BOTTOMRIGHT', anchor, 'BOTTOMRIGHT', -x, y)
+local function Scale(x)
+    local m = GW.mult
+    if m == 1 or x == 0 then
+        return x
+    else
+        local y = m > 1 and m or -m
+        return x - x % (x < 0 and y or -y)
+    end
 end
-GW.SetInside = SetInside
+GW.Scale = Scale

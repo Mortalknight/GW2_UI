@@ -29,6 +29,7 @@ local function LoadTooltipPanel(sWindow)
     addOption(p, L["Gender"], L["Displays the player character's gender."], "ADVANCED_TOOLTIP_SHOW_GENDER", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, DUNGEON_SCORE, nil, "ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, CHALLENGE_MODE_KEYSTONE_NAME:format("_"):gsub(": _", ""), L["Adds descriptions for mythic keystone properties to their tooltips."], "ADVANCED_TOOLTIP_SHOW_KEYSTONEINFO", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p, L["Show Health bar text"], nil, "ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOptionDropdown(
         p,
         L["Modifier for IDs"],

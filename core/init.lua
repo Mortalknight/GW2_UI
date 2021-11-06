@@ -51,6 +51,8 @@ GW.ScanTooltip = CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "Sha
 GW.HiddenFrame = CreateFrame("Frame")
 GW.HiddenFrame.HiddenString = GW.HiddenFrame:CreateFontString(nil, "OVERLAY")
 GW.HiddenFrame:Hide()
+GW.BorderSize = 1
+GW.SpacingSize = 1
 
 --Tables
 GW.unitIlvlsCache = {}

@@ -225,13 +225,19 @@ local function SkinSliderFrame(frame)
     end
 end
 
-local function CreateBackdrop(frame, backdropTexture, isBorder, xOffset, yOffset, xShift, yShift)
+local function CreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShift, yShift)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
     local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
     if not frame.backdrop then frame.backdrop = backdrop end
 
+    if not backdrop.SetBackdrop then
+        _G.Mixin(backdrop, _G.BackdropTemplateMixin)
+        backdrop:HookScript("OnSizeChanged", backdrop.OnBackdropSizeChanged)
+    end
+
     local frameLevel = parent.GetFrameLevel and parent:GetFrameLevel()
     local frameLevelMinusOne = frameLevel and (frameLevel - 1)
+
     if frameLevelMinusOne and (frameLevelMinusOne >= 0) then
         backdrop:SetFrameLevel(frameLevelMinusOne)
     else
@@ -253,10 +259,16 @@ local function CreateBackdrop(frame, backdropTexture, isBorder, xOffset, yOffset
         backdrop:SetAllPoints()
     end
 
-    if backdropTexture then
-        backdrop:SetBackdrop(backdropTexture)
+    if template then
+        backdrop:SetBackdrop(template)
+    elseif template == "Transparent" then
+        backdrop:SetBackdrop({
+			edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+			bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+			edgeSize = GW.Scale(1)
+		})
     else
-        backdrop:SetBackdrop(nil)
+        backdrop:SetBackdrop()
     end
 end
 
@@ -481,8 +493,6 @@ local function HandleMaxMinFrame(frame)
     frame.isSkinned = true
 end
 
-
-
 local function HandleNextPrevButton(button, arrowDir, noBackdrop)
     if button.isSkinned then return end
 
@@ -533,6 +543,38 @@ local function HandleNextPrevButton(button, arrowDir, noBackdrop)
 end
 GW.HandleNextPrevButton = HandleNextPrevButton
 
+local function SetOutside(obj, anchor, xOffset, yOffset, anchor2, noScale)
+    if not anchor then anchor = obj:GetParent() end
+
+    if not xOffset then xOffset = GW.BorderSize end
+    if not yOffset then yOffset = GW.BorderSize end
+    local x = (noScale and xOffset) or GW.Scale(xOffset)
+    local y = (noScale and yOffset) or GW.Scale(yOffset)
+
+    if GW.SetPointsRestricted (obj) or obj:GetPoint() then
+        obj:ClearAllPoints()
+    end
+
+    obj:SetPoint('TOPLEFT', anchor, 'TOPLEFT', -x, y)
+    obj:SetPoint('BOTTOMRIGHT', anchor2 or anchor, 'BOTTOMRIGHT', x, -y)
+end
+
+local function SetInside(obj, anchor, xOffset, yOffset, anchor2, noScale)
+    if not anchor then anchor = obj:GetParent() end
+
+    if not xOffset then xOffset = GW.BorderSize end
+    if not yOffset then yOffset = GW.BorderSize end
+    local x = (noScale and xOffset) or GW.Scale(xOffset)
+    local y = (noScale and yOffset) or GW.Scale(yOffset)
+
+    if GW.SetPointsRestricted (obj) or obj:GetPoint() then
+        obj:ClearAllPoints()
+    end
+
+    obj:SetPoint('TOPLEFT', anchor, 'TOPLEFT', x, -y)
+    obj:SetPoint('BOTTOMRIGHT', anchor2 or anchor, 'BOTTOMRIGHT', -x, y)
+end
+
 local function addapi(object)
     local mt = getmetatable(object).__index
     if not object.Kill then mt.Kill = Kill end
@@ -547,9 +589,11 @@ local function addapi(object)
     if not object.SkinScrollBar then mt.SkinScrollBar = SkinScrollBar end
     if not object.SkinDropDownMenu then mt.SkinDropDownMenu = SkinDropDownMenu end
     if not object.HandleMaxMinFrame then mt.HandleMaxMinFrame = HandleMaxMinFrame end
+    if not object.SetOutside then mt.SetOutside = SetOutside end
+    if not object.SetInside then mt.SetInside = SetInside end
 end
 
-local handled = {["Frame"] = true}
+local handled = {Frame = true}
 local object = CreateFrame("Frame")
 addapi(object)
 addapi(object:CreateTexture())
@@ -566,5 +610,5 @@ while object do
     object = EnumerateFrames(object)
 end
 
-local scrollFrame = CreateFrame("ScrollFrame")
-addapi(scrollFrame)
+addapi(GameFontNormal)
+addapi(CreateFrame("ScrollFrame"))

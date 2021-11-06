@@ -48,7 +48,7 @@ local function SkinDungeons()
         b1.hovertex:Hide()
         b1:HookScript("OnEnter", SetModifiedBackdrop)
         b1:HookScript("OnLeave", SetOriginalBackdrop)
-        GW.SetInside(b1.bgImage)
+        b1.bgImage:SetInside(2, 2)
         b1.bgImage:SetTexCoord(.08, .6, .08, .6)
         b1.bgImage:SetDrawLayer("ARTWORK", 5)
         b1.isSkinned = true
@@ -68,7 +68,7 @@ local function SkinDungeons()
             b.hovertex:Hide()
             b:HookScript("OnEnter", SetModifiedBackdrop)
             b:HookScript("OnLeave", SetOriginalBackdrop)
-            GW.SetInside(b.bgImage)
+            b.bgImage:SetInside(2, 2)
             b.bgImage:SetTexCoord(0.08, 0.6, 0.08, 0.6)
             b.bgImage:SetDrawLayer("ARTWORK", 5)
             b.isSkinned = true
@@ -475,7 +475,7 @@ local function LoadEncounterJournalSkin()
         local rewardData = sugg.reward.data
         if rewardData then
             if not sugg.reward.icon.backdrop then
-                sugg.reward.icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+                sugg.reward.icon:CreateBackdrop("Transparent", true)
                 sugg.reward.icon.backdrop:SetFrameLevel(3)
             end
 
@@ -528,7 +528,7 @@ local function LoadEncounterJournalSkin()
                 btn.BackgroundOverlay:SetAlpha(0)
                 btn.CircleMask:Hide()
                 GW.HandleIcon(btn.Icon)
-                btn.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+                btn.Icon:CreateBackdrop("Transparent", true)
                 btn.Icon.backdrop:SetBackdropBorderColor(r, g, b)
 
                 btn:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
