@@ -97,10 +97,6 @@ local function SetUnitAura(self, unit, index, filter)
     end
 
     self:Show()
-
-    if self:IsShown() then
-        --C_Timer.After(0.5, function() GameTooltip:SetUnitAura(unit, index, filter) end)
-    end
 end
 
 local function GameTooltip_OnTooltipSetSpell(self)
@@ -721,7 +717,7 @@ local function GameTooltipStatusBar_OnValueChanged(self, value)
     local _, max = self:GetMinMaxValues()
     if value > 0 and max == 1 then
         self.text:SetFormattedText("%d%%", floor(value * 100))
-        self:SetStatusBarColor(TAPPED_COLOR.r, TAPPED_COLOR.g, TAPPED_COLOR.b) --most effeciant?
+        self:SetStatusBarColor(TAPPED_COLOR.r, TAPPED_COLOR.g, TAPPED_COLOR.b)
     elseif value == 0 or (unit and UnitIsDeadOrGhost(unit)) then
         self.text:SetText(DEAD)
     else
@@ -792,15 +788,13 @@ local function SetTooltipFonts()
         end
     end
 
-    -- Ignore header font size on DatatextTooltip
     if DatatextTooltip then
         DatatextTooltipTextLeft1:SetFont(font, textSize, fontOutline)
         DatatextTooltipTextRight1:SetFont(font, textSize, fontOutline)
     end
 
-    -- Comparison Tooltips should use smallTextSize
     for _, tt in ipairs(GameTooltip.shoppingTooltips) do
-        for i=1, tt:GetNumRegions() do
+        for i = 1, tt:GetNumRegions() do
             local region = select(i, tt:GetRegions())
             if region:IsObjectType("FontString") then
                 region:SetFont(font, smallTextSize, fontOutline)

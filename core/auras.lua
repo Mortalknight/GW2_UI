@@ -316,16 +316,6 @@ local function UpdateBuffLayout(self, event, anchorPos)
 end
 GW.UpdateBuffLayout = UpdateBuffLayout
 
-local function auraFrame_OnUpdate(self, elapsed)
-    if self.throt < 0 and self.expires ~= nil and self:IsShown() then
-        self.throt = 0.2
-        self.duration:SetText(TimeCount(self.expires - GetTime()))
-    else
-        self.throt = self.throt - elapsed
-    end
-end
-GW.AddForProfiling("auras", "auraFrame_OnUpdate", auraFrame_OnUpdate)
-
 local function auraFrame_OnEnter(self)
     if self:IsShown() and self.auraid ~= nil and self.unit ~= nil then
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
@@ -339,6 +329,21 @@ local function auraFrame_OnEnter(self)
     end
 end
 GW.AddForProfiling("auras", "auraFrame_OnEnter", auraFrame_OnEnter)
+
+local function auraFrame_OnUpdate(self, elapsed)
+    if self.throt < 0 and self.expires ~= nil and self:IsShown() then
+        self.throt = 0.2
+        self.duration:SetText(TimeCount(self.expires - GetTime()))
+        -- update tooltip
+
+        if GameTooltip:IsOwned(self) then
+            auraFrame_OnEnter(self)
+        end
+    else
+        self.throt = self.throt - elapsed
+    end
+end
+GW.AddForProfiling("auras", "auraFrame_OnUpdate", auraFrame_OnUpdate)
 
 local function CreateAuraFrame(name, parent)
     local f = CreateFrame("Button", name, parent, "GwAuraFrame")

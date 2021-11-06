@@ -466,6 +466,8 @@ local function GridShowDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count
         frame:SetParent(parent)
         frame:SetFrameStrata("MEDIUM")
 
+        frame.throt = -1
+
         frame.debuffIcon:SetPoint("TOPLEFT", frame, "TOPLEFT", 1, -1)
         frame.debuffIcon:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
 
@@ -483,6 +485,18 @@ local function GridShowDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count
             frame:EnableMouse(true)
         end
     end
+
+    -- readd OnUpdate handler
+    frame:SetScript("OnUpdate", function(self, elapsed)
+        if self.throt < 0 and self.expires ~= nil and self:IsShown() then
+            self.throt = 0.2
+            if GameTooltip:IsOwned(self) then
+                onDebuffEnter(self)
+            end
+        else
+            self.throt = self.throt - elapsed
+        end
+    end)
 
     if debuffType and DEBUFF_COLOR[debuffType] then
         frame.background:SetVertexColor(DEBUFF_COLOR[debuffType].r, DEBUFF_COLOR[debuffType].g, DEBUFF_COLOR[debuffType].b)
@@ -572,6 +586,14 @@ local function GridUpdateDebuffs(self, profile)
             aurasDone = not debuffName or y > 0
         end
     until framesDone and aurasDone
+
+    --remove unsed OnUpdate handler
+    for ii = btnIndex, 40 do
+        local frame = _G["Gw" .. self:GetName() .. "DeBuffItemFrame" .. ii]
+        if frame then
+            frame:SetScript("OnUpdate", nil)
+        end
+    end
 end
 
 local function GridShowBuffIcon(parent, i, btnIndex, x, y, icon, isMissing, profile)
@@ -586,6 +608,8 @@ local function GridShowBuffIcon(parent, i, btnIndex, x, y, icon, isMissing, prof
         frame:SetSize(14, 14)
         frame:ClearAllPoints()
         frame:SetPoint("BOTTOMRIGHT", parent.healthbar, "BOTTOMRIGHT", -(marginX + 3), marginY + 3)
+        
+        frame.throt = -1
 
         frame.buffDuration:SetFont(UNIT_NAME_FONT, 11)
         frame.buffDuration:SetTextColor(1, 1, 1)
@@ -606,6 +630,18 @@ local function GridShowBuffIcon(parent, i, btnIndex, x, y, icon, isMissing, prof
             frame:EnableMouse(true)
         end
     end
+
+    -- readding onUpdate handler
+    frame:SetScript("OnUpdate", function(self, elapsed)
+        if self.throt < 0 and self.expires ~= nil and self:IsShown() then
+            self.throt = 0.2
+            if GameTooltip:IsOwned(self) then
+                onBuffEnter(self)
+            end
+        else
+            self.throt = self.throt - elapsed
+        end
+    end)
 
     frame.index = i
     frame.isMissing = isMissing
@@ -749,6 +785,14 @@ local function GridUpdateBuffs(self, profile)
             end
         end
     until framesDone and aurasDone
+
+     --remove unsed OnUpdate handler
+     for ii = btnIndex, 40 do
+        local frame = _G["Gw" .. self:GetName() .. "BuffItemFrame" .. ii]
+        if frame then
+            frame:SetScript("OnUpdate", nil)
+        end
+    end
 end
 
 local function GridUpdateAuras(self, profile)

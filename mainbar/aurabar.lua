@@ -224,6 +224,9 @@ local function header_OnUpdate(self, elapsed)
         local name, _ , _, _, duration, expires, _ = UnitAura("player", btn:GetID(), btn:GetFilter())
         if name and duration then
             btn:UpdateCD(expires - GetTime())
+            if GameTooltip:IsOwned(btn) then
+                GameTooltip:SetUnitAura("player", btn:GetID(), btn:GetFilter());
+            end
         end
     end
 
@@ -237,7 +240,7 @@ local function header_OnUpdate(self, elapsed)
                 mh, mh_exp, _, _, oh, oh_exp, _, _, rh, rh_exp, _ = GetWeaponEnchantInfo()
                 weigot = true
             end
-    
+
             local slot = INVSLOT_MAINHAND - 1 + i
             local remain = 0
             if slot == INVSLOT_MAINHAND and mh and mh_exp > 0 then
@@ -248,6 +251,9 @@ local function header_OnUpdate(self, elapsed)
                 remain = rh_exp / 1000
             end
             btn:UpdateCD(remain)
+            if GameTooltip:IsOwned(btn) then
+                TempEnchantButton_OnEnter(btn)
+            end
         end
     end
 
@@ -557,7 +563,7 @@ local function LoadPlayerAuras(lm)
     BuffFrame:SetScript("OnShow", Self_Hide)
 
     local aura_style = GetSetting("PLAYER_AURA_STYLE")
-    local secure = aura_style == "SECURE" or false
+    local secure = aura_style == "SECURE"
     Debug("player aura style", aura_style, secure)
 
     loadAuras(lm, secure)

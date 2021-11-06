@@ -1,6 +1,11 @@
-5.20.2
+5.21.0
+NEW
+    - Added text option to tooltip healthbar
+
 FIXES
-    - 9.1.5 tooltip issue
+    - Fix some tooltip issues
+    - Aura tooltips are now updating correctly to show remaning time
+    - Fix item upgrade skin
 
 
 5.20.1

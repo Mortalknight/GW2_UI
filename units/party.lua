@@ -165,6 +165,13 @@ local function getUnitDebuffs(unit)
 end
 GW.AddForProfiling("party", "getUnitDebuffs", getUnitDebuffs)
 
+local function DebuffOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+    GameTooltip:ClearLines()
+    GameTooltip:SetUnitDebuff(self.unit, self.key)
+    GameTooltip:Show()
+end
+
 local function updatePartyDebuffs(self, x, y)
     if x ~= 0 and not self.isPet then
         y = y + 1
@@ -181,6 +188,8 @@ local function updatePartyDebuffs(self, x, y)
 
             debuffFrame.expires = debuffList[i].expires
             debuffFrame.duration = debuffList[i].duration
+            debuffFrame.key = debuffList[i].key
+            debuffFrame.unit = unit
 
             debuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
             if debuffList[i].dispelType ~= nil and DEBUFF_COLOR[debuffList[i].dispelType] ~= nil then
@@ -191,13 +200,18 @@ local function updatePartyDebuffs(self, x, y)
             debuffFrame.debuffIcon.stacks:SetText((debuffList[i].count or 1) > 1 and debuffList[i].count or "")
             debuffFrame.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, (debuffList[i].count or 1) > 9 and 11 or 14, "OUTLINE")
 
-            debuffFrame:SetScript("OnEnter", function(self)
-                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
-                GameTooltip:ClearLines()
-                GameTooltip:SetUnitDebuff(unit, debuffList[i].key)
-                GameTooltip:Show()
-            end)
+            debuffFrame:SetScript("OnEnter", DebuffOnEnter)
             debuffFrame:SetScript("OnLeave", GameTooltip_Hide)
+            debuffFrame:SetScript("OnUpdate", function(self, elapsed)
+                if self.throt < 0 and self.expires ~= nil and self:IsShown() then
+                    self.throt = 0.2
+                    if GameTooltip:IsOwned(self) then
+                        DebuffOnEnter(self)
+                    end
+                else
+                    self.throt = self.throt - elapsed
+                end
+            end)
 
             local size = self.isPet and 10 or 24
             if debuffList[i].isImportant or debuffList[i].isDispellable then
@@ -226,6 +240,7 @@ local function updatePartyDebuffs(self, x, y)
             debuffFrame:Hide()
             debuffFrame:SetScript("OnEnter", nil)
             debuffFrame:SetScript("OnLeave", nil)
+            debuffFrame:SetScript("OnUpdate", nil)
         end
     end
 end
@@ -264,6 +279,13 @@ local function getUnitBuffs(unit)
 end
 GW.AddForProfiling("party", "getUnitBuffs", getUnitBuffs)
 
+local function BuffOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
+    GameTooltip:ClearLines()
+    GameTooltip:SetUnitBuff(self.unit, self.key)
+    GameTooltip:Show()
+end
+
 local function updatePartyAuras(self)
     local x = 0
     local y = 0
@@ -280,19 +302,26 @@ local function updatePartyAuras(self)
 
             buffFrame.expires = buffList[i].expires
             buffFrame.duration = buffList[i].duration
+            buffFrame.key = buffList[i].key
+            buffFrame.unit = unit
 
             buffFrame.buffDuration:SetText("")
             buffFrame.buffStacks:SetText((buffList[i].count or 1) > 1 and buffList[i].count or "")
             buffFrame:ClearAllPoints()
             buffFrame:SetPoint("BOTTOMRIGHT", (-margin * x), marginy * y)
 
-            buffFrame:SetScript("OnEnter", function(self)
-                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
-                GameTooltip:ClearLines()
-                GameTooltip:SetUnitBuff(unit, buffList[i].key)
-                GameTooltip:Show()
-            end)
+            buffFrame:SetScript("OnEnter", BuffOnEnter)
             buffFrame:SetScript("OnLeave", GameTooltip_Hide)
+            buffFrame:SetScript("OnUpdate", function(self, elapsed)
+                if self.throt < 0 and self.expires ~= nil and self:IsShown() then
+                    self.throt = 0.2
+                    if GameTooltip:IsOwned(self) then
+                        BuffOnEnter(self)
+                    end
+                else
+                    self.throt = self.throt - elapsed
+                end
+            end)
 
             buffFrame:Show()
 
@@ -305,6 +334,7 @@ local function updatePartyAuras(self)
             buffFrame:Hide()
             buffFrame:SetScript("OnEnter", nil)
             buffFrame:SetScript("OnLeave", nil)
+            buffFrame:SetScript("OnUpdate", nil)
         end
     end
     updatePartyDebuffs(self, x, y)
@@ -557,6 +587,7 @@ local function CreatePartyPetFrame(frame, i)
         debuffFrame.cooldown:SetDrawSwipe(1)
         debuffFrame.cooldown:SetReverse(1)
         debuffFrame.cooldown:SetHideCountdownNumbers(true)
+        debuffFrame.throt = -1
         debuffFrame:SetSize(10, 10)
 
         f.debuffFrames[k] = debuffFrame
@@ -568,6 +599,7 @@ local function CreatePartyPetFrame(frame, i)
         buffFrame.buffStacks:SetTextColor(1, 1, 1)
         buffFrame:SetParent(f.auras)
         buffFrame:SetSize(10, 10)
+        buffFrame.throt = -1
 
         f.buffFrames[k] = buffFrame
     end
@@ -672,6 +704,7 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
         debuffFrame.cooldown:SetReverse(1)
         debuffFrame.cooldown:SetHideCountdownNumbers(true)
         debuffFrame:SetSize(24, 24)
+        debuffFrame.throt = -1
 
         frame.debuffFrames[k] = debuffFrame
 
@@ -682,6 +715,7 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
         buffFrame.buffStacks:SetTextColor(1, 1, 1)
         buffFrame:SetParent(frame.auras)
         buffFrame:SetSize(20, 20)
+        buffFrame.throt = -1
 
         frame.buffFrames[k] = buffFrame
     end

@@ -1,9 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("5.20.2", [=[
+v("5.21.0", [=[
+NEW
+- Added text option to tooltip healthbar
+
 FIXES
-    - 9.1.5 tooltip issue
+- Fix some tooltip issues
+- Aura tooltips are now updating correctly to show remaning time
+- Fix item upgrade skin
 ]=])
 
 v("5.20.1", [=[
