@@ -494,7 +494,7 @@ local function AddTargetInfo(self, unit)
 
         local numList = #targetList
         if numList > 0 then
-            self:AddLine(format("%s (|cffffffff%d|r): %s", L["Targeted By:"], numList, table.concat(targetList, ", ")), nil, nil, nil, true)
+            self:AddLine(format("%s (|cffffffff%d|r): %s", L["Targeted by:"], numList, table.concat(targetList, ", ")), nil, nil, nil, true)
             wipe(targetList)
         end
     end
