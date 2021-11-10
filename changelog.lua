@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.21.1", [=[
+FIXES
+    - Tooltip statusbar color
+]=])
+
 v("5.21.0", [=[
 NEW
 - Added text option to tooltip healthbar

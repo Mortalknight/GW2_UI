@@ -693,7 +693,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
     if color then
         self.StatusBar:SetStatusBarColor(color.r, color.g, color.b)
     else
-        self.StatusBar:SetStatusBarColor(0.6, 0.6, 0.6)
+        self.StatusBar:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
     end
 
     local textWidth = self.StatusBar.text:GetStringWidth()
@@ -717,7 +717,7 @@ local function GameTooltipStatusBar_OnValueChanged(self, value)
     local _, max = self:GetMinMaxValues()
     if value > 0 and max == 1 then
         self.text:SetFormattedText("%d%%", floor(value * 100))
-        self:SetStatusBarColor(TAPPED_COLOR.r, TAPPED_COLOR.g, TAPPED_COLOR.b)
+        self:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
     elseif value == 0 or (unit and UnitIsDeadOrGhost(unit)) then
         self.text:SetText(DEAD)
     else
@@ -807,7 +807,7 @@ local function GameTooltip_AddQuestRewardsToTooltip(self, questID)
     if not (self and questID and self.progressBar) or self:IsForbidden() then return end
 
     local _, max = self.progressBar:GetMinMaxValues()
-    GW.StatusBarColorGradient (self.progressBar, self.progressBar:GetValue(), max)
+    GW.StatusBarColorGradient(self.progressBar, self.progressBar:GetValue(), max)
 end
 
 local function GameTooltip_ClearProgressBars(self)
