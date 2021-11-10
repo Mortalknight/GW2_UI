@@ -124,7 +124,7 @@ local function Money_OnEnter(self)
             end
 
             local toonName = format("%s%s", factionTexture, g.name)
-            GameTooltip:AddDoubleLine((g.name == GW.myname and toonName .. " |TInterface/COMMON/Indicator-Green:14:14:0:-2|t") or toonName, GW.FormatMoneyForChat(g.amount), color.r, color.g, color.b, 1, 1, 1)
+            GameTooltip:AddDoubleLine((g.name == GW.myname and toonName .. " |TInterface/COMMON/Indicator-Green:14:14:0:-2|t") or toonName, FormatMoneyForChat(g.amount), color.r, color.g, color.b, 1, 1, 1)
         end
 
         -- add total gold on realm

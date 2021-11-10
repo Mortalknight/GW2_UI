@@ -1027,7 +1027,6 @@ local function LoadBag(helpers)
         OnButton1 = function(self, data)
             SetSetting("BAG_HEADER_NAME" .. data, self.editBox:GetText())
             _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(self.editBox:GetText())
-            return
         end,
         OnButton2 = function(_, data)
             SetSetting("BAG_HEADER_NAME" .. data, "")
@@ -1047,8 +1046,6 @@ local function LoadBag(helpers)
             else
                 _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(BACKPACK_TOOLTIP)
             end
-
-            return
         end,
         timeout = 0,
         whileDead = 1,

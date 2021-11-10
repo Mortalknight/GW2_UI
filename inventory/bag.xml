@@ -77,7 +77,8 @@
                         <Anchor point="BOTTOMRIGHT" x="-20" y="-40"></Anchor>
                     </Anchors>
                 </FontString>
-                <Texture file="Interface/MoneyFrame/UI-CopperIcon">
+                <Texture file="Interface/AddOns/GW2_UI/textures/icons/Coins">
+                    <TexCoords left="0" right="0.33" top="0.022" bottom="0.66"/>
                     <Size x="11" y="11"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" x="-8" y="-25"></Anchor>
@@ -89,7 +90,8 @@
                         <Anchor point="BOTTOMRIGHT" x="-60" y="-40"></Anchor>
                     </Anchors>
                 </FontString>
-                <Texture file="Interface/MoneyFrame/UI-SilverIcon">
+                <Texture file="Interface/AddOns/GW2_UI/textures/icons/Coins">
+                    <TexCoords left="0.66" right="0.99" top="0.022" bottom="0.66"/>
                     <Size x="11" y="11"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" x="-48" y="-25"></Anchor>
@@ -101,7 +103,8 @@
                         <Anchor point="BOTTOMRIGHT" x="-100" y="-40"></Anchor>
                     </Anchors>
                 </FontString>
-                <Texture file="Interface/MoneyFrame/UI-GoldIcon">
+                <Texture file="Interface/AddOns/GW2_UI/textures/icons/Coins">
+                    <TexCoords left="0.33" right="0.66" top="0.022" bottom="0.66"/>
                     <Size x="11" y="11"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" x="-88" y="-25"></Anchor>
