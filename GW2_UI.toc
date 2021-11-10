@@ -78,6 +78,7 @@ dataInfo/time.lua
 dataInfo/spec.lua
 dataInfo/conduits.lua
 dataInfo/friends.lua
+dataInfo/system.lua
 
 core/auras.lua
 

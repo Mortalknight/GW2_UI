@@ -313,12 +313,14 @@ local function LoadMinimap()
 
     --FPS
     if GetSetting("MINIMAP_FPS") then
+        GW.BuildAddonList()
         GwMapFPS = CreateFrame("Button", "GwMapFPS", Minimap, "GwMapFPS")
         GwMapFPS.fps:SetText(NOT_APPLICABLE)
         GwMapFPS.fps:SetFont(STANDARD_TEXT_FONT, 12)
-        GwMapFPS.fpsTimer = C_Timer.NewTicker(0.5, function()
-            GwMapFPS.fps:SetText(RoundDec(GetFramerate()) .. " FPS")
-        end)
+        GwMapFPS:SetScript("OnEnter", GW.FpsOnEnter)
+        GwMapFPS:SetScript("OnUpdate", GW.FpsOnUpdate)
+        GwMapFPS:SetScript("OnLeave", GW.FpsOnLeave)
+        GwMapFPS:SetScript("OnClick", GW.FpsOnClick)
     end
 
     MinimapNorthTag:ClearAllPoints()
