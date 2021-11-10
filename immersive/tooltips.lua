@@ -854,7 +854,14 @@ local function SkinQueueStatusFrame()
     local QueueStatusFrame = QueueStatusFrame
 
     QueueStatusFrame:StripTextures()
-    QueueStatusFrame:CreateBackdrop(constBackdropArgs)
+    QueueStatusFrame:CreateBackdrop({
+        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+        tile = false,
+        tileSize = 64,
+        edgeSize = 32,
+        insets = {left = 2, right = 2, top = 2, bottom = 2}
+    })
 end
 
 local function SkinBattlePetTooltip()
