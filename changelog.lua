@@ -1,6 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.22.0", [=[
+NEW
+    - Added option to set mainbar and multibar button spacing
+    - Added System datainfo to minimap fps text
+FIXES
+    - Some tooltip issues
+]=])
+
 v("5.21.1", [=[
 FIXES
     - Tooltip statusbar color

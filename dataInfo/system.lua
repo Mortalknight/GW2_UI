@@ -76,8 +76,8 @@ local function FpsOnEnter(self, slow)
 
     local Downloading = GetFileStreamingStatus() ~= 0 or GetBackgroundLoadingStatus() ~= 0
     if Downloading then
-        GameTooltip:AddDoubleLine(L["Bandwidth"] , format("%.2f Mbps", GetAvailableBandwidth()), 1, 0.93, 0.73, 0.84, 0.75, 0.65)
-        GameTooltip:AddDoubleLine(L["Download"] , format("%.2f%%", GetDownloadedPercentage() * 100), 1, 0.93, 0.73, 0.84, 0.75, 0.65)
+        GameTooltip:AddDoubleLine(L["Bandwidth"], format("%.2f Mbps", GetAvailableBandwidth()), 1, 0.93, 0.73, 0.84, 0.75, 0.65)
+        GameTooltip:AddDoubleLine(L["Download"], format("%.2f%%", GetDownloadedPercentage() * 100), 1, 0.93, 0.73, 0.84, 0.75, 0.65)
         GameTooltip:AddLine(" ")
     end
 
@@ -112,7 +112,7 @@ local function FpsOnEnter(self, slow)
             count = count + 1
             infoDisplay[count] = data
 
-            if data.name == "GW2 UI (@project-version@)" then
+            if data.name == "GW2_UI" then
                 infoTable[data.name] = data
             end
         end

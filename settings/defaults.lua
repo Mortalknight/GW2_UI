@@ -247,15 +247,16 @@ GW_DEFAULT["focustarget_pos"]["xOfs"] = -80
 GW_DEFAULT["focustarget_pos"]["yOfs"] = -10
 GW_DEFAULT["focustarget_pos_scale"] = 1
 
+GW_DEFAULT.MULTIBAR_MARGIIN = 2
+GW_DEFAULT.MAINBAR_MARGIIN = 5
+
 GW_DEFAULT["MultiBarBottomLeft"] = {}
 GW_DEFAULT["MultiBarBottomLeft"]["point"] = "BOTTOMLEFT"
 GW_DEFAULT["MultiBarBottomLeft"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["MultiBarBottomLeft"]["xOfs"] = -372
 GW_DEFAULT["MultiBarBottomLeft"]["yOfs"] = 120
 GW_DEFAULT["MultiBarBottomLeft_scale"] = 1
-
 GW_DEFAULT["MultiBarBottomLeft"]["size"] = 38
-GW_DEFAULT["MultiBarBottomLeft"]["margin"] = 2
 GW_DEFAULT["MultiBarBottomLeft"]["ButtonsPerRow"] = 6
 GW_DEFAULT["MultiBarBottomLeft"]["hideDefaultBackground"] = true
 
@@ -265,11 +266,29 @@ GW_DEFAULT["MultiBarBottomRight"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["MultiBarBottomRight"]["xOfs"] = 372
 GW_DEFAULT["MultiBarBottomRight"]["yOfs"] = 120
 GW_DEFAULT["MultiBarBottomRight_scale"] = 1
-
 GW_DEFAULT["MultiBarBottomRight"]["size"] = 38
-GW_DEFAULT["MultiBarBottomRight"]["margin"] = 2
 GW_DEFAULT["MultiBarBottomRight"]["ButtonsPerRow"] = 6
 GW_DEFAULT["MultiBarBottomRight"]["hideDefaultBackground"] = true
+
+GW_DEFAULT["MultiBarRight"] = {}
+GW_DEFAULT["MultiBarRight"]["point"] = "RIGHT"
+GW_DEFAULT["MultiBarRight"]["relativePoint"] = "RIGHT"
+GW_DEFAULT["MultiBarRight"]["xOfs"] = -320
+GW_DEFAULT["MultiBarRight"]["yOfs"] = 0
+GW_DEFAULT["MultiBarRight_scale"] = 1
+GW_DEFAULT["MultiBarRight"]["size"] = 38
+GW_DEFAULT["MultiBarRight"]["ButtonsPerRow"] = 1
+GW_DEFAULT["MultiBarRight"]["hideDefaultBackground"] = true
+
+GW_DEFAULT["MultiBarLeft"] = {}
+GW_DEFAULT["MultiBarLeft"]["point"] = "RIGHT"
+GW_DEFAULT["MultiBarLeft"]["relativePoint"] = "RIGHT"
+GW_DEFAULT["MultiBarLeft"]["xOfs"] = -368
+GW_DEFAULT["MultiBarLeft"]["yOfs"] = 0
+GW_DEFAULT["MultiBarLeft_scale"] = 1
+GW_DEFAULT["MultiBarLeft"]["size"] = 38
+GW_DEFAULT["MultiBarLeft"]["ButtonsPerRow"] = 1
+GW_DEFAULT["MultiBarLeft"]["hideDefaultBackground"] = true
 
 GW_DEFAULT["MULTIBAR_RIGHT_COLS"] = 1
 
@@ -288,30 +307,6 @@ GW_DEFAULT["PlayerDebuffFrame"]["xOfs"] = 53
 GW_DEFAULT["PlayerDebuffFrame"]["yOfs"] = 220
 GW_DEFAULT["PlayerDebuffFrame_GrowDirection"] = "UP"
 GW_DEFAULT["PlayerDebuffFrame_scale"] = 1
-
-GW_DEFAULT["MultiBarRight"] = {}
-GW_DEFAULT["MultiBarRight"]["point"] = "RIGHT"
-GW_DEFAULT["MultiBarRight"]["relativePoint"] = "RIGHT"
-GW_DEFAULT["MultiBarRight"]["xOfs"] = -320
-GW_DEFAULT["MultiBarRight"]["yOfs"] = 0
-GW_DEFAULT["MultiBarRight_scale"] = 1
-
-GW_DEFAULT["MultiBarRight"]["size"] = 38
-GW_DEFAULT["MultiBarRight"]["margin"] = 2
-GW_DEFAULT["MultiBarRight"]["ButtonsPerRow"] = 1
-GW_DEFAULT["MultiBarRight"]["hideDefaultBackground"] = true
-
-GW_DEFAULT["MultiBarLeft"] = {}
-GW_DEFAULT["MultiBarLeft"]["point"] = "RIGHT"
-GW_DEFAULT["MultiBarLeft"]["relativePoint"] = "RIGHT"
-GW_DEFAULT["MultiBarLeft"]["xOfs"] = -368
-GW_DEFAULT["MultiBarLeft"]["yOfs"] = 0
-GW_DEFAULT["MultiBarLeft_scale"] = 1
-
-GW_DEFAULT["MultiBarLeft"]["size"] = 38
-GW_DEFAULT["MultiBarLeft"]["margin"] = 2
-GW_DEFAULT["MultiBarLeft"]["ButtonsPerRow"] = 1
-GW_DEFAULT["MultiBarLeft"]["hideDefaultBackground"] = true
 
 GW_DEFAULT["GameTooltipPos"] = {}
 GW_DEFAULT["GameTooltipPos"]["point"] = "BOTTOMRIGHT"

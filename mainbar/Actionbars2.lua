@@ -8,7 +8,6 @@ local CountTable = GW.CountTable
 local AddUpdateCB = GW.AddUpdateCB
 
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
-local MAIN_MENU_BAR_BUTTON_MARGIN = 5
 
 local GW_BLIZZARD_HIDE_FRAMES = {
     MainMenuBar,
@@ -212,8 +211,7 @@ local function fadeCheck(self, forceCombat)
     local isDirty = self.gw_DirtySetting
 
     for i = 1, 5 do
-        local f = self["gw_Bar" .. i]
-        if i == 5 then f = self end
+        local f = i == 5 and self or self["gw_Bar" .. i]
         local fadeOption = GetSetting("FADE_MULTIACTIONBAR_" .. i)
         if f then
             if isDirty and not inLockdown then
@@ -410,7 +408,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         if btn.showMacroName then
             btn.Name:SetPoint("TOPLEFT", btn, "TOPLEFT")
             btn.Name:SetJustifyH("LEFT")
-            local font, fontHeight, fontFlags = btn.Name:GetFont()
+            local font, fontHeight = btn.Name:GetFont()
             btn.Name:SetFont(font, fontHeight, "OUTLINED")
         else
             btn.Name:SetAlpha(0)
@@ -453,7 +451,7 @@ local function updateMainBar()
     local fmActionbar = MainMenuBarArtFrame
 
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
-    local btn_padding = MAIN_MENU_BAR_BUTTON_MARGIN
+    local btn_padding = GetSetting("MAINBAR_MARGIIN")
     local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
 
     fmActionbar.gw_Buttons = {}
@@ -481,7 +479,7 @@ local function updateMainBar()
             btn:SetScript("OnUpdate", nil) -- disable the default button update handler
 
             local hotkey = _G["ActionButton" .. i .. "HotKey"]
-            btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + MAIN_MENU_BAR_BUTTON_MARGIN
+            btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + GetSetting("MAINBAR_MARGIIN")
             btn:SetSize(MAIN_MENU_BAR_BUTTON_SIZE, MAIN_MENU_BAR_BUTTON_SIZE)
             btn.showMacroName = showName
 
@@ -524,7 +522,7 @@ local function updateMainBar()
                 "LEFT",
                 fmActionbar,
                 "LEFT",
-                btn_padding - MAIN_MENU_BAR_BUTTON_MARGIN - MAIN_MENU_BAR_BUTTON_SIZE,
+                btn_padding - GetSetting("MAINBAR_MARGIIN") - MAIN_MENU_BAR_BUTTON_SIZE,
                 (GetSetting("XPBAR_ENABLED") and 0 or -14)
             )
 
@@ -562,6 +560,30 @@ local function updateMainBar()
     return fmActionbar
 end
 GW.AddForProfiling("Actionbars2", "updateMainBar", updateMainBar)
+
+local function UpdateMainBarMargin()
+    local fmActionbar = MainMenuBarArtFrame
+    local used_height = MAIN_MENU_BAR_BUTTON_SIZE
+    local btn_padding = GetSetting("MAINBAR_MARGIIN")
+
+    for i = 1, 12 do
+        local btn = fmActionbar.gw_Buttons[i]
+        btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + GetSetting("MAINBAR_MARGIIN")
+
+        btn:ClearAllPoints()
+        btn:SetPoint("LEFT", fmActionbar, "LEFT", btn_padding - GetSetting("MAINBAR_MARGIIN") - MAIN_MENU_BAR_BUTTON_SIZE, (GetSetting("XPBAR_ENABLED") and 0 or -14))
+
+        if i == 6 and not GetSetting("PLAYER_AS_TARGET_FRAME") then
+            btn_padding = btn_padding + 108
+        end
+    end
+   -- position the main action bar
+   fmActionbar:ClearAllPoints()
+   fmActionbar:SetPoint("TOP", UIParent, "BOTTOM", 0, 80)
+   fmActionbar:SetSize(btn_padding, used_height)
+   fmActionbar.gw_Width = btn_padding
+end
+GW.UpdateMainBarMargin = UpdateMainBarMargin
 
 local function trackBarChanges()
     local fmActionbar = MainMenuBarArtFrame
@@ -611,6 +633,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local settings = GetSetting(barName)
     local used_width = 0
     local used_height = settings.size
+    local margin = GetSetting("MULTIBAR_MARGIIN")
     local btn_padding = 0
     local btn_padding_y = 0
     local btn_this_row = 0
@@ -623,14 +646,15 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
         fmMultibar:SetFrameStrata("LOW")
     end
     fmMultibar.gw_Buttons = {}
+    fmMultibar.originalBarName = barName
 
     local hideActionBarBG = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
     for i = 1, 12 do
         local btn = _G[buttonName .. i]
         fmMultibar.gw_Buttons[i] = btn
 
-        if btn ~= nil then
-            if actionPage ~= nil then
+        if btn then
+            if actionPage then
                 -- reparent button to our action bar
                 btn:SetParent(fmMultibar)
             end
@@ -648,12 +672,12 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             btn.noGrid = nil
             btn.changedColor = false
 
-            btn_padding = btn_padding + settings.size + settings.margin
+            btn_padding = btn_padding + settings.size + margin
             btn_this_row = btn_this_row + 1
             used_width = btn_padding
 
             if btn_this_row == settings.ButtonsPerRow then
-                btn_padding_y = btn_padding_y + settings.size + settings.margin
+                btn_padding_y = btn_padding_y + settings.size + margin
                 btn_this_row = 0
                 btn_padding = 0
                 used_height = btn_padding_y
@@ -716,7 +740,46 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 end
 GW.AddForProfiling("Actionbars2", "updateMultiBar", updateMultiBar)
 
+local function UpdateMultibarButtonMargin()
+    local margin = GetSetting("MULTIBAR_MARGIIN")
+    local fmActionbar = MainMenuBarArtFrame
+    local fmMultiBar
+    for y = 1, 4 do
+        if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
+        if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
+        if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
+        if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
+        if fmMultiBar.gw_IsEnabled then
+            local settings = GetSetting(fmMultiBar.originalBarName)
+            local used_height = settings.size
+            local btn_padding = 0
+            local btn_padding_y = 0
+            local btn_this_row = 0
+            local used_width = 0
+            for i = 1, 12 do
+                local btn = fmMultiBar.gw_Buttons[i]
 
+                btn:ClearAllPoints()
+                btn:SetPoint("TOPLEFT", fmMultiBar, "TOPLEFT", btn_padding, -btn_padding_y)
+
+                btn_padding = btn_padding + settings.size + margin
+                btn_this_row = btn_this_row + 1
+                used_width = btn_padding
+
+                if btn_this_row == settings.ButtonsPerRow then
+                    btn_padding_y = btn_padding_y + used_height + margin
+                    btn_this_row = 0
+                    btn_padding = 0
+                    --used_height = btn_padding_y
+                end
+
+            end
+
+            fmMultiBar:SetSize(used_width, settings.size)
+        end
+    end
+end
+GW.UpdateMultibarButtonMargin = UpdateMultibarButtonMargin
 
 local function setPossessBar()
     PossessBarFrame:ClearAllPoints()
@@ -1018,7 +1081,7 @@ local function LoadActionBars(lm)
     end
 
     -- init our bars
-    local fmActionbar = updateMainBar(showBotRight)
+    local fmActionbar = updateMainBar()
     fmActionbar.gw_Bar1 = updateMultiBar(lm, "MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true)
     fmActionbar.gw_Bar2 = updateMultiBar(lm, "MultiBarBottomRight", "MultiBarBottomRightButton", BOTTOMRIGHT_ACTIONBAR_PAGE, true)
     fmActionbar.gw_Bar3 = updateMultiBar(lm, "MultiBarRight", "MultiBarRightButton", RIGHT_ACTIONBAR_PAGE, nil)

@@ -2,6 +2,7 @@ local _, GW = ...
 local L = GW.L
 local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
+local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
@@ -18,6 +19,8 @@ local function setMultibarCols()
     mb2["ButtonsPerRow"] = cols
     SetSetting("MultiBarRight", mb1)
     SetSetting("MultiBarLeft", mb2)
+    --#regionto update the cols
+    GW.UpdateMultibarButtonMargin()
 end
 AddForProfiling("panel_actionbar", "setMultibarCols", setMultibarCols)
 
@@ -85,6 +88,30 @@ local function LoadActionbarPanel(sWindow)
         nil,
         {["ACTIONBARS_ENABLED"] = true, ["GW_SHOW_MULTI_ACTIONBAR_3"] = true},
         "Actionbars"
+    )
+    addOptionSlider(
+        p,
+        BINDING_HEADER_ACTIONBAR .. ": " .. L["Button Spacing"],
+        nil,
+        "MAINBAR_MARGIIN",
+        GW.UpdateMainBarMargin,
+        0,
+        10,
+        nil,
+        1,
+        {["ACTIONBARS_ENABLED"] = true}
+    )
+    addOptionSlider(
+        p,
+        BINDING_HEADER_MULTIACTIONBAR .. ": " .. L["Button Spacing"],
+        nil,
+        "MULTIBAR_MARGIIN",
+        GW.UpdateMultibarButtonMargin,
+        0,
+        10,
+        nil,
+        1,
+        {["ACTIONBARS_ENABLED"] = true}
     )
     addOptionDropdown(
         p,
