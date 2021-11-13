@@ -17,11 +17,14 @@ do
         if s < MINUTE then
             return TimeFormats[3]:format(s), 0.5
         elseif s < HOUR then
-            return TimeFormats[2]:format(mod(s, HOUR) / MINUTE), 2
+            local mins = mod(s, HOUR) / MINUTE
+            return TimeFormats[2]:format(mins), mins > 2 and 30 or 1
         elseif s < DAY then
-            return TimeFormats[1]:format(mod(s, DAY)) / HOUR, 1
+            local hrs = mod(s, DAY) / HOUR
+            return TimeFormats[1]:format(hrs), hrs > 1 and 60 or 30
         else
-            return TimeFormats[0]:format(mod(s, YEAR)) / DAY, 0
+            local days = mod(s, YEAR) / DAY
+            return TimeFormats[0]:format(days), days > 1 and 120 or 60
         end
     end
     GW.GetTimeInfo = GetTimeInfo
@@ -41,7 +44,7 @@ local function Cooldown_StopTimer(self)
     self:Hide()
 end
 
-local function Cooldown_BelowScale(self) 
+local function Cooldown_BelowScale(self)
     return self.fontScale and (self.fontScale < MIN_SCALE)
 end
 
@@ -126,7 +129,6 @@ local function CreateCooldownTimer(parent)
 
     ToggleBlizzardCooldownText(parent, timer)
 
-    -- keep an eye on the size so we can rescale the font if needed
     Cooldown_OnSizeChanged(timer, parent:GetWidth())
     parent:SetScript("OnSizeChanged", function(_, width)
         Cooldown_OnSizeChanged(timer, width)

@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.22.1", [=[
+FIXES
+    - Fix cooldown lua error
+]=])
+
+
 v("5.22.0", [=[
 NEW
     - Added option to set mainbar and multibar button spacing
