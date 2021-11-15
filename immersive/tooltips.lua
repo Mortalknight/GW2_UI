@@ -436,23 +436,15 @@ local function SkinProgressbar(self)
     self.pbBar = sb.Bar
 end
 
-local function SetStyle(tooltip, _, isEmbedded)
-    if tooltip.NineSlice then
-        if not tooltip or (tooltip == GW.ScanTooltip or isEmbedded or tooltip.IsEmbedded or not tooltip.NineSlice) or tooltip:IsForbidden() then return end
+local function SetStyle(self, _, isEmbedded)
+    if not self or (self == GW.ScanTooltip or isEmbedded or self.IsEmbedded or not self.NineSlice) or self:IsForbidden() then return end
 
-        if tooltip.Delimiter1 then tooltip.Delimiter1:SetTexture() end
-        if tooltip.Delimiter2 then tooltip.Delimiter2:SetTexture() end
+    if self.Delimiter1 then self.Delimiter1:SetTexture() end
+    if self.Delimiter2 then self.Delimiter2:SetTexture() end
 
-        if not tooltip.NineSlice.SetBackdrop then
-            tooltip.NineSlice:Hide()
-            Mixin(tooltip, BackdropTemplateMixin)
-            tooltip:HookScript("OnSizeChanged", tooltip.OnBackdropSizeChanged)
-            tooltip:SetBackdrop(constBackdropArgs)
-        end
-    else
-        if not tooltip or (tooltip == GW.ScanTooltip or isEmbedded or tooltip.IsEmbedded) or tooltip:IsForbidden() then return end
-        tooltip:SetBackdrop(constBackdropArgs)
-    end
+
+    self.NineSlice:Hide()
+    self:CreateBackdrop(constBackdropArgs)
 end
 
 local function LoadTooltips()

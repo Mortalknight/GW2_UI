@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("2.0.4 Era", [=[
+FIXES
+    - Fix tooltip lua error
+]=])
+
+
 v("2.0.3 Era", [=[
 FIXES
     - Fix a PTR bug
