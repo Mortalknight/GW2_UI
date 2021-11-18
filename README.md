@@ -24,15 +24,15 @@ Not compatible with the *"Paste"* addon (action bars will appear empty). This ma
 [![GW2 UI on Patreon](http://i.imgur.com/gyn76CI.png)](https://www.patreon.com/gw2ui)[![GW2 UI on PayPal](http://i.imgur.com/xSSjpwd.png)](https://www.paypal.com/donate?hosted_button_id=H7E9W75TYRWX4)
 
 ### SCREENSHOTS
-![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/overview.jpg?raw=true)
-![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/combat-2.jpg?raw=true)
-![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/Bag-frame.jpg?raw=true)
-![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/hero_panel.jpg?raw=true)
-![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/professions.jpg?raw=true)
-![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/spells_and_talents.jpg?raw=true)
-![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/Dungeon-frames-in-quest-tracker.jpg?raw=true)
-![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/classpower.jpg?raw=true)
-![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/readme_files/raidcom.jpg?raw=true)
+![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/.previews/overview.jpg?raw=true)
+![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/.previews/combat-2.jpg?raw=true)
+![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/.previews/Bag-frame.jpg?raw=true)
+![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/.previews/hero_panel.jpg?raw=true)
+![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/.previews/professions.jpg?raw=true)
+![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/.previews/spells_and_talents.jpg?raw=true)
+![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/.previews/Dungeon-frames-in-quest-tracker.jpg?raw=true)
+![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/.previews/classpower.jpg?raw=true)
+![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/.previews/raidcom.jpg?raw=true)
 
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
