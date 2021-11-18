@@ -833,9 +833,10 @@ local function GameTooltip_ShowStatusBar(self)
     if not self or not self.statusBarPool or self:IsForbidden() then return end
 
     local sb = self.statusBarPool:GetNextActive()
-    if not (sb and sb.Text and sb.NineSlice) then return end
+    if not sb or sb.backdrop then return end
 
-    sb.NineSlice:CreateBackdrop()
+    sb:StripTextures()
+    sb:CreateBackdrop(GW.skins.constBackdropFrameBorder)
     sb:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
 end
 
