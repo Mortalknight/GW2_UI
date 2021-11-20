@@ -310,7 +310,6 @@ local function UpdateMissingRaidBuffCustomSpell()
 			ReminderBuffs.Custom[#ReminderBuffs.Custom + 1] = tonumber(stringValue)
 		end
 	end
-    GW_13 = flaskbuffs
 end
 GW.UpdateMissingRaidBuffCustomSpell = UpdateMissingRaidBuffCustomSpell
 
