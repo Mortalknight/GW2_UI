@@ -343,10 +343,10 @@ GW.AddForProfiling("unitframes", "hideCastBar", hideCastBar)
 local function updateCastValues(self)
     local castType = 1
 
-    local name, _, texture, startTime, endTime = UnitCastingInfo(self.unit)
+    local name, _, texture, startTime, endTime = LCC:UnitCastingInfo(self.unit)
 
     if name == nil then
-        name, _, texture, startTime, endTime = UnitChannelInfo(self.unit)
+        name, _, texture, startTime, endTime = LCC:UnitChannelInfo(self.unit)
         castType = 0
     end
 
