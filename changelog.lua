@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("2.0.5 Era", [=[
+MISC
+    - Update libs
+]=])
+
+
 v("2.0.4 Era", [=[
 FIXES
     - Fix tooltip lua error

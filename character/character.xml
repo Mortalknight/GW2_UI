@@ -150,7 +150,7 @@
             <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="PET" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.titleMenu" relativePoint="BOTTOMLEFT"></Anchor>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.honorMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
         </Frames>

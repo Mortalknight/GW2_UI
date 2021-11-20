@@ -4,7 +4,12 @@ Author: d87
 --]================]
 if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then return end
 
-local MAJOR, MINOR = "LibClassicCasterino", 36
+local apiLevel = math.floor(select(4,GetBuildInfo())/10000)
+local isClassic = apiLevel <= 2
+local isVanilla = apiLevel == 1
+local isBC = apiLevel == 2
+
+local MAJOR, MINOR = "LibClassicCasterino", 37
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
 
@@ -271,9 +276,9 @@ function f:COMBAT_LOG_EVENT_UNFILTERED(event)
         end
     elseif castingAimedShot and dstGUID == UnitGUID("player") then
         if eventType == "SWING_DAMAGE" or
-           eventType == "ENVIRONMENTAL_DAMAGE" or
-           eventType == "RANGE_DAMAGE" or
-           eventType == "SPELL_DAMAGE"
+        eventType == "ENVIRONMENTAL_DAMAGE" or
+        eventType == "RANGE_DAMAGE" or
+        eventType == "SPELL_DAMAGE"
         then
             if resisted or blocked or absorbed then return end
             local currentCast = casters[UnitGUID("player")]
@@ -381,6 +386,17 @@ local Passthrough = function(self, event, unit, ...)
         callbacks:Fire(event, unit, ...)
     end
 end
+if isBC then
+    Passthrough = function(self, event, unit, ...)
+        callbacks:Fire(event, unit, ...)
+    end
+    lib.UnitChannelInfo = function(self, ...)
+        return _G.UnitChannelInfo(...)
+    end
+    lib.UnitCastingInfo = function(self, ...)
+        return _G.UnitCastingInfo(...)
+    end
+end
 f.UNIT_SPELLCAST_START = Passthrough
 f.UNIT_SPELLCAST_DELAYED = Passthrough
 f.UNIT_SPELLCAST_STOP = Passthrough
@@ -392,7 +408,13 @@ f.UNIT_SPELLCAST_CHANNEL_STOP = Passthrough
 f.UNIT_SPELLCAST_SUCCEEDED = Passthrough
 
 function callbacks.OnUsed()
-    f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    if isVanilla then
+        f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        -- for unit lookup
+        f:RegisterEvent("GROUP_ROSTER_UPDATE")
+        f:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+        f:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+    end
 
     f:RegisterEvent("UNIT_SPELLCAST_START")
     f:RegisterEvent("UNIT_SPELLCAST_DELAYED")
@@ -403,11 +425,6 @@ function callbacks.OnUsed()
     f:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
     f:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
     f:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-
-    -- for unit lookup
-    f:RegisterEvent("GROUP_ROSTER_UPDATE")
-    f:RegisterEvent("NAME_PLATE_UNIT_ADDED")
-    f:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 end
 
 function callbacks.OnUnused()
@@ -498,7 +515,6 @@ classCasts = {
     [10054] = 3, -- Conjure Mana Ruby
     [10140] = 3, -- Conjure Water
     [12826] = 1.5, -- Polymorph
-    [28270] = 1.5, -- Polymorph: Cow
     [25306] = 3.5, -- Fireball
     [10216] = 3, -- Flamestrike
     [10207] = 1.5, -- Scorch
@@ -819,7 +835,10 @@ local function processNPCSpellTable()
     counter = 0
     local index, id = next(NPCSpells, prevID)
     while (id and counter < 150) do
-        NPCspellNameToID[GetSpellInfo(id)] = id
+        local spellName = GetSpellInfo(id)
+        if spellName then
+            NPCspellNameToID[spellName] = id
+        end
 
         counter = counter + 1
         prevID = index
@@ -829,7 +848,9 @@ local function processNPCSpellTable()
         C_Timer.After(1, processNPCSpellTable)
     end
 end
-lib.NPCSpellsTimer = C_Timer.NewTimer(6.5, processNPCSpellTable)
+if isVanilla then
+    lib.NPCSpellsTimer = C_Timer.NewTimer(6.5, processNPCSpellTable)
+end
 
 NPCSpells = {
     10215,
