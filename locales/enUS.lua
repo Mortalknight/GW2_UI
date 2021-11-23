@@ -423,3 +423,5 @@ L["Total CPU:"] = true
 L["Hold Shift: Memory Usage"] = true
 L["Shift Click: Collect Garbage"] = true
 L["Ctrl & Shift Click: Toggle CPU Profiling"] = true
+L["Chromie Time Frame"] = true
+L["Allied Races"] = true

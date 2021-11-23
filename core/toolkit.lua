@@ -86,6 +86,17 @@ local constBackdropDropDown = {
     insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
 
+local function HandleBlizzardRegions(frame)
+    local name = frame.GetName and frame:GetName()
+    for _, area in pairs(BlizzardRegions) do
+        local object = (name and _G[name .. area]) or frame[area]
+        if object then
+            object:SetAlpha(0)
+        end
+    end
+end
+GW.HandleBlizzardRegions = HandleBlizzardRegions
+
 local function GrabScrollBarElement(frame, element)
     local FrameName = frame:GetDebugName()
     return frame[element] or FrameName and (_G[FrameName..element] or strfind(FrameName, element)) or nil
@@ -277,13 +288,7 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover, s
 
     if strip then button:StripTextures(nil, true) end
 
-    local name = button.GetName and button:GetName()
-    for _, area in pairs(BlizzardRegions) do
-        local object = (name and _G[name .. area]) or button[area]
-        if object then
-            object:SetAlpha(0)
-        end
-    end
+    HandleBlizzardRegions(button)
 
     if not onlyHover then
         if isXButton then

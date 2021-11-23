@@ -44,6 +44,11 @@ local function LoadSkinsPanel(sWindow)
     addOption(p.scroll.scrollchild, ADVENTURE_JOURNAL, nil, "ENCOUNTER_JOURNAL_SKIN_ENABLED")
     addOption(p.scroll.scrollchild, COVENANT_SANCTUM_TAB_UPGRADES, nil, "CONCENANT_SANCTUM_SKIN_ENABLED")
     addOption(p.scroll.scrollchild, COVENANT_PREVIEW_SOULBINDS, nil, "SOULBINDS_SKIN_ENABLED")
+    addOption(p.scroll.scrollchild, L["Chromie Time Frame"], nil, "CHROMIE_TIME_SKIN_ENABLED")
+    addOption(p.scroll.scrollchild, L["Allied Races"], nil, "ALLIEND_RACES_UI_SKIN_ENABLED")
+    addOption(p.scroll.scrollchild, PVP_WEEKLY_REWARD, nil, "WEEKLY_REWARDS_SKIN_ENABLED")
+    addOption(p.scroll.scrollchild, LFG_TITLE, nil, "LFG_SKIN_ENABLED")
+    
 
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r World Quest Tracker", nil, "SKIN_WQT_ENABLED", nil, nil, {["QUESTTRACKER_ENABLED"] = true}, "Objectives")
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Immersion", nil, "IMMERSIONADDON_SKIN_ENABLED")

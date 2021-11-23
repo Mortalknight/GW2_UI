@@ -32,6 +32,10 @@
     <Script file="immersive\skins\encounterJournal.lua"/>
     <Script file="immersive\skins\covenantSanctum.lua"/>
     <Script file="immersive\skins\soulbinds.lua"/>
+    <Script file="immersive\skins\chromieTimer.lua"/>
+    <Script file="immersive\skins\alliedRaces.lua"/>
+    <Script file="immersive\skins\weeklyRewards.lua"/>
+    <Script file="immersive\skins\lfg.lua"/>
     
     <Script file="immersive\skins\addons\immersion.lua"/>
     <Script file="immersive\skins\addons\postal.lua"/>

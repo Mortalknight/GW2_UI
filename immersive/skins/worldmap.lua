@@ -257,7 +257,7 @@ local function LoadWorldMapSkin()
         end
     end)
 
-    hooksecurefunc(_G.CampaignCollapseButtonMixin, "UpdateState", function(self)
+    hooksecurefunc(_G.CampaignCollapseButtonMixin, "UpdateState", function(self, isCollapsed)
         if isCollapsed then
             self:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
             self:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")

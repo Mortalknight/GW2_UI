@@ -425,3 +425,5 @@ L["Total CPU:"] = "Gesamt CPU:"
 L["Hold Shift: Memory Usage"] = "Shift gedrückthalten: Speichernutzung"
 L["Shift Click: Collect Garbage"] = "Shift + Klick: Müll säubern"
 L["Ctrl & Shift Click: Toggle CPU Profiling"] = "Strg + Shift + Klick: CPU Profiling an/ausschalten"
+L["Chromie Time Frame"] = true
+L["Allied Races"] = "Verbündete Völker"

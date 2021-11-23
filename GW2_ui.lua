@@ -473,6 +473,10 @@ local function loadAddon(self)
     GW.LoadEncounterJournalSkin()
     GW.LoadCovenantSanctumSkin()
     GW.LoadSoulbindsSkin()
+    GW.LoadChromieTimerSkin()
+    GW.LoadAlliedRacesUISkin()
+    GW.LoadWeeklyRewardsSkin()
+    GW.LoadLFGSkin()
 
     GW.LoadImmersionAddonSkin()
 

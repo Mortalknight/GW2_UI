@@ -333,7 +333,6 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local playerTitles = GetSetting("ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES")
         local alwaysShowRealm = GetSetting("ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS")
         local guildRanks = GetSetting("ADVANCED_TOOLTIP_SHOW_GUILD_RANKS")
-        local showRole = GetSetting("ADVANCED_TOOLTIP_SHOW_ROLE")
         local showGender = GetSetting("ADVANCED_TOOLTIP_SHOW_GENDER")
 
         local nameColor = GWGetClassColor(class, GetSetting("ADVANCED_TOOLTIP_SHOW_CLASS_COLOR"), true)
@@ -380,40 +379,6 @@ local function SetUnitText(self, unit, isPlayerUnit)
                 levelLine:SetFormattedText("%s%s|r |cffFFFFFF(%s)|r %s%s |c%s%s|r", hexColor, level > 0 and level or "??", realLevel, unitGender or "", race or "", nameColor.colorStr, localeClass)
             else
                 levelLine:SetFormattedText("%s%s|r %s%s |c%s%s|r", hexColor, level > 0 and level or "??", unitGender or "", race or "", nameColor.colorStr, localeClass)
-            end
-        end
-
-        if showRole then
-            local r, g, b, role = 1, 1, 1, UnitGroupRolesAssigned(unit)
-            if IsInGroup() and (UnitInParty(unit) or UnitInRaid(unit)) and (role ~= "NONE") then
-                if role == "HEALER" then
-                    role, r, g, b = nameRoleIcon[role] .. HEALER, 0, 1, 0.59
-                elseif role == "TANK" then
-                    role, r, g, b = nameRoleIcon[role] .. TANK, 0.51, 0.67, 0.9
-                elseif role == "DAMAGER" then
-                    role, r, g, b = nameRoleIcon[role] .. DAMAGER, 0.77, 0.12, 0.24
-                end
-                -- if in raid add also the assist function here eg: Role:      [] Tank ([] Maintank)
-                local isGroupLeader = UnitIsGroupLeader(unit)
-                local isGroupAssist = UnitIsGroupAssistant(unit)
-                local raidId = UnitInRaid(unit)
-                local raidRole = ""
-                if raidId then
-                    local raidR = select(10, GetRaidRosterInfo(raidId))
-                    if raidR == "MAINTANK" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-maintank:0:0:0:-3:64:64:4:60:4:60|t " .. MAINTANK .. ")" end
-                    if raidR == "MAINASSIST" then raidRole = " (|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist:0:0:0:-1:64:64:4:60:4:60|t " .. MAIN_ASSIST .. ")" end
-                end
-
-                GameTooltip:AddDoubleLine(format("%s:", ROLE), role .. raidRole, nil, nil, nil, r, g, b)
-                if isGroupLeader or isGroupAssist then
-                    local roleString
-                    if isGroupLeader then
-                        roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:0:0:0:-2:64:64:4:60:4:60|t " .. (IsInRaid() and RAID_LEADER or PARTY_LEADER)
-                    else
-                        roleString = "|TInterface/AddOns/GW2_UI/textures/party/icon-assist:0:0:0:-2:64:64:4:60:4:60|t " .. RAID_ASSISTANT
-                    end
-                    GameTooltip:AddDoubleLine(" ", roleString, nil, nil, nil, r, g, b)
-                end
             end
         end
 
