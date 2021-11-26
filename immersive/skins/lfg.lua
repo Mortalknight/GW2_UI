@@ -459,7 +459,7 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.SearchPanel.AutoCompleteFrame:SetPoint("TOPRIGHT", LFGListFrame.SearchPanel.SearchBox, "BOTTOMRIGHT", -4, -8)
 
     --ApplicationViewer (Custom Groups)
-    LFGListFrame.ApplicationViewer.InfoBackground:Hide() -- even the ugly borders are now an atlas on the texutre? wtf????
+    LFGListFrame.ApplicationViewer.InfoBackground:Hide()
     LFGListFrame.ApplicationViewer.InfoBackground:CreateBackdrop("Transparent")
     LFGListFrame.ApplicationViewer.AutoAcceptButton:SkinCheckButton()
 
@@ -469,6 +469,7 @@ local function SkinLookingForGroupFrames()
         LFGListFrame.ApplicationViewer.Inset:HookScript("OnSizeChanged", LFGListFrame.ApplicationViewer.Inset.OnBackdropSizeChanged)
     end
     LFGListFrame.ApplicationViewer.Inset:SetBackdrop(GW.constBackdropFrameColorBorder)
+    LFGListFrame.ApplicationViewer.Inset:SetBackdropBorderColor(0, 0, 0, 1)
 
     LFGListFrame.ApplicationViewer.NameColumnHeader:SkinButton(false, true)
     LFGListFrame.ApplicationViewer.RoleColumnHeader:SkinButton(false, true)
@@ -498,7 +499,6 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.ApplicationViewer.BrowseGroupsButton:SetPoint("BOTTOMLEFT", -1, 3)
     LFGListFrame.ApplicationViewer.BrowseGroupsButton:SetSize(120, 22)
 
-    local LFGListApplicationViewerScrollFrameScrollBar = _G.LFGListApplicationViewerScrollFrameScrollBar
     LFGListApplicationViewerScrollFrameScrollBar:SkinScrollBar()
     LFGListApplicationViewerScrollFrame:SkinScrollFrame()
     LFGListApplicationViewerScrollFrameScrollBar:ClearAllPoints()
@@ -737,17 +737,17 @@ local function ApplyPvPUISkin()
     RewardFrame.backdrop:SetOutside(RewardFrame.Icon)
 
     if NewSeasonPopup.NewSeason then
-        NewSeasonPopup.NewSeason:SetTextColor(1, .8, 0)
+        NewSeasonPopup.NewSeason:SetTextColor(1, 0.8, 0)
         NewSeasonPopup.NewSeason:SetShadowOffset(1, -1)
     end
 
     if NewSeasonPopup.SeasonRewardText then
-        NewSeasonPopup.SeasonRewardText:SetTextColor(1, .8, 0)
+        NewSeasonPopup.SeasonRewardText:SetTextColor(1, 0.8, 0)
         NewSeasonPopup.SeasonRewardText:SetShadowOffset(1, -1)
     end
 
     if NewSeasonPopup.SeasonDescriptionHeader then
-        NewSeasonPopup.SeasonDescriptionHeader:SetTextColor(1, 1, 1)
+        NewSeasonPopup.SeasonDescriptionHeader:SetTextColor(0, 0, 0)
         NewSeasonPopup.SeasonDescriptionHeader:SetShadowOffset(1, -1)
     end
 
