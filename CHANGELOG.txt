@@ -1,3 +1,14 @@
+5.23.0
+NEW
+    Skins:
+    - LFG
+    - Allied Races
+    - Weekly Rewards
+    - Chromie Time
+
+FIXES
+    - Fixe some cooldown issues for extra action buttons
+
 5.22.1
 FIXES
     - Fix cooldown lua error
