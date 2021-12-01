@@ -399,6 +399,13 @@ local function SkinLookingForGroupFrames()
     LFGListSearchPanelScrollFrameScrollBar:SkinScrollBar()
     LFGListSearchPanelScrollFrame:SkinScrollFrame()
 
+    if not LFGListFrame.SearchPanel.ResultsInset.SetBackdrop then
+        _G.Mixin(LFGListFrame.SearchPanel.ResultsInset, _G.BackdropTemplateMixin)
+        LFGListFrame.SearchPanel.ResultsInset:HookScript("OnSizeChanged", LFGListFrame.SearchPanel.ResultsInset.OnBackdropSizeChanged)
+    end
+    LFGListFrame.SearchPanel.ResultsInset:SetBackdrop(GW.constBackdropFrameColorBorder)
+    LFGListFrame.SearchPanel.ResultsInset:SetBackdropBorderColor(0, 0, 0, 1)
+
     LFGListFrame.SearchPanel.FilterButton:SkinButton(false, true)
     LFGListFrame.SearchPanel.FilterButton:SetPoint("LEFT", LFGListFrame.SearchPanel.SearchBox, "RIGHT", 5, 0)
     LFGListFrame.SearchPanel.FilterButton.Icon:SetDesaturated(true)
