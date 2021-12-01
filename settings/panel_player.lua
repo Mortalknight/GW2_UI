@@ -25,20 +25,6 @@ local function LoadPlayerPanel(sWindow)
     addOption(p.scroll.scrollchild, L["PvP Indicator"], nil, "PLAYER_SHOW_PVP_INDICATOR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p.scroll.scrollchild, PET .. ": " .. L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "PET_FLOATING_COMBAT_TEXT", nil, nil, {["PETBAR_ENABLED"] = true})
     addOption(p.scroll.scrollchild, PET .. ": " .. L["Show auras below"], nil, "PET_AURAS_UNDER", nil, nil, {["PETBAR_ENABLED"] = true})
-    addOptionDropdown(
-        p.scroll.scrollchild,
-        L["Aura Style"],
-        L["Legacy: Sorted by duration but auras can't cancel via right click in combat\nSecure: Not sorted but auras can cancel via right click in combat"],
-        "PLAYER_AURA_STYLE",
-        nil,
-        {"LEGACY", "SECURE"},
-        {
-            LFG_LIST_LEGACY,
-            L["Secure"]
-        },
-        nil,
-        {["PLAYER_BUFFS_ENABLED"] = true}
-    )
     addOptionSlider(
         p.scroll.scrollchild,
         L["Auras per row"],

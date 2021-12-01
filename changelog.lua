@@ -10,7 +10,8 @@ NEW
     - Chromie Time
 
 FIXES
-    - Fixe some cooldown issues for extra action buttons
+    - Fix some cooldown issues for extra action buttons
+    - Show correct buffs in vehicle UI
 ]=])
 
 v("5.22.1", [=[

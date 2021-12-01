@@ -145,17 +145,18 @@ GW.AddForProfiling("aurabar_secure", "GetFilter", GetFilter)
 local function header_OnEvent(self, event, ...)
     local unit = select(1, ...)
     local valid = false
-    if event == "PLAYER_ENTERING_WORLD" then
+
+    if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE" then
         valid = true
-    elseif event == "UNIT_AURA" and unit == "player" then
+    elseif event == "UNIT_AURA" and unit == self:GetUnit() then
         valid = true
-    elseif event == "UNIT_INVENTORY_CHANGED" and unit == "player" then
+    elseif event == "UNIT_INVENTORY_CHANGED" and unit == self:GetUnit() then
         valid = true
     end
     if not valid then return end
 
     -- set info for each aura button (on aura change events)
-    if event == "UNIT_AURA" or event == "PLAYER_ENTERING_WORLD" then
+    if event == "UNIT_AURA" or event == "PLAYER_ENTERING_WORLD" or event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE" then
         local atype = self:GetAType()
         for i = 1, 40 do
             local btn = self:GetAura(i)
@@ -164,7 +165,7 @@ local function header_OnEvent(self, event, ...)
                 break
             end
 
-            local name, icon , count, dtype, duration, expires, _ = UnitAura("player", btn:GetID(), btn:GetFilter())
+            local name, icon , count, dtype, duration, expires, _ = UnitAura(self:GetUnit(), btn:GetID(), btn:GetFilter())
             if name then
                 btn.atype = atype
                 btn:SetIcon(icon, dtype)
@@ -212,7 +213,6 @@ local function header_OnUpdate(self, elapsed)
         return
     end
     self.timer = 0.2
-
     -- update the cooldown text for each aura
     for i = 1, 40 do
         local btn = self:GetAura(i)
@@ -221,11 +221,11 @@ local function header_OnUpdate(self, elapsed)
             break
         end
 
-        local name, _ , _, _, duration, expires, _ = UnitAura("player", btn:GetID(), btn:GetFilter())
+        local name, _ , _, _, duration, expires, _ = UnitAura(self:GetUnit(), btn:GetID(), btn:GetFilter())
         if name and duration then
             btn:UpdateCD(expires - GetTime())
             if GameTooltip:IsOwned(btn) then
-                GameTooltip:SetUnitAura("player", btn:GetID(), btn:GetFilter());
+                GameTooltip:SetUnitAura(self:GetUnit(), btn:GetID(), btn:GetFilter());
             end
         end
     end
@@ -265,11 +265,11 @@ local function aura_OnEnter(self)
     GameTooltip:ClearLines()
     local atype = self.atype
     if atype == 0 then
-        GameTooltip:SetUnitDebuff("player", self:GetID(), self:GetFilter())
+        GameTooltip:SetUnitDebuff(GwAuraHeader:GetUnit(), self:GetID(), self:GetFilter())
     elseif atype == 1 then
-        GameTooltip:SetUnitBuff("player", self:GetID())
+        GameTooltip:SetUnitBuff(GwAuraHeader:GetUnit(), self:GetID())
     elseif atype == 2 then
-        GameTooltip:SetInventoryItem("player", self.slotId, false, true)
+        GameTooltip:SetInventoryItem(GwAuraHeader:GetUnit(), self.slotId, false, true)
     end
     GameTooltip:Show()
 end
@@ -285,7 +285,7 @@ local function cancelAura(self)
     else
         local index = self:GetID()
         if index then
-            CancelUnitBuff("player", index, self.filter)
+            CancelUnitBuff(GwAuraHeader:GetUnit(), index, self.filter)
         end
     end
 end
@@ -346,6 +346,11 @@ function GwAuraTmpl_OnLoad(self)
     self.gwInit = true
 end
 
+local function getUnit(self)
+    return self:GetAttribute("unit")
+end
+GW.AddForProfiling("aurabar_secure", "getUnit", getUnit)
+
 local function getSecureAura(self, idx)
     return self:GetAttribute("child" .. idx)
 end
@@ -381,36 +386,24 @@ local function getLegacyTempEnchant(self, idx)
 end
 GW.AddForProfiling("aurabar_secure", "getLegacyTempEnchant", getLegacyTempEnchant)
 
-local function newHeader(filter, secure, settingname)
+local function newHeader(filter, settingname)
     local h, w, aura_tmpl
     local size = tonumber(GW.RoundDec(GetSetting(settingname .. "_ICON_SIZE")))
-    if secure then
-        -- "secure" style auras
-        h = CreateFrame("Frame", nil, UIParent, "SecureAuraHeaderTemplate,SecureHandlerStateTemplate")
-        aura_tmpl = format("GwAuraSecureTmpl%d", size)
-        h.GetAura = getSecureAura
-        h.GetTempEnchant = getSecureTempEnchant
-        h.GetFilter = getSecureFilter
-        h.GetAType = getSecureAType
-    else
-        -- "legacy" style auras
-        w = GW.CreateModifiedAuraHeader(settingname)
-        h = w.inner
-        aura_tmpl = format("GwAuraTmpl%d", size)
-        h.GetAura = getLegacyAura
-        h.GetTempEnchant = getLegacyTempEnchant
-        h.GetFilter = getLegacyFilter
-        h.GetAType = getSecureAType
-    end
-    -- TODO: implement "GW2" style auras
+
+    h = CreateFrame("Frame", "GwAuraHeader", UIParent, "SecureAuraHeaderTemplate,SecureHandlerStateTemplate")
+    aura_tmpl = format("GwAuraSecureTmpl%d", size)
+    h.GetAura = getSecureAura
+    h.GetTempEnchant = getSecureTempEnchant
+    h.GetFilter = getSecureFilter
+    h.GetAType = getSecureAType
+    h.GetUnit = getUnit
 
     local grow_dir = GetSetting(settingname .. "_GrowDirection")
-    local aura_style = GetSetting("PLAYER_AURA_STYLE")
     local wrap_num = tonumber(GetSetting("PLAYER_AURA_WRAP_NUM"))
     if not wrap_num or wrap_num < 1 or wrap_num > 20 then
         wrap_num = 7
     end
-    Debug("settings", settingname, grow_dir, aura_style, wrap_num, size)
+    Debug("settings", settingname, grow_dir, wrap_num, size)
 
     local ap
     local yoff
@@ -437,24 +430,23 @@ local function newHeader(filter, secure, settingname)
     h:SetAttribute("template", aura_tmpl)
     h:SetAttribute("unit", "player")
     h:SetAttribute("filter", filter)
-    if not secure then
-        -- this is custom to our modified header thing; if Blizz adopts our
-        -- recommendations this will not work exactly as-is for secure stuff
-        -- (which is OK because "GW2" style will work as-is, this is just
-        -- legacy, and if the Blizz change is made we will eventually deprecate
-        -- the legacy style and have only GW2 & Secure options; though at that
-        -- point the GW2 style would *also* be secure)
-        h:SetAttribute("consolidateGroup", true)
-        h:SetAttribute("consolidateTo", "-1")
-        h:SetAttribute("consolidateDuration", "120")
-        h:SetAttribute("consolidateThreshold", "120")
-        h:SetAttribute("consolidateFraction", "0")
-        h:SetAttribute("sortMethod", "CONSOLIDATEIDX")
-        h:SetAttribute("sortDirection", "-")
-    else
-        h:SetAttribute("sortMethod", "INDEX")
-        h:SetAttribute("sortDirection", "+")
-    end
+
+    h:SetAttribute(
+        "_onstate-customAttributeChange",
+        [=[
+        if newstate == "pet" then
+            self:SetAttribute("unit", "pet")
+        elseif newstate == "player" then
+            self:SetAttribute("unit", "player")
+            self:Hide()
+        end
+    ]=]
+    )
+
+    RegisterStateDriver(h, "customAttributeChange", "[overridebar] pet; [vehicleui] pet; player")
+
+    h:SetAttribute("sortMethod", "INDEX")
+    h:SetAttribute("sortDirection", "+")
     h:SetAttribute("minWidth", (size + 1) * wrap_num)
     h:SetAttribute("minHeight", (size + 1))
     h:SetAttribute("separateOwn", 0)
@@ -474,29 +466,25 @@ local function newHeader(filter, secure, settingname)
     h:UnregisterAllEvents()
     h:HookScript("OnEvent", header_OnEvent)
     h:HookScript("OnUpdate", header_OnUpdate)
-    h:RegisterUnitEvent("UNIT_AURA", "player")
+    h:RegisterEvent("UNIT_AURA")
     h:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player")
     h:RegisterEvent("PLAYER_ENTERING_WORLD")
+    h:RegisterUnitEvent("UNIT_ENTERED_VEHICLE")
+    h:RegisterUnitEvent("UNIT_EXITED_VEHICLE")
 
-    if w then
-        return w
-    else
-        return h
-    end
+    return h
 end
 GW.AddForProfiling("aurabar_secure", "newHeader", newHeader)
 
-local function loadAuras(lm, secure)
+local function loadAuras(lm)
     local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
     local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 
     -- create a new header for buffs
-    local hb = newHeader("HELPFUL", secure, "PlayerBuffFrame")
+    local hb = newHeader("HELPFUL", "PlayerBuffFrame")
     hb:SetAttribute("growDir", grow_dir)
     hb:Show()
-    if hb.inner then
-        hb.inner:Show()
-    end
+
     RegisterMovableFrame(hb, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", {316, 100}, true, {"default", "scaleable"}, true)
     hb:ClearAllPoints()
     hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
@@ -513,30 +501,17 @@ local function loadAuras(lm, secure)
 
     -- create a new header for debuffs
     local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
-    local hd = newHeader("HARMFUL", secure, "PlayerDebuffFrame")
+    local hd = newHeader("HARMFUL", "PlayerDebuffFrame")
     local anchor_hd
     RegisterMovableFrame(hd, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", {316, 60}, true, {"default", "scaleable"}, true)
     hd:Show()
-    if hd.inner then
-        hd.inner:Show()
-    end
     hd:ClearAllPoints()
     if not hd.isMoved then
         anchor_hd = grow_dir == "UPR" and "TOPLEFT" or grow_dir == "DOWNR" and "BOTTOMLEFT" or grow_dir == "UP" and "TOPRIGHT" or grow_dir == "DOWN" and "BOTTOMRIGHT"
         if grow_dir == "DOWNR" or grow_dir == "DOWN" then
-            if hd.inner and hb.inner then
-                hd.inner:ClearAllPoints()
-                hd.inner:SetPoint(anchor_hd, hb.inner, anchor_hd, 0, -50)
-            else
-                hd:SetPoint(anchor_hd, hb, anchor_hd, 0, -50)
-            end
+            hd:SetPoint(anchor_hd, hb, anchor_hd, 0, -50)
         else
-            if hd.inner and hb.inner then
-                hd.inner:ClearAllPoints()
-                hd.inner:SetPoint(anchor_hd, hb.inner, anchor_hd, 0, 50)
-            else
-                hd:SetPoint(anchor_hd, hb, anchor_hd, 0, 50)
-            end
+            hd:SetPoint(anchor_hd, hb, anchor_hd, 0, 50)
         end
     else
         anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
@@ -562,11 +537,7 @@ local function LoadPlayerAuras(lm)
     BuffFrame:Kill()
     BuffFrame:SetScript("OnShow", Self_Hide)
 
-    local aura_style = GetSetting("PLAYER_AURA_STYLE")
-    local secure = aura_style == "SECURE"
-    Debug("player aura style", aura_style, secure)
-
-    loadAuras(lm, secure)
+    loadAuras(lm)
 end
 GW.LoadPlayerAuras = LoadPlayerAuras
 

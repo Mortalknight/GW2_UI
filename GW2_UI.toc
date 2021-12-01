@@ -140,7 +140,6 @@ mainbar/hud.lua
 mainbar/stancebar.lua
 mainbar/actionbars2.lua
 mainbar/petbar.lua
-mainbar/aurabar_blizz_modified.lua
 mainbar/aurabar.lua
 mainbar/castingbar.lua
 mainbar/totemBar.lua
