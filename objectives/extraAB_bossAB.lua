@@ -62,13 +62,13 @@ local function ExtraAB_BossAB_Setup()
 
     ZoneAbilityHolder = CreateFrame("Frame", nil, UIParent)
     ZoneAbilityHolder:SetPoint("BOTTOM", UIParent, "BOTTOM", 150, 300)
-    
+
     ZoneAbilityFrame.SpellButtonContainer.holder = ZoneAbilityHolder
 
     -- try to shutdown the container movement and taints
-    _G.UIPARENT_MANAGED_FRAME_POSITIONS.ExtraAbilityContainer = nil
-    _G.ExtraAbilityContainer.SetSize = GW.NoOp
-    
+    UIPARENT_MANAGED_FRAME_POSITIONS.ExtraAbilityContainer = nil
+    ExtraAbilityContainer.SetSize = GW.NoOp
+
     RegisterMovableFrame(ExtraActionBarHolder, L["Boss Button"], "ExtraActionBarFramePos", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"})
     RegisterMovableFrame(ZoneAbilityHolder, L["Zone Ability"], "ZoneAbilityFramePos", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"})
 
@@ -81,16 +81,22 @@ local function ExtraAB_BossAB_Setup()
     ExtraActionBarFrame:ClearAllPoints()
     ExtraActionBarFrame:SetAllPoints(ExtraActionBarHolder.gwMover)
     ExtraActionBarFrame.ignoreInLayout = true
-    
+
     hooksecurefunc(ZoneAbilityFrame.SpellButtonContainer, "SetSize", ExtraButtons_ZoneScale)
     hooksecurefunc(ZoneAbilityFrame, "UpdateDisplayedZoneAbilities", function(frame)
-
         for spellButton in frame.SpellButtonContainer:EnumerateActive() do
             if spellButton and not spellButton.IsSkinned then
                 spellButton.NormalTexture:SetAlpha(0)
                 spellButton:GetHighlightTexture():SetColorTexture(1, 1, 1, 0.25)
-                spellButton.Icon:SetDrawLayer("ARTWORK")
+                spellButton.Icon:SetDrawLayer("ARTWORK", -1)
                 spellButton.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+                spellButton.Icon:SetInside()
+
+                if spellButton.Cooldown then
+                    spellButton.Cooldown.CooldownOverride = "actionbar"
+                    GW.RegisterCooldown(spellButton.Cooldown)
+                    spellButton.Cooldown:SetInside(spellButton)
+                end
 
                 spellButton.holder = ZoneAbilityHolder
 
@@ -98,29 +104,42 @@ local function ExtraAB_BossAB_Setup()
             end
         end
     end)
-    
-    for i = 1, ExtraActionBarFrame:GetNumChildren() do
-        local button = _G["ExtraActionButton" .. i]
-        if button then
+
+    hooksecurefunc(ExtraAbilityContainer, "AddFrame", function(frame)
+        local button = frame.button
+        if button and not button.IsSkinned then
             button.pushed = true
             button.checked = true
 
-            button.icon:SetDrawLayer("ARTWORK")
+            local name = button.GetName and button:GetName()
+            local cooldown = name and _G[name .. "Cooldown"]
+            if cooldown then
+                cooldown:SetInside()
+                cooldown:SetDrawEdge(false)
+                cooldown:SetSwipeColor(0, 0, 0, 1)
+                GW.RegisterCooldown(cooldown)
+            end
+
+            ActionButton_UpdateCooldown(button)
+
+            button.icon:SetDrawLayer("ARTWORK", -1)
             button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
             button.holder = ExtraActionBarHolder
 
             local tex = button:CreateTexture(nil, "OVERLAY")
             tex:SetColorTexture(0.9, 0.8, 0.1, 0.3)
-            button:SetCheckedTexture(tex)          
+            button:SetCheckedTexture(tex)
 
             button.HotKey:SetText(GetBindingKey("ExtraActionButton" .. i))
             tinsert(ExtraButtons, button)
+
+            button.IsSkinned = true
         end
-    end
-    
+    end)
+
     ExtraButtons_UpdateScale()
-    
+
     -- Spawn the mover before its available.
     local size = 52 * GetSetting("ZoneAbilityFramePos_scale")
     ZoneAbilityHolder:SetSize(size, size)
