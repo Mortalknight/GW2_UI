@@ -1,4 +1,4 @@
-## Interface: 90105
+## Interface: 90200
 ## Title: |cffffedbaGW2 UI|r |cFF888888(@project-version@)|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
