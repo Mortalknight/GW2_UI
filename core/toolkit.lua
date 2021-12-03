@@ -195,6 +195,8 @@ local function SkinCheckButton(button)
     if button.SetDisabledCheckedTexture then button:SetDisabledCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked") end
     if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox") end
     if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal") end
+
+    button.isSkinnedGW2_UI = true
 end
 
 local function SkinSliderFrame(frame)

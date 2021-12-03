@@ -131,8 +131,10 @@ local function SkinLookingForGroupFrames()
     end
 
     hooksecurefunc("SetCheckButtonIsRadio", function(self)
-        self:SkinCheckButton()
-        self:SetSize(15, 15)
+        if not self.isSkinnedGW2_UI then
+            self:SkinCheckButton()
+            self:SetSize(15, 15)
+        end
     end)
 
     local repositionCheckButtons = {
@@ -230,8 +232,9 @@ local function SkinLookingForGroupFrames()
     end)
 
     for i = 1, 3 do
-        _G["PVEFrameTab"..i]:SkinButton(false, true)
+        _G["PVEFrameTab" .. i]:SkinButton(false, true)
     end
+
     PVEFrameTab1:SetPoint("BOTTOMLEFT", PVEFrame, "BOTTOMLEFT", 19, -50)
     PVEFrameTab2:SetPoint("LEFT", PVEFrameTab1, "RIGHT", 1, 0)
     PVEFrameTab3:SetPoint("LEFT", PVEFrameTab2, "RIGHT", 1, 0)
@@ -297,7 +300,10 @@ local function SkinLookingForGroupFrames()
     LFRQueueFrameSpecificListScrollFrameScrollBackgroundBottomRight:Hide()
     LFRBrowseFrameColumnHeader1:SetWidth(94)
     LFRBrowseFrameColumnHeader2:SetWidth(38)
+    LFDQueueFrameSpecificListScrollFrame:StripTextures()
 
+    RaidBrowserFrameCloseButton:SkinButton(false)
+    RaidBrowserFrameCloseButton:SetSize(15, 15)
     LFRQueueFrameFindGroupButton:SkinButton(false, true)
     LFRQueueFrameAcceptCommentButton:SkinButton(false, true)
 
@@ -790,6 +796,15 @@ local function ApplyChallengesUISkin()
     ChallengesKeystoneFrame.DungeonName:SetFont(DAMAGE_TEXT_FONT, 26, "OUTLINE")
     ChallengesKeystoneFrame.TimeLimit:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
 
+    KeyStoneFrame.KeystoneSlot:HookScript("OnEvent", function(frame, event, itemID)
+        if event == "CHALLENGE_MODE_KEYSTONE_SLOTTED" and frame.Texture then
+            local texture = select(10, GetItemInfo(itemID))
+            if texture then
+                frame.Texture:SetTexture(texture)
+            end
+        end
+    end)
+
     hooksecurefunc("ChallengesFrame_Update", function(frame)
         for _, child in ipairs(frame.DungeonIcons) do
             if not child.template then
@@ -811,8 +826,7 @@ local function ApplyChallengesUISkin()
     end)
 
     hooksecurefunc(ChallengesFrame.WeeklyInfo, "SetUp", function(info)
-        local affixes = C_MythicPlus.GetCurrentAffixes()
-        if affixes then
+        if C_MythicPlus.GetCurrentAffixes() then
             HandleAffixIcons(info.Child)
         end
     end)
@@ -825,8 +839,6 @@ local function ApplyChallengesUISkin()
         frame.KeystoneFrame:Hide()
         frame.Divider:Hide()
     end)
-
-    hooksecurefunc(ChallengesKeystoneFrame, "OnKeystoneSlotted", HandleAffixIcons)
 
     -- New Season Frame
     local NoticeFrame = ChallengesFrame.SeasonChangeNoticeFrame
