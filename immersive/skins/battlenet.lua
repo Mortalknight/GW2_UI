@@ -105,7 +105,7 @@ local function LoadBNToastSkin()
     hooksecurefunc(BNToastFrame, "SetPoint", function(self, _, anchor)
         if anchor ~= self.gwMover then
             self:ClearAllPoints()
-            self:SetPoint(self.gwMover.anchorPoint or 'TOPLEFT', self.gwMover, self.gwMover.anchorPoint or 'TOPLEFT')
+            self:SetPoint(self.gwMover.anchorPoint or "TOPLEFT", self.gwMover, self.gwMover.anchorPoint or "TOPLEFT")
         end
     end)
 end
