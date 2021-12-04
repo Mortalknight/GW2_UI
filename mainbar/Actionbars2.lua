@@ -307,22 +307,24 @@ local function updateHotkey(self)
         return
     end
 
-    text = string.gsub(text, "(s%-)", "S")
-    text = string.gsub(text, "(a%-)", "A")
-    text = string.gsub(text, "(c%-)", "C")
-    text = string.gsub(text, "(Mouse Button )", "M")
-    text = string.gsub(text, "(Middle Mouse)", "M3")
-    text = string.gsub(text, "(Num Pad )", "N")
-    text = string.gsub(text, "(Page Up)", "PU")
-    text = string.gsub(text, "(Page Down)", "PD")
-    text = string.gsub(text, "(Spacebar)", "SpB")
-    text = string.gsub(text, "(Insert)", "Ins")
-    text = string.gsub(text, "(Home)", "Hm")
-    text = string.gsub(text, "(Delete)", "Del")
-    text = string.gsub(text, "(Left Arrow)", "LT")
-    text = string.gsub(text, "(Right Arrow)", "RT")
-    text = string.gsub(text, "(Up Arrow)", "UP")
-    text = string.gsub(text, "(Down Arrow)", "DN")
+    text = gsub(text, "(s%-)", "S")
+    text = gsub(text, "(a%-)", "A")
+    text = gsub(text, "(c%-)", "C")
+    text = gsub(text, KEY_BUTTON3, "M3") --middle mouse Button
+    text = gsub(text, gsub(KEY_BUTTON4, " 4", ""), "M") -- mouse button
+    text = gsub(text, KEY_PAGEUP, "PU")
+    text = gsub(text, KEY_PAGEDOWN, "PD")
+    text = gsub(text, KEY_SPACE, "SpB")
+    text = gsub(text, KEY_INSERT, "Ins")
+    text = gsub(text, KEY_HOME, "Hm")
+    text = gsub(text, KEY_DELETE, "Del")
+    text = gsub(text, KEY_LEFT, "LT")
+    text = gsub(text, KEY_RIGHT, "RT")
+    text = gsub(text, KEY_UP, "UP")
+    text = gsub(text, KEY_DOWN, "DN")
+    text = gsub(text, gsub(KEY_NUMPADPLUS, "%+", ""), "N") -- for all numpad keys
+    text = gsub(text, KEY_MOUSEWHEELDOWN, 'MwD')
+    text = gsub(text, KEY_MOUSEWHEELUP, 'MwU')
 
     if hotkey:GetText() == RANGE_INDICATOR or not GetSetting("BUTTON_ASSIGNMENTS") then
         hotkey:SetText("")
@@ -1102,7 +1104,23 @@ local function LoadActionBars(lm)
     setLeaveVehicleButton()
 
     -- hook hotkey update calls so we can override styling changes
-    hooksecurefunc(ActionBarActionButtonMixin, "UpdateHotkeys", updateHotkey)
+    local hotkeyEventTrackerFrame = CreateFrame("Frame")
+    hotkeyEventTrackerFrame:RegisterEvent("UPDATE_BINDINGS")
+    hotkeyEventTrackerFrame:SetScript("OnEvent", function()
+        local fmMultiBar
+        for y = 0, 4 do
+            if y == 0 then fmMultiBar = fmActionbar end
+            if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
+            if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
+            if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
+            if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
+            if fmMultiBar.gw_IsEnabled then
+                for i = 1, 12 do
+                    updateHotkey(fmMultiBar.gw_Buttons[i])
+                end
+            end
+        end
+    end)
 
     -- frames using the alert frame subsystem have their positioning managed by UIParent
     -- the secure code for that lives mostly in Interface/FrameXML/UIParent.lua
