@@ -12,6 +12,7 @@ NEW
 FIXES
     - Fix some cooldown issues for extra action buttons
     - Show correct buffs in vehicle UI
+    - Some actionbar hotkey issues
 ]=])
 
 v("5.22.1", [=[
