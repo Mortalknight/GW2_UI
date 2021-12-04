@@ -71,7 +71,7 @@
 
     <Button name="GwAuraSecureTmpl" inherits="SecureActionButtonTemplate,GwAuraTmpl" virtual="true">
         <Attributes>
-            <Attribute name="type2" value="cancelaura"/>
+            <Attribute name="type" value="cancelaura"/>
         </Attributes>
     </Button>
 
