@@ -56,7 +56,7 @@ local function SetCD(self, expires, duration, stackCount)
 
     if self.atype == 2 then
         -- temp weapon enchant
-        local remains = expires/1000
+        local remains = expires / 1000
         setLongCD(self, stackCount)
         self.status.duration:SetText(TimeCount(remains))
         self.status.duration:Show()
@@ -103,11 +103,10 @@ local function SetIcon(self, icon, dtype)
         self.status.icon:Hide()
     end
 
-    local atype = self.atype
-    if atype == 1 then
+    if self.atype == 1 then
         self.border.inner:SetVertexColor(0, 0, 0)
     else
-        if atype == 2 then
+        if self.atype == 2 then
             dtype = "Curse"
         end
         local c = DEBUFF_COLOR[dtype]
@@ -119,21 +118,16 @@ local function SetIcon(self, icon, dtype)
 
 end
 
-
 local function UpdateAura(button, index)
-    local atype = button:GetParent():GetAType()
-
     local name, icon , count, dtype, duration, expires = UnitAura(button:GetParent():GetUnit(), index, button:GetFilter())
 
     if name then
-        button.atype = atype
+        button.atype = button:GetParent():GetAType()
         button:SetIcon(icon, dtype)
         button:SetCD(expires, duration, count)
         button:SetCount(count)
-        if duration then
-            if GameTooltip:IsOwned(button) then
-                GameTooltip:SetUnitAura(button:GetParent():GetUnit(), index, button:GetFilter());
-            end
+        if duration and GameTooltip:IsOwned(button) then
+            GameTooltip:SetUnitAura(button:GetParent():GetUnit(), index, button:GetFilter());
         end
     end
 end
@@ -160,41 +154,16 @@ local function UpdateTempEnchant(button, index)
 end
 
 local function aura_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", -5, -5)
     GameTooltip:ClearLines()
-    local atype = self.atype
-    if atype == 0 then
-        GameTooltip:SetUnitDebuff(self:GetParent():GetUnit(), self:GetID(), self:GetFilter())
-    elseif atype == 1 then
-        GameTooltip:SetUnitBuff(self:GetParent():GetUnit(), self:GetID())
-    elseif atype == 2 then
-        GameTooltip:SetInventoryItem(self:GetParent():GetUnit(), self.slotId, false, true)
+
+    if self:GetAttribute("index") then
+        GameTooltip:SetUnitAura(SecureButton_GetUnit(self:GetParent()), self:GetID(), self:GetFilter())
+    elseif self:GetAttribute("target-slot") then
+        GameTooltip:SetInventoryItem("player", self:GetID())
     end
-    GameTooltip:Show()
 end
 GW.AddForProfiling("aurabar_secure", "aura_OnEnter", aura_OnEnter)
-
-local function cancelAura(self)
-    local slot = tonumber(self.targetSlot)
-    if slot then
-        if slot == 16 or slot == 17 then
-            -- currently doesn't work as this is set protected
-            --CancelItemTempEnchantment(slot - 15)
-        end
-    else
-        local index = self:GetID()
-        if index then
-            CancelUnitBuff(self:GetParent():GetUnit(), index, self.filter)
-        end
-    end
-end
-
-local function auraFrame_OnClick(self, button)
-    if not InCombatLockdown() and button == "RightButton" and self.atype ~= 0 then
-        cancelAura(self)
-    end
-end
-GW.AddForProfiling("aurabar_secure", "auraFrame_OnClick", auraFrame_OnClick)
 
 local function GetFilter(self)
     return self:GetParent():GetFilter(self)
@@ -218,10 +187,10 @@ function GwAuraTmpl_OnLoad(self)
     self.SetIcon = SetIcon
     self.GetFilter = GetFilter
 
-    self:SetScript('OnAttributeChanged', function(_, attribute, value)
-        if attribute == 'index' then
+    self:SetScript("OnAttributeChanged", function(_, attribute, value)
+        if attribute == "index" then
             UpdateAura(self, value)
-        elseif attribute == 'target-slot' then
+        elseif attribute == "target-slot" then
             UpdateTempEnchant(self, value)
         end
     end)
@@ -246,13 +215,8 @@ function GwAuraTmpl_OnLoad(self)
     a2:SetToScale(1.0, 1.0)
 
     -- add mouseover handlers
-    self:HookScript("OnEnter", aura_OnEnter)
-    self:HookScript("OnLeave", GameTooltip_Hide)
-
-    if not self:GetAttribute("type2") then
-        -- not a secure handler; add our own right-click buff removal
-        self:SetScript("OnClick", auraFrame_OnClick)
-    end
+    self:SetScript("OnEnter", aura_OnEnter)
+    self:SetScript("OnLeave", GameTooltip_Hide)
 
     self.gwInit = true
 end
@@ -299,7 +263,7 @@ local function newHeader(filter, settingname)
     h:SetAttribute("unit", "player")
     h:SetAttribute("filter", filter)
 
-    RegisterStateDriver(h, 'visibility', '[petbattle] hide; show')
+    RegisterStateDriver(h, "visibility", "[petbattle] hide; show")
     RegisterAttributeDriver(h, "unit", "[vehicleui] vehicle; player")
 
     h:SetAttribute("sortMethod", "INDEX")
@@ -316,8 +280,8 @@ local function newHeader(filter, settingname)
     if filter == "HELPFUL" then
         h:SetAttribute("includeWeapons", 1)
         h:SetAttribute("weaponTemplate", aura_tmpl)
-        h:SetAttribute('consolidateDuration', -1)
-        h:SetAttribute('consolidateTo', 0)
+        h:SetAttribute("consolidateDuration", -1)
+        h:SetAttribute("consolidateTo", 0)
     end
 
     return h
