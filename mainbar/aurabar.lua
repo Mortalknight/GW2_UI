@@ -49,12 +49,12 @@ local function setShortCD(self, expires, duration, stackCount)
     self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
 end
 
-local function SetCD(self, expires, duration, stackCount)
+local function SetCD(self, expires, duration, stackCount, auraType)
     if not self or not self.status or not self.gwInit then
         return
     end
 
-    if self.atype == 2 then
+    if auraType == 2 then
         -- temp weapon enchant
         local remains = expires / 1000
         setLongCD(self, stackCount)
@@ -92,7 +92,7 @@ local function SetCount(self, count)
     end
 end
 
-local function SetIcon(self, icon, dtype)
+local function SetIcon(self, icon, dtype, auraType)
     if not self or not self.status or not self.gwInit then
         return
     end
@@ -103,10 +103,10 @@ local function SetIcon(self, icon, dtype)
         self.status.icon:Hide()
     end
 
-    if self.atype == 1 then
+    if auraType == 1 then
         self.border.inner:SetVertexColor(0, 0, 0)
     else
-        if self.atype == 2 then
+        if auraType == 2 then
             dtype = "Curse"
         end
         local c = DEBUFF_COLOR[dtype]
@@ -114,42 +114,6 @@ local function SetIcon(self, icon, dtype)
             c = DEBUFF_COLOR["none"]
         end
         self.border.inner:SetVertexColor(c.r, c.g, c.b)
-    end
-
-end
-
-local function UpdateAura(button, index)
-    local name, icon , count, dtype, duration, expires = UnitAura(button:GetParent():GetUnit(), index, button:GetFilter())
-
-    if name then
-        button.atype = button:GetParent():GetAType()
-        button:SetIcon(icon, dtype)
-        button:SetCD(expires, duration, count)
-        button:SetCount(count)
-        if duration and GameTooltip:IsOwned(button) then
-            GameTooltip:SetUnitAura(button:GetParent():GetUnit(), index, button:GetFilter());
-        end
-    end
-end
-
-local function UpdateTempEnchant(button, index)
-    local mh, mh_exp, mh_num, _, oh, oh_exp, oh_num = GetWeaponEnchantInfo()
-
-    local icon = GetInventoryItemTexture("player", index)
-
-    button.atype = 2
-    button.slotId = index
-    button:SetIcon(icon)
-    if index == INVSLOT_MAINHAND and mh then
-        button:SetCount(mh_num)
-        button:SetCD(mh_exp, -1)
-    elseif index == INVSLOT_OFFHAND and oh then
-        button:SetCount(oh_num)
-        button:SetCD(oh_exp, -1)
-    end
-
-    if GameTooltip:IsOwned(button) then
-        TempEnchantButton_OnEnter(button)
     end
 end
 
@@ -164,6 +128,40 @@ local function aura_OnEnter(self)
     end
 end
 GW.AddForProfiling("aurabar_secure", "aura_OnEnter", aura_OnEnter)
+
+local function UpdateAura(button, index)
+    local name, icon , count, dtype, duration, expires = UnitAura(button:GetParent():GetUnit(), index, button:GetFilter())
+
+    if name then
+        local auraType = button:GetParent():GetAType()
+        button:SetIcon(icon, dtype, auraType)
+        button:SetCD(expires, duration, count, auraType)
+        button:SetCount(count)
+        if duration and GameTooltip:IsOwned(button) then
+            aura_OnEnter(button)
+        end
+    end
+end
+
+local function UpdateTempEnchant(button, index)
+    local mh, mh_exp, mh_num, _, oh, oh_exp, oh_num = GetWeaponEnchantInfo()
+
+    local icon = GetInventoryItemTexture("player", index)
+
+    button.slotId = index
+    button:SetIcon(icon, nil, 2)
+    if index == INVSLOT_MAINHAND and mh then
+        button:SetCount(mh_num)
+        button:SetCD(mh_exp, -1, nil, 2)
+    elseif index == INVSLOT_OFFHAND and oh then
+        button:SetCount(oh_num)
+        button:SetCD(oh_exp, -1, nil, 2)
+    end
+
+    if GameTooltip:IsOwned(button) then
+        aura_OnEnter(button)
+    end
+end
 
 local function GetFilter(self)
     return self:GetParent():GetFilter(self)
@@ -181,7 +179,6 @@ function GwAuraTmpl_OnLoad(self)
     self.cooldown:SetReverse(false)
     self.cooldown:SetHideCountdownNumbers(true)
 
-    self.atype = 1
     self.SetCD = SetCD
     self.SetCount = SetCount
     self.SetIcon = SetIcon
