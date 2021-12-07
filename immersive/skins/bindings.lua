@@ -107,33 +107,33 @@ local function ApplyBindingsUISkin()
 end
 
 local function updateNewGlow(self)
-	if self.NewOutline:IsShown() then
-		self.backdrop:SetBackdropBorderColor(0, .8, 0)
-	else
-		self.backdrop:SetBackdropBorderColor(0, 0, 0)
-	end
+    if self.NewOutline:IsShown() then
+        self.backdrop:SetBackdropBorderColor(0, .8, 0)
+    else
+        self.backdrop:SetBackdropBorderColor(0, 0, 0)
+    end
 end
 
 local function HandleScrollChild(self)
-	for i = 1, self.ScrollTarget:GetNumChildren() do
-		local child = select(i, self.ScrollTarget:GetChildren())
-		local icon = child and child.Icon
-		if icon and not icon.IsSkinned then
-			GW.HandleIcon(icon)
-			child.Background:Hide()
-			child:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+    for i = 1, self.ScrollTarget:GetNumChildren() do
+        local child = select(i, self.ScrollTarget:GetChildren())
+        local icon = child and child.Icon
+        if icon and not icon.IsSkinned then
+            GW.HandleIcon(icon)
+            child.Background:Hide()
+            child:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
 
-			child.DeleteButton:SkinButton(false, true)
-			child.DeleteButton:SetSize(20, 20)
-			child.FrameHighlight:SetInside(child.bg)
-			child.FrameHighlight:SetColorTexture(1, 1, 1, .20)
+            child.DeleteButton:SkinButton(false, true)
+            child.DeleteButton:SetSize(20, 20)
+            child.FrameHighlight:SetInside(child.bg)
+            child.FrameHighlight:SetColorTexture(1, 1, 1, .20)
 
-			child.NewOutline:SetTexture('')
-			hooksecurefunc(child, 'Init', updateNewGlow)
+            child.NewOutline:SetTexture("")
+            hooksecurefunc(child, "Init", updateNewGlow)
 
-			icon.IsSkinned = true
-		end
-	end
+            icon.IsSkinned = true
+        end
+    end
 end
 
 local function ApplyClickBindingUISkin()
@@ -143,15 +143,15 @@ local function ApplyClickBindingUISkin()
 
     ClickBindingFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     ClickBindingFrame.TutorialButton.Ring:Hide()
-	ClickBindingFrame.TutorialButton:SetPoint('TOPLEFT', ClickBindingFrame, 'TOPLEFT', -12, 12)
+    ClickBindingFrame.TutorialButton:SetPoint("TOPLEFT", ClickBindingFrame, "TOPLEFT", -12, 12)
 
-    for _, v in next, { 'ResetButton', 'AddBindingButton', 'SaveButton' } do
+    for _, v in next, { "ResetButton", "AddBindingButton", "SaveButton" } do
         ClickBindingFrame[v]:SkinButton(false, true)
     end
 
     ClickBindingFrame.ScrollBar:HandleTrimScrollBar()
-	ClickBindingFrame.ScrollBoxBackground:Hide()
-	hooksecurefunc(ClickBindingFrame.ScrollBox, 'Update', HandleScrollChild)
+    ClickBindingFrame.ScrollBoxBackground:Hide()
+    hooksecurefunc(ClickBindingFrame.ScrollBox, "Update", HandleScrollChild)
 
     if GW.GetSetting("USE_TALENT_WINDOW") then
         ClickBindingFrame.SpellbookPortrait.FrameName = "GwCharacterWindow"
@@ -201,9 +201,9 @@ local function ApplyClickBindingUISkin()
         end
     end
 
-	-- Tutorial Frame
-	ClickBindingFrame.TutorialFrame.NineSlice:StripTextures()
-	ClickBindingFrame.TutorialFrame.TitleBg:Hide()
+    -- Tutorial Frame
+    ClickBindingFrame.TutorialFrame.NineSlice:StripTextures()
+    ClickBindingFrame.TutorialFrame.TitleBg:Hide()
 
     if not ClickBindingFrame.TutorialFrame.SetBackdrop then
         Mixin(ClickBindingFrame.TutorialFrame, BackdropTemplateMixin)
@@ -212,7 +212,7 @@ local function ApplyClickBindingUISkin()
 
     ClickBindingFrame.TutorialFrame:SetBackdrop(GW.skins.constBackdropFrame)
 
-	ClickBindingFrame.TutorialFrame.CloseButton:SkinButton(true)
+    ClickBindingFrame.TutorialFrame.CloseButton:SkinButton(true)
     ClickBindingFrame.TutorialFrame.CloseButton:SetSize(20, 20)
 end
 
