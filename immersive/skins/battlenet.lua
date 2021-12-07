@@ -25,7 +25,7 @@ local function LoadBNToastSkin()
     local skins = {
         BNToastFrame,
         TimeAlertFrame,
-        TicketStatusFrameButton.Background.NineSlice
+        TicketStatusFrameButton.NineSlice
     }
 
     for i = 1, #skins do
