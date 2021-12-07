@@ -137,9 +137,6 @@ local function UpdateAura(button, index)
         button:SetIcon(icon, dtype, auraType)
         button:SetCD(expires, duration, count, auraType)
         button:SetCount(count)
-        if duration and GameTooltip:IsOwned(button) then
-            aura_OnEnter(button)
-        end
     end
 end
 
@@ -157,16 +154,24 @@ local function UpdateTempEnchant(button, index)
         button:SetCount(oh_num)
         button:SetCD(oh_exp, -1, nil, 2)
     end
-
-    if GameTooltip:IsOwned(button) then
-        aura_OnEnter(button)
-    end
 end
 
 local function GetFilter(self)
     return self:GetParent():GetFilter(self)
 end
 GW.AddForProfiling("aurabar_secure", "GetFilter", GetFilter)
+
+local function aura_OnUpdate(self, elapsed)
+    if self.ttElapsed and self.ttElapsed > 0.1 then
+		if GameTooltip:IsOwned(self) then
+			aura_OnEnter(self)
+		end
+
+		self.ttElapsed = 0
+	else
+		self.ttElapsed = (self.ttElapsed or 0) + elapsed
+	end
+end
 
 function GwAuraTmpl_OnLoad(self)
     if self.gwInit then
@@ -214,6 +219,7 @@ function GwAuraTmpl_OnLoad(self)
     -- add mouseover handlers
     self:SetScript("OnEnter", aura_OnEnter)
     self:SetScript("OnLeave", GameTooltip_Hide)
+    self:SetScript("OnUpdate", aura_OnUpdate)
 
     self.gwInit = true
 end
