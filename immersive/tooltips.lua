@@ -731,7 +731,6 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
     end
 end
 
-
 local function SetTooltipFonts()
     local font = UNIT_NAME_FONT
     local fontOutline = "NONE"

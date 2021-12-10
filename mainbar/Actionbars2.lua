@@ -410,6 +410,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         if btn.showMacroName then
             btn.Name:SetPoint("TOPLEFT", btn, "TOPLEFT")
             btn.Name:SetJustifyH("LEFT")
+            btn.Name:SetWidth(btn:GetWidth())
             local font, fontHeight = btn.Name:GetFont()
             btn.Name:SetFont(font, fontHeight, "OUTLINED")
         else
