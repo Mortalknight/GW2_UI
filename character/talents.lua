@@ -397,6 +397,12 @@ GW.AddForProfiling("talents", "loadTalents", loadTalents)
 local function spellButton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
+
+    if InClickBindingMode() and not self.canClickBind then
+        GameTooltip:AddLine(CLICK_BINDING_NOT_AVAILABLE, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
+        GameTooltip:Show();
+        return;
+    end
     if self.skillType == "TALENT" then
         GameTooltip:SetSpellByID(self.spellId)
     elseif not self.isFlyout then
@@ -426,6 +432,14 @@ local function spellButton_OnDragStart(self)
     PickupSpellBookItem(self.spellbookIndex, self.booktype)
 end
 GW.AddForProfiling("talents", "spellButton_OnDragStart", spellButton_OnDragStart)
+
+local function spellButton_ClickBindCast(self)
+    if InClickBindingMode() then
+        if ClickBindingFrame:HasNewSlot() and self.canClickBind then
+            ClickBindingFrame:AddNewAction(Enum.ClickBindingType.Spell, self.spellId);
+        end
+    end
+end
 
 local function spellButton_GlyphApply(self, unit, button, actionType)
     GW.Debug("in glyph application", unit, button, actionType)
@@ -568,6 +582,29 @@ local function setPassiveButton(btn, spellId, skillType, icon, spellbookIndex, b
     btn:EnableMouse(true)
 end
 GW.AddForProfiling("talents", "setPassiveButton", setPassiveButton)
+
+local function checkForClickBinding(btn, spellId)
+    btn.canClickBind = false
+    if InClickBindingMode() then
+        btn.SpellHighlightTexture:Hide();
+        local spellBindable = spellId and C_ClickBindings.CanSpellBeClickBound(spellId) or false;
+        local isDisabled = spellId and C_SpellBook.IsSpellDisabled(spellId)
+        local isOffSpec = (btn.offSpecID ~= 0) and (btn.bookType == BOOKTYPE_SPELL);
+        local canBind = spellBindable and (not isOffSpec) and (not isDisabled);
+        if (canBind) then
+            btn.canClickBind = true;
+            if (ClickBindingFrame:HasEmptySlot()) then
+                btn.ClickBindingHighlight:Show();
+            end
+            btn:SetAttribute("type1", "CustomClickCastClick") -- enable strict left-click clickBindCast
+        else
+            btn.ClickBindingIconCover:Show();
+        end
+    else
+        btn:SetAttribute("type1", nil)
+        btn.ClickBindingHighlight:Hide()
+    end
+end
 
 local function checkForGlyph(btn, spellId, fmSpellbook)
     if HasAttachedGlyph(spellId) then
@@ -716,6 +753,7 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
             -- check for should glyph highlight
             if spellBookTabs == 2 or spellBookTabs == 3 then
                 checkForGlyph(btn, spellId, fmSpellbook)
+                checkForClickBinding(btn, spellId)
             end
             GW.RegisterCooldown(btn.cooldown)
 
@@ -808,6 +846,7 @@ local function activePoolCommon_Resetter(_, btn)
     btn:SetAttribute("*macrotext2", nil)
     btn:SetAttribute("ispickable", nil)
     btn.GlyphApply = spellButton_GlyphApply
+    btn.CustomClickCastClick = spellButton_ClickBindCast
     btn.isFuture = nil
     btn.spellbookIndex = nil
     btn.booktype = nil
@@ -815,6 +854,7 @@ local function activePoolCommon_Resetter(_, btn)
     btn.skillType = nil
     btn.isFlyout = nil
     btn.modifiedClick = TalProfButton_OnModifiedClick
+    btn.canClickBind = false
 end
 GW.AddForProfiling("talents", "activePoolCommon_Resetter", activePoolCommon_Resetter)
 

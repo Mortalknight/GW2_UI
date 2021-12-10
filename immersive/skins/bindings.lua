@@ -9,10 +9,10 @@ local function ApplyBindingsUISkin()
         "unbindButton",
         "okayButton",
         "cancelButton",
-        "quickKeybindButton"
+        "quickKeybindButton",
+        "clickCastingButton"
     }
 
-    local KeyBindingFrame = _G.KeyBindingFrame
     for _, v in pairs(buttons) do
         KeyBindingFrame[v]:SkinButton(false, true)
     end
@@ -30,16 +30,16 @@ local function ApplyBindingsUISkin()
     tex:SetSize(w + 50, h + 50)
     KeyBindingFrame.tex = tex
 
-    _G.KeyBindingFrameCategoryList:StripTextures()
-    _G.KeyBindingFrameCategoryList:CreateBackdrop(constBackdropFrameBorder)
+    KeyBindingFrameCategoryList:StripTextures()
+    KeyBindingFrameCategoryList:CreateBackdrop(constBackdropFrameBorder)
     KeyBindingFrame.bindingsContainer:StripTextures()
     KeyBindingFrame.bindingsContainer:CreateBackdrop(constBackdropFrameBorder)
 
     KeyBindingFrame.characterSpecificButton:SkinCheckButton()
     KeyBindingFrame.characterSpecificButton:SetSize(15, 15)
 
-    _G.KeyBindingFrameScrollFrame:SkinScrollFrame()
-    _G.KeyBindingFrameScrollFrameScrollBar:SkinScrollBar()
+    KeyBindingFrameScrollFrame:SkinScrollFrame()
+    KeyBindingFrameScrollFrameScrollBar:SkinScrollBar()
 
     hooksecurefunc("BindingButtonTemplate_SetupBindingButton", function(_, button)
         button:SkinButton(false, true)
@@ -58,30 +58,30 @@ local function ApplyBindingsUISkin()
     end)
 
     -- QuickKeybind
-    _G.QuickKeybindFrame:StripTextures()
-    _G.QuickKeybindFrame.Header:StripTextures()
-    _G.QuickKeybindFrame.Header.Text:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+    QuickKeybindFrame:StripTextures()
+    QuickKeybindFrame.Header:StripTextures()
+    QuickKeybindFrame.Header.Text:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
 
-    _G.QuickKeybindFrame.characterSpecificButton:SkinCheckButton()
-    _G.QuickKeybindFrame.characterSpecificButton:SetSize(13, 13)
+    QuickKeybindFrame.characterSpecificButton:SkinCheckButton()
+    QuickKeybindFrame.characterSpecificButton:SetSize(13, 13)
 
-    local tex = _G.QuickKeybindFrame:CreateTexture("bg", "BACKGROUND")
-    tex:SetPoint("TOP", _G.QuickKeybindFrame, "TOP", 0, 25)
+    local tex = QuickKeybindFrame:CreateTexture("bg", "BACKGROUND")
+    tex:SetPoint("TOP", QuickKeybindFrame, "TOP", 0, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    local w, h = _G.QuickKeybindFrame:GetSize()
+    local w, h = QuickKeybindFrame:GetSize()
     tex:SetSize(w + 50, h + 50)
-    _G.QuickKeybindFrame.tex = tex
+    QuickKeybindFrame.tex = tex
 
     local buttons = {"okayButton", "defaultsButton", "cancelButton"}
     for _, v in pairs(buttons) do
-        _G.QuickKeybindFrame[v]:SkinButton(false, true)
+        QuickKeybindFrame[v]:SkinButton(false, true)
     end
 
     QuickKeybindFrame:HookScript("OnShow", function()
-        _G.MultiBarRight.QuickKeybindGlow:Hide()
-        _G.MultiBarLeft.QuickKeybindGlow:Hide()
-        _G.MultiBarBottomRight.QuickKeybindGlow:Hide()
-        _G.MultiBarBottomLeft.QuickKeybindGlow:Hide()
+        MultiBarRight.QuickKeybindGlow:Hide()
+        MultiBarLeft.QuickKeybindGlow:Hide()
+        MultiBarBottomRight.QuickKeybindGlow:Hide()
+        MultiBarBottomLeft.QuickKeybindGlow:Hide()
     end)
 
     -- make the frame movable (maybe someone have a actionbar behinde that frame)
@@ -90,7 +90,7 @@ local function ApplyBindingsUISkin()
     QuickKeybindFrame.Header:RegisterForDrag("LeftButton")
 
     QuickKeybindFrame.Header:SetScript(
-        'OnDragStart',
+        "OnDragStart",
         function(self)
             self.moving = true
             self:GetParent():StartMoving()
@@ -98,16 +98,127 @@ local function ApplyBindingsUISkin()
     )
 
     QuickKeybindFrame.Header:SetScript(
-        'OnDragStop',
+        "OnDragStop",
         function(self)
             self.moving = nil
             self:GetParent():StopMovingOrSizing()
         end
     )
-
 end
+
+local function updateNewGlow(self)
+    if self.NewOutline:IsShown() then
+        self.backdrop:SetBackdropBorderColor(0, .8, 0)
+    else
+        self.backdrop:SetBackdropBorderColor(0, 0, 0)
+    end
+end
+
+local function HandleScrollChild(self)
+    for i = 1, self.ScrollTarget:GetNumChildren() do
+        local child = select(i, self.ScrollTarget:GetChildren())
+        local icon = child and child.Icon
+        if icon and not icon.IsSkinned then
+            GW.HandleIcon(icon)
+            child.Background:Hide()
+            child:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+
+            child.DeleteButton:SkinButton(false, true)
+            child.DeleteButton:SetSize(20, 20)
+            child.FrameHighlight:SetInside(child.bg)
+            child.FrameHighlight:SetColorTexture(1, 1, 1, .20)
+
+            child.NewOutline:SetTexture("")
+            hooksecurefunc(child, "Init", updateNewGlow)
+
+            icon.IsSkinned = true
+        end
+    end
+end
+
+local function ApplyClickBindingUISkin()
+    if not GW.GetSetting("BINDINGS_SKIN_ENABLED") then return end
+
+    GW.HandlePortraitFrame(ClickBindingFrame, true)
+
+    ClickBindingFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+    ClickBindingFrame.TutorialButton.Ring:Hide()
+    ClickBindingFrame.TutorialButton:SetPoint("TOPLEFT", ClickBindingFrame, "TOPLEFT", -12, 12)
+
+    for _, v in next, { "ResetButton", "AddBindingButton", "SaveButton" } do
+        ClickBindingFrame[v]:SkinButton(false, true)
+    end
+
+    ClickBindingFrame.ScrollBar:HandleTrimScrollBar()
+    ClickBindingFrame.ScrollBoxBackground:Hide()
+    hooksecurefunc(ClickBindingFrame.ScrollBox, "Update", HandleScrollChild)
+
+    if GW.GetSetting("USE_TALENT_WINDOW") then
+        ClickBindingFrame.SpellbookPortrait.FrameName = "GwCharacterWindow"
+
+        ClickBindingFrame.SpellbookPortrait:SetScript("OnClick", function(self)
+            local frame = self:GetFrame()
+
+            if frame == SpellBookFrame then
+                frame = GwCharacterWindow
+            end
+            if ClickBindingFrame:GetFocusedFrame() == frame then
+                ClickBindingFrame:ClearFocusedFrame();
+            else
+                GwPaperDollDetailsFrame:Hide()
+                GwReputationyDetailsFrame:Hide()
+                GwCurrencyDetailsFrame:Hide()
+                GwProfessionsDetailsFrame:Hide()
+                GwTalentDetailsFrame:Show()
+                ClickBindingFrame:SetFocusedFrame(frame);
+            end
+
+        end)
+
+        ClickBindingFrame.SetFocusedFrame = function(_, frame)
+            if frame == SpellBookFrame then frame = GwCharacterWindow end
+            if (frame == ClickBindingFrame:GetFocusedFrame()) or not (frame == GwCharacterWindow or frame == MacroFrame) then
+                return;
+            end
+
+            HideUIPanel(ClickBindingFrame:GetFocusedFrame());
+            ClickBindingFrame.focusedFrame = frame;
+
+            if not frame:IsShown() then
+                ShowUIPanel(frame);
+                if frame == GwCharacterWindow then
+                    GwPaperDollDetailsFrame:Hide()
+                    GwReputationyDetailsFrame:Hide()
+                    GwCurrencyDetailsFrame:Hide()
+                    GwProfessionsDetailsFrame:Hide()
+                    GwTalentDetailsFrame:Show()
+                end
+            end
+
+            for _, portrait in ipairs(ClickBindingFrame.FramePortraits) do
+                portrait:SetSelectedState(portrait:GetFrame() == frame)
+            end
+        end
+    end
+
+    -- Tutorial Frame
+    ClickBindingFrame.TutorialFrame.NineSlice:StripTextures()
+    ClickBindingFrame.TutorialFrame.TitleBg:Hide()
+
+    if not ClickBindingFrame.TutorialFrame.SetBackdrop then
+        Mixin(ClickBindingFrame.TutorialFrame, BackdropTemplateMixin)
+        ClickBindingFrame.TutorialFrame:HookScript("OnSizeChanged", ClickBindingFrame.TutorialFrame.OnBackdropSizeChanged)
+    end
+
+    ClickBindingFrame.TutorialFrame:SetBackdrop(GW.skins.constBackdropFrame)
+
+    ClickBindingFrame.TutorialFrame.CloseButton:SkinButton(true)
+    ClickBindingFrame.TutorialFrame.CloseButton:SetSize(20, 20)
+end
+
 
 local function LoadBindingsUISkin()
     GW.RegisterSkin("Blizzard_BindingUI", function() ApplyBindingsUISkin() end)
+    GW.RegisterSkin("Blizzard_ClickBindingUI", function() ApplyClickBindingUISkin() end)
 end
 GW.LoadBindingsUISkin = LoadBindingsUISkin

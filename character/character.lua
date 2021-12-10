@@ -9,6 +9,7 @@ local moveDistance, heroFrameX, heroFrameY, heroFrameLeft, heroFrameTop, heroFra
 
 windowsList[1] = {
     ["OnLoad"] = "LoadPaperDoll",
+    ["FrameName"] = "GwPaperDollDetailsFrame",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["RefName"] = "GwPaperDoll",
     ["TabIcon"] = "tabicon_character",
@@ -24,6 +25,7 @@ windowsList[1] = {
 
 windowsList[2] = {
     ["OnLoad"] = "LoadTalents",
+    ["FrameName"] = "GwTalentDetailsFrame",
     ["SettingName"] = "USE_TALENT_WINDOW",
     ["RefName"] = "GwTalentFrame",
     ["TabIcon"] = "tabicon_spellbook",
@@ -41,6 +43,7 @@ windowsList[2] = {
 
 windowsList[3] = {
     ["OnLoad"] = "LoadProfessions",
+    ["FrameName"] = "GwProfessionsDetailsFrame",
     ["SettingName"] = "USE_TALENT_WINDOW",
     ["RefName"] = "GwProfessionsFrame",
     ["TabIcon"] = "tabicon_professions",
@@ -56,6 +59,7 @@ windowsList[3] = {
 
 windowsList[4] = {
     ["OnLoad"] = "LoadCurrency",
+    ["FrameName"] = "GwCurrencyDetailsFrame",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["RefName"] = "GwCurrencyFrame",
     ["TabIcon"] = "tabicon_currency",
@@ -71,6 +75,7 @@ windowsList[4] = {
 
 windowsList[5] = {
     ["OnLoad"] = "LoadReputation",
+    ["FrameName"] = "GwReputationyDetailsFrame",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["RefName"] = "GwReputationFrame",
     ["TabIcon"] = "tabicon_reputation",
@@ -506,7 +511,7 @@ local function LoadCharacter()
     local tabIndex = 1
     for _, v in pairs(windowsList) do
         if GetSetting(v.SettingName) then
-            local container = CreateFrame("Frame", nil, GwCharacterWindow, "GwCharacterTabContainer")
+            local container = CreateFrame("Frame", v.FrameName, GwCharacterWindow, "GwCharacterTabContainer")
             local tab = createTabIcon(v.TabIcon, tabIndex)
 
             GwCharacterWindow:SetFrameRef(v.RefName, container)

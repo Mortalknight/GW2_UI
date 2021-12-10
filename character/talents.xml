@@ -551,7 +551,18 @@
                         <Anchor point="CENTER"/>
                     </Anchors>
                 </Texture>
+                <Texture parentKey="ClickBindingHighlight" atlas="ClickCast-Highlight-Spellbook" useAtlasSize="true" alphaMode="ADD" hidden="true">
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
             </Layer>
+
+            <Layer level="OVERLAY" textureSubLevel="-2">
+                <Texture parentKey="ClickBindingIconCover" setAllPoints="true" hidden="true">
+					<Color r="0" g="0" b="0" a="0.3"/>
+				</Texture>
+             </Layer>
             <Layer level="OVERLAY" textureSubLevel="1">
                 <Texture parentKey="GlyphTranslation" hidden="true" alpha="1" alphaMode="ADD" atlas="GlyphIcon-Spellbook" useAtlasSize="true">
                     <Anchors>
