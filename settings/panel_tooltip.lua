@@ -30,6 +30,19 @@ local function LoadTooltipPanel(sWindow)
     addOption(p, DUNGEON_SCORE, nil, "ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, CHALLENGE_MODE_KEYSTONE_NAME:format("_"):gsub(": _", ""), L["Adds descriptions for mythic keystone properties to their tooltips."], "ADVANCED_TOOLTIP_SHOW_KEYSTONEINFO", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, L["Show Health bar text"], nil, "ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOptionSlider(
+        p,
+        FONT_SIZE,
+        nil,
+        "TOOLTIP_FONT_SIZE",
+        GW.SetTooltipFonts,
+        5,
+        42,
+        nil,
+        0,
+        {["TOOLTIPS_ENABLED"] = true},
+        1
+    )
     addOptionDropdown(
         p,
         L["Modifier for IDs"],

@@ -731,13 +731,12 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
     end
 end
 
-
 local function SetTooltipFonts()
     local font = UNIT_NAME_FONT
     local fontOutline = "NONE"
-    local headerSize = 12
-    local smallTextSize = 12
-    local textSize = 12
+    local headerSize = GetSetting("TOOLTIP_FONT_SIZE")
+    local smallTextSize = GetSetting("TOOLTIP_FONT_SIZE")
+    local textSize = GetSetting("TOOLTIP_FONT_SIZE")
 
     GameTooltipHeaderText:SetFont(font, headerSize, fontOutline)
     GameTooltipTextSmall:SetFont(font, smallTextSize, fontOutline)
@@ -767,6 +766,7 @@ local function SetTooltipFonts()
         end
     end
 end
+GW.SetTooltipFonts = SetTooltipFonts
 
 local function GameTooltip_AddQuestRewardsToTooltip(self, questID)
     if not (self and questID and self.progressBar) or self:IsForbidden() then return end

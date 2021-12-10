@@ -9,6 +9,8 @@ NEW
     - Weekly Rewards
     - Chromie Time
 
+    - Added option to change tooltip font size
+
 FIXES
     - Fix some cooldown issues for extra action buttons
     - Show correct buffs in vehicle UI
