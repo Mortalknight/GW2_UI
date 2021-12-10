@@ -90,3 +90,77 @@ local function SkinDropDown()
     SkinUIDropDownMenu()
 end
 GW.SkinDropDown = SkinDropDown
+
+local function HandleIcon(icon, backdrop)
+    icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+
+    if backdrop and not icon.backdrop then
+        icon:CreateBackdrop()
+    end
+end
+GW.HandleIcon = HandleIcon
+
+do
+    local function iconBorderColor(border, r, g, b, a)
+        border:StripTextures()
+
+        if border.customFunc then
+            local br, bg, bb = 1, 1, 1
+            border.customFunc(border, r, g, b, a, br, bg, bb)
+        elseif border.customBackdrop then
+            border.customBackdrop:SetBackdropBorderColor(r, g, b)
+        end
+    end
+
+    local function iconBorderHide(border)
+        local br, bg, bb = 1, 1, 1
+        if border.customFunc then
+            local r, g, b, a = border:GetVertexColor()
+            border.customFunc(border, r, g, b, a, br, bg, bb)
+        elseif border.customBackdrop then
+            border.customBackdrop:SetBackdropBorderColor(br, bg, bb)
+        end
+    end
+
+    local function HandleIconBorder(border, backdrop, customFunc)
+        if not backdrop then
+            local parent = border:GetParent()
+            backdrop = parent.backdrop or parent
+        end
+
+        border.customBackdrop = backdrop
+
+        if not border.IconBorderHooked then
+            border:StripTextures()
+
+            hooksecurefunc(border, "SetVertexColor", iconBorderColor)
+            hooksecurefunc(border, "Hide", iconBorderHide)
+
+            border.IconBorderHooked = true
+        end
+
+        local r, g, b, a = border:GetVertexColor()
+        if customFunc then
+            border.customFunc = customFunc
+            local br, bg, bb = unpack(1, 1, 1)
+            customFunc(border, r, g, b, a, br, bg, bb)
+        elseif r then
+            backdrop:SetBackdropBorderColor(r, g, b, a)
+        else
+            local br, bg, bb = unpack(1, 1, 1)
+            backdrop:SetBackdropBorderColor(br, bg, bb)
+        end
+    end
+    GW.HandleIconBorder = HandleIconBorder
+end
+
+local function Scale(x)
+    local m = GW.mult
+    if m == 1 or x == 0 then
+        return x
+    else
+        local y = m > 1 and m or -m
+        return x - x % (x < 0 and y or -y)
+    end
+end
+GW.Scale = Scale

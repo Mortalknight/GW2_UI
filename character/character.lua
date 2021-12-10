@@ -189,7 +189,7 @@ local function PaperDollStats_OnEvent(self, event, ...)
         PaperDollUpdateUnitData()
         self:SetScript("OnUpdate", PaperDollStats_QueuedUpdate)
     elseif event == "ACTIVE_TALENT_GROUP_CHANGED" then
-        PaperDollUpdateStats()
+        GW.PaperDollUpdateStats()
     elseif event == "SPELL_POWER_CHANGED" then
         self:SetScript("OnUpdate", PaperDollStats_QueuedUpdate)
     end

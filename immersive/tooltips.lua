@@ -27,56 +27,6 @@ local genderTable = {
     " " .. FEMALE .. " "
 }
 
-local UNSTYLED = {
-    GameTooltip,
-    ShoppingTooltip1,
-    ShoppingTooltip2,
-    ShoppingTooltip3,
-    ItemRefShoppingTooltip1,
-    ItemRefShoppingTooltip2,
-    ItemRefShoppingTooltip3,
-    WorldMapTooltip,
-    WorldMapCompareTooltip1,
-    WorldMapCompareTooltip2,
-    WorldMapCompareTooltip3,
-    AtlasLootTooltip,
-    QuestHelperTooltip,
-    QuestGuru_QuestWatchTooltip,
-    TRP2_MainTooltip,
-    TRP2_ObjetTooltip,
-    TRP2_StaticPopupPersoTooltip,
-    TRP2_PersoTooltip,
-    TRP2_MountTooltip,
-    AltoTooltip,
-    AltoScanningTooltip,
-    ArkScanTooltipTemplate,
-    NxTooltipItem,
-    NxTooltipD,
-    DBMInfoFrame,
-    DBMRangeCheck,
-    DatatextTooltip,
-    VengeanceTooltip,
-    FishingBuddyTooltip,
-    FishLibTooltip,
-    HealBot_ScanTooltip,
-    hbGameTooltip,
-    PlateBuffsTooltip,
-    LibGroupInSpecTScanTip,
-    RecountTempTooltip,
-    VuhDoScanTooltip,
-    XPerl_BottomTip,
-    EventTraceTooltip,
-    FrameStackTooltip,
-    PetBattlePrimaryUnitTooltip,
-    PetBattlePrimaryAbilityTooltip,
-    LibDBIconTooltip,
-    FriendsTooltip,
-    EmbeddedItemTooltip,
-    RepurationParagonTooltip,
-    WarCampaignTooltip,
-    QuickKeybindTooltip
-}
-
 local function GetLevelLine(self, offset)
     if self:IsForbidden() then return end
     for i = offset, self:NumLines() do
@@ -370,27 +320,6 @@ local constBackdropArgs = {
     edgeSize = 32,
     insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
-local function styleTooltip(self)
-    if not self:IsShown() then
-        return
-    end
-    self:SetBackdrop(constBackdropArgs)
-    if _G[self:GetName() .. "StatusBarTexture"] then
-        _G[self:GetName() .. "StatusBarTexture"]:SetTexture("Interface/Addons/GW2_UI/Textures/castinbar-white")
-    end
-end
---GW.AddForProfiling("tooltips", "styleTooltip", styleTooltip)
-
-local function tooltip_SetBackdropStyle(self, args)
-    --if args and args == GAME_TOOLTIP_BACKDROP_STYLE_EMBEDDED then
-        --return
-    --end
-    if not self:IsShown() then
-        return
-    end
-    self:SetBackdrop(constBackdropArgs)
-end
---GW.AddForProfiling("tooltips", "tooltip_SetBackdropStyle", tooltip_SetBackdropStyle)
 
 local function anchorTooltip(self, p)
     self:SetOwner(p, GetSetting("CURSOR_ANCHOR_TYPE"), GetSetting("ANCHOR_CURSOR_OFFSET_X"), GetSetting("ANCHOR_CURSOR_OFFSET_Y"))
@@ -418,61 +347,214 @@ local function SkinItemRefTooltip()
     hooksecurefunc("SetItemRef", SkinItemRefTooltip_Update)
 end
 
-local function SkinProgressbar(self)
-    if not self or self:IsForbidden() or not self.progressBarPool then return end
+local function GameTooltip_ClearProgressBars(self)
+    self.progressBar = nil
+end
+
+local function GameTooltip_ShowStatusBar(self)
+    if not self or not self.statusBarPool or self:IsForbidden() then return end
+
+    local sb = self.statusBarPool:GetNextActive()
+    if not sb or sb.backdrop then return end
+
+    sb:StripTextures()
+    sb:CreateBackdrop(GW.skins.constBackdropFrameBorder)
+    sb:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/gwstatusbar")
+end
+
+local function GameTooltip_ShowProgressBar(self)
+    if not self or not self.progressBarPool or self:IsForbidden() then return end
 
     local sb = self.progressBarPool:GetNextActive()
-    if (not sb or not sb.Bar) or sb.Bar.backdrop then return end
+    if not sb or not sb.Bar then return end
 
-    sb.Bar:StripTextures()
-    sb.Bar:CreateBackdrop()
-    sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/gwstatusbar")
-    sb.Bar.BorderLeft:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
-    sb.Bar.BorderRight:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
-    sb.Bar.BorderMid:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
-    sb.Bar.LeftDivider:Hide()
-    sb.Bar.RightDivider:Hide()
+    self.progressBar = sb.Bar
 
-    self.pbBar = sb.Bar
+    if not sb.Bar.backdrop then
+        sb.Bar:StripTextures()
+        sb.Bar:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+        sb.Bar.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
+        sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/gwstatusbar")
+    end
 end
 
-local function SetStyle(tooltip)
-    if not tooltip or (tooltip == GW.ScanTooltip or tooltip.IsEmbedded) or tooltip:IsForbidden() then return end
-    tooltip:SetBackdrop(constBackdropArgs)
+local function SetStyle(self, _, isEmbedded)
+    if not self or (self == GW.ScanTooltip or isEmbedded or self.IsEmbedded or not self.NineSlice) or self:IsForbidden() then return end
+
+    if self.Delimiter1 then self.Delimiter1:SetTexture() end
+    if self.Delimiter2 then self.Delimiter2:SetTexture() end
+
+
+    self.NineSlice:Hide()
+    self:CreateBackdrop({
+        bgFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background",
+        edgeFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Border",
+        edgeSize = GW.Scale(32),
+        insets = {left = 2, right = 2, top = 2, bottom = 2}
+    })
 end
+
+local function StyleTooltips()
+    for _, tt in pairs({
+        ItemRefTooltip,
+        ItemRefShoppingTooltip1,
+        ItemRefShoppingTooltip2,
+        FriendsTooltip,
+        WarCampaignTooltip,
+        EmbeddedItemTooltip,
+        ReputationParagonTooltip,
+        GameTooltip,
+        ShoppingTooltip1,
+        ShoppingTooltip2,
+        QuickKeybindTooltip,
+        GameSmallHeaderTooltip,
+        PetJournalPrimaryAbilityTooltip,
+        GarrisonShipyardMapMissionTooltip,
+        BattlePetTooltip,
+        PetBattlePrimaryAbilityTooltip,
+        PetBattlePrimaryUnitTooltip,
+        FloatingBattlePetTooltip,
+        FloatingPetBattleAbilityTooltip,
+        ShoppingTooltip3,
+        ItemRefShoppingTooltip3,
+        WorldMapTooltip,
+        WorldMapCompareTooltip1,
+        WorldMapCompareTooltip2,
+        WorldMapCompareTooltip3,
+        AtlasLootTooltip,
+        QuestHelperTooltip,
+        QuestGuru_QuestWatchTooltip,
+        TRP2_MainTooltip,
+        TRP2_ObjetTooltip,
+        TRP2_StaticPopupPersoTooltip,
+        TRP2_PersoTooltip,
+        TRP2_MountTooltip,
+        AltoTooltip,
+        AltoScanningTooltip,
+        ArkScanTooltipTemplate,
+        NxTooltipItem,
+        NxTooltipD,
+        DBMInfoFrame,
+        DBMRangeCheck,
+        DatatextTooltip,
+        VengeanceTooltip,
+        FishingBuddyTooltip,
+        FishLibTooltip,
+        HealBot_ScanTooltip,
+        hbGameTooltip,
+        PlateBuffsTooltip,
+        LibGroupInSpecTScanTip,
+        RecountTempTooltip,
+        VuhDoScanTooltip,
+        XPerl_BottomTip,
+        EventTraceTooltip,
+        FrameStackTooltip,
+        LibDBIconTooltip,
+        RepurationParagonTooltip
+    }) do
+        SetStyle(tt)
+    end
+end
+
+local function GameTooltip_SetDefaultAnchor(self, parent)
+    if self:IsForbidden() or self:GetAnchorType() ~= "ANCHOR_NONE" then return end
+
+    if GetSetting("TOOLTIP_MOUSE") then
+        self:SetOwner(parent, GetSetting("CURSOR_ANCHOR_TYPE"), GetSetting("ANCHOR_CURSOR_OFFSET_X"), GetSetting("ANCHOR_CURSOR_OFFSET_Y"))
+        return
+    else
+        self:SetOwner(parent, "ANCHOR_NONE")
+    end
+
+    local TooltipMover = GameTooltip.gwMover
+    local _, anchor = self:GetPoint()
+
+    if anchor == nil or anchor == TooltipMover or anchor == UIParent then
+        self:ClearAllPoints()
+        if not GameTooltip.isMoved then
+            self:SetPoint("BOTTOMRIGHT", RightChatPanel, "BOTTOMRIGHT", 0, 300)
+        else
+            local point = GW.GetScreenQuadrant(TooltipMover)
+
+            if point == "TOPLEFT" then
+                self:SetPoint("TOPLEFT", TooltipMover, "TOPLEFT", 0, 0)
+            elseif point == "TOPRIGHT" then
+                self:SetPoint("TOPRIGHT", TooltipMover, "TOPRIGHT", -0, 0)
+            elseif point == "BOTTOMLEFT" or point == "LEFT" then
+                self:SetPoint("BOTTOMLEFT", TooltipMover, "BOTTOMLEFT", 0, 0)
+            else
+                self:SetPoint("BOTTOMRIGHT", TooltipMover, "BOTTOMRIGHT", 0, 0)
+            end
+        end
+    end
+end
+
+local function SetTooltipFonts()
+    local font = UNIT_NAME_FONT
+    local fontOutline = "NONE"
+    local headerSize = GetSetting("TOOLTIP_FONT_SIZE")
+    local smallTextSize = GetSetting("TOOLTIP_FONT_SIZE")
+    local textSize = GetSetting("TOOLTIP_FONT_SIZE")
+
+    GameTooltipHeaderText:SetFont(font, headerSize, fontOutline)
+    GameTooltipTextSmall:SetFont(font, smallTextSize, fontOutline)
+    GameTooltipText:SetFont(font, textSize, fontOutline)
+
+    if GameTooltip.hasMoney then
+        for i = 1, GameTooltip.numMoneyFrames do
+            _G["GameTooltipMoneyFrame"..i.."PrefixText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame"..i.."SuffixText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame"..i.."GoldButtonText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame"..i.."SilverButtonText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame"..i.."CopperButtonText"]:SetFont(font, textSize, fontOutline)
+        end
+    end
+
+    if DatatextTooltip then
+        DatatextTooltipTextLeft1:SetFont(font, textSize, fontOutline)
+        DatatextTooltipTextRight1:SetFont(font, textSize, fontOutline)
+    end
+
+    for _, tt in ipairs(GameTooltip.shoppingTooltips) do
+        for i = 1, tt:GetNumRegions() do
+            local region = select(i, tt:GetRegions())
+            if region:IsObjectType("FontString") then
+                region:SetFont(font, smallTextSize, fontOutline)
+            end
+        end
+    end
+end
+GW.SetTooltipFonts = SetTooltipFonts
 
 local function LoadTooltips()
     -- Style Tooltips first
-    for _, tooltip in pairs(UNSTYLED) do
-        SetStyle(tooltip)
-    end
-    hooksecurefunc("GameTooltip_SetBackdropStyle", SetStyle)
+    StyleTooltips()
+
+    -- Skin GameTooltip Status Bar
     GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/castinbar-white")
-    hooksecurefunc("GameTooltip_ShowProgressBar", SkinProgressbar)
+    GameTooltipStatusBar:CreateBackdrop()
+    GameTooltipStatusBar:ClearAllPoints()
+    GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", GW.BorderSize, -(GW.SpacingSize * 3))
+    GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -GW.BorderSize, -(GW.SpacingSize * 3))
 
-    if GetSetting("TOOLTIP_MOUSE") then
-        hooksecurefunc("GameTooltip_SetDefaultAnchor", anchorTooltip)
-    else
-        GameTooltip:HookScript("OnTooltipSetUnit", movePlacement)
-        GameTooltip:HookScript("OnTooltipSetQuest", movePlacement)
-        GameTooltip:HookScript("OnTooltipSetSpell", movePlacement)
-        --GameTooltip:HookScript("OnTooltipSetItem", movePlacement)
-        GameTooltip:HookScript("OnTooltipSetDefaultAnchor", movePlacement)
-        RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", "VerticalActionBarDummy", {230, 80}, true, {"default"})
-        hooksecurefunc(GameTooltip.gwMover, "StopMovingOrSizing", function (frame)
-            local anchor = "BOTTOMRIGHT"
-            local x = frame:GetRight() - GetScreenWidth()
-            local y = frame:GetBottom()
+    hooksecurefunc("GameTooltip_ShowStatusBar", GameTooltip_ShowStatusBar) -- Skin Status Bars
+    hooksecurefunc("GameTooltip_ShowProgressBar", GameTooltip_ShowProgressBar) -- Skin Progress Bars
+    hooksecurefunc("GameTooltip_ClearProgressBars", GameTooltip_ClearProgressBars)
+    hooksecurefunc("GameTooltip_AddQuestRewardsToTooltip", GameTooltip_AddQuestRewardsToTooltip) -- Color Progress Bars
+    hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle) -- This also deals with other tooltip borders like AzeriteEssence Tooltip
 
-            frame:ClearAllPoints()
-            frame:SetPoint(anchor, x, y)
-
-            if not InCombatLockdown() then
-                GameTooltip:ClearAllPoints()
-                GameTooltip:SetPoint(frame:GetPoint())
-            end
-        end)
+    --Tooltip Fonts
+    if not GameTooltip.hasMoney then
+        SetTooltipMoney(GameTooltip, 1, nil, "", "")
+        SetTooltipMoney(GameTooltip, 1, nil, "", "")
+        GameTooltip_ClearMoney(GameTooltip)
     end
+    SetTooltipFonts()
+
+
+    RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", "VerticalActionBarDummy", {230, 80}, true, {"default"})
+
+    hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
 
     SkinItemRefTooltip()
 

@@ -45,13 +45,13 @@ local function castBar_OnEvent(self, event, unitID, ...)
 
     if IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_DELAYED") then
         if IsIn(event, "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE") then
-            spell, _, icon, startTime, endTime, isTradeSkill, spellID = UnitChannelInfo(self.unit)
+            spell, _, icon, startTime, endTime, isTradeSkill, _, spellID = UnitChannelInfo(self.unit)
             isChannelCast = true
             self.isChanneling = true
             self.bar_r, self.bar_g, self.bar_b, self.bar_a = 0.2, 1, 0.7, 1
             self.bar:SetVertexColor(self.bar_r, self.bar_g, self.bar_b, self.bar_a)
         else
-            spell, _, icon, startTime, endTime, isTradeSkill, _, spellID = UnitCastingInfo(self.unit)
+            spell, _, icon, startTime, endTime, isTradeSkill, _, _, spellID = UnitCastingInfo(self.unit)
             self.bar_r, self.bar_g, self.bar_b, self.bar_a = 1, 1, 1, 1
             self.bar:SetVertexColor(self.bar_r, self.bar_g, self.bar_b, self.bar_a)
             self.isChanneling = false

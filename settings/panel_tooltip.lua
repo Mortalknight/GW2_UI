@@ -25,6 +25,19 @@ local function LoadTooltipPanel(sWindow)
     addOption(p, L["Always Show Realm"], nil, "ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, CLASS_COLORS, COMPACT_UNIT_FRAME_PROFILE_USECLASSCOLORS, "ADVANCED_TOOLTIP_SHOW_CLASS_COLOR", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, L["Gender"], L["Displays the player character's gender."], "ADVANCED_TOOLTIP_SHOW_GENDER", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOptionSlider(
+        p,
+        FONT_SIZE,
+        nil,
+        "TOOLTIP_FONT_SIZE",
+        GW.SetTooltipFonts,
+        5,
+        42,
+        nil,
+        0,
+        {["TOOLTIPS_ENABLED"] = true},
+        1
+    )    
     addOptionDropdown(
         p,
         L["Modifier for IDs"],

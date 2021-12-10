@@ -7,7 +7,6 @@ local CountTable = GW.CountTable
 local AddUpdateCB = GW.AddUpdateCB
 
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
-local MAIN_MENU_BAR_BUTTON_MARGIN = 5
 
 local GW_BLIZZARD_HIDE_FRAMES = {
     MainMenuBarOverlayFrame,
@@ -218,8 +217,8 @@ local function fadeCheck(self, forceCombat)
     local inLockdown = InCombatLockdown()
     local isDirty = self.gw_DirtySetting
 
-    for i = 1, 4 do
-        local f = self["gw_Bar" .. i]
+    for i = 1, 5 do
+        local f = i == 5 and self or self["gw_Bar" .. i]
         local fadeOption = GetSetting("FADE_MULTIACTIONBAR_" .. i)
         if f then
             if isDirty and not inLockdown then
@@ -315,22 +314,24 @@ local function updateHotkey(self)
         return
     end
 
-    text = string.gsub(text, "(s%-)", "S")
-    text = string.gsub(text, "(a%-)", "A")
-    text = string.gsub(text, "(c%-)", "C")
-    text = string.gsub(text, "(Mouse Button )", "M")
-    text = string.gsub(text, "(Middle Mouse)", "M3")
-    text = string.gsub(text, "(Num Pad )", "N")
-    text = string.gsub(text, "(Page Up)", "PU")
-    text = string.gsub(text, "(Page Down)", "PD")
-    text = string.gsub(text, "(Spacebar)", "SpB")
-    text = string.gsub(text, "(Insert)", "Ins")
-    text = string.gsub(text, "(Home)", "Hm")
-    text = string.gsub(text, "(Delete)", "Del")
-    text = string.gsub(text, "(Left Arrow)", "LT")
-    text = string.gsub(text, "(Right Arrow)", "RT")
-    text = string.gsub(text, "(Up Arrow)", "UP")
-    text = string.gsub(text, "(Down Arrow)", "DN")
+    text = gsub(text, "(s%-)", "S")
+    text = gsub(text, "(a%-)", "A")
+    text = gsub(text, "(c%-)", "C")
+    text = gsub(text, KEY_BUTTON3, "M3") --middle mouse Button
+    text = gsub(text, gsub(KEY_BUTTON4, " 4", ""), "M") -- mouse button
+    text = gsub(text, KEY_PAGEUP, "PU")
+    text = gsub(text, KEY_PAGEDOWN, "PD")
+    text = gsub(text, KEY_SPACE, "SpB")
+    text = gsub(text, KEY_INSERT, "Ins")
+    text = gsub(text, KEY_HOME, "Hm")
+    text = gsub(text, KEY_DELETE, "Del")
+    text = gsub(text, KEY_LEFT, "LT")
+    text = gsub(text, KEY_RIGHT, "RT")
+    text = gsub(text, KEY_UP, "UP")
+    text = gsub(text, KEY_DOWN, "DN")
+    text = gsub(text, gsub(KEY_NUMPADPLUS, "%+", ""), "N") -- for all numpad keys
+    text = gsub(text, KEY_MOUSEWHEELDOWN, 'MwD')
+    text = gsub(text, KEY_MOUSEWHEELUP, 'MwU')
 
     if hotkey:GetText() == RANGE_INDICATOR or not GetSetting("BUTTON_ASSIGNMENTS") then
         hotkey:SetText("")
@@ -411,7 +412,18 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
     btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/actionbutton-pressed")
     btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
     btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
-    btn.Name:SetAlpha(0) --Hide Marco Name on Actionbutton
+
+    if btn.Name then
+        if btn.showMacroName then
+            btn.Name:SetPoint("TOPLEFT", btn, "TOPLEFT")
+            btn.Name:SetJustifyH("LEFT")
+            btn.Name:SetWidth(btn:GetWidth())
+            local font, fontHeight = btn.Name:GetFont()
+            btn.Name:SetFont(font, fontHeight, "OUTLINED")
+        else
+            btn.Name:SetAlpha(0)
+        end
+    end
 
     if noBackDrop == nil or noBackDrop == false then
         local backDrop = CreateFrame("Frame", nil, btn, "GwActionButtonBackdropTmpl")
@@ -449,18 +461,14 @@ local function updateMainBar()
     local fmActionbar = MainMenuBarArtFrame
 
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
-    local btn_padding = MAIN_MENU_BAR_BUTTON_MARGIN
+    local btn_padding = GetSetting("MAINBAR_MARGIIN")
+    local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
 
     fmActionbar.gw_Buttons = {}
     fmActionbar.gw_Backdrops = {}
     fmActionbar.rangeTimer = -1
     fmActionbar.fadeTimer = -1
     fmActionbar.elapsedTimer = -1
-    local btn_yOff = 0
-
-    if not GetSetting("XPBAR_ENABLED") then
-        btn_yOff = -14
-    end
 
     local rangeIndicatorSetting = GetSetting("MAINBAR_RANGEINDICATOR")
     for i = 1, 12 do
@@ -481,8 +489,9 @@ local function updateMainBar()
             btn:SetScript("OnUpdate", nil) -- disable the default button update handler
 
             local hotkey = _G["ActionButton" .. i .. "HotKey"]
-            btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + MAIN_MENU_BAR_BUTTON_MARGIN
+            btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + GetSetting("MAINBAR_MARGIIN")
             btn:SetSize(MAIN_MENU_BAR_BUTTON_SIZE, MAIN_MENU_BAR_BUTTON_SIZE)
+            btn.showMacroName = showName
 
             setActionButtonStyle("ActionButton" .. i, true)
             updateHotkey(btn)
@@ -501,8 +510,7 @@ local function updateMainBar()
                 end
             end
 
-            local rangeIndicator =
-                CreateFrame("FRAME", "GwActionRangeIndicator" .. i, hotkey:GetParent(), "GwActionRangeIndicatorTmpl")
+            local rangeIndicator = CreateFrame("FRAME", "GwActionRangeIndicator" .. i, hotkey:GetParent(), "GwActionRangeIndicatorTmpl")
             rangeIndicator:SetFrameStrata("BACKGROUND", 1)
             rangeIndicator:SetPoint("TOPLEFT", btn, "BOTTOMLEFT", -1, -2)
             rangeIndicator:SetPoint("TOPRIGHT", btn, "BOTTOMRIGHT", 1, -2)
@@ -530,8 +538,8 @@ local function updateMainBar()
                 "LEFT",
                 fmActionbar,
                 "LEFT",
-                btn_padding - MAIN_MENU_BAR_BUTTON_MARGIN - MAIN_MENU_BAR_BUTTON_SIZE,
-                btn_yOff
+                btn_padding - GetSetting("MAINBAR_MARGIIN") - MAIN_MENU_BAR_BUTTON_SIZE,
+                (GetSetting("XPBAR_ENABLED") and 0 or -14)
             )
 
             if i == 6 and not GetSetting("PLAYER_AS_TARGET_FRAME") then
@@ -563,6 +571,9 @@ local function updateMainBar()
     MainMenuBar:SetUserPlaced(true)
     MainMenuBar:SetMovable(0)
     -- even with IsUserPlaced set, the Blizz multibar handlers mess with the width so reset in fadeCheck DirtySetting
+
+    -- set fader logic
+    createFaderAnim(fmActionbar, true)
 
     return fmActionbar
 end
@@ -607,16 +618,20 @@ local function trackBarChanges()
     fmActionbar.gw_Bar2.gw_IsEnabled = show2
     fmActionbar.gw_Bar3.gw_IsEnabled = show3
     fmActionbar.gw_Bar4.gw_IsEnabled = show4
+
+    fmActionbar.gw_IsEnabled = true
 end
 
 local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local multibar = _G[barName]
     local settings = GetSetting(barName)
     local used_width = 0
-    local used_height = settings["size"]
+    local used_height = settings.size
+    local margin = GetSetting("MULTIBAR_MARGIIN")
     local btn_padding = 0
     local btn_padding_y = 0
     local btn_this_row = 0
+    local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
 
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
 
@@ -640,6 +655,9 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 
             btn:SetSize(settings.size, settings.size)
             updateHotkey(btn)
+
+            btn.showMacroName = showName
+
             setActionButtonStyle(buttonName .. i, nil, hideActionBarBG)
 
             btn:ClearAllPoints()
@@ -647,12 +665,12 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             btn.noGrid = nil
             btn.changedColor = false
 
-            btn_padding = btn_padding + settings.size + settings.margin
+            btn_padding = btn_padding + settings.size + margin
             btn_this_row = btn_this_row + 1
             used_width = btn_padding
 
             if btn_this_row == settings.ButtonsPerRow then
-                btn_padding_y = btn_padding_y + settings.size + settings.margin
+                btn_padding_y = btn_padding_y + settings.size + margin
                 btn_this_row = 0
                 btn_padding = 0
                 used_height = btn_padding_y
@@ -714,6 +732,47 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     return fmMultibar
 end
 GW.AddForProfiling("Actionbars2", "updateMultiBar", updateMultiBar)
+
+local function UpdateMultibarButtonMargin()
+    local margin = GetSetting("MULTIBAR_MARGIIN")
+    local fmActionbar = MainMenuBarArtFrame
+    local fmMultiBar
+    for y = 1, 4 do
+        if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
+        if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
+        if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
+        if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
+        if fmMultiBar.gw_IsEnabled then
+            local settings = GetSetting(fmMultiBar.originalBarName)
+            local used_height = settings.size
+            local btn_padding = 0
+            local btn_padding_y = 0
+            local btn_this_row = 0
+            local used_width = 0
+            for i = 1, 12 do
+                local btn = fmMultiBar.gw_Buttons[i]
+
+                btn:ClearAllPoints()
+                btn:SetPoint("TOPLEFT", fmMultiBar, "TOPLEFT", btn_padding, -btn_padding_y)
+
+                btn_padding = btn_padding + settings.size + margin
+                btn_this_row = btn_this_row + 1
+                used_width = btn_padding
+
+                if btn_this_row == settings.ButtonsPerRow then
+                    btn_padding_y = btn_padding_y + used_height + margin
+                    btn_this_row = 0
+                    btn_padding = 0
+                    --used_height = btn_padding_y
+                end
+
+            end
+
+            fmMultiBar:SetSize(used_width, settings.size)
+        end
+    end
+end
+GW.UpdateMultibarButtonMargin = UpdateMultibarButtonMargin
 
 local function vehicleLeave_OnUpdate()
     if InCombatLockdown() then
@@ -936,7 +995,9 @@ actionBar_OnUpdate = function(self, elapsed)
     end
 
     -- update action bar buttons
-    actionButtons_OnUpdate(self, elapsed, testRange)
+    if self.gw_FadeShowing then
+        actionButtons_OnUpdate(self, elapsed, testRange)
+    end
 
     -- update multibar buttons
     if self.gw_Bar1.gw_FadeShowing then
@@ -1061,8 +1122,23 @@ local function LoadActionBars(lm)
     setLeaveVehicleButton()
 
     -- hook hotkey update calls so we can override styling changes
-    hooksecurefunc("ActionButton_UpdateHotkeys", updateHotkey)
-
+    local hotkeyEventTrackerFrame = CreateFrame("Frame")
+    hotkeyEventTrackerFrame:RegisterEvent("UPDATE_BINDINGS")
+    hotkeyEventTrackerFrame:SetScript("OnEvent", function()
+        local fmMultiBar
+        for y = 0, 4 do
+            if y == 0 then fmMultiBar = fmActionbar end
+            if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
+            if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
+            if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
+            if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
+            if fmMultiBar.gw_IsEnabled then
+                for i = 1, 12 do
+                    updateHotkey(fmMultiBar.gw_Buttons[i])
+                end
+            end
+        end
+    end)
     -- frames using the alert frame subsystem have their positioning managed by UIParent
     -- the secure code for that lives mostly in Interface/FrameXML/UIParent.lua
     -- we can override the alert frame subsystem update loop in Interface/FrameXML/AlertFrames.lua

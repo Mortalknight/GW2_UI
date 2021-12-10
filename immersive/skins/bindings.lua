@@ -41,8 +41,10 @@ local function SkinBindingsUI()
 
     KeyBindingFrame.bottomSeparator:Hide()
 
-    _G.KeyBindingFrameCategoryList:SetBackdrop(constBackdropFrameBorder)
-    KeyBindingFrame.bindingsContainer:SetBackdrop(constBackdropFrameBorder)
+    KeyBindingFrameCategoryList:StripTextures()
+    KeyBindingFrameCategoryList:CreateBackdrop(constBackdropFrameBorder)
+    KeyBindingFrame.bindingsContainer:StripTextures()
+    KeyBindingFrame.bindingsContainer:CreateBackdrop(constBackdropFrameBorder)
 
     KeyBindingFrame.characterSpecificButton:SkinCheckButton()
     KeyBindingFrame.characterSpecificButton:SetSize(15, 15)

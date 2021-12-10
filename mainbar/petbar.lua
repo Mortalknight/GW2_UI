@@ -31,15 +31,19 @@ GW.AddForProfiling("petbar", "petBarUpdate", petBarUpdate)
 local function setPetBar(fmPet)
     local BUTTON_SIZE = 28
     local BUTTON_MARGIN = 3
+    local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
 
     PetActionButton1:ClearAllPoints()
     PetActionButton1:SetPoint("BOTTOMLEFT", fmPet, "BOTTOMLEFT", 3, 30)
+
+    fmPet.gwButton = {}
 
     for i = 1, 12 do
         local btn = _G["PetActionButton" .. i]
         local btnPrev = _G["PetActionButton" .. (i - 1)]
 
         if btn then
+            fmPet.gwButton[i] = btn
             btn:SetParent(fmPet)
             GW.updateHotkey(btn)
             btn.noGrid = nil
@@ -63,6 +67,8 @@ local function setPetBar(fmPet)
                 btn:SetScript("OnReceiveDrag", nil)
                 btn:SetAttribute("_onreceivedrag", nil)
             end
+
+            btn.showMacroName = showName
 
             GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, nil, true)
             GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])
@@ -266,6 +272,17 @@ local function LoadPetFrame(lm)
     lm:RegisterPetFrame(playerPetFrame)
 
     setPetBar(playerPetFrame)
+
+    -- hook hotkey update calls so we can override styling changes
+    local hotkeyEventTrackerFrame = CreateFrame("Frame")
+    hotkeyEventTrackerFrame:RegisterEvent("UPDATE_BINDINGS")
+    hotkeyEventTrackerFrame:SetScript("OnEvent", function()
+        for i = 1, 12 do
+            if playerPetFrame.gwButton[i] then
+                GW.updateHotkey(playerPetFrame.gwButton[i])
+            end
+        end
+    end)
 
     -- create floating combat text
     if GetSetting("PET_FLOATING_COMBAT_TEXT") then

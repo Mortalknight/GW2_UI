@@ -9,7 +9,6 @@ local IsFrameModified = GW.IsFrameModified
 local Debug = GW.Debug
 local animations = GW.animations
 local IsIncompatibleAddonLoadedOrOverride = GW.IsIncompatibleAddonLoadedOrOverride
-local LibSharedMedia = GW.Libs.LSM
 
 local l = CreateFrame("Frame", nil, UIParent) -- Main event frame nil
 

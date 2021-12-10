@@ -5,7 +5,7 @@ local RoundDec = GW.RoundDec
 local updateIcon
 
 do
-    local SendMessageWaiting 
+    local SendMessageWaiting
     local function SendMessage()
         if IsInRaid() then
             C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, (not IsInRaid(LE_PARTY_CATEGORY_HOME) and IsInRaid(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "RAID")

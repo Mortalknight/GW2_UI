@@ -1,6 +1,20 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.18.0 TBC", [=[
+NEW
+    - Add option to show macronames on actionbuttons
+    - Add option to adjust actionbutton padding
+    - Add option to fade main actionbar
+
+FIXES
+    - Fix hotkeynames
+
+MISC
+    - Update for 2.5.3
+]=])
+
+
 v("1.17.4 TBC", [=[
 FIXES
     - Raid frame issue

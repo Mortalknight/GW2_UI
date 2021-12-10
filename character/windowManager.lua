@@ -400,7 +400,7 @@ local function click_OnEvent(self, event)
         end
     end
 end
-GW.AddForProfiling("character", "mover_OnEvent", mover_OnEvent)
+GW.AddForProfiling("character", "click_OnEvent", click_OnEvent)
 
 local function GetScaleDistance()
     local left, top = heroFrameLeft, heroFrameTop
