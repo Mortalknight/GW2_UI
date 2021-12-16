@@ -48,7 +48,7 @@
     <Frame name="GwSettingsMoverFrame" frameStrata="HIGH" enableMouse="true" movable="true" parent="UIParent" virtual="true">
         <Size x="470" y="40"></Size>
         <Anchors>
-            <Anchor point="CENTER" x="0" y="256"></Anchor>
+            <Anchor point="CENTER" x="0" y="312"></Anchor>
         </Anchors>
     </Frame>
 
@@ -752,7 +752,7 @@
     <Frame name="GwSmallSettingsMoverFrame" frameStrata="FULLSCREEN_DIALOG" enableMouse="true" movable="true" parent="UIParent" virtual="true">
         <Size x="180" y="32"></Size>
         <Anchors>
-            <Anchor point="CENTER" x="0" y="80"></Anchor>
+            <Anchor point="CENTER" x="0" y="130"></Anchor>
         </Anchors>
     </Frame>
 
