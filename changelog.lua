@@ -10,6 +10,7 @@ NEW
     - Chromie Time
 
     - Added option to change tooltip font size
+    - Added option to show "SpellQueueWindow" on castbar
 
 FIXES
     - Fix some cooldown issues for extra action buttons

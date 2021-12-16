@@ -427,3 +427,4 @@ L["Shift Click: Collect Garbage"] = "Shift + Klick: Müll säubern"
 L["Ctrl & Shift Click: Toggle CPU Profiling"] = "Strg + Shift + Klick: CPU Profiling an/ausschalten"
 L["Chromie Time Frame"] = true
 L["Allied Races"] = "Verbündete Völker"
+L["Show spell queue window on castinbar"] = "Zeige das 'Spell Queue Fenster' an der Zauberleiste"
