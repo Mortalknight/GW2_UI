@@ -147,7 +147,7 @@ local function SkinLookingForGroupFrames()
         checkButton:SetPoint("BOTTOMLEFT", 0, 0)
     end
 
-    hooksecurefunc("LFGListApplicationDialog_UpdateRoles", function(dialog) --Copy from Blizzard, we just fix position
+    hooksecurefunc("LFGListApplicationDialog_UpdateRoles", function(dialog)
         local availTank, availHealer, availDPS = C_LFGList.GetAvailableRoles()
 
         local avail1, avail2
@@ -300,10 +300,7 @@ local function SkinLookingForGroupFrames()
     LFRQueueFrameSpecificListScrollFrameScrollBackgroundBottomRight:Hide()
     LFRBrowseFrameColumnHeader1:SetWidth(94)
     LFRBrowseFrameColumnHeader2:SetWidth(38)
-    LFDQueueFrameSpecificListScrollFrame:StripTextures()
 
-    RaidBrowserFrameCloseButton:SkinButton(false)
-    RaidBrowserFrameCloseButton:SetSize(15, 15)
     LFRQueueFrameFindGroupButton:SkinButton(false, true)
     LFRQueueFrameAcceptCommentButton:SkinButton(false, true)
 
