@@ -131,10 +131,8 @@ local function SkinLookingForGroupFrames()
     end
 
     hooksecurefunc("SetCheckButtonIsRadio", function(self)
-        if not self.isSkinnedGW2_UI then
-            self:SkinCheckButton()
-            self:SetSize(15, 15)
-        end
+        self:SkinCheckButton()
+        self:SetSize(15, 15)
     end)
 
     local repositionCheckButtons = {
@@ -232,9 +230,8 @@ local function SkinLookingForGroupFrames()
     end)
 
     for i = 1, 3 do
-        _G["PVEFrameTab" .. i]:SkinButton(false, true)
+        _G["PVEFrameTab"..i]:SkinButton(false, true)
     end
-
     PVEFrameTab1:SetPoint("BOTTOMLEFT", PVEFrame, "BOTTOMLEFT", 19, -50)
     PVEFrameTab2:SetPoint("LEFT", PVEFrameTab1, "RIGHT", 1, 0)
     PVEFrameTab3:SetPoint("LEFT", PVEFrameTab2, "RIGHT", 1, 0)
@@ -300,10 +297,7 @@ local function SkinLookingForGroupFrames()
     LFRQueueFrameSpecificListScrollFrameScrollBackgroundBottomRight:Hide()
     LFRBrowseFrameColumnHeader1:SetWidth(94)
     LFRBrowseFrameColumnHeader2:SetWidth(38)
-    LFDQueueFrameSpecificListScrollFrame:StripTextures()
 
-    RaidBrowserFrameCloseButton:SkinButton(false)
-    RaidBrowserFrameCloseButton:SetSize(15, 15)
     LFRQueueFrameFindGroupButton:SkinButton(false, true)
     LFRQueueFrameAcceptCommentButton:SkinButton(false, true)
 
@@ -796,7 +790,7 @@ local function ApplyChallengesUISkin()
     ChallengesKeystoneFrame.DungeonName:SetFont(DAMAGE_TEXT_FONT, 26, "OUTLINE")
     ChallengesKeystoneFrame.TimeLimit:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
 
-    KeyStoneFrame.KeystoneSlot:HookScript("OnEvent", function(frame, event, itemID)
+    ChallengesKeystoneFrame.KeystoneSlot:HookScript("OnEvent", function(frame, event, itemID)
         if event == "CHALLENGE_MODE_KEYSTONE_SLOTTED" and frame.Texture then
             local texture = select(10, GetItemInfo(itemID))
             if texture then
