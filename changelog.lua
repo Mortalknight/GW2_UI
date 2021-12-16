@@ -3,12 +3,11 @@ local v = GW.vernotes
 
 v("5.23.0", [=[
 NEW
-    Skins:
-    - LFG
-    - Allied Races
-    - Weekly Rewards
-    - Chromie Time
-
+    - Skins:
+        - LFG
+        - Allied Races
+        - Weekly Rewards
+        - Chromie Time
     - Added option to change tooltip font size
     - Added option to show "SpellQueueWindow" on castbar
 
