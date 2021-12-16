@@ -796,7 +796,7 @@ local function ApplyChallengesUISkin()
     ChallengesKeystoneFrame.DungeonName:SetFont(DAMAGE_TEXT_FONT, 26, "OUTLINE")
     ChallengesKeystoneFrame.TimeLimit:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
 
-    KeyStoneFrame.KeystoneSlot:HookScript("OnEvent", function(frame, event, itemID)
+    ChallengesKeystoneFrame.KeystoneSlot:HookScript("OnEvent", function(frame, event, itemID)
         if event == "CHALLENGE_MODE_KEYSTONE_SLOTTED" and frame.Texture then
             local texture = select(10, GetItemInfo(itemID))
             if texture then
