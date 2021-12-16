@@ -425,3 +425,4 @@ L["Shift Click: Collect Garbage"] = true
 L["Ctrl & Shift Click: Toggle CPU Profiling"] = true
 L["Chromie Time Frame"] = true
 L["Allied Races"] = true
+L["Show spell queue window on castinbar"] = true
