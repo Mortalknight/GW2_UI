@@ -3,6 +3,7 @@ NEW
     - Add option to show macronames on actionbuttons
     - Add option to adjust actionbutton padding
     - Add option to fade main actionbar
+    - Added option to show "SpellQueueWindow" on castbar
 
 FIXES
     - Fix hotkeynames

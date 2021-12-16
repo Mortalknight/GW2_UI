@@ -93,7 +93,8 @@ local function castBar_OnEvent(self, event, unitID, ...)
                 self.bar:SetTexCoord(0, p, 0.25, 0.5)
 
                 local lagWorld = select(4, GetNetStats()) / 1000
-                self.latency:SetWidth(math.max(0.0001, math.min(1, (lagWorld / (self.endTime - self.startTime)))) * 176)
+                local sqw = GetSetting("PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW") and GetCVar("SpellQueueWindow") / 1000 or 0
+                self.latency:SetWidth(math.max(0.0001, math.min(1, ((sqw + lagWorld) / (self.endTime - self.startTime)))) * 176)
             end,
             "noease"
         )

@@ -433,3 +433,4 @@ L["Important & dispellable debuff scale priority"] = "Wichtige & bannbare Debuff
 L["If both scales could apply to a debuff, which one should be used"] = "Wenn beide Skalierungen angewendet werden können, welche von beiden soll bevorzugt werden"
 L["Dispell > Important"] = "Bannbare > Wichtige"
 L["Important > Dispell"] = "Wichtige > Bannbare"
+L["Show spell queue window on castinbar"] = "Zeige das 'Spell Queue Fenster' an der Zauberleiste"
