@@ -131,8 +131,10 @@ local function SkinLookingForGroupFrames()
     end
 
     hooksecurefunc("SetCheckButtonIsRadio", function(self)
-        self:SkinCheckButton()
-        self:SetSize(15, 15)
+        if not self.isSkinnedGW2_UI then
+            self:SkinCheckButton()
+            self:SetSize(15, 15)
+        end
     end)
 
     local repositionCheckButtons = {
@@ -145,7 +147,7 @@ local function SkinLookingForGroupFrames()
         checkButton:SetPoint("BOTTOMLEFT", 0, 0)
     end
 
-    hooksecurefunc("LFGListApplicationDialog_UpdateRoles", function(dialog) --Copy from Blizzard, we just fix position
+    hooksecurefunc("LFGListApplicationDialog_UpdateRoles", function(dialog)
         local availTank, availHealer, availDPS = C_LFGList.GetAvailableRoles()
 
         local avail1, avail2
@@ -230,8 +232,9 @@ local function SkinLookingForGroupFrames()
     end)
 
     for i = 1, 3 do
-        _G["PVEFrameTab"..i]:SkinButton(false, true)
+        _G["PVEFrameTab" .. i]:SkinButton(false, true)
     end
+
     PVEFrameTab1:SetPoint("BOTTOMLEFT", PVEFrame, "BOTTOMLEFT", 19, -50)
     PVEFrameTab2:SetPoint("LEFT", PVEFrameTab1, "RIGHT", 1, 0)
     PVEFrameTab3:SetPoint("LEFT", PVEFrameTab2, "RIGHT", 1, 0)
