@@ -6,15 +6,21 @@
             <Anchor point="CENTER" x="0" y="0"></Anchor>
         </Anchors>
         <Layers>
-            <Layer level="ARTWORK">
+            <Layer level="ARTWORK" textureSubLevel="0">
+                <Texture parentKey="backgroundOverlay" file="Interface/AddOns/GW2_UI/textures/units/targetShadowOverlay">
+                    <Size x="360" y="160"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="15" y="-5"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="1">
                 <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/units/targetshadow">
                     <Size x="512" y="128"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
                     </Anchors>
                 </Texture>
-            </Layer>
-            <Layer level="ARTWORK" textureSubLevel="1">
                 <Texture parentKey="portrait" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\asd">
                     <Size x="58" y="58"></Size>
                     <Anchors>
@@ -220,6 +226,15 @@
             <Anchor point="CENTER" x="0" y="0"></Anchor>
         </Anchors>
         <Layers>
+            <Layer level="ARTWORK" textureSubLevel="0">
+                <Texture parentKey="backgroundOverlay" file="Interface/AddOns/GW2_UI/textures/units/targettargetShadowOverlay">
+                <TexCoords left="0" right="1" top="1" bottom="0"/>
+                    <Size x="220" y="140"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="15" y="10"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
                 <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd">
                     <Size x="20" y="20"></Size>
@@ -377,7 +392,16 @@
             <Anchor point="CENTER" x="0" y="0"></Anchor>
         </Anchors>
         <Layers>
-            <Layer level="ARTWORK">
+            <Layer level="ARTWORK" textureSubLevel="0">
+                <Texture parentKey="backgroundOverlay" file="Interface/AddOns/GW2_UI/textures/units/targetShadowOverlay">
+                    <Size x="360" y="160"></Size>
+                    <TexCoords left="1" right="0" top="0" bottom="1"/>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="-15" y="-5"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="1">
                 <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/units/targetshadow">
                     <TexCoords left="1" right="0" top="0" bottom="1"/>
                     <Size x="512" y="128"></Size>

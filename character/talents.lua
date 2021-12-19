@@ -148,10 +148,12 @@ local function updateActiveSpec()
         if i == GW.myspec then
             container.active = true
             container.info:Hide()
+            container.activeSpecTitle:Show()
             container.background:SetDesaturated(false)
         else
             container.active = false
             container.info:Show()
+            container.activeSpecTitle:Hide()
 
             container.background:SetDesaturated(true)
         end
@@ -308,9 +310,28 @@ local function loadTalents()
         container:SetPoint("TOPLEFT", GwSpecContainerFrame, "TOPLEFT", 10, (-140 * i) + 98)
         container.spec = i
 
-        local _, name, description, icon, _, _, _ = GetSpecializationInfo(i)
+        local _, name, description, icon, role = GetSpecializationInfo(i)
+
+        container.roleIcon:ClearAllPoints()
+        if role == "TANK" then
+            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank")
+            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -6, -6)
+        elseif role == "HEALER" then
+            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer")
+            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -8, -5)
+        elseif role == "DAMAGER" then
+            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
+            container.roleIcon:SetSize(30, 30)
+            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -3, -10)
+        end
+
+        container.activeSpecTitle:SetFont(DAMAGE_TEXT_FONT, 13)
+        container.activeSpecTitle:SetTextColor(1, 1, 1, 1)
+        container.activeSpecTitle:SetShadowColor(0, 0, 0, 1)
+        container.activeSpecTitle:SetShadowOffset(1, -1)
+        container.activeSpecTitle:SetText(name)
         container.icon:SetTexture(icon)
-        container.info.specTitle:SetFont(DAMAGE_TEXT_FONT, 18)
+        container.info.specTitle:SetFont(DAMAGE_TEXT_FONT, 16)
         container.info.specTitle:SetTextColor(1, 1, 1, 1)
         container.info.specTitle:SetShadowColor(0, 0, 0, 1)
         container.info.specTitle:SetShadowOffset(1, -1)
@@ -320,6 +341,18 @@ local function loadTalents()
         container.info.specDesc:SetShadowOffset(1, -1)
         container.info.specTitle:SetText(name)
         container.info.specDesc:SetText(description)
+        container.iconHelperButton:SetScript("OnEnter", function(self)
+            if not self:GetParent().active then
+                return
+            end
+            GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
+            GameTooltip:ClearLines()
+            GameTooltip:AddLine(self:GetParent().info.specTitle:GetText(), 1, 1, 1)
+            GameTooltip:AddLine(" ")
+            GameTooltip:AddLine(self:GetParent().info.specDesc:GetText(), 1, 1, 1, true)
+            GameTooltip:Show()
+        end)
+        container.iconHelperButton:SetScript("OnLeave", GameTooltip_Hide)
 
         txT = (i - 1) * txH
         container.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/art/" .. GW.myClassID)
@@ -1212,7 +1245,7 @@ local function LoadTalents(tabContainer)
     )
     fmSpellbook:SetAttribute("tabOpen", 2)
 
-    local _, specName, _ = GetSpecializationInfo(GW.myspec)
+    local _, specName = GetSpecializationInfo(GW.myspec)
     fmSpellbook.tab1.gwTipLabel = GENERAL_SPELLS
     fmSpellbook.tab2.gwTipLabel = GW.myLocalizedClass
     fmSpellbook.tab3.gwTipLabel = specName

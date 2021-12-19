@@ -8,12 +8,12 @@ local specList = {{text = SPECIALIZATION, isTitle = true, notCheckable = true}}
 
 local function GetSpecData()
     for index = 1, GetNumSpecializations() do
-        local id, name, _, icon = GetSpecializationInfo(index)
+        local id, name, _, icon, role = GetSpecializationInfo(index)
 
         if id then
-            spec_data[index] = {id = id, name = name, icon = icon}
-            spec_data[id] = {name = name, icon = icon}
-            specList[#specList + 1] = {text = format("|T%s:14:14:0:0:64:64:4:60:4:60|t  %s", icon, name), checked = function() return GetSpecialization() == index end, func = function() SetSpecialization(index) end}
+            spec_data[index] = {id = id, name = name, icon = icon, role = getglobal(role)}
+            spec_data[id] = {name = name, icon = icon, role = getglobal(role)}
+            specList[#specList + 1] = {text = format("|T%s:14:14:0:0:64:64:4:60:4:60|t  %s |cFF888888(%s)|r", icon, name, getglobal(role)), checked = function() return GetSpecialization() == index end, func = function() SetSpecialization(index) end}
         end
     end
 
@@ -47,7 +47,7 @@ local function TalentButton_OnEnter(self)
 
     for i, info in ipairs(spec_data) do
         if i == GW.myspec then
-           GameTooltip:AddLine(format("|cffFFFFFF%s:|r %s", SPECIALIZATION, AddTexture(info.icon) .. info.name), nil, nil, nil, true)
+           GameTooltip:AddLine(format("|cffFFFFFF%s:|r %s |cFF888888(%s)|r", SPECIALIZATION, AddTexture(info.icon) .. info.name, info.role), nil, nil, nil, true)
         end
     end
 
@@ -55,7 +55,7 @@ local function TalentButton_OnEnter(self)
     local sameSpec = specialization == 0 and GW.myspec
     local specIndex = spec_data[sameSpec or specialization]
     if specIndex and specIndex.name then
-        GameTooltip:AddLine(format("|cffFFFFFF%s:|r %s %s", SELECT_LOOT_SPECIALIZATION, AddTexture(specIndex.icon), sameSpec and format(LOOT_SPECIALIZATION_DEFAULT, specIndex.name) or specIndex.name), nil, nil, nil ,true)
+        GameTooltip:AddLine(format("|cffFFFFFF%s:|r %s %s |cFF888888(%s)|r", SELECT_LOOT_SPECIALIZATION, AddTexture(specIndex.icon), sameSpec and format(LOOT_SPECIALIZATION_DEFAULT, specIndex.name) or specIndex.name, specIndex.role), nil, nil, nil ,true)
     end
 
     GameTooltip:AddLine(" ")

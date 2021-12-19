@@ -811,6 +811,8 @@ local function LoadTarget()
     NewUnitFrame.portrait.mask:SetSize(58, 58)
     NewUnitFrame.portrait:AddMaskTexture(NewUnitFrame.portrait.mask)
 
+    NewUnitFrame.backgroundOverlay:SetShown(GetSetting("target_FRAME_ALT_BACKGROUND"))
+
     NewUnitFrame:SetAttribute("*type1", "target")
     NewUnitFrame:SetAttribute("*type2", "togglemenu")
     NewUnitFrame:SetAttribute("unit", "target")
@@ -907,6 +909,8 @@ local function LoadFocus()
     NewUnitFrame.portrait.mask:SetSize(58, 58)
     NewUnitFrame.portrait:AddMaskTexture(NewUnitFrame.portrait.mask)
 
+    NewUnitFrame.backgroundOverlay:SetShown(GetSetting("focus_FRAME_ALT_BACKGROUND"))
+
     NewUnitFrame:SetAttribute("*type1", "target")
     NewUnitFrame:SetAttribute("*type2", "togglemenu")
     NewUnitFrame:SetAttribute("unit", "focus")
@@ -979,6 +983,8 @@ local function LoadTargetOfUnit(unit)
     RegisterUnitWatch(f)
     f:EnableMouse(true)
     f:RegisterForClicks("AnyDown")
+
+    f.backgroundOverlay:SetShown((unit == "Target" and GetSetting("target_FRAME_ALT_BACKGROUND")) or (unit == "Focus" and GetSetting("focus_FRAME_ALT_BACKGROUND")))
 
     AddToClique(f)
 

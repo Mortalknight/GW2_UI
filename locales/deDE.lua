@@ -428,3 +428,4 @@ L["Ctrl & Shift Click: Toggle CPU Profiling"] = "Strg + Shift + Klick: CPU Profi
 L["Chromie Time Frame"] = true
 L["Allied Races"] = "Verbündete Völker"
 L["Show spell queue window on castinbar"] = "Zeige das 'Spell Queue Fenster' an der Zauberleiste"
+L["Show alternative background texture"] = "Zeige alternative hintergrund Texture"

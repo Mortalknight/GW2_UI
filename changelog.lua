@@ -1,6 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.24.0", [=[
+NEW
+    - Added option for alternative target/focus background texture
+
+MISC
+    - Tweak character talent frame
+]=])
+
 v("5.23.0", [=[
 NEW
     - Skins:
