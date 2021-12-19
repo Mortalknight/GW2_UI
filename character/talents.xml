@@ -56,12 +56,30 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK">
+                <FontString parentKey="activeSpecTitle" text="Arcane" justifyH="CENTER" justifyV="TOP">
+                    <Size x="120" y="18"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
+                    </Anchors>
+                </FontString>
                 <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
                     <Size x="80" y="80"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="20" y="0"></Anchor>
                     </Anchors>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture parentKey="roleIcon">
+                    <Size x="25" y="25"></Size>
+                </Texture>
+                <Texture parentKey="roleIconBg" file="Interface/AddOns/GW2_UI/textures/hud/notification-backdrop">
+                    <Size x="27" y="27"></Size>
+                    <Color r="0" g="0" b="0" a="0.7"/>
+                    <Anchors>
+                        <Anchor point="CENTER" relativeKey="$parent.roleIcon" relativePoint="CENTER" x="0"></Anchor>
+                    </Anchors>
                 </Texture>
             </Layer>
             <Layer level="BORDER">
@@ -74,6 +92,12 @@
             </Layer>
         </Layers>
         <Frames>
+            <Button parentKey="iconHelperButton">
+                <Size x="80" y="80"/>
+                <Anchors>
+                    <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER" x="0"></Anchor>
+                </Anchors>
+            </Button>
             <Frame parentKey="info" enableMouse="false">
                 <Size x="460" y="140"></Size>
                 <Anchors>
@@ -82,7 +106,6 @@
                 <Layers>
                     <Layer level="OVERLAY">
                         <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
-
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
@@ -93,7 +116,7 @@
                     </Layer>
                     <Layer level="OVERLAY" textureSubLevel="">
                         <FontString parentKey="specTitle" text="Arcane" justifyH="LEFT">
-                            <Size x="200" y="20"></Size>
+                            <Size x="500" y="20"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="0" y="-20"></Anchor>
                             </Anchors>

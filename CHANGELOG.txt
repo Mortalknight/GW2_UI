@@ -1,3 +1,7 @@
+5.24.0
+MISC
+    - Tweak character talent frame
+
 5.23.0
 NEW
     - Skins:
