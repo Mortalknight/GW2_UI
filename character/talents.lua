@@ -256,6 +256,34 @@ local function updateActiveSpec()
             last = row
         end
     end
+
+    local hunterPetSpecId = GetSpecialization(false, true)
+    local hunterPetContainerId = GetNumSpecializations() + 1
+    if GW.myclass == "HUNTER" and hunterPetSpecId then
+        local container = _G["GwSpecFrame" .. hunterPetContainerId]
+        local _, name, description, icon, role = GetSpecializationInfo(hunterPetSpecId, false, true)
+
+        container.roleIcon:ClearAllPoints()
+        if role == "TANK" then
+            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank")
+            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -6, -6)
+        elseif role == "HEALER" then
+            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer")
+            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -8, -5)
+        elseif role == "DAMAGER" then
+            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
+            container.roleIcon:SetSize(30, 30)
+            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -3, -10)
+        end
+
+        container.icon:SetTexture(icon)
+        container.info.specTitle:SetText(PET_SPECIALIZATION .. ": " .. name)
+        container.info.specDesc:SetText(description)
+
+        _G["GwSpecFrame" .. hunterPetContainerId]:Show()
+    elseif GW.myclass == "HUNTER" and _G["GwSpecFrame" .. hunterPetContainerId] then
+        _G["GwSpecFrame" .. hunterPetContainerId]:Hide()
+    end
 end
 GW.AddForProfiling("talents", "updateActiveSpec", updateActiveSpec)
 
@@ -424,6 +452,54 @@ local function loadTalents()
         end
     end
     updateActiveSpec()
+
+    local hunterPetContainerId = GetNumSpecializations() + 1
+
+    if GW.myclass == "HUNTER" then
+        local container = CreateFrame("Button", "GwSpecFrame" .. hunterPetContainerId, GwSpecContainerFrame, "GwSpecFrame")
+
+        local mask = UIParent:CreateMaskTexture()
+        mask:SetPoint("CENTER", container.icon, "CENTER", 0, 0)
+        mask:SetTexture(
+            "Interface/AddOns/GW2_UI/textures/talents/passive_border",
+            "CLAMPTOBLACKADDITIVE",
+            "CLAMPTOBLACKADDITIVE"
+        )
+        mask:SetSize(80, 80)
+        container.icon:AddMaskTexture(mask)
+        container:SetScript("OnEnter", nil)
+        container:SetScript("OnLeave", nil)
+        container:SetScript("OnUpdate", nil)
+        container:SetScript("OnShow", fnContainer_OnShow)
+        container:SetScript("OnHide", fnContainer_OnHide)
+        container:SetPoint("TOPLEFT", GwSpecContainerFrame, "TOPLEFT", 10, (-140 * hunterPetContainerId) + 98)
+        container.spec = hunterPetContainerId
+
+        container.info.specTitle:SetFont(DAMAGE_TEXT_FONT, 16)
+        container.info.specTitle:SetTextColor(1, 1, 1, 1)
+        container.info.specTitle:SetShadowColor(0, 0, 0, 1)
+        container.info.specTitle:SetShadowOffset(1, -1)
+        container.info.specDesc:SetFont(UNIT_NAME_FONT, 14)
+        container.info.specDesc:SetTextColor(0.8, 0.8, 0.8, 1)
+        container.info.specDesc:SetShadowColor(0, 0, 0, 1)
+        container.info.specDesc:SetShadowOffset(1, -1)
+        container.iconHelperButton:SetScript("OnEnter", function(self)
+            if not self:GetParent().active then
+                return
+            end
+            GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
+            GameTooltip:ClearLines()
+            GameTooltip:AddLine(self:GetParent().info.specTitle:GetText(), 1, 1, 1)
+            GameTooltip:AddLine(" ")
+            GameTooltip:AddLine(self:GetParent().info.specDesc:GetText(), 1, 1, 1, true)
+            GameTooltip:Show()
+        end)
+        container.iconHelperButton:SetScript("OnLeave", GameTooltip_Hide)
+
+        txT = (3 - 1) * txH
+        container.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/art/" .. GW.myClassID)
+        container.background:SetTexCoord(0, txR, txT / txMH, (txT + txH) / txMH)
+    end
 end
 GW.AddForProfiling("talents", "loadTalents", loadTalents)
 
@@ -438,8 +514,10 @@ local function spellButton_OnEnter(self)
     end
     if self.skillType == "TALENT" then
         GameTooltip:SetSpellByID(self.spellId)
-    elseif not self.isFlyout then
+    elseif not self.isFlyout and self.spellbookIndex then
         GameTooltip:SetSpellBookItem(self.spellbookIndex, self.booktype)
+    elseif not self.spellbookIndex and self.spellId then
+        GameTooltip:SetSpellByID(self.spellId)
     else
         local name, desc, _, _ = GetFlyoutInfo(self.spellId)
         GameTooltip:AddLine(name)
@@ -451,7 +529,7 @@ local function spellButton_OnEnter(self)
             GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(self.unlockLevel), 1, 1, 1)
         elseif GetSpellLevelLearned(self.spellId) > 0 then
             GameTooltip:AddLine(" ")
-            GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(GetSpellLevelLearned(self.spellId)), 1, 1, 1)  
+            GameTooltip:AddLine(UNLOCKS_AT_LEVEL:format(GetSpellLevelLearned(self.spellId)), 1, 1, 1)
         end
     end
     GameTooltip:Show()
@@ -580,22 +658,22 @@ local function setActiveButton(btn, spellId, skillType, icon, spellbookIndex, bo
     btn.isFlyout = (skillType == "FLYOUT")
     if btn.isFlyout then
         btn.arrow:Show()
-        btn:SetAttribute("type1", "flyout")
-        btn:SetAttribute("type2", "flyout")
+        btn:SetAttribute("*type1", "flyout")
+        btn:SetAttribute("*type2", "flyout")
         btn:SetAttribute("spell", spellId)
         btn:SetAttribute("flyout", spellId)
         btn:SetAttribute("flyoutDirection", "RIGHT")
     elseif not btn.isFuture and booktype == BOOKTYPE_PET then
-        btn:SetAttribute("type1", "spell")
-        btn:SetAttribute("type2", "macro")
+        btn:SetAttribute("*type1", "spell")
+        btn:SetAttribute("*type2", "macro")
         btn:SetAttribute("spell", spellId)
         btn:SetAttribute("*macrotext2", "/petautocasttoggle " .. name)
         btn:SetAttribute("shift-type1", "modifiedClick")
         btn:SetAttribute("shift-type2", "modifiedClick")
     elseif not btn.isFuture then
         btn:SetAttribute("ispickable", true)
-        btn:SetAttribute("type1", "spell")
-        btn:SetAttribute("type2", "spell")
+        btn:SetAttribute("*type1", "spell")
+        btn:SetAttribute("*type2", "spell")
         btn:SetAttribute("spell", spellId)
         btn:SetAttribute("shift-type1", "modifiedClick")
         btn:SetAttribute("shift-type2", "modifiedClick")
@@ -678,8 +756,46 @@ local function checkForGlyph(btn, spellId, fmSpellbook)
     end
 end
 
+local function CreatePassiveSpellButton(passiveGroup, passiveIndex, fmSpellbook, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+    local btn = passiveGroup.pool:Acquire()
+    local row = math.floor((passiveIndex - 1) / 5)
+    local col = (passiveIndex - 1) % 5
+    btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
+    setPassiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+
+    -- check for should glyph highlight
+    if spellBookTabs == 2 or spellBookTabs == 3 then
+        checkForGlyph(btn, spellId, fmSpellbook)
+    end
+
+    return passiveIndex + 1
+end
+
+local function CreateActiveSpellButton(activeGroup, activeIndex, fmSpellbook, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+    local btn
+    if BOOKTYPE == BOOKTYPE_PET or skillType == "FLYOUT" then
+        btn = activeGroup.poolNSD:Acquire()
+    else
+        btn = activeGroup.pool:Acquire()
+    end
+    local row = math.floor((activeIndex - 1) / 5)
+    local col = (activeIndex - 1) % 5
+    btn:SetPoint("TOPLEFT", activeGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
+    setActiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+
+    -- check for should glyph highlight
+    if spellBookTabs == 2 or spellBookTabs == 3 then
+        checkForGlyph(btn, spellId, fmSpellbook)
+        checkForClickBinding(btn, spellId)
+    end
+    GW.RegisterCooldown(btn.cooldown)
+
+    return activeIndex + 1
+end
+
 local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
     local _, _, offset, numSpells = GetSpellTabInfo(spellBookTabs)
+    local btn
 
     local BOOKTYPE = BOOKTYPE_SPELL
     if spellBookTabs == 3 and (numSpells < 1 or GetSpecialization() == 5) then
@@ -723,19 +839,15 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
         for row = 1, maxTalentRows do
             for index = 1, talentsPerRow do
                 local _, name, icon, selected, available, spellId = GetTalentInfo(row, index, 1, false, "player")
-                if selected and available then
-                    local isPassive = IsPassiveSpell(spellId)
-                    local btn
-                    if isPassive then
-                        local skillType = "TALENT"
-                        btn = passiveGroup.pool:Acquire()
-                        local row = math.floor((passiveIndex - 1) / 5)
-                        local col = (passiveIndex - 1) % 5
-                        btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
-                        setPassiveButton(btn, spellId, skillType, icon, nil, BOOKTYPE, spellBookTabs, name)      
-                        passiveIndex = passiveIndex + 1
-                        talentPassiveSkills[spellId] = true
-                    end
+                if selected and available and IsPassiveSpell(spellId) then
+                    local skillType = "TALENT"
+                    btn = passiveGroup.pool:Acquire()
+                    local row2 = math.floor((passiveIndex - 1) / 5)
+                    local col = (passiveIndex - 1) % 5
+                    btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row2))
+                    setPassiveButton(btn, spellId, skillType, icon, nil, BOOKTYPE, spellBookTabs, name)
+                    passiveIndex = passiveIndex + 1
+                    talentPassiveSkills[spellId] = true
                 end
             end
         end
@@ -747,7 +859,6 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
         if name == nil then
             name = ""
         end
-        local isPassive = IsPassiveSpell(spellIndex, BOOKTYPE)
 
         local skillType, spellId = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
         if BOOKTYPE == BOOKTYPE_PET then
@@ -755,42 +866,30 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
         end
         local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
 
-        local btn
-        if isPassive then
-            local bolfound = talentPassiveSkills[spellId] or false
-
-            if not bolfound then 
-                btn = passiveGroup.pool:Acquire()
-                local row = math.floor((passiveIndex - 1) / 5)
-                local col = (passiveIndex - 1) % 5
-                btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
-                setPassiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
-
-                -- check for should glyph highlight
-                if spellBookTabs == 2 or spellBookTabs == 3 then
-                    checkForGlyph(btn, spellId, fmSpellbook)
-                end
-                passiveIndex = passiveIndex + 1
+        if IsPassiveSpell(spellIndex, BOOKTYPE) then
+            if not talentPassiveSkills[spellId] then
+                passiveIndex = CreatePassiveSpellButton(passiveGroup, passiveIndex, fmSpellbook, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
             end
         else
-            if BOOKTYPE == BOOKTYPE_PET or skillType == "FLYOUT" then
-                btn = activeGroup.poolNSD:Acquire()
-            else
-                btn = activeGroup.pool:Acquire()
-            end
-            local row = math.floor((activeIndex - 1) / 5)
-            local col = (activeIndex - 1) % 5
-            btn:SetPoint("TOPLEFT", activeGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
-            setActiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+            activeIndex = CreateActiveSpellButton(activeGroup, activeIndex, fmSpellbook, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+        end
+    end
+    if spellBookTabs == 5 and GetSpecialization(false, true) then
+        -- add spec spells
+        local bonuses = {GetSpecializationSpells(GetSpecialization(false, true), nil, true, true)}
+        for i = 1, #bonuses, 2 do
+            if not IsSpellKnownOrOverridesKnown(bonuses[i], true) then
+                local isPassive = IsPassiveSpell(bonuses[i])
+                local name, _, icon = GetSpellInfo(bonuses[i])
 
-            -- check for should glyph highlight
-            if spellBookTabs == 2 or spellBookTabs == 3 then
-                checkForGlyph(btn, spellId, fmSpellbook)
-                checkForClickBinding(btn, spellId)
+                if isPassive then
+                    if not talentPassiveSkills[bonuses[i]] then
+                        passiveIndex = CreatePassiveSpellButton(passiveGroup, passiveIndex, fmSpellbook, bonuses[i], "FUTURESPELL", icon, nil, BOOKTYPE, spellBookTabs, name)
+                    end
+                else
+                    activeIndex = CreateActiveSpellButton(activeGroup, activeIndex, fmSpellbook, bonuses[i], "FUTURESPELL", icon, nil, BOOKTYPE, spellBookTabs, name)
+                end
             end
-            GW.RegisterCooldown(btn.cooldown)
-
-            activeIndex = activeIndex + 1
         end
     end
     talentPassiveSkills = nil
@@ -935,15 +1034,17 @@ end
 GW.AddForProfiling("talents", "passivePool_Resetter", passivePool_Resetter)
 
 local function updateButton(self)
-    local start, duration, _ = GetSpellCooldown(self.spellbookIndex, self.booktype)
+    if self.spellbookIndex and self.booktype then
+        local start, duration, _ = GetSpellCooldown(self.spellbookIndex, self.booktype)
 
-    if start ~= nil and duration ~= nil then
-        self.cooldown:SetCooldown(start, duration)
+        if start ~= nil and duration ~= nil then
+            self.cooldown:SetCooldown(start, duration)
+        end
+
+        local _, autostate = GetSpellAutocast(self.spellbookIndex, self.booktype)
+
+        self.autocast:SetShown(autostate)
     end
-
-    local _, autostate = GetSpellAutocast(self.spellbookIndex, self.booktype)
-
-    self.autocast:SetShown(autostate)
 end
 GW.AddForProfiling("talents", "updateButton", updateButton)
 
