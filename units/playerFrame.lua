@@ -144,7 +144,7 @@ end
 local function player_OnEvent(self, event)
     if event == "PLAYER_ENTERING_WORLD" then
         unitFrameData(self)
-        updateHealthData(self, event)
+        updateHealthData(self)
         GW.updatePowerValues(self, false)
     elseif IsIn(event, "PLAYER_LEVEL_UP", "GROUP_ROSTER_UPDATE", "UNIT_PORTRAIT_UPDATE") then
         unitFrameData(self)
@@ -175,6 +175,8 @@ local function LoadPlayerFrame()
     RegisterUnitWatch(NewUnitFrame)
     NewUnitFrame:EnableMouse(true)
     NewUnitFrame:RegisterForClicks("AnyDown")
+
+    NewUnitFrame.backgroundOverlay:SetShown(GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
 
     local mask = UIParent:CreateMaskTexture()
     mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
