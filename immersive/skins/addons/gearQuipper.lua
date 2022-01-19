@@ -105,7 +105,6 @@ local function SkinGearQuipper()
                 _G["GqUiSetCheckBox_" .. index].hookedGW = true
             end
         end
-
     end)
 
     hooksecurefunc(gearquipper, "RefreshEventEntries", function()
