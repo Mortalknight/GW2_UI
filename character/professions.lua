@@ -124,7 +124,7 @@ local function updateOverview(fmOverview)
     end
 
     local fmProfs = fmOverview.profs
-    local iProf1, iProf2, iArch, iFish, iCook, _ = GetProfessions()
+    local iProf1, iProf2, iArch, iFish, iCook = GetProfessions()
 
     local txR = 588 / 1024
     local txH = 110
@@ -143,9 +143,8 @@ local function updateOverview(fmOverview)
         elseif i == 5 then
             idx = iArch
         end
-        if idx ~= nil then
-            local name, icon, skill, skillMax, num, offset, profId, skillMod, specId, specOff, skillDesc =
-                GetProfessionInfo(idx)
+        if idx then
+            local name, icon, skill, skillMax, num, offset, profId, skillMod, specId, specOff, skillDesc = GetProfessionInfo(idx)
             fm.skillName = name
             fm.profId = profId
             fm.icon:SetTexture(icon)
@@ -161,11 +160,7 @@ local function updateOverview(fmOverview)
                     skillDesc = title
                 end
             end
-            if skillDesc ~= nil then
-                fm.desc:SetText(skillDesc)
-            else
-                fm.desc:SetText(nil)
-            end
+            fm.desc:SetText(skillDesc and skillDesc)
             fm.desc:SetWidth(220)
             fm.StatusBar:SetValue(skill / skillMax)
             if skillMod and skillMod ~= 0 then

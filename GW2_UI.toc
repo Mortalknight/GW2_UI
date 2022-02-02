@@ -6,9 +6,10 @@
 ## Version: @project-version@
 ## X-Website: https://www.curseforge.com/wow/addons/gw2-ui
 ## X-Curse-Project-ID: 94310
+## X-Wago-ID: Mj6jXpGR
 ## DefaultState: Enabled
 
-## Author: deadend06, Nils89, nezroy
+## Author: deadend06, Winglord89(Nils89), nezroy
 
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES, GW2UI_STORAGE2

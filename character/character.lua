@@ -15,6 +15,7 @@ windowsList[1] = {
     ["TabIcon"] = "tabicon_character",
     ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/character-window-icon",
     ["HeaderText"] = CHARACTER,
+    ["TooltipText"] = CHARACTER_BUTTON,
     ["Bindings"] = {
         ["TOGGLECHARACTER0"] = "PaperDoll"
     },
@@ -31,6 +32,7 @@ windowsList[2] = {
     ["TabIcon"] = "tabicon_spellbook",
     ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
     ["HeaderText"] = SPELLS,
+    ["TooltipText"] = TALENTS_BUTTON,
     ["Bindings"] = {
         ["TOGGLESPELLBOOK"] = "SpellBook",
         ["TOGGLETALENTS"] = "Talents",
@@ -49,6 +51,7 @@ windowsList[3] = {
     ["TabIcon"] = "tabicon_professions",
     ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/professions-window-icon",
     ["HeaderText"] = TRADE_SKILLS,
+    ["TooltipText"] = TRADE_SKILLS,
     ["Bindings"] = {
         ["TOGGLEPROFESSIONBOOK"] = "Professions"
     },
@@ -65,6 +68,7 @@ windowsList[4] = {
     ["TabIcon"] = "tabicon_currency",
     ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/currency-window-icon",
     ["HeaderText"] = CURRENCY,
+    ["TooltipText"] = CURRENCY,
     ["Bindings"] = {
         ["TOGGLECURRENCY"] = "Currency"
     },
@@ -81,6 +85,7 @@ windowsList[5] = {
     ["TabIcon"] = "tabicon_reputation",
     ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/reputation-window-icon",
     ["HeaderText"] = REPUTATION,
+    ["TooltipText"] = REPUTATION,
     ["Bindings"] = {
         ["TOGGLECHARACTER2"] = "Reputation"
     },
@@ -518,13 +523,8 @@ local function LoadCharacter()
             container.TabFrame = tab
             container.CharWindow = GwCharacterWindow
             container.HeaderIcon = v.HeaderIcon
-            if v.HeaderTextKey then
-                container.HeaderText = L[v.HeaderTextKey]
-                tab.gwTipLabel = L[v.HeaderTextKey]
-            else
-                container.HeaderText = v.HeaderText
-                tab.gwTipLabel = v.HeaderText
-            end
+            container.HeaderText = v.HeaderText
+            tab.gwTipLabel = v.TooltipText
 
             tab:SetScript("OnEnter", charTab_OnEnter)
             tab:SetScript("OnLeave", GameTooltip_Hide)
