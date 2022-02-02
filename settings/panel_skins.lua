@@ -48,6 +48,8 @@ local function LoadSkinsPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Allied Races"], nil, "ALLIEND_RACES_UI_SKIN_ENABLED")
     addOption(p.scroll.scrollchild, PVP_WEEKLY_REWARD, nil, "WEEKLY_REWARDS_SKIN_ENABLED")
     addOption(p.scroll.scrollchild, LFG_TITLE, nil, "LFG_SKIN_ENABLED")
+    addOption(p.scroll.scrollchild, C_Garrison.GetTalentTreeInfo(461).title, nil, "ORDERRHALL_TALENT_FRAME_SKIN_ENABLED")
+
 
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r World Quest Tracker", nil, "SKIN_WQT_ENABLED", nil, nil, {["QUESTTRACKER_ENABLED"] = true}, "Objectives")
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Immersion", nil, "IMMERSIONADDON_SKIN_ENABLED")

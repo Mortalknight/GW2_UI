@@ -1,9 +1,7 @@
 local _, GW = ...
 
-local function ApplyocketUISkin()
+local function ApplySocketUISkin()
     if not GW.GetSetting("SOCKET_SKIN_ENABLED") then return end
-
-    local ItemSocketingFrame = _G.ItemSocketingFrame
 
     ItemSocketingFrame:StripTextures()
     _G.ItemSocketingFrameCloseButton:SkinButton(true)
@@ -58,6 +56,6 @@ local function ApplyocketUISkin()
 end
 
 local function LoadSocketUISkin()
-    GW.RegisterSkin("Blizzard_ItemSocketingUI", function() ApplyocketUISkin() end)
+    GW.RegisterSkin("Blizzard_ItemSocketingUI", function() ApplySocketUISkin() end)
 end
 GW.LoadSocketUISkin = LoadSocketUISkin
