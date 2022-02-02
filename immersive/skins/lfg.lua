@@ -813,6 +813,13 @@ local function ApplyChallengesUISkin()
                 child:SetBackdrop(GW.constBackdropFrameColorBorder)
                 child:SetBackdropBorderColor(1, 0.99, 0.85)
 
+                if child.mapID then
+                    local _, overAllScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(child.mapID)
+                    if overAllScore then
+                        local color = C_ChallengeMode.GetSpecificDungeonOverallScoreRarityColor(overAllScore)
+                        child:SetBackdropBorderColor(color.r, color.g, color.g)
+                    end
+                end
 
                 GW.HandleIcon(child.Icon, true)
                 child.Icon:SetDrawLayer("ARTWORK")

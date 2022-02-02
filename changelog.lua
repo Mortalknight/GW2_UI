@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.24.2", [=[
+    FIXES
+    - Fix rare player aura issue
+]=])
+
 v("5.24.1", [=[
     FIXES
     - Fix player frame background overlay
