@@ -107,6 +107,7 @@ local function ClearAuraTime(self)
     self.timeLeft = nil
     self:SetScript("OnUpdate", nil)
     self.status.duration:SetText("")
+    setLongCD(self, 0) -- to reset border and timer
 end
 
 local function SetCD(self, expires, duration, stackCount, auraType)
