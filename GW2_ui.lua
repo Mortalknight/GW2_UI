@@ -477,6 +477,7 @@ local function loadAddon(self)
     GW.LoadAlliedRacesUISkin()
     GW.LoadWeeklyRewardsSkin()
     GW.LoadLFGSkin()
+    GW.LoadOrderHallTalentFrameSkin()
 
     GW.LoadImmersionAddonSkin()
 

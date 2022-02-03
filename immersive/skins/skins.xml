@@ -36,6 +36,7 @@
     <Script file="immersive\skins\alliedRaces.lua"/>
     <Script file="immersive\skins\weeklyRewards.lua"/>
     <Script file="immersive\skins\lfg.lua"/>
+    <Script file="immersive\skins\orderHallTalentFrame.lua"/>
     
     <Script file="immersive\skins\addons\immersion.lua"/>
     <Script file="immersive\skins\addons\postal.lua"/>
