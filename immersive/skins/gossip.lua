@@ -156,7 +156,7 @@ local function LoadGossipSkin()
             end
         end
     end)
-    hooksecurefunc(QuestInfoSealFrame.Text, "SetText", function(text)
+    hooksecurefunc(QuestInfoSealFrame.Text, "SetText", function(self, text)
         if text and text ~= "" then
             local colorStr, rawText = strmatch(text, "|c[fF][fF](%x%x%x%x%x%x)(.-)|r")
             if colorStr and rawText then
