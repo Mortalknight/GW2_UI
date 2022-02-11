@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.24.3", [=[
+    FIXES
+    - Fix gossip skin error
+]=])
+
 v("5.24.2", [=[
     FIXES
     - Fix rare player aura issue
