@@ -1,6 +1,6 @@
 5.24.3
 FIXES
-    - Fix rgossip skin error
+    - Fix gossip skin error
     
 5.24.2
 FIXES

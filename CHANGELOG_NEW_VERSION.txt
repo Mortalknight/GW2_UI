@@ -1,0 +1,3 @@
+5.??.?: Current 5.24.3
+FIXES
+    - Fix gossip skin error
