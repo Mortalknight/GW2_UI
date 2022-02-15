@@ -49,29 +49,49 @@ local function setShortCD(self, expires, duration, stackCount)
     self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
 end
 
-local function aura_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", -5, -5)
+local function SetTooltip(self)
     GameTooltip:ClearLines()
 
     if self:GetAttribute("index") then
-        GameTooltip:SetUnitAura(SecureButton_GetUnit(self:GetParent()), self:GetID(), self:GetFilter())
+        GameTooltip:SetUnitAura(SecureButton_GetUnit(self.header), self:GetID(), self:GetFilter())
     elseif self:GetAttribute("target-slot") then
         GameTooltip:SetInventoryItem("player", self:GetID())
     end
 end
+
+local function AuraOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", -5, -5)
+
+    self.elapsed = 1
+end
 GW.AddForProfiling("aurabar_secure", "aura_OnEnter", aura_OnEnter)
 
+local function AuraOnShow(self)
+    if self.enchantIndex then
+        self.header.enchants[self.enchantIndex] = self
+    end
+end
+
+local function AuraOnHide(self)
+    if self.enchantIndex then
+        self.header.enchants[self.enchantIndex] = nil
+    else
+        self.instant = true
+    end
+end
+
 local function AuraButton_OnUpdate(self, elapsed)
-    if self.timeLeft then
-        if self.auraType == 2 then -- temp weapon enchant
-            local remains = self.expires / 1000
+    local xpr = self.endTime
+    if xpr then
+        if self.auraType and self.auraType == 2 then -- temp weapon enchant
             setLongCD(self, self.stackCount)
-            self.status.duration:SetText(TimeCount(remains))
+
+            self.status.duration:SetText(TimeCount(xpr - GetTime()))
             self.status.duration:Show()
         elseif self.duration and self.duration ~= 0 then -- normal aura with duration
-            local remains = self.expires - GetTime()
+            local remains = xpr - GetTime()
             if self.duration < 121 then
-                setShortCD(self, self.expires, self.duration, self.stackCount)
+                setShortCD(self, xpr, self.duration, self.stackCount)
                 if self.duration - remains < 0.1 then
                     self.agZoomIn:Play()
                 end
@@ -86,54 +106,39 @@ local function AuraButton_OnUpdate(self, elapsed)
         end
     end
 
-    if self.ttElapsed and self.ttElapsed > 0.1 then
+    if self.elapsed and self.elapsed > 0.1 then
         if GameTooltip:IsOwned(self) then
-            aura_OnEnter(self)
+            SetTooltip(self)
         end
 
-        self.ttElapsed = 0
+        self.elapsed = 0
     else
-        self.ttElapsed = (self.ttElapsed or 0) + elapsed
+        self.elapsed = (self.elapsed or 0) + elapsed
     end
 end
 
 local function ClearAuraTime(self)
     self.auraType = nil
-    self.expires = nil
     self.stackCount = nil
     self.duration = nil
 
     self.endTime = nil
-    self.timeLeft = nil
-    self:SetScript("OnUpdate", nil)
     self.status.duration:SetText("")
     setLongCD(self, 0) -- to reset border and timer
 end
 
 local function SetCD(self, expires, duration, stackCount, auraType)
-    if not self or not self.status or not self.gwInit then
-        return
-    end
-    self.timeLeft = tonumber(GW.RoundDec(expires - GetTime(), 3))
-
-    if self.timeLeft <= 0.05 then
-        ClearAuraTime(self)
-        return
-    end
-
-    self.auraType = auraType
-    self.expires = expires
-    self.stackCount = stackCount
-    self.duration = duration
-
-    self:SetScript("OnUpdate", AuraButton_OnUpdate)
-
     local oldEnd = self.endTime
     self.endTime = expires
+    self.auraType = auraType
+    self.stackCount = stackCount
+    self.duration = duration
 
     if oldEnd ~= self.endTime then
         self.nextUpdate = 0
     end
+
+    self.elapsed = 0
 end
 
 local function SetCount(self, count)
@@ -166,10 +171,10 @@ local function SetIcon(self, icon, dtype, auraType)
 end
 
 local function UpdateAura(self, index)
-    local name, icon, count, dtype, duration, expires = UnitAura(self:GetParent():GetUnit(), index, self:GetFilter())
+    local name, icon, count, dtype, duration, expires = UnitAura(self.header:GetUnit(), index, self:GetFilter())
     if not name then return end
 
-    local auraType = self:GetParent():GetAType()
+    local auraType = self.header:GetAType()
     self:SetIcon(icon, dtype, auraType)
     self:SetCount(count)
 
@@ -180,34 +185,76 @@ local function UpdateAura(self, index)
     end
 end
 
-local function UpdateTempEnchant(self, index)
-    local mh, mh_exp, mh_num, _, oh, oh_exp, oh_num = GetWeaponEnchantInfo()
+local function UpdateTempEnchant(self, index, expires)
+    if expires then
+        self:SetIcon(GetInventoryItemTexture("player", index), nil, 2)
+        self:SetCount(0)
 
-    if mh_exp or oh_exp then
-        local icon = GetInventoryItemTexture("player", index)
-
-        self.slotId = index
-        self:SetIcon(icon, nil, 2)
-        if index == INVSLOT_MAINHAND and mh then
-            self:SetCount(mh_num)
-            self:SetCD(mh_exp, -1, nil, 2)
-        elseif index == INVSLOT_OFFHAND and oh then
-            self:SetCount(oh_num)
-            self:SetCD(oh_exp, -1, nil, 2)
-        end
+        self:SetCD(((expires / 1000) or 0) + GetTime(), -1, nil, 2)
     else
         ClearAuraTime(self)
     end
 end
 
+local function HeaderOnUpdate(self, elapsed)
+    local header = self.frame
+
+    if header.elapsed and header.elapsed > 0.1 then
+        local button, value = next(header.spells)
+        while button do
+            UpdateAura(button, value)
+
+            header.spells[button] = nil
+            button, value = next(header.spells)
+        end
+
+        local _, main, _, _, _, offhand = GetWeaponEnchantInfo()
+        header.enchantOffhand = offhand
+        header.enchantMain = main
+
+        local index, enchant = next(header.enchants)
+        while enchant do
+            if index == 1 then
+                UpdateTempEnchant(enchant, enchant:GetID(), main)
+            else
+                UpdateTempEnchant(enchant, enchant:GetID(), offhand)
+            end
+            header.enchants[index] = nil
+            index, enchant = next(header.enchants)
+        end
+
+        header.elapsed = 0
+    else
+        header.elapsed = (header.elapsed or 0) + elapsed
+    end
+end
+
+local function HeaderOnEvent(self)
+    local header = self.frame
+    if header then
+        header.enchants[1] = header.enchantMain and header.enchant1
+        header.enchants[2] = header.enchantOffhand and header.enchant2
+    end
+end
+
 local function GetFilter(self)
-    return self:GetParent():GetFilter(self)
+    return self.header:GetFilter(self)
 end
 GW.AddForProfiling("aurabar_secure", "GetFilter", GetFilter)
 
 function GwAuraTmpl_OnLoad(self)
     if self.gwInit then
         return
+    end
+
+    self.header = self:GetParent()
+    self.name = self:GetName()
+
+    self.enchantIndex = tonumber(strmatch(self.name, "TempEnchant(%d)$"))
+    if self.enchantIndex then
+        self.header["enchant" .. self.enchantIndex] = self
+    else
+        self.instant = true
     end
 
     self.cooldown:SetDrawBling(false)
@@ -223,9 +270,12 @@ function GwAuraTmpl_OnLoad(self)
 
     self:SetScript("OnAttributeChanged", function(_, attribute, value)
         if attribute == "index" then
-            UpdateAura(self, value)
-        elseif attribute == "target-slot" then
-            UpdateTempEnchant(self, value)
+            if self.instant then
+                UpdateAura(self, value)
+                self.instant = nil
+            else
+                self.header.spells[self] = value
+            end
         end
     end)
 
@@ -249,7 +299,10 @@ function GwAuraTmpl_OnLoad(self)
     a2:SetToScale(1.0, 1.0)
 
     -- add mouseover handlers
-    self:SetScript("OnEnter", aura_OnEnter)
+    self:SetScript("OnUpdate", AuraButton_OnUpdate)
+    self:SetScript("OnEnter", AuraOnEnter)
+    self:SetScript("OnShow", AuraOnShow)
+    self:SetScript("OnHide", AuraOnHide)
     self:SetScript("OnLeave", GameTooltip_Hide)
 
     self.gwInit = true
@@ -257,8 +310,9 @@ end
 
 local function newHeader(filter, settingname)
     local size = tonumber(GW.RoundDec(GetSetting(settingname .. "_ICON_SIZE")))
+    local name = filter == "HELPFUL" and "GW2UIPlayerBuffs" or "GW2UIPlayerDebuffs"
 
-    local h = CreateFrame("Frame", nil, UIParent, "SecureAuraHeaderTemplate")
+    local h = CreateFrame("Frame", name, UIParent, "SecureAuraHeaderTemplate")
     local aura_tmpl = format("GwAuraSecureTmpl%d", size)
     h.GetFilter = function(_, btn) return btn:GetAttribute("filter") end
     h.GetAType = function(self) return self:GetAttribute("filter") == "HELPFUL" and 1 or 0 end
@@ -296,9 +350,26 @@ local function newHeader(filter, settingname)
     h:SetAttribute("template", aura_tmpl)
     h:SetAttribute("unit", "player")
     h:SetAttribute("filter", filter)
+    h.enchants = {}
+    h.spells = {}
 
-    RegisterStateDriver(h, "visibility", "[petbattle] hide; show")
+    h.visibility = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
+    h.visibility:SetScript("OnUpdate", HeaderOnUpdate)
+    h.visibility:SetScript("OnEvent", HeaderOnEvent)
+    h.visibility.frame = h
+    h.enchants = {}
+    h.name = name
+
+    C_Timer.After(1, function() h.visibility:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player") end)
+
     RegisterAttributeDriver(h, "unit", "[vehicleui] vehicle; player")
+    SecureHandlerSetFrameRef(h.visibility, "AuraHeader", h)
+    RegisterStateDriver(h.visibility, "customVisibility", "[petbattle] 0; 1")
+    h.visibility:SetAttribute("_onstate-customVisibility", [[
+        local header = self:GetFrameRef("AuraHeader")
+        local hide, shown = newstate == 0, header:IsShown()
+        if hide and shown then header:Hide() elseif not hide and not shown then header:Show() end
+    ]])
 
     h:SetAttribute("sortMethod", "INDEX")
     h:SetAttribute("sortDirection", "+")
