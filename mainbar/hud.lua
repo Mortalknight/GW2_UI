@@ -186,12 +186,9 @@ local function xpbar_OnEvent(self, event)
         if C_Reputation.IsFactionParagon(factionID) then
             local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(factionID)
 
-            if currentValue > 10000 then
-                repeat
-                    currentValue = currentValue - 10000
-                until (currentValue < 10000)
-            end
+            currentValue = currentValue % maxValueParagon;
             valPrecRepu = (currentValue - 0) / (maxValueParagon - 0)
+
             gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((currentValue - 0)) .. " / " .. CommaValue((maxValueParagon - 0)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
