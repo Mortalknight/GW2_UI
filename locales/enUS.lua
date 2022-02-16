@@ -437,3 +437,6 @@ L["Seperate"] = true
 L["Indicate whether buffs you cast yourself should be separated before or after"] = true
 L["Buffs"] = true
 L["Debuffs"] = true
+L["Other's First"] = true
+L["No Sorting"] = true
+L["Your Auras First"] = true
