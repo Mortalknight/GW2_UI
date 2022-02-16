@@ -185,7 +185,7 @@ local function AddOptionButton(panel, name, desc, optionName, callback, params, 
     local i = #(panel.gwOptions) + 1
     panel.gwOptions[i] = opt
 
-    local i = #(all_options) + 1
+    i = #(all_options) + 1
     all_options[i] = opt
 
     if incompatibleAddons then
@@ -561,7 +561,7 @@ local function InitPanel(panel, hasScroll)
 
                         SetSetting(self.optionName .. (v.hasProfile and (panel.selectProfile.type == "PARTY" and "_PARTY" or "") or ""), self.option, self:GetParent():GetParent().data.perSpec)
 
-                        if v.callback ~= nil then
+                        if v.callback then
                             v.callback()
                         end
                         --Check all dependencies on this option
@@ -575,7 +575,7 @@ local function InitPanel(panel, hasScroll)
 
                         SetSetting(self:GetParent().optionName .. (v.hasProfile and (panel.selectProfile.type == "PARTY" and "_PARTY" or "") or ""), toSet, self:GetParent():GetParent():GetParent().data.perSpec, self:GetParent().option)
 
-                        if v.callback ~= nil then
+                        if v.callback then
                             v.callback(toSet, self:GetParent().option)
                         end
                         --Check all dependencies on this option
@@ -668,7 +668,7 @@ local function InitPanel(panel, hasScroll)
 
                     SetSetting(of.optionName, roundValue, of.perSpec)
                     self:GetParent().input:SetText(roundValue)
-                    if v.callback ~= nil then
+                    if v.callback then
                         v.callback()
                     end
                 end
@@ -703,7 +703,7 @@ local function InitPanel(panel, hasScroll)
                     self:GetParent().slider:SetValue(roundValue)
                     self:SetText(roundValue)
                     SetSetting(v.optionName, roundValue, of.perSpec)
-                    if v.callback ~= nil then
+                    if v.callback then
                         v.callback()
                     end
                 end
@@ -728,7 +728,7 @@ local function InitPanel(panel, hasScroll)
                     end
                     self:ClearFocus()
                     SetSetting(of.optionName, self:GetText(), of.perSpec)
-                    if v.callback ~= nil then
+                    if v.callback then
                         v.callback(self)
                     end
                 end

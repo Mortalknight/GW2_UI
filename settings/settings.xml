@@ -621,7 +621,7 @@
                     </Anchors>
                 </FontString>
                 <FontString parentKey="sub" text="Subheader" inherits="GameFontNormalSmall" justifyH="LEFT">
-                    <Size x="512" y="25"/>
+                    <Size x="500" y="25"/>
                     <Color r="0.6" b="0.6" g="0.6"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="5" y="-30"/>

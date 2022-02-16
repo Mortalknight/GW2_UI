@@ -295,22 +295,6 @@ GW_DEFAULT["MultiBarLeft"]["hideDefaultBackground"] = true
 
 GW_DEFAULT["MULTIBAR_RIGHT_COLS"] = 1
 
-GW_DEFAULT["PlayerBuffFrame"] = {}
-GW_DEFAULT["PlayerBuffFrame"]["point"] = "BOTTOMLEFT"
-GW_DEFAULT["PlayerBuffFrame"]["relativePoint"] = "BOTTOM"
-GW_DEFAULT["PlayerBuffFrame"]["xOfs"] = 53
-GW_DEFAULT["PlayerBuffFrame"]["yOfs"] = 120
-GW_DEFAULT["PlayerBuffFrame_GrowDirection"] = "UP"
-GW_DEFAULT["PlayerBuffFrame_scale"] = 1
-
-GW_DEFAULT["PlayerDebuffFrame"] = {}
-GW_DEFAULT["PlayerDebuffFrame"]["point"] = "BOTTOMLEFT"
-GW_DEFAULT["PlayerDebuffFrame"]["relativePoint"] = "BOTTOM"
-GW_DEFAULT["PlayerDebuffFrame"]["xOfs"] = 53
-GW_DEFAULT["PlayerDebuffFrame"]["yOfs"] = 220
-GW_DEFAULT["PlayerDebuffFrame_GrowDirection"] = "UP"
-GW_DEFAULT["PlayerDebuffFrame_scale"] = 1
-
 GW_DEFAULT["GameTooltipPos"] = {}
 GW_DEFAULT["GameTooltipPos"]["point"] = "BOTTOMRIGHT"
 GW_DEFAULT["GameTooltipPos"]["relativePoint"] = "BOTTOMRIGHT"
@@ -624,7 +608,32 @@ GW_DEFAULT["MAINBAR_RANGEINDICATOR"] = "RED_INDICATOR"
 
 GW_DEFAULT["ACTIVE_PROFILE"] = nil
 
-GW_DEFAULT["PLAYER_AURA_STYLE"] = "LEGACY"
+GW_DEFAULT["PlayerBuffFrame"] = {}
+GW_DEFAULT["PlayerBuffFrame"]["point"] = "BOTTOMLEFT"
+GW_DEFAULT["PlayerBuffFrame"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["PlayerBuffFrame"]["xOfs"] = 53
+GW_DEFAULT["PlayerBuffFrame"]["yOfs"] = 120
+GW_DEFAULT["PlayerBuffFrame_GrowDirection"] = "UP"
+GW_DEFAULT["PlayerBuffFrame_scale"] = 1
+
+GW_DEFAULT["PlayerDebuffFrame"] = {}
+GW_DEFAULT["PlayerDebuffFrame"]["point"] = "BOTTOMLEFT"
+GW_DEFAULT["PlayerDebuffFrame"]["relativePoint"] = "BOTTOM"
+GW_DEFAULT["PlayerDebuffFrame"]["xOfs"] = 53
+GW_DEFAULT["PlayerDebuffFrame"]["yOfs"] = 220
+GW_DEFAULT["PlayerDebuffFrame_GrowDirection"] = "UP"
+GW_DEFAULT["PlayerDebuffFrame_scale"] = 1
+
+GW_DEFAULT["PlayerBuffFrame_Seperate"] = 0
+GW_DEFAULT["PlayerDebuffFrame_Seperate"] = 0
+
+GW_DEFAULT["PlayerBuffFrame_SortDir"] = "+"
+GW_DEFAULT["PlayerDebuffFrame_SortDir"] = "+"
+
+GW_DEFAULT["PlayerBuffFrame_SortMethod"] = "INDEX"
+GW_DEFAULT["PlayerDebuffFrame_SortMethod"] = "INDEX"
+
+GW_DEFAULT["PLAYER_AURA_WRAP_NUM_DEBUFF"] = 7
 GW_DEFAULT["PLAYER_AURA_WRAP_NUM"] = 7
 GW_DEFAULT["PlayerBuffFrame_ICON_SIZE"] = 32
 GW_DEFAULT["PlayerDebuffFrame_ICON_SIZE"] = 32
