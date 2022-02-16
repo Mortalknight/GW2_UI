@@ -111,6 +111,10 @@ local function AuraButton_OnUpdate(self, elapsed)
             SetTooltip(self)
         end
 
+        if xpr then
+            GW.UpdateTime(self, xpr)
+        end
+
         self.elapsed = 0
     else
         self.elapsed = (self.elapsed or 0) + elapsed
@@ -127,6 +131,13 @@ local function ClearAuraTime(self)
     setLongCD(self, 0) -- to reset border and timer
 end
 
+local function UpdateTime(self, expires)
+    if (expires - GetTime()) < 0.1 then
+        ClearAuraTime(self)
+    end
+end
+GW.UpdateTime = UpdateTime
+
 local function SetCD(self, expires, duration, stackCount, auraType)
     local oldEnd = self.endTime
     self.endTime = expires
@@ -138,6 +149,7 @@ local function SetCD(self, expires, duration, stackCount, auraType)
         self.nextUpdate = 0
     end
 
+    UpdateTime(self, expires)
     self.elapsed = 0
 end
 
@@ -232,8 +244,8 @@ end
 local function HeaderOnEvent(self)
     local header = self.frame
     if header then
-        header.enchants[1] = header.enchantMain and header.enchant1
-        header.enchants[2] = header.enchantOffhand and header.enchant2
+        header.enchants[1] = header.enchantMain and header.enchant1 or nil
+        header.enchants[2] = header.enchantOffhand and header.enchant2 or nil
     end
 end
 
@@ -308,22 +320,19 @@ function GwAuraTmpl_OnLoad(self)
     self.gwInit = true
 end
 
-local function newHeader(filter, settingname)
-    local size = tonumber(GW.RoundDec(GetSetting(settingname .. "_ICON_SIZE")))
-    local name = filter == "HELPFUL" and "GW2UIPlayerBuffs" or "GW2UIPlayerDebuffs"
+local function UpdateAuraHeader(header, settingName)
+    if not header then return end
 
-    local h = CreateFrame("Frame", name, UIParent, "SecureAuraHeaderTemplate")
+    local size = tonumber(GW.RoundDec(GetSetting(settingName .. "_ICON_SIZE")))
     local aura_tmpl = format("GwAuraSecureTmpl%d", size)
-    h.GetFilter = function(_, btn) return btn:GetAttribute("filter") end
-    h.GetAType = function(self) return self:GetAttribute("filter") == "HELPFUL" and 1 or 0 end
-    h.GetUnit = function(self) return self:GetAttribute("unit") end
-
-    local grow_dir = GetSetting(settingname .. "_GrowDirection")
-    local wrap_num = tonumber(GetSetting("PLAYER_AURA_WRAP_NUM"))
+    local grow_dir = GetSetting(settingName .. "_GrowDirection")
+    local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
+    local wrap_num = header.name == "GW2UIPlayerBuffs" and tonumber(GetSetting("PLAYER_AURA_WRAP_NUM")) or tonumber(GetSetting("PLAYER_AURA_WRAP_NUM_DEBUFF"))
     if not wrap_num or wrap_num < 1 or wrap_num > 20 then
         wrap_num = 7
     end
-    Debug("settings", settingname, grow_dir, wrap_num, size)
+
+    Debug("settings", settingName, grow_dir, wrap_num, size)
 
     local ap
     local yoff
@@ -346,18 +355,79 @@ local function newHeader(filter, settingname)
         yoff = 50
     end
 
+    header:SetAttribute("sortMethod", GetSetting(settingName .. "_SortMethod"))
+    header:SetAttribute("sortDirection", GetSetting(settingName .. "_SortDir"))
+    header:SetAttribute("template", aura_tmpl)
+    header:SetAttribute("separateOwn", tonumber(GW.RoundDec(GetSetting(settingName .. "_Seperate"))))
+    header:SetAttribute("wrapAfter", wrap_num)
+    header:SetAttribute("minWidth", (size + 1) * wrap_num)
+    header:SetAttribute("minHeight", (size + 1))
+    header:SetAttribute("point", ap)
+    header:SetAttribute("xOffset", xoff)
+    header:SetAttribute("wrapYOffset", yoff)
+
+    if header.filter == "HELPFUL" then
+        header:SetAttribute("includeWeapons", 1)
+        header:SetAttribute("weaponTemplate", aura_tmpl)
+    end
+
+    local index = 1
+	local child = select(index, header:GetChildren())
+	while child do
+        child:SetSize(size, size)
+
+        index = index + 1
+		child = select(index, header:GetChildren())
+    end
+
+    -- set anchoring
+    if header.filter == "HELPFUL" then
+        header:SetAttribute("growDir", grow_dir)
+
+        header:ClearAllPoints()
+        header:SetPoint(anchor_hb, header.gwMover, anchor_hb, 0, 0)
+    else
+        local anchor_hd
+        header:ClearAllPoints()
+        if not header.isMoved then
+            anchor_hd = grow_dir == "UPR" and "TOPLEFT" or grow_dir == "DOWNR" and "BOTTOMLEFT" or grow_dir == "UP" and "TOPRIGHT" or grow_dir == "DOWN" and "BOTTOMRIGHT"
+            if grow_dir == "DOWNR" or grow_dir == "DOWN" then
+                header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, -50)
+            else
+                header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, 50)
+            end
+        else
+            anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
+            header:SetPoint(anchor_hd, header.gwMover, anchor_hd, 0, 0)
+        end
+
+    end
+
+end
+GW.UpdateAuraHeader = UpdateAuraHeader
+
+local function newHeader(filter, settingname)
+    local name = filter == "HELPFUL" and "GW2UIPlayerBuffs" or "GW2UIPlayerDebuffs"
+
+    local h = CreateFrame("Frame", name, UIParent, "SecureAuraHeaderTemplate")
+    h:SetClampedToScreen(true)
+    h:UnregisterEvent("UNIT_AURA") -- only need player and vehicle, so we can reduce the calls
+    h:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
+    h.GetFilter = function(_, btn) return btn:GetAttribute("filter") end
+    h.GetAType = function(self) return self:GetAttribute("filter") == "HELPFUL" and 1 or 0 end
+    h.GetUnit = function(self) return self:GetAttribute("unit") end
+
     -- setup parameters for the header template
-    h:SetAttribute("template", aura_tmpl)
     h:SetAttribute("unit", "player")
     h:SetAttribute("filter", filter)
     h.enchants = {}
     h.spells = {}
+    h.filter = filter
 
     h.visibility = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
     h.visibility:SetScript("OnUpdate", HeaderOnUpdate)
     h.visibility:SetScript("OnEvent", HeaderOnEvent)
     h.visibility.frame = h
-    h.enchants = {}
     h.name = name
 
     C_Timer.After(1, function() h.visibility:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player") end)
@@ -371,40 +441,28 @@ local function newHeader(filter, settingname)
         if hide and shown then header:Hide() elseif not hide and not shown then header:Show() end
     ]])
 
-    h:SetAttribute("sortMethod", "INDEX")
-    h:SetAttribute("sortDirection", "+")
-    h:SetAttribute("minWidth", (size + 1) * wrap_num)
-    h:SetAttribute("minHeight", (size + 1))
-    h:SetAttribute("separateOwn", 0)
-    h:SetAttribute("point", ap)
-    h:SetAttribute("xOffset", xoff)
     h:SetAttribute("yOffset", "0")
-    h:SetAttribute("wrapAfter", wrap_num)
     h:SetAttribute("wrapXOffset", "0")
-    h:SetAttribute("wrapYOffset", yoff)
     if filter == "HELPFUL" then
-        h:SetAttribute("includeWeapons", 1)
-        h:SetAttribute("weaponTemplate", aura_tmpl)
         h:SetAttribute("consolidateDuration", -1)
         h:SetAttribute("consolidateTo", 0)
+
+        RegisterMovableFrame(h, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", {316, 100}, true, {"default", "scaleable"}, true)
+    else
+        RegisterMovableFrame(h, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", {316, 60}, true, {"default", "scaleable"}, true)
     end
+
+    UpdateAuraHeader(h, settingname)
 
     return h
 end
 GW.AddForProfiling("aurabar_secure", "newHeader", newHeader)
 
 local function loadAuras(lm)
-    local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
-    local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
-
     -- create a new header for buffs
     local hb = newHeader("HELPFUL", "PlayerBuffFrame")
-    hb:SetAttribute("growDir", grow_dir)
     hb:Show()
 
-    RegisterMovableFrame(hb, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", {316, 100}, true, {"default", "scaleable"}, true)
-    hb:ClearAllPoints()
-    hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
     lm:RegisterBuffFrame(hb)
     hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function ()
         local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
@@ -417,23 +475,8 @@ local function loadAuras(lm)
     end)
 
     -- create a new header for debuffs
-    local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
     local hd = newHeader("HARMFUL", "PlayerDebuffFrame")
-    local anchor_hd
-    RegisterMovableFrame(hd, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", {316, 60}, true, {"default", "scaleable"}, true)
     hd:Show()
-    hd:ClearAllPoints()
-    if not hd.isMoved then
-        anchor_hd = grow_dir == "UPR" and "TOPLEFT" or grow_dir == "DOWNR" and "BOTTOMLEFT" or grow_dir == "UP" and "TOPRIGHT" or grow_dir == "DOWN" and "BOTTOMRIGHT"
-        if grow_dir == "DOWNR" or grow_dir == "DOWN" then
-            hd:SetPoint(anchor_hd, hb, anchor_hd, 0, -50)
-        else
-            hd:SetPoint(anchor_hd, hb, anchor_hd, 0, 50)
-        end
-    else
-        anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
-        hd:SetPoint(anchor_hd, hd.gwMover, anchor_hd, 0, 0)
-    end
     lm:RegisterDebuffFrame(hd)
     hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function ()
         local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
