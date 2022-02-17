@@ -69,6 +69,7 @@ GW.AddForProfiling("aurabar_secure", "aura_OnEnter", aura_OnEnter)
 local function AuraOnShow(self)
     if self.enchantIndex then
         self.header.enchants[self.enchantIndex] = self
+        self.header.elapsedEnchants = 1
     end
 end
 
@@ -211,7 +212,7 @@ end
 local function HeaderOnUpdate(self, elapsed)
     local header = self.frame
 
-    if header.elapsed and header.elapsed > 0.1 then
+    if header.elapsedSpells and header.elapsedSpells > 0.1 then
         local button, value = next(header.spells)
         while button do
             UpdateAura(button, value)
@@ -220,32 +221,27 @@ local function HeaderOnUpdate(self, elapsed)
             button, value = next(header.spells)
         end
 
-        local _, main, _, _, _, offhand = GetWeaponEnchantInfo()
-        header.enchantOffhand = offhand
-        header.enchantMain = main
+        header.elapsedSpells = 0
+    else
+        header.elapsedSpells = (header.elapsedSpells or 0) + elapsed
+    end
 
+    if header.elapsedEnchants and header.elapsedEnchants > 0.5 then
         local index, enchant = next(header.enchants)
-        while enchant do
-            if index == 1 then
-                UpdateTempEnchant(enchant, enchant:GetID(), main)
-            else
-                UpdateTempEnchant(enchant, enchant:GetID(), offhand)
+        if index then
+            local _, main, _, _, _, offhand, _, _, _, ranged = GetWeaponEnchantInfo()
+
+            while enchant do
+                UpdateTempEnchant(enchant, enchant:GetID(), (index == 1 and main) or (index == 2 and offhand) or (index == 3 and ranged))
+
+                header.enchants[index] = nil
+                index, enchant = next(header.enchants)
             end
-            header.enchants[index] = nil
-            index, enchant = next(header.enchants)
         end
 
-        header.elapsed = 0
+        header.elapsedEnchants = 0
     else
-        header.elapsed = (header.elapsed or 0) + elapsed
-    end
-end
-
-local function HeaderOnEvent(self)
-    local header = self.frame
-    if header then
-        header.enchants[1] = header.enchantMain and header.enchant1 or nil
-        header.enchants[2] = header.enchantOffhand and header.enchant2 or nil
+        header.elapsedEnchants = (header.elapsedEnchants or 0) + elapsed
     end
 end
 
@@ -253,6 +249,20 @@ local function GetFilter(self)
     return self.header:GetFilter(self)
 end
 GW.AddForProfiling("aurabar_secure", "GetFilter", GetFilter)
+
+local function AuraOnAttributeChanged(self, attribute, value)
+    if attribute == "index" then
+        if self.instant then
+            UpdateAura(self, value)
+            self.instant = nil
+        elseif self.header.spells[self] ~= value then
+            self.header.spells[self] = value
+        end
+    elseif attribute == "target-slot" and self.enchantIndex and self.header.enchants[self.enchantIndex] ~= self then
+        self.header.enchants[self.enchantIndex] = self
+        self.header.elapsedEnchants = 0
+    end
+end
 
 function GwAuraTmpl_OnLoad(self)
     if self.gwInit then
@@ -280,16 +290,7 @@ function GwAuraTmpl_OnLoad(self)
     self.SetIcon = SetIcon
     self.GetFilter = GetFilter
 
-    self:SetScript("OnAttributeChanged", function(_, attribute, value)
-        if attribute == "index" then
-            if self.instant then
-                UpdateAura(self, value)
-                self.instant = nil
-            else
-                self.header.spells[self] = value
-            end
-        end
-    end)
+    self:SetScript("OnAttributeChanged", AuraOnAttributeChanged)
 
     setLongCD(self) -- force font info to get set first time
 
@@ -372,12 +373,12 @@ local function UpdateAuraHeader(header, settingName)
     end
 
     local index = 1
-	local child = select(index, header:GetChildren())
-	while child do
+    local child = select(index, header:GetChildren())
+    while child do
         child:SetSize(size, size)
 
         index = index + 1
-		child = select(index, header:GetChildren())
+        child = select(index, header:GetChildren())
     end
 
     -- set anchoring
@@ -400,9 +401,7 @@ local function UpdateAuraHeader(header, settingName)
             anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
             header:SetPoint(anchor_hd, header.gwMover, anchor_hd, 0, 0)
         end
-
     end
-
 end
 GW.UpdateAuraHeader = UpdateAuraHeader
 
@@ -426,11 +425,8 @@ local function newHeader(filter, settingname)
 
     h.visibility = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
     h.visibility:SetScript("OnUpdate", HeaderOnUpdate)
-    h.visibility:SetScript("OnEvent", HeaderOnEvent)
     h.visibility.frame = h
     h.name = name
-
-    C_Timer.After(1, function() h.visibility:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player") end)
 
     RegisterAttributeDriver(h, "unit", "[vehicleui] vehicle; player")
     SecureHandlerSetFrameRef(h.visibility, "AuraHeader", h)
