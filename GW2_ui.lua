@@ -412,6 +412,7 @@ local function loadAddon(self)
     GW.LoadSlashCommands()
 
     -- Misc
+    GW.InitializeMiscFunctions()
     GW.LoadRaidMarker()
 
     --Create the mainbar layout manager
