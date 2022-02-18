@@ -414,7 +414,7 @@ L["Show Threat"] = "Bedrohung anzeigen"
 L["Show tooltips of buffs and debuffs."] = "Zeige Tooltips von Buffs und Debuffs."
 L["Show Upgrade Icon"] = "Zeige Aufwertungs-Symbol"
 L["Show your player frame as part of the group"] = "Spieler als Gruppenrahmen anzeigen"
-L["Shows the xp you got from that quest in % based on your current needed xp for next level."] = "Zeigt die EP, die du von dieser Quest bekommst, in % an. Basierend auf die aktuell benötigten EP für das nächste Level. "
+L["Shows the xp you got from that quest in % based on your total needed xp for next level."] = "Zeigt die EP, die du von dieser Quest bekommst, in % an. Basierend auf die benötigten EP für das nächste Level. "
 L["Skins"] = true
 L["Skip"] = "Überspringen"
 L["Socket Frame"] = "Sockel Fenster"
@@ -479,4 +479,3 @@ L["Your Auras First"] = "Deine Auren zuerst"
 L["Your items have been repaired for: %s"] = "Deine Gegenstände wurden repariert für: %s"
 L["Your items have been repaired using guild bank funds for: %s"] = "Deine Gegenstände wurden aus der Gildenbank repariert für: %s"
 L["Zone Ability"] = "Zonen Fähigkeit"
-

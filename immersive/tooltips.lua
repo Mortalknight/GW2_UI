@@ -872,7 +872,6 @@ local function SetStyle(self, _, isEmbedded)
     if self.Delimiter1 then self.Delimiter1:SetTexture() end
     if self.Delimiter2 then self.Delimiter2:SetTexture() end
 
-
     self.NineSlice:Hide()
     self:CreateBackdrop({
         bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
