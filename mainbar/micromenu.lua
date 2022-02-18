@@ -115,6 +115,28 @@ local function updateGuildButton(self, event)
 end
 GW.AddForProfiling("micromenu", "updateGuildButton", updateGuildButton)
 
+local function TalentButtonOnEvent(self)
+    local counter = 0
+    for row = 1, 7 do
+        for index = 1, 3 do
+            local _, _, _, selected, available, _, _, _, _, _, known = GetTalentInfo(row, index, 1, false, "player")
+            if available and not known and not selected then
+                counter = counter + 1
+                break
+            end
+        end
+    end
+
+    if counter > 0 then
+        self.GwNotify:Show()
+        self.GwNotifyText:SetText(counter)
+        self.GwNotifyText:Show()
+    else
+        self.GwNotify:Hide()
+        self.GwNotifyText:Hide()
+    end
+end
+
 local function updateQuestLogButton(_, event)
     if event ~= "QUEST_LOG_UPDATE" then
         return
@@ -353,6 +375,9 @@ local function setupMicroButtons(mbf)
         tref:SetScript("OnHide", GameTooltip_Hide)
         tref:HookScript("OnEnter", GW.TalentButton_OnEnter)
         tref:HookScript("OnClick", GW.TalentButton_OnClick)
+        tref:HookScript("OnEvent", TalentButtonOnEvent)
+        tref:RegisterEvent("PLAYER_TALENT_UPDATE")
+        tref:RegisterEvent("PLAYER_ENTERING_WORLD")
 
         disableMicroButton(SpellbookMicroButton)
         disableMicroButton(TalentMicroButton, true)
@@ -368,6 +393,9 @@ local function setupMicroButtons(mbf)
         tref:SetPoint("BOTTOMLEFT", SpellbookMicroButton, "BOTTOMRIGHT", 4, 0)
         tref:HookScript("OnEnter", GW.TalentButton_OnEnter)
         tref:SetScript("OnClick", GW.TalentButton_OnClick)
+        tref:HookScript("OnEvent", TalentButtonOnEvent)
+        tref:RegisterEvent("PLAYER_TALENT_UPDATE")
+        tref:RegisterEvent("PLAYER_ENTERING_WORLD")
 
         -- we've added an extra button so expand the container a bit
         mbf:SetWidth(mbf:GetWidth() + 28)

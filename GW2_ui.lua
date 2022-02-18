@@ -479,6 +479,7 @@ local function loadAddon(self)
     GW.LoadWeeklyRewardsSkin()
     GW.LoadLFGSkin()
     GW.LoadOrderHallTalentFrameSkin()
+    GW.LoadLootFrameSkin()
 
     GW.LoadImmersionAddonSkin()
 
@@ -563,7 +564,6 @@ local function loadAddon(self)
     if not IsIncompatibleAddonLoadedOrOverride("Inventory", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("BAGS_ENABLED") then
             GW.LoadInventory()
-            GW.SkinLooTFrame()
         else
             -- if not our bags, we need to cut the bagbar frame out of the micromenu
             GW.LoadDefaultBagBar()

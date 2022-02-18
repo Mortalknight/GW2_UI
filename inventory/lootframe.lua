@@ -9,7 +9,9 @@ local function updateLootFrameButtons()
     end
 end
 
-local function SkinLooTFrame()
+local function LoadLootFrameSkin()
+    if not GetSetting("LOOTFRAME_SKIN_ENABLED") then return end
+
     _G.LootFrameBg:Hide()
     _G.LootFrameBg:SetPoint("TOPLEFT", 0, -64)
     _G.LootFrameBg:SetWidth(170)
@@ -73,4 +75,4 @@ local function SkinLooTFrame()
 
     hooksecurefunc("LootFrame_Update", updateLootFrameButtons)
 end
-GW.SkinLooTFrame = SkinLooTFrame
+GW.LoadLootFrameSkin = LoadLootFrameSkin

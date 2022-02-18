@@ -12,14 +12,14 @@ local function QuestXPPercent()
             local xp = GetQuestLogRewardXP()
             if xp and xp > 0 then
                 local text = MapQuestInfoRewardsFrame.XPFrame.Name:GetText()
-                if text then MapQuestInfoRewardsFrame.XPFrame.Name:SetFormattedText("%s (|cff4beb2c+%.2f%%|r)", text, (((unitXP + xp) / unitXPMax) - (unitXP / unitXPMax)) * 100) end
+                if text then MapQuestInfoRewardsFrame.XPFrame.Name:SetFormattedText("%s (|cff4beb2c+%.2f%%|r)", text, (xp / unitXPMax) * 100) end
             end
         end
     else
         local xp = GetRewardXP()
         if xp and xp > 0 then
             local text = QuestInfoXPFrame.ValueText:GetText()
-            if text then QuestInfoXPFrame.ValueText:SetFormattedText("%s (|cff4beb2c+%.2f%%|r)", text, (((unitXP + xp) / unitXPMax) - (unitXP / unitXPMax)) * 100) end
+            if text then QuestInfoXPFrame.ValueText:SetFormattedText("%s (|cff4beb2c+%.2f%%|r)", text, (xp / unitXPMax) * 100) end
         end
     end
 end

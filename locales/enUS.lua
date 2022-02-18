@@ -443,4 +443,4 @@ L["Your Auras First"] = true
 L["Mark Quest Reward"] = true
 L["Marks the most valuable quest reward with a gold coin."] = true
 L["XP Quest Percent"] = true
-L["Shows the xp you got from that quest in % based on your current needed xp for next level."] = true
+L["Shows the xp you got from that quest in % based on your total needed xp for next level."] = true
