@@ -1,18 +1,28 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.25.0", [=[
+NEW
+    - Update for 9.2.0
+    - Split Inventroy Skin and Loot Windwo Skin
+    - Added indicator for unused talent points
+    - Added new option 'XP Quest Percent', which shows how much % that quest gives you in relation to the total xp needed for next level
+    - Added new option 'Mark Quest Reward', which marks the most valuable quest reward item
+]=])
+
+
 v("5.24.3", [=[
-    FIXES
+FIXES
     - Fix gossip skin error
 ]=])
 
 v("5.24.2", [=[
-    FIXES
+FIXES
     - Fix rare player aura issue
 ]=])
 
 v("5.24.1", [=[
-    FIXES
+FIXES
     - Fix player frame background overlay
 ]=])
 

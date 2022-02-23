@@ -5,7 +5,7 @@ local QuestRewardGoldIconOverlay = {}
 local function QuestXPPercent()
     if not GW.GetSetting("QUEST_XP_PERCENT") then return end
 
-    local unitXP, unitXPMax = UnitXP("player"), UnitXPMax("player")
+    local _, unitXPMax = UnitXP("player"), UnitXPMax("player")
     if QuestInfoFrame.questLog then
         local selectedQuest = C_QuestLog.GetSelectedQuest()
         if C_QuestLog.ShouldShowQuestRewards(selectedQuest) then

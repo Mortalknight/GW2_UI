@@ -180,10 +180,8 @@ end
     SetDefaultOnTheFly(347283) -- Predator's Howl
     SetDefaultOnTheFly(347286) -- Unshakeable Dread
     SetDefaultOnTheFly(346986) -- Crushed Armor
-    SetDefaultOnTheFly(347991) -- Ten of Towers
     SetDefaultOnTheFly(347269) -- Chains of Eternity
     SetDefaultOnTheFly(346985) -- Overpower
-    SetDefaultOnTheFly(347274) -- Annihilating Smash
 -- Eye of the Jailer
     SetDefaultOnTheFly(350606) -- Hopeless Lethargy
     SetDefaultOnTheFly(355240) -- Scorn
@@ -280,19 +278,12 @@ end
     SetDefaultOnTheFly(360415) -- Defenseless
     SetDefaultOnTheFly(360412) -- Exposed Core
     SetDefaultOnTheFly(366393) -- Searing Ablation
--- Prototype Pantheon
-    SetDefaultOnTheFly(365306) -- Invigorating Bloom
-    SetDefaultOnTheFly(361608) -- Burden of Sin
-    SetDefaultOnTheFly(361689) -- Wracking Pain
-    SetDefaultOnTheFly(366232) -- Animastorm
-    SetDefaultOnTheFly(364839) -- Sinful Projection
--- Dausegne, The Fallen Oracle
-    SetDefaultOnTheFly(361751) -- Disintegration Halo
-    SetDefaultOnTheFly(364289) -- Staggering Barrage
-    SetDefaultOnTheFly(361018) -- Staggering Barrage Mythic 1
-    SetDefaultOnTheFly(360960) -- Staggering Barrage Mythic 2
-    SetDefaultOnTheFly(361225) -- Encroaching Dominion
-    SetDefaultOnTheFly(361966) -- Infused Strikes
+-- Skolex, the Insatiable Ravener
+    SetDefaultOnTheFly(364522) -- Devouring Blood
+    SetDefaultOnTheFly(359976) -- Riftmaw
+    SetDefaultOnTheFly(359981) -- Rend
+    SetDefaultOnTheFly(360098) -- Warp Sickness
+    SetDefaultOnTheFly(366070) -- Volatile Residue
 -- Artificer Xy'mox
     SetDefaultOnTheFly(362850) -- Hyperlight Sparknova
     SetDefaultOnTheFly(364030) -- Debilitating Ray
@@ -302,22 +293,25 @@ end
     SetDefaultOnTheFly(362615) -- Interdimensional Wormhole Player 1
     SetDefaultOnTheFly(362614) -- Interdimensional Wormhole Player 2
     SetDefaultOnTheFly(362803) -- Glyph of Relocation
-    SetDefaultOnTheFly(363413) -- Genesis Rings 1
-    SetDefaultOnTheFly(364604) -- Genesis Rings 2
-    SetDefaultOnTheFly(365681) -- Massive Blast
--- Lithuvim, Principle Architect
+-- Dausegne, The Fallen Oracle
+    SetDefaultOnTheFly(361751) -- Disintegration Halo
+    SetDefaultOnTheFly(364289) -- Staggering Barrage
+    SetDefaultOnTheFly(361018) -- Staggering Barrage Mythic 1
+    SetDefaultOnTheFly(360960) -- Staggering Barrage Mythic 2
+    SetDefaultOnTheFly(361225) -- Encroaching Dominion
+    SetDefaultOnTheFly(361966) -- Infused Strikes
+-- Prototype Pantheon
+    SetDefaultOnTheFly(365306) -- Invigorating Bloom
+    SetDefaultOnTheFly(361608) -- Burden of Sin
+    SetDefaultOnTheFly(361689) -- Wracking Pain
+    SetDefaultOnTheFly(366232) -- Animastorm
+    SetDefaultOnTheFly(364839) -- Sinful Projection
+-- Lihuvim, Principle Architect
     SetDefaultOnTheFly(360159) -- Unstable Protoform Energy
     SetDefaultOnTheFly(363681) -- Deconstructing Blast
     SetDefaultOnTheFly(363676) -- Deconstructing Energy Player 1
     SetDefaultOnTheFly(363795) -- Deconstructing Energy Player 2
     SetDefaultOnTheFly(464312) -- Ephemeral Barrier
-    SetDefaultOnTheFly(360159) -- Unstable Mote
--- Skolex, the Insatiable Ravener
-    SetDefaultOnTheFly(364522) -- Devouring Blood
-    SetDefaultOnTheFly(359976) -- Riftmaw
-    SetDefaultOnTheFly(359981) -- Rend
-    SetDefaultOnTheFly(360098) -- Warp Sickness
-    SetDefaultOnTheFly(366070) -- Volatile Residue
 -- Halondrus the Reclaimer
     SetDefaultOnTheFly(361309) -- Lightshatter Beam
     SetDefaultOnTheFly(361002) -- Ephemeral Fissure
@@ -329,8 +323,8 @@ end
     SetDefaultOnTheFly(365021) -- Wicked Star
     SetDefaultOnTheFly(365445) -- Scarred Soul
     SetDefaultOnTheFly(365008) -- Psychic Terror
+-- Lords of Dread
 -- Rygelon
--- Lords of the Dread
 -- The Jailer
 
 -------------------- Castle Nathria --------------------
