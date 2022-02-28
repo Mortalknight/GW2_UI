@@ -17,7 +17,7 @@ local function SkinBarShop()
     _G.CharCustomizeFrame.SmallButtons.RotateLeftButton:SkinButton(false, true)
     _G.CharCustomizeFrame.SmallButtons.RotateRightButton:SkinButton(false, true)
 
-    hooksecurefunc(_G.CharCustomizeFrame, "SetSelectedCatgory", function(list)
+    hooksecurefunc(_G.CharCustomizeFrame, "SetSelectedCategory", function(list)
         for button in list.selectionPopoutPool:EnumerateActive() do
             if not button.isSkinned then
                 button.DecrementButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/character/backicon")
@@ -27,7 +27,7 @@ local function SkinBarShop()
                 button.IncrementButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon")
                 button.IncrementButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/character/forwardicon")
 
-                local popoutButton = button.SelectionPopoutButton
+                local popoutButton = button.Button
                 popoutButton.Popout:StripTextures()
                 popoutButton.Popout:CreateBackdrop(constBackdropFrame)
                 popoutButton.Popout.backdrop:SetFrameLevel(popoutButton.Popout:GetFrameLevel())
