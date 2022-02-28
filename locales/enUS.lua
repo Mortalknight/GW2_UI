@@ -265,6 +265,7 @@ L["Extra Frame Options"] = true
 L["No extra frame options for '%s'"] = true
 L["Scale"] = true
 L["Right Bar Width"] = true
+L["Right Bar 2 Width"] = true
 L["Number of columns in the two extra right-hand action bars."] = true
 L["Enable the talents, specialization, and spellbook replacement."] = true
 L["Targeted by:"] = true

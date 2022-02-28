@@ -754,7 +754,7 @@ local function UpdateMultibarButtonMargin()
         if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
         if fmMultiBar.gw_IsEnabled then
             local settings = GetSetting(fmMultiBar.originalBarName)
-            local used_height = settings.size
+            local used_height = 0
             local btn_padding = 0
             local btn_padding_y = 0
             local btn_this_row = 0
@@ -770,15 +770,16 @@ local function UpdateMultibarButtonMargin()
                 used_width = btn_padding
 
                 if btn_this_row == settings.ButtonsPerRow then
-                    btn_padding_y = btn_padding_y + used_height + margin
+                    btn_padding_y = btn_padding_y + settings.size + margin
                     btn_this_row = 0
                     btn_padding = 0
-                    --used_height = btn_padding_y
+                    used_height = used_height + settings.size + margin
                 end
 
             end
 
-            fmMultiBar:SetSize(used_width, settings.size)
+            fmMultiBar.gwMover:SetSize(used_width, used_height)
+            fmMultiBar:SetSize(used_width, used_height)
         end
     end
 end

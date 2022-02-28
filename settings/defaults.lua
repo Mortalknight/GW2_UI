@@ -294,6 +294,7 @@ GW_DEFAULT["MultiBarLeft"]["ButtonsPerRow"] = 1
 GW_DEFAULT["MultiBarLeft"]["hideDefaultBackground"] = true
 
 GW_DEFAULT["MULTIBAR_RIGHT_COLS"] = 1
+GW_DEFAULT["MULTIBAR_RIGHT_COLS_2"] = 1
 
 GW_DEFAULT["GameTooltipPos"] = {}
 GW_DEFAULT["GameTooltipPos"]["point"] = "BOTTOMRIGHT"

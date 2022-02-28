@@ -10,22 +10,20 @@ local InitPanel = GW.InitPanel
 local AddForProfiling = GW.AddForProfiling
 local StrUpper = GW.StrUpper
 
-local function setMultibarCols()
-    local cols = GetSetting("MULTIBAR_RIGHT_COLS")
-    GW.Debug("setting multibar cols", cols)
-    local mb1 = GetSetting("MultiBarRight")
-    local mb2 = GetSetting("MultiBarLeft")
-    mb1["ButtonsPerRow"] = cols
-    mb2["ButtonsPerRow"] = cols
-    SetSetting("MultiBarRight", mb1)
-    SetSetting("MultiBarLeft", mb2)
+local function setMultibarCols(barName, setting)
+    local mb = GetSetting(barName)
+    local cols = GetSetting(setting)
+    GW.Debug("setting multibar colsfor bar ", barName, "to", cols)
+
+    mb["ButtonsPerRow"] = cols
+    SetSetting(barName, mb)
     --#regionto update the cols
     GW.UpdateMultibarButtonMargin()
 end
 AddForProfiling("panel_actionbar", "setMultibarCols", setMultibarCols)
 
 local function LoadActionbarPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.header:SetText(BINDING_HEADER_ACTIONBAR)
@@ -33,12 +31,12 @@ local function LoadActionbarPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(ACTIONBARS_SUBTEXT)
 
-    createCat(BINDING_HEADER_ACTIONBAR, nil, p, 7)
+    createCat(BINDING_HEADER_ACTIONBAR, nil, p, 7, nil, {p})
 
-    addOption(p, L["Hide Empty Slots"], L["Hide the empty action bar slots."], "HIDEACTIONBAR_BACKGROUND_ENABLED", nil, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
-    addOption(p, L["Action Button Labels"], L["Enable or disable the action button assignment text"], "BUTTON_ASSIGNMENTS", nil, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
+    addOption(p.scroll.scrollchild, L["Hide Empty Slots"], L["Hide the empty action bar slots."], "HIDEACTIONBAR_BACKGROUND_ENABLED", nil, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
+    addOption(p.scroll.scrollchild, L["Action Button Labels"], L["Enable or disable the action button assignment text"], "BUTTON_ASSIGNMENTS", nil, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
     addOption(
-        p,
+        p.scroll.scrollchild,
         SHOW_MULTIBAR1_TEXT,
         OPTION_TOOLTIP_SHOW_MULTIBAR1,
         "GW_SHOW_MULTI_ACTIONBAR_1",
@@ -51,7 +49,7 @@ local function LoadActionbarPanel(sWindow)
         "Actionbars"
     )
     addOption(
-        p,
+        p.scroll.scrollchild,
         SHOW_MULTIBAR2_TEXT,
         OPTION_TOOLTIP_SHOW_MULTIBAR2,
         "GW_SHOW_MULTI_ACTIONBAR_2",
@@ -64,7 +62,7 @@ local function LoadActionbarPanel(sWindow)
         "Actionbars"
     )
     addOption(
-        p,
+        p.scroll.scrollchild,
         SHOW_MULTIBAR3_TEXT,
         OPTION_TOOLTIP_SHOW_MULTIBAR3,
         "GW_SHOW_MULTI_ACTIONBAR_3",
@@ -77,7 +75,7 @@ local function LoadActionbarPanel(sWindow)
         "Actionbars"
     )
     addOption(
-        p,
+        p.scroll.scrollchild,
         SHOW_MULTIBAR4_TEXT,
         OPTION_TOOLTIP_SHOW_MULTIBAR4,
         "GW_SHOW_MULTI_ACTIONBAR_4",
@@ -90,7 +88,7 @@ local function LoadActionbarPanel(sWindow)
         "Actionbars"
     )
     addOptionSlider(
-        p,
+        p.scroll.scrollchild,
         BINDING_HEADER_ACTIONBAR .. ": " .. L["Button Spacing"],
         nil,
         "MAINBAR_MARGIIN",
@@ -102,7 +100,7 @@ local function LoadActionbarPanel(sWindow)
         {["ACTIONBARS_ENABLED"] = true}
     )
     addOptionSlider(
-        p,
+        p.scroll.scrollchild,
         BINDING_HEADER_MULTIACTIONBAR .. ": " .. L["Button Spacing"],
         nil,
         "MULTIBAR_MARGIIN",
@@ -114,20 +112,37 @@ local function LoadActionbarPanel(sWindow)
         {["ACTIONBARS_ENABLED"] = true}
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         L["Right Bar Width"],
         L["Number of columns in the two extra right-hand action bars."],
         "MULTIBAR_RIGHT_COLS",
-        setMultibarCols,
+        function()
+            setMultibarCols("MultiBarRight", "MULTIBAR_RIGHT_COLS")
+        end,
         {1, 2, 3, 4, 6, 12},
         {"1", "2", "3", "4", "6", "12"},
         nil,
-        {["ACTIONBARS_ENABLED"] = true},
+        {["ACTIONBARS_ENABLED"] = true, ["GW_SHOW_MULTI_ACTIONBAR_3"] = true},
         nil,
         "Actionbars"
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
+        L["Right Bar 2 Width"],
+        L["Number of columns in the two extra right-hand action bars."],
+        "MULTIBAR_RIGHT_COLS_2",
+        function()
+            setMultibarCols("MultiBarLeft", "MULTIBAR_RIGHT_COLS_2")
+        end,
+        {1, 2, 3, 4, 6, 12},
+        {"1", "2", "3", "4", "6", "12"},
+        nil,
+        {["ACTIONBARS_ENABLED"] = true, ["GW_SHOW_MULTI_ACTIONBAR_3"] = true, ["GW_SHOW_MULTI_ACTIONBAR_4"] = true},
+        nil,
+        "Actionbars"
+    )
+    addOptionDropdown(
+        p.scroll.scrollchild,
         L["Stance Bar Growth Direction"],
         L["Set the growth direction of the stance bar"],
         "StanceBar_GrowDirection",
@@ -142,7 +157,7 @@ local function LoadActionbarPanel(sWindow)
         "Actionbars"
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         BINDING_HEADER_ACTIONBAR .. ": '" .. BINDING_HEADER_ACTIONBAR .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_5",
@@ -155,7 +170,7 @@ local function LoadActionbarPanel(sWindow)
         "Actionbars"
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         BINDING_HEADER_MULTIACTIONBAR .. ": '" .. SHOW_MULTIBAR1_TEXT .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_1",
@@ -168,7 +183,7 @@ local function LoadActionbarPanel(sWindow)
         "Actionbars"
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         BINDING_HEADER_MULTIACTIONBAR .. ": '" .. SHOW_MULTIBAR2_TEXT .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_2",
@@ -181,7 +196,7 @@ local function LoadActionbarPanel(sWindow)
         "Actionbars"
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         BINDING_HEADER_MULTIACTIONBAR .. ": '" .. SHOW_MULTIBAR3_TEXT .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_3",
@@ -194,7 +209,7 @@ local function LoadActionbarPanel(sWindow)
         "Actionbars"
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         BINDING_HEADER_MULTIACTIONBAR .. ": '" .. SHOW_MULTIBAR4_TEXT .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_4",
@@ -207,7 +222,7 @@ local function LoadActionbarPanel(sWindow)
         "Actionbars"
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         L["Main Bar Range Indicator"],
         nil,
         "MAINBAR_RANGEINDICATOR",
@@ -219,8 +234,8 @@ local function LoadActionbarPanel(sWindow)
         nil,
         "Actionbars"
     )
-    addOption(p, L["Show Macro Name"], L["Show Macro Name on Action Button"], "SHOWACTIONBAR_MACRO_NAME_ENABLED", nil, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
+    addOption(p.scroll.scrollchild, L["Show Macro Name"], L["Show Macro Name on Action Button"], "SHOWACTIONBAR_MACRO_NAME_ENABLED", nil, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
 
-    InitPanel(p)
+    InitPanel(p, true)
 end
 GW.LoadActionbarPanel = LoadActionbarPanel
