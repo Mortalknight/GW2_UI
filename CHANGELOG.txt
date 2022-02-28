@@ -1,7 +1,17 @@
+5.26.0
+NEW
+    - Make "PowerBarContainer" movable
+    - Added individual bar width settings for multibar right 1 and 2
+
+FIXES
+    - Fix an issue with the multibar right 1 & 2 mover
+    - Fix a chat issue on ruRU clients
+    - Fix a lua error with barber skin
+
 5.25.0
 NEW
     - Update for 9.2.0
-    - Split Inventroy Skin and Loot Windwo Skin
+    - Split Inventory Skin and Loot Window Skin
     - Added indicator for unused talent points
     - Added new option 'XP Quest Percent', which shows how much % that quest gives you in relation to the total xp needed for next level
     - Added new option 'Mark Quest Reward', which marks the most valuable quest reward item
