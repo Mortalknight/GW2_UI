@@ -1077,6 +1077,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             local showLink = 1
             if strsub(chatType, 1, 7) == "MONSTER" or strsub(chatType, 1, 9) == "RAID_BOSS" then
                 showLink = nil
+                arg1 = gsub(arg1, "%%%d","%%s")
             else
                 arg1 = gsub(arg1, "%%", "%%%%")
             end
