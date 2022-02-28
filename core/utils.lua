@@ -639,9 +639,10 @@ end
 GW.GetScreenQuadrant = GetScreenQuadrant
 
 do
-    local a1, a2, a3, a4, a5 = "", "|c[fF][fF]%x%x%x%x%x%x", "|r", "|[TA].-|[ta]", "^%s*"
-    local function StripString(s)
-        return gsub(gsub(gsub(gsub(s, a2, a1), a3, a1), a4, a1) , a5, a1)
+    local a, d = "", {"|c[fF][fF]%x%x%x%x%x%x","|r","^%s+","%s+$","|[TA].-|[ta]"}
+    local function StripString(s, ignoreTextures)
+        for i = 1, #d - (ignoreTextures and 1 or 0) do s = gsub(s, d[i], a) end
+        return s
     end
     GW.StripString = StripString
 end

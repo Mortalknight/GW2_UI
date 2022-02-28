@@ -416,6 +416,13 @@ GW_DEFAULT["TopCenterWidget_pos"]["xOfs"] = 0
 GW_DEFAULT["TopCenterWidget_pos"]["yOfs"] = -30
 GW_DEFAULT["TopCenterWidget_pos_scale"] = 1
 
+GW_DEFAULT["PowerBarContainer_pos"] = {}
+GW_DEFAULT["PowerBarContainer_pos"]["point"] = "TOP"
+GW_DEFAULT["PowerBarContainer_pos"]["relativePoint"] = "TOP"
+GW_DEFAULT["PowerBarContainer_pos"]["xOfs"] = 0
+GW_DEFAULT["PowerBarContainer_pos"]["yOfs"] = -75
+GW_DEFAULT["PowerBarContainer_pos_scale"] = 1
+
 GW_DEFAULT["AlertPos"] = {}
 GW_DEFAULT["AlertPos"]["point"] = "BOTTOMRIGHT"
 GW_DEFAULT["AlertPos"]["relativePoint"] = "BOTTOMRIGHT"

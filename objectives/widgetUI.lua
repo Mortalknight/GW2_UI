@@ -34,18 +34,22 @@ local function PVPCaptureBar(self)
     end
 end
 
-local CaptureBarSkins = {
+local captureBarSkins = {
     [2] = PVPCaptureBar,
     [252] = EmberCourtCaptureBar
 }
 
 local function TopCenterPosition(self, _, b)
-    local holder = UIWidgetTopCenterContainerFrame.gwMover
+    local holder = self.gwMover
     if b and (b ~= holder) then
         self:ClearAllPoints()
         self:SetPoint("CENTER", holder, "CENTER")
     end
 end
+
+local ignoreWidgetSetID = {
+    [283] = true -- Cosmic Energy
+}
 
 local function UpdateBarTexture(bar, atlas)
     if atlasColors[atlas] then
@@ -56,7 +60,9 @@ end
 
 
 local function UIWidgetTemplateStatusBar(self)
-    local bar = self.Bar
+    local bar = not self:IsForbidden() and self.Bar
+ 	if not bar or ignoreWidgetSetID[self.widgetSetID] then return end
+
     local atlas = bar:GetStatusBarAtlas()
     UpdateBarTexture(bar, atlas)
 
@@ -75,19 +81,30 @@ end
 
 local function UIWidgetTemplateCaptureBar(self, _, widgetContainer)
     if not widgetContainer then return end
-    local skinFunc = CaptureBarSkins[widgetContainer.widgetSetID]
+    local skinFunc = captureBarSkins[widgetContainer.widgetSetID]
     if skinFunc then skinFunc(self) end
 end
 
 
 local function WidgetUISetup()
     GW.RegisterMovableFrame(UIWidgetTopCenterContainerFrame, "TopWidget", "TopCenterWidget_pos", "VerticalActionBarDummy", {58, 58}, nil, {"default", "scaleable"})
+    GW.RegisterMovableFrame(UIWidgetPowerBarContainerFrame, "PowerBarContainer", "PowerBarContainer_pos", "VerticalActionBarDummy", {100, 20}, nil, {"default", "scaleable"})
+
     UIWidgetTopCenterContainerFrame:ClearAllPoints()
     UIWidgetTopCenterContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
 
+    UIWidgetPowerBarContainerFrame:ClearAllPoints()
+    UIWidgetPowerBarContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
+
     hooksecurefunc(UIWidgetTopCenterContainerFrame, "SetPoint", TopCenterPosition)
+    hooksecurefunc(UIWidgetPowerBarContainerFrame, "SetPoint", TopCenterPosition)
 
     hooksecurefunc(UIWidgetTemplateStatusBarMixin, "Setup", UIWidgetTemplateStatusBar)
     hooksecurefunc(UIWidgetTemplateCaptureBarMixin, "Setup", UIWidgetTemplateCaptureBar)
+
+    -- handle power bar widgets after reload as Setup will have fired before this
+    for _, widget in pairs(UIWidgetPowerBarContainerFrame.widgetFrames) do
+        UIWidgetTemplateStatusBar(widget)
+    end
 end
 GW.WidgetUISetup = WidgetUISetup

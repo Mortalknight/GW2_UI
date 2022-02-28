@@ -10,8 +10,7 @@ local function handleGossipText()
 
                 local text = str:GetText()
                 if text then
-                    local stripped = GW.StripString(text)
-                    str:SetText(stripped)
+                    str:SetText(GW.StripString(text), true)
                 end
             end
         end
