@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.27.0", [=[
+NEW
+    - Added option to disable player new de/buff animation
+]=])
+
 v("5.26.0", [=[
 NEW
     - Make "PowerBarContainer" movable

@@ -1,3 +1,7 @@
+5.27.0
+NEW
+    - Added option to disable player new de/buff animation
+
 5.26.0
 NEW
     - Make "PowerBarContainer" movable

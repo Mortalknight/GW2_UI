@@ -445,3 +445,5 @@ L["Mark Quest Reward"] = true
 L["Marks the most valuable quest reward with a gold coin."] = true
 L["XP Quest Percent"] = true
 L["Shows the xp you got from that quest in % based on your total needed xp for next level."] = true
+L["Player de/buff animation"] = true
+L["Shows an animation for new de/buffs"] = true

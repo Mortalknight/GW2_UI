@@ -94,7 +94,9 @@ local function AuraButton_OnUpdate(self, elapsed)
             if self.duration < 121 then
                 setShortCD(self, xpr, self.duration, self.stackCount)
                 if self.duration - remains < 0.1 then
-                    self.agZoomIn:Play()
+                    if GetSetting("PLAYER_AURA_ANIMATION") then
+                        self.agZoomIn:Play()
+                    end
                 end
             else
                 setLongCD(self, self.stackCount)
