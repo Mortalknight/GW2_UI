@@ -4,6 +4,10 @@ local v = GW.vernotes
 v("5.27.0", [=[
 NEW
     - Added option to disable player new de/buff animation
+FIXES
+    - Some chat issues on russian clients
+    - Possible actionbar lua error
+    - Possible torghast fix
 ]=])
 
 v("5.26.0", [=[

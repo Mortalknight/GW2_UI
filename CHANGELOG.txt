@@ -2,6 +2,11 @@
 NEW
     - Added option to disable player new de/buff animation
 
+FIXES
+    - Some chat issues on russian clients
+    - Possible actionbar lua error
+    - Possible torghast fix
+
 5.26.0
 NEW
     - Make "PowerBarContainer" movable

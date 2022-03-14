@@ -1,9 +1,8 @@
-5.26.0
+5.27.0
 NEW
-    - Make "PowerBarContainer" movable
-    - Added individual bar width settings for multibar right 1 and 2
+    - Added option to disable player new de/buff animation
 
 FIXES
-    - Fix an issue with the multibar right 1 & 2 mover
-    - Fix a chat issue on ruRU clients
-    - Fix a lua error with barber skin
+    - Some chat issues on russian clients
+    - Possible actionbar lua error
+    - Possible torghast fix
