@@ -1,5 +1,7 @@
 local _, GW = ...
 
+local hooked = false
+
 local function addJailersTowerData(block, numCriteria)
     if IsInJailersTower() then
         --Phantasma
@@ -83,11 +85,14 @@ local function addJailersTowerData(block, numCriteria)
         objectiveBlock.objectToHide = BottomScenarioWidgetContainerBlock
         objectiveBlock.resetParent = true
 
-        hooksecurefunc("ScenarioBlocksFrame_ExtraBlocksSetShown", function(shown)
-            if shown and IsInJailersTower() then
-                GW.updateCurrentScenario(GwQuesttrackerContainerScenario)
-            end
-        end)
+        if not hooked then
+            hooksecurefunc("ScenarioBlocksFrame_ExtraBlocksSetShown", function(shown)
+                if shown and IsInJailersTower() then
+                    GW.updateCurrentScenario(GwQuesttrackerContainerScenario)
+                end
+            end)
+            hooked = true
+        end
     end
 
     return numCriteria
