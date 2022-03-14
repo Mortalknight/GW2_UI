@@ -795,6 +795,7 @@ local function vehicleLeave_OnUpdate()
     if InCombatLockdown() then
         return
     end
+    MainMenuBarVehicleLeaveButton:ClearAllPoints()
     MainMenuBarVehicleLeaveButton:SetPoint("LEFT", ActionButton12, "RIGHT", 0, 0)
 end
 GW.AddForProfiling("Actionbars2", "vehicleLeave_OnUpdate", vehicleLeave_OnUpdate)
