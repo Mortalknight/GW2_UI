@@ -1077,7 +1077,10 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             local showLink = 1
             if strsub(chatType, 1, 7) == "MONSTER" or strsub(chatType, 1, 9) == "RAID_BOSS" then
                 showLink = nil
-                arg1 = gsub(arg1, "%%%d","%%s")
+                -- fix blizzard formatting errors from localization strings
+                arg1 = gsub(arg1, "%%%d", "%%s")
+                arg1 = gsub(arg1, "(%d%%)([^%%%a])", "%1%%%2")
+                arg1 = gsub(arg1, "(%d%%)$", "%1%%")
             else
                 arg1 = gsub(arg1, "%%", "%%%%")
             end
