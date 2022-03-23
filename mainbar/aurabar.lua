@@ -6,7 +6,7 @@ local GetSetting = GW.GetSetting
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
-local function setLongCD(self)
+local function setLongCD(self, stackCount)
     self.cooldown:Hide()
     self.status.duration:SetFont(UNIT_NAME_FONT, 11)
     self.status.duration:SetShadowColor(0, 0, 0, 1)
@@ -14,6 +14,12 @@ local function setLongCD(self)
     self.status.stacks:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
     self.status.stacks:SetShadowColor(0, 0, 0, 1)
     self.status.stacks:SetShadowOffset(1, -1)
+
+    if stackCount and stackCount > 99 then
+        self.status.stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINED")
+    else
+        self.status.stacks:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
+    end
 
     self.status:ClearAllPoints()
     self.status:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -6)
@@ -24,7 +30,7 @@ local function setLongCD(self)
 end
 GW.AddForProfiling("aurabar_secure", "setLongCD", setLongCD)
 
-local function setShortCD(self, expires, duration)
+local function setShortCD(self, expires, duration, stackCount)
     self.cooldown:SetCooldown(expires - duration, duration)
     self.status.duration:SetFont(UNIT_NAME_FONT, 13)
     self.status.duration:SetShadowColor(0, 0, 0, 1)
@@ -32,6 +38,12 @@ local function setShortCD(self, expires, duration)
     self.status.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
     self.status.stacks:SetShadowColor(0, 0, 0, 1)
     self.status.stacks:SetShadowOffset(1, -1)
+
+    if stackCount and stackCount > 99 then
+        self.status.stacks:SetFont(UNIT_NAME_FONT, 10, "OUTLINED")
+    else
+        self.status.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
+    end
 
     self.status:ClearAllPoints()
     self.status:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -4)
@@ -42,79 +54,133 @@ local function setShortCD(self, expires, duration)
 end
 GW.AddForProfiling("aurabar_secure", "setShortCD", setShortCD)
 
-local function SetCD(self, expires, duration)
-    if not self or not self.status or not self.gwInit then
-        return
+local function SetTooltip(self)
+    GameTooltip:ClearLines()
+
+    if self:GetAttribute("index") then
+        GameTooltip:SetUnitAura(SecureButton_GetUnit(self.header), self:GetID(), self:GetFilter())
+    elseif self:GetAttribute("target-slot") then
+        GameTooltip:SetInventoryItem("player", self:GetID())
+    end
+end
+
+local function AuraOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", -5, -5)
+
+    self.elapsed = 1
+end
+GW.AddForProfiling("aurabar_secure", "aura_OnEnter", aura_OnEnter)
+
+local function AuraOnShow(self)
+    if self.enchantIndex then
+        self.header.enchants[self.enchantIndex] = self
+        self.header.elapsedEnchants = 1
+    end
+end
+
+local function AuraOnHide(self)
+    if self.enchantIndex then
+        self.header.enchants[self.enchantIndex] = nil
+    else
+        self.instant = true
+    end
+end
+
+local function AuraButton_OnUpdate(self, elapsed)
+    local xpr = self.endTime
+    if xpr then
+        if self.auraType and self.auraType == 2 then -- temp weapon enchant
+            setLongCD(self, self.stackCount)
+
+            self.status.duration:SetText(TimeCount(xpr - GetTime()))
+            self.status.duration:Show()
+        elseif self.duration and self.duration ~= 0 then -- normal aura with duration
+            local remains = xpr - GetTime()
+            if self.duration < 121 then
+                setShortCD(self, xpr, self.duration, self.stackCount)
+                if self.duration - remains < 0.1 then
+                    if GetSetting("PLAYER_AURA_ANIMATION") then
+                        self.agZoomIn:Play()
+                    end
+                end
+            else
+                setLongCD(self, self.stackCount)
+            end
+            self.status.duration:SetText(TimeCount(remains))
+            self.status.duration:Show()
+        else -- aura without duration or invalid
+            setLongCD(self, self.stackCount)
+            self.status.duration:Hide()
+        end
     end
 
-    if self.atype == 2 then
-        -- temp weapon enchant
-        local remains = expires/1000
-        setLongCD(self)
-        self.status.duration:SetText(TimeCount(remains))
-        self.status.duration:Show()
-    elseif duration and duration ~= 0 then
-        -- normal aura with duration
-        local remains = expires - GetTime()
-        if duration < 121 then
-            setShortCD(self, expires, duration)
-            if duration - remains < 0.1 then
-                self.agZoomIn:Play()
-            end
-        else
-            setLongCD(self)
+    if self.elapsed and self.elapsed > 0.1 then
+        if GameTooltip:IsOwned(self) then
+            SetTooltip(self)
         end
-        self.status.duration:SetText(TimeCount(remains))
-        self.status.duration:Show()
+
+        if xpr then
+            GW.UpdateTime(self, xpr)
+        end
+
+        self.elapsed = 0
     else
-        -- aura without duration or invalid
-        setLongCD(self)
-        self.status.duration:Hide()
+        self.elapsed = (self.elapsed or 0) + elapsed
     end
+end
+
+local function ClearAuraTime(self)
+    self.auraType = nil
+    self.stackCount = nil
+    self.duration = nil
+
+    self.endTime = nil
+    self.status.duration:SetText("")
+    setLongCD(self, 0) -- to reset border and timer
+end
+
+local function UpdateTime(self, expires)
+    if (expires - GetTime()) < 0.1 then
+        ClearAuraTime(self)
+    end
+end
+GW.UpdateTime = UpdateTime
+
+local function SetCD(self, expires, duration, stackCount, auraType)
+    local oldEnd = self.endTime
+    self.endTime = expires
+    self.auraType = auraType
+    self.stackCount = stackCount
+    self.duration = duration
+
+    if oldEnd ~= self.endTime then
+        self.nextUpdate = 0
+    end
+
+    UpdateTime(self, expires)
+    self.elapsed = 0
 end
 GW.AddForProfiling("aurabar_secure", "SetCD", SetCD)
-
-local function UpdateCD(self, remains)
-    if not self or not self.status or not self.gwInit then
-        return
-    end
-    if not remains or remains < 0 then
-        return
-    end
-
-    self.status.duration:SetText(TimeCount(remains))
-end
-GW.AddForProfiling("aurabar_secure", "UpdateCD", UpdateCD)
 
 local function SetCount(self, count)
     if not self or not self.status or not self.gwInit then
         return
     end
-    if count and count > 1 then
-        self.status.stacks:SetText(count)
-        self.status.stacks:Show()
-    else
-        self.status.stacks:Hide()
-    end
-end
-GW.AddForProfiling("aurabar_secure", "SetCount", SetCount)
 
-local function SetIcon(self, icon, dtype)
+    self.status.stacks:SetText(count > 1 and count)
+end
+
+local function SetIcon(self, icon, dtype, auraType)
     if not self or not self.status or not self.gwInit then
         return
     end
-    if icon then
-        self.status.icon:SetTexture(icon)
-        self.status.icon:Show()
-    else
-        self.status.icon:Hide()
-    end
 
-    local atype = self.atype
-    if atype == 1 then
+    self.status.icon:SetTexture(icon)
+
+    if auraType == 1 then
         self.border.inner:SetVertexColor(0, 0, 0)
     else
-        if atype == 2 then
+        if auraType == 2 then
             dtype = "Curse"
         end
         local c = DEBUFF_COLOR[dtype]
@@ -123,168 +189,105 @@ local function SetIcon(self, icon, dtype)
         end
         self.border.inner:SetVertexColor(c.r, c.g, c.b)
     end
-
 end
 GW.AddForProfiling("aurabar_secure", "SetIcon", SetIcon)
 
+local function UpdateAura(self, index)
+    local name, icon, count, dtype, duration, expires = UnitAura(self.header:GetUnit(), index, self:GetFilter())
+    if not name then return end
+
+    local auraType = self.header:GetAType()
+    self:SetIcon(icon, dtype, auraType)
+    self:SetCount(count)
+
+    if duration > 0 and expires then
+        self:SetCD(expires, duration, count, auraType)
+    else
+        ClearAuraTime(self)
+    end
+end
+
+local function UpdateTempEnchant(self, index, expires)
+    if expires then
+        self:SetIcon(GetInventoryItemTexture("player", index), nil, 2)
+        self:SetCount(0)
+
+        self:SetCD(((expires / 1000) or 0) + GetTime(), -1, nil, 2)
+    else
+        ClearAuraTime(self)
+    end
+end
+
+local function HeaderOnUpdate(self, elapsed)
+    local header = self.frame
+
+    if header.elapsedSpells and header.elapsedSpells > 0.1 then
+        local button, value = next(header.spells)
+        while button do
+            UpdateAura(button, value)
+
+            header.spells[button] = nil
+            button, value = next(header.spells)
+        end
+
+        header.elapsedSpells = 0
+    else
+        header.elapsedSpells = (header.elapsedSpells or 0) + elapsed
+    end
+
+    if header.elapsedEnchants and header.elapsedEnchants > 0.5 then
+        local index, enchant = next(header.enchants)
+        if index then
+            local _, main, _, _, _, offhand, _, _, _, ranged = GetWeaponEnchantInfo()
+
+            while enchant do
+                UpdateTempEnchant(enchant, enchant:GetID(), (index == 1 and main) or (index == 2 and offhand) or (index == 3 and ranged))
+
+                header.enchants[index] = nil
+                index, enchant = next(header.enchants)
+            end
+        end
+
+        header.elapsedEnchants = 0
+    else
+        header.elapsedEnchants = (header.elapsedEnchants or 0) + elapsed
+    end
+end
+
 local function GetFilter(self)
-    return self:GetParent():GetFilter(self)
+    return self.header:GetFilter(self)
 end
 GW.AddForProfiling("aurabar_secure", "GetFilter", GetFilter)
 
-local function header_OnEvent(self, event, ...)
-    local unit = select(1, ...)
-    local valid = false
-    if event == "PLAYER_ENTERING_WORLD" then
-        valid = true
-    elseif event == "UNIT_AURA" and unit == "player" then
-        valid = true
-    elseif event == "UNIT_INVENTORY_CHANGED" and unit == "player" then
-        valid = true
-    end
-    if not valid then return end
-    
-    -- set info for each aura button (on aura change events)
-    if event == "UNIT_AURA" or event == "PLAYER_ENTERING_WORLD" then
-        local atype = self:GetAType()
-        for i = 1, 40 do
-            local btn = self:GetAura(i)
-            if not btn or not btn:IsShown() then
-                -- only look at buttons that have info
-                break
-            end
-
-            local name, icon , count, dtype, duration, expires, _ = UnitAura("player", btn:GetID(), btn:GetFilter())
-            if name then
-                btn.atype = atype
-                btn:SetIcon(icon, dtype)
-                btn:SetCD(expires, duration)
-                btn:SetCount(count)
-            end
+local function AuraOnAttributeChanged(self, attribute, value)
+    if attribute == "index" then
+        if self.instant then
+            UpdateAura(self, value)
+            self.instant = nil
+        elseif self.header.spells[self] ~= value then
+            self.header.spells[self] = value
         end
-    end
-
-    -- set info for weapon enchants (on any event)
-    local weigot, mh, mh_exp, mh_num, oh, oh_exp, oh_num, rh, rh_exp, rh_num
-    for i = 1, 3 do
-        local btn = self:GetTempEnchant(i)
-        if btn then
-            TemporaryEnchantFrame:Hide()
-            -- only look at buttons that have info
-            if not weigot then
-                mh, mh_exp, mh_num, _, oh, oh_exp, oh_num, _, rh, rh_exp, rh_num, _= GetWeaponEnchantInfo()
-                weigot = true
-            end
-            local slot = INVSLOT_MAINHAND - 1 + i
-            local icon = GetInventoryItemTexture("player", slot)
-
-            btn.atype = 2
-            btn.slotId = slot
-            btn:SetIcon(icon)
-            if slot == INVSLOT_MAINHAND and mh then
-                btn:SetCount(mh_num)
-                btn:SetCD(mh_exp, -1)
-            elseif slot == INVSLOT_OFFHAND and oh then
-                btn:SetCount(oh_num)
-                btn:SetCD(oh_exp, -1)
-            elseif slot == INVSLOT_RANGED and rh then
-                btn:SetCount(rh_num)
-                btn:SetCD(rh_exp, -1)
-            end
-        end
+    elseif attribute == "target-slot" and self.enchantIndex and self.header.enchants[self.enchantIndex] ~= self then
+        self.header.enchants[self.enchantIndex] = self
+        self.header.elapsedEnchants = 0
     end
 end
-GW.AddForProfiling("aurabar_secure", "header_OnEvent", header_OnEvent)
-
-local function header_OnUpdate(self, elapsed)
-    if self.timer > 0 then
-        self.timer = self.timer - elapsed
-        return
-    end
-    self.timer = 0.2
-
-    -- update the cooldown text for each aura
-    for i = 1, 40 do
-        local btn = self:GetAura(i)
-        if not btn or not btn:IsShown() then
-            -- only look at auras being used
-            break
-        end
-
-        local name, _ , _, _, duration, expires, _ = UnitAura("player", btn:GetID(), btn:GetFilter())
-        if name and duration then
-            btn:UpdateCD(expires - GetTime())
-        end
-    end
-
-    -- update the cooldown text for each weapon enchant
-    local weigot, mh, mh_exp, oh, oh_exp, rh, rh_exp
-    for i = 1, 3 do
-        local btn = self:GetTempEnchant(i)
-        if btn and btn:IsShown() then
-            -- only look at auras being used
-            if not weigot then
-                mh, mh_exp, _, _, oh, oh_exp, _, _, rh, rh_exp, _ = GetWeaponEnchantInfo()
-                weigot = true
-            end
-    
-            local slot = INVSLOT_MAINHAND - 1 + i
-            local remain = 0
-            if slot == INVSLOT_MAINHAND and mh and mh_exp > 0 then
-                remain = mh_exp / 1000
-            elseif slot == INVSLOT_OFFHAND and oh and oh_exp > 0 then
-                remain = oh_exp / 1000
-            elseif slot == INVSLOT_RANGED and rh and rh_exp > 0 then
-                remain = rh_exp / 1000
-            end
-            btn:UpdateCD(remain)
-        end
-    end
-
-end
-GW.AddForProfiling("aurabar_secure", "header_OnUpdate", header_OnUpdate)
-
-local function aura_OnEnter(self)
-    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
-    GameTooltip:ClearLines()
-    local atype = self.atype
-    if atype == 0 then
-        GameTooltip:SetUnitDebuff("player", self:GetID(), self:GetFilter())
-    elseif atype == 1 then
-        GameTooltip:SetUnitBuff("player", self:GetID())
-    elseif atype == 2 then
-        GameTooltip:SetInventoryItem("player", self.slotId, false, true)
-    end
-    GameTooltip:Show()
-end
-GW.AddForProfiling("aurabar_secure", "aura_OnEnter", aura_OnEnter)
-
-local function cancelAura(self)
-    local slot = tonumber(self.targetSlot)
-    if slot then
-        if slot == 16 or slot == 17 then
-            -- currently doesn't work as this is set protected
-            --CancelItemTempEnchantment(slot - 15)
-        end
-    else
-        local index = self:GetID()
-        if index then
-            CancelUnitBuff("player", index, self.filter)
-        end
-    end
-end
-
-local function auraFrame_OnClick(self, button)
-    if not InCombatLockdown() and button == "RightButton" and self.atype ~= 0 then
-        cancelAura(self)
-    end
-end
-GW.AddForProfiling("aurabar_secure", "auraFrame_OnClick", auraFrame_OnClick)
 
 function GwAuraTmpl_OnLoad(self)
     if self.gwInit then
         return
     end
+
+    self.header = self:GetParent()
+    self.name = self:GetName()
+
+    self.enchantIndex = tonumber(strmatch(self.name, "TempEnchant(%d)$"))
+    if self.enchantIndex then
+        self.header["enchant" .. self.enchantIndex] = self
+    else
+        self.instant = true
+    end
+
 
     self.cooldown:SetDrawBling(false)
     self.cooldown:SetDrawEdge(false)
@@ -292,12 +295,12 @@ function GwAuraTmpl_OnLoad(self)
     self.cooldown:SetReverse(false)
     self.cooldown:SetHideCountdownNumbers(true)
 
-    self.atype = 1
     self.SetCD = SetCD
-    self.UpdateCD = UpdateCD
     self.SetCount = SetCount
     self.SetIcon = SetIcon
     self.GetFilter = GetFilter
+
+    self:SetScript("OnAttributeChanged", AuraOnAttributeChanged)
 
     setLongCD(self) -- force font info to get set first time
 
@@ -319,70 +322,28 @@ function GwAuraTmpl_OnLoad(self)
     a2:SetToScale(1.0, 1.0)
 
     -- add mouseover handlers
-    self:HookScript("OnEnter", aura_OnEnter)
-    self:HookScript("OnLeave", GameTooltip_Hide)
-
-    if not self:GetAttribute("type2") then
-        -- not a secure handler; add our own right-click buff removal
-        self:SetScript("OnClick", auraFrame_OnClick)
-    end
+    self:SetScript("OnUpdate", AuraButton_OnUpdate)
+    self:SetScript("OnEnter", AuraOnEnter)
+    self:SetScript("OnShow", AuraOnShow)
+    self:SetScript("OnHide", AuraOnHide)
+    self:SetScript("OnLeave", GameTooltip_Hide)
 
     self.gwInit = true
 end
 
-local function getSecureAura(self, idx)
-    return self:GetAttribute("child" .. idx)
-end
-GW.AddForProfiling("aurabar_secure", "getSecureAura", getSecureAura)
+local function UpdateAuraHeader(header, settingName)
+    if not header then return end
 
-local function getSecureTempEnchant(self, idx)
-    return self:GetAttribute("tempEnchant" .. idx)
-end
-GW.AddForProfiling("aurabar_secure", "getSecureTempEnchant", getSecureTempEnchant)
-
-local function getSecureFilter(_, btn)
-    return btn:GetAttribute("filter")
-end
-GW.AddForProfiling("aurabar_secure", "getSecureFilter", getSecureFilter)
-
-local function getSecureAType(self)
-    return self:GetAttribute("filter") == "HELPFUL" and 1 or 0
-end
-GW.AddForProfiling("aurabar_secure", "getSecureAType", getSecureAType)
-
-local function getLegacyAura(self, idx)
-    return self.buttons[idx]
-end
-GW.AddForProfiling("aurabar_secure", "getLegacyAura", getLegacyAura)
-
-local function getLegacyFilter(_, btn)
-    return btn.filter
-end
-GW.AddForProfiling("aurabar_secure", "getLegacyFilter", getLegacyFilter)
-
-local function getLegacyTempEnchant(self, idx)
-    return self.tempenchants[idx]
-end
-GW.AddForProfiling("aurabar_secure", "getLegacyTempEnchant", getLegacyTempEnchant)
-
-local function newHeader(filter, settingname)
-    local h, aura_tmpl
-
-    -- "secure" style auras
-    h = CreateFrame("Frame", nil, UIParent, "SecureAuraHeaderTemplate,SecureHandlerStateTemplate")
-    h.GetAura = getSecureAura
-    h.GetTempEnchant = getSecureTempEnchant
-    h.GetFilter = getSecureFilter
-    h.GetAType = getSecureAType
-
-    local grow_dir = GetSetting(settingname .. "_GrowDirection")
-    local wrap_num = tonumber(GetSetting("PLAYER_AURA_WRAP_NUM"))
-    local size = tonumber(GW.RoundDec(GetSetting(settingname .. "_ICON_SIZE")))
-    aura_tmpl = format("GwAuraSecureTmpl%d", size)
+    local size = tonumber(GW.RoundDec(GetSetting(settingName .. "_ICON_SIZE")))
+    local aura_tmpl = format("GwAuraSecureTmpl%d", size)
+    local grow_dir = GetSetting(settingName .. "_GrowDirection")
+    local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
+    local wrap_num = header.name == "GW2UIPlayerBuffs" and tonumber(GetSetting("PLAYER_AURA_WRAP_NUM")) or tonumber(GetSetting("PLAYER_AURA_WRAP_NUM_DEBUFF"))
     if not wrap_num or wrap_num < 1 or wrap_num > 20 then
         wrap_num = 7
     end
-    Debug("settings", settingname, grow_dir, wrap_num, size)
+
+    Debug("settings", settingName, grow_dir, wrap_num, size)
 
     local ap
     local yoff
@@ -405,53 +366,109 @@ local function newHeader(filter, settingname)
         yoff = 50
     end
 
-    -- setup parameters for the header template
-    h:SetAttribute("template", aura_tmpl)
-    h:SetAttribute("unit", "player")
-    h:SetAttribute("filter", filter)
-    h:SetAttribute("sortMethod", "INDEX")
-    h:SetAttribute("sortDirection", "+")
-    h:SetAttribute("minWidth", (size + 1) * wrap_num)
-    h:SetAttribute("minHeight", (size + 1))
-    h:SetAttribute("separateOwn", 0)
-    h:SetAttribute("point", ap)
-    h:SetAttribute("xOffset", xoff)
-    h:SetAttribute("yOffset", "0")
-    h:SetAttribute("wrapAfter", wrap_num)
-    h:SetAttribute("wrapXOffset", "0")
-    h:SetAttribute("wrapYOffset", yoff)
-    if filter == "HELPFUL" then
-        h:SetAttribute("includeWeapons", "1")
-        h:SetAttribute("weaponTemplate", aura_tmpl)
+    header:SetAttribute("sortMethod", GetSetting(settingName .. "_SortMethod"))
+    header:SetAttribute("sortDirection", GetSetting(settingName .. "_SortDir"))
+    header:SetAttribute("template", aura_tmpl)
+    header:SetAttribute("separateOwn", tonumber(GW.RoundDec(GetSetting(settingName .. "_Seperate"))))
+    header:SetAttribute("wrapAfter", wrap_num)
+    header:SetAttribute("minWidth", (size + 1) * wrap_num)
+    header:SetAttribute("minHeight", (size + 1))
+    header:SetAttribute("point", ap)
+    header:SetAttribute("xOffset", xoff)
+    header:SetAttribute("wrapYOffset", yoff)
+
+    if header.filter == "HELPFUL" then
+        header:SetAttribute("includeWeapons", 1)
+        header:SetAttribute("weaponTemplate", aura_tmpl)
     end
 
-    -- setup event handling
-    h.timer = 0.2
-    h:UnregisterAllEvents()
-    h:HookScript("OnEvent", header_OnEvent)
-    h:HookScript("OnUpdate", header_OnUpdate)
-    h:RegisterUnitEvent("UNIT_AURA", "player")
-    h:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player")
-    h:RegisterEvent("PLAYER_ENTERING_WORLD")
+    local index = 1
+    local child = select(index, header:GetChildren())
+    while child do
+        child:SetSize(size, size)
+
+        index = index + 1
+        child = select(index, header:GetChildren())
+    end
+
+    -- set anchoring
+    if header.filter == "HELPFUL" then
+        header:SetAttribute("growDir", grow_dir)
+
+        header:ClearAllPoints()
+        header:SetPoint(anchor_hb, header.gwMover, anchor_hb, 0, 0)
+    else
+        local anchor_hd
+        header:ClearAllPoints()
+        if not header.isMoved then
+            anchor_hd = grow_dir == "UPR" and "TOPLEFT" or grow_dir == "DOWNR" and "BOTTOMLEFT" or grow_dir == "UP" and "TOPRIGHT" or grow_dir == "DOWN" and "BOTTOMRIGHT"
+            if grow_dir == "DOWNR" or grow_dir == "DOWN" then
+                header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, -50)
+            else
+                header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, 50)
+            end
+        else
+            anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
+            header:SetPoint(anchor_hd, header.gwMover, anchor_hd, 0, 0)
+        end
+    end
+end
+GW.UpdateAuraHeader = UpdateAuraHeader
+
+local function newHeader(filter, settingname)
+    local name = filter == "HELPFUL" and "GW2UIPlayerBuffs" or "GW2UIPlayerDebuffs"
+
+    local h = CreateFrame("Frame", name, UIParent, "SecureAuraHeaderTemplate,SecureHandlerStateTemplate")
+    h:SetClampedToScreen(true)
+    h:UnregisterEvent("UNIT_AURA") -- only need player and vehicle, so we can reduce the calls
+    h:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
+    h.GetFilter = function(_, btn) return btn:GetAttribute("filter") end
+    h.GetAType = function(self) return self:GetAttribute("filter") == "HELPFUL" and 1 or 0 end
+    h.GetUnit = function(self) return self:GetAttribute("unit") end
+
+    -- setup parameters for the header template
+    h:SetAttribute("unit", "player")
+    h:SetAttribute("filter", filter)
+    h.enchants = {}
+    h.spells = {}
+    h.filter = filter
+
+    h.visibility = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
+    h.visibility:SetScript("OnUpdate", HeaderOnUpdate)
+    h.visibility.frame = h
+    h.name = name
+
+    RegisterAttributeDriver(h, "unit", "[vehicleui] vehicle; player")
+    SecureHandlerSetFrameRef(h.visibility, "AuraHeader", h)
+    RegisterStateDriver(h.visibility, "customVisibility", "[petbattle] 0; 1")
+    h.visibility:SetAttribute("_onstate-customVisibility", [[
+        local header = self:GetFrameRef("AuraHeader")
+        local hide, shown = newstate == 0, header:IsShown()
+        if hide and shown then header:Hide() elseif not hide and not shown then header:Show() end
+    ]])
+
+    h:SetAttribute("yOffset", "0")
+    h:SetAttribute("wrapXOffset", "0")
+    if filter == "HELPFUL" then
+        h:SetAttribute("consolidateDuration", -1)
+        h:SetAttribute("consolidateTo", 0)
+
+        RegisterMovableFrame(h, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", {316, 100}, true, {"default", "scaleable"}, true)
+    else
+        RegisterMovableFrame(h, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", {316, 60}, true, {"default", "scaleable"}, true)
+    end
+
+    UpdateAuraHeader(h, settingname)
 
     return h
 end
 GW.AddForProfiling("aurabar_secure", "newHeader", newHeader)
 
 local function loadAuras(lm)
-    local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
-    local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
-
     -- create a new header for buffs
     local hb = newHeader("HELPFUL", "PlayerBuffFrame")
-    hb:SetAttribute("growDir", grow_dir)
     hb:Show()
-    if hb.inner then
-        hb.inner:Show()
-    end
-    RegisterMovableFrame(hb, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", {316, 100}, true, {"default", "scaleable"}, true)
-    hb:ClearAllPoints()
-    hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
+
     lm:RegisterBuffFrame(hb)
     hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function ()
         local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
@@ -464,36 +481,8 @@ local function loadAuras(lm)
     end)
 
     -- create a new header for debuffs
-    local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
     local hd = newHeader("HARMFUL", "PlayerDebuffFrame")
-    local anchor_hd
-    RegisterMovableFrame(hd, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", {316, 60}, true, {"default", "scaleable"}, true)
     hd:Show()
-    if hd.inner then
-        hd.inner:Show()
-    end
-    hd:ClearAllPoints()
-    if not hd.isMoved then
-        anchor_hd = grow_dir == "UPR" and "TOPLEFT" or grow_dir == "DOWNR" and "BOTTOMLEFT" or grow_dir == "UP" and "TOPRIGHT" or grow_dir == "DOWN" and "BOTTOMRIGHT"
-        if grow_dir == "DOWNR" or grow_dir == "DOWN" then
-            if hd.inner and hb.inner then
-                hd.inner:ClearAllPoints()
-                hd.inner:SetPoint(anchor_hd, hb.inner, anchor_hd, 0, -50)
-            else
-                hd:SetPoint(anchor_hd, hb, anchor_hd, 0, -50)
-            end
-        else
-            if hd.inner and hb.inner then
-                hd.inner:ClearAllPoints()
-                hd.inner:SetPoint(anchor_hd, hb.inner, anchor_hd, 0, 50)
-            else
-                hd:SetPoint(anchor_hd, hb, anchor_hd, 0, 50)
-            end
-        end
-    else
-        anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
-        hd:SetPoint(anchor_hd, hd.gwMover, anchor_hd, 0, 0)
-    end
     lm:RegisterDebuffFrame(hd)
     hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function ()
         local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
@@ -508,8 +497,8 @@ end
 
 local function LoadPlayerAuras(lm)
     -- hide default buffs
+    TemporaryEnchantFrame:Kill()
     BuffFrame:Kill()
-    BuffFrame:SetScript("OnShow", Self_Hide)
 
     Debug("player aura style")
 

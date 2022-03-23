@@ -1,0 +1,5 @@
+1.19.0
+NEW
+    - Update for 2.5.4
+    - Redo player de/buffs
+        - Added more options

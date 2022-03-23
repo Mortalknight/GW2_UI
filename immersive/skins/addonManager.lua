@@ -51,11 +51,27 @@ local function SkinAddonList()
     _G.AddonListScrollFrame:SkinScrollFrame()
     _G.AddonListScrollFrameScrollBar:SkinScrollBar()
 
-    hooksecurefunc("TriStateCheckbox_SetState", function(checked, checkButton)
-        local checkedTexture = _G[checkButton:GetName().."CheckedTexture"]
-        -- 1 is a gray check
-        if checked == 1 then
-            checkedTexture:SetVertexColor(1, .93, .73)
+    hooksecurefunc("AddonList_Update", function()
+        local numEntrys = GetNumAddOns()
+
+        for i = 1, MAX_ADDONS_DISPLAYED do
+            local addonIndex = AddonList.offset + i
+
+            if addonIndex <= numEntrys then
+                local checkbox = _G["AddonListEntry" .. i .. "Enabled"]
+                local checkboxState = GetAddOnEnableState(character, addonIndex)
+                -- Get the character from the current list (nil is all characters)
+                local character = UIDropDownMenu_GetSelectedValue(AddonCharacterDropDown)
+                if ( character == true ) then
+                    character = nil
+                end
+
+                local checkedTexture = checkbox:GetCheckedTexture()
+                -- 1 is a gray check
+                if checkboxState == 1 then
+                    checkedTexture:SetVertexColor(1, .93, .73)
+                end
+            end
         end
     end)
 end

@@ -580,7 +580,7 @@ local function loadAddon(self)
     end
 
     -- create buff frame
-    if GetSetting("PLAYER_BUFFS_ENABLED") then
+    if GetSetting("PLAYER_BUFFS_ENABLED") and GW.wowbuild >= 42873 then
         GW.LoadPlayerAuras(lm)
     end
 

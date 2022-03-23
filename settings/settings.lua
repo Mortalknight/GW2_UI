@@ -399,7 +399,7 @@ local function InitPanel(panel, hasScroll)
 
     local numRows = 1
 
-    local padding = {x = box_padding, y = (hasScroll and panel.scroll.scrollchild.sub:GetText() or panel.sub:GetText()) and -55 or -35}
+    local padding = {x = box_padding, y = hasScroll and 0 or panel.sub:GetText() and -55 or -35}
     local first = true
 
     for _, v in pairs(options) do

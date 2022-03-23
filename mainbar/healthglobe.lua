@@ -237,22 +237,22 @@ local function LoadHealthGlobe()
     local hg = CreateFrame("Button", "GW2_PlayerFrame", UIParent, "GwHealthGlobeTmpl")
     GW.RegisterScaleFrame(hg, 1.1)
 
-        -- position based on XP bar space and make it movable if your actionbars are off
-        if GetSetting("ACTIONBARS_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
-            if GetSetting("XPBAR_ENABLED") then
-                hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 17)
-            else
-                hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
-            end
+    -- position based on XP bar space and make it movable if your actionbars are off
+    if GetSetting("ACTIONBARS_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
+        if GetSetting("XPBAR_ENABLED") then
+            hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 17)
         else
-            GW.RegisterMovableFrame(hg, GW.L["Health Globe"], "HealthGlobe_pos", "VerticalActionBarDummy", nil, true, {"default"}, false)
-            hg:SetPoint("TOPLEFT", hg.gwMover)
-            if not GetSetting("XPBAR_ENABLED") and not hg.isMoved then
-                local framePoint = GetSetting("HealthGlobe_pos")
-                hg.gwMover:ClearAllPoints()
-                hg.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, 0)
-            end
+            hg:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
         end
+    else
+        GW.RegisterMovableFrame(hg, GW.L["Health Globe"], "HealthGlobe_pos", "VerticalActionBarDummy", nil, true, {"default"}, false)
+        hg:SetPoint("TOPLEFT", hg.gwMover)
+        if not GetSetting("XPBAR_ENABLED") and not hg.isMoved then
+            local framePoint = GetSetting("HealthGlobe_pos")
+            hg.gwMover:ClearAllPoints()
+            hg.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, 0)
+        end
+    end
 
     --save settingsvalue for later use
     hg.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
@@ -313,8 +313,12 @@ local function LoadHealthGlobe()
     end
 
     -- set handlers for health globe and disable default player frame
-    PlayerFrame:SetScript("OnEvent", nil)
-    PlayerFrame:Kill()
+    if GW.wowbuild >= 42873 then
+        PlayerFrame:SetScript("OnEvent", nil)
+        PlayerFrame:Kill()
+    else
+        PlayerFrame:SetParent(GW.HiddenFrame)
+    end
     hg:SetScript("OnEvent", globe_OnEvent)
     hg:SetScript("OnEnter", globe_OnEnter)
     hg:SetScript("OnLeave", function(self)

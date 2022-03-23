@@ -1,6 +1,13 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.19.0 TBC", [=[
+NEW
+    - Update for 2.5.4
+    - Redo player de/buffs
+        - Added more options
+]=])
+
 v("1.18.0 TBC", [=[
 NEW
     - Add option to show macronames on actionbuttons
