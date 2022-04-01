@@ -1,5 +1,4 @@
-1.19.0
-NEW
-    - Update for 2.5.4
-    - Redo player de/buffs
-        - Added more options
+1.19.1
+FIXES
+    - Fix an issue where so buttons was missing on the module tab
+    - Added missing player aura animation toggle
