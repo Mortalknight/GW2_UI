@@ -6,7 +6,7 @@ local InitPanel = GW.InitPanel
 local SetSetting = GW.SetSetting
 local AddForProfiling = GW.AddForProfiling
 
-local welcome_OnClick = function(self, button)
+local welcome_OnClick = function(self)
     if self.settings then
         self.settings:Hide()
     end
@@ -16,7 +16,7 @@ local welcome_OnClick = function(self, button)
 end
 AddForProfiling("panel_modules", "welcome_OnClick", welcome_OnClick)
 
-local statusReport_OnClick = function(self, button)
+local statusReport_OnClick = function(self)
     if self.settings then
         self.settings:Hide()
     end
@@ -41,17 +41,17 @@ local function LoadModulesPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Enable or disable the modules you need and don't need."])
 
-    p.welcome:SetParent(p.scroll.scrollchild)
+    p.welcome:SetParent(p)
     p.welcome.settings = sWindow
     p.welcome:SetText(L["Welcome"])
     p.welcome:SetScript("OnClick", welcome_OnClick)
 
-    p.statusReport:SetParent(p.scroll.scrollchild)
+    p.statusReport:SetParent(p)
     p.statusReport.settings = sWindow
     p.statusReport:SetText(LANDING_PAGE_REPORT)
     p.statusReport:SetScript("OnClick", statusReport_OnClick)
 
-    p.credits:SetParent(p.scroll.scrollchild)
+    p.credits:SetParent(p)
     p.credits.settings = sWindow
     p.credits:SetText(L["Credits"])
     p.credits:SetScript("OnClick", creditst_OnClick)
