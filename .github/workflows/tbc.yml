@@ -19,5 +19,5 @@ jobs:
       - uses: actions/checkout@v1
 
       - uses: BigWigsMods/packager@master
-      with:
+        with:
           args: -g bcc
