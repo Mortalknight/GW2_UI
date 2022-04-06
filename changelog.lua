@@ -1,6 +1,13 @@
 local _, GW = ...
 local v = GW.vernotes
 
+
+v("5.27.1", [=[
+    FIXES
+    - You can not apply glyphs again
+    - Fix a lua error while rename an equipment set
+]=])
+
 v("5.27.0", [=[
 NEW
     - Added option to disable player new de/buff animation
