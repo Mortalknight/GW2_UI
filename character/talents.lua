@@ -644,8 +644,8 @@ local function TalProfButton_OnModifiedClick(self)
 end
 GW.TalProfButton_OnModifiedClick = TalProfButton_OnModifiedClick
 
-local function setActiveButton(btn, spellId, skillType, icon, spellbookIndex, booktype, tab, name)
-    setButton(btn, spellId, skillType, icon, spellbookIndex, booktype, tab, name)
+local function setActiveButton(btn, spellId, skillType, icon, spellbookIndex, booktype, name)
+    setButton(btn, spellId, skillType, icon, spellbookIndex, booktype)
 
     local _, autostate = GetSpellAutocast(spellbookIndex, booktype)
     if autostate then
@@ -694,7 +694,7 @@ local function setPassiveButton(btn, spellId, skillType, icon, spellbookIndex, b
 end
 GW.AddForProfiling("talents", "setPassiveButton", setPassiveButton)
 
-local function checkForClickBinding(btn, spellId)
+local function checkForClickBinding(btn, spellId, fmSpellbook)
     btn.canClickBind = false
     if InClickBindingMode() then
         btn.SpellHighlightTexture:Hide();
@@ -711,7 +711,7 @@ local function checkForClickBinding(btn, spellId)
         else
             btn.ClickBindingIconCover:Show();
         end
-    else
+    elseif fmSpellbook.glyphReason == nil then
         btn:SetAttribute("type1", nil)
         btn.ClickBindingHighlight:Hide()
     end
@@ -781,12 +781,12 @@ local function CreateActiveSpellButton(activeGroup, activeIndex, fmSpellbook, sp
     local row = math.floor((activeIndex - 1) / 5)
     local col = (activeIndex - 1) % 5
     btn:SetPoint("TOPLEFT", activeGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row))
-    setActiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name)
+    setActiveButton(btn, spellId, skillType, icon, spellIndex, BOOKTYPE, name)
 
     -- check for should glyph highlight
     if spellBookTabs == 2 or spellBookTabs == 3 then
         checkForGlyph(btn, spellId, fmSpellbook)
-        checkForClickBinding(btn, spellId)
+        checkForClickBinding(btn, spellId, fmSpellbook)
     end
     GW.RegisterCooldown(btn.cooldown)
 
