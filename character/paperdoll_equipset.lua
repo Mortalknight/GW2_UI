@@ -70,6 +70,7 @@ GW.AddForProfiling("character_equipset", "outfitEquipButton_OnClick", outfitEqui
 
 
 local function GearSetButton_Edit(self)
+    GearManagerDialogPopup:ClearAllPoints()
     GearManagerDialogPopup:SetParent(GwDressingRoom)
     GearManagerDialogPopup:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
     GearManagerDialogPopup:Show()
