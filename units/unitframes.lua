@@ -301,14 +301,14 @@ local function updateAvgItemLevel(self, event, guid)
                     PopulateUnitIlvlsCache(guid, calculateItemLevel, "target")
                     ClearInspectPlayer()
                     self:UnregisterEvent("INSPECT_READY")
-                    setUnitPortraitFrame(self, event)
+                    setUnitPortraitFrame(self)
                 end
             end)
         else
             PopulateUnitIlvlsCache(guid, itemLevel, "target")
             self:UnregisterEvent("INSPECT_READY")
         end
-        setUnitPortraitFrame(self, event)
+        setUnitPortraitFrame(self)
     end
 end
 GW.AddForProfiling("unitframes", "updateAvgItemLevel", updateAvgItemLevel)
