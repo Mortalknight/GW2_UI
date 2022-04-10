@@ -1,3 +1,9 @@
+1.20.0
+NEW
+    - Added a toggle for target, target target, focus and focus target castbar
+FIXES
+    - Change from "UNIT_HEALTH" event to "UNIT_HEALTH_FREQUENT" to prevent a blizzard bug
+
 1.19.1
 FIXES
     - Fix an issue where so buttons was missing on the module tab

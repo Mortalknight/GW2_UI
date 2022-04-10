@@ -1,6 +1,13 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.20.0 TBC", [=[
+NEW
+    - Added a toggle for target, target target, focus and focus target castbar
+FIXES
+    - Change from "UNIT_HEALTH" event to "UNIT_HEALTH_FREQUENT" to prevent a blizzard bug
+]=])
+
 v("1.19.1 TBC", [=[
 FIXES
     - Fix an issue where so buttons was missing on the module tab

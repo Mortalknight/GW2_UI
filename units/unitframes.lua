@@ -331,9 +331,9 @@ local function hideCastBar(self)
         setUnitPortrait(self)
     end
 
-    if animations["GwUnitFrame" .. self.unit .. "Cast"] ~= nil then
-        animations["GwUnitFrame" .. self.unit .. "Cast"]["completed"] = true
-        animations["GwUnitFrame" .. self.unit .. "Cast"]["duration"] = 0
+    if animations["GwUnitFrame" .. self.unit .. "Cast"] then
+        animations["GwUnitFrame" .. self.unit .. "Cast"].completed = true
+        animations["GwUnitFrame" .. self.unit .. "Cast"].duration = 0
     end
 end
 GW.AddForProfiling("unitframes", "hideCastBar", hideCastBar)
@@ -348,7 +348,7 @@ local function updateCastValues(self)
         castType = 0
     end
 
-    if name == nil  then
+    if name == nil or not self.showCastbar then
         hideCastBar(self)
         return
     end
@@ -391,7 +391,7 @@ local function updateCastValues(self)
         startTime,
         endTime - startTime,
         function(step)
-            if GetSetting("target_CASTINGBAR_DATA") and self.castingTimeString then
+            if GetSetting("target_SHOW_CASTBAR") and GetSetting("target_CASTINGBAR_DATA") and self.castingTimeString then
                 self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
             end
             if castType == 0 then
@@ -532,10 +532,10 @@ local function target_OnEvent(self, event, unit)
         if (ttf) then unitFrameData(ttf) end
         updateHealthValues(self, event)
         if (ttf) then updateHealthValues(ttf, event) end
-        updatePowerValues(self, event)
-        if (ttf) then updatePowerValues(ttf, event) end
-        updateCastValues(self, event)
-        if (ttf) then updateCastValues(ttf, event) end
+        updatePowerValues(self)
+        if (ttf) then updatePowerValues(ttf) end
+        updateCastValues(self)
+        if (ttf) then updateCastValues(ttf) end
         updateRaidMarkers(self)
         if (ttf) then updateRaidMarkers(ttf) end
         UpdateBuffLayout(self, event)
@@ -564,7 +564,7 @@ local function target_OnEvent(self, event, unit)
         end
     elseif event == "RAID_TARGET_UPDATE" then
         updateRaidMarkers(self)
-        if (ttf) then updateRaidMarkers(ttf, event) end
+        if (ttf) then updateRaidMarkers(ttf) end
     elseif event == "UNIT_THREAT_LIST_UPDATE" and self.showThreat then
         updateThreatValues(self)
     elseif UnitIsUnit(unit, self.unit) then
@@ -589,16 +589,16 @@ local function focus_OnEvent(self, event, unit)
     local ttf = GwFocusTargetUnitFrame
 
     if event == "PLAYER_FOCUS_CHANGED" or event == "ZONE_CHANGED" then
-        unitFrameData(self, event)
-        if (ttf) then unitFrameData(ttf, event) end
+        unitFrameData(self)
+        if (ttf) then unitFrameData(ttf) end
         updateHealthValues(self, event)
         if (ttf) then updateHealthValues(ttf, event) end
         updatePowerValues(self)
         if (ttf) then updatePowerValues(ttf) end
-        updateCastValues(self, event)
-        if (ttf) then updateCastValues(ttf, event) end
-        updateRaidMarkers(self, event)
-        if (ttf) then updateRaidMarkers(ttf, event) end
+        updateCastValues(self)
+        if (ttf) then updateCastValues(ttf) end
+        updateRaidMarkers(self)
+        if (ttf) then updateRaidMarkers(ttf) end
         UpdateBuffLayout(self, event)
 
         if event == "PLAYER_FOCUS_CHANGED" then
@@ -617,10 +617,10 @@ local function focus_OnEvent(self, event, unit)
     elseif event == "UNIT_TARGET" and unit == "focus" then
         if (ttf ~= nil) then
             if UnitExists("focustarget") then
-                unitFrameData(ttf, event)
+                unitFrameData(ttf)
                 updateHealthValues(ttf, event)
                 updatePowerValues(ttf)
-                updateCastValues(ttf, event)
+                updateCastValues(ttf)
                 updateRaidMarkers(ttf)
             end
         end
@@ -634,9 +634,9 @@ local function focus_OnEvent(self, event, unit)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
             updatePowerValues(self)
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START") then
-            updateCastValues(self, event)
+            updateCastValues(self)
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED") then
-            hideCastBar(self, event)
+            hideCastBar(self)
         elseif event == "UNIT_FACTION" then
             updateHealthbarColor(self)
         end
@@ -652,7 +652,7 @@ local function unittarget_OnUpdate(self, elapsed)
         self.totalElapsed = self.totalElapsed - elapsed
         return
     end
-    self.totalElapsed = 0.25
+    self.totalElapsed = 0.15
     if not UnitExists(self.unit) then
         return
     end
@@ -706,6 +706,7 @@ local function LoadTarget()
 
     NewUnitFrame.showHealthValue = GetSetting("target_HEALTH_VALUE_ENABLED")
     NewUnitFrame.showHealthPrecentage = GetSetting("target_HEALTH_VALUE_TYPE")
+    NewUnitFrame.showCastbar = GetSetting("target_SHOW_CASTBAR")
 
     NewUnitFrame.displayBuffs = GetSetting("target_BUFFS")
     NewUnitFrame.displayDebuffs = GetSetting("target_DEBUFFS")
@@ -802,6 +803,7 @@ local function LoadFocus()
 
     NewUnitFrame.showHealthValue = GetSetting("focus_HEALTH_VALUE_ENABLED")
     NewUnitFrame.showHealthPrecentage = GetSetting("focus_HEALTH_VALUE_TYPE")
+    NewUnitFrame.showCastbar = GetSetting("focus_SHOW_CASTBAR")
 
     NewUnitFrame.classColor = GetSetting("focus_CLASS_COLOR")
 
@@ -868,9 +870,10 @@ local function LoadTargetOfUnit(unit)
     f.showHealthPrecentage = false
 
     f.classColor = GetSetting(string.lower(unit) .. "_CLASS_COLOR")
+    f.showCastbar = GetSetting(string.lower(unit) .. "_TARGET_SHOW_CASTBAR")
     f.debuffFilter = nil
 
-    f.totalElapsed = 0.25
+    f.totalElapsed = 0.15
     f:SetScript("OnUpdate", unittarget_OnUpdate)
 end
 GW.LoadTargetOfUnit = LoadTargetOfUnit
