@@ -324,8 +324,22 @@ end
     SetDefaultOnTheFly(365445) -- Scarred Soul
     SetDefaultOnTheFly(365008) -- Psychic Terror
 -- Lords of Dread
--- Rygelon
+    SetDefaultOnTheFly(360148) -- Bursting Dread
+    SetDefaultOnTheFly(360012) -- Cloud of Carrion
+    SetDefaultOnTheFly(360146) -- Fearful Trepidation
+    SetDefaultOnTheFly(360241) -- Unsettling Dreams
+    -- Rygelon
+    SetDefaultOnTheFly(362206) -- Event Horizon
+    SetDefaultOnTheFly(362137) -- Corrupted Wound
+    SetDefaultOnTheFly(361548) -- Dark Eclipse
 -- The Jailer
+    SetDefaultOnTheFly(362075) -- Domination
+    SetDefaultOnTheFly(365150) -- Rune of Domination
+    SetDefaultOnTheFly(363893) -- Martyrdom
+    SetDefaultOnTheFly(363886) -- Imprisonment
+    SetDefaultOnTheFly(365219) -- Chains of Anguish
+    SetDefaultOnTheFly(366285) -- Rune of Compulsion
+    SetDefaultOnTheFly(363332) -- Unbreaking Grasp
 
 -------------------- Castle Nathria --------------------
 -- Shriekwing
