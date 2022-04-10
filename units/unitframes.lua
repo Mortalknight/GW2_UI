@@ -281,7 +281,7 @@ local function setUnitPortraitFrame(self)
 end
 GW.AddForProfiling("unitframes", "setUnitPortraitFrame", setUnitPortraitFrame)
 
-local function updateAvgItemLevel(self, event, guid)
+local function updateAvgItemLevel(self, guid)
     if guid == UnitGUID(self.unit) and CanInspect(self.unit) then
         local itemLevel, retryUnit, retryTable, iLevelDB = GW.GetUnitItemLevel(self.unit)
         if itemLevel == "tooSoon" then
@@ -681,7 +681,7 @@ local function target_OnEvent(self, event, unit)
         if not GetSetting("target_SHOW_ILVL") then
             self:UnregisterEvent("INSPECT_READY")
         else
-            updateAvgItemLevel(self, event, unit)
+            updateAvgItemLevel(self, unit)
         end
     elseif event == "UNIT_THREAT_LIST_UPDATE" and self.showThreat then
         updateThreatValues(self)
