@@ -1,6 +1,10 @@
+5.28.0
+NEW
+    - Added a toggle for target, target target, focus and focus target castbar
+
 5.27.1
 FIXES
-    - You can not apply glyphs again
+    - You can now apply glyphs again
     - Fix a lua error while rename an equipment set
 
 5.27.0

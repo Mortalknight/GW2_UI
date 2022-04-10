@@ -1,10 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.28.0", [=[
+NEW
+    - Added a toggle for target, target target, focus and focus target castbar
+]=])
 
 v("5.27.1", [=[
     FIXES
-    - You can not apply glyphs again
+    - You can now apply glyphs again
     - Fix a lua error while rename an equipment set
 ]=])
 

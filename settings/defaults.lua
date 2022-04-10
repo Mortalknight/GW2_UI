@@ -164,6 +164,8 @@ GW_DEFAULT["AFK_MODE"] = true
 GW_DEFAULT["CHAT_MAX_COPY_CHAT_LINES"] = 100
 
 GW_DEFAULT["target_TARGET_ENABLED"] = true
+GW_DEFAULT["target_TARGET_SHOW_CASTBAR"] = true
+GW_DEFAULT["target_SHOW_CASTBAR"] = true
 GW_DEFAULT["target_DEBUFFS"] = true
 GW_DEFAULT["target_DEBUFFS_FILTER"] = true
 GW_DEFAULT["target_BUFFS"] = true
@@ -183,6 +185,8 @@ GW_DEFAULT["target_FRAME_INVERT"] = false
 GW_DEFAULT["target_FRAME_ALT_BACKGROUND"] = false
 
 GW_DEFAULT["focus_TARGET_ENABLED"] = true
+GW_DEFAULT["focus_TARGET_SHOW_CASTBAR"] = true
+GW_DEFAULT["focus_SHOW_CASTBAR"] = true
 GW_DEFAULT["focus_DEBUFFS"] = true
 GW_DEFAULT["focus_DEBUFFS_FILTER"] = true
 GW_DEFAULT["focus_BUFFS"] = true
