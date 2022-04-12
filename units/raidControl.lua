@@ -2,7 +2,7 @@ local _, GW = ...
 local GetSetting = GW.GetSetting
 
 local function fnGMIG_OnEvent(self)
-    local active = UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")
+    local activ = (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) or (IsInGroup() and not IsInRaid())
 
     if IsInRaid() then
         GwManageGroupButton.icon:SetTexCoord(0, 0.59375, 0.2968, 0.2968 * 2)
@@ -11,19 +11,19 @@ local function fnGMIG_OnEvent(self)
     end
 
     for _, marker in pairs(self.markers) do
-        marker:SetEnabled(active)
-        marker:GetNormalTexture():SetDesaturated(not active)
+        marker:SetEnabled(activ)
+        marker:GetNormalTexture():SetDesaturated(not activ)
     end
     for _, marker in pairs(self.workdmarkers) do
-        marker:GetNormalTexture():SetDesaturated(not active)
+        marker:GetNormalTexture():SetDesaturated(not activ)
     end
 
     self.convert:SetEnabled(UnitIsGroupLeader("player"))
     self.convert:SetText(IsInRaid() and CONVERT_TO_PARTY or CONVERT_TO_RAID)
 
-    self.countdown:SetEnabled(active)
-    self.readyCheck:SetEnabled(active)
-    self.roleCheck:SetEnabled(active)
+    self.countdown:SetEnabled(activ)
+    self.readyCheck:SetEnabled(activ)
+    self.roleCheck:SetEnabled(activ)
 
     -- set counter
     local unit = (IsInRaid() and "raid" or "party")
@@ -411,4 +411,3 @@ local function Create_Raid_Counter()
     UpdateRaidCounterVisibility()
 end
 GW.Create_Raid_Counter = Create_Raid_Counter
-
