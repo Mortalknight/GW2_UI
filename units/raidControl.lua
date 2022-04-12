@@ -27,34 +27,33 @@ local function fnGMIG_OnEvent(self)
 
     -- set counter
     local unit = (IsInRaid() and "raid" or "party")
-        local tank, damage, heal = 0, 0, 0
+        local numTank, numDamage, numHeal = 0, 0, 0
         for i = 1, GetNumGroupMembers() do
             local role = UnitGroupRolesAssigned(unit .. i)
 
             if role then
                 if role == "TANK" then
-                    tank = tank + 1
+                    numTank = numTank + 1
                 elseif role == "HEALER" then
-                    heal = heal + 1
+                    numHeal = numHeal + 1
                 elseif role == "DAMAGER" then
-                    damage = damage + 1
+                    numDamage = numDamage + 1
                 end
             end
         end
 
         if GetNumGroupMembers() == 0 or unit == "party" then
-            local plyerRole = UnitGroupRolesAssigned("player")
-            if plyerRole then
+            if GW.myrole then
                 if GW.myrole == "TANK" then
-                    tank = tank + 1
+                    numTank = numTank + 1
                 elseif GW.myrole == "HEALER" then
-                    heal = heal + 1
+                    numHeal = numHeal + 1
                 elseif GW.myrole == "DAMAGER" then
-                    damage = damage + 1
+                    numDamage = numDamage + 1
                 end
             end
         end
-    self.groupCounter:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank:0:0:0:2:64:64:4:60:4:60|t " .. tank .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-healer:0:0:0:2:64:64:4:60:4:60|t " .. heal .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:15:15:0:0:64:64:4:60:4:60|t " .. damage)
+    self.groupCounter:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank:0:0:0:2:64:64:4:60:4:60|t " .. numTank .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-healer:0:0:0:2:64:64:4:60:4:60|t " .. numHeal .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:15:15:0:0:64:64:4:60:4:60|t " .. numDamage)
 
 end
 
