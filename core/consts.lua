@@ -215,6 +215,12 @@ local indicatorsText = {"Bar", "Top Left", "Top", "Top Right", "Left", "Center",
 GW.INDICATORS = INDICATORS
 GW.indicatorsText = indicatorsText
 
+    GW.bossFrameExtraEnergyBar = {
+        [2469] = {npcId = 181954, enable = true}, -- Andui Wrynn
+        [2467] = {npcId = 182777, enable = true}, -- Rygelon
+        --[465] = {npcId = 46264, enable = true}, -- Lord Overheat for testing
+    }
+
 -- Taken from ElvUI: https://git.tukui.org/elvui/elvui/blob/master/ElvUI/Settings/Filters/UnitFrame.lua
 -- Format: {class = {id = {r, g, b[, <spell-id-same-slot>]} ...}, ...}
 local AURAS_INDICATORS = {

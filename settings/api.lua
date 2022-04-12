@@ -81,7 +81,11 @@ local function SetSetting(name, state, perSpec, tableID)
         end
         settings[name][spec] = state
     elseif tableID then
-        settings[name][tableID] = state
+        if type(settings[name][tableID]) == "table" then
+            settings[name][tableID].enable = state
+        else
+            settings[name][tableID] = state
+        end
     else
         settings[name] = state
     end

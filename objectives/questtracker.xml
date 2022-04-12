@@ -532,7 +532,7 @@
         </Frames>
     </Frame>
     
-    <Button name="GwQuestTrackerBossFrameTemp" inherits="SecureUnitButtonTemplate" virtual="true" hidden="true">
+    <Button name="GwQuestTrackerBossFrameTemp" virtual="true" hidden="true">
         <Size x="300" y="35"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
@@ -543,6 +543,12 @@
                     <Size x="282" y="12"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-9" y="-19"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentPowerBarBg" parentKey="powerBarbg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
+                    <Size x="282" y="10"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-9" y="-44"></Anchor>
                     </Anchors>
                 </Texture>
                 <Texture name="$parentIcon" parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-boss">
@@ -592,9 +598,29 @@
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-28"></Anchor>
                 </Anchors>
                 <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <FontString name="$parentName" parentKey="name" hidden="true" inherits="GameFontNormalSmall" justifyH="LEFT">
+                            <Color r="1" g="1" b="1"></Color>
+                            <Size x="180" y="8"/>
+                            <Anchors>
+                                <Anchor point="LEFT" x="0" y="10"/>
+                            </Anchors>
+                        </FontString>
+                        <FontString name="$parentString" parentKey="value" hidden="true" inherits="GameFontNormalSmall" justifyH="CENTER">
+                            <Color r="1" g="1" b="1"></Color>
+                            <Size x="180" y="8"/>
+                            <Anchors>
+                                <Anchor point="CENTER" x="0" y="0"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
             </StatusBar>
         </Frames>
     </Button>
+
+    <Button name="GwQuestTrackerAreanaFrameTemp" inherits="GwQuestTrackerBossFrameTemp,SecureUnitButtonTemplate" virtual="true" hidden="true"/>
 
     <Button name="GwQuestTrackerArenaPrepFrameTemp" inherits="SecureUnitButtonTemplate" virtual="true" hidden="true">
         <Size x="300" y="35"></Size>

@@ -43,8 +43,8 @@ L["Always show Minimap details."] = "Zeige Minimap Informationen dauerhaft."
 L["Always Show Realm"] = "Server immer anzeigen"
 L["Anchor the tooltips to the cursor."] = "Tooltips am Mauszeiger anzeigen"
 L["Animated"] = "Animiert"
-L["Applies the UI scale to all frames, which can be scaled in 'Move HUD' mode."] = "Überträgt die UI Skalierung auf alle Fenster, welche im 'Move HUD' skaliert werden können"
-L["Apply UI to all"] = "Auf alle anwenden"
+L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."] = "Überträgt die UI Skalierung auf alle Fenster, welche im 'Move HUD' skaliert werden können"
+L["Apply to all"] = "Auf alle anwenden"
 L["Are you sure you want to delete this profile?"] = "Bist du sicher, dass du dieses Profil löschen möchtest?"
 L[ [=[Are you sure you want to load the default settings?
 
@@ -482,3 +482,5 @@ L["Your items have been repaired using guild bank funds for: %s"] = "Deine Gegen
 L["Zone Ability"] = "Zonen Fähigkeit"
 L["Player de/buff animation"] = "Spiel Stärkungs- und Schwächungszauber Animation"
 L["Shows an animation for new de/buffs"] = "Zeige eine Animation bei neuen Stärkungs- oder Schwächungszauber"
+L["Boss frames: Separate Energy Bar"] = "Schlachtzugbosseinheiten: Separate Energiebar"
+L["If enabled, enabled bosses’ energy bars will be shown separately from their health bar."] = "Wir für die aktiven Bosse eine sepearte Energybar im Questtracker anzeigen."

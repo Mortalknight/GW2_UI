@@ -232,7 +232,7 @@ end
 GW.AddForProfiling("arenaFrames", "arenaPrepFrame_OnEvent", arenaPrepFrame_OnEvent)
 
 local function registerFrame(i)
-    local arenaFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerBossFrameTemp")
+    local arenaFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerAreanaFrameTemp")
     local unit = "arena" .. i
     local yOffset = GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
     local p = yOffset + ((35 * i) - 35)

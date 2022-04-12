@@ -447,3 +447,5 @@ L["XP Quest Percent"] = true
 L["Shows the xp you got from that quest in % based on your total needed xp for next level."] = true
 L["Player de/buff animation"] = true
 L["Shows an animation for new de/buffs"] = true
+L["Boss frames: Separate Energy Bar"] = true
+L["If enabled, enabled bosses’ energy bars will be shown separately from their health bar."] = true

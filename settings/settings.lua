@@ -389,7 +389,13 @@ local function loadDropDown(scrollFrame)
 
                 if scrollFrame.data.hasCheckbox then
                     local settingstable = GetSetting(scrollFrame.data.optionName, scrollFrame.data.perSpec)
-                    if settingstable[scrollFrame.data.options[idx]] then
+                    if type(settingstable[scrollFrame.data.options[idx]]) == "table" then
+                        if settingstable[scrollFrame.data.options[idx]].enable then
+                            slot.checkbutton:SetChecked(true)
+                        else
+                            slot.checkbutton:SetChecked(false)
+                        end
+                    elseif settingstable[scrollFrame.data.options[idx]] then
                         slot.checkbutton:SetChecked(true)
                     else
                         slot.checkbutton:SetChecked(false)
@@ -587,6 +593,14 @@ local function InitPanel(panel, hasScroll)
                                 -- show the spell tooltip
                                 GameTooltip_SetDefaultAnchor(GameTooltip, self)
                                 GameTooltip:SetSpellByID(self.option)
+                                GameTooltip:Show()
+                            end)
+                        elseif v.tooltipType == "encounter" then
+                            slot:HookScript("OnEnter", function(self)
+                                local name, desc = EJ_GetEncounterInfo(self.option)
+                                GameTooltip_SetDefaultAnchor(GameTooltip, self)
+                                GameTooltip_SetTitle(GameTooltip, name)
+                                GameTooltip_AddNormalLine(GameTooltip, desc, nil, true)
                                 GameTooltip:Show()
                             end)
                         end

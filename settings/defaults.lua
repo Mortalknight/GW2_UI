@@ -669,6 +669,8 @@ GW_DEFAULT["player_pos"]["xOfs"] = -56
 GW_DEFAULT["player_pos"]["yOfs"] = -100
 GW_DEFAULT["player_pos_scale"] = 1
 
+GW_DEFAULT["boss_frame_extra_energy_bar"] = GW.bossFrameExtraEnergyBar
+
 -- incompatible addons
 GW_DEFAULT.IncompatibleAddons = {
     Actionbars = {

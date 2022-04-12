@@ -4,6 +4,7 @@ local v = GW.vernotes
 v("5.28.0", [=[
 NEW
     - Added a toggle for target, target target, focus and focus target castbar
+    - Added option to show a separate energy bar for some bosses like Anduin at the objectives boss frames
 ]=])
 
 v("5.27.1", [=[
