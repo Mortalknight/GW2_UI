@@ -8,11 +8,9 @@ local function LoadDetailsProfile()
 
     local instance = details:GetInstance(1)
 
-    for _, profile in ipairs(instance:GetProfileList()) do
-        if profile == "GW2_UI" then
-            return
-        end
-    end
+    local profile = instance:GetProfile("GW2_UI")
+
+    if profile then return end
 
     instance:CreateProfile("GW2_UI")
     instance:ApplyProfile("GW2_UI")
