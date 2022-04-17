@@ -54,6 +54,8 @@ local function LoadSkinsPanel(sWindow)
 
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r World Quest Tracker", nil, "SKIN_WQT_ENABLED", nil, nil, {["QUESTTRACKER_ENABLED"] = true}, "Objectives")
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Immersion", nil, "IMMERSIONADDON_SKIN_ENABLED")
+    addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Details |cffaaaaaaby SHOODOX|r", nil, "DETAILS_SKIN_ENABLED")
+    
 
     InitPanel(p, true)
 end

@@ -41,4 +41,5 @@
     <Script file="immersive\skins\addons\immersion.lua"/>
     <Script file="immersive\skins\addons\postal.lua"/>
     <Script file="immersive\skins\addons\WorldQuestTracker.lua"/>
+    <Script file="immersive\skins\addons\detailsProfile.lua"/>
 </Ui>

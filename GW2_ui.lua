@@ -480,6 +480,7 @@ local function loadAddon(self)
     GW.LoadLFGSkin()
     GW.LoadOrderHallTalentFrameSkin()
     GW.LoadLootFrameSkin()
+    GW.LoadDetailsProfile()
 
     GW.LoadImmersionAddonSkin()
 
