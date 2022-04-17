@@ -1836,7 +1836,7 @@ local function SocialQueueEvent(...)
         end
 
         if activityID or firstQueue.queueData.activityID then
-            fullName = C_LFGList.GetActivityInfo(activityID or firstQueue.queueData.activityID)
+            fullName = C_LFGList.GetActivityInfoTable(activityID or firstQueue.queueData.activityID)
         end
 
         if name then
