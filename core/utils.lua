@@ -6,6 +6,23 @@ local maxUpdatesPerCircle = 5
 local EMPTY = {}
 local NIL = {}
 
+local function copyTable(newTable, tableToCopy)
+    if type(newTable) ~= "table" then newTable = {} end
+
+    if type(tableToCopy) == "table" then
+        for option, value in pairs(tableToCopy) do
+            if type(value) == "table" then
+                value = copyTable(newTable[option], value)
+            end
+
+            newTable[option] = value
+        end
+    end
+
+    return newTable
+end
+GW.copyTable = copyTable
+
 local function CombatQueue_Initialize()
     C_Timer.NewTicker(0.1, function()
         if InCombatLockdown() then

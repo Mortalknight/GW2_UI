@@ -248,25 +248,8 @@ local function rename_OnClick(self)
     StaticPopup_Show("GW_CHANGE_PROFILE_NAME", nil, nil, self:GetParent())
 end
 
-local function copyTable(newTable, tableToCopy)
-    if type(newTable) ~= "table" then newTable = {} end
-
-    if type(tableToCopy) == "table" then
-        for option, value in pairs(tableToCopy) do
-            if type(value) == "table" then
-                value = copyTable(newTable[option], value)
-            end
-
-            newTable[option] = value
-        end
-    end
-
-    return newTable
-end
-GW.copyTable = copyTable
-
 local function copy_OnClick(self)
-    local newProfil = copyTable(nil, GW2UI_SETTINGS_PROFILES[self:GetParent().profileID])
+    local newProfil = GW.copyTable(nil, GW2UI_SETTINGS_PROFILES[self:GetParent().profileID])
     GW.addProfile(self:GetParent():GetParent():GetParent():GetParent(), L["Copy of"] .. " " .. GW2UI_SETTINGS_PROFILES[self:GetParent().profileID]["profilename"], newProfil, true)
 end
 
