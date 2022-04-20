@@ -1825,7 +1825,7 @@ local function SocialQueueEvent(...)
     local isLFGList = firstQueue and firstQueue.queueData and firstQueue.queueData.queueType == "lfglist"
 
     if isLFGList and firstQueue and firstQueue.eligible then
-        local activityID, name, leaderName, activitiyInfoTable, isLeader
+        local activityID, name, leaderName, activityInfo, isLeader
 
         if firstQueue.queueData.lfgListID then
             local searchResultInfo = C_LFGList.GetSearchResultInfo(firstQueue.queueData.lfgListID)
