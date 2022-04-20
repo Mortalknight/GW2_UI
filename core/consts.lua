@@ -228,12 +228,12 @@ GW.bossFrameExtraEnergyBar = {
             [182777] = true,
         },
     },
-    [465] = { -- Lord Overheat for testing
-        enable = true,
-        npcIds = {
-            [46264] = true,
-        },
-    }
+--    [465] = { -- Lord Overheat for testing
+--        enable = true,
+--        npcIds = {
+--            [46264] = true,
+--        },
+--    }
 }
 
 -- Taken from ElvUI: https://git.tukui.org/elvui/elvui/blob/master/ElvUI/Settings/Filters/UnitFrame.lua
