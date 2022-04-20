@@ -67,7 +67,10 @@ local function LoadHudPanel(sWindow)
 
             if settingstable[encounterId] == nil then
                 local newTable = GW.copyTable(nil, settingstable)
-                newTable[encounterId] = {npcId = GW.bossFrameExtraEnergyBar[encounterId].npcId, enable = true}
+                newTable[encounterId] = {
+                    enable = true,
+                    npcIds = GW.copyTable(nil, GW.bossFrameExtraEnergyBar[encounterId].npcIds),
+                }
 
                 GW.SetSetting("boss_frame_extra_energy_bar", newTable)
                 settingstable = GetSetting("boss_frame_extra_energy_bar")

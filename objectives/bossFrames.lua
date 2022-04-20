@@ -94,10 +94,13 @@ local function checkForExtraEnergyBar(self)
     local showExtraEnergybar = false
     local _, _, _, _, _, npc_id = strsplit("-", self.guid)
     for encounterId, _ in pairs(GW.bossFrameExtraEnergyBar) do
-        if GW.bossFrameExtraEnergyBar[encounterId].npcId == tonumber(npc_id) and GW.bossFrameExtraEnergyBar[encounterId].enable == true then
-            showExtraEnergybar = true
-            break
+        for npcId, _ in pairs(GW.bossFrameExtraEnergyBar[encounterId].npcIds) do
+            if npcId == tonumber(npc_id) and GW.bossFrameExtraEnergyBar[encounterId].enable == true then
+                showExtraEnergybar = true
+                break
+            end
         end
+        if showExtraEnergybar then break end
     end
 
     if showExtraEnergybar then
