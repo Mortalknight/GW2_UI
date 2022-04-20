@@ -1825,7 +1825,7 @@ local function SocialQueueEvent(...)
     local isLFGList = firstQueue and firstQueue.queueData and firstQueue.queueData.queueType == "lfglist"
 
     if isLFGList and firstQueue and firstQueue.eligible then
-        local activityID, name, leaderName, fullName, isLeader
+        local activityID, name, leaderName, fullName, isLeader = "", "", "", "", false
 
         if firstQueue.queueData.lfgListID then
             local searchResultInfo = C_LFGList.GetSearchResultInfo(firstQueue.queueData.lfgListID)
@@ -1839,7 +1839,7 @@ local function SocialQueueEvent(...)
             fullName = C_LFGList.GetActivityInfoTable(activityID or firstQueue.queueData.activityID)
         end
 
-        if name then
+        if name and type(name) == "string" then
             SocialQueueMessage(guid, format("%s %s: |cffFFFF00[%s: %s]|r", coloredName, (isLeader and L["is looking for members"]) or L["joined a group"], fullName or UNKNOWN, name))
         else
             SocialQueueMessage(guid, format("%s %s: |cffFFFF00[%s]|r", coloredName, (isLeader and L["is looking for members"]) or L["joined a group"], fullName or UNKNOWN))
