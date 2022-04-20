@@ -139,19 +139,6 @@ local function updateCurrentScenario(self, event, ...)
 
     compassData.COLOR = TRACKER_TYPE_COLOR.SCENARIO
 
-
-    local delayUpdateTime = GetTime() + 0.8
-    GwQuesttrackerContainerScenario:SetScript(
-        "OnUpdate",
-        function()
-            if GetTime() < delayUpdateTime then
-                return
-            end
-            updateCurrentScenario(self, event)
-            GwQuesttrackerContainerScenario:SetScript("OnUpdate", nil)
-        end
-    )
-
     GwScenarioBlock.height = 1
 
     if GwQuestTrackerTimer:IsShown() then
@@ -550,6 +537,14 @@ local function LoadScenarioFrame()
 
     GwQuesttrackerContainerScenario.jailersTowerType = nil
 
+    -- JailersTower hook
+    -- do it only here so we are sure we do not hook more than one time
+    hooksecurefunc("ScenarioBlocksFrame_ExtraBlocksSetShown", function(shown)
+        if shown and IsInJailersTower() then
+            updateCurrentScenario(GwQuesttrackerContainerScenario)
+        end
+    end)
+
     local timerBlock = CreateFrame("Button", "GwQuestTrackerTimer", GwQuesttrackerContainerScenario, "GwQuesttrackerScenarioBlock")
     timerBlock.height = timerBlock:GetHeight()
     timerBlock.timerlabel = timerBlock.timer.timerlabel
@@ -660,7 +655,9 @@ local function LoadScenarioFrame()
     setBlockColor(newBlock, "SCENARIO")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    updateCurrentScenario(GwQuesttrackerContainerScenario)
+
+    C_Timer.After(0.8, function() updateCurrentScenario(GwQuesttrackerContainerScenario) end)
+
     scenarioTimerOnEvent()
 end
 GW.LoadScenarioFrame = LoadScenarioFrame
