@@ -400,6 +400,14 @@ local function LoadWorldMapSkin()
         button:SetHighlightTexture("Interface/Buttons/ButtonHilight-Square", "ADD")
     end
 
+    -- player pin
+    for pin in WorldMapFrame:EnumeratePinsByTemplate("GroupMembersPinTemplate") do
+        pin:SetPinTexture("player", "Interface/AddOns/GW2_UI/textures/icons/player_arrow")
+        pin.dataProvider:GetUnitPinSizesTable().player = 34
+        pin:SynchronizePinSizes()
+        break
+    end
+
 
     -- Mover
     WorldMapFrame.mover = CreateFrame("Frame", nil, WorldMapFrame)

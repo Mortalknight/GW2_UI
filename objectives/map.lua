@@ -496,6 +496,8 @@ local function LoadMinimap()
         MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
     end
 
+    Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow")
+
     C_Timer.After(0.1, hoverMiniMapOut)
 end
 GW.LoadMinimap = LoadMinimap

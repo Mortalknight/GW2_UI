@@ -6,6 +6,7 @@ NEW
     - Added a toggle for target, target target, focus and focus target castbar
     - Added option to show a separate energy bar for some bosses like Anduin at the objectives boss frames
     - Added Details skin (by SHOODOX)
+    - Added GW2 style worldmap and minimap player pin
 ]=])
 
 v("5.27.1", [=[
