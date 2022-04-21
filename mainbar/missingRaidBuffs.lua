@@ -29,7 +29,7 @@ local ReminderBuffs = {
         224001,			-- Defiled Augumentation (15 primary stat)
         270058,			-- Battle Scarred Augmentation (60 primary stat)
         347901,			-- Veiled Augmentation (18 primary stat)
-        190384,         -- Eternal Augment Rune
+        367405,         -- Eternal Augment Rune
     },
     Food = {
         104280,	-- Well Fed
