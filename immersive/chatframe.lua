@@ -1592,6 +1592,11 @@ local function BuildCopyChatFrame()
     frame.editBox:EnableMouse(true)
     frame.editBox:SetAutoFocus(false)
     frame.editBox:SetFontObject(ChatFontNormal)
+    if GetSetting("CHAT_USE_GW2_STYLE") then
+        local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
+        local _, fonzSize = frame.editBox:GetFont()
+        frame.editBox:SetFont(chatFont, fonzSize or 12)
+    end
     frame.editBox:SetWidth(frame.scrollArea:GetWidth())
     frame.editBox:SetHeight(200)
     frame.editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
