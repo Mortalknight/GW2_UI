@@ -484,3 +484,5 @@ L["Player de/buff animation"] = "Spiel Stärkungs- und Schwächungszauber Animat
 L["Shows an animation for new de/buffs"] = "Zeige eine Animation bei neuen Stärkungs- oder Schwächungszauber"
 L["Boss frames: Separate Energy Bar"] = "Schlachtzugbosseinheiten: Separate Energiebar"
 L["If enabled, enabled bosses’ energy bars will be shown separately from their health bar."] = "Wir für die aktiven Bosse eine sepearte Energybar im Questtracker anzeigen."
+L["GW2 chat message style"] = "GW2 Chat Nachrichten Style"
+L["Changes the chat font, timestamp color and name display"] = "Ändert die Schriftart, die Farbe des zeitstempel und das Erscheinungsbild der Namen"

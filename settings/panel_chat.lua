@@ -19,6 +19,7 @@ local function LoadChatPanel(sWindow)
 
     createCat(CHAT, nil, p, 3, nil, {p}, "Interface/AddOns/GW2_UI/textures/chat/bubble_down")
 
+    addOption(p.scroll.scrollchild, L["GW2 chat message style"], L["Changes the chat font, timestamp color and name display"], "CHAT_USE_GW2_STYLE", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Fade Chat"], L["Allow the chat to fade when not in use."], "CHATFRAME_FADE", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Hide Editbox"], L["Hide the chat editbox when not in focus."], "CHATFRAME_EDITBOX_HIDE", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["URL Links"], L["Attempt to create URL links inside the chat."], "CHAT_FIND_URL", nil, nil, {["CHATFRAME_ENABLED"] = true})

@@ -710,21 +710,34 @@ local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
     return ChatFrame_AddChannel(chatFrame, C_ChatInfo.GetChannelShortcutForChannelID(channelID)) ~= nil;
 end
 
-local function AddTimestamp(msg)
-   if CHAT_TIMESTAMP_FORMAT then
-        local timeStamp = BetterDate(CHAT_TIMESTAMP_FORMAT, time())
+local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID, alwaysAddTimestamp)
+    local useGw2Style = GetSetting("CHAT_USE_GW2_STYLE")
 
+    if GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL") or alwaysAddTimestamp then
+        local timeStamp = BetterDate(CHAT_TIMESTAMP_FORMAT, time())
         timeStamp = gsub(timeStamp, " ", "")
         timeStamp = gsub(timeStamp, "AM", " AM")
         timeStamp = gsub(timeStamp, "PM", " PM")
-        msg = format("[%s] %s", timeStamp, msg)
+
+        if useGw2Style then
+            msg = format("|c%s[%s]|r %s", "FF888888", timeStamp, msg)
+        else
+            msg = format("[%s] %s", timeStamp, msg)
+        end
     end
 
-    return msg
-end
+    -- color channel in light grey
+    if useGw2Style then
+        -- color channel in light grey
+        msg = msg:gsub(" |Hchannel:(.-)|h%[(.-)%]|h", function(channelLink, channelTag)
+            return string.format("|Hchannel:%s|h|c%s[%s]|r|h", channelLink, "FFD0D0D0", channelTag)
+        end)
 
-local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID)
-    msg = AddTimestamp(msg)
+        -- remove square brackets from message name in chat
+        msg = msg:gsub("|h%[(|c(.-)|r)%]|h: ", function(coloredPlayer)
+            return string.format("|h%s|h: ", coloredPlayer)
+        end)
+    end
 
     self.OldAddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID)
 end
@@ -1197,14 +1210,10 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                 body = gsub(body, "^%[" .. RAID_WARNING .. "%]", "[" .. L["RW"] .. "]")
             end
 
-            if not GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL") then
-                body = AddTimestamp(body)
-            end
-
             local accessID = ChatHistory_GetAccessID(chatGroup, chatTarget)
             local typeID = ChatHistory_GetAccessID(infoType, chatTarget, arg12 or arg13)
 
-            frame:AddMessage(body, info.r, info.g, info.b, info.id, accessID, typeID)
+            frame:AddMessage(body, info.r, info.g, info.b, info.id, accessID, typeID, not GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL"))
         end
 
         if chatType == "WHISPER" or chatType == "BN_WHISPER" then
@@ -1258,13 +1267,13 @@ local function styleChatWindow(frame)
     local id = frame:GetID()
     local _, fontSize, _, _, _, _, _, _, isDocked = GetChatWindowInfo(id)
 
-    local tab = _G[name.."Tab"]
-    local editbox = _G[name.."EditBox"]
+    local tab = _G[name .. "Tab"]
+    local editbox = _G[name .. "EditBox"]
     local scroll = frame.ScrollBar
     local scrollToBottom = frame.ScrollToBottomButton
     local background = _G[name .. "Background"]
 
-    if not frame.hasContainer and (isDocked == 1 or isDocked == nil) then
+    if not frame.hasContainer and (isDocked == 1 or (isDocked == nil and frame:IsShown())) then
         local fmGCC = CreateFrame("Frame", nil, UIParent, "GwChatContainer")
         fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
         fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
@@ -1276,6 +1285,15 @@ local function styleChatWindow(frame)
         if not frame.isDocked then fmGCC.EditBox:Hide() end
         frame.Container = fmGCC
         frame.hasContainer = true
+    end
+
+    if id == 3 then
+        SetChatWindowShown(id, GetCVarBool("speechToText"))
+        if frame.hasContainer then
+            frame.Container:SetShown(GetCVarBool("speechToText"))
+        end
+        FloatingChatFrame_Update(id)
+        FCF_DockUpdate()
     end
 
     for _, texName in pairs(tabTexs) do
@@ -1356,9 +1374,9 @@ local function styleChatWindow(frame)
     _G[name .. "ButtonFrame"]:Hide()
 
     local a, b, c = select(6, editbox:GetRegions())
-    a:SetTexture()
-    b:SetTexture()
-    c:SetTexture()
+    a:Kill()
+    b:Kill()
+    c:Kill()
     _G[format(editbox:GetName() .. "Left", id)]:Hide()
     _G[format(editbox:GetName() .. "Mid", id)]:Hide()
     _G[format(editbox:GetName() .. "Right", id)]:Hide()
@@ -1417,7 +1435,13 @@ local function styleChatWindow(frame)
         end
     end)
 
-    if GetSetting("FONTS_ENABLED") and fontSize then
+    if GetSetting("CHAT_USE_GW2_STYLE") then
+        local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
+        local _, fontHeight, fontFlags = frame:GetFont()
+        frame:SetFont(chatFont, fontHeight or 12, fontFlags)
+        editbox:SetFont(chatFont, fontHeight or 12, fontFlags)
+        _G[editbox:GetName() .. "Header"]:SetFont(chatFont, fontHeight or 12, fontFlags)
+    elseif GetSetting("FONTS_ENABLED") and fontSize then
         if fontSize > 0 then
             frame:SetFont(STANDARD_TEXT_FONT, fontSize)
         elseif fontSize == 0 then
@@ -1895,8 +1919,10 @@ local function LoadChat()
         QuickJoinToastButton.SetPoint = GW.NoOp
     end
 
-    for i = 1, FCF_GetNumActiveChatFrames() do
-        local frame = _G["ChatFrame" .. i]
+    --for i = 1, FCF_GetNumActiveChatFrames() do
+    for _, frameName in ipairs(CHAT_FRAMES) do
+        --local frame = _G["ChatFrame" .. i]
+        local frame = _G[frameName]
         -- possible fix for chatframe floating max error
         frame.oldAlpha = frame.oldAlpha and frame.oldAlpha or DEFAULT_CHATFRAME_ALPHA
         styleChatWindow(frame)
@@ -1907,12 +1933,10 @@ local function LoadChat()
 
         local allowHooks = not ignoreChats[frame:GetID()]
         if allowHooks and not frame.OldAddMessage then
-            --Don"t add timestamps to combat log, they don"t work.
-            --This usually taints, but LibChatAnims should make sure it doesn"t.
-            if GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL") then
-                frame.OldAddMessage = frame.AddMessage
-                frame.AddMessage = AddMessage
-            end
+            --Don't add timestamps to combat log, they don"t work.
+            --This usually taints, but LibChatAnims should make sure it doesn't
+            frame.OldAddMessage = frame.AddMessage
+            frame.AddMessage = AddMessage
         end
 
         if not frame.scriptsSet then
@@ -1932,12 +1956,29 @@ local function LoadChat()
     end)
 
     hooksecurefunc("FCF_DockUpdate", function()
-        for i = 1, FCF_GetNumActiveChatFrames() do
-            local frame = _G["ChatFrame" .. i]
+        for _, frameName in ipairs(CHAT_FRAMES) do
+            local frame = _G[frameName]
+            local _, _, _, _, _, _, _, _, isDocked = GetChatWindowInfo(frame:GetID())
+            local editbox = _G[frameName .. "EditBox"]
             styleChatWindow(frame)
             FCFTab_UpdateAlpha(frame)
             frame:SetTimeVisible(100)
             frame:SetFading(shouldFading)
+            if not frame.hasContainer and (isDocked == 1 or (isDocked == nil and frame:IsShown())) then
+                local fmGCC = CreateFrame("FRAME", nil, UIParent, "GwChatContainer")
+                fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
+                fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
+                if not frame.isDocked then
+                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
+                else
+                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, 0)
+                end
+                if not frame.isDocked then fmGCC.EditBox:Hide() end
+                frame.Container = fmGCC
+                frame.hasContainer = true
+            elseif frame.hasContainer then
+                frame.Container:SetShown(frame:IsShown())
+            end
         end
     end)
 
@@ -1976,7 +2017,7 @@ local function LoadChat()
         FCFTab_UpdateAlpha(frame)
         frame:SetTimeVisible(100)
         frame:SetFading(shouldFading)
-        if not frame.hasContainer and (isDocked == 1 or isDocked == nil) then
+        if not frame.hasContainer and (isDocked == 1 or (isDocked == nil and frame:IsShown())) then
             local fmGCC = CreateFrame("FRAME", nil, UIParent, "GwChatContainer")
             fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
             fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
@@ -1992,8 +2033,9 @@ local function LoadChat()
             frame.Container:Show()
         end
         --Set Button and container position after drag for every container
-        for i = 1, FCF_GetNumActiveChatFrames() do
-            if _G["ChatFrame" .. i].hasContainer then setButtonPosition(_G["ChatFrame" .. i]) end
+        for _, frameName in ipairs(CHAT_FRAMES) do
+            local frameForPosition = _G[frameName]
+            if frameForPosition:IsShown() and frameForPosition.hasContainer then setButtonPosition(frameForPosition) end
         end
     end)
 
@@ -2024,9 +2066,10 @@ local function LoadChat()
         end
     end
 
-    for i = 1, FCF_GetNumActiveChatFrames() do
-        if _G["ChatFrame" .. i] then
-            FCF_FadeOutChatFrame(_G["ChatFrame" .. i])
+    for _, frameName in ipairs(CHAT_FRAMES) do
+        local frame = _G[frameName]
+        if frame and frame:IsShown() then
+            FCF_FadeOutChatFrame(frame)
         end
     end
     FCF_FadeOutChatFrame(ChatFrame1)
@@ -2058,10 +2101,23 @@ local function LoadChat()
     BuildCopyChatFrame()
     BuildEmoticonTableFrame()
 
+    -- prevent the vice tab from showing if disabled
+    hooksecurefunc("VoiceTranscriptionFrame_UpdateVisibility", function(self)
+        local showVoice = GetCVarBool("speechToText")
+            SetChatWindowShown(self:GetID(), showVoice)
+            ChatFrame3Tab:SetShown(showVoice)
+            FloatingChatFrame_Update(self:GetID())
+            FCF_DockUpdate()
+            if ChatFrame3.hasContainer then
+                ChatFrame3.Container:SetShown(showVoice)
+            end
+        end)
+
     -- events for functions
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("SOCIAL_QUEUE_UPDATE")
+    eventFrame:RegisterEvent("CVAR_UPDATE")
     eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "GROUP_ROSTER_UPDATE" or event == "PLAYER_ENTERING_WORLD" then
             if not GetSetting("CHAT_SHOW_LFG_ICONS") or not IsInGroup() then return end
@@ -2086,6 +2142,15 @@ local function LoadChat()
             end
         elseif event == "SOCIAL_QUEUE_UPDATE" then
             SocialQueueEvent(...)
+        elseif event == "CVAR_UPDATE" and ... == "ENABLE_SPEECH_TO_TEXT_TRANSCRIPTION" then
+            local showVoice = GetCVarBool("speechToText")
+            SetChatWindowShown(3, showVoice)
+            ChatFrame3Tab:SetShown(showVoice)
+            if ChatFrame3.hasContainer then
+                ChatFrame3.Container:SetShown(showVoice)
+            end
+            FloatingChatFrame_Update(3)
+            FCF_DockUpdate()
         elseif tonumber(GetSetting("CHAT_SPAM_INTERVAL_TIMER")) ~= 0 and (event == "CHAT_MSG_SAY" or event == "CHAT_MSG_YELL" or event == "CHAT_MSG_CHANNEL") then
             local message, author = ...
             local when = time()

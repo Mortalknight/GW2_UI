@@ -73,7 +73,7 @@ local function button1_OnClick()
 
         wpanel.welcome.button1:SetScript("OnClick", function()
             FCF_ResetChatWindows()
-            FCF_OpenNewWindow(LOOT .. " / " .. TRADE)
+            FCF_OpenNewWindow(LOOT)
 
             for _, name in ipairs(CHAT_FRAMES) do
                 local frame = _G[name]
@@ -84,19 +84,19 @@ local function button1_OnClick()
                     frame:ClearAllPoints()
                     frame:SetPoint("BOTTOMLEFT", UIParent, 40, 60)
                     frame:SetUserPlaced(true)
-                end
-
-                FCF_SavePositionAndDimensions(frame)
-                FCF_StopDragging(frame)
-                FCF_SetChatWindowFontSize(nil, frame, 12)
-
-                if id == 2 then
+                elseif id == 2 then
                     FCF_SetWindowName(frame, GUILD_EVENT_LOG)
                 elseif id == 3 then
-                    --VoiceTranscriptionFrame_UpdateVisibility(frame)
+                    VoiceTranscriptionFrame_UpdateVisibility(frame)
                     VoiceTranscriptionFrame_UpdateVoiceTab(frame)
                     VoiceTranscriptionFrame_UpdateEditBox(frame)
+                elseif id == 4 then
+                    FCF_SetWindowName(frame, LOOT .. " / " .. TRADE)
                 end
+
+                FCF_SetChatWindowFontSize(nil, frame, 12)
+                FCF_SavePositionAndDimensions(frame)
+                FCF_StopDragging(frame)
             end
 
             -- keys taken from "ChatTypeGroup" but doesnt add: "OPENING", "TRADESKILLS", "PET_INFO", "COMBAT_MISC_INFO", "COMMUNITIES_CHANNEL", "PET_BATTLE_COMBAT_LOG", "PET_BATTLE_INFO", "TARGETICONS"

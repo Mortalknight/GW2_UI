@@ -1,7 +1,6 @@
 local _, GW = ...
 
 local function LoadDetailsSkin()
-    if not GW.GetSetting("DETAILS_SKIN_ENABLED") then return end
     local details = _G.Details
     if not details then return end
 
@@ -153,6 +152,10 @@ local function LoadDetailsSkin()
             }
         }
     })
+
+    if not GW.GetSetting("DETAILS_SKIN_ENABLED") then return end
+
+    details:GetInstance(1):ChangeSkin("GW2 UI Skin")
 
 end
 GW.LoadDetailsSkin = LoadDetailsSkin
