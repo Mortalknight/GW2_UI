@@ -212,7 +212,7 @@ local function setButtonPosition(frame)
             QuickJoinToastButton.ClearAllPoints = nil
             QuickJoinToastButton.SetPoint = nil
             QuickJoinToastButton:ClearAllPoints()
-            QuickJoinToastButton:SetPoint("LEFT", GeneralDockManager, "RIGHT", 30, -3)
+            QuickJoinToastButton:SetPoint("LEFT", GeneralDockManager, "RIGHT", 30, 4)
 
             QuickJoinToastButton.ClearAllPoints = GW.NoOp
             QuickJoinToastButton.SetPoint = GW.NoOp
@@ -234,7 +234,7 @@ local function setButtonPosition(frame)
             QuickJoinToastButton.ClearAllPoints = nil
             QuickJoinToastButton.SetPoint = nil
             QuickJoinToastButton:ClearAllPoints()
-            QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, -3)
+            QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
 
             QuickJoinToastButton.ClearAllPoints = GW.NoOp
             QuickJoinToastButton.SetPoint = GW.NoOp
@@ -1901,19 +1901,21 @@ local function LoadChat()
     local eventFrame = CreateFrame("Frame")
 
     if QuickJoinToastButton then
-        QuickJoinToastButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-        QuickJoinToastButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-        QuickJoinToastButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-        QuickJoinToastButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
+        QuickJoinToastButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
+        QuickJoinToastButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton")
+        QuickJoinToastButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
+        QuickJoinToastButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/SocialChatButton-Highlight")
         QuickJoinToastButton:SetSize(25, 25)
         QuickJoinToastButton:ClearAllPoints()
-        QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, -3)
+        QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
+        QuickJoinToastButton.QueueCount:Kill()
+        local _, fontHeight, fontFlags = QuickJoinToastButton.FriendCount:GetFont()
+        QuickJoinToastButton.FriendCount:SetFont(_, 12, fontFlags)
         QuickJoinToastButton.FriendsButton:StripTextures(true)
-        QuickJoinToastButton.QueueButton:StripTextures(true)
-        QuickJoinToastButton.FriendCount:SetTextColor(0, 0, 0)
+        QuickJoinToastButton.FriendCount:SetTextColor(1, 1, 1)
         QuickJoinToastButton.FriendCount:SetShadowOffset(1, 1)
-        QuickJoinToastButton.QueueCount:SetTextColor(0, 0, 0)
-        QuickJoinToastButton.QueueCount:SetShadowOffset(1, 1)
+        QuickJoinToastButton.FriendCount:SetPoint("TOP", QuickJoinToastButton, "BOTTOM", 0, 1)
+        
 
         if GetSetting("CHAT_SOCIAL_LINK") then
             QuickJoinToastButton.Toast:Kill()
