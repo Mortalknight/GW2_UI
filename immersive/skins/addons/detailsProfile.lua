@@ -120,7 +120,7 @@ local function LoadDetailsSkin()
                 ["start_after_icon"] = false,
                 ["font_size"] = 12,
                 ["font_face"] = "GW2_UI_Chat",
-                ["font_face_file"] = "Interface/AddOns/GW2_UI/fonts/trebuchet-ms.ttf",
+                ["font_face_file"] = "Interface/AddOns/GW2_UI/fonts/trebuchet_ms.ttf",
                 ["fixed_text_color"] = {
                     1, -- [1]
                     1, -- [2]
@@ -269,7 +269,7 @@ local function LoadDetailsSkin()
                 ["start_after_icon"] = false,
                 ["font_size"] = 12,
                 ["font_face"] = "GW2_UI_Chat",
-                ["font_face_file"] = "Interface/AddOns/GW2_UI/fonts/trebuchet-ms.ttf",
+                ["font_face_file"] = "Interface/AddOns/GW2_UI/fonts/trebuchet_ms.ttf",
                 ["fixed_text_color"] = {
                     1, -- [1]
                     1, -- [2]
