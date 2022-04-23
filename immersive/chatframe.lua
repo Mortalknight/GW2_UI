@@ -2152,11 +2152,15 @@ local function LoadChat()
             self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc")
             self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
             self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
+            ChatFrameToggleVoiceMuteButton:Show()
+            ChatFrameToggleVoiceDeafenButton:Show()
         else
             self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
             self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal")
             self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
             self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
+            ChatFrameToggleVoiceMuteButton:Hide()
+            ChatFrameToggleVoiceDeafenButton:Hide()
         end
     end)
     ChatFrameToggleVoiceMuteButton:SetHeight(20)
@@ -2195,7 +2199,6 @@ local function LoadChat()
             self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on_highlight")
         end
     end)
-
 
     -- events for functions
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
