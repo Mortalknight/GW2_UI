@@ -1914,7 +1914,7 @@ local function LoadChat()
         QuickJoinToastButton.FriendsButton:StripTextures(true)
         QuickJoinToastButton.FriendCount:SetTextColor(1, 1, 1)
         QuickJoinToastButton.FriendCount:SetShadowOffset(1, 1)
-        QuickJoinToastButton.FriendCount:SetPoint("TOP", QuickJoinToastButton, "BOTTOM", 0, 1)
+        QuickJoinToastButton.FriendCount:SetPoint("TOP", QuickJoinToastButton, "BOTTOM", 1, 1)
         
 
         if GetSetting("CHAT_SOCIAL_LINK") then
