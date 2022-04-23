@@ -730,7 +730,7 @@ local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, type
     -- color channel in light grey
     if useGw2Style then
         -- color channel in light grey
-        msg = msg:gsub(" |Hchannel:(.-)|h %[(.-)%]|h", function(channelLink, channelTag)
+        msg = msg:gsub(" |Hchannel:(.-)|h%[(.-)%]|h", function(channelLink, channelTag)
             return string.format("|Hchannel:%s|h|c%s[%s]|r|h", channelLink, "FFD0D0D0", channelTag)
         end)
 
