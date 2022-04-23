@@ -433,8 +433,8 @@
                 <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
             </CheckButton>
             <Button parentKey="soundButton">
-                <NormalTexture file="Interface/AddOns/GW2_UI/textures/chat/bubble_up"/>
-                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/chat/bubble_down"/>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on"/>
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on_highlight"/>
                 <Size x="12" y="12"/>
                 <Anchors>
                     <Anchor point="RIGHT" relativePoint="RIGHT" x="-18" y="0"/>
