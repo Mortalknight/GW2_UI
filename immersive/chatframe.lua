@@ -98,6 +98,7 @@ local hooks = {}
 local Smileys = {}
 local SmileysForMenu = {}
 local socialQueueCache = {}
+local ignoreChats = {[2] = "Log", [3] = "Voice"}
 
 local SoundTimer
 
@@ -729,7 +730,7 @@ local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, type
     -- color channel in light grey
     if useGw2Style then
         -- color channel in light grey
-        msg = msg:gsub(" |Hchannel:(.-)|h%[(.-)%]|h", function(channelLink, channelTag)
+        msg = msg:gsub(" |Hchannel:(.-)|h %[(.-)%]|h", function(channelLink, channelTag)
             return string.format("|Hchannel:%s|h|c%s[%s]|r|h", channelLink, "FFD0D0D0", channelTag)
         end)
 
@@ -1775,6 +1776,29 @@ local function SetupSmileys()
     AddSmiley("</3", "|TInterface/AddOns/GW2_UI/textures/emoji/BrokenHeart:16:16|t")
 end
 
+local function CollectLfgRolesForChatIcons()
+    if not GetSetting("CHAT_SHOW_LFG_ICONS") or not IsInGroup() then return end
+    wipe(lfgRoles)
+
+    local playerRole = UnitGroupRolesAssigned("player")
+    if playerRole then
+        lfgRoles[PLAYER_NAME] = rolePaths[playerRole]
+    end
+
+    local unit = (IsInRaid() and "raid" or "party")
+    for i = 1, GetNumGroupMembers() do
+        if UnitExists(unit .. i) and not UnitIsUnit(unit .. i, "player") then
+            local role = UnitGroupRolesAssigned(unit .. i)
+            local name, realm = UnitName(unit .. i)
+
+            if role and name then
+                name = (realm and realm ~= "" and name .. "-" .. realm) or name .. "-" .. PLAYER_REALM
+                lfgRoles[name] = rolePaths[role]
+            end
+        end
+    end
+end
+
 local function SocialQueueIsLeader(playerName, leaderName)
     if leaderName == playerName then
         return true
@@ -1895,7 +1919,6 @@ local function SocialQueueEvent(...)
     end
 end
 
-local ignoreChats = {[2] = "Log", [3] = "Voice"}
 local function LoadChat()
     local shouldFading = GetSetting("CHATFRAME_FADE")
     local eventFrame = CreateFrame("Frame")
@@ -1909,13 +1932,12 @@ local function LoadChat()
         QuickJoinToastButton:ClearAllPoints()
         QuickJoinToastButton:SetPoint("RIGHT", GeneralDockManager, "LEFT", -6, 4)
         QuickJoinToastButton.QueueCount:Kill()
-        local _, fontHeight, fontFlags = QuickJoinToastButton.FriendCount:GetFont()
+        local _, _, fontFlags = QuickJoinToastButton.FriendCount:GetFont()
         QuickJoinToastButton.FriendCount:SetFont(_, 12, fontFlags)
         QuickJoinToastButton.FriendsButton:StripTextures(true)
         QuickJoinToastButton.FriendCount:SetTextColor(1, 1, 1)
         QuickJoinToastButton.FriendCount:SetShadowOffset(1, 1)
         QuickJoinToastButton.FriendCount:SetPoint("TOP", QuickJoinToastButton, "BOTTOM", 1, 1)
-        
 
         if GetSetting("CHAT_SOCIAL_LINK") then
             QuickJoinToastButton.Toast:Kill()
@@ -1926,9 +1948,7 @@ local function LoadChat()
         QuickJoinToastButton.SetPoint = GW.NoOp
     end
 
-    --for i = 1, FCF_GetNumActiveChatFrames() do
     for _, frameName in ipairs(CHAT_FRAMES) do
-        --local frame = _G["ChatFrame" .. i]
         local frame = _G[frameName]
         -- possible fix for chatframe floating max error
         frame.oldAlpha = frame.oldAlpha and frame.oldAlpha or DEFAULT_CHATFRAME_ALPHA
@@ -1940,7 +1960,7 @@ local function LoadChat()
 
         local allowHooks = not ignoreChats[frame:GetID()]
         if allowHooks and not frame.OldAddMessage then
-            --Don't add timestamps to combat log, they don"t work.
+            --Don't add timestamps to combat log, they don't work.
             --This usually taints, but LibChatAnims should make sure it doesn't
             frame.OldAddMessage = frame.AddMessage
             frame.AddMessage = AddMessage
@@ -2108,7 +2128,7 @@ local function LoadChat()
     BuildCopyChatFrame()
     BuildEmoticonTableFrame()
 
-    -- prevent the vice tab from showing if disabled
+    -- prevent the voice tab from showing if disabled
     hooksecurefunc("VoiceTranscriptionFrame_UpdateVisibility", function(self)
         local showVoice = GetCVarBool("speechToText")
         SetChatWindowShown(self:GetID(), showVoice)
@@ -2132,11 +2152,15 @@ local function LoadChat()
             self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc")
             self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
             self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
+            ChatFrameToggleVoiceMuteButton:Show()
+            ChatFrameToggleVoiceDeafenButton:Show()
         else
             self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
             self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal")
             self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
             self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
+            ChatFrameToggleVoiceMuteButton:Hide()
+            ChatFrameToggleVoiceDeafenButton:Hide()
         end
     end)
     ChatFrameToggleVoiceMuteButton:SetHeight(20)
@@ -2176,7 +2200,6 @@ local function LoadChat()
         end
     end)
 
-
     -- events for functions
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
@@ -2184,30 +2207,13 @@ local function LoadChat()
     eventFrame:RegisterEvent("CVAR_UPDATE")
     eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "PLAYER_ENTERING_WORLD" then
+            CollectLfgRolesForChatIcons()
+
             ChatFrameChannelButton:UpdateVisibleState()
             ChatFrameToggleVoiceMuteButton:UpdateVisibleState()
             ChatFrameToggleVoiceDeafenButton:UpdateVisibleState()
-        elseif event == "GROUP_ROSTER_UPDATE" or event == "PLAYER_ENTERING_WORLD" then
-            if not GetSetting("CHAT_SHOW_LFG_ICONS") or not IsInGroup() then return end
-            wipe(lfgRoles)
-
-            local playerRole = UnitGroupRolesAssigned("player")
-            if playerRole then
-                lfgRoles[PLAYER_NAME] = rolePaths[playerRole]
-            end
-
-            local unit = (IsInRaid() and "raid" or "party")
-            for i = 1, GetNumGroupMembers() do
-                if UnitExists(unit .. i) and not UnitIsUnit(unit .. i, "player") then
-                    local role = UnitGroupRolesAssigned(unit .. i)
-                    local name, realm = UnitName(unit .. i)
-
-                    if role and name then
-                        name = (realm and realm ~= "" and name .. "-" .. realm) or name .. "-" .. PLAYER_REALM
-                        lfgRoles[name] = rolePaths[role]
-                    end
-                end
-            end
+        elseif event == "GROUP_ROSTER_UPDATE" then
+            CollectLfgRolesForChatIcons()
         elseif event == "SOCIAL_QUEUE_UPDATE" then
             SocialQueueEvent(...)
         elseif event == "CVAR_UPDATE" and ... == "ENABLE_SPEECH_TO_TEXT_TRANSCRIPTION" then
