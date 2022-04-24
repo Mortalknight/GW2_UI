@@ -168,7 +168,7 @@ local function LoadHudPanel(sWindow)
         nil,
         "Minimap"
     )
-    addOptionDropdown(
+    addOptionSlider(
         p.scroll.scrollchild,
         L["Minimap Scale"],
         L["Change the Minimap size."],
@@ -178,16 +178,12 @@ local function LoadHudPanel(sWindow)
             Minimap:SetSize(size, size)
             Minimap.gwMover:SetSize(size, size)
         end,
-        {250, 200, 170},
-        {
-            LARGE,
-            TIME_LEFT_MEDIUM,
-            DEFAULT
-        },
+        160,
+        420,
         nil,
+        0,
         {["MINIMAP_ENABLED"] = true},
-        nil,
-        "Minimap"
+        1
     )
     addOptionDropdown(
         p.scroll.scrollchild,
