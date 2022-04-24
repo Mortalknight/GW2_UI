@@ -301,11 +301,5 @@ local function LoadDetailsSkin()
             }
         }
     })
-
-    if not GW.GetSetting("DETAILS_SKIN_ENABLED") then return end
-
-    -- commented out because it would overwrite the "GW2 UI Colored" skin if chosen
-    -- details:GetInstance(1):ChangeSkin("GW2 UI Default")
-
 end
 GW.LoadDetailsSkin = LoadDetailsSkin
