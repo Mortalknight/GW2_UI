@@ -677,7 +677,7 @@ local function CollectCategories()
                 local found = false
                 cCur = cCur + standingId
                 if friendID then
-                    cMax = cMax + 7
+                    cMax = cMax + select(2, GetFriendshipReputationRanks(friendID))
                     if not factionTbl then factionTbl = {} end
                     for _, v in pairs(factionTbl) do
                         if v.isFriend == true and v.standingText == friendTextLevel then
@@ -738,7 +738,7 @@ updateReputations = function()
             cat.item.name:SetText(catagories[idx].name)
             if catagories[idx].standingCur and catagories[idx].standingCur > 0 and catagories[idx].standingMax and catagories[idx].standingMax > 0 then
                 cat.item.StatusBar:SetValue(catagories[idx].standingCur / catagories[idx].standingMax)
-                cat.item.StatusBar.percentage:SetText(math.floor(RoundDec(cat.item.StatusBar:GetValue() * 100), 0) .. "%")
+                cat.item.StatusBar.percentage:SetText(math.floor(RoundDec(cat.item.StatusBar:GetValue() * 100)) .. "%")
                 if catagories[idx].standingCur / catagories[idx].standingMax >= 1 and catagories[idx].standingMax ~= 0 then
                     cat.item.StatusBar:SetStatusBarColor(171 / 255, 37 / 255, 240 / 255)
                     cat.item.StatusBar.Spark:Hide()
