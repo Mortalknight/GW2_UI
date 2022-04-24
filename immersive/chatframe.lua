@@ -2005,6 +2005,8 @@ local function LoadChat()
                 frame.hasContainer = true
             elseif frame.hasContainer then
                 frame.Container:SetShown(frame:IsShown())
+            elseif frame.isDocked and frame:IsShown() and frame:GetID() > 1 then
+                ChatFrame1.Container:Show()
             end
         end
     end)
