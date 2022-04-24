@@ -42,31 +42,6 @@ local function SetMinimapHover()
 end
 GW.SetMinimapHover = SetMinimapHover
 
-local function lfgAnim(_, elapse)
-    if Minimap:IsShown() then
-        QueueStatusMinimapButtonIcon:SetAlpha(1)
-    else
-        QueueStatusMinimapButtonIcon:SetAlpha(0)
-        return
-    end
-    QueueStatusMinimapButton.animationCircle:Show()
-
-    QueueStatusMinimapButtonIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-
-    local rot = QueueStatusMinimapButton.animationCircle.background:GetRotation() + (1.5 * elapse)
-
-    QueueStatusMinimapButton.animationCircle.background:SetRotation(rot)
-    QueueStatusMinimapButtonIconTexture:SetTexCoord(unpack(GW.TexCoords))
-end
-GW.AddForProfiling("map", "lfgAnim", lfgAnim)
-
-local function lfgAnimStop()
-    QueueStatusMinimapButtonIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-    QueueStatusMinimapButton.animationCircle:Hide()
-    QueueStatusMinimapButtonIconTexture:SetTexCoord(unpack(GW.TexCoords))
-end
-GW.AddForProfiling("map", "lfgAnimStop", lfgAnimStop)
-
 local function hideMiniMapIcons()
     for _, v in pairs(MAP_FRAMES_HIDE) do
         if v then
@@ -211,19 +186,19 @@ local function setMinimapButtons(side)
     GwAddonToggle.container:ClearAllPoints()
 
     if side == "left" then
-        QueueStatusMinimapButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -8.5, -69)
-        GameTimeFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
-        GarrisonLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 1, -7)
-        GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -16, -47)
-        GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -10, -127)
+        GameTimeFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -2)
+        GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -12, -47)
+        QueueStatusMinimapButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -9.5, -66)
+        GwAddonToggle:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -9, 46)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
+        GarrisonLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 0, -3)
     else
-        QueueStatusMinimapButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -69)
-        GameTimeFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 7, 0)
-        GarrisonLandingPageMinimapButton:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", -1, -7)
-        GwMailButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 14, -47)
-        GwAddonToggle:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -127)
+        GameTimeFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -2)
+        GwMailButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 11, -47)
+        QueueStatusMinimapButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 9.5, -66)
+        GwAddonToggle:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 9, 46)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
+        GarrisonLandingPageMinimapButton:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 2, -3)
     end
 end
 GW.setMinimapButtons = setMinimapButtons
@@ -249,14 +224,28 @@ local function LoadMinimap()
 
     SetMinimapHover()
 
-    hooksecurefunc("EyeTemplate_OnUpdate", lfgAnim)
-    hooksecurefunc("EyeTemplate_StopAnimating", lfgAnimStop)
-
-    QueueStatusMinimapButtonIconTexture:SetSize(20, 20)
-    QueueStatusMinimapButtonIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-    QueueStatusMinimapButtonIcon:SetSize(20, 20)
-    QueueStatusMinimapButton.animationCircle =
-        CreateFrame("Frame", "GwLFDAnimation", QueueStatusMinimapButton, "GwLFDAnimation")
+    QueueStatusMinimapButton:SetSize(26, 26)
+    QueueStatusMinimapButtonIcon:Kill()
+    QueueStatusMinimapButtonIconTexture:SetTexture(nil)    
+    QueueStatusMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton")    
+    QueueStatusMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
+    QueueStatusMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")    
+    local GwLfgQueueIcon = CreateFrame("Frame", "GwLfgQueueIcon", QueueStatusMinimapButton, "GwLfgQueueIcon")
+    _G.GwLfgQueueIcon = GwLfgQueueIcon
+    GwLfgQueueIcon:SetPoint("TOPLEFT", QueueStatusMinimapButton, "TOPLEFT", 0, 0)
+    hooksecurefunc("EyeTemplate_StartAnimating", function() 
+        if not Minimap:IsShown() then return end
+        QueueStatusMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1")    
+        QueueStatusMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1-Highlight")   
+        QueueStatusMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1-Highlight")   
+        GwLfgQueueIcon.animation:Play()
+    end)
+    hooksecurefunc("EyeTemplate_StopAnimating", function()  
+        GwLfgQueueIcon.animation:Stop()
+        QueueStatusMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton")    
+        QueueStatusMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")   
+        QueueStatusMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")  
+    end)
 
     Minimap:SetMaskTexture("Interface/ChatFrame/ChatFrameBackground")
     Minimap:SetParent(UIParent)
@@ -364,8 +353,9 @@ local function LoadMinimap()
     GarrisonLandingPageMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
     GarrisonLandingPageMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
     GarrisonLandingPageMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
+    GarrisonLandingPageMinimapButton:GetHighlightTexture():SetBlendMode("BLEND")
     GarrisonLandingPageMinimapButton.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
-    GarrisonLandingPageMinimapButton:SetSize(50, 50)
+    GarrisonLandingPageMinimapButton:SetSize(43, 43)
     -- override blizzard function to prevent texture changes
     GarrisonLandingPageMinimapButton_UpdateIcon = function(self)
         local garrisonType = C_Garrison.GetLandingPageGarrisonType()

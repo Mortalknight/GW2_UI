@@ -20,21 +20,31 @@
     </Button>
 
     <Button name="GwAddonToggle" virtual="true">
-        <Size x="40" y="40"/>
-        <Layers>
-            <Layer level="OVERLAY">
-                <Texture name="$parentTexture" parentKey="Texture" file="Interface/AddOns/GW2_UI/textures/icons/icon-module">
-                    <Size x="35" y="35"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER"></Anchor>
-                    </Anchors>
-                    <TexCoords left="0" right="0.25" top="0" bottom="0.25" />
-                </Texture>
-            </Layer>
-        </Layers>
+        <Size x="35" y="35"/>
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/icon-module">
+            <Size x="30" y="30"></Size>
+            <Anchors>
+                <Anchor point="CENTER"></Anchor>
+            </Anchors>
+            <TexCoords left="0" right="0.25" top="0" bottom="0.25" />
+        </NormalTexture>
+        <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/icon-module" alphaMode="ADD" alpha="0.5">
+            <Size x="30" y="30"></Size>
+            <Anchors>
+                <Anchor point="CENTER"></Anchor>
+            </Anchors>
+            <TexCoords left="0" right="0.25" top="0" bottom="0.25" />
+        </HighlightTexture>
+        <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/icon-module" alpha="0.5">
+            <Size x="30" y="30"></Size>
+            <Anchors>
+                <Anchor point="CENTER"></Anchor>
+            </Anchors>
+            <TexCoords left="0" right="0.25" top="0" bottom="0.25" />
+        </PushedTexture>
         <Frames>
             <Frame parentKey="container" hidden="true">
-                <Size x="40" y="35"/>
+                <Size x="35" y="30"/>
                 <Anchors>
                     <Anchor point="RIGHT" relativePoint="LEFT"></Anchor>
                 </Anchors>
@@ -43,10 +53,64 @@
     </Button>
 
     <Button name="GwMailButton" frameStrata="LOW" toplevel="true" virtual="true" hidden="true">
-        <Size x="30" y="30"/>
+        <Size x="31" y="31"/>
         <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/mail"></NormalTexture>
-        <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/mail"></PushedTexture >
+        <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/mail" alphaMode="ADD" alpha="0.5"></HighlightTexture>
     </Button>
+
+    <Frame name="GwLfgQueueIcon" virtual="true">
+        <Size x="26" y="26"></Size>
+        <Animations>
+            <AnimationGroup parentKey="animation" looping="REPEAT">
+                <Alpha target="lfg2" parentKey="frame1" fromAlpha="0" toAlpha="1" duration="0.8" smoothing="IN" order="1"/>
+                <Alpha target="lfg3" parentKey="frame2" fromAlpha="0" toAlpha="1" duration="0.8" smoothing="IN" order="2"/>
+                <Alpha target="lfg4" parentKey="frame3a" fromAlpha="0" toAlpha="1" duration="0.8" smoothing="IN" order="3"/>
+                <Alpha target="lfg5" parentKey="frame3b" fromAlpha="0" toAlpha="1" duration="0.8" smoothing="IN" order="3"/>
+                <Alpha target="lfg2" parentKey="frame4a" fromAlpha="1" toAlpha="0" duration="1" smoothing="OUT" startDelay="0.5" order="4"/>
+                <Alpha target="lfg3" parentKey="frame4b" fromAlpha="1" toAlpha="0" duration="1" smoothing="OUT" startDelay="0.5" order="4"/>
+                <Alpha target="lfg4" parentKey="frame4c" fromAlpha="1" toAlpha="0" duration="1" smoothing="OUT" startDelay="0.5" order="4"/>
+                <Alpha target="lfg5" parentKey="frame4d" fromAlpha="1" toAlpha="0" duration="1" smoothing="OUT" startDelay="0.5" order="4"/>
+            </AnimationGroup>
+        </Animations>
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture name="lfg2" file="Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-2" alpha="0">
+                    <TexCoords left="0" right="1" top="0" bottom="1" />
+                    <Size x="26" y="26"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture name="lfg3" file="Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-3" alpha="0">
+                    <TexCoords left="0" right="1" top="0" bottom="1" />
+                    <Size x="26" y="26"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture name="lfg4" file="Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-4" alpha="0">
+                    <TexCoords left="0" right="1" top="0" bottom="1" />
+                    <Size x="26" y="26"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture name="lfg5" file="Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-5" alpha="0">
+                    <TexCoords left="0" right="1" top="0" bottom="1" />
+                    <Size x="26" y="26"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
 
     <Button name="GwStanceBarButton" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate" virtual="true">
         <Size x="30" y="30"></Size>
