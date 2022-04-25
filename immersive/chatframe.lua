@@ -125,6 +125,11 @@ local gw_fade_frames = {
     ChatFrameToggleVoiceMuteButton
 }
 
+local gw2StuffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label:14:24|t"
+local gw2StuffList = {
+    ["Sâphira-Aegwynn"] = gw2StuffIcon,
+}
+
 local function colorizeLine(text, r, g, b)
     local hexCode = GW.RGBToHex(r, g, b)
     local hexReplacement = format("|r%s", hexCode)
@@ -1151,11 +1156,17 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
 
             -- Player Flags
             local pflag = GetPFlag(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
+            local gw2StuffIcon = gw2StuffList[playerName]
 
             -- LFG Role Flags
             local lfgRole = lfgRoles[playerName]
             if lfgRole and (chatType == "PARTY_LEADER" or chatType == "PARTY" or chatType == "RAID" or chatType == "RAID_LEADER" or chatType == "INSTANCE_CHAT" or chatType == "INSTANCE_CHAT_LEADER") then
                 pflag = pflag .. lfgRole
+            end
+
+            -- GW2 Stuff Icon Chat Icon
+            if gw2StuffIcon then
+                pflag = pflag .. gw2StuffIcon
             end
 
             if usingDifferentLanguage then
