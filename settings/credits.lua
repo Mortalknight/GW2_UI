@@ -87,7 +87,7 @@ local function CreateCreditsFrame()
 
     --Main frame
     local CreditsFrame = CreateFrame("Frame", "GWCreditsFrame", UIParent)
-    CreditsFrame:SetSize(320, 815)
+    CreditsFrame:SetSize(320, 835)
     CreditsFrame:SetPoint("CENTER", UIParent, "CENTER")
     CreditsFrame:SetFrameStrata("HIGH")
     CreditsFrame:CreateBackdrop(BackdropFrame)
@@ -108,7 +108,7 @@ local function CreateCreditsFrame()
 
     --Sections
     CreditsFrame.Section1 = CreateSection(300, 55, CreditsFrame, "TOP", CreditsFrame, "TOP", -150)
-    CreditsFrame.Section2 = CreateSection(300, 95, CreditsFrame, "TOP", CreditsFrame.Section1, "BOTTOM", 0)
+    CreditsFrame.Section2 = CreateSection(300, 115, CreditsFrame, "TOP", CreditsFrame.Section1, "BOTTOM", 0)
     CreditsFrame.Section3 = CreateSection(300, 55, CreditsFrame, "TOP", CreditsFrame.Section2, "BOTTOM", 0)
     CreditsFrame.Section4 = CreateSection(300, 255, CreditsFrame, "TOP", CreditsFrame.Section3, "BOTTOM", 0)
     CreditsFrame.Section5 = CreateSection(300, 125, CreditsFrame, "TOP", CreditsFrame.Section4, "BOTTOM", 0)
@@ -124,7 +124,7 @@ local function CreateCreditsFrame()
 
     --Section content
     CreditsFrame.Section1.Content = CreateContentLines(1, CreditsFrame.Section1, CreditsFrame.Section1.Header)
-    CreditsFrame.Section2.Content = CreateContentLines(3, CreditsFrame.Section2, CreditsFrame.Section2.Header)
+    CreditsFrame.Section2.Content = CreateContentLines(4, CreditsFrame.Section2, CreditsFrame.Section2.Header)
     CreditsFrame.Section3.Content = CreateContentLines(1, CreditsFrame.Section3, CreditsFrame.Section3.Header)
     CreditsFrame.Section4.Content = CreateContentLines(11, CreditsFrame.Section4, CreditsFrame.Section4.Header)
     CreditsFrame.Section5.Content = CreateContentLines(5, CreditsFrame.Section5, CreditsFrame.Section5.Header)
@@ -140,6 +140,7 @@ local function CreateCreditsFrame()
     CreditsFrame.Section2.Content.Line1.Text:SetText("Glow")
     CreditsFrame.Section2.Content.Line2.Text:SetText("nezroy")
     CreditsFrame.Section2.Content.Line3.Text:SetText("Shrugal")
+    CreditsFrame.Section2.Content.Line4.Text:SetText("SHOODOX")
 
     --With Contributions by
     CreditsFrame.Section3.Content.Line1.Text:SetText("hatdragon")
