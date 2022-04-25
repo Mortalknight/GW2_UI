@@ -125,14 +125,14 @@ local gw_fade_frames = {
     ChatFrameToggleVoiceMuteButton
 }
 
-local gw2StuffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label:14:24|t"
-local gw2StuffList = {
+local gw2StaffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label:14:24|t"
+local gw2StaffList = {
     -- Glow
-    ["Sâphira-Aegwynn"] = gw2StuffIcon,
-    ["Shâdowfall-Aegwynn"] = gw2StuffIcon,
-    ["Mâgus-Aegwynn"] = gw2StuffIcon,
-    ["Flôffi-Aegwynn"] = gw2StuffIcon,
-    ["Winglord-Arygos"] = gw2StuffIcon,
+    ["Sâphira-Aegwynn"] = gw2StaffIcon,
+    ["Shâdowfall-Aegwynn"] = gw2StaffIcon,
+    ["Mâgus-Aegwynn"] = gw2StaffIcon,
+    ["Flôffi-Aegwynn"] = gw2StaffIcon,
+    ["Winglord-Arygos"] = gw2StaffIcon,
 }
 
 local function colorizeLine(text, r, g, b)
@@ -1161,7 +1161,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
 
             -- Player Flags
             local pflag = GetPFlag(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
-            local gw2StuffIcon = gw2StuffList[playerName]
+            local gw2StaffIcon = gw2StaffList[playerName]
 
             -- LFG Role Flags
             local lfgRole = lfgRoles[playerName]
@@ -1169,9 +1169,9 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                 pflag = pflag .. lfgRole
             end
 
-            -- GW2 Stuff Icon Chat Icon
-            if gw2StuffIcon then
-                pflag = pflag .. gw2StuffIcon
+            -- GW2 Staff Icon Chat Icon
+            if gw2StaffIcon then
+                pflag = pflag .. gw2StaffIcon
             end
 
             if usingDifferentLanguage then
