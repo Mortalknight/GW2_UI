@@ -30,6 +30,27 @@ local function LoadTooltipPanel(sWindow)
     addOption(p, DUNGEON_SCORE, nil, "ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, CHALLENGE_MODE_KEYSTONE_NAME:format("_"):gsub(": _", ""), L["Adds descriptions for mythic keystone properties to their tooltips."], "ADVANCED_TOOLTIP_SHOW_KEYSTONEINFO", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, L["Show Health bar text"], nil, "ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p, L["Hide in combat"], L["Hide different kind of tooltips during combat."], "HIDE_TOOLTIP_IN_COMBAT", nil, nil, {["TOOLTIPS_ENABLED"] = true})
+    addOptionDropdown(
+        p,
+        L["Hide Units"],
+        L["Only hide unit tooltips of the selected reactions."],
+        "HIDE_TOOLTIP_IN_COMBAT_UNIT",
+        nil,
+        {"NONE", "FRIENDLY", "HOSTILE", "NEUTRAL", "FRIENDLY_NEUTRAL", "FRIENDLY_HOSTILE", "HOSTILE_NEUTRAL", "ALL"},
+        {
+            NONE,
+            FRIENDLY,
+            HOSTILE,
+            FACTION_STANDING_LABEL4,
+            FRIENDLY .. " & " .. FACTION_STANDING_LABEL4,
+            FRIENDLY .. " & " .. HOSTILE,
+            HOSTILE .. " & " .. FACTION_STANDING_LABEL4,
+            ALL
+        },
+        nil,
+        {["TOOLTIPS_ENABLED"] = true, ["HIDE_TOOLTIP_IN_COMBAT"] = true}
+    )
     addOptionSlider(
         p,
         FONT_SIZE,

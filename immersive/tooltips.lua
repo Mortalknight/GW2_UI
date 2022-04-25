@@ -1038,5 +1038,39 @@ local function LoadTooltips()
         GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
     end
 
+    local hideInCombat = GetSetting("HIDE_TOOLTIP_IN_COMBAT")
+    if hideInCombat then
+        local isHiddenInCombat = function()
+            if GameTooltip:GetUnit() then
+                local unitReaction = UnitReaction("player", "mouseover")
+                local unitSetting = GetSetting("HIDE_TOOLTIP_IN_COMBAT_UNIT")
+                if unitSetting == "ALL" and unitReaction or
+                string.find(unitSetting, "HOSTILE") and unitReaction <= 3 or
+                string.find(unitSetting, "NEUTRAL") and unitReaction == 4 or
+                string.find(unitSetting, "FRIENDLY") and unitReaction >= 5 then
+                    return true
+                end
+            end
+            return false
+        end
+        local eventFrame = CreateFrame("Frame")
+        eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+        eventFrame:SetScript("OnEvent", function(self, event)
+            if event == "PLAYER_REGEN_ENABLED" and not isHiddenInCombat() then
+                GameTooltip:Show()
+            else
+                GameTooltip:Hide()
+            end
+        end)
+        GameTooltip:HookScript("OnShow", function()
+            if InCombatLockdown() then
+                if isHiddenInCombat() then
+                    GameTooltip:Hide()
+                end
+            end
+        end)    
+    end
+
 end
 GW.LoadTooltips = LoadTooltips

@@ -195,6 +195,10 @@ Some of the modules available to you are an immersive questing window, a full in
 Einige der Module, die dir zur Verfügung stehen, sind ein umfassendes Questfenster, ein vollständiger Inventarersatz sowie ein vollständiger Charakterfesterersatz. Es gibt viel mehr welche du erleben kannst. Wirf einfach ein Blick in die Einstellungen und schaue was zur Verfügung steht.]=]
 L["GW2 UI Update"] = true
 L["Health Globe"] = "Gesundheitskugel"
+L["Hide in combat"] = "Im Kampf ausblenden"
+L["Hide different kind of tooltips during combat."] = "Verschiedene Arten von Tooltips im Kampf ausblenden."
+L["Hide Units"] = "Einheiten ausblenden"
+L["Only hide unit tooltips of the selected reactions."] = "Verstecke nur Tooltips von Einheiten der ausgewählten Gesinnung."
 L["Hide Editbox"] = "Chateingabefeld verstecken"
 L["Hide Empty Slots"] = "Leere Plätze ausblenden"
 L["Hide grid"] = "Raster ausblenden"
