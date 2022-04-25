@@ -125,6 +125,16 @@ local gw_fade_frames = {
     ChatFrameToggleVoiceMuteButton
 }
 
+local gw2StuffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label:14:24|t"
+local gw2StuffList = {
+    -- Glow
+    ["Sâphira-Aegwynn"] = gw2StuffIcon,
+    ["Shâdowfall-Aegwynn"] = gw2StuffIcon,
+    ["Mâgus-Aegwynn"] = gw2StuffIcon,
+    ["Flôffi-Aegwynn"] = gw2StuffIcon,
+    ["Winglord-Arygos"] = gw2StuffIcon,
+}
+
 local function colorizeLine(text, r, g, b)
     local hexCode = GW.RGBToHex(r, g, b)
     local hexReplacement = format("|r%s", hexCode)
@@ -1151,11 +1161,17 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
 
             -- Player Flags
             local pflag = GetPFlag(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
+            local gw2StuffIcon = gw2StuffList[playerName]
 
             -- LFG Role Flags
             local lfgRole = lfgRoles[playerName]
             if lfgRole and (chatType == "PARTY_LEADER" or chatType == "PARTY" or chatType == "RAID" or chatType == "RAID_LEADER" or chatType == "INSTANCE_CHAT" or chatType == "INSTANCE_CHAT_LEADER") then
                 pflag = pflag .. lfgRole
+            end
+
+            -- GW2 Stuff Icon Chat Icon
+            if gw2StuffIcon then
+                pflag = pflag .. gw2StuffIcon
             end
 
             if usingDifferentLanguage then
@@ -1254,6 +1270,45 @@ end
 local function FloatingChatFrameOnEvent(...)
     ChatFrame_OnEvent(...)
     FloatingChatFrame_OnEvent(...)
+end
+
+local function ChatFrame_OnMouseScroll(self, delta)
+    local numScrollMessages = GetSetting("CHAT_NUM_SCROLL_MESSAGES") or 3
+    if delta < 0 then
+        if IsShiftKeyDown() then
+            self:ScrollToBottom()
+        elseif IsAltKeyDown() then
+            self:ScrollDown()
+        else
+            for _ = 1, numScrollMessages do
+                self:ScrollDown()
+            end
+        end
+    elseif delta > 0 then
+        if IsShiftKeyDown() then
+            self:ScrollToTop()
+        elseif IsAltKeyDown() then
+            self:ScrollUp()
+        else
+            for _ = 1, numScrollMessages do
+                self:ScrollUp()
+            end
+        end
+
+        if GetSetting("CHAT_SCROLL_DOWN_INTERVAL") ~= 0 then
+            if self.ScrollTimer then
+                self.ScrollTimer:Cancel()
+            end
+
+            self.ScrollTimer = C_Timer.NewTimer(GetSetting("CHAT_SCROLL_DOWN_INTERVAL"), function() self:ScrollToBottom() end)
+        end
+    end
+end
+
+local function ChatFrame_SetScript(self, script, func)
+    if script == "OnMouseWheel" and func ~= ChatFrame_OnMouseScroll then
+        self:SetScript(script, ChatFrame_OnMouseScroll)
+    end
 end
 
 local function styleChatWindow(frame)
@@ -1971,6 +2026,8 @@ local function LoadChat()
                 frame:SetScript("OnEvent", FloatingChatFrameOnEvent)
             end
 
+            frame:SetScript("OnMouseWheel", ChatFrame_OnMouseScroll)
+            hooksecurefunc(frame, "SetScript", ChatFrame_SetScript)
             frame.scriptsSet = true
         end
     end

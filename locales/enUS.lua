@@ -455,3 +455,7 @@ L["Boss frames: Separate Energy Bar"] = true
 L["If enabled, enabled bosses’ energy bars will be shown separately from their health bar."] = true
 L["GW2 chat message style"] = true
 L["Changes the chat font, timestamp color and name display"] = true
+L["Scroll Messages"] = true
+L["Number of messages you scroll for each step."] = true
+L["Scroll Interval"] = true
+L["Number of time in seconds to scroll down to the bottom of the chat window if you are not scrolled down completely."] = true

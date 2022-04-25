@@ -226,25 +226,24 @@ local function LoadMinimap()
 
     QueueStatusMinimapButton:SetSize(26, 26)
     QueueStatusMinimapButtonIcon:Kill()
-    QueueStatusMinimapButtonIconTexture:SetTexture(nil)    
-    QueueStatusMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton")    
+    QueueStatusMinimapButtonIconTexture:SetTexture(nil)
+    QueueStatusMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton")
     QueueStatusMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
-    QueueStatusMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")    
+    QueueStatusMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
     local GwLfgQueueIcon = CreateFrame("Frame", "GwLfgQueueIcon", QueueStatusMinimapButton, "GwLfgQueueIcon")
-    _G.GwLfgQueueIcon = GwLfgQueueIcon
     GwLfgQueueIcon:SetPoint("TOPLEFT", QueueStatusMinimapButton, "TOPLEFT", 0, 0)
-    hooksecurefunc("EyeTemplate_StartAnimating", function() 
+    hooksecurefunc("EyeTemplate_StartAnimating", function()
         if not Minimap:IsShown() then return end
-        QueueStatusMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1")    
-        QueueStatusMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1-Highlight")   
-        QueueStatusMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1-Highlight")   
+        QueueStatusMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1")
+        QueueStatusMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1-Highlight")
+        QueueStatusMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1-Highlight")
         GwLfgQueueIcon.animation:Play()
     end)
-    hooksecurefunc("EyeTemplate_StopAnimating", function()  
+    hooksecurefunc("EyeTemplate_StopAnimating", function()
         GwLfgQueueIcon.animation:Stop()
-        QueueStatusMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton")    
-        QueueStatusMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")   
-        QueueStatusMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")  
+        QueueStatusMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton")
+        QueueStatusMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
+        QueueStatusMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
     end)
 
     Minimap:SetMaskTexture("Interface/ChatFrame/ChatFrameBackground")
@@ -364,16 +363,16 @@ local function LoadMinimap()
         if (garrisonType == Enum.GarrisonType.Type_6_0) then
             self.faction = UnitFactionGroup("player")
             self.title = GARRISON_LANDING_PAGE_TITLE;
-            self.description = MINIMAP_GARRISON_LANDING_PAGE_TOOLTIP;
+            self.description = MINIMAP_GARRISON_LANDING_PAGE_TOOLTIP
         elseif (garrisonType == Enum.GarrisonType.Type_7_0) then
             self.title = ORDER_HALL_LANDING_PAGE_TITLE;
-            self.description = MINIMAP_ORDER_HALL_LANDING_PAGE_TOOLTIP;
+            self.description = MINIMAP_ORDER_HALL_LANDING_PAGE_TOOLTIP
         elseif (garrisonType == Enum.GarrisonType.Type_8_0) then
             self.title = GARRISON_TYPE_8_0_LANDING_PAGE_TITLE;
-            self.description = GARRISON_TYPE_8_0_LANDING_PAGE_TOOLTIP;
-        elseif (garrisonType == Enum.GarrisonType.Type_9_0) then   
+            self.description = GARRISON_TYPE_8_0_LANDING_PAGE_TOOLTIP
+        elseif (garrisonType == Enum.GarrisonType.Type_9_0) then
             self.title = GARRISON_TYPE_9_0_LANDING_PAGE_TITLE;
-            self.description = GARRISON_TYPE_9_0_LANDING_PAGE_TOOLTIP;
+            self.description = GARRISON_TYPE_9_0_LANDING_PAGE_TOOLTIP
         end
     end
     GarrisonLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter)
