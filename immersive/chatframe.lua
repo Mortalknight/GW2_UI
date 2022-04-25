@@ -133,6 +133,24 @@ local gw2StaffList = {
     ["Mâgus-Aegwynn"] = gw2StaffIcon,
     ["Flôffi-Aegwynn"] = gw2StaffIcon,
     ["Winglord-Arygos"] = gw2StaffIcon,
+    -- SHOODOX
+    ["Blish-Thrall"] = gw2StaffIcon,
+    ["Blish-Arthas"] = gw2StaffIcon,
+    ["Hildegunde-ArgentDawn"] = gw2StaffIcon,
+    ["Notburga-ArgentDawn"] = gw2StaffIcon,
+    ["Aderna-Arthas"] = gw2StaffIcon,
+    ["Wan-Malfurion"] = gw2StaffIcon,
+    ["Funda-Malfurion"] = gw2StaffIcon,
+    ["Glühdirne-Arthas"] = gw2StaffIcon,
+    ["Ticksick-Arthas"] = gw2StaffIcon,
+    ["Meep-Arthas"] = gw2StaffIcon,
+    ["Hiniche-Arthas"] = gw2StaffIcon,
+    ["Trodar-Madmortem"] = gw2StaffIcon,
+    ["Lætitia-ArgentDawn"] = gw2StaffIcon,
+    ["Fuyubara-ArgentDawn"] = gw2StaffIcon,
+    ["Blish-Proudmoore"] = gw2StaffIcon,
+    ["Notburga-Proudmoore"] = gw2StaffIcon,
+    ["Sisi-Proudmoore"] = gw2StaffIcon,
 }
 
 local function colorizeLine(text, r, g, b)
