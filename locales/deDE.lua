@@ -486,3 +486,7 @@ L["Boss frames: Separate Energy Bar"] = "Schlachtzugbosseinheiten: Separate Ener
 L["If enabled, enabled bosses’ energy bars will be shown separately from their health bar."] = "Wir für die aktiven Bosse eine sepearte Energybar im Questtracker anzeigen."
 L["GW2 chat message style"] = "GW2 Chat Nachrichten Style"
 L["Changes the chat font, timestamp color and name display"] = "Ändert die Schriftart, die Farbe des zeitstempel und das Erscheinungsbild der Namen"
+L["Scroll Messages"] = "Scroll Nachrichten"
+L["Number of messages you scroll for each step."] = "Anzahl der Nachrichten die mit jeden Schritt gescrollt werden."
+L["Scroll Interval"] = "Scroll Intervall"
+L["Number of time in seconds to scroll down to the bottom of the chat window if you are not scrolled down completely."] = "Anzahl der Sekunden um im Chatfenster nach unten zu scrollen, wenn du nicht komplett nach unten gescrollt bist."

@@ -1267,6 +1267,45 @@ local function FloatingChatFrameOnEvent(...)
     FloatingChatFrame_OnEvent(...)
 end
 
+local function ChatFrame_OnMouseScroll(self, delta)
+    local numScrollMessages = GetSetting("CHAT_NUM_SCROLL_MESSAGES") or 3
+    if delta < 0 then
+        if IsShiftKeyDown() then
+            self:ScrollToBottom()
+        elseif IsAltKeyDown() then
+            self:ScrollDown()
+        else
+            for _ = 1, numScrollMessages do
+                self:ScrollDown()
+            end
+        end
+    elseif delta > 0 then
+        if IsShiftKeyDown() then
+            self:ScrollToTop()
+        elseif IsAltKeyDown() then
+            self:ScrollUp()
+        else
+            for _ = 1, numScrollMessages do
+                self:ScrollUp()
+            end
+        end
+
+        if GetSetting("CHAT_SCROLL_DOWN_INTERVAL") ~= 0 then
+            if self.ScrollTimer then
+                self.ScrollTimer:Cancel()
+            end
+
+            self.ScrollTimer = C_Timer.NewTimer(GetSetting("CHAT_SCROLL_DOWN_INTERVAL"), function() self:ScrollToBottom() end)
+        end
+    end
+end
+
+local function ChatFrame_SetScript(self, script, func)
+    if script == "OnMouseWheel" and func ~= ChatFrame_OnMouseScroll then
+        self:SetScript(script, ChatFrame_OnMouseScroll)
+    end
+end
+
 local function styleChatWindow(frame)
     local name = frame:GetName()
     _G[name .. "TabText"]:SetFont(DAMAGE_TEXT_FONT, 14)
@@ -1982,6 +2021,8 @@ local function LoadChat()
                 frame:SetScript("OnEvent", FloatingChatFrameOnEvent)
             end
 
+            frame:SetScript("OnMouseWheel", ChatFrame_OnMouseScroll)
+            hooksecurefunc(frame, "SetScript", ChatFrame_SetScript)
             frame.scriptsSet = true
         end
     end

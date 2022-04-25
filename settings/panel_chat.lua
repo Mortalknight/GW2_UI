@@ -79,6 +79,33 @@ local function LoadChatPanel(sWindow)
         {["CHATFRAME_ENABLED"] = true},
         1
     )
+    addOptionSlider(
+        p.scroll.scrollchild,
+        L["Scroll Messages"],
+        L["Number of messages you scroll for each step."],
+        "CHAT_NUM_SCROLL_MESSAGES",
+        nil,
+        1,
+        12,
+        nil,
+        0,
+        {["CHATFRAME_ENABLED"] = true},
+        1
+    )
+
+    addOptionSlider(
+        p.scroll.scrollchild,
+        L["Scroll Interval"],
+        L["Number of time in seconds to scroll down to the bottom of the chat window if you are not scrolled down completely."],
+        "CHAT_SCROLL_DOWN_INTERVAL",
+        nil,
+        0,
+        120,
+        nil,
+        0,
+        {["CHATFRAME_ENABLED"] = true},
+        1
+    )
     addOptionText(
         p.scroll.scrollchild,
         L["Keywords"],
