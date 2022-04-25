@@ -127,7 +127,12 @@ local gw_fade_frames = {
 
 local gw2StuffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label:14:24|t"
 local gw2StuffList = {
+    -- Glow
     ["Sâphira-Aegwynn"] = gw2StuffIcon,
+    ["Shâdowfall-Aegwynn"] = gw2StuffIcon,
+    ["Mâgus-Aegwynn"] = gw2StuffIcon,
+    ["Flôffi-Aegwynn"] = gw2StuffIcon,
+    ["Winglord-Arygos"] = gw2StuffIcon,
 }
 
 local function colorizeLine(text, r, g, b)
