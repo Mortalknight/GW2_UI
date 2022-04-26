@@ -687,6 +687,9 @@ local function loadAddon(self)
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     end
 
+    --temp for migration
+    GW.SetSetting("MIGRATION_TO_HAS_MOVED_SETTING", true)
+
     self:SetScript("OnUpdate", gw_OnUpdate)
 end
 GW.AddForProfiling("index", "loadAddon", loadAddon)

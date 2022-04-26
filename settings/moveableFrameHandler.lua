@@ -166,22 +166,6 @@ local function Grid_Show_Hide(self)
     end
 end
 
-local function CheckIfMoved(self, settingsName, new_point)
-    -- check if we need to know if the frame is on its default position
-    if self.gw_isMoved ~= nil then
-        local defaultPoint = GetDefault(settingsName)
-        local growDirection = GetSetting(settingsName .. "_GrowDirection")
-        local frame = self.gw_frame
-        if defaultPoint.point == new_point.point and defaultPoint.relativePoint == new_point.relativePoint and defaultPoint.xOfs == new_point.xOfs and defaultPoint.yOfs == new_point.yOfs and (growDirection and growDirection == "UP") then
-            frame.isMoved = false
-            frame:SetAttribute("isMoved", false)
-        else
-            frame.isMoved = true
-            frame:SetAttribute("isMoved", true)
-        end
-    end
-end
-
 local function smallSettings_resetToDefault(self)
     local mf = self:GetParent().child
     --local f = mf.gw_frame
@@ -204,7 +188,11 @@ local function smallSettings_resetToDefault(self)
     new_point["relativePoint"] = relativePoint
     new_point["xOfs"] = GW.RoundInt(xOfs)
     new_point["yOfs"] = GW.RoundInt(yOfs)
+    new_point.hasMoved = false
     SetSetting(settingsName, new_point)
+
+    mf.isMoved = false
+    mf:SetAttribute("isMoved", false)
 
     --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
     if settingsName == "PlayerBuffFrame" or settingsName == "PlayerDebuffFrame" then
@@ -213,9 +201,6 @@ local function smallSettings_resetToDefault(self)
         -- Hide/Show BG here
         mf.gw_frame.cf.bg:Show()
     end
-
-    -- check if we need to know if the frame is on its default position
-    CheckIfMoved(mf, settingsName, new_point)
 
     -- Set Scale back to default
     if mf.optionScaleable then
@@ -272,11 +257,13 @@ local function mover_OnDragStop(self)
     new_point.relativePoint = relativePoint
     new_point.xOfs = xOfs and math.floor(xOfs) or 0
     new_point.yOfs = yOfs and math.floor(yOfs) or 0
+    new_point.hasMoved = true
     self:ClearAllPoints()
     self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
     SetSetting(settingsName, new_point)
-    -- check if we need to know if the frame is on its default position
-    CheckIfMoved(self, settingsName, new_point)
+
+    self.isMoved = true
+    self:SetAttribute("isMoved", true)
 
     if self.gw_postdrag then
         self.gw_postdrag(self.gw_frame)
@@ -442,23 +429,29 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         moveframe:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs)
     end
 
-    local num = #GW.MOVABLE_FRAMES
-    GW.MOVABLE_FRAMES[num + 1] = moveframe
+    GW.MOVABLE_FRAMES[#GW.MOVABLE_FRAMES + 1] = moveframe
     moveframe:Hide()
     moveframe:RegisterForDrag("LeftButton")
     moveframe:SetScript("OnEnter", moverframe_OnEnter)
     moveframe:SetScript("OnLeave", moverframe_OnLeave)
 
-    if isMoved ~= nil then
-        local defaultPoint = GetDefault(settingsName)
-
-        if defaultPoint.point == framePoint.point and defaultPoint.relativePoint == framePoint.relativePoint and defaultPoint.xOfs == framePoint.xOfs and defaultPoint.yOfs == framePoint.yOfs then
+    if isMoved ~= nil and not GetSetting("MIGRATION_TO_HAS_MOVED_SETTING") then -- can be removed after some time
+         if defaultPoint.point == framePoint.point and defaultPoint.relativePoint == framePoint.relativePoint and defaultPoint.xOfs == framePoint.xOfs and defaultPoint.yOfs == framePoint.yOfs then
             frame.isMoved = false
             frame:SetAttribute("isMoved", false)
         else
             frame.isMoved = true
             frame:SetAttribute("isMoved", true)
         end
+    elseif isMoved ~= nil and GetSetting("MIGRATION_TO_HAS_MOVED_SETTING") then
+        frame.isMoved = framePoint.hasMoved
+        frame:SetAttribute("isMoved", framePoint.hasMoved)
+    end
+
+     --temp to migrate to new isMoved system
+    if not GetSetting("MIGRATION_TO_HAS_MOVED_SETTING") then
+        framePoint.hasMoved = frame.isMoved
+        SetSetting(settingsName, framePoint)
     end
 
     if mhf then
