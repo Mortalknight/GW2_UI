@@ -228,6 +228,30 @@ GW.bossFrameExtraEnergyBar = {
             [182777] = true,
         },
     },
+    [2470] = { -- Artificer Xy’mox
+        enable = true,
+        npcIds = {
+            [184140] = true,
+        },
+    },
+    [2459] = { -- Dausegne, the Fallen Oracle
+        enable = true,
+        npcIds = {
+            [181224] = true,
+        },
+    },
+    [2461] = { -- Lihuvim, Principal Architect
+        enable = true,
+        npcIds = {
+            [182169] = true,
+        },
+    },
+    [2457] = { -- Lords of Dread
+        enable = true,
+        npcIds = {
+            [181398] = true,
+        },
+    },
 --    [465] = { -- Lord Overheat for testing
 --        enable = true,
 --        npcIds = {
