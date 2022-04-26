@@ -459,3 +459,5 @@ L["Scroll Messages"] = true
 L["Number of messages you scroll for each step."] = true
 L["Scroll Interval"] = true
 L["Number of time in seconds to scroll down to the bottom of the chat window if you are not scrolled down completely."] = true
+L["Combat Override Key"] = true
+L["Modifier to hold to show the tooltip in combat."] = true

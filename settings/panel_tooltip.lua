@@ -33,6 +33,23 @@ local function LoadTooltipPanel(sWindow)
     addOption(p, L["Hide in combat"], L["Hide different kind of tooltips during combat."], "HIDE_TOOLTIP_IN_COMBAT", nil, nil, {["TOOLTIPS_ENABLED"] = true})
     addOptionDropdown(
         p,
+        L["Combat Override Key"],
+        L["Modifier to hold to show the tooltip in combat."],
+        "HIDE_TOOLTIP_IN_COMBAT_OVERRIDE",
+        nil,
+        {"ALWAYS", "NONE", "SHIFT", "CTRL", "ALT"},
+        {
+            ALWAYS,
+            NONE,
+            SHIFT_KEY,
+            CTRL_KEY,
+            ALT_KEY,
+        },
+        nil,
+        {["TOOLTIPS_ENABLED"] = true, ["HIDE_TOOLTIP_IN_COMBAT"] = true}
+    )
+    addOptionDropdown(
+        p,
         L["Hide Units"],
         L["Only hide unit tooltips of the selected reactions."],
         "HIDE_TOOLTIP_IN_COMBAT_UNIT",

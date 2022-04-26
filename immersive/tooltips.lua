@@ -30,8 +30,8 @@ local IDLine = "|cffffedba%s|r %d"
 
 local TT = CreateFrame("Frame")
 
-local function IsModKeyDown()
-    local k = GetSetting("ADVANCED_TOOLTIP_ID_MODIFIER")
+local function IsModKeyDown(setting)
+    local k = setting and GetSetting(setting) or GetSetting("ADVANCED_TOOLTIP_ID_MODIFIER")
     return k == "ALWAYS" or ((k == "SHIFT" and IsShiftKeyDown()) or (k == "CTRL" and IsControlKeyDown()) or (k == "ALT" and IsAltKeyDown()))
 end
 
@@ -697,7 +697,6 @@ local function SetItemRef(link)
     ItemRefTooltip:Show()
 end
 
-
 local function GameTooltip_SetDefaultAnchor(self, parent)
     if self:IsForbidden() or self:GetAnchorType() ~= "ANCHOR_NONE" then return end
 
@@ -864,6 +863,20 @@ local function SkinBattlePetTooltip()
         skin_battle_pet_tt(BattlePetTooltip)
     end
     hooksecurefunc("BattlePetToolTip_Show", bptt)
+end
+
+local function shouldHiddenInCombat(tooltip)
+    if tooltip:GetUnit() then
+        local unitReaction = UnitReaction("player", "mouseover")
+        local unitSetting = GetSetting("HIDE_TOOLTIP_IN_COMBAT_UNIT")
+        if unitSetting == "ALL" and unitReaction or
+        string.find(unitSetting, "HOSTILE") and unitReaction <= 3 or
+        string.find(unitSetting, "NEUTRAL") and unitReaction == 4 or
+        string.find(unitSetting, "FRIENDLY") and unitReaction >= 5 then
+            return true
+        end
+    end
+    return false
 end
 
 local function SetStyle(self, _, isEmbedded)
@@ -1038,39 +1051,21 @@ local function LoadTooltips()
         GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
     end
 
-    local hideInCombat = GetSetting("HIDE_TOOLTIP_IN_COMBAT")
-    if hideInCombat then
-        local isHiddenInCombat = function()
-            if GameTooltip:GetUnit() then
-                local unitReaction = UnitReaction("player", "mouseover")
-                local unitSetting = GetSetting("HIDE_TOOLTIP_IN_COMBAT_UNIT")
-                if unitSetting == "ALL" and unitReaction or
-                string.find(unitSetting, "HOSTILE") and unitReaction <= 3 or
-                string.find(unitSetting, "NEUTRAL") and unitReaction == 4 or
-                string.find(unitSetting, "FRIENDLY") and unitReaction >= 5 then
-                    return true
-                end
-            end
-            return false
+    local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+    eventFrame:SetScript("OnEvent", function(_, event)
+        if not GetSetting("HIDE_TOOLTIP_IN_COMBAT") then return end
+
+        if event == "PLAYER_REGEN_DISABLED" and shouldHiddenInCombat(GameTooltip) and not IsModKeyDown("HIDE_TOOLTIP_IN_COMBAT_OVERRIDE") then
+            GameTooltip:Hide()
         end
-        local eventFrame = CreateFrame("Frame")
-        eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-        eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-        eventFrame:SetScript("OnEvent", function(self, event)
-            if event == "PLAYER_REGEN_ENABLED" and not isHiddenInCombat() then
-                GameTooltip:Show()
-            else
-                GameTooltip:Hide()
-            end
-        end)
-        GameTooltip:HookScript("OnShow", function()
-            if InCombatLockdown() then
-                if isHiddenInCombat() then
-                    GameTooltip:Hide()
-                end
-            end
-        end)    
-    end
+    end)
+
+    GameTooltip:HookScript("OnShow", function(self)
+        if GetSetting("HIDE_TOOLTIP_IN_COMBAT") and InCombatLockdown() and shouldHiddenInCombat(self) and not IsModKeyDown("HIDE_TOOLTIP_IN_COMBAT_OVERRIDE") then
+            self:Hide()
+        end
+    end)
 
 end
 GW.LoadTooltips = LoadTooltips
