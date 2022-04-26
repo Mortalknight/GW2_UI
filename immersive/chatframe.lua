@@ -151,6 +151,8 @@ local gw2StaffList = {
     ["Blish-Proudmoore"] = gw2StaffIcon,
     ["Notburga-Proudmoore"] = gw2StaffIcon,
     ["Sisi-Proudmoore"] = gw2StaffIcon,
+    --Belazor
+    ["Ilyxiana-Ravencrest"] = gw2StaffIcon,
 }
 
 local function colorizeLine(text, r, g, b)
