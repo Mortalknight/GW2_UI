@@ -757,7 +757,7 @@
     </Frame>
 
     <Frame name="GwSmallSettings" frameStrata="FULLSCREEN_DIALOG" enableMouse="true" parent="UIParent" virtual="true">
-        <Size x="180" y="260"/>
+        <Size x="180" y="285"/>
         <Anchors>
             <Anchor point="TOP" relativeTo="GwSmallSettingsMoverFrame" relativePoint="TOP" x="0" y="-20"></Anchor>
         </Anchors>
@@ -937,7 +937,7 @@
             <Frame parentKey="movers">
                 <Size x="170" y="40"/>
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="105" />
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="130" />
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY" textureSubLevel="2">
@@ -976,10 +976,16 @@
             <Button parentKey="default" inherits="GwStandardButton" text="RESET_TO_DEFAULT">
                 <Size x="170" y="20" />
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="80" />
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="105" />
                 </Anchors>
             </Button>
             <Button parentKey="lockHud" inherits="GwStandardButton" text="LOCK HUD">
+                <Size x="170" y="20" />
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="80" />
+                </Anchors>
+            </Button>
+            <Button parentKey="hidePlaceholder" inherits="GwStandardButton" text="HIDE PLACEHOLDERS">
                 <Size x="170" y="20" />
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="5" y="55" />

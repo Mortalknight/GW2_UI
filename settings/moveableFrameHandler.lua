@@ -4,6 +4,7 @@ local SetSetting = GW.SetSetting
 local GetDefault = GW.GetDefault
 local L = GW.L
 
+local moveable_window_placeholders_visible = true
 local settings_window_open_before_change = false
 local function lockHudObjects(_, inCombat)
     GW.MoveHudScaleableFrame:UnregisterAllEvents()
@@ -18,6 +19,9 @@ local function lockHudObjects(_, inCombat)
         GwSettingsWindow:Show()
     end
 
+    if not moveable_window_placeholders_visible then 
+        GW.toggleHudPlaceholders() 
+    end
     for _, mf in ipairs(GW.MOVABLE_FRAMES) do
         mf:EnableMouse(false)
         mf:SetMovable(false)
@@ -32,6 +36,22 @@ local function lockHudObjects(_, inCombat)
 end
 GW.lockHudObjects = lockHudObjects
 GW.AddForProfiling("settings", "lockHudObjects", lockHudObjects)
+
+local function toggleHudPlaceholders(self)
+    for _, mf in pairs(GW.MOVABLE_FRAMES) do
+        if mf.Background then
+            if moveable_window_placeholders_visible then 
+                mf.Background:Hide()
+                GW.MoveHudScaleableFrame.hidePlaceholder:SetText(L["Show placeholders"])
+            else 
+                mf.Background:Show()
+                GW.MoveHudScaleableFrame.hidePlaceholder:SetText(L["Hide placeholders"])
+            end
+        end
+    end
+    moveable_window_placeholders_visible = not moveable_window_placeholders_visible
+end
+GW.toggleHudPlaceholders = toggleHudPlaceholders
 
 local function moveHudObjects(self)
     if GwSettingsWindow:IsShown() then
@@ -602,9 +622,12 @@ local function LoadMovers()
 
     moverSettingsFrame.default:SetScript("OnClick", smallSettings_resetToDefault)
 
-    -- lock and grid button
+    -- lock, placeholder and grid button
     moverSettingsFrame.lockHud:SetScript("OnClick", lockHudObjects)
     moverSettingsFrame.lockHud:SetText(L["Lock HUD"])
+
+    moverSettingsFrame.hidePlaceholder:SetScript("OnClick", toggleHudPlaceholders)
+    moverSettingsFrame.hidePlaceholder:SetText(L["Hide placeholders"])
 
     moverSettingsFrame.showGrid:SetScript("OnClick", Grid_Show_Hide)
     moverSettingsFrame.showGrid:SetText(L["Show grid"])

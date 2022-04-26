@@ -468,7 +468,7 @@
         </HitRectInsets>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/units/targetshadowmoveable">
+                <Texture name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/units/targetshadowmoveable" parentKey="Background">
                     <Size x="512" y="128"/>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="-5"/>
