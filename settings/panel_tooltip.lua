@@ -7,7 +7,7 @@ local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 
 local function LoadTooltipPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.header:SetText(L["Tooltips"])
@@ -15,24 +15,24 @@ local function LoadTooltipPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
 
-    createCat(L["Tooltips"], nil, p, 10)
+    createCat(L["Tooltips"], nil, p, 10, nil, {p})
 
-    addOption(p, L["Cursor Tooltips"], L["Anchor the tooltips to the cursor."], "TOOLTIP_MOUSE", nil, nil, {["TOOLTIPS_ENABLED"] = true})
-    addOption(p, L["Advanced Tooltips"], L["Displays additional information in the tooltip (further information is displayed when the SHIFT key is pressed)"], "ADVANCED_TOOLTIP", nil, nil, {["TOOLTIPS_ENABLED"] = true})
-    addOption(p, L["Current Mount"], L["Display current mount the unit is riding."], "ADVANCED_TOOLTIP_SHOW_MOUNT", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p, L["Target Info"], L["When in a raid group, show if anyone in your raid is targeting the current tooltip unit."], "ADVANCED_TOOLTIP_SHOW_TARGET_INFO", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p, SHOW_PLAYER_TITLES, L["Display player titles."], "ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p, GUILDCONTROL_GUILDRANKS, L["Display guild ranks if a unit is a member of a guild."], "ADVANCED_TOOLTIP_SHOW_GUILD_RANKS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p, L["Always Show Realm"], nil, "ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p, ROLE, L["Display the unit role in the tooltip."], "ADVANCED_TOOLTIP_SHOW_ROLE", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p, CLASS_COLORS, COMPACT_UNIT_FRAME_PROFILE_USECLASSCOLORS, "ADVANCED_TOOLTIP_SHOW_CLASS_COLOR", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p, L["Gender"], L["Displays the player character's gender."], "ADVANCED_TOOLTIP_SHOW_GENDER", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p, DUNGEON_SCORE, nil, "ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p, CHALLENGE_MODE_KEYSTONE_NAME:format("_"):gsub(": _", ""), L["Adds descriptions for mythic keystone properties to their tooltips."], "ADVANCED_TOOLTIP_SHOW_KEYSTONEINFO", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p, L["Show Health bar text"], nil, "ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p, L["Hide in combat"], L["Hide different kind of tooltips during combat."], "HIDE_TOOLTIP_IN_COMBAT", nil, nil, {["TOOLTIPS_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Cursor Tooltips"], L["Anchor the tooltips to the cursor."], "TOOLTIP_MOUSE", nil, nil, {["TOOLTIPS_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Advanced Tooltips"], L["Displays additional information in the tooltip (further information is displayed when the SHIFT key is pressed)"], "ADVANCED_TOOLTIP", nil, nil, {["TOOLTIPS_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Current Mount"], L["Display current mount the unit is riding."], "ADVANCED_TOOLTIP_SHOW_MOUNT", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, L["Target Info"], L["When in a raid group, show if anyone in your raid is targeting the current tooltip unit."], "ADVANCED_TOOLTIP_SHOW_TARGET_INFO", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, SHOW_PLAYER_TITLES, L["Display player titles."], "ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, GUILDCONTROL_GUILDRANKS, L["Display guild ranks if a unit is a member of a guild."], "ADVANCED_TOOLTIP_SHOW_GUILD_RANKS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, L["Always Show Realm"], nil, "ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, ROLE, L["Display the unit role in the tooltip."], "ADVANCED_TOOLTIP_SHOW_ROLE", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, CLASS_COLORS, COMPACT_UNIT_FRAME_PROFILE_USECLASSCOLORS, "ADVANCED_TOOLTIP_SHOW_CLASS_COLOR", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, L["Gender"], L["Displays the player character's gender."], "ADVANCED_TOOLTIP_SHOW_GENDER", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, DUNGEON_SCORE, nil, "ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, CHALLENGE_MODE_KEYSTONE_NAME:format("_"):gsub(": _", ""), L["Adds descriptions for mythic keystone properties to their tooltips."], "ADVANCED_TOOLTIP_SHOW_KEYSTONEINFO", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, L["Show Health bar text"], nil, "ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, L["Hide in combat"], L["Hide different kind of tooltips during combat."], "HIDE_TOOLTIP_IN_COMBAT", nil, nil, {["TOOLTIPS_ENABLED"] = true})
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         L["Combat Override Key"],
         L["Modifier to hold to show the tooltip in combat."],
         "HIDE_TOOLTIP_IN_COMBAT_OVERRIDE",
@@ -49,7 +49,7 @@ local function LoadTooltipPanel(sWindow)
         {["TOOLTIPS_ENABLED"] = true, ["HIDE_TOOLTIP_IN_COMBAT"] = true}
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         L["Hide Units"],
         L["Only hide unit tooltips of the selected reactions."],
         "HIDE_TOOLTIP_IN_COMBAT_UNIT",
@@ -69,7 +69,7 @@ local function LoadTooltipPanel(sWindow)
         {["TOOLTIPS_ENABLED"] = true, ["HIDE_TOOLTIP_IN_COMBAT"] = true}
     )
     addOptionSlider(
-        p,
+        p.scroll.scrollchild,
         FONT_SIZE,
         nil,
         "TOOLTIP_FONT_SIZE",
@@ -82,7 +82,7 @@ local function LoadTooltipPanel(sWindow)
         1
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         L["Modifier for IDs"],
         nil,
         "ADVANCED_TOOLTIP_ID_MODIFIER",
@@ -99,7 +99,7 @@ local function LoadTooltipPanel(sWindow)
         {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true}
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         L["Item Count"],
         L["Display how many of a certain item you have in your possession."],
         "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT",
@@ -115,7 +115,7 @@ local function LoadTooltipPanel(sWindow)
         {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true}
     )
     addOptionDropdown(
-        p,
+        p.scroll.scrollchild,
         L["Cursor Anchor Type"],
         L["Only takes effect if the option 'Cursor Tooltips' is activated"],
         "CURSOR_ANCHOR_TYPE",
@@ -130,7 +130,7 @@ local function LoadTooltipPanel(sWindow)
         {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true}
     )
     addOptionSlider(
-        p,
+        p.scroll.scrollchild,
         L["Cursor Anchor Offset X"],
         L["Only takes effect if the option 'Cursor Tooltips' is activated and the cursor anchor is NOT 'Cursor Anchor'"],
         "ANCHOR_CURSOR_OFFSET_X",
@@ -142,7 +142,7 @@ local function LoadTooltipPanel(sWindow)
         {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}
     )
     addOptionSlider(
-        p,
+        p.scroll.scrollchild,
         L["Cursor Anchor Offset Y"],
         L["Only takes effect if the option 'Cursor Tooltips' is activated and the cursor anchor is NOT 'Cursor Anchor'"],
         "ANCHOR_CURSOR_OFFSET_Y",
@@ -154,6 +154,6 @@ local function LoadTooltipPanel(sWindow)
         {["TOOLTIPS_ENABLED"] = true, ["TOOLTIP_MOUSE"] = true, ["CURSOR_ANCHOR_TYPE"] = {"ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"}}
     )
 
-    InitPanel(p)
+    InitPanel(p, true)
 end
 GW.LoadTooltipPanel = LoadTooltipPanel
