@@ -4,6 +4,12 @@ local function LoadDetailsSkin()
     local details = _G.Details
     if not details then return end
 
+
+    if not details.IsLoaded() then
+        C_Timer.After(0, function() LoadDetailsSkin() end)
+        return
+    end
+
     details:InstallSkin("GW2 UI Default", {
         file = "Interface/AddOns/GW2_UI/textures/addonSkins/details_skin",
         author = "GW2 UI",

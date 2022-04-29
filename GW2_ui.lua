@@ -480,7 +480,7 @@ local function loadAddon(self)
     GW.LoadLFGSkin()
     GW.LoadOrderHallTalentFrameSkin()
     GW.LoadLootFrameSkin()
-    
+    GW.LoadDetailsSkin()
 
     GW.LoadImmersionAddonSkin()
 
@@ -729,10 +729,7 @@ local function gw_OnEvent(self, event, ...)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
         GW.CheckRole()
     elseif event == "ADDON_LOADED" then
-        if ... == "GW2_UI" then
-            GW.LoadDetailsSkin()
-           -- C_Timer.After(0, function() GW.LoadDetailsSkin() end)
-        elseif ... == "OmniCD" then
+        if ... == "OmniCD" then
             local func = OmniCD and OmniCD.AddUnitFrameData
             if func then
                 func("GW2_UI-Party-Grid", "GwCompactPartyFrame", "unit", 1)
