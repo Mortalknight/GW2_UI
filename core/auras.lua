@@ -208,6 +208,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local maxIndex = self.displayDebuffs and 80 or 40
     local marginX = 3
     local marginY = 20
+    local maxHeightInRow = 0
     local usedWidth = 0
     local usedHeight = 0
     local usedWidth2 = 2
@@ -282,8 +283,11 @@ local function UpdateBuffLayout(self, event, anchorPos)
             usedWidth = usedWidth + size + marginX
             if maxSize < usedWidth then
                 usedWidth = 0
+                maxHeightInRow = 0
                 usedHeight = usedHeight + lineSize + marginY
                 lineSize = smallSize
+            elseif size > maxHeightInRow then
+                maxHeightInRow = size
             end
             if usedWidth > 0 then
                 usedWidth2 = usedWidth - size - marginX
@@ -291,7 +295,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 usedWidth2 = usedWidth
             end
             local px = usedWidth2  + (size / 2)
-            local py = usedHeight + (size / 2)
+            local py = usedHeight + (maxHeightInRow / 2)
 
             if anchorPos == "pet" then
                 frame:SetPoint("CENTER", self.auras, "TOPRIGHT", -px, self.auraPositionUnder and -py or py)

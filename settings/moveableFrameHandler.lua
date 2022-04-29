@@ -415,7 +415,7 @@ local function moverframe_OnLeave(self)
     end
 end
 
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, isMoved, smallOptions, mhf, postdrag)
+local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, smallOptions, mhf, postdrag)
     local moveframe = CreateFrame("Frame", nil, UIParent, dummyFrame)
     frame.gwMover = moveframe
     if size then
@@ -425,7 +425,6 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     end
     moveframe:SetScale(frame:GetScale())
     moveframe.gw_Settings = settingsName
-    moveframe.gw_isMoved = isMoved
     moveframe.gw_frame = frame
     moveframe.gw_mhf = mhf
     moveframe.gw_postdrag = postdrag
@@ -455,7 +454,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     moveframe:SetScript("OnEnter", moverframe_OnEnter)
     moveframe:SetScript("OnLeave", moverframe_OnLeave)
 
-    if isMoved ~= nil and not GetSetting("MIGRATION_TO_HAS_MOVED_SETTING") then -- can be removed after some time
+    if framePoint.hasMoved == nil then -- can be removed after some time
          if defaultPoint.point == framePoint.point and defaultPoint.relativePoint == framePoint.relativePoint and defaultPoint.xOfs == framePoint.xOfs and defaultPoint.yOfs == framePoint.yOfs then
             frame.isMoved = false
             frame:SetAttribute("isMoved", false)
@@ -463,14 +462,15 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
             frame.isMoved = true
             frame:SetAttribute("isMoved", true)
         end
-    elseif isMoved ~= nil and GetSetting("MIGRATION_TO_HAS_MOVED_SETTING") then
+    elseif framePoint.hasMoved ~= nil then
         frame.isMoved = framePoint.hasMoved
         frame:SetAttribute("isMoved", framePoint.hasMoved)
     end
 
      --temp to migrate to new isMoved system
-    if not GetSetting("MIGRATION_TO_HAS_MOVED_SETTING") then
-        framePoint.hasMoved = frame.isMoved
+    if framePoint.hasMoved == nil then
+        print(displayName)
+        framePoint.hasMoved = frame.isMoved or false
         SetSetting(settingsName, framePoint)
     end
 

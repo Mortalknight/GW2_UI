@@ -69,8 +69,8 @@ local function ExtraAB_BossAB_Setup()
     UIPARENT_MANAGED_FRAME_POSITIONS.ExtraAbilityContainer = nil
     ExtraAbilityContainer.SetSize = GW.NoOp
 
-    RegisterMovableFrame(ExtraActionBarHolder, L["Boss Button"], "ExtraActionBarFramePos", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"})
-    RegisterMovableFrame(ZoneAbilityHolder, L["Zone Ability"], "ZoneAbilityFramePos", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"})
+    RegisterMovableFrame(ExtraActionBarHolder, L["Boss Button"], "ExtraActionBarFramePos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
+    RegisterMovableFrame(ZoneAbilityHolder, L["Zone Ability"], "ZoneAbilityFramePos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
 
     ZoneAbilityFrame:SetParent(ZoneAbilityHolder)
     ZoneAbilityFrame:ClearAllPoints()

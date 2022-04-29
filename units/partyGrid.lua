@@ -348,7 +348,7 @@ local function LoadPartyGrid()
     container:ClearAllPoints()
     container:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 
-    RegisterMovableFrame(container, L["Group Frames"], "raid_party_pos", "VerticalActionBarDummy", nil, true, {"default", "default"})
+    RegisterMovableFrame(container, L["Group Frames"], "raid_party_pos", "VerticalActionBarDummy", nil, {"default", "default"})
 
     hooksecurefunc(container.gwMover, "StopMovingOrSizing", function(frame)
         local anchor = GetSetting("RAID_ANCHOR_PARTY")

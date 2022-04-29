@@ -612,7 +612,7 @@ local function LoadMicroMenu()
     local postDragFunction = function(mbf)
         mbf.cf.bg:SetShown(not mbf.isMoved)
     end
-    GW.RegisterMovableFrame(mbf, GW.L["Micro Bar"], "MicromenuPos", "VerticalActionBarDummy", nil, true, {"default"}, nil, postDragFunction)
+    GW.RegisterMovableFrame(mbf, GW.L["Micro Bar"], "MicromenuPos", "VerticalActionBarDummy", nil, {"default"}, nil, postDragFunction)
     mbf:SetPoint("TOPLEFT", mbf.gwMover)
 
     -- reskin all default (and custom) micro buttons to our styling

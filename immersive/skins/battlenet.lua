@@ -100,7 +100,7 @@ local function LoadBNToastSkin()
         end
     end
 
-    RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"}, nil, BNTostPostDrag)
+    RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", "VerticalActionBarDummy", nil, {"default", "scaleable"}, nil, BNTostPostDrag)
 
     hooksecurefunc(BNToastFrame, "SetPoint", function(self, _, anchor)
         if anchor ~= self.gwMover then

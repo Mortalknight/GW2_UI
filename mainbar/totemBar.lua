@@ -114,7 +114,7 @@ local function Create_Totem_Bar()
     gw_totem_bar:RegisterEvent("PLAYER_ENTERING_WORLD")
     gw_totem_bar:SetScript("OnEvent", gw_totem_bar_OnEvent)
 
-    GW.RegisterMovableFrame(gw_totem_bar, GW.L["Class Totems"], "TotemBar_pos", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"})
+    GW.RegisterMovableFrame(gw_totem_bar, GW.L["Class Totems"], "TotemBar_pos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
     gw_totem_bar:ClearAllPoints()
     gw_totem_bar:SetPoint("TOPLEFT", gw_totem_bar.gwMover)
 end

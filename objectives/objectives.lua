@@ -1404,7 +1404,7 @@ local function LoadQuestTracker()
     GwQuesttrackerContainerCampaign.header:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
     GwQuesttrackerContainerCampaign.header:HookScript("OnHide", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
 
-    GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", {400, 10}, true, {"scaleable", "height"})
+    GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", {400, 10}, {"scaleable", "height"})
     fTracker:ClearAllPoints()
     fTracker:SetPoint("TOPLEFT", fTracker.gwMover)
     fTracker:SetHeight(GetSetting("QuestTracker_pos_height"))

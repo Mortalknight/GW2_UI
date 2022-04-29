@@ -351,7 +351,7 @@ local function LoadRaidFrames()
     container:ClearAllPoints()
     container:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 
-    RegisterMovableFrame(container, RAID_FRAMES_LABEL, "raid_pos", "VerticalActionBarDummy", nil, true, {"default", "default"})
+    RegisterMovableFrame(container, RAID_FRAMES_LABEL, "raid_pos", "VerticalActionBarDummy", nil, {"default", "default"})
 
     hooksecurefunc(container.gwMover, "StopMovingOrSizing", function(frame)
         local anchor = GetSetting("RAID_ANCHOR")
