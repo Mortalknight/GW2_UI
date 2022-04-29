@@ -2,10 +2,21 @@
 NEW
     - Added a toggle for target, target target, focus and focus target castbar
     - Added option to show a separate energy bar for some bosses like Anduin at the objectives boss frames
-    - Added Details skin (by SHOODOX)
+    - Added 2 Details skin (by SHOODOX)
     - Added GW2 style worldmap and minimap player pin
     - Added option to set a timer to auto scroll down the chat
     - Added option to set the number of chat messages which are scrolled with one scroll
+    - Added an option to hide placeholder in move hud mode
+    - Added ooption to hide tooltips ins combat and a override setting
+    - Minimap can now be sized by a slider
+    - New icons for chat buttons
+    - New lfg animation
+
+FIXES
+    - Fix issue with target debuff spacing in some situations
+    - Fix a wrong total reputation callculation per expansion
+    - Hide voicetab correctly
+
 
 5.27.1
 FIXES
