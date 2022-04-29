@@ -14,6 +14,12 @@ local function updateBossFrameHeight()
     for k, frame in pairs(bossFrames) do
         if frame:IsShown() then
             i = k
+        end
+    end
+
+    -- get correct height
+    for k, frame in pairs(bossFrames) do
+        if k <= i then
             height = height + frame:GetHeight()
         end
     end
