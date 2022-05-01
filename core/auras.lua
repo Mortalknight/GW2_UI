@@ -283,7 +283,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
             usedWidth = usedWidth + size + marginX
             if maxSize < usedWidth then
                 usedWidth = 0
-                maxHeightInRow = 0
+                maxHeightInRow = size
                 usedHeight = usedHeight + lineSize + marginY
                 lineSize = smallSize
             elseif size > maxHeightInRow then
