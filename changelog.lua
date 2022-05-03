@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.28.1", [=[
+FIXES
+    - Fix an error if no timestamp format is set
+]=])
+
 v("5.28.0", [=[
 NEW
     - Added a toggle for target, target target, focus and focus target castbar

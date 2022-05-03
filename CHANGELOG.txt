@@ -1,3 +1,7 @@
+5.28.1
+FIXES
+    - Fix an error if no timestamp format is set
+
 5.28.0
 NEW
     - Added a toggle for target, target target, focus and focus target castbar
