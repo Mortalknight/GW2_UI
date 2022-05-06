@@ -469,7 +469,6 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
 
      --temp to migrate to new isMoved system
     if framePoint.hasMoved == nil then
-        print(displayName)
         framePoint.hasMoved = frame.isMoved or false
         SetSetting(settingsName, framePoint)
     end

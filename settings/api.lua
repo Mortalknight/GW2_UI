@@ -1,6 +1,7 @@
 local _, GW = ...
 
 local GW_DEFAULT = GW.DEFAULTS
+local GW_PRIVATE_DEFAULT = GW.PRIVATE_DEFAULT
 local LibBase64 = GW.Libs.LibBase64
 local Compress = GW.Libs.Compress
 local Serializer = GW.Libs.Serializer
@@ -43,11 +44,14 @@ local function GetSetting(name, perSpec)
     if GW2UI_SETTINGS_DB_03 == nil then
         GW2UI_SETTINGS_DB_03 = GW_DEFAULT
     end
+    if GW2UI_PRIVATE_SETTINGS == nil then
+        GW2UI_PRIVATE_SETTINGS = {}
+    end
 
-    local settings = profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] or GW2UI_SETTINGS_DB_03
+    local settings = GW_PRIVATE_DEFAULT[name] and GW2UI_PRIVATE_SETTINGS or profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] or GW2UI_SETTINGS_DB_03
 
     if settings[name] == nil then
-        settings[name] = GetDefault(name)
+        settings[name] = GW_PRIVATE_DEFAULT[name] or GetDefault(name)
     end
 
     if perSpec then
@@ -68,8 +72,8 @@ GW.GetSetting = GetSetting
 local function SetSetting(name, state, perSpec, tableID)
     local profileIndex = GetActiveProfile()
 
-    local settings = GW2UI_SETTINGS_DB_03
-    if profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] then
+    local settings = GW_PRIVATE_DEFAULT[name] and GW2UI_PRIVATE_SETTINGS or GW2UI_SETTINGS_DB_03
+    if GW_PRIVATE_DEFAULT[name] == nil and profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] then
         settings = GW2UI_SETTINGS_PROFILES[profileIndex]
         settings["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
     end
