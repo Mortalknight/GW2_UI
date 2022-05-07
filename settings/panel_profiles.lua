@@ -422,8 +422,12 @@ local function addProfile(self, name, profileData, copy)
     elseif profileData then
         GW2UI_SETTINGS_PROFILES[index] = profileData
     else
+        if GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] == nil then
+            GW2UI_SETTINGS_PROFILES[index] = GW.copyTable(nil, GW2UI_SETTINGS_DB_03)
+        else
+            GW2UI_SETTINGS_PROFILES[index] = {}
+        end
         GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] = index
-        GW2UI_SETTINGS_PROFILES[index] = {}
         GW2UI_SETTINGS_PROFILES[index]["profilename"] = name
         GW2UI_SETTINGS_PROFILES[index]["profileCreatedDate"] = date("%m/%d/%y %H:%M:%S")
         GW2UI_SETTINGS_PROFILES[index]["profileCreatedCharacter"] = GetUnitName("player", true)
@@ -578,8 +582,6 @@ local function LoadProfilesPanel(sWindow)
             data.name:SetText(text)
             data.name:SetWidth(min(GW.HiddenFrame.HiddenString:GetStringWidth() + 5, 250))
             data.desc:SetText(description)
-
-            return
         end,
         OnButton2 = function() end,
         timeout = 0,
