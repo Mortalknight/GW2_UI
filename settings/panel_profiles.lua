@@ -41,7 +41,7 @@ local function createImportExportFrame(settingsWindow)
     frame.bg = frame:CreateTexture(nil, "ARTWORK")
     frame.bg:SetAllPoints()
     frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg")
-    
+
     frame.header = frame:CreateFontString(nil, "OVERLAY")
     frame.header:SetFont(DAMAGE_TEXT_FONT, 30, "OUTLINE")
     frame.header:SetTextColor(1, 0.95, 0.8, 1)
@@ -199,7 +199,7 @@ local function buttons_OnEnter(self)
         self:GetParent().copyButton:Show()
     end
 end
-AddForProfiling("panel_profiles", "activate_OnEnter", activate_OnEnter)
+AddForProfiling("panel_profiles", "activate_OnEnter", buttons_OnEnter)
 
 local function buttons_OnLeave(self)
     if self:GetParent().deleteable ~= nil and self:GetParent().deleteable == true then
