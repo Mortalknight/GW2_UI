@@ -5,7 +5,7 @@ local function LoadDetailsSkin()
     if not details then return end
 
 
-    if not details.IsLoaded() then
+    if details.IsLoaded and not details.IsLoaded() then
         C_Timer.After(0, function() LoadDetailsSkin() end)
         return
     end
