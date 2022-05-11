@@ -1355,14 +1355,14 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         end
     elseif event == "QUEST_ACCEPTED" and GetSetting("ALERTFRAME_NOTIFICATION_PARAGON") then
         local questId = ...
-        if not PARAGON_QUEST_ID[questId] then return end
-
-        local text = GW.RGBToHex(0.22, 0.37, 0.98) .. (PARAGON_QUEST_ID[questId] and GetFactionInfoByID(PARAGON_QUEST_ID[questId][1]) or UNKNOWN) .. "|r"
-        local name = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(questId))
-        -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("|cff00c0fa%s|r", GetFactionInfoByID(2407)), nil, format("|cff00c0fa%s|r", "TESTE"), false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
-        GW2_UIAlertSystem.AlertSystem:AddAlert(name, nil, text, false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
-        if GetSetting("ALERTFRAME_NOTIFICATION_PARAGON_SOUND") ~= "None" then
-            PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_PARAGON_SOUND")), "Master")
+        if PARAGON_QUEST_ID[questId] then
+            local text = GW.RGBToHex(0.22, 0.37, 0.98) .. (GetFactionInfoByID(PARAGON_QUEST_ID[questId][1]) or UNKNOWN) .. "|r"
+            local name = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(questId))
+            -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("|cff00c0fa%s|r", GetFactionInfoByID(2407)), nil, format("|cff00c0fa%s|r", "TESTE"), false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(name, nil, text, false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
+            if GetSetting("ALERTFRAME_NOTIFICATION_PARAGON_SOUND") ~= "None" then
+                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_PARAGON_SOUND")), "Master")
+            end
         end
     elseif event == "VIGNETTE_MINIMAP_UPDATED" and GetSetting("ALERTFRAME_NOTIFICATION_RARE") then
         if VignetteExclusionMapIDs[GW.locationData.mapID] or IsInGroup() or IsInRaid() or IsPartyLFG() then return end
