@@ -1066,6 +1066,5 @@ local function LoadTooltips()
             self:Hide()
         end
     end)
-
 end
 GW.LoadTooltips = LoadTooltips

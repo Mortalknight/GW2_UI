@@ -15,6 +15,7 @@ local function LoadSkinsPanel(sWindow)
 
     createCat(L["Skins"], L["Adjust Skin settings."], p, 6, nil, {p})
 
+    addOption(p.scroll.scrollchild, L["Alert Frames"], nil, "ALERTFRAME_SKIN_ENABLED")
     addOption(p.scroll.scrollchild, MAINMENU_BUTTON, nil, "MAINMENU_SKIN_ENABLED")
     addOption(p.scroll.scrollchild, L["Popup notifications"], nil, "STATICPOPUP_SKIN_ENABLED")
     addOption(p.scroll.scrollchild, SHOW_BATTLENET_TOASTS, nil, "BNTOASTFRAME_SKIN_ENABLED")

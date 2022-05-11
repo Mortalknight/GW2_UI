@@ -399,10 +399,9 @@ local function loadAddon(self)
     end
     GW.mult = (1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)
 
-    if GetSetting("ALERTFRAME_ENABLED") then
-        GW.LoadAlertSystemFrameSkins()
-        GW.SetupAlertFramePosition()
-    end
+    -- load alert settings
+    GW.LoadAlertSystem()
+    GW.SetupAlertFramePosition()
     GW.LoadOurAlertSubSystem()
 
     -- disable Move Anything bag handling
@@ -480,8 +479,8 @@ local function loadAddon(self)
     GW.LoadLFGSkin()
     GW.LoadOrderHallTalentFrameSkin()
     GW.LoadLootFrameSkin()
-    GW.LoadDetailsSkin()
 
+    GW.LoadDetailsSkin()
     GW.LoadImmersionAddonSkin()
 
     GW.SkinAndEnhanceColorPicker()

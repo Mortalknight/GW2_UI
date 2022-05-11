@@ -65,6 +65,7 @@ settings/panel_tooltip.lua
 settings/panel_party.lua
 settings/panel_raid.lua
 settings/panel_auras.lua
+settings/panel_notifications.lua
 settings/panel_skins.lua
 settings/panel_profiles.lua
 settings/hover_binding.lua

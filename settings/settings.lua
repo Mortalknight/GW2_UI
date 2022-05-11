@@ -234,7 +234,7 @@ local function AddOptionText(panel, name, desc, optionName, callback, multiline,
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, hasProfile, isSound)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, hasProfile, isSound, noNewLine)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, nil, hasProfile)
 
     opt["options"] = {}
@@ -244,6 +244,7 @@ local function AddOptionDropdown(panel, name, desc, optionName, callback, option
     opt["optionType"] = "dropdown"
     opt["tooltipType"] = tooltipType
     opt["hasSound"] = isSound
+    opt["noNewLine"] = noNewLine
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
@@ -452,7 +453,11 @@ local function InitPanel(panel, hasScroll)
             newLine = true
         elseif v.optionType == "dropdown" then
             optionFrameType = "GwOptionBoxDropDownTmpl"
-            newLine = true
+            if v.noNewLine then
+                newLine = not v.noNewLine
+            else
+                newLine = true
+            end
         elseif v.optionType == "text" then
             optionFrameType = "GwOptionBoxTextTmpl"
             newLine = true
@@ -487,6 +492,14 @@ local function InitPanel(panel, hasScroll)
         of.title:SetFont(DAMAGE_TEXT_FONT, 12)
         of.title:SetTextColor(1, 1, 1)
         of.title:SetShadowColor(0, 0, 0, 1)
+
+        if v.optionType == "dropdown" and v.noNewLine ~= nil and v.noNewLine then
+            of.title:Hide()
+            of.container:ClearAllPoints()
+            of.container:SetPoint("LEFT", -10, 0)
+            of.button:ClearAllPoints()
+            of.button:SetPoint("LEFT", -10, 0)
+        end
 
         if hasScroll and v.optionType == "dropdown" then
             of.container:SetParent(panel)
@@ -1052,6 +1065,7 @@ local function LoadSettings()
     GW.LoadPartyPanel(sWindow)
     GW.LoadRaidPanel(sWindow)
     GW.LoadAurasPanel(sWindow)
+    GW.LoadNotificationsPanel(sWindow)
     GW.LoadSkinsPanel(sWindow)
     GW.LoadProfilesPanel(sWindow)
 
