@@ -516,7 +516,7 @@
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="4">
                 <FontString parentKey="name" justifyH="LEFT" justifyV="MIDDLE">
-                    <Size x="160" y="15"></Size>
+                    <Size x="155" y="15"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                     </Anchors>
