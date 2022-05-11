@@ -6,6 +6,7 @@ local toastQueue = {} --Prevent from showing all "new" spells after spec change
 local hasMail = false
 local showRepair = true
 local numInvites = 0
+local guildInviteCache = {}
 local slots = {
     [1] = {1, INVTYPE_HEAD, 1000},
     [2] = {3, INVTYPE_SHOULDER, 1000},
@@ -1226,8 +1227,9 @@ local function GetGuildInvites()
 
         for i = 1, numDayEvents do
             local event = C_Calendar.GetDayEvent(monthOffset, info.monthDay, i)
-            if event.inviteStatus == CALENDAR_INVITESTATUS_NOT_SIGNEDUP then
+            if event.inviteStatus == CALENDAR_INVITESTATUS_NOT_SIGNEDUP and not guildInviteCache[info.eventID] then
                 numGuildInvites = numGuildInvites + 1
+                guildInviteCache[info.eventID] = true
             end
         end
     end
@@ -1504,7 +1506,8 @@ local function LoadAlertSystem()
         GW.AlertContainerFrame:RegisterEvent("QUEST_ACCEPTED")
         GW.AlertContainerFrame:RegisterEvent("VIGNETTE_MINIMAP_UPDATED")
         GW.AlertContainerFrame:RegisterEvent("CALENDAR_UPDATE_PENDING_INVITES")
-		GW.AlertContainerFrame:RegisterEvent("CALENDAR_UPDATE_GUILD_EVENTS")
+        GW.AlertContainerFrame:RegisterEvent("CALENDAR_UPDATE_GUILD_EVENTS")
+        GW.AlertContainerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
         GW.AlertContainerFrame.lastMinimapRare = {time = 0, id = nil}
 
