@@ -1375,7 +1375,6 @@ local function AlertContainerFrameOnEvent(self, event, ...)
 
             if vignetteInfo and vignetteGUID ~= self.lastMinimapRare.id then
                 vignetteInfo.name = format("|cff00c0fa%s|r", vignetteInfo.name)
-                print(vignetteInfo.atlasName)
                 GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["has appeared on the MiniMap!"], nil, vignetteInfo.name, false, vignetteInfo.atlasName, false)
                 self.lastMinimapRare.id = vignetteGUID
 
