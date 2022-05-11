@@ -1371,9 +1371,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
 
         if onMinimap then
             local vignetteInfo = C_VignetteInfo.GetVignetteInfo(vignetteGUID)
-		    if not vignetteInfo then return end
-            if VignetteBlackListIDs[vignetteInfo.vignetteID] then return end
-
+            if not vignetteInfo or (vignetteInfo and VignetteBlackListIDs[vignetteInfo.vignetteID]) then return end
 
             if vignetteInfo and vignetteGUID ~= self.lastMinimapRare.id then
                 vignetteInfo.name = format("|cff00c0fa%s|r", vignetteInfo.name)
