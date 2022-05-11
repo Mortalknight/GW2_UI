@@ -1355,7 +1355,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         local questId = ...
 
         local text = GW.RGBToHex(0.22, 0.37, 0.98) .. (PARAGON_QUEST_ID[questId] and GetFactionInfoByID(PARAGON_QUEST_ID[questId][1]) or UNKNOWN) .. "|r"
-        local name = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(questID))
+        local name = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(questId))
         -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("|cff00c0fa%s|r", GetFactionInfoByID(2407)), nil, format("|cff00c0fa%s|r", "TESTE"), false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
         GW2_UIAlertSystem.AlertSystem:AddAlert(name, nil, text, false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
         if GetSetting("ALERTFRAME_NOTIFICATION_PARAGON_SOUND") ~= "None" then
