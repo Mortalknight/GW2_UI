@@ -1345,8 +1345,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         if showRepair and value < 20 then
             showRepair = false
             C_Timer.After(30, function() showRepair = true end)
-            -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s slot needs to repair, current durability is %d.", INVTYPE_HEAD, 20), nil, MINIMAP_TRACKING_REPAIR, false, nil, false)
-            GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s slot needs to repair, current durability is %d."], slots[1][2], value), nil, MINIMAP_TRACKING_REPAIR, false, nil, false)
+            -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s slot needs to repair, current durability is %d.", INVTYPE_HEAD, 20), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair", false)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s slot needs to repair, current durability is %d."], slots[1][2], value), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair", false)
             if GetSetting("ALERTFRAME_NOTIFICATION_REPAIR_SOUND") ~= "None" then
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_REPAIR_SOUND")), "Master")
             end
