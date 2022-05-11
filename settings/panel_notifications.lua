@@ -15,7 +15,7 @@ local function LoadNotificationsPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(nil)
 
-    createCat(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, L["Edit your GW2 notifications."], p, 3, nil, {p})
+    createCat(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, L["Edit your GW2 notifications."], p, 11, nil, {p})
 
     local soundKeys = {}
     for _, sound in next, GW.Libs.LSM:List("sound") do
