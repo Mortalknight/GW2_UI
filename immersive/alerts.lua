@@ -1355,6 +1355,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         end
     elseif event == "QUEST_ACCEPTED" and GetSetting("ALERTFRAME_NOTIFICATION_PARAGON") then
         local questId = ...
+        if not PARAGON_QUEST_ID[questId] then return end
 
         local text = GW.RGBToHex(0.22, 0.37, 0.98) .. (PARAGON_QUEST_ID[questId] and GetFactionInfoByID(PARAGON_QUEST_ID[questId][1]) or UNKNOWN) .. "|r"
         local name = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(questId))
