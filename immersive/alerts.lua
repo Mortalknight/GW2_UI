@@ -81,6 +81,7 @@ local VignetteBlackListIDs = {
     [4582] = true, -- Ripe Purian (Bastion)
     [4602] = true, -- Aimless Soul (The Maw)
     [4617] = true, -- Imprisoned Soul (The Maw)
+    [5020] = true, -- Consol (Zereth Mortis)
 }
 
 local constBackdropAlertFrame = {
@@ -1323,8 +1324,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             hasMail = newMail
 
             if hasMail then
-                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail", false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail", false)
+                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon", false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon", false)
                 if GetSetting("ALERTFRAME_NOTIFICATION_NEW_MAIL_SOUND") ~= "None" then
                     PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_NEW_MAIL_SOUND")), "Master")
                 end
@@ -1375,6 +1376,9 @@ local function AlertContainerFrameOnEvent(self, event, ...)
 
             if vignetteInfo and vignetteGUID ~= self.lastMinimapRare.id then
                 vignetteInfo.name = format("|cff00c0fa%s|r", vignetteInfo.name)
+                if vignetteInfo.atlasName == "VignetteLoot" then
+                    vignetteInfo.atlasName = "Interface/AddOns/GW2_UI/textures/icons/rewards-icon"
+                end
                 GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["has appeared on the MiniMap!"], nil, vignetteInfo.name, false, vignetteInfo.atlasName, false)
                 self.lastMinimapRare.id = vignetteGUID
 

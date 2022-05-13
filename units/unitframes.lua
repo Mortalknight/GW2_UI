@@ -127,7 +127,7 @@ local function updateHealthbarColor(self)
 
         self.nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
     else
-        local unitReaction = UnitReaction(self.unit, "player")      
+        local unitReaction = UnitReaction(self.unit, "player")
         local nameColor = unitReaction and GW.FACTION_BAR_COLORS[unitReaction] or RAID_CLASS_COLORS.PRIEST
 
         if unitReaction then
