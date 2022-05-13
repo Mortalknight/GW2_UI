@@ -6,6 +6,7 @@ local toastQueue = {} --Prevent from showing all "new" spells after spec change
 local hasMail = false
 local showRepair = true
 local numInvites = 0
+local LFG_Timer = 0
 local guildInviteCache = {}
 local slots = {
     [1] = {1, INVTYPE_HEAD, 1000},
@@ -315,7 +316,7 @@ local function skinDungeonCompletionAlert(frame)
         frame.dungeonTexture.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         frame.dungeonTexture.iconBorder:SetAllPoints(frame.dungeonTexture.b)
     end
-    
+
     --flare
     AddFlare(frame, frame.dungeonTexture.b)
 end
@@ -474,7 +475,7 @@ local function skinLootWonAlert(frame)
         frame.backdrop:SetPoint("TOPLEFT", lootItem.Icon.b, "TOPLEFT", -25, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", lootItem.Icon.b, "BOTTOMRIGHT", 227, -15)
     end
-    
+
     --flare
     AddFlare(frame, lootItem.Icon.b)
 end
@@ -506,7 +507,7 @@ local function skinLootUpgradeAlert(frame)
         frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
     end
-    
+
     --flare
     AddFlare(frame, frame.Icon.b)
 end
@@ -538,7 +539,7 @@ local function skinMoneyWonAlert(frame)
         frame.backdrop:SetPoint("TOPLEFT", frame.Icon.b, "TOPLEFT", -25, 15)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame.Icon.b, "BOTTOMRIGHT", 227, -15)
     end
-    
+
     --flare
     AddFlare(frame, frame.Icon.b)
 end
@@ -577,7 +578,7 @@ local function skinEntitlementDeliveredAlert(frame)
         frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
     end
-    
+
     --flare
     AddFlare(frame, frame.Icon.b)
 end
@@ -616,7 +617,7 @@ local function skinRafRewardDeliveredAlert(frame)
         frame.Icon.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         frame.Icon.iconBorder:SetAllPoints(frame.Icon.b)
     end
-    
+
     --flare
     AddFlare(frame, frame.Icon.b)
 end
@@ -686,7 +687,7 @@ local function skinNewRecipeLearnedAlert(frame)
 
     frame.Name:SetFont(UNIT_NAME_FONT, 12)
     frame.Title:SetFont(UNIT_NAME_FONT, 14)
-    
+
     --flare
     AddFlare(frame, frame.Icon.b)
 end
@@ -725,7 +726,7 @@ local function skinNewPetAlert(frame)
 
     frame.Name:SetFont(UNIT_NAME_FONT, 12)
     frame.Label:SetFont(UNIT_NAME_FONT, 14)
-    
+
     --flare
     AddFlare(frame, frame.Icon.b)
 end
@@ -734,11 +735,11 @@ local function skinInvasionAlert(frame)
     if not frame.isSkinned then
         frame:SetAlpha(1)
         hooksecurefunc(frame, "SetAlpha", forceAlpha)
-        
+
         frame:CreateBackdrop(constBackdropAlertFrame)
         frame.backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -15, 0)
         frame.backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
-        
+
         --Background contains the item border too, so have to remove it
         if frame.GetRegions then
             local region, icon = frame:GetRegions()
@@ -759,7 +760,7 @@ local function skinInvasionAlert(frame)
                     icon.iconBorder:SetAllPoints(icon.b)
                     icon:SetDrawLayer("OVERLAY")
                     icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-                    
+
                     --flare
                     AddFlare(frame, icon.b)
                 end
@@ -1379,7 +1380,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
                 if vignetteInfo.atlasName == "VignetteLoot" then
                     vignetteInfo.atlasName = "Interface/AddOns/GW2_UI/textures/icons/rewards-icon"
                 end
-                GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["has appeared on the MiniMap!"], nil, vignetteInfo.name, false, vignetteInfo.atlasName, false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["has appeared on the Minimap!"], nil, vignetteInfo.name, false, vignetteInfo.atlasName, false)
                 self.lastMinimapRare.id = vignetteGUID
 
                 local time = GetTime()
@@ -1403,6 +1404,64 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         -- collect open invites
         C_Timer.After(7, function() AlertContainerFrameOnEvent(self, "CALENDAR_UPDATE_PENDING_INVITES") end)
         self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+    elseif event == "LFG_UPDATE_RANDOM_INFO" and GetSetting("ALERTFRAME_NOTIFICATION_CALL_TO_ARMS") then
+        local _, forTank, forHealer, forDamage = GetLFGRoleShortageRewards(2087, LFG_ROLE_SHORTAGE_RARE) -- 2087 Random Shadowlands Heroic
+        local IsTank, IsHealer, IsDamage = C_LFGList.GetAvailableRoles()
+
+        local ingroup = IsInGroup(LE_PARTY_CATEGORY) or IsInGroup(LE_PARTY_CATEGORY_INSTANCE)
+
+        local tank = IsTank and forTank and "|cff00B2EE" .. TANK .. "|r" or ""
+        local healer = IsHealer and forHealer and "|cff00EE00" .. HEALER .. "|r" or ""
+        local damager = IsDamage and forDamage and "|cffd62c35" .. DAMAGER .. "|r" or ""
+
+        if ((IsTank and forTank) or (IsHealer and forHealer) or (IsDamage and forDamage)) and not ingroup then
+            if GetTime() - LFG_Timer > 20 then
+                if GetSetting("ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND") ~= "None" then
+                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND")), "Master")
+                end
+                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, "|cff00B2EE" .. TANK .. "|r"), nil, BATTLEGROUND_HOLIDAY, false, nil, false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, tank .. " " .. healer .. " " .. damager), nil, BATTLEGROUND_HOLIDAY, false, nil, false)
+                LFG_Timer = GetTime()
+            end
+        end
+    elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
+        local _, subEvent, _, _, srcName, _, _, _, _, _, _, spellID = CombatLogGetCurrentEventInfo()
+        if not subEvent or not spellID or not srcName then return end
+        if not UnitInRaid(srcName) and not UnitInParty(srcName) then return end
+
+        if subEvent == "SPELL_CAST_SUCCESS" then
+            if GetSetting("ALERTFRAME_NOTIFICATION_MAGE_TABLE") and spellID == 190336 then -- Refreshment Table
+                local name, _, icon = GetSpellInfo(190336)
+                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s created a table of Conjured Refreshments.", "Hansi"), nil, GetSpellInfo(190336), false, select(3, GetSpellInfo(190336)), false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s created a table of Conjured Refreshments."], srcName), nil, name, false, icon, false)
+                if GetSetting("ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND") ~= "None" then
+                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND")), "Master")
+                end
+            elseif GetSetting("ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING") and spellID == 698 then -- Ritual of Summoning
+                local name, _, icon = GetSpellInfo(698)
+                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s is performing a Ritual of Summoning.", "Hansi"), nil, GetSpellInfo(698), false, select(3, GetSpellInfo(698)), false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s is performing a Ritual of Summoning."], srcName), nil, name, false, icon, false)
+                if GetSetting("ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND") ~= "None" then
+                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND")), "Master")
+                end
+            elseif GetSetting("ALERTFRAME_NOTIFICATION_SPOULWELL") and spellID == 29893 then -- Soul Well
+                local name, _, icon = GetSpellInfo(29893)
+                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s created a Soulwell.", "Hansi"), nil, GetSpellInfo(29893), false, select(3, GetSpellInfo(29893)), false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s created a Soulwell."], srcName), nil, name, false, icon, false)
+                if GetSetting("ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND") ~= "None" then
+                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND")), "Master")
+                end
+            end
+        elseif subEvent == "SPELL_CREATE" then --Portals
+            if GetSetting("ALERTFRAME_NOTIFICATION_MAGE_PORTAL") and GW.MagePortals[spellID] then
+                local name, _, icon = GetSpellInfo(spellID)
+                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s placed a portal to %s.", "Hansi", string.sub(GetSpellInfo(224871), string.find(GetSpellInfo(224871), ": ") + 2)), nil, GetSpellInfo(224871), false, select(3, GetSpellInfo(224871)), false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s placed a portal to %s."], srcName, string.sub(name, string.find(name, ": ") + 2)), nil, name, false, icon, false)
+                if GetSetting("ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND") ~= "None" then
+                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND")), "Master")
+                end
+            end
+        end
     end
 end
 
@@ -1513,6 +1572,8 @@ local function LoadAlertSystem()
         GW.AlertContainerFrame:RegisterEvent("CALENDAR_UPDATE_PENDING_INVITES")
         GW.AlertContainerFrame:RegisterEvent("CALENDAR_UPDATE_GUILD_EVENTS")
         GW.AlertContainerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+        GW.AlertContainerFrame:RegisterEvent("LFG_UPDATE_RANDOM_INFO")
+        GW.AlertContainerFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
         GW.AlertContainerFrame.lastMinimapRare = {time = 0, id = nil}
 
