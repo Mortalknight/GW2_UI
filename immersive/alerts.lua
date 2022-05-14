@@ -1419,8 +1419,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
                 if GetSetting("ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND") ~= "None" then
                     PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND")), "Master")
                 end
-                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, "|cff00B2EE" .. TANK .. "|r"), nil, BATTLEGROUND_HOLIDAY, false, nil, false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, tank .. " " .. healer .. " " .. damager), nil, BATTLEGROUND_HOLIDAY, false, nil, false)
+                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, "|cff00B2EE" .. TANK .. "|r"), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, tank .. " " .. healer .. " " .. damager), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
                 LFG_Timer = GetTime()
             end
         end
