@@ -616,7 +616,7 @@ local function ApplyPvPUISkin()
     BonusFrame.ShadowOverlay:Hide()
     BonusFrame.WorldBattlesTexture:Hide()
 
-    for _, bonusButton in pairs({"RandomBGButton", "Arena1Button", "RandomEpicBGButton", "BrawlButton"}) do
+    for _, bonusButton in pairs({"RandomBGButton", "Arena1Button", "RandomEpicBGButton", "BrawlButton", "BrawlButton2"}) do
         local bu = BonusFrame[bonusButton]
         local reward = bu.Reward
 
