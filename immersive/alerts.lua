@@ -1455,8 +1455,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         elseif subEvent == "SPELL_CREATE" then --Portals
             if GetSetting("ALERTFRAME_NOTIFICATION_MAGE_PORTAL") and GW.MagePortals[spellID] then
                 local name, _, icon = GetSpellInfo(spellID)
-                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s placed a portal to %s.", "Hansi", string.sub(GetSpellInfo(224871), string.find(GetSpellInfo(224871), ": ") + 2)), nil, GetSpellInfo(224871), false, select(3, GetSpellInfo(224871)), false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s placed a portal to %s."], srcName, string.sub(name, string.find(name, ": ") + 2)), nil, name, false, icon, false)
+                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s placed a portal to %s.", "Hansi", GetSpellInfo(224871):gsub("^.+:%s+", "")), nil, GetSpellInfo(224871), false, select(3, GetSpellInfo(224871)), false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s placed a portal to %s."], srcName, name:gsub("^.+:%s+", "")), nil, name, false, icon, false)
                 if GetSetting("ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND") ~= "None" then
                     PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND")), "Master")
                 end
