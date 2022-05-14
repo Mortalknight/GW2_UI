@@ -258,6 +258,10 @@ local function registerFrame(i)
     arenaFrame.marker:Hide()
     arenaFrame.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
 
+    arenaFrame.power.value:Hide()
+    arenaFrame.power.name:Hide()
+    arenaFrame.powerBarbg:Hide()
+
     arenaFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     arenaFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     arenaFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")

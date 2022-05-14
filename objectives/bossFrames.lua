@@ -127,7 +127,6 @@ local function checkForExtraEnergyBar(self)
         self.powerBarbg:Hide()
         self:SetHeight(35)
     end
-        
 end
 
 local function bossFrame_OnEvent(self, event)
