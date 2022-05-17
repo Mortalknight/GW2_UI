@@ -13,6 +13,12 @@ local function SkinGearQuipper()
     tex:SetSize(GqUiFrame:GetWidth() + 30, 450)
     GqUiFrame.tex = tex
 
+    GqUiFrame:SetPoint("TOPRIGHT", 310, -12);
+
+    GqUiFrame:HookScript("OnShow", function()
+        GqUiFrame:SetPoint("TOPRIGHT", 350, -12)
+    end)
+
     GqUiFrame_BtnSaveSet:SkinButton(false, true)
     GqUiFrame_BtnDeleteSet:SkinButton(false, true)
     GqUiScrollFrame:StripTextures()

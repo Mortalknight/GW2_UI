@@ -1,6 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.21.0 TBC", [=[
+NEW
+    - Added Details Skins
+FIXES
+    - Adjust GearQuipper frame position
+]=])
+
+
 v("1.20.0 TBC", [=[
 NEW
     - Added a toggle for target, target target, focus and focus target castbar

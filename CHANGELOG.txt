@@ -1,3 +1,9 @@
+1.21.0
+NEW
+    - Added Details Skins
+FIXES
+    - Adjust GearQuipper frame position
+
 1.20.0
 NEW
     - Added a toggle for target, target target, focus and focus target castbar

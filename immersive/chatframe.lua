@@ -183,7 +183,7 @@ local function handleChatFrameFadeIn(chatFrame)
             end
         end
 
-        if GwChatContainer1 then UIFrameFadeIn(GwChatContainer1, 0.5, GwChatContainer1:GetAlpha(), 1) end
+        UIFrameFadeIn(ChatFrame1.Container, 0.5, ChatFrame1.Container:GetAlpha(), 1)
         UIFrameFadeIn(ChatFrameMenuButton, 0.5, ChatFrameMenuButton:GetAlpha(), 1)
     elseif chatFrame.isDocked == nil then
         if chatFrame.Container then
@@ -253,7 +253,7 @@ local function handleChatFrameFadeOut(chatFrame)
     --check if other Tabs has Containers, which need to fade out
     for i = 1, FCF_GetNumActiveChatFrames() do
         if _G["ChatFrame" .. i].hasContainer and _G["ChatFrame" .. i].isDocked == chatFrame.isDocked and chatFrame:GetID() ~= i then
-            UIFrameFadeOut(_G["GwChatContainer" .. i], 2, _G["GwChatContainer" .. i]:GetAlpha(), chatAlpha)
+            UIFrameFadeOut(_G["ChatFrame" .. i].Container, 2, _G["ChatFrame" .. i].Container:GetAlpha(), chatAlpha)
         end
     end
 end
@@ -275,8 +275,8 @@ local function styleChatWindow(frame)
     local editbox = _G[name.."EditBox"]
     local background = _G[name .. "Background"]
 
-    if not frame.hasContainer and (isDocked == 1 or isDocked == nil) then
-        local fmGCC = CreateFrame("FRAME", "GwChatContainer" .. id, UIParent, "GwChatContainer")
+    if not frame.hasContainer and (isDocked == 1 or (isDocked == nil and frame:IsShown())) then
+        local fmGCC = CreateFrame("Frame", nil, UIParent, "GwChatContainer")
         fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
         fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
         if not frame.isDocked then
@@ -287,6 +287,15 @@ local function styleChatWindow(frame)
         if not frame.isDocked then fmGCC.EditBox:Hide() end
         frame.Container = fmGCC
         frame.hasContainer = true
+    end
+
+    if id == 3 then
+        SetChatWindowShown(id, GetCVarBool("speechToText"))
+        if frame.hasContainer then
+            frame.Container:SetShown(GetCVarBool("speechToText"))
+        end
+        FloatingChatFrame_Update(id)
+        FCF_DockUpdate()
     end
 
     for _, texName in pairs(tabTexs) do
@@ -551,22 +560,44 @@ end
 
 local function LoadChat()
     local shouldFading = GetSetting("CHATFRAME_FADE")
+    local eventFrame = CreateFrame("Frame")
 
-    for i = 1, FCF_GetNumActiveChatFrames() do
-        local frame = _G["ChatFrame" .. i]
+    for _, frameName in ipairs(CHAT_FRAMES) do
+        local frame = _G[frameName]
+        frame.oldAlpha = frame.oldAlpha and frame.oldAlpha or DEFAULT_CHATFRAME_ALPHA
         styleChatWindow(frame)
         FCFTab_UpdateAlpha(frame)
         frame:SetTimeVisible(100)
         frame:SetFading(shouldFading)
+        frame:SetMaxLines(2500)
     end
 
     hooksecurefunc("FCF_DockUpdate", function()
-        for i = 1, FCF_GetNumActiveChatFrames() do
-            local frame = _G["ChatFrame" .. i]
+        for _, frameName in ipairs(CHAT_FRAMES) do
+            local frame = _G[frameName]
+            local _, _, _, _, _, _, _, _, isDocked = GetChatWindowInfo(frame:GetID())
+            local editbox = _G[frameName .. "EditBox"]
             styleChatWindow(frame)
             FCFTab_UpdateAlpha(frame)
             frame:SetTimeVisible(100)
             frame:SetFading(shouldFading)
+            if not frame.hasContainer and (isDocked == 1 or (isDocked == nil and frame:IsShown())) then
+                local fmGCC = CreateFrame("FRAME", nil, UIParent, "GwChatContainer")
+                fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
+                fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
+                if not frame.isDocked then
+                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
+                else
+                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxRight"], "BOTTOMRIGHT", 0, 0)
+                end
+                if not frame.isDocked then fmGCC.EditBox:Hide() end
+                frame.Container = fmGCC
+                frame.hasContainer = true
+            elseif frame.hasContainer then
+                frame.Container:SetShown(frame:IsShown())
+            elseif frame.isDocked and frame:IsShown() and frame:GetID() > 1 then
+                ChatFrame1.Container:Show()
+            end
         end
     end)
     hooksecurefunc("FCF_Close", function(frame)
@@ -592,7 +623,7 @@ local function LoadChat()
     end)
 
     hooksecurefunc("FCFTab_OnDragStop", function(frame)
-        local frame = _G["ChatFrame"..frame:GetID()]
+        local frame = _G["ChatFrame" .. self:GetID()]
         local name = frame:GetName()
         local editbox = _G[name.."EditBox"]
         local id = frame:GetID()
@@ -601,8 +632,8 @@ local function LoadChat()
         FCFTab_UpdateAlpha(frame)
         frame:SetTimeVisible(100)
         frame:SetFading(shouldFading)
-        if not frame.hasContainer and (isDocked == 1 or isDocked == nil) then
-            local fmGCC = CreateFrame("FRAME", "GwChatContainer" .. id, UIParent, "GwChatContainer")
+        if not frame.hasContainer and (isDocked == 1 or (isDocked == nil and frame:IsShown())) then
+            local fmGCC = CreateFrame("FRAME", nil, UIParent, "GwChatContainer")
             fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
             fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
             if not frame.isDocked then
@@ -610,15 +641,16 @@ local function LoadChat()
             else
                 fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxRight"], "BOTTOMRIGHT", 0, 0)
             end
-            if not frame.isDocked  then fmGCC.EditBox:Hide() end
+            if not frame.isDocked then fmGCC.EditBox:Hide() end
             frame.Container = fmGCC
             frame.hasContainer = true
         elseif frame.hasContainer then
             frame.Container:Show()
         end
         --Set Button and container position after drag for every container
-        for i = 1, FCF_GetNumActiveChatFrames() do
-            if _G["ChatFrame" .. i].hasContainer then setButtonPosition(_G["ChatFrame" .. i]) end
+        for _, frameName in ipairs(CHAT_FRAMES) do
+            local frameForPosition = _G[frameName]
+            if frameForPosition:IsShown() and frameForPosition.hasContainer then setButtonPosition(frameForPosition) end
         end
     end)
 
@@ -668,13 +700,65 @@ local function LoadChat()
     }
 
     for i = 1, #ChatMenus do
-        _G[ChatMenus[i]]:HookScript("OnShow", 
+        _G[ChatMenus[i]]:HookScript("OnShow",
             function(self)
                 self:SetBackdrop(GW.skins.constBackdropFrame)
             end)
     end
 
-    _G.CombatLogQuickButtonFrame_CustomTexture:Hide()
+    CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar")
+    CombatLogQuickButtonFrame_CustomTexture:Hide()
     BuildCopyChatFrame()
+
+    -- prevent the voice tab from showing if disabled
+    hooksecurefunc("VoiceTranscriptionFrame_UpdateVisibility", function(self)
+        local showVoice = GetCVarBool("speechToText")
+        SetChatWindowShown(self:GetID(), showVoice)
+        ChatFrame3Tab:SetShown(showVoice)
+        FloatingChatFrame_Update(self:GetID())
+        FCF_DockUpdate()
+        if ChatFrame3.hasContainer then
+            ChatFrame3.Container:SetShown(showVoice)
+        end
+    end)
+    VoiceTranscriptionFrame_UpdateVisibility(_G["ChatFrame3"])
+
+    -- set custom textures for chat channel buttons (chats/voice, mute mic/sound)
+    ChatFrameChannelButton:SetHeight(20)
+    ChatFrameChannelButton:SetWidth(20)
+    ChatFrameChannelButton.Flash:SetHeight(20)
+    ChatFrameChannelButton.Flash:SetWidth(20)
+    ChatFrameChannelButton.Icon:Kill()
+    hooksecurefunc(ChatFrameChannelButton, "SetIconToState", function(self, joined)
+        if joined then
+            self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
+            self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc")
+            self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
+            self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
+        else
+            self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
+            self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal")
+            self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
+            self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
+        end
+    end)
+
+    -- events for functions
+    eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    eventFrame:RegisterEvent("CVAR_UPDATE")
+    eventFrame:SetScript("OnEvent", function(_, event, ...)
+        if event == "PLAYER_ENTERING_WORLD" then
+            ChatFrameChannelButton:UpdateVisibleState()
+        elseif event == "CVAR_UPDATE" and ... == "ENABLE_SPEECH_TO_TEXT_TRANSCRIPTION" then
+            local showVoice = GetCVarBool("speechToText")
+            SetChatWindowShown(3, showVoice)
+            ChatFrame3Tab:SetShown(showVoice)
+            if ChatFrame3.hasContainer then
+                ChatFrame3.Container:SetShown(showVoice)
+            end
+            FloatingChatFrame_Update(3)
+            FCF_DockUpdate()
+        end
+    end)
 end
 GW.LoadChat = LoadChat

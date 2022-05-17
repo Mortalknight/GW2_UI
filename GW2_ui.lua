@@ -433,6 +433,8 @@ local function loadAddon(self)
         GW.SkinWorldMap()
     end
 
+    GW.LoadDetailsSkin()
+
 
     --Create hud art
     hudArtFrame = GW.LoadHudArt()

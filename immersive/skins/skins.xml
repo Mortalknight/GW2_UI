@@ -11,4 +11,5 @@
     <Script file="immersive\skins\worldmap.lua"/>
 
     <Script file="immersive\skins\addons\gearQuipper.lua"/>
+    <Script file="immersive\skins\addons\detailsProfile.lua"/>
 </Ui>

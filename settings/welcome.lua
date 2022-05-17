@@ -93,7 +93,7 @@ local function button1_OnClick()
                 if id == 2 then
                     FCF_SetWindowName(frame, GUILD_EVENT_LOG)
                 elseif id == 3 then
-                    --VoiceTranscriptionFrame_UpdateVisibility(frame)
+                    VoiceTranscriptionFrame_UpdateVisibility(frame)
                     VoiceTranscriptionFrame_UpdateVoiceTab(frame)
                     VoiceTranscriptionFrame_UpdateEditBox(frame)
                 end

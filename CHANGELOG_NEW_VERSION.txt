@@ -1,5 +1,5 @@
-1.20.0
+1.21.0
 NEW
-    - Added a toggle for target, target target, focus and focus target castbar
+    - Added Details Skins
 FIXES
-    - Change from "UNIT_HEALTH" event to "UNIT_HEALTH_FREQUENT" to prevent a blizzard bug
+    - Adjust GearQuipper frame position
