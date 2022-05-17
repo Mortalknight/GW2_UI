@@ -1130,7 +1130,7 @@ local function skinBonusRollLoot()
     AddFlare(frame, lootItem.Icon.b)
 end
 
-function GW2_UIAlertFrame_OnClick(self, ...)
+local function GW2_UIAlertFrame_OnClick(self, ...)
     if (self.delay == -1) then
         self:SetScript("OnLeave", AlertFrame_ResumeOutAnimation)
         self.delay = 0
@@ -1143,9 +1143,10 @@ function GW2_UIAlertFrame_OnClick(self, ...)
     end
 end
 
-local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon, levelup, spellID)
+local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon, levelup, spellID, targetName)
     -- An alert flagged as alreadyEarned has more space for the text to display since there's no shield+points icon.
     AchievementAlertFrame_SetUp(frame, 5208, true)
+    frame:HookScript("OnClick", GW2_UIAlertFrame_OnClick)
     frame.Name:SetFormattedText(name)
     frame.Name:SetFont(UNIT_NAME_FONT, 12)
     frame.Unlocked:SetFormattedText(toptext or "")
@@ -1183,6 +1184,12 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
         frame:SetScript("OnLeave", nil)
     else
         frame:SetScript("OnLeave", AlertFrame_ResumeOutAnimation)
+    end
+
+    -- target by name
+    if not InCombatLockdown() then
+        frame:SetAttribute("type", "macro")
+        frame:SetAttribute("macrotext", "/target " .. targetName)
     end
 
     -- Background
@@ -1376,11 +1383,11 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             if not vignetteInfo or (vignetteInfo and VignetteBlackListIDs[vignetteInfo.vignetteID]) then return end
 
             if vignetteInfo and vignetteGUID ~= self.lastMinimapRare.id then
-                vignetteInfo.name = format("|cff00c0fa%s|r", vignetteInfo.name)
+                vignetteInfo.nameColored = format("|cff00c0fa%s|r", vignetteInfo.name)
                 if vignetteInfo.atlasName == "VignetteLoot" then
                     vignetteInfo.atlasName = "Interface/AddOns/GW2_UI/textures/icons/rewards-icon"
                 end
-                GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["has appeared on the Minimap!"], nil, vignetteInfo.name, false, vignetteInfo.atlasName, false)
+                GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["has appeared on the Minimap!"], nil, vignetteInfo.nameColored, false, vignetteInfo.atlasName, false, nil, vignetteInfo.name)
                 self.lastMinimapRare.id = vignetteGUID
 
                 local time = GetTime()
