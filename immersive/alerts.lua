@@ -1187,7 +1187,7 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
     end
 
     -- target by name
-    if not InCombatLockdown() then
+    if not InCombatLockdown() and targetName then
         frame:SetAttribute("type", "macro")
         frame:SetAttribute("macrotext", "/target " .. targetName)
     end
