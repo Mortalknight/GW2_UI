@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.28.2", [=[
+FIXES
+    - Fix an error if pet grid is enabled
+]=])
+
 v("5.28.1", [=[
 FIXES
     - Fix an error if no timestamp format is set
