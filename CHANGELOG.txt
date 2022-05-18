@@ -1,3 +1,7 @@
+1.21.1
+FIXES
+    - Fix chat lua error
+
 1.21.0
 NEW
     - Added Details Skins

@@ -2,6 +2,11 @@ local _, GW = ...
 local v = GW.vernotes
 
 v("1.21.0 TBC", [=[
+FIXES
+    - Fix chat lua error
+]=])
+
+v("1.21.0 TBC", [=[
 NEW
     - Added Details Skins
 FIXES
