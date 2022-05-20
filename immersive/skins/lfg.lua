@@ -470,7 +470,7 @@ local function SkinLookingForGroupFrames()
 
     --ApplicationViewer (Custom Groups)
     LFGListFrame.ApplicationViewer.InfoBackground:Hide()
-    LFGListFrame.ApplicationViewer.InfoBackground:CreateBackdrop("Transparent")
+    --LFGListFrame.ApplicationViewer.InfoBackground:CreateBackdrop("Transparent")
     LFGListFrame.ApplicationViewer.AutoAcceptButton:SkinCheckButton()
 
     LFGListFrame.ApplicationViewer.Inset:StripTextures()
