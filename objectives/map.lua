@@ -264,7 +264,7 @@ local function LoadMinimap()
         GuildInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
     end
     if MiniMapChallengeMode then
-        MiniMapChallengeMode:SetParent(UIParMinimapent)
+        MiniMapChallengeMode:SetParent(Minimap)
         MiniMapChallengeMode:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
     end
 
