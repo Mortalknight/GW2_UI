@@ -209,6 +209,7 @@ local function xpbar_OnEvent(self, event)
 
             earnedValue = earnedValue or 0 --fallback
             topValue = topValue or 0 --fallback
+            bottomValue = bottomValue or 0 --fallback
             if currentRank == nextRank and earnedValue - bottomValue == 0 then
                 valPrecRepu = 1
                 gw_reputation_vals = name .. " " .. REPUTATION .. " 21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
