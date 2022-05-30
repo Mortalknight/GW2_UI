@@ -207,6 +207,8 @@ local function xpbar_OnEvent(self, event)
             local currentRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (standingId or 1))), GW.mysex)
             local nextRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (standingId or 1) + 1)), GW.mysex)
 
+            earnedValue = earnedValue or 0 --fallback
+            topValue = topValue or 0 --fallback
             if currentRank == nextRank and earnedValue - bottomValue == 0 then
                 valPrecRepu = 1
                 gw_reputation_vals = name .. " " .. REPUTATION .. " 21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
