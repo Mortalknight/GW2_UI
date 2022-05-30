@@ -463,7 +463,6 @@ L["Scroll Interval"] = true
 L["Number of time in seconds to scroll down to the bottom of the chat window if you are not scrolled down completely."] = true
 L["Combat Override Key"] = true
 L["Modifier to hold to show the tooltip in combat."] = true
-
 L["%s slot needs to repair, current durability is %d."] = true
 L["has appeared on the Minimap!"] = true
 L["%s created a table of Conjured Refreshments."] = true

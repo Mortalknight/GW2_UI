@@ -1300,9 +1300,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
                 v.event = ""
             end
         end
-        if GetSetting("ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND") ~= "None" then
-            PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND")), "Master")
-        end
+        PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND")), "Master")
     elseif event == "LEARNED_SPELL_IN_TAB" and GetSetting("ALERTFRAME_NOTIFICATION_NEW_SPELL") then
         local spellID = ...
         local name, _, icon = GetSpellInfo(spellID)
@@ -1315,9 +1313,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
                 end
             end
             wipe(toastQueue)
-            if GetSetting("ALERTFRAME_NOTIFICATION_NEW_SPELL_SOUND") ~= "None" then
-                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_NEW_SPELL_SOUND")), "Master")
-            end
+            PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_NEW_SPELL_SOUND")), "Master")
         end)
         -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(GetSpellInfo(48181), nil, LEVEL_UP_ABILITY, false, select(3, GetSpellInfo(48181)), false, 48181)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" and GetSetting("ALERTFRAME_NOTIFICATION_NEW_SPELL") then
@@ -1334,9 +1330,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             if hasMail then
                 -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon", false)
                 GW2_UIAlertSystem.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon", false)
-                if GetSetting("ALERTFRAME_NOTIFICATION_NEW_MAIL_SOUND") ~= "None" then
-                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_NEW_MAIL_SOUND")), "Master")
-                end
+                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_NEW_MAIL_SOUND")), "Master")
             end
         end
     elseif event == "UPDATE_INVENTORY_DURABILITY" and GetSetting("ALERTFRAME_NOTIFICATION_REPAIR") then
@@ -1358,9 +1352,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             C_Timer.After(30, function() showRepair = true end)
             -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s slot needs to repair, current durability is %d.", INVTYPE_HEAD, 20), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair", false)
             GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s slot needs to repair, current durability is %d."], slots[1][2], value), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair", false)
-            if GetSetting("ALERTFRAME_NOTIFICATION_REPAIR_SOUND") ~= "None" then
-                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_REPAIR_SOUND")), "Master")
-            end
+            PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_REPAIR_SOUND")), "Master")
         end
     elseif event == "QUEST_ACCEPTED" and GetSetting("ALERTFRAME_NOTIFICATION_PARAGON") then
         local questId = ...
@@ -1369,9 +1361,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             local name = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(questId))
             -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("|cff00c0fa%s|r", GetFactionInfoByID(2407)), nil, format("|cff00c0fa%s|r", "TESTE"), false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
             GW2_UIAlertSystem.AlertSystem:AddAlert(name, nil, text, false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
-            if GetSetting("ALERTFRAME_NOTIFICATION_PARAGON_SOUND") ~= "None" then
-                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_PARAGON_SOUND")), "Master")
-            end
+            PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_PARAGON_SOUND")), "Master")
         end
     elseif event == "VIGNETTE_MINIMAP_UPDATED" and GetSetting("ALERTFRAME_NOTIFICATION_RARE") then
         if VignetteExclusionMapIDs[GW.locationData.mapID] or IsInGroup() or IsInRaid() or IsPartyLFG() then return end
@@ -1392,19 +1382,17 @@ local function AlertContainerFrameOnEvent(self, event, ...)
 
                 local time = GetTime()
                 if time > (self.lastMinimapRare.time + 20) then
-                    if GetSetting("ALERTFRAME_NOTIFICATION_RARE_SOUND") ~= "None" then
-                        PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_RARE_SOUND")), "Master")
-                        self.lastMinimapRare.time = time
-                    end
+                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_RARE_SOUND")), "Master")
+                    self.lastMinimapRare.time = time
                 end
             end
         end
     elseif event == "CALENDAR_UPDATE_PENDING_INVITES" and GetSetting("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE") then
-        if alertEvents() or alertGuildEvents() and GetSetting("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND") ~= "None" then
+        if alertEvents() or alertGuildEvents() then
             PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND")), "Master")
         end
     elseif event == "CALENDAR_UPDATE_GUILD_EVENTS" and GetSetting("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE") then
-        if alertGuildEvents() and GetSetting("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND") ~= "None" then
+        if alertGuildEvents() then
             PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND")), "Master")
         end
     elseif event == "PLAYER_ENTERING_WORLD" then
@@ -1423,9 +1411,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
 
         if ((IsTank and forTank) or (IsHealer and forHealer) or (IsDamage and forDamage)) and not ingroup then
             if GetTime() - LFG_Timer > 20 then
-                if GetSetting("ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND") ~= "None" then
-                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND")), "Master")
-                end
+                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND")), "Master")
                 -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, "|cff00B2EE" .. TANK .. "|r"), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
                 GW2_UIAlertSystem.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, tank .. " " .. healer .. " " .. damager), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
                 LFG_Timer = GetTime()
@@ -1441,32 +1427,24 @@ local function AlertContainerFrameOnEvent(self, event, ...)
                 local name, _, icon = GetSpellInfo(190336)
                 -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s created a table of Conjured Refreshments.", "Hansi"), nil, GetSpellInfo(190336), false, select(3, GetSpellInfo(190336)), false)
                 GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s created a table of Conjured Refreshments."], srcName), nil, name, false, icon, false)
-                if GetSetting("ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND") ~= "None" then
-                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND")), "Master")
-                end
+                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND")), "Master")
             elseif GetSetting("ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING") and spellID == 698 then -- Ritual of Summoning
                 local name, _, icon = GetSpellInfo(698)
                 -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s is performing a Ritual of Summoning.", "Hansi"), nil, GetSpellInfo(698), false, select(3, GetSpellInfo(698)), false)
                 GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s is performing a Ritual of Summoning."], srcName), nil, name, false, icon, false)
-                if GetSetting("ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND") ~= "None" then
-                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND")), "Master")
-                end
+                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND")), "Master")
             elseif GetSetting("ALERTFRAME_NOTIFICATION_SPOULWELL") and spellID == 29893 then -- Soul Well
                 local name, _, icon = GetSpellInfo(29893)
                 -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s created a Soulwell.", "Hansi"), nil, GetSpellInfo(29893), false, select(3, GetSpellInfo(29893)), false)
                 GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s created a Soulwell."], srcName), nil, name, false, icon, false)
-                if GetSetting("ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND") ~= "None" then
-                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND")), "Master")
-                end
+                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND")), "Master")
             end
         elseif subEvent == "SPELL_CREATE" then --Portals
             if GetSetting("ALERTFRAME_NOTIFICATION_MAGE_PORTAL") and GW.MagePortals[spellID] then
                 local name, _, icon = GetSpellInfo(spellID)
                 -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s placed a portal to %s.", "Hansi", GetSpellInfo(224871):gsub("^.+:%s+", "")), nil, GetSpellInfo(224871), false, select(3, GetSpellInfo(224871)), false)
                 GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s placed a portal to %s."], srcName, name:gsub("^.+:%s+", "")), nil, name, false, icon, false)
-                if GetSetting("ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND") ~= "None" then
-                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND")), "Master")
-                end
+                PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND")), "Master")
             end
         end
     end
