@@ -672,7 +672,7 @@ local function ApplyPvPUISkin()
         reward.Border:Hide()
         reward.CircleMask:Hide()
         GW.HandleIcon(reward.Icon)
-        reward.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder , true)
+        reward.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
     end
 
     -- Item Borders for HonorFrame & ConquestFrame
@@ -697,6 +697,9 @@ local function ApplyPvPUISkin()
 
         if rewardTexture then
             rewardFrame.Icon:SetTexture(rewardTexture)
+            if not rewardFrame.Icon.backdrop then
+                rewardFrame.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+            end
             rewardFrame.Icon.backdrop:SetBackdropBorderColor(GetItemQualityColor(rewardQuaility))
         end
     end)
