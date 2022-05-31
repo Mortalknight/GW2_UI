@@ -43,42 +43,24 @@ local function LoadBNToastSkin()
 
     BNToastFrame.CloseButton:SkinButton(true)
 
-    PlayerReportFrame:StripTextures()
-    if not PlayerReportFrame.SetBackdrop then
-        Mixin(PlayerReportFrame, BackdropTemplateMixin)
-        PlayerReportFrame:HookScript("OnSizeChanged", PlayerReportFrame.OnBackdropSizeChanged)
+    ReportFrame:StripTextures()
+    if not ReportFrame.SetBackdrop then
+        Mixin(ReportFrame, BackdropTemplateMixin)
+        ReportFrame:HookScript("OnSizeChanged", ReportFrame.OnBackdropSizeChanged)
     end
 
-    PlayerReportFrame:SetBackdrop({
+    ReportFrame:SetBackdrop({
         edgeFile = "",
         bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
         edgeSize = GW.Scale(1)
     })
 
-    PlayerReportFrame.Comment:StripTextures()
-    PlayerReportFrame.Comment:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
-    GW.HandleBlizzardRegions(PlayerReportFrame.Comment)
-    PlayerReportFrame.ReportButton:SkinButton(false, true)
-    PlayerReportFrame.CancelButton:SkinButton(false, true)
-
-    ReportCheatingDialog:StripTextures()
-    ReportCheatingDialogCommentFrame:StripTextures()
-    ReportCheatingDialogReportButton:SkinButton(false, true)
-    ReportCheatingDialogCancelButton:SkinButton(false, true)
-
-    if not ReportCheatingDialog.SetBackdrop then
-        Mixin(ReportCheatingDialog, BackdropTemplateMixin)
-        ReportCheatingDialog:HookScript("OnSizeChanged", ReportCheatingDialog.OnBackdropSizeChanged)
-    end
-
-    ReportCheatingDialog:SetBackdrop({
-        edgeFile = "",
-        bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
-        edgeSize = GW.Scale(1)
-    })
-
-    ReportCheatingDialogCommentFrameEditBox:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
-    GW.HandleBlizzardRegions(ReportCheatingDialogCommentFrameEditBox)
+    ReportFrame.Comment:StripTextures()
+    ReportFrame.Comment:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    GW.HandleBlizzardRegions(ReportFrame.Comment)
+    ReportFrame.CloseButton:SkinButton(true)
+    ReportFrame.ReportButton:SkinButton(false, true)
+    ReportFrame.ReportingMajorCategoryDropdown:SkinDropDownMenu()
 
     BattleTagInviteFrame:StripTextures()
 
