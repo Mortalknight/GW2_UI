@@ -1,6 +1,13 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.29.0", [=[
+NEW
+    - Added alert notification system
+FIXES
+    - Fix some rare lua errors
+]=])
+
 v("5.28.2", [=[
 FIXES
     - Fix an error if pet grid is enabled

@@ -1374,9 +1374,6 @@ local function AlertContainerFrameOnEvent(self, event, ...)
 
             if vignetteInfo and vignetteGUID ~= self.lastMinimapRare.id then
                 vignetteInfo.nameColored = format("|cff00c0fa%s|r", vignetteInfo.name)
-                if vignetteInfo.atlasName == "VignetteLoot" then
-                    vignetteInfo.atlasName = "Interface/AddOns/GW2_UI/textures/icons/rewards-icon"
-                end
                 GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["has appeared on the Minimap!"], nil, vignetteInfo.nameColored, false, vignetteInfo.atlasName, false, nil, vignetteInfo.name)
                 self.lastMinimapRare.id = vignetteGUID
 

@@ -1,3 +1,5 @@
-5.28.2
+5.29.0
+NEW
+    - Added alert notification system
 FIXES
-    - Fix an error if pet grid is enabled
+    - Fix some rare lua errors
