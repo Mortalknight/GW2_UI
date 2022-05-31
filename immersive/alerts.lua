@@ -1257,7 +1257,7 @@ local function alertEvents()
     local num = C_Calendar.GetNumPendingInvites()
     if num ~= numInvites then
         if num > 0 then
-            GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["You have %s pending calendar invite(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, nil, false)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["You have %s pending calendar invite(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock", false)
             showAlert = true
         end
         numInvites = num
@@ -1272,7 +1272,7 @@ local function alertGuildEvents()
     local num = GetGuildInvites()
     if num > 0 then
         -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(("You have %s pending guild event(s)."):format(2), nil, CALENDAR_STATUS_INVITED, function() if not CalendarFrame then LoadAddOn("Blizzard_Calendar") end ShowUIPanel(CalendarFrame) end , nil, false)
-        GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["You have %s pending guild event(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, nil, false)
+        GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["You have %s pending guild event(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock", false)
         showAlert = true
     end
 
