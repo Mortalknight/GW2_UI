@@ -2,6 +2,35 @@ local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 local constBackdropFrameSmallerBorder = GW.skins.constBackdropFrameSmallerBorder
 
+local function SkinMerchantFrameItemButton(i)
+    local button = _G["MerchantItem" .. i .. "ItemButton"]
+    local icon = button.icon
+    local iconBorder = button.IconBorder
+    local item = _G["MerchantItem" .. i]
+    item:StripTextures(true)
+    item:CreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
+
+    button:StripTextures()
+    button:SetPoint("TOPLEFT", item, "TOPLEFT", 4, -4)
+
+    icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    icon:ClearAllPoints()
+    icon:SetPoint("TOPLEFT", 1, -1)
+    icon:SetPoint("BOTTOMRIGHT", -1, 1)
+
+    iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    iconBorder:SetAllPoints(button)
+    iconBorder:SetParent(button)
+
+    hooksecurefunc(iconBorder, "SetVertexColor", function(self)
+        self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    end)
+
+    _G["MerchantItem" .. i .. "MoneyFrame"]:ClearAllPoints()
+    _G["MerchantItem" .. i .. "MoneyFrame"]:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 3, 0)
+end
+GW.SkinMerchantFrameItemButton = SkinMerchantFrameItemButton
+
 local function LoadMerchantFrameSkin()
     if not GW.GetSetting("MERCHANT_SKIN_ENABLED") then return end
 
@@ -23,6 +52,10 @@ local function LoadMerchantFrameSkin()
     local w, h = MerchantFrame:GetSize()
     tex:SetSize(w + 50, h + 50)
     MerchantFrame.tex = tex
+    hooksecurefunc(MerchantFrame, "SetWidth", function()
+        local w2, h2 = MerchantFrame:GetSize()
+        MerchantFrame.tex:SetSize(w2 + 50, h2 + 50)
+    end)
 
     local r = {MerchantFrame:GetRegions()}
     local i = 1
@@ -66,32 +99,7 @@ local function LoadMerchantFrameSkin()
     end)
 
     for i = 1, BUYBACK_ITEMS_PER_PAGE do
-        local button = _G["MerchantItem" .. i .. "ItemButton"]
-        local icon = button.icon
-        local iconBorder = button.IconBorder
-        local item = _G["MerchantItem" .. i]
-        item:StripTextures(true)
-        item:CreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
-
-        button:StripTextures()
-        button:SetPoint("TOPLEFT", item, "TOPLEFT", 4, -4)
-
-        icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-        icon:ClearAllPoints()
-        icon:SetPoint("TOPLEFT", 1, -1)
-        icon:SetPoint("BOTTOMRIGHT", -1, 1)
-
-        iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-        iconBorder:SetAllPoints(button)
-        iconBorder:SetParent(button)
-
-        hooksecurefunc(iconBorder, "SetVertexColor", function(self)
-            self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-        end)
-
-
-        _G["MerchantItem" .. i .. "MoneyFrame"]:ClearAllPoints()
-        _G["MerchantItem" .. i .. "MoneyFrame"]:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 3, 0)
+        SkinMerchantFrameItemButton(i)
     end
 
     MerchantBuyBackItemItemButton:StripTextures()

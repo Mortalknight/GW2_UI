@@ -62,6 +62,8 @@ local function LoadBNToastSkin()
     ReportFrame.ReportButton:SkinButton(false, true)
     ReportFrame.ReportingMajorCategoryDropdown:SkinDropDownMenu()
 
+    ReportFrame.CloseButton:SetSize(20, 20)
+
     BattleTagInviteFrame:StripTextures()
 
     if not BattleTagInviteFrame.SetBackdrop then

@@ -1,5 +1,6 @@
-5.29.0
+5.30.0
 NEW
-    - Added alert notification system
+    - Extended Vendor (default disabled)
+
 FIXES
-    - Fix some rare lua errors
+    - Fix a profile lua error

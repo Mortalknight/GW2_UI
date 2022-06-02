@@ -198,6 +198,19 @@ local function LoadHudPanel(sWindow)
             GUILD,
         }
     )
+    addOptionSlider(
+        p.scroll.scrollchild,
+        GW.NewSign .. L["Extended Vendor"],
+        L["The number of pages shown in the merchant frame. Set 1 to disable."],
+        "EXTENDED_VENDOR_NUM_PAGES",
+        nil,
+        1,
+        6,
+        nil,
+        0,
+        nil,
+        1
+    )
 
     InitPanel(p, true)
 end

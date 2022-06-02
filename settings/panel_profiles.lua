@@ -364,7 +364,7 @@ updateProfiles = function(self)
                 L["Created: "] ..
                 v["profileCreatedDate"] ..
                     L["\nCreated by: "] ..
-                        v["profileCreatedCharacter"] .. L["\nLast updated: "] .. v["profileLastUpdated"]
+                        (v["profileCreatedCharacter"] or UNKNOWN) .. L["\nLast updated: "] .. (v["profileLastUpdated"] or UNKNOWN)
 
             f.name:SetText(v["profilename"])
             f.name:SetWidth(min(f.name:GetStringWidth(), 250))
@@ -426,13 +426,13 @@ local function addProfile(self, name, profileData, copy)
             GW2UI_SETTINGS_PROFILES[index] = GW.copyTable(nil, GW2UI_SETTINGS_DB_03)
         else
             GW2UI_SETTINGS_PROFILES[index] = {}
+            SetProfileSettings()
         end
         GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] = index
         GW2UI_SETTINGS_PROFILES[index]["profilename"] = name
         GW2UI_SETTINGS_PROFILES[index]["profileCreatedDate"] = date("%m/%d/%y %H:%M:%S")
         GW2UI_SETTINGS_PROFILES[index]["profileCreatedCharacter"] = GetUnitName("player", true)
         GW2UI_SETTINGS_PROFILES[index]["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
-        SetProfileSettings()
     end
 
     updateProfiles(self)

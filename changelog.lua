@@ -1,6 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.30.0", [=[
+NEW
+    - Extended Vendor (default disabled)
+
+FIXES
+    - Fix a profile lua error
+]=])
+
 v("5.29.0", [=[
 NEW
     - Added alert notification system

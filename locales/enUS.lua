@@ -481,3 +481,5 @@ L["Mage table"] = true
 L["Ritual of Summoning"] = true
 L["Soulwell"] = true
 L["Mage portal"] = true
+L["Extended Vendor"] = true
+L["The number of pages shown in the merchant frame. Set 1 to disable."] = true

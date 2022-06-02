@@ -46,6 +46,7 @@ GW.wowpatch, GW.wowbuild, _ , GW.wowToc = GetBuildInfo()
 
 GW.wowbuild = tonumber(GW.wowbuild)
 GW.Gw2Color = "|cffffedba" -- Color used for chat prints or buttons
+GW.NewSign = [[|TInterface\OptionsFrame\UI-OptionsFrame-NewFeatureIcon:14:14|t]]
 
 GW.ScanTooltip = CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "SharedTooltipTemplate")
 GW.HiddenFrame = CreateFrame("Frame")

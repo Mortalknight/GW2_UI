@@ -570,6 +570,8 @@ local function loadAddon(self)
         end
     end
 
+    GW.SetUpExtendedVendor()
+
     if GetSetting("USE_BATTLEGROUND_HUD") then
         GW.LoadBattlegrounds()
     end

@@ -159,6 +159,7 @@ inventory/bag.lua
 inventory/bank.lua
 inventory/lootframe.xml
 inventory/lootframe.lua
+inventory/extendVendor.lua
 
 immersive/skins/skins.xml
 immersive/questview.xml
