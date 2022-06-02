@@ -71,6 +71,8 @@ local VignetteExclusionMapIDs = {
     [579] = true, -- Lunarfall: Alliance garrison
     [585] = true, -- Frostwall: Horde garrison
     [646] = true, -- Scenario: The Broken Shore
+    [1911] = true, -- Thorgast
+    [1912] = true, -- Thorgast
 }
 
 local VignetteBlackListIDs = {
@@ -1294,7 +1296,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             --/run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
         end
 
-        -- if we learn a spell here we should show the new spell so we remove the event drom the toastQueue list
+        -- if we learn a spell here we should show the new spell so we remove the event from the toastQueue list
         for _, v in pairs(toastQueue) do
             if v ~= nil and v.event == "LEARNED_SPELL_IN_TAB" then
                 v.event = ""
@@ -1305,8 +1307,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         local spellID = ...
         local name, _, icon = GetSpellInfo(spellID)
         toastQueue[#toastQueue + 1] = {name = name, spellID = spellID, icon = icon, event = event}
-
-        C_Timer.After(1, function()
+        C_Timer.After(1.5, function()
             for _, v in pairs(toastQueue) do
                 if v ~= nil then
                     GW2_UIAlertSystem.AlertSystem:AddAlert(SPELL_BUCKET_ABILITIES_UNLOCKED, nil, v.name, false, v.icon, false, v.spellID)
@@ -1317,11 +1318,13 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         end)
         -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(GetSpellInfo(48181), nil, LEVEL_UP_ABILITY, false, select(3, GetSpellInfo(48181)), false, 48181)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" and GetSetting("ALERTFRAME_NOTIFICATION_NEW_SPELL") then
-        for k, v in pairs(toastQueue) do
-            if v ~= nil and v.event == "LEARNED_SPELL_IN_TAB" then
-                toastQueue[k] = nil
+        C_Timer.After(0.5, function()
+            for k, v in pairs(toastQueue) do
+                if v ~= nil and v.event == "LEARNED_SPELL_IN_TAB" then
+                    toastQueue[k] = nil
+                end
             end
-        end
+        end)
     elseif event == "UPDATE_PENDING_MAIL" and GetSetting("ALERTFRAME_NOTIFICATION_NEW_MAIL") then
         local newMail = HasNewMail()
         if hasMail ~= newMail then
