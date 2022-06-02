@@ -436,6 +436,15 @@ local function setupMicroButtons(mbf)
     -- EJMicroButton
     EJMicroButton:ClearAllPoints()
     EJMicroButton:SetPoint("BOTTOMLEFT", LFDMicroButton, "BOTTOMRIGHT", 4, 0)
+    EJMicroButton.NewAdventureNotice:GetRegions():SetTexture("Interface/OptionsFrame/UI-OptionsFrame-NewFeatureIcon")
+    EJMicroButton.NewAdventureNotice:GetRegions():ClearAllPoints()
+    EJMicroButton.NewAdventureNotice:GetRegions():SetPoint("CENTER", EJMicroButton, "BOTTOM", 6, 2)
+    EJMicroButton.NewAdventureNotice:GetRegions():SetSize(12, 12)
+    EJMicroButton.NewAdventureNotice.GwNotifyDark = EJMicroButton.NewAdventureNotice:CreateTexture(nil, "BACKGROUND")
+    EJMicroButton.NewAdventureNotice.GwNotifyDark:SetSize(18, 18)
+    EJMicroButton.NewAdventureNotice.GwNotifyDark:SetPoint("CENTER", EJMicroButton, "BOTTOM", 6, 3)
+    EJMicroButton.NewAdventureNotice.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
+    EJMicroButton.NewAdventureNotice.GwNotifyDark:SetVertexColor(0, 0, 0, 0.7)
 
     -- CollectionsMicroButton
     CollectionsMicroButton:ClearAllPoints()
