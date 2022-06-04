@@ -89,6 +89,7 @@ end
 local function WidgetUISetup()
     GW.RegisterMovableFrame(UIWidgetTopCenterContainerFrame, "TopWidget", "TopCenterWidget_pos", "VerticalActionBarDummy", {58, 58}, {"default", "scaleable"})
     GW.RegisterMovableFrame(UIWidgetPowerBarContainerFrame, "PowerBarContainer", "PowerBarContainer_pos", "VerticalActionBarDummy", {100, 20}, {"default", "scaleable"})
+    GW.RegisterMovableFrame(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "BelowMinimapContainer_pos", "VerticalActionBarDummy", {150, 30}, {"default", "scaleable"})
 
     UIWidgetTopCenterContainerFrame:ClearAllPoints()
     UIWidgetTopCenterContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
@@ -96,8 +97,12 @@ local function WidgetUISetup()
     UIWidgetPowerBarContainerFrame:ClearAllPoints()
     UIWidgetPowerBarContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
 
+    UIWidgetBelowMinimapContainerFrame:ClearAllPoints()
+    UIWidgetBelowMinimapContainerFrame:SetPoint("CENTER", UIWidgetBelowMinimapContainerFrame.gwMover, "CENTER")
+
     hooksecurefunc(UIWidgetTopCenterContainerFrame, "SetPoint", TopCenterPosition)
     hooksecurefunc(UIWidgetPowerBarContainerFrame, "SetPoint", TopCenterPosition)
+    hooksecurefunc(UIWidgetBelowMinimapContainerFrame, "SetPoint", TopCenterPosition)
 
     hooksecurefunc(UIWidgetTemplateStatusBarMixin, "Setup", UIWidgetTemplateStatusBar)
     hooksecurefunc(UIWidgetTemplateCaptureBarMixin, "Setup", UIWidgetTemplateCaptureBar)

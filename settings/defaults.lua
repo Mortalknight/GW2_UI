@@ -480,6 +480,14 @@ GW_DEFAULT["PowerBarContainer_pos"]["yOfs"] = -75
 GW_DEFAULT["PowerBarContainer_pos"]["hasMoved"] = false
 GW_DEFAULT["PowerBarContainer_pos_scale"] = 1
 
+GW_DEFAULT["BelowMinimapContainer_pos"] = {}
+GW_DEFAULT["BelowMinimapContainer_pos"]["point"] = "TOPRIGHT"
+GW_DEFAULT["BelowMinimapContainer_pos"]["relativePoint"] = "TOPRIGHT"
+GW_DEFAULT["BelowMinimapContainer_pos"]["xOfs"] = -430
+GW_DEFAULT["BelowMinimapContainer_pos"]["yOfs"] = -130
+GW_DEFAULT["BelowMinimapContainer_pos"]["hasMoved"] = false
+GW_DEFAULT["BelowMinimapContainer_pos_scale"] = 1
+
 GW_DEFAULT["AlertPos"] = {}
 GW_DEFAULT["AlertPos"]["point"] = "BOTTOMRIGHT"
 GW_DEFAULT["AlertPos"]["relativePoint"] = "BOTTOMRIGHT"
