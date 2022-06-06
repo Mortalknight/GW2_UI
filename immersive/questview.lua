@@ -332,7 +332,9 @@ local model_tweaks = {
     [3670316] = {["x"] = -40, ["y"] = 4, ["z"] = 3},
     [2343653] = {["z"] = -0.5},
     [577134] = {["z"] = -0.8},
-    [1349623] = {["z"] = -0.4}
+    [1349623] = {["z"] = -0.4},
+    [3024835] = {["z"] = -0.1},
+    [3208389] = {["z"] = -0.1}
 }
 local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
     local uX, uY, uZ, uF = -1.25, -0.65, -0.2, 0.7 -- fac 0.7
@@ -442,7 +444,9 @@ end
 GW.AddForProfiling("questview", "setPMUnit", setPMUnit)
 
 local mapBGs = {}
+mapBGs[627] = "Legion/dalaran"
 mapBGs[1525] = "SL/revendreth"
+mapBGs[1533] = "SL/bastion"
 mapBGs[1565] = "SL/ardenweald"
 mapBGs[1670] = "SL/oribos"
 local function showQuestFrame()
