@@ -376,7 +376,85 @@ local function RegisterScaleFrame(f, modifier)
 end
 GW.RegisterScaleFrame = RegisterScaleFrame
 
-local function loadAddon(self)
+local function evAddonLoaded(self, addonName)
+    if addonName == "OmniCD" then
+        local func = OmniCD and OmniCD.AddUnitFrameData
+        if func then
+            func("GW2_UI-Party-Grid", "GwCompactPartyFrame", "unit", 1)
+            func("GW2_UI-Party", "GwPartyFrame", "unit", 1)
+            func("GW2_UI-Raid", "GwCompactRaidFrame", "unit", 1, nil, 40)
+            self:UnregisterEvent("ADDON_LOADED")
+        end
+    end
+end
+AFP("evAddonLoaded", evAddonLoaded)
+
+local function evNeutralFactionSelectResult(self, success)
+    GW.myfaction, GW.myLocalizedFaction = UnitFactionGroup("player")
+    Debug("New faction:", GW.myfaction, GW.myLocalizedFaction)
+end
+AFP("evNeutralFactionSelectResult", evNeutralFactionSelectResult)
+
+local function evPlayerSpecializationChanged(self, unitTarget)
+    GW.CheckRole()
+end
+AFP("evPlayerSpecializationChanged", evPlayerSpecializationChanged)
+
+local function evUiScaleChanged(self)
+    if not GetCVarBool("useUiScale") then
+        return
+    end
+    SetSetting("PIXEL_PERFECTION", false)
+    GW.scale = UIParent:GetScale()
+    GW.screenwidth, GW.screenheight = GetPhysicalScreenSize()
+    GW.resolution = format("%dx%d", GW.screenwidth, GW.screenheight)
+    GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
+end
+AFP("evUiScaleChanged", evUiScaleChanged)
+
+local function evPlayerLevelUp(self, newLevel, hpDelta, powDelta, newTalents, newPvpSlots, strDelta, agiDelta, stamDelta, intDelta)
+    GW.mylevel = newLevel
+    Debug("New level:", newLevel)
+end
+AFP("evPlayerLevelUp", evPlayerLevelUp)
+
+local function evPlayerLeavingWorld(self)
+    GW.inWorld = false
+end
+AFP("evPlayerLeavingWorld", evPlayerLeavingWorld)
+
+local function commonEntering(self)
+    GW.inWorld = true
+    GW.CheckRole()
+    if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
+        PixelPerfection()
+    end
+    C_Timer.After(0.5, function()
+        if UnitInBattleground("player") == nil and not IsActiveBattlefieldArena() then
+            GW.RemoveTrackerNotificationOfType("ARENA")
+        end
+    end)
+end
+
+local function evPlayerEnteringWorld(self, isInitialLogin, isReloadingUi)
+    commonEntering(self)
+end
+AFP("evPlayerEnteringWorld", evPlayerEnteringWorld)
+
+local function evPlayerEnteringBattleground(self)
+    commonEntering(self)
+end
+AFP("evPlayerEnteringBattleground", evPlayerEnteringBattleground)
+
+local function evPlayerLogin(self)
+    if loaded then
+        GW.LoadStorage()
+        return
+    end
+
+    loaded = true
+    GW.CheckRole() -- some API's deliver a nil value on init.lua load, we we fill this values also here
+
     if GW.inDebug then
         GW.AlertTestsSetup()
     end
@@ -440,6 +518,14 @@ local function loadAddon(self)
             GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonUIOptions, "BOTTOMLEFT", 0, -1)
             hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
         end
+    end
+
+    -- check for DeModal
+    local _, _, _, enabled, _ = GetAddOnInfo("DeModal")
+    if enabled then
+        GW.HasDeModal = true
+    else
+        GW.HasDeModal = false
     end
 
     -- Skins: BLizzard & Addons
@@ -685,57 +771,32 @@ local function loadAddon(self)
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     end
 
-
     self:SetScript("OnUpdate", gw_OnUpdate)
-end
-AFP("loadAddon", loadAddon)
 
--- handles addon loading
+    GW.LoadStorage()
+end
+AFP("evPlayerLogin", evPlayerLogin)
+
+-- generic event router
 local function gw_OnEvent(self, event, ...)
     if event == "PLAYER_LOGIN" then
-        if not loaded then
-            loaded = true
-            GW.CheckRole() -- some API's deliver a nil value on init.lua load, we we fill this values also here
-            loadAddon(self)
-        end
-        GW.LoadStorage()
-    elseif event == "UI_SCALE_CHANGED" and GetCVarBool("useUiScale") then
-        SetSetting("PIXEL_PERFECTION", false)
-        GW.scale = UIParent:GetScale()
-        GW.screenwidth, GW.screenheight = GetPhysicalScreenSize()
-        GW.resolution = format("%dx%d", GW.screenwidth, GW.screenheight)
-        GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
+        evPlayerLogin(self)
+    elseif event == "UI_SCALE_CHANGED" then
+        evUiScaleChanged(self)
     elseif event == "PLAYER_LEAVING_WORLD" then
-        GW.inWorld = false
-    elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
-        GW.inWorld = true
-        GW.CheckRole()
-        if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
-            PixelPerfection()
-        end
-        C_Timer.After(0.5, function()
-            if UnitInBattleground("player") == nil and not IsActiveBattlefieldArena() then
-                GW.RemoveTrackerNotificationOfType("ARENA")
-            end
-        end)
+        evPlayerLeavingWorld(self)
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        evPlayerEnteringWorld(self, ...)
+    elseif event == "PLAYER_ENTERING_BATTLEGROUND" then
+        evPlayerEnteringBattleground(self)
     elseif event == "PLAYER_LEVEL_UP" then
-        GW.mylevel = ...
-        Debug("New level:", GW.mylevel)
+        evPlayerLevelUp(self, ...)
     elseif event == "NEUTRAL_FACTION_SELECT_RESULT" then
-        GW.myfaction, GW.myLocalizedFaction = UnitFactionGroup("player")
-        Debug("New faction:", GW.myfaction, GW.myLocalizedFaction)
+        evNeutralFactionSelectResult(self, ...)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
-        GW.CheckRole()
+        evPlayerSpecializationChanged(self, ...)
     elseif event == "ADDON_LOADED" then
-        if ... == "OmniCD" then
-            local func = OmniCD and OmniCD.AddUnitFrameData
-            if func then
-                func("GW2_UI-Party-Grid", "GwCompactPartyFrame", "unit", 1)
-                func("GW2_UI-Party", "GwPartyFrame", "unit", 1)
-                func("GW2_UI-Raid", "GwCompactRaidFrame", "unit", 1, nil, 40)
-                self:UnregisterEvent(event)
-            end
-        end
+        evAddonLoaded(self, ...)
     end
 end
 AFP("gw_OnEvent", gw_OnEvent)
