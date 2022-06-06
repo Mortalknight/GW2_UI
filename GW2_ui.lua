@@ -402,7 +402,7 @@ local function hookOmniCDLoad(self)
     end
 end
 AFP("hookOmniCDLoad", hookOmniCDLoad)
-RegisterLoadHook(hookOmniCDLoad, OmniCD)
+RegisterLoadHook(hookOmniCDLoad, "OmniCD", OmniCD)
 
 local function evAddonLoaded(self, addonName)
     if addonName ~= "GW2_UI" then
