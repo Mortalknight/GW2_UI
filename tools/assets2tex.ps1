@@ -16,7 +16,7 @@ if (-not $quiet) {
 foreach ($srcItem in $srcFiles) {
     $tgtPath = $srcItem.DirectoryName.Replace('\assets', '\textures')
     $useBLP = $false
-    if ($srcItem.FullName.Contains('rep\') -or $srcItem.FullName.Contains('talents\art') -or $srcItem.FullName.Contains('character\professions_overview')) {
+    if ($srcItem.FullName.Contains('rep\') -or $srcItem.FullName.Contains('talents\art') -or $srcItem.FullName.Contains('character\professions_overview') -or $srcItem.FullName.Contains('questview\backgrounds\')) {
         $useBLP = $true
     }
     if ($useBLP) {

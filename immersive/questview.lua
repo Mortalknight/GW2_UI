@@ -465,9 +465,9 @@ local function showQuestFrame()
         mapId = prevInfo.mapID
     end
     if mapId and mapBGs[mapId] then
-        GwQuestviewFrame.mapBG:SetTexture("Interface/AddOns/GW2_UI/textures/questview/" .. mapBGs[mapId])
+        GwQuestviewFrame.mapBG:SetTexture("Interface/AddOns/GW2_UI/textures/questview/backgrounds/" .. mapBGs[mapId])
     else
-        GwQuestviewFrame.mapBG:SetTexture("Interface/AddOns/GW2_UI/textures/questview/bg_default")
+        GwQuestviewFrame.mapBG:SetTexture("Interface/AddOns/GW2_UI/textures/questview/backgrounds/default")
     end
 
 
