@@ -134,7 +134,10 @@ local function LoadGossipSkin()
         ["042c54"] = "1c86ee",
     }
 
-    hooksecurefunc("QuestInfo_Display", GW.QuestInfo_Display)
+    if not GW.QuestInfo_Display_hooked then
+        hooksecurefunc("QuestInfo_Display", GW.QuestInfo_Display)
+        GW.QuestInfo_Display_hooked = true
+    end
     hooksecurefunc("QuestFrame_SetTitleTextColor", function(self)
         self:SetTextColor(1, 0.8, 0.1)
     end)

@@ -376,16 +376,61 @@ local function RegisterScaleFrame(f, modifier)
 end
 GW.RegisterScaleFrame = RegisterScaleFrame
 
-local function evAddonLoaded(self, addonName)
-    if addonName == "OmniCD" then
-        local func = OmniCD and OmniCD.AddUnitFrameData
-        if func then
-            func("GW2_UI-Party-Grid", "GwCompactPartyFrame", "unit", 1)
-            func("GW2_UI-Party", "GwPartyFrame", "unit", 1)
-            func("GW2_UI-Raid", "GwCompactRaidFrame", "unit", 1, nil, 40)
-            self:UnregisterEvent("ADDON_LOADED")
-        end
+-- Functions to run when various addons load. Registering these
+-- works on the honor system for now; don't blow away a prior hook :)
+-- Primarily for on-demand addons; if the addon has already loaded
+-- (based on the cond arg), the hook will run immediately.
+local addonLoadHooks = {}
+local function RegisterLoadHook(func, name, cond)
+    if not func or type(func) ~= "function" or not name or type(name) ~= "string" then
+        return
     end
+    if cond then
+        func(l)
+    else
+        addonLoadHooks[name] = func
+    end
+end
+GW.RegisterLoadHook = RegisterLoadHook
+
+local function hookOmniCDLoad(self)
+    local func = OmniCD and OmniCD.AddUnitFrameData
+    if func then
+        func("GW2_UI-Party-Grid", "GwCompactPartyFrame", "unit", 1)
+        func("GW2_UI-Party", "GwPartyFrame", "unit", 1)
+        func("GW2_UI-Raid", "GwCompactRaidFrame", "unit", 1, nil, 40)
+    end
+end
+AFP("hookOmniCDLoad", hookOmniCDLoad)
+RegisterLoadHook(hookOmniCDLoad, OmniCD)
+
+local function evAddonLoaded(self, addonName)
+    if addonName ~= "GW2_UI" then
+        local loadHook = addonLoadHooks[addonName]
+        if loadHook and type(loadHook) == "function" then
+            Debug("run load hook for addon", addonName)
+            loadHook(self)
+        end
+        return
+    end
+
+    Debug("in GW2_UI ADDON_LOADED event")
+    GW.LoadStorage()
+    -- TODO: A lot of what happens in player login should probably happen here instead
+
+    -- check for DeModal
+    local _, _, _, enabled, _ = GetAddOnInfo("DeModal")
+    if enabled then
+        GW.HasDeModal = true
+    else
+        GW.HasDeModal = false
+    end
+    Debug("DeModal status:", GW.HasDeModal)
+
+    -- TODO: moving skinning from player login to here
+    -- Skins: BLizzard & Addons
+    GW.LoadWorldMapSkin()
+    GW.LoadEncounterJournalSkin()
 end
 AFP("evAddonLoaded", evAddonLoaded)
 
@@ -447,8 +492,9 @@ end
 AFP("evPlayerEnteringBattleground", evPlayerEnteringBattleground)
 
 local function evPlayerLogin(self)
+    Debug("in PLAYER_LOGIN event; loaded:", loaded)
     if loaded then
-        GW.LoadStorage()
+        GW.UpdateCharData()
         return
     end
 
@@ -520,14 +566,6 @@ local function evPlayerLogin(self)
         end
     end
 
-    -- check for DeModal
-    local _, _, _, enabled, _ = GetAddOnInfo("DeModal")
-    if enabled then
-        GW.HasDeModal = true
-    else
-        GW.HasDeModal = false
-    end
-
     -- Skins: BLizzard & Addons
     GW.LoadStaticPopupSkin()
     GW.LoadBNToastSkin()
@@ -548,12 +586,10 @@ local function evPlayerLogin(self)
     GW.LoadDressUpFrameSkin()
     GW.LoadHelperFrameSkin()
     GW.LoadSocketUISkin()
-    GW.LoadWorldMapSkin()
     GW.LoadGossipSkin()
     GW.LoadItemUpgradeSkin()
     GW.LoadTimeManagerSkin()
     GW.LoadMerchantFrameSkin()
-    GW.LoadEncounterJournalSkin()
     GW.LoadCovenantSanctumSkin()
     GW.LoadSoulbindsSkin()
     GW.LoadChromieTimerSkin()
@@ -773,7 +809,7 @@ local function evPlayerLogin(self)
 
     self:SetScript("OnUpdate", gw_OnUpdate)
 
-    GW.LoadStorage()
+    GW.UpdateCharData()
 end
 AFP("evPlayerLogin", evPlayerLogin)
 

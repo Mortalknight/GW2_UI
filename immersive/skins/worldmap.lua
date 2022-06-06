@@ -1,21 +1,29 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
+local AFP = GW.AddProfiling
 
 local function SkinHeaders(header)
-    if not header.IsSkinned then
-        if header.TopFiligree then header.TopFiligree:Hide() end
-
-        header:SetAlpha(0.8)
-
-        header.HighlightTexture:SetAllPoints(header.Background)
-        header.HighlightTexture:SetAlpha(0)
-
-        header.IsSkinned = true
+    if header.IsSkinned then
+        return
     end
+
+    if header.TopFiligree then
+        header.TopFiligree:Hide()
+    end
+
+    header:SetAlpha(0.8)
+
+    header.HighlightTexture:SetAllPoints(header.Background)
+    header.HighlightTexture:SetAlpha(0)
+
+    header.IsSkinned = true
 end
+AFP("SkinHeaders", SkinHeaders)
 
 local function HandleReward(frame)
-    if not frame then return end
+    if not frame then
+        return
+    end
 
     if frame.Icon then
         frame.Icon:SetDrawLayer("ARTWORK")
@@ -59,8 +67,12 @@ end
 GW.HandleReward = HandleReward
 
 local function QuestInfo_Display(template)
-    if not GetSetting("GOSSIP_SKIN_ENABLED") and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then return end
-    if not GetSetting("WORLDMAP_SKIN_ENABLED") and (template == QUEST_TEMPLATE_MAP_DETAILS or template == QUEST_TEMPLATE_MAP_REWARDS) then return end
+    if not GetSetting("GOSSIP_SKIN_ENABLED") and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
+        return
+    end
+    if not GetSetting("WORLDMAP_SKIN_ENABLED") and (template == QUEST_TEMPLATE_MAP_DETAILS or template == QUEST_TEMPLATE_MAP_REWARDS) then
+        return
+    end
 
     local rewardsFrame = _G.QuestInfoFrame.rewardsFrame
     local isQuestLog = _G.QuestInfoFrame.questLog ~= nil
@@ -177,9 +189,93 @@ local function QuestInfo_Display(template)
 end
 GW.QuestInfo_Display = QuestInfo_Display
 
-local function LoadWorldMapSkin()
-    if not GW.GetSetting("WORLDMAP_SKIN_ENABLED") then return end
+local function hook_QuestLogQuests_Update()
+    for i = 1, _G.QuestMapFrame.QuestsFrame.Contents:GetNumChildren() do
+        local child = select(i, _G.QuestMapFrame.QuestsFrame.Contents:GetChildren())
+        if child and child.ButtonText and not child.questID then
+            child:SetSize(16, 16)
 
+            for x = 1, child:GetNumRegions() do
+                local tex = select(x, child:GetRegions())
+                if tex and tex.GetAtlas then
+                    local atlas = tex:GetAtlas()
+                    if atlas == "Campaign_HeaderIcon_Closed" or atlas == "Campaign_HeaderIcon_ClosedPressed" then
+                        tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
+                    elseif atlas == "Campaign_HeaderIcon_Open" or atlas == "Campaign_HeaderIcon_OpenPressed" then
+                        tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                    end
+                end
+            end
+        end
+    end
+end
+AFP("hook_QuestLogQuests_Update", hook_QuestLogQuests_Update)
+
+local function hook_UpdateState(self, isCollapsed)
+    if isCollapsed then
+        self:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
+        self:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
+    else
+        self:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+        self:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+    end
+    self:SetSize(16, 16)
+end
+AFP("hook_UpdateState", hook_UpdateState)
+
+local sessionCommandToButtonAtlas = {
+    [_G.Enum.QuestSessionCommand.Start] = "QuestSharing-DialogIcon",
+    [_G.Enum.QuestSessionCommand.Stop] = "QuestSharing-Stop-DialogIcon"
+}
+local function hook_UpdateExecuteCommandAtlases(s, command)
+    s.ExecuteSessionCommand:SetNormalTexture("")
+    s.ExecuteSessionCommand:SetPushedTexture("")
+    s.ExecuteSessionCommand:SetDisabledTexture("")
+    local atlas = sessionCommandToButtonAtlas[command]
+    if atlas then
+        s.ExecuteSessionCommand.normalIcon:SetAtlas(atlas)
+    end
+end
+AFP("hook_UpdateExecuteCommandAtlases", hook_UpdateExecuteCommandAtlases)
+
+local function hook_NotifyDialogShow(_, dialog)
+    if not dialog.isSkinned then
+        dialog:StripTextures()
+        dialog:CreateBackdrop()
+        dialog.ButtonContainer.Confirm:SkinButton(false, true)
+        dialog.ButtonContainer.Decline:SkinButton(false, true)
+        if dialog.MinimizeButton then
+            dialog.MinimizeButton:StripTextures()
+            dialog.MinimizeButton:SetSize(16, 16)
+
+            dialog.MinimizeButton.tex = dialog.MinimizeButton:CreateTexture(nil, "OVERLAY")
+            dialog.MinimizeButton.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
+            dialog.MinimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button", "ADD")
+        end
+        dialog.isSkinned = true
+    end
+end
+AFP("hook_NotifyDialogShow", hook_NotifyDialogShow)
+
+local function hook_QuestLogQuests_Update()
+    for header in QuestScrollFrame.campaignHeaderFramePool:EnumerateActive() do
+        SkinHeaders(header)
+    end
+end
+AFP("hook_QuestLogQuests_Update", hook_QuestLogQuests_Update)
+
+local function mover_OnDragStart(self)
+    self:GetParent():StartMoving()
+end
+AFP("mover_OnDragStart", mover_OnDragStart)
+
+local function mover_OnDragStop(self)
+    local self = self:GetParent()
+    self:StopMovingOrSizing()
+end
+AFP("mover_OnDragStop", mover_OnDragStop)
+
+local function worldMapSkin()
     local WorldMapFrame = _G.WorldMapFrame
 
     WorldMapFrame:StripTextures()
@@ -236,45 +332,19 @@ local function LoadWorldMapSkin()
     QuestMapFrame.DetailsFrame:StripTextures(true)
     QuestMapFrame.DetailsFrame.RewardsFrame:StripTextures()
 
-    hooksecurefunc("QuestLogQuests_Update", function()
-        for i = 1, _G.QuestMapFrame.QuestsFrame.Contents:GetNumChildren() do
-            local child = select(i, _G.QuestMapFrame.QuestsFrame.Contents:GetChildren())
-            if child and child.ButtonText and not child.questID then
-                child:SetSize(16, 16)
+    hooksecurefunc("QuestLogQuests_Update", hook_QuestLogQuests_Update)
 
-                for x = 1, child:GetNumRegions() do
-                    local tex = select(x, child:GetRegions())
-                    if tex and tex.GetAtlas then
-                        local atlas = tex:GetAtlas()
-                        if atlas == "Campaign_HeaderIcon_Closed" or atlas == "Campaign_HeaderIcon_ClosedPressed" then
-                            tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
-                        elseif atlas == "Campaign_HeaderIcon_Open" or atlas == "Campaign_HeaderIcon_OpenPressed" then
-                            tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
-                        end
-                    end
-                end
-            end
-        end
-    end)
-
-    hooksecurefunc(_G.CampaignCollapseButtonMixin, "UpdateState", function(self, isCollapsed)
-        if isCollapsed then
-            self:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
-            self:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
-        else
-            self:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
-            self:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
-        end
-
-        self:SetSize(16, 16)
-    end)
+    hooksecurefunc(_G.CampaignCollapseButtonMixin, "UpdateState", hook_UpdateState)
 
     for _, frame in pairs({"HonorFrame", "XPFrame", "SpellFrame", "SkillPointFrame", "ArtifactXPFrame", "TitleFrame", "WarModeBonusFrame"}) do
         HandleReward(_G.MapQuestInfoRewardsFrame[frame])
     end
     HandleReward(_G.MapQuestInfoRewardsFrame.MoneyFrame)
 
-    hooksecurefunc("QuestInfo_Display", QuestInfo_Display)
+    if not GW.QuestInfo_Display_hooked then
+        hooksecurefunc("QuestInfo_Display", QuestInfo_Display)
+        GW.QuestInfo_Display_hooked = true
+    end
 
     if QuestMapFrame.Background then
         QuestMapFrame.Background:SetAlpha(0)
@@ -342,54 +412,21 @@ local function LoadWorldMapSkin()
     icon:SetPoint("BOTTOMRIGHT", 0, 0)
     ExecuteSessionCommand.normalIcon = icon
 
-    local sessionCommandToButtonAtlas = {
-        [_G.Enum.QuestSessionCommand.Start] = "QuestSharing-DialogIcon",
-        [_G.Enum.QuestSessionCommand.Stop] = "QuestSharing-Stop-DialogIcon"
-    }
+    hooksecurefunc(QuestMapFrame.QuestSessionManagement, "UpdateExecuteCommandAtlases", hook_UpdateExecuteCommandAtlases)
 
-    hooksecurefunc(QuestMapFrame.QuestSessionManagement, "UpdateExecuteCommandAtlases", function(s, command)
-        s.ExecuteSessionCommand:SetNormalTexture("")
-        s.ExecuteSessionCommand:SetPushedTexture("")
-        s.ExecuteSessionCommand:SetDisabledTexture("")
+    hooksecurefunc(_G.QuestSessionManager, "NotifyDialogShow", hook_NotifyDialogShow)
 
-        local atlas = sessionCommandToButtonAtlas[command]
-        if atlas then
-            s.ExecuteSessionCommand.normalIcon:SetAtlas(atlas)
-        end
-    end)
-
-    hooksecurefunc(_G.QuestSessionManager, "NotifyDialogShow", function(_, dialog)
-        if not dialog.isSkinned then
-            dialog:StripTextures()
-            dialog:CreateBackdrop()
-            dialog.ButtonContainer.Confirm:SkinButton(false, true)
-            dialog.ButtonContainer.Decline:SkinButton(false, true)
-            if dialog.MinimizeButton then
-                dialog.MinimizeButton:StripTextures()
-                dialog.MinimizeButton:SetSize(16, 16)
-
-                dialog.MinimizeButton.tex = dialog.MinimizeButton:CreateTexture(nil, "OVERLAY")
-                dialog.MinimizeButton.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button")
-                dialog.MinimizeButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/minimize_button", "ADD")
-            end
-            dialog.isSkinned = true
-        end
-    end)
-
-    hooksecurefunc("QuestLogQuests_Update", function()
-        for header in QuestScrollFrame.campaignHeaderFramePool:EnumerateActive() do
-            SkinHeaders(header)
-        end
-    end)
+    hooksecurefunc("QuestLogQuests_Update", hook_QuestLogQuests_Update)
 
     hooksecurefunc("NavBar_AddButton", GW.SkinNavBarButtons)
 
-    local w, h = _G.QuestModelScene:GetSize()
-    _G.QuestModelScene:StripTextures()
-    _G.QuestModelScene.tex = _G.QuestModelScene:CreateTexture("bg", "BACKGROUND", nil, 0)
-    _G.QuestModelScene.tex:SetPoint("TOP", _G.QuestModelScene, "TOP", 0, 20)
-    _G.QuestModelScene.tex:SetSize(w + 30, h + 60)
-    _G.QuestModelScene.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    local qms = _G.QuestModelScene
+    local w, h = qms:GetSize()
+    qms:StripTextures()
+    qms.tex = qms:CreateTexture("bg", "BACKGROUND", nil, 0)
+    qms.tex:SetPoint("TOP", qms, "TOP", 0, 20)
+    qms.tex:SetSize(w + 30, h + 60)
+    qms.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
 
     -- Addons
     if _G["AtlasLootToggleFromWorldMap2"] then
@@ -408,23 +445,25 @@ local function LoadWorldMapSkin()
         break
     end
 
-
     -- Mover
-    WorldMapFrame.mover = CreateFrame("Frame", nil, WorldMapFrame)
-    WorldMapFrame.mover:EnableMouse(true)
-    WorldMapFrame:SetMovable(true)
-    WorldMapFrame.mover:SetSize(WorldMapFrame:GetWidth(), 30)
-    WorldMapFrame.mover:SetPoint("BOTTOMLEFT", WorldMapFrame, "TOPLEFT", 0, -20)
-    WorldMapFrame.mover:SetPoint("BOTTOMRIGHT", WorldMapFrame, "TOPRIGHT", 0, 20)
-    WorldMapFrame.mover:RegisterForDrag("LeftButton")
-    WorldMapFrame:SetClampedToScreen(true)
-    WorldMapFrame.mover:SetScript("OnDragStart", function(self)
-        self:GetParent():StartMoving()
-    end)
-    WorldMapFrame.mover:SetScript("OnDragStop", function(self)
-        local self = self:GetParent()
+    if not GW.HasDeModal then
+        WorldMapFrame.mover = CreateFrame("Frame", nil, WorldMapFrame)
+        WorldMapFrame.mover:EnableMouse(true)
+        WorldMapFrame:SetMovable(true)
+        WorldMapFrame.mover:SetSize(WorldMapFrame:GetWidth(), 30)
+        WorldMapFrame.mover:SetPoint("BOTTOMLEFT", WorldMapFrame, "TOPLEFT", 0, -20)
+        WorldMapFrame.mover:SetPoint("BOTTOMRIGHT", WorldMapFrame, "TOPRIGHT", 0, 20)
+        WorldMapFrame.mover:RegisterForDrag("LeftButton")
+        WorldMapFrame:SetClampedToScreen(true)
+        WorldMapFrame.mover:SetScript("OnDragStart", mover_OnDragStart)
+        WorldMapFrame.mover:SetScript("OnDragStop", mover_OnDragStop)
+    end
+end
+AFP("worldMapSkin", worldMapSkin)
 
-        self:StopMovingOrSizing()
-    end)
+local function LoadWorldMapSkin()
+    if not GW.GetSetting("WORLDMAP_SKIN_ENABLED") then return end
+
+    GW.RegisterLoadHook(worldMapSkin, "Blizzard_WorldMap", WorldMapFrame)
 end
 GW.LoadWorldMapSkin = LoadWorldMapSkin

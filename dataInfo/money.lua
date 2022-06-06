@@ -2,7 +2,7 @@ local _, GW = ...
 local L = GW.L
 local GetStorage = GW.GetStorage
 local ClearStorage = GW.ClearStorage
-local UpdateMoney = GW.UpdateMoney
+local UpdateCharData = GW.UpdateCharData
 local FormatMoneyForChat = GW.FormatMoneyForChat
 
 local function GetGraysValue()
@@ -44,8 +44,7 @@ local function Money_OnClick(self, button)
                                 notCheckable = true,
                                 func = function()
                                     ClearStorage(nil, char.name)
-                                    GW.UpdateCharData()
-                                    UpdateMoney()
+                                    UpdateCharData()
                                 end
                             })
                         end

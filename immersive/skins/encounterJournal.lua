@@ -1,4 +1,5 @@
 local _, GW =  ...
+local AFP = GW.AddProfiling
 
 local constBackdropArgs = {
     bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
@@ -25,6 +26,7 @@ local function SetModifiedBackdrop(self)
         end
     end
 end
+AFP("SetModifiedBackdrop", SetModifiedBackdrop)
 
 local function SetOriginalBackdrop(self)
     if self:IsEnabled() then
@@ -33,6 +35,7 @@ local function SetOriginalBackdrop(self)
         end
     end
 end
+AFP("SetOriginalBackdrop", SetOriginalBackdrop)
 
 local function SkinDungeons()
     local b1 = EncounterJournalInstanceSelectScrollFrameScrollChildInstanceButton1
@@ -75,6 +78,7 @@ local function SkinDungeons()
         end
     end
 end
+AFP("SkinDungeons", SkinDungeons)
 
 local function SkinBosses()
     local bossIndex = 1
@@ -97,6 +101,7 @@ local function SkinBosses()
         _, _, bossID = EJ_GetEncounterInfoByIndex(bossIndex)
     end
 end
+AFP("SkinBosses", SkinBosses)
 
 local function SkinOverviewInfo(self, _, index)
     local header = self.overviews[index]
@@ -117,6 +122,7 @@ local function SkinOverviewInfo(self, _, index)
         header.isSkinned = true
     end
 end
+AFP("SkinOverviewInfo", SkinOverviewInfo)
 
 local function SkinOverviewInfoBullets(object)
     local parent = object:GetParent()
@@ -130,6 +136,7 @@ local function SkinOverviewInfoBullets(object)
         end
     end
 end
+AFP("SkinOverviewInfoBullets", SkinOverviewInfoBullets)
 
 local function SkinAbilitiesInfo()
     local index = 1
@@ -168,7 +175,7 @@ local function SkinAbilitiesInfo()
         header = _G["EncounterJournalInfoHeader" .. index]
     end
 end
-
+AFP("SkinAbilitiesInfo", SkinAbilitiesInfo)
 
 local function HandleTopTabs(tab)
     for _, object in pairs(tabs) do
@@ -191,6 +198,7 @@ local function HandleTopTabs(tab)
     tab:SetHitRectInsets(0, 0, 0, 0)
     tab:GetFontString():SetTextColor(0, 0, 0)
 end
+AFP("HandleTopTabs", HandleTopTabs)
 
 local function HandleTabs(tab)
     tab:StripTextures()
@@ -202,14 +210,130 @@ local function HandleTabs(tab)
     tab:SetSize(tab:GetFontString():GetStringWidth() * 1.5 , 20)
     tab.SetPoint = GW.NoOp
 end
+AFP("HandleTabs", HandleTabs)
 
+local function hook_EJ_ContentTab_Select(id)
+    for i = 1, #EncounterJournal.instanceSelect.Tabs do
+        local tab = EncounterJournal.instanceSelect.Tabs[i]
+        if tab.id ~= id then
+            tab:GetFontString():SetTextColor(0, 0, 0)
+        else
+            tab:GetFontString():SetTextColor(0, 0, 0)
+        end
+    end
+end
+AFP("hook_EJ_ContentTab_Select", hook_EJ_ContentTab_Select)
 
-local function LoadEncounterJournalSkin()
+local function hook_EncounterJournal_SetTabEnabled(tab, enabled)
+    if enabled then
+        tab:GetFontString():SetTextColor(0, 0, 0)
+    else
+        tab:GetFontString():SetTextColor(0.6, 0.6, 0.6)
+    end
+end
+AFP("hook_EncounterJournal_SetTabEnabled", hook_EncounterJournal_SetTabEnabled)
+
+local function hook_SetVertexColor(self)
+    self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+end
+AFP("hook_SetVertexColor", hook_SetVertexColor)
+
+local function hook_EJSuggestFrame_RefreshDisplay()
+    for i, data in ipairs(EncounterJournal.suggestFrame.suggestions) do
+        local sugg = next(data) and EncounterJournal.suggestFrame["Suggestion" .. i]
+        if sugg then
+            if not sugg.icon.backdrop then
+                sugg.icon:CreateBackdrop()
+            end
+
+            sugg.icon:SetMask("")
+            sugg.icon:SetTexture(data.iconPath)
+            sugg.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+            sugg.iconRing:Hide()
+        end
+    end
+end
+AFP("hook_EJSuggestFrame_RefreshDisplay", hook_EJSuggestFrame_RefreshDisplay)
+
+local function hook_EJSuggestFrame_UpdateRewards(sugg)
+    local rewardData = sugg.reward.data
+    if rewardData then
+        if not sugg.reward.icon.backdrop then
+            sugg.reward.icon:CreateBackdrop("Transparent", true)
+            sugg.reward.icon.backdrop:SetFrameLevel(3)
+        end
+
+        sugg.reward.icon:SetMask("")
+        sugg.reward.icon:SetTexture(rewardData.itemIcon or rewardData.currencyIcon or [[Interface\Icons\achievement_guildperk_mobilebanking]])
+        sugg.reward.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+
+        local r, g, b = 1, 1, 1
+        if rewardData.itemID then
+            local quality = select(3, GetItemInfo(rewardData.itemID))
+            if quality and quality > 1 then
+                r, g, b = GetItemQualityColor(quality)
+            end
+        end
+        sugg.reward.icon.backdrop:SetBackdropBorderColor(r, g, b)
+    end
+end
+AFP("hook_EJSuggestFrame_UpdateRewards", hook_EJSuggestFrame_UpdateRewards)
+
+local function hook_RefreshListDisplay(buttons)
+    if not buttons.elements then return end
+
+    for i = 1, buttons:GetNumElementFrames() do
+        local btn = buttons.elements[i]
+        if btn and not btn.IsSkinned then
+            btn.Background:SetAlpha(0)
+            btn.BackgroundOverlay:SetAlpha(0)
+            btn.CircleMask:Hide()
+            GW.HandleIcon(btn.Icon)
+            btn.Icon:CreateBackdrop("Transparent", true)
+            btn.Icon.backdrop:SetBackdropBorderColor(r, g, b)
+
+            btn:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+            btn.backdrop:SetPoint("TOPLEFT", 3, 0)
+            btn.backdrop:SetPoint("BOTTOMRIGHT", -2, 1)
+
+            btn.IsSkinned = true
+        end
+    end
+end
+AFP("hook_RefreshListDisplay", hook_RefreshListDisplay)
+
+local function hook_EncounterJournalBossButton_OnClick()
+    local bossIndex = 1
+    local _, _, bossID = EJ_GetEncounterInfoByIndex(bossIndex)
+    local bossButton
+
+    local encounter = EncounterJournal.encounter
+
+    while bossID do
+        bossButton = _G["EncounterJournalBossButton" .. bossIndex]
+        if (encounter.infoFrame.encounterID == bossID) then
+            bossButton.hover.skipHover = true
+            bossButton.hover:SetAlpha(1)
+            bossButton.hover:SetPoint("RIGHT", bossButton, "LEFT", bossButton:GetWidth(), 0)
+        else
+            bossButton.hover.skipHover = false
+            bossButton.hover:SetAlpha(1)
+            bossButton.hover:SetPoint("RIGHT", bossButton, "LEFT", 0, 0)
+        end
+        bossIndex = bossIndex + 1
+        _, _, bossID = EJ_GetEncounterInfoByIndex(bossIndex)
+    end
+end
+AFP("hook_EncounterJournalBossButton_OnClick", hook_EncounterJournalBossButton_OnClick)
+
+local function encounterJournalSkin()
+    --[[
     if not GW.GetSetting("ENCOUNTER_JOURNAL_SKIN_ENABLED") then return end
 
     if not EncounterJournal then
         EncounterJournal_LoadUI()
     end
+    --]]
 
     GW.HandlePortraitFrame(EncounterJournal, true)
     EncounterJournalTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
@@ -232,16 +356,7 @@ local function LoadEncounterJournalSkin()
     HandleTopTabs(EncounterJournal.instanceSelect.raidsTab)
     HandleTopTabs(EncounterJournal.instanceSelect.LootJournalTab)
 
-    hooksecurefunc("EJ_ContentTab_Select", function(id)
-        for i = 1, #EncounterJournal.instanceSelect.Tabs do
-            local tab = EncounterJournal.instanceSelect.Tabs[i]
-            if tab.id ~= id then
-                tab:GetFontString():SetTextColor(0, 0, 0)
-            else
-                tab:GetFontString():SetTextColor(0, 0, 0)
-            end
-        end
-    end)
+    hooksecurefunc("EJ_ContentTab_Select", hook_EJ_ContentTab_Select)
 
     EncounterJournal.instanceSelect.dungeonsTab:ClearAllPoints()
     EncounterJournal.instanceSelect.dungeonsTab:SetPoint("BOTTOMLEFT", EncounterJournal.instanceSelect.suggestTab, "BOTTOMRIGHT", 2, 0)
@@ -355,13 +470,7 @@ local function LoadEncounterJournalSkin()
         HandleTabs(tab)
     end
 
-    hooksecurefunc("EncounterJournal_SetTabEnabled", function(tab, enabled)
-        if enabled then
-            tab:GetFontString():SetTextColor(0, 0, 0)
-        else
-            tab:GetFontString():SetTextColor(0.6, 0.6, 0.6)
-        end
-    end)
+    hooksecurefunc("EncounterJournal_SetTabEnabled", hook_EncounterJournal_SetTabEnabled)
 
     local items = EncounterJournal.encounter.info.lootScroll.buttons
     for i = 1, #items do
@@ -380,9 +489,7 @@ local function LoadEncounterJournalSkin()
         item.IconBorder:SetAllPoints(item.icon)
         item.IconBorder:SetParent(item)
 
-        hooksecurefunc(item.IconBorder, "SetVertexColor", function(self)
-            self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-        end)
+        hooksecurefunc(item.IconBorder, "SetVertexColor", hook_SetVertexColor)
 
         item.name:ClearAllPoints()
         item.name:SetPoint("TOPLEFT", item.icon, "TOPRIGHT", 6, -2)
@@ -455,44 +562,9 @@ local function LoadEncounterJournalSkin()
         reward.iconRingHighlight:SetTexture()
     end
 
-    hooksecurefunc("EJSuggestFrame_RefreshDisplay", function()
-        for i, data in ipairs(EncounterJournal.suggestFrame.suggestions) do
-            local sugg = next(data) and EncounterJournal.suggestFrame["Suggestion" .. i]
-            if sugg then
-                if not sugg.icon.backdrop then
-                    sugg.icon:CreateBackdrop()
-                end
+    hooksecurefunc("EJSuggestFrame_RefreshDisplay", hook_EJSuggestFrame_RefreshDisplay)
 
-                sugg.icon:SetMask("")
-                sugg.icon:SetTexture(data.iconPath)
-                sugg.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-                sugg.iconRing:Hide()
-            end
-        end
-    end)
-
-    hooksecurefunc("EJSuggestFrame_UpdateRewards", function(sugg)
-        local rewardData = sugg.reward.data
-        if rewardData then
-            if not sugg.reward.icon.backdrop then
-                sugg.reward.icon:CreateBackdrop("Transparent", true)
-                sugg.reward.icon.backdrop:SetFrameLevel(3)
-            end
-
-            sugg.reward.icon:SetMask("")
-            sugg.reward.icon:SetTexture(rewardData.itemIcon or rewardData.currencyIcon or [[Interface\Icons\achievement_guildperk_mobilebanking]])
-            sugg.reward.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-
-            local r, g, b = 1, 1, 1
-            if rewardData.itemID then
-                local quality = select(3, GetItemInfo(rewardData.itemID))
-                if quality and quality > 1 then
-                    r, g, b = GetItemQualityColor(quality)
-                end
-            end
-            sugg.reward.icon.backdrop:SetBackdropBorderColor(r, g, b)
-        end
-    end)
+    hooksecurefunc("EJSuggestFrame_UpdateRewards", hook_EJSuggestFrame_UpdateRewards)
 
     if GW.GetSetting("TOOLTIPS_ENABLED") then
         local item1 = EncounterJournalTooltip.Item1
@@ -518,54 +590,13 @@ local function LoadEncounterJournalSkin()
     LootJournal.PowersFrame:SkinScrollFrame()
 
     local r, g, b = GetItemQualityColor(Enum.ItemQuality.Legendary or 5)
-    hooksecurefunc(LootJournal.PowersFrame, "RefreshListDisplay", function(buttons)
-        if not buttons.elements then return end
-
-        for i = 1, buttons:GetNumElementFrames() do
-            local btn = buttons.elements[i]
-            if btn and not btn.IsSkinned then
-                btn.Background:SetAlpha(0)
-                btn.BackgroundOverlay:SetAlpha(0)
-                btn.CircleMask:Hide()
-                GW.HandleIcon(btn.Icon)
-                btn.Icon:CreateBackdrop("Transparent", true)
-                btn.Icon.backdrop:SetBackdropBorderColor(r, g, b)
-
-                btn:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
-                btn.backdrop:SetPoint("TOPLEFT", 3, 0)
-                btn.backdrop:SetPoint("BOTTOMRIGHT", -2, 1)
-
-                btn.IsSkinned = true
-            end
-        end
-    end)
+    hooksecurefunc(LootJournal.PowersFrame, "RefreshListDisplay", hook_RefreshListDisplay)
 
     hooksecurefunc("EncounterJournal_ListInstances", SkinDungeons)
     EncounterJournal_ListInstances()
 
     hooksecurefunc("EncounterJournal_DisplayInstance", SkinBosses)
-    hooksecurefunc("EncounterJournalBossButton_OnClick", function()
-        local bossIndex = 1
-        local _, _, bossID = EJ_GetEncounterInfoByIndex(bossIndex)
-        local bossButton
-
-        local encounter = EncounterJournal.encounter
-
-        while bossID do
-            bossButton = _G["EncounterJournalBossButton" .. bossIndex]
-            if (encounter.infoFrame.encounterID == bossID) then
-                bossButton.hover.skipHover = true
-                bossButton.hover:SetAlpha(1)
-                bossButton.hover:SetPoint("RIGHT", bossButton, "LEFT", bossButton:GetWidth(), 0)
-            else
-                bossButton.hover.skipHover = false
-                bossButton.hover:SetAlpha(1)
-                bossButton.hover:SetPoint("RIGHT", bossButton, "LEFT", 0, 0)
-            end
-            bossIndex = bossIndex + 1
-            _, _, bossID = EJ_GetEncounterInfoByIndex(bossIndex)
-        end
-    end)
+    hooksecurefunc("EncounterJournalBossButton_OnClick", hook_EncounterJournalBossButton_OnClick)
     hooksecurefunc("EncounterJournal_SetUpOverview", SkinOverviewInfo)
     hooksecurefunc("EncounterJournal_SetBullets", SkinOverviewInfoBullets)
     hooksecurefunc("EncounterJournal_ToggleHeaders", SkinAbilitiesInfo)
@@ -587,5 +618,13 @@ local function LoadEncounterJournalSkin()
     EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildHeader:SetAlpha(0)
 
     EncounterJournal.LootJournal:GetRegions():Kill()
+end
+AFP("encounterJournalSkin", encounterJournalSkin)
+
+local function LoadEncounterJournalSkin()
+    if not GW.GetSetting("ENCOUNTER_JOURNAL_SKIN_ENABLED") then
+        return
+    end
+    GW.RegisterLoadHook(encounterJournalSkin, "Blizzard_EncounterJournal", EncounterJournal)
 end
 GW.LoadEncounterJournalSkin = LoadEncounterJournalSkin
