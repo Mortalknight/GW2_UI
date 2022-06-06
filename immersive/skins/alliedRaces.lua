@@ -1,4 +1,5 @@
 local _, GW = ...
+local AFP = GW.AddProfiling
 
 local function ApplyAlliedRacesUISkin()
     if not GW.GetSetting("ALLIEND_RACES_UI_SKIN_ENABLED") then return end
@@ -45,6 +46,7 @@ local function ApplyAlliedRacesUISkin()
         end
     end)
 end
+AFP("ApplyAlliedRacesUISkin", ApplyAlliedRacesUISkin)
 
 local function LoadAlliedRacesUISkin()
     GW.RegisterSkin("Blizzard_AlliedRacesUI", function() ApplyAlliedRacesUISkin() end)

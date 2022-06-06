@@ -1,5 +1,33 @@
 local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
+local AFP = GW.AddProfiling
+
+local function hook_AddonList_Update()
+    local numEntrys = GetNumAddOns()
+
+    local addonOffset = _G.AddonList.offset
+
+    for i = 1, MAX_ADDONS_DISPLAYED do
+        local addonIndex = addonOffset + i
+
+        if addonIndex <= numEntrys then
+            local checkbox = _G["AddonListEntry" .. i .. "Enabled"]
+            local checkboxState = GetAddOnEnableState(character, addonIndex)
+            -- Get the character from the current list (nil is all characters)
+            local character = UIDropDownMenu_GetSelectedValue(AddonCharacterDropDown)
+            if ( character == true ) then
+                character = nil
+            end
+
+            local checkedTexture = checkbox:GetCheckedTexture()
+            -- 1 is a gray check
+            if checkboxState == 1 then
+                checkedTexture:SetVertexColor(1, .93, .73)
+            end
+        end
+    end
+end
+AFP("hook_AddonList_Update", hook_AddonList_Update)
 
 local function LoadAddonListSkin()
     if not GW.GetSetting("ADDONLIST_SKIN_ENABLED") then return end
@@ -48,28 +76,6 @@ local function LoadAddonListSkin()
     _G.AddonListScrollFrame:SkinScrollFrame()
     _G.AddonListScrollFrameScrollBar:SkinScrollBar()
 
-    hooksecurefunc("AddonList_Update", function()
-        local numEntrys = GetNumAddOns()
-
-        for i = 1, MAX_ADDONS_DISPLAYED do
-            local addonIndex = AddonList.offset + i
-
-            if addonIndex <= numEntrys then
-                local checkbox = _G["AddonListEntry" .. i .. "Enabled"]
-                local checkboxState = GetAddOnEnableState(character, addonIndex)
-                -- Get the character from the current list (nil is all characters)
-                local character = UIDropDownMenu_GetSelectedValue(AddonCharacterDropDown)
-                if ( character == true ) then
-                    character = nil
-                end
-
-                local checkedTexture = checkbox:GetCheckedTexture()
-                -- 1 is a gray check
-                if checkboxState == 1 then
-                    checkedTexture:SetVertexColor(1, .93, .73)
-                end
-            end
-        end
-    end)
+    hooksecurefunc("AddonList_Update", hook_AddonList_Update)
 end
 GW.LoadAddonListSkin = LoadAddonListSkin

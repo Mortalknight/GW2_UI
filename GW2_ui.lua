@@ -8,6 +8,7 @@ local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
 local IsIncompatibleAddonLoadedOrOverride = GW.IsIncompatibleAddonLoadedOrOverride
 local Debug = GW.Debug
+local AFP = GW.AddProfiling
 
 local animations = GW.animations
 
@@ -37,10 +38,6 @@ local swimAnimation = 0
 local lastSwimState = true
 local hudArtFrame
 
-if Profiler then
-    _G.GW_Addon_Scope = GW
-end
-
 local function disableMABags()
     local bags = GetSetting("BAGS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Inventory", true)
     if not bags or not MovAny or not MADB then
@@ -50,7 +47,7 @@ local function disableMABags()
     MAOptNoBags:SetEnabled(false)
     forcedMABags = true
 end
-GW.AddForProfiling("index", "disableMABags", disableMABags)
+AFP("disableMABags", disableMABags)
 
 -- https://us.battle.net/forums/en/wow/topic/6036615884
 if AchievementMicroButton_Update == nil then
@@ -98,7 +95,7 @@ local function buttonAnim(self, name, w, hover)
     hover:SetPoint("RIGHT", self, "LEFT", lerp, 0)
     hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, GW.lerp(0, 1, ((prog) - 0.5) / 0.5))
 end
-GW.AddForProfiling("index", "buttonAnim", buttonAnim)
+AFP("buttonAnim", buttonAnim)
 
 --[[
     Basic helper function for spritemaps
@@ -211,7 +208,7 @@ local function barAnimation(self, barWidth, sparkWidth)
     self.spark:ClearAllPoints()
     self.spark:SetPoint("LEFT", spark, 0)
 end
-GW.AddForProfiling("index", "barAnimation", barAnimation)
+AFP("barAnimation", barAnimation)
 
 local function Bar(self, value)
     if self == nil then
@@ -260,7 +257,7 @@ local function swimAnim()
     hudArtFrame.actionBarHud.RightSwim:SetVertexColor(r, g, b, animations.swimAnimation.progress)
     hudArtFrame.actionBarHud.LeftSwim:SetVertexColor(r, g, b, animations.swimAnimation.progress)
 end
-GW.AddForProfiling("index", "swimAnim", swimAnim)
+AFP("swimAnim", swimAnim)
 
 local updateCB = {}
 local function AddUpdateCB(func, payload)
@@ -326,7 +323,7 @@ local function gw_OnUpdate(_, elapsed)
         cb.func(cb.payload, elapsed)
     end
 end
-GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
+AFP("gw_OnUpdate", gw_OnUpdate)
 
 local function getBestPixelScale()
     return max(0.4, min(1.15, 768 / GW.screenHeight))
@@ -691,7 +688,7 @@ local function loadAddon(self)
 
     self:SetScript("OnUpdate", gw_OnUpdate)
 end
-GW.AddForProfiling("index", "loadAddon", loadAddon)
+AFP("loadAddon", loadAddon)
 
 -- handles addon loading
 local function gw_OnEvent(self, event, ...)
@@ -741,7 +738,7 @@ local function gw_OnEvent(self, event, ...)
         end
     end
 end
-GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)
+AFP("gw_OnEvent", gw_OnEvent)
 l:SetScript("OnEvent", gw_OnEvent)
 l:RegisterEvent("PLAYER_LOGIN")
 l:RegisterEvent("PLAYER_LEAVING_WORLD")
@@ -784,7 +781,7 @@ local function wait_OnUpdate(_, elapse)
         end
     end
 end
-GW.AddForProfiling("index", "wait_OnUpdate", wait_OnUpdate)
+AFP("wait_OnUpdate", wait_OnUpdate)
 
 local function Wait(delay, func, ...)
     if type(delay) ~= "number" or type(func) ~= "function" then

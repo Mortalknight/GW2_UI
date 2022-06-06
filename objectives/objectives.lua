@@ -7,6 +7,7 @@ local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local IsIn = GW.IsIn
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
+local AFP = GW.AddProfiling
 
 local questInfo = {}
 
@@ -20,6 +21,7 @@ local function IsQuestAutoTurnInOrAutoAccept(blockQuestID, checkType)
 
     return false
 end
+AFP("IsQuestAutoTurnInOrAutoAccept", IsQuestAutoTurnInOrAutoAccept)
 
 local function wiggleAnim(self)
     if self.animation == nil then
@@ -61,7 +63,7 @@ local function wiggleAnim(self)
         end
     )
 end
-GW.AddForProfiling("objectives", "wiggleAnim", wiggleAnim)
+AFP("wiggleAnim", wiggleAnim)
 
 local function NewQuestAnimation(block)
     block.flare:Show()
@@ -173,7 +175,6 @@ local function setBlockColor(block, string)
     block.color = TRACKER_TYPE_COLOR[string]
 end
 GW.setBlockColor = setBlockColor
-GW.AddForProfiling("objectives", "setBlockColor", setBlockColor)
 
 local function statusBar_OnShow(self)
     local f = self:GetParent()
@@ -183,7 +184,7 @@ local function statusBar_OnShow(self)
     f:SetHeight(50)
     f.StatusBar.statusbarBg:Show()
 end
-GW.AddForProfiling("objectives", "statusBar_OnShow", statusBar_OnShow)
+AFP("statusBar_OnShow", statusBar_OnShow)
 
 local function statusBar_OnHide(self)
     local f = self:GetParent()
@@ -193,7 +194,7 @@ local function statusBar_OnHide(self)
     f:SetHeight(20)
     f.StatusBar.statusbarBg:Hide()
 end
-GW.AddForProfiling("objectives", "statusBar_OnHide", statusBar_OnHide)
+AFP("statusBar_OnHide", statusBar_OnHide)
 
 local function statusBarSetValue(self)
     local f = self:GetParent()
@@ -211,7 +212,7 @@ local function statusBarSetValue(self)
         f.StatusBar.progress:SetText(math.floor((v / mx) * 100) .. "%")
     end
 end
-GW.AddForProfiling("objectives", "statusBarSetValue", statusBarSetValue)
+AFP("statusBarSetValue", statusBarSetValue)
 
 local function CreateObjectiveNormal(name, parent)
     local f = CreateFrame("Frame", name, parent, "GwQuesttrackerObjectiveNormal")
@@ -261,6 +262,7 @@ local function blockOnEnter(self)
         BonusObjectiveTracker_ShowRewardsTooltip(self)
     end
 end
+AFP("blockOnEnter", blockOnEnter)
 
 local function blockOnLeave(self)
     if not self.hover then
@@ -283,6 +285,7 @@ local function blockOnLeave(self)
     end
     GameTooltip_Hide()
 end
+AFP("blockOnLeave", blockOnLeave)
 
 local function CreateTrackerObject(name, parent)
     local f = CreateFrame("Button", name, parent, "GwQuesttrackerObject")
@@ -356,7 +359,7 @@ local function getObjectiveBlock(self, index)
 
     return newBlock
 end
-GW.AddForProfiling("objectives", "getObjectiveBlock", getObjectiveBlock)
+AFP("getObjectiveBlock", getObjectiveBlock)
 
 local function getBlockQuest(blockIndex, isFrequency)
     if _G["GwQuestBlock" .. blockIndex] ~= nil then
@@ -401,7 +404,7 @@ local function getBlockQuest(blockIndex, isFrequency)
 
     return newBlock
 end
-GW.AddForProfiling("objectives", "getBlockQuest", getBlockQuest)
+AFP("getBlockQuest", getBlockQuest)
 
 local function getBlockCampaign(blockIndex)
     if _G["GwCampaignBlock" .. blockIndex] ~= nil then
@@ -436,7 +439,7 @@ local function getBlockCampaign(blockIndex)
 
     return newBlock
 end
-GW.AddForProfiling("objectives", "getBlockCampaign", getBlockCampaign)
+AFP("getBlockCampaign", getBlockCampaign)
 
 local function getBlockById(questID)
     for i = 1, 50 do -- loop quest and campaign
@@ -450,6 +453,7 @@ local function getBlockById(questID)
 
     return nil
 end
+AFP("getBlockById", getBlockById)
 
 local function getBlockByIdOrCreateNew(questID, isCampaign, isFrequency)
     local blockName = isCampaign and "GwCampaignBlock" or "GwQuestBlock"
@@ -468,6 +472,7 @@ local function getBlockByIdOrCreateNew(questID, isCampaign, isFrequency)
 
     return nil
 end
+AFP("getBlockByIdOrCreateNew", getBlockByIdOrCreateNew)
 
 local function getQuestWatchId(questID)
     for i = 1, C_QuestLog.GetNumQuestWatches() do
@@ -478,6 +483,7 @@ local function getQuestWatchId(questID)
 
     return nil
 end
+AFP("getQuestWatchId", getQuestWatchId)
 
 local function addObjective(block, text, finished, objectiveIndex, objectiveType)
     if finished == true then
@@ -520,7 +526,7 @@ local function addObjective(block, text, finished, objectiveIndex, objectiveType
         block.numObjectives = block.numObjectives + 1
     end
 end
-GW.AddForProfiling("objectives", "addObjective", addObjective)
+AFP("addObjective", addObjective)
 
 local function updateQuestObjective(block, numObjectives)
     local addedObjectives = 1
@@ -533,7 +539,7 @@ local function updateQuestObjective(block, numObjectives)
         end
     end
 end
-GW.AddForProfiling("objectives", "updateQuestObjective", updateQuestObjective)
+AFP("updateQuestObjective", updateQuestObjective)
 
 local function UpdateQuestItem(block)
     local link, item, charges, showItemWhenComplete = nil, nil, nil, false
@@ -592,7 +598,7 @@ local function OnBlockClick(self, button, isHeader)
         end
     end
 end
-GW.AddForProfiling("objectives", "OnBlockClick", OnBlockClick)
+AFP("OnBlockClick", OnBlockClick)
 
 local function OnBlockClickHandler(self, button)
     if self.questID == nil then 
@@ -601,7 +607,7 @@ local function OnBlockClickHandler(self, button)
         OnBlockClick(self, button, false)
     end
 end
-GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
+AFP("OnBlockClickHandler", OnBlockClickHandler)
 
 local function updateQuest(self, block, quest)
     local questID = quest:GetID()
@@ -680,7 +686,7 @@ local function updateQuest(self, block, quest)
     block.height = block.height + 5
     block:SetHeight(block.height)
 end
-GW.AddForProfiling("objectives", "updateQuest", updateQuest)
+AFP("updateQuest", updateQuest)
 
 local function updateQuestByID(self, block, quest, questID, questLogIndex)
     local numObjectives = C_QuestLog.GetNumQuestObjectives(questID)
@@ -755,7 +761,7 @@ local function updateQuestByID(self, block, quest, questID, questLogIndex)
     block:SetHeight(block.height)
     wipe(questInfo)
 end
-GW.AddForProfiling("objectives", "updateQuestByID", updateQuestByID)
+AFP("updateQuestByID", updateQuestByID)
 
 local function updateQuestItemPositions(button, height, type, block)
     if not button or not block.hasItem then
@@ -781,7 +787,6 @@ local function updateQuestItemPositions(button, height, type, block)
     button:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height)
 end
 GW.updateQuestItemPositions = updateQuestItemPositions
-GW.AddForProfiling("objectives", "updateQuestItemPositions", updateQuestItemPositions)
 
 local questExraButtonHelperFrame = CreateFrame("Frame")
 questExraButtonHelperFrame:SetScript("OnEvent", function(self)
@@ -825,7 +830,6 @@ local function updateExtraQuestItemPositions(height)
     GwBonusItemButton:SetPoint("TOPLEFT", GwQuestTracker, "TOPRIGHT", -330, -height + -25)
 end
 GW.updateExtraQuestItemPositions = updateExtraQuestItemPositions
-GW.AddForProfiling("objectives", "updateExtraQuestItemPositions", updateExtraQuestItemPositions)
 
 --[[
 function gwRequestQustlogUpdate()
@@ -978,7 +982,6 @@ local function updateQuestLogLayout(self)
     self.isUpdating = false
 end
 GW.updateQuestLogLayout = updateQuestLogLayout
-GW.AddForProfiling("objectives", "updateQuestLogLayout", updateQuestLogLayout)
 
 local function updateQuestLogLayoutSingle(self, questID, added)
     if self.isUpdating or not self.init or not questID then
@@ -1050,6 +1053,7 @@ local function updateQuestLogLayoutSingle(self, questID, added)
 
     self.isUpdating = false
 end
+AFP("updateQuestLogLayoutSingle", updateQuestLogLayoutSingle)
 
 local function checkForAutoQuests()
     for i = 1, GetNumAutoQuestPopUps() do
@@ -1079,6 +1083,7 @@ local function checkForAutoQuests()
         end
     end
 end
+AFP("checkForAutoQuests", checkForAutoQuests)
 
 local function tracker_OnEvent(self, event, ...)
     local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
@@ -1131,7 +1136,7 @@ local function tracker_OnEvent(self, event, ...)
     C_Timer.After(0.5, checkForAutoQuests)
     QuestTrackerLayoutChanged()
 end
-GW.AddForProfiling("objectives", "tracker_OnEvent", tracker_OnEvent)
+AFP("tracker_OnEvent", tracker_OnEvent)
 
 local function tracker_OnUpdate()
     local prevState = GwObjectivesNotification.shouldDisplay
@@ -1145,7 +1150,6 @@ local function tracker_OnUpdate()
     end
 end
 GW.forceCompassHeaderUpdate = tracker_OnUpdate
-GW.AddForProfiling("objectives", "tracker_OnUpdate", tracker_OnUpdate)
 
 local function bonus_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 0)
@@ -1153,7 +1157,7 @@ local function bonus_OnEnter(self)
     GameTooltip:SetText(RoundDec(self.progress * 100, 0) .. "%")
     GameTooltip:Show()
 end
-GW.AddForProfiling("objectives", "bonus_OnEnter", bonus_OnEnter)
+AFP("bonus_OnEnter", bonus_OnEnter)
 
 local function AdjustQuestTracker(our_bars, our_minimap)
     if (not our_minimap) then

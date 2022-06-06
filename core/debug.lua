@@ -1,59 +1,71 @@
 local _, GW = ...
 
+local D = DLAPI
+local P = Profiler
+
+-- Deprecated; use AddProfiling instead
 local function AddForProfiling(unit, name, ...)
-    local gName = "GW_" .. unit
+    local gName = "GW2_" .. unit
     if not _G[gName] then
         _G[gName] = {}
     end
     _G[gName][name] = ...
 end
 
-local function Debug(...)
-    if DLAPI then
-        local msg = ""
-        for i = 1, select("#", ...) do
-            local arg = select(i, ...)
-            msg = msg .. tostring(arg) .. " "
-        end
-        DLAPI.DebugLog("GW2", "%s", msg)
+-- Adds local-only function refs into global namespace so that the profiler can "see" them
+-- Only needed for functions that don't go into the GW obj (those show in GW2_ADDON scope)
+-- Does nothing when the profiling addon is not enabled
+local function AddProfiling(name, func)
+    if not name or type(name) ~= "string" or not func or type(func) ~= "function" then
+        return
     end
+    local callLine, _ = strsplit("\n", debugstack(2, 1, 0), 2)
+    local unit = gsub(gsub(callLine, '%[string "@Interface\\AddOns\\GW2_UI\\', ""), '%.lua".*', "")
+    unit = gsub(gsub(unit, '\\', "::"), '/', "::")
+    local gName = "GW2_" .. unit
+    if not _G[gName] then
+        _G[gName] = {}
+    end
+    _G[gName][name] = func
+end
+
+local function Debug(...)
+    local msg = ""
+    for i = 1, select("#", ...) do
+        local arg = select(i, ...)
+        msg = msg .. tostring(arg) .. " "
+    end
+    D.DebugLog("GW2", "%s", msg)
 end
 
 local function Trace()
-    if DLAPI then
-        DLAPI.DebugLog("GW2Trace", "%s", "------------------------- Trace -------------------------")
-        for i,v in ipairs({("\n"):split(debugstack(2))}) do
-            if v ~= "" then
-                DLAPI.DebugLog("GW2Trace", "%d: %s", i, v)
-            end
+    D.DebugLog("GW2Trace", "%s", "------------------------- Trace -------------------------")
+    for i,v in ipairs({("\n"):split(debugstack(2))}) do
+        if v ~= "" then
+            D.DebugLog("GW2Trace", "%d: %s", i, v)
         end
-        DLAPI.DebugLog("GW2Trace", "%s", "---------------------------------------------------------")
     end
+    D.DebugLog("GW2Trace", "%s", "---------------------------------------------------------")
 end
 
-local function DebugOff()
-    return
-end
-local function AddForProfilingOff()
-    return
-end
-local function TraceOff()
-    return
+local function EmptyFunc()
 end
 
-if DLAPI then
+if D then
     GW.Debug = Debug
     GW.Trace = Trace
     GW.inDebug = true
     SetCVar("fstack_preferParentKeys", 0)
     Debug("debug log initialized")
 else
-    GW.Debug = DebugOff
-    GW.Trace = TraceOff
+    GW.Debug = EmptyFunc
+    GW.Trace = EmptyFunc
     GW.inDebug = false
 end
-if Profiler then
+if P then
     GW.AddForProfiling = AddForProfiling
+    GW.AddProfiling = AddProfiling
 else
-    GW.AddForProfiling = AddForProfilingOff
+    GW.AddForProfiling = EmptyFunc
+    GW.AddProfiling = EmptyFunc
 end
