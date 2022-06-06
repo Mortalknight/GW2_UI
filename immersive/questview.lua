@@ -1,6 +1,7 @@
 local _, GW = ...
 local L = GW.L
 local GetSetting = GW.GetSetting
+local Debug = GW.Debug
 
 local questState = "NONE"
 local questStateSet = false
@@ -82,6 +83,7 @@ GW.AddForProfiling("questview", "styleRewards", styleRewards)
 
 local function hideBlizzardQuestFrame()
     QuestFrame:ClearAllPoints()
+    QuestFrame:SetClampedToScreen(false)
     QuestFrame:SetPoint("RIGHT", UIParent, "LEFT", -800, 0)
 end
 GW.AddForProfiling("questview", "hideBlizzardQuestFrame", hideBlizzardQuestFrame)
@@ -426,7 +428,7 @@ local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
 
     if dirty then
         PM:SetPosition(uX, uY, uZ)
-        GW.Debug("set pos:", unit, "id:", fileid, "x:", uX, "y:", uY, "z:", uZ, "is_dead:", is_dead)
+        Debug("set pos:", unit, "id:", fileid, "x:", uX, "y:", uY, "z:", uZ, "is_dead:", is_dead)
         PM:SetUnit(unit)
         if crace then
             PM:SetCustomRace(crace, cgender)
@@ -438,7 +440,32 @@ local function setPMUnit(PM, unit, side, is_dead, crace, cgender)
 end
 GW.AddForProfiling("questview", "setPMUnit", setPMUnit)
 
+local mapBGs = {}
+mapBGs[1525] = "SL/revendreth"
+mapBGs[1565] = "SL/ardenweald"
+mapBGs[1670] = "SL/oribos"
 local function showQuestFrame()
+    local mapId = C_Map.GetBestMapForUnit("player")
+    local mapInfo
+    local prevInfo
+    repeat
+        prevInfo = mapInfo
+        mapInfo = C_Map.GetMapInfo(mapId)
+        Debug("current map", mapInfo.mapID, mapInfo.name, mapInfo.mapType, mapInfo.parentMapID)
+        mapId = mapInfo.parentMapID
+    until not mapInfo or mapInfo.mapType == 3 or (prevInfo and prevInfo.mapType == 4 and mapInfo.mapType == 2) or not mapId or mapId == 0
+    if mapInfo and mapInfo.mapType == 3 then
+        mapId = mapInfo.mapID
+    elseif mapInfo and prevInfo and mapInfo.mapType == 2 and prevInfo.mapType == 4 then
+        mapId = prevInfo.mapID
+    end
+    if mapId and mapBGs[mapId] then
+        GwQuestviewFrame.mapBG:SetTexture("Interface/AddOns/GW2_UI/textures/questview/" .. mapBGs[mapId])
+    else
+        GwQuestviewFrame.mapBG:SetTexture("Interface/AddOns/GW2_UI/textures/questview/bg_default")
+    end
+
+
     GwQuestviewFrameContainerDialogQuestTitle:SetText(GetTitleText())
     GwQuestviewFrame:Show()
 

@@ -344,6 +344,7 @@ local function bank_OnShow(self)
 
     -- hide the bank frame off screen
     BankFrame:ClearAllPoints()
+    BankFrame:SetClampedToScreen(false)
     BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
     BankSlotsFrame:Hide()
     BankItemAutoSortButton:Hide()

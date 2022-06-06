@@ -16,7 +16,7 @@
                 </Texture>
             </Layer>
             <Layer level="BACKGROUND" textureSubLevel="2">
-                <Texture file="Interface\AddOns\GW2_UI\textures\questview\bg_default">
+                <Texture parentKey="mapBG" file="Interface\AddOns\GW2_UI\textures\questview\bg_default">
                     <Size x="950" y="475"></Size>
                     <Anchors>
                         <Anchor point="center" x="0" y="0" />
