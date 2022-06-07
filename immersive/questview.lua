@@ -277,23 +277,20 @@ AFP("QuestViewMixin", QuestViewMixin)
 
 function QuestViewMixin:styleRewards()
     local f = QuestInfoRewardsFrame
+
+    -- style all font strings (this also gets the anon ones created from the spellHeaderPool)
+    local regions = { f:GetRegions() }
+    for i = 1, #regions do
+        local r = regions[i]
+        if r.SetFont and r.SetTextColor and r.SetShadowColor then
+            r:SetFont("UNIT_NAME_FONT", 12)
+            r:SetTextColor(1, 1, 1)
+            r:SetShadowColor(0, 0, 0, 1)
+        end
+    end
     f.Header:SetFont("UNIT_NAME_FONT", 14)
-    f.Header:SetTextColor(1, 1, 1)
-    f.Header:SetShadowColor(0, 0, 0, 1)
 
-    f.ItemChooseText:SetFont("UNIT_NAME_FONT", 12)
-    f.ItemChooseText:SetTextColor(1, 1, 1)
-    f.ItemChooseText:SetShadowColor(0, 0, 0, 1)
-
-    f.ItemReceiveText:SetFont("UNIT_NAME_FONT", 12)
-    f.ItemReceiveText:SetTextColor(1, 1, 1)
-    f.ItemReceiveText:SetShadowColor(0, 0, 0, 1)
-
-    f.PlayerTitleText:SetFont("UNIT_NAME_FONT", 12)
-    f.PlayerTitleText:SetTextColor(1, 1, 1)
-    f.PlayerTitleText:SetShadowColor(0, 0, 0, 1)
-
-    local fXP = QuestInfoXPFrame
+    local fXP = f.XPFrame
     fXP.ReceiveText:SetFont("UNIT_NAME_FONT", 12)
     fXP.ReceiveText:SetTextColor(1, 1, 1)
     fXP.ReceiveText:SetShadowColor(0, 0, 0, 1)
@@ -420,6 +417,7 @@ function QuestViewMixin:nextGossip()
             self.container.acceptButton:SetText(L["Skip"])
         end
     else
+        self.questStringInt = count
         self:questTextCompleted()
     end
 end

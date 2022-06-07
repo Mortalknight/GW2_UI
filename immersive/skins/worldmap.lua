@@ -67,7 +67,7 @@ end
 GW.HandleReward = HandleReward
 
 local function QuestInfo_Display(template)
-    if not GetSetting("GOSSIP_SKIN_ENABLED") and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
+    if (not GetSetting("GOSSIP_SKIN_ENABLED") or GetSetting("QUESTVIEW_ENABLED")) and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
         return
     end
     if not GetSetting("WORLDMAP_SKIN_ENABLED") and (template == QUEST_TEMPLATE_MAP_DETAILS or template == QUEST_TEMPLATE_MAP_REWARDS) then
