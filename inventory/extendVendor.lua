@@ -49,7 +49,7 @@ end
 
 
 local function SetUpExtendedVendor()
-    if IsAddOnLoaded("ExtVendor") or GW.GetSetting("EXTENDED_VENDOR_NUM_PAGES") == 1 then
+    if IsAddOnLoaded("ExtVendor") or GW.GetSetting("EXTENDED_VENDOR_NUM_PAGES") == "1" then
         return
     end
 
@@ -65,6 +65,8 @@ local function SetUpExtendedVendor()
         end
     end
 
+    MerchantBuyBackItem:ClearAllPoints()
+	MerchantBuyBackItem:SetPoint("TOPLEFT", MerchantItem10, "BOTTOMLEFT", -14,-43)
     MerchantPrevPageButton:ClearAllPoints()
     MerchantPrevPageButton:SetPoint("CENTER", MerchantFrame, "BOTTOM", 30, 55)
     MerchantPageText:ClearAllPoints()
