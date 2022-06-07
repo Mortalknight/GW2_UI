@@ -450,7 +450,7 @@ mapBGs[1533] = "SL/bastion"
 mapBGs[1565] = "SL/ardenweald"
 mapBGs[1670] = "SL/oribos"
 local function showQuestFrame()
-    local mapId = C_Map.GetBestMapForUnit("player")
+    local mapId = GW.locationData.mapID
     local mapInfo
     local prevInfo
     repeat
