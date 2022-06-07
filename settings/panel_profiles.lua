@@ -362,7 +362,7 @@ updateProfiles = function(self)
 
             local description =
                 L["Created: "] ..
-                v["profileCreatedDate"] ..
+                (v["profileCreatedDate"] or UNKNOWN) ..
                     L["\nCreated by: "] ..
                         (v["profileCreatedCharacter"] or UNKNOWN) .. L["\nLast updated: "] .. (v["profileLastUpdated"] or UNKNOWN)
 

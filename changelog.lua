@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.30.1", [=[
+FIXES
+    - Fix a profile lua error
+]=])
+
 v("5.30.0", [=[
 NEW
     - Extended Vendor (default disabled)
