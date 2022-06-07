@@ -16,7 +16,7 @@ end
 -- Only needed for functions that don't go into the GW obj (those show in GW2_ADDON scope)
 -- Does nothing when the profiling addon is not enabled
 local function AddProfiling(name, func)
-    if not name or type(name) ~= "string" or not func or type(func) ~= "function" then
+    if not name or type(name) ~= "string" or not func or (type(func) ~= "function" and type(func) ~= "table") then
         return
     end
     local callLine, _ = strsplit("\n", debugstack(2, 1, 0), 2)
