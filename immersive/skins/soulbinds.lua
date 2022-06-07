@@ -19,7 +19,7 @@ local function ApplySoulbindsSkin()
 end
 
 local function LoadSoulbindsSkin()
-    GW.RegisterSkin("Blizzard_Soulbinds", function() ApplySoulbindsSkin() end)
+	GW.RegisterLoadHook(ApplySoulbindsSkin, "Blizzard_Soulbinds", SoulbindViewer)
 end
 GW.LoadSoulbindsSkin = LoadSoulbindsSkin
 

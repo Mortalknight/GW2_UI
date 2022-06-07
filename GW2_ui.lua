@@ -380,6 +380,10 @@ GW.RegisterScaleFrame = RegisterScaleFrame
 -- works on the honor system for now; don't blow away a prior hook :)
 -- Primarily for on-demand addons; if the addon has already loaded
 -- (based on the cond arg), the hook will run immediately.
+local function errorhandler(err)
+    return geterrorhandler()(err)
+end
+
 local addonLoadHooks = {}
 local function RegisterLoadHook(func, name, cond)
     if not func or type(func) ~= "function" or not name or type(name) ~= "string" then
@@ -393,7 +397,7 @@ local function RegisterLoadHook(func, name, cond)
 end
 GW.RegisterLoadHook = RegisterLoadHook
 
-local function hookOmniCDLoad(self)
+local function hookOmniCDLoad()
     local func = OmniCD and OmniCD.AddUnitFrameData
     if func then
         func("GW2_UI-Party-Grid", "GwCompactPartyFrame", "unit", 1)
@@ -404,14 +408,25 @@ end
 AFP("hookOmniCDLoad", hookOmniCDLoad)
 RegisterLoadHook(hookOmniCDLoad, "OmniCD", OmniCD)
 
-local function evAddonLoaded(self, addonName)
+local function evAddonLoaded(_, addonName)
     if addonName ~= "GW2_UI" then
         local loadHook = addonLoadHooks[addonName]
         if loadHook and type(loadHook) == "function" then
             Debug("run load hook for addon", addonName)
-            loadHook(self)
+            xpcall(loadHook, errorhandler)
+            addonLoadHooks[addonName] = nil
         end
         return
+    else
+        -- setup default values on load, which are required for same skins
+        if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
+            PixelPerfection()
+            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r"):gsub("*", GW.Gw2Color))
+        else
+            GW.scale = UIParent:GetScale()
+            GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
+        end
+        GW.mult = (1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)
     end
 
     Debug("in GW2_UI ADDON_LOADED event")
@@ -431,6 +446,22 @@ local function evAddonLoaded(self, addonName)
     -- Skins: BLizzard & Addons
     GW.LoadWorldMapSkin()
     GW.LoadEncounterJournalSkin()
+
+    GW.LoadAlliedRacesUISkin()
+    GW.LoadBarShopUISkin()
+    GW.LoadBindingsUISkin()
+    GW.LoadChromieTimerSkin()
+    GW.LoadCovenantSanctumSkin()
+    GW.LoadDeathRecapSkin()
+    GW.LoadFlightMapSkin()
+    GW.LoadInspectFrameSkin()
+    GW.LoadItemUpgradeSkin()
+    GW.LoadLFGSkin()
+    GW.LoadMacroOptionsSkin()
+    GW.LoadOrderHallTalentFrameSkin()
+    GW.LoadSocketUISkin()
+    GW.LoadSoulbindsSkin()
+    GW.LoadWeeklyRewardsSkin()
 end
 AFP("evAddonLoaded", evAddonLoaded)
 
@@ -507,18 +538,8 @@ local function evPlayerLogin(self)
     GW.CombatQueue_Initialize()
 
     --Create Settings window
-    GW.SkinLoading ()
     GW.LoadMovers()
     GW.LoadSettings()
-
-    if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
-        PixelPerfection()
-        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r"):gsub("*", GW.Gw2Color))
-    else
-        GW.scale = UIParent:GetScale()
-        GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
-    end
-    GW.mult = (1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)
 
     -- load alert settings
     GW.LoadAlertSystem()
@@ -569,34 +590,19 @@ local function evPlayerLogin(self)
     -- Skins: BLizzard & Addons
     GW.LoadStaticPopupSkin()
     GW.LoadBNToastSkin()
-    GW.LoadDeathRecapSkin()
     GW.LoadDropDownSkin()
     GW.LoadLFGSkins()
     GW.LoadReadyCheckSkin()
     GW.LoadTalkingHeadSkin()
     GW.LoadMiscBlizzardFrameSkins()
-    GW.LoadFlightMapSkin()
     GW.LoadAddonListSkin()
-    GW.LoadBindingsUISkin()
     GW.LoadBlizzardOptionsSkin()
-    GW.LoadMacroOptionsSkin()
     GW.LoadMailSkin()
-    GW.LoadBarShopUISkin()
-    GW.LoadInspectFrameSkin()
     GW.LoadDressUpFrameSkin()
     GW.LoadHelperFrameSkin()
-    GW.LoadSocketUISkin()
     GW.LoadGossipSkin()
-    GW.LoadItemUpgradeSkin()
     GW.LoadTimeManagerSkin()
     GW.LoadMerchantFrameSkin()
-    GW.LoadCovenantSanctumSkin()
-    GW.LoadSoulbindsSkin()
-    GW.LoadChromieTimerSkin()
-    GW.LoadAlliedRacesUISkin()
-    GW.LoadWeeklyRewardsSkin()
-    GW.LoadLFGSkin()
-    GW.LoadOrderHallTalentFrameSkin()
     GW.LoadLootFrameSkin()
 
     GW.LoadDetailsSkin()

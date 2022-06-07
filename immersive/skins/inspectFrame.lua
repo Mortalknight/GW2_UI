@@ -138,6 +138,6 @@ local function SkinInspectFrameOnLoad()
 end
 
 local function LoadInspectFrameSkin()
-    GW.RegisterSkin("Blizzard_InspectUI", function() SkinInspectFrameOnLoad() end)
+    GW.RegisterLoadHook(SkinInspectFrameOnLoad, "Blizzard_InspectUI", InspectFrame)
 end
 GW.LoadInspectFrameSkin = LoadInspectFrameSkin

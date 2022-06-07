@@ -33,25 +33,25 @@ AFP("hook_SetSelectedCategory", hook_SetSelectedCategory)
 
 local function SkinBarShop()
     if not GW.GetSetting("BARBERSHOP_SKIN_ENABLED") then return end
-    _G.BarberShopFrame.ResetButton:SkinButton(false, true)
-    _G.BarberShopFrame.CancelButton:SkinButton(false, true)
-    _G.BarberShopFrame.AcceptButton:SkinButton(false, true)
+    BarberShopFrame.ResetButton:SkinButton(false, true)
+    BarberShopFrame.CancelButton:SkinButton(false, true)
+    BarberShopFrame.AcceptButton:SkinButton(false, true)
 
-    _G.BarberShopFrame.TopBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
-    _G.BarberShopFrame.LeftBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
-    _G.BarberShopFrame.RightBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
+    BarberShopFrame.TopBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
+    BarberShopFrame.LeftBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
+    BarberShopFrame.RightBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
 
-    _G.CharCustomizeFrame.SmallButtons.ResetCameraButton:SkinButton(false, true)
-    _G.CharCustomizeFrame.SmallButtons.ZoomOutButton:SkinButton(false, true)
-    _G.CharCustomizeFrame.SmallButtons.ZoomInButton:SkinButton(false, true)
-    _G.CharCustomizeFrame.SmallButtons.RotateLeftButton:SkinButton(false, true)
-    _G.CharCustomizeFrame.SmallButtons.RotateRightButton:SkinButton(false, true)
+    CharCustomizeFrame.SmallButtons.ResetCameraButton:SkinButton(false, true)
+    CharCustomizeFrame.SmallButtons.ZoomOutButton:SkinButton(false, true)
+    CharCustomizeFrame.SmallButtons.ZoomInButton:SkinButton(false, true)
+    CharCustomizeFrame.SmallButtons.RotateLeftButton:SkinButton(false, true)
+    CharCustomizeFrame.SmallButtons.RotateRightButton:SkinButton(false, true)
 
     hooksecurefunc(_G.CharCustomizeFrame, "SetSelectedCategory", hook_SetSelectedCategory)
 end
 AFP("SkinBarShop", SkinBarShop)
 
 local function LoadBarShopUISkin()
-    GW.RegisterSkin("Blizzard_BarbershopUI", function() SkinBarShop() end)
+    GW.RegisterLoadHook(SkinBarShop, "Blizzard_BarbershopUI", BarberShopFrame)
 end
 GW.LoadBarShopUISkin = LoadBarShopUISkin

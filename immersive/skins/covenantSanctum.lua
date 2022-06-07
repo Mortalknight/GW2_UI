@@ -100,6 +100,6 @@ local function ApplyCovenantSanctumSkin()
 end
 
 local function LoadCovenantSanctumSkin()
-    GW.RegisterSkin("Blizzard_CovenantSanctum", function() ApplyCovenantSanctumSkin() end)
+    GW.RegisterLoadHook(ApplyCovenantSanctumSkin, "Blizzard_CovenantSanctum", CovenantSanctumFrame)
 end
 GW.LoadCovenantSanctumSkin = LoadCovenantSanctumSkin

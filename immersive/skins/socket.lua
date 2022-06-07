@@ -56,6 +56,6 @@ local function ApplySocketUISkin()
 end
 
 local function LoadSocketUISkin()
-    GW.RegisterSkin("Blizzard_ItemSocketingUI", function() ApplySocketUISkin() end)
+    GW.RegisterLoadHook(ApplySocketUISkin, "Blizzard_ItemSocketingUI", ItemSocketingFrame)
 end
 GW.LoadSocketUISkin = LoadSocketUISkin

@@ -57,6 +57,6 @@ local function ApplyItemUpgradeSkin()
 end
 
 local function LoadItemUpgradeSkin()
-    GW.RegisterSkin("Blizzard_ItemUpgradeUI", function() ApplyItemUpgradeSkin() end)
+    GW.RegisterLoadHook(ApplyItemUpgradeSkin, "Blizzard_ItemUpgradeUI", ItemUpgradeFrame)
 end
 GW.LoadItemUpgradeSkin = LoadItemUpgradeSkin

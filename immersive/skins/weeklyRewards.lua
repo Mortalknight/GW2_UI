@@ -117,6 +117,6 @@ local function ApplyWeeklyRewardsSkin()
 end
 
 local function LoadWeeklyRewardsSkin()
-    GW.RegisterSkin("Blizzard_WeeklyRewards", function() ApplyWeeklyRewardsSkin() end)
+    GW.RegisterLoadHook(ApplyWeeklyRewardsSkin, "Blizzard_WeeklyRewards", WeeklyRewardsFrame)
 end
 GW.LoadWeeklyRewardsSkin = LoadWeeklyRewardsSkin

@@ -28,6 +28,6 @@ local function ApplyChromieTimerSkin()
 end
 
 local function LoadChromieTimerSkin()
-    GW.RegisterSkin("Blizzard_ChromieTimeUI", function() ApplyChromieTimerSkin() end)
+    GW.RegisterLoadHook(ApplyChromieTimerSkin, "Blizzard_ChromieTimeUI", ChromieTimeFrame)
 end
 GW.LoadChromieTimerSkin = LoadChromieTimerSkin

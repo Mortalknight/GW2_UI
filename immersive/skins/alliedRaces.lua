@@ -49,6 +49,6 @@ end
 AFP("ApplyAlliedRacesUISkin", ApplyAlliedRacesUISkin)
 
 local function LoadAlliedRacesUISkin()
-    GW.RegisterSkin("Blizzard_AlliedRacesUI", function() ApplyAlliedRacesUISkin() end)
+    GW.RegisterLoadHook(ApplyAlliedRacesUISkin, "Blizzard_AlliedRacesUI", AlliedRacesFrame)
 end
 GW.LoadAlliedRacesUISkin = LoadAlliedRacesUISkin

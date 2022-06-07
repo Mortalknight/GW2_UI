@@ -5,8 +5,6 @@ local constBackdropFrame = GW.skins.constBackdropFrame
 local function ApplyMacroOptionsSkin()
     if not GW.GetSetting("MACRO_SKIN_ENABLED") then return end
 
-    local MacroFrame = _G.MacroFrame
-
     _G.MacroFrameBg:Hide()
     MacroFrame.NineSlice:Hide()
     MacroFrame.TitleBg:Hide()
@@ -161,6 +159,6 @@ local function ApplyMacroOptionsSkin()
 end
 
 local function LoadMacroOptionsSkin()
-    GW.RegisterSkin("Blizzard_MacroUI", function() ApplyMacroOptionsSkin() end)
+    GW.RegisterLoadHook(ApplyMacroOptionsSkin, "Blizzard_MacroUI", MacroFrame)
 end
 GW.LoadMacroOptionsSkin = LoadMacroOptionsSkin

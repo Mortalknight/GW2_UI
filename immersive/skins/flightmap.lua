@@ -3,8 +3,6 @@ local _, GW = ...
 local function ApplyFlightMapSkin()
     if not GW.GetSetting("FLIGHTMAP_SKIN_ENABLED") then return end
 
-    local FlightMapFrame = _G.FlightMapFrame
-
     local tex = FlightMapFrame:CreateTexture("bg", "BACKGROUND")
     local w, h = FlightMapFrame:GetSize()
     tex:SetPoint("TOP", FlightMapFrame, "TOP", 10, 25)
@@ -39,6 +37,6 @@ local function ApplyFlightMapSkin()
 end
 
 local function LoadFlightMapSkin()
-    GW.RegisterSkin("Blizzard_FlightMap", function() ApplyFlightMapSkin() end)
+    GW.RegisterLoadHook(ApplyFlightMapSkin, "Blizzard_FlightMap", FlightMapFrame)
 end
 GW.LoadFlightMapSkin = LoadFlightMapSkin

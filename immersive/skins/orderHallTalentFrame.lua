@@ -51,6 +51,6 @@ local function ApplyOrderHallTalentFrameSkin()
 end
 
 local function LoadOrderHallTalentFrameSkin()
-    GW.RegisterSkin("Blizzard_OrderHallUI", function() ApplyOrderHallTalentFrameSkin() end)
+    GW.RegisterLoadHook(ApplyOrderHallTalentFrameSkin, "Blizzard_OrderHallUI", OrderHallTalentFrame)
 end
 GW.LoadOrderHallTalentFrameSkin = LoadOrderHallTalentFrameSkin

@@ -233,7 +233,7 @@ end
 AFP("ApplyClickBindingUISkin", ApplyClickBindingUISkin)
 
 local function LoadBindingsUISkin()
-    GW.RegisterSkin("Blizzard_BindingUI", function() ApplyBindingsUISkin() end)
-    GW.RegisterSkin("Blizzard_ClickBindingUI", function() ApplyClickBindingUISkin() end)
+    GW.RegisterLoadHook(ApplyBindingsUISkin, "Blizzard_BindingUI", KeyBindingFrame)
+    GW.RegisterLoadHook(ApplyClickBindingUISkin, "Blizzard_ClickBindingUI", ClickBindingFrame)
 end
 GW.LoadBindingsUISkin = LoadBindingsUISkin

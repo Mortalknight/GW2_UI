@@ -884,8 +884,9 @@ local function ApplyChallengesUISkin()
 end
 
 local function LoadLFGSkin()
-    GW.RegisterSkin("Blizzard_ChallengesUI", function() ApplyChallengesUISkin() end)
-    GW.RegisterSkin("Blizzard_PVPUI", function() ApplyPvPUISkin() end)
+    GW.RegisterLoadHook(ApplyChallengesUISkin, "Blizzard_ChallengesUI", ChallengesFrame)
+    GW.RegisterLoadHook(ApplyPvPUISkin, "Blizzard_PVPUI", PVPUIFrame)
+
     SkinLookingForGroupFrames()
 end
 GW.LoadLFGSkin = LoadLFGSkin
