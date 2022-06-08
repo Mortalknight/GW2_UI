@@ -20,7 +20,8 @@ local function SkinHeaders(header)
 end
 AFP("SkinHeaders", SkinHeaders)
 
-local function HandleReward(frame)
+local function handleReward(frame, hideNF)
+    hideNF = hideNF == nil or hideNF
     if not frame then
         return
     end
@@ -43,9 +44,13 @@ local function HandleReward(frame)
         frame.Count:SetJustifyH("RIGHT")
     end
 
-    if frame.NameFrame then
+    if frame.NameFrame and hideNF then
         frame.NameFrame:SetAlpha(0)
         frame.NameFrame:Hide()
+    end
+
+    if frame.Name then
+        frame.Name:SetTextColor(1, 1, 1)
     end
 
     if frame.IconOverlay then
@@ -64,20 +69,25 @@ local function HandleReward(frame)
         end
     end
 end
-GW.HandleReward = HandleReward
+AFP("handleReward", handleReward)
 
 local function QuestInfo_Display(template)
-    if (not GetSetting("GOSSIP_SKIN_ENABLED") or GetSetting("QUESTVIEW_ENABLED")) and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
+    if not GetSetting("GOSSIP_SKIN_ENABLED") and not GetSetting("QUESTVIEW_ENABLED") and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
         return
     end
-    if not GetSetting("WORLDMAP_SKIN_ENABLED") and (template == QUEST_TEMPLATE_MAP_DETAILS or template == QUEST_TEMPLATE_MAP_REWARDS) then
-        return
+    local isMapStyle = false
+    if template == QUEST_TEMPLATE_MAP_DETAILS or template == QUEST_TEMPLATE_MAP_REWARDS then
+        if not GetSetting("WORLDMAP_SKIN_ENABLED") then
+            return
+        end
+        isMapStyle = true
     end
 
-    local rewardsFrame = _G.QuestInfoFrame.rewardsFrame
-    local isQuestLog = _G.QuestInfoFrame.questLog ~= nil
+    local fInfo = _G.QuestInfoFrame
+    local fRwd = fInfo.rewardsFrame
+    local isQuestLog = fInfo.questLog ~= nil
 
-    for i, questItem in ipairs(rewardsFrame.RewardButtons) do
+    for i, questItem in ipairs(fRwd.RewardButtons) do
         local point, relativeTo, relativePoint, _, y = questItem:GetPoint()
         if point and relativeTo and relativePoint then
             if i == 1 then
@@ -89,26 +99,19 @@ local function QuestInfo_Display(template)
             end
         end
 
-        HandleReward(questItem)
-
-        questItem.NameFrame:Hide()
-        questItem.Name:SetTextColor(1, 1, 1)
-    end
-
-    for _, questItem in ipairs(QuestInfoRewardsFrame.RewardButtons) do
-        HandleReward(questItem)
+        handleReward(questItem, isMapStyle or not GetSetting("QUESTVIEW_ENABLED"))
     end
 
     local numSpellRewards = isQuestLog and GetNumQuestLogRewardSpells() or GetNumRewardSpells()
     if numSpellRewards > 0 then
-        for spellHeader in rewardsFrame.spellHeaderPool:EnumerateActive() do
+        for spellHeader in fRwd.spellHeaderPool:EnumerateActive() do
             spellHeader:SetVertexColor(1, 1, 1)
         end
-        for spellIcon in rewardsFrame.spellRewardPool:EnumerateActive() do
-            HandleReward(spellIcon)
+        for spellIcon in fRwd.spellRewardPool:EnumerateActive() do
+            handleReward(spellIcon, isMapStyle or not GetSetting("QUESTVIEW_ENABLED"))
         end
 
-        for followerReward in rewardsFrame.followerRewardPool:EnumerateActive() do
+        for followerReward in fRwd.followerRewardPool:EnumerateActive() do
             if not followerReward.isSkinned then
                 followerReward:CreateBackdrop()
                 followerReward.backdrop:SetAllPoints(followerReward.BG)
@@ -145,21 +148,32 @@ local function QuestInfo_Display(template)
     _G.QuestInfoTitleHeader:SetTextColor(1, 0.8, 0.1)
     _G.QuestInfoDescriptionHeader:SetTextColor(1, 0.8, 0.1)
     _G.QuestInfoObjectivesHeader:SetTextColor(1, 0.8, 0.1)
-    _G.QuestInfoRewardsFrame.Header:SetTextColor(1, 0.8, 0.1)
     _G.QuestInfoDescriptionText:SetTextColor(1, 1, 1)
     _G.QuestInfoObjectivesText:SetTextColor(1, 1, 1)
     _G.QuestInfoGroupSize:SetTextColor(1, 1, 1)
     _G.QuestInfoRewardText:SetTextColor(1, 1, 1)
     _G.QuestInfoQuestType:SetTextColor(1, 1, 1)
-    _G.QuestInfoRewardsFrame.ItemChooseText:SetTextColor(1, 1, 1)
-    _G.QuestInfoRewardsFrame.ItemReceiveText:SetTextColor(1, 1, 1)
+    fRwd.ItemChooseText:SetTextColor(1, 1, 1)
+    fRwd.ItemReceiveText:SetTextColor(1, 1, 1)
 
-    if _G.QuestInfoRewardsFrame.SpellLearnText then
-        _G.QuestInfoRewardsFrame.SpellLearnText:SetTextColor(1, 1, 1)
+    if not isMapStyle and GetSetting("QUESTVIEW_ENABLED") then
+        fRwd.Header:SetTextColor(1, 1, 1)
+        fRwd.Header:SetShadowColor(0, 0, 0, 1)
+    elseif fRwd.Header.SetTextColor then
+        fRwd.Header:SetTextColor(1, 0.8, 0.1)
     end
 
-    _G.QuestInfoRewardsFrame.PlayerTitleText:SetTextColor(1, 1, 1)
-    _G.QuestInfoRewardsFrame.XPFrame.ReceiveText:SetTextColor(1, 1, 1)
+    if fRwd.SpellLearnText then
+        fRwd.SpellLearnText:SetTextColor(1, 1, 1)
+    end
+
+    if fRwd.PlayerTitleText then
+        fRwd.PlayerTitleText:SetTextColor(1, 1, 1)
+    end
+
+    if fRwd.XPFrame.ReceiveText then
+        fRwd.XPFrame.ReceiveText:SetTextColor(1, 1, 1)
+    end
 
     local objectives = _G.QuestInfoObjectivesFrame.Objectives
     local index = 0
@@ -337,9 +351,9 @@ local function worldMapSkin()
     hooksecurefunc(_G.CampaignCollapseButtonMixin, "UpdateState", hook_UpdateState)
 
     for _, frame in pairs({"HonorFrame", "XPFrame", "SpellFrame", "SkillPointFrame", "ArtifactXPFrame", "TitleFrame", "WarModeBonusFrame"}) do
-        HandleReward(_G.MapQuestInfoRewardsFrame[frame])
+        handleReward(_G.MapQuestInfoRewardsFrame[frame])
     end
-    HandleReward(_G.MapQuestInfoRewardsFrame.MoneyFrame)
+    handleReward(_G.MapQuestInfoRewardsFrame.MoneyFrame)
 
     if not GW.QuestInfo_Display_hooked then
         hooksecurefunc("QuestInfo_Display", QuestInfo_Display)

@@ -44,7 +44,7 @@ local mapBGs = {
     [1525] = "SL/revendreth",
     [1533] = "SL/bastion",
     [1565] = "SL/ardenweald",
-    [1670] = "SL/oribos"
+    [1670] = "SL/oribos", [1672] = "SL/oribos"
 }
 
 -- known emote IDs used for SetAnimation
@@ -275,32 +275,8 @@ end
 local QuestViewMixin = {}
 AFP("QuestViewMixin", QuestViewMixin)
 
-function QuestViewMixin:styleRewards()
-    local f = QuestInfoRewardsFrame
-
-    -- style all font strings (this also gets the anon ones created from the spellHeaderPool)
-    local regions = { f:GetRegions() }
-    for i = 1, #regions do
-        local r = regions[i]
-        if r.SetFont and r.SetTextColor and r.SetShadowColor then
-            r:SetFont("UNIT_NAME_FONT", 12)
-            r:SetTextColor(1, 1, 1)
-            r:SetShadowColor(0, 0, 0, 1)
-        end
-    end
-    f.Header:SetFont("UNIT_NAME_FONT", 14)
-
-    local fXP = f.XPFrame
-    fXP.ReceiveText:SetFont("UNIT_NAME_FONT", 12)
-    fXP.ReceiveText:SetTextColor(1, 1, 1)
-    fXP.ReceiveText:SetShadowColor(0, 0, 0, 1)
-
-    for _, questItem in ipairs(f.RewardButtons) do
-        GW.HandleReward(questItem)
-    end
-end
-
-function QuestViewMixin:showRewards()
+function QuestViewMixin:showRewards(showObjective)
+    showObjective = showObjective == nil or showObjective
     local xp = GetRewardXP()
     local money = GetRewardMoney()
     local title = GetRewardTitle()
@@ -316,8 +292,6 @@ function QuestViewMixin:showRewards()
     local qinfoHeight = 300
     local qinfoTop = -20
     local itemReqOffset = ((items > 0 or currency > 0 or money > 0 or xp > 0 or honor > 0 or hasChanceForQuestSessionBonusReward) and (choices > 0 or spells > 0 or title)) and 50 or 9
-
-    self:styleRewards()
 
     local qReq = self.questReq
     if (qReq["money"] > 0 or #qReq["currency"] > 0 or #qReq["stuff"] > 0) then
@@ -388,7 +362,7 @@ function QuestViewMixin:questTextCompleted()
     end
     Debug("quest text completed", self.questState)
     if self.questState == "COMPLETE" then
-        self:showRewards()
+        self:showRewards(false)
         self.container.acceptButton:SetText(COMPLETE_QUEST)
     elseif self.questState == "PROGRESS" then
         self:showRewards()
@@ -752,5 +726,11 @@ local function LoadQuestview()
     f:RegisterForDrag("LeftButton")
     f:SetScript("OnDragStart", f.StartMoving)
     f:SetScript("OnDragStop", f.StopMovingOrSizing)
+
+    -- handle styling the rewards in a consistent way across options
+    if not GW.QuestInfo_Display_hooked then
+        hooksecurefunc("QuestInfo_Display", GW.QuestInfo_Display)
+        GW.QuestInfo_Display_hooked = true
+    end
 end
 GW.LoadQuestview = LoadQuestview
