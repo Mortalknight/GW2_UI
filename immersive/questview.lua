@@ -1,6 +1,7 @@
 local _, GW = ...
 local L = GW.L
 local GetSetting = GW.GetSetting
+local HandleReward = GW.HandleReward
 local Debug = GW.Debug
 local AFP = GW.AddProfiling
 
@@ -9,6 +10,7 @@ local model_tweaks = {
     [1980608] = {["y"] = 0.6, ["z"] = -0.3}, -- Ulfar
     [2021536] = {["z"] = -0.55}, -- Kivar
     [3730970] = {["x"] = 0, ["y"] = 0.25, ["z"] = -0.04}, -- Nika
+    [2139079] = {["z"] = -0.2}, -- Alpaca soulshape
     [1717164] = {["z"] = -0.35},
     [415230] = {["z"] = 0},
     [3023013] = {["x"] = -4, ["y"] = 1, ["z"] = -0.33},
@@ -129,7 +131,7 @@ function QuestGiverMixin:setQuestGiverAnimation(count)
         return
     end
 
-    if qStringInt == 1 then
+    if qStringInt == 1 or qStringInt >= count then
         self:SetScript("OnAnimFinished", nil)
         self.anim_next = 0
         self.anim_playing = false
@@ -275,31 +277,10 @@ end
 local QuestViewMixin = {}
 AFP("QuestViewMixin", QuestViewMixin)
 
-function QuestViewMixin:showRewards(showObjective)
-    showObjective = showObjective == nil or showObjective
-    local xp = GetRewardXP()
-    local money = GetRewardMoney()
-    local title = GetRewardTitle()
-    local currency = GetNumRewardCurrencies()
-    local _, _, skillPoints = GetRewardSkillPoints()
-    local items = GetNumQuestRewards()
-    local spells = GetNumRewardSpells()
-    local choices = GetNumQuestChoices()
-    local honor = GetRewardHonor()
-    local questID = GetQuestID()
-    local hasChanceForQuestSessionBonusReward = C_QuestLog.QuestHasQuestSessionBonus(questID)
-
-    local qinfoHeight = 300
-    local qinfoTop = -20
-    local itemReqOffset = ((items > 0 or currency > 0 or money > 0 or xp > 0 or honor > 0 or hasChanceForQuestSessionBonusReward) and (choices > 0 or spells > 0 or title)) and 50 or 9
-
+function QuestViewMixin:showRequired()
+    local itemReqOffset = 9
     local qReq = self.questReq
     if (qReq["money"] > 0 or #qReq["currency"] > 0 or #qReq["stuff"] > 0) then
-        qinfoHeight = 150
-        qinfoTop = 55
-
-        self.container.dialog.required:ClearAllPoints()
-        self.container.dialog.required:SetPoint("CENTER", self.container.dialog, "CENTER", 40, (itemReqOffset == 50 and -30 or 20))
         UIFrameFadeIn(self.container.dialog.required, 0.1, 0, 1)
 
         if qReq["money"] > 0 then
@@ -334,25 +315,43 @@ function QuestViewMixin:showRewards(showObjective)
                     -(itemHeight + itemReqOffset) * (math.ceil(i / 2))
                 )
                 frame:SetFrameLevel(5)
-                frame:SetScript(
-                    "OnEnter",
-                    function()
-                    end
-                ) -- TODO: tooltips disabled because it dies for currency types
             end
         end
     end
+end
 
-    if (xp > 0 or money > 0 or title or currency > 0 or skillPoints or items > 0 or spells > 0 or choices > 0) then
-        local f = QuestInfoRewardsFrame
+function QuestViewMixin:showRewards(showObjective)
+    local xp = GetRewardXP()
+    local money = GetRewardMoney()
+    local title = GetRewardTitle()
+    local currency = GetNumRewardCurrencies()
+    local _, _, skillPoints = GetRewardSkillPoints()
+    local items = GetNumQuestRewards()
+    local spells = GetNumRewardSpells()
+    local choices = GetNumQuestChoices()
+    local honor = GetRewardHonor()
+
+    local qinfoHeight = 300
+    local qinfoTop = -20
+
+    if showObjective then
+        self.container.dialog.objectiveText:SetText(GetObjectiveText())
+        UIFrameFadeIn(self.container.dialog.objectiveHeader, 0.1, 0, 1)
+        UIFrameFadeIn(self.container.dialog.objectiveText, 0.1, 0, 1)
+    end
+
+    if (xp > 0 or money > 0 or title or currency > 0 or skillPoints or items > 0 or spells > 0 or choices > 0 or honor > 0) then
+        local f = _G.QuestInfoRewardsFrame
         UIFrameFadeIn(f, 0.1, 0, 1)
         f:SetParent(self)
-        f:SetWidth(400)
         f:SetHeight(qinfoHeight)
-
         f:ClearAllPoints()
-        f:SetPoint("CENTER", self, "CENTER", 40, qinfoTop)
         f:SetFrameLevel(5)
+        if showObjective then
+            f:SetPoint("TOPLEFT", self.container.dialog.objectiveText, "BOTTOMLEFT", 0, -15)
+        else
+            f:SetPoint("CENTER", self, "CENTER", 40, qinfoTop)
+        end
     end
 end
 
@@ -364,17 +363,40 @@ function QuestViewMixin:questTextCompleted()
     if self.questState == "COMPLETE" then
         self:showRewards(false)
         self.container.acceptButton:SetText(COMPLETE_QUEST)
+        self.container.acceptButton:Show()
     elseif self.questState == "PROGRESS" then
-        self:showRewards()
-        self.container.acceptButton:SetText(L["Skip"])
+        if IsQuestCompletable() then
+            Debug("in progress completable state")
+            self.container.acceptButton:SetText(CONTINUE)
+            self.questState = "NEEDCOMPLETE"
+        else
+            self.container.acceptButton:Hide()
+            self.container.declineButton:SetText(CANCEL)
+            self.container.declineButton:Show()
+        end
     else
-        self:showRewards()
+        self:showRewards(true)
         self.container.acceptButton:SetText(ACCEPT)
+        self.container.acceptButton:Show()
     end
     self.questStateSet = true
 end
 
 function QuestViewMixin:nextGossip()
+    if self.questState and self.questState == "NEEDCOMPLETE" then
+        self.questState = "COMPLETING"
+        -- there will be a QUEST_COMPLETE event shortly
+        self:clearDialog()
+        self:clearRequired()
+        self.container.acceptButton:Hide()
+        self.container.declineButton:Hide()
+        self.container.playerModel:SetAnimation(emotes.Yes)
+        CompleteQuest()
+        return
+    end
+    if self.questStateSet then
+        return
+    end
     self.questStringInt = self.questStringInt + 1
     local qStringInt = self.questStringInt
     local count = #self.questString
@@ -389,6 +411,7 @@ function QuestViewMixin:nextGossip()
             self:questTextCompleted()
         else
             self.container.acceptButton:SetText(L["Skip"])
+            self.container.acceptButton:Show()
         end
     else
         self.questStringInt = count
@@ -397,6 +420,9 @@ function QuestViewMixin:nextGossip()
 end
 
 function QuestViewMixin:lastGossip()
+    if self.questStringInt == 1 then
+        return
+    end
     self.questStringInt = max(self.questStringInt - 1, 1)
     local qStringInt = self.questStringInt
     local count = #self.questString
@@ -408,7 +434,8 @@ function QuestViewMixin:lastGossip()
             PlaySound(906)
         end
         self.container.acceptButton:SetText(L["Skip"])
-        QuestInfoRewardsFrame:SetShown(false)
+        self.container.acceptButton:Show()
+        QuestInfoRewardsFrame:Hide()
         self.container.dialog.required:Hide()
         self.questStateSet = false
         local qReq = self.questReq
@@ -419,6 +446,8 @@ function QuestViewMixin:lastGossip()
                 frame:Hide()
             end
         end
+        self.container.dialog.objectiveHeader:Hide()
+        self.container.dialog.objectiveText:Hide()
     else
         self:questTextCompleted()
     end
@@ -466,16 +495,13 @@ function QuestViewMixin:showQuestFrame()
     PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_open.ogg", "SFX")
 end
 
-function QuestViewMixin:clearQuestReq()
-    self.questState = "NONE"
-    self.questStateSet = false
-    self.questNPCType = 0
-    if (self.questString) then
-        wipe(self.questString)
-    else
-        self.questString = {}
+function QuestViewMixin:clearRequired()
+    for i = 1, 32, 1 do
+        local frame = _G["QuestProgressItem" .. i]
+        if (frame) then
+            frame:Hide()
+        end
     end
-    self.questStringInt = 0
     if (self.questReq) then
         wipe(self.questReq.stuff)
         wipe(self.questReq.currency)
@@ -489,8 +515,27 @@ function QuestViewMixin:clearQuestReq()
             ["money"] = 0
         }
     end
-
     QuestProgressRequiredMoneyFrame:Hide()
+    self.container.dialog.required:Hide()
+    self.container.dialog.objectiveHeader:Hide()
+    self.container.dialog.objectiveText:Hide()
+end
+
+function QuestViewMixin:clearDialog()
+    if (self.questString) then
+        wipe(self.questString)
+    else
+        self.questString = {}
+    end
+    self.questStringInt = 0
+end
+
+function QuestViewMixin:clearQuestReq()
+    self.questState = "NONE"
+    self.questStateSet = false
+    self.questNPCType = 0
+    self:clearDialog()
+    self:clearRequired()
 end
 
 function QuestViewMixin:acceptQuest()
@@ -543,7 +588,8 @@ end
 
 function QuestViewMixin:OnShow()
     UIFrameFadeIn(self, 0.2, 0, 1)
-    self.container.declineButton:SetShown(not QuestFrame.autoQuest and true or false)
+    self.container.declineButton:SetText(IGNORE)
+    self.container.declineButton:SetShown(not QuestFrame.autoQuest)
     self:EnableKeyboard(true)
     self:SetScript("OnKeyDown", self.OnKeyDown)
 end
@@ -568,19 +614,13 @@ function QuestViewMixin:evQuestProgress()
     if (self.questReq["money"] > 0 or #self.questReq["currency"] > 0 or #self.questReq["stuff"] > 0) then
         self.questReq["text"] = splitQuest(GetProgressText())
     end
-    if IsQuestCompletable() then
-        -- there will be a QUEST_COMPLETE event shortly
-        CompleteQuest()
-        self.questState = "AUTOPROGRESS"
-        self.questStateSet = false
-    else
-        self:showQuestFrame()
-        self.questString = splitQuest(GetProgressText())
-        self.questStringInt = 0
-        self.questState = "PROGRESS"
-        self.questStateSet = false
-        self:nextGossip()
-    end
+    self:showQuestFrame()
+    self.questString = splitQuest(GetProgressText())
+    self.questStringInt = 0
+    self.questState = "PROGRESS"
+    self.questStateSet = false
+    self:nextGossip()
+    self:showRequired()
     Debug("quest progress", self.questState)
 end
 
@@ -591,14 +631,14 @@ function QuestViewMixin:evQuestDetail(questStartItemID)
         end
         return
     end
-    if (self.questState ~= "AUTOPROGRESS") then
+    if (self.questState ~= "COMPLETING") then
         hideBlizzardQuestFrame()
         self:clearQuestReq()
     end
     self:showQuestFrame()
     self.questString = splitQuest(GetQuestText())
     if not IsQuestCompletable() then
-        table.insert(self.questString, GetObjectiveText())
+        table.insert(self.questString, "")
     end
     self.questStringInt = 0
     self.questState = "TAKE"
@@ -607,11 +647,16 @@ function QuestViewMixin:evQuestDetail(questStartItemID)
 end
 
 function QuestViewMixin:evQuestComplete()
-    if (self.questState ~= "AUTOPROGRESS") then
+    if (self.questState ~= "COMPLETING") then
         hideBlizzardQuestFrame()
         self:clearQuestReq()
+    else
+        self.container.declineButton:SetText(IGNORE)
+        self.container.declineButton:SetShown(not QuestFrame.autoQuest)
     end
-    self:showQuestFrame()
+    if not self:IsShown() then
+        self:showQuestFrame()
+    end
     self.questString = splitQuest(GetRewardText())
     local qText = self.questReq.text
     if (#qText > 0) then
@@ -629,20 +674,9 @@ function QuestViewMixin:evQuestFinished()
     QuestInfoRewardsFrame:Hide()
     QuestProgressRequiredMoneyFrame:Hide()
     self.container.dialog.required:Hide()
-    if QuestGetAutoAccept() and not QuestFrame.autoQuest then
-        QuestFrame.autoQuest = true
-    else
-        QuestFrame.autoQuest = nil
-    end
-    for i = 1, 32, 1 do
-        local frame = _G["QuestProgressItem" .. i]
-        if (frame) then
-            frame:Hide()
-        end
-    end
     self:Hide()
     if (self.questState ~= "PROGRESS") then
-        PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\dialog_close.ogg", "SFX")
+        PlaySoundFile("Interface/AddOns/GW2_UI/sounds/dialog_close.ogg", "SFX")
     end
     self:clearQuestReq()
 end
@@ -700,11 +734,14 @@ local function LoadQuestview()
     f.title:SetFont(DAMAGE_TEXT_FONT, 24)
     f.container.dialog.text:SetFont(STANDARD_TEXT_FONT, 14)
     f.container.dialog.text:SetTextColor(1, 1, 1)
-    f.container.declineButton:SetText(IGNORE)
     f.container.dialog.required:SetFont("UNIT_NAME_FONT", 14)
     f.container.dialog.required:SetTextColor(1, 1, 1)
     f.container.dialog.required:SetShadowColor(0, 0, 0, 1)
     f.container.dialog.required:SetText(L["Required Items:"])
+    f.container.dialog.objectiveHeader:SetTextColor(1, 1, 1)
+    f.container.dialog.objectiveHeader:SetShadowColor(0, 0, 0, 1)
+    f.container.dialog.objectiveHeader:SetText(QUEST_OBJECTIVES)
+    f.container.dialog.objectiveText:SetTextColor(1, 1, 1)
 
     f:SetScript("OnShow", f.OnShow)
     f:SetScript("OnHide", f.OnHide)
@@ -731,6 +768,21 @@ local function LoadQuestview()
     if not GW.QuestInfo_Display_hooked then
         hooksecurefunc("QuestInfo_Display", GW.QuestInfo_Display)
         GW.QuestInfo_Display_hooked = true
+    end
+
+    -- style required items
+    for i = 1, 6 do
+        local button = _G["QuestProgressItem" .. i]
+        if button then
+            HandleReward(button, false)
+            if button.IconBorder then
+                button.IconBorder:Show()
+            end
+            if button.Icon and button.NameFrame then
+                button.NameFrame:ClearAllPoints()
+                button.NameFrame:SetPoint("LEFT", button.Icon, "RIGHT", -10, -1)
+            end
+        end
     end
 end
 GW.LoadQuestview = LoadQuestview

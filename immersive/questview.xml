@@ -81,10 +81,22 @@
                                         <Anchor point="BOTTOM" relativePoint="BOTTOM" x="0" y="0" />
                                     </Anchors>
                                 </FontString>
-                                <FontString parentKey="required" inherits="QuestTitleFont" text="Test text" justifyH="LEFT" hidden="true">
-                                    <Size x="400" y="100"></Size>
+                                <FontString parentKey="objectiveHeader" inherits="QuestTitleFont" justifyH="LEFT" hidden="true">
+                                    <Size x="300" y="0"/>
                                     <Anchors>
-                                        <Anchor point="CENTER" relativePoint="CENTER" x="40" y="20" />
+                                        <Anchor point="TOP" relativePoint="TOP" x="0" y="-5" />
+                                    </Anchors>
+                                </FontString>
+                                <FontString parentKey="objectiveText" inherits="QuestFont" justifyH="LEFT" hidden="true">
+                                    <Size x="300" y="0"/>
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.objectiveHeader" x="0" y="-5" />
+                                    </Anchors>
+                                </FontString>
+                                <FontString parentKey="required" inherits="QuestTitleFont" text="Test text" justifyH="LEFT" hidden="true">
+                                    <Size x="300" y="100"></Size>
+                                    <Anchors>
+                                        <Anchor point="LEFT" relativePoint="CENTER" x="-160" y="20" />
                                     </Anchors>
                                 </FontString>
                             </Layer>

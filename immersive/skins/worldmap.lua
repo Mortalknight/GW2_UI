@@ -69,7 +69,7 @@ local function handleReward(frame, hideNF)
         end
     end
 end
-AFP("handleReward", handleReward)
+GW.HandleReward = handleReward
 
 local function QuestInfo_Display(template)
     if not GetSetting("GOSSIP_SKIN_ENABLED") and not GetSetting("QUESTVIEW_ENABLED") and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
@@ -147,7 +147,6 @@ local function QuestInfo_Display(template)
 
     _G.QuestInfoTitleHeader:SetTextColor(1, 0.8, 0.1)
     _G.QuestInfoDescriptionHeader:SetTextColor(1, 0.8, 0.1)
-    _G.QuestInfoObjectivesHeader:SetTextColor(1, 0.8, 0.1)
     _G.QuestInfoDescriptionText:SetTextColor(1, 1, 1)
     _G.QuestInfoObjectivesText:SetTextColor(1, 1, 1)
     _G.QuestInfoGroupSize:SetTextColor(1, 1, 1)
@@ -159,8 +158,11 @@ local function QuestInfo_Display(template)
     if not isMapStyle and GetSetting("QUESTVIEW_ENABLED") then
         fRwd.Header:SetTextColor(1, 1, 1)
         fRwd.Header:SetShadowColor(0, 0, 0, 1)
+        _G.QuestInfoObjectivesHeader:SetTextColor(1, 1, 1)
+        _G.QuestInfoObjectivesHeader:SetShadowColor(0, 0, 0, 1)
     elseif fRwd.Header.SetTextColor then
         fRwd.Header:SetTextColor(1, 0.8, 0.1)
+        _G.QuestInfoObjectivesHeader:SetTextColor(1, 0.8, 0.1)
     end
 
     if fRwd.SpellLearnText then

@@ -1,4 +1,6 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
+local AFP = GW.AddProfiling
 
 local function handleGossipText()
     local buttons = GossipFrame.buttons
@@ -16,6 +18,7 @@ local function handleGossipText()
         end
     end
 end
+AFP("handleGossipText", handleGossipText)
 
 local function LoadGossipSkin()
     if not GW.GetSetting("GOSSIP_SKIN_ENABLED") then return end
@@ -172,12 +175,15 @@ local function LoadGossipSkin()
         QuestProgressRequiredMoneyText:SetTextColor(1, 1, 1)
     end)
 
-    for i = 1, 6 do
-        local button = _G["QuestProgressItem" .. i]
-        local icon = _G["QuestProgressItem" .. i .. "IconTexture"]
-        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        button:StripTextures()
-        button:SetFrameLevel(button:GetFrameLevel() +1)
+    -- questview handles required item styling when it is enabled
+    if not GetSetting("QUESTVIEW_ENABLED") then
+        for i = 1, 6 do
+            local button = _G["QuestProgressItem" .. i]
+            local icon = _G["QuestProgressItem" .. i .. "IconTexture"]
+            icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            button:StripTextures()
+            button:SetFrameLevel(button:GetFrameLevel() +1)
+        end
     end
 
     QuestFrameDetailPanel.SealMaterialBG:SetAlpha(0)
