@@ -778,10 +778,6 @@ local function LoadQuestview()
             if button.IconBorder then
                 button.IconBorder:Show()
             end
-            if button.Icon and button.NameFrame then
-                button.NameFrame:ClearAllPoints()
-                button.NameFrame:SetPoint("LEFT", button.Icon, "RIGHT", -10, -1)
-            end
         end
     end
 end

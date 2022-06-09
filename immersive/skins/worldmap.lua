@@ -20,8 +20,7 @@ local function SkinHeaders(header)
 end
 AFP("SkinHeaders", SkinHeaders)
 
-local function handleReward(frame, hideNF)
-    hideNF = hideNF == nil or hideNF
+local function handleReward(frame, isMap)
     if not frame then
         return
     end
@@ -44,9 +43,14 @@ local function handleReward(frame, hideNF)
         frame.Count:SetJustifyH("RIGHT")
     end
 
-    if frame.NameFrame and hideNF then
-        frame.NameFrame:SetAlpha(0)
-        frame.NameFrame:Hide()
+    if frame.NameFrame then
+        if isMap then
+            frame.NameFrame:SetAlpha(0)
+            --frame.NameFrame:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/nameframe-map")
+        else
+            frame.NameFrame:SetAlpha(0.75)
+            frame.NameFrame:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/nameframe")
+        end
     end
 
     if frame.Name then
@@ -99,7 +103,7 @@ local function QuestInfo_Display(template)
             end
         end
 
-        handleReward(questItem, isMapStyle or not GetSetting("QUESTVIEW_ENABLED"))
+        handleReward(questItem, isMapStyle)
     end
 
     local numSpellRewards = isQuestLog and GetNumQuestLogRewardSpells() or GetNumRewardSpells()
@@ -108,7 +112,7 @@ local function QuestInfo_Display(template)
             spellHeader:SetVertexColor(1, 1, 1)
         end
         for spellIcon in fRwd.spellRewardPool:EnumerateActive() do
-            handleReward(spellIcon, isMapStyle or not GetSetting("QUESTVIEW_ENABLED"))
+            handleReward(spellIcon, isMapStyle)
         end
 
         for followerReward in fRwd.followerRewardPool:EnumerateActive() do
@@ -148,6 +152,7 @@ local function QuestInfo_Display(template)
     _G.QuestInfoTitleHeader:SetTextColor(1, 0.8, 0.1)
     _G.QuestInfoDescriptionHeader:SetTextColor(1, 0.8, 0.1)
     _G.QuestInfoDescriptionText:SetTextColor(1, 1, 1)
+    _G.QuestInfoObjectivesHeader:SetTextColor(1, 0.8, 0.1)
     _G.QuestInfoObjectivesText:SetTextColor(1, 1, 1)
     _G.QuestInfoGroupSize:SetTextColor(1, 1, 1)
     _G.QuestInfoRewardText:SetTextColor(1, 1, 1)
@@ -158,11 +163,8 @@ local function QuestInfo_Display(template)
     if not isMapStyle and GetSetting("QUESTVIEW_ENABLED") then
         fRwd.Header:SetTextColor(1, 1, 1)
         fRwd.Header:SetShadowColor(0, 0, 0, 1)
-        _G.QuestInfoObjectivesHeader:SetTextColor(1, 1, 1)
-        _G.QuestInfoObjectivesHeader:SetShadowColor(0, 0, 0, 1)
     elseif fRwd.Header.SetTextColor then
         fRwd.Header:SetTextColor(1, 0.8, 0.1)
-        _G.QuestInfoObjectivesHeader:SetTextColor(1, 0.8, 0.1)
     end
 
     if fRwd.SpellLearnText then
@@ -353,9 +355,9 @@ local function worldMapSkin()
     hooksecurefunc(_G.CampaignCollapseButtonMixin, "UpdateState", hook_UpdateState)
 
     for _, frame in pairs({"HonorFrame", "XPFrame", "SpellFrame", "SkillPointFrame", "ArtifactXPFrame", "TitleFrame", "WarModeBonusFrame"}) do
-        handleReward(_G.MapQuestInfoRewardsFrame[frame])
+        handleReward(_G.MapQuestInfoRewardsFrame[frame], true)
     end
-    handleReward(_G.MapQuestInfoRewardsFrame.MoneyFrame)
+    handleReward(_G.MapQuestInfoRewardsFrame.MoneyFrame, true)
 
     if not GW.QuestInfo_Display_hooked then
         hooksecurefunc("QuestInfo_Display", QuestInfo_Display)
