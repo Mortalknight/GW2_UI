@@ -15,6 +15,7 @@ local model_tweaks = {
     [3148995] = {["x"] = 0, ["y"] = -1.25, ["z"] = -0.3}, -- horned horse soulshape
     [1886694] = {["x"] = -0.5, ["y"] = -1.75, ["z"] = -0.3}, -- raptor soulshape
     [2343653] = {["x"] = -1.25, ["y"] = -1.25, ["z"] = -0.5}, -- shadowstalker soulshape
+    [3483612] = {["x"] = -0.25, ["y"] = 0.50, ["z"] = -0.1}, -- Ysera
     [1717164] = {["z"] = -0.35},
     [415230] = {["z"] = 0},
     [3023013] = {["x"] = -4, ["y"] = 1, ["z"] = -0.33},
@@ -451,15 +452,17 @@ function QuestViewMixin:lastGossip()
         self.container.acceptButton:SetText(L["Skip"])
         self.container.acceptButton:Show()
         QuestInfoRewardsFrame:Hide()
-        self.container.dialog.required:Hide()
         self.questStateSet = false
-        local qReq = self.questReq
-        local itemReq = #qReq["currency"] + #qReq["stuff"]
-        for i = 1, itemReq, 1 do
-            local frame = _G["QuestProgressItem" .. i]
-            if frame then
-                frame:Hide()
+        if self.questState ~= "PROGRESS" then
+            local qReq = self.questReq
+            local itemReq = #qReq["currency"] + #qReq["stuff"]
+            for i = 1, itemReq, 1 do
+                local frame = _G["QuestProgressItem" .. i]
+                if frame then
+                    frame:Hide()
+                end
             end
+            self.container.dialog.required:Hide()
         end
         self.container.dialog.objectiveHeader:Hide()
         self.container.dialog.objectiveText:Hide()
@@ -620,20 +623,18 @@ function QuestViewMixin:evQuestProgress()
     self.questReq["money"] = GetQuestMoneyToGet()
     for i = GetNumQuestItems(), 1, -1 do
         if (IsQuestItemHidden(i) == 0) then
-            table.insert(self.questReq["stuff"], 1, {GetQuestItemInfo("required", i)})
+            tinsert(self.questReq["stuff"], 1, {GetQuestItemInfo("required", i)})
         end
     end
     for i = GetNumQuestCurrencies(), 1, -1 do
-        table.insert(self.questReq["currency"], 1, {GetQuestCurrencyInfo("required", i)})
+        tinsert(self.questReq["currency"], 1, {GetQuestCurrencyInfo("required", i)})
     end
     if (self.questReq["money"] > 0 or #self.questReq["currency"] > 0 or #self.questReq["stuff"] > 0) then
         self.questReq["text"] = splitQuest(GetProgressText())
     end
     self:showQuestFrame()
     self.questString = splitQuest(GetProgressText())
-    self.questStringInt = 0
     self.questState = "PROGRESS"
-    self.questStateSet = false
     self:nextGossip()
     self:showRequired()
     Debug("quest progress", self.questState)
@@ -649,15 +650,17 @@ function QuestViewMixin:evQuestDetail(questStartItemID)
     if (self.questState ~= "COMPLETING") then
         hideBlizzardQuestFrame()
         self:clearQuestReq()
+        self.questState = "TAKE"
+    else
+        self.questStringInt = 0
+        self.questStateSet = false
     end
     self:showQuestFrame()
     self.questString = splitQuest(GetQuestText())
-    if not IsQuestCompletable() then
-        table.insert(self.questString, "")
+    if self.questState ~= "COMPLETING" then
+        --Debug("adding end row")
+        tinsert(self.questString, "")
     end
-    self.questStringInt = 0
-    self.questState = "TAKE"
-    self.questStateSet = false
     self:nextGossip()
 end
 
@@ -668,6 +671,8 @@ function QuestViewMixin:evQuestComplete()
     else
         self.container.declineButton:SetText(IGNORE)
         self.container.declineButton:SetShown(not QuestFrame.autoQuest)
+        self.questStringInt = 0
+        self.questStateSet = false
     end
     if not self:IsShown() then
         self:showQuestFrame()
@@ -676,12 +681,10 @@ function QuestViewMixin:evQuestComplete()
     local qText = self.questReq.text
     if (#qText > 0) then
         for i = #qText, 1, -1 do
-            table.insert(self.questString, 1, qText[i])
+            tinsert(self.questString, 1, qText[i])
         end
     end
-    self.questStringInt = 0
     self.questState = "COMPLETE"
-    self.questStateSet = false
     self:nextGossip()
 end
 
