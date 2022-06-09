@@ -789,11 +789,15 @@ local function LoadTarget()
     NewUnitFrame.auraPositionTop = GetSetting("target_AURAS_ON_TOP")
 
     if NewUnitFrame.auraPositionTop then
+        local yOff = 17
+        if GetSetting("target_FRAME_ALT_BACKGROUND") then
+            yOff = 22
+        end
         NewUnitFrame.auras:ClearAllPoints()
         if NewUnitFrame.frameInvert then
-            NewUnitFrame.auras:SetPoint("TOPRIGHT", NewUnitFrame.nameString, "TOPRIGHT", -2, 17)
+            NewUnitFrame.auras:SetPoint("TOPRIGHT", NewUnitFrame.nameString, "TOPRIGHT", -2, yOff)
         else
-            NewUnitFrame.auras:SetPoint("TOPLEFT", NewUnitFrame.nameString, "TOPLEFT", 2, 17)
+            NewUnitFrame.auras:SetPoint("TOPLEFT", NewUnitFrame.nameString, "TOPLEFT", 2, yOff)
         end
     elseif GetSetting("target_HOOK_COMBOPOINTS") and (GW.myClassID == 4 or GW.myClassID == 11) then
         NewUnitFrame.auras:ClearAllPoints()
