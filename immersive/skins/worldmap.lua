@@ -207,28 +207,6 @@ local function QuestInfo_Display(template)
 end
 GW.QuestInfo_Display = QuestInfo_Display
 
-local function hook_QuestLogQuests_Update()
-    for i = 1, _G.QuestMapFrame.QuestsFrame.Contents:GetNumChildren() do
-        local child = select(i, _G.QuestMapFrame.QuestsFrame.Contents:GetChildren())
-        if child and child.ButtonText and not child.questID then
-            child:SetSize(16, 16)
-
-            for x = 1, child:GetNumRegions() do
-                local tex = select(x, child:GetRegions())
-                if tex and tex.GetAtlas then
-                    local atlas = tex:GetAtlas()
-                    if atlas == "Campaign_HeaderIcon_Closed" or atlas == "Campaign_HeaderIcon_ClosedPressed" then
-                        tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
-                    elseif atlas == "Campaign_HeaderIcon_Open" or atlas == "Campaign_HeaderIcon_OpenPressed" then
-                        tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
-                    end
-                end
-            end
-        end
-    end
-end
-AFP("hook_QuestLogQuests_Update", hook_QuestLogQuests_Update)
-
 local function hook_UpdateState(self, isCollapsed)
     if isCollapsed then
         self:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
@@ -278,6 +256,25 @@ AFP("hook_NotifyDialogShow", hook_NotifyDialogShow)
 local function hook_QuestLogQuests_Update()
     for header in QuestScrollFrame.campaignHeaderFramePool:EnumerateActive() do
         SkinHeaders(header)
+    end
+
+    for i = 1, _G.QuestMapFrame.QuestsFrame.Contents:GetNumChildren() do
+        local child = select(i, _G.QuestMapFrame.QuestsFrame.Contents:GetChildren())
+        if child and child.ButtonText and not child.questID then
+            child:SetSize(16, 16)
+
+            for x = 1, child:GetNumRegions() do
+                local tex = select(x, child:GetRegions())
+                if tex and tex.GetAtlas then
+                    local atlas = tex:GetAtlas()
+                    if atlas == "Campaign_HeaderIcon_Closed" or atlas == "Campaign_HeaderIcon_ClosedPressed" then
+                        tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
+                    elseif atlas == "Campaign_HeaderIcon_Open" or atlas == "Campaign_HeaderIcon_OpenPressed" then
+                        tex:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
+                    end
+                end
+            end
+        end
     end
 end
 AFP("hook_QuestLogQuests_Update", hook_QuestLogQuests_Update)
@@ -349,8 +346,6 @@ local function worldMapSkin()
 
     QuestMapFrame.DetailsFrame:StripTextures(true)
     QuestMapFrame.DetailsFrame.RewardsFrame:StripTextures()
-
-    hooksecurefunc("QuestLogQuests_Update", hook_QuestLogQuests_Update)
 
     hooksecurefunc(_G.CampaignCollapseButtonMixin, "UpdateState", hook_UpdateState)
 
