@@ -103,6 +103,7 @@ local clientTags = {
     [BNET_CLIENT_COD_MW] = "MW",
     [BNET_CLIENT_COD_MW2] = "MW2",
     [BNET_CLIENT_COD_BOCW] = "CW",
+    [BNET_CLIENT_DI] = "DI",
     BSAp = COMMUNITIES_PRESENCE_MOBILE_CHAT,
 }
 
@@ -123,8 +124,9 @@ local clientIndex = {
     [BNET_CLIENT_COD_MW] = 13,
     [BNET_CLIENT_COD_MW2] = 14,
     [BNET_CLIENT_COD_BOCW] = 15,
-    App = 16,
-    BSAp = 17,
+    [BNET_CLIENT_DI] = 16,
+    App = 17,
+    BSAp = 18,
 }
 
 local function inGroup(name, realmName)
@@ -475,7 +477,7 @@ local function Friends_OnClick(self, button)
                     menuList[3].menuList[menuCountWhispers] = {text = realID, arg1 = realID, arg2 = true, notCheckable = true, func = whisperClick}
                 end
 
-                if (info.client and info.client == BNET_CLIENT_WOW) and (GW.myfaction == info.faction) and inGroup(info.characterName, info.realmName) == "" then
+                if (info.client and info.client == BNET_CLIENT_WOW) and inGroup(info.characterName, info.realmName) == "" then
                     local classc, levelc = GW.GWGetClassColor(info.className, true, true), GetQuestDifficultyColor(info.level)
                     if not classc then classc = levelc end
 
