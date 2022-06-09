@@ -11,6 +11,10 @@ local model_tweaks = {
     [2021536] = {["z"] = -0.55}, -- Kivar
     [3730970] = {["x"] = 0, ["y"] = 0.25, ["z"] = -0.04}, -- Nika
     [2139079] = {["z"] = -0.2}, -- Alpaca soulshape
+    [3071370] = {["x"] = 1.0, ["y"] = -0.5, ["z"] = -0.15, ["f"] = 2.5}, -- Vulpin soulshape
+    [3148995] = {["x"] = 0, ["y"] = -1.25, ["z"] = -0.3}, -- horned horse soulshape
+    [1886694] = {["x"] = -0.5, ["y"] = -1.75, ["z"] = -0.3}, -- raptor soulshape
+    [2343653] = {["x"] = -1.25, ["y"] = -1.25, ["z"] = -0.5}, -- shadowstalker soulshape
     [1717164] = {["z"] = -0.35},
     [415230] = {["z"] = 0},
     [3023013] = {["x"] = -4, ["y"] = 1, ["z"] = -0.33},
@@ -32,7 +36,6 @@ local model_tweaks = {
     [3483610] = {["x"] = -0.5, ["y"] = 4, ["z"] = 0.25},
     [3492867] = {["x"] = 5, ["y"] = 10, ["z"] = 2.5},
     [3670316] = {["x"] = -40, ["y"] = 4, ["z"] = 3},
-    [2343653] = {["z"] = -0.5},
     [577134] = {["z"] = -0.8},
     [1349623] = {["z"] = -0.4},
     [3024835] = {["z"] = -0.1},
@@ -259,11 +262,19 @@ function QuestModelMixin:setPMUnit(unit, side, is_dead, crace, cgender)
             uZ = twk.z
             dirty = 1
         end
+        if twk.f then
+            uF = twk.f
+            if side > 0 then
+                uF = -uF
+            end
+            dirty = 1
+        end
     end
 
     if dirty then
         self:SetPosition(uX, uY, uZ)
-        Debug("set pos:", unit, "id:", fileid, "x:", uX, "y:", uY, "z:", uZ, "is_dead:", is_dead)
+        self:SetFacing(uF)
+        Debug("set pos:", unit, "id:", fileid, "x:", uX, "y:", uY, "z:", uZ, "f:", uF, "is_dead:", is_dead)
         self:SetUnit(unit)
         if crace then
             self:SetCustomRace(crace, cgender)
@@ -370,6 +381,10 @@ function QuestViewMixin:questTextCompleted()
             self.container.acceptButton:SetText(CONTINUE)
             self.questState = "NEEDCOMPLETE"
         else
+            local s = string.sub(self.questString[self.questStringInt], -1)
+            if s == "?" then
+                self.container.playerModel:SetAnimation(emotes.No)
+            end
             self.container.acceptButton:Hide()
             self.container.declineButton:SetText(CANCEL)
             self.container.declineButton:Show()
