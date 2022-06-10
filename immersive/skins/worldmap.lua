@@ -157,6 +157,7 @@ local function QuestInfo_Display(template)
     _G.QuestInfoGroupSize:SetTextColor(1, 1, 1)
     _G.QuestInfoRewardText:SetTextColor(1, 1, 1)
     _G.QuestInfoQuestType:SetTextColor(1, 1, 1)
+    select(1, _G.QuestInfoItemHighlight:GetRegions()):SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/questitemhighlight")
     fRwd.ItemChooseText:SetTextColor(1, 1, 1)
     fRwd.ItemReceiveText:SetTextColor(1, 1, 1)
 
