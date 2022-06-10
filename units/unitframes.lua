@@ -815,7 +815,15 @@ local function LoadTarget()
     NewUnitFrame.portrait.mask:SetSize(58, 58)
     NewUnitFrame.portrait:AddMaskTexture(NewUnitFrame.portrait.mask)
 
-    NewUnitFrame.backgroundOverlay:SetShown(GetSetting("target_FRAME_ALT_BACKGROUND"))
+    if GetSetting("target_FRAME_ALT_BACKGROUND") then
+        local altBg = CreateFrame("Frame", nil, NewUnitFrame, "GwAlternativeUnitFrameBackground")
+        if NewUnitFrame.frameInvert then
+            altBg.backgroundOverlay:SetTexCoord(1, 0, 0, 1)
+            altBg.backgroundOverlay:SetPoint("CENTER", -15, -5)
+        end
+        altBg:SetAllPoints(NewUnitFrame)
+        altBg:Show()
+    end
 
     NewUnitFrame:SetAttribute("*type1", "target")
     NewUnitFrame:SetAttribute("*type2", "togglemenu")
@@ -914,7 +922,15 @@ local function LoadFocus()
     NewUnitFrame.portrait.mask:SetSize(58, 58)
     NewUnitFrame.portrait:AddMaskTexture(NewUnitFrame.portrait.mask)
 
-    NewUnitFrame.backgroundOverlay:SetShown(GetSetting("focus_FRAME_ALT_BACKGROUND"))
+    if GetSetting("focus_FRAME_ALT_BACKGROUND") then
+        local altBg = CreateFrame("Frame", nil, NewUnitFrame, "GwAlternativeUnitFrameBackground")
+        if NewUnitFrame.frameInvert then
+            altBg.backgroundOverlay:SetTexCoord(1, 0, 0, 1)
+            altBg.backgroundOverlay:SetPoint("CENTER", -15, -5)
+        end
+        altBg:SetAllPoints(NewUnitFrame)
+        altBg:Show()
+    end
 
     NewUnitFrame:SetAttribute("*type1", "target")
     NewUnitFrame:SetAttribute("*type2", "togglemenu")
@@ -990,7 +1006,14 @@ local function LoadTargetOfUnit(unit)
     f:EnableMouse(true)
     f:RegisterForClicks("AnyDown")
 
-    f.backgroundOverlay:SetShown((unit == "Target" and GetSetting("target_FRAME_ALT_BACKGROUND")) or (unit == "Focus" and GetSetting("focus_FRAME_ALT_BACKGROUND")))
+
+    if (unit == "Target" and GetSetting("target_FRAME_ALT_BACKGROUND")) or (unit == "Focus" and GetSetting("focus_FRAME_ALT_BACKGROUND")) then
+        local altBg = CreateFrame("Frame", nil, f, "GwAlternativeUnitFrameBackground")
+        altBg.backgroundOverlay:Hide()
+        altBg.backgroundOverlaySmall:Show()
+        altBg:SetAllPoints(f)
+        altBg:Show()
+    end
 
     AddToClique(f)
 

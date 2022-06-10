@@ -176,7 +176,11 @@ local function LoadPlayerFrame()
     NewUnitFrame:EnableMouse(true)
     NewUnitFrame:RegisterForClicks("AnyDown")
 
-    NewUnitFrame.backgroundOverlay:SetShown(GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
+    if GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND") then
+        local altBg = CreateFrame("Frame", nil, NewUnitFrame, "GwAlternativeUnitFrameBackground")
+        altBg:SetAllPoints(NewUnitFrame)
+        altBg:Show()
+    end
 
     local mask = UIParent:CreateMaskTexture()
     mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
