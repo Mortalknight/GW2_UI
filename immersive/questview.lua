@@ -49,6 +49,7 @@ local mapBGs = {
     [896] = "BFA/drustvar",
     [1525] = "SL/revendreth",
     [1533] = "SL/bastion",
+    [1543] = "SL/maw",
     [1565] = "SL/ardenweald",
     [1670] = "SL/oribos", [1672] = "SL/oribos"
 }
@@ -379,7 +380,7 @@ function QuestViewMixin:showRewards(showObjective)
         if showObjective then
             f:SetPoint("TOPLEFT", self.container.dialog.objectiveText, "BOTTOMLEFT", 0, -15)
         else
-            f:SetPoint("CENTER", self, "CENTER", 40, qinfoTop)
+            f:SetPoint("CENTER", self, "CENTER", -5, qinfoTop)
         end
     end
 end
