@@ -99,13 +99,6 @@ local function splitQuest(inputstr)
 end
 AFP("splitQuest", splitQuest)
 
-local function hideBlizzardQuestFrame()
-    QuestFrame:ClearAllPoints()
-    QuestFrame:SetClampedToScreen(false)
-    QuestFrame:SetPoint("RIGHT", UIParent, "LEFT", -800, 0)
-end
-AFP("hideBlizzardQuestFrame", hideBlizzardQuestFrame)
-
 local QuestGiverMixin = {}
 AFP("QuestGiverMixin", QuestGiverMixin)
 
@@ -288,6 +281,30 @@ end
 
 local QuestViewMixin = {}
 AFP("QuestViewMixin", QuestViewMixin)
+
+function QuestViewMixin:HideQuestFrame()
+    -- cannot actually hide it as we are stealing its elements/events and need it
+    -- to remain technially shown for the duration
+    if self.blizzFramePoints then
+        wipe(self.blizzFramePoints)
+    else
+        self.blizzFramePoints = {}
+    end
+    for i = 1, QuestFrame:GetNumPoints() do
+        tinsert(self.blizzFramePoints, {QuestFrame:GetPoint(i)})
+    end
+    QuestFrame:ClearAllPoints()
+    QuestFrame:SetClampedToScreen(false)
+    QuestFrame:SetPoint("RIGHT", UIParent, "LEFT", -800, 0)
+end
+
+function QuestViewMixin:UnhideQuestFrame()
+    QuestFrame:ClearAllPoints()
+    QuestFrame:SetClampedToScreen(true)
+    for _, pt in ipairs(self.blizzFramePoints) do
+        QuestFrame:SetPoint(pt[1], pt[2], pt[3], pt[4], pt[5])
+    end
+end
 
 function QuestViewMixin:showRequired()
     local itemReqOffset = 9
@@ -615,10 +632,11 @@ end
 function QuestViewMixin:OnHide()
     self:EnableKeyboard(false)
     self:SetScript("OnKeyDown", nil)
+    self:UnhideQuestFrame()
 end
 
 function QuestViewMixin:evQuestProgress()
-    hideBlizzardQuestFrame()
+    self:HideQuestFrame()
     self:clearQuestReq()
     self.questReq["money"] = GetQuestMoneyToGet()
     for i = GetNumQuestItems(), 1, -1 do
@@ -648,7 +666,7 @@ function QuestViewMixin:evQuestDetail(questStartItemID)
         return
     end
     if (self.questState ~= "COMPLETING") then
-        hideBlizzardQuestFrame()
+        self:HideQuestFrame()
         self:clearQuestReq()
         self.questState = "TAKE"
     else
@@ -666,7 +684,7 @@ end
 
 function QuestViewMixin:evQuestComplete()
     if (self.questState ~= "COMPLETING") then
-        hideBlizzardQuestFrame()
+        self:HideQuestFrame()
         self:clearQuestReq()
     else
         self.container.declineButton:SetText(IGNORE)
