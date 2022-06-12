@@ -52,6 +52,7 @@ local mapBGs = {
     [1543] = "SL/maw",
     [1565] = "SL/ardenweald",
     [1670] = "SL/oribos", [1672] = "SL/oribos",
+    [1961] = "SL/korthia",
     [2016] = "SL/tazavesh"
 }
 
