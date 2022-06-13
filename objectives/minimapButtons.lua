@@ -165,6 +165,8 @@ local function UpdateButtons(self)
     if frameIndex == 0 then
         self:Hide()
     end
+
+    self.gw_Showing = not (frameIndex == 0)
 end
 
 local function GrabIcons(self)
@@ -190,10 +192,8 @@ local function stack_OnClick(self)
     if self.container:IsShown() then
         UIFrameFadeOut(self.container, 0.2, 1, 0)
         C_Timer.After(0.2, function() self.container:Hide() end)
-        self.gw_Showing = false
     else
         UIFrameFadeIn(self.container, 0.2, 0, 1)
-        self.gw_Showing = true
     end
 
 end
@@ -209,6 +209,6 @@ local function CreateMinimapButtonsSack()
     minimapButton.gw_Showing = false
     GrabIcons(minimapButton)
 
-    C_Timer.NewTicker(6, function() GrabIcons(minimapButton) end)
+    C_Timer.NewTicker(6, function() GrabIcons(minimapButton) print(minimapButton.gw_Showing) end)
 end
 GW.CreateMinimapButtonsSack = CreateMinimapButtonsSack
