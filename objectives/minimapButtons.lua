@@ -190,8 +190,10 @@ local function stack_OnClick(self)
     if self.container:IsShown() then
         UIFrameFadeOut(self.container, 0.2, 1, 0)
         C_Timer.After(0.2, function() self.container:Hide() end)
+        self.gw_Showing = false
     else
         UIFrameFadeIn(self.container, 0.2, 0, 1)
+        self.gw_Showing = true
     end
 
 end
@@ -204,7 +206,7 @@ local function CreateMinimapButtonsSack()
     minimapButton:RegisterEvent("PLAYER_ENTERING_WORLD")
     minimapButton:SetFrameStrata("MEDIUM")
     minimapButton.container:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
-    minimapButton.gw_Showing = true
+    minimapButton.gw_Showing = false
     GrabIcons(minimapButton)
 
     C_Timer.NewTicker(6, function() GrabIcons(minimapButton) end)
