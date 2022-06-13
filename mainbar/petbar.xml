@@ -7,8 +7,7 @@
             <AbsInset left="0" right="0" top="0" bottom="30"/>
         </HitRectInsets>
         <Layers>
-            <Layer level="ARTWORK">
-
+            <Layer level="BACKGROUND">
                 <Texture name="$parentBarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar" parentKey="Background">
                     <Color r="0" g="0" b="0" a="0.8"/>
                     <Size x="232" y="18"/>
@@ -34,7 +33,6 @@
             </Layer>
         </Layers>
         <Frames>
-
             <StatusBar name="$parentHealth" parentKey="health" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
                 <Size x="230" y="16"/>
                 <Anchors>
