@@ -49,26 +49,28 @@ GW.AddForProfiling("auras", "sortAuraList", sortAuraList)
 
 local function getBuffs(unit, filter, revert)
     local buffList = {}
+    local name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID
 
     if filter == nil then
         filter = ""
     end
     for i = 1, 40 do
-        if UnitBuff(unit, i, filter) then
+        name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitBuff(unit, i, filter)
+        if name then
             buffList[i] = {}
             local bli = buffList[i]
             bli.id = i
 
-            bli.name,
-            bli.icon,
-            bli.count,
-            bli.dispelType,
-            bli.duration,
-            bli.expires,
-            bli.caster,
-            bli.isStealable,
-            bli.shouldConsolidate,
-            bli.spellID = UnitBuff(unit, i, filter)
+            bli.name = name
+            bli.icon = icon
+            bli.count = count
+            bli.dispelType = dispelType
+            bli.duration = duration
+            bli.expires = expires
+            bli.caster = caster
+            bli.isStealable = isStealable
+            bli.shouldConsolidate = shouldConsolidate
+            bli.spellID = spellID
 
             bli.timeremaning = bli.duration <= 0 and 500001 or bli.expires - GetTime()
         end
@@ -83,24 +85,26 @@ local function getDebuffs(unit, filter, revert)
     local showImportant = filter == "IMPORTANT"
     local counter = 0
     local filterToUse = filter == "IMPORTANT" and nil or filter
+    local name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID
 
     for i = 1, 40 do
-        if UnitDebuff(unit, i, filterToUse) and ((showImportant and (select(7, UnitDebuff(unit, i, filterToUse)) == "player" or GW.ImportendRaidDebuff[select(10, UnitDebuff(unit, i, filterToUse))])) or not showImportant) then
+        name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitDebuff(unit, i, filterToUse)
+        if name and ((showImportant and (caster == "player" or GW.ImportendRaidDebuff[spellID])) or not showImportant) then
             counter = #debuffList + 1
             debuffList[counter] = {}
             local dbi = debuffList[counter]
             dbi.id = i
 
-            dbi.name,
-            dbi.icon,
-            dbi.count,
-            dbi.dispelType,
-            dbi.duration,
-            dbi.expires,
-            dbi.caster,
-            dbi.isStealable,
-            dbi.shouldConsolidate,
-            dbi.spellID = UnitDebuff(unit, i, filter)
+            dbi.name = name
+            dbi.icon = icon
+            dbi.count = count
+            dbi.dispelType = dispelType
+            dbi.duration = duration
+            dbi.expires = expires
+            dbi.caster = caster
+            dbi.isStealable = isStealable
+            dbi.shouldConsolidate = shouldConsolidate
+            dbi.spellID  = spellID
 
             dbi.timeremaning = dbi.duration <= 0 and 500001 or dbi.expires - GetTime()
         end
