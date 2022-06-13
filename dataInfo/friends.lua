@@ -22,24 +22,7 @@ local menuList = {
     {text = BN_BROADCAST_TOOLTIP, notCheckable = true, func = function() StaticPopup_Show("SET_BN_BROADCAST") end},
 }
 
-StaticPopupDialogs["SET_BN_BROADCAST"] = {
-    text = BN_BROADCAST_TOOLTIP,
-    button1 = ACCEPT,
-    button2 = CANCEL,
-    hasEditBox = 1,
-    editBoxWidth = 350,
-    maxLetters = 127,
-    OnAccept = function(self) BNSetCustomMessage(self.editBox:GetText()) end,
-    OnShow = function(self) self.editBox:SetText(select(4, BNGetInfo()) ) self.editBox:SetFocus() end,
-    OnHide = ChatEdit_FocusActiveWindow,
-    EditBoxOnEnterPressed = function(self) BNSetCustomMessage(self:GetText()) self:GetParent():Hide() end,
-    EditBoxOnEscapePressed = function(self) self:GetParent():Hide() end,
-    timeout = 0,
-    exclusive = 1,
-    whileDead = 1,
-    hideOnEscape = 1,
-    preferredIndex = 3
-}
+
 
 local function inviteClick(_, name, guid)
     GW.EasyMenu:Hide()

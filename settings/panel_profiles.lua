@@ -2,7 +2,6 @@ local _, GW = ...
 local L = GW.L
 local createCat = GW.CreateCat
 local GetActiveProfile = GW.GetActiveProfile
-local SetProfileSettings = GW.SetProfileSettings
 local SetSetting = GW.SetSetting
 local ResetToDefault = GW.ResetToDefault
 local GetSettingsProfiles = GW.GetSettingsProfiles
@@ -336,7 +335,7 @@ updateProfiles = function(self)
         local k = i
         local v = profiles[i]
         local f = self.profile_buttons[k + 1]
-        if f == nil then
+        if not f then
             f = CreateFrame("Button", nil, self.scrollchild, "GwProfileItemTmpl")
             f:SetScript("OnEnter", item_OnEnter)
             f:SetScript("OnLeave", item_OnLeave)
@@ -360,11 +359,21 @@ updateProfiles = function(self)
                 f.activateAble = false
             end
 
+            if v["profileCreatedDate"] == nil then
+                v["profileCreatedDate"] = UNKNOWN
+            end
+            if v["profileCreatedCharacter"] == nil then
+                v["profileCreatedCharacter"] = UNKNOWN
+            end
+            if v["profileLastUpdated"] == nil then
+                v["profileLastUpdated"] = UNKNOWN
+            end
+
             local description =
                 L["Created: "] ..
-                (v["profileCreatedDate"] or UNKNOWN) ..
-                    L["\nCreated by: "] ..
-                        (v["profileCreatedCharacter"] or UNKNOWN) .. L["\nLast updated: "] .. (v["profileLastUpdated"] or UNKNOWN)
+                v["profileCreatedDate"] ..
+                L["\nCreated by: "] ..
+                v["profileCreatedCharacter"] .. L["\nLast updated: "] .. v["profileLastUpdated"]
 
             f.name:SetText(v["profilename"])
             f.name:SetWidth(min(f.name:GetStringWidth(), 250))
@@ -422,13 +431,7 @@ local function addProfile(self, name, profileData, copy)
     elseif profileData then
         GW2UI_SETTINGS_PROFILES[index] = profileData
     else
-        if GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] == nil then
-            GW2UI_SETTINGS_PROFILES[index] = GW.copyTable(nil, GW2UI_SETTINGS_DB_03)
-        else
-            GW2UI_SETTINGS_PROFILES[index] = {}
-            SetProfileSettings()
-        end
-        GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] = index
+        GW2UI_SETTINGS_PROFILES[index] = GW.copyTable(nil, GW2UI_SETTINGS_DB_03)
         GW2UI_SETTINGS_PROFILES[index]["profilename"] = name
         GW2UI_SETTINGS_PROFILES[index]["profileCreatedDate"] = date("%m/%d/%y %H:%M:%S")
         GW2UI_SETTINGS_PROFILES[index]["profileCreatedCharacter"] = GetUnitName("player", true)
@@ -549,7 +552,7 @@ local function LoadProfilesPanel(sWindow)
         ImportExportFrame.import:Show()
         ImportExportFrame.decode:Show()
         ImportExportFrame.decode:Disable()
-        ImportExportFrame.result:SetText("")  
+        ImportExportFrame.result:SetText("")
         ImportExportFrame.editBox:SetFocus()
     end
     fmIP:SetScript("OnClick", fnGCNP_OnClick)
@@ -561,35 +564,5 @@ local function LoadProfilesPanel(sWindow)
     updateProfiles(p)
 
     ImportExportFrame = createImportExportFrame(p)
-
-    StaticPopupDialogs["GW_CHANGE_PROFILE_NAME"] = {
-        text = GARRISON_SHIP_RENAME_LABEL,
-        button1 = SAVE,
-        button2 = CANCEL,
-        selectCallbackByIndex = true,
-        OnButton1 = function(self, data)
-            local profileToRename = GW2UI_SETTINGS_PROFILES[data.profileID]
-            local text = self.editBox:GetText()
-            local changeDate = date("%m/%d/%y %H:%M:%S")
-            local description = L["Created: "] .. profileToRename["profileCreatedDate"] .. L["\nCreated by: "] ..
-                profileToRename["profileCreatedCharacter"] .. L["\nLast updated: "] .. changeDate
-
-            -- Use hidden frame font object to calculate string width
-            GW.HiddenFrame.HiddenString:SetFont(UNIT_NAME_FONT, 14)
-            GW.HiddenFrame.HiddenString:SetText(text)
-            profileToRename["profilename"] = text
-            profileToRename["profileLastUpdated"] = changeDate
-            data.name:SetText(text)
-            data.name:SetWidth(min(GW.HiddenFrame.HiddenString:GetStringWidth() + 5, 250))
-            data.desc:SetText(description)
-        end,
-        OnButton2 = function() end,
-        timeout = 0,
-        whileDead = 1,
-        hasEditBox = 1,
-        maxLetters = 64,
-        editBoxWidth = 250,
-        closeButton = 0,
-    }
 end
 GW.LoadProfilesPanel = LoadProfilesPanel

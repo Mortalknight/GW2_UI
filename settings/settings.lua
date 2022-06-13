@@ -959,32 +959,6 @@ local function LoadSettings()
     fmGSWKB:SetText(KEY_BINDING)
     fmGSWD:SetText(L["Join Discord"])
 
-    StaticPopupDialogs["JOIN_DISCORD"] = {
-        text = L["Join Discord"],
-        button2 = CLOSE,
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        hasEditBox = 1,
-        hasWideEditBox = true,
-        editBoxWidth = 250,
-        EditBoxOnEscapePressed = function(self)
-            self:GetParent():Hide();
-        end,
-        OnShow = function(self)
-            self:SetWidth(420)
-            local editBox = _G[self:GetName() .. "EditBox"]
-            editBox:SetText("https://discord.gg/MZZtRWt")
-            editBox:SetFocus()
-            editBox:HighlightText(false)
-            local button = _G[self:GetName() .. "Button2"]
-            button:ClearAllPoints()
-            button:SetWidth(200)
-            button:SetPoint("CENTER", editBox, "CENTER", 0, -30)
-        end,
-        preferredIndex = 4
-    }
-
     local fnGSWMH_OnClick = function()
         if InCombatLockdown() then
             DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))

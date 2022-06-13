@@ -14,19 +14,6 @@ local function GetActiveProfile()
 end
 GW.GetActiveProfile = GetActiveProfile
 
-local function SetProfileSettings()
-    local profileIndex = GetActiveProfile()
-
-    if profileIndex == nil or GW2UI_SETTINGS_PROFILES[profileIndex] == nil then
-        return
-    end
-
-    for k, v in pairs(GW2UI_SETTINGS_DB_03) do
-        GW2UI_SETTINGS_PROFILES[profileIndex][k] = v
-    end
-end
-GW.SetProfileSettings = SetProfileSettings
-
 local function GetDefault(name)
     return GW_DEFAULT[name]
 end
@@ -119,6 +106,8 @@ local function ResetToDefault()
         GW2UI_PRIVATE_SETTINGS = nil
         GW2UI_PRIVATE_SETTINGS = GW.copyTable(nil, GW_PRIVATE_DEFAULT)
         GW2UI_SETTINGS_PROFILES[profileIndex]["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
+        GW2UI_SETTINGS_PROFILES[profileIndex]["profileCreatedDate"] = date("%m/%d/%y %H:%M:%S")
+        GW2UI_SETTINGS_PROFILES[profileIndex]["profileCreatedCharacter"] = UNKNOWN
         return
     end
     GW2UI_SETTINGS_DB_03 = GW_DEFAULT

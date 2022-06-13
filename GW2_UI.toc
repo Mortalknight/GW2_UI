@@ -35,6 +35,7 @@ locales/itIT.lua
 
 core/consts.lua
 core/init.lua
+core/staticPopupDialogs.lua
 core/raid_debuffs.lua
 core/toolkit.lua
 core/utils.lua
