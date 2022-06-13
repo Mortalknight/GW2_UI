@@ -118,7 +118,7 @@ local function updateArena_Name(self)
 
     if UnitName(self.unit) ~= nil then 
         name = UnitName(self.unit)
-    else 
+    else
         name = UNKNOWNOBJECT
     end
 
@@ -146,7 +146,6 @@ local function updateArena_Name(self)
     end
 
     self.name:SetText(nameString)
-    
     self.guid = UnitGUID(self.unit)
     self.class = select(2, UnitClass(self.unit))
     self.classIndex = select(3, UnitClass(self.unit))
@@ -191,20 +190,20 @@ GW.AddForProfiling("arenaFrames", "arenaFrame_OnEvent", arenaFrame_OnEvent)
 local function arenaPrepFrame_OnEvent()
     local numOpps = GetNumArenaOpponentSpecs()
 
-    if _G.ArenaPrepFrames then
-        _G.ArenaPrepFrames:Kill()
+    if ArenaPrepFrames then
+        ArenaPrepFrames:Kill()
     end
 
     for i = 1, MAX_ARENA_ENEMIES do
         local prepFrame = arenaPrepFrames[i]
         if i <= numOpps then
             local specID, gender = GetArenaOpponentSpec(i)
-            if specID > 0 then 
+            if specID > 0 then
                 local nameString = UNKNOWN
                 local className, classFile
                 local _, specName, _, _, role, class = GetSpecializationInfoByID(specID, gender)
-                for i = 1, GetNumClasses() do
-                    className, classFile = GetClassInfo(i)
+                for y = 1, GetNumClasses() do
+                    className, classFile = GetClassInfo(y)
                     if class == classFile then
                         break
                     end
@@ -213,7 +212,7 @@ local function arenaPrepFrame_OnEvent()
                     nameString = nameRoleIcon[role] .. className .. " - " .. specName
                 else
                     nameString = className .. " - " .. specName
-                end   
+                end
                 prepFrame.name:SetText(nameString)
                 prepFrame.health:SetStatusBarColor(0.5, 0.5, 0.5)
                 prepFrame.power:SetStatusBarColor(0.5, 0.5, 0.5)
