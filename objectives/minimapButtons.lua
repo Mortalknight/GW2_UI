@@ -209,6 +209,6 @@ local function CreateMinimapButtonsSack()
     minimapButton.gw_Showing = false
     GrabIcons(minimapButton)
 
-    C_Timer.NewTicker(6, function() GrabIcons(minimapButton) print(minimapButton.gw_Showing) end)
+    C_Timer.NewTicker(6, function() GrabIcons(minimapButton) end)
 end
 GW.CreateMinimapButtonsSack = CreateMinimapButtonsSack
