@@ -16,6 +16,7 @@ local model_tweaks = {
     [1886694] = {["x"] = -0.5, ["y"] = -1.75, ["z"] = -0.3}, -- raptor soulshape
     [2343653] = {["x"] = -1.25, ["y"] = -1.25, ["z"] = -0.5}, -- shadowstalker soulshape
     [3483612] = {["x"] = -0.25, ["y"] = 0.50, ["z"] = -0.1}, -- Ysera
+    [3762412] = {["x"] = -0.25, ["y"] = 4.25}, -- primus
     [1717164] = {["z"] = -0.35},
     [415230] = {["z"] = 0},
     [3023013] = {["x"] = -4, ["y"] = 1, ["z"] = -0.33},
@@ -51,8 +52,9 @@ local mapBGs = {
     [1533] = "SL/bastion",
     [1543] = "SL/maw",
     [1565] = "SL/ardenweald",
-    [1670] = "SL/oribos", [1672] = "SL/oribos",
+    [1670] = "SL/oribos", [1671] = "SL/oribos", [1672] = "SL/oribos",
     [1961] = "SL/korthia",
+    [1970] = "SL/zerethmortis",
     [2016] = "SL/tazavesh"
 }
 
