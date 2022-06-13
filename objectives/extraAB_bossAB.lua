@@ -8,8 +8,8 @@ local ExtraButtons = {}
 
 local function ExtraButtons_ZoneScale()
     local scale = GetSetting("ZoneAbilityFramePos_scale")
-    _G.ZoneAbilityFrame.Style:SetScale(scale)
-    _G.ZoneAbilityFrame.SpellButtonContainer:SetScale(scale)
+    ZoneAbilityFrame.Style:SetScale(scale)
+    ZoneAbilityFrame.SpellButtonContainer:SetScale(scale)
 
     local width, height = _G.ZoneAbilityFrame.SpellButtonContainer:GetSize()
     ZoneAbilityHolder:SetSize(width * scale, height * scale)
@@ -20,30 +20,19 @@ local function ExtraButtons_UpdateScale()
     ExtraButtons_ZoneScale()
 
     local scale = GetSetting("ExtraActionBarFramePos_scale")
-    _G.ExtraActionBarFrame:SetScale(scale)
+    ExtraActionBarFrame:SetScale(scale)
 
     local width, height = _G.ExtraActionBarFrame.button:GetSize()
     ExtraActionBarHolder:SetSize(width * scale, height * scale)
     ExtraActionBarHolder.gwMover:SetSize(width * scale, height * scale)
 
-    -- For 9.1 need to be removed with 9.1
-    if QuickKeybindFrame.phantomExtraActionButton then
-        QuickKeybindFrame.phantomExtraActionButton.normalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty")
-        QuickKeybindFrame.phantomExtraActionButton.normalTexture:ClearAllPoints()
-        QuickKeybindFrame.phantomExtraActionButton.normalTexture:SetAllPoints(ExtraActionBarHolder.gwMover)
-        QuickKeybindFrame.phantomExtraActionButton.QuickKeybindHighlightTexture:ClearAllPoints()
-        QuickKeybindFrame.phantomExtraActionButton.QuickKeybindHighlightTexture:SetAllPoints(ExtraActionBarHolder.gwMover)
-        QuickKeybindFrame.phantomExtraActionButton:ClearAllPoints()
-        QuickKeybindFrame.phantomExtraActionButton:SetAllPoints(ExtraActionBarHolder.gwMover)
-    elseif ExtraActionButton1 then
-        ExtraActionButton1.QuickKeybindHighlightTexture:ClearAllPoints()
-        ExtraActionButton1.QuickKeybindHighlightTexture:SetAllPoints(ExtraActionBarHolder.gwMover)
-    end
+    ExtraActionButton1.QuickKeybindHighlightTexture:ClearAllPoints()
+    ExtraActionButton1.QuickKeybindHighlightTexture:SetAllPoints(ExtraActionBarHolder.gwMover)
 end
 
 local function UpdateExtraBindings()
     for _, button in pairs(ExtraButtons) do
-        button.HotKey:SetText(_G.GetBindingKey(button:GetName()))
+        button.HotKey:SetText(GetBindingKey(button.commandName))
         GW.updateHotkey(button)
     end
 end
@@ -51,8 +40,6 @@ end
 local function ExtraAB_BossAB_Setup()
     KeyBindingFrame_LoadUI()
 
-    local ExtraActionBarFrame = _G.ExtraActionBarFrame
-    local ZoneAbilityFrame = _G.ZoneAbilityFrame
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("UPDATE_BINDINGS")
     eventFrame:SetScript("OnEvent", UpdateExtraBindings)
@@ -131,7 +118,7 @@ local function ExtraAB_BossAB_Setup()
             tex:SetColorTexture(0.9, 0.8, 0.1, 0.3)
             button:SetCheckedTexture(tex)
 
-            button.HotKey:SetText(GetBindingKey("ExtraActionButton" .. i))
+            button.HotKey:SetText(GetBindingKey(button.commandName))
             tinsert(ExtraButtons, button)
 
             button.IsSkinned = true
