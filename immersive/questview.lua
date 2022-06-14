@@ -619,7 +619,11 @@ function QuestViewMixin:OnKeyDown(key)
         if self.questStringInt < Stringcount then
             self:nextGossip()
         else
-            self:acceptQuest()
+            if self.questState == "NEEDCOMPLETE" then
+                self:nextGossip()
+            else
+                self:acceptQuest()
+            end
         end
     else
         self:SetPropagateKeyboardInput(true)
@@ -758,7 +762,11 @@ local function accept_OnClick(self, button)
         qview.questStringInt = Stringcount - 1
         qview:nextGossip()
     else
-        qview:acceptQuest()
+        if qview.questState == "NEEDCOMPLETE" then
+            qview:nextGossip()
+        else
+            qview:acceptQuest()
+        end
     end
 end
 AFP("accept_OnClick", accept_OnClick)
