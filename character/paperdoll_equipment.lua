@@ -306,7 +306,7 @@ local function DurabilityTooltip()
             if duraval ~= nil then
                 -- At least one item has durability stat
                 validItems = true
-                
+
                 -- Add to tooltip
                 durapercent = tonumber(GW.RoundDec(duraval / duramax * 100))
                 valcol = (durapercent >= 80 and "|cff00FF00") or (durapercent >= 60 and "|cff99FF00") or (durapercent >= 40 and "|cffFFFF00") or (durapercent >= 20 and "|cffFF9900") or (durapercent >= 0 and "|cffFF2000") or ("|cffFFFFFF")
@@ -340,7 +340,7 @@ local function DurabilityTooltip()
     else
         -- No items have durability stat
         GameTooltip:ClearLines()
-        GameTooltip:AddLine("" .. DURABILITY, 1, 0.85, 0)
+        GameTooltip:AddLine(DURABILITY, 1, 0.85, 0)
         GameTooltip:Show()
     end
 end
@@ -351,7 +351,7 @@ local function collectDurability(self)
     local completeDurabilityNumItems = 0
     for i = 1, 23 do
         local current, maximum = GetInventoryItemDurability(i)
-            
+
         if current ~= nil then
             completeDurability = completeDurability + (current / maximum)
             completeDurabilityNumItems = completeDurabilityNumItems + 1
