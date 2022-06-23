@@ -7,7 +7,7 @@
             <Anchor point="TOPLEFT"></Anchor>
         </Anchors>
         <Layers>
-            <Layer level="ARTWORK">
+            <Layer level="BACKGROUND">
                 <Texture parentKey="portraitBackground" file="Interface\AddOns\GW2_UI\textures\party\portraits">
                     <Size x="81" y="66"></Size>
                     <Anchors>
