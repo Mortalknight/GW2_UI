@@ -88,6 +88,9 @@ end
 
 local function MapInfoUpdateMapId()
     GW.locationData.mapID = C_Map.GetBestMapForUnit("player")
+    if not GW.locationData.mapID then
+        C_Timer.After(0.1, function() MapInfoUpdateMapId() end)
+    end
     GW.Debug("Update location data: mapID:", GW.locationData.mapID)
 end
 
@@ -95,10 +98,6 @@ local function MapInfoWatcherOnEvent()
     MapInfoUpdateMapId()
     GW.locationData.instanceMapID = select(8, GetInstanceInfo())
     GW.locationData.ZoneText = GetRealZoneText() or UNKNOWN
-
-    if not GW.locationData.mapID then
-        C_Timer.After(0.1, function() MapInfoUpdateMapId() end)
-    end
 
     CoordsUpdate()
 
