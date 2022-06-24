@@ -610,12 +610,7 @@ local function CreatePartyPetFrame(frame, i)
 end
 
 local function createPartyFrame(i, isFirstFrame, isPlayer)
-    local registerUnit
-    if isPlayer then
-        registerUnit = "player"
-    else
-        registerUnit = "party" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0))
-    end
+    local registerUnit = isPlayer and "player" or "party" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0))
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, "GwPartyFrame")
 
     if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
@@ -626,8 +621,6 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     frame.level:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINED")
     frame.healthbar = frame.predictionbar.healthbar
     frame.healthstring = frame.healthbar.healthstring
-
-    frame:SetScript("OnEvent", party_OnEvent)
 
     frame.unit = registerUnit
     frame.guid = UnitGUID(frame.unit)
@@ -691,6 +684,8 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", registerUnit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", registerUnit)
+
+    frame:SetScript("OnEvent", party_OnEvent)
 
     -- create de/buff frames
     frame.buffFrames = {}
