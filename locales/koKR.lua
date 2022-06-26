@@ -12,11 +12,8 @@ L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/korean.ttf"
 
 --Strings
 L[" (Resting)"] = "(휴식)"
-L[ [=[
-Created by: ]=] ] = "제작자: "
-L[ [=[
-Last updated: ]=] ] = [=[
-마지막 업데이트:]=]
+L["Created by: "] = "제작자: "
+L["Last updated:"] = "마지막 업데이트: "
 L["%s and then %s"] = "%s 그리고 %s"
 L["%s Indicator"] = "%s 표시기"
 L[": Show numbers with commas"] = ": 쉼표로 구분된 숫자 표시"

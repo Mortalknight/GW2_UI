@@ -115,7 +115,7 @@ local function CreateCreditsFrame()
     CreditsFrame.Section6 = CreateSection(300, 55, CreditsFrame, "TOP", CreditsFrame.Section5, "BOTTOM", 0, true)
 
     --Section headers
-    CreditsFrame.Section1.Header.Text:SetText(GW.Gw2Color .. L["\nCreated by: "]:gsub("\n", ""):gsub(":", "")  .. "|r")
+    CreditsFrame.Section1.Header.Text:SetText(GW.Gw2Color .. L["Created by: "]:gsub(":", "")  .. "|r")
     CreditsFrame.Section2.Header.Text:SetText(GW.Gw2Color .. L["Developed by"] .. "|r")
     CreditsFrame.Section3.Header.Text:SetText(GW.Gw2Color .. L["With Contributions by"] .. "|r")
     CreditsFrame.Section4.Header.Text:SetText(GW.Gw2Color .. L["Localised by"] .. "|r")

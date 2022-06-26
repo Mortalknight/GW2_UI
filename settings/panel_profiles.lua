@@ -7,27 +7,88 @@ local ResetToDefault = GW.ResetToDefault
 local GetSettingsProfiles = GW.GetSettingsProfiles
 local AddForProfiling = GW.AddForProfiling
 
-local GW_PROFILE_ICONS_PRESET = {}
-GW_PROFILE_ICONS_PRESET[0] = 538514 -- Interface/icons/spell_druid_displacement
-GW_PROFILE_ICONS_PRESET[1] = 1041232 -- Interface/icons/ability_socererking_arcanemines
-GW_PROFILE_ICONS_PRESET[2] = 236304 -- Interface/icons/ability_warrior_bloodbath
-GW_PROFILE_ICONS_PRESET[3] = 135990 -- Interface/icons/ability_priest_ascendance
-GW_PROFILE_ICONS_PRESET[4] = 1033914 -- Interface/icons/spell_mage_overpowered
-GW_PROFILE_ICONS_PRESET[5] = 298660 -- Interface/icons/achievement_boss_kingymiron
-GW_PROFILE_ICONS_PRESET[6] = 135791 -- Interface/icons/spell_fire_elementaldevastation
-GW_PROFILE_ICONS_PRESET[7] = 538514 -- Interface/icons/spell_druid_displacement
-GW_PROFILE_ICONS_PRESET[8] = 1041232 -- Interface/icons/ability_socererking_arcanemines
-GW_PROFILE_ICONS_PRESET[9] = 236304 -- Interface/icons/ability_warrior_bloodbath
-GW_PROFILE_ICONS_PRESET[10] = 135990 -- Interface/icons/ability_priest_ascendance
-GW_PROFILE_ICONS_PRESET[11] = 1033914 -- Interface/icons/spell_mage_overpowered
-GW_PROFILE_ICONS_PRESET[12] = 298660 -- Interface/icons/achievement_boss_kingymiron
-GW_PROFILE_ICONS_PRESET[13] = 135791 -- Interface/icons/spell_fire_elementaldevastation
-
--- local forward function defs
-local updateProfiles = nil
+local ICONS = {}
 local ImportExportFrame = nil
+local ProfileWin = nil
 
-local function createImportExportFrame(settingsWindow)
+local function loadProfiles(profilewin)
+    local USED_PROFILE_HEIGHT
+    local offset = HybridScrollFrame_GetOffset(profilewin)
+    local profiles = GetSettingsProfiles()
+    local currentProfile = GetActiveProfile()
+    local validProfiles = {}
+    local validProfileIdx = 1
+
+    -- sort out nil tables and sort table by id
+    for k, _ in pairs(profiles) do
+        if profiles[k] then
+            validProfiles[validProfileIdx] = profiles[k]
+            validProfiles[validProfileIdx].realIdx = k
+            validProfileIdx = validProfileIdx + 1
+        end
+    end
+
+    table.sort(
+        validProfiles,
+        function(a, b)
+            return a.realIdx < b.realIdx
+        end
+    )
+
+    for i = 1, #profilewin.buttons do
+        local slot = profilewin.buttons[i]
+
+        local idx = i + offset
+        if idx > #validProfiles then
+            -- empty row (blank starter row, final row, and any empty entries)
+            slot.item:Hide()
+            slot.item.profileID = nil
+        else
+            slot.item.profileID = validProfiles[idx].realIdx
+            slot.item.name:SetText(validProfiles[idx].profilename)
+
+            slot.item.hasOptions = true
+            slot.item.canDelete = true
+            slot.item.canExport = true
+            slot.item.canRename = true
+            slot.item.canCopy = true
+            slot.item.background:SetTexCoord(0, 1, 0, 0.5)
+            slot.item.canActivate = true
+
+            if currentProfile == validProfiles[idx].realIdx then
+                slot.item.background:SetTexCoord(0, 1, 0.5, 1)
+                slot.item.canActivate = false
+                slot.item.canDelete = false
+            end
+
+            validProfiles[idx].profileCreatedDate = validProfiles[idx].profileCreatedDate or UNKNOWN
+            validProfiles[idx].profileCreatedCharacter = validProfiles[idx].profileCreatedCharacter or UNKNOWN
+            validProfiles[idx].profileLastUpdated = validProfiles[idx].profileLastUpdated or UNKNOWN
+            validProfiles[idx].profileIcon = validProfiles[idx].profileIcon or ICONS[math.random(1, #ICONS)]
+
+            if(type(validProfiles[idx].profileIcon) == "number") then
+                slot.item.activateButton.icon:SetTexture(validProfiles[idx].profileIcon)
+            else
+                slot.item.activateButton.icon:SetTexture("INTERFACE\\ICONS\\" .. validProfiles[idx].profileIcon)
+            end
+
+            local description =
+                L["Created: "] ..
+                validProfiles[idx].profileCreatedDate .. "\n" ..
+                L["Created by: "] ..
+                validProfiles[idx].profileCreatedCharacter .. "\n" .. L["Last updated: "] .. validProfiles[idx].profileLastUpdated
+
+            slot.item.desc:SetText(description)
+
+            slot.item:Show()
+        end
+    end
+
+    USED_PROFILE_HEIGHT = profilewin.buttons[1]:GetHeight() * #validProfiles
+    HybridScrollFrame_Update(profilewin, USED_PROFILE_HEIGHT, 433)
+end
+
+local function createImportExportFrame()
     local frame = CreateFrame("Frame", "GW_ImportExportFrame", UIParent)
 
     frame:SetSize(700, 600)
@@ -115,7 +176,7 @@ local function createImportExportFrame(settingsWindow)
     frame.import:SetSize(128, 28)
     frame.import:SetText(L["Import"])
     frame.import:SetScript("OnClick", function()
-        local profileName, profilePlayer, version = GW.ImportProfile(frame.editBox:GetText(), settingsWindow)
+        local profileName, profilePlayer, version = GW.ImportProfile(frame.editBox:GetText())
 
         frame.result:SetText("")
         if profileName and profilePlayer and version == "Retail" then
@@ -170,70 +231,88 @@ end
 AddForProfiling("panel_profiles", "setProfile", setProfile)
 
 local function delete_OnClick(self)
-    local p = self:GetParent()
+    local p = self:GetParent().parentItem
+    self:GetParent():Hide()
     GW.WarningPrompt(
-        L["Are you sure you want to delete this profile?"],
+        L["Are you sure you want to delete this profile?"] .. "\n\n'" .. GW2UI_SETTINGS_PROFILES[p.profileID].profilename .. "'",
         function()
             deleteProfile(p.profileID)
-            updateProfiles(p:GetParent():GetParent():GetParent())
+            loadProfiles(ProfileWin)
         end
     )
 end
 AddForProfiling("panel_profiles", "delete_OnClick", delete_OnClick)
 
 local function buttons_OnEnter(self)
-    if self:GetParent().activateAble ~= nil and self:GetParent().activateAble == true then
-        self:GetParent().activateButton:Show()
+    if self:GetParent().hasOptions then
+        self:GetParent().settingsButton:Show()
     end
-    if self:GetParent().deleteable ~= nil and self:GetParent().deleteable == true then
-        self:GetParent().deleteButton:Show()
+
+    if self:GetParent().canDelete then
+        self:GetParent().settingsButton.dropdown.delete:Enable()
+        self:GetParent().settingsButton.dropdown.delete.name:SetTextColor(1, 0.2, 0.2, 1)
+    else
+        self:GetParent().settingsButton.dropdown.delete:Disable()
+        self:GetParent().settingsButton.dropdown.delete.name:SetTextColor(1, 1, 1, 0.2)
     end
-    if self:GetParent().renameable ~= nil and self:GetParent().renameable == true then
-        self:GetParent().renameButton:Show()
+
+    if self:GetParent().canRename then
+        self:GetParent().settingsButton.dropdown.rename:Enable()
+        self:GetParent().settingsButton.dropdown.rename.name:SetTextColor(1, 1, 1, 1)
+    else
+        self:GetParent().settingsButton.dropdown.rename:Disable()
+        self:GetParent().settingsButton.dropdown.rename.name:SetTextColor(1, 1, 1, 0.2)
     end
-    if self:GetParent().exportable ~= nil and self:GetParent().exportable == true then
-        self:GetParent().exportButton:Show()
+
+    if self:GetParent().canExport then
+        self:GetParent().settingsButton.dropdown.export:Enable()
+        self:GetParent().settingsButton.dropdown.export.name:SetTextColor(1, 1, 1, 1)
+    else
+        self:GetParent().settingsButton.dropdown.export:Disable()
+        self:GetParent().settingsButton.dropdown.export.name:SetTextColor(1, 1, 1, 0.2)
     end
-    if self:GetParent().copyable ~= nil and self:GetParent().copyable == true then
-        self:GetParent().copyButton:Show()
+
+    if self:GetParent().canCopy then
+        self:GetParent().settingsButton.dropdown.copy:Enable()
+        self:GetParent().settingsButton.dropdown.copy.name:SetTextColor(1, 1, 1, 1)
+    else
+        self:GetParent().settingsButton.dropdown.copy:Disable()
+        self:GetParent().settingsButton.dropdown.copy.name:SetTextColor(1, 1, 1, 0.2)
     end
 end
 AddForProfiling("panel_profiles", "activate_OnEnter", buttons_OnEnter)
 
 local function buttons_OnLeave(self)
-    if self:GetParent().deleteable ~= nil and self:GetParent().deleteable == true then
-        self:GetParent().deleteButton:Hide()
+    if MouseIsOver(self) then return end
+
+    if self:GetParent().hasOptions then
+        self:GetParent().settingsButton:Hide()
     end
-    if self:GetParent().exportable ~= nil and self:GetParent().exportable == true then
-        self:GetParent().exportButton:Hide()
-    end
-    if self:GetParent().renameable ~= nil and self:GetParent().renameable == true then
-        self:GetParent().renameButton:Hide()
-    end
-    if self:GetParent().activateAble ~= nil and self:GetParent().activateAble == true then
-        self:GetParent().activateButton:Hide()
-    end
-    if self:GetParent().copyable ~= nil and self:GetParent().copyable == true then
-        self:GetParent().copyButton:Hide()
-    end
+
     self:GetParent().background:SetBlendMode("BLEND")
 end
 AddForProfiling("panel_profiles", "buttons_OnLeave", buttons_OnLeave)
 
 local function activate_OnClick(self)
     local p = self:GetParent()
-    setProfile(p.profileID)
-    updateProfiles(p:GetParent():GetParent():GetParent())
+    if not p.canActivate then return end
+
+    GW.WarningPrompt(
+        L["Do you want to activate profile"] .. "\n\n'" .. GW2UI_SETTINGS_PROFILES[p.profileID].profilename .."'?",
+        function()
+            setProfile(p.profileID) -- triggers a reload
+        end
+    )
 end
 AddForProfiling("panel_profiles", "activate_OnClick", activate_OnClick)
 
 local function export_OnClick(self)
-    local p = self:GetParent()
-    local exportString = GW.GetExportString(p.profileID, GW2UI_SETTINGS_PROFILES[p.profileID]["profilename"])
+    local p = self:GetParent().parentItem
+    local exportString = GW.GetExportString(p.profileID, GW2UI_SETTINGS_PROFILES[p.profileID].profilename)
 
     ImportExportFrame:Show()
     ImportExportFrame.header:SetText(L["Export Profile"])
-    ImportExportFrame.subheader:SetText(GW2UI_SETTINGS_PROFILES[p.profileID]["profilename"])
+    ImportExportFrame.subheader:SetText(GW2UI_SETTINGS_PROFILES[p.profileID].profilename)
     ImportExportFrame.description:SetText(L["Profile string to share your settings:"])
     ImportExportFrame.import:Hide()
     ImportExportFrame.decode:Hide()
@@ -244,201 +323,101 @@ end
 AddForProfiling("panel_profiles", "export_OnClick", export_OnClick)
 
 local function rename_OnClick(self)
-    StaticPopup_Show("GW_CHANGE_PROFILE_NAME", nil, nil, self:GetParent())
+    StaticPopup_Show("GW_CHANGE_PROFILE_NAME", nil, nil, self:GetParent().parentItem)
+    self:GetParent():Hide()
 end
 
 local function copy_OnClick(self)
-    local newProfil = GW.copyTable(nil, GW2UI_SETTINGS_PROFILES[self:GetParent().profileID])
-    GW.addProfile(self:GetParent():GetParent():GetParent():GetParent(), L["Copy of"] .. " " .. GW2UI_SETTINGS_PROFILES[self:GetParent().profileID]["profilename"], newProfil, true)
+    local newProfil = GW.copyTable(nil, GW2UI_SETTINGS_PROFILES[self:GetParent().parentItem.profileID])
+    GW.addProfile(L["Copy of"] .. " " .. GW2UI_SETTINGS_PROFILES[self:GetParent().parentItem.profileID].profilename, newProfil, true)
+    self:GetParent():Hide()
 end
 
 local function item_OnLoad(self)
     self.name:SetFont(UNIT_NAME_FONT, 14)
-    self.name:SetTextColor(1, 1, 1)
     self.desc:SetFont(UNIT_NAME_FONT, 10)
+    self.activateButton.hint:SetFont(DAMAGE_TEXT_FONT, 10)
+    self.activateButton.hint:SetShadowColor(0, 0, 0, 1)
+    self.activateButton.hint:SetShadowOffset(1, -1)
+
     self.desc:SetTextColor(125 / 255, 125 / 255, 125 / 255)
     self.desc:SetText(L["Text has not loaded."])
 
-    self.deleteButton.string:SetFont(UNIT_NAME_FONT, 12)
-    self.deleteButton.string:SetTextColor(255 / 255, 255 / 255, 255 / 255)
-    self.deleteButton.string:SetText(DELETE)
+    self.settingsButton.dropdown.export.name:SetText(L["Export"])
 
-    self.activateButton:SetText(ACTIVATE)
-    self.exportButton:SetText(L["Export"])
+    self.settingsButton:SetScript("OnEnter", buttons_OnEnter)
+    self.settingsButton:SetScript("OnLeave", buttons_OnLeave)
 
-    self.deleteButton:SetScript("OnEnter", buttons_OnEnter)
-    self.deleteButton:SetScript("OnLeave", buttons_OnLeave)
-    self.deleteButton:SetScript("OnClick", delete_OnClick)
-    self.activateButton:SetScript("OnEnter", buttons_OnEnter)
-    self.activateButton:SetScript("OnLeave", buttons_OnLeave)
-    self.activateButton:SetScript("OnClick", activate_OnClick)
-    self.exportButton:SetScript("OnEnter", buttons_OnEnter)
-    self.exportButton:SetScript("OnLeave", buttons_OnLeave)
-    self.exportButton:SetScript("OnClick", export_OnClick)
-    self.renameButton:SetScript("OnEnter", buttons_OnEnter)
-    self.renameButton:SetScript("OnLeave", buttons_OnLeave)
-    self.renameButton:SetScript("OnClick", rename_OnClick)
-    self.copyButton:SetScript("OnEnter", buttons_OnEnter)
-    self.copyButton:SetScript("OnLeave", buttons_OnLeave)
-    self.copyButton:SetScript("OnClick", copy_OnClick)
+    self.settingsButton.dropdown.delete:SetScript("OnClick", delete_OnClick)
+    self.settingsButton.dropdown.export:SetScript("OnClick", export_OnClick)
+    self.settingsButton.dropdown.rename:SetScript("OnClick", rename_OnClick)
+    self.settingsButton.dropdown.copy:SetScript("OnClick", copy_OnClick)
 end
 AddForProfiling("panel_profiles", "item_OnLoad", item_OnLoad)
 
 local function item_OnEnter(self)
-    if self.deleteable ~= nil and self.deleteable == true then
-        self.deleteButton:Show()
+    if self.hasOptions then
+        self.settingsButton:Show()
     end
-    if self.renameable ~= nil and self.renameable == true then
-        self.renameButton:Show()
+    if self.canDelete then
+        self.settingsButton.dropdown.delete:Show()
     end
-    if self.activateAble ~= nil and self.activateAble == true then
-        self.activateButton:Show()
+    if self.canRename then
+        self.settingsButton.dropdown.rename:Show()
     end
-    if self.exportable ~= nil and self.exportable == true then
-        self.exportButton:Show()
+    if self.canExport then
+        self.settingsButton.dropdown.export:Show()
     end
-    if self.copyable ~= nil and self.copyable == true then
-        self.copyButton:Show()
+    if self.canCopy then
+        self.settingsButton.dropdown.copy:Show()
     end
     self.background:SetBlendMode("ADD")
 end
 AddForProfiling("panel_profiles", "item_OnEnter", item_OnEnter)
 
 local function item_OnLeave(self)
-    if self.deleteable ~= nil and self.deleteable == true then
-        self.deleteButton:Hide()
+    if MouseIsOver(self) then return end
+    if MouseIsOver(self.settingsButton.dropdown) and self.settingsButton.dropdown:IsShown() then return end
+
+    self.settingsButton.dropdown:Hide()
+
+    if self.hasOptions then
+        self.settingsButton:Hide()
     end
-    if self.renameable ~= nil and self.renameable == true then
-        self.renameButton:Hide()
+    if self.canDelete then
+        self.settingsButton.dropdown.delete:Hide()
     end
-    if self.exportable ~= nil and self.exportable == true then
-        self.exportButton:Hide()
+    if self.canRename then
+        self.settingsButton.dropdown.rename:Hide()
     end
-    if self.copyable ~= nil and self.copyable == true then
-        self.copyButton:Hide()
+    if self.canExport then
+        self.settingsButton.dropdown.export:Hide()
     end
-    self.activateButton:Hide()
+    if self.canCopy then
+        self.settingsButton.dropdown.copy:Hide()
+    end
     self.background:SetBlendMode("BLEND")
 end
 AddForProfiling("panel_profiles", "item_OnLeave", item_OnLeave)
 
-updateProfiles = function(self)
-    local currentProfile = GetActiveProfile()
-
-    if not self.profile_buttons then
-        self.profile_buttons = {}
-    end
-
-    local h = 0
-    local profiles = GetSettingsProfiles()
-    for i = 0, 13 do
-        local k = i
-        local v = profiles[i]
-        local f = self.profile_buttons[k + 1]
-        if not f then
-            f = CreateFrame("Button", nil, self.scrollchild, "GwProfileItemTmpl")
-            f:SetScript("OnEnter", item_OnEnter)
-            f:SetScript("OnLeave", item_OnLeave)
-            item_OnLoad(f)
-            self.profile_buttons[k + 1] = f
-        end
-
-        if v ~= nil then
-            f:Show()
-            f.profileID = k
-            f.icon:SetTexture(GW_PROFILE_ICONS_PRESET[k])
-
-            f.deleteable = true
-            f.exportable = true
-            f.renameable = true
-            f.copyable = true
-            f.background:SetTexCoord(0, 1, 0, 0.5)
-            f.activateAble = true
-            if currentProfile == k then
-                f.background:SetTexCoord(0, 1, 0.5, 1)
-                f.activateAble = false
-            end
-
-            if v["profileCreatedDate"] == nil then
-                v["profileCreatedDate"] = UNKNOWN
-            end
-            if v["profileCreatedCharacter"] == nil then
-                v["profileCreatedCharacter"] = UNKNOWN
-            end
-            if v["profileLastUpdated"] == nil then
-                v["profileLastUpdated"] = UNKNOWN
-            end
-
-            local description =
-                L["Created: "] ..
-                v["profileCreatedDate"] ..
-                L["\nCreated by: "] ..
-                v["profileCreatedCharacter"] .. L["\nLast updated: "] .. v["profileLastUpdated"]
-
-            f.name:SetText(v["profilename"])
-            f.name:SetWidth(min(f.name:GetStringWidth(), 250))
-            f.desc:SetText(description)
-            f:SetPoint("TOPLEFT", 15, (-70 * h) + -120)
-            h = h + 1
-        else
-            f:Hide()
-        end
-    end
-
-    if h < 14 then
-        self.createNew:Enable()
-        self.importProfile:Enable()
-    else
-        self.createNew:Disable()
-        self.importProfile:Disable()
-    end
-
-    local scrollM = (120 + (70 * h))
-    local scroll = 0
-    local thumbheight = 1
-
-    if scrollM > 440 then
-        scroll = math.abs(440 - scrollM)
-        thumbheight = 100
-    end
-
-    self.scrollFrame:SetScrollChild(self.scrollchild)
-    self.scrollFrame.maxScroll = scroll
-
-    self.slider.thumb:SetHeight(thumbheight)
-    self.slider:SetMinMaxValues(0, scroll)
-end
-AddForProfiling("panel_profiles", "updateProfiles", updateProfiles)
-
-local function addProfile(self, name, profileData, copy)
-    local index = 0
+local function addProfile(name, profileData, copy)
     local profileList = GetSettingsProfiles()
-
-    for i = 0, 13 do
-        index = i
-        if profileList[i] == nil then
-            break
-        end
-    end
-
-    if index > 13 then
-        return
-    end
+    local newIdx = #profileList + 1
 
     if copy then
-        GW2UI_SETTINGS_PROFILES[index] = profileData
-        GW2UI_SETTINGS_PROFILES[index]["profilename"] = name
+        GW2UI_SETTINGS_PROFILES[newIdx] = profileData
+        GW2UI_SETTINGS_PROFILES[newIdx]["profilename"] = name
     elseif profileData then
-        GW2UI_SETTINGS_PROFILES[index] = profileData
+        GW2UI_SETTINGS_PROFILES[newIdx] = profileData
     else
-        GW2UI_SETTINGS_PROFILES[index] = GW.copyTable(nil, GW2UI_SETTINGS_DB_03)
-        GW2UI_SETTINGS_PROFILES[index]["profilename"] = name
-        GW2UI_SETTINGS_PROFILES[index]["profileCreatedDate"] = date("%m/%d/%y %H:%M:%S")
-        GW2UI_SETTINGS_PROFILES[index]["profileCreatedCharacter"] = GetUnitName("player", true)
-        GW2UI_SETTINGS_PROFILES[index]["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
+        GW2UI_SETTINGS_PROFILES[newIdx] = GW.copyTable(nil, GW2UI_SETTINGS_DB_03)
+        GW2UI_SETTINGS_PROFILES[newIdx].profilename = name
+        GW2UI_SETTINGS_PROFILES[newIdx].profileCreatedDate = date("%m/%d/%y %H:%M:%S")
+        GW2UI_SETTINGS_PROFILES[newIdx].profileCreatedCharacter = GetUnitName("player", true)
+        GW2UI_SETTINGS_PROFILES[newIdx].profileLastUpdated = date("%m/%d/%y %H:%M:%S")
     end
 
-    updateProfiles(self)
+    loadProfiles(ProfileWin)
 end
 GW.addProfile = addProfile
 AddForProfiling("panel_profiles", "addProfile", addProfile)
@@ -452,8 +431,106 @@ local function inputPrompt(text, method)
 end
 AddForProfiling("panel_profiles", "inputPrompt", inputPrompt)
 
+local function ProfileSetup(profilewWin)
+    HybridScrollFrame_CreateButtons(profilewWin, "GwProfileItemTmpl", 0, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
+    for i = 1, #profilewWin.buttons do
+        local slot = profilewWin.buttons[i]
+        slot.item:SetWidth(profilewWin:GetWidth() - 12)
+        slot.item:SetScript("OnEnter", item_OnEnter)
+        slot.item:SetScript("OnLeave", item_OnLeave)
+        if not slot.item.ScriptsHooked then
+            slot.item.settingsButton:SetScript("OnClick", function(self)
+                if self.dropdown:IsShown() then
+                    self.dropdown:Hide()
+                else
+                    self.dropdown:Show()
+                end
+            end)
+            slot.item.settingsButton.dropdown:SetScript("OnLeave", function()
+                if not MouseIsOver(slot.item) then slot.item:GetScript("OnLeave")(slot.item) end
+            end)
+
+            item_OnLoad(slot.item)
+            slot.item.settingsButton.dropdown.parentItem = slot.item
+            slot.item.settingsButton.dropdown:SetParent(profilewWin)
+
+            slot.item.activateButton:SetScript("OnEnter", function(self)
+                if slot.item.canActivate then
+                    self.icon:SetBlendMode("ADD")
+                    self.icon:SetAlpha(0.5)
+                    self.hint:Show()
+
+                    self:GetParent():GetScript("OnEnter")(self:GetParent())
+                end
+            end)
+            slot.item.activateButton:SetScript("OnLeave", function(self)
+                self.icon:SetBlendMode("BLEND")
+                self.icon:SetAlpha(1)
+                self.hint:Hide()
+
+                self:GetParent():GetScript("OnLeave")(self:GetParent())
+            end)
+
+            slot.item.activateButton:SetScript("OnMouseUp", activate_OnClick)
+
+
+            slot.item.ScriptsHooked = true
+        end
+    end
+
+    loadProfiles(profilewWin)
+end
+
+local function collectAllIcons()
+    -- We need to avoid adding duplicate spellIDs from the spellbook tabs for your other specs.
+    local activeIcons = {}
+
+    for i = 1, GetNumSpellTabs() do
+        local _, _, offset, numSpells, _ = GetSpellTabInfo(i)
+        offset = offset + 1
+        local tabEnd = offset + numSpells
+        for j = offset, tabEnd - 1 do
+            --to get spell info by slot, you have to pass in a pet argument
+            local spellType, ID = GetSpellBookItemInfo(j, "player")
+            if spellType ~= "FUTURESPELL" then
+                local fileID = GetSpellBookItemTexture(j, "player")
+                if fileID then
+                    activeIcons[fileID] = true
+                end
+            end
+            if spellType == "FLYOUT" then
+                local _, _, numSlots, isKnown = GetFlyoutInfo(ID)
+                if (isKnown and numSlots > 0) then
+                    for k = 1, numSlots do
+                        local spellID, _, isKnownSlot = GetFlyoutSlotInfo(ID, k)
+                        if isKnownSlot then
+                            local fileID = GetSpellTexture(spellID)
+                            if fileID then
+                                activeIcons[fileID] = true
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    for fileDataID in pairs(activeIcons) do
+        ICONS[#ICONS + 1] = fileDataID
+    end
+
+    GetLooseMacroIcons(ICONS)
+    GetLooseMacroItemIcons( ICONS)
+    GetMacroIcons(ICONS)
+    GetMacroItemIcons(ICONS)
+end
+
 local function LoadProfilesPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsProfilesPanelTmpl")
+    local p = CreateFrame("Frame", "TgWEST", sWindow.panels, "GwSettingsProfilesPanelTmpl")
+    ProfileWin = p.profileScroll
+
+    collectAllIcons()
+
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 255 / 255, 255 / 255)
     p.header:SetText(L["Profiles"])
@@ -461,57 +538,27 @@ local function LoadProfilesPanel(sWindow)
     p.sub:SetTextColor(125 / 255, 125 / 255, 125 / 255)
     p.sub:SetText(L["Profiles are an easy way to share your settings across characters and realms."])
 
-    local fnGSPF_OnShow = function()
-        sWindow.background:SetTexture("Interface/AddOns/GW2_UI/textures/profiles/profiles-bg")
-    end
-    local fnGSPF_OnHide = function()
-        sWindow.background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagbg")
-    end
-    p:SetScript("OnShow", fnGSPF_OnShow)
-    p:SetScript("OnHide", fnGSPF_OnHide)
+    p.resetToDefaultFrame = CreateFrame("Button", nil, p, "GwProfileItemTmpl")
+    p.resetToDefaultFrame:SetPoint("TOPLEFT", 5, -65)
+    p.resetToDefaultFrame:SetWidth(p:GetWidth() - 15)
 
-    local fnGSPF_slider_OnValueChanged = function(self, value)
-        self:GetParent().scrollFrame:SetVerticalScroll(value)
-    end
-    p.slider:SetScript("OnValueChanged", fnGSPF_slider_OnValueChanged)
-    p.slider:SetMinMaxValues(0, 512)
+    p.resetToDefaultFrame:SetScript("OnEnter", item_OnEnter)
+    p.resetToDefaultFrame:SetScript("OnLeave", item_OnLeave)
+    item_OnLoad(p.resetToDefaultFrame.item)
 
-    local fnGSPF_scroll_OnMouseWheel = function(self, delta)
-        delta = -delta * 10
-        local s = math.max(0, self:GetVerticalScroll() + delta)
-        if self.maxScroll ~= nil then
-            s = math.min(self.maxScroll, s)
-        end
-        self:SetVerticalScroll(s)
-        self:GetParent().slider:SetValue(s)
-    end
-    p.scrollFrame:SetScript("OnMouseWheel", fnGSPF_scroll_OnMouseWheel)
+    p.resetToDefaultFrame.item.activateButton.icon:SetTexture("Interface/icons/inv_corgi2")
 
-    createCat(L["PROFILES"], L["Add and remove profiles."], p, 5, "Interface/AddOns/GW2_UI/textures/icons/settingsiconbg-2")
+    p.resetToDefaultFrame.item.hasOptions = false
+    p.resetToDefaultFrame.item.canDelete = false
+    p.resetToDefaultFrame.item.canExport = false
+    p.resetToDefaultFrame.item.canRename = false
+    p.resetToDefaultFrame.item.canCopy = false
+    p.resetToDefaultFrame.item.background:SetTexCoord(0, 1, 0, 0.5)
+    p.resetToDefaultFrame.item.canActivate = true
 
-    p.slider:SetValue(0)
-
-    p.slider.thumb:SetHeight(200)
-
-    local resetTodefault = CreateFrame("Button", nil, p.scrollchild, "GwProfileItemTmpl")
-    resetTodefault:SetScript("OnEnter", item_OnEnter)
-    resetTodefault:SetScript("OnLeave", item_OnLeave)
-    item_OnLoad(resetTodefault)
-
-    resetTodefault.icon:SetTexture("Interface/icons/inv_corgi2")
-
-    resetTodefault.deleteable = false
-    resetTodefault.exportable = false
-    resetTodefault.renameable = false
-    resetTodefault.copyable = false
-    resetTodefault.background:SetTexCoord(0, 1, 0, 0.5)
-    resetTodefault.activateAble = true
-
-    resetTodefault:SetPoint("TOPLEFT", 15, 0)
-
-    resetTodefault.name:SetText(L["Default Settings"])
-    resetTodefault.desc:SetText(L["Load the default addon settings to the current profile."])
-    resetTodefault.activateButton:SetScript(
+    p.resetToDefaultFrame.item.name:SetText(L["Default Settings"])
+    p.resetToDefaultFrame.item.desc:SetText(L["Load the default addon settings to the current profile."])
+    p.resetToDefaultFrame.item.defaultSettings:SetScript(
         "OnClick",
         function()
             GW.WarningPrompt(
@@ -523,26 +570,28 @@ local function LoadProfilesPanel(sWindow)
             )
         end
     )
-    resetTodefault.activateButton:SetText(L["Load"])
+    p.resetToDefaultFrame.item.defaultSettings:SetText(L["Load"])
+    p.resetToDefaultFrame.item.defaultSettings:Show()
+    p.resetToDefaultFrame.item:Show()
 
-    local fmGCNP = CreateFrame("Button", nil, p.scrollchild, "GwCreateNewProfileTmpl")
-    fmGCNP:SetText(NEW_COMPACT_UNIT_FRAME_PROFILE)
-    fmGCNP:SetWidth(fmGCNP:GetTextWidth() + 10)
+    p.createNewProfile = CreateFrame("Button", nil, p.resetToDefaultFrame, "GwCreateNewProfileTmpl")
+    p.createNewProfile:SetText(NEW_COMPACT_UNIT_FRAME_PROFILE)
+    p.createNewProfile:SetWidth(p.createNewProfile:GetTextWidth() + 10)
     local fnGCNP_OnClick = function()
         inputPrompt(
             NEW_COMPACT_UNIT_FRAME_PROFILE,
             function()
-                addProfile(p, GwWarningPrompt.input:GetText())
+                addProfile(GwWarningPrompt.input:GetText())
                 GwWarningPrompt:Hide()
             end
         )
     end
-    fmGCNP:SetScript("OnClick", fnGCNP_OnClick)
-    fmGCNP:SetPoint("TOPLEFT", 15, -80)
+    p.createNewProfile:SetScript("OnClick", fnGCNP_OnClick)
+    p.createNewProfile:SetPoint("TOPLEFT", 5, -75)
 
-    local fmIP = CreateFrame("Button", nil, p.scrollchild, "GwCreateNewProfileTmpl")
-    fmIP:SetText(L["Import Profile"])
-    fmIP:SetWidth(fmIP:GetTextWidth() + 10)
+    p.importProfile = CreateFrame("Button", nil, p.resetToDefaultFrame, "GwCreateNewProfileTmpl")
+    p.importProfile:SetText(L["Import Profile"])
+    p.importProfile:SetWidth( p.importProfile:GetTextWidth() + 10)
     local fnGCNP_OnClick = function()
         ImportExportFrame:Show()
         ImportExportFrame.header:SetText(L["Import Profile"])
@@ -555,14 +604,24 @@ local function LoadProfilesPanel(sWindow)
         ImportExportFrame.result:SetText("")
         ImportExportFrame.editBox:SetFocus()
     end
-    fmIP:SetScript("OnClick", fnGCNP_OnClick)
-    fmIP:SetPoint("TOPLEFT", fmGCNP, "TOPLEFT", fmGCNP:GetTextWidth() + 25, 0)
+    p.importProfile:SetScript("OnClick", fnGCNP_OnClick)
+    p.importProfile:SetPoint("TOPLEFT", p.createNewProfile, p.createNewProfile:GetTextWidth() + 25, 0)
 
-    p.createNew = fmGCNP
-    p.importProfile = fmIP
+    local fnGSPF_OnShow = function()
+        sWindow.background:SetTexture("Interface/AddOns/GW2_UI/textures/profiles/profiles-bg")
+    end
+    local fnGSPF_OnHide = function()
+        sWindow.background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagbg")
+    end
+    p:SetScript("OnShow", fnGSPF_OnShow)
+    p:SetScript("OnHide", fnGSPF_OnHide)
 
-    updateProfiles(p)
+    ProfileWin.update = loadProfiles
+    ProfileWin.scrollBar.doNotHide = true
+    ProfileSetup(ProfileWin)
 
-    ImportExportFrame = createImportExportFrame(p)
+    createCat(L["PROFILES"], L["Add and remove profiles."], p, 5, "Interface/AddOns/GW2_UI/textures/icons/settingsiconbg-2")
+
+    ImportExportFrame = createImportExportFrame()
 end
 GW.LoadProfilesPanel = LoadProfilesPanel

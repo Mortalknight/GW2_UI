@@ -12,12 +12,8 @@ L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf"
 
 --Strings
 L[" (Resting)"] = " (休息中)"
-L[ [=[
-Created by: ]=] ] = [=[
-角色名：]=]
-L[ [=[
-Last updated: ]=] ] = [=[
-更新于：]=]
+L["Created by: "] = "角色名："
+L["Last updated: "] = "更新于："
 L["%s and then %s"] = "先向%s延展再向%s延展"
 L["%s Indicator"] = "%s指示器"
 L[": Show numbers with commas"] = ": 使用逗号分隔数字"

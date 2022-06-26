@@ -3,179 +3,182 @@
 
     <Frame name="GwSettingsProfilesPanelTmpl" inherits="GwSettingsPanelTmpl" virtual="true">
         <Frames>
-            <Slider parentKey="slider" orientation="VERTICAL" enableMouse="true">
-                <Size x="12" y="12"/>
+            <ScrollFrame parentKey="profileScroll" inherits="GwHybridScrollFrameTemplate">
+                <Size x="480" y="433"></Size>
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-12" y="-32"/>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-12" y="32"/>
-                </Anchors>
-                <ThumbTexture parentKey="thumb" file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle">
-                    <Size x="12" y="100"/>
-                    <Anchors>
-                        <Anchor point="TOP" relativePoint="TOP"/>
-                    </Anchors>
-                </ThumbTexture>
-                <Layers>
-                    <Layer>
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbg">
-                            <Anchors>
-                                <Anchor point="TOP" relativePoint="TOP"/>
-                                <Anchor point="BOTTOM" relativePoint="BOTTOM"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </Slider>
-            <Button parentKey="scrollUp">
-                <Size x="12" y="12"/>
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-12" y="-22"/>
-                </Anchors>
-                <Layers>
-                    <Layer>
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton">
-                            <Size x="12" y="12"/>
-                            <Anchors>
-                                <Anchor point="TOP" relativePoint="TOP"/>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </Button>
-            <Button parentKey="scrollDown">
-                <Size x="12" y="12"/>
-                <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-12" y="18"/>
-                </Anchors>
-                <Layers>
-                    <Layer>
-                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton">
-                            <Size x="12" y="12"/>
-                            <Anchors>
-                                <Anchor point="TOP" relativePoint="TOP"/>
-                            </Anchors>
-                            <TexCoords left="0" right="1" top="1" bottom="0" />
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </Button>
-            <ScrollFrame parentKey="scrollFrame">
-                <Size x="480" y="500"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="0" y="-70"/>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-170"></Anchor>
                 </Anchors>
             </ScrollFrame>
-            <Frame parentKey="scrollchild">
-                <Size x="480" y="500"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="0" y="0"/>
-                    <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
-                </Anchors>
-            </Frame>
         </Frames>
     </Frame>
 
     <Button name="GwProfileItemTmpl" virtual="true">
         <size x="470" y="66"/>
-        <Anchors>
-            <Anchor point="TOPLEFT" x="10" y="0"/>
-        </Anchors>
-        <Layers>
-            <Layer>
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/profiles/profile-item">
-                    <size x="480" y="66"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
-                    </Anchors>
-                    <TexCoords left="0" right="1" top="0" bottom="0.5" />
-                </Texture>
-            </Layer>
-            <Layer textureSubLevel="2">
-                <Texture parentKey="icon" file="Interface/icons/inv_helmet_151">
-                    <size x="56" y="56"/>
-                    <Anchors>
-                        <Anchor point="LEFT" x="5"/>
-                    </Anchors>
-                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
-                </Texture>
-            </Layer>
-            <Layer textureSubLevel="3">
-                <Texture parentKey="portraitframe" file="Interface/AddOns/GW2_UI/textures/profiles/portraitframe">
-                    <size x="64" y="64"/>
-                    <Anchors>
-                        <Anchor point="LEFT" x="1"/>
-                    </Anchors>
-                </Texture>
-                <FontString parentKey="name" text="Name not yet loaded" justifyH="LEFT">
-                    <Size x="200" y="15"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="65" y="-5"/>
-                    </Anchors>
-                </FontString>
-                <FontString parentKey="desc" text="If you see this message. We forgot to load some text. Dont worry we have very capable sample text just like this one to fill you with the information." justifyV="TOP" justifyH="LEFT">
-                    <Size x="200" y="50"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="65" y="-25"/>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-100" y="-10"/>
-                    </Anchors>
-                </FontString>
-            </Layer>
-        </Layers>
         <Frames>
-            <Button hidden="true" parentKey="copyButton">
-                <Size x="20" y="20"/>
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.name" relativePoint="RIGHT" x="10" y="0"/>
-                </Anchors>
-                <Layers>
-                    <Layer>
-                        <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/maximize_button" SetAllPoints="true"/>
-                    </Layer>
-                </Layers>
-            </Button>
-            <Button hidden="true" parentKey="deleteButton">
-                <Size x="56" y="20"/>
-                <Anchors>
-                    <Anchor point="BOTTOMRIGHT" x="-10" y="5"/>
-                </Anchors>
+            <Button parentKey="item" setAllPoints="true" hidden="true">
                 <Layers>
                     <Layer>
                         <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/profiles/profile-item">
-                            <size x="56" y="20"/>
+                            <size x="480" y="66"/>
                             <Anchors>
-                                <Anchor point="BOTTOMRIGHT" x="0"/>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
                             </Anchors>
-                            <Color r="1" g="0.5" b="0.5" a="1"/>
+                            <TexCoords left="0" right="1" top="0" bottom="0.5" />
                         </Texture>
                     </Layer>
-                    <Layer textureSubLevel="2">
-                        <FontString parentKey="string" text="Delete" justifyH="CENTER">
+                    <Layer textureSubLevel="3">
+                        <Texture parentKey="portraitframe" file="Interface/AddOns/GW2_UI/textures/profiles/portraitframe">
+                            <size x="64" y="64"/>
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
-                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                                <Anchor point="LEFT" x="1"/>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="name" text="Name not yet loaded" justifyH="LEFT">
+                            <Size x="350" y="15"/>
+                            <Color r="1" g="1" b="1" a="1"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="65" y="-5"/>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="desc" text="If you see this message. We forgot to load some text. Dont worry we have very capable sample text just like this one to fill you with the information." justifyV="TOP" justifyH="LEFT">
+                            <Size x="200" y="50"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="65" y="-25"/>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-100" y="-10"/>
                             </Anchors>
                         </FontString>
                     </Layer>
                 </Layers>
-            </Button>
-            <Button hidden="true" inherits="GwStandardButton" text="PET_RENAME" parentKey="renameButton">
-                <Size x="90" y="20" />
-                <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-90" y="35"/>
-                </Anchors>
-            </Button>
-            <Button hidden="true" inherits="GwStandardButton" text="Activate" parentKey="activateButton">
-                <Size x="70" y="20" />
-                <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="35"/>
-                </Anchors>
-            </Button>
-            <Button hidden="true" inherits="GwStandardButton" text="EXPORT" parentKey="exportButton">
-                <Size x="90" y="20" />
-                <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-90" y="5"/>
-                </Anchors>
+                <Frames>
+                    <Frame parentKey="activateButton">
+                        <size x="56" y="56"/>
+                        <Anchors>
+                            <Anchor point="LEFT" x="5"/>
+                        </Anchors>
+                        <Layers>
+                            <Layer textureSubLevel="2">
+                                <Texture parentKey="icon" file="Interface/icons/inv_helmet_151">
+                                    <size x="56" y="56"/>
+                                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                                </Texture>
+                            </Layer>
+                             <Layer textureSubLevel="3">
+                                <FontString hidden="true" parentKey="hint" text="SOULBIND_NODE_ACTIVATE" justifyV="MIDDLE" justifyH="CENTER">
+                                    <Size x="54" y="54"/>
+                                    <Color r="1" g="1" b="1" a="1"/>
+                                    <Anchors>
+                                        <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER" x="0" y="0"/>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                    </Frame>
+                    <Button hidden="true" inherits="GwStandardButton" text="ACTIVATE" parentKey="defaultSettings">
+                        <Size x="70" y="20" />
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-10"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="settingsButton" text="" hidden="true">
+                        <Size x="24" y="24" />
+                        <Anchors>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="5"/>
+                        </Anchors>
+                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up"></NormalTexture>
+                        <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Down"></PushedTexture>
+                        <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Down"></HighlightTexture>
+                        <Frames>
+                            <Frame parentKey="dropdown" hidden="true" frameLevel="28">
+                                <Size x="140" y="90"></Size>
+                                <Anchors>
+                                    <Anchor point="BOTTOMRIGHT" relativePoint="LEFT" x="-5" y="-5"></Anchor>
+                                </Anchors>
+                                <Layers>
+                                    <Layer level="OVERLAY" textureSubLevel="2">
+                                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
+                                            <Color r="0" b="0" g="0"/>
+                                            <Anchors>
+                                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                                            </Anchors>
+                                        </Texture>
+                                    </Layer>
+                                </Layers>
+                                <Frames>
+                                    <Button parentKey="rename">
+                                        <Size x="150" y="25"></Size>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" y="30"></Anchor>
+                                        </Anchors>
+                                        <Layers>
+                                            <Layer level="OVERLAY" textureSubLevel="2">
+                                                <FontString parentKey="name" text="PET_RENAME" inherits="ChatBubbleFont" justifyH="LEFT">
+                                                    <Size x="150" y="25"/>
+                                                    <Color r="1" b="1" g="1"/>
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" x="10" y="0"/>
+                                                    </Anchors>
+                                                </FontString>
+                                            </Layer>
+                                        </Layers>
+                                    </Button>
+                                    <Button parentKey="copy">
+                                        <Size x="150" y="25"></Size>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" y="10"></Anchor>
+                                        </Anchors>
+                                        <Layers>
+                                            <Layer level="OVERLAY" textureSubLevel="2">
+                                                <FontString parentKey="name" text="CALENDAR_COPY_EVENT" inherits="ChatBubbleFont" justifyH="LEFT">
+                                                    <Size x="150" y="25"/>
+                                                    <Color r="1" b="1" g="1"/>
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" x="10" y="0"/>
+                                                    </Anchors>
+                                                </FontString>
+                                            </Layer>
+                                        </Layers>
+                                    </Button>
+                                    <Button parentKey="export">
+                                        <Size x="150" y="25"></Size>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" y="-10"></Anchor>
+                                        </Anchors>
+                                        <Layers>
+                                            <Layer level="OVERLAY" textureSubLevel="2">
+                                                <FontString parentKey="name" text="EXPORT" inherits="ChatBubbleFont" justifyH="LEFT">
+                                                    <Size x="150" y="25"/>
+                                                    <Color r="1" b="1" g="1"/>
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" x="10" y="0"/>
+                                                    </Anchors>
+                                                </FontString>
+                                            </Layer>
+                                        </Layers>
+                                    </Button>
+                                    <Button parentKey="delete">
+                                        <Size x="150" y="25"></Size>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativePoint="LEFT" y="-33"></Anchor>
+                                        </Anchors>
+                                        <Layers>
+                                            <Layer level="OVERLAY" textureSubLevel="2">
+                                                <FontString parentKey="name" text="DELETE" inherits="ChatBubbleFont" justifyH="LEFT">
+                                                    <Size x="150" y="25"/>
+                                                    <Color r="1" b="0.2" g="0.2"/>
+                                                    <Anchors>
+                                                        <Anchor point="LEFT" x="10" y="0"/>
+                                                    </Anchors>
+                                                </FontString>
+                                            </Layer>
+                                        </Layers>
+                                    </Button>
+                                </Frames>
+                            </Frame>
+                        </Frames>
+                    </Button>
+                </Frames>
             </Button>
         </Frames>
     </Button>

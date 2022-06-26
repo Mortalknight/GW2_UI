@@ -233,14 +233,14 @@ local function DecodeProfile(dataString)
 end
 GW.DecodeProfile = DecodeProfile
 
-local function ImportProfile(dataString, settingsWindow)
+local function ImportProfile(dataString)
     local profileName, profilePlayer, version, profileDataString = DecodeProfile(dataString)
 
     if not profileDataString or version ~= "Retail" then
         return
     end
 
-    GW.addProfile(settingsWindow, profileName, profileDataString)
+    GW.addProfile(profileName, profileDataString)
 
     return profileName, profilePlayer, version
 end

@@ -12,12 +12,8 @@ L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf"
 
 --Strings
 L[" (Resting)"] = " (休息中)"
-L[ [=[
-Created by: ]=] ] = [=[
-建立角色: ]=]
-L[ [=[
-Last updated: ]=] ] = [=[
-上次更新: ]=]
+L["Created by: "] = "建立角色: "
+L["Last updated: "] = "上次更新: "
 L["%s and then %s"] = "先%s再%s"
 L["%s created a Soulwell."] = "%s 發糖囉～"
 L["%s created a table of Conjured Refreshments."] = "%s 開了餐桌，快來領便當哦～"

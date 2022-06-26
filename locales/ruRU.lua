@@ -12,10 +12,8 @@ L['FONT_DAMAGE'] = 'Interface/AddOns/GW2_UI/fonts/headlines.ttf'
 
 --Strings
 L[" (Resting)"] = " (Вы отдыхаете)"
-L[ [=[
-Created by: ]=] ] = "Создатели:"
-L[ [=[
-Last updated: ]=] ] = "Обновлено:"
+L["Created by: "] = "Создатели: "
+L["Last updated: "] = "Обновлено: "
 L["%s and then %s"] = "%s, затем %s"
 L["%s Indicator"] = "%s индикация"
 L[": Show numbers with commas"] = ": десятичный разделитель"

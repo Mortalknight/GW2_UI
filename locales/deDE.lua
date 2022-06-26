@@ -12,12 +12,8 @@ L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
 
 --Strings
 L[" (Resting)"] = " (Erholen)"
-L[ [=[
-Created by: ]=] ] = [=[
-Erstellt von: ]=]
-L[ [=[
-Last updated: ]=] ] = [=[
-zuletzt aktualisiert: ]=]
+L["Created by: "] = "Erstellt von: "
+L["Last updated: "] = "Zuletzt aktualisiert: "
 L["%s and then %s"] = "%s und dann %s"
 L["%s Indicator"] = "Indikator %s"
 L[": Show numbers with commas"] = ": Zahlen mir Komma anzeigen"

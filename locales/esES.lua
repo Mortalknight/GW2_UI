@@ -12,12 +12,8 @@ L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
 
 --Strings
 L[" (Resting)"] = " (En descanso)"
-L[ [=[
-Created by: ]=] ] = [=[
-Creado por: ]=]
-L[ [=[
-Last updated: ]=] ] = [=[
-Última actualización: ]=]
+L["Created by: "]= "Creado por: "
+L["Last updated: "] = "Última actualización: "
 L["%s and then %s"] = "%s y luego %s"
 L["%s created a Soulwell."] = "%s creó un pozo de alma."
 L["%s created a table of Conjured Refreshments."] = "%s creó una mesa de refrigerio."
