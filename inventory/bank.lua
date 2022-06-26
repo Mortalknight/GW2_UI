@@ -606,7 +606,6 @@ local function LoadBank(helpers)
                     dd:ClearAllPoints()
                     dd:SetPoint(position, dd:GetParent(), "LEFT", 0, -5)
                     dd:Show()
-                    dd:Show()
                 end
             end
         )
