@@ -404,15 +404,13 @@
         <Size x="250" y="20"/>
         <Layers>
             <Layer level="OVERLAY" textureSubLevel="2">
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
+                <Texture parentKey="bg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Color r="0" b="0" g="0"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
                     </Anchors>
                 </Texture>
-            </Layer>
-            <Layer level="OVERLAY" textureSubLevel="3">
                 <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="MIDDLE">
                     <Size x="240" y="20"/>
                     <Color r="1" b="1" g="1"/>
@@ -421,8 +419,12 @@
                     </Anchors>
                 </FontString>
             </Layer>
+             <Layer level="OVERLAY" textureSubLevel="100">
+                <Texture parentKey="hover" file="Interface/AddOns/GW2_UI/textures/uistuff/button" setAllPoints="true" hidden="true"/>
+            </Layer>
         </Layers>
         <Frames>
+
             <CheckButton parentKey="checkbutton" checked="false">
                 <HitRectInsets left="0" right="0" top="0" bottom="0"/>
                 <Size x="16" y="16"/>

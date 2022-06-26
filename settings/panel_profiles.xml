@@ -106,16 +106,15 @@
                                     </Layer>
                                 </Layers>
                                 <Frames>
-                                    <Button parentKey="rename">
-                                        <Size x="150" y="25"></Size>
+                                    <Button parentKey="rename" inherits="GwProfileSettingsButtonTemplate">
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" y="30"></Anchor>
                                         </Anchors>
                                         <Layers>
                                             <Layer level="OVERLAY" textureSubLevel="2">
                                                 <FontString parentKey="name" text="PET_RENAME" inherits="ChatBubbleFont" justifyH="LEFT">
-                                                    <Size x="150" y="25"/>
-                                                    <Color r="1" b="1" g="1"/>
+                                                    <Size x="140" y="20"/>
+                                                    <Color r="0" b="0" g="0"/>
                                                     <Anchors>
                                                         <Anchor point="LEFT" x="10" y="0"/>
                                                     </Anchors>
@@ -123,16 +122,15 @@
                                             </Layer>
                                         </Layers>
                                     </Button>
-                                    <Button parentKey="copy">
-                                        <Size x="150" y="25"></Size>
+                                    <Button parentKey="copy" inherits="GwProfileSettingsButtonTemplate">
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" y="10"></Anchor>
                                         </Anchors>
                                         <Layers>
                                             <Layer level="OVERLAY" textureSubLevel="2">
                                                 <FontString parentKey="name" text="CALENDAR_COPY_EVENT" inherits="ChatBubbleFont" justifyH="LEFT">
-                                                    <Size x="150" y="25"/>
-                                                    <Color r="1" b="1" g="1"/>
+                                                    <Size x="140" y="20"/>
+                                                    <Color r="0" b="0" g="0"/>
                                                     <Anchors>
                                                         <Anchor point="LEFT" x="10" y="0"/>
                                                     </Anchors>
@@ -140,16 +138,15 @@
                                             </Layer>
                                         </Layers>
                                     </Button>
-                                    <Button parentKey="export">
-                                        <Size x="150" y="25"></Size>
+                                    <Button parentKey="export" inherits="GwProfileSettingsButtonTemplate">
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" y="-10"></Anchor>
                                         </Anchors>
                                         <Layers>
                                             <Layer level="OVERLAY" textureSubLevel="2">
                                                 <FontString parentKey="name" text="EXPORT" inherits="ChatBubbleFont" justifyH="LEFT">
-                                                    <Size x="150" y="25"/>
-                                                    <Color r="1" b="1" g="1"/>
+                                                    <Size x="140" y="20"/>
+                                                    <Color r="0" b="0" g="0"/>
                                                     <Anchors>
                                                         <Anchor point="LEFT" x="10" y="0"/>
                                                     </Anchors>
@@ -157,15 +154,14 @@
                                             </Layer>
                                         </Layers>
                                     </Button>
-                                    <Button parentKey="delete">
-                                        <Size x="150" y="25"></Size>
+                                    <Button parentKey="delete" inherits="GwProfileSettingsButtonTemplate">
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" y="-33"></Anchor>
                                         </Anchors>
                                         <Layers>
                                             <Layer level="OVERLAY" textureSubLevel="2">
                                                 <FontString parentKey="name" text="DELETE" inherits="ChatBubbleFont" justifyH="LEFT">
-                                                    <Size x="150" y="25"/>
+                                                    <Size x="140" y="20"/>
                                                     <Color r="1" b="0.2" g="0.2"/>
                                                     <Anchors>
                                                         <Anchor point="LEFT" x="10" y="0"/>
@@ -182,6 +178,15 @@
             </Button>
         </Frames>
     </Button>
+
+    <Button name="GwProfileSettingsButtonTemplate" virtual="true">
+        <Size x="140" y="20"/>
+        <Layers>
+            <Layer textureSubLevel="3">
+                <Texture parentKey="hover" file="Interface/AddOns/GW2_UI/textures/uistuff/button" setAllPoints="true" hidden="true"/>
+            </Layer>
+        </Layers>
+    </Button>            
 
     <Button name="GwCreateNewProfileTmpl" inherits="GwStandardButton" virtual="true" text="New Profile">
         <Size x="70" y="20" />

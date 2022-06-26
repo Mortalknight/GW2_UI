@@ -333,15 +333,23 @@ local function copy_OnClick(self)
     self:GetParent():Hide()
 end
 
+local function settingsSubButtonOnEnter(self)
+    self.hover:Show()
+end
+
+local function settingsSubButtonOnLeave(self)
+    self.hover:Hide()
+end
+
 local function item_OnLoad(self)
+    local settingButtons = {self.settingsButton.dropdown.copy, self.settingsButton.dropdown.export, self.settingsButton.dropdown.rename, self.settingsButton.dropdown.delete}
     self.name:SetFont(UNIT_NAME_FONT, 14)
     self.desc:SetFont(UNIT_NAME_FONT, 10)
     self.activateButton.hint:SetFont(DAMAGE_TEXT_FONT, 10)
     self.activateButton.hint:SetShadowColor(0, 0, 0, 1)
     self.activateButton.hint:SetShadowOffset(1, -1)
 
-    self.desc:SetTextColor(125 / 255, 125 / 255, 125 / 255)
-    self.desc:SetText(L["Text has not loaded."])
+    self.desc:SetTextColor(0.49, 0.49, 0.49)
 
     self.settingsButton.dropdown.export.name:SetText(L["Export"])
 
@@ -352,6 +360,12 @@ local function item_OnLoad(self)
     self.settingsButton.dropdown.export:SetScript("OnClick", export_OnClick)
     self.settingsButton.dropdown.rename:SetScript("OnClick", rename_OnClick)
     self.settingsButton.dropdown.copy:SetScript("OnClick", copy_OnClick)
+
+    for _, button in pairs(settingButtons) do
+        button.hover:SetAlpha(0.5)
+        button:SetScript("OnEnter", settingsSubButtonOnEnter)
+        button:SetScript("OnLeave", settingsSubButtonOnLeave)
+    end
 end
 AddForProfiling("panel_profiles", "item_OnLoad", item_OnLoad)
 
@@ -431,6 +445,37 @@ local function inputPrompt(text, method)
 end
 AddForProfiling("panel_profiles", "inputPrompt", inputPrompt)
 
+local function ItemActivateButtonOnEnter(self)
+    if self:GetParent().canActivate then
+        self.icon:SetBlendMode("ADD")
+        self.icon:SetAlpha(0.5)
+        self.hint:Show()
+
+        self:GetParent():GetScript("OnEnter")(self:GetParent())
+    end
+end
+
+local function ItemActivateButtonOnLeave(self)
+    self.icon:SetBlendMode("BLEND")
+    self.icon:SetAlpha(1)
+    self.hint:Hide()
+
+    self:GetParent():GetScript("OnLeave")(self:GetParent())
+end
+
+local function ItemSettingsButtonOnClick(self)
+    if self.dropdown:IsShown() then
+        self.dropdown:Hide()
+    else
+        self.dropdown:Show()
+    end
+end
+
+local function ItemSettingsDropDownOnLeave(self)
+    local p = self.parentItem
+    if not MouseIsOver(p) then p:GetScript("OnLeave")(p) end
+end
+
 local function ProfileSetup(profilewWin)
     HybridScrollFrame_CreateButtons(profilewWin, "GwProfileItemTmpl", 0, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
     for i = 1, #profilewWin.buttons do
@@ -439,40 +484,16 @@ local function ProfileSetup(profilewWin)
         slot.item:SetScript("OnEnter", item_OnEnter)
         slot.item:SetScript("OnLeave", item_OnLeave)
         if not slot.item.ScriptsHooked then
-            slot.item.settingsButton:SetScript("OnClick", function(self)
-                if self.dropdown:IsShown() then
-                    self.dropdown:Hide()
-                else
-                    self.dropdown:Show()
-                end
-            end)
-            slot.item.settingsButton.dropdown:SetScript("OnLeave", function()
-                if not MouseIsOver(slot.item) then slot.item:GetScript("OnLeave")(slot.item) end
-            end)
-
             item_OnLoad(slot.item)
-            slot.item.settingsButton.dropdown.parentItem = slot.item
-            slot.item.settingsButton.dropdown:SetParent(profilewWin)
 
-            slot.item.activateButton:SetScript("OnEnter", function(self)
-                if slot.item.canActivate then
-                    self.icon:SetBlendMode("ADD")
-                    self.icon:SetAlpha(0.5)
-                    self.hint:Show()
-
-                    self:GetParent():GetScript("OnEnter")(self:GetParent())
-                end
-            end)
-            slot.item.activateButton:SetScript("OnLeave", function(self)
-                self.icon:SetBlendMode("BLEND")
-                self.icon:SetAlpha(1)
-                self.hint:Hide()
-
-                self:GetParent():GetScript("OnLeave")(self:GetParent())
-            end)
-
+            slot.item.settingsButton:SetScript("OnClick", ItemSettingsButtonOnClick)
+            slot.item.settingsButton.dropdown:SetScript("OnLeave", ItemSettingsDropDownOnLeave)
+            slot.item.activateButton:SetScript("OnEnter", ItemActivateButtonOnEnter)
+            slot.item.activateButton:SetScript("OnLeave", ItemActivateButtonOnLeave)
             slot.item.activateButton:SetScript("OnMouseUp", activate_OnClick)
 
+            slot.item.settingsButton.dropdown.parentItem = slot.item
+            slot.item.settingsButton.dropdown:SetParent(profilewWin)
 
             slot.item.ScriptsHooked = true
         end
@@ -554,7 +575,7 @@ local function LoadProfilesPanel(sWindow)
     p.resetToDefaultFrame.item.canRename = false
     p.resetToDefaultFrame.item.canCopy = false
     p.resetToDefaultFrame.item.background:SetTexCoord(0, 1, 0, 0.5)
-    p.resetToDefaultFrame.item.canActivate = true
+    p.resetToDefaultFrame.item.canActivate = false
 
     p.resetToDefaultFrame.item.name:SetText(L["Default Settings"])
     p.resetToDefaultFrame.item.desc:SetText(L["Load the default addon settings to the current profile."])

@@ -566,6 +566,7 @@ local function InitPanel(panel, hasScroll)
                 local slot = scrollFrame.buttons[i]
                 slot:SetWidth(scrollFrame:GetWidth())
                 slot.string:SetFont(UNIT_NAME_FONT, 12)
+                slot.hover:SetAlpha(0.5)
                 slot.of = of
                 if not slot.ScriptsHooked then
                     slot:HookScript("OnClick", function(self)
@@ -599,6 +600,18 @@ local function InitPanel(panel, hasScroll)
                         end
                         --Check all dependencies on this option
                         checkDependenciesOnLoad()
+                    end)
+                    slot:HookScript("OnEnter", function()
+                        slot.hover:Show()
+                    end)
+                    slot.checkbutton:HookScript("OnEnter", function()
+                        slot.hover:Show()
+                    end)
+                    slot:HookScript("OnLeave", function()
+                        slot.hover:Hide()
+                    end)
+                    slot.checkbutton:HookScript("OnLeave", function()
+                        slot.hover:Hide()
                     end)
                     if v.tooltipType then
                         if v.tooltipType == "spell" then

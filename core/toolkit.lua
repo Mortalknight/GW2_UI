@@ -282,7 +282,7 @@ local function CreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShif
     elseif template then
         backdrop:SetBackdrop(template)
     else
-        backdrop:SetBackdrop()
+        backdrop:SetBackdrop(nil)
     end
 end
 
