@@ -420,7 +420,7 @@
                 </FontString>
             </Layer>
              <Layer level="OVERLAY" textureSubLevel="100">
-                <Texture parentKey="hover" file="Interface/AddOns/GW2_UI/textures/uistuff/button" setAllPoints="true" hidden="true"/>
+                <Texture parentKey="hover" file="Interface/AddOns/GW2_UI/textures/uistuff/button_hover" setAllPoints="true" hidden="true"/>
             </Layer>
         </Layers>
         <Frames>

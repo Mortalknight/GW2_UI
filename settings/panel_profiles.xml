@@ -183,7 +183,7 @@
         <Size x="140" y="20"/>
         <Layers>
             <Layer textureSubLevel="3">
-                <Texture parentKey="hover" file="Interface/AddOns/GW2_UI/textures/uistuff/button" setAllPoints="true" hidden="true"/>
+                <Texture parentKey="hover" file="Interface/AddOns/GW2_UI/textures/uistuff/button_hover" setAllPoints="true" hidden="true"/>
             </Layer>
         </Layers>
     </Button>            
