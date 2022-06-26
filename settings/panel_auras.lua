@@ -141,7 +141,9 @@ local function LoadAurasPanel(sWindow)
             auraVals,
             {perSpec = true},
             {["RAID_FRAMES"] = true},
-            nil
+            nil,
+            nil,
+            "spell"
         )
     end
 
