@@ -1131,22 +1131,16 @@
                 </Frames>
             </Button>
 
-            <Button parentKey="new" inherits="GwStandardButton" text="N">
-                <Size x="46" y="15" />
+            <Button parentKey="new" inherits="GwStandardButton" text="NEW">
+                <Size x="72" y="15" />
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.savedLayoutDropDown" relativePoint="BOTTOMLEFT" x="0" y="0"/>
                 </Anchors>
             </Button>
-            <Button parentKey="save" inherits="GwStandardButton" text="S">
-                <Size x="46" y="15" />
+             <Button parentKey="delete" inherits="GwStandardButton" text="DELETE">
+                <Size x="73" y="15" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.new" relativePoint="RIGHT" x="5" y="0"/>
-                </Anchors>
-            </Button>
-             <Button parentKey="delete" inherits="GwStandardButton" text="D">
-                <Size x="46" y="15" />
-                <Anchors>
-                    <Anchor point="LEFT" relativeKey="$parent.save" relativePoint="RIGHT" x="5" y="0"/>
                 </Anchors>
             </Button>
 

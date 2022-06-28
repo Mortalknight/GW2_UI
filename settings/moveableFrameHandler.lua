@@ -191,6 +191,7 @@ local function UpdateMatchingLayout(self, new_point)
     local layout = selectedLayoutId and GW.GetLayoutById(selectedLayoutId) or nil
     local frameFound = false
     if layout then
+        print(layout.name)
         for i = 0, #layout.frames do
             if layout.frames[i].settingName == self.gw_Settings then
                 layout.frames[i].point = nil

@@ -261,13 +261,18 @@ local function CreateNewLayout(self)
         function()
             local savedLayouts = GW.GetAllLayouts()
             local newIdx = #savedLayouts + 1
+            local newMoverFrameIndex = 0
             GW2UI_LAYOUTS[newIdx] = {}
             GW2UI_LAYOUTS[newIdx].name = (GwWarningPrompt.input:GetText() or UNKNOWN)
             GW2UI_LAYOUTS[newIdx].frames = {}
             GW2UI_LAYOUTS[newIdx].id = newIdx
             GW2UI_LAYOUTS[newIdx].profileLayout = false
             for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
-                GW2UI_LAYOUTS[newIdx].frames[#GW2UI_LAYOUTS[newIdx].frames + 1] = moveableFrame
+                GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex] = {}
+                GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].settingName = moveableFrame.gw_Settings
+                GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].point = moveableFrame.savedPoint
+    
+                newMoverFrameIndex = newMoverFrameIndex + 1
             end
             loadLayoutDropDown(self:GetParent().savedLayoutDropDown.container.contentScroll)
 
@@ -391,6 +396,8 @@ local function LoadLayoutsFrame(smallSettingsFrame)
                 smallSettingsFrame.layoutView.savedLayoutDropDown.button.string:SetText(allLayouts[i].name)
                 smallSettingsFrame.layoutView.savedLayoutDropDown.buttonlayoutName = allLayouts[i].name
                 smallSettingsFrame.layoutView.savedLayoutDropDown.button.selectedId = allLayouts[i].id
+
+                GwSmallSettingsWindow.layoutView.delete:Disable()
                 break
             end
         end
