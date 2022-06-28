@@ -19,8 +19,8 @@ local function lockHudObjects(_, inCombat)
         GwSettingsWindow:Show()
     end
 
-    if not moveable_window_placeholders_visible then 
-        GW.toggleHudPlaceholders() 
+    if not moveable_window_placeholders_visible then
+        GW.toggleHudPlaceholders()
     end
     for _, mf in ipairs(GW.MOVABLE_FRAMES) do
         mf:EnableMouse(false)
@@ -40,7 +40,7 @@ GW.AddForProfiling("settings", "lockHudObjects", lockHudObjects)
 local function toggleHudPlaceholders(self)
     for _, mf in pairs(GW.MOVABLE_FRAMES) do
         if mf.Background then
-            if moveable_window_placeholders_visible then 
+            if moveable_window_placeholders_visible then
                 mf.Background:Hide()
                 GW.MoveHudScaleableFrame.hidePlaceholder:SetText(L["Show placeholders"])
             else 
@@ -448,7 +448,6 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         moveframe:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs)
     end
 
-    GW.MOVABLE_FRAMES[#GW.MOVABLE_FRAMES + 1] = moveframe
     moveframe:Hide()
     moveframe:RegisterForDrag("LeftButton")
     moveframe:SetScript("OnEnter", moverframe_OnEnter)
@@ -549,6 +548,8 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
 
     moveframe:SetScript("OnDragStart", mover_OnDragStart)
     moveframe:SetScript("OnDragStop", mover_OnDragStop)
+
+    GW.MOVABLE_FRAMES[#GW.MOVABLE_FRAMES + 1] = moveframe
 end
 GW.RegisterMovableFrame = RegisterMovableFrame
 
@@ -663,6 +664,9 @@ local function LoadMovers()
     end)
     moverSettingsFrame.gridAlign.text:SetText(L["Grid Size:"])
     moverSettingsFrame.gridAlign:Hide()
+
+    --Layout
+    GW.LoadLayoutsFrame(moverSettingsFrame)
 
     moverSettingsFrame:Hide()
     mf:Hide()

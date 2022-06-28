@@ -6,6 +6,55 @@ local LibBase64 = GW.Libs.LibBase64
 local Compress = GW.Libs.Compress
 local Serializer = GW.Libs.Serializer
 
+local function GetAllLayouts()
+    if GW2UI_LAYOUTS == nil then
+        GW2UI_LAYOUTS = {}
+    end
+    return GW2UI_LAYOUTS
+end
+GW.GetAllLayouts = GetAllLayouts
+
+local function GetLayoutById(id)
+    if GW2UI_LAYOUTS == nil then
+        GW2UI_LAYOUTS = {}
+    end
+    return GW2UI_LAYOUTS[id]
+end
+GW.GetLayoutById = GetLayoutById
+
+local function GetAllPrivateLayouts()
+    if GW2UI_PRIVATE_LAYOUTS == nil then
+        GW2UI_PRIVATE_LAYOUTS = {}
+    end
+    return GW2UI_PRIVATE_LAYOUTS
+end
+GW.GetAllPrivateLayouts = GetAllPrivateLayouts
+
+local function GetPrivateLayoutByLayoutId(layoutId)
+    if GW2UI_PRIVATE_LAYOUTS == nil then
+        GW2UI_PRIVATE_LAYOUTS = {}
+    end
+    for k, _ in pairs(GW2UI_PRIVATE_LAYOUTS) do
+        if GW2UI_PRIVATE_LAYOUTS[k].layoutId == layoutId then
+            return GW2UI_PRIVATE_LAYOUTS[k]
+        end
+    end
+    return nil
+end
+GW.GetPrivateLayoutByLayoutId = GetPrivateLayoutByLayoutId
+
+local function DeletePrivateLayoutByLayoutId(layoutId)
+    if GW2UI_PRIVATE_LAYOUTS == nil then
+        GW2UI_PRIVATE_LAYOUTS = {}
+    end
+    for k, _ in pairs(GW2UI_PRIVATE_LAYOUTS) do
+        if GW2UI_PRIVATE_LAYOUTS[k].layoutId == layoutId then
+            GW2UI_PRIVATE_LAYOUTS[k] = nil
+        end
+    end
+end
+GW.DeletePrivateLayoutByLayoutId = DeletePrivateLayoutByLayoutId
+
 local function GetActiveProfile()
     if GW2UI_SETTINGS_DB_03 == nil then
         GW2UI_SETTINGS_DB_03 = {}

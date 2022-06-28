@@ -256,6 +256,15 @@ local function WarningPrompt(text, method)
 end
 GW.WarningPrompt = WarningPrompt
 
+local function InputPrompt(text, method)
+    GwWarningPrompt.string:SetText(text)
+    GwWarningPrompt.method = method
+    GwWarningPrompt:Show()
+    GwWarningPrompt.input:Show()
+    GwWarningPrompt.input:SetText("")
+end
+GW.InputPrompt = InputPrompt
+
 local function setDependenciesOption(type, name, SetEnable, deactivateColor, overrideColor)
     if deactivateColor then
         _G[name].title:SetTextColor(0.82, 0, 0)

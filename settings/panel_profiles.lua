@@ -436,14 +436,7 @@ end
 GW.addProfile = addProfile
 AddForProfiling("panel_profiles", "addProfile", addProfile)
 
-local function inputPrompt(text, method)
-    GwWarningPrompt.string:SetText(text)
-    GwWarningPrompt.method = method
-    GwWarningPrompt:Show()
-    GwWarningPrompt.input:Show()
-    GwWarningPrompt.input:SetText("")
-end
-AddForProfiling("panel_profiles", "inputPrompt", inputPrompt)
+
 
 local function ItemActivateButtonOnEnter(self)
     if self:GetParent().canActivate then
@@ -599,7 +592,7 @@ local function LoadProfilesPanel(sWindow)
     p.createNewProfile:SetText(NEW_COMPACT_UNIT_FRAME_PROFILE)
     p.createNewProfile:SetWidth(p.createNewProfile:GetTextWidth() + 10)
     local fnGCNP_OnClick = function()
-        inputPrompt(
+        GW:InputPrompt(
             NEW_COMPACT_UNIT_FRAME_PROFILE,
             function()
                 addProfile(GwWarningPrompt.input:GetText())
