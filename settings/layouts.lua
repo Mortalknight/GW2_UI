@@ -21,7 +21,7 @@ local function AssignLayoutToSpec(specwin, button, specId, layoutId)
     button.checkbutton:SetChecked(toSet)
 
     if not privateLayoutSettings then
-        local newIdx = #privateLayoutSettings + 1
+        local newIdx = #GW.GetAllPrivateLayouts() + 1
         GW2UI_PRIVATE_LAYOUTS[newIdx] = {}
         GW2UI_PRIVATE_LAYOUTS[newIdx].assignedSpecs = {}
         privateLayoutSettings = GW2UI_PRIVATE_LAYOUTS[newIdx]
@@ -199,6 +199,13 @@ local function SetupLayouts(layoutwin)
                     layoutwin.scrollContainer:Show()
                 end
                 loadSpecDropDown(layoutwin:GetParent():GetParent().specsDropDown.container.contentScroll)
+
+                -- prevent profile layouts from deletion
+                if self.id and GW2UI_LAYOUTS[self.id] and GW2UI_LAYOUTS[self.id].profileLayout then
+                    GwSmallSettingsWindow.layoutView.delete:Disable()
+                else
+                    GwSmallSettingsWindow.layoutView.delete:Enable()
+                end
             end)
             slot:HookScript("OnEnter", function()
                 slot.hover:Show()
@@ -225,7 +232,7 @@ local function CreateProfileLayout()
     if profileIndex then
         for i = 0, #savedLayouts do
             if savedLayouts[i] then
-                if savedLayouts[i].name == L["Profiles"] .. " - " .. GW2UI_SETTINGS_PROFILES[profileIndex].profilename then
+                if savedLayouts[i].name == L["Profiles"] .. " - " .. GW2UI_SETTINGS_PROFILES[profileIndex].profilename and savedLayouts[i].profileLayout == true then
                     needToCreate = false
                     break
                 end
@@ -238,6 +245,8 @@ local function CreateProfileLayout()
         GW2UI_LAYOUTS[newIdx] = {}
         GW2UI_LAYOUTS[newIdx].name = L["Profiles"] .. " - " .. GW2UI_SETTINGS_PROFILES[profileIndex].profilename
         GW2UI_LAYOUTS[newIdx].frames = {}
+        GW2UI_LAYOUTS[newIdx].id = newIdx
+        GW2UI_LAYOUTS[newIdx].profileLayout = true
         for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
             GW2UI_LAYOUTS[newIdx].frames[#GW2UI_LAYOUTS[newIdx].frames + 1] = moveableFrame
         end
@@ -254,6 +263,7 @@ local function CreateNewLayout(self)
             GW2UI_LAYOUTS[newIdx].name = (GwWarningPrompt.input:GetText() or UNKNOWN)
             GW2UI_LAYOUTS[newIdx].frames = {}
             GW2UI_LAYOUTS[newIdx].id = newIdx
+            GW2UI_LAYOUTS[newIdx].profileLayout = false
             for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
                 GW2UI_LAYOUTS[newIdx].frames[#GW2UI_LAYOUTS[newIdx].frames + 1] = moveableFrame
             end
@@ -279,6 +289,59 @@ local function DeleteSelectedLayout(self)
             GwWarningPrompt:Hide()
         end
     )
+end
+
+local function specSwitchHandlerOnEvent(self, event)
+    local currentSpecIdx = GetSpecialization()
+
+    if event == "PLAYER_SPECIALIZATION_CHANGED" and self.currentSpecIdx == currentSpecIdx then
+        return
+    end
+
+    local privateLayouSettings = GW.GetAllPrivateLayouts()
+    local layoutIdToUse
+    local layoutToUse
+
+    self.currentSpecIdx = currentSpecIdx
+
+    for i = 0, #privateLayouSettings do
+        if privateLayouSettings[i] then
+            if privateLayouSettings[i].assignedSpecs[currentSpecIdx] ~= nil and privateLayouSettings[i].assignedSpecs[currentSpecIdx] == true then
+                layoutIdToUse = privateLayouSettings[i].layoutId
+                break
+            end
+        end
+    end
+
+    if layoutIdToUse then
+        layoutToUse = GW.GetLayoutById(layoutIdToUse)
+    end
+    if layoutToUse then
+        print("Spec switch detected!", "Switch to Layout ID", layoutIdToUse, "With name:", layoutToUse.name)
+    else
+        local profileIndex = GW.GetActiveProfile()
+        local allLayouts = GW.GetAllLayouts()
+
+        if profileIndex then
+            for i = 0, #allLayouts do
+                if allLayouts[i] then
+                    if allLayouts[i].name == L["Profiles"] .. " - " .. GW2UI_SETTINGS_PROFILES[profileIndex].profilename and allLayouts[i].profileLayout == true then
+                        layoutToUse = allLayouts[i]
+                        break
+                    end
+                end
+            end
+
+            print("Spec switch detected!", "No assinged layout found! Switch to profile layout with name:", layoutToUse.name)
+        else
+            print("Spec switch detected!", "No assinged layout found! No profile Layout found! Do nothing!")
+        end
+    end
+
+
+    if event == "PLAYER_ENTERING_WORLD" then
+        self:UnregisterEvent(event)
+    end
 end
 
 local function LoadLayoutsFrame(smallSettingsFrame)
@@ -358,7 +421,7 @@ local function LoadLayoutsFrame(smallSettingsFrame)
     SetupSpecs(specScrollFrame)
 
     smallSettingsFrame.layoutView.specsDropDown.button:SetScript("OnClick", function(self)
-        if smallSettingsFrame.layoutView.savedLayoutDropDown.button.string:GetText() == L["<Select a Layout>"] then return end
+        if smallSettingsFrame.layoutView.savedLayoutDropDown.button.selectedId == -1 then return end
         local dd = self:GetParent()
         if dd.container:IsShown() then
             dd.container:Hide()
@@ -370,6 +433,14 @@ local function LoadLayoutsFrame(smallSettingsFrame)
     -- new, delete layout
     smallSettingsFrame.layoutView.new:SetScript("OnClick", CreateNewLayout)
     smallSettingsFrame.layoutView.delete:SetScript("OnClick", DeleteSelectedLayout)
+
+    -- specswitch detaction things
+    local specSwitchHandler = CreateFrame("Frame")
+    specSwitchHandler.currentSpecIdx = GetSpecialization() -- sometimes PLAYER_SPECIALIZATION_CHANGED fired twice, so we prevent a double call
+
+    specSwitchHandler:RegisterEvent("PLAYER_ENTERING_WORLD") -- for start up
+    specSwitchHandler:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    specSwitchHandler:SetScript("OnEvent", specSwitchHandlerOnEvent)
 
     --GW2UI_PRIVATE_LAYOUTS= nil
 end
