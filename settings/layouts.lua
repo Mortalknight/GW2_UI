@@ -138,16 +138,12 @@ local function loadLayoutDropDown(layoutwin)
     local layouts = {}
     local tableIndex = 1
 
-    layouts[1] = {}
-    layouts[1].name = L["<Select a Layout>"]
-    layouts[1].id = -1
-
     for k, _ in pairs(savedLayouts) do
         if savedLayouts[k] then
-            tableIndex = tableIndex + 1
             layouts[tableIndex] = {}
             layouts[tableIndex].name = savedLayouts[k].name
             layouts[tableIndex].id = k
+            tableIndex = tableIndex + 1
         end
     end
 
@@ -232,7 +228,7 @@ local function CreateProfileLayout()
     if profileIndex then
         for i = 0, #savedLayouts do
             if savedLayouts[i] then
-                if savedLayouts[i].name == L["Profiles"] .. " - " .. GW2UI_SETTINGS_PROFILES[profileIndex].profilename and savedLayouts[i].profileLayout == true then
+                if savedLayouts[i].profileLayout == true and savedLayouts[i].profileId == profileIndex then
                     needToCreate = false
                     break
                 end
@@ -242,13 +238,19 @@ local function CreateProfileLayout()
 
     if needToCreate and profileIndex then
         local newIdx = #savedLayouts + 1
+        local newMoverFrameIndex = 0
         GW2UI_LAYOUTS[newIdx] = {}
         GW2UI_LAYOUTS[newIdx].name = L["Profiles"] .. " - " .. GW2UI_SETTINGS_PROFILES[profileIndex].profilename
         GW2UI_LAYOUTS[newIdx].frames = {}
         GW2UI_LAYOUTS[newIdx].id = newIdx
         GW2UI_LAYOUTS[newIdx].profileLayout = true
+        GW2UI_LAYOUTS[newIdx].profileId = profileIndex
         for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
-            GW2UI_LAYOUTS[newIdx].frames[#GW2UI_LAYOUTS[newIdx].frames + 1] = moveableFrame
+            GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex] = {}
+            GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].settingName = moveableFrame.gw_Settings
+            GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].point = moveableFrame.savedPoint
+
+            newMoverFrameIndex = newMoverFrameIndex + 1
         end
     end
 end
@@ -283,7 +285,7 @@ local function DeleteSelectedLayout(self)
             GW.DeletePrivateLayoutByLayoutId(self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId)
             loadLayoutDropDown(self:GetParent().savedLayoutDropDown.container.contentScroll)
 
-            self:GetParent().savedLayoutDropDown.button.string:SetText(L["<Select a Layout>"])
+            self:GetParent().savedLayoutDropDown.button.string:SetText("")
             self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId = nil
 
             GwWarningPrompt:Hide()
@@ -332,6 +334,11 @@ local function specSwitchHandlerOnEvent(self, event)
                 end
             end
 
+            if not layoutToUse then
+                C_Timer.After(1, function() specSwitchHandlerOnEvent(self, event) end)
+                return
+            end
+
             print("Spec switch detected!", "No assinged layout found! Switch to profile layout with name:", layoutToUse.name)
         else
             print("Spec switch detected!", "No assinged layout found! No profile Layout found! Do nothing!")
@@ -349,7 +356,7 @@ local function LoadLayoutsFrame(smallSettingsFrame)
     smallSettingsFrame.layoutView.headerString:SetFont(UNIT_NAME_FONT, 14)
     smallSettingsFrame.layoutView.desc:SetFont(UNIT_NAME_FONT, 12)
     smallSettingsFrame.layoutView.desc:SetText(L["Assign layouts to a spec. The layout will be automatically changed on a spec switch.\n\nLayouts has always priority for profile settings."])
-    smallSettingsFrame.layoutView.isExpanded = false
+    smallSettingsFrame.layoutView.isExpanded = true
     smallSettingsFrame.layoutViewToggle:SetScript("OnClick", function()
         if smallSettingsFrame.layoutView.isExpanded then
             smallSettingsFrame.layoutViewToggle.icon:SetTexCoord(1, 0, 1, 0)
@@ -368,13 +375,25 @@ local function LoadLayoutsFrame(smallSettingsFrame)
     smallSettingsFrame.layoutView.specsDropDown.title:SetFont(DAMAGE_TEXT_FONT, 12)
     smallSettingsFrame.layoutView.specsDropDown.title:SetText(SPECIALIZATION)
 
-    smallSettingsFrame.layoutView.savedLayoutDropDown.button.string:SetText(L["<Select a Layout>"])
+    -- start with the current profile layout add it at the timer function in case this is the first login
     smallSettingsFrame.layoutView.specsDropDown.button.string:SetText(L["<Select specializations>"])
 
     --create or get profile layout
     C_Timer.After(1, function()
         CreateProfileLayout()
         loadLayoutDropDown(smallSettingsFrame.layoutView.savedLayoutDropDown.container.contentScroll)
+        -- get the current profile layout
+        local allLayouts = GW.GetAllLayouts()
+        local currentProfileIndex = GW.GetActiveProfile()
+
+        for i = 0, #allLayouts do
+            if allLayouts[i] and allLayouts[i].profileId == currentProfileIndex then
+                smallSettingsFrame.layoutView.savedLayoutDropDown.button.string:SetText(allLayouts[i].name)
+                smallSettingsFrame.layoutView.savedLayoutDropDown.buttonlayoutName = allLayouts[i].name
+                smallSettingsFrame.layoutView.savedLayoutDropDown.button.selectedId = allLayouts[i].id
+                break
+            end
+        end
     end)
 
     --load layout dropdown
@@ -421,7 +440,6 @@ local function LoadLayoutsFrame(smallSettingsFrame)
     SetupSpecs(specScrollFrame)
 
     smallSettingsFrame.layoutView.specsDropDown.button:SetScript("OnClick", function(self)
-        if smallSettingsFrame.layoutView.savedLayoutDropDown.button.selectedId == -1 then return end
         local dd = self:GetParent()
         if dd.container:IsShown() then
             dd.container:Hide()

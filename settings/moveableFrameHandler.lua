@@ -186,6 +186,31 @@ local function Grid_Show_Hide(self)
     end
 end
 
+local function UpdateMatchingLayout(self, new_point)
+    local selectedLayoutId = GwSmallSettingsWindow.layoutView.savedLayoutDropDown.button.selectedId
+    local layout = selectedLayoutId and GW.GetLayoutById(selectedLayoutId) or nil
+    local frameFound = false
+    if layout then
+        for i = 0, #layout.frames do
+            if layout.frames[i].settingName == self.gw_Settings then
+                layout.frames[i].point = nil
+                layout.frames[i].point = GW.copyTable(nil, new_point)
+
+                frameFound = true
+                break
+            end
+        end
+
+        -- could be a new moveable frame which is not at the layout settings, so we need to add it here
+        if not frameFound then
+            local newIdx = #layout.frames + 1
+            layout.frames[newIdx] = {}
+            layout.frames[newIdx].settingName = self.gw_Settings
+            layout.frames[newIdx].point = GW.copyTable(nil, new_point)
+        end
+    end
+end
+
 local function smallSettings_resetToDefault(self)
     local mf = self:GetParent().child
     --local f = mf.gw_frame
@@ -250,6 +275,9 @@ local function smallSettings_resetToDefault(self)
     end
 
     GW.UpdateHudScale()
+
+    --also update the selected layout
+    UpdateMatchingLayout(mf, new_point)
 end
 GW.AddForProfiling("index", "smallSettings_resetToDefault", smallSettings_resetToDefault)
 
@@ -292,6 +320,9 @@ local function mover_OnDragStop(self)
     self:SetMovable(true)
     self:SetUserPlaced(true)
     self.IsMoving = false
+
+    --also update the selected layout
+    UpdateMatchingLayout(self, new_point)
 end
 GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
 
@@ -437,15 +468,15 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     moveframe:SetClampedToScreen(true)
 
     -- position mover (as fallback use the default position)
-    local framePoint = GetSetting(settingsName)
-    local defaultPoint = GetDefault(settingsName)
+    moveframe.savedPoint = GetSetting(settingsName)
+    moveframe.defaultPoint = GetDefault(settingsName)
     moveframe:ClearAllPoints()
-    if not framePoint.point or not framePoint.relativePoint or not framePoint.xOfs or not framePoint.yOfs then
+    if not moveframe.savedPoint.point or not moveframe.savedPoint.relativePoint or not moveframe.savedPoint.xOfs or not moveframe.savedPoint.yOfs then
         -- use default position
-        moveframe:SetPoint(defaultPoint.point, UIParent, defaultPoint.relativePoint, defaultPoint.xOfs, defaultPoint.yOfs)
-        framePoint = defaultPoint
+        moveframe:SetPoint(moveframe.defaultPoint.point, UIParent, moveframe.defaultPoint.relativePoint, moveframe.defaultPoint.xOfs, moveframe.defaultPoint.yOfs)
+        moveframe.savedPoint = moveframe.defaultPoint
     else
-        moveframe:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs)
+        moveframe:SetPoint(moveframe.savedPoint.point, UIParent, moveframe.savedPoint.relativePoint, moveframe.savedPoint.xOfs, moveframe.savedPoint.yOfs)
     end
 
     moveframe:Hide()
@@ -453,23 +484,23 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     moveframe:SetScript("OnEnter", moverframe_OnEnter)
     moveframe:SetScript("OnLeave", moverframe_OnLeave)
 
-    if framePoint.hasMoved == nil then -- can be removed after some time
-         if defaultPoint.point == framePoint.point and defaultPoint.relativePoint == framePoint.relativePoint and defaultPoint.xOfs == framePoint.xOfs and defaultPoint.yOfs == framePoint.yOfs then
+    if moveframe.savedPoint.hasMoved == nil then -- can be removed after some time
+         if moveframe.defaultPoint.point == moveframe.savedPoint.point and moveframe.defaultPoint.relativePoint == moveframe.savedPoint.relativePoint and moveframe.defaultPoint.xOfs == moveframe.savedPoint.xOfs and moveframe.defaultPoint.yOfs == moveframe.savedPoint.yOfs then
             frame.isMoved = false
             frame:SetAttribute("isMoved", false)
         else
             frame.isMoved = true
             frame:SetAttribute("isMoved", true)
         end
-    elseif framePoint.hasMoved ~= nil then
-        frame.isMoved = framePoint.hasMoved
-        frame:SetAttribute("isMoved", framePoint.hasMoved)
+    elseif moveframe.savedPoint.hasMoved ~= nil then
+        frame.isMoved = moveframe.savedPoint.hasMoved
+        frame:SetAttribute("isMoved", moveframe.savedPoint.hasMoved)
     end
 
      --temp to migrate to new isMoved system
-    if framePoint.hasMoved == nil then
-        framePoint.hasMoved = frame.isMoved or false
-        SetSetting(settingsName, framePoint)
+    if moveframe.savedPoint.hasMoved == nil then
+        moveframe.savedPoint.hasMoved = frame.isMoved or false
+        SetSetting(settingsName, moveframe.savedPoint)
     end
 
     if mhf then

@@ -221,6 +221,15 @@ local function deleteProfile(index)
     if GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] ~= nil and GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] == index then
         SetSetting("ACTIVE_PROFILE", nil)
     end
+
+    -- delete also all "attached" layouts
+    local allLayouts = GW.GetAllLayouts()
+    for i = 0, #allLayouts do
+        if allLayouts[i] and allLayouts[i].profileId == index then
+            GW2UI_LAYOUTS[i] = nil
+            break
+        end
+    end
 end
 AddForProfiling("panel_profiles", "deleteProfile", deleteProfile)
 

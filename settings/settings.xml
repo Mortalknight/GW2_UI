@@ -825,7 +825,7 @@
                 <Layers>
                     <Layer>
                         <Texture parentKey="icon" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\character\backicon">
-                            <TexCoords left="1" right="0" top="0" bottom="1"/>
+                            <TexCoords left="0" right="1" top="0" bottom="1"/>
                         </Texture>
                     </Layer>
                 </Layers>
@@ -1029,7 +1029,7 @@
         </Frames> 
     </Frame>
 
-    <Frame name="GwLayoutView" virtual="true" hidden="true">
+    <Frame name="GwLayoutView" virtual="true" hidden="false">
         <Size x="170" y="285"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativeKey="$parent.layoutViewToggle" relativePoint="TOPRIGHT" x="2" y="-20"></Anchor>
