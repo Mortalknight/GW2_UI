@@ -537,8 +537,8 @@ local function evPlayerLogin(self)
     end
     GW.CombatQueue_Initialize()
 
-        --Create the mainbar layout manager
-        local lm = GW.LoadMainbarLayout()
+    --Create the mainbar layout manager
+    local lm = GW.LoadMainbarLayout()
 
     --Create Settings window
     GW.LoadMovers(lm.layoutFrame)
