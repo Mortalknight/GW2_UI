@@ -6,7 +6,7 @@ local L = GW.L
 
 local moveable_window_placeholders_visible = true
 local settings_window_open_before_change = false
-local function lockHudObjects(_, inCombat)
+local function lockHudObjects(self, inCombat)
     GW.MoveHudScaleableFrame:UnregisterAllEvents()
     if InCombatLockdown() then
         DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
@@ -33,6 +33,8 @@ local function lockHudObjects(_, inCombat)
         GW.MoveHudScaleableFrame.showGrid.forceHide = false
         GW.MoveHudScaleableFrame.showGrid:SetText(L["Show grid"])
     end
+
+    self:GetParent().layoutManager:GetScript("OnEvent")(self:GetParent().layoutManager)
 end
 GW.lockHudObjects = lockHudObjects
 GW.AddForProfiling("settings", "lockHudObjects", lockHudObjects)
@@ -191,7 +193,6 @@ local function UpdateMatchingLayout(self, new_point)
     local layout = selectedLayoutId and GW.GetLayoutById(selectedLayoutId) or nil
     local frameFound = false
     if layout then
-        print(layout.name)
         for i = 0, #layout.frames do
             if layout.frames[i].settingName == self.gw_Settings then
                 layout.frames[i].point = nil
@@ -301,29 +302,35 @@ local function mover_OnDragStop(self)
     self:StopMovingOrSizing()
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
 
-    local new_point = GetSetting(settingsName)
-    new_point.point = point
-    new_point.relativePoint = relativePoint
-    new_point.xOfs = xOfs and math.floor(xOfs) or 0
-    new_point.yOfs = yOfs and math.floor(yOfs) or 0
-    new_point.hasMoved = true
-    self:ClearAllPoints()
-    self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
-    SetSetting(settingsName, new_point)
+    -- for layouts: if newPoint is old point, do not update the setting
+    if self.defaultPoint.point ~= point or self.defaultPoint.relativePoint ~= relativePoint or self.defaultPoint.xOfs ~= xOfs or self.defaultPoint.yOfs ~= yOfs then
+        local new_point = GetSetting(settingsName)
+        new_point.point = point
+        new_point.relativePoint = relativePoint
+        new_point.xOfs = xOfs and math.floor(xOfs) or 0
+        new_point.yOfs = yOfs and math.floor(yOfs) or 0
+        new_point.hasMoved = true
+        self:ClearAllPoints()
+        self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
+        SetSetting(settingsName, new_point)
 
-    self.isMoved = true
-    self:SetAttribute("isMoved", true)
+
+        self.isMoved = true
+        self:SetAttribute("isMoved", true)
+
+        self:SetMovable(true)
+        self:SetUserPlaced(true)
+
+        --also update the selected layout
+        UpdateMatchingLayout(self, new_point)
+    end
 
     if self.gw_postdrag then
         self.gw_postdrag(self.gw_frame)
     end
-
-    self:SetMovable(true)
-    self:SetUserPlaced(true)
     self.IsMoving = false
 
-    --also update the selected layout
-    UpdateMatchingLayout(self, new_point)
+    
 end
 GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
 
@@ -448,7 +455,7 @@ local function moverframe_OnLeave(self)
 end
 
 local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, smallOptions, mhf, postdrag)
-    local moveframe = CreateFrame("Frame", nil, UIParent, dummyFrame)
+    local moveframe = CreateFrame("Frame", "Gw_" .. settingsName, UIParent, dummyFrame)
     frame.gwMover = moveframe
     if size then
         moveframe:SetSize(unpack(size))
@@ -597,7 +604,7 @@ local function MoveFrameByPixel(nudgeX, nudgeY)
     mover_OnDragStop(mover)
 end
 
-local function LoadMovers()
+local function LoadMovers(layoutManager)
     -- Create mover settings frame
     local fnMf_OnDragStart = function(self)
         self:StartMoving()
@@ -611,6 +618,8 @@ local function LoadMovers()
     mf:SetScript("OnDragStop", fnMf_OnDragStop)
 
     local moverSettingsFrame = CreateFrame("Frame", "GwSmallSettingsWindow", UIParent, "GwSmallSettings")
+    moverSettingsFrame.layoutManager = layoutManager
+
     moverSettingsFrame.scaleSlider.slider:SetMinMaxValues(0.5, 1.5)
     moverSettingsFrame.scaleSlider.slider:SetValue(1)
     moverSettingsFrame.scaleSlider.slider:SetScript("OnValueChanged", sliderValueChange)
@@ -698,7 +707,7 @@ local function LoadMovers()
     moverSettingsFrame.gridAlign:Hide()
 
     --Layout
-    GW.LoadLayoutsFrame(moverSettingsFrame)
+    GW.LoadLayoutsFrame(moverSettingsFrame, layoutManager)
 
     moverSettingsFrame:Hide()
     mf:Hide()

@@ -51,6 +51,7 @@ end
 
 local function LoadTalkingHeadSkin()
     if not GW.GetSetting("TALKINGHEAD_SKIN_ENABLED") then return end
+    TalkingHead_LoadUI() -- needs to be loaded here for layouts
 
     if IsAddOnLoaded("Blizzard_TalkingHeadUI") then
         InitTalkingHeadFrame()
@@ -59,7 +60,7 @@ local function LoadTalkingHeadSkin()
         f:RegisterEvent("PLAYER_ENTERING_WORLD")
         f:SetScript("OnEvent", function(self, event)
             self:UnregisterEvent(event)
-            _G.TalkingHead_LoadUI()
+            TalkingHead_LoadUI()
             InitTalkingHeadFrame()
         end)
     end

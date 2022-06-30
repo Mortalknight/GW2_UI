@@ -18,7 +18,7 @@ local function GetLayoutById(id)
     if GW2UI_LAYOUTS == nil then
         GW2UI_LAYOUTS = {}
     end
-    return GW2UI_LAYOUTS[id]
+    return GW2UI_LAYOUTS[id] or nil
 end
 GW.GetLayoutById = GetLayoutById
 
@@ -148,6 +148,7 @@ GW.SetOverrideIncompatibleAddons = SetOverrideIncompatibleAddons
 
 local function ResetToDefault()
     local profileIndex = GetActiveProfile()
+    local allLayouts = GetAllLayouts()
 
     if profileIndex ~= nil and GW2UI_SETTINGS_PROFILES[profileIndex] ~= nil then
         GW2UI_SETTINGS_PROFILES[profileIndex] = nil
@@ -157,6 +158,14 @@ local function ResetToDefault()
         GW2UI_SETTINGS_PROFILES[profileIndex]["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
         GW2UI_SETTINGS_PROFILES[profileIndex]["profileCreatedDate"] = date("%m/%d/%y %H:%M:%S")
         GW2UI_SETTINGS_PROFILES[profileIndex]["profileCreatedCharacter"] = UNKNOWN
+        -- also rest the matching profile layout
+        for i = 0, #allLayouts do
+            if allLayouts[i] and allLayouts[i].profileLayout and allLayouts[i].profileId == profileIndex then
+                GW2UI_LAYOUTS[i] = nil
+                break
+            end
+        end
+
         return
     end
     GW2UI_SETTINGS_DB_03 = GW_DEFAULT

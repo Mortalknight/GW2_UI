@@ -1,6 +1,32 @@
 local _, GW = ...
 local L = GW.L
 
+local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdown)
+    if updateDropdown then
+        GwSmallSettingsWindow.layoutView.savedLayoutDropDown.button.string:SetText(layout.name)
+        GwSmallSettingsWindow.layoutView.savedLayoutDropDown.button.layoutName = layout.name
+        GwSmallSettingsWindow.layoutView.savedLayoutDropDown.button.selectedId = layout.id
+        GwSmallSettingsWindow.layoutView.savedLayoutDropDown.button.setByUpdateFramePositionForLayout = true
+
+        GwSmallSettingsWindow.layoutView.specsDropDown.container.contentScroll.update(GwSmallSettingsWindow.layoutView.specsDropDown.container.contentScroll)
+
+        GwSmallSettingsWindow.layoutView.delete:SetEnabled(not layout.profileLayout)
+    end
+
+    for k, _ in pairs(layout.frames) do
+        local frame = layout.frames[k]
+        if frame then
+            _G["Gw_" .. frame.settingName]:ClearAllPoints()
+            _G["Gw_" .. frame.settingName]:SetPoint(frame.point.point, UIParent, frame.point.relativePoint, frame.point.xOfs, frame.point.yOfs)
+            _G["Gw_" .. frame.settingName]:GetScript("OnDragStop")(_G["Gw_" .. frame.settingName])
+        end
+    end
+
+    if layoutManager then
+        layoutManager:GetScript("OnEvent")(layoutManager)
+    end
+end
+
 local function AssignLayoutToSpec(specwin, button, specId, layoutId)
     local allLayouts = GW.GetAllLayouts()
     local allPrivateLayouts = GW.GetAllPrivateLayouts()
@@ -202,6 +228,9 @@ local function SetupLayouts(layoutwin)
                 else
                     GwSmallSettingsWindow.layoutView.delete:Enable()
                 end
+
+                -- load layout
+                UpdateFramePositionForLayout(GW.GetLayoutById(self.id))
             end)
             slot:HookScript("OnEnter", function()
                 slot.hover:Show()
@@ -271,7 +300,7 @@ local function CreateNewLayout(self)
                 GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex] = {}
                 GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].settingName = moveableFrame.gw_Settings
                 GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].point = moveableFrame.savedPoint
-    
+
                 newMoverFrameIndex = newMoverFrameIndex + 1
             end
             loadLayoutDropDown(self:GetParent().savedLayoutDropDown.container.contentScroll)
@@ -305,16 +334,16 @@ local function specSwitchHandlerOnEvent(self, event)
         return
     end
 
-    local privateLayouSettings = GW.GetAllPrivateLayouts()
+    local privateLayoutSettings = GW.GetAllPrivateLayouts()
     local layoutIdToUse
     local layoutToUse
 
     self.currentSpecIdx = currentSpecIdx
 
-    for i = 0, #privateLayouSettings do
-        if privateLayouSettings[i] then
-            if privateLayouSettings[i].assignedSpecs[currentSpecIdx] ~= nil and privateLayouSettings[i].assignedSpecs[currentSpecIdx] == true then
-                layoutIdToUse = privateLayouSettings[i].layoutId
+    for i = 0, #privateLayoutSettings do
+        if privateLayoutSettings[i] then
+            if privateLayoutSettings[i].assignedSpecs[currentSpecIdx] ~= nil and privateLayoutSettings[i].assignedSpecs[currentSpecIdx] == true then
+                layoutIdToUse = privateLayoutSettings[i].layoutId
                 break
             end
         end
@@ -324,7 +353,7 @@ local function specSwitchHandlerOnEvent(self, event)
         layoutToUse = GW.GetLayoutById(layoutIdToUse)
     end
     if layoutToUse then
-        print("Spec switch detected!", "Switch to Layout ID", layoutIdToUse, "With name:", layoutToUse.name)
+        GW.Debug("Spec switch detected!", "Switch to Layout ID", layoutIdToUse, "With name:", layoutToUse.name)
     else
         local profileIndex = GW.GetActiveProfile()
         local allLayouts = GW.GetAllLayouts()
@@ -344,19 +373,23 @@ local function specSwitchHandlerOnEvent(self, event)
                 return
             end
 
-            print("Spec switch detected!", "No assinged layout found! Switch to profile layout with name:", layoutToUse.name)
+            GW.Debug("Spec switch detected!", "No assinged layout found! Switch to profile layout with name:", layoutToUse.name)
         else
-            print("Spec switch detected!", "No assinged layout found! No profile Layout found! Do nothing!")
+            GW.Debug("Spec switch detected!", "No assinged layout found! No profile Layout found! Do nothing!")
         end
     end
 
+    if layoutToUse then
+        UpdateFramePositionForLayout(layoutToUse, self.layoutManager, true)
+    end
 
     if event == "PLAYER_ENTERING_WORLD" then
         self:UnregisterEvent(event)
     end
 end
 
-local function LoadLayoutsFrame(smallSettingsFrame)
+local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
+    --GW2UI_LAYOUTS = nil
     smallSettingsFrame.layoutView = CreateFrame("Frame", nil, smallSettingsFrame, "GwLayoutView")
     smallSettingsFrame.layoutView.headerString:SetFont(UNIT_NAME_FONT, 14)
     smallSettingsFrame.layoutView.desc:SetFont(UNIT_NAME_FONT, 12)
@@ -387,18 +420,20 @@ local function LoadLayoutsFrame(smallSettingsFrame)
     C_Timer.After(1, function()
         CreateProfileLayout()
         loadLayoutDropDown(smallSettingsFrame.layoutView.savedLayoutDropDown.container.contentScroll)
-        -- get the current profile layout
-        local allLayouts = GW.GetAllLayouts()
-        local currentProfileIndex = GW.GetActiveProfile()
+        if not smallSettingsFrame.layoutView.savedLayoutDropDown.button.setByUpdateFramePositionForLayout then
+            -- get the current profile layout
+            local allLayouts = GW.GetAllLayouts()
+            local currentProfileIndex = GW.GetActiveProfile()
 
-        for i = 0, #allLayouts do
-            if allLayouts[i] and allLayouts[i].profileId == currentProfileIndex then
-                smallSettingsFrame.layoutView.savedLayoutDropDown.button.string:SetText(allLayouts[i].name)
-                smallSettingsFrame.layoutView.savedLayoutDropDown.buttonlayoutName = allLayouts[i].name
-                smallSettingsFrame.layoutView.savedLayoutDropDown.button.selectedId = allLayouts[i].id
+            for i = 0, #allLayouts do
+                if allLayouts[i] and allLayouts[i].profileId == currentProfileIndex then
+                    smallSettingsFrame.layoutView.savedLayoutDropDown.button.string:SetText(allLayouts[i].name)
+                    smallSettingsFrame.layoutView.savedLayoutDropDown.button.layoutName = allLayouts[i].name
+                    smallSettingsFrame.layoutView.savedLayoutDropDown.button.selectedId = allLayouts[i].id
 
-                GwSmallSettingsWindow.layoutView.delete:Disable()
-                break
+                    GwSmallSettingsWindow.layoutView.delete:Disable()
+                    break
+                end
             end
         end
     end)
@@ -466,6 +501,7 @@ local function LoadLayoutsFrame(smallSettingsFrame)
     specSwitchHandler:RegisterEvent("PLAYER_ENTERING_WORLD") -- for start up
     specSwitchHandler:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     specSwitchHandler:SetScript("OnEvent", specSwitchHandlerOnEvent)
+    specSwitchHandler.layoutManager = layoutManager
 
     --GW2UI_PRIVATE_LAYOUTS= nil
 end

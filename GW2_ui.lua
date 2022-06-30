@@ -537,8 +537,11 @@ local function evPlayerLogin(self)
     end
     GW.CombatQueue_Initialize()
 
+        --Create the mainbar layout manager
+        local lm = GW.LoadMainbarLayout()
+
     --Create Settings window
-    GW.LoadMovers()
+    GW.LoadMovers(lm.layoutFrame)
     GW.LoadSettings()
 
     -- load alert settings
@@ -556,8 +559,7 @@ local function evPlayerLogin(self)
     GW.InitializeMiscFunctions()
     GW.LoadRaidMarker()
 
-    --Create the mainbar layout manager
-    local lm = GW.LoadMainbarLayout()
+
 
     --Create general skins
     if GetSetting("MAINMENU_SKIN_ENABLED") then
