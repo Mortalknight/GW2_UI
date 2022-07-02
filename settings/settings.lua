@@ -256,12 +256,12 @@ local function WarningPrompt(text, method)
 end
 GW.WarningPrompt = WarningPrompt
 
-local function InputPrompt(text, method)
+local function InputPrompt(text, method, input)
     GwWarningPrompt.string:SetText(text)
     GwWarningPrompt.method = method
     GwWarningPrompt:Show()
     GwWarningPrompt.input:Show()
-    GwWarningPrompt.input:SetText("")
+    GwWarningPrompt.input:SetText(input or "")
 end
 GW.InputPrompt = InputPrompt
 

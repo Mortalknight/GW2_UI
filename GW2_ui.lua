@@ -559,8 +559,6 @@ local function evPlayerLogin(self)
     GW.InitializeMiscFunctions()
     GW.LoadRaidMarker()
 
-
-
     --Create general skins
     if GetSetting("MAINMENU_SKIN_ENABLED") then
         GW.SkinMainMenu()

@@ -27,10 +27,10 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
     end
 end
 
-local function AssignLayoutToSpec(specwin, button, specId, layoutId)
+local function AssignLayoutToSpec(specwin, button, specId, layoutId, setCheckbox)
     local allLayouts = GW.GetAllLayouts()
     local allPrivateLayouts = GW.GetAllPrivateLayouts()
-    local toSet = not button.checkbutton:GetChecked()
+    local toSet = button.checkbutton:GetChecked()
     local privateLayoutSettings = GW.GetPrivateLayoutByLayoutId(layoutId)
     -- check if that check has already a layout assigned
     if toSet and privateLayoutSettings then
@@ -42,6 +42,10 @@ local function AssignLayoutToSpec(specwin, button, specId, layoutId)
                 end
             end
         end
+    end
+
+    if setCheckbox then
+        toSet = not button.checkbutton:GetChecked()
     end
 
     button.checkbutton:SetChecked(toSet)
@@ -131,10 +135,10 @@ local function SetupSpecs(specwin)
         slot.hover:SetAlpha(0.5)
         if not slot.ScriptsHooked then
             slot:HookScript("OnClick", function(self)
-                AssignLayoutToSpec(specwin, self, self.specIdx, specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId)
+                AssignLayoutToSpec(specwin, self, self.specIdx, specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId, true)
             end)
             slot.checkbutton:HookScript("OnClick", function(self)
-                AssignLayoutToSpec(specwin, self:GetParent(), self:GetParent().specIdx, specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId)
+                AssignLayoutToSpec(specwin, self:GetParent(), self:GetParent().specIdx, specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId, false)
             end)
             slot:HookScript("OnEnter", function()
                 slot.hover:Show()
@@ -225,8 +229,10 @@ local function SetupLayouts(layoutwin)
                 -- prevent profile layouts from deletion
                 if self.id and GW2UI_LAYOUTS[self.id] and GW2UI_LAYOUTS[self.id].profileLayout then
                     GwSmallSettingsWindow.layoutView.delete:Disable()
+                    GwSmallSettingsWindow.layoutView.rename:Disable()
                 else
                     GwSmallSettingsWindow.layoutView.delete:Enable()
+                    GwSmallSettingsWindow.layoutView.rename:Enable()
                 end
 
                 -- load layout
@@ -288,6 +294,8 @@ local function CreateNewLayout(self)
     GW.InputPrompt(
         L["New layout name:"],
         function()
+            if GwWarningPrompt.input:GetText() == nil then return end
+
             local savedLayouts = GW.GetAllLayouts()
             local newIdx = #savedLayouts + 1
             local newMoverFrameIndex = 0
@@ -324,6 +332,23 @@ local function DeleteSelectedLayout(self)
 
             GwWarningPrompt:Hide()
         end
+    )
+end
+
+local function RenameSelectedLayout(self)
+    GW.InputPrompt(
+        L["Rename layout:"],
+        function()
+            if GwWarningPrompt.input:GetText() == nil then return end
+            GW2UI_LAYOUTS[self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId].name = (GwWarningPrompt.input:GetText() or UNKNOWN)
+
+            loadLayoutDropDown(self:GetParent().savedLayoutDropDown.container.contentScroll)
+
+            self:GetParent().savedLayoutDropDown.button.string:SetText(GwWarningPrompt.input:GetText() or UNKNOWN)
+
+            GwWarningPrompt:Hide()
+        end,
+        self:GetParent().savedLayoutDropDown.button.string:GetText()
     )
 end
 
@@ -432,6 +457,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
                     smallSettingsFrame.layoutView.savedLayoutDropDown.button.selectedId = allLayouts[i].id
 
                     GwSmallSettingsWindow.layoutView.delete:Disable()
+                    GwSmallSettingsWindow.layoutView.rename:Disable()
                     break
                 end
             end
@@ -493,6 +519,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     -- new, delete layout
     smallSettingsFrame.layoutView.new:SetScript("OnClick", CreateNewLayout)
     smallSettingsFrame.layoutView.delete:SetScript("OnClick", DeleteSelectedLayout)
+    smallSettingsFrame.layoutView.rename:SetScript("OnClick", RenameSelectedLayout)
 
     -- specswitch detaction things
     local specSwitchHandler = CreateFrame("Frame")

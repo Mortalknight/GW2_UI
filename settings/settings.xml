@@ -1063,7 +1063,7 @@
         </Layers>
         <Frames>
             <Button parentKey="savedLayoutDropDown">
-                <Size x="150" y="40"/>
+                <Size x="135" y="40"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.desc" relativePoint="BOTTOMLEFT" x="0" y="0"/>
                 </Anchors>
@@ -1080,7 +1080,7 @@
                 </Layers>
                 <Frames>
                     <Frame hidden="true" frameStrata="HIGH" parentKey="container">
-                        <Size x="150" y="20"/>
+                        <Size x="135" y="20"/>
                         <Anchors>
                             <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
                         </Anchors>
@@ -1094,7 +1094,7 @@
                         </Frames>
                     </Frame>
                     <Button parentKey="button">
-                        <Size x="150" y="20"/>
+                        <Size x="135" y="20"/>
                         <Anchors>
                             <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="-5"/>
                         </Anchors>
@@ -1110,7 +1110,7 @@
                             </Layer>
                             <Layer level="OVERLAY" textureSubLevel="3">
                                 <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="MIDDLE">
-                                    <Size x="140" y="20"/>
+                                    <Size x="125" y="20"/>
                                     <Color r="1" b="1" g="1"/>
                                     <Anchors>
                                         <Anchor point="CENTER"/>
@@ -1130,6 +1130,12 @@
                     </Button>
                 </Frames>
             </Button>
+            <Button parentKey="rename" inherits="GwStandardButton" text="R">
+                <Size x="10" y="18" />
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.savedLayoutDropDown" relativePoint="RIGHT" x="5" y="-5"/>
+                </Anchors>
+            </Button>
 
             <Button parentKey="new" inherits="GwStandardButton" text="NEW">
                 <Size x="72" y="15" />
@@ -1137,7 +1143,7 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.savedLayoutDropDown" relativePoint="BOTTOMLEFT" x="0" y="0"/>
                 </Anchors>
             </Button>
-             <Button parentKey="delete" inherits="GwStandardButton" text="DELETE">
+            <Button parentKey="delete" inherits="GwStandardButton" text="DELETE">
                 <Size x="73" y="15" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.new" relativePoint="RIGHT" x="5" y="0"/>
