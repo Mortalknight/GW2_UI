@@ -200,8 +200,10 @@ local function setUnitPortraitFrame(self)
         return
     end
 
-    local txt = nil
+    local txt
     local border = "normal"
+    local showItemLevel = (GetSetting(self.unit .. "_SHOW_ILVL") and CanInspect(self.unit))
+    local honorLevel = showItemLevel and 0 or UnitHonorLevel(self.unit)
 
     local unitClassIfication = UnitClassification(self.unit)
     if TARGET_FRAME_ART[unitClassIfication] ~= nil then
@@ -211,20 +213,20 @@ local function setUnitPortraitFrame(self)
         end
     end
 
-    if GetSetting(self.unit .. "_SHOW_ILVL") and CanInspect(self.unit) then
+    if showItemLevel then
         local guid = UnitGUID(self.unit)
         if guid and GW.unitIlvlsCache[guid] and GW.unitIlvlsCache[guid].itemLevel then
             txt = RoundDec(GW.unitIlvlsCache[guid].itemLevel, 0)
         end
-    elseif (UnitHonorLevel(self.unit) ~= nil and UnitHonorLevel(self.unit) > 9)   then
-        txt = UnitHonorLevel(self.unit)
+    elseif honorLevel > 9 then
         local plvl
+        txt = honorLevel
 
         if txt > 199 then
             plvl = 4
         elseif txt > 99 then
             plvl = 3
-        elseif txt > 49 then 
+        elseif txt > 49 then
             plvl = 2
         elseif txt > 9 then
             plvl = 1
@@ -247,13 +249,13 @@ local function setUnitPortraitFrame(self)
 
     --if DBM or BigWigs is load, check if target is a boss and set boss frame
     local foundBossMod = false
-    if IsAddOnLoaded("DBM-Core") then
+    if IsAddOnLoaded("DBM-Core") and DBM and DBM.ModLists then
         local npcId = GW.GetUnitCreatureId(self.unit)
 
         for modId, _ in pairs(DBM.ModLists) do
             for _, id in ipairs(DBM.ModLists[modId]) do
                 local mod = DBM:GetModByName(id)
-                if mod.creatureId ~= nil and mod.creatureId == npcId then
+                if mod.creatureId and mod.creatureId == npcId then
                     foundBossMod = true
                     break
                 end
@@ -262,13 +264,11 @@ local function setUnitPortraitFrame(self)
                 break
             end
         end
-    elseif IsAddOnLoaded("BigWigs") then
+    elseif IsAddOnLoaded("BigWigs") and BigWigs then
         local npcId = GW.GetUnitCreatureId(self.unit)
-        if BigWigs ~= nil then
-            local BWMods = BigWigs:GetEnableMobs()
-            if BWMods[npcId] ~= nil then
-                foundBossMod = true
-            end
+        local BWMods = BigWigs:GetEnableMobs()
+        if BWMods[npcId] then
+            foundBossMod = true
         end
     end
 

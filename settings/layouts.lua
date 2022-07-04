@@ -439,7 +439,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     smallSettingsFrame.layoutView.specsDropDown.title:SetText(SPECIALIZATION)
 
     -- start with the current profile layout add it at the timer function in case this is the first login
-    smallSettingsFrame.layoutView.specsDropDown.button.string:SetText(L["<Select specializations>"])
+    smallSettingsFrame.layoutView.specsDropDown.button.string:SetText(L["<Assign specializations>"])
 
     --create or get profile layout
     C_Timer.After(1, function()
