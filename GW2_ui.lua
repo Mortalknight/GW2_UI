@@ -36,6 +36,14 @@ if Profiler then
     _G.GW_Addon_Scope = GW
 end
 
+local function DatabaseMigration()
+    if GetSetting("AUTO_REPAIR") == true then
+        SetSetting("AUTO_REPAIR", "PLAYER")
+    elseif GetSetting("AUTO_REPAIR") == false then
+        SetSetting("AUTO_REPAIR", "NONE")
+    end
+end
+
 local function disableMABags()
     local bags = GetSetting("BAGS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Inventory", true)
     if not bags or not MovAny or not MADB then
@@ -351,6 +359,9 @@ end
 GW.RegisterScaleFrame = RegisterScaleFrame
 
 local function loadAddon(self)
+
+    -- db migrations
+    DatabaseMigration()
     --Create Settings window
     GW.CombatQueue_Initialize()
     GW.LoadMovers()

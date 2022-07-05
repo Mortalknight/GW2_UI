@@ -1,7 +1,13 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("1.21.0 TBC", [=[
+v("1.22.0 TBC", [=[
+NEW
+    - Added option for guild repair
+    - Minimap can now be scaled with a slider
+]=])
+
+v("1.21.1 TBC", [=[
 FIXES
     - Fix chat lua error
 ]=])

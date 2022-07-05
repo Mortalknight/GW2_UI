@@ -17,9 +17,9 @@ local function LoadDetailsSkin()
         site = "unknown",
         desc = "Skin to match the GW2 UI",
 
-        can_change_alpha_head = false, 
-        icon_anchor_main = {4, 1}, 
-        icon_anchor_plugins = {-9, -7}, 
+        can_change_alpha_head = false,
+        icon_anchor_main = {4, 1},
+        icon_anchor_plugins = {-9, -7},
         icon_plugins_size = {19, 19},
 
         -- the four anchors:
@@ -166,9 +166,9 @@ local function LoadDetailsSkin()
         site = "unknown",
         desc = "Skin to match the GW2 UI",
 
-        can_change_alpha_head = false, 
-        icon_anchor_main = {4, 1}, 
-        icon_anchor_plugins = {-9, -7}, 
+        can_change_alpha_head = false,
+        icon_anchor_main = {4, 1},
+        icon_anchor_plugins = {-9, -7},
         icon_plugins_size = {19, 19},
 
         -- the four anchors:

@@ -1,3 +1,4 @@
-1.21.1
-FIXES
-    - Fix chat lua error
+1.22.0
+NEW
+    - Added option for guild repair
+    - Minimap can now be scaled with a slider

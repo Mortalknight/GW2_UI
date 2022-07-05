@@ -52,7 +52,6 @@ local function LoadHudPanel(sWindow)
     )
 
     addOption(p.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU")
-    addOption(p.scroll.scrollchild, L["Auto Repair"], L["Automatically repair using the following method when visiting a merchant."], "AUTO_REPAIR")
     addOption(p.scroll.scrollchild, DISPLAY_BORDERS, nil, "BORDER_ENABLED")
     addOption(p.scroll.scrollchild, L["Show Coordinates on World Map"], L["Show Coordinates on World Map"], "WORLDMAP_COORDS_TOGGLE", nil, nil)
     addOption(p.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", nil, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
@@ -124,24 +123,35 @@ local function LoadHudPanel(sWindow)
         nil,
         "Minimap"
     )
-    addOptionDropdown(
+    addOptionSlider(
         p.scroll.scrollchild,
         L["Minimap Scale"],
         L["Change the Minimap size."],
         "MINIMAP_SCALE",
         function()
-            Minimap:SetSize(GetSetting("MINIMAP_SCALE"), GetSetting("MINIMAP_SCALE"))
+            local size = GetSetting("MINIMAP_SCALE")
+            Minimap:SetSize(size, size)
+            Minimap.gwMover:SetSize(size, size)
         end,
-        {250, 200, 170},
-        {
-            LARGE,
-            TIME_LEFT_MEDIUM,
-            DEFAULT
-        },
+        160,
+        420,
         nil,
+        0,
         {["MINIMAP_ENABLED"] = true},
+        1
+    )
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        L["Auto Repair"],
+        L["Automatically repair using the following method when visiting a merchant."],
+        "AUTO_REPAIR",
         nil,
-        "Minimap"
+        {"NONE", "PLAYER", "GUILD"},
+        {
+            NONE_KEY,
+            PLAYER,
+            GUILD,
+        }
     )
 
     InitPanel(p, true)
