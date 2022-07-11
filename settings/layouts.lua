@@ -11,6 +11,7 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
         GwSmallSettingsWindow.layoutView.specsDropDown.container.contentScroll.update(GwSmallSettingsWindow.layoutView.specsDropDown.container.contentScroll)
 
         GwSmallSettingsWindow.layoutView.delete:SetEnabled(not layout.profileLayout)
+        GwSmallSettingsWindow.layoutView.rename:SetEnabled(not layout.profileLayout)
     end
 
     for k, _ in pairs(layout.frames) do

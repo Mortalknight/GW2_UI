@@ -1063,14 +1063,14 @@
         </Layers>
         <Frames>
             <Button parentKey="savedLayoutDropDown">
-                <Size x="135" y="40"/>
+                <Size x="125" y="40"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.desc" relativePoint="BOTTOMLEFT" x="0" y="0"/>
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY" textureSubLevel="2">
                         <FontString parentKey="title" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
-                            <Size x="150" y="12"/>
+                            <Size x="125" y="12"/>
                             <Color r="1" b="0.73" g="0.93"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="0" y="0"/>
@@ -1080,7 +1080,7 @@
                 </Layers>
                 <Frames>
                     <Frame hidden="true" frameStrata="HIGH" parentKey="container">
-                        <Size x="135" y="20"/>
+                        <Size x="125" y="20"/>
                         <Anchors>
                             <Anchor point="RIGHT" relativePoint="RIGHT" x="-10" y="0"/>
                         </Anchors>
@@ -1094,7 +1094,7 @@
                         </Frames>
                     </Frame>
                     <Button parentKey="button">
-                        <Size x="135" y="20"/>
+                        <Size x="125" y="20"/>
                         <Anchors>
                             <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="-5"/>
                         </Anchors>
@@ -1110,7 +1110,7 @@
                             </Layer>
                             <Layer level="OVERLAY" textureSubLevel="3">
                                 <FontString parentKey="string" text="" inherits="GameFontNormalSmall" justifyH="LEFT" justifyV="MIDDLE">
-                                    <Size x="125" y="20"/>
+                                    <Size x="115" y="20"/>
                                     <Color r="1" b="1" g="1"/>
                                     <Anchors>
                                         <Anchor point="CENTER"/>
@@ -1130,8 +1130,10 @@
                     </Button>
                 </Frames>
             </Button>
-            <Button parentKey="rename" inherits="GwStandardButton" text="R">
-                <Size x="10" y="18" />
+            <Button parentKey="rename" inherits="GwStandardButton" text="">
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/rename-quill"/>
+                <DisabledTexture file="Interface/AddOns/GW2_UI/textures/uistuff/rename-quill"/>
+                <Size x="20" y="18" />
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.savedLayoutDropDown" relativePoint="RIGHT" x="5" y="-5"/>
                 </Anchors>
