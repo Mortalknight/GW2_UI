@@ -14,14 +14,6 @@ end
     SetDefaultOnTheFly(226512) -- Sanguine
     SetDefaultOnTheFly(240559) -- Grievous
     SetDefaultOnTheFly(240443) -- Bursting
--- Shadowlands Season 1
-    SetDefaultOnTheFly(342494) -- Belligerent Boast (Prideful)
--- Shadowlands Season 2
-    SetDefaultOnTheFly(356667) -- Biting Cold 1
-    SetDefaultOnTheFly(356666) -- Biting Cold 2
-    SetDefaultOnTheFly(355732) -- Melt Soul
-    SetDefaultOnTheFly(356925) -- Carnage
-    SetDefaultOnTheFly(358777) -- Bindings of Misery
 -- Shadowlands Season 3
     SetDefaultOnTheFly(368241) -- Decrypted Urh Cypher
     SetDefaultOnTheFly(368244) -- Urh Cloaking Field
@@ -29,6 +21,105 @@ end
     SetDefaultOnTheFly(368239)-- Decrypted Vy Cypher
     SetDefaultOnTheFly(366297) -- Deconstruct (Tank Debuff)
     SetDefaultOnTheFly(366288) -- Force Slam (Stun)
+-- Shadowlands Season 4
+    SetDefaultOnTheFly(373364) -- Vampiric Claws
+    SetDefaultOnTheFly(373429) -- Carrion Swarm
+    SetDefaultOnTheFly(373370) -- Nightmare Cloud
+    SetDefaultOnTheFly(373391) -- Nightmare
+    SetDefaultOnTheFly(373570) -- Hypnosis
+    SetDefaultOnTheFly(373607) -- Shadowy Barrier (Hypnosis)
+    SetDefaultOnTheFly(373509) -- Shadow Claws (Stacking)
+
+
+-------------------- Old Dungeons (Season 4) --------------------
+-- Grimrail Depot
+    SetDefaultOnTheFly(162057) -- Spinning Spear
+    SetDefaultOnTheFly(156357) -- Blackrock Shrapnel
+    SetDefaultOnTheFly(160702) -- Blackrock Mortar Shells
+    SetDefaultOnTheFly(160681) -- Suppressive Fire
+    SetDefaultOnTheFly(166570) -- Slag Blast (Stacking)
+    SetDefaultOnTheFly(164218) -- Double Slash
+    SetDefaultOnTheFly(162491) -- Acquiring Targets 1
+    SetDefaultOnTheFly(162507) -- Acquiring Targets 2
+    SetDefaultOnTheFly(161588) -- Diffused Energy
+    SetDefaultOnTheFly(162065) -- Freezing Snare
+-- Iron Docks
+    SetDefaultOnTheFly(163276) -- Shredded Tendons
+    SetDefaultOnTheFly(162415) -- Time to Feed
+    SetDefaultOnTheFly(168398) -- Rapid Fire Targeting
+    SetDefaultOnTheFly(172889) -- Charging Slash
+    SetDefaultOnTheFly(164504) -- Intimidated
+    SetDefaultOnTheFly(172631) -- Knocked Down
+    SetDefaultOnTheFly(172636) -- Slippery Grease
+    SetDefaultOnTheFly(158341) -- Gushing Wounds
+    SetDefaultOnTheFly(167240) -- Leg Shot
+    SetDefaultOnTheFly(173105) -- Whirling Chains
+    SetDefaultOnTheFly(173324) -- Jagged Caltrops
+    SetDefaultOnTheFly(172771) -- Incendiary Slug
+    SetDefaultOnTheFly(173307) -- Serrated Spear
+    SetDefaultOnTheFly(169341) -- Demoralizing Roar
+-- Return to Karazhan: Upper
+    SetDefaultOnTheFly(229248) -- Fel Beam
+    SetDefaultOnTheFly(227592) -- Frostbite
+    SetDefaultOnTheFly(228252) -- Shadow Rend
+    SetDefaultOnTheFly(227502) -- Unstable Mana
+    SetDefaultOnTheFly(228261) -- Flame Wreath
+    SetDefaultOnTheFly(229241) -- Acquiring Target
+    SetDefaultOnTheFly(230083) -- Nullification
+    SetDefaultOnTheFly(230221) -- Absorbed Mana
+    SetDefaultOnTheFly(228249) -- Inferno Bolt 1
+    SetDefaultOnTheFly(228958) -- Inferno Bolt 2
+    SetDefaultOnTheFly(229159) -- Chaotic Shadows
+    SetDefaultOnTheFly(227465) -- Power Discharge
+    SetDefaultOnTheFly(229083) -- Burning Blast (Stacking)
+-- Return to Karazhan: Lower
+    SetDefaultOnTheFly(227917) -- Poetry Slam
+    SetDefaultOnTheFly(228164) -- Hammer Down
+    SetDefaultOnTheFly(228215) -- Severe Dusting 1
+    SetDefaultOnTheFly(228221) -- Severe Dusting 2
+    SetDefaultOnTheFly(29690)-- Drunken Skull Crack
+    SetDefaultOnTheFly(227493) -- Mortal Strike
+    SetDefaultOnTheFly(228280) -- Oath of Fealty
+    SetDefaultOnTheFly(29574) -- Rend
+    SetDefaultOnTheFly(230297) -- Brittle Bones
+    SetDefaultOnTheFly(228526) -- Flirt
+    SetDefaultOnTheFly(227851) -- Coat Check 1
+    SetDefaultOnTheFly(227832) -- Coat Check 2
+    SetDefaultOnTheFly(32752) -- Summoning Disorientation
+    SetDefaultOnTheFly(228559) -- Charming Perfume
+    SetDefaultOnTheFly(227508) -- Mass Repentance
+    SetDefaultOnTheFly(241774) -- Shield Smash
+    SetDefaultOnTheFly(227742) -- Garrote (Stacking)
+    SetDefaultOnTheFly(238606) -- Arcane Eruption
+    SetDefaultOnTheFly(227848) -- Sacred Ground (Stacking)
+    SetDefaultOnTheFly(227404) -- Intangible Presence
+    SetDefaultOnTheFly(228610) -- Burning Brand
+    SetDefaultOnTheFly(228576) -- Allured
+-- Operation Mechagon
+    SetDefaultOnTheFly(291928) -- Giga-Zap
+    SetDefaultOnTheFly(292267) -- Giga-Zap
+    SetDefaultOnTheFly(302274) -- Fulminating Zap
+    SetDefaultOnTheFly(298669) -- Taze
+    SetDefaultOnTheFly(295445) -- Wreck
+    SetDefaultOnTheFly(294929) -- Blazing Chomp
+    SetDefaultOnTheFly(297257) -- Electrical Charge
+    SetDefaultOnTheFly(294855) -- Blossom Blast
+    SetDefaultOnTheFly(291972) -- Explosive Leap
+    SetDefaultOnTheFly(285443) -- 'Hidden' Flame Cannon
+    SetDefaultOnTheFly(291974) -- Obnoxious Monologue
+    SetDefaultOnTheFly(296150) -- Vent Blast
+    SetDefaultOnTheFly(298602) -- Smoke Cloud
+    SetDefaultOnTheFly(296560) -- Clinging Static
+    SetDefaultOnTheFly(297283) -- Cave In
+    SetDefaultOnTheFly(291914) -- Cutting Beam
+    SetDefaultOnTheFly(302384) -- Static Discharge
+    SetDefaultOnTheFly(294195) -- Arcing Zap
+    SetDefaultOnTheFly(299572) -- Shrink
+    SetDefaultOnTheFly(300659) -- Consuming Slime
+    SetDefaultOnTheFly(300650) -- Suffocating Smog
+    SetDefaultOnTheFly(301712) -- Pounce
+    SetDefaultOnTheFly(299475) -- B.O.R.K
+    SetDefaultOnTheFly(293670) -- Chain Blade
 
 ------------------ Shadowlands Dungeons ------------------
 -- Tazavesh, the Veiled Market

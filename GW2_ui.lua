@@ -429,7 +429,7 @@ local function evAddonLoaded(_, addonName)
         GW.mult = (1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)
     end
 
-    Debug("in GW2_UI ADDON_LOADED event")
+    Debug("OK~EVENT~In ADDON_LOADED event")
     GW.LoadStorage()
     -- TODO: A lot of what happens in player login should probably happen here instead
 
@@ -467,7 +467,7 @@ AFP("evAddonLoaded", evAddonLoaded)
 
 local function evNeutralFactionSelectResult(self, success)
     GW.myfaction, GW.myLocalizedFaction = UnitFactionGroup("player")
-    Debug("New faction:", GW.myfaction, GW.myLocalizedFaction)
+    Debug("OK~EVENT~New faction:", GW.myfaction, GW.myLocalizedFaction)
 end
 AFP("evNeutralFactionSelectResult", evNeutralFactionSelectResult)
 
@@ -490,7 +490,7 @@ AFP("evUiScaleChanged", evUiScaleChanged)
 
 local function evPlayerLevelUp(self, newLevel, hpDelta, powDelta, newTalents, newPvpSlots, strDelta, agiDelta, stamDelta, intDelta)
     GW.mylevel = newLevel
-    Debug("New level:", newLevel)
+    Debug("OK~EVENT~New level:", newLevel)
 end
 AFP("evPlayerLevelUp", evPlayerLevelUp)
 
@@ -523,7 +523,7 @@ end
 AFP("evPlayerEnteringBattleground", evPlayerEnteringBattleground)
 
 local function evPlayerLogin(self)
-    Debug("in PLAYER_LOGIN event; loaded:", loaded)
+    Debug("OK~EVENT~PLAYER_LOGIN; loaded:", loaded)
     if loaded then
         GW.UpdateCharData()
         return
