@@ -1,0 +1,104 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Button name="GwUpcomingRewardRow" virtual="true">
+        <Size x="350" y="50"></Size>
+        <Frames>
+            <Button parentKey="item" setAllPoints="true" hidden="true">
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/hud/levelrewardframe">
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                            <Size x="40" y="40"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
+                            </Anchors>
+                        </Texture>
+
+                        <Texture file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                            <Size x="512" y="2"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="TOP" y="2"></Anchor>
+                            </Anchors>
+                        </Texture>
+
+                        <Texture file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                            <Size x="512" y="2"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
+                            </Anchors>
+                        </Texture>
+
+                        <FontString parentKey="name" text="Upcoming Level Rewards" justifyH="LEFT">
+                            <Size x="200" y="50"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="60"></Anchor>
+                            </Anchors>
+                        </FontString>
+
+                        <FontString parentKey="levelString" text="??" justifyH="RIGHT">
+                            <Size x="70" y="50"></Size>
+                            <Anchors>
+                                <Anchor point="RIGHT" relativePoint="RIGHT" x="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+
+                    </Layer>
+                </Layers>
+            </Button>
+        </Frames>
+    </Button>
+
+    <Frame name="GwLevelingRewards" hidden="true" virtual="true">
+        <Size x="376" y="361"></Size>
+        <Anchors>
+            <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/hud/levelrewardframe">
+                    <Size x="512" y="512"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <FontString parentKey="header" text="Upcoming Level Rewards">
+                    <Size x="376" y="50"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativePoint="TOP" y="-10"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="rewardHeader" text="REWARD" justifyH="LEFT">
+                    <Size x="100" y="25"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-55"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="levelHeader" text="LEVEL" justifyH="RIGHT">
+                    <Size x="100" y="25"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-20" y="-55"></Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Frames>
+            <ScrollFrame parentKey="scrollFrame" inherits="GwHybridScrollFrameTemplate">
+                <Size x="360" y="230"></Size>
+                <Anchors>
+                    <Anchor point="TOP" relativePoint="TOP" x="-5" y="-90"></Anchor>
+                </Anchors>
+            </ScrollFrame>
+            <Button parentKey="CloseButton" inherits="GwStandardButton" text="Close">
+                <Size x="70" y="20" />
+                <Anchors>
+                    <Anchor point="BOTTOM" relativePoint="BOTTOM" relativeTo="GwLevelingRewards" x="5" y="10"></Anchor>
+                </Anchors>
+            </Button>
+        </Frames>
+    </Frame>
+
+
+</Ui>

@@ -12,7 +12,6 @@ local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 local displayRewards
 
 local experiencebarAnimation = 0
-local GW_LEVELING_REWARD_AVALIBLE
 
 local gw_reputation_vals = nil
 local gw_honor_vals = nil
@@ -140,8 +139,6 @@ local function xpbar_OnEvent(self, event)
     if event == "UPDATE_FACTION" and not GW.inWorld then
         return
     end
-
-    displayRewards()
 
     local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
     local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
@@ -303,10 +300,7 @@ local function xpbar_OnEvent(self, event)
             HONOR ..
                 " " ..
                     CommaValue(currentHonor) ..
-                        " / " .. CommaValue(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r",
-            1,
-            1,
-            1
+                        " / " .. CommaValue(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r"
             self.ExpBar:SetStatusBarColor(1, 0.2, 0.2)
     end
 
@@ -411,7 +405,7 @@ local function xpbar_OnEvent(self, event)
 
     experiencebarAnimation = valPrec
 
-    if GW_LEVELING_REWARD_AVALIBLE then
+    if GW.IsUpcomingSpellAvalible() then
         Nextlevel = Nextlevel and Nextlevel .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon:20:20:0:0|t" or ""
     end
 
@@ -843,194 +837,6 @@ registerActionHudAura(
     "pet"
 )
 
-
-local function levelingRewards_OnShow(self)
-    PlaySound(SOUNDKIT.ACHIEVEMENT_MENU_OPEN)
-    self.animationValue = -400
-    local name = self:GetName()
-    local start = GetTime()
-    AddToAnimation(
-        name,
-        self.animationValue,
-        0,
-        start,
-        0.2,
-        function()
-            local prog = animations[name].progress
-            local a = lerp(0, 1, (GetTime() - start) / 0.2)
-            self:SetAlpha(a)
-            self:SetPoint("CENTER", 0, prog)
-        end
-    )
-end
-GW.AddForProfiling("hud", "levelingRewards_OnShow", levelingRewards_OnShow)
-
-local function loadRewards()
-    local f = CreateFrame("Frame", "GwLevelingRewards", UIParent, "GwLevelingRewards")
-
-    f.header:SetFont(DAMAGE_TEXT_FONT, 24)
-    f.header:SetText(L["Upcoming Level Rewards"])
-
-    f.rewardHeader:SetFont(DAMAGE_TEXT_FONT, 11)
-    f.rewardHeader:SetTextColor(0.6, 0.6, 0.6)
-    f.rewardHeader:SetText(REWARD)
-
-    f.levelHeader:SetFont(DAMAGE_TEXT_FONT, 11)
-    f.levelHeader:SetTextColor(0.6, 0.6, 0.6)
-    f.levelHeader:SetText(LEVEL)
-
-    local fnGwCloseLevelingRewards_OnClick = function(self)
-        self:GetParent():Hide()
-    end
-    f.CloseButton:SetScript("OnClick", fnGwCloseLevelingRewards_OnClick)
-    f.CloseButton:SetText(CLOSE)
-
-    f.Item1.name:SetFont(DAMAGE_TEXT_FONT, 14)
-    f.Item1.level:SetFont(DAMAGE_TEXT_FONT, 14)
-    f.Item1.name:SetText(L["Upcoming Level Rewards"])
-
-    f.Item2.name:SetFont(DAMAGE_TEXT_FONT, 14)
-    f.Item2.level:SetFont(DAMAGE_TEXT_FONT, 14)
-    f.Item2.name:SetText(L["Upcoming Level Rewards"])
-
-    f.Item3.name:SetFont(DAMAGE_TEXT_FONT, 14)
-    f.Item3.level:SetFont(DAMAGE_TEXT_FONT, 14)
-    f.Item3.name:SetText(L["Upcoming Level Rewards"])
-
-    f.Item4.name:SetFont(DAMAGE_TEXT_FONT, 14)
-    f.Item4.level:SetFont(DAMAGE_TEXT_FONT, 14)
-    f.Item4.name:SetText(L["Upcoming Level Rewards"])
-
-    f:SetScript("OnShow", levelingRewards_OnShow)
-
-    tinsert(UISpecialFrames, "GwLevelingRewards")
-end
-GW.AddForProfiling("hud", "loadRewards", loadRewards)
-
-local GW_LEVELING_REWARDS = {}
-displayRewards = function()
-
-    wipe(GW_LEVELING_REWARDS)
-    for i = 1, 7 do
-        GW_LEVELING_REWARDS[i] = {}
-        GW_LEVELING_REWARDS[i]["type"] = "TALENT"
-        GW_LEVELING_REWARDS[i]["id"] = 0
-        GW_LEVELING_REWARDS[i]["level"] = select(3, GetTalentTierInfo(i, GetActiveSpecGroup()))
-    end
-
-    GW_LEVELING_REWARD_AVALIBLE = false
-
-    local spells = {GetSpecializationSpells(GW.myspec)}
-    for _, v in pairs(spells) do
-        if v ~= nil then
-            local tIndex = #GW_LEVELING_REWARDS + 1
-            GW_LEVELING_REWARDS[tIndex] = {}
-            GW_LEVELING_REWARDS[tIndex]["type"] = "SPELL"
-            GW_LEVELING_REWARDS[tIndex]["id"] = v
-            GW_LEVELING_REWARDS[tIndex]["level"] = GetSpellLevelLearned(v)
-        end
-    end
-
-    for i = 1, 80 do
-        local skillType, spellId = GetSpellBookItemInfo(i, "spell")
-
-        if skillType == "FUTURESPELL" and spellId ~= nil then
-            local shouldAdd = true
-            for _, v in pairs(GW_LEVELING_REWARDS) do
-                if v["type"] == "SPELL" and v["id"] == spellId then
-                    shouldAdd = false
-                end
-            end
-            if shouldAdd then
-                local tIndex = #GW_LEVELING_REWARDS + 1
-
-                GW_LEVELING_REWARDS[tIndex] = {}
-                GW_LEVELING_REWARDS[tIndex]["type"] = "SPELL"
-                GW_LEVELING_REWARDS[tIndex]["id"] = spellId
-                GW_LEVELING_REWARDS[tIndex]["level"] = GetSpellLevelLearned(spellId)
-            end
-        end
-    end
-
-    table.sort(
-        GW_LEVELING_REWARDS,
-        function(a, b)
-            return a["level"] < b["level"]
-        end
-    )
-
-    local i = 1
-    for _, v in pairs(GW_LEVELING_REWARDS) do
-        if v["level"] > GW.mylevel then
-            if _G["GwLevelingRewardsItem" .. i].mask ~= nil then
-                _G["GwLevelingRewardsItem" .. i].icon:RemoveMaskTexture(_G["GwLevelingRewardsItem" .. i].mask)
-            end
-
-            _G["GwLevelingRewardsItem" .. i]:Show()
-            _G["GwLevelingRewardsItem" .. i].level:SetText(
-                v["level"] .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon:24:24:0:0|t "
-            )
-
-            if v["type"] == "SPELL" then
-                local name, _, icon = GetSpellInfo(v["id"])
-                _G["GwLevelingRewardsItem" .. i].icon:SetTexture(icon)
-                _G["GwLevelingRewardsItem" .. i].name:SetText(name)
-                _G["GwLevelingRewardsItem" .. i]:SetScript(
-                    "OnEnter",
-                    function()
-                        GameTooltip:SetOwner(GwLevelingRewards, "ANCHOR_CURSOR", 0, 0)
-                        GameTooltip:ClearLines()
-                        GameTooltip:SetSpellByID(v["id"])
-                        GameTooltip:Show()
-                    end
-                )
-                if IsPassiveSpell(v["id"]) then
-                    if not _G["GwLevelingRewardsItem" .. i].mask then
-                        local mask = UIParent:CreateMaskTexture()
-                        mask:SetPoint("CENTER", _G["GwLevelingRewardsItem" .. i].icon, "CENTER", 0, 0)
-                        mask:SetTexture(
-                            "Interface/AddOns/GW2_UI/textures/talents/passive_border",
-                            "CLAMPTOBLACKADDITIVE",
-                            "CLAMPTOBLACKADDITIVE"
-                        )
-                        mask:SetSize(40, 40)
-                        _G["GwLevelingRewardsItem" .. i].mask = mask
-                    end
-                    _G["GwLevelingRewardsItem" .. i].icon:AddMaskTexture(_G["GwLevelingRewardsItem" .. i].mask)
-                end
-                _G["GwLevelingRewardsItem" .. i]:SetScript("OnLeave", GameTooltip_Hide)
-            elseif v["type"] == "TALENT" then
-                _G["GwLevelingRewardsItem" .. i].icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/talent-icon")
-                _G["GwLevelingRewardsItem" .. i].name:SetText(BONUS_TALENTS)
-                _G["GwLevelingRewardsItem" .. i]:SetScript(
-                    "OnEnter",
-                    function()
-                    end
-                )
-                _G["GwLevelingRewardsItem" .. i]:SetScript(
-                    "OnLeave",
-                    function()
-                    end
-                )
-            end
-            GW_LEVELING_REWARD_AVALIBLE = true
-
-            i = i + 1
-            if i > 4 then
-                break
-            end
-        end
-    end
-
-    if i < 5 then
-        while i < 5 do
-            _G["GwLevelingRewardsItem" .. i]:Hide()
-            i = i + 1
-        end
-    end
-end
-GW.AddForProfiling("hud", "displayRewards", displayRewards)
-
 local function hud_OnEvent(self, event, ...)
     if event == "UNIT_AURA" then
         local unit = ...
@@ -1089,7 +895,7 @@ end
 GW.LoadHudArt = LoadHudArt
 
 local function LoadXPBar()
-    loadRewards()
+    GW.LoadUpcomingSpells()
 
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")
     GW.MixinHideDuringPet(experiencebar)

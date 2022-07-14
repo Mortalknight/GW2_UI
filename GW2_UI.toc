@@ -123,6 +123,8 @@ units/playerFrame.lua
 units/raidMarker.lua
 units/petGrid.lua
 
+mainbar/upcomingSpells.xml
+mainbar/upcomingSpells.lua
 mainbar/micromenu.xml
 mainbar/micromenu.lua
 mainbar/missingRaidBuffs.lua
