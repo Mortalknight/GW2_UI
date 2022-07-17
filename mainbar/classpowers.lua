@@ -391,13 +391,13 @@ local function setWarrior(f)
 
         if GW.myspec == 2 then -- fury
             f:SetScript("OnEvent", powerEnrage)
-            powerEnrage(f, "CLASS_POWER_INIT")
+            powerEnrage()
         elseif GW.myspec == 3 then -- prot
             -- determine if bolster talent is selected
             _, _, _, selected, _ = GetTalentInfo(4, 3, 1, false, "player")
             f.gw_BolsterSelected = selected
             f:SetScript("OnEvent", powerSBlock)
-            powerSBlock(f, "CLASS_POWER_INIT")
+            powerSBlock(f)
         end
         f:RegisterUnitEvent("UNIT_AURA", "player")
 
@@ -683,7 +683,7 @@ local function setDeathKnight(f)
     end
 
     f:SetScript("OnEvent", powerRune)
-    powerRune(f, "CLASS_POWER_INIT")
+    powerRune(f)
     f:RegisterEvent("RUNE_POWER_UPDATE")
 
     return true
@@ -732,7 +732,7 @@ local function setShaman(f)
         fms:Show()
 
         f:SetScript("OnEvent", powerMaelstrom)
-        powerMaelstrom(f, "CLASS_POWER_INIT")
+        powerMaelstrom(f)
         f:RegisterUnitEvent("UNIT_AURA", "player")
         return true
     end
@@ -1164,7 +1164,7 @@ local function setDeamonHunter(f)
         fd.bar:SetValue(0)
 
         f:SetScript("OnEvent", timerMetamorphosis)
-        timerMetamorphosis(f, "CLASS_POWER_INIT")
+        timerMetamorphosis(f)
         f:RegisterUnitEvent("UNIT_AURA", "player")
 
         return true

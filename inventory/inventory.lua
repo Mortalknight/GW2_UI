@@ -289,7 +289,7 @@ local function takeItemButtons(p, bag_id)
     -- amazingly; this is probably brittle in the long-term though and we should
     -- someday re-implemenent all the ItemButton functionality ourselves
 
-    freeItemButtons(cf, p, bag_id)
+    freeItemButtons(cf, p)
 
     local iname
     if bag_id == BANK_CONTAINER then
