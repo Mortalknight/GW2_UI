@@ -67,7 +67,6 @@ local function AssignLayoutToSpec(specwin, button, specId, layoutId, setCheckbox
     else
         specwin.scrollContainer:Show()
     end
-
 end
 
 local function loadSpecDropDown(specwin)
@@ -174,10 +173,18 @@ local function loadLayoutDropDown(layoutwin)
             layouts[tableIndex] = {}
             layouts[tableIndex].name = savedLayouts[k].name
             layouts[tableIndex].id = k
+            layouts[tableIndex].isProfileLayout = savedLayouts[k].profileLayout
             tableIndex = tableIndex + 1
         end
     end
 
+    table.sort(layouts, function(a, b)
+        if a.isProfileLayout ~= b.isProfileLayout then
+            return a.isProfileLayout
+        elseif a.name and b.name then
+            return a.name < b.name
+        end
+    end)
 
     for i = 1, #layoutwin.buttons do
         local slot = layoutwin.buttons[i]
