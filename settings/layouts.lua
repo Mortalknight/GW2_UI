@@ -16,7 +16,8 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
 
     for k, _ in pairs(layout.frames) do
         local frame = layout.frames[k]
-        if frame then
+        print(frame.settingName)
+        if frame and frame.settingName and _G["Gw_" .. frame.settingName] then
             _G["Gw_" .. frame.settingName]:ClearAllPoints()
             _G["Gw_" .. frame.settingName]:SetPoint(frame.point.point, UIParent, frame.point.relativePoint, frame.point.xOfs, frame.point.yOfs)
             _G["Gw_" .. frame.settingName]:GetScript("OnDragStop")(_G["Gw_" .. frame.settingName])

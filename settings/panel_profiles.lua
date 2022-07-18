@@ -581,8 +581,7 @@ local function LoadProfilesPanel(sWindow)
 
     p.resetToDefaultFrame.item.name:SetText(L["Default Settings"])
     p.resetToDefaultFrame.item.desc:SetText(L["Load the default addon settings to the current profile."])
-    p.resetToDefaultFrame.item.defaultSettings:SetScript(
-        "OnClick",
+    p.resetToDefaultFrame.item.defaultSettings:SetScript("OnClick",
         function()
             GW.WarningPrompt(
                 L["Are you sure you want to load the default settings?\n\nAll previous settings will be lost."],
@@ -601,10 +600,10 @@ local function LoadProfilesPanel(sWindow)
     p.createNewProfile:SetText(NEW_COMPACT_UNIT_FRAME_PROFILE)
     p.createNewProfile:SetWidth(p.createNewProfile:GetTextWidth() + 10)
     local fnGCNP_OnClick = function()
-        GW:InputPrompt(
+        GW.InputPrompt(
             NEW_COMPACT_UNIT_FRAME_PROFILE,
             function()
-                addProfile(GwWarningPrompt.input:GetText())
+                addProfile(GwWarningPrompt.input:GetText() or UNKNOWN)
                 GwWarningPrompt:Hide()
             end
         )
@@ -615,7 +614,7 @@ local function LoadProfilesPanel(sWindow)
     p.importProfile = CreateFrame("Button", nil, p.resetToDefaultFrame, "GwCreateNewProfileTmpl")
     p.importProfile:SetText(L["Import Profile"])
     p.importProfile:SetWidth( p.importProfile:GetTextWidth() + 10)
-    local fnGCNP_OnClick = function()
+    local fnGCIP_OnClick = function()
         ImportExportFrame:Show()
         ImportExportFrame.header:SetText(L["Import Profile"])
         ImportExportFrame.subheader:SetText("")
@@ -627,7 +626,7 @@ local function LoadProfilesPanel(sWindow)
         ImportExportFrame.result:SetText("")
         ImportExportFrame.editBox:SetFocus()
     end
-    p.importProfile:SetScript("OnClick", fnGCNP_OnClick)
+    p.importProfile:SetScript("OnClick", fnGCIP_OnClick)
     p.importProfile:SetPoint("TOPLEFT", p.createNewProfile, p.createNewProfile:GetTextWidth() + 25, 0)
 
     local fnGSPF_OnShow = function()
