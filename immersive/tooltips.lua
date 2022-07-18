@@ -867,11 +867,10 @@ end
 
 local function shouldHiddenInCombat(tooltip)
     if tooltip:GetUnit() then
-        local unitReaction = UnitReaction("player", "mouseover")
+        local unitReaction = UnitReaction("player", tooltip:GetUnit())
         if not unitReaction then return false end
 
-        local unitSetting = GetSetting("HIDE_TOOLTIP_IN_COMBAT_UNIT")
-
+        local unitSetting = GetSetting("HIDE_TOOLTIP_IN_COMBAT_UNIT") 
         if unitSetting == "ALL" or
             (string.find(unitSetting, "HOSTILE") and unitReaction <= 3 or
             string.find(unitSetting, "NEUTRAL") and unitReaction == 4 or
