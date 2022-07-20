@@ -26,11 +26,11 @@ StaticPopupDialogs["GW_CHANGE_BAG_HEADER"] = {
     button2 = RESET,
     selectCallbackByIndex = true,
     OnButton1 = function(self, data)
-        SetSetting("BAG_HEADER_NAME" .. data, self.editBox:GetText())
+        GW.SetSetting("BAG_HEADER_NAME" .. data, self.editBox:GetText())
         _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(self.editBox:GetText())
     end,
     OnButton2 = function(_, data)
-        SetSetting("BAG_HEADER_NAME" .. data, "")
+        GW.SetSetting("BAG_HEADER_NAME" .. data, "")
 
         if tonumber(data) > 0 then
             local slotID = GetInventorySlotInfo("Bag" .. data - 1 .. "Slot")
