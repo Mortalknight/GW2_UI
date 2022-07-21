@@ -179,7 +179,7 @@ local function SetIcon(self, icon, dtype, auraType)
         end
         local c = DEBUFF_COLOR[dtype]
         if not c then
-            c = DEBUFF_COLOR["none"]
+            c = DEBUFF_COLOR.none
         end
         self.border.inner:SetVertexColor(c.r, c.g, c.b)
     end

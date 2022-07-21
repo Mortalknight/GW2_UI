@@ -1,5 +1,5 @@
 local _, GW = ...
-local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
+local GW_CLASS_COLORS = GW.GW_CLASS_COLORS
 
 local afterCombatQueue = {}
 local maxUpdatesPerCircle = 5
@@ -134,7 +134,7 @@ local function GWGetClassColor(class, useClassColor, forNameString)
     end
 
     local useBlizzardClassColor = GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
-    local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or CLASS_COLORS_RAIDFRAME[class]
+    local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW_CLASS_COLORS[class]
     local colorForNameString
 
     if type(color) ~= "table" then return end
