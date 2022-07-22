@@ -290,13 +290,13 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/units/castingbars">
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="176" y="15"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                     </Anchors>
-                    <TexCoords left="1" right="0" top="0" bottom="0.25" />
+                    <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
                     <Color r="1" g="1" b="1" a="0.6"></Color>
                 </Texture>
             </Layer>
@@ -311,7 +311,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="bar" file="Interface/AddOns/GW2_UI/textures/units/castingbars">
+                <Texture parentKey="bar" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="176" y="15"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT"></Anchor>

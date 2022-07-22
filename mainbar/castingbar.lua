@@ -8,6 +8,53 @@ local AddToAnimation = GW.AddToAnimation
 local StopAnimation = GW.StopAnimation
 local IsIn = GW.IsIn
 
+
+local CASTINGBAR_TEXTURES = {
+  YELLOW = {
+    NORMAL ={
+      L =0,
+      R =0.5,
+      T =0.25,
+      B =0.50,
+    },
+    HIGHLIGHT ={
+      L =0,
+      R =0.5,
+      T =0.5,
+      B =0.75,
+    }
+  },
+  RED = {
+    NORMAL ={
+      L =0,
+      R =0.5,
+      T =0.75,
+      B =1,
+    },
+    HIGHLIGHT ={
+      L =0.5,
+      R =1,
+      T =0,
+      B =0.25,
+    }
+  },
+  GREEN = {
+    NORMAL ={
+      L =0.5,
+      R =1,
+      T =0.25,
+      B =0.50,
+    },
+    HIGHLIGHT ={
+      L =0.5,
+      R =1,
+      T =0.5,
+      B =0.75,
+    }
+  },
+}
+
+
 local function barValues(self, name, icon)
     self.name:SetText(name)
     self.icon:SetTexture(icon)
@@ -26,7 +73,8 @@ GW.AddForProfiling("castingbar", "barReset", barReset)
 local function castBar_OnEvent(self, event, unitID, ...)
     local isChannelCast = false
     local spell, icon, startTime, endTime, isTradeSkill, spellID
-
+    local barTexture = CASTINGBAR_TEXTURES.YELLOW.NORMAL
+    local barHighlightTexture = CASTINGBAR_TEXTURES.YELLOW.HIGHLIGHT
     if event == "PLAYER_ENTERING_WORLD" then
         local nameChannel = UnitChannelInfo(self.unit)
         local nameSpell = UnitCastingInfo(self.unit)
@@ -49,13 +97,21 @@ local function castBar_OnEvent(self, event, unitID, ...)
             isChannelCast = true
             self.isChanneling = true
             self.bar_r, self.bar_g, self.bar_b, self.bar_a = 0.2, 1, 0.7, 1
-            self.bar:SetVertexColor(self.bar_r, self.bar_g, self.bar_b, self.bar_a)
+        --    self.bar:SetVertexColor(self.bar_r, self.bar_g, self.bar_b, self.bar_a)
+            barTexture =CASTINGBAR_TEXTURES.GREEN.NORMAL
+            barHighlightTexture = CASTINGBAR_TEXTURES.GREEN.HIGHLIGHT
+            self.bar:SetTexCoord(barTexture.L,barTexture.R,barTexture.T,barTexture.B)
+
         else
             spell, _, icon, startTime, endTime, isTradeSkill, _, _, spellID = UnitCastingInfo(self.unit)
             self.bar_r, self.bar_g, self.bar_b, self.bar_a = 1, 1, 1, 1
-            self.bar:SetVertexColor(self.bar_r, self.bar_g, self.bar_b, self.bar_a)
+          --  self.bar:SetVertexColor(self.bar_r, self.bar_g, self.bar_b, self.bar_a)
+            self.bar:SetTexCoord(barTexture.L,barTexture.R,barTexture.T,barTexture.B)
             self.isChanneling = false
         end
+
+        self.bar.barCoords = barTexture
+        self.bar.barHighLightCoords = barHighlightTexture
 
         if not spell or (not self.showTradeSkills and isTradeSkill) then
             barReset(self)
@@ -88,9 +144,9 @@ local function castBar_OnEvent(self, event, unitID, ...)
                 self.latency:SetPoint(isChannelCast and "LEFT" or "RIGHT", self, isChannelCast and "LEFT" or "RIGHT")
 
                 self.bar:SetWidth(math.max(1, p * 176))
-                self.bar:SetVertexColor(self.bar_r, self.bar_g, self.bar_b, self.bar_a)
+                self.bar:SetVertexColor(1,1,1,1)
                 self.spark:SetWidth(math.min(15, math.max(1, p * 176)))
-                self.bar:SetTexCoord(0, p, 0.25, 0.5)
+                self.bar:SetTexCoord(self.bar.barCoords.L, lerp(self.bar.barCoords.L,self.bar.barCoords.R, p), self.bar.barCoords.T, self.bar.barCoords.B)
 
                 local lagWorld = select(4, GetNetStats()) / 1000
                 local sqw = GetSetting("PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW") and GetCVar("SpellQueueWindow") / 1000 or 0
@@ -114,7 +170,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
         self.isCasting = false
     elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.spellID == select(2, ...) and not self.isChanneling then
         self.animating = true
-        self.bar:SetTexCoord(0, 1, 0.5, 0.75)
+        self.bar:SetTexCoord(self.bar.barHighLightCoords.L,self.bar.barHighLightCoords.R,self.bar.barHighLightCoords.T,self.bar.barHighLightCoords.B)
         self.bar:SetWidth(176)
         self.spark:Hide()
         AddToAnimation(
@@ -124,7 +180,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
             GetTime(),
             0.2,
             function()
-                self.bar:SetVertexColor(self.bar_r, self.bar_g, self.bar_b, lerp(1, 0.7, animations[self.animationName .. "Complete"].progress))
+                self.bar:SetVertexColor(1,1,1, lerp(1, 0.7, animations[self.animationName .. "Complete"].progress))
             end,
             nil,
             function()
