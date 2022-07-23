@@ -54,7 +54,7 @@ local function updateAnim(self, start, duration, charges, maxCharges)
 
     -- spark if charge count has changed
     if not self.gwNeedDrain and self.gwCharges ~= charges then
-        FrameFlash(self.arcfill.spark, 0.2)
+        FrameFlash(self.arcfill.fill, 0.2)
     end
     self.gwCharges = charges
 
