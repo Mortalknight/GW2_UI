@@ -54,7 +54,6 @@ local CASTINGBAR_TEXTURES = {
   },
 }
 
-
 local function barValues(self, name, icon)
     self.name:SetText(name)
     self.icon:SetTexture(icon)
@@ -71,7 +70,6 @@ end
 GW.AddForProfiling("castingbar", "barReset", barReset)
 
 local function castBar_OnEvent(self, event, unitID, ...)
-    local isChannelCast = false
     local spell, icon, startTime, endTime, isTradeSkill, spellID
     local barTexture = CASTINGBAR_TEXTURES.YELLOW.NORMAL
     local barHighlightTexture = CASTINGBAR_TEXTURES.YELLOW.HIGHLIGHT
@@ -94,19 +92,14 @@ local function castBar_OnEvent(self, event, unitID, ...)
     if IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_DELAYED") then
         if IsIn(event, "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE") then
             spell, _, icon, startTime, endTime, isTradeSkill, _, spellID = UnitChannelInfo(self.unit)
-            isChannelCast = true
             self.isChanneling = true
-            self.bar_r, self.bar_g, self.bar_b, self.bar_a = 0.2, 1, 0.7, 1
-        --    self.bar:SetVertexColor(self.bar_r, self.bar_g, self.bar_b, self.bar_a)
-            barTexture =CASTINGBAR_TEXTURES.GREEN.NORMAL
+            barTexture = CASTINGBAR_TEXTURES.GREEN.NORMAL
             barHighlightTexture = CASTINGBAR_TEXTURES.GREEN.HIGHLIGHT
-            self.bar:SetTexCoord(barTexture.L,barTexture.R,barTexture.T,barTexture.B)
+            self.bar:SetTexCoord(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
 
         else
             spell, _, icon, startTime, endTime, isTradeSkill, _, _, spellID = UnitCastingInfo(self.unit)
-            self.bar_r, self.bar_g, self.bar_b, self.bar_a = 1, 1, 1, 1
-          --  self.bar:SetVertexColor(self.bar_r, self.bar_g, self.bar_b, self.bar_a)
-            self.bar:SetTexCoord(barTexture.L,barTexture.R,barTexture.T,barTexture.B)
+            self.bar:SetTexCoord(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
             self.isChanneling = false
         end
 
@@ -139,9 +132,9 @@ local function castBar_OnEvent(self, event, unitID, ...)
                     self.time:SetText(TimeCount(self.endTime - GetTime(), true))
                 end
 
-                local p = isChannelCast and (1 - animations[self.animationName].progress) or animations[self.animationName].progress
+                local p = self.isChanneling and (1 - animations[self.animationName].progress) or animations[self.animationName].progress
                 self.latency:ClearAllPoints()
-                self.latency:SetPoint(isChannelCast and "LEFT" or "RIGHT", self, isChannelCast and "LEFT" or "RIGHT")
+                self.latency:SetPoint(self.isChanneling and "LEFT" or "RIGHT", self, self.isChanneling and "LEFT" or "RIGHT")
 
                 self.bar:SetWidth(math.max(1, p * 176))
                 self.bar:SetVertexColor(1,1,1,1)
@@ -170,7 +163,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
         self.isCasting = false
     elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.spellID == select(2, ...) and not self.isChanneling then
         self.animating = true
-        self.bar:SetTexCoord(self.bar.barHighLightCoords.L,self.bar.barHighLightCoords.R,self.bar.barHighLightCoords.T,self.bar.barHighLightCoords.B)
+        self.bar:SetTexCoord(self.bar.barHighLightCoords.L, self.bar.barHighLightCoords.R, self.bar.barHighLightCoords.T, self.bar.barHighLightCoords.B)
         self.bar:SetWidth(176)
         self.spark:Hide()
         AddToAnimation(
@@ -205,6 +198,16 @@ local function petCastBar_OnEvent(self, event, unit, ...)
     castBar_OnEvent(self, event, unit, ...)
 end
 
+local function TogglePlayerEnhancedCastbar(self, setShown)
+    self.name:SetShown(setShown)
+    self.icon:SetShown(setShown)
+    self.latency:SetShown(setShown)
+    self.time:SetShown(setShown)
+
+    self.showDetails = setShown
+end
+GW.TogglePlayerEnhancedCastbar = TogglePlayerEnhancedCastbar
+
 local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
     castingBarType:Kill()
 
@@ -227,6 +230,7 @@ local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
     GwCastingBar.animationName = name
     GwCastingBar.showTradeSkills = showTradeSkills
     GwCastingBar.showDetails = GetSetting("CASTINGBAR_DATA")
+    TogglePlayerEnhancedCastbar(GwCastingBar, GwCastingBar.showDetails)
 
     if name == "GwCastingBarPlayer" then
         RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "GwCastFrameDummy", nil, {"default", "scaleable"})
