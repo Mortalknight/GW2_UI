@@ -8,6 +8,8 @@ local AddToAnimation = GW.AddToAnimation
 local StopAnimation = GW.StopAnimation
 local IsIn = GW.IsIn
 
+-- For testing basic implementation of DRAGONFLIGHT segmented casting bar
+local TEST_SEGMENT_BAR = false
 
 local CASTINGBAR_TEXTURES = {
   YELLOW = {
@@ -54,6 +56,55 @@ local CASTINGBAR_TEXTURES = {
   },
 }
 
+---- DUMMY FUNCTION REMOVE LATER
+local function GetCastingSegments()
+  return {
+     {
+      p =0.25,
+      text = "I",
+    },
+   {
+      p =0.50,
+      text = "II",
+    },
+     {
+      p =0.75,
+      text = "III",
+    },
+   {
+      p =1,
+      text = "IV",
+    },
+  }
+end
+
+
+-- DRAGONFLIGHT SEGMENTBAR
+local function createNewBarSegment(self)
+
+  local segment = CreateFrame("Frame", self:GetName().."Segment"..#self.segments + 1, self, "GwCastingBarSegmentSep")
+
+  segment.rank:SetFont(UNIT_NAME_FONT, 12)
+  segment.rank:SetShadowOffset(1, -1)
+  self.segments[#self.segments + 1] = segment
+
+
+  return segment;
+end
+
+local function getCastingBarSegment(self,index, precentage, rankText)
+  if (#self.segments - 1 )<index then
+    createNewBarSegment(self)
+  end
+  local segment = self.segments[index];
+
+  segment:SetPoint("TOPLEFT",self,"TOPLEFT",self:GetWidth() * precentage ,0 )
+  segment.rank:SetText(rankText)
+
+end
+--
+
+
 local function barValues(self, name, icon)
     self.name:SetText(name)
     self.icon:SetTexture(icon)
@@ -73,6 +124,7 @@ local function AddFinishAnimation(self)
     self.animating = true
     self.highlight:SetTexCoord(self.bar.barHighLightCoords.L, self.bar.barHighLightCoords.R, self.bar.barHighLightCoords.T, self.bar.barHighLightCoords.B)
     self.highlight:Show()
+    self.highlight:SetWidth(176)
     self.spark:Hide()
 
     AddToAnimation(
@@ -131,6 +183,17 @@ local function castBar_OnEvent(self, event, unitID, ...)
             self.isChanneling = false
         end
 
+        if TEST_SEGMENT_BAR then
+            self.castSegmentData = nil
+          local segments = GetCastingSegments()
+            self.castSegmentData = segments
+          for k,v in pairs(segments) do
+            getCastingBarSegment(self,k, v.p, v.text)
+
+          end
+        end
+
+
         self.bar.barCoords = barTexture
         self.bar.barHighLightCoords = barHighlightTexture
 
@@ -169,6 +232,20 @@ local function castBar_OnEvent(self, event, unitID, ...)
                 self.bar:SetVertexColor(1,1,1,1)
                 self.spark:SetWidth(math.min(15, math.max(1, p * 176)))
                 self.bar:SetTexCoord(self.bar.barCoords.L, lerp(self.bar.barCoords.L,self.bar.barCoords.R, p), self.bar.barCoords.T, self.bar.barCoords.B)
+
+                if TEST_SEGMENT_BAR then
+                  if self.castSegmentData~=nil then
+                    for k,v in pairs(self.castSegmentData) do
+
+                      if v.p<p then
+                        self.highlight:SetTexCoord(self.bar.barHighLightCoords.L,lerp(self.bar.barHighLightCoords.L,self.bar.barHighLightCoords.R, v.p), self.bar.barHighLightCoords.T, self.bar.barHighLightCoords.B)
+                        self.highlight:SetWidth(math.max(1, v.p * 176))
+                        self.highlight:Show()
+                      end
+
+                    end
+                  end
+              end
 
                 local lagWorld = select(4, GetNetStats()) / 1000
                 local sqw = GetSetting("PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW") and GetCVar("SpellQueueWindow") / 1000 or 0
@@ -237,6 +314,9 @@ local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
     GwCastingBar.animationName = name
     GwCastingBar.showTradeSkills = showTradeSkills
     GwCastingBar.showDetails = GetSetting("CASTINGBAR_DATA")
+
+    GwCastingBar.segments = {}
+
     TogglePlayerEnhancedCastbar(GwCastingBar, GwCastingBar.showDetails)
 
     if name == "GwCastingBarPlayer" then

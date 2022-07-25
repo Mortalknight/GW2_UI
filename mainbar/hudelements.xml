@@ -283,6 +283,36 @@
         </Layers>
     </Frame>
 
+    <Frame name="GwCastingBarSegmentSep" virtual="true">
+      <Size x="1" y="15"></Size>
+      <Anchors>
+          <Anchor point="TOPLEFT"></Anchor>
+      </Anchors>
+      <Layers>
+          <Layer level="ARTWORK" textureSubLevel="4">
+            <Texture parentKey="line" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
+                <Size x="1" y="15"></Size>
+                <Anchors>
+                    <Anchor point="TOP" relativePoint="TOP"></Anchor>
+
+                </Anchors>
+                <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
+                <Color r="1" g="1" b="1" a="1"></Color>
+            </Texture>
+            <FontString parentKey="rank" justifyH="CENTER" justifyV="MIDDLE">
+                <Size x="15" y="15"></Size>
+                <Anchors>
+                    <Anchor point="TOP" relativePoint="BOTTOM" x="0" y="0"></Anchor>
+                </Anchors>
+            </FontString>
+          </Layer>
+
+
+      </Layers>
+
+
+    </Frame>
+
     <Frame name="GwCastingBar" virtual="true">
         <Size x="176" y="15"></Size>
         <Anchors>
@@ -326,8 +356,7 @@
                  <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF" hidden="true">
                     <Size x="176" y="15"></Size>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                        <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
                     </Anchors>
                 </Texture>
             </Layer>
