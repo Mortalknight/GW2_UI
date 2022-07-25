@@ -90,7 +90,7 @@ local function AddFinishAnimation(self)
             if not self.isCasting then
                 if self:GetAlpha() > 0 then
                     UIFrameFadeOut(self, 0.2, 1, 0)
-                    C_Timer.After(0.2, function() self.highlight:Hide() end)
+                    self.highlight:Hide()
                 end
             end
         end
@@ -148,6 +148,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
         self.endTime = endTime / 1000
         barReset(self)
         self.spark:Show()
+        self.highlight:Hide()
         StopAnimation(self.animationName)
         AddToAnimation(
             self.animationName,
