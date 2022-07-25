@@ -69,6 +69,34 @@ local function barReset(self)
 end
 GW.AddForProfiling("castingbar", "barReset", barReset)
 
+local function AddFinishAnimation(self)
+    self.animating = true
+    self.highlight:SetTexCoord(self.bar.barHighLightCoords.L, self.bar.barHighLightCoords.R, self.bar.barHighLightCoords.T, self.bar.barHighLightCoords.B)
+    self.highlight:Show()
+    self.spark:Hide()
+
+    AddToAnimation(
+        self.animationName .. "Complete",
+        0,
+        1,
+        GetTime(),
+        0.2,
+        function()
+            self.highlight:SetVertexColor(1, 1, 1, lerp(1, 0.7, animations[self.animationName .. "Complete"].progress))
+        end,
+        nil,
+        function()
+            self.animating = false
+            if not self.isCasting then
+                if self:GetAlpha() > 0 then
+                    UIFrameFadeOut(self, 0.2, 1, 0)
+                    C_Timer.After(0.2, function() self.highlight:Hide() end)
+                end
+            end
+        end
+    )
+end
+
 local function castBar_OnEvent(self, event, unitID, ...)
     local spell, icon, startTime, endTime, isTradeSkill, spellID
     local barTexture = CASTINGBAR_TEXTURES.YELLOW.NORMAL
@@ -162,29 +190,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
         barReset(self)
         self.isCasting = false
     elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.spellID == select(2, ...) and not self.isChanneling then
-        self.animating = true
-        self.bar:SetTexCoord(self.bar.barHighLightCoords.L, self.bar.barHighLightCoords.R, self.bar.barHighLightCoords.T, self.bar.barHighLightCoords.B)
-        self.bar:SetWidth(176)
-        self.spark:Hide()
-        AddToAnimation(
-            self.animationName .. "Complete",
-            0,
-            1,
-            GetTime(),
-            0.2,
-            function()
-                self.bar:SetVertexColor(1,1,1, lerp(1, 0.7, animations[self.animationName .. "Complete"].progress))
-            end,
-            nil,
-            function()
-                self.animating = false
-                if not self.isCasting then
-                    if self:GetAlpha() > 0 then
-                        UIFrameFadeOut(self, 0.2, 1, 0)
-                    end
-                end
-            end
-        )
+        AddFinishAnimation(self)
     end
 end
 

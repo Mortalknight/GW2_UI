@@ -323,6 +323,13 @@
                     <Size x="15" y="15"></Size>
                     <Color r="1" g="1" b="1" a="0.7"></Color>
                 </Texture>
+                 <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF" hidden="true">
+                    <Size x="176" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="4">
                 <FontString parentKey="name" justifyH="LEFT" justifyV="MIDDLE">
