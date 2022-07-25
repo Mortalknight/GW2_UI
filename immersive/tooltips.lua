@@ -700,6 +700,28 @@ end
 local function GameTooltip_SetDefaultAnchor(self, parent)
     if self:IsForbidden() or self:GetAnchorType() ~= "ANCHOR_NONE" then return end
 
+    if self.StatusBar then
+        local healtBarPosition = GetSetting("TOOLTIP_HEALTHBAER_POSITION")
+        self.StatusBar:SetAlpha(healtBarPosition == "DISABLED" and 0 or 1)
+        if healtBarPosition == "BOTTOM" then
+            if self.StatusBar.anchoredToTop then
+                self.StatusBar:ClearAllPoints()
+                self.StatusBar:SetPoint("TOPLEFT", self, "BOTTOMLEFT", GW.BorderSize, -(GW.SpacingSize * 3))
+                self.StatusBar:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", -GW.BorderSize, -(GW.SpacingSize * 3))
+                self.StatusBar.text:SetPoint("CENTER", self.StatusBar, 0, 0)
+                self.StatusBar.anchoredToTop = false
+            end
+        elseif healtBarPosition == "TOP" then
+            if not self.StatusBar.anchoredToTop then
+                self.StatusBar:ClearAllPoints()
+                self.StatusBar:SetPoint("BOTTOMLEFT", self, "TOPLEFT", GW.BorderSize, (GW.SpacingSize * 3))
+                self.StatusBar:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", -GW.BorderSize, (GW.SpacingSize * 3))
+                self.StatusBar.text:SetPoint("CENTER", self.StatusBar, 0, 0)
+                self.StatusBar.anchoredToTop = true
+            end
+        end
+    end
+
     if GetSetting("TOOLTIP_MOUSE") then
         self:SetOwner(parent, GetSetting("CURSOR_ANCHOR_TYPE"), GetSetting("ANCHOR_CURSOR_OFFSET_X"), GetSetting("ANCHOR_CURSOR_OFFSET_Y"))
         return

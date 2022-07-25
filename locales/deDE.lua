@@ -522,3 +522,5 @@ L["Are you sure you want to delete the selected layout?"] = "Bist du sicher, das
 L["Rename layout:"] = "Layout umbenennen:"
 L["Assign layouts to a spec. The layout will be automatically changed on a spec switch.\n\nLayouts has always priority for profile settings."] = "Layouts einer Spezialisierung zuweisen. Layouts werden automatisch bei einem Spezialisierungs-Wechsel geändert.\n\nLayouts haben immer Prio vor Profil Einstellungen."
 L["<Assign specializations>"] = "<Spezialisierung zuweisen>"
+L["Bottom"] = "Unten"
+L["Health Bar Position"] = "Gesundheitsbalken Position"

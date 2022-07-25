@@ -483,10 +483,12 @@ L["Soulwell"] = true
 L["Mage portal"] = true
 L["Extended Vendor"] = true
 L["The number of pages shown in the merchant frame. Set 1 to disable."] = true
-
 L["Spec is already assigned to a layout!"] = true
 L["New layout name:"] = true
 L["Are you sure you want to delete the selected layout?"] = true
 L["Rename layout:"] = true
 L["Assign layouts to a spec. The layout will be automatically changed on a spec switch.\n\nLayouts has always priority for profile settings."] = true
 L["<Assign specializations>"] = true
+
+L["Bottom"] = true
+L["Health Bar Position"] = true

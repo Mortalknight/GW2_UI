@@ -1,3 +1,19 @@
+5.31.0
+NEW
+    - Added 'Layouts':
+        - You can now create, save and edit differente movable frame layouts and assing them to a spec.
+        - This layouts will be automaticly activated by a spec switch
+        Notes: The current profile layout will be saved as a new layout and works always a default, if no spec layout was found
+    - Added an option to change the position of the tooltip healtbar: Bottom, Top, Disable
+    - Added new backgrounds for the immersive question module
+
+FIXES
+    - Fix some bugs related to the immersive question module
+
+MISC
+    - Redo the GW2 profile page and allow unlimited profiles
+    - Some tweaks to the immersive questiong module
+
 5.30.2
 FIXES
     - Fix a extended vendor issue
