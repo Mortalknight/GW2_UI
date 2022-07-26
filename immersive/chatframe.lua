@@ -128,11 +128,12 @@ local gw_fade_frames = {
 local gw2StaffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label:14:24|t"
 local gw2StaffList = {
     -- Glow
-    ["Sâphira-Aegwynn"] = gw2StaffIcon,
-    ["Shâdowfall-Aegwynn"] = gw2StaffIcon,
+    ["Sàphy-Antonidas"] = gw2StaffIcon,
+    ["Shâdowfall-Antonidas"] = gw2StaffIcon,
+    ["Winglord-Antonidas"] = gw2StaffIcon,
+    ["Zâmârâ-Antonidas"] = gw2StaffIcon,
     ["Mâgus-Aegwynn"] = gw2StaffIcon,
     ["Flôffi-Aegwynn"] = gw2StaffIcon,
-    ["Winglord-Arygos"] = gw2StaffIcon,
     -- SHOODOX
     ["Blish-Thrall"] = gw2StaffIcon,
     ["Blish-Arthas"] = gw2StaffIcon,
