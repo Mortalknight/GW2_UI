@@ -294,7 +294,6 @@
                 <Size x="1" y="15"></Size>
                 <Anchors>
                     <Anchor point="TOP" relativePoint="TOP"></Anchor>
-
                 </Anchors>
                 <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
                 <Color r="1" g="1" b="1" a="1"></Color>
@@ -306,11 +305,7 @@
                 </Anchors>
             </FontString>
           </Layer>
-
-
       </Layers>
-
-
     </Frame>
 
     <Frame name="GwCastingBar" virtual="true">
@@ -331,7 +326,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="3">
-                <Texture parentKey="latency" file="Interface/AddOns/GW2_UI/textures/units/castingbars">
+                <Texture parentKey="latency" file="Interface/AddOns/GW2_UI/textures/units/castingbars" hidden="true">
                     <Size x="176" y="15"></Size>
                     <Anchors>
                         <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
@@ -351,9 +346,12 @@
             <Layer level="ARTWORK" textureSubLevel="4">
                 <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
                     <Size x="15" y="15"></Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.bar" relativePoint="RIGHT"></Anchor>
+                    </Anchors>
                     <Color r="1" g="1" b="1" a="0.7"></Color>
                 </Texture>
-                 <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF" hidden="true">
+                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF" hidden="true">
                     <Size x="176" y="15"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
