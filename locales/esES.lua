@@ -512,3 +512,4 @@ L["Assign layouts to a spec. The layout will be automatically changed on a spec 
 L["<Assign specializations>"] = "<Asignar especializaciones>"
 L["Bottom"] = "Final"
 L["Health Bar Position"] = "Posición de barra de vida"
+L["One or more of the changes you have made require a UI reload."] = "Uno o más cambios que has hecho necesitan reiniciar la interfaz."
