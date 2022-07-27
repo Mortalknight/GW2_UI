@@ -614,6 +614,8 @@ local function evPlayerLogin(self)
     GW.MakeAltPowerBarMovable()
     GW.WidgetUISetup()
 
+
+
     --Create hud art
     hudArtFrame = GW.LoadHudArt()
 
@@ -777,9 +779,7 @@ local function evPlayerLogin(self)
         end
     end
 
-    if GetSetting("AFK_MODE") then
-        GW.loadAFKAnimation()
-    end
+    GW.loadAFKAnimation()
 
     if GetSetting("CHATBUBBLES_ENABLED") then
         GW.LoadChatBubbles()

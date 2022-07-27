@@ -55,6 +55,9 @@ GW.HiddenFrame:Hide()
 GW.BorderSize = 1
 GW.SpacingSize = 1
 
+GW.ShowRlPopup = false
+GW.InMoveHudMode = false
+
 --Tables
 GW.unitIlvlsCache = {}
 GW.skins = {}

@@ -399,7 +399,6 @@ local function GridUpdateAwayData(self, profile)
 end
 GW.GridUpdateAwayData = GridUpdateAwayData
 
-
 local function onDebuffEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
     GameTooltip:ClearLines()
@@ -608,7 +607,7 @@ local function GridShowBuffIcon(parent, i, btnIndex, x, y, icon, isMissing, prof
         frame:SetSize(14, 14)
         frame:ClearAllPoints()
         frame:SetPoint("BOTTOMRIGHT", parent.healthbar, "BOTTOMRIGHT", -(marginX + 3), marginY + 3)
-        
+
         frame.throt = -1
 
         frame.buffDuration:SetFont(UNIT_NAME_FONT, 11)

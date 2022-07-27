@@ -18,7 +18,7 @@ local function LoadTooltipPanel(sWindow)
     createCat(L["Tooltips"], nil, p, 10, nil, {p})
 
     addOption(p.scroll.scrollchild, L["Cursor Tooltips"], L["Anchor the tooltips to the cursor."], "TOOLTIP_MOUSE", nil, nil, {["TOOLTIPS_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Advanced Tooltips"], L["Displays additional information in the tooltip (further information is displayed when the SHIFT key is pressed)"], "ADVANCED_TOOLTIP", nil, nil, {["TOOLTIPS_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Advanced Tooltips"], L["Displays additional information in the tooltip (further information is displayed when the SHIFT key is pressed)"], "ADVANCED_TOOLTIP", function() GW.ShowRlPopup = true end, nil, {["TOOLTIPS_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Current Mount"], L["Display current mount the unit is riding."], "ADVANCED_TOOLTIP_SHOW_MOUNT", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p.scroll.scrollchild, L["Target Info"], L["When in a raid group, show if anyone in your raid is targeting the current tooltip unit."], "ADVANCED_TOOLTIP_SHOW_TARGET_INFO", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p.scroll.scrollchild, SHOW_PLAYER_TITLES, L["Display player titles."], "ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
@@ -46,7 +46,6 @@ local function LoadTooltipPanel(sWindow)
         nil,
         {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true}
     )
-    
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Combat Override Key"],

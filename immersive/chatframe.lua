@@ -487,12 +487,13 @@ local function ToggleHyperlink(enabled)
         local frame = _G[frameName]
         local hooked = hooks and hooks[frame] and hooks[frame].OnHyperlinkEnter
         if not hooked then
-            frame:HookScript("OnHyperlinkEnter", OnHyperlinkEnter)
-            frame:HookScript("OnHyperlinkLeave", OnHyperlinkLeave)
-            frame:HookScript("OnMouseWheel", OnMouseWheel)
+            frame:HookScript("OnHyperlinkEnter", enabled and OnHyperlinkEnter or nil)
+            frame:HookScript("OnHyperlinkLeave", enabled and OnHyperlinkLeave or nil)
+            frame:HookScript("OnMouseWheel", enabled and OnMouseWheel or nil)
         end
     end
 end
+GW.ToggleChatHyperlink = ToggleHyperlink
 
 local function UpdateChatKeywords()
     wipe(Keywords)
@@ -1695,8 +1696,6 @@ local function BuildCopyChatFrame()
 end
 
 local function BuildEmoticonTableFrame()
-    if not GetSetting("CHAT_KEYWORDS_EMOJI") then return end
-
     local frame = CreateFrame("Frame", "GW_EmoteFrame", UIParent)
     frame:CreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
     frame:SetWidth(160)
@@ -1762,6 +1761,10 @@ local function BuildEmoticonTableFrame()
             i = i + 1
             tinsert(isIn, {tex = texture})
         end
+    end
+
+    if not GetSetting("CHAT_KEYWORDS_EMOJI") then
+        frame:Hide()
     end
 end
 
@@ -1874,6 +1877,7 @@ local function CollectLfgRolesForChatIcons()
         end
     end
 end
+GW.CollectLfgRolesForChatIcons = CollectLfgRolesForChatIcons
 
 local function SocialQueueIsLeader(playerName, leaderName)
     if leaderName == playerName then

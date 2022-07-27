@@ -260,6 +260,7 @@ local function OnAuraChange(self, event, arg1)
         LibCustomGlow.PixelGlow_Stop(GW_CustomFrameanimation)
     end
 end
+GW.UpdateMissingRaidBuffs = OnAuraChange
 
 local function CreateIconBuff(name, relativeTo, firstbutton, frame)
     local button = CreateFrame("Button", name, frame)
@@ -311,6 +312,8 @@ local function UpdateMissingRaidBuffCustomSpell()
 			ReminderBuffs.Custom[#ReminderBuffs.Custom + 1] = tonumber(stringValue)
 		end
 	end
+
+    OnAuraChange(GW_RaidBuffReminder, "UPDATE")
 end
 GW.UpdateMissingRaidBuffCustomSpell = UpdateMissingRaidBuffCustomSpell
 
@@ -340,7 +343,7 @@ local function LoadRaidbuffReminder()
 
     rbr:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     rbr:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player")
-    rbr:RegisterUnitEvent("UNIT_AURA")
+    rbr:RegisterUnitEvent("UNIT_AURA", "player")
     rbr:RegisterEvent("PLAYER_REGEN_ENABLED")
     rbr:RegisterEvent("PLAYER_REGEN_DISABLED")
     rbr:RegisterEvent("PLAYER_ENTERING_WORLD")

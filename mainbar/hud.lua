@@ -857,23 +857,38 @@ local function hud_OnEvent(self, event, ...)
 end
 GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
 
+local function ToggleHudBackground()
+    if Gw2_HudBackgroud.actionBarHud.HUDBG then
+        for _, f in ipairs(Gw2_HudBackgroud.actionBarHud.HUDBG) do
+            if GetSetting("HUD_BACKGROUND") then
+                f:Show()
+            else
+                f:Hide()
+            end
+        end
+    end
+
+    if Gw2_HudBackgroud.edgeTint then
+        local showBorder = GetSetting("BORDER_ENABLED")
+        for _, f in ipairs(Gw2_HudBackgroud.edgeTint) do
+            if showBorder then
+                f:Show()
+            else
+                f:Hide()
+            end
+        end
+
+        --Gw2MicroBarFrame.cf.bg:SetShown(showBorder)
+    end
+end
+GW.ToggleHudBackground = ToggleHudBackground
+
 local function LoadHudArt()
-    local hudArtFrame = CreateFrame("Frame", nil, UIParent, "GwHudArtFrame")
+    local hudArtFrame = CreateFrame("Frame", "Gw2_HudBackgroud", UIParent, "GwHudArtFrame")
     GW.MixinHideDuringPetAndOverride(hudArtFrame)
 
-    if not GetSetting("BORDER_ENABLED") and hudArtFrame.edgeTint then
-        for _, f in ipairs(hudArtFrame.edgeTint) do
-            f:Hide()
-        end
-    end
-
-    if not GetSetting("HUD_BACKGROUND") and hudArtFrame.actionBarHud.HUDBG then
-        for _, f in ipairs(hudArtFrame.actionBarHud.HUDBG) do
-            f:Hide()
-        end
-    else
-        GW.RegisterScaleFrame(hudArtFrame.actionBarHud)
-    end
+    ToggleHudBackground()
+    GW.RegisterScaleFrame(hudArtFrame.actionBarHud)
 
     hudArtFrame:SetScript("OnEvent", hud_OnEvent)
 

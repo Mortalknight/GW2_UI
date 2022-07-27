@@ -75,7 +75,7 @@ local function LoadRaidProfile(sWindow)
     end)
     p.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
 
-    addOption(p, PET, L["Show a separate grid for raid pets"], "RAID_PET_FRAMES", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, PET, L["Show a separate grid for raid pets"], "RAID_PET_FRAMES", function() GW.ShowRlPopup = true end, nil, {["RAID_FRAMES"] = true})
     addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true})

@@ -163,11 +163,11 @@ local function LoadAurasPanel(sWindow)
         }
     )
 
-    addOption(p_missingBuffs.scroll.scrollchild, L["Dimmed"], nil, "MISSING_RAID_BUFF_dimmed")
-    addOption(p_missingBuffs.scroll.scrollchild, L["Greyed out"], nil, "MISSING_RAID_BUFF_grayed_out")
-    addOption(p_missingBuffs.scroll.scrollchild, L["Animated"], L["If enabled, an animated border will surround the missing raid buffs"], "MISSING_RAID_BUFF_animated")
+    addOption(p_missingBuffs.scroll.scrollchild, L["Dimmed"], nil, "MISSING_RAID_BUFF_dimmed", function() GW.UpdateMissingRaidBuffs(GW_RaidBuffReminder, "UPDATE") end)
+    addOption(p_missingBuffs.scroll.scrollchild, L["Greyed out"], nil, "MISSING_RAID_BUFF_grayed_out", function() GW.UpdateMissingRaidBuffs(GW_RaidBuffReminder, "UPDATE") end)
+    addOption(p_missingBuffs.scroll.scrollchild, L["Animated"], L["If enabled, an animated border will surround the missing raid buffs"], "MISSING_RAID_BUFF_animated", function() GW.UpdateMissingRaidBuffs(GW_RaidBuffReminder, "UPDATE") end)
 
-    addOption(p_missingBuffs.scroll.scrollchild, L["Invert raid buff bar"], L["If enabled, the above settings will apply to buffs you have, instead of buffs you are missing"], "MISSING_RAID_BUFF_INVERT", nil, nil, nil, nil, true)
+    addOption(p_missingBuffs.scroll.scrollchild, L["Invert raid buff bar"], L["If enabled, the above settings will apply to buffs you have, instead of buffs you are missing"], "MISSING_RAID_BUFF_INVERT", function() GW.UpdateMissingRaidBuffs(GW_RaidBuffReminder, "UPDATE") end, nil, nil, nil, true)
 
     addOptionText(
         p_missingBuffs.scroll.scrollchild,

@@ -110,3 +110,14 @@ StaticPopupDialogs["JOIN_DISCORD"] = {
     end,
     preferredIndex = 4
 }
+
+StaticPopupDialogs["CONFIG_RELOAD"] = {
+    text = L["One or more of the changes you have made require a UI reload."],
+    button1 = ACCEPT,
+    button2 = CANCEL,
+    OnAccept = function() C_UI.Reload() end,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = false,
+    preferredIndex = 4
+}

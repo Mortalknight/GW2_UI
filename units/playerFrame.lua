@@ -159,6 +159,17 @@ local function player_OnEvent(self, event)
     end
 end
 
+local function TogglePlayerFrameASettings()
+    if not GwPlayerUnitFrame then return end
+    GwPlayerUnitFrame.altBg:SetShown(GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
+    GwPlayerUnitFrame.classColor = GetSetting("player_CLASS_COLOR")
+    GwPlayerUnitFrame.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
+
+    updateHealthData(GwPlayerUnitFrame)
+    unitFrameData(GwPlayerUnitFrame)
+end
+GW.TogglePlayerFrameASettings = TogglePlayerFrameASettings
+
 local function LoadPlayerFrame()
     local NewUnitFrame = createNormalUnitFrame("GwPlayerUnitFrame")
     NewUnitFrame.unit = "player"
@@ -176,11 +187,7 @@ local function LoadPlayerFrame()
     NewUnitFrame:EnableMouse(true)
     NewUnitFrame:RegisterForClicks("AnyDown")
 
-    if GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND") then
-        local altBg = CreateFrame("Frame", nil, NewUnitFrame, "GwAlternativeUnitFrameBackground")
-        altBg:SetAllPoints(NewUnitFrame)
-        altBg:Show()
-    end
+    NewUnitFrame.altBg = CreateFrame("Frame", nil, NewUnitFrame, "GwAlternativeUnitFrameBackground")
 
     local mask = UIParent:CreateMaskTexture()
     mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
@@ -190,8 +197,6 @@ local function LoadPlayerFrame()
     NewUnitFrame.portrait:AddMaskTexture(mask)
 
     AddToClique(NewUnitFrame)
-
-    NewUnitFrame.classColor = GetSetting("player_CLASS_COLOR")
 
     -- add pvp marker
     NewUnitFrame.pvp = CreateFrame("Frame", nil, NewUnitFrame)
@@ -213,9 +218,6 @@ local function LoadPlayerFrame()
     NewUnitFrame.pvp.horde:SetTexCoord(0, 1, 0.51, 1)
     NewUnitFrame.pvp.horde:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 5)
     NewUnitFrame.pvp.horde:Hide()
-
-    --save settingsvalue for later use
-    NewUnitFrame.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
 
     NewUnitFrame:SetScript("OnEvent", player_OnEvent)
 
@@ -293,6 +295,8 @@ local function LoadPlayerFrame()
     NewUnitFrame.raidmarker:Hide()
     NewUnitFrame.prestigebg:Hide()
     NewUnitFrame.prestigeString:Hide()
+
+    TogglePlayerFrameASettings()
 
     return NewUnitFrame
 end

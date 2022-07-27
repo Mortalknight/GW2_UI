@@ -216,6 +216,49 @@ local function MinimapPostDrag(self)
     end
 end
 
+local function ToogleMinimapCoorsLable()
+    if GetSetting("MINIMAP_COORDS_TOGGLE") then
+        GwMapCoords:Show()
+        GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
+        GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
+        GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
+
+        -- only set the coords updater here if they are showen always
+        local hoverSetting = GetSetting("MINIMAP_HOVER")
+        if hoverSetting == "COORDS" or hoverSetting == "CLOCKCOORDS" or hoverSetting == "ZONECOORDS" or hoverSetting == "ALL" then
+            GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
+        end
+    else
+        GwMapCoords:Hide()
+        GwMapCoords:SetScript("OnEnter", nil)
+        GwMapCoords:SetScript("OnClick", nil)
+        GwMapCoords:SetScript("OnLeave", nil)
+        if GwMapCoords.CoordsTimer then
+            GwMapCoords.CoordsTimer:Cancel()
+            GwMapCoords.CoordsTimer = nil
+        end
+    end
+end
+GW.ToogleMinimapCoorsLable = ToogleMinimapCoorsLable
+
+local function ToogleMinimapFpsLable()
+    if GetSetting("MINIMAP_FPS") then
+        GW.BuildAddonList()
+        GwMapFPS:SetScript("OnEnter", GW.FpsOnEnter)
+        GwMapFPS:SetScript("OnUpdate", GW.FpsOnUpdate)
+        GwMapFPS:SetScript("OnLeave", GW.FpsOnLeave)
+        GwMapFPS:SetScript("OnClick", GW.FpsOnClick)
+        GwMapFPS:Show()
+    else
+        GwMapFPS:SetScript("OnEnter", nil)
+        GwMapFPS:SetScript("OnUpdate", nil)
+        GwMapFPS:SetScript("OnLeave", nil)
+        GwMapFPS:SetScript("OnClick", nil)
+        GwMapFPS:Hide()
+    end
+end
+GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
+
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = getMinimapShape
@@ -283,33 +326,17 @@ local function LoadMinimap()
     GwMapTime:SetScript("OnEvent", GW.Time_OnEvent)
 
     --coords
-    if GetSetting("MINIMAP_COORDS_TOGGLE") then
-        GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
-        GwMapCoords.Coords:SetText(NOT_APPLICABLE)
-        GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
-        GwMapCoords.MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
-        GwMapCoords:SetScript("OnEnter", MapCoordsMiniMap_OnEnter)
-        GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
-        GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
-
-        -- only set the coords updater here if they are showen always
-        local hoverSetting = GetSetting("MINIMAP_HOVER")
-        if hoverSetting == "COORDS" or hoverSetting == "CLOCKCOORDS" or hoverSetting == "ZONECOORDS" or hoverSetting == "ALL" then
-            GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
-        end
-    end
+    GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
+    GwMapCoords.Coords:SetText(NOT_APPLICABLE)
+    GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
+    GwMapCoords.MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
+    ToogleMinimapCoorsLable()
 
     --FPS
-    if GetSetting("MINIMAP_FPS") then
-        GW.BuildAddonList()
-        GwMapFPS = CreateFrame("Button", "GwMapFPS", Minimap, "GwMapFPS")
-        GwMapFPS.fps:SetText(NOT_APPLICABLE)
-        GwMapFPS.fps:SetFont(STANDARD_TEXT_FONT, 12)
-        GwMapFPS:SetScript("OnEnter", GW.FpsOnEnter)
-        GwMapFPS:SetScript("OnUpdate", GW.FpsOnUpdate)
-        GwMapFPS:SetScript("OnLeave", GW.FpsOnLeave)
-        GwMapFPS:SetScript("OnClick", GW.FpsOnClick)
-    end
+    GwMapFPS = CreateFrame("Button", "GwMapFPS", Minimap, "GwMapFPS")
+    GwMapFPS.fps:SetText(NOT_APPLICABLE)
+    GwMapFPS.fps:SetFont(STANDARD_TEXT_FONT, 12)
+    ToogleMinimapFpsLable()
 
     MinimapNorthTag:ClearAllPoints()
     MinimapNorthTag:SetPoint("TOP", Minimap, 0, 0)

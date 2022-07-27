@@ -4,7 +4,6 @@ local CoordsFrame
 local MOUSE_LABEL = MOUSE_LABEL:gsub("|[TA].-|[ta]","")
 
 local function UpdateCoords()
-    local WorldMapFrame = _G.WorldMapFrame
     if not WorldMapFrame:IsShown() then
         return
     end
@@ -23,18 +22,24 @@ local function UpdateCoords()
     end
 end
 
+local function ToggleWorldMapCoords()
+    if GW.GetSetting("WORLDMAP_COORDS_TOGGLE") then
+        CoordsFrame:Show()
+
+    else
+        CoordsFrame:Hide()
+    end
+end
+GW.ToggleWorldMapCoords = ToggleWorldMapCoords
+
 local function AddCoordsToWorldMap()
-    if not GW.GetSetting("WORLDMAP_COORDS_TOGGLE") then return end
-
-    local WorldMapFrame = _G.WorldMapFrame
-
     local CoordsTimer = nil
     CoordsFrame = CreateFrame("Frame", nil, WorldMapFrame)
     CoordsFrame:SetFrameLevel(WorldMapFrame.BorderFrame:GetFrameLevel() + 2)
     CoordsFrame:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
     CoordsFrame.Coords = CoordsFrame:CreateFontString(nil, "OVERLAY")
     CoordsFrame.Coords:SetTextColor(1, 1 ,1)
-    CoordsFrame.Coords:SetFontObject(_G.Number12Font)
+    CoordsFrame.Coords:SetFontObject(Number12Font)
 
     WorldMapFrame:HookScript("OnShow", function()
         if not CoordsTimer then
@@ -48,6 +53,8 @@ local function AddCoordsToWorldMap()
     end)
 
     CoordsFrame.Coords:ClearAllPoints()
-    CoordsFrame.Coords:SetPoint("TOP", _G.WorldMapFrame.ScrollContainer, "TOP", 0, 0)
+    CoordsFrame.Coords:SetPoint("TOP", WorldMapFrame.ScrollContainer, "TOP", 0, 0)
+
+    ToggleWorldMapCoords()
 end
 GW.AddCoordsToWorldMap = AddCoordsToWorldMap

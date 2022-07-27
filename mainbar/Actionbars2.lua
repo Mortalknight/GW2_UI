@@ -310,6 +310,18 @@ local function updateHotkey(self)
         return
     end
 
+    if GetSetting("BUTTON_ASSIGNMENTS") then
+        hotkey:Show()
+        if self.hkBg then
+            self.hkBg.texture:Show()
+        end
+    else
+        hotkey:Hide()
+        if self.hkBg then
+            self.hkBg.texture:Hide()
+        end
+    end
+
     text = gsub(text, "(s%-)", "S")
     text = gsub(text, "(a%-)", "A")
     text = gsub(text, "(c%-)", "C")
@@ -329,13 +341,29 @@ local function updateHotkey(self)
     text = gsub(text, KEY_MOUSEWHEELDOWN, 'MwD')
     text = gsub(text, KEY_MOUSEWHEELUP, 'MwU')
 
-    if hotkey:GetText() == RANGE_INDICATOR or not GetSetting("BUTTON_ASSIGNMENTS") then
+    if hotkey:GetText() == RANGE_INDICATOR then
         hotkey:SetText("")
     else
         hotkey:SetText(text)
     end
 end
 GW.updateHotkey = updateHotkey
+
+local function updateMacroName(self)
+    if self.Name then
+        if self.showMacroName then
+            self.Name:SetPoint("TOPLEFT", self, "TOPLEFT")
+            self.Name:SetJustifyH("LEFT")
+            self.Name:SetWidth(self:GetWidth())
+            local font, fontHeight = self.Name:GetFont()
+            self.Name:SetFont(font, fontHeight, "OUTLINED")
+            self.Name:SetAlpha(1)
+        else
+            self.Name:SetAlpha(0)
+        end
+    end
+end
+GW.updateMacroName = updateMacroName
 
 local function hideBackdrop(self)
     self.gwBackdrop:Hide()
@@ -350,7 +378,7 @@ AFP("showBackdrop", showBackdrop)
 local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton, isPet)
     local btn = _G[buttonName]
 
-    if btn.icon ~= nil then
+    if btn.icon then
         btn.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     end
     if btn.HotKey ~= nil then
@@ -362,7 +390,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         end
         btn.HotKey:SetJustifyH("CENTER")
     end
-    if btn.Count ~= nil then
+    if btn.Count then
         btn.Count:ClearAllPoints()
         btn.Count:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -3, -3)
         btn.Count:SetJustifyH("RIGHT")
@@ -370,7 +398,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         btn.Count:SetTextColor(1, 1, 0.6)
     end
 
-    if btn.Border ~= nil then
+    if btn.Border then
         btn.Border:SetSize(btn:GetWidth(), btn:GetWidth())
         btn.Border:SetBlendMode("BLEND")
         if isStanceButton then
@@ -380,7 +408,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
             btn.Border:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
         end
     end
-    if btn.NormalTexture ~= nil then
+    if btn.NormalTexture then
         btn:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal")
     end
 
@@ -408,17 +436,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
     btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
     if btn.SetCheckedTexture then btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress") end
 
-    if btn.Name then
-        if btn.showMacroName then
-            btn.Name:SetPoint("TOPLEFT", btn, "TOPLEFT")
-            btn.Name:SetJustifyH("LEFT")
-            btn.Name:SetWidth(btn:GetWidth())
-            local font, fontHeight = btn.Name:GetFont()
-            btn.Name:SetFont(font, fontHeight, "OUTLINED")
-        else
-            btn.Name:SetAlpha(0)
-        end
-    end
+    updateMacroName(btn)
 
     if noBackDrop == nil or noBackDrop == false then
         local backDrop = CreateFrame("Frame", nil, btn, "GwActionButtonBackdropTmpl")
@@ -431,10 +449,12 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         backDrop:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", backDropSize, -backDropSize)
 
         btn.gwBackdrop = backDrop
-    end
 
-    if hideUnused == true then
-        btn.gwBackdrop:Hide()
+        if hideUnused then
+            btn.gwBackdrop:Hide()
+        else
+            btn.gwBackdrop:Show()
+        end
         btn:HookScript("OnHide", hideBackdrop)
         btn:HookScript("OnShow", showBackdrop)
     end
@@ -487,6 +507,10 @@ local function updateMainBar()
             btn:SetSize(MAIN_MENU_BAR_BUTTON_SIZE, MAIN_MENU_BAR_BUTTON_SIZE)
             btn.showMacroName = showName
 
+            btn.hkBg = CreateFrame("Frame", "GwHotKeyBackDropActionButton" .. i, hotkey:GetParent(), "GwActionHotkeyBackdropTmpl")
+            btn.hkBg:SetPoint("CENTER", hotkey, "CENTER", 0, 0)
+            btn.hkBg.texture:SetParent(hotkey:GetParent())
+
             setActionButtonStyle("ActionButton" .. i, true, nil)
             updateHotkey(btn)
 
@@ -511,15 +535,7 @@ local function updateMainBar()
             _G["GwActionRangeIndicator" .. i .. "Texture"]:SetVertexColor(147 / 255, 19 / 255, 2 / 255)
             rangeIndicator:Hide()
 
-            btn["gw_RangeIndicator"] = rangeIndicator
-            btn["gw_HotKey"] = hotkey
-
-            if GetSetting("BUTTON_ASSIGNMENTS") then
-                local hkBg = CreateFrame("Frame", "GwHotKeyBackDropActionButton" .. i, hotkey:GetParent(), "GwActionHotkeyBackdropTmpl")
-
-                hkBg:SetPoint("CENTER", hotkey, "CENTER", 0, 0)
-                _G["GwHotKeyBackDropActionButton" .. i .. "Texture"]:SetParent(hotkey:GetParent())
-            end
+            btn.gw_RangeIndicator = rangeIndicator
 
             btn:ClearAllPoints()
             btn:SetPoint(
@@ -564,30 +580,6 @@ local function updateMainBar()
     return fmActionbar
 end
 AFP("updateMainBar", updateMainBar)
-
-local function UpdateMainBarMargin()
-    local fmActionbar = MainMenuBarArtFrame
-    local used_height = MAIN_MENU_BAR_BUTTON_SIZE
-    local btn_padding = GetSetting("MAINBAR_MARGIIN")
-
-    for i = 1, 12 do
-        local btn = fmActionbar.gw_Buttons[i]
-        btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + GetSetting("MAINBAR_MARGIIN")
-
-        btn:ClearAllPoints()
-        btn:SetPoint("LEFT", fmActionbar, "LEFT", btn_padding - GetSetting("MAINBAR_MARGIIN") - MAIN_MENU_BAR_BUTTON_SIZE, (GetSetting("XPBAR_ENABLED") and 0 or -14))
-
-        if i == 6 and not GetSetting("PLAYER_AS_TARGET_FRAME") then
-            btn_padding = btn_padding + 108
-        end
-    end
-   -- position the main action bar
-   fmActionbar:ClearAllPoints()
-   fmActionbar:SetPoint("TOP", UIParent, "BOTTOM", 0, 80)
-   fmActionbar:SetSize(btn_padding, used_height)
-   fmActionbar.gw_Width = btn_padding
-end
-GW.UpdateMainBarMargin = UpdateMainBarMargin
 
 local function trackBarChanges()
     local fmActionbar = MainMenuBarArtFrame
@@ -745,10 +737,21 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 end
 AFP("updateMultiBar", updateMultiBar)
 
-local function UpdateMultibarButtonMargin()
+local function UpdateMultibarButtons()
     local margin = GetSetting("MULTIBAR_MARGIIN")
     local fmActionbar = MainMenuBarArtFrame
     local fmMultiBar
+    local HIDE_ACTIONBARS_CVAR
+
+    local hideActionbuttonBackdrop = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
+
+    if hideActionbuttonBackdrop then
+        HIDE_ACTIONBARS_CVAR = nil
+    else
+        HIDE_ACTIONBARS_CVAR = 1
+    end
+    SetCVar("alwaysShowActionBars", HIDE_ACTIONBARS_CVAR)
+
     for y = 1, 4 do
         if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
         if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
@@ -778,14 +781,26 @@ local function UpdateMultibarButtonMargin()
                     used_height = used_height + settings.size + margin
                 end
 
+                if hideActionbuttonBackdrop then
+                    btn.gwBackdrop:Hide()
+                else
+                    btn.gwBackdrop:Show()
+                end
+
+                btn.showMacroName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
+                updateMacroName(btn)
+                updateHotkey(btn)
             end
 
             fmMultiBar.gwMover:SetSize(used_width, used_height)
             fmMultiBar:SetSize(used_width, used_height)
         end
     end
+    ALWAYS_SHOW_MULTIBARS = HIDE_ACTIONBARS_CVAR
+    MultiActionBar_UpdateGridVisibility()
+    InterfaceOptions_UpdateMultiActionBars()
 end
-GW.UpdateMultibarButtonMargin = UpdateMultibarButtonMargin
+GW.UpdateMultibarButtons = UpdateMultibarButtons
 
 local function setPossessBar()
     PossessBarFrame:ClearAllPoints()
@@ -1057,10 +1072,41 @@ local function changeFlyoutStyle(self)
 end
 AFP("changeFlyoutStyle", changeFlyoutStyle)
 
+local function UpdateMainBarHot()
+    local fmActionbar = MainMenuBarArtFrame
+    local used_height = MAIN_MENU_BAR_BUTTON_SIZE
+    local btn_padding = GetSetting("MAINBAR_MARGIIN")
+
+    for i = 1, 12 do
+        local btn = fmActionbar.gw_Buttons[i]
+        btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + GetSetting("MAINBAR_MARGIIN")
+
+        btn:ClearAllPoints()
+        btn:SetPoint("LEFT", fmActionbar, "LEFT", btn_padding - GetSetting("MAINBAR_MARGIIN") - MAIN_MENU_BAR_BUTTON_SIZE, (GetSetting("XPBAR_ENABLED") and 0 or -14))
+
+        if i == 6 and not GetSetting("PLAYER_AS_TARGET_FRAME") then
+            btn_padding = btn_padding + 108
+        end
+
+        btn.showMacroName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
+        btn.rangeIndicatorSetting = GetSetting("MAINBAR_RANGEINDICATOR")
+        updateMacroName(btn)
+        updateHotkey(btn)
+    end
+   -- position the main action bar
+   fmActionbar:ClearAllPoints()
+   fmActionbar:SetPoint("TOP", UIParent, "BOTTOM", 0, 80)
+   fmActionbar:SetSize(btn_padding, used_height)
+   fmActionbar.gw_Width = btn_padding
+
+   actionButtons_OnUpdate(MainMenuBarArtFrame, 0, true)
+end
+GW.UpdateMainBarHot = UpdateMainBarHot
+
 local function LoadActionBars(lm)
     local HIDE_ACTIONBARS_CVAR = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
     if HIDE_ACTIONBARS_CVAR then
-        HIDE_ACTIONBARS_CVAR = 0
+        HIDE_ACTIONBARS_CVAR = nil
     else
         HIDE_ACTIONBARS_CVAR = 1
     end

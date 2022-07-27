@@ -69,6 +69,7 @@ local function PositionAndSize(self)
 
     gw_totem_bar_OnEvent(self)
 end
+GW.UpdateTotembar = PositionAndSize
 
 local function Create_Totem_Bar()
     local gw_totem_bar = CreateFrame("Frame", "GW_TotemBar", UIParent)

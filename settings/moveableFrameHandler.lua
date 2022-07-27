@@ -6,15 +6,16 @@ local L = GW.L
 
 local moveable_window_placeholders_visible = true
 local settings_window_open_before_change = false
-local function lockHudObjects(self, inCombat)
+local function lockHudObjects(self)
+    local inCombat = InCombatLockdown()
     GW.MoveHudScaleableFrame:UnregisterAllEvents()
-    if InCombatLockdown() then
+    if inCombat then
         DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
         return
     end
 
     GW.MoveHudScaleableFrame:Hide()
-    if settings_window_open_before_change and inCombat ~= true then
+    if settings_window_open_before_change and not inCombat then
         settings_window_open_before_change = false
         GwSettingsWindow:Show()
     end
@@ -35,17 +36,19 @@ local function lockHudObjects(self, inCombat)
     end
 
     self:GetParent().layoutManager:GetScript("OnEvent")(self:GetParent().layoutManager)
+
+    GW.InMoveHudMode = false
 end
 GW.lockHudObjects = lockHudObjects
 GW.AddForProfiling("settings", "lockHudObjects", lockHudObjects)
 
-local function toggleHudPlaceholders(self)
+local function toggleHudPlaceholders()
     for _, mf in pairs(GW.MOVABLE_FRAMES) do
         if mf.Background then
             if moveable_window_placeholders_visible then
                 mf.Background:Hide()
                 GW.MoveHudScaleableFrame.hidePlaceholder:SetText(L["Show placeholders"])
-            else 
+            else
                 mf.Background:Show()
                 GW.MoveHudScaleableFrame.hidePlaceholder:SetText(L["Hide placeholders"])
             end
@@ -56,6 +59,8 @@ end
 GW.toggleHudPlaceholders = toggleHudPlaceholders
 
 local function moveHudObjects(self)
+    GW.InMoveHudMode = true
+
     if GwSettingsWindow:IsShown() then
         settings_window_open_before_change = true
     end
@@ -78,7 +83,7 @@ local function moveHudObjects(self)
         if event == "PLAYER_REGEN_DISABLED" then
             DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
             self:UnregisterEvent(event)
-            lockHudObjects(self, true)
+            lockHudObjects(self)
         end
     end)
 end

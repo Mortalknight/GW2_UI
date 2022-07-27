@@ -121,37 +121,34 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
     end
 
     local opt = {}
-    opt["name"] = name
-    opt["desc"] = desc
-    opt["optionName"] = optionName
-    opt["optionType"] = "boolean"
-    opt["callback"] = callback
-    opt["dependence"] = dependence
-    opt["forceNewLine"] = forceNewLine
-    opt["hasProfile"] = hasProfile
-    opt["incompatibleAddonsType"] = incompatibleAddons
-    opt["isIncompatibleAddonLoaded"] = false
-    opt["isIncompatibleAddonLoadedButOverride"] = false
+    opt.name = name
+    opt.desc = desc
+    opt.optionName = optionName
+    opt.optionType = "boolean"
+    opt.callback = callback
+    opt.dependence = dependence
+    opt.forceNewLine = forceNewLine
+    opt.hasProfile = hasProfile
+    opt.incompatibleAddonsType = incompatibleAddons
+    opt.isIncompatibleAddonLoaded = false
+    opt.isIncompatibleAddonLoadedButOverride = false
 
     if params then
         for k, v in pairs(params) do opt[k] = v end
     end
 
-    local i = #(panel.gwOptions) + 1
-    panel.gwOptions[i] = opt
-
-    local i = #(all_options) + 1
-    all_options[i] = opt
+    panel.gwOptions[#panel.gwOptions + 1] = opt
+    all_options[#all_options + 1] = opt
 
     if incompatibleAddons then
         local isIncompatibleAddonLoaded, whichAddonsLoaded, isOverride = GW.IsIncompatibleAddonLoadedOrOverride(incompatibleAddons)
         if isIncompatibleAddonLoaded and not isOverride then
-            opt["desc"] = (desc and desc or "") .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
-            opt["isIncompatibleAddonLoaded"] = true
+            opt.desc = (desc and desc or "") .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
+            opt.isIncompatibleAddonLoaded = true
         elseif isIncompatibleAddonLoaded and isOverride then
-            opt["desc"] = (desc and desc or "") .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffffa500" ..  L["You have overridden this behavior."] .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
-            opt["isIncompatibleAddonLoaded"] = false
-            opt["isIncompatibleAddonLoadedButOverride"] = true
+            opt.desc = (desc and desc or "") .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffffa500" ..  L["You have overridden this behavior."] .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
+            opt.isIncompatibleAddonLoaded = false
+            opt.isIncompatibleAddonLoadedButOverride = true
         end
     end
 
@@ -168,35 +165,32 @@ local function AddOptionButton(panel, name, desc, optionName, callback, params, 
     end
 
     local opt = {}
-    opt["name"] = name
-    opt["desc"] = desc
-    opt["optionName"] = optionName
-    opt["optionType"] = "button"
-    opt["callback"] = callback
-    opt["dependence"] = dependence
-    opt["incompatibleAddonsType"] = incompatibleAddons
-    opt["isIncompatibleAddonLoaded"] = false
-    opt["isIncompatibleAddonLoadedButOverride"] = false
+    opt.name = name
+    opt.desc = desc
+    opt.optionName = optionName
+    opt.optionType = "button"
+    opt.callback = callback
+    opt.dependence = dependence
+    opt.incompatibleAddonsType = incompatibleAddons
+    opt.isIncompatibleAddonLoaded = false
+    opt.isIncompatibleAddonLoadedButOverride = false
 
     if params then
         for k, v in pairs(params) do opt[k] = v end
     end
 
-    local i = #(panel.gwOptions) + 1
-    panel.gwOptions[i] = opt
-
-    i = #(all_options) + 1
-    all_options[i] = opt
+    panel.gwOptions[#panel.gwOptions + 1] = opt
+    all_options[#all_options + 1] = opt
 
     if incompatibleAddons then
         local isIncompatibleAddonLoaded, whichAddonsLoaded, isOverride = GW.IsIncompatibleAddonLoadedOrOverride(incompatibleAddons)
         if isIncompatibleAddonLoaded and not isOverride then
-            opt["desc"] = (desc and desc or "") .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
-            opt["isIncompatibleAddonLoaded"] = true
+            opt.desc = (desc and desc or "") .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
+            opt.isIncompatibleAddonLoaded = true
         elseif  isIncompatibleAddonLoaded and isOverride then
-            opt["desc"] = (desc and desc or "") .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffffa500" ..  L["You have overridden this behavior."] .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
-            opt["isIncompatibleAddonLoaded"] = false
-            opt["isIncompatibleAddonLoadedButOverride"] = true
+            opt.desc = (desc and desc or "") .. "\n\n|cffffedba" .. L["The following addon(s) are loaded, which can cause conflicts. By default, this setting is disabled."] .. "|r |cffff0000\n" .. whichAddonsLoaded .. "|r\n\n|cffffa500" ..  L["You have overridden this behavior."] .. "|r\n\n|cffaaaaaa" .. L["Ctrl + Click to toggle override"] .. "|r"
+            opt.isIncompatibleAddonLoaded = false
+            opt.isIncompatibleAddonLoadedButOverride = true
         end
     end
 
@@ -207,7 +201,7 @@ GW.AddOptionButton = AddOptionButton
 local function AddOptionColorPicker(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
 
-    opt["optionType"] = "colorPicker"
+    opt.optionType = "colorPicker"
 
     return opt
 end
@@ -216,11 +210,11 @@ GW.AddOptionColorPicker = AddOptionColorPicker
 local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons, hasProfile)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, nil, hasProfile)
 
-    opt["min"] = min
-    opt["max"] = max
-    opt["decimalNumbers"] = decimalNumbers or 0
-    opt["step"] = step
-    opt["optionType"] = "slider"
+    opt.min = min
+    opt.max = max
+    opt.decimalNumbers = decimalNumbers or 0
+    opt.step = step
+    opt.optionType = "slider"
 
     return opt
 end
@@ -229,22 +223,22 @@ GW.AddOptionSlider = AddOptionSlider
 local function AddOptionText(panel, name, desc, optionName, callback, multiline, params, dependence, incompatibleAddons)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
 
-    opt["multiline"] = multiline
-    opt["optionType"] = "text"
+    opt.multiline = multiline
+    opt.optionType = "text"
 end
 GW.AddOptionText = AddOptionText
 
 local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, hasProfile, isSound, noNewLine)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, nil, hasProfile)
 
-    opt["options"] = {}
-    opt["options"] = options_list
-    opt["options_names"] = option_names
-    opt["hasCheckbox"] = checkbox
-    opt["optionType"] = "dropdown"
-    opt["tooltipType"] = tooltipType
-    opt["hasSound"] = isSound
-    opt["noNewLine"] = noNewLine
+    opt.options = {}
+    opt.options = options_list
+    opt.options_names = option_names
+    opt.hasCheckbox = checkbox
+    opt.optionType = "dropdown"
+    opt.tooltipType = tooltipType
+    opt.hasSound = isSound
+    opt.noNewLine = noNewLine
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
@@ -325,10 +319,9 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
 end
 
 local function checkDependenciesOnLoad()
-    local options = all_options
     local allOptionsSet = false
 
-    for _, v in pairs(options) do
+    for _, v in pairs(all_options) do
         if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
             if v.isIncompatibleAddonLoadedButOverride then
                 setDependenciesOption(v.optionType, v.optionName, false, false, true)
@@ -977,7 +970,7 @@ local function LoadSettings()
     sWindow.versionString:SetText(GW.VERSION_STRING)
     sWindow.headerString:SetText(CHAT_CONFIGURATION)
     fmGSWMH:SetText(L["Move HUD"])
-    fmGSWS:SetText(L["Save and Reload"])
+    fmGSWS:SetText(CLOSE)
     fmGSWKB:SetText(KEY_BINDING)
     fmGSWD:SetText(L["Join Discord"])
 
@@ -989,13 +982,13 @@ local function LoadSettings()
         GW.moveHudObjects(GW.MoveHudScaleableFrame)
     end
     local fnGSWS_OnClick = function()
-        C_UI.Reload()
+        sWindow:Hide()
     end
     local fnGSWD_OnClick = function()
         StaticPopup_Show("JOIN_DISCORD")
     end
     local fmGSWKB_OnClick = function()
-        GwSettingsWindow:Hide()
+        sWindow:Hide()
         GW.DisplayHoverBinding()
     end
     fmGSWMH:SetScript("OnClick", fnGSWMH_OnClick)
@@ -1030,6 +1023,12 @@ local function LoadSettings()
         "OnHide",
         function()
             mf:Hide()
+            if not GW.InMoveHudMode then
+                if GW.ShowRlPopup then
+                    StaticPopup_Show("CONFIG_RELOAD")
+                    GW.ShowRlPopup = false
+                end
+            end
         end
     )
     sWindow:SetScript(

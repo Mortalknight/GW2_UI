@@ -92,9 +92,11 @@ local function SkinMainMenu()
                 DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
                 return
             end
-            ShowUIPanel(GwSettingsWindow)
-            UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
-            HideUIPanel(GameMenuFrame)
+            if not GW.InMoveHudMode then
+                ShowUIPanel(GwSettingsWindow)
+                UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
+                HideUIPanel(GameMenuFrame)
+            end
         end
     )
     GameMenuFrame[GW.addonName] = GwMainMenuFrame

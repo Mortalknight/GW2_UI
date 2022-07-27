@@ -673,7 +673,7 @@ local function LoadMicroMenu()
     end
 
     -- create our micro button container frame
-    local mbf = CreateFrame("Frame", nil, UIParent, "GwMicroButtonFrameTmpl")
+    local mbf = CreateFrame("Frame", "Gw2MicroBarFrame", UIParent, "GwMicroButtonFrameTmpl")
     local postDragFunction = function(mbf)
         mbf.cf.bg:SetShown(not mbf.isMoved)
     end
