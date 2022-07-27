@@ -13,46 +13,46 @@ local TEST_SEGMENT_BAR = false
 
 local CASTINGBAR_TEXTURES = {
     YELLOW = {
-      NORMAL = {
-        L = 0,
-        R = 0.5,
-        T = 0.25,
-        B = 0.50,
-      },
-      HIGHLIGHT = {
-        L = 0,
-        R = 0.5,
-        T = 0.5,
-        B = 0.75,
-      }
+        NORMAL = {
+            L = 0,
+            R = 0.5,
+            T = 0.25,
+            B = 0.50,
+        },
+        HIGHLIGHT = {
+            L = 0,
+            R = 0.5,
+            T = 0.5,
+            B = 0.75,
+        }
     },
     RED = {
-      NORMAL = {
-        L = 0,
-        R = 0.5,
-        T = 0.75,
-        B = 1,
-      },
-      HIGHLIGHT = {
-        L = 0.5,
-        R = 1,
-        T = 0,
-        B = 0.25,
-      }
+        NORMAL = {
+            L = 0,
+            R = 0.5,
+            T = 0.75,
+            B = 1,
+        },
+        HIGHLIGHT = {
+            L = 0.5,
+            R = 1,
+            T = 0,
+            B = 0.25,
+        }
     },
     GREEN = {
-      NORMAL = {
-        L = 0.5,
-        R = 1,
-        T = 0.25,
-        B = 0.50,
-      },
-      HIGHLIGHT = {
-        L = 0.5,
-        R = 1,
-        T = 0.5,
-        B = 0.75,
-      }
+        NORMAL = {
+            L = 0.5,
+            R = 1,
+            T = 0.25,
+            B = 0.50,
+        },
+        HIGHLIGHT = {
+            L = 0.5,
+            R = 1,
+            T = 0.5,
+            B = 0.75,
+        }
     },
   }
 
@@ -110,12 +110,18 @@ local function barReset(self)
 end
 GW.AddForProfiling("castingbar", "barReset", barReset)
 
-local function AddFinishAnimation(self)
+local function AddFinishAnimation(self, isStopped)
+    local highlightColor = isStopped and CASTINGBAR_TEXTURES.RED.HIGHLIGHT or self.bar.barHighLightCoords
     self.animating = true
-    self.highlight:SetTexCoord(self.bar.barHighLightCoords.L, self.bar.barHighLightCoords.R, self.bar.barHighLightCoords.T, self.bar.barHighLightCoords.B)
+    self.highlight:SetTexCoord(highlightColor.L, highlightColor.R, highlightColor.T, highlightColor.B)
     self.highlight:Show()
     self.highlight:SetWidth(176)
     self.spark:Hide()
+
+    if isStopped then
+        self.bar:SetWidth(176)
+        self.bar:SetTexCoord(CASTINGBAR_TEXTURES.RED.NORMAL.L, CASTINGBAR_TEXTURES.RED.NORMAL.R, CASTINGBAR_TEXTURES.RED.NORMAL.T, CASTINGBAR_TEXTURES.RED.NORMAL.B)
+    end
 
     AddToAnimation(
         self.animationName .. "Complete",
@@ -250,11 +256,18 @@ local function castBar_OnEvent(self, event, unitID, ...)
         end
         barReset(self)
         self.isCasting = false
-    elseif event == "UNIT_SPELLCAST_INTERRUPTED" then
-        barReset(self)
+    elseif event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" then
+        if self.showDetails then
+            if event == "UNIT_SPELLCAST_FAILED" then
+                self.name:SetText(FAILED)
+            else
+                self.name:SetText(INTERRUPTED)
+            end
+        end
+        AddFinishAnimation(self, true)
         self.isCasting = false
     elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.spellID == select(2, ...) and not self.isChanneling then
-        AddFinishAnimation(self)
+        AddFinishAnimation(self, false)
     end
 end
 
@@ -314,6 +327,7 @@ local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
     GwCastingBar:SetScript("OnEvent", unit == "pet" and petCastBar_OnEvent or castBar_OnEvent)
 
     GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", unit)
+    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", unit)
     GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", unit)
     GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", unit)
     GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", unit)
