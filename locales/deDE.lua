@@ -515,7 +515,6 @@ L["Soulwell"] = "Gesundheitsstein"
 L["Mage portal"] = "Magier Portal"
 L["Extended Vendor"] = "Erweiterter Händler"
 L["The number of pages shown in the merchant frame. Set 1 to disable."] = "Die Anzahl der Seiten, welche im Verkäufer Fenster angezeigt werden. 1 zum deaktivieren."
-
 L["Spec is already assigned to a layout!"] = "Spec ist bereits eine Layout zugeordnet!"
 L["New layout name:"] = "Name für das neue Layout:"
 L["Are you sure you want to delete the selected layout?"] = "Bist du sicher, dass du das ausgewählte Layout löschen möchtest?"
@@ -524,3 +523,4 @@ L["Assign layouts to a spec. The layout will be automatically changed on a spec 
 L["<Assign specializations>"] = "<Spezialisierung zuweisen>"
 L["Bottom"] = "Unten"
 L["Health Bar Position"] = "Gesundheitsbalken Position"
+L["One or more of the changes you have made require a UI reload."] = "Eine oder mehrere Einstellungen, die du vorgenommen hast, benötigen ein Neuladen des Benutzerinterfaces um in Effekt zu treten."

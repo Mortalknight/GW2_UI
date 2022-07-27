@@ -489,6 +489,6 @@ L["Are you sure you want to delete the selected layout?"] = true
 L["Rename layout:"] = true
 L["Assign layouts to a spec. The layout will be automatically changed on a spec switch.\n\nLayouts has always priority for profile settings."] = true
 L["<Assign specializations>"] = true
-
 L["Bottom"] = true
 L["Health Bar Position"] = true
+L["One or more of the changes you have made require a UI reload."] = true
