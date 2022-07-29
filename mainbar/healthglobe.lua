@@ -180,7 +180,7 @@ GW.AddForProfiling("healthglobe", "updateHealthData", updateHealthData)
 
 local function selectPvp(self)
     local prevFlag = self.pvp.pvpFlag
-    if GetSetting("PLAYER_SHOW_PVP_INDICATOR") and (C_PvP.IsWarModeDesired() or GetPVPDesired("player") or UnitIsPVP("player") or UnitIsPVPFreeForAll("player")) then
+    if GetSetting("PLAYER_SHOW_PVP_INDICATOR") and (C_PvP.IsWarModeDesired() or GetPVPDesired() or UnitIsPVP("player") or UnitIsPVPFreeForAll("player")) then
         self.pvp.pvpFlag = true
         if prevFlag ~= true then
             if GW.myfaction == "Horde" then
@@ -217,7 +217,7 @@ GW.AddForProfiling("healthglobe", "globe_OnEvent", globe_OnEvent)
 
 local function globe_OnEnter(self)
     local warmode = C_PvP.IsWarModeDesired()
-    local pvpdesired = GetPVPDesired("player")
+    local pvpdesired = GetPVPDesired()
     local pvpactive = UnitIsPVP("player") or UnitIsPVPFreeForAll("player")
 
     GameTooltip_SetDefaultAnchor(GameTooltip, self)

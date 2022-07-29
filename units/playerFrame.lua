@@ -189,12 +189,12 @@ local function LoadPlayerFrame()
 
     NewUnitFrame.altBg = CreateFrame("Frame", nil, NewUnitFrame, "GwAlternativeUnitFrameBackground")
 
-    local mask = UIParent:CreateMaskTexture()
-    mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
+    NewUnitFrame.mask = UIParent:CreateMaskTexture()
+    NewUnitFrame.mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
 
-    mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    mask:SetSize(58, 58)
-    NewUnitFrame.portrait:AddMaskTexture(mask)
+    NewUnitFrame.mask:SetTexture(186178, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    NewUnitFrame.mask:SetSize(58, 58)
+    NewUnitFrame.portrait:AddMaskTexture(NewUnitFrame.mask)
 
     AddToClique(NewUnitFrame)
 

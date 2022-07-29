@@ -989,6 +989,6 @@ local function LoadXPBar()
             UIFrameFadeIn(self.AzeritBar, 0.2, self.AzeritBar:GetAlpha(), 1)
             UIFrameFadeIn(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 1)
         end
-    )    
+    )
 end
 GW.LoadXPBar = LoadXPBar
