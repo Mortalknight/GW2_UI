@@ -199,7 +199,7 @@ local function LoadUpcomingSpells()
     tinsert(UISpecialFrames, "GwLevelingRewards")
 
     upcomingSpellsFrame.scrollFrame.update = LoadUpcomingRewarsIntoScrollFrame
-    upcomingSpellsFrame.scrollFrame.scrollBar.doNotHide = true
+    upcomingSpellsFrame.scrollFrame.scrollBar.doNotHide = false
     scrollFrameSetup(upcomingSpellsFrame.scrollFrame)
 
     upcomingSpellsFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
