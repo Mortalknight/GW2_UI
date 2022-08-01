@@ -259,6 +259,8 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 frame:Show()
             end
 
+            frame:SetScript("OnUpdate", frame.OnUpdatefunction)
+
             local isBig = frame.typeAura == "bigBuff"
 
             local size = smallSize
@@ -315,8 +317,9 @@ local function UpdateBuffLayout(self, event, anchorPos)
             if usedWidth == 0 then
                 usedWidth = usedWidth + size + marginX
             end
-        elseif frame and frame:IsShown() then
+        elseif frame then
             frame:Hide()
+            frame:SetScript("OnUpdate", nil)
         end
     end
 
@@ -370,6 +373,8 @@ local function CreateAuraFrame(name, parent)
     f.duration = f.status.duration
     f.stacks = f.status.stacks
     f.icon = f.status.icon
+
+    f.OnUpdatefunction = auraFrame_OnUpdate
 
     f:SetScript("OnUpdate", auraFrame_OnUpdate)
     f:SetScript("OnEnter", auraFrame_OnEnter)
