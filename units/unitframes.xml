@@ -400,6 +400,7 @@
          <Layer level="BACKGROUND">
                 <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/units/targetshadow">
                     <Size x="512" y="128"></Size>
+                    <TexCoords left="1" right="0" top="0" bottom="1"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
                     </Anchors>

@@ -1,3 +1,7 @@
+5.31.1
+FIXES
+    - Fix wrong position of inverted target frame background
+
 5.31.0
 NEW
     - Added 'Layouts':

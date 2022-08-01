@@ -1,3 +1,7 @@
+5.31.1
+FIXES
+    - Fix wrong position of inverted target frame background
+
 5.31.0
 NEW
     - Added 'Layouts':
@@ -5,14 +9,14 @@ NEW
         - This layouts will be automaticly activated by a spec switch
         Notes: The current profile layout will be saved as a new layout and works always a default, if no spec layout was found
     - Added an option to change the position of the tooltip healtbar: Bottom, Top, Disable
-    - Added new backgrounds for the immersive question module
+    - Added new backgrounds for the immersive questing module
 
 FIXES
-    - Fix some bugs related to the immersive question module
+    - Fix some bugs related to the immersive questing module
 
 MISC
     - Redo the GW2 profile page and allow unlimited profiles
-    - Some tweaks to the immersive questiong module
+    - Some tweaks to the immersive questing module
 
 5.30.2
 FIXES

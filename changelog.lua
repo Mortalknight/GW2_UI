@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.31.1", [=[
+FIXES
+    - Fix wrong position of inverted target frame background
+]=])
+
 v("5.31.0", [=[
 NEW
     - Added 'Layouts':
