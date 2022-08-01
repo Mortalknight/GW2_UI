@@ -200,7 +200,7 @@ end
 GW.AddForProfiling("raidframes", "unhookPlayerFrame", unhookPlayerFrame)
 
 local function PartyGridOnEvent(self, event, unit)
-    if not UnitExists(self.unit) then
+    if not UnitExists(self.unit) or (self.unit == "player" and (not IsInGroup() and previewStep == 0)) then
         return
     elseif not self.nameNotLoaded then
         GW.GridSetUnitName(self, "PARTY")
@@ -338,8 +338,11 @@ local function LoadPartyGrid()
         return
     end
 
-    if not _G.GwManageGroupButton then
+    if not GwManageGroupButton then
         GW.manageButton()
+
+        -- load missing and ignored auras, do it here bcause this code is only triggered from one of the 3 grids
+        GW.UpdateMissingAndIgnoredAuras()
     end
 
     local container = CreateFrame("Frame", "GwRaidFramePartyContainer", UIParent, "GwRaidFrameContainer")

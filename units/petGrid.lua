@@ -273,8 +273,11 @@ local function LoadPetGrid()
         return
     end
 
-    if not _G.GwManageGroupButton then
+    if not GwManageGroupButton then
         GW.manageButton()
+
+        -- load missing and ignored auras, do it here bcause this code is only triggered from one of the 3 grids
+        GW.UpdateMissingAndIgnoredAuras()
     end
 
     local container = CreateFrame("Frame", "GwRaidFramePetContainer", UIParent, "GwRaidFrameContainer")

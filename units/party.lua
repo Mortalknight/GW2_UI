@@ -108,10 +108,11 @@ local function getUnitDebuffs(unit)
     local counter = 1
 
     for i = 1, 40 do
-        if UnitDebuff(unit, i, "HARMFUL") then
-            local debuffName, icon, count, debuffType, duration, expires, caster, isStealable, shouldConsolidate, spellId = UnitDebuff(unit, i, "HARMFUL")
+        local debuffName, icon, count, debuffType, duration, expires, caster, isStealable, shouldConsolidate, spellId = UnitDebuff(unit, i, "HARMFUL")
+        if debuffName then
             local shouldDisplay = false
-            local isImportant, isDispellable = false, false
+            local isImportant = (GW.ImportendRaidDebuff[spellId] and showImportendInstanceDebuffs) or false
+            local isDispellable = GW.IsDispellableByMe(debuffType)
 
             if showDebuffs then
                 if onlyDispellableDebuffs then
@@ -121,11 +122,7 @@ local function getUnitDebuffs(unit)
                 else
                     shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                 end
-
-                isDispellable = GW.IsDispellableByMe(debuffType)
             end
-
-            isImportant = (GW.ImportendRaidDebuff[spellId] and showImportendInstanceDebuffs) or false
 
             if showImportendInstanceDebuffs and not shouldDisplay then
                 shouldDisplay = GW.ImportendRaidDebuff[spellId] or false
@@ -742,6 +739,9 @@ GW.AddForProfiling("party", "hideBlizzardPartyFrame", hideBlizzardPartyFrame)
 local function LoadPartyFrames()
     if not GwManageGroupButton then
         GW.manageButton()
+
+        -- load missing and ignored auras, do it here bcause this code is only triggered from one of the 3 grids
+        GW.UpdateMissingAndIgnoredAuras()
     end
 
     hideBlizzardPartyFrame()

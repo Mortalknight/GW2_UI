@@ -19,6 +19,13 @@ local missing, ignored = {}, {}
 local spellIDs = {}
 local spellBookSearched = 0
 
+local function UpdateMissingAndIgnoredAuras()
+    missing = FillTable(missing, true, strsplit(",", (GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
+    ignored = FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
+    GW.Debug("Update missing and ignored grid auras")
+end
+GW.UpdateMissingAndIgnoredAuras = UpdateMissingAndIgnoredAuras
+
 local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     local frame, unit = nil, ""
     if profile == "PARTY" then
@@ -485,18 +492,6 @@ local function GridShowDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count
         end
     end
 
-    -- readd OnUpdate handler
-    frame:SetScript("OnUpdate", function(self, elapsed)
-        if self.throt < 0 and self.expires ~= nil and self:IsShown() then
-            self.throt = 0.2
-            if GameTooltip:IsOwned(self) then
-                onDebuffEnter(self)
-            end
-        else
-            self.throt = self.throt - elapsed
-        end
-    end)
-
     if debuffType and DEBUFF_COLOR[debuffType] then
         frame.background:SetVertexColor(DEBUFF_COLOR[debuffType].r, DEBUFF_COLOR[debuffType].g, DEBUFF_COLOR[debuffType].b)
     else
@@ -530,72 +525,69 @@ local function GridShowDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count
         x, y, marginX = 0, y + 1, 0
     end
 
+    -- readd OnUpdate handler
+    frame:SetScript("OnUpdate", function(self, elapsed)
+        if self.throt < 0 and self.expires ~= nil and self:IsShown() then
+            self.throt = 0.2
+            if GameTooltip:IsOwned(self) then
+                onDebuffEnter(self)
+            end
+        else
+            self.throt = self.throt - elapsed
+        end
+    end)
+
     return btnIndex, x, y, marginX
 end
 
 local function GridUpdateDebuffs(self, profile)
     local btnIndex, x, y = 1, 0, 0
-    local filter = "HARMFUL"
+    local shouldDisplay, isImportant, isDispellable
     local showDebuffs = GetSetting("RAID_SHOW_DEBUFFS" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
     local onlyDispellableDebuffs = GetSetting("RAID_ONLY_DISPELL_DEBUFFS" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
     local showImportendInstanceDebuffs = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
-    FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
 
-    local i, framesDone, aurasDone = 0, false, false
-    repeat
-        i = i + 1
+    for i = 1, 40 do
+        local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitDebuff(self.unit, i, "HARMFUL")
 
-        -- hide old frames
-        if not framesDone then
-            local frame = _G["Gw" .. self:GetName() .. "DeBuffItemFrame" .. i]
-            framesDone = not (frame and frame:IsShown())
-            if not framesDone then
-                frame:Hide()
-            end
-        end
-
-        -- show current debuffs
-        if not aurasDone then
-            local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitDebuff(self.unit, i, filter)
-            local shouldDisplay = false
-            local isImportant, isDispellable = false, false
+        if debuffName and y <= 0 then
+            shouldDisplay = false
+            isDispellable = debuffType and GW.IsDispellableByMe(debuffType) or false
+            isImportant = (showImportendInstanceDebuffs and GW.ImportendRaidDebuff[spellId]) or false
 
             if showDebuffs then
                 if onlyDispellableDebuffs then
-                    if debuffType and GW.IsDispellableByMe(debuffType) then
+                    if isDispellable then
                         shouldDisplay = debuffName and not (ignored[debuffName] or spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                     end
                 else
                     shouldDisplay = debuffName and not (ignored[debuffName] or spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                 end
-
-                isDispellable = GW.IsDispellableByMe(debuffType)
             end
 
-            isImportant = (GW.ImportendRaidDebuff[spellId] and showImportendInstanceDebuffs) or false
-
             if showImportendInstanceDebuffs and not shouldDisplay then
-                shouldDisplay = GW.ImportendRaidDebuff[spellId] or false
+                shouldDisplay = isImportant
             end
 
             if shouldDisplay then
-                btnIndex, x, y = GridShowDebuffIcon(self, i, btnIndex, x, y, filter, icon, count, debuffType, duration, expires, isImportant, isDispellable, profile)
+                btnIndex, x, y = GridShowDebuffIcon(self, i, btnIndex, x, y, "HARMFUL", icon, count, debuffType, duration, expires, isImportant, isDispellable, profile)
             end
-
-            aurasDone = not debuffName or y > 0
+        else
+            break
         end
-    until framesDone and aurasDone
+    end
 
-    --remove unsed OnUpdate handler
-    for ii = btnIndex, 40 do
-        local frame = _G["Gw" .. self:GetName() .. "DeBuffItemFrame" .. ii]
+    for i = btnIndex, 40 do
+        local frame = _G["Gw" .. self:GetName() .. "DeBuffItemFrame" .. i]
+
         if frame then
+            frame:Hide()
             frame:SetScript("OnUpdate", nil)
         end
     end
 end
 
-local function GridShowBuffIcon(parent, i, btnIndex, x, y, icon, isMissing, profile)
+local function GridShowBuffIcon(parent, i, btnIndex, x, y, icon, isMissing, expires, profile)
     local size = 14
     local marginX, marginY = x * (size + 2), y * (size + 2)
     local frame = _G["Gw" .. parent:GetName() .. "BuffItemFrame" .. btnIndex]
@@ -644,6 +636,7 @@ local function GridShowBuffIcon(parent, i, btnIndex, x, y, icon, isMissing, prof
 
     frame.index = i
     frame.isMissing = isMissing
+    frame.expires = expires
 
     frame.buffIcon:SetTexture(icon)
     frame.buffIcon:SetVertexColor(1, isMissing and .75 or 1, isMissing and .75 or 1)
@@ -664,11 +657,11 @@ local function GridUpdateBuffs(self, profile)
     local btnIndex, x, y = 1, 0, 0
     local indicators = AURAS_INDICATORS[GW.myclass]
     local i, name, spellid = 1, nil, nil
-    FillTable(missing, true, strsplit(",", (GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
-    FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
+    local shouldDisplay, hasCustom, alwaysShowMine, showForMySpec, indicator
 
+    -- hide all indicators
     for _, pos in pairs(INDICATORS) do
-        self['indicator' .. pos]:Hide()
+        self["indicator" .. pos]:Hide()
     end
 
     -- missing buffs
@@ -696,99 +689,86 @@ local function GridUpdateBuffs(self, profile)
 
                 if spellIDs[mName] then
                     local icon = GetSpellTexture(spellIDs[mName])
-                    i, btnIndex, x, y = i + 1, GridShowBuffIcon(self, spellIDs[mName], btnIndex, x, y, icon, true, profile)
+                    i, btnIndex, x, y = i + 1, GridShowBuffIcon(self, spellIDs[mName], btnIndex, x, y, icon, true, nil, profile)
                 end
             end
         end
     end
 
     -- current buffs
-    local framesDone, aurasDone
-    repeat
-        i = i + 1
+    for i = 1, 40 do
+        local name, icon, count, _, duration, expires, caster, _, _, spellID, canApplyAura, _, castByPlayer = UnitBuff(self.unit, i)
 
-        -- hide old frames
-        if not framesDone then
-            local frame = _G["Gw" .. self:GetName() .. "BuffItemFrame" .. i]
-            framesDone = not (frame and frame:IsShown())
-            if not framesDone then
-                frame:Hide()
+        if name then
+            hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
+
+            if hasCustom then
+                shouldDisplay = showForMySpec or (alwaysShowMine and (caster == "player" or caster == "pet" or caster == "vehicle"))
+            else
+                shouldDisplay = (caster == "player" or caster == "pet" or caster == "vehicle") and (canApplyAura or castByPlayer) and not SpellIsSelfBuff(spellID)
             end
-        end
 
-        -- show buffs
-        if not aurasDone then
-            local name, icon, count, _, duration, expires, caster, _, _, spellID, canApplyAura, _, castByPlayer = UnitBuff(self.unit, i)
-            if name then
-                -- visibility
-                local shouldDisplay
-                local hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
-                if hasCustom then
-                    shouldDisplay = showForMySpec or (alwaysShowMine and (caster == "player" or caster == "pet" or caster == "vehicle"))
-                else
-                    shouldDisplay = (caster == "player" or caster == "pet" or caster == "vehicle") and (canApplyAura or castByPlayer) and not SpellIsSelfBuff(spellID)
-                end
+            if shouldDisplay then
+                -- indicators
+                indicator = indicators[spellID]
+                if indicator then
+                    for _, pos in ipairs(INDICATORS) do
+                        if GetSetting("INDICATOR_" .. pos, true) == (indicator[4] or spellID) then
+                            local frame = self["indicator" .. pos]
+                            local r, g, b = unpack(indicator)
 
-                if shouldDisplay then
-                    -- indicators
-                    local indicator = indicators[spellID]
-                    if indicator then
-                        for _, pos in ipairs(INDICATORS) do
-                            if GetSetting("INDICATOR_" .. pos, true) == (indicator[4] or spellID) then
-                                local frame = self["indicator" .. pos]
-                                local r, g, b = unpack(indicator)
-
-                                if pos == "BAR" then
-                                    frame.expires = expires
-                                    frame.duration = duration
+                            if pos == "BAR" then
+                                frame.expires = expires
+                                frame.duration = duration
+                            else
+                                -- Stacks
+                                if count > 1 then
+                                    frame.text:SetText(count)
+                                    frame.text:SetFont(UNIT_NAME_FONT, count > 9 and 9 or 11, "OUTLINE")
+                                    frame.text:Show()
                                 else
-                                    -- Stacks
-                                    if count > 1 then
-                                        frame.text:SetText(count)
-                                        frame.text:SetFont(UNIT_NAME_FONT, count > 9 and 9 or 11, "OUTLINE")
-                                        frame.text:Show()
-                                    else
-                                        frame.text:Hide()
-                                    end
-
-                                    -- Icon
-                                    if GetSetting("INDICATORS_ICON") then
-                                        frame.icon:SetTexture(icon)
-                                    else
-                                        frame.icon:SetColorTexture(r, g, b)
-                                    end
-
-                                    -- Cooldown
-                                    if GetSetting("INDICATORS_TIME") then
-                                        frame.cooldown:Show()
-                                        frame.cooldown:SetCooldown(expires - duration, duration)
-                                    else
-                                        frame.cooldown:Hide()
-                                    end
-
-                                    shouldDisplay = false
+                                    frame.text:Hide()
                                 end
 
-                                frame:Show()
+                                -- Icon
+                                if GetSetting("INDICATORS_ICON") then
+                                    frame.icon:SetTexture(icon)
+                                else
+                                    frame.icon:SetColorTexture(r, g, b)
+                                end
+
+                                -- Cooldown
+                                if GetSetting("INDICATORS_TIME") then
+                                    frame.cooldown:Show()
+                                    frame.cooldown:SetCooldown(expires - duration, duration)
+                                else
+                                    frame.cooldown:Hide()
+                                end
+
+                                -- do not show that buff as normal buff
+                                shouldDisplay = false
                             end
+
+                            frame:Show()
                         end
                     end
-
-                    --set new buff
-                    if shouldDisplay and not (ignored[name] or missing[name] ~= nil) then
-                        btnIndex, x, y = GridShowBuffIcon(self, i, btnIndex, x, y, icon, nil, profile)
-                    end
                 end
-            else
-                aurasDone = true
-            end
-        end
-    until framesDone and aurasDone
 
-     --remove unsed OnUpdate handler
-     for ii = btnIndex, 40 do
-        local frame = _G["Gw" .. self:GetName() .. "BuffItemFrame" .. ii]
+                --set new buff
+                if shouldDisplay and not (ignored[name] or missing[name] ~= nil) then
+                    btnIndex, x, y = GridShowBuffIcon(self, i, btnIndex, x, y, icon, nil, expires, profile)
+                end
+            end
+        else
+            break
+        end
+    end
+
+    for i = btnIndex, 40 do
+        local frame = _G["Gw" .. self:GetName() .. "BuffItemFrame" .. i]
+
         if frame then
+            frame:Hide()
             frame:SetScript("OnUpdate", nil)
         end
     end

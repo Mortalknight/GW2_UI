@@ -52,8 +52,8 @@ local function LoadAurasPanel(sWindow)
 
     createCat(L["Raid Auras"], L["Show or hide auras and edit raid aura indicators."], p, 2, nil, {p_auras, p_indicator, p_missingBuffs})
 
-    addOptionText(p_auras.scroll.scrollchild, L["Ignored Auras"], L["A list of auras that should never be shown."], "AURAS_IGNORED", nil, nil, nil, {["RAID_FRAMES"] = true})
-    addOptionText(p_auras.scroll.scrollchild, L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], "AURAS_MISSING", nil, nil, nil, {["RAID_FRAMES"] = true})
+    addOptionText(p_auras.scroll.scrollchild, L["Ignored Auras"], L["A list of auras that should never be shown."], "AURAS_IGNORED", GW.UpdateMissingAndIgnoredAuras, nil, nil, {["RAID_FRAMES"] = true})
+    addOptionText(p_auras.scroll.scrollchild, L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], "AURAS_MISSING", GW.UpdateMissingAndIgnoredAuras, nil, nil, {["RAID_FRAMES"] = true})
 
     local raidDebuffKeys, raidDebuffVales = {}, {}
     local settingstable = GetSetting("RAIDDEBUFFS")

@@ -310,7 +310,7 @@ local function LoadRaidPetProfile(sWindow)
     p.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
 
     addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_PET", nil, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PET", nil, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PET", nil, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PET"] = true})
     addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", nil, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
     addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_PET", nil, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
     addOptionDropdown(
@@ -513,7 +513,7 @@ local function LoadPartyProfile(sWindow)
     addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR_PARTY", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS_PARTY", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_PARTY", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PARTY", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PARTY", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PARTY"] = true})
     addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_PARTY", nil, nil, {["RAID_FRAMES"] = true})
     addOption(
