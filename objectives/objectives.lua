@@ -309,6 +309,11 @@ local function CreateTrackerObject(name, parent)
             self:SetScript("OnUpdate", nil)
         end
     )
+    f.turnin:SetScript("OnClick",function(self)
+        ShowQuestComplete(self:GetParent().id)
+        RemoveAutoQuestPopUp(self:GetParent().id)
+        self:Hide()
+    end)
     f.popupQuestAccept:SetScript(
         "OnShow",
         function(self)
@@ -321,6 +326,11 @@ local function CreateTrackerObject(name, parent)
             self:SetScript("OnUpdate", nil)
         end
     )
+    f.popupQuestAccept:SetScript("OnClick", function(self)
+        ShowQuestOffer(self:GetParent().id)
+        RemoveAutoQuestPopUp(self:GetParent().id)
+        self:Hide()
+    end)
 
     return f
 end
@@ -1061,24 +1071,12 @@ local function checkForAutoQuests()
         if questID and (popUpType == "OFFER" or popUpType == "COMPLETE") then
             --find our block with that questId
             local questBlock = getBlockById(questID)
-            if questBlock and questBlock.questID == questID then
+            if questBlock then
                 if popUpType == "OFFER" then
                     questBlock.popupQuestAccept:Show()
-                    questBlock.popupQuestAccept:SetScript("OnClick", function(self)
-                        ShowQuestOffer(self:GetParent().id)
-                        RemoveAutoQuestPopUp(self:GetParent().id)
-                        self:Hide()
-                    end)
                 elseif popUpType == "COMPLETE" then
                     questBlock.turnin:Show()
-                    questBlock.turnin:SetScript("OnClick",function(self)
-                        ShowQuestComplete(self:GetParent().id)
-                        RemoveAutoQuestPopUp(self:GetParent().id)
-                        self:Hide()
-                    end)
                 end
-            elseif questBlock == nil then
-                C_Timer.After(0.5, checkForAutoQuests)
             end
         end
     end
@@ -1133,7 +1131,8 @@ local function tracker_OnEvent(self, event, ...)
     end
 
     if self.watchMoneyReasons > numWatchedQuests then self.watchMoneyReasons = self.watchMoneyReasons - numWatchedQuests end
-    C_Timer.After(0.5, checkForAutoQuests)
+    --C_Timer.After(0.5, checkForAutoQuests)
+    checkForAutoQuests()
     QuestTrackerLayoutChanged()
 end
 AFP("tracker_OnEvent", tracker_OnEvent)
