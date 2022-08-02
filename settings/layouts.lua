@@ -1,7 +1,7 @@
 local _, GW = ...
 local L = GW.L
 
-local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdown)
+local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdown, startUp)
     if updateDropdown then
         GwSmallSettingsWindow.layoutView.savedLayoutDropDown.button.string:SetText(layout.name)
         GwSmallSettingsWindow.layoutView.savedLayoutDropDown.button.layoutName = layout.name
@@ -19,7 +19,9 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
         if frame and frame.settingName and _G["Gw_" .. frame.settingName] then
             _G["Gw_" .. frame.settingName]:ClearAllPoints()
             _G["Gw_" .. frame.settingName]:SetPoint(frame.point.point, UIParent, frame.point.relativePoint, frame.point.xOfs, frame.point.yOfs)
-            _G["Gw_" .. frame.settingName]:GetScript("OnDragStop")(_G["Gw_" .. frame.settingName])
+            if not startUp then
+                _G["Gw_" .. frame.settingName]:GetScript("OnDragStop")(_G["Gw_" .. frame.settingName])
+            end
         end
     end
 
@@ -413,7 +415,7 @@ local function specSwitchHandlerOnEvent(self, event)
     end
 
     if layoutToUse then
-        UpdateFramePositionForLayout(layoutToUse, self.layoutManager, true)
+        UpdateFramePositionForLayout(layoutToUse, self.layoutManager, true, event == "PLAYER_ENTERING_WORLD")
     end
 
     if event == "PLAYER_ENTERING_WORLD" then

@@ -59,12 +59,16 @@ local function PositionAndSize(self)
         end
     end
 
+    local size1, size2 = TOTEM_BAR_BUTTON_SIZE * MAX_TOTEMS + MAX_TOTEMS * TOTEM_BAR_BUTTON_MARGIN + TOTEM_BAR_BUTTON_MARGIN, TOTEM_BAR_BUTTON_SIZE + TOTEM_BAR_BUTTON_MARGIN * 2
     if growDirection == "HORIZONTAL" then
-        self:SetWidth(TOTEM_BAR_BUTTON_SIZE * MAX_TOTEMS + MAX_TOTEMS * TOTEM_BAR_BUTTON_MARGIN + TOTEM_BAR_BUTTON_MARGIN) -- Button Size * MAX_TOTEMS + MAX_TOTEMS * Spacing + Spacing
-        self:SetHeight(TOTEM_BAR_BUTTON_SIZE + TOTEM_BAR_BUTTON_MARGIN * 2) -- Button Size + Spacing * 2
+        self:SetWidth(size1) -- Button Size * MAX_TOTEMS + MAX_TOTEMS * Spacing + Spacing
+        self:SetHeight(size2) -- Button Size + Spacing * 2
     else
-        self:SetHeight(TOTEM_BAR_BUTTON_SIZE * MAX_TOTEMS + MAX_TOTEMS * TOTEM_BAR_BUTTON_MARGIN + TOTEM_BAR_BUTTON_MARGIN) -- Button Size * MAX_TOTEMS + MAX_TOTEMS * Spacing + Spacing
-        self:SetWidth(TOTEM_BAR_BUTTON_SIZE + TOTEM_BAR_BUTTON_MARGIN * 2) -- Button Size + Spacing * 2
+        self:SetHeight(size1) -- Button Size * MAX_TOTEMS + MAX_TOTEMS * Spacing + Spacing
+        self:SetWidth(size2) -- Button Size + Spacing * 2
+    end
+    if self.gwMover then
+        self.gwMover:SetSize(self:GetSize())
     end
 
     gw_totem_bar_OnEvent(self)

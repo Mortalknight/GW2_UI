@@ -100,7 +100,7 @@ local function LoadPlayerPanel(sWindow)
         L["Class Totems Growth Direction"],
         function() GW.UpdateTotembar(GW_TotemBar) end,
         "TotemBar_GrowDirection",
-        nil,
+        function() GW.UpdateTotembar(GW_TotemBar) end,
         {"HORIZONTAL", "VERTICAL"},
         {L["Horizontal"], L["Vertical"]},
         nil,

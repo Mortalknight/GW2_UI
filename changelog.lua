@@ -1,6 +1,15 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.31.2", [=[
+FIXES
+    It could happen, that some frames after 2 or more reloads automaticly moves one pixel out of there default position.
+    That causes that eg. the automaticly player buff/debuff positions was not changed if the right actionbar was set to show on hower.
+    
+    To fix this: Open the Move HUD mode and reset the effected frames to there default position (right click the mover and click on Reset).
+    After that do a /reload 
+]=])
+
 v("5.31.1", [=[
 FIXES
     - Fix wrong position of inverted target frame background

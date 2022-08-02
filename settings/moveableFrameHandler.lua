@@ -220,36 +220,31 @@ end
 
 local function smallSettings_resetToDefault(self)
     local mf = self:GetParent().child
-    --local f = mf.gw_frame
-    local settingsName = mf.gw_Settings
 
-    local dummyPoint = GetDefault(settingsName)
     mf:ClearAllPoints()
     mf:SetPoint(
-        dummyPoint["point"],
+        mf.defaultPoint.point,
         UIParent,
-        dummyPoint["relativePoint"],
-        dummyPoint["xOfs"],
-        dummyPoint["yOfs"]
+        mf.defaultPoint.relativePoint,
+        mf.defaultPoint.xOfs,
+        mf.defaultPoint.yOfs
     )
 
-    local point, _, relativePoint, xOfs, yOfs = mf:GetPoint()
-
-    local new_point = GetSetting(settingsName)
-    new_point["point"] = point
-    new_point["relativePoint"] = relativePoint
-    new_point["xOfs"] = GW.RoundInt(xOfs)
-    new_point["yOfs"] = GW.RoundInt(yOfs)
+    local new_point = GetSetting(mf.gw_Settings)
+    new_point.point = mf.defaultPoint.point
+    new_point.relativePoint = mf.defaultPoint.relativePoint
+    new_point.xOfs = mf.defaultPoint.xOfs
+    new_point.yOfs = mf.defaultPoint.yOfs
     new_point.hasMoved = false
-    SetSetting(settingsName, new_point)
+    SetSetting(mf.gw_Settings, new_point)
 
     mf.isMoved = false
-    mf:SetAttribute("isMoved", false)
+    mf:SetAttribute("isMoved", new_point.hasMoved)
 
     --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
-    if settingsName == "PlayerBuffFrame" or settingsName == "PlayerDebuffFrame" then
-        SetSetting(settingsName .. "_GrowDirection", "UP")
-    elseif settingsName == "MicromenuPos" then
+    if mf.gw_Settings == "PlayerBuffFrame" or mf.gw_Settings == "PlayerDebuffFrame" then
+        SetSetting(mf.gw_Settings .. "_GrowDirection", "UP")
+    elseif mf.gw_Settings == "MicromenuPos" then
         -- Hide/Show BG here
         mf.gw_frame.cf.bg:Show()
     end
@@ -260,20 +255,20 @@ local function smallSettings_resetToDefault(self)
         if mf.gw_mhf then
             scale = GetSetting("HUD_SCALE")
         else
-            scale = GetDefault(settingsName .. "_scale")
+            scale = GetDefault(mf.gw_Settings .. "_scale")
         end
         mf:SetScale(scale)
         mf.gw_frame:SetScale(scale)
-        SetSetting(settingsName .. "_scale", scale)
+        SetSetting(mf.gw_Settings .. "_scale", scale)
         self:GetParent().scaleSlider.slider:SetValue(scale)
     end
 
     -- Set height back to default
     if mf.optionHeight then
-        local height = GetDefault(settingsName .. "_height")
+        local height = GetDefault(mf.gw_Settings .. "_height")
         mf:SetHeight(height)
         mf.gw_frame:SetHeight(height)
-        SetSetting(settingsName .. "_height", height)
+        SetSetting(mf.gw_Settings .. "_height", height)
         self:GetParent().heightSlider.slider:SetValue(height)
     end
 
@@ -312,16 +307,15 @@ local function mover_OnDragStop(self)
         local new_point = GetSetting(settingsName)
         new_point.point = point
         new_point.relativePoint = relativePoint
-        new_point.xOfs = xOfs and math.floor(xOfs) or 0
-        new_point.yOfs = yOfs and math.floor(yOfs) or 0
+        new_point.xOfs = xOfs and GW.RoundInt(xOfs) or 0
+        new_point.yOfs = yOfs and GW.RoundInt(yOfs) or 0
         new_point.hasMoved = true
         self:ClearAllPoints()
         self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
         SetSetting(settingsName, new_point)
 
-
-        self.isMoved = true
-        self:SetAttribute("isMoved", true)
+        self.isMoved =  new_point.hasMoved
+        self:SetAttribute("isMoved", new_point.hasMoved)
 
         self:SetMovable(true)
         self:SetUserPlaced(true)
@@ -334,8 +328,6 @@ local function mover_OnDragStop(self)
         self.gw_postdrag(self.gw_frame)
     end
     self.IsMoving = false
-
-    
 end
 GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
 
@@ -487,7 +479,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     if not moveframe.savedPoint.point or not moveframe.savedPoint.relativePoint or not moveframe.savedPoint.xOfs or not moveframe.savedPoint.yOfs then
         -- use default position
         moveframe:SetPoint(moveframe.defaultPoint.point, UIParent, moveframe.defaultPoint.relativePoint, moveframe.defaultPoint.xOfs, moveframe.defaultPoint.yOfs)
-        moveframe.savedPoint = moveframe.defaultPoint
+        moveframe.savedPoint = GW.copyTable(nil, moveframe.defaultPoint)
     else
         moveframe:SetPoint(moveframe.savedPoint.point, UIParent, moveframe.savedPoint.relativePoint, moveframe.savedPoint.xOfs, moveframe.savedPoint.yOfs)
     end
@@ -498,7 +490,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     moveframe:SetScript("OnLeave", moverframe_OnLeave)
 
     if moveframe.savedPoint.hasMoved == nil then -- can be removed after some time
-         if moveframe.defaultPoint.point == moveframe.savedPoint.point and moveframe.defaultPoint.relativePoint == moveframe.savedPoint.relativePoint and moveframe.defaultPoint.xOfs == moveframe.savedPoint.xOfs and moveframe.defaultPoint.yOfs == moveframe.savedPoint.yOfs then
+        if moveframe.defaultPoint.point == moveframe.savedPoint.point and moveframe.defaultPoint.relativePoint == moveframe.savedPoint.relativePoint and moveframe.defaultPoint.xOfs == moveframe.savedPoint.xOfs and moveframe.defaultPoint.yOfs == moveframe.savedPoint.yOfs then
             frame.isMoved = false
             frame:SetAttribute("isMoved", false)
         else
@@ -512,7 +504,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
 
      --temp to migrate to new isMoved system
     if moveframe.savedPoint.hasMoved == nil then
-        moveframe.savedPoint.hasMoved = frame.isMoved or false
+        moveframe.savedPoint.hasMoved = frame.isMoved
         SetSetting(settingsName, moveframe.savedPoint)
     end
 
