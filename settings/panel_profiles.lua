@@ -382,6 +382,9 @@ local function item_OnEnter(self)
     if self.hasOptions then
         self.settingsButton:Show()
     end
+    if self.canActivate then
+        self.activateButton:GetScript("OnEnter")(self.activateButton, true)
+    end
     if self.canDelete then
         self.settingsButton.dropdown.delete:Show()
     end
@@ -403,6 +406,10 @@ local function item_OnLeave(self)
     if MouseIsOver(self.settingsButton.dropdown) and self.settingsButton.dropdown:IsShown() then return end
 
     self.settingsButton.dropdown:Hide()
+
+    if self.canActivate then
+        self.activateButton:GetScript("OnLeave")(self.activateButton, true)
+    end
 
     if self.hasOptions then
         self.settingsButton:Hide()
@@ -447,22 +454,26 @@ AddForProfiling("panel_profiles", "addProfile", addProfile)
 
 
 
-local function ItemActivateButtonOnEnter(self)
+local function ItemActivateButtonOnEnter(self, triggeredFromParent)
     if self:GetParent().canActivate then
         self.icon:SetBlendMode("ADD")
         self.icon:SetAlpha(0.5)
         self.hint:Show()
 
-        self:GetParent():GetScript("OnEnter")(self:GetParent())
+        if not triggeredFromParent then
+            self:GetParent():GetScript("OnEnter")(self:GetParent())
+        end
     end
 end
 
-local function ItemActivateButtonOnLeave(self)
+local function ItemActivateButtonOnLeave(self, triggeredFromParent)
     self.icon:SetBlendMode("BLEND")
     self.icon:SetAlpha(1)
     self.hint:Hide()
 
-    self:GetParent():GetScript("OnLeave")(self:GetParent())
+    if not triggeredFromParent then
+        self:GetParent():GetScript("OnLeave")(self:GetParent())
+    end
 end
 
 local function ItemSettingsButtonOnClick(self)
