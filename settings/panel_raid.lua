@@ -78,9 +78,9 @@ local function LoadRaidProfile(sWindow)
     addOption(p, PET, L["Show a separate grid for raid pets"], "RAID_PET_FRAMES", function() GW.ShowRlPopup = true end, nil, {["RAID_FRAMES"] = true})
     addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
-    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", function() for i = 1, MAX_RAID_MEMBERS do if _G["GwCompactRaidFrame" .. i] then GW.RaidGridOnEvent(_G["GwCompactRaidFrame" .. i], "UNIT_AURA") end end end, nil, {["RAID_FRAMES"] = true})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS", function() for i = 1, MAX_RAID_MEMBERS do if _G["GwCompactRaidFrame" .. i] then GW.RaidGridOnEvent(_G["GwCompactRaidFrame" .. i], "UNIT_AURA") end end end, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
+    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", function() for i = 1, MAX_RAID_MEMBERS do if _G["GwCompactRaidFrame" .. i] then GW.RaidGridOnEvent(_G["GwCompactRaidFrame" .. i], "UNIT_AURA") end end end, nil, {["RAID_FRAMES"] = true})
     addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS", nil, nil, {["RAID_FRAMES"] = true})
     addOption(
         p,
@@ -310,9 +310,9 @@ local function LoadRaidPetProfile(sWindow)
     p.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
 
     addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_PET", nil, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PET", nil, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PET"] = true})
-    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", nil, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
-    addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_PET", nil, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PET", function() for i = 1, 40 do if _G["GwCompactRaidPetFrame" .. i] then GW.PetGridOnEvent(_G["GwCompactRaidPetFrame" .. i], "UNIT_AURA") end end end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PET"] = true})
+    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", function() for i = 1, 40 do if _G["GwCompactRaidPetFrame" .. i] then GW.PetGridOnEvent(_G["GwCompactRaidPetFrame" .. i], "UNIT_AURA") end end end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
+    addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_PET", function() for i = 1, 40 do if _G["GwCompactRaidPetFrame" .. i] then GW.PetGridOnEvent(_G["GwCompactRaidPetFrame" .. i], "UNIT_AURA") end end end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
     addOptionDropdown(
         p,
         L["Show Aura Tooltips"],
@@ -512,9 +512,9 @@ local function LoadPartyProfile(sWindow)
 
     addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR_PARTY", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS_PARTY", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_PARTY", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PARTY", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PARTY"] = true})
-    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_PARTY", function() for i = 1, 5 do if _G["GwCompactPartyFrame" .. i] then GW.PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "UNIT_AURA") end end end, nil, {["RAID_FRAMES"] = true})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PARTY", function() for i = 1, 5 do if _G["GwCompactPartyFrame" .. i] then GW.PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "UNIT_AURA") end end end, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PARTY"] = true})
+    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY", function() for i = 1, 5 do if _G["GwCompactPartyFrame" .. i] then GW.PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "UNIT_AURA") end end end, nil, {["RAID_FRAMES"] = true})
     addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_PARTY", nil, nil, {["RAID_FRAMES"] = true})
     addOption(
         p,
