@@ -118,9 +118,12 @@ local function SkinInspectFrameOnLoad()
 
     for _, Slot in pairs({InspectPaperDollItemsFrame:GetChildren()}) do
         if Slot:IsObjectType("Button") or Slot:IsObjectType("ItemButton") then
-            Slot.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-            Slot.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+            GW.HandleIcon(Slot.icon, true, GW.constBackdropFrameColorBorder)
+
+            Slot.icon.backdrop:SetFrameLevel(Slot:GetFrameLevel())
+            Slot.icon:SetInside()
             Slot:StripTextures()
+            GW.HandleIconBorder(Slot.IconBorder, Slot.icon.backdrop)
         end
     end
 
