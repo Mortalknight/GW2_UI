@@ -281,25 +281,25 @@ local function loadAFKAnimation()
     elseif GW.myrace == "Draenei" or GW.myrace == "LightforgedDraenei" then
         if GW.mysex == 2 then modelOffsetY = 250 end
     elseif GW.myrace == "Pandaren" then
-        if GW.mysex == 2 then 
+        if GW.mysex == 2 then
             modelOffsetY = 220
         elseif GW.mysex == 3 then
             modelOffsetY = 280
         end
     elseif GW.myrace == "KulTiran" then
-        if GW.mysex == 2 then 
+        if GW.mysex == 2 then
             modelOffsetY = 220
         elseif GW.mysex == 3 then
             modelOffsetY = 240
         end
     elseif GW.myrace == "Goblin" then
-        if GW.mysex == 2 then 
+        if GW.mysex == 2 then
             modelOffsetY = 240
         elseif GW.mysex == 3 then
             modelOffsetY = 220
         end
     elseif GW.myrace == "Troll" or GW.myrace == "ZandalariTroll" then
-        if GW.mysex == 2 then 
+        if GW.mysex == 2 then
             modelOffsetY = 250
         elseif GW.mysex == 3 then
             modelOffsetY = 280

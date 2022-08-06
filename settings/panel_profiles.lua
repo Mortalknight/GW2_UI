@@ -243,7 +243,7 @@ local function delete_OnClick(self)
     local p = self:GetParent().parentItem
     self:GetParent():Hide()
     GW.WarningPrompt(
-        L["Are you sure you want to delete this profile?"] .. "\n\n'" .. GW2UI_SETTINGS_PROFILES[p.profileID].profilename .. "'",
+        L["Are you sure you want to delete this profile?"] .. "\n\n'" .. (GW2UI_SETTINGS_PROFILES[p.profileID].profilename or UNKNOWN) .. "'",
         function()
             deleteProfile(p.profileID)
             loadProfiles(ProfileWin)
@@ -614,7 +614,7 @@ local function LoadProfilesPanel(sWindow)
         GW.InputPrompt(
             NEW_COMPACT_UNIT_FRAME_PROFILE,
             function()
-                addProfile(GwWarningPrompt.input:GetText() or UNKNOWN)
+                addProfile(string.len(GwWarningPrompt.input:GetText()) == 0 and UNKNOWN or GwWarningPrompt.input:GetText())
                 GwWarningPrompt:Hide()
             end
         )
