@@ -6,7 +6,7 @@
             <ScrollFrame parentKey="profileScroll" inherits="GwHybridScrollFrameTemplate">
                 <Size x="480" y="433"></Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-170"></Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-170"></Anchor>
                 </Anchors>
             </ScrollFrame>
         </Frames>
