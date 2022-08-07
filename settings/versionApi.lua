@@ -38,7 +38,7 @@ local function GetSpecialization()
         return _G.GetSpecialization()
     end
     if version>30000 then
-        return _G.GetPrimaryTalentTree()
+        return 0 --_G.GetPrimaryTalentTree()
     end
 
     return 0

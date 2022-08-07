@@ -127,7 +127,7 @@ local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requir
         end
     end
 
-    blocked= false
+    blocked = false
     if buttonTier == tier then
         local left = min(buttonColumn, column)
         local right = max(buttonColumn, column)
@@ -174,6 +174,7 @@ local function TalentFrame_SetPrereqs(frame, buttonTier, buttonColumn, forceDesa
         if not isLearnable or forceDesaturated then
             requirementsMet = nil
         end
+        print(buttonTier, buttonColumn, tier, column, frame, requirementsMet)
         getLinePath(buttonTier, buttonColumn, tier, column, frame, requirementsMet)
     end
     return requirementsMet
@@ -206,9 +207,10 @@ local function updateTalentTrees()
 
         local numTalents = GetNumTalents(f)
         for i = 1, MAX_NUM_TALENTS do
-            if i <= numTalents then
-                local name, texture, tier, column, rank, maxRank, isExceptional, available = GetTalentInfo(f, i)
+            local name, texture, tier, column, rank, maxRank, isExceptional, available = GetTalentInfo(f, i)
+            local button = _G['GwLegacyTalentTree' .. f .. 'Teir' .. tier .. 'index' .. column]
 
+            if i <= numTalents then
                 TALENT_BRANCH_ARRAY[f][tier][column].id = i
                 local button = _G['GwLegacyTalentTree' .. f .. 'Teir' .. tier .. 'index' .. column]
                 button.icon:SetTexture(texture)
@@ -233,7 +235,7 @@ local function updateTalentTrees()
                 local ispassive = not isExceptional
                 local Prereqs = TalentFrame_SetPrereqs(f, tier, column, forceDesaturated, tierUnlocked, GetTalentPrereqs(f, i))
 
-                button.talentID = talentID
+                button.talentID = i
                 button.available = available
                 button.known = rank==maxRank
 

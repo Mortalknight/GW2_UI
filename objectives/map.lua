@@ -315,7 +315,7 @@ local function LoadMinimap()
     MiniMapLFGFrameIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMicroButton-Down")
     MiniMapLFGFrameIcon:SetSize(20, 20)
 
-    hooksecurefunc("BattlefieldFrame_OnUpdate", lfgAnimPvP)
+    --hooksecurefunc("BattlefieldFrame_OnUpdate", lfgAnimPvP)
     hooksecurefunc("MiniMapBattlefieldFrame_isArena", function()
         local _, _, _, _, _, _, isRankedArena  = GetBattlefieldStatus(1)
         if isRankedArena then

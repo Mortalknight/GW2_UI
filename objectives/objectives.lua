@@ -686,9 +686,9 @@ local function OnBlockClick(self, button)
             end
         end
         if GetCVar("autoQuestWatch") == "0" then
-            GW2UI_QUEST_WATCH_DBTrackedQuests[questID] = nil
+            GW2UI_QUEST_WATCH_DB.TrackedQuests[questID] = nil
         else
-            GW2UI_QUEST_WATCH_DBTrackedQuests.AutoUntrackedQuests[questID] = true
+            GW2UI_QUEST_WATCH_DB.TrackedQuests.AutoUntrackedQuests[questID] = true
         end
         RemoveQuestWatch(self.questLogIndex)
         QuestWatch_Update()
@@ -1050,7 +1050,7 @@ local function AdjustQuestTracker(our_bars, our_minimap)
         return
     end
 
-    local o = QuestWatchFrame
+    local o = WatchFrame
     if (o:IsUserPlaced()) then
         return
     end
@@ -1075,13 +1075,13 @@ GW.AdjustQuestTracker = AdjustQuestTracker
 
 local function LoadQuestTracker()
     -- disable the default tracker
-    QuestWatchFrame:SetMovable(1)
-    QuestWatchFrame:SetUserPlaced(true)
-    QuestWatchFrame:Hide()
-    QuestWatchFrame:SetScript(
+    WatchFrame:SetMovable(1)
+    WatchFrame:SetUserPlaced(true)
+    WatchFrame:Hide()
+    WatchFrame:SetScript(
         "OnShow",
         function()
-            QuestWatchFrame:Hide()
+            WatchFrame:Hide()
         end
     )
 
@@ -1217,7 +1217,7 @@ local function LoadQuestTracker()
     fTracker:SetHeight(GetSetting("QuestTracker_pos_height"))
 
     --hook functions
-    hooksecurefunc("AutoQuestWatch_Insert", _AQW_Insert)
+    --hooksecurefunc("AutoQuestWatch_Insert", _AQW_Insert)
     hooksecurefunc("AddQuestWatch", _AQW_Insert)
     hooksecurefunc("RemoveQuestWatch", _RemoveQuestWatch)
 
