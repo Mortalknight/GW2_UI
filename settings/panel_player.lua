@@ -75,28 +75,28 @@ local function LoadPlayerPanel(sWindow)
         nil,
         {["HEALTHGLOBE_ENABLED"] = true}
     )
-    addOptionDropdown(
-        p_player.scroll.scrollchild,
-        L["Class Totems Sorting"],
-        nil,
-        "TotemBar_SortDirection",
-        nil,
-        {"ASC", "DSC"},
-        {L["Ascending"], L["Descending"]},
-        nil,
-        {["HEALTHGLOBE_ENABLED"] = true}
-    )
-    addOptionDropdown(
-        p_player.scroll.scrollchild,
-        L["Class Totems Growth Direction"],
-        nil,
-        "TotemBar_GrowDirection",
-        nil,
-        {"HORIZONTAL", "VERTICAL"},
-        {L["Horizontal"], L["Vertical"]},
-        nil,
-        {["HEALTHGLOBE_ENABLED"] = true}
-    )
+--    addOptionDropdown(
+--        p_player.scroll.scrollchild,
+--        L["Class Totems Sorting"],
+--        nil,
+--        "TotemBar_SortDirection",
+--        nil,
+--        {"ASC", "DSC"},
+--        {L["Ascending"], L["Descending"]},
+--        nil,
+--        {["HEALTHGLOBE_ENABLED"] = true}
+--    )
+--    addOptionDropdown(
+--        p_player.scroll.scrollchild,
+--        L["Class Totems Growth Direction"],
+--        nil,
+--        "TotemBar_GrowDirection",
+--        nil,
+--       {"HORIZONTAL", "VERTICAL"},
+--        {L["Horizontal"], L["Vertical"]},
+--        nil,
+--        {["HEALTHGLOBE_ENABLED"] = true}
+--    )
     addOptionText(
         p_player.scroll.scrollchild,
         L["Dodge Bar Ability"],

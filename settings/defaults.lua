@@ -324,14 +324,14 @@ GW_DEFAULT["ClasspowerBar_pos"]["xOfs"] = -372
 GW_DEFAULT["ClasspowerBar_pos"]["yOfs"] = 81
 GW_DEFAULT["ClasspowerBar_pos_scale"] = 1
 
-GW_DEFAULT["TotemBar_pos"] = {}
-GW_DEFAULT["TotemBar_pos"]["point"] = "TOPRIGHT"
-GW_DEFAULT["TotemBar_pos"]["relativePoint"] = "TOPRIGHT"
-GW_DEFAULT["TotemBar_pos"]["xOfs"] = -500
-GW_DEFAULT["TotemBar_pos"]["yOfs"] = -50
-GW_DEFAULT["TotemBar_pos_scale"] = 1
-GW_DEFAULT["TotemBar_GrowDirection"] = "HORIZONTAL"
-GW_DEFAULT["TotemBar_SortDirection"] = "ASC"
+--GW_DEFAULT["TotemBar_pos"] = {}
+--GW_DEFAULT["TotemBar_pos"]["point"] = "TOPRIGHT"
+--GW_DEFAULT["TotemBar_pos"]["relativePoint"] = "TOPRIGHT"
+--GW_DEFAULT["TotemBar_pos"]["xOfs"] = -500
+--GW_DEFAULT["TotemBar_pos"]["yOfs"] = -50
+--GW_DEFAULT["TotemBar_pos_scale"] = 1
+--GW_DEFAULT["TotemBar_GrowDirection"] = "HORIZONTAL"
+--GW_DEFAULT["TotemBar_SortDirection"] = "ASC"
 
 GW_DEFAULT["MinimapPos"] = {}
 GW_DEFAULT["MinimapPos"]["point"] = "BOTTOMRIGHT"

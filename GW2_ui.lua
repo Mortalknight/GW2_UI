@@ -584,7 +584,6 @@ local function loadAddon(self)
     -- create action bars
     if GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
         GW.LoadActionBars(lm)
-        GW.LoadMultiCastActionBarFrame()
     end
 
     -- create pet frame

@@ -234,6 +234,21 @@ local function setDruid(f)
 end
 GW.AddForProfiling("classpowers", "setDruid", setDruid)
 
+--SHAMAN
+local function setShaman(f)
+    MultiCastActionBarFrame:SetParent(f)
+    MultiCastActionBarFrame:ClearAllPoints()
+    MultiCastActionBarFrame:SetAllPoints(f)
+
+    f.background:Hide()
+    f.fill:Hide()
+
+    f:ClearAllPoints()
+    f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -MultiCastActionBarFrame:GetHeight() + 5)
+
+    return true
+end
+
 local function selectType(f)
     f:SetScript("OnEvent", nil)
     f:UnregisterAllEvents()
@@ -251,12 +266,14 @@ local function selectType(f)
         showBar = setRogue(f)
     elseif GW.myClassID == 6 then
         showBar = setDeathKnight(f)
+    elseif GW.myClassID == 7 then
+        showBar = setShaman(f)
     elseif GW.myClassID == 11 then
         showBar = setDruid(f)
     end
 
     if (GW.myClassID == 4 or GW.myClassID == 11) and f.ourTarget and f.comboPointsOnTarget and f.barType == "combo" then
-        showBar = UnitExists("target") and UnitCanAttack("player", "target") and not UnitIsDead("target")
+        showBar = UnitExists("target") and UnitCanAttack("player", "target") and not UnitIsDead("target") or false
     end
     f:SetShown(showBar)
 end
@@ -306,8 +323,8 @@ local function LoadClassPowers()
 
     -- create an extra mana power bar that is used sometimes (druid) only if our Powerbar is on
     if cpf.ourPowerBar then
-        local anchorFrame = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame or _G.GwPlayerPowerBar
-        local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame.powerbar:GetWidth() or _G.GwPlayerPowerBar:GetWidth()
+        local anchorFrame = GetSetting("PLAYER_AS_TARGET_FRAME") and GwPlayerUnitFrame or GwPlayerPowerBar
+        local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
         local lmb = CreateFrame("Frame", "GwPlayerPowerBarExtra", anchorFrame, "GwPlayerPowerBar")
         cpf.lmb = lmb
         lmb.candy.spark:ClearAllPoints()

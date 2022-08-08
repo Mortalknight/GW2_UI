@@ -445,17 +445,11 @@ local function LoadMinimap()
     MiniMapBattlefieldFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -69)
 
     GwCalendarButton = CreateFrame("Button", "GwCalendarButton", UIParent, "GwCalendarButton")
-    local fnGwCalendarButton_OnShow = function(self)
-        if (IsKioskModeEnabled()) then
-            self:Disable()
-        end
-    end
     local fnGwCalendarButton_OnEnter = function(self)
         GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -70)
         GameTooltip:AddLine(GAMETIME_TOOLTIP_TOGGLE_CALENDAR, 1, 1, 1)
         GameTooltip:Show()
     end
-    GwCalendarButton:SetScript("OnShow", fnGwCalendarButton_OnShow)
     GwCalendarButton:SetScript("OnEnter", fnGwCalendarButton_OnEnter)
     GwCalendarButton:SetScript("OnLeave", GameTooltip_Hide)
     GwCalendarButton:SetScript("OnClick", GameTimeFrame_OnClick)
