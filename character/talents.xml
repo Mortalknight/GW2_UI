@@ -400,7 +400,7 @@
                     <Button parentKey="spec2Button" text="2" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
                         <Size x="32" y="32"/>
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-10"/>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-5"/>
                         </Anchors>
                     </Button>
                     <Button parentKey="spec1Button" text="1" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
@@ -409,8 +409,14 @@
                             <Anchor point="RIGHT" relativePoint="LEFT" relativeKey="$parent.spec2Button" x="-10" y="0"/>
                         </Anchors>
                     </Button>
+                    <Button parentKey="petTalentsButton" text="PETS" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="74" y="16"/>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.spec2Button" x="0" y="-5"/>
+                        </Anchors>
+                    </Button>
                     <Button parentKey="activateSpecGroup" text="TALENT_SPEC_ACTIVATE" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
-                    <Size x="80" y="22"/>
+                        <Size x="80" y="22"/>
                         <Anchors>
                              <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-10"/>
                         </Anchors>

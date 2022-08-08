@@ -25,11 +25,11 @@ end
 GW.api.GetItemLevelColor = GetItemLevelColor
 
 
-local function GetNumSpecializations()
+local function GetNumSpecializations(isPet)
     if version>50000 then
         return _G.GetNumSpecializations()
     end
-    return _G.GetNumTalentTabs()
+    return _G.GetNumTalentTabs(false, isPet)
 end
 GW.api.GetNumSpecializations = GetNumSpecializations
 
