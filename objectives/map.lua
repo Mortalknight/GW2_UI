@@ -8,10 +8,10 @@ local trackingTypes = GW.trackingTypes
 local MAP_FRAMES_HIDE = {}
 MAP_FRAMES_HIDE[1] = MiniMapMailFrame
 MAP_FRAMES_HIDE[2] = MiniMapVoiceChatFrame
-MAP_FRAMES_HIDE[3] = GameTimeFrame
-MAP_FRAMES_HIDE[4] = MiniMapTrackingButton
-MAP_FRAMES_HIDE[5] = MiniMapTracking
-MAP_FRAMES_HIDE[6] = MinimapToggleButton
+MAP_FRAMES_HIDE[3] = MiniMapTrackingButton
+MAP_FRAMES_HIDE[4] = MiniMapTracking
+MAP_FRAMES_HIDE[5] = MinimapToggleButton
+MAP_FRAMES_HIDE[6] = GameTimeFrame
 
 local MAP_FRAMES_HOVER = {}
 
@@ -47,26 +47,26 @@ GW.SetMinimapHover = SetMinimapHover
 
 local function setMinimapButtons(side)
     MiniMapBattlefieldIcon:ClearAllPoints()
+    GwCalendarButton:ClearAllPoints()
     MiniMapLFGFrame:ClearAllPoints()
     GwMailButton:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
-    GwMiniMapTrackingFrame:ClearAllPoints()
 
     if side == "left" then
+        GwCalendarButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -2)
         MiniMapBattlefieldIcon:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -8.5, -69)
         MiniMapLFGFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -5, -7)
         GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -10, -47)
         GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -127)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
-        GwMiniMapTrackingFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
     else
+        GwCalendarButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -2)
         MiniMapBattlefieldIcon:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -69)
         MiniMapLFGFrame:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 5, -7)
         GwMailButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 14, -47)
         GwAddonToggle:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -127)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
-        GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 7, 0)
     end
 end
 
@@ -282,6 +282,9 @@ local function getMinimapShape()
 end
 
 local function minimap_OnShow()
+    if GwCalendarButton then
+        GwCalendarButton:Show()
+    end
     if GwAddonToggle and GwAddonToggle.gw_Showing then
         GwAddonToggle:Show()
     end
@@ -292,6 +295,9 @@ end
 GW.AddForProfiling("map", "minimap_OnShow", minimap_OnShow)
 
 local function minimap_OnHide()
+    if GwCalendarButton then
+        GwCalendarButton:Hide()
+    end
     if GwAddonToggle then
         GwAddonToggle:Hide()
     end
@@ -364,6 +370,7 @@ local function LoadMinimap()
             self:Hide()
         end
     end)
+    GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", -30, 0)
 
     GwMapTime = CreateFrame("Button", "GwMapTime", Minimap, "GwMapTime")
     TimeManager_LoadUI()
@@ -416,7 +423,6 @@ local function LoadMinimap()
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
     MiniMapTracking:SetPoint("TOPLEFT", Minimap, -15, -30)
-    GameTimeFrame:SetPoint("TOPLEFT", Minimap, -42, 0)
     MiniMapMailFrame:SetPoint("TOPLEFT", Minimap, 45, 15)
     MiniMapBattlefieldFrame:ClearAllPoints()
     MiniMapBattlefieldFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 45, 0)
@@ -438,12 +444,25 @@ local function LoadMinimap()
     MiniMapBattlefieldFrame:ClearAllPoints()
     MiniMapBattlefieldFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -69)
 
-    GameTimeFrame:HookScript(
-        "OnShow",
-        function(self)
-            self:Hide()
+    GwCalendarButton = CreateFrame("Button", "GwCalendarButton", UIParent, "GwCalendarButton")
+    local fnGwCalendarButton_OnShow = function(self)
+        if (IsKioskModeEnabled()) then
+            self:Disable()
         end
-    )
+    end
+    local fnGwCalendarButton_OnEnter = function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -70)
+        GameTooltip:AddLine(GAMETIME_TOOLTIP_TOGGLE_CALENDAR, 1, 1, 1)
+        GameTooltip:Show()
+    end
+    GwCalendarButton:SetScript("OnShow", fnGwCalendarButton_OnShow)
+    GwCalendarButton:SetScript("OnEnter", fnGwCalendarButton_OnEnter)
+    GwCalendarButton:SetScript("OnLeave", GameTooltip_Hide)
+    GwCalendarButton:SetScript("OnClick", GameTimeFrame_OnClick)
+    GwCalendarButton.gw_Showing = true
+    GwCalendarButton.Text:SetFont(UNIT_NAME_FONT, 14)
+    GwCalendarButton.Text:SetTextColor(0, 0, 0)
+    GwCalendarButton.Text:SetText(date("%d"))
 
     local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")
     local fnGwMailButton_OnEvent = function(self, event, ...)
@@ -547,15 +566,8 @@ local function LoadMinimap()
 
     -- mobeable stuff
     GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "VerticalActionBarDummy", {size, size}, nil, {"default"}, nil, MinimapPostDrag, true)
-    local framePoint = GetSetting("MinimapPos")
-    local defaultPoint = GW.GetDefault("MinimapPos")
     Minimap:ClearAllPoints()
-    if not framePoint.point or not framePoint.relativePoint or not framePoint.xOfs or not framePoint.yOfs then
-        -- use default position
-        Minimap:SetPoint(defaultPoint.point, UIParent, defaultPoint.relativePoint, defaultPoint.xOfs, defaultPoint.yOfs)
-    else
-        Minimap:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs, framePoint.yOfs)
-    end
+    Minimap:SetPoint("TOPLEFT", Minimap.gwMover)
     -- check on which side we need to set the buttons
     local x = Minimap:GetCenter()
     local screenWidth = UIParent:GetRight()
@@ -564,9 +576,12 @@ local function LoadMinimap()
     else
         setMinimapButtons("right")
     end
-    MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
-    MinimapCluster:ClearAllPoints()
-    MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
+
+    if not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
+        MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
+        MinimapCluster:ClearAllPoints()
+        MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
+    end
 
     C_Timer.After(0.1, hoverMiniMapOut)
 end

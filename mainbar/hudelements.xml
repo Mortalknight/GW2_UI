@@ -123,7 +123,7 @@
 
     <Frame name="GwMiniMapTrackingFrame" enableMouse="true" hidden="true" virtual="true">
         <Size>
-            <AbsDimension x="33" y="33"/>
+            <AbsDimension x="30" y="30"/>
         </Size>
         <Anchors>
             <Anchor point="TOPLEFT">
@@ -136,7 +136,7 @@
             <Layer level="BACKGROUND">
                 <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\Textures\track-icons-map">
                     <Size>
-                        <AbsDimension x="40" y="40"/>
+                        <AbsDimension x="30" y="30"/>
                     </Size>
                     <Anchors>
                         <Anchor point="TOPLEFT"/>
@@ -574,5 +574,22 @@
             </Layer>
         </Layers>
     </Frame>
+
+    <Button name="GwCalendarButton" virtual="true">
+        <Size x="40" y="40"/>
+        <NormalTexture file="Interface\AddOns\GW2_UI\textures\icon-calendar-Up"></NormalTexture>
+        <PushedTexture file="Interface\AddOns\GW2_UI\textures\icon-calendar"></PushedTexture>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="GwDateText" parentKey="Text" justifyH="CENTER" justifyV="MIDDLE">
+                    <Size x="40" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
+                    </Anchors>
+
+                </FontString>
+            </Layer>
+        </Layers>
+    </Button>
 
 </Ui>

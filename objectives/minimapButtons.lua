@@ -8,7 +8,6 @@ local ignoreButton = {
 	"TimeManagerClockButton",
 	"BattlefieldMinimap",
 	"ButtonCollectFrame",
-	"GameTimeFrame",
 	"QueueStatusMinimapButton",
 	"GarrisonLandingPageMinimapButton",
 	"MiniMapMailFrame",
