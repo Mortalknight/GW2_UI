@@ -352,7 +352,7 @@ local function LoadHealthGlobe()
 
     -- grab the TotemFrame so it remains visible
     if PlayerFrame and TotemFrame then
-        GW.Create_Totem_Bar()
+        --GW.Create_Totem_Bar()
     end
 
     -- setup anim to flash the PvP marker

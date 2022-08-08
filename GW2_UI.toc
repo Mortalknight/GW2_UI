@@ -119,7 +119,8 @@ mainbar/petbar.lua
 mainbar/aurabar_blizz_modified.lua
 mainbar/aurabar.lua
 mainbar/castingbar.lua
-mainbar/totemBar.lua
+## mainbar/totemBar.lua
+mainbar/MultiCastActionBar.lua
 mainbar/healthglobe.lua
 mainbar/powerbar.lua
 mainbar/classpowers.lua
