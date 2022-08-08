@@ -51,7 +51,7 @@ windowsList[3] = {
     ["OnClick"] = [=[
         self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
     ]=]
-    }
+}
 
 windowsList[4] = {
     ['OnLoad'] = "LoadSpellBook",
@@ -65,6 +65,46 @@ windowsList[4] = {
     },
     ["OnClick"] = [=[
         self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "spellbook")
+    ]=]
+}
+
+windowsList[5] = {
+    ['OnLoad'] = "LoadGlyphes",
+    ['SettingName'] = 'USE_TALENT_WINDOW',
+    ['TabIcon'] = 'tabicon_spellbook',
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
+    ["HeaderText"] = GLYPHS,
+    ["Bindings"] = {
+        ["TOGGLEINSCRIPTION"] = "Glyphes"
+    },
+    ["OnClick"] = [=[
+        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "glyphes")
+    ]=]
+}
+
+windowsList[6] = {
+    ['OnLoad'] = "LoadMounts",
+    ['SettingName'] = 'USE_CHARACTER_WINDOW',
+    ['TabIcon'] = 'tabicon_spellbook',
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
+    ["HeaderText"] = MOUNTS,
+    ["Bindings"] = {
+    },
+    ["OnClick"] = [=[
+        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "mounts")
+    ]=]
+}
+
+windowsList[7] = {
+    ['OnLoad'] = "LoadCritter",
+    ['SettingName'] = 'USE_CHARACTER_WINDOW',
+    ['TabIcon'] = 'tabicon_spellbook',
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
+    ["HeaderText"] = PETS,
+    ["Bindings"] = {
+    },
+    ["OnClick"] = [=[
+        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "critter")
     ]=]
 }
 
@@ -86,6 +126,15 @@ local charSecure_OnClick = [=[
     elseif button == "PetBook" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "petbook")
+    elseif button == "Glyphes" then
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "glyphes")
+    elseif button == "Mounts" then
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "mounts")
+    elseif button == "Critter" then
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "critter")
     elseif button == "Talents" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "talents")
@@ -129,6 +178,12 @@ local charSecure_OnAttributeChanged = [=[
     local showSpell = false
     local fmTal = self:GetFrameRef("GwTalentFrame")
     local showTal = false
+    local fmGlyphes = self:GetFrameRef("GwGlyphesFrame")
+    local showGlyphes = false
+    local fmMounts = self:GetFrameRef("GwMountsFrame")
+    local showMounts = false
+    local fmCritter = self:GetFrameRef("GwCritterFrame")
+    local showCritter = false
 
     local hasPetUI = self:GetAttribute("HasPetUI")
 
@@ -142,6 +197,30 @@ local charSecure_OnAttributeChanged = [=[
             return
         else
             showTal = true
+        end
+    elseif fmGlyphes ~= nil and value == "glyphes" then
+        if keytoggle and fmGlyphes:IsVisible() then
+            self:SetAttribute("keytoggle", nil)
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showGlyphes = true
+        end
+    elseif fmMounts ~= nil and value == "mounts" then
+        if keytoggle and fmMounts:IsVisible() then
+            self:SetAttribute("keytoggle", nil)
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showMounts = true
+        end
+    elseif fmCritter ~= nil and value == "critter" then
+        if keytoggle and fmCritter:IsVisible() then
+            self:SetAttribute("keytoggle", nil)
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showCritter = true
         end
     elseif fmSBM ~= nil and value == "spellbook" then
         if keytoggle and fmSBM:IsVisible() then
@@ -235,6 +314,27 @@ local charSecure_OnAttributeChanged = [=[
             fmTal:Show()
         else
             fmTal:Hide()
+        end
+    end
+    if fmGlyphes then
+        if showGlyphes and not close then
+            fmGlyphes:Show()
+        else
+            fmGlyphes:Hide()
+        end
+    end
+    if fmMounts then
+        if showMounts and not close then
+            fmMounts:Show()
+        else
+            fmMounts:Hide()
+        end
+    end
+    if fmCritter then
+        if showCritter and not close then
+            fmCritter:Show()
+        else
+            fmCritter:Hide()
         end
     end
     if fmSBM then

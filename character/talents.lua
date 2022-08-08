@@ -365,7 +365,7 @@ end
 local function LoadTalents()
     TalentFrame_LoadUI()
 
-    CreateFrame('Frame','GwTalentFrame', GwCharacterWindow,'GwLegacyTalentFrame')
+    CreateFrame('Frame','GwTalentFrame', GwCharacterWindow, 'GwLegacyTalentFrame')
 
     GwTalentFrame.bottomBar.activateSpecGroup:SetWidth(GwTalentFrame.bottomBar.activateSpecGroup:GetTextWidth() + 40)
 

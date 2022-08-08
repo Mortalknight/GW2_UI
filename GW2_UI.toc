@@ -150,6 +150,12 @@ character/spellbook.lua
 character/spellbook.xml
 character/talents.lua
 character/talents.xml
+character/glyphes.xml
+character/glyphes.lua
+character/mounts.xml
+character/mounts.lua
+character/critter.xml
+character/critter.lua
 character/windowManager.lua
 
 immersive/skins/skins.xml
