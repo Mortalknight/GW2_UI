@@ -196,14 +196,33 @@ GW.AddForProfiling("micromenu", "bag_OnUpdate", bag_OnUpdate)
 
 local function reskinMicroButton(btn, name, mbf)
     btn:SetParent(mbf)
-    local tex = "Interface\\AddOns\\GW2_UI/Textures\\" .. name .. "-Up"
+    local tex = "Interface/AddOns/GW2_UI/Textures/" .. name .. "-Up"
 
     btn:SetSize(24, 24)
     btn:SetHitRectInsets(0, 0, 0, 0)
+
+
+    if name == "PVPMicroButton" then
+        tex = "Interface/AddOns/GW2_UI/Textures/" .. GW.myfaction
+        if btn.texture then
+            btn.texture:Kill()
+        end
+    end
+
     btn:SetDisabledTexture(tex)
     btn:SetNormalTexture(tex)
     btn:SetPushedTexture(tex)
     btn:SetHighlightTexture(tex)
+
+    if name == "PVPMicroButton" then
+        tex = "Interface/AddOns/GW2_UI/Textures/" .. GW.myfaction
+        btn:SetSize(22, 22)
+
+        btn:GetDisabledTexture():SetDesaturated(true)
+        btn:GetNormalTexture():SetDesaturated(true)
+        btn:GetPushedTexture():SetDesaturated(true)
+        btn:GetHighlightTexture():SetDesaturated(true)
+    end
 
     if btn.Flash then
         -- hide the flash frames off-screen
@@ -366,9 +385,14 @@ local function setupMicroButtons(mbf)
         tref:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
     end
 
+    -- AchievementMicroButton
+    AchievementMicroButton:ClearAllPoints()
+    AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
+    AchievementMicroButton.SetPoint = GW.NoOp
+
     -- QuestLogMicroButton
     QuestLogMicroButton:ClearAllPoints()
-    QuestLogMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
+    QuestLogMicroButton:SetPoint("BOTTOMLEFT", AchievementMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- SocialsMicroButton
     SocialsMicroButton:ClearAllPoints()
@@ -382,9 +406,36 @@ local function setupMicroButtons(mbf)
     SocialsMicroButton:HookScript("OnEvent", updateGuildButton)
     updateGuildButton(SocialsMicroButton, "GUILD_ROSTER_UPDATE")
 
+    -- PVPMicroButton
+    local pvpref
+    if GetSetting("USE_CHARACTER_WINDOW") then
+        pvpref = CreateFrame("Button", "GwTalentMicroButton", mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
+        pvpref.tooltipText = MicroButtonTooltipText(TALENTS, "TOGGLETALENTS")
+        pvpref.newbieText = NEWBIE_TOOLTIP_TALENTS
+        reskinMicroButton(pvpref, "PVPMicroButton", mbf)
+        pvpref:ClearAllPoints()
+        pvpref:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
+
+        pvpref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+        pvpref:SetAttribute(
+            "_onclick",
+            [=[
+            local f = self:GetFrameRef("GwCharacterWindow")
+            f:SetAttribute("keytoggle", "1")
+            f:SetAttribute("windowpanelopen", "paperdollhonor")
+            ]=]
+        )
+
+        disableMicroButton(PVPMicroButton, true)
+    else
+        pvpref = PVPMicroButton
+        pvpref:ClearAllPoints()
+        pvpref:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
+    end
+
     -- LFGMicroButton
     LFGMicroButton:ClearAllPoints()
-    LFGMicroButton:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
+    LFGMicroButton:SetPoint("BOTTOMLEFT", pvpref, "BOTTOMRIGHT", 4, 0)
 
     -- MainMenuMicroButton
     MainMenuMicroButton:ClearAllPoints()
@@ -440,7 +491,7 @@ local function checkElvUI()
     --
     -- This works as-is because we know ElvUI will load before us. Otherwise we'll
     -- have to get more in-depth with the ACE loading logic.
-    
+
     -- get the ElvUI addon/ActionBars module from ACE
     if not LibStub then
         return false
@@ -546,14 +597,8 @@ local function LoadMicroMenu()
             m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
             m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
 
-            local tref
-            if GetSetting("USE_TALENT_WINDOW") then
-                tref = GwTalentMicroButton
-            else
-                tref = TalentMicroButton
-            end
             QuestLogMicroButton:ClearAllPoints()
-            QuestLogMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
+            QuestLogMicroButton:SetPoint("BOTTOMLEFT", AchievementMicroButton, "BOTTOMRIGHT", 4, 0)
         end
     )
 
