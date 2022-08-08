@@ -595,8 +595,8 @@ local function getRangedDamage(unit, prefix)
         end
     end
 
-    local tooltip2 = ATTACK_SPEED_COLON .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", rangedAttackSpeed) .. FONT_COLOR_CODE_CLOSE .. "\n"
-    tooltip2 = tooltip2 .. DAMAGE_COLON .. HIGHLIGHT_FONT_COLOR_CODE .. tooltip .. FONT_COLOR_CODE_CLOSE .. "\n"
+    local tooltip2 = ATTACK_SPEED_SECONDS .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.2F", rangedAttackSpeed) .. FONT_COLOR_CODE_CLOSE .. "\n"
+    tooltip2 = tooltip2 .. DAMAGE .. HIGHLIGHT_FONT_COLOR_CODE .. tooltip .. FONT_COLOR_CODE_CLOSE .. "\n"
     tooltip2 = tooltip2 .. DAMAGE_PER_SECOND .. HIGHLIGHT_FONT_COLOR_CODE .. format("%.1F", damagePerSecond) .. FONT_COLOR_CODE_CLOSE .. "\n"
     tooltip = HIGHLIGHT_FONT_COLOR_CODE .. INVTYPE_RANGED..FONT_COLOR_CODE_CLOSE
     return stat, tooltip, tooltip2

@@ -1,6 +1,6 @@
 local _, GW = ...
 -- Default 8 but none uses 8 talent rows in classic
-local MAX_NUM_TALENT_TIERS = 9
+local MAX_NUM_TALENT_TIERS = 11
 local TALENT_BRANCH_ARRAY = {}
 
 local function talentBunnton_OnEnter(self)
@@ -49,7 +49,7 @@ local function hookTalentButton(talentButton, container, row, index)
     mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(talentButton:GetSize())
     talentButton.mask = mask
-    talentButton.points:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINE")
+    talentButton.points:SetFont(DAMAGE_TEXT_FONT, 10, "OUTLINE")
     talentButton.points:SetTextColor(1, 1, 1, 1)
 end
 
@@ -86,6 +86,7 @@ local function drawLegacyLine(path, frame, teir, column, requirementsMet)
         arrow:ClearAllPoints()
         arrow:SetPoint("TOPLEFT", _G["GwLegacyTalentTree" .. frame].treeContainer, "TOPLEFT", x + (arrow:GetWidth() / 4) , -(y + (arrow:GetHeight() / 4)))
 
+
         if path[i].y ~= 0 then
             if path[i].y > 0 then
                 arrow.down:Show()
@@ -116,7 +117,7 @@ local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requir
     -- Check to see if are in the same column
     if buttonColumn == column then
         if (buttonTier - tier) > 1 then
-            for i=tier , buttonTier - 1 do
+            for i = tier , buttonTier - 1 do
                 path[#path + 1] = {x = 0, y = 1}
             end
         else
@@ -158,23 +159,16 @@ local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requir
     return drawLegacyLine(path, frame, tier, column, requirementsMet)
 end
 
-local function TalentFrame_SetPrereqs(frame, buttonTier, buttonColumn, forceDesaturated, tierUnlocked, ...)
-    local tier, column, isLearnable
-    local requirementsMet
+local function TalentFrame_SetPrereqs(frame, buttonTier, buttonColumn, forceDesaturated, tierUnlocked, preview, ...)
+    local requirementsMet = tierUnlocked and not forceDesaturated
 
-    if tierUnlocked and not forceDesaturated then
-        requirementsMet = 1
-    else
-        requirementsMet = nil
-    end
-    for i = 1, select('#', ...), 3 do
-        tier = select(i, ...)
-        column = select(i + 1, ...)
-        isLearnable = select(i + 2, ...)
-        if not isLearnable or forceDesaturated then
+    for i = 1, select('#', ...), 4 do
+        local tier, column, isLearnable, isPreviewLearnable = select(i, ...)
+        if ( forceDesaturated or
+			 (preview and not isPreviewLearnable) or
+			 (not preview and not isLearnable) ) then
             requirementsMet = nil
         end
-        print(buttonTier, buttonColumn, tier, column, frame, requirementsMet)
         getLinePath(buttonTier, buttonColumn, tier, column, frame, requirementsMet)
     end
     return requirementsMet
@@ -188,6 +182,7 @@ local function updateTalentTrees()
         local talentPoints = UnitCharacterPoints("player")
         local name, _, pointsSpent = GetTalentTabInfo(f)
         local TalentFrame = _G["GwLegacyTalentTree" .. f]
+        local preview = GetCVarBool("previewTalents")
 
         TalentFrame.pointsSpent = pointsSpent
 
@@ -203,7 +198,7 @@ local function updateTalentTrees()
         TalentFrame.info.title:SetText(name)
         TalentFrame.info.points:SetText(pointsSpent)
 
-        GwTalentFrame.bottomBar.unspentPoints:SetText(talentPoints)
+        GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player"))
 
         local numTalents = GetNumTalents(f)
         for i = 1, MAX_NUM_TALENTS do
@@ -212,7 +207,6 @@ local function updateTalentTrees()
 
             if i <= numTalents then
                 TALENT_BRANCH_ARRAY[f][tier][column].id = i
-                local button = _G['GwLegacyTalentTree' .. f .. 'Teir' .. tier .. 'index' .. column]
                 button.icon:SetTexture(texture)
                 button.points:SetText(rank .. " / " .. maxRank)
                 button.talentid = i
@@ -233,7 +227,7 @@ local function updateTalentTrees()
                 end
 
                 local ispassive = not isExceptional
-                local Prereqs = TalentFrame_SetPrereqs(f, tier, column, forceDesaturated, tierUnlocked, GetTalentPrereqs(f, i))
+                local Prereqs = TalentFrame_SetPrereqs(f, tier, column, forceDesaturated, tierUnlocked, preview, GetTalentPrereqs(f, i))
 
                 button.talentID = i
                 button.available = available
@@ -251,7 +245,7 @@ local function updateTalentTrees()
                     button.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border')
                 end
                     button:EnableMouse(true)
-                if  available and Prereqs then
+                if available and Prereqs then
                     button.icon:SetDesaturated(false)
                     button.icon:SetVertexColor(1, 1, 1, 1)
                     button:SetAlpha(1)
@@ -269,7 +263,7 @@ local function updateTalentTrees()
                     button.points:SetText("")
                 end
             else
-                if button ~= nil then
+                if button and button.talentid == nil then
                     button:Hide()
                 end
             end
@@ -277,7 +271,7 @@ local function updateTalentTrees()
     end
     -- Clean up unsuded slots
     for i = 1, GW.api.GetNumSpecializations() do
-        for y = 1, MAX_NUM_TALENT_TIERS do
+        for y = 1, 15 do
             for j = 1, NUM_TALENT_COLUMNS do
                 local button = _G['GwLegacyTalentTree' .. i .. 'Teir' .. y .. 'index' .. j]
                 if button.talentid == nil then
@@ -312,7 +306,7 @@ local function loadTalentsFrames()
             updateTalentTrees()
         end)
 
-        for y = 1, MAX_NUM_TALENT_TIERS do
+        for y = 1, 15 do
             TALENT_BRANCH_ARRAY[i][y] = {}
             for j = 1, NUM_TALENT_COLUMNS do
                 TALENT_BRANCH_ARRAY[i][y][j] = {id = nil, up = 0, left = 0, right = 0, down = 0, leftArrow = 0, rightArrow = 0, topArrow = 0}
@@ -332,7 +326,7 @@ local function LoadTalents()
     loadTalentsFrames()
     GwTalentFrame:SetScript('OnEvent', function(_, event)
         if event == "CHARACTER_POINTS_CHANGED" then
-            GwTalentFrame.bottomBar.unspentPoints:SetText(UnitCharacterPoints("player"))
+            GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player"))
         end
         if not GwTalentFrame:IsShown() then return end
         updateTalentTrees()

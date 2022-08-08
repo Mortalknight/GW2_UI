@@ -39,14 +39,14 @@
     </Frame>
 
     <Button name="GwTalentButton" registerForClicks="AnyDown" enableMouse="true" inherits="SecureActionButtonTemplate" virtual="true">
-        <Size x="44" y="44"/>
+        <Size x="32" y="32"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"/>
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\background_border">
-                    <Size x="54" y="54"/>
+                    <Size x="42" y="42"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
                     </Anchors>
@@ -63,14 +63,14 @@
             </Layer>
             <Layer level="OVERLAY">
                 <Texture alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="highlight">
-                    <Size x="44" y="44"/>
+                    <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
                     </Anchors>
                     <Color r="1" b="0.6" g="1" a="0.9"></Color>
                 </Texture>
                 <Texture file="Interface\AddOns\GW2_UI\textures\talents\active_highlight" parentKey="legendaryHighlight" hidden="true">
-                    <Size x="44" y="44"/>
+                    <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="CENTER"/>
                     </Anchors>
@@ -386,12 +386,12 @@
                     <Layer level="BORDER">
                         <FontString parentKey="unspentPoints" text="10" justifyH="LEFT" justifyV="MIDDLE">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeKey="$parent.background" x="10" y="-20"/>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeKey="$parent.background" x="10" y="-10"/>
                             </Anchors>
                         </FontString>
-                        <FontString parentKey="unspentPointsLabel" text="Unspent talent points" justifyH="LEFT" justifyV="MIDDLE">
+                        <FontString parentKey="dualSpecActiveTalentGroupe" text="This is your active talent group" justifyH="LEFT" justifyV="MIDDLE">
                             <Anchors>
-                                <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.unspentPoints" x="0" y="0"/>
+                                <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.unspentPoints" x="0" y="-10"/>
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -400,12 +400,11 @@
         </Frames>
         <Scripts>
             <OnLoad>
-                self.bottomBar.unspentPoints:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINE")
+                self.bottomBar.unspentPoints:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
                 self.bottomBar.unspentPoints:SetTextColor(0.87, 0.74, 0.29, 1)
 
-                self.bottomBar.unspentPointsLabel:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINE")
-                self.bottomBar.unspentPointsLabel:SetTextColor(0.85, 0.70, 0.29, 1)
-                self.bottomBar.unspentPointsLabel:SetText(BONUS_TALENTS)
+                self.bottomBar.dualSpecActiveTalentGroupe:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINE")
+                self.bottomBar.dualSpecActiveTalentGroupe:SetTextColor(0.85, 0.70, 0.29, 1)
 
                 self:RegisterEvent("UNIT_MODEL_CHANGED")
                 self:RegisterEvent("UNIT_LEVEL")
@@ -490,7 +489,7 @@
     </Frame>
 
     <Frame name="GwLegacyTalentLine" virtual="true">
-        <Size x="44" y="44"/>
+        <Size x="32" y="32"/>
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="-1">>
                 <Texture parentKey="down" file="Interface\AddOns\GW2_UI\textures\talents\talent_line" hidden="true">
