@@ -3,11 +3,33 @@ local _, GW = ...
 local MAX_NUM_TALENT_TIERS = 11
 local TALENT_BRANCH_ARRAY = {}
 
+local activeSpec = nil
+local openSpec = 1 -- Can be 1 or 2
+
+local function UpdateActiveSpec(activeTalentGroup)
+-- set the active spec
+    activeSpec = 1
+    for i = 1, 2 do
+        if i == activeTalentGroup then
+            activeSpec = i
+            break
+        end
+    end
+end
+
+
+local function UpdateTalentPoints()
+    local talentPoints = GetUnspentTalentPoints(false, false, openSpec)
+	local unspentPoints = talentPoints - GetGroupPreviewTalentPointsSpent(false ,openSpec);
+
+    return unspentPoints
+end
+
 local function talentBunnton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
     GameTooltip:ClearLines()
 
-    GameTooltip:SetTalent(self.talentFrameId, self.talentid)
+    GameTooltip:SetTalent(self.talentFrameId, self.talentid, false, false, openSpec, GetCVarBool("previewTalents"))
     self.UpdateTooltip = talentBunnton_OnEnter
 end
 
@@ -23,14 +45,14 @@ local function hookTalentButton(talentButton, container, row, index)
     talentButton:SetScript("OnEnter", talentBunnton_OnEnter)
     talentButton:SetScript("OnLeave", GameTooltip_Hide)
     talentButton:SetScript("OnClick", function(self, button)
-        if button == "LeftButton" then
+        if button == "LeftButton" and openSpec == activeSpec then
             if IsModifiedClick("CHATLINK") then
                 local link = GetTalentLink(self.talentFrameId, self.talentid)
                 if link then
                     ChatEdit_InsertLink(link)
                 end
             else
-                LearnTalent(self.talentFrameId, self.talentid)
+                LearnTalent(self.talentFrameId, self.talentid, false, openSpec)
             end
         end
     end)
@@ -177,10 +199,33 @@ end
 local function updateTalentTrees()
     if InCombatLockdown() then return end
 
+    local activeTalentGroup = GetActiveTalentGroup()
+
+    UpdateActiveSpec(activeTalentGroup)
+
+    if GetNumTalentGroups(false, false) > 1 then
+        GwTalentFrame.bottomBar.spec1Button:Show()
+        GwTalentFrame.bottomBar.spec2Button:Show()
+        GwTalentFrame.bottomBar.spec1Button:SetEnabled(openSpec == 2)
+        GwTalentFrame.bottomBar.spec2Button:SetEnabled(openSpec == 1)
+
+        GwTalentFrame.bottomBar.dualSpecActiveTalentGroupe:SetShown(openSpec == activeTalentGroup)
+        GwTalentFrame.bottomBar.activateSpecGroup:SetShown(openSpec ~= activeTalentGroup)
+    else
+        GwTalentFrame.bottomBar.spec1Button:Hide()
+        GwTalentFrame.bottomBar.spec2Button:Hide()
+
+        GwTalentFrame.bottomBar.dualSpecActiveTalentGroupe:Hide()
+        GwTalentFrame.bottomBar.activateSpecGroup:Hide()
+    end
+
+
+    GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UpdateTalentPoints())
+
     for f = 1, GW.api.GetNumSpecializations() do
         local forceDesaturated
-        local talentPoints = UnitCharacterPoints("player")
-        local name, _, pointsSpent = GetTalentTabInfo(f)
+        local talentPoints = UpdateTalentPoints()
+        local name, _, pointsSpent = GetTalentTabInfo(f, false, false, openSpec)
         local TalentFrame = _G["GwLegacyTalentTree" .. f]
         local preview = GetCVarBool("previewTalents")
 
@@ -198,11 +243,9 @@ local function updateTalentTrees()
         TalentFrame.info.title:SetText(name)
         TalentFrame.info.points:SetText(pointsSpent)
 
-        GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player"))
-
         local numTalents = GetNumTalents(f)
         for i = 1, MAX_NUM_TALENTS do
-            local name, texture, tier, column, rank, maxRank, isExceptional, available = GetTalentInfo(f, i)
+            local name, texture, tier, column, rank, maxRank, isExceptional, available = GetTalentInfo(f, i, false, false, openSpec)
             local button = _G['GwLegacyTalentTree' .. f .. 'Teir' .. tier .. 'index' .. column]
 
             if i <= numTalents then
@@ -214,8 +257,8 @@ local function updateTalentTrees()
                 button:Show()
                 button.active = true
 
-                -- If player has no talent points then show only talents with points in them
-                if TalentFrame.talentPoints <= 0 and rank == 0 then
+                -- If player has no talent points or this is the inactive talent group then show only talents with points in them
+                if (TalentFrame.talentPoints <= 0 or not openSpec == activeTalentGroup) and rank == 0 then
                     forceDesaturated = 1
                 else
                     forceDesaturated = nil
@@ -244,9 +287,10 @@ local function updateTalentTrees()
                     button.icon:RemoveMaskTexture(button.mask)
                     button.outline:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\background_border')
                 end
-                    button:EnableMouse(true)
+
+                button:EnableMouse(true)
                 if available and Prereqs then
-                    button.icon:SetDesaturated(false)
+                    button.icon:SetDesaturated(openSpec ~= activeTalentGroup)
                     button.icon:SetVertexColor(1, 1, 1, 1)
                     button:SetAlpha(1)
                     if rank<maxRank then
@@ -290,7 +334,6 @@ local function loadTalentsFrames()
     mask:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\windowbg-mask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetSize(853, 853)
 
-
     for i = 1, GW.api.GetNumSpecializations() do
         TALENT_BRANCH_ARRAY[i] = {}
         local container = CreateFrame('Button', 'GwLegacyTalentTree' .. i, GwTalentFrame, 'GwLegacyTalentTree')
@@ -315,6 +358,7 @@ local function loadTalentsFrames()
             end
         end
     end
+
     updateTalentTrees()
 end
 
@@ -323,7 +367,28 @@ local function LoadTalents()
 
     CreateFrame('Frame','GwTalentFrame', GwCharacterWindow,'GwLegacyTalentFrame')
 
+    GwTalentFrame.bottomBar.activateSpecGroup:SetWidth(GwTalentFrame.bottomBar.activateSpecGroup:GetTextWidth() + 40)
+
     loadTalentsFrames()
+
+    GwTalentFrame.bottomBar.spec1Button:SetScript("OnClick", function()
+        openSpec = 1
+        updateTalentTrees()
+    end)
+    GwTalentFrame.bottomBar.spec2Button:SetScript("OnClick", function()
+        openSpec = 2
+        updateTalentTrees()
+    end)
+    GwTalentFrame.bottomBar.activateSpecGroup:SetScript("OnClick", function()
+        if openSpec then
+            SetActiveTalentGroup(openSpec)
+            updateTalentTrees()
+        end
+    end)
+
+
+    GwTalentFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
+    GwTalentFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     GwTalentFrame:SetScript('OnEvent', function(_, event)
         if event == "CHARACTER_POINTS_CHANGED" then
             GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player"))
