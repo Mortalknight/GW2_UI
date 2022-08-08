@@ -576,28 +576,40 @@ local function abandonProffesionOnEnter(self)
 end
 
 local function LoadPVPTab()
+
+    for i = 1, PVPFrame:GetNumRegions() do
+        local region = select(i, PVPFrame:GetRegions())
+        if region:IsObjectType("FontString") then
+            region:ClearAllPoints()
+            region:SetPoint("TOP", PVPFrame, "TOP", 0, 40)
+            region:SetFont(UNIT_NAME_FONT, 24)
+            region:SetTextColor(1, 1, 1)
+            break
+        end
+    end
+
     PVPFrame.Hide = PVPFrame.Show
     PVPFrame:Show()
     PVPFrame:SetParent(GwPaperHonor)
     PVPFrame:ClearAllPoints()
-    PVPFrame:SetPoint("TOPLEFT", GwPaperHonor, "TOPLEFT", 0, 0)
+    PVPFrame:SetPoint("TOPLEFT", GwPaperHonor, "TOPLEFT", 0, -60)
     PVPFrame:SetPoint("BOTTOMRIGHT", GwPaperHonor, "BOTTOMRIGHT", 0, 8)
 
     PVPFrameBackground:ClearAllPoints()
-    PVPFrameBackground:SetPoint("TOPLEFT", GwPaperHonor, "TOPLEFT", 0, 0)
+    PVPFrameBackground:SetPoint("TOPLEFT", GwPaperHonor, "TOPLEFT", 0, -60)
     PVPFrameBackground:SetPoint("BOTTOMRIGHT", GwPaperHonor, "BOTTOMRIGHT", 0, 8)
 
     PVPFrame:StripTextures(true)
 
     PVPFrameHonorLabel:ClearAllPoints()
     PVPFrameHonorLabel:SetPoint("TOP", PVPFrameBackground, "TOP", 0, -10)
-    PVPFrameHonorLabel:SetFont(UNIT_NAME_FONT, 14)
-    PVPFrameHonorPoints:SetFont(UNIT_NAME_FONT, 14)
+    PVPFrameHonorLabel:SetFont(UNIT_NAME_FONT, 20)
+    PVPFrameHonorPoints:SetFont(UNIT_NAME_FONT, 20)
 
     PVPFrameArenaLabel:ClearAllPoints()
     PVPFrameArenaLabel:SetPoint("TOP", PVPFrameBackground, "TOP", 0, -130)
-    PVPFrameArenaLabel:SetFont(UNIT_NAME_FONT, 14)
-    PVPFrameArenaPoints:SetFont(UNIT_NAME_FONT, 14)
+    PVPFrameArenaLabel:SetFont(UNIT_NAME_FONT, 20)
+    PVPFrameArenaPoints:SetFont(UNIT_NAME_FONT, 20)
 
     PVPHonor:ClearAllPoints()
     PVPHonor:SetPoint("TOP", PVPFrameBackground, "TOP", 0, -35)
