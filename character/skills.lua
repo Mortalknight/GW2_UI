@@ -2483,4 +2483,7 @@ GW.Skills = {
             {32594, 2500, req=32593, rank=3}, -- Earth Shield rank 3
         },
     },
+    DEATHKNIGHT = {
+        -- TODO
+    },
 }

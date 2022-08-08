@@ -663,7 +663,7 @@ local function updateSpellbookTab()
             local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
             local name, rank, spellID = GetSpellBookItemName(spellIndex, BOOKTYPE)
 
-            rank = rank and string.match(rank, "[%d]") or ""
+            rank = rank:gsub(RANK, "")
             knownSpellID[#knownSpellID + 1] = spellID
 
             needNewHeader = true
@@ -745,6 +745,12 @@ end
 local function LoadSpellBook()
     CreateFrame('Frame', 'GwSpellbook', GwCharacterWindow, 'GwSpellbook')
     CreateFrame('Frame', 'GwSpellbookMenu', GwSpellbook, 'GwSpellbookMenu')
+
+    GwSpellbook.showAllSpellRanks.checkbutton:SetScript("OnClick", function(self)
+        SetCVar("ShowAllSpellRanks", self:GetChecked())
+        updateSpellbookTab()
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    end)
 
     spellBookMenu_onLoad(GwSpellbookMenu)
     GwSpellbookMenu:RegisterEvent("PLAYER_ENTERING_WORLD")
