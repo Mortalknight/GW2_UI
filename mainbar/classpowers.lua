@@ -124,6 +124,90 @@ local function setRogue(f)
     return true
 end
 
+
+-- DEATHKNIGHT
+local RUNE_TIMER_ANIMATIONS = {}
+RUNE_TIMER_ANIMATIONS[1] = 0
+RUNE_TIMER_ANIMATIONS[2] = 0
+RUNE_TIMER_ANIMATIONS[3] = 0
+RUNE_TIMER_ANIMATIONS[4] = 0
+RUNE_TIMER_ANIMATIONS[5] = 0
+RUNE_TIMER_ANIMATIONS[6] = 0
+local function powerRune(self)
+    local f = self
+    local fr = self.runeBar
+    for i = 1, 6 do
+        local rune_start, rune_duration, rune_ready = GetRuneCooldown(i)
+        if rune_start == nil then
+            rune_start = GetTime()
+            rune_duration = 0
+        end
+        local fFill = fr["runeTexFill" .. i]
+        local fTex = fr["runeTex" .. i]
+        local animId = "RUNE_TIMER_ANIMATIONS" .. i
+        if rune_ready and fFill then
+            fFill:SetTexCoord(0.5, 1, 0, 1)
+            fFill:SetHeight(32)
+            fFill:SetVertexColor(1, 1, 1)
+            if animations[animId] then
+                animations[animId].completed = true
+                animations[animId].duration = 0
+            end
+        else
+            if rune_start == 0 then
+                return
+            end
+
+            AddToAnimation(
+                animId,
+                RUNE_TIMER_ANIMATIONS[i],
+                1,
+                rune_start,
+                rune_duration,
+                function()
+                    fFill:SetTexCoord(0.5, 1, 1 - animations[animId].progress, 1)
+                    fFill:SetHeight(32 * animations[animId].progress)
+                    fFill:SetVertexColor(1, 0.6 * animations[animId].progress, 0.6 * animations[animId].progress)
+                end,
+                "noease",
+                function()
+                    f.flare:ClearAllPoints()
+                    f.flare:SetPoint("CENTER", fFill, "CENTER", 0, 0)
+                    AddToAnimation(
+                        "HOLY_POWER_FLARE_ANIMATION",
+                        1,
+                        0,
+                        GetTime(),
+                        0.5,
+                        function()
+                            f.flare:SetAlpha(animations["HOLY_POWER_FLARE_ANIMATION"].progress)
+                        end
+                    )
+                end
+            )
+            RUNE_TIMER_ANIMATIONS[i] = 0
+        end
+        fTex:SetTexCoord(0, 0.5, 0, 1)
+    end
+end
+
+local function setDeathKnight(f)
+    local fr = f.runeBar
+    f.background:SetTexture(nil)
+    f.fill:SetTexture(nil)
+    f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash")
+    f.flare:SetWidth(256)
+    f.flare:SetHeight(128)
+    fr:Show()
+
+    f:SetScript("OnEvent", powerRune)
+    powerRune(f)
+    f:RegisterEvent("RUNE_POWER_UPDATE")
+
+    return true
+end
+GW.AddForProfiling("classpowers", "setDeathKnight", setDeathKnight)
+
 -- DRUID
 local function setDruid(f)
     local form = f.gwPlayerForm
@@ -155,6 +239,7 @@ local function selectType(f)
     f:UnregisterAllEvents()
 
     f.combopoints:Hide()
+    f.runeBar:Hide()
 
     if f.ourPowerBar then
         GwPlayerPowerBarExtra:Hide()
@@ -164,6 +249,8 @@ local function selectType(f)
 
     if GW.myClassID == 4 then
         showBar = setRogue(f)
+    elseif GW.myClassID == 6 then
+        showBar = setDeathKnight(f)
     elseif GW.myClassID == 11 then
         showBar = setDruid(f)
     end

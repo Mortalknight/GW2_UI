@@ -28,6 +28,99 @@
             </Layer>
         </Layers>
         <Frames>
+            <Frame parentKey="runeBar" hidden="true">
+                <Size x="316" y="32"></Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="0" y="5"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="runeTex1" file="Interface\AddOns\GW2_UI\textures\altpower/runes-blood">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTex2" file="Interface\AddOns\GW2_UI\textures\altpower/runes-blood">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="42" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTex3" file="Interface\AddOns\GW2_UI\textures\altpower/runes-unholy">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="84" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTex4" file="Interface\AddOns\GW2_UI\textures\altpower/runes-unholy">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="126" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTex5" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="168" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTex6" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Color r="0" g="0" b="0" a="0.7"></Color>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="210" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="runeTexFill1" file="Interface\AddOns\GW2_UI\textures\altpower/runes-blood">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTexFill2" file="Interface\AddOns\GW2_UI\textures\altpower/runes-blood">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="42" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTexFill3" file="Interface\AddOns\GW2_UI\textures\altpower/runes-unholy">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="84" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTexFill4" file="Interface\AddOns\GW2_UI\textures\altpower/runes-unholy">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="126" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTexFill5" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="168" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="runeTexFill6" file="Interface\AddOns\GW2_UI\textures\altpower/runes">
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="210" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
+
+
+
             <Frame parentKey="combopoints" hidden="true">
                 <Size x="316" y="18"></Size>
                 <Anchors>
