@@ -44,7 +44,7 @@
         </Frames>
     </Frame>
 
-    <Button name="GwMountSummonButton"  enableMouse="true"  inherits="GwStandardButton,SecureActionButtonTemplate" virtual="true" text="Summon">
+    <Button name="GwMountSummonButton"  enableMouse="true"  inherits="GwStandardButton" virtual="true" text="Summon">
         <Size x="200" y="48" />
         <Anchors>
             <Anchor point="BOTTOM" relativePoint="BOTTOM" x="120" y="40"/>
@@ -76,53 +76,6 @@
         </Layers>
         <Frames>
           <Frame parentKey="attrDummy" inherits="SecureHandlerAttributeTemplate">
-          </Frame>
-          <Frame name="$parentcontainer1" parentKey="container1" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="false">
-            <Size x="241" y="621"/>
-            <Anchors>
-                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-            </Anchors>
-            <Scripts>
-                <OnShow>
-                    self:GetParent().pages:SetText(1)
-                </OnShow>
-            </Scripts>
-          </Frame>
-
-          <Frame name="$parentcontainer2" parentKey="container2" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
-            <Size x="241" y="621"/>
-            <Anchors>
-                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-            </Anchors>
-            <Scripts>
-                <OnShow>
-                    self:GetParent().pages:SetText(2)
-                </OnShow>
-            </Scripts>
-          </Frame>
-
-          <Frame name="$parentcontainer3" parentKey="container3" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
-            <Size x="241" y="621"/>
-            <Anchors>
-                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-            </Anchors>
-            <Scripts>
-                <OnShow>
-                    self:GetParent().pages:SetText(3)
-                </OnShow>
-            </Scripts>
-          </Frame>
-
-          <Frame name="$parentcontainer4" parentKey="container4" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
-            <Size x="241" y="621"/>
-            <Anchors>
-                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-            </Anchors>
-            <Scripts>
-                <OnShow>
-                    self:GetParent().pages:SetText(4)
-                </OnShow>
-            </Scripts>
           </Frame>
           <Button parentKey="left" enableMouse="true" inherits="SecureHandlerClickTemplate,SecureHandlerShowHideTemplate,SecureHandlerStateTemplate"  >
               <size x="32" y="32"/>
@@ -157,6 +110,18 @@
               </Layers>
           </Button>
         </Frames>
+    </Frame>
+
+    <Frame name="GWMountCritterListContainerTemplate" virtual="true" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
+        <Size x="241" y="621"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+        </Anchors>
+        <Scripts>
+            <OnShow>
+                --self:GetParent().pages:SetText(3)
+            </OnShow>
+        </Scripts>
     </Frame>
 
     <Button name="GwMountsListItem" inherits="GwCharacterMenuBlank,SecureActionButtonTemplate,SecureHandlerDragTemplate"  enableMouse="true" virtual="true" >
