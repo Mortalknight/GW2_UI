@@ -9,7 +9,6 @@
         <Layers>
             <Layer level="BACKGROUND">
                 <Texture name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
-
                     <Size x="318" y="20"></Size>
                 </Texture>
             </Layer>
@@ -53,7 +52,7 @@
                             <Color r="1" b="1" g="1"></Color>
                             <Size x="316" y="16"/>
                             <Anchors>
-                                <Anchor point="CENTER" x="5" y="0"/>
+                                <Anchor point="CENTER" x="0" y="0"/>
                             </Anchors>
                         </FontString>
 

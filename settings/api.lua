@@ -149,15 +149,19 @@ GW.SetOverrideIncompatibleAddons = SetOverrideIncompatibleAddons
 local function ResetToDefault()
     local profileIndex = GetActiveProfile()
     local allLayouts = GetAllLayouts()
+    local oldUsername, oldProfilename = nil, nil
 
     if profileIndex ~= nil and GW2UI_SETTINGS_PROFILES[profileIndex] ~= nil then
+        oldUsername = GW2UI_SETTINGS_PROFILES[profileIndex].profileCreatedCharacter
+        oldProfilename = GW2UI_SETTINGS_PROFILES[profileIndex].profilename
         GW2UI_SETTINGS_PROFILES[profileIndex] = nil
         GW2UI_SETTINGS_PROFILES[profileIndex] = GW.copyTable(nil, GW_DEFAULT)
         GW2UI_PRIVATE_SETTINGS = nil
         GW2UI_PRIVATE_SETTINGS = GW.copyTable(nil, GW_PRIVATE_DEFAULT)
-        GW2UI_SETTINGS_PROFILES[profileIndex]["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
-        GW2UI_SETTINGS_PROFILES[profileIndex]["profileCreatedDate"] = date("%m/%d/%y %H:%M:%S")
-        GW2UI_SETTINGS_PROFILES[profileIndex]["profileCreatedCharacter"] = UNKNOWN
+        GW2UI_SETTINGS_PROFILES[profileIndex].profileLastUpdated = date("%m/%d/%y %H:%M:%S")
+        GW2UI_SETTINGS_PROFILES[profileIndex].profileCreatedDate = date("%m/%d/%y %H:%M:%S")
+        GW2UI_SETTINGS_PROFILES[profileIndex].profileCreatedCharacter = oldUsername or UNKNOWN
+        GW2UI_SETTINGS_PROFILES[profileIndex].profilename = oldProfilename or UNKNOWN
         -- also rest the matching profile layout
         for i = 0, #allLayouts do
             if allLayouts[i] and allLayouts[i].profileLayout and allLayouts[i].profileId == profileIndex then
