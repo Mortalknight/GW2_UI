@@ -1,6 +1,17 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.31.3", [=[
+FIXES
+FIXES
+    - Do not delete profile names on profile resets
+
+MISC
+    - Profile frame tweaks
+    - Inspection frame tweaks
+]=])
+
+
 v("5.31.2", [=[
 FIXES
     It could happen, that some frames after 2 or more reloads automaticly moves one pixel out of there default position.
