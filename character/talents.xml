@@ -519,28 +519,28 @@
         <Layers>
             <Layer level="BACKGROUND" textureSubLevel="-1">>
                 <Texture parentKey="down" file="Interface\AddOns\GW2_UI\textures\talents\talent_line" hidden="true">
-                    <Size x="100" y="75"/>
+                    <Size x="62" y="47"/>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="CENTER" x="0" y="5"/>
                     </Anchors>
                     <Color r="1" b="0.6" g="1" a="1"></Color>
                 </Texture>
                 <Texture parentKey="up" file="Interface\AddOns\GW2_UI\textures\talents\talent_line" hidden="true">
-                    <Size x="100" y="75"/>
+                    <Size x="62" y="47"/>
                     <Anchors>
                         <Anchor point="BOTTOM" relativePoint="CENTER" x="0" y="-5"/>
                     </Anchors>
                     <Color r="1" b="0.6" g="1" a="1"></Color>
                 </Texture>
                 <Texture parentKey="left" file="Interface\AddOns\GW2_UI\textures\talents\talent-line-left" hidden="true">
-                    <Size x="70" y="100"/>
+                    <Size x="47" y="62"/>
                     <Anchors>
                         <Anchor point="RIGHT" relativePoint="CENTER" x="5" y="0"/>
                     </Anchors>
                     <Color r="1" b="0.6" g="1" a="1"></Color>
                 </Texture>
                 <Texture parentKey="right" file="Interface\AddOns\GW2_UI\textures\talents\talent-line-left" hidden="true">
-                    <Size x="70" y="100"/>
+                    <Size x="47" y="62"/>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="CENTER" x="-5" y="0"/>
                     </Anchors>
