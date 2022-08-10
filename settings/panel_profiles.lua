@@ -307,7 +307,7 @@ local function activate_OnClick(self)
     if not p.canActivate then return end
 
     GW.WarningPrompt(
-        L["Do you want to activate profile"] .. "\n\n'" .. GW2UI_SETTINGS_PROFILES[p.profileID].profilename .."'?",
+        L["Do you want to activate profile"] .. "\n\n'" .. (GW2UI_SETTINGS_PROFILES[p.profileID].profilename or UNKNOWN) .."'?",
         function()
             setProfile(p.profileID) -- triggers a reload
         end

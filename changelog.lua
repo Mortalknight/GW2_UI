@@ -1,8 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("5.31.3", [=[
+v("5.31.4", [=[
 FIXES
+    - Do not delete profile names on profile resets
+]=])
+
+v("5.31.3", [=[
 FIXES
     - Do not delete profile names on profile resets
 
