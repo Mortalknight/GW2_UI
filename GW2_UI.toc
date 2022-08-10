@@ -153,9 +153,8 @@ character/talents.xml
 character/glyphes.xml
 character/glyphes.lua
 character/mountsCritterFunctions.lua
-character/mounts.xml
+character/mountsCritter.xml
 character/mounts.lua
-character/critter.xml
 character/critter.lua
 character/currency.xml
 character/currency.lua

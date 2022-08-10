@@ -89,6 +89,19 @@ local function SetUpMoutCritterPaging(self)
 end
 GW.SetUpMoutCritterPaging = SetUpMoutCritterPaging
 
+local function MountCrintterItemOnClick(self)
+    self.baseFrame.model:SetCreature(self.creatureID)
+    self.baseFrame.title:SetText(self.creatureName)
+    self.baseFrame.selectedButton = self
+
+    if self.active and self.creatureID then
+		self.baseFrame.summon:SetText(self.petType == "MOUNT" and BINDING_NAME_DISMOUNT or PET_DISMISS)
+    else
+        self.baseFrame.summon:SetText(self.petType == "MOUNT" and MOUNT or SUMMON)
+    end
+end
+GW.MountCrintterItemOnClick = MountCrintterItemOnClick
+
 local function CreateMountsPetsContainersWithButtons(listFrame, baseFrame, maxNumberOfContainers, numMountsCritterPerTab, listItemTemplate, startTab)
     -- create dynamic container min 10 to have enough start space
     for i = 1, maxNumberOfContainers do
@@ -118,7 +131,7 @@ local function CreateMountsPetsContainersWithButtons(listFrame, baseFrame, maxNu
             btn:SetPoint('TOPLEFT', listFrame, 'TOPLEFT', 0,YPadding)
             btn:RegisterForClicks("AnyUp")
             btn:RegisterForDrag("LeftButton")
-            btn:HookScript("OnClick", GW.MountCrintterItemOnClick)
+            btn:HookScript("OnClick", MountCrintterItemOnClick)
             btn:Hide()
 
             btn.title:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
@@ -135,21 +148,9 @@ local function CreateMountsPetsContainersWithButtons(listFrame, baseFrame, maxNu
 end
 GW.CreateMountsPetsContainersWithButtons = CreateMountsPetsContainersWithButtons
 
-local function MountCrintterItemOnClick(self)
-    self.baseFrame.model:SetCreature(self.creatureID)
-    self.baseFrame.title:SetText(self.creatureName)
-    self.baseFrame.selectedButton = self
-
-    if self.active and self.creatureID then
-		self.baseFrame.summon:SetText(self.petType == "MOUNT" and BINDING_NAME_DISMOUNT or PET_DISMISS)
-    else
-        self.baseFrame.summon:SetText(self.petType == "MOUNT" and MOUNT or SUMMON)
-    end
-end
-GW.MountCrintterItemOnClick = MountCrintterItemOnClick
-
 local function UserMountCritter(self)
     local selectedButton = self:GetParent().selectedButton
+    if not selectedButton then return end
 
     if selectedButton.active and selectedButton.creatureID then
         DismissCompanion(selectedButton.petType )
@@ -174,8 +175,9 @@ local function UpdateMountsCritterList(self, petType, numMountsCritterPerTab, fi
     local btnIndex = 0
     local tabIndex = 1
     local zebra
+    local numberOfMountsCritter =  GetNumCompanions(petType)
 
-    for i = 1, GetNumCompanions(petType) do
+    for i = 1, numberOfMountsCritter do
         local creatureID, creatureName, spellID, icon, active = GetCompanionInfo(petType, i)
 
         local btn =_G[self:GetName() .. "Container" .. tabIndex .. 'Actionbutton' .. btnIndex]
@@ -199,7 +201,7 @@ local function UpdateMountsCritterList(self, petType, numMountsCritterPerTab, fi
 
         -- populate the info panel with the first mount
         if firstLoad and i == 1 then
-            MountCrintterItemOnClick (btn)
+            MountCrintterItemOnClick(btn)
         end
 
         -- Handle pagnition
@@ -209,5 +211,8 @@ local function UpdateMountsCritterList(self, petType, numMountsCritterPerTab, fi
             tabIndex = tabIndex + 1
         end
     end
+
+    self.baseFrame.summon:SetEnabled(numberOfMountsCritter > 0)
+    self.baseFrame.summon:SetText(self.petType == "MOUNT" and MOUNT or SUMMON)
 end
 GW.UpdateMountsCritterList = UpdateMountsCritterList

@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwMountsFrame" enableMouse="true" inherits="SecureHandlerStateTemplate,SecureHandlerBaseTemplate" protected="true" virtual="true">
+    <Frame name="GwMountsCritterBaseFrame" enableMouse="true" inherits="SecureHandlerStateTemplate,SecureHandlerBaseTemplate" protected="true" virtual="true">
         <Size x="853" y="627"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -16,7 +16,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK">
-                <FontString parentKey="title" text="Passive" justifyH="CENTER" justifyV="MIDDLE">
+                <FontString parentKey="title" text="No pets known" justifyH="CENTER" justifyV="MIDDLE">
                     <Size x="612" y="32"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="241" y="-20"/>
@@ -44,14 +44,14 @@
         </Frames>
     </Frame>
 
-    <Button name="GwMountSummonButton"  enableMouse="true"  inherits="GwStandardButton" virtual="true" text="Summon">
+    <Button name="GwMountCritterSummonButton"  enableMouse="true"  inherits="GwStandardButton" virtual="true" text="SUMMON">
         <Size x="200" y="48" />
         <Anchors>
             <Anchor point="BOTTOM" relativePoint="BOTTOM" x="120" y="40"/>
         </Anchors>
     </Button>
 
-    <Frame name="GwMountsList" inherits="SecureHandlerAttributeTemplate" virtual="true">
+    <Frame name="GwMountsCritterList" inherits="SecureHandlerAttributeTemplate" virtual="true">
         <Size x="241" y="621"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-10"/>
@@ -119,7 +119,7 @@
         </Anchors>
     </Frame>
 
-    <Button name="GwMountsListItem" inherits="GwCharacterMenuBlank,SecureActionButtonTemplate,SecureHandlerDragTemplate"  enableMouse="true" virtual="true" >
+    <Button name="GwMountsCritterListItem" inherits="GwCharacterMenuBlank,SecureActionButtonTemplate,SecureHandlerDragTemplate"  enableMouse="true" virtual="true" >
         <Size x="231" y="44"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>

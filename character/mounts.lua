@@ -8,19 +8,21 @@ Drag and drop (any secure way of handling drag and drop?)
 local NUM_MOUNTS_PER_TAB = 12
 
 local function LoadMounts()
-    local mountsFrame = CreateFrame("Frame", "GwMountsFrame", GwCharacterWindow, "GwMountsFrame")
-    local mountsList = CreateFrame('Frame', 'GwMountsList', GwMountsFrame, 'GwMountsList')
+    local mountsFrame = CreateFrame("Frame", "GwMountsFrame", GwCharacterWindow, "GwMountsCritterBaseFrame")
+    local mountsList = CreateFrame('Frame', 'GwMountsList', GwMountsFrame, 'GwMountsCritterList')
 
     mountsList.neededContainers = math.ceil(GetNumCompanions("MOUNT") / NUM_MOUNTS_PER_TAB)
     mountsList.maxNumberOfContainers = mountsList.neededContainers  + 2
 
     --Create summon button and set frame level above the model frame
-    local summonButton = CreateFrame("Button","GwMountSummonButton" .. "MOUNT", GwMountsFrame, "GwMountSummonButton" )
+    local summonButton = CreateFrame("Button","GwMountSummonButton" .. "MOUNT", GwMountsFrame, "GwMountCritterSummonButton" )
     summonButton:SetFrameLevel(mountsFrame.model:GetFrameLevel()+1)
     summonButton:RegisterForClicks("AnyUp")
     summonButton:SetScript("OnClick", GW.UserMountCritter)
     summonButton.selectedButton = nil
     mountsFrame.summon = summonButton
+
+    mountsList.baseFrame = mountsFrame
 
     mountsFrame.title:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     mountsFrame.title:SetTextColor(0.87, 0.74, 0.29, 1)
@@ -28,7 +30,7 @@ local function LoadMounts()
     mountsList.pages:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     mountsList.pages:SetTextColor(0.7, 0.7, 0.5, 1)
 
-    GW.CreateMountsPetsContainersWithButtons(mountsList, mountsFrame, mountsList.maxNumberOfContainers, NUM_MOUNTS_PER_TAB, "GwMountsListItem")
+    GW.CreateMountsPetsContainersWithButtons(mountsList, mountsFrame, mountsList.maxNumberOfContainers, NUM_MOUNTS_PER_TAB, "GwMountsCritterListItem")
 
     GW.UpdateMountsCritterList(mountsList, "MOUNT", NUM_MOUNTS_PER_TAB, true)
     GW.SetUpMoutCritterPaging(mountsList)
@@ -47,7 +49,7 @@ local function LoadMounts()
                 mountsList.attrDummy:SetAttribute("maxNumberOfContainers", mountsList.maxNumberOfContainers)
                 mountsList.attrDummy:SetAttribute("neededContainers", mountsList.neededContainers)
 
-                GW.CreateMountsPetsContainersWithButtons(mountsList, mountsFrame, mountsList.maxNumberOfContainers, NUM_MOUNTS_PER_TAB, "GwMountsListItem", oldMaxNumberOfContainers + 1)
+                GW.CreateMountsPetsContainersWithButtons(mountsList, mountsFrame, mountsList.maxNumberOfContainers, NUM_MOUNTS_PER_TAB, "GwMountsCritterListItem", oldMaxNumberOfContainers + 1)
 
                 self.attrDummy:SetAttribute('page', 'left')
             end
