@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.31.5", [=[
+FIXES
+- Player castingbar issue
+]=])
+
 v("5.31.4", [=[
 FIXES
     - Do not delete profile names on profile resets

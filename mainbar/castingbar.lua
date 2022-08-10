@@ -139,6 +139,8 @@ local function AddFinishAnimation(self, isStopped)
                 if self:GetAlpha() > 0 then
                     UIFrameFadeOut(self, 0.2, 1, 0)
                     self.highlight:Hide()
+                    self.isCasting = false
+                    self.isChanneling = false
                 end
             end
         end
@@ -146,7 +148,7 @@ local function AddFinishAnimation(self, isStopped)
 end
 
 local function castBar_OnEvent(self, event, unitID, ...)
-    local spell, icon, startTime, endTime, isTradeSkill, spellID
+    local spell, icon, startTime, endTime, isTradeSkill, castID, spellID
     local barTexture = CASTINGBAR_TEXTURES.YELLOW.NORMAL
     local barHighlightTexture = CASTINGBAR_TEXTURES.YELLOW.HIGHLIGHT
     if event == "PLAYER_ENTERING_WORLD" then
@@ -169,14 +171,16 @@ local function castBar_OnEvent(self, event, unitID, ...)
         if IsIn(event, "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE") then
             spell, _, icon, startTime, endTime, isTradeSkill, _, spellID = UnitChannelInfo(self.unit)
             self.isChanneling = true
+            self.isCasting = false
             barTexture = CASTINGBAR_TEXTURES.GREEN.NORMAL
             barHighlightTexture = CASTINGBAR_TEXTURES.GREEN.HIGHLIGHT
             self.bar:SetTexCoord(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
 
         else
-            spell, _, icon, startTime, endTime, isTradeSkill, _, _, spellID = UnitCastingInfo(self.unit)
+            spell, _, icon, startTime, endTime, isTradeSkill, castID, _, spellID = UnitCastingInfo(self.unit)
             self.bar:SetTexCoord(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
             self.isChanneling = false
+            self.isCasting = true
         end
 
         if TEST_SEGMENT_BAR then
@@ -199,6 +203,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
         end
 
         self.spellID = spellID
+        self.castID = castID
         self.startTime = startTime / 1000
         self.endTime = endTime / 1000
         barReset(self)
@@ -246,26 +251,31 @@ local function castBar_OnEvent(self, event, unitID, ...)
             "noease"
         )
 
-        if not self.isCasting then
+        if self:GetAlpha() < 1 then
             UIFrameFadeIn(self, 0.1, 0, 1)
         end
-        self.isCasting = true
     elseif IsIn(event, "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP") then
-        if self.animating == nil or self.animating == false then
-            UIFrameFadeOut(self, 0.2, 1, 0)
-        end
-        barReset(self)
-        self.isCasting = false
-    elseif event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" then
-        if self.showDetails then
-            if event == "UNIT_SPELLCAST_FAILED" then
-                self.name:SetText(FAILED)
-            else
-                self.name:SetText(INTERRUPTED)
+        if (event == "UNIT_SPELLCAST_STOP" and self.castID == select(1, ...)) or (event == "UNIT_SPELLCAST_CHANNEL_STOP" and self.isChanneling) then
+            if self.animating == nil or self.animating == false then
+                UIFrameFadeOut(self, 0.2, 1, 0)
             end
+            barReset(self)
+            self.isCasting = false
+            self.isChanneling = false
         end
-        AddFinishAnimation(self, true)
-        self.isCasting = false
+    elseif event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" then
+        if self:IsShown() and self.isCasting and select(1, ...) == self.castID then
+            if self.showDetails then
+                if event == "UNIT_SPELLCAST_FAILED" then
+                    self.name:SetText(FAILED)
+                else
+                    self.name:SetText(INTERRUPTED)
+                end
+            end
+            AddFinishAnimation(self, true)
+            self.isCasting = false
+            self.isChanneling = false
+        end
     elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.spellID == select(2, ...) and not self.isChanneling then
         AddFinishAnimation(self, false)
     end
