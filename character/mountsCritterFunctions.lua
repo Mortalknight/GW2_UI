@@ -121,10 +121,9 @@ local function CreateMountsPetsContainersWithButtons(listFrame, baseFrame, maxNu
             btn:HookScript("OnClick", GW.MountCrintterItemOnClick)
             btn:Hide()
 
-            local zebra = tab % 2
             btn.title:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
             btn.title:SetTextColor(0.7, 0.7, 0.5, 1)
-            btn.bg:SetVertexColor(1, 1, 1, zebra)
+            btn.bg:SetVertexColor(1, 1, 1, 1)
             btn.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
             btn:SetNormalTexture(nil)
             btn:SetText("")
@@ -158,7 +157,7 @@ local function UserMountCritter(self)
 
 		self:SetText(selectedButton.petType  == "MOUNT" and MOUNT or SUMMON)
     else
-        CallCompanion(selectedButton.petType , selectedButton.mountID)
+        CallCompanion(selectedButton.petType, selectedButton.mountID)
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
 
         self:SetText(selectedButton.petType == "MOUNT" and BINDING_NAME_DISMOUNT or PET_DISMISS)
@@ -174,6 +173,7 @@ local function UpdateMountsCritterList(self, petType, numMountsCritterPerTab, fi
 
     local btnIndex = 0
     local tabIndex = 1
+    local zebra
 
     for i = 1, GetNumCompanions(petType) do
         local creatureID, creatureName, spellID, icon, active = GetCompanionInfo(petType, i)
@@ -188,11 +188,13 @@ local function UpdateMountsCritterList(self, petType, numMountsCritterPerTab, fi
         btn.spellID = spellID
         btn.active = active
 
-        -- For menu items, if we want them to be clickable action buttons
-        --  btn:SetAttribute("ispickable", true)
-        --  btn:SetAttribute("type1", "spell")
-        --  btn:SetAttribute("type2", "spell")
-        --  btn:SetAttribute("spell", spellID)
+        zebra = btnIndex % 2
+        if btn.active then
+            btn.zebra:SetVertexColor(1, 1, 0.5, 0.15)
+        else
+            btn.zebra:SetVertexColor(zebra, zebra, zebra, 0.05)
+        end
+
         btn:Show()
 
         -- populate the info panel with the first mount
@@ -205,7 +207,6 @@ local function UpdateMountsCritterList(self, petType, numMountsCritterPerTab, fi
         if btnIndex >= numMountsCritterPerTab then
             btnIndex = 0
             tabIndex = tabIndex + 1
-            self.tabs = tabIndex
         end
     end
 end
