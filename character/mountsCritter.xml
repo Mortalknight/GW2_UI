@@ -16,7 +16,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK">
-                <FontString parentKey="title" text="No pets known" justifyH="CENTER" justifyV="MIDDLE">
+                <FontString parentKey="title" text="ADDON_NOT_AVAILABLE" justifyH="CENTER" justifyV="MIDDLE">
                     <Size x="612" y="32"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="241" y="-20"/>
