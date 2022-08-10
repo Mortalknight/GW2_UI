@@ -379,9 +379,9 @@ local function getRating(ratingIndex)
     local tooltip, tooltip2 = HIGHLIGHT_FONT_COLOR_CODE .. statName .. " " .. rating .. FONT_COLOR_CODE_CLOSE, nil
     -- Can probably axe this if else tree if all rating tooltips follow the same format
     if ( ratingIndex == CR_HIT_MELEE ) then
-        tooltip2 = format(CR_HIT_MELEE_TOOLTIP, UnitLevel("player"), ratingBonus, GetArmorPenetration());
+        tooltip2 = format(CR_HIT_MELEE_TOOLTIP, UnitLevel("player"), ratingBonus, GetCombatRating(CR_ARMOR_PENETRATION), GetArmorPenetration());
     elseif ( ratingIndex == CR_HIT_RANGED ) then
-        tooltip2 = format(CR_HIT_RANGED_TOOLTIP, UnitLevel("player"), ratingBonus, GetArmorPenetration());
+        tooltip2 = format(CR_HIT_RANGED_TOOLTIP, UnitLevel("player"), ratingBonus, GetCombatRating(CR_ARMOR_PENETRATION), GetArmorPenetration());
     elseif ( ratingIndex == CR_DODGE ) then
         tooltip2 = format(CR_DODGE_TOOLTIP, ratingBonus);
     elseif ( ratingIndex == CR_PARRY ) then
