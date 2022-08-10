@@ -105,7 +105,7 @@ local function drawLegacyLine(path, frame, teir, column, requirementsMet)
     for i = 1, #path do
         local x = (w / NUM_TALENT_COLUMNS) * (cCol - 1)
         local y = (h / MAX_NUM_TALENT_TIERS) * (cTeir - 1)
-        local arrow = getArrow(frame, teir, column, i)
+        local arrow = getArrow(frame, cTeir, cCol, i)
 
         arrow:ClearAllPoints()
         arrow:SetPoint("TOPLEFT", _G["GwLegacyTalentTree" .. frame].treeContainer, "TOPLEFT", x + (arrow:GetWidth() / 4) , -(y + (arrow:GetHeight() / 4)))

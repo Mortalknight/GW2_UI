@@ -533,14 +533,14 @@
                     <Color r="1" b="0.6" g="1" a="1"></Color>
                 </Texture>
                 <Texture parentKey="left" file="Interface\AddOns\GW2_UI\textures\talents\talent-line-left" hidden="true">
-                    <Size x="47" y="62"/>
+                    <Size x="70" y="62"/>
                     <Anchors>
                         <Anchor point="RIGHT" relativePoint="CENTER" x="5" y="0"/>
                     </Anchors>
                     <Color r="1" b="0.6" g="1" a="1"></Color>
                 </Texture>
                 <Texture parentKey="right" file="Interface\AddOns\GW2_UI\textures\talents\talent-line-left" hidden="true">
-                    <Size x="47" y="62"/>
+                    <Size x="70" y="62"/>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="CENTER" x="-5" y="0"/>
                     </Anchors>
