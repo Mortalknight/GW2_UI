@@ -127,7 +127,7 @@ local function updatePetData(self, event)
 
     if event == "PLAYER_ENTERING_WORLD" then
         UpdateBuffLayout(self, event, "pet")
-        SetPetHappiness(self)
+        C_Timer.After(0.1, function() SetPetHappiness(self) end)
         SetPortraitTexture(self.portrait, "pet")
         self:UnregisterEvent(event)
     elseif event == "UNIT_AURA" then
@@ -256,7 +256,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterUnitEvent("UNIT_AURA", "pet", "player")
     playerPetFrame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MODEL_CHANGED", "pet")
-    playerPetFrame:RegisterUnitEvent("UNIT_HAPPINESS", "pet")
+    playerPetFrame:RegisterEvent("UNIT_HAPPINESS")
     playerPetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, true, {"default", "scaleable"}, true)
