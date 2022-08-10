@@ -157,6 +157,8 @@ character/mounts.xml
 character/mounts.lua
 character/critter.xml
 character/critter.lua
+character/currency.xml
+character/currency.lua
 character/windowManager.lua
 
 immersive/skins/skins.xml

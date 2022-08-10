@@ -108,6 +108,21 @@ windowsList[7] = {
     ]=]
 }
 
+windowsList[8] = {
+    ["OnLoad"] = "LoadCurrency",
+    ["SettingName"] = "USE_CHARACTER_WINDOW",
+    ["TabIcon"] = "tabicon_currency",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/currency-window-icon",
+    ["HeaderText"] = CURRENCY,
+    ["TooltipText"] = CURRENCY,
+    ["Bindings"] = {
+        ["TOGGLECURRENCY"] = "Currency"
+    },
+    ["OnClick"] = [=[
+        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "currency")
+    ]=]
+}
+
 -- turn click events (generated from key bind overrides) into the correct tab show/hide calls
 local charSecure_OnClick = [=[
     --print("secure click handler button: " .. button)
@@ -135,6 +150,9 @@ local charSecure_OnClick = [=[
     elseif button == "Critter" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "critter")
+    elseif button == "Currency" then
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "currency")
     elseif button == "Talents" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "talents")
@@ -184,6 +202,8 @@ local charSecure_OnAttributeChanged = [=[
     local showMounts = false
     local fmCritter = self:GetFrameRef("GwCritterFrame")
     local showCritter = false
+    local fmCurrency = self:GetFrameRef("GwCurrencyDetailsFrame")
+    local showCurrency = false
 
     local hasPetUI = self:GetAttribute("HasPetUI")
 
@@ -221,6 +241,14 @@ local charSecure_OnAttributeChanged = [=[
             return
         else
             showCritter = true
+        end
+    elseif fmCurrency ~= nil and value == "currency" then
+        if keytoggle and fmCurrency:IsVisible() then
+            self:SetAttribute("keytoggle", nil)
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showCurrency = true
         end
     elseif fmSBM ~= nil and value == "spellbook" then
         if keytoggle and fmSBM:IsVisible() then
@@ -335,6 +363,13 @@ local charSecure_OnAttributeChanged = [=[
             fmCritter:Show()
         else
             fmCritter:Hide()
+        end
+    end
+    if fmCurrency then
+        if showCurrency and not close then
+            fmCurrency:Show()
+        else
+            fmCurrency:Hide()
         end
     end
     if fmSBM then

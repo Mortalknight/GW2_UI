@@ -262,6 +262,27 @@ local function updateMoney(self)
 end
 GW.AddForProfiling("bag", "updateMoney", updateMoney)
 
+local function watchCurrency(self)
+    local watchSlot = 1
+    local currencyCount = GetCurrencyListSize()
+    for i = 1, currencyCount do
+        local info = GetCurrencyListInfo(i)
+        if not info.isHeader and info.isShowInBackpack and watchSlot < 4 then
+            self["currency" .. tostring(watchSlot)]:SetText(CommaValue(info.quantity))
+            self["currency" .. tostring(watchSlot) .. "Texture"]:SetTexture(info.iconFileID)
+            self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = i
+            watchSlot = watchSlot + 1
+        end
+    end
+
+    for i = watchSlot, 3 do
+        self["currency" .. tostring(i)]:SetText("")
+        self["currency" .. tostring(i) .. "Texture"]:SetTexture(nil)
+        self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = nil
+    end
+end
+GW.AddForProfiling("bag", "watchCurrency", watchCurrency)
+
 local function updateFreeSpaceString(free, full)
     local space_string = free .. " / " .. full
     GwBagFrame.spaceString:SetText(space_string)
@@ -986,6 +1007,64 @@ local function LoadBag(helpers)
     end)
     f.moneyFrame:RegisterEvent("PLAYER_MONEY")
     updateMoney(f)
+
+    f.currency:SetScript("OnClick", function()
+        -- TODO: cannot do this properly until we make the whole bag frame secure
+        if not InCombatLockdown() then
+            ToggleCharacter("TokenFrame")
+        end
+    end)
+
+    -- setup watch currencies
+    f.currency1:SetFont(UNIT_NAME_FONT, 12)
+    f.currency1:SetTextColor(1, 1, 1)
+    f.currency2:SetFont(UNIT_NAME_FONT, 12)
+    f.currency2:SetTextColor(1, 1, 1)
+    f.currency3:SetFont(UNIT_NAME_FONT, 12)
+    f.currency3:SetTextColor(1, 1, 1)
+
+    -- set warch currencies tooltips
+    f.currency1Frame:SetScript("OnEnter", function(self)
+        if not self.CurrencyIdx then
+            return
+        end
+        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+        GameTooltip:ClearLines()
+        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+        GameTooltip:Show()
+    end)
+    f.currency2Frame:SetScript("OnEnter", function(self)
+        if not self.CurrencyIdx then
+            return
+        end
+        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+        GameTooltip:ClearLines()
+        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+        GameTooltip:Show()
+    end)
+    f.currency3Frame:SetScript("OnEnter", function(self)
+        if not self.CurrencyIdx then
+            return
+        end
+        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+        GameTooltip:ClearLines()
+        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+        GameTooltip:Show()
+    end)
+
+    f.currency:SetScript("OnEvent", function(self)
+        if GW.inWorld then
+            watchCurrency(self:GetParent())
+        end
+    end)
+    f.currency:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+    hooksecurefunc(
+        "SetCurrencyBackpack",
+        function()
+            watchCurrency(f)
+        end
+    )
+    watchCurrency(f)
 
     -- return a callback that should be called when item size changes
     local changeItemSize = function()

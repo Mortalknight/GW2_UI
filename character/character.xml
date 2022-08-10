@@ -1,6 +1,13 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
+    <Frame name="GwCharacterTabContainer" inherits="SecureHandlerBaseTemplate" protected="true" virtual="true">
+        <Size x="853" y="627"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0"></Anchor>
+        </Anchors>
+    </Frame>
+
     <Button name="CharacterWindowTabSelect" inherits="SecureHandlerClickTemplate" registerForClicks="LeftButtonUp, RightButtonUp" virtual="true">
         <Size x="64" y="40"></Size>
         <Anchors>
@@ -75,6 +82,24 @@
         </Scripts>
     </Frame>
 
+    <Button name="GwCharacterMenuButtonTemplateNew" inherits="GwStandardButton" virtual="true">
+        <Size x="231" y="36"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+        </Anchors>
+        <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
+        <Layers>
+            <Layer>
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
+                    <Size x="10" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Button>
+
     <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" virtual="true">
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
         <Layers>
@@ -128,6 +153,13 @@
             </OnLoad>
         </Scripts>
     </Button>
+
+    <Frame name="GwCharacterMenuTemplate" virtual="true">
+        <Size x="231" y="498"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-20"></Anchor>
+        </Anchors>
+    </Frame>
 
     <Frame name="GwCharacterMenu" inherits="SecureHandlerBaseTemplate" hidden="true" virtual="true">
         <Size x="231" y="498"></Size>
