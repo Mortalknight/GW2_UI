@@ -150,8 +150,9 @@ character/spellbook.lua
 character/spellbook.xml
 character/talents.lua
 character/talents.xml
-character/glyphes.xml
-character/glyphes.lua
+character/glyphData.lua
+character/glyphs.xml
+character/glyphs.lua
 character/mountsCritterFunctions.lua
 character/mountsCritter.xml
 character/mounts.lua
