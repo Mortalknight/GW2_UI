@@ -70,7 +70,7 @@
                                 <Texture file="Interface\AddOns\GW2_UI\textures\questview\overlay_bottom">
                                     <Size x="952" y="475"></Size>
                                     <Anchors>
-                                        <Anchor point="bottom" x="0" y="0" />
+                                        <Anchor point="bottom" x="0" y="-1" />
                                     </Anchors>
                                 </Texture>
                             </Layer>
