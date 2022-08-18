@@ -168,7 +168,7 @@ local function setupBar(self)
         end
         maxCharges = 1
     end
-    self.gwMaxCharges = maxCharges
+    self.gwMaxCharges = maxCharges or 0
 
     -- sort out separators for multi charges
     local af = self.arcfill
