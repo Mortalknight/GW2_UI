@@ -99,5 +99,14 @@ local function LoadDressUpFrameSkin()
     WardrobeOutfitEditFrame.AcceptButton:SkinButton(false, true)
     WardrobeOutfitEditFrame.CancelButton:SkinButton(false, true)
     WardrobeOutfitEditFrame.DeleteButton:SkinButton(false, true)
+
+    -- SideDressUpFrame
+    SideDressUpFrameCloseButton:SkinButton(true)
+    SideDressUpFrameCloseButton:SetSize(18, 18)
+    SideDressUpFrame.ResetButton:SkinButton(false, true)
+    SideDressUpFrame:StripTextures()
+    SideDressUpFrame.BGTopLeft:Hide()
+	SideDressUpFrame.BGBottomLeft:Hide()
+    SideDressUpFrame:CreateBackdrop(GW.skins.constBackdropFrame, true, -2, -2)
 end
 GW.LoadDressUpFrameSkin = LoadDressUpFrameSkin

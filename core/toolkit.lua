@@ -293,6 +293,10 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover, s
 
     HandleBlizzardRegions(button)
 
+    if isXButton then
+        button:StripTextures()
+    end
+
     if not onlyHover then
         if isXButton then
             if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal") end
