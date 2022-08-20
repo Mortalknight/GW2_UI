@@ -46,7 +46,23 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendFrame.RecruitList.ScrollFrame.Slider:StripTextures()
     RecruitAFriendFrame.RecruitList.ScrollFrame.Slider:SetWidth(3)
     RecruitAFriendFrame.RecruitList.ScrollFrame.Slider:SkinScrollBar()
-    RecruitAFriendFrame.RecruitList.ScrollFrame:SetSize(433, 300)
+    RecruitAFriendFrame.RecruitList.ScrollFrame:SetSize(433, 420)
+
+    HybridScrollFrame_CreateButtons(RecruitAFriendFrame.RecruitList.ScrollFrame, "RecruitListButtonTemplate")
+
+    local buttons = RecruitAFriendFrame.RecruitList.ScrollFrame.buttons
+    for i = 1, #buttons do
+        local button = buttons[i]
+
+        button:SetSize(433, 34)
+    end
+
+    hooksecurefunc("HybridScrollFrame_Update", function(self)
+        if self == RecruitAFriendFrame.RecruitList.ScrollFrame then
+            self.scrollChild:SetHeight(420)
+            self:UpdateScrollChildRect()
+        end
+    end)
 
     RecruitAFriendFrame.RecruitList.Header:SetSize(450, 20)
     RecruitAFriendFrame.RecruitList.Header.Background:Hide()
@@ -55,7 +71,7 @@ local function LoadRecruitAFriendList(tabContainer)
 
     RecruitAFriendFrame.RecruitmentButton:SetParent(RAFFrame.RecruitList)
     RecruitAFriendFrame.RecruitmentButton:ClearAllPoints()
-    RecruitAFriendFrame.RecruitmentButton:SetPoint("BOTTOMLEFT", RAFFrame.RecruitList,  "BOTTOMLEFT", 4, -50)
+    RecruitAFriendFrame.RecruitmentButton:SetPoint("BOTTOMLEFT", RecruitAFriendFrame.RecruitList.ScrollFrame,  "BOTTOMLEFT", 4, -20)
     RecruitAFriendFrame.RecruitmentButton:SkinButton(false, true)
 
     RecruitAFriendFrame.SplashFrame.OKButton:SkinButton(false, true)
