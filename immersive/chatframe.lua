@@ -373,7 +373,9 @@ local function handleChatFrameFadeOut(chatFrame)
                 UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
             end
         end
-        UIFrameFadeOut(ChatFrame1.Container, 2, ChatFrame1.Container:GetAlpha(), chatAlpha)
+        if chatFrame.Container then
+            UIFrameFadeOut(ChatFrame1.Container, 2, ChatFrame1.Container:GetAlpha(), chatAlpha)
+        end
     elseif chatFrame.isDocked == nil then
         if chatFrame.Container then
             UIFrameFadeOut(chatFrame.Container, 2, chatFrame.Container:GetAlpha(), chatAlpha)

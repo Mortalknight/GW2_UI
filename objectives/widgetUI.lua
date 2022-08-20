@@ -85,31 +85,55 @@ local function UIWidgetTemplateCaptureBar(self, _, widgetContainer)
     if skinFunc then skinFunc(self) end
 end
 
+local function CheckElvUI()
+    if not LibStub then
+        return false
+    end
+    local ace = LibStub("AceAddon-3.0", true)
+    if not ace then
+        return false
+    end
+    local elv = ace:GetAddon("ElvUI", true)
+    if not elv then
+        return false
+    end
+    local b = elv:GetModule("Blizzard")
+    if not b then
+        return false
+    end
+
+    GW.Debug(b.Initialized)
+    return b.Initialized
+end
+
 
 local function WidgetUISetup()
-    GW.RegisterMovableFrame(UIWidgetTopCenterContainerFrame, "TopWidget", "TopCenterWidget_pos", "VerticalActionBarDummy", {58, 58}, {"default", "scaleable"})
-    GW.RegisterMovableFrame(UIWidgetPowerBarContainerFrame, "PowerBarContainer", "PowerBarContainer_pos", "VerticalActionBarDummy", {100, 20}, {"default", "scaleable"})
-    GW.RegisterMovableFrame(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "BelowMinimapContainer_pos", "VerticalActionBarDummy", {150, 30}, {"default", "scaleable"})
+    -- avoide conflict with elvui
+    if not CheckElvUI() then
+        GW.RegisterMovableFrame(UIWidgetTopCenterContainerFrame, "TopWidget", "TopCenterWidget_pos", "VerticalActionBarDummy", {58, 58}, {"default", "scaleable"})
+        GW.RegisterMovableFrame(UIWidgetPowerBarContainerFrame, "PowerBarContainer", "PowerBarContainer_pos", "VerticalActionBarDummy", {100, 20}, {"default", "scaleable"})
+        GW.RegisterMovableFrame(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "BelowMinimapContainer_pos", "VerticalActionBarDummy", {150, 30}, {"default", "scaleable"})
 
-    UIWidgetTopCenterContainerFrame:ClearAllPoints()
-    UIWidgetTopCenterContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
+        UIWidgetTopCenterContainerFrame:ClearAllPoints()
+        UIWidgetTopCenterContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
 
-    UIWidgetPowerBarContainerFrame:ClearAllPoints()
-    UIWidgetPowerBarContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
+        UIWidgetPowerBarContainerFrame:ClearAllPoints()
+        UIWidgetPowerBarContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
 
-    UIWidgetBelowMinimapContainerFrame:ClearAllPoints()
-    UIWidgetBelowMinimapContainerFrame:SetPoint("CENTER", UIWidgetBelowMinimapContainerFrame.gwMover, "CENTER")
+        UIWidgetBelowMinimapContainerFrame:ClearAllPoints()
+        UIWidgetBelowMinimapContainerFrame:SetPoint("CENTER", UIWidgetBelowMinimapContainerFrame.gwMover, "CENTER")
 
-    hooksecurefunc(UIWidgetTopCenterContainerFrame, "SetPoint", TopCenterPosition)
-    hooksecurefunc(UIWidgetPowerBarContainerFrame, "SetPoint", TopCenterPosition)
-    hooksecurefunc(UIWidgetBelowMinimapContainerFrame, "SetPoint", TopCenterPosition)
+        hooksecurefunc(UIWidgetTopCenterContainerFrame, "SetPoint", TopCenterPosition)
+        hooksecurefunc(UIWidgetPowerBarContainerFrame, "SetPoint", TopCenterPosition)
+        hooksecurefunc(UIWidgetBelowMinimapContainerFrame, "SetPoint", TopCenterPosition)
 
-    hooksecurefunc(UIWidgetTemplateStatusBarMixin, "Setup", UIWidgetTemplateStatusBar)
-    hooksecurefunc(UIWidgetTemplateCaptureBarMixin, "Setup", UIWidgetTemplateCaptureBar)
+        hooksecurefunc(UIWidgetTemplateStatusBarMixin, "Setup", UIWidgetTemplateStatusBar)
+        hooksecurefunc(UIWidgetTemplateCaptureBarMixin, "Setup", UIWidgetTemplateCaptureBar)
 
-    -- handle power bar widgets after reload as Setup will have fired before this
-    for _, widget in pairs(UIWidgetPowerBarContainerFrame.widgetFrames) do
-        UIWidgetTemplateStatusBar(widget)
+        -- handle power bar widgets after reload as Setup will have fired before this
+        for _, widget in pairs(UIWidgetPowerBarContainerFrame.widgetFrames) do
+            UIWidgetTemplateStatusBar(widget)
+        end
     end
 end
 GW.WidgetUISetup = WidgetUISetup
