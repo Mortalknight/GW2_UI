@@ -82,6 +82,6 @@ local function LoadQuickJoinList(tabContainer)
         end
     end)
 
-    QuickJoinFrame:OnShow()
+    --QuickJoinFrame:OnShow()
 end
 GW.LoadQuickJoinList = LoadQuickJoinList
