@@ -9,8 +9,6 @@ local AddToAnimation = GW.AddToAnimation
 local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 
 -- forward function defs
-local displayRewards
-
 local experiencebarAnimation = 0
 
 local gw_reputation_vals = nil
