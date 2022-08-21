@@ -250,7 +250,7 @@ drawItemSetList = function()
             frame.setName = name
             frame.setID = setID
 
-            DropDownOutfit_OnLoad(frame.editOutfit, button)
+            DropDownOutfit_OnLoad(frame.editOutfit)
             GearSetButton_UpdateSpecInfo(frame)
 
             if texture then

@@ -50,7 +50,7 @@ local function LoadHudPanel(sWindow)
         L["Scales the UI into a Pixel Perfect Mode. This is dependent on screen resolution."],
         "PIXEL_PERFECTION",
         function()
-            SetCVar("useUiScale", 0)
+            C_CVar.SetCVar("useUiScale", "0")
             GW.PixelPerfection()
         end
     )

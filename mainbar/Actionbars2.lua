@@ -750,7 +750,7 @@ local function UpdateMultibarButtons()
     else
         HIDE_ACTIONBARS_CVAR = 1
     end
-    SetCVar("alwaysShowActionBars", HIDE_ACTIONBARS_CVAR)
+    C_CVar.SetCVar("alwaysShowActionBars", tostring(HIDE_ACTIONBARS_CVAR))
 
     for y = 1, 4 do
         if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
@@ -1110,7 +1110,7 @@ local function LoadActionBars(lm)
     else
         HIDE_ACTIONBARS_CVAR = 1
     end
-    SetCVar("alwaysShowActionBars", HIDE_ACTIONBARS_CVAR)
+    C_CVar.SetCVar("alwaysShowActionBars", tostring(HIDE_ACTIONBARS_CVAR))
 
     for _, frame in pairs(
         {

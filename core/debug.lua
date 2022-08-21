@@ -55,7 +55,7 @@ if D then
     GW.Debug = Debug
     GW.Trace = Trace
     GW.inDebug = true
-    SetCVar("fstack_preferParentKeys", 0)
+    C_CVar.SetCVar("fstack_preferParentKeys", "0")
     Debug("debug log initialized")
 else
     GW.Debug = EmptyFunc

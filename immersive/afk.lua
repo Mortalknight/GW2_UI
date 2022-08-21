@@ -213,11 +213,11 @@ local function ToggelAfkMode()
         AFKMode:RegisterEvent("LFG_PROPOSAL_SHOW")
         AFKMode:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
         AFKMode:SetScript("OnEvent", AFKMode_OnEvent)
-        SetCVar("autoClearAFK", "1")
+        C_CVar.SetCVar("autoClearAFK", "1")
     else
         AFKMode:UnregisterAllEvents()
         AFKMode:SetScript("OnEvent", nil)
-        SetCVar("autoClearAFK", "1")
+        C_CVar.SetCVar("autoClearAFK", "1")
     end
 end
 GW.ToggelAfkMode = ToggelAfkMode

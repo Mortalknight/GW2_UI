@@ -494,7 +494,7 @@ function QuestViewMixin:lastGossip()
 end
 
 function QuestViewMixin:showQuestFrame()
-    local mapId = GW.locationData.mapID or C_Map.GetBestMapForUnit("player") -- as fallback if location service is to slow
+    local mapId = GW.locationData.mapID or C_Map.GetBestMapForUnit("player") or 0 -- as fallback if location service is to slow
     local mapTex
     repeat
         local mapInfo = C_Map.GetMapInfo(mapId)
@@ -749,12 +749,12 @@ local function dialog_OnClick(self, button)
 end
 AFP("dialog_OnClick", dialog_OnClick)
 
-local function decline_OnClick(self, button)
+local function decline_OnClick()
     CloseQuest()
 end
 AFP("decline_OnClick", decline_OnClick)
 
-local function accept_OnClick(self, button)
+local function accept_OnClick(self)
     local qview = self:GetParent():GetParent()
     local Stringcount = #qview.questString
 

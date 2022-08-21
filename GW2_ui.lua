@@ -465,18 +465,18 @@ local function evAddonLoaded(_, addonName)
 end
 AFP("evAddonLoaded", evAddonLoaded)
 
-local function evNeutralFactionSelectResult(self, success)
+local function evNeutralFactionSelectResult()
     GW.myfaction, GW.myLocalizedFaction = UnitFactionGroup("player")
     Debug("OK~EVENT~New faction:", GW.myfaction, GW.myLocalizedFaction)
 end
 AFP("evNeutralFactionSelectResult", evNeutralFactionSelectResult)
 
-local function evPlayerSpecializationChanged(self, unitTarget)
+local function evPlayerSpecializationChanged()
     GW.CheckRole()
 end
 AFP("evPlayerSpecializationChanged", evPlayerSpecializationChanged)
 
-local function evUiScaleChanged(self)
+local function evUiScaleChanged()
     if not GetCVarBool("useUiScale") then
         return
     end
@@ -488,18 +488,18 @@ local function evUiScaleChanged(self)
 end
 AFP("evUiScaleChanged", evUiScaleChanged)
 
-local function evPlayerLevelUp(self, newLevel, hpDelta, powDelta, newTalents, newPvpSlots, strDelta, agiDelta, stamDelta, intDelta)
+local function evPlayerLevelUp(_, newLevel)
     GW.mylevel = newLevel
     Debug("OK~EVENT~New level:", newLevel)
 end
 AFP("evPlayerLevelUp", evPlayerLevelUp)
 
-local function evPlayerLeavingWorld(self)
+local function evPlayerLeavingWorld()
     GW.inWorld = false
 end
 AFP("evPlayerLeavingWorld", evPlayerLeavingWorld)
 
-local function commonEntering(self)
+local function commonEntering()
     GW.inWorld = true
     GW.CheckRole()
     if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
@@ -512,13 +512,13 @@ local function commonEntering(self)
     end)
 end
 
-local function evPlayerEnteringWorld(self, isInitialLogin, isReloadingUi)
-    commonEntering(self)
+local function evPlayerEnteringWorld()
+    commonEntering()
 end
 AFP("evPlayerEnteringWorld", evPlayerEnteringWorld)
 
-local function evPlayerEnteringBattleground(self)
-    commonEntering(self)
+local function evPlayerEnteringBattleground()
+    commonEntering()
 end
 AFP("evPlayerEnteringBattleground", evPlayerEnteringBattleground)
 
@@ -639,12 +639,12 @@ local function evPlayerLogin(self)
 
     if not IsIncompatibleAddonLoadedOrOverride("FloatingCombatText", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("GW_COMBAT_TEXT_MODE") == "GW2" then
-            SetCVar("floatingCombatTextCombatDamage", 0)
+            C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
             GW.LoadDamageText()
         elseif GetSetting("GW_COMBAT_TEXT_MODE") == "BLIZZARD" then
-            SetCVar("floatingCombatTextCombatDamage", 1)
+            C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
         else
-            SetCVar("floatingCombatTextCombatDamage", 0)
+            C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
         end
     end
 
@@ -764,18 +764,18 @@ local function evPlayerLogin(self)
 
     if not IsIncompatibleAddonLoadedOrOverride("DynamicCam", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("DYNAMIC_CAM") then
-            SetCVar("test_cameraDynamicPitch", true)
-            SetCVar("cameraKeepCharacterCentered", false)
-            SetCVar("cameraReduceUnexpectedMovement", false)
+            C_CVar.SetCVar("test_cameraDynamicPitch", "1")
+            C_CVar.SetCVar("cameraKeepCharacterCentered", "0")
+            C_CVar.SetCVar("cameraReduceUnexpectedMovement", "0")
             hooksecurefunc("StaticPopup_Show", function(which)
                 if which == "EXPERIMENTAL_CVAR_WARNING" then
                     StaticPopup_Hide("EXPERIMENTAL_CVAR_WARNING")
                 end
             end)
         else
-            SetCVar("test_cameraDynamicPitch", false)
-            SetCVar("cameraKeepCharacterCentered", true)
-            SetCVar("cameraReduceUnexpectedMovement", true)
+            C_CVar.SetCVar("test_cameraDynamicPitch", "false")
+            C_CVar.SetCVar("cameraKeepCharacterCentered", "1")
+            C_CVar.SetCVar("cameraReduceUnexpectedMovement", "1")
         end
     end
 
@@ -824,19 +824,19 @@ local function gw_OnEvent(self, event, ...)
     if event == "PLAYER_LOGIN" then
         evPlayerLogin(self)
     elseif event == "UI_SCALE_CHANGED" then
-        evUiScaleChanged(self)
+        evUiScaleChanged()
     elseif event == "PLAYER_LEAVING_WORLD" then
-        evPlayerLeavingWorld(self)
+        evPlayerLeavingWorld()
     elseif event == "PLAYER_ENTERING_WORLD" then
-        evPlayerEnteringWorld(self, ...)
+        evPlayerEnteringWorld()
     elseif event == "PLAYER_ENTERING_BATTLEGROUND" then
-        evPlayerEnteringBattleground(self)
+        evPlayerEnteringBattleground()
     elseif event == "PLAYER_LEVEL_UP" then
         evPlayerLevelUp(self, ...)
     elseif event == "NEUTRAL_FACTION_SELECT_RESULT" then
-        evNeutralFactionSelectResult(self, ...)
+        evNeutralFactionSelectResult()
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
-        evPlayerSpecializationChanged(self, ...)
+        evPlayerSpecializationChanged()
     elseif event == "ADDON_LOADED" then
         evAddonLoaded(self, ...)
     end

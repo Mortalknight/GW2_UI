@@ -94,7 +94,7 @@ local function updatePicks(self)
             end
 
             slotInfo = C_SpecializationInfo.GetPvpTalentSlotInfo(slot.slotIndex)
-            if slotInfo.selectedTalentID then
+            if slotInfo and slotInfo.selectedTalentID then
                 slot.talentId = slotInfo.selectedTalentID
                 local _, _, icon, _, _, spellId, _ = GetPvpTalentInfoByID(slot.talentId)
                 local isPassive = IsPassiveSpell(spellId)
@@ -364,15 +364,14 @@ local function slotPool_Resetter(_, btn)
     btn.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon")
 
     if not btn.mask then
-        local mask = UIParent:CreateMaskTexture()
-        mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
-        mask:SetTexture(
+        btn.mask = UIParent:CreateMaskTexture()
+        btn.mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
+        btn.mask:SetTexture(
             "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
-        mask:SetSize(40, 40)
-        btn.mask = mask
+        btn.mask:SetSize(40, 40)
     end
 end
 GW.AddForProfiling("talents_pvp", "slotPool_Resetter", slotPool_Resetter)
@@ -406,16 +405,15 @@ local function passivePool_Resetter(_, btn)
     btn.icon:SetTexture(nil)
 
     if not btn.mask then
-        local mask = UIParent:CreateMaskTexture()
-        mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
-        mask:SetTexture(
+        btn.mask = UIParent:CreateMaskTexture()
+        btn.mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
+        btn.mask:SetTexture(
             "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
-        mask:SetSize(40, 40)
-        btn.mask = mask
-        btn.icon:AddMaskTexture(mask)
+        btn.mask:SetSize(40, 40)
+        btn.icon:AddMaskTexture(btn.mask)
     end
 end
 GW.AddForProfiling("talents_pvp", "passivePool_Resetter", passivePool_Resetter)

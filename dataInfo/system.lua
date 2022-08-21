@@ -190,7 +190,7 @@ local function FpsOnUpdate(self, elapsed)
     if wait < 0 then
         wait = 1
 
-        local framerate = floor(GetFramerate())
+        local framerate = floor(GetFramerate() or 0)
 
         self.fps:SetText(framerate .. " FPS")
 
@@ -214,7 +214,7 @@ GW.FpsOnUpdate = FpsOnUpdate
 local function FpsOnClick()
     if IsShiftKeyDown() then
         if IsControlKeyDown() then
-            SetCVar("scriptProfile", GetCVarBool("scriptProfile") and 0 or 1)
+            C_CVar.SetCVar("scriptProfile", GetCVarBool("scriptProfile") and "0" or "1")
             ReloadUI()
         else
             collectgarbage("collect")

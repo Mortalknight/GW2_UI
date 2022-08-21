@@ -286,9 +286,10 @@ end
 
 local function onNamePlateAdded(_, _, unitID)
     local guid = UnitGUID(unitID)
-
-    unitToGuid[unitID] = guid
-    guidToUnit[guid] = unitID
+    if guid then
+        unitToGuid[unitID] = guid
+        guidToUnit[guid] = unitID
+    end
 end
 
 local function onNamePlateRemoved(_, _, unitID)
@@ -322,7 +323,7 @@ local function LoadDamageText()
         elseif event == "NAME_PLATE_UNIT_REMOVED" then
             onNamePlateRemoved(f, event, ...)
         elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-            onCombatLogEvent(f, event, ...)
+            onCombatLogEvent(f)
         end
     end)
 end

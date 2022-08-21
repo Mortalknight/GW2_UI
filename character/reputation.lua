@@ -329,7 +329,7 @@ local function setDetailEx(
         frame.currentValue:SetText(CommaValue(value))
         frame.nextValue:SetText(CommaValue(threshold))
 
-        local percent = math.floor(RoundDec(((value - 0) / (threshold - 0)) * 100), 0)
+        local percent = math.floor(RoundDec(((value - 0) / (threshold - 0)) * 100))
         frame.percentage:SetText(percent .. "%")
 
         frame.StatusBar:SetMinMaxValues(0, 1)
@@ -350,14 +350,13 @@ local function setDetailEx(
             frame.nextValue:SetText(CommaValue(nextFriendThreshold - friendThreshold))
 
             local percent =
-                math.floor(RoundDec(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)) * 100), 0)
+                math.floor(RoundDec(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)) * 100))
             if percent == -1 then
                 frame.percentage:SetText("0%")
             else
                 frame.percentage:SetText(
                     (math.floor(
-                        RoundDec(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)) * 100),
-                        0
+                        RoundDec(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)) * 100)
                     )) .. "%"
                 )
             end
@@ -378,7 +377,7 @@ local function setDetailEx(
         if ldiff == 0 then
             ldiff = 1
         end
-        local percent = math.floor(RoundDec(((earnedValue - bottomValue) / ldiff) * 100), 0)
+        local percent = math.floor(RoundDec(((earnedValue - bottomValue) / ldiff) * 100))
         if percent == -1 then
             frame.percentage:SetText("0%")
         else
@@ -458,7 +457,7 @@ updateDetails = function()
             expCount = expCount + 1
         end
 
-        if isHeader and isChild then
+        if isHeader and isChild and name then
             savedHeaderName = name
         end
 
@@ -829,7 +828,7 @@ local function updateDetailsSearch(s)
                 savedHeaderName = ""
             end
 
-            if not facData[factionID] then
+            if not facData[factionID] and factionID then
                 facData[factionID] = {}
             end
             facOrder[#facOrder + 1] = factionID
@@ -904,15 +903,6 @@ local function dynamicOffset(_, offset)
     return element, scrollHeight
 end
 GW.AddForProfiling("reputation", "dynamicOffset", dynamicOffset)
-
-local function SortTable(tbl, func)
-    local t = {}
-    for k in pairs(tbl) do
-        tinsert(t, k)
-    end
-    sort(t, func)
-    return t
-end
 
 local function categoriesSetup(catwin)
     HybridScrollFrame_CreateButtons(catwin, "GwPaperDollReputationCat", 0, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")

@@ -76,16 +76,15 @@ local function hookTalentButton(self, container, row, index)
     --   self:SetAttribute("type", "macro");
     self:SetPoint("TOPLEFT", container, "TOPLEFT", 110 + ((65 * row) - (38)), -10 + ((-42 * index) + 40))
 
-    local mask = UIParent:CreateMaskTexture()
-    mask:SetPoint("CENTER", self, "CENTER", 0, 0)
+    self.mask = UIParent:CreateMaskTexture()
+    self.mask:SetPoint("CENTER", self, "CENTER", 0, 0)
 
-    mask:SetTexture(
+    self.mask:SetTexture(
         "Interface/AddOns/GW2_UI/textures/talents/passive_border",
         "CLAMPTOBLACKADDITIVE",
         "CLAMPTOBLACKADDITIVE"
     )
-    mask:SetSize(34, 34)
-    self.mask = mask
+    self.mask:SetSize(34, 34)
 end
 GW.AddForProfiling("talents", "hookTalentButton", hookTalentButton)
 
@@ -320,15 +319,15 @@ local function loadTalents()
         local container = CreateFrame("Button", "GwSpecFrame" .. i, GwSpecContainerFrame, "GwSpecFrame")
 
         container:RegisterForClicks("AnyUp")
-        local mask = UIParent:CreateMaskTexture()
-        mask:SetPoint("CENTER", container.icon, "CENTER", 0, 0)
-        mask:SetTexture(
+        container.icon.mask = UIParent:CreateMaskTexture()
+        container.icon.mask:SetPoint("CENTER", container.icon, "CENTER", 0, 0)
+        container.icon.mask:SetTexture(
             "Interface/AddOns/GW2_UI/textures/talents/passive_border",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
-        mask:SetSize(80, 80)
-        container.icon:AddMaskTexture(mask)
+        container.icon.mask:SetSize(80, 80)
+        container.icon:AddMaskTexture(container.icon.mask)
         container:SetScript("OnEnter", nil)
         container:SetScript("OnLeave", nil)
         container:SetScript("OnUpdate", nil)
@@ -458,15 +457,15 @@ local function loadTalents()
     if GW.myclass == "HUNTER" then
         local container = CreateFrame("Button", "GwSpecFrame" .. hunterPetContainerId, GwSpecContainerFrame, "GwSpecFrame")
 
-        local mask = UIParent:CreateMaskTexture()
-        mask:SetPoint("CENTER", container.icon, "CENTER", 0, 0)
-        mask:SetTexture(
+        container.icon.mask = UIParent:CreateMaskTexture()
+        container.icon.mask:SetPoint("CENTER", container.icon, "CENTER", 0, 0)
+        container.icon.mask:SetTexture(
             "Interface/AddOns/GW2_UI/textures/talents/passive_border",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
-        mask:SetSize(80, 80)
-        container.icon:AddMaskTexture(mask)
+        container.icon.mask:SetSize(80, 80)
+        container.icon:AddMaskTexture(container.icon.mask)
         container:SetScript("OnEnter", nil)
         container:SetScript("OnLeave", nil)
         container:SetScript("OnUpdate", nil)
@@ -839,7 +838,7 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
         for row = 1, maxTalentRows do
             for index = 1, talentsPerRow do
                 local _, name, icon, selected, available, spellId = GetTalentInfo(row, index, 1, false, "player")
-                if selected and available and IsPassiveSpell(spellId) then
+                if selected and available and spellId and IsPassiveSpell(spellId) then
                     local skillType = "TALENT"
                     btn = passiveGroup.pool:Acquire()
                     local row2 = math.floor((passiveIndex - 1) / 5)
@@ -876,7 +875,7 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
     end
     if spellBookTabs == 5 and GetSpecialization(false, true) then
         -- add spec spells
-        local bonuses = {GetSpecializationSpells(GetSpecialization(false, true), nil, true, true)}
+        local bonuses = {GetSpecializationSpells(GetSpecialization(false, true), nil, true)}
         for i = 1, #bonuses, 2 do
             if not IsSpellKnownOrOverridesKnown(bonuses[i], true) then
                 local isPassive = IsPassiveSpell(bonuses[i])
@@ -1019,16 +1018,15 @@ local function passivePool_Resetter(_, btn)
     btn.modifiedClick = TalProfButton_OnModifiedClick
 
     if not btn.mask then
-        local mask = UIParent:CreateMaskTexture()
-        mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
-        mask:SetTexture(
+        btn.mask = UIParent:CreateMaskTexture()
+        btn.mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
+        btn.mask:SetTexture(
             "Interface/AddOns/GW2_UI/textures/talents/passive_border",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
-        mask:SetSize(40, 40)
-        btn.mask = mask
-        btn.icon:AddMaskTexture(mask)
+        btn.mask:SetSize(40, 40)
+        btn.icon:AddMaskTexture(btn.mask)
     end
 end
 GW.AddForProfiling("talents", "passivePool_Resetter", passivePool_Resetter)

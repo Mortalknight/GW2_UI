@@ -467,7 +467,7 @@ end
 
 local function AddMountInfo(self, unit)
     local index = 1
-    local name, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, index, "HELPFUL")
+    local name, _, _, _, _, _, _, _, _, spellID = UnitBuff(unit, index)
     while name do
         local mountID = MountIDs[spellID]
         if mountID then
@@ -490,7 +490,7 @@ local function AddMountInfo(self, unit)
             break
         else
             index = index + 1
-            name, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, index, "HELPFUL")
+            name, _, _, _, _, _, _, _, _, spellID = UnitBuff(unit, index)
         end
     end
 end
@@ -570,7 +570,7 @@ end
 
 local lastGUID
 local function AddInspectInfo(self, unit, numTries, r, g, b)
-    if (not unit) or (numTries > 3) or not CanInspect(unit) then return end
+    if not unit or numTries > 3 or not CanInspect(unit) then return end
 
     local unitGUID = UnitGUID(unit)
     if not unitGUID then return end
