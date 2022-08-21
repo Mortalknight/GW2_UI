@@ -6,16 +6,11 @@ local L = GW.L
 
 local moveable_window_placeholders_visible = true
 local settings_window_open_before_change = false
-local function lockHudObjects(self)
-    local inCombat = InCombatLockdown()
-    GW.MoveHudScaleableFrame:UnregisterAllEvents()
-    if inCombat then
-        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
-        return
-    end
 
+local function lockHudObjects(self, _, inCombatLockdown)
+    GW.MoveHudScaleableFrame:UnregisterEvent("PLAYER_REGEN_DISABLED")
     GW.MoveHudScaleableFrame:Hide()
-    if settings_window_open_before_change and not inCombat then
+    if settings_window_open_before_change and not inCombatLockdown then
         settings_window_open_before_change = false
         GwSettingsWindow:Show()
     end
@@ -35,7 +30,11 @@ local function lockHudObjects(self)
         GW.MoveHudScaleableFrame.showGrid:SetText(L["Show grid"])
     end
 
-    self:GetParent().layoutManager:GetScript("OnEvent")(self:GetParent().layoutManager)
+    if self:GetParent().layoutManager then
+        self:GetParent().layoutManager:GetScript("OnEvent")(self:GetParent().layoutManager)
+    else
+        self.layoutManager:GetScript("OnEvent")(self.layoutManager)
+    end
 
     GW.InMoveHudMode = false
 end
@@ -61,7 +60,7 @@ GW.toggleHudPlaceholders = toggleHudPlaceholders
 local function moveHudObjects(self)
     GW.InMoveHudMode = true
 
-    if GwSettingsWindow:IsShown() then
+    if GwSettingsWindow:IsShown() or settings_window_open_before_change then
         settings_window_open_before_change = true
     end
     GwSettingsWindow:Hide()
@@ -79,15 +78,20 @@ local function moveHudObjects(self)
 
     -- register event to close move hud in combat
     self:RegisterEvent("PLAYER_REGEN_DISABLED")
-    self:SetScript("OnEvent", function(self, event)
-        if event == "PLAYER_REGEN_DISABLED" then
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
-            self:UnregisterEvent(event)
-            lockHudObjects(self)
-        end
-    end)
 end
 GW.moveHudObjects = moveHudObjects
+
+local function HandleMoveHudEvents(self, event)
+    if event == "PLAYER_REGEN_DISABLED" then
+        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
+        self:UnregisterEvent(event)
+        self:RegisterEvent("PLAYER_REGEN_ENABLED")
+        lockHudObjects(self, nil, true)
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        self:UnregisterEvent(event)
+        moveHudObjects(self)
+    end
+end
 
 local function Grid_GetRegion(mhgb)
     if mhgb.grid then
@@ -615,6 +619,7 @@ local function LoadMovers(layoutManager)
     mf:SetScript("OnDragStop", fnMf_OnDragStop)
 
     local moverSettingsFrame = CreateFrame("Frame", "GwSmallSettingsWindow", UIParent, "GwSmallSettings")
+    GW.MoveHudScaleableFrame = moverSettingsFrame
     moverSettingsFrame.layoutManager = layoutManager
 
     moverSettingsFrame.scaleSlider.slider:SetMinMaxValues(0.5, 1.5)
@@ -657,6 +662,7 @@ local function LoadMovers(layoutManager)
     moverSettingsFrame:SetScript("OnHide", function()
         mf:Hide()
     end)
+    moverSettingsFrame:SetScript("OnEvent", HandleMoveHudEvents)
 
     moverSettingsFrame.default:SetScript("OnClick", smallSettings_resetToDefault)
 
@@ -708,6 +714,5 @@ local function LoadMovers(layoutManager)
 
     moverSettingsFrame:Hide()
     mf:Hide()
-    GW.MoveHudScaleableFrame = moverSettingsFrame
 end
 GW.LoadMovers = LoadMovers
