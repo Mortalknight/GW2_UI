@@ -30,11 +30,9 @@ local function lockHudObjects(self, _, inCombatLockdown)
         GW.MoveHudScaleableFrame.showGrid:SetText(L["Show grid"])
     end
 
-    if self:GetParent().layoutManager then
-        self:GetParent().layoutManager:GetScript("OnEvent")(self:GetParent().layoutManager)
-    else
-        self.layoutManager:GetScript("OnEvent")(self.layoutManager)
-    end
+    -- enable main bar layout manager and trigger the changes
+    GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(self:GetParent().layoutManager)
+    GW.MoveHudScaleableFrame.layoutManager:SetAttribute("InMoveHudMode", false)
 
     GW.InMoveHudMode = false
 end
@@ -75,6 +73,9 @@ local function moveHudObjects(self)
     GW.MoveHudScaleableFrame.movers:Hide()
     GW.MoveHudScaleableFrame.desc:Show()
     GW.MoveHudScaleableFrame:Show()
+
+    -- disable main bar layout manager
+    GW.MoveHudScaleableFrame.layoutManager:SetAttribute("InMoveHudMode", true)
 
     -- register event to close move hud in combat
     self:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -242,8 +243,8 @@ local function smallSettings_resetToDefault(self)
     new_point.hasMoved = false
     SetSetting(mf.gw_Settings, new_point)
 
-    mf.isMoved = false
-    mf:SetAttribute("isMoved", new_point.hasMoved)
+    mf.gw_frame.isMoved = false
+    mf.gw_frame:SetAttribute("isMoved", new_point.hasMoved)
 
     --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
     if mf.gw_Settings == "PlayerBuffFrame" or mf.gw_Settings == "PlayerDebuffFrame" then
@@ -318,8 +319,8 @@ local function mover_OnDragStop(self)
         self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
         SetSetting(settingsName, new_point)
 
-        self.isMoved =  new_point.hasMoved
-        self:SetAttribute("isMoved", new_point.hasMoved)
+        self.gw_frame.isMoved = false
+        self.gw_frame:SetAttribute("isMoved", new_point.hasMoved)
 
         self:SetMovable(true)
         self:SetUserPlaced(true)

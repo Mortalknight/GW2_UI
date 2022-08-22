@@ -66,6 +66,10 @@ local onstate_Barlayout = [=[
     if newstate ~= "outcombat" then
         self:SetAttribute("currentHandlerState", newstate)
     end
+    
+    local inMoveHudMode = self:GetAttribute("inMoveHudMode")
+
+    if inMoveHudMode then return end
 
     local uip = self:GetFrameRef("UIP")
     local mbr = self:GetFrameRef("mbr")
