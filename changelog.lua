@@ -1,9 +1,16 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.31.6", [=[
+FIXES
+    - Fix a bug in move hud mode which sets a wrong paramter if a frame was moved
+    - Adjust classpower bars to fit with the mover
+    - Fix ember court memory leak
+]=])
+
 v("5.31.5", [=[
 FIXES
-- Player castingbar issue
+    - Player castingbar issue
 ]=])
 
 v("5.31.4", [=[
