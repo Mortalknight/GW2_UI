@@ -191,23 +191,20 @@ local function setManaBar(f)
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
     f.exbar:Show()
+    f:SetHeight(18)
 
     if not f.isMoved then
-        f.gwMover:ClearAllPoints()
         f:ClearAllPoints()
         if GetSetting("XPBAR_ENABLED") then
-            f.gwMover:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 81)
+            f:SetPoint("TOPLEFT", f.gwMover, 0, -15)
         else
-            f.gwMover:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 67)
+            f:SetPoint("TOPLEFT", f.gwMover, 0, 0)
         end
-        f:SetPoint("TOPLEFT", f.gwMover)
     elseif CPF_HOOKED_TO_TARGETFRAME then
         f:ClearAllPoints()
         f:SetPoint("TOPLEFT", f.gwMover)
     end
 
-    f:SetWidth(220)
-    f:SetHeight(30)
     f:Hide()
 
     f:SetScript("OnEvent", powerMana)
@@ -289,6 +286,8 @@ end
 GW.AddForProfiling("classpowers", "powerCombo", powerCombo)
 
 local function setComboBar(f)
+    f:ClearAllPoints()
+    f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
     f.barType = "combo"
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
@@ -380,6 +379,8 @@ local function setWarrior(f)
     local selected
 
     if GW.myspec == 2 or GW.myspec == 3 then
+        f:ClearAllPoints()
+        f:SetPoint("TOPLEFT", f.gwMover, 0, -15)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
         local fd = f.decay
@@ -549,6 +550,8 @@ local function setHunter(f)
     end
 
     if GW.myspec == 1 or (GW.myspec == 3 and selected) then
+        f:ClearAllPoints()
+        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -15)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
         local fdc = f.decayCounter
@@ -661,6 +664,8 @@ GW.AddForProfiling("classpowers", "powerRune", powerRune)
 
 local function setDeathKnight(f)
     local fr = f.runeBar
+    f:ClearAllPoints()
+    f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -10)
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
     f.flare:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/runeflash")
@@ -726,6 +731,8 @@ local function setShaman(f)
         setManaBar(f)
         return true
     elseif GW.myspec == 2 then -- enh
+        f:ClearAllPoints()
+        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -10)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
         local fms = f.maelstrom
@@ -786,16 +793,8 @@ end
 
 local function setMage(f)
     if GW.myspec == 1 then -- arcane
-        if not f.isMoved then
-            f.gwMover:ClearAllPoints()
-            f:ClearAllPoints()
-            if GetSetting("XPBAR_ENABLED") then
-                f.gwMover:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 66)
-            else
-                f.gwMover:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", -372, 52)
-            end
-            f:SetPoint("TOPLEFT", f.gwMover)
-        end
+        f:ClearAllPoints()
+        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 15)
         f:SetHeight(64)
         f:SetWidth(512)
         f.background:SetHeight(64)
@@ -817,6 +816,8 @@ local function setMage(f)
 
         return true
     elseif GW.myspec == 3 then --frost
+        f:ClearAllPoints()
+        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
         f:SetHeight(32)
         f:SetWidth(256)
         f.background:SetHeight(32)
@@ -1061,6 +1062,10 @@ GW.AddForProfiling("classpowers", "powerStagger", powerStagger)
 
 local function setMonk(f)
     if GW.myspec == 1 then -- brewmaster
+        f:ClearAllPoints()
+        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -20)
+        f:SetHeight(18)
+        f:SetWidth(316)
         f.brewmaster:Show()
         f.staggerBar.loopValue = 0
         f.background:SetTexture(nil)
@@ -1074,6 +1079,8 @@ local function setMonk(f)
 
         return true
     elseif GW.myspec == 3 then -- ww
+        f:ClearAllPoints()
+        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
         f:SetHeight(32)
         f:SetWidth(256)
         f.background:SetHeight(32)
@@ -1155,6 +1162,8 @@ GW.AddForProfiling("classpowers", "setDruid", setDruid)
 
 local function setDeamonHunter(f)
     if GW.myspec == 1 then -- havoc
+        f:ClearAllPoints()
+        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -15)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
         local fd = f.decay
@@ -1222,7 +1231,7 @@ local function selectType(f)
     end
 
     if (GW.myClassID == 4 or GW.myClassID == 11) and f.ourTarget and f.comboPointsOnTarget and f.barType == "combo" then
-        showBar = UnitExists("target") and UnitCanAttack("player", "target") and not UnitIsDead("target")
+        showBar = UnitExists("target") and UnitCanAttack("player", "target") and not UnitIsDead("target") or false
     end
     f:SetShown(showBar)
 end
@@ -1255,11 +1264,7 @@ end
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
 
-    GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", "VerticalActionBarDummy", nil, {"default", "scaleable"}, true)
-    cpf:ClearAllPoints()
-    cpf:SetPoint("TOPLEFT", cpf.gwMover)
-    hooksecurefunc(cpf, "SetHeight", function() cpf.gwMover:SetHeight(cpf:GetHeight()) end)
-    hooksecurefunc(cpf, "SetWidth", function() cpf.gwMover:SetWidth(cpf:GetWidth()) end)
+    GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", "VerticalActionBarDummy", {316, 32}, {"default", "scaleable"}, true)
 
     -- position mover
     if (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not cpf.isMoved  then
@@ -1269,6 +1274,8 @@ local function LoadClassPowers()
         cpf.gwMover:ClearAllPoints()
         cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
     end
+    cpf:ClearAllPoints()
+    cpf:SetPoint("TOPLEFT", cpf.gwMover)
 
     GW.MixinHideDuringPetAndOverride(cpf)
     CPWR_FRAME = cpf
