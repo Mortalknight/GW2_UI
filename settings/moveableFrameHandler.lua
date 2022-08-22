@@ -31,7 +31,7 @@ local function lockHudObjects(self, _, inCombatLockdown)
     end
 
     -- enable main bar layout manager and trigger the changes
-    GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(self:GetParent().layoutManager)
+    GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(GW.MoveHudScaleableFrame.layoutManager)
     GW.MoveHudScaleableFrame.layoutManager:SetAttribute("InMoveHudMode", false)
 
     GW.InMoveHudMode = false
