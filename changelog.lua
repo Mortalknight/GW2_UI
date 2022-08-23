@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("5.31.7", [=[
+FIXES
+    - Fix a classpower anchor issue if the classpower is moved
+]=])
+
 v("5.31.6", [=[
 FIXES
     - Fix a bug in move hud mode which sets a wrong paramter if a frame was moved

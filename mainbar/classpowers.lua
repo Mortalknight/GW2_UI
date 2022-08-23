@@ -193,16 +193,11 @@ local function setManaBar(f)
     f.exbar:Show()
     f:SetHeight(18)
 
-    if not f.isMoved then
-        f:ClearAllPoints()
-        if GetSetting("XPBAR_ENABLED") then
-            f:SetPoint("TOPLEFT", f.gwMover, 0, -15)
-        else
-            f:SetPoint("TOPLEFT", f.gwMover, 0, 0)
-        end
-    elseif CPF_HOOKED_TO_TARGETFRAME then
-        f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", f.gwMover)
+    f:ClearAllPoints()
+    if GetSetting("XPBAR_ENABLED") or (f.isMoved and not CPF_HOOKED_TO_TARGETFRAME) then
+        f:SetPoint("TOPLEFT", f.gwMover, 0, -15)
+    else
+        f:SetPoint("TOPLEFT", f.gwMover, 0, 0)
     end
 
     f:Hide()
