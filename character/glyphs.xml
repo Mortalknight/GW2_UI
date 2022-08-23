@@ -6,6 +6,229 @@
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
         </Anchors>
-    </Frame>
+        <Layers>
+          <Layer level="BACKGROUND" textureSubLevel="-4">
+            <Texture parentKey="glyphBackground" file="Interface\AddOns\GW2_UI\textures\character\windowbg-glyphs">
+              <Size x="853" y="853"></Size>
+              <Color r="1" g="1" b="1" a="1"></Color>
+              <Anchors>
+                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+              </Anchors>
+            </Texture>
+          </Layer>
+          <Layer level="BACKGROUND" textureSubLevel="-3">
+            <Texture file="Interface\AddOns\GW2_UI\textures\character\glyphbackground">
+              <Size x="400" y="400"></Size>
+
+              <Anchors>
+                <Anchor point="CENTER" relativePoint="CENTER" x="120" y="0"/>
+              </Anchors>
+            </Texture>
+          </Layer>
+
+        </Layers>
+
+        <Frames>
+          <Frame name="GwGlyphsList">
+            <Size x="241" y="621"/>
+            <Anchors>
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-10"/>
+              </Anchors>
+            <Layers>
+              <Layer level="BACKGROUND" textureSubLevel="-2">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\spellbookmenu_background">
+                  <Size x="241" y="512"/>
+                  <Color r="1" g="1" b="1" a="1"></Color>
+                  <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="8"/>
+                  </Anchors>
+                </Texture>
+              </Layer>
+            <Layer level="BORDER">
+          </Layer>
+        </Layers>
+        <Frames>
+            <ScrollFrame parentKey="GlyphScroll" inherits="GwHybridScrollFrameTemplate">
+                <Size x="241" y="600"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                </Anchors>
+            </ScrollFrame>
+          </Frames>
+      </Frame>
+        <Frame name="GwGlyphesContainer" >
+          <Size x="612" y="627"></Size>
+          <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="241" y="0"></Anchor>
+          </Anchors>
+        <Frames>
+          <Button name="$parentGlyph1" inherits="GwGlyphTemplate GlyphTemplate" id="1">
+            <Size x="90" y="90"/>
+            <Anchors>
+              <Anchor point="CENTER">
+                <Offset x="0" y="200"/>
+              </Anchor>
+            </Anchors>
+          </Button>
+          <Button name="$parentGlyph4" inherits="GwGlyphTemplate GlyphTemplate" id="4">
+            <Size x="90" y="90"/>
+            <Anchors>
+              <Anchor point="CENTER">
+                <Offset x="173" y="-100"/>
+              </Anchor>
+            </Anchors>
+          </Button>
+          <Button name="$parentGlyph6" inherits="GwGlyphTemplate GlyphTemplate" id="6">
+            <Size x="90" y="90"/>
+            <Anchors>
+              <Anchor point="CENTER">
+                <Offset x="-173" y="-100"/>
+              </Anchor>
+            </Anchors>
+          </Button>
+          <Button name="$parentGlyph2" inherits="GwGlyphTemplate GlyphTemplate" id="2">
+            <Size x="90" y="90"/>
+            <Anchors>
+              <Anchor point="CENTER">
+                <Offset x="0" y="-200"/>
+              </Anchor>
+            </Anchors>
+          </Button>
+          <Button name="$parentGlyph5" inherits="GwGlyphTemplate GlyphTemplate" id="5">
+            <Size x="90" y="90"/>
+            <Anchors>
+              <Anchor point="CENTER">
+                <Offset x="173" y="100"/>
+              </Anchor>
+            </Anchors>
+          </Button>
+          <Button name="$parentGlyph3" inherits="GwGlyphTemplate GlyphTemplate" id="3">
+            <Size x="90" y="90"/>
+            <Anchors>
+              <Anchor point="CENTER">
+                <Offset x="-173" y="100"/>
+              </Anchor>
+            </Anchors>
+          </Button>
+        </Frames>
+
+      </Frame>
+
+    </Frames>
+  </Frame>
+
+  <Button name="GwGlyphTemplate" virtual="true">
+  <Layers>
+    <Layer level="BACKGROUND" textureSubLevel="-1">
+      <Texture parentKey="GwBackground" file="Interface\AddOns\GW2_UI\textures\character\glyphbgmajor" >
+        <Size x="140" y="140"/>
+        <Anchors>
+          <Anchor point="CENTER">
+            <Offset x="0" y="0"/>
+          </Anchor>
+        </Anchors>
+      </Texture>
+      </Layer>
+      <Layer level="BACKGROUND" textureSubLevel="1">
+      <Texture parentKey="GwUnlocked" file="Interface\AddOns\GW2_UI\textures\character\glypbgmajorunlocked">
+        <Size x="140" y="140"/>
+        <Anchors>
+          <Anchor point="CENTER">
+            <Offset x="0" y="0"/>
+          </Anchor>
+        </Anchors>
+      </Texture>
+    </Layer>
+    <Layer level="BACKGROUND" textureSubLevel="2">
+    <Texture parentKey="GwEquiped" file="Interface\AddOns\GW2_UI\textures\character\glyphbgmajorequip">
+      <Size x="140" y="140"/>
+      <Anchors>
+        <Anchor point="CENTER">
+          <Offset x="0" y="0"/>
+        </Anchor>
+      </Anchors>
+    </Texture>
+  </Layer>
+  <Layer level="BACKGROUND" textureSubLevel="3">
+  <Texture parentKey="GwGlyph" >
+    <Size x="64" y="64"/>
+    <Anchors>
+      <Anchor point="CENTER">
+        <Offset x="0" y="0"/>
+      </Anchor>
+    </Anchors>
+  </Texture>
+</Layer>
+  </Layers>
+  </Button>
+
+  <Button name="GwGlyphItem" inherits="GwCharacterMenuBlank,SecureActionButtonTemplate,SecureHandlerDragTemplate"  enableMouse="true" virtual="true" >
+      <Size x="231" y="44"/>
+
+      <RelInset left="0.2" right="-0.2" top="0.2" bottom="0"/>
+      <Layers>
+          <Layer level="ARTWORK">
+              <Texture parentKey="zebra" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                  <Size x="32" y="32"></Size>
+                  <Anchors>
+                      <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                      <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                  </Anchors>
+              </Texture>
+          </Layer>
+          <Layer level="BACKGROUND" >
+              <Texture parentKey="bg" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
+                  <Anchors>
+                      <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                      <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                  </Anchors>
+              </Texture>
+              <Texture parentKey="bgstatic" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
+                  <Anchors>
+                      <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                      <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                  </Anchors>
+              </Texture>
+              <Texture parentKey="background" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\button_hover" hidden="true">
+                  <Anchors>
+                      <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                  </Anchors>
+                  <Color r="1" g="1" b="0.6" a="0.1"/>
+              </Texture>
+          </Layer>
+          <Layer level="OVERLAY">
+              <Texture parentkey="icon" file="Interface\AddOns\GW2_UI\textures\levelreward-icon">
+                  <Size x="32" y="32"/>
+                  <Anchors>
+                      <Anchor point="LEFT" relativePoint="LEFT" x="10" y="0"/>
+                  </Anchors>
+                  <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+              </Texture>
+              <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyV="MIDDLE">
+                  <Size x="32" y="32"/>
+                  <Anchors>
+                      <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeKey="$parent.icon" x="5" y="0"/>
+                      <Anchor point="BOTTOMRIGHT" relativePoint="RIGHT" x="5" y="0"/>
+                  </Anchors>
+              </FontString>
+              <FontString parentKey="subHeader" text="Unknown" justifyH="LEFT" justifyV="MIDDLE">
+                  <Size x="32" y="32"/>
+                  <Anchors>
+                      <Anchor point="TOPLEFT" relativePoint="RIGHT" relativeKey="$parent.icon" x="5" y="0"/>
+                      <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="5" y="0"/>
+                  </Anchors>
+              </FontString>
+          </Layer>
+      </Layers>
+      <Scripts>
+        <OnDragStart>
+            if InCombatLockdown() then return end
+
+            PickupCompanion(self.petType,self.mountID)
+        </OnDragStart>
+      </Scripts>
+  </Button>
+
 
 </Ui>
