@@ -83,8 +83,6 @@ local function UpcomingSpellOnEnter(self)
 end
 
 local function LoadUpcomingRewarsIntoScrollFrame(self)
-    local USED_HEIGHT
-
     local offset = HybridScrollFrame_GetOffset(self)
 
     for i = 1, #self.buttons do
@@ -134,12 +132,12 @@ local function LoadUpcomingRewarsIntoScrollFrame(self)
         end
     end
 
-    USED_HEIGHT = 50 * #upcomingLevelRewards
-    HybridScrollFrame_Update(self, USED_HEIGHT, 433)
+    local USED_HEIGHT = 50 * #upcomingLevelRewards
+    HybridScrollFrame_Update(self, USED_HEIGHT, 235)
 end
 
 local function scrollFrameSetup(self)
-    HybridScrollFrame_CreateButtons(self, "GwUpcomingRewardRow", 12, 0, "TOPLEFT", "TOPLEFT", 0, -5, "TOP", "BOTTOM")
+    HybridScrollFrame_CreateButtons(self, "GwUpcomingRewardRow", 12, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
     for i = 1, #self.buttons do
         local slot = self.buttons[i]
         slot:SetWidth(self:GetWidth() - 12)

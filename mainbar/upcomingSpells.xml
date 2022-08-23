@@ -18,14 +18,15 @@
                         <Texture file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
                             <Size x="512" y="2"></Size>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="TOP" y="2"></Anchor>
+                                <Anchor point="CENTER" relativePoint="TOP" x="0" y="0"></Anchor>
                             </Anchors>
                         </Texture>
+
 
                         <Texture file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
                             <Size x="512" y="2"></Size>
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
+                                <Anchor point="CENTER" relativePoint="BOTTOM" y="0"></Anchor>
                             </Anchors>
                         </Texture>
 
@@ -50,7 +51,7 @@
     </Button>
 
     <Frame name="GwLevelingRewards" hidden="true" virtual="true">
-        <Size x="376" y="361"></Size>
+        <Size x="376" y="360"></Size>
         <Anchors>
             <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
         </Anchors>
@@ -86,9 +87,9 @@
         </Layers>
         <Frames>
             <ScrollFrame parentKey="scrollFrame" inherits="GwHybridScrollFrameTemplate">
-                <Size x="360" y="230"></Size>
+                <Size x="360" y="235"></Size>
                 <Anchors>
-                    <Anchor point="TOP" relativePoint="TOP" x="-5" y="-90"></Anchor>
+                    <Anchor point="TOP" relativeKey="$parent.header" relativePoint="BOTTOM" x="-5" y="-20"></Anchor>
                 </Anchors>
             </ScrollFrame>
             <Button parentKey="CloseButton" inherits="GwStandardButton" text="Close">
