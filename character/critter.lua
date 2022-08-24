@@ -46,7 +46,7 @@ local function LoadCritter()
 
                 GW.CreateMountsPetsContainersWithButtons(critterList, critterFrame, critterList.maxNumberOfContainers, NUM_CRITTER_PER_TAB, "GwMountsCritterListItem", oldMaxNumberOfContainers + 1)
 
-                self.attrDummy:SetAttribute('page', 'left')
+                critterList.attrDummy:SetAttribute('page', 'left')
             end
         elseif event == "COMPANION_LEARNED" and InCombatLockdown() then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -56,23 +56,15 @@ local function LoadCritter()
         if not self:IsShown() then return end
         GW.UpdateMountsCritterList(critterList, "CRITTER", NUM_CRITTER_PER_TAB)
     end)
-    critterFrame:SetScript("OnSHow", function()
+    critterList:SetScript("OnShow", function()
         GW.UpdateMountsCritterList(critterList, "CRITTER", NUM_CRITTER_PER_TAB)
     end)
 
     -- GwCritterList event handler for updates during combat
-    critterFrame:SetScript("OnEvent", function(_, event)
+    critterList:SetScript("OnEvent", function(_, event)
         critterList:UnregisterEvent(event)
         GW.UpdateMountsCritterList(critterList, "CRITTER", NUM_CRITTER_PER_TAB)
     end)
-
-
-
-
-
-
-
-
 
     return critterFrame
 end

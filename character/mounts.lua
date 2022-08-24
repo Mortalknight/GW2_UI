@@ -51,7 +51,7 @@ local function LoadMounts()
 
                 GW.CreateMountsPetsContainersWithButtons(mountsList, mountsFrame, mountsList.maxNumberOfContainers, NUM_MOUNTS_PER_TAB, "GwMountsCritterListItem", oldMaxNumberOfContainers + 1)
 
-                self.attrDummy:SetAttribute('page', 'left')
+                mountsList.attrDummy:SetAttribute('page', 'left')
             end
         elseif event == "COMPANION_LEARNED" and InCombatLockdown() then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -61,7 +61,7 @@ local function LoadMounts()
         if not self:IsShown() then return end
         GW.UpdateMountsCritterList(mountsList, "MOUNT", NUM_MOUNTS_PER_TAB)
     end)
-    mountsFrame:SetScript("OnSHow", function()
+    mountsList:SetScript("OnShow", function()
         GW.UpdateMountsCritterList(mountsList, "MOUNT", NUM_MOUNTS_PER_TAB)
     end)
 
