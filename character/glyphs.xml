@@ -70,7 +70,7 @@
               </Anchor>
             </Anchors>
           </Button>
-          <Button name="$parentGlyph4" inherits="GwGlyphTemplate GlyphTemplate" id="4">
+          <Button name="$parentGlyph4" inherits="GwGlyphTemplate,GlyphTemplate" id="4">
             <Size x="90" y="90"/>
             <Anchors>
               <Anchor point="CENTER">
@@ -78,7 +78,7 @@
               </Anchor>
             </Anchors>
           </Button>
-          <Button name="$parentGlyph6" inherits="GwGlyphTemplate GlyphTemplate" id="6">
+          <Button name="$parentGlyph6" inherits="GwGlyphTemplate,GlyphTemplate" id="6">
             <Size x="90" y="90"/>
             <Anchors>
               <Anchor point="CENTER">
@@ -86,7 +86,7 @@
               </Anchor>
             </Anchors>
           </Button>
-          <Button name="$parentGlyph2" inherits="GwGlyphTemplate GlyphTemplate" id="2">
+          <Button name="$parentGlyph2" inherits="GwGlyphTemplate,GlyphTemplate" id="2">
             <Size x="90" y="90"/>
             <Anchors>
               <Anchor point="CENTER">
@@ -94,7 +94,7 @@
               </Anchor>
             </Anchors>
           </Button>
-          <Button name="$parentGlyph5" inherits="GwGlyphTemplate GlyphTemplate" id="5">
+          <Button name="$parentGlyph5" inherits="GwGlyphTemplate,GlyphTemplate" id="5">
             <Size x="90" y="90"/>
             <Anchors>
               <Anchor point="CENTER">
@@ -102,7 +102,7 @@
               </Anchor>
             </Anchors>
           </Button>
-          <Button name="$parentGlyph3" inherits="GwGlyphTemplate GlyphTemplate" id="3">
+          <Button name="$parentGlyph3" inherits="GwGlyphTemplate,GlyphTemplate" id="3">
             <Size x="90" y="90"/>
             <Anchors>
               <Anchor point="CENTER">
@@ -141,6 +141,14 @@
     </Layer>
     <Layer level="BACKGROUND" textureSubLevel="2">
     <Texture parentKey="GwEquiped" file="Interface\AddOns\GW2_UI\textures\character\glyphbgmajorequip">
+      <Size x="140" y="140"/>
+      <Anchors>
+        <Anchor point="CENTER">
+          <Offset x="0" y="0"/>
+        </Anchor>
+      </Anchors>
+    </Texture>
+     <Texture parentKey="selectable" file="Interface\AddOns\GW2_UI\textures\character\glyphbgmajorequip" hidden="true">
       <Size x="140" y="140"/>
       <Anchors>
         <Anchor point="CENTER">
