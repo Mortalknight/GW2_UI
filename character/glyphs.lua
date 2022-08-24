@@ -13,7 +13,7 @@ local function GlyphFrameGlyph_UpdateSlot_Hook(self)
     local id = self:GetID()
     local frame = _G["GwGlyphesContainerGlyph" .. id]
 
-	local enabled, _, glyphSpell = GetGlyphSocketInfo(id, GetActiveTalentGroup())
+	local enabled, _, glyphSpell, iconFilename = GetGlyphSocketInfo(id, GetActiveTalentGroup())
 
 	if ( not enabled ) then
 		--Locked glyph slot
@@ -30,6 +30,8 @@ local function GlyphFrameGlyph_UpdateSlot_Hook(self)
         frame.GwUnlocked:Show()
         frame.GwEquiped:Show()
         frame.GwGlyph:Show()
+
+        frame.GwGlyph:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\glyphs\\" .. (iconFilename and iconFilename or "237636")) -- as fallback: sometimes we do not have an id
 	end
 end
 
@@ -45,14 +47,6 @@ local function loadGlyphSlot(self)
     else
         GlyphFrameGlyph_SetGlyphType(self, GLYPHTYPE_MAJOR);
     end
-end
-
-local function overrideDefaultGlyphIcons(self, t)
-    if t==nil then
-        self:GetParent().GwGlyph:SetTexture(nil)
-        return
-    end
-    self:GetParent().GwGlyph:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\glyphs\\"..t)
 end
 
 local function overrideBlizzardStyle(self)
@@ -205,10 +199,6 @@ local function GlyphFrameOnEvent(self, event, ...)
     if event == "USE_GLYPH" then
         if InCombatLockdown() then return end
         GwCharacterWindow:SetAttribute('windowPanelOpen', "glyphes")
-
-        for i = 1, 6 do
-            GlyphFrameGlyph_UpdateSlot_Hook(_G["GwGlyphesContainerGlyph" .. i])
-        end
     elseif event == "PLAYER_REGEN_ENABLED" then
         self:UnregisterEvent(event)
         UpdateGlyphList()
@@ -218,19 +208,15 @@ local function GlyphFrameOnEvent(self, event, ...)
             UpdateGlyphList()
         end
     elseif event == "PLAYER_LEVEL_UP" then
-        if self:IsShown() then
+        if self:IsVisible() then
             UpdateGlyphList()
         end
     elseif event == "GLYPH_ADDED" or event == "GLYPH_REMOVED" or event == "GLYPH_UPDATED" then
-        if self:IsShown() then
+        if self:IsVisible() then
             local index = ...
             local glyph = _G["GwGlyphesContainerGlyph" .. index]
             local glyphBlizz = _G["GlyphFrameGlyph" .. index]
             local glyphType = glyph.glyphType
-
-            for i = 1, 6 do
-                GlyphFrameGlyph_UpdateSlot_Hook(_G["GwGlyphesContainerGlyph" .. i])
-            end
 
 		    if glyphBlizz then
 			    -- update the glyph blizz one to trigger hooks, on default it is only trigger if the frame is visible
@@ -275,7 +261,6 @@ local function LoadGlyphes()
 
     for i = 1, 6 do
       loadGlyphSlot(_G["GwGlyphesContainerGlyph" .. i])
-      hooksecurefunc(_G["GwGlyphesContainerGlyph" .. i].glyph, "SetTexture", overrideDefaultGlyphIcons)
     end
 
     loadGlyphList(GwGlyphsList.GlyphScroll)
