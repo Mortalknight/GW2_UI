@@ -651,7 +651,7 @@ local function setTabIconState(self, b)
 end
 
 local function createTabIcon(iconName, tabIndex)
-    local f = CreateFrame('Button', nil, GwCharacterWindow, '   CharacterWindowTabSelect')
+    local f = CreateFrame('Button', nil, GwCharacterWindow, 'CharacterWindowTabSelect')
     f.icon:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\' .. iconName)
     f:SetPoint('TOP', GwCharacterWindow, 'TOPLEFT', -32, -25 + -((tabIndex - 1) * 45))
     setTabIconState(f, false)
