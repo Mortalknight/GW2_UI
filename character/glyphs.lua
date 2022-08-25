@@ -44,8 +44,10 @@ local function loadGlyphSlot(self)
         self.GwUnlocked:SetSize(100,100)
         self.GwEquiped:SetSize(100,100)
         self.GwGlyph:SetSize(71,71)
+        self.selectable:SetSize(120,120)
     else
         GlyphFrameGlyph_SetGlyphType(self, GLYPHTYPE_MAJOR);
+
     end
 end
 

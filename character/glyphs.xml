@@ -148,8 +148,8 @@
         </Anchor>
       </Anchors>
     </Texture>
-     <Texture parentKey="selectable" file="Interface\AddOns\GW2_UI\textures\character\glyphbgmajorequip" hidden="true">
-      <Size x="140" y="140"/>
+     <Texture parentKey="selectable" file="Interface\AddOns\GW2_UI\textures\character\glyphbgmajorhighlight" hidden="true">
+      <Size x="160" y="160"/>
       <Anchors>
         <Anchor point="CENTER">
           <Offset x="0" y="0"/>
