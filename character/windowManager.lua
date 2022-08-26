@@ -41,7 +41,7 @@ windowsList[2] = {
 
 windowsList[3] = {
     ['OnLoad'] = "LoadTalents",
-    ['SettingName'] = 'USE_TALENT_WINDOW',
+    ['SettingName'] = "USE_TALENT_WINDOW",
     ['TabIcon'] = 'tabicon-talents',
     ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/talents-window-icon",
     ["HeaderText"] = TALENTS,
@@ -55,7 +55,7 @@ windowsList[3] = {
 
 windowsList[4] = {
     ['OnLoad'] = "LoadSpellBook",
-    ['SettingName'] = 'USE_SPELLBOOK_WINDOW',
+    ['SettingName'] = "USE_SPELLBOOK_WINDOW",
     ['TabIcon'] = 'tabicon_spellbook',
     ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
     ["HeaderText"] = SPELLS,
@@ -70,7 +70,7 @@ windowsList[4] = {
 
 windowsList[5] = {
     ['OnLoad'] = "LoadGlyphes",
-    ['SettingName'] = 'USE_TALENT_WINDOW',
+    ['SettingName'] = "USE_TALENT_WINDOW",
     ['TabIcon'] = 'tabicon-glyph',
     ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/glyph-window-icon",
     ["HeaderText"] = GLYPHS,
