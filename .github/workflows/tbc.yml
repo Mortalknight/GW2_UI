@@ -20,4 +20,4 @@ jobs:
 
       - uses: BigWigsMods/packager@master
         with:
-          args: -g bwotlk
+          args: -g wotlk
