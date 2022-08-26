@@ -191,8 +191,14 @@ local function GlyphFrameOnUpdateTimer()
 
         if enabled and GlyphMatchesSocket(i) then
             _G["GwGlyphesContainerGlyph" .. i].selectable:Show()
+            GW.FrameFlash(_G["GwGlyphesContainerGlyph" .. i].selectable, 1, 0.4, 1, true)
+            GW.FrameFlash(_G["GwGlyphesContainerGlyph" .. i].GwUnlocked, 1, 0.4, 1, true)
+            GW.FrameFlash(_G["GwGlyphesContainerGlyph" .. i].GwEquiped, 1, 0.4, 1, true) 
         else
             _G["GwGlyphesContainerGlyph" .. i].selectable:Hide()
+            GW.StopFlash(_G["GwGlyphesContainerGlyph" .. i].selectable)
+            GW.StopFlash(_G["GwGlyphesContainerGlyph" .. i].GwUnlocked)
+            GW.StopFlash(_G["GwGlyphesContainerGlyph" .. i].GwEquiped)
         end
     end
 end
