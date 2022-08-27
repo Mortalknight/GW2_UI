@@ -219,13 +219,13 @@ local function SkinLookingForGroupFrames()
         for i = 1, 3 do
             local bu = GroupFinderFrame["groupButton" .. i]
             if i == idx then
-                bu.hover.skipHover = true
-                bu.hover:SetAlpha(1)
-                bu.hover:SetPoint("RIGHT", bu, "LEFT", bu:GetWidth(), 0)
+                bu.gwHover.skipHover = true
+                bu.gwHover:SetAlpha(1)
+                bu.gwHover:SetPoint("RIGHT", bu, "LEFT", bu:GetWidth(), 0)
             else
-                bu.hover.skipHover = false
-                bu.hover:SetAlpha(1)
-                bu.hover:SetPoint("RIGHT", bu, "LEFT", 0, 0)
+                bu.gwHover.skipHover = false
+                bu.gwHover:SetAlpha(1)
+                bu.gwHover:SetPoint("RIGHT", bu, "LEFT", 0, 0)
             end
 
         end
@@ -580,13 +580,13 @@ local function ApplyPvPUISkin()
         for i = 1, 3 do
             local bu = _G["PVPQueueFrameCategoryButton" .. i]
             if i == idx then
-                bu.hover.skipHover = true
-                bu.hover:SetAlpha(1)
-                bu.hover:SetPoint("RIGHT", bu, "LEFT", bu:GetWidth(), 0)
+                bu.gwHover.skipHover = true
+                bu.gwHover:SetAlpha(1)
+                bu.gwHover:SetPoint("RIGHT", bu, "LEFT", bu:GetWidth(), 0)
             else
-                bu.hover.skipHover = false
-                bu.hover:SetAlpha(1)
-                bu.hover:SetPoint("RIGHT", bu, "LEFT", 0, 0)
+                bu.gwHover.skipHover = false
+                bu.gwHover:SetAlpha(1)
+                bu.gwHover:SetPoint("RIGHT", bu, "LEFT", 0, 0)
             end
         end
     end)

@@ -93,7 +93,7 @@ local function buttonAnim(self, name, w, hover)
     local lerp = GW.lerp(0, w, prog)
 
     hover:SetPoint("RIGHT", self, "LEFT", lerp, 0)
-    hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, GW.lerp(0, 1, ((prog) - 0.5) / 0.5))
+    hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, GW.lerp(0, 1, (prog - 0.5) / 0.5))
 end
 AFP("buttonAnim", buttonAnim)
 
@@ -144,8 +144,8 @@ GW.getSpriteByIndex = getSpriteByIndex
 function GwStandardButton_OnEnter(self)
     local name = tostring(self)
     local w = self:GetWidth()
-    local hover = self.hover
-    if not hover then
+    local hover = self.gwHover
+    if not hover or not self:IsEnabled() then
         return
     end
 
@@ -167,11 +167,11 @@ end
 function GwStandardButton_OnLeave(self)
     local name = tostring(self)
     local w = self:GetWidth()
-    local hover = self.hover
-    if not hover then
+    local hover = self.gwHover
+    if not hover or not self:IsEnabled() then
         return
     end
-    if self.hover.skipHover then return end
+    if self.gwHover.skipHover then return end
 
     hover:SetAlpha(1)
     self.animationValue = 1

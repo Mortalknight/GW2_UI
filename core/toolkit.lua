@@ -166,26 +166,17 @@ end
 GW.HandleBlizzardRegions = HandleBlizzardRegions
 
 local function AddHover(self)
-    if not self.hover then
-        local hover = self:CreateTexture(nil, "ARTWORK", nil, 7)
-        hover:SetPoint("LEFT", self, "LEFT")
-        hover:SetPoint("TOP", self, "TOP")
-        hover:SetPoint("BOTTOM", self, "BOTTOM")
-        hover:SetPoint("RIGHT", self, "RIGHT")
-        hover:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
-        self.hover = hover
-        self.hover:SetAlpha(0)
+    if not self.gwHover then
+        self.gwHover = self:CreateTexture(nil, "ARTWORK", nil, 7)
+        self.gwHover:SetPoint("LEFT", self, "LEFT")
+        self.gwHover:SetPoint("TOP", self, "TOP")
+        self.gwHover:SetPoint("BOTTOM", self, "BOTTOM")
+        self.gwHover:SetPoint("RIGHT", self, "RIGHT")
+        self.gwHover:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
+        self.gwHover:SetAlpha(0)
 
-        --if self.OnEnter then
-            self:HookScript("OnEnter", GwStandardButton_OnEnter)
-        --else
-        --    self:SetScript("OnEnter", GwStandardButton_OnEnter)
-        --end
-        --if self.OnLeave then
-            self:HookScript("OnLeave", GwStandardButton_OnLeave)
-        --else
-        --    self:SetScript("OnLeave", GwStandardButton_OnLeave)
-        --end
+        self:HookScript("OnEnter", GwStandardButton_OnEnter)
+        self:HookScript("OnLeave", GwStandardButton_OnLeave)
     end
 end
 
@@ -286,8 +277,9 @@ local function CreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShif
     end
 end
 
-local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover, strip)
+local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover, strip, transparent)
     if not button then return end
+    if button.isSkinned then return end
 
     if strip then button:StripTextures(nil, true) end
 
@@ -303,6 +295,11 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover, s
             if button.SetHighlightTexture then button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover") end
             if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover") end
             if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal") end
+        elseif transparent then
+            if button.SetNormalTexture then button:SetNormalTexture("") end
+            if button.SetHighlightTexture then button:SetHighlightTexture("") end
+            if button.SetPushedTexture then button:SetPushedTexture("") end
+            if button.SetDisabledTexture then button:SetDisabledTexture("") end
         else
             if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/button") end
             if button.SetHighlightTexture then
@@ -318,7 +315,7 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover, s
                 if button.SetPushedTexture then button:GetPushedTexture():Show() end
                 if button.SetDisabledTexture then button:GetDisabledTexture():Show() end
             end
-            button:DisableDrawLayer("BACKGROUND")
+            --button:DisableDrawLayer("BACKGROUND")
         end
 
         if setTextColor then
@@ -335,6 +332,8 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover, s
     if (not isXButton or onlyHover) and not noHover then
         button:AddHover()
     end
+
+    button.isSkinned = true
 end
 
 local function SkinTab(tabButton, direction)

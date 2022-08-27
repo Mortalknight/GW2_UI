@@ -312,13 +312,13 @@ local function hook_EncounterJournalBossButton_OnClick()
     while bossID do
         bossButton = _G["EncounterJournalBossButton" .. bossIndex]
         if (encounter.infoFrame.encounterID == bossID) then
-            bossButton.hover.skipHover = true
-            bossButton.hover:SetAlpha(1)
-            bossButton.hover:SetPoint("RIGHT", bossButton, "LEFT", bossButton:GetWidth(), 0)
+            bossButton.gwHover.skipHover = true
+            bossButton.gwHover:SetAlpha(1)
+            bossButton.gwHover:SetPoint("RIGHT", bossButton, "LEFT", bossButton:GetWidth(), 0)
         else
-            bossButton.hover.skipHover = false
-            bossButton.hover:SetAlpha(1)
-            bossButton.hover:SetPoint("RIGHT", bossButton, "LEFT", 0, 0)
+            bossButton.gwHover.skipHover = false
+            bossButton.gwHover:SetAlpha(1)
+            bossButton.gwHover:SetPoint("RIGHT", bossButton, "LEFT", 0, 0)
         end
         bossIndex = bossIndex + 1
         _, _, bossID = EJ_GetEncounterInfoByIndex(bossIndex)
