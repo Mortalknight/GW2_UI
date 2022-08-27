@@ -48,6 +48,7 @@ local model_tweaks = {
 local mapBGs = {
     [627] = "Legion/dalaran",
     [896] = "BFA/drustvar",
+    [1409] = "starter_isle",
     [1525] = "SL/revendreth",
     [1533] = "SL/bastion",
     [1543] = "SL/maw",
