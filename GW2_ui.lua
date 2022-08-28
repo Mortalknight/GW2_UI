@@ -145,7 +145,7 @@ function GwStandardButton_OnEnter(self)
     local name = tostring(self)
     local w = self:GetWidth()
     local hover = self.gwHover
-    if not hover or not self:IsEnabled() then
+    if not hover or (self.IsEnabled and not self:IsEnabled()) then
         return
     end
 
@@ -168,7 +168,7 @@ function GwStandardButton_OnLeave(self)
     local name = tostring(self)
     local w = self:GetWidth()
     local hover = self.gwHover
-    if not hover or not self:IsEnabled() then
+    if not hover or (self.IsEnabled and not self:IsEnabled()) then
         return
     end
     if self.gwHover.skipHover then return end

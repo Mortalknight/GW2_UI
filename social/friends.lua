@@ -130,9 +130,9 @@ local function LoadFriendList(tabContainer)
     button.Tag:SetPoint("CENTER", button, "CENTER")
     button.Tag:SetTextColor(0.345, 0.667, 0.867)
     button.Tag:SetFont(UNIT_NAME_FONT, 15)
-    button.hover.r = FRIENDS_BNET_BACKGROUND_COLOR.r
-    button.hover.g = FRIENDS_BNET_BACKGROUND_COLOR.g
-    button.hover.b = FRIENDS_BNET_BACKGROUND_COLOR.b
+    button.gwHover.r = FRIENDS_BNET_BACKGROUND_COLOR.r
+    button.gwHover.g = FRIENDS_BNET_BACKGROUND_COLOR.g
+    button.gwHover.b = FRIENDS_BNET_BACKGROUND_COLOR.b
 
     button:SetScript("OnClick", function() FriendsFrameBattlenetFrame.BroadcastFrame:ToggleFrame() end)
     button:HookScript("OnEnter", function(self) self.Tag:SetTextColor(1, 1, 1) end)

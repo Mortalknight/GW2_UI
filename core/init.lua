@@ -115,35 +115,34 @@ GW.L = GW.Libs.AceLocale:GetLocale("GW2_UI")
 local NPERemoveFrame = CreateFrame("Frame")
 NPERemoveFrame:Hide()
 
-local function RemoveNPE(self, event)
-    local NPE = _G.NewPlayerExperience
-    if NPE then
-        if NPE:GetIsActive() then
-            NPE:Shutdown()
+local function RemoveNPE(_, event)
+    if NewPlayerExperience then
+        if NewPlayerExperience:GetIsActive() then
+            NewPlayerExperience:Shutdown()
             C_CVar.SetCVar("showNPETutorials", "0")
         end
 
         if event then
-            self:UnregisterEvent(event)
+            NPERemoveFrame:UnregisterEvent(event)
         end
     end
 end
 
-if _G.NewPlayerExperience then
-    RemoveNPE(NPERemoveFrame)
+if NewPlayerExperience then
+    RemoveNPE()
 else
     NPERemoveFrame:RegisterEvent("ADDON_LOADED")
     NPERemoveFrame:SetScript("OnEvent", RemoveNPE)
 end
 
 local function AcknowledgeTips()
-    for frame in _G.HelpTip.framePool:EnumerateActive() do
+    for frame in HelpTip.framePool:EnumerateActive() do
         frame:Acknowledge()
     end
 end
 
 -- disable helper tooltips
-hooksecurefunc(_G.HelpTip, "Show", AcknowledgeTips)
+hooksecurefunc(HelpTip, "Show", AcknowledgeTips)
 C_Timer.After(1, function() AcknowledgeTips() end)
 
 --Add Shared Media
