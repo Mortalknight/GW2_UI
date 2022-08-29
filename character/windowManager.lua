@@ -98,8 +98,8 @@ windowsList[6] = {
 windowsList[7] = {
     ['OnLoad'] = "LoadCritter",
     ['SettingName'] = 'USE_CHARACTER_WINDOW',
-    ['TabIcon'] = 'tabicon_spellbook',
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
+    ['TabIcon'] = 'tabicon_pet',
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/pet-window-icon",
     ["HeaderText"] = PETS,
     ["Bindings"] = {
     },
