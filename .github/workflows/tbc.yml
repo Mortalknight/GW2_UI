@@ -1,12 +1,12 @@
-name: Release TBC Update # description of this workflow, can be anything you want
+name: Release WOTLK Update # description of this workflow, can be anything you want
 
 # triggers when pushing a tag
 on:
   push:
     branches:
-      - 'tbc-classic'
+      - 'wotlk-classic'
     tags:
-      - '*-TBC'
+      - '*-WOTLK'
 
 env:
   # for github releases, this secret is automatically provided to the workflow
@@ -20,4 +20,4 @@ jobs:
 
       - uses: BigWigsMods/packager@master
         with:
-          args: -g bcc
+          args: -g wrath

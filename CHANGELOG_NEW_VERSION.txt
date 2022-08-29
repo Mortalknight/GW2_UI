@@ -1,4 +1,2 @@
-1.22.0
-NEW
-    - Added option for guild repair
-    - Minimap can now be scaled with a slider
+1.0.0-WOTLK
+- First release
