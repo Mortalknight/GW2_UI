@@ -7,6 +7,21 @@ local activeSpec = nil
 local openSpec = 1 -- Can be 1 or 2
 local isPetTalents = false
 
+StaticPopupDialogs["GW_CONFIRM_LEARN_PREVIEW_TALENTS"] = {
+	text = CONFIRM_LEARN_PREVIEW_TALENTS,
+	button1 = YES,
+	button2 = NO,
+	OnAccept = function ()
+		LearnPreviewTalents(isPetTalents)
+	end,
+	OnCancel = function (self)
+	end,
+	hideOnEscape = 1,
+	timeout = 0,
+	exclusive = 1,
+    preferredIndex = 4
+}
+
 local function UpdateActiveSpec(activeTalentGroup)
 -- set the active spec
     activeSpec = 1
@@ -53,8 +68,16 @@ local function hookTalentButton(talentButton, container, row, index)
                     ChatEdit_InsertLink(link)
                 end
             else
-                LearnTalent(self.talentFrameId, self.talentid, isPetTalents, openSpec)
+                if GetCVarBool("previewTalents") then
+                    AddPreviewTalentPoints(self.talentFrameId, self.talentid, 1, isPetTalents, openSpec)
+                else
+                    LearnTalent(self.talentFrameId, self.talentid, isPetTalents, openSpec)
+                end
             end
+        elseif button == "RightButton" and openSpec == activeSpec  then
+			if GetCVarBool("previewTalents") then
+				AddPreviewTalentPoints(self.talentFrameId, self.talentid, -1, isPetTalents, openSpec)
+			end
         end
     end)
     talentButton:SetScript("OnEvent", function(self)
@@ -63,8 +86,6 @@ local function hookTalentButton(talentButton, container, row, index)
         end
     end)
     talentButton:RegisterEvent("CHARACTER_POINTS_CHANGED")
-    --talentButton:RegisterEvent("")
-    --talentButton:RegisterEvent("")
 
     local mask = UIParent:CreateMaskTexture()
 
@@ -221,12 +242,36 @@ local function CleanUpTalentTrees()
     end
 end
 
+local function UpdatePreviewControls()
+    local preview = GetCVarBool("previewTalents")
+    local talentPoints = GetUnspentTalentPoints(false, isPetTalents, openSpec)
+
+    if (isPetTalents or openSpec) and talentPoints > 0 and preview then
+        GwTalentFrame.bottomBar.prevLearn:Show()
+        GwTalentFrame.bottomBar.prevCancel:Show()
+		-- enable accept/cancel buttons if preview talent points were spent
+		if GetGroupPreviewTalentPointsSpent(isPetTalents, openSpec) > 0 then
+			GwTalentFrame.bottomBar.prevLearn:Enable();
+			GwTalentFrame.bottomBar.prevCancel:Enable();
+		else
+			GwTalentFrame.bottomBar.prevLearn:Disable();
+			GwTalentFrame.bottomBar.prevCancel:Disable();
+		end
+	else
+		GwTalentFrame.bottomBar.prevLearn:Hide()
+        GwTalentFrame.bottomBar.prevCancel:Hide()
+	end
+end
+
 local function updateTalentTrees()
     if InCombatLockdown() then return end
 
     local activeTalentGroup = GetActiveTalentGroup()
     local hastDualSpec = GetNumTalentGroups(false, false) > 1
     local hasPetTalents = GetNumTalentGroups(false, true) > 0
+
+    -- preview
+    UpdatePreviewControls()
 
     UpdateActiveSpec(activeTalentGroup)
 
@@ -260,11 +305,11 @@ local function updateTalentTrees()
     for f = 1, GW.api.GetNumSpecializations(isPetTalents) do
         local forceDesaturated
         local talentPoints = UpdateTalentPoints()
-        local name, _, pointsSpent = GetTalentTabInfo(f, false, isPetTalents, openSpec)
+        local name, _, pointsSpent, _, previewPointsSpent = GetTalentTabInfo(f, false, isPetTalents, openSpec)
         local TalentFrame = _G["GwLegacyTalentTree" .. f]
         local preview = GetCVarBool("previewTalents")
 
-        TalentFrame.pointsSpent = pointsSpent
+        TalentFrame.pointsSpent = pointsSpent + previewPointsSpent
 
         if pointsSpent < 1 then
             TalentFrame.background:SetDesaturated(true)
@@ -276,24 +321,24 @@ local function updateTalentTrees()
 
 
         TalentFrame.info.title:SetText(name)
-        TalentFrame.info.points:SetText(pointsSpent)
+        TalentFrame.info.points:SetText(TalentFrame.pointsSpent)
 
         local numTalents = GetNumTalents(f, false, isPetTalents)
         for i = 1, MAX_NUM_TALENTS do
-            local name, texture, tier, column, rank, maxRank, isExceptional, available = GetTalentInfo(f, i, false, isPetTalents, openSpec)
+            local name, texture, tier, column, rank, maxRank, isExceptional, available, previewRank, meetsPreviewPrereq = GetTalentInfo(f, i, false, isPetTalents, openSpec)
             local button = _G['GwLegacyTalentTree' .. f .. 'Teir' .. tier .. 'index' .. column]
 
             if name and i <= numTalents then
                 TALENT_BRANCH_ARRAY[f][tier][column].id = i
                 button.icon:SetTexture(texture)
-                button.points:SetText(rank .. " / " .. maxRank)
+                button.points:SetText((preview and previewRank or rank) .. " / " .. maxRank)
                 button.talentid = i
                 button.talentFrameId = f
                 button:Show()
                 button.active = true
 
                 -- If player has no talent points or this is the inactive talent group then show only talents with points in them
-                if (TalentFrame.talentPoints <= 0 or not openSpec == activeTalentGroup) and rank == 0 then
+                if (TalentFrame.talentPoints <= 0 or not openSpec == activeTalentGroup) and (preview and previewRank or rank) == 0 then
                     forceDesaturated = 1
                 else
                     forceDesaturated = nil
@@ -308,8 +353,8 @@ local function updateTalentTrees()
                 local Prereqs = TalentFrame_SetPrereqs(f, tier, column, forceDesaturated, tierUnlocked, preview, GetTalentPrereqs(f, i, false, isPetTalents, openSpec))
 
                 button.talentID = i
-                button.available = available
-                button.known = rank==maxRank
+                button.available = preview and meetsPreviewPrereq or available
+                button.known = (preview and previewRank or rank) == maxRank
 
                 if ispassive then
                     button.legendaryHighlight:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_highlight')
@@ -324,11 +369,11 @@ local function updateTalentTrees()
                 end
 
                 button:EnableMouse(true)
-                if available and Prereqs then
+                if Prereqs and ((preview and meetsPreviewPrereq) or (not preview and available)) then
                     button.icon:SetDesaturated(openSpec ~= activeTalentGroup)
                     button.icon:SetVertexColor(1, 1, 1, 1)
                     button:SetAlpha(1)
-                    if rank<maxRank then
+                    if rank < maxRank then
                         button.highlight:Hide()
                         button.points:SetTextColor(GREEN_FONT_COLOR.r, GREEN_FONT_COLOR.g, GREEN_FONT_COLOR.b)
                     else
@@ -406,6 +451,15 @@ local function LoadTalents()
 
     loadTalentsFrames()
 
+    GwTalentFrame.bottomBar.prevCancel:SetScript("OnClick", function()
+        ResetGroupPreviewTalentPoints(isPetTalents, openSpec)
+        updateTalentTrees()
+    end)
+    GwTalentFrame.bottomBar.prevLearn:SetScript("OnClick", function()
+        StaticPopup_Show("GW_CONFIRM_LEARN_PREVIEW_TALENTS")
+        updateTalentTrees()
+    end)
+
     GwTalentFrame.bottomBar.spec1Button:SetScript("OnClick", function()
         openSpec = 1
         isPetTalents = false
@@ -430,11 +484,12 @@ local function LoadTalents()
     end)
 
     GwTalentFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
+    GwTalentFrame:RegisterEvent("PET_TALENT_UPDATE")
     GwTalentFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    GwTalentFrame:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED")
+    GwTalentFrame:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED")
     GwTalentFrame:SetScript('OnEvent', function(_, event)
-        if event == "CHARACTER_POINTS_CHANGED" then
-            GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player"))
-        end
+        GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player"))
         if not GwTalentFrame:IsShown() then return end
         updateTalentTrees()
     end)
