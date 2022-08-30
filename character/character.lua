@@ -871,6 +871,7 @@ local function LoadPaperDoll()
     GwPaperSkills.scroll.slider:SetValue(1)
 
     GW.LoadTitles()
+    GW.LoadGeatSets()
 
     GwDressingRoom.model:SetUnit("player")
     GwDressingRoom.model:SetPosition(0.8, 0, 0)

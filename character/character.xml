@@ -185,10 +185,16 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.titleMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="PET" >
+            <Button name="$parentTitle" parentKey="gearMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate" text="EQUIPMENT_MANAGER" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.honorMenu" relativePoint="BOTTOMLEFT"></Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="PET" >
+                <Size x="231" y="36"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.gearMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
         </Frames>
@@ -197,6 +203,7 @@
                 self.skillsMenu:SetText(SKILLS)
                 self.honorMenu:SetText(PVP)
                 self.petMenu:SetText(PET)
+                self.gearMenu:SetText(EQUIPMENT_MANAGER)
             </OnLoad>
         </Scripts>
     </Frame>

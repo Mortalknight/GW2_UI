@@ -128,7 +128,7 @@ local function CreateMountsPetsContainersWithButtons(listFrame, baseFrame, maxNu
             btn.baseFrame = baseFrame
             btn.baseList = listFrame
             btn.petType = "MOUNT"
-            btn:SetPoint('TOPLEFT', listFrame, 'TOPLEFT', 0,YPadding)
+            btn:SetPoint('TOPLEFT', listFrame, 'TOPLEFT', 0, YPadding)
             btn:RegisterForClicks("AnyUp")
             btn:RegisterForDrag("LeftButton")
             btn:HookScript("OnClick", MountCrintterItemOnClick)

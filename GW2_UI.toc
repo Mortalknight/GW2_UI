@@ -138,6 +138,8 @@ inventory/lootframe.lua
 
 character/skills.lua
 character/title.xml
+character/gearSets.xml
+character/gearSets.lua
 character/reputation.xml
 character/reputation_table.lua
 character/stats.lua

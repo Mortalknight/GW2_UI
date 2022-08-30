@@ -1,0 +1,114 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Frame name="GwPaperGearSets" inherits="SecureHandlerShowHideTemplate,SecureHandlerAttributeTemplate" virtual="true" hidden ="true">
+        <Size x="231" y="478"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="13" y="-105"/>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\item-selectbg">
+                    <Size x="231" y="478"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-3" y="7"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack,SecureHandlerClickTemplate" text="CHARACTER: PAPERDOLL_SIDEBAR_TITLES" >
+                <Size x="231" y="50"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
+                </Anchors>
+            </Button>
+            <Frame parentKey="attrDummy" inherits="SecureHandlerAttributeTemplate" />
+
+            <Button parentKey="delete" text="DELETE" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                <Size x="70" y="20"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.backButton" x="0" y="-5"/>
+                </Anchors>
+            </Button>
+            <Button parentKey="equipe" text="EQUIPSET_EQUIP" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                <Size x="70" y="20"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.delete" x="0" y="0"/>
+                </Anchors>
+            </Button>
+            <Button parentKey="save" text="SAVE" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                <Size x="70" y="20"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.equipe" x="0" y="0"/>
+                </Anchors>
+            </Button>
+
+        </Frames>
+    </Frame>
+
+     <Button name="GwGearSetsButtonTemplate" inherits="GwCharacterMenuBlank,SecureActionButtonTemplate,SecureHandlerDragTemplate"  enableMouse="true" virtual="true" >
+        <Size x="200" y="44"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <RelInset left="0.2" right="-0.2" top="0.2" bottom="0"/>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="zebra" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                    <Size x="32" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BACKGROUND" >
+                <Texture parentKey="bg" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="bgstatic" file="Interface\AddOns\GW2_UI\textures\character\menu-bg">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="background" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\button_hover" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+                    </Anchors>
+                    <Color r="1" g="1" b="0.6" a="0.1"/>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <Texture parentkey="icon" file="Interface\AddOns\GW2_UI\textures\levelreward-icon">
+                    <Size x="32" y="32"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="10" y="0"/>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+                <FontString parentKey="title" text="Unknown" justifyH="LEFT" justifyV="MIDDLE">
+                    <Size x="32" y="32"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.icon" x="5" y="0"/>
+                        <Anchor point="RIGHT" relativePoint="RIGHT" x="5" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+          <OnDragStart>
+                if InCombatLockdown() then return end
+
+                if self.name and self.name ~= "" then
+					C_EquipmentSet.PickupEquipmentSet(self.id)
+				end
+          </OnDragStart>
+        </Scripts>
+    </Button>
+</Ui>
