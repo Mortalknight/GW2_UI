@@ -266,10 +266,10 @@ local function watchCurrency(self)
     local watchSlot = 1
     local currencyCount = GetCurrencyListSize()
     for i = 1, currencyCount do
-        local info = GetCurrencyListInfo(i)
-        if not info.isHeader and info.isShowInBackpack and watchSlot < 4 then
-            self["currency" .. tostring(watchSlot)]:SetText(CommaValue(info.quantity))
-            self["currency" .. tostring(watchSlot) .. "Texture"]:SetTexture(info.iconFileID)
+        local name, isHeader, _, _, isWatched, count, icon = GetCurrencyListInfo(i)
+        if not isHeader and isWatched and watchSlot < 4 then
+            self["currency" .. tostring(watchSlot)]:SetText(CommaValue(count))
+            self["currency" .. tostring(watchSlot) .. "Texture"]:SetTexture(icon)
             self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = i
             watchSlot = watchSlot + 1
         end

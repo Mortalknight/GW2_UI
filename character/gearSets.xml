@@ -17,7 +17,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack,SecureHandlerClickTemplate" text="CHARACTER: PAPERDOLL_SIDEBAR_TITLES" >
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack,SecureHandlerClickTemplate" text="CHARACTER: PAPERDOLL_SIDEBAR_TITLES" justifyH="LEFT" >
                 <Size x="231" y="50"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="0" y="90"></Anchor>
@@ -34,13 +34,13 @@
             <Button parentKey="equipe" text="EQUIPSET_EQUIP" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
                 <Size x="70" y="20"/>
                 <Anchors>
-                    <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.delete" x="0" y="0"/>
+                    <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.delete" x="5" y="0"/>
                 </Anchors>
             </Button>
             <Button parentKey="save" text="SAVE" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
                 <Size x="70" y="20"/>
                 <Anchors>
-                    <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.equipe" x="0" y="0"/>
+                    <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.equipe" x="5" y="0"/>
                 </Anchors>
             </Button>
 

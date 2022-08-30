@@ -1,2 +1,5 @@
+1.0.1-WOTLK
+- First release
+
 1.0.0-WOTLK
 - First release

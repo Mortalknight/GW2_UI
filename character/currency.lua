@@ -22,8 +22,8 @@ local function checkNumWatched()
     local numWatched = 0
 
     for i = 1, GetCurrencyListSize() do
-        local info = GetCurrencyListInfo(i)
-        if info.isShowInBackpack then
+        local _, _, _, _, isWatched = GetCurrencyListInfo(i)
+        if isWatched then
             numWatched = numWatched + 1
         end
     end
@@ -37,17 +37,17 @@ local function currency_OnClick(self)
         if not self.CurrencyID or not self.CurrencyIdx then
             return
         end
-        local info = GetCurrencyListInfo(self.CurrencyIdx)
-        if not info.isShowInBackpack then
+        local _, _, _, _, isWatched = GetCurrencyListInfo(self.CurrencyIdx)
+        if not isWatched then
             if checkNumWatched() >= MAX_WATCHED_TOKENS then
                 UIErrorsFrame:AddMessage(format(TOO_MANY_WATCHED_TOKENS, MAX_WATCHED_TOKENS), 1.0, 0.1, 0.1, 1.0)
                 return
             end
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            SetCurrencyBackpack(self.CurrencyIdx, true)
+            SetCurrencyBackpack(self.CurrencyIdx, 1)
         else
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-            SetCurrencyBackpack(self.CurrencyIdx, false)
+            SetCurrencyBackpack(self.CurrencyIdx, 0)
         end
     end
 end
@@ -85,13 +85,13 @@ local function loadCurrency(curwin)
             slot.item.CurrencyIdx = nil
             slot.header:Hide()
         else
-            local info = GetCurrencyListInfo(idx)
-            if info.isHeader then
+            local name, isHeader, isExpanded, isUnused, isWatched, count, icon, maxQuantity, maxEarnable, quantityEarned, isTradeable, itemID = GetCurrencyListInfo(idx)
+            if isHeader then
                 slot.item:Hide()
                 slot.item.CurrencyID = nil
                 slot.item.CurrencyIdx = nil
-                slot.header.spaceString:SetText(info.name)
-                slot.header.isHeaderExpanded = info.isHeaderExpanded
+                slot.header.spaceString:SetText(name)
+                slot.header.isHeaderExpanded = isExpanded
                 slot.header.index = idx
                 if slot.header.isHeaderExpanded then
                     slot.header.icon:Show()
@@ -111,29 +111,28 @@ local function loadCurrency(curwin)
                     link,
                     "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%]%[]*)%]?|?h?|?r?"
                 )
-                local cinfo = GetCurrencyInfo(curid)
                 slot.item.CurrencyID = curid
                 slot.item.CurrencyIdx = idx
 
                 -- set currency item values
-                slot.item.spaceString:SetText(cinfo.name)
-                if cinfo.maxQuantity == 0 then
-                    slot.item.amount:SetText(CommaValue(cinfo.quantity))
+                slot.item.spaceString:SetText(name)
+                if maxQuantity == 0 then
+                    slot.item.amount:SetText(CommaValue(count))
                 else
-                    slot.item.amount:SetText(CommaValue(cinfo.quantity) .. " / " .. CommaValue(cinfo.maxQuantity))
+                    slot.item.amount:SetText(CommaValue(count) .. " / " .. CommaValue(maxQuantity))
                 end
-                if cinfo.quantity == 0 then
+                if count == 0 then
                     slot.item.amount:SetFontObject("GameFontDisable")
                     slot.item.spaceString:SetFontObject("GameFontDisable")
                 else
                     slot.item.amount:SetFontObject("GameFontHighlight")
                     slot.item.spaceString:SetFontObject("GameFontHighlight")
                 end
-                slot.item.icon:SetTexture(cinfo.iconFileID)
+                slot.item.icon:SetTexture(icon)
 
                 -- set zebra color by idx or watch status
                 zebra = idx % 2
-                if info.isShowInBackpack then
+                if isWatched then
                     slot.item.zebra:SetVertexColor(1, 1, 0.5, 0.15)
                 else
                     slot.item.zebra:SetVertexColor(zebra, zebra, zebra, 0.05)

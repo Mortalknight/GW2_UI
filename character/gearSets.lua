@@ -51,7 +51,7 @@ local function UpdateSets()
         button:Hide()
 	end
     if(GearManagerDialogPopup:IsShown()) then
-		--RecalculateGearManagerDialogPopup();		--Scroll so that the texture appears and Save is enabled
+		RecalculateGearManagerDialogPopup();		--Scroll so that the texture appears and Save is enabled
 	end
 
 end
@@ -99,9 +99,27 @@ local function LoadGeatSets()
 	gearSetsFrame:RegisterEvent("EQUIPMENT_SWAP_FINISHED")
     gearSetsFrame:RegisterEvent("EQUIPMENT_SETS_CHANGED")
     C_EquipmentSet.ClearIgnoredSlotsForSave()
+    UpdateSets()
 
     gearSetsFrame:HookScript("OnShow", function()
+        if InCombatLockdown() then
+            gearSetsFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+            return
+        end
         UpdateSets()
+    end)
+
+    gearSetsFrame:SetScript("OnEvent", function(_, event)
+        if InCombatLockdown() then
+            gearSetsFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+            return
+        end
+
+        UpdateSets()
+
+        if event == "PLAYER_REGEN_ENABLED" then
+            gearSetsFrame:UnregisterEvent(event)
+        end
     end)
 
     GearManagerDialogPopup:HookScript("OnShow", function()
@@ -162,6 +180,6 @@ local function LoadGeatSets()
         end
     end)
 
-    gearSetsFrame.backButton:SetText(CHARACTER .. ": " .. EQUIPMENT_MANAGER)
+    gearSetsFrame.backButton:SetText(CHARACTER .. ":\n" .. EQUIPMENT_MANAGER)
 end
 GW.LoadGeatSets = LoadGeatSets
