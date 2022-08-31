@@ -30,7 +30,7 @@ local function LoadMounts()
     mountsList.pages:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     mountsList.pages:SetTextColor(0.7, 0.7, 0.5, 1)
 
-    GW.CreateMountsPetsContainersWithButtons(mountsList, mountsFrame, mountsList.maxNumberOfContainers, NUM_MOUNTS_PER_TAB, "GwMountsCritterListItem")
+    GW.CreateMountsPetsContainersWithButtons("MOUNT", mountsList, mountsFrame, mountsList.maxNumberOfContainers, NUM_MOUNTS_PER_TAB, "GwMountsCritterListItem")
 
     GW.UpdateMountsCritterList(mountsList, "MOUNT", NUM_MOUNTS_PER_TAB, true)
     GW.SetUpMoutCritterPaging(mountsList)
@@ -49,7 +49,7 @@ local function LoadMounts()
                 mountsList.attrDummy:SetAttribute("maxNumberOfContainers", mountsList.maxNumberOfContainers)
                 mountsList.attrDummy:SetAttribute("neededContainers", mountsList.neededContainers)
 
-                GW.CreateMountsPetsContainersWithButtons(mountsList, mountsFrame, mountsList.maxNumberOfContainers, NUM_MOUNTS_PER_TAB, "GwMountsCritterListItem", oldMaxNumberOfContainers + 1)
+                GW.CreateMountsPetsContainersWithButtons("MOUNT", mountsList, mountsFrame, mountsList.maxNumberOfContainers, NUM_MOUNTS_PER_TAB, "GwMountsCritterListItem", oldMaxNumberOfContainers + 1)
 
                 mountsList.attrDummy:SetAttribute('page', 'left')
             end

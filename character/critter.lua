@@ -25,7 +25,7 @@ local function LoadCritter()
     critterList.pages:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     critterList.pages:SetTextColor(0.7, 0.7, 0.5, 1)
 
-    GW.CreateMountsPetsContainersWithButtons(critterList, critterFrame, critterList.maxNumberOfContainers, NUM_CRITTER_PER_TAB, "GwMountsCritterListItem")
+    GW.CreateMountsPetsContainersWithButtons("CRITTER", critterList, critterFrame, critterList.maxNumberOfContainers, NUM_CRITTER_PER_TAB, "GwMountsCritterListItem")
 
     GW.UpdateMountsCritterList(critterList, "CRITTER", NUM_CRITTER_PER_TAB, true)
     GW.SetUpMoutCritterPaging(critterList)
@@ -44,7 +44,7 @@ local function LoadCritter()
                 critterList.attrDummy:SetAttribute("maxNumberOfContainers", critterList.maxNumberOfContainers)
                 critterList.attrDummy:SetAttribute("neededContainers", critterList.neededContainers)
 
-                GW.CreateMountsPetsContainersWithButtons(critterList, critterFrame, critterList.maxNumberOfContainers, NUM_CRITTER_PER_TAB, "GwMountsCritterListItem", oldMaxNumberOfContainers + 1)
+                GW.CreateMountsPetsContainersWithButtons("CRITTER", critterList, critterFrame, critterList.maxNumberOfContainers, NUM_CRITTER_PER_TAB, "GwMountsCritterListItem", oldMaxNumberOfContainers + 1)
 
                 critterList.attrDummy:SetAttribute('page', 'left')
             end

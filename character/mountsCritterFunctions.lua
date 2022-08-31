@@ -102,7 +102,7 @@ local function MountCrintterItemOnClick(self)
 end
 GW.MountCrintterItemOnClick = MountCrintterItemOnClick
 
-local function CreateMountsPetsContainersWithButtons(listFrame, baseFrame, maxNumberOfContainers, numMountsCritterPerTab, listItemTemplate, startTab)
+local function CreateMountsPetsContainersWithButtons(type, listFrame, baseFrame, maxNumberOfContainers, numMountsCritterPerTab, listItemTemplate, startTab)
     -- create dynamic container min 10 to have enough start space
     for i = 1, maxNumberOfContainers do
         local container = CreateFrame("Frame", listFrame:GetName() .. "Container" .. i, listFrame, "GWMountCritterListContainerTemplate")
@@ -127,7 +127,7 @@ local function CreateMountsPetsContainersWithButtons(listFrame, baseFrame, maxNu
 
             btn.baseFrame = baseFrame
             btn.baseList = listFrame
-            btn.petType = "MOUNT"
+            btn.petType = type
             btn:SetPoint('TOPLEFT', listFrame, 'TOPLEFT', 0, YPadding)
             btn:RegisterForClicks("AnyUp")
             btn:RegisterForDrag("LeftButton")
@@ -213,6 +213,6 @@ local function UpdateMountsCritterList(self, petType, numMountsCritterPerTab, fi
     end
 
     self.baseFrame.summon:SetEnabled(numberOfMountsCritter > 0)
-    self.baseFrame.summon:SetText(self.petType == "MOUNT" and MOUNT or SUMMON)
+    --self.baseFrame.summon:SetText(self.petType == "MOUNT" and MOUNT or SUMMON)
 end
 GW.UpdateMountsCritterList = UpdateMountsCritterList
