@@ -688,10 +688,9 @@ local function OnBlockClick(self, button)
         if GetCVar("autoQuestWatch") == "0" then
             GW2UI_QUEST_WATCH_DB.TrackedQuests[questID] = nil
         else
-            GW2UI_QUEST_WATCH_DB.TrackedQuests.AutoUntrackedQuests[questID] = true
+            GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questID] = true
         end
         RemoveQuestWatch(self.questLogIndex)
-        QuestWatch_Update()
         QuestLog_Update()
         return
     end
@@ -1236,7 +1235,6 @@ local function LoadQuestTracker()
             else
                 if GetNumQuestLeaderBoards(questLogLineIndex) == 0 and not IsQuestWatched(questLogLineIndex) then -- only call if we actually want to fix this quest (normal quests already call AQW_insert)
                     _AQW_Insert(questLogLineIndex, QUEST_WATCH_NO_EXPIRE)
-                    QuestWatch_Update()
                     QuestLog_SetSelection(questLogLineIndex)
                     QuestLog_Update()
                 else
