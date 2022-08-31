@@ -5,7 +5,7 @@ GW.DispelClasses = {
     MAGE = { Curse = true },
     PALADIN = { Magic = true, Poison = true, Disease = true },
     PRIEST = { Magic = true, Disease = true },
-    SHAMAN = { Magic = false, Poison = true, Disease = true, Curse = false },
+    SHAMAN = { Magic = false, Poison = true, Disease = true, Curse = IsSpellKnown(51886) },
     WARLOCK = { Magic = true }
 }
 
