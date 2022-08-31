@@ -327,12 +327,13 @@
                 </Anchors>
                 <Scripts>
                     <OnEnter>
-                        local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel()
+                        local avgItemLevel, avgItemLevelEquipped, avgItemLevelPVP = GetAverageItemLevel()
                         local minItemLevel = C_PaperDollInfo.GetMinItemLevel()
                         local displayItemLevel = math.max(minItemLevel or 0, avgItemLevelEquipped)
 
                         displayItemLevel = floor(displayItemLevel)
                         avgItemLevel = floor(avgItemLevel)
+                        avgItemLevelPVP = floor(avgItemLevelPVP)
 
                         self.tooltip = HIGHLIGHT_FONT_COLOR_CODE .. format(PAPERDOLLFRAME_TOOLTIP_FORMAT, STAT_AVERAGE_ITEM_LEVEL) .. " " .. avgItemLevel
                         if displayItemLevel ~= avgItemLevel then
@@ -340,6 +341,7 @@
                         end
                         self.tooltip = self.tooltip .. FONT_COLOR_CODE_CLOSE
                         self.tooltip2 = STAT_AVERAGE_ITEM_LEVEL_TOOLTIP
+                        self.tooltip2 = self.tooltip2 .. "\n\n" .. STAT_AVERAGE_PVP_ITEM_LEVEL:format(avgItemLevelPVP)
                         if not self.tooltip then
                             return
                         end
