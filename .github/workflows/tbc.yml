@@ -6,7 +6,7 @@ on:
     branches:
       - 'wotlk-classic'
     tags:
-      - '*-WOTLK'
+      - '*-Wrath'
 
 env:
   # for github releases, this secret is automatically provided to the workflow
