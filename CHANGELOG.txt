@@ -1,3 +1,6 @@
+1.0.2-WOTLK
+- Fix all known issus
+
 1.0.1-WOTLK
 - First release
 
