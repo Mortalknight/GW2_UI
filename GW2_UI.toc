@@ -178,3 +178,4 @@ objectives/questtracker.xml
 objectives/minimapButtons.lua
 objectives/objectives.lua
 objectives/notifications.lua
+objectives/achievement.lua

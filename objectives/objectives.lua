@@ -4,13 +4,11 @@ local GetSetting = GW.GetSetting
 local CommaValue = GW.CommaValue
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
+local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local savedQuests = {}
 local lastAQW = GetTime()
 
-local TRACKER_TYPE_COLOR = {}
-GW.TRACKER_TYPE_COLOR = TRACKER_TYPE_COLOR
-TRACKER_TYPE_COLOR["QUEST"] = {r = 221 / 255, g = 198 / 255, b = 68 / 255}
 
 local function wiggleAnim(self)
     if self.animation == nil then
@@ -164,6 +162,7 @@ local function setBlockColor(block, string)
     block.color = TRACKER_TYPE_COLOR[string]
 end
 GW.AddForProfiling("objectives", "setBlockColor", setBlockColor)
+GW.setBlockColor = setBlockColor
 
 local function statusBar_OnShow(self)
     local f = self:GetParent()
@@ -639,7 +638,7 @@ local function updateQuestItemPositions(height, block)
     if not block.actionButton or not block.hasItem then
         return
     end
-
+    height = height + GwQuesttrackerContainerAchievement:GetHeight()
     if GwObjectivesNotification:IsShown() then
         height = height + GwObjectivesNotification.desc:GetHeight()
     else
@@ -850,7 +849,7 @@ GW.AddForProfiling("objectives", "updateQuest", updateQuest)
 
 local function QuestTrackerLayoutChanged()
     local scroll = 0
-    local height = GwQuesttrackerContainerQuests:GetHeight() + 60
+    local height = GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + 60
     local trackerHeight = GetSetting("QuestTracker_pos_height") - GwObjectivesNotification:GetHeight()
 
     if height > tonumber(trackerHeight) then
@@ -1132,10 +1131,12 @@ local function LoadQuestTracker()
     fNotify.desc:SetShadowOffset(1, -1)
     fNotify.compass:SetScript("OnShow", NewQuestAnimation)
 
+    local fAchv = CreateFrame("Frame", "GwQuesttrackerContainerAchievement", fTracker, "GwQuesttrackerContainer")
     local fQuest = CreateFrame("Frame", "GwQuesttrackerContainerQuests", fScroll, "GwQuesttrackerContainer")
 
     fNotify:SetParent(fTracker)
     fQuest:SetParent(fScroll)
+    fAchv:SetParent(fScroll)
 
     fNotify:SetPoint("TOPRIGHT", fTracker, "TOPRIGHT")
 
@@ -1143,7 +1144,8 @@ local function LoadQuestTracker()
     fTraScr:SetPoint("BOTTOMRIGHT", fTracker, "BOTTOMRIGHT")
 
     fScroll:SetPoint("TOPRIGHT", fTraScr, "TOPRIGHT")
-    fQuest:SetPoint("TOPRIGHT", fScroll, "TOPRIGHT")
+    fAchv:SetPoint("TOPRIGHT", fScroll, "TOPRIGHT")
+    fQuest:SetPoint("TOPRIGHT", fAchv, "BOTTOMRIGHT")
 
     fScroll:SetSize(fTracker:GetWidth(), 2)
     fTraScr:SetScrollChild(fScroll)
@@ -1190,6 +1192,8 @@ local function LoadQuestTracker()
 
     fQuest.init = false
     tracker_OnEvent(fQuest)
+
+    GW.LoadAchievementFrame()
     fQuest.init = true
 
     fNotify.shouldDisplay = false
@@ -1286,5 +1290,6 @@ local function LoadQuestTracker()
 
     fNotify:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
     fNotify:HookScript("OnHide", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
+    hooksecurefunc(fAchv, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
 end
 GW.LoadQuestTracker = LoadQuestTracker
