@@ -691,6 +691,7 @@ local function OnBlockClick(self, button)
             GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questID] = true
         end
         RemoveQuestWatch(self.questLogIndex)
+        WatchFrame_Update()
         QuestLog_Update()
         return
     end
@@ -968,7 +969,20 @@ local function updateQuestLogLayout(self)
 end
 GW.AddForProfiling("objectives", "updateQuestLogLayout", updateQuestLogLayout)
 
-local function tracker_OnEvent(self)
+local function tracker_OnEvent(self, event, ...)
+    local questId
+    if event == "QUEST_ACCEPTED" then
+        questId = select(2, ...)
+    elseif event == "QUEST_REMOVED" then
+        questId = ...
+    end
+    if questId then
+        if "0" == GetCVar("autoQuestWatch") then
+            GW2UI_QUEST_WATCH_DB.TrackedQuests[questId] = nil
+        else
+            GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questId] = nil
+        end
+    end
     updateQuestLogLayout(self)
 end
 GW.UpdateQuestTracker = tracker_OnEvent
@@ -1221,52 +1235,53 @@ local function LoadQuestTracker()
     hooksecurefunc("RemoveQuestWatch", _RemoveQuestWatch)
 
     local baseQLTB_OnClick = QuestLogTitleButton_OnClick
-        QuestLogTitleButton_OnClick = function(self, button) -- I wanted to use hooksecurefunc but this needs to be a pre-hook to work properly unfortunately
-            if (not self) or self.isHeader or not IsShiftKeyDown() then baseQLTB_OnClick(self, button) return end
-            local questLogLineIndex = self:GetID() + FauxScrollFrame_GetOffset(QuestLogListScrollFrame)
-            local questId = GetQuestIDFromLogIndex(questLogLineIndex)
+    QuestLogTitleButton_OnClick = function(self, button) -- I wanted to use hooksecurefunc but this needs to be a pre-hook to work properly unfortunately
+        if (not self) or self.isHeader or not IsShiftKeyDown() then baseQLTB_OnClick(self, button) return end
+        local questLogLineIndex = self:GetID() + FauxScrollFrame_GetOffset(QuestLogListScrollFrame)
+        local questId = GetQuestIDFromLogIndex(questLogLineIndex)
 
-            if ( IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() ) then
-                if (self.isHeader) then
-                    return
-                end
-                ChatEdit_InsertLink("["..gsub(self:GetText(), " *(.*)", "%1").." ("..questId..")]")
-
-            else
-                if GetNumQuestLeaderBoards(questLogLineIndex) == 0 and not IsQuestWatched(questLogLineIndex) then -- only call if we actually want to fix this quest (normal quests already call AQW_insert)
-                    _AQW_Insert(questLogLineIndex, QUEST_WATCH_NO_EXPIRE)
-                    QuestLog_SetSelection(questLogLineIndex)
-                    QuestLog_Update()
-                else
-                    baseQLTB_OnClick(self, button)
-                end
+        if ( IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() ) then
+            if (self.isHeader) then
+                return
             end
+            ChatEdit_InsertLink("["..gsub(self:GetText(), " *(.*)", "%1").." ("..questId..")]")
+
+        else
+            --if GetNumQuestLeaderBoards(questLogLineIndex) == 0 and not IsQuestWatched(questLogLineIndex) then -- only call if we actually want to fix this quest (normal quests already call AQW_insert)
+            --    _AQW_Insert(questLogLineIndex, QUEST_WATCH_NO_EXPIRE)
+            --    QuestLog_SetSelection(questLogLineIndex)
+            --    WatchFrame_Update()
+            --    QuestLog_Update()
+            --else
+                baseQLTB_OnClick(self, button)
+            --end
+        end
+    end
+
+    if not fQuest._IsQuestWatched then
+        fQuest._IsQuestWatched = IsQuestWatched
+        fQuest._GetNumQuestWatches = GetNumQuestWatches
+    end
+
+    -- this is probably bad
+    IsQuestWatched = function(index)
+        local questId = select(8, GetQuestLogTitle(index))
+        local isHeader = select(4, GetQuestLogTitle(index))
+        if isHeader then return false end
+        if questId == 0 then
+            questId = index
         end
 
-        if not fQuest._IsQuestWatched then
-            fQuest._IsQuestWatched = IsQuestWatched
-            fQuest._GetNumQuestWatches = GetNumQuestWatches
+        if "0" == GetCVar("autoQuestWatch") then
+            return GW2UI_QUEST_WATCH_DB.TrackedQuests[questId or -1]
+        else
+            return questId and (not GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questId])
         end
+    end
 
-        -- this is probably bad
-        IsQuestWatched = function(index)
-            local questId = select(8, GetQuestLogTitle(index))
-            local isHeader = select(4, GetQuestLogTitle(index))
-            if isHeader then return false end
-            if questId == 0 then
-                questId = index
-            end
-
-            if "0" == GetCVar("autoQuestWatch") then
-                return GW2UI_QUEST_WATCH_DB.TrackedQuests[questId or -1]
-            else
-                return questId and not GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questId]
-            end
-        end
-
-        GetNumQuestWatches = function()
-            return 0
-        end
+    GetNumQuestWatches = function()
+        return 0
+    end
 
 
     fNotify:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
