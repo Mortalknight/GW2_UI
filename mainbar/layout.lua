@@ -99,7 +99,7 @@ local onstate_Barlayout = [=[
         end
     end
 
-    -- only set the bbarmover frame to the correct position, based on scaling
+    -- only set the dbarmover frame to the correct position, based on scaling
     if newstate == "outcombat" and dbarmover and bbar and not dbar:GetAttribute("isMoved") and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
         local buff_action = "none"
         if mbr and mbr:IsShown() and not mbr:GetAttribute("isMoved") then
@@ -107,11 +107,9 @@ local onstate_Barlayout = [=[
                 buff_action = "high"
             end
         end
-        local y_off = (buff_action == "high") and 200 or 100
-        local grow_dir = bbar:GetAttribute("growDir")
-        local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
+        local y_off = (buff_action == "high" and 200 or 100)
         dbarmover:ClearAllPoints()
-        dbarmover:SetPoint(anchor_hb, mbr, anchor_hb, 0, y_off)
+        dbarmover:SetPoint("BOTTOMRIGHT", mbr, "BOTTOMRIGHT", 0, y_off)
     end
 
     if bbar and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
@@ -137,10 +135,8 @@ local onstate_Barlayout = [=[
 
         if buff_action == "high" or buff_action == "low" then
             local y_off = (buff_action == "high") and 100 or 0
-            local grow_dir = bbar:GetAttribute("growDir")
-            local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
             bbarmover:ClearAllPoints()
-            bbarmover:SetPoint(anchor_hb, mbr, anchor_hb, 0, y_off)
+            bbarmover:SetPoint("BOTTOMRIGHT", mbr, "BOTTOMRIGHT", 0, y_off)
             bbar:Show()
             if dbar then dbar:Show() end
         elseif buff_action == "hide" then

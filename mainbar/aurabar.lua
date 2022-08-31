@@ -368,6 +368,7 @@ local function UpdateAuraHeader(header, settingName)
     header:SetAttribute("point", ap)
     header:SetAttribute("xOffset", xoff)
     header:SetAttribute("wrapYOffset", yoff)
+    header:SetAttribute("growDir", grow_dir)
 
     if header.filter == "HELPFUL" then
         header:SetAttribute("includeWeapons", 1)
@@ -385,8 +386,6 @@ local function UpdateAuraHeader(header, settingName)
 
     -- set anchoring
     if header.filter == "HELPFUL" then
-        header:SetAttribute("growDir", grow_dir)
-
         header:ClearAllPoints()
         header:SetPoint(anchor_hb, header.gwMover, anchor_hb, 0, 0)
     else
