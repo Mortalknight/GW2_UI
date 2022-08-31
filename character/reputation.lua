@@ -624,7 +624,7 @@ local function CollectCategories()
     ExpandAllFactionHeaders()
 
     local catagories = {}
-    local factionTbl
+    local factionTbl = {}
     local cMax = 0
     local cCur = 0
     local idx, headerName = 0, ""
