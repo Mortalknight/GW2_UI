@@ -893,34 +893,42 @@ local function updateQuestLogLayout(self)
         end)
     elseif GetSetting("QUESTTRACKER_SORTING") == "ZONE" then
         -- Sort by Zone
-        if Questie and Questie.started then
-            table.sort(sorted, function(a, b)
-                local qA = QuestieLoader:ImportModule("QuestieDB"):GetQuest(a.questId)
-                local qB = QuestieLoader:ImportModule("QuestieDB"):GetQuest(b.questId)
-                local qAZone, qBZone
-                if qA.zoneOrSort > 0 then
-                    qAZone = QuestieLoader:ImportModule("QuestieTracker").utils:GetZoneNameByID(qA.zoneOrSort)
-                elseif qA.zoneOrSort < 0 then
-                    qAZone = QuestieLoader:ImportModule("QuestieTracker").utils:GetCategoryNameByID(qA.zoneOrSort)
-                end
-
-                if qB.zoneOrSort > 0 then
-                    qBZone = QuestieLoader:ImportModule("QuestieTracker").utils:GetZoneNameByID(qB.zoneOrSort)
-                elseif qB.zoneOrSort < 0 then
-                    qBZone = QuestieLoader:ImportModule("QuestieTracker").utils:GetCategoryNameByID(qB.zoneOrSort)
-                end
-
-                -- Sort by Zone then by Level to mimic QuestLog sorting
-                if qAZone == qBZone then
-                    return qA.level < qB.level
-                else
-                    if qAZone ~= nil and qBZone ~= nil then
-                        return qAZone < qBZone
+        if Questie and Questie.started and QuestieLoader then
+            local QuestieTrackerUtils = QuestieLoader:ImportModule("TrackerUtils")
+            local QuestieDB = QuestieLoader:ImportModule("QuestieDB")
+            if QuestieTrackerUtils and QuestieDB then
+                table.sort(sorted, function(a, b)
+                    local qA = QuestieDB:GetQuest(a.questId)
+                    local qB = QuestieDB:GetQuest(b.questId)
+                    local qAZone, qBZone
+                    if qA.zoneOrSort > 0 then
+                        qAZone = QuestieTrackerUtils:GetZoneNameByID(qA.zoneOrSort)
+                    elseif qA.zoneOrSort < 0 then
+                        qAZone = QuestieTrackerUtils:GetCategoryNameByID(qA.zoneOrSort)
                     else
-                        return qAZone and qBZone
+                        qAZone = tostring(qA.zoneOrSort)
                     end
-                end
-            end)
+
+                    if qB.zoneOrSort > 0 then
+                        qBZone = QuestieTrackerUtils:GetZoneNameByID(qB.zoneOrSort)
+                    elseif qB.zoneOrSort < 0 then
+                        qBZone = QuestieTrackerUtils:GetCategoryNameByID(qB.zoneOrSort)
+                    else
+                        qBZone = tostring(qB.zoneOrSort)
+                    end
+
+                    -- Sort by Zone then by Level to mimic QuestLog sorting
+                    if qAZone == qBZone then
+                        return qA.level < qB.level
+                    else
+                        if qAZone ~= nil and qBZone ~= nil then
+                            return qAZone < qBZone
+                        else
+                            return qAZone and qBZone
+                        end
+                    end
+                end)
+            end
         end
     end
 
