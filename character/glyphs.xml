@@ -62,7 +62,7 @@
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="241" y="0"></Anchor>
           </Anchors>
         <Frames>
-          <Button name="$parentGlyph1" inherits="GwGlyphTemplate GlyphTemplate" id="1">
+          <Button name="$parentGlyph1" inherits="GwGlyphTemplate,GlyphTemplate" id="1">
             <Size x="90" y="90"/>
             <Anchors>
               <Anchor point="CENTER">
@@ -229,13 +229,7 @@
               </FontString>
           </Layer>
       </Layers>
-      <Scripts>
-        <OnDragStart>
-            if InCombatLockdown() then return end
 
-            PickupCompanion(self.petType,self.mountID)
-        </OnDragStart>
-      </Scripts>
   </Button>
 
 

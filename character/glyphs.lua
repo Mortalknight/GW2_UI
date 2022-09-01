@@ -47,7 +47,6 @@ local function loadGlyphSlot(self)
         self.selectable:SetSize(120,120)
     else
         GlyphFrameGlyph_SetGlyphType(self, GLYPHTYPE_MAJOR);
-
     end
 end
 
@@ -124,7 +123,7 @@ local function setGlyphButton(self, glyphData)
     -- glyphData.inBag
     setGlyphButtonState(self, glyphData.inBag)
     if glyphData.inBag then
-        self:SetAttribute("macrotext", "/use item:"..glyphData.itemID)
+        self:SetAttribute("macrotext", "/use item:" .. glyphData.itemID)
     else
         self:SetAttribute("macrotext", nil)
     end
@@ -204,7 +203,13 @@ local function GlyphFrameOnUpdateTimer()
 end
 
 local function GlyphFrameOnEvent(self, event, ...)
-    if event == "USE_GLYPH" then
+    if event == "ACTIVE_TALENT_GROUP_CHANGED" then
+        for i = 1, 6 do
+            loadGlyphSlot(_G["GwGlyphesContainerGlyph" .. i])
+        end
+        UpdateGlyphList()
+       print(event)
+    elseif event == "USE_GLYPH" then
         if InCombatLockdown() then return end
         GwCharacterWindow:SetAttribute('windowPanelOpen', "glyphes")
     elseif event == "PLAYER_REGEN_ENABLED" then
@@ -255,6 +260,19 @@ local function GlyphFrameOnEvent(self, event, ...)
     end
 end
 
+local function GlyphFrameGlyph_OnEnter(self) -- copy from blizzard with littel tweaks
+	self.hasCursor = true
+
+	local glyphSpellID = self.spell
+	local glyphName = GetSpellInfo(glyphSpellID)
+
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+	GameTooltip:SetGlyph(self:GetID(), GetActiveTalentGroup())
+
+	EventRegistry:TriggerEvent("GlyphFrameGlyph.MouseOver", self, glyphName, glyphSpellID)
+	GameTooltip:Show();
+end
+
 local function LoadGlyphes()
     TalentFrame_LoadUI()
     GlyphFrame_LoadUI()
@@ -268,7 +286,11 @@ local function LoadGlyphes()
     hooksecurefunc("GlyphFrameGlyph_UpdateSlot", GlyphFrameGlyph_UpdateSlot_Hook)
 
     for i = 1, 6 do
-      loadGlyphSlot(_G["GwGlyphesContainerGlyph" .. i])
+        loadGlyphSlot(_G["GwGlyphesContainerGlyph" .. i])
+        _G["GwGlyphesContainerGlyph" .. i]:SetScript("OnClick", function()
+            PlaceGlyphInSocket(_G["GwGlyphesContainerGlyph" .. i]:GetID())
+        end)
+        _G["GwGlyphesContainerGlyph" .. i]:SetScript("OnEnter", GlyphFrameGlyph_OnEnter)
     end
 
     loadGlyphList(GwGlyphsList.GlyphScroll)
@@ -287,6 +309,7 @@ local function LoadGlyphes()
     glyphesFrame:RegisterEvent("GLYPH_REMOVED")
     glyphesFrame:RegisterEvent("GLYPH_UPDATED")
     glyphesFrame:RegisterEvent("BAG_UPDATE")
+    glyphesFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     glyphesFrame:SetScript("OnEvent", GlyphFrameOnEvent)
 
     GwGlyphsList:SetScript("OnShow", function()
