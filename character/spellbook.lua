@@ -659,19 +659,19 @@ local function updateSpellbookTab()
         for i = 1, numSpells do
             local spellIndex = i + offset
             local skillType = GetSpellBookItemInfo(spellIndex, BOOKTYPE)
-            local ispassive = IsPassiveSpell(spellID)
             local icon = GetSpellBookItemTexture(spellIndex, BOOKTYPE)
-            local name, rank, spellID = GetSpellBookItemName(spellIndex, BOOKTYPE)
+            local nameSpell, rank, spellID = GetSpellBookItemName(spellIndex, BOOKTYPE)
+            local ispassive = IsPassiveSpell(spellID)
 
-            rank = rank:gsub(RANK, "")
+            rank = rank and rank:gsub(RANK, "") or ""
             knownSpellID[#knownSpellID + 1] = spellID
 
             needNewHeader = true
-            if lastName == name then
+            if lastName == nameSpell then
                 needNewHeader = false
             end
 
-            local mainButton = setButtonStyle(ispassive, spellID, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, name, rank)
+            local mainButton = setButtonStyle(ispassive, spellID, skillType, icon, spellIndex, BOOKTYPE, spellBookTabs, nameSpell, rank)
             mainButton.modifiedClick = SpellButton_OnModifiedClick
             if not ispassive then GW.RegisterCooldown(mainButton.cooldown) end
             spellButtonIndex = spellButtonIndex + 1
@@ -690,7 +690,7 @@ local function updateSpellbookTab()
                 end
                 header = getSpellBookHeader(spellBookTabs)
                 setHeaderLocation(header, pagingContainer)
-                header.title:SetText(name)
+                header.title:SetText(nameSpell)
                 header.buttons = 1
                 header.height = 80
             end
@@ -711,7 +711,7 @@ local function updateSpellbookTab()
             end
 
             header:SetHeight(header.height)
-            lastName = name
+            lastName = nameSpell
             lastButton = mainButton
 
             setUpPaging(_G['GwSpellbookContainerTab' .. spellBookTabs])
