@@ -236,9 +236,11 @@ GW.AddForProfiling("classpowers", "setDruid", setDruid)
 
 --SHAMAN
 local function setShaman(f)
-    MultiCastActionBarFrame:SetParent(f)
-    MultiCastActionBarFrame:ClearAllPoints()
-    MultiCastActionBarFrame:SetAllPoints(f)
+    if MultiCastActionBarFrame:GetParent() ~= f and not InCombatLockdown() then
+        MultiCastActionBarFrame:SetParent(f)
+        MultiCastActionBarFrame:ClearAllPoints()
+        MultiCastActionBarFrame:SetAllPoints(f)
+    end
 
     f.background:Hide()
     f.fill:Hide()
