@@ -1,14 +1,13 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
-    <Script file="libs\LibStub\LibStub.lua"/>
-    <Script file="libs\CallbackHandler-1.0\CallbackHandler-1.0.lua"/>
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file="LibStub\LibStub.lua"/>
+    <Script file="CallbackHandler-1.0\CallbackHandler-1.0.lua"/>
 
-    <Script file="libs\LibSharedMedia-3.0\LibSharedMedia-3.0.lua"/>
-    <Script file="libs\LibRealmInfo\LibRealmInfo.lua"/>
-    <Script file="libs\LibCompress\LibCompress.lua"/>
-    <Script file="libs\AceSerializer-3.0\AceSerializer-3.0.lua"/>
-    <Script file="libs\AceLocale-3.0\AceLocale-3.0.lua"/>
-    <Script file="libs\LibBase64-1.0\LibBase64-1.0.lua"/>
-    <Script file="libs\LibCustomGlow\LibCustomGlow-1.0.lua"/>
-    <Script file="libs\LibChatAnims\LibChatAnims.lua"/>
+    <Script file="LibSharedMedia-3.0\LibSharedMedia-3.0.lua"/>
+    <Script file="LibRealmInfo\LibRealmInfo.lua"/>
+    <Script file="LibCompress\LibCompress.lua"/>
+    <Script file="AceSerializer-3.0\AceSerializer-3.0.lua"/>
+    <Script file="AceLocale-3.0\AceLocale-3.0.lua"/>
+    <Script file="LibBase64-1.0\LibBase64-1.0.lua"/>
+    <Script file="LibCustomGlow\LibCustomGlow-1.0.lua"/>
+    <Script file="LibChatAnims\LibChatAnims.lua"/>
 </Ui>
