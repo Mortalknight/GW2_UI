@@ -379,7 +379,7 @@ GW.PaperDollUpdateStats = PaperDollUpdateStats
 local function PaperDollUpdatePetStats()
     local hasUI, isHunterPet = HasPetUI()
     local statText, tooltip1, tooltip2
-    GwCharacterMenu.petMenu:SetShown(GW.myClassID == 3 or GW.myClassID == 9)
+    GwCharacterMenu.petMenu:SetShown(GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6)
     if not hasUI then return end
 
     local numShownStats = 1
