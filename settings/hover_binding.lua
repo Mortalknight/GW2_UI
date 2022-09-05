@@ -195,9 +195,10 @@ local function HoverKeyBinds()
             or key == "RALT"
             or key == "UNKNOWN"
             or key == "LeftButton"
-            or key == "MiddleButton"
+            --or key == "MiddleButton"
             then return end
 
+            if key == "MiddleButton" then key = "BUTTON3" end
             if key == "Button4" then key = "BUTTON4" end
             if key == "Button5" then key = "BUTTON5" end
 
