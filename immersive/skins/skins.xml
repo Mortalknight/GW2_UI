@@ -1,15 +1,15 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Script file="iutils.lua"/>
-    <Script file="ibattlenet.lua"/>
-    <Script file="igamemenu.lua"/>
-    <Script file="istaticpopup.lua"/>
-    <Script file="iaddonManager.lua"/>
-    <Script file="ibindings.lua"/>
-    <Script file="iblizzard_options.lua"/>
-    <Script file="imacro.lua"/>
-    <Script file="iworldmap.lua"/>
+    <Script file="utils.lua"/>
+    <Script file="battlenet.lua"/>
+    <Script file="gamemenu.lua"/>
+    <Script file="staticpopup.lua"/>
+    <Script file="addonManager.lua"/>
+    <Script file="bindings.lua"/>
+    <Script file="blizzard_options.lua"/>
+    <Script file="macro.lua"/>
+    <Script file="worldmap.lua"/>
 
-    <Script file="iaddons\gearQuipper.lua"/>
-    <Script file="iaddons\detailsProfile.lua"/>
+    <Script file="addons\gearQuipper.lua"/>
+    <Script file="addons\detailsProfile.lua"/>
 </Ui>

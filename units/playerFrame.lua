@@ -215,7 +215,7 @@ local function LoadPlayerFrame()
 
     -- grab the TotemFramebuttons to our own Totem Frame
     if PlayerFrame and TotemFrame then
-        --GW.Create_Totem_Bar()
+        GW.Create_Totem_Bar()
     end
 
     -- setup anim to flash the PvP marker
