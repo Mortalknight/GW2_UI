@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.0.5 Wrath", [=[
+    - Fix unitframes lua error
+]=])
+
 v("1.0.4 Wrath", [=[
     - Added DK Pet UI
     - Added totem timers
