@@ -31,12 +31,14 @@ end
 function lm:RegisterMultiBarLeft(f)
     local l = self.layoutFrame
     l:SetFrameRef("mbl", f)
+    l:SetFrameRef("mbl_mover", f.gwMover)
     self.mblFrame = f
 end
 
 function lm:RegisterMultiBarRight(f)
     local l = self.layoutFrame
     l:SetFrameRef("mbr", f)
+    l:SetFrameRef("mbr_mover", f.gwMover)
     self.mbrFrame = f
 end
 
@@ -66,23 +68,24 @@ local onstate_Barlayout = [=[
     if newstate ~= "outcombat" then
         self:SetAttribute("currentHandlerState", newstate)
     end
-    
-    local inMoveHudMode = self:GetAttribute("inMoveHudMode")
 
-    if inMoveHudMode then return end
+    if self:GetAttribute("inMoveHudMode") then return end
 
     local uip = self:GetFrameRef("UIP")
     local mbr = self:GetFrameRef("mbr")
+    local mbr_mover = self:GetFrameRef("mbr_mover")
     local mbl = self:GetFrameRef("mbl")
+    local mbl_mover = self:GetFrameRef("mbl_mover")
     local bbar = self:GetFrameRef("buffs")
     local bbarmover = self:GetFrameRef("buffs_mover")
     local dbar = self:GetFrameRef("debuffs")
     local dbarmover = self:GetFrameRef("debuffs_mover")
     local pet = self:GetFrameRef("pet")
     local petmover = self:GetFrameRef("pet_mover")
+    local pfat = self:GetAttribute("playerFrameAsTarget")
+    local epbar = self:GetAttribute("isEpBarShown")
 
     if mbl and mbl:IsShown() and not mbl:GetAttribute("isMoved") and pet and not pet:GetAttribute("isMoved") then
-        local pfat = pet:GetAttribute("playerFrameAsTarget")
         if newstate == "incombat" then
             petmover:ClearAllPoints()
             petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 212)
@@ -110,6 +113,18 @@ local onstate_Barlayout = [=[
         local y_off = (buff_action == "high" and 200 or 100)
         dbarmover:ClearAllPoints()
         dbarmover:SetPoint("BOTTOMRIGHT", mbr, "BOTTOMRIGHT", 0, y_off)
+    end
+
+    --mbrFrame
+    if mbr and not mbr:GetAttribute("isMoved") and mbr_mover then
+        mbr_mover:ClearAllPoints()
+        mbr_mover:SetPoint("BOTTOMRIGHT", uip, "BOTTOM", pfat and 318 or 372, epbar and 114 or 120)
+    end
+
+    --mblFrame
+    if mbl and not mbl:GetAttribute("isMoved") and mbl_mover then
+        mbl_mover:ClearAllPoints()
+        mbl_mover:SetPoint("BOTTOMLEFT", uip, "BOTTOM", pfat and -318 or -372, epbar and 114 or 120)
     end
 
     if bbar and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
@@ -151,6 +166,8 @@ local onstate_Barlayout = [=[
 
 local function LoadMainbarLayout()
     local l = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
+    l:SetAttribute("playerFrameAsTarget", GW.GetSetting("PLAYER_AS_TARGET_FRAME"))
+    l:SetAttribute("isEpBarShown", GW.GetSetting("XPBAR_ENABLED"))
     l:SetAttribute("_onstate-barlayout", onstate_Barlayout)
     l.oocHandler = function()
         lm:onstate_None()

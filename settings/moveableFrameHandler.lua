@@ -285,6 +285,11 @@ local function smallSettings_resetToDefault(self)
 
     --also update the selected layout
     UpdateMatchingLayout(mf, new_point)
+
+    -- run layout manager
+    GwSmallSettingsWindow.layoutManager:SetAttribute("inMoveHudMode", false)
+    GwSmallSettingsWindow.layoutManager:GetScript("OnEvent")(GwSmallSettingsWindow.layoutManager)
+    GwSmallSettingsWindow.layoutManager:SetAttribute("inMoveHudMode", true)
 end
 GW.AddForProfiling("index", "smallSettings_resetToDefault", smallSettings_resetToDefault)
 

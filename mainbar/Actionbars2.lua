@@ -697,11 +697,11 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     elseif barName == "MultiBarRight" then
         RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, nil, FlyoutDirection)
     elseif barName == "MultiBarBottomLeft" then
-        lm:RegisterMultiBarLeft(fmMultibar)
         RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, true, FlyoutDirection)
+        lm:RegisterMultiBarLeft(fmMultibar)
     elseif barName == "MultiBarBottomRight" then
-        lm:RegisterMultiBarRight(fmMultibar)
         RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, true, FlyoutDirection)
+        lm:RegisterMultiBarRight(fmMultibar)
     end
 
     fmMultibar:ClearAllPoints()
@@ -718,6 +718,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
         elseif barName == "MultiBarBottomRight" then
             fmMultibar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs - xOff, framePoint.yOfs - yOff)
         end
+        print(barName)
     end
 
     -- set fader logic
