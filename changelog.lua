@@ -1,20 +1,25 @@
 local _, GW = ...
 local v = GW.vernotes
 
-v("1.0.3 WOTLK", [=[
+v("1.0.4 Wrath", [=[
+    - Added DK Pet UI
+    - Added totem timers
+]=])
+
+v("1.0.3 Wrath", [=[
     - Fix glyphs for secound spec
     - Fix questie integration
 ]=])
 
-v("1.0.2 WOTLK", [=[
+v("1.0.2 Wrath", [=[
     - Fix all known issus
 ]=])
 
-v("1.0.1 WOTLK", [=[
+v("1.0.1 Wrath", [=[
     - First release
 ]=])
 
-v("1.0.0 WOTLK", [=[
+v("1.0.0 Wrath", [=[
     - First release
 ]=])
 

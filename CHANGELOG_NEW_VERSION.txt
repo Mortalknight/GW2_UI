@@ -1,12 +1,3 @@
-1.0.3-WOTLK
-- Fix glyphs for secound spec
-- Fix questie integration
-
-1.0.2-WOTLK
-- Fix all known issus
-
-1.0.1-WOTLK
-- First release
-
-1.0.0-WOTLK
-- First release
+1.0.4-Wrath
+- Added DK Pet UI
+- Added totem timers
