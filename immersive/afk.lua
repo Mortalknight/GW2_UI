@@ -71,16 +71,11 @@ local function SetAFK(self, status)
     end
 end
 
-local function AFKMode_OnEvent(self, event, ...)
+local function AFKMode_OnEvent(self, event, arg1, ...)
     if IsIn(event, "PLAYER_REGEN_DISABLED", "LFG_PROPOSAL_SHOW", "UPDATE_BATTLEFIELD_STATUS") then
-        if event == "UPDATE_BATTLEFIELD_STATUS" then
-            local status = GetBattlefieldStatus(...)
-            if status == "confirm" then
-                SetAFK(self, false)
-            end
-        else
-            SetAFK(self, false)
-        end
+        if event ~= "UPDATE_BATTLEFIELD_STATUS" or (GetBattlefieldStatus(arg1, ...) == "confirm") then
+			SetAFK(self, false)
+		end
 
         if event == "PLAYER_REGEN_DISABLED" then
             self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -92,18 +87,14 @@ local function AFKMode_OnEvent(self, event, ...)
         self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     end
 
-    if InCombatLockdown() or CinematicFrame:IsShown() or MovieFrame:IsShown() then return end
+    if (event == "PLAYER_FLAGS_CHANGED" and arg1 ~= "player") or (InCombatLockdown() or CinematicFrame:IsShown() or MovieFrame:IsShown()) then return end
     if UnitCastingInfo("player") ~= nil then
         --Don't activate afk if player is crafting stuff, check back in 30 seconds
         C_Timer.After(30, function() AFKMode_OnEvent(self) end)
         return
     end
 
-    if UnitIsAFK("player") and not C_PetBattles.IsInBattle() then
-        SetAFK(self, true)
-    else
-        SetAFK(self, false)
-    end
+    SetAFK(self, UnitIsAFK("player") and not C_PetBattles.IsInBattle())
 end
 
 local function OnKeyDown(self, key)
