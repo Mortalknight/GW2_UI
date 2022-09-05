@@ -150,9 +150,9 @@ GW.AddForProfiling("currency", "loadCurrency", loadCurrency)
 
 local function header_OnClick(self)
     if self.isHeaderExpanded then
-        ExpandCurrencyList(self.index, false)
+        ExpandCurrencyList(self.index, 0)
     else
-        ExpandCurrencyList(self.index, true)
+        ExpandCurrencyList(self.index, 1)
     end
 
     loadCurrency(self.curwin)
