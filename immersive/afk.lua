@@ -65,7 +65,7 @@ end
 
 local function AFKMode_OnEvent(self, event, arg1, ...)
     if IsIn(event, "PLAYER_REGEN_DISABLED", "UPDATE_BATTLEFIELD_STATUS") then
-        if event == "UPDATE_BATTLEFIELD_STATUS" or (GetBattlefieldStatus(arg1, ...) == "confirm") then
+        if event ~= "UPDATE_BATTLEFIELD_STATUS" or (GetBattlefieldStatus(arg1, ...) == "confirm") then
             SetAFK(self, false)
         end
 
@@ -79,7 +79,7 @@ local function AFKMode_OnEvent(self, event, arg1, ...)
         self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     end
 
-    if InCombatLockdown() or (event == "PLAYER_FLAGS_CHANGED" and arg1 ~= "player") or CinematicFrame:IsShown() or MovieFrame:IsShown() then return end
+    if (event == "PLAYER_FLAGS_CHANGED" and arg1 ~= "player") or (InCombatLockdown() or CinematicFrame:IsShown() or MovieFrame:IsShown()) then return end
     if UnitCastingInfo("player") ~= nil then
         --Don't activate afk if player is crafting stuff, check back in 30 seconds
         C_Timer.After(30, function() AFKMode_OnEvent(self) end)
