@@ -237,12 +237,24 @@ GW.AddForProfiling("classpowers", "setDruid", setDruid)
 --SHAMAN
 local function setShaman(f)
     if MultiCastActionBarFrame:GetParent() ~= f and not InCombatLockdown() then
+        MultiCastActionBarFrame.SetParent = nil
+        MultiCastActionBarFrame.ClearAllPoints = nil
+        MultiCastActionBarFrame.SetAllPoints = nil
+        MultiCastActionBarFrame.SetPoint = nil
+
         MultiCastActionBarFrame:SetParent(f)
         MultiCastActionBarFrame:ClearAllPoints()
         MultiCastActionBarFrame:SetAllPoints(f)
 
+        MultiCastActionBarFrame.SetParent = GW.NoOp
+        MultiCastActionBarFrame.ClearAllPoints = GW.NoOp
+        MultiCastActionBarFrame.SetAllPoints = GW.NoOp
+        MultiCastActionBarFrame.SetPoint = GW.NoOp
+
         f:ClearAllPoints()
         f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -MultiCastActionBarFrame:GetHeight() + 5)
+    elseif MultiCastActionBarFrame:GetParent() ~= f and InCombatLockdown() then
+        f.Script:RegisterEvent("PLAYER_REGEN_ENABLED")
     end
 
     f.background:Hide()
@@ -297,6 +309,9 @@ local function barChange_OnEvent(self, event, ...)
         elseif f.barType == "combo" then
             f:Hide()
         end
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+        selectType(f)
     end
 end
 
