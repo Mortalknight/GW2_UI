@@ -240,13 +240,13 @@ local function setShaman(f)
         MultiCastActionBarFrame:SetParent(f)
         MultiCastActionBarFrame:ClearAllPoints()
         MultiCastActionBarFrame:SetAllPoints(f)
+
+        f:ClearAllPoints()
+        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -MultiCastActionBarFrame:GetHeight() + 5)
     end
 
     f.background:Hide()
     f.fill:Hide()
-
-    f:ClearAllPoints()
-    f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -MultiCastActionBarFrame:GetHeight() + 5)
 
     return true
 end
