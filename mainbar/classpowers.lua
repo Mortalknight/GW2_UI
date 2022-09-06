@@ -252,7 +252,7 @@ local function setShaman(f)
         MultiCastActionBarFrame.SetPoint = GW.NoOp
 
         f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -MultiCastActionBarFrame:GetHeight() + 5)
+        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
     elseif MultiCastActionBarFrame:GetParent() ~= f and InCombatLockdown() then
         f.Script:RegisterEvent("PLAYER_REGEN_ENABLED")
     end
@@ -289,7 +289,11 @@ local function selectType(f)
     if (GW.myClassID == 4 or GW.myClassID == 11) and f.ourTarget and f.comboPointsOnTarget and f.barType == "combo" then
         showBar = UnitExists("target") and UnitCanAttack("player", "target") and not UnitIsDead("target") or false
     end
-    f:SetShown(showBar)
+    if showBar and not f:IsShown() then
+        f:Show()
+    elseif not showBar and f:IsShown() then
+        f:Hide()
+    end
 end
 
 local function barChange_OnEvent(self, event, ...)
