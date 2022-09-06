@@ -1,3 +1,7 @@
+1.0.6-Wrath
+- Fix shaman classpower issue
+- Added DK talent bg
+
 1.0.5-Wrath
 - Fix unitframes lua error
 

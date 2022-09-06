@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.0.6 Wrath", [=[
+    - Fix shaman classpower issue
+    - Added DK talent bg
+]=])
+
 v("1.0.5 Wrath", [=[
     - Fix unitframes lua error
 ]=])
