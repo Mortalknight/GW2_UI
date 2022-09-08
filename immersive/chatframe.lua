@@ -631,6 +631,11 @@ local function PrintURL(url)
     return "|cFFFFFFFF[|Hurl:" .. url .. "|h" .. url .. "|h]|r "
 end
 
+local function ReplaceProtocol(self, arg1, arg2)
+    local str = self .. "://" .. arg1
+ 	return (self == "Houtfit") and str .. arg2 or PrintURL(str)
+end
+
 local function FindURL(msg, author, ...)
     if not GetSetting("CHAT_FIND_URL") then -- find url setting here
         msg = CheckKeyword(msg, author)
@@ -645,7 +650,7 @@ local function FindURL(msg, author, ...)
 
     text = gsub(gsub(text, "(%S)(|c.-|H.-|h.-|h|r)", "%1 %2"), "(|c.-|H.-|h.-|h|r)(%S)", "%1 %2")
     -- http://example.com
-    local newMsg, found = gsub(text, "(%a+)://(%S+)%s?", PrintURL("%1://%2"))
+    local newMsg, found = gsub(text, "(%a+)://(%S+)(%s?)", ReplaceProtocol)
     if found > 0 then return false, GetSmileyReplacementText(CheckKeyword(newMsg, author)), author, ... end
     -- www.example.com
     newMsg, found = gsub(text, "www%.([_A-Za-z0-9-]+)%.(%S+)%s?", PrintURL("www.%1.%2"))
