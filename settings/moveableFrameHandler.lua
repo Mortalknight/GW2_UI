@@ -593,6 +593,8 @@ local function LoadMovers(layoutManager)
     GW.MoveHudScaleableFrame = moverSettingsFrame
     moverSettingsFrame.layoutManager = layoutManager
 
+    tinsert(UISpecialFrames, "GwSmallSettingsWindow")
+
     moverSettingsFrame.options.scaleSlider.slider:SetMinMaxValues(0.5, 1.5)
     moverSettingsFrame.options.scaleSlider.slider:SetValue(1)
     moverSettingsFrame.options.scaleSlider.slider:SetScript("OnValueChanged", sliderValueChange)
@@ -631,6 +633,7 @@ local function LoadMovers(layoutManager)
         mf:Show()
     end)
     moverSettingsFrame:SetScript("OnHide", function()
+        lockHudObjects()
         mf:Hide()
     end)
     moverSettingsFrame:SetScript("OnEvent", HandleMoveHudEvents)
