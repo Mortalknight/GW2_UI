@@ -441,7 +441,6 @@ local function setupMicroButtons(mbf)
     MainMenuMicroButton:ClearAllPoints()
     MainMenuMicroButton:SetPoint("BOTTOMLEFT", LFGMicroButton, "BOTTOMRIGHT", 4, 0)
     MainMenuBarPerformanceBar:Hide()
-    MainMenuBarDownload:Hide()
     MainMenuMicroButton:HookScript(
         "OnUpdate",
         function()

@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.0.7 Wrath", [=[
+    - Fix for WoW client update
+]=])
+
 v("1.0.6 Wrath", [=[
     - Fix shaman classpower issue
     - Added DK talent bg
