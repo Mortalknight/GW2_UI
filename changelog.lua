@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+
+v("1.0.8 Wrath", [=[
+    - Fix spellbook issue: Some classes have to many spells
+]=])
+
 v("1.0.7 Wrath", [=[
     - Fix for WoW client update
 ]=])

@@ -1,3 +1,6 @@
+1.0.8-Wrath
+- Fix spellbook issue: Some classes have to many spells
+
 1.0.7-Wrath
 - Fix for WoW client update
 
