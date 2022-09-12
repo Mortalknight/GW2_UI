@@ -5,23 +5,23 @@ local invDurability = {}
 local totalRepairCost
 
 local slots = {
-	[1] = INVTYPE_HEAD,
-	[3] = INVTYPE_SHOULDER,
-	[5] = INVTYPE_CHEST,
-	[6] = INVTYPE_WAIST,
-	[7] = INVTYPE_LEGS,
-	[8] = INVTYPE_FEET,
-	[9] = INVTYPE_WRIST,
-	[10] = INVTYPE_HAND,
-	[16] = INVTYPE_WEAPONMAINHAND,
-	[17] = INVTYPE_WEAPONOFFHAND,
-	[18] = INVTYPE_RANGED,
+    [1] = INVTYPE_HEAD,
+    [3] = INVTYPE_SHOULDER,
+    [5] = INVTYPE_CHEST,
+    [6] = INVTYPE_WAIST,
+    [7] = INVTYPE_LEGS,
+    [8] = INVTYPE_FEET,
+    [9] = INVTYPE_WRIST,
+    [10] = INVTYPE_HAND,
+    [16] = INVTYPE_WEAPONMAINHAND,
+    [17] = INVTYPE_WEAPONOFFHAND,
+    [18] = INVTYPE_RANGED,
 }
 local function collectDurability(self)
     totalDurability = 100
-	totalRepairCost = 0
+    totalRepairCost = 0
 
-	wipe(invDurability)
+    wipe(invDurability)
 
     for idx in pairs(slots) do
         local current, maximum = GetInventoryItemDurability(idx)
@@ -31,8 +31,8 @@ local function collectDurability(self)
             invDurability[idx] = perc
 
             if perc < totalDurability then
-				totalDurability = perc
-			end
+                totalDurability = perc
+            end
 
             totalRepairCost = totalRepairCost + select(3, GW.ScanTooltip:SetInventoryItem("player", idx))
         end
@@ -50,9 +50,9 @@ local function DurabilityTooltip()
     end
 
     if totalRepairCost > 0 then
-		GameTooltip:AddLine(" ")
-		GameTooltip:AddDoubleLine(REPAIR_COST, GetMoneyString(totalRepairCost), 1, 1, 1, 1, 1, 1)
-	end
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddDoubleLine(REPAIR_COST, GetMoneyString(totalRepairCost), 1, 1, 1, 1, 1, 1)
+    end
 
     GameTooltip:Show()
 end
