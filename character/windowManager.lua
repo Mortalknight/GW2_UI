@@ -867,7 +867,7 @@ local function LoadWindows()
                 else
                     nextShadow = false
                 end
-                nextAnchor = (GW.myClassID == 3 or GW.myClassID == 9) and GwCharacterMenu.petMenu or GwCharacterMenu.gearMenu
+                nextAnchor = (GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6) and GwCharacterMenu.petMenu or GwCharacterMenu.gearMenu
                 addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end, true)
                 addAddonButton("GearQuipper-TBC", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() gearquipper:ToggleUI() end, false)
                 addAddonButton("Clique", GetSetting("USE_SPELLBOOK_WINDOW"), nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end, true)
