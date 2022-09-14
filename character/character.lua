@@ -697,6 +697,7 @@ function GwToggleCharacter(tab, onlyShow)
     CHARACTERFRAME_DEFAULTFRAMES["ReputationFrame"] = GwPaperReputation
     CHARACTERFRAME_DEFAULTFRAMES["SkillFrame"] = GwPaperSkills
     CHARACTERFRAME_DEFAULTFRAMES["PetPaperDollFrame"] = GwPetContainer
+    CHARACTERFRAME_DEFAULTFRAMES["TokenFrame"] = GwCurrencyDetailsFrame
 
     if CHARACTERFRAME_DEFAULTFRAMES[tab] ~= nil and CHARACTER_PANEL_OPEN ~= tab  then
         CHARACTER_PANEL_OPEN = tab
@@ -720,6 +721,11 @@ function GwToggleCharacter(tab, onlyShow)
                 GwCharacterWindow:SetAttribute("keytoggle", true)
             end
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdollpet")
+        elseif tab == "TokenFrame" then
+            if not onlyShow then
+                GwCharacterWindow:SetAttribute("keytoggle", true)
+            end
+            GwCharacterWindow:SetAttribute("windowpanelopen", "currency")
         else
             -- PaperDollFrame or any other value
             if not onlyShow then
