@@ -185,13 +185,19 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.titleMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentTitle" parentKey="gearMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate" text="EQUIPMENT_MANAGER" >
+            <Button name="$parentBattleground" parentKey="battlegroundMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate" text="BATTLEGROUND" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.honorMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="PET" >
+            <Button name="$parentTitle" parentKey="gearMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="EQUIPMENT_MANAGER" >
+                <Size x="231" y="36"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.battlegroundMenu" relativePoint="BOTTOMLEFT"></Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="PET" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.gearMenu" relativePoint="BOTTOMLEFT"></Anchor>
@@ -202,6 +208,7 @@
             <OnLoad>
                 self.skillsMenu:SetText(SKILLS)
                 self.honorMenu:SetText(PVP)
+                self.battlegroundMenu:SetText(BATTLEGROUND)
                 self.petMenu:SetText(PET)
                 self.gearMenu:SetText(EQUIPMENT_MANAGER)
             </OnLoad>
@@ -664,6 +671,42 @@
         <Scripts>
             <OnLoad>
                 self.backButton:SetText(CHARACTER .. ": " .. PVP)
+            </OnLoad>
+        </Scripts>
+    </Frame>
+
+    <Frame name="GwPaperBattleground" inherits="SecureHandlerBaseTemplate" hidden="true" virtual="true">
+        <Size x="608" y="621"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="608" y="621"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentBackButton" parentKey="backButton" inherits="GwCharacterMenuButtonBack,SecureHandlerClickTemplate">
+                <Size x="231" y="50"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="-232" y="-10"></Anchor>
+                </Anchors>
+            </Button>
+            <Frame name="$parentBattlegroundDetails" parentKey="BattlegoundDetails" inherits="SecureHandlerBaseTemplate" hidden="true" virtual="true">
+                <Size x="580" y="576"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="-10"></Anchor>
+                </Anchors>
+            </Frame>
+        </Frames>
+        <Scripts>
+            <OnLoad>
+                self.backButton:SetText(CHARACTER .. ": " .. BATTLEGROUND)
             </OnLoad>
         </Scripts>
     </Frame>

@@ -574,7 +574,7 @@ local function abandonProffesionOnEnter(self)
 end
 
 local function LoadPVPTab()
-
+    -- Honor
     for i = 1, PVPFrame:GetNumRegions() do
         local region = select(i, PVPFrame:GetRegions())
         if region:IsObjectType("FontString") then
@@ -628,6 +628,54 @@ local function LoadPVPTab()
 
     PVPTeam3Standard:ClearAllPoints()
     PVPTeam3Standard:SetPoint("LEFT", PVPFrameBackground, "LEFT", 150, -90)
+
+    -- Battleground
+    BattlefieldFrame.Hide = BattlefieldFrame.Show
+    BattlefieldFrame:Show()
+    BattlefieldFrame:SetParent(GwPaperBattleground)
+    BattlefieldFrame:ClearAllPoints()
+    BattlefieldFrame:SetPoint("TOPLEFT", GwPaperBattleground, "TOPLEFT", 0, -40)
+    BattlefieldFrame:SetPoint("BOTTOMRIGHT", GwPaperBattleground, "BOTTOMRIGHT", 0, 8)
+
+
+    BattlefieldFrame:StripTextures()
+    BattlefieldFrameBGTex:Hide()
+
+    BattlefieldFrameCloseButton:Hide()
+
+    BattlefieldFrameFrameLabel:ClearAllPoints()
+    BattlefieldFrameFrameLabel:SetPoint("TOP", BattlefieldFrame, "TOP", 0, 20)
+    BattlefieldFrameFrameLabel:SetFont(UNIT_NAME_FONT, 24)
+    BattlefieldFrameFrameLabel:SetTextColor(1, 1, 1)
+
+    BattlefieldFrameNameHeader:ClearAllPoints()
+    BattlefieldFrameNameHeader:SetPoint("TOPLEFT", BattlefieldFrame, "TOPLEFT", 20, -30)
+    BattlefieldFrameNameHeader:SetFont(UNIT_NAME_FONT, 20)
+    BattlefieldFrameNameHeader:SetTextColor(1, 1, 1)
+
+    WintergraspTimer:ClearAllPoints()
+    WintergraspTimer:SetPoint("RIGHT", BattlefieldFrame, "TOPRIGHT", -20, -0)
+    WintergraspTimer:SetSize(50, 50)
+    WintergraspTimer.texture:SetSize(50, 50)
+
+    hooksecurefunc("PVPBattleground_UpdateBattlegrounds", function()
+        for i = 1, GetNumBattlegroundTypes() do
+            if _G["BattlegroundType" .. i] then
+                _G["BattlegroundType" .. i]:SetSize(560, 20)
+            end
+        end
+    end)
+
+    BattlefieldFrameCancelButton:Hide()
+
+    BattlefieldFrameJoinButton:ClearAllPoints()
+    BattlefieldFrameJoinButton:SetPoint("RIGHT", BattlefieldFrame, "BOTTOMRIGHT", -20, 20)
+
+    BattlefieldFrameJoinButton:SkinButton(false, true)
+    BattlefieldFrameGroupJoinButton:SkinButton(false, true)
+
+    BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoDescription:SetTextColor(1, 1, 1)
+    BattlefieldFrameInfoScrollFrameChildFrameDescription:SetTextColor(1, 1, 1)
 end
 
 function GWupdateSkills()
@@ -805,6 +853,7 @@ local function LoadPaperDoll()
     CreateFrame("Button", "GwDressingRoom", GwCharacterWindowContainer, "GwDressingRoom")
     CreateFrame("Frame", "GwCharacterMenu", GwCharacterWindowContainer, "GwCharacterMenu")
     CreateFrame("Frame", "GwPaperHonor", GwCharacterWindowContainer, "GwPaperHonor")
+    CreateFrame("Frame", "GwPaperBattleground", GwCharacterWindowContainer, "GwPaperBattleground")
     CreateFrame("Frame", "GwPaperSkills", GwCharacterWindowContainer, "GwPaperSkills")
 
     --Legacy pet window
