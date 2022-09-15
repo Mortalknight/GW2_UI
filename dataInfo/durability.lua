@@ -25,7 +25,6 @@ local function collectDurability(self)
 
     for idx in pairs(slots) do
         local current, maximum = GetInventoryItemDurability(idx)
-
         if current and maximum > 0 then
             local perc = (current / maximum) * 100
             invDurability[idx] = perc

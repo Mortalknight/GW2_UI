@@ -30,25 +30,22 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
     end
 end
 
-local function AssignLayoutToSpec(specwin, button, specId, layoutId, setCheckbox)
+local function AssignLayoutToSpec(specwin, button, specId, layoutId, toSet)
     local allLayouts = GW.GetAllLayouts()
     local allPrivateLayouts = GW.GetAllPrivateLayouts()
-    local toSet = button.checkbutton:GetChecked()
     local privateLayoutSettings = GW.GetPrivateLayoutByLayoutId(layoutId)
+
     -- check if that check has already a layout assigned
     if toSet and privateLayoutSettings then
         for j = 0, #allPrivateLayouts do
             if allPrivateLayouts[j] and allPrivateLayouts[j].layoutId ~= privateLayoutSettings.layoutId then
                 if allPrivateLayouts[j].assignedSpecs[specId] then
                     DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Spec is already assigned to a layout!"]):gsub("*", GW.Gw2Color))
+                    button.checkbutton:SetChecked(false)
                     return
                 end
             end
         end
-    end
-
-    if setCheckbox then
-        toSet = not button.checkbutton:GetChecked()
     end
 
     button.checkbutton:SetChecked(toSet)
@@ -136,11 +133,19 @@ local function SetupSpecs(specwin)
         slot.string:SetFont(UNIT_NAME_FONT, 10)
         slot.hover:SetAlpha(0.5)
         if not slot.ScriptsHooked then
-            slot:HookScript("OnClick", function(self)
-                AssignLayoutToSpec(specwin, self, self.specIdx, specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId, true)
+            slot:HookScript("OnClick", function()
+                local toSet = true
+                if slot.checkbutton:GetChecked() then
+                    toSet = false
+                end
+                AssignLayoutToSpec(specwin, slot, slot.specIdx, specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId, toSet)
             end)
-            slot.checkbutton:HookScript("OnClick", function(self)
-                AssignLayoutToSpec(specwin, self:GetParent(), self:GetParent().specIdx, specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId, false)
+            slot.checkbutton:HookScript("OnClick", function()
+                local toSet = false
+                if slot.checkbutton:GetChecked() then
+                    toSet = true
+                end
+                AssignLayoutToSpec(specwin, slot, slot.specIdx, specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId, toSet)
             end)
             slot:HookScript("OnEnter", function()
                 slot.hover:Show()

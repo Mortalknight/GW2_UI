@@ -75,6 +75,17 @@ StaticPopupDialogs["GW_CHANGE_PROFILE_NAME"] = {
         profileToRename["profileLastUpdated"] = changeDate
         data.name:SetText(text)
         data.desc:SetText(description)
+
+        -- rename also all "attached" layouts
+        local allLayouts = GW.GetAllLayouts()
+        for i = 0, #allLayouts do
+            if allLayouts[i] and allLayouts[i].profileId == data.profileID then
+                GW2UI_LAYOUTS[i].name = text
+                GW2UI_LAYOUTS[i].name = L["Profiles"] .. " - " .. text
+                GwSmallSettingsWindow.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsWindow.layoutView.savedLayoutDropDown.container.contentScroll)
+                break
+            end
+        end
     end,
     OnButton2 = function() end,
     timeout = 0,
