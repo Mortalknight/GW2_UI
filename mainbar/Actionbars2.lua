@@ -718,7 +718,6 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
         elseif barName == "MultiBarBottomRight" then
             fmMultibar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs - xOff, framePoint.yOfs - yOff)
         end
-        print(barName)
     end
 
     -- set fader logic
