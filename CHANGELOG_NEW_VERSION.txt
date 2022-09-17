@@ -1,6 +1,4 @@
-1.0.5-Wrath
-- Fix unitframes lua error
-
-1.0.4-Wrath
-- Added DK Pet UI
-- Added totem timers
+1.0.9-Wrath
+- Fix DK pet button overlapping
+- Added bag currencybutton function
+- Added battleground tab to heropanel

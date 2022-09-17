@@ -422,7 +422,7 @@ local function setupMicroButtons(mbf)
             [=[
             local f = self:GetFrameRef("GwCharacterWindow")
             f:SetAttribute("keytoggle", "1")
-            f:SetAttribute("windowpanelopen", "paperdollhonor")
+            f:SetAttribute("windowpanelopen", "pvp")
             ]=]
         )
 
@@ -441,7 +441,6 @@ local function setupMicroButtons(mbf)
     MainMenuMicroButton:ClearAllPoints()
     MainMenuMicroButton:SetPoint("BOTTOMLEFT", LFGMicroButton, "BOTTOMRIGHT", 4, 0)
     MainMenuBarPerformanceBar:Hide()
-    MainMenuBarDownload:Hide()
     MainMenuMicroButton:HookScript(
         "OnUpdate",
         function()

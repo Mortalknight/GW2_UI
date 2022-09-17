@@ -1,6 +1,25 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.0.9 Wrath", [=[
+    - Fix DK pet button overlapping
+    - Added bag currencybutton function
+    - Added battleground tab to heropanel
+]=])
+
+v("1.0.8 Wrath", [=[
+    - Fix spellbook issue: Some classes have to many spells
+]=])
+
+v("1.0.7 Wrath", [=[
+    - Fix for WoW client update
+]=])
+
+v("1.0.6 Wrath", [=[
+    - Fix shaman classpower issue
+    - Added DK talent bg
+]=])
+
 v("1.0.5 Wrath", [=[
     - Fix unitframes lua error
 ]=])

@@ -717,12 +717,12 @@ local function updateSpellbookTab()
             setUpPaging(_G['GwSpellbookContainerTab' .. spellBookTabs])
         end
 
-        for i = boxIndex, 100 do
+        for i = boxIndex, 300 do
             _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. i]:SetAlpha(0)
             _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. i]:EnableMouse(false)
             _G['GwSpellbookTab' .. spellBookTabs .. 'Actionbutton' .. boxIndex]:SetScript('OnEvent', nil)
         end
-        for i = SpellbookHeaderIndex + 1, 100 do
+        for i = SpellbookHeaderIndex + 1, 300 do
             if _G['GwSpellbookContainerTab' .. spellBookTabs .. 'GwSpellbookActionBackground' .. i] then
                 _G['GwSpellbookContainerTab' .. spellBookTabs .. 'GwSpellbookActionBackground' .. i]:Hide()
             end
@@ -796,7 +796,7 @@ local function LoadSpellBook()
         local line = 0
         local x = 0
         local y = 0
-        for i = 1, 100 do
+        for i = 1, 300 do
             local f = CreateFrame('Button', 'GwSpellbookTab' .. tab .. 'Actionbutton' .. i, container.container1, 'GwSpellbookActionbutton')
             local mask = UIParent:CreateMaskTexture()
             mask:SetPoint("CENTER", f, 'CENTER', 0, 0)
