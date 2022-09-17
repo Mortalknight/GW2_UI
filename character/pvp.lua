@@ -151,7 +151,7 @@ local function LoadPvp()
     fmMenu.items.pvp:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
 
     PVPParentFrame:HookScript("OnShow", function()
-        PVPParentFrame:Hide()
+        TogglePVPFrame()
         if not InCombatLockdown() then
             ToggleCharacter("PvpFrame")
         end
