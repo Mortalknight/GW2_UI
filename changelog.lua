@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.0.10 Wrath", [=[
+    - Tweak pvp window and fix some bugs
+]=])
+
 v("1.0.9 Wrath", [=[
     - Fix DK pet button overlapping
     - Added bag currencybutton function
