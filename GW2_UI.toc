@@ -161,6 +161,8 @@ character\mounts.lua
 character\critter.lua
 character\currency.xml
 character\currency.lua
+character\pvp.xml
+character\pvp.lua
 character\windowManager.lua
 
 immersive\skins\skins.xml

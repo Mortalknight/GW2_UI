@@ -3,21 +3,6 @@ local CommaValue = GW.CommaValue
 
 local BAG_CURRENCY_SIZE = 32
 
-local function CharacterMenuButton_OnLoad(self, odd)
-    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-    if not odd then
-        self:SetNormalTexture(nil)
-    else
-        self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
-    end
-    self:GetFontString():SetTextColor(1, 1, 1, 1)
-    self:GetFontString():SetShadowColor(0, 0, 0, 0)
-    self:GetFontString():SetShadowOffset(1, -1)
-    self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14)
-    self:GetFontString():SetJustifyH("LEFT")
-    self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
-end
-
 local function checkNumWatched()
     local numWatched = 0
 
@@ -329,8 +314,8 @@ local function LoadCurrency()
     item:SetPoint("TOPLEFT", fmMenu.items["currency"], "BOTTOMLEFT")
     fmMenu.items["raidinfo"] = item
 
-    CharacterMenuButton_OnLoad(fmMenu.items["currency"], false)
-    CharacterMenuButton_OnLoad(fmMenu.items["raidinfo"], true)
+    GW.CharacterMenuButton_OnLoad(fmMenu.items["currency"], false)
+    GW.CharacterMenuButton_OnLoad(fmMenu.items["raidinfo"], true)
 
     fmMenu.items["currency"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
 

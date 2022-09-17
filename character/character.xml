@@ -179,22 +179,10 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.skillsMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentHonor" parentKey="honorMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="PVP" >
-                <Size x="231" y="36"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.titleMenu" relativePoint="BOTTOMLEFT"></Anchor>
-                </Anchors>
-            </Button>
-            <Button name="$parentBattleground" parentKey="battlegroundMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate" text="BATTLEGROUND" >
-                <Size x="231" y="36"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.honorMenu" relativePoint="BOTTOMLEFT"></Anchor>
-                </Anchors>
-            </Button>
             <Button name="$parentTitle" parentKey="gearMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="EQUIPMENT_MANAGER" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativeKey="$parent.battlegroundMenu" relativePoint="BOTTOMLEFT"></Anchor>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.titleMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
             <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="PET" >
@@ -207,8 +195,6 @@
         <Scripts>
             <OnLoad>
                 self.skillsMenu:SetText(SKILLS)
-                self.honorMenu:SetText(PVP)
-                self.battlegroundMenu:SetText(BATTLEGROUND)
                 self.petMenu:SetText(PET)
                 self.gearMenu:SetText(EQUIPMENT_MANAGER)
             </OnLoad>

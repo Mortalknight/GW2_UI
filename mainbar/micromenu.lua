@@ -422,7 +422,7 @@ local function setupMicroButtons(mbf)
             [=[
             local f = self:GetFrameRef("GwCharacterWindow")
             f:SetAttribute("keytoggle", "1")
-            f:SetAttribute("windowpanelopen", "paperdollhonor")
+            f:SetAttribute("windowpanelopen", "pvp")
             ]=]
         )
 
