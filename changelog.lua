@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.0.11 Wrath", [=[
+    - Update future spells
+]=])
+
 v("1.0.10 Wrath", [=[
     - Tweak pvp window and fix some bugs
 ]=])
