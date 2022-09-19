@@ -414,7 +414,7 @@ local function isHigherRankKnownAndThisNot(spellId)
         if GW.Skills[GW.myclass][i] then
             for _ ,reqData in pairs(GW.Skills[GW.myclass][i]) do
                 if spellId == reqData.req then
-                    if (IsPlayerSpell(reqData[1]) or IsSpellKnown(reqData[1])) and (not IsPlayerSpell(spellId) or not IsSpellKnown(spellId)) then                
+                    if (IsPlayerSpell(reqData[1]) or IsSpellKnown(reqData[1])) and (not IsPlayerSpell(spellId) or not IsSpellKnown(spellId)) then
                         return true
                     else
                         return isHigherRankKnownAndThisNot(reqData[1])
@@ -426,53 +426,37 @@ local function isHigherRankKnownAndThisNot(spellId)
     return false
 end
 
-local function isAnyDependencieKnown(spellData, level)
-    local neededReq, found = spellData.req, false
-    for i = level - 1, 1, -1 do
-        if GW.Skills[GW.myclass][i] then
-            for _ ,reqData in pairs(GW.Skills[GW.myclass][i]) do
-                if reqData[1] == neededReq then
-                    found = true
-                    if IsPlayerSpell(spellData[1]) or IsSpellKnown(spellData[1]) then
-                        return true
-                    else
-                        neededReq = reqData.req and reqData.req or nil
-                    end
-                end
-            end
-        end
-    end
-
-    if not found then
-        if IsPlayerSpell(spellData.req) or IsSpellKnown(spellData.req) then return true end
-    end
+local function isAnyDependencieKnown(spellData)
+    if IsPlayerSpell(spellData[1]) or IsSpellKnown(spellData[1]) or IsSpellKnownOrOverridesKnown(spellData[1]) then return true end
+    if IsPlayerSpell(spellData.req) or IsSpellKnown(spellData.req) or IsSpellKnownOrOverridesKnown(spellData.req) then return true end
 
     return false
 end
 
-local function filterUnknownSpell(spellData, level)
+local function filterUnknownSpell(spellData)
     local show, isHigherKnownAndThisNot = true, isHigherRankKnownAndThisNot(spellData[1])
 
     if spellData.faction then
         if spellData.faction ~= GW.myfaction then
-            show = false
+            return false
         end
-    elseif spellData.race then
+    end
+
+    if spellData.race then
         if type(spellData.race) == "table" then
-            local ourRace = true
             for _, v in pairs(spellData.race) do
                 if v ~= GW.myrace then
-                    ourRace = false
-                    break
+                    return false
                 end
-                show = ourRace
             end
         else
             if spellData.race ~= GW.myrace then
-                show = false
+                return false
             end
         end
-    elseif spellData.req then
+    end
+
+    if spellData.req then
         if isHigherKnownAndThisNot then
             show = false
         else
@@ -480,12 +464,13 @@ local function filterUnknownSpell(spellData, level)
             local isTalent, learned = depIsTalentAndLearned(name)
             if isTalent then
                 show = learned
+            else
+                show = not (IsPlayerSpell(spellData[1]) or IsSpellKnown(spellData[1]) or IsSpellKnownOrOverridesKnown(spellData[1])) and isAnyDependencieKnown(spellData)
             end
-            show = not isAnyDependencieKnown(spellData, level) and (not isTalent or learned)
         end
     elseif isHigherKnownAndThisNot then
         show = false
-    elseif IsSpellKnown(spellData[1]) or IsPlayerSpell(spellData[1]) then
+    elseif IsSpellKnown(spellData[1]) or IsPlayerSpell(spellData[1]) or IsSpellKnownOrOverridesKnown(spellData[1]) then
         show = false
     end
 
@@ -515,21 +500,23 @@ local function updateUnknownTab()
     local x = 10
     local y = 50
 
-    for i = 1, 70 do
+    for i = 1, 80 do
         local buttons = {}
 
         if GW.Skills[GW.myclass][i] then
             for _ ,SpellData in pairs(GW.Skills[GW.myclass][i]) do
-                if filterUnknownSpell(SpellData, i) then
-                local f =  getUnknownSpellItem(SPELL_INDEX)
-                f:Show()
-                local _, _, icon =  GetSpellInfo(SpellData[1])
-                local ispassive = IsPassiveSpell(SpellData[1])
+                if filterUnknownSpell(SpellData) then
+                    local f = getUnknownSpellItem(SPELL_INDEX)
+                    f:Show()
+                    local _, _, icon =  GetSpellInfo(SpellData[1])
+                    local ispassive = IsPassiveSpell(SpellData[1])
+                    SpellData.rank = GetSpellSubtext(SpellData[1])
+                    SpellData.rank = SpellData.rank and SpellData.rank:gsub(RANK, "") or ""
 
-                buttons[#buttons + 1] = f
-                setUnknowSpellButton(f, icon, SpellData[1], SpellData.rank and SpellData.rank or nil, ispassive, i, SpellData[2])
+                    buttons[#buttons + 1] = f
+                    setUnknowSpellButton(f, icon, SpellData[1], SpellData.rank and SpellData.rank or nil, ispassive, i, SpellData[2])
 
-                SPELL_INDEX = SPELL_INDEX + 1
+                    SPELL_INDEX = SPELL_INDEX + 1
                 end
             end
         end
