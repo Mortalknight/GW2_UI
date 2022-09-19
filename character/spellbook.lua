@@ -414,7 +414,7 @@ local function isHigherRankKnownAndThisNot(spellId)
         if GW.Skills[GW.myclass][i] then
             for _ ,reqData in pairs(GW.Skills[GW.myclass][i]) do
                 if spellId == reqData.req then
-                    if (IsPlayerSpell(reqData[1]) or IsSpellKnown(reqData[1])) and (not IsPlayerSpell(spellId) or not IsSpellKnown(spellId)) then
+                    if (IsPlayerSpell(reqData[1]) or IsSpellKnown(reqData[1]) or IsSpellKnownOrOverridesKnown(reqData[1])) and (not IsPlayerSpell(spellId) or not IsSpellKnown(spellId) or not IsSpellKnownOrOverridesKnown(spellId)) then
                         return true
                     else
                         return isHigherRankKnownAndThisNot(reqData[1])
