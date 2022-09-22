@@ -1,2 +1,2 @@
-1.0.11-Wrath
-- Update future spells
+1.0.12-Wrath
+- Fix for WoW client update
