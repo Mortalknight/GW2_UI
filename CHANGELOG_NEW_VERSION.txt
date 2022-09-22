@@ -1,2 +1,2 @@
-1.0.12-Wrath
-- Fix for WoW client update
+1.0.13-Wrath
+- Fix taint error

@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.0.13 Wrath", [=[
+    - Fix taint error
+]=])
+
 v("1.0.12 Wrath", [=[
     - Fix for WoW client update
 ]=])
