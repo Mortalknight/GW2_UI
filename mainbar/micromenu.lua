@@ -386,9 +386,12 @@ local function setupMicroButtons(mbf)
     end
 
     -- AchievementMicroButton
-    AchievementMicroButton:ClearAllPoints()
-    AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
-    AchievementMicroButton.SetPoint = GW.NoOp
+    hooksecurefunc(AchievementMicroButton, "SetPoint", function(_, _, parent)
+        if parent ~= tref then
+            AchievementMicroButton:ClearAllPoints()
+            AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
+        end
+    end)
 
     -- QuestLogMicroButton
     QuestLogMicroButton:ClearAllPoints()
