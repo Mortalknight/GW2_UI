@@ -185,7 +185,7 @@ local function powerRune(self)
                 function()
                     fFill:SetTexCoord(0.5, 1, 1 - animations[animId].progress, 1)
                     fFill:SetHeight(32 * animations[animId].progress)
-                    fFill:SetVertexColor(1, 0.6 * animations[animId].progress, 0.6 * animations[animId].progress)
+                    fFill:SetVertexColor(0.6 * animations[animId].progress, 0.6 * animations[animId].progress, 0.6 * animations[animId].progress)
                 end,
                 "noease",
                 function()
