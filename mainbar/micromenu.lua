@@ -387,7 +387,17 @@ local function setupMicroButtons(mbf)
 
     -- AchievementMicroButton
     hooksecurefunc(AchievementMicroButton, "SetPoint", function(_, _, parent)
-        if parent ~= tref then
+        if parent ~= tref and InCombatLockdown() then
+            mbf:GetParent():RegisterEvent("PLAYER_REGEN_ENABLED")
+
+            mbf:GetParent():SetScript("OnEvent", function()
+                AchievementMicroButton:ClearAllPoints()
+                AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
+
+                mbf:GetParent():UnregisterEvent("PLAYER_REGEN_ENABLED")
+                mbf:GetParent():SetScript("OnEvent", nil)
+            end)
+        elseif parent ~= tref and not InCombatLockdown() then
             AchievementMicroButton:ClearAllPoints()
             AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
         end
@@ -599,8 +609,20 @@ local function LoadMicroMenu()
             m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
             m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
 
-            QuestLogMicroButton:ClearAllPoints()
-            QuestLogMicroButton:SetPoint("BOTTOMLEFT", AchievementMicroButton, "BOTTOMRIGHT", 4, 0)
+            if InCombatLockdown() then
+                mbf:RegisterEvent("PLAYER_REGEN_ENABLED")
+
+                mbf:SetScript("OnEvent", function()
+                    QuestLogMicroButton:ClearAllPoints()
+                    QuestLogMicroButton:SetPoint("BOTTOMLEFT", AchievementMicroButton, "BOTTOMRIGHT", 4, 0)
+
+                    mbf:UnregisterEvent("PLAYER_REGEN_ENABLED")
+                    mbf:SetScript("OnEvent", nil)
+                end)
+            else
+                QuestLogMicroButton:ClearAllPoints()
+                QuestLogMicroButton:SetPoint("BOTTOMLEFT", AchievementMicroButton, "BOTTOMRIGHT", 4, 0)
+            end
         end
     )
 
