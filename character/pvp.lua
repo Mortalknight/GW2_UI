@@ -80,10 +80,12 @@ local function LoadBattlegroundFrame(battlegroundFrame)
     BattlefieldFrameNameHeader:SetFont(UNIT_NAME_FONT, 20)
     BattlefieldFrameNameHeader:SetTextColor(1, 1, 1)
 
-    WintergraspTimer:ClearAllPoints()
-    WintergraspTimer:SetPoint("RIGHT", BattlefieldFrame, "TOPRIGHT", -20, -0)
-    WintergraspTimer:SetSize(50, 50)
-    WintergraspTimer.texture:SetSize(50, 50)
+    if WintergraspTimer then
+        WintergraspTimer:ClearAllPoints()
+        WintergraspTimer:SetPoint("RIGHT", BattlefieldFrame, "TOPRIGHT", -20, -0)
+        WintergraspTimer:SetSize(50, 50)
+        WintergraspTimer.texture:SetSize(50, 50)
+    end
 
     hooksecurefunc("PVPBattleground_UpdateBattlegrounds", function()
         for i = 1, GetNumBattlegroundTypes() do

@@ -1,6 +1,22 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.0.13 Wrath", [=[
+    - Fix taint error
+]=])
+
+v("1.0.12 Wrath", [=[
+    - Fix for WoW client update
+]=])
+
+v("1.0.11 Wrath", [=[
+    - Update future spells
+]=])
+
+v("1.0.10 Wrath", [=[
+    - Tweak pvp window and fix some bugs
+]=])
+
 v("1.0.9 Wrath", [=[
     - Fix DK pet button overlapping
     - Added bag currencybutton function

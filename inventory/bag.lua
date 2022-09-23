@@ -877,7 +877,6 @@ local function LoadBag(helpers)
             "OnClick",
             function()
                 local newStatus = not GetSetting("SORT_BAGS_RIGHT_TO_LEFT")
-                GW.SetSortBagsRightToLeft(newStatus)
                 dd.sortOrder.checkbutton:SetChecked(newStatus)
                 SetSetting("SORT_BAGS_RIGHT_TO_LEFT", newStatus)
                 dd:Hide()
