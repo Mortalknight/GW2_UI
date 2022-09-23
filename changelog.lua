@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.0.14 Wrath", [=[
+    - Added DK death runes
+]=])
+
 v("1.0.13 Wrath", [=[
     - Fix taint error
 ]=])
