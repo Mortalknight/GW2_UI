@@ -126,6 +126,16 @@ end
 
 
 -- DEATHKNIGHT
+local RUNETYPE_BLOOD = 1
+local RUNETYPE_FROST = 2
+local RUNETYPE_UNHOLY = 3
+local RUNETYPE_DEATH = 4
+
+local iconTextures = {}
+iconTextures[RUNETYPE_BLOOD] = "Interface/AddOns/GW2_UI/textures/altpower/runes-blood"
+iconTextures[RUNETYPE_FROST] = "Interface/AddOns/GW2_UI/textures/altpower/runes"
+iconTextures[RUNETYPE_UNHOLY] = "Interface/AddOns/GW2_UI/textures/altpower/runes-unholy"
+iconTextures[RUNETYPE_DEATH] = "Interface/AddOns/GW2_UI/textures/altpower/runes-death"
 local RUNE_TIMER_ANIMATIONS = {}
 RUNE_TIMER_ANIMATIONS[1] = 0
 RUNE_TIMER_ANIMATIONS[2] = 0
@@ -138,13 +148,21 @@ local function powerRune(self)
     local fr = self.runeBar
     for i = 1, 6 do
         local rune_start, rune_duration, rune_ready = GetRuneCooldown(i)
+        local runeType = GetRuneType(i)
+        local fFill = fr["runeTexFill" .. i]
+        local fTex = fr["runeTex" .. i]
+        local animId = "RUNE_TIMER_ANIMATIONS" .. i
+
         if rune_start == nil then
             rune_start = GetTime()
             rune_duration = 0
         end
-        local fFill = fr["runeTexFill" .. i]
-        local fTex = fr["runeTex" .. i]
-        local animId = "RUNE_TIMER_ANIMATIONS" .. i
+
+        if runeType then
+            fFill:SetTexture(iconTextures[runeType])
+            fTex:SetTexture(iconTextures[runeType])
+        end
+
         if rune_ready and fFill then
             fFill:SetTexCoord(0.5, 1, 0, 1)
             fFill:SetHeight(32)
@@ -203,6 +221,7 @@ local function setDeathKnight(f)
     f:SetScript("OnEvent", powerRune)
     powerRune(f)
     f:RegisterEvent("RUNE_POWER_UPDATE")
+    f:RegisterEvent("RUNE_TYPE_UPDATE")
 
     return true
 end
