@@ -640,6 +640,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
         fmMultibar:SetFrameStrata("LOW")
     end
     fmMultibar.gw_Buttons = {}
+    fmMultibar.originalBarName = barName
 
     local hideActionBarBG = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
     for i = 1, 12 do
