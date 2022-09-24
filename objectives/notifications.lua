@@ -9,6 +9,7 @@ local questCompass = {}
 
 local icons = {
     QUEST = {tex = "icon-objective", l = 0, r = 1, t = 0.25, b = 0.5},
+    BOSS = {tex = "icon-boss", l = 0, r = 1, t = 0, b = 1},
     DEAD = {tex = "party/icon-dead", l = 0, r = 1, t = 0, b = 1},
 }
 

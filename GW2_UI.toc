@@ -181,3 +181,4 @@ objectives\minimapButtons.lua
 objectives\objectives.lua
 objectives\notifications.lua
 objectives\achievement.lua
+objectives\bossFrames.lua

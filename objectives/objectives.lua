@@ -638,7 +638,8 @@ local function updateQuestItemPositions(height, block)
     if not block.actionButton or not block.hasItem then
         return
     end
-    height = height + GwQuesttrackerContainerAchievement:GetHeight()
+
+    height = height + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerBossFrames:GetHeight()
     if GwObjectivesNotification:IsShown() then
         height = height + GwObjectivesNotification.desc:GetHeight()
     else
@@ -1139,14 +1140,17 @@ local function LoadQuestTracker()
     fNotify.desc:SetShadowOffset(1, -1)
     fNotify.compass:SetScript("OnShow", NewQuestAnimation)
 
+    local fBoss = CreateFrame("Frame", "GwQuesttrackerContainerBossFrames", fTracker, "GwQuesttrackerContainer")
     local fAchv = CreateFrame("Frame", "GwQuesttrackerContainerAchievement", fTracker, "GwQuesttrackerContainer")
     local fQuest = CreateFrame("Frame", "GwQuesttrackerContainerQuests", fScroll, "GwQuesttrackerContainer")
 
     fNotify:SetParent(fTracker)
+    fBoss:SetParent(fTracker)
     fQuest:SetParent(fScroll)
     fAchv:SetParent(fScroll)
 
     fNotify:SetPoint("TOPRIGHT", fTracker, "TOPRIGHT")
+    fBoss:SetPoint("TOPRIGHT", fNotify, "BOTTOMRIGHT")
 
     fTraScr:SetPoint("TOPRIGHT", fNotify, "BOTTOMRIGHT")
     fTraScr:SetPoint("BOTTOMRIGHT", fTracker, "BOTTOMRIGHT")
@@ -1201,6 +1205,7 @@ local function LoadQuestTracker()
     fQuest.init = false
     tracker_OnEvent(fQuest)
 
+    GW.LoadBossFrame()
     GW.LoadAchievementFrame()
     fQuest.init = true
 
@@ -1296,6 +1301,7 @@ local function LoadQuestTracker()
     end
 
 
+    hooksecurefunc(fBoss, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
     fNotify:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
     fNotify:HookScript("OnHide", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
     hooksecurefunc(fAchv, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)

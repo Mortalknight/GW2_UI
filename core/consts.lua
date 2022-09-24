@@ -206,6 +206,8 @@ local indicatorsText = {"Bar", "Top Left", "Top", "Top Right", "Left", "Center",
 GW.INDICATORS = INDICATORS
 GW.indicatorsText = indicatorsText
 
+GW.bossFrameExtraEnergyBar = {}
+
 -- Taken from ElvUI: https://git.tukui.org/elvui/elvui/blob/master/ElvUI/Settings/Filters/UnitFrame.lua
 -- Format: {class = {id = {r, g, b[, <spell-id-same-slot>]} ...}, ...}
 local AURAS_INDICATORS = {
