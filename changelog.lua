@@ -1,6 +1,13 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.1.0 Wrath", [=[
+    - Added boss frames
+    - Added arena frames
+    - Added role icons to party and raid
+    - Added option to set buttons per row for each action bar right (1 and 2)
+]=])
+
 v("1.0.14 Wrath", [=[
     - Added DK death runes
 ]=])
