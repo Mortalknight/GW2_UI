@@ -256,6 +256,7 @@ GW_DEFAULT["MultiBarBottomRight"]["ButtonsPerRow"] = 6
 GW_DEFAULT["MultiBarBottomRight"]["hideDefaultBackground"] = true
 
 GW_DEFAULT["MULTIBAR_RIGHT_COLS"] = 1
+GW_DEFAULT["MULTIBAR_RIGHT_COLS_2"] = 2
 
 GW_DEFAULT["StanceBar_pos"] = {}
 GW_DEFAULT["StanceBar_pos"]["point"] = "BOTTOMLEFT"

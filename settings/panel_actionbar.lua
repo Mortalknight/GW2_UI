@@ -10,15 +10,14 @@ local InitPanel = GW.InitPanel
 local StrUpper = GW.StrUpper
 local AddForProfiling = GW.AddForProfiling
 
-local function setMultibarCols()
-    local cols = GetSetting("MULTIBAR_RIGHT_COLS")
-    GW:Debug("setting multibar cols", cols)
-    local mb1 = GetSetting("MultiBarRight")
-    local mb2 = GetSetting("MultiBarLeft")
-    mb1["ButtonsPerRow"] = cols
-    mb2["ButtonsPerRow"] = cols
-    SetSetting("MultiBarRight", mb1)
-    SetSetting("MultiBarLeft", mb2)
+local function setMultibarCols(barName, setting)
+    local mb = GetSetting(barName)
+    local cols = GetSetting(setting)
+    GW:Debug("setting multibar colsfor bar ", barName, "to", cols)
+
+    mb["ButtonsPerRow"] = cols
+    SetSetting(barName, mb)
+    --#regionto update the cols
     GW.UpdateMultibarButtonMargin()
 end
 AddForProfiling("panel_actionbar", "setMultibarCols", setMultibarCols)
@@ -121,7 +120,24 @@ local function LoadActionbarPanel(sWindow)
         L["Right Bar Width"],
         L["Number of columns in the two extra right-hand action bars."],
         "MULTIBAR_RIGHT_COLS",
-        setMultibarCols,
+        function()
+            setMultibarCols("MultiBarRight", "MULTIBAR_RIGHT_COLS")
+        end,
+        {1, 2, 3, 4, 6, 12},
+        {"1", "2", "3", "4", "6", "12"},
+        nil,
+        {["ACTIONBARS_ENABLED"] = true},
+        nil,
+        "Actionbars"
+    )
+    addOptionDropdown(
+        p,
+        L["Right Bar 2 Width"],
+        L["Number of columns in the two extra right-hand action bars."],
+        "MULTIBAR_RIGHT_COLS_2",
+        function()
+            setMultibarCols("MultiBarLeft", "MULTIBAR_RIGHT_COLS_2")
+        end,
         {1, 2, 3, 4, 6, 12},
         {"1", "2", "3", "4", "6", "12"},
         nil,
