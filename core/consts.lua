@@ -30,6 +30,13 @@ PowerBarColorCustom["AMMOSLOT"] = {r = 0.80, g = 0.60, b = 0.00}
 PowerBarColorCustom["FUEL"] = {r = 0.0, g = 0.55, b = 0.5}
 PowerBarColorCustom["STAGGER"] = {r = 0.52, g = 1.0, b = 0.52}
 
+GW.nameRoleIcon = {
+    TANK = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank:0:0:0:0:64:64:4:60:4:60|t ",
+    HEALER = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-healer:0:0:0:0:64:64:4:60:4:60|t ",
+    DAMAGER = "|TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:0:0:0:0:64:64:4:60:4:60|t ",
+    NONE = ""
+}
+
 local DEBUFF_COLOR = {}
 GW.DEBUFF_COLOR = DEBUFF_COLOR
 DEBUFF_COLOR["none"] = {r = 220 / 255, g = 0, b = 0}

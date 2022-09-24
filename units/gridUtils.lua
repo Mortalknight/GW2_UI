@@ -11,6 +11,7 @@ local INDICATORS = GW.INDICATORS
 local AURAS_INDICATORS = GW.AURAS_INDICATORS
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local AddToClique = GW.AddToClique
+local nameRoleIcon = GW.nameRoleIcon
 
 local missing, ignored = {}, {}
 local spellIDs = {}
@@ -223,11 +224,16 @@ local function GridSetUnitName(self, profile)
     end
 
     local nameString = UnitName(self.unit)
+    local role = UnitGroupRolesAssigned(self.unit)
 
     if not nameString or nameString == UNKNOWNOBJECT then
         self.nameNotLoaded = false
     else
         self.nameNotLoaded = true
+    end
+
+    if nameRoleIcon[role] then
+        nameString = nameRoleIcon[role] .. nameString
     end
 
     if UnitIsGroupLeader(self.unit) then

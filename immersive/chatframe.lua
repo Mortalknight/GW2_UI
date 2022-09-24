@@ -39,7 +39,12 @@ local tabTexs = {
     "Highlight"
 }
 
-local gw_fade_frames = {}
+local gw_fade_frames = {
+    GeneralDockManager,
+    ChatFrameChannelButton,
+    ChatFrameToggleVoiceDeafenButton,
+    ChatFrameToggleVoiceMuteButton
+}
 
 local function colorizeLine(text, r, g, b)
     local hexCode = GW.RGBToHex(r, g, b)
@@ -678,13 +683,6 @@ local function LoadChat()
     hooksecurefunc("FCF_FadeOutChatFrame", handleChatFrameFadeOut)
     hooksecurefunc("FCF_FadeInChatFrame", handleChatFrameFadeIn)
     hooksecurefunc("FCFTab_UpdateColors", setChatBackgroundColor)
-
-    gw_fade_frames = {
-        GeneralDockManager,
-        ChatFrameChannelButton,
-        ChatFrameToggleVoiceDeafenButton,
-        ChatFrameToggleVoiceMuteButton
-    }
 
     for _, frameName in ipairs(CHAT_FRAMES) do
         local frame = _G[frameName]

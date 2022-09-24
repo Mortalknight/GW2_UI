@@ -9,6 +9,7 @@ local SetClassIcon = GW.SetClassIcon
 local AddToClique = GW.AddToClique
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
+local nameRoleIcon = GW.nameRoleIcon
 
 local GW_PORTRAIT_BACKGROUND = {
     [1] = {l = 0, r = 0.828, t = 0, b = 0.166015625},
@@ -295,12 +296,17 @@ end
 GW.AddForProfiling("party", "updatePartyAuras", updatePartyAuras)
 
 local function setUnitName(self)
+    local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
 
     if not nameString or nameString == UNKNOWNOBJECT then
         self.nameNotLoaded = false
     else
         self.nameNotLoaded = true
+    end
+
+    if role and nameRoleIcon[role] ~= nil then
+        nameString = nameRoleIcon[role] .. nameString
     end
 
     if UnitIsGroupLeader(self.unit) then
