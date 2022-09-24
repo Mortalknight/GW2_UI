@@ -182,3 +182,4 @@ objectives\objectives.lua
 objectives\notifications.lua
 objectives\achievement.lua
 objectives\bossFrames.lua
+objectives\arenaFrames.lua

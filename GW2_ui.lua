@@ -675,6 +675,11 @@ local function gw_OnEvent(self, event, ...)
         if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
             PixelPerfection()
         end
+        C_Timer.After(0.5, function()
+            if UnitInBattleground("player") == nil and not IsActiveBattlefieldArena() then
+                GW.RemoveTrackerNotificationOfType("ARENA")
+            end
+        end)
     elseif event == "PLAYER_LEVEL_UP" then
         GW.mylevel = ...
         Debug("New level:", GW.mylevel)

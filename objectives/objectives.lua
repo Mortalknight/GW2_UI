@@ -639,7 +639,7 @@ local function updateQuestItemPositions(height, block)
         return
     end
 
-    height = height + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerBossFrames:GetHeight()
+    height = height + GwQuesttrackerContainerAchievement:GetHeight() + GwQuesttrackerContainerBossFrames:GetHeight() + GwQuesttrackerContainerArenaBGFrames:GetHeight()
     if GwObjectivesNotification:IsShown() then
         height = height + GwObjectivesNotification.desc:GetHeight()
     else
@@ -1007,6 +1007,7 @@ local function tracker_OnUpdate()
         GW.NotificationStateChanged(GwObjectivesNotification.shouldDisplay)
     end
 end
+GW.forceCompassHeaderUpdate = tracker_OnUpdate
 GW.AddForProfiling("objectives", "tracker_OnUpdate", tracker_OnUpdate)
 
 local _RemoveQuestWatch = function(index, isGW2)
@@ -1141,18 +1142,21 @@ local function LoadQuestTracker()
     fNotify.compass:SetScript("OnShow", NewQuestAnimation)
 
     local fBoss = CreateFrame("Frame", "GwQuesttrackerContainerBossFrames", fTracker, "GwQuesttrackerContainer")
+    local fArenaBG = CreateFrame("Frame", "GwQuesttrackerContainerArenaBGFrames", fTracker, "GwQuesttrackerContainer")
     local fAchv = CreateFrame("Frame", "GwQuesttrackerContainerAchievement", fTracker, "GwQuesttrackerContainer")
     local fQuest = CreateFrame("Frame", "GwQuesttrackerContainerQuests", fScroll, "GwQuesttrackerContainer")
 
     fNotify:SetParent(fTracker)
     fBoss:SetParent(fTracker)
+    fArenaBG:SetParent(fTracker)
     fQuest:SetParent(fScroll)
     fAchv:SetParent(fScroll)
 
     fNotify:SetPoint("TOPRIGHT", fTracker, "TOPRIGHT")
     fBoss:SetPoint("TOPRIGHT", fNotify, "BOTTOMRIGHT")
+    fArenaBG:SetPoint("TOPRIGHT", fBoss, "BOTTOMRIGHT")
 
-    fTraScr:SetPoint("TOPRIGHT", fNotify, "BOTTOMRIGHT")
+    fTraScr:SetPoint("TOPRIGHT", fArenaBG, "BOTTOMRIGHT")
     fTraScr:SetPoint("BOTTOMRIGHT", fTracker, "BOTTOMRIGHT")
 
     fScroll:SetPoint("TOPRIGHT", fTraScr, "TOPRIGHT")
@@ -1204,6 +1208,10 @@ local function LoadQuestTracker()
 
     fQuest.init = false
     tracker_OnEvent(fQuest)
+
+    if not IsAddOnLoaded("sArena") then
+        GW.LoadArenaFrame()
+    end
 
     GW.LoadBossFrame()
     GW.LoadAchievementFrame()
@@ -1302,6 +1310,7 @@ local function LoadQuestTracker()
 
 
     hooksecurefunc(fBoss, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
+    hooksecurefunc(fArenaBG, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
     fNotify:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
     fNotify:HookScript("OnHide", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
     hooksecurefunc(fAchv, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
