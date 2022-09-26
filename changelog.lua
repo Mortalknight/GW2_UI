@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.2.1 Wrath", [=[
+    - Pet stat fix
+]=])
+
 v("1.2.0 Wrath", [=[
     - Added GW2 style worldmap and minimap player pin
     - Added a new "Role Bar" which shows your group or raid's role composition

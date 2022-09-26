@@ -244,8 +244,20 @@ local function PaperDollGetStatListFrame(self, i)
 end
 
 local function PaperDollPetGetStatListFrame(self, i)
-    if _G["GwPaperDollPetStat" .. i] ~= nil then return _G["GwPaperDollPetStat" .. i] end
-    return CreateFrame("Frame", "GwPaperDollPetStat" .. i, self, "GwPaperDollStat")
+    if _G["GwPaperDollPetStat" .. i] ~= nil then
+        return _G["GwPaperDollPetStat" .. i]
+    end
+    local fm = CreateFrame("Frame", "GwPaperDollPetStat" .. i, self, "GwPaperDollStat")
+
+    fm.Value:SetFont(UNIT_NAME_FONT, 14)
+    fm.Value:SetText(ERRORS)
+    fm.Label:SetFont(UNIT_NAME_FONT, 1)
+    fm.Label:SetTextColor(0, 0, 0, 0)
+
+    fm:SetScript("OnEnter", stat_OnEnter)
+    fm:SetScript("OnLeave", GameTooltip_Hide)
+
+    return fm
 end
 
 local function setStatFrame(stat, index, statText, tooltip, tooltip2, grid, x, y)
