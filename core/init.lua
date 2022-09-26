@@ -1,6 +1,22 @@
 local addonName, GW = ...
 
 -- init: store API, to reduce the API usage
+local function GetPlayerRole()
+    return UnitGroupRolesAssigned("player")
+end
+GW.GetPlayerRole = GetPlayerRole
+
+local function CheckRole()
+    GW.myrole = GetPlayerRole()
+
+    -- myrole = group role; TANK, HEALER, DAMAGER
+
+    local dispel = GW.DispelClasses[GW.myclass]
+    if GW.myrole and (GW.myclass ~= "PRIEST" and dispel ~= nil) then
+        dispel.Magic = (GW.myrole == "HEALER")
+    end
+end
+GW.CheckRole = CheckRole
 
 --Constants
 local gameLocale = GetLocale()
@@ -15,6 +31,7 @@ GW.myname = UnitName("player")
 GW.myrealm = GetRealmName()
 GW.mysex = UnitSex("player")
 GW.mylevel = UnitLevel("player")
+GW.CheckRole()
 GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
 GW.resolution = format("%dx%d", GW.screenwidth, GW.screenHeight)
 GW.wowpatch, GW.wowbuild = GetBuildInfo()
@@ -31,6 +48,7 @@ GW.scaleableMainHudFrames = {}
 GW.animations = {}
 GW.trackedQuests = {}
 
+GW.ScanTooltip = CreateFrame("GameTooltip", "GW2_UI_ScanTooltip", UIParent, "SharedTooltipTemplate")
 GW.HiddenFrame = CreateFrame("Frame")
 GW.HiddenFrame.HiddenString = GW.HiddenFrame:CreateFontString(nil, "OVERLAY")
 GW.HiddenFrame:Hide()
@@ -62,9 +80,18 @@ do
     AddLib("AceLocale", "AceLocale-3.0", true)
 end
 
+do
+	GW.UnlocalizedClasses = {}
+	for k, v in pairs(LOCALIZED_CLASS_NAMES_MALE) do GW.UnlocalizedClasses[v] = k end
+	for k, v in pairs(LOCALIZED_CLASS_NAMES_FEMALE) do GW.UnlocalizedClasses[v] = k end
+
+	function GW.UnlocalizedClassName(className)
+		return (className and className ~= "") and GW.UnlocalizedClasses[className]
+	end
+end
+
 -- Locale doesn't exist yet, make it exist
 GW.L = GW.Libs.AceLocale:GetLocale("GW2_UI")
-
 
 --Add Shared Media
 --Font

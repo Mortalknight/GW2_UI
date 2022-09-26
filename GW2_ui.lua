@@ -364,7 +364,11 @@ local function loadAddon(self)
     DatabaseMigration()
     --Create Settings window
     GW.CombatQueue_Initialize()
-    GW.LoadMovers()
+
+    --Create the mainbar layout manager
+    local lm = GW.LoadMainbarLayout()
+
+    GW.LoadMovers(lm.layoutFrame)
     GW.LoadSettings()
     GW.LoadHoverBinds()
 
@@ -387,10 +391,8 @@ local function loadAddon(self)
     GW.LoadSlashCommands()
 
     -- Misc
+    GW.InitializeMiscFunctions()
     GW.LoadRaidMarker()
-
-    --Create the mainbar layout manager
-    local lm = GW.LoadMainbarLayout()
 
     --Create general skins
     if GetSetting("MAINMENU_SKIN_ENABLED") then
@@ -445,6 +447,8 @@ local function loadAddon(self)
     end
 
     GW.LoadDetailsSkin()
+
+    GW.SkinAndEnhanceColorPicker()
 
 
     --Create hud art
@@ -546,6 +550,8 @@ local function loadAddon(self)
             CharacterBag3Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
         end
     end
+
+    GW.Create_Raid_Counter()
 
     GW.LoadMirrorTimers()
     GW.LoadAutoRepair()
@@ -659,6 +665,7 @@ local function gw_OnEvent(self, event, ...)
     if event == "PLAYER_LOGIN" then
         if not loaded then
             loaded = true
+            GW.CheckRole()
             loadAddon(self)
         end
         GW.LoadStorage()
@@ -672,6 +679,7 @@ local function gw_OnEvent(self, event, ...)
         GW.inWorld = false
     elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
         GW.inWorld = true
+        GW.CheckRole()
         if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
             PixelPerfection()
         end

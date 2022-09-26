@@ -114,6 +114,22 @@ local function GridRaidUpdateFramesPosition()
 end
 GW.GridRaidUpdateFramesPosition = GridRaidUpdateFramesPosition
 
+local function GridSortByRole()
+    local sorted = {}
+    local roleIndex = {"TANK", "HEALER", "DAMAGER", "NONE"}
+    local unitString = "Raid"
+
+    for _, v in pairs(roleIndex) do
+        for i = 1, MAX_RAID_MEMBERS do
+            if UnitExists(unitString .. i) and UnitGroupRolesAssigned(unitString .. i) == v then
+                tinsert(sorted, unitString .. "Frame" .. i)
+            end
+        end
+    end
+
+    return sorted
+end
+
 local grpPos, noGrp = {}, {}
 local function GridRaidUpdateFramesLayout()
     -- Get directions, rows, cols and sizing
@@ -124,16 +140,26 @@ local function GridRaidUpdateFramesLayout()
         GwRaidFrameContainer:SetSize(isV and size2 or size1, isV and size1 or size2)
     end
 
+    local unitString = "Raid"
+    local sorted = GetSetting("RAID_SORT_BY_ROLE") and GridSortByRole() or {}
+
+    -- Position by role
+    for i, v in ipairs(sorted) do
+        PositionRaidFrame(_G["GwCompact" .. v], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+    end
+
     wipe(grpPos) wipe(noGrp)
 
     -- Position by group
     for i = 1, MAX_RAID_MEMBERS do
-        local name, _, grp = GetRaidRosterInfo(i)
-        if name or grp > 1 then
-            grpPos[grp] = (grpPos[grp] or 0) + 1
-            PositionRaidFrame(_G["GwCompactRaidFrame" .. i], GwRaidFrameContainer, (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
-        else
-            tinsert(noGrp, i)
+        if not tContains(sorted, unitString .. "Frame" .. i) then
+            local name, _, grp = GetRaidRosterInfo(i)
+            if name or grp > 1 then
+                grpPos[grp] = (grpPos[grp] or 0) + 1
+                PositionRaidFrame(_G["GwCompactRaidFrame" .. i], GwRaidFrameContainer, (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+            else
+                tinsert(noGrp, i)
+            end
         end
     end
 
@@ -355,7 +381,7 @@ local function LoadRaidFrames()
         GW.GridToggleFramesPreviewRaid(_, _, true, true)
         GW.GridToggleFramesPreviewParty(_, _, true, true)
     end)
-    GwSmallSettingsWindow.lockHud:HookScript("OnClick", function()
+    GwSmallSettingsWindow.defaultButtons.lockHud:HookScript("OnClick", function()
         GW.GridToggleFramesPreviewRaid(_, _, true, true)
         GW.GridToggleFramesPreviewParty(_, _, true, true)
     end)

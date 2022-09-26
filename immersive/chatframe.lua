@@ -1,5 +1,59 @@
 local _, GW = ...
+local L = GW.L
 local GetSetting = GW.GetSetting
+
+local FindURL_Events = {
+    "CHAT_MSG_WHISPER",
+    "CHAT_MSG_WHISPER_INFORM",
+    "CHAT_MSG_BN_WHISPER",
+    "CHAT_MSG_BN_WHISPER_INFORM",
+    "CHAT_MSG_BN_INLINE_TOAST_BROADCAST",
+    "CHAT_MSG_GUILD_ACHIEVEMENT",
+    "CHAT_MSG_GUILD",
+    "CHAT_MSG_OFFICER",
+    "CHAT_MSG_PARTY",
+    "CHAT_MSG_PARTY_LEADER",
+    "CHAT_MSG_RAID",
+    "CHAT_MSG_RAID_LEADER",
+    "CHAT_MSG_RAID_WARNING",
+    "CHAT_MSG_INSTANCE_CHAT",
+    "CHAT_MSG_INSTANCE_CHAT_LEADER",
+    "CHAT_MSG_CHANNEL",
+    "CHAT_MSG_SAY",
+    "CHAT_MSG_YELL",
+    "CHAT_MSG_EMOTE",
+    "CHAT_MSG_AFK",
+    "CHAT_MSG_DND",
+    "CHAT_MSG_COMMUNITIES_CHANNEL",
+}
+
+local DEFAULT_STRINGS = {
+    GUILD = L["G"],
+    PARTY = L["P"],
+    RAID = L["R"],
+    OFFICER = L["O"],
+    PARTY_LEADER = L["PL"],
+    RAID_LEADER = L["RL"],
+    INSTANCE_CHAT = L["I"],
+    INSTANCE_CHAT_LEADER = L["IL"],
+    PET_BATTLE_COMBAT_LOG = PET_BATTLE_COMBAT_LOG,
+}
+    
+local hyperlinkTypes = {
+    achievement = true,
+    apower = true,
+    currency = true,
+    enchant = true,
+    glyph = true,
+    instancelock = true,
+    item = true,
+    keystone = true,
+    quest = true,
+    spell = true,
+    talent = true,
+    unit = true
+}
+
 
 local CHAT_FRAME_TEXTURES = {
     "TopLeftTexture",
@@ -33,10 +87,63 @@ local CHAT_FRAME_TEXTURES = {
     "TabText"
 }
 
+local throttle = {}
+local lfgRoles = {}
+local GuidCache = {}
+local ClassNames = {}
+local Keywords = {}
+local hooks = {}
+local Smileys = {}
+local SmileysForMenu = {}
+local socialQueueCache = {}
+local ignoreChats = {[2] = "Log", [3] = "Voice"}
+
+local SoundTimer
+
+local PLAYER_REALM = gsub(GW.myrealm , "[%s%-]", "")
+local PLAYER_NAME = format("%s-%s", GW.myname, PLAYER_REALM)
+
 local tabTexs = {
     "",
     "Selected",
     "Highlight"
+}
+
+local rolePaths = {
+    TANK = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-tank:12:12:0:0:64:64:2:56:2:56|t ",
+    HEALER = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-healer:12:12:0:0:64:64:2:56:2:56|t ",
+    DAMAGER = "|TInterface/AddOns/GW2_UI/Textures/party/roleicon-dps:15:15:-2:0:64:64:2:56:2:56|t"
+}
+
+local gw2StaffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label:14:24|t"
+local gw2StaffList = {
+    -- Glow
+    ["Sàphy-Antonidas"] = gw2StaffIcon,
+    ["Shâdowfall-Antonidas"] = gw2StaffIcon,
+    ["Winglord-Antonidas"] = gw2StaffIcon,
+    ["Zâmârâ-Antonidas"] = gw2StaffIcon,
+    ["Mâgus-Aegwynn"] = gw2StaffIcon,
+    ["Flôffi-Aegwynn"] = gw2StaffIcon,
+    -- SHOODOX
+    ["Blish-Thrall"] = gw2StaffIcon,
+    ["Blish-Arthas"] = gw2StaffIcon,
+    ["Hildegunde-ArgentDawn"] = gw2StaffIcon,
+    ["Notburga-ArgentDawn"] = gw2StaffIcon,
+    ["Aderna-Arthas"] = gw2StaffIcon,
+    ["Wan-Malfurion"] = gw2StaffIcon,
+    ["Funda-Malfurion"] = gw2StaffIcon,
+    ["Glühdirne-Arthas"] = gw2StaffIcon,
+    ["Ticksick-Arthas"] = gw2StaffIcon,
+    ["Meep-Arthas"] = gw2StaffIcon,
+    ["Hiniche-Arthas"] = gw2StaffIcon,
+    ["Trodar-Madmortem"] = gw2StaffIcon,
+    ["Lætitia-ArgentDawn"] = gw2StaffIcon,
+    ["Fuyubara-ArgentDawn"] = gw2StaffIcon,
+    ["Blish-Proudmoore"] = gw2StaffIcon,
+    ["Notburga-Proudmoore"] = gw2StaffIcon,
+    ["Sisi-Proudmoore"] = gw2StaffIcon,
+    --Belazor
+    ["Ilyxiana-Ravencrest"] = gw2StaffIcon,
 }
 
 local gw_fade_frames = {
@@ -199,6 +306,12 @@ local function handleChatFrameFadeIn(chatFrame)
     if chatFrame.button then
         UIFrameFadeIn(chatFrame.button, 0.5, chatFrame.button:GetAlpha(), 0.35)
     end
+    if chatFrame.buttonEmote then
+        UIFrameFadeIn(chatFrame.buttonEmote, 0.5, chatFrame.buttonEmote:GetAlpha(), 0.35)
+    end
+    if GW_EmoteFrame and GW_EmoteFrame:IsShown() then
+        UIFrameFadeIn(GW_EmoteFrame, 0.5, GW_EmoteFrame:GetAlpha(), 1)
+    end
 
     local chatTab = _G[frameName .. "Tab"]
     UIFrameFadeIn(chatTab, 0.5, chatTab:GetAlpha(), 1)
@@ -212,7 +325,7 @@ local function handleChatFrameFadeOut(chatFrame)
     end
 
     setChatBackgroundColor(chatFrame)
-    if chatFrame.editboxHasFocus then
+    if chatFrame.editboxHasFocus or (GW_EmoteFrame and GW_EmoteFrame:IsShown() and GW_EmoteFrame:IsMouseOver()) then
         handleChatFrameFadeIn(chatFrame)
         return
     end
@@ -248,6 +361,12 @@ local function handleChatFrameFadeOut(chatFrame)
     if chatFrame.button then
         UIFrameFadeOut(chatFrame.button, 2, chatFrame.button:GetAlpha(), 0)
     end
+    if chatFrame.buttonEmote then
+        UIFrameFadeOut(chatFrame.buttonEmote, 2, chatFrame.buttonEmote:GetAlpha(), 0)
+    end
+    if GW_EmoteFrame and GW_EmoteFrame:IsShown() then
+        UIFrameFadeOut(GW_EmoteFrame, 2, GW_EmoteFrame:GetAlpha(), 0)
+    end
 
     local chatTab = _G[frameName .. "Tab"]
     UIFrameFadeOut(chatTab, 2, chatTab:GetAlpha(), 0)
@@ -263,6 +382,958 @@ local function handleChatFrameFadeOut(chatFrame)
     end
 end
 GW.AddForProfiling("chatframe", "handleChatFrameFadeOut", handleChatFrameFadeOut)
+
+local function SetChatEditBoxMessage(message)
+    local ChatFrameEditBox = ChatEdit_ChooseBoxForSend()
+    local editBoxShown = ChatFrameEditBox:IsShown()
+    local editBoxText = ChatFrameEditBox:GetText()
+    if not editBoxShown then
+        ChatEdit_ActivateChat(ChatFrameEditBox)
+    end
+    if editBoxText and editBoxText ~= "" then
+        ChatFrameEditBox:SetText("")
+    end
+    ChatFrameEditBox:Insert(message)
+    ChatFrameEditBox:HighlightText()
+end
+
+local SetHyperlink = _G.ItemRefTooltip.SetHyperlink
+function _G.ItemRefTooltip:SetHyperlink(data, ...)
+    if strsub(data, 1, 3) == "url" then
+        local currentLink = strsub(data, 5)
+        if currentLink and currentLink ~= "" then
+            SetChatEditBoxMessage(currentLink)
+        end
+    elseif strsub(data, 1, 3) == "squ" then
+        if not QuickJoinFrame:IsShown() then
+			ToggleQuickJoinPanel()
+		end
+		local guid = strsub(data, 5)
+		if guid and guid ~= "" then
+			QuickJoinFrame:SelectGroup(guid)
+			QuickJoinFrame:ScrollToGroup(guid)
+		end
+    else
+        SetHyperlink(self, data, ...)
+    end
+end
+
+local hyperLinkEntered
+local function OnHyperlinkEnter(self, refString)
+    if InCombatLockdown() then return end
+    local linkToken = strmatch(refString, "^([^:]+)")
+    if hyperlinkTypes[linkToken] then
+        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+        GameTooltip:SetHyperlink(refString)
+        GameTooltip:Show()
+        hyperLinkEntered = self
+    end
+end
+
+local function OnHyperlinkLeave()
+    if hyperLinkEntered then
+        hyperLinkEntered = nil
+        GameTooltip:Hide()
+    end
+end
+
+local function OnMouseWheel(frame)
+    if hyperLinkEntered == frame then
+        hyperLinkEntered = false
+        GameTooltip:Hide()
+    end
+end
+
+local function ToggleHyperlink(enabled)
+    if not enabled then return end
+    for _, frameName in ipairs(CHAT_FRAMES) do
+        local frame = _G[frameName]
+        local hooked = hooks and hooks[frame] and hooks[frame].OnHyperlinkEnter
+        if not hooked then
+            frame:HookScript("OnHyperlinkEnter", enabled and OnHyperlinkEnter or nil)
+            frame:HookScript("OnHyperlinkLeave", enabled and OnHyperlinkLeave or nil)
+            frame:HookScript("OnMouseWheel", enabled and OnMouseWheel or nil)
+        end
+    end
+end
+GW.ToggleChatHyperlink = ToggleHyperlink
+
+local function UpdateChatKeywords()
+    wipe(Keywords)
+
+    local keywords = GetSetting("CHAT_KEYWORDS")
+    keywords = gsub(keywords, ",%s", ",")
+
+    for stringValue in gmatch(keywords, "[^,]+") do
+        if stringValue ~= "" then
+            Keywords[stringValue] = true
+        end
+    end
+end
+GW.UpdateChatKeywords = UpdateChatKeywords
+
+local protectLinks = {}
+local function CheckKeyword(message, author)
+    local letSound = not SoundTimer and author ~= PLAYER_NAME and GetSetting("CHAT_KEYWORDS_ALERT_NEW") ~= "None"
+
+    for hyperLink in gmatch(message, "|c%x-|H.-|h.-|h|r") do
+        protectLinks[hyperLink] = gsub(hyperLink,"%s","|s")
+
+        if letSound then
+            for keyword in pairs(Keywords) do
+                if hyperLink == keyword then
+                    SoundTimer = C_Timer.NewTimer(5, function() SoundTimer = nil end)
+                    PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("CHAT_KEYWORDS_ALERT_NEW")), "Master")
+                    letSound = false
+                    break
+                end
+            end
+        end
+    end
+
+    for hyperLink, tempLink in pairs(protectLinks) do
+        message = gsub(message, GW.EscapeString(hyperLink), tempLink)
+    end
+
+    local rebuiltString
+    local isFirstWord = true
+    for word in gmatch(message, "%s-%S+%s*") do
+        if not next(protectLinks) or not protectLinks[gsub(gsub(word, "%s", ""), "|s", " ")] then
+            local tempWord = gsub(word, "[%s%p]", "")
+            local lowerCaseWord = strlower(tempWord)
+
+            for keyword in pairs(Keywords) do
+                if lowerCaseWord == strlower(keyword) or (lowerCaseWord == strlower(GW.myname) and keyword == "%MYNAME%") then
+                    local keywordColor = GetSetting("CHAT_KEYWORDS_ALERT_COLOR")
+                    word = gsub(word, tempWord, format("%s%s|r",GW.RGBToHex(keywordColor.r, keywordColor.g, keywordColor.b), tempWord))
+
+                    if letSound then
+                        SoundTimer = C_Timer.NewTimer(5, function() SoundTimer = nil end)
+                        PlaySoundFile(GW.Libs.LSM:Fetch("sound", GetSetting("CHAT_KEYWORDS_ALERT_NEW")), "Master")
+                        letSound = false
+                    end
+                end
+            end
+
+            if GetSetting("CHAT_CLASS_COLOR_MENTIONS") then
+                tempWord = gsub(word, "^[%s%p]-([^%s%p]+)([%-]?[^%s%p]-)[%s%p]*$", "%1%2")
+                lowerCaseWord = strlower(tempWord)
+                GW_ClassNames = ClassNames
+                local classMatch = ClassNames[lowerCaseWord]
+                local wordMatch = classMatch and lowerCaseWord
+
+                if wordMatch then
+                    local classColorTable = GW.GWGetClassColor(classMatch, true, true)
+                    GW_classColorTable = classColorTable
+                    if classColorTable then
+                        word = gsub(word, gsub(tempWord, "%-","%%-"), format("\124cff%.2x%.2x%.2x%s\124r", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, tempWord))
+                    end
+                end
+            end
+        end
+
+        if isFirstWord then
+            rebuiltString = word
+            isFirstWord = false
+        else
+            rebuiltString = rebuiltString .. word
+        end
+    end
+
+    for hyperLink, tempLink in pairs(protectLinks) do
+        rebuiltString = gsub(rebuiltString, GW.EscapeString(tempLink), hyperLink)
+        protectLinks[hyperLink] = nil
+    end
+
+    return rebuiltString
+end
+
+local function InsertEmotions(msg)
+    for word in gmatch(msg, "%s-%S+%s*") do
+        word = strtrim(word)
+        local pattern = GW.EscapeString(word)
+        local emoji = Smileys[pattern]
+        if emoji and strmatch(msg, "[%s%p]-" .. pattern .. "[%s%p]*") then
+            local base64 = GW.Libs.LibBase64:Encode(word)
+            msg = gsub(msg, "([%s%p]-)" .. pattern .. "([%s%p]*)", (base64 and ("%1|Helvmoji:%%" .. base64 .. "|h|cFFffffff|r|h") or "%1") .. emoji .. "%2")
+        end
+    end
+
+    return msg
+end
+
+local function GetSmileyReplacementText(msg)
+    if not msg or not GetSetting("CHAT_KEYWORDS_EMOJI") or strfind(msg, "/run") or strfind(msg, "/dump") or strfind(msg, "/script") then return msg end
+    local outstr = ""
+    local origlen = strlen(msg)
+    local startpos = 1
+    local endpos
+
+    while (startpos <= origlen) do
+        local pos = strfind(msg, "|H", startpos, true)
+        endpos = pos or origlen
+        outstr = outstr .. InsertEmotions(strsub(msg, startpos, endpos))
+        startpos = endpos + 1
+        if pos ~= nil then
+            _, endpos = strfind(msg, "|h.-|h", startpos)
+            endpos = endpos or origlen
+            if startpos < endpos then
+                outstr = outstr .. strsub(msg, startpos, endpos)
+                startpos = endpos + 1
+            end
+        end
+    end
+
+    return outstr
+end
+
+local function PrintURL(url)
+    return "|cFFFFFFFF[|Hurl:" .. url .. "|h" .. url .. "|h]|r "
+end
+
+local function ReplaceProtocol(self, arg1, arg2)
+    local str = self .. "://" .. arg1
+ 	return (self == "Houtfit") and str .. arg2 or PrintURL(str)
+end
+
+local function FindURL(msg, author, ...)
+    if not GetSetting("CHAT_FIND_URL") then -- find url setting here
+        msg = CheckKeyword(msg, author)
+        msg = GetSmileyReplacementText(msg)
+        return false, msg, author, ...
+    end
+
+    local text, tag = msg, strmatch(msg, "{(.-)}")
+    if tag and ICON_TAG_LIST[strlower(tag)] then
+        text = gsub(gsub(text, "(%S)({.-})", "%1 %2"), "({.-})(%S)", "%1 %2")
+    end
+
+    text = gsub(gsub(text, "(%S)(|c.-|H.-|h.-|h|r)", "%1 %2"), "(|c.-|H.-|h.-|h|r)(%S)", "%1 %2")
+    -- http://example.com
+    local newMsg, found = gsub(text, "(%a+)://(%S+)(%s?)", ReplaceProtocol)
+    if found > 0 then return false, GetSmileyReplacementText(CheckKeyword(newMsg, author)), author, ... end
+    -- www.example.com
+    newMsg, found = gsub(text, "www%.([_A-Za-z0-9-]+)%.(%S+)%s?", PrintURL("www.%1.%2"))
+    if found > 0 then return false, GetSmileyReplacementText(CheckKeyword(newMsg, author)), author, ... end
+    -- example@example.com
+    newMsg, found = gsub(text, "([_A-Za-z0-9-%.]+)@([_A-Za-z0-9-]+)(%.+)([_A-Za-z0-9-%.]+)%s?", PrintURL("%1@%2%3%4"))
+    if found > 0 then return false, GetSmileyReplacementText(CheckKeyword(newMsg, author)), author, ... end
+    -- IP address with port 1.1.1.1:1
+    newMsg, found = gsub(text, "(%d%d?%d?)%.(%d%d?%d?)%.(%d%d?%d?)%.(%d%d?%d?)(:%d+)%s?", PrintURL("%1.%2.%3.%4%5"))
+    if found > 0 then return false, GetSmileyReplacementText(CheckKeyword(newMsg, author)), author, ... end
+    -- IP address 1.1.1.1
+    newMsg, found = gsub(text, "(%d%d?%d?)%.(%d%d?%d?)%.(%d%d?%d?)%.(%d%d?%d?)%s?", PrintURL("%1.%2.%3.%4"))
+    if found > 0 then return false, GetSmileyReplacementText(CheckKeyword(newMsg, author)), author, ... end
+
+    msg = CheckKeyword(msg, author)
+    msg = GetSmileyReplacementText(msg)
+
+    return false, msg, author, ...
+end
+
+local function DisableChatThrottle()
+    wipe(throttle)
+end
+GW.DisableChatThrottle = DisableChatThrottle
+
+local function PrepareMessage(author, message)
+    if author and author ~= "" and message and message ~= "" then
+        return strupper(author) .. message
+    end
+end
+
+local function ChatThrottleHandler(author, message, when)
+    local msg = PrepareMessage(author, message)
+    if msg then
+        for message, object in pairs(throttle) do
+            if difftime(when, object.time) >= tonumber(GetSetting("CHAT_SPAM_INTERVAL_TIMER")) then
+                throttle[message] = nil
+            end
+        end
+
+        if not throttle[msg] then
+            throttle[msg] = {time = time(), count = 1}
+        else
+            throttle[msg].count = throttle[msg].count + 1
+        end
+    end
+end
+
+local function ChatThrottleBlockFlag(author, message, when)
+    local msg = (author ~= PLAYER_NAME) and (tonumber(GetSetting("CHAT_SPAM_INTERVAL_TIMER")) ~= 0) and PrepareMessage(author, message)
+
+    local object = msg and throttle[msg]
+
+    return object and object.time and object.count and object.count > 1 and (difftime(when, object.time) <= tonumber(GetSetting("CHAT_SPAM_INTERVAL_TIMER"))), object
+end
+
+local function ChatThrottleIntervalHandler(message, author, ...)
+    local blockFlag, blockObject = ChatThrottleBlockFlag(author, message, time())
+
+    if blockFlag then
+        return true
+    else
+        if blockObject then blockObject.time = time() end
+        return FindURL(message, author, ...)
+    end
+end
+
+local function HandleChatMessageFilter(_, event, message, author, ...)
+    if GW.IsIn(event, "CHAT_MSG_CHANNEL", "CHAT_MSG_YELL", "CHAT_MSG_SAY") then
+        return ChatThrottleIntervalHandler(message, author, ...)
+    else
+        return FindURL(message, author, ...)
+    end
+end
+
+local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
+    -- This is called in the event that a user receives chat events for a channel that isn"t enabled for any chat frames.
+    -- Minor hack, because chat channel filtering is backed by the client, but driven entirely from Lua.
+    -- This solves the issue of Guides abdicating their status, and then re-applying in the same game session, unless ChatFrame_AddChannel
+    -- is called, the channel filter will be off even though it"s still enabled in the client, since abdication removes the chat channel and its config.
+
+    -- Only add to default (since multiple chat frames receive the event and we don"t want to add to others)
+    if chatFrame ~= DEFAULT_CHAT_FRAME then
+        return false;
+    end
+
+    -- Only add if the user is joining a channel
+    if eventType ~= "YOU_CHANGED" then
+        return false;
+    end
+
+    -- Only add regional channels
+    if not C_ChatInfo.IsChannelRegionalForChannelID(channelID) then
+        return false;
+    end
+
+    return ChatFrame_AddChannel(chatFrame, C_ChatInfo.GetChannelShortcutForChannelID(channelID)) ~= nil;
+end
+
+local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID, alwaysAddTimestamp)
+    local useGw2Style = GetSetting("CHAT_USE_GW2_STYLE")
+
+    if CHAT_TIMESTAMP_FORMAT and (GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL") or alwaysAddTimestamp) then
+        local timeStamp = BetterDate(CHAT_TIMESTAMP_FORMAT, time())
+        timeStamp = gsub(timeStamp, " ", "")
+        timeStamp = gsub(timeStamp, "AM", " AM")
+        timeStamp = gsub(timeStamp, "PM", " PM")
+
+        if useGw2Style then
+            msg = format("|c%s[%s]|r %s", "FF888888", timeStamp, msg)
+        else
+            msg = format("[%s] %s", timeStamp, msg)
+        end
+    end
+
+    -- color channel in light grey
+    if useGw2Style then
+        -- color channel in light grey
+        msg = msg:gsub(" |Hchannel:(.-)|h%[(.-)%]|h", function(channelLink, channelTag)
+            return string.format("|Hchannel:%s|h|c%s[%s]|r|h", channelLink, "FFD0D0D0", channelTag)
+        end)
+
+        -- remove square brackets from message name in chat
+        msg = msg:gsub("|h%[(|c(.-)|r)%]|h: ", function(coloredPlayer)
+            return string.format("|h%s|h: ", coloredPlayer)
+        end)
+    end
+
+    self.OldAddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID)
+end
+
+--Copied from FrameXML ChatFrame.lua and modified to add CUSTOM_CLASS_COLORS
+local seenGroups = {}
+local function ChatFrame_ReplaceIconAndGroupExpressions(message, noIconReplacement, noGroupReplacement)
+	wipe(seenGroups)
+
+	local ICON_LIST, ICON_TAG_LIST, GROUP_TAG_LIST = ICON_LIST, ICON_TAG_LIST, GROUP_TAG_LIST
+	for tag in gmatch(message, '%b{}') do
+		local term = strlower(gsub(tag, '[{}]', ''))
+		if not noIconReplacement and ICON_TAG_LIST[term] and ICON_LIST[ICON_TAG_LIST[term]] then
+			message = gsub(message, tag, ICON_LIST[ICON_TAG_LIST[term]] .. '0|t')
+		elseif not noGroupReplacement and GROUP_TAG_LIST[term] then
+			local groupIndex = GROUP_TAG_LIST[term]
+			if not seenGroups[groupIndex] then
+				seenGroups[groupIndex] = true
+				local groupList = '['
+				for i = 1, GetNumGroupMembers() do
+					local name, _, subgroup, _, _, classFileName = GetRaidRosterInfo(i)
+					if name and subgroup == groupIndex then
+						local classColorTable = GW.GWGetClassColor(classFileName, true, true)
+						if classColorTable then
+							name = format('|cff%.2x%.2x%.2x%s|r', classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, name)
+						end
+						groupList = groupList..(groupList == '[' and '' or PLAYER_LIST_DELIMITER)..name
+					end
+				end
+				if groupList ~= '[' then
+					groupList = groupList..']'
+					message = gsub(message, tag, groupList, 1)
+				end
+			end
+		end
+	end
+
+	return message
+end
+
+-- copied from ChatFrame.lua
+local function GetPFlag(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
+    -- Renaming for clarity:
+    local specialFlag = arg6
+    --local zoneChannelID = arg7
+    --local localChannelID = arg8
+
+    if specialFlag ~= "" then
+        if specialFlag == "GM" or specialFlag == "DEV" then
+            -- Add Blizzard Icon if this was sent by a GM/DEV
+            return "|TInterface\\ChatFrame\\UI-ChatIcon-Blizz:12:20:0:0:32:16:4:28:0:16|t "
+        else
+            return _G["CHAT_FLAG_" .. specialFlag]
+        end
+    end
+
+    return ""
+end
+
+local function GW_GetPlayerInfoByGUID(guid)
+    local data = GuidCache[guid]
+    if not data then
+        local ok, localizedClass, englishClass, localizedRace, englishRace, sex, name, realm = pcall(GetPlayerInfoByGUID, guid)
+        if not (ok and englishClass) then return end
+
+        if realm == "" then realm = nil end
+        local shortRealm, nameWithRealm = realm and gsub(realm, "[%s%-]", ""), nil
+        if name and name ~= "" then
+            nameWithRealm = (shortRealm and name .. "-" .. shortRealm) or name .. "-" .. PLAYER_REALM
+        end
+
+        data = {
+            localizedClass = localizedClass,
+            englishClass = englishClass,
+            localizedRace = localizedRace,
+            englishRace = englishRace,
+            sex = sex,
+            name = name,
+            realm = realm,
+            nameWithRealm = nameWithRealm
+        }
+
+        -- add it to ClassNames
+        if name then
+            ClassNames[strlower(name)] = englishClass
+        end
+        if nameWithRealm then
+            ClassNames[strlower(nameWithRealm)] = englishClass
+        end
+
+        -- push into the cache
+        GuidCache[guid] = data
+    end
+
+    if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true) end
+
+    return data
+end
+
+local function ShortChannel(self)
+    return format("|Hchannel:%s|h[%s]|h", self, DEFAULT_STRINGS[strupper(self)] or gsub(self, "channel:", ""))
+end
+GW.ShortChannel = ShortChannel
+
+-- Clone of FCFManager_GetChatTarget as it doesn't exist on Classic ERA
+local function FCFManager_GetChatTarget(chatGroup, playerTarget, channelTarget)
+	local chatTarget
+	if chatGroup == 'CHANNEL' then
+		chatTarget = tostring(channelTarget)
+	elseif chatGroup == 'WHISPER' or chatGroup == 'BN_WHISPER' then
+		if strsub(playerTarget, 1, 2) ~= '|K' then
+			chatTarget = strupper(playerTarget)
+		else
+			chatTarget = playerTarget
+		end
+	end
+
+	return chatTarget
+end
+
+local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
+    if TextToSpeechFrame_MessageEventHandler then
+        TextToSpeechFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
+    end
+
+    if strsub(event, 1, 8) == "CHAT_MSG" then
+        if arg16 then return true end -- hiding sender in letterbox: do NOT even show in chat window (only shows in cinematic frame)
+
+        local chatType = strsub(event, 10)
+        local info = ChatTypeInfo[chatType]
+
+        --If it was a GM whisper, dispatch it to the GMChat addon.
+        if arg6 == "GM" and chatType == "WHISPER" then
+            return
+        end
+
+        local chatFilters = ChatFrame_GetMessageEventFilters(event)
+        if chatFilters then
+            for _, filterFunc in next, chatFilters do
+                local filter, new1, new2, new3, new4, new5, new6, new7, new8, new9, new10, new11, new12, new13, new14, new15, new16, new17 = filterFunc(frame, event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+                if filter then
+                    return true
+                elseif new1 then
+                    arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17 = new1, new2, new3, new4, new5, new6, new7, new8, new9, new10, new11, new12, new13, new14, new15, new16, new17
+                end
+            end
+        end
+
+        -- data from populated guid info
+        local nameWithRealm, realm
+        local data = GW_GetPlayerInfoByGUID(arg12)
+        if data then
+            realm = data.realm
+            nameWithRealm = data.nameWithRealm
+        end
+
+        -- fetch the name color to use
+        local coloredName = GetColoredName(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14)
+
+        local channelLength = strlen(arg4)
+        local infoType = chatType
+
+        if type == "VOICE_TEXT" then
+            local leader = UnitIsGroupLeader(arg2)
+            infoType, type = VoiceTranscription_DetermineChatTypeVoiceTranscription_DetermineChatType(leader)
+            info = ChatTypeInfo[infoType]
+        elseif chatType == "COMMUNITIES_CHANNEL" or ((strsub(chatType, 1, 7) == "CHANNEL") and (chatType ~= "CHANNEL_LIST") and ((arg1 ~= "INVITE") or (chatType ~= "CHANNEL_NOTICE_USER"))) then
+            if arg1 == "WRONG_PASSWORD" then
+                local _, popup = StaticPopup_Visible("CHAT_CHANNEL_PASSWORD")
+                if popup and strupper(popup.data) == strupper(arg9) then
+                    return
+                end
+            end
+
+            local found = false
+            for index, value in pairs(frame.channelList) do
+                if channelLength > strlen(value) then
+                    -- arg9 is the channel name without the number in front...
+                    if (arg7 > 0 and frame.zoneChannelList[index] == arg7) or (strupper(value) == strupper(arg9)) then
+                        found = true
+
+                        infoType = "CHANNEL"..arg8
+                        info = ChatTypeInfo[infoType]
+
+                        if chatType == "CHANNEL_NOTICE" and arg1 == "YOU_LEFT" then
+                            frame.channelList[index] = nil
+                            frame.zoneChannelList[index] = nil
+                        end
+                        break
+                    end
+                end
+            end
+
+            if not found or not info then
+                local eventType, channelID = arg1, arg7
+                if not ChatFrame_CheckAddChannel(frame, eventType, channelID) then
+                    return true
+                end
+            end
+        end
+
+        local chatGroup = Chat_GetChatCategory(chatType)
+        local chatTarget = FCFManager_GetChatTarget(chatGroup, arg2, arg8)
+
+        if FCFManager_ShouldSuppressMessage(frame, chatGroup, chatTarget) then
+            return true
+        end
+
+        if chatGroup == "WHISPER" or chatGroup == "BN_WHISPER" then
+            if frame.privateMessageList and not frame.privateMessageList[strlower(arg2)] then
+                return true
+            elseif frame.excludePrivateMessageList and frame.excludePrivateMessageList[strlower(arg2)] and ((chatGroup == "WHISPER" and GetCVar("whisperMode") ~= "popout_and_inline") or (chatGroup == "BN_WHISPER" and GetCVar("whisperMode") ~= "popout_and_inline")) then
+                return true
+            end
+        end
+
+        if frame.privateMessageList then
+            -- Dedicated BN whisper windows need online/offline messages for only that player
+            if (chatGroup == "BN_INLINE_TOAST_ALERT" or chatGroup == "BN_WHISPER_PLAYER_OFFLINE") and not frame.privateMessageList[strlower(arg2)] then
+                return true
+            end
+
+            -- HACK to put certain system messages into dedicated whisper windows
+            if chatGroup == "SYSTEM" then
+                local matchFound = false
+                local message = strlower(arg1)
+                for playerName in pairs(frame.privateMessageList) do
+                    local playerNotFoundMsg = strlower(format(_G.ERR_CHAT_PLAYER_NOT_FOUND_S, playerName))
+                    local charOnlineMsg = strlower(format(_G.ERR_FRIEND_ONLINE_SS, playerName, playerName))
+                    local charOfflineMsg = strlower(format(_G.ERR_FRIEND_OFFLINE_S, playerName))
+                    if message == playerNotFoundMsg or message == charOnlineMsg or message == charOfflineMsg then
+                        matchFound = true
+                        break
+                    end
+                end
+
+                if not matchFound then
+                    return true
+                end
+            end
+        end
+
+        if (chatType == "SYSTEM" or chatType == "SKILL" or chatType == "CURRENCY" or chatType == "MONEY" or
+            chatType == "OPENING" or chatType == "TRADESKILLS" or chatType == "PET_INFO" or chatType == "TARGETICONS" or chatType == "BN_WHISPER_PLAYER_OFFLINE") then
+            frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil)
+        elseif chatType == "LOOT" then
+            if arg12 == GW.myguid and C_Social.IsSocialEnabled() then
+                local itemID, creationContext = GetItemInfoFromHyperlink(arg1)
+                if itemID and C_Social.GetLastItem() == itemID then
+                    arg1 = arg1 .. " " .. _G.Social_GetShareItemLink(creationContext, true)
+                end
+            end
+            frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil)
+        elseif strsub(chatType,1,7) == "COMBAT_" then
+            frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil)
+        elseif strsub(chatType,1,6) == "SPELL_" then
+            frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil)
+        elseif strsub(chatType,1,10) == "BG_SYSTEM_" then
+            frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil)
+        elseif strsub(chatType,1,11) == "ACHIEVEMENT" then
+            -- Append [Share] hyperlink
+            if arg12 == GW.myguid and C_Social.IsSocialEnabled() then
+                local achieveID = GetAchievementInfoFromHyperlink(arg1)
+                if achieveID then
+                    arg1 = arg1 .. " " .. Social_GetShareAchievementLink(achieveID, true)
+                end
+            end
+            frame:AddMessage(format(arg1, GetPlayerLink(arg2, ("[%s]"):format(coloredName))), info.r, info.g, info.b, info.id, nil, nil)
+        elseif strsub(chatType,1,18) == "GUILD_ACHIEVEMENT" then
+            local message = format(arg1, GetPlayerLink(arg2, ("[%s]"):format(coloredName)))
+            if C_Social.IsSocialEnabled() then
+                local achieveID = GetAchievementInfoFromHyperlink(arg1)
+                if achieveID then
+                    local isGuildAchievement = select(12, GetAchievementInfo(achieveID))
+                    if isGuildAchievement then
+                        message = message .. " " .. Social_GetShareAchievementLink(achieveID, true)
+                    end
+                end
+            end
+            frame:AddMessage(message, info.r, info.g, info.b, info.id, nil, nil)
+        elseif chatType == "IGNORED" then
+            frame:AddMessage(format(CHAT_IGNORED, arg2), info.r, info.g, info.b, info.id, nil, nil)
+        elseif chatType == "FILTERED" then
+            frame:AddMessage(format(CHAT_FILTERED, arg2), info.r, info.g, info.b, info.id, nil, nil)
+        elseif chatType == "RESTRICTED" then
+            frame:AddMessage(CHAT_RESTRICTED_TRIAL, info.r, info.g, info.b, info.id, nil, nil)
+        elseif chatType == "CHANNEL_LIST" then
+            if channelLength > 0 then
+                frame:AddMessage(format(_G["CHAT_" .. chatType .. "_GET"] .. arg1, tonumber(arg8), arg4), info.r, info.g, info.b, info.id, nil, nil)
+            else
+                frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil)
+            end
+        elseif chatType == "CHANNEL_NOTICE_USER" then
+            local globalstring = _G["CHAT_"..arg1.."_NOTICE_BN"]
+            if not globalstring then
+                globalstring = _G["CHAT_"..arg1.."_NOTICE"]
+            end
+            if not globalstring then
+                GMError(("Missing global string for %q"):format("CHAT_"..arg1.."_NOTICE_BN"))
+                return
+            end
+            if arg5 ~= "" then
+                -- TWO users in this notice (E.G. x kicked y)
+                frame:AddMessage(format(globalstring, arg8, arg4, arg2, arg5), info.r, info.g, info.b, info.id, nil, nil)
+            elseif arg1 == "INVITE" then
+                frame:AddMessage(format(globalstring, arg4, arg2), info.r, info.g, info.b, info.id, nil, nil)
+            else
+                frame:AddMessage(format(globalstring, arg8, arg4, arg2), info.r, info.g, info.b, info.id, nil, nil)
+            end
+            if arg1 == "INVITE" and GetCVarBool("blockChannelInvites") then
+                frame:AddMessage(CHAT_MSG_BLOCK_CHAT_CHANNEL_INVITE, info.r, info.g, info.b, info.id, nil, nil)
+            end
+        elseif chatType == "CHANNEL_NOTICE" then
+            local accessID = ChatHistory_GetAccessID(chatGroup, arg8)
+            local typeID = ChatHistory_GetAccessID(infoType, arg8, arg12)
+
+            local globalstring
+            if arg1 == "TRIAL_RESTRICTED" then
+                globalstring = _G.CHAT_TRIAL_RESTRICTED_NOTICE_TRIAL
+            else
+                globalstring = _G["CHAT_"..arg1.."_NOTICE_BN"]
+                if not globalstring then
+                    globalstring = _G["CHAT_"..arg1.."_NOTICE"]
+                    if not globalstring then
+                        GMError(("Missing global string for %q"):format("CHAT_"..arg1.."_NOTICE"))
+                        return
+                    end
+                end
+            end
+
+            frame:AddMessage(format(globalstring, arg8, ChatFrame_ResolvePrefixedChannelName(arg4)), info.r, info.g, info.b, info.id, accessID, typeID)
+        elseif chatType == "BN_INLINE_TOAST_ALERT" then
+            local globalstring = _G["BN_INLINE_TOAST_"..arg1]
+            if not globalstring then
+                GMError(("Missing global string for %q"):format("BN_INLINE_TOAST_"..arg1))
+                return
+            end
+
+            local message
+            if arg1 == "FRIEND_REQUEST" then
+                message = globalstring
+            elseif arg1 == "FRIEND_PENDING" then
+                message = format(_G.BN_INLINE_TOAST_FRIEND_PENDING, BNGetNumFriendInvites())
+            elseif arg1 == "FRIEND_REMOVED" or arg1 == "BATTLETAG_FRIEND_REMOVED" then
+                message = format(globalstring, arg2)
+            elseif arg1 == "FRIEND_ONLINE" or arg1 == "FRIEND_OFFLINE" then
+                local accountInfo = C_BattleNet.GetAccountInfoByID(arg13)
+                if not accountInfo then return end
+                local client = accountInfo.gameAccountInfo and accountInfo.gameAccountInfo.clientProgram
+                if client and client ~= "" then
+                    local characterName = BNet_GetValidatedCharacterName(accountInfo.gameAccountInfo.characterName, accountInfo.battleTag, client) or ""
+                    local characterNameText = BNet_GetClientEmbeddedTexture(client, 14)..characterName
+                    local linkDisplayText = ("[%s] (%s)"):format(arg2, characterNameText)
+                    local playerLink = GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
+                    message = format(globalstring, playerLink)
+                else
+                    local linkDisplayText = ("[%s]"):format(arg2)
+                    local playerLink = GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
+                    message = format(globalstring, playerLink)
+                end
+            else
+                local linkDisplayText = ("[%s]"):format(arg2)
+                local playerLink = GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
+                message = format(globalstring, playerLink)
+            end
+            frame:AddMessage(message, info.r, info.g, info.b, info.id, nil, nil)
+        elseif chatType == "BN_INLINE_TOAST_BROADCAST" then
+            if arg1 ~= "" then
+                arg1 = RemoveNewlines(RemoveExtraSpaces(arg1))
+                local linkDisplayText = ("[%s]"):format(arg2)
+                local playerLink = GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
+                frame:AddMessage(format(BN_INLINE_TOAST_BROADCAST, playerLink, arg1), info.r, info.g, info.b, info.id, nil, nil)
+            end
+        elseif chatType == "BN_INLINE_TOAST_BROADCAST_INFORM" then
+            if arg1 ~= "" then
+                frame:AddMessage(BN_INLINE_TOAST_BROADCAST_INFORM, info.r, info.g, info.b, info.id, nil, nil)
+            end
+        else
+            local body
+
+            if chatType == "WHISPER_INFORM" and GMChatFrame_IsGM and GMChatFrame_IsGM(arg2) then
+                return
+            end
+
+            local showLink = 1
+            if strsub(chatType, 1, 7) == "MONSTER" or strsub(chatType, 1, 9) == "RAID_BOSS" then
+                showLink = nil
+                -- fix blizzard formatting errors from localization strings
+                arg1 = gsub(arg1, "%%%d", "%%s")
+                arg1 = gsub(arg1, "(%d%%)([^%%%a])", "%1%%%2")
+                arg1 = gsub(arg1, "(%d%%)$", "%1%%")
+            else
+                arg1 = gsub(arg1, "%%", "%%%%")
+            end
+
+            -- Search for icon links and replace them with texture links.
+            arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrame_CanChatGroupPerformExpressionExpansion(chatGroup)) -- If arg17 is true, don"t convert to raid icons
+
+            --Remove groups of many spaces
+            arg1 = RemoveExtraSpaces(arg1)
+
+            local playerLink
+            local playerLinkDisplayText = coloredName
+            local relevantDefaultLanguage = frame.defaultLanguage
+            if chatType == "SAY" or chatType == "YELL" then
+                relevantDefaultLanguage = frame.alternativeDefaultLanguage
+            end
+            local usingDifferentLanguage = (arg3 ~= "") and (arg3 ~= relevantDefaultLanguage)
+            local usingEmote = (chatType == "EMOTE") or (chatType == "TEXT_EMOTE")
+
+            if usingDifferentLanguage or not usingEmote then
+                playerLinkDisplayText = ("[%s]"):format(coloredName)
+            end
+
+            local isCommunityType = chatType == "COMMUNITIES_CHANNEL"
+            local playerName, lineID, bnetIDAccount = arg2, arg11, arg13
+            if isCommunityType then
+                local isBattleNetCommunity = bnetIDAccount ~= nil and bnetIDAccount ~= 0
+                local messageInfo, clubId, streamId = C_Club.GetInfoFromLastCommunityChatLine()
+
+                if messageInfo ~= nil then
+                    if isBattleNetCommunity then
+                        playerLink = GetBNPlayerCommunityLink(playerName, playerLinkDisplayText, bnetIDAccount, clubId, streamId, messageInfo.messageId.epoch, messageInfo.messageId.position)
+                    else
+                        playerLink = GetPlayerCommunityLink(playerName, playerLinkDisplayText, clubId, streamId, messageInfo.messageId.epoch, messageInfo.messageId.position)
+                    end
+                else
+                    playerLink = playerLinkDisplayText
+                end
+            else
+                if chatType == "BN_WHISPER" or chatType == "BN_WHISPER_INFORM" then
+                    playerLink = GetBNPlayerLink(playerName, playerLinkDisplayText, bnetIDAccount, lineID, chatGroup, chatTarget)
+                elseif ((chatType == "GUILD" or chatType == "TEXT_EMOTE") or arg14) and (nameWithRealm and nameWithRealm ~= playerName) then
+                    playerName = nameWithRealm
+                    playerLink = GetPlayerLink(playerName, playerLinkDisplayText, lineID, chatGroup, chatTarget)
+                else
+                    playerLink = GetPlayerLink(playerName, playerLinkDisplayText, lineID, chatGroup, chatTarget)
+                end
+            end
+
+            local message = arg1
+            if arg14 then --isMobile
+                message = ChatFrame_GetMobileEmbeddedTexture(info.r, info.g, info.b)..message
+            end
+
+            -- Player Flags
+            local pflag = GetPFlag(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
+            local gw2StaffIcon = gw2StaffList[playerName]
+
+            -- LFG Role Flags
+            local lfgRole = lfgRoles[playerName]
+            if lfgRole and (chatType == "PARTY_LEADER" or chatType == "PARTY" or chatType == "RAID" or chatType == "RAID_LEADER" or chatType == "INSTANCE_CHAT" or chatType == "INSTANCE_CHAT_LEADER") then
+                pflag = pflag .. lfgRole
+            end
+
+            -- GW2 Staff Icon Chat Icon
+            if gw2StaffIcon then
+                pflag = pflag .. gw2StaffIcon
+            end
+
+            if usingDifferentLanguage then
+                local languageHeader = "["..arg3.."] "
+                if showLink and (arg2 ~= "") then
+                    body = format(_G["CHAT_"..chatType.."_GET"]..languageHeader..message, pflag..playerLink)
+                else
+                    body = format(_G["CHAT_"..chatType.."_GET"]..languageHeader..message, pflag..arg2)
+                end
+            else
+                if not showLink or arg2 == "" then
+                    if chatType == "TEXT_EMOTE" then
+                        body = message
+                    else
+                        body = format(_G["CHAT_"..chatType.."_GET"]..message, pflag..arg2, arg2)
+                    end
+                else
+                    if chatType == "EMOTE" then
+                        body = format(_G["CHAT_"..chatType.."_GET"]..message, pflag..playerLink)
+                    elseif chatType == "TEXT_EMOTE" and realm then
+                        if info.colorNameByClass then
+                            body = gsub(message, arg2.."%-"..realm, pflag..gsub(playerLink, "(|h|c.-)|r|h$","%1-"..realm.."|r|h"), 1)
+                        else
+                            body = gsub(message, arg2.."%-"..realm, pflag..gsub(playerLink, "(|h.-)|h$","%1-"..realm.."|h"), 1)
+                        end
+                    elseif chatType == "TEXT_EMOTE" then
+                        body = gsub(message, arg2, pflag..playerLink, 1)
+                    elseif chatType == "GUILD_ITEM_LOOTED" then
+                        body = gsub(message, "$s", GetPlayerLink(arg2, playerLinkDisplayText))
+                    else
+                        body = format(_G["CHAT_"..chatType.."_GET"]..message, pflag..playerLink)
+                    end
+                end
+            end
+
+            -- Add Channel
+            if channelLength > 0 then
+                body = "|Hchannel:channel:" .. arg8 .. "|h[" .. ChatFrame_ResolvePrefixedChannelName(arg4) .. "]|h " .. body
+            end
+
+            if GetSetting("CHAT_SHORT_CHANNEL_NAMES") and (chatType ~= "EMOTE" and chatType ~= "TEXT_EMOTE") then
+                if chatType == "RAID_LEADER" or chatType == "PARTY_LEADER" or chatType == "INSTANCE_CHAT_LEADER" then
+                    body = gsub(body, "|Hchannel:(.-)|h%[(.-)%]|h", format("|Hchannel:%s|h[%s]|h", (chatType == "PARTY_LEADER" and "PARTY" or chatType == "RAID_LEADER" and "RAID" or chatType == "INSTANCE_CHAT_LEADER" and "INSTANCE_CHAT") , DEFAULT_STRINGS[strupper(chatType)] or gsub(chatType, "channel:", "")))
+                else
+                    body = gsub(body, "|Hchannel:(.-)|h%[(.-)%]|h", ShortChannel)
+                end
+                body = gsub(body, "CHANNEL:", "")
+                body = gsub(body, "^(.-|h) " .. CHAT_WHISPER_GET:format("~"):gsub("~ ", ""):gsub(": ", ""), "%1")
+                body = gsub(body, "^(.-|h) " .. CHAT_SAY_GET:format("~"):gsub("~ ", ""):gsub(": ", ""), "%1")
+                body = gsub(body, "^(.-|h) " .. CHAT_YELL_GET:format("~"):gsub("~ ", ""):gsub(": ", ""), "%1")
+                body = gsub(body, "<" .. AFK .. ">", "[|cffFF0000" .. AFK .. "|r] ")
+                body = gsub(body, "<" .. DND .. ">", "[|cffE7E716" .. DND .. "|r] ")
+                body = gsub(body, "^%[" .. RAID_WARNING .. "%]", "[" .. L["RW"] .. "]")
+            end
+
+            local accessID = ChatHistory_GetAccessID(chatGroup, chatTarget)
+            local typeID = ChatHistory_GetAccessID(infoType, chatTarget, arg12 or arg13)
+
+            frame:AddMessage(body, info.r, info.g, info.b, info.id, accessID, typeID, not GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL"))
+        end
+
+        if chatType == "WHISPER" or chatType == "BN_WHISPER" then
+            ChatEdit_SetLastTellTarget(arg2, chatType)
+            FlashClientIcon()
+        end
+
+        if not frame:IsShown() then
+            if (frame == DEFAULT_CHAT_FRAME and info.flashTabOnGeneral) or (frame ~= DEFAULT_CHAT_FRAME and info.flashTab) then
+                if not CHAT_OPTIONS.HIDE_FRAME_ALERTS or chatType == "WHISPER" or chatType == "BN_WHISPER" then
+                    if not FCFManager_ShouldSuppressMessageFlash(frame, chatGroup, chatTarget) then
+                        FCF_StartAlertFlash(frame)
+                    end
+                end
+            end
+        end
+
+        return true
+    end
+end
+
+local function ChatFrame_ConfigEventHandler(...)
+    return _G.ChatFrame_ConfigEventHandler(...)
+end
+
+local function ChatFrame_SystemEventHandler(frame, event, message, ...)
+    return _G.ChatFrame_SystemEventHandler(frame, event, message, ...)
+end
+
+local function ChatFrame_OnEvent(frame, event, ...)
+    if frame.customEventHandler and frame.customEventHandler(frame, event, ...) then return end
+    if ChatFrame_ConfigEventHandler(frame, event, ...) then return end
+    if ChatFrame_SystemEventHandler(frame, event, ...) then return end
+    if ChatFrame_MessageEventHandler(frame, event, ...) then return end
+end
+
+local function FloatingChatFrameOnEvent(...)
+    ChatFrame_OnEvent(...)
+    FloatingChatFrame_OnEvent(...)
+end
+
+local function ChatFrame_OnMouseScroll(self, delta)
+    local numScrollMessages = GetSetting("CHAT_NUM_SCROLL_MESSAGES") or 3
+    if delta < 0 then
+        if IsShiftKeyDown() then
+            self:ScrollToBottom()
+        elseif IsAltKeyDown() then
+            self:ScrollDown()
+        else
+            for _ = 1, numScrollMessages do
+                self:ScrollDown()
+            end
+        end
+    elseif delta > 0 then
+        if IsShiftKeyDown() then
+            self:ScrollToTop()
+        elseif IsAltKeyDown() then
+            self:ScrollUp()
+        else
+            for _ = 1, numScrollMessages do
+                self:ScrollUp()
+            end
+        end
+
+        if GetSetting("CHAT_SCROLL_DOWN_INTERVAL") ~= 0 then
+            if self.ScrollTimer then
+                self.ScrollTimer:Cancel()
+            end
+
+            self.ScrollTimer = C_Timer.NewTimer(GetSetting("CHAT_SCROLL_DOWN_INTERVAL"), function() self:ScrollToBottom() end)
+        end
+    end
+end
+
+local function ChatFrame_SetScript(self, script, func)
+    if script == "OnMouseWheel" and func ~= ChatFrame_OnMouseScroll then
+        self:SetScript(script, ChatFrame_OnMouseScroll)
+    end
+end
 
 local function styleChatWindow(frame)
     local name = frame:GetName()
@@ -417,8 +1488,52 @@ local function styleChatWindow(frame)
         frame:SetScript("OnUpdate", nil)
         frame.editboxHasFocus = false
         FCF_FadeOutChatFrame(frame)
-        editBox:Hide()
+        if GetSetting("CHATFRAME_EDITBOX_HIDE") then
+            editBox:Hide()
+        end
     end)
+
+    local repeatedText
+    editbox:HookScript("OnTextChanged", function(self)
+        local userInput = self:GetText()
+
+        if tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT")) ~= 0 and InCombatLockdown() and (not repeatedText or not strfind(userInput, repeatedText, 1, true)) then
+            local MIN_REPEAT_CHARACTERS = tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT"))
+            if strlen(userInput) > MIN_REPEAT_CHARACTERS then
+                local repeatChar = true
+                for i = 1, MIN_REPEAT_CHARACTERS, 1 do
+                    local first = -1 - i
+                    if strsub(userInput, -i, -i) ~= strsub(userInput, first, first) then
+                        repeatChar = false
+                        break
+                    end
+                end
+                if repeatChar then
+                    repeatedText = userInput
+                    self:Hide()
+                    return
+                end
+            end
+        end
+
+        if repeatedText then
+            repeatedText = nil
+        end
+    end)
+
+    if GetSetting("CHAT_USE_GW2_STYLE") then
+        local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
+        local _, fontHeight, fontFlags = frame:GetFont()
+        frame:SetFont(chatFont, fontHeight or 12, fontFlags)
+        editbox:SetFont(chatFont, fontHeight or 12, fontFlags)
+        _G[editbox:GetName() .. "Header"]:SetFont(chatFont, fontHeight or 12, fontFlags)
+    elseif GetSetting("FONTS_ENABLED") and fontSize then
+        if fontSize > 0 then
+            frame:SetFont(STANDARD_TEXT_FONT, fontSize)
+        elseif fontSize == 0 then
+            frame:SetFont(STANDARD_TEXT_FONT, 14)
+        end
+    end
 
     if GetSetting("FONTS_ENABLED") then
         if fontSize > 0 then
@@ -467,6 +1582,45 @@ local function styleChatWindow(frame)
             button:SetAlpha(0)
         end
     end)
+
+    --emote bar button
+    if GetSetting("CHAT_KEYWORDS_EMOJI") and (id ~= 2 and id ~= 3) then
+        frame.buttonEmote = CreateFrame("Frame", nil, frame)
+        frame.buttonEmote:EnableMouse(true)
+        frame.buttonEmote:SetAlpha(0.35)
+        frame.buttonEmote:SetSize(12, 12)
+        frame.buttonEmote:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -20, -5)
+        frame.buttonEmote:SetFrameLevel(frame:GetFrameLevel() + 5)
+
+        frame.buttonEmote.tex = frame.buttonEmote:CreateTexture(nil, "OVERLAY")
+        frame.buttonEmote.tex:SetAllPoints()
+        frame.buttonEmote.tex:SetTexture("Interface/AddOns/GW2_UI/textures/emoji/Smile")
+        frame.buttonEmote.tex:SetDesaturated(true)
+
+        frame.buttonEmote:SetScript("OnMouseUp", function()
+            if not GW_EmoteFrame:IsShown() then
+                GW_EmoteFrame:Show()
+            else
+                GW_EmoteFrame:Hide()
+            end
+        end)
+
+        frame.buttonEmote:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 6)
+            GameTooltip:AddLine(L["Click to open Emoticon Frame"])
+            GameTooltip:Show()
+            frame.buttonEmote.tex:SetTexture("Interface/AddOns/GW2_UI/textures/emoji/OpenMouth")
+            frame.buttonEmote.tex:SetDesaturated(false)
+            frame.buttonEmote.tex:SetAlpha(1)
+        end)
+
+        frame.buttonEmote:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+            frame.buttonEmote.tex:SetTexture("Interface/AddOns/GW2_UI/textures/emoji/Smile")
+            frame.buttonEmote.tex:SetDesaturated(true)
+            frame.buttonEmote.tex:SetAlpha(.45)
+        end)
+    end
 
     frame.styled = true
 end
@@ -563,6 +1717,190 @@ local function BuildCopyChatFrame()
     frame.close:SkinButton(true)
 end
 
+local function BuildEmoticonTableFrame()
+    local frame = CreateFrame("Frame", "GW_EmoteFrame", UIParent)
+    frame:CreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
+    frame:SetWidth(160)
+    frame:SetHeight(134)
+    frame:SetPoint("BOTTOMLEFT", ChatFrame1Tab, "TOPLEFT", 0, 5)
+    frame:Hide()
+    frame:SetFrameStrata("DIALOG")
+    tinsert(UISpecialFrames, "GW_EmoteFrame")
+
+    local icon, row, col, i = nil, 1, 1, 1
+    local isIn, alreadyIn = {}, false
+    for text, texture in pairs(SmileysForMenu) do
+        alreadyIn = false
+        for _, v in pairs(isIn) do
+            if v.tex == texture then
+                alreadyIn = true
+                break
+            end
+        end
+        if not alreadyIn then
+            icon = CreateFrame("Frame", format("IconButton%d", i), frame)
+            icon:SetSize(24, 24)
+            icon.text = text
+            icon.texture = icon:CreateTexture(nil, "ARTWORK")
+            icon.texture:SetTexture(texture:gsub("|T", ""):gsub(":16:16|t", ""))
+            icon.texture:SetAllPoints(icon)
+            icon:Show()
+            icon:SetPoint("TOPLEFT", (col - 1) * 26 + 2, -(row - 1) * 26 - 2)
+            icon:SetScript("OnMouseUp",function(self, button)
+                if button == "LeftButton" then
+                    local ChatFrameEditBox = ChatEdit_ChooseBoxForSend()
+                    if not ChatFrameEditBox:IsShown() then
+                        ChatEdit_ActivateChat(ChatFrameEditBox)
+                    end
+                    ChatFrameEditBox:Insert(self.text)
+                end
+                if not GW_EmoteFrame:IsShown() then
+                    GW_EmoteFrame:Show()
+                else
+                    GW_EmoteFrame:Hide()
+                end
+            end)
+            icon:SetScript("OnEnter", function(self)
+                self:SetSize(28, 28)
+                local point, anchorFrame, anchorPoint, x, y = self:GetPoint()
+                self:ClearAllPoints()
+                self:SetPoint(point, anchorFrame, anchorPoint, x - 2, y + 2)
+                self.texture:SetBlendMode("ADD")
+            end)
+            icon:SetScript("OnLeave", function(self)
+                self:SetSize(24, 24)
+                local point, anchorFrame, anchorPoint, x, y = self:GetPoint()
+                self:ClearAllPoints()
+                self:SetPoint(point, anchorFrame, anchorPoint, x + 2, y - 2)
+                self.texture:SetBlendMode("BLEND")
+            end)
+            icon:EnableMouse(true)
+            col = col + 1
+            if col > 6 then
+                row = row + 1
+                col = 1
+            end
+            i = i + 1
+            tinsert(isIn, {tex = texture})
+        end
+    end
+
+    if not GetSetting("CHAT_KEYWORDS_EMOJI") then
+        frame:Hide()
+    end
+end
+
+local function AddSmiley(key, texture, showAtMenu)
+    if key and (type(key) == "string" and not strfind(key, ":%%", 1, true)) and texture then
+        Smileys[key] = texture
+        if showAtMenu then
+            SmileysForMenu[key] = texture
+        end
+    end
+end
+
+local function SetupSmileys()
+    if next(Smileys) then
+        wipe(Smileys)
+    end
+    if next(SmileysForMenu) then
+        wipe(SmileysForMenu)
+    end
+    -- new keys
+    AddSmiley(":angry:", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t", true)
+    AddSmiley(":blush:", "|TInterface/AddOns/GW2_UI/textures/emoji/Blush:16:16|t", true)
+    AddSmiley(":broken_heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/BrokenHeart:16:16|t", true)
+    AddSmiley(":call_me:", "|TInterface/AddOns/GW2_UI/textures/emoji/CallMe:16:16|t", true)
+    AddSmiley(":cry:", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t", true)
+    AddSmiley(":grin:", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t", true)
+    AddSmiley(":heart:", "|TInterface/AddOns/GW2_UI/textures/emoji/Heart:16:16|t", true)
+    AddSmiley(":heart_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/HeartEyes:16:16|t", true)
+    AddSmiley(":joy:", "|TInterface/AddOns/GW2_UI/textures/emoji/Joy:16:16|t", true)
+    AddSmiley(":middle_finger:", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t", true)
+    AddSmiley(":ok_hand:", "|TInterface/AddOns/GW2_UI/textures/emoji/OkHand:16:16|t", true)
+    AddSmiley(":open_mouth:", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t", true)
+    AddSmiley(":poop:", "|TInterface/AddOns/GW2_UI/textures/emoji/Poop:16:16|t", true)
+    AddSmiley(":rage:", "|TInterface/AddOns/GW2_UI/textures/emoji/Rage:16:16|t", true)
+    AddSmiley(":scream:", "|TInterface/AddOns/GW2_UI/textures/emoji/Scream:16:16|t", true)
+    AddSmiley(":scream_cat:", "|TInterface/AddOns/GW2_UI/textures/emoji/ScreamCat:16:16|t", true)
+    AddSmiley(":slight_frown:", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t", true)
+    AddSmiley(":smile:", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t", true)
+    AddSmiley(":smirk:", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t", true)
+    AddSmiley(":sob:", "|TInterface/AddOns/GW2_UI/textures/emoji/Sob:16:16|t", true)
+    AddSmiley(":sunglasses:", "|TInterface/AddOns/GW2_UI/textures/emoji/Sunglasses:16:16|t", true)
+    AddSmiley(":thinking:", "|TInterface/AddOns/GW2_UI/textures/emoji/Thinking:16:16|t", true)
+    AddSmiley(":thumbs_up:", "|TInterface/AddOns/GW2_UI/textures/emoji/ThumbsUp:16:16|t", true)
+    AddSmiley(":wink:", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t", true)
+    AddSmiley(":zzz:", "|TInterface/AddOns/GW2_UI/textures/emoji/ZZZ:16:16|t", true)
+    AddSmiley(":stuck_out_tongue:", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t", true)
+    AddSmiley(":stuck_out_tongue_closed_eyes:", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t", true)
+
+    AddSmiley(",,!,,", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t")
+    AddSmiley(":%-@", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t")
+    AddSmiley(":@", "|TInterface/AddOns/GW2_UI/textures/emoji/Angry:16:16|t")
+    AddSmiley(":%-%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t")
+    AddSmiley(":%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Smile:16:16|t")
+    AddSmiley(":D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley(":%-D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley(";%-D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley(";D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley("=D", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley("xD", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley("XD", "|TInterface/AddOns/GW2_UI/textures/emoji/Grin:16:16|t")
+    AddSmiley(":%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t")
+    AddSmiley(":%(", "|TInterface/AddOns/GW2_UI/textures/emoji/SlightFrown:16:16|t")
+    AddSmiley(":o", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
+    AddSmiley(":%-o", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
+    AddSmiley(":%-O", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
+    AddSmiley(":O", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
+    AddSmiley(":%-0", "|TInterface/AddOns/GW2_UI/textures/emoji/OpenMouth:16:16|t")
+    AddSmiley(":P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
+    AddSmiley(":%-P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
+    AddSmiley(":p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
+    AddSmiley(":%-p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
+    AddSmiley("=P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
+    AddSmiley("=p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongue:16:16|t")
+    AddSmiley(";%-p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
+    AddSmiley(";p", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
+    AddSmiley(";P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
+    AddSmiley(";%-P", "|TInterface/AddOns/GW2_UI/textures/emoji/StuckOutTongueClosedEyes:16:16|t")
+    AddSmiley(";%-%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t")
+    AddSmiley(";%)", "|TInterface/AddOns/GW2_UI/textures/emoji/Wink:16:16|t")
+    AddSmiley(":S", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t")
+    AddSmiley(":%-S", "|TInterface/AddOns/GW2_UI/textures/emoji/Smirk:16:16|t")
+    AddSmiley(":,%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
+    AddSmiley(":,%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
+    AddSmiley(":\"%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
+    AddSmiley(":\"%-%(", "|TInterface/AddOns/GW2_UI/textures/emoji/Cry:16:16|t")
+    AddSmiley(":F", "|TInterface/AddOns/GW2_UI/textures/emoji/MiddleFinger:16:16|t")
+    AddSmiley("<3", "|TInterface/AddOns/GW2_UI/textures/emoji/Heart:16:16|t")
+    AddSmiley("</3", "|TInterface/AddOns/GW2_UI/textures/emoji/BrokenHeart:16:16|t")
+end
+
+local function CollectLfgRolesForChatIcons()
+    if not GetSetting("CHAT_SHOW_LFG_ICONS") or not IsInGroup() then return end
+    wipe(lfgRoles)
+
+    local playerRole = UnitGroupRolesAssigned("player")
+    if playerRole then
+        lfgRoles[PLAYER_NAME] = rolePaths[playerRole]
+    end
+
+    local unit = (IsInRaid() and "raid" or "party")
+    for i = 1, GetNumGroupMembers() do
+        if UnitExists(unit .. i) and not UnitIsUnit(unit .. i, "player") then
+            local role = UnitGroupRolesAssigned(unit .. i)
+            local name, realm = UnitName(unit .. i)
+
+            if role and name then
+                name = (realm and realm ~= "" and name .. "-" .. realm) or name .. "-" .. PLAYER_REALM
+                lfgRoles[name] = rolePaths[role]
+            end
+        end
+    end
+end
+GW.CollectLfgRolesForChatIcons = CollectLfgRolesForChatIcons
+
 local function LoadChat()
     local shouldFading = GetSetting("CHATFRAME_FADE")
     local eventFrame = CreateFrame("Frame")
@@ -575,6 +1913,24 @@ local function LoadChat()
         frame:SetTimeVisible(100)
         frame:SetFading(shouldFading)
         frame:SetMaxLines(2500)
+
+        local allowHooks = not ignoreChats[frame:GetID()]
+        if allowHooks and not frame.OldAddMessage then
+            --Don't add timestamps to combat log, they don't work.
+            --This usually taints, but LibChatAnims should make sure it doesn't
+            frame.OldAddMessage = frame.AddMessage
+            frame.AddMessage = AddMessage
+        end
+
+        if not frame.scriptsSet then
+            if allowHooks then
+                frame:SetScript("OnEvent", FloatingChatFrameOnEvent)
+            end
+
+            frame:SetScript("OnMouseWheel", ChatFrame_OnMouseScroll)
+            hooksecurefunc(frame, "SetScript", ChatFrame_SetScript)
+            frame.scriptsSet = true
+        end
     end
 
     hooksecurefunc("FCF_SetTemporaryWindowType", function(chatFrame)
@@ -612,6 +1968,11 @@ local function LoadChat()
             end
         end
     end)
+
+    ToggleHyperlink(GetSetting("CHAT_HYPERLINK_TOOLTIP"))
+    UpdateChatKeywords()
+    SetupSmileys()
+
     hooksecurefunc("FCF_Close", function(frame)
         if frame.Container then
             frame.Container:Hide()
@@ -684,6 +2045,14 @@ local function LoadChat()
     hooksecurefunc("FCF_FadeInChatFrame", handleChatFrameFadeIn)
     hooksecurefunc("FCFTab_UpdateColors", setChatBackgroundColor)
 
+    for _, event in pairs(FindURL_Events) do
+        ChatFrame_AddMessageEventFilter(event, HandleChatMessageFilter)
+        local nType = strsub(event, 10)
+        if nType ~= "AFK" and nType ~= "DND" and nType ~= "COMMUNITIES_CHANNEL" then
+            eventFrame:RegisterEvent(event)
+        end
+    end
+
     for _, frameName in ipairs(CHAT_FRAMES) do
         local frame = _G[frameName]
         if frame and frame:IsShown() then
@@ -714,6 +2083,7 @@ local function LoadChat()
     CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar")
     CombatLogQuickButtonFrame_CustomTexture:Hide()
     BuildCopyChatFrame()
+    BuildEmoticonTableFrame()
 
     -- prevent the voice tab from showing if disabled
     hooksecurefunc("VoiceTranscriptionFrame_UpdateVisibility", function(self)
@@ -750,10 +2120,13 @@ local function LoadChat()
 
     -- events for functions
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("CVAR_UPDATE")
     eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "PLAYER_ENTERING_WORLD" then
             ChatFrameChannelButton:UpdateVisibleState()
+        elseif event == "GROUP_ROSTER_UPDATE" then
+            CollectLfgRolesForChatIcons()
         elseif event == "CVAR_UPDATE" and ... == "ENABLE_SPEECH_TO_TEXT_TRANSCRIPTION" then
             local showVoice = GetCVarBool("speechToText")
             SetChatWindowShown(3, showVoice)
@@ -763,6 +2136,10 @@ local function LoadChat()
             end
             FloatingChatFrame_Update(3)
             FCF_DockUpdate()
+        elseif tonumber(GetSetting("CHAT_SPAM_INTERVAL_TIMER")) ~= 0 and (event == "CHAT_MSG_SAY" or event == "CHAT_MSG_YELL" or event == "CHAT_MSG_CHANNEL") then
+            local message, author = ...
+            local when = time()
+            ChatThrottleHandler(author, message, when)
         end
     end)
 end

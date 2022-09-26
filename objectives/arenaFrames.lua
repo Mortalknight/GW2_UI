@@ -36,7 +36,7 @@ local function setCompass()
             local status, mapName, _, _, _, _, _, _, _, shortDescription = GetBattlefieldStatus(i)
             if status and status == "active" then
                 compassTitle = mapName
-                compassDesc = shortDescription and shortDescription or ""
+                compassDesc = shortDescription and getglobal(shortDescription) or ""
                 break
             end
         end

@@ -200,6 +200,15 @@ local function AddOptionButton(panel, name, desc, optionName, callback, params, 
 end
 GW.AddOptionButton = AddOptionButton
 
+local function AddOptionColorPicker(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+
+    opt.optionType = "colorPicker"
+
+    return opt
+end
+GW.AddOptionColorPicker = AddOptionColorPicker
+
 local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
 
@@ -221,15 +230,17 @@ local function AddOptionText(panel, name, desc, optionName, callback, multiline,
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, hasProfile, isSound, noNewLine)
     local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
 
-    opt["options"] = {}
-    opt["options"] = options_list
-    opt["options_names"] = option_names
-    opt["hasCheckbox"] = checkbox
-    opt["optionType"] = "dropdown"
-    opt["tooltipType"] = tooltipType
+    opt.options = {}
+    opt.options = options_list
+    opt.options_names = option_names
+    opt.hasCheckbox = checkbox
+    opt.optionType = "dropdown"
+    opt.tooltipType = tooltipType
+    opt.hasSound = isSound
+    opt.noNewLine = noNewLine
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
@@ -362,6 +373,11 @@ local function loadDropDown(scrollFrame)
                 else
                     slot.checkbutton:Show()
                 end
+                if not scrollFrame.data.hasSound then
+                    slot.soundButton:Hide()
+                else
+                    slot.soundButton:Show()
+                end
 
                 slot.string:SetText(scrollFrame.data.options_names[idx])
                 slot.option = scrollFrame.data.options[idx]
@@ -386,6 +402,17 @@ local function loadDropDown(scrollFrame)
 
     USED_DROPDOWN_HEIGHT = 20 * ddCount
     HybridScrollFrame_Update(scrollFrame, USED_DROPDOWN_HEIGHT, 120)
+end
+
+local function ShowColorPicker(r, g, b, a, changedCallback)
+    ColorPickerFrame:SetColorRGB(r, g, b)
+    ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = (a ~= nil), a
+    ColorPickerFrame.previousValues = {r, g, b, a}
+    ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.cancelFunc = changedCallback, changedCallback, changedCallback
+    ColorPickerFrame:Show()
+    ColorPickerFrame:SetFrameStrata('FULLSCREEN_DIALOG')
+    ColorPickerFrame:SetClampedToScreen(true)
+    ColorPickerFrame:Raise()
 end
 
 local function InitPanel(panel, hasScroll)
@@ -419,9 +446,18 @@ local function InitPanel(panel, hasScroll)
         elseif v.optionType == "button" then
             optionFrameType = "GwButtonTextTmpl"
             newLine = true
+        elseif v.optionType == "colorPicker" then
+            optionFrameType = "GwOptionBoxColorPickerTmpl"
+            newLine = true
         end
 
         local of = CreateFrame("Button", v.optionName, (hasScroll and panel.scroll.scrollchild or panel), optionFrameType)
+
+        of.optionName = v.optionName
+        of.perSpec = v.perSpec
+        of.decimalNumbers = v.decimalNumbers
+        of.options = v.options
+        of.options_names = v.options_names
 
         if (newLine and not first) or padding.x > 440 then
             padding.y = padding.y + (pY + box_padding)
@@ -455,7 +491,36 @@ local function InitPanel(panel, hasScroll)
         )
         of:SetScript("OnLeave", GameTooltip_Hide)
 
-        if v.optionType == "dropdown" then
+        if v.optionType == "colorPicker" then
+            local color = GetSetting(of.optionName)
+            of.button.bg:SetColorTexture(color.r, color.g, color.b)
+            of.button:SetScript("OnClick", function()
+                if ColorPickerFrame:IsShown() then
+                    HideUIPanel(ColorPickerFrame)
+                else
+                    color = GetSetting(of.optionName)
+                    ShowColorPicker(color.r, color.g, color.b, nil, function(restore)
+                        if ColorPickerFrame.noColorCallback then return end
+                        local newR, newG, newB
+                        if restore then
+                         -- The user bailed, we extract the old color from the table created by ShowColorPicker.
+                         newR, newG, newB = unpack(restore)
+                        else
+                         -- Something changed
+                          newR, newG, newB = ColorPickerFrame:GetColorRGB()
+                        end
+                        -- Update our internal storage.
+
+                        local color = GetSetting(of.optionName)
+                        color.r = newR
+                        color.g = newG
+                        color.b = newB
+                        SetSetting(of.optionName, color)
+                        of.button.bg:SetColorTexture(newR, newG, newB)
+                    end)
+                end
+            end)
+        elseif v.optionType == "dropdown" then
             local scrollFrame = of.container.contentScroll
             scrollFrame.numEntries = #v.options
             scrollFrame.scrollBar.thumbTexture:SetSize(12, 30)
@@ -475,6 +540,7 @@ local function InitPanel(panel, hasScroll)
                 local slot = scrollFrame.buttons[i]
                 slot:SetWidth(scrollFrame:GetWidth())
                 slot.string:SetFont(UNIT_NAME_FONT, 12)
+                slot.hover:SetAlpha(0.5)
                 slot.of = of
                 if not slot.ScriptsHooked then
                     slot:HookScript("OnClick", function(self)
@@ -489,7 +555,7 @@ local function InitPanel(panel, hasScroll)
 
                         SetSetting(self.optionName, self.option)
 
-                        if v.callback ~= nil then
+                        if v.callback then
                             v.callback()
                         end
                         --Check all dependencies on this option
@@ -503,11 +569,23 @@ local function InitPanel(panel, hasScroll)
 
                         SetSetting(self:GetParent().optionName, toSet, self:GetParent().option)
 
-                        if v.callback ~= nil then
+                        if v.callback then
                             v.callback(toSet, self:GetParent().option)
                         end
                         --Check all dependencies on this option
                         checkDependenciesOnLoad()
+                    end)
+                    slot:HookScript("OnEnter", function()
+                        slot.hover:Show()
+                    end)
+                    slot.checkbutton:HookScript("OnEnter", function()
+                        slot.hover:Show()
+                    end)
+                    slot:HookScript("OnLeave", function()
+                        slot.hover:Hide()
+                    end)
+                    slot.checkbutton:HookScript("OnLeave", function()
+                        slot.hover:Hide()
                     end)
                     if v.tooltipType then
                         if v.tooltipType == "spell" then
@@ -522,6 +600,9 @@ local function InitPanel(panel, hasScroll)
                             GameTooltip:Hide()
                         end)
                     end
+                    slot.soundButton:HookScript("OnClick", function(self)
+                        PlaySoundFile(GW.Libs.LSM:Fetch("sound", self:GetParent().option), "Master")
+                    end)
                     slot.ScriptsHooked = true
                 end
             end
@@ -928,6 +1009,7 @@ local function LoadSettings()
     GW.LoadTargetPanel(sWindow)
     GW.LoadActionbarPanel(sWindow)
     GW.LoadHudPanel(sWindow)
+    GW.LoadChatPanel(sWindow)
     GW.LoadTooltipPanel(sWindow)
     GW.LoadPartyPanel(sWindow)
     GW.LoadRaidPanel(sWindow)

@@ -21,10 +21,65 @@ local function LoadTooltipPanel(sWindow)
     addOption(p, L["Cursor Tooltips"], L["Anchor the tooltips to the cursor."], "TOOLTIP_MOUSE", nil, nil, {["TOOLTIPS_ENABLED"] = true})
     addOption(p, L["Advanced Tooltips"], L["Displays additional information in the tooltip (further information is displayed when the SHIFT key is pressed)"], "ADVANCED_TOOLTIP", nil, nil, {["TOOLTIPS_ENABLED"] = true})
     addOption(p, L["Target Info"], L["When in a raid group, show if anyone in your raid is targeting the current tooltip unit."], "ADVANCED_TOOLTIP_SHOW_TARGET_INFO", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p, SHOW_PLAYER_TITLES, L["Display player titles."], "ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, GUILDCONTROL_GUILDRANKS, L["Display guild ranks if a unit is a member of a guild."], "ADVANCED_TOOLTIP_SHOW_GUILD_RANKS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, L["Always Show Realm"], nil, "ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, CLASS_COLORS, COMPACT_UNIT_FRAME_PROFILE_USECLASSCOLORS, "ADVANCED_TOOLTIP_SHOW_CLASS_COLOR", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p, L["Gender"], L["Displays the player character's gender."], "ADVANCED_TOOLTIP_SHOW_GENDER", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p, L["Show Health bar text"], nil, "ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT", function(value) if not GameTooltip:IsForbidden() then if value then GameTooltipStatusBar.text:Show(); else GameTooltipStatusBar.text:Hide() end end end, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p, L["Hide in combat"], L["Hide different kind of tooltips during combat."], "HIDE_TOOLTIP_IN_COMBAT", nil, nil, {["TOOLTIPS_ENABLED"] = true})
+    addOptionDropdown(
+        p,
+        L["Health Bar Position"],
+        nil,
+        "TOOLTIP_HEALTHBAER_POSITION",
+        nil,
+        {"BOTTOM", "TOP", "DISABLED"},
+        {
+            L["Bottom"],
+            L["Top"],
+            GARRISON_DEACTIVATE_FOLLOWER
+        },
+        nil,
+        {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true}
+    )
+    addOptionDropdown(
+        p,
+        L["Combat Override Key"],
+        L["Modifier to hold to show the tooltip in combat."],
+        "HIDE_TOOLTIP_IN_COMBAT_OVERRIDE",
+        nil,
+        {"ALWAYS", "NONE", "SHIFT", "CTRL", "ALT"},
+        {
+            ALWAYS,
+            NONE,
+            SHIFT_KEY,
+            CTRL_KEY,
+            ALT_KEY,
+        },
+        nil,
+        {["TOOLTIPS_ENABLED"] = true, ["HIDE_TOOLTIP_IN_COMBAT"] = true}
+    )
+    addOptionDropdown(
+        p,
+        L["Hide Units"],
+        L["Only hide unit tooltips of the selected reactions."],
+        "HIDE_TOOLTIP_IN_COMBAT_UNIT",
+        nil,
+        {"NONE", "FRIENDLY", "HOSTILE", "NEUTRAL", "FRIENDLY_NEUTRAL", "FRIENDLY_HOSTILE", "HOSTILE_NEUTRAL", "ALL"},
+        {
+            NONE,
+            FRIENDLY,
+            HOSTILE,
+            FACTION_STANDING_LABEL4,
+            FRIENDLY .. " & " .. FACTION_STANDING_LABEL4,
+            FRIENDLY .. " & " .. HOSTILE,
+            HOSTILE .. " & " .. FACTION_STANDING_LABEL4,
+            ALL
+        },
+        nil,
+        {["TOOLTIPS_ENABLED"] = true, ["HIDE_TOOLTIP_IN_COMBAT"] = true}
+    )
     addOptionSlider(
         p,
         FONT_SIZE,

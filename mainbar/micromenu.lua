@@ -305,6 +305,17 @@ local function setupMicroButtons(mbf)
             self:ClearAllPoints()
             self:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
         end
+        cref:SetScript("OnEnter", CharacterMicroButton.OnEnter)
+        cref:SetScript("OnLeave", GameTooltip_Hide)
+        cref:HookScript("OnEnter", GW.Friends_OnEnter)
+        cref:HookScript("OnEvent", GW.Friends_OnEvent)
+        cref:HookScript("OnClick", GW.Friends_OnClick)
+        cref:RegisterEvent("BN_FRIEND_ACCOUNT_ONLINE")
+        cref:RegisterEvent("BN_FRIEND_ACCOUNT_OFFLINE")
+        cref:RegisterEvent("BN_FRIEND_INFO_CHANGED")
+        cref:RegisterEvent("FRIENDLIST_UPDATE")
+        cref:RegisterEvent("CHAT_MSG_SYSTEM")
+        cref:RegisterEvent("MODIFIER_STATE_CHANGED")
     else
         cref = CharacterMicroButton
         MicroButtonPortrait:Hide()

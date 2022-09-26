@@ -1,5 +1,4 @@
 local _, GW = ...
-local CLASS_COLORS_RAIDFRAME = GW.CLASS_COLORS_RAIDFRAME
 
 local afterCombatQueue = {}
 local EMPTY = {}
@@ -170,14 +169,8 @@ local function GWGetClassColor(class, useClassColor, forNameString)
     end
 
     local useBlizzardClassColor = GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
-    local color
+    local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW.GW_CLASS_COLORS[class]
     local colorForNameString
-
-    if useBlizzardClassColor then
-        color = RAID_CLASS_COLORS[class]
-    else
-        color = CLASS_COLORS_RAIDFRAME[class]
-    end
 
     if type(color) ~= "table" then return end
 
@@ -188,7 +181,7 @@ local function GWGetClassColor(class, useClassColor, forNameString)
     end
 
     if forNameString and not useBlizzardClassColor then
-        colorForNameString = {r = color.r + 0.3, g = color.g + 0.3, b = color.b + 0.3, a = color.a, colorStr = GW.RGBToHex(color.r + 0.3, color.g + 0.3, color.b + 0.3, "ff")}
+        colorForNameString = {r = min(color.r + 0.3, 1), g = min(color.g + 0.3, 1), b = min(color.b + 0.3, 1), a = color.a, colorStr = GW.RGBToHex(min(color.r + 0.3, 1), min(color.g + 0.3, 1), min(color.b + 0.3, 1), "ff")}
     end
 
     return forNameString and colorForNameString or color
@@ -203,6 +196,11 @@ local function RGBToHex(r, g, b, header, ending)
     return format("%s%02x%02x%02x%s", header or "|cff", r * 255, g * 255, b * 255, ending or "")
 end
 GW.RGBToHex = RGBToHex
+
+local function GetUnitBattlefieldFaction(unit)
+    return UnitFactionGroup(unit)
+end
+GW.GetUnitBattlefieldFaction = GetUnitBattlefieldFaction
 
 local function FillTable(T, map, ...)
     wipe(T)
@@ -579,6 +577,15 @@ local function GetScreenQuadrant(frame)
 end
 GW.GetScreenQuadrant = GetScreenQuadrant
 
+do
+    local a, d = "", {"|c[fF][fF]%x%x%x%x%x%x","|r","^%s+","%s+$","|[TA].-|[ta]"}
+    local function StripString(s, ignoreTextures)
+        for i = 1, #d - (ignoreTextures and 1 or 0) do s = gsub(s, d[i], a) end
+        return s
+    end
+    GW.StripString = StripString
+end
+
 local function setItemLevel(button, quality, itemlink)
     button.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     if quality then
@@ -612,6 +619,25 @@ local function ColorGradient(perc, ...)
     return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
 end
 GW.ColorGradient = ColorGradient
+
+local function StatusBarColorGradient(bar, value, max, backdrop)
+	if not (bar and value) then return end
+
+	local current = (not max and value) or (value and max and max ~= 0 and value / max)
+	if not current then return end
+
+	local r, g, b = ColorGradient(current, 0.8, 0, 0, 0.8, 0.8, 0, 0, 0.8,  0)
+	bar:SetStatusBarColor(r, g, b)
+
+	if not backdrop then
+		backdrop = bar.backdrop
+	end
+
+	if backdrop then
+		backdrop:SetBackdropColor(r * 0.25, g * 0.25, b * 0.25)
+	end
+end
+GW.StatusBarColorGradient = StatusBarColorGradient
 
 local Fn = function (...) return not GW.Matches(...) end
 
@@ -708,3 +734,8 @@ local function Join(del, ...)
     return s
 end
 GW.Join = Join
+
+local function EscapeString(s)
+    return gsub(s, "([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1")
+end
+GW.EscapeString = EscapeString

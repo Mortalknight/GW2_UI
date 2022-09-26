@@ -151,7 +151,10 @@ local function PaperDollStats_OnEvent(self, event, ...)
     if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MODEL_CHANGED" or event=="UNIT_NAME_UPDATE" or event=="PLAYER_PVP_RANK_CHANGED" and unit == "player" then
         GwDressingRoom.model:SetUnit("player", false)
         PaperDollUpdateUnitData()
-        collectDurability(durabilityFrame)
+        GW.collectDurability(durabilityFrame)
+        return
+    elseif event == "UPDATE_INVENTORY_DURABILITY" or event == "MERCHANT_SHOW" then
+        GW.collectDurability(durabilityFrame)
         return
     end
 
@@ -206,9 +209,38 @@ local function statGridPos(grid, x, y)
     return grid, x, y
 end
 
+local function stat_OnEnter(self)
+    if self.stat == "DURABILITY" then
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GW.DurabilityTooltip()
+        return
+    end
+    if not self.tooltip then
+        return
+    end
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(self.tooltip)
+    if self.tooltip2 then
+        GameTooltip:AddLine(self.tooltip2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+    end
+    GameTooltip:Show()
+end
+
 local function PaperDollGetStatListFrame(self, i)
-    if _G["GwPaperDollStat" .. i] ~= nil then return _G["GwPaperDollStat" .. i] end
-    return CreateFrame("Frame", "GwPaperDollStat" .. i, self, "GwPaperDollStat")
+    if _G["GwPaperDollStat" .. i] ~= nil then
+        return _G["GwPaperDollStat" .. i]
+    end
+    local fm = CreateFrame("Frame", "GwPaperDollStat" .. i, self, "GwPaperDollStat")
+
+    fm.Value:SetFont(UNIT_NAME_FONT, 14)
+    fm.Value:SetText(ERRORS)
+    fm.Label:SetFont(UNIT_NAME_FONT, 1)
+    fm.Label:SetTextColor(0, 0, 0, 0)
+
+    fm:SetScript("OnEnter", stat_OnEnter)
+    fm:SetScript("OnLeave", GameTooltip_Hide)
+
+    return fm
 end
 
 local function PaperDollPetGetStatListFrame(self, i)
@@ -247,69 +279,6 @@ local function setPetStatFrame(stat, index, statText, tooltip, tooltip2, grid, x
     grid, x, y = statGridPos(grid, x, y)
     return grid, x, y, index + 1
 end
-
-local Slots = {"HeadSlot", "ShoulderSlot", "ChestSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "MainHandSlot", "SecondaryHandSlot", "RangedSlot"}
-local SlotsFriendly = {INVTYPE_HEAD, INVTYPE_SHOULDER, INVTYPE_CHEST, INVTYPE_WRIST, INVTYPE_HAND, INVTYPE_WAIST, INVTYPE_LEGS, INVTYPE_FEET, INVTYPE_WEAPONMAINHAND, INVTYPE_WEAPONOFFHAND, L["Ranged"]}
-
-function GW_DurabilityTooltip()
-    local duravaltotal, duramaxtotal, durapercent = 0, 0, 0
-    local valcol, id, duraval, duramax
-    local validItems = false
-
-    -- Create layout
-    GameTooltip:AddLine("|cffffffff")
-    GameTooltip:AddLine("|cffffffff")
-    GameTooltip:AddLine("|cffffffff")
-    _G["GameTooltipTextLeft1"]:SetText("|cffffffff"); _G["GameTooltipTextRight1"]:SetText("|cffffffff")
-    _G["GameTooltipTextLeft2"]:SetText("|cffffffff"); _G["GameTooltipTextRight2"]:SetText("|cffffffff")
-    _G["GameTooltipTextLeft3"]:SetText("|cffffffff"); _G["GameTooltipTextRight3"]:SetText("|cffffffff")
-
-    for k, slotName in ipairs(Slots) do
-        if GetInventorySlotInfo(slotName) then
-            id = GetInventorySlotInfo(slotName)
-            duraval, duramax = GetInventoryItemDurability(id)
-            if duraval ~= nil then
-                -- At least one item has durability stat
-                validItems = true
-
-                -- Add to tooltip
-                durapercent = tonumber(GW.RoundDec(duraval / duramax * 100))
-                valcol = (durapercent >= 80 and "|cff00FF00") or (durapercent >= 60 and "|cff99FF00") or (durapercent >= 40 and "|cffFFFF00") or (durapercent >= 20 and "|cffFF9900") or (durapercent >= 0 and "|cffFF2000") or ("|cffFFFFFF")
-                _G["GameTooltipTextLeft1"]:SetText(DURABILITY)
-                _G["GameTooltipTextLeft2"]:SetText(_G["GameTooltipTextLeft2"]:GetText() .. SlotsFriendly[k] .. "|n")
-                _G["GameTooltipTextRight2"]:SetText(_G["GameTooltipTextRight2"]:GetText() ..  valcol .. durapercent .. "%" .. "|n")
-
-                duravaltotal = duravaltotal + duraval
-                duramaxtotal = duramaxtotal + duramax
-            end
-        end
-    end
-    if duravaltotal > 0 and duramaxtotal > 0 then
-        durapercent = duravaltotal / duramaxtotal * 100
-    else
-        durapercent = 0
-    end
-    if validItems == true then
-        -- Show overall durability in the tooltip
-        if durapercent >= 80 then valcol = "|cff00FF00"    elseif durapercent >= 60 then valcol = "|cff99FF00"    elseif durapercent >= 40 then valcol = "|cffFFFF00"    elseif durapercent >= 20 then valcol = "|cffFF9900"    elseif durapercent >= 0 then valcol = "|cffFF2000" else return end
-        _G["GameTooltipTextLeft3"]:SetText(TOTAL .. " " .. valcol)
-        _G["GameTooltipTextRight3"]:SetText(valcol .. GW.RoundDec(durapercent) .. "%")
-
-        -- Show lines of the tooltip
-        GameTooltipTextLeft1:Show(); GameTooltipTextRight1:Show()
-        GameTooltipTextLeft2:Show(); GameTooltipTextRight2:Show()
-        GameTooltipTextLeft3:Show(); GameTooltipTextRight3:Show()
-        GameTooltipTextRight2:SetJustifyH("RIGHT")
-        GameTooltipTextRight3:SetJustifyH("RIGHT")
-        GameTooltip:Show()
-    else
-        -- No items have durability stat
-        GameTooltip:ClearLines()
-        GameTooltip:AddLine("" .. DURABILITY, 1, 0.85, 0)
-        GameTooltip:Show()
-    end
-end
-GW.AddForProfiling("paperdoll_equipment", "DurabilityTooltip", DurabilityTooltip)
 
 local function PaperDollUpdateStats()
     local avgItemLevel, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
@@ -571,14 +540,6 @@ local function abandonProffesionOnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     GameTooltip:SetText(UNLEARN_SKILL_TOOLTIP)
     GameTooltip:Show()
-end
-
-local function LoadPVPTab()
-    -- Honor
-    
-
-    -- Battleground
-    
 end
 
 function GWupdateSkills()
@@ -868,8 +829,6 @@ local function LoadPaperDoll()
 
     PaperDollUpdateStats()
     PaperDollUpdatePetStats()
-
-    LoadPVPTab()
 
     GwDressingRoomPet.model.expBar:SetScript("OnEnter", function(self)
         self.value:Show()

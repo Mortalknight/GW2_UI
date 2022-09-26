@@ -43,6 +43,7 @@ core\storage.lua
 core\statusReport.lua
 core\slashcommands.lua
 core\cooldowns.lua
+core\misc.lua
 
 settings\defaults.lua
 settings\api.lua
@@ -63,6 +64,7 @@ settings\panel_raid.lua
 settings\panel_auras.lua
 settings\panel_skins.lua
 settings\panel_profiles.lua
+settings\panel_chat.lua
 settings\hover_binding.lua
 settings\welcome.xml
 settings\welcome.lua
@@ -73,6 +75,9 @@ settings\versionApi.lua
 dataInfo\money.lua
 dataInfo\guild.lua
 dataInfo\bags.lua
+dataInfo\durability.lua
+dataInfo\system.lua
+dataInfo\friends.lua
 
 core\auras.lua
 

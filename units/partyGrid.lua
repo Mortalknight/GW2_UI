@@ -117,7 +117,7 @@ local function GridPartyUpdateFramesPosition()
 end
 GW.GridPartyUpdateFramesPosition = GridPartyUpdateFramesPosition
 
---[[
+
 local function GridSortByRole()
     local sorted = {}
     local roleIndex = {"TANK", "HEALER", "DAMAGER", "NONE"}
@@ -137,7 +137,7 @@ local function GridSortByRole()
 
     return sorted
 end
-]]
+
 
 local grpPos, noGrp = {}, {}
 local function GridPartyUpdateFramesLayout()
@@ -151,7 +151,7 @@ local function GridPartyUpdateFramesLayout()
     end
 
     local unitString = "Party"
-    local sorted = {} --GetSetting("RAID_SORT_BY_ROLE_PARTY") and GridSortByRole() or {}
+    local sorted = GetSetting("RAID_SORT_BY_ROLE_PARTY") and GridSortByRole() or {}
 
     -- Position by role
     for i, v in ipairs(sorted) do

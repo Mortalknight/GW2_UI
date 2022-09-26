@@ -53,33 +53,6 @@
                 </FontString>
             </Layer>
         </Layers>
-        <Scripts>
-            <OnLoad>
-                self.Value:SetFont(UNIT_NAME_FONT, 14)
-                self.Label:SetFont(UNIT_NAME_FONT, 1)
-                self.Label:SetTextColor(0, 0, 0, 0)
-                self.Value:SetText("")
-            </OnLoad>
-            <OnEnter>
-                if self.stat == "DURABILITY" then
-                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                    GW_DurabilityTooltip(self)
-                    return
-                end
-                if not self.tooltip then
-                    return
-                end
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(self.tooltip)
-                if self.tooltip2 then
-                    GameTooltip:AddLine(self.tooltip2, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
-                end
-                GameTooltip:Show()
-            </OnEnter>
-            <OnLeave>
-                GameTooltip:Hide()
-            </OnLeave>
-        </Scripts>
     </Frame>
 
     <Button name="GwCharacterMenuButtonTemplateNew" inherits="GwStandardButton" virtual="true">
@@ -793,6 +766,8 @@
                         self:RegisterEvent("CHARACTER_ITEM_FIXUP_NOTIFICATION")
                         self:RegisterEvent("UNIT_NAME_UPDATE")
                         self:RegisterEvent("UNIT_INVENTORY_CHANGED")
+                        self:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
+                        self:RegisterEvent("MERCHANT_SHOW")
                         self:RegisterEvent("UPDATE_INVENTORY_ALERTS")
 
                         self:RegisterUnitEvent("UNIT_DAMAGE", "player")

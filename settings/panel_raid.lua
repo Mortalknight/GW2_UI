@@ -19,7 +19,7 @@ local function CreateProfileSwitcher(panel, profiles, panels)
         panel.selectProfile[value].string:SetFont(UNIT_NAME_FONT, 12)
         panel.selectProfile[value].string:SetText(getglobal(value))
         panel.selectProfile[value].checkbutton:Hide()
-        --panel.selectProfile[value].soundButton:Hide()
+        panel.selectProfile[value].soundButton:Hide()
         panel.selectProfile[value].string:ClearAllPoints()
         panel.selectProfile[value].string:SetPoint("LEFT", 5, 0)
         panel.selectProfile[value].type = value
@@ -81,6 +81,18 @@ local function LoadRaidProfile(sWindow)
     addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
     addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(
+        p,
+        L["Sort Raid Frames by Role"],
+        L["Sort raid unit frames by role (tank, heal, damage) instead of group."],
+        "RAID_SORT_BY_ROLE",
+        function()
+            GW.GridUpdateFramesPosition("RAID")
+            GW.GridUpdateFramesLayout("RAID")
+        end,
+        nil,
+        {["RAID_FRAMES"] = true}
+    )
     addOptionDropdown(
         p,
         L["Show Aura Tooltips"],
@@ -299,6 +311,18 @@ local function LoadPartyProfile(sWindow)
     addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PARTY", nil, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
     addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY", nil, nil, {["RAID_FRAMES"] = true})
     addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_PARTY", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(
+        p,
+        L["Sort Raid Frames by Role"],
+        L["Sort raid unit frames by role (tank, heal, damage) instead of group."],
+        "RAID_SORT_BY_ROLE_PARTY",
+        function()
+            GW.GridUpdateFramesPosition("PARTY")
+            GW.GridUpdateFramesLayout("PARTY")
+        end,
+        nil,
+        {["RAID_FRAMES"] = true}
+    )
     addOptionDropdown(
         p,
         L["Show Aura Tooltips"],

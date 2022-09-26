@@ -9,6 +9,7 @@
     <Script file="blizzard_options.lua"/>
     <Script file="macro.lua"/>
     <Script file="worldmap.lua"/>
+    <Script file="colorPicker.lua"/>
 
     <Script file="addons\gearQuipper.lua"/>
     <Script file="addons\detailsProfile.lua"/>

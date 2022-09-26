@@ -1,6 +1,31 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.2.0 Wrath", [=[
+    - Added GW2 style worldmap and minimap player pin
+    - Added a new "Role Bar" which shows your group or raid's role composition
+    - Added option to sort raid grid by role
+    - Added 'Friends' tooltip to character micro menu button
+    - Added an option to change the position of the tooltip healtbar: Bottom, Top, Disable
+    - Added option to hide tooltips in combat and a override setting
+
+    CHAT:
+        Added lots of new settings to the chat module
+            - Detacting URL Links and make them clickable
+            - A Keyword System, which marks your keywords in the chat and plays a sound
+            - Classcoloring char names
+            - Short Channel names
+            - Emoticon's
+            - Show role icons before the names (if you are in a raid or party)
+            - Spam Intervall: Hides the same messages in a given time
+            - Combat Repeate: Close the chat editbox if you type in the same char for a given number while in combat
+            - Link Hovering: Shows the tooltip of eg a Achivment while hovering
+            - Added option to set a timer to auto scroll down the chat
+            - Added option to set the number of chat messages which are scrolled with one scroll
+    
+    
+]=])
+
 v("1.1.0 Wrath", [=[
     - Added boss frames
     - Added arena frames

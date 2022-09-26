@@ -11,10 +11,13 @@ local icons = {
     QUEST = {tex = "icon-objective", l = 0, r = 1, t = 0.25, b = 0.5},
     BOSS = {tex = "icon-boss", l = 0, r = 1, t = 0, b = 1},
     DEAD = {tex = "party/icon-dead", l = 0, r = 1, t = 0, b = 1},
+    ARENA = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1},
 }
 
 local notification_priority = {
-    EVENT = 1
+    EVENT = 1,
+    ARENA = 2,
+    BOSS = 3,
 }
 
 
@@ -129,12 +132,12 @@ local function getNearestQuestPOI()
     if Questie and Questie.started then
         for _, quest in pairs(GW.trackedQuests) do
             if quest.questId then
-                local questQuestie = QuestieLoader:ImportModule("QuestieDB"):GetQuest(quest.questId)
-                if questQuestie then
+                local QuestieDB = QuestieLoader:ImportModule("QuestieDB"):GetQuest(quest.questId)
+                if QuestieDB then
                     -- do this to prevent a questie error
                     local shouldCheck = false
-                    if questQuestie.Objectives then
-                        for _, objective in pairs(questQuestie.Objectives) do
+                    if QuestieDB.Objectives then
+                        for _, objective in pairs(QuestieDB.Objectives) do
                             if objective.spawnList and next(objective.spawnList) then
                                 shouldCheck = true
                             else
@@ -149,7 +152,7 @@ local function getNearestQuestPOI()
                         if spawn and zone and name then
                             if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
                                 local distance = _GetDistanceToClosestObjective(spawn, zone, name)
-                                if distance < minDist then
+                                if distance and distance < minDist then
                                     minDist = distance
                                     closestQuestID = quest.questId
                                     spawnInfo = spawn

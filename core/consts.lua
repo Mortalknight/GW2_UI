@@ -137,57 +137,55 @@ bloodSpark[22] = {left = 0.125 * 5, right = 0.125 * 6, top = 0, bottom = 0.5}
 bloodSpark[23] = {left = 0.125 * 6, right = 0.125 * 7, top = 0, bottom = 0.5}
 bloodSpark[24] = {left = 0.125 * 7, right = 0.125 * 8, top = 0, bottom = 0.5}
 
-local CLASS_ICONS = {}
-GW.CLASS_ICONS = CLASS_ICONS
+GW.CLASS_ICONS = {
+    [0] = {l = 0.0625 * 12, r = 0.0625 * 13, t = 0, b = 1},
 
-CLASS_ICONS[0] = {l = 0.0625 * 12, r = 0.0625 * 13, t = 0, b = 1}
+    [1] = {l = 0.0625 * 11, r = 0.0625 * 12, t = 0, b = 1},
+    [2] = {l = 0.0625 * 10, r = 0.0625 * 11, t = 0, b = 1},
+    [3] = {l = 0.0625 * 9, r = 0.0625 * 10, t = 0, b = 1},
+    [4] = {l = 0.0625 * 8, r = 0.0625 * 9, t = 0, b = 1},
+    [5] = {l = 0.0625 * 7, r = 0.0625 * 8, t = 0, b = 1},
+    [6] = {l = 0.0625 * 6, r = 0.0625 * 7, t = 0, b = 1},
+    [7] = {l = 0.0625 * 5, r = 0.0625 * 6, t = 0, b = 1},
+    [8] = {l = 0.0625 * 4, r = 0.0625 * 5, t = 0, b = 1},
+    [9] = {l = 0.0625 * 3, r = 0.0625 * 4, t = 0, b = 1},
+    [10] = {l = 0.0625 * 2, r = 0.0625 * 3, t = 0, b = 1},
+    [11] = {l = 0.0625 * 1, r = 0.0625 * 2, t = 0, b = 1},
+    [12] = {l = 0, r = 0.0625 * 1, t = 0, b = 1},
+    dead = {l = 0.0625 * 12, r = 0.0625 * 13, t = 0, b = 1}
+}
+GW.CLASS_ICONS.WARRIOR = GW.CLASS_ICONS[1]
+GW.CLASS_ICONS.PALADIN = GW.CLASS_ICONS[2]
+GW.CLASS_ICONS.HUNTER = GW.CLASS_ICONS[3]
+GW.CLASS_ICONS.ROGUE = GW.CLASS_ICONS[4]
+GW.CLASS_ICONS.PRIEST = GW.CLASS_ICONS[5]
+GW.CLASS_ICONS.DEATHKNIGHT = GW.CLASS_ICONS[6]
+GW.CLASS_ICONS.SHAMAN = GW.CLASS_ICONS[7]
+GW.CLASS_ICONS.MAGE = GW.CLASS_ICONS[8]
+GW.CLASS_ICONS.WARLOCK = GW.CLASS_ICONS[9]
+GW.CLASS_ICONS.MONK = GW.CLASS_ICONS[10]
+GW.CLASS_ICONS.DRUID = GW.CLASS_ICONS[11]
+GW.CLASS_ICONS.DEMONHUNTER = GW.CLASS_ICONS[12]
 
-CLASS_ICONS[1] = {l = 0.0625 * 11, r = 0.0625 * 12, t = 0, b = 1}
-CLASS_ICONS[2] = {l = 0.0625 * 10, r = 0.0625 * 11, t = 0, b = 1}
-CLASS_ICONS[3] = {l = 0.0625 * 9, r = 0.0625 * 10, t = 0, b = 1}
-CLASS_ICONS[4] = {l = 0.0625 * 8, r = 0.0625 * 9, t = 0, b = 1}
-CLASS_ICONS[5] = {l = 0.0625 * 7, r = 0.0625 * 8, t = 0, b = 1}
-CLASS_ICONS[6] = {l = 0.0625 * 6, r = 0.0625 * 7, t = 0, b = 1}
-CLASS_ICONS[7] = {l = 0.0625 * 5, r = 0.0625 * 6, t = 0, b = 1}
-CLASS_ICONS[8] = {l = 0.0625 * 4, r = 0.0625 * 5, t = 0, b = 1}
-CLASS_ICONS[9] = {l = 0.0625 * 3, r = 0.0625 * 4, t = 0, b = 1}
-CLASS_ICONS[10] = {l = 0.0625 * 2, r = 0.0625 * 3, t = 0, b = 1}
-CLASS_ICONS[11] = {l = 0.0625 * 1, r = 0.0625 * 2, t = 0, b = 1}
-CLASS_ICONS[12] = {l = 0, r = 0.0625 * 1, t = 0, b = 1}
-CLASS_ICONS["WARRIOR"] = CLASS_ICONS[1]
-CLASS_ICONS["PALADIN"] = CLASS_ICONS[2]
-CLASS_ICONS["HUNTER"] = CLASS_ICONS[3]
-CLASS_ICONS["ROGUE"] = CLASS_ICONS[4]
-CLASS_ICONS["PRIEST"] = CLASS_ICONS[5]
-CLASS_ICONS["DEATHKNIGHT"] = CLASS_ICONS[6]
-CLASS_ICONS["SHAMAN"] = CLASS_ICONS[7]
-CLASS_ICONS["MAGE"] = CLASS_ICONS[8]
-CLASS_ICONS["WARLOCK"] = CLASS_ICONS[9]
-CLASS_ICONS["MONK"] = CLASS_ICONS[10]
-CLASS_ICONS["DRUID"] = CLASS_ICONS[11]
-CLASS_ICONS["DEMONHUNTER"] = CLASS_ICONS[12]
-CLASS_ICONS["dead"] = {l = 0.0625 * 12, r = 0.0625 * 13, t = 0, b = 1}
+GW.GW_CLASS_COLORS = {
+    WARRIOR = {r = 90 / 255, g = 54 / 255, b = 38 / 255, a = 1},
+    PALADIN = {r = 177 / 255, g = 72 / 255, b = 117 / 255, a = 1},
+    HUNTER = {r = 99 / 255, g = 125 / 255, b = 53 / 255, a = 1},
+    ROGUE = {r = 190 / 255, g = 183 / 255, b = 79 / 255, a = 1},
+    PRIEST = {r = 205 / 255, g = 205 / 255, b = 205 / 255, a = 1},
+    DEATHKNIGHT = {r = 148 / 255, g = 62 / 255, b = 62 / 255, a = 1},
+    SHAMAN = {r = 30 / 255, g = 44 / 255, b = 149 / 255, a = 1},
+    MAGE = {r = 62 / 255, g = 121 / 255, b = 149 / 255, a = 1},
+    WARLOCK = {r = 125 / 255, g = 88 / 255, b = 154 / 255, a = 1},
+    MONK = {r = 66 / 255, g = 151 / 255, b = 112 / 255, a = 1},
+    DRUID = {r = 158 / 255, g = 103 / 255, b = 37 / 255, a = 1},
+    DEMONHUNTER = {r = 72 / 255, g = 38 / 255, b = 148 / 255, a = 1}
+}
 
-local CLASS_COLORS_RAIDFRAME = {}
-GW.CLASS_COLORS_RAIDFRAME = CLASS_COLORS_RAIDFRAME
-
-CLASS_COLORS_RAIDFRAME["WARRIOR"] = {r = 90 / 255, g = 54 / 255, b = 38 / 255, a = 1}
-CLASS_COLORS_RAIDFRAME["PALADIN"] = {r = 177 / 255, g = 72 / 255, b = 117 / 255, a = 1}
-CLASS_COLORS_RAIDFRAME["HUNTER"] = {r = 99 / 255, g = 125 / 255, b = 53 / 255, a = 1}
-CLASS_COLORS_RAIDFRAME["ROGUE"] = {r = 190 / 255, g = 183 / 255, b = 79 / 255, a = 1}
-CLASS_COLORS_RAIDFRAME["PRIEST"] = {r = 205 / 255, g = 205 / 255, b = 205 / 255, a = 1}
-CLASS_COLORS_RAIDFRAME["DEATHKNIGHT"] = {r = 148 / 255, g = 62 / 255, b = 62 / 255, a = 1}
-CLASS_COLORS_RAIDFRAME["SHAMAN"] = {r = 30 / 255, g = 44 / 255, b = 149 / 255, a = 1}
-CLASS_COLORS_RAIDFRAME["MAGE"] = {r = 62 / 255, g = 121 / 255, b = 149 / 255, a = 1}
-CLASS_COLORS_RAIDFRAME["WARLOCK"] = {r = 125 / 255, g = 88 / 255, b = 154 / 255, a = 1}
-CLASS_COLORS_RAIDFRAME["MONK"] = {r = 66 / 255, g = 151 / 255, b = 112 / 255, a = 1}
-CLASS_COLORS_RAIDFRAME["DRUID"] = {r = 158 / 255, g = 103 / 255, b = 37 / 255, a = 1}
-CLASS_COLORS_RAIDFRAME["DEMONHUNTER"] = {r = 72 / 255, g = 38 / 255, b = 148 / 255, a = 1}
-
-local FACTION_COLOR = {}
-GW.FACTION_COLOR = FACTION_COLOR
-FACTION_COLOR[1] = {r = 163 / 255, g = 46 / 255, b = 54 / 255}
-FACTION_COLOR[2] = {r = 57 / 255, g = 115 / 255, b = 186 / 255}
+GW.FACTION_COLOR = {
+    [1] = {r = 163 / 255, g = 46 / 255, b = 54 / 255}, --Horde
+    [2] = {r = 57 / 255, g = 115 / 255, b = 186 / 255} --Alliance
+}
 
 local TARGET_FRAME_ART = {
     ["minus"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow",
