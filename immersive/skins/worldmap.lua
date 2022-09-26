@@ -244,6 +244,14 @@ local function SkinWorldMap()
         end)
     end
 
+    -- player pin
+    for pin in WorldMapFrame:EnumeratePinsByTemplate("GroupMembersPinTemplate") do
+        pin:SetPinTexture("player", "Interface/AddOns/GW2_UI/textures/icons/player_arrow")
+        pin.dataProvider:GetUnitPinSizesTable().player = 34
+        pin:SynchronizePinSizes()
+        break
+    end
+
     if Questie_Toggle then Questie_Toggle:SkinButton(false, true) end
 end
 GW.SkinWorldMap = SkinWorldMap
