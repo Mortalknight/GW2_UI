@@ -22,8 +22,52 @@ StaticPopupDialogs["GW_CONFIRM_LEARN_PREVIEW_TALENTS"] = {
     preferredIndex = 4
 }
 
+local function PlayerTalentFrameRole_UpdateRole(self, role)
+	if not role or role == "NONE" then
+		role = "DAMAGER"
+	end
+
+	self:GetNormalTexture():SetTexCoord(GetTexCoordsForRole(role))
+end
+
+local function PlayerTalentFrameRoleDropDown_OnSelect(self)
+	if activeSpec then
+		SetTalentGroupRole(activeSpec, self.value)
+	end
+end
+
+local function PlayerTalentFrameRoleDropDown_Initialize()
+    local currentRole = "NONE"
+    if activeSpec then
+        currentRole = GetTalentGroupRole(activeSpec)
+    end
+
+    local info = UIDropDownMenu_CreateInfo()
+
+    info.text = INLINE_TANK_ICON .. " " .. TANK
+    info.func = PlayerTalentFrameRoleDropDown_OnSelect
+    info.classicChecks = true
+    info.value = "TANK"
+    info.checked = info.value == currentRole
+    UIDropDownMenu_AddButton(info)
+
+    info.text = INLINE_HEALER_ICON .. " " .. HEALER
+    info.func = PlayerTalentFrameRoleDropDown_OnSelect
+    info.classicChecks = true
+    info.value = "HEALER"
+    info.checked = info.value == currentRole
+    UIDropDownMenu_AddButton(info)
+
+    info.text = INLINE_DAMAGER_ICON .. " " .. DAMAGER
+    info.func = PlayerTalentFrameRoleDropDown_OnSelect
+    info.classicChecks = true
+    info.value = "DAMAGER"
+    info.checked = info.value == currentRole or currentRole == "NONE"
+    UIDropDownMenu_AddButton(info)
+end
+
 local function UpdateActiveSpec(activeTalentGroup)
--- set the active spec
+    -- set the active spec
     activeSpec = 1
     for i = 1, 2 do
         if i == activeTalentGroup then
@@ -32,7 +76,6 @@ local function UpdateActiveSpec(activeTalentGroup)
         end
     end
 end
-
 
 local function UpdateTalentPoints()
     local talentPoints = GetUnspentTalentPoints(false, isPetTalents, openSpec)
@@ -269,13 +312,24 @@ local function updateTalentTrees()
     local activeTalentGroup = GetActiveTalentGroup()
     local hasDualSpec = GetNumTalentGroups(false, false) > 1
     local hasPetTalents = GetNumTalentGroups(false, true) > 0
+    local role = GetTalentGroupRole(activeTalentGroup)
 
     -- preview
     UpdatePreviewControls()
 
     UpdateActiveSpec(activeTalentGroup)
 
-    if hasDualSpec then
+	if role then
+		PlayerTalentFrameRole_UpdateRole(GwTalentFrame.bottomBar.roleButton, role)
+	end
+
+    if isPetTalents then
+        GwTalentFrame.bottomBar.spec1Button:Hide()
+        GwTalentFrame.bottomBar.spec2Button:Hide()
+
+        GwTalentFrame.bottomBar.dualSpecActiveTalentGroupe:Hide()
+        GwTalentFrame.bottomBar.activateSpecGroup:Hide()
+    elseif hasDualSpec then
         GwTalentFrame.bottomBar.spec1Button:Show()
         GwTalentFrame.bottomBar.spec2Button:Show()
         GwTalentFrame.bottomBar.spec1Button:SetEnabled(openSpec == 2 or isPetTalents)
@@ -292,11 +346,7 @@ local function updateTalentTrees()
     end
 
     if hasPetTalents then
-        if hasDualSpec then
-            GwTalentFrame.bottomBar.petTalentsButton:SetEnabled(not isPetTalents)
-        else
-            GwTalentFrame.bottomBar.petTalentsButton:SetText(isPetTalents and PLAYER or PETS)
-        end
+        GwTalentFrame.bottomBar.petTalentsButton:SetText(isPetTalents and PLAYER or PETS)
     end
     GwTalentFrame.bottomBar.petTalentsButton:SetShown(hasPetTalents)
 
@@ -483,16 +533,25 @@ local function LoadTalents()
         end
     end)
 
+    GwTalentFrame.bottomBar.dualSpecActiveTalentGroupe:SetTextColor(63 / 255, 205 / 255, 75 / 255)
+
     GwTalentFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
     GwTalentFrame:RegisterEvent("PET_TALENT_UPDATE")
     GwTalentFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     GwTalentFrame:RegisterEvent("TALENT_GROUP_ROLE_CHANGED")
     GwTalentFrame:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED")
     GwTalentFrame:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED")
-    GwTalentFrame:SetScript('OnEvent', function(_, event)
+    GwTalentFrame:SetScript('OnEvent', function(_, event, ...)
         GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player"))
         if not GwTalentFrame:IsShown() then return end
         updateTalentTrees()
+        if event == "TALENT_GROUP_ROLE_CHANGED" then
+            local talentGroupIndex, role = ...
+            if activeSpec == talentGroupIndex then
+                PlayerTalentFrameRole_UpdateRole(GwTalentFrame.bottomBar.roleButton, role)
+            end
+
+        end
     end)
     GwTalentFrame:SetScript('OnShow', function()
         if InCombatLockdown() then return end
@@ -504,6 +563,9 @@ local function LoadTalents()
         GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
     end)
     GwTalentFrame:Hide()
+
+    -- role icon
+    UIDropDownMenu_Initialize(GwTalentFrame.bottomBar.roleButton.DropDown, PlayerTalentFrameRoleDropDown_Initialize, "MENU")
 
     return GwTalentFrame
 end

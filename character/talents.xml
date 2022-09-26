@@ -391,7 +391,7 @@
                         </FontString>
                         <FontString parentKey="dualSpecActiveTalentGroupe" text="This is your active talent group" justifyH="LEFT" justifyV="MIDDLE">
                             <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-10"/>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-13"/>
                             </Anchors>
                         </FontString>
                     </Layer>
@@ -409,30 +409,64 @@
                             <Anchor point="LEFT" relativeKey="$parent.prevLearn" relativePoint="RIGHT" x="10" y="0"/>
                         </Anchors>
                     </Button>
-
-                    <Button parentKey="spec2Button" text="2" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
-                        <Size x="32" y="32"/>
+                    <Button parentKey="spec1Button" registerForClicks="AnyDown" text="Specialization 1" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="130" y="16"/>
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-5"/>
+                            <Anchor point="CENTER" relativePoint="CENTER" x="-70" y="13"/>
                         </Anchors>
                     </Button>
-                    <Button parentKey="spec1Button" text="1" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
-                        <Size x="32" y="32"/>
+                    <Button parentKey="spec2Button" registerForClicks="AnyDown" text="Specialization 2" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="130" y="16"/>
                         <Anchors>
-                            <Anchor point="RIGHT" relativePoint="LEFT" relativeKey="$parent.spec2Button" x="-10" y="0"/>
+                            <Anchor point="CENTER" relativePoint="CENTER" x="70" y="13"/>
                         </Anchors>
                     </Button>
                     <Button parentKey="petTalentsButton" text="PETS" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
                         <Size x="74" y="16"/>
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.spec2Button" x="0" y="-5"/>
+                            <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.spec2Button" x="10" y="0"/>
                         </Anchors>
                     </Button>
                     <Button parentKey="activateSpecGroup" text="TALENT_SPEC_ACTIVATE" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
                         <Size x="80" y="22"/>
                         <Anchors>
-                             <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-10"/>
+                             <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-15"/>
                         </Anchors>
+                    </Button>
+                    <Button parentKey="roleButton">
+                        <Size x="34" y="34"/>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-5"/>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <Texture file="Interface\LFGFrame\UI-LFG-ICON-ROLES" setAllPoints="true" parentKey="cover" alpha="0.5" hidden="true">
+                                    <TexCoords left="0" right="0.2617" top="0.5234" bottom="0.7851"/>
+                                </Texture>
+                            </Layer>
+                        </Layers>
+                        <Frames>
+                            <Frame parentKey="DropDown" inherits="UIDropDownMenuTemplate" clampedToScreen="true" id="1" hidden="true" />
+                        </Frames>
+                        <Scripts>
+                            <OnLoad>
+                                self:GetNormalTexture():SetTexCoord(GetTexCoordsForRole("DAMAGER"))
+                            </OnLoad>
+                            <OnEnter>
+                                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                                GameTooltip:SetText(ROLE, 1, 1, 1)
+                                GameTooltip:AddLine(SET_ROLE_TOOLTIP, nil, nil, nil, true)
+                                GameTooltip:Show()
+                            </OnEnter>
+                            <OnLeave>
+                                GameTooltip:Hide()
+                            </OnLeave>
+                            <OnClick>
+                                ToggleDropDownMenu(1, nil, GwTalentFrame.bottomBar.roleButton.DropDown, GwTalentFrame.bottomBar.roleButton, 17, 4)
+                            </OnClick>
+                        </Scripts>
+                        <NormalTexture file="Interface\LFGFrame\UI-LFG-ICON-ROLES"/>
+                        <HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
                     </Button>
                 </Frames>
             </Frame>
