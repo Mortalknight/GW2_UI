@@ -389,7 +389,7 @@
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeKey="$parent.background" x="10" y="-10"/>
                             </Anchors>
                         </FontString>
-                        <FontString parentKey="dualSpecActiveTalentGroupe" text="This is your active talent group" justifyH="LEFT" justifyV="MIDDLE">
+                        <FontString parentKey="dualSpecActiveTalentGroupe" text="TALENT_SPECTAB_TOOLTIP_ACTIVE" justifyH="LEFT" justifyV="MIDDLE">
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-13"/>
                             </Anchors>
@@ -409,13 +409,13 @@
                             <Anchor point="LEFT" relativeKey="$parent.prevLearn" relativePoint="RIGHT" x="10" y="0"/>
                         </Anchors>
                     </Button>
-                    <Button parentKey="spec1Button" registerForClicks="AnyDown" text="Specialization 1" enableMouse="true" inherits="GwStandardButton">
+                    <Button parentKey="spec1Button" registerForClicks="AnyDown" text="PRIMARY" enableMouse="true" inherits="GwStandardButton">
                         <Size x="130" y="16"/>
                         <Anchors>
                             <Anchor point="CENTER" relativePoint="CENTER" x="-70" y="13"/>
                         </Anchors>
                     </Button>
-                    <Button parentKey="spec2Button" registerForClicks="AnyDown" text="Specialization 2" enableMouse="true" inherits="GwStandardButton">
+                    <Button parentKey="spec2Button" registerForClicks="AnyDown" text="SECONDARY" enableMouse="true" inherits="GwStandardButton">
                         <Size x="130" y="16"/>
                         <Anchors>
                             <Anchor point="CENTER" relativePoint="CENTER" x="70" y="13"/>
@@ -424,7 +424,7 @@
                     <Button parentKey="petTalentsButton" text="PETS" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
                         <Size x="74" y="16"/>
                         <Anchors>
-                            <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.spec2Button" x="10" y="0"/>
+                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeKey="$parent.roleButton" x="-10" y="5"/>
                         </Anchors>
                     </Button>
                     <Button parentKey="activateSpecGroup" text="TALENT_SPEC_ACTIVATE" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
