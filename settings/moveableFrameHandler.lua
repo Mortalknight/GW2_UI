@@ -509,8 +509,8 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     moveframe.optionScaleable = false
     moveframe.optionHeight = false
 
-    if smallOptions then
-        for _, v in pairs(smallOptions) do
+    if frameOptions then
+        for _, v in pairs(frameOptions) do
             if v == "scaleable" then
                 moveframe.optionScaleable = true
             elseif v == "height" then
