@@ -95,7 +95,6 @@ local Keywords = {}
 local hooks = {}
 local Smileys = {}
 local SmileysForMenu = {}
-local socialQueueCache = {}
 local ignoreChats = {[2] = "Log", [3] = "Voice"}
 
 local SoundTimer
@@ -118,32 +117,11 @@ local rolePaths = {
 local gw2StaffIcon = "|TInterface/AddOns/GW2_UI/Textures/chat/dev_label:14:24|t"
 local gw2StaffList = {
     -- Glow
-    ["Sàphy-Antonidas"] = gw2StaffIcon,
-    ["Shâdowfall-Antonidas"] = gw2StaffIcon,
-    ["Winglord-Antonidas"] = gw2StaffIcon,
-    ["Zâmârâ-Antonidas"] = gw2StaffIcon,
-    ["Mâgus-Aegwynn"] = gw2StaffIcon,
-    ["Flôffi-Aegwynn"] = gw2StaffIcon,
+    ["Zâmara-Everlook"] = gw2StaffIcon,
     -- SHOODOX
-    ["Blish-Thrall"] = gw2StaffIcon,
-    ["Blish-Arthas"] = gw2StaffIcon,
-    ["Hildegunde-ArgentDawn"] = gw2StaffIcon,
-    ["Notburga-ArgentDawn"] = gw2StaffIcon,
-    ["Aderna-Arthas"] = gw2StaffIcon,
-    ["Wan-Malfurion"] = gw2StaffIcon,
-    ["Funda-Malfurion"] = gw2StaffIcon,
-    ["Glühdirne-Arthas"] = gw2StaffIcon,
-    ["Ticksick-Arthas"] = gw2StaffIcon,
-    ["Meep-Arthas"] = gw2StaffIcon,
-    ["Hiniche-Arthas"] = gw2StaffIcon,
-    ["Trodar-Madmortem"] = gw2StaffIcon,
-    ["Lætitia-ArgentDawn"] = gw2StaffIcon,
-    ["Fuyubara-ArgentDawn"] = gw2StaffIcon,
-    ["Blish-Proudmoore"] = gw2StaffIcon,
-    ["Notburga-Proudmoore"] = gw2StaffIcon,
-    ["Sisi-Proudmoore"] = gw2StaffIcon,
-    --Belazor
-    ["Ilyxiana-Ravencrest"] = gw2StaffIcon,
+
+    -- Belazor
+
 }
 
 local gw_fade_frames = {

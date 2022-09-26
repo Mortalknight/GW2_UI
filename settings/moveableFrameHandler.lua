@@ -443,7 +443,7 @@ local function moverframe_OnLeave(self)
 end
 
 local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, isMoved, frameOptions, mhf, postdrag)
-    local moveframe = CreateFrame("Frame", settingsName .. "Mover", UIParent, dummyFrame)
+    local moveframe = CreateFrame("Button", "Gw_" .. settingsName .. "Mover", UIParent, dummyFrame)
     frame.gwMover = moveframe
     if size then
         moveframe:SetSize(unpack(size))
