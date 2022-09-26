@@ -442,7 +442,7 @@ local function moverframe_OnLeave(self)
     end
 end
 
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, isMoved, smallOptions, mhf, postdrag)
+local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, isMoved, frameOptions, mhf, postdrag)
     local moveframe = CreateFrame("Frame", settingsName .. "Mover", UIParent, dummyFrame)
     frame.gwMover = moveframe
     if size then
@@ -519,7 +519,8 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         end
     end
 
-    if smallOptions and #smallOptions > 0 then
+    moveframe:SetScript("OnClick", mover_options)
+    if frameOptions and #frameOptions > 0 then
         if moveframe.optionScaleable then
             local scale = GetSetting(settingsName .. "_scale")
             moveframe.gw_frame:SetScale(scale)
@@ -531,7 +532,6 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
             moveframe.gw_frame:SetHeight(height)
             moveframe:SetHeight(height)
         end
-        moveframe:SetScript("OnMouseDown", mover_options)
     end
 
     if postdrag then
