@@ -690,15 +690,15 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     fmMultibar:SetSize(used_width, used_height)
 
     if barName == "MultiBarLeft" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, "VerticalActionBarDummy", nil, nil, {"default", "scaleable"}, nil, FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, nil, FlyoutDirection)
     elseif barName == "MultiBarRight" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, "VerticalActionBarDummy", nil, nil, {"default", "scaleable"}, nil, FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, nil, FlyoutDirection)
     elseif barName == "MultiBarBottomLeft" then
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, true, FlyoutDirection)
         lm:RegisterMultiBarLeft(fmMultibar)
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, "VerticalActionBarDummy", nil, true, {"default", "scaleable"}, true, FlyoutDirection)
     elseif barName == "MultiBarBottomRight" then
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, true, FlyoutDirection)
         lm:RegisterMultiBarRight(fmMultibar)
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, "VerticalActionBarDummy", nil, true, {"default", "scaleable"}, true, FlyoutDirection)
     end
 
     fmMultibar:ClearAllPoints()

@@ -8,6 +8,7 @@ v("1.2.0 Wrath", [=[
     - Added 'Friends' tooltip to character micro menu button
     - Added an option to change the position of the tooltip healtbar: Bottom, Top, Disable
     - Added option to hide tooltips in combat and a override setting
+    - Redo the GW2 profile page and allow unlimited profiles
 
     CHAT:
         Added lots of new settings to the chat module

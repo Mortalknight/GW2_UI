@@ -1095,50 +1095,6 @@ local function LoadBag(helpers)
 
     f.smsj = smsj
 
-    StaticPopupDialogs["GW_CHANGE_BAG_HEADER"] = {
-        text = L["New Bag Name"],
-        button1 = SAVE,
-        button2 = RESET,
-        selectCallbackByIndex = true,
-        OnButton1 = function(self, data)
-            SetSetting("BAG_HEADER_NAME" .. data, self.editBox:GetText())
-            _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(self.editBox:GetText())
-            return
-        end,
-        OnButton2 = function(_, data)
-            SetSetting("BAG_HEADER_NAME" .. data, "")
-
-            if tonumber(data) > 0 then
-                if tonumber(data) == 5 then
-                    _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(KEYRING)
-                    _G["GwBagFrameGwBagHeader" .. data].nameString:SetTextColor(1, 1, 1, 1)
-                else
-                    local slotID = GetInventorySlotInfo("Bag" .. data - 1 .. "Slot")
-                    local itemID = GetInventoryItemID("player", slotID)
-
-                    if itemID then
-                        local r, g, b = 1, 1, 1
-                        local itemName, _, itemRarity = GetItemInfo(itemID)
-                        if itemRarity then r, g, b = GetItemQualityColor(itemRarity) end
-
-                        _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(itemName or UNKNOWN)
-                        _G["GwBagFrameGwBagHeader" .. data].nameString:SetTextColor(r, g, b, 1)
-                    end
-                end
-            else
-                _G["GwBagFrameGwBagHeader" .. data].nameString:SetText(BACKPACK_TOOLTIP)
-            end
-
-            return
-        end,
-        timeout = 0,
-        whileDead = 1,
-        hasEditBox = 1,
-        maxLetters = 64,
-        editBoxWidth = 250,
-        closeButton = 1,
-    }
-
     return changeItemSize
 end
 GW.LoadBag = LoadBag

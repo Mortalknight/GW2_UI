@@ -739,3 +739,20 @@ local function EscapeString(s)
     return gsub(s, "([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1")
 end
 GW.EscapeString = EscapeString
+
+local function CopyTable(newTable, tableToCopy)
+    if type(newTable) ~= "table" then newTable = {} end
+
+    if type(tableToCopy) == "table" then
+        for option, value in pairs(tableToCopy) do
+            if type(value) == "table" then
+                value = CopyTable(newTable[option], value)
+            end
+
+            newTable[option] = value
+        end
+    end
+
+    return newTable
+end
+GW.CopyTable = CopyTable

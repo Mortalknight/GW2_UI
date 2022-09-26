@@ -376,6 +376,7 @@ local function UpdateAuraHeader(header, settingName)
     header:SetAttribute("point", ap)
     header:SetAttribute("xOffset", xoff)
     header:SetAttribute("wrapYOffset", yoff)
+    header:SetAttribute("growDir", grow_dir)
 
     if header.filter == "HELPFUL" then
         header:SetAttribute("includeWeapons", 1)
@@ -393,8 +394,6 @@ local function UpdateAuraHeader(header, settingName)
 
     -- set anchoring
     if header.filter == "HELPFUL" then
-        header:SetAttribute("growDir", grow_dir)
-
         header:ClearAllPoints()
         header:SetPoint(anchor_hb, header.gwMover, anchor_hb, 0, 0)
     else
@@ -418,7 +417,7 @@ GW.UpdateAuraHeader = UpdateAuraHeader
 local function newHeader(filter, settingname)
     local name = filter == "HELPFUL" and "GW2UIPlayerBuffs" or "GW2UIPlayerDebuffs"
 
-    local h = CreateFrame("Frame", name, UIParent, "SecureAuraHeaderTemplate,SecureHandlerStateTemplate")
+    local h = CreateFrame("Frame", name, UIParent, "SecureAuraHeaderTemplate")
     h:SetClampedToScreen(true)
     h:UnregisterEvent("UNIT_AURA") -- only need player and vehicle, so we can reduce the calls
     h:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
@@ -453,9 +452,9 @@ local function newHeader(filter, settingname)
         h:SetAttribute("consolidateDuration", -1)
         h:SetAttribute("consolidateTo", 0)
 
-        RegisterMovableFrame(h, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", {316, 100}, true, {"default", "scaleable"}, true)
+        RegisterMovableFrame(h, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", {316, 100}, {"default", "scaleable"}, true)
     else
-        RegisterMovableFrame(h, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", {316, 60}, true, {"default", "scaleable"}, true)
+        RegisterMovableFrame(h, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", {316, 60}, {"default", "scaleable"}, true)
     end
 
     UpdateAuraHeader(h, settingname)

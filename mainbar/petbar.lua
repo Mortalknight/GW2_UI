@@ -259,7 +259,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterEvent("UNIT_HAPPINESS")
     playerPetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, true, {"default", "scaleable"}, true)
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, {"default", "scaleable"}, true)
 
     if not playerPetFrame.isMoved then
         AddActionBarCallback(updatePetFrameLocation)

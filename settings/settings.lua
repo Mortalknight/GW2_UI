@@ -252,6 +252,15 @@ local function WarningPrompt(text, method)
 end
 GW.WarningPrompt = WarningPrompt
 
+local function InputPrompt(text, method, input)
+    GwWarningPrompt.string:SetText(text)
+    GwWarningPrompt.method = method
+    GwWarningPrompt:Show()
+    GwWarningPrompt.input:Show()
+    GwWarningPrompt.input:SetText(input or "")
+end
+GW.InputPrompt = InputPrompt
+
 local function setDependenciesOption(type, name, SetEnable, deactivateColor, overrideColor)
     if deactivateColor then
         _G[name].title:SetTextColor(0.82, 0, 0)
@@ -531,7 +540,7 @@ local function InitPanel(panel, hasScroll)
             scrollFrame.scrollBar.scrollDown:SetPoint("BOTTOMRIGHT", 0, -12)
             scrollFrame.scrollBar:SetFrameLevel(scrollFrame:GetFrameLevel() + 5)
 
-            scrollFrame.data = GW.copyTable(nil, v)
+            scrollFrame.data = GW.CopyTable(nil, v)
             scrollFrame.of = of
             scrollFrame.update = loadDropDown
             scrollFrame.scrollBar.doNotHide = false
@@ -907,32 +916,6 @@ local function LoadSettings()
     fmGSWS:SetText(L["Save and Reload"])
     fmGSWKB:SetText(KEY_BINDING)
     fmGSWD:SetText(L["Join Discord"])
-
-    StaticPopupDialogs["JOIN_DISCORD"] = {
-        text = L["Join Discord"],
-        button2 = CLOSE,
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        hasEditBox = 1,
-        hasWideEditBox = true,
-        editBoxWidth = 250,
-        EditBoxOnEscapePressed = function(self)
-            self:GetParent():Hide();
-        end,
-        OnShow = function(self)
-            self:SetWidth(420)
-            local editBox = _G[self:GetName() .. "EditBox"]
-            editBox:SetText("https://discord.gg/MZZtRWt")
-            editBox:SetFocus()
-            editBox:HighlightText(false)
-            local button = _G[self:GetName() .. "Button2"]
-            button:ClearAllPoints()
-            button:SetWidth(200)
-            button:SetPoint("CENTER", editBox, "CENTER", 0, -30)
-        end,
-        preferredIndex = 4
-    }
 
     local fnGSWMH_OnClick = function()
         if InCombatLockdown() then

@@ -195,22 +195,6 @@ local function Grid_Show_Hide(self)
     end
 end
 
-local function CheckIfMoved(self, settingsName, new_point)
-    -- check if we need to know if the frame is on its default position
-    if self.gw_isMoved ~= nil then
-        local defaultPoint = GetDefault(settingsName)
-        local growDirection = GetSetting(settingsName .. "_GrowDirection")
-        local frame = self.gw_frame
-        if defaultPoint.point == new_point.point and defaultPoint.relativePoint == new_point.relativePoint and defaultPoint.xOfs == new_point.xOfs and defaultPoint.yOfs == new_point.yOfs and (growDirection and growDirection == "UP") then
-            frame.isMoved = false
-            frame:SetAttribute("isMoved", false)
-        else
-            frame.isMoved = true
-            frame:SetAttribute("isMoved", true)
-        end
-    end
-end
-
 local function smallSettings_resetToDefault(self)
     local mf = self:GetParent():GetParent().child
 
@@ -442,7 +426,7 @@ local function moverframe_OnLeave(self)
     end
 end
 
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, isMoved, frameOptions, mhf, postdrag)
+local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, frameOptions, mhf, postdrag)
     local moveframe = CreateFrame("Button", "Gw_" .. settingsName .. "Mover", UIParent, dummyFrame)
     frame.gwMover = moveframe
     if size then
@@ -452,7 +436,6 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     end
     moveframe:SetScale(frame:GetScale())
     moveframe.gw_Settings = settingsName
-    moveframe.gw_isMoved = isMoved
     moveframe.gw_frame = frame
     moveframe.gw_mhf = mhf
     moveframe.gw_postdrag = postdrag
@@ -472,7 +455,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     if not moveframe.savedPoint.point or not moveframe.savedPoint.relativePoint or not moveframe.savedPoint.xOfs or not moveframe.savedPoint.yOfs then
         -- use default position
         moveframe:SetPoint(moveframe.defaultPoint.point, UIParent, moveframe.defaultPoint.relativePoint, moveframe.defaultPoint.xOfs, moveframe.defaultPoint.yOfs)
-        moveframe.savedPoint = GW.copyTable(nil, moveframe.defaultPoint)
+        moveframe.savedPoint = GW.CopyTable(nil, moveframe.defaultPoint)
     else
         moveframe:SetPoint(moveframe.savedPoint.point, UIParent, moveframe.savedPoint.relativePoint, moveframe.savedPoint.xOfs, moveframe.savedPoint.yOfs)
     end
