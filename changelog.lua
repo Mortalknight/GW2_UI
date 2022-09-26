@@ -23,8 +23,11 @@ v("1.2.0 Wrath", [=[
             - Link Hovering: Shows the tooltip of eg a Achivment while hovering
             - Added option to set a timer to auto scroll down the chat
             - Added option to set the number of chat messages which are scrolled with one scroll
-    
-    
+
+    - Added 'Layouts':
+        - You can now create, save and edit differente movable frame layouts and assing them to a spec.
+        - This layouts will be automaticly activated by a spec switch
+        Notes: The current profile layout will be saved as a new layout and works always a default, if no spec layout was found
 ]=])
 
 v("1.1.0 Wrath", [=[
