@@ -10,8 +10,8 @@
 
 ## Author: deadend06, Nils89, nezroy
 
-## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03, GW2UI_QUEST_WATCH_DB
-## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES, GW2UI_STORAGE2
+## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03, GW2UI_QUEST_WATCH_DB, GW2UI_PRIVATE_SETTINGS, GW2UI_PRIVATE_LAYOUTS
+## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES, GW2UI_STORAGE2, GW2UI_LAYOUTS
 
 core\TaintLess.xml
 core\debug.lua
@@ -69,6 +69,7 @@ settings\panel_chat.lua
 settings\hover_binding.lua
 settings\welcome.xml
 settings\welcome.lua
+settings\layouts.lua
 settings\moveableFrameHandler.lua
 settings\credits.lua
 settings\versionApi.lua

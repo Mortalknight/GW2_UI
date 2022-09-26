@@ -195,6 +195,31 @@ local function Grid_Show_Hide(self)
     end
 end
 
+local function UpdateMatchingLayout(self, new_point)
+    local selectedLayoutId = GwSmallSettingsWindow.layoutView.savedLayoutDropDown.button.selectedId
+    local layout = selectedLayoutId and GW.GetLayoutById(selectedLayoutId) or nil
+    local frameFound = false
+    if layout then
+        for i = 0, #layout.frames do
+            if layout.frames[i].settingName == self.gw_Settings then
+                layout.frames[i].point = nil
+                layout.frames[i].point = GW.CopyTable(nil, new_point)
+
+                frameFound = true
+                break
+            end
+        end
+        print(frameFound)
+        -- could be a new moveable frame which is not at the layout settings, so we need to add it here
+        if not frameFound then
+            local newIdx = #layout.frames + 1
+            layout.frames[newIdx] = {}
+            layout.frames[newIdx].settingName = self.gw_Settings
+            layout.frames[newIdx].point = GW.CopyTable(nil, new_point)
+        end
+    end
+end
+
 local function smallSettings_resetToDefault(self)
     local mf = self:GetParent():GetParent().child
 
@@ -255,6 +280,9 @@ local function smallSettings_resetToDefault(self)
 
     GW.UpdateHudScale()
 
+    --also update the selected layout
+    UpdateMatchingLayout(mf, new_point)
+
     -- run layout manager
     GwSmallSettingsWindow.layoutManager:SetAttribute("inMoveHudMode", false)
     GwSmallSettingsWindow.layoutManager:GetScript("OnEvent")(GwSmallSettingsWindow.layoutManager)
@@ -281,25 +309,31 @@ local function mover_OnDragStop(self)
     self:StopMovingOrSizing()
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
 
-    local new_point = GetSetting(settingsName)
-    new_point.point = point
-    new_point.relativePoint = relativePoint
-    new_point.xOfs = xOfs and GW.RoundInt(xOfs) or 0
-    new_point.yOfs = yOfs and GW.RoundInt(yOfs) or 0
-    new_point.hasMoved = true
-    self:ClearAllPoints()
-    self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
-    SetSetting(settingsName, new_point)
+   -- for layouts: if newPoint is old point, do not update the setting
+   if self.defaultPoint.point ~= point or self.defaultPoint.relativePoint ~= relativePoint or self.defaultPoint.xOfs ~= xOfs or self.defaultPoint.yOfs ~= yOfs then
+        local new_point = GetSetting(settingsName)
+        new_point.point = point
+        new_point.relativePoint = relativePoint
+        new_point.xOfs = xOfs and GW.RoundInt(xOfs) or 0
+        new_point.yOfs = yOfs and GW.RoundInt(yOfs) or 0
+        new_point.hasMoved = true
+        self:ClearAllPoints()
+        self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
+        SetSetting(settingsName, new_point)
 
-    self.gw_frame.isMoved = false
-    self.gw_frame:SetAttribute("isMoved", new_point.hasMoved)
+        self.gw_frame.isMoved = false
+        self.gw_frame:SetAttribute("isMoved", new_point.hasMoved)
+
+        self:SetMovable(true)
+        self:SetUserPlaced(true)
+
+        --also update the selected layout
+        UpdateMatchingLayout(self, new_point)
+    end
 
     if self.gw_postdrag then
         self.gw_postdrag(self.gw_frame)
     end
-
-    self:SetMovable(true)
-    self:SetUserPlaced(true)
     self.IsMoving = false
 end
 GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
@@ -427,7 +461,7 @@ local function moverframe_OnLeave(self)
 end
 
 local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, frameOptions, mhf, postdrag)
-    local moveframe = CreateFrame("Button", "Gw_" .. settingsName .. "Mover", UIParent, dummyFrame)
+    local moveframe = CreateFrame("Button", "Gw_" .. settingsName, UIParent, dummyFrame)
     frame.gwMover = moveframe
     if size then
         moveframe:SetSize(unpack(size))
@@ -650,6 +684,9 @@ local function LoadMovers(layoutManager)
     end)
     moverSettingsFrame.defaultButtons.gridAlign.text:SetText(L["Grid Size:"])
     moverSettingsFrame.defaultButtons.gridAlign:Hide()
+
+    --Layout
+    GW.LoadLayoutsFrame(moverSettingsFrame, layoutManager)
 
     moverSettingsFrame:Hide()
     mf:Hide()

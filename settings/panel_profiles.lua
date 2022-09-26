@@ -220,13 +220,13 @@ local function deleteProfile(index)
     end
 
     -- delete also all "attached" layouts
-    --local allLayouts = GW.GetAllLayouts()
-    --for i = 0, #allLayouts do
-    --    if allLayouts[i] and allLayouts[i].profileId == index then
-    --        GW2UI_LAYOUTS[i] = nil
-    --        break
-    --    end
-    --end
+    local allLayouts = GW.GetAllLayouts()
+    for i = 0, #allLayouts do
+        if allLayouts[i] and allLayouts[i].profileId == index then
+            GW2UI_LAYOUTS[i] = nil
+            break
+        end
+    end
 end
 AddForProfiling("panel_profiles", "deleteProfile", deleteProfile)
 
@@ -244,7 +244,7 @@ local function delete_OnClick(self)
         function()
             deleteProfile(p.profileID)
             loadProfiles(ProfileWin)
-            --GwSmallSettingsWindow.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsWindow.layoutView.savedLayoutDropDown.container.contentScroll)
+            GwSmallSettingsWindow.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsWindow.layoutView.savedLayoutDropDown.container.contentScroll)
         end
     )
 end

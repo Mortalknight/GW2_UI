@@ -267,7 +267,7 @@ local function updateTalentTrees()
     if InCombatLockdown() then return end
 
     local activeTalentGroup = GetActiveTalentGroup()
-    local hastDualSpec = GetNumTalentGroups(false, false) > 1
+    local hasDualSpec = GetNumTalentGroups(false, false) > 1
     local hasPetTalents = GetNumTalentGroups(false, true) > 0
 
     -- preview
@@ -275,7 +275,7 @@ local function updateTalentTrees()
 
     UpdateActiveSpec(activeTalentGroup)
 
-    if hastDualSpec then
+    if hasDualSpec then
         GwTalentFrame.bottomBar.spec1Button:Show()
         GwTalentFrame.bottomBar.spec2Button:Show()
         GwTalentFrame.bottomBar.spec1Button:SetEnabled(openSpec == 2 or isPetTalents)
@@ -292,7 +292,7 @@ local function updateTalentTrees()
     end
 
     if hasPetTalents then
-        if hastDualSpec then
+        if hasDualSpec then
             GwTalentFrame.bottomBar.petTalentsButton:SetEnabled(not isPetTalents)
         else
             GwTalentFrame.bottomBar.petTalentsButton:SetText(isPetTalents and PLAYER or PETS)
@@ -486,6 +486,7 @@ local function LoadTalents()
     GwTalentFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
     GwTalentFrame:RegisterEvent("PET_TALENT_UPDATE")
     GwTalentFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    GwTalentFrame:RegisterEvent("TALENT_GROUP_ROLE_CHANGED")
     GwTalentFrame:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED")
     GwTalentFrame:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED")
     GwTalentFrame:SetScript('OnEvent', function(_, event)

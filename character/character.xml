@@ -763,6 +763,7 @@
                         self:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE")
                         self:RegisterEvent("PLAYER_DAMAGE_DONE_MODS")
                         self:RegisterEvent("SPELL_POWER_CHANGED")
+                        self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
                         self:RegisterEvent("CHARACTER_ITEM_FIXUP_NOTIFICATION")
                         self:RegisterEvent("UNIT_NAME_UPDATE")
                         self:RegisterEvent("UNIT_INVENTORY_CHANGED")

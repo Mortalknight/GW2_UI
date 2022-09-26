@@ -1,9 +1,59 @@
 local _, GW = ...
 
 local GW_DEFAULT = GW.DEFAULTS
+local GW_PRIVATE_DEFAULT = GW.PRIVATE_DEFAULT
 local LibBase64 = GW.Libs.LibBase64
 local Compress = GW.Libs.Compress
 local Serializer = GW.Libs.Serializer
+
+local function GetAllLayouts()
+    if GW2UI_LAYOUTS == nil then
+        GW2UI_LAYOUTS = {}
+    end
+    return GW2UI_LAYOUTS
+end
+GW.GetAllLayouts = GetAllLayouts
+
+local function GetLayoutById(id)
+    if GW2UI_LAYOUTS == nil then
+        GW2UI_LAYOUTS = {}
+    end
+    return GW2UI_LAYOUTS[id] or nil
+end
+GW.GetLayoutById = GetLayoutById
+
+local function GetAllPrivateLayouts()
+    if GW2UI_PRIVATE_LAYOUTS == nil then
+        GW2UI_PRIVATE_LAYOUTS = {}
+    end
+    return GW2UI_PRIVATE_LAYOUTS
+end
+GW.GetAllPrivateLayouts = GetAllPrivateLayouts
+
+local function GetPrivateLayoutByLayoutId(layoutId)
+    if GW2UI_PRIVATE_LAYOUTS == nil then
+        GW2UI_PRIVATE_LAYOUTS = {}
+    end
+    for k, _ in pairs(GW2UI_PRIVATE_LAYOUTS) do
+        if GW2UI_PRIVATE_LAYOUTS[k].layoutId == layoutId then
+            return GW2UI_PRIVATE_LAYOUTS[k]
+        end
+    end
+    return nil
+end
+GW.GetPrivateLayoutByLayoutId = GetPrivateLayoutByLayoutId
+
+local function DeletePrivateLayoutByLayoutId(layoutId)
+    if GW2UI_PRIVATE_LAYOUTS == nil then
+        GW2UI_PRIVATE_LAYOUTS = {}
+    end
+    for k, _ in pairs(GW2UI_PRIVATE_LAYOUTS) do
+        if GW2UI_PRIVATE_LAYOUTS[k].layoutId == layoutId then
+            GW2UI_PRIVATE_LAYOUTS[k] = nil
+        end
+    end
+end
+GW.DeletePrivateLayoutByLayoutId = DeletePrivateLayoutByLayoutId
 
 local function GetActiveProfile()
     if GW2UI_SETTINGS_DB_03 == nil then
@@ -43,11 +93,14 @@ local function GetSetting(name)
     if GW2UI_SETTINGS_DB_03 == nil then
         GW2UI_SETTINGS_DB_03 = GW_DEFAULT
     end
+    if GW2UI_PRIVATE_SETTINGS == nil then
+        GW2UI_PRIVATE_SETTINGS = {}
+    end
 
-    local settings = profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] or GW2UI_SETTINGS_DB_03
+    local settings = GW_PRIVATE_DEFAULT[name] and GW2UI_PRIVATE_SETTINGS or profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] or GW2UI_SETTINGS_DB_03
 
     if settings[name] == nil then
-        settings[name] = GetDefault(name)
+        settings[name] = GW_PRIVATE_DEFAULT[name] or GetDefault(name)
     end
 
     return settings[name]
@@ -57,8 +110,8 @@ GW.GetSetting = GetSetting
 local function SetSetting(name, state, tableID)
     local profileIndex = GetActiveProfile()
 
-    local settings = GW2UI_SETTINGS_DB_03
-    if profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] then
+    local settings = GW_PRIVATE_DEFAULT[name] and GW2UI_PRIVATE_SETTINGS or GW2UI_SETTINGS_DB_03
+    if GW_PRIVATE_DEFAULT[name] == nil and profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] then
         settings = GW2UI_SETTINGS_PROFILES[profileIndex]
         settings["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
     end
@@ -87,12 +140,28 @@ GW.SetOverrideIncompatibleAddons = SetOverrideIncompatibleAddons
 
 local function ResetToDefault()
     local profileIndex = GetActiveProfile()
+    local allLayouts = GetAllLayouts()
+    local oldUsername, oldProfilename = nil, nil
 
     if profileIndex ~= nil and GW2UI_SETTINGS_PROFILES[profileIndex] ~= nil then
-        for k, v in pairs(GW_DEFAULT) do
-            GW2UI_SETTINGS_PROFILES[profileIndex][k] = v
+        oldUsername = GW2UI_SETTINGS_PROFILES[profileIndex].profileCreatedCharacter
+        oldProfilename = GW2UI_SETTINGS_PROFILES[profileIndex].profilename
+        GW2UI_SETTINGS_PROFILES[profileIndex] = nil
+        GW2UI_SETTINGS_PROFILES[profileIndex] = GW.CopyTable(nil, GW_DEFAULT)
+        GW2UI_PRIVATE_SETTINGS = nil
+        GW2UI_PRIVATE_SETTINGS = GW.CopyTable(nil, GW_PRIVATE_DEFAULT)
+        GW2UI_SETTINGS_PROFILES[profileIndex].profileLastUpdated = date("%m/%d/%y %H:%M:%S")
+        GW2UI_SETTINGS_PROFILES[profileIndex].profileCreatedDate = date("%m/%d/%y %H:%M:%S")
+        GW2UI_SETTINGS_PROFILES[profileIndex].profileCreatedCharacter = oldUsername or UNKNOWN
+        GW2UI_SETTINGS_PROFILES[profileIndex].profilename = oldProfilename or UNKNOWN
+        -- also rest the matching profile layout
+        for i = 0, #allLayouts do
+            if allLayouts[i] and allLayouts[i].profileLayout and allLayouts[i].profileId == profileIndex then
+                GW2UI_LAYOUTS[i] = nil
+                break
+            end
         end
-        GW2UI_SETTINGS_PROFILES[profileIndex]["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
+
         return
     end
     GW2UI_SETTINGS_DB_03 = GW_DEFAULT
