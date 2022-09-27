@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.2.2 Wrath", [=[
+    - Fix chat lua error
+]=])
+
 v("1.2.1 Wrath", [=[
     - Pet stat fix
 ]=])
