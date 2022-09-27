@@ -1,3 +1,6 @@
+1.2.2-Wrath
+    - Fix chat lua error
+
 1.2.1-Wrath
     - Pet stat fix
 
