@@ -664,30 +664,6 @@ local function HandleChatMessageFilter(_, event, message, author, ...)
     end
 end
 
-local function ChatFrame_CheckAddChannel(chatFrame, eventType, channelID)
-    -- This is called in the event that a user receives chat events for a channel that isn"t enabled for any chat frames.
-    -- Minor hack, because chat channel filtering is backed by the client, but driven entirely from Lua.
-    -- This solves the issue of Guides abdicating their status, and then re-applying in the same game session, unless ChatFrame_AddChannel
-    -- is called, the channel filter will be off even though it"s still enabled in the client, since abdication removes the chat channel and its config.
-
-    -- Only add to default (since multiple chat frames receive the event and we don"t want to add to others)
-    if chatFrame ~= DEFAULT_CHAT_FRAME then
-        return false;
-    end
-
-    -- Only add if the user is joining a channel
-    if eventType ~= "YOU_CHANGED" then
-        return false;
-    end
-
-    -- Only add regional channels
-    if not C_ChatInfo.IsChannelRegionalForChannelID(channelID) then
-        return false;
-    end
-
-    return ChatFrame_AddChannel(chatFrame, C_ChatInfo.GetChannelShortcutForChannelID(channelID)) ~= nil;
-end
-
 local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID, alwaysAddTimestamp)
     local useGw2Style = GetSetting("CHAT_USE_GW2_STYLE")
 
@@ -910,10 +886,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             end
 
             if not found or not info then
-                local eventType, channelID = arg1, arg7
-                if not ChatFrame_CheckAddChannel(frame, eventType, channelID) then
-                    return true
-                end
+                return true
             end
         end
 
