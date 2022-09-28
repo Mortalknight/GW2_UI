@@ -120,7 +120,7 @@ local function getNearestQuestPOI()
         return nil
     end
 
-    if (GW.locationData.x == nil or GW.locationData.y == nil) and numQuests == 0 then
+    if (GW.locationData.x == nil or GW.locationData.y == nil) then
         return nil
     end
 
@@ -148,7 +148,6 @@ local function getNearestQuestPOI()
                     end
                     if shouldCheck then
                         local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(questieQuest)
-
                         if spawn and zone and name then
                             if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
                                 local distance = _GetDistanceToClosestObjective(spawn, zone, name)
