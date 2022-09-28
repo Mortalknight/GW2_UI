@@ -112,7 +112,7 @@ local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon,
 end
 GW.CreateCat = CreateCat
 
-local function AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, hasProfile)
+local function AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine)
     if not panel then
         return
     end
@@ -128,7 +128,6 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
     opt.callback = callback
     opt.dependence = dependence
     opt.forceNewLine = forceNewLine
-    opt.hasProfile = hasProfile
     opt.incompatibleAddonsType = incompatibleAddons
     opt.isIncompatibleAddonLoaded = false
     opt.isIncompatibleAddonLoadedButOverride = false
@@ -207,8 +206,8 @@ local function AddOptionColorPicker(panel, name, desc, optionName, callback, par
 end
 GW.AddOptionColorPicker = AddOptionColorPicker
 
-local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons, hasProfile)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, nil, hasProfile)
+local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
 
     opt.min = min
     opt.max = max
@@ -229,7 +228,7 @@ end
 GW.AddOptionText = AddOptionText
 
 local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, hasProfile, isSound, noNewLine)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, nil, hasProfile)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
 
     opt.options = {}
     opt.options = options_list
@@ -581,7 +580,7 @@ local function InitPanel(panel, hasScroll)
                             of.container:Show()
                         end
 
-                        SetSetting(self.optionName .. (v.hasProfile and (panel.selectProfile.type == "PARTY" and "_PARTY" or "") or ""), self.option, self:GetParent():GetParent().data.perSpec)
+                        SetSetting(self.optionName, self.option, self:GetParent():GetParent().data.perSpec)
 
                         if v.callback then
                             v.callback()
@@ -595,7 +594,7 @@ local function InitPanel(panel, hasScroll)
                             toSet = true
                         end
 
-                        SetSetting(self:GetParent().optionName .. (v.hasProfile and (panel.selectProfile.type == "PARTY" and "_PARTY" or "") or ""), toSet, self:GetParent():GetParent():GetParent().data.perSpec, self:GetParent().option)
+                        SetSetting(self:GetParent().optionName, toSet, self:GetParent():GetParent():GetParent().data.perSpec, self:GetParent().option)
 
                         if v.callback then
                             v.callback(toSet, self:GetParent().option)

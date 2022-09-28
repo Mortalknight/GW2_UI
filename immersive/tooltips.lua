@@ -734,20 +734,16 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
 
     if anchor == nil or anchor == TooltipMover or anchor == UIParent then
         self:ClearAllPoints()
-        if not GameTooltip.isMoved then
-            self:SetPoint("BOTTOMRIGHT", RightChatPanel, "BOTTOMRIGHT", 0, 300)
-        else
-            local point = GW.GetScreenQuadrant(TooltipMover)
+        local point = GW.GetScreenQuadrant(TooltipMover)
 
-            if point == "TOPLEFT" then
-                self:SetPoint("TOPLEFT", TooltipMover, "TOPLEFT", 0, 0)
-            elseif point == "TOPRIGHT" then
-                self:SetPoint("TOPRIGHT", TooltipMover, "TOPRIGHT", -0, 0)
-            elseif point == "BOTTOMLEFT" or point == "LEFT" then
-                self:SetPoint("BOTTOMLEFT", TooltipMover, "BOTTOMLEFT", 0, 0)
-            else
-                self:SetPoint("BOTTOMRIGHT", TooltipMover, "BOTTOMRIGHT", 0, 0)
-            end
+        if point == "TOPLEFT" then
+            self:SetPoint("TOPLEFT", TooltipMover, "TOPLEFT", 0, 0)
+        elseif point == "TOPRIGHT" then
+            self:SetPoint("TOPRIGHT", TooltipMover, "TOPRIGHT", -0, 0)
+        elseif point == "BOTTOMLEFT" or point == "LEFT" then
+            self:SetPoint("BOTTOMLEFT", TooltipMover, "BOTTOMLEFT", 0, 0)
+        else
+            self:SetPoint("BOTTOMRIGHT", TooltipMover, "BOTTOMRIGHT", 0, 0)
         end
     end
 end

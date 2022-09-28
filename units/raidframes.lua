@@ -164,7 +164,6 @@ local function GridRaidUpdateFramesLayout()
     end
 
     -- Find spots for units with missing group info
-    GW_noGrp = noGrp
     for _,i in ipairs(noGrp) do
         for grp = 1, NUM_RAID_GROUPS do
             if (grpPos[grp] or 0) < MEMBERS_PER_RAID_GROUP then

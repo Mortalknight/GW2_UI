@@ -453,8 +453,6 @@ end
 GW.addProfile = addProfile
 AddForProfiling("panel_profiles", "addProfile", addProfile)
 
-
-
 local function ItemActivateButtonOnEnter(self, triggeredFromParent)
     if self:GetParent().canActivate then
         self.icon:SetBlendMode("ADD")
