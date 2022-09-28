@@ -1338,23 +1338,19 @@ local function styleChatWindow(frame)
             _G[tab:GetName()..texName.."Right"]:SetVertexColor(1, 1, 1, 1)
             _G[tab:GetName()..texName.."Left"]:SetVertexColor(1, 1, 1, 1)
             _G[tab:GetName()..texName.."Middle"]:SetVertexColor(1, 1, 1, 1)
-        elseif texName == "" then
+        else
             _G[tab:GetName()..texName.."Right"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
             _G[tab:GetName()..texName.."Left"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
             _G[tab:GetName()..texName.."Middle"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
 
-            _G[tab:GetName()..texName.."Right"]:SetHeight(40)
-            _G[tab:GetName()..texName.."Left"]:SetHeight(40)
-            _G[tab:GetName()..texName.."Middle"]:SetHeight(40)
-
-            _G[tab:GetName()..texName.."Left"]:SetTexture()
-            _G[tab:GetName()..texName.."Middle"]:SetTexture()
-            _G[tab:GetName()..texName.."Right"]:SetTexture()
-        else
             _G[tab:GetName()..texName.."Left"]:SetTexture()
             _G[tab:GetName()..texName.."Middle"]:SetTexture()
             _G[tab:GetName()..texName.."Right"]:SetTexture()
         end
+
+        _G[tab:GetName()..texName.."Right"]:SetHeight(28)
+        _G[tab:GetName()..texName.."Left"]:SetHeight(28)
+        _G[tab:GetName()..texName.."Middle"]:SetHeight(28)
     end
 
     _G[name .. "ButtonFrameBottomButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
