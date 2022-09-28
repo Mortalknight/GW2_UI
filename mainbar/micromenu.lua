@@ -401,14 +401,15 @@ local function setupMicroButtons(mbf)
     -- AchievementMicroButton
     hooksecurefunc(AchievementMicroButton, "SetPoint", function(_, _, parent)
         if parent ~= tref and InCombatLockdown() then
-            mbf:GetParent():RegisterEvent("PLAYER_REGEN_ENABLED")
-
-            mbf:GetParent():SetScript("OnEvent", function()
+            mbf:RegisterEvent("PLAYER_REGEN_ENABLED")
+            print("InCombat")
+            mbf:SetScript("OnEvent", function()
+                print("event")
                 AchievementMicroButton:ClearAllPoints()
                 AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
 
-                mbf:GetParent():UnregisterEvent("PLAYER_REGEN_ENABLED")
-                mbf:GetParent():SetScript("OnEvent", nil)
+                mbf:UnregisterEvent("PLAYER_REGEN_ENABLED")
+                mbf:SetScript("OnEvent", nil)
             end)
         elseif parent ~= tref then
             AchievementMicroButton:ClearAllPoints()
