@@ -8,6 +8,7 @@ local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local savedQuests = {}
 local lastAQW = GetTime()
+local tomTomWaypoint = nil
 
 
 local function wiggleAnim(self)
@@ -679,20 +680,37 @@ local function OnBlockClick(self, button)
         return
     end
     if IsControlKeyDown() then
-        local questID = GetQuestIDFromLogIndex(self.questLogIndex)
-        for index, value in ipairs(QUEST_WATCH_LIST) do
-            if value.id == questID then
-                tremove(QUEST_WATCH_LIST, index)
+        if button == "LeftButton" then
+            if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
+                local QuestieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(self.questID)
+                local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(QuestieQuest)
+                if (not spawn) and QuestieQuest.Objective[1] ~= nil then
+                    spawn, zone, name = QuestieMap:GetNearestSpawn(QuestieQuest.Objective[1])
+                end
+                if spawn then
+                    if tomTomWaypoint and TomTom.RemoveWaypoint then -- remove old waypoint
+                        TomTom:RemoveWaypoint(tomTomWaypoint)
+                    end
+                    local uiMapId = QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone)
+                    tomTomWaypoint = TomTom:AddWaypoint(uiMapId, spawn[1] / 100, spawn[2] / 100,  {title = name, crazy = true})
+                end
             end
-        end
-        if GetCVar("autoQuestWatch") == "0" then
-            GW2UI_QUEST_WATCH_DB.TrackedQuests[questID] = nil
         else
-            GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questID] = true
+            local questID = GetQuestIDFromLogIndex(self.questLogIndex)
+            for index, value in ipairs(QUEST_WATCH_LIST) do
+                if value.id == questID then
+                    tremove(QUEST_WATCH_LIST, index)
+                end
+            end
+            if GetCVar("autoQuestWatch") == "0" then
+                GW2UI_QUEST_WATCH_DB.TrackedQuests[questID] = nil
+            else
+                GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questID] = true
+            end
+            RemoveQuestWatch(self.questLogIndex)
+            WatchFrame_Update()
+            QuestLog_Update()
         end
-        RemoveQuestWatch(self.questLogIndex)
-        WatchFrame_Update()
-        QuestLog_Update()
         return
     end
 
@@ -791,9 +809,12 @@ local function updateQuest(block, quest)
         --Quest item
         GW.CombatQueue_Queue(UpdateQuestItem, {block})
 
-        local rewardXP = GetQuestLogRewardXP and GetQuestLogRewardXP(quest.questId) or nil
-        if rewardXP and GetSetting("QUESTTRACKER_SHOW_XP") and GW.mylevel < GetMaxPlayerLevel() then
-            block.Header:SetText(text .. quest.title .. " |cFF888888(" .. CommaValue(rewardXP) .. XP .. ")|r")
+        if Questie and Questie.started then
+            local xpReward = QuestieLoader:ImportModule("QuestXP"):GetQuestLogRewardXP(quest.questId, false)
+
+            if xpReward and GetSetting("QUESTTRACKER_SHOW_XP") and GW.mylevel < GetMaxPlayerLevel() then
+                block.Header:SetText(text .. quest.title .. " |cFF888888(" .. CommaValue(xpReward) .. XP .. ")|r")
+            end
         end
 
         if quest.numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent then

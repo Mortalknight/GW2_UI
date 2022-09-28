@@ -132,12 +132,12 @@ local function getNearestQuestPOI()
     if Questie and Questie.started then
         for _, quest in pairs(GW.trackedQuests) do
             if quest.questId then
-                local QuestieDB = QuestieLoader:ImportModule("QuestieDB"):GetQuest(quest.questId)
-                if QuestieDB then
+                local questieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(quest.questId)
+                if questieQuest then
                     -- do this to prevent a questie error
                     local shouldCheck = false
-                    if QuestieDB.Objectives then
-                        for _, objective in pairs(QuestieDB.Objectives) do
+                    if questieQuest.Objectives then
+                        for _, objective in pairs(questieQuest.Objectives) do
                             if objective.spawnList and next(objective.spawnList) then
                                 shouldCheck = true
                             else
@@ -147,7 +147,7 @@ local function getNearestQuestPOI()
                         end
                     end
                     if shouldCheck then
-                        local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(questQuestie)
+                        local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(questieQuest)
 
                         if spawn and zone and name then
                             if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
