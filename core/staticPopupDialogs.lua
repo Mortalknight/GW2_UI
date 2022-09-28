@@ -114,7 +114,7 @@ StaticPopupDialogs["CONFIG_RELOAD"] = {
     preferredIndex = 4
 }
 
-StaticPopupDialogs["QUESTIE_WOWHEAD_URL"] = {
+StaticPopupDialogs["GW2_WOWHEAD_URL"] = {
     text = "Wowhead URL",
     button2 = CLOSE,
     hasEditBox = true,

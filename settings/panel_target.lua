@@ -1,9 +1,9 @@
 local _, GW = ...
 local L = GW.L
 local addOption = GW.AddOption
+local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
-local AddForProfiling = GW.AddForProfiling
 
 local function LoadTargetPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
@@ -52,6 +52,21 @@ local function LoadTargetPanel(sWindow)
     addOption(p_target.scroll.scrollchild, BUFFS_ON_TOP, nil, "target_AURAS_ON_TOP", nil, nil, {["TARGET_ENABLED"] = true, ["target_SHOW_CASTBAR"] = true})
     addOption(p_target.scroll.scrollchild, L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "TARGET_FLOATING_COMBAT_TEXT", nil, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target.scroll.scrollchild, L["Invert target frame"], nil, "target_FRAME_INVERT", nil, nil, {["TARGET_ENABLED"] = true})
+    addOptionSlider(
+        p_target.scroll.scrollchild,
+        L["Aura size"],
+        nil,
+        "target_ICON_SIZE",
+        function()
+            GW.UpdateBuffLayout(GwTargetUnitFrame, nil)
+        end,
+        16,
+        60,
+        nil,
+        0,
+        {["TARGET_ENABLED"] = true},
+        2
+    )
 
     addOption(p_focus.scroll.scrollchild, L[FOCUS .. ": " .. SHOW_ENEMY_CAST], nil, "focus_SHOW_CASTBAR", nil, nil, {["FOCUS_ENABLED"] = true})
     addOption(p_focus.scroll.scrollchild, MINIMAP_TRACKING_FOCUS, L["Display the focus target frame."], "focus_TARGET_ENABLED", nil, nil, {["FOCUS_ENABLED"] = true})
@@ -64,6 +79,21 @@ local function LoadTargetPanel(sWindow)
     addOption(p_focus.scroll.scrollchild, SHOW_ALL_ENEMY_DEBUFFS_TEXT, L["Display all of the target's debuffs."], "focus_BUFFS_FILTER_ALL", nil, nil, {["FOCUS_ENABLED"] = true, ["focus_DEBUFFS"] = true})
     addOption(p_focus.scroll.scrollchild, SHOW_BUFFS, L["Display the target's buffs."], "focus_BUFFS", nil, nil, {["FOCUS_ENABLED"] = true})
     addOption(p_focus.scroll.scrollchild, L["Invert focus frame"], nil, "focus_FRAME_INVERT", nil, nil, {["FOCUS_ENABLED"] = true})
+    addOptionSlider(
+        p_focus.scroll.scrollchild,
+        L["Aura size"],
+        nil,
+        "focus_ICON_SIZE",
+        function()
+            GW.UpdateBuffLayout(GwFocusUnitFrame, nil)
+        end,
+        16,
+        60,
+        nil,
+        0,
+        {["FOCUS_ENABLED"] = true},
+        2
+    )
 
     InitPanel(p_target, true)
     InitPanel(p_focus, true)
