@@ -304,11 +304,11 @@ local function Create_Raid_Counter()
         if GetNumGroupMembers() == 0 or unit == "party" then
             local plyerRole = UnitGroupRolesAssigned("player")
             if plyerRole then
-                if GW.myrole == "TANK" then
+                if plyerRole == "TANK" then
                     tank = tank + 1
-                elseif GW.myrole == "HEALER" then
+                elseif plyerRole == "HEALER" then
                     heal = heal + 1
-                elseif GW.myrole == "DAMAGER" then
+                elseif plyerRole == "DAMAGER" then
                     damage = damage + 1
                 end
             end
