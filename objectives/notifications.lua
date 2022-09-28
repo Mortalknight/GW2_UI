@@ -140,9 +140,9 @@ local function getNearestQuestPOI()
                         for _, objective in pairs(questieQuest.Objectives) do
                             if objective.spawnList and next(objective.spawnList) then
                                 shouldCheck = true
+                                break
                             else
                                 shouldCheck = false
-                                break
                             end
                         end
                     end
