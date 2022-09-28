@@ -113,3 +113,45 @@ StaticPopupDialogs["CONFIG_RELOAD"] = {
     hideOnEscape = false,
     preferredIndex = 4
 }
+
+StaticPopupDialogs["QUESTIE_WOWHEAD_URL"] = {
+    text = "Wowhead URL",
+    button2 = CLOSE,
+    hasEditBox = true,
+    editBoxWidth = 280,
+
+    EditBoxOnEnterPressed = function(self)
+        self:GetParent():Hide()
+    end,
+
+    EditBoxOnEscapePressed = function(self)
+        self:GetParent():Hide()
+    end,
+
+    OnShow = function(self)
+        local questID = self.text.text_arg1
+        local questName = self.text.text_arg2
+        local wowheadLink
+        local langShort = string.sub(GW.mylocal, 1, 2) .. "."
+
+        self.text:SetFont("GameFontNormal", 12)
+        self.text:SetText(self.text:GetText() .. "|cFFffd100\n\n" .. questName .. "|r")
+
+        if langShort == "en." then
+            langShort = ""
+        end
+
+        if langShort then
+            langShort = langShort:gsub("%.", "/")
+        end
+        wowheadLink = "https://" .. "wowhead.com/wotlk/" .. langShort .. "quest=" .. questID
+
+        self.editBox:SetText(wowheadLink)
+        self.editBox:SetFocus()
+        self.editBox:HighlightText()
+    end,
+
+    whileDead = true,
+    hideOnEscape = true,
+    preferredIndex = 4
+}

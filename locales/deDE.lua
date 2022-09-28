@@ -32,6 +32,8 @@ L["bound to"] = "gebunden an"
 L["Sold Junk for: %s"] = "Müll verkauft für: %s"
 L["Show Quest XP on Quest Tracker"] = "Zeige Quest EP im Quest Tracker"
 L["Quest Tracker sorting"] = "Quest Listen Sortierung"
+L["Show on Map"] = "Auf Karte zeigen"
+L["Set TomTom Target"] = "TomTom-Ziel setzen"
 
 --Strings
 L[" (Resting)"] = " (Erholen)"
