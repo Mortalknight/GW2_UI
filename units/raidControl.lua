@@ -282,6 +282,8 @@ local function Create_Raid_Counter()
 
     raidCounterFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     raidCounterFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+    raidCounterFrame:RegisterEvent("ROLE_CHANGED_INFORM")
+    
     raidCounterFrame:SetScript("OnEvent", function(self)
         if not self:IsShown() then return end
 
