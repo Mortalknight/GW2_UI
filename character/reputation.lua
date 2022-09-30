@@ -186,7 +186,7 @@ local function setDetailEx(
 
     local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
     local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
-    local friendID, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
+    local friendID, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = C_GossipInfo.GetFriendshipReputation(factionID)
 
     --if factionIndex % 2 == 0 then
     frame.background:SetTexture(nil)
@@ -661,7 +661,7 @@ local function CollectCategories()
     for factionIndex = 1, GetNumFactions() do
         local name, _, standingId, _, _, _, _, _, isHeader, _, _, _, isChild, factionID = returnReputationData(factionIndex)
         if name then
-            local friendID, _, _, _, _, _, friendTextLevel = GetFriendshipReputation(factionID)
+            local friendID, _, _, _, _, _, friendTextLevel = C_GossipInfo.GetFriendshipReputation(factionID)
             if isHeader and not isChild then
                 if not skipFirst then
                     tinsert(catagories, {idx = idx, idxLast = factionIndex - 1,  name = headerName, standingCur = cCur, standingMax = cMax, fctTbl = sortFactionsStatus(factionTbl)})
@@ -676,7 +676,7 @@ local function CollectCategories()
                 local found = false
                 cCur = cCur + standingId
                 if friendID then
-                    cMax = cMax + select(2, GetFriendshipReputationRanks(friendID))
+                    cMax = cMax + select(2, C_GossipInfo.GetFriendshipReputationRanks(friendID))
                     if not factionTbl then factionTbl = {} end
                     for _, v in pairs(factionTbl) do
                         if v.isFriend == true and v.standingText == friendTextLevel then

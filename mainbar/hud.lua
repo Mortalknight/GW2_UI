@@ -157,7 +157,7 @@ local function xpbar_OnEvent(self, event)
     local showBar1 = level < Nextlevel
     local showBar2 = false
     local showBar3 = false
-    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon:16:16:0:0|t " or "" 
+    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon:16:16:0:0|t " or ""
 
     if rested == nil or (rested / valMax) == 0 then
         rested = 0
@@ -174,7 +174,9 @@ local function xpbar_OnEvent(self, event)
     local name, reaction, _, _, _, factionID = GetWatchedFactionInfo()
     if factionID and factionID > 0 then
         local _, _, standingId, bottomValue, topValue, earnedValue = GetFactionInfoByID(factionID)
-        local friendID, friendRep, friendMaxRep, friendName, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
+        local friendReputationInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+        local friendshipID = friendReputationInfo.friendshipFactionID
+
         local isParagon = false
         local isFriend = false
         local isNormal = false
@@ -184,17 +186,17 @@ local function xpbar_OnEvent(self, event)
             currentValue = currentValue % maxValueParagon;
             valPrecRepu = (currentValue - 0) / (maxValueParagon - 0)
 
-            gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((currentValue - 0)) .. " / " .. CommaValue((maxValueParagon - 0)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+            gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue(currentValue - 0) .. " / " .. CommaValue(maxValueParagon - 0) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
             isParagon = true
-        elseif friendID ~= nil then
-            if nextFriendThreshold then
-                valPrecRepu = (friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)
-                gw_reputation_vals = friendName .. " " .. REPUTATION .. " " .. CommaValue((friendRep - friendThreshold)) .. " / " .. CommaValue((nextFriendThreshold - friendThreshold)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+        elseif friendshipID > 0 then
+            if friendReputationInfo.nextThreshold then
+                valPrecRepu = (friendReputationInfo.standing - friendReputationInfo.reactionThreshold) / (friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold)
+                gw_reputation_vals = friendReputationInfo.name .. " " .. REPUTATION .. " " .. CommaValue(friendReputationInfo.standing - friendReputationInfo.reactionThreshold) .. " / " .. CommaValue(friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             else
                 valPrecRepu = 1
-                gw_reputation_vals = friendName .. " " .. REPUTATION .. " " .. CommaValue(friendMaxRep) .. " / " .. CommaValue(friendMaxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                gw_reputation_vals = friendReputationInfo.name .. " " .. REPUTATION .. " " .. CommaValue(friendReputationInfo.maxRep) .. " / " .. CommaValue(friendReputationInfo.maxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
             isFriend = true
@@ -908,6 +910,8 @@ end
 GW.LoadHudArt = LoadHudArt
 
 local function LoadXPBar()
+
+    StatusTrackingBarManager:Kill()
     GW.LoadUpcomingSpells()
 
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")
