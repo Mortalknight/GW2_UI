@@ -330,7 +330,7 @@ local function updateBonusObjective(self)
 
     for i = 1, C_QuestLog.GetNumWorldQuestWatches() do
         local wqID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
-        if trackedEventIDs[wqID] == nil then
+        if wqID and trackedEventIDs[wqID] == nil then
             trackedEventIDs[wqID] = {}
             trackedEventIDs[wqID].ID = wqID
             trackedEventIDs[wqID].tracked = true

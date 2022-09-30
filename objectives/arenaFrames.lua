@@ -336,8 +336,6 @@ end
 GW.AddForProfiling("arenaFrames", "registerPrepFrame", registerPrepFrame)
 
 local function LoadArenaFrame()
-    Arena_LoadUI()
-
     for i = 1, MAX_ARENA_ENEMIES do
         arenaFrames[i] = registerFrame(i)
         arenaPrepFrames[i] = registerPrepFrame(i)

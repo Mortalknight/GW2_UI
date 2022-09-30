@@ -254,7 +254,7 @@ local function blockOnEnter(self)
         GetTime(),
         0.2,
         function(step)
-            self.hover:SetAlpha(step - 0.3)
+            self.hover:SetAlpha(math.max((step - 0.3), 0))
             self.hover:SetTexCoord(0, step, 0, 1)
         end
     )
