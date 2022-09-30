@@ -134,17 +134,11 @@ end
 AFP("updateGuildButton", updateGuildButton)
 
 local function TalentButtonOnEvent(self)
-    local counter = 0
-    for row = 1, 7 do
-        for index = 1, 3 do
-            local _, _, _, selected, available, _, _, _, _, _, known = GetTalentInfo(row, index, 1, false, "player")
-            if available and not known and not selected then
-                counter = counter + 1
-                break
-            end
-        end
-    end
 
+    print(123)
+    if not ClassTalentFrame then return end
+    local treeCurrencyInfo = C_Traits.GetTreeCurrencyInfo(ClassTalentFrame.TalentsTab:GetConfigID(), ClassTalentFrame.TalentsTab:GetTalentTreeID(), ClassTalentFrame.TalentsTab.excludeStagedChangesForCurrencies)
+    local counter = treeCurrencyInfo[1].quantity + treeCurrencyInfo[2].quantity
     if counter > 0 then
         self.GwNotify:Show()
         self.GwNotifyText:SetText(counter)
@@ -437,6 +431,11 @@ local function setupMicroButtons(mbf)
         tref:HookScript("OnEvent", TalentButtonOnEvent)
         tref:RegisterEvent("PLAYER_TALENT_UPDATE")
         tref:RegisterEvent("PLAYER_ENTERING_WORLD")
+        tref:RegisterEvent("TRAIT_TREE_CURRENCY_INFO_UPDATED")
+        tref:RegisterEvent("CONFIG_COMMIT_FAILED")
+        tref:RegisterEvent("TRAIT_CONFIG_UPDATED")
+        tref:RegisterEvent("CONFIG_COMMIT_FAILED")
+        tref:RegisterEvent("TRAIT_NODE_CHANGED")
 
         disableMicroButton(SpellbookMicroButton)
         disableMicroButton(TalentMicroButton, true)
@@ -455,6 +454,11 @@ local function setupMicroButtons(mbf)
         tref:HookScript("OnEvent", TalentButtonOnEvent)
         tref:RegisterEvent("PLAYER_TALENT_UPDATE")
         tref:RegisterEvent("PLAYER_ENTERING_WORLD")
+        tref:RegisterEvent("TRAIT_TREE_CURRENCY_INFO_UPDATED")
+        tref:RegisterEvent("CONFIG_COMMIT_FAILED")
+        tref:RegisterEvent("TRAIT_CONFIG_UPDATED")
+        tref:RegisterEvent("CONFIG_COMMIT_FAILED")
+        tref:RegisterEvent("TRAIT_NODE_CHANGED")
 
         -- we've added an extra button so expand the container a bit
         mbf:SetWidth(mbf:GetWidth() + 28)
@@ -491,15 +495,6 @@ local function setupMicroButtons(mbf)
     -- EJMicroButton
     EJMicroButton:ClearAllPoints()
     EJMicroButton:SetPoint("BOTTOMLEFT", LFDMicroButton, "BOTTOMRIGHT", 4, 0)
-    --EJMicroButton.NewAdventureNotice:GetRegions():SetTexture("Interface/OptionsFrame/UI-OptionsFrame-NewFeatureIcon")
-    --EJMicroButton.NewAdventureNotice:GetRegions():ClearAllPoints()
-    --EJMicroButton.NewAdventureNotice:GetRegions():SetPoint("CENTER", EJMicroButton, "BOTTOM", 6, 2)
-    --EJMicroButton.NewAdventureNotice:GetRegions():SetSize(12, 12)
-    --EJMicroButton.NewAdventureNotice.GwNotifyDark = EJMicroButton.NewAdventureNotice:CreateTexture(nil, "BACKGROUND")
-    --EJMicroButton.NewAdventureNotice.GwNotifyDark:SetSize(18, 18)
-    --EJMicroButton.NewAdventureNotice.GwNotifyDark:SetPoint("CENTER", EJMicroButton, "BOTTOM", 6, 3)
-    --EJMicroButton.NewAdventureNotice.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
-    --EJMicroButton.NewAdventureNotice.GwNotifyDark:SetVertexColor(0, 0, 0, 0.7)
     EJMicroButton.FlashBorder:Hide()
     EJMicroButton.FlashContent:Hide()
 

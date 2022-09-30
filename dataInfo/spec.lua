@@ -59,32 +59,6 @@ local function TalentButton_OnEnter(self)
     end
 
     GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(TALENTS, 1, 0.93, 0.73)
-
-    for i = 1, _G.MAX_TALENT_TIERS do
-        for j = 1, 3 do
-            local _, name, icon, selected = GetTalentInfo(i, j, 1)
-            if selected then
-                GameTooltip:AddLine(AddTexture(icon) .. " " .. name)
-            end
-        end
-    end
-
-    local pvpTalents = C_SpecializationInfo.GetAllSelectedPvpTalentIDs()
-    if next(pvpTalents) then
-        GameTooltip:AddLine(" ")
-        GameTooltip:AddLine(PVP_TALENTS, 1, 0.93, 0.73)
-
-        for i, talentID in next, pvpTalents do
-            if i > 4 then break end
-            local _, name, icon, _, _, _, unlocked = GetPvpTalentInfoByID(talentID)
-            if name and unlocked then
-                GameTooltip:AddLine(AddTexture(icon).. " " .. name)
-            end
-        end
-    end
-
-    GameTooltip:AddLine(" ")
     GameTooltip:AddLine("|cffaaaaaa" .. L["Right Click to change Talent Specialization"] .. "|r", nil, nil, nil, true)
 
     GameTooltip:Show()
