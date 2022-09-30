@@ -447,21 +447,21 @@ local function evAddonLoaded(_, addonName)
     GW.LoadWorldMapSkin()
     GW.LoadEncounterJournalSkin()
 
-    GW.LoadAlliedRacesUISkin()
-    GW.LoadBarShopUISkin()
-    GW.LoadBindingsUISkin()
-    GW.LoadChromieTimerSkin()
-    GW.LoadCovenantSanctumSkin()
-    GW.LoadDeathRecapSkin()
-    GW.LoadFlightMapSkin()
-    GW.LoadInspectFrameSkin()
-    GW.LoadItemUpgradeSkin()
-    GW.LoadLFGSkin()
-    GW.LoadMacroOptionsSkin()
-    GW.LoadOrderHallTalentFrameSkin()
-    GW.LoadSocketUISkin()
-    GW.LoadSoulbindsSkin()
-    GW.LoadWeeklyRewardsSkin()
+    --GW.LoadAlliedRacesUISkin()
+    --GW.LoadBarShopUISkin()
+    --GW.LoadBindingsUISkin()
+    --GW.LoadChromieTimerSkin()
+    --GW.LoadCovenantSanctumSkin()
+    --GW.LoadDeathRecapSkin()
+    --GW.LoadFlightMapSkin()
+    --GW.LoadInspectFrameSkin()
+    --GW.LoadItemUpgradeSkin()
+    --GW.LoadLFGSkin()
+    --GW.LoadMacroOptionsSkin()
+    --GW.LoadOrderHallTalentFrameSkin()
+    --GW.LoadSocketUISkin()
+    --GW.LoadSoulbindsSkin()
+    --GW.LoadWeeklyRewardsSkin()
 end
 AFP("evAddonLoaded", evAddonLoaded)
 
@@ -588,31 +588,31 @@ local function evPlayerLogin(self)
     end
 
     -- Skins: BLizzard & Addons
-    GW.LoadStaticPopupSkin()
-    GW.LoadBNToastSkin()
-    GW.LoadDropDownSkin()
-    GW.LoadLFGSkins()
-    GW.LoadReadyCheckSkin()
-    GW.LoadTalkingHeadSkin()
-    GW.LoadMiscBlizzardFrameSkins()
-    GW.LoadAddonListSkin()
-    GW.LoadBlizzardOptionsSkin()
-    GW.LoadMailSkin()
-    GW.LoadDressUpFrameSkin()
-    GW.LoadHelperFrameSkin()
-    GW.LoadGossipSkin()
-    GW.LoadTimeManagerSkin()
-    GW.LoadMerchantFrameSkin()
-    GW.LoadLootFrameSkin()
+    --GW.LoadStaticPopupSkin()
+    --GW.LoadBNToastSkin()
+    --GW.LoadDropDownSkin()
+    --GW.LoadLFGSkins()
+    --GW.LoadReadyCheckSkin()
+    --GW.LoadTalkingHeadSkin()
+    --GW.LoadMiscBlizzardFrameSkins()
+    --GW.LoadAddonListSkin()
+    --GW.LoadBlizzardOptionsSkin()
+    --GW.LoadMailSkin()
+    --GW.LoadDressUpFrameSkin()
+    --GW.LoadHelperFrameSkin()
+    --GW.LoadGossipSkin()
+    --GW.LoadTimeManagerSkin()
+    --GW.LoadMerchantFrameSkin()
+    --GW.LoadLootFrameSkin()
 
-    GW.LoadDetailsSkin()
-    GW.LoadImmersionAddonSkin()
+    --GW.LoadDetailsSkin()
+    --GW.LoadImmersionAddonSkin()
 
-    GW.SkinAndEnhanceColorPicker()
-    GW.AddCoordsToWorldMap()
-    GW.LoadVehicleButton()
-    GW.MakeAltPowerBarMovable()
-    GW.WidgetUISetup()
+    --GW.SkinAndEnhanceColorPicker()
+    --GW.AddCoordsToWorldMap()
+    --GW.LoadVehicleButton()
+    --GW.MakeAltPowerBarMovable()
+    --GW.WidgetUISetup()
 
 
 
@@ -649,7 +649,7 @@ local function evPlayerLogin(self)
     end
 
     if GetSetting("CASTINGBAR_ENABLED") then
-        GW.LoadCastingBar(CastingBarFrame, "GwCastingBarPlayer", "player", true)
+        GW.LoadCastingBar(PlayerCastingBarFrame, "GwCastingBarPlayer", "player", true)
         GW.LoadCastingBar(PetCastingBarFrame, "GwCastingBarPet", "pet", false)
     end
 
@@ -691,9 +691,6 @@ local function evPlayerLogin(self)
     if not IsIncompatibleAddonLoadedOrOverride("Inventory", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("BAGS_ENABLED") then
             GW.LoadInventory()
-        else
-            -- if not our bags, we need to cut the bagbar frame out of the micromenu
-            GW.LoadDefaultBagBar()
         end
     end
 

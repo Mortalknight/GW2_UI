@@ -143,7 +143,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].r, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].g, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].b)
     end
 
-    local professionColors = GW.professionBagColor[select(2, GetContainerNumFreeSlots(button:GetParent():GetID()))]
+    local professionColors = GW.professionBagColor[select(2, C_Container.GetContainerNumFreeSlots(button:GetParent():GetID()))]
     if GetSetting("BAG_PROFESSION_BAG_COLOR") and professionColors then
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
@@ -308,7 +308,7 @@ local function takeItemButtons(p, bag_id)
     end
     cf.gw_owner = p
     
-    local num_slots = ContainerFrame_GetContainerNumSlots(bag_id)
+    local num_slots = ContainerFrame_C_Container.GetContainerNumSlots(bag_id)
     cf.gw_num_slots = num_slots
 
     for i = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
@@ -475,13 +475,13 @@ local function updateFreeSlots(sp_str, start_idx, end_idx, opt_container)
     local free = 0
     local full = 0
     if opt_container then
-        free = GetContainerNumFreeSlots(opt_container)
-        full = GetContainerNumSlots(opt_container)
+        free = C_Container.GetContainerNumFreeSlots(opt_container)
+        full = C_Container.GetContainerNumSlots(opt_container)
     end
 
     for bag_id = start_idx, end_idx do
-        free = free + GetContainerNumFreeSlots(bag_id)
-        full = full + GetContainerNumSlots(bag_id)
+        free = free + C_Container.GetContainerNumFreeSlots(bag_id)
+        full = full + C_Container.GetContainerNumSlots(bag_id)
     end
 
     sp_str:SetText((full - free) .. " / " .. full)
@@ -610,36 +610,6 @@ local function onMoverDragStop(self)
     onMoved(self:GetParent(), self.onMoveSetting)
 end
 GW.AddForProfiling("inventory", "onMoverDragStop", onMoverDragStop)
-
-local function LoadDefaultBagBar()
-    -- if not our bags, we need to cut the bagbar frame out of the micromenu
-    reskinBagBar(MainMenuBarBackpackButton, 1)
-    reskinBagBar(CharacterBag0Slot, 1)
-    reskinBagBar(CharacterBag1Slot, 1)
-    reskinBagBar(CharacterBag2Slot, 1)
-    reskinBagBar(CharacterBag3Slot, 1)
-
-    SetItemButtonQuality(MainMenuBarBackpackButton, 1, nil)
-
-    MainMenuBarBackpackButton:ClearAllPoints()
-    CharacterBag0Slot:ClearAllPoints()
-    CharacterBag1Slot:ClearAllPoints()
-    CharacterBag2Slot:ClearAllPoints()
-    CharacterBag3Slot:ClearAllPoints()
-
-    MainMenuBarBackpackButton:SetParent(UIParent)
-    CharacterBag0Slot:SetParent(UIParent)
-    CharacterBag1Slot:SetParent(UIParent)
-    CharacterBag2Slot:SetParent(UIParent)
-    CharacterBag3Slot:SetParent(UIParent)
-
-    CharacterBag3Slot:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -500, 20)
-    CharacterBag2Slot:SetPoint("LEFT", CharacterBag3Slot, "RIGHT", 0, 0)
-    CharacterBag1Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
-    CharacterBag0Slot:SetPoint("LEFT", CharacterBag1Slot, "RIGHT", 0, 0)
-    MainMenuBarBackpackButton:SetPoint("LEFT", CharacterBag0Slot, "RIGHT", 0, 0)
-end
-GW.LoadDefaultBagBar = LoadDefaultBagBar
 
 local function LoadInventory()
     _G["BINDING_HEADER_GW2UI_INVENTORY_BINDINGS"] = INVENTORY_TOOLTIP

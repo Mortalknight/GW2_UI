@@ -308,7 +308,7 @@ GW.AddForProfiling("bank", "compactToggle", compactToggle)
 
 -- reskin all the base BankFrame ItemButtons
 local function reskinBankItemButtons()
-    local items = GetContainerNumSlots(BANK_CONTAINER)
+    local items = C_Container.GetContainerNumSlots(BANK_CONTAINER)
     for i = 1, items do
         local iname = "BankFrameItem" .. i
         local b = _G[iname]
@@ -321,7 +321,7 @@ GW.AddForProfiling("bank", "reskinBankItemButtons", reskinBankItemButtons)
 
 -- reskin all the ReagentBankFrame ItemButtons
 local function reskinReagentItemButtons()
-    local items = GetContainerNumSlots(REAGENTBANK_CONTAINER)
+    local items = C_Container.GetContainerNumSlots(REAGENTBANK_CONTAINER)
     for i = 1, items do
         local iname = "ReagentBankFrameItem" .. i
         local b = _G[iname]

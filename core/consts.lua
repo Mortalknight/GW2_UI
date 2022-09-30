@@ -131,6 +131,7 @@ GW.CLASS_ICONS = {
     [10] = {l = 0.0625 * 2, r = 0.0625 * 3, t = 0, b = 1},
     [11] = {l = 0.0625 * 1, r = 0.0625 * 2, t = 0, b = 1},
     [12] = {l = 0, r = 0.0625 * 1, t = 0, b = 1},
+    [13] = {l = 0, r = 0.0625 * 1, t = 0, b = 1},
     dead = {l = 0.0625 * 12, r = 0.0625 * 13, t = 0, b = 1}
 }
 GW.CLASS_ICONS.WARRIOR = GW.CLASS_ICONS[1]
@@ -145,6 +146,7 @@ GW.CLASS_ICONS.WARLOCK = GW.CLASS_ICONS[9]
 GW.CLASS_ICONS.MONK = GW.CLASS_ICONS[10]
 GW.CLASS_ICONS.DRUID = GW.CLASS_ICONS[11]
 GW.CLASS_ICONS.DEMONHUNTER = GW.CLASS_ICONS[12]
+GW.CLASS_ICONS.EVOKER = GW.CLASS_ICONS[13]
 
 GW.GW_CLASS_COLORS = {
     WARRIOR = {r = 90 / 255, g = 54 / 255, b = 38 / 255, a = 1},
@@ -158,7 +160,8 @@ GW.GW_CLASS_COLORS = {
     WARLOCK = {r = 125 / 255, g = 88 / 255, b = 154 / 255, a = 1},
     MONK = {r = 66 / 255, g = 151 / 255, b = 112 / 255, a = 1},
     DRUID = {r = 158 / 255, g = 103 / 255, b = 37 / 255, a = 1},
-    DEMONHUNTER = {r = 72 / 255, g = 38 / 255, b = 148 / 255, a = 1}
+    DEMONHUNTER = {r = 72 / 255, g = 38 / 255, b = 148 / 255, a = 1},
+    EVOKER = {r = 72 / 255, g = 38 / 255, b = 148 / 255, a = 1}
 }
 
 GW.FACTION_COLOR = {
@@ -310,6 +313,7 @@ GW.AURAS_INDICATORS = {
     WARLOCK = {},
     MAGE = {},
     DEATHKNIGHT = {},
+    EVOKER = {},
     PET = {
         [193396] =  {0.6, 0.2, 0.8},    -- Demonic Empowerment
         [19615] =   {0.89, 0.09, 0.05}, -- Frenzy

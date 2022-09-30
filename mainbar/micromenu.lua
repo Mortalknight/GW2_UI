@@ -4,6 +4,21 @@ local GetSetting = GW.GetSetting
 local AFP = GW.AddProfiling
 local updateIcon
 
+local MICRO_BUTTONS = {
+	"CharacterMicroButton",
+	"SpellbookMicroButton",
+	"TalentMicroButton",
+	"AchievementMicroButton",
+	"QuestLogMicroButton",
+	"GuildMicroButton",
+	"LFDMicroButton",
+	"EJMicroButton",
+	"CollectionsMicroButton",
+	"MainMenuMicroButton",
+	"HelpMicroButton",
+	"StoreMicroButton",
+	}
+
 do
     local SendMessageWaiting
     local function SendMessage()
@@ -178,8 +193,8 @@ local function bag_OnUpdate(self, elapsed)
     self.interval = bag_update_interval
 
     local totalEmptySlots = 0
-    for i = 0, 4 do
-        local numberOfFreeSlots, _ = GetContainerNumFreeSlots(i)
+    for i = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
+        local numberOfFreeSlots = C_Container.GetContainerNumFreeSlots(i)
 
         if numberOfFreeSlots ~= nil then
             totalEmptySlots = totalEmptySlots + numberOfFreeSlots
@@ -374,7 +389,7 @@ local function setupMicroButtons(mbf)
         cref:RegisterEvent("MODIFIER_STATE_CHANGED")
     else
         cref = CharacterMicroButton
-        MicroButtonPortrait:Hide()
+        --MicroButtonPortrait:Hide()
     end
     cref.GwSetAnchorPoint = function(self) cref_SetAnchorPoint(self, mbf) end
     cref:GwSetAnchorPoint()
@@ -460,7 +475,7 @@ local function setupMicroButtons(mbf)
     -- GuildMicroButton
     GuildMicroButton:ClearAllPoints()
     GuildMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
-    GuildMicroButtonTabard:Hide()
+    --GuildMicroButtonTabard:Hide()
     GuildMicroButton.Ticker = C_Timer.NewTicker(15, function() C_GuildInfo.GuildRoster() end)
     GuildMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
     GuildMicroButton:RegisterEvent("MODIFIER_STATE_CHANGED")
@@ -477,15 +492,15 @@ local function setupMicroButtons(mbf)
     -- EJMicroButton
     EJMicroButton:ClearAllPoints()
     EJMicroButton:SetPoint("BOTTOMLEFT", LFDMicroButton, "BOTTOMRIGHT", 4, 0)
-    EJMicroButton.NewAdventureNotice:GetRegions():SetTexture("Interface/OptionsFrame/UI-OptionsFrame-NewFeatureIcon")
-    EJMicroButton.NewAdventureNotice:GetRegions():ClearAllPoints()
-    EJMicroButton.NewAdventureNotice:GetRegions():SetPoint("CENTER", EJMicroButton, "BOTTOM", 6, 2)
-    EJMicroButton.NewAdventureNotice:GetRegions():SetSize(12, 12)
-    EJMicroButton.NewAdventureNotice.GwNotifyDark = EJMicroButton.NewAdventureNotice:CreateTexture(nil, "BACKGROUND")
-    EJMicroButton.NewAdventureNotice.GwNotifyDark:SetSize(18, 18)
-    EJMicroButton.NewAdventureNotice.GwNotifyDark:SetPoint("CENTER", EJMicroButton, "BOTTOM", 6, 3)
-    EJMicroButton.NewAdventureNotice.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
-    EJMicroButton.NewAdventureNotice.GwNotifyDark:SetVertexColor(0, 0, 0, 0.7)
+    --EJMicroButton.NewAdventureNotice:GetRegions():SetTexture("Interface/OptionsFrame/UI-OptionsFrame-NewFeatureIcon")
+    --EJMicroButton.NewAdventureNotice:GetRegions():ClearAllPoints()
+    --EJMicroButton.NewAdventureNotice:GetRegions():SetPoint("CENTER", EJMicroButton, "BOTTOM", 6, 2)
+    --EJMicroButton.NewAdventureNotice:GetRegions():SetSize(12, 12)
+    --EJMicroButton.NewAdventureNotice.GwNotifyDark = EJMicroButton.NewAdventureNotice:CreateTexture(nil, "BACKGROUND")
+    --EJMicroButton.NewAdventureNotice.GwNotifyDark:SetSize(18, 18)
+    --EJMicroButton.NewAdventureNotice.GwNotifyDark:SetPoint("CENTER", EJMicroButton, "BOTTOM", 6, 3)
+    --EJMicroButton.NewAdventureNotice.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
+    --EJMicroButton.NewAdventureNotice.GwNotifyDark:SetVertexColor(0, 0, 0, 0.7)
 
     -- CollectionsMicroButton
     CollectionsMicroButton:ClearAllPoints()
@@ -494,8 +509,7 @@ local function setupMicroButtons(mbf)
     -- MainMenuMicroButton
     MainMenuMicroButton:ClearAllPoints()
     MainMenuMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
-    MainMenuBarPerformanceBar:Hide()
-    MainMenuBarDownload:Hide()
+    MainMenuMicroButton.MainMenuBarPerformanceBar:Hide()
     MainMenuMicroButton:HookScript("OnUpdate", hook_MainMenuMicroButton_OnUpdate)
 
     -- HelpMicroButton
@@ -642,8 +656,6 @@ AFP("hook_MoveMicroButtons", hook_MoveMicroButtons)
 
 local function hook_UpdateMicroButtons()
     HelpMicroButton:Show()
-    MicroButtonPortrait:Hide()
-    GuildMicroButtonTabard:Hide()
     local m = GuildMicroButton
     m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")
     m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")

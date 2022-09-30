@@ -26,8 +26,8 @@ local function currency_OnClick(self)
         end
         local info = C_CurrencyInfo.GetCurrencyListInfo(self.CurrencyIdx)
         if not info.isShowInBackpack then
-            if checkNumWatched() >= MAX_WATCHED_TOKENS then
-                UIErrorsFrame:AddMessage(format(TOO_MANY_WATCHED_TOKENS, MAX_WATCHED_TOKENS), 1.0, 0.1, 0.1, 1.0)
+            if checkNumWatched() >= BackpackTokenFrame:GetMaxTokensWatched() then
+                UIErrorsFrame:AddMessage(format(TOO_MANY_WATCHED_TOKENS, BackpackTokenFrame:GetMaxTokensWatched()), 1.0, 0.1, 0.1, 1.0)
                 return
             end
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
