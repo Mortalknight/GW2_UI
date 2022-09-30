@@ -161,7 +161,7 @@ local function SetCount(self, count)
         return
     end
 
-    self.status.stacks:SetText(count > 1 and count)
+    self.status.stacks:SetText(count > 1 and count or "")
 end
 
 local function SetIcon(self, icon, dtype, auraType)
@@ -310,8 +310,8 @@ function GwAuraTmpl_OnLoad(self)
 
     a1:SetFromAlpha(0.85)
     a1:SetToAlpha(1.0)
-    a2:SetFromScale(2.5, 2.5)
-    a2:SetToScale(1.0, 1.0)
+    --a2:SetFromScale(2.5, 2.5)
+    --a2:SetToScale(1.0, 1.0)
 
     -- add mouseover handlers
     self:SetScript("OnUpdate", AuraButton_OnUpdate)
@@ -491,7 +491,7 @@ end
 
 local function LoadPlayerAuras(lm)
     -- hide default buffs
-    TemporaryEnchantFrame:Kill()
+    --TemporaryEnchantFrame:Kill()
     BuffFrame:Kill()
 
     loadAuras(lm)
