@@ -194,14 +194,12 @@
                 <Layers>
                     <Layer level="BACKGROUND">
                     <Texture parentKey="flare1" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentFlareLeft">
-
                         <Size x="256" y="64"></Size>
                         <Anchors>
                             <Anchor point="RIGHT" relativePoint="CENTER" x="30" y="0"></Anchor>
                         </Anchors>
                     </Texture>
                     <Texture parentKey="flare2" file="Interface\AddOns\GW2_UI\textures\altpower/enchantmentFlareRight">
-
                         <Size x="256" y="64"></Size>
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="CENTER" x="-30" y="0"></Anchor>
@@ -757,10 +755,10 @@
                     <Layer level="ARTWORK">
                         <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                             <Size x="316" y="18"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0"></Anchor>
+                            </Anchors>
                         </Texture>
-                        <Anchors>
-                            <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0"></Anchor>
-                        </Anchors>
                     </Layer>
                 </Layers>
                 <Frames>

@@ -86,8 +86,8 @@
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-2" y="0"></Anchor>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="2" y="2"></Anchor>
-                                <Color r="0" g="0" b="0" a="0.5"></Color>
                             </Anchors>
+                            <Color r="0" g="0" b="0" a="0.5"></Color>
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK" textureSubLevel="2">
@@ -165,32 +165,32 @@
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-2" y="0"></Anchor>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="2" y="2"></Anchor>
-                                <Color r="0" g="0" b="0" a="0.5"></Color>
                             </Anchors>
+                            <Color r="0" g="0" b="0" a="0.5"></Color>
                         </Texture>
                         <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
                             <Size x="2" y="2"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="-2"></Anchor>
                                 <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="2"></Anchor>
-                                <Color r="0" g="0" b="0" a="0.5"></Color>
                             </Anchors>
+                            <Color r="0" g="0" b="0" a="0.5"></Color>
                         </Texture>
                         <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
                             <Size x="2" y="2"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
                                 <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
-                                <Color r="0" g="0" b="0" a="0.5"></Color>
                             </Anchors>
+                            <Color r="0" g="0" b="0" a="0.5"></Color>
                         </Texture>
                         <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
                             <Size x="2" y="2"></Size>
                             <Anchors>
                                 <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
                                 <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
-                                <Color r="0" g="0" b="0" a="0.5"></Color>
                             </Anchors>
+                            <Color r="0" g="0" b="0" a="0.5"></Color>
                         </Texture>
                         <Texture parentKey="detailsbg">
                             <Size x="548" y="50"></Size>
