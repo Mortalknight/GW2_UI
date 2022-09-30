@@ -339,8 +339,7 @@ local function hook_MainMenuMicroButton_OnUpdate()
     m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
     m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
     m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
-    MainMenuBarPerformanceBar:Hide()
-    MainMenuBarDownload:Hide()
+    MainMenuMicroButton.MainMenuBarPerformanceBar:Hide()
 end
 AFP("hook_MainMenuMicroButton_OnUpdate", hook_MainMenuMicroButton_OnUpdate)
 
@@ -501,16 +500,26 @@ local function setupMicroButtons(mbf)
     --EJMicroButton.NewAdventureNotice.GwNotifyDark:SetPoint("CENTER", EJMicroButton, "BOTTOM", 6, 3)
     --EJMicroButton.NewAdventureNotice.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
     --EJMicroButton.NewAdventureNotice.GwNotifyDark:SetVertexColor(0, 0, 0, 0.7)
+    EJMicroButton.FlashBorder:Hide()
+    EJMicroButton.FlashContent:Hide()
 
     -- CollectionsMicroButton
     CollectionsMicroButton:ClearAllPoints()
     CollectionsMicroButton:SetPoint("BOTTOMLEFT", EJMicroButton, "BOTTOMRIGHT", 4, 0)
+    CollectionsMicroButton.FlashBorder:Hide()
+    CollectionsMicroButton.FlashContent:Hide()
+    hooksecurefunc("MicroButtonPulse", function(self)
+        if self == CollectionsMicroButton or self == EJMicroButton then
+            MicroButtonPulseStop(self)
+        end
+    end)
 
     -- MainMenuMicroButton
     MainMenuMicroButton:ClearAllPoints()
     MainMenuMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
     MainMenuMicroButton.MainMenuBarPerformanceBar:Hide()
     MainMenuMicroButton:HookScript("OnUpdate", hook_MainMenuMicroButton_OnUpdate)
+    MainMenuMicroButton.FlashContent:Hide()
 
     -- HelpMicroButton
     HelpMicroButton:ClearAllPoints()
