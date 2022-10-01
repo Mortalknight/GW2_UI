@@ -614,7 +614,7 @@ local function evPlayerLogin(self)
 
     --GW.SkinAndEnhanceColorPicker()
     --GW.AddCoordsToWorldMap()
-    --GW.LoadVehicleButton()
+    GW.LoadVehicleButton()
     GW.MakeAltPowerBarMovable()
     GW.WidgetUISetup()
 
