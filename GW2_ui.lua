@@ -91,9 +91,13 @@ GW.AddToAnimation = AddToAnimation
 local function buttonAnim(self, name, w, hover)
     local prog = animations[name].progress
     local lerp = GW.lerp(0, w, prog)
+    local lerp2 = GW.lerp(0, 1, (prog - 0.5) / 0.5)
+
+    if lerp2 < 0 then lerp2 = 0 end
+    if lerp2 > 1 then lerp2 = 1 end
 
     hover:SetPoint("RIGHT", self, "LEFT", lerp, 0)
-    hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, GW.lerp(0, 1, (prog - 0.5) / 0.5))
+    hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, lerp2)
 end
 AFP("buttonAnim", buttonAnim)
 
@@ -588,7 +592,7 @@ local function evPlayerLogin(self)
     end
 
     -- Skins: BLizzard & Addons
-    --GW.LoadStaticPopupSkin()
+    GW.LoadStaticPopupSkin()
     --GW.LoadBNToastSkin()
     --GW.LoadDropDownSkin()
     --GW.LoadLFGSkins()
