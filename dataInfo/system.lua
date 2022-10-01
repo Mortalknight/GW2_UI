@@ -42,6 +42,7 @@ end
 
 local function displayData(data, totalMEM, totalCPU)
     if not data then return end
+    if totalMEM == 0 then totalMEM = 0.00000000000000000001 end
 
     local name, mem, cpu = data.title, data.mem, data.cpu
     if cpu then
