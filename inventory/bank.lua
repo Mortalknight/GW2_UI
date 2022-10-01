@@ -489,7 +489,7 @@ local function LoadBank(helpers)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
     -- setup resizer stuff
-    f:SetMinResize(340, 340)
+    f:SetResizeBounds(340, 340)
     f:SetScript("OnSizeChanged", onBankFrameChangeSize)
     f.sizer.onResizeStop = onBankResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
@@ -559,9 +559,9 @@ local function LoadBank(helpers)
     createBagBar(f.ItemFrame)
 
     -- skin some things not done in XML
-    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20)
+    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20, "")
     f.headerString:SetText(BANK)
-    f.spaceString:SetFont(UNIT_NAME_FONT, 12)
+    f.spaceString:SetFont(UNIT_NAME_FONT, 12, "")
     f.spaceString:SetTextColor(1, 1, 1)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
 

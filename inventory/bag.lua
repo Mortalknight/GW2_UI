@@ -83,7 +83,7 @@ local function SellJunkFrame_OnEvent(self, event)
         self:UnregisterEvent("ITEM_UNLOCKED")
         -- Check whether vendor refuses to buy items
         if mBagID and mBagSlot and mBagID ~= -1 and mBagSlot ~= -1 then
-            local _, count, locked = GetContainerItemInfo(mBagID, mBagSlot)
+            local _, count, locked = C_Container.GetContainerItemInfo(mBagID, mBagSlot)
             if count and not locked then
                 -- Item has been unlocked but still not sold so stop selling
                 StopSelling()
@@ -335,8 +335,8 @@ local function createBagBar(f)
     bp:HookScript("OnMouseDown", inv.bag_OnMouseDown)
     bp.gwBackdrop = true -- checked by some things to see if this is a reskinned button
     f.bags[BACKPACK_CONTAINER] = bp
-    hooksecurefunc(
-        "MainMenuBarBackpackButton_UpdateFreeSlots",
+    hooksecurefunc(MainMenuBarBackpackButton,
+        "UpdateFreeSlots",
         function()
             bp.Count:SetText(bp.freeSlots)
         end
@@ -354,6 +354,11 @@ local function createBagBar(f)
         -- because of hard-coded string parsing in PaperDollItemSlotButton_OnLoad
         local name = "GwInvntry" .. "Bag" .. (bag_idx - 1) .. "Slot"
         local b = CreateFrame("ItemButton", name, f, "GwBackpackBagTemplate")
+        b.commandName = ""
+
+        --_G["GwInvntry" .. "Bag" .. (bag_idx - 1) .. "SlotIconTexture"]:RemoveMaskTexture(b.CircleMask)
+        --_G["GwInvntry" .. "Bag" .. (bag_idx - 1) .. "SlotNormalTexture"]:Kill()
+        --b.SlotHighlightTexture:Kill()
 
         -- We depend on a number of behaviors from the default BagSlotButtonTemplate.
         -- The ID set here is NOT the usual bag_id; rather it is an offset from the
@@ -501,6 +506,7 @@ local function bag_OnShow(self)
     self:RegisterEvent("ITEM_UNLOCKED")
     self:RegisterEvent("BAG_UPDATE")
     self:RegisterEvent("BAG_UPDATE_DELAYED")
+    self:RegisterEvent("CVAR_UPDATE")
     if not IsBagOpen(BACKPACK_CONTAINER) then
         OpenBackpack()
     end
@@ -574,6 +580,11 @@ local function bag_OnEvent(self, event, ...)
                 updateFreeBagSlots()
             end
         end
+    elseif event == "CVAR_UPDATE" then
+        local cvarName, cvarValue = ...
+        if cvarName == "combinedBags" and cvarValue == "1" then
+            SetCVar("combinedBags", "0")
+        end
     end
 end
 GW.AddForProfiling("bag", "bag_OnEvent", bag_OnEvent)
@@ -606,6 +617,7 @@ local function bagHeader_OnEnter(self)
 end
 
 local function LoadBag(helpers)
+    ContainerFrameCombinedBags:Kill()
     inv = helpers
 
     BAG_WINDOW_SIZE = GetSetting("BAG_WIDTH")
@@ -638,7 +650,7 @@ local function LoadBag(helpers)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
     -- setup resizer stuff
-    f:SetMinResize(340, 340)
+    f:SetResizeBounds(340, 340)
     f:SetScript("OnSizeChanged", onBagFrameChangeSize)
     f.sizer.onResizeStop = onBagResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
@@ -646,7 +658,7 @@ local function LoadBag(helpers)
 
     -- setup bagheader stuff
     for i = 0, 4 do
-        _G["GwBagFrameGwBagHeader" .. i].nameString:SetFont(UNIT_NAME_FONT, 12)
+        _G["GwBagFrameGwBagHeader" .. i].nameString:SetFont(UNIT_NAME_FONT, 12, "")
         _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(1, 1, 1)
         _G["GwBagFrameGwBagHeader" .. i].nameString:SetShadowColor(0, 0, 0, 0)
         _G["GwBagFrameGwBagHeader" .. i].icon2:Hide()
@@ -659,7 +671,7 @@ local function LoadBag(helpers)
     -- take the original search box
     inv.reskinSearchBox(BagItemSearchBox)
     hooksecurefunc(
-        "ContainerFrame_Update",
+        "ContainerFrame_UpdateAll",
         function()
             inv.relocateSearchBox(BagItemSearchBox, f)
         end
@@ -696,9 +708,9 @@ local function LoadBag(helpers)
     createBagBar(f.ItemFrame)
 
     -- skin some things not done in XML
-    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20)
+    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20, "")
     f.headerString:SetText(INVENTORY_TOOLTIP)
-    f.spaceString:SetFont(UNIT_NAME_FONT, 12)
+    f.spaceString:SetFont(UNIT_NAME_FONT, 12, "")
     f.spaceString:SetTextColor(1, 1, 1)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
 
@@ -916,11 +928,11 @@ local function LoadBag(helpers)
     end
 
     -- setup money frame
-    f.bronze:SetFont(UNIT_NAME_FONT, 12)
+    f.bronze:SetFont(UNIT_NAME_FONT, 12, "")
     f.bronze:SetTextColor(177 / 255, 97 / 255, 34 / 255)
-    f.silver:SetFont(UNIT_NAME_FONT, 12)
+    f.silver:SetFont(UNIT_NAME_FONT, 12, "")
     f.silver:SetTextColor(170 / 255, 170 / 255, 170 / 255)
-    f.gold:SetFont(UNIT_NAME_FONT, 12)
+    f.gold:SetFont(UNIT_NAME_FONT, 12, "")
     f.gold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
 
     -- money frame tooltip
@@ -944,11 +956,11 @@ local function LoadBag(helpers)
     end)
 
     -- setup watch currencies
-    f.currency1:SetFont(UNIT_NAME_FONT, 12)
+    f.currency1:SetFont(UNIT_NAME_FONT, 12, "")
     f.currency1:SetTextColor(1, 1, 1)
-    f.currency2:SetFont(UNIT_NAME_FONT, 12)
+    f.currency2:SetFont(UNIT_NAME_FONT, 12, "")
     f.currency2:SetTextColor(1, 1, 1)
-    f.currency3:SetFont(UNIT_NAME_FONT, 12)
+    f.currency3:SetFont(UNIT_NAME_FONT, 12, "")
     f.currency3:SetTextColor(1, 1, 1)
 
     -- set warch currencies tooltips

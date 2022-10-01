@@ -28,7 +28,7 @@ local function reskinItemButton(iname, b)
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
 
-    b:SetPushedTexture(nil)
+    --b:SetPushedTexture()
 
     if not b.gwBackdrop then
         local bd = b:CreateTexture(nil, "BACKGROUND")
@@ -71,7 +71,7 @@ local function reskinItemButton(iname, b)
 
     if not b.itemlevel then
         b.itemlevel = b:CreateFontString(nil, "OVERLAY")
-        b.itemlevel:SetFont(UNIT_NAME_FONT, 12)
+        b.itemlevel:SetFont(UNIT_NAME_FONT, 12, "")
         b.itemlevel:SetPoint("BOTTOMRIGHT", 0, 0)
         b.itemlevel:SetText("")
     end
@@ -120,7 +120,7 @@ local function CheckUpdateIcon(button)
     else
         itemIsUpgrade = IsContainerItemAnUpgrade(button:GetParent():GetID(), button:GetID())
     end
-    
+
     if itemIsUpgrade == nil then -- nil means not all the data was available to determine if this is an upgrade.
         button.UpgradeIcon:SetShown(false)
         button:SetScript("OnUpdate", CheckUpdateIcon_OnUpdate)
@@ -160,7 +160,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             end
         end
         -- Show junk icon if active
-        local _, _, _, rarity, _, _, _, _, noValue = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
+        local _, _, _, rarity, _, _, _, _, noValue = C_Container.GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
         button.isJunk = (rarity and rarity == Enum.ItemQuality.Poor) and not noValue
 
         if button.junkIcon then
@@ -307,8 +307,8 @@ local function takeItemButtons(p, bag_id)
         iname = b:GetName() .. "Item"
     end
     cf.gw_owner = p
-    
-    local num_slots = ContainerFrame_C_Container.GetContainerNumSlots(bag_id)
+
+    local num_slots = C_Container.GetContainerNumSlots(bag_id)
     cf.gw_num_slots = num_slots
 
     for i = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
@@ -329,7 +329,7 @@ local function reskinBagBar(b, ha)
 
     b:SetSize(bag_size, bag_size)
     b.tooltipText = BANK_BAG
-    
+
     b.Count:ClearAllPoints()
     b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
     b.Count:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
@@ -357,7 +357,7 @@ local function reskinBagBar(b, ha)
         b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
     end
 
-    b:SetPushedTexture(nil)
+    --b:SetPushedTexture(nil)
 end
 GW.AddForProfiling("inventory", "reskinBagBar", reskinBagBar)
 
@@ -367,8 +367,8 @@ local function reskinSearchBox(sb)
         return
     end
 
-    sb:SetFont(UNIT_NAME_FONT, 14)
-    sb.Instructions:SetFont(UNIT_NAME_FONT, 14)
+    sb:SetFont(UNIT_NAME_FONT, 14, "")
+    sb.Instructions:SetFont(UNIT_NAME_FONT, 14, "")
     sb.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
     sb.Left:SetPoint("LEFT", 0, 0)
@@ -621,7 +621,7 @@ local function LoadInventory()
     -- anytime a ContainerFrame has its anchors set, we re-hide it
     hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)
 
-    hooksecurefunc("ContainerFrameItemButton_UpdateItemUpgradeIcon", CheckUpdateIcon)
+    --hooksecurefunc("ContainerFrameItemButton_UpdateItemUpgradeIcon", CheckUpdateIcon)
 
     -- reskin all the multi-use ContainerFrame ItemButtons
     reskinItemButtons()
@@ -629,7 +629,7 @@ local function LoadInventory()
     -- whenever an ItemButton sets its quality ensure our custom border is being used
     hooksecurefunc("SetItemButtonQuality", hookItemQuality)
 
-    hooksecurefunc("ContainerFrame_Update", hookQuestItemBorder)
+    --hooksecurefunc("ContainerFrame_Update", hookQuestItemBorder)
 
     -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
     for i = 1, NUM_CONTAINER_FRAMES do
@@ -660,7 +660,7 @@ local function LoadInventory()
     helpers.onMoverDragStop = onMoverDragStop
 
     bag_resize = GW.LoadBag(helpers)
-    bank_resize = GW.LoadBank(helpers)
+    --bank_resize = GW.LoadBank(helpers) TODO bugged atm
 
     -- Skin StackSplit
     local StackSplitFrame = _G.StackSplitFrame

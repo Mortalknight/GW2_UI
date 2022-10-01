@@ -1631,7 +1631,7 @@ local function BuildCopyChatFrame()
     frame:SetMovable(true)
     frame:EnableMouse(true)
     frame:SetResizable(true)
-    frame:SetMinResize(350, 100)
+    frame:SetResizeBounds(350, 100)
     frame:SetScript("OnMouseDown", function(copyChat, button)
         if button == "LeftButton" and not copyChat.isMoving then
             copyChat:StartMoving()

@@ -14,7 +14,7 @@ local function GetGraysValue()
             if itemLink then
                 local _, _, rarity, _, _, itype, _, _, _, _, itemPrice = GetItemInfo(itemLink)
                 if itemPrice then
-                    local stackCount = select(2, GetContainerItemInfo(bag, slot)) or 1
+                    local stackCount = select(2, C_Container.GetContainerItemInfo(bag, slot)) or 1
                     local stackPrice = itemPrice * stackCount
                     if rarity and rarity == 0 and (itype and itype ~= "Quest") and (stackPrice > 0) then
                         value = value + stackPrice
