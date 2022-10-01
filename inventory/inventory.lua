@@ -660,7 +660,7 @@ local function LoadInventory()
     helpers.onMoverDragStop = onMoverDragStop
 
     bag_resize = GW.LoadBag(helpers)
-    --bank_resize = GW.LoadBank(helpers) TODO bugged atm
+    --bank_resize = GW.LoadBank(helpers) --TODO bugged atm
 
     -- Skin StackSplit
     local StackSplitFrame = _G.StackSplitFrame
