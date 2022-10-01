@@ -594,7 +594,7 @@ local function evPlayerLogin(self)
     -- Skins: BLizzard & Addons
     GW.LoadStaticPopupSkin()
     GW.LoadBNToastSkin()
-    --GW.LoadDropDownSkin()
+    GW.LoadDropDownSkin()
     --GW.LoadLFGSkins()
     --GW.LoadReadyCheckSkin()
     --GW.LoadTalkingHeadSkin()
