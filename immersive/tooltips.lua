@@ -750,7 +750,7 @@ end
 
 local function SetTooltipFonts()
     local font = UNIT_NAME_FONT
-    local fontOutline = "NONE"
+    local fontOutline = ""
     local headerSize = GetSetting("TOOLTIP_FONT_SIZE")
     local smallTextSize = GetSetting("TOOLTIP_FONT_SIZE")
     local textSize = GetSetting("TOOLTIP_FONT_SIZE")
@@ -1071,9 +1071,9 @@ local function LoadTooltips()
         GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
     end
 
-    local eventFrame = CreateFrame("Frame")
-    eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-    eventFrame:SetScript("OnEvent", function(_, event)
+    local eventFrame2 = CreateFrame("Frame")
+    eventFrame2:RegisterEvent("PLAYER_REGEN_DISABLED")
+    eventFrame2:SetScript("OnEvent", function(_, event)
         if not GetSetting("HIDE_TOOLTIP_IN_COMBAT") then return end
 
         if event == "PLAYER_REGEN_DISABLED" and shouldHiddenInCombat(GameTooltip) and not IsModKeyDown("HIDE_TOOLTIP_IN_COMBAT_OVERRIDE") then
