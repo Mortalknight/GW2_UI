@@ -308,6 +308,7 @@ local function mover_OnDragStop(self)
     local settingsName = self.gw_Settings
     self:StopMovingOrSizing()
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
+    print( settingsName, point, relativePoint, xOfs, yOfs)
 
     -- for layouts: if newPoint is old point, do not update the setting
     if self.defaultPoint.point ~= point or self.defaultPoint.relativePoint ~= relativePoint or self.defaultPoint.xOfs ~= xOfs or self.defaultPoint.yOfs ~= yOfs then
@@ -481,6 +482,8 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     end
 
     moveframe:SetClampedToScreen(true)
+    moveframe:SetMovable(true)
+    moveframe:EnableMouseWheel(true)
 
     -- position mover (as fallback use the default position)
     moveframe.savedPoint = GetSetting(settingsName)

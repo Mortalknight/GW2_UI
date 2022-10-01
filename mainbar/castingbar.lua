@@ -55,24 +55,7 @@ local CASTINGBAR_TEXTURES = {
         }
     },
   }
-
----- DUMMY FUNCTION REMOVE LATER
-local function GetCastingSegments()
-    return {
-        {
-            p = 0.5,
-            text = "I",
-        },
-        {
-            p = 0.75,
-            text = "II",
-        },
-        {
-            p = 1,
-            text = "III",
-        },
-    }
-end
+  GW.CASTINGBAR_TEXTURES = CASTINGBAR_TEXTURES
 
 local function createNewBarSegment(self)
     local segment = CreateFrame("Frame", self:GetName() .. "Segment" .. #self.segments + 1, self, "GwCastingBarSegmentSep")
@@ -84,10 +67,10 @@ local function createNewBarSegment(self)
     return segment
 end
 
-local function AddStages(self)
+local function AddStages(self, parent, barWidth)
     local sumDuration = 0
-    local castBarLeft = self:GetLeft();
-	local castBarRight = self:GetRight();
+    local castBarLeft = self:GetLeft()
+	local castBarRight = self:GetRight()
 	local castBarWidth = castBarRight - castBarLeft
     self.StagePoints = {}
 
@@ -107,24 +90,26 @@ local function AddStages(self)
             local segment = self.segments[i] or createNewBarSegment(self)
             self.StagePoints[i] = portion
 
-            segment:SetPoint("TOPLEFT", self, "TOPLEFT", castBarWidth * portion, 0)
+            segment:SetPoint("TOPLEFT", (parent and parent or self), "TOPLEFT", (barWidth and barWidth or castBarWidth) * portion, 0)
 
             segment.rank:SetText(i)
             segment:Show()
         end
     end
 end
+GW.AddStages = AddStages
 
 local function ClearStages(self)
-    for i = 1, self.numStages - 1, 1 do
-        if self.segments[i] then
-            self.segments[i]:Hide()
+    for k, _ in pairs(self.segments) do
+        if self.segments[k] then
+            self.segments[k]:Hide()
         end
     end
 
     self.numStages = 0
 	table.wipe(self.StagePoints)
 end
+GW.ClearStages = ClearStages
 
 local function barValues(self, name, icon)
     self.name:SetText(name)
@@ -159,7 +144,7 @@ local function AddFinishAnimation(self, isStopped)
         0,
         1,
         GetTime(),
-        0.2,
+        isStopped and 0.5 or 0.2,
         function()
             self.highlight:SetVertexColor(1, 1, 1, lerp(1, 0.7, animations[self.animationName .. "Complete"].progress))
         end,
@@ -241,6 +226,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
             barValues(self, spell, icon)
         end
 
+        self.numStages = numStages and numStages + 1 or 0
         self.maxValue = (endTime - startTime) / 1000
         self.spellID = spellID
         self.castID = castID
@@ -252,7 +238,6 @@ local function castBar_OnEvent(self, event, unitID, ...)
         StopAnimation(self.animationName)
 
         if self.reverseChanneling then
-            self.numStages = numStages + 1
             AddStages(self)
 
         else
@@ -275,7 +260,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
                 self.latency:SetPoint(self.isChanneling and "LEFT" or "RIGHT", self, self.isChanneling and "LEFT" or "RIGHT")
 
                 self.bar:SetWidth(math.max(1, p * 176))
-                self.bar:SetVertexColor(1,1,1,1)
+                self.bar:SetVertexColor(1, 1, 1, 1)
                 self.spark:SetWidth(math.min(15, math.max(1, p * 176)))
                 self.bar:SetTexCoord(self.bar.barCoords.L, lerp(self.bar.barCoords.L,self.bar.barCoords.R, p), self.bar.barCoords.T, self.bar.barCoords.B)
 

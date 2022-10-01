@@ -337,9 +337,6 @@ local function LoadMinimap()
     GwMapFPS.fps:SetFont(STANDARD_TEXT_FONT, 12)
     ToogleMinimapFpsLable()
 
-    --MinimapNorthTag:ClearAllPoints()
-    --MinimapNorthTag:SetPoint("TOP", Minimap, 0, 0)
-
     MinimapCluster:SetAlpha(0)
     hooksecurefunc(MinimapCluster, "SetAlpha", function(self, alpha, forced)
         if alpha ~= 0 and forced ~= true then
@@ -347,7 +344,6 @@ local function LoadMinimap()
         end
     end)
     MinimapCompassTexture:Hide()
-    --MiniMapWorldMapButton:Hide()
 
     MinimapZoneText:ClearAllPoints()
     MinimapZoneText:SetParent(GwMapGradient)
@@ -433,8 +429,6 @@ local function LoadMinimap()
 
     GW.CreateMinimapButtonsSack()
 
-    hooksecurefunc(Minimap, "SetScale", GW.NoOp)
-
     Minimap:SetScale(1.2)
 
     MinimapZoneText:ClearAllPoints()
@@ -494,6 +488,8 @@ local function LoadMinimap()
     GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "VerticalActionBarDummy", {size, size}, {"default"}, nil, MinimapPostDrag)
     Minimap:ClearAllPoints()
     Minimap:SetPoint("TOPLEFT", Minimap.gwMover)
+
+    MinimapCluster:EnableMouse(false)
     -- check on which side we need to set the buttons
     local x = Minimap:GetCenter()
     local screenWidth = UIParent:GetRight()

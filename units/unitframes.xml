@@ -62,12 +62,13 @@
                         <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbars">
+                <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="215" y="15"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.powerbarBackground" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
                     </Anchors>
-                    <TexCoords left="1" right="0" top="0" bottom="0.25" />
+                    <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
+                    <Color r="1" g="1" b="1" a="0.6"></Color>
                 </Texture>
                 <Texture parentKey="predictionbar" file="Interface/AddOns/GW2_UI/textures/units/incominghealing">
                     <Size x="213" y="13"/>
@@ -130,12 +131,11 @@
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="castingbarNormal" file="Interface/AddOns/GW2_UI/textures/units/castingbars">
+                <Texture parentKey="castingbarNormal" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="213" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
                     </Anchors>
-                    <TexCoords left="1" right="0" top="0.25" bottom="0.5" />
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="6">
@@ -170,6 +170,12 @@
                         <Anchor point="LEFT" relativeKey="$parent.healthbar" relativePoint="RIGHT" x="0" y="0"/>
                     </Anchors>
                     <TexCoords left="0" right="0.125" top="0" bottom="0.5" />
+                </Texture>
+                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF" hidden="true">
+                    <Size x="213" y="12"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
+                    </Anchors>
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
@@ -259,12 +265,13 @@
                         <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbars">
+                <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="148" y="15"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.powerbarBackground" relativePoint="BOTTOMLEFT" x="0" y="-1"></Anchor>
                     </Anchors>
-                    <TexCoords left="1" right="0" top="0" bottom="0.25" />
+                    <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
+                    <Color r="1" g="1" b="1" a="0.6"></Color>
                 </Texture>
                 <Texture parentKey="predictionbar" file="Interface/AddOns/GW2_UI/textures/units/incominghealing">
                     <Size x="148" y="13"/>
@@ -321,12 +328,11 @@
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="castingbarNormal" file="Interface/AddOns/GW2_UI/textures/units/castingbars">
+                <Texture parentKey="castingbarNormal" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="146" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
                     </Anchors>
-                    <TexCoords left="1" right="0" top="0.25" bottom="0.5" />
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="6">
@@ -349,6 +355,12 @@
                         <Anchor point="LEFT" relativeKey="$parent.healthbar" relativePoint="RIGHT" x="0" y="0"/>
                     </Anchors>
                     <TexCoords left="0" right="0.125" top="0" bottom="0.5" />
+                </Texture>
+                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF" hidden="true">
+                    <Size x="146" y="12"></Size>
+                    <Anchors>
+                       <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
+                    </Anchors>
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
@@ -434,12 +446,13 @@
                         <Anchor point="TOPRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbars">
+                <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="215" y="15"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.powerbarBackground" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
                     </Anchors>
-                    <TexCoords left="1" right="0" top="0" bottom="0.25" />
+                    <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
+                    <Color r="1" g="1" b="1" a="0.6"></Color>
                 </Texture>
                 <Texture parentKey="predictionbar" file="Interface/AddOns/GW2_UI/textures/units/incominghealing">
                     <Size x="213" y="13"/>
@@ -502,12 +515,11 @@
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="castingbarNormal" file="Interface/AddOns/GW2_UI/textures/units/castingbars">
+                <Texture parentKey="castingbarNormal" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="213" y="13"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
                     </Anchors>
-                    <TexCoords left="1" right="0" top="0.25" bottom="0.5" />
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="6">
@@ -542,6 +554,12 @@
                         <Anchor point="LEFT" relativeKey="$parent.healthbar" relativePoint="RIGHT" x="0" y="0"/>
                     </Anchors>
                     <TexCoords left="0" right="0.125" top="0" bottom="0.5" />
+                </Texture>
+                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF" hidden="true">
+                    <Size x="213" y="12"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
+                    </Anchors>
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
