@@ -40,7 +40,7 @@ local function sellJunk()
                     SoldCount = SoldCount + 1
                     if MerchantFrame:IsShown() then
                         -- If merchant frame is open, vendor the item
-                        UseContainerItem(BagID, BagSlot)
+                        C_Container.UseContainerItem(BagID, BagSlot)
                         -- Perform actions on first iteration
                         if SellJunkTicker._remainingIterations == IterationCount then
                             -- Store first sold bag slot for analysis
@@ -670,8 +670,8 @@ local function LoadBag(helpers)
 
     -- take the original search box
     inv.reskinSearchBox(BagItemSearchBox)
-    hooksecurefunc(
-        "ContainerFrame_UpdateAll",
+    hooksecurefunc(ContainerFrame1,
+        "UpdateSearchBox",
         function()
             inv.relocateSearchBox(BagItemSearchBox, f)
         end
