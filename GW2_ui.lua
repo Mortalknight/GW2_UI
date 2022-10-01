@@ -593,7 +593,7 @@ local function evPlayerLogin(self)
 
     -- Skins: BLizzard & Addons
     GW.LoadStaticPopupSkin()
-    --GW.LoadBNToastSkin()
+    GW.LoadBNToastSkin()
     --GW.LoadDropDownSkin()
     --GW.LoadLFGSkins()
     --GW.LoadReadyCheckSkin()
@@ -615,7 +615,7 @@ local function evPlayerLogin(self)
     --GW.SkinAndEnhanceColorPicker()
     --GW.AddCoordsToWorldMap()
     --GW.LoadVehicleButton()
-    --GW.MakeAltPowerBarMovable()
+    GW.MakeAltPowerBarMovable()
     --GW.WidgetUISetup()
 
 
