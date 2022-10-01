@@ -4,11 +4,17 @@ local TOTEM_BAR_BUTTON_SIZE = 48
 local TOTEM_BAR_BUTTON_MARGIN = 3
 
 local function gw_totem_bar_OnEvent(self)
-    for i = 1, MAX_TOTEMS do
-        local button = _G["TotemFrameTotem" .. i]
-        local _, _, startTime, duration, icon = GetTotemInfo(button.slot)
+    local priorities = STANDARD_TOTEM_PRIORITIES
+	if GW.myclass == "SHAMAN" then
+		priorities = SHAMAN_TOTEM_PRIORITIES
+	end
 
-        if button:IsShown() then
+    for i = 1, MAX_TOTEMS do
+        local slot = priorities[i]
+        local haveTotem, _, startTime, duration, icon = GetTotemInfo(slot)
+
+        if haveTotem then
+            local button = slot.button
             self[i]:Show()
             self[i].iconTexture:SetTexture(icon)
             CooldownFrame_Set(self[i].cooldown, startTime, duration, true)
@@ -117,6 +123,9 @@ local function Create_Totem_Bar()
 
     gw_totem_bar:RegisterEvent("PLAYER_TOTEM_UPDATE")
     gw_totem_bar:RegisterEvent("PLAYER_ENTERING_WORLD")
+	gw_totem_bar:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+	gw_totem_bar:RegisterEvent("PLAYER_TALENT_UPDATE")
+	gw_totem_bar:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     gw_totem_bar:SetScript("OnEvent", gw_totem_bar_OnEvent)
 
     GW.RegisterMovableFrame(gw_totem_bar, GW.L["Class Totems"], "TotemBar_pos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
