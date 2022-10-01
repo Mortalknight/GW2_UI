@@ -613,7 +613,7 @@ local function evPlayerLogin(self)
     --GW.LoadImmersionAddonSkin()
 
     --GW.SkinAndEnhanceColorPicker()
-    --GW.AddCoordsToWorldMap()
+    GW.AddCoordsToWorldMap()
     GW.LoadVehicleButton()
     GW.MakeAltPowerBarMovable()
     GW.WidgetUISetup()
