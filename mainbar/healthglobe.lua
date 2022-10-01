@@ -321,8 +321,11 @@ local function LoadHealthGlobe()
     hg:SetAttribute("*type1", "target")
     hg:SetAttribute("*type2", "togglemenu")
     hg:SetAttribute("unit", "player")
+    RegisterUnitWatch(NewhgUnitFrame)
+    hg:EnableMouse(true)
+    hg:RegisterForClicks("AnyDown")
+
     AddToClique(hg)
-    hg:RegisterForClicks("AnyUp")
 
     -- setup masking textures
     for _, v in ipairs(hg.fill.masked) do
