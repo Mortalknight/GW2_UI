@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.3.0 Wrath", [=[
+    - Added right click drop down to the quest tracker with different options. Also Questie and TomTom integration
+    - Fix profile import and export
+]=])
+
 v("1.2.2 Wrath", [=[
     - Fix chat lua error
 ]=])

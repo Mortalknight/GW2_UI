@@ -1,33 +1,3 @@
-1.2.2-Wrath
-    - Fix chat lua error
-
-1.2.1-Wrath
-    - Pet stat fix
-
-1.2.0-Wrath
-    - Added GW2 style worldmap and minimap player pin
-    - Added a new "Role Bar" which shows your group or raid's role composition
-    - Added option to sort raid grid by role
-    - Added 'Friends' tooltip to character micro menu button
-    - Added an option to change the position of the tooltip healtbar: Bottom, Top, Disable
-    - Added option to hide tooltips in combat and a override setting
-    - Redo the GW2 profile page and allow unlimited profiles
-
-    CHAT:
-        Added lots of new settings to the chat module
-            - Detacting URL Links and make them clickable
-            - A Keyword System, which marks your keywords in the chat and plays a sound
-            - Classcoloring char names
-            - Short Channel names
-            - Emoticon's
-            - Show role icons before the names (if you are in a raid or party)
-            - Spam Intervall: Hides the same messages in a given time
-            - Combat Repeate: Close the chat editbox if you type in the same char for a given number while in combat
-            - Link Hovering: Shows the tooltip of eg a Achivment while hovering
-            - Added option to set a timer to auto scroll down the chat
-            - Added option to set the number of chat messages which are scrolled with one scroll
-
-    - Added 'Layouts':
-        - You can now create, save and edit differente movable frame layouts and assing them to a spec.
-        - This layouts will be automaticly activated by a spec switch
-        Notes: The current profile layout will be saved as a new layout and works always a default, if no spec layout was found
+1.3.0-Wrath
+    - Added right click drop down to the quest tracker with different options. Also Questie and TomTom integration
+    - Fix profile import and export
