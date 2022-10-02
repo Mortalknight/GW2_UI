@@ -174,7 +174,7 @@ local function createImportExportFrame(settingsWindow)
     frame.import:SetSize(128, 28)
     frame.import:SetText(L["Import"])
     frame.import:SetScript("OnClick", function()
-        local profileName, profilePlayer, version = GW.ImportProfile(frame.editBox:GetText(), settingsWindow)
+        local profileName, profilePlayer, version = GW.ImportProfile(frame.editBox:GetText())
 
         frame.result:SetText("")
         if profileName and profilePlayer and version == "Classic" then
@@ -434,7 +434,7 @@ local function addProfile(name, profileData, copy)
 
     if copy then
         GW2UI_SETTINGS_PROFILES[newIdx] = profileData
-        GW2UI_SETTINGS_PROFILES[newIdx]["profilename"] = name
+        GW2UI_SETTINGS_PROFILES[newIdx].profilename = name
     elseif profileData then
         GW2UI_SETTINGS_PROFILES[newIdx] = profileData
     else
