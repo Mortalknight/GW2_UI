@@ -10,6 +10,7 @@
     <Script file="macro.lua"/>
     <Script file="worldmap.lua"/>
     <Script file="colorPicker.lua"/>
+    <Script file="questLog.lua"/>
     <Script file="gossip.lua"/>
 
     <Script file="addons\gearQuipper.lua"/>

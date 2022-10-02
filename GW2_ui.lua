@@ -447,6 +447,7 @@ local function loadAddon(self)
     end
 
     GW.LoadGossipSkin()
+    GW.LoadQuestLogFrameSkin()
 
     GW.LoadDetailsSkin()
 
