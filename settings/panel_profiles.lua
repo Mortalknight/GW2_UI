@@ -314,12 +314,12 @@ end
 AddForProfiling("panel_profiles", "activate_OnClick", activate_OnClick)
 
 local function export_OnClick(self)
-    local p = self:GetParent()
-    local exportString = GW.GetExportString(p.profileID, GW2UI_SETTINGS_PROFILES[p.profileID]["profilename"])
+    local p = self:GetParent().parentItem
+    local exportString = GW.GetExportString(p.profileID, GW2UI_SETTINGS_PROFILES[p.profileID].profilename)
 
     ImportExportFrame:Show()
     ImportExportFrame.header:SetText(L["Export Profile"])
-    ImportExportFrame.subheader:SetText(GW2UI_SETTINGS_PROFILES[p.profileID]["profilename"])
+    ImportExportFrame.subheader:SetText(GW2UI_SETTINGS_PROFILES[p.profileID].profilename)
     ImportExportFrame.description:SetText(L["Profile string to share your settings:"])
     ImportExportFrame.import:Hide()
     ImportExportFrame.decode:Hide()
