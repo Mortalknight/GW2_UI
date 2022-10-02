@@ -168,13 +168,19 @@ function SkinSliderFrame(frame)
     end
 end
 
-local function CreateBackdrop(frame, backdropTexture, isBorder, setOffset)
+local function CreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShift, yShift)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
     local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
     if not frame.backdrop then frame.backdrop = backdrop end
 
+    if not backdrop.SetBackdrop then
+        _G.Mixin(backdrop, _G.BackdropTemplateMixin)
+        backdrop:HookScript("OnSizeChanged", backdrop.OnBackdropSizeChanged)
+    end
+
     local frameLevel = parent.GetFrameLevel and parent:GetFrameLevel()
     local frameLevelMinusOne = frameLevel and (frameLevel - 1)
+
     if frameLevelMinusOne and (frameLevelMinusOne >= 0) then
         backdrop:SetFrameLevel(frameLevelMinusOne)
     else
@@ -184,18 +190,27 @@ local function CreateBackdrop(frame, backdropTexture, isBorder, setOffset)
     if isBorder then
         local trunc = function(s) return s >= 0 and s-s%01 or s-s%-1 end
         local round = function(s) return s >= 0 and s-s%-1 or s-s%01 end
-        local x = setOffset and setOffset or ((GW.mult == 1 or 2 == 0) and 2 or ((GW.mult < 1 and trunc(2 / GW.mult) or round(2 / GW.mult)) * GW.mult))
-        local y = setOffset and setOffset or ((GW.mult == 1 or 2 == 0) and 2 or ((GW.mult < 1 and trunc(2 / GW.mult) or round(2 / GW.mult)) * GW.mult))
+        local x = (GW.mult == 1 or (xOffset or 2) == 0) and (xOffset or 2) or ((GW.mult < 1 and trunc((xOffset or 2) / GW.mult) or round((xOffset or 2) / GW.mult)) * GW.mult)
+        local y = (GW.mult == 1 or (yOffset or 2) == 0) and (yOffset or 2) or ((GW.mult < 1 and trunc((yOffset or 2) / GW.mult) or round((yOffset or 2) / GW.mult)) * GW.mult)
 
-        backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -x, y)
-        backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", x, -y)
+        xShift = xShift or 0
+        yShift = yShift or 0
+        backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -(x + xShift), (y - yShift))
+        backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", (x - xShift), -(y + yShift))
 
     else
         backdrop:SetAllPoints()
     end
 
-    if backdropTexture then
-        backdrop:SetBackdrop(backdropTexture)
+
+    if template == "Transparent" then
+        backdrop:SetBackdrop({
+            edgeFile = "Interface/AddOns/GW2_UI/textures/white",
+            bgFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background",
+            edgeSize = GW.Scale(1)
+        })
+    elseif template then
+        backdrop:SetBackdrop(template)
     else
         backdrop:SetBackdrop(nil)
     end

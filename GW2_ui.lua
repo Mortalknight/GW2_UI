@@ -446,6 +446,8 @@ local function loadAddon(self)
         GW.SkinWorldMap()
     end
 
+    GW.LoadGossipSkin()
+
     GW.LoadDetailsSkin()
 
     GW.SkinAndEnhanceColorPicker()
