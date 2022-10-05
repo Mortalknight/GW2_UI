@@ -4,7 +4,7 @@ local function MirrorTimer_Show(timer, value, maxvalue, scale, paused, label)
     -- Pick a free dialog to use
     local dialog = nil
     -- Find an open dialog of the requested type
-    for index = 1, _G.MIRRORTIMER_NUMTIMERS, 1 do
+    for index = 1, MIRRORTIMER_NUMTIMERS, 1 do
         local frame = _G["GwMirrorTimer" .. index]
         if frame:IsShown() and frame.timer == timer then
             dialog = frame
@@ -13,7 +13,7 @@ local function MirrorTimer_Show(timer, value, maxvalue, scale, paused, label)
     end
     if not dialog then
         -- Find a free dialog
-        for index = 1, _G.MIRRORTIMER_NUMTIMERS, 1 do
+        for index = 1, MIRRORTIMER_NUMTIMERS, 1 do
             local frame = _G["GwMirrorTimer" .. index]
             if not frame:IsShown() then
                 dialog = frame

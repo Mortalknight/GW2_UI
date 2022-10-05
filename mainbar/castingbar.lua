@@ -32,8 +32,10 @@ local function castBar_OnEvent(self, event, unitID, ...)
         local nameSpell = UnitCastingInfo(self.unit)
         if nameChannel then
             event = "UNIT_SPELLCAST_CHANNEL_START"
+            unitID = self.unit
         elseif nameSpell then
             event = "UNIT_SPELLCAST_START"
+            unitID = self.unit
         else
             barReset(self)
         end
@@ -143,6 +145,12 @@ local function petCastBar_OnEvent(self, event, unit, ...)
     if event == "UNIT_PET" then
         if unit == "player" then
             self.showCastbar = UnitIsPossessed("pet")
+
+            if not self.showCastbar then
+                self:Hide()
+            elseif self.isCasting or self.isChanneling then
+                self:Show()
+            end
         end
         return
     end
@@ -183,15 +191,16 @@ local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
 
     GwCastingBar:SetScript("OnEvent", unit == "pet" and petCastBar_OnEvent or castBar_OnEvent)
 
-    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", unit)
-    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", unit)
-    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", unit)
-    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", unit)
-    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", unit)
-    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", unit)
+    GwCastingBar:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
+    GwCastingBar:RegisterEvent("UNIT_SPELLCAST_DELAYED")
+    GwCastingBar:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
+    GwCastingBar:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
+    GwCastingBar:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
     GwCastingBar:RegisterEvent("PLAYER_ENTERING_WORLD")
     GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_START", unit)
     GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_STOP", unit)
+    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", unit)
+
     if unit == "pet" then
         GwCastingBar:RegisterEvent("UNIT_PET")
         GwCastingBar.showCastbar = UnitIsPossessed(unit)

@@ -52,7 +52,7 @@ local function SkinStaticPopup()
     hooksecurefunc("StaticPopup_OnUpdate", gwSetStaticPopupSize)
     --Movie skip Frame
     hooksecurefunc("CinematicFrame_OnDisplaySizeChanged", function(self)
-        if self and self.closeDialog and not self.closeDialog.template then
+        if self and self.closeDialog and not self.closeDialog.tex then
             self.closeDialog:StripTextures()
 
             local tex = self.closeDialog:CreateTexture("bg", "BACKGROUND")
@@ -70,8 +70,8 @@ local function SkinStaticPopup()
     end)
 
     hooksecurefunc("MovieFrame_PlayMovie", function(self)
-        if self and self.CloseDialog and not self.CloseDialog.template then
-            self.CloseDialog.Border:Hide()
+        if self and self.CloseDialog and not self.CloseDialog.tex then
+            self.CloseDialog:StripTextures()
 
             local tex = self.CloseDialog:CreateTexture("bg", "BACKGROUND")
             tex:SetPoint("TOP", self.CloseDialog, "TOP", 0, 0)
