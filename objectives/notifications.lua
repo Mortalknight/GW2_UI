@@ -8,16 +8,23 @@ local notifications = {}
 local questCompass = {}
 
 local icons = {
-    QUEST = {tex = "icon-objective", l = 0, r = 1, t = 0.25, b = 0.5},
+    QUEST = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
+    CAMPAIGN = {tex = "icon-objective", l = 0.5, r = 1, t = 0, b = 0.25},
+    EVENT = {tex = "icon-objective", l = 0, r = 0.5, t = 0.5, b = 0.75},
+    SCENARIO = {tex = "icon-objective", l = 0, r = 0.5, t = 0.75, b = 1},
     BOSS = {tex = "icon-boss", l = 0, r = 1, t = 0, b = 1},
-    DEAD = {tex = "party/icon-dead", l = 0, r = 1, t = 0, b = 1},
+    DEAD = {tex = "icon-dead", l = 0, r = 1, t = 0, b = 1},
     ARENA = {tex = "icon-arena", l = 0, r = 1, t = 0, b = 1},
+    DAILY = {tex = "icon-objective", l = 0.5, r = 1, t = 0.25, b = 0.5},
+    TORGHAST = {tex = "icon-objective", l = 0.5, r = 1, t = 0.5, b = 0.75},
 }
 
 local notification_priority = {
-    EVENT = 1,
-    ARENA = 2,
-    BOSS = 3,
+    TORGHAST = 1,
+    SCENARIO = 2,
+    EVENT = 3,
+    ARENA = 4,
+    BOSS = 5,
 }
 
 
@@ -127,12 +134,13 @@ local function getNearestQuestPOI()
     local closestQuestID
     local minDist = math.huge
     local spawnInfo
+    local questieQuest
     wipe(questCompass)
 
     if Questie and Questie.started then
         for _, quest in pairs(GW.trackedQuests) do
             if quest.questId then
-                local questieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(quest.questId)
+                questieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(quest.questId)
                 if questieQuest then
                     -- do this to prevent a questie error
                     local shouldCheck = false
@@ -165,13 +173,14 @@ local function getNearestQuestPOI()
     end
 
     if closestQuestID and spawnInfo and spawnInfo[1] then
+        local isDaily = QuestieLoader:ImportModule("QuestieDB").IsDailyQuest(closestQuestID)
         questCompass.DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID))
         questCompass.TITLE = GetQuestLogTitle(GetQuestLogIndexByID(closestQuestID))
         questCompass.ID = closestQuestID
         questCompass.X = spawnInfo[1] / 100
         questCompass.Y = spawnInfo[2] / 100
-        questCompass.TYPE = "QUEST"
-        questCompass.COLOR = TRACKER_TYPE_COLOR.QUEST
+        questCompass.TYPE = isDaily and "DAILY" or "QUEST"
+        questCompass.COLOR = isDaily and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST
         questCompass.COMPASS = true
         questCompass.ID = closestQuestID
 

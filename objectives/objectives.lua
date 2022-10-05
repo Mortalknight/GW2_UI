@@ -390,10 +390,7 @@ GW.AddForProfiling("objectives", "getObjectiveBlock", getObjectiveBlock)
 local function getBlock(blockIndex)
     if _G["GwQuestBlock" .. blockIndex] then
         local block = _G["GwQuestBlock" .. blockIndex]
-        -- set the correct block color for an existing block here
-        setBlockColor(block, "QUEST")
-        block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
-        block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
+
         for i = 1, 20 do
             if _G[block:GetName() .. "GwQuestObjective" .. i] ~= nil then
                 _G[block:GetName() .. "GwQuestObjective" .. i].StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
@@ -412,9 +409,6 @@ local function getBlock(blockIndex)
     end
 
     newBlock.clickHeader:Show()
-    setBlockColor(newBlock, "QUEST")
-    newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
 
     -- quest item button here
     newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
@@ -1026,6 +1020,14 @@ local function updateQuestLogLayout(self)
             end
             GwQuestHeader:Show()
             local block = getBlock(counter)
+            -- if questie is loaded check for daily quest
+            local isDaily = false
+            if Questie and Questie.started then
+                isDaily = QuestieLoader:ImportModule("QuestieDB").IsDailyQuest(quest.questId)
+            end
+            setBlockColor(block, isDaily and "DAILY" or "QUEST")
+            block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
+            block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
             if block == nil then
                 return
             end
@@ -1269,7 +1271,7 @@ local function LoadQuestTracker()
     fQuest:RegisterEvent("PLAYER_REGEN_ENABLED")
 
     local header = CreateFrame("Button", "GwQuestHeader", fQuest, "GwQuestTrackerHeader")
-    header.icon:SetTexCoord(0, 1, 0.25, 0.5)
+    header.icon:SetTexCoord(0, 0.5, 0.25, 0.5)
     header.title:SetFont(UNIT_NAME_FONT, 14)
     header.title:SetShadowOffset(1, -1)
     header.title:SetText(QUESTS_LABEL)
