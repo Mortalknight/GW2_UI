@@ -27,6 +27,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p, WORLD_MAP, nil, "WORLDMAP_SKIN_ENABLED")
     addOption(p, L["Gossip Frame"], nil, "GOSSIP_SKIN_ENABLED")
     addOption(p, QUEST_LOG, nil, "QUESTLOG_SKIN_ENABLED")
+    addOption(p, MERCHANT, nil, "MERCHANT_SKIN_ENABLED")
 
     InitPanel(p)
 end

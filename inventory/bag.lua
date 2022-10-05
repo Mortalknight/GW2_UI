@@ -917,6 +917,17 @@ local function LoadBag(helpers)
             end
         )
 
+        dd.upgradeIcon.checkbutton:HookScript(
+            "OnClick",
+            function()
+                local newStatus = not GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW")
+                dd.upgradeIcon.checkbutton:SetChecked(newStatus)
+                SetSetting("BAG_ITEM_UPGRADE_ICON_SHOW", newStatus)
+
+                ContainerFrame_UpdateAll()
+            end
+        )
+
         dd.professionColor.checkbutton:HookScript(
             "OnClick",
             function()
@@ -967,6 +978,7 @@ local function LoadBag(helpers)
         dd.bagOrder.checkbutton:SetChecked(GetSetting("BAG_REVERSE_SORT"))
         dd.itemBorder.checkbutton:SetChecked(GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW"))
         dd.junkIcon.checkbutton:SetChecked(GetSetting("BAG_ITEM_JUNK_ICON_SHOW"))
+        dd.upgradeIcon.checkbutton:SetChecked(GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW"))
         dd.professionColor.checkbutton:SetChecked(GetSetting("BAG_PROFESSION_BAG_COLOR"))
         dd.vendorGrays.checkbutton:SetChecked(GetSetting("BAG_VENDOR_GRAYS"))
         dd.showItemLvl.checkbutton:SetChecked(GetSetting("BAG_SHOW_ILVL"))
@@ -979,6 +991,8 @@ local function LoadBag(helpers)
         dd.sortOrder.title:SetText(L["Sort to Last Bag"])
         dd.itemBorder.title:SetText(L["Show Quality Color"])
         dd.junkIcon.title:SetText(L["Show Junk Icon"])
+        dd.upgradeIcon.title:SetText(L["Show Upgrade Icon |cFF888888(required Pawn - can cause a bag open delay)|r"])
+        dd.upgradeIcon.title:SetFont(UNIT_NAME_FONT, 10)
         dd.professionColor.title:SetText(L["Show Profession Bag Coloring"])
         dd.bagOrder.title:SetText(L["Reverse Bag Order"])
         dd.vendorGrays.title:SetText(L["Sell junk automatically"])

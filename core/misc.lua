@@ -25,7 +25,7 @@ local function QuestRewardMostValueIcon()
     end
 
     if bestItem > 0 then
-        local btn = _G["QuestInfoRewardsFrameQuestInfoItem"..bestItem]
+        local btn = _G["QuestInfoRewardsFrameQuestInfoItem" .. bestItem]
         if btn and btn.type == "choice" then
             mostValue:ClearAllPoints()
             mostValue:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -2, -2)

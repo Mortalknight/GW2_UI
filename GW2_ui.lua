@@ -448,6 +448,7 @@ local function loadAddon(self)
 
     GW.LoadGossipSkin()
     GW.LoadQuestLogFrameSkin()
+    GW.LoadMerchantFrameSkin()
 
     GW.LoadDetailsSkin()
 
@@ -553,6 +554,8 @@ local function loadAddon(self)
             CharacterBag3Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
         end
     end
+
+    GW.SetUpExtendedVendor()
 
     GW.Create_Raid_Counter()
 

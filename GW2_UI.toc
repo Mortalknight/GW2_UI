@@ -142,6 +142,7 @@ inventory\bag.lua
 inventory\bank.lua
 inventory\lootframe.xml
 inventory\lootframe.lua
+inventory\extendVendor.lua
 
 character\skills.lua
 character\title.xml

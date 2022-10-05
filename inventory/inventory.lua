@@ -63,6 +63,14 @@ local function reskinItemButton(iname, b)
         b.junkIcon:Hide()
     end
 
+    if not b.UpgradeIcon then
+        b.UpgradeIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
+        b.UpgradeIcon:SetSize(15, 15)
+        b.UpgradeIcon:SetPoint("TOPRIGHT", 7, -1)
+        b.UpgradeIcon:Hide()
+    end
+    b.UpgradeIcon:SetSize(15, 15)
+
     if not b.questIcon then
         b.questIcon = b:CreateTexture(nil, "OVERLAY", nil, 2)
         b.questIcon:SetTexture("Interface/AddOns/GW2_UI/textures/icon-quest")
@@ -122,6 +130,15 @@ local function hookUpdateAnchors()
     end
 end
 GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
+
+local function CheckUpdateIcon(button)
+    local _, Count, _, _, _, _, ItemLink = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
+    if not Count then return false end -- If the stack count is 0, it's clearly not an upgrade
+    if not ItemLink then return nil end -- If we didn't get an item link, but there's an item there, try again later
+    local itemIsUpgrade = PawnShouldItemLinkHaveUpgradeArrow(ItemLink)
+
+    button.UpgradeIcon:SetShown(itemIsUpgrade)
+end
 
 local function SetItemButtonQualityForBags(button, quality)
     button.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
@@ -195,6 +212,11 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
             end
         end
 
+        -- Show upgrade icon if active
+        if GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW") and button.UpgradeIcon and PawnShouldItemLinkHaveUpgradeArrow then
+            CheckUpdateIcon(button)
+        end
+
         -- Show ilvl if active
         if showItemLevel then
             local canShowItemLevel = IsItemEligibleForItemLevelDisplay(select(9, GetItemInfo(itemIDOrLink)), quality)
@@ -216,6 +238,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         t:Hide()
         if button.junkIcon then button.junkIcon:Hide() end
         if button.questIcon then button.questIcon:Hide() end
+        if button.UpgradeIcon then button.UpgradeIcon:Hide() end
         if button.itemlevel then button.itemlevel:SetText("") end
     end
 
