@@ -221,14 +221,6 @@ local function SetCurrencyToken(self, index)
     self:Show()
 end
 
-local function SetCurrencyTokenByID(self, id)
-    if self:IsForbidden() then return end
-    if id and IsModKeyDown() then
-        self:AddLine(format(IDLine, ID, id))
-        self:Show()
-    end
-end
-
 local function AddQuestID(frame)
     if GameTooltip:IsForbidden() then return end
 
@@ -1045,7 +1037,6 @@ local function LoadTooltips()
 
         hooksecurefunc(GameTooltip, "SetToyByItemID", SetToyByItemID)
         hooksecurefunc(GameTooltip, "SetCurrencyToken", SetCurrencyToken)
-        hooksecurefunc(GameTooltip, "SetCurrencyTokenByID", SetCurrencyTokenByID)
         hooksecurefunc(GameTooltip, "SetBackpackToken", SetBackpackToken)
         hooksecurefunc("QuestMapLogTitleButton_OnEnter", AddQuestID)
         hooksecurefunc("TaskPOI_OnEnter", AddQuestID)

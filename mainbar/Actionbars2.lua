@@ -560,7 +560,12 @@ local function updateMainBar()
     fmActionbar:SetPoint("TOP", UIParent, "BOTTOM", 0, 80)
     fmActionbar:SetSize(btn_padding, used_height)
     fmActionbar.gw_Width = btn_padding
-    fmActionbar.SetPoint = GW.NoOp
+    hooksecurefunc(fmActionbar, "SetPoint", function(_, point, anchor, relPoint, x, y)
+        if point ~= "TOP" or anchor ~= UIParent or relPoint ~= "BOTTOM" or x ~= 0 or y ~= 80 then
+            fmActionbar:ClearAllPoints()
+            fmActionbar:SetPoint("TOP", UIParent, "BOTTOM", 0, 80)
+        end
+    end)
 
     -- event/update handlers
     AddUpdateCB(actionBar_OnUpdate, fmActionbar)

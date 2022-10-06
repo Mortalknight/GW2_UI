@@ -10,7 +10,7 @@ local function GetGraysValue()
 
     for bag = 0, 4 do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            local itemLink = GetContainerItemLink(bag, slot)
+            local itemLink = C_Container.GetContainerItemLink(bag, slot)
             if itemLink then
                 local _, _, rarity, _, _, itype, _, _, _, _, itemPrice = GetItemInfo(itemLink)
                 if itemPrice then

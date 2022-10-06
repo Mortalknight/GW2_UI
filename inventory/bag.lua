@@ -33,7 +33,7 @@ local function sellJunk()
     -- Traverse bags and sell grey items
     for BagID = 0, 4 do
         for BagSlot = 1, C_Container.GetContainerNumSlots(BagID) do
-            CurrentItemLink = GetContainerItemLink(BagID, BagSlot)
+            CurrentItemLink = C_Container.GetContainerItemLink(BagID, BagSlot)
             if CurrentItemLink then
                 _, _, Rarity, _, _, _, _, _, _, _, ItemPrice = GetItemInfo(CurrentItemLink)
                 if Rarity == 0 and ItemPrice ~= 0 then
@@ -60,7 +60,7 @@ local function sellJunk()
 
     -- Stop selling if no items were sold for this iteration or iteration limit was reached
     if SoldCount == 0 or SellJunkTicker and SellJunkTicker._remainingIterations == 1 then 
-        StopSelling() 
+        StopSelling()
     end
 end
 
@@ -688,6 +688,7 @@ local function LoadBag(helpers)
         cf.gw_num_slots = 0
         cf:SetAllPoints(f.ItemFrame)
         cf:SetID(bag_id)
+        cf.bagID = bag_id
         cf.shouldShow = true
         f.ItemFrame.Containers[bag_id] = cf
     end
@@ -1030,6 +1031,11 @@ local function LoadBag(helpers)
     smsj.text:SetText(L["Selling junk"])
 
     f.smsj = smsj
+
+    hooksecurefunc("ContainerFrameItemButton_OnClick", function(self)
+        print(self:GetBagID(), self:GetID())
+    
+    end)
 
     return changeItemSize
 end
