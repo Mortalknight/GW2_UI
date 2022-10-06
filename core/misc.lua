@@ -1,12 +1,21 @@
 local _, GW = ...
 
 local mostValue
+local upgradeIconsByPawn = {}
+
+local function HideAllUpgradeIconsByPawn()
+    for i = 1, MAX_NUM_ITEMS do
+        if upgradeIconsByPawn[i] then upgradeIconsByPawn[i]:Hide() end
+    end
+end
 
 local function QuestRewardMostValueIcon()
     if not GW.GetSetting("QUEST_REWARDS_MOST_VALUE_ICON") then return end
 
     local firstItem = QuestInfoRewardsFrameQuestInfoItem1
     if not firstItem then return end
+
+    HideAllUpgradeIconsByPawn()
 
     local numQuests = GetNumQuestChoices()
     if numQuests < 2 then return end
@@ -16,6 +25,22 @@ local function QuestRewardMostValueIcon()
         local questLink = GetQuestItemLink("choice", i)
         local _, _, amount = GetQuestItemInfo("choice", i)
         local itemSellPrice = questLink and select(11, GetItemInfo(questLink))
+        local itemIsUpgrade = PawnShouldItemLinkHaveUpgradeArrow and PawnShouldItemLinkHaveUpgradeArrow(questLink)
+        local upgradeIconByPawn = upgradeIconsByPawn[i]
+
+        if itemIsUpgrade then
+            if not upgradeIconByPawn then
+                upgradeIconByPawn = _G["QuestInfoRewardsFrameQuestInfoItem" .. i]:CreateTexture(nil, "OVERLAY")
+                upgradeIconByPawn:SetPoint("BOTTOMRIGHT", _G["QuestInfoRewardsFrameQuestInfoItem" .. i], "BOTTOMRIGHT", -2, 2)
+                upgradeIconByPawn:SetSize(15, 15)
+                upgradeIconByPawn:SetAtlas("bags-greenarrow", true)
+                upgradeIconByPawn:SetDrawLayer("OVERLAY", 7)
+                upgradeIconByPawn:Hide()
+
+                upgradeIconsByPawn[i] = upgradeIconByPawn
+            end
+            upgradeIconByPawn:Show()
+        end
 
         local totalValue = (itemSellPrice and itemSellPrice * amount) or 0
         if totalValue > bestValue then
@@ -58,6 +83,8 @@ local function InitializeMiscFunctions()
             mostValue:Hide()
         end
     end)
+
+    hooksecurefunc("QuestInfo_Display", HideAllUpgradeIconsByPawn)
 
     MiscFrame:RegisterEvent("QUEST_COMPLETE") -- used for quest gold reward icon
 
