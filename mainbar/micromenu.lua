@@ -269,13 +269,12 @@ GW.AddForProfiling("micromenu", "reskinMicroButtons", reskinMicroButtons)
 local function disableMicroButton(btn, hideOnly)
     if hideOnly then
         -- hide it off-screen but still want events to run for alerts/notifications
-        btn:ClearAllPoints()
-        btn:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
+        btn:SetParent(GW.HiddenFrame)
     else
         btn:Disable()
         btn:UnregisterAllEvents()
         btn:SetScript("OnUpdate", nil)
-        btn:Hide()
+        btn:Kill()
     end
 end
 
@@ -301,11 +300,8 @@ local function setupMicroButtons(mbf)
             ]=]
         )
 
-        disableMicroButton(CharacterMicroButton)
-        CharacterMicroButton.GwSetAnchorPoint = function(self)
-            self:ClearAllPoints()
-            self:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
-        end
+        disableMicroButton(CharacterMicroButton, false)
+
         cref:RegisterForClicks("AnyUp")
         cref:SetScript("OnEnter", CharacterMicroButton.OnEnter)
         cref:SetScript("OnLeave", GameTooltip_Hide)
@@ -434,7 +430,7 @@ local function setupMicroButtons(mbf)
     -- PVPMicroButton
     local pvpref
     if GetSetting("USE_CHARACTER_WINDOW") then
-        pvpref = CreateFrame("Button", "GwTalentMicroButton", mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
+        pvpref = CreateFrame("Button", "GwPvpMicroButton", mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
         pvpref.tooltipText = MicroButtonTooltipText(TALENTS, "TOGGLETALENTS")
         pvpref.newbieText = NEWBIE_TOOLTIP_TALENTS
         reskinMicroButton(pvpref, "PVPMicroButton", mbf)
