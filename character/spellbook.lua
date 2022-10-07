@@ -267,57 +267,73 @@ local function setUpPaging(self)
     self.right:SetAttribute("_onclick", [=[
         self:GetFrameRef('tab'):SetAttribute('page', 'right')
     ]=])
+    self.attrDummy:SetAttribute('neededContainers', self.tabs)
 
     self.attrDummy:SetFrameRef('container1', self.container1)
     self.attrDummy:SetFrameRef('container2', self.container2)
     self.attrDummy:SetFrameRef('container3', self.container3)
     self.attrDummy:SetFrameRef('container4', self.container4)
+    self.attrDummy:SetFrameRef('container5', self.container5)
+    self.attrDummy:SetFrameRef('container6', self.container6)
     self.attrDummy:SetFrameRef('left', self.left)
     self.attrDummy:SetFrameRef('right', self.right)
     self.attrDummy:SetAttribute('_onattributechanged', ([=[
         if name ~= 'page' then return end
 
-        local p1 = self:GetFrameRef('container1')
-        local p2 = self:GetFrameRef('container2')
-        local p3 = self:GetFrameRef('container3')
-        local p4 = self:GetFrameRef('container4')
+
         local left = self:GetFrameRef('left')
         local right = self:GetFrameRef('right')
-        local numPages = %s
+
+        local maxNumberOfContainers = 6
+        local container
+        local showNext = false
+        local hadSomethingToShow = false
+
         local currentPage = 1
+        local neededContainers = self:GetAttribute("neededContainers")
 
-        if value == "left" then
-            if p4:IsVisible() then
-                p4:Hide()
-                p3:Show()
-                currentPage = 3
-            elseif p3:IsVisible() then
-                p3:Hide()
-                p2:Show()
-                currentPage = 2
-            elseif p2:IsVisible() then
-                p2:Hide()
-                p1:Show()
-                currentPage = 1
+        if value == "left" then -- container -1
+            for i = maxNumberOfContainers, 1, -1 do
+                container = self:GetFrameRef("container" .. i)
+                if container:IsVisible() then
+                    container:Hide()
+                    showNext = true
+                else
+                    if showNext then
+                        container:Show()
+                        showNext = false
+                        hadSomethingToShow = true
+                        currentPage = i
+                    else
+                        container:Hide()
+                    end
+                end
+
+                if i == 1 and not hadSomethingToShow then
+                    self:GetFrameRef("container" .. i):Show()
+                    currentPage = i
+                end
             end
         end
-        if value == "right" then
-            if p1:IsVisible()  then
-                p1:Hide()
-                p2:Show()
-                currentPage = 2
-            elseif p2:IsVisible() then
-                p2:Hide()
-                p3:Show()
-                currentPage = 3
-            elseif p3:IsVisible() then
-                p3:Hide()
-                p4:Show()
-                currentPage = 4
+        if value == "right" then -- container +1
+            for i = 1, maxNumberOfContainers do
+                container = self:GetFrameRef("container" .. i)
+
+                if container:IsVisible() then
+                    container:Hide()
+                    showNext = true
+                else
+                    if showNext then
+                        container:Show()
+                        showNext = false
+                        currentPage = i
+                    else
+                        container:Hide()
+                    end
+                end
             end
         end
-
-        if currentPage >= numPages then
+        if currentPage >= neededContainers then
             right:Hide()
         else
             right:Show()
@@ -327,7 +343,7 @@ local function setUpPaging(self)
         else
             left:Show()
         end
-    ]=]):format(self.tabs))
+    ]=]))
     self.attrDummy:SetAttribute('page', 'left')
 end
 

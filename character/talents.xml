@@ -227,6 +227,28 @@
                     </OnShow>
                 </Scripts>
             </Frame>
+            <Frame name="$parentcontainer5" parentKey="container5" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
+                <Size x="608" y="541"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                </Anchors>
+                <Scripts>
+                    <OnShow>
+                        self:GetParent().pages:SetText(5)
+                    </OnShow>
+                </Scripts>
+            </Frame>
+            <Frame name="$parentcontainer6" parentKey="container6" inherits="SecureHandlerShowHideTemplate" enableMouse="false" hidden="true">
+                <Size x="608" y="541"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                </Anchors>
+                <Scripts>
+                    <OnShow>
+                        self:GetParent().pages:SetText(6)
+                    </OnShow>
+                </Scripts>
+            </Frame>
             <Button parentKey="left" enableMouse="true" inherits="SecureHandlerClickTemplate,SecureHandlerShowHideTemplate,SecureHandlerStateTemplate"  >
                 <size x="32" y="32"/>
                 <Anchors>
