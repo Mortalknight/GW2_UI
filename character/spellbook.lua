@@ -426,7 +426,7 @@ end
 local function isHigherRankKnownAndThisNot(spellId)
     if not spellId then return false end
     if IsPlayerSpell(spellId) or IsSpellKnown(spellId) then return false end
-    for i = 1, 70 do
+    for i = 1, 80 do
         if GW.Skills[GW.myclass][i] then
             for _ ,reqData in pairs(GW.Skills[GW.myclass][i]) do
                 if spellId == reqData.req then
@@ -478,8 +478,13 @@ local function filterUnknownSpell(spellData)
         else
             local name = GetSpellInfo(spellData.req)
             local isTalent, learned = depIsTalentAndLearned(name)
+
             if isTalent then
-                show = learned
+                if learned then
+                    show = not (IsPlayerSpell(spellData[1]) or IsSpellKnown(spellData[1]) or IsSpellKnownOrOverridesKnown(spellData[1])) and isAnyDependencieKnown(spellData)
+                else
+                    show = false
+                end
             else
                 show = not (IsPlayerSpell(spellData[1]) or IsSpellKnown(spellData[1]) or IsSpellKnownOrOverridesKnown(spellData[1])) and isAnyDependencieKnown(spellData)
             end
