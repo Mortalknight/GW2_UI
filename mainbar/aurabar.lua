@@ -1,5 +1,4 @@
 local _, GW = ...
-local Self_Hide = GW.Self_Hide
 local Debug = GW.Debug
 local TimeCount = GW.TimeCount
 local GetSetting = GW.GetSetting
@@ -11,7 +10,6 @@ local function setLongCD(self, stackCount)
     self.status.duration:SetFont(UNIT_NAME_FONT, 11)
     self.status.duration:SetShadowColor(0, 0, 0, 1)
     self.status.duration:SetShadowOffset(1, -1)
-    self.status.stacks:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
     self.status.stacks:SetShadowColor(0, 0, 0, 1)
     self.status.stacks:SetShadowOffset(1, -1)
 
@@ -28,14 +26,12 @@ local function setLongCD(self, stackCount)
     self.border:SetPoint("TOPLEFT", self, "TOPLEFT", 2, -4)
     self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -2, 0)
 end
-GW.AddForProfiling("aurabar_secure", "setLongCD", setLongCD)
 
 local function setShortCD(self, expires, duration, stackCount)
     self.cooldown:SetCooldown(expires - duration, duration)
     self.status.duration:SetFont(UNIT_NAME_FONT, 13)
     self.status.duration:SetShadowColor(0, 0, 0, 1)
     self.status.duration:SetShadowOffset(1, -1)
-    self.status.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
     self.status.stacks:SetShadowColor(0, 0, 0, 1)
     self.status.stacks:SetShadowOffset(1, -1)
 
@@ -52,7 +48,6 @@ local function setShortCD(self, expires, duration, stackCount)
     self.border:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 0)
     self.border:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 0)
 end
-GW.AddForProfiling("aurabar_secure", "setShortCD", setShortCD)
 
 local function SetTooltip(self)
     GameTooltip:ClearLines()
@@ -160,7 +155,6 @@ local function SetCD(self, expires, duration, stackCount, auraType)
     UpdateTime(self, expires)
     self.elapsed = 0
 end
-GW.AddForProfiling("aurabar_secure", "SetCD", SetCD)
 
 local function SetCount(self, count)
     if not self or not self.status or not self.gwInit then
@@ -185,15 +179,14 @@ local function SetIcon(self, icon, dtype, auraType)
         end
         local c = DEBUFF_COLOR[dtype]
         if not c then
-            c = DEBUFF_COLOR["none"]
+            c = DEBUFF_COLOR.none
         end
         self.border.inner:SetVertexColor(c.r, c.g, c.b)
     end
 end
-GW.AddForProfiling("aurabar_secure", "SetIcon", SetIcon)
 
 local function UpdateAura(self, index)
-    local name, icon, count, dtype, duration, expires = UnitAura(self.header:GetUnit(), index, self:GetFilter())
+    local name, icon, count, dtype, duration, expires = UnitAura(self.header:GetAttribute("unit"), index, self:GetFilter())
     if not name then return end
 
     local auraType = self.header:GetAType()
@@ -287,7 +280,6 @@ function GwAuraTmpl_OnLoad(self)
     else
         self.instant = true
     end
-
 
     self.cooldown:SetDrawBling(false)
     self.cooldown:SetDrawEdge(false)
@@ -498,8 +490,6 @@ local function LoadPlayerAuras(lm)
     -- hide default buffs
     TemporaryEnchantFrame:Kill()
     BuffFrame:Kill()
-
-    Debug("player aura style")
 
     loadAuras(lm)
 end

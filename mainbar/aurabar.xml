@@ -71,10 +71,9 @@
 
     <Button name="GwAuraSecureTmpl" inherits="SecureActionButtonTemplate,GwAuraTmpl" virtual="true">
         <Attributes>
-            <Attribute name="type2" value="cancelaura"/>
+            <Attribute name="type" value="cancelaura"/>
         </Attributes>
     </Button>
-
 
     <Button name="GwAuraSecureTmpl16" inherits="GwAuraSecureTmpl" virtual="true"><Size x="16" y="16"/></Button>
     <Button name="GwAuraSecureTmpl18" inherits="GwAuraSecureTmpl" virtual="true"><Size x="18" y="18"/></Button>
@@ -99,5 +98,4 @@
     <Button name="GwAuraSecureTmpl56" inherits="GwAuraSecureTmpl" virtual="true"><Size x="56" y="56"/></Button>
     <Button name="GwAuraSecureTmpl58" inherits="GwAuraSecureTmpl" virtual="true"><Size x="58" y="58"/></Button>
     <Button name="GwAuraSecureTmpl60" inherits="GwAuraSecureTmpl" virtual="true"><Size x="60" y="60"/></Button>
-
 </Ui>
