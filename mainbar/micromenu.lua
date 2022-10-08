@@ -386,7 +386,11 @@ local function setupMicroButtons(mbf)
             ]=]
         )
 
-        disableMicroButton(TalentMicroButton, true)
+        TalentMicroButton:ClearAllPoints()
+        TalentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
+        TalentMicroButton:Hide()
+        TalentMicroButton:SetAlpha(0)
+        TalentMicroButton:SetEnabled(false)
     else
         -- TalentMicroButton
         tref = TalentMicroButton
@@ -395,21 +399,8 @@ local function setupMicroButtons(mbf)
     end
 
     -- AchievementMicroButton
-    hooksecurefunc(AchievementMicroButton, "SetPoint", function(_, _, parent)
-        if parent ~= tref and InCombatLockdown() then
-            mbf:RegisterEvent("PLAYER_REGEN_ENABLED")
-            mbf:SetScript("OnEvent", function()
-                AchievementMicroButton:ClearAllPoints()
-                AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
-
-                mbf:UnregisterEvent("PLAYER_REGEN_ENABLED")
-                mbf:SetScript("OnEvent", nil)
-            end)
-        elseif parent ~= tref then
-            AchievementMicroButton:ClearAllPoints()
-            AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
-        end
-    end)
+    AchievementMicroButton:ClearAllPoints()
+    AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
 
     -- QuestLogMicroButton
     QuestLogMicroButton:ClearAllPoints()
@@ -461,7 +452,8 @@ local function setupMicroButtons(mbf)
     -- MainMenuMicroButton
     MainMenuMicroButton:ClearAllPoints()
     MainMenuMicroButton:SetPoint("BOTTOMLEFT", LFGMicroButton, "BOTTOMRIGHT", 4, 0)
-    MainMenuBarPerformanceBar:Hide()
+    MainMenuBarPerformanceBar:SetAlpha(0)
+	MainMenuBarPerformanceBar:SetScale(0.00001)
     MainMenuMicroButton:HookScript(
         "OnUpdate",
         function()
@@ -475,7 +467,8 @@ local function setupMicroButtons(mbf)
             m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
             m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
             m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
-            MainMenuBarPerformanceBarFrame:Hide()
+            MainMenuBarPerformanceBar:SetAlpha(0)
+	        MainMenuBarPerformanceBar:SetScale(0.00001)
             if MainMenuMicroButton.hover then
                 LatencyInfoToolTip()
             end
@@ -598,6 +591,9 @@ local function LoadMicroMenu()
     for i = 1, #MICRO_BUTTONS do
         MICRO_BUTTONS[i] = nil
     end
+
+    UpdateMicroButtonsParent(mbf.cf)
+
     hooksecurefunc(
         "MoveMicroButtons",
         function()
@@ -616,21 +612,6 @@ local function LoadMicroMenu()
             m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
             m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
             m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
-
-            if InCombatLockdown() then
-                mbf:RegisterEvent("PLAYER_REGEN_ENABLED")
-
-                mbf:SetScript("OnEvent", function()
-                    QuestLogMicroButton:ClearAllPoints()
-                    QuestLogMicroButton:SetPoint("BOTTOMLEFT", AchievementMicroButton, "BOTTOMRIGHT", 4, 0)
-
-                    mbf:UnregisterEvent("PLAYER_REGEN_ENABLED")
-                    mbf:SetScript("OnEvent", nil)
-                end)
-            else
-                QuestLogMicroButton:ClearAllPoints()
-                QuestLogMicroButton:SetPoint("BOTTOMLEFT", AchievementMicroButton, "BOTTOMRIGHT", 4, 0)
-            end
         end
     )
 
@@ -688,7 +669,5 @@ local function LoadMicroMenu()
         end)
         mbf.cf:Hide()
     end
-
-    
 end
 GW.LoadMicroMenu = LoadMicroMenu
