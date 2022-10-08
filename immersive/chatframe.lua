@@ -1474,18 +1474,18 @@ local function styleChatWindow(frame)
         frame:SetFont(chatFont, fontHeight or 12, fontFlags)
         editbox:SetFont(chatFont, fontHeight or 12, fontFlags)
         _G[editbox:GetName() .. "Header"]:SetFont(chatFont, fontHeight or 12, fontFlags)
-    elseif GetSetting("FONTS_ENABLED") and fontSize then
-        if fontSize > 0 then
+    elseif GetSetting("FONTS_ENABLED") then
+        if fontSize and fontSize > 0 then
             frame:SetFont(STANDARD_TEXT_FONT, fontSize)
-        elseif fontSize == 0 then
+        elseif fontSize == nil or fontSize == 0 then
             frame:SetFont(STANDARD_TEXT_FONT, 14)
         end
     end
 
     if GetSetting("FONTS_ENABLED") then
-        if fontSize > 0 then
+        if fontSize and fontSize > 0 then
             frame:SetFont(STANDARD_TEXT_FONT, fontSize)
-        elseif fontSize == 0 then
+        elseif fontSize == nil or fontSize == 0 then
             frame:SetFont(STANDARD_TEXT_FONT, 14)
         end
     end
