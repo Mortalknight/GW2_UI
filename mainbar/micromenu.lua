@@ -388,9 +388,8 @@ local function setupMicroButtons(mbf)
 
         TalentMicroButton:ClearAllPoints()
         TalentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
-        TalentMicroButton:Hide()
         TalentMicroButton:SetAlpha(0)
-        TalentMicroButton:SetEnabled(false)
+        TalentMicroButton:EnableMouse(false)
     else
         -- TalentMicroButton
         tref = TalentMicroButton
