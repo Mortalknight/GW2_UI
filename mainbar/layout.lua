@@ -131,7 +131,7 @@ local onstate_Barlayout = [=[
         local buff_action = "none"
         if newstate == "incombat" or newstate == "outcombat" then
             buff_action = "low"
-            if mbr and mbr:IsShown() and not mbr:GetAttribute("isMoved") then
+            if mbr:IsShown() then
                 if newstate == "outcombat" then
                     if mbr:GetAttribute("gw_FadeShowing") then
                         buff_action = "high"

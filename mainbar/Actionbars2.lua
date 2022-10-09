@@ -152,14 +152,22 @@ local function fadeIn_OnFinished(self)
 end
 GW.AddForProfiling("Actionbars2", "fadeIn_OnFinished", fadeIn_OnFinished)
 
+local function actionBarFrameShoweSetAttribute(f)
+    if not InCombatLockdown() then
+        f:SetAttribute("gw_FadeShowing", true)
+    else
+        C_Timer.After(0.1, function()
+            actionBarFrameShoweSetAttribute(f)
+        end)
+    end
+end
+
 local function actionBarFrameShow(f, instant)
     f.fadeOut:Stop()
     f.fadeIn:Stop()
 
     f.gw_FadeShowing = true
-    if not InCombatLockdown() then
-        f:SetAttribute("gw_FadeShowing", true)
-    end
+    actionBarFrameShoweSetAttribute(f)
     if f.gw_StateTrigger then
         stateChanged()
     end
@@ -181,14 +189,22 @@ local function fadeOut_OnFinished(self)
 end
 GW.AddForProfiling("Actionbars2", "fadeOut_OnFinished", fadeOut_OnFinished)
 
+local function actionBarFrameHideSetAttribute(f)
+    if not InCombatLockdown() then
+        f:SetAttribute("gw_FadeShowing", false)
+    else
+        C_Timer.After(0.1, function()
+            actionBarFrameHideSetAttribute(f)
+        end)
+    end
+end
+
 local function actionBarFrameHide(f, instant)
     f.fadeOut:Stop()
     f.fadeIn:Stop()
 
     f.gw_FadeShowing = false
-    if not InCombatLockdown() then
-        f:SetAttribute("gw_FadeShowing", false)
-    end
+    actionBarFrameHideSetAttribute(f)
     for i = 1, 12 do
         f.gw_Buttons[i].cooldown:SetDrawBling(false)
     end
