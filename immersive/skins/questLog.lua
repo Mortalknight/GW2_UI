@@ -44,7 +44,7 @@ local function handleItemButton(item)
     if not item then return end
 
     if item then
-        item:CreateBackdrop("Transparent", true)
+        item:CreateBackdrop("Transparent", true, -1, -1)
         item:SetSize(143, 40)
         item:SetFrameLevel(item:GetFrameLevel() + 2)
     end

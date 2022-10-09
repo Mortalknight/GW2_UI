@@ -176,12 +176,12 @@ do
         local r, g, b, a = border:GetVertexColor()
         if customFunc then
             border.customFunc = customFunc
-            local br, bg, bb = unpack(1, 1, 1)
+            local br, bg, bb = 1, 1, 1
             customFunc(border, r, g, b, a, br, bg, bb)
         elseif r then
             backdrop:SetBackdropBorderColor(r, g, b, a)
         else
-            local br, bg, bb = unpack(1, 1, 1)
+            local br, bg, bb = 1, 1, 1
             backdrop:SetBackdropBorderColor(br, bg, bb)
         end
     end
