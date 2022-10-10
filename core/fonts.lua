@@ -11,7 +11,7 @@ local function setFont(fontObject, font, size, style, shadowX, shadowY, shadowA,
     end
 
     if not style then
-        style = oldStyle == "OUTLINE" and "THINOUTLINE" or oldStyle -- keep outlines thin
+        style = oldStyle == "OUTLINE" and "THINOUTLINE" or oldStyle or "" -- keep outlines thin
     end
 
     fontObject:SetFont(font, size, style)

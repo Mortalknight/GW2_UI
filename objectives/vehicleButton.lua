@@ -10,6 +10,10 @@ end
 local function LoadVehicleButton()
     if not VehicleSeatIndicator.PositionVehicleFrameHooked then
         hooksecurefunc(VehicleSeatIndicator, "SetPoint", SetPosition)
+
+        VehicleSeatIndicator:ClearAllPoints()
+ 		VehicleSeatIndicator:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMRIGHT", 0, 0)
+
         GW.RegisterMovableFrame(VehicleSeatIndicator, BINDING_HEADER_VEHICLE, "VEHICLE_SEAT_POS", "VerticalActionBarDummy", nil, {"default", "scaleable"})
         VehicleSeatIndicator.PositionVehicleFrameHooked = true
     end
