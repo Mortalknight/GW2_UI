@@ -363,6 +363,7 @@ local function UpdateAuraHeader(header, settingName)
     header:SetAttribute("template", aura_tmpl)
     header:SetAttribute("separateOwn", tonumber(GW.RoundDec(GetSetting(settingName .. "_Seperate"))))
     header:SetAttribute("wrapAfter", wrap_num)
+    header:SetAttribute("maxWraps", 8)
     header:SetAttribute("minWidth", (size + 1) * wrap_num)
     header:SetAttribute("minHeight", (size + 1))
     header:SetAttribute("point", ap)
@@ -379,6 +380,10 @@ local function UpdateAuraHeader(header, settingName)
     local child = select(index, header:GetChildren())
     while child do
         child:SetSize(size, size)
+
+        if index > (8 * wrap_num) and child:IsShown() then
+			child:Hide()
+		end
 
         index = index + 1
         child = select(index, header:GetChildren())
