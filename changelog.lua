@@ -1,6 +1,24 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.5.0 Wrath", [=[
+    NEW
+        - Added vendor skin
+        - Added extended vendor view
+        - Added pawn upgrade icon to quest rewards
+        - Added pawn upgrade icons to bags (off by default -  can cause a short lag during open bags)
+    
+    
+    FIXES
+        - Quest reward most value item indicator
+        - Castbar issues
+        - Static popup lua error
+        - Added more spellbook pages for classes with lots of spells
+        - Micromenu moving
+        - Player aura overlapping
+        - Unknown spell talent check
+]=])
+
 v("1.4.0 Wrath", [=[
     - Added Quest Log skin
     - Added Gossip skin
