@@ -476,7 +476,7 @@ local function setupMicroButtons(mbf)
     -- GuildMicroButton
     GuildMicroButton:ClearAllPoints()
     GuildMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
-    --GuildMicroButtonTabard:Hide()
+
     GuildMicroButton.Ticker = C_Timer.NewTicker(15, function() C_GuildInfo.GuildRoster() end)
     GuildMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
     GuildMicroButton:RegisterEvent("MODIFIER_STATE_CHANGED")
@@ -701,10 +701,6 @@ local function LoadMicroMenu()
     -- custom button overrides & behaviors for each button where necessary
     setupMicroButtons(mbf.cf)
 
-    -- undo micro button position and visibility changes done by others
-    for i = 1, #MICRO_BUTTONS do
-        MICRO_BUTTONS[i] = nil
-    end
     hooksecurefunc("MoveMicroButtons", hook_MoveMicroButtons)
     hooksecurefunc("UpdateMicroButtons", hook_UpdateMicroButtons)
 

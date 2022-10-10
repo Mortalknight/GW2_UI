@@ -491,7 +491,6 @@ end
 
 local function LoadPlayerAuras(lm)
     -- hide default buffs
-    --TemporaryEnchantFrame:Kill()
     BuffFrame:Kill()
 
     loadAuras(lm)

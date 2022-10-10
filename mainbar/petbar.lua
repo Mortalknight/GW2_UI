@@ -13,13 +13,12 @@ local AddActionBarCallback = GW.AddActionBarCallback
 local function setActionButtonAutocast(id)
     local btn = _G["PetActionButton" .. id]
     local autoCastEnabled = select(6, GetPetActionInfo(id))
+    local autoCast = btn.AutoCastable or _G["PetActionButton" .. id .. "AutoCastable"]
 
-    if btn then
-        for _, v in pairs(_G["PetActionButton" .. id .. "Shine"].sparkles) do
-            v:SetShown(autoCastEnabled)
-        end
-        _G["PetActionButton" .. id .. "AutoCastable"]:SetShown(autoCastEnabled)
+    for _, v in pairs(_G["PetActionButton" .. id .. "Shine"].sparkles) do
+        v:SetShown(autoCastEnabled)
     end
+    autoCast:SetShown(autoCastEnabled)
 end
 
 local function petBarUpdate()
@@ -30,7 +29,7 @@ local function petBarUpdate()
     PetActionButton8Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist")
     PetActionButton9Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
     PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
-    for i = 1, 12 do
+    for i = 1, NUM_PET_ACTION_SLOTS do
         if _G["PetActionButton" .. i] then
             _G["PetActionButton" .. i .. "NormalTexture2"]:SetTexture(nil)
             setActionButtonAutocast(i)
@@ -49,10 +48,11 @@ local function setPetBar(fmPet)
 
     fmPet.gwButton = {}
 
-    for i = 1, 12 do
+    for i = 1, NUM_PET_ACTION_SLOTS do
         local btn = _G["PetActionButton" .. i]
         local btnPrev = _G["PetActionButton" .. (i - 1)]
         local btnShine = _G["PetActionButton" .. i .. "Shine"]
+        local autoCast = btn.AutoCastable or _G["PetActionButton" .. i .. "AutoCastable"]
 
         if btn then
             fmPet.gwButton[i] = btn
@@ -76,8 +76,9 @@ local function setPetBar(fmPet)
                     v:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
                 end
 
-                _G["PetActionButton" .. i .. "AutoCastable"]:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
-                _G["PetActionButton" .. i .. "AutoCastable"]:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
+               
+                autoCast:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
+                autoCast:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
             end
 
             if i == 1 then

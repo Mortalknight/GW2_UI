@@ -1,5 +1,7 @@
 local _, GW = ...
 
+local NUM_STANCE_SLOTS = NUM_STANCE_SLOTS or 10
+
 local function SetStanceButtons(stanceButton)
     if not stanceButton then return end
     local numForms = GetNumShapeshiftForms()
@@ -22,7 +24,7 @@ local function SetStanceButtons(stanceButton)
         elseif growDirection == "DOWN" then
             stanceButton.container:SetPoint("TOP", stanceButton, "BOTTOM", 0, 0)
         end
-        for i = 1, 10 do
+        for i = 1, NUM_STANCE_SLOTS do
             _G["StanceButton" .. i]:ClearAllPoints()
             _G["StanceButton" .. i]:SetParent(stanceButton.container)
             if growDirection == "UP" then
@@ -111,7 +113,7 @@ local function CreateStanceBar()
     StanceBarButton:SetPoint("TOPLEFT", StanceBarButton.gwMover)
 
     -- Skin default stancebuttons
-    for i = 1, 10 do
+    for i = 1, NUM_STANCE_SLOTS do
         if _G["StanceButton" .. i] then
             _G["StanceButton" .. i]:SetSize(30, 30)
             GW.setActionButtonStyle("StanceButton" .. i, true, nil ,true)

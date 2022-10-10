@@ -12,8 +12,6 @@ local function SkinTalkingHeadFrame_OnShow()
 end
 
 local function InitTalkingHeadFrame()
-    UIPARENT_MANAGED_FRAME_POSITIONS.TalkingHeadFrame = nil
-
     -- remove TalkingHeadFrame from Alert System
     for i, alertFrameSubSystem in ipairs(AlertFrame.alertFrameSubSystems) do
         if alertFrameSubSystem.anchorFrame and alertFrameSubSystem.anchorFrame == TalkingHeadFrame then

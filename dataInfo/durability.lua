@@ -33,7 +33,9 @@ local function collectDurability(self)
                 totalDurability = perc
             end
 
-            totalRepairCost = totalRepairCost + select(3, GW.ScanTooltip:SetInventoryItem("player", idx))
+            GW.ScanTooltip:SetInventoryItem("player", idx)
+            GW.ScanTooltip:Show()
+            totalRepairCost = totalRepairCost + GW.ScanTooltip:GetTooltipData().repairCost
         end
     end
     self.Value:SetFormattedText("%d%%", totalDurability)
