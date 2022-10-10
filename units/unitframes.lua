@@ -341,10 +341,10 @@ GW.AddForProfiling("unitframes", "hideCastBar", hideCastBar)
 local function updateCastValues(self)
     local castType = 1
 
-    local name, _, texture, startTime, endTime = UnitCastingInfo(self.unit)
+    local name, _, texture, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(self.unit)
 
     if name == nil then
-        name, _, texture, startTime, endTime = UnitChannelInfo(self.unit)
+        name, _, texture, startTime, endTime, _, notInterruptible = UnitChannelInfo(self.unit)
         castType = 0
     end
 
@@ -370,19 +370,19 @@ local function updateCastValues(self)
         self.castingTimeString:Show()
     end
 
-    --if notInterruptible then
-        --self.castingbarNormal:Hide()
-        --self.castingbarNormalSpark:Hide()
+    if notInterruptible then
+        self.castingbarNormal:Hide()
+        self.castingbarNormalSpark:Hide()
 
-        --self.castingbar:Show()
-        --self.castingbarSpark:Show()
-    --else
+        self.castingbar:Show()
+        self.castingbarSpark:Show()
+    else
         self.castingbar:Hide()
         self.castingbarSpark:Hide()
 
         self.castingbarNormal:Show()
         self.castingbarNormalSpark:Show()
-    --end
+    end
 
     AddToAnimation(
         "GwUnitFrame" .. self.unit .. "Cast",
@@ -397,11 +397,11 @@ local function updateCastValues(self)
             if castType == 0 then
                 step = 1 - step
             end
-            --if notInterruptible then
-                --protectedCastAnimation(self, step)
-            --else
+            if notInterruptible then
+                protectedCastAnimation(self, step)
+            else
                 normalCastBarAnimation(self, step)
-            --end
+            end
         end,
         "noease"
     )
