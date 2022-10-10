@@ -10,4 +10,6 @@
     <Script file="AceLocale-3.0\AceLocale-3.0.lua"/>
     <Script file="LibBase64-1.0\LibBase64-1.0.lua"/>
     <Script file="LibFrameFade\LibFrameFade.lua"/>
+    <Script file="LibDetours-1.0\LibDetours-1.0.lua"/>
+    <Script file="LibClassicInspector\LibClassicInspector.lua"/>
 </Ui>

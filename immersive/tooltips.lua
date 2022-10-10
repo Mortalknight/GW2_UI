@@ -5,6 +5,7 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local RGBToHex = GW.RGBToHex
 local GWGetClassColor = GW.GWGetClassColor
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
+local CI = GW.Libs.CI
 
 local targetList = {}
 local classification = {
@@ -236,6 +237,36 @@ local function AddTargetInfo(self, unit)
     end
 end
 
+local function AddInspectInfo(self, unit, numTries, r, g, b)
+    if not unit or numTries > 3 or not CanInspect(unit) then return end
+
+    local unitGUID = UnitGUID(unit)
+    if not unitGUID then return end
+    local specIndex = CI:GetSpecialization(unitGUID) or 1
+    local x1, x2, x3 = 0, 0, 0
+    local gearscore, avg_ilvl = 0, 0
+
+    x1, x2, x3 = CI:GetTalentPoints(unitGUID)
+    if TT_GS then
+        gearscore, avg_ilvl = TT_GS:GetScore(unitGUID, true)
+    end
+
+    if unitGUID == UnitGUID("player") then
+        self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(GW.myclass, specIndex), x1, x2, x3), nil, nil, nil, r, g, b)
+    else
+        local _, className = UnitClass(unit)
+        self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(className, specIndex), x1, x2, x3), nil, nil, nil, r, g, b)  
+    end
+
+    if avg_ilvl > 0 then
+        self:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":" ,avg_ilvl, nil, nil, nil, 1, 1, 1)
+    end
+
+    if gearscore > 0 then
+        self:AddDoubleLine("GearScore:" , gearscore, nil, nil, nil, 1, 1, 1)
+    end
+end
+
 local function GameTooltip_OnTooltipSetUnit(self)
     if self:IsForbidden() then return end
 
@@ -259,6 +290,10 @@ local function GameTooltip_OnTooltipSetUnit(self)
 
     if GetSetting("ADVANCED_TOOLTIP_SHOW_TARGET_INFO") and not isShiftKeyDown and not isControlKeyDown then
         AddTargetInfo(self, unit)
+    end
+
+    if isShiftKeyDown and color then
+        AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
     end
 
     if unit and not isPlayerUnit and IsModKeyDown() then
@@ -622,7 +657,6 @@ local function LoadTooltips()
         hooksecurefunc("SetItemRef", SetItemRef)
         hooksecurefunc("EmbeddedItemTooltip_SetItemByID", EmbeddedItemTooltip_ID)
         hooksecurefunc("EmbeddedItemTooltip_SetCurrencyByID", EmbeddedItemTooltip_ID)
-        --hooksecurefunc("EmbeddedItemTooltip_SetSpellWithTextureByID", EmbeddedItemTooltip_ID)
         hooksecurefunc("EmbeddedItemTooltip_SetItemByQuestReward", EmbeddedItemTooltip_QuestReward)
         hooksecurefunc("EmbeddedItemTooltip_SetSpellByQuestReward", EmbeddedItemTooltip_QuestReward)
 

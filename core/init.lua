@@ -34,8 +34,9 @@ GW.mylevel = UnitLevel("player")
 GW.CheckRole()
 GW.screenwidth, GW.screenHeight = GetPhysicalScreenSize()
 GW.resolution = format("%dx%d", GW.screenwidth, GW.screenHeight)
-GW.wowpatch, GW.wowbuild = GetBuildInfo()
+GW.wowpatch, GW.wowbuild, _, GW.tocversion = GetBuildInfo()
 GW.wowbuild = tonumber(GW.wowbuild)
+GW.tocversion = tonumber(GW.tocversion)
 GW.Gw2Color = "|cffffedba" -- Color used for chat prints or buttons
 
 --Tables
@@ -78,6 +79,8 @@ do
     AddLib("Serializer", "AceSerializer-3.0", true)
     AddLib("LibBase64", "LibBase64-1.0", true)
     AddLib("AceLocale", "AceLocale-3.0", true)
+    AddLib("LibDetours", "LibDetours-1.0", true)
+    AddLib("CI", "LibClassicInspector", true)
 end
 
 do

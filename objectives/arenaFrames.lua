@@ -116,7 +116,7 @@ local function updateArena_Name(self)
     local nameString = UNKNOWNOBJECT
     local name
 
-    if UnitName(self.unit) ~= nil then 
+    if UnitName(self.unit) ~= nil then
         name = UnitName(self.unit)
     else
         name = UNKNOWNOBJECT

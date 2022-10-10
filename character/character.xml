@@ -706,9 +706,9 @@
                     </Anchors>
                 </FontString>
                 <FontString parentKey="itemLevel" text="100" justifyH="LEFT">
-                    <Size x="180" y="20"></Size>
+                    <Size x="180" y="40"></Size>
                     <Anchors>
-                        <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.classIcon" x="10" y="0"></Anchor>
+                        <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.classIcon" x="0" y="0"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -796,7 +796,7 @@
             <OnLoad>
                 self.characterName:SetFont(UNIT_NAME_FONT, 14)
                 self.characterData:SetFont(UNIT_NAME_FONT, 12)
-                self.itemLevel:SetFont(UNIT_NAME_FONT, 24)
+                self.itemLevel:SetFont(UNIT_NAME_FONT, 12)
             </OnLoad>
         </Scripts>
     </Button>
