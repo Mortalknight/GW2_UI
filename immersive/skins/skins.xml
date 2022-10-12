@@ -13,6 +13,7 @@
     <Script file="questLog.lua"/>
     <Script file="gossip.lua"/>
     <Script file="merchant.lua"/>
+    <Script file="readycheck.lua"/>
 
     <Script file="addons\gearQuipper.lua"/>
     <Script file="addons\detailsProfile.lua"/>

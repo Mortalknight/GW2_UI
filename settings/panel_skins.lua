@@ -28,6 +28,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p, L["Gossip Frame"], nil, "GOSSIP_SKIN_ENABLED")
     addOption(p, QUEST_LOG, nil, "QUESTLOG_SKIN_ENABLED")
     addOption(p, MERCHANT, nil, "MERCHANT_SKIN_ENABLED")
+    addOption(p, READY_CHECK, nil, "READYCHECK_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
 
     InitPanel(p)
 end
