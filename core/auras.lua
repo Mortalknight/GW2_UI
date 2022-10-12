@@ -48,26 +48,28 @@ GW.AddForProfiling("auras", "sortAuraList", sortAuraList)
 
 local function getBuffs(unit, filter, revert)
     local buffList = {}
+    local name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID
 
     if filter == nil then
         filter = ""
     end
     for i = 1, 40 do
-        if UnitBuff(unit, i, filter) then
+        name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitBuff(unit, i, filter)
+        if name then
             buffList[i] = {}
             local bli = buffList[i]
             bli.id = i
 
-            bli.name,
-            bli.icon,
-            bli.count,
-            bli.dispelType,
-            bli.duration,
-            bli.expires,
-            bli.caster,
-            bli.isStealable,
-            bli.shouldConsolidate,
-            bli.spellID = UnitBuff(unit, i, filter)
+            bli.name = name
+            bli.icon = icon
+            bli.count = count
+            bli.dispelType = dispelType
+            bli.duration = duration
+            bli.expires = expires
+            bli.caster = caster
+            bli.isStealable = isStealable
+            bli.shouldConsolidate = shouldConsolidate
+            bli.spellID = spellID
 
             bli.timeremaning = bli.duration <= 0 and 500001 or bli.expires - GetTime()
         end
@@ -82,24 +84,26 @@ local function getDebuffs(unit, filter, revert)
     local showImportant = filter == "IMPORTANT"
     local counter = 0
     local filterToUse = filter == "IMPORTANT" and nil or filter
+    local name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID
 
     for i = 1, 40 do
-        if UnitDebuff(unit, i, filterToUse) and ((showImportant and (select(7, UnitDebuff(unit, i, filterToUse)) == "player" or GW.ImportendRaidDebuff[select(10, UnitDebuff(unit, i, filterToUse))])) or not showImportant) then
+        name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitDebuff(unit, i, filterToUse)
+        if name and ((showImportant and (caster == "player" or caster == "vehicle" or GW.ImportendRaidDebuff[spellID])) or not showImportant) then
             counter = #debuffList + 1
             debuffList[counter] = {}
             local dbi = debuffList[counter]
             dbi.id = i
 
-            dbi.name,
-            dbi.icon,
-            dbi.count,
-            dbi.dispelType,
-            dbi.duration,
-            dbi.expires,
-            dbi.caster,
-            dbi.isStealable,
-            dbi.shouldConsolidate,
-            dbi.spellID = UnitDebuff(unit, i, filter)
+            dbi.name = name
+            dbi.icon = icon
+            dbi.count = count
+            dbi.dispelType = dispelType
+            dbi.duration = duration
+            dbi.expires = expires
+            dbi.caster = caster
+            dbi.isStealable = isStealable
+            dbi.shouldConsolidate = shouldConsolidate
+            dbi.spellID  = spellID
 
             dbi.timeremaning = dbi.duration <= 0 and 500001 or dbi.expires - GetTime()
         end
@@ -165,7 +169,7 @@ local function setBuffData(self, buffs, i)
     end
 
     if self.auraType == "debuff" then
-        if b.dispelType ~= nil then
+        if b.dispelType then
             self.background:SetVertexColor(DEBUFF_COLOR[b.dispelType].r, DEBUFF_COLOR[b.dispelType].g, DEBUFF_COLOR[b.dispelType].b)
         else
             self.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
@@ -185,7 +189,7 @@ local function setBuffData(self, buffs, i)
 
     return true
 end
-GW.AddForProfiling("unitframes", "setBuffData", setBuffData)
+GW.AddForProfiling("auras", "setBuffData", setBuffData)
 
 local function auraAnimateIn(self)
     local endWidth = self:GetWidth()
@@ -201,7 +205,7 @@ local function auraAnimateIn(self)
         end
     )
 end
-GW.AddForProfiling("unitframes", "auraAnimateIn", auraAnimateIn)
+GW.AddForProfiling("auras", "auraAnimateIn", auraAnimateIn)
 
 -- No use for player (not secure)
 local function UpdateBuffLayout(self, event, anchorPos)
@@ -209,6 +213,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
     local maxIndex = self.displayDebuffs and 80 or 40
     local marginX = 3
     local marginY = 20
+    local maxHeightInRow = 0
     local usedWidth = 0
     local usedHeight = 0
     local usedWidth2 = 2
@@ -244,6 +249,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
             usedWidth = 0
             usedHeight = usedHeight + lineSize + marginY
             lineSize = smallSize
+            isBuff = false
         end
 
         if setBuffData(frame, list, index) then
@@ -253,6 +259,8 @@ local function UpdateBuffLayout(self, event, anchorPos)
             if not frame:IsShown() then
                 frame:Show()
             end
+
+            frame:SetScript("OnUpdate", frame.OnUpdatefunction)
 
             local isBig = frame.typeAura == "bigBuff"
 
@@ -282,16 +290,19 @@ local function UpdateBuffLayout(self, event, anchorPos)
             usedWidth = usedWidth + size + marginX
             if maxSize < usedWidth then
                 usedWidth = 0
+                maxHeightInRow = size
                 usedHeight = usedHeight + lineSize + marginY
                 lineSize = smallSize
+            elseif size > maxHeightInRow then
+                maxHeightInRow = size
             end
-            if usedWidth > 0 then 
+            if usedWidth > 0 then
                 usedWidth2 = usedWidth - size - marginX
             else
                 usedWidth2 = usedWidth
             end
             local px = usedWidth2  + (size / 2)
-            local py = usedHeight + (size / 2)
+            local py = usedHeight + (maxHeightInRow / 2)
 
             if anchorPos == "pet" then
                 frame:SetPoint("CENTER", self.auras, "TOPRIGHT", -px, self.auraPositionUnder and -py or py)
@@ -307,24 +318,15 @@ local function UpdateBuffLayout(self, event, anchorPos)
             if usedWidth == 0 then
                 usedWidth = usedWidth + size + marginX
             end
-        elseif frame and frame:IsShown() then
+        elseif frame then
             frame:Hide()
+            frame:SetScript("OnUpdate", nil)
         end
     end
 
     self.saveAuras = saveAuras
 end
 GW.UpdateBuffLayout = UpdateBuffLayout
-
-local function auraFrame_OnUpdate(self, elapsed)
-    if self.throt < 0 and self.expires ~= nil and self:IsShown() then
-        self.throt = 0.2
-        self.duration:SetText(TimeCount(self.expires - GetTime()))
-    else
-        self.throt = self.throt - elapsed
-    end
-end
-GW.AddForProfiling("unitframes", "auraFrame_OnUpdate", auraFrame_OnUpdate)
 
 local function auraFrame_OnEnter(self)
     if self:IsShown() and self.auraid ~= nil and self.unit ~= nil then
@@ -338,14 +340,23 @@ local function auraFrame_OnEnter(self)
         GameTooltip:Show()
     end
 end
-GW.AddForProfiling("unitframes", "auraFrame_OnEnter", auraFrame_OnEnter)
+GW.AddForProfiling("auras", "auraFrame_OnEnter", auraFrame_OnEnter)
 
-local function auraFrame_OnClick(self, button)
-    if not InCombatLockdown() and self.auraType == "buff" and button == "RightButton" and self.unit == "player" then
-        CancelUnitBuff("player", self.auraid)
+
+local function auraFrame_OnUpdate(self, elapsed)
+    if self.throt < 0 and self.expires ~= nil and self:IsShown() then
+        self.throt = 0.2
+        self.duration:SetText(TimeCount(self.expires - GetTime()))
+        -- update tooltip
+
+        if GameTooltip:IsOwned(self) then
+            auraFrame_OnEnter(self)
+        end
+    else
+        self.throt = self.throt - elapsed
     end
 end
-GW.AddForProfiling("unitframes", "auraFrame_OnClick", auraFrame_OnClick)
+GW.AddForProfiling("auras", "auraFrame_OnUpdate", auraFrame_OnUpdate)
 
 local function CreateAuraFrame(name, parent)
     local f = CreateFrame("Button", name, parent, "GwAuraFrame")
@@ -366,10 +377,11 @@ local function CreateAuraFrame(name, parent)
     fs:GetParent().stacks = fs.stacks
     fs:GetParent().icon = fs.icon
 
+    f.OnUpdatefunction = auraFrame_OnUpdate
+
     f:SetScript("OnUpdate", auraFrame_OnUpdate)
     f:SetScript("OnEnter", auraFrame_OnEnter)
     f:SetScript("OnLeave", GameTooltip_Hide)
-    f:SetScript("OnClick", auraFrame_OnClick)
 
     return f
 end
