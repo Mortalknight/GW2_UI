@@ -391,6 +391,22 @@ local function LoadMinimap()
     GwMapGradient:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
     GwMapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
 
+    if MiniMapInstanceDifficulty then
+        MiniMapInstanceDifficulty:SetParent(Minimap)
+        MiniMapInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
+        MiniMapInstanceDifficulty:SetScale(0.8)
+    end
+    if GuildInstanceDifficulty then
+        GuildInstanceDifficulty:SetParent(Minimap)
+        GuildInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
+        GuildInstanceDifficulty:SetScale(0.8)
+    end
+    if MiniMapChallengeMode then
+        MiniMapChallengeMode:SetParent(Minimap)
+        MiniMapChallengeMode:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
+        MiniMapChallengeMode:SetScale(0.8)
+    end
+
     GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
 
     local icontype = MiniMapTrackingIcon:GetTexture()

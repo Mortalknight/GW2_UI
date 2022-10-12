@@ -208,7 +208,6 @@ local function GlyphFrameOnEvent(self, event, ...)
             loadGlyphSlot(_G["GwGlyphesContainerGlyph" .. i])
         end
         UpdateGlyphList()
-       print(event)
     elseif event == "USE_GLYPH" then
         if InCombatLockdown() then return end
         GwCharacterWindow:SetAttribute('windowPanelOpen', "glyphes")

@@ -128,7 +128,6 @@ local function BuildFriendTable(total)
         if info and info.connected then
             local className = GW.UnlocalizedClassName(info.className) or ""
             local status = (info.afk and statusTable.AFK) or (info.dnd and statusTable.DND) or ""
-            print(info.name)
             friendTable[i] = {
                 name = info.name,			--1
                 level = info.level,			--2

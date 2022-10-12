@@ -209,7 +209,6 @@ local function UpdateMatchingLayout(self, new_point)
                 break
             end
         end
-        print(frameFound)
         -- could be a new moveable frame which is not at the layout settings, so we need to add it here
         if not frameFound then
             local newIdx = #layout.frames + 1
