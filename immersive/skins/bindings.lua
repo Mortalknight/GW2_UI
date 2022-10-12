@@ -1,11 +1,7 @@
 local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
-local SkinButton = GW.skins.SkinButton
-local SkinCheckButton = GW.skins.SkinCheckButton
-local SkinScrollBar = GW.skins.SkinScrollBar
-local SkinScrollFrame = GW.skins.SkinScrollFrame
 
-local function SkinBindingsUI()
+local function ApplyBindingsUISkin()
     KeyBindingFrame_LoadUI()
 
     local buttons = {
@@ -68,4 +64,10 @@ local function SkinBindingsUI()
         end
     end)
 end
-GW.SkinBindingsUI = SkinBindingsUI
+
+local function LoadBindingsUISkin()
+    if not GW.GetSetting("BINDINGS_SKIN_ENABLED") then return end
+
+    GW.RegisterLoadHook(ApplyBindingsUISkin, "Blizzard_BindingUI", KeyBindingFrame)
+end
+GW.LoadBindingsUISkin = LoadBindingsUISkin

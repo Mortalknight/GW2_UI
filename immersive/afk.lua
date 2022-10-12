@@ -3,6 +3,8 @@ local L = GW.L
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
 
+local AFKMode
+
 local ignoreKeys = {
     LALT = true,
     LSHIFT = true,
@@ -169,9 +171,25 @@ local function LoopAnimations(self)
     end
 end
 
+local function ToggelAfkMode()
+    if GW.GetSetting("AFK_MODE") then
+        AFKMode:RegisterEvent("PLAYER_FLAGS_CHANGED")
+        AFKMode:RegisterEvent("PLAYER_REGEN_DISABLED")
+        AFKMode:RegisterEvent("LFG_PROPOSAL_SHOW")
+        AFKMode:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
+        AFKMode:SetScript("OnEvent", AFKMode_OnEvent)
+        C_CVar.SetCVar("autoClearAFK", "1")
+    else
+        AFKMode:UnregisterAllEvents()
+        AFKMode:SetScript("OnEvent", nil)
+        C_CVar.SetCVar("autoClearAFK", "1")
+    end
+end
+GW.ToggelAfkMode = ToggelAfkMode
+
 local function loadAFKAnimation()
     local classColor = GWGetClassColor(GW.myclass, true, true)
-    
+
     local BackdropFrame = {
         bgFile = "Interface/AddOns/GW2_UI/textures/welcome-bg",
         edgeFile = "",
@@ -181,7 +199,7 @@ local function loadAFKAnimation()
         insets = {left = 2, right = 2, top = 2, bottom = 2}
     }
 
-    local AFKMode = CreateFrame("Frame")
+    AFKMode = CreateFrame("Frame")
     AFKMode:SetFrameLevel(1)
     AFKMode:SetScale(UIParent:GetScale())
     AFKMode:SetAllPoints(UIParent)
@@ -274,6 +292,8 @@ local function loadAFKAnimation()
     AFKMode:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
     AFKMode:SetScript("OnEvent", AFKMode_OnEvent)
     SetCVar("autoClearAFK", "1")
+
+    ToggelAfkMode()
 
     if IsMacClient() then
         printKeys[KEY_PRINTSCREEN_MAC] = true

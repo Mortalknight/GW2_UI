@@ -56,6 +56,9 @@ GW.HiddenFrame:Hide()
 GW.BorderSize = 1
 GW.SpacingSize = 1
 
+GW.ShowRlPopup = false
+GW.InMoveHudMode = false
+
 -- money
 GW.earnedMoney = 0
 GW.spentMoney = 0

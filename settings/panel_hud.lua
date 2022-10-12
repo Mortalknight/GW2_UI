@@ -19,10 +19,10 @@ local function LoadHudPanel(sWindow)
 
     createCat(UIOPTIONS_MENU, L["Edit the HUD modules."], p, 3, nil, {p})
 
-    addOption(p.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND")
+    addOption(p.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND", GW.ToggleHudBackground)
     addOption(p.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
-    addOption(p.scroll.scrollchild, L["AFK Mode"], L["When you go AFK display the AFK screen."], "AFK_MODE")
-    addOption(p.scroll.scrollchild, L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], "QUEST_REWARDS_MOST_VALUE_ICON")
+    addOption(p.scroll.scrollchild, L["AFK Mode"], L["When you go AFK display the AFK screen."], "AFK_MODE", GW.ToggelAfkMode)
+    addOption(p.scroll.scrollchild, L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], "QUEST_REWARDS_MOST_VALUE_ICON", function() GW.ResetQuestRewardMostValueIcon() end)
     addOptionSlider(
         p.scroll.scrollchild,
         L["Maximum lines of 'Copy Chat Frame'"],
@@ -36,8 +36,8 @@ local function LoadHudPanel(sWindow)
         {["CHATFRAME_ENABLED"] = true},
         1
     )
-    addOption(p.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Show Quest XP on Quest Tracker"], nil, "QUESTTRACKER_SHOW_XP", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", function() GW.ShowRlPopup = true end, nil, {["QUESTTRACKER_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Show Quest XP on Quest Tracker"], nil, "QUESTTRACKER_SHOW_XP", function() GW.UpdateQuestTracker(GwQuesttrackerContainerQuests) end, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Quest Tracker sorting"],
@@ -51,19 +51,19 @@ local function LoadHudPanel(sWindow)
         nil
     )
 
-    addOption(p.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU")
-    addOption(p.scroll.scrollchild, DISPLAY_BORDERS, nil, "BORDER_ENABLED")
-    addOption(p.scroll.scrollchild, L["Show Coordinates on World Map"], L["Show Coordinates on World Map"], "WORLDMAP_COORDS_TOGGLE", nil, nil)
-    addOption(p.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", nil, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
-    addOption(p.scroll.scrollchild, L["Show Coordinates on Minimap"], L["Show Coordinates on Minimap"], "MINIMAP_COORDS_TOGGLE", nil, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
-    addOption(p.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", nil, nil, {["PARTY_FRAMES"] = true})
+    addOption(p.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, DISPLAY_BORDERS, nil, "BORDER_ENABLED", GW.ToggleHudBackground)
+    addOption(p.scroll.scrollchild, L["Show Coordinates on World Map"], L["Show Coordinates on World Map"], "WORLDMAP_COORDS_TOGGLE", GW.ToggleWorldMapCoords, nil)
+    addOption(p.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", GW.ToogleMinimapFpsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
+    addOption(p.scroll.scrollchild, L["Show Coordinates on Minimap"], L["Show Coordinates on Minimap"], "MINIMAP_COORDS_TOGGLE", GW.ToogleMinimapCoorsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
+    addOption(p.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", function() GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true})
     addOption(
         p.scroll.scrollchild,
         L["Pixel Perfect Mode"],
         L["Scales the UI into a Pixel Perfect Mode. This is dependent on screen resolution."],
         "PIXEL_PERFECTION",
         function()
-            SetCVar("useUiScale", 0)
+            SetCVar("useUiScale", "0")
             GW.PixelPerfection()
         end
     )
@@ -72,7 +72,7 @@ local function LoadHudPanel(sWindow)
         COMBAT_TEXT_LABEL,
         COMBAT_SUBTEXT,
         "GW_COMBAT_TEXT_MODE",
-        nil,
+        function() GW.ShowRlPopup = true end,
         {"GW2", "BLIZZARD", "OFF"},
         {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS},
         nil,

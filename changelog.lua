@@ -1,14 +1,28 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.6.0 Wrath", [=[
+    NEW
+        - Added ready check skin
+        - Nearly all settings are now working without a needed reload
+        - Added support for GearScore and itemlevel to hero panel and tooltip (holding SHIFT -> required the addon TacoTip, with a feature update this addon will not be needed)
+        - Update raid debuffs
+        - Update raid frame auras
+        - Added socket skin
+        - Added timemanager skin
+
+    FIXES
+        - Show player vehicle debuffs
+]=])
+
 v("1.5.0 Wrath", [=[
     NEW
         - Added vendor skin
         - Added extended vendor view
         - Added pawn upgrade icon to quest rewards
         - Added pawn upgrade icons to bags (off by default -  can cause a short lag during open bags)
-    
-    
+
+
     FIXES
         - Quest reward most value item indicator
         - Castbar issues

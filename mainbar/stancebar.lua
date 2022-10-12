@@ -84,6 +84,7 @@ local function CreateStanceBarButton()
     StanceButton:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
     StanceButton:SetScript("OnEvent", StanceButton_OnEvent)
 
+    GW.MixinHideDuringPetAndOverride(StanceButton)
     return StanceButton
 end
 

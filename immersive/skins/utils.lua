@@ -102,6 +102,7 @@ local function SkinDropDownList()
 end
 
 local function SkinDropDown()
+    if not GW.GetSetting("DROPDOWN_SKIN_ENABLED") then return end
     SkinDropDownList()
     SkinUIDropDownMenu()
 end

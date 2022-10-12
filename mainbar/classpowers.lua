@@ -344,6 +344,9 @@ local function LoadClassPowers()
     GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", "VerticalActionBarDummy", nil, {"default", "scaleable"}, true)
     cpf:ClearAllPoints()
     cpf:SetPoint("TOPLEFT", cpf.gwMover)
+
+    GW.MixinHideDuringPetAndOverride(cpf)
+
     hooksecurefunc(cpf, "SetHeight", function() cpf.gwMover:SetHeight(cpf:GetHeight()) end)
     hooksecurefunc(cpf, "SetWidth", function() cpf.gwMover:SetWidth(cpf:GetWidth()) end)
 
@@ -366,6 +369,7 @@ local function LoadClassPowers()
         local anchorFrame = GetSetting("PLAYER_AS_TARGET_FRAME") and GwPlayerUnitFrame or GwPlayerPowerBar
         local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
         local lmb = CreateFrame("Frame", "GwPlayerPowerBarExtra", anchorFrame, "GwPlayerPowerBar")
+        GW.MixinHideDuringPetAndOverride(lmb)
         cpf.lmb = lmb
         lmb.candy.spark:ClearAllPoints()
 

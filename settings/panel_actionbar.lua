@@ -18,7 +18,7 @@ local function setMultibarCols(barName, setting)
     mb["ButtonsPerRow"] = cols
     SetSetting(barName, mb)
     --#regionto update the cols
-    GW.UpdateMultibarButtonMargin()
+    GW.UpdateMultibarButtons()
 end
 AddForProfiling("panel_actionbar", "setMultibarCols", setMultibarCols)
 
@@ -33,8 +33,8 @@ local function LoadActionbarPanel(sWindow)
 
     createCat(BINDING_HEADER_ACTIONBAR, nil, p, 7, nil, {p})
 
-    addOption(p.scroll.scrollchild, L["Hide Empty Slots"], L["Hide the empty action bar slots."], "HIDEACTIONBAR_BACKGROUND_ENABLED", nil, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
-    addOption(p.scroll.scrollchild, L["Action Button Labels"], L["Enable or disable the action button assignment text"], "BUTTON_ASSIGNMENTS", nil, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
+    addOption(p.scroll.scrollchild, L["Hide Empty Slots"], L["Hide the empty action bar slots."], "HIDEACTIONBAR_BACKGROUND_ENABLED", function() GW.ShowRlPopup = true; GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
+    addOption(p.scroll.scrollchild, L["Action Button Labels"], L["Enable or disable the action button assignment text"], "BUTTON_ASSIGNMENTS", function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
     addOption(
         p.scroll.scrollchild,
         SHOW_MULTIBAR1_TEXT,
@@ -96,7 +96,7 @@ local function LoadActionbarPanel(sWindow)
         BINDING_HEADER_ACTIONBAR .. ": " .. L["Button Spacing"],
         nil,
         "MAINBAR_MARGIIN",
-        GW.UpdateMainBarMargin,
+        GW.UpdateMainBarHot,
         0,
         10,
         nil,
@@ -108,7 +108,7 @@ local function LoadActionbarPanel(sWindow)
         BINDING_HEADER_MULTIACTIONBAR .. ": " .. L["Button Spacing"],
         nil,
         "MULTIBAR_MARGIIN",
-        GW.UpdateMultibarButtonMargin,
+        GW.UpdateMultibarButtons,
         0,
         10,
         nil,
@@ -230,7 +230,7 @@ local function LoadActionbarPanel(sWindow)
         L["Main Bar Range Indicator"],
         nil,
         "MAINBAR_RANGEINDICATOR",
-        nil,
+        GW.UpdateMainBarHot,
         {"RED_INDICATOR", "RED_OVERLAY", "BOTH", "NONE"},
         {L["%s Indicator"]:format(RED_GEM), L["Red Overlay"], STATUS_TEXT_BOTH, NONE},
         nil,
@@ -238,7 +238,7 @@ local function LoadActionbarPanel(sWindow)
         nil,
         "Actionbars"
     )
-    addOption(p.scroll.scrollchild, L["Show Macro Name"], L["Show Macro Name on Action Button"], "SHOWACTIONBAR_MACRO_NAME_ENABLED", nil, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
+    addOption(p.scroll.scrollchild, L["Show Macro Name"], L["Show Macro Name on Action Button"], "SHOWACTIONBAR_MACRO_NAME_ENABLED", function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons(); GW.UpdatePetBarButtonsHot() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
 
     InitPanel(p, true)
 end

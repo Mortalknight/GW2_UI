@@ -19,6 +19,37 @@ local function fnGMIG_OnEvent(self)
     self.convert:SetText(IsInRaid() and CONVERT_TO_PARTY or CONVERT_TO_RAID)
 
     self.readyCheck:SetEnabled(active)
+
+    -- set counter
+    local unit = (IsInRaid() and "raid" or "party")
+        local numTank, numDamage, numHeal = 0, 0, 0
+        for i = 1, GetNumGroupMembers() do
+            local role = UnitGroupRolesAssigned(unit .. i)
+
+            if role then
+                if role == "TANK" then
+                    numTank = numTank + 1
+                elseif role == "HEALER" then
+                    numHeal = numHeal + 1
+                elseif role == "DAMAGER" then
+                    numDamage = numDamage + 1
+                end
+            end
+        end
+
+        if GetNumGroupMembers() == 0 or unit == "party" then
+            if GW.myrole then
+                if GW.myrole == "TANK" then
+                    numTank = numTank + 1
+                elseif GW.myrole == "HEALER" then
+                    numHeal = numHeal + 1
+                elseif GW.myrole == "DAMAGER" then
+                    numDamage = numDamage + 1
+                end
+            end
+        end
+    self.groupCounter:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank:0:0:0:2:64:64:4:60:4:60|t " .. numTank .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-healer:0:0:0:2:64:64:4:60:4:60|t " .. numHeal .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:15:15:0:0:64:64:4:60:4:60|t " .. numDamage)
+
 end
 
 local function manageButton()
@@ -283,7 +314,7 @@ local function Create_Raid_Counter()
     raidCounterFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     raidCounterFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     raidCounterFrame:RegisterEvent("ROLE_CHANGED_INFORM")
-    
+
     raidCounterFrame:SetScript("OnEvent", function(self)
         if not self:IsShown() then return end
 

@@ -913,7 +913,7 @@ local function LoadSettings()
     sWindow.versionString:SetText(GW.VERSION_STRING)
     sWindow.headerString:SetText(CHAT_CONFIGURATION)
     fmGSWMH:SetText(L["Move HUD"])
-    fmGSWS:SetText(L["Save and Reload"])
+    fmGSWS:SetText(CLOSE)
     fmGSWKB:SetText(KEY_BINDING)
     fmGSWD:SetText(L["Join Discord"])
 
@@ -925,7 +925,7 @@ local function LoadSettings()
         GW.moveHudObjects(GW.MoveHudScaleableFrame)
     end
     local fnGSWS_OnClick = function()
-        C_UI.Reload()
+        sWindow:Hide()
     end
     local fnGSWD_OnClick = function()
         StaticPopup_Show("JOIN_DISCORD")
@@ -965,7 +965,12 @@ local function LoadSettings()
     sWindow:SetScript(
         "OnHide",
         function()
-            mf:Hide()
+            if not GW.InMoveHudMode then
+                if GW.ShowRlPopup then
+                    StaticPopup_Show("CONFIG_RELOAD")
+                    GW.ShowRlPopup = false
+                end
+            end
         end
     )
     sWindow:SetScript(

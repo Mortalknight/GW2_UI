@@ -1,5 +1,25 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
 
+        <Frame name="GwAlternativeUnitFrameBackground" frameStrata="BACKGROUND" virtual="true">
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="backgroundOverlay" file="Interface/AddOns/GW2_UI/textures/units/targetShadowOverlay">
+                    <Size x="360" y="160"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="15" y="-5"></Anchor>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="backgroundOverlaySmall" file="Interface/AddOns/GW2_UI/textures/units/targettargetShadowOverlay" hidden="true">
+                    <TexCoords left="0" right="1" top="1" bottom="0"/>
+                    <Size x="220" y="140"></Size>
+                    <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER" x="15" y="10"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+    
     <Button name="GwNormalUnitFrame" frameStrata="LOW" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
         <Size x="300" y="64"></Size>
         <Anchors>
@@ -134,7 +154,7 @@
             </Layer>
             <Layer level="OVERLAY">
                 <FontString parentKey="nameString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
-                    <Size x="150" y="15"/>
+                    <Size x="200" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
                     </Anchors>
@@ -288,7 +308,7 @@
             </Layer>
             <Layer level="OVERLAY">
                 <FontString parentKey="nameString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
-                    <Size x="100" y="15"/>
+                    <Size x="120" y="15"/>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="2"></Anchor>
                     </Anchors>

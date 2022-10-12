@@ -7,7 +7,10 @@ local function HideAllUpgradeIconsByPawn()
     for i = 1, MAX_NUM_ITEMS do
         if upgradeIconsByPawn[i] then upgradeIconsByPawn[i]:Hide() end
     end
+
+    if mostValue then mostValue:Hide() end
 end
+GW.ResetQuestRewardMostValueIcon = HideAllUpgradeIconsByPawn
 
 local function QuestRewardMostValueIcon()
     if not GW.GetSetting("QUEST_REWARDS_MOST_VALUE_ICON") then return end

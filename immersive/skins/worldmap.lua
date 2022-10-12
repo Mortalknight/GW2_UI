@@ -31,7 +31,8 @@ local function GetScaleDistance()
     return sqrt(x * x + y * y)
 end
 
-local function SkinWorldMap()
+local function worldMapSkin()
+    if not GW.GetSetting("WORLDMAP_SKIN_ENABLED") then return end
     WorldMapFrame:StripTextures()
     WorldMapFrame.BlackoutFrame:Hide()
 
@@ -83,31 +84,6 @@ local function SkinWorldMap()
     WorldMapFrame:SetFrameStrata("HIGH")
 
     WorldMapTooltip:SetFrameLevel(WorldMapFrame.ScrollContainer:GetFrameLevel() + 110)
-
-    -- Added Coords to Worldmap
-    if GW.GetSetting("WORLDMAP_COORDS_TOGGLE") then
-        local CoordsTimer = nil
-        CoordsFrame = CreateFrame("Frame", nil, WorldMapFrame)
-        CoordsFrame:SetFrameLevel(WorldMapFrame.BorderFrame:GetFrameLevel() + 2)
-        CoordsFrame:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
-        CoordsFrame.Coords = CoordsFrame:CreateFontString(nil, "OVERLAY")
-        CoordsFrame.Coords:SetTextColor(1, 1 ,1)
-        CoordsFrame.Coords:SetFontObject(NumberFontNormal)
-
-        WorldMapFrame:HookScript("OnShow", function()
-            if not CoordsTimer then
-                UpdateCoords()
-                CoordsTimer = C_Timer.NewTicker(0.1, function() UpdateCoords() end)
-            end
-        end)
-        WorldMapFrame:HookScript("OnHide", function()
-            CoordsTimer:Cancel()
-            CoordsTimer = nil
-        end)
-
-        CoordsFrame.Coords:ClearAllPoints()
-        CoordsFrame.Coords:SetPoint("TOP", WorldMapFrame.ScrollContainer, "TOP", 0, 0)
-    end
 
     -- Enable movement
     WorldMapFrame:SetMovable(true)
@@ -254,4 +230,48 @@ local function SkinWorldMap()
 
     if Questie_Toggle then Questie_Toggle:SkinButton(false, true) end
 end
-GW.SkinWorldMap = SkinWorldMap
+
+local function LoadWorldMapSkin()
+    if not GW.GetSetting("WORLDMAP_SKIN_ENABLED") then return end
+
+    GW.RegisterLoadHook(worldMapSkin, "Blizzard_WorldMap", WorldMapFrame)
+end
+GW.LoadWorldMapSkin = LoadWorldMapSkin
+
+local function ToggleWorldMapCoords()
+    if GW.GetSetting("WORLDMAP_COORDS_TOGGLE") then
+        CoordsFrame:Show()
+
+    else
+        CoordsFrame:Hide()
+    end
+end
+GW.ToggleWorldMapCoords = ToggleWorldMapCoords
+
+local function AddCoordsToWorldMap()
+    if not GW.GetSetting("WORLDMAP_COORDS_TOGGLE") then return end
+    local CoordsTimer = nil
+    CoordsFrame = CreateFrame("Frame", nil, WorldMapFrame)
+    CoordsFrame:SetFrameLevel(WorldMapFrame.BorderFrame:GetFrameLevel() + 2)
+    CoordsFrame:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
+    CoordsFrame.Coords = CoordsFrame:CreateFontString(nil, "OVERLAY")
+    CoordsFrame.Coords:SetTextColor(1, 1 ,1)
+    CoordsFrame.Coords:SetFontObject(Number12Font)
+
+    WorldMapFrame:HookScript("OnShow", function()
+        if not CoordsTimer then
+            UpdateCoords()
+            CoordsTimer = C_Timer.NewTicker(0.1, function() UpdateCoords() end)
+        end
+    end)
+    WorldMapFrame:HookScript("OnHide", function()
+        CoordsTimer:Cancel()
+        CoordsTimer = nil
+    end)
+
+    CoordsFrame.Coords:ClearAllPoints()
+    CoordsFrame.Coords:SetPoint("TOP", WorldMapFrame.ScrollContainer, "TOP", 0, 0)
+
+    ToggleWorldMapCoords()
+end
+GW.AddCoordsToWorldMap = AddCoordsToWorldMap

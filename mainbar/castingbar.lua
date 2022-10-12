@@ -157,6 +157,16 @@ local function petCastBar_OnEvent(self, event, unit, ...)
     castBar_OnEvent(self, event, unit, ...)
 end
 
+local function TogglePlayerEnhancedCastbar(self, setShown)
+    self.name:SetShown(setShown)
+    self.icon:SetShown(setShown)
+    self.latency:SetShown(setShown)
+    self.time:SetShown(setShown)
+
+    self.showDetails = setShown
+end
+GW.TogglePlayerEnhancedCastbar = TogglePlayerEnhancedCastbar
+
 local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
     castingBarType:Kill()
 
@@ -179,6 +189,8 @@ local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
     GwCastingBar.animationName = name
     GwCastingBar.showTradeSkills = showTradeSkills
     GwCastingBar.showDetails = GetSetting("CASTINGBAR_DATA")
+
+    TogglePlayerEnhancedCastbar(GwCastingBar, GwCastingBar.showDetails)
 
     if name == "GwCastingBarPlayer" then
         RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "GwCastFrameDummy", nil, {"default", "scaleable"})

@@ -6,16 +6,18 @@ local SetSetting = GW.SetSetting
 local bloodSpark = GW.BLOOD_SPARK
 local CLASS_ICONS = GW.CLASS_ICONS
 local IsFrameModified = GW.IsFrameModified
-local Debug = GW.Debug
-local animations = GW.animations
 local IsIncompatibleAddonLoadedOrOverride = GW.IsIncompatibleAddonLoadedOrOverride
+local Debug = GW.Debug
+local AFP = GW.AddProfiling
 
-local l = CreateFrame("Frame", nil, UIParent) -- Main event frame nil
+local animations = GW.animations
 
-GW.VERSION_STRING = "@project-version@ Classic"
+local l = CreateFrame("Frame", nil, UIParent) -- Main event frame
+
+GW.VERSION_STRING = "GW2_UI @project-version@-Wrath"
 
 -- setup Binding Header color
-_G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
+BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
 
 -- Make a global GW variable , so others cann access out functions
 GW2_ADDON = GW
@@ -27,21 +29,12 @@ end
 local loaded = false
 local forcedMABags = false
 
-local ourPetbar = false
 local swimAnimation = 0
 local lastSwimState = true
 local hudArtFrame
 
 if Profiler then
     _G.GW_Addon_Scope = GW
-end
-
-local function DatabaseMigration()
-    if GetSetting("AUTO_REPAIR") == true then
-        SetSetting("AUTO_REPAIR", "PLAYER")
-    elseif GetSetting("AUTO_REPAIR") == false then
-        SetSetting("AUTO_REPAIR", "NONE")
-    end
 end
 
 local function disableMABags()
@@ -55,6 +48,13 @@ local function disableMABags()
 end
 GW.AddForProfiling("index", "disableMABags", disableMABags)
 
+-- https://us.battle.net/forums/en/wow/topic/6036615884
+if AchievementMicroButton_Update == nil then
+    function AchievementMicroButton_Update()
+        return
+    end
+end
+
 local function disableTitanPanelBarAdjusting()
     local ourBars = GetSetting("ACTIONBARS_ENABLED")
     if ourBars and IsAddOnLoaded("TitanClassic") then
@@ -62,7 +62,7 @@ local function disableTitanPanelBarAdjusting()
         TitanMovable_AddonAdjust("ExtraActionBarFrame", true)
         TitanMovable_AddonAdjust("MinimapCluster", true)
     end
-end 
+end
 
 local function AddToAnimation(name, from, to, start, duration, method, easeing, onCompleteCallback, doCompleteOnOverider)
     local newAnimation = true
@@ -98,13 +98,22 @@ GW.AddToAnimation = AddToAnimation
 
 local function buttonAnim(self, name, w, hover)
     local prog = animations[name].progress
-    local l = GW.lerp(0, w, prog)
+    local lerp = GW.lerp(0, w, prog)
 
-    hover:SetPoint("RIGHT", self, "LEFT", l, 0)
-    hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, GW.lerp(0, 1, ((prog) - 0.5) / 0.5))
+    hover:SetPoint("RIGHT", self, "LEFT", lerp, 0)
+    hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, GW.lerp(0, 1, (prog - 0.5) / 0.5))
 end
-GW.AddForProfiling("index", "buttonAnim", buttonAnim)
+AFP("buttonAnim", buttonAnim)
 
+--[[
+    Basic helper function for spritemaps
+    mapExample = {
+    width = 100,
+    height = 10,
+    colums = 5,
+    rows = 3
+}
+]]--
 local function getSprite(map,x,y)
     local pw = (map.width / map.colums) / map.width
     local ph = (map.height / map.rows) / map.height
@@ -119,16 +128,37 @@ local function getSprite(map,x,y)
 end
 GW.getSprite = getSprite
 
+local function getSpriteByIndex(map, index)
+    if map == nil then
+        return 0, 0, 0, 0
+    end
+
+    local tileWidth =  map.width / map.colums
+    local tileHeight =  map.height / map.rows
+
+    local tilesPerColums = map.width / tileWidth
+    --local tilesPerRow = map.height / tileHeight
+
+    local left = tileWidth * (index % tilesPerColums)
+    local top =  tileHeight * math.floor(index / tilesPerColums)
+
+    local bottom = top + tileHeight
+    local right = left + tileWidth
+
+    return left / map.width, right / map.width, top / map.height,bottom / map.height
+end
+GW.getSpriteByIndex = getSpriteByIndex
+
 function GwStandardButton_OnEnter(self)
     local name = tostring(self)
     local w = self:GetWidth()
-    local hover = self.hover
-    if not hover then
+    local hover = self.gwHover
+    if not hover or (self.IsEnabled and not self:IsEnabled()) then
         return
     end
 
     hover:SetAlpha(1)
-    self.animationValue = 0
+    self.animationValue = hover.skipHover and 1 or 0
 
     AddToAnimation(
         name,
@@ -145,10 +175,11 @@ end
 function GwStandardButton_OnLeave(self)
     local name = tostring(self)
     local w = self:GetWidth()
-    local hover = self.hover
-    if not hover then
+    local hover = self.gwHover
+    if not hover or (self.IsEnabled and not self:IsEnabled()) then
         return
     end
+    if self.gwHover.skipHover then return end
 
     hover:SetAlpha(1)
     self.animationValue = 1
@@ -185,7 +216,7 @@ local function barAnimation(self, barWidth, sparkWidth)
     self.spark:ClearAllPoints()
     self.spark:SetPoint("LEFT", spark, 0)
 end
-GW.AddForProfiling("index", "barAnimation", barAnimation)
+AFP("barAnimation", barAnimation)
 
 local function Bar(self, value)
     if self == nil then
@@ -225,7 +256,6 @@ GW.SetDeadIcon = SetDeadIcon
 local function StopAnimation(name)
     if animations[name] then
         animations[name].completed = true
-        animations[name].duration = 0
     end
 end
 GW.StopAnimation = StopAnimation
@@ -235,7 +265,7 @@ local function swimAnim()
     hudArtFrame.actionBarHud.RightSwim:SetVertexColor(r, g, b, animations.swimAnimation.progress)
     hudArtFrame.actionBarHud.LeftSwim:SetVertexColor(r, g, b, animations.swimAnimation.progress)
 end
-GW.AddForProfiling("index", "swimAnim", swimAnim)
+AFP("swimAnim", swimAnim)
 
 local updateCB = {}
 local function AddUpdateCB(func, payload)
@@ -281,7 +311,7 @@ local function gw_OnUpdate(_, elapsed)
         end
     end
 
-    if not foundAnimation and count ~= 0 then
+    if not foundAnimation and count > 0 then
         table.wipe(animations)
     end
 
@@ -300,12 +330,8 @@ local function gw_OnUpdate(_, elapsed)
     for _, cb in ipairs(updateCB) do
         cb.func(cb.payload, elapsed)
     end
-
-    if PetActionBarFrame:IsShown() and ourPetbar and loaded then
-        PetActionBarFrame:Hide()
-    end
 end
-GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
+AFP("gw_OnUpdate", gw_OnUpdate)
 
 local function getBestPixelScale()
     return max(0.4, min(1.15, 768 / GW.screenHeight))
@@ -358,32 +384,154 @@ local function RegisterScaleFrame(f, modifier)
 end
 GW.RegisterScaleFrame = RegisterScaleFrame
 
-local function loadAddon(self)
+-- Functions to run when various addons load. Registering these
+-- works on the honor system for now; don't blow away a prior hook :)
+-- Primarily for on-demand addons; if the addon has already loaded
+-- (based on the cond arg), the hook will run immediately.
+local function errorhandler(err)
+    return geterrorhandler()(err)
+end
 
-    -- db migrations
-    DatabaseMigration()
+local addonLoadHooks = {}
+local function RegisterLoadHook(func, name, cond)
+    if not func or type(func) ~= "function" or not name or type(name) ~= "string" then
+        return
+    end
+    if cond then
+        func(l)
+    else
+        addonLoadHooks[name] = func
+    end
+end
+GW.RegisterLoadHook = RegisterLoadHook
+
+local function hookOmniCDLoad()
+    local func = OmniCD and OmniCD.AddUnitFrameData
+    if func then
+        func("GW2_UI-Party-Grid", "GwCompactPartyFrame", "unit", 1)
+        func("GW2_UI-Party", "GwPartyFrame", "unit", 1)
+        func("GW2_UI-Raid", "GwCompactRaidFrame", "unit", 1, nil, 40)
+    end
+end
+AFP("hookOmniCDLoad", hookOmniCDLoad)
+RegisterLoadHook(hookOmniCDLoad, "OmniCD", OmniCD)
+
+local function evAddonLoaded(_, addonName)
+    if addonName ~= "GW2_UI" then
+        local loadHook = addonLoadHooks[addonName]
+        if loadHook and type(loadHook) == "function" then
+            Debug("run load hook for addon", addonName)
+            xpcall(loadHook, errorhandler)
+            addonLoadHooks[addonName] = nil
+        end
+        return
+    else
+        -- setup default values on load, which are required for same skins
+        if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
+            PixelPerfection()
+            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r"):gsub("*", GW.Gw2Color))
+        else
+            GW.scale = UIParent:GetScale()
+            GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
+        end
+        GW.mult = (1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)
+    end
+
+    Debug("OK~EVENT~In ADDON_LOADED event")
+    GW.LoadStorage()
+    -- TODO: A lot of what happens in player login should probably happen here instead
+
+    -- check for DeModal
+    local _, _, _, enabled, _ = GetAddOnInfo("DeModal")
+    if enabled then
+        GW.HasDeModal = true
+    else
+        GW.HasDeModal = false
+    end
+    Debug("DeModal status:", GW.HasDeModal)
+
+    -- TODO: moving skinning from player login to here
+    -- Skins: BLizzard & Addons
+    GW.LoadWorldMapSkin()
+    GW.LoadBindingsUISkin()
+    GW.LoadMacroOptionsSkin()
+    GW.LoadSocketUISkin()
+
+
+end
+AFP("evAddonLoaded", evAddonLoaded)
+
+local function evUiScaleChanged()
+    if not GetCVarBool("useUiScale") then
+        return
+    end
+    SetSetting("PIXEL_PERFECTION", false)
+    GW.scale = UIParent:GetScale()
+    GW.screenwidth, GW.screenheight = GetPhysicalScreenSize()
+    GW.resolution = format("%dx%d", GW.screenwidth, GW.screenheight)
+    GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
+end
+AFP("evUiScaleChanged", evUiScaleChanged)
+
+local function evPlayerLevelUp(_, newLevel)
+    GW.mylevel = newLevel
+    Debug("OK~EVENT~New level:", newLevel)
+end
+AFP("evPlayerLevelUp", evPlayerLevelUp)
+
+local function evPlayerLeavingWorld()
+    GW.inWorld = false
+end
+AFP("evPlayerLeavingWorld", evPlayerLeavingWorld)
+
+local function commonEntering()
+    GW.inWorld = true
+    GW.CheckRole()
+    if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
+        PixelPerfection()
+    end
+    C_Timer.After(0.5, function()
+        if UnitInBattleground("player") == nil and not IsActiveBattlefieldArena() then
+            GW.RemoveTrackerNotificationOfType("ARENA")
+        end
+    end)
+end
+
+local function evPlayerEnteringWorld()
+    commonEntering()
+end
+AFP("evPlayerEnteringWorld", evPlayerEnteringWorld)
+
+local function evPlayerEnteringBattleground()
+    commonEntering()
+end
+AFP("evPlayerEnteringBattleground", evPlayerEnteringBattleground)
+
+
+local function evPlayerLogin(self)
+
+    Debug("OK~EVENT~PLAYER_LOGIN; loaded:", loaded)
+    if loaded then
+        GW.UpdateCharData() --TODO
+        return
+    end
+
+    loaded = true
+    GW.CheckRole() -- some API's deliver a nil value on init.lua load, we we fill this values also here
+
     --Create Settings window
     GW.CombatQueue_Initialize()
 
     --Create the mainbar layout manager
     local lm = GW.LoadMainbarLayout()
 
+    --Create Settings window
     GW.LoadMovers(lm.layoutFrame)
     GW.LoadSettings()
     GW.LoadHoverBinds()
 
-    if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
-        PixelPerfection()
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
-    else
-        GW.scale = UIParent:GetScale()
-        GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
-    end
-    GW.mult = (1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)
-
     -- disable Move Anything bag handling
     disableMABags()
-
     --disbale TitanPanelClaissc Adjustment
     disableTitanPanelBarAdjusting()
 
@@ -421,39 +569,23 @@ local function loadAddon(self)
             hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)
         end
     end
-    if GetSetting("STATICPOPUP_SKIN_ENABLED") then
-        GW.SkinStaticPopup()
-    end
-    if GetSetting("BNTOASTFRAME_SKIN_ENABLED") then
-        GW.SkinBNToastFrame()
-    end
-    if GetSetting("DROPDOWN_SKIN_ENABLED") then
-        GW.SkinDropDown()
-    end
-    if GetSetting("ADDONLIST_SKIN_ENABLED") then
-        GW.SkinAddonList()
-    end
-    if GetSetting("BINDINGS_SKIN_ENABLED") then
-        GW.SkinBindingsUI()
-    end
-    if GetSetting("BLIZZARD_OPTIONS_SKIN_ENABLED") then
-        GW.SkinBlizzardOptions()
-    end
-    if GetSetting("MACRO_SKIN_ENABLED") then
-        GW.SkinMacroOptions()
-    end
-    if GetSetting("WORLDMAP_SKIN_ENABLED") then
-        GW.SkinWorldMap()
-    end
 
+    -- Skins: BLizzard & Addons
+    GW.SkinStaticPopup()
+    GW.SkinBNToastFrame()
+    GW.SkinDropDown()
+    GW.SkinAddonList()
+    GW.SkinBlizzardOptions()
     GW.LoadGossipSkin()
     GW.LoadQuestLogFrameSkin()
     GW.LoadMerchantFrameSkin()
     GW.LoadReadyCheckSkin()
+    GW.LoadTimeManagerSkin()
 
     GW.LoadDetailsSkin()
 
     GW.SkinAndEnhanceColorPicker()
+    GW.AddCoordsToWorldMap()
 
 
     --Create hud art
@@ -479,12 +611,12 @@ local function loadAddon(self)
 
     if not IsIncompatibleAddonLoadedOrOverride("FloatingCombatText", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("GW_COMBAT_TEXT_MODE") == "GW2" then
-            SetCVar("floatingCombatTextCombatDamage", 0)
+            SetCVar("floatingCombatTextCombatDamage", "0")
             GW.LoadDamageText()
         elseif GetSetting("GW_COMBAT_TEXT_MODE") == "BLIZZARD" then
-            SetCVar("floatingCombatTextCombatDamage", 1)
+            SetCVar("floatingCombatTextCombatDamage", "1")
         else
-            SetCVar("floatingCombatTextCombatDamage", 0)
+            SetCVar("floatingCombatTextCombatDamage", "0")
         end
     end
 
@@ -556,6 +688,9 @@ local function loadAddon(self)
         end
     end
 
+    -- hero panel
+    GW.LoadWindows()
+
     GW.SetUpExtendedVendor()
 
     GW.Create_Raid_Counter()
@@ -602,40 +737,37 @@ local function loadAddon(self)
     -- create pet frame
     if GetSetting("PETBAR_ENABLED") then
         GW.LoadPetFrame(lm)
-        ourPetbar = true
     end
 
     -- create buff frame
-    if GetSetting("PLAYER_BUFFS_ENABLED") and GW.wowbuild >= 42873 then
+    if GetSetting("PLAYER_BUFFS_ENABLED") then
         GW.LoadPlayerAuras(lm)
     end
 
     if not IsIncompatibleAddonLoadedOrOverride("DynamicCam", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("DYNAMIC_CAM") then
-            if GetCVar("test_cameraDynamicPitch") == "0" then
-                SetCVar("test_cameraDynamicPitch", true)
+            if GetSetting("DYNAMIC_CAM") then
+                C_CVar.SetCVar("test_cameraDynamicPitch", "1")
+                C_CVar.SetCVar("cameraKeepCharacterCentered", "0")
+                C_CVar.SetCVar("cameraReduceUnexpectedMovement", "0")
+            else
+                C_CVar.SetCVar("test_cameraDynamicPitch", "0")
+                C_CVar.SetCVar("cameraKeepCharacterCentered", "1")
+                C_CVar.SetCVar("cameraReduceUnexpectedMovement", "1")
             end
             hooksecurefunc("StaticPopup_Show", function(which)
                 if which == "EXPERIMENTAL_CVAR_WARNING" then
                     StaticPopup_Hide("EXPERIMENTAL_CVAR_WARNING")
                 end
             end)
-        else
-            if GetCVar("test_cameraDynamicPitch") == "1" then
-                SetCVar("test_cameraDynamicPitch", false)
-            end
         end
     end
 
-    if GetSetting("AFK_MODE") then
-        GW.loadAFKAnimation()
-    end
+    GW.loadAFKAnimation()
 
     if GetSetting("CHATBUBBLES_ENABLED") then
         GW.LoadChatBubbles()
     end
-
-    GW.LoadWindows()
 
     GW.LoadMicroMenu()
 
@@ -664,40 +796,27 @@ local function loadAddon(self)
     end
 
     self:SetScript("OnUpdate", gw_OnUpdate)
+
+    GW.UpdateCharData()
 end
-GW.AddForProfiling("index", "loadAddon", loadAddon)
+GW.AddForProfiling("index", "evPlayerLogin", evPlayerLogin)
 
 -- handles addon loading
 local function gw_OnEvent(self, event, ...)
     if event == "PLAYER_LOGIN" then
-        if not loaded then
-            loaded = true
-            GW.CheckRole()
-            loadAddon(self)
-        end
-        GW.LoadStorage()
-    elseif event == "UI_SCALE_CHANGED" and GetCVarBool("useUiScale") then
-        SetSetting("PIXEL_PERFECTION", false)
-        GW.scale = UIParent:GetScale()
-        GW.screenwidth, GW.screenheight = GetPhysicalScreenSize()
-        GW.resolution = format("%dx%d", GW.screenwidth, GW.screenheight)
-        GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
+        evPlayerLogin(self)
+    elseif event == "UI_SCALE_CHANGED" then
+        evUiScaleChanged()
     elseif event == "PLAYER_LEAVING_WORLD" then
-        GW.inWorld = false
-    elseif event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_ENTERING_BATTLEGROUND" then
-        GW.inWorld = true
-        GW.CheckRole()
-        if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
-            PixelPerfection()
-        end
-        C_Timer.After(0.5, function()
-            if UnitInBattleground("player") == nil and not IsActiveBattlefieldArena() then
-                GW.RemoveTrackerNotificationOfType("ARENA")
-            end
-        end)
+        evPlayerLeavingWorld()
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        evPlayerEnteringWorld()
+    elseif event == "PLAYER_ENTERING_BATTLEGROUND" then
+        evPlayerEnteringBattleground()
     elseif event == "PLAYER_LEVEL_UP" then
-        GW.mylevel = ...
-        Debug("New level:", GW.mylevel)
+        evPlayerLevelUp(self, ...)
+    elseif event == "ADDON_LOADED" then
+        evAddonLoaded(self, ...)
     end
 end
 GW.AddForProfiling("index", "gw_OnEvent", gw_OnEvent)
@@ -709,6 +828,7 @@ l:RegisterEvent("PLAYER_ENTERING_WORLD")
 l:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
 l:RegisterEvent("UI_SCALE_CHANGED")
 l:RegisterEvent("PLAYER_LEVEL_UP")
+l:RegisterEvent("ADDON_LOADED")
 
 local function AddToClique(frame)
     if type(frame) == "string" then
@@ -741,7 +861,7 @@ local function wait_OnUpdate(_, elapse)
         end
     end
 end
-GW.AddForProfiling("index", "wait_OnUpdate", wait_OnUpdate)
+AFP("wait_OnUpdate", wait_OnUpdate)
 
 local function Wait(delay, func, ...)
     if type(delay) ~= "number" or type(func) ~= "function" then

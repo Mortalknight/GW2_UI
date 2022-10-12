@@ -177,6 +177,7 @@ local function LoadPowerBar()
         playerPowerBar.gwMover:ClearAllPoints()
         playerPowerBar.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
     end
+    GW.MixinHideDuringPetAndOverride(playerPowerBar)
 
     _G[playerPowerBar:GetName() .. "CandySpark"]:ClearAllPoints()
 

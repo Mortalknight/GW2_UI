@@ -3,6 +3,7 @@ local constBackdropFrame = GW.skins.constBackdropFrame
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 
 local function SkinAddonList()
+    if not GW.GetSetting("ADDONLIST_SKIN_ENABLED") then return end
     local AddonList = _G.AddonList
 
     _G.AddonList:StripTextures(true)

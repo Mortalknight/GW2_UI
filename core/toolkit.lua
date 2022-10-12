@@ -168,6 +168,23 @@ function SkinSliderFrame(frame)
     end
 end
 
+local function BackdropFrameLevel(frame, level)
+    frame:SetFrameLevel(level)
+
+    if frame.oborder then frame.oborder:SetFrameLevel(level) end
+    if frame.iborder then frame.iborder:SetFrameLevel(level) end
+end
+
+local function BackdropFrameLower(backdrop, parent)
+    local level = parent:GetFrameLevel()
+    local minus = level and (level - 1)
+    if minus and (minus >= 0) then
+        BackdropFrameLevel(backdrop, minus)
+    else
+        BackdropFrameLevel(backdrop, 0)
+    end
+end
+
 local function CreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShift, yShift)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
     local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
@@ -214,6 +231,8 @@ local function CreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShif
     else
         backdrop:SetBackdrop(nil)
     end
+
+    BackdropFrameLower(backdrop, parent)
 end
 
 local function SkinButton(button, isXButton, setTextColor, onlyHover)
@@ -427,6 +446,72 @@ local function HandleNextPrevButton(button, arrowDir)
 end
 GW.HandleNextPrevButton = HandleNextPrevButton
 
+local function SetOutside(obj, anchor, xOffset, yOffset, anchor2, noScale)
+    if not anchor then anchor = obj:GetParent() end
+
+    if not xOffset then xOffset = GW.BorderSize end
+    if not yOffset then yOffset = GW.BorderSize end
+    local x = (noScale and xOffset) or GW.Scale(xOffset)
+    local y = (noScale and yOffset) or GW.Scale(yOffset)
+
+    if GW.SetPointsRestricted (obj) or obj:GetPoint() then
+        obj:ClearAllPoints()
+    end
+
+    obj:SetPoint('TOPLEFT', anchor, 'TOPLEFT', -x, y)
+    obj:SetPoint('BOTTOMRIGHT', anchor2 or anchor, 'BOTTOMRIGHT', x, -y)
+end
+
+local function SetInside(obj, anchor, xOffset, yOffset, anchor2, noScale)
+    if not anchor then anchor = obj:GetParent() end
+
+    if not xOffset then xOffset = GW.BorderSize end
+    if not yOffset then yOffset = GW.BorderSize end
+    local x = (noScale and xOffset) or GW.Scale(xOffset)
+    local y = (noScale and yOffset) or GW.Scale(yOffset)
+
+    if GW.SetPointsRestricted(obj) or obj:GetPoint() then
+        obj:ClearAllPoints()
+    end
+
+    obj:SetPoint('TOPLEFT', anchor, 'TOPLEFT', x, -y)
+    obj:SetPoint('BOTTOMRIGHT', anchor2 or anchor, 'BOTTOMRIGHT', -x, y)
+end
+
+local function StyleButton(button, noHover, noPushed, noChecked)
+	if button.SetHighlightTexture and not button.hover and not noHover then
+		local hover = button:CreateTexture()
+		hover:SetInside()
+		hover:SetBlendMode("ADD")
+		hover:SetColorTexture(1, 1, 1, 0.3)
+		button:SetHighlightTexture(hover)
+		button.hover = hover
+	end
+
+	if button.SetPushedTexture and not button.pushed and not noPushed then
+		local pushed = button:CreateTexture()
+		pushed:SetInside()
+		pushed:SetBlendMode("ADD")
+		pushed:SetColorTexture(0.9, 0.8, 0.1, 0.3)
+		button:SetPushedTexture(pushed)
+		button.pushed = pushed
+	end
+
+	if button.SetCheckedTexture and not button.checked and not noChecked then
+		local checked = button:CreateTexture()
+		checked:SetInside()
+		checked:SetBlendMode("ADD")
+		checked:SetColorTexture(1, 1, 1, 0.3)
+		button:SetCheckedTexture(checked)
+		button.checked = checked
+	end
+
+	if button.cooldown then
+		button.cooldown:SetDrawEdge(false)
+		button.cooldown:SetInside(button, 0, 0)
+	end
+end
+
 local function addapi(object)
     local mt = getmetatable(object).__index
     if not object.Kill then mt.Kill = Kill end
@@ -440,6 +525,9 @@ local function addapi(object)
     if not object.SkinScrollFrame then mt.SkinScrollFrame = SkinScrollFrame end
     if not object.SkinScrollBar then mt.SkinScrollBar = SkinScrollBar end
     if not object.SkinDropDownMenu then mt.SkinDropDownMenu = SkinDropDownMenu end
+    if not object.SetOutside then mt.SetOutside = SetOutside end
+    if not object.SetInside then mt.SetInside = SetInside end
+    if not object.StyleButton then mt.StyleButton = StyleButton end
 end
 
 local handled = {["Frame"] = true}

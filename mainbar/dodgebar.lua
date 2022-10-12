@@ -317,6 +317,9 @@ local function LoadDodgeBar(hg, asTargetFrame)
     fmdb:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmdb:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 
+    -- setup hook to hide the dodge bar when in vehicle/override UI
+    GW.MixinHideDuringPetAndOverride(fmdb)
+
     return fmdb
 end
 GW.LoadDodgeBar = LoadDodgeBar

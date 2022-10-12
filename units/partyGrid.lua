@@ -100,7 +100,7 @@ end
 
 local function GridPartyUpdateFramesPosition()
     if not GwRaidFramePartyContainer then return end
-    players = previewStep == 0 and 5 or previewSteps[previewStep]
+    players = IsInGroup() and max(1, GetNumGroupMembers()) or previewStep == 0 and 5 or previewSteps[previewStep]
 
     -- Get directions, rows, cols and sizing
     local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetPartyFramesMeasures(players)
@@ -116,7 +116,6 @@ local function GridPartyUpdateFramesPosition()
     end
 end
 GW.GridPartyUpdateFramesPosition = GridPartyUpdateFramesPosition
-
 
 local function GridSortByRole()
     local sorted = {}
@@ -138,12 +137,11 @@ local function GridSortByRole()
     return sorted
 end
 
-
 local grpPos, noGrp = {}, {}
 local function GridPartyUpdateFramesLayout()
     if not GwRaidFramePartyContainer then return end
     -- Get directions, rows, cols and sizing
-    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetPartyFramesMeasures()
+    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetPartyFramesMeasures(IsInGroup() and max(1, GetNumGroupMembers()) or previewStep == 0 and 5 or previewSteps[previewStep])
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     if not InCombatLockdown() then
@@ -201,8 +199,8 @@ local function unhookPlayerFrame()
 end
 GW.AddForProfiling("raidframes", "unhookPlayerFrame", unhookPlayerFrame)
 
-local function GridOnEvent(self, event, unit)
-    if not UnitExists(self.unit) then
+local function PartyGridOnEvent(self, event, unit)
+    if not UnitExists(self.unit) or (self.unit == "player" and (not IsInGroup() and previewStep == 0)) then
         return
     elseif not self.nameNotLoaded then
         GW.GridSetUnitName(self, "PARTY")
@@ -237,15 +235,18 @@ local function GridOnEvent(self, event, unit)
     end
 
     if event == "load" then
+        --GW.GridSetAbsorbAmount(self)
         GW.GridSetPredictionAmount(self, "PARTY")
         GW.GridSetHealth(self, "PARTY")
         GW.GridUpdateAwayData(self, "PARTY")
         GW.GridUpdateAuras(self, "PARTY")
         GW.GridUpdatePower(self)
-    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" then
+    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
         GW.GridSetHealth(self, "PARTY")
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
         GW.GridUpdatePower(self)
+    elseif event == "UNIT_ABSORB_AMOUNT_CHANGED" then
+        --GW.GridSetAbsorbAmount(self)
     elseif event == "UNIT_HEAL_PREDICTION" then
         GW.GridSetPredictionAmount(self, "PARTY")
     elseif event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
@@ -261,7 +262,7 @@ local function GridOnEvent(self, event, unit)
     elseif event == "UPDATE_INSTANCE_INFO" then
         GW.GridUpdateAuras(self, "PARTY")
         GW.GridUpdateAwayData(self, "PARTY")
-    elseif (event == "INCOMING_RESURRECT_CHANGED") and unit == self.unit then
+    elseif (event == "INCOMING_RESURRECT_CHANGED" or event == "INCOMING_SUMMON_CHANGED") and unit == self.unit then
         GW.GridUpdateAwayData(self, "PARTY")
     elseif event == "RAID_TARGET_UPDATE" and GetSetting("RAID_UNIT_MARKERS_PARTY") then
         GW.GridUpdateRaidMarkers(self, "PARTY")
@@ -285,7 +286,7 @@ local function GridOnEvent(self, event, unit)
         end)
     end
 end
-GW.GridOnEvent = GridOnEvent
+GW.PartyGridOnEvent = PartyGridOnEvent
 
 local function GridOnUpdate(self, elapsed)
     if self.onUpdateDelay ~= nil and self.onUpdateDelay > 0 then
@@ -309,7 +310,7 @@ local function GridToggleFramesPreviewParty(_, _, moveHudMode, hudMoving)
                 _G["GwCompactPartyFrame" .. i]:SetAttribute("unit", i == 1 and "player" or "party" .. i - 1)
                 UnregisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility")
                 RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(_G["GwCompactPartyFrame" .. i].unit))
-                GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
+                PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
             end
         end
     else
@@ -320,7 +321,7 @@ local function GridToggleFramesPreviewParty(_, _, moveHudMode, hudMoving)
                 _G["GwCompactPartyFrame" .. i]:SetAttribute("unit", "player")
                 UnregisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility")
                 RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("%s"):format((i > previewSteps[previewStep] and "hide" or "show")))
-                GW.GridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
+                PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
             end
         end
         GridPartyUpdateFramesPosition()
@@ -337,8 +338,11 @@ local function LoadPartyGrid()
         return
     end
 
-    if not _G.GwManageGroupButton then
+    if not GwManageGroupButton then
         GW.manageButton()
+
+        -- load missing and ignored auras, do it here bcause this code is only triggered from one of the 3 grids
+        GW.UpdateMissingAndIgnoredAuras()
     end
 
     local container = CreateFrame("Frame", "GwRaidFramePartyContainer", UIParent, "GwRaidFrameContainer")
@@ -372,7 +376,7 @@ local function LoadPartyGrid()
     end)
 
     for i = 1, 5 do
-        GW.CreateGridFrame(i, true, container, GridOnEvent, GridOnUpdate, "PARTY")
+        GW.CreateGridFrame(i, container, PartyGridOnEvent, GridOnUpdate, "PARTY")
     end
 
     GridPartyUpdateFramesPosition()
@@ -393,7 +397,7 @@ local function LoadPartyGrid()
         GridPartyUpdateFramesLayout()
 
         for i = 1, 5 do
-            GW.GridUpdateFrameData(_G["GwCompactPartyFrame" .. i], i)
+            GW.GridUpdateFrameData(_G["GwCompactPartyFrame" .. i], i, "PARTY")
         end
     end)
 end

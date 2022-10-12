@@ -9,6 +9,7 @@ local SetClassIcon = GW.SetClassIcon
 local AddToClique = GW.AddToClique
 local CommaValue = GW.CommaValue
 local RoundDec = GW.RoundDec
+local IsIn = GW.IsIn
 local nameRoleIcon = GW.nameRoleIcon
 
 local GW_PORTRAIT_BACKGROUND = {
@@ -26,28 +27,25 @@ GW.AddForProfiling("party", "setPortraitBackground", setPortraitBackground)
 
 local function updateAwayData(self)
     if not self.classicon then return end
-    local readyCheckStatus = GetReadyCheckStatus(self.unit)
-    local instanceId = select(4, UnitPosition(self.unit))
     local playerInstanceId = select(4, UnitPosition("player"))
+    local instanceId = select(4, UnitPosition(self.unit))
+    local readyCheckStatus = GetReadyCheckStatus(self.unit)
     local portraitIndex = 1
 
-    if not readyCheckStatus then
-        self.classicon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
-        local _, _, classIndex = UnitClass(self.unit)
-        if classIndex ~= nil and classIndex ~= 0 then
-            SetClassIcon(self.classicon, classIndex)
-        end
+    if not readyCheckStatus and not UnitHasIncomingResurrection(self.unit) then 
+        self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
+        SetClassIcon(self.classicon, select(3, UnitClass(self.unit)))
     end
 
     if playerInstanceId ~= instanceId then
         portraitIndex = 2
     end
 
-    if not UnitInPhase(self.unit) then
-        portraitIndex = 4
-        self.classicon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
-        self.classicon:SetTexCoord(0.15625, 0.84375, 0.15625, 0.84375)
+    if UnitHasIncomingResurrection(self.unit) then
+        self.classicon:SetTexture("Interface/RaidFrame/Raid-Icon-Rez")
+        self.classicon:SetTexCoord(unpack(GW.TexCoords))
     end
+
     if not UnitIsConnected(self.unit) then
         portraitIndex = 3
     end
@@ -87,32 +85,29 @@ GW.AddForProfiling("party", "updateUnitPortrait", updateUnitPortrait)
 
 local function getUnitDebuffs(unit)
     local debuffList = {}
-    local show_debuffs = GetSetting("PARTY_SHOW_DEBUFFS")
-    local only_dispellable_debuffs = GetSetting("PARTY_ONLY_DISPELL_DEBUFFS")
-    local show_importend_raid_instance_debuffs = GetSetting("PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
+    local showDebuffs = GetSetting("PARTY_SHOW_DEBUFFS")
+    local onlyDispellableDebuffs = GetSetting("PARTY_ONLY_DISPELL_DEBUFFS")
+    local showImportendInstanceDebuffs = GetSetting("PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
     local counter = 1
 
     for i = 1, 40 do
-        if UnitAura(unit, i, "HARMFUL") then
-            local debuffName, icon, count, debuffType, duration, expires, caster, isStealable, shouldConsolidate, spellId = UnitAura(unit, i, "HARMFUL")
+        local debuffName, icon, count, debuffType, duration, expires, caster, isStealable, shouldConsolidate, spellId = UnitDebuff(unit, i, "HARMFUL")
+        if debuffName then
             local shouldDisplay = false
-            local isImportant, isDispellable = false, false
+            local isImportant = (GW.ImportendRaidDebuff[spellId] and showImportendInstanceDebuffs) or false
+            local isDispellable = GW.IsDispellableByMe(debuffType)
 
-            if show_debuffs then
-                if only_dispellable_debuffs then
+            if showDebuffs then
+                if onlyDispellableDebuffs then
                     if debuffType and GW.IsDispellableByMe(debuffType) then
                         shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                     end
                 else
                     shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                 end
-
-                isDispellable = GW.IsDispellableByMe(debuffType)
             end
 
-            isImportant = (GW.ImportendRaidDebuff[spellId] and show_importend_raid_instance_debuffs) or false
-
-            if show_importend_raid_instance_debuffs and not shouldDisplay then
+            if showImportendInstanceDebuffs and not shouldDisplay then
                 shouldDisplay = GW.ImportendRaidDebuff[spellId] or false
             end
 
@@ -142,13 +137,20 @@ local function getUnitDebuffs(unit)
     table.sort(
         debuffList,
         function(a, b)
-            return a.timeRemaining < b.timeRemaining
+            return a.timeRemaining > b.timeRemaining
         end
     )
 
     return debuffList
 end
 GW.AddForProfiling("party", "getUnitDebuffs", getUnitDebuffs)
+
+local function DebuffOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+    GameTooltip:ClearLines()
+    GameTooltip:SetUnitDebuff(self.unit, self.key)
+    GameTooltip:Show()
+end
 
 local function updatePartyDebuffs(self, x, y)
     if x ~= 0 and not self.isPet then
@@ -157,6 +159,7 @@ local function updatePartyDebuffs(self, x, y)
     x = self.isPet and x or 0
     local unit = self.unit
     local debuffList = getUnitDebuffs(unit)
+    local debuffScale = GW.GetDebuffScaleBasedOnPrio()
 
     for i, debuffFrame in pairs(self.debuffFrames) do
         if debuffList[i] then
@@ -165,6 +168,8 @@ local function updatePartyDebuffs(self, x, y)
 
             debuffFrame.expires = debuffList[i].expires
             debuffFrame.duration = debuffList[i].duration
+            debuffFrame.key = debuffList[i].key
+            debuffFrame.unit = unit
 
             debuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
             if debuffList[i].dispelType ~= nil and DEBUFF_COLOR[debuffList[i].dispelType] ~= nil then
@@ -175,13 +180,18 @@ local function updatePartyDebuffs(self, x, y)
             debuffFrame.debuffIcon.stacks:SetText((debuffList[i].count or 1) > 1 and debuffList[i].count or "")
             debuffFrame.debuffIcon.stacks:SetFont(UNIT_NAME_FONT, (debuffList[i].count or 1) > 9 and 11 or 14, "OUTLINE")
 
-            debuffFrame:SetScript("OnEnter", function(self)
-                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
-                GameTooltip:ClearLines()
-                GameTooltip:SetUnitDebuff(unit, debuffList[i].key)
-                GameTooltip:Show()
-            end)
+            debuffFrame:SetScript("OnEnter", DebuffOnEnter)
             debuffFrame:SetScript("OnLeave", GameTooltip_Hide)
+            debuffFrame:SetScript("OnUpdate", function(self, elapsed)
+                if self.throt < 0 and self.expires ~= nil and self:IsShown() then
+                    self.throt = 0.2
+                    if GameTooltip:IsOwned(self) then
+                        DebuffOnEnter(self)
+                    end
+                else
+                    self.throt = self.throt - elapsed
+                end
+            end)
 
             local size = self.isPet and 10 or 24
             if debuffList[i].isImportant or debuffList[i].isDispellable then
@@ -210,6 +220,7 @@ local function updatePartyDebuffs(self, x, y)
             debuffFrame:Hide()
             debuffFrame:SetScript("OnEnter", nil)
             debuffFrame:SetScript("OnLeave", nil)
+            debuffFrame:SetScript("OnUpdate", nil)
         end
     end
 end
@@ -219,7 +230,7 @@ local function getUnitBuffs(unit)
     local buffList = {}
 
     for i = 1, 40 do
-        if UnitAura(unit, i, "HELPFUL") then
+        if UnitBuff(unit, i) then
             buffList[i] = {}
 
             buffList[i].name,
@@ -231,7 +242,7 @@ local function getUnitBuffs(unit)
             buffList[i].caster,
             buffList[i].isStealable,
             buffList[i].shouldConsolidate,
-            buffList[i].spellID = UnitAura(unit, i, "HELPFUL")
+            buffList[i].spellID = UnitBuff(unit, i)
             buffList[i].key = i
             buffList[i].timeRemaining = buffList[i].duration <= 0 and 500000 or buffList[i].expires - GetTime()
         end
@@ -248,12 +259,19 @@ local function getUnitBuffs(unit)
 end
 GW.AddForProfiling("party", "getUnitBuffs", getUnitBuffs)
 
+local function BuffOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
+    GameTooltip:ClearLines()
+    GameTooltip:SetUnitBuff(self.unit, self.key)
+    GameTooltip:Show()
+end
+
 local function updatePartyAuras(self)
     local x = 0
     local y = 0
     local unit = self.unit
 
-    local buffList = getUnitBuffs(self.unit)
+    local buffList = getUnitBuffs(unit)
 
     for i, buffFrame in pairs(self.buffFrames) do
         if buffList[i] then
@@ -264,19 +282,26 @@ local function updatePartyAuras(self)
 
             buffFrame.expires = buffList[i].expires
             buffFrame.duration = buffList[i].duration
+            buffFrame.key = buffList[i].key
+            buffFrame.unit = unit
 
             buffFrame.buffDuration:SetText("")
             buffFrame.buffStacks:SetText((buffList[i].count or 1) > 1 and buffList[i].count or "")
             buffFrame:ClearAllPoints()
             buffFrame:SetPoint("BOTTOMRIGHT", (-margin * x), marginy * y)
 
-            buffFrame:SetScript("OnEnter", function(self)
-                GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
-                GameTooltip:ClearLines()
-                GameTooltip:SetUnitBuff(unit, buffList[i].key)
-                GameTooltip:Show()
-            end)
+            buffFrame:SetScript("OnEnter", BuffOnEnter)
             buffFrame:SetScript("OnLeave", GameTooltip_Hide)
+            buffFrame:SetScript("OnUpdate", function(self, elapsed)
+                if self.throt < 0 and self.expires ~= nil and self:IsShown() then
+                    self.throt = 0.2
+                    if GameTooltip:IsOwned(self) then
+                        BuffOnEnter(self)
+                    end
+                else
+                    self.throt = self.throt - elapsed
+                end
+            end)
 
             buffFrame:Show()
 
@@ -289,6 +314,7 @@ local function updatePartyAuras(self)
             buffFrame:Hide()
             buffFrame:SetScript("OnEnter", nil)
             buffFrame:SetScript("OnLeave", nil)
+            buffFrame:SetScript("OnUpdate", nil)
         end
     end
     updatePartyDebuffs(self, x, y)
@@ -305,13 +331,14 @@ local function setUnitName(self)
         self.nameNotLoaded = true
     end
 
-    if role and nameRoleIcon[role] ~= nil then
+    if nameRoleIcon[role] ~= nil then
         nameString = nameRoleIcon[role] .. nameString
     end
 
     if UnitIsGroupLeader(self.unit) then
-        nameString = "|TInterface\\AddOns\\GW2_UI\\textures\\party\\icon-groupleader:18:18:0:-3|t" .. nameString
+        nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:18:18:0:-3|t" .. nameString
     end
+
     self.name:SetText(nameString)
 end
 GW.AddForProfiling("party", "setUnitName", setUnitName)
@@ -326,7 +353,7 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
     end
 
     if self.healthsetting == "PREC" then
-        self.healthstring:SetText(RoundDec(healthPrec *100,0).. "%")
+        self.healthstring:SetText(RoundDec(healthPrec * 100, 0) .. "%")
         self.healthstring:SetJustifyH("LEFT")
     elseif self.healthsetting == "HEALTH" then
         self.healthstring:SetText(CommaValue(healthCur))
@@ -336,7 +363,7 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
         self.healthstring:SetText(healthstring)
         self.healthstring:SetJustifyH("RIGHT")
     end
-    if healthCur == 0 then 
+    if healthCur == 0 then
         self.healthstring:SetTextColor(255, 0, 0)
     else
         self.healthstring:SetTextColor(1, 1, 1)
@@ -355,12 +382,10 @@ local function setHealth(self)
     local healthMax = UnitHealthMax(self.unit)
     local healthPrec = 0
     local predictionPrecentage = 0
-
     if healthMax > 0 then
         healthPrec = health / healthMax
     end
-
-    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax ~= 0 then
+    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax~=0 then
         predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
     end
     setHealPrediction(self, predictionPrecentage)
@@ -375,14 +400,18 @@ local function setPredictionAmount(self)
     self.healPredictionAmount = prediction
     setHealth(self)
 end
+GW.AddForProfiling("party", "setPredictionAmount", setPredictionAmount)
 
 local function updatePartyData(self)
     if not UnitExists(self.unit) then
         return
     end
+
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
     local healthPrec = 0
+    local prediction = UnitGetIncomingHeals(self.unit) or 0
+    local predictionPrecentage = 0
 
     local power = UnitPower(self.unit, UnitPowerType(self.unit))
     local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
@@ -393,19 +422,19 @@ local function updatePartyData(self)
         local pwcolor = PowerBarColorCustom[powerToken]
         self.powerbar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
-
-    self.guid = UnitGUID(self.unit)
-    self.healPredictionAmount = 0
-
-    if powerMax > 0 then
-        powerPrecentage = power / powerMax
-    end
     if healthMax > 0 then
         healthPrec = health / healthMax
     end
+    if prediction > 0 and healthMax > 0 then
+        predictionPrecentage = math.min(healthPrec + (prediction / healthMax), 1)
+    end
+    if powerMax > 0 then
+        powerPrecentage = power / powerMax
+    end
     Bar(self.healthbar, healthPrec)
-    self.powerbar:SetValue(powerPrecentage)
+    self.predictionbar:SetValue(predictionPrecentage)
 
+    self.powerbar:SetValue(powerPrecentage)
     setHealth(self)
     setUnitName(self)
     updateAwayData(self)
@@ -435,9 +464,9 @@ local function party_OnEvent(self, event, unit)
     if not self.nameNotLoaded then
         setUnitName(self)
     end
-    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" and unit == self.unit then
+    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
         setHealth(self)
-    elseif event == "UNIT_POWER_UPDATE" or event == "UNIT_MAXPOWER" and unit == self.unit then
+    elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
         local power = UnitPower(self.unit, UnitPowerType(self.unit))
         local powerMax = UnitPowerMax(self.unit, UnitPowerType(self.unit))
         local powerPrecentage = 0
@@ -445,9 +474,11 @@ local function party_OnEvent(self, event, unit)
             powerPrecentage = power / powerMax
         end
         self.powerbar:SetValue(powerPrecentage)
-    elseif event == "UNIT_LEVEL" or event == "GROUP_ROSTER_UPDATE" or event == "UNIT_MODEL_CHANGED" then
+    elseif IsIn(event, "UNIT_LEVEL", "GROUP_ROSTER_UPDATE", "UNIT_MODEL_CHANGED") then
         updatePartyData(self)
-    elseif event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
+    elseif event == "UNIT_HEAL_PREDICTION" then
+        setPredictionAmount(self)
+    elseif IsIn(event,"UNIT_PHASE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "UNIT_THREAT_SITUATION_UPDATE", "INCOMING_RESURRECT_CHANGED", "INCOMING_SUMMON_CHANGED") then
         updateAwayData(self)
     elseif event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" or event == "UNIT_PHASE" then
         updateUnitPortrait(self)
@@ -468,29 +499,8 @@ local function party_OnEvent(self, event, unit)
 end
 GW.AddForProfiling("party", "party_OnEvent", party_OnEvent)
 
-local function TogglePartyRaid(b)
-    if b and not IsInRaid() then
-        for i = 1, 4 do
-            if _G["GwPartyFrame" .. i] ~= nil then
-                _G["GwPartyFrame" .. i]:Show()
-                RegisterUnitWatch(_G["GwPartyFrame" .. i])
-                _G["GwPartyFrame" .. i]:SetScript("OnEvent", party_OnEvent)
-            end
-        end
-    else
-        for i = 1, 4 do
-            if _G["GwPartyFrame" .. i] ~= nil then
-                _G["GwPartyFrame" .. i]:Hide()
-                _G["GwPartyFrame" .. i]:SetScript("OnEvent", nil)
-                UnregisterUnitWatch(_G["GwPartyFrame" .. i])
-            end
-        end
-    end
-end
-GW.TogglePartyRaid = TogglePartyRaid
-
 local function CreatePartyPetFrame(frame, i)
-    local unit = frame.unit == "player" and "pet" or "partypet" .. i
+    local unit = frame.unit == "player" and "pet" or "partypet" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0))
     local f = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, "GwPartyPetFrame")
 
     f:SetAttribute("*type1", "target")
@@ -534,17 +544,17 @@ local function CreatePartyPetFrame(frame, i)
     f:RegisterEvent("PARTY_MEMBER_ENABLE")
     f:RegisterEvent("PORTRAITS_UPDATED")
     f:RegisterEvent("PLAYER_TARGET_CHANGED")
-    f:RegisterEvent("UNIT_HEAL_PREDICTION")
 
-    f:RegisterUnitEvent("UNIT_AURA", unit)
     f:RegisterUnitEvent("UNIT_PET", frame.unit)
+    f:RegisterUnitEvent("UNIT_AURA", unit)
     f:RegisterUnitEvent("UNIT_LEVEL", unit)
     f:RegisterUnitEvent("UNIT_PHASE", unit)
-    f:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", unit)
+    f:RegisterUnitEvent("UNIT_HEALTH", unit)
     f:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
     f:RegisterUnitEvent("UNIT_POWER_UPDATE", unit)
     f:RegisterUnitEvent("UNIT_MAXPOWER", unit)
     f:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)
+    f:RegisterUnitEvent("UNIT_HEAL_PREDICTION", unit)
 
     -- create de/buff frames
     f.buffFrames = {}
@@ -557,6 +567,7 @@ local function CreatePartyPetFrame(frame, i)
         debuffFrame.cooldown:SetDrawSwipe(1)
         debuffFrame.cooldown:SetReverse(1)
         debuffFrame.cooldown:SetHideCountdownNumbers(true)
+        debuffFrame.throt = -1
         debuffFrame:SetSize(10, 10)
 
         f.debuffFrames[k] = debuffFrame
@@ -568,6 +579,7 @@ local function CreatePartyPetFrame(frame, i)
         buffFrame.buffStacks:SetTextColor(1, 1, 1)
         buffFrame:SetParent(f.auras)
         buffFrame:SetSize(10, 10)
+        buffFrame.throt = -1
 
         f.buffFrames[k] = buffFrame
     end
@@ -577,24 +589,18 @@ local function CreatePartyPetFrame(frame, i)
     updatePartyData(f)
 end
 
-local function createPartyFrame(i, isFirstFrame)
-    local registerUnit
-    if i > 0 then
-        registerUnit = "party" .. i
-    else
-        registerUnit = "player"
-    end
+local function createPartyFrame(i, isFirstFrame, isPlayer)
+    local registerUnit = isPlayer and "player" or "party" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0))
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, "GwPartyFrame")
-    local multiplier = GetSetting("PARTY_PLAYER_FRAME") and 1 or 0
 
-    frame.name:SetFont(UNIT_NAME_FONT, 12)
+    if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
+        frame.name:SetFont(UNIT_NAME_FONT, 12)
+    end
     frame.name:SetShadowOffset(-1, -1)
     frame.name:SetShadowColor(0, 0, 0, 1)
     frame.level:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINED")
     frame.healthbar = frame.predictionbar.healthbar
     frame.healthstring = frame.healthbar.healthstring
-
-    frame:SetScript("OnEvent", party_OnEvent)
 
     frame.unit = registerUnit
     frame.guid = UnitGUID(frame.unit)
@@ -603,7 +609,7 @@ local function createPartyFrame(i, isFirstFrame)
 
     frame:ClearAllPoints()
     if isFirstFrame then
-        frame:SetPoint("TOPLEFT", 20, -104 + (-85 * (i + multiplier)) + 85)
+        frame:SetPoint("TOPLEFT", 20, -104 + (-85 * i) + 85)
     else
         frame:SetPoint("BOTTOMLEFT", _G["GwPartyPetFrame" .. (i - 1)], "BOTTOMLEFT", -15, -90)
     end
@@ -641,21 +647,25 @@ local function createPartyFrame(i, isFirstFrame)
     frame:RegisterEvent("READY_CHECK")
     frame:RegisterEvent("READY_CHECK_CONFIRM")
     frame:RegisterEvent("READY_CHECK_FINISHED")
-    frame:RegisterEvent("PORTRAITS_UPDATED")
     frame:RegisterEvent("PLAYER_TARGET_CHANGED")
-    frame:RegisterEvent("UNIT_HEAL_PREDICTION")
+    frame:RegisterEvent("INCOMING_RESURRECT_CHANGED")
+    --frame:RegisterEvent("INCOMING_SUMMON_CHANGED")
+    frame:RegisterEvent("PORTRAITS_UPDATED")
 
-    frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
     frame:RegisterUnitEvent("UNIT_PHASE", registerUnit)
-    frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", registerUnit)
+    frame:RegisterUnitEvent("UNIT_HEALTH", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
-    frame:RegisterUnitEvent("UNIT_POWER_UPDATE", registerUnit)
+    frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXPOWER", registerUnit)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
-    frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", registerUnit)
+    frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
+    frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", registerUnit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
+    frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", registerUnit)
+
+    frame:SetScript("OnEvent", party_OnEvent)
 
     -- create de/buff frames
     frame.buffFrames = {}
@@ -669,6 +679,7 @@ local function createPartyFrame(i, isFirstFrame)
         debuffFrame.cooldown:SetReverse(1)
         debuffFrame.cooldown:SetHideCountdownNumbers(true)
         debuffFrame:SetSize(24, 24)
+        debuffFrame.throt = -1
 
         frame.debuffFrames[k] = debuffFrame
 
@@ -679,6 +690,7 @@ local function createPartyFrame(i, isFirstFrame)
         buffFrame.buffStacks:SetTextColor(1, 1, 1)
         buffFrame:SetParent(frame.auras)
         buffFrame:SetSize(20, 20)
+        buffFrame.throt = -1
 
         frame.buffFrames[k] = buffFrame
     end
@@ -710,6 +722,9 @@ GW.AddForProfiling("party", "hideBlizzardPartyFrame", hideBlizzardPartyFrame)
 local function LoadPartyFrames()
     if not GwManageGroupButton then
         GW.manageButton()
+
+        -- load missing and ignored auras, do it here bcause this code is only triggered from one of the 3 grids
+        GW.UpdateMissingAndIgnoredAuras()
     end
 
     hideBlizzardPartyFrame()
@@ -717,16 +732,18 @@ local function LoadPartyFrames()
     if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
         return
     end
-    local isFirstFrame = GetSetting("PARTY_PLAYER_FRAME")
 
-    if GetSetting("PARTY_PLAYER_FRAME") then
-        createPartyFrame(0, isFirstFrame)
-    end
-
-    isFirstFrame = not GetSetting("PARTY_PLAYER_FRAME")
-    for i = 1, MAX_PARTY_MEMBERS do
-        createPartyFrame(i, isFirstFrame)
+    local addCounter = GetSetting("PARTY_PLAYER_FRAME") and 1 or 0
+    local index = 1
+    local isFirstFrame = true
+    for _ = 1, MAX_PARTY_MEMBERS + addCounter do
+        if GetSetting("PARTY_PLAYER_FRAME") and isFirstFrame then
+            createPartyFrame(index, isFirstFrame, true)
+        else
+            createPartyFrame(index, isFirstFrame, false)
+        end
         isFirstFrame = false
+        index = index + 1
     end
 
     -- Set up preview mode
@@ -734,22 +751,22 @@ local function LoadPartyFrames()
     GwSettingsPartyPanel.buttonPartyPreview:SetScript("OnClick", function(self)
         if self.previewMode then
             self:SetText("-")
-            for i = 0, MAX_PARTY_MEMBERS do
+            for i = 1, MAX_PARTY_MEMBERS + addCounter do
                 if _G["GwPartyFrame" .. i] then
-                    _G["GwPartyFrame" .. i].unit = i == 0 and "player" or "party" .. i
-                    _G["GwPartyFrame" .. i].guid = UnitGUID(i == 0 and "player" or "party" .. i)
-                    _G["GwPartyFrame" .. i]:SetAttribute("unit", (i == 0 and "player" or "party" .. i))
+                    _G["GwPartyFrame" .. i].unit = i == 1 and GetSetting("PARTY_PLAYER_FRAME") and "player" or "party" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0))
+                    _G["GwPartyFrame" .. i].guid = UnitGUID(i == 1 and GetSetting("PARTY_PLAYER_FRAME") and "player" or "party" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0)))
+                    _G["GwPartyFrame" .. i]:SetAttribute("unit", (i == 1 and GetSetting("PARTY_PLAYER_FRAME") and "player" or "party" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0))))
                     UnregisterStateDriver(_G["GwPartyFrame" .. i], "visibility")
-                    RegisterStateDriver(_G["GwPartyFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format((i == 0 and "player" or "party" .. i)))
+                    RegisterStateDriver(_G["GwPartyFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format((i == 1 and GetSetting("PARTY_PLAYER_FRAME") and "player" or "party" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0)))))
                     party_OnEvent(_G["GwPartyFrame" .. i], "load")
                     updatePartyData(_G["GwPartyFrame" .. i])
 
-                    _G["GwPartyPetFrame" .. i].unit = i == 0 and "pet" or "partypet" .. i
-                    _G["GwPartyPetFrame" .. i].guid = UnitGUID(i == 0 and "pet" or "partypet" .. i)
-                    _G["GwPartyPetFrame" .. i]:SetAttribute("unit", (i == 0 and "pet" or "partypet" .. i))
+                    _G["GwPartyPetFrame" .. i].unit = i == 1 and GetSetting("PARTY_PLAYER_FRAME") and "pet" or "partypet" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0))
+                    _G["GwPartyPetFrame" .. i].guid = UnitGUID(i == 1 and GetSetting("PARTY_PLAYER_FRAME") and "pet" or "partypet" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0)))
+                    _G["GwPartyPetFrame" .. i]:SetAttribute("unit", (i == 1 and GetSetting("PARTY_PLAYER_FRAME") and "pet" or "partypet" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0))))
                     UnregisterStateDriver(_G["GwPartyPetFrame" .. i], "visibility")
                     if GetSetting("PARTY_SHOW_PETS") then
-                        RegisterStateDriver(_G["GwPartyPetFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format((i == 0 and "pet" or "partypet" .. i)))
+                        RegisterStateDriver(_G["GwPartyPetFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format((i == 1 and GetSetting("PARTY_PLAYER_FRAME") and "pet" or "partypet" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0)))))
                     else
                         RegisterStateDriver(_G["GwPartyPetFrame" .. i], "visibility", "hide")
                     end
@@ -760,7 +777,7 @@ local function LoadPartyFrames()
             self.previewMode = false
         else
             self:SetText("5")
-            for i = 0, MAX_PARTY_MEMBERS do
+            for i = 1, MAX_PARTY_MEMBERS + addCounter do
                 if _G["GwPartyFrame" .. i] then
                     _G["GwPartyFrame" .. i].unit = "player"
                     _G["GwPartyFrame" .. i].guid = UnitGUID("player")

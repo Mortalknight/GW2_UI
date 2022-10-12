@@ -133,7 +133,7 @@ end
 local grpPos, noGrp = {}, {}
 local function GridRaidUpdateFramesLayout()
     -- Get directions, rows, cols and sizing
-    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures()
+    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures(IsInRaid() and max(1, GetNumGroupMembers()) or previewStep == 0 and 40 or previewSteps[previewStep])
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     if not InCombatLockdown() then
@@ -197,7 +197,7 @@ local function hideBlizzardRaidFrame()
 end
 GW.AddForProfiling("raidframes", "hideBlizzardRaidFrame", hideBlizzardRaidFrame)
 
-local function GridOnEvent(self, event, unit)
+local function RaidGridOnEvent(self, event, unit)
     if not UnitExists(self.unit) then
         return
     elseif not self.nameNotLoaded then
@@ -281,6 +281,7 @@ local function GridOnEvent(self, event, unit)
         end)
     end
 end
+GW.RaidGridOnEvent = RaidGridOnEvent
 
 local function GridOnUpdate(self, elapsed)
     if self.onUpdateDelay ~= nil and self.onUpdateDelay > 0 then
@@ -304,7 +305,7 @@ local function GridToggleFramesPreviewRaid(_, _, moveHudMode, hudMoving)
                 _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "raid" .. i)
                 UnregisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility")
                 RegisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility", ("[group:raid,@%s,exists] show; [group:party] hide; hide"):format(_G["GwCompactRaidFrame" .. i].unit))
-                GridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
+                RaidGridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
             end
         end
     else
@@ -315,7 +316,7 @@ local function GridToggleFramesPreviewRaid(_, _, moveHudMode, hudMoving)
                 _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "player")
                 UnregisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility")
                 RegisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility", ("%s"):format((i > previewSteps[previewStep] and "hide" or "show")))
-                GridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
+                RaidGridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
             end
         end
         GridRaidUpdateFramesPosition()
@@ -371,7 +372,7 @@ local function LoadRaidFrames()
     end)
 
     for i = 1, MAX_RAID_MEMBERS do
-        GW.CreateGridFrame(i, false, container, GridOnEvent, GridOnUpdate, "RAID")
+        GW.CreateGridFrame(i, container, RaidGridOnEvent, GridOnUpdate, "RAID")
     end
 
     GridRaidUpdateFramesPosition()

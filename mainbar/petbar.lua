@@ -77,6 +77,18 @@ local function setPetBar(fmPet)
 end
 GW.AddForProfiling("petbar", "setPetBar", setPetBar)
 
+local function UpdatePetBarButtonsHot()
+    for i = 1, 12 do
+        local btn = _G["PetActionButton" .. i]
+
+        if btn then
+            btn.showMacroName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
+            GW.updateMacroName(btn)
+        end
+    end
+end
+GW.UpdatePetBarButtonsHot = UpdatePetBarButtonsHot
+
 local function updatePetFrameLocation()
     local fPet = GwPlayerPetFrame
     if not fPet or InCombatLockdown() then
@@ -183,9 +195,20 @@ local function updatePetData(self, event)
 end
 GW.AddForProfiling("petbar", "updatePetData", updatePetData)
 
+local function TogglePetAuraPosition()
+    GwPlayerPetFrame.auraPositionUnder = GetSetting("PET_AURAS_UNDER")
+
+    if GwPlayerPetFrame.auraPositionUnder then
+        GwPlayerPetFrame.auras:ClearAllPoints()
+        GwPlayerPetFrame.auras:SetPoint("TOPLEFT", GwPlayerPetFrame.resource, "BOTTOMLEFT", 0, -5)
+    end
+end
+GW.TogglePetAuraPosition = TogglePetAuraPosition
+
 local function LoadPetFrame(lm)
     -- disable default PetFrame stuff
     PetFrame:Kill()
+    PetActionBarFrame:Kill()
 
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
 
@@ -201,12 +224,7 @@ local function LoadPetFrame(lm)
     playerPetFrame.health:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
     playerPetFrame.health.text:SetFont(UNIT_NAME_FONT, 11)
 
-    playerPetFrame.auraPositionUnder = GetSetting("PET_AURAS_UNDER")
-
-    if playerPetFrame.auraPositionUnder then
-        playerPetFrame.auras:ClearAllPoints()
-        playerPetFrame.auras:SetPoint("TOPLEFT", playerPetFrame.resource, "BOTTOMLEFT", 0, -5)
-    end
+    TogglePetAuraPosition()
 
     playerPetFrame:SetScript("OnEnter", function(self)
         if self.unit then

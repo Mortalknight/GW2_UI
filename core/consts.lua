@@ -206,6 +206,19 @@ GW.indicatorsText = indicatorsText
 
 GW.bossFrameExtraEnergyBar = {}
 
+GW.GemTypeInfo = {
+	Yellow			= { r = 0.97, g = 0.82, b = 0.29 },
+	Red				= { r = 1.00, g = 0.47, b = 0.47 },
+	Blue			= { r = 0.47, g = 0.67, b = 1.00 },
+	Hydraulic		= { r = 1.00, g = 1.00, b = 1.00 },
+	Cogwheel		= { r = 1.00, g = 1.00, b = 1.00 },
+	Meta			= { r = 1.00, g = 1.00, b = 1.00 },
+	Prismatic		= { r = 1.00, g = 1.00, b = 1.00 },
+	PunchcardRed	= { r = 1.00, g = 0.47, b = 0.47 },
+	PunchcardYellow	= { r = 0.97, g = 0.82, b = 0.29 },
+	PunchcardBlue	= { r = 0.47, g = 0.67, b = 1.00 },
+}
+
 -- Taken from ElvUI: https://git.tukui.org/elvui/elvui/blob/master/ElvUI/Settings/Filters/UnitFrame.lua
 -- Format: {class = {id = {r, g, b[, {<spell-id-same-slot>, ...}]} ...}, ...}
 local AURAS_INDICATORS = {

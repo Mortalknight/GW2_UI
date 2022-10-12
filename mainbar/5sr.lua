@@ -127,6 +127,7 @@ end
 local function createStatusbar(playerFrame)
     local fsr = CreateFrame("Frame", nil, playerFrame and playerFrame or GwPlayerPowerBar)
     local width = playerFrame and 215 or 316
+    GW.MixinHideDuringPetAndOverride(fsr)
 
     fsr:ClearAllPoints()
     if playerFrame then
@@ -176,8 +177,49 @@ local function createStatusbar(playerFrame)
     return fsr
 end
 
-local function load5SR(playerFrame)
+local function Update5SrHot()
     local hide_ofc = GW.GetSetting("PLAYER_ENERGY_MANA_TICK_HIDE_OFC")
+
+    if hide_ofc then
+        if fsrMana then 
+            fsrMana:RegisterEvent("PLAYER_REGEN_DISABLED")
+            fsrMana:RegisterEvent("PLAYER_REGEN_ENABLED")
+        end
+
+        if fsrEnergy then
+            fsrEnergy:RegisterEvent("PLAYER_REGEN_DISABLED")
+            fsrEnergy:RegisterEvent("PLAYER_REGEN_ENABLED")
+        end
+    else
+        if fsrMana then 
+            fsrMana:UnregisterEvent("PLAYER_REGEN_DISABLED")
+            fsrMana:UnregisterEvent("PLAYER_REGEN_ENABLED")
+        end
+
+        if fsrEnergy then
+            fsrEnergy:UnregisterEvent("PLAYER_REGEN_DISABLED")
+            fsrEnergy:UnregisterEvent("PLAYER_REGEN_ENABLED")
+        end
+    end
+
+    if not InCombatLockdown() and hide_ofc then
+        if fsrMana then fsrMana:Hide() end
+        if fsrEnergy then fsrEnergy:Hide() end
+    end
+
+    if fsrMana then 
+        fsrMana.showTimer = GW.GetSetting("PLAYER_5SR_TIMER")
+        fsrMana.showTick = GW.GetSetting("PLAYER_5SR_MANA_TICK")
+    end
+
+    if fsrEnergy then
+        fsrEnergy.showTimer = GW.GetSetting("PLAYER_5SR_TIMER")
+        fsrEnergy.showTick = GW.GetSetting("PLAYER_5SR_MANA_TICK")
+    end
+end
+GW.Update5SrHot = Update5SrHot()
+
+local function load5SR(playerFrame)
     local powerType, powerName = UnitPowerType("player")
     -- Setup bar
     fsrMana = createStatusbar(playerFrame)
@@ -186,10 +228,7 @@ local function load5SR(playerFrame)
     fsrMana:SetScript("OnUpdate", fsr_OnUpdate)
     fsrMana:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
     fsrMana:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
-    if hide_ofc then
-        fsrMana:RegisterEvent("PLAYER_REGEN_DISABLED")
-        fsrMana:RegisterEvent("PLAYER_REGEN_ENABLED")
-    end
+
     fsrMana.powerType = GW.myclass == "DRUID" and Enum.PowerType.Mana or powerType
     fsrMana.powerName = GW.myclass == "DRUID" and "MANA" or powerName
 
@@ -200,10 +239,7 @@ local function load5SR(playerFrame)
         fsrEnergy:SetScript("OnEvent", fsr_OnEvent)
         fsrEnergy:SetScript("OnUpdate", fsr_OnUpdate)
         fsrEnergy:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
-        if hide_ofc then
-            fsrMana:RegisterEvent("PLAYER_REGEN_DISABLED")
-            fsrMana:RegisterEvent("PLAYER_REGEN_ENABLED")
-        end
+
         fsrEnergy.powerType = Enum.PowerType.Energy
         fsrEnergy.powerName = "ENERGY"
 
@@ -217,9 +253,6 @@ local function load5SR(playerFrame)
         end
     end
 
-    if not InCombatLockdown() and hide_ofc then
-        fsrMana:Hide()
-        if fsrEnergy then fsrEnergy:Hide() end
-    end
+    Update5SrHot()
 end
 GW.load5SR = load5SR

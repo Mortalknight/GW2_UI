@@ -52,24 +52,25 @@ local function LoadPlayerPanel(sWindow)
     createCat(PLAYER, L["Modify the player frame settings."], p, 9, nil, {p_player, p_player_aura, p_player_debuff})
 
 
-    addOption(p_player.scroll.scrollchild, L["Player frame in target frame style"], nil, "PLAYER_AS_TARGET_FRAME", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, RAID_USE_CLASS_COLORS, nil, "player_CLASS_COLOR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
-    addOption(p_player.scroll.scrollchild, L["Show an additional resource bar"], nil, "PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true, ["POWERBAR_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, L["Player frame in target frame style"], nil, "PLAYER_AS_TARGET_FRAME", function() GW.ShowRlPopup = true end, nil, {["HEALTHGLOBE_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, L["Show alternative background texture"], nil, "PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND", GW.TogglePlayerFrameASettings, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
+    addOption(p_player.scroll.scrollchild, RAID_USE_CLASS_COLORS, nil, "player_CLASS_COLOR", GW.TogglePlayerFrameASettings, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
+    addOption(p_player.scroll.scrollchild, L["Show an additional resource bar"], nil, "PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR", function() GW.ShowRlPopup = true end, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true, ["POWERBAR_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["PvP Indicator"], nil, "PLAYER_SHOW_PVP_INDICATOR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["Player de/buff animation"], L["Shows an animation for new de/buffs"], "PLAYER_AURA_ANIMATION", nil, nil, {["PLAYER_BUFFS_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, L["Energy/Mana Ticker"], nil, "PLAYER_ENERGY_MANA_TICK", nil, nil, {["POWERBAR_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, L["Show Energy/Mana Ticker only in combat"], nil, "PLAYER_ENERGY_MANA_TICK_HIDE_OFC", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
-    addOption(p_player.scroll.scrollchild, L["5 secound rule: display remaning time"], nil, "PLAYER_5SR_TIMER", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
+    addOption(p_player.scroll.scrollchild, L["Energy/Mana Ticker"], nil, "PLAYER_ENERGY_MANA_TICK", function() GW.ShowRlPopup = true end, nil, {["POWERBAR_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, L["Show Energy/Mana Ticker only in combat"], nil, "PLAYER_ENERGY_MANA_TICK_HIDE_OFC", GW.Update5SrHot, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
+    addOption(p_player.scroll.scrollchild, L["5 secound rule: display remaning time"], nil, "PLAYER_5SR_TIMER", GW.Update5SrHot, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
     addOption(p_player.scroll.scrollchild, L["Show spell queue window on castinbar"], nil, "PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW", nil, nil, {["CASTINGBAR_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], "CASTINGBAR_DATA", nil, nil, {["CASTINGBAR_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, PET .. ": " .. L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "PET_FLOATING_COMBAT_TEXT", nil, nil, {["PETBAR_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, PET .. ": " .. L["Show auras below"], nil, "PET_AURAS_UNDER", nil, nil, {["PETBAR_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], "CASTINGBAR_DATA", function(value) GW.TogglePlayerEnhancedCastbar(GwCastingBarPlayer, value); GW.TogglePlayerEnhancedCastbar(GwCastingBarPet, value); end, nil, {["CASTINGBAR_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, PET .. ": " .. L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "PET_FLOATING_COMBAT_TEXT", function() GW.ShowRlPopup = true end, nil, {["PETBAR_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, PET .. ": " .. L["Show auras below"], nil, "PET_AURAS_UNDER", GW.TogglePetAuraPosition, nil, {["PETBAR_ENABLED"] = true})
     addOptionDropdown(
         p_player.scroll.scrollchild,
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         nil,
         "PLAYER_UNIT_HEALTH",
-        nil,
+        function() GW.ToggleHealthglobeSettings(); GW.TogglePlayerFrameASettings() end,
         {"NONE", "PREC", "VALUE", "BOTH"},
         {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH},
         nil,
@@ -80,7 +81,7 @@ local function LoadPlayerPanel(sWindow)
         L["Class Totems Sorting"],
         nil,
         "TotemBar_SortDirection",
-        nil,
+        function() GW.UpdateTotembar(GW_TotemBar) end,
         {"ASC", "DSC"},
         {L["Ascending"], L["Descending"]},
         nil,
@@ -91,8 +92,8 @@ local function LoadPlayerPanel(sWindow)
         L["Class Totems Growth Direction"],
         nil,
         "TotemBar_GrowDirection",
-        nil,
-       {"HORIZONTAL", "VERTICAL"},
+        function() GW.UpdateTotembar(GW_TotemBar) end,
+        {"HORIZONTAL", "VERTICAL"},
         {L["Horizontal"], L["Vertical"]},
         nil,
         {["HEALTHGLOBE_ENABLED"] = true}
