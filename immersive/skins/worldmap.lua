@@ -256,7 +256,7 @@ local function AddCoordsToWorldMap()
     CoordsFrame:SetFrameStrata(WorldMapFrame.BorderFrame:GetFrameStrata())
     CoordsFrame.Coords = CoordsFrame:CreateFontString(nil, "OVERLAY")
     CoordsFrame.Coords:SetTextColor(1, 1 ,1)
-    CoordsFrame.Coords:SetFontObject(Number12Font)
+    CoordsFrame.Coords:SetFontObject(NumberFontNormal)
 
     WorldMapFrame:HookScript("OnShow", function()
         if not CoordsTimer then
