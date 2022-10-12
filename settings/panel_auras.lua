@@ -107,8 +107,8 @@ local function LoadAurasPanel(sWindow)
     addOption(p_indicator.scroll.scrollchild, L["Show Remaining Time"], L["INDICATORS_TIME_DESC"], "INDICATORS_TIME", nil, nil, nil, {["RAID_FRAMES"] = true})
 
     local auraKeys, auraVals = {0}, {NONE_KEY}
-    for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
-        if not indicator[4] and GetSpellInfo(spellID) then
+    for spellID, _ in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
+        if GetSpellInfo(spellID) then
             local name = GetSpellInfo(spellID)
             tinsert(auraKeys, spellID)
             tinsert(auraVals, name)
@@ -142,12 +142,7 @@ local function LoadAurasPanel(sWindow)
             local num = frame.container.contentScroll.numEntries
             if num and num > 0 then
                 for i = 1, num do
-                    local spellId = frame.container.contentScroll.data.options[i]
-                    local name = frame.container.contentScroll.data.options_names[i]
-                    local rank = GetSpellSubtext(spellId)
-                    rank = rank and string.match(rank, "[%d]") or nil
-                    name = name .. (rank and " |cFF888888(" .. RANK .. " " .. rank .. ")|r" or "")
-                    frame.container.contentScroll.data.options_names[i] = name
+                    frame.container.contentScroll.data.options_names[i] = frame.container.contentScroll.data.options_names[i]
                 end
                 frame.container.contentScroll.update(frame.container.contentScroll)
             end

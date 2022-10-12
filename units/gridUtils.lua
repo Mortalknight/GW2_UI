@@ -12,6 +12,7 @@ local AURAS_INDICATORS = GW.AURAS_INDICATORS
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local AddToClique = GW.AddToClique
 local nameRoleIcon = GW.nameRoleIcon
+local IsIn = GW.IsIn
 
 local missing, ignored = {}, {}
 local spellIDs = {}
@@ -651,7 +652,7 @@ local function GridUpdateBuffs(self, profile)
                     local indicator = indicators[spellID]
                     if indicator then
                         for _, pos in ipairs(INDICATORS) do
-                            if GetSetting("INDICATOR_" .. pos, true) == (indicator[4] or spellID) then
+                            if GetSetting("INDICATOR_" .. pos, true) == (spellID or (indicator[4] and IsIn(spellID, unpack(indicator[4])))) then
                                 local frame = self["indicator" .. pos]
                                 local r, g, b = unpack(indicator)
 
