@@ -434,6 +434,17 @@ local function evAddonLoaded(_, addonName)
     end
 
     Debug("OK~EVENT~In ADDON_LOADED event")
+    local buildVer, _ = GetBuildInfo()
+    Debug("build version", buildVer)
+    if buildVer == "10.0.0" then
+        -- temp put stuff in C_Container (PTR 10.0.0 vs Beta 10.0.2 diffs)
+        C_Container.GetContainerNumSlots = GetContainerNumSlots
+        C_Container.GetContainerNumFreeSlots = GetContainerNumFreeSlots
+        C_Container.GetContainerItemInfo = GetContainerItemInfo
+        C_Container.GetContainerItemLink = GetContainerItemLink
+        C_Container.GetBagName = GetBagName
+    end
+
     GW.LoadStorage()
     -- TODO: A lot of what happens in player login should probably happen here instead
 

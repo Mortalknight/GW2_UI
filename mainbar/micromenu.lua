@@ -186,9 +186,8 @@ local function bag_OnUpdate(self, elapsed)
 
     local totalEmptySlots = 0
     for i = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
-        local numberOfFreeSlots = C_Container.GetContainerNumFreeSlots(i)
-
-        if numberOfFreeSlots ~= nil then
+        local numberOfFreeSlots, bagFamily = C_Container.GetContainerNumFreeSlots(i)
+        if bagFamily == 0 and numberOfFreeSlots ~= nil then
             totalEmptySlots = totalEmptySlots + numberOfFreeSlots
         end
     end
