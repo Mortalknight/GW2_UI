@@ -130,16 +130,7 @@ local function LoadMerchantFrameSkin()
     MerchantRepairAllIcon:SetTexCoord(0.34, 0.1, 0.34, 0.535, 0.535, 0.1, 0.535, 0.535)
 
     -- added repar cost to the tooltio
-    MerchantRepairAllButton:SetScript("OnEnter", function()
-        GameTooltip:SetOwner(MerchantRepairAllButton, "ANCHOR_RIGHT");
-        local repairAllCost, canRepair = GetRepairAllCost()
-        if canRepair and repairAllCost > 0 then
-            GameTooltip:SetText(REPAIR_ALL_ITEMS)
-            SetTooltipMoney(GameTooltip, repairAllCost)
-        end
-        GameTooltip:Show()
-        print(1)
-    end)
+
 
     GW.HandleNextPrevButton(MerchantNextPageButton, nil, true)
     GW.HandleNextPrevButton(MerchantPrevPageButton, nil, true)
