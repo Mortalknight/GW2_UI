@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.6.3 Wrath", [=[
+    - Fix lua error if GW2 Font module is disabled
+]=])
+
+
 v("1.6.2 Wrath", [=[
     - Fix raid frame out of range indicator
 ]=])
