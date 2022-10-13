@@ -654,6 +654,7 @@ end
 
 local function CheckForClassIndicatorForSpellId(self, classIndicators, id, expires, duration, count, icon)
     local posSetting
+    local showAsNormalBuff = true
     for _, pos in ipairs(INDICATORS) do
         posSetting = GetSetting("INDICATOR_" .. pos, true)
 
@@ -696,15 +697,15 @@ local function CheckForClassIndicatorForSpellId(self, classIndicators, id, expir
 
                         frame:Show()
                         -- do not show that buff as normal buff
-                        return false
+                        showAsNormalBuff = false
                     end
-                    return true
+                    showAsNormalBuff = true
                 end
             end
         end
     end
 
-    return true
+    return showAsNormalBuff
 end
 
 local function GridUpdateBuffs(self, profile)
