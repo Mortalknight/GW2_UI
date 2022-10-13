@@ -330,6 +330,10 @@ local function gw_OnUpdate(_, elapsed)
     for _, cb in ipairs(updateCB) do
         cb.func(cb.payload, elapsed)
     end
+
+    if PetActionBarFrame:IsShown() and GetSetting("PETBAR_ENABLED") and loaded then
+        PetActionBarFrame:Hide()
+    end
 end
 AFP("gw_OnUpdate", gw_OnUpdate)
 
