@@ -640,11 +640,78 @@ local function GridShowBuffIcon(parent, i, btnIndex, x, y, icon, isMissing, expi
     return btnIndex, x, y
 end
 
+local function ShouldShowIndicatorOnGivenPosition(posId, auraId, indicatorData, spellId)
+    if indicatorData[4] then
+        if GW.IsIn(auraId, unpack(indicatorData[4])) or (posId == auraId and posId == spellId) then
+            return true
+        else
+            return false
+        end
+    else
+        return (posId == auraId and posId == spellId)
+    end
+end
+
+local function CheckForClassIndicatorForSpellId(self, classIndicators, id, expires, duration, count, icon)
+    local posSetting
+    for _, pos in ipairs(INDICATORS) do
+        posSetting = GetSetting("INDICATOR_" .. pos, true)
+
+        if posSetting and type(posSetting) ~= "table" and posSetting > 0 then
+            for spellId, indicatorData in pairs(classIndicators) do
+                if ShouldShowIndicatorOnGivenPosition(posSetting, id, indicatorData, spellId) then
+                    -- we have a indicator for that spell and need to show it
+                    local frame = self["indicator" .. pos]
+                    local r, g, b = indicatorData[1], indicatorData[2], indicatorData[3]
+
+                    if pos == "BAR" then
+                        frame.expires = expires
+                        frame.duration = duration
+
+                        frame:Show()
+                    else
+                        -- Stacks
+                        if count > 1 then
+                            frame.text:SetText(count)
+                            frame.text:SetFont(UNIT_NAME_FONT, count > 9 and 9 or 11, "OUTLINE")
+                            frame.text:Show()
+                        else
+                            frame.text:Hide()
+                        end
+
+                        -- Icon
+                        if GetSetting("INDICATORS_ICON") then
+                            frame.icon:SetTexture(icon)
+                        else
+                            frame.icon:SetColorTexture(r, g, b)
+                        end
+
+                        -- Cooldown
+                        if GetSetting("INDICATORS_TIME") then
+                            frame.cooldown:Show()
+                            frame.cooldown:SetCooldown(expires - duration, duration)
+                        else
+                            frame.cooldown:Hide()
+                        end
+
+                        frame:Show()
+                        -- do not show that buff as normal buff
+                        return false
+                    end
+                    return true
+                end
+            end
+        end
+    end
+
+    return true
+end
+
 local function GridUpdateBuffs(self, profile)
     local btnIndex, x, y = 1, 0, 0
-    local indicators = AURAS_INDICATORS[GW.myclass]
+    local classIndicators = AURAS_INDICATORS[GW.myclass]
     local i, name, spellid = 1, nil, nil
-    local shouldDisplay, hasCustom, alwaysShowMine, showForMySpec, indicator
+    local shouldDisplay, hasCustom, alwaysShowMine, showForMySpec
 
     -- hide all indicators
     for _, pos in pairs(INDICATORS) do
@@ -697,49 +764,7 @@ local function GridUpdateBuffs(self, profile)
 
             if shouldDisplay then
                 -- indicators
-                indicator = indicators[spellID]
-                if indicator then
-                    for _, pos in ipairs(INDICATORS) do
-                        if GetSetting("INDICATOR_" .. pos, true) == (spellID or (indicator[4] and GW.IsIn(spellID, unpack(indicator[4])))) then
-                            local frame = self["indicator" .. pos]
-                            local r, g, b = unpack(indicator)
-
-                            if pos == "BAR" then
-                                frame.expires = expires
-                                frame.duration = duration
-                            else
-                                -- Stacks
-                                if count > 1 then
-                                    frame.text:SetText(count)
-                                    frame.text:SetFont(UNIT_NAME_FONT, count > 9 and 9 or 11, "OUTLINE")
-                                    frame.text:Show()
-                                else
-                                    frame.text:Hide()
-                                end
-
-                                -- Icon
-                                if GetSetting("INDICATORS_ICON") then
-                                    frame.icon:SetTexture(icon)
-                                else
-                                    frame.icon:SetColorTexture(r, g, b)
-                                end
-
-                                -- Cooldown
-                                if GetSetting("INDICATORS_TIME") then
-                                    frame.cooldown:Show()
-                                    frame.cooldown:SetCooldown(expires - duration, duration)
-                                else
-                                    frame.cooldown:Hide()
-                                end
-
-                                -- do not show that buff as normal buff
-                                shouldDisplay = false
-                            end
-
-                            frame:Show()
-                        end
-                    end
-                end
+                shouldDisplay = CheckForClassIndicatorForSpellId(self, classIndicators, spellID, expires, duration, count, icon)
 
                 --set new buff
                 if shouldDisplay and not (ignored[name] or missing[name] ~= nil) then

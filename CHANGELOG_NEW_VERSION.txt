@@ -1,3 +1,6 @@
+1.6.4-Wrath
+- Fix raid frame aura indicators
+
 1.6.3-Wrath
 - Fix lua error if GW2 Font module is disabled
 
