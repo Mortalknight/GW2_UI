@@ -297,7 +297,7 @@ local function PaperDollUpdateStats()
     local hexColor = ""
     local statText, tooltip1, tooltip2
 
-    if gearScore > 0 and avgItemLevelEquipped > 0 then 
+    if gearScore and gearScore > 0 and avgItemLevelEquipped and avgItemLevelEquipped > 0 then 
         avgItemLevelEquipped = avgItemLevelEquipped and math.floor(avgItemLevelEquipped) or 0
 
         gearScore = gearScore and gearScore or 0
@@ -305,6 +305,8 @@ local function PaperDollUpdateStats()
 
         avgItemLevelEquipped = "GearScore: " .. hexColor .. gearScore .. "|r\n" .. STAT_AVERAGE_ITEM_LEVEL .. ": " .. hexColor .. avgItemLevelEquipped .."|r"
         GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped)
+    else
+        GwDressingRoom.itemLevel:SetText("")
     end
 
     local numShownStats = 1

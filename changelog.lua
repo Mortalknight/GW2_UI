@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.6.1 Wrath", [=[
+    - Fix lua error it TacoTip is not installed
+]=])
+
+
 v("1.6.0 Wrath", [=[
     NEW
         - Added ready check skin
