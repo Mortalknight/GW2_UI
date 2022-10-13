@@ -370,7 +370,7 @@ local function GridUpdateAwayData(self, profile)
         self.healthbar:SetStatusBarColor(0.3, 0.3, 0.3, 1)
     end
 
-    if UnitIsConnected(self.unit) or not UnitInRange(self.unit) then
+    if UnitIsConnected(self.unit) and not UnitInRange(self.unit) then
         local r, g, b = self.healthbar:GetStatusBarColor()
 
         self.healthbar:SetStatusBarColor(r * 0.3, g * 0.3, b * 0.3)
