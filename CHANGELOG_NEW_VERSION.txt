@@ -1,3 +1,7 @@
+1.6.5-Wrath
+- Fix raid frame aura indicators
+- Fix raid frame healtbar updating
+
 1.6.4-Wrath
 - Fix raid frame aura indicators
 

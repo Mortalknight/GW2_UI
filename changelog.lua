@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.6.5 Wrath", [=[
+    - Fix raid frame aura indicators
+- Fix raid frame healtbar updating
+]=])
+
 v("1.6.4 Wrath", [=[
     - Fix raid frame aura indicators
 ]=])
