@@ -9,7 +9,7 @@ local function GetAverageItemLevel()
         local MyGearScore, MyItemLevel  = TT_GS:GetScore(UnitName("player"), true)
         return MyGearScore, MyItemLevel
     end
-    return nil, nil
+    return 0, 0
 end
 GW.api.GetAverageItemLevel = GetAverageItemLevel
 
