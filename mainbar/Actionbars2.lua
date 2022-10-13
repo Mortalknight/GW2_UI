@@ -597,6 +597,7 @@ local function updateMainBar()
     -- set fader logic
     createFaderAnim(fmActionbar, true)
 
+    GW.MixinHideDuringOverride(fmActionbar)
     return fmActionbar
 end
 GW.AddForProfiling("Actionbars2", "updateMainBar", updateMainBar)
