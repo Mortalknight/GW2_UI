@@ -642,7 +642,7 @@ end
 
 local function ShouldShowIndicatorOnGivenPosition(posId, auraId, indicatorData, spellId)
     if indicatorData[4] then
-        if GW.IsIn(auraId, unpack(indicatorData[4])) or (posId == auraId and posId == spellId) then
+        if (GW.IsIn(auraId, unpack(indicatorData[4])) or posId == auraId) and posId == spellId then
             return true
         else
             return false
