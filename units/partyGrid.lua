@@ -241,7 +241,7 @@ local function PartyGridOnEvent(self, event, unit)
         GW.GridUpdateAwayData(self, "PARTY")
         GW.GridUpdateAuras(self, "PARTY")
         GW.GridUpdatePower(self)
-    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
+    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" then
         GW.GridSetHealth(self, "PARTY")
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
         GW.GridUpdatePower(self)

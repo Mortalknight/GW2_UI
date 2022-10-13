@@ -464,7 +464,7 @@ local function party_OnEvent(self, event, unit)
     if not self.nameNotLoaded then
         setUnitName(self)
     end
-    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
+    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" then
         setHealth(self)
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
         local power = UnitPower(self.unit, UnitPowerType(self.unit))
@@ -549,7 +549,7 @@ local function CreatePartyPetFrame(frame, i)
     f:RegisterUnitEvent("UNIT_AURA", unit)
     f:RegisterUnitEvent("UNIT_LEVEL", unit)
     f:RegisterUnitEvent("UNIT_PHASE", unit)
-    f:RegisterUnitEvent("UNIT_HEALTH", unit)
+    f:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", unit)
     f:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
     f:RegisterUnitEvent("UNIT_POWER_UPDATE", unit)
     f:RegisterUnitEvent("UNIT_MAXPOWER", unit)
@@ -655,7 +655,7 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
     frame:RegisterUnitEvent("UNIT_PHASE", registerUnit)
-    frame:RegisterUnitEvent("UNIT_HEALTH", registerUnit)
+    frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXHEALTH", registerUnit)
     frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", registerUnit)
     frame:RegisterUnitEvent("UNIT_MAXPOWER", registerUnit)

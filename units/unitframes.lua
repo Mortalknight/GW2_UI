@@ -567,7 +567,7 @@ local function target_OnEvent(self, event, unit)
     elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
             UpdateBuffLayout(self, event)
-        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
+        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH_FREQUENT", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
             updatePowerValues(self)
@@ -626,7 +626,7 @@ local function focus_OnEvent(self, event, unit)
     elseif UnitIsUnit(unit, self.unit) then
         if event == "UNIT_AURA" then
             UpdateBuffLayout(self, event)
-        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
+        elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH_FREQUENT", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
             updatePowerValues(self)
@@ -748,7 +748,7 @@ local function LoadTarget()
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
 
-    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_TARGET", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "target")
@@ -858,7 +858,7 @@ local function LoadFocus()
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
 
-    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "focus")
+    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_TARGET", "focus")
     NewUnitFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "focus")

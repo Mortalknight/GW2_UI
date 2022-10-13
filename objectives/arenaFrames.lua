@@ -173,7 +173,7 @@ local function arenaFrame_OnEvent(self, event)
         return
     end
 
-    if IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH") then
+    if IsIn(event, "UNIT_MAXHEALTH", "UNIT_HEALTH_FREQUENT") then
         updateArena_Health(self)
     elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
         updateArena_Power(self)
@@ -266,7 +266,7 @@ local function registerFrame(i)
     arenaFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
     arenaFrame:RegisterEvent("ARENA_OPPONENT_UPDATE")
     arenaFrame:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
-    arenaFrame:RegisterUnitEvent("UNIT_HEALTH", unit)
+    arenaFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", unit)
     arenaFrame:RegisterUnitEvent("UNIT_MAXPOWER", unit)
     arenaFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit)
     arenaFrame:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)

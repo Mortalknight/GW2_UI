@@ -134,7 +134,7 @@ local function bossFrame_OnEvent(self, event)
         return
     end
 
-    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
+    if event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" then
         updateBoss_Health(self)
     elseif event == "UNIT_MAXPOWER" or event == "UNIT_POWER_FREQUENT" then
         updateBoss_Power(self)
@@ -200,7 +200,7 @@ local function registerFrame(i)
     bossFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     bossFrame:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT")
     bossFrame:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
-    bossFrame:RegisterUnitEvent("UNIT_HEALTH", unit)
+    bossFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", unit)
     bossFrame:RegisterUnitEvent("UNIT_MAXPOWER", unit)
     bossFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit)
     bossFrame:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)

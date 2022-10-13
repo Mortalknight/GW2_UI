@@ -124,7 +124,7 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
         frame:RegisterUnitEvent("UNIT_PET", "raid" .. index)
     end
 
-    frame:RegisterUnitEvent("UNIT_HEALTH", frame.unit)
+    frame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", frame.unit)
     frame:RegisterUnitEvent("UNIT_MAXHEALTH", frame.unit)
     --frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", frame.unit)
     frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", frame.unit)
