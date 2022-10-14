@@ -32,9 +32,9 @@ local function ApplySocketUISkin()
         local button_bracket = _G[("ItemSocketingSocket%dBracketFrame"):format(i)]
         local button_icon = _G[("ItemSocketingSocket%dIconTexture"):format(i)]
         local button_bg = _G[("ItemSocketingSocket%dBackground"):format(i)]
-        --button:StripTextures()
+        button:StripTextures()
         button:StyleButton(false)
-        button:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+        button:CreateBackdrop(GW.constBackdropFrameColorBorder, true, 2, 2)
         button_bracket:Kill()
         button_bg:Kill()
         button_icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
