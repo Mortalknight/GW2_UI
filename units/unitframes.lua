@@ -789,6 +789,7 @@ local function LoadTarget()
     end
 
     TargetFrame:Kill()
+    ComboFrame:Kill()
 end
 GW.LoadTarget = LoadTarget
 
