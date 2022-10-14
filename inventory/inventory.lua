@@ -44,7 +44,6 @@ local function reskinItemButton(iname, b)
 
     local qtex = b.IconQuestTexture or _G[iname .. "IconQuestTexture"]
     if qtex then
-        b.IconQuestTexture = qtex
         qtex:SetSize(item_size + 2, item_size + 2)
         qtex:ClearAllPoints()
         qtex:SetPoint("CENTER", b, "CENTER", 0, 0)
