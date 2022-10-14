@@ -19,7 +19,7 @@ assert(LibStub, "LibClassicInspector requires LibStub")
 assert(LibStub:GetLibrary("CallbackHandler-1.0", true), "LibClassicInspector requires CallbackHandler-1.0")
 assert(LibStub:GetLibrary("LibDetours-1.0", true), "LibClassicInspector requires LibDetours-1.0")
 
-local lib, oldminor = LibStub:NewLibrary("LibClassicInspector", 2)
+local lib, oldminor = LibStub:NewLibrary("LibClassicInspector", 3)
 
 -- already loaded
 if (not lib) then
@@ -2523,11 +2523,23 @@ oAddMessage = Detours:DetourHook(lib, UIErrorsFrame, "AddMessage", function(self
         skip_error = false
         local msg = ...
         if (msg == ERR_UNIT_NOT_FOUND or msg == ERR_INVALID_INSPECT_TARGET or msg == ERR_OUT_OF_RANGE) then
+            if GetCVar("Sound_EnableErrorSpeech") == "1" then
+                skip_error = true
+            end
             return nil
         end
     end
     return oAddMessage(self, ...)
 end)
+
+local oPlayVocalErrorSoundID
+ oPlayVocalErrorSoundID = Detours:DetourHook(lib, "PlayVocalErrorSoundID", function(vocalErrorSoundID, ...)
+ 	if vocalErrorSoundID == 10 and skip_error == true then
+ 		skip_error = false
+ 		return nil
+ 	end
+ 	return oPlayVocalErrorSoundID(vocalErrorSoundID, ...)
+ end)
 
 
 --------------------------------------------------------------------------
