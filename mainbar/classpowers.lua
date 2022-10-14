@@ -364,7 +364,7 @@ local function barChange_OnEvent(self, event, ...)
         f.gwPlayerForm = results
         selectType(f)
     elseif event == "PLAYER_TARGET_CHANGED" then
-        if UnitExists("target") and UnitCanAttack(self.unit, "target") and f.barType == "combo" and not UnitIsDead("target") then
+        if UnitExists("target") and UnitCanAttack(f.unit, "target") and f.barType == "combo" and not UnitIsDead("target") then
             f:Show()
         elseif f.barType == "combo" then
             f:Hide()
