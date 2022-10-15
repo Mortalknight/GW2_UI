@@ -119,7 +119,7 @@ local function loadCurrency(curwin)
                 if itemID == Constants.CurrencyConsts.CLASSIC_HONOR_CURRENCY_ID then
                     slot.item.icon:SetTexCoord( 0.03125, 0.59375, 0.03125, 0.59375 )
                 else
-                    slot.item.icon:SetTexCoord(0, 1, 0, 1)
+                    slot.item.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
                 end
 
                 -- set zebra color by idx or watch status
