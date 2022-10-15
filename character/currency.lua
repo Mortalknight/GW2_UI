@@ -58,6 +58,7 @@ local function loadCurrency(curwin)
 
     local offset = HybridScrollFrame_GetOffset(curwin)
     local currencyCount = GetCurrencyListSize()
+    local name, isHeader, isExpanded, isUnused, isWatched, count, icon, maxQuantity, maxEarnable, quantityEarned, isTradeable, itemID
 
     for i = 1, #curwin.buttons do
         local slot = curwin.buttons[i]
@@ -70,7 +71,7 @@ local function loadCurrency(curwin)
             slot.item.CurrencyIdx = nil
             slot.header:Hide()
         else
-            local name, isHeader, isExpanded, isUnused, isWatched, count, icon, maxQuantity, maxEarnable, quantityEarned, isTradeable, itemID = GetCurrencyListInfo(idx)
+            name, isHeader, isExpanded, isUnused, isWatched, count, icon, maxQuantity, maxEarnable, quantityEarned, isTradeable, itemID = GetCurrencyListInfo(idx)
             if isHeader then
                 slot.item:Hide()
                 slot.item.CurrencyID = nil
@@ -114,6 +115,12 @@ local function loadCurrency(curwin)
                     slot.item.spaceString:SetFontObject("GameFontHighlight")
                 end
                 slot.item.icon:SetTexture(icon)
+                -- If is honor
+                if itemID == Constants.CurrencyConsts.CLASSIC_HONOR_CURRENCY_ID then
+                    slot.item.icon:SetTexCoord( 0.03125, 0.59375, 0.03125, 0.59375 )
+                else
+                    slot.item.icon:SetTexCoord(0, 1, 0, 1)
+                end
 
                 -- set zebra color by idx or watch status
                 zebra = idx % 2
