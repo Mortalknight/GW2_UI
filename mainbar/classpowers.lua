@@ -319,7 +319,10 @@ local function selectType(f)
     f.gwPower = -1
     local showBar = false
 
-    if GW.myClassID == 4 then
+    if f.unit == "vehicle" then
+        setComboBar(f)
+        showBar = true -- combopoints for eg. Malygos; has always prio
+    elseif GW.myClassID == 4 then
         showBar = setRogue(f)
     elseif GW.myClassID == 6 then
         showBar = setDeathKnight(f)
@@ -327,8 +330,6 @@ local function selectType(f)
         showBar = setShaman(f)
     elseif GW.myClassID == 11 then
         showBar = setDruid(f)
-    elseif f.unit == "vehicle" then
-        showBar = setRogue(f) -- combopoints for eg. Malygos
     end
 
     if ((GW.myClassID == 4 or GW.myClassID == 11) and f.ourTarget and f.comboPointsOnTarget and f.barType == "combo") or f.unit == "vehicle" then
