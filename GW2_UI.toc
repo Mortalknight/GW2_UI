@@ -102,6 +102,7 @@ units\unitframes.lua
 units\party.lua
 units\playerFrame.lua
 units\raidMarker.lua
+units\petGrid.lua
 
 mainbar\micromenu.xml
 mainbar\micromenu.lua

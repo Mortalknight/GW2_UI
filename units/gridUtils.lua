@@ -867,6 +867,8 @@ local function GridUpdateFramesLayout(profile)
         GW.GridRaidUpdateFramesLayout()
     elseif profile == "PARTY" then
         GW.GridPartyUpdateFramesLayout()
+    elseif profile == "RAID_PET" then
+        GW.GridRaidPetUpdateFramesLayout()
     end
 end
 GW.GridUpdateFramesLayout = GridUpdateFramesLayout
@@ -876,6 +878,8 @@ local function GridUpdateFramesPosition(profile)
         GW.GridRaidUpdateFramesPosition()
     elseif profile == "PARTY" then
         GW.GridPartyUpdateFramesPosition()
+    elseif profile == "RAID_PET" then
+        GW.GridRaidPetUpdateFramesPosition()
     end
 end
 GW.GridUpdateFramesPosition = GridUpdateFramesPosition
@@ -885,6 +889,8 @@ local function GridContainerUpdateAnchor(profile)
         GwRaidFrameContainer.gwMover:GetScript("OnDragStop")(GwRaidFrameContainer.gwMover)
     elseif profile == "PARTY" then
         GwRaidFramePartyContainer.gwMover:GetScript("OnDragStop")(GwRaidFramePartyContainer.gwMover)
+    elseif profile == "RAID_PET" then
+        GwRaidFramePetContainer.gwMover:GetScript("OnDragStop")(GwRaidFramePetContainer.gwMover)
     end
 end
 GW.GridContainerUpdateAnchor = GridContainerUpdateAnchor
