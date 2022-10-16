@@ -1,32 +1,9 @@
-1.6.6-Wrath
-- Fix raid frame aura indicators
-- Fix combobar
-
-1.6.5-Wrath
-- Fix raid frame aura indicators
-- Fix raid frame healtbar updating
-
-1.6.4-Wrath
-- Fix raid frame aura indicators
-
-1.6.3-Wrath
-- Fix lua error if GW2 Font module is disabled
-
-1.6.2-Wrath
-- Fix raid frame out of range indicator
-
-1.6.1-Wrath
-- Fix lua error it TacoTip is not installed
-
-1.6.0-Wrath
+1.7.0-Wrath
 NEW
-    - Added ready check skin
-    - Nearly all settings are now working without a needed reload
-    - Added support for GearScore and itemlevel to hero panel and tooltip (holding SHIFT -> required the addon TacoTip, with a feature update this addon will not be needed)
-    - Update raid debuffs
-    - Update raid frame auras
-    - Added socket skin
-    - Added timemanager skin
+    - Added Custom Aura Tracker: You can track multiple auras. If you get this Aura it will show a flashing icon on the screen
+        - You can track as many auras as you want, only enter the Ids comma separated (Player Settings first segment)
+    - Added raidframe pet grid
 
 FIXES
-    - Show player vehicle debuffs
+    - Target frame level color indicator
+    - Raidframe aura indicator should work correct now

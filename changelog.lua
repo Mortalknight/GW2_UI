@@ -1,6 +1,17 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.7.0 Wrath", [=[
+    NEW
+        - Added Custom Aura Tracker: You can track multiple auras. If you get this Aura it will show a flashing icon on the screen
+            - You can track as many auras as you want, only enter the Ids comma separated (Player Settings first segment)
+        - Added raidframe pet grid
+
+    FIXES
+        - Target frame level color indicator
+        - Raidframe aura indicator should work correct now
+]=])
+
 v("1.6.6 Wrath", [=[
     - Fix raid frame aura indicators
     - Fix combobar
