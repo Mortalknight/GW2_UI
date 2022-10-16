@@ -94,8 +94,8 @@ local function GetIconButton(self, index)
         frame.cooldown:SetPoint("TOPLEFT", frame, "TOPLEFT")
         frame.cooldown:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
 
-        frame.counter:SetFont(UNIT_NAME_FONT, 14)
-        frame.counter:SetShadowColor(0.8, 0.8, 0.8, 1)
+        frame.counter:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
+        frame.counter:SetShadowColor(0, 0, 0, 1)
         frame.counter:SetShadowOffset(1, -1)
 
         tinsert(self.icons, frame)

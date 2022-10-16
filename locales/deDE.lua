@@ -35,7 +35,7 @@ L["Quest Tracker sorting"] = "Quest Listen Sortierung"
 L["Show on Map"] = "Auf Karte zeigen"
 L["Set TomTom Target"] = "TomTom-Ziel setzen"
 
-L["Enter the spell IDs which should be tracked and show a flashing icon, if you have that aura.\nYou can enter multiple IDs comma separated without spaces"] = "Trage doe Aura Ids, welche du verfolgen möchtest, mit Komma getrennt sein.\nSobald du eins dieser Auren hast wird ein pilsierendes Icon angezeigt."
+L["Enter the spell IDs which should be tracked and show a flashing icon, if you have that aura.\nYou can enter multiple IDs comma separated without spaces"] = "Trage die Aura Ids, welche du verfolgen möchtest, mit Komma getrennt ein.\nSobald du eine dieser Auren hast wird ein pulsierendes Icon angezeigt."
 L["Track custom aura(s)"] = "Verfolge bestimmte Auren"
 L["Aura Tracker Sorting"] = "Aura Verfolgungs Sortierrichtung"
 L["Aura Tracker Growth Direction"] = "Aura Verfolgungs Wachstumsrichtung"
