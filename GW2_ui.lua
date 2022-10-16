@@ -591,6 +591,8 @@ local function evPlayerLogin(self)
     GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()
 
+    GW.LoadCustomAuraTracker()
+
 
     --Create hud art
     hudArtFrame = GW.LoadHudArt()

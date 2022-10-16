@@ -69,6 +69,8 @@ GW_DEFAULT["PET_AURAS_UNDER"] = false
 
 GW_DEFAULT["BUTTON_ASSIGNMENTS"] = true
 
+GW_DEFAULT["CUSTOM_AURA_TRACKER"] = ""
+
 GW_DEFAULT["HUD_BACKGROUND"] = true
 GW_DEFAULT["HUD_SPELL_SWAP"] = true
 
@@ -335,6 +337,15 @@ GW_DEFAULT["GameTooltipPos"]["point"] = "BOTTOMRIGHT"
 GW_DEFAULT["GameTooltipPos"]["relativePoint"] = "BOTTOMRIGHT"
 GW_DEFAULT["GameTooltipPos"]["xOfs"] = 0
 GW_DEFAULT["GameTooltipPos"]["yOfs"] = 300
+
+GW_DEFAULT["AuraTrackerPos"] = {}
+GW_DEFAULT["AuraTrackerPos"]["point"] = "CENTER"
+GW_DEFAULT["AuraTrackerPos"]["relativePoint"] = "CENTER"
+GW_DEFAULT["AuraTrackerPos"]["xOfs"] = 0
+GW_DEFAULT["AuraTrackerPos"]["yOfs"] = 0
+GW_DEFAULT["AuraTrackerPos_scale"] = 1
+GW_DEFAULT["AuraTracker_GrowDirection"] = "HORIZONTAL"
+GW_DEFAULT["AuraTracker_SortDirection"] = "ASC"
 
 GW_DEFAULT["BNToastPos"] = {}
 GW_DEFAULT["BNToastPos"]["point"] = "BOTTOM"

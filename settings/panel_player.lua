@@ -119,6 +119,31 @@ local function LoadPlayerPanel(sWindow)
         nil,
         {["HEALTHGLOBE_ENABLED"] = true}
     )
+    addOptionText(
+        p_player.scroll.scrollchild,
+        L["Track custom aura(s)"],
+        L["Enter the spell IDs which should be tracked and show a flashing icon, if you have that aura.\nYou can enter multiple IDs comma separated without spaces"],
+        "CUSTOM_AURA_TRACKER",
+        GW.UpdateTrackedAuras
+    )
+    addOptionDropdown(
+        p_player.scroll.scrollchild,
+        L["Aura Tracker Sorting"],
+        nil,
+        "AuraTracker_SortDirection",
+        GW.UpdateTrackedAuras,
+        {"ASC", "DSC"},
+        {L["Ascending"], L["Descending"]}
+    )
+    addOptionDropdown(
+        p_player.scroll.scrollchild,
+        L["Aura Tracker Growth Direction"],
+        nil,
+        "AuraTracker_GrowDirection",
+        GW.UpdateTrackedAuras,
+        {"HORIZONTAL", "VERTICAL"},
+        {L["Horizontal"], L["Vertical"]}
+    )
 
      -- BUFF
      addOptionDropdown(

@@ -121,6 +121,8 @@ mainbar\5sr.lua
 mainbar\mirrortimer.lua
 mainbar\hud.lua
 mainbar\stancebar.lua
+mainbar\customTrackAura.lua
+mainbar\customTrackAura.xml
 mainbar\actionbars2.lua
 mainbar\petbar.lua
 mainbar\aurabar.lua

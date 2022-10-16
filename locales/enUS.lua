@@ -34,6 +34,11 @@ L["Quest Tracker sorting"] = true
 L["Show on Map"] = true
 L["Set TomTom Target"] = true
 
+L["Enter the spell IDs which should be tracked and show a flashing icon, if you have that aura.\nYou can enter multiple IDs comma separated without spaces"] = true
+L["Track custom aura(s)"] = true
+L["Aura Tracker Sorting"] = true
+L["Aura Tracker Growth Direction"] = true
+
 --Strings
 L["Use the GW2 UI improved action bars."] = true
 L["Fade Action Bars"] = true
