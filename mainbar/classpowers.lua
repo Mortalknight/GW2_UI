@@ -134,7 +134,7 @@ local function setManaBar(f)
 
     f:SetWidth(220)
     f:SetHeight(30)
-    f:Hide()
+    --f:Hide()
 
     GwPlayerPowerBarExtra:SetScript("OnEvent", powerMana)
     powerMana(GwPlayerPowerBarExtra, "CLASS_POWER_INIT")
@@ -256,9 +256,9 @@ local function setDruid(f)
     local form = f.gwPlayerForm
     local barType = "none"
 
-    if form == 1 then -- cat
+    if form == CAT_FORM then -- cat
         barType = "combo|little_mana"
-    elseif form == 5 or form == 8 then --bear
+    elseif form == BEAR_FORM or form == 8 then --bear
         barType = "little_mana"
     end
 
@@ -272,6 +272,7 @@ local function setDruid(f)
         setManaBar(f)
         return false
     else
+        f.barType = "none"
         return false
     end
 end
@@ -313,7 +314,7 @@ local function selectType(f)
     f.combopoints:Hide()
     f.runeBar:Hide()
 
-    if f.ourPowerBar then
+    if GwPlayerPowerBarExtra then
         GwPlayerPowerBarExtra:Hide()
     end
     f.gwPower = -1
@@ -421,7 +422,6 @@ local function LoadClassPowers()
         local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
         local lmb = CreateFrame("Frame", "GwPlayerPowerBarExtra", anchorFrame, "GwPlayerPowerBar")
         GW.MixinHideDuringPetAndOverride(lmb)
-        cpf.lmb = lmb
         lmb.candy.spark:ClearAllPoints()
 
         lmb.bar:SetHeight(5)
