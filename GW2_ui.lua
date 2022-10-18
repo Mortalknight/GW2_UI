@@ -544,6 +544,8 @@ local function evPlayerLogin(self)
         return
     end
 
+    GW.DisableBlizzardMovers()
+
     loaded = true
     GW.CheckRole() -- some API's deliver a nil value on init.lua load, we we fill this values also here
 

@@ -76,6 +76,8 @@ settings\layouts.lua
 settings\moveableFrameHandler.lua
 settings\credits.lua
 
+core\EditMode.lua
+
 dataInfo\money.lua
 dataInfo\guild.lua
 dataInfo\bags.lua
