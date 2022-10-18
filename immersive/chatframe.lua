@@ -85,8 +85,7 @@ local CHAT_FRAME_TEXTURES = {
     "TabRight",
     "TabLeft",
     "TabMiddle",
-    "Tab",
-    "TabText"
+    "Tab"
 }
 
 local throttle = {}
@@ -1341,10 +1340,19 @@ local function ChatFrame_SetScript(self, script, func)
     end
 end
 
+local function GetTab(chat)
+	if not chat.tab then
+		chat.tab = _G[format('ChatFrame%sTab', chat:GetID())]
+	end
+
+	return chat.tab
+end
+
 local function styleChatWindow(frame)
     local name = frame:GetName()
-    _G[name .. "TabText"]:SetFont(DAMAGE_TEXT_FONT, 14, "")
-    _G[name .. "TabText"]:SetTextColor(1, 1, 1)
+    local tab = GetTab(frame)
+    tab.Text:SetFont(DAMAGE_TEXT_FONT, 14, "")
+    tab.Text:SetTextColor(1, 1, 1)
 
     if frame.styled then return end
 
@@ -1353,7 +1361,6 @@ local function styleChatWindow(frame)
     local id = frame:GetID()
     local _, fontSize, _, _, _, _, _, _, isDocked = GetChatWindowInfo(id)
 
-    local tab = _G[name .. "Tab"]
     local editbox = _G[name .. "EditBox"]
     local scroll = frame.ScrollBar
     local scrollToBottom = frame.ScrollToBottomButton
@@ -1384,30 +1391,37 @@ local function styleChatWindow(frame)
 
     for _, texName in pairs(tabTexs) do
         if texName == "Selected" then
-            _G[tab:GetName()][texName.."Right"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright")
-            _G[tab:GetName()][texName.."Left"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
-            _G[tab:GetName()][texName.."Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive")
+            if _G[tab:GetName()][texName.."Left"] then
+                _G[tab:GetName()][texName.."Right"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright")
+                _G[tab:GetName()][texName.."Left"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
+                _G[tab:GetName()][texName.."Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive")
 
-            _G[tab:GetName()][texName.."Right"]:SetBlendMode("BLEND")
-            _G[tab:GetName()][texName.."Left"]:SetBlendMode("BLEND")
-            _G[tab:GetName()][texName.."Middle"]:SetBlendMode("BLEND")
+                _G[tab:GetName()][texName.."Right"]:SetBlendMode("BLEND")
+                _G[tab:GetName()][texName.."Left"]:SetBlendMode("BLEND")
+                _G[tab:GetName()][texName.."Middle"]:SetBlendMode("BLEND")
 
-            _G[tab:GetName()][texName.."Right"]:SetVertexColor(1, 1, 1, 1)
-            _G[tab:GetName()][texName.."Left"]:SetVertexColor(1, 1, 1, 1)
-            _G[tab:GetName()][texName.."Middle"]:SetVertexColor(1, 1, 1, 1)
+                _G[tab:GetName()][texName.."Right"]:SetVertexColor(1, 1, 1, 1)
+                _G[tab:GetName()][texName.."Left"]:SetVertexColor(1, 1, 1, 1)
+                _G[tab:GetName()][texName.."Middle"]:SetVertexColor(1, 1, 1, 1)
+
+            end
         else
-            _G[tab:GetName()][texName.."Right"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
-            _G[tab:GetName()][texName.."Left"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
-            _G[tab:GetName()][texName.."Middle"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
+            if _G[tab:GetName()][texName.."Left"] then
+                _G[tab:GetName()][texName.."Right"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
+                _G[tab:GetName()][texName.."Left"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
+                _G[tab:GetName()][texName.."Middle"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
 
-            _G[tab:GetName()][texName.."Left"]:SetTexture()
-            _G[tab:GetName()][texName.."Middle"]:SetTexture()
-            _G[tab:GetName()][texName.."Right"]:SetTexture()
+                _G[tab:GetName()][texName.."Left"]:SetTexture()
+                _G[tab:GetName()][texName.."Middle"]:SetTexture()
+                _G[tab:GetName()][texName.."Right"]:SetTexture()
+            end
         end
 
-        _G[tab:GetName()][texName.."Right"]:SetHeight(28)
-        _G[tab:GetName()][texName.."Left"]:SetHeight(28)
-        _G[tab:GetName()][texName.."Middle"]:SetHeight(28)
+        if _G[tab:GetName()][texName.."Left"] then
+            _G[tab:GetName()][texName.."Right"]:SetHeight(28)
+            _G[tab:GetName()][texName.."Left"]:SetHeight(28)
+            _G[tab:GetName()][texName.."Middle"]:SetHeight(28)
+        end
     end
 
     scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
@@ -1436,9 +1450,8 @@ local function styleChatWindow(frame)
         end
     end)
 
-    tab.text = _G[name.."TabText"]
-    tab.text:SetTextColor(1, 1, 1)
-    hooksecurefunc(tab.text, "SetTextColor", function(tt, r, g, b)
+    tab.Text:SetTextColor(1, 1, 1)
+    hooksecurefunc(tab.Text, "SetTextColor", function(tt, r, g, b)
         local rR, gG, bB = 1, 1, 1
         if r ~= rR or g ~= gG or b ~= bB then
             tt:SetTextColor(rR, gG, bB)
@@ -1455,13 +1468,10 @@ local function styleChatWindow(frame)
     frame:StripTextures(true)
     _G[name .. "ButtonFrame"]:Hide()
 
-    local a, b, c = select(6, editbox:GetRegions())
-    a:Kill()
-    b:Kill()
-    c:Kill()
-    _G[format(editbox:GetName() .. "Left", id)]:Hide()
-    _G[format(editbox:GetName() .. "Mid", id)]:Hide()
-    _G[format(editbox:GetName() .. "Right", id)]:Hide()
+
+    _G[format(editbox:GetName() .. "Left", id)]:Kill()
+    _G[format(editbox:GetName() .. "Mid", id)]:Kill()
+    _G[format(editbox:GetName() .. "Right", id)]:Kill()
     editbox:ClearAllPoints()
     editbox:SetPoint("TOPLEFT", _G[name .. "ButtonFrame"], "BOTTOMLEFT", 0, 0)
     editbox:SetPoint("TOPRIGHT", background, "BOTTOMRIGHT", 0, 0)
@@ -1564,7 +1574,7 @@ local function styleChatWindow(frame)
 
     frame.button:SetScript("OnEnter", function(button) button:SetAlpha(1) end)
     frame.button:SetScript("OnLeave", function(button)
-        if _G[button:GetParent():GetName() .. "TabText"]:IsShown() then
+        if GetTab(button:GetParent()).Text:IsShown() then
             button:SetAlpha(0.35)
         else
             button:SetAlpha(0)
@@ -2158,13 +2168,13 @@ local function LoadChat()
         "FCFTab_UpdateColors",
         function(self)
             self:GetFontString():SetTextColor(1, 1, 1)
-            self.leftSelectedTexture:SetVertexColor(1, 1, 1)
-            self.middleSelectedTexture:SetVertexColor(1, 1, 1)
-            self.rightSelectedTexture:SetVertexColor(1, 1, 1)
+            self.ActiveLeft:SetVertexColor(1, 1, 1)
+            self.ActiveMiddle:SetVertexColor(1, 1, 1)
+            self.ActiveRight:SetVertexColor(1, 1, 1)
 
-            self.leftHighlightTexture:SetVertexColor(1, 1, 1)
-            self.middleHighlightTexture:SetVertexColor(1, 1, 1)
-            self.rightHighlightTexture:SetVertexColor(1, 1, 1)
+            self.HighlightLeft:SetVertexColor(1, 1, 1)
+            self.HighlightMiddle:SetVertexColor(1, 1, 1)
+            self.HighlightRight:SetVertexColor(1, 1, 1)
             self.glow:SetVertexColor(1, 1, 1)
         end
     )
