@@ -4,7 +4,7 @@ local GetSetting = GW.GetSetting
 
 local function updateLootFrameButtons()
     for i = 1, 4 do
-        _G["LootButton" .. i]:SetNormalTexture(nil)
+        _G["LootButton" .. i]:ClearNormalTexture()
         _G["LootButton" .. i].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     end
 end

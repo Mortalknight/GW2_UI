@@ -602,10 +602,10 @@ local function stats_OnEvent(self, event, ...)
     if (IsIn(event, "UNIT_MODEL_CHANGED", "UNIT_NAME_UPDATE") and unit == "player") or event == "PLAYER_ENTERING_WORLD" then
         GwDressingRoom.model:SetUnit("player", false)
         updateUnitData()
-        GW.collectDurability(durabilityFrame)
+        --GW.collectDurability(durabilityFrame)
         return
     elseif IsIn(event, "UPDATE_INVENTORY_DURABILITY", "MERCHANT_SHOW") then
-        GW.collectDurability(durabilityFrame)
+        --GW.collectDurability(durabilityFrame)
         return
     end
 

@@ -549,7 +549,7 @@ GW.LoadCharacter = LoadCharacter
 -- stuff for standard menu functionality
 local function CharacterMenuBlank_OnLoad(self)
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-    self:SetNormalTexture(nil)
+    self:ClearNormalTexture()
     local fontString = self:GetFontString()
     fontString:SetTextColor(1, 1, 1, 1)
     fontString:SetShadowColor(0, 0, 0, 0)
@@ -561,7 +561,7 @@ GW.CharacterMenuBlank_OnLoad = CharacterMenuBlank_OnLoad
 local function CharacterMenuButton_OnLoad(self, odd)
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
     if odd then
-        self:SetNormalTexture(nil)
+        self:ClearNormalTexture()
     else
         self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
     end
@@ -576,7 +576,7 @@ GW.CharacterMenuButton_OnLoad = CharacterMenuButton_OnLoad
 
 local function CharacterMenuButtonBack_OnLoad(self)
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-    self:SetNormalTexture(nil)
+    self:ClearNormalTexture()
     local fontString = self:GetFontString()
     fontString:SetTextColor(1, 1, 1, 1)
     fontString:SetShadowColor(0, 0, 0, 0)

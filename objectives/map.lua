@@ -334,7 +334,7 @@ local function HandleExpansionButton()
             garrison.title = GARRISON_TYPE_8_0_LANDING_PAGE_TITLE;
             garrison.description = GARRISON_TYPE_8_0_LANDING_PAGE_TOOLTIP
         elseif (garrisonType == Enum.GarrisonType.Type_9_0) then
-            segarrisonlf.title = GARRISON_TYPE_9_0_LANDING_PAGE_TITLE;
+            garrison.title = GARRISON_TYPE_9_0_LANDING_PAGE_TITLE;
             garrison.description = GARRISON_TYPE_9_0_LANDING_PAGE_TOOLTIP
         end
     else

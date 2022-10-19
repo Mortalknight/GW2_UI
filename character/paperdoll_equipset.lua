@@ -70,15 +70,14 @@ GW.AddForProfiling("character_equipset", "outfitEquipButton_OnClick", outfitEqui
 
 
 local function GearSetButton_Edit(self)
-    GearManagerDialogPopup:ClearAllPoints()
-    GearManagerDialogPopup:SetParent(GwDressingRoom)
-    GearManagerDialogPopup:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
-    GearManagerDialogPopup:Show()
+    GearManagerPopupFrame:ClearAllPoints()
+    GearManagerPopupFrame:SetParent(GwDressingRoom)
+    GearManagerPopupFrame:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
+    GearManagerPopupFrame:Show()
 
-    GearManagerDialogPopup.isEdit = true
-    GearManagerDialogPopup.setID = self.setID
-    GearManagerDialogPopup.origName = self.setName
-    RecalculateGearManagerDialogPopup(self.setName, self.icon:GetTexture())
+    GearManagerPopupFrame.mode = IconSelectorPopupFrameModes.Edit
+    PaperDollFrame.EquipmentManagerPane.selectedSetID = self.setID
+    GearManagerPopupFrame:Update()
 end
 
 local function DropDownOutfit_OnLoad(self)
@@ -263,7 +262,7 @@ drawItemSetList = function()
                 frame:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
                 textureC = 2
             else
-                frame:SetNormalTexture(nil)
+                frame:ClearNormalTexture()
                 textureC = 1
             end
             if isEquipped then
@@ -314,16 +313,22 @@ end
 local function LoadPDEquipset(fmMenu)
     local fmGPDO = CreateFrame("Frame", "GwPaperDollOutfits", GwPaperDoll, "GwPaperDollOutfits")
     local fnGPDO_newOutfit_OnClick = function(self)
-        self.oldParent = GearManagerDialogPopup:GetParent()
-        GearManagerDialogPopup:SetParent(GwDressingRoom)
-        --GearManagerDialogPopup:GetParent():ClearAllPoints()
-        GearManagerDialogPopup:ClearAllPoints()
-        GearManagerDialogPopup:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
-        PaperDollEquipmentManagerPane.selectedSetID = nil
-        GearManagerDialogPopup:Show()
-        PaperDollFrame_ClearIgnoredSlots()
-        PaperDollFrame_IgnoreSlot(4)
-        PaperDollFrame_IgnoreSlot(19)
+        self.oldParent = GearManagerPopupFrame:GetParent()
+        GearManagerPopupFrame:SetParent(GwDressingRoom)
+        GearManagerPopupFrame:ClearAllPoints()
+        GearManagerPopupFrame:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
+
+        GearManagerPopupFrame.mode = IconSelectorPopupFrameModes.New
+        GearManagerPopupFrame.iconDataProvider = CreateAndInitFromMixin(IconDataProviderMixin, IconDataProviderExtraType.Equipment)
+        GearManagerPopupFrame:Show()
+        PaperDollFrame.EquipmentManagerPane.selectedSetID = nil
+
+        --PaperDollFrame_ClearIgnoredSlots();
+		--PaperDollEquipmentManagerPane_Update()
+
+        -- Ignore shirt and tabard by default
+		PaperDollFrame_IgnoreSlot(4);
+		PaperDollFrame_IgnoreSlot(19)
     end
     fmGPDO.newOutfit:SetText(TRANSMOG_OUTFIT_NEW)
     fmGPDO.newOutfit:SetScript("OnClick", fnGPDO_newOutfit_OnClick)
@@ -338,15 +343,12 @@ local function LoadPDEquipset(fmMenu)
     )
     drawItemSetList()
 
-    hooksecurefunc("GearManagerDialogPopupOkay_OnClick", drawItemSetList)
-    GearManagerDialogPopup:SetScript(
+    hooksecurefunc(GearManagerPopupFrame, "OkayButton_OnClick", drawItemSetList)
+    GearManagerPopupFrame:SetScript(
         "OnShow",
         function(self)
             PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
-            self.name = nil
-            self.isEdit = false
-            RecalculateGearManagerDialogPopup()
-            RefreshEquipmentSetIconInfo()
+            --self:Update()
         end
     )
 end

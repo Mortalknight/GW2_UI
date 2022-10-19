@@ -366,7 +366,7 @@ GW.AddForProfiling("currency", "raidInfoSetup", raidInfoSetup)
 local function menuItem_OnClick(self)
     local menuItems = self:GetParent().items
     for _, v in pairs(menuItems) do
-        v:SetNormalTexture(nil)
+        v:ClearNormalTexture()
         v.ToggleMe:Hide()
     end
     self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")

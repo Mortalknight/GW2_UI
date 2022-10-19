@@ -129,7 +129,7 @@ local function LoadPaperDoll(tabContainer)
     CharacterMenuButton_OnLoad(fmMenu.outfitsMenu, true)
     CharacterMenuButton_OnLoad(fmMenu.titlesMenu, false)
 
-    SkinGearManagerDialogPopup()
+    --SkinGearManagerDialogPopup()
 
     -- pull corruption thingy from default paperdoll
     if (CharacterStatsPane and CharacterStatsPane.ItemLevelFrame) then
