@@ -35,7 +35,7 @@ windowsList[2] = {
     ["TooltipText"] = TALENTS_BUTTON,
     ["Bindings"] = {
         ["TOGGLESPELLBOOK"] = "SpellBook",
-        ["TOGGLETALENTS"] = "Talents",
+
         ["TOGGLEPETBOOK"] = "PetBook"
     },
     ["OnClick"] = [=[
@@ -116,9 +116,6 @@ local charSecure_OnClick =
     elseif button == "PetBook" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "petbook")
-    elseif button == "Talents" then
-        f:SetAttribute("keytoggle", true)
-        f:SetAttribute("windowpanelopen", "talents")
     elseif button == "Professions" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "professions")

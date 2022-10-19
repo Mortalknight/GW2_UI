@@ -4,112 +4,9 @@ local UpdatePvPTab = GW.UpdatePvPTab
 local CreatePvPTab = GW.CreatePvPTab
 local IsIn = GW.IsIn
 
-local maxTalentRows = 7
-local talentsPerRow = 3
+local maxTalentRows = 10
+local talentsPerRow = 10
 
-local TAXIROUTE_LINEFACTOR = 32 / 30 -- Multiplying factor for texture coordinates
-local TAXIROUTE_LINEFACTOR_2 = TAXIROUTE_LINEFACTOR / 2 -- Half o that
-
--- T        - Texture
--- C        - Canvas Frame (for anchoring)
--- sx,sy    - Coordinate of start of line
--- ex,ey    - Coordinate of end of line
--- w        - Width of line
--- relPoint - Relative point on canvas to interpret coords (Default BOTTOMLEFT)
-
-local function drawRouteLine(T, C, sx, sy, ex, ey, w, relPoint)
-    if (not relPoint) then
-        relPoint = "BOTTOMLEFT"
-    end
-
-    -- Determine dimensions and center point of line
-    local dx, dy = ex - sx, ey - sy
-    local cx, cy = (sx + ex) / 2, (sy + ey) / 2
-
-    -- Normalize direction if necessary
-    if (dx < 0) then
-        dx, dy = -dx, -dy
-    end
-
-    -- Calculate actual length of line
-    local l = sqrt((dx * dx) + (dy * dy))
-
-    -- Quick escape if it's zero length
-    if (l == 0) then
-        T:SetTexCoord(0, 0, 0, 0, 0, 0, 0, 0)
-        T:SetPoint("BOTTOMLEFT", C, relPoint, cx, cy)
-        T:SetPoint("TOPRIGHT", C, relPoint, cx, cy)
-        return
-    end
-
-    -- Sin and Cosine of rotation, and combination (for later)
-    local s, c = -dy / l, dx / l
-    local sc = s * c
-
-    -- Calculate bounding box size and texture coordinates
-    local Bwid, Bhgt, BLx, BLy, TLx, TLy, TRx, TRy, BRx, BRy
-    if (dy >= 0) then
-        Bwid = ((l * c) - (w * s)) * TAXIROUTE_LINEFACTOR_2
-        Bhgt = ((w * c) - (l * s)) * TAXIROUTE_LINEFACTOR_2
-        BLx, BLy, BRy = (w / l) * sc, s * s, (l / w) * sc
-        BRx, TLx, TLy, TRx = 1 - BLy, BLy, 1 - BRy, 1 - BLx
-        TRy = BRx
-    else
-        Bwid = ((l * c) + (w * s)) * TAXIROUTE_LINEFACTOR_2
-        Bhgt = ((w * c) + (l * s)) * TAXIROUTE_LINEFACTOR_2
-        BLx, BLy, BRx = s * s, -(l / w) * sc, 1 + (w / l) * sc
-        BRy, TLx, TLy, TRy = BLx, 1 - BRx, 1 - BLx, 1 - BLy
-        TRx = TLy
-    end
-
-    -- Set texture coordinates and anchors
-    T:ClearAllPoints()
-    T:SetTexCoord(TLx, TLy, BLx, BLy, TRx, TRy, BRx, BRy)
-    T:SetPoint("BOTTOMLEFT", C, relPoint, cx - Bwid, cy - Bhgt)
-    T:SetPoint("TOPRIGHT", C, relPoint, cx + Bwid, cy + Bhgt)
-end
-GW.AddForProfiling("talents", "drawRouteLine", drawRouteLine)
-
-local function hookTalentButton(self, container, row, index)
-    --  self:SetAttribute('macrotext1', '/click PlayerTalentFrameTalentsTalentRow'..row..'Talent'..index)
-    self:RegisterForClicks("AnyUp")
-    --   self:SetAttribute("type", "macro");
-    self:SetPoint("TOPLEFT", container, "TOPLEFT", 110 + ((65 * row) - (38)), -10 + ((-42 * index) + 40))
-
-    self.mask = UIParent:CreateMaskTexture()
-    self.mask:SetPoint("CENTER", self, "CENTER", 0, 0)
-
-    self.mask:SetTexture(
-        "Interface/AddOns/GW2_UI/textures/talents/passive_border",
-        "CLAMPTOBLACKADDITIVE",
-        "CLAMPTOBLACKADDITIVE"
-    )
-    self.mask:SetSize(34, 34)
-end
-GW.AddForProfiling("talents", "hookTalentButton", hookTalentButton)
-
-local function setLineRotation(self, from, to)
-    local y1 = 0
-    local y2 = 0
-
-    if from == 1 then
-        y1 = -18
-    elseif from == 2 then
-        y1 = -60
-    elseif from == 3 then
-        y1 = -103
-    end
-    if to == 1 then
-        y2 = -18
-    elseif to == 2 then
-        y2 = -60
-    elseif to == 3 then
-        y2 = -103
-    end
-
-    drawRouteLine(self.line, self, 10, y1, 56, y2, 4, "TOPLEFT")
-end
-GW.AddForProfiling("talents", "setLineRotation", setLineRotation)
 
 local function setSpecTabIconAndTooltip(tab)
     -- update spec-specific skill tab tooltip and icon
@@ -132,375 +29,6 @@ local function setSpecTabIconAndTooltip(tab)
         end
     end
 end
-
-local function updateActiveSpec()
-    if InCombatLockdown() then
-        return
-    end
-
-    setSpecTabIconAndTooltip(GwSpellbookMenu.tab3)
-
-    for i = 1, GetNumSpecializations() do
-        local container = _G["GwSpecFrame" .. i]
-
-        container.specIndex = i
-        if i == GW.myspec then
-            container.active = true
-            container.info:Hide()
-            container.activeSpecTitle:Show()
-            container.background:SetDesaturated(false)
-        else
-            container.active = false
-            container.info:Show()
-            container.activeSpecTitle:Hide()
-
-            container.background:SetDesaturated(true)
-        end
-        local last = 0
-        local lastIndex = 2
-        for row = 1, maxTalentRows do
-            local anySelected = false
-            local allAvalible = false
-
-            local sel = nil
-            for index = 1, talentsPerRow do
-                local button = _G["GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index]
-                local talentID, _, texture, selected, available, spellid, _, _, _, _, known = GetTalentInfo(row, index, 1, false, "player")
-
-                if not available then
-                    allAvalible = false
-                end
-                if not selected then
-                    anySelected = true
-                end
-
-                button.spellId = spellid
-                button.icon:SetTexture(texture)
-
-                button.talentID = talentID
-                button.available = available
-                button.known = known
-
-                local ispassive = IsPassiveSpell(spellid)
-                button:EnableMouse(true)
-                if i ~= GW.myspec then
-                    button:EnableMouse(false)
-                end
-
-                if ispassive then
-                    button.legendaryHighlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight")
-                    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_highlight")
-                    button.icon:AddMaskTexture(button.mask)
-                    button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/passive_outline")
-                else
-                    button.highlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight")
-                    button.legendaryHighlight:SetTexture("Interface/AddOns/GW2_UI/textures/talents/active_highlight")
-                    button.icon:RemoveMaskTexture(button.mask)
-                    button.outline:SetTexture("Interface/AddOns/GW2_UI/textures/talents/background_border")
-                end
-
-                if i == GW.myspec and (selected or available) and not known then
-                    button.highlight:Show()
-                    button.legendaryHighlight:Hide()
-
-                    if lastIndex ~= -1 then
-                        _G["GwTalentLine" .. i .. "-" .. last .. "-" .. row]:Show()
-                        setLineRotation(_G["GwTalentLine" .. i .. "-" .. last .. "-" .. row], lastIndex, index)
-                    else
-                        _G["GwTalentLine" .. i .. "-" .. last .. "-" .. row]:Hide()
-                    end
-
-                    if selected then
-                        sel = true
-                        lastIndex = index
-                    elseif index == talentsPerRow and not sel then
-                        lastIndex = -1
-                    end
-                else
-                    button.legendaryHighlight:Hide()
-                    if known then
-                        button.legendaryHighlight:Show()
-                    end
-                    button.highlight:Hide()
-                end
-
-                if i == GW.myspec and (selected or available or known) then
-                    button.icon:SetDesaturated(false)
-                    button.icon:SetVertexColor(1, 1, 1, 1)
-                    button:SetAlpha(1)
-                elseif i ~= GW.myspec then
-                    button.icon:SetDesaturated(true)
-                    button.icon:SetVertexColor(1, 1, 1, 0.1)
-                    button:SetAlpha(0.5)
-                else
-                    button.icon:SetDesaturated(true)
-                    button.icon:SetVertexColor(1, 1, 1, 0.4)
-                end
-            end
-
-            if i == GW.myspec and allAvalible == true and anySelected == false then
-                for index = 1, talentsPerRow do
-                    local button = _G["GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index]
-                    button.icon:SetDesaturated(false)
-                    button.icon:SetVertexColor(1, 1, 1, 1)
-                    button:SetAlpha(1)
-                    button.highlight:Hide()
-                end
-            end
-
-            if not sel then
-                _G["GwTalentLine" .. i .. "-" .. last .. "-" .. row]:Hide()
-            end
-
-            last = row
-        end
-    end
-
-    local hunterPetSpecId = GetSpecialization(false, true)
-    local hunterPetContainerId = GetNumSpecializations() + 1
-    if GW.myclass == "HUNTER" and hunterPetSpecId then
-        local container = _G["GwSpecFrame" .. hunterPetContainerId]
-        local _, name, description, icon, role = GetSpecializationInfo(hunterPetSpecId, false, true)
-
-        container.roleIcon:ClearAllPoints()
-        if role == "TANK" then
-            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank")
-            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -6, -6)
-        elseif role == "HEALER" then
-            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer")
-            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -8, -5)
-        elseif role == "DAMAGER" then
-            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
-            container.roleIcon:SetSize(30, 30)
-            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -3, -10)
-        end
-
-        container.icon:SetTexture(icon)
-        container.info.specTitle:SetText(PET_SPECIALIZATION .. ": " .. name)
-        container.info.specDesc:SetText(description)
-
-        _G["GwSpecFrame" .. hunterPetContainerId]:Show()
-    elseif GW.myclass == "HUNTER" and _G["GwSpecFrame" .. hunterPetContainerId] then
-        _G["GwSpecFrame" .. hunterPetContainerId]:Hide()
-    end
-end
-GW.AddForProfiling("talents", "updateActiveSpec", updateActiveSpec)
-
-local function loadTalents()
-    local txR, txT, txH, txMH
-    txR = 588 / 1024
-    txH = 140
-    txMH = 512
-    local specs = GetNumSpecializations()
-    if specs > 3 then
-        txMH = 1024
-    end
-
-    local fnContainer_OnUpdate = function(self, elapsed)
-        if MouseIsOver(self) then
-            local r, _, _, _ = self.background:GetVertexColor()
-            self.background:SetVertexColor(r + (1 * elapsed), r + (1 * elapsed), r + (1 * elapsed), r + (1 * elapsed))
-            return
-        end
-        self.background:SetVertexColor(0.7, 0.7, 0.7, 0.7)
-    end
-    local fnContainer_OnShow = function(self)
-        self:SetScript("OnUpdate", fnContainer_OnUpdate)
-    end
-    local fnContainer_OnHide = function(self)
-        self:SetScript("OnUpdate", nil)
-    end
-    local fnContainer_OnClick = function(self)
-        if not self.active and C_SpecializationInfo.CanPlayerUseTalentSpecUI() then
-            SetSpecialization(self.specIndex)
-        end
-    end
-    for i = 1, GetNumSpecializations() do
-        local container = CreateFrame("Button", "GwSpecFrame" .. i, GwSpecContainerFrame, "GwSpecFrame")
-
-        container:RegisterForClicks("AnyUp")
-        container.icon.mask = UIParent:CreateMaskTexture()
-        container.icon.mask:SetPoint("CENTER", container.icon, "CENTER", 0, 0)
-        container.icon.mask:SetTexture(
-            "Interface/AddOns/GW2_UI/textures/talents/passive_border",
-            "CLAMPTOBLACKADDITIVE",
-            "CLAMPTOBLACKADDITIVE"
-        )
-        container.icon.mask:SetSize(80, 80)
-        container.icon:AddMaskTexture(container.icon.mask)
-        container:SetScript("OnEnter", nil)
-        container:SetScript("OnLeave", nil)
-        container:SetScript("OnUpdate", nil)
-        container:SetScript("OnShow", fnContainer_OnShow)
-        container:SetScript("OnHide", fnContainer_OnHide)
-        container:SetScript("OnClick", fnContainer_OnClick)
-        container:SetPoint("TOPLEFT", GwSpecContainerFrame, "TOPLEFT", 10, (-140 * i) + 98)
-        container.spec = i
-
-        local _, name, description, icon, role = GetSpecializationInfo(i)
-
-        container.roleIcon:ClearAllPoints()
-        if role == "TANK" then
-            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank")
-            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -6, -6)
-        elseif role == "HEALER" then
-            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer")
-            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -8, -5)
-        elseif role == "DAMAGER" then
-            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
-            container.roleIcon:SetSize(30, 30)
-            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -3, -10)
-        end
-
-        container.activeSpecTitle:SetFont(DAMAGE_TEXT_FONT, 13)
-        container.activeSpecTitle:SetTextColor(1, 1, 1, 1)
-        container.activeSpecTitle:SetShadowColor(0, 0, 0, 1)
-        container.activeSpecTitle:SetShadowOffset(1, -1)
-        container.activeSpecTitle:SetText(name)
-        container.icon:SetTexture(icon)
-        container.info.specTitle:SetFont(DAMAGE_TEXT_FONT, 16)
-        container.info.specTitle:SetTextColor(1, 1, 1, 1)
-        container.info.specTitle:SetShadowColor(0, 0, 0, 1)
-        container.info.specTitle:SetShadowOffset(1, -1)
-        container.info.specDesc:SetFont(UNIT_NAME_FONT, 14)
-        container.info.specDesc:SetTextColor(0.8, 0.8, 0.8, 1)
-        container.info.specDesc:SetShadowColor(0, 0, 0, 1)
-        container.info.specDesc:SetShadowOffset(1, -1)
-        container.info.specTitle:SetText(name)
-        container.info.specDesc:SetText(description)
-        container.iconHelperButton:SetScript("OnEnter", function(self)
-            if not self:GetParent().active then
-                return
-            end
-            GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
-            GameTooltip:ClearLines()
-            GameTooltip:AddLine(self:GetParent().info.specTitle:GetText(), 1, 1, 1)
-            GameTooltip:AddLine(" ")
-            GameTooltip:AddLine(self:GetParent().info.specDesc:GetText(), 1, 1, 1, true)
-            GameTooltip:Show()
-        end)
-        container.iconHelperButton:SetScript("OnLeave", GameTooltip_Hide)
-
-        txT = (i - 1) * txH
-        container.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/art/" .. GW.myClassID)
-        container.background:SetTexCoord(0, txR, txT / txMH, (txT + txH) / txMH)
-
-        local last = 0
-
-        local fnTalentButton_OnEnter = function(self)
-            if self:GetParent().active ~= true then
-                return
-            end
-            GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
-            GameTooltip:ClearLines()
-            GameTooltip:SetTalent(self.talentID)
-            GameTooltip:Show()
-        end
-        local fnTalentButton_OnDragStart = function(self)
-            if InCombatLockdown() or self.isPassive then
-                return
-            end
-            PickupSpell(self.spellId)
-        end
-        local fnTalentButton_OnClick = function(self)
-            if IsModifiedClick("CHATLINK") then
-                local link = GetSpellLink(self.spellId)
-                ChatEdit_InsertLink(link)
-                return
-            end
-            return LearnTalent(self.talentID)
-        end
-        for row = 1, maxTalentRows do
-            local fistOnRow
-            local line = CreateFrame("Frame", "GwTalentLine" .. i .. "-" .. last .. "-" .. row, container, "GwTalentLine")
-
-            line:SetPoint("TOPLEFT", container, "TOPLEFT", 110 + ((65 * row) - (88)), -10)
-
-            last = row
-
-            for index = 1, talentsPerRow do
-                local talentButton =
-                    CreateFrame(
-                    "Button",
-                    "GwSpecFrameSpec" .. i .. "Teir" .. row .. "index" .. index,
-                    container,
-                    "GwTalentButton"
-                )
-                talentButton:SetScript("OnEnter", fnTalentButton_OnEnter)
-                talentButton:SetScript("OnLeave", GameTooltip_Hide)
-                talentButton:SetScript("OnDragStart", fnTalentButton_OnDragStart)
-                talentButton:SetScript("OnClick", fnTalentButton_OnClick)
-
-                talentButton:RegisterForDrag("LeftButton")
-
-                hookTalentButton(talentButton, container, row, index)
-
-                if fistOnRow == nil then
-                    fistOnRow = talentButton
-                end
-            end
-            if i == 1 then
-                local numberDisplay = CreateFrame("Frame", "GwTalentsLevelLabel" .. row, GwSpecContainerFrame, "GwTalentsLevelLabel")
-                numberDisplay.title:SetFont(DAMAGE_TEXT_FONT, 14)
-                numberDisplay.title:SetTextColor(0.7, 0.7, 0.7, 1)
-                numberDisplay.title:SetShadowColor(0, 0, 0, 0)
-                numberDisplay.title:SetShadowOffset(1, -1)
-                numberDisplay:SetPoint("BOTTOM", fistOnRow, "TOP", 0, 13)
-                numberDisplay.title:SetText(select(3, GetTalentTierInfo(row, GetActiveSpecGroup())))
-            end
-        end
-    end
-    updateActiveSpec()
-
-    local hunterPetContainerId = GetNumSpecializations() + 1
-
-    if GW.myclass == "HUNTER" then
-        local container = CreateFrame("Button", "GwSpecFrame" .. hunterPetContainerId, GwSpecContainerFrame, "GwSpecFrame")
-
-        container.icon.mask = UIParent:CreateMaskTexture()
-        container.icon.mask:SetPoint("CENTER", container.icon, "CENTER", 0, 0)
-        container.icon.mask:SetTexture(
-            "Interface/AddOns/GW2_UI/textures/talents/passive_border",
-            "CLAMPTOBLACKADDITIVE",
-            "CLAMPTOBLACKADDITIVE"
-        )
-        container.icon.mask:SetSize(80, 80)
-        container.icon:AddMaskTexture(container.icon.mask)
-        container:SetScript("OnEnter", nil)
-        container:SetScript("OnLeave", nil)
-        container:SetScript("OnUpdate", nil)
-        container:SetScript("OnShow", fnContainer_OnShow)
-        container:SetScript("OnHide", fnContainer_OnHide)
-        container:SetPoint("TOPLEFT", GwSpecContainerFrame, "TOPLEFT", 10, (-140 * hunterPetContainerId) + 98)
-        container.spec = hunterPetContainerId
-
-        container.info.specTitle:SetFont(DAMAGE_TEXT_FONT, 16)
-        container.info.specTitle:SetTextColor(1, 1, 1, 1)
-        container.info.specTitle:SetShadowColor(0, 0, 0, 1)
-        container.info.specTitle:SetShadowOffset(1, -1)
-        container.info.specDesc:SetFont(UNIT_NAME_FONT, 14)
-        container.info.specDesc:SetTextColor(0.8, 0.8, 0.8, 1)
-        container.info.specDesc:SetShadowColor(0, 0, 0, 1)
-        container.info.specDesc:SetShadowOffset(1, -1)
-        container.iconHelperButton:SetScript("OnEnter", function(self)
-            if not self:GetParent().active then
-                return
-            end
-            GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
-            GameTooltip:ClearLines()
-            GameTooltip:AddLine(self:GetParent().info.specTitle:GetText(), 1, 1, 1)
-            GameTooltip:AddLine(" ")
-            GameTooltip:AddLine(self:GetParent().info.specDesc:GetText(), 1, 1, 1, true)
-            GameTooltip:Show()
-        end)
-        container.iconHelperButton:SetScript("OnLeave", GameTooltip_Hide)
-
-        txT = (3 - 1) * txH
-        container.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/art/" .. GW.myClassID)
-        container.background:SetTexCoord(0, txR, txT / txMH, (txT + txH) / txMH)
-    end
-end
-GW.AddForProfiling("talents", "loadTalents", loadTalents)
 
 local function spellButton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
@@ -934,7 +462,6 @@ GW.AddForProfiling("talents", "queueUpdateTab", queueUpdateTab)
 
 local function talentFrame_OnUpdate(self)
     self:SetScript("OnUpdate", nil)
-    updateActiveSpec()
     self.queuedUpdateActiveSpec = false
 end
 GW.AddForProfiling("talents", "talentFrame_OnUpdate", talentFrame_OnUpdate)
@@ -1075,15 +602,6 @@ local function toggleSpellBook(bookType)
 end
 GW.AddForProfiling("talents", "toggleSpellBook", toggleSpellBook)
 
-local function toggleTalentFrame()
-    if InCombatLockdown() then
-        return
-    end
-    GwCharacterWindow:SetAttribute("keytoggle", true)
-    GwCharacterWindow:SetAttribute("windowpanelopen", "talents")
-end
-GW.AddForProfiling("talents", "toggleTalentFrame", toggleTalentFrame)
-
 local function spellBook_OnEvent(self, event, ...)
     if IsIn(event, "SPELLS_CHANGED", "LEARNED_SPELL_IN_TAB", "PLAYER_GUILD_UPDATE", "PLAYER_SPECIALIZATION_CHANGED", "PLAYER_LEVEL_UP", "") then
         if not GwTalentFrame:IsShown() or not GW.inWorld then
@@ -1181,35 +699,7 @@ end
 GW.AddForProfiling("talents", "createRegTab", createRegTab)
 
 local function LoadTalents(tabContainer)
-    local fmGTF = CreateFrame("Frame", "GwTalentFrame", tabContainer, "SecureHandlerStateTemplate,GwTalentFrame")
-    fmGTF.title:SetFont(DAMAGE_TEXT_FONT, 14)
-    fmGTF.title:SetTextColor(1, 1, 1, 1)
-    fmGTF.title:SetShadowColor(0, 0, 0, 1)
-    fmGTF.title:SetShadowOffset(1, -1)
-    fmGTF.title:SetText(SPECIALIZATION)
-    fmGTF:SetScript(
-        "OnEvent",
-        function(self)
-            if not self:IsShown() or not GW.inWorld then
-                return
-            end
-            queueUpdateActiveSpec(self)
-        end
-    )
-    fmGTF:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-    fmGTF:RegisterEvent("PET_SPECIALIZATION_CHANGED")
-    fmGTF:RegisterEvent("PLAYER_LEARN_PVP_TALENT_FAILED")
-    fmGTF:RegisterEvent("PLAYER_LEARN_TALENT_FAILED")
-    fmGTF:RegisterEvent("PLAYER_PVP_TALENT_UPDATE")
-    fmGTF:RegisterEvent("PLAYER_TALENT_UPDATE")
-    fmGTF:RegisterEvent("SPEC_INVOLUNTARILY_CHANGED")
-    fmGTF:RegisterEvent("TALENTS_INVOLUNTARILY_RESET")
-    fmGTF:RegisterEvent("UNIT_MODEL_CHANGED")
-    fmGTF:RegisterEvent("UNIT_LEVEL")
-
-    CreateFrame("Frame", "GwSpecContainerFrame", GwTalentFrame)
-    GwSpecContainerFrame:SetPoint("TOPLEFT", GwTalentFrame, "TOPLEFT")
-    GwSpecContainerFrame:SetPoint("BOTTOMRIGHT", GwTalentFrame, "BOTTOMRIGHT")
+    CreateFrame("Frame", "GwTalentFrame", tabContainer, "SecureHandlerStateTemplate,GwTalentFrame")
 
     local fmSpellbook = CreateFrame("Frame", "GwSpellbookMenu", GwTalentFrame, "GwSpellbookMenu")
     -- TODO: change this to do all attribute stuff on container instead of menu
@@ -1240,9 +730,9 @@ local function LoadTalents(tabContainer)
 
     fmSpellbook.tabContainers[2]:Show()
 
-    loadTalents()
     updateTab(fmSpellbook)
 
+    fmSpellbook.tab1:RegisterForClicks("AnyUp")
     fmSpellbook.tab1:SetFrameRef("GwSpellbookMenu", fmSpellbook)
     fmSpellbook.tab1:SetAttribute(
         "_onclick",
@@ -1250,6 +740,7 @@ local function LoadTalents(tabContainer)
         self:GetFrameRef('GwSpellbookMenu'):SetAttribute('tabopen',1)
         ]=]
     )
+    fmSpellbook.tab2:RegisterForClicks("AnyUp")
     fmSpellbook.tab2:SetFrameRef("GwSpellbookMenu", fmSpellbook)
     fmSpellbook.tab2:SetAttribute(
         "_onclick",
@@ -1257,6 +748,7 @@ local function LoadTalents(tabContainer)
         self:GetFrameRef('GwSpellbookMenu'):SetAttribute('tabopen',2)
         ]=]
     )
+    fmSpellbook.tab3:RegisterForClicks("AnyUp")
     fmSpellbook.tab3:SetFrameRef("GwSpellbookMenu", fmSpellbook)
     fmSpellbook.tab3:SetAttribute(
         "_onclick",
@@ -1264,6 +756,7 @@ local function LoadTalents(tabContainer)
         self:GetFrameRef('GwSpellbookMenu'):SetAttribute('tabopen',3)
         ]=]
     )
+    fmSpellbook.tab4:RegisterForClicks("AnyUp")
     fmSpellbook.tab4:SetFrameRef("GwSpellbookMenu", fmSpellbook)
     fmSpellbook.tab4:SetAttribute(
         "_onclick",
@@ -1271,6 +764,7 @@ local function LoadTalents(tabContainer)
         self:GetFrameRef('GwSpellbookMenu'):SetAttribute('tabopen',4)
         ]=]
     )
+    fmSpellbook.tab5:RegisterForClicks("AnyUp")
     fmSpellbook.tab5:SetFrameRef("GwSpellbookMenu", fmSpellbook)
     fmSpellbook.tab5:SetAttribute(
         "_onclick",
@@ -1284,7 +778,6 @@ local function LoadTalents(tabContainer)
     fmSpellbook:SetFrameRef("GwspellbookTab3", fmSpellbook.tab3)
     fmSpellbook:SetFrameRef("GwspellbookTab4", fmSpellbook.tab4)
     fmSpellbook:SetFrameRef("GwspellbookTab5", fmSpellbook.tab5)
-    fmSpellbook:SetFrameRef("GwSpecContainerFrame", GwSpecContainerFrame)
     fmSpellbook.UnselectAllTabs = function()
         fmSpellbook.tab1.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
         fmSpellbook.tab2.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/spellbooktab_bg_inactive")
@@ -1311,7 +804,7 @@ local function LoadTalents(tabContainer)
         "_onattributechanged",
         [=[
             if name ~= 'tabopen' then return end
-            
+
             self:GetFrameRef('GwSpellbookContainerTab1'):Hide()
             self:GetFrameRef('GwSpellbookContainerTab2'):Hide()
             self:GetFrameRef('GwSpellbookContainerTab3'):Hide()
@@ -1373,12 +866,10 @@ local function LoadTalents(tabContainer)
                 return
             end
             updateTab(fmSpellbook)
-            updateActiveSpec()
         end
     )
 
     -- TODO: not sure if we want these or not
-    hooksecurefunc("ToggleTalentFrame", toggleTalentFrame)
     hooksecurefunc("ToggleSpellBook", toggleSpellBook)
 
     return GwTalentFrame
