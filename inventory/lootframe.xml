@@ -7,14 +7,7 @@
             <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT"/>
         </Anchors>
         <Layers>
-            <Layer level="BACKGROUND" textureSubLevel="1">
-                <Texture parentKey="BG" file="Interface/AddOns/GW2_UI/textures/bag/lootframebg">
-                    <Size x="256" y="256"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-11" y="-30" />
-                    </Anchors>
-                </Texture>
-            </Layer>
+
             <Layer level="BACKGROUND" textureSubLevel="2">
                 <Texture parentKey="BGLEFT" file="Interface/AddOns/GW2_UI/textures/bag/bagheader">
                     <Size x="170" y="41"></Size>

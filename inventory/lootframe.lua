@@ -2,37 +2,59 @@ local _, GW = ...
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local GetSetting = GW.GetSetting
 
-local function updateLootFrameButtons()
-    for i = 1, 4 do
-        _G["LootButton" .. i]:ClearNormalTexture()
-        _G["LootButton" .. i].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+local function updateLootFrameButtons(self)
+    for i = 1, self.ScrollTarget:GetNumChildren() do
+        local button = select(i, self.ScrollTarget:GetChildren())
+        local item = button.Item
+        local Icon = item.icon:GetTexture()
+        item:StripTextures()
+        item.icon:SetTexture(Icon)
+
+        GW.HandleIcon(item.icon, true, GW.constBackdropFrameColorBorder)
+        GW.HandleIconBorder(item.IconBorder, item.icon.backdrop)
+
+        button.BorderFrame:SetAlpha(0)
+        button.IconQuestTexture:SetAlpha(0)
+
+        item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+
+        button.NameFrame:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+        button.NameFrame:SetHeight(button:GetHeight())
+        button.NameFrame:SetPoint("LEFT", button, "RIGHT", 0, 0)
+
+        button.Text:SetFont(UNIT_NAME_FONT, 12)
     end
 end
 
 local function LoadLootFrameSkin()
     if not GetSetting("LOOTFRAME_SKIN_ENABLED") then return end
 
-    _G.LootFrameBg:Hide()
-    _G.LootFrameBg:SetPoint("TOPLEFT", 0, -64)
-    _G.LootFrameBg:SetWidth(170)
-    _G.LootFrame.TitleBg:Hide()
-    _G.LootFrame.TopTileStreaks:Hide()
-    _G.LootFramePortrait:Hide()
-    _G.LootFramePortraitOverlay:Hide()
-    _G.LootFrameInset:Hide()
-    _G.LootFrame.NineSlice:Hide()
+    LootFrame:StripTextures()
+    LootFrameBg:Hide()
+    LootFrameTitleText:Hide()
 
-    local r = {_G.LootFrame:GetRegions()}
-    for _,c in pairs(r) do
-        if c:GetObjectType() == "FontString" then
-            c:Hide()
-        end
-    end
-
-    local GwLootFrameTitle = CreateFrame("Frame", nil, _G.LootFrame, "GwLootFrameTitleTemp")
-    GwLootFrameTitle:SetPoint("BOTTOMLEFT", _G.LootFrameBg, "TOPLEFT")
+    local GwLootFrameTitle = CreateFrame("Frame", "asdasda", LootFrame, "GwLootFrameTitleTemp")
+    GwLootFrameTitle:SetPoint("BOTTOMLEFT", LootFrame, "TOPLEFT", 0, -25)
     GwLootFrameTitle.headerString:SetFont(DAMAGE_TEXT_FONT, 14)
     GwLootFrameTitle.headerString:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+
+    local w, h = LootFrame:GetSize()
+    GwLootFrameTitle:SetWidth(w)
+    GwLootFrameTitle.BGLEFT:SetWidth(w)
+    GwLootFrameTitle.BGRIGHT:SetWidth(w)
+    GwLootFrameTitle.headerString:SetWidth(w)
+    --GwLootFrameTitle.BG:SetSize(w + 100, h)
+
+    if not LootFrame.SetBackdrop then
+        Mixin(LootFrame, BackdropTemplateMixin)
+        LootFrame:HookScript("OnSizeChanged", LootFrame.OnBackdropSizeChanged)
+    end
+
+    LootFrame:SetBackdrop({
+        edgeFile = "",
+        bgFile = "Interface/AddOns/GW2_UI/textures/bag/lootframebg",
+        edgeSize = 1
+    })
 
     if GetCVar("lootUnderMouse") == "0" then
         local pos = GetSetting("LOOTFRAME_POS")
@@ -44,35 +66,13 @@ local function LoadLootFrameSkin()
         end)
     end
 
-    _G.LootFrameCloseButton:ClearAllPoints()
-    _G.LootFrameCloseButton:SetPoint("RIGHT", GwLootFrameTitle.BGRIGHT, "RIGHT", -5, -2)
-    _G.LootFrameCloseButton:SetSize(20,20)
-    _G.LootFrameCloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal")
-    _G.LootFrameCloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
-    _G.LootFrameCloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
+    LootFrame.ClosePanelButton:ClearAllPoints()
+    LootFrame.ClosePanelButton:SetPoint("RIGHT", GwLootFrameTitle.BGRIGHT, "RIGHT", -5, -2)
+    LootFrame.ClosePanelButton:SetSize(20,20)
+    LootFrame.ClosePanelButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal")
+    LootFrame.ClosePanelButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
+    LootFrame.ClosePanelButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
 
-    _G.LootFrameNext:SetFont(UNIT_NAME_FONT, 12)
-    _G.LootFramePrev:SetFont(UNIT_NAME_FONT, 12)
-    _G.LootFrameNext:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    _G.LootFramePrev:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-
-    _G.LootFrameDownButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
-    _G.LootFrameDownButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
-    _G.LootFrameDownButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
-
-    _G.LootFrameUpButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down")
-    _G.LootFrameUpButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down")
-    _G.LootFrameUpButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down")
-
-    for i = 1, 4 do
-        _G["LootButton" .. i .. "NameFrame"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-        _G["LootButton" .. i .. "NameFrame"]:SetHeight(_G["LootButton" .. i]:GetHeight())
-        _G["LootButton" .. i .. "NameFrame"]:SetPoint("LEFT", _G["LootButton" .. i], "RIGHT", 0, 0)
-
-        _G["LootButton" .. i .. "IconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        _G["LootButton" .. i .. "Text"]:SetFont(UNIT_NAME_FONT, 12)
-    end
-
-    hooksecurefunc("LootFrame_Update", updateLootFrameButtons)
+    hooksecurefunc(LootFrame.ScrollBox, "Update", updateLootFrameButtons)
 end
 GW.LoadLootFrameSkin = LoadLootFrameSkin
