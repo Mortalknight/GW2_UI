@@ -610,9 +610,7 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     local registerUnit = isPlayer and "player" or "party" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0))
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, "GwPartyFrame")
 
-    if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
-        frame.name:SetFont(UNIT_NAME_FONT, 12)
-    end
+    frame.name:SetFont(UNIT_NAME_FONT, 12)
     frame.name:SetShadowOffset(-1, -1)
     frame.name:SetShadowColor(0, 0, 0, 1)
     frame.level:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINED")

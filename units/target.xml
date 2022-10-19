@@ -401,7 +401,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Cooldown parentKey="cooldown" inherits="ActionButtonTemplate" frameStrata="MEDIUM" toplevel="true">
+            <Cooldown parentKey="cooldown" inherits="CooldownFrameTemplate" frameStrata="MEDIUM" toplevel="true">
                 <SwipeTexture>
                     <Color r="1" g="1" b="1" a="1"/>
                 </SwipeTexture>
