@@ -488,13 +488,34 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     -- position mover (as fallback use the default position)
     moveframe.savedPoint = GetSetting(settingsName)
     moveframe.defaultPoint = GetDefault(settingsName)
+
+    if moveframe.savedPoint == nil then
+        local point, anchor, relativePoint, xOfs, yOfs = frame:GetPoint()
+        moveframe.savedPoint = {}
+        moveframe.savedPoint.point = point
+        moveframe.savedPoint.anchor = anchor == UIParent and UIParent or anchor
+        moveframe.savedPoint.relativePoint = relativePoint
+        moveframe.savedPoint.xOfs = xOfs
+        moveframe.savedPoint.yOfs = yOfs
+    end
+
+    if moveframe.defaultPoint == nil then
+        local point, anchor, relativePoint, xOfs, yOfs = frame:GetPoint()
+        moveframe.defaultPoint = {}
+        moveframe.defaultPoint.point = point
+        moveframe.savedPoint.anchor = anchor == UIParent and UIParent or anchor
+        moveframe.defaultPoint.relativePoint = relativePoint
+        moveframe.defaultPoint.xOfs = xOfs
+        moveframe.defaultPoint.yOfs = yOfs
+    end
+
     moveframe:ClearAllPoints()
     if not moveframe.savedPoint.point or not moveframe.savedPoint.relativePoint or not moveframe.savedPoint.xOfs or not moveframe.savedPoint.yOfs then
         -- use default position
-        moveframe:SetPoint(moveframe.defaultPoint.point, UIParent, moveframe.defaultPoint.relativePoint, moveframe.defaultPoint.xOfs, moveframe.defaultPoint.yOfs)
+        moveframe:SetPoint(moveframe.defaultPoint.point, moveframe.defaultPoint.anchor and moveframe.defaultPointanchor or UIParent, moveframe.defaultPoint.relativePoint, moveframe.defaultPoint.xOfs, moveframe.defaultPoint.yOfs)
         moveframe.savedPoint = GW.copyTable(nil, moveframe.defaultPoint)
     else
-        moveframe:SetPoint(moveframe.savedPoint.point, UIParent, moveframe.savedPoint.relativePoint, moveframe.savedPoint.xOfs, moveframe.savedPoint.yOfs)
+        moveframe:SetPoint(moveframe.savedPoint.point, moveframe.savedPoint.anchor and moveframe.savedPoint.anchor or UIParent, moveframe.savedPoint.relativePoint, moveframe.savedPoint.xOfs, moveframe.savedPoint.yOfs)
     end
 
     moveframe:Hide()
