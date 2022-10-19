@@ -1054,11 +1054,10 @@ local function LoadTooltips()
             end
         end)
 
-        --GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_OnTooltipSetSpell)
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
         GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
-        --GameTooltip:HookScript("OnTooltipSetItem", GameTooltip_OnTooltipSetItem)
-        --GameTooltip:HookScript("OnTooltipSetUnit", GameTooltip_OnTooltipSetUnit)
-
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetSpell)
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
         GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
     end
 
