@@ -618,6 +618,7 @@ end
 
 local function LoadBag(helpers)
     ContainerFrameCombinedBags:Kill()
+    SetCVar("combinedBags", "0")
     inv = helpers
 
     BAG_WINDOW_SIZE = GetSetting("BAG_WIDTH")
@@ -1031,11 +1032,6 @@ local function LoadBag(helpers)
     smsj.text:SetText(L["Selling junk"])
 
     f.smsj = smsj
-
-    hooksecurefunc("ContainerFrameItemButton_OnClick", function(self)
-        print(self:GetBagID(), self:GetID())
-    
-    end)
 
     return changeItemSize
 end
