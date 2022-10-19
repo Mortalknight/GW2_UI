@@ -31,7 +31,7 @@ local function petBarUpdate()
     PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
     for i = 1, NUM_PET_ACTION_SLOTS do
         if _G["PetActionButton" .. i] then
-            _G["PetActionButton" .. i .. "NormalTexture2"]:SetTexture(nil)
+           -- _G["PetActionButton" .. i .. "NormalTexture2"]:SetTexture(nil)
             setActionButtonAutocast(i)
         end
     end
@@ -76,13 +76,19 @@ local function setPetBar(fmPet)
                     v:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
                 end
 
-               
                 autoCast:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
-                autoCast:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
+                autoCast.size = (i < 4 and 32 or BUTTON_SIZE) + 5
+                hooksecurefunc(autoCast, "SetSize", function()
+                    local w = autoCast:GetSize()
+                    if autoCast.size ~= w then
+                        autoCast:SetHeight(autoCast.size)
+                        autoCast:SetWidth(autoCast.size)
+                    end
+                end)
             end
 
             if i == 1 then
-                hooksecurefunc("PetActionBar_Update", petBarUpdate)
+                hooksecurefunc(PetActionBar, "Update", petBarUpdate)
                 hooksecurefunc("TogglePetAutocast", setActionButtonAutocast)
             end
 
