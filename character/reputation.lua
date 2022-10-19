@@ -381,6 +381,10 @@ local function setDetailEx(
         if C_MajorFactions.HasMaximumRenown(factionID) then
             --max rank
             frame.StatusBar:SetValue(1)
+
+            frame.currentRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
+            frame.nextRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
+
             frame.nextValue:SetText()
             frame.currentValue:SetText()
             frame.percentage:SetText("100%")
@@ -391,7 +395,6 @@ local function setDetailEx(
             frame.currentValue:SetText(CommaValue(majorFactionData.renownReputationEarned or 0))
             frame.nextValue:SetText(CommaValue(majorFactionData.renownLevelThreshold))
             frame.percentage:SetText((math.floor((majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold * 100) .. "%"))
-           
 
             frame.StatusBar:SetValue((majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold)
         end
