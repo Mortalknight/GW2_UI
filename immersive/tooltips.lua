@@ -1054,10 +1054,10 @@ local function LoadTooltips()
             end
         end)
 
-        GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_OnTooltipSetSpell)
+        --GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_OnTooltipSetSpell)
         GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
-        GameTooltip:HookScript("OnTooltipSetItem", GameTooltip_OnTooltipSetItem)
-        GameTooltip:HookScript("OnTooltipSetUnit", GameTooltip_OnTooltipSetUnit)
+        --GameTooltip:HookScript("OnTooltipSetItem", GameTooltip_OnTooltipSetItem)
+        --GameTooltip:HookScript("OnTooltipSetUnit", GameTooltip_OnTooltipSetUnit)
 
         GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
     end
