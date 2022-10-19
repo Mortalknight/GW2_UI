@@ -189,7 +189,7 @@ local function setActiveButton(btn, spellId, skillType, icon, spellbookIndex, bo
         btn:SetAttribute("*type2", "flyout")
         btn:SetAttribute("spell", spellId)
         btn:SetAttribute("flyout", spellId)
-        btn:SetAttribute("flyoutDirection", "RIGHT")
+        btn:SetAttribute("flyoutDirection", "LEFT")
     elseif not btn.isFuture and booktype == BOOKTYPE_PET then
         btn:SetAttribute("*type1", "spell")
         btn:SetAttribute("*type2", "macro")

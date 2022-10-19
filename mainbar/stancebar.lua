@@ -122,6 +122,6 @@ local function CreateStanceBar()
 
     SetStanceButtons(StanceBarButton)
 
-    StanceBar:Kill()
+    StanceBar:SetParent(GW.HiddenFrame)
 end
 GW.CreateStanceBar = CreateStanceBar
