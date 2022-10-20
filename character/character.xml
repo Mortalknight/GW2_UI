@@ -400,11 +400,11 @@
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\party\manage-group-arrow">
-                    <Size x="20" y="30"></Size>
-                    <Anchors>
-                        <Anchor point="RIGHT" relativePoint="RIGHT" x="-5" y="-5"></Anchor>
-                    </Anchors>
+                <Texture parentKey="arrow" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down">
+                    <Size x="28" y="28"></Size>
+                </Texture>
+                <Texture parentKey="arrow2" file="Interface/AddOns/GW2_UI/Textures/arrowdown_down" rotation="90">
+                    <Size x="28" y="28"></Size>
                 </Texture>
                 <FontString parentKey="name" text="Unknown" justifyH="LEFT">
                     <Size x="231" y="20"></Size>

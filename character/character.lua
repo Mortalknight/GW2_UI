@@ -511,6 +511,23 @@ local function getSkillElement(index)
     f.val:SetFont(DAMAGE_TEXT_FONT, 12)
     f.val:SetText(UNKNOWN)
     f:SetText("")
+    f.arrow:ClearAllPoints()
+    f.arrow:SetPoint("RIGHT", -5, 0)
+    f.arrow2:ClearAllPoints()
+    f.arrow2:SetPoint("RIGHT", -5, 0)
+
+    f:SetScript("OnClick", function()
+        if not f.isHeader then return end
+
+        if f.isExpanded then
+            CollapseSkillHeader(f.skillIndex)
+        else
+            ExpandSkillHeader(f.skillIndex)
+        end
+
+        GWupdateSkills()
+    end)
+
     return f
 end
 
@@ -520,17 +537,23 @@ local function updateSkillItem(self)
         self.val:Hide()
         self.StatusBar:Hide()
         self.name:SetFont(DAMAGE_TEXT_FONT, 14)
-        self.arrow:Show()
-        self.arrow:SetRotation(-1.5708)
         self.bgheader:Show()
         self.bg:Hide()
         self.bgstatic:Hide()
+        if self.isExpanded then
+            self.arrow:Show()
+            self.arrow2:Hide()
+        else
+            self.arrow:Hide()
+            self.arrow2:Show()
+        end
     else
         self:SetHeight(50)
         self.val:Show()
         self.StatusBar:Show()
         self.name:SetFont(DAMAGE_TEXT_FONT, 12)
         self.arrow:Hide()
+        self.arrow2:Hide()
         self.bgheader:Hide()
         self.bg:Show()
         self.bgstatic:Show()
@@ -569,6 +592,8 @@ function GWupdateSkills()
         skillMaxRank, isAbandonable, stepCost, rankCost, minLevel, skillCostType,
         skillDescription = GetSkillLineInfo(skillIndex)
 
+        skillRank = skillRank + numTempPoints
+
         local f = getSkillElement(skillIndex)
         local zebra = skillIndex % 2
 
@@ -595,13 +620,25 @@ function GWupdateSkills()
         if skillMaxRank == 0 then skillMaxRank = 1 end
 
         LastElement = f
+
+        if skillModifier == 0 then
+			f.val:SetText(skillRank .. " / " .. skillMaxRank)
+		else
+			local color = RED_FONT_COLOR_CODE
+			if skillModifier > 0 then
+				color = GREEN_FONT_COLOR_CODE .. "+"
+			end
+            f.val:SetText(skillRank .." (" .. color .. skillModifier .. FONT_COLOR_CODE_CLOSE .. ") /" .. skillMaxRank)
+		end
+
         y = y + height
         f.name:SetText(skillName)
         f.tooltip = skillName
         f.tooltip2 = skillDescription
         f.StatusBar:SetValue(skillRank / skillMaxRank)
-        f.val:SetText(skillRank .. " / " .. skillMaxRank)
         f.isHeader = isHeader
+        f.isExpanded = isExpanded
+        f:SetID(skillIndex)
         f.bg:SetVertexColor(1, 1, 1, zebra)
         updateSkillItem(f)
         totlaHeight = totlaHeight + f:GetHeight()
@@ -609,6 +646,7 @@ function GWupdateSkills()
     GwPaperSkills.scroll.slider.thumb:SetHeight((GwPaperSkills.scroll:GetHeight()/totlaHeight) * GwPaperSkills.scroll.slider:GetHeight() )
     GwPaperSkills.scroll.slider:SetMinMaxValues (0,math.max(0,totlaHeight - GwPaperSkills.scroll:GetHeight()))
 end
+GW.GWupdateSkills = GWupdateSkills
 
 local CHARACTER_PANEL_OPEN = ""
 function GwToggleCharacter(tab, onlyShow)
