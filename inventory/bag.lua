@@ -617,6 +617,10 @@ local function bagHeader_OnEnter(self)
 end
 
 local function LoadBag(helpers)
+    ContainerFrameCombinedBags:SetScript('OnShow', nil)
+    ContainerFrameCombinedBags:SetScript('OnHide', nil)
+    ContainerFrameCombinedBags:SetScale(0.0001)
+    ContainerFrameCombinedBags:SetAlpha(0)
     ContainerFrameCombinedBags:Kill()
     SetCVar("combinedBags", "0")
     inv = helpers

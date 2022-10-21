@@ -375,8 +375,8 @@ local function setDetailEx(
         frame.StatusBar:SetMinMaxValues(0, 1)
         majorFactionData.renownReputationEarned = 1000
 
-        frame.background2:SetVertexColor(BLUE_FONT_COLOR.r, BLUE_FONT_COLOR.g, BLUE_FONT_COLOR.b)
-        frame.StatusBar:SetStatusBarColor(BLUE_FONT_COLOR.r, BLUE_FONT_COLOR.g, BLUE_FONT_COLOR.b)
+        frame.background2:SetVertexColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
+        frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
 
         if C_MajorFactions.HasMaximumRenown(factionID) then
             --max rank
