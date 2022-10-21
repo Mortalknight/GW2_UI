@@ -78,47 +78,6 @@ local function setComboBar(f)
     powerCombo(f, "CLASS_POWER_INIT")
     f:RegisterEvent("UNIT_MAXPOWER")
     f:RegisterEvent("UNIT_POWER_UPDATE")
-
-    if f.ourTarget and f.comboPointsOnTarget then
-        f:ClearAllPoints()
-        if GwTargetUnitFrame.frameInvert then
-            f:SetPoint("TOPRIGHT", GwTargetUnitFrame.castingbar, "TOPRIGHT", 0, -13)
-            f.combopoints:SetWidth(213)
-        else
-            f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", 0, -13)
-        end
-        f:SetWidth(220)
-        f:SetHeight(30)
-        f.combopoints.comboFlare:SetSize(64, 64)
-        local point = 0
-        for i = 1, 9 do
-            f.combopoints["runeTex" .. i]:SetSize(18, 18)
-            f.combopoints["combo" .. i]:SetSize(18, 18)
-            if GwTargetUnitFrame.frameInvert then
-                f.combopoints["runeTex" .. i]:ClearAllPoints()
-                f.combopoints["combo" .. i]:ClearAllPoints()
-                f.combopoints["runeTex" .. i]:SetPoint("RIGHT", f.combopoints, "RIGHT", point, 0)
-                f.combopoints["combo" .. i]:SetPoint("RIGHT", f.combopoints, "RIGHT", point, 0)
-                point = point - 32
-            end
-        end
-    else
-        f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", f.gwMover)
-        f:SetWidth(316)
-        f.combopoints:SetWidth(316)
-        f.combopoints.comboFlare:SetSize(70, 70)
-        local point = 0
-        for i = 1, 9 do
-            f.combopoints["runeTex" .. i]:SetSize(32, 32)
-            f.combopoints["combo" .. i]:SetSize(32, 32)
-            f.combopoints["runeTex" .. i]:ClearAllPoints()
-            f.combopoints["combo" .. i]:ClearAllPoints()
-            f.combopoints["runeTex" .. i]:SetPoint("LEFT", f.combopoints, "LEFT", point, 0)
-            f.combopoints["combo" .. i]:SetPoint("LEFT", f.combopoints, "LEFT", point, 0)
-            point = point + 32
-        end
-    end
 end
 
 local function powerMana(self, event, ...)
@@ -144,6 +103,8 @@ end
 
 -- ROGUE
 local function setRogue(f)
+    if GetSetting("target_HOOK_COMBOPOINTS") then return false end
+
     setComboBar(f)
     return true
 end
@@ -321,8 +282,7 @@ local function selectType(f)
     local showBar = false
 
     if f.unit == "vehicle" then
-        setComboBar(f)
-        showBar = true -- combopoints for eg. Malygos; has always prio
+        showBar = false
     elseif GW.myClassID == 4 then
         showBar = setRogue(f)
     elseif GW.myClassID == 6 then
@@ -333,24 +293,10 @@ local function selectType(f)
         showBar = setDruid(f)
     end
 
-    if ((GW.myClassID == 4 or GW.myClassID == 11) and f.ourTarget and f.comboPointsOnTarget and f.barType == "combo") or f.unit == "vehicle" then
-        showBar = UnitExists("target") and UnitCanAttack(f.unit, "target") and not UnitIsDead("target") or false
-    end
     if showBar and not f:IsShown() then
         f:Show()
     elseif not showBar and f:IsShown() then
         f:Hide()
-    end
-end
-
-local function SetUpComboBarOnTarget(self)
-    if self.comboPointsOnTarget then
-        self.Script:RegisterEvent("PLAYER_TARGET_CHANGED")
-        if self.barType == "combo" then
-            self:Hide()
-        end
-    else
-        self.Script:UnregisterEvent("PLAYER_TARGET_CHANGED")
     end
 end
 
@@ -376,17 +322,13 @@ local function barChange_OnEvent(self, event, ...)
         selectType(f)
     elseif event == "UNIT_ENTERED_VEHICLE" then
         f.unit = "vehicle"
-        f.comboPointsOnTarget = true
         selectType(f)
-        SetUpComboBarOnTarget(f)
     elseif event == "UNIT_EXITED_VEHICLE" then
         f.unit = "player"
-        f.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
         selectType(f)
-        SetUpComboBarOnTarget(f)
     end
 end
-GWTEST = barChange_OnEvent
+--GWTEST = barChange_OnEvent
 --/run GWTEST(GwPlayerClassPower.Script, "UNIT_ENTERED_VEHICLE")
 --/run GWTEST(GwPlayerClassPower.Script, "UNIT_EXITED_VEHICLE")
 
@@ -411,8 +353,6 @@ local function LoadClassPowers()
         cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
     end
 
-    cpf.ourTarget = GetSetting("TARGET_ENABLED")
-    cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
     cpf.ourPowerBar = GetSetting("POWERBAR_ENABLED")
     cpf.gwPlayerForm = GetShapeshiftFormID()
 
@@ -449,9 +389,5 @@ local function LoadClassPowers()
     cpf.unit = "player"
 
     selectType(cpf)
-
-    if ((GW.myClassID == 4 or GW.myClassID == 11) and (cpf.ourTarget and cpf.comboPointsOnTarget)) or cpf.unit == "vehicle" then
-        SetUpComboBarOnTarget(cpf)
-    end
 end
 GW.LoadClassPowers = LoadClassPowers

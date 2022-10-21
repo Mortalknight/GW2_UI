@@ -132,6 +132,7 @@ mainbar\totemBar.lua
 mainbar\healthglobe.lua
 mainbar\powerbar.lua
 mainbar\classpowers.lua
+mainbar\comboBarTarget.lua
 mainbar\dodgebar.lua
 mainbar\layout.lua
 mainbar\autoRepair.lua
