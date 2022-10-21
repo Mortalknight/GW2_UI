@@ -412,8 +412,8 @@ local function bag_OnMouseDown(self, button)
     if self.gwHasBag or bag_id == BACKPACK_CONTAINER then
         local cf = getContainerFrame(bag_id)
         if cf and cf.FilterDropDown then
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            ToggleDropDownMenu(1, nil, cf.FilterDropDown, self, 32, 32)
+            --PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+            --ToggleDropDownMenu(1, nil, cf.FilterDropDown, self, 32, 32)
         end
     end
 end
