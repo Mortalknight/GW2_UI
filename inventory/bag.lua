@@ -689,7 +689,7 @@ local function LoadBag(helpers)
         cf.gw_num_slots = 0
         cf:SetAllPoints(f.ItemFrame)
         cf:SetID(bag_id)
-        cf.bagID = bag_id
+        cf.BagID = bag_id
         cf.shouldShow = true
         f.ItemFrame.Containers[bag_id] = cf
     end
