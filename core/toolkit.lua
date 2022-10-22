@@ -4,6 +4,43 @@ local _, GW = ...
 local STRIP_TEX = "Texture"
 local STRIP_FONT = "FontString"
 
+local BlizzardRegions = {
+    "Left",
+    "Middle",
+    "Right",
+    "Mid",
+    "LeftDisabled",
+    "MiddleDisabled",
+    "RightDisabled",
+    "TopLeft",
+    "TopRight",
+    "BottomLeft",
+    "BottomRight",
+    "TopMiddle",
+    "MiddleLeft",
+    "MiddleRight",
+    "BottomMiddle",
+    "MiddleMiddle",
+    "TabSpacer",
+    "TabSpacer1",
+    "TabSpacer2",
+    "_RightSeparator",
+    "_LeftSeparator",
+    "Cover",
+    "Border",
+    "Background",
+    "TopTex",
+    "TopLeftTex",
+    "TopRightTex",
+    "LeftTex",
+    "BottomTex",
+    "BottomLeftTex",
+    "BottomRightTex",
+    "RightTex",
+    "MiddleTex",
+    "Center",
+}
+
 local ArrowRotation = {
     up = 0,
     down = 3.14,
@@ -108,6 +145,17 @@ local function Kill(object)
 
     object:Hide()
 end
+
+local function HandleBlizzardRegions(frame)
+    local name = frame.GetName and frame:GetName()
+    for _, area in pairs(BlizzardRegions) do
+        local object = (name and _G[name .. area]) or frame[area]
+        if object then
+            object:SetAlpha(0)
+        end
+    end
+end
+GW.HandleBlizzardRegions = HandleBlizzardRegions
 
 local function AddHover(self)
     if not self.hover then
@@ -235,8 +283,17 @@ local function CreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShif
     BackdropFrameLower(backdrop, parent)
 end
 
-local function SkinButton(button, isXButton, setTextColor, onlyHover)
-    if not button or button.isSkinned then return end
+local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover, strip, transparent)
+    if not button then return end
+    if button.isSkinned then return end
+
+    if strip then button:StripTextures(nil, true) end
+
+    HandleBlizzardRegions(button)
+
+    if isXButton then
+        button:StripTextures()
+    end
 
     if not onlyHover then
         if isXButton then
@@ -244,6 +301,11 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
             if button.SetHighlightTexture then button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover") end
             if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover") end
             if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal") end
+        elseif transparent then
+            if button.SetNormalTexture then button:SetNormalTexture("") end
+            if button.SetHighlightTexture then button:SetHighlightTexture("") end
+            if button.SetPushedTexture then button:SetPushedTexture("") end
+            if button.SetDisabledTexture then button:SetDisabledTexture("") end
         else
             if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/button") end
             if button.SetHighlightTexture then 
@@ -252,7 +314,13 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
             end
             if button.SetPushedTexture then button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/button") end
             if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/button_disable") end
-            button:DisableDrawLayer("BACKGROUND")
+
+            if strip then
+                if button.SetNormalTexture then button:GetNormalTexture():Show() end
+                if button.SetHighlightTexture then button:GetHighlightTexture():Show() end
+                if button.SetPushedTexture then button:GetPushedTexture():Show() end
+                if button.SetDisabledTexture then button:GetDisabledTexture():Show() end
+            end
 
             if button.LeftSeparator then button.LeftSeparator:Hide() end
             if button.RightSeparator then button.RightSeparator:Hide() end
@@ -269,7 +337,7 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover)
         end
     end
 
-    if not isXButton or onlyHover then
+    if (not isXButton or onlyHover) and not noHover then
         button:AddHover()
     end
 

@@ -25,22 +25,23 @@
             </Layer>
         </Layers>
         <Frames>
-
-          <PlayerModel name="PaperDoll3dModel" inherits="ModelWithZoomTemplate ModelTemplate" enableMouse="true" parentKey="model">
-              <Size x="612" y="598"></Size>
-              <Anchors>
-                  <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="241" y="0"></Anchor>
-
-              </Anchors>
-              <Scripts>
-                  <OnLoad>
-
-                      Model_OnLoad(self, 4, -0.5, 0, CharacterModelFrame_OnMouseUp)
-                  </OnLoad>
-              </Scripts>
-
-          </PlayerModel>
-
+            <DressUpModel inherits="ModelWithZoomTemplate" enableMouse="true" parentKey="model">
+                <Size>
+                    <AbsDimension x="600" y="330"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="CENTER" relativePoint="CENTER" x="115" y="0"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>
+                        Model_OnLoad(self)
+                    </OnLoad>
+                    <OnEvent>
+                        self:RefreshUnit();
+                    </OnEvent>
+                    <OnUpdate function="Model_OnUpdate"/>
+                </Scripts>
+            </DressUpModel>
         </Frames>
     </Frame>
 
