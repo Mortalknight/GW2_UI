@@ -320,6 +320,39 @@
                     </Layer>
                 </Layers>
             </Button>
+            <Button name="$parentGwBagHeader5" registerForClicks="LeftButtonUp,RightButtonUp" framelevel="50">
+                <Size x="512" y="32"></Size>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="background" name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/bag/bag-sep">
+                            <Size x="512" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down" rotation="90">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="nameString" text="Name Could not be loaded" justifyV="MIDDLE" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="28" y="-5" />
+                            </Anchors>
+                            <Size x="300" y="24" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Button>
             <Button parentKey="currency" framelevel="50">
                 <Size x="32" y="32"></Size>
                 <Anchors>

@@ -134,6 +134,10 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     if not button.gwBackdrop then
         return
     end
+
+    local bag_id = button:GetParent():GetID()
+    local isReagentBag = bag_id == 5
+
     local t = button.IconBorder
     t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     t:SetAlpha(0.9)
@@ -142,7 +146,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].r, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].g, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].b)
     end
 
-    local professionColors = GW.professionBagColor[select(2, C_Container.GetContainerNumFreeSlots(button:GetParent():GetID()))]
+    local professionColors = isReagentBag and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or GW.professionBagColor[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     if GetSetting("BAG_PROFESSION_BAG_COLOR") and professionColors then
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
@@ -159,7 +163,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             end
         end
         -- Show junk icon if active
-        local _, _, _, rarity, _, _, _, _, noValue = C_Container.GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
+        local _, _, _, rarity, _, _, _, _, noValue = C_Container.GetContainerItemInfo(bag_id, button:GetID())
         button.isJunk = (rarity and rarity == Enum.ItemQuality.Poor) and not noValue
 
         if button.junkIcon then
@@ -172,7 +176,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         -- Show scrap icon if active
         if button.scrapIcon then
             if GetSetting("BAG_ITEM_SCRAP_ICON_SHOW") then
-                local itemLoc = ItemLocation:CreateFromBagAndSlot(button:GetParent():GetID(), button:GetID())
+                local itemLoc = ItemLocation:CreateFromBagAndSlot(bag_id, button:GetID())
                 if itemLoc and itemLoc ~= "" then
                     if (C_Item.DoesItemExist(itemLoc) and C_Item.CanScrapItem(itemLoc)) then
                         button.scrapIcon:SetShown(itemLoc)
@@ -528,7 +532,7 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
     end
     f:SetHeight(max((isize * rows) + 75, min_height))
     f:SetWidth((isize * cols) + padding + 2)
-    for i = 0, 5 do
+    for i = 0, 6 do
         if _G["GwBagFrameGwBagHeader" .. i] and sep then
             _G["GwBagFrameGwBagHeader" .. i]:SetWidth((isize * cols) + padding + 2 - 5)
             _G["GwBagFrameGwBagHeader" .. i].background:SetWidth((isize * cols) + padding + 2 - 5)
