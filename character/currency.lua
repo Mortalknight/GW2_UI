@@ -191,7 +191,7 @@ local function loadRaidInfo(raidinfo)
 
     for i = 1, #raidinfo.buttons do
         local slot = raidinfo.buttons[i]
-        local instanceName, instanceID, instanceReset
+        local instanceName, instanceID, instanceReset, difficult
 
         local idx = i + offset
         if idx > raidInfoCount then
@@ -200,13 +200,15 @@ local function loadRaidInfo(raidinfo)
             slot.item.instanceID = nil
             slot.item.RaidInfoIdx = nil
         else
-            instanceName, instanceID, instanceReset = GetSavedInstanceInfo(idx)
+            instanceName, instanceID, instanceReset, _, _, _, _, _ , _, difficult = GetSavedInstanceInfo(idx)
             slot.item.instanceID = instanceID
             slot.item.RaidInfoIdx = idx
 
             -- set raidInfo values
-            slot.item.reset:SetText(RESETS_IN .. " " .. SecondsToTime(instanceReset, true, nil, 3))
-            slot.item.name:SetText(instanceName .. " " .. ID .. ": " .. instanceID)
+            slot.item.reset:SetText(SecondsToTime(instanceReset, true, nil, 3))
+            slot.item.name:SetText(instanceName)
+            slot.item.difficult:SetText(difficult)
+            slot.item.id:SetText("|cFF888888" .. ID .. ": " .. instanceID .. "|r")
 
             -- set zebra color by idx or watch status and show extended button
             zebra = idx % 2
@@ -226,10 +228,17 @@ local function raidInfoSetup(raidinfo)
     for i = 1, #raidinfo.buttons do
         local slot = raidinfo.buttons[i]
         slot:SetWidth(raidinfo:GetWidth() - 12)
-        slot.item.name:SetFont(DAMAGE_TEXT_FONT, 14)
+        slot.item.name:SetFont(DAMAGE_TEXT_FONT, 16)
         slot.item.name:SetTextColor(1, 1, 1)
+        slot.item.name:SetShadowColor(0, 0, 0, 1)
+        slot.item.name:SetShadowOffset(1, -1)
+
         slot.item.reset:SetFont(DAMAGE_TEXT_FONT, 12)
         slot.item.reset:SetTextColor(1, 1, 1)
+        slot.item.difficult:SetFont(UNIT_NAME_FONT, 12)
+        slot.item.difficult:SetTextColor(1, 1, 1)
+        slot.item.id:SetFont(UNIT_NAME_FONT, 10)
+        slot.item.id:SetTextColor(1, 1, 1)
         --save frame
         slot.item.frame = raidinfo
     end

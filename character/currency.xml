@@ -84,13 +84,25 @@
                     <Layer textureSubLevel="2">
                         <FontString parentKey="name" text="Name Could not be loaded" inherits="GameFontNormalSmall" justifyV="TOP" justifyH="LEFT">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-5" />
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-10" />
                             </Anchors>
                             <Size x="300" y="22" />
                         </FontString>
+                        <FontString parentKey="difficult" text="Heroic" inherits="GameFontNormalSmall" justifyV="BOTTOM" justifyH="Left">
+                            <Anchors>
+                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="15" y="15" />
+                            </Anchors>
+                            <Size x="200" y="22" />
+                        </FontString>
                         <FontString parentKey="reset" text="????" inherits="GameFontNormalSmall" justifyV="TOP" justifyH="RIGHT">
                             <Anchors>
-                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-15" y="-5" />
+                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-15" y="-10" />
+                            </Anchors>
+                            <Size x="200" y="22" />
+                        </FontString>
+                        <FontString parentKey="id" text="????" inherits="GameFontNormalSmall" justifyV="BOTTOM" justifyH="RIGHT">
+                            <Anchors>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-15" y="15" />
                             </Anchors>
                             <Size x="200" y="22" />
                         </FontString>
