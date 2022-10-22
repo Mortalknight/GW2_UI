@@ -79,9 +79,23 @@ local function comboBarOnEvent(self, event, ...)
 	elseif event == "UNIT_MAXPOWER" or event == "PLAYER_ENTERING_WORLD" then
 		ComboFrame_UpdateMax(self)
 	elseif event == "UNIT_ENTERED_VEHICLE" then
+        if not GetSetting("target_HOOK_COMBOPOINTS")then
+            self:RegisterEvent("PLAYER_TARGET_CHANGED")
+            self:RegisterEvent("UNIT_POWER_FREQUENT")
+            self:RegisterEvent("UNIT_MAXPOWER")
+            self:RegisterEvent("PLAYER_ENTERING_WORLD")
+        end
+
 		self.unit = "vehicle"
 		ComboFrame_UpdateMax(self)
     elseif event == "UNIT_EXITED_VEHICLE" then
+        if not GetSetting("target_HOOK_COMBOPOINTS")then
+            self:UnregisterEvent("PLAYER_TARGET_CHANGED")
+            self:UnregisterEvent("UNIT_POWER_FREQUENT")
+            self:UnregisterEvent("UNIT_MAXPOWER")
+            self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+        end
+
 		self.unit = "player"
 		ComboFrame_UpdateMax(self)
 	end
@@ -113,10 +127,14 @@ local function UpdateSettings(targetFrame)
     end
 
     if GetSetting("target_HOOK_COMBOPOINTS")then
-        comboBar:SetScript("OnEvent", comboBarOnEvent)
-        comboBarOnEvent(comboBar, "PLAYER_ENTERING_WORLD")
+        comboBar:RegisterEvent("PLAYER_TARGET_CHANGED")
+        comboBar:RegisterEvent("UNIT_POWER_FREQUENT")
+        comboBar:RegisterEvent("UNIT_MAXPOWER")
+        comboBar:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+        ComboFrame_UpdateMax(comboBar)
     else
-        comboBar:SetScript("OnEvent", nil)
+        -- only check vehicle stuff
         comboBar:Hide()
     end
 end
@@ -130,10 +148,8 @@ local function LoadComboBarOnTargetFrame(targetFrame)
 
     UpdateSettings(targetFrame)
 
-    comboBar:RegisterEvent("PLAYER_TARGET_CHANGED")
-	comboBar:RegisterEvent("UNIT_POWER_FREQUENT")
-	comboBar:RegisterEvent("UNIT_MAXPOWER")
-	comboBar:RegisterEvent("PLAYER_ENTERING_WORLD")
+    comboBar:SetScript("OnEvent", comboBarOnEvent)
+
 	comboBar:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player")
 	comboBar:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player")
 end
