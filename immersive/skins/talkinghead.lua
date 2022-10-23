@@ -47,6 +47,6 @@ local function InitTalkingHeadFrame()
 end
 
 local function LoadTalkingHeadSkin()
-    GW.RegisterLoadHook(InitTalkingHeadFrame, "Blizzard_TalkingHeadUI", TalkingHeadFrame)
+    GW.RegisterLoadHook(InitTalkingHeadFrame, "TalkingHead", TalkingHeadFrame)
 end
 GW.LoadTalkingHeadSkin = LoadTalkingHeadSkin
