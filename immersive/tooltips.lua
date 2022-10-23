@@ -724,7 +724,7 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
     local TooltipMover = GameTooltip.gwMover
     local _, anchor = self:GetPoint()
 
-    if anchor == nil or anchor == TooltipMover or anchor == UIParent then
+    if anchor == nil or anchor == TooltipMover or anchor == GameTooltipDefaultContainer or anchor == UIParent then
         self:ClearAllPoints()
         local point = GW.GetScreenQuadrant(TooltipMover)
 
