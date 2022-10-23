@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.7.1 Wrath", [=[
+    - Target combo points fixes
+]=])
+
 v("1.7.0 Wrath", [=[
     NEW
         - Added Custom Aura Tracker: You can track multiple auras. If you get this Aura it will show a flashing icon on the screen
