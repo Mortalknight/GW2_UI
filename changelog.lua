@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.7.2 Wrath", [=[
+    - Fix gear quipper skin
+]=])
+
 v("1.7.1 Wrath", [=[
     - Target combo points fixes
 ]=])

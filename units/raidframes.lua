@@ -6,7 +6,7 @@ local SetClassIcon = GW.SetClassIcon
 local IsIn = GW.IsIn
 
 local players
-local previewSteps = {40, 20, 10, 5}
+local previewSteps = {40, 25, 10, 5}
 local previewStep = 0
 
 -- functions
