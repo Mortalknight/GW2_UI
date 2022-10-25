@@ -380,7 +380,6 @@ local function createBagBar(f)
 
     --Get Reagant Slot
     if CharacterReagentBag0Slot then
-        print(1)
         local name = "GwInvntryReagentBag0Slot"
         local b = CreateFrame("ItemButton", name, f, "GwBackpackBagTemplate")
         b.commandName = ""
