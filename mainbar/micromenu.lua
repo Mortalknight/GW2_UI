@@ -235,6 +235,7 @@ AFP("modifyMicroAlert", modifyMicroAlert)
 
 local function reskinMicroButton(btn, name, mbf)
     btn:SetParent(mbf)
+    btn.SetParent = GW.NoOp -- could be taint
     local tex = "Interface/AddOns/GW2_UI/textures/icons/" .. name .. "-Up"
 
     btn:SetSize(24, 24)

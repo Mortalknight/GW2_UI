@@ -850,7 +850,7 @@ local function LoadBag(helpers)
                 dd.itemBorder.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll()  this is tainting
             end
         )
 
@@ -861,7 +861,7 @@ local function LoadBag(helpers)
                 dd.junkIcon.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_JUNK_ICON_SHOW", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll()  this is tainting
             end
         )
 
@@ -872,7 +872,7 @@ local function LoadBag(helpers)
                 dd.scrapIcon.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_SCRAP_ICON_SHOW", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll()  this is tainting
             end
         )
 
@@ -883,7 +883,7 @@ local function LoadBag(helpers)
                 dd.upgradeIcon.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_UPGRADE_ICON_SHOW", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll()  this is tainting
             end
         )
 
@@ -894,7 +894,7 @@ local function LoadBag(helpers)
                 dd.professionColor.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_PROFESSION_BAG_COLOR", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll() this is tainting
             end
         )
 
@@ -916,7 +916,7 @@ local function LoadBag(helpers)
                 dd.showItemLvl.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_SHOW_ILVL", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll() this is tainting
             end
         )
 

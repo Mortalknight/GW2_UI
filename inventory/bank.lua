@@ -626,7 +626,7 @@ local function LoadBank(helpers)
                 dd.bagOrder.checkbutton:SetChecked(newStatus)
                 SetSetting("BANK_REVERSE_SORT", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll() this is tainting
             end
         )
 
@@ -637,7 +637,7 @@ local function LoadBank(helpers)
                 dd.itemBorder.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll() this is tainting
             end
         )
 
