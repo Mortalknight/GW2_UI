@@ -235,7 +235,12 @@ AFP("modifyMicroAlert", modifyMicroAlert)
 
 local function reskinMicroButton(btn, name, mbf)
     btn:SetParent(mbf)
-    btn.SetParent = GW.NoOp -- could be taint
+    hooksecurefunc(btn, "SetParent", function(self, parent)
+        if parent ~= mbf then
+            self:SetParent(mbf)
+        end
+    end)
+
     local tex = "Interface/AddOns/GW2_UI/textures/icons/" .. name .. "-Up"
 
     btn:SetSize(24, 24)
@@ -393,7 +398,7 @@ local function setupMicroButtons(mbf)
 
     bref:ClearAllPoints()
     bref:SetPoint("BOTTOMLEFT", cref, "BOTTOMRIGHT", 4, 0)
-    bref:HookScript("OnClick", ToggleAllBags)
+    bref:HookScript("OnClick", ToggleAllBags) -- tainting
     bref.interval = 0
     bref:HookScript("OnUpdate", bag_OnUpdate)
     bref:HookScript("OnEnter", GW.Bags_OnEnter)
