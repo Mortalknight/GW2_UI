@@ -35,6 +35,7 @@ local IgnoreFrames = {
 	PetActionBar = CheckActionBar,
 	PossessActionBar = CheckActionBar,
 	MainMenuBarVehicleLeaveButton = CheckActionBar,
+	MainMenuBar = CheckActionBar,
 	MultiBarBottomLeft = CheckActionBar,
 	MultiBarBottomRight = CheckActionBar,
 	MultiBarLeft = CheckActionBar,
