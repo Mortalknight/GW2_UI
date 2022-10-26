@@ -399,6 +399,8 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         btn.Count:SetTextColor(1, 1, 0.6)
     end
 
+    btn:GetPushedTexture():SetSize(btn:GetSize())
+
     if btn.Border then
         btn.Border:SetSize(btn:GetWidth(), btn:GetWidth())
         btn.Border:SetBlendMode("BLEND")
