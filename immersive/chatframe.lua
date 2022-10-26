@@ -1342,7 +1342,7 @@ end
 
 local function GetTab(chat)
 	if not chat.tab then
-		chat.tab = _G[format('ChatFrame%sTab', chat:GetID())]
+		chat.tab = _G[format("ChatFrame%sTab", chat:GetID())]
 	end
 
 	return chat.tab
@@ -1391,38 +1391,40 @@ local function styleChatWindow(frame)
 
     for _, texName in pairs(tabTexs) do
         if texName == "Selected" then
-            if _G[tab:GetName()][texName.."Left"] then
-                _G[tab:GetName()][texName.."Right"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright")
-                _G[tab:GetName()][texName.."Left"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
-                _G[tab:GetName()][texName.."Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive")
+            if _G[name.."Tab"][texName.."Left"] then
+                _G[name.."Tab"][texName.."Left"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
+                _G[name.."Tab"][texName.."Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive")
+                _G[name.."Tab"][texName.."Right"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright")
 
-                _G[tab:GetName()][texName.."Right"]:SetBlendMode("BLEND")
-                _G[tab:GetName()][texName.."Left"]:SetBlendMode("BLEND")
-                _G[tab:GetName()][texName.."Middle"]:SetBlendMode("BLEND")
 
-                _G[tab:GetName()][texName.."Right"]:SetVertexColor(1, 1, 1, 1)
-                _G[tab:GetName()][texName.."Left"]:SetVertexColor(1, 1, 1, 1)
-                _G[tab:GetName()][texName.."Middle"]:SetVertexColor(1, 1, 1, 1)
+                _G[name.."Tab"][texName.."Left"]:SetBlendMode("BLEND")
+                _G[name.."Tab"][texName.."Middle"]:SetBlendMode("BLEND")
+                _G[name.."Tab"][texName.."Right"]:SetBlendMode("BLEND")
 
+                _G[name.."Tab"][texName.."Left"]:SetVertexColor(1, 1, 1, 1)
+                _G[name.."Tab"][texName.."Middle"]:SetVertexColor(1, 1, 1, 1)
+                _G[name.."Tab"][texName.."Right"]:SetVertexColor(1, 1, 1, 1)
             end
         else
-            if _G[tab:GetName()][texName.."Left"] then
-                _G[tab:GetName()][texName.."Right"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
-                _G[tab:GetName()][texName.."Left"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
-                _G[tab:GetName()][texName.."Middle"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
+            if _G[name.."Tab"][texName.."Left"] then
+                --_G[name.."Tab"][texName.."Left"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
+                --_G[name.."Tab"][texName.."Middle"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
+                --_G[name.."Tab"][texName.."Right"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
 
-                _G[tab:GetName()][texName.."Left"]:SetTexture()
-                _G[tab:GetName()][texName.."Middle"]:SetTexture()
-                _G[tab:GetName()][texName.."Right"]:SetTexture()
+
+                _G[name.."Tab"][texName.."Left"]:SetTexture()
+                _G[name.."Tab"][texName.."Middle"]:SetTexture()
+                _G[name.."Tab"][texName.."Right"]:SetTexture()
             end
         end
 
-        if _G[tab:GetName()][texName.."Left"] then
-            _G[tab:GetName()][texName.."Right"]:SetHeight(28)
-            _G[tab:GetName()][texName.."Left"]:SetHeight(28)
-            _G[tab:GetName()][texName.."Middle"]:SetHeight(28)
+        if _G[name.."Tab"][texName.."Left"] then
+            _G[name.."Tab"][texName.."Left"]:SetHeight(28)
+            _G[name.."Tab"][texName.."Middle"]:SetHeight(28)
+            _G[name.."Tab"][texName.."Right"]:SetHeight(28)
         end
     end
+
 
     scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     scrollToBottom:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
@@ -2055,8 +2057,8 @@ local function LoadChat()
 
         local allowHooks = not ignoreChats[frame:GetID()]
         if allowHooks and not frame.OldAddMessage then
-            --Don't add timestamps to combat log, they don't work.
-            --This usually taints, but LibChatAnims should make sure it doesn't
+            --Don"t add timestamps to combat log, they don"t work.
+            --This usually taints, but LibChatAnims should make sure it doesn"t
             frame.OldAddMessage = frame.AddMessage
             frame.AddMessage = AddMessage
         end
