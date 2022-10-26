@@ -38,8 +38,6 @@ local function UpdateExtraBindings()
 end
 
 local function ExtraAB_BossAB_Setup()
-    KeyBindingFrame_LoadUI()
-
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("UPDATE_BINDINGS")
     eventFrame:SetScript("OnEvent", UpdateExtraBindings)

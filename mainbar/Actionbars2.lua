@@ -711,7 +711,6 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
         RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(7), barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, nil, FlyoutDirection)
     elseif barName == "MultiBar7" then
         RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(8), barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, nil, FlyoutDirection)
-         
     end
 
     fmMultibar:ClearAllPoints()
