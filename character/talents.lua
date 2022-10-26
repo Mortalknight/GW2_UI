@@ -209,6 +209,7 @@ local function setActiveButton(btn, spellId, skillType, icon, spellbookIndex, bo
         btn:SetAttribute("shift-type2", "modifiedClick")
     end
 
+    btn:RegisterForClicks("AnyUp", "AnyDown")
     btn:EnableMouse(true)
 end
 GW.AddForProfiling("talents", "setActiveButton", setActiveButton)
@@ -217,6 +218,7 @@ local function setPassiveButton(btn, spellId, skillType, icon, spellbookIndex, b
     setButton(btn, spellId, skillType, icon, spellbookIndex, booktype, tab, name)
     btn:SetAttribute("shift-type1", "modifiedClick")
     btn:SetAttribute("shift-type2", "modifiedClick")
+    btn:RegisterForClicks("AnyUp", "AnyDown")
     btn:EnableMouse(true)
 end
 GW.AddForProfiling("talents", "setPassiveButton", setPassiveButton)

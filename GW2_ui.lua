@@ -719,7 +719,7 @@ local function evPlayerLogin(self)
 
     GW.LoadCharacter()
 
-    GW.LoadSocialFrame()
+    --GW.LoadSocialFrame() TODO
 
     GW.Create_Raid_Counter()
     GW.LoadRaidbuffReminder()

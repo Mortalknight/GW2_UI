@@ -1012,7 +1012,7 @@ local function LoadTooltips()
         SetTooltipMoney(GameTooltip, 1, nil, "", "")
         GameTooltip_ClearMoney(GameTooltip)
     end
-    SetTooltipFonts()
+    --SetTooltipFonts()
 
     RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", "VerticalActionBarDummy", {230, 80}, {"default"})
 
@@ -1054,11 +1054,19 @@ local function LoadTooltips()
             end
         end)
 
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
-        GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetSpell)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
-        GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
+        if select(4, GetBuildInfo()) >= 100002 then
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
+            GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetSpell)
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
+            GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
+        else
+            GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_OnTooltipSetSpell)
+            GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
+            GameTooltip:HookScript("OnTooltipSetItem", GameTooltip_OnTooltipSetItem)
+            GameTooltip:HookScript("OnTooltipSetUnit", GameTooltip_OnTooltipSetUnit)
+            GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
+        end
     end
 
     local eventFrame2 = CreateFrame("Frame")

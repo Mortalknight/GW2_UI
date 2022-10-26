@@ -286,6 +286,7 @@ local function LoadDodgeBar(hg, asTargetFrame)
     -- this bar gets a global name for use in key bindings
     local fmdb = CreateFrame("Button", "GwDodgeBar", UIParent, "GwDodgeBarTmpl")
     fmdb.asTargetFrame = asTargetFrame
+    fmdb:RegisterForClicks("AnyUp", "AnyDown")
 
     fmdb:ClearAllPoints()
     if fmdb.asTargetFrame then

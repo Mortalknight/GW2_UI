@@ -36,7 +36,15 @@ local function collectDurability(self)
             GW.ScanTooltip:SetInventoryItem("player", idx)
             GW.ScanTooltip:Show()
 
-            totalRepairCost = totalRepairCost + (GW.ScanTooltip:GetTooltipData().repairCost or 0)
+            if GW.ScanTooltip.GetTooltipData then
+				GW.ScanTooltip:SetInventoryItem("player", idx)
+				GW.ScanTooltip:Show()
+
+				local data = GW.ScanTooltip:GetTooltipData()
+				totalRepairCost = totalRepairCost + (data and data.repairCost or 0)
+			else
+				totalRepairCost = totalRepairCost + select(3, GW.ScanTooltip:SetInventoryItem("player", idx))
+			end
         end
     end
     self.Value:SetFormattedText("%d%%", totalDurability)

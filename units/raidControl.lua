@@ -245,6 +245,7 @@ local function manageButton()
         f:SetNormalTexture(i < 9 and "Interface/AddOns/GW2_UI/textures/party/GM_" .. i or "Interface/BUTTONS/UI-GROUPLOOT-PASS-DOWN")
         f:SetAttribute("type", "macro")
         f:SetAttribute("macrotext", (i < 9 and "/wm " .. i or "/cwm 9"))
+        f:RegisterForClicks("AnyUp", "AnyDown")
 
         x = x + 44
         if i == 4 or i == 8 then

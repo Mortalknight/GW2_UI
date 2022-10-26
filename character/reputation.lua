@@ -187,7 +187,7 @@ local function setDetailEx(
 
     local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
     local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
-    local friendInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+    local friendInfo = C_GossipInfo.GetFriendshipReputation(factionID or 0)
 
     --if factionIndex % 2 == 0 then
     frame.background:SetTexture(nil)
@@ -691,7 +691,7 @@ local function CollectCategories()
     for factionIndex = 1, GetNumFactions() do
         local name, _, standingId, _, _, _, _, _, isHeader, _, _, _, isChild, factionID = returnReputationData(factionIndex)
         if name then
-            local friendInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+            local friendInfo = C_GossipInfo.GetFriendshipReputation(factionID or 0)
             if isHeader and not isChild then
                 if not skipFirst then
                     tinsert(catagories, {idx = idx, idxLast = factionIndex - 1,  name = headerName, standingCur = cCur, standingMax = cMax, fctTbl = sortFactionsStatus(factionTbl)})

@@ -320,6 +320,8 @@ function GwAuraTmpl_OnLoad(self)
     self:SetScript("OnHide", AuraOnHide)
     self:SetScript("OnLeave", GameTooltip_Hide)
 
+    self:RegisterForClicks("AnyUp", "AnyDown")
+
     self.gwInit = true
 end
 

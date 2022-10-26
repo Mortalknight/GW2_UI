@@ -192,7 +192,7 @@
         </Frames>
     </Button>
 
-    <Button name="GwTalentButton" registerForClicks="AnyDown" enableMouse="true" inherits="SecureActionButtonTemplate" virtual="true">
+    <Button name="GwTalentButton" enableMouse="true" inherits="SecureActionButtonTemplate" virtual="true">
         <Size x="34" y="34"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
