@@ -398,7 +398,7 @@ local function setupMicroButtons(mbf)
 
     bref:ClearAllPoints()
     bref:SetPoint("BOTTOMLEFT", cref, "BOTTOMRIGHT", 4, 0)
-    bref:HookScript("OnClick", ToggleAllBags) -- tainting
+    --bref:HookScript("OnClick", ToggleAllBags) -- tainting TODO
     bref.interval = 0
     bref:HookScript("OnUpdate", bag_OnUpdate)
     bref:HookScript("OnEnter", GW.Bags_OnEnter)

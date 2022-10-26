@@ -46,7 +46,7 @@ local IgnoreFrames = {
 }
 
 local PatternFrames = {
-	["^ChatFrame%d+"] = function() return GetSetting("CHATFRAME_ENABLED") end,
+	--["^ChatFrame%d+"] = function() return GetSetting("CHATFRAME_ENABLED") end,
 }
 
 local function PatternIgnore(frameName)
