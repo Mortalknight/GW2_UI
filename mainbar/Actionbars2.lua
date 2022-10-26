@@ -433,6 +433,12 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         btn.SpellHighlightTexture:SetSize(btn:GetWidth(), btn:GetWidth())
     end
 
+    if btn.HighlightTexture then
+        btn.HighlightTexture:SetSize(btn:GetWidth(), btn:GetWidth())
+    end
+
+    if btn.IconMask then btn.IconMask:Hide() end
+
     btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
     btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
     if btn.SetCheckedTexture then btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress") end
