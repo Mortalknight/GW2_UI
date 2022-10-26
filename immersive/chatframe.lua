@@ -752,9 +752,10 @@ end
 
 local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID, alwaysAddTimestamp)
     local useGw2Style = GetSetting("CHAT_USE_GW2_STYLE")
+    local timeStampFormat = GetChatTimestampFormat()
 
-    if CHAT_TIMESTAMP_FORMAT and (GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL") or alwaysAddTimestamp) then
-        local timeStamp = BetterDate(CHAT_TIMESTAMP_FORMAT, time())
+    if timeStampFormat and (GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL") or alwaysAddTimestamp) then
+        local timeStamp = BetterDate(timeStampFormat, time())
         timeStamp = gsub(timeStamp, " ", "")
         timeStamp = gsub(timeStamp, "AM", " AM")
         timeStamp = gsub(timeStamp, "PM", " PM")
