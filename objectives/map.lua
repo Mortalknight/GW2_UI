@@ -319,6 +319,17 @@ local function HandleExpansionButton()
     garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
     garrison:SetSize(43, 43)
 
+    -- Handle Position
+    local x = Minimap.gwMover:GetCenter()
+    local screenWidth = UIParent:GetRight()
+
+    garrison:ClearAllPoints()
+    if x > (screenWidth / 2) then
+        garrison:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 0, -3)
+    else
+        garrison:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 2, -3)
+    end
+
     local garrisonType = C_Garrison.GetLandingPageGarrisonType()
     garrison.garrisonType = garrisonType
 
