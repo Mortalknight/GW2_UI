@@ -41,7 +41,6 @@ local function updateButton(self, spellIdx, unlearn)
     if spellIdx then
         local tex = GetSpellBookItemTexture(spellIdx, BOOKTYPE_PROFESSION)
         local name, _, spellId = GetSpellBookItemName(spellIdx, BOOKTYPE_PROFESSION)
-        print(name, spellId)
         self.spellbookIndex = spellIdx
         self.booktype = BOOKTYPE_PROFESSION
         self.skillName = name
