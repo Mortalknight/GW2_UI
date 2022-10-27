@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.7.3 Wrath", [=[
+    - Fix settings window mover issue
+]=])
+
 v("1.7.2 Wrath", [=[
     - Fix gear quipper skin
 ]=])

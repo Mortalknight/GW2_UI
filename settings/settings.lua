@@ -965,6 +965,7 @@ local function LoadSettings()
     sWindow:SetScript(
         "OnHide",
         function()
+            mf:Hide()
             if not GW.InMoveHudMode then
                 if GW.ShowRlPopup then
                     StaticPopup_Show("CONFIG_RELOAD")
