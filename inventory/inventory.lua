@@ -28,8 +28,6 @@ local function reskinItemButton(iname, b)
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
 
-    --b:SetPushedTexture()
-
     if not b.gwBackdrop then
         local bd = b:CreateTexture(nil, "BACKGROUND")
         bd:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop")
@@ -199,6 +197,8 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         elseif button.itemlevel then
             button.itemlevel:SetText("")
         end
+
+        button:GetItemButtonIconTexture():SetAlpha(1)
     else
         if button.junkIcon then button.junkIcon:Hide() end
         if button.scrapIcon then button.scrapIcon:Hide() end
@@ -207,6 +207,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             button:SetScript("OnUpdate", nil)
         end
         if button.itemlevel then button.itemlevel:SetText("") end
+        button:GetItemButtonIconTexture():SetAlpha(0)
     end
 end
 GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)
