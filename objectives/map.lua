@@ -5,7 +5,7 @@ local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
 
 local MAP_FRAMES_HIDE = {}
-MAP_FRAMES_HIDE[1] = MiniMapMailFrame
+MAP_FRAMES_HIDE[1] = MiniMapMailIcon
 MAP_FRAMES_HIDE[2] = MiniMapVoiceChatFrame
 MAP_FRAMES_HIDE[3] = MiniMapTrackingButton
 MAP_FRAMES_HIDE[4] = MiniMapTracking
