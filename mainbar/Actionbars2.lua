@@ -12,7 +12,7 @@ local MAIN_MENU_BAR_BUTTON_SIZE = 48
 
 local GW_BLIZZARD_HIDE_FRAMES = {
     MainMenuBar,
-    MainMenuBarBackground,
+    MainMenuBar.Background,
     MainMenuBarOverlayFrame,
     MainMenuBarTexture0,
     MainMenuBarTexture1,
@@ -506,9 +506,7 @@ local function updateMainBar()
             -- create a backdrop not attached to button because default actionbar backdrop logic is wonky
             local backDrop = CreateFrame("Frame", nil, fmActionbar, "GwActionButtonBackdropTmpl")
             local backDropSize = 1
-            if btn:GetWidth() > 40 then
-                backDropSize = 2
-            end
+
             backDrop:SetPoint("TOPLEFT", btn, "TOPLEFT", -backDropSize, backDropSize)
             backDrop:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", backDropSize, -backDropSize)
             fmActionbar.gw_Backdrops[i] = backDrop
@@ -525,7 +523,6 @@ local function updateMainBar()
             btn.hkBg = CreateFrame("Frame", "GwHotKeyBackDropActionButton" .. i, hotkey:GetParent(), "GwActionHotkeyBackdropTmpl")
             btn.hkBg:SetPoint("CENTER", hotkey, "CENTER", 0, 0)
             btn.hkBg.texture:SetParent(hotkey:GetParent())
-
             setActionButtonStyle("ActionButton" .. i, true, nil)
             updateHotkey(btn)
 
