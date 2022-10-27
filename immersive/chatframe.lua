@@ -1391,41 +1391,46 @@ local function styleChatWindow(frame)
     end
 
     for _, texName in pairs(tabTexs) do
-        if texName == "Selected" then
-            if _G[name.."Tab"][texName.."Left"] then
-                _G[name.."Tab"][texName.."Left"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
-                _G[name.."Tab"][texName.."Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive")
-                _G[name.."Tab"][texName.."Right"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright")
+        local t, l, m, r = name .. "Tab", texName .. "Left", texName .. "Middle", texName .. "Right"
+        local main = _G[t]
+        local left = _G[t .. l] or (main and main[l])
+        local middle = _G[t .. m] or (main and main[m])
+        local right = _G[t .. r] or (main and main[r])
 
+        if texName == "Active" then
+            if left then
+                left:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
+                left:ClearAllPoints()
+                left:SetPoint("TOPRIGHT", tab.Left, "TOPRIGHT", 0, 2)
+                left:SetBlendMode("BLEND")
+                left:SetVertexColor(1, 1, 1, 1)
+            end
 
-                _G[name.."Tab"][texName.."Left"]:SetBlendMode("BLEND")
-                _G[name.."Tab"][texName.."Middle"]:SetBlendMode("BLEND")
-                _G[name.."Tab"][texName.."Right"]:SetBlendMode("BLEND")
-
-                _G[name.."Tab"][texName.."Left"]:SetVertexColor(1, 1, 1, 1)
-                _G[name.."Tab"][texName.."Middle"]:SetVertexColor(1, 1, 1, 1)
-                _G[name.."Tab"][texName.."Right"]:SetVertexColor(1, 1, 1, 1)
+            if middle then
+                middle:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive")
+                middle:ClearAllPoints()
+                middle:SetPoint("LEFT", tab.Middle, "LEFT", 0, 2)
+                middle:SetPoint("RIGHT", tab.Middle, "RIGHT", 0, 2 )
+                middle:SetBlendMode("BLEND")
+                middle:SetVertexColor(1, 1, 1, 1)
+            end
+            if right then
+                right:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright")
+                right:ClearAllPoints()
+                right:SetPoint("TOPRIGHT", tab.Right, "TOPRIGHT", 0, 2)
+                right:SetBlendMode("BLEND")
+                right:SetVertexColor(1, 1, 1, 1)
             end
         else
-            if _G[name.."Tab"][texName.."Left"] then
-                --_G[name.."Tab"][texName.."Left"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
-                --_G[name.."Tab"][texName.."Middle"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
-                --_G[name.."Tab"][texName.."Right"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
-
-
-                _G[name.."Tab"][texName.."Left"]:SetTexture()
-                _G[name.."Tab"][texName.."Middle"]:SetTexture()
-                _G[name.."Tab"][texName.."Right"]:SetTexture()
-            end
+            if left then left:SetTexture() end
+            if middle then middle:SetTexture() end
+            if right then right:SetTexture() end
         end
 
-        if _G[name.."Tab"][texName.."Left"] then
-            _G[name.."Tab"][texName.."Left"]:SetHeight(28)
-            _G[name.."Tab"][texName.."Middle"]:SetHeight(28)
-            _G[name.."Tab"][texName.."Right"]:SetHeight(28)
-        end
+        if left then left:SetHeight(28) end
+        if middle then middle:SetHeight(28) end
+        if right then right:SetHeight(28) end
     end
-
 
     scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     scrollToBottom:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
