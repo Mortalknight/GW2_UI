@@ -134,7 +134,7 @@ end
 AFP("updateGuildButton", updateGuildButton)
 
 local function TalentButtonOnEvent(self)
-    if not ClassTalentFrame then return end
+    if not ClassTalentFrame then ClassTalentFrame_LoadUI() end
     local treeCurrencyInfo = C_Traits.GetTreeCurrencyInfo(ClassTalentFrame.TalentsTab:GetConfigID(), ClassTalentFrame.TalentsTab:GetTalentTreeID(), ClassTalentFrame.TalentsTab.excludeStagedChangesForCurrencies)
     local counter = treeCurrencyInfo[1].quantity + treeCurrencyInfo[2].quantity
     if counter > 0 then
