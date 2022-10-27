@@ -373,7 +373,7 @@ local function createBagBar(f)
         inv.reskinBagBar(b)
 
         -- Hide default bag bar
-        _G["CharacterBag" .. bag_idx - 1 .. "Slot"]:Hide()
+        _G["CharacterBag" .. bag_idx - 1 .. "Slot"]:Kill()
 
         f.bags[bag_idx] = b
     end

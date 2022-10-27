@@ -767,8 +767,8 @@ local function combatHealthState(self)
         self.actionBarHud.RightSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
         self.actionBarHud.LeftSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
 
-        self.actionBarHud.LeftBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
-        self.actionBarHud.RightBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
+        self.actionBarHud.LeftBlood:SetVertexColor(1, 1, 1, math.max(1 - (unitHealthPrecentage - 0.2), 0))
+        self.actionBarHud.RightBlood:SetVertexColor(1, 1, 1, math.max(1 - (unitHealthPrecentage - 0.2), 0))
     else
         self.actionBarHud.Left:SetVertexColor(1, 1, 1)
         self.actionBarHud.Right:SetVertexColor(1, 1, 1)

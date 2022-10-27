@@ -727,9 +727,9 @@ local function hideBlizzardPartyFrame()
         end
     end
 
-    if CompactRaidFrameManager then
-        CompactRaidFrameManager:UnregisterAllEvents()
-        CompactRaidFrameManager:Hide()
+    if CompactRaidFrameManager_SetSetting then
+        CompactRaidFrameManager_SetSetting("IsShown", "0")
+        CompactRaidFrameManager:Kill()
     end
 end
 GW.AddForProfiling("party", "hideBlizzardPartyFrame", hideBlizzardPartyFrame)
