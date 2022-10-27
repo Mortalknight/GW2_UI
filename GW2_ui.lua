@@ -443,6 +443,7 @@ local function evAddonLoaded(_, addonName)
         C_Container.GetContainerItemInfo = GetContainerItemInfo
         C_Container.GetContainerItemLink = GetContainerItemLink
         C_Container.GetBagName = GetBagName
+        C_Container.UseContainerItem = UseContainerItem
     end
 
     GW.LoadStorage()
