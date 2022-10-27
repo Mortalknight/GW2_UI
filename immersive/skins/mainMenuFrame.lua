@@ -117,7 +117,7 @@ local function SkinMainMenu()
 
     local tex = GameMenuFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", GameMenuFrame, "TOP", 0, -10)
-    tex:SetSize(256, 450)
+    tex:SetSize(256, 500)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubg")
 
     GameMenuFrame.Border:Hide()
