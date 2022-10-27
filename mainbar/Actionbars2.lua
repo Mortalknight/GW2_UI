@@ -378,6 +378,7 @@ AFP("showBackdrop", showBackdrop)
 
 local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton, isPet)
     local btn = _G[buttonName]
+    local btnWidth = btn:GetWidth()
 
     if btn.icon then
         btn.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -399,10 +400,10 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         btn.Count:SetTextColor(1, 1, 0.6)
     end
 
-    btn:GetPushedTexture():SetSize(btn:GetSize())
+    btn:GetPushedTexture():SetSize(btnWidth, btnWidth)
 
     if btn.Border then
-        btn.Border:SetSize(btn:GetWidth(), btn:GetWidth())
+        btn.Border:SetSize(btnWidth, btnWidth)
         btn.Border:SetBlendMode("BLEND")
         if isStanceButton then
             btn.Border:Show()
@@ -415,42 +416,45 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         btn:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal")
     end
 
-    if _G[buttonName .. "FloatingBG"] ~= nil then
+    if _G[buttonName .. "FloatingBG"] then
         _G[buttonName .. "FloatingBG"]:SetTexture(nil)
     end
-    if _G[buttonName .. "NormalTexture2"] ~= nil then
+    if _G[buttonName .. "NormalTexture2"] then
         _G[buttonName .. "NormalTexture2"]:SetTexture(nil)
         _G[buttonName .. "NormalTexture2"]:Hide()
     end
     if btn.AutoCastable then
-        btn.AutoCastable:SetSize(btn:GetWidth() * 2, btn:GetWidth() * 2)
+        btn.AutoCastable:SetSize(btnWidth * 2, btnWidth * 2)
     end
     if btn.AutoCastShine then
-        btn.AutoCastShine:SetSize(btn:GetWidth(), btn:GetWidth())
+        btn.AutoCastShine:SetSize(btnWidth, btnWidth)
     end
     if btn.NewActionTexture then
-        btn.NewActionTexture:SetSize(btn:GetWidth(), btn:GetWidth())
+        btn.NewActionTexture:SetSize(btnWidth, btnWidth)
     end
     if btn.SpellHighlightTexture then
-        btn.SpellHighlightTexture:SetSize(btn:GetWidth(), btn:GetWidth())
+        btn.SpellHighlightTexture:SetSize(btnWidth, btnWidth)
     end
 
     if btn.HighlightTexture then
-        btn.HighlightTexture:SetSize(btn:GetWidth(), btn:GetWidth())
+        btn.HighlightTexture:SetSize(btnWidth, btnWidth)
     end
 
     if btn.IconMask then btn.IconMask:Hide() end
 
     btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
     btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
-    if btn.SetCheckedTexture then btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress") end
+    if btn.SetCheckedTexture then
+        btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+    end
+    btn.CheckedTexture:SetSize(btnWidth, btnWidth)
 
     updateMacroName(btn)
 
     if noBackDrop == nil or noBackDrop == false then
         local backDrop = CreateFrame("Frame", nil, btn, "GwActionButtonBackdropTmpl")
         local backDropSize = 1
-        if btn:GetWidth() > 40 then
+        if btnWidth > 40 then
             backDropSize = 2
         end
 
