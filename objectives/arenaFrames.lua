@@ -100,7 +100,7 @@ local function updateArena_Power(self)
         local pwcolor = PowerBarColorCustom[powerToken]
         self.power:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     else
-        self.power:SetStatusBarColor(altR, altG, altB)
+        self.power:SetStatusBarColor(altR or 0, altG or 0, altB or 0)
     end
 
     self.power:SetMinMaxValues(0, powerMax)
