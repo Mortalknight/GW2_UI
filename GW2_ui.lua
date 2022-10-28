@@ -464,7 +464,7 @@ local function evAddonLoaded(_, addonName)
     GW.LoadEncounterJournalSkin()
 
     GW.LoadAlliedRacesUISkin()
-    --GW.LoadBarShopUISkin()
+    GW.LoadBarShopUISkin()
     --GW.LoadBindingsUISkin()
     GW.LoadChromieTimerSkin()
     --GW.LoadCovenantSanctumSkin()
