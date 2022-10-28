@@ -171,6 +171,14 @@ local function healthBarAnimation(self, powerPrec, norm)
         hbSpark = self.healthbarFlashSpark
     end
 
+    if powerPrec>=1 or powerPrec<=0 then
+      hbSpark:Hide()
+    else
+      hbSpark:Show()
+      hbSpark:SetWidth(powerBarWidth/12)
+
+    end
+
     hbSpark:SetTexCoord(
         self.frameInvert and bloodSpark[bI].right or bloodSpark[bI].left,
         self.frameInvert and bloodSpark[bI].left or bloodSpark[bI].right,
@@ -1140,5 +1148,3 @@ local function LoadTargetOfUnit(unit)
     f:SetScript("OnUpdate", unittarget_OnUpdate)
 end
 GW.LoadTargetOfUnit = LoadTargetOfUnit
-
-
