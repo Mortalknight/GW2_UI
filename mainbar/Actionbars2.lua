@@ -674,6 +674,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
                 btn:SetParent(fmMultibar)
             end
             btn:SetScript("OnUpdate", nil) -- disable the default button update handler
+            btn.SlotBackground:Hide()
 
             btn:SetSize(settings.size, settings.size)
             updateHotkey(btn)
