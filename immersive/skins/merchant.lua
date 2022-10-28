@@ -36,7 +36,6 @@ local function LoadMerchantFrameSkin()
 
     MerchantFrame:StripTextures()
     MerchantFrame.NineSlice:Hide()
-    MerchantFrame.TitleBg:Hide()
     MerchantFrame.TopTileStreaks:Hide()
     MerchantFrame:CreateBackdrop()
 
@@ -83,8 +82,8 @@ local function LoadMerchantFrameSkin()
 
     MerchantItem1:SetPoint("TOPLEFT", MerchantFrame, "TOPLEFT", 24, -69)
 
-    MerchantFrameTab1:SkinButton(false, true)
-    MerchantFrameTab2:SkinButton(false, true)
+    MerchantFrameTab1:SkinButton(false, true, nil, nil, true)
+    MerchantFrameTab2:SkinButton(false, true, nil, nil, true)
 
     MerchantFrameTab1:SetSize(80, 24)
     MerchantFrameTab2:SetSize(80, 24)
