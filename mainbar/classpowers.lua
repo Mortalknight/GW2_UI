@@ -884,7 +884,10 @@ local function powerSoulshard(self, event, ...)
     end
 
     if GW.myspec == 3 then -- Destruction
-        local shardPower = Saturate(WarlockPowerBar_UnitPower("player") - pwr)
+        local shardPower = UnitPower("player", Enum.PowerType.SoulShards, true)
+        local shardModifier = UnitPowerDisplayMod(Enum.PowerType.SoulShards)
+        shardPower = (shardModifier ~= 0) and (shardPower / shardModifier) or 0
+        shardPower = Saturate(shardPower - pwr)
         if shardPower == 0 then shardPower = 0.00000000000001 end
 
         --Hide fragment bar if capped
