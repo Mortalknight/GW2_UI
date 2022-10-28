@@ -400,6 +400,11 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         btn.Count:SetTextColor(1, 1, 0.6)
     end
 
+    if btn.cooldown then
+        btn.cooldown:ClearAllPoints()
+        btn.cooldown:SetAllPoints(btn)
+    end
+
     btn:GetPushedTexture():SetSize(btnWidth, btnWidth)
 
     if btn.Border then
