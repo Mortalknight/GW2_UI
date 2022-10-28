@@ -153,7 +153,7 @@ local function TalentButtonOnEvent(self)
         end
     else
         self.GwNotify:Hide()
-            elf.GwNotifyText:Hide()
+        self.GwNotifyText:Hide()
     end
 end
 AFP("TalentButtonOnEvent", TalentButtonOnEvent)
