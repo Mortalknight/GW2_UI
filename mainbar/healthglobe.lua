@@ -321,7 +321,6 @@ local function LoadHealthGlobe()
     hg:SetAttribute("*type1", "target")
     hg:SetAttribute("*type2", "togglemenu")
     hg:SetAttribute("unit", "player")
-    RegisterUnitWatch(hg)
     hg:EnableMouse(true)
     hg:RegisterForClicks("AnyDown")
 
