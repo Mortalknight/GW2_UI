@@ -647,7 +647,7 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
         end
     end
 
-    if color then
+    if color and color.r and color.g and color.b then
         self.StatusBar:SetStatusBarColor(color.r, color.g, color.b)
     else
         self.StatusBar:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
