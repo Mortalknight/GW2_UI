@@ -463,7 +463,7 @@ local function evAddonLoaded(_, addonName)
     GW.LoadWorldMapSkin()
     GW.LoadEncounterJournalSkin()
 
-    --GW.LoadAlliedRacesUISkin()
+    GW.LoadAlliedRacesUISkin()
     --GW.LoadBarShopUISkin()
     --GW.LoadBindingsUISkin()
     GW.LoadChromieTimerSkin()
