@@ -643,12 +643,11 @@ local function evPlayerLogin(self)
     else
         hudArtFrame.actionBarHud:ClearAllPoints()
         hudArtFrame.actionBarHud:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
-        hudArtFrame.edgeTintBottom1:ClearAllPoints()
-        hudArtFrame.edgeTintBottom1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
-        hudArtFrame.edgeTintBottom1:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
-        hudArtFrame.edgeTintBottom2:ClearAllPoints()
-        hudArtFrame.edgeTintBottom2:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
-        hudArtFrame.edgeTintBottom2:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 0, 0)
+
+        hudArtFrame.edgeTintBottomCornerLeft:ClearAllPoints()
+        hudArtFrame.edgeTintBottomCornerLeft:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
+        hudArtFrame.edgeTintBottomCornerRight:ClearAllPoints()
+        hudArtFrame.edgeTintBottomCornerRight:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
     end
 
     if GetSetting("FONTS_ENABLED") then
