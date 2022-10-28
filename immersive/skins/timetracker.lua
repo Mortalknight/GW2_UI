@@ -1,6 +1,7 @@
 local _, GW = ...
 
 local function SkinTimerTrackerFrame_OnShow(self)
+    print(1)
     local Frame = _G[self:GetName() .. "StatusBar"]
     if Frame then
         Frame:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
