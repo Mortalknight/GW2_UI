@@ -176,7 +176,6 @@ local function healthBarAnimation(self, powerPrec, norm)
     else
       hbSpark:Show()
       hbSpark:SetWidth(powerBarWidth/12)
-
     end
 
     hbSpark:SetTexCoord(
@@ -196,7 +195,7 @@ local function healthBarAnimation(self, powerPrec, norm)
         self.frameInvert and "LEFT" or "RIGHT",
         hbbg,
         self.frameInvert and "RIGHT" or "LEFT",
-        (math.max(0, math.min(powerBarWidth, spark)) * (self.frameInvert and -1 or 1)) + (self.frameInvert and -1 or 1),
+        (math.max(0, math.min(powerBarWidth, spark)) * (self.frameInvert and -1 or 1)), -- + (self.frameInvert and -1 or 1),
         0
     )
 end
