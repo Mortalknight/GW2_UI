@@ -477,7 +477,7 @@ local function evAddonLoaded(_, addonName)
     --GW.LoadOrderHallTalentFrameSkin()
     --GW.LoadSocketUISkin()
     --GW.LoadSoulbindsSkin()
-    --GW.LoadWeeklyRewardsSkin()
+    GW.LoadWeeklyRewardsSkin()
 end
 AFP("evAddonLoaded", evAddonLoaded)
 
