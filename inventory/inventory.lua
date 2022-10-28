@@ -360,8 +360,6 @@ local function reskinBagBar(b, ha)
         b.SlotHighlightTexture:SetAlpha(highlightAlpha)
         b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
     end
-
-    --b:SetPushedTexture(nil)
 end
 GW.AddForProfiling("inventory", "reskinBagBar", reskinBagBar)
 

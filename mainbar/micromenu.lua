@@ -135,16 +135,25 @@ AFP("updateGuildButton", updateGuildButton)
 
 local function TalentButtonOnEvent(self)
     ClassTalentFrame_LoadUI()
+    local configId = ClassTalentFrame.TalentsTab:GetConfigID()
+    local talentTreeId = ClassTalentFrame.TalentsTab:GetTalentTreeID()
+    local excludeStagedChangesForCurrencies = ClassTalentFrame.TalentsTab.excludeStagedChangesForCurrencies
 
-    local treeCurrencyInfo = C_Traits.GetTreeCurrencyInfo(ClassTalentFrame.TalentsTab:GetConfigID(), ClassTalentFrame.TalentsTab:GetTalentTreeID(), ClassTalentFrame.TalentsTab.excludeStagedChangesForCurrencies)
-    local counter = treeCurrencyInfo[1].quantity + treeCurrencyInfo[2].quantity
-    if counter > 0 then
-        self.GwNotify:Show()
-        self.GwNotifyText:SetText(counter)
-        self.GwNotifyText:Show()
+    if configId and configId > 0 and talentTreeId and talentTreeId > 0 then
+       
+        local treeCurrencyInfo = C_Traits.GetTreeCurrencyInfo(configId, talentTreeId, excludeStagedChangesForCurrencies)
+        local counter = treeCurrencyInfo[1].quantity + treeCurrencyInfo[2].quantity
+        if counter > 0 then
+            self.GwNotify:Show()
+            self.GwNotifyText:SetText(counter)
+            self.GwNotifyText:Show()
+        else
+            self.GwNotify:Hide()
+            self.GwNotifyText:Hide()
+        end
     else
         self.GwNotify:Hide()
-        self.GwNotifyText:Hide()
+            elf.GwNotifyText:Hide()
     end
 end
 AFP("TalentButtonOnEvent", TalentButtonOnEvent)

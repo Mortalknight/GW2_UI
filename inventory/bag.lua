@@ -352,9 +352,8 @@ local function createBagBar(f)
     for bag_idx = 1, NUM_BAG_SLOTS do
         -- this name MUST have a 9-letter prefix and match the style "CharacterBag0Slot"
         -- because of hard-coded string parsing in PaperDollItemSlotButton_OnLoad
-        local name = "GwInvntry" .. "Bag" .. (bag_idx - 1) .. "Slot"
+        local name = "GwInvntryBag" .. (bag_idx - 1) .. "Slot"
         local b = CreateFrame("ItemButton", name, f, "GwBackpackBagTemplate")
-        local icon = b.icon or _G[b:GetName()..'IconTexture']
         b.commandName = ""
 
         -- We depend on a number of behaviors from the default BagSlotButtonTemplate.
@@ -384,10 +383,6 @@ local function createBagBar(f)
         local b = CreateFrame("ItemButton", name, f, "GwBackpackBagTemplate")
         b.commandName = ""
 
-       -- _G["GwInvntry" .. "Bag" .. (bag_idx - 1) .. "SlotIconTexture"]:RemoveMaskTexture(b.CircleMask)
-       -- _G["GwInvntry" .. "Bag" .. (bag_idx - 1) .. "SlotNormalTexture"]:Kill()
-        --b.SlotHighlightTexture:Kill()
-
         -- We depend on a number of behaviors from the default BagSlotButtonTemplate.
         -- The ID set here is NOT the usual bag_id; rather it is an offset from the
         -- id of CharacterBag0Slot, used internally by BagSlotButtonTemplate methods.
@@ -404,7 +399,7 @@ local function createBagBar(f)
         inv.reskinBagBar(b)
 
         -- Hide default bag bar
-        CharacterReagentBag0Slot:Hide()
+        CharacterReagentBag0Slot:Kill()
 
         f.bags[NUM_BAG_SLOTS + 1] = b
     end
