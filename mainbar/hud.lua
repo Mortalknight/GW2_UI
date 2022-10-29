@@ -190,6 +190,7 @@ local function xpbar_OnEvent(self, event)
 
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
             isParagon = true
+            isFriend = friendshipID > 0
         elseif friendshipID > 0 then
             if friendReputationInfo.nextThreshold then
                 valPrecRepu = (friendReputationInfo.standing - friendReputationInfo.reactionThreshold) / (friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold)
@@ -220,7 +221,7 @@ local function xpbar_OnEvent(self, event)
 
         local nextId = standingId and standingId + 1 or 1
         if not lockLevelTextUnderMaxLevel then
-            level = isParagon and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1)) or isFriend and friendTextLevel or isNormal and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1))
+            level = isFriend and  friendReputationInfo.reaction or isParagon and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1)) or isNormal and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1))
             Nextlevel = isParagon and L["Paragon"] or isFriend and "" or isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
         end
 
@@ -410,7 +411,7 @@ local function xpbar_OnEvent(self, event)
     end
 
     if GW.mylevel ~= UnitEffectiveLevel("player") then
-        level = level.. " |cFF00FF00(" .. UnitEffectiveLevel("player") .. ")|r"
+        level = level .. " |cFF00FF00(" .. UnitEffectiveLevel("player") .. ")|r"
     end
 
     self.NextLevel:SetText(Nextlevel)
