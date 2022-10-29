@@ -15,7 +15,9 @@ local function ApplyItemUpgradeSkin()
     ItemUpgradeFramePlayerCurrenciesBorder:StripTextures()
     ItemUpgradeFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
 
-    ItemUpgradeFrame.tex = ItemUpgradeFrame:CreateTexture("bg", "BACKGROUND", nil,-7)
+    ItemUpgradeFrame:StripTextures()
+
+    ItemUpgradeFrame.tex = ItemUpgradeFrame:CreateTexture("bg", "BACKGROUND", nil, -7)
     local w, h = ItemUpgradeFrame:GetSize()
     ItemUpgradeFrame.tex:SetPoint("TOP", ItemUpgradeFrame, "TOP", 0, 20)
     ItemUpgradeFrame.tex:SetSize(w + 50, h + 70)
@@ -24,9 +26,7 @@ local function ApplyItemUpgradeSkin()
     ItemUpgradeFrame.UpgradeCostFrame.BGTex:StripTextures()
 
     ItemUpgradeFrame.NineSlice:Hide()
-    ItemUpgradeFrame.TitleBg:Hide()
     ItemUpgradeFrame.TopTileStreaks:Hide()
-    ItemUpgradeFrame.BottomBG:CreateBackdrop('Transparent')
     ItemUpgradeFrame.ItemInfo.UpgradeTo:SetFontObject("GameFontHighlightMedium")
 
     local button = ItemUpgradeFrame.UpgradeItemButton
