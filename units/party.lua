@@ -721,9 +721,11 @@ local function hideBlizzardPartyFrame()
         return
     end
 
-    for i = 1, MAX_PARTY_MEMBERS do
-        if _G["PartyMemberFrame" .. i] then
-            _G["PartyMemberFrame" .. i]:Kill()
+    PartyFrame:UnregisterAllEvents()
+
+    for frame in PartyFrame.PartyMemberFramePool:EnumerateActive() do
+        if frame then
+            frame:KIll()
         end
     end
 
