@@ -417,6 +417,7 @@ local function evAddonLoaded(_, addonName)
         local loadHook = addonLoadHooks[addonName]
         if loadHook and type(loadHook) == "function" then
             Debug("run load hook for addon", addonName)
+            print(addonName)
             xpcall(loadHook, errorhandler)
             addonLoadHooks[addonName] = nil
         end
