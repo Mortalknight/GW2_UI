@@ -3,6 +3,7 @@ local _, GW = ...
 local function ApplySocketUISkin()
     if not GW.GetSetting("SOCKET_SKIN_ENABLED") then return end
 
+    ItemSocketingFramePortrait:Hide()
     ItemSocketingFrame:StripTextures()
     _G.ItemSocketingFrameCloseButton:SkinButton(true)
     _G.ItemSocketingFrameCloseButton:SetSize(20, 20)
@@ -24,7 +25,13 @@ local function ApplySocketUISkin()
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
     ItemSocketingFrame.tex = tex
 
-    _G.ItemSocketingScrollFrameScrollBar:SkinScrollBar()
+
+    ItemSocketingDescription:DisableDrawLayer('BORDER')
+	ItemSocketingDescription:DisableDrawLayer('BACKGROUND')
+    ItemSocketingScrollFrame:StripTextures()
+
+    ItemSocketingScrollFrameScrollBar:SkinScrollBar()
+    ItemSocketingScrollFrame:SkinScrollFrame()
 
     for i = 1, _G.MAX_NUM_SOCKETS  do
         local button_bracket = _G[("ItemSocketingSocket%dBracketFrame"):format(i)]

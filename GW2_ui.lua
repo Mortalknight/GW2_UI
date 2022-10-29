@@ -475,7 +475,7 @@ local function evAddonLoaded(_, addonName)
     --GW.LoadLFGSkin()
     --GW.LoadMacroOptionsSkin()
     --GW.LoadOrderHallTalentFrameSkin()
-    --GW.LoadSocketUISkin()
+    GW.LoadSocketUISkin()
     GW.LoadSoulbindsSkin()
     GW.LoadWeeklyRewardsSkin()
 end
