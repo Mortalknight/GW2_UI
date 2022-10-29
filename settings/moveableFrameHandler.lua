@@ -492,7 +492,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         local point, anchor, relativePoint, xOfs, yOfs = frame:GetPoint()
         moveframe.savedPoint = {}
         moveframe.savedPoint.point = point
-        moveframe.savedPoint.anchor = anchor == UIParent and UIParent or anchor
+        moveframe.savedPoint.anchor = anchor == UIParent and "UIParent" or anchor:GetName()
         moveframe.savedPoint.relativePoint = relativePoint
         moveframe.savedPoint.xOfs = xOfs
         moveframe.savedPoint.yOfs = yOfs
@@ -502,7 +502,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         local point, anchor, relativePoint, xOfs, yOfs = frame:GetPoint()
         moveframe.defaultPoint = {}
         moveframe.defaultPoint.point = point
-        moveframe.savedPoint.anchor = anchor == UIParent and UIParent or anchor
+        moveframe.savedPoint.anchor = anchor == UIParent and "UIParent" or anchor:GetName()
         moveframe.defaultPoint.relativePoint = relativePoint
         moveframe.defaultPoint.xOfs = xOfs
         moveframe.defaultPoint.yOfs = yOfs
