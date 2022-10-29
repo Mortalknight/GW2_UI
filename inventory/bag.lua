@@ -179,7 +179,7 @@ local function layoutBagItems(f)
         if not rev and bag_id < 4 then
             slotID = GetInventorySlotInfo("Bag" .. bag_id .. "Slot")
             itemID = GetInventoryItemID("player", slotID)
-        elseif rev and bag_id <= 5 and bag_id > 0 then
+        elseif rev and bag_id <= 4 and bag_id > 0 then --TODO with reagent bag
             slotID = GetInventorySlotInfo("Bag" .. bag_id - 1 .. "Slot")
             itemID = GetInventoryItemID("player", slotID)
         end
