@@ -44,7 +44,7 @@ local function animFlare(f, scale, offset, duration, rotate)
         GetTime(),
         duration,
         function()
-            local p = math.max(0, animations["POWER_FLARE_ANIM"].progress)
+            local p = math.min(1, math.max(0, animations["POWER_FLARE_ANIM"].progress))
             ff:SetAlpha(p)
             if rotate then
                 ff:SetRotation(1 * p)
@@ -70,7 +70,7 @@ GW.AddForProfiling("classpowers", "decayCounter_OnAnim", decayCounter_OnAnim)
 local function decayCounterFlash_OnAnim()
     local f = CPWR_FRAME
     local fdc = f.decayCounter
-    fdc.flash:SetAlpha(animations["DECAYCOUNTER_TEXT"].progress)
+    fdc.flash:SetAlpha(math.min(1, math.max(0, animations["DECAYCOUNTER_TEXT"].progress)))
 end
 GW.AddForProfiling("classpowers", "decayCounterFlash_OnAnim", decayCounterFlash_OnAnim)
 
@@ -90,7 +90,7 @@ GW.AddForProfiling("classpowers", "maelstromCounter_OnAnim", maelstromCounter_On
 local function maelstromCounterFlash_OnAnim()
     local f = CPWR_FRAME
     local fms = f.maelstrom
-    fms.flash:SetAlpha(animations["MAELSTROMCOUNTER_TEXT"].progress)
+    fms.flash:SetAlpha(math.min(1, math.max(0, animations["MAELSTROMCOUNTER_TEXT"].progress)))
 end
 GW.AddForProfiling("classpowers", "maelstromCounterFlash_OnAnim", maelstromCounterFlash_OnAnim)
 
@@ -264,7 +264,7 @@ local function powerCombo(self, event, ...)
                     GetTime(),
                     0.5,
                     function()
-                        local p = math.max(0, animations["COMBOPOINTS_FLARE"].progress)
+                        local p = math.min(1, math.max(0, animations["COMBOPOINTS_FLARE"].progress))
                         self.combopoints.comboFlare:SetAlpha(p)
                     end,
                     nil,
@@ -630,9 +630,10 @@ local function powerRune(self)
                 rune_start,
                 rune_duration,
                 function()
+                    local value = math.min(1, math.max(0, 0.6 * animations[animId].progress))
                     fFill:SetTexCoord(0.5, 1, 1 - animations[animId].progress, 1)
                     fFill:SetHeight(32 * animations[animId].progress)
-                    fFill:SetVertexColor(1, 0.6 * animations[animId].progress, 0.6 * animations[animId].progress)
+                    fFill:SetVertexColor(1, value, value)
                 end,
                 "noease",
                 function()
@@ -645,7 +646,7 @@ local function powerRune(self)
                         GetTime(),
                         0.5,
                         function()
-                            f.flare:SetAlpha(animations["HOLY_POWER_FLARE_ANIMATION"].progress)
+                            f.flare:SetAlpha(math.min(1, math.max(0 ,animations["HOLY_POWER_FLARE_ANIMATION"].progress)))
                         end
                     )
                 end
@@ -907,8 +908,7 @@ local function powerSoulshard(self, event, ...)
                 GetTime(),
                 0.3,
                 function()
-                    local p = math.max(0, animations["WARLOCK_FRAGMENT_FLARE"].progress)
-                    self.warlock.shardFragment.flare:SetAlpha(p)
+                    self.warlock.shardFragment.flare:SetAlpha(math.min(1, math.max(0, animations["WARLOCK_FRAGMENT_FLARE"].progress)))
                 end
             )
         end
@@ -976,6 +976,7 @@ local function loopStagger()
     local f = CPWR_FRAME
     local fb = f.brewmaster
     local staggerAmountClamped = math.min(1, fb.debugpre)
+    local alpha = math.min(1, math.max(0, lerp(0, 1, staggerAmountClamped / 0.5)))
 
     if fb.debugpre == 0 then
         fb.stagger.blue:Hide()
@@ -992,8 +993,8 @@ local function loopStagger()
     end
 
     fb.stagger.blue:SetVertexColor(1, 1, 1, 1)
-    fb.stagger.yellow:SetVertexColor(1, 1, 1, lerp(0, 1, staggerAmountClamped / 0.5))
-    fb.stagger.red:SetVertexColor(1, 1, 1, lerp(0, 1, (staggerAmountClamped - 0.5) / 0.5))
+    fb.stagger.yellow:SetVertexColor(1, 1, 1, alpha)
+    fb.stagger.red:SetVertexColor(1, 1, 1, alpha)
 
     fb.stagger.blue:SetTexCoord(0, staggerAmountClamped, 0, 1)
     fb.stagger.yellow:SetTexCoord(0, staggerAmountClamped, 0, 1)
