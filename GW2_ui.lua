@@ -765,7 +765,7 @@ local function evPlayerLogin(self)
         GW.LoadActionBars(lm)
         GW.ExtraAB_BossAB_Setup()
 
-        DEFAULT_CHAT_FRAME:AddMessage(("\n*GW2 UI:|r |cffff0000You need to reset the scale of the Blizzard Action Bars in their \"Edit Mode\" to 1!|r Otherwise, we cannot set the bar position correctly.\n\n"):gsub("*", GW.Gw2Color))
+        DEFAULT_CHAT_FRAME:AddMessage(("\n*GW2 UI:|r |cffff0000You need to reset the scale of the Blizzard Action Bars in their \"Edit Mode\" to 100%!|r Otherwise, we cannot set the bar position correctly.\n\n"):gsub("*", GW.Gw2Color))
     end
 
     -- create pet frame
