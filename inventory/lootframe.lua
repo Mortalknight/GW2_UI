@@ -59,9 +59,11 @@ local function LoadLootFrameSkin()
         LootFrame:ClearAllPoints()
         LootFrame:SetPoint(pos.point, nil, pos.relativePoint, pos.xOfs, pos.yOfs)
         RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "LOOTFRAME_POS", "VerticalActionBarDummy", nil, {"default", "scaleable"})
-        LootFrame:HookScript("OnSHow", function(self)
-            LootFrame:ClearAllPoints()
-            LootFrame:SetPoint("TOPLEFT", self.gwMover)
+        hooksecurefunc(LootFrame, "SetPoint", function(_, _, holder)
+            if holder ~= LootFrame.gwMover then
+                LootFrame:ClearAllPoints()
+                LootFrame:SetPoint("TOPLEFT", LootFrame.gwMover)
+            end
         end)
     end
 
