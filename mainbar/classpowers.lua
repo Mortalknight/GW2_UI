@@ -44,7 +44,7 @@ local function animFlare(f, scale, offset, duration, rotate)
         GetTime(),
         duration,
         function()
-            local p = animations["POWER_FLARE_ANIM"].progress
+            local p = math.max(0, animations["POWER_FLARE_ANIM"].progress)
             ff:SetAlpha(p)
             if rotate then
                 ff:SetRotation(1 * p)
@@ -264,7 +264,7 @@ local function powerCombo(self, event, ...)
                     GetTime(),
                     0.5,
                     function()
-                        local p = animations["COMBOPOINTS_FLARE"].progress
+                        local p = math.max(0, animations["COMBOPOINTS_FLARE"].progress)
                         self.combopoints.comboFlare:SetAlpha(p)
                     end,
                     nil,
@@ -907,7 +907,7 @@ local function powerSoulshard(self, event, ...)
                 GetTime(),
                 0.3,
                 function()
-                    local p = animations["WARLOCK_FRAGMENT_FLARE"].progress
+                    local p = math.max(0, animations["WARLOCK_FRAGMENT_FLARE"].progress)
                     self.warlock.shardFragment.flare:SetAlpha(p)
                 end
             )
