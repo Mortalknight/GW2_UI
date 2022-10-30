@@ -725,7 +725,7 @@ local function hideBlizzardPartyFrame()
 
     for frame in PartyFrame.PartyMemberFramePool:EnumerateActive() do
         if frame then
-            frame:KIll()
+            frame:Kill()
         end
     end
 

@@ -10,6 +10,7 @@ local CheckRaidFrame = function() return GetSetting("RAID_FRAMES") end
 local CheckBossFrame = function() return GetSetting("QUESTTRACKER_ENABLED") end
 local CheckAuraFrame = function() return GetSetting("PLAYER_BUFFS_ENABLED") end
 local CheckActionBar = function() return GetSetting("ACTIONBARS_ENABLED") end
+local CheckLootFrame = function() return GetSetting("LOOTFRAME_SKIN_ENABLED") and GetCVar("lootUnderMouse") == "0" end
 
 local IgnoreFrames = {
 	MinimapCluster = function() return GetSetting("MINIMAP_ENABLED") end,
@@ -42,20 +43,11 @@ local IgnoreFrames = {
 	MultiBarRight = CheckActionBar,
 	MultiBar5 = CheckActionBar,
 	MultiBar6 = CheckActionBar,
-	MultiBar7 = CheckActionBar
-}
+	MultiBar7 = CheckActionBar,
 
-local PatternFrames = {
-	--["^ChatFrame%d+"] = function() return GetSetting("CHATFRAME_ENABLED") end,
+	-- Iventroy
+	LootFrame = CheckLootFrame,
 }
-
-local function PatternIgnore(frameName)
-	for pattern, patternFunc in pairs(PatternFrames) do
-		if strmatch(frameName, pattern) then
-			return patternFunc()
-		end
-	end
-end
 
 local function DisableBlizzardMovers()
 	local editMode = EditModeManagerFrame
@@ -66,7 +58,7 @@ local function DisableBlizzardMovers()
 		local name = registered[i]:GetName()
 		local ignore = IgnoreFrames[name]
 
-		if ignore and ignore() or PatternIgnore(name) then
+		if ignore and ignore() then
 			tremove(editMode.registeredSystemFrames, i)
 		end
 	end
@@ -79,6 +71,7 @@ local function DisableBlizzardMovers()
 	if CheckRaidFrame() then mixin.RefreshRaidFrames = GW.NoOp end
 	if CheckArenaFrame() then mixin.RefreshArenaFrames = GW.NoOp end
 	if CheckPartyFrame() then mixin.RefreshPartyFrames = GW.NoOp end
+	if CheckLootFrame() then mixin.RefreshLootFrame = GW.NoOp end
 	if CheckTargetFrame() and CheckFocusFrame() then mixin.RefreshTargetAndFocus = GW.NoOp end
 	if CheckActionBar() then
 		mixin.RefreshVehicleLeaveButton = GW.NoOp

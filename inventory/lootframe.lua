@@ -38,12 +38,11 @@ local function LoadLootFrameSkin()
     GwLootFrameTitle.headerString:SetFont(DAMAGE_TEXT_FONT, 14)
     GwLootFrameTitle.headerString:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
-    local w, h = LootFrame:GetSize()
+    local w, _ = LootFrame:GetSize()
     GwLootFrameTitle:SetWidth(w)
     GwLootFrameTitle.BGLEFT:SetWidth(w)
     GwLootFrameTitle.BGRIGHT:SetWidth(w)
     GwLootFrameTitle.headerString:SetWidth(w)
-    --GwLootFrameTitle.BG:SetSize(w + 100, h)
 
     if not LootFrame.SetBackdrop then
         Mixin(LootFrame, BackdropTemplateMixin)
@@ -58,11 +57,12 @@ local function LoadLootFrameSkin()
 
     if GetCVar("lootUnderMouse") == "0" then
         local pos = GetSetting("LOOTFRAME_POS")
-        _G.LootFrame:SetPoint(pos.point, nil, pos.relativePoint, pos.xOfs, pos.yOfs)
-        RegisterMovableFrame(_G.LootFrame, BUTTON_LAG_LOOT, "LOOTFRAME_POS", "VerticalActionBarDummy", nil, {"default", "scaleable"})
+        LootFrame:ClearAllPoints()
+        LootFrame:SetPoint(pos.point, nil, pos.relativePoint, pos.xOfs, pos.yOfs)
+        RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "LOOTFRAME_POS", "VerticalActionBarDummy", nil, {"default", "scaleable"})
         LootFrame:HookScript("OnSHow", function(self)
-            _G.LootFrame:ClearAllPoints()
-            _G.LootFrame:SetPoint("TOPLEFT", self.gwMover)
+            LootFrame:ClearAllPoints()
+            LootFrame:SetPoint("TOPLEFT", self.gwMover)
         end)
     end
 
