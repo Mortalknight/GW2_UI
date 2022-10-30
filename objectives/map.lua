@@ -427,7 +427,7 @@ local function LoadMinimap()
     TimeManagerClockButton:Kill()
     MinimapCluster.Tracking.Button:SetParent(GW.HiddenFrame)
 
-    Minimap.location = Minimap:CreateFontString(nil, "OVERLAY", "Meno")
+    Minimap.location = Minimap:CreateFontString(nil, "OVERLAY", "GW_Standard_Button_Font_Small")
     Minimap.location:SetPoint("TOP", Minimap, "TOP", 0, -2)
     Minimap.location:SetJustifyH("CENTER")
     Minimap.location:SetJustifyV("MIDDLE")
