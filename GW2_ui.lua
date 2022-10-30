@@ -764,6 +764,8 @@ local function evPlayerLogin(self)
     if GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
         GW.LoadActionBars(lm)
         GW.ExtraAB_BossAB_Setup()
+
+        DEFAULT_CHAT_FRAME:AddMessage(("\n*GW2 UI:|r |cffff0000You need to reset the scale of the Blizzard Action Bars in their \"Edit Mode\" to 1!|r Otherwise, we cannot set the bar position correctly.\n\n"):gsub("*", GW.Gw2Color))
     end
 
     -- create pet frame
