@@ -5,23 +5,33 @@ local TOTEM_BAR_BUTTON_MARGIN = 3
 
 local priority = GW.myclass == "SHAMAN" and {[1]=1, [2]=2, [3]=4, [4]=3} or STANDARD_TOTEM_PRIORITIES
 
+local function UpdateButton(button, totem, show)
+    if show and totem then
+        local _, _, startTime, duration, icon = GetTotemInfo(totem.slot)
+
+        button.iconTexture:SetTexture(icon)
+        button.cooldown:SetCooldown(startTime, duration)
+
+        totem:ClearAllPoints()
+        totem:SetParent(button.holder)
+        totem:SetAllPoints(button.holder)
+    end
+
+    button:SetShown(show)
+end
+
+local function HideTotem(self)
+    local i = priority[self.layoutIndex]
+    UpdateButton(GW_TotemBar[i], self, false)
+end
+
 local function gw_totem_bar_OnEvent(self)
-    for i = 1, MAX_TOTEMS do
-        local button = self[priority[i]]
-        local totem = _G["TotemFrameTotem" .. i]
+    for totem in next, TotemFrame.totemPool.activeObjects do
+        local i = priority[totem.layoutIndex]
+        UpdateButton(self[i], totem, true)
 
-        if totem and totem:IsShown() then
-            local _, _, startTime, duration, icon = GetTotemInfo(totem.slot)
-
-            button:Show()
-            button.iconTexture:SetTexture(icon)
-            button.cooldown:SetCooldown(startTime, duration)
-
-            button:ClearAllPoints()
-            button:SetParent(button.holder)
-            button:SetAllPoints(button.holder)
-        else
-            button:Hide()
+        if totem:GetScript("OnHide") ~= HideTotem then
+            totem:SetScript("OnHide", HideTotem)
         end
     end
 end
@@ -91,9 +101,7 @@ local function Create_Totem_Bar()
 
         local backDrop = CreateFrame("Frame", nil, button, "GwActionButtonBackdropTmpl")
         local backDropSize = 1
-        if button:GetWidth() > 40 then
-            backDropSize = 2
-        end
+
         backDrop:SetPoint("TOPLEFT", button, "TOPLEFT", -backDropSize, backDropSize)
         backDrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", backDropSize, -backDropSize)
         button:Hide()
