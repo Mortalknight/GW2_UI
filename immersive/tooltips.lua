@@ -811,7 +811,8 @@ local function GameTooltip_ShowStatusBar(self)
     if not sb or sb.backdrop then return end
 
     sb:StripTextures()
-    sb:CreateBackdrop(GW.skins.constBackdropFrameBorder)
+    sb:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+    sb.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
     sb:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
 end
 
