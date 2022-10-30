@@ -140,7 +140,6 @@ local function TalentButtonOnEvent(self)
     local excludeStagedChangesForCurrencies = ClassTalentFrame.TalentsTab.excludeStagedChangesForCurrencies
 
     if configId and configId > 0 and talentTreeId and talentTreeId > 0 then
-       
         local treeCurrencyInfo = C_Traits.GetTreeCurrencyInfo(configId, talentTreeId, excludeStagedChangesForCurrencies)
         local counter = treeCurrencyInfo[1].quantity + treeCurrencyInfo[2].quantity
         if counter > 0 then
@@ -260,9 +259,8 @@ local function reskinMicroButton(btn, name, mbf)
     btn:SetHighlightTexture(tex)
 
     if btn.Flash then
-        -- hide the flash frames off-screen
-        btn.Flash:ClearAllPoints()
-        btn.Flash:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 440)
+        btn.Flash:SetInside()
+		btn.Flash:SetTexture()
     end
 
     btn.GwNotify = btn:CreateTexture(nil, "OVERLAY")
@@ -346,7 +344,8 @@ local function hook_MainMenuMicroButton_OnUpdate()
     m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
     m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
     m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
-    MainMenuMicroButton.MainMenuBarPerformanceBar:Hide()
+    MainMenuMicroButton.MainMenuBarPerformanceBar:SetAlpha(0)
+    MainMenuMicroButton.MainMenuBarPerformanceBar:SetScale(0.00001)
 end
 AFP("hook_MainMenuMicroButton_OnUpdate", hook_MainMenuMicroButton_OnUpdate)
 
@@ -525,7 +524,8 @@ local function setupMicroButtons(mbf)
     -- MainMenuMicroButton
     MainMenuMicroButton:ClearAllPoints()
     MainMenuMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
-    MainMenuMicroButton.MainMenuBarPerformanceBar:Hide()
+    MainMenuMicroButton.MainMenuBarPerformanceBar:SetAlpha(0)
+    MainMenuMicroButton.MainMenuBarPerformanceBar:SetScale(0.00001)
     MainMenuMicroButton:HookScript("OnUpdate", hook_MainMenuMicroButton_OnUpdate)
     MainMenuMicroButton.FlashContent:Hide()
 

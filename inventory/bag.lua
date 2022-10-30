@@ -646,7 +646,7 @@ local function LoadBag(helpers)
     ContainerFrameCombinedBags:SetScale(0.0001)
     ContainerFrameCombinedBags:SetAlpha(0)
     ContainerFrameCombinedBags:Kill()
-    SetCVar("combinedBags", "0")
+    SetCVar("combinedBags", 0)
 
     inv = helpers
 
