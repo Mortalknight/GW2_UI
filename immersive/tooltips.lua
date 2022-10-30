@@ -743,9 +743,9 @@ end
 local function SetTooltipFonts()
     local font = UNIT_NAME_FONT
     local fontOutline = ""
-    local headerSize = GetSetting("TOOLTIP_FONT_SIZE")
-    local smallTextSize = GetSetting("TOOLTIP_FONT_SIZE")
-    local textSize = GetSetting("TOOLTIP_FONT_SIZE")
+    local headerSize = tonumber(GetSetting("TOOLTIP_FONT_SIZE"))
+    local smallTextSize =tonumber(GetSetting("TOOLTIP_FONT_SIZE"))
+    local textSize = tonumber(GetSetting("TOOLTIP_FONT_SIZE"))
 
     GameTooltipHeaderText:SetFont(font, headerSize, fontOutline)
     GameTooltipTextSmall:SetFont(font, smallTextSize, fontOutline)
@@ -1012,7 +1012,7 @@ local function LoadTooltips()
         SetTooltipMoney(GameTooltip, 1, nil, "", "")
         GameTooltip_ClearMoney(GameTooltip)
     end
-    --SetTooltipFonts()
+    SetTooltipFonts()
 
     RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", "VerticalActionBarDummy", {230, 80}, {"default"})
 
