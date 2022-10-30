@@ -3,8 +3,7 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 local GetSetting = GW.GetSetting
 
 local function updateLootFrameButtons(self)
-    for i = 1, self.ScrollTarget:GetNumChildren() do
-        local button = select(i, self.ScrollTarget:GetChildren())
+    for _, button in next, { self.ScrollTarget:GetChildren() } do
         local item = button.Item
         local Icon = item.icon:GetTexture()
         item:StripTextures()
