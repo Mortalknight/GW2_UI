@@ -55,6 +55,7 @@ local function setPetBar(fmPet)
         local autoCast = btn.AutoCastable or _G["PetActionButton" .. i .. "AutoCastable"]
 
         if btn then
+            btn:Show()
             fmPet.gwButton[i] = btn
             btn:SetParent(fmPet)
             GW.updateHotkey(btn)
@@ -68,6 +69,9 @@ local function setPetBar(fmPet)
                 btn:ClearAllPoints()
                 btn:SetPoint("BOTTOM", PetActionButton5, "TOP", 0, BUTTON_MARGIN)
             end
+            -- caused be taint
+            btn.ClearAllPoints = GW.NoOp
+            btn.SetPoint = GW.NoOp
 
             if btnShine then
                 btnShine:SetSize(btn:GetSize())
@@ -256,6 +260,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterUnitEvent("UNIT_AURA", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MODEL_CHANGED", "pet")
+    playerPetFrame:RegisterEvent("PET_UI_UPDATE")
 
     updatePetData(playerPetFrame, "UNIT_PET", "pet")
 
