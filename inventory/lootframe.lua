@@ -5,17 +5,36 @@ local GetSetting = GW.GetSetting
 local function updateLootFrameButtons(self)
     for _, button in next, { self.ScrollTarget:GetChildren() } do
         local item = button.Item
-        local Icon = item.icon:GetTexture()
-        item:StripTextures()
-        item.icon:SetTexture(Icon)
 
-        GW.HandleIcon(item.icon, true, GW.constBackdropFrameColorBorder)
-        GW.HandleIconBorder(item.IconBorder, item.icon.backdrop)
+        if item then
+            local Icon = item.icon:GetTexture()
+            item:StripTextures()
+            item.icon:SetTexture(Icon)
+
+            GW.HandleIcon(item.icon, true, GW.constBackdropFrameColorBorder)
+            GW.HandleIconBorder(item.IconBorder, item.icon.backdrop)
+            item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        end
 
         button.BorderFrame:SetAlpha(0)
         button.IconQuestTexture:SetAlpha(0)
 
-        item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        button.HighlightNameFrame:SetAlpha(0)
+	    button.PushedNameFrame:SetAlpha(0)
+        if not button.gwHooked then
+            button:CreateBackdrop(GW.constBackdropFrameColorBorderNoBackground, true)
+            button.backdrop:Hide()
+            button:HookScript("OnEnter", function()
+                button.backdrop:Show()
+            end)
+            button:HookScript("OnLeave", function()
+                button.backdrop:Hide()
+            end)
+            button.gwHooked = true
+        end
+        local quality = button.GetElementData and button.GetQuality and button:GetQuality() or Enum.ItemQuality.Common
+        local color = ITEM_QUALITY_COLORS[quality].color
+        button.backdrop:SetBackdropBorderColor(color.r, color.g, color.b, 0.7)
 
         button.NameFrame:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
         button.NameFrame:SetHeight(button:GetHeight())
