@@ -341,12 +341,18 @@ local function reskinBagBar(b, ha)
 
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     b.icon:SetAlpha(0.75)
+    b.icon:Show()
 
     local norm = b:GetNormalTexture()
     norm:SetTexture(nil)
 
     b.IconBorder:SetAllPoints(b)
     b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    hooksecurefunc(b.IconBorder, "SetTexture", function()
+        if b.IconBorder:GetTexture() and b.IconBorder:GetTexture() > 0 and b.IconBorder:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder" then
+            b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        end
+    end)
 
     local high = b:GetHighlightTexture()
     high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
@@ -662,7 +668,7 @@ local function LoadInventory()
     helpers.onMoverDragStop = onMoverDragStop
 
     bag_resize = GW.LoadBag(helpers)
-    --bank_resize = GW.LoadBank(helpers) --TODO bugged atm
+    bank_resize = GW.LoadBank(helpers) --TODO bugged atm
 
     -- Skin StackSplit
     local StackSplitFrame = _G.StackSplitFrame
