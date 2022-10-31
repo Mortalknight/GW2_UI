@@ -24,7 +24,7 @@ local function SetAFK(self, status)
         MoveViewLeftStart(0.035)
         self:Show()
         CloseAllWindows()
-        --UIParent:Hide()
+        UIParent:Hide()
 
         if IsInGuild() then
             local guildName, guildRankName = GetGuildInfo("player")
@@ -51,7 +51,7 @@ local function SetAFK(self, status)
 
         self.isAFK = true
     elseif self.isAFK then
-        --UIParent:Show()
+        UIParent:Show()
         self:Hide()
         MoveViewLeftStop()
 

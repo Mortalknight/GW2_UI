@@ -3,12 +3,12 @@ local AFP = GW.AddProfiling
 
 
 local lootQuality = {
-	['loottab-set-itemborder-white'] = nil, -- dont show white
-	['loottab-set-itemborder-green'] = 2,
-	['loottab-set-itemborder-blue'] = 3,
-	['loottab-set-itemborder-purple'] = 4,
-	['loottab-set-itemborder-orange'] = 5,
-	['loottab-set-itemborder-artifact'] = 6,
+    ["loottab-set-itemborder-white"] = nil, -- dont show white
+    ["loottab-set-itemborder-green"] = 2,
+    ["loottab-set-itemborder-blue"] = 3,
+    ["loottab-set-itemborder-purple"] = 4,
+    ["loottab-set-itemborder-orange"] = 5,
+    ["loottab-set-itemborder-artifact"] = 6,
 }
 
 local constBackdropArgs = {
@@ -260,16 +260,16 @@ end
 
 
 local function ItemSetsItemBorder(border, atlas)
-	local parent = border:GetParent()
-	local backdrop = parent and parent.Icon and parent.Icon.backdrop
-	if backdrop then
-		local color = GetItemQualityColor[lootQuality[atlas]]
-		if color then
-			backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
-		else
-			backdrop:SetBackdropBorderColor(1, 1, 1)
-		end
-	end
+    local parent = border:GetParent()
+    local backdrop = parent and parent.Icon and parent.Icon.backdrop
+    if backdrop then
+        local color = GetItemQualityColor[lootQuality[atlas]]
+        if color then
+            backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
+        else
+            backdrop:SetBackdropBorderColor(1, 1, 1)
+        end
+    end
 end
 
 
@@ -287,7 +287,7 @@ local function encounterJournalSkin()
     EncounterJournal.searchBox:SetPoint("TOPLEFT", EncounterJournal.navBar, "TOPRIGHT", 4, 0)
 
     local InstanceSelect = EJ.instanceSelect
-	InstanceSelect.bg:Kill()
+    InstanceSelect.bg:Kill()
 
     InstanceSelect.bg:Kill()
     InstanceSelect.tierDropDown:SkinDropDownMenu()
@@ -309,11 +309,11 @@ local function encounterJournalSkin()
     EncounterInfo.instanceButton:SetNormalTexture("")
     EncounterInfo.instanceButton:SetHighlightTexture("")
 
+    EncounterInfo.leftShadow:Kill()
+    EncounterInfo.rightShadow:Kill()
+    EncounterInfo.model.dungeonBG:Kill()
     EncounterJournalEncounterFrameInfoBG:SetHeight(385)
-	EncounterInfo.leftShadow:Kill()
-	EncounterInfo.rightShadow:Kill()
-	EncounterInfo.model.dungeonBG:Kill()
-	EncounterJournalEncounterFrameInfoModelFrameShadow:Kill()
+    EncounterJournalEncounterFrameInfoModelFrameShadow:Kill()
 
     EncounterInfo.instanceButton:ClearAllPoints()
     EncounterInfo.instanceButton:SetPoint("TOPLEFT",EncounterInfo, "TOPLEFT", 0, 0)
@@ -335,8 +335,8 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInfoResetButtonTexture:SetTexture([[Interface\EncounterJournal\UI-EncounterJournalTextures]])
     EncounterJournalEncounterFrameInfoResetButtonTexture:SetTexCoord(0.90625000, 0.94726563, 0.00097656, 0.02050781)
 
-	GW.HandleTrimScrollBar(EncounterInfo.BossesScrollBar)
-	GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInstanceFrame.LoreScrollBar)
+    GW.HandleTrimScrollBar(EncounterInfo.BossesScrollBar)
+    GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInstanceFrame.LoreScrollBar)
 
     EncounterJournalEncounterFrameInstanceFrameBG:SetScale(0.85)
     EncounterJournalEncounterFrameInstanceFrameBG:ClearAllPoints()
@@ -358,18 +358,22 @@ local function encounterJournalSkin()
     EncounterInfo.LootContainer:SetHeight(360)
     EncounterInfo.overviewScroll:SetHeight(360)
 
-    local frameTabs = {
-        EncounterInfo.overviewTab,
-        EncounterInfo.lootTab,
-        EncounterInfo.bossTab,
-        EncounterInfo.modelTab
-    }
+    for _, name in next, {"overviewTab", "modelTab", "bossTab", "lootTab"} do
+        local info = EncounterJournal.encounter.info
 
-    for i = 1, #frameTabs do
-        local tab = frameTabs[i]
+        local tab = info[name]
         tab:SkinButton(false, true)
-        if i == 1 then
-            tab:SetPoint("TOPLEFT", EncounterJournalEncounterFrameInfo, "TOPRIGHT", 9, -35)
+
+        tab:ClearAllPoints()
+
+        if name == "overviewTab" then
+            tab:SetPoint("TOPLEFT", EncounterJournalEncounterFrameInfo, "TOPRIGHT", 9, 0)
+        elseif name == "lootTab" then
+            tab:SetPoint("TOPLEFT", info.overviewTab, "BOTTOMLEFT", 0, -1)
+        elseif name == "bossTab" then
+            tab:SetPoint("TOPLEFT", info.lootTab, "BOTTOMLEFT", 0, -1)
+        elseif name == "modelTab" then
+            tab:SetPoint("TOPLEFT", info.bossTab, "BOTTOMLEFT", 0, -1)
         end
     end
 
@@ -451,18 +455,18 @@ local function encounterJournalSkin()
     LJ.RuneforgePowerFilterDropDownButton:SetFrameLevel(10)
 
     for _, button in next, {EncounterJournalEncounterFrameInfoFilterToggle, EncounterJournalEncounterFrameInfoSlotFilterToggle } do
-		button:SkinButton(false, true, nil, nil, true)
-	end
+        button:SkinButton(false, true, nil, nil, true)
+    end
 
     LJ:StripTextures()
-	LJ:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    LJ:CreateBackdrop(GW.skins.constBackdropFrame, true)
 
     hooksecurefunc(EncounterJournal.instanceSelect.ScrollBox, "Update", function(frame)
-		for _, child in next, { frame.ScrollTarget:GetChildren() } do
-			if not child.isSkinned then
-				child:SetNormalTexture("")
-				child:SetHighlightTexture("")
-				child:SetPushedTexture("")
+        for _, child in next, { frame.ScrollTarget:GetChildren() } do
+            if not child.isSkinned then
+                child:SetNormalTexture("")
+                child:SetHighlightTexture("")
+                child:SetPushedTexture("")
                 if child.SetDisabledTexture then child:SetDisabledTexture("") end
                 child:CreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
                 child.hovertex = child:CreateTexture(nil, "ARTWORK", nil, 7)
@@ -475,11 +479,11 @@ local function encounterJournalSkin()
                 child.bgImage:SetTexCoord(.08, .6, .08, .6)
                 child.bgImage:SetDrawLayer("ARTWORK", 5)
                 child.isSkinned = true
-			end
-		end
-	end)
+            end
+        end
+    end)
 
-    hooksecurefunc(EncounterJournal.encounter.info.BossesScrollBox, 'Update', function(frame)
+    hooksecurefunc(EncounterJournal.encounter.info.BossesScrollBox, "Update", function(frame)
         for _, child in next, { frame.ScrollTarget:GetChildren() } do
             if not child.isSkinned then
 
@@ -503,9 +507,9 @@ local function encounterJournalSkin()
         end
     end)
 
-    hooksecurefunc('EncounterJournal_SetUpOverview', SkinOverviewInfo)
-    hooksecurefunc('EncounterJournal_SetBullets', SkinOverviewInfoBullets)
-    hooksecurefunc('EncounterJournal_ToggleHeaders', SkinAbilitiesInfo)
+    hooksecurefunc("EncounterJournal_SetUpOverview", SkinOverviewInfo)
+    hooksecurefunc("EncounterJournal_SetBullets", SkinOverviewInfoBullets)
+    hooksecurefunc("EncounterJournal_ToggleHeaders", SkinAbilitiesInfo)
 
     EncounterJournalEncounterFrameInfoBG:Kill()
     EncounterInfo.detailsScroll.child.description:SetTextColor(1, 1, 1)
@@ -516,6 +520,8 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle:SetFontObject("GameFontNormalLarge")
     EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildLoreDescription:SetTextColor(1, 1, 1)
     EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildTitle:SetTextColor(1, 0.8, 0)
+    EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildHeader:SetAlpha(0)
+    EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChild.overviewDescription.Text:SetTextColor("P", 1, 1, 1)
 
     EncounterJournalEncounterFrameInstanceFrameBG:SetTexCoord(0.71, 0.06, 0.582, 0.08)
     EncounterJournalEncounterFrameInstanceFrameBG:SetRotation(rad(180))
@@ -524,24 +530,31 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInstanceFrame.titleBG:SetAlpha(0)
     EncounterJournalEncounterFrameInstanceFrameTitle:SetTextColor(1, 1, 1)
     EncounterJournalEncounterFrameInstanceFrameTitle:SetFont(UNIT_NAME_FONT, 25, "")
-    EncounterJournalEncounterFrameInfoOverviewScrollFrameScrollChildHeader:SetAlpha(0)
+
+    for _, child in next, {EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox.ScrollTarget:GetChildren()} do
+        if child.FontString then
+            child.FontString:SetTextColor(1, 1, 1)
+        end
+    end
 
     local parchment = LJ:GetRegions()
-	parchment:Kill()
+    if parchment then
+        parchment:Kill()
+    end
 
     local LootDropdown = EncounterJournalLootJournalViewDropDown
-	LootDropdown:SkinDropDownMenu()
-	LootDropdown:SetScript('OnShow', function(dd) dd:SetFrameLevel(5) end) -- might be able to hook a function later; hotfix builds didn't export Blizzard_LootJournalItems.xml
+    LootDropdown:SkinDropDownMenu()
+    LootDropdown:SetScript("OnShow", function(dd) dd:SetFrameLevel(5) end) -- might be able to hook a function later; hotfix builds didn"t export Blizzard_LootJournalItems.xml
 
-	do -- Item Sets
-		local ItemSetsFrame = EJ.LootJournalItems.ItemSetsFrame
-		ItemSetsFrame.ClassButton:SkinButton(false, true)
-		ItemSetsFrame.scrollBar:SkinScrollBar()
+    do -- Item Sets
+        local ItemSetsFrame = EJ.LootJournalItems.ItemSetsFrame
+        ItemSetsFrame.ClassButton:SkinButton(false, true)
+        ItemSetsFrame.scrollBar:SkinScrollBar()
 
         EJ.LootJournalItems:StripTextures()
         EJ.LootJournalItems:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
 
-        hooksecurefunc(ItemSetsFrame, 'UpdateList', function(frame)
+        hooksecurefunc(ItemSetsFrame, "UpdateList", function(frame)
             if frame.buttons then
                 for _, button in ipairs(frame.buttons) do
                     if button and not button.backdrop then
@@ -552,23 +565,23 @@ local function encounterJournalSkin()
             end
         end)
 
-		hooksecurefunc(ItemSetsFrame, 'ConfigureItemButton', function(_, button)
-			if not button.Icon then return end
+        hooksecurefunc(ItemSetsFrame, "ConfigureItemButton", function(_, button)
+            if not button.Icon then return end
 
-			if not button.Icon.backdrop then
-				GW.HandleIcon(button.Icon, true)
-			end
+            if not button.Icon.backdrop then
+                GW.HandleIcon(button.Icon, true)
+            end
 
-			if button.Border and not button.Border.isSkinned then
-				button.Border:SetAlpha(0)
+            if button.Border and not button.Border.isSkinned then
+                button.Border:SetAlpha(0)
 
-				ItemSetsItemBorder(button.Border, button.Border:GetAtlas()) -- handle first one
-				hooksecurefunc(button.Border, 'SetAtlas', ItemSetsItemBorder)
+                ItemSetsItemBorder(button.Border, button.Border:GetAtlas()) -- handle first one
+                hooksecurefunc(button.Border, "SetAtlas", ItemSetsItemBorder)
 
-				button.Border.isSkinned = true
-			end
-		end)
-	end
+                button.Border.isSkinned = true
+            end
+        end)
+    end
 end
 AFP("encounterJournalSkin", encounterJournalSkin)
 
