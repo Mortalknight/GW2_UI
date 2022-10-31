@@ -371,6 +371,8 @@ local function encounterJournalSkin()
     LJ.RuneforgePowerFilterDropDownButton:SkinButton(false, true, nil, nil, true)
     LJ.RuneforgePowerFilterDropDownButton:SetFrameLevel(10)
 
+    GW.HandleTrimScrollBar(EncounterJournal.LootJournal.ScrollBar)
+
     for _, button in next, {EncounterJournalEncounterFrameInfoFilterToggle, EncounterJournalEncounterFrameInfoSlotFilterToggle } do
         button:SkinButton(false, true, nil, nil, true)
     end

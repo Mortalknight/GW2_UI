@@ -387,8 +387,6 @@ local function LoadMinimap()
     GwMapGradient:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
     GwMapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
 
-    --Minimap:CreateBackdrop()
-
     local minimapLevel = Minimap:GetFrameLevel() + 2
     Minimap:SetFrameLevel(minimapLevel)
 
