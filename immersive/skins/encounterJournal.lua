@@ -1,7 +1,6 @@
 local _, GW =  ...
 local AFP = GW.AddProfiling
 
-
 local lootQuality = {
     ["loottab-set-itemborder-white"] = nil, -- dont show white
     ["loottab-set-itemborder-green"] = 2,
@@ -41,48 +40,6 @@ local function SetOriginalBackdrop(self)
     if self:IsEnabled() then
         if self.hovertex then
             self.hovertex:Hide()
-        end
-    end
-end
-
-local function SkinDungeons()
-    local b1 = EncounterJournalInstanceSelectScrollFrameScrollChildInstanceButton1
-    if b1 and not b1.isSkinned then
-        if b1.SetNormalTexture then b1:SetNormalTexture("") end
-        if b1.SetHighlightTexture then b1:SetHighlightTexture("") end
-        if b1.SetPushedTexture then b1:SetPushedTexture("") end
-        if b1.SetDisabledTexture then b1:SetDisabledTexture("") end
-        b1:CreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
-        b1.hovertex = b1:CreateTexture(nil, "ARTWORK", nil, 7)
-        b1.hovertex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border")
-        b1.hovertex:SetAllPoints(b1)
-        b1.hovertex:Hide()
-        b1:HookScript("OnEnter", SetModifiedBackdrop)
-        b1:HookScript("OnLeave", SetOriginalBackdrop)
-        b1.bgImage:SetInside(2, 2)
-        b1.bgImage:SetTexCoord(.08, .6, .08, .6)
-        b1.bgImage:SetDrawLayer("ARTWORK", 5)
-        b1.isSkinned = true
-    end
-
-    for i = 1, 100 do
-        local b = _G["EncounterJournalInstanceSelectScrollFrameinstance" .. i]
-        if b and not b.isSkinned then
-            if b.SetNormalTexture then b:SetNormalTexture("") end
-            if b.SetHighlightTexture then b:SetHighlightTexture("") end
-            if b.SetPushedTexture then b:SetPushedTexture("") end
-            if b.SetDisabledTexture then b:SetDisabledTexture("") end
-            b:CreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
-            b.hovertex = b:CreateTexture(nil, "ARTWORK", nil, 7)
-            b.hovertex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border")
-            b.hovertex:SetAllPoints(b)
-            b.hovertex:Hide()
-            b:HookScript("OnEnter", SetModifiedBackdrop)
-            b:HookScript("OnLeave", SetOriginalBackdrop)
-            b.bgImage:SetInside(2, 2)
-            b.bgImage:SetTexCoord(0.08, 0.6, 0.08, 0.6)
-            b.bgImage:SetDrawLayer("ARTWORK", 5)
-            b.isSkinned = true
         end
     end
 end
@@ -181,21 +138,6 @@ local function HandleTopTabs(tab)
     tab:GetFontString():SetTextColor(0, 0, 0)
 end
 
-local function hook_EJ_ContentTab_Select(id)
-    for i = 1, #EncounterJournal.instanceSelect.Tabs do
-        local tab = EncounterJournal.instanceSelect.Tabs[i]
-        if tab.id ~= id then
-            tab:GetFontString():SetTextColor(0, 0, 0)
-        else
-            tab:GetFontString():SetTextColor(0, 0, 0)
-        end
-    end
-end
-
-local function hook_SetVertexColor(self)
-    self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
-end
-
 local function hook_EJSuggestFrame_RefreshDisplay()
     for i, data in ipairs(EncounterJournal.suggestFrame.suggestions) do
         local sugg = next(data) and EncounterJournal.suggestFrame["Suggestion" .. i]
@@ -235,30 +177,6 @@ local function hook_EJSuggestFrame_UpdateRewards(sugg)
     end
 end
 
-local function hook_RefreshListDisplay(buttons)
-    if not buttons.elements then return end
-
-    for i = 1, buttons:GetNumElementFrames() do
-        local btn = buttons.elements[i]
-        if btn and not btn.IsSkinned then
-            btn.Background:SetAlpha(0)
-            btn.BackgroundOverlay:SetAlpha(0)
-            btn.CircleMask:Hide()
-            GW.HandleIcon(btn.Icon)
-            btn.Icon:CreateBackdrop("Transparent", true)
-            btn.Icon.backdrop:SetBackdropBorderColor(r, g, b)
-
-            btn:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
-            btn.backdrop:SetPoint("TOPLEFT", 3, 0)
-            btn.backdrop:SetPoint("BOTTOMRIGHT", -2, 1)
-
-            btn.IsSkinned = true
-        end
-    end
-end
-
-
-
 local function ItemSetsItemBorder(border, atlas)
     local parent = border:GetParent()
     local backdrop = parent and parent.Icon and parent.Icon.backdrop
@@ -271,7 +189,6 @@ local function ItemSetsItemBorder(border, atlas)
         end
     end
 end
-
 
 local function encounterJournalSkin()
     local EJ = EncounterJournal

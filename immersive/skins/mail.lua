@@ -9,7 +9,7 @@ local SendMailFrame = _G.SendMailFrame
 local OpenMailFrame = _G.OpenMailFrame
 
 local function FixMailSkin()
-    MailFrameTab2:SetSize(310, 24)
+    MailFrameTab2:SetWidth(310)
     SendMailSendMoneyButtonText:SetTextColor(1, 1, 1, 1)
     SendMailCODButtonText:SetTextColor(1, 1, 1, 1)
 end
@@ -244,7 +244,7 @@ local function SkinSendMailFrame()
     cancelButton:SetText(CANCEL)
     cancelButton:SetSize(SendMailCancelButton:GetSize())
     cancelButton:SkinButton(false, true)
-    cancelButton:SetScript("OnClick", function()
+    cancelButton:SetScript("OnClick", function(self)
         SendMailFrame_Reset()
         --clear attachments
         for i =1 , ATTACHMENTS_MAX_SEND do
@@ -260,6 +260,8 @@ end
 local function SkinComposeButton()
     MailFrameTab2:StripTextures()
     MailFrameTab2:SetSize(310, 24)
+    MailFrameTab2.SetWidth = GW.NoOp
+
     MailFrameTab2:SetText(SENDMAIL)
     MailFrameTab2:SkinButton(false, true)
     MailFrameTab2:SetScript("OnClick", function()
@@ -274,9 +276,10 @@ local function SkinComposeButton()
 end
 
 local function ClearMailTextures()
+    MailFrameTitleText:Hide()
     _G.MailFrameBg:Hide()
     _G.MailFrameInset.NineSlice:Hide()
-    _G.MailFrameInset:CreateBackdrop(constBackdropFrameBorder)
+    _G.MailFrameInset:CreateBackdrop()
 
     MailFrame:StripTextures()
     InboxFrame:StripTextures()
@@ -284,6 +287,8 @@ local function ClearMailTextures()
     SendMailScrollFrame:StripTextures()
     OpenMailFrame:StripTextures()
     OpenMailScrollFrame:StripTextures()
+
+    SendMailScrollFrame:CreateBackdrop(GW.skins.constBackdropFrame)
 
     MailFrame.NineSlice:Hide()
     MailFrame.TopTileStreaks:Hide()
@@ -311,7 +316,6 @@ local function ClearMailTextures()
         hooksecurefunc(ib, "SetVertexColor", function(self)
             self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         end)
-    
     end
     MailFrameTab1:Hide()
 end
@@ -346,7 +350,7 @@ local function LoadMailSkin()
     MailFrame.maxTabWidth = 320
 
     -- Configure Mail Frame Background
-    MailFrame.mailFrameBgTexture = MailFrame:CreateTexture("MailFrameBgTexture", "BACKGROUND")
+    MailFrame.mailFrameBgTexture = MailFrame:CreateTexture("MailFrameBgTexture", "BACKGROUND", nil, -7)
     MailFrame.mailFrameBgTexture:SetSize(newWidth, newHeight)
     MailFrame.mailFrameBgTexture:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 0, 5)
     MailFrame.mailFrameBgTexture:SetTexture("Interface/AddOns/GW2_UI/textures/hud/mailboxwindow-background")
