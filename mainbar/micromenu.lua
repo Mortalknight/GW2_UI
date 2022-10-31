@@ -4,6 +4,8 @@ local GetSetting = GW.GetSetting
 local AFP = GW.AddProfiling
 local updateIcon
 
+local PERFORMANCE_BAR_UPDATE_INTERVAL = 1
+
 local MICRO_BUTTONS = {
 	"CharacterMicroButton",
 	"SpellbookMicroButton",
@@ -337,15 +339,15 @@ local function hook_MainMenuMicroButton_OnUpdate()
     -- the main menu button routinely updates its texture based on streaming download
     -- status and net performance; we undo those changes here on each update interval
     local m = MainMenuMicroButton
-    if m.updateInterval ~= PERFORMANCEBAR_UPDATE_INTERVAL then
+    if m.updateInterval ~= PERFORMANCE_BAR_UPDATE_INTERVAL then
         return
     end
     m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
     m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
     m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
     m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
-    MainMenuMicroButton.MainMenuBarPerformanceBar:SetAlpha(0)
-    MainMenuMicroButton.MainMenuBarPerformanceBar:SetScale(0.00001)
+    m.MainMenuBarPerformanceBar:SetAlpha(0)
+    m.MainMenuBarPerformanceBar:SetScale(0.00001)
 end
 AFP("hook_MainMenuMicroButton_OnUpdate", hook_MainMenuMicroButton_OnUpdate)
 
@@ -507,8 +509,10 @@ local function setupMicroButtons(mbf)
     -- EJMicroButton
     EJMicroButton:ClearAllPoints()
     EJMicroButton:SetPoint("BOTTOMLEFT", LFDMicroButton, "BOTTOMRIGHT", 4, 0)
-    EJMicroButton.FlashBorder:Hide()
-    EJMicroButton.FlashContent:Hide()
+    EJMicroButton.FlashBorder:SetAlpha(0)
+    EJMicroButton.FlashBorder:SetScale(0.00001)
+    EJMicroButton.FlashContent:SetAlpha(0)
+    EJMicroButton.FlashContent:SetScale(0.00001)
 
     -- CollectionsMicroButton
     CollectionsMicroButton:ClearAllPoints()
@@ -527,7 +531,8 @@ local function setupMicroButtons(mbf)
     MainMenuMicroButton.MainMenuBarPerformanceBar:SetAlpha(0)
     MainMenuMicroButton.MainMenuBarPerformanceBar:SetScale(0.00001)
     MainMenuMicroButton:HookScript("OnUpdate", hook_MainMenuMicroButton_OnUpdate)
-    MainMenuMicroButton.FlashContent:Hide()
+    MainMenuMicroButton.FlashContent:SetAlpha(0)
+    MainMenuMicroButton.FlashContent:SetScale(0.00001)
 
     -- HelpMicroButton
     HelpMicroButton:ClearAllPoints()
