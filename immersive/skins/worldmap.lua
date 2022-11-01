@@ -314,7 +314,7 @@ local function worldMapSkin()
     qLogText:SetPoint("TOPLEFT", QuestMapFrame, "TOPLEFT", 0,0)
     qLogText:SetPoint("BOTTOMRIGHT", QuestMapFrame, "BOTTOMRIGHT", 0, 0)
     qLogText:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
-    qLogText:SetTexCoord(0,0.70703125,0,0.580078125 )
+    qLogText:SetTexCoord(0, 0.70703125, 0, 0.580078125)
     QuestMapFrame.tex = qLogText
 
     WorldMapFrame.ScrollContainer:CreateBackdrop()
@@ -326,10 +326,10 @@ local function worldMapSkin()
 
     QuestMapFrame:SetPoint("TOPRIGHT",WorldMapFrame,"TOPRIGHT",-3,-32)
 
-    _G.WorldMapFrameTitleText:ClearAllPoints()
-    _G.WorldMapFrameTitleText:SetPoint("BOTTOMLEFT",header,"BOTTOMLEFT",64,10)
-    _G.WorldMapFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20)
-    _G.WorldMapFrameTitleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    WorldMapFrameTitleText:ClearAllPoints()
+    WorldMapFrameTitleText:SetPoint("BOTTOMLEFT",header,"BOTTOMLEFT",64,10)
+    WorldMapFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20)
+    WorldMapFrameTitleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
     WorldMapFrame.NavBar.homeButton:StripTextures()
     local r = {WorldMapFrame.NavBar.homeButton:GetRegions()}
