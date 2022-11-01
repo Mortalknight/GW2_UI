@@ -252,7 +252,7 @@ local function reskinMicroButton(btn, name, mbf)
         end
     end)
 
-    local tex = "Interface/AddOns/GW2_UI/textures/icons/" .. name .. "-Up"
+    local tex = "Interface/AddOns/GW2_UI/textures/icons/microicons/" .. name .. "-Up"
 
     btn:SetSize(24, 24)
     btn:SetDisabledTexture(tex)
@@ -260,9 +260,31 @@ local function reskinMicroButton(btn, name, mbf)
     btn:SetPushedTexture(tex)
     btn:SetHighlightTexture(tex)
 
+		--hackfix for texture size
+    local t = btn:GetDisabledTexture()
+		t:ClearAllPoints()
+		t:SetPoint("CENTER",btn,"CENTER",0,0)
+		t:SetSize(32,32)
+
+		t = btn:GetNormalTexture()
+		t:ClearAllPoints()
+		t:SetPoint("CENTER",btn,"CENTER",0,0)
+		t:SetSize(32,32)
+
+		t = btn:GetPushedTexture()
+		t:ClearAllPoints()
+		t:SetPoint("CENTER",btn,"CENTER",0,0)
+		t:SetSize(32,32)
+
+		t = btn:GetHighlightTexture()
+		t:ClearAllPoints()
+		t:SetPoint("CENTER",btn,"CENTER",0,0)
+		t:SetSize(32,32)
+		--
+
     if btn.Flash then
         btn.Flash:SetInside()
-		btn.Flash:SetTexture()
+				btn.Flash:SetTexture()
     end
 
     btn.GwNotify = btn:CreateTexture(nil, "OVERLAY")
@@ -342,10 +364,10 @@ local function hook_MainMenuMicroButton_OnUpdate()
     if m.updateInterval ~= PERFORMANCE_BAR_UPDATE_INTERVAL then
         return
     end
-    m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
-    m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
-    m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
-    m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
+    m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
+    m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
+    m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
+    m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
     m.MainMenuBarPerformanceBar:SetAlpha(0)
     m.MainMenuBarPerformanceBar:SetScale(0.00001)
 end
@@ -603,7 +625,7 @@ local function checkElvUI()
     --
     -- This works as-is because we know ElvUI will load before us. Otherwise we'll
     -- have to get more in-depth with the ACE loading logic.
-    
+
     -- get the ElvUI addon/ActionBars module from ACE
     if not LibStub then
         return false
@@ -679,10 +701,10 @@ AFP("hook_MoveMicroButtons", hook_MoveMicroButtons)
 local function hook_UpdateMicroButtons()
     HelpMicroButton:Show()
     local m = GuildMicroButton
-    m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")
-    m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")
-    m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")
-    m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")
+    m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+    m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+    m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+    m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
 end
 AFP("hook_UpdateMicroButtons", hook_UpdateMicroButtons)
 
