@@ -765,7 +765,21 @@ local function evPlayerLogin(self)
         GW.LoadActionBars(lm)
         GW.ExtraAB_BossAB_Setup()
 
-        DEFAULT_CHAT_FRAME:AddMessage(("\n*GW2 UI:|r |cffff0000You need to reset the scale of the Blizzard Action Bars in their \"Edit Mode\" to 100%!|r Otherwise, we cannot set the bar position correctly.\n\n"):gsub("*", GW.Gw2Color))
+        C_Timer.After(1, function()
+            for i = 1, 13 do
+                local systemInfo = EditModeManagerFrame:GetActiveLayoutSystemInfo(0, i) --0 = Actionbar System
+                if systemInfo then
+                    for _, value2 in pairs(systemInfo.settings) do
+                        if value2.setting == 3 then -- Scale setting
+                            if value2.value ~= 5 then -- 5 = 100%; they count in slider steps from left
+                                DEFAULT_CHAT_FRAME:AddMessage(("\n*GW2 UI:|r |cffff0000You need to reset the scale of the Blizzard Action Bars in their \"Edit Mode\" to 100%!|r Otherwise, we cannot set the bar position correctly.\n\n"):gsub("*", GW.Gw2Color))
+                                break
+                            end
+                        end
+                    end
+                end
+            end
+        end)
     end
 
     -- create pet frame
