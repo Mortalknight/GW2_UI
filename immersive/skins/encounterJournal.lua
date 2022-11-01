@@ -192,16 +192,56 @@ end
 
 local function encounterJournalSkin()
     local EJ = EncounterJournal
+    GW.HandlePortraitFrame(EJ)
+    local header = CreateFrame("Frame", "GwEncounterJournalHeader", EJ, "GwWorldmapHeader")
 
-    GW.HandlePortraitFrame(EJ, true)
-    EncounterJournalTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
-    EncounterJournal.navBar:StripTextures(true)
-    EncounterJournal.navBar.overlay:StripTextures(true)
+    EJ.navBar:StripTextures()
+    EJ.navBar.overlay:StripTextures()
+    EJ.navBar:SetPoint("TOPLEFT", 7, -33)
+    EJ.navBar.SetPoint = GW.NoOp
+
+    EJ.navBar.tex = EJ.navBar:CreateTexture("bg", "OVERLAY", nil, 0)
+    EJ.navBar.tex:SetPoint("TOPLEFT", EJ.navBar, "TOPLEFT", 0, 20)
+    EJ.navBar.tex:SetPoint("BOTTOMRIGHT", EJ.navBar, "BOTTOMRIGHT", 0, 1)
+    EJ.navBar.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
+
+    EJ.tex = EJ:CreateTexture("bg", "BACKGROUND", nil, 0)
+    EJ.tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
+    EJ.tex:SetPoint("BOTTOMRIGHT", EJ, "BOTTOMRIGHT", 0, 0)
+    EJ.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")
+
+    EJ.navBar.homeButton:StripTextures()
+    local r = {EJ.navBar.homeButton:GetRegions()}
+    for _,c in pairs(r) do
+        if c:GetObjectType() == "FontString" then
+            c:SetTextColor(1, 1, 1, 1)
+            c:SetShadowOffset(0, 0)
+        end
+    end
+    EJ.navBar.homeButton.tex = EJ.navBar.homeButton:CreateTexture(nil, "BACKGROUND")
+    EJ.navBar.homeButton.tex:SetPoint("LEFT", EJ.navBar.homeButton, "LEFT")
+    EJ.navBar.homeButton.tex:SetPoint("TOP", EJ.navBar.homeButton, "TOP")
+    EJ.navBar.homeButton.tex:SetPoint("BOTTOM", EJ.navBar.homeButton, "BOTTOM")
+    EJ.navBar.homeButton.tex:SetPoint("RIGHT", EJ.navBar.homeButton, "RIGHT")
+    EJ.navBar.homeButton.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightInner")
+    EJ.navBar.homeButton.tex:SetAlpha(1)
+
+    local homeButtonBorder = CreateFrame("Frame", nil, EJ.navBar.homeButton, "GwLightButtonBorder")
+    EJ.navBar.homeButton.borderFrame = homeButtonBorder
+    EJ.navBar.homeButton.xoffset = -1
+
+    EncounterJournalTitleText:ClearAllPoints()
+    EncounterJournalTitleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
+    EncounterJournalTitleText:SetFont(DAMAGE_TEXT_FONT, 20)
+    EncounterJournalTitleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+
+    EJ.CloseButton:SetPoint("TOPRIGHT", -10, -2)
+
     EncounterJournalPortrait:Show()
 
     GW.SkinTextBox(EncounterJournal.searchBox.Middle, EncounterJournal.searchBox.Left, EncounterJournal.searchBox.Right)
     EncounterJournal.searchBox:ClearAllPoints()
-    EncounterJournal.searchBox:SetPoint("TOPLEFT", EncounterJournal.navBar, "TOPRIGHT", 4, 0)
+    EncounterJournal.searchBox:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", -15, -25)
 
     local InstanceSelect = EJ.instanceSelect
     InstanceSelect.bg:Kill()
@@ -218,7 +258,12 @@ local function encounterJournalSkin()
 
     local EncounterInfo = EJ.encounter.info
 
-    EncounterInfo:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    EncounterInfo.tex = EncounterInfo:CreateTexture("bg", "BACKGROUND", nil, 7)
+    EncounterInfo.tex:SetPoint("TOPLEFT", EncounterInfo, "TOPLEFT", -1, -1)
+    EncounterInfo.tex:SetPoint("BOTTOMRIGHT", EncounterInfo, "BOTTOMRIGHT", 1, 1)
+    EncounterInfo.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+    EncounterInfo.tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
+
     EncounterInfo.encounterTitle:Kill()
 
     GW.HandleIcon(EncounterInfo.instanceButton.icon, true)
@@ -319,7 +364,12 @@ local function encounterJournalSkin()
     -- Suggestion 1
     local suggestion = suggestFrame.Suggestion1
     suggestion.bg:Hide()
-    suggestion:CreateBackdrop(GW.skins.constBackdropFrame, true)
+
+    suggestion.tex = suggestion:CreateTexture("bg", "BACKGROUND", nil, 0)
+    suggestion.tex:SetPoint("TOPLEFT", suggestion, "TOPLEFT", -1, 1)
+    suggestion.tex:SetPoint("BOTTOMRIGHT", suggestion, "BOTTOMRIGHT", 1, -1)
+    suggestion.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+    suggestion.tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
     local centerDisplay = suggestion.centerDisplay
     centerDisplay.title.text:SetTextColor(1, 1, 1)
@@ -334,8 +384,13 @@ local function encounterJournalSkin()
     for i = 2, 3 do
         suggestion = suggestFrame["Suggestion" .. i]
         suggestion.bg:Hide()
-        suggestion:CreateBackdrop(GW.skins.constBackdropFrame, true)
         suggestion.icon:SetPoint("TOPLEFT", 10, -10)
+
+        suggestion.tex = suggestion:CreateTexture("bg", "BACKGROUND", nil, 0)
+        suggestion.tex:SetPoint("TOPLEFT", suggestion, "TOPLEFT", -1, 1)
+        suggestion.tex:SetPoint("BOTTOMRIGHT", suggestion, "BOTTOMRIGHT", 1, -1)
+        suggestion.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+        suggestion.tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
         centerDisplay = suggestion.centerDisplay
         centerDisplay:ClearAllPoints()
@@ -378,7 +433,11 @@ local function encounterJournalSkin()
     end
 
     LJ:StripTextures()
-    LJ:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    LJ.tex = LJ:CreateTexture("bg", "BACKGROUND", nil, 0)
+    LJ.tex:SetPoint("TOPLEFT", LJ, "TOPLEFT", -1, 1)
+    LJ.tex:SetPoint("BOTTOMRIGHT", LJ, "BOTTOMRIGHT", 1, -1)
+    LJ.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+    LJ.tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
     hooksecurefunc(EncounterJournal.instanceSelect.ScrollBox, "Update", function(frame)
         for _, child in next, { frame.ScrollTarget:GetChildren() } do
@@ -449,6 +508,7 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInstanceFrame.titleBG:SetAlpha(0)
     EncounterJournalEncounterFrameInstanceFrameTitle:SetTextColor(1, 1, 1)
     EncounterJournalEncounterFrameInstanceFrameTitle:SetFont(UNIT_NAME_FONT, 25, "")
+
 
     for _, child in next, {EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox.ScrollTarget:GetChildren()} do
         if child.FontString then
