@@ -66,7 +66,7 @@ end
 GW.TalentButton_OnEnter = TalentButton_OnEnter
 
 local function TalentButton_OnClick(self, button)
-    if button == "LeftButton" and not GetSetting("USE_TALENT_WINDOW") then
+    if button == "LeftButton" then
         self:OnClick()
     elseif button == "RightButton" then
         if not spec_data_loaded then
