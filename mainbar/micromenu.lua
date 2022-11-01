@@ -251,7 +251,7 @@ local function reskinMicroButton(btn, name, mbf)
             self:SetParent(mbf)
         end
     end)
-
+    print(name)
     local tex = "Interface/AddOns/GW2_UI/textures/icons/microicons/" .. name .. "-Up"
 
     btn:SetSize(24, 24)
@@ -438,12 +438,11 @@ local function setupMicroButtons(mbf)
 
     -- determine if we are using the default spell & talent buttons
     -- or if we need our custom talent button for the hero panel
-    local tref
     if GetSetting("USE_TALENT_WINDOW") then
-        tref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
-        tref.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
+        local tref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
+        tref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
         tref.newbieText = NEWBIE_TOOLTIP_TALENTS
-        reskinMicroButton(tref, "TalentMicroButton", mbf)
+        reskinMicroButton(tref, "SpellbookMicroButton", mbf)
         tref:ClearAllPoints()
         tref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
 
@@ -474,27 +473,29 @@ local function setupMicroButtons(mbf)
         tref:RegisterEvent("TRAIT_NODE_CHANGED")
 
         disableMicroButton(SpellbookMicroButton)
-        disableMicroButton(TalentMicroButton, true)
+
+        -- TalentMicroButton
+        TalentMicroButton:ClearAllPoints()
+        TalentMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
     else
         -- SpellbookMicroButton
         SpellbookMicroButton:ClearAllPoints()
         SpellbookMicroButton:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
 
         -- TalentMicroButton
-        tref = TalentMicroButton
-        tref:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-        tref:ClearAllPoints()
-        tref:SetPoint("BOTTOMLEFT", SpellbookMicroButton, "BOTTOMRIGHT", 4, 0)
-        tref:HookScript("OnEnter", GW.TalentButton_OnEnter)
-        tref:SetScript("OnClick", GW.TalentButton_OnClick)
-        tref:HookScript("OnEvent", TalentButtonOnEvent)
-        tref:RegisterEvent("PLAYER_TALENT_UPDATE")
-        tref:RegisterEvent("PLAYER_ENTERING_WORLD")
-        tref:RegisterEvent("TRAIT_TREE_CURRENCY_INFO_UPDATED")
-        tref:RegisterEvent("CONFIG_COMMIT_FAILED")
-        tref:RegisterEvent("TRAIT_CONFIG_UPDATED")
-        tref:RegisterEvent("CONFIG_COMMIT_FAILED")
-        tref:RegisterEvent("TRAIT_NODE_CHANGED")
+        TalentMicroButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+        TalentMicroButton:ClearAllPoints()
+        TalentMicroButton:SetPoint("BOTTOMLEFT", SpellbookMicroButton, "BOTTOMRIGHT", 4, 0)
+        TalentMicroButton:HookScript("OnEnter", GW.TalentButton_OnEnter)
+        TalentMicroButton:SetScript("OnClick", GW.TalentButton_OnClick)
+        TalentMicroButton:HookScript("OnEvent", TalentButtonOnEvent)
+        TalentMicroButton:RegisterEvent("PLAYER_TALENT_UPDATE")
+        TalentMicroButton:RegisterEvent("PLAYER_ENTERING_WORLD")
+        TalentMicroButton:RegisterEvent("TRAIT_TREE_CURRENCY_INFO_UPDATED")
+        TalentMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
+        TalentMicroButton:RegisterEvent("TRAIT_CONFIG_UPDATED")
+        TalentMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
+        TalentMicroButton:RegisterEvent("TRAIT_NODE_CHANGED")
 
         -- we've added an extra button so expand the container a bit
         mbf:SetWidth(mbf:GetWidth() + 28)
@@ -502,7 +503,7 @@ local function setupMicroButtons(mbf)
 
     -- AchievementMicroButton
     AchievementMicroButton:ClearAllPoints()
-    AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
+    AchievementMicroButton:SetPoint("BOTTOMLEFT", TalentMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- QuestLogMicroButton
     QuestLogMicroButton:ClearAllPoints()
