@@ -193,8 +193,38 @@ end
 local function encounterJournalSkin()
     local EJ = EncounterJournal
 
+    EJ.navBar:StripTextures()
+    EJ.navBar.overlay:StripTextures()
+    EJ.navBar:SetPoint("TOPLEFT", 10, -33)
+    EJ.navBar.SetPoint = GW.NoOp
+
+    EJ.navBar.homeButton:StripTextures()
+    local r = {EJ.navBar.homeButton:GetRegions()}
+    for _,c in pairs(r) do
+        if c:GetObjectType() == "FontString" then
+            c:SetTextColor(1, 1, 1, 1)
+            c:SetShadowOffset(0, 0)
+        end
+    end
+    local tex = EJ.navBar.homeButton:CreateTexture(nil, "BACKGROUND")
+    tex:SetPoint("LEFT", EJ.navBar.homeButton, "LEFT")
+    tex:SetPoint("TOP", EJ.navBar.homeButton, "TOP")
+    tex:SetPoint("BOTTOM", EJ.navBar.homeButton, "BOTTOM")
+    tex:SetPoint("RIGHT", EJ.navBar.homeButton, "RIGHT")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightInner")
+    EJ.navBar.homeButton.tex = tex
+    EJ.navBar.homeButton.tex:SetAlpha(1)
+
+    local homeButtonBorder = CreateFrame("Frame",nil,EJ.navBar.homeButton,"GwLightButtonBorder")
+    EJ.navBar.homeButton.borderFrame =homeButtonBorder
+    EJ.navBar.homeButton.xoffset = -1
+
+    EncounterJournalTitleText:ClearAllPoints()
+    EncounterJournalTitleText:SetPoint("BOTTOMLEFT", EJ.TitleContainer, "BOTTOMLEFT", 64, 10) --TODO
+    EncounterJournalTitleText:SetFont(DAMAGE_TEXT_FONT, 20)
+    EncounterJournalTitleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+
     GW.HandlePortraitFrame(EJ, true)
-    EncounterJournalTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     EncounterJournal.navBar:StripTextures(true)
     EncounterJournal.navBar.overlay:StripTextures(true)
     EncounterJournalPortrait:Show()

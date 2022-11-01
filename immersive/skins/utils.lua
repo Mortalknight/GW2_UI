@@ -154,15 +154,23 @@ local function MutateInaccessableObject(frame, objType, func)
 end
 GW.MutateInaccessableObject = MutateInaccessableObject
 
+local NavBarCheck = {
+	EncounterJournal = function()
+		return GW.GetSetting("ENCOUNTER_JOURNAL_SKIN_ENABLED")
+	end,
+	WorldMapFrame = function()
+		return GW.GetSetting("WORLDMAP_SKIN_ENABLED")
+	end,
+}
+
 local function SkinNavBarButtons(self)
-    if not self:GetParent():GetName() == "WorldMapFrame" then return end
+    local func = NavBarCheck[self:GetParent():GetName()]
+    if func and not func() then return end
 
     local navButton = self.navList[#self.navList]
     if navButton and not navButton.isSkinned then
-
-
         navButton:StripTextures()
-      --  navButton:SkinButton(false, false, true)
+        --navButton:SkinButton(false, false, true)
 
         local r = {navButton:GetRegions()}
         for _,c in pairs(r) do
@@ -205,7 +213,7 @@ local function SkinNavBarButtons(self)
         navButton.isSkinned = true
     end
 end
-GW.SkinNavBarButtons = SkinNavBarButtons
+hooksecurefunc("NavBar_AddButton", SkinNavBarButtons)
 
 local function HandlePortraitFrame(frame, createBackdrop)
     local name = frame and frame.GetName and frame:GetName()

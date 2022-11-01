@@ -326,22 +326,20 @@ local function worldMapSkin()
 
     QuestMapFrame:SetPoint("TOPRIGHT",WorldMapFrame,"TOPRIGHT",-3,-32)
 
-
     _G.WorldMapFrameTitleText:ClearAllPoints()
     _G.WorldMapFrameTitleText:SetPoint("BOTTOMLEFT",header,"BOTTOMLEFT",64,10)
     _G.WorldMapFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20)
     _G.WorldMapFrameTitleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
-
     WorldMapFrame.NavBar.homeButton:StripTextures()
     local r = {WorldMapFrame.NavBar.homeButton:GetRegions()}
-        for _,c in pairs(r) do
-            if c:GetObjectType() == "FontString" then
-                c:SetTextColor(1, 1, 1, 1)
-                c:SetShadowOffset(0, 0)
-            end
+    for _,c in pairs(r) do
+        if c:GetObjectType() == "FontString" then
+            c:SetTextColor(1, 1, 1, 1)
+            c:SetShadowOffset(0, 0)
         end
-      tex = WorldMapFrame.NavBar.homeButton:CreateTexture(nil, "BACKGROUND")
+    end
+    tex = WorldMapFrame.NavBar.homeButton:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("LEFT", WorldMapFrame.NavBar.homeButton, "LEFT")
     tex:SetPoint("TOP", WorldMapFrame.NavBar.homeButton, "TOP")
     tex:SetPoint("BOTTOM", WorldMapFrame.NavBar.homeButton, "BOTTOM")
@@ -350,17 +348,12 @@ local function worldMapSkin()
     WorldMapFrame.NavBar.homeButton.tex = tex
     WorldMapFrame.NavBar.homeButton.tex:SetAlpha(1)
 
-
-
     local homeButtonBorder = CreateFrame("Frame",nil,WorldMapFrame.NavBar.homeButton,"GwLightButtonBorder")
     WorldMapFrame.NavBar.homeButton.borderFrame =homeButtonBorder
-
-
     WorldMapFrame.NavBar.homeButton.xoffset = -1
-
     WorldMapFrame.BorderFrame.CloseButton:SkinButton(true)
     WorldMapFrame.BorderFrame.CloseButton:SetSize(20, 20)
-  --  WorldMapFrame.BorderFrame.CloseButton:ClearAllPoints()
+    --WorldMapFrame.BorderFrame.CloseButton:ClearAllPoints()
     WorldMapFrame.BorderFrame.CloseButton:SetPoint("TOPRIGHT",-10,-2)
 
     WorldMapFrame.BorderFrame.MaximizeMinimizeFrame:HandleMaxMinFrame()
@@ -455,8 +448,6 @@ local function worldMapSkin()
     hooksecurefunc(_G.QuestSessionManager, "NotifyDialogShow", hook_NotifyDialogShow)
 
     hooksecurefunc("QuestLogQuests_Update", hook_QuestLogQuests_Update)
-
-    hooksecurefunc("NavBar_AddButton", GW.SkinNavBarButtons)
 
     local qms = _G.QuestModelScene
     local w, h = qms:GetSize()
