@@ -452,6 +452,22 @@ local function GameTooltip_ShowProgressBar(self)
     end
 end
 
+local function shouldHiddenInCombat(tooltip)
+    if tooltip:GetUnit() then
+        local unitReaction = UnitReaction("player", tooltip:GetUnit())
+        if not unitReaction then return false end
+
+        local unitSetting = GetSetting("HIDE_TOOLTIP_IN_COMBAT_UNIT")
+        if unitSetting == "ALL" or
+            (string.find(unitSetting, "HOSTILE") and unitReaction <= 3 or
+            string.find(unitSetting, "NEUTRAL") and unitReaction == 4 or
+            string.find(unitSetting, "FRIENDLY") and unitReaction >= 5) then
+            return true
+        end
+    end
+    return false
+end
+
 local function SetStyle(self, _, isEmbedded)
     if not self or (self == GW.ScanTooltip or isEmbedded or self.IsEmbedded or not self.NineSlice) or self:IsForbidden() then return end
 
