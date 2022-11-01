@@ -160,14 +160,14 @@ local function SkinNavBarButtons(self)
     local navButton = self.navList[#self.navList]
     if navButton and not navButton.isSkinned then
 
-        --[[ Add this later if we have a custom texture for navigationbars
+
         navButton:StripTextures()
-        navButton:SkinButton(false, false, true)
+      --  navButton:SkinButton(false, false, true)
 
         local r = {navButton:GetRegions()}
         for _,c in pairs(r) do
             if c:GetObjectType() == "FontString" then
-                c:SetTextColor(0, 0, 0, 1)
+                c:SetTextColor(1, 1, 1, 1)
                 c:SetShadowOffset(0, 0)
             end
         end
@@ -177,16 +177,20 @@ local function SkinNavBarButtons(self)
         tex:SetPoint("TOP", navButton, "TOP")
         tex:SetPoint("BOTTOM", navButton, "BOTTOM")
         tex:SetPoint("RIGHT", navButton, "RIGHT")
-        tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button")
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightInner")
         navButton.tex = tex
         navButton.tex:SetAlpha(1)
+
+        local homeButtonBorder = CreateFrame("Frame",nil,navButton,"GwLightButtonBorder")
+        navButton.borderFrame =homeButtonBorder
+
 
         hooksecurefunc(navButton, "SetWidth", function()
             local w = navButton:GetWidth()
 
             navButton.tex:SetPoint("RIGHT", navButton, "LEFT", w, 0)
         end)
-        ]]
+
         if navButton.MenuArrowButton then
             navButton.MenuArrowButton:StripTextures()
             if navButton.MenuArrowButton.Art then
@@ -196,7 +200,7 @@ local function SkinNavBarButtons(self)
             end
         end
 
-        navButton.xoffset = 1
+        navButton.xoffset = -1
 
         navButton.isSkinned = true
     end

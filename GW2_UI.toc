@@ -169,6 +169,7 @@ inventory\lootframe.lua
 inventory\extendVendor.lua
 
 immersive\skins\skins.xml
+immersive\skins\worldmap.xml
 immersive\questview.xml
 immersive\toast.xml
 immersive\alertPosition.lua

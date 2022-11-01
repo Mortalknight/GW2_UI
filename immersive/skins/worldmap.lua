@@ -293,6 +293,7 @@ AFP("mover_OnDragStop", mover_OnDragStop)
 
 local function worldMapSkin()
     local WorldMapFrame = _G.WorldMapFrame
+    local header = CreateFrame("Frame","GwWorldmapHeader",WorldMapFrame,"GwWorldmapHeader")
 
     WorldMapFrame:StripTextures()
     WorldMapFrame.BorderFrame:StripTextures()
@@ -300,45 +301,68 @@ local function worldMapSkin()
     WorldMapFrame.BorderFrame.NineSlice:Hide()
     WorldMapFrame.NavBar:StripTextures()
     WorldMapFrame.NavBar.overlay:StripTextures()
-    WorldMapFrame.NavBar:SetPoint("TOPLEFT", 1, -40)
-    _G.WorldMapFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+    WorldMapFrame.NavBar:SetPoint("TOPLEFT", 1, -47)
+    WorldMapFrame.NavBar.SetPoint = GW.NoOp
+
+    local navBarTex = WorldMapFrame.NavBar:CreateTexture("bg", "BACKGROUND", nil, 0)
+    navBarTex:SetPoint("TOPLEFT", WorldMapFrame.NavBar, "TOPLEFT", 0,20)
+    navBarTex:SetPoint("BOTTOMRIGHT", WorldMapFrame.NavBar, "BOTTOMRIGHT", 0, -10)
+    navBarTex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
+    WorldMapFrame.NavBar.tex = navBarTex
+
+    local qLogText = QuestMapFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
+    qLogText:SetPoint("TOPLEFT", QuestMapFrame, "TOPLEFT", 0,0)
+    qLogText:SetPoint("BOTTOMRIGHT", QuestMapFrame, "BOTTOMRIGHT", 0, 0)
+    qLogText:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+    qLogText:SetTexCoord(0,0.70703125,0,0.580078125 )
+    QuestMapFrame.tex = qLogText
 
     WorldMapFrame.ScrollContainer:CreateBackdrop()
     local tex = WorldMapFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
-    tex:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", -40, 20)
-    tex:SetPoint("BOTTOMRIGHT", WorldMapFrame, "BOTTOMRIGHT", 25, -45)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
+    tex:SetPoint("BOTTOMRIGHT", WorldMapFrame, "BOTTOMRIGHT", 0, 0)
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")
     WorldMapFrame.tex = tex
 
-    --[[ Add this later if we have a custom texture for navigationbars
+    QuestMapFrame:SetPoint("TOPRIGHT",WorldMapFrame,"TOPRIGHT",-3,-32)
+
+
+    _G.WorldMapFrameTitleText:ClearAllPoints()
+    _G.WorldMapFrameTitleText:SetPoint("BOTTOMLEFT",header,"BOTTOMLEFT",64,10)
+    _G.WorldMapFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20)
+    _G.WorldMapFrameTitleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+
+
     WorldMapFrame.NavBar.homeButton:StripTextures()
     local r = {WorldMapFrame.NavBar.homeButton:GetRegions()}
         for _,c in pairs(r) do
             if c:GetObjectType() == "FontString" then
-                c:SetTextColor(0, 0, 0, 1)
+                c:SetTextColor(1, 1, 1, 1)
                 c:SetShadowOffset(0, 0)
             end
         end
-    tex = WorldMapFrame.NavBar.homeButton:CreateTexture(nil, "BACKGROUND")
+      tex = WorldMapFrame.NavBar.homeButton:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("LEFT", WorldMapFrame.NavBar.homeButton, "LEFT")
     tex:SetPoint("TOP", WorldMapFrame.NavBar.homeButton, "TOP")
     tex:SetPoint("BOTTOM", WorldMapFrame.NavBar.homeButton, "BOTTOM")
     tex:SetPoint("RIGHT", WorldMapFrame.NavBar.homeButton, "RIGHT")
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button")
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightInner")
     WorldMapFrame.NavBar.homeButton.tex = tex
     WorldMapFrame.NavBar.homeButton.tex:SetAlpha(1)
-    WorldMapFrame.NavBar.homeButton:SkinButton(false, false, true)
 
-    hooksecurefunc(WorldMapFrame.NavBar.homeButton, "SetWidth", function()
-        local w = WorldMapFrame.NavBar.homeButton:GetWidth()
 
-        WorldMapFrame.NavBar.homeButton.tex:SetPoint("RIGHT", WorldMapFrame.NavBar.homeButton, "LEFT", w, 0)
-    end)
 
-    WorldMapFrame.NavBar.homeButton.xoffset = 2
-    ]]
+    local homeButtonBorder = CreateFrame("Frame",nil,WorldMapFrame.NavBar.homeButton,"GwLightButtonBorder")
+    WorldMapFrame.NavBar.homeButton.borderFrame =homeButtonBorder
+
+
+    WorldMapFrame.NavBar.homeButton.xoffset = -1
+
     WorldMapFrame.BorderFrame.CloseButton:SkinButton(true)
     WorldMapFrame.BorderFrame.CloseButton:SetSize(20, 20)
+  --  WorldMapFrame.BorderFrame.CloseButton:ClearAllPoints()
+    WorldMapFrame.BorderFrame.CloseButton:SetPoint("TOPRIGHT",-10,-2)
+
     WorldMapFrame.BorderFrame.MaximizeMinimizeFrame:HandleMaxMinFrame()
 
     local QuestMapFrame = _G.QuestMapFrame
