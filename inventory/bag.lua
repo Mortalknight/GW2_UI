@@ -238,7 +238,7 @@ local function watchCurrency(self)
     local currencyCount = C_CurrencyInfo.GetCurrencyListSize()
     for i = 1, currencyCount do
         local info = C_CurrencyInfo.GetCurrencyListInfo(i)
-        if not info.isHeader and info.isShowInBackpack and watchSlot < 4 then
+        if not info.isHeader and info.isShowInBackpack and watchSlot <= 4 then
             self["currency" .. tostring(watchSlot)]:SetText(CommaValue(info.quantity))
             self["currency" .. tostring(watchSlot) .. "Texture"]:SetTexture(info.iconFileID)
             self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = i
@@ -246,7 +246,7 @@ local function watchCurrency(self)
         end
     end
 
-    for i = watchSlot, 3 do
+    for i = watchSlot, 4 do
         self["currency" .. tostring(i)]:SetText("")
         self["currency" .. tostring(i) .. "Texture"]:SetTexture(nil)
         self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = nil
@@ -993,6 +993,8 @@ local function LoadBag(helpers)
     f.currency2:SetTextColor(1, 1, 1)
     f.currency3:SetFont(UNIT_NAME_FONT, 12, "")
     f.currency3:SetTextColor(1, 1, 1)
+    f.currency4:SetFont(UNIT_NAME_FONT, 12, "")
+    f.currency4:SetTextColor(1, 1, 1)
 
     -- set warch currencies tooltips
     f.currency1Frame:SetScript("OnEnter", function(self)
@@ -1014,6 +1016,15 @@ local function LoadBag(helpers)
         GameTooltip:Show()
     end)
     f.currency3Frame:SetScript("OnEnter", function(self)
+        if not self.CurrencyIdx then
+            return
+        end
+        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+        GameTooltip:ClearLines()
+        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+        GameTooltip:Show()
+    end)
+    f.currency4Frame:SetScript("OnEnter", function(self)
         if not self.CurrencyIdx then
             return
         end

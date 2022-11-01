@@ -137,6 +137,7 @@
                     </Anchors>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                 </Texture>
+
                 <FontString parentKey="currency3" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
                     <Size x="100" y="40"></Size>
                     <Anchors>
@@ -147,6 +148,20 @@
                     <Size x="11" y="11"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" x="-303" y="-25"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+
+                <FontString parentKey="currency4" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                    <Size x="100" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-375" y="-40"></Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="currency4Texture" file="Interface/MoneyFrame/UI-GoldIcon">
+                    <Size x="11" y="11"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-363" y="-25"></Anchor>
                     </Anchors>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                 </Texture>
@@ -397,6 +412,17 @@
                 <Size x="50" y="40"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" x="-303" y="-40"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLeave>
+                        GameTooltip:Hide()
+                    </OnLeave>
+                </Scripts>
+            </Button>
+            <Button parentKey="currency4Frame">
+                <Size x="50" y="40"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-363" y="-40"></Anchor>
                 </Anchors>
                 <Scripts>
                     <OnLeave>
