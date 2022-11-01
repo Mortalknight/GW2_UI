@@ -53,7 +53,7 @@
                     </Anchors>
                 </Texture>
                 <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagicon">
-                    <Size x="128" y="128"></Size>
+                    <Size x="84" y="84"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="TOPLEFT" x="-16" y="16" />
                     </Anchors>
