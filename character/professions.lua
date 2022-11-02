@@ -47,6 +47,7 @@ local function updateButton(self, spellIdx, unlearn)
         self.icon:SetTexture(tex)
         self.name:SetText(name)
         self.modifiedClick = TalProfButton_OnModifiedClick
+        self:RegisterForClicks("AnyUp", "AnyDown")
         self:SetAttribute("type1", "spell")
         self:SetAttribute("type2", "spell")
         self:SetAttribute("shift-type1", "modifiedClick")

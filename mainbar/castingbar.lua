@@ -8,8 +8,8 @@ local AddToAnimation = GW.AddToAnimation
 local StopAnimation = GW.StopAnimation
 local IsIn = GW.IsIn
 
--- For testing basic implementation of DRAGONFLIGHT segmented casting bar
-local TEST_SEGMENT_BAR = false
+local CASTBAR_STAGE_INVALID = -1
+local CASTBAR_STAGE_DURATION_INVALID = -1
 
 local CASTINGBAR_TEXTURES = {
     YELLOW = {
@@ -55,45 +55,61 @@ local CASTINGBAR_TEXTURES = {
         }
     },
   }
+  GW.CASTINGBAR_TEXTURES = CASTINGBAR_TEXTURES
 
----- DUMMY FUNCTION REMOVE LATER
-local function GetCastingSegments()
-    return {
-        {
-            p = 0.5,
-            text = "I",
-        },
-        {
-            p = 0.75,
-            text = "II",
-        },
-        {
-            p = 1,
-            text = "III",
-        },
-    }
-end
-
-
--- DRAGONFLIGHT SEGMENTBAR
 local function createNewBarSegment(self)
     local segment = CreateFrame("Frame", self:GetName() .. "Segment" .. #self.segments + 1, self, "GwCastingBarSegmentSep")
 
-    segment.rank:SetFont(UNIT_NAME_FONT, 12)
+    segment.rank:SetFont(UNIT_NAME_FONT, 12, "")
     segment.rank:SetShadowOffset(1, -1)
     self.segments[#self.segments + 1] = segment
 
     return segment
 end
 
-local function setCastingBarSegment(self, index, precentage, rankText)
-  local segment = self.segments[index] or createNewBarSegment(self)
+local function AddStages(self, parent, barWidth)
+    local sumDuration = 0
+    local castBarLeft = self:GetLeft()
+	local castBarRight = self:GetRight()
+	local castBarWidth = castBarRight - castBarLeft
+    self.StagePoints = {}
 
-  segment:SetPoint("TOPLEFT", self, "TOPLEFT", self:GetWidth() * precentage, 0)
-  segment.rank:SetText(rankText)
+    local getStageDuration = function(stage)
+		if stage == self.numStages then
+			return GetUnitEmpowerHoldAtMaxTime(self.unit)
+		else
+			return GetUnitEmpowerStageDuration(self.unit, stage - 1)
+		end
+	end
+
+    for i = 1, self.numStages - 1, 1 do
+        local duration = getStageDuration(i)
+        if duration > CASTBAR_STAGE_DURATION_INVALID then
+            sumDuration = sumDuration + duration
+            local portion = sumDuration / self.maxValue / 1000
+            local segment = self.segments[i] or createNewBarSegment(self)
+            self.StagePoints[i] = portion
+
+            segment:SetPoint("TOPLEFT", (parent and parent or self), "TOPLEFT", (barWidth and barWidth or castBarWidth) * portion, 0)
+
+            segment.rank:SetText(i)
+            segment:Show()
+        end
+    end
 end
---
+GW.AddStages = AddStages
 
+local function ClearStages(self)
+    for k, _ in pairs(self.segments) do
+        if self.segments[k] then
+            self.segments[k]:Hide()
+        end
+    end
+
+    self.numStages = 0
+	table.wipe(self.StagePoints)
+end
+GW.ClearStages = ClearStages
 
 local function barValues(self, name, icon)
     self.name:SetText(name)
@@ -128,7 +144,7 @@ local function AddFinishAnimation(self, isStopped)
         0,
         1,
         GetTime(),
-        0.2,
+        isStopped and 0.5 or 0.2,
         function()
             self.highlight:SetVertexColor(1, 1, 1, lerp(1, 0.7, animations[self.animationName .. "Complete"].progress))
         end,
@@ -148,7 +164,7 @@ local function AddFinishAnimation(self, isStopped)
 end
 
 local function castBar_OnEvent(self, event, unitID, ...)
-    local spell, icon, startTime, endTime, isTradeSkill, castID, spellID
+    local spell, icon, startTime, endTime, isTradeSkill, castID, spellID, numStages
     local barTexture = CASTINGBAR_TEXTURES.YELLOW.NORMAL
     local barHighlightTexture = CASTINGBAR_TEXTURES.YELLOW.HIGHLIGHT
     if event == "PLAYER_ENTERING_WORLD" then
@@ -167,28 +183,36 @@ local function castBar_OnEvent(self, event, unitID, ...)
         return
     end
 
-    if IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_DELAYED") then
-        if IsIn(event, "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE") then
-            spell, _, icon, startTime, endTime, isTradeSkill, _, spellID = UnitChannelInfo(self.unit)
-            self.isChanneling = true
-            self.isCasting = false
+    if IsIn(event, "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_DELAYED") then
+        if IsIn(event, "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_EMPOWER_UPDATE") then
+            spell, _, icon, startTime, endTime, isTradeSkill, _, spellID, _, numStages = UnitChannelInfo(self.unit)
+            local isChargeSpell = numStages > 0
+            if isChargeSpell then
+                endTime = endTime + GetUnitEmpowerHoldAtMaxTime(self.unit)
+            end
+
+            if isChargeSpell then
+                self.reverseChanneling = true
+                self.isChanneling = false
+                self.isCasting = true
+            else
+                self.reverseChanneling = false
+                self.isChanneling = true
+                self.isCasting = false
+            end
+
             barTexture = CASTINGBAR_TEXTURES.GREEN.NORMAL
             barHighlightTexture = CASTINGBAR_TEXTURES.GREEN.HIGHLIGHT
             self.bar:SetTexCoord(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
-
         else
             spell, _, icon, startTime, endTime, isTradeSkill, castID, _, spellID = UnitCastingInfo(self.unit)
             self.bar:SetTexCoord(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
             self.isChanneling = false
             self.isCasting = true
+            self.reverseChanneling = false
         end
 
-        if TEST_SEGMENT_BAR then
-            self.castSegmentData = GetCastingSegments()
-            for k, v in pairs(self.castSegmentData) do
-                setCastingBarSegment(self, k, v.p, v.text)
-            end
-        end
+        barReset(self)
 
         self.bar.barCoords = barTexture
         self.bar.barHighLightCoords = barHighlightTexture
@@ -202,14 +226,24 @@ local function castBar_OnEvent(self, event, unitID, ...)
             barValues(self, spell, icon)
         end
 
+        self.numStages = numStages and numStages + 1 or 0
+        self.maxValue = (endTime - startTime) / 1000
         self.spellID = spellID
         self.castID = castID
         self.startTime = startTime / 1000
         self.endTime = endTime / 1000
-        barReset(self)
         self.spark:Show()
         self.highlight:Hide()
+
         StopAnimation(self.animationName)
+
+        if self.reverseChanneling then
+            AddStages(self)
+
+        else
+            ClearStages(self)
+        end
+
         AddToAnimation(
             self.animationName,
             0,
@@ -226,20 +260,21 @@ local function castBar_OnEvent(self, event, unitID, ...)
                 self.latency:SetPoint(self.isChanneling and "LEFT" or "RIGHT", self, self.isChanneling and "LEFT" or "RIGHT")
 
                 self.bar:SetWidth(math.max(1, p * 176))
-                self.bar:SetVertexColor(1,1,1,1)
+                self.bar:SetVertexColor(1, 1, 1, 1)
                 self.spark:SetWidth(math.min(15, math.max(1, p * 176)))
                 self.bar:SetTexCoord(self.bar.barCoords.L, lerp(self.bar.barCoords.L,self.bar.barCoords.R, p), self.bar.barCoords.T, self.bar.barCoords.B)
 
-                if TEST_SEGMENT_BAR then
-                    if self.castSegmentData then
-                        for _, v in pairs(self.castSegmentData) do
-
-                        if v.p <= p then
-                            self.highlight:SetTexCoord(self.bar.barHighLightCoords.L, lerp(self.bar.barHighLightCoords.L, self.bar.barHighLightCoords.R, v.p), self.bar.barHighLightCoords.T, self.bar.barHighLightCoords.B)
-                            self.highlight:SetWidth(math.max(1, v.p * 176))
+                if self.numStages > 0 then
+                    for i = 1, self.numStages - 1, 1 do
+                        local stage_percentage = self.StagePoints[i]
+                        if stage_percentage <= p then
+                            self.highlight:SetTexCoord(self.bar.barHighLightCoords.L, lerp(self.bar.barHighLightCoords.L, self.bar.barHighLightCoords.R, stage_percentage), self.bar.barHighLightCoords.T, self.bar.barHighLightCoords.B)
+                            self.highlight:SetWidth(math.max(1, stage_percentage * 176))
                             self.highlight:Show()
                         end
 
+                        if i == 1 and stage_percentage >= p then
+                            self.highlight:Hide()
                         end
                     end
                 end
@@ -254,14 +289,16 @@ local function castBar_OnEvent(self, event, unitID, ...)
         if self:GetAlpha() < 1 then
             UIFrameFadeIn(self, 0.1, 0, 1)
         end
-    elseif IsIn(event, "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP") then
-        if (event == "UNIT_SPELLCAST_STOP" and self.castID == select(1, ...)) or (event == "UNIT_SPELLCAST_CHANNEL_STOP" and self.isChanneling) then
+    elseif IsIn(event, "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_EMPOWER_STOP") then
+        if (event == "UNIT_SPELLCAST_STOP" and self.castID == select(1, ...)) or 
+            ((event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "UNIT_SPELLCAST_EMPOWER_STOP") and (self.isChanneling or self.reverseChanneling)) then
             if self.animating == nil or self.animating == false then
                 UIFrameFadeOut(self, 0.2, 1, 0)
             end
             barReset(self)
             self.isCasting = false
             self.isChanneling = false
+            self.reverseChanneling = false
         end
     elseif event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" then
         if self:IsShown() and self.isCasting and select(1, ...) == self.castID then
@@ -275,6 +312,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
             AddFinishAnimation(self, true)
             self.isCasting = false
             self.isChanneling = false
+            self.reverseChanneling = false
         end
     elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.spellID == select(2, ...) and not self.isChanneling then
         AddFinishAnimation(self, false)
@@ -301,9 +339,7 @@ local function TogglePlayerEnhancedCastbar(self, setShown)
 end
 GW.TogglePlayerEnhancedCastbar = TogglePlayerEnhancedCastbar
 
-local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
-    castingBarType:Kill()
-
+local function LoadCastingBar(name, unit, showTradeSkills)
     local GwCastingBar = CreateFrame("Frame", name, UIParent, "GwCastingBar")
     GwCastingBar.name:SetFont(UNIT_NAME_FONT, 12)
     GwCastingBar.name:SetShadowOffset(1, -1)
@@ -316,9 +352,12 @@ local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
     GwCastingBar.showCastbar = true
     GwCastingBar.spellID = nil
     GwCastingBar.isChanneling = false
+    GwCastingBar.reverseChanneling = false
     GwCastingBar.isCasting = false
     GwCastingBar.animationName = name
     GwCastingBar.showTradeSkills = showTradeSkills
+    GwCastingBar.StagePoints = {}
+    GwCastingBar.numStages = 0
     GwCastingBar.showDetails = GetSetting("CASTINGBAR_DATA")
 
     GwCastingBar.segments = {}
@@ -345,6 +384,11 @@ local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
     GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", unit)
     GwCastingBar:RegisterEvent("PLAYER_ENTERING_WORLD")
     GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_START", unit)
+    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_STOP", unit)
+
+    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_START", unit)
+    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_UPDATE", unit)
+    GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", unit)
     GwCastingBar:RegisterUnitEvent("UNIT_SPELLCAST_STOP", unit)
     if unit == "pet" then
         GwCastingBar:RegisterEvent("UNIT_PET")

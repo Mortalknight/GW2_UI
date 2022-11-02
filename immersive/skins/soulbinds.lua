@@ -4,12 +4,13 @@ local function ApplySoulbindsSkin()
 	if not GW.GetSetting("SOULBINDS_SKIN_ENABLED") then return end
 
 	SoulbindViewer:StripTextures()
-	local tex = SoulbindViewer:CreateTexture("bg", "BACKGROUND", -7)
+	local tex = SoulbindViewer:CreateTexture("bg", "BACKGROUND", nil, -7)
 	tex:SetPoint("TOP", SoulbindViewer, "TOP", 0, 25)
 	tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
 	local w, h = SoulbindViewer:GetSize()
 	tex:SetSize(w + 50, h + 50)
 	SoulbindViewer.tex = tex
+
 	SoulbindViewer.CloseButton:SkinButton(true)
 	SoulbindViewer.CloseButton:SetSize(20, 20)
 	SoulbindViewer.CommitConduitsButton:SkinButton(false, true)

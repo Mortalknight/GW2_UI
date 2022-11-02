@@ -38,6 +38,7 @@ GW.AddForProfiling("reputation", "detailFaction", detailFaction)
 
 local function updateSavedReputation()
     for factionIndex = 1, GetNumFactions() do
+
         savedReputation[factionIndex] = {}
         savedReputation[factionIndex].name,
             savedReputation[factionIndex].description,
@@ -186,7 +187,7 @@ local function setDetailEx(
 
     local currentRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId)), GW.mysex)
     local nextRank = GetText("FACTION_STANDING_LABEL" .. math.min(8, math.max(1, standingId + 1)), GW.mysex)
-    local friendID, friendRep, _, _, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
+    local friendInfo = C_GossipInfo.GetFriendshipReputation(factionID or 0)
 
     --if factionIndex % 2 == 0 then
     frame.background:SetTexture(nil)
@@ -323,7 +324,7 @@ local function setDetailEx(
 
         frame.name:SetText(hasRewardPending and name .. "|TInterface/AddOns/GW2_UI/textures/icons/rewards-icon:32:32:0:0|t" or name)
 
-        frame.currentRank:SetText(friendID and friendTextLevel or currentRank)
+        frame.currentRank:SetText(friendInfo.friendshipFactionID and friendInfo.reaction or currentRank)
         frame.nextRank:SetText(L["Paragon"] .. (currentValue > threshold and (" (" .. RoundDec(currentValue / threshold, 0) .. "x)") or ""))
 
         frame.currentValue:SetText(CommaValue(value))
@@ -337,31 +338,31 @@ local function setDetailEx(
 
         frame.background2:SetVertexColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
         frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
-    elseif friendID ~= nil then
+    elseif friendInfo.friendshipFactionID > 0 then
         frame.StatusBar:SetMinMaxValues(0, 1)
-        frame.currentRank:SetText(friendTextLevel)
+        frame.currentRank:SetText(friendInfo.reaction)
         frame.nextRank:SetText()
 
         frame.background2:SetVertexColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
         frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
 
-        if (nextFriendThreshold) then
-            frame.currentValue:SetText(CommaValue(friendRep - friendThreshold))
-            frame.nextValue:SetText(CommaValue(nextFriendThreshold - friendThreshold))
+        if (friendInfo.nextThreshold) then
+            frame.currentValue:SetText(CommaValue(friendInfo.standing - friendInfo.reactionThreshold))
+            frame.nextValue:SetText(CommaValue(friendInfo.nextThreshold - friendInfo.reactionThreshold))
 
             local percent =
-                math.floor(RoundDec(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)) * 100))
+                math.floor(RoundDec(((friendInfo.standing - friendInfo.reactionThreshold) / (friendInfo.nextThreshold - friendInfo.reactionThreshold)) * 100))
             if percent == -1 then
                 frame.percentage:SetText("0%")
             else
                 frame.percentage:SetText(
                     (math.floor(
-                        RoundDec(((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)) * 100)
+                        RoundDec(((friendInfo.standing - friendInfo.reactionThreshold) / (friendInfo.nextThreshold - friendInfo.reactionThreshold)) * 100)
                     )) .. "%"
                 )
             end
 
-            frame.StatusBar:SetValue((friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold))
+            frame.StatusBar:SetValue((friendInfo.standing - friendInfo.reactionThreshold) / (friendInfo.nextThreshold - friendInfo.reactionThreshold))
         else
             --max rank
             frame.StatusBar:SetValue(1)
@@ -369,6 +370,35 @@ local function setDetailEx(
             frame.currentValue:SetText()
             frame.percentage:SetText("100%")
         end
+    elseif factionID and C_Reputation.IsMajorFaction(factionID) then
+        local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
+        frame.StatusBar:SetMinMaxValues(0, 1)
+        majorFactionData.renownReputationEarned = 1000
+
+        frame.background2:SetVertexColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
+        frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
+
+        if C_MajorFactions.HasMaximumRenown(factionID) then
+            --max rank
+            frame.StatusBar:SetValue(1)
+
+            frame.currentRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
+            frame.nextRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
+
+            frame.nextValue:SetText()
+            frame.currentValue:SetText()
+            frame.percentage:SetText("100%")
+        else
+            frame.nextRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel + 1)
+            frame.currentRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
+
+            frame.currentValue:SetText(CommaValue(majorFactionData.renownReputationEarned or 0))
+            frame.nextValue:SetText(CommaValue(majorFactionData.renownLevelThreshold))
+            frame.percentage:SetText((math.floor((majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold * 100) .. "%"))
+
+            frame.StatusBar:SetValue((majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold)
+        end
+
     else
         frame.currentRank:SetText(currentRank)
         frame.nextRank:SetText(nextRank)
@@ -661,7 +691,7 @@ local function CollectCategories()
     for factionIndex = 1, GetNumFactions() do
         local name, _, standingId, _, _, _, _, _, isHeader, _, _, _, isChild, factionID = returnReputationData(factionIndex)
         if name then
-            local friendID, _, _, _, _, _, friendTextLevel = GetFriendshipReputation(factionID)
+            local friendInfo = C_GossipInfo.GetFriendshipReputation(factionID or 0)
             if isHeader and not isChild then
                 if not skipFirst then
                     tinsert(catagories, {idx = idx, idxLast = factionIndex - 1,  name = headerName, standingCur = cCur, standingMax = cMax, fctTbl = sortFactionsStatus(factionTbl)})
@@ -675,18 +705,18 @@ local function CollectCategories()
             else
                 local found = false
                 cCur = cCur + standingId
-                if friendID then
-                    cMax = cMax + select(2, GetFriendshipReputationRanks(friendID))
+                if friendInfo.friendshipFactionID and friendInfo.friendshipFactionID > 0 then
+                    cMax = cMax + C_GossipInfo.GetFriendshipReputationRanks(friendInfo.friendshipFactionID).maxLevel
                     if not factionTbl then factionTbl = {} end
                     for _, v in pairs(factionTbl) do
-                        if v.isFriend == true and v.standingText == friendTextLevel then
+                        if v.isFriend == true and v.standingText == friendInfo.reaction then
                             v.counter = v.counter + 1
                             found = true
                             break
                         end
                     end
                     if not found then
-                        tinsert(factionTbl, {standingId = standingId, isFriend = true, standingText = friendTextLevel, counter = 1})
+                        tinsert(factionTbl, {standingId = standingId, isFriend = true, standingText = friendInfo.reaction, counter = 1})
                     end
                 else
                     local standing = getglobal("FACTION_STANDING_LABEL" .. standingId)

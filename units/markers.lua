@@ -14,6 +14,7 @@ local function LoadMarkers()
 
     local btn = CreateFrame("Button", "GW2UI_Markers_Button", UIParent, "SecureActionButtonTemplate")
     btn:Hide()
+    btn:RegisterForClicks("AnyUp", "AnyDown")
 
     btn:SetAttribute("type-WM1", "worldmarker")
     btn:SetAttribute("action-WM1", "set")

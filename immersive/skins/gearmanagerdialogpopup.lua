@@ -2,7 +2,7 @@ local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
 
 local function SkinGearManagerDialogPopup_OnShow()
-    local GearManagerDialogPopup = _G.GearManagerDialogPopup
+    local GearManagerDialogPopup = _G.GearManagerPopupFrame
 
     GearManagerDialogPopup.BG:Hide()
     local r = {GearManagerDialogPopup.BorderBox:GetRegions()}
@@ -11,24 +11,22 @@ local function SkinGearManagerDialogPopup_OnShow()
             c:Hide()
         end
     end
-    GearManagerDialogPopup.BorderBox.NameText:SetFont(DAMAGE_TEXT_FONT, 12)
-    GearManagerDialogPopup.BorderBox.ChooseIconText:SetFont(DAMAGE_TEXT_FONT, 12)
+    GearManagerDialogPopup.BorderBox.EditBoxHeaderText:SetFont(DAMAGE_TEXT_FONT, 12)
+    GearManagerDialogPopup.BorderBox.IconSelectionText:SetFont(DAMAGE_TEXT_FONT, 12)
     GearManagerDialogPopup:SetSize(GearManagerDialogPopup:GetSize(), GearManagerDialogPopup:GetSize() + 5)
     GearManagerDialogPopup:CreateBackdrop(constBackdropFrame)
     --Change EditBox
-    _G["GearManagerDialogPopupEditBoxLeft"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-    _G["GearManagerDialogPopupEditBoxRight"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-    _G["GearManagerDialogPopupEditBoxMiddle"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    GearManagerDialogPopup.BorderBox.IconSelectorEditBox.IconSelectorPopupNameLeft:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    GearManagerDialogPopup.BorderBox.IconSelectorEditBox.IconSelectorPopupNameMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    GearManagerDialogPopup.BorderBox.IconSelectorEditBox.IconSelectorPopupNameRight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
 
-    local GearManagerDialogPopupCancel = _G.GearManagerDialogPopupCancel
+    GearManagerDialogPopup.BorderBox.CancelButton:SkinButton(false, true)
+    GearManagerDialogPopup.BorderBox.CancelButton:ClearAllPoints()
+    GearManagerDialogPopup.BorderBox.CancelButton:SetPoint("BOTTOMRIGHT" ,-11, 20)
 
-    GearManagerDialogPopupCancel:SkinButton(false, true)
-    GearManagerDialogPopupCancel:ClearAllPoints()
-    GearManagerDialogPopupCancel:SetPoint("BOTTOMRIGHT" ,-11, 20)
-
-    _G.GearManagerDialogPopupOkay:SkinButton(false, true)
-    _G.GearManagerDialogPopupScrollFrame:SkinScrollFrame()
-    _G.GearManagerDialogPopupScrollFrameScrollBar:SkinScrollBar()
+    GearManagerDialogPopup.BorderBox.OkayButton:SkinButton(false, true)
+    GearManagerDialogPopup.IconSelector.ScrollBox:SkinScrollFrame()
+    GearManagerDialogPopup.IconSelector.ScrollBar:SkinScrollBar()
 end
 
 local function SkinGearManagerDialogPopupButtons_OnUpdate()
@@ -66,7 +64,7 @@ local function SkinGearManagerDialogPopupButtons_OnUpdate()
 end
 
 local function SkinGearManagerDialogPopup()
-    hooksecurefunc("GearManagerDialogPopup_Update", SkinGearManagerDialogPopupButtons_OnUpdate)
+    hooksecurefunc(GearManagerPopupFrame, "Update", SkinGearManagerDialogPopupButtons_OnUpdate)
     SkinGearManagerDialogPopup_OnShow()
 end
 GW.SkinGearManagerDialogPopup = SkinGearManagerDialogPopup

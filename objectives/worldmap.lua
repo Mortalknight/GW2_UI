@@ -25,7 +25,6 @@ end
 local function ToggleWorldMapCoords()
     if GW.GetSetting("WORLDMAP_COORDS_TOGGLE") then
         CoordsFrame:Show()
-
     else
         CoordsFrame:Hide()
     end

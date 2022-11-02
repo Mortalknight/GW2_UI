@@ -53,7 +53,7 @@
                     </Anchors>
                 </Texture>
                 <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagicon">
-                    <Size x="128" y="128"></Size>
+                    <Size x="84" y="84"></Size>
                     <Anchors>
                         <Anchor point="CENTER" relativePoint="TOPLEFT" x="-16" y="16" />
                     </Anchors>
@@ -137,6 +137,7 @@
                     </Anchors>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                 </Texture>
+
                 <FontString parentKey="currency3" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
                     <Size x="100" y="40"></Size>
                     <Anchors>
@@ -147,6 +148,20 @@
                     <Size x="11" y="11"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" x="-303" y="-25"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                </Texture>
+
+                <FontString parentKey="currency4" text="100" inherits="GameFontNormalSmall" justifyH="RIGHT">
+                    <Size x="100" y="40"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-375" y="-40"></Anchor>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="currency4Texture" file="Interface/MoneyFrame/UI-GoldIcon">
+                    <Size x="11" y="11"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-363" y="-25"></Anchor>
                     </Anchors>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                 </Texture>
@@ -320,6 +335,39 @@
                     </Layer>
                 </Layers>
             </Button>
+            <Button name="$parentGwBagHeader5" registerForClicks="LeftButtonUp,RightButtonUp" framelevel="50">
+                <Size x="512" y="32"></Size>
+                <Layers>
+                    <Layer>
+                        <Texture parentKey="background" name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/bag/bag-sep">
+                            <Size x="512" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer textureSubLevel="2">
+                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="icon2" file="Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down" rotation="90">
+                            <Size x="28" y="28"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <FontString parentKey="nameString" text="Name Could not be loaded" justifyV="MIDDLE" justifyH="LEFT">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="28" y="-5" />
+                            </Anchors>
+                            <Size x="300" y="24" />
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Button>
             <Button parentKey="currency" framelevel="50">
                 <Size x="32" y="32"></Size>
                 <Anchors>
@@ -364,6 +412,17 @@
                 <Size x="50" y="40"></Size>
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" x="-303" y="-40"></Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLeave>
+                        GameTooltip:Hide()
+                    </OnLeave>
+                </Scripts>
+            </Button>
+            <Button parentKey="currency4Frame">
+                <Size x="50" y="40"></Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" x="-363" y="-40"></Anchor>
                 </Anchors>
                 <Scripts>
                     <OnLeave>
@@ -796,20 +855,8 @@
         </Frames>
     </Frame>
 
-    <ItemButton name="GwBackpackBagTemplate" inherits="BagSlotButtonTemplate" virtual="true">
+    <ItemButton name="GwBackpackBagTemplate" inherits="BaseBagSlotButtonTemplate" virtual="true">
         <Size x="28" y="28"></Size>
-        <Layers>
-            <Layer level="BACKGROUND">
-                <Texture parentKey="gwBackdrop" file="Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop">
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
     </ItemButton>
 
 </Ui>

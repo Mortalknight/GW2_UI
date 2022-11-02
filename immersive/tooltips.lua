@@ -221,14 +221,6 @@ local function SetCurrencyToken(self, index)
     self:Show()
 end
 
-local function SetCurrencyTokenByID(self, id)
-    if self:IsForbidden() then return end
-    if id and IsModKeyDown() then
-        self:AddLine(format(IDLine, ID, id))
-        self:Show()
-    end
-end
-
 local function AddQuestID(frame)
     if GameTooltip:IsForbidden() then return end
 
@@ -606,7 +598,7 @@ local function AddInspectInfo(self, unit, numTries, r, g, b)
     end
 end
 
-local function GameTooltip_OnTooltipSetUnit(self)
+local function GameTooltip_OnTooltipSetUnit(self, data)
     if self:IsForbidden() then return end
 
     local _, unit = self:GetUnit()
@@ -655,7 +647,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
         end
     end
 
-    if color then
+    if color and color.r and color.g and color.b then
         self.StatusBar:SetStatusBarColor(color.r, color.g, color.b)
     else
         self.StatusBar:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
@@ -732,7 +724,7 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
     local TooltipMover = GameTooltip.gwMover
     local _, anchor = self:GetPoint()
 
-    if anchor == nil or anchor == TooltipMover or anchor == UIParent then
+    if anchor == nil or anchor == TooltipMover or anchor == GameTooltipDefaultContainer or anchor == UIParent then
         self:ClearAllPoints()
         local point = GW.GetScreenQuadrant(TooltipMover)
 
@@ -750,10 +742,10 @@ end
 
 local function SetTooltipFonts()
     local font = UNIT_NAME_FONT
-    local fontOutline = "NONE"
-    local headerSize = GetSetting("TOOLTIP_FONT_SIZE")
-    local smallTextSize = GetSetting("TOOLTIP_FONT_SIZE")
-    local textSize = GetSetting("TOOLTIP_FONT_SIZE")
+    local fontOutline = ""
+    local headerSize = tonumber(GetSetting("TOOLTIP_FONT_SIZE"))
+    local smallTextSize =tonumber(GetSetting("TOOLTIP_FONT_SIZE"))
+    local textSize = tonumber(GetSetting("TOOLTIP_FONT_SIZE"))
 
     GameTooltipHeaderText:SetFont(font, headerSize, fontOutline)
     GameTooltipTextSmall:SetFont(font, smallTextSize, fontOutline)
@@ -819,7 +811,8 @@ local function GameTooltip_ShowStatusBar(self)
     if not sb or sb.backdrop then return end
 
     sb:StripTextures()
-    sb:CreateBackdrop(GW.skins.constBackdropFrameBorder)
+    sb:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+    sb.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
     sb:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
 end
 
@@ -1045,7 +1038,6 @@ local function LoadTooltips()
 
         hooksecurefunc(GameTooltip, "SetToyByItemID", SetToyByItemID)
         hooksecurefunc(GameTooltip, "SetCurrencyToken", SetCurrencyToken)
-        hooksecurefunc(GameTooltip, "SetCurrencyTokenByID", SetCurrencyTokenByID)
         hooksecurefunc(GameTooltip, "SetBackpackToken", SetBackpackToken)
         hooksecurefunc("QuestMapLogTitleButton_OnEnter", AddQuestID)
         hooksecurefunc("TaskPOI_OnEnter", AddQuestID)
@@ -1063,17 +1055,24 @@ local function LoadTooltips()
             end
         end)
 
-        GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_OnTooltipSetSpell)
-        GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
-        GameTooltip:HookScript("OnTooltipSetItem", GameTooltip_OnTooltipSetItem)
-        GameTooltip:HookScript("OnTooltipSetUnit", GameTooltip_OnTooltipSetUnit)
-
-        GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
+        if select(4, GetBuildInfo()) >= 100002 then
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
+            GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetSpell)
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
+            GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
+        else
+            GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_OnTooltipSetSpell)
+            GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
+            GameTooltip:HookScript("OnTooltipSetItem", GameTooltip_OnTooltipSetItem)
+            GameTooltip:HookScript("OnTooltipSetUnit", GameTooltip_OnTooltipSetUnit)
+            GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
+        end
     end
 
-    local eventFrame = CreateFrame("Frame")
-    eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-    eventFrame:SetScript("OnEvent", function(_, event)
+    local eventFrame2 = CreateFrame("Frame")
+    eventFrame2:RegisterEvent("PLAYER_REGEN_DISABLED")
+    eventFrame2:SetScript("OnEvent", function(_, event)
         if not GetSetting("HIDE_TOOLTIP_IN_COMBAT") then return end
 
         if event == "PLAYER_REGEN_DISABLED" and shouldHiddenInCombat(GameTooltip) and not IsModKeyDown("HIDE_TOOLTIP_IN_COMBAT_OVERRIDE") then

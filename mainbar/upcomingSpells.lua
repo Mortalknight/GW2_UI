@@ -5,8 +5,9 @@ local upcomingLevelRewards = {}
 local loaded = false
 
 local function IsUpcomingSpellAvalible()
-    if not loaded then GW.UpdateUpcomingSpells() end
-    return #upcomingLevelRewards > 0
+    --if not loaded then GW.UpdateUpcomingSpells() end
+    --return #upcomingLevelRewards > 0
+    return false
 end
 GW.IsUpcomingSpellAvalible = IsUpcomingSpellAvalible
 

@@ -610,9 +610,7 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     local registerUnit = isPlayer and "player" or "party" .. (i - (GetSetting("PARTY_PLAYER_FRAME") and 1 or 0))
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, "GwPartyFrame")
 
-    if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
-        frame.name:SetFont(UNIT_NAME_FONT, 12)
-    end
+    frame.name:SetFont(UNIT_NAME_FONT, 12)
     frame.name:SetShadowOffset(-1, -1)
     frame.name:SetShadowColor(0, 0, 0, 1)
     frame.level:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINED")
@@ -718,25 +716,6 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
 end
 GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 
-local function hideBlizzardPartyFrame()
-    if InCombatLockdown() then
-        return
-    end
-
-    PartyFrame:UnregisterAllEvents()
-
-    for frame in PartyFrame.PartyMemberFramePool:EnumerateActive() do
-        if frame then
-            frame:KIll()
-        end
-    end
-
-    if CompactRaidFrameManager then
-        CompactRaidFrameManager:UnregisterAllEvents()
-        CompactRaidFrameManager:Hide()
-    end
-end
-GW.AddForProfiling("party", "hideBlizzardPartyFrame", hideBlizzardPartyFrame)
 
 local function LoadPartyFrames()
     if not GwManageGroupButton then
@@ -745,8 +724,6 @@ local function LoadPartyFrames()
         -- load missing and ignored auras, do it here bcause this code is only triggered from one of the 3 grids
         GW.UpdateMissingAndIgnoredAuras()
     end
-
-    hideBlizzardPartyFrame()
 
     if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
         return

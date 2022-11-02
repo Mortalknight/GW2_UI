@@ -7,8 +7,9 @@ local function ApplyAlliedRacesUISkin()
     AlliedRacesFrame.NineSlice:SetAlpha(0)
     AlliedRacesFramePortrait:SetAlpha(0)
     AlliedRacesFrameBg:SetAlpha(0)
-    AlliedRacesFrame.TitleBg:SetAlpha(0)
     AlliedRacesFrame.ModelFrame:StripTextures()
+
+    select(2, AlliedRacesFrame.ModelFrame:GetRegions()):Hide()
 
     local tex = AlliedRacesFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", AlliedRacesFrame, "TOP", 0, 25)
@@ -16,6 +17,8 @@ local function ApplyAlliedRacesUISkin()
     local w, h = AlliedRacesFrame:GetSize()
     tex:SetSize(w + 50, h + 50)
     AlliedRacesFrame.tex = tex
+
+    AlliedRacesFrame.Banner:Hide()
 
     AlliedRacesFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
 
@@ -29,6 +32,7 @@ local function ApplyAlliedRacesUISkin()
     scrollFrame:SkinScrollFrame()
     scrollFrame.ScrollBar:SkinScrollBar()
 
+    scrollFrame.Child:StripTextures()
     scrollFrame.Child.ObjectivesFrame:StripTextures()
     scrollFrame.Child.ObjectivesFrame:CreateBackdrop(GW.skins.constBackdropFrame, true)
 

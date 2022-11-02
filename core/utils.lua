@@ -500,8 +500,8 @@ GW.MixinHideDuringPetAndOverride = MixinHideDuringPetAndOverride
 local function getContainerItemLinkByNameOrId(itemName, id)
     local itemLink = nil
     for bag = 0, 4 do
-        for slot = 1, GetContainerNumSlots(bag) do
-            local item = GetContainerItemLink(bag, slot)
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            local item = C_Container.GetContainerItemLink(bag, slot)
             if item and (item:find(itemName) or item:find(id)) then
                 itemLink = item
                 break

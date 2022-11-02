@@ -338,7 +338,7 @@ end
 
 local function SkinTab(tabButton, direction)
     tabButton:CreateBackdrop()
-    local direction = direction and direction == "down" and "_down" or ""
+    direction = direction and direction == "down" and "_down" or ""
 
     if tabButton.SetNormalTexture then tabButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/units/unittab" .. direction) end
     if tabButton.SetHighlightTexture then 
@@ -359,11 +359,20 @@ local function SkinTab(tabButton, direction)
         end
     end
 
+    local highlightTex = tabButton.GetHighlightTexture and tabButton:GetHighlightTexture()
+    if highlightTex then
+        highlightTex:SetTexture()
+    else
+        tabButton:StripTextures()
+    end
+
     if tabButton:GetName() then
         for _, object in pairs(tabs) do
-            local tex = _G[tabButton:GetName() .. object]
-            if tex then
-                tex:SetTexture()
+            local textureName = _G[tabButton:GetName() .. object]
+            if textureName then
+                textureName:SetTexture()
+            elseif tabButton[object] then
+				tabButton[object]:SetTexture()
             end
         end
     end
@@ -617,6 +626,40 @@ local function SetInside(obj, anchor, xOffset, yOffset, anchor2, noScale)
     obj:SetPoint('BOTTOMRIGHT', anchor2 or anchor, 'BOTTOMRIGHT', -x, y)
 end
 
+local function StyleButton(button, noHover, noPushed, noChecked)
+    if button.SetHighlightTexture and button.CreateTexture and not button.hover and not noHover then
+        local hover = button:CreateTexture()
+        hover:SetInside()
+        hover:SetBlendMode('ADD')
+        hover:SetColorTexture(1, 1, 1, 0.3)
+        button:SetHighlightTexture(hover)
+        button.hover = hover
+    end
+
+    if button.SetPushedTexture and button.CreateTexture and not button.pushed and not noPushed then
+        local pushed = button:CreateTexture()
+        pushed:SetInside()
+        pushed:SetBlendMode('ADD')
+        pushed:SetColorTexture(0.9, 0.8, 0.1, 0.3)
+        button:SetPushedTexture(pushed)
+        button.pushed = pushed
+    end
+
+    if button.SetCheckedTexture and button.CreateTexture and not button.checked and not noChecked then
+        local checked = button:CreateTexture()
+        checked:SetInside()
+        checked:SetBlendMode('ADD')
+        checked:SetColorTexture(1, 1, 1, 0.3)
+        button:SetCheckedTexture(checked)
+        button.checked = checked
+    end
+
+    if button.cooldown then
+        button.cooldown:SetDrawEdge(false)
+        button.cooldown:SetInside(button, 0, 0)
+    end
+end
+
 local function addapi(object)
     local mt = getmetatable(object).__index
     if not object.Kill then mt.Kill = Kill end
@@ -634,6 +677,7 @@ local function addapi(object)
     if not object.SetOutside then mt.SetOutside = SetOutside end
     if not object.SetInside then mt.SetInside = SetInside end
     if not object.HandleTrimScrollBar then mt.HandleTrimScrollBar = HandleTrimScrollBar end
+    if not object.StyleButton then mt.StyleButton = StyleButton end
 end
 
 local handled = {Frame = true}

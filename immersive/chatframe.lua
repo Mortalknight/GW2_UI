@@ -85,8 +85,7 @@ local CHAT_FRAME_TEXTURES = {
     "TabRight",
     "TabLeft",
     "TabMiddle",
-    "Tab",
-    "TabText"
+    "Tab"
 }
 
 local throttle = {}
@@ -108,6 +107,7 @@ local PLAYER_NAME = format("%s-%s", GW.myname, PLAYER_REALM)
 local tabTexs = {
     "",
     "Selected",
+    "Active",
     "Highlight"
 }
 
@@ -752,9 +752,10 @@ end
 
 local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID, alwaysAddTimestamp)
     local useGw2Style = GetSetting("CHAT_USE_GW2_STYLE")
+    local timeStampFormat = GetChatTimestampFormat()
 
-    if CHAT_TIMESTAMP_FORMAT and (GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL") or alwaysAddTimestamp) then
-        local timeStamp = BetterDate(CHAT_TIMESTAMP_FORMAT, time())
+    if timeStampFormat and (GetSetting("CHAT_ADD_TIMESTAMP_TO_ALL") or alwaysAddTimestamp) then
+        local timeStamp = BetterDate(timeStampFormat, time())
         timeStamp = gsub(timeStamp, " ", "")
         timeStamp = gsub(timeStamp, "AM", " AM")
         timeStamp = gsub(timeStamp, "PM", " PM")
@@ -1094,7 +1095,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                 local client = accountInfo.gameAccountInfo and accountInfo.gameAccountInfo.clientProgram
                 if client and client ~= "" then
                     local characterName = BNet_GetValidatedCharacterName(accountInfo.gameAccountInfo.characterName, accountInfo.battleTag, client) or ""
-                    local characterNameText = BNet_GetClientEmbeddedTexture(client, 14)..characterName
+                    local characterNameText = BNet_GetClientEmbeddedAtlas(client, 14)..characterName
                     local linkDisplayText = ("[%s] (%s)"):format(arg2, characterNameText)
                     local playerLink = GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
                     message = format(globalstring, playerLink)
@@ -1340,10 +1341,19 @@ local function ChatFrame_SetScript(self, script, func)
     end
 end
 
+local function GetTab(chat)
+	if not chat.tab then
+		chat.tab = _G[format("ChatFrame%sTab", chat:GetID())]
+	end
+
+	return chat.tab
+end
+
 local function styleChatWindow(frame)
     local name = frame:GetName()
-    _G[name .. "TabText"]:SetFont(DAMAGE_TEXT_FONT, 14)
-    _G[name .. "TabText"]:SetTextColor(1, 1, 1)
+    local tab = GetTab(frame)
+    tab.Text:SetFont(DAMAGE_TEXT_FONT, 14, "")
+    tab.Text:SetTextColor(1, 1, 1)
 
     if frame.styled then return end
 
@@ -1352,7 +1362,6 @@ local function styleChatWindow(frame)
     local id = frame:GetID()
     local _, fontSize, _, _, _, _, _, _, isDocked = GetChatWindowInfo(id)
 
-    local tab = _G[name .. "Tab"]
     local editbox = _G[name .. "EditBox"]
     local scroll = frame.ScrollBar
     local scrollToBottom = frame.ScrollToBottomButton
@@ -1382,35 +1391,45 @@ local function styleChatWindow(frame)
     end
 
     for _, texName in pairs(tabTexs) do
-        if texName == "Selected" then
-            _G[tab:GetName()..texName.."Right"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright")
-            _G[tab:GetName()..texName.."Left"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
-            _G[tab:GetName()..texName.."Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive")
+        local t, l, m, r = name .. "Tab", texName .. "Left", texName .. "Middle", texName .. "Right"
+        local main = _G[t]
+        local left = _G[t .. l] or (main and main[l])
+        local middle = _G[t .. m] or (main and main[m])
+        local right = _G[t .. r] or (main and main[r])
 
-            _G[tab:GetName()..texName.."Right"]:SetBlendMode("BLEND")
-            _G[tab:GetName()..texName.."Left"]:SetBlendMode("BLEND")
-            _G[tab:GetName()..texName.."Middle"]:SetBlendMode("BLEND")
+        if texName == "Active" then
+            if left then
+                left:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveleft")
+                left:ClearAllPoints()
+                left:SetPoint("TOPRIGHT", tab.Left, "TOPRIGHT", 0, 2)
+                left:SetBlendMode("BLEND")
+                left:SetVertexColor(1, 1, 1, 1)
+            end
 
-            _G[tab:GetName()..texName.."Right"]:SetVertexColor(1, 1, 1, 1)
-            _G[tab:GetName()..texName.."Left"]:SetVertexColor(1, 1, 1, 1)
-            _G[tab:GetName()..texName.."Middle"]:SetVertexColor(1, 1, 1, 1)
-        elseif texName == "" then
-            _G[tab:GetName()..texName.."Right"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
-            _G[tab:GetName()..texName.."Left"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
-            _G[tab:GetName()..texName.."Middle"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
-
-            _G[tab:GetName()..texName.."Right"]:SetHeight(40)
-            _G[tab:GetName()..texName.."Left"]:SetHeight(40)
-            _G[tab:GetName()..texName.."Middle"]:SetHeight(40)
-
-            _G[tab:GetName()..texName.."Left"]:SetTexture()
-            _G[tab:GetName()..texName.."Middle"]:SetTexture()
-            _G[tab:GetName()..texName.."Right"]:SetTexture()
+            if middle then
+                middle:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactive")
+                middle:ClearAllPoints()
+                middle:SetPoint("LEFT", tab.Middle, "LEFT", 0, 2)
+                middle:SetPoint("RIGHT", tab.Middle, "RIGHT", 0, 2 )
+                middle:SetBlendMode("BLEND")
+                middle:SetVertexColor(1, 1, 1, 1)
+            end
+            if right then
+                right:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chattabactiveright")
+                right:ClearAllPoints()
+                right:SetPoint("TOPRIGHT", tab.Right, "TOPRIGHT", 0, 2)
+                right:SetBlendMode("BLEND")
+                right:SetVertexColor(1, 1, 1, 1)
+            end
         else
-            _G[tab:GetName()..texName.."Left"]:SetTexture()
-            _G[tab:GetName()..texName.."Middle"]:SetTexture()
-            _G[tab:GetName()..texName.."Right"]:SetTexture()
+            if left then left:SetTexture() end
+            if middle then middle:SetTexture() end
+            if right then right:SetTexture() end
         end
+
+        if left then left:SetHeight(28) end
+        if middle then middle:SetHeight(28) end
+        if right then right:SetHeight(28) end
     end
 
     scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
@@ -1431,6 +1450,8 @@ local function styleChatWindow(frame)
     frame.buttonFrame.minimizeButton:SetSize(24, 24)
     frame.buttonFrame:StripTextures()
 
+ 	if not tab.Left then tab.Left = _G[name .. "TabLeft"] or _G[name .. "Tab"].Left end
+
     hooksecurefunc(tab, "SetAlpha", function(t, alpha)
         if alpha ~= 1 and (not t.isDocked or GeneralDockManager.selected:GetID() == t:GetID()) then
             t:SetAlpha(1)
@@ -1439,9 +1460,8 @@ local function styleChatWindow(frame)
         end
     end)
 
-    tab.text = _G[name.."TabText"]
-    tab.text:SetTextColor(1, 1, 1)
-    hooksecurefunc(tab.text, "SetTextColor", function(tt, r, g, b)
+    tab.Text:SetTextColor(1, 1, 1)
+    hooksecurefunc(tab.Text, "SetTextColor", function(tt, r, g, b)
         local rR, gG, bB = 1, 1, 1
         if r ~= rR or g ~= gG or b ~= bB then
             tt:SetTextColor(rR, gG, bB)
@@ -1458,13 +1478,9 @@ local function styleChatWindow(frame)
     frame:StripTextures(true)
     _G[name .. "ButtonFrame"]:Hide()
 
-    local a, b, c = select(6, editbox:GetRegions())
-    a:Kill()
-    b:Kill()
-    c:Kill()
-    _G[format(editbox:GetName() .. "Left", id)]:Hide()
-    _G[format(editbox:GetName() .. "Mid", id)]:Hide()
-    _G[format(editbox:GetName() .. "Right", id)]:Hide()
+    _G[format(editbox:GetName() .. "Left", id)]:Kill()
+    _G[format(editbox:GetName() .. "Mid", id)]:Kill()
+    _G[format(editbox:GetName() .. "Right", id)]:Kill()
     editbox:ClearAllPoints()
     editbox:SetPoint("TOPLEFT", _G[name .. "ButtonFrame"], "BOTTOMLEFT", 0, 0)
     editbox:SetPoint("TOPRIGHT", background, "BOTTOMRIGHT", 0, 0)
@@ -1528,9 +1544,9 @@ local function styleChatWindow(frame)
         _G[editbox:GetName() .. "Header"]:SetFont(chatFont, fontHeight or 12, fontFlags)
     elseif GetSetting("FONTS_ENABLED") and fontSize then
         if fontSize > 0 then
-            frame:SetFont(STANDARD_TEXT_FONT, fontSize)
+            frame:SetFont(STANDARD_TEXT_FONT, fontSize, "")
         elseif fontSize == 0 then
-            frame:SetFont(STANDARD_TEXT_FONT, 14)
+            frame:SetFont(STANDARD_TEXT_FONT, 14, "")
         end
     end
 
@@ -1567,7 +1583,7 @@ local function styleChatWindow(frame)
 
     frame.button:SetScript("OnEnter", function(button) button:SetAlpha(1) end)
     frame.button:SetScript("OnLeave", function(button)
-        if _G[button:GetParent():GetName() .. "TabText"]:IsShown() then
+        if GetTab(button:GetParent()).Text:IsShown() then
             button:SetAlpha(0.35)
         else
             button:SetAlpha(0)
@@ -1631,7 +1647,7 @@ local function BuildCopyChatFrame()
     frame:SetMovable(true)
     frame:EnableMouse(true)
     frame:SetResizable(true)
-    frame:SetMinResize(350, 100)
+    frame:SetResizeBounds(350, 100)
     frame:SetScript("OnMouseDown", function(copyChat, button)
         if button == "LeftButton" and not copyChat.isMoving then
             copyChat:StartMoving()
@@ -1680,7 +1696,7 @@ local function BuildCopyChatFrame()
     if GetSetting("CHAT_USE_GW2_STYLE") then
         local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
         local _, fonzSize = frame.editBox:GetFont()
-        frame.editBox:SetFont(chatFont, fonzSize or 12)
+        frame.editBox:SetFont(chatFont, fonzSize or 12, "")
     end
     frame.editBox:SetWidth(frame.scrollArea:GetWidth())
     frame.editBox:SetHeight(200)
@@ -2047,8 +2063,8 @@ local function LoadChat()
 
         local allowHooks = not ignoreChats[frame:GetID()]
         if allowHooks and not frame.OldAddMessage then
-            --Don't add timestamps to combat log, they don't work.
-            --This usually taints, but LibChatAnims should make sure it doesn't
+            --Don"t add timestamps to combat log, they don"t work.
+            --This usually taints, but LibChatAnims should make sure it doesn"t
             frame.OldAddMessage = frame.AddMessage
             frame.AddMessage = AddMessage
         end
@@ -2161,13 +2177,13 @@ local function LoadChat()
         "FCFTab_UpdateColors",
         function(self)
             self:GetFontString():SetTextColor(1, 1, 1)
-            self.leftSelectedTexture:SetVertexColor(1, 1, 1)
-            self.middleSelectedTexture:SetVertexColor(1, 1, 1)
-            self.rightSelectedTexture:SetVertexColor(1, 1, 1)
+            self.ActiveLeft:SetVertexColor(1, 1, 1)
+            self.ActiveMiddle:SetVertexColor(1, 1, 1)
+            self.ActiveRight:SetVertexColor(1, 1, 1)
 
-            self.leftHighlightTexture:SetVertexColor(1, 1, 1)
-            self.middleHighlightTexture:SetVertexColor(1, 1, 1)
-            self.rightHighlightTexture:SetVertexColor(1, 1, 1)
+            self.HighlightLeft:SetVertexColor(1, 1, 1)
+            self.HighlightMiddle:SetVertexColor(1, 1, 1)
+            self.HighlightRight:SetVertexColor(1, 1, 1)
             self.glow:SetVertexColor(1, 1, 1)
         end
     )

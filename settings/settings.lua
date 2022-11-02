@@ -999,17 +999,6 @@ local function LoadSettings()
         "OnShow",
         function()
             mf:Show()
-            -- Check Blizzard Actionbar settings and set correct values
-            local bar1, bar2, bar3, bar4 =  GetActionBarToggles()
-            SetSetting("GW_SHOW_MULTI_ACTIONBAR_1", bar1)
-            SetSetting("GW_SHOW_MULTI_ACTIONBAR_2", bar2)
-            SetSetting("GW_SHOW_MULTI_ACTIONBAR_3", bar3)
-            SetSetting("GW_SHOW_MULTI_ACTIONBAR_4", bar4)
-            _G["GW_SHOW_MULTI_ACTIONBAR_1"].checkbutton:SetChecked(bar1)
-            _G["GW_SHOW_MULTI_ACTIONBAR_2"].checkbutton:SetChecked(bar2)
-            _G["GW_SHOW_MULTI_ACTIONBAR_3"].checkbutton:SetChecked(bar3)
-            _G["GW_SHOW_MULTI_ACTIONBAR_4"].checkbutton:SetChecked(bar4)
-
             -- Check UI Scale
             if GetCVarBool("useUiScale") then
                 _G["PIXEL_PERFECTION"].checkbutton:SetChecked(false)
@@ -1064,15 +1053,6 @@ local function LoadSettings()
     GW.LoadProfilesPanel(sWindow)
 
     checkDependenciesOnLoad()
-
-    -- change the blizzard actionbarsettings on "InterfaceOptions_OnShow" 
-    InterfaceOptionsFrame:HookScript("OnShow", function()
-        local bar1, bar2, bar3, bar4 = GetSetting("GW_SHOW_MULTI_ACTIONBAR_1"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_2"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_3"), GetSetting("GW_SHOW_MULTI_ACTIONBAR_4")
-        _G.InterfaceOptionsActionBarsPanelBottomLeft:SetChecked(bar1)
-        _G.InterfaceOptionsActionBarsPanelBottomRight:SetChecked(bar2)
-        _G.InterfaceOptionsActionBarsPanelRight:SetChecked(bar3)
-        _G.InterfaceOptionsActionBarsPanelRightTwo:SetChecked(bar4)
-    end)
 
     local fnGSBC_OnClick = function(self)
         self:GetParent():Hide()

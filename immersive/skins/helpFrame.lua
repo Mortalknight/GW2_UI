@@ -3,10 +3,10 @@ local _, GW = ...
 local function LoadHelperFrameSkin()
     if not GW.GetSetting("HELPFRAME_SKIN_ENABLED") then return end
 
-    _G.HelpFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
-    _G.HelpFrameTitleText:ClearAllPoints()
-    _G.HelpFrameTitleText:SetPoint("TOP", _G.HelpFrame, "TOP", 0, 5)
-    local HelpFrame = _G.HelpFrame
+    HelpFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+    HelpFrameTitleText:ClearAllPoints()
+    HelpFrameTitleText:SetPoint("TOP", HelpFrame, "TOP", 0, 5)
+
     HelpFrame:StripTextures(true)
     HelpFrame:CreateBackdrop()
     local tex = HelpFrame:CreateTexture("bg", "BACKGROUND")
@@ -16,10 +16,10 @@ local function LoadHelperFrameSkin()
     tex:SetSize(w + 50, h + 50)
     HelpFrame.tex = tex
 
-    _G.HelpFrameCloseButton:SkinButton(true)
-    _G.HelpFrameCloseButton:SetSize(25, 25)
-    _G.HelpFrameCloseButton:ClearAllPoints()
-    _G.HelpFrameCloseButton:SetPoint("TOPRIGHT", _G.HelpFrame, "TOPRIGHT", 0, 5)
+    HelpFrame.CloseButton:SkinButton(true)
+    HelpFrame.CloseButton:SetSize(25, 25)
+    HelpFrame.CloseButton:ClearAllPoints()
+    HelpFrame.CloseButton:SetPoint("TOPRIGHT", _G.HelpFrame, "TOPRIGHT", 0, 5)
 
     local browser = _G.HelpBrowser
     browser.BrowserInset:StripTextures()

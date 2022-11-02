@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Button name="GwAuraTmpl" registerForClicks="RightButtonUp" virtual="true">
+    <Button name="GwAuraTmpl" virtual="true">
         <Size x="32" y="32"></Size>
         <Frames>
             <Frame parentKey="border" frameLevel="1">

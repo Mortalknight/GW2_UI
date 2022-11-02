@@ -1,5 +1,7 @@
 local _, GW = ...
 
+local NUM_STANCE_SLOTS = NUM_STANCE_SLOTS or 10
+
 local function SetStanceButtons(stanceButton)
     if not stanceButton then return end
     local numForms = GetNumShapeshiftForms()
@@ -120,6 +122,6 @@ local function CreateStanceBar()
 
     SetStanceButtons(StanceBarButton)
 
-    StanceBarFrame:Kill()
+    StanceBar:SetParent(GW.HiddenFrame)
 end
 GW.CreateStanceBar = CreateStanceBar

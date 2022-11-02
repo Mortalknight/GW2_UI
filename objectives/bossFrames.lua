@@ -53,7 +53,7 @@ local function updateBoss_Power(self)
         local pwcolor = PowerBarColorCustom[powerToken]
         self.power:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     else
-        self.power:SetStatusBarColor(altR, altG, altB)
+        self.power:SetStatusBarColor(altR or 0, altG or 0, altB or 0)
     end
 
     if power > 0 and powerMax > 0 then
@@ -254,7 +254,6 @@ GW.AddForProfiling("bossFrames", "registerFrame", registerFrame)
 local function LoadBossFrame()
     for i = 1, 5 do
         bossFrames[i] = registerFrame(i)
-        _G["Boss" .. i .. "TargetFrame"]:Kill()
     end
     C_Timer.After(0.01, function() updateBossFrameHeight() end)
 end

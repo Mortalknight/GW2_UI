@@ -1157,6 +1157,7 @@ local function GW2_UIAlertFrame_SetUp(frame, name, delay, toptext, onClick, icon
     frame.delay = delay
     frame.spellID = spellID
     frame.levelup = levelup
+    frame:RegisterForClicks("AnyUp", "AnyDown")
 
     frame.Icon:SetScript("OnEnter", function(self)
         if self:GetParent().spellID then

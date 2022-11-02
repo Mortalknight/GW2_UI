@@ -164,15 +164,14 @@ GW_DEFAULT["MAILBOX_POSITION"]["xOfs"] = 16
 GW_DEFAULT["MAILBOX_POSITION"]["yOfs"] = -116
 GW_DEFAULT["MAILBOX_POSITION"]["hasMoved"] = false
 
-GW_DEFAULT["GW_SHOW_MULTI_ACTIONBAR_1"] = false
-GW_DEFAULT["GW_SHOW_MULTI_ACTIONBAR_2"] = false
-GW_DEFAULT["GW_SHOW_MULTI_ACTIONBAR_3"] = false
-GW_DEFAULT["GW_SHOW_MULTI_ACTIONBAR_4"] = false
 GW_DEFAULT["FADE_MULTIACTIONBAR_1"] = "ALWAYS"
 GW_DEFAULT["FADE_MULTIACTIONBAR_2"] = "ALWAYS"
 GW_DEFAULT["FADE_MULTIACTIONBAR_3"] = "ALWAYS"
 GW_DEFAULT["FADE_MULTIACTIONBAR_4"] = "ALWAYS"
 GW_DEFAULT["FADE_MULTIACTIONBAR_5"] = "ALWAYS"
+GW_DEFAULT["FADE_MULTIACTIONBAR_6"] = "ALWAYS"
+GW_DEFAULT["FADE_MULTIACTIONBAR_7"] = "ALWAYS"
+GW_DEFAULT["FADE_MULTIACTIONBAR_8"] = "ALWAYS"
 GW_DEFAULT["HIDE_CHATSHADOW"] = false
 GW_DEFAULT["HIDE_QUESTVIEW"] = false
 GW_DEFAULT["USE_CHAT_BUBBLES"] = false
@@ -335,8 +334,45 @@ GW_DEFAULT["MultiBarLeft"]["size"] = 38
 GW_DEFAULT["MultiBarLeft"]["ButtonsPerRow"] = 1
 GW_DEFAULT["MultiBarLeft"]["hideDefaultBackground"] = true
 
+GW_DEFAULT["MultiBar5"] = {}
+GW_DEFAULT["MultiBar5"]["point"] = "RIGHT"
+GW_DEFAULT["MultiBar5"]["relativePoint"] = "RIGHT"
+GW_DEFAULT["MultiBar5"]["xOfs"] = -368
+GW_DEFAULT["MultiBar5"]["yOfs"] = 0
+GW_DEFAULT["MultiBar5"]["hasMoved"] = false
+GW_DEFAULT["MultiBar5_scale"] = 1
+GW_DEFAULT["MultiBar5"]["size"] = 38
+GW_DEFAULT["MultiBar5"]["ButtonsPerRow"] = 1
+GW_DEFAULT["MultiBar5"]["hideDefaultBackground"] = true
+
+GW_DEFAULT["MultiBar6"] = {}
+GW_DEFAULT["MultiBar6"]["point"] = "RIGHT"
+GW_DEFAULT["MultiBar6"]["relativePoint"] = "RIGHT"
+GW_DEFAULT["MultiBar6"]["xOfs"] = -368
+GW_DEFAULT["MultiBar6"]["yOfs"] = 0
+GW_DEFAULT["MultiBar6"]["hasMoved"] = false
+GW_DEFAULT["MultiBar6_scale"] = 1
+GW_DEFAULT["MultiBar6"]["size"] = 38
+GW_DEFAULT["MultiBar6"]["ButtonsPerRow"] = 1
+GW_DEFAULT["MultiBar6"]["hideDefaultBackground"] = true
+
+GW_DEFAULT["MultiBar7"] = {}
+GW_DEFAULT["MultiBar7"]["point"] = "RIGHT"
+GW_DEFAULT["MultiBar7"]["relativePoint"] = "RIGHT"
+GW_DEFAULT["MultiBar7"]["xOfs"] = -368
+GW_DEFAULT["MultiBar7"]["yOfs"] = 0
+GW_DEFAULT["MultiBar7"]["hasMoved"] = false
+GW_DEFAULT["MultiBar7_scale"] = 1
+GW_DEFAULT["MultiBar7"]["size"] = 38
+GW_DEFAULT["MultiBar7"]["ButtonsPerRow"] = 1
+GW_DEFAULT["MultiBar7"]["hideDefaultBackground"] = true
+
 GW_DEFAULT["MULTIBAR_RIGHT_COLS"] = 1
 GW_DEFAULT["MULTIBAR_RIGHT_COLS_2"] = 1
+GW_DEFAULT["MULTIBAR_RIGHT_COLS_3"] = 1
+GW_DEFAULT["MULTIBAR_RIGHT_COLS_4"] = 1
+GW_DEFAULT["MULTIBAR_RIGHT_COLS_5"] = 1
+
 
 GW_DEFAULT["GameTooltipPos"] = {}
 GW_DEFAULT["GameTooltipPos"]["point"] = "BOTTOMRIGHT"

@@ -481,17 +481,40 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     end
 
     moveframe:SetClampedToScreen(true)
+    moveframe:SetMovable(true)
+    moveframe:EnableMouseWheel(true)
 
     -- position mover (as fallback use the default position)
     moveframe.savedPoint = GetSetting(settingsName)
     moveframe.defaultPoint = GetDefault(settingsName)
+
+    if moveframe.savedPoint == nil then
+        local point, anchor, relativePoint, xOfs, yOfs = frame:GetPoint()
+        moveframe.savedPoint = {}
+        moveframe.savedPoint.point = point
+        moveframe.savedPoint.anchor = anchor == UIParent and "UIParent" or anchor:GetName()
+        moveframe.savedPoint.relativePoint = relativePoint
+        moveframe.savedPoint.xOfs = xOfs
+        moveframe.savedPoint.yOfs = yOfs
+    end
+
+    if moveframe.defaultPoint == nil then
+        local point, anchor, relativePoint, xOfs, yOfs = frame:GetPoint()
+        moveframe.defaultPoint = {}
+        moveframe.defaultPoint.point = point
+        moveframe.savedPoint.anchor = anchor == UIParent and "UIParent" or anchor:GetName()
+        moveframe.defaultPoint.relativePoint = relativePoint
+        moveframe.defaultPoint.xOfs = xOfs
+        moveframe.defaultPoint.yOfs = yOfs
+    end
+
     moveframe:ClearAllPoints()
     if not moveframe.savedPoint.point or not moveframe.savedPoint.relativePoint or not moveframe.savedPoint.xOfs or not moveframe.savedPoint.yOfs then
         -- use default position
-        moveframe:SetPoint(moveframe.defaultPoint.point, UIParent, moveframe.defaultPoint.relativePoint, moveframe.defaultPoint.xOfs, moveframe.defaultPoint.yOfs)
+        moveframe:SetPoint(moveframe.defaultPoint.point, moveframe.defaultPoint.anchor and moveframe.defaultPointanchor or UIParent, moveframe.defaultPoint.relativePoint, moveframe.defaultPoint.xOfs, moveframe.defaultPoint.yOfs)
         moveframe.savedPoint = GW.copyTable(nil, moveframe.defaultPoint)
     else
-        moveframe:SetPoint(moveframe.savedPoint.point, UIParent, moveframe.savedPoint.relativePoint, moveframe.savedPoint.xOfs, moveframe.savedPoint.yOfs)
+        moveframe:SetPoint(moveframe.savedPoint.point, moveframe.savedPoint.anchor and moveframe.savedPoint.anchor or UIParent, moveframe.savedPoint.relativePoint, moveframe.savedPoint.xOfs, moveframe.savedPoint.yOfs)
     end
 
     moveframe:Hide()
@@ -599,27 +622,27 @@ local function LoadMovers(layoutManager)
     moverSettingsFrame.options.scaleSlider.slider:SetValue(1)
     moverSettingsFrame.options.scaleSlider.slider:SetScript("OnValueChanged", sliderValueChange)
     moverSettingsFrame.options.scaleSlider.input:SetNumber(1)
-    moverSettingsFrame.options.scaleSlider.input:SetFont(UNIT_NAME_FONT, 8)
+    moverSettingsFrame.options.scaleSlider.input:SetFont(UNIT_NAME_FONT, 8, "")
     moverSettingsFrame.options.scaleSlider.input:SetScript("OnEnterPressed", sliderEditBoxValueChanged)
 
     moverSettingsFrame.options.heightSlider.slider:SetMinMaxValues(1, 1500)
     moverSettingsFrame.options.heightSlider.slider:SetValue(1)
     moverSettingsFrame.options.heightSlider.slider:SetScript("OnValueChanged", heightSliderValueChange)
     moverSettingsFrame.options.heightSlider.input:SetNumber(1)
-    moverSettingsFrame.options.heightSlider.input:SetFont(UNIT_NAME_FONT, 7)
+    moverSettingsFrame.options.heightSlider.input:SetFont(UNIT_NAME_FONT, 7, "")
     moverSettingsFrame.options.heightSlider.input:SetScript("OnEnterPressed", heightEditBoxValueChanged)
 
     moverSettingsFrame.desc:SetText(L["Left click on a moverframe to show extra frame options"])
     moverSettingsFrame.desc:SetFont(UNIT_NAME_FONT, 12)
-    moverSettingsFrame.options.scaleSlider.title:SetFont(UNIT_NAME_FONT, 12)
+    moverSettingsFrame.options.scaleSlider.title:SetFont(UNIT_NAME_FONT, 12, "")
     moverSettingsFrame.options.scaleSlider.title:SetText(L["Scale"])
-    moverSettingsFrame.options.heightSlider.title:SetFont(UNIT_NAME_FONT, 12)
+    moverSettingsFrame.options.heightSlider.title:SetFont(UNIT_NAME_FONT, 12, "")
     moverSettingsFrame.options.heightSlider.title:SetText(COMPACT_UNIT_FRAME_PROFILE_FRAMEHEIGHT)
-    moverSettingsFrame.headerString:SetFont(UNIT_NAME_FONT, 14)
+    moverSettingsFrame.headerString:SetFont(UNIT_NAME_FONT, 14, "")
     moverSettingsFrame.headerString:SetText(L["Extra Frame Options"])
 
     moverSettingsFrame.options.movers.title:SetText(NPE_MOVE )
-    moverSettingsFrame.options.movers.title:SetFont(UNIT_NAME_FONT, 12)
+    moverSettingsFrame.options.movers.title:SetFont(UNIT_NAME_FONT, 12, "")
     GW.HandleNextPrevButton(moverSettingsFrame.options.movers.left, "left")
     GW.HandleNextPrevButton(moverSettingsFrame.options.movers.right, "right")
     GW.HandleNextPrevButton(moverSettingsFrame.options.movers.up, "up")

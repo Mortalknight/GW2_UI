@@ -157,7 +157,7 @@ local function xpbar_OnEvent(self, event)
     local showBar1 = level < Nextlevel
     local showBar2 = false
     local showBar3 = false
-    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon:16:16:0:0|t " or "" 
+    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon:16:16:0:0|t " or ""
 
     if rested == nil or (rested / valMax) == 0 then
         rested = 0
@@ -174,7 +174,9 @@ local function xpbar_OnEvent(self, event)
     local name, reaction, _, _, _, factionID = GetWatchedFactionInfo()
     if factionID and factionID > 0 then
         local _, _, standingId, bottomValue, topValue, earnedValue = GetFactionInfoByID(factionID)
-        local friendID, friendRep, friendMaxRep, friendName, _, _, friendTextLevel, friendThreshold, nextFriendThreshold = GetFriendshipReputation(factionID)
+        local friendReputationInfo = C_GossipInfo.GetFriendshipReputation(factionID)
+        local friendshipID = friendReputationInfo.friendshipFactionID
+
         local isParagon = false
         local isFriend = false
         local isNormal = false
@@ -184,17 +186,18 @@ local function xpbar_OnEvent(self, event)
             currentValue = currentValue % maxValueParagon;
             valPrecRepu = (currentValue - 0) / (maxValueParagon - 0)
 
-            gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((currentValue - 0)) .. " / " .. CommaValue((maxValueParagon - 0)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+            gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue(currentValue - 0) .. " / " .. CommaValue(maxValueParagon - 0) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
             isParagon = true
-        elseif friendID ~= nil then
-            if nextFriendThreshold then
-                valPrecRepu = (friendRep - friendThreshold) / (nextFriendThreshold - friendThreshold)
-                gw_reputation_vals = friendName .. " " .. REPUTATION .. " " .. CommaValue((friendRep - friendThreshold)) .. " / " .. CommaValue((nextFriendThreshold - friendThreshold)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+            isFriend = friendshipID > 0
+        elseif friendshipID > 0 then
+            if friendReputationInfo.nextThreshold then
+                valPrecRepu = (friendReputationInfo.standing - friendReputationInfo.reactionThreshold) / (friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold)
+                gw_reputation_vals = friendReputationInfo.name .. " " .. REPUTATION .. " " .. CommaValue(friendReputationInfo.standing - friendReputationInfo.reactionThreshold) .. " / " .. CommaValue(friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             else
                 valPrecRepu = 1
-                gw_reputation_vals = friendName .. " " .. REPUTATION .. " " .. CommaValue(friendMaxRep) .. " / " .. CommaValue(friendMaxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                gw_reputation_vals = friendReputationInfo.name .. " " .. REPUTATION .. " " .. CommaValue(friendReputationInfo.maxRep) .. " / " .. CommaValue(friendReputationInfo.maxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
             isFriend = true
@@ -218,7 +221,7 @@ local function xpbar_OnEvent(self, event)
 
         local nextId = standingId and standingId + 1 or 1
         if not lockLevelTextUnderMaxLevel then
-            level = isParagon and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1)) or isFriend and friendTextLevel or isNormal and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1))
+            level = isFriend and  friendReputationInfo.reaction or isParagon and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1)) or isNormal and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1))
             Nextlevel = isParagon and L["Paragon"] or isFriend and "" or isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
         end
 
@@ -408,7 +411,7 @@ local function xpbar_OnEvent(self, event)
     end
 
     if GW.mylevel ~= UnitEffectiveLevel("player") then
-        level = level.. " |cFF00FF00(" .. UnitEffectiveLevel("player") .. ")|r"
+        level = level .. " |cFF00FF00(" .. UnitEffectiveLevel("player") .. ")|r"
     end
 
     self.NextLevel:SetText(Nextlevel)
@@ -755,6 +758,9 @@ local function combatHealthState(self)
     end
 
     local unitHealthPrecentage = UnitHealth("player") / UnitHealthMax("player")
+    local alpha = 1 - unitHealthPrecentage - 0.2
+    if alpha < 0 then alpha = 0 end
+    if alpha > 1 then alpha = 1 end
 
     if unitHealthPrecentage < 0.5 and not UnitIsDeadOrGhost("player") then
         unitHealthPrecentage = unitHealthPrecentage / 0.5
@@ -765,8 +771,8 @@ local function combatHealthState(self)
         self.actionBarHud.RightSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
         self.actionBarHud.LeftSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
 
-        self.actionBarHud.LeftBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
-        self.actionBarHud.RightBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
+        self.actionBarHud.LeftBlood:SetVertexColor(1, 1, 1, alpha)
+        self.actionBarHud.RightBlood:SetVertexColor(1, 1, 1, alpha)
     else
         self.actionBarHud.Left:SetVertexColor(1, 1, 1)
         self.actionBarHud.Right:SetVertexColor(1, 1, 1)
@@ -848,9 +854,6 @@ local function hud_OnEvent(self, event, ...)
         if unit == "player" then
             combatHealthState(self)
         end
-    elseif event == "MIRROR_TIMER_START" then
-        local arg1, arg2, arg3, arg4, arg5, arg6 = ...
-        GW.MirrorTimer_Show(arg1, arg2, arg3, arg4, arg5, arg6)
     end
 end
 GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
@@ -894,7 +897,6 @@ local function LoadHudArt()
     hudArtFrame:RegisterEvent("PLAYER_ALIVE")
     hudArtFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     hudArtFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-    hudArtFrame:RegisterEvent("MIRROR_TIMER_START")
     hudArtFrame:RegisterUnitEvent("UNIT_HEALTH", "player")
     hudArtFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     selectBg(hudArtFrame)
@@ -908,6 +910,8 @@ end
 GW.LoadHudArt = LoadHudArt
 
 local function LoadXPBar()
+
+    StatusTrackingBarManager:Kill()
     GW.LoadUpcomingSpells()
 
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")

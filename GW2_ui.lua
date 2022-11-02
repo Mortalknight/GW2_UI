@@ -91,9 +91,13 @@ GW.AddToAnimation = AddToAnimation
 local function buttonAnim(self, name, w, hover)
     local prog = animations[name].progress
     local lerp = GW.lerp(0, w, prog)
+    local lerp2 = GW.lerp(0, 1, (prog - 0.5) / 0.5)
+
+    if lerp2 < 0 then lerp2 = 0 end
+    if lerp2 > 1 then lerp2 = 1 end
 
     hover:SetPoint("RIGHT", self, "LEFT", lerp, 0)
-    hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, GW.lerp(0, 1, (prog - 0.5) / 0.5))
+    hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, lerp2)
 end
 AFP("buttonAnim", buttonAnim)
 
@@ -430,6 +434,18 @@ local function evAddonLoaded(_, addonName)
     end
 
     Debug("OK~EVENT~In ADDON_LOADED event")
+    local buildVer, _ = GetBuildInfo()
+    Debug("build version", buildVer)
+    if buildVer == "10.0.0" then
+        -- temp put stuff in C_Container (PTR 10.0.0 vs Beta 10.0.2 diffs)
+        C_Container.GetContainerNumSlots = GetContainerNumSlots
+        C_Container.GetContainerNumFreeSlots = GetContainerNumFreeSlots
+        C_Container.GetContainerItemInfo = GetContainerItemInfo
+        C_Container.GetContainerItemLink = GetContainerItemLink
+        C_Container.GetBagName = GetBagName
+        C_Container.UseContainerItem = UseContainerItem
+    end
+
     GW.LoadStorage()
     -- TODO: A lot of what happens in player login should probably happen here instead
 
@@ -449,16 +465,16 @@ local function evAddonLoaded(_, addonName)
 
     GW.LoadAlliedRacesUISkin()
     GW.LoadBarShopUISkin()
-    GW.LoadBindingsUISkin()
+    --GW.LoadBindingsUISkin()
     GW.LoadChromieTimerSkin()
     GW.LoadCovenantSanctumSkin()
     GW.LoadDeathRecapSkin()
     GW.LoadFlightMapSkin()
-    GW.LoadInspectFrameSkin()
+    --GW.LoadInspectFrameSkin()
     GW.LoadItemUpgradeSkin()
-    GW.LoadLFGSkin()
-    GW.LoadMacroOptionsSkin()
-    GW.LoadOrderHallTalentFrameSkin()
+    --GW.LoadLFGSkin()
+    --GW.LoadMacroOptionsSkin()
+    --GW.LoadOrderHallTalentFrameSkin()
     GW.LoadSocketUISkin()
     GW.LoadSoulbindsSkin()
     GW.LoadWeeklyRewardsSkin()
@@ -529,6 +545,9 @@ local function evPlayerLogin(self)
         return
     end
 
+    GW.DisableBlizzardMovers()
+    GW.DisableBlizzardFrames()
+
     loaded = true
     GW.CheckRole() -- some API's deliver a nil value on init.lua load, we we fill this values also here
 
@@ -595,10 +614,10 @@ local function evPlayerLogin(self)
     GW.LoadReadyCheckSkin()
     GW.LoadTalkingHeadSkin()
     GW.LoadMiscBlizzardFrameSkins()
-    GW.LoadAddonListSkin()
-    GW.LoadBlizzardOptionsSkin()
+    --GW.LoadAddonListSkin()
+    --GW.LoadBlizzardOptionsSkin()
     GW.LoadMailSkin()
-    GW.LoadDressUpFrameSkin()
+    --GW.LoadDressUpFrameSkin()
     GW.LoadHelperFrameSkin()
     GW.LoadGossipSkin()
     GW.LoadTimeManagerSkin()
@@ -625,12 +644,11 @@ local function evPlayerLogin(self)
     else
         hudArtFrame.actionBarHud:ClearAllPoints()
         hudArtFrame.actionBarHud:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
-        hudArtFrame.edgeTintBottom1:ClearAllPoints()
-        hudArtFrame.edgeTintBottom1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
-        hudArtFrame.edgeTintBottom1:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
-        hudArtFrame.edgeTintBottom2:ClearAllPoints()
-        hudArtFrame.edgeTintBottom2:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
-        hudArtFrame.edgeTintBottom2:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 0, 0)
+
+        hudArtFrame.edgeTintBottomCornerLeft:ClearAllPoints()
+        hudArtFrame.edgeTintBottomCornerLeft:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
+        hudArtFrame.edgeTintBottomCornerRight:ClearAllPoints()
+        hudArtFrame.edgeTintBottomCornerRight:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
     end
 
     if GetSetting("FONTS_ENABLED") then
@@ -649,8 +667,8 @@ local function evPlayerLogin(self)
     end
 
     if GetSetting("CASTINGBAR_ENABLED") then
-        GW.LoadCastingBar(CastingBarFrame, "GwCastingBarPlayer", "player", true)
-        GW.LoadCastingBar(PetCastingBarFrame, "GwCastingBarPet", "pet", false)
+        GW.LoadCastingBar("GwCastingBarPlayer", "player", true)
+        GW.LoadCastingBar("GwCastingBarPet", "pet", false)
     end
 
     if GetSetting("MINIMAP_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Minimap", true) then
@@ -691,9 +709,6 @@ local function evPlayerLogin(self)
     if not IsIncompatibleAddonLoadedOrOverride("Inventory", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("BAGS_ENABLED") then
             GW.LoadInventory()
-        else
-            -- if not our bags, we need to cut the bagbar frame out of the micromenu
-            GW.LoadDefaultBagBar()
         end
     end
 
@@ -705,7 +720,7 @@ local function evPlayerLogin(self)
 
     GW.LoadCharacter()
 
-    GW.LoadSocialFrame()
+    --GW.LoadSocialFrame() TODO
 
     GW.Create_Raid_Counter()
     GW.LoadRaidbuffReminder()
@@ -736,7 +751,7 @@ local function evPlayerLogin(self)
         if not IsFrameModified("UIErrorsFrame") then
             UIErrorsFrame:ClearAllPoints()
             UIErrorsFrame:SetPoint("TOP", UIParent, "TOP", 0, -190)
-            UIErrorsFrame:SetFont(STANDARD_TEXT_FONT, 14)
+            UIErrorsFrame:SetFont(STANDARD_TEXT_FONT, 14, "")
         end
     end
 
@@ -750,6 +765,22 @@ local function evPlayerLogin(self)
     if GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
         GW.LoadActionBars(lm)
         GW.ExtraAB_BossAB_Setup()
+
+        C_Timer.After(1, function()
+            for i = 1, 13 do
+                local systemInfo = EditModeManagerFrame:GetActiveLayoutSystemInfo(0, i) --0 = Actionbar System
+                if systemInfo then
+                    for _, value2 in pairs(systemInfo.settings) do
+                        if value2.setting == 3 then -- Scale setting
+                            if value2.value ~= 5 then -- 5 = 100%; they count in slider steps from left
+                                DEFAULT_CHAT_FRAME:AddMessage(("\n*GW2 UI:|r |cffff0000You need to reset the scale of the Blizzard Action Bars in their \"Edit Mode\" to 100%!|r Otherwise, we cannot set the bar position correctly.\n\n"):gsub("*", GW.Gw2Color))
+                                break
+                            end
+                        end
+                    end
+                end
+            end
+        end)
     end
 
     -- create pet frame

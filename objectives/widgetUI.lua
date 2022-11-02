@@ -39,9 +39,9 @@ local captureBarSkins = {
     [252] = EmberCourtCaptureBar
 }
 
-local function TopCenterPosition(self, _, b)
+local function TopCenterPosition(self, _, anchor)
     local holder = self.gwMover
-    if b and (b ~= holder) then
+    if anchor and anchor ~= holder then
         self:ClearAllPoints()
         self:SetPoint("CENTER", holder, "CENTER")
     end
@@ -60,11 +60,20 @@ end
 
 
 local function UIWidgetTemplateStatusBar(self)
-    local bar = not self:IsForbidden() and self.Bar
- 	if not bar or ignoreWidgetSetID[self.widgetSetID] then return end
+    local forbidden = self:IsForbidden()
+    local bar = self.Bar
 
-    local atlas = bar:GetStatusBarAtlas()
-    UpdateBarTexture(bar, atlas)
+    if forbidden and bar then
+        if bar.tooltip then bar.tooltip = nil end -- EmbeddedItemTooltip is tainted
+        return
+    elseif forbidden or ignoreWidgetSetID[self.widgetSetID] or not bar then
+        return
+    end
+
+    if bar.GetStatusBarAtlas then
+        UpdateBarTexture(bar, bar:GetStatusBarAtlas())
+        hooksecurefunc(bar, "SetStatusBarAtlas", UpdateBarTexture)
+    end
 
     if not bar.backdrop then
         bar:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)

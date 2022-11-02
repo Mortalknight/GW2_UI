@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("6.0.0", [=[
+    - Update for 10.0.0
+]=])
+
 v("5.31.7", [=[
 FIXES
     - Fix a classpower anchor issue if the classpower is moved

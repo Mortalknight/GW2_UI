@@ -4,6 +4,23 @@ local GetSetting = GW.GetSetting
 local AFP = GW.AddProfiling
 local updateIcon
 
+local PERFORMANCE_BAR_UPDATE_INTERVAL = 1
+
+local MICRO_BUTTONS = {
+	"CharacterMicroButton",
+	"SpellbookMicroButton",
+	"TalentMicroButton",
+	"AchievementMicroButton",
+	"QuestLogMicroButton",
+	"GuildMicroButton",
+	"LFDMicroButton",
+	"EJMicroButton",
+	"CollectionsMicroButton",
+	"MainMenuMicroButton",
+	"HelpMicroButton",
+	"StoreMicroButton",
+	}
+
 do
     local SendMessageWaiting
     local function SendMessage()
@@ -119,21 +136,22 @@ end
 AFP("updateGuildButton", updateGuildButton)
 
 local function TalentButtonOnEvent(self)
-    local counter = 0
-    for row = 1, 7 do
-        for index = 1, 3 do
-            local _, _, _, selected, available, _, _, _, _, _, known = GetTalentInfo(row, index, 1, false, "player")
-            if available and not known and not selected then
-                counter = counter + 1
-                break
-            end
-        end
-    end
+    ClassTalentFrame_LoadUI()
+    local configId = ClassTalentFrame.TalentsTab:GetConfigID()
+    local talentTreeId = ClassTalentFrame.TalentsTab:GetTalentTreeID()
+    local excludeStagedChangesForCurrencies = ClassTalentFrame.TalentsTab.excludeStagedChangesForCurrencies
 
-    if counter > 0 then
-        self.GwNotify:Show()
-        self.GwNotifyText:SetText(counter)
-        self.GwNotifyText:Show()
+    if configId and configId > 0 and talentTreeId and talentTreeId > 0 then
+        local treeCurrencyInfo = C_Traits.GetTreeCurrencyInfo(configId, talentTreeId, excludeStagedChangesForCurrencies)
+        local counter = treeCurrencyInfo[1].quantity + treeCurrencyInfo[2].quantity
+        if counter > 0 then
+            self.GwNotify:Show()
+            self.GwNotifyText:SetText(counter)
+            self.GwNotifyText:Show()
+        else
+            self.GwNotify:Hide()
+            self.GwNotifyText:Hide()
+        end
     else
         self.GwNotify:Hide()
         self.GwNotifyText:Hide()
@@ -178,10 +196,9 @@ local function bag_OnUpdate(self, elapsed)
     self.interval = bag_update_interval
 
     local totalEmptySlots = 0
-    for i = 0, 4 do
-        local numberOfFreeSlots, _ = GetContainerNumFreeSlots(i)
-
-        if numberOfFreeSlots ~= nil then
+    for i = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
+        local numberOfFreeSlots, bagFamily = C_Container.GetContainerNumFreeSlots(i)
+        if bagFamily == 0 and numberOfFreeSlots ~= nil then
             totalEmptySlots = totalEmptySlots + numberOfFreeSlots
         end
     end
@@ -229,7 +246,13 @@ AFP("modifyMicroAlert", modifyMicroAlert)
 
 local function reskinMicroButton(btn, name, mbf)
     btn:SetParent(mbf)
-    local tex = "Interface/AddOns/GW2_UI/textures/icons/" .. name .. "-Up"
+    hooksecurefunc(btn, "SetParent", function(self, parent)
+        if parent ~= mbf then
+            self:SetParent(mbf)
+        end
+    end)
+
+    local tex = "Interface/AddOns/GW2_UI/textures/icons/microicons/" .. name .. "-Up"
 
     btn:SetSize(24, 24)
     btn:SetDisabledTexture(tex)
@@ -237,10 +260,31 @@ local function reskinMicroButton(btn, name, mbf)
     btn:SetPushedTexture(tex)
     btn:SetHighlightTexture(tex)
 
+		--hackfix for texture size
+    local t = btn:GetDisabledTexture()
+		t:ClearAllPoints()
+		t:SetPoint("CENTER",btn,"CENTER",0,0)
+		t:SetSize(32,32)
+
+		t = btn:GetNormalTexture()
+		t:ClearAllPoints()
+		t:SetPoint("CENTER",btn,"CENTER",0,0)
+		t:SetSize(32,32)
+
+		t = btn:GetPushedTexture()
+		t:ClearAllPoints()
+		t:SetPoint("CENTER",btn,"CENTER",0,0)
+		t:SetSize(32,32)
+
+		t = btn:GetHighlightTexture()
+		t:ClearAllPoints()
+		t:SetPoint("CENTER",btn,"CENTER",0,0)
+		t:SetSize(32,32)
+		--
+
     if btn.Flash then
-        -- hide the flash frames off-screen
-        btn.Flash:ClearAllPoints()
-        btn.Flash:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 440)
+        btn.Flash:SetInside()
+				btn.Flash:SetTexture()
     end
 
     btn.GwNotify = btn:CreateTexture(nil, "OVERLAY")
@@ -317,15 +361,15 @@ local function hook_MainMenuMicroButton_OnUpdate()
     -- the main menu button routinely updates its texture based on streaming download
     -- status and net performance; we undo those changes here on each update interval
     local m = MainMenuMicroButton
-    if m.updateInterval ~= PERFORMANCEBAR_UPDATE_INTERVAL then
+    if m.updateInterval ~= PERFORMANCE_BAR_UPDATE_INTERVAL then
         return
     end
-    m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
-    m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
-    m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
-    m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up")
-    MainMenuBarPerformanceBar:Hide()
-    MainMenuBarDownload:Hide()
+    m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
+    m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
+    m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
+    m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
+    m.MainMenuBarPerformanceBar:SetAlpha(0)
+    m.MainMenuBarPerformanceBar:SetScale(0.00001)
 end
 AFP("hook_MainMenuMicroButton_OnUpdate", hook_MainMenuMicroButton_OnUpdate)
 
@@ -374,7 +418,7 @@ local function setupMicroButtons(mbf)
         cref:RegisterEvent("MODIFIER_STATE_CHANGED")
     else
         cref = CharacterMicroButton
-        MicroButtonPortrait:Hide()
+        --MicroButtonPortrait:Hide()
     end
     cref.GwSetAnchorPoint = function(self) cref_SetAnchorPoint(self, mbf) end
     cref:GwSetAnchorPoint()
@@ -387,25 +431,25 @@ local function setupMicroButtons(mbf)
 
     bref:ClearAllPoints()
     bref:SetPoint("BOTTOMLEFT", cref, "BOTTOMRIGHT", 4, 0)
-    bref:HookScript("OnClick", ToggleAllBags)
+    --bref:HookScript("OnClick", ToggleAllBags) -- tainting TODO
     bref.interval = 0
     bref:HookScript("OnUpdate", bag_OnUpdate)
     bref:HookScript("OnEnter", GW.Bags_OnEnter)
 
     -- determine if we are using the default spell & talent buttons
     -- or if we need our custom talent button for the hero panel
-    local tref
+    local sref
     if GetSetting("USE_TALENT_WINDOW") then
-        tref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
-        tref.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
-        tref.newbieText = NEWBIE_TOOLTIP_TALENTS
-        reskinMicroButton(tref, "TalentMicroButton", mbf)
-        tref:ClearAllPoints()
-        tref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
+        sref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
+        sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
+        sref.newbieText = NEWBIE_TOOLTIP_TALENTS
+        reskinMicroButton(sref, "SpellbookMicroButton", mbf)
+        sref:ClearAllPoints()
+        sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
 
-        tref:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-        tref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
-        tref:SetAttribute(
+        sref:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+        sref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+        sref:SetAttribute(
             "_onclick",
             [=[
             if button == "LeftButton" then
@@ -415,40 +459,35 @@ local function setupMicroButtons(mbf)
             end
             ]=]
         )
-        tref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
-        tref:SetScript("OnLeave", GameTooltip_Hide)
-        tref:SetScript("OnHide", GameTooltip_Hide)
-        tref:HookScript("OnEnter", GW.TalentButton_OnEnter)
-        tref:HookScript("OnClick", GW.TalentButton_OnClick)
-        tref:HookScript("OnEvent", TalentButtonOnEvent)
-        tref:RegisterEvent("PLAYER_TALENT_UPDATE")
-        tref:RegisterEvent("PLAYER_ENTERING_WORLD")
+        sref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
+        sref:SetScript("OnLeave", GameTooltip_Hide)
+        sref:SetScript("OnHide", GameTooltip_Hide)
 
         disableMicroButton(SpellbookMicroButton)
-        disableMicroButton(TalentMicroButton, true)
     else
         -- SpellbookMicroButton
-        SpellbookMicroButton:ClearAllPoints()
-        SpellbookMicroButton:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
-
-        -- TalentMicroButton
-        tref = TalentMicroButton
-        tref:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-        tref:ClearAllPoints()
-        tref:SetPoint("BOTTOMLEFT", SpellbookMicroButton, "BOTTOMRIGHT", 4, 0)
-        tref:HookScript("OnEnter", GW.TalentButton_OnEnter)
-        tref:SetScript("OnClick", GW.TalentButton_OnClick)
-        tref:HookScript("OnEvent", TalentButtonOnEvent)
-        tref:RegisterEvent("PLAYER_TALENT_UPDATE")
-        tref:RegisterEvent("PLAYER_ENTERING_WORLD")
-
-        -- we've added an extra button so expand the container a bit
-        mbf:SetWidth(mbf:GetWidth() + 28)
+        sref = SpellbookMicroButton
+        sref:ClearAllPoints()
+        sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
     end
+    -- TalentMicroButton
+    TalentMicroButton:ClearAllPoints()
+    TalentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
+    TalentMicroButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    TalentMicroButton:HookScript("OnEnter", GW.TalentButton_OnEnter)
+    TalentMicroButton:SetScript("OnClick", GW.TalentButton_OnClick)
+    TalentMicroButton:HookScript("OnEvent", TalentButtonOnEvent)
+    TalentMicroButton:RegisterEvent("PLAYER_TALENT_UPDATE")
+    TalentMicroButton:RegisterEvent("PLAYER_ENTERING_WORLD")
+    TalentMicroButton:RegisterEvent("TRAIT_TREE_CURRENCY_INFO_UPDATED")
+    TalentMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
+    TalentMicroButton:RegisterEvent("TRAIT_CONFIG_UPDATED")
+    TalentMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
+    TalentMicroButton:RegisterEvent("TRAIT_NODE_CHANGED")
 
     -- AchievementMicroButton
     AchievementMicroButton:ClearAllPoints()
-    AchievementMicroButton:SetPoint("BOTTOMLEFT", tref, "BOTTOMRIGHT", 4, 0)
+    AchievementMicroButton:SetPoint("BOTTOMLEFT", TalentMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- QuestLogMicroButton
     QuestLogMicroButton:ClearAllPoints()
@@ -460,7 +499,7 @@ local function setupMicroButtons(mbf)
     -- GuildMicroButton
     GuildMicroButton:ClearAllPoints()
     GuildMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
-    GuildMicroButtonTabard:Hide()
+
     GuildMicroButton.Ticker = C_Timer.NewTicker(15, function() C_GuildInfo.GuildRoster() end)
     GuildMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
     GuildMicroButton:RegisterEvent("MODIFIER_STATE_CHANGED")
@@ -477,26 +516,30 @@ local function setupMicroButtons(mbf)
     -- EJMicroButton
     EJMicroButton:ClearAllPoints()
     EJMicroButton:SetPoint("BOTTOMLEFT", LFDMicroButton, "BOTTOMRIGHT", 4, 0)
-    EJMicroButton.NewAdventureNotice:GetRegions():SetTexture("Interface/OptionsFrame/UI-OptionsFrame-NewFeatureIcon")
-    EJMicroButton.NewAdventureNotice:GetRegions():ClearAllPoints()
-    EJMicroButton.NewAdventureNotice:GetRegions():SetPoint("CENTER", EJMicroButton, "BOTTOM", 6, 2)
-    EJMicroButton.NewAdventureNotice:GetRegions():SetSize(12, 12)
-    EJMicroButton.NewAdventureNotice.GwNotifyDark = EJMicroButton.NewAdventureNotice:CreateTexture(nil, "BACKGROUND")
-    EJMicroButton.NewAdventureNotice.GwNotifyDark:SetSize(18, 18)
-    EJMicroButton.NewAdventureNotice.GwNotifyDark:SetPoint("CENTER", EJMicroButton, "BOTTOM", 6, 3)
-    EJMicroButton.NewAdventureNotice.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
-    EJMicroButton.NewAdventureNotice.GwNotifyDark:SetVertexColor(0, 0, 0, 0.7)
+    EJMicroButton.FlashBorder:SetAlpha(0)
+    EJMicroButton.FlashBorder:SetScale(0.00001)
+    EJMicroButton.FlashContent:SetAlpha(0)
+    EJMicroButton.FlashContent:SetScale(0.00001)
 
     -- CollectionsMicroButton
     CollectionsMicroButton:ClearAllPoints()
     CollectionsMicroButton:SetPoint("BOTTOMLEFT", EJMicroButton, "BOTTOMRIGHT", 4, 0)
+    CollectionsMicroButton.FlashBorder:Hide()
+    CollectionsMicroButton.FlashContent:Hide()
+    hooksecurefunc("MicroButtonPulse", function(self)
+        if self == CollectionsMicroButton or self == EJMicroButton then
+            MicroButtonPulseStop(self)
+        end
+    end)
 
     -- MainMenuMicroButton
     MainMenuMicroButton:ClearAllPoints()
     MainMenuMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
-    MainMenuBarPerformanceBar:Hide()
-    MainMenuBarDownload:Hide()
+    MainMenuMicroButton.MainMenuBarPerformanceBar:SetAlpha(0)
+    MainMenuMicroButton.MainMenuBarPerformanceBar:SetScale(0.00001)
     MainMenuMicroButton:HookScript("OnUpdate", hook_MainMenuMicroButton_OnUpdate)
+    MainMenuMicroButton.FlashContent:SetAlpha(0)
+    MainMenuMicroButton.FlashContent:SetScale(0.00001)
 
     -- HelpMicroButton
     HelpMicroButton:ClearAllPoints()
@@ -567,7 +610,7 @@ local function checkElvUI()
     --
     -- This works as-is because we know ElvUI will load before us. Otherwise we'll
     -- have to get more in-depth with the ACE loading logic.
-    
+
     -- get the ElvUI addon/ActionBars module from ACE
     if not LibStub then
         return false
@@ -642,13 +685,11 @@ AFP("hook_MoveMicroButtons", hook_MoveMicroButtons)
 
 local function hook_UpdateMicroButtons()
     HelpMicroButton:Show()
-    MicroButtonPortrait:Hide()
-    GuildMicroButtonTabard:Hide()
     local m = GuildMicroButton
-    m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")
-    m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")
-    m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")
-    m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/GuildMicroButton-Up")
+    m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+    m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+    m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+    m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
 end
 AFP("hook_UpdateMicroButtons", hook_UpdateMicroButtons)
 
@@ -687,10 +728,6 @@ local function LoadMicroMenu()
     -- custom button overrides & behaviors for each button where necessary
     setupMicroButtons(mbf.cf)
 
-    -- undo micro button position and visibility changes done by others
-    for i = 1, #MICRO_BUTTONS do
-        MICRO_BUTTONS[i] = nil
-    end
     hooksecurefunc("MoveMicroButtons", hook_MoveMicroButtons)
     hooksecurefunc("UpdateMicroButtons", hook_UpdateMicroButtons)
 

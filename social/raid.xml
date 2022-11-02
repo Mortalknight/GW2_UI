@@ -18,7 +18,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <Frame parentKey="Inset" inherits="InsetFrameTemplate" frameStrata="MEDIUM" hidde="true"/>
+            <Frame parentKey="Inset" inherits="InsetFrameTemplate" frameStrata="MEDIUM" hidden="true"/>
         </Frames>
     </Frame>
 </Ui>

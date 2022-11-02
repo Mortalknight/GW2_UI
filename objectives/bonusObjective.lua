@@ -161,7 +161,7 @@ local function createNewBonusObjectiveBlock(blockIndex)
     newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
     newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     newBlock.actionButton.NormalTexture:SetTexture(nil)
-    newBlock.actionButton:RegisterForClicks("AnyUp")
+    newBlock.actionButton:RegisterForClicks("AnyUp", "AnyDown")
     newBlock.actionButton:SetScript("OnShow", QuestObjectiveItem_OnShow)
     newBlock.actionButton:SetScript("OnHide", QuestObjectiveItem_OnHide)
     newBlock.actionButton:SetScript("OnEnter", QuestObjectiveItem_OnEnter)
@@ -330,7 +330,7 @@ local function updateBonusObjective(self)
 
     for i = 1, C_QuestLog.GetNumWorldQuestWatches() do
         local wqID = C_QuestLog.GetQuestIDForWorldQuestWatchIndex(i)
-        if trackedEventIDs[wqID] == nil then
+        if wqID and trackedEventIDs[wqID] == nil then
             trackedEventIDs[wqID] = {}
             trackedEventIDs[wqID].ID = wqID
             trackedEventIDs[wqID].tracked = true

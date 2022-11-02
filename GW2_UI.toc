@@ -1,4 +1,4 @@
-## Interface: 90207
+## Interface: 100000
 ## Title: |cffffedbaGW2 UI|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
@@ -47,6 +47,7 @@ core\statusReport.lua
 core\slashcommands.lua
 core\cooldowns.lua
 core\misc.lua
+core\disableBlizzard.lua
 
 settings\defaults.lua
 settings\api.lua
@@ -75,6 +76,8 @@ settings\welcome.lua
 settings\layouts.lua
 settings\moveableFrameHandler.lua
 settings\credits.lua
+
+core\EditMode.lua
 
 dataInfo\money.lua
 dataInfo\guild.lua
@@ -167,6 +170,7 @@ inventory\lootframe.lua
 inventory\extendVendor.lua
 
 immersive\skins\skins.xml
+immersive\skins\worldmap.xml
 immersive\questview.xml
 immersive\toast.xml
 immersive\alertPosition.lua

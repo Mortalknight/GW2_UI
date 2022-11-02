@@ -13,13 +13,12 @@ local AddActionBarCallback = GW.AddActionBarCallback
 local function setActionButtonAutocast(id)
     local btn = _G["PetActionButton" .. id]
     local autoCastEnabled = select(6, GetPetActionInfo(id))
+    local autoCast = btn.AutoCastable or _G["PetActionButton" .. id .. "AutoCastable"]
 
-    if btn then
-        for _, v in pairs(_G["PetActionButton" .. id .. "Shine"].sparkles) do
-            v:SetShown(autoCastEnabled)
-        end
-        _G["PetActionButton" .. id .. "AutoCastable"]:SetShown(autoCastEnabled)
+    for _, v in pairs(_G["PetActionButton" .. id .. "Shine"].sparkles) do
+        v:SetShown(autoCastEnabled)
     end
+    autoCast:SetShown(autoCastEnabled)
 end
 
 local function petBarUpdate()
@@ -30,9 +29,9 @@ local function petBarUpdate()
     PetActionButton8Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist")
     PetActionButton9Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
     PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
-    for i = 1, 12 do
+    for i = 1, NUM_PET_ACTION_SLOTS do
         if _G["PetActionButton" .. i] then
-            _G["PetActionButton" .. i .. "NormalTexture2"]:SetTexture(nil)
+           -- _G["PetActionButton" .. i .. "NormalTexture2"]:SetTexture(nil)
             setActionButtonAutocast(i)
         end
     end
@@ -49,12 +48,14 @@ local function setPetBar(fmPet)
 
     fmPet.gwButton = {}
 
-    for i = 1, 12 do
+    for i = 1, NUM_PET_ACTION_SLOTS do
         local btn = _G["PetActionButton" .. i]
         local btnPrev = _G["PetActionButton" .. (i - 1)]
         local btnShine = _G["PetActionButton" .. i .. "Shine"]
+        local autoCast = btn.AutoCastable or _G["PetActionButton" .. i .. "AutoCastable"]
 
         if btn then
+            btn:Show()
             fmPet.gwButton[i] = btn
             btn:SetParent(fmPet)
             GW.updateHotkey(btn)
@@ -68,6 +69,9 @@ local function setPetBar(fmPet)
                 btn:ClearAllPoints()
                 btn:SetPoint("BOTTOM", PetActionButton5, "TOP", 0, BUTTON_MARGIN)
             end
+            -- caused be taint
+            btn.ClearAllPoints = GW.NoOp
+            btn.SetPoint = GW.NoOp
 
             if btnShine then
                 btnShine:SetSize(btn:GetSize())
@@ -76,12 +80,19 @@ local function setPetBar(fmPet)
                     v:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
                 end
 
-                _G["PetActionButton" .. i .. "AutoCastable"]:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
-                _G["PetActionButton" .. i .. "AutoCastable"]:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
+                autoCast:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
+                autoCast.size = (i < 4 and 32 or BUTTON_SIZE) + 5
+                hooksecurefunc(autoCast, "SetSize", function()
+                    local w = autoCast:GetSize()
+                    if autoCast.size ~= w then
+                        autoCast:SetHeight(autoCast.size)
+                        autoCast:SetWidth(autoCast.size)
+                    end
+                end)
             end
 
             if i == 1 then
-                hooksecurefunc("PetActionBar_Update", petBarUpdate)
+                hooksecurefunc(PetActionBar, "Update", petBarUpdate)
                 hooksecurefunc("TogglePetAutocast", setActionButtonAutocast)
             end
 
@@ -200,9 +211,6 @@ end
 GW.TogglePetAuraPosition = TogglePetAuraPosition
 
 local function LoadPetFrame(lm)
-    -- disable default PetFrame stuff
-    PetFrame:Kill()
-
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
 
     playerPetFrame:SetAttribute("*type1", "target")
@@ -249,6 +257,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterUnitEvent("UNIT_AURA", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MODEL_CHANGED", "pet")
+    playerPetFrame:RegisterEvent("PET_UI_UPDATE")
 
     updatePetData(playerPetFrame, "UNIT_PET", "pet")
 

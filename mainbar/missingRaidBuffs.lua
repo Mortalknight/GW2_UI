@@ -147,14 +147,14 @@ local function setButtonStyle(button, haveBuff)
         button.icon:SetDesaturated(invert and grayedout or false)
         button:SetAlpha(not invert and 1 or dimmed and ALPHA or 1)
         if GetSetting("MISSING_RAID_BUFF_animated") then
-            LibCustomGlow.PixelGlow_Start(button, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
+            --LibCustomGlow.PixelGlow_Start(button, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
         else
-            LibCustomGlow.PixelGlow_Stop(button)
+            --LibCustomGlow.PixelGlow_Stop(button)
         end
     else
         button.icon:SetDesaturated(invert and false or grayedout)
         button:SetAlpha(invert and 1 or dimmed and ALPHA or 1)
-        LibCustomGlow.PixelGlow_Stop(button)
+        --LibCustomGlow.PixelGlow_Stop(button)
     end
 end
 
@@ -270,7 +270,7 @@ local function OnAuraChange(self)
     else
         self:SetSize(218, 32)
         self.customButton:Hide()
-        LibCustomGlow.PixelGlow_Stop(self.customButton)
+        --LibCustomGlow.PixelGlow_Stop(self.customButton)
     end
 end
 GW.UpdateMissingRaidBuffs = OnAuraChange

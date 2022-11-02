@@ -28,8 +28,6 @@ local function reskinItemButton(iname, b)
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
 
-    b:SetPushedTexture(nil)
-
     if not b.gwBackdrop then
         local bd = b:CreateTexture(nil, "BACKGROUND")
         bd:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop")
@@ -44,7 +42,6 @@ local function reskinItemButton(iname, b)
 
     local qtex = b.IconQuestTexture or _G[iname .. "IconQuestTexture"]
     if qtex then
-        b.IconQuestTexture = qtex
         qtex:SetSize(item_size + 2, item_size + 2)
         qtex:ClearAllPoints()
         qtex:SetPoint("CENTER", b, "CENTER", 0, 0)
@@ -71,7 +68,7 @@ local function reskinItemButton(iname, b)
 
     if not b.itemlevel then
         b.itemlevel = b:CreateFontString(nil, "OVERLAY")
-        b.itemlevel:SetFont(UNIT_NAME_FONT, 12)
+        b.itemlevel:SetFont(UNIT_NAME_FONT, 12, "")
         b.itemlevel:SetPoint("BOTTOMRIGHT", 0, 0)
         b.itemlevel:SetText("")
     end
@@ -120,7 +117,7 @@ local function CheckUpdateIcon(button)
     else
         itemIsUpgrade = IsContainerItemAnUpgrade(button:GetParent():GetID(), button:GetID())
     end
-    
+
     if itemIsUpgrade == nil then -- nil means not all the data was available to determine if this is an upgrade.
         button.UpgradeIcon:SetShown(false)
         button:SetScript("OnUpdate", CheckUpdateIcon_OnUpdate)
@@ -135,6 +132,10 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     if not button.gwBackdrop then
         return
     end
+
+    local bag_id = button:GetParent():GetID()
+    local isReagentBag = bag_id == 5
+
     local t = button.IconBorder
     t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     t:SetAlpha(0.9)
@@ -143,7 +144,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].r, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].g, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].b)
     end
 
-    local professionColors = GW.professionBagColor[select(2, GetContainerNumFreeSlots(button:GetParent():GetID()))]
+    local professionColors = isReagentBag and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or GW.professionBagColor[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     if GetSetting("BAG_PROFESSION_BAG_COLOR") and professionColors then
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
@@ -160,7 +161,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             end
         end
         -- Show junk icon if active
-        local _, _, _, rarity, _, _, _, _, noValue = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
+        local _, _, _, rarity, _, _, _, _, noValue = C_Container.GetContainerItemInfo(bag_id, button:GetID())
         button.isJunk = (rarity and rarity == Enum.ItemQuality.Poor) and not noValue
 
         if button.junkIcon then
@@ -173,7 +174,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         -- Show scrap icon if active
         if button.scrapIcon then
             if GetSetting("BAG_ITEM_SCRAP_ICON_SHOW") then
-                local itemLoc = ItemLocation:CreateFromBagAndSlot(button:GetParent():GetID(), button:GetID())
+                local itemLoc = ItemLocation:CreateFromBagAndSlot(bag_id, button:GetID())
                 if itemLoc and itemLoc ~= "" then
                     if (C_Item.DoesItemExist(itemLoc) and C_Item.CanScrapItem(itemLoc)) then
                         button.scrapIcon:SetShown(itemLoc)
@@ -196,6 +197,8 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         elseif button.itemlevel then
             button.itemlevel:SetText("")
         end
+
+        button:GetItemButtonIconTexture():SetAlpha(1)
     else
         if button.junkIcon then button.junkIcon:Hide() end
         if button.scrapIcon then button.scrapIcon:Hide() end
@@ -204,6 +207,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             button:SetScript("OnUpdate", nil)
         end
         if button.itemlevel then button.itemlevel:SetText("") end
+        button:GetItemButtonIconTexture():SetAlpha(0)
     end
 end
 GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)
@@ -307,8 +311,8 @@ local function takeItemButtons(p, bag_id)
         iname = b:GetName() .. "Item"
     end
     cf.gw_owner = p
-    
-    local num_slots = ContainerFrame_GetContainerNumSlots(bag_id)
+
+    local num_slots = C_Container.GetContainerNumSlots(bag_id)
     cf.gw_num_slots = num_slots
 
     for i = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
@@ -329,7 +333,7 @@ local function reskinBagBar(b, ha)
 
     b:SetSize(bag_size, bag_size)
     b.tooltipText = BANK_BAG
-    
+
     b.Count:ClearAllPoints()
     b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
     b.Count:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
@@ -337,12 +341,18 @@ local function reskinBagBar(b, ha)
 
     b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     b.icon:SetAlpha(0.75)
+    b.icon:Show()
 
     local norm = b:GetNormalTexture()
     norm:SetTexture(nil)
 
     b.IconBorder:SetAllPoints(b)
     b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+    hooksecurefunc(b.IconBorder, "SetTexture", function()
+        if b.IconBorder:GetTexture() and b.IconBorder:GetTexture() > 0 and b.IconBorder:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder" then
+            b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+        end
+    end)
 
     local high = b:GetHighlightTexture()
     high:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
@@ -356,8 +366,6 @@ local function reskinBagBar(b, ha)
         b.SlotHighlightTexture:SetAlpha(highlightAlpha)
         b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
     end
-
-    b:SetPushedTexture(nil)
 end
 GW.AddForProfiling("inventory", "reskinBagBar", reskinBagBar)
 
@@ -367,8 +375,8 @@ local function reskinSearchBox(sb)
         return
     end
 
-    sb:SetFont(UNIT_NAME_FONT, 14)
-    sb.Instructions:SetFont(UNIT_NAME_FONT, 14)
+    sb:SetFont(UNIT_NAME_FONT, 14, "")
+    sb.Instructions:SetFont(UNIT_NAME_FONT, 14, "")
     sb.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
     sb.Left:SetPoint("LEFT", 0, 0)
@@ -413,8 +421,8 @@ local function bag_OnMouseDown(self, button)
     if self.gwHasBag or bag_id == BACKPACK_CONTAINER then
         local cf = getContainerFrame(bag_id)
         if cf and cf.FilterDropDown then
-            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            ToggleDropDownMenu(1, nil, cf.FilterDropDown, self, 32, 32)
+            --PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+            --ToggleDropDownMenu(1, nil, cf.FilterDropDown, self, 32, 32)
         end
     end
 end
@@ -475,13 +483,13 @@ local function updateFreeSlots(sp_str, start_idx, end_idx, opt_container)
     local free = 0
     local full = 0
     if opt_container then
-        free = GetContainerNumFreeSlots(opt_container)
-        full = GetContainerNumSlots(opt_container)
+        free = C_Container.GetContainerNumFreeSlots(opt_container)
+        full = C_Container.GetContainerNumSlots(opt_container)
     end
 
     for bag_id = start_idx, end_idx do
-        free = free + GetContainerNumFreeSlots(bag_id)
-        full = full + GetContainerNumSlots(bag_id)
+        free = free + C_Container.GetContainerNumFreeSlots(bag_id)
+        full = full + C_Container.GetContainerNumSlots(bag_id)
     end
 
     sp_str:SetText((full - free) .. " / " .. full)
@@ -529,7 +537,7 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
     end
     f:SetHeight(max((isize * rows) + 75, min_height))
     f:SetWidth((isize * cols) + padding + 2)
-    for i = 0, 5 do
+    for i = 0, 6 do
         if _G["GwBagFrameGwBagHeader" .. i] and sep then
             _G["GwBagFrameGwBagHeader" .. i]:SetWidth((isize * cols) + padding + 2 - 5)
             _G["GwBagFrameGwBagHeader" .. i].background:SetWidth((isize * cols) + padding + 2 - 5)
@@ -611,36 +619,6 @@ local function onMoverDragStop(self)
 end
 GW.AddForProfiling("inventory", "onMoverDragStop", onMoverDragStop)
 
-local function LoadDefaultBagBar()
-    -- if not our bags, we need to cut the bagbar frame out of the micromenu
-    reskinBagBar(MainMenuBarBackpackButton, 1)
-    reskinBagBar(CharacterBag0Slot, 1)
-    reskinBagBar(CharacterBag1Slot, 1)
-    reskinBagBar(CharacterBag2Slot, 1)
-    reskinBagBar(CharacterBag3Slot, 1)
-
-    SetItemButtonQuality(MainMenuBarBackpackButton, 1, nil)
-
-    MainMenuBarBackpackButton:ClearAllPoints()
-    CharacterBag0Slot:ClearAllPoints()
-    CharacterBag1Slot:ClearAllPoints()
-    CharacterBag2Slot:ClearAllPoints()
-    CharacterBag3Slot:ClearAllPoints()
-
-    MainMenuBarBackpackButton:SetParent(UIParent)
-    CharacterBag0Slot:SetParent(UIParent)
-    CharacterBag1Slot:SetParent(UIParent)
-    CharacterBag2Slot:SetParent(UIParent)
-    CharacterBag3Slot:SetParent(UIParent)
-
-    CharacterBag3Slot:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -500, 20)
-    CharacterBag2Slot:SetPoint("LEFT", CharacterBag3Slot, "RIGHT", 0, 0)
-    CharacterBag1Slot:SetPoint("LEFT", CharacterBag2Slot, "RIGHT", 0, 0)
-    CharacterBag0Slot:SetPoint("LEFT", CharacterBag1Slot, "RIGHT", 0, 0)
-    MainMenuBarBackpackButton:SetPoint("LEFT", CharacterBag0Slot, "RIGHT", 0, 0)
-end
-GW.LoadDefaultBagBar = LoadDefaultBagBar
-
 local function LoadInventory()
     _G["BINDING_HEADER_GW2UI_INVENTORY_BINDINGS"] = INVENTORY_TOOLTIP
     _G["BINDING_NAME_GW2UI_BAG_SORT"] = BAG_CLEANUP_BAGS
@@ -651,7 +629,7 @@ local function LoadInventory()
     -- anytime a ContainerFrame has its anchors set, we re-hide it
     hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)
 
-    hooksecurefunc("ContainerFrameItemButton_UpdateItemUpgradeIcon", CheckUpdateIcon)
+    --hooksecurefunc("ContainerFrameItemButton_UpdateItemUpgradeIcon", CheckUpdateIcon)
 
     -- reskin all the multi-use ContainerFrame ItemButtons
     reskinItemButtons()
@@ -659,7 +637,7 @@ local function LoadInventory()
     -- whenever an ItemButton sets its quality ensure our custom border is being used
     hooksecurefunc("SetItemButtonQuality", hookItemQuality)
 
-    hooksecurefunc("ContainerFrame_Update", hookQuestItemBorder)
+    --hooksecurefunc("ContainerFrame_Update", hookQuestItemBorder)
 
     -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
     for i = 1, NUM_CONTAINER_FRAMES do
@@ -690,7 +668,7 @@ local function LoadInventory()
     helpers.onMoverDragStop = onMoverDragStop
 
     bag_resize = GW.LoadBag(helpers)
-    bank_resize = GW.LoadBank(helpers)
+    bank_resize = GW.LoadBank(helpers) --TODO bugged atm
 
     -- Skin StackSplit
     local StackSplitFrame = _G.StackSplitFrame

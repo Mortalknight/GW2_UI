@@ -246,9 +246,7 @@ local function LoadPlayerFrame()
     end)
 
     -- grab the TotemFramebuttons to our own Totem Frame
-    if PlayerFrame and TotemFrame then
-        GW.Create_Totem_Bar()
-    end
+    GW.Create_Totem_Bar()
 
     -- setup anim to flash the PvP marker
     local pvp = NewUnitFrame.pvp
@@ -281,8 +279,6 @@ local function LoadPlayerFrame()
     end
 
     if not GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
-
-    PlayerFrame:Kill()
 
     --hide unsed things from default target frame
     NewUnitFrame.castingbarBackground:Hide()

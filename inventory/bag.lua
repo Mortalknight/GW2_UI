@@ -32,15 +32,15 @@ local function sellJunk()
 
     -- Traverse bags and sell grey items
     for BagID = 0, 4 do
-        for BagSlot = 1, GetContainerNumSlots(BagID) do
-            CurrentItemLink = GetContainerItemLink(BagID, BagSlot)
+        for BagSlot = 1, C_Container.GetContainerNumSlots(BagID) do
+            CurrentItemLink = C_Container.GetContainerItemLink(BagID, BagSlot)
             if CurrentItemLink then
                 _, _, Rarity, _, _, _, _, _, _, _, ItemPrice = GetItemInfo(CurrentItemLink)
                 if Rarity == 0 and ItemPrice ~= 0 then
                     SoldCount = SoldCount + 1
                     if MerchantFrame:IsShown() then
                         -- If merchant frame is open, vendor the item
-                        UseContainerItem(BagID, BagSlot)
+                        C_Container.UseContainerItem(BagID, BagSlot)
                         -- Perform actions on first iteration
                         if SellJunkTicker._remainingIterations == IterationCount then
                             -- Store first sold bag slot for analysis
@@ -60,7 +60,7 @@ local function sellJunk()
 
     -- Stop selling if no items were sold for this iteration or iteration limit was reached
     if SoldCount == 0 or SellJunkTicker and SellJunkTicker._remainingIterations == 1 then 
-        StopSelling() 
+        StopSelling()
     end
 end
 
@@ -83,7 +83,7 @@ local function SellJunkFrame_OnEvent(self, event)
         self:UnregisterEvent("ITEM_UNLOCKED")
         -- Check whether vendor refuses to buy items
         if mBagID and mBagSlot and mBagID ~= -1 and mBagSlot ~= -1 then
-            local _, count, locked = GetContainerItemInfo(mBagID, mBagSlot)
+            local _, count, locked = C_Container.GetContainerItemInfo(mBagID, mBagSlot)
             if count and not locked then
                 -- Item has been unlocked but still not sold so stop selling
                 StopSelling()
@@ -108,8 +108,8 @@ local function setupVendorJunk(active)
 end
 
 local function setBagHeaders()
-    for i = 1, 4 do
-        local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
+    for i = 1, 5 do
+        local slotID = GetInventorySlotInfo(i == 5 and ("ReagentBag0Slot") or ("Bag" .. i - 1 .. "Slot"))
         local itemID = GetInventoryItemID("player", slotID)
         local customBagHeaderName = GetSetting("BAG_HEADER_NAME" .. i)
 
@@ -140,11 +140,11 @@ local function layoutBagItems(f)
     local finishedRows = 0
 
     local iS = BACKPACK_CONTAINER
-    local iE = NUM_BAG_SLOTS
+    local iE = NUM_TOTAL_EQUIPPED_BAG_SLOTS
     local iD = 1
     if rev then
         iE = iS
-        iS = NUM_BAG_SLOTS
+        iS = NUM_TOTAL_EQUIPPED_BAG_SLOTS
         iD = -1
     end
     f:GetParent().unfinishedRow = 0
@@ -179,7 +179,7 @@ local function layoutBagItems(f)
         if not rev and bag_id < 4 then
             slotID = GetInventorySlotInfo("Bag" .. bag_id .. "Slot")
             itemID = GetInventoryItemID("player", slotID)
-        elseif rev and bag_id <= 5 and bag_id > 0 then
+        elseif rev and bag_id <= 4 and bag_id > 0 then --TODO with reagent bag
             slotID = GetInventorySlotInfo("Bag" .. bag_id - 1 .. "Slot")
             itemID = GetInventoryItemID("player", slotID)
         end
@@ -238,7 +238,7 @@ local function watchCurrency(self)
     local currencyCount = C_CurrencyInfo.GetCurrencyListSize()
     for i = 1, currencyCount do
         local info = C_CurrencyInfo.GetCurrencyListInfo(i)
-        if not info.isHeader and info.isShowInBackpack and watchSlot < 4 then
+        if not info.isHeader and info.isShowInBackpack and watchSlot <= 4 then
             self["currency" .. tostring(watchSlot)]:SetText(CommaValue(info.quantity))
             self["currency" .. tostring(watchSlot) .. "Texture"]:SetTexture(info.iconFileID)
             self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = i
@@ -246,7 +246,7 @@ local function watchCurrency(self)
         end
     end
 
-    for i = watchSlot, 3 do
+    for i = watchSlot, 4 do
         self["currency" .. tostring(i)]:SetText("")
         self["currency" .. tostring(i) .. "Texture"]:SetTexture(nil)
         self["currency" .. tostring(watchSlot) .. "Frame"].CurrencyIdx = nil
@@ -262,7 +262,7 @@ GW.AddForProfiling("bag", "updateFreeSpaceString", updateFreeSpaceString)
 
 -- update the number of free bag slots available and set the display for it
 local function updateFreeBagSlots()
-    inv.updateFreeSlots(GwBagFrame.spaceString, 1, NUM_BAG_SLOTS, BACKPACK_CONTAINER)
+    inv.updateFreeSlots(GwBagFrame.spaceString, 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS, BACKPACK_CONTAINER)
 end
 GW.AddForProfiling("bag", "updateFreeBagSlots", updateFreeBagSlots)
 
@@ -278,7 +278,7 @@ GW.AddForProfiling("bag", "updateBagContainers", updateBagContainers)
 
 -- rescan ALL bag ItemButtons
 local function rescanBagContainers(f)
-    for bag_id = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+    for bag_id = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
         inv.takeItemButtons(f.ItemFrame, bag_id)
     end
     updateBagContainers(f)
@@ -293,12 +293,12 @@ local function setBagBarOrder(f)
     local bag_padding = 4
     local rev = GetSetting("BAG_REVERSE_SORT")
     if rev then
-        y = 5 - ((bag_size + bag_padding) * NUM_BAG_SLOTS)
+        y = 5 - ((bag_size + bag_padding) * NUM_TOTAL_EQUIPPED_BAG_SLOTS)
     else
         y = 5
     end
 
-    for bag_idx = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+    for bag_idx = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
         local b = f.bags[bag_idx]
         b:ClearAllPoints()
         b:SetPoint("TOPLEFT", f, "TOPLEFT", x, y)
@@ -335,8 +335,8 @@ local function createBagBar(f)
     bp:HookScript("OnMouseDown", inv.bag_OnMouseDown)
     bp.gwBackdrop = true -- checked by some things to see if this is a reskinned button
     f.bags[BACKPACK_CONTAINER] = bp
-    hooksecurefunc(
-        "MainMenuBarBackpackButton_UpdateFreeSlots",
+    hooksecurefunc(MainMenuBarBackpackButton,
+        "UpdateFreeSlots",
         function()
             bp.Count:SetText(bp.freeSlots)
         end
@@ -352,13 +352,15 @@ local function createBagBar(f)
     for bag_idx = 1, NUM_BAG_SLOTS do
         -- this name MUST have a 9-letter prefix and match the style "CharacterBag0Slot"
         -- because of hard-coded string parsing in PaperDollItemSlotButton_OnLoad
-        local name = "GwInvntry" .. "Bag" .. (bag_idx - 1) .. "Slot"
+        local name = "GwInvntryBag" .. (bag_idx - 1) .. "Slot"
         local b = CreateFrame("ItemButton", name, f, "GwBackpackBagTemplate")
+        b.commandName = ""
 
         -- We depend on a number of behaviors from the default BagSlotButtonTemplate.
         -- The ID set here is NOT the usual bag_id; rather it is an offset from the
         -- id of CharacterBag0Slot, used internally by BagSlotButtonTemplate methods.
         b:SetID(cb0_id + bag_idx - 1)
+        b.BagID = cb0_id + bag_idx - 1
         -- unlike BankItemButtonBagTemplate, we must provide the GetInventorySlot method
         b.GetInventorySlot = getInvId
 
@@ -370,9 +372,36 @@ local function createBagBar(f)
         inv.reskinBagBar(b)
 
         -- Hide default bag bar
-        _G["CharacterBag" .. bag_idx - 1 .. "Slot"]:Hide()
+        _G["CharacterBag" .. bag_idx - 1 .. "Slot"]:Kill()
 
         f.bags[bag_idx] = b
+    end
+
+    --Get Reagant Slot
+    if CharacterReagentBag0Slot then
+        local name = "GwInvntryReagentBag0Slot"
+        local b = CreateFrame("ItemButton", name, f, "GwBackpackBagTemplate")
+        b.commandName = ""
+
+        -- We depend on a number of behaviors from the default BagSlotButtonTemplate.
+        -- The ID set here is NOT the usual bag_id; rather it is an offset from the
+        -- id of CharacterBag0Slot, used internally by BagSlotButtonTemplate methods.
+        b:SetID(CharacterReagentBag0Slot:GetID())
+        b.BagID = CharacterReagentBag0Slot:GetID()
+        -- unlike BankItemButtonBagTemplate, we must provide the GetInventorySlot method
+        b.GetInventorySlot = getInvId
+
+        -- remove default of capturing right-click also (we handle right-click separately)
+        b:RegisterForClicks("LeftButtonUp")
+        b:SetScript("OnClick", bag_OnClick)
+        b:SetScript("OnMouseDown", inv.bag_OnMouseDown)
+
+        inv.reskinBagBar(b)
+
+        -- Hide default bag bar
+        CharacterReagentBag0Slot:Kill()
+
+        f.bags[NUM_BAG_SLOTS + 1] = b
     end
 
     setBagBarOrder(f)
@@ -381,7 +410,7 @@ GW.AddForProfiling("bag", "createBagBar", createBagBar)
 
 -- updates the contents of the backpack bag slots
 local function updateBagBar(f)
-    for bag_idx = 1, NUM_BAG_SLOTS do
+    for bag_idx = 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
         local b = f.bags[bag_idx]
         local inv_id = b:GetInventorySlot()
         local bag_tex = GetInventoryItemTexture("player", inv_id)
@@ -501,10 +530,11 @@ local function bag_OnShow(self)
     self:RegisterEvent("ITEM_UNLOCKED")
     self:RegisterEvent("BAG_UPDATE")
     self:RegisterEvent("BAG_UPDATE_DELAYED")
+    self:RegisterEvent("CVAR_UPDATE")
     if not IsBagOpen(BACKPACK_CONTAINER) then
         OpenBackpack()
     end
-    for i = 1, NUM_BAG_SLOTS do
+    for i = 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
         if not IsBagOpen(i) then
             OpenBag(i)
         end
@@ -519,7 +549,7 @@ GW.AddForProfiling("bag", "bag_OnShow", bag_OnShow)
 local function bag_OnHide(self)
     PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
     self:UnregisterAllEvents()
-    for i = 1, NUM_BAG_SLOTS do
+    for i = 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
         if IsBagOpen(i) then
             CloseBag(i)
         end
@@ -540,7 +570,7 @@ local function bag_OnEvent(self, event, ...)
         local slot = select(2, ...)
         local cb0_id = CharacterBag0Slot:GetID()
 
-        if slot == nil and bag >= cb0_id and bag <= cb0_id + NUM_BAG_SLOTS then
+        if slot == nil and bag >= cb0_id and bag <= cb0_id + NUM_TOTAL_EQUIPPED_BAG_SLOTS then
             local bag_id = bag - cb0_id + 1
             local b = self.ItemFrame.bags[bag_id]
             if b and b.icon and b.icon.SetDesaturated then
@@ -554,12 +584,12 @@ local function bag_OnEvent(self, event, ...)
         end
     elseif event == "BAG_UPDATE" then
         local bag_id = select(1, ...)
-        if bag_id <= NUM_BAG_SLOTS and bag_id >= BACKPACK_CONTAINER then
+        if bag_id <= NUM_TOTAL_EQUIPPED_BAG_SLOTS and bag_id >= BACKPACK_CONTAINER then
             self.gw_need_bag_update = true
         end
     elseif event == "BAG_UPDATE_DELAYED" then
         if self.gw_need_bag_rescan then
-            for bag_id = 1, NUM_BAG_SLOTS do
+            for bag_id = 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
                 if not IsBagOpen(bag_id) then
                     OpenBag(bag_id)
                 end
@@ -573,6 +603,11 @@ local function bag_OnEvent(self, event, ...)
             if self.ItemFrame:IsShown() then
                 updateFreeBagSlots()
             end
+        end
+    elseif event == "CVAR_UPDATE" then
+        local cvarName, cvarValue = ...
+        if cvarName == "combinedBags" and cvarValue == "1" then
+            SetCVar("combinedBags", "0")
         end
     end
 end
@@ -606,6 +641,13 @@ local function bagHeader_OnEnter(self)
 end
 
 local function LoadBag(helpers)
+    ContainerFrameCombinedBags:SetScript('OnShow', nil)
+    ContainerFrameCombinedBags:SetScript('OnHide', nil)
+    ContainerFrameCombinedBags:SetScale(0.0001)
+    ContainerFrameCombinedBags:SetAlpha(0)
+    ContainerFrameCombinedBags:Kill()
+    SetCVar("combinedBags", 0)
+
     inv = helpers
 
     BAG_WINDOW_SIZE = GetSetting("BAG_WIDTH")
@@ -638,15 +680,15 @@ local function LoadBag(helpers)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
     -- setup resizer stuff
-    f:SetMinResize(340, 340)
+    f:SetResizeBounds(340, 340)
     f:SetScript("OnSizeChanged", onBagFrameChangeSize)
     f.sizer.onResizeStop = onBagResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
     f.sizer:SetScript("OnMouseUp", inv.onSizerMouseUp)
 
     -- setup bagheader stuff
-    for i = 0, 4 do
-        _G["GwBagFrameGwBagHeader" .. i].nameString:SetFont(UNIT_NAME_FONT, 12)
+    for i = 0, 5 do
+        _G["GwBagFrameGwBagHeader" .. i].nameString:SetFont(UNIT_NAME_FONT, 12, "")
         _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(1, 1, 1)
         _G["GwBagFrameGwBagHeader" .. i].nameString:SetShadowColor(0, 0, 0, 0)
         _G["GwBagFrameGwBagHeader" .. i].icon2:Hide()
@@ -658,8 +700,8 @@ local function LoadBag(helpers)
 
     -- take the original search box
     inv.reskinSearchBox(BagItemSearchBox)
-    hooksecurefunc(
-        "ContainerFrame_Update",
+    hooksecurefunc(ContainerFrame1,
+        "UpdateSearchBox",
         function()
             inv.relocateSearchBox(BagItemSearchBox, f)
         end
@@ -670,12 +712,13 @@ local function LoadBag(helpers)
     -- set to the ID (bagId) of the original ContainerFrame we stole it from, in order
     -- for all of the inherited ItemButton functionality to work normally
     f.ItemFrame.Containers = {}
-    for bag_id = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+    for bag_id = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
         local cf = CreateFrame("Frame", nil, f.ItemFrame)
         cf.gw_items = {}
         cf.gw_num_slots = 0
         cf:SetAllPoints(f.ItemFrame)
         cf:SetID(bag_id)
+        cf.BagID = bag_id
         cf.shouldShow = true
         f.ItemFrame.Containers[bag_id] = cf
     end
@@ -696,9 +739,9 @@ local function LoadBag(helpers)
     createBagBar(f.ItemFrame)
 
     -- skin some things not done in XML
-    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20)
+    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20, "")
     f.headerString:SetText(INVENTORY_TOOLTIP)
-    f.spaceString:SetFont(UNIT_NAME_FONT, 12)
+    f.spaceString:SetFont(UNIT_NAME_FONT, 12, "")
     f.spaceString:SetTextColor(1, 1, 1)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
 
@@ -802,7 +845,7 @@ local function LoadBag(helpers)
                 dd.itemBorder.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll()  this is tainting
             end
         )
 
@@ -813,7 +856,7 @@ local function LoadBag(helpers)
                 dd.junkIcon.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_JUNK_ICON_SHOW", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll()  this is tainting
             end
         )
 
@@ -824,7 +867,7 @@ local function LoadBag(helpers)
                 dd.scrapIcon.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_SCRAP_ICON_SHOW", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll()  this is tainting
             end
         )
 
@@ -835,7 +878,7 @@ local function LoadBag(helpers)
                 dd.upgradeIcon.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_UPGRADE_ICON_SHOW", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll()  this is tainting
             end
         )
 
@@ -846,7 +889,7 @@ local function LoadBag(helpers)
                 dd.professionColor.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_PROFESSION_BAG_COLOR", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll() this is tainting
             end
         )
 
@@ -868,7 +911,7 @@ local function LoadBag(helpers)
                 dd.showItemLvl.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_SHOW_ILVL", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll() this is tainting
             end
         )
 
@@ -916,11 +959,11 @@ local function LoadBag(helpers)
     end
 
     -- setup money frame
-    f.bronze:SetFont(UNIT_NAME_FONT, 12)
+    f.bronze:SetFont(UNIT_NAME_FONT, 12, "")
     f.bronze:SetTextColor(177 / 255, 97 / 255, 34 / 255)
-    f.silver:SetFont(UNIT_NAME_FONT, 12)
+    f.silver:SetFont(UNIT_NAME_FONT, 12, "")
     f.silver:SetTextColor(170 / 255, 170 / 255, 170 / 255)
-    f.gold:SetFont(UNIT_NAME_FONT, 12)
+    f.gold:SetFont(UNIT_NAME_FONT, 12, "")
     f.gold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
 
     -- money frame tooltip
@@ -944,12 +987,14 @@ local function LoadBag(helpers)
     end)
 
     -- setup watch currencies
-    f.currency1:SetFont(UNIT_NAME_FONT, 12)
+    f.currency1:SetFont(UNIT_NAME_FONT, 12, "")
     f.currency1:SetTextColor(1, 1, 1)
-    f.currency2:SetFont(UNIT_NAME_FONT, 12)
+    f.currency2:SetFont(UNIT_NAME_FONT, 12, "")
     f.currency2:SetTextColor(1, 1, 1)
-    f.currency3:SetFont(UNIT_NAME_FONT, 12)
+    f.currency3:SetFont(UNIT_NAME_FONT, 12, "")
     f.currency3:SetTextColor(1, 1, 1)
+    f.currency4:SetFont(UNIT_NAME_FONT, 12, "")
+    f.currency4:SetTextColor(1, 1, 1)
 
     -- set warch currencies tooltips
     f.currency1Frame:SetScript("OnEnter", function(self)
@@ -971,6 +1016,15 @@ local function LoadBag(helpers)
         GameTooltip:Show()
     end)
     f.currency3Frame:SetScript("OnEnter", function(self)
+        if not self.CurrencyIdx then
+            return
+        end
+        GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+        GameTooltip:ClearLines()
+        GameTooltip:SetCurrencyToken(self.CurrencyIdx)
+        GameTooltip:Show()
+    end)
+    f.currency4Frame:SetScript("OnEnter", function(self)
         if not self.CurrencyIdx then
             return
         end

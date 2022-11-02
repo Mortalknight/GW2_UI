@@ -43,7 +43,7 @@
         </Layers>
     </Button>
 
-    <Button name="GwProfessionsButton" enableMouse="true" registerForClicks="LeftButtonUp,RightButtonUp" inherits="SecureActionButtonTemplate,SecureHandlerDragTemplate" virtual="true">
+    <Button name="GwProfessionsButton" enableMouse="true" inherits="SecureActionButtonTemplate,SecureHandlerDragTemplate" virtual="true">
         <Size x="40" y="40"></Size>
         <Layers>
             <Layer level="BACKGROUND">

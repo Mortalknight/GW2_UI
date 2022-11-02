@@ -67,7 +67,10 @@ local function animateTextCritical(frame, offsetIndex)
 
             if p > 0.7 then
                 local alphaFade = p - 0.7
-                frame:SetAlpha(GW.lerp(1, 0, alphaFade / 0.3))
+                local lerp = GW.lerp(1, 0, alphaFade / 0.3)
+                if lerp < 0 then lerp = 0 end
+                if lerp > 1 then lerp = 1 end
+                frame:SetAlpha(lerp)
             else
                 frame:SetAlpha(1)
             end
@@ -106,7 +109,10 @@ local function animateTextNormal(frame, offsetIndex)
 
             if p > 0.7 then
                 local alphaFade = p - 0.7
-                frame:SetAlpha(GW.lerp(1, 0, alphaFade / 0.3))
+                local lerp = GW.lerp(1, 0, alphaFade / 0.3)
+                if lerp < 0 then lerp = 0 end
+                if lerp > 1 then lerp = 1 end
+                frame:SetAlpha(lerp)
             else
                 frame:SetAlpha(1)
             end

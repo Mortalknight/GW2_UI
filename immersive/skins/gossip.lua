@@ -1,31 +1,68 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
-local AFP = GW.AddProfiling
 
-local function handleGossipText()
-    local buttons = GossipFrame.buttons
-    if buttons and next(buttons) then
-        for _, button in ipairs(buttons) do
-            local str = button:GetFontString()
-            if str then
-                str:SetTextColor(1, 1, 1)
+local function ReplaceGossipFormat(button, textFormat, text)
+    local newFormat, count = gsub(textFormat, "000000", "ffffff")
+    if count > 0 then
+        button:SetFormattedText(newFormat, text)
+    end
+end
 
-                local text = str:GetText()
-                if text then
-                    str:SetText(GW.StripString(text), true)
-                end
-            end
+local ReplacedGossipColor = {
+    ["000000"] = "ffffff",
+    ["414141"] = "7b8489",
+}
+
+local function ReplaceGossipText(button, text)
+    if text and text ~= "" then
+        local newText, count = gsub(text, ":32:32:0:0", ":32:32:0:0:64:64:5:59:5:59")
+        if count > 0 then
+            text = newText
+            button:SetFormattedText("%s", text)
+        end
+
+        local colorStr, rawText = strmatch(text, "|c[fF][fF](%x%x%x%x%x%x)(.-)|r")
+        colorStr = ReplacedGossipColor[colorStr]
+        if colorStr and rawText then
+            button:SetFormattedText("|cff%s%s|r", colorStr, rawText)
         end
     end
 end
-AFP("handleGossipText", handleGossipText)
 
 local function LoadGossipSkin()
     if not GW.GetSetting("GOSSIP_SKIN_ENABLED") then return end
 
     local GossipFrame = GossipFrame
+
+    ItemTextScrollFrameScrollBar:SkinScrollBar()
+    ItemTextScrollFrame:SkinScrollFrame()
+    GW.HandleTrimScrollBar(GossipFrame.GreetingPanel.ScrollBar)
+    GossipFrame.GreetingPanel.GoodbyeButton:StripTextures()
+    GossipFrame.GreetingPanel.GoodbyeButton:SkinButton(false, true)
+
+    for i = 1, 4 do
+        local notch =  GossipFrame.FriendshipStatusBar["Notch" .. i]
+        if notch then
+            notch:SetColorTexture(0, 0, 0)
+            notch:SetSize(1, 16)
+        end
+    end
+
+    ItemTextPageText:SetTextColor("P", 1, 1, 1)
+    hooksecurefunc(ItemTextPageText, "SetTextColor", function(pageText, headerType, r, g, b)
+        if r ~= 1 or g ~= 1 or b ~= 1 then
+            pageText:SetTextColor(headerType, 1, 1, 1)
+        end
+    end)
+
     ItemTextFrame:StripTextures(true)
     ItemTextFrame:CreateBackdrop()
+    QuestFont:SetTextColor(1, 1, 1)
+    GossipFrameInset:Hide()
+
+    if GossipFrame.Background then
+        GossipFrame.Background:Hide()
+    end
 
     local tex = ItemTextFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     local w, h = ItemTextFrame:GetSize()
@@ -36,7 +73,7 @@ local function LoadGossipSkin()
 
     ItemTextScrollFrame:StripTextures()
 
-    GossipFrameNpcNameText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+    GossipFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     GossipFrame:StripTextures()
     GossipFrame:CreateBackdrop()
     tex = GossipFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
@@ -48,49 +85,29 @@ local function LoadGossipSkin()
 
     GossipFrame.CloseButton:SkinButton(true)
     GossipFrame.CloseButton:SetSize(20, 20)
-    GossipFrame.Background:Hide()
 
     ItemTextFrameCloseButton:SkinButton(true)
     ItemTextFrameCloseButton:SetSize(20, 20)
 
-    GossipGreetingScrollFrameScrollBar:SkinScrollBar()
-    ItemTextScrollFrameScrollBar:SkinScrollBar()
-    ItemTextScrollFrame:SkinScrollFrame()
-
     GW.HandleNextPrevButton(ItemTextPrevPageButton)
     GW.HandleNextPrevButton(ItemTextNextPageButton)
 
-    ItemTextPageText:SetTextColor(1, 1, 1)
-    hooksecurefunc(ItemTextPageText, "SetTextColor", function(pageText, headerType, r, g, b)
-        if r ~= 1 or g ~= 1 or b ~= 1 then
-            pageText:SetTextColor(headerType, 1, 1, 1)
+    hooksecurefunc(GossipFrame.GreetingPanel.ScrollBox, "Update", function(frame)
+        for _, button in next, { frame.ScrollTarget:GetChildren() } do
+            if not button.IsSkinned then
+                local buttonText = select(3, button:GetRegions())
+                if buttonText and buttonText:IsObjectType("FontString") then
+                    ReplaceGossipText(button, button:GetText())
+                    hooksecurefunc(button, "SetText", ReplaceGossipText)
+                    hooksecurefunc(button, "SetFormattedText", ReplaceGossipFormat)
+                end
+
+                button.IsSkinned = true
+            end
         end
     end)
 
-    local StripAllTextures = {"GossipFrameGreetingPanel", "GossipGreetingScrollFrame"}
-    for _, object in pairs(StripAllTextures) do
-        _G[object]:StripTextures()
-    end
-
-    local GossipGreetingScrollFrame = GossipGreetingScrollFrame
-    GossipGreetingScrollFrame:SkinScrollFrame()
-
-    hooksecurefunc("GossipFrameUpdate", handleGossipText)
-    GossipGreetingText:SetTextColor(1, 1, 1)
-    handleGossipText()
-
-    GossipFrameGreetingGoodbyeButton:StripTextures()
-    GossipFrameGreetingGoodbyeButton:SkinButton(false, true)
-
-    for i = 1, 4 do
-        local notch = _G["NPCFriendshipStatusBarNotch" .. i]
-        if notch then
-            notch:SetColorTexture(0, 0, 0)
-            notch:SetSize(1, 16)
-        end
-    end
-
-    local NPCFriendshipStatusBar = NPCFriendshipStatusBar
+    local NPCFriendshipStatusBar = GossipFrame.FriendshipStatusBar
     NPCFriendshipStatusBar:StripTextures()
     NPCFriendshipStatusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
     NPCFriendshipStatusBar.bg = NPCFriendshipStatusBar:CreateTexture(nil, "BACKGROUND")
@@ -104,7 +121,7 @@ local function LoadGossipSkin()
 
     --QuestFrame
     local QuestFrame = QuestFrame
-    QuestFrameNpcNameText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+    QuestFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     QuestFrame:StripTextures()
     QuestFrame:CreateBackdrop()
     QuestFrame.tex = QuestFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
@@ -214,7 +231,7 @@ local function LoadGossipSkin()
     QuestFrameCompleteQuestButton:SkinButton(false, true)
 
     QuestNPCModelTextFrame:StripTextures()
-    local w, h = QuestNPCModelTextFrame:GetSize()
+    w, h = QuestNPCModelTextFrame:GetSize()
     QuestNPCModelTextFrame:StripTextures()
     QuestNPCModelTextFrame.tex = QuestNPCModelTextFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     QuestNPCModelTextFrame.tex:SetPoint("TOP", QuestNPCModelTextFrame, "TOP", 0, 20)
@@ -234,9 +251,7 @@ local function LoadGossipSkin()
         self:GetParent():StartMoving()
     end)
     GossipFrame.mover:SetScript("OnDragStop", function(self)
-        local self = self:GetParent()
-
-        self:StopMovingOrSizing()
+        self:GetParent():StopMovingOrSizing()
     end)
 
     QuestLogPopupDetailFrame:StripTextures(nil, true)
@@ -249,13 +264,13 @@ local function LoadGossipSkin()
     QuestLogPopupDetailFrame.tex = tex
 
     QuestLogPopupDetailFrameAbandonButton:SkinButton(false, true)
-	QuestLogPopupDetailFrameShareButton:SkinButton(false, true)
-	QuestLogPopupDetailFrameTrackButton:SkinButton(false, true)
+    QuestLogPopupDetailFrameShareButton:SkinButton(false, true)
+    QuestLogPopupDetailFrameTrackButton:SkinButton(false, true)
     QuestLogPopupDetailFrameCloseButton:SkinButton(true)
     QuestLogPopupDetailFrameCloseButton:SetSize(20, 20)
 
     QuestLogPopupDetailFrameScrollFrame:StripTextures()
-	QuestLogPopupDetailFrameScrollFrameScrollBar:SkinScrollBar()
+    QuestLogPopupDetailFrameScrollFrameScrollBar:SkinScrollBar()
     QuestLogPopupDetailFrameScrollFrame:SkinScrollFrame()
 end
 GW.LoadGossipSkin = LoadGossipSkin

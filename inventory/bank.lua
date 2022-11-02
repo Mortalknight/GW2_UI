@@ -187,6 +187,7 @@ local function createBagBar(f)
         -- The ID set here is NOT the usual bag_id; rather it is a 1-based index of bank
         -- bags used by helper methods provided by BankItemButtonBagTemplate.
         b:SetID(bag_idx)
+        b.BagID = bag_idx
         -- unlike BagSlotButtonTemplate, we must provide the GetBagID method ourself
         b.GetBagID = getBagId
 
@@ -203,6 +204,7 @@ local function createBagBar(f)
     -- create a fake bag frame for the base bank slots
     local b = CreateFrame("ItemButton", nil, f, "GwBankBaseBagTemplate")
     b:SetID(0)
+    b.BagID = 0
     b.GetBagID = function()
         return BANK_CONTAINER
     end
@@ -308,7 +310,7 @@ GW.AddForProfiling("bank", "compactToggle", compactToggle)
 
 -- reskin all the base BankFrame ItemButtons
 local function reskinBankItemButtons()
-    local items = GetContainerNumSlots(BANK_CONTAINER)
+    local items = C_Container.GetContainerNumSlots(BANK_CONTAINER)
     for i = 1, items do
         local iname = "BankFrameItem" .. i
         local b = _G[iname]
@@ -321,7 +323,7 @@ GW.AddForProfiling("bank", "reskinBankItemButtons", reskinBankItemButtons)
 
 -- reskin all the ReagentBankFrame ItemButtons
 local function reskinReagentItemButtons()
-    local items = GetContainerNumSlots(REAGENTBANK_CONTAINER)
+    local items = C_Container.GetContainerNumSlots(REAGENTBANK_CONTAINER)
     for i = 1, items do
         local iname = "ReagentBankFrameItem" .. i
         local b = _G[iname]
@@ -346,7 +348,7 @@ local function bank_OnShow(self)
     BankFrame:ClearAllPoints()
     BankFrame:SetClampedToScreen(false)
     BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-    BankSlotsFrame:Hide()
+    BankSlotsFrame:Kill()
     BankItemAutoSortButton:Hide()
 
     -- make the reagent bank initialize itself
@@ -476,7 +478,7 @@ local function LoadBank(helpers)
     hooksecurefunc(BankFrame, "Raise", function()
         BankFrame:ClearAllPoints()
         BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-        BankSlotsFrame:Hide()
+        BankSlotsFrame:Kill()
         BankItemAutoSortButton:Hide()
     end)
 
@@ -489,7 +491,7 @@ local function LoadBank(helpers)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
     -- setup resizer stuff
-    f:SetMinResize(340, 340)
+    f:SetResizeBounds(340, 340)
     f:SetScript("OnSizeChanged", onBankFrameChangeSize)
     f.sizer.onResizeStop = onBankResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
@@ -518,6 +520,7 @@ local function LoadBank(helpers)
         cf.gw_num_slots = 0
         cf:SetAllPoints(f.ItemFrame)
         cf:SetID(bag_id)
+        cf.BagID = bag_id
         f.ItemFrame.Containers[bag_id] = cf
     end
     f.ReagentFrame.Containers = {}
@@ -559,9 +562,9 @@ local function LoadBank(helpers)
     createBagBar(f.ItemFrame)
 
     -- skin some things not done in XML
-    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20)
+    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20, "")
     f.headerString:SetText(BANK)
-    f.spaceString:SetFont(UNIT_NAME_FONT, 12)
+    f.spaceString:SetFont(UNIT_NAME_FONT, 12, "")
     f.spaceString:SetTextColor(1, 1, 1)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
 
@@ -625,7 +628,7 @@ local function LoadBank(helpers)
                 dd.bagOrder.checkbutton:SetChecked(newStatus)
                 SetSetting("BANK_REVERSE_SORT", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll() this is tainting
             end
         )
 
@@ -636,7 +639,7 @@ local function LoadBank(helpers)
                 dd.itemBorder.checkbutton:SetChecked(newStatus)
                 SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", newStatus)
 
-                ContainerFrame_UpdateAll()
+                --ContainerFrame_UpdateAll() this is tainting
             end
         )
 

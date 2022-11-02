@@ -38,8 +38,6 @@ local function UpdateExtraBindings()
 end
 
 local function ExtraAB_BossAB_Setup()
-    KeyBindingFrame_LoadUI()
-
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("UPDATE_BINDINGS")
     eventFrame:SetScript("OnEvent", UpdateExtraBindings)
@@ -53,7 +51,6 @@ local function ExtraAB_BossAB_Setup()
     ZoneAbilityFrame.SpellButtonContainer.holder = ZoneAbilityHolder
 
     -- try to shutdown the container movement and taints
-    UIPARENT_MANAGED_FRAME_POSITIONS.ExtraAbilityContainer = nil
     ExtraAbilityContainer.SetSize = GW.NoOp
 
     RegisterMovableFrame(ExtraActionBarHolder, L["Boss Button"], "ExtraActionBarFramePos", "VerticalActionBarDummy", nil, {"default", "scaleable"})

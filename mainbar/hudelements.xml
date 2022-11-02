@@ -19,7 +19,7 @@
         </Anchors>
     </Button>
 
-    <Button name="GwAddonToggle" virtual="true">
+    <Button name="GwAddonToggle" frameStrata="MEDIUM" virtual="true">
         <Size x="35" y="35"/>
         <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/icon-module">
             <Size x="30" y="30"></Size>
@@ -52,13 +52,13 @@
         </Frames>
     </Button>
 
-    <Button name="GwMailButton" frameStrata="LOW" toplevel="true" virtual="true" hidden="true">
+    <Button name="GwMailButton" frameStrata="MEDIUM" toplevel="true" virtual="true" hidden="true">
         <Size x="31" y="31"/>
         <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/mail"></NormalTexture>
         <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/mail" alphaMode="ADD" alpha="0.5"></HighlightTexture>
     </Button>
 
-    <Frame name="GwLfgQueueIcon" virtual="true">
+    <Frame name="GwLfgQueueIcon"  virtual="true">
         <Size x="26" y="26"></Size>
         <Animations>
             <AnimationGroup parentKey="animation" looping="REPEAT">
@@ -126,7 +126,7 @@
         </Frames>
     </Button>
 
-    <Frame name="GwMapGradient" frameStrata="LOW" frameLevel="2" virtual="true">
+    <Frame name="GwMapGradient" frameStrata="MEDIUM" frameLevel="2" virtual="true">
         <Size x="32" y="32"></Size>
         <Layers>
             <Layer>
@@ -142,7 +142,7 @@
             </Layer>
         </Layers>
     </Frame>
-    <Button name="GwMapTime" frameStrata="LOW" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" frameLevel="2" virtual="true">
+    <Button name="GwMapTime" frameStrata="MEDIUM" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" frameLevel="2" virtual="true">
         <Size x="50" y="20"></Size>
         <Anchors>
             <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT"></Anchor>
@@ -157,7 +157,7 @@
             </Layer>
         </Layers>
     </Button>
-    <Button name="GwMapCoords" frameStrata="LOW" enableMouse="true" frameLevel="2" virtual="true">
+    <Button name="GwMapCoords" frameStrata="MEDIUM" enableMouse="true" frameLevel="2" virtual="true">
         <Size x="50" y="20"></Size>
         <Anchors>
             <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
@@ -172,7 +172,7 @@
             </Layer>
         </Layers>
     </Button>
-    <Button name="GwMapFPS" frameStrata="LOW" enableMouse="false" frameLevel="2" virtual="true">
+    <Button name="GwMapFPS" frameStrata="MEDIUM" enableMouse="false" frameLevel="2" virtual="true">
         <Size x="50" y="20"></Size>
         <Anchors>
             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
@@ -273,12 +273,38 @@
         </Anchors>
         <Layers>
             <Layer>
-                <Texture file="Interface/AddOns/GW2_UI/textures/hud/mapshadow">
+          
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
+                    <Size x="314" y="2"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="1"/>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"  x="0" y="1"/>
                     </Anchors>
                 </Texture>
+                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
+                    <Size x="314" y="2"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="-1"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="-1"/>
+                    </Anchors>
+                    <TexCoords left="0" right="1" top="1" bottom="0" />
+                </Texture>
+
+            <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
+                <Size x="2" y="2"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="1" y="1"/>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="-1"/>
+                </Anchors>
+            </Texture>
+            <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
+                <Size x="2" y="2"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"/>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-1" y="-1"/>
+                </Anchors>
+                <TexCoords left="1" right="0" top="0" bottom="1" />
+            </Texture>
             </Layer>
         </Layers>
     </Frame>

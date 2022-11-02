@@ -100,7 +100,7 @@ local function updateArena_Power(self)
         local pwcolor = PowerBarColorCustom[powerToken]
         self.power:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     else
-        self.power:SetStatusBarColor(altR, altG, altB)
+        self.power:SetStatusBarColor(altR or 0, altG or 0, altB or 0)
     end
 
     self.power:SetMinMaxValues(0, powerMax)
@@ -336,17 +336,9 @@ end
 GW.AddForProfiling("arenaFrames", "registerPrepFrame", registerPrepFrame)
 
 local function LoadArenaFrame()
-    Arena_LoadUI()
-
     for i = 1, MAX_ARENA_ENEMIES do
         arenaFrames[i] = registerFrame(i)
         arenaPrepFrames[i] = registerPrepFrame(i)
-        if _G["ArenaEnemyFrame" .. i] ~= nil then
-            _G["ArenaEnemyFrame" .. i]:Kill()
-        end
-        if _G["ArenaEnemyFrame" .. i .. "PetFrame"] ~= nil then
-            _G["ArenaEnemyFrame" .. i .. "PetFrame"]:Kill()
-        end
     end
 
     --create prepframe frame to handle events

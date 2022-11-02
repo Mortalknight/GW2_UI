@@ -37,6 +37,13 @@ local constBackdropFrameColorBorder = {
 }
 GW.constBackdropFrameColorBorder = constBackdropFrameColorBorder
 
+local constBackdropFrameColorBorderNoBackground = {
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+    bgFile = "",
+    edgeSize = 1
+}
+GW.constBackdropFrameColorBorderNoBackground = constBackdropFrameColorBorderNoBackground
+
 local function SkinUIDropDownMenu()
     hooksecurefunc("UIDropDownMenu_CreateFrames", function(level, index)
         local listFrame = _G["DropDownList" .. level]
@@ -147,20 +154,28 @@ local function MutateInaccessableObject(frame, objType, func)
 end
 GW.MutateInaccessableObject = MutateInaccessableObject
 
+local NavBarCheck = {
+	EncounterJournal = function()
+		return GW.GetSetting("ENCOUNTER_JOURNAL_SKIN_ENABLED")
+	end,
+	WorldMapFrame = function()
+		return GW.GetSetting("WORLDMAP_SKIN_ENABLED")
+	end,
+}
+
 local function SkinNavBarButtons(self)
-    if not self:GetParent():GetName() == "WorldMapFrame" then return end
+    local func = NavBarCheck[self:GetParent():GetName()]
+    if func and not func() then return end
 
     local navButton = self.navList[#self.navList]
     if navButton and not navButton.isSkinned then
-
-        --[[ Add this later if we have a custom texture for navigationbars
         navButton:StripTextures()
-        navButton:SkinButton(false, false, true)
+        --navButton:SkinButton(false, false, true)
 
         local r = {navButton:GetRegions()}
         for _,c in pairs(r) do
             if c:GetObjectType() == "FontString" then
-                c:SetTextColor(0, 0, 0, 1)
+                c:SetTextColor(1, 1, 1, 1)
                 c:SetShadowOffset(0, 0)
             end
         end
@@ -170,16 +185,20 @@ local function SkinNavBarButtons(self)
         tex:SetPoint("TOP", navButton, "TOP")
         tex:SetPoint("BOTTOM", navButton, "BOTTOM")
         tex:SetPoint("RIGHT", navButton, "RIGHT")
-        tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button")
+        tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightInner")
         navButton.tex = tex
         navButton.tex:SetAlpha(1)
+
+        local homeButtonBorder = CreateFrame("Frame",nil,navButton,"GwLightButtonBorder")
+        navButton.borderFrame =homeButtonBorder
+
 
         hooksecurefunc(navButton, "SetWidth", function()
             local w = navButton:GetWidth()
 
             navButton.tex:SetPoint("RIGHT", navButton, "LEFT", w, 0)
         end)
-        ]]
+
         if navButton.MenuArrowButton then
             navButton.MenuArrowButton:StripTextures()
             if navButton.MenuArrowButton.Art then
@@ -189,12 +208,12 @@ local function SkinNavBarButtons(self)
             end
         end
 
-        navButton.xoffset = 1
+        navButton.xoffset = -1
 
         navButton.isSkinned = true
     end
 end
-GW.SkinNavBarButtons = SkinNavBarButtons
+hooksecurefunc("NavBar_AddButton", SkinNavBarButtons)
 
 local function HandlePortraitFrame(frame, createBackdrop)
     local name = frame and frame.GetName and frame:GetName()
@@ -297,12 +316,12 @@ do
         local r, g, b, a = border:GetVertexColor()
         if customFunc then
             border.customFunc = customFunc
-            local br, bg, bb = unpack(1, 1, 1)
+            local br, bg, bb = 1, 1, 1
             customFunc(border, r, g, b, a, br, bg, bb)
         elseif r then
             backdrop:SetBackdropBorderColor(r, g, b, a)
         else
-            local br, bg, bb = unpack(1, 1, 1)
+            local br, bg, bb = 1, 1, 1
             backdrop:SetBackdropBorderColor(br, bg, bb)
         end
     end
@@ -319,3 +338,54 @@ local function Scale(x)
     end
 end
 GW.Scale = Scale
+
+local function ReskinScrollBarArrow(frame, direction)
+    GW.HandleNextPrevButton(frame, direction)
+
+    if frame.Texture then
+        frame.Texture:SetAlpha(0)
+
+        if frame.Overlay then
+            frame.Overlay:SetAlpha(0)
+        end
+    else
+        frame:StripTextures()
+    end
+end
+
+local function HandleTrimScrollBar(frame, small)
+    frame:StripTextures()
+
+    ReskinScrollBarArrow(frame.Back, 'up')
+    ReskinScrollBarArrow(frame.Forward, 'down')
+
+    if frame.Background then
+        frame.Background:Hide()
+    end
+
+    local track = frame.Track
+    if track then
+        track:DisableDrawLayer('ARTWORK')
+    end
+
+    local thumb = frame:GetThumb()
+    if thumb then
+        thumb:DisableDrawLayer('BACKGROUND')
+
+        thumb.bg = thumb:CreateTexture(nil, "ARTWORK")
+        thumb.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
+        thumb:SetSize(12, thumb:GetSize())
+
+
+        if not small then
+            thumb.bg:SetPoint('TOP', 4, -1)
+            thumb.bg:SetPoint('BOTTOM', -4, 1)
+        end
+
+        --thumb:HookScript('OnEnter', ThumbOnEnter)
+        --thumb:HookScript('OnLeave', ThumbOnLeave)
+        --thumb:HookScript('OnMouseUp', ThumbOnMouseUp)
+        --thumb:HookScript('OnMouseDown', ThumbOnMouseDown)
+    end
+end
+GW.HandleTrimScrollBar = HandleTrimScrollBar

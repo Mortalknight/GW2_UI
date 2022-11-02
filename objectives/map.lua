@@ -5,40 +5,52 @@ local SetSetting = GW.SetSetting
 local RoundDec = GW.RoundDec
 
 local MAP_FRAMES_HIDE = {}
-MAP_FRAMES_HIDE[1] = MiniMapMailFrame
+MAP_FRAMES_HIDE[1] = MiniMapMailIcon
 MAP_FRAMES_HIDE[2] = MiniMapVoiceChatFrame
 MAP_FRAMES_HIDE[3] = MiniMapTrackingButton
 MAP_FRAMES_HIDE[4] = MiniMapTracking
+
+local M = CreateFrame("Frame")
 
 local MAP_FRAMES_HOVER = {}
 
 local function SetMinimapHover()
     local hoverSetting = GetSetting("MINIMAP_HOVER")
 
+    wipe(MAP_FRAMES_HOVER)
+
     if hoverSetting == "NONE" then
-        MAP_FRAMES_HOVER[1] = "GwMapGradient"
-        MAP_FRAMES_HOVER[2] = "MinimapZoneText"
-        MAP_FRAMES_HOVER[3] = "GwMapTime"
-        MAP_FRAMES_HOVER[4] = "GwMapCoords"
+        MAP_FRAMES_HOVER[1] = GwMapGradient
+        MAP_FRAMES_HOVER[2] = Minimap.location
+        MAP_FRAMES_HOVER[3] = GwMapTime
+        MAP_FRAMES_HOVER[4] = GwMapCoords
     elseif hoverSetting == "CLOCK" then
-        MAP_FRAMES_HOVER[1] = "GwMapGradient"
-        MAP_FRAMES_HOVER[2] = "MinimapZoneText"
-        MAP_FRAMES_HOVER[3] = "GwMapCoords"
+        MAP_FRAMES_HOVER[1] = GwMapGradient
+        MAP_FRAMES_HOVER[2] = Minimap.location
+        MAP_FRAMES_HOVER[3] = GwMapCoords
     elseif hoverSetting == "ZONE" then
-        MAP_FRAMES_HOVER[1] = "GwMapTime"
-        MAP_FRAMES_HOVER[2] = "GwMapCoords"
+        MAP_FRAMES_HOVER[1] = GwMapTime
+        MAP_FRAMES_HOVER[2] = GwMapCoords
     elseif hoverSetting == "COORDS" then
-        MAP_FRAMES_HOVER[1] = "GwMapGradient"
-        MAP_FRAMES_HOVER[2] = "MinimapZoneText"
-        MAP_FRAMES_HOVER[3] = "GwMapTime"
+        MAP_FRAMES_HOVER[1] = GwMapGradient
+        MAP_FRAMES_HOVER[2] = Minimap.location
+        MAP_FRAMES_HOVER[3] = GwMapTime
     elseif hoverSetting == "CLOCKZONE" then
-        MAP_FRAMES_HOVER[1] = "GwMapCoords"
+        MAP_FRAMES_HOVER[1] = GwMapCoords
     elseif hoverSetting == "CLOCKCOORDS" then
-        MAP_FRAMES_HOVER[1] = "GwMapGradient"
-        MAP_FRAMES_HOVER[2] = "MinimapZoneText"
+        MAP_FRAMES_HOVER[1] = GwMapGradient
+        MAP_FRAMES_HOVER[2] = Minimap.location
     elseif hoverSetting == "ZONECOORDS" then
-        MAP_FRAMES_HOVER[1] = "GwMapTime"
+        MAP_FRAMES_HOVER[1] = GwMapTime
     end
+
+    -- show all and hide not needes
+    GwMapGradient:SetAlpha(1)
+    Minimap.location:SetAlpha(1)
+    GwMapTime:SetAlpha(1)
+    GwMapCoords:SetAlpha(1)
+
+    GW.hoverMiniMapOut()
 end
 GW.SetMinimapHover = SetMinimapHover
 
@@ -54,22 +66,6 @@ local function hideMiniMapIcons()
             )
         end
     end
-
-    Minimap:SetScript(
-        "OnUpdate",
-        function()
-            if TimeManagerClockButton then
-                TimeManagerClockButton:Hide()
-                TimeManagerClockButton:SetScript(
-                    "OnShow",
-                    function(self)
-                        self:Hide()
-                    end
-                )
-                Minimap:SetScript("OnUpdate", nil)
-            end
-        end
-    )
 end
 GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 
@@ -109,51 +105,34 @@ GW.AddForProfiling("map", "MapCoordsMiniMap_OnClick", MapCoordsMiniMap_OnClick)
 
 local function hoverMiniMap()
     for _, v in ipairs(MAP_FRAMES_HOVER) do
-        local child = _G[v]
-        if child ~= nil then
-            UIFrameFadeIn(child, 0.2, child:GetAlpha(), 1)
-            if child == GwMapCoords then
-                GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
+        if v then
+            UIFrameFadeIn(v, 0.2, v:GetAlpha(), 1)
+            if v == GwMapCoords then
+                v.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(v) end)
             end
         end
     end
-    MinimapNorthTag:Hide()
 end
 GW.AddForProfiling("map", "hoverMiniMap", hoverMiniMap)
 
 local function hoverMiniMapOut()
-    local shouldShowNorthTag = false
-
     for _, v in ipairs(MAP_FRAMES_HOVER) do
-        local child = _G[v]
-        if child ~= nil then
-            UIFrameFadeOut(child, 0.2, child:GetAlpha(), 0)
-            if child == GwMapCoords then
-                GwMapCoords:SetScript("OnUpdate", nil)
-                if GwMapCoords.CoordsTimer then
-                    GwMapCoords.CoordsTimer:Cancel()
-                    GwMapCoords.CoordsTimer = nil
+        if v then
+            UIFrameFadeOut(v, 0.2, v:GetAlpha(), 0)
+            if v == GwMapCoords then
+                v:SetScript("OnUpdate", nil)
+                if v.CoordsTimer then
+                    v.CoordsTimer:Cancel()
+                    v.CoordsTimer = nil
                 end
             end
         end
-        if v == "MinimapZoneText" then
-            shouldShowNorthTag = true
-        end
     end
-    MinimapNorthTag:SetShown(shouldShowNorthTag)
 end
+GW.hoverMiniMapOut = hoverMiniMapOut
 GW.AddForProfiling("map", "hoverMiniMapOut", hoverMiniMapOut)
 
-local function checkCursorOverMap()
-    if Minimap:IsMouseOver(100, -100, -100, 100) then
-    else
-        hoverMiniMapOut()
-        Minimap:SetScript("OnUpdate", nil)
-    end
-end
-GW.AddForProfiling("map", "checkCursorOverMap", checkCursorOverMap)
-
-local function getMinimapShape()
+local function GetMinimapShape()
     return "SQUARE"
 end
 
@@ -178,9 +157,10 @@ end
 GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
 
 local function setMinimapButtons(side)
-    QueueStatusMinimapButton:ClearAllPoints()
+    local expButton = ExpansionLandingPageMinimapButton or GarrisonLandingPageMinimapButton
+    QueueStatusButton:ClearAllPoints()
     GameTimeFrame:ClearAllPoints()
-    GarrisonLandingPageMinimapButton:ClearAllPoints()
+    expButton:ClearAllPoints()
     GwMailButton:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
@@ -188,18 +168,20 @@ local function setMinimapButtons(side)
     if side == "left" then
         GameTimeFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -2)
         GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -12, -47)
-        QueueStatusMinimapButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -9.5, -66)
+        QueueStatusButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -9.5, -66)
         GwAddonToggle:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -9, 46)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
-        GarrisonLandingPageMinimapButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 0, -3)
+        expButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 0, -3)
     else
         GameTimeFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -2)
         GwMailButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 11, -47)
-        QueueStatusMinimapButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 9.5, -66)
+        QueueStatusButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 9.5, -66)
         GwAddonToggle:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 9, 46)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
-        GarrisonLandingPageMinimapButton:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 2, -3)
+        expButton:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 2, -3)
     end
+
+    QueueStatusButton:SetParent(UIParent)
 end
 GW.setMinimapButtons = setMinimapButtons
 
@@ -259,62 +241,274 @@ local function ToogleMinimapFpsLable()
 end
 GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 
+
+local function Minimap_OnMouseDown(self, btn)
+    if M.TrackingDropdown then
+        _G.HideDropDownMenu(1, nil, M.TrackingDropdown)
+    end
+
+    if btn == "RightButton" and M.TrackingDropdown then
+        _G.ToggleDropDownMenu(1, nil, M.TrackingDropdown, "cursor")
+    else
+        Minimap.OnClick(self)
+    end
+end
+
+local function MapCanvas_OnMouseDown(_, btn)
+    if M.TrackingDropdown then
+        HideDropDownMenu(1, nil, M.TrackingDropdown)
+    end
+
+    if btn == "RightButton" and M.TrackingDropdown then
+        ToggleDropDownMenu(1, nil, M.TrackingDropdown, "cursor")
+    end
+end
+
+local function Minimap_OnMouseWheel(_, d)
+    if d > 0 then
+        Minimap.ZoomIn:Click()
+    elseif d < 0 then
+        Minimap.ZoomOut:Click()
+    end
+end
+
+local function GetLocTextColor()
+    local pvpType = GetZonePVPInfo()
+    if pvpType == "arena" then
+        return 0.84, 0.03, 0.03
+    elseif pvpType == "friendly" then
+        return 0.05, 0.85, 0.03
+    elseif pvpType == "contested" then
+        return 0.9, 0.85, 0.05
+    elseif pvpType == "hostile" then
+        return 0.84, 0.03, 0.03
+    elseif pvpType == "sanctuary" then
+        return 0.035, 0.58, 0.84
+    elseif pvpType == "combat" then
+        return 0.84, 0.03, 0.03
+    else
+        return 0.9, 0.85, 0.05
+    end
+end
+
+local function Update_ZoneText()
+    Minimap.location:SetText(GetMinimapZoneText())
+    Minimap.location:SetTextColor(GetLocTextColor())
+end
+
+local function CreateMinimapTrackingDropdown()
+    local dropdown = CreateFrame("Frame", "GW2UIMiniMapTrackingDropDown", UIParent, "UIDropDownMenuTemplate")
+    dropdown:SetID(1)
+    dropdown:SetClampedToScreen(true)
+    dropdown:Hide()
+
+    UIDropDownMenu_Initialize(dropdown, MiniMapTrackingDropDown_Initialize, "MENU")
+    dropdown.noResize = true
+
+    return dropdown
+end
+
+local function HandleExpansionButton()
+    local garrison = ExpansionLandingPageMinimapButton or GarrisonLandingPageMinimapButton
+    if not garrison then return end
+
+    garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
+    garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
+    garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
+    garrison:GetHighlightTexture():SetBlendMode("BLEND")
+    garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
+    garrison:SetSize(43, 43)
+
+    -- Handle Position
+    local x = Minimap.gwMover:GetCenter()
+    local screenWidth = UIParent:GetRight()
+
+    garrison:ClearAllPoints()
+    if x > (screenWidth / 2) then
+        garrison:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 0, -3)
+    else
+        garrison:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 2, -3)
+    end
+
+    local garrisonType = C_Garrison.GetLandingPageGarrisonType()
+    garrison.garrisonType = garrisonType
+
+    if garrison.garrisonMode then
+        if (garrisonType == Enum.GarrisonType.Type_6_0) then
+            garrison.faction = UnitFactionGroup("player")
+            garrison.title = GARRISON_LANDING_PAGE_TITLE;
+            garrison.description = MINIMAP_GARRISON_LANDING_PAGE_TOOLTIP
+        elseif (garrisonType == Enum.GarrisonType.Type_7_0) then
+            garrison.title = ORDER_HALL_LANDING_PAGE_TITLE;
+            garrison.description = MINIMAP_ORDER_HALL_LANDING_PAGE_TOOLTIP
+        elseif (garrisonType == Enum.GarrisonType.Type_8_0) then
+            garrison.title = GARRISON_TYPE_8_0_LANDING_PAGE_TITLE;
+            garrison.description = GARRISON_TYPE_8_0_LANDING_PAGE_TOOLTIP
+        elseif (garrisonType == Enum.GarrisonType.Type_9_0) then
+            garrison.title = GARRISON_TYPE_9_0_LANDING_PAGE_TITLE;
+            garrison.description = GARRISON_TYPE_9_0_LANDING_PAGE_TOOLTIP
+        end
+    else
+        local minimapDisplayInfo = ExpansionLandingPage:GetOverlayMinimapDisplayInfo();
+        if minimapDisplayInfo then
+            garrison.title = minimapDisplayInfo.title;
+            garrison.description = minimapDisplayInfo.description;
+        end
+    end
+end
+
+local function SetupHybridMinimap()
+    local MapCanvas = HybridMinimap.MapCanvas
+    --MapCanvas:SetMaskTexture(E.Media.Textures.White8x8)
+    MapCanvas:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
+    MapCanvas:SetScript("OnMouseDown", MapCanvas_OnMouseDown)
+    MapCanvas:SetScript("OnMouseUp", GW.NoOp)
+
+    _G.HybridMinimap.CircleMask:StripTextures()
+end
+
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
-    GetMinimapShape = getMinimapShape
+    GetMinimapShape = GetMinimapShape
+
+    Minimap:SetMaskTexture(130937)
+    Minimap:SetScale(1.2)
+
+    local size = GetSetting("MINIMAP_SCALE")
+    Minimap:SetSize(size, size)
+
+    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "VerticalActionBarDummy", {Minimap:GetSize()}, {"default"}, nil, MinimapPostDrag)
+    Minimap:ClearAllPoints()
+    Minimap:SetPoint("CENTER", Minimap.gwMover)
 
     local GwMinimapShadow = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")
-
-    SetMinimapHover()
-
-    QueueStatusMinimapButton:SetSize(26, 26)
-    QueueStatusMinimapButtonIcon:Kill()
-    QueueStatusMinimapButtonIconTexture:SetTexture(nil)
-    QueueStatusMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton")
-    QueueStatusMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
-    QueueStatusMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
-    local GwLfgQueueIcon = CreateFrame("Frame", "GwLfgQueueIcon", QueueStatusMinimapButton, "GwLfgQueueIcon")
-    GwLfgQueueIcon:SetPoint("TOPLEFT", QueueStatusMinimapButton, "TOPLEFT", 0, 0)
-    hooksecurefunc("EyeTemplate_StartAnimating", function()
-        if not Minimap:IsShown() then return end
-        QueueStatusMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1")
-        QueueStatusMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1-Highlight")
-        QueueStatusMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1-Highlight")
-        GwLfgQueueIcon.animation:Play()
-    end)
-    hooksecurefunc("EyeTemplate_StopAnimating", function()
-        GwLfgQueueIcon.animation:Stop()
-        QueueStatusMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton")
-        QueueStatusMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
-        QueueStatusMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
-    end)
-
-    Minimap:SetMaskTexture("Interface/ChatFrame/ChatFrameBackground")
-    Minimap:SetParent(UIParent)
-    Minimap:SetFrameStrata("LOW")
-
-    GwMapGradient = CreateFrame("Frame", "GwMapGradient", GwMinimapShadow, "GwMapGradient")
+    local GwMapGradient = CreateFrame("Frame", "GwMapGradient", GwMinimapShadow, "GwMapGradient")
     GwMapGradient:SetParent(GwMinimapShadow)
     GwMapGradient:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
     GwMapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
 
-    if MiniMapInstanceDifficulty then
-        MiniMapInstanceDifficulty:SetParent(Minimap)
-        MiniMapInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
-    end
-    if GuildInstanceDifficulty then
-        GuildInstanceDifficulty:SetParent(Minimap)
-        GuildInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
-    end
-    if MiniMapChallengeMode then
-        MiniMapChallengeMode:SetParent(Minimap)
-        MiniMapChallengeMode:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
+    local minimapLevel = Minimap:GetFrameLevel() + 2
+    Minimap:SetFrameLevel(minimapLevel)
+
+    MinimapCluster:SetFrameLevel(minimapLevel)
+    MinimapCluster:SetFrameStrata("MEDIUM")
+    Minimap:SetFrameStrata("LOW")
+
+    if Minimap.backdrop then -- level to hybrid maps fixed values
+        Minimap.backdrop:SetFrameLevel(99)
+        Minimap.backdrop:SetFrameStrata("BACKGROUND")
+        Minimap.backdrop:SetIgnoreParentScale(true)
+        Minimap.backdrop:SetScale(1)
     end
 
+    local clusterHolder = CreateFrame("Frame", "GW2UI_MinimapClusterHolder", MinimapCluster)
+    local clusterBackdrop = CreateFrame("Frame", "GWUI_MinimapClusterBackdrop", MinimapCluster)
+    clusterHolder:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -350, -3)
+
+    clusterBackdrop:SetIgnoreParentScale(true)
+    clusterBackdrop:SetScale(1)
+
+    MinimapCluster:ClearAllPoints()
+    MinimapCluster:SetScale(1)
+    MinimapCluster:SetPoint("TOPRIGHT", clusterHolder, 0, 1)
+
+    local mcWidth = MinimapCluster:GetWidth()
+    local height, width = 20, (mcWidth - 30)
+    clusterBackdrop:ClearAllPoints()
+    clusterBackdrop:SetPoint("TOPRIGHT", 0, -1)
+    clusterBackdrop:SetSize(width, height)
+    clusterHolder:SetSize(width, height)
+
+    MinimapCluster:EnableMouse(false)
+
+    MinimapCluster.ZoneTextButton:Kill()
+    TimeManagerClockButton:Kill()
+    MinimapCluster.Tracking.Button:SetParent(GW.HiddenFrame)
+
+    Minimap.location = Minimap:CreateFontString(nil, "OVERLAY", "GW_Standard_Button_Font_Small")
+    Minimap.location:SetPoint("TOP", Minimap, "TOP", 0, -2)
+    Minimap.location:SetJustifyH("CENTER")
+    Minimap.location:SetJustifyV("MIDDLE")
+    Minimap.location:SetIgnoreParentScale(true)
+    Minimap.location:SetScale(1)
+
+    local killFrames = {
+        MinimapBorder,
+        MinimapBorderTop,
+        MinimapZoomIn,
+        MinimapZoomOut,
+        MinimapNorthTag,
+        MinimapZoneTextButton,
+        MiniMapWorldMapButton,
+        MiniMapMailBorder,
+        MiniMapTracking,
+        Minimap.ZoomIn,
+        Minimap.ZoomOut,
+        MinimapCompassTexture
+    }
+
+    MinimapCluster.BorderTop:StripTextures()
+    MinimapCluster.Tracking.Background:StripTextures()
+
+    for _, frame in next, killFrames do
+        frame:Kill()
+    end
+
+    if ExpansionLandingPageMinimapButton.UpdateIcon then
+        hooksecurefunc(ExpansionLandingPageMinimapButton, "UpdateIcon", HandleExpansionButton)
+        ExpansionLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter)
+    else
+        hooksecurefunc("GarrisonLandingPageMinimapButton_UpdateIcon", HandleExpansionButton)
+        GarrisonLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter)
+    end
+    HandleExpansionButton()
+
+    --Hide the BlopRing on Minimap
+    Minimap:SetArchBlobRingAlpha(0)
+    Minimap:SetArchBlobRingScalar(0)
+    Minimap:SetQuestBlobRingAlpha(0)
+    Minimap:SetQuestBlobRingScalar(0)
+
+    QueueStatusFrame:SetClampedToScreen(true)
+
+    M.TrackingDropdown = CreateMinimapTrackingDropdown()
+
+    if HybridMinimap then SetupHybridMinimap() end
+
+    Minimap:EnableMouseWheel(true)
+    Minimap:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
+    Minimap:SetScript("OnMouseDown", Minimap_OnMouseDown)
+    Minimap:SetScript("OnMouseUp", GW.NoOp)
+
+    M:RegisterEvent("ADDON_LOADED")
+    M:RegisterEvent("PLAYER_ENTERING_WORLD")
+    M:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+    M:RegisterEvent("ZONE_CHANGED_INDOORS")
+    M:RegisterEvent("ZONE_CHANGED")
+    M:SetScript("OnEvent", function(_, event, ...)
+        if event == "ADDON_LOADED" then
+            local addon = ...
+            if addon == "Blizzard_TimeManager" then
+                TimeManagerClockButton:Kill()
+            elseif addon == "Blizzard_FeedbackUI" then
+                FeedbackUIButton:Kill()
+            elseif addon == "Blizzard_HybridMinimap" then
+                SetupHybridMinimap()
+            elseif addon == "Blizzard_EncounterJournal" then
+                -- Since the default non-quest map is full screen, it overrides the showing of the encounter journal
+                hooksecurefunc("EJ_HideNonInstancePanels", function()
+                    if InCombatLockdown() or not WorldMapFrame:IsShown() then return end
+
+                    HideUIPanel(WorldMapFrame)
+                end)
+            end
+        else
+            Update_ZoneText()
+        end
+    end)
+
+    --Time
     GwMapTime = CreateFrame("Button", "GwMapTime", Minimap, "GwMapTime")
-    TimeManager_LoadUI()
-    TimeManagerClockButton:Hide()
-    StopwatchFrame:SetParent("UIParent")
     GwMapTime:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     GwMapTime.timeTimer = C_Timer.NewTicker(0.2, function()
         GwMapTime.Time:SetText(GameTime_GetTime(false))
@@ -328,7 +522,7 @@ local function LoadMinimap()
     --coords
     GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
     GwMapCoords.Coords:SetText(NOT_APPLICABLE)
-    GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12)
+    GwMapCoords.Coords:SetFont(STANDARD_TEXT_FONT, 12, "")
     GwMapCoords.MapCoordsMiniMapPrecision = GetSetting("MINIMAP_COORDS_PRECISION")
     ToogleMinimapCoorsLable()
 
@@ -338,75 +532,32 @@ local function LoadMinimap()
     GwMapFPS.fps:SetFont(STANDARD_TEXT_FONT, 12)
     ToogleMinimapFpsLable()
 
-    MinimapNorthTag:ClearAllPoints()
-    MinimapNorthTag:SetPoint("TOP", Minimap, 0, 0)
-
-    MinimapCluster:SetAlpha(0)
-    hooksecurefunc(MinimapCluster, "SetAlpha", function(self, alpha, forced)
-        if alpha ~= 0 and forced ~= true then
-            self:SetAlpha(0, true)
-        end
-    end)
-    MinimapBorder:Hide()
-    MiniMapWorldMapButton:Hide()
-
-    MinimapZoneText:ClearAllPoints()
-    MinimapZoneText:SetParent(GwMapGradient)
-    MinimapZoneText:SetDrawLayer("OVERLAY", 2)
-    MiniMapTracking:SetPoint("TOPLEFT", Minimap, -15, -30)
-
-    MinimapZoneText:SetTextColor(1, 1, 1)
-
-    hooksecurefunc(
-        MinimapZoneText,
-        "SetText",
-        function()
-            MinimapZoneText:SetTextColor(1, 1, 1)
-        end
-    )
-
-    QueueStatusMinimapButtonBorder:SetTexture(nil)
-
+    --CalenderIcon
     GameTimeFrame:SetHitRectInsets(0, 0, 0, 0)
-    GameTimeFrame:SetSize(35, 35)
-    GameTimeFrame:StripTextures()
-    GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/icon-calendar-Up")
-    GameTimeFrame:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/icon-calendar")
-    GameTimeFrame:SetHighlightTexture(nil)
-    GameTimeFrame:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
-    GameTimeFrame:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
+    GameTimeFrame:SetSize(40, 40)
+    GameTimeFrame.date = GameTimeFrame:CreateFontString(nil, "OVERLAY")
+    GameTimeFrame.date:SetPoint("CENTER", GameTimeFrame, "CENTER", 0, -1)
+    GameTimeFrame.date:SetJustifyH("CENTER")
+    GameTimeFrame.date:SetJustifyV("MIDDLE")
+    GameTimeFrame.date:SetIgnoreParentScale(true)
+    GameTimeFrame.date:SetScale(1)
+    GameTimeFrame.date:SetFont(UNIT_NAME_FONT, 10, "")
+    GameTimeFrame.date:SetTextColor(0, 0, 0)
+    hooksecurefunc("GameTimeFrame_SetDate", function()
+        GameTimeFrame:StripTextures()
+        GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/icon-calendar-Up")
+        GameTimeFrame:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/icon-calendar")
+        GameTimeFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/icon-calendar")
+        GameTimeFrame:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
+        GameTimeFrame:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
+        GameTimeFrame:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
+        GameTimeFrame.date:SetText(C_DateAndTime.GetCurrentCalendarTime().monthDay)
+    end)
 
-    GarrisonLandingPageMinimapButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
-    GarrisonLandingPageMinimapButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
-    GarrisonLandingPageMinimapButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
-    GarrisonLandingPageMinimapButton:GetHighlightTexture():SetBlendMode("BLEND")
-    GarrisonLandingPageMinimapButton.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
-    GarrisonLandingPageMinimapButton:SetSize(43, 43)
-    -- override blizzard function to prevent texture changes
-    GarrisonLandingPageMinimapButton_UpdateIcon = function(self)
-        local garrisonType = C_Garrison.GetLandingPageGarrisonType()
-        self.garrisonType = garrisonType
-
-        if (garrisonType == Enum.GarrisonType.Type_6_0) then
-            self.faction = UnitFactionGroup("player")
-            self.title = GARRISON_LANDING_PAGE_TITLE;
-            self.description = MINIMAP_GARRISON_LANDING_PAGE_TOOLTIP
-        elseif (garrisonType == Enum.GarrisonType.Type_7_0) then
-            self.title = ORDER_HALL_LANDING_PAGE_TITLE;
-            self.description = MINIMAP_ORDER_HALL_LANDING_PAGE_TOOLTIP
-        elseif (garrisonType == Enum.GarrisonType.Type_8_0) then
-            self.title = GARRISON_TYPE_8_0_LANDING_PAGE_TITLE;
-            self.description = GARRISON_TYPE_8_0_LANDING_PAGE_TOOLTIP
-        elseif (garrisonType == Enum.GarrisonType.Type_9_0) then
-            self.title = GARRISON_TYPE_9_0_LANDING_PAGE_TITLE;
-            self.description = GARRISON_TYPE_9_0_LANDING_PAGE_TOOLTIP
-        end
-    end
-    GarrisonLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter)
-
+    --Mail Button
     local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")
     local fnGwMailButton_OnEvent = function(self, event)
-        if (event == "UPDATE_PENDING_MAIL") then
+        if event == "UPDATE_PENDING_MAIL" then
             if (HasNewMail()) then
                 if Minimap:IsShown() then
                     self:Show()
@@ -434,69 +585,9 @@ local function LoadMinimap()
     GwMailButton:RegisterEvent("UPDATE_PENDING_MAIL")
     GwMailButton:SetFrameLevel(GwMailButton:GetFrameLevel() + 1)
 
+    -- Addon Icons
     GW.CreateMinimapButtonsSack()
 
-    hooksecurefunc(Minimap, "SetScale", GW.NoOp)
-
-    Minimap:SetScale(1.2)
-
-    MinimapZoneText:ClearAllPoints()
-    MinimapZoneText:SetPoint("TOP", Minimap, 0, -5)
-
-    hideMiniMapIcons()
-
-    Minimap:SetScript(
-        "OnEnter",
-        function()
-            hoverMiniMap()
-            Minimap:SetScript(
-                "OnUpdate",
-                function()
-                    checkCursorOverMap()
-                end
-            )
-        end
-    )
-
-    MinimapZoomIn:Hide()
-    MinimapZoomOut:Hide()
-    Minimap:EnableMouseWheel(true)
-
-    Minimap:SetScript(
-        "OnMouseWheel",
-        function(self, delta)
-            if delta > 0 and self:GetZoom() < 5 then
-                MinimapZoomIn:Click()
-            elseif delta < 0 and self:GetZoom() > 0 then
-                MinimapZoomOut:Click()
-            end
-        end
-    )
-    Minimap:SetScript(
-        "OnMouseDown",
-        function(_, button)
-            if button == "RightButton" then
-                ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "MiniMapTracking", 0, -5)
-
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            end
-        end
-    )
-
-    Minimap:HookScript("OnShow", minimap_OnShow)
-    Minimap:HookScript("OnHide", minimap_OnHide)
-
-    -- remove quest blob
-    Minimap:SetArchBlobRingScalar(0)
-    Minimap:SetQuestBlobRingScalar(0)
-
-    local size = GetSetting("MINIMAP_SCALE")
-    Minimap:SetSize(size, size)
-
-    -- mobeable stuff
-    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "VerticalActionBarDummy", {size, size}, {"default"}, nil, MinimapPostDrag)
-    Minimap:ClearAllPoints()
-    Minimap:SetPoint("TOPLEFT", Minimap.gwMover)
     -- check on which side we need to set the buttons
     local x = Minimap:GetCenter()
     local screenWidth = UIParent:GetRight()
@@ -506,15 +597,62 @@ local function LoadMinimap()
         setMinimapButtons("right")
     end
 
-    if not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
-        MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
-        MinimapCluster:ClearAllPoints()
-        MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
-    end
-
     Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow")
 
-    C_Timer.After(0.1, hoverMiniMapOut)
+    hideMiniMapIcons()
+
+    Minimap:SetScript("OnEnter", hoverMiniMap)
+    Minimap:SetScript("OnLeave", hoverMiniMapOut)
+
+    Minimap:HookScript("OnShow", minimap_OnShow)
+    Minimap:HookScript("OnHide", minimap_OnHide)
+
+    SetMinimapHover()
+    C_Timer.After(0.2, hoverMiniMapOut)
+
+    --difficult icon
+    local difficulty = MinimapCluster.InstanceDifficulty
+    local instance = difficulty.Instance
+    local guild = difficulty.Guild
+    local challenge = difficulty.ChallengeMode
+
+    challenge:SetParent(Minimap)
+    instance:SetParent(Minimap)
+    guild:SetParent(Minimap)
+
+    if challenge then
+        challenge:ClearAllPoints()
+        challenge:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
+    end
+    if instance then
+        instance:ClearAllPoints()
+        instance:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
+    end
+    if guild then
+        guild:ClearAllPoints()
+        guild:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
+    end
+
+    QueueStatusButton:SetSize(26, 26)
+    QueueStatusButtonIcon:Kill()
+    QueueStatusButtonIcon.texture:SetTexture(nil)
+    QueueStatusButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton")
+    QueueStatusButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
+    QueueStatusButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
+    local GwLfgQueueIcon = CreateFrame("Frame", "GwLfgQueueIcon", QueueStatusButton, "GwLfgQueueIcon")
+    GwLfgQueueIcon:SetPoint("CENTER", QueueStatusButton, "CENTER", 0, 0)
+    hooksecurefunc(QueueStatusButtonIcon, "PlayAnim", function()
+        if not Minimap:IsShown() then return end
+        QueueStatusButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1")
+        QueueStatusButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1-Highlight")
+        QueueStatusButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGAnimation-1-Highlight")
+        GwLfgQueueIcon.animation:Play()
+    end)
+    hooksecurefunc(QueueStatusButtonIcon, "StopAnimating", function()
+        GwLfgQueueIcon.animation:Stop()
+        QueueStatusButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton")
+        QueueStatusButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
+        QueueStatusButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")
+    end)
 end
 GW.LoadMinimap = LoadMinimap
-

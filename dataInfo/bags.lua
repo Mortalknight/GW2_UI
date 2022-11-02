@@ -20,11 +20,11 @@ local function Bags_OnEnter(self)
     end
     GameTooltip:AddLine(" ")
 
-    for i = 0, NUM_BAG_SLOTS do
-        local bagName = GetBagName(i)
+    for i = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
+        local bagName = C_Container.GetBagName(i)
         if bagName then
-            local numSlots = GetContainerNumSlots(i)
-            local freeSlots = GetContainerNumFreeSlots(i)
+            local numSlots = C_Container.GetContainerNumSlots(i)
+            local freeSlots = C_Container.GetContainerNumFreeSlots(i)
             local usedSlots = numSlots - freeSlots
             local sumNum = 19 + i
 
@@ -42,7 +42,7 @@ local function Bags_OnEnter(self)
         end
     end
 
-    for i = 1, MAX_WATCHED_TOKENS do
+    for i = 1, BackpackTokenFrame:GetMaxTokensWatched() do
         local info = C_CurrencyInfo.GetBackpackCurrencyInfo(i)
         if info then
             if i == 1 then
