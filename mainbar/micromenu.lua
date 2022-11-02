@@ -262,29 +262,37 @@ local function reskinMicroButton(btn, name, mbf)
 
 		--hackfix for texture size
     local t = btn:GetDisabledTexture()
-		t:ClearAllPoints()
-		t:SetPoint("CENTER",btn,"CENTER",0,0)
-		t:SetSize(32,32)
+    t:ClearAllPoints()
+    t:SetPoint("CENTER",btn,"CENTER",0,0)
+    t:SetSize(32,32)
 
-		t = btn:GetNormalTexture()
-		t:ClearAllPoints()
-		t:SetPoint("CENTER",btn,"CENTER",0,0)
-		t:SetSize(32,32)
+    t = btn:GetNormalTexture()
+    t:ClearAllPoints()
+    t:SetPoint("CENTER",btn,"CENTER",0,0)
+    t:SetSize(32,32)
 
-		t = btn:GetPushedTexture()
-		t:ClearAllPoints()
-		t:SetPoint("CENTER",btn,"CENTER",0,0)
-		t:SetSize(32,32)
+    t = btn:GetPushedTexture()
+    t:ClearAllPoints()
+    t:SetPoint("CENTER",btn,"CENTER",0,0)
+    t:SetSize(32,32)
 
-		t = btn:GetHighlightTexture()
-		t:ClearAllPoints()
-		t:SetPoint("CENTER",btn,"CENTER",0,0)
-		t:SetSize(32,32)
-		--
+    t = btn:GetHighlightTexture()
+    t:ClearAllPoints()
+    t:SetPoint("CENTER",btn,"CENTER",0,0)
+    t:SetSize(32,32)
 
     if btn.Flash then
         btn.Flash:SetInside()
-				btn.Flash:SetTexture()
+		btn.Flash:SetTexture()
+    end
+
+    if btn.FlashBorder then
+        btn.FlashBorder:SetAlpha(0)
+        btn.FlashBorder:SetScale(0.00001)
+    end
+    if btn.FlashContent then
+        btn.FlashContent:SetAlpha(0)
+        btn.FlashContent:SetScale(0.00001)
     end
 
     btn.GwNotify = btn:CreateTexture(nil, "OVERLAY")
@@ -484,6 +492,21 @@ local function setupMicroButtons(mbf)
     TalentMicroButton:RegisterEvent("TRAIT_CONFIG_UPDATED")
     TalentMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
     TalentMicroButton:RegisterEvent("TRAIT_NODE_CHANGED")
+    hooksecurefunc(TalentMicroButton, "EvaluateAlertVisibility", function(self)
+        MicroButtonPulseStop(self) -- hide blizzard flash
+
+        local alertText, alertPriority = self:HasTalentAlertToShow()
+	    local pvpAlertText, pvpAlertPriority = self:HasPvpTalentAlertToShow()
+
+        if not alertText or pvpAlertPriority < alertPriority then
+            -- pvpAlert is higher priority, use that instead
+            alertText = pvpAlertText;
+        end
+
+        if alertText and MainMenuMicroButton_ShowAlert(self, alertText) then
+            GW.FrameFlash(self, 1, 0.3, 1, true)
+        end
+    end)
 
     -- AchievementMicroButton
     AchievementMicroButton:ClearAllPoints()
@@ -516,19 +539,41 @@ local function setupMicroButtons(mbf)
     -- EJMicroButton
     EJMicroButton:ClearAllPoints()
     EJMicroButton:SetPoint("BOTTOMLEFT", LFDMicroButton, "BOTTOMRIGHT", 4, 0)
-    EJMicroButton.FlashBorder:SetAlpha(0)
-    EJMicroButton.FlashBorder:SetScale(0.00001)
-    EJMicroButton.FlashContent:SetAlpha(0)
-    EJMicroButton.FlashContent:SetScale(0.00001)
+    hooksecurefunc(EJMicroButton, "EvaluateAlertVisibility", function(self)
+        MicroButtonPulseStop(self) -- hide blizzard flash
+
+        local alertShown = MainMenuMicroButton_ShowAlert(self, FIRST_RUNEFORGE_LEGENDARY_POWER_TUTORIAL, LE_FRAME_TUTORIAL_FIRST_RUNEFORGE_LEGENDARY_POWER)
+        if alertShown then
+            GW.FrameFlash(self, 1, 0.3, 1, true)
+        end
+    end)
 
     -- CollectionsMicroButton
     CollectionsMicroButton:ClearAllPoints()
     CollectionsMicroButton:SetPoint("BOTTOMLEFT", EJMicroButton, "BOTTOMRIGHT", 4, 0)
-    CollectionsMicroButton.FlashBorder:Hide()
-    CollectionsMicroButton.FlashContent:Hide()
+    hooksecurefunc(CollectionsMicroButton, "EvaluateAlertVisibility", function(self)
+        MicroButtonPulseStop(self) -- hide blizzard flash
+
+        local numMountsNeedingFanfare = C_MountJournal.GetNumMountsNeedingFanfare()
+        local numPetsNeedingFanfare = C_PetJournal.GetNumPetsNeedingFanfare()
+        if numMountsNeedingFanfare > self.lastNumMountsNeedingFanfare or numPetsNeedingFanfare > self.lastNumPetsNeedingFanfare then
+            local alertShown = MainMenuMicroButton_ShowAlert(self, numMountsNeedingFanfare + numPetsNeedingFanfare > 1 and COLLECTION_UNOPENED_PLURAL or COLLECTION_UNOPENED_SINGULAR)
+            if alertShown then
+                GW.FrameFlash(self, 1, 0.3, 1, true)
+            end
+        end
+    end)
+
     hooksecurefunc("MicroButtonPulse", function(self)
-        if self == CollectionsMicroButton or self == EJMicroButton then
+        if self == CollectionsMicroButton or self == EJMicroButton or self == TalentMicroButton then
             MicroButtonPulseStop(self)
+            GW.FrameFlash(self, 1, 0.3, 1, true)
+        end
+    end)
+
+    hooksecurefunc("MicroButtonPulseStop", function(self)
+        if self == CollectionsMicroButton or self == EJMicroButton or self == TalentMicroButton then
+            GW.StopFlash(self)
         end
     end)
 
@@ -538,8 +583,6 @@ local function setupMicroButtons(mbf)
     MainMenuMicroButton.MainMenuBarPerformanceBar:SetAlpha(0)
     MainMenuMicroButton.MainMenuBarPerformanceBar:SetScale(0.00001)
     MainMenuMicroButton:HookScript("OnUpdate", hook_MainMenuMicroButton_OnUpdate)
-    MainMenuMicroButton.FlashContent:SetAlpha(0)
-    MainMenuMicroButton.FlashContent:SetScale(0.00001)
 
     -- HelpMicroButton
     HelpMicroButton:ClearAllPoints()

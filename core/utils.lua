@@ -581,7 +581,7 @@ GW.StopFlash = StopFlash
 
 local function FrameFlash(frame, duration, fadeOutAlpha, fadeInAlpha, loop)
     if not frame.flasher then
-        SetUpFrameFlash(frame,loop)
+        SetUpFrameFlash(frame, loop)
     end
 
     if not frame.flasher:IsPlaying() then
