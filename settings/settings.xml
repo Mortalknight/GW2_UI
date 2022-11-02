@@ -71,7 +71,7 @@
                 <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagheader">
                     <Size x="512" y="64"/>
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-40" y="0" />
                     </Anchors>
                 </Texture>
                 <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagheader-right">
@@ -104,10 +104,10 @@
                 </Texture>
             </Layer>
             <Layer textureSubLevel="3">
-                <Texture file="Interface/AddOns/GW2_UI/textures/icons/settingsicon">
-                    <Size x="128" y="128"/>
+                <Texture file="Interface/AddOns/GW2_UI/textures/character/settings-window-icon">
+                    <Size x="84" y="84"></Size>
                     <Anchors>
-                        <Anchor point="CENTER" relativePoint="TOPLEFT" x="-16" y="16" />
+                        <Anchor point="CENTER" relativePoint="TOPLEFT" x="-26" y="26" />
                     </Anchors>
                 </Texture>
                 <FontString parentKey="headerString" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
@@ -670,7 +670,7 @@
                             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                         </Anchors>
-                        
+
                     </Frame>
                     <Slider parentKey="slider" orientation="VERTICAL" enableMouse="true">
                         <Size x="12" y="12"/>
@@ -1052,7 +1052,7 @@
                     </EditBox>
                 </Frames>
             </Frame>
-        </Frames> 
+        </Frames>
     </Frame>
 
     <Frame name="GwLayoutView" virtual="true" hidden="false">
@@ -1248,7 +1248,7 @@
             </Button>
 
         </Frames>
-        
+
     </Frame>
 
 </Ui>
