@@ -6,16 +6,20 @@
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="245" y="-5"></Anchor>
         </Anchors>
-    </Frame>
-
-    <Frame name="GwTalentsLevelLabel" virtual="true">
-        <Size x="30" y="30"></Size>
         <Layers>
-            <Layer level="BORDER">
-                <FontString parentKey="title" text="0" justifyH="CENTER" justifyV="MIDDLE">
-                    <Size x="32" y="32"></Size>
+            <Layer level="BACKGROUND">
+                <Texture file="Interface\AddOns\GW2_UI\textures\talents\talents_header">
+                    <Size x="512" y="32"></Size>
                     <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <FontString parentKey="title" text="Passive" justifyH="LEFT" justifyV="MIDDLE">
+                    <Size x="256" y="32"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="20" y="-10"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
@@ -36,31 +40,27 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK">
-                <FontString parentKey="activeSpecTitle" text="Arcane" justifyH="CENTER" justifyV="TOP">
-                    <Size x="120" y="18"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" x="5" y="-10"></Anchor>
-                    </Anchors>
-                </FontString>
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
-                    <Size x="80" y="80"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="20" y="0"></Anchor>
-                    </Anchors>
-                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
-                </Texture>
-            </Layer>
-            <Layer level="OVERLAY">
+            <Layer level="ARTWORK" textureSubLevel="7">
                 <Texture parentKey="roleIcon">
                     <Size x="25" y="25"></Size>
                 </Texture>
+            </Layer>
+             <Layer level="ARTWORK" textureSubLevel="6">
                 <Texture parentKey="roleIconBg" file="Interface/AddOns/GW2_UI/textures/hud/notification-backdrop">
                     <Size x="27" y="27"></Size>
                     <Color r="0" g="0" b="0" a="0.7"/>
                     <Anchors>
                         <Anchor point="CENTER" relativeKey="$parent.roleIcon" relativePoint="CENTER" x="0"></Anchor>
                     </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="80" y="80"></Size>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="20" y="0"></Anchor>
+                    </Anchors>
+                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                 </Texture>
             </Layer>
             <Layer level="BORDER">
@@ -73,19 +73,13 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button parentKey="iconHelperButton">
-                <Size x="80" y="80"/>
-                <Anchors>
-                    <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER" x="0"></Anchor>
-                </Anchors>
-            </Button>
             <Frame parentKey="info" enableMouse="false">
                 <Size x="460" y="140"></Size>
                 <Anchors>
                     <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
                 </Anchors>
                 <Layers>
-                    <Layer level="OVERLAY">
+                    <Layer level="BACKGROUND">
                         <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -103,85 +97,7 @@
                             </Anchors>
                         </FontString>
                         <FontString parentKey="specDesc" text="Arcane" justifyH="LEFT">
-                            <Size x="400" y="60"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.specTitle" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-                <Frames>
-                    <Frame parentKey="spellPreview" enableMouse="false">
-                        <Size x="460" y="140"></Size>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativeKey="$parent.specDesc" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        </Anchors>
-                    </Frame>
-                </Frames>
-            </Frame>
-
-        </Frames>
-    </Button>
-
-    <Button name="GwPetSpecFrame" enableMouse="true" virtual="true">
-        <Size x="196" y="140"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="BACKGROUND">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
-                    <Size x="196" y="140"></Size>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer level="ARTWORK">
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
-                    <Size x="80" y="80"></Size>
-                    <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="20" y="0"></Anchor>
-                    </Anchors>
-                    <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
-                </Texture>
-            </Layer>
-            <Layer level="BORDER">
-                <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
-                    <Size x="90" y="90"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER" x="0"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-        <Frames>
-            <Frame parentKey="info" enableMouse="false">
-                <Size x="196" y="140"></Size>
-                <Anchors>
-                    <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
-
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                            </Anchors>
-                            <Color r="1" g="1" b="1" a="0.6"></Color>
-                            <TexCoords left="1" right="0" top="0" bottom="1" />
-                        </Texture>
-                    </Layer>
-                    <Layer level="OVERLAY" textureSubLevel="">
-                        <FontString parentKey="specTitle" text="Arcane" justifyH="LEFT">
-                            <Size x="200" y="20"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" x="0" y="-20"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentKey="specDesc" text="Arcane" justifyH="LEFT">
-                            <Size x="400" y="50"></Size>
+                            <Size x="400" y="80"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.specTitle" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
                             </Anchors>

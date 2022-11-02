@@ -7,7 +7,6 @@ local IsIn = GW.IsIn
 local maxTalentRows = 10
 local talentsPerRow = 10
 
-
 local function setSpecTabIconAndTooltip(tab)
     -- update spec-specific skill tab tooltip and icon
     local _, specName, _ = GetSpecializationInfo(GW.myspec)
@@ -29,6 +28,7 @@ local function setSpecTabIconAndTooltip(tab)
         end
     end
 end
+GW.SetSpecTabIconAndTooltip = setSpecTabIconAndTooltip
 
 local function spellButton_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT", 0, 0)
@@ -701,7 +701,7 @@ end
 GW.AddForProfiling("talents", "createRegTab", createRegTab)
 
 local function LoadTalents(tabContainer)
-    CreateFrame("Frame", "GwTalentFrame", tabContainer, "SecureHandlerStateTemplate,GwTalentFrame")
+    local fmGTF = CreateFrame("Frame", "GwTalentFrame", tabContainer, "SecureHandlerStateTemplate,GwTalentFrame")
 
     local fmSpellbook = CreateFrame("Frame", "GwSpellbookMenu", GwTalentFrame, "GwSpellbookMenu")
     -- TODO: change this to do all attribute stuff on container instead of menu
@@ -732,6 +732,8 @@ local function LoadTalents(tabContainer)
 
     fmSpellbook.tabContainers[2]:Show()
 
+
+    GW.LoadSpecializations(fmGTF)
     updateTab(fmSpellbook)
 
     fmSpellbook.tab1:RegisterForClicks("AnyUp")
