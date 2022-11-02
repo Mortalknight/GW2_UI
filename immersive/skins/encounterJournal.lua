@@ -197,10 +197,10 @@ local function encounterJournalSkin()
 
     EJ.navBar:StripTextures()
     EJ.navBar.overlay:StripTextures()
-    EJ.navBar:SetPoint("TOPLEFT", 7, -33)
+    EJ.navBar:SetPoint("TOPLEFT", 0, -33)
     EJ.navBar.SetPoint = GW.NoOp
 
-    EJ.navBar.tex = EJ.navBar:CreateTexture("bg", "OVERLAY", nil, 0)
+    EJ.navBar.tex = EJ.navBar:CreateTexture("bg", "BACKGROUND", nil, 0)
     EJ.navBar.tex:SetPoint("TOPLEFT", EJ.navBar, "TOPLEFT", 0, 20)
     EJ.navBar.tex:SetPoint("BOTTOMRIGHT", EJ.navBar, "BOTTOMRIGHT", 0, 1)
     EJ.navBar.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
@@ -209,6 +209,12 @@ local function encounterJournalSkin()
     EJ.tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
     EJ.tex:SetPoint("BOTTOMRIGHT", EJ, "BOTTOMRIGHT", 0, 0)
     EJ.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")
+
+    EJ.innertex = EJ:CreateTexture("bg2", "BACKGROUND", nil, 7)
+    EJ.innertex:SetPoint("TOPLEFT", EJ.navBar, "BOTTOMLEFT", -1, 1)
+    EJ.innertex:SetPoint("BOTTOMRIGHT", EJ, "BOTTOMRIGHT", 1, -1)
+    EJ.innertex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+    EJ.innertex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
     EJ.navBar.homeButton:StripTextures()
     local r = {EJ.navBar.homeButton:GetRegions()}
@@ -258,11 +264,11 @@ local function encounterJournalSkin()
 
     local EncounterInfo = EJ.encounter.info
 
-    EncounterInfo.tex = EncounterInfo:CreateTexture("bg", "BACKGROUND", nil, 7)
-    EncounterInfo.tex:SetPoint("TOPLEFT", EncounterInfo, "TOPLEFT", -1, -1)
-    EncounterInfo.tex:SetPoint("BOTTOMRIGHT", EncounterInfo, "BOTTOMRIGHT", 1, 1)
-    EncounterInfo.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
-    EncounterInfo.tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
+    --EncounterInfo.tex = EncounterInfo:CreateTexture("bg", "BACKGROUND", nil, 7)
+    --EncounterInfo.tex:SetPoint("TOPLEFT", EncounterInfo, "TOPLEFT", -1, -1)
+    --EncounterInfo.tex:SetPoint("BOTTOMRIGHT", EncounterInfo, "BOTTOMRIGHT", 1, 1)
+    --EncounterInfo.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+    --EncounterInfo.tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
     EncounterInfo.encounterTitle:Kill()
 
@@ -433,11 +439,11 @@ local function encounterJournalSkin()
     end
 
     LJ:StripTextures()
-    LJ.tex = LJ:CreateTexture("bg", "BACKGROUND", nil, 0)
-    LJ.tex:SetPoint("TOPLEFT", LJ, "TOPLEFT", -1, 1)
-    LJ.tex:SetPoint("BOTTOMRIGHT", LJ, "BOTTOMRIGHT", 1, -1)
-    LJ.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
-    LJ.tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
+    --LJ.tex = LJ:CreateTexture("bg", "BACKGROUND", nil, 0)
+    --LJ.tex:SetPoint("TOPLEFT", LJ, "TOPLEFT", -1, 1)
+    --LJ.tex:SetPoint("BOTTOMRIGHT", LJ, "BOTTOMRIGHT", 1, -1)
+    --LJ.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+    --LJ.tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
     hooksecurefunc(EncounterJournal.instanceSelect.ScrollBox, "Update", function(frame)
         for _, child in next, { frame.ScrollTarget:GetChildren() } do
