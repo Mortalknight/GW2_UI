@@ -852,7 +852,10 @@ local function LoadPDBagList(fmMenu)
         fmPD3M:SetPosition(0.2, 0, -0.05)
     elseif GW.myrace == "Orc" or GW.myrace == "MagharOrc" then
         fmPD3M:SetPosition(0.1, 0, -0.15)
+    elseif GW.myrace == "Dracthyr" then
+        fmPD3M:SetPosition(0.1, 0, -0.15)
     end
+
     fmPD3M:SetRotation(-0.15)
     Model_OnLoad(fmPD3M, 4, 0, -0.1, CharacterModelFrame_OnMouseUp)
 
