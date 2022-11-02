@@ -69,6 +69,7 @@ GW.MOVABLE_FRAMES = {}
 GW.scaleableFrames = {}
 GW.scaleableMainHudFrames = {}
 GW.animations = {}
+GW.oUF = {}
 
 -- money
 GW.earnedMoney = 0

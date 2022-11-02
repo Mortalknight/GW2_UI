@@ -716,26 +716,6 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
 end
 GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 
-local function hideBlizzardPartyFrame()
-    if InCombatLockdown() then
-        return
-    end
-
-    PartyFrame:UnregisterAllEvents()
-
-    for frame in PartyFrame.PartyMemberFramePool:EnumerateActive() do
-        if frame then
-            frame:Kill()
-        end
-    end
-
-    if CompactRaidFrameManager_SetSetting then
-        CompactRaidFrameManager_SetSetting("IsShown", "0")
-        CompactRaidFrameManager:Kill()
-    end
-end
-GW.AddForProfiling("party", "hideBlizzardPartyFrame", hideBlizzardPartyFrame)
-
 local function LoadPartyFrames()
     if not GwManageGroupButton then
         GW.manageButton()
@@ -743,8 +723,6 @@ local function LoadPartyFrames()
         -- load missing and ignored auras, do it here bcause this code is only triggered from one of the 3 grids
         GW.UpdateMissingAndIgnoredAuras()
     end
-
-    hideBlizzardPartyFrame()
 
     if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
         return

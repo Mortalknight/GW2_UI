@@ -339,9 +339,7 @@ local function TogglePlayerEnhancedCastbar(self, setShown)
 end
 GW.TogglePlayerEnhancedCastbar = TogglePlayerEnhancedCastbar
 
-local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
-    castingBarType:Kill()
-
+local function LoadCastingBar(name, unit, showTradeSkills)
     local GwCastingBar = CreateFrame("Frame", name, UIParent, "GwCastingBar")
     GwCastingBar.name:SetFont(UNIT_NAME_FONT, 12)
     GwCastingBar.name:SetShadowOffset(1, -1)

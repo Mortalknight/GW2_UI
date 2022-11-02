@@ -546,6 +546,7 @@ local function evPlayerLogin(self)
     end
 
     GW.DisableBlizzardMovers()
+    GW.DisableBlizzardFrames()
 
     loaded = true
     GW.CheckRole() -- some API's deliver a nil value on init.lua load, we we fill this values also here
@@ -666,8 +667,8 @@ local function evPlayerLogin(self)
     end
 
     if GetSetting("CASTINGBAR_ENABLED") then
-        GW.LoadCastingBar(PlayerCastingBarFrame, "GwCastingBarPlayer", "player", true)
-        GW.LoadCastingBar(PetCastingBarFrame, "GwCastingBarPet", "pet", false)
+        GW.LoadCastingBar("GwCastingBarPlayer", "player", true)
+        GW.LoadCastingBar("GwCastingBarPet", "pet", false)
     end
 
     if GetSetting("MINIMAP_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Minimap", true) then

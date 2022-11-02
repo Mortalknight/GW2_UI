@@ -993,8 +993,6 @@ local function LoadTarget()
 
         CombatFeedback_Initialize(fctf, font, 30)
     end
-
-    TargetFrame:Kill()
 end
 GW.LoadTarget = LoadTarget
 
@@ -1087,9 +1085,6 @@ local function LoadFocus()
     NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_EMPOWER_STOP", "focus")
 
     LoadAuras(NewUnitFrame)
-
-    FocusFrame:SetScript("OnEvent", nil)
-    FocusFrame:Hide()
 end
 GW.LoadFocus = LoadFocus
 

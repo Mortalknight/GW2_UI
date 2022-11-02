@@ -394,9 +394,6 @@ local function LoadHealthGlobe()
         v:SetTextColor(0, 0, 0, 1 / i)
     end
 
-    -- set handlers for health globe and disable default player frame
-    PlayerFrame:SetScript("OnEvent", nil)
-    PlayerFrame:Kill()
     hg:SetScript("OnEvent", globe_OnEvent)
     hg:SetScript("OnEnter", globe_OnEnter)
     hg:SetScript("OnLeave", function(self)
@@ -428,9 +425,7 @@ local function LoadHealthGlobe()
     rep:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     -- grab the TotemFramebuttons to our own Totem Frame
-    if PlayerFrame and TotemFrame then
-        GW.Create_Totem_Bar()
-    end
+    GW.Create_Totem_Bar()
 
     -- setup anim to flash the PvP marker
     local pvp = hg.pvp

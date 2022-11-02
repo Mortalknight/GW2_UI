@@ -176,18 +176,6 @@ local function GridRaidUpdateFramesLayout()
 end
 GW.GridRaidUpdateFramesLayout = GridRaidUpdateFramesLayout
 
-local function hideBlizzardRaidFrame()
-    if InCombatLockdown() then
-        return
-    end
-
-    if CompactRaidFrameManager_SetSetting then
-        CompactRaidFrameManager_SetSetting("IsShown", "0")
-        CompactRaidFrameManager:Kill()
-    end
-end
-GW.AddForProfiling("raidframes", "hideBlizzardRaidFrame", hideBlizzardRaidFrame)
-
 local function RaidGridOnEvent(self, event, unit)
     if not UnitExists(self.unit) then
         return
@@ -329,8 +317,6 @@ local function LoadRaidFrames()
         -- load missing and ignored auras, do it here bcause this code is only triggered from one of the 3 grids
         GW.UpdateMissingAndIgnoredAuras()
     end
-
-    hideBlizzardRaidFrame()
 
     local container = CreateFrame("Frame", "GwRaidFrameContainer", UIParent, "GwRaidFrameContainer")
     local pos = GetSetting("raid_pos")

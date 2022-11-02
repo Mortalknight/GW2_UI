@@ -254,7 +254,6 @@ GW.AddForProfiling("bossFrames", "registerFrame", registerFrame)
 local function LoadBossFrame()
     for i = 1, 5 do
         bossFrames[i] = registerFrame(i)
-        _G["Boss" .. i .. "TargetFrame"]:Kill()
     end
     C_Timer.After(0.01, function() updateBossFrameHeight() end)
 end

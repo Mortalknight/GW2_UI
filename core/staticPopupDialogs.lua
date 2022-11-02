@@ -132,3 +132,13 @@ StaticPopupDialogs["CONFIG_RELOAD"] = {
     hideOnEscape = false,
     preferredIndex = 4
 }
+
+StaticPopupDialogs["WARNING_BLIZZARD_ADDONS"] = {
+    text = L["It appears one of your AddOns have disabled the AddOn Blizzard_CompactRaidFrames. This can cause errors and other issues. The AddOn will now be re-enabled."],
+    button1 = OKAY,
+    OnAccept = function() EnableAddOn("Blizzard_CompactRaidFrames"); ReloadUI() end,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = false,
+    preferredIndex = 4
+}

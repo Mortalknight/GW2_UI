@@ -339,12 +339,6 @@ local function LoadArenaFrame()
     for i = 1, MAX_ARENA_ENEMIES do
         arenaFrames[i] = registerFrame(i)
         arenaPrepFrames[i] = registerPrepFrame(i)
-        if _G["ArenaEnemyFrame" .. i] ~= nil then
-            _G["ArenaEnemyFrame" .. i]:Kill()
-        end
-        if _G["ArenaEnemyFrame" .. i .. "PetFrame"] ~= nil then
-            _G["ArenaEnemyFrame" .. i .. "PetFrame"]:Kill()
-        end
     end
 
     --create prepframe frame to handle events

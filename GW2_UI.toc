@@ -47,6 +47,7 @@ core\statusReport.lua
 core\slashcommands.lua
 core\cooldowns.lua
 core\misc.lua
+core\disableBlizzard.lua
 
 settings\defaults.lua
 settings\api.lua
