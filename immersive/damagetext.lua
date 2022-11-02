@@ -132,6 +132,7 @@ local function createNewFontElement(self)
     end
 
     local f = CreateFrame("FRAME", "GwDamageTextElement" .. createdFramesIndex, self, "GwDamageText")
+    f.string:SetJustifyV("MIDDLE")
     table.insert(fontStringList, f)
     createdFramesIndex = createdFramesIndex + 1
     return f
@@ -152,7 +153,7 @@ local function getFontElement(self)
         return f
     end
 end
-local function setElementData(self, critical, source, missType, blocked, absorbed)
+local function setElementData(self, critical, source, missType, blocked, absorbed,periodic)
     if missType then
         self.critTexture:Hide()
         self.string:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINED")
@@ -174,6 +175,13 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
         self.string:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
         self.crit = false
     end
+    if periodic then
+        self.bleedTexture:Show()
+    else
+        self.bleedTexture:Hide()
+    end
+
+
     self.pet = false
 
     local colorSource = "spell"
@@ -193,7 +201,7 @@ local function formatDamageValue(amount)
     return GW.GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT") and CommaValue(amount) or amount
 end
 
-local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed)
+local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed,periodic)
     local f = getFontElement(self)
     f.string:SetText(missType and getglobal(missType) or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount))
 
@@ -211,7 +219,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
     f.anchorFrame = nameplate
     f.unit = unit
 
-    setElementData(f, critical, source, missType, blocked, absorbed)
+    setElementData(f, critical, source, missType, blocked, absorbed,periodic)
 
     f:Show()
     f:ClearAllPoints()
@@ -225,7 +233,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         end
     end
 
-    if critical then
+    if critical and not periodic then
         if namePlatesCriticalOffsets[nameplate] == nil then
             namePlatesCriticalOffsets[nameplate] = 0
         else
@@ -246,16 +254,20 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
     if not targetUnit then return end
 
     if playerGUID == sourceGUID then
+        local periodic = false
         if (string.find(event, "_DAMAGE")) then
             local spellName, amount, blocked, absorbed, critical
             if (string.find(event, "SWING")) then
                 spellName, amount, _, _, _, blocked, absorbed, critical = "melee", ...
             elseif (string.find(event, "ENVIRONMENTAL")) then
                 spellName, amount, _, _, _, blocked, absorbed, critical = ...
-            else
+              elseif (string.find(event, "PERIODIC")) then
+                  spellName, amount, _, _, _, blocked, absorbed, critical = ...
+                  periodic = true
+              else
                 _, spellName, _, amount, _, _, _, blocked, absorbed, critical = ...
             end
-            displayDamageText(self, destGUID, amount, critical, spellName, nil, blocked, absorbed)
+            displayDamageText(self, destGUID, amount, critical, spellName, nil, blocked, absorbed,periodic)
         elseif (string.find(event, "_MISSED")) then
             local missType
             if (string.find(event, "RANGE") or string.find(event, "SPELL")) then
