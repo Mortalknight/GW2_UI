@@ -182,7 +182,7 @@ local function LoadSpecializations(parentContainer)
     end
     local fnContainer_OnHide = function(self)
         self:SetScript("OnUpdate", nil)
-        SpecSwitchAnimation(self:GetParent(), false)
+        SpecSwitchAnimation(parentContainer, false)
     end
     local fnContainer_OnClick = function(self)
         if not self.active and C_SpecializationInfo.CanPlayerUseTalentSpecUI() then

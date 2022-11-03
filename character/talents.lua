@@ -34,32 +34,42 @@ local function UpdateBackground(container)
 	end
 end
 
-local function SetupTreeContainer(fmTalents, index)
-    local container = CreateFrame("Frame", "TreeContainer" .. index, fmTalents, "GwTalentskContainerTab")
+local function RefreshCurrencyDisplay(self)
     local configId = ClassTalentFrame.TalentsTab:GetConfigID()
     local talentTreeId = ClassTalentFrame.TalentsTab:GetTalentTreeID()
     local excludeStagedChangesForCurrencies = ClassTalentFrame.TalentsTab.excludeStagedChangesForCurrencies
-    local counter = 0
+    local counter, treeCurrencyInfo, textColor
 
     if configId and configId > 0 and talentTreeId and talentTreeId > 0 then
-        local treeCurrencyInfo = C_Traits.GetTreeCurrencyInfo(configId, talentTreeId, excludeStagedChangesForCurrencies)
-        counter = treeCurrencyInfo[index].quantity
+        treeCurrencyInfo = C_Traits.GetTreeCurrencyInfo(configId, talentTreeId, excludeStagedChangesForCurrencies)
     end
 
-    local enabled = counter > 0
-	local textColor = enabled and GREEN_FONT_COLOR or GRAY_FONT_COLOR
+    for _, v in pairs(self.tabContainers) do
+        counter = treeCurrencyInfo and treeCurrencyInfo[v.index].quantity or 0
+        textColor = counter > 0 and GREEN_FONT_COLOR or GRAY_FONT_COLOR
 
-    container.currencyLabel:SetText(TALENT_FRAME_CURRENCY_DISPLAY_FORMAT:format(string.upper(fmTalents.menuItems[index]:GetText())))
-    container.currencyAmmount:SetText(counter)
-    container.currencyAmmount:SetTextColor(textColor:GetRGBA())
+        v.currencyLabel:SetText(TALENT_FRAME_CURRENCY_DISPLAY_FORMAT:format(string.upper(v:GetParent().menuItems[v.index]:GetText())))
+        v.currencyAmmount:SetText(counter)
+        v.currencyAmmount:SetTextColor(textColor:GetRGBA())
+    end
+end
+
+local function SetupTreeContainer(fmTalents, index)
+    local container = CreateFrame("Frame", "TreeContainer" .. index, fmTalents, "GwTalentskContainerTab")
+
+    container.index = index
+
     return container
 end
 
 local function fmTalentsOnEvent(self, event, ...)
-    UpdateMenu(self)
+    if event == "ACTIVE_PLAYER_SPECIALIZATION_CHANGED" then
+        UpdateMenu(self)
+        UpdateBackground(self)
+    end
 
-    -- Update Background
-    UpdateBackground(self)
+    -- Update TalentPoints
+    RefreshCurrencyDisplay(self)
 end
 
 local function menuItem_OnClick(self)
@@ -87,6 +97,14 @@ local function LoadTalents(tabContainer)
 
     fmTalents.tabContainers = {}
     fmTalents:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    fmTalents:RegisterEvent("PLAYER_TALENT_UPDATE")
+    fmTalents:RegisterEvent("PLAYER_ENTERING_WORLD")
+    fmTalents:RegisterEvent("TRAIT_TREE_CURRENCY_INFO_UPDATED")
+    fmTalents:RegisterEvent("CONFIG_COMMIT_FAILED")
+    fmTalents:RegisterEvent("TRAIT_CONFIG_UPDATED")
+    fmTalents:RegisterEvent("CONFIG_COMMIT_FAILED")
+    fmTalents:RegisterEvent("TRAIT_NODE_CHANGED")
+    fmTalents:RegisterEvent("ACTIVE_PLAYER_SPECIALIZATION_CHANGED")
     fmTalents:SetScript("OnEvent", fmTalentsOnEvent)
 
     fmTalents.tabContainers[1] = SetupTreeContainer(fmTalents, 1)
@@ -145,6 +163,7 @@ local function LoadTalents(tabContainer)
                 return
             end
             --update here
+            RefreshCurrencyDisplay(fmTalents)
         end
     )
 
