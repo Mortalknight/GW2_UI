@@ -68,11 +68,22 @@ local function DisableBlizzardMovers()
 	if CheckCastFrame() then mixin.RefreshCastBar = GW.NoOp end
 	if CheckAuraFrame() then mixin.RefreshAuraFrame = GW.NoOp end
 	if CheckBossFrame() then mixin.RefreshBossFrames = GW.NoOp end
-	if CheckRaidFrame() then mixin.RefreshRaidFrames = GW.NoOp end
 	if CheckArenaFrame() then mixin.RefreshArenaFrames = GW.NoOp end
-	if CheckPartyFrame() then mixin.RefreshPartyFrames = GW.NoOp end
 	if CheckLootFrame() then mixin.RefreshLootFrame = GW.NoOp end
-	if CheckTargetFrame() and CheckFocusFrame() then mixin.RefreshTargetAndFocus = GW.NoOp end
+
+	if CheckRaidFrame() then
+		mixin.RefreshRaidFrames = GW.NoOp
+		mixin.ResetRaidFrames = GW.NoOp
+	end
+	if CheckPartyFrame() then
+		mixin.RefreshPartyFrames = GW.NoOp
+		mixin.ResetPartyFrames = GW.NoOp
+	end
+	if CheckTargetFrame() and CheckFocusFrame() then
+		mixin.RefreshTargetAndFocus = GW.NoOp
+		mixin.ResetTargetAndFocus = GW.NoOp
+	end
+
 	if CheckActionBar() then
 		mixin.RefreshVehicleLeaveButton = GW.NoOp
 		mixin.RefreshActionBarShown = GW.NoOp
