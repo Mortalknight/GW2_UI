@@ -105,6 +105,28 @@ local function updateActiveSpec(self)
     end
 end
 
+local function SpecSwitchAnimation(self, playFlash)
+    local newSpec = GetSpecialization()
+
+    for i = 1, GetNumSpecializations() do
+        local container = self.specs[i]
+
+        container.specIndex = i
+        if i == newSpec then
+            if playFlash then
+                container.AnimationHolder.ActivationFlashBack:Restart()
+                container.playingActivationFlash = true
+            else
+                if container.playingActivationFlash then
+                    container.AnimationHolder.ActivationFlashBack:Stop()
+                    container.playingActivationFlash = false
+                end
+            end
+            break
+        end
+    end
+end
+
 local function LoadSpecializations(parentContainer)
     parentContainer.title:SetFont(DAMAGE_TEXT_FONT, 14)
     parentContainer.title:SetTextColor(1, 1, 1, 1)
@@ -115,6 +137,7 @@ local function LoadSpecializations(parentContainer)
         "OnEvent",
         function(self)
             updateActiveSpec(self)
+            SpecSwitchAnimation(self, true)
         end
     )
     parentContainer:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
@@ -159,6 +182,7 @@ local function LoadSpecializations(parentContainer)
     end
     local fnContainer_OnHide = function(self)
         self:SetScript("OnUpdate", nil)
+        SpecSwitchAnimation(self:GetParent(), false)
     end
     local fnContainer_OnClick = function(self)
         if not self.active and C_SpecializationInfo.CanPlayerUseTalentSpecUI() then
