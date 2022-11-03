@@ -2,13 +2,6 @@ local _, GW = ...
 
 local isArenaHooked = false
 
-local function GWoUF_OnEvent(self, _, addon)
-    if addon ~= "Blizzard_ArenaUI" then return end
-
-    GW.DisableBlizzardFrames()
-    self.UnregisterEvent("ADDON_LOADED")
-end
-
 local function HandleFrame(baseName, doNotReparent)
     local frame
     if type(baseName) == "string" then
@@ -64,8 +57,6 @@ end
 
 
 local function DisableBlizzardFrames()
-    local eventFrame = CreateFrame("Frame")
-
     local ourPartyFrames = GW.GetSetting("PARTY_FRAMES")
     local ourRaidFrames = GW.GetSetting("RAID_FRAMES")
     local ourBossFrames = GW.GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
@@ -134,28 +125,9 @@ local function DisableBlizzardFrames()
             ArenaEnemyMatchFramesContainer:UnregisterAllEvents()
 
             for i = 1, MAX_ARENA_ENEMIES do
-                HandleFrame("ArenaEnemyFrame" .. i)
                 HandleFrame("ArenaEnemyMatchFrame" .. i)
                 HandleFrame("ArenaEnemyPrepFrame" .. i)
             end
-        end
-
-        if IsAddOnLoaded("Blizzard_ArenaUI") then
-            if ArenaEnemyFrames then
-                ArenaEnemyFrames:UnregisterAllEvents()
-                ArenaPrepFrames:UnregisterAllEvents()
-                ArenaEnemyFrames:Hide()
-                ArenaPrepFrames:Hide()
-
-                -- reference on oUF and clear the global frame reference, to fix ClearAllPoints taint
-                GW.oUF.ArenaEnemyFrames = ArenaEnemyFrames
-                GW.oUF.ArenaEnemyMatchFrame = ArenaEnemyMatchFrame
-                GW.oUF.ArenaEnemyPrepFrame = ArenaEnemyPrepFrame
-                ArenaEnemyFrames = nil
-                ArenaPrepFrames = nil
-            end
-        else
-            eventFrame:RegisterEvent("ADDON_LOADED")
         end
     end
 
@@ -201,7 +173,5 @@ local function DisableBlizzardFrames()
         HandleFrame(PlayerCastingBarFrame)
         HandleFrame(PetCastingBarFrame)
     end
-
-    eventFrame:SetScript("OnEvent", GWoUF_OnEvent)
 end
 GW.DisableBlizzardFrames = DisableBlizzardFrames
