@@ -13,6 +13,27 @@ local function UpdateMenu(menu)
     UpdateMenuTreeButtonText(menu.tree2, specName)
 end
 
+local function UpdateBackground(container)
+    local currentSpecID = PlayerUtil.GetCurrentSpecID()
+	local atlas = ClassTalentUtil.GetAtlasForSpecID(currentSpecID)
+	if atlas and C_Texture.GetAtlasInfo(atlas) then
+        for _, v in pairs(container.tabContainers) do
+            v.background:SetAtlas(atlas, TextureKitConstants.UseAtlasSize)
+
+            if not v.maskedAdded then
+                --setup background mask
+                local mask = v:CreateMaskTexture()
+                mask:SetPoint("TOPLEFT", v, "TOPLEFT", 0, 0)
+                mask:SetPoint("BOTTOMRIGHT", v, "BOTTOMRIGHT", -2, -228)
+                mask:SetTexture("Interface/AddOns/GW2_UI/textures/character/windowbg", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+                v.background:AddMaskTexture(mask)
+
+                v.maskedAdded = true
+            end
+        end
+	end
+end
+
 local function SetupTreeContainer(fmTalents, index)
     local container = CreateFrame("Frame", "TreeContainer" .. index, fmTalents, "GwTalentskContainerTab")
     local configId = ClassTalentFrame.TalentsTab:GetConfigID()
@@ -36,6 +57,9 @@ end
 
 local function fmTalentsOnEvent(self, event, ...)
     UpdateMenu(self)
+
+    -- Update Background
+    UpdateBackground(self)
 end
 
 local function menuItem_OnClick(self)
@@ -69,6 +93,8 @@ local function LoadTalents(tabContainer)
     fmTalents.tabContainers[2] = SetupTreeContainer(fmTalents, 2)
 
     fmTalents.tabContainers[1]:Show()
+
+    UpdateBackground(fmTalents)
 
     fmTalents.tree1:HookScript("OnClick", menuItem_OnClick)
     fmTalents.tree2:HookScript("OnClick", menuItem_OnClick)

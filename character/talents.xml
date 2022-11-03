@@ -40,7 +40,7 @@
     </Frame>
 
      <Frame name="GwTalentskContainerTab" virtual="true" protected="true" hidden="true">
-        <Size x="608" y="621"></Size>
+        <Size x="608" y="615"></Size>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="231" y="0"></Anchor>
         </Anchors>
@@ -58,6 +58,14 @@
                         <Anchor point="TOP" relativeKey="$parent.currencyLabel" relativePoint="BOTTOM" x="0" y="-8"></Anchor>
                     </Anchors>
                 </FontString>
+            </Layer>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="608" y="615"></Size>
+                    <Anchors>
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
             </Layer>
         </Layers>
     </Frame>
