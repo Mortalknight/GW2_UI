@@ -138,11 +138,20 @@ local function LoadSpecializations(parentContainer)
 
     local fnContainer_OnUpdate = function(self, elapsed)
         if MouseIsOver(self) then
-            local r, _, _, _ = self.background:GetVertexColor()
+            local r = self.background:GetVertexColor()
             r = math.min(1, math.max(0, r + (1 * elapsed)))
             self.background:SetVertexColor(r, r, r, r)
+
+            if not self.active then
+                self.activateButton.hint:Show()
+                self.activateButton.icon:SetBlendMode("ADD")
+                self.activateButton.icon:SetAlpha(0.5)
+            end
             return
         end
+        self.activateButton.hint:Hide()
+        self.activateButton.icon:SetBlendMode("BLEND")
+        self.activateButton.icon:SetAlpha(1)
         self.background:SetVertexColor(0.7, 0.7, 0.7, 0.7)
     end
     local fnContainer_OnShow = function(self)
@@ -157,20 +166,19 @@ local function LoadSpecializations(parentContainer)
         end
     end
 
-
-    for i = 1, GetNumSpecializations() do
+    for i = 1, specs do
         local container = CreateFrame("Button", "GwSpecFrame" .. i, GwSpecContainerFrame, "GwSpecFrame")
 
         container:RegisterForClicks("AnyUp")
-        container.mask = container:CreateMaskTexture()
-        container.mask:SetPoint("CENTER", container.icon, "CENTER", 0, 0)
-        container.mask:SetTexture(
+        container.activateButton.mask = container.activateButton:CreateMaskTexture()
+        container.activateButton.mask:SetPoint("CENTER", container.activateButton.icon, "CENTER", 0, 0)
+        container.activateButton.mask:SetTexture(
             "Interface/AddOns/GW2_UI/textures/talents/passive_border",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
-        container.mask:SetSize(80, 80)
-        container.icon:AddMaskTexture(container.mask)
+        container.activateButton.mask:SetSize(80, 80)
+        container.activateButton.icon:AddMaskTexture(container.activateButton.mask)
         container:SetScript("OnEnter", nil)
         container:SetScript("OnLeave", nil)
         container:SetScript("OnUpdate", nil)
@@ -183,21 +191,21 @@ local function LoadSpecializations(parentContainer)
         local specID, name, description, _, role, primaryStat = GetSpecializationInfo(i, false, false, nil, GW.mysex)
         local atlasName = SPEC_TEXTURE_FORMAT:format(SPEC_FORMAT_STRINGS[specID])
 
-        container.roleIcon:ClearAllPoints()
+        container.activateButton.roleIcon:ClearAllPoints()
         if role == "TANK" then
-            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank")
-            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -6, -6)
+            container.activateButton.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-tank")
+            container.activateButton.roleIcon:SetPoint("BOTTOMRIGHT", container.activateButton.icon, "BOTTOMRIGHT", -6, -6)
         elseif role == "HEALER" then
-            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer")
-            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -8, -5)
+            container.activateButton.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-healer")
+            container.activateButton.roleIcon:SetPoint("BOTTOMRIGHT", container.activateButton.icon, "BOTTOMRIGHT", -8, -5)
         elseif role == "DAMAGER" then
-            container.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
-            container.roleIcon:SetSize(30, 30)
-            container.roleIcon:SetPoint("BOTTOMRIGHT", container.icon, "BOTTOMRIGHT", -3, -10)
+            container.activateButton.roleIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
+            container.activateButton.roleIcon:SetSize(30, 30)
+            container.activateButton.roleIcon:SetPoint("BOTTOMRIGHT", container.activateButton.icon, "BOTTOMRIGHT", -3, -10)
         end
 
         if C_Texture.GetAtlasInfo(atlasName) then
-            container.icon:SetAtlas(atlasName)
+            container.activateButton.icon:SetAtlas(atlasName)
         end
 
         container.info.specTitle:SetFont(DAMAGE_TEXT_FONT, 16)
@@ -208,6 +216,9 @@ local function LoadSpecializations(parentContainer)
         container.info.specDesc:SetTextColor(0.8, 0.8, 0.8, 1)
         container.info.specDesc:SetShadowColor(0, 0, 0, 1)
         container.info.specDesc:SetShadowOffset(1, -1)
+        container.activateButton.hint:SetFont(DAMAGE_TEXT_FONT, 10)
+        container.activateButton.hint:SetShadowColor(0, 0, 0, 1)
+        container.activateButton.hint:SetShadowOffset(1, -1)
 
         container.info.specTitle:SetText(name)
 
