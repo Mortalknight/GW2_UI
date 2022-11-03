@@ -1,22 +1,44 @@
 local _, GW = ...
 
+local function HandleMirrorTimer(timer)
+	local i = 1
+	local frame = MirrorTimer1
+	while frame do
+		if not frame.atlasHolder then
+			frame.atlasHolder = CreateFrame("Frame", nil, frame)
+			frame.atlasHolder:SetClipsChildren(true)
+			frame.atlasHolder:SetInside()
 
+			frame.StatusBar:SetParent(frame.atlasHolder)
+			frame.StatusBar:ClearAllPoints()
+			frame.StatusBar:SetSize(204, 22)
+			frame.StatusBar:SetPoint('TOP', 0, 2)
+			--frame.StatusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/units/castingbarsDF")
+			--frame.StatusBar:GetStatusBarTexture():SetTexCoord(GW.CASTINGBAR_TEXTURES[timer].NORMAL.L, GW.CASTINGBAR_TEXTURES[timer].NORMAL.R, GW.CASTINGBAR_TEXTURES[timer].NORMAL.T, GW.CASTINGBAR_TEXTURES[timer].NORMAL.B)
+			frame:SetSize(200, 18)
+
+			frame.Text:ClearAllPoints()
+			frame.Text:SetParent(frame.StatusBar)
+			frame.Text:SetPoint("CENTER", frame.StatusBar, 0, 1)
+		end
+
+		frame:StripTextures()
+		frame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+
+		i = i + 1
+		frame = _G['MirrorTimer' ..i]
+	end
+end
 
 local function LoadMirrorTimers()
-    for i = 1, MIRRORTIMER_NUMTIMERS do
-		local bar = _G['MirrorTimer'..i]
-		local statusbar = bar.StatusBar or _G[bar:GetName() .. "StatusBar"]
+	local i = 1
+	local frame = MirrorTimer1
+	while frame do
+		GW.RegisterMovableFrame(frame,  GW.L["MirrorTimer"] .. i, frame:GetName(), "VerticalActionBarDummy", nil, {"default"})
+        frame:ClearAllPoints()
+        frame:SetPoint("TOPLEFT", frame.gwMover)
 
-		--bar:SetTemplate()
-		bar:SetSize(200, 15)
-
-		bar.Text:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
-		bar.Border:Hide()
-
-		statusbar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
-		statusbar:SetAllPoints()
-
-		-- temp to clean up setitngs
+		-- temp beta thing need to be removed with 6.0.0 TODO
 		local profiles = GW.GetSettingsProfiles()
 		for k, _ in pairs(profiles) do
 			if profiles[k] then
@@ -26,9 +48,12 @@ local function LoadMirrorTimers()
 			end
 		end
 		GW.SetSetting("MirrorTimer" .. i, nil)
-        GW.RegisterMovableFrame(bar,  GW.L["MirrorTimer"] .. i, "MirrorTimer" .. i , "VerticalActionBarDummy", nil, {"default"})
-        bar:ClearAllPoints()
-        bar:SetPoint("TOPLEFT", bar.gwMover)
+		--
+
+		i = i + 1
+		frame = _G["MirrorTimer" .. i]
 	end
+
+	hooksecurefunc("MirrorTimer_Show", HandleMirrorTimer)
 end
 GW.LoadMirrorTimers = LoadMirrorTimers

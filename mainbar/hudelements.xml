@@ -187,42 +187,6 @@
             </Layer>
         </Layers>
     </Button>
-    <Frame name="GwMirrorTimer" frameStrata="LOW" virtual="true" parent="UIParent">
-        <Size x="258" y="22"></Size>
-        <Anchors>
-            <Anchor point="TOP" x="0" y="-200"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer>
-                <Texture file="Interface/AddOns/GW2_UI/textures/hud/breathmeter">
-                    <Color r="0.2" b="0.2" g="0.2" a="0.5"></Color>
-                    <Size x="258" y="22"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-        <Frames>
-            <StatusBar parentKey="bar" defaultValue="1" minValue="0" maxValue="1">
-                <Size x="258" y="22"></Size>
-                <Anchors>
-                    <Anchor point="LEFT" x="1"></Anchor>
-                </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/hud/breathmeter"/>
-                <Layers>
-                    <Layer level="OVERLAY" textureSubLevel="2">
-                        <FontString parentKey="name" text="" justifyH="CENTER">
-                            <Size x="258" y="22"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </StatusBar>
-        </Frames>
-    </Frame>
 
     <Frame name="GwChatContainer" frameStrata="BACKGROUND" virtual="true">
         <Size x="20" y="4"></Size>
@@ -334,7 +298,7 @@
       </Layers>
     </Frame>
 
-    <Frame name="GwCastingBar" virtual="true">
+    <Frame name="GwCastingBar" virtual="true" frameStrata="DIALOG">
         <Size x="176" y="15"></Size>
         <Anchors>
             <Anchor point="CENTER"></Anchor>

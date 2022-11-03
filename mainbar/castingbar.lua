@@ -8,7 +8,6 @@ local AddToAnimation = GW.AddToAnimation
 local StopAnimation = GW.StopAnimation
 local IsIn = GW.IsIn
 
-local CASTBAR_STAGE_INVALID = -1
 local CASTBAR_STAGE_DURATION_INVALID = -1
 
 local CASTINGBAR_TEXTURES = {
@@ -54,8 +53,8 @@ local CASTINGBAR_TEXTURES = {
             B = 0.75,
         }
     },
-  }
-  GW.CASTINGBAR_TEXTURES = CASTINGBAR_TEXTURES
+}
+GW.CASTINGBAR_TEXTURES = CASTINGBAR_TEXTURES
 
 local function createNewBarSegment(self)
     local segment = CreateFrame("Frame", self:GetName() .. "Segment" .. #self.segments + 1, self, "GwCastingBarSegmentSep")
