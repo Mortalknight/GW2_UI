@@ -46,10 +46,16 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <FontString parentKey="test" inherits="GameFontNormal" justifyH="CENTER" justifyV="MIDDLE">
-                    <Size x="100" y="100"></Size>
+                <FontString parentKey="currencyLabel" inherits="SystemFont_Shadow_Large2" justifyH="LEFT" justifyV="MIDDLE">
+                    <Size x="621" y="20"></Size>
                     <Anchors>
-                        <Anchor point="CENTER"></Anchor>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString parentKey="currencyAmmount" inherits="Game32Font_Shadow2" justifyH="LEFT" justifyV="MIDDLE">
+                    <Size x="621" y="20"></Size>
+                    <Anchors>
+                        <Anchor point="TOP" relativeKey="$parent.currencyLabel" relativePoint="BOTTOM" x="0" y="-8"></Anchor>
                     </Anchors>
                 </FontString>
             </Layer>
