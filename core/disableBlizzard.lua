@@ -1,6 +1,8 @@
 local _, GW = ...
 
-local function GWoUF_OnEvnt(self, _, addon)
+local isArenaHooked = false
+
+local function GWoUF_OnEvent(self, _, addon)
     if addon ~= "Blizzard_ArenaUI" then return end
 
     GW.DisableBlizzardFrames()
@@ -48,7 +50,7 @@ local function HandleFrame(baseName, doNotReparent)
             buffFrame:UnregisterAllEvents()
         end
 
-        local petFrame = frame.PetFrame
+        local petFrame = frame.PetFrame or frame.petFrame
         if petFrame then
             petFrame:UnregisterAllEvents()
         end
@@ -121,11 +123,24 @@ local function DisableBlizzardFrames()
 
         Arena_LoadUI = GW.NoOp
 
-        if IsAddOnLoaded("Blizzard_ArenaUI") then
-            for i = 1, MAX_ARENA_ENEMIES do
-                HandleFrame(format("ArenaEnemyFrame%d", i))
-            end
+        if not isArenaHooked then
+            isArenaHooked = true
+            -- this disables ArenaEnemyFramesContainer
+            SetCVar("showArenaEnemyFrames", "0")
+            SetCVar("showArenaEnemyPets", "0")
 
+            ArenaEnemyFramesContainer:UnregisterAllEvents()
+            ArenaEnemyPrepFramesContainer:UnregisterAllEvents()
+            ArenaEnemyMatchFramesContainer:UnregisterAllEvents()
+
+            for i = 1, MAX_ARENA_ENEMIES do
+                HandleFrame("ArenaEnemyFrame" .. i)
+                HandleFrame("ArenaEnemyMatchFrame" .. i)
+                HandleFrame("ArenaEnemyPrepFrame" .. i)
+            end
+        end
+
+        if IsAddOnLoaded("Blizzard_ArenaUI") then
             if ArenaEnemyFrames then
                 ArenaEnemyFrames:UnregisterAllEvents()
                 ArenaPrepFrames:UnregisterAllEvents()
@@ -134,7 +149,8 @@ local function DisableBlizzardFrames()
 
                 -- reference on oUF and clear the global frame reference, to fix ClearAllPoints taint
                 GW.oUF.ArenaEnemyFrames = ArenaEnemyFrames
-                GW.oUF.ArenaPrepFrames = ArenaPrepFrames
+                GW.oUF.ArenaEnemyMatchFrame = ArenaEnemyMatchFrame
+                GW.oUF.ArenaEnemyPrepFrame = ArenaEnemyPrepFrame
                 ArenaEnemyFrames = nil
                 ArenaPrepFrames = nil
             end
@@ -186,6 +202,6 @@ local function DisableBlizzardFrames()
         HandleFrame(PetCastingBarFrame)
     end
 
-    eventFrame:SetScript("OnEvent", GWoUF_OnEvnt)
+    eventFrame:SetScript("OnEvent", GWoUF_OnEvent)
 end
 GW.DisableBlizzardFrames = DisableBlizzardFrames
