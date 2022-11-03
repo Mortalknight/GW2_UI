@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local function HandleMirrorTimer(timer)
+local function HandleMirrorTimer()
 	local i = 1
 	local frame = MirrorTimer1
 	while frame do
@@ -11,10 +11,8 @@ local function HandleMirrorTimer(timer)
 
 			frame.StatusBar:SetParent(frame.atlasHolder)
 			frame.StatusBar:ClearAllPoints()
-			frame.StatusBar:SetSize(204, 22)
-			frame.StatusBar:SetPoint('TOP', 0, 2)
-			--frame.StatusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/units/castingbarsDF")
-			--frame.StatusBar:GetStatusBarTexture():SetTexCoord(GW.CASTINGBAR_TEXTURES[timer].NORMAL.L, GW.CASTINGBAR_TEXTURES[timer].NORMAL.R, GW.CASTINGBAR_TEXTURES[timer].NORMAL.T, GW.CASTINGBAR_TEXTURES[timer].NORMAL.B)
+			frame.StatusBar:SetSize(200, 18)
+			frame.StatusBar:SetPoint("TOP", 0, 2)
 			frame:SetSize(200, 18)
 
 			frame.Text:ClearAllPoints()
@@ -26,7 +24,7 @@ local function HandleMirrorTimer(timer)
 		frame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
 
 		i = i + 1
-		frame = _G['MirrorTimer' ..i]
+		frame = _G["MirrorTimer" .. i]
 	end
 end
 
@@ -34,7 +32,7 @@ local function LoadMirrorTimers()
 	local i = 1
 	local frame = MirrorTimer1
 	while frame do
-		GW.RegisterMovableFrame(frame,  GW.L["MirrorTimer"] .. i, frame:GetName(), "VerticalActionBarDummy", nil, {"default"})
+		GW.RegisterMovableFrame(frame,  GW.L["MirrorTimer"] .. i, frame:GetName(), "VerticalActionBarDummy", {200, 18}, {"default"})
         frame:ClearAllPoints()
         frame:SetPoint("TOPLEFT", frame.gwMover)
 
