@@ -447,7 +447,7 @@ local function setupMicroButtons(mbf)
     -- determine if we are using the default spell & talent buttons
     -- or if we need our custom talent button for the hero panel
     local sref
-    if GetSetting("USE_TALENT_WINDOW") then
+    if GetSetting("USE_SPELLBOOK_WINDOW") then
         sref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
         sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
         sref.newbieText = NEWBIE_TOOLTIP_TALENTS

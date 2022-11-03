@@ -33,8 +33,8 @@ local function LoadMirrorTimers()
 	local frame = MirrorTimer1
 	while frame do
 		GW.RegisterMovableFrame(frame,  GW.L["MirrorTimer"] .. i, frame:GetName(), "VerticalActionBarDummy", {200, 18}, {"default"})
-        frame:ClearAllPoints()
-        frame:SetPoint("TOPLEFT", frame.gwMover)
+		frame:ClearAllPoints()
+		frame:SetPoint("TOPLEFT", frame.gwMover)
 
 		-- temp beta thing need to be removed with 6.0.0 TODO
 		local profiles = GW.GetSettingsProfiles()

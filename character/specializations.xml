@@ -1,0 +1,103 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+    <Button name="GwSpecFrame" enableMouse="true" virtual="true">
+        <Size x="588" y="140"></Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-10"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                    <Size x="588" y="140"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Frame parentKey="activateButton">
+                <Size x="80" y="80"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="20" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="6">
+                        <Texture parentKey="roleIcon">
+                            <Size x="25" y="25"></Size>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK" textureSubLevel="5">
+                        <Texture parentKey="roleIconBg" file="Interface/AddOns/GW2_UI/textures/hud/notification-backdrop">
+                            <Size x="27" y="27"></Size>
+                            <Color r="0" g="0" b="0" a="0.7"/>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.roleIcon" relativePoint="CENTER" x="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                            <Size x="80" y="80"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                            <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+                        </Texture>
+                    </Layer>
+                    <Layer level="BORDER">
+                        <Texture parentKey="outline" file="Interface\AddOns\GW2_UI\textures\talents\passive_outline">
+                            <Size x="90" y="90"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER" x="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="ARTWORK" textureSubLevel="7">
+                        <FontString hidden="true" parentKey="hint" text="SOULBIND_NODE_ACTIVATE" justifyV="MIDDLE" justifyH="CENTER">
+                            <Size x="54" y="54"/>
+                            <Color r="1" g="1" b="1" a="1"/>
+                            <Anchors>
+                                <Anchor point="CENTER" relativeKey="$parent.icon" relativePoint="CENTER" x="0" y="0"/>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+            <Frame parentKey="info" enableMouse="false">
+                <Size x="460" y="140"></Size>
+                <Anchors>
+                    <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\character\paperdollbg">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                            </Anchors>
+                            <Color r="1" g="1" b="1" a="0.6"></Color>
+                            <TexCoords left="1" right="0" top="0" bottom="1" />
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY" textureSubLevel="">
+                        <FontString parentKey="specTitle" text="Arcane" justifyH="LEFT">
+                            <Size x="500" y="20"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="-20"></Anchor>
+                            </Anchors>
+                        </FontString>
+                        <FontString parentKey="specDesc" text="Arcane" justifyH="LEFT">
+                            <Size x="400" y="80"></Size>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativeKey="$parent.specTitle" relativePoint="BOTTOMLEFT" x="0" y="-5"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+    </Button>
+
+</Ui>

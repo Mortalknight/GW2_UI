@@ -146,7 +146,7 @@ local function LoadPaperDoll(tabContainer)
     nextShadow = true
     nextAnchor = fmMenu.titlesMenu
     addAddonButton("Pawn", nil, nextShadow, nextAnchor, PawnUIShow)
-    addAddonButton("Clique", GW.GetSetting("USE_TALENT_WINDOW"), nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end)
+    addAddonButton("Clique", GW.GetSetting("USE_SPELLBOOK_WINDOW"), nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end)
     addAddonButton("Outfitter", GW.GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end)
     addAddonButton("MyRolePlay", GW.GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false ToggleCharacter("MyRolePlayCharacterFrame") end)
     addAddonButton("TalentSetManager", GW.GetSetting("USE_TALENT_WINDOW"), nextShadow, nextAnchor, function() TalentFrame_LoadUI() if PlayerTalentFrame_Toggle then PlayerTalentFrame_Toggle(TALENTS_TAB) end end)

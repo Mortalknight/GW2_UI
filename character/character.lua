@@ -25,25 +25,42 @@ windowsList[1] = {
 }
 
 windowsList[2] = {
-    ["OnLoad"] = "LoadTalents",
-    ["FrameName"] = "GwTalentDetailsFrame",
-    ["SettingName"] = "USE_TALENT_WINDOW",
-    ["RefName"] = "GwTalentFrame",
+    ["OnLoad"] = "LoadSpellbook",
+    ["FrameName"] = "GwSpellbookDetailsFrame",
+    ["SettingName"] = "USE_SPELLBOOK_WINDOW",
+    ["RefName"] = "GwSpellbookFrame",
     ["TabIcon"] = "tabicon_spellbook",
     ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
     ["HeaderText"] = SPELLS,
-    ["TooltipText"] = TALENTS_BUTTON,
+    ["TooltipText"] = SPELLS,
     ["Bindings"] = {
         ["TOGGLESPELLBOOK"] = "SpellBook",
 
         ["TOGGLEPETBOOK"] = "PetBook"
     },
     ["OnClick"] = [=[
-        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
+        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "spellbook")
     ]=]
 }
 
 windowsList[3] = {
+    ["OnLoad"] = "LoadTalents",
+    ["FrameName"] = "GwTalentDetailsFrame",
+    ["SettingName"] = "USE_TALENT_WINDOW",
+    ["RefName"] = "GwTalentFrame",
+    ["TabIcon"] = "tabicon_spellbook",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
+    ["HeaderText"] = TALENTS,
+    ["TooltipText"] = TALENTS_BUTTON,
+    ["Bindings"] = {
+
+    },
+    ["OnClick"] = [=[
+        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
+    ]=]
+}
+
+windowsList[4] = {
     ["OnLoad"] = "LoadProfessions",
     ["FrameName"] = "GwProfessionsDetailsFrame",
     ["SettingName"] = "USE_TALENT_WINDOW",
@@ -60,7 +77,7 @@ windowsList[3] = {
     ]=]
 }
 
-windowsList[4] = {
+windowsList[5] = {
     ["OnLoad"] = "LoadCurrency",
     ["FrameName"] = "GwCurrencyDetailsFrame",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
@@ -77,7 +94,7 @@ windowsList[4] = {
     ]=]
 }
 
-windowsList[5] = {
+windowsList[6] = {
     ["OnLoad"] = "LoadReputation",
     ["FrameName"] = "GwReputationyDetailsFrame",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
@@ -113,6 +130,9 @@ local charSecure_OnClick =
     elseif button == "SpellBook" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "spellbook")
+    elseif button == "Talents" then
+        f:SetAttribute("keytoggle", true)
+        f:SetAttribute("windowpanelopen", "talents")
     elseif button == "PetBook" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "petbook")
@@ -132,6 +152,9 @@ local charSecure_OnAttributeChanged =
     local fmDoll = self:GetFrameRef("GwPaperDoll")
     local showDoll = false
     local fmSBM = self:GetFrameRef("GwSpellbookMenu")
+    local fmSpell = self:GetFrameRef("GwSpellbookFrame")
+    local showSpell = flase
+    local fmTaM = self:GetFrameRef("GwTalentsMenu")
     local fmTal = self:GetFrameRef("GwTalentFrame")
     local showTal = flase
     local fmRep = self:GetFrameRef("GwReputationFrame")
@@ -144,30 +167,39 @@ local charSecure_OnAttributeChanged =
     local close = false
     local keytoggle = self:GetAttribute("keytoggle")
 
-    if fmTal ~= nil and value == "talents" then
-        if keytoggle and fmTal:IsVisible() then
+    if fmSpell ~= nil and value == "spellbook" then
+        if keytoggle and fmSpell:IsVisible() then
             self:SetAttribute("keytoggle", nil)
             self:SetAttribute("windowpanelopen", nil)
             return
         else
-            showTal = true
+            showSpell = true
         end
-    elseif fmTal ~= nil and value == "spellbook" then
-        if keytoggle and fmTal:IsVisible() and fmSBM and fmSBM:GetAttribute("tabopen") == 2 then
+    elseif fmTal ~= nil and value == "talents" then
+        if keytoggle and fmTal:IsVisible() and fmTaM and fmTaM:GetAttribute("tabopen") == 1 then
             self:SetAttribute("keytoggle", nil)
             self:SetAttribute("windowpanelopen", nil)
             return
         else
             showTal = true
+            fmTaM:SetAttribute("tabopen", 1)
+        end
+    elseif fmSpell ~= nil and value == "spellbook" then
+        if keytoggle and fmSpell:IsVisible() and fmSBM and fmSBM:GetAttribute("tabopen") == 2 then
+            self:SetAttribute("keytoggle", nil)
+            self:SetAttribute("windowpanelopen", nil)
+            return
+        else
+            showSpell = true
             fmSBM:SetAttribute("tabopen", 2)
         end
-    elseif fmTal ~= nil and value == "petbook" then
-        if keytoggle and fmTal:IsVisible() and fmSBM and fmSBM:GetAttribute("tabopen") == 5 then
+    elseif fmSpell ~= nil and value == "petbook" then
+        if keytoggle and fmSpell:IsVisible() and fmSBM and fmSBM:GetAttribute("tabopen") == 5 then
             self:SetAttribute("keytoggle", nil)
             self:SetAttribute("windowpanelopen", nil)
             return
         else
-            showTal = true
+            showSpell = true
             fmSBM:SetAttribute("tabopen", 5)
         end
     elseif fmProf ~= nil and value == "professions" then
@@ -216,6 +248,13 @@ local charSecure_OnAttributeChanged =
             fmDoll:Show()
         else
             fmDoll:Hide()
+        end
+    end
+    if fmSpell then
+        if showSpell and not close then
+            fmSpell:Show()
+        else
+            fmSpell:Hide()
         end
     end
     if fmTal then

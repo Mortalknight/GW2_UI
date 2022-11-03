@@ -185,7 +185,7 @@ local function ApplyClickBindingUISkin()
     ClickBindingFrame.ScrollBoxBackground:Hide()
     hooksecurefunc(ClickBindingFrame.ScrollBox, "Update", HandleScrollChild)
 
-    if GW.GetSetting("USE_TALENT_WINDOW") then
+    if GW.GetSetting("USE_SPELLBOOK_WINDOW") then
         ClickBindingFrame.SpellbookPortrait.FrameName = "GwCharacterWindow"
 
         ClickBindingFrame.SpellbookPortrait:SetScript("OnClick", spellbook_OnClick)

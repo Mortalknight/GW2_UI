@@ -120,9 +120,9 @@ local function LoadSpecializations(parentContainer)
     parentContainer:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     parentContainer:RegisterEvent("UNIT_LEVEL")
 
-    CreateFrame("Frame", "GwSpecContainerFrame", GwTalentFrame)
-    GwSpecContainerFrame:SetPoint("TOPLEFT", GwTalentFrame, "TOPLEFT")
-    GwSpecContainerFrame:SetPoint("BOTTOMRIGHT", GwTalentFrame, "BOTTOMRIGHT")
+    CreateFrame("Frame", "GwSpecContainerFrame", GwSpellbookFrame)
+    GwSpecContainerFrame:SetPoint("TOPLEFT", GwSpellbookFrame, "TOPLEFT")
+    GwSpecContainerFrame:SetPoint("BOTTOMRIGHT", GwSpellbookFrame, "BOTTOMRIGHT")
 
     parentContainer.specs = {}
 
