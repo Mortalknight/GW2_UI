@@ -72,7 +72,7 @@ GW.AddForProfiling("map", "hideMiniMapIcons", hideMiniMapIcons)
 local function MapCoordsMiniMap_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
     GameTooltip:AddLine(L["Map Coordinates"])
-    GameTooltip:AddLine(L["Left Click to toggle higher precision coordinates."], 1, 1, 1, true) 
+    GameTooltip:AddLine(L["Left Click to toggle higher precision coordinates."], 1, 1, 1, true)
     GameTooltip:SetMinimumWidth(100)
     GameTooltip:Show()
 end
@@ -80,7 +80,7 @@ GW.AddForProfiling("map", "MapCoordsMiniMap_OnEnter", MapCoordsMiniMap_OnEnter)
 
 local function mapCoordsMiniMap_setCoords(self)
     if GW.locationData.x and GW.locationData.y then
-        self.Coords:SetText(RoundDec(GW.locationData.xText, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(GW.locationData.yText, self.MapCoordsMiniMapPrecision)) 
+        self.Coords:SetText(RoundDec(GW.locationData.xText, self.MapCoordsMiniMapPrecision) .. ", " .. RoundDec(GW.locationData.yText, self.MapCoordsMiniMapPrecision))
     else
         self.Coords:SetText(NOT_APPLICABLE)
     end
@@ -312,11 +312,18 @@ local function HandleExpansionButton()
     local garrison = ExpansionLandingPageMinimapButton or GarrisonLandingPageMinimapButton
     if not garrison then return end
 
+    --[[
+    use this if we want to use old landing page button texture
     garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
     garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
     garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
-    garrison:GetHighlightTexture():SetBlendMode("BLEND")
     garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
+    ]]
+    garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
+    garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
+    garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
+    garrison:GetHighlightTexture():SetBlendMode("BLEND")
+    garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
     garrison:SetSize(43, 43)
 
     -- Handle Position
