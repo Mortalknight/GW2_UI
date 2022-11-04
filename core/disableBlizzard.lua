@@ -187,7 +187,7 @@ local function DisableBlizzardFrames()
             MicroButtonAndBagsBar = true,
             MainMenuBar = true,
             ["StanceBar"] = true,
-            ["PetActionBar"] = true
+            ["PetActionBar"] = true -- not remove the events
         }
 
         for name in next, untaint do
@@ -197,7 +197,9 @@ local function DisableBlizzardFrames()
             local frame = _G[name]
             if frame then
                 frame:SetParent(GW.HiddenFrame)
-                frame:UnregisterAllEvents()
+                if name == "PetActionBar" then
+                    frame:UnregisterAllEvents()
+                end
             end
         end
 
