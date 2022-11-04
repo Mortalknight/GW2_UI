@@ -463,9 +463,6 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
     if noBackDrop == nil or noBackDrop == false then
         local backDrop = CreateFrame("Frame", nil, btn, "GwActionButtonBackdropTmpl")
         local backDropSize = 1
-        if btnWidth > 40 then
-            backDropSize = 2
-        end
 
         backDrop:SetPoint("TOPLEFT", btn, "TOPLEFT", -backDropSize, backDropSize)
         backDrop:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", backDropSize, -backDropSize)
@@ -477,8 +474,8 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         else
             btn.gwBackdrop:Show()
         end
-        btn:HookScript("OnHide", hideBackdrop)
-        btn:HookScript("OnShow", showBackdrop)
+        --btn:HookScript("OnHide", hideBackdrop)
+        --btn:HookScript("OnShow", showBackdrop)
     end
 end
 GW.setActionButtonStyle = setActionButtonStyle
@@ -676,7 +673,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
                 btn:SetParent(fmMultibar)
             end
             btn:SetScript("OnUpdate", nil) -- disable the default button update handler
-            btn.SlotBackground:Hide()
+            btn.SlotBackground:Kill()
 
             btn:SetSize(settings.size, settings.size)
             updateHotkey(btn)
