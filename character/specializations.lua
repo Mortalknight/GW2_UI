@@ -98,9 +98,19 @@ local function updateActiveSpec(self)
         if i == newSpec then
             container.active = true
             container.background:SetDesaturated(false)
+            container.background:SetVertexColor(1, 1, 1, 1)
+            container.activateButton.icon:SetDesaturated(false)
+            for ii = 1, #container.spellPreviewButton do
+                container.spellPreviewButton[ii].icon:SetDesaturated(false)
+            end
         else
             container.active = false
             container.background:SetDesaturated(true)
+            container.background:SetVertexColor(0.7, 0.7, 0.7, 0.7)
+            container.activateButton.icon:SetDesaturated(true)
+            for ii = 1, #container.spellPreviewButton do
+                container.spellPreviewButton[ii].icon:SetDesaturated(true)
+            end
         end
     end
 end
@@ -163,9 +173,9 @@ local function LoadSpecializations(parentContainer)
         if MouseIsOver(self) then
             local r = self.background:GetVertexColor()
             r = math.min(1, math.max(0, r + (1 * elapsed)))
-            self.background:SetVertexColor(r, r, r, r)
 
             if not self.active then
+                self.background:SetVertexColor(r, r, r, r)
                 self.activateButton.hint:Show()
                 self.activateButton.icon:SetBlendMode("ADD")
                 self.activateButton.icon:SetAlpha(0.5)
@@ -175,7 +185,9 @@ local function LoadSpecializations(parentContainer)
         self.activateButton.hint:Hide()
         self.activateButton.icon:SetBlendMode("BLEND")
         self.activateButton.icon:SetAlpha(1)
-        self.background:SetVertexColor(0.7, 0.7, 0.7, 0.7)
+        if not self.active then
+            self.background:SetVertexColor(0.7, 0.7, 0.7, 0.7)
+        end
     end
     local fnContainer_OnShow = function(self)
         self:SetScript("OnUpdate", fnContainer_OnUpdate)
