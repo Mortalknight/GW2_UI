@@ -491,6 +491,63 @@ local function encounterJournalSkin()
         end
     end)
 
+    hooksecurefunc(_G.EncounterJournal.encounter.info.LootContainer.ScrollBox, "Update", function(frame)
+        for _, child in next, { frame.ScrollTarget:GetChildren() } do
+            if not child.isSkinned then
+                if child.bossTexture then child.bossTexture:SetAlpha(0) end
+                if child.bosslessTexture then child.bosslessTexture:SetAlpha(0) end
+
+                if child.name then
+                    child.name:ClearAllPoints()
+                    child.name:SetPoint("TOPLEFT", child.icon, "TOPRIGHT", 6, -2)
+                end
+
+                if child.boss then
+                    child.boss:ClearAllPoints()
+                    child.boss:SetPoint("BOTTOMLEFT", 4, 6)
+                    child.boss:SetTextColor(1, 1, 1)
+                end
+
+                if child.slot then
+                    child.slot:ClearAllPoints()
+                    child.slot:SetPoint("TOPLEFT", child.name, "BOTTOMLEFT", 0, -3)
+                    child.slot:SetTextColor(1, 1, 1)
+                end
+
+                if child.armorType then
+                    child.armorType:ClearAllPoints()
+                    child.armorType:SetPoint("RIGHT", child, "RIGHT", -10, 0)
+                    child.armorType:SetTextColor(1, 1, 1)
+                end
+
+                if child.icon then
+                    child.icon:SetSize(32, 32)
+                    child.icon:SetPoint("TOPLEFT", 3 , -7)
+                    GW.HandleIcon(child.icon)
+                    child.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+                    if not child.IconBorder.hooked then
+                        hooksecurefunc(child.IconBorder, "SetTexture", function()
+                            print(child.IconBorder:GetTexture())
+                            if child.IconBorder:GetTexture() ~= -4957 then
+                                child.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
+                            end
+                        end)
+                        child.IconBorder.hooked = true
+                    end
+                end
+
+                if not child.backdrop then
+                    child:CreateBackdrop("Transparent")
+                    child.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
+                    child.backdrop:SetPoint("TOPLEFT")
+                    child.backdrop:SetPoint("BOTTOMRIGHT", 0, 1)
+                end
+
+                child.isSkinned = true
+            end
+        end
+    end)
+
     hooksecurefunc("EncounterJournal_SetUpOverview", SkinOverviewInfo)
     hooksecurefunc("EncounterJournal_SetBullets", SkinOverviewInfoBullets)
     hooksecurefunc("EncounterJournal_ToggleHeaders", SkinAbilitiesInfo)
