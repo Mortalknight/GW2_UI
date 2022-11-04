@@ -841,35 +841,30 @@ GW.UpdateMultibarButtons = UpdateMultibarButtons
 local function setPossessBar()
     PossessActionBar:ClearAllPoints()
     PossessActionBar:SetPoint("BOTTOM", GwMainActionbar, "TOP", -110, 40)
+
+    hooksecurefunc(PossessActionBar, "SetPoint", function(_, _, parent)
+        if parent ~= GwMainActionbar then
+            PossessActionBar:ClearAllPoints()
+            PossessActionBar:SetParent(_G.UIParent)
+            PossessActionBar:Point("BOTTOM", GwMainActionbar, "TOP", -110, 40)
+        end
+    end)
+
 end
 AFP("setPossessBar", setPossessBar)
-
-local function vehicleLeave_OnUpdate()
-    if InCombatLockdown() then
-        return
-    end
-    MainMenuBarVehicleLeaveButton:ClearAllPoints()
-    MainMenuBarVehicleLeaveButton:SetPoint("LEFT", ActionButton12, "RIGHT", 0, 0)
-end
-AFP("vehicleLeave_OnUpdate", vehicleLeave_OnUpdate)
-
-local function vehicleLeave_OnShow()
-    MainMenuBarVehicleLeaveButton:SetScript("OnUpdate", vehicleLeave_OnUpdate)
-end
-AFP("vehicleLeave_OnShow", vehicleLeave_OnShow)
-
-local function vehicleLeave_OnHide()
-    MainMenuBarVehicleLeaveButton:SetScript("OnUpdate", nil)
-end
-AFP("vehicleLeave_OnHide", vehicleLeave_OnHide)
 
 local function setLeaveVehicleButton()
     MainMenuBarVehicleLeaveButton:SetParent(GwMainActionbar)
     MainMenuBarVehicleLeaveButton:ClearAllPoints()
     MainMenuBarVehicleLeaveButton:SetPoint("LEFT", ActionButton12, "RIGHT", 0, 0)
 
-    MainMenuBarVehicleLeaveButton:HookScript("OnShow", vehicleLeave_OnShow)
-    MainMenuBarVehicleLeaveButton:HookScript("OnHide", vehicleLeave_OnHide)
+    hooksecurefunc(MainMenuBarVehicleLeaveButton, "SetPoint", function(_, _, parent)
+        if parent ~= ActionButton12 then
+            MainMenuBarVehicleLeaveButton:ClearAllPoints()
+            MainMenuBarVehicleLeaveButton:SetParent(_G.UIParent)
+            MainMenuBarVehicleLeaveButton:Point("LEFT", ActionButton12, "RIGHT", 0, 0)
+        end
+    end)
 end
 AFP("setLeaveVehicleButton", setLeaveVehicleButton)
 
