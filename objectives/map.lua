@@ -312,18 +312,7 @@ local function HandleExpansionButton()
     local garrison = ExpansionLandingPageMinimapButton or GarrisonLandingPageMinimapButton
     if not garrison then return end
 
-    --[[
-    use this if we want to use old landing page button texture
-    garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
-    garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
-    garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
-    garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
-    ]]
-    garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
-    garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
-    garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
     garrison:GetHighlightTexture():SetBlendMode("BLEND")
-    garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
     garrison:SetSize(43, 43)
 
     -- Handle Position
@@ -355,12 +344,20 @@ local function HandleExpansionButton()
             garrison.title = GARRISON_TYPE_9_0_LANDING_PAGE_TITLE;
             garrison.description = GARRISON_TYPE_9_0_LANDING_PAGE_TOOLTIP
         end
+        garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
+        garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
+        garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-down")
+        garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/garrison-up")
     else
         local minimapDisplayInfo = ExpansionLandingPage:GetOverlayMinimapDisplayInfo();
         if minimapDisplayInfo then
             garrison.title = minimapDisplayInfo.title;
             garrison.description = minimapDisplayInfo.description;
         end
+        garrison:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
+        garrison:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
+        garrison:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
+        garrison.LoopingGlow:SetTexture("Interface/AddOns/GW2_UI/textures/icons/landingpage-dragon")
     end
 end
 
