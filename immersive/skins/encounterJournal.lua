@@ -527,7 +527,7 @@ local function encounterJournalSkin()
                     child.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
                     if not child.IconBorder.hooked then
                         hooksecurefunc(child.IconBorder, "SetTexture", function()
-                            if child.IconBorder:GetTexture() ~= -4957 then
+                            if child.IconBorder:GetTexture() and child.IconBorder:GetTexture() > 0 and child.IconBorder:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder" then
                                 child.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
                             end
                         end)
