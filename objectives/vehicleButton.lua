@@ -10,13 +10,23 @@ end
 
 local function LoadVehicleButton()
     if not VehicleSeatIndicator.PositionVehicleFrameHooked then
-        VehicleSeatIndicator:ClearAllPoints()
-        VehicleSeatIndicator:SetPoint("TOPRIGHT", nil, "BOTTOMRIGHT", 0, 0)
-
         hooksecurefunc(VehicleSeatIndicator, "SetPoint", SetPosition)
+
+        VehicleSeatIndicator:ClearAllPoints()
+        VehicleSeatIndicator:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMRIGHT", 0, 0)
 
         GW.RegisterMovableFrame(VehicleSeatIndicator, BINDING_HEADER_VEHICLE, "VEHICLE_SEAT_POS", "VerticalActionBarDummy", nil, {"default", "scaleable"})
         VehicleSeatIndicator.PositionVehicleFrameHooked = true
+    end
+
+    if GW.GetSetting("ACTIONBARS_ENABLED") then
+        VehicleSeatIndicator_UnloadTextures = function()
+            VehicleSeatIndicatorBackgroundTexture:SetTexture()
+            VehicleSeatIndicator:Hide()
+            VehicleSeatIndicator.currSkin = nil
+
+            DurabilityFrame:SetAlerts()
+        end
     end
 end
 GW.LoadVehicleButton = LoadVehicleButton
