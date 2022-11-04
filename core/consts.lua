@@ -314,7 +314,13 @@ GW.AURAS_INDICATORS = {
     WARLOCK = {},
     MAGE = {},
     DEATHKNIGHT = {},
-    EVOKER = {},
+    EVOKER = {
+        [355941] =  {0.33, 0.33, 0.77},    -- Dream Breath
+        [363502] =  {0.33, 0.33, 0.7},    -- Dream Flight
+        [366155] =  {0.14, 1.00, 0.88},   -- Reversion
+        [364343] =  {0.13, 0.87, 0.50},  -- Echo
+        [357170] =  {0.11, 0.57, 0.7}, -- Time Dilation
+    },
     PET = {
         [193396] =  {0.6, 0.2, 0.8},    -- Demonic Empowerment
         [19615] =   {0.89, 0.09, 0.05}, -- Frenzy

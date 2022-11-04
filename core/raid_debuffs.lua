@@ -14,13 +14,6 @@ end
     SetDefaultOnTheFly(226512) -- Sanguine
     SetDefaultOnTheFly(240559) -- Grievous
     SetDefaultOnTheFly(240443) -- Bursting
--- Shadowlands Season 3
-    SetDefaultOnTheFly(368241) -- Decrypted Urh Cypher
-    SetDefaultOnTheFly(368244) -- Urh Cloaking Field
-    SetDefaultOnTheFly(368240) -- Decrypted Wo Cypher
-    SetDefaultOnTheFly(368239)-- Decrypted Vy Cypher
-    SetDefaultOnTheFly(366297) -- Deconstruct (Tank Debuff)
-    SetDefaultOnTheFly(366288) -- Force Slam (Stun)
 -- Shadowlands Season 4
     SetDefaultOnTheFly(373364) -- Vampiric Claws
     SetDefaultOnTheFly(373429) -- Carrion Swarm
@@ -29,7 +22,85 @@ end
     SetDefaultOnTheFly(373570) -- Hypnosis
     SetDefaultOnTheFly(373607) -- Shadowy Barrier (Hypnosis)
     SetDefaultOnTheFly(373509) -- Shadow Claws (Stacking)
+-- Dragonflight Season 1
+    SetDefaultOnTheFly(396369) -- Mark of Lightning
+    SetDefaultOnTheFly(396364) -- Mark of Wind
 
+----------------------------------------------------------
+    ----------------- Dragonflight Dungeons ------------------
+    ----------------------------------------------------------
+    -- Ruby Life Pools
+    SetDefaultOnTheFly(392406) -- Thunderclap
+    SetDefaultOnTheFly(372820) -- Scorched Earth
+    SetDefaultOnTheFly(384823) -- Inferno 1
+    SetDefaultOnTheFly(373692) -- Inferno 2
+    SetDefaultOnTheFly(381862) -- Infernocore
+    SetDefaultOnTheFly(372860) -- Searing Wounds
+    SetDefaultOnTheFly(373869) -- Burning Touch
+    SetDefaultOnTheFly(385536) -- Flame Dance
+    SetDefaultOnTheFly(381518) -- Winds of Change
+    SetDefaultOnTheFly(372858) -- Searing Blows
+    SetDefaultOnTheFly(372682) -- Primal Chill 1
+    SetDefaultOnTheFly(373589) -- Primal Chill 2
+    SetDefaultOnTheFly(373693) -- Living Bomb
+    SetDefaultOnTheFly(392924) -- Shock Blast
+    SetDefaultOnTheFly(381515) -- Stormslam
+    SetDefaultOnTheFly(396411) -- Primal Overload
+    SetDefaultOnTheFly(384773) -- Flaming Embers
+    SetDefaultOnTheFly(392451) -- Flashfire
+    SetDefaultOnTheFly(372697) -- Jagged Earth
+    SetDefaultOnTheFly(372047) -- Flurry
+    SetDefaultOnTheFly(372963) -- Chillstorm
+-- Brackenhide Hollow
+-- The Nokhud Offensive
+-- Uldaman: Legacy of Tyr
+-- Neltharus
+-- The Azure Vault
+-- Halls of Infusion
+-- Algeth'ar Academy
+----------------------------------------------------------
+---------------- Dragonflight (Season 1) -----------------
+----------------------------------------------------------
+-- Court of Stars
+    SetDefaultOnTheFly(207278) -- Arcane Lockdown
+    SetDefaultOnTheFly(209516) -- Mana Fang
+    SetDefaultOnTheFly(209512) -- Disrupting Energy
+    SetDefaultOnTheFly(211473) -- Shadow Slash
+    SetDefaultOnTheFly(207979) -- Shockwave
+    SetDefaultOnTheFly(207980) -- Disintegration Beam 1
+    SetDefaultOnTheFly(207981) -- Disintegration Beam 2
+    SetDefaultOnTheFly(211464) -- Fel Detonation
+    SetDefaultOnTheFly(208165) -- Withering Soul
+    SetDefaultOnTheFly(209413) -- Suppress
+    SetDefaultOnTheFly(209027) -- Quelling Strike
+-- Halls of Valor
+    SetDefaultOnTheFly(197964) -- Runic Brand Orange
+    SetDefaultOnTheFly(197965) -- Runic Brand Yellow
+    SetDefaultOnTheFly(197963) -- Runic Brand Purple
+    SetDefaultOnTheFly(197967) -- Runic Brand Green
+    SetDefaultOnTheFly(197966) -- Runic Brand Blue
+    SetDefaultOnTheFly(193783) -- Aegis of Aggramar Up
+    SetDefaultOnTheFly(196838) -- Scent of Blood
+    SetDefaultOnTheFly(199674) -- Wicked Dagger
+    SetDefaultOnTheFly(193260) -- Static Field
+    SetDefaultOnTheFly(193743) -- Aegis of Aggramar Wielder
+    SetDefaultOnTheFly(199652) -- Sever
+    SetDefaultOnTheFly(198944) -- Breach Armor
+    SetDefaultOnTheFly(215430) -- Thunderstrike 1
+    SetDefaultOnTheFly(215429) -- Thunderstrike 2
+    SetDefaultOnTheFly(203963) -- Eye of the Storm
+-- Shadowmoon Burial Grounds
+    SetDefaultOnTheFly(156776) -- Rending Voidlash
+    SetDefaultOnTheFly(153692) -- Necrotic Pitch
+    SetDefaultOnTheFly(153524) -- Plague Spit
+    SetDefaultOnTheFly(154469) -- Ritual of Bones
+    SetDefaultOnTheFly(162652) -- Lunar Purity
+    SetDefaultOnTheFly(164907) -- Void Cleave
+    SetDefaultOnTheFly(152979) -- Soul Shred
+    SetDefaultOnTheFly(158061) -- Blessed Waters of Purity
+    SetDefaultOnTheFly(154442) -- Malevolence
+    SetDefaultOnTheFly(153501) -- Void Blast
+-- Temple of the Jade Serpent
 
 -------------------- Old Dungeons (Season 4) --------------------
 -- Grimrail Depot

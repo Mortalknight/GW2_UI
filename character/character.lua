@@ -44,23 +44,6 @@ windowsList[2] = {
 }
 
 windowsList[3] = {
-    ["OnLoad"] = "LoadTalents",
-    ["FrameName"] = "GwTalentDetailsFrame",
-    ["SettingName"] = "USE_TALENT_WINDOW",
-    ["RefName"] = "GwTalentFrame",
-    ["TabIcon"] = "tabicon_spellbook",
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
-    ["HeaderText"] = TALENTS,
-    ["TooltipText"] = TALENTS_BUTTON,
-    ["Bindings"] = {
-
-    },
-    ["OnClick"] = [=[
-        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
-    ]=]
-}
-
-windowsList[4] = {
     ["OnLoad"] = "LoadProfessions",
     ["FrameName"] = "GwProfessionsDetailsFrame",
     ["SettingName"] = "USE_TALENT_WINDOW",
@@ -77,7 +60,7 @@ windowsList[4] = {
     ]=]
 }
 
-windowsList[5] = {
+windowsList[4] = {
     ["OnLoad"] = "LoadCurrency",
     ["FrameName"] = "GwCurrencyDetailsFrame",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
@@ -94,7 +77,7 @@ windowsList[5] = {
     ]=]
 }
 
-windowsList[6] = {
+windowsList[5] = {
     ["OnLoad"] = "LoadReputation",
     ["FrameName"] = "GwReputationyDetailsFrame",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
@@ -110,6 +93,25 @@ windowsList[6] = {
         self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "reputation")
     ]=]
 }
+
+--[[
+windowsList[6] = {
+    ["OnLoad"] = "LoadTalents",
+    ["FrameName"] = "GwTalentDetailsFrame",
+    ["SettingName"] = "USE_TALENT_WINDOW",
+    ["RefName"] = "GwTalentFrame",
+    ["TabIcon"] = "tabicon_spellbook",
+    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/spellbook-window-icon",
+    ["HeaderText"] = TALENTS,
+    ["TooltipText"] = TALENTS_BUTTON,
+    ["Bindings"] = {
+
+    },
+    ["OnClick"] = [=[
+        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "talents")
+    ]=]
+}
+]]
 
 -- turn click events (generated from key bind overrides) into the correct tab show/hide calls
 local charSecure_OnClick =
