@@ -21,26 +21,26 @@
 
     <Button name="GwAddonToggle" frameStrata="MEDIUM" virtual="true">
         <Size x="35" y="35"/>
-        <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/icon-module">
-            <Size x="30" y="30"></Size>
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout">
+            <Size x="38" y="30"></Size>
             <Anchors>
                 <Anchor point="CENTER"></Anchor>
             </Anchors>
-            <TexCoords left="0" right="0.25" top="0" bottom="0.25" />
+            <TexCoords left="0.171" right="0.78125" top="0.25" bottom="0.71875" />
         </NormalTexture>
-        <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/icon-module" alphaMode="ADD" alpha="0.5">
-            <Size x="30" y="30"></Size>
+        <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout" alphaMode="ADD" alpha="0.5">
+            <Size x="38" y="30"></Size>
             <Anchors>
                 <Anchor point="CENTER"></Anchor>
             </Anchors>
-            <TexCoords left="0" right="0.25" top="0" bottom="0.25" />
+            <TexCoords left="0.171" right="0.78125" top="0.25" bottom="0.71875" />
         </HighlightTexture>
-        <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/icon-module" alpha="0.5">
-            <Size x="30" y="30"></Size>
+        <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout" alpha="0.5">
+            <Size x="38" y="30"></Size>
             <Anchors>
                 <Anchor point="CENTER"></Anchor>
             </Anchors>
-            <TexCoords left="0" right="0.25" top="0" bottom="0.25" />
+            <TexCoords left="0.171" right="0.78125" top="0.25" bottom="0.71875" />
         </PushedTexture>
         <Frames>
             <Frame parentKey="container" hidden="true">
@@ -237,7 +237,7 @@
         </Anchors>
         <Layers>
             <Layer>
-          
+
                 <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
                     <Size x="314" y="2"/>
                     <Anchors>
