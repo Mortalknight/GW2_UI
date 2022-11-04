@@ -46,11 +46,13 @@ local function HandleFrame(baseName, doNotReparent)
         local petFrame = frame.PetFrame or frame.petFrame
         if petFrame then
             petFrame:UnregisterAllEvents()
+            petFrame:SetParent(GW.HiddenFrame)
         end
 
         local totFrame = frame.totFrame
         if totFrame then
             totFrame:UnregisterAllEvents()
+            totFrame:SetParent(GW.HiddenFrame)
         end
     end
 end
@@ -140,6 +142,7 @@ local function DisableBlizzardFrames()
 
     if ourPetFrame then
         HandleFrame(PetFrame)
+        PetActionBar.UpdateGridLayout = GW.NoOp
     end
 
     if ourTargetFrame then
@@ -186,20 +189,14 @@ local function DisableBlizzardFrames()
             MultiBarBottomRight = true,
             MicroButtonAndBagsBar = true,
             MainMenuBar = true,
-            ["StanceBar"] = true,
-            ["PetActionBar"] = true -- not remove the events
+            ["StanceBar"] = true
         }
 
         for name in next, untaint do
-            if name == "PetActionBar" then -- this fixes the pet bar getting replaced by EditMode
-                PetActionBar.UpdateGridLayout = GW.NoOp
-            end
             local frame = _G[name]
             if frame then
                 frame:SetParent(GW.HiddenFrame)
-                if name == "PetActionBar" then
-                    frame:UnregisterAllEvents()
-                end
+                frame:UnregisterAllEvents()
             end
         end
 
