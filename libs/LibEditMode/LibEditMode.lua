@@ -16,7 +16,6 @@ local function GetSystemByID(systemID, systemIndex)
   -- Get the system by checking each one for the right system id
   for _, system in pairs(layoutInfo.layouts[layoutInfo.activeLayout].systems) do
     if system.system == systemID and system.systemIndex == systemIndex then
-        print(system.system)
       return system
     end
   end
