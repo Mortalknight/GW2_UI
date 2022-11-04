@@ -145,7 +145,7 @@ local onstate_Barlayout = [=[
         elseif newstate == "obar" then
             buff_action = "show"
         elseif newstate == "vbar" then
-            buff_action = "low"
+            buff_action = "high"
         end
 
         if buff_action == "high" or buff_action == "low" then

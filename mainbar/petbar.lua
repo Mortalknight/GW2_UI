@@ -69,9 +69,6 @@ local function setPetBar(fmPet)
                 btn:ClearAllPoints()
                 btn:SetPoint("BOTTOM", PetActionButton5, "TOP", 0, BUTTON_MARGIN)
             end
-            -- caused be taint
-            btn.ClearAllPoints = GW.NoOp
-            btn.SetPoint = GW.NoOp
 
             if btnShine then
                 btnShine:SetSize(btn:GetSize())

@@ -68,6 +68,7 @@ local function DisableBlizzardFrames()
     local ourFocusTargetFrame = GW.GetSetting("focus_TARGET_ENABLED")
     local ourPlayerFrame = GW.GetSetting("HEALTHGLOBE_ENABLED")
     local ourCastBar = GW.GetSetting("CASTINGBAR_ENABLED")
+    local ourActionbars = GW.GetSetting("ACTIONBARS_ENABLED")
 
     if ourPartyFrames or ourRaidFrames then
         -- calls to UpdateRaidAndPartyFrames, which as of writing this is used to show/hide the
@@ -172,6 +173,37 @@ local function DisableBlizzardFrames()
     if ourCastBar then
         HandleFrame(PlayerCastingBarFrame)
         HandleFrame(PetCastingBarFrame)
+    end
+
+    if ourActionbars then
+        local untaint = {
+            MultiBar5 = true,
+            MultiBar6 = true,
+            MultiBar7 = true,
+            MultiBarLeft = true,
+            MultiBarRight = true,
+            MultiBarBottomLeft = true,
+            MultiBarBottomRight = true,
+            MicroButtonAndBagsBar = true,
+            MainMenuBar = true,
+            ["StanceBar"] = true,
+            ["PetActionBar"] = true
+        }
+
+        for name in next, untaint do
+            if name == "PetActionBar" then -- this fixes the pet bar getting replaced by EditMode
+                PetActionBar.UpdateGridLayout = GW.NoOp
+            end
+            local frame = _G[name]
+            if frame then
+                frame:SetParent(GW.HiddenFrame)
+                frame:UnregisterAllEvents()
+            end
+        end
+
+        MainMenuBar.SetPositionForStatusBars = GW.NoOp
+        MultiActionBar_HideAllGrids = GW.NoOp
+        MultiActionBar_ShowAllGrids = GW.NoOp
     end
 end
 GW.DisableBlizzardFrames = DisableBlizzardFrames
