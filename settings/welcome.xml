@@ -8,18 +8,18 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg">
-                <Size x="512" y="512"/>
+                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/uistuff/settingssplash">
+                <Size x="1024" y="1024"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT"/>
-                        <Anchor point="BOTTOMRIGHT"/>
+                        <Anchor point="CENTER"/>
+
                     </Anchors>
                 </Texture>
             </Layer>
             <Layer level="BORDER">
                 <FontString parentKey="header" text="Welcome to Gw2 UI" justifyH="CENTER">
                     <Anchors>
-                        <Anchor point="TOP" x="0" y="-20"/>
+                        <Anchor point="TOP" x="0" y="15"/>
                     </Anchors>
                 </FontString>
                 <FontString parentKey="subHeader" text="{VERSION}" justifyH="CENTER">
