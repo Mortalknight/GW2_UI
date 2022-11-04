@@ -167,18 +167,28 @@ local function setMinimapButtons(side)
 
     if side == "left" then
         GameTimeFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -2)
-        GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -12, -47)
-        QueueStatusButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -9.5, -66)
-        GwAddonToggle:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -9, 46)
+        GwMailButton:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
+        QueueStatusButton:SetPoint("TOP", GwMailButton, "BOTTOM", 0, 0)
+        GwAddonToggle:SetPoint("TOP", QueueStatusButton, "BOTTOM", -3, 0)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
         expButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 0, -3)
+
+        --flip GwAddonToggle icon
+        GwAddonToggle:GetNormalTexture():SetTexCoord(0.171, 0.78125, 0.25, 0.71875)
+        GwAddonToggle:GetHighlightTexture():SetTexCoord(0.171, 0.78125, 0.25, 0.71875)
+        GwAddonToggle:GetPushedTexture():SetTexCoord(0.171, 0.78125, 0.25, 0.71875)
     else
         GameTimeFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -2)
-        GwMailButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 11, -47)
-        QueueStatusButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 9.5, -66)
-        GwAddonToggle:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 9, 46)
+        GwMailButton:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
+        QueueStatusButton:SetPoint("TOP", GwMailButton, "BOTTOM", 0, 0)
+        GwAddonToggle:SetPoint("TOP", QueueStatusButton, "BOTTOM", 3, 0)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
         expButton:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 2, -3)
+
+        --flip GwAddonToggle icon
+        GwAddonToggle:GetNormalTexture():SetTexCoord(0.78125, 0.171, 0.25, 0.71875)
+        GwAddonToggle:GetHighlightTexture():SetTexCoord(0.78125, 0.171, 0.25, 0.71875)
+        GwAddonToggle:GetPushedTexture():SetTexCoord(0.78125, 0.171, 0.25, 0.71875)
     end
 
     QueueStatusButton:SetParent(UIParent)
