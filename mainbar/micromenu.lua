@@ -463,7 +463,7 @@ local function setupMicroButtons(mbf)
             if button == "LeftButton" then
                 local f = self:GetFrameRef("GwCharacterWindow")
                 f:SetAttribute("keytoggle", "1")
-                f:SetAttribute("windowpanelopen", "talents")
+                f:SetAttribute("windowpanelopen", "spellbook")
             end
             ]=]
         )
