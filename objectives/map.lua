@@ -244,11 +244,11 @@ GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 
 local function Minimap_OnMouseDown(self, btn)
     if M.TrackingDropdown then
-        _G.HideDropDownMenu(1, nil, M.TrackingDropdown)
+        HideDropDownMenu(1, nil, M.TrackingDropdown)
     end
 
     if btn == "RightButton" and M.TrackingDropdown then
-        _G.ToggleDropDownMenu(1, nil, M.TrackingDropdown, "cursor")
+        ToggleDropDownMenu(1, nil, M.TrackingDropdown, "cursor")
     else
         Minimap.OnClick(self)
     end
