@@ -66,6 +66,8 @@ local function fmTalentsOnEvent(self, event, ...)
     if event == "ACTIVE_PLAYER_SPECIALIZATION_CHANGED" then
         UpdateMenu(self)
         UpdateBackground(self)
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        UpdateBackground(self)
     end
 
     -- Update TalentPoints
@@ -111,8 +113,6 @@ local function LoadTalents(tabContainer)
     fmTalents.tabContainers[2] = SetupTreeContainer(fmTalents, 2)
 
     fmTalents.tabContainers[1]:Show()
-
-    UpdateBackground(fmTalents)
 
     fmTalents.tree1:HookScript("OnClick", menuItem_OnClick)
     fmTalents.tree2:HookScript("OnClick", menuItem_OnClick)
