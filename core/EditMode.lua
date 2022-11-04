@@ -52,6 +52,23 @@ local IgnoreFrames = {
 local function DisableBlizzardMovers()
     local editMode = EditModeManagerFrame
 
+    -- first reset the actionbar scale to 100% if our actionbars are active
+    if CheckActionBar() then
+        -- reset blizzard actionbarbutton scale
+        GW.Libs.LEM:LoadLayouts()
+        GW.Libs.LEM:SetFrameSetting(MainMenuBar, 3, 5)
+        GW.Libs.LEM:SetFrameSetting(MultiBarBottomLeft, 3, 5)
+        GW.Libs.LEM:SetFrameSetting(MultiBarBottomRight, 3, 5)
+        GW.Libs.LEM:SetFrameSetting(MultiBarRight, 3, 5)
+        GW.Libs.LEM:SetFrameSetting(MultiBarLeft, 3, 5)
+        GW.Libs.LEM:SetFrameSetting(MultiBar5, 3, 5)
+        GW.Libs.LEM:SetFrameSetting(MultiBar6, 3, 5)
+        GW.Libs.LEM:SetFrameSetting(MultiBar7, 3, 5)
+
+        GW.Libs.LEM:ApplyChanges()
+    end
+
+
     -- remove the initial registers
     local registered = editMode.registeredSystemFrames
     for i = #registered, 1, -1 do
@@ -87,7 +104,7 @@ local function DisableBlizzardMovers()
     if CheckActionBar() then
         mixin.RefreshVehicleLeaveButton = GW.NoOp
         mixin.RefreshActionBarShown = GW.NoOp
-        mixin.RefreshEncounterBar = GW.NoOp
+        --mixin.RefreshEncounterBar = GW.NoOp
     end
 end
 GW.DisableBlizzardMovers = DisableBlizzardMovers
