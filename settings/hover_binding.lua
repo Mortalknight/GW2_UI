@@ -8,7 +8,6 @@ local function DisplayHoverBinding()
         -- Init the function
         -- Track if we opened the QuickKeybindFram from our Button, if so we need to close the KeyBindingFrame and GameMenuFrame after close
         QuickKeybindFrame:HookScript("OnHide", function()
-            print(opendFromGW2)
             if opendFromGW2 then
                 opendFromGW2 = false
 
