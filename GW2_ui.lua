@@ -343,7 +343,7 @@ GW.PixelPerfection = PixelPerfection
 
 local SCALE_HUD_FRAMES = {}
 local function UpdateHudScale()
-    local hudScale = GetSetting("HUD_SCALE")
+    local hudScale = tonumber(GetSetting("HUD_SCALE")) or 1
     for _, f in ipairs(SCALE_HUD_FRAMES) do
         if f then
             local fm = f.gwMover

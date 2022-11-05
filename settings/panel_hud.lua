@@ -117,7 +117,7 @@ local function LoadHudPanel(sWindow)
         L["HUD Scale"],
         L["Change the HUD size."],
         "HUD_SCALE",
-        GW.UpdateHudScale,
+        function() GW.UpdateHudScale(); GW.ShowRlPopup = true end,
         0.5,
         1.5,
         nil,

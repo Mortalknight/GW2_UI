@@ -33,7 +33,7 @@ local IgnoreFrames = {
 
     -- ActionBars
     StanceBar = CheckActionBar,
-    EncounterBar = CheckActionBar,
+    --EncounterBar = CheckActionBar,
     PetActionBar = CheckPetActionBar,
     PossessActionBar = CheckActionBar,
     MainMenuBarVehicleLeaveButton = CheckActionBar,
@@ -57,7 +57,7 @@ local function DisableBlizzardMovers()
     -- first reset the actionbar scale to 100% if our actionbars are active
     if CheckActionBar() then
         -- create gw2 profile with needed actionbar settings
-
+        --/run GW2_ADDON.Libs.LEM:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.GetSetting("HUD_SCALE")) or 1))); GW2_ADDON.Libs.LEM:ApplyChanges()
         LEM:LoadLayouts()
 
         if not LEM:DoesLayoutExist("GW2_Layout") then
@@ -77,7 +77,7 @@ local function DisableBlizzardMovers()
         LEM:SetFrameSetting(MultiBar6, 3, 5)
         LEM:SetFrameSetting(MultiBar7, 3, 5)
 
-        LEM:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, 65)
+        LEM:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.GetSetting("HUD_SCALE")) or 1)))
 
         LEM:ApplyChanges()
     end
