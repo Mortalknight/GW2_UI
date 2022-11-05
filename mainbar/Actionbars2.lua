@@ -226,6 +226,8 @@ local function fadeCheck(self, forceCombat)
                     f:Hide()
                     actionBarFrameHide(f, true)
                 end
+
+                self.gw_DirtySetting = false
             else
                 local inFocus
                 if fadeOption == "MOUSE_OVER" or fadeOption == "INCOMBAT" then
@@ -260,19 +262,6 @@ local function fadeCheck(self, forceCombat)
                 end
             end
         end
-    end
-
-    if not inLockdown and self.gw_DirtySetting then
-        local xOff
-        local btn_padding = self.gw_Width
-        if self.gw_Bar2:IsShown() then
-            xOff = (804 - btn_padding) / 2
-        else
-            xOff = -(btn_padding - 550) / 2
-        end
-        self:ClearAllPoints()
-        self:SetPoint("TOP", UIParent, "BOTTOM", xOff, 80)
-        self.gw_DirtySetting = false
     end
 end
 AFP("fadeCheck", fadeCheck)
@@ -474,8 +463,8 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         else
             btn.gwBackdrop:Show()
         end
-        --btn:HookScript("OnHide", hideBackdrop)
-        --btn:HookScript("OnShow", showBackdrop)
+        btn:HookScript("OnHide", hideBackdrop)
+        btn:HookScript("OnShow", showBackdrop)
     end
 end
 GW.setActionButtonStyle = setActionButtonStyle
@@ -485,39 +474,38 @@ local function main_OnEvent(self, event)
         actionBarEquipUpdate()
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         local forceCombat = (event == "PLAYER_REGEN_DISABLED")
+        print(1)
         fadeCheck(self, forceCombat)
     end
 end
 AFP("main_OnEvent", main_OnEvent)
 
 local function updateMainBar()
+    local fmActionbar = MainMenuBar
+
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
     local btn_padding = GetSetting("MAINBAR_MARGIIN")
     local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
-    local fmMainbar = CreateFrame("FRAME", "GwMainActionbar", UIParent, "GwMultibarTmpl")
-    GW.MixinHideDuringPetAndOverride(fmMainbar)
 
-    fmMainbar.gw_Buttons = {}
-    fmMainbar.gw_Backdrops = {}
-    fmMainbar.rangeTimer = -1
-    fmMainbar.fadeTimer = -1
-    fmMainbar.elapsedTimer = -1
-
+    fmActionbar.gw_Buttons = {}
+    fmActionbar.gw_Backdrops = {}
+    fmActionbar.rangeTimer = -1
+    fmActionbar.fadeTimer = -1
+    fmActionbar.elapsedTimer = -1
 
     local rangeIndicatorSetting = GetSetting("MAINBAR_RANGEINDICATOR")
     for i = 1, 12 do
         local btn = _G["ActionButton" .. i]
-        fmMainbar.gw_Buttons[i] = btn
+        fmActionbar.gw_Buttons[i] = btn
 
         if btn then
-            btn:SetParent(fmMainbar)
             -- create a backdrop not attached to button because default actionbar backdrop logic is wonky
-            local backDrop = CreateFrame("Frame", nil, fmMainbar, "GwActionButtonBackdropTmpl")
+            local backDrop = CreateFrame("Frame", nil, fmActionbar, "GwActionButtonBackdropTmpl")
             local backDropSize = 1
 
             backDrop:SetPoint("TOPLEFT", btn, "TOPLEFT", -backDropSize, backDropSize)
             backDrop:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", backDropSize, -backDropSize)
-            fmMainbar.gw_Backdrops[i] = backDrop
+            fmActionbar.gw_Backdrops[i] = backDrop
 
             btn:SetScript("OnUpdate", nil) -- disable the default button update handler
             btn.RightDivider:Hide()
@@ -560,7 +548,7 @@ local function updateMainBar()
             btn:ClearAllPoints()
             btn:SetPoint(
                 "LEFT",
-                fmMainbar,
+                fmActionbar,
                 "LEFT",
                 btn_padding - GetSetting("MAINBAR_MARGIIN") - MAIN_MENU_BAR_BUTTON_SIZE,
                 (GetSetting("XPBAR_ENABLED") and 0 or -14)
@@ -573,23 +561,15 @@ local function updateMainBar()
     end
 
     -- position the main action bar
-    fmMainbar:ClearAllPoints()
-    fmMainbar:SetPoint("TOP", UIParent, "BOTTOM", 0, 80)
-    fmMainbar:SetSize(btn_padding, used_height)
-    fmMainbar.gw_Width = btn_padding
-    hooksecurefunc(fmMainbar, "SetPoint", function(_, point, anchor, relPoint, x, y)
-        if point ~= "TOP" or anchor ~= UIParent or relPoint ~= "BOTTOM" or x ~= 0 or y ~= 80 then
-            fmMainbar:ClearAllPoints()
-            fmMainbar:SetPoint("TOP", UIParent, "BOTTOM", 0, 80)
-        end
-    end)
+    fmActionbar:SetSize(btn_padding, used_height)
+    fmActionbar.gw_Width = btn_padding
 
     -- event/update handlers
-    AddUpdateCB(actionBar_OnUpdate, fmMainbar)
-    fmMainbar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-    fmMainbar:RegisterEvent("PLAYER_REGEN_DISABLED")
-    fmMainbar:RegisterEvent("PLAYER_REGEN_ENABLED")
-    fmMainbar:SetScript("OnEvent", main_OnEvent)
+    AddUpdateCB(actionBar_OnUpdate, fmActionbar)
+    fmActionbar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+    fmActionbar:RegisterEvent("PLAYER_REGEN_DISABLED")
+    fmActionbar:RegisterEvent("PLAYER_REGEN_ENABLED")
+    fmActionbar:SetScript("OnEvent", main_OnEvent)
 
     -- disable default main action bar behaviors
     MainMenuBar:UnregisterAllEvents()
@@ -601,14 +581,14 @@ local function updateMainBar()
     -- even with IsUserPlaced set, the Blizz multibar handlers mess with the width so reset in fadeCheck DirtySetting
 
     -- set fader logic
-    createFaderAnim(fmMainbar, true)
+    createFaderAnim(fmActionbar, true)
 
-    return fmMainbar
+    return fmActionbar
 end
 AFP("updateMainBar", updateMainBar)
 
 local function trackBarChanges()
-    local fmActionbar = GwMainActionbar
+    local fmActionbar = MainMenuBar
     if not fmActionbar then
         return
     end
@@ -684,11 +664,16 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 
             btn:ClearAllPoints()
             btn:SetPoint("TOPLEFT", fmMultibar, "TOPLEFT", btn_padding, -btn_padding_y)
+            btn.gwX = btn_padding
+            btn.gwY = btn_padding_y
             btn.noGrid = nil
             btn.changedColor = false
-            -- caused be taint
-            btn.ClearAllPoints = GW.NoOp
-            btn.SetPoint = GW.NoOp
+            hooksecurefunc(btn, "SetPoint", function(_, _, parent)
+                if parent ~= fmMultibar then
+                    btn:ClearAllPoints()
+                    btn:SetPoint("TOPLEFT", fmMultibar, "TOPLEFT", btn.gwX, -btn.gwY)
+                end
+            end)
 
             btn_padding = btn_padding + settings.size + margin
             btn_this_row = btn_this_row + 1
@@ -733,8 +718,12 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 
     fmMultibar:ClearAllPoints()
     fmMultibar:SetPoint("TOPLEFT", fmMultibar.gwMover)
-    fmMultibar.ClearAllPoints = GW.NoOp
-    fmMultibar.SetPoint = GW.NoOp
+    hooksecurefunc(fmMultibar, "SetPoint", function(_, _, anchor)
+        if anchor ~= fmMultibar.gwMover then
+            fmMultibar:ClearAllPoints()
+            fmMultibar:SetPoint("TOPLEFT", fmMultibar.gwMover)
+        end
+    end)
 
     -- position mover
     if (barName == "MultiBarBottomLeft" or barName == "MultiBarBottomRight") and (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not fmMultibar.isMoved  then
@@ -770,7 +759,7 @@ AFP("updateMultiBar", updateMultiBar)
 
 local function UpdateMultibarButtons()
     local margin = GetSetting("MULTIBAR_MARGIIN")
-    local fmActionbar = GwMainActionbar
+    local fmActionbar = MainMenuBar
     local fmMultiBar
     local HIDE_ACTIONBARS_CVAR
 
@@ -801,12 +790,10 @@ local function UpdateMultibarButtons()
             for i = 1, 12 do
                 local btn = fmMultiBar.gw_Buttons[i]
 
-                btn.ClearAllPoints = nil
-                btn.SetPoint = nil
+                btn.gwX = btn_padding
+                btn.gwY = btn_padding_y
                 btn:ClearAllPoints()
                 btn:SetPoint("TOPLEFT", fmMultiBar, "TOPLEFT", btn_padding, -btn_padding_y)
-                btn.ClearAllPoints = GW.NoOp
-                btn.SetPoint = GW.NoOp
 
                 btn_padding = btn_padding + settings.size + margin
                 btn_this_row = btn_this_row + 1
@@ -840,13 +827,13 @@ GW.UpdateMultibarButtons = UpdateMultibarButtons
 
 local function setPossessBar()
     PossessActionBar:ClearAllPoints()
-    PossessActionBar:SetPoint("BOTTOM", GwMainActionbar, "TOP", -110, 40)
+    PossessActionBar:SetPoint("BOTTOM", MainMenuBar, "TOP", -110, 40)
 
     hooksecurefunc(PossessActionBar, "SetPoint", function(_, _, parent)
-        if parent ~= GwMainActionbar then
+        if parent ~= MainMenuBar then
             PossessActionBar:ClearAllPoints()
-            PossessActionBar:SetParent(_G.UIParent)
-            PossessActionBar:Point("BOTTOM", GwMainActionbar, "TOP", -110, 40)
+            PossessActionBar:SetParent(UIParent)
+            PossessActionBar:SetPoint("BOTTOM", MainMenuBar, "TOP", -110, 40)
         end
     end)
 
@@ -854,15 +841,15 @@ end
 AFP("setPossessBar", setPossessBar)
 
 local function setLeaveVehicleButton()
-    MainMenuBarVehicleLeaveButton:SetParent(GwMainActionbar)
+    MainMenuBarVehicleLeaveButton:SetParent(MainMenuBar)
     MainMenuBarVehicleLeaveButton:ClearAllPoints()
     MainMenuBarVehicleLeaveButton:SetPoint("LEFT", ActionButton12, "RIGHT", 0, 0)
 
     hooksecurefunc(MainMenuBarVehicleLeaveButton, "SetPoint", function(_, _, parent)
         if parent ~= ActionButton12 then
             MainMenuBarVehicleLeaveButton:ClearAllPoints()
-            MainMenuBarVehicleLeaveButton:SetParent(_G.UIParent)
-            MainMenuBarVehicleLeaveButton:Point("LEFT", ActionButton12, "RIGHT", 0, 0)
+            MainMenuBarVehicleLeaveButton:SetParent(UIParent)
+            MainMenuBarVehicleLeaveButton:SetPoint("LEFT", ActionButton12, "RIGHT", 0, 0)
         end
     end)
 end
@@ -981,7 +968,7 @@ end
 AFP("actionButtons_OnUpdate", actionButtons_OnUpdate)
 
 local function changeVertexColorActionbars()
-    local fmActionbar = GwMainActionbar
+    local fmActionbar = MainMenuBar
     local fmMultiBar
     for y = 1, 8 do
         if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
@@ -1116,7 +1103,7 @@ end
 AFP("changeFlyoutStyle", changeFlyoutStyle)
 
 local function UpdateMainBarHot()
-    local fmActionbar = GwMainActionbar
+    local fmActionbar = MainMenuBar
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
     local btn_padding = GetSetting("MAINBAR_MARGIIN")
 
@@ -1136,13 +1123,11 @@ local function UpdateMainBarHot()
         updateMacroName(btn)
         updateHotkey(btn)
     end
-   -- position the main action bar
-   fmActionbar:ClearAllPoints()
-   fmActionbar:SetPoint("TOP", UIParent, "BOTTOM", 0, 80)
-   fmActionbar:SetSize(btn_padding, used_height)
-   fmActionbar.gw_Width = btn_padding
+-- position the main action bar
+fmActionbar:SetSize(btn_padding, used_height)
+fmActionbar.gw_Width = btn_padding
 
-   actionButtons_OnUpdate(GwMainActionbar, 0, true)
+actionButtons_OnUpdate(MainMenuBar, 0, true)
 end
 GW.UpdateMainBarHot = UpdateMainBarHot
 
@@ -1166,7 +1151,7 @@ local function LoadActionBars(lm)
     fmActionbar.gw_Bar6 = updateMultiBar(lm, "MultiBar6", "MultiBar6Button", MULTIBAR_6_ACTIONBAR_PAGE, nil)
     fmActionbar.gw_Bar7 = updateMultiBar(lm, "MultiBar7", "MultiBar7Button", MULTIBAR_7_ACTIONBAR_PAGE, nil)
 
-    GW.RegisterScaleFrame(GwMainActionbar)
+    GW.RegisterScaleFrame(fmActionbar)
 
     -- hook existing multibars to track settings changes
     hooksecurefunc("SetActionBarToggles", function() C_Timer.After(1, trackBarChanges) end)

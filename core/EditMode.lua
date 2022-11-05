@@ -9,6 +9,7 @@ local CheckFocusFrame = function() return GetSetting("FOCUS_ENABLED") end
 local CheckRaidFrame = function() return GetSetting("RAID_FRAMES") end
 local CheckBossFrame = function() return GetSetting("QUESTTRACKER_ENABLED") end
 local CheckAuraFrame = function() return GetSetting("PLAYER_BUFFS_ENABLED") end
+local CheckPetActionBar = function() return GetSetting("PETBAR_ENABLED") end
 local CheckActionBar = function() return GetSetting("ACTIONBARS_ENABLED") end
 local CheckLootFrame = function() return GetSetting("LOOTFRAME_SKIN_ENABLED") and GetCVar("lootUnderMouse") == "0" end
 
@@ -33,7 +34,7 @@ local IgnoreFrames = {
     -- ActionBars
     StanceBar = CheckActionBar,
     EncounterBar = CheckActionBar,
-    PetActionBar = CheckActionBar,
+    PetActionBar = CheckPetActionBar,
     PossessActionBar = CheckActionBar,
     MainMenuBarVehicleLeaveButton = CheckActionBar,
     MainMenuBar = CheckActionBar,
@@ -51,23 +52,35 @@ local IgnoreFrames = {
 
 local function DisableBlizzardMovers()
     local editMode = EditModeManagerFrame
+    local LEM = GW.Libs.LEM
 
     -- first reset the actionbar scale to 100% if our actionbars are active
     if CheckActionBar() then
-        -- reset blizzard actionbarbutton scale
-        GW.Libs.LEM:LoadLayouts()
-        GW.Libs.LEM:SetFrameSetting(MainMenuBar, 3, 5)
-        GW.Libs.LEM:SetFrameSetting(MultiBarBottomLeft, 3, 5)
-        GW.Libs.LEM:SetFrameSetting(MultiBarBottomRight, 3, 5)
-        GW.Libs.LEM:SetFrameSetting(MultiBarRight, 3, 5)
-        GW.Libs.LEM:SetFrameSetting(MultiBarLeft, 3, 5)
-        GW.Libs.LEM:SetFrameSetting(MultiBar5, 3, 5)
-        GW.Libs.LEM:SetFrameSetting(MultiBar6, 3, 5)
-        GW.Libs.LEM:SetFrameSetting(MultiBar7, 3, 5)
+        -- create gw2 profile with needed actionbar settings
 
-        GW.Libs.LEM:ApplyChanges()
+        LEM:LoadLayouts()
+
+        if not LEM:DoesLayoutExist("GW2_Layout") then
+            LEM:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
+            LEM:ApplyChanges()
+        end
+
+        LEM:SetActiveLayout("GW2_Layout")
+        LEM:ApplyChanges()
+
+        LEM:SetFrameSetting(MainMenuBar, 3, 5)
+        LEM:SetFrameSetting(MultiBarBottomLeft, 3, 5)
+        LEM:SetFrameSetting(MultiBarBottomRight, 3, 5)
+        LEM:SetFrameSetting(MultiBarRight, 3, 5)
+        LEM:SetFrameSetting(MultiBarLeft, 3, 5)
+        LEM:SetFrameSetting(MultiBar5, 3, 5)
+        LEM:SetFrameSetting(MultiBar6, 3, 5)
+        LEM:SetFrameSetting(MultiBar7, 3, 5)
+
+        LEM:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, 65)
+
+        LEM:ApplyChanges()
     end
-
 
     -- remove the initial registers
     local registered = editMode.registeredSystemFrames
