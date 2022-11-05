@@ -1,23 +1,25 @@
 <Bindings>
-    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM8" header="GW2UI_MARKER_BINDINGS"/>
-    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM6"/>
-    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM3"/>
-    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM1"/>
-    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM5"/>
-    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM7"/>
-    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM2"/>
-    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM4"/>
-    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GW2UI_Markers_Button:WM9"/>
-    <Binding category="BINDING_HEADER_GW2UI" name="CLICK GwDodgeBar:LeftButton" header="GW2UI_MOVE_BINDINGS"/>
-    <Binding category="BINDING_HEADER_GW2UI" name="GW2UI_BAG_SORT" header="GW2UI_INVENTORY_BINDINGS" runOnUp="false">
+    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button8:LeftButton" header="GW2UI_WORLD_MARKER"/>
+    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button6:LeftButton"/>
+    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button3:LeftButton"/>
+    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button1:LeftButton"/>
+    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button5:LeftButton"/>
+    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button7:LeftButton"/>
+    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button2:LeftButton"/>
+    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_Button4:LeftButton"/>
+    <Binding category="GW2 UI" name="CLICK GW2UI_Markers_ButtonCWM:LeftButton"/>
+
+    <Binding category="GW2 UI" name="CLICK GwDodgeBar:LeftButton" header="GW2UI_MOVE_BINDINGS"/>
+
+    <Binding category="GW2 UI" name="BAG_SORT" header="GW2UI_INVENTORY_BINDINGS" runOnUp="true">
         PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
         SortBags()
     </Binding>
-    <Binding category="BINDING_HEADER_GW2UI" name="GW2UI_BANK_SORT" runOnUp="false">
+    <Binding category="GW2 UI" name="BANK_SORT" runOnUp="true">
         PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
         SortBankBags()
     </Binding>
-    <Binding category="BINDING_HEADER_GW2UI" name="GW2UI_RAID_MARKER" runOnUp="true">
+    <Binding category="GW2 UI" name="RAID_MARKER" runOnUp="true">
         GW_RaidMark_HotkeyPressed(keystate)
     </Binding>
 </Bindings>

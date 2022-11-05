@@ -1,55 +1,25 @@
 local _, GW = ...
 
+local function CreateEntry(name, command, description)
+    print(description)
+    _G["BINDING_NAME_CLICK " .. name .. ":LeftButton"] = description
+	local btn = CreateFrame("Button", name, nil, "SecureActionButtonTemplate")
+	btn:SetAttribute("type", "macro")
+	btn:SetAttribute("macrotext", command)
+	btn:RegisterForClicks("AnyDown")
+end
+
 local function LoadMarkers()
-    _G["BINDING_HEADER_GW2UI_MARKER_BINDINGS"] = string.gsub(WORLD_MARKER, "%%d", "")
-    _G["BINDING_NAME_CLICK GW2UI_Markers_Button:WM8"] = WORLD_MARKER8
-    _G["BINDING_NAME_CLICK GW2UI_Markers_Button:WM6"] = WORLD_MARKER6
-    _G["BINDING_NAME_CLICK GW2UI_Markers_Button:WM3"] = WORLD_MARKER3
-    _G["BINDING_NAME_CLICK GW2UI_Markers_Button:WM1"] = WORLD_MARKER1
-    _G["BINDING_NAME_CLICK GW2UI_Markers_Button:WM5"] = WORLD_MARKER5
-    _G["BINDING_NAME_CLICK GW2UI_Markers_Button:WM7"] = WORLD_MARKER7
-    _G["BINDING_NAME_CLICK GW2UI_Markers_Button:WM2"] = WORLD_MARKER2
-    _G["BINDING_NAME_CLICK GW2UI_Markers_Button:WM4"] = WORLD_MARKER4
-    _G["BINDING_NAME_CLICK GW2UI_Markers_Button:WM9"] = REMOVE_WORLD_MARKERS
+    BINDING_HEADER_GW2UI_WORLD_MARKER = string.gsub(WORLD_MARKER, "%%d", "")
+    for i = 1, 8 do
+        CreateEntry("GW2UI_Markers_Button" .. i, "/clearworldmarker "..i.."\n/worldmarker "..i, _G["WORLD_MARKER"..i])
+    end
+    CreateEntry("GW2UI_Markers_ButtonCWM", "/clearworldmarker 0", REMOVE_WORLD_MARKERS)
 
-    local btn = CreateFrame("Button", "GW2UI_Markers_Button", UIParent, "SecureActionButtonTemplate")
-    btn:Hide()
-    btn:RegisterForClicks("AnyUp", "AnyDown")
+    _G["BINDING_HEADER_GW2UI_MOVE_BINDINGS"] = BINDING_HEADER_MOVEMENT
+    _G["BINDING_NAME_CLICK GwDodgeBar:LeftButton"] = DODGE
 
-    btn:SetAttribute("type-WM1", "worldmarker")
-    btn:SetAttribute("action-WM1", "set")
-    btn:SetAttribute("marker-WM1", "1")
-
-    btn:SetAttribute("type-WM2", "worldmarker")
-    btn:SetAttribute("action-WM2", "set")
-    btn:SetAttribute("marker-WM2", "2")
-
-    btn:SetAttribute("type-WM3", "worldmarker")
-    btn:SetAttribute("action-WM3", "set")
-    btn:SetAttribute("marker-WM3", "3")
-
-    btn:SetAttribute("type-WM4", "worldmarker")
-    btn:SetAttribute("action-WM4", "set")
-    btn:SetAttribute("marker-WM4", "4")
-
-    btn:SetAttribute("type-WM5", "worldmarker")
-    btn:SetAttribute("action-WM5", "set")
-    btn:SetAttribute("marker-WM5", "5")
-
-    btn:SetAttribute("type-WM6", "worldmarker")
-    btn:SetAttribute("action-WM6", "set")
-    btn:SetAttribute("marker-WM6", "6")
-
-    btn:SetAttribute("type-WM7", "worldmarker")
-    btn:SetAttribute("action-WM7", "set")
-    btn:SetAttribute("marker-WM7", "7")
-
-    btn:SetAttribute("type-WM8", "worldmarker")
-    btn:SetAttribute("action-WM8", "set")
-    btn:SetAttribute("marker-WM8", "8")
-
-    btn:SetAttribute("type-WM9", "worldmarker")
-    btn:SetAttribute("action-WM9", "clear")
-    btn:SetAttribute("marker-WM9", "0")
+    BINDING_NAME_BAG_SORT = BAG_CLEANUP_BAGS
+    BINDING_NAME_BANK_SORT = BAG_CLEANUP_BANK
 end
 GW.LoadMarkers = LoadMarkers

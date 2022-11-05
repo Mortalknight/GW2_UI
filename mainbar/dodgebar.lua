@@ -280,8 +280,6 @@ GW.AddForProfiling("dodgebar", "dodge_OnLeave", dodge_OnLeave)
 
 local function LoadDodgeBar(hg, asTargetFrame)
     Debug("LoadDodgeBar start")
-    _G["BINDING_HEADER_GW2UI_MOVE_BINDINGS"] = BINDING_HEADER_MOVEMENT
-    _G["BINDING_NAME_CLICK GwDodgeBar:LeftButton"] = DODGE
 
     -- this bar gets a global name for use in key bindings
     local fmdb = CreateFrame("Button", "GwDodgeBar", UIParent, "GwDodgeBarTmpl")

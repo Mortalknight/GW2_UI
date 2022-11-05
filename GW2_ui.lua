@@ -16,9 +16,6 @@ local l = CreateFrame("Frame", nil, UIParent) -- Main event frame
 
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
--- setup Binding Header color
-BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
-
 -- Make a global GW variable , so others cann access out functions
 GW2_ADDON = GW
 

@@ -62,7 +62,7 @@ local function RaidMarkButton_OnClick(self, button)
 end
 
 local function LoadRaidMarker()
-    _G["BINDING_NAME_GW2UI_RAID_MARKER"] = RAID_TARGET_ICON
+    _G["BINDING_NAME_RAID_MARKER"] = RAID_TARGET_ICON
 
     RaidMarkFrame:EnableMouse(true)
     RaidMarkFrame:SetFrameStrata("DIALOG")
