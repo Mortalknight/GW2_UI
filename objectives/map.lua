@@ -174,9 +174,11 @@ local function setMinimapButtons(side)
         expButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 0, -3)
 
         --flip GwAddonToggle icon
-        GwAddonToggle:GetNormalTexture():SetTexCoord(0.171, 0.78125, 0.25, 0.71875)
-        GwAddonToggle:GetHighlightTexture():SetTexCoord(0.171, 0.78125, 0.25, 0.71875)
-        GwAddonToggle:GetPushedTexture():SetTexCoord(0.171, 0.78125, 0.25, 0.71875)
+
+        GwAddonToggle:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
+        GwAddonToggle:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
+        GwAddonToggle:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
+        
     else
         GameTimeFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -2)
         GwMailButton:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
@@ -186,9 +188,11 @@ local function setMinimapButtons(side)
         expButton:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 2, -3)
 
         --flip GwAddonToggle icon
-        GwAddonToggle:GetNormalTexture():SetTexCoord(0.78125, 0.171, 0.25, 0.71875)
-        GwAddonToggle:GetHighlightTexture():SetTexCoord(0.78125, 0.171, 0.25, 0.71875)
-        GwAddonToggle:GetPushedTexture():SetTexCoord(0.78125, 0.171, 0.25, 0.71875)
+
+        GwAddonToggle:GetNormalTexture():SetTexCoord(1, 0, 0, 1)
+        GwAddonToggle:GetHighlightTexture():SetTexCoord(1, 0, 0, 1)
+        GwAddonToggle:GetPushedTexture():SetTexCoord(1, 0, 0, 1)
+
     end
 
     QueueStatusButton:SetParent(UIParent)
