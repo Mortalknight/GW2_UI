@@ -3,7 +3,8 @@ local L = GW.L
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local GetSetting = GW.GetSetting
 
-local ExtraActionBarHolder, ZoneAbilityHolder
+local ExtraActionBarHolder, ZoneAbilityHolder, eventFrame
+local NeedsReparentExtraButtons = false
 local ExtraButtons = {}
 
 local function ExtraButtons_ZoneScale()
@@ -11,7 +12,7 @@ local function ExtraButtons_ZoneScale()
     ZoneAbilityFrame.Style:SetScale(scale)
     ZoneAbilityFrame.SpellButtonContainer:SetScale(scale)
 
-    local width, height = _G.ZoneAbilityFrame.SpellButtonContainer:GetSize()
+    local width, height = ZoneAbilityFrame.SpellButtonContainer:GetSize()
     ZoneAbilityHolder:SetSize(width * scale, height * scale)
     ZoneAbilityHolder.gwMover:SetSize(width * scale, height * scale)
 end
@@ -37,10 +38,33 @@ local function UpdateExtraBindings()
     end
 end
 
+local function Reparent()
+    if InCombatLockdown() then
+        NeedsReparentExtraButtons = true
+        eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        return
+    end
+
+    ZoneAbilityFrame:SetParent(ZoneAbilityHolder)
+    ExtraActionBarFrame:SetParent(ExtraActionBarHolder)
+end
+
+local function OnEvent(self, event)
+    if event == "UPDATE_BINDINGS" then
+        UpdateExtraBindings()
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        Reparent()
+        NeedsReparentExtraButtons = false
+        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    end
+end
+
+
+
 local function ExtraAB_BossAB_Setup()
-    local eventFrame = CreateFrame("Frame")
+    eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("UPDATE_BINDINGS")
-    eventFrame:SetScript("OnEvent", UpdateExtraBindings)
+    eventFrame:SetScript("OnEvent", OnEvent)
 
     ExtraActionBarHolder = CreateFrame("Frame", nil, UIParent)
     ExtraActionBarHolder:SetPoint("BOTTOM", UIParent, "BOTTOM", -150, 300)
@@ -53,15 +77,15 @@ local function ExtraAB_BossAB_Setup()
     -- try to shutdown the container movement and taints
     ExtraAbilityContainer.SetSize = GW.NoOp
 
+    Reparent()
+
     RegisterMovableFrame(ExtraActionBarHolder, L["Boss Button"], "ExtraActionBarFramePos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
     RegisterMovableFrame(ZoneAbilityHolder, L["Zone Ability"], "ZoneAbilityFramePos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
 
-    ZoneAbilityFrame:SetParent(ZoneAbilityHolder)
     ZoneAbilityFrame:ClearAllPoints()
     ZoneAbilityFrame:SetAllPoints(ZoneAbilityHolder.gwMover)
     ZoneAbilityFrame.ignoreInLayout = true
 
-    ExtraActionBarFrame:SetParent(ExtraActionBarHolder)
     ExtraActionBarFrame:ClearAllPoints()
     ExtraActionBarFrame:SetAllPoints(ExtraActionBarHolder.gwMover)
     ExtraActionBarFrame.ignoreInLayout = true
@@ -92,9 +116,6 @@ local function ExtraAB_BossAB_Setup()
     hooksecurefunc(ExtraAbilityContainer, "AddFrame", function(frame)
         local button = frame.button
         if button and not button.IsSkinned then
-            button.pushed = true
-            button.checked = true
-
             local name = button.GetName and button:GetName()
             local cooldown = name and _G[name .. "Cooldown"]
             if cooldown then
@@ -119,6 +140,17 @@ local function ExtraAB_BossAB_Setup()
             tinsert(ExtraButtons, button)
 
             button.IsSkinned = true
+        end
+    end)
+
+    hooksecurefunc(ZoneAbilityFrame, "SetParent", function(_, parent)
+        if parent ~= ZoneAbilityHolder and not NeedsReparentExtraButtons then
+            Reparent()
+        end
+    end)
+    hooksecurefunc(ExtraActionBarFrame, "SetParent", function(_, parent)
+        if parent ~= ExtraActionBarHolder and not NeedsReparentExtraButtons then
+            Reparent()
         end
     end)
 

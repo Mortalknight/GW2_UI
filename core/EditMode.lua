@@ -56,17 +56,19 @@ local function DisableBlizzardMovers()
 
     -- first reset the actionbar scale to 100% if our actionbars are active
     if CheckActionBar() then
-        -- create gw2 profile with needed actionbar settings
+        -- do that in the users profile, if this is not editable we create a gw2 profile with needed actionbar settings
         --/run GW2_ADDON.Libs.LEM:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.GetSetting("HUD_SCALE")) or 1))); GW2_ADDON.Libs.LEM:ApplyChanges()
         LEM:LoadLayouts()
 
-        if not LEM:DoesLayoutExist("GW2_Layout") then
-            LEM:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
+        if not LEM:CanEditActiveLayout() then
+            if not LEM:DoesLayoutExist("GW2_Layout") then
+                LEM:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
+                LEM:ApplyChanges()
+            end
+
+            LEM:SetActiveLayout("GW2_Layout")
             LEM:ApplyChanges()
         end
-
-        LEM:SetActiveLayout("GW2_Layout")
-        LEM:ApplyChanges()
 
         LEM:SetFrameSetting(MainMenuBar, 3, 5)
         LEM:SetFrameSetting(MultiBarBottomLeft, 3, 5)
