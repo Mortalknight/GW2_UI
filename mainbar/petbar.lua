@@ -62,6 +62,12 @@ local function setPetBar(fmPet)
             btn.noGrid = nil
             btn:SetSize(i < 4 and 32 or BUTTON_SIZE, i < 4 and 32 or BUTTON_SIZE)
 
+            btn.gwAnchor = i == 1 and fmPet or i == 8 and PetActionButton5 or btnPrev
+            btn.point1 = i == 1 and "BOTTOMLEFT" or i == 8 and "BOTTOM" or "BOTTOMLEFT"
+            btn.point2 = i == 1 and "BOTTOMLEFT" or i == 8 and "TOP" or "BOTTOMRIGHT"
+            btn.gwX = i == 1 and 3 or i == 8 and 0 or BUTTON_MARGIN
+            btn.gwY = i == 1 and 30 or i == 8 and BUTTON_MARGIN or 0
+
             if i > 1 and i ~= 8 then
                 btn:ClearAllPoints()
                 btn:SetPoint("BOTTOMLEFT", btnPrev, "BOTTOMRIGHT", BUTTON_MARGIN, 0)
@@ -69,6 +75,13 @@ local function setPetBar(fmPet)
                 btn:ClearAllPoints()
                 btn:SetPoint("BOTTOM", PetActionButton5, "TOP", 0, BUTTON_MARGIN)
             end
+            hooksecurefunc(btn, "SetPoint", function(self, _, parent)
+                print(i, self.gwAnchor:GetName())
+                if parent ~= self.gwAnchor then
+                    self:ClearAllPoints()
+                    self:SetPoint(self.point1, self.gwAnchor, self.point2, self.gwX, self.gwY)
+                end
+            end)
 
             if btnShine then
                 btnShine:SetSize(btn:GetSize())

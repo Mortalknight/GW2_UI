@@ -1,5 +1,6 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
+local LEM = GW.Libs.LEM
 
 local CheckTargetFrame = function() return GetSetting("TARGET_ENABLED") end
 local CheckCastFrame = function() return GetSetting("CASTINGBAR_ENABLED") end
@@ -34,7 +35,7 @@ local IgnoreFrames = {
     -- ActionBars
     StanceBar = CheckActionBar,
     --EncounterBar = CheckActionBar,
-    PetActionBar = CheckPetActionBar,
+    PetActionBar = CheckPetActionBar, -- has it own function
     PossessActionBar = CheckActionBar,
     MainMenuBarVehicleLeaveButton = CheckActionBar,
     MainMenuBar = CheckActionBar,
@@ -63,8 +64,6 @@ local ShutdownMode = {
 
 local function DisableBlizzardMovers()
     local editMode = EditModeManagerFrame
-    local LEM = GW.Libs.LEM
-
     -- first reset the actionbar scale to 100% if our actionbars are active
     if CheckActionBar() then
         -- do that in the users profile, if this is not editable we create a gw2 profile with needed actionbar settings
