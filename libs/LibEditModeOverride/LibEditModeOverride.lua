@@ -1,7 +1,7 @@
 -- Copyright 2022 plusmouse. Licensed under terms found in LICENSE file.
 -- https://github.com/plusmouse/LibEditMode
 
-local lib = LibStub:NewLibrary("LibEditMode-1-0", 2)
+local lib = LibStub:NewLibrary("LibEditModeOverride-1.0", 2)
 
 local pointGetter = CreateFrame("Frame", nil, UIParent)
 
@@ -28,6 +28,16 @@ local function GetSystemByFrame(frame)
   local systemIndex = frame.systemIndex
 
   return GetSystemByID(systemID, systemIndex)
+end
+
+local function GetParameterRestrictions(frame, setting)
+  local systemRestrictions = EditModeSettingDisplayInfoManager.systemSettingDisplayInfo[frame.system]
+  for _, setup in ipairs(systemRestrictions) do
+    if setup.setting == setting then
+      return setup
+    end
+  end
+  return nil
 end
 
 local function GetLayoutIndex(layoutName)
@@ -62,6 +72,33 @@ function lib:SetFrameSetting(frame, setting, value)
   local system = GetSystemByFrame(frame)
 
   assert(system, FRAME_ERROR)
+
+  assert(value == math.floor(value), "Non-negative integer values only")
+
+  local restrictions = GetParameterRestrictions(frame, setting)
+
+  if restrictions then
+    DevTools_Dump(restrictions)
+    local min, max
+    if restrictions.type == Enum.EditModeSettingDisplayType.Dropdown then
+      min = 1
+      max = #restrictions.options
+    elseif restrictions.type == Enum.EditModeSettingDisplayType.Checkbox then
+      min = 0
+      max = 1
+    elseif restrictions.type == Enum.EditModeSettingDisplayType.Slider then
+      if restrictions.stepSize then
+        min = 0
+        max = (restrictions.maxValue - restrictions.minValue) / restrictions.stepSize
+      else
+        min = restrictions.minValue
+        max = restrictions.maxValue
+      end
+    else
+      error("Internal Error: Unknown setting restrictions")
+    end
+    assert(min <= value and value <= max, string.format("Value %s invalid for this setting: min %s, max %s", value, min, max))
+  end
 
   for _, item in pairs(system.settings) do
     if item.setting == setting then
