@@ -182,9 +182,6 @@
         </Anchors>
     </Frame>
     <Button name="GwQuesttrackerObject" registerForClicks="LeftButtonUp,RightButtonUp" enableMouse="true" parent="GwQuestTracker" virtual="true">
-        <HitRectInsets>
-            <AbsInset left="0" right="0" top="30" bottom="0"/>
-        </HitRectInsets>
         <Size x="300" y="1"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>

@@ -2,7 +2,6 @@ local _, GW = ...
 local L = GW.L
 
 local upcomingLevelRewards = {}
-local loaded = false
 
 local function IsUpcomingSpellAvalible()
     --if not loaded then GW.UpdateUpcomingSpells() end
@@ -15,13 +14,6 @@ local function UpdateUpcomingSpells()
     local totalUpcomingRewards = {}
     local upcomingLevelRewardsIdx = 1
     wipe(upcomingLevelRewards)
-
-    for i = 1, 7 do
-        totalUpcomingRewards[i] = {}
-        totalUpcomingRewards[i].type = "TALENT"
-        totalUpcomingRewards[i].id = 0
-        totalUpcomingRewards[i].level = select(3, GetTalentTierInfo(i, GetActiveSpecGroup()))
-    end
 
     local spells = {GetSpecializationSpells(GW.myspec)}
     for _, v in pairs(spells) do
@@ -68,8 +60,6 @@ local function UpdateUpcomingSpells()
             return a.level < b.level
         end
     )
-
-    loaded = true
 end
 GW.UpdateUpcomingSpells = UpdateUpcomingSpells
 GW.AddForProfiling("upcomingSpells", "UpdateUpcomingSpells", UpdateUpcomingSpells)
@@ -124,9 +114,6 @@ local function LoadUpcomingRewarsIntoScrollFrame(self)
                     end
                     slot.item.icon:AddMaskTexture(slot.item.mask)
                 end
-            elseif slot.item.type== "TALENT" then
-                slot.item.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/talent-icon")
-                slot.item.name:SetText(BONUS_TALENTS)
             end
 
             slot.item:Show()
@@ -168,7 +155,7 @@ local function UpcomingSpellsFrameOnShow(self)
         0.2,
         function()
             local prog = GW.animations[name].progress
-            local a = GW.lerp(0, 1, (GetTime() - start) / 0.2)
+            local a = math.min(1, math.max(0, GW.lerp(0, 1, (GetTime() - start) / 0.2)))
             self:SetAlpha(a)
             self:SetPoint("CENTER", 0, prog)
         end

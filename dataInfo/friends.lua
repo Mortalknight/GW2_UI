@@ -22,8 +22,6 @@ local menuList = {
     {text = BN_BROADCAST_TOOLTIP, notCheckable = true, func = function() StaticPopup_Show("SET_BN_BROADCAST") end},
 }
 
-
-
 local function inviteClick(_, name, guid)
     GW.EasyMenu:Hide()
 

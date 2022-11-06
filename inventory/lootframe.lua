@@ -21,20 +21,6 @@ local function updateLootFrameButtons(self)
 
         button.HighlightNameFrame:SetAlpha(0)
 	    button.PushedNameFrame:SetAlpha(0)
-        if not button.gwHooked then
-            button:CreateBackdrop(GW.constBackdropFrameColorBorderNoBackground, true)
-            button.backdrop:Hide()
-            button:HookScript("OnEnter", function()
-                button.backdrop:Show()
-            end)
-            button:HookScript("OnLeave", function()
-                button.backdrop:Hide()
-            end)
-            button.gwHooked = true
-        end
-        local quality = button.GetElementData and button.GetQuality and button:GetQuality() or Enum.ItemQuality.Common
-        local color = ITEM_QUALITY_COLORS[quality].color
-        button.backdrop:SetBackdropBorderColor(color.r, color.g, color.b, 0.7)
 
         button.NameFrame:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
         button.NameFrame:SetHeight(button:GetHeight())

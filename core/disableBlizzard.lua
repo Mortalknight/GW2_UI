@@ -142,7 +142,7 @@ local function DisableBlizzardFrames()
 
     if ourPetFrame then
         HandleFrame(PetFrame)
-        PetActionBar.UpdateGridLayout = GW.NoOp
+        --PetActionBar.UpdateGridLayout = GW.NoOp -- taints the mainactionbar keybinds
     end
 
     if ourTargetFrame then
@@ -189,7 +189,7 @@ local function DisableBlizzardFrames()
             MultiBarBottomRight = true,
             MicroButtonAndBagsBar = true,
             --MainMenuBar = true, -- this make the mainbar unvisible (HiddenFrame) we remove the events at the actionbars
-            ["StanceBar"] = true
+            StanceBar = true
         }
 
         for name in next, untaint do

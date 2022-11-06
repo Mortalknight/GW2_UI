@@ -24,6 +24,7 @@ DODGEBAR_SPELLS["DRUID"] = "[talent:2/1] 252216; [talent:2/3,form:1] 16979; [tal
 DODGEBAR_SPELLS_ATTR["DRUID"] = "[talent:2/3] 102401; 1850" -- use Dash (instead of Tiger Dash) and Wild Charge baseline(instead of form-specific talents) for the button attr
 DODGEBAR_SPELLS["DEMONHUNTER"] = "[spec:1] 195072; [spec:2] 189110; 344865" -- Fel Rush (Havoc) or Infernal Strike (Vengeance)
 DODGEBAR_SPELLS_ATTR["DEMONHUNTER"] = "[spec:1] 343017,320416,344865; [spec:2] 189110; 344865" -- Fel Rush (Havoc) or Infernal Strike (Vengeance)
+DODGEBAR_SPELLS["EVOKER"] = "358267"
 
 local EMPTY_IN_RAD = 128 * math.pi / 180 -- the angle in radians for an empty bar
 local FULL_IN_RAD = 2 * math.pi / 180 -- the angle in radians for a full bar

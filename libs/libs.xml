@@ -10,5 +10,5 @@
     <Script file="LibBase64-1.0\LibBase64-1.0.lua"/>
     <Script file="LibCustomGlow\LibCustomGlow-1.0.lua"/>
     <Script file="LibChatAnims\LibChatAnims.lua"/>
-    <Script file="LibEditMode\LibEditMode.lua"/>
+    <Script file="LibEditModeOverride\LibEditModeOverride.lua"/>
 </Ui>

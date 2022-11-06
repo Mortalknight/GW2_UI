@@ -107,6 +107,41 @@ AFP("stateChanged", stateChanged)
 
 hooksecurefunc("ValidateActionBarTransition", stateChanged)
 
+local function changeVertexColorActionbars(btn)
+    if btn and btn.changedColor then
+        local valid = IsActionInRange(btn.action)
+        local checksRange = (valid ~= nil)
+        local inRange = checksRange and valid
+        local out_R, out_G, out_B = RED_FONT_COLOR:GetRGB()
+        if checksRange and not inRange then
+            btn.icon:SetVertexColor(out_R, out_G, out_B)
+        end
+    end
+end
+AFP("changeVertexColorActionbars", changeVertexColorActionbars)
+
+local function changeFlyoutStyle(self)
+    if not self.FlyoutArrow then
+        return
+    end
+
+    self.FlyoutBorder:Hide()
+    self.FlyoutBorderShadow:Hide()
+    SpellFlyoutHorizontalBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
+    SpellFlyoutVerticalBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
+    SpellFlyoutBackgroundEnd:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
+
+    local i = 1
+    local btn = _G["SpellFlyoutButton1"]
+    while btn do
+        btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
+        btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+        i = i + 1
+        btn = _G["SpellFlyoutButton" .. i]
+    end
+end
+AFP("changeFlyoutStyle", changeFlyoutStyle)
+
 local function FlyoutDirection(actionbar)
     if InCombatLockdown() then return end
 
@@ -220,10 +255,10 @@ local function fadeCheck(self, forceCombat)
             if isDirty and not inLockdown then
                 -- this should only be set after a bar setting change (including initial load)
                 if f.gw_IsEnabled then
-                    f:Show()
+                    --f:Show()
                     actionBarFrameShow(f, true)
                 else
-                    f:Hide()
+                    --f:Hide()
                     actionBarFrameHide(f, true)
                 end
 
@@ -463,8 +498,8 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         else
             btn.gwBackdrop:Show()
         end
-        btn:HookScript("OnHide", hideBackdrop)
-        btn:HookScript("OnShow", showBackdrop)
+        --btn:HookScript("OnHide", hideBackdrop)
+        --btn:HookScript("OnShow", showBackdrop)
     end
 end
 GW.setActionButtonStyle = setActionButtonStyle
@@ -521,6 +556,8 @@ local function updateMainBar()
             btn.hkBg.texture:SetParent(hotkey:GetParent())
             setActionButtonStyle("ActionButton" .. i, true, nil)
             updateHotkey(btn)
+            hooksecurefunc(btn, "UpdateUsable", changeVertexColorActionbars)
+            hooksecurefunc(btn, "UpdateFlyout", changeFlyoutStyle)
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
@@ -662,6 +699,9 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 
             setActionButtonStyle(buttonName .. i, nil, hideActionBarBG)
 
+            hooksecurefunc(btn, "UpdateUsable", changeVertexColorActionbars)
+            hooksecurefunc(btn, "UpdateFlyout", changeFlyoutStyle)
+
             btn:ClearAllPoints()
             btn:SetPoint("TOPLEFT", fmMultibar, "TOPLEFT", btn_padding, -btn_padding_y)
             btn.gwX = btn_padding
@@ -761,16 +801,9 @@ local function UpdateMultibarButtons()
     local margin = GetSetting("MULTIBAR_MARGIIN")
     local fmActionbar = MainMenuBar
     local fmMultiBar
-    local HIDE_ACTIONBARS_CVAR
 
     local hideActionbuttonBackdrop = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
 
-    if hideActionbuttonBackdrop then
-        HIDE_ACTIONBARS_CVAR = nil
-    else
-        HIDE_ACTIONBARS_CVAR = 1
-    end
-    C_CVar.SetCVar("alwaysShowActionBars", tostring(HIDE_ACTIONBARS_CVAR))
 
     for y = 1, 7 do
         if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
@@ -821,24 +854,8 @@ local function UpdateMultibarButtons()
             fmMultiBar:SetSize(used_width, used_height)
         end
     end
-    ALWAYS_SHOW_MULTIBARS = HIDE_ACTIONBARS_CVAR
 end
 GW.UpdateMultibarButtons = UpdateMultibarButtons
-
-local function setPossessBar()
-    PossessActionBar:ClearAllPoints()
-    PossessActionBar:SetPoint("BOTTOM", MainMenuBar, "TOP", -110, 40)
-
-    hooksecurefunc(PossessActionBar, "SetPoint", function(_, _, parent)
-        if parent ~= MainMenuBar then
-            PossessActionBar:ClearAllPoints()
-            PossessActionBar:SetParent(UIParent)
-            PossessActionBar:SetPoint("BOTTOM", MainMenuBar, "TOP", -110, 40)
-        end
-    end)
-
-end
-AFP("setPossessBar", setPossessBar)
 
 local function setLeaveVehicleButton()
     MainMenuBarVehicleLeaveButton:SetParent(MainMenuBar)
@@ -967,34 +984,7 @@ local function actionButtons_OnUpdate(self, elapsed, testRange)
 end
 AFP("actionButtons_OnUpdate", actionButtons_OnUpdate)
 
-local function changeVertexColorActionbars()
-    local fmActionbar = MainMenuBar
-    local fmMultiBar
-    for y = 1, 8 do
-        if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
-        if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
-        if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
-        if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
-        if y == 5 then fmMultiBar = fmActionbar.gw_Bar5 end
-        if y == 6 then fmMultiBar = fmActionbar.gw_Bar6 end
-        if y == 7 then fmMultiBar = fmActionbar.gw_Bar7 end
-        if y == 8 then fmMultiBar = fmActionbar end
-        if fmMultiBar.gw_IsEnabled then
-            for i = 1, 12 do
-                local btn = fmMultiBar.gw_Buttons[i]
-                if btn.changedColor then
-                    local valid = IsActionInRange(btn.action)
-                    local checksRange = (valid ~= nil)
-                    local inRange = checksRange and valid
-                    if checksRange and not inRange then
-                        btn.icon:SetVertexColor(out_R, out_G, out_B)
-                    end
-                end
-            end
-        end
-    end
-end
-AFP("changeVertexColorActionbars", changeVertexColorActionbars)
+
 
 local function multiButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
@@ -1080,28 +1070,6 @@ actionBar_OnUpdate = function(self, elapsed)
 end
 AFP("actionBar_OnUpdate", actionBar_OnUpdate)
 
-local function changeFlyoutStyle(self)
-    if not self.FlyoutArrow then
-        return
-    end
-
-    self.FlyoutBorder:Hide()
-    self.FlyoutBorderShadow:Hide()
-    SpellFlyoutHorizontalBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
-    SpellFlyoutVerticalBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
-    SpellFlyoutBackgroundEnd:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
-
-    local i = 1
-    local btn = _G["SpellFlyoutButton1"]
-    while btn do
-        btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
-        btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
-        i = i + 1
-        btn = _G["SpellFlyoutButton" .. i]
-    end
-end
-AFP("changeFlyoutStyle", changeFlyoutStyle)
-
 local function UpdateMainBarHot()
     local fmActionbar = MainMenuBar
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
@@ -1132,14 +1100,6 @@ end
 GW.UpdateMainBarHot = UpdateMainBarHot
 
 local function LoadActionBars(lm)
-    local HIDE_ACTIONBARS_CVAR = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
-    if HIDE_ACTIONBARS_CVAR then
-        HIDE_ACTIONBARS_CVAR = nil
-    else
-        HIDE_ACTIONBARS_CVAR = 1
-    end
-    C_CVar.SetCVar("alwaysShowActionBars", tostring(HIDE_ACTIONBARS_CVAR))
-
     -- init our bars
     local fmActionbar = updateMainBar()
     fmActionbar.gw_Bar1 = updateMultiBar(lm, "MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true)
@@ -1155,14 +1115,11 @@ local function LoadActionBars(lm)
 
     -- hook existing multibars to track settings changes
     hooksecurefunc("SetActionBarToggles", function() C_Timer.After(1, trackBarChanges) end)
-    hooksecurefunc(ActionBarActionButtonMixin, "UpdateUsable", changeVertexColorActionbars)
-    hooksecurefunc(ActionBarActionButtonMixin, "UpdateFlyout", changeFlyoutStyle) --TODO
     trackBarChanges()
 
     -- do stuff to other pieces of the blizz UI
     hideBlizzardsActionbars()
     GW.CreateStanceBar()
-    setPossessBar()
     setLeaveVehicleButton()
 
     -- hook hotkey update calls so we can override styling changes

@@ -840,6 +840,12 @@ registerActionHudAura(
     "Interface/AddOns/GW2_UI/textures/hud/rightshadow_unholy",
     "pet"
 )
+registerActionHudAura(
+    375087,
+    "Interface/AddOns/GW2_UI/textures/hud/evokerdpsLeft",
+    "Interface/AddOns/GW2_UI/textures/hud/evokerdpsRight",
+    "player"
+)
 
 local function hud_OnEvent(self, event, ...)
     if event == "UNIT_AURA" then
