@@ -77,8 +77,12 @@ local function setPetBar(fmPet)
             end
             hooksecurefunc(btn, "SetPoint", function(self, _, parent)
                 if parent ~= self.gwAnchor then
-                    self:ClearAllPoints()
-                    self:SetPoint(self.point1, self.gwAnchor, self.point2, self.gwX, self.gwY)
+                    if not InCombatLockdown() then
+                        self:ClearAllPoints()
+                        self:SetPoint(self.point1, self.gwAnchor, self.point2, self.gwX, self.gwY)
+                    else
+                        self:GetParent():RegisterEvent("PLAYER_REGEN_ENABLED")
+                    end
                 end
             end)
 
@@ -165,6 +169,16 @@ local function updatePetData(self, event, unit)
         if event ~= "UNIT_PET" then
             return
         end
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        for i = 1, NUM_PET_ACTION_SLOTS do
+            local button = self.gwButton[i]
+            if button then
+                button:ClearAllPoints()
+                button:SetPoint(button.point1, button.gwAnchor, button.point2, button.gwX, button.gwY)
+            end
+        end
+        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+        return
     end
 
     local health = UnitHealth("pet")
