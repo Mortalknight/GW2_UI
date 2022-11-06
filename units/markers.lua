@@ -1,7 +1,6 @@
 local _, GW = ...
 
 local function CreateEntry(name, command, description)
-    print(description)
     _G["BINDING_NAME_CLICK " .. name .. ":LeftButton"] = description
 	local btn = CreateFrame("Button", name, nil, "SecureActionButtonTemplate")
 	btn:SetAttribute("type", "macro")
