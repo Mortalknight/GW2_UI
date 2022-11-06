@@ -50,6 +50,17 @@ local IgnoreFrames = {
     LootFrame = CheckLootFrame,
 }
 
+local ShutdownMode = {
+    "OnEditModeEnter",
+    "OnEditModeExit",
+    "HasActiveChanges",
+    "HighlightSystem",
+    "SelectSystem",
+    -- these will taint the default bars on spec switch
+    --- "IsInDefaultPosition",
+    --- "UpdateSystem",
+}
+
 local function DisableBlizzardMovers()
     local editMode = EditModeManagerFrame
     local LEM = GW.Libs.LEM
@@ -87,11 +98,13 @@ local function DisableBlizzardMovers()
     -- remove the initial registers
     local registered = editMode.registeredSystemFrames
     for i = #registered, 1, -1 do
-        local name = registered[i]:GetName()
-        local ignore = IgnoreFrames[name]
+        local frame = registered[i]
+        local ignore = IgnoreFrames[frame:GetName()]
 
         if ignore and ignore() then
-            tremove(editMode.registeredSystemFrames, i)
+            for _, key in next, ShutdownMode do
+                frame[key] = GW.NoOp
+            end
         end
     end
 
