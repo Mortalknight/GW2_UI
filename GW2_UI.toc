@@ -195,6 +195,7 @@ objectives\objectives.lua
 objectives\scenario.lua
 objectives\notifications.lua
 objectives\bonusObjective.lua
+objectives\recipeTracking.lua
 objectives\bossFrames.lua
 objectives\arenaFrames.lua
 objectives\achievement.lua
