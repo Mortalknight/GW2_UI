@@ -49,7 +49,6 @@ end
 
 
 local function SetUpExtendedVendor()
-    print(GW.GetSetting("EXTENDED_VENDOR_NUM_PAGES") == "1")
     if IsAddOnLoaded("ExtVendor") or GW.GetSetting("EXTENDED_VENDOR_NUM_PAGES") == "1" then
         return
     end
