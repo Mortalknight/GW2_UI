@@ -112,6 +112,7 @@ local function changeVertexColorActionbars(btn)
         local valid = IsActionInRange(btn.action)
         local checksRange = (valid ~= nil)
         local inRange = checksRange and valid
+        local out_R, out_G, out_B = RED_FONT_COLOR:GetRGB()
         if checksRange and not inRange then
             btn.icon:SetVertexColor(out_R, out_G, out_B)
         end
@@ -254,10 +255,10 @@ local function fadeCheck(self, forceCombat)
             if isDirty and not inLockdown then
                 -- this should only be set after a bar setting change (including initial load)
                 if f.gw_IsEnabled then
-                    f:Show()
+                    --f:Show()
                     actionBarFrameShow(f, true)
                 else
-                    f:Hide()
+                    --f:Hide()
                     actionBarFrameHide(f, true)
                 end
 
@@ -800,16 +801,9 @@ local function UpdateMultibarButtons()
     local margin = GetSetting("MULTIBAR_MARGIIN")
     local fmActionbar = MainMenuBar
     local fmMultiBar
-    local HIDE_ACTIONBARS_CVAR
 
     local hideActionbuttonBackdrop = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
 
-    if hideActionbuttonBackdrop then
-        HIDE_ACTIONBARS_CVAR = nil
-    else
-        HIDE_ACTIONBARS_CVAR = 1
-    end
-    C_CVar.SetCVar("alwaysShowActionBars", tostring(HIDE_ACTIONBARS_CVAR))
 
     for y = 1, 7 do
         if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
@@ -860,24 +854,8 @@ local function UpdateMultibarButtons()
             fmMultiBar:SetSize(used_width, used_height)
         end
     end
-    ALWAYS_SHOW_MULTIBARS = HIDE_ACTIONBARS_CVAR
 end
 GW.UpdateMultibarButtons = UpdateMultibarButtons
-
-local function setPossessBar()
-    PossessActionBar:ClearAllPoints()
-    PossessActionBar:SetPoint("BOTTOM", MainMenuBar, "TOP", -110, 40)
-
-    hooksecurefunc(PossessActionBar, "SetPoint", function(_, _, parent)
-        if parent ~= MainMenuBar then
-            PossessActionBar:ClearAllPoints()
-            PossessActionBar:SetParent(UIParent)
-            PossessActionBar:SetPoint("BOTTOM", MainMenuBar, "TOP", -110, 40)
-        end
-    end)
-
-end
-AFP("setPossessBar", setPossessBar)
 
 local function setLeaveVehicleButton()
     MainMenuBarVehicleLeaveButton:SetParent(MainMenuBar)
@@ -1122,14 +1100,6 @@ end
 GW.UpdateMainBarHot = UpdateMainBarHot
 
 local function LoadActionBars(lm)
-    local HIDE_ACTIONBARS_CVAR = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
-    if HIDE_ACTIONBARS_CVAR then
-        HIDE_ACTIONBARS_CVAR = nil
-    else
-        HIDE_ACTIONBARS_CVAR = 1
-    end
-    C_CVar.SetCVar("alwaysShowActionBars", tostring(HIDE_ACTIONBARS_CVAR))
-
     -- init our bars
     local fmActionbar = updateMainBar()
     fmActionbar.gw_Bar1 = updateMultiBar(lm, "MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true)
@@ -1150,7 +1120,6 @@ local function LoadActionBars(lm)
     -- do stuff to other pieces of the blizz UI
     hideBlizzardsActionbars()
     GW.CreateStanceBar()
-    setPossessBar()
     setLeaveVehicleButton()
 
     -- hook hotkey update calls so we can override styling changes

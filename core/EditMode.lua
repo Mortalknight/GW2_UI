@@ -90,7 +90,10 @@ local function DisableBlizzardMovers()
         LEM:SetFrameSetting(MultiBar6, 3, 5)
         LEM:SetFrameSetting(MultiBar7, 3, 5)
 
+        -- Main Actionbar
         LEM:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.GetSetting("HUD_SCALE")) or 1)))
+        -- PossessActionBar
+        LEM:ReanchorFrame(PossessActionBar, "BOTTOM", MainMenuBar, "TOP", -110, 40)
 
         LEM:ApplyChanges()
     end
