@@ -25,6 +25,7 @@ local function recipe_OnClick(self, button)
     elseif button ~= "RightButton" then
         if not ProfessionsFrame then
             ProfessionsFrame_LoadUI()
+            ProfessionsFrame_LoadUI()
         end
         if IsModifiedClick("RECIPEWATCHTOGGLE") then
             C_TradeSkillUI.SetRecipeTracked(self.id, false)
