@@ -78,7 +78,7 @@ function lib:SetFrameSetting(frame, setting, value)
   local restrictions = GetParameterRestrictions(frame, setting)
 
   if restrictions then
-    DevTools_Dump(restrictions)
+    --DevTools_Dump(restrictions)
     local min, max
     if restrictions.type == Enum.EditModeSettingDisplayType.Dropdown then
       min = 1
