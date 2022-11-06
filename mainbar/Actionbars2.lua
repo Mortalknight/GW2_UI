@@ -463,8 +463,8 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         else
             btn.gwBackdrop:Show()
         end
-        btn:HookScript("OnHide", hideBackdrop)
-        btn:HookScript("OnShow", showBackdrop)
+        --btn:HookScript("OnHide", hideBackdrop)
+        --btn:HookScript("OnShow", showBackdrop)
     end
 end
 GW.setActionButtonStyle = setActionButtonStyle
