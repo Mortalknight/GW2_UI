@@ -76,7 +76,6 @@ local function setPetBar(fmPet)
                 btn:SetPoint("BOTTOM", PetActionButton5, "TOP", 0, BUTTON_MARGIN)
             end
             hooksecurefunc(btn, "SetPoint", function(self, _, parent)
-                print(i, self.gwAnchor:GetName())
                 if parent ~= self.gwAnchor then
                     self:ClearAllPoints()
                     self:SetPoint(self.point1, self.gwAnchor, self.point2, self.gwX, self.gwY)
