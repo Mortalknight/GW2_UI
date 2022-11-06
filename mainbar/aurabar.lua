@@ -495,6 +495,7 @@ local function LoadPlayerAuras(lm)
     -- hide default buffs
     TemporaryEnchantFrame:Kill()
     BuffFrame:Kill()
+    ConsolidatedBuffs:Kill()
 
     loadAuras(lm)
 end

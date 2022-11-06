@@ -4,7 +4,7 @@
     for Classic/TBC/WOTLK
 
     Requires: LibStub, CallbackHandler-1.0, LibDetours-1.0
-    Version: 2 (2022-09-03)
+    Version: 4 (2022-11-04)
 
 --]]
 
@@ -19,7 +19,7 @@ assert(LibStub, "LibClassicInspector requires LibStub")
 assert(LibStub:GetLibrary("CallbackHandler-1.0", true), "LibClassicInspector requires CallbackHandler-1.0")
 assert(LibStub:GetLibrary("LibDetours-1.0", true), "LibClassicInspector requires LibDetours-1.0")
 
-local lib, oldminor = LibStub:NewLibrary("LibClassicInspector", 3)
+local lib, oldminor = LibStub:NewLibrary("LibClassicInspector", 4)
 
 -- already loaded
 if (not lib) then
@@ -65,7 +65,6 @@ lib.cache = lib.cache or {["len"] = 0}
 lib.queue = lib.queue or {}
 lib.guildies = lib.guildies or {}
 
--- TODO: localization?
 lib.spec_table = lib.spec_table or {
     ["WARRIOR"] = {"Arms", "Fury", "Protection"},
     ["PALADIN"] = {"Holy", "Protection", "Retribution"},
@@ -79,8 +78,143 @@ lib.spec_table = lib.spec_table or {
     ["DRUID"] = {"Balance", "Feral Combat", "Restoration"}
 }
 
+-- TODO: localization
+if (GetLocale() == "deDE") then
+lib.spec_table_localized = lib.spec_table_localized or {
+    ["WARRIOR"] = {"Waffen", "Furor", "Schutz"},
+    ["PALADIN"] = {"Heilig", "Schutz", "Vergeltung"},
+    ["HUNTER"] = {"Tierherrschaft", "Treffsicherheit", "Überleben"},
+    ["ROGUE"] = {"Meuchseln", "Kampf", "Täuschung"},
+    ["PRIEST"] = {"Disziplin", "Heilig", "Schatten"},
+    ["DEATHKNIGHT"] = {"Blut", "Frost", "Unheilig"},
+    ["SHAMAN"] = {"Elementar", "Verstärkung", "Wiederherstellung"},
+    ["MAGE"] = {"Arkan", "Feuer", "Frost"},
+    ["WARLOCK"] = {"Gebrechen", "Demonology", "Zerstörung"},
+    ["DRUID"] = {"Gleichgewicht", "Wildheit", "Wiederherstellung"}
+}
+elseif (GetLocale() == "esES") then
+lib.spec_table_localized = lib.spec_table_localized or {
+    ["WARRIOR"] = {"Arms", "Fury", "Protection"},
+    ["PALADIN"] = {"Holy", "Protection", "Retribution"},
+    ["HUNTER"] = {"Beast Mastery", "Marksmanship", "Survival"},
+    ["ROGUE"] = {"Assassination", "Combat", "Subtlety"},
+    ["PRIEST"] = {"Discipline", "Holy", "Shadow"},
+    ["DEATHKNIGHT"] = {"Blood", "Frost", "Unholy"},
+    ["SHAMAN"] = {"Elemental", "Enhancement", "Restoration"},
+    ["MAGE"] = {"Arcane", "Fire", "Frost"},
+    ["WARLOCK"] = {"Affliction", "Demonology", "Destruction"},
+    ["DRUID"] = {"Balance", "Feral Combat", "Restoration"}
+}
+elseif (GetLocale() == "esMX") then
+lib.spec_table_localized = lib.spec_table_localized or {
+    ["WARRIOR"] = {"Arms", "Fury", "Protection"},
+    ["PALADIN"] = {"Holy", "Protection", "Retribution"},
+    ["HUNTER"] = {"Beast Mastery", "Marksmanship", "Survival"},
+    ["ROGUE"] = {"Assassination", "Combat", "Subtlety"},
+    ["PRIEST"] = {"Discipline", "Holy", "Shadow"},
+    ["DEATHKNIGHT"] = {"Blood", "Frost", "Unholy"},
+    ["SHAMAN"] = {"Elemental", "Enhancement", "Restoration"},
+    ["MAGE"] = {"Arcane", "Fire", "Frost"},
+    ["WARLOCK"] = {"Affliction", "Demonology", "Destruction"},
+    ["DRUID"] = {"Balance", "Feral Combat", "Restoration"}
+}
+elseif (GetLocale() == "frFR") then
+lib.spec_table_localized = lib.spec_table_localized or {
+    ["WARRIOR"] = {"Arms", "Fury", "Protection"},
+    ["PALADIN"] = {"Holy", "Protection", "Retribution"},
+    ["HUNTER"] = {"Beast Mastery", "Marksmanship", "Survival"},
+    ["ROGUE"] = {"Assassination", "Combat", "Subtlety"},
+    ["PRIEST"] = {"Discipline", "Holy", "Shadow"},
+    ["DEATHKNIGHT"] = {"Blood", "Frost", "Unholy"},
+    ["SHAMAN"] = {"Elemental", "Enhancement", "Restoration"},
+    ["MAGE"] = {"Arcane", "Fire", "Frost"},
+    ["WARLOCK"] = {"Affliction", "Demonology", "Destruction"},
+    ["DRUID"] = {"Balance", "Feral Combat", "Restoration"}
+}
+elseif (GetLocale() == "itIT") then
+lib.spec_table_localized = lib.spec_table_localized or {
+    ["WARRIOR"] = {"Arms", "Fury", "Protection"},
+    ["PALADIN"] = {"Holy", "Protection", "Retribution"},
+    ["HUNTER"] = {"Beast Mastery", "Marksmanship", "Survival"},
+    ["ROGUE"] = {"Assassination", "Combat", "Subtlety"},
+    ["PRIEST"] = {"Discipline", "Holy", "Shadow"},
+    ["DEATHKNIGHT"] = {"Blood", "Frost", "Unholy"},
+    ["SHAMAN"] = {"Elemental", "Enhancement", "Restoration"},
+    ["MAGE"] = {"Arcane", "Fire", "Frost"},
+    ["WARLOCK"] = {"Affliction", "Demonology", "Destruction"},
+    ["DRUID"] = {"Balance", "Feral Combat", "Restoration"}
+}
+elseif (GetLocale() == "koKR") then
+lib.spec_table_localized = lib.spec_table_localized or {
+    ["WARRIOR"] = {"Arms", "Fury", "Protection"},
+    ["PALADIN"] = {"Holy", "Protection", "Retribution"},
+    ["HUNTER"] = {"Beast Mastery", "Marksmanship", "Survival"},
+    ["ROGUE"] = {"Assassination", "Combat", "Subtlety"},
+    ["PRIEST"] = {"Discipline", "Holy", "Shadow"},
+    ["DEATHKNIGHT"] = {"Blood", "Frost", "Unholy"},
+    ["SHAMAN"] = {"Elemental", "Enhancement", "Restoration"},
+    ["MAGE"] = {"Arcane", "Fire", "Frost"},
+    ["WARLOCK"] = {"Affliction", "Demonology", "Destruction"},
+    ["DRUID"] = {"Balance", "Feral Combat", "Restoration"}
+}
+elseif (GetLocale() == "ruRU") then
+lib.spec_table_localized = lib.spec_table_localized or {
+    ["WARRIOR"] = {"Arms", "Fury", "Protection"},
+    ["PALADIN"] = {"Holy", "Protection", "Retribution"},
+    ["HUNTER"] = {"Beast Mastery", "Marksmanship", "Survival"},
+    ["ROGUE"] = {"Assassination", "Combat", "Subtlety"},
+    ["PRIEST"] = {"Discipline", "Holy", "Shadow"},
+    ["DEATHKNIGHT"] = {"Blood", "Frost", "Unholy"},
+    ["SHAMAN"] = {"Elemental", "Enhancement", "Restoration"},
+    ["MAGE"] = {"Arcane", "Fire", "Frost"},
+    ["WARLOCK"] = {"Affliction", "Demonology", "Destruction"},
+    ["DRUID"] = {"Balance", "Feral Combat", "Restoration"}
+}
+elseif (GetLocale() == "ptBR") then
+lib.spec_table_localized = lib.spec_table_localized or {
+    ["WARRIOR"] = {"Arms", "Fury", "Protection"},
+    ["PALADIN"] = {"Holy", "Protection", "Retribution"},
+    ["HUNTER"] = {"Beast Mastery", "Marksmanship", "Survival"},
+    ["ROGUE"] = {"Assassination", "Combat", "Subtlety"},
+    ["PRIEST"] = {"Discipline", "Holy", "Shadow"},
+    ["DEATHKNIGHT"] = {"Blood", "Frost", "Unholy"},
+    ["SHAMAN"] = {"Elemental", "Enhancement", "Restoration"},
+    ["MAGE"] = {"Arcane", "Fire", "Frost"},
+    ["WARLOCK"] = {"Affliction", "Demonology", "Destruction"},
+    ["DRUID"] = {"Balance", "Feral Combat", "Restoration"}
+}
+elseif (GetLocale() == "zhCN") then
+lib.spec_table_localized = lib.spec_table_localized or {
+    ["WARRIOR"] = {"Arms", "Fury", "Protection"},
+    ["PALADIN"] = {"Holy", "Protection", "Retribution"},
+    ["HUNTER"] = {"Beast Mastery", "Marksmanship", "Survival"},
+    ["ROGUE"] = {"Assassination", "Combat", "Subtlety"},
+    ["PRIEST"] = {"Discipline", "Holy", "Shadow"},
+    ["DEATHKNIGHT"] = {"Blood", "Frost", "Unholy"},
+    ["SHAMAN"] = {"Elemental", "Enhancement", "Restoration"},
+    ["MAGE"] = {"Arcane", "Fire", "Frost"},
+    ["WARLOCK"] = {"Affliction", "Demonology", "Destruction"},
+    ["DRUID"] = {"Balance", "Feral Combat", "Restoration"}
+}
+elseif (GetLocale() == "zhTW") then
+lib.spec_table_localized = lib.spec_table_localized or {
+    ["WARRIOR"] = {"Arms", "Fury", "Protection"},
+    ["PALADIN"] = {"Holy", "Protection", "Retribution"},
+    ["HUNTER"] = {"Beast Mastery", "Marksmanship", "Survival"},
+    ["ROGUE"] = {"Assassination", "Combat", "Subtlety"},
+    ["PRIEST"] = {"Discipline", "Holy", "Shadow"},
+    ["DEATHKNIGHT"] = {"Blood", "Frost", "Unholy"},
+    ["SHAMAN"] = {"Elemental", "Enhancement", "Restoration"},
+    ["MAGE"] = {"Arcane", "Fire", "Frost"},
+    ["WARLOCK"] = {"Affliction", "Demonology", "Destruction"},
+    ["DRUID"] = {"Balance", "Feral Combat", "Restoration"}
+}
+else -- enUS / enGB
+lib.spec_table_localized = lib.spec_table
+end
+
 -- TODO: talent IDs
--- TODO: localization?
+-- TODO: localization
 if (isWotlk) then
 lib.talents_table = lib.talents_table or {
     ["HUNTER"] = {
@@ -2171,6 +2305,7 @@ local f = lib.frame
 local cache = lib.cache
 local queue = lib.queue
 local spec_table = lib.spec_table
+local spec_table_localized = lib.spec_table_localized
 local talents_table = lib.talents_table
 local guildies = lib.guildies
 
@@ -2206,7 +2341,7 @@ local function getCacheUser2(guid)
     local user = getCacheUser(guid)
     if (user) then
         local t = time()-INSPECTOR_REFRESH_DELAY
-        if ((not isClassic and user.talents.time < t) or user.inventory.time < t) then
+        if ((not isClassic and user.talents.time < t) or user.inventory.time < t or (isWotlk and user.achievements.time < t)) then
             lib:DoInspect(guid)
         end
     else
@@ -2215,7 +2350,7 @@ local function getCacheUser2(guid)
     return user
 end
 
-local function addCacheUser(guid, inventory, talents)
+local function addCacheUser(guid, inventory, talents, achievements)
     local user = {["guid"] = guid}
     if(inventory) then
         user.inventory = inventory
@@ -2227,6 +2362,11 @@ local function addCacheUser(guid, inventory, talents)
     else
         user.talents = {[1] = {[1] = {}, [2] = {}, [3] = {}}, [2] = {[1] = {}, [2] = {}, [3] = {}}, ["time"] = 0, ["active"] = 0}
     end
+    if(achievements) then
+        user.achievements = achievements
+    else
+        user.achievements = {["time"] = 0}
+    end    
     if (not cache.first) then
         cache.first = user
         cache.last = user
@@ -2268,7 +2408,7 @@ local function cacheUserInventory(unit)
     if(user) then
         user.inventory = inventory
     else
-        addCacheUser(guid, inventory, nil)
+        addCacheUser(guid, inventory, nil, nil)
     end
     -- Fire INVENTORY_READY(guid, isInspect[, unit]) callback
     lib.callbacks:Fire("INVENTORY_READY", guid, true, unit)
@@ -2291,38 +2431,65 @@ local function cacheUserTalents(unit)
     if(user) then
         user.talents = talents
     else
-        addCacheUser(guid, nil, talents)
+        addCacheUser(guid, nil, talents, nil)
     end
     -- Fire TALENTS_READY(guid, isInspect[, unit]) callback
     lib.callbacks:Fire("TALENTS_READY", guid, true, unit)
 end
 
+local function cacheUserAchievements(guid)
+    local achievements = {["time"] = time(), ["t_pts"] = GetComparisonAchievementPoints()}
+    local user = getCacheUser(guid)
+    if(user) then
+        user.achievements = achievements
+    else
+        addCacheUser(guid, nil, nil, achievements)
+    end
+end
 
 local function tryInspect(unit, refresh)
     if (lib:CanInspect(unit)) then
         local guid = UnitGUID(unit)
         local user = getCacheUser(guid)
+        local ret = false
         if (user) then
             if (refresh) then
                 local t = time()-INSPECTOR_REFRESH_DELAY
                 if ((not isClassic and user.talents.time < t) or user.inventory.time < t) then
                     NotifyInspect(unit)
-                    return true
+                    ret = true
+                end
+                if (isWotlk and user.achievements.time < t) then
+                    if (not AchievementFrame or not AchievementFrame.isComparison) then
+                        ClearAchievementComparisonUnit()
+                        SetAchievementComparisonUnit(unit)
+                        ret = true
+                    end
                 end
             else
                 if ((not isClassic and user.talents.time == 0) or user.inventory.time == 0) then
                     NotifyInspect(unit)
-                    return true
+                    ret = true
+                end
+                if (isWotlk and user.achievements.time == 0) then
+                    if (not AchievementFrame or not AchievementFrame.isComparison) then
+                        ClearAchievementComparisonUnit()
+                        SetAchievementComparisonUnit(unit)
+                        ret = true
+                    end
                 end
             end
         else
             NotifyInspect(unit)
+            if (isWotlk and (not AchievementFrame or not AchievementFrame.isComparison)) then
+                ClearAchievementComparisonUnit()
+                SetAchievementComparisonUnit(unit)
+            end
             return true
         end
     end
-    return false
+    return ret
 end
-
 
 function f:INSPECT_READY(event, guid)
     if (not guid) then 
@@ -2375,7 +2542,7 @@ function f:CHAT_MSG_ADDON(event, prefix, text, channelType, senderFullName, send
         if(user) then
             user.talents = talents
         else
-            addCacheUser(guid, nil, talents)
+            addCacheUser(guid, nil, talents, nil)
         end
         -- Fire TALENTS_READY(guid, isInspect[, unit]) callback
         lib.callbacks:Fire("TALENTS_READY", guid, false, nil)
@@ -2413,6 +2580,24 @@ end
 function f:ACTIVE_TALENT_GROUP_CHANGED()
     infoChanged = true
 end
+if (isWotlk) then
+function f:INSPECT_ACHIEVEMENT_READY(event, guid, ...)
+    if (guid and GUIDIsPlayer(guid)) then
+        cacheUserAchievements(guid)
+        -- Fire ACHIEVEMENTS_READY(guid, isInspect) callback
+        lib.callbacks:Fire("ACHIEVEMENTS_READY", guid, true)
+    end
+    if (AchievementFrame and AchievementFrame.isComparison and AchievementFrameComparison) then
+        AchievementFrameComparison_OnEvent(AchievementFrameComparison, event, guid, ...)
+    end
+end
+if (not AchievementFrame or not AchievementFrameComparison) then
+    AchievementFrame_LoadUI()
+end
+if (AchievementFrameComparison) then
+    AchievementFrameComparison:UnregisterEvent("INSPECT_ACHIEVEMENT_READY")
+end
+end
 
 f:SetScript("OnEvent", function(self, event, ...)
     return self[event](self, event, ...)
@@ -2429,6 +2614,7 @@ f:RegisterEvent("CHARACTER_POINTS_CHANGED")
 if (isWotlk) then
     f:RegisterEvent("PLAYER_TALENT_UPDATE")
     f:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    f:RegisterEvent("INSPECT_ACHIEVEMENT_READY")
 end
 C_ChatInfo.RegisterAddonMessagePrefix(C_PREFIX)
 
@@ -2523,7 +2709,7 @@ oAddMessage = Detours:DetourHook(lib, UIErrorsFrame, "AddMessage", function(self
         skip_error = false
         local msg = ...
         if (msg == ERR_UNIT_NOT_FOUND or msg == ERR_INVALID_INSPECT_TARGET or msg == ERR_OUT_OF_RANGE) then
-            if GetCVar("Sound_EnableErrorSpeech") == "1" then
+            if (GetCVar("Sound_EnableErrorSpeech") == "1") then
                 skip_error = true
             end
             return nil
@@ -2533,13 +2719,13 @@ oAddMessage = Detours:DetourHook(lib, UIErrorsFrame, "AddMessage", function(self
 end)
 
 local oPlayVocalErrorSoundID
- oPlayVocalErrorSoundID = Detours:DetourHook(lib, "PlayVocalErrorSoundID", function(vocalErrorSoundID, ...)
- 	if vocalErrorSoundID == 10 and skip_error == true then
- 		skip_error = false
- 		return nil
- 	end
- 	return oPlayVocalErrorSoundID(vocalErrorSoundID, ...)
- end)
+oPlayVocalErrorSoundID = Detours:DetourHook(lib, "PlayVocalErrorSoundID", function(vocalErrorSoundID, ...)
+    if (vocalErrorSoundID == 10 and skip_error == true) then
+        skip_error = false
+        return nil
+    end
+    return oPlayVocalErrorSoundID(vocalErrorSoundID, ...)
+end)
 
 
 --------------------------------------------------------------------------
@@ -2591,14 +2777,14 @@ end
 --     @boolean canInspect         - can target unit be inspected
 --
 function lib:CanInspect(unitorguid)
-    if (not unitorguid) then return false end
+    if ((not unitorguid) or InCombatLockdown()) then return false end
     local unit
     if (GUIDIsPlayer(unitorguid)) then
         unit = lib:PlayerGUIDToUnitToken(unitorguid)
     elseif (UnitIsPlayer(unitorguid)) then
         unit = unitorguid
     end
-    return unit and (not InCombatLockdown()) and UnitExists(unit) and UnitIsConnected(unit) and (not UnitIsDeadOrGhost(unit)) and (not UnitIsUnit(unit, "player")) and CheckInteractDistance(unit, 1) and (not InspectFrame or not InspectFrame:IsShown()) and CanInspect(unit, false)
+    return unit and UnitExists(unit) and UnitIsConnected(unit) and (not UnitIsDeadOrGhost(unit)) and (not UnitIsUnit(unit, "player")) and CheckInteractDistance(unit, 1) and (not InspectFrame or not InspectFrame:IsShown()) and CanInspect(unit, false)
 end
 
 
@@ -2627,6 +2813,10 @@ function lib:DoInspect(unitorguid)
     if (lib:CanInspect(unit)) then
         if (time() >= nextInspectTime) then
             NotifyInspect(unit)
+            if (isWotlk and (not AchievementFrame or not AchievementFrame.isComparison)) then
+                ClearAchievementComparisonUnit()
+                SetAchievementComparisonUnit(unit)
+            end
             return 1
         else
             local c = #queue
@@ -2668,21 +2858,22 @@ end
 
 
 --------------------------------------------------------------------------
--- ClassicInspector:GetSpecializationName(class, tabIndex)
+-- ClassicInspector:GetSpecializationName(class, tabIndex, localized)
 --
 --  Parameters
 --     @string class               - english class name in uppercase e.g. "WARRIOR"
 --     @number tabIndex            - talent tab index (1-3)
+--     @boolean localized          - return localized name instead of english name
 --
 --  Returns
 --     @string specName            - specialization name e.g. "Retribution"
 --
-function lib:GetSpecializationName(class, tabIndex)
+function lib:GetSpecializationName(class, tabIndex, localized)
     assert(class == "WARRIOR" or class == "PALADIN" or class == "HUNTER" or class == "ROGUE" or class == "PRIEST" or class == "SHAMAN" or 
            class == "MAGE" or class == "WARLOCK" or class == "DRUID" or (isWotlk and class == "DEATHKNIGHT"), "invalid class")
     local n = tonumber(tabIndex) or 0
     assert(n > 0 and n < 4, "tabIndex is not a valid number (1-3)")
-    return spec_table[class][tabIndex]
+    return localized and spec_table_localized[class][tabIndex] or spec_table[class][tabIndex]
 end
 
 
@@ -3152,6 +3343,35 @@ function lib:PlayerGUIDToUnitToken(guid)
     end
     if (UnitGUID("mouseovertarget") == guid) then
         return "mouseovertarget"
+    end
+    return nil
+end
+
+
+--------------------------------------------------------------------------
+-- ClassicInspector:GetTotalAchievementPoints(unitorguid)
+--
+--  Parameters
+--     @string unitorguid          - unit token or guid
+--
+--  Returns
+--     @number total_points        - total achievement points
+--
+function lib:GetTotalAchievementPoints(unitorguid)
+    if (not isWotlk) then
+        return nil
+    end
+    local guid = getPlayerGUID(unitorguid)
+    if (not guid) then
+        return nil
+    end
+    if (guid == UnitGUID("player")) then
+        return GetTotalAchievementPoints()
+    else
+        local user = getCacheUser2(guid)
+        if (user and user.achievements.time > 0) then
+            return user.achievements["t_pts"]
+        end
     end
     return nil
 end
