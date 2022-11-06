@@ -229,7 +229,7 @@ local function LoadRecipeTracking(self)
     self:SetScript("OnEvent", OnEvent)
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
-    self.header.icon:SetTexCoord(0, 0.5, 0, 0.25) -- CHANGE
+    self.header.icon:SetTexCoord(0.5, 1, 0.75, 1)
     self.header.title:SetFont(UNIT_NAME_FONT, 14)
     self.header.title:SetShadowOffset(1, -1)
     self.header.title:SetText(PROFESSIONS_TRACKER_HEADER_PROFESSION)
