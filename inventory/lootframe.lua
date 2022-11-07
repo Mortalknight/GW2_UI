@@ -16,7 +16,9 @@ local function updateLootFrameButtons(self)
             item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         end
 
-        button.BorderFrame:SetAlpha(0)
+        if button.BorderFrame then
+            button.BorderFrame:SetAlpha(0)
+        end
         button.IconQuestTexture:SetAlpha(0)
 
         button.HighlightNameFrame:SetAlpha(0)
@@ -37,7 +39,7 @@ local function LoadLootFrameSkin()
     LootFrameBg:Hide()
     LootFrameTitleText:Hide()
 
-    local GwLootFrameTitle = CreateFrame("Frame", "asdasda", LootFrame, "GwLootFrameTitleTemp")
+    local GwLootFrameTitle = CreateFrame("Frame", nil, LootFrame, "GwLootFrameTitleTemp")
     GwLootFrameTitle:SetPoint("BOTTOMLEFT", LootFrame, "TOPLEFT", 0, -25)
     GwLootFrameTitle.headerString:SetFont(DAMAGE_TEXT_FONT, 14)
     GwLootFrameTitle.headerString:SetTextColor(255 / 255, 241 / 255, 209 / 255)
