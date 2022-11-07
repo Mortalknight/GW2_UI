@@ -1,6 +1,10 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 
+local GetContainerNumSlots = GetContainerNumSlots or (C_Container and C_Container.GetContainerNumSlots)
+local GetContainerNumFreeSlots = GetContainerNumFreeSlots or (C_Container and C_Container.GetContainerNumFreeSlots)
+local GetBagName = GetBagName or (C_Container and C_Container.GetBagName)
+
 local iconString = "|T%s:14:14:0:0:64:64:4:60:4:60|t "
 
 local function Bags_OnEnter(self)
@@ -21,10 +25,10 @@ local function Bags_OnEnter(self)
     GameTooltip:AddLine(" ")
 
     for i = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
-        local bagName = C_Container.GetBagName(i)
+        local bagName = GetBagName(i)
         if bagName then
-            local numSlots = C_Container.GetContainerNumSlots(i)
-            local freeSlots = C_Container.GetContainerNumFreeSlots(i)
+            local numSlots = GetContainerNumSlots(i)
+            local freeSlots = GetContainerNumFreeSlots(i)
             local usedSlots = numSlots - freeSlots
             local sumNum = 19 + i
 

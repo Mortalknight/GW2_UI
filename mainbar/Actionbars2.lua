@@ -252,13 +252,13 @@ local function fadeCheck(self, forceCombat)
         local f = i == 8 and self or self["gw_Bar" .. i]
         local fadeOption = GetSetting("FADE_MULTIACTIONBAR_" .. i)
         if f then
-            if isDirty and not inLockdown then
+            if isDirty and not inLockdown and f ~= self then
                 -- this should only be set after a bar setting change (including initial load)
                 if f.gw_IsEnabled then
-                    --f:Show()
+                    f:Show()
                     actionBarFrameShow(f, true)
-                else
-                    --f:Hide()
+                else   
+                    f:Hide()
                     actionBarFrameHide(f, true)
                 end
 

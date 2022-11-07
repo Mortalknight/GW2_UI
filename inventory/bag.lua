@@ -17,6 +17,11 @@ local IterationCount = 500
 local SellJunkFrame = CreateFrame("FRAME")
 local SellJunkTicker, mBagID, mBagSlot
 
+local GetContainerNumSlots = GetContainerNumSlots or (C_Container and C_Container.GetContainerNumSlots)
+local GetContainerItemInfo = GetContainerItemInfo or (C_Container and C_Container.GetContainerItemInfo)
+local GetContainerItemLink = GetContainerItemLink or (C_Container and C_Container.GetContainerItemLink)
+local UseContainerItem = UseContainerItem or (C_Container and C_Container.UseContainerItem)
+
 -- automaticly vendor junk
 local function StopSelling()
     if SellJunkTicker then SellJunkTicker:Cancel() end
@@ -32,15 +37,15 @@ local function sellJunk()
 
     -- Traverse bags and sell grey items
     for BagID = 0, 4 do
-        for BagSlot = 1, C_Container.GetContainerNumSlots(BagID) do
-            CurrentItemLink = C_Container.GetContainerItemLink(BagID, BagSlot)
+        for BagSlot = 1, GetContainerNumSlots(BagID) do
+            CurrentItemLink = GetContainerItemLink(BagID, BagSlot)
             if CurrentItemLink then
                 _, _, Rarity, _, _, _, _, _, _, _, ItemPrice = GetItemInfo(CurrentItemLink)
                 if Rarity == 0 and ItemPrice ~= 0 then
                     SoldCount = SoldCount + 1
                     if MerchantFrame:IsShown() then
                         -- If merchant frame is open, vendor the item
-                        C_Container.UseContainerItem(BagID, BagSlot)
+                        UseContainerItem(BagID, BagSlot)
                         -- Perform actions on first iteration
                         if SellJunkTicker._remainingIterations == IterationCount then
                             -- Store first sold bag slot for analysis
@@ -83,7 +88,7 @@ local function SellJunkFrame_OnEvent(self, event)
         self:UnregisterEvent("ITEM_UNLOCKED")
         -- Check whether vendor refuses to buy items
         if mBagID and mBagSlot and mBagID ~= -1 and mBagSlot ~= -1 then
-            local _, count, locked = C_Container.GetContainerItemInfo(mBagID, mBagSlot)
+            local _, count, locked = GetContainerItemInfo(mBagID, mBagSlot)
             if count and not locked then
                 -- Item has been unlocked but still not sold so stop selling
                 StopSelling()

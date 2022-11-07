@@ -235,12 +235,6 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button name="$parentHeaderButton" hidden="true" enableMouse="true" registerForClicks="AnyDown" parentKey="clickHeader">
-                <Size x="300" y="25"></Size>
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
-                </Anchors>
-            </Button>
             <Button name="$parentClickToTurnIn" hidden="true" parentKey="turnin">
                 <size x="90" y="90"></size>
                 <Anchors>

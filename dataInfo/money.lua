@@ -5,16 +5,20 @@ local ClearStorage = GW.ClearStorage
 local UpdateCharData = GW.UpdateCharData
 local FormatMoneyForChat = GW.FormatMoneyForChat
 
+local GetContainerNumSlots = GetContainerNumSlots or (C_Container and C_Container.GetContainerNumSlots)
+local GetContainerItemInfo = GetContainerItemInfo or (C_Container and C_Container.GetContainerItemInfo)
+local GetContainerItemLink = GetContainerItemLink or (C_Container and C_Container.GetContainerItemLink)
+
 local function GetGraysValue()
     local value = 0
 
     for bag = 0, 4 do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            local itemLink = C_Container.GetContainerItemLink(bag, slot)
+        for slot = 1, GetContainerNumSlots(bag) do
+            local itemLink = GetContainerItemLink(bag, slot)
             if itemLink then
                 local _, _, rarity, _, _, itype, _, _, _, _, itemPrice = GetItemInfo(itemLink)
                 if itemPrice then
-                    local stackCount = select(2, C_Container.GetContainerItemInfo(bag, slot)) or 1
+                    local stackCount = select(2, GetContainerItemInfo(bag, slot)) or 1
                     local stackPrice = itemPrice * stackCount
                     if rarity and rarity == 0 and (itype and itype ~= "Quest") and (stackPrice > 0) then
                         value = value + stackPrice

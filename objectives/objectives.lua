@@ -295,8 +295,6 @@ local function CreateTrackerObject(name, parent)
     f.SubHeader:SetShadowOffset(1, -1)
     f:SetScript("OnEnter", blockOnEnter)
     f:SetScript("OnLeave", blockOnLeave)
-    f.clickHeader:SetScript("OnEnter", blockOnEnter)
-    f.clickHeader:SetScript("OnLeave", blockOnLeave)
     f.turnin:SetScript(
         "OnShow",
         function(self)
@@ -396,7 +394,6 @@ local function getBlockQuest(blockIndex, isFrequency)
     end
 
     newBlock.index = blockIndex
-    newBlock.clickHeader:Show()
     setBlockColor(newBlock, isFrequency and "DAILY" or "QUEST")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
@@ -431,7 +428,6 @@ local function getBlockCampaign(blockIndex)
     end
 
     newBlock.index = blockIndex
-    newBlock.clickHeader:Show()
     setBlockColor(newBlock, "CAMPAIGN")
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
@@ -611,11 +607,7 @@ end
 AFP("OnBlockClick", OnBlockClick)
 
 local function OnBlockClickHandler(self, button)
-    if self.questID == nil then 
-        OnBlockClick(self:GetParent(), button, true)
-    else
-        OnBlockClick(self, button, false)
-    end
+    OnBlockClick(self, button, false)
 end
 AFP("OnBlockClickHandler", OnBlockClickHandler)
 
@@ -679,7 +671,6 @@ local function updateQuest(self, block, quest)
         elseif questFailed then
             addObjective(block, FAILED, false, block.numObjectives + 1, nil)
         end
-        block.clickHeader:SetScript("OnClick", OnBlockClickHandler)
         block:SetScript("OnClick", OnBlockClickHandler)
 
         wipe(questInfo)
@@ -755,7 +746,6 @@ local function updateQuestByID(self, block, quest, questID, questLogIndex)
     elseif questFailed then
         addObjective(block, FAILED, false, block.numObjectives + 1, nil)
     end
-    block.clickHeader:SetScript("OnClick", OnBlockClickHandler)
     block:SetScript("OnClick", OnBlockClickHandler)
 
     if block.objectiveBlocks == nil then

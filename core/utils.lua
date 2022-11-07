@@ -6,6 +6,9 @@ local maxUpdatesPerCircle = 5
 local EMPTY = {}
 local NIL = {}
 
+local GetContainerNumSlots = GetContainerNumSlots or (C_Container and C_Container.GetContainerNumSlots)
+local GetContainerItemLink = GetContainerItemLink or (C_Container and C_Container.GetContainerItemLink)
+
 local function copyTable(newTable, tableToCopy)
     if type(newTable) ~= "table" then newTable = {} end
 
@@ -500,8 +503,8 @@ GW.MixinHideDuringPetAndOverride = MixinHideDuringPetAndOverride
 local function getContainerItemLinkByNameOrId(itemName, id)
     local itemLink = nil
     for bag = 0, 4 do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            local item = C_Container.GetContainerItemLink(bag, slot)
+        for slot = 1, GetContainerNumSlots(bag) do
+            local item = GetContainerItemLink(bag, slot)
             if item and (item:find(itemName) or item:find(id)) then
                 itemLink = item
                 break
