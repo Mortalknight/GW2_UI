@@ -18,7 +18,6 @@ local SellJunkFrame = CreateFrame("FRAME")
 local SellJunkTicker, mBagID, mBagSlot
 
 local GetContainerNumSlots = GetContainerNumSlots or (C_Container and C_Container.GetContainerNumSlots)
-local GetContainerItemInfo = GetContainerItemInfo or (C_Container and C_Container.GetContainerItemInfo)
 local GetContainerItemLink = GetContainerItemLink or (C_Container and C_Container.GetContainerItemLink)
 local UseContainerItem = UseContainerItem or (C_Container and C_Container.UseContainerItem)
 
@@ -88,8 +87,8 @@ local function SellJunkFrame_OnEvent(self, event)
         self:UnregisterEvent("ITEM_UNLOCKED")
         -- Check whether vendor refuses to buy items
         if mBagID and mBagSlot and mBagID ~= -1 and mBagSlot ~= -1 then
-            local _, count, locked = GetContainerItemInfo(mBagID, mBagSlot)
-            if count and not locked then
+            local itemInfo = GW.GetContainerItemInfo(mBagID, mBagSlot)
+            if itemInfo.stackCount and not itemInfo.isLocked then
                 -- Item has been unlocked but still not sold so stop selling
                 StopSelling()
             end

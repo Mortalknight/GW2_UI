@@ -5,7 +5,6 @@ local setItemLevel = GW.setItemLevel
 
 local GetContainerNumSlots = GetContainerNumSlots or (C_Container and C_Container.GetContainerNumSlots)
 local GetContainerNumFreeSlots = GetContainerNumFreeSlots or (C_Container and C_Container.GetContainerNumFreeSlots)
-local GetContainerItemInfo = GetContainerItemInfo or (C_Container and C_Container.GetContainerItemInfo)
 
 -- global for this deprecated in 8.3; from ContainerFrame.lua
 local MAX_CONTAINER_ITEMS = 36
@@ -164,8 +163,8 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             end
         end
         -- Show junk icon if active
-        local _, _, _, rarity, _, _, _, _, noValue = GetContainerItemInfo(bag_id, button:GetID())
-        button.isJunk = (rarity and rarity == Enum.ItemQuality.Poor) and not noValue
+        local itemInfo = GW.GetContainerItemInfo(bag_id, button:GetID())
+        button.isJunk = (itemInfo.quality and itemInfo.quality == Enum.ItemQuality.Poor) and not itemInfo.hasNoValue
 
         if button.junkIcon then
             if button.isJunk and GetSetting("BAG_ITEM_JUNK_ICON_SHOW") then
@@ -221,9 +220,9 @@ local function hookQuestItemBorder(self)
 
     for i = 1, self.size, 1 do
         local itemButton = _G[name .. "Item" .. i]
-        local isQuestItem, questId = GetContainerItemQuestInfo(id, itemButton:GetID())
+        local itemInfo = GW.GetContainerItemQuestInfo(id, itemButton:GetID())
         if itemButton.IconQuestTexture then
-            if questId or isQuestItem then
+            if itemInfo.questID or itemInfo.isQuestItem then
                 itemButton.IconQuestTexture:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border")
             end
         end
