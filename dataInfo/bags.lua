@@ -47,7 +47,7 @@ local function Bags_OnEnter(self)
     end
 
     for i = 1, BackpackTokenFrame:GetMaxTokensWatched() do
-        local info = C_CurrencyInfo.GetBackpackCurrencyInfo(i)
+        local info = GW.GetBackpackCurrencyInfo(i)
         if info then
             if i == 1 then
                 GameTooltip:AddLine(" ")
