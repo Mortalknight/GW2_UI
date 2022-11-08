@@ -154,6 +154,12 @@ local function AdjustMaxStanceButtons(self)
     PositionsAndSize(self)
     StyleStanceBarButtons(self)
     UpdateKeybinds()
+
+    if numButtons == 0 then
+        self:Hide()
+    else
+        self:Show()
+    end
 end
 
 local function StanceButton_OnEvent(self, event)
