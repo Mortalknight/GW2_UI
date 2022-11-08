@@ -305,6 +305,7 @@ local function LoadPetFrame(lm)
         for i = 1, 12 do
             if playerPetFrame.gwButton[i] then
                 GW.updateHotkey(playerPetFrame.gwButton[i])
+                GW.FixHotKeyPosition(playerPetFrame.gw_Buttons[i], false, true)
             end
         end
     end)

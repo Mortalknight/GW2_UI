@@ -1,55 +1,77 @@
 local _, GW = ...
 
+local NeedAdjustMaxStanceButtons = false
 local NUM_STANCE_SLOTS = NUM_STANCE_SLOTS or 10
+local WispSplode = [[Interface\Icons\Spell_Nature_WispSplode]]
 
-local function SetStanceButtons(stanceButton)
-    if not stanceButton then return end
+local function UpdateCooldown()
+    local numForms = GetNumShapeshiftForms()
+    for i = 1, NUM_STANCE_SLOTS do
+        if i <= numForms then
+            local cooldown = _G["GwStanceBarButton" .. i .. "Cooldown"]
+            local start, duration, active = GetShapeshiftFormCooldown(i)
+            if (active and active ~= 0) and start > 0 and duration > 0 then
+                cooldown:SetCooldown(start, duration)
+                cooldown:SetDrawBling(cooldown:GetEffectiveAlpha() > 0.5)
+            else
+                cooldown:Clear()
+            end
+        end
+    end
+end
+
+local function PositionsAndSize(self)
+    if not self then return end
     local numForms = GetNumShapeshiftForms()
 
     if numForms == 1 then -- If we have only 1 stance, show that button directly and not a container
-        StanceButton1:SetParent(stanceButton)
-        StanceButton1:ClearAllPoints()
-        StanceButton1:SetPoint("TOPLEFT", stanceButton.gwMover)
-        StanceButton1:SetFrameLevel(stanceButton:GetFrameLevel() + 5)
+        GwStanceBarButton1:SetParent(self)
+        GwStanceBarButton1:ClearAllPoints()
+        GwStanceBarButton1:SetPoint("TOPLEFT", self.gwMover)
+        GwStanceBarButton1:SetFrameLevel(self:GetFrameLevel() + 5)
     else
         local growDirection = GW.GetSetting("StanceBar_GrowDirection")
+        local button, lastbutton
 
-        stanceButton.container:ClearAllPoints()
+        self.container:ClearAllPoints()
         if growDirection == "UP" then
-            stanceButton.container:SetPoint("BOTTOM", stanceButton, "TOP", 0, 0)
+            self.container:SetPoint("BOTTOM", self, "TOP", 0, 0)
         elseif growDirection == "LEFT" then
-            stanceButton.container:SetPoint("RIGHT", stanceButton, "LEFT", 0, 0)
+            self.container:SetPoint("RIGHT", self, "LEFT", 0, 0)
         elseif growDirection == "RIGHT" then
-            stanceButton.container:SetPoint("LEFT", stanceButton, "RIGHT", 0, 0)
+            self.container:SetPoint("LEFT", self, "RIGHT", 0, 0)
         elseif growDirection == "DOWN" then
-            stanceButton.container:SetPoint("TOP", stanceButton, "BOTTOM", 0, 0)
+            self.container:SetPoint("TOP", self, "BOTTOM", 0, 0)
         end
         for i = 1, NUM_STANCE_SLOTS do
-            _G["StanceButton" .. i]:ClearAllPoints()
-            _G["StanceButton" .. i]:SetParent(stanceButton.container)
+            button = _G["GwStanceBarButton" .. i]
+            lastbutton = _G["GwStanceBarButton" .. i - 1]
+
+            button:ClearAllPoints()
+            button:SetParent(self.container)
             if growDirection == "UP" then
                 if i == 1 then
-                    _G["StanceButton" .. i]:SetPoint("BOTTOM", stanceButton.container, "BOTTOM", 0, 2)
+                    button:SetPoint("BOTTOM", self.container, "BOTTOM", 0, 2)
                 else
-                    _G["StanceButton" .. i]:SetPoint("BOTTOM", _G["StanceButton" .. (i - 1)], "TOP", 0, 2)
+                    button:SetPoint("BOTTOM", lastbutton, "TOP", 0, 2)
                 end
             elseif growDirection == "LEFT" then
                 if i == 1 then
-                    _G["StanceButton" .. i]:SetPoint("RIGHT", stanceButton.container, "RIGHT", -2, 0)
+                    button:SetPoint("RIGHT", self.container, "RIGHT", -2, 0)
                 else
-                    _G["StanceButton" .. i]:SetPoint("RIGHT", _G["StanceButton" .. (i - 1)], "LEFT", -2, 0)
+                    button:SetPoint("RIGHT", lastbutton, "LEFT", -2, 0)
                 end
             elseif growDirection == "RIGHT" then
                 if i == 1 then
-                    _G["StanceButton" .. i]:SetPoint("LEFT", stanceButton.container, "LEFT", 2, 0)
+                    button:SetPoint("LEFT", self.container, "LEFT", 2, 0)
                 else
-                    _G["StanceButton" .. i]:SetPoint("LEFT", _G["StanceButton" .. (i - 1)], "RIGHT", 2, 0)
+                    button:SetPoint("LEFT", lastbutton, "RIGHT", 2, 0)
                 end
             elseif growDirection == "DOWN" then
                 if i == 1 then
-                    _G["StanceButton" .. i]:SetPoint("TOP", stanceButton.container, "TOP", 0, -2)
+                    button:SetPoint("TOP", self.container, "TOP", 0, -2)
                 else
-                    _G["StanceButton" .. i]:SetPoint("TOP", _G["StanceButton" .. (i - 1)], "BOTTOM", 0, -2)
+                    button:SetPoint("TOP", lastbutton, "BOTTOM", 0, -2)
                 end
             end
         end
@@ -57,44 +79,133 @@ local function SetStanceButtons(stanceButton)
 end
 GW.SetStanceButtons = SetStanceButtons
 
-local function StanceButton_OnEvent(self, event)
-    if event == "PLAYER_ENTERING_WORLD" and not InCombatLockdown() then
-        self.container:SetShown(GW.GetSetting("StanceBarContainerState") == "open" and true or false)
+local function StyleStanceBarButtons()
+    local numForms = GetNumShapeshiftForms()
+    local stance = GetShapeshiftForm()
+
+    for i = 1, NUM_STANCE_SLOTS do
+        local button = _G["GwStanceBarButton" .. i]
+
+        if i > numForms then
+            break
+        else
+            local texture, isActive, isCastable, spellID = GetShapeshiftFormInfo(i)
+
+            button.icon:SetTexture((not isActive and spellID and GetSpellTexture(spellID)) or WispSplode)
+            button.icon:SetInside()
+            button:SetSize(30, 30)
+            button.cooldown:SetAlpha(texture and 1 or 0)
+            if isActive then
+                button:SetChecked(numForms == 1)
+            elseif numForms == 1 or stance == 0 then
+                button:SetChecked(false)
+            else
+                button:SetChecked(false)
+            end
+
+            if isCastable then
+                button.icon:SetVertexColor(1.0, 1.0, 1.0)
+            else
+                button.icon:SetVertexColor(0.3, 0.3, 0.3)
+            end
+
+            GW.setActionButtonStyle(button:GetName(), true, nil ,true)
+        end
     end
-    if InCombatLockdown() then
+end
+
+local function UpdateKeybinds()
+    for i = 1, NUM_STANCE_SLOTS do
+		local button = _G['GwStanceBarButton'..i]
+		if not button then break end
+
+		button.HotKey:SetText(GetBindingKey('SHAPESHIFTBUTTON'..i))
+        GW.updateHotkey(button)
+        GW.FixHotKeyPosition(button, true)
+	end
+end
+
+local function AdjustMaxStanceButtons(self)
+    for _, button in ipairs(self.buttons) do
+        button:Hide()
+    end
+
+    local numButtons = GetNumShapeshiftForms()
+    for i = 1, NUM_STANCE_SLOTS do
+        if not self.buttons[i] then
+            self.buttons[i] = CreateFrame("CheckButton", format(self:GetName() .. "Button%d", i), self, "StanceButtonTemplate")
+            self.buttons[i]:SetID(i)
+        end
+
+        local blizz = _G[format("StanceButton%d", i)]
+        if blizz and blizz.commandName then
+            self.buttons[i].commandName = blizz.commandName
+        end
+        GW.updateHotkey(self.buttons[i])
+
+        if i <= numButtons then
+            self.buttons[i]:Show()
+            self.LastButton = i
+        else
+            self.buttons[i]:Hide()
+        end
+    end
+
+    PositionsAndSize(self)
+    StyleStanceBarButtons(self)
+    UpdateKeybinds()
+end
+
+local function StanceButton_OnEvent(self, event)
+    local inCombat = InCombatLockdown()
+
+    if (event == "PLAYER_ENTERING_WORLD" or event == "UPDATE_SHAPESHIFT_FORMS") or NeedAdjustMaxStanceButtons then
+        if inCombat then
+            NeedAdjustMaxStanceButtons = true
+        else
+            self.container:SetShown(GW.GetSetting("StanceBarContainerState") == "open" and true or false)
+            AdjustMaxStanceButtons(self)
+            NeedAdjustMaxStanceButtons = false
+        end
+    elseif event == "UPDATE_SHAPESHIFT_FORM" or event == "UPDATE_SHAPESHIFT_USABLE" or event == "ACTIONBAR_PAGE_CHANGED" then
+        StyleStanceBarButtons(self)
+    elseif event == "UPDATE_SHAPESHIFT_COOLDOWN" then
+        UpdateCooldown(self)
+    elseif event == "UPDATE_BINDINGS" then
+        UpdateKeybinds()
+    end
+
+    if inCombat then
         self:RegisterEvent("PLAYER_REGEN_ENABLED")
         return
     elseif event == "PLAYER_REGEN_ENABLED" then
         self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     end
-
-    if GetNumShapeshiftForms() == 0 then
-        self:Hide()
-    else
-        SetStanceButtons(self)
-        self:Show()
-    end
 end
 
-local function CreateStanceBarButton()
-    local StanceButton = CreateFrame("Button", "GwStanceBarButton", UIParent, "GwStanceBarButton")
+local function CreateStanceBarButtonHolder()
+    local StanceButtonHolder = CreateFrame("Button", "GwStanceBar", UIParent, "GwStanceBarButton")
 
-    StanceButton:RegisterEvent("PLAYER_ENTERING_WORLD")
-    StanceButton:RegisterEvent("CHARACTER_POINTS_CHANGED")
-    StanceButton:RegisterEvent("PLAYER_ALIVE")
-    StanceButton:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-    StanceButton:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
-    StanceButton:SetScript("OnEvent", StanceButton_OnEvent)
+    StanceButtonHolder.buttons = {}
 
-    GW.MixinHideDuringPetAndOverride(StanceButton)
-    return StanceButton
+    StanceButtonHolder:RegisterEvent("PLAYER_ENTERING_WORLD")
+    StanceButtonHolder:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    StanceButtonHolder:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
+    StanceButtonHolder:RegisterEvent("UPDATE_SHAPESHIFT_USABLE")
+    StanceButtonHolder:RegisterEvent("ACTIONBAR_PAGE_CHANGED")
+    StanceButtonHolder:RegisterEvent("UPDATE_SHAPESHIFT_COOLDOWN")
+    StanceButtonHolder:RegisterEvent("UPDATE_BINDINGS")
+    StanceButtonHolder:SetScript("OnEvent", StanceButton_OnEvent)
+
+    GW.MixinHideDuringPetAndOverride(StanceButtonHolder)
+    return StanceButtonHolder
 end
 
 local function CreateStanceBar()
-    local StanceBarButton = CreateStanceBarButton()
+    local StanceButtonHolder = CreateStanceBarButtonHolder()
 
-    StanceBarButton:SetFrameRef("GwStanceBarContainer", StanceBarButton.container)
-    StanceBarButton:SetAttribute(
+    StanceButtonHolder:SetFrameRef("GwStanceBarContainer", StanceButtonHolder.container)
+    StanceButtonHolder:SetAttribute(
         "_onclick",
         [=[
         if self:GetFrameRef("GwStanceBarContainer"):IsVisible() then
@@ -102,26 +213,13 @@ local function CreateStanceBar()
         else
             self:GetFrameRef("GwStanceBarContainer"):Show()
         end
-    ]=]
-    )
-    StanceBarButton:HookScript("OnClick", function(self)
+    ]=])
+    StanceButtonHolder:HookScript("OnClick", function(self)
         GW.SetSetting("StanceBarContainerState", self.container:IsShown() and "open" or "close")
     end)
 
-    GW.RegisterMovableFrame(StanceBarButton, GW.L["StanceBar"], "StanceBar_pos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
-    StanceBarButton:ClearAllPoints()
-    StanceBarButton:SetPoint("TOPLEFT", StanceBarButton.gwMover)
-
-    -- Skin default stancebuttons
-    for i = 1, NUM_STANCE_SLOTS do
-        if _G["StanceButton" .. i] then
-            _G["StanceButton" .. i]:SetSize(30, 30)
-            GW.setActionButtonStyle("StanceButton" .. i, true, nil ,true)
-        end
-    end
-
-    SetStanceButtons(StanceBarButton)
-
-    StanceBar:SetParent(GW.HiddenFrame)
+    GW.RegisterMovableFrame(StanceButtonHolder, GW.L["StanceBar"], "StanceBar_pos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
+    StanceButtonHolder:ClearAllPoints()
+    StanceButtonHolder:SetPoint("TOPLEFT", StanceButtonHolder.gwMover)
 end
 GW.CreateStanceBar = CreateStanceBar
