@@ -1,6 +1,6 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
-local LEMO = GW.Libs.LEMO
+local LEM = GW.Libs.LEM
 
 local CheckTargetFrame = function() return GetSetting("TARGET_ENABLED") end
 local CheckCastFrame = function() return GetSetting("CASTINGBAR_ENABLED") end
@@ -67,34 +67,34 @@ local function DisableBlizzardMovers()
     -- first reset the actionbar scale to 100% if our actionbars are active
     if CheckActionBar() then
         -- do that in the users profile, if this is not editable we create a gw2 profile with needed actionbar settings
-        --/run GW2_ADDON.Libs.LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.GetSetting("HUD_SCALE")) or 1))); GW2_ADDON.Libs.LEM:ApplyChanges()
-        LEMO:LoadLayouts()
+        --/run GW2_ADDON.Libs.LEM:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.GetSetting("HUD_SCALE")) or 1))); GW2_ADDON.Libs.LEM:ApplyChanges()
+        LEM:LoadLayouts()
 
-        if not LEMO:CanEditActiveLayout() then
-            if not LEMO:DoesLayoutExist("GW2_Layout") then
-                LEMO:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
-                LEMO:ApplyChanges()
+        if not LEM:CanEditActiveLayout() then
+            if not LEM:DoesLayoutExist("GW2_Layout") then
+                LEM:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
+                LEM:ApplyChanges()
             end
 
-            LEMO:SetActiveLayout("GW2_Layout")
-            LEMO:ApplyChanges()
+            LEM:SetActiveLayout("GW2_Layout")
+            LEM:ApplyChanges()
         end
 
-        LEMO:SetFrameSetting(MainMenuBar, 3, 5)
-        LEMO:SetFrameSetting(MultiBarBottomLeft, 3, 5)
-        LEMO:SetFrameSetting(MultiBarBottomRight, 3, 5)
-        LEMO:SetFrameSetting(MultiBarRight, 3, 5)
-        LEMO:SetFrameSetting(MultiBarLeft, 3, 5)
-        LEMO:SetFrameSetting(MultiBar5, 3, 5)
-        LEMO:SetFrameSetting(MultiBar6, 3, 5)
-        LEMO:SetFrameSetting(MultiBar7, 3, 5)
+        LEM:SetFrameSetting(MainMenuBar, 3, 5)
+        LEM:SetFrameSetting(MultiBarBottomLeft, 3, 5)
+        LEM:SetFrameSetting(MultiBarBottomRight, 3, 5)
+        LEM:SetFrameSetting(MultiBarRight, 3, 5)
+        LEM:SetFrameSetting(MultiBarLeft, 3, 5)
+        LEM:SetFrameSetting(MultiBar5, 3, 5)
+        LEM:SetFrameSetting(MultiBar6, 3, 5)
+        LEM:SetFrameSetting(MultiBar7, 3, 5)
 
         -- Main Actionbar
-        LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.GetSetting("HUD_SCALE")) or 1)))
+        LEM:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.GetSetting("HUD_SCALE")) or 1)))
         -- PossessActionBar
-        LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainMenuBar, "TOP", -110, 40)
+        LEM:ReanchorFrame(PossessActionBar, "BOTTOM", MainMenuBar, "TOP", -110, 40)
 
-        LEMO:ApplyChanges()
+        LEM:ApplyChanges()
     end
 
     -- remove the initial registers
