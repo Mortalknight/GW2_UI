@@ -252,10 +252,10 @@ local function AddInspectInfo(self, unit, numTries, r, g, b)
     end
 
     if unitGUID == UnitGUID("player") then
-        self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(GW.myclass, specIndex), x1, x2, x3), nil, nil, nil, r, g, b)
+        self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(GW.myclass, specIndex, true), x1, x2, x3), nil, nil, nil, r, g, b)
     else
         local _, className = UnitClass(unit)
-        self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(className, specIndex), x1, x2, x3), nil, nil, nil, r, g, b)  
+        self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(className, specIndex, true), x1, x2, x3), nil, nil, nil, r, g, b)  
     end
 
     if avg_ilvl > 0 then
