@@ -362,7 +362,7 @@ local function bank_OnShow(self)
         self.gw_reagent_skinned = true
     end
 
-    OpenAllBags(self)
+    --OpenAllBags(self) --taints
     updateBagBar(self.ItemFrame)
     updateBankContainers(self)
 end
