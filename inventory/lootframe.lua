@@ -19,10 +19,15 @@ local function updateLootFrameButtons(self)
         if button.BorderFrame then
             button.BorderFrame:SetAlpha(0)
         end
-        button.IconQuestTexture:SetAlpha(0)
-
-        button.HighlightNameFrame:SetAlpha(0)
-	    button.PushedNameFrame:SetAlpha(0)
+        if button.IconQuestTexture then
+            button.IconQuestTexture:SetAlpha(0)
+        end
+        if button.HighlightNameFrame then
+            button.HighlightNameFrame:SetAlpha(0)
+        end
+        if button.PushedNameFrame then
+            button.PushedNameFrame:SetAlpha(0)
+        end
 
         button.NameFrame:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
         button.NameFrame:SetHeight(button:GetHeight())
