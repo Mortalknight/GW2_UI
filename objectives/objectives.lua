@@ -144,7 +144,7 @@ local function ParseObjectiveString(block, text, objectiveType, quantity, numIte
     numItems = tonumber(numItems)
     numNeeded = tonumber(numNeeded)
 
-    if numItems ~= nil and numNeeded ~= nil and numNeeded > 1 and numItems < numNeeded then
+    if numItems and numNeeded and numNeeded > 1 and numItems < numNeeded then
         block.StatusBar:Show()
         block.StatusBar:SetMinMaxValues(0, numNeeded)
         block.StatusBar:SetValue(numItems)

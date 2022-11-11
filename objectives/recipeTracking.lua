@@ -90,7 +90,11 @@ local function addObjective(block, text, finished, qty, totalqty)
     local objectiveBlock = getObjectiveBlock(block)
 
     objectiveBlock:Show()
-    objectiveBlock.ObjectiveText:SetText(FormatObjectiveNumbers(text))
+    if qty < totalqty then
+        objectiveBlock.ObjectiveText:SetText(GW.CommaValue(qty) .. " / " .. GW.CommaValue(totalqty) .. " " .. text)
+    else
+        objectiveBlock.ObjectiveText:SetText(text)
+    end
     objectiveBlock.ObjectiveText:SetHeight(objectiveBlock.ObjectiveText:GetStringHeight() + 15)
     objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
 
@@ -195,23 +199,51 @@ local function updateRecipeLayout(self)
     end
 end
 
-local function GetAllBasicReagentItemIDs()
-    wipe(collectedItemIDs)
+local function StartUpdate(self)
+    if self.continuableContainer then
+        self.continuableContainer:Cancel()
+    end
+
+    self.continuableContainer = ContinuableContainer:Create()
     for _, recipeID in ipairs(C_TradeSkillUI.GetRecipesTracked()) do
-        for _, itemID in ipairs(Professions.CreateRecipeItemIDsForAllBasicReagents(recipeID)) do
-            table.insert(collectedItemIDs, itemID)
+        local itemIDs = Professions.CreateRecipeItemIDsForAllBasicReagents(recipeID)
+        for _, item in ipairs(ItemUtil.TransformItemIDsToItems(itemIDs)) do
+            self.continuableContainer:AddContinuable(item)
         end
     end
+
+    -- We can continue to layout each of the blocks if every item is loaded, otherwise
+    -- we need to wait until the items load, then notify the objective tracker to try again.
+    local allLoaded = true
+    local function OnItemsLoaded()
+        if allLoaded then
+            updateRecipeLayout(self)
+        end
+    end
+    -- The assignment of allLoaded is only meaningful if false. If and when the callback
+    -- is invoked later, it will force an update. If the value was true, the callback would have
+    -- already been invoked prior to returning.
+    allLoaded = self.continuableContainer:ContinueOnLoad(OnItemsLoaded)
+end
+
+local function GetAllBasicReagentItemIDs()
+    local itemIDs = {}
+    for _, recipeID in ipairs(C_TradeSkillUI.GetRecipesTracked()) do
+        for _, itemID in ipairs(Professions.CreateRecipeItemIDsForAllBasicReagents(recipeID)) do
+            table.insert(itemIDs, itemID)
+        end
+    end
+    return itemIDs
 end
 
 local function OnEvent(self, event, ...)
     if event == "TRACKED_RECIPE_UPDATE" then
-        GetAllBasicReagentItemIDs()
-        updateRecipeLayout(self)
+        collectedItemIDs = GetAllBasicReagentItemIDs()
+        StartUpdate(self)
     elseif event == "ITEM_COUNT_CHANGED" then
         local itemID = ...
         if tContains(collectedItemIDs, itemID) then
-            updateRecipeLayout(self)
+            StartUpdate(self)
         end
     elseif event == "SKILL_LINES_CHANGED" then
         for _, recipeID in ipairs(C_TradeSkillUI.GetRecipesTracked()) do
@@ -223,6 +255,8 @@ local function OnEvent(self, event, ...)
 end
 
 local function LoadRecipeTracking(self)
+    collectedItemIDs = GetAllBasicReagentItemIDs()
+
     self:RegisterEvent("TRACKED_RECIPE_UPDATE")
     self:RegisterEvent("ITEM_COUNT_CHANGED")
     self:RegisterEvent("SKILL_LINES_CHANGED")
@@ -254,8 +288,6 @@ local function LoadRecipeTracking(self)
         TRACKER_TYPE_COLOR.RECIPE.g,
         TRACKER_TYPE_COLOR.RECIPE.b
     )
-
-    GetAllBasicReagentItemIDs()
 
     updateRecipeLayout(self)
 end
