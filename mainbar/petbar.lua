@@ -10,10 +10,9 @@ local AddToAnimation = GW.AddToAnimation
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local AddActionBarCallback = GW.AddActionBarCallback
 
-local function setActionButtonAutocast(id)
-    local btn = _G["PetActionButton" .. id]
+local function setActionButtonAutocast(button, id)
     local autoCastEnabled = select(6, GetPetActionInfo(id))
-    local autoCast = btn.AutoCastable or _G["PetActionButton" .. id .. "AutoCastable"]
+    local autoCast = button.AutoCastable
 
     for _, v in pairs(_G["PetActionButton" .. id .. "Shine"].sparkles) do
         v:SetShown(autoCastEnabled)
@@ -21,7 +20,7 @@ local function setActionButtonAutocast(id)
     autoCast:SetShown(autoCastEnabled)
 end
 
-local function petBarUpdate()
+local function UpdatePetActionBarIcons()
     PetActionButton1Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
     PetActionButton2Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow")
     PetActionButton3Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place")
@@ -29,98 +28,90 @@ local function petBarUpdate()
     PetActionButton8Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist")
     PetActionButton9Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
     PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
-    for i = 1, NUM_PET_ACTION_SLOTS do
-        if _G["PetActionButton" .. i] then
-           -- _G["PetActionButton" .. i .. "NormalTexture2"]:SetTexture(nil)
-            setActionButtonAutocast(i)
-        end
+    for i, button in ipairs(GwPlayerPetFrame.buttons) do
+        setActionButtonAutocast(button, i)
     end
 end
-GW.AddForProfiling("petbar", "petBarUpdate", petBarUpdate)
+GW.AddForProfiling("petbar", "UpdatePetActionBarIcons", UpdatePetActionBarIcons)
 
-local function setPetBar(fmPet)
+local function SetPetActionButtonPositionAndStyle(self)
     local BUTTON_SIZE = 28
     local BUTTON_MARGIN = 3
     local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
 
-    PetActionButton1:ClearAllPoints()
-    PetActionButton1:SetPoint("BOTTOMLEFT", fmPet, "BOTTOMLEFT", 3, 30)
+    for i, button in ipairs(self.buttons) do
+        local lastButton = _G["PetActionButton" .. (i - 1)]
+        local lastColumnButton = _G["PetActionButton5"]
+        local buttonShine = _G["PetActionButton" .. i .. "Shine"]
+        local autoCast = button.AutoCastable
+        local point, relativeFrame, relativePoint, x, y
 
-    fmPet.gwButton = {}
+        button:SetScale(1)
+        button:SetAlpha(1)
 
-    for i = 1, NUM_PET_ACTION_SLOTS do
-        local btn = _G["PetActionButton" .. i]
-        local btnPrev = _G["PetActionButton" .. (i - 1)]
-        local btnShine = _G["PetActionButton" .. i .. "Shine"]
-        local autoCast = btn.AutoCastable or _G["PetActionButton" .. i .. "AutoCastable"]
+        if i == 1 then
+            point, relativeFrame, relativePoint, x, y = "BOTTOMLEFT", self, "BOTTOMLEFT", 3, 30
+        elseif i == 8 then
+            point, relativeFrame, relativePoint, x, y = "BOTTOM", lastColumnButton, "TOP", 0, BUTTON_MARGIN
+        else
+            point, relativeFrame, relativePoint, x, y = "BOTTOMLEFT", lastButton, "BOTTOMRIGHT", BUTTON_MARGIN, 0
+        end
 
-        if btn then
-            btn:Show()
-            fmPet.gwButton[i] = btn
-            btn:SetParent(fmPet)
-            GW.updateHotkey(btn)
-            btn.noGrid = nil
-            btn:SetSize(i < 4 and 32 or BUTTON_SIZE, i < 4 and 32 or BUTTON_SIZE)
+        button:SetParent(self)
+        button:ClearAllPoints()
+        button:SetAttribute("showgrid", 0)
+        button:EnableMouse(true)
+        button:SetSize(i < 4 and 32 or BUTTON_SIZE, i < 4 and 32 or BUTTON_SIZE)
+        button:SetPoint(point, relativeFrame, relativePoint, x, y)
 
-            btn.gwAnchor = i == 1 and fmPet or i == 8 and PetActionButton5 or btnPrev
-            btn.point1 = i == 1 and "BOTTOMLEFT" or i == 8 and "BOTTOM" or "BOTTOMLEFT"
-            btn.point2 = i == 1 and "BOTTOMLEFT" or i == 8 and "TOP" or "BOTTOMRIGHT"
-            btn.gwX = i == 1 and 3 or i == 8 and 0 or BUTTON_MARGIN
-            btn.gwY = i == 1 and 30 or i == 8 and BUTTON_MARGIN or 0
+        GW.updateHotkey(button)
+        button.noGrid = nil
 
-            if i > 1 and i ~= 8 then
-                btn:ClearAllPoints()
-                btn:SetPoint("BOTTOMLEFT", btnPrev, "BOTTOMRIGHT", BUTTON_MARGIN, 0)
-            elseif i == 8 then
-                btn:ClearAllPoints()
-                btn:SetPoint("BOTTOM", PetActionButton5, "TOP", 0, BUTTON_MARGIN)
+        button.relativeFrame = relativeFrame
+        button.point = point
+        button.relativePoint = relativePoint
+        button.gwX = x
+        button.gwY = y
+        hooksecurefunc(button, "SetPoint", function(btn, _, parent)
+            if parent ~= btn.relativeFrame then
+                if not InCombatLockdown() then
+                    btn:ClearAllPoints()
+                    btn:SetPoint(btn.point, btn.relativeFrame, btn.relativePoint, btn.gwX, btn.gwY)
+                else
+                    btn:GetParent():RegisterEvent("PLAYER_REGEN_ENABLED")
+                end
             end
-            hooksecurefunc(btn, "SetPoint", function(self, _, parent)
-                if parent ~= self.gwAnchor then
-                    if not InCombatLockdown() then
-                        self:ClearAllPoints()
-                        self:SetPoint(self.point1, self.gwAnchor, self.point2, self.gwX, self.gwY)
-                    else
-                        self:GetParent():RegisterEvent("PLAYER_REGEN_ENABLED")
-                    end
+        end)
+
+        if buttonShine then
+            buttonShine:SetSize(button:GetSize())
+            for _, v in pairs(_G["PetActionButton" .. i .. "Shine"].sparkles) do
+                v:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
+                v:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
+            end
+
+            autoCast:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
+            autoCast.size = (i < 4 and 32 or BUTTON_SIZE) + 5
+            hooksecurefunc(autoCast, "SetSize", function()
+                local w = autoCast:GetSize()
+                if autoCast.size ~= w then
+                    autoCast:SetHeight(autoCast.size)
+                    autoCast:SetWidth(autoCast.size)
                 end
             end)
-
-            if btnShine then
-                btnShine:SetSize(btn:GetSize())
-                for _, v in pairs(_G["PetActionButton" .. i .. "Shine"].sparkles) do
-                    v:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
-                    v:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
-                end
-
-                autoCast:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
-                autoCast.size = (i < 4 and 32 or BUTTON_SIZE) + 5
-                hooksecurefunc(autoCast, "SetSize", function()
-                    local w = autoCast:GetSize()
-                    if autoCast.size ~= w then
-                        autoCast:SetHeight(autoCast.size)
-                        autoCast:SetWidth(autoCast.size)
-                    end
-                end)
-            end
-
-            if i == 1 then
-                hooksecurefunc(PetActionBar, "Update", petBarUpdate)
-                hooksecurefunc("TogglePetAutocast", setActionButtonAutocast)
-            end
-
-            if i <= 3 or i >= 8 then
-                btn:SetScript("OnDragStart", nil)
-                btn:SetAttribute("_ondragstart", nil)
-                btn:SetScript("OnReceiveDrag", nil)
-                btn:SetAttribute("_onreceivedrag", nil)
-            end
-
-            btn.showMacroName = showName
-
-            GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, nil, true)
-            GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])
         end
+
+        if i <= 3 or i >= 8 then
+            button:SetScript("OnDragStart", nil)
+            button:SetAttribute("_ondragstart", nil)
+            button:SetScript("OnReceiveDrag", nil)
+            button:SetAttribute("_onreceivedrag", nil)
+        end
+
+        button.showMacroName = showName
+
+        GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, nil, true)
+        GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])
     end
 end
 GW.AddForProfiling("petbar", "setPetBar", setPetBar)
@@ -156,6 +147,100 @@ local function updatePetFrameLocation()
 end
 GW.AddForProfiling("petbar", "updatePetFrameLocation", updatePetFrameLocation)
 
+local function UpdatePetActionBar(self, event, unit)
+    if (event == "UNIT_FLAGS" and unit ~= "pet") or (event == "UNIT_PET" and unit ~= "player") then return end
+
+    for i, button in ipairs(self.buttons) do
+        local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(i)
+        local buttonName = "PetActionButton" .. i
+        local autoCast = button.AutoCastable
+
+        button:SetAlpha(1)
+        button.isToken = isToken
+        button.icon:Show()
+
+        if i > 3 and i < 8 then
+            if not isToken then
+                button.icon:SetTexture(texture)
+                button.tooltipName = name
+            else
+                button.icon:SetTexture(_G[texture])
+                button.tooltipName = _G[name]
+            end
+        end
+
+        if spellID then
+            local spell = Spell:CreateFromSpellID(spellID)
+            button.spellDataLoadedCancelFunc = spell:ContinueWithCancelOnSpellLoad(function()
+                button.tooltipSubtext = spell:GetSpellSubtext()
+            end)
+        end
+
+        if isActive and name ~= "PET_ACTION_FOLLOW" then
+            button:SetChecked(true)
+
+            if IsPetAttackAction(i) then
+                if PetActionButton_StartFlash then
+                    PetActionButton_StartFlash(button)
+                else
+                    button:StartFlash()
+                end
+            end
+        else
+            button:SetChecked(false)
+
+            if IsPetAttackAction(i) then
+                if PetActionButton_StopFlash then
+                    PetActionButton_StopFlash(button)
+                else
+                    button:StopFlash()
+                end
+            end
+        end
+
+        if autoCastAllowed then
+            autoCast:Show()
+        else
+            autoCast:Hide()
+        end
+
+        if autoCastEnabled then
+            AutoCastShine_AutoCastStart(button.AutoCastShine)
+        else
+            AutoCastShine_AutoCastStop(button.AutoCastShine)
+        end
+
+        if not PetHasActionBar() and texture and name ~= "PET_ACTION_FOLLOW" then
+            if PetActionButton_StopFlash then
+                PetActionButton_StopFlash(button)
+            else
+                button:StopFlash()
+            end
+
+            button.icon:SetDesaturation(1)
+            button:SetChecked(false)
+        end
+    end
+end
+
+local function UpdatePetCooldown(self)
+    if PetActionBar_UpdateCooldowns then
+        PetActionBar_UpdateCooldowns()
+    else
+        local forbidden = GameTooltip:IsForbidden()
+        local owner = GameTooltip:GetOwner()
+
+        for i, button in ipairs(self.buttons) do
+            local start, duration = GetPetActionCooldown(i)
+            button.cooldown:SetCooldown(start, duration)
+
+            if not forbidden and owner == button then
+                button:OnEnter(button)
+            end
+        end
+    end
+end
+
 local function updatePetData(self, event, unit)
     if not UnitExists("pet") then
         return
@@ -164,21 +249,26 @@ local function updatePetData(self, event, unit)
     if event == "UNIT_AURA" then
         UpdateBuffLayout(self, event, unit)
         return
-    elseif event == "UNIT_PET" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
+    elseif event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
         SetPortraitTexture(self.portrait, "pet")
-        if event ~= "UNIT_PET" then
-            return
-        end
+        return
     elseif event == "PLAYER_REGEN_ENABLED" then
         for i = 1, NUM_PET_ACTION_SLOTS do
-            local button = self.gwButton[i]
+            local button = self.buttons[i]
             if button then
                 button:ClearAllPoints()
-                button:SetPoint(button.point1, button.gwAnchor, button.point2, button.gwX, button.gwY)
+                button:SetPoint(button.point, button.relativeFrame, button.relativePoint, button.gwX, button.gwY)
             end
         end
         self:UnregisterEvent("PLAYER_REGEN_ENABLED")
         return
+    elseif GW.IsIn(event, "PET_UI_UPDATE", "PET_BAR_UPDATE", "PLAYER_CONTROL_GAINED", "PLAYER_CONTROL_LOST", "PLAYER_ENTERING_WORLD", "PLAYER_FARSIGHT_FOCUS_CHANGED", "SPELLS_CHANGED", "UNIT_FLAGS", "UNIT_PET") then
+        SetPortraitTexture(self.portrait, "pet")
+        UpdatePetActionBar(self, event, unit)
+
+        if event  ~= "UNIT_PET" then return end
+    elseif event == "PET_BAR_UPDATE_COOLDOWN" then
+        UpdatePetCooldown(self)
     end
 
     local health = UnitHealth("pet")
@@ -235,6 +325,7 @@ GW.TogglePetAuraPosition = TogglePetAuraPosition
 
 local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
+    playerPetFrame.buttons = {}
 
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
@@ -281,8 +372,14 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MODEL_CHANGED", "pet")
     playerPetFrame:RegisterEvent("PET_UI_UPDATE")
-
-    updatePetData(playerPetFrame, "UNIT_PET", "pet")
+    playerPetFrame:RegisterEvent("PET_BAR_UPDATE")
+    playerPetFrame:RegisterEvent("PLAYER_CONTROL_GAINED")
+    playerPetFrame:RegisterEvent("PLAYER_CONTROL_LOST")
+    playerPetFrame:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
+    playerPetFrame:RegisterEvent("SPELLS_CHANGED")
+    playerPetFrame:RegisterEvent("UNIT_FLAGS")
+    playerPetFrame:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
+    playerPetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, {"default", "scaleable"}, true)
 
@@ -296,16 +393,25 @@ local function LoadPetFrame(lm)
 
     lm:RegisterPetFrame(playerPetFrame)
 
-    setPetBar(playerPetFrame)
+    -- Pet Actionbuttons here
+    for i = 1, NUM_PET_ACTION_SLOTS do
+        local button = _G["PetActionButton" .. i]
+        button:Show()
+        playerPetFrame.buttons[i] = button
+    end
+    SetPetActionButtonPositionAndStyle(playerPetFrame)
+    hooksecurefunc(PetActionBar, "Update", UpdatePetActionBarIcons)
+    hooksecurefunc("TogglePetAutocast", setActionButtonAutocast)
+    UpdatePetActionBarIcons()
 
     -- hook hotkey update calls so we can override styling changes
     local hotkeyEventTrackerFrame = CreateFrame("Frame")
     hotkeyEventTrackerFrame:RegisterEvent("UPDATE_BINDINGS")
+    hotkeyEventTrackerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     hotkeyEventTrackerFrame:SetScript("OnEvent", function()
-        for i = 1, 12 do
-            if playerPetFrame.gwButton[i] then
-                GW.updateHotkey(playerPetFrame.gwButton[i])
-            end
+        for _, button in ipairs(GwPlayerPetFrame.buttons) do
+            GW.updateHotkey(button)
+            GW.FixHotKeyPosition(button, false, true)
         end
     end)
 

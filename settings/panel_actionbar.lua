@@ -148,7 +148,7 @@ local function LoadActionbarPanel(sWindow)
         L["Set the growth direction of the stance bar"],
         "StanceBar_GrowDirection",
         function()
-            GW.SetStanceButtons(GwStanceBarButton)
+            GW.SetStanceButtons(GwStanceBar)
         end,
         {"UP", "DOWN", "LEFT", "RIGHT"},
         {StrUpper(L["Up"], 1, 1), StrUpper(L["Down"], 1, 1), L["Left"], L["Right"]},

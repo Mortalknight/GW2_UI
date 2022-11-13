@@ -7,6 +7,7 @@ local IsFrameModified = GW.IsFrameModified
 local CountTable = GW.CountTable
 local AddUpdateCB = GW.AddUpdateCB
 local AFP = GW.AddProfiling
+--local LEM = GW.Libs.LEM
 
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
 
@@ -400,6 +401,22 @@ local function showBackdrop(self)
 end
 AFP("showBackdrop", showBackdrop)
 
+local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
+    button.HotKey:ClearAllPoints()
+    if isPetButton or isStanceButton then
+        button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 5)
+    elseif isMainBar then
+        button.HotKey:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, 0)
+        button.HotKey:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+        button.HotKey:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
+        button.HotKey:SetTextColor(1, 1, 1)
+    else
+        button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 0)
+    end
+    button.HotKey:SetJustifyH("CENTER")
+end
+GW.FixHotKeyPosition = FixHotKeyPosition
+
 local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton, isPet)
     local btn = _G[buttonName]
     local btnWidth = btn:GetWidth()
@@ -407,14 +424,8 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
     if btn.icon then
         btn.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     end
-    if btn.HotKey ~= nil then
-        btn.HotKey:ClearAllPoints()
-        if isPet then
-            btn.HotKey:SetPoint("CENTER", btn, "BOTTOM", 0, 5)
-        else
-            btn.HotKey:SetPoint("CENTER", btn, "BOTTOM", 0, 0)
-        end
-        btn.HotKey:SetJustifyH("CENTER")
+    if btn.HotKey then
+        FixHotKeyPosition(btn, isStanceButton, isPet)
     end
     if btn.Count then
         btn.Count:ClearAllPoints()
@@ -447,6 +458,10 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
 
     if _G[buttonName .. "FloatingBG"] then
         _G[buttonName .. "FloatingBG"]:SetTexture(nil)
+    end
+    if _G[buttonName .. "NormalTexture"] then
+        _G[buttonName .. "NormalTexture"]:SetTexture(nil)
+        _G[buttonName .. "NormalTexture"]:Hide()
     end
     if _G[buttonName .. "NormalTexture2"] then
         _G[buttonName .. "NormalTexture2"]:SetTexture(nil)
@@ -1111,6 +1126,8 @@ local function LoadActionBars(lm)
     fmActionbar.gw_Bar6 = updateMultiBar(lm, "MultiBar6", "MultiBar6Button", MULTIBAR_6_ACTIONBAR_PAGE, nil)
     fmActionbar.gw_Bar7 = updateMultiBar(lm, "MultiBar7", "MultiBar7Button", MULTIBAR_7_ACTIONBAR_PAGE, nil)
 
+    --LEM:ApplyChanges()
+
     GW.RegisterScaleFrame(fmActionbar)
 
     -- hook existing multibars to track settings changes
@@ -1128,17 +1145,15 @@ local function LoadActionBars(lm)
     hotkeyEventTrackerFrame:SetScript("OnEvent", function()
         local fmMultiBar
         for y = 0, 7 do
-            if y == 0 then fmMultiBar = fmActionbar end
-            if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
-            if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
-            if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
-            if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
-            if y == 5 then fmMultiBar = fmActionbar.gw_Bar5 end
-            if y == 6 then fmMultiBar = fmActionbar.gw_Bar6 end
-            if y == 7 then fmMultiBar = fmActionbar.gw_Bar7 end
+            if y == 0 then 
+                fmMultiBar = fmActionbar
+            else
+                fmMultiBar = fmActionbar["gw_Bar" .. y]
+            end
             if fmMultiBar.gw_IsEnabled then
                 for i = 1, 12 do
                     updateHotkey(fmMultiBar.gw_Buttons[i])
+                    FixHotKeyPosition(fmMultiBar.gw_Buttons[i], false, false, y == 0)
                 end
             end
         end

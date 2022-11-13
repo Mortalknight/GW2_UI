@@ -373,7 +373,6 @@ local function setDetailEx(
     elseif factionID and C_Reputation.IsMajorFaction(factionID) then
         local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
         frame.StatusBar:SetMinMaxValues(0, 1)
-        majorFactionData.renownReputationEarned = 1000
 
         frame.background2:SetVertexColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
         frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
@@ -687,6 +686,7 @@ local function CollectCategories()
     local cCur = 0
     local idx, headerName = 0, ""
     local skipFirst = true
+    local found = false
 
     for factionIndex = 1, GetNumFactions() do
         local name, _, standingId, _, _, _, _, _, isHeader, _, _, _, isChild, factionID = returnReputationData(factionIndex)
@@ -703,10 +703,11 @@ local function CollectCategories()
                 idx = factionIndex
                 headerName = name
             else
-                local found = false
-                cCur = cCur + standingId
+                found = false
                 if friendInfo.friendshipFactionID and friendInfo.friendshipFactionID > 0 then
-                    cMax = cMax + C_GossipInfo.GetFriendshipReputationRanks(friendInfo.friendshipFactionID).maxLevel
+                    local friendRankInfo = C_GossipInfo.GetFriendshipReputationRanks(friendInfo.friendshipFactionID)
+                    cMax = cMax + friendRankInfo.maxLevel
+                    cCur = cCur + friendRankInfo.currentLevel
                     if not factionTbl then factionTbl = {} end
                     for _, v in pairs(factionTbl) do
                         if v.isFriend == true and v.standingText == friendInfo.reaction then
@@ -716,11 +717,28 @@ local function CollectCategories()
                         end
                     end
                     if not found then
-                        tinsert(factionTbl, {standingId = standingId, isFriend = true, standingText = friendInfo.reaction, counter = 1})
+                        tinsert(factionTbl, {standingId = friendRankInfo.currentLevel, isFriend = true, standingText = friendInfo.reaction, counter = 1})
+                    end
+                elseif C_Reputation.IsMajorFaction(factionID) then
+                    local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
+                    local standing = RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel
+                    cMax = cMax + #C_MajorFactions.GetRenownLevels(factionID)
+                    cCur = cCur + majorFactionData.renownLevel
+                    if not factionTbl then factionTbl = {} end
+                    for _, v in pairs(factionTbl) do
+                        if v.isFriend == false and v.standingText == standing then
+                            v.counter = v.counter + 1
+                            found = true
+                            break
+                        end
+                    end
+                    if not found then
+                        tinsert(factionTbl, {standingId = majorFactionData.renownLevel, isFriend = false, standingText = standing, counter = 1})
                     end
                 else
                     local standing = getglobal("FACTION_STANDING_LABEL" .. standingId)
                     cMax = cMax + 8
+                    cCur = cCur + standingId
                     if not factionTbl then factionTbl = {} end
                     for _, v in pairs(factionTbl) do
                         if v.isFriend == false and v.standingText == standing then

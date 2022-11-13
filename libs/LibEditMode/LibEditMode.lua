@@ -1,7 +1,8 @@
 -- Copyright 2022 plusmouse. Licensed under terms found in LICENSE file.
 -- https://github.com/plusmouse/LibEditMode
 
-local lib = LibStub:NewLibrary("LibEditModeOverride-1.0", 2)
+
+local lib = LibStub:NewLibrary("LibEditMode-1.0", 6)
 
 local pointGetter = CreateFrame("Frame", nil, UIParent)
 
@@ -62,6 +63,16 @@ function lib:SetGlobalSetting(setting, value)
   C_EditMode.SetAccountSetting(setting, value)
 end
 
+function lib:GetGlobalSetting(setting)
+  local currentSettings = C_EditMode.GetAccountSettings()
+
+  for _, s in ipairs(currentSettings) do
+    if s.setting == setting then
+      return s.value
+    end
+  end
+end
+
 function lib:HasEditModeSettings(frame)
   return GetSystemByFrame(frame) ~= nil
 end
@@ -78,7 +89,6 @@ function lib:SetFrameSetting(frame, setting, value)
   local restrictions = GetParameterRestrictions(frame, setting)
 
   if restrictions then
-    --DevTools_Dump(restrictions)
     local min, max
     if restrictions.type == Enum.EditModeSettingDisplayType.Dropdown then
       min = 1
@@ -103,10 +113,21 @@ function lib:SetFrameSetting(frame, setting, value)
   for _, item in pairs(system.settings) do
     if item.setting == setting then
       item.value = value
-      return true
     end
   end
-  return false
+end
+
+function lib:GetFrameSetting(frame, setting)
+  local system = GetSystemByFrame(frame)
+
+  assert(system, FRAME_ERROR)
+
+  for _, item in pairs(system.settings) do
+    if item.setting == setting then
+      return item.value
+    end
+  end
+  return nil
 end
 
 function lib:ReanchorFrame(frame, ...)

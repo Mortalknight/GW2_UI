@@ -1,59 +1,49 @@
 local _, GW = ...
 
 local isArenaHooked = false
+local lockedFrames = {}
 
-local function HandleFrame(baseName, doNotReparent)
-    local frame
-    if type(baseName) == "string" then
-        frame = _G[baseName]
-    else
-        frame = baseName
+local MAX_PARTY = MEMBERS_PER_RAID_GROUP or MAX_PARTY_MEMBERS or 5
+local MAX_ARENA_ENEMIES = MAX_ARENA_ENEMIES or 5
+local MAX_BOSS_FRAMES = 8
+
+-- lock Boss, Party, and Arena
+local function LockParent(frame, parent)
+    if parent ~= GW.HiddenFrame then
+        frame:SetParent(GW.HiddenFrame)
+    end
+end
+
+local function HandleFrame(frame, doNotReparent)
+    if type(frame) == "string" then
+        frame = _G[frame]
     end
 
-    if frame then
-        frame:UnregisterAllEvents()
-        frame:Hide()
+    if not frame then return end
 
-        if not doNotReparent then
-            frame:SetParent(GW.HiddenFrame)
-        end
+    local lockParent = doNotReparent == 1
 
-        local health = frame.healthBar or frame.healthbar or frame.HealthBar
-        if health then
-            health:UnregisterAllEvents()
+    if lockParent or not doNotReparent then
+        frame:SetParent(GW.HiddenFrame)
+        if lockParent and not lockedFrames[frame] then
+            hooksecurefunc(frame, "SetParent", LockParent)
+            lockedFrames[frame] = true
         end
+    end
 
-        local power = frame.manabar or frame.ManaBar
-        if power then
-            power:UnregisterAllEvents()
-        end
+    frame:UnregisterAllEvents()
+    frame:Hide()
 
-        local spell = frame.castBar or frame.spellbar
-        if spell then
-            spell:UnregisterAllEvents()
-        end
-
-        local altpowerbar = frame.powerBarAlt or frame.PowerBarAlt
-        if altpowerbar then
-            altpowerbar:UnregisterAllEvents()
-        end
-
-        local buffFrame = frame.BuffFrame
-        if buffFrame then
-            buffFrame:UnregisterAllEvents()
-        end
-
-        local petFrame = frame.PetFrame or frame.petFrame
-        if petFrame then
-            petFrame:UnregisterAllEvents()
-            petFrame:SetParent(GW.HiddenFrame)
-        end
-
-        local totFrame = frame.totFrame
-        if totFrame then
-            totFrame:UnregisterAllEvents()
-            totFrame:SetParent(GW.HiddenFrame)
-        end
+    for _, child in next, {
+        frame.petFrame or frame.PetFrame,
+        frame.healthBar or frame.healthbar or frame.HealthBar,
+        frame.manabar or frame.ManaBar,
+        frame.castBar or frame.spellbar,
+        frame.powerBarAlt or frame.PowerBarAlt,
+        frame.totFrame,
+        frame.BuffFrame
+    } do
+        child:UnregisterAllEvents()
     end
 end
 
@@ -84,11 +74,17 @@ local function DisableBlizzardFrames()
     end
 
     if ourPartyFrames then
+        HandleFrame(PartyFrame, 1)
         PartyFrame:UnregisterAllEvents()
         PartyFrame:SetScript("OnShow", nil)
 
         for frame in PartyFrame.PartyMemberFramePool:EnumerateActive() do
-            HandleFrame(frame)
+            HandleFrame(frame, true)
+        end
+
+        for i = 1, MAX_PARTY do
+            HandleFrame("PartyMemberFrame" .. i)
+            HandleFrame("CompactPartyFrameMember" .. i)
         end
     end
 
@@ -123,20 +119,22 @@ local function DisableBlizzardFrames()
             SetCVar("showArenaEnemyFrames", "0")
             SetCVar("showArenaEnemyPets", "0")
 
-            ArenaEnemyFramesContainer:UnregisterAllEvents()
-            ArenaEnemyPrepFramesContainer:UnregisterAllEvents()
-            ArenaEnemyMatchFramesContainer:UnregisterAllEvents()
+            HandleFrame(ArenaEnemyFramesContainer, 1)
+            HandleFrame(ArenaEnemyPrepFramesContainer, 1)
+            HandleFrame(ArenaEnemyMatchFramesContainer, 1)
 
             for i = 1, MAX_ARENA_ENEMIES do
-                HandleFrame("ArenaEnemyMatchFrame" .. i)
-                HandleFrame("ArenaEnemyPrepFrame" .. i)
+                HandleFrame("ArenaEnemyMatchFrame" .. i, true)
+                HandleFrame("ArenaEnemyPrepFrame" .. i, true)
             end
         end
     end
 
     if ourBossFrames then
+        HandleFrame(BossTargetFrameContainer, 1)
+
         for i = 1, MAX_BOSS_FRAMES do
-            HandleFrame(format("Boss%dTargetFrame", i))
+            HandleFrame("Boss" .. i .. "TargetFrame", true)
         end
     end
 
@@ -171,6 +169,10 @@ local function DisableBlizzardFrames()
         PlayerFrame:RegisterEvent("UNIT_ENTERED_VEHICLE")
         PlayerFrame:RegisterEvent("UNIT_EXITING_VEHICLE")
         PlayerFrame:RegisterEvent("UNIT_EXITED_VEHICLE")
+
+        PlayerFrame:SetMovable(true)
+        PlayerFrame:SetUserPlaced(true)
+        PlayerFrame:SetDontSavePosition(true)
     end
 
     if ourCastBar then

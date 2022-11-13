@@ -666,10 +666,9 @@ local function LoadInventory()
     helpers.onMoverDragStop = onMoverDragStop
 
     bag_resize = GW.LoadBag(helpers)
-    bank_resize = GW.LoadBank(helpers) --TODO bugged atm
+    bank_resize = GW.LoadBank(helpers) --TODO OpenAllBags() causes a taint
 
     -- Skin StackSplit
-    local StackSplitFrame = _G.StackSplitFrame
     StackSplitFrame:StripTextures()
     StackSplitFrame:CreateBackdrop(GW.skins.constBackdropFrame)
 
@@ -695,6 +694,5 @@ local function LoadInventory()
     StackSplitFrame.textboxbg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
     StackSplitFrame.textboxbg:SetPoint("TOPLEFT", 35, -20)
     StackSplitFrame.textboxbg:SetPoint("BOTTOMRIGHT", -35, 55)
-
 end
 GW.LoadInventory = LoadInventory

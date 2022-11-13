@@ -189,7 +189,8 @@ local function createBagBar(f)
         -- The ID set here is NOT the usual bag_id; rather it is a 1-based index of bank
         -- bags used by helper methods provided by BankItemButtonBagTemplate.
         b:SetID(bag_idx)
-        b.BagID = bag_idx
+        --b.BagID = bag_idx
+        b.bagID = bag_idx -- TEST
         -- unlike BagSlotButtonTemplate, we must provide the GetBagID method ourself
         b.GetBagID = getBagId
 
@@ -206,7 +207,8 @@ local function createBagBar(f)
     -- create a fake bag frame for the base bank slots
     local b = CreateFrame("ItemButton", nil, f, "GwBankBaseBagTemplate")
     b:SetID(0)
-    b.BagID = 0
+    --b.BagID = 0
+    b.bagID = 0 -- TEST
     b.GetBagID = function()
         return BANK_CONTAINER
     end
@@ -360,7 +362,7 @@ local function bank_OnShow(self)
         self.gw_reagent_skinned = true
     end
 
-    OpenAllBags(self)
+    --OpenAllBags(self) --taints
     updateBagBar(self.ItemFrame)
     updateBankContainers(self)
 end
@@ -522,7 +524,8 @@ local function LoadBank(helpers)
         cf.gw_num_slots = 0
         cf:SetAllPoints(f.ItemFrame)
         cf:SetID(bag_id)
-        cf.BagID = bag_id
+        --cf.BagID = bag_id
+        cf.bagID = bag_id -- TEST
         f.ItemFrame.Containers[bag_id] = cf
     end
     f.ReagentFrame.Containers = {}

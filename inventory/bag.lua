@@ -364,7 +364,8 @@ local function createBagBar(f)
         -- The ID set here is NOT the usual bag_id; rather it is an offset from the
         -- id of CharacterBag0Slot, used internally by BagSlotButtonTemplate methods.
         b:SetID(cb0_id + bag_idx - 1)
-        b.BagID = cb0_id + bag_idx - 1
+        --b.BagID = bag_idx
+        b.bagID = bag_idx -- TEST
         -- unlike BankItemButtonBagTemplate, we must provide the GetInventorySlot method
         b.GetInventorySlot = getInvId
 
@@ -390,8 +391,9 @@ local function createBagBar(f)
         -- We depend on a number of behaviors from the default BagSlotButtonTemplate.
         -- The ID set here is NOT the usual bag_id; rather it is an offset from the
         -- id of CharacterBag0Slot, used internally by BagSlotButtonTemplate methods.
-        b:SetID(CharacterReagentBag0Slot:GetID())
-        b.BagID = CharacterReagentBag0Slot:GetID()
+        b:SetID(cb0_id + 5 - 1)
+        --b.BagID = CharacterReagentBag0Slot:GetID()
+        b.bagID = 5 -- TEST
         -- unlike BankItemButtonBagTemplate, we must provide the GetInventorySlot method
         b.GetInventorySlot = getInvId
 
@@ -722,7 +724,8 @@ local function LoadBag(helpers)
         cf.gw_num_slots = 0
         cf:SetAllPoints(f.ItemFrame)
         cf:SetID(bag_id)
-        cf.BagID = bag_id
+        --cf.BagID = bag_id
+        cf.bagID = bag_id -- TEST
         cf.shouldShow = true
         f.ItemFrame.Containers[bag_id] = cf
     end

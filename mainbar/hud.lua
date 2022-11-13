@@ -18,8 +18,8 @@ local function xpbar_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
     GameTooltip:ClearLines()
 
-    local valCurrent = UnitXP("Player")
-    local valMax = UnitXPMax("Player")
+    local valCurrent = UnitXP("player")
+    local valMax = UnitXPMax("player")
     local rested = GetXPExhaustion()
     local isRestingString = ""
 
@@ -179,7 +179,11 @@ local function xpbar_OnEvent(self, event)
 
         local isParagon = false
         local isFriend = false
+        local isMajor = false
         local isNormal = false
+
+        local MajorCurrentLevel = 0
+        local MajorNextLevel = 0
         if C_Reputation.IsFactionParagon(factionID) then
             local currentValue, maxValueParagon = C_Reputation.GetFactionParagonInfo(factionID)
 
@@ -201,6 +205,21 @@ local function xpbar_OnEvent(self, event)
             end
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
             isFriend = true
+        elseif C_Reputation.IsMajorFaction(factionID) then
+            local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
+
+            MajorCurrentLevel = majorFactionData.renownLevel
+            MajorNextLevel = C_MajorFactions.HasMaximumRenown(factionID) and MajorCurrentLevel or MajorCurrentLevel + 1
+
+            if C_MajorFactions.HasMaximumRenown(factionID) then
+                valPrecRepu = 1
+            else
+                valPrecRepu = ((majorFactionData.renownReputationEarned or 0)) / majorFactionData.renownLevelThreshold
+            end
+            gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((majorFactionData.renownReputationEarned or 0)) .. " / " .. CommaValue(majorFactionData.renownLevelThreshold) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+
+            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
+            isMajor = true
         else
             local currentRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (standingId or 1))), GW.mysex)
             local nextRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (standingId or 1) + 1)), GW.mysex)
@@ -221,8 +240,8 @@ local function xpbar_OnEvent(self, event)
 
         local nextId = standingId and standingId + 1 or 1
         if not lockLevelTextUnderMaxLevel then
-            level = isFriend and  friendReputationInfo.reaction or isParagon and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1)) or isNormal and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1))
-            Nextlevel = isParagon and L["Paragon"] or isFriend and "" or isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
+            level = isMajor and MajorCurrentLevel or isFriend and friendReputationInfo.reaction or isParagon and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1)) or isNormal and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1))
+            Nextlevel = isParagon and L["Paragon"] or isFriend and "" or isMajor and MajorNextLevel or isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
         end
 
         showBar3 = true
