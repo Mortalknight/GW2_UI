@@ -133,7 +133,7 @@ local function DisableBlizzardMovers()
 
     if CheckActionBar() then
         mixin.RefreshVehicleLeaveButton = GW.NoOp
-        mixin.RefreshActionBarShown = GW.NoOp
+        --mixin.RefreshActionBarShown = GW.NoOp -- TEST
         --mixin.RefreshEncounterBar = GW.NoOp -- we are not handling that bar
     end
 end
