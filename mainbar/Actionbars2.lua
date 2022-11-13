@@ -7,6 +7,7 @@ local IsFrameModified = GW.IsFrameModified
 local CountTable = GW.CountTable
 local AddUpdateCB = GW.AddUpdateCB
 local AFP = GW.AddProfiling
+--local LEM = GW.Libs.LEM
 
 local MAIN_MENU_BAR_BUTTON_SIZE = 48
 
@@ -457,6 +458,10 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
 
     if _G[buttonName .. "FloatingBG"] then
         _G[buttonName .. "FloatingBG"]:SetTexture(nil)
+    end
+    if _G[buttonName .. "NormalTexture"] then
+        _G[buttonName .. "NormalTexture"]:SetTexture(nil)
+        _G[buttonName .. "NormalTexture"]:Hide()
     end
     if _G[buttonName .. "NormalTexture2"] then
         _G[buttonName .. "NormalTexture2"]:SetTexture(nil)
@@ -1120,6 +1125,8 @@ local function LoadActionBars(lm)
     fmActionbar.gw_Bar5 = updateMultiBar(lm, "MultiBar5", "MultiBar5Button", MULTIBAR_5_ACTIONBAR_PAGE, nil)
     fmActionbar.gw_Bar6 = updateMultiBar(lm, "MultiBar6", "MultiBar6Button", MULTIBAR_6_ACTIONBAR_PAGE, nil)
     fmActionbar.gw_Bar7 = updateMultiBar(lm, "MultiBar7", "MultiBar7Button", MULTIBAR_7_ACTIONBAR_PAGE, nil)
+
+    --LEM:ApplyChanges()
 
     GW.RegisterScaleFrame(fmActionbar)
 
