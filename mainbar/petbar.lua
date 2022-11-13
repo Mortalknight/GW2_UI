@@ -254,7 +254,7 @@ local function updatePetData(self, event, unit)
         return
     elseif event == "PLAYER_REGEN_ENABLED" then
         for i = 1, NUM_PET_ACTION_SLOTS do
-            local button = self.gwButton[i]
+            local button = self.buttons[i]
             if button then
                 button:ClearAllPoints()
                 button:SetPoint(button.point, button.relativeFrame, button.relativePoint, button.gwX, button.gwY)
