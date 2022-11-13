@@ -79,7 +79,7 @@ local function manageButton()
 
         if PlayerInGroup() ~= false then
             ref:Show()
-            self:SetHeight(230)
+            self:SetHeight(250)
         else
             ref:Hide()
             self:SetHeight(80)
@@ -90,7 +90,7 @@ local function manageButton()
         local state = self:GetAttribute("state")
 
         if newstate == "show" and state == "open" then
-            self:SetHeight(230)
+            self:SetHeight(250)
             ref:Show()
         elseif newstate == "hide" and state == "open" then
             self:SetHeight(80)
@@ -177,7 +177,7 @@ local function manageButton()
         self.texture:SetBlendMode("BLEND")
     end
 
-    local x, y, f = 15, -25, nil
+    local x, y, f = 15, -50, nil
 
     GwGroupManage.inGroup.markers = {}
     for i = 1, 8 do
