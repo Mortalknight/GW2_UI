@@ -51,14 +51,15 @@ local function EmbeddedItemTooltip_QuestReward(self)
     end
 end
 
-
 local function RemoveTrashLines(self)
     if self:IsForbidden() then return end
     for i = 3, self:NumLines() do
         local tiptext = _G["GameTooltipTextLeft" .. i]
-        local linetext = tiptext:GetText()
+        local linetext = tiptext and tiptext:GetText()
 
-        if linetext == PVP or linetext == FACTION_ALLIANCE or linetext == FACTION_HORDE then
+        if not tiptext then
+            break
+        elseif linetext == PVP or linetext == FACTION_ALLIANCE or linetext == FACTION_HORDE then
             tiptext:SetText("")
             tiptext:Hide()
         end
@@ -700,16 +701,22 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
                 self.StatusBar:ClearAllPoints()
                 self.StatusBar:SetPoint("TOPLEFT", self, "BOTTOMLEFT", GW.BorderSize, -(GW.SpacingSize * 3))
                 self.StatusBar:SetPoint("TOPRIGHT", self, "BOTTOMRIGHT", -GW.BorderSize, -(GW.SpacingSize * 3))
-                self.StatusBar.text:SetPoint("CENTER", self.StatusBar, 0, 0)
                 self.StatusBar.anchoredToTop = false
+
+                if self.StatusBar.text then
+                    self.StatusBar.text:SetPoint("CENTER", self.StatusBar, 0, 0)
+                end
             end
         elseif healtBarPosition == "TOP" then
             if not self.StatusBar.anchoredToTop then
                 self.StatusBar:ClearAllPoints()
                 self.StatusBar:SetPoint("BOTTOMLEFT", self, "TOPLEFT", GW.BorderSize, (GW.SpacingSize * 3))
                 self.StatusBar:SetPoint("BOTTOMRIGHT", self, "TOPRIGHT", -GW.BorderSize, (GW.SpacingSize * 3))
-                self.StatusBar.text:SetPoint("CENTER", self.StatusBar, 0, 0)
                 self.StatusBar.anchoredToTop = true
+
+                if self.StatusBar.text then
+                    self.StatusBar.text:SetPoint("CENTER", self.StatusBar, 0, 0)
+                end
             end
         end
     end
