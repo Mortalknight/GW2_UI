@@ -135,14 +135,11 @@ local function updatePetFrameLocation()
     end
     local fBar = MultiBarBottomLeft
     local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 54 or 0
-    fPet:ClearAllPoints()
     fPet.gwMover:ClearAllPoints()
     if fBar and fBar.gw_FadeShowing then
         fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + xOff, 212)
-        fPet:SetPoint("TOPLEFT", fPet.gwMover)
     else
         fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + xOff, 120)
-        fPet:SetPoint("TOPLEFT", fPet.gwMover)
     end
 end
 GW.AddForProfiling("petbar", "updatePetFrameLocation", updatePetFrameLocation)
@@ -152,7 +149,6 @@ local function UpdatePetActionBar(self, event, unit)
 
     for i, button in ipairs(self.buttons) do
         local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(i)
-        local buttonName = "PetActionButton" .. i
         local autoCast = button.AutoCastable
 
         button:SetAlpha(1)
@@ -382,16 +378,14 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, {"default", "scaleable"}, true)
+    lm:RegisterPetFrame(playerPetFrame)
+
+    playerPetFrame:ClearAllPoints()
+    playerPetFrame:SetPoint("TOPLEFT", playerPetFrame.gwMover)
 
     if not playerPetFrame.isMoved then
         AddActionBarCallback(updatePetFrameLocation)
-        updatePetFrameLocation()
-    else
-        playerPetFrame:ClearAllPoints()
-        playerPetFrame:SetPoint("TOPLEFT", playerPetFrame.gwMover)
     end
-
-    lm:RegisterPetFrame(playerPetFrame)
 
     -- Pet Actionbuttons here
     for i = 1, NUM_PET_ACTION_SLOTS do
