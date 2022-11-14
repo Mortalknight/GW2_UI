@@ -101,7 +101,7 @@ local function SetUnitAura(self, unit, index, filter)
 end
 
 local function GameTooltip_OnTooltipSetSpell(self)
-    if self:IsForbidden() or not IsModKeyDown() then return end
+    if self ~= GameTooltip or self:IsForbidden() or not IsModKeyDown() then return end
 
     local _, id = self:GetSpell()
     if not id then return end
@@ -263,7 +263,7 @@ local function GameTooltip_OnTooltipCleared(self)
 end
 
 local function GameTooltip_OnTooltipSetItem(self)
-    if self:IsForbidden() then return end
+    if self ~= GameTooltip or self:IsForbidden() then return end
 
     local _, link = self:GetItem()
     local num = GetItemCount(link)
@@ -600,7 +600,7 @@ local function AddInspectInfo(self, unit, numTries, r, g, b)
 end
 
 local function GameTooltip_OnTooltipSetUnit(self, data)
-    if self:IsForbidden() then return end
+    if self ~= GameTooltip or self:IsForbidden() then return end
 
     local _, unit = self:GetUnit()
     local isPlayerUnit = UnitIsPlayer(unit)
@@ -760,11 +760,11 @@ local function SetTooltipFonts()
 
     if GameTooltip.hasMoney then
         for i = 1, GameTooltip.numMoneyFrames do
-            _G["GameTooltipMoneyFrame"..i.."PrefixText"]:SetFont(font, textSize, fontOutline)
-            _G["GameTooltipMoneyFrame"..i.."SuffixText"]:SetFont(font, textSize, fontOutline)
-            _G["GameTooltipMoneyFrame"..i.."GoldButtonText"]:SetFont(font, textSize, fontOutline)
-            _G["GameTooltipMoneyFrame"..i.."SilverButtonText"]:SetFont(font, textSize, fontOutline)
-            _G["GameTooltipMoneyFrame"..i.."CopperButtonText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "PrefixText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "SuffixText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "GoldButtonText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "SilverButtonText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "CopperButtonText"]:SetFont(font, textSize, fontOutline)
         end
     end
 
@@ -862,8 +862,7 @@ local function SkinBattlePetTooltip()
     end
 
     hooksecurefunc("SharedPetBattleAbilityTooltip_SetAbility", function(self) skin_battle_pet_tt(self) end)
-
-    local fbptt = function()
+    hooksecurefunc("FloatingBattlePet_Show", function()
         if FloatingBattlePetTooltip:IsShown() then
             FloatingBattlePetTooltip.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal")
             FloatingBattlePetTooltip.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
@@ -874,13 +873,18 @@ local function SkinBattlePetTooltip()
 
             skin_battle_pet_tt(FloatingBattlePetTooltip)
         end
-    end
-    hooksecurefunc("FloatingBattlePet_Show", fbptt)
+    end)
 
-    local bptt = function()
+    hooksecurefunc("BattlePetToolTip_Show", function()
+        if not BattlePetTooltip then return end
         skin_battle_pet_tt(BattlePetTooltip)
-    end
-    hooksecurefunc("BattlePetToolTip_Show", bptt)
+
+        if not BattlePetTooltip.speciesID or not IsModKeyDown() then return end
+
+        BattlePetTooltip:AddLine(" ")
+        BattlePetTooltip:AddLine(format(IDLine, ID, BattlePetTooltip.speciesID))
+        BattlePetTooltip:Show()
+    end)
 end
 
 local function shouldHiddenInCombat(tooltip)
@@ -1063,18 +1067,17 @@ local function LoadTooltips()
         end)
 
         if select(4, GetBuildInfo()) >= 100002 then
-            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
-            GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
             TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetSpell)
             TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
-            GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
+            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
         else
             GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_OnTooltipSetSpell)
-            GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
             GameTooltip:HookScript("OnTooltipSetItem", GameTooltip_OnTooltipSetItem)
             GameTooltip:HookScript("OnTooltipSetUnit", GameTooltip_OnTooltipSetUnit)
-            GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
         end
+
+        GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
+        GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
     end
 
     local eventFrame2 = CreateFrame("Frame")
