@@ -323,6 +323,50 @@ end
 GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
 
 -- EVOKER
+local FillingAnimationTime = 5.0
+
+local function Essence_OnUpdate(self, elapsed) 
+    local peace, interrupted = GetPowerRegenForPowerType(Enum.PowerType.Essence)
+    if (peace == nil or peace == 0) then
+        peace = 0.2
+    end
+    local cooldownDuration = 1 / peace
+    local animationSpeedMultiplier = FillingAnimationTime / cooldownDuration
+    self.EssenceFilling.FillingAnim:SetAnimationSpeedMultiplier(animationSpeedMultiplier)
+    self.EssenceFilling.CircleAnim:SetAnimationSpeedMultiplier(animationSpeedMultiplier)
+end
+local function SetEssennceFull(self)
+    self.EssenceFilling.FillingAnim:Stop()
+    self.EssenceFilling.CircleAnim:Stop()
+    self.EssenceFillDone:Show()
+    self.EssenceEmpty:Hide()
+    self:SetScript("OnUpdate", nil)
+end
+
+local function AnimOut(self)
+    if (self.EssenceFull:IsShown() or self.EssenceFilling:IsShown() or self.EssenceFillDone:IsShown()) then 
+        self.EssenceDepleting:Show()
+        self.EssenceFilling:Hide();
+        self.EssenceEmpty:Hide();
+        self.EssenceFillDone:Hide()
+        self.EssenceFull:Hide();
+        self.EssenceFilling.FillingAnim:Stop()
+        self.EssenceFilling.CircleAnim:Stop()
+        self:SetScript("OnUpdate", nil)
+    end 
+end
+
+local function AnimIn(self, animationSpeedMultiplier)
+    self.EssenceFilling.FillingAnim:SetAnimationSpeedMultiplier(animationSpeedMultiplier)
+    self.EssenceFilling.CircleAnim:SetAnimationSpeedMultiplier(animationSpeedMultiplier)
+    self:SetScript("OnUpdate", Essence_OnUpdate)
+    self.EssenceFilling:Show()
+    self.EssenceDepleting:Hide()
+    self.EssenceEmpty:Hide()
+    self.EssenceFillDone:Hide()
+    self.EssenceFull:Hide()
+end
+
 local function powerEssence(self, event, ...)
     local pType = select(2, ...)
     if event ~= "CLASS_POWER_INIT" and pType ~= "ESSENCE" then
@@ -334,36 +378,22 @@ local function powerEssence(self, event, ...)
     local old_power = self.gwPower
     self.gwPower = pwr
 
-    for i = 1, pwrMax do
-        if pwr >= i then
-            self.evoker["essenceBgTex" .. i]:Show()
-            self.evoker["essence" .. i]:Show()
+    for i = 1, min(pwr, 6) do
+        SetEssennceFull(self.evoker["essence" ..i])
+    end
+    for i = pwr + 1, 6 do
+        AnimOut(self.evoker["essence" ..i])
+    end
 
-            self.evoker.essenceFlare:ClearAllPoints()
-            self.evoker.essenceFlare:SetPoint("CENTER", self.evoker["essence" .. i], "CENTER", 0, 0)
-            --[[
-            if pwr > old_power then
-                self.evoker.essenceFlare:Show()
-                AddToAnimation(
-                    "ESSENCEPOINTS_FLARE",
-                    0,
-                    5,
-                    GetTime(),
-                    0.5,
-                    function()
-                        local p = math.min(1, math.max(0, animations["ESSENCEPOINTS_FLARE"].progress))
-                        self.evoker.essenceFlare:SetAlpha(p)
-                    end,
-                    nil,
-                    function()
-                        self.evoker.essenceFlare:Hide()
-                    end
-                )
-            end
-            ]]
-        else
-            self.evoker["essence" .. i]:Hide()
-        end
+    local isAtMaxPoints = pwr == pwrMax
+    local peace, interrupted = GetPowerRegenForPowerType(Enum.PowerType.Essence)
+    if (peace == nil or peace == 0) then
+        peace = 0.2
+    end
+    local cooldownDuration = 1 / peace
+    local animationSpeedMultiplier = FillingAnimationTime / cooldownDuration;
+    if (not isAtMaxPoints and self.evoker["essence" .. pwr + 1] and not self.evoker["essence" .. pwr + 1].EssenceFull:IsShown()) then 
+        AnimIn(self.evoker["essence" .. pwr + 1], animationSpeedMultiplier)
     end
 end
 GW.AddForProfiling("classpowers", "powerEssence", powerEssence)
@@ -382,6 +412,9 @@ local function setEssenceBar(f)
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
     f:RegisterUnitEvent("UNIT_POWER_POINT_CHARGE", "player")
+
+
+
 end
 GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
 
