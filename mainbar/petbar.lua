@@ -128,22 +128,6 @@ local function UpdatePetBarButtonsHot()
 end
 GW.UpdatePetBarButtonsHot = UpdatePetBarButtonsHot
 
-local function updatePetFrameLocation()
-    local fPet = GwPlayerPetFrame
-    if not fPet or InCombatLockdown() then
-        return
-    end
-    local fBar = MultiBarBottomLeft
-    local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 54 or 0
-    fPet.gwMover:ClearAllPoints()
-    if fBar and fBar.gw_FadeShowing then
-        fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + xOff, 212)
-    else
-        fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + xOff, 120)
-    end
-end
-GW.AddForProfiling("petbar", "updatePetFrameLocation", updatePetFrameLocation)
-
 local function UpdatePetActionBar(self, event, unit)
     if (event == "UNIT_FLAGS" and unit ~= "pet") or (event == "UNIT_PET" and unit ~= "player") then return end
 
@@ -382,10 +366,6 @@ local function LoadPetFrame(lm)
 
     playerPetFrame:ClearAllPoints()
     playerPetFrame:SetPoint("TOPLEFT", playerPetFrame.gwMover)
-
-    if not playerPetFrame.isMoved then
-        AddActionBarCallback(updatePetFrameLocation)
-    end
 
     -- Pet Actionbuttons here
     for i = 1, NUM_PET_ACTION_SLOTS do
