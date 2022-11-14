@@ -549,6 +549,110 @@
                     </Layer>
                 </Layers>
             </Frame>
+            <Frame parentKey="evoker" hidden="true">
+                <Size x="316" y="18"></Size>
+                <Anchors>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture parentKey="essenceBgTex1" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+                            <TexCoords left="0.5" right="1" top="0" bottom="1"/>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="essenceBgTex2" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+                            <TexCoords left="0.5" right="1" top="0" bottom="1"/>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="essenceBgTex3" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+                            <TexCoords left="0.5" right="1" top="0" bottom="1"/>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="essenceBgTex4" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+                           <TexCoords left="0.5" right="1" top="0" bottom="1"/>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="96" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="essenceBgTex5" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+                            <TexCoords left="0.5" right="1" top="0" bottom="1"/>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="128" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="essenceBgTex6" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+                            <TexCoords left="0.5" right="1" top="0" bottom="1"/>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="160" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="essenceFlare" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash" hidden="true">
+                            <Size x="70" y="70"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="LEFT" x="128" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY" textureSubLevel="8">
+                        <Texture parentKey="essence1" file="Interface\AddOns\GW2_UI\textures\altpower/evoker" hidden="true">
+                            <TexCoords left="0" right="0.5" top="0" bottom="1"/>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="essence2" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+                            <TexCoords left="0" right="0.5" top="0" bottom="1"/>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="32" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="essence3" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+                           <TexCoords left="0" right="0.5" top="0" bottom="1"/>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="64" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="essence4" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+                            <TexCoords left="0" right="0.5" top="0" bottom="1"/>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="96" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="essence5" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+                            <TexCoords left="0" right="0.5" top="0" bottom="1"/>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="128" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="essence6" file="Interface\AddOns\GW2_UI\textures\altpower/evoker">
+                            <TexCoords left="0" right="0.5" top="0" bottom="1"/>
+                            <Size x="32" y="32"></Size>
+                            <Anchors>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="160" y="0"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Frame>
             <Frame parentKey="brewmaster" hidden="true">
                 <Size x="316" y="18"></Size>
                 <Anchors>

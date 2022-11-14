@@ -163,7 +163,7 @@ GW.GW_CLASS_COLORS = {
     MONK = {r = 66 / 255, g = 151 / 255, b = 112 / 255, a = 1},
     DRUID = {r = 158 / 255, g = 103 / 255, b = 37 / 255, a = 1},
     DEMONHUNTER = {r = 72 / 255, g = 38 / 255, b = 148 / 255, a = 1},
-    EVOKER = {r = 72 / 255, g = 38 / 255, b = 148 / 255, a = 1}
+    EVOKER = {r = 51 / 255, g = 147 / 255, b = 127 / 255, a = 1}
 }
 
 GW.FACTION_COLOR = {

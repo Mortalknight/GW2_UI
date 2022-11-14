@@ -322,6 +322,74 @@ local function setComboBar(f)
 end
 GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
 
+-- EVOKER
+local function powerEssence(self, event, ...)
+    local pType = select(2, ...)
+    if event ~= "CLASS_POWER_INIT" and pType ~= "ESSENCE" then
+        return
+    end
+
+    local pwrMax = UnitPowerMax("player", Enum.PowerType.Essence)
+    local pwr = UnitPower("player", Enum.PowerType.Essence)
+    local old_power = self.gwPower
+    self.gwPower = pwr
+
+    for i = 1, pwrMax do
+        if pwr >= i then
+            self.evoker["essenceBgTex" .. i]:Show()
+            self.evoker["essence" .. i]:Show()
+
+            self.evoker.essenceFlare:ClearAllPoints()
+            self.evoker.essenceFlare:SetPoint("CENTER", self.evoker["essence" .. i], "CENTER", 0, 0)
+            --[[
+            if pwr > old_power then
+                self.evoker.essenceFlare:Show()
+                AddToAnimation(
+                    "ESSENCEPOINTS_FLARE",
+                    0,
+                    5,
+                    GetTime(),
+                    0.5,
+                    function()
+                        local p = math.min(1, math.max(0, animations["ESSENCEPOINTS_FLARE"].progress))
+                        self.evoker.essenceFlare:SetAlpha(p)
+                    end,
+                    nil,
+                    function()
+                        self.evoker.essenceFlare:Hide()
+                    end
+                )
+            end
+            ]]
+        else
+            self.evoker["essence" .. i]:Hide()
+        end
+    end
+end
+GW.AddForProfiling("classpowers", "powerEssence", powerEssence)
+
+local function setEssenceBar(f)
+    f:ClearAllPoints()
+    f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
+    f.barType = "essence"
+    f.background:SetTexture(nil)
+    f.fill:SetTexture(nil)
+    f:SetHeight(32)
+    f.evoker:Show()
+
+    f:SetScript("OnEvent", powerEssence)
+    powerEssence(f, "CLASS_POWER_INIT")
+    f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+    f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+    f:RegisterUnitEvent("UNIT_POWER_POINT_CHARGE", "player")
+end
+GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
+
+local function setEvoker(self)
+    setEssenceBar(self)
+    return true
+end
+
 -- DEAMONHUNTER
 local function timerMetamorphosis(self)
     local _, _, duration, expires = findBuff("player", 162264)
@@ -1197,6 +1265,7 @@ local function selectType(f)
     f.exbar:Hide()
     f.warlock:Hide()
     f.combopoints:Hide()
+    f.evoker:Hide()
     if f.ourPowerBar then
         f.lmb:Hide()
     end
@@ -1227,6 +1296,8 @@ local function selectType(f)
         showBar = setDruid(f)
     elseif GW.myClassID == 12 then
         showBar = setDeamonHunter(f)
+    elseif GW.myClassID == 13 then
+        showBar = setEvoker(f)
     end
 
     if (GW.myClassID == 4 or GW.myClassID == 11) and f.ourTarget and f.comboPointsOnTarget and f.barType == "combo" then
