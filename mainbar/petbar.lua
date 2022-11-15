@@ -10,11 +10,11 @@ local AddToAnimation = GW.AddToAnimation
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local AddActionBarCallback = GW.AddActionBarCallback
 
-local function setActionButtonAutocast(button, id)
-    local autoCastEnabled = select(6, GetPetActionInfo(id))
+local function setActionButtonAutocast(button)
+    local autoCastEnabled = select(6, GetPetActionInfo(button:GetID()))
     local autoCast = button.AutoCastable
 
-    for _, v in pairs(_G["PetActionButton" .. id .. "Shine"].sparkles) do
+    for _, v in pairs(_G["PetActionButton" .. button:GetID() .. "Shine"].sparkles) do
         v:SetShown(autoCastEnabled)
     end
     autoCast:SetShown(autoCastEnabled)
@@ -29,7 +29,7 @@ local function UpdatePetActionBarIcons()
     PetActionButton9Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
     PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
     for i, button in ipairs(GwPlayerPetFrame.buttons) do
-        setActionButtonAutocast(button, i)
+        setActionButtonAutocast(button)
     end
 end
 GW.AddForProfiling("petbar", "UpdatePetActionBarIcons", UpdatePetActionBarIcons)
