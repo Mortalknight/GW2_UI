@@ -28,9 +28,9 @@ local function UpdatePetActionBarIcons()
     PetActionButton8Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist")
     PetActionButton9Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
     PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
-    for i, button in ipairs(GwPlayerPetFrame.buttons) do
-        setActionButtonAutocast(button)
-    end
+    --for i, button in ipairs(GwPlayerPetFrame.buttons) do
+    --    setActionButtonAutocast(button)
+    --end
 end
 GW.AddForProfiling("petbar", "UpdatePetActionBarIcons", UpdatePetActionBarIcons)
 
@@ -375,7 +375,7 @@ local function LoadPetFrame(lm)
     end
     SetPetActionButtonPositionAndStyle(playerPetFrame)
     hooksecurefunc(PetActionBar, "Update", UpdatePetActionBarIcons)
-    hooksecurefunc("TogglePetAutocast", setActionButtonAutocast)
+    --hooksecurefunc("TogglePetAutocast", setActionButtonAutocast)
     UpdatePetActionBarIcons()
 
     -- hook hotkey update calls so we can override styling changes
