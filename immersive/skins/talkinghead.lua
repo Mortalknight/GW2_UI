@@ -10,15 +10,15 @@ local function InitTalkingHeadFrame()
         end
     end
 
-    GW.RegisterMovableFrame(TalkingHeadFrame, "Talking Head Frame", "TalkingHeadFrame_pos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
-    TalkingHeadFrame:ClearAllPoints()
-    TalkingHeadFrame:SetPoint("TOPLEFT", TalkingHeadFrame.gwMover)
+    --GW.RegisterMovableFrame(TalkingHeadFrame, "Talking Head Frame", "TalkingHeadFrame_pos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
+    --TalkingHeadFrame:ClearAllPoints()
+    --TalkingHeadFrame:SetPoint("TOPLEFT", TalkingHeadFrame.gwMover)
 
     --Reset Model Camera
     local model = TalkingHeadFrame.MainFrame.Model
     if model.uiCameraID then
         model:RefreshCamera()
-        _G.Model_ApplyUICamera(model, model.uiCameraID)
+        Model_ApplyUICamera(model, model.uiCameraID)
     end
 
     -- Skin

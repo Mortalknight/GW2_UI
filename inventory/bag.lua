@@ -770,7 +770,7 @@ local function LoadBag(helpers)
         "OnClick",
         function()
             PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
-            SortBags()
+            C_Container.SortBags()
         end
     )
     EnableTooltip(f.buttonSort, BAG_CLEANUP_BAGS)
