@@ -385,6 +385,13 @@ local function SetupHybridMinimap()
     _G.HybridMinimap.CircleMask:StripTextures()
 end
 
+local function UpdateClusterPoint(self, _, anchor)
+    if anchor ~= GW2UI_MinimapClusterHolder then
+        MinimapCluster:ClearAllPoints()
+        MinimapCluster:Point('TOPRIGHT', GW2UI_MinimapClusterHolder, 0, 1)
+    end
+end
+
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = GetMinimapShape
@@ -436,6 +443,8 @@ local function LoadMinimap()
     clusterBackdrop:SetPoint("TOPRIGHT", 0, -1)
     clusterBackdrop:SetSize(width, height)
     clusterHolder:SetSize(width, height)
+
+    hooksecurefunc(MinimapCluster, "SetPoint", UpdateClusterPoint)
 
     MinimapCluster:EnableMouse(false)
 
