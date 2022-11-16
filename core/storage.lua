@@ -117,10 +117,9 @@ local UpdateMoney = function ()
     local money = GetMoney()
 
     -- first store old money
-    local oldMoney = GetStorage("money")
-    local OldMoney = oldMoney or money
+    local OldMoney = GetStorage("money") or money
 
-    local change = money - OldMoney 
+    local change = money - OldMoney
     if OldMoney > money then        -- Lost Money
         GW.spentMoney = GW.spentMoney - change
     else                            -- Gained Moeny
