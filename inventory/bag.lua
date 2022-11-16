@@ -149,6 +149,7 @@ local function layoutBagItems(f)
     end
     f:GetParent().unfinishedRow = 0
     f:GetParent().finishedRow = 0
+
     local lcf = inv.layoutContainerFrame
     for i = iS, iE, iD do
         local bag_id = i
@@ -176,15 +177,15 @@ local function layoutBagItems(f)
         if unfinishedRow then f:GetParent().unfinishedRow = f:GetParent().unfinishedRow  + 1 end
         f:GetParent().finishedRow = f:GetParent().finishedRow + finishedRows
 
-        if not rev and bag_id < 4 then
+        if not rev and bag_id <= 3 then
             slotID = GetInventorySlotInfo("Bag" .. bag_id .. "Slot")
             itemID = GetInventoryItemID("player", slotID)
-        elseif rev and bag_id <= 4 and bag_id > 0 then --TODO with reagent bag
+        elseif rev and bag_id <= 4 and bag_id > 0 then
             slotID = GetInventorySlotInfo("Bag" .. bag_id - 1 .. "Slot")
             itemID = GetInventoryItemID("player", slotID)
         end
 
-        if (sep and bag_id == 0) or (sep and itemID) then
+        if (sep and (bag_id == 0 or bag_id >= 4)) or (sep and itemID) then
             if col ~= 0 then
                 row = row + 2
                 col = 0

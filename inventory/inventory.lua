@@ -141,8 +141,8 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].r, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].g, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].b)
     end
 
-    local professionColors = isReagentBag and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or GW.professionBagColor[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
-    if GetSetting("BAG_PROFESSION_BAG_COLOR") and professionColors then
+    local professionColors = isReagentBag and BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Artifact] or GW.professionBagColor[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
+    if (GetSetting("BAG_PROFESSION_BAG_COLOR") or isReagentBag) and professionColors then
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
     end
@@ -518,9 +518,15 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
     local isize = size + padding
     if sep then
         local bags_equipped = 0
-        for i = 1, 4 do
-            local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
-            local itemID = GetInventoryItemID("player", slotID)
+        for i = 1, 5 do
+            local slotID, itemID
+
+            if i <= 4 then
+                slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
+            else
+                slotID = 35 -- ReagentBag0Slot
+            end
+            itemID = GetInventoryItemID("player", slotID)
 
             if itemID then
                 bags_equipped = bags_equipped + 1
