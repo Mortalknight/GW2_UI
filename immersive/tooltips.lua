@@ -654,7 +654,7 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
         self.StatusBar:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
     end
 
-    if statusBar.text then
+    if self.StatusBar.text then
         local textWidth = self.StatusBar.text:GetStringWidth()
         if textWidth then
             self:SetMinimumWidth(textWidth)
