@@ -114,10 +114,8 @@ end
 
 local function CheckUpdateIcon(button)
     local itemIsUpgrade = nil
-    if IsAddOnLoaded("Pawn") then
+    if PawnIsContainerItemAnUpgrade then
         itemIsUpgrade = PawnIsContainerItemAnUpgrade(button:GetParent():GetID(), button:GetID())
-    else
-        itemIsUpgrade = IsContainerItemAnUpgrade(button:GetParent():GetID(), button:GetID())
     end
 
     if itemIsUpgrade == nil then -- nil means not all the data was available to determine if this is an upgrade.
@@ -200,7 +198,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             button.itemlevel:SetText("")
         end
 
-        button:GetItemButtonIconTexture():SetAlpha(1)
+        button:GetItemButtonIconTexture():Show()
     else
         if button.junkIcon then button.junkIcon:Hide() end
         if button.scrapIcon then button.scrapIcon:Hide() end
@@ -209,7 +207,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             button:SetScript("OnUpdate", nil)
         end
         if button.itemlevel then button.itemlevel:SetText("") end
-        button:GetItemButtonIconTexture():SetAlpha(0)
+       button:GetItemButtonIconTexture():Hide()
     end
 end
 GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)
