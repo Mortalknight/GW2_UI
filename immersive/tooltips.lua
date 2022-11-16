@@ -673,14 +673,21 @@ local function GameTooltipStatusBar_OnValueChanged(self, value)
         end
     end
 
-    local _, max = self:GetMinMaxValues()
-    if value > 0 and max == 1 then
-        self.text:SetFormattedText("%d%%", floor(value * 100))
-        self:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
-    elseif value == 0 or (unit and UnitIsDeadOrGhost(unit)) then
+    if value == 0 or (unit and UnitIsDeadOrGhost(unit)) then
         self.text:SetText(DEAD)
     else
-        self.text:SetText(GW.CommaValue(value).." / "..GW.CommaValue(max))
+        local max
+        if unit then -- try to get real health values
+            value, max = UnitHealth(unit), UnitHealthMax(unit)
+        else
+            _, max = self:GetMinMaxValues()
+        end
+        if value > 0 and max == 1 then
+            self.text:SetFormattedText("%d%%", floor(value * 100))
+            self:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)
+        else
+            self.text:SetText(GW.CommaValue(value) .. " / " .. GW.CommaValue(max))
+        end
     end
 end
 
