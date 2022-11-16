@@ -9,11 +9,10 @@ local function MakeAltPowerBarMovable()
     PlayerPowerBarAlt:SetMovable(true)
     PlayerPowerBarAlt:SetUserPlaced(true)
 
-    hooksecurefunc(PlayerPowerBarAlt, "SetupPlayerPowerBarPosition", function()
-        local _, anchorFrame = PlayerPowerBarAlt:GetPoint()
-        if anchorFrame ~= PlayerPowerBarAlt.gwMover then
+    hooksecurefunc(PlayerPowerBarAlt, "SetPoint", function(self, _, anchor)
+        if self.gwMover and anchor ~= self.gwMover then
             PlayerPowerBarAlt:ClearAllPoints()
-            PlayerPowerBarAlt:SetPoint("TOPLEFT", _G.PlayerPowerBarAlt.gwMover)
+            PlayerPowerBarAlt:SetPoint("TOPLEFT", self.gwMover)
         end
     end)
 
