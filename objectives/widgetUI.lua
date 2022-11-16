@@ -41,7 +41,7 @@ local captureBarSkins = {
 
 local function TopCenterPosition(self, _, anchor)
     local holder = self.gwMover
-    if anchor and anchor ~= holder then
+    if holder and anchor ~= holder then
         self:ClearAllPoints()
         self:SetPoint("CENTER", holder, "CENTER")
     end
