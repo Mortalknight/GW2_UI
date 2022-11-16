@@ -388,7 +388,7 @@ end
 local function UpdateClusterPoint(self, _, anchor)
     if anchor ~= GW2UI_MinimapClusterHolder then
         MinimapCluster:ClearAllPoints()
-        MinimapCluster:SetPoint('TOPRIGHT', GW2UI_MinimapClusterHolder, 0, 1)
+        MinimapCluster:SetPoint("TOPRIGHT", GW2UI_MinimapClusterHolder, 0, 1)
     end
 end
 
