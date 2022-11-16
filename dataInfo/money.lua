@@ -14,7 +14,7 @@ local function GetGraysValue()
             if itemLink then
                 local _, _, rarity, _, _, itype, _, _, _, _, itemPrice = GetItemInfo(itemLink)
                 if itemPrice then
-                    local itemInfo = GW.GetContainerItemInfo(bag, slot)
+                    local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
                     local stackPrice = itemPrice * (itemInfo.stackCount or 1)
                     if rarity and rarity == 0 and (itype and itype ~= "Quest") and (stackPrice > 0) then
                         value = value + stackPrice
