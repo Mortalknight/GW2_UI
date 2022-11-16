@@ -159,7 +159,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         end
         -- Show junk icon if active
         local itemInfo = C_Container.GetContainerItemInfo(bag_id, button:GetID())
-        button.isJunk = (itemInfo.quality and itemInfo.quality == Enum.ItemQuality.Poor) and not itemInfo.hasNoValue
+        button.isJunk = itemInfo and ((itemInfo.quality and itemInfo.quality == Enum.ItemQuality.Poor) and not itemInfo.hasNoValue) or false
 
         if button.junkIcon then
             if button.isJunk and GetSetting("BAG_ITEM_JUNK_ICON_SHOW") then
