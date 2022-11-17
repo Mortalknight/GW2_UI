@@ -253,12 +253,12 @@ local function fadeCheck(self, forceCombat)
         local f = i == 8 and self or self["gw_Bar" .. i]
         local fadeOption = GetSetting("FADE_MULTIACTIONBAR_" .. i)
         if f then
-            if isDirty and not inLockdown and f ~= self then
+            if isDirty and not inLockdown then
                 -- this should only be set after a bar setting change (including initial load)
                 if f.gw_IsEnabled then
                     f:Show()
                     actionBarFrameShow(f, true)
-                else   
+                else
                     f:Hide()
                     actionBarFrameHide(f, true)
                 end
@@ -524,7 +524,6 @@ local function main_OnEvent(self, event)
         actionBarEquipUpdate()
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         local forceCombat = (event == "PLAYER_REGEN_DISABLED")
-        print(1)
         fadeCheck(self, forceCombat)
     end
 end
@@ -999,8 +998,6 @@ local function actionButtons_OnUpdate(self, elapsed, testRange)
 end
 AFP("actionButtons_OnUpdate", actionButtons_OnUpdate)
 
-
-
 local function multiButtons_OnUpdate(self, elapsed, testRange)
     for i = 1, 12 do
         local btn = self.gw_Buttons[i]
@@ -1106,11 +1103,11 @@ local function UpdateMainBarHot()
         updateMacroName(btn)
         updateHotkey(btn)
     end
--- position the main action bar
-fmActionbar:SetSize(btn_padding, used_height)
-fmActionbar.gw_Width = btn_padding
+    -- position the main action bar
+    fmActionbar:SetSize(btn_padding, used_height)
+    fmActionbar.gw_Width = btn_padding
 
-actionButtons_OnUpdate(MainMenuBar, 0, true)
+    actionButtons_OnUpdate(MainMenuBar, 0, true)
 end
 GW.UpdateMainBarHot = UpdateMainBarHot
 
