@@ -318,7 +318,7 @@ local function bag_OnClick(self, button)
         local id = self:GetID();
         local hadItem = PutItemInBag(id)
         if not hadItem and self.gwHasBag and not IsBagOpen(self:GetBagID()) then
-            OpenBag(self:GetBagID())
+            --OpenBag(self:GetBagID()) --taint atm
         end
     end
 end

@@ -21,19 +21,19 @@ local function layoutBankItems(f)
 
     local item_off = BANK_ITEM_SIZE + BANK_ITEM_PADDING
 
-    local iS = NUM_BAG_SLOTS
-    local iE = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
+    local iS = NUM_TOTAL_EQUIPPED_BAG_SLOTS
+    local iE = NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS
     local iD = 1
     if rev then
         iS = iE
-        iE = NUM_BAG_SLOTS
+        iE = NUM_TOTAL_EQUIPPED_BAG_SLOTS
         iD = -1
     end
 
     local lcf = inv.layoutContainerFrame
     for i = iS, iE, iD do
         local bag_id = i
-        if bag_id == NUM_BAG_SLOTS then
+        if bag_id == NUM_TOTAL_EQUIPPED_BAG_SLOTS then
             bag_id = BANK_CONTAINER
         end
         local cf = f.Containers[bag_id]
@@ -85,7 +85,7 @@ GW.AddForProfiling("bank", "updateFreeSpaceString", updateFreeSpaceString)
 
 -- update the number of free bank slots available and set the display for it
 local function updateFreeBankSlots(self)
-    local free, _ = inv.updateFreeSlots(GwBankFrame.spaceString, NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS, BANK_CONTAINER)
+    local free, _ = inv.updateFreeSlots(GwBankFrame.spaceString, NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS, BANK_CONTAINER)
     local b = self.bags[0]
     if b then
         SetItemButtonCount(b, free)
@@ -124,7 +124,7 @@ GW.AddForProfiling("bank", "updateBankContainers", updateBankContainers)
 
 -- rescan ALL bank ItemButtons
 local function rescanBankContainers(f)
-    for bag_id = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+    for bag_id = NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
         inv.takeItemButtons(f.ItemFrame, bag_id)
     end
     updateBankContainers(f)
@@ -163,7 +163,7 @@ local function bag_OnClick(self, button)
     if button == "LeftButton" then
         if self.gwHasBag then
             if not IsBagOpen(self:GetBagID()) then
-                OpenBag(self:GetBagID())
+                --OpenBag(self:GetBagID()) --taint atm
             end
         elseif self.tooltipText == BANK_BAG_PURCHASE then
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
@@ -178,7 +178,7 @@ local function createBagBar(f)
     f.bags = {}
 
     local getBagId = function(self)
-        return self:GetID() + NUM_BAG_SLOTS
+        return self:GetID() + NUM_TOTAL_EQUIPPED_BAG_SLOTS
     end
 
     for bag_idx = 1, NUM_BANKBAGSLOTS do
@@ -386,7 +386,7 @@ local function bank_OnEvent(self, event, ...)
         local slot = select(1, ...)
         if slot > NUM_BANKGENERIC_SLOTS then
             -- a bank bag was un/equipped
-            for bag_id = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+            for bag_id = NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
                 if not IsBagOpen(bag_id) then
                     OpenBag(bag_id)
                 end
@@ -419,7 +419,7 @@ local function bank_OnEvent(self, event, ...)
         end
     elseif event == "BAG_UPDATE" then
         local bag_id = select(1, ...)
-        if bag_id == BANK_CONTAINER or bag_id > NUM_BAG_SLOTS then
+        if bag_id == BANK_CONTAINER or bag_id > NUM_TOTAL_EQUIPPED_BAG_SLOTS then
             if self.ItemFrame:IsShown() then
                 updateFreeBankSlots(self.ItemFrame)
             end
@@ -514,7 +514,7 @@ local function LoadBank(helpers)
         if i == 1 then
             bag_id = BANK_CONTAINER
         else
-            bag_id = i + NUM_BAG_SLOTS - 1
+            bag_id = i + NUM_TOTAL_EQUIPPED_BAG_SLOTS - 1
         end
         local cf = CreateFrame("Frame", nil, f.ItemFrame)
         cf.gw_items = {}
@@ -534,7 +534,7 @@ local function LoadBank(helpers)
 
     -- anytime a ContainerFrame is populated with a bank bagId, we take its buttons
     hooksecurefunc("ContainerFrame_GenerateFrame", function(_, _, id)
-        if id > NUM_BAG_SLOTS and id <= NUM_BAG_SLOTS + NUM_BANKBAGSLOTS then
+        if id > NUM_TOTAL_EQUIPPED_BAG_SLOTS and id <= NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS then
             rescanBankContainers(f)
         end
     end)
@@ -542,7 +542,7 @@ local function LoadBank(helpers)
     -- don't let anyone close bank bags while the bank is open
     hooksecurefunc("ToggleAllBags", function()
         if GwBankFrame:IsShown() then
-            for i = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+            for i = NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
                 if not IsBagOpen(i) then
                     OpenBag(i)
                 end
@@ -551,7 +551,7 @@ local function LoadBank(helpers)
     end)
     hooksecurefunc("ToggleBackpack", function()
         if GwBankFrame:IsShown() then
-            for i = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+            for i = NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
                 if not IsBagOpen(i) then
                     OpenBag(i)
                 end
