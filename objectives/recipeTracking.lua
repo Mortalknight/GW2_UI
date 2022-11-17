@@ -91,7 +91,7 @@ local function addObjective(block, text, finished, qty, totalqty)
 
     objectiveBlock:Show()
     if qty < totalqty then
-        objectiveBlock.ObjectiveText:SetText(GW.CommaValue(qty) .. " / " .. GW.CommaValue(totalqty) .. " " .. text)
+        objectiveBlock.ObjectiveText:SetText(GW.CommaValue(qty) .. "/" .. GW.CommaValue(totalqty) .. " " .. text)
     else
         objectiveBlock.ObjectiveText:SetText(text)
     end
