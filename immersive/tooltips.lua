@@ -240,7 +240,7 @@ end
 local function SetBackpackToken(self, id)
     if self:IsForbidden() then return end
     if id and IsModKeyDown() then
-        local info = GW.GetBackpackCurrencyInfo(id)
+        local info = C_CurrencyInfo.GetBackpackCurrencyInfo(id)
         if info and info.currencyTypesID then
             self:AddLine(format(IDLine, ID, info.currencyTypesID))
             self:Show()
