@@ -128,12 +128,12 @@ local function FormatMoneyForChat(amount)
 end
 GW.FormatMoneyForChat = FormatMoneyForChat
 
-local function GWGetClassColor(class, useClassColor, forNameString)
+local function GWGetClassColor(class, useClassColor, forNameString, alwaysUseBlizzardColors)
     if not class or not useClassColor then
         return RAID_CLASS_COLORS.PRIEST
     end
 
-    local useBlizzardClassColor = GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
+    local useBlizzardClassColor = alwaysUseBlizzardColors or GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW_CLASS_COLORS[class]
     local colorForNameString
 

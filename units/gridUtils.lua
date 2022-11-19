@@ -297,7 +297,7 @@ local function GridUpdateAwayData(self, profile)
 
     self.name:SetTextColor(1, 1, 1)
 
-    if classColor and classColor then
+    if classColor and englishClass then
         local color = GW.GWGetClassColor(englishClass, true)
         self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
         self.classicon:SetShown(false)
