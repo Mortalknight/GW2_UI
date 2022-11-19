@@ -562,15 +562,7 @@ local function LoadMinimap()
     --CalenderIcon
     GameTimeFrame:SetHitRectInsets(0, 0, 0, 0)
     GameTimeFrame:SetSize(32, 32)
-  --[[  GameTimeFrame.date = GameTimeFrame:CreateFontString(nil, "OVERLAY")
-    GameTimeFrame.date:SetPoint("CENTER", GameTimeFrame, "CENTER", 0, -1)
-    GameTimeFrame.date:SetJustifyH("CENTER")
-    GameTimeFrame.date:SetJustifyV("MIDDLE")
-    GameTimeFrame.date:SetIgnoreParentScale(true)
-    GameTimeFrame.date:SetScale(1)
-    GameTimeFrame.date:SetFont(UNIT_NAME_FONT, 10, "")
-    GameTimeFrame.date:SetTextColor(0, 0, 0)
-    ]]
+
     hooksecurefunc("GameTimeFrame_SetDate", function()
         GameTimeFrame:StripTextures()
         GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/calendar")
@@ -579,7 +571,6 @@ local function LoadMinimap()
         GameTimeFrame:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
         GameTimeFrame:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
         GameTimeFrame:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
-    --    GameTimeFrame.date:SetText(C_DateAndTime.GetCurrentCalendarTime().monthDay)
     end)
 
     --Mail Button
@@ -629,8 +620,8 @@ local function LoadMinimap()
 
     hideMiniMapIcons()
 
-    Minimap:SetScript("OnEnter", hoverMiniMap)
-    Minimap:SetScript("OnLeave", hoverMiniMapOut)
+    Minimap:HookScript("OnEnter", hoverMiniMap)
+    Minimap:HookScript("OnLeave", hoverMiniMapOut)
 
     Minimap:HookScript("OnShow", minimap_OnShow)
     Minimap:HookScript("OnHide", minimap_OnHide)
