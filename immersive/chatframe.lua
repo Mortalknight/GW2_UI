@@ -557,13 +557,11 @@ local function CheckKeyword(message, author)
             if GetSetting("CHAT_CLASS_COLOR_MENTIONS") then
                 tempWord = gsub(word, "^[%s%p]-([^%s%p]+)([%-]?[^%s%p]-)[%s%p]*$", "%1%2")
                 lowerCaseWord = strlower(tempWord)
-                GW_ClassNames = ClassNames
                 local classMatch = ClassNames[lowerCaseWord]
                 local wordMatch = classMatch and lowerCaseWord
 
                 if wordMatch then
-                    local classColorTable = GW.GWGetClassColor(classMatch, true, true)
-                    GW_classColorTable = classColorTable
+                    local classColorTable = GW.GWGetClassColor(classMatch, true, true, true)
                     if classColorTable then
                         word = gsub(word, gsub(tempWord, "%-","%%-"), format("\124cff%.2x%.2x%.2x%s\124r", classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, tempWord))
                     end
@@ -845,7 +843,7 @@ local function GW_GetPlayerInfoByGUID(guid)
         GuidCache[guid] = data
     end
 
-    if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true) end
+    if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true, true) end
 
     return data
 end
@@ -1191,7 +1189,6 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
 
             -- Player Flags
             local pflag = GetPFlag(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
-            local gw2StaffIcon = gw2StaffList[playerName]
 
             -- LFG Role Flags
             local lfgRole = lfgRoles[playerName]
@@ -1200,8 +1197,9 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             end
 
             -- GW2 Staff Icon Chat Icon
-            if gw2StaffIcon then
-                pflag = pflag .. gw2StaffIcon
+            local gw2Icon = gw2StaffList[playerName]
+            if gw2Icon then
+                pflag = pflag .. gw2Icon
             end
 
             if usingDifferentLanguage then
