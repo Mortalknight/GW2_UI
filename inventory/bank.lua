@@ -580,7 +580,7 @@ local function LoadBank(helpers)
         function(self)
             PlaySound(SOUNDKIT.UI_BAG_SORTING_01)
             if self:GetParent().ItemFrame:IsShown() then
-                C_Container.SortBankBags()()
+                C_Container.SortBankBags()
             elseif self:GetParent().ReagentFrame:IsShown() and IsReagentBankUnlocked() then
                 C_Container.SortReagentBankBags()
             end
