@@ -290,14 +290,14 @@ end
 GW.GridSetUnitName = GridSetUnitName
 
 local function GridUpdateAwayData(self, profile)
-    local classColor = GetSetting("RAID_CLASS_COLOR" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or "")) or profile == "RAID_PET"
+    local classColor = GetSetting("RAID_CLASS_COLOR" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
     local readyCheckStatus = GetReadyCheckStatus(self.unit)
     local iconState = 0
     local _, englishClass, classIndex = UnitClass(self.unit)
 
     self.name:SetTextColor(1, 1, 1)
 
-    if classColor and classIndex and classIndex > 0 then
+    if classColor and classColor then
         local color = GW.GWGetClassColor(englishClass, true)
         self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
         self.classicon:SetShown(false)

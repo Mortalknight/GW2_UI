@@ -232,7 +232,7 @@ local function SkinLookingForGroupFrames()
     end)
 
     for i = 1, 3 do
-        _G["PVEFrameTab" .. i]:SkinButton(false, true)
+        _G["PVEFrameTab" .. i]:SkinButton(false, true, nil, nil, true)
     end
 
     PVEFrameTab1:SetPoint("BOTTOMLEFT", PVEFrame, "BOTTOMLEFT", 19, -50)
@@ -248,11 +248,6 @@ local function SkinLookingForGroupFrames()
     HandleGoldIcon("LFDQueueFrameRandomScrollFrameChildFrameMoneyReward")
     HandleGoldIcon("RaidFinderQueueFrameScrollFrameChildFrameMoneyReward")
 
-    for i = 1, NUM_LFD_CHOICE_BUTTONS do
-        _G["LFDQueueFrameSpecificListButton"..i].enableButton:SkinCheckButton()
-        _G["LFDQueueFrameSpecificListButton"..i].enableButton:SetSize(15, 15)
-    end
-
     hooksecurefunc("LFGDungeonListButton_SetDungeon", function(button)
         if button and button.expandOrCollapseButton:IsShown() then
             if button.isCollapsed then
@@ -262,12 +257,6 @@ local function SkinLookingForGroupFrames()
             end
         end
     end)
-
-    for i = 1, NUM_LFR_CHOICE_BUTTONS do
-        local bu = _G["LFRQueueFrameSpecificListButton"..i].enableButton
-        bu:SkinCheckButton()
-        bu:SetSize(15, 15)
-    end
 
     LFDQueueFrameTypeDropDown:SkinDropDownMenu()
 
@@ -285,8 +274,6 @@ local function SkinLookingForGroupFrames()
     hooksecurefunc("LFGRewardsFrame_SetItemButton", SkinItemButton)
 
     -- Looking for raid
-    LFRBrowseFrameListScrollFrame:StripTextures()
-
     LFRBrowseFrame:HookScript("OnShow", function()
         if not LFRBrowseFrameListScrollFrameScrollBar.skinned then
             LFRBrowseFrameListScrollFrame:SkinScrollFrame()
@@ -296,8 +283,7 @@ local function SkinLookingForGroupFrames()
     end)
 
     LFRBrowseFrameRoleInset:DisableDrawLayer("BORDER")
-    LFRQueueFrameSpecificListScrollFrameScrollBackgroundTopLeft:Hide()
-    LFRQueueFrameSpecificListScrollFrameScrollBackgroundBottomRight:Hide()
+    RaidBrowserFrameBg:Hide()
     LFRBrowseFrameColumnHeader1:SetWidth(94)
     LFRBrowseFrameColumnHeader2:SetWidth(38)
 
@@ -306,9 +292,7 @@ local function SkinLookingForGroupFrames()
 
     LFRQueueFrameCommentScrollFrame:SkinScrollFrame()
     LFRQueueFrameCommentScrollFrameScrollBar:SkinScrollBar()
-    LFDQueueFrameSpecificListScrollFrame:SkinScrollFrame()
-    LFDQueueFrameSpecificListScrollFrameScrollBar:SkinScrollBar()
-    LFDQueueFrameSpecificListScrollFrame:StripTextures()
+    GW.HandleTrimScrollBar(LFDQueueFrameSpecific.ScrollBar)
 
     _G[_G.LFDQueueFrame.PartyBackfill:GetName().."BackfillButton"]:SkinButton(false, true)
     _G[_G.LFDQueueFrame.PartyBackfill:GetName().."NoBackfillButton"]:SkinButton(false, true)
@@ -375,8 +359,6 @@ local function SkinLookingForGroupFrames()
 
     LFGListFrame.EntryCreation.ActivityFinder.Dialog.EntryBox:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.ActivityFinder.Dialog.EntryBox)
-    LFGListEntryCreationSearchScrollFrameScrollBar:SkinScrollBar()
-    LFGListEntryCreationSearchScrollFrame:SkinScrollFrame()
     LFGListFrame.EntryCreation.ActivityFinder.Dialog.SelectButton:SkinButton(false, true)
     LFGListFrame.EntryCreation.ActivityFinder.Dialog.CancelButton:SkinButton(false, true)
 
@@ -395,14 +377,13 @@ local function SkinLookingForGroupFrames()
     GW.HandleBlizzardRegions(LFGListFrame.SearchPanel.SearchBox)
     LFGListFrame.SearchPanel.BackButton:SkinButton(false, true)
     LFGListFrame.SearchPanel.SignUpButton:SkinButton(false, true)
-    LFGListSearchPanelScrollFrameScrollChild.StartGroupButton:SkinButton(false, true)
+    LFGListFrame.CategorySelection.StartGroupButton:SkinButton(false, true)
     LFGListFrame.SearchPanel.BackButton:ClearAllPoints()
     LFGListFrame.SearchPanel.BackButton:SetPoint("BOTTOMLEFT", -1, 3)
     LFGListFrame.SearchPanel.SignUpButton:ClearAllPoints()
     LFGListFrame.SearchPanel.SignUpButton:SetPoint("BOTTOMRIGHT", -6, 3)
     LFGListFrame.SearchPanel.ResultsInset:StripTextures()
-    LFGListSearchPanelScrollFrameScrollBar:SkinScrollBar()
-    LFGListSearchPanelScrollFrame:SkinScrollFrame()
+    GW.HandleTrimScrollBar(LFGListFrame.SearchPanel.ScrollBar)
 
     if not LFGListFrame.SearchPanel.ResultsInset.SetBackdrop then
         _G.Mixin(LFGListFrame.SearchPanel.ResultsInset, _G.BackdropTemplateMixin)
@@ -511,11 +492,10 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.ApplicationViewer.BrowseGroupsButton:SetPoint("BOTTOMLEFT", -1, 3)
     LFGListFrame.ApplicationViewer.BrowseGroupsButton:SetSize(120, 22)
 
-    LFGListApplicationViewerScrollFrameScrollBar:SkinScrollBar()
-    LFGListApplicationViewerScrollFrame:SkinScrollFrame()
-    LFGListApplicationViewerScrollFrameScrollBar:ClearAllPoints()
-    LFGListApplicationViewerScrollFrameScrollBar:SetPoint("TOPLEFT", LFGListFrame.ApplicationViewer.Inset, "TOPRIGHT", 0, -16)
-    LFGListApplicationViewerScrollFrameScrollBar:SetPoint("BOTTOMLEFT", LFGListFrame.ApplicationViewer.Inset, "BOTTOMRIGHT", 0, 16)
+    GW.HandleTrimScrollBar(LFGListFrame.ApplicationViewer.ScrollBar)
+    --LFGListFrame.ApplicationViewer.ScrollBar:ClearAllPoints()
+    --LFGListFrame.ApplicationViewer.ScrollBar:SetPoint("TOPLEFT", LFGListFrame.ApplicationViewer.Inset, "TOPRIGHT", 0, -16)
+    --LFGListFrame.ApplicationViewer.ScrollBar:SetPoint("BOTTOMLEFT", LFGListFrame.ApplicationViewer.Inset, "BOTTOMRIGHT", 0, 16)
 
     hooksecurefunc("LFGListApplicationViewer_UpdateInfo", function(frame)
         frame.RemoveEntryButton:ClearAllPoints()
@@ -608,8 +588,7 @@ local function ApplyPvPUISkin()
     local HonorFrame = _G.HonorFrame
     HonorFrame:StripTextures()
 
-    HonorFrameSpecificFrameScrollBar:SkinScrollBar()
-    HonorFrameSpecificFrame:SkinScrollFrame()
+    GW.HandleTrimScrollBar(HonorFrame.SpecificScrollBar)
     HonorFrameTypeDropDown:SkinDropDownMenu()
     HonorFrameQueueButton:SkinButton(false, true)
 
@@ -639,11 +618,16 @@ local function ApplyPvPUISkin()
     end
 
     -- Honor Frame Specific Buttons
-    for _, bu in pairs(HonorFrame.SpecificFrame.buttons) do
-        bu.Border:Hide()
-        bu.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-        bu.Icon:SetPoint("TOPLEFT", 5, -3)
-    end
+    hooksecurefunc(HonorFrame.SpecificScrollBox, "Update", function (box)
+        for _, bu in next, {box.ScrollTarget:GetChildren()} do
+            if not bu.IsSkinned then
+                bu.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+                bu.Icon:SetPoint("TOPLEFT", 5, -3)
+
+                bu.IsSkinned = true
+            end
+        end
+    end)
 
     hooksecurefunc("LFG_PermanentlyDisableRoleButton", function(s)
         if s.bg then s.bg:SetDesaturated(true) end
@@ -677,7 +661,7 @@ local function ApplyPvPUISkin()
         reward.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
     end
 
-    -- Item Borders for HonorFrame & ConquestFrame
+    -- Item Borders for HonorFrame & ConquestFrame ------FEHLER
     hooksecurefunc("PVPUIFrame_ConfigureRewardFrame", function(rewardFrame, _, _, itemRewards, currencyRewards)
         local rewardTexture, rewardQuaility = nil, 1
 
@@ -698,11 +682,12 @@ local function ApplyPvPUISkin()
         end
 
         if rewardTexture then
+            local r, g, b = GetItemQualityColor(rewardQuaility)
             rewardFrame.Icon:SetTexture(rewardTexture)
             if not rewardFrame.Icon.backdrop then
                 rewardFrame.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
             end
-            rewardFrame.Icon.backdrop:SetBackdropBorderColor(GetItemQualityColor(rewardQuaility))
+            rewardFrame.Icon.backdrop:SetBackdropBorderColor(r, g, b)
         end
     end)
 
@@ -715,6 +700,7 @@ local function ApplyPvPUISkin()
             insets = {left = 2, right = 2, top = 2, bottom = 2}
         })
     end
+    --- FEHLER
 
     -- PvP StatusBars
     for _, Frame in pairs({ HonorFrame, ConquestFrame }) do
@@ -774,6 +760,7 @@ local function ApplyPvPUISkin()
             end
         end
     end)
+
 end
 
 local function ApplyChallengesUISkin()
@@ -807,7 +794,7 @@ local function ApplyChallengesUISkin()
         end
     end)
 
-    hooksecurefunc("ChallengesFrame_Update", function(frame)
+    hooksecurefunc(ChallengesFrame, "Update", function(frame)
         for _, child in ipairs(frame.DungeonIcons) do
             if not child.template then
                 child:GetRegions():SetAlpha(0)
