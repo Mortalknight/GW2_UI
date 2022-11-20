@@ -144,7 +144,7 @@ local function LoadRaidProfile(sWindow)
         function()
             for i = 1, MAX_RAID_MEMBERS do
                 if _G["GwCompactRaidFrame" .. i] then
-                    GW.RaidGridOnEvent(_G["GwCompactRaidFrame" .. i], "UNIT_AURA")
+                    GW.GridUpdateFrameData(_G["GwCompactRaidFrame" .. i], i, "RAID")
                 end
             end
         end,
@@ -580,7 +580,7 @@ local function LoadPartyProfile(sWindow)
         function()
             for i = 1, 5 do
                 if _G["GwCompactPartyFrame" .. i] then
-                    GW.PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "UNIT_NAME_UPDATE")
+                    GW.GridUpdateFrameData(_G["GwCompactPartyFrame" .. i], i, "PARTY")
                 end
             end
         end,
