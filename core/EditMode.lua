@@ -71,7 +71,7 @@ local function DisableBlizzardMovers()
         LEMO:LoadLayouts()
 
         if not LEMO:CanEditActiveLayout() then
-            if not LELEMOM:DoesLayoutExist("GW2_Layout") then
+            if not LEMO:DoesLayoutExist("GW2_Layout") then
                 LEMO:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
                 LEMO:ApplyChanges()
             end
