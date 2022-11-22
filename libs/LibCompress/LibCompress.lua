@@ -435,9 +435,9 @@ function LibCompress:CompressHuffman(uncompressed)
     -- bitfield = bitfield + bit_lshift(byte2, bitfield_len)
     -- bitfield_len = bitfield_len + 8
     -- (use 5 bits)
-    -- word = bit_band( bitfield, bit_lshift(1,5)-1)
-    -- bitfield = bit_rshift( bitfield, 5)
-    -- bitfield_len = bitfield_len - 5
+    --	word = bit_band( bitfield, bit_lshift(1,5)-1)
+    --	bitfield = bit_rshift( bitfield, 5)
+    --	bitfield_len = bitfield_len - 5
     -- read byte3
     -- bitfield = bitfield + bit_lshift(byte3, bitfield_len)
     -- bitfield_len = bitfield_len + 8
@@ -455,10 +455,10 @@ function LibCompress:CompressHuffman(uncompressed)
     -- Header: byte 0 = #leafs, bytes 1-3 = size of uncompressed data
     -- max 2^24 bytes
     length = string_len(uncompressed)
-    compressed[2] = string_char(bit_band(nLeafs -1, 255)) -- number of leafs
-    compressed[3] = string_char(bit_band(length, 255))   -- bit 0-7
-    compressed[4] = string_char(bit_band(bit_rshift(length, 8), 255)) -- bit 8-15
-    compressed[5] = string_char(bit_band(bit_rshift(length, 16), 255)) -- bit 16-23
+    compressed[2] = string_char(bit_band(nLeafs -1, 255))	-- number of leafs
+    compressed[3] = string_char(bit_band(length, 255))			-- bit 0-7
+    compressed[4] = string_char(bit_band(bit_rshift(length, 8), 255))	-- bit 8-15
+    compressed[5] = string_char(bit_band(bit_rshift(length, 16), 255))	-- bit 16-23
     compressed_size = 5
 
     -- create symbol/code map
@@ -910,8 +910,7 @@ function LibCompress:GetEncodeTable(reservedChars, escapeChars, mapChars)
     local decode_translate = {}
     local decode_func
     local c, r, to, from
-    local escapeCharIndex = 0
-    local escapeChar
+    local escapeCharIndex, escapeChar = 0
 
     -- map single byte to single byte
     if #mapChars > 0 then
@@ -1113,14 +1112,14 @@ end
 -- FCS16/32 checksum algorithms
 -- converted from C by Galmok of European Stormrage (Horde), galmok@gmail.com
 -- usage:
---  code = LibCompress:fcs16init()
--- code = LibCompress:fcs16update(code, data1)
--- code = LibCompress:fcs16update(code, data2)
--- code = LibCompress:fcs16update(code, data...)
--- code = LibCompress:fcs16final(code)
+-- 	code = LibCompress:fcs16init()
+--	code = LibCompress:fcs16update(code, data1)
+--	code = LibCompress:fcs16update(code, data2)
+--	code = LibCompress:fcs16update(code, data...)
+--	code = LibCompress:fcs16final(code)
 --
--- data = string
--- fcs16 provides a 16 bit checksum, fcs32 provides a 32 bit checksum.
+--	data = string
+--	fcs16 provides a 16 bit checksum, fcs32 provides a 32 bit checksum.
 
 
 --[[/* The following copyright notice concerns only the FCS hash algorithm

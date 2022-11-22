@@ -10,7 +10,7 @@
 -- make into AceSerializer.
 -- @class file
 -- @name AceSerializer-3.0
--- @release $Id: AceSerializer-3.0.lua 1202 2019-05-15 23:11:22Z nevcairiel $
+-- @release $Id: AceSerializer-3.0.lua 1284 2022-09-25 09:15:30Z nevcairiel $
 local MAJOR,MINOR = "AceSerializer-3.0", 5
 local AceSerializer, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
@@ -33,21 +33,21 @@ local serNegInf, serNegInfMac = "-1.#INF", "-inf"
 
 -- Serialization functions
 
-local function SerializeStringHelper(ch)    -- Used by SerializeValue for strings
+local function SerializeStringHelper(ch)	-- Used by SerializeValue for strings
     -- We use \126 ("~") as an escape character for all nonprints plus a few more
     local n = strbyte(ch)
     if n==30 then           -- v3 / ticket 115: catch a nonprint that ends up being "~^" when encoded... DOH
         return "\126\122"
-    elseif n<=32 then             -- nonprint + space
+    elseif n<=32 then 			-- nonprint + space
         return "\126"..strchar(n+64)
-    elseif n==94 then        -- value separator
+    elseif n==94 then		-- value separator
         return "\126\125"
-    elseif n==126 then        -- our own escape character
+    elseif n==126 then		-- our own escape character
         return "\126\124"
-    elseif n==127 then        -- nonprint (DEL)
+    elseif n==127 then		-- nonprint (DEL)
         return "\126\123"
     else
-        assert(false)    -- can't be reached if caller uses a sane regex
+        assert(false)	-- can't be reached if caller uses a sane regex
     end
 end
 
@@ -55,12 +55,12 @@ local function SerializeValue(v, res, nres)
     -- We use "^" as a value separator, followed by one byte for type indicator
     local t=type(v)
 
-    if t=="string" then        -- ^S = string (escaped to remove nonprints, "^"s, etc)
+    if t=="string" then		-- ^S = string (escaped to remove nonprints, "^"s, etc)
         res[nres+1] = "^S"
         res[nres+2] = gsub(v,"[%c \94\126\127]", SerializeStringHelper)
         nres=nres+2
 
-    elseif t=="number" then    -- ^N = number (just tostring()ed) or ^F (float components)
+    elseif t=="number" then	-- ^N = number (just tostring()ed) or ^F (float components)
         local str = tostring(v)
         if tonumber(str)==v  --[[not in 4.3 or str==serNaN]] then
             -- translates just fine, transmit as-is
@@ -74,36 +74,36 @@ local function SerializeValue(v, res, nres)
         else
             local m,e = frexp(v)
             res[nres+1] = "^F"
-            res[nres+2] = format("%.0f",m*2^53)    -- force mantissa to become integer (it's originally 0.5--0.9999)
+            res[nres+2] = format("%.0f",m*2^53)	-- force mantissa to become integer (it's originally 0.5--0.9999)
             res[nres+3] = "^f"
-            res[nres+4] = tostring(e-53)    -- adjust exponent to counteract mantissa manipulation
+            res[nres+4] = tostring(e-53)	-- adjust exponent to counteract mantissa manipulation
             nres=nres+4
         end
 
-    elseif t=="table" then    -- ^T...^t = table (list of key,value pairs)
+    elseif t=="table" then	-- ^T...^t = table (list of key,value pairs)
         nres=nres+1
         res[nres] = "^T"
-        for k,v in pairs(v) do
-            nres = SerializeValue(k, res, nres)
-            nres = SerializeValue(v, res, nres)
+        for key,value in pairs(v) do
+            nres = SerializeValue(key, res, nres)
+            nres = SerializeValue(value, res, nres)
         end
         nres=nres+1
         res[nres] = "^t"
 
-    elseif t=="boolean" then    -- ^B = true, ^b = false
+    elseif t=="boolean" then	-- ^B = true, ^b = false
         nres=nres+1
         if v then
-            res[nres] = "^B"    -- true
+            res[nres] = "^B"	-- true
         else
-            res[nres] = "^b"    -- false
+            res[nres] = "^b"	-- false
         end
 
-    elseif t=="nil" then        -- ^Z = nil (zero, "N" was taken :P)
+    elseif t=="nil" then		-- ^Z = nil (zero, "N" was taken :P)
         nres=nres+1
         res[nres] = "^Z"
 
     else
-        error(MAJOR..": Cannot serialize a value of type '"..t.."'")    -- can't produce error on right level, this is wildly recursive
+        error(MAJOR..": Cannot serialize a value of type '"..t.."'")	-- can't produce error on right level, this is wildly recursive
     end
 
     return nres
@@ -111,7 +111,7 @@ end
 
 
 
-local serializeTbl = { "^1" }    -- "^1" = Hi, I'm data serialized by AceSerializer protocol rev 1
+local serializeTbl = { "^1" }	-- "^1" = Hi, I'm data serialized by AceSerializer protocol rev 1
 
 --- Serialize the data passed into the function.
 -- Takes a list of values (strings, numbers, booleans, nils, tables)
@@ -127,7 +127,7 @@ function AceSerializer:Serialize(...)
         nres = SerializeValue(v, serializeTbl, nres)
     end
 
-    serializeTbl[nres+1] = "^^"    -- "^^" = End of serialized data
+    serializeTbl[nres+1] = "^^"	-- "^^" = End of serialized data
 
     return tconcat(serializeTbl, "", 1, nres+1)
 end
@@ -136,7 +136,7 @@ end
 local function DeserializeStringHelper(escape)
     if escape<"~\122" then
         return strchar(strbyte(escape,2,2)-64)
-    elseif escape=="~\122" then    -- v3 / ticket 115: special case encode since 30+64=94 ("^") - OOPS.
+    elseif escape=="~\122" then	-- v3 / ticket 115: special case encode since 30+64=94 ("^") - OOPS.
         return "\030"
     elseif escape=="~\123" then
         return "\127"
@@ -204,11 +204,11 @@ local function DeserializeValue(iter,single,ctl,data)
             error("Invalid serialized floating-point number, expected mantissa and exponent, got '"..tostring(m).."' and '"..tostring(e).."'")
         end
         res = m*(2^e)
-    elseif ctl=="^B" then    -- yeah yeah ignore data portion
+    elseif ctl=="^B" then	-- yeah yeah ignore data portion
         res = true
     elseif ctl=="^b" then   -- yeah yeah ignore data portion
         res = false
-    elseif ctl=="^Z" then    -- yeah yeah ignore data portion
+    elseif ctl=="^Z" then	-- yeah yeah ignore data portion
         res = nil
     elseif ctl=="^T" then
         -- ignore ^T's data, future extensibility?
@@ -216,7 +216,7 @@ local function DeserializeValue(iter,single,ctl,data)
         local k,v
         while true do
             ctl,data = iter()
-            if ctl=="^t" then break end    -- ignore ^t's data
+            if ctl=="^t" then break end	-- ignore ^t's data
             k = DeserializeValue(iter,true,ctl,data)
             if k==nil then
                 error("Invalid AceSerializer table format (no table end marker)")
@@ -244,9 +244,9 @@ end
 -- @param str The serialized data (from :Serialize)
 -- @return true followed by a list of values, OR false followed by an error message
 function AceSerializer:Deserialize(str)
-    str = gsub(str, "[%c ]", "")    -- ignore all control characters; nice for embedding in email and stuff
+    str = gsub(str, "[%c ]", "")	-- ignore all control characters; nice for embedding in email and stuff
 
-    local iter = gmatch(str, "(^.)([^^]*)")    -- Any ^x followed by string of non-^
+    local iter = gmatch(str, "(^.)([^^]*)")	-- Any ^x followed by string of non-^
     local ctl,data = iter()
     if not ctl or ctl~="^1" then
         -- we purposefully ignore the data portion of the start code, it can be used as an extension mechanism
@@ -261,7 +261,7 @@ end
 -- Base library stuff
 ----------------------------------------
 
-AceSerializer.internals = {    -- for test scripts
+AceSerializer.internals = {	-- for test scripts
     SerializeValue = SerializeValue,
     SerializeStringHelper = SerializeStringHelper,
 }

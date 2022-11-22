@@ -1,4 +1,4 @@
---[[ $Id: CallbackHandler-1.0.lua 22 2018-07-21 14:17:22Z nevcairiel $ ]]
+--[[ $Id: CallbackHandler-1.0.lua 1186 2018-07-21 14:19:18Z nevcairiel $ ]]
 local MAJOR, MINOR = "CallbackHandler-1.0", 7
 local CallbackHandler = LibStub:NewLibrary(MAJOR, MINOR)
 
@@ -43,7 +43,7 @@ function CallbackHandler:New(target, RegisterName, UnregisterName, UnregisterAll
 
     RegisterName = RegisterName or "RegisterCallback"
     UnregisterName = UnregisterName or "UnregisterCallback"
-    if UnregisterAllName==nil then    -- false is used to indicate "don't want this method"
+    if UnregisterAllName==nil then	-- false is used to indicate "don't want this method"
         UnregisterAllName = "UnregisterAllCallbacks"
     end
 
@@ -68,7 +68,7 @@ function CallbackHandler:New(target, RegisterName, UnregisterName, UnregisterAll
         if registry.insertQueue and oldrecurse==0 then
             -- Something in one of our callbacks wanted to register more callbacks; they got queued
             for eventname,callbacks in pairs(registry.insertQueue) do
-                local first = not rawget(events, eventname) or not next(events[eventname])    -- test for empty before. not test for one member after. that one member may have been overwritten.
+                local first = not rawget(events, eventname) or not next(events[eventname])	-- test for empty before. not test for one member after. that one member may have been overwritten.
                 for self,func in pairs(callbacks) do
                     events[eventname][self] = func
                     -- fire OnUsed callback?
@@ -94,7 +94,7 @@ function CallbackHandler:New(target, RegisterName, UnregisterName, UnregisterAll
 
         method = method or eventname
 
-        local first = not rawget(events, eventname) or not next(events[eventname])    -- test for empty before. not test for one member after. that one member may have been overwritten.
+        local first = not rawget(events, eventname) or not next(events[eventname])	-- test for empty before. not test for one member after. that one member may have been overwritten.
 
         if type(method) ~= "string" and type(method) ~= "function" then
             error("Usage: "..RegisterName.."(\"eventname\", \"methodname\"): 'methodname' - string or function expected.", 2)
@@ -112,7 +112,7 @@ function CallbackHandler:New(target, RegisterName, UnregisterName, UnregisterAll
                 error("Usage: "..RegisterName.."(\"eventname\", \"methodname\"): 'methodname' - method '"..tostring(method).."' not found on self.", 2)
             end
 
-            if select("#",...)>=1 then    -- this is not the same as testing for arg==nil!
+            if select("#",...)>=1 then	-- this is not the same as testing for arg==nil!
                 local arg=select(1,...)
                 regfunc = function(...) self[method](self,arg,...) end
             else
@@ -124,7 +124,7 @@ function CallbackHandler:New(target, RegisterName, UnregisterName, UnregisterAll
                 error("Usage: "..RegisterName.."(self or \"addonId\", eventname, method): 'self or addonId': table or string or thread expected.", 2)
             end
 
-            if select("#",...)>=1 then    -- this is not the same as testing for arg==nil!
+            if select("#",...)>=1 then	-- this is not the same as testing for arg==nil!
                 local arg=select(1,...)
                 regfunc = function(...) method(arg,...) end
             else
