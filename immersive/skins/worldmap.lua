@@ -348,7 +348,7 @@ local function worldMapSkin()
     WorldMapFrame.NavBar.homeButton.tex = tex
     WorldMapFrame.NavBar.homeButton.tex:SetAlpha(1)
 
-    local homeButtonBorder = CreateFrame("Frame",nil,WorldMapFrame.NavBar.homeButton,"GwLightButtonBorder")
+    local homeButtonBorder = CreateFrame("Frame",nil,WorldMapFrame.NavBar.homeButton, "GwLightButtonBorder")
     WorldMapFrame.NavBar.homeButton.borderFrame =homeButtonBorder
     WorldMapFrame.NavBar.homeButton.xoffset = -1
     WorldMapFrame.BorderFrame.CloseButton:SkinButton(true)
