@@ -193,7 +193,8 @@ end
 local function encounterJournalSkin()
     local EJ = EncounterJournal
     GW.HandlePortraitFrame(EJ)
-    local header = CreateFrame("Frame", "GwEncounterJournalHeader", EJ, "GwWorldmapHeader")
+    local header = CreateFrame("Frame", "GwEncounterJournalHeader", EJ, "GwFrameHeader")
+    header.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon")
 
     EJ.navBar:StripTextures()
     EJ.navBar.overlay:StripTextures()

@@ -293,7 +293,7 @@ AFP("mover_OnDragStop", mover_OnDragStop)
 
 local function worldMapSkin()
     local WorldMapFrame = _G.WorldMapFrame
-    local header = CreateFrame("Frame","GwWorldmapHeader",WorldMapFrame,"GwWorldmapHeader")
+    local header = CreateFrame("Frame","GwWorldmapHeader",WorldMapFrame,"GwFrameHeader")
 
     WorldMapFrame:StripTextures()
     WorldMapFrame.BorderFrame:StripTextures()
