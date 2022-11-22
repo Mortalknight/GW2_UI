@@ -389,3 +389,37 @@ local function HandleTrimScrollBar(frame, small)
     end
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar
+
+local tabs = {
+    "LeftDisabled",
+    "MiddleDisabled",
+    "RightDisabled",
+    "Left",
+    "Middle",
+    "Right"
+}
+
+local function HandleTabs(tab, skinAsButton)
+    for _, object in pairs(tabs) do
+        local textureName = tab:GetName() and _G[tab:GetName() .. object]
+        if textureName then
+            textureName:SetTexture()
+        elseif tab[object] then
+            tab[object]:SetTexture()
+        end
+    end
+
+    local highlightTex = tab.GetHighlightTexture and tab:GetHighlightTexture()
+    if highlightTex then
+        highlightTex:SetTexture()
+    else
+        tab:StripTextures()
+    end
+
+    if skinAsButton then
+        tab:SkinButton(false, true)
+    end
+    tab:SetHitRectInsets(0, 0, 0, 0)
+    tab:GetFontString():SetTextColor(0, 0, 0)
+end
+GW.HandleTabs = HandleTabs

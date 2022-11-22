@@ -19,15 +19,6 @@ local constBackdropArgs = {
     insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
 
-local tabs = {
-    "LeftDisabled",
-    "MiddleDisabled",
-    "RightDisabled",
-    "Left",
-    "Middle",
-    "Right"
-}
-
 local function SetModifiedBackdrop(self)
     if self:IsEnabled() then
         if self.hovertex then
@@ -114,28 +105,6 @@ local function SkinAbilitiesInfo()
         index = index + 1
         header = _G["EncounterJournalInfoHeader" .. index]
     end
-end
-
-local function HandleTopTabs(tab)
-    for _, object in pairs(tabs) do
-        local textureName = tab:GetName() and _G[tab:GetName() .. object]
-        if textureName then
-            textureName:SetTexture()
-        elseif tab[object] then
-            tab[object]:SetTexture()
-        end
-    end
-
-    local highlightTex = tab.GetHighlightTexture and tab:GetHighlightTexture()
-    if highlightTex then
-        highlightTex:SetTexture()
-    else
-        tab:StripTextures()
-    end
-
-    tab:SkinButton(false, true)
-    tab:SetHitRectInsets(0, 0, 0, 0)
-    tab:GetFontString():SetTextColor(0, 0, 0)
 end
 
 local function hook_EJSuggestFrame_RefreshDisplay()
@@ -258,10 +227,10 @@ local function encounterJournalSkin()
 
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
 
-    HandleTopTabs(EncounterJournalSuggestTab)
-    HandleTopTabs(EncounterJournalDungeonTab)
-    HandleTopTabs(EncounterJournalRaidTab)
-    HandleTopTabs(EncounterJournalLootJournalTab)
+    GW.HandleTabs(EncounterJournalSuggestTab, true)
+    GW.HandleTabs(EncounterJournalDungeonTab, true)
+    GW.HandleTabs(EncounterJournalRaidTab, true)
+    GW.HandleTabs(EncounterJournalLootJournalTab, true)
 
     local EncounterInfo = EJ.encounter.info
 

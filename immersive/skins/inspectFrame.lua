@@ -57,26 +57,8 @@ local function SkinInspectFrameOnLoad()
         self:StopMovingOrSizing()
     end)
 
-    -- PVE Talents
-    for i = 1, 7 do
-        for j = 1, 3 do
-            local button = _G["TalentsTalentRow" .. i .. "Talent" .. j]
-
-            button:StripTextures()
-            button.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        end
-    end
-
-    -- PVP Talents
     for i = 1, 3 do
-        local icon = InspectPVPFrame["TalentSlot" .. i].Texture
-        InspectPVPFrame["TalentSlot" .. i]:StripTextures()
-        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        InspectPVPFrame["TalentSlot" .. i].Border:Hide()
-    end
-
-    for i = 1, 4 do
-        _G["InspectFrameTab" .. i]:SkinButton(false, true)
+        GW.HandleTabs(_G["InspectFrameTab" .. i], true)
         _G["InspectFrameTab" .. i]:SetSize(80, 24)
         if i > 1 then
             _G["InspectFrameTab" .. i]:ClearAllPoints()
@@ -101,6 +83,8 @@ local function SkinInspectFrameOnLoad()
     InspectModelFrameBorderBottom:Kill()
     InspectModelFrameBorderBottom2:Kill()
 
+    InspectPaperDollItemsFrame.InspectTalents:SkinButton(false, true)
+
     InspectModelFrame.BackgroundOverlay:SetColorTexture(0, 0, 0)
 
     -- Give inspect frame model backdrop it's color back
@@ -118,6 +102,7 @@ local function SkinInspectFrameOnLoad()
 
     for _, Slot in pairs({InspectPaperDollItemsFrame:GetChildren()}) do
         if Slot:IsObjectType("Button") or Slot:IsObjectType("ItemButton") then
+            if not Slot.icon then return end
             GW.HandleIcon(Slot.icon, true, GW.constBackdropFrameColorBorder)
 
             Slot.icon.backdrop:SetFrameLevel(Slot:GetFrameLevel())
@@ -127,17 +112,8 @@ local function SkinInspectFrameOnLoad()
         end
     end
 
-    hooksecurefunc("InspectPaperDollItemSlotButton_Update", function(button)
-        local textureName = GetInventoryItemTexture(InspectFrame.unit, button:GetID())
-        if not textureName then
-            button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/slot-bg")
-            button.icon:SetTexCoord(unpack(InscpectSlots[button:GetName()]))
-        end
-    end)
-
     InspectPVPFrame.BG:Kill()
     InspectGuildFrameBG:Kill()
-    InspectTalentFrame:StripTextures()
 end
 
 local function LoadInspectFrameSkin()
