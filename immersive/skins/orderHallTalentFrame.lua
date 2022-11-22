@@ -22,7 +22,7 @@ local function ApplyOrderHallTalentFrameSkin()
             for bu in frame.buttonPool:EnumerateActive() do
                 if bu.talent then
                     if not bu.SetBackdrop then
-                        _G.Mixin(bu, _G.BackdropTemplateMixin)
+                        Mixin(bu, BackdropTemplateMixin)
                         bu:HookScript("OnSizeChanged", bu.OnBackdropSizeChanged)
                     end
                     bu:SetBackdrop(GW.constBackdropFrameColorBorder)
