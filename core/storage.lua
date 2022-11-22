@@ -121,7 +121,7 @@ local UpdateMoney = function ()
     local money = GetMoney()
 
     -- first store old money
-    local OldMoney = GetStorage("money") or money
+    local OldMoney = GetStorage("money") or 0
 
     local change = money - OldMoney
     if OldMoney > money then        -- Lost Money
