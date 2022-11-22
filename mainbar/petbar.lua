@@ -119,7 +119,7 @@ local function UpdatePetActionBar(self, event, unit)
     if (event == "UNIT_FLAGS" and unit ~= "pet") or (event == "UNIT_PET" and unit ~= "player") then return end
 
     for i, button in ipairs(self.buttons) do
-        local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(i)
+        local name, texture, isToken, isActive, _, autoCastEnabled, spellID = GetPetActionInfo(i)
         local autoCast = button.AutoCastable
         button:SetAlpha(1)
         button.isToken = isToken
@@ -286,6 +286,9 @@ GW.TogglePetAuraPosition = TogglePetAuraPosition
 local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
     playerPetFrame.buttons = {}
+
+    --/dump PetActionBar.buttonsAndSpacers
+    PetActionBar.buttonsAndSpacers = {} -- test if removs the actionbutton moving and not taint
 
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
