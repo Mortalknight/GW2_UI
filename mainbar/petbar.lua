@@ -10,16 +10,6 @@ local AddToAnimation = GW.AddToAnimation
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local AddActionBarCallback = GW.AddActionBarCallback
 
-local function setActionButtonAutocast(button)
-    local autoCastEnabled = select(6, GetPetActionInfo(button:GetID()))
-    local autoCast = button.AutoCastable
-
-    for _, v in pairs(_G["PetActionButton" .. button:GetID() .. "Shine"].sparkles) do
-        v:SetShown(autoCastEnabled)
-    end
-    autoCast:SetShown(autoCastEnabled)
-end
-
 local function UpdatePetActionBarIcons()
     PetActionButton1Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
     PetActionButton2Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow")
@@ -28,9 +18,6 @@ local function UpdatePetActionBarIcons()
     PetActionButton8Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-assist")
     PetActionButton9Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
     PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
-    --for i, button in ipairs(GwPlayerPetFrame.buttons) do
-    --    setActionButtonAutocast(button)
-    --end
 end
 GW.AddForProfiling("petbar", "UpdatePetActionBarIcons", UpdatePetActionBarIcons)
 
@@ -134,7 +121,6 @@ local function UpdatePetActionBar(self, event, unit)
     for i, button in ipairs(self.buttons) do
         local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(i)
         local autoCast = button.AutoCastable
-
         button:SetAlpha(1)
         button.isToken = isToken
         button.icon:Show()
@@ -178,16 +164,10 @@ local function UpdatePetActionBar(self, event, unit)
             end
         end
 
-        if autoCastAllowed then
+        if autoCastEnabled then
             autoCast:Show()
         else
             autoCast:Hide()
-        end
-
-        if autoCastEnabled then
-            AutoCastShine_AutoCastStart(button.AutoCastShine)
-        else
-            AutoCastShine_AutoCastStop(button.AutoCastShine)
         end
 
         if not PetHasActionBar() and texture and name ~= "PET_ACTION_FOLLOW" then
@@ -375,7 +355,6 @@ local function LoadPetFrame(lm)
     end
     SetPetActionButtonPositionAndStyle(playerPetFrame)
     hooksecurefunc(PetActionBar, "Update", UpdatePetActionBarIcons)
-    --hooksecurefunc("TogglePetAutocast", setActionButtonAutocast)
     UpdatePetActionBarIcons()
 
     -- hook hotkey update calls so we can override styling changes
