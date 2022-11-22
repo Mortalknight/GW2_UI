@@ -2,7 +2,7 @@
 ## Title: |cffffedbaGW2 UI|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
-## OptionalDeps: Details, MoveAnything, _DebugLog, BugSack, !Stragglers, ACU
+## OptionalDeps: Details, MoveAnything, _DebugLog, BugSack, !Stragglers, ACU, Krowi_AchievementFilter
 ## Version: @project-version@
 ## X-Website: https://www.curseforge.com/wow/addons/gw2-ui
 ## X-Curse-Project-ID: 94310
