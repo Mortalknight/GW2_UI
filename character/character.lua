@@ -165,7 +165,7 @@ local charSecure_OnAttributeChanged =
     local showCur = flase
     local fmProf = self:GetFrameRef("GwProfessionsFrame")
     local showProf = false
-    
+
     local close = false
     local keytoggle = self:GetAttribute("keytoggle")
 

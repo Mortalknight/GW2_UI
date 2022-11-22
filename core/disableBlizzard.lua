@@ -140,7 +140,7 @@ local function DisableBlizzardFrames()
 
     if ourPetFrame then
         HandleFrame(PetFrame)
-        --PetActionBar.UpdateGridLayout = GW.NoOp -- taints the mainactionbar keybinds
+        PetActionBar.UpdateGridLayout = GW.NoOp -- taints the mainactionbar keybinds
     end
 
     if ourTargetFrame then
