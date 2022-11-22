@@ -18,4 +18,4 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - uses: BigWigsMods/packager@master
+      - uses: BigWigsMods/packager@v2

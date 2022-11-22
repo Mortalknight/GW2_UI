@@ -659,6 +659,11 @@ local function evPlayerLogin(self)
 
     if GetSetting("MINIMAP_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Minimap", true) then
         GW.LoadMinimap()
+    else
+        QueueStatusButton:ClearAllPoints()
+        QueueStatusButton:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
+        QueueStatusButton:SetSize(26, 26)
+        QueueStatusButton:SetParent(UIParent)
     end
 
     if GetSetting("QUESTTRACKER_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Objectives", true) then

@@ -178,7 +178,6 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
-        
     else
         GameTimeFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -2)
         GwMailButton:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
