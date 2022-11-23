@@ -287,8 +287,10 @@ local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
     playerPetFrame.buttons = {}
 
-    --/dump PetActionBar.buttonsAndSpacers
-    PetActionBar.buttonsAndSpacers = {} -- test if removs the actionbutton moving and not taint
+    PetActionBar:UnregisterEvent("PET_BAR_UPDATE")
+    PetActionBar:UnregisterEvent("UNIT_PET")
+    PetActionBar:UnregisterEvent("PET_UI_UPDATE")
+    PetActionBar:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
 
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
