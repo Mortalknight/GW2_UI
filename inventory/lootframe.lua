@@ -29,11 +29,15 @@ local function updateLootFrameButtons(self)
             button.PushedNameFrame:SetAlpha(0)
         end
 
-        button.NameFrame:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-        button.NameFrame:SetHeight(button:GetHeight())
-        button.NameFrame:SetPoint("LEFT", button, "RIGHT", 0, 0)
+        if button.NameFrame then
+            button.NameFrame:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+            button.NameFrame:SetHeight(button:GetHeight())
+            button.NameFrame:SetPoint("LEFT", button, "RIGHT", 0, 0)
+        end
 
-        button.Text:SetFont(UNIT_NAME_FONT, 12)
+        if button.Text then
+            button.Text:SetFont(UNIT_NAME_FONT, 12)
+        end
     end
 end
 
