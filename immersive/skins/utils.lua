@@ -390,6 +390,133 @@ local function HandleTrimScrollBar(frame, small)
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar
 
+local function HandleItemButton(b, setInside)
+	if b.isSkinned then return end
+
+	local name = b:GetName()
+	local icon = b.icon or b.Icon or b.IconTexture or b.iconTexture or (name and (_G[name .. "IconTexture"] or _G[name .. "Icon"]))
+	local texture = icon and icon.GetTexture and icon:GetTexture()
+
+	b:StripTextures()
+	b:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+	b:StyleButton()
+
+	if icon then
+		icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+
+		if setInside then
+			icon:SetInside(b)
+		else
+			b.backdrop:SetOutside(icon, 1, 1)
+		end
+
+		icon:SetParent(b.backdrop)
+
+		if texture then
+			icon:SetTexture(texture)
+		end
+	end
+
+	b.isSkinned = true
+end
+GW.HandleItemButton = HandleItemButton
+
+do
+	local function selectionOffset(frame)
+		local point, anchor, relativePoint, xOffset = frame:GetPoint()
+		if xOffset <= 0 then
+			local x = frame.BorderBox and 4 or 38
+			local y = frame.BorderBox and 0 or -10
+
+			frame:ClearAllPoints()
+			frame:SetPoint(point, (frame == MacroPopupFrame and MacroFrame) or anchor, relativePoint, strfind(point, "LEFT") and x or -x, y)
+		end
+	end
+
+	local function handleButton(button, i, buttonNameTemplate)
+		local icon, texture = button.Icon or _G[buttonNameTemplate..i.."Icon"]
+		if icon then
+			icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+			icon:SetInside(button)
+			texture = icon:GetTexture()
+		end
+
+		button:StripTextures()
+		button:StyleButton(nil, true)
+
+		if texture then
+			icon:SetTexture(texture)
+		end
+	end
+
+	local function HandleIconSelectionFrame(frame, numIcons, buttonNameTemplate, nameOverride, dontOffset)
+		assert(frame, "HandleIconSelectionFrame: frame argument missing")
+
+		if frame.isSkinned then return end
+
+		if not dontOffset then
+			frame:HookScript("OnShow", selectionOffset)
+		end
+
+		local borderBox = frame.BorderBox
+		local frameName = nameOverride or frame:GetName()
+		local scrollFrame = frame.ScrollFrame or _G[frameName  .. "ScrollFrame"]
+		local editBox = borderBox.IconSelectorEditBox
+		local cancel = frame.CancelButton or (borderBox and borderBox.CancelButton)
+		local okay = frame.OkayButton or (borderBox and borderBox.OkayButton)
+
+		frame:StripTextures()
+		frame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+		frame:SetHeight(frame:GetHeight() + 10)
+
+		if borderBox then
+			borderBox:StripTextures()
+
+			local button = borderBox.SelectedIconArea and borderBox.SelectedIconArea.SelectedIconButton
+			if button then
+				button:DisableDrawLayer("BACKGROUND")
+				GW.HandleItemButton(button, true)
+			end
+		end
+
+		cancel:ClearAllPoints()
+		cancel:SetPoint("BOTTOMRIGHT", frame, -4, 4)
+		cancel:SkinButton(false, true)
+
+		okay:ClearAllPoints()
+		okay:SetPoint("RIGHT", cancel, "LEFT", -10, 0)
+		okay:SkinButton(false, true)
+
+		if editBox then
+			editBox:DisableDrawLayer("BACKGROUND")
+            editBox:StripTextures()
+            editBox:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+		end
+
+		if numIcons then
+			scrollFrame:StripTextures()
+			scrollFrame:SetHeight(scrollFrame:GetHeight() + 10)
+			scrollFrame.ScrollBar:SkinScrollBar()
+
+			for i = 1, numIcons do
+				local button = _G[buttonNameTemplate..i]
+				if button then
+					handleButton(button, i, buttonNameTemplate)
+				end
+			end
+		else
+			GW.HandleTrimScrollBar(frame.IconSelector.ScrollBar)
+
+			for _, button in next, { frame.IconSelector.ScrollBox.ScrollTarget:GetChildren() } do
+				handleButton(button)
+			end
+		end
+
+		frame.isSkinned = true
+	end
+    GW.HandleIconSelectionFrame = HandleIconSelectionFrame
+end
+
 local tabs = {
     "LeftDisabled",
     "MiddleDisabled",

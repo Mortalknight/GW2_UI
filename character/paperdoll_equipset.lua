@@ -73,11 +73,13 @@ local function GearSetButton_Edit(self)
     GearManagerPopupFrame:ClearAllPoints()
     GearManagerPopupFrame:SetParent(GwDressingRoom)
     GearManagerPopupFrame:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
-    GearManagerPopupFrame:Show()
 
     GearManagerPopupFrame.mode = IconSelectorPopupFrameModes.Edit
+    GearManagerPopupFrame:Show()
     PaperDollFrame.EquipmentManagerPane.selectedSetID = self.setID
-    GearManagerPopupFrame:Update()
+    GearManagerPopupFrame.setID = self.setID
+    GearManagerPopupFrame.origName = self.setName
+    GearManagerPopupFrameMixin.OnShow(GearManagerPopupFrame)
 end
 
 local function DropDownOutfit_OnLoad(self)
@@ -319,15 +321,12 @@ local function LoadPDEquipset(fmMenu)
         GearManagerPopupFrame:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
 
         GearManagerPopupFrame.mode = IconSelectorPopupFrameModes.New
-        GearManagerPopupFrame.iconDataProvider = CreateAndInitFromMixin(IconDataProviderMixin, IconDataProviderExtraType.Equipment)
         GearManagerPopupFrame:Show()
         PaperDollFrame.EquipmentManagerPane.selectedSetID = nil
-
-        --PaperDollFrame_ClearIgnoredSlots();
-		--PaperDollEquipmentManagerPane_Update()
+        GearManagerPopupFrameMixin.OnShow(GearManagerPopupFrame)
 
         -- Ignore shirt and tabard by default
-		PaperDollFrame_IgnoreSlot(4);
+		PaperDollFrame_IgnoreSlot(4)
 		PaperDollFrame_IgnoreSlot(19)
     end
     fmGPDO.newOutfit:SetText(TRANSMOG_OUTFIT_NEW)
@@ -344,12 +343,5 @@ local function LoadPDEquipset(fmMenu)
     drawItemSetList()
 
     hooksecurefunc(GearManagerPopupFrame, "OkayButton_OnClick", drawItemSetList)
-    GearManagerPopupFrame:SetScript(
-        "OnShow",
-        function(self)
-            PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
-            --self:Update()
-        end
-    )
 end
 GW.LoadPDEquipset = LoadPDEquipset

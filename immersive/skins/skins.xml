@@ -2,7 +2,6 @@
     <Script file="utils.lua"/>
     <Script file="battlenet.lua"/>
     <Script file="deathrecapframe.lua"/>
-    <Script file="gearmanagerdialogpopup.lua"/>
     <Script file="ghostframe.lua"/>
     <Script file="lfg_popup_frames.lua"/>
     <Script file="mainMenuFrame.lua"/>

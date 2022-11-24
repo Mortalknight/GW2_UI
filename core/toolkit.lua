@@ -340,8 +340,10 @@ local function SkinTab(tabButton, direction)
     tabButton:CreateBackdrop()
     direction = direction and direction == "down" and "_down" or ""
 
+    tabButton:StripTextures()
+
     if tabButton.SetNormalTexture then tabButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/units/unittab" .. direction) end
-    if tabButton.SetHighlightTexture then 
+    if tabButton.SetHighlightTexture then
         tabButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/units/unittab" .. direction)
         tabButton:GetHighlightTexture():SetVertexColor(0, 0, 0)
     end
