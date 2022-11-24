@@ -13,7 +13,6 @@
     <Script file="flightmap.lua"/>
     <Script file="addonManager.lua"/>
     <Script file="bindings.lua"/>
-    <Script file="blizzard_options.lua"/>
     <Script file="macro.lua"/>
     <Script file="mail.lua"/>
     <Script file="barber.lua"/>
@@ -36,7 +35,7 @@
     <Script file="weeklyRewards.lua"/>
     <Script file="lfg.lua"/>
     <Script file="orderHallTalentFrame.lua"/>
-    
+
     <Script file="addons\immersion.lua"/>
     <Script file="addons\postal.lua"/>
     <Script file="addons\WorldQuestTracker.lua"/>

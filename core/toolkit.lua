@@ -450,37 +450,6 @@ local function SkinScrollBar(frame)
     end
 end
 
--- WoWTrimScrollBar
-local function ReskinScrollBarArrow(frame, direction)
-    GW.HandleNextPrevButton(frame, direction)
-    frame.Overlay:SetAlpha(0)
-    frame.Texture:Hide()
-end
-
-local function HandleTrimScrollBar(frame)
-    frame.Background:Hide()
-    frame:StripTextures()
-
-    local thumb = frame.Track.Thumb
-    thumb.Middle:Hide()
-    thumb.Begin:Hide()
-    thumb.End:Hide()
-
-    if not thumb.SetBackdrop then
-        Mixin(thumb, BackdropTemplateMixin)
-        thumb:HookScript("OnSizeChanged", thumb.OnBackdropSizeChanged)
-    end
-
-    thumb:SetBackdrop({
-        edgeFile = "",
-        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle",
-        edgeSize = GW.Scale(1)
-    })
-
-    ReskinScrollBarArrow(frame.Back, 'up')
-    ReskinScrollBarArrow(frame.Forward, 'down')
-end
-
 local function SkinDropDownMenu(frame, buttonPaddindX)
     local frameName = frame.GetName and frame:GetName()
     local button = frame.Button or frameName and (_G[frameName .. "Button"] or _G[frameName .. "_Button"])
@@ -676,7 +645,6 @@ local function addapi(object)
     if not object.HandleMaxMinFrame then mt.HandleMaxMinFrame = HandleMaxMinFrame end
     if not object.SetOutside then mt.SetOutside = SetOutside end
     if not object.SetInside then mt.SetInside = SetInside end
-    if not object.HandleTrimScrollBar then mt.HandleTrimScrollBar = HandleTrimScrollBar end
     if not object.StyleButton then mt.StyleButton = StyleButton end
 end
 
