@@ -43,7 +43,6 @@ local function LoadAddonListSkin()
     GW.HandleTrimScrollBar(AddonList.ScrollBar)
 
     hooksecurefunc("AddonList_Update", function()
-        print(12)
         for _, entry in next, {AddonList.ScrollBox.ScrollTarget:GetChildren()} do
             local id = entry:GetID()
 
