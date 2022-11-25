@@ -623,13 +623,18 @@ local function updateMainBar()
     fmActionbar:SetScript("OnEvent", main_OnEvent)
 
     -- disable default main action bar behaviors
-    MainMenuBar:UnregisterAllEvents()
-    MainMenuBar:SetScript("OnUpdate", nil)
-    MainMenuBar:EnableMouse(false)
-    MainMenuBar:SetMovable(1)
-    MainMenuBar:SetUserPlaced(true)
-    MainMenuBar:SetMovable(0)
-    -- even with IsUserPlaced set, the Blizz multibar handlers mess with the width so reset in fadeCheck DirtySetting
+    --MainMenuBar:UnregisterAllEvents()
+    --MainMenuBar:SetScript("OnUpdate", nil)
+    --MainMenuBar:EnableMouse(false)
+    --MainMenuBar:SetMovable(1)
+    --MainMenuBar:SetUserPlaced(true)
+    --MainMenuBar:SetMovable(0)
+
+    hooksecurefunc(MainMenuBar, "SetScale", function(_, scale)
+        if scale and scale ~= tonumber(GW.GetSetting("HUD_SCALE")) then
+            MainMenuBar:SetScale(tonumber(GW.GetSetting("HUD_SCALE")) or 1)
+        end
+    end)
 
     -- set fader logic
     createFaderAnim(fmActionbar, true)

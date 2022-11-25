@@ -80,17 +80,18 @@ local function DisableBlizzardMovers()
             LEMO:ApplyChanges()
         end
 
-        LEMO:SetFrameSetting(MainMenuBar, 3, 5)
-        LEMO:SetFrameSetting(MultiBarBottomLeft, 3, 5)
-        LEMO:SetFrameSetting(MultiBarBottomRight, 3, 5)
-        LEMO:SetFrameSetting(MultiBarRight, 3, 5)
-        LEMO:SetFrameSetting(MultiBarLeft, 3, 5)
-        LEMO:SetFrameSetting(MultiBar5, 3, 5)
-        LEMO:SetFrameSetting(MultiBar6, 3, 5)
-        LEMO:SetFrameSetting(MultiBar7, 3, 5)
+        LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.IconSize, 5)
+        LEMO:SetFrameSetting(MultiBarBottomLeft, Enum.EditModeActionBarSetting.IconSize, 5)
+        LEMO:SetFrameSetting(MultiBarBottomRight, Enum.EditModeActionBarSetting.IconSize, 5)
+        LEMO:SetFrameSetting(MultiBarRight, Enum.EditModeActionBarSetting.IconSize, 5)
+        LEMO:SetFrameSetting(MultiBarLeft, Enum.EditModeActionBarSetting.IconSize, 5)
+        LEMO:SetFrameSetting(MultiBar5, Enum.EditModeActionBarSetting.IconSize, 5)
+        LEMO:SetFrameSetting(MultiBar6, Enum.EditModeActionBarSetting.IconSize, 5)
+        LEMO:SetFrameSetting(MultiBar7, Enum.EditModeActionBarSetting.IconSize, 5)
 
         -- Main Actionbar
         LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.GetSetting("HUD_SCALE")) or 1)))
+
         -- PossessActionBar
         LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainMenuBar, "TOP", -110, 40)
 
