@@ -550,3 +550,34 @@ local function HandleTabs(tab, skinAsButton)
     tab:GetFontString():SetTextColor(0, 0, 0)
 end
 GW.HandleTabs = HandleTabs
+
+local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackground)
+    local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
+    header.windowIcon:SetTexture(icon)
+
+    header:SetWidth(frame:GetWidth())
+    header.BGLEFT:SetWidth(frame:GetWidth())
+    header.BGRIGHT:SetWidth(frame:GetWidth())
+
+    titleText:ClearAllPoints()
+    titleText:SetParent(header)
+    titleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
+    titleText:SetFont(DAMAGE_TEXT_FONT, 20)
+    titleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+
+    local tex = frame:CreateTexture("bg", "BACKGROUND", nil, 0)
+    tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
+    tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")
+    frame.tex = tex
+
+    if detailBackground then
+        local detailBg = detailBackground:CreateTexture("bg", "BACKGROUND", nil, 0)
+        detailBg:SetPoint("TOPLEFT", detailBackground, "TOPLEFT", 0,0)
+        detailBg:SetPoint("BOTTOMRIGHT", detailBackground, "BOTTOMRIGHT", 0, 0)
+        detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+        detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
+        detailBackground.tex = detailBg
+    end
+end
+GW.CreateFrameHeaderWithBody = CreateFrameHeaderWithBody

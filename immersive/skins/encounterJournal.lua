@@ -162,8 +162,7 @@ end
 local function encounterJournalSkin()
     local EJ = EncounterJournal
     GW.HandlePortraitFrame(EJ)
-    local header = CreateFrame("Frame", "GwEncounterJournalHeader", EJ, "GwFrameHeader")
-    header.windowIcon:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon")
+    GW.CreateFrameHeaderWithBody(EJ, EncounterJournalTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon")
 
     EJ.navBar:StripTextures()
     EJ.navBar.overlay:StripTextures()
@@ -175,10 +174,6 @@ local function encounterJournalSkin()
     EJ.navBar.tex:SetPoint("BOTTOMRIGHT", EJ.navBar, "BOTTOMRIGHT", 0, 1)
     EJ.navBar.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
 
-    EJ.tex = EJ:CreateTexture("bg", "BACKGROUND", nil, 0)
-    EJ.tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
-    EJ.tex:SetPoint("BOTTOMRIGHT", EJ, "BOTTOMRIGHT", 0, 0)
-    EJ.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")
 
     EJ.innertex = EJ:CreateTexture("bg2", "BACKGROUND", nil, 7)
     EJ.innertex:SetPoint("TOPLEFT", EJ.navBar, "BOTTOMLEFT", -1, 1)
@@ -205,11 +200,6 @@ local function encounterJournalSkin()
     local homeButtonBorder = CreateFrame("Frame", nil, EJ.navBar.homeButton, "GwLightButtonBorder")
     EJ.navBar.homeButton.borderFrame = homeButtonBorder
     EJ.navBar.homeButton.xoffset = -1
-
-    EncounterJournalTitleText:ClearAllPoints()
-    EncounterJournalTitleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
-    EncounterJournalTitleText:SetFont(DAMAGE_TEXT_FONT, 20)
-    EncounterJournalTitleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
     EJ.CloseButton:SetPoint("TOPRIGHT", -10, -2)
 

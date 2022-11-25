@@ -1,38 +1,36 @@
 local _, GW = ...
-local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 local constBackdropFrame = GW.skins.constBackdropFrame
 
 local function ApplyMacroOptionsSkin()
     if not GW.GetSetting("MACRO_SKIN_ENABLED") then return end
 
+    local macroHeaderText
+
+    local r = {MacroFrame:GetRegions()}
+    for _,c in pairs(r) do
+        if c:GetObjectType() == "FontString" then
+            macroHeaderText = c
+            break
+        end
+    end
+    GW.CreateFrameHeaderWithBody(MacroFrame, macroHeaderText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", MacroFrameInset)
+
     MacroFrameBg:Hide()
+
     MacroFrame.NineSlice:Hide()
     MacroFrame.TopTileStreaks:Hide()
     MacroFrame:CreateBackdrop()
 
     MacroFrameInset.NineSlice:Hide()
-    MacroFrameInset:CreateBackdrop(constBackdropFrameBorder)
     MacroHorizontalBarLeft:Hide()
     MacroFrameTextBackground:StripTextures()
     MacroFrameTextBackground:CreateBackdrop(constBackdropFrame)
 
-    local r = {MacroFrame:GetRegions()}
-    local i = 1
     for _,c in pairs(r) do
         if c:GetObjectType() == "Texture" then
             c:Hide()
-        elseif c:GetObjectType() == "FontString" then
-            if i == 2 then c:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE") end
-            i = i + 1
         end
     end
-
-    local tex = MacroFrame:CreateTexture("bg", "BACKGROUND")
-    tex:SetPoint("TOP", MacroFrame, "TOP", 0, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    local w, h = MacroFrame:GetSize()
-    tex:SetSize(w + 50, h + 50)
-    MacroFrame.tex = tex
 
     GW.HandleTrimScrollBar(MacroFrame.MacroSelector.ScrollBar)
     MacroFrameScrollFrameScrollBar:SkinScrollBar()

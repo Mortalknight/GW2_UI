@@ -293,9 +293,10 @@ AFP("mover_OnDragStop", mover_OnDragStop)
 
 local function worldMapSkin()
     local WorldMapFrame = _G.WorldMapFrame
-    local header = CreateFrame("Frame","GwWorldmapHeader",WorldMapFrame,"GwFrameHeader")
 
     WorldMapFrame:StripTextures()
+    GW.CreateFrameHeaderWithBody(WorldMapFrame, WorldMapFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", QuestMapFrame)
+
     WorldMapFrame.BorderFrame:StripTextures()
     WorldMapFrame.BorderFrame:SetFrameStrata(WorldMapFrame:GetFrameStrata())
     WorldMapFrame.BorderFrame.NineSlice:Hide()
@@ -310,26 +311,9 @@ local function worldMapSkin()
     navBarTex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
     WorldMapFrame.NavBar.tex = navBarTex
 
-    local qLogText = QuestMapFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
-    qLogText:SetPoint("TOPLEFT", QuestMapFrame, "TOPLEFT", 0,0)
-    qLogText:SetPoint("BOTTOMRIGHT", QuestMapFrame, "BOTTOMRIGHT", 0, 0)
-    qLogText:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
-    qLogText:SetTexCoord(0, 0.70703125, 0, 0.580078125)
-    QuestMapFrame.tex = qLogText
-
     WorldMapFrame.ScrollContainer:CreateBackdrop()
-    local tex = WorldMapFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
-    tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
-    tex:SetPoint("BOTTOMRIGHT", WorldMapFrame, "BOTTOMRIGHT", 0, 0)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")
-    WorldMapFrame.tex = tex
 
     QuestMapFrame:SetPoint("TOPRIGHT",WorldMapFrame,"TOPRIGHT",-3,-32)
-
-    WorldMapFrameTitleText:ClearAllPoints()
-    WorldMapFrameTitleText:SetPoint("BOTTOMLEFT",header,"BOTTOMLEFT",64,10)
-    WorldMapFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20)
-    WorldMapFrameTitleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
     WorldMapFrame.NavBar.homeButton:StripTextures()
     local r = {WorldMapFrame.NavBar.homeButton:GetRegions()}
@@ -339,7 +323,7 @@ local function worldMapSkin()
             c:SetShadowOffset(0, 0)
         end
     end
-    tex = WorldMapFrame.NavBar.homeButton:CreateTexture(nil, "BACKGROUND")
+    local tex = WorldMapFrame.NavBar.homeButton:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("LEFT", WorldMapFrame.NavBar.homeButton, "LEFT")
     tex:SetPoint("TOP", WorldMapFrame.NavBar.homeButton, "TOP")
     tex:SetPoint("BOTTOM", WorldMapFrame.NavBar.homeButton, "BOTTOM")
