@@ -626,13 +626,14 @@ local function updateMainBar()
     --MainMenuBar:UnregisterAllEvents()
     --MainMenuBar:SetScript("OnUpdate", nil)
     --MainMenuBar:EnableMouse(false)
-    --MainMenuBar:SetMovable(1)
-    --MainMenuBar:SetUserPlaced(true)
-    --MainMenuBar:SetMovable(0)
+    MainMenuBar:SetMovable(1)
+    MainMenuBar:SetUserPlaced(true)
+    MainMenuBar:SetMovable(0)
 
     hooksecurefunc(MainMenuBar, "SetScale", function(_, scale)
+        GW.Debug("MainMenuBar scale changed to", scale)
         if scale and scale ~= tonumber(GW.GetSetting("HUD_SCALE")) then
-            MainMenuBar:SetScale(tonumber(GW.GetSetting("HUD_SCALE")) or 1)
+            --MainMenuBar:SetScale(tonumber(GW.GetSetting("HUD_SCALE")) or 1)
         end
     end)
 
