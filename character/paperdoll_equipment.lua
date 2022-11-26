@@ -768,6 +768,7 @@ local function GwPaperDollBagItemList_OnShow()
 end
 
 local function EquipCursorItem()
+    if InCombatLockdown() then return end
     local cursorItem = C_Cursor.GetCursorItem()
     if cursorItem and cursorItem.bagID and cursorItem.slotIndex then
         local itemID = C_Container.GetContainerItemID(cursorItem.bagID, cursorItem.slotIndex)
