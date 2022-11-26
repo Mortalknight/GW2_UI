@@ -551,7 +551,7 @@ local function HandleTabs(tab, skinAsButton)
 end
 GW.HandleTabs = HandleTabs
 
-local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackground)
+local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds)
     local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
     header.windowIcon:SetTexture(icon)
 
@@ -571,13 +571,15 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")
     frame.tex = tex
 
-    if detailBackground then
-        local detailBg = detailBackground:CreateTexture("bg", "BACKGROUND", nil, 0)
-        detailBg:SetPoint("TOPLEFT", detailBackground, "TOPLEFT", 0,0)
-        detailBg:SetPoint("BOTTOMRIGHT", detailBackground, "BOTTOMRIGHT", 0, 0)
-        detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
-        detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
-        detailBackground.tex = detailBg
+    if detailBackgrounds then
+        for _, v in pairs(detailBackgrounds) do
+            local detailBg = v:CreateTexture("bg", "BACKGROUND", nil, 0)
+            detailBg:SetPoint("TOPLEFT", v, "TOPLEFT", 0,0)
+            detailBg:SetPoint("BOTTOMRIGHT", v, "BOTTOMRIGHT", 0, 0)
+            detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+            detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
+            v.tex = detailBg
+        end
     end
 end
 GW.CreateFrameHeaderWithBody = CreateFrameHeaderWithBody

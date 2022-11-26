@@ -87,9 +87,14 @@ end
 local function SkinLookingForGroupFrames()
     if not GW.GetSetting("LFG_SKIN_ENABLED") then return end
 
-    GW.HandlePortraitFrame(PVEFrame, true)
+    GW.HandlePortraitFrame(PVEFrame, false)
 
+    LFDQueueFrame:StripTextures(true)
+    RaidFinderFrame:StripTextures()
     RaidFinderQueueFrame:StripTextures(true)
+
+    GW.CreateFrameHeaderWithBody(PVEFrame, PVEFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {LFDQueueFrame, RaidFinderFrame, LFGListFrame})
+    
     PVEFrameBg:Hide()
     PVEFrame.shadows:Kill()
 
@@ -100,8 +105,6 @@ local function SkinLookingForGroupFrames()
     GroupFinderFrame.groupButton2.icon:SetTexture(133074) -- interface/icons/inv_helmet_06.blp
     GroupFinderFrame.groupButton3.icon:SetTexture(464820) -- interface/icons/achievement_general_stayclassy.blp
 
-
-    LFDQueueFrame:StripTextures(true)
     LFDQueueFrameRoleButtonTankIncentiveIcon:SetAlpha(0)
     LFDQueueFrameRoleButtonHealerIncentiveIcon:SetAlpha(0)
     LFDQueueFrameRoleButtonDPSIncentiveIcon:SetAlpha(0)
@@ -235,10 +238,6 @@ local function SkinLookingForGroupFrames()
         _G["PVEFrameTab" .. i]:SkinButton(false, true, nil, nil, true)
     end
 
-    PVEFrameTab1:SetPoint("BOTTOMLEFT", PVEFrame, "BOTTOMLEFT", 19, -50)
-    PVEFrameTab2:SetPoint("LEFT", PVEFrameTab1, "RIGHT", 1, 0)
-    PVEFrameTab3:SetPoint("LEFT", PVEFrameTab2, "RIGHT", 1, 0)
-
     -- Raid finder
     LFDQueueFrameFindGroupButton:SkinButton(false, true)
 
@@ -260,7 +259,7 @@ local function SkinLookingForGroupFrames()
 
     LFDQueueFrameTypeDropDown:SkinDropDownMenu()
 
-    RaidFinderFrame:StripTextures()
+    
     RaidFinderFrameRoleInset:StripTextures()
     RaidFinderQueueFrameSelectionDropDown:SkinDropDownMenu()
     RaidFinderFrameFindRaidButton:StripTextures()
@@ -587,6 +586,16 @@ local function ApplyPvPUISkin()
     -- Honor Frame
     local HonorFrame = _G.HonorFrame
     HonorFrame:StripTextures()
+    ConquestFrame:StripTextures()
+
+    for _, v in pairs({HonorFrame, ConquestFrame  }) do
+        local detailBg = v:CreateTexture("bg", "BACKGROUND", nil, 0)
+        detailBg:SetPoint("TOPLEFT", v, "TOPLEFT", 0, -10)
+        detailBg:SetPoint("BOTTOMRIGHT", v, "BOTTOMRIGHT", 0, 0)
+        detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+        detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
+        v.tex = detailBg
+    end
 
     GW.HandleTrimScrollBar(HonorFrame.SpecificScrollBar)
     HonorFrameTypeDropDown:SkinDropDownMenu()
@@ -641,7 +650,7 @@ local function ApplyPvPUISkin()
     HonorFrame.DPSIcon.checkButton:SetSize(15, 15)
 
     -- Conquest Frame
-    ConquestFrame:StripTextures()
+    
     ConquestFrame.ShadowOverlay:Hide()
 
     ConquestJoinButton:SkinButton(false, true)
