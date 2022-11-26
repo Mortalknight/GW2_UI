@@ -94,7 +94,7 @@ local function LoadDetailsSkin()
                 ["space"] = {
                     ["right"] = 0,
                     ["left"] = 0,
-                    ["between"] = 1,
+                    ["between"] = 2,
                 },
                 ["texture"] = "GW2_UI_Details",
                 ["texture_file"] = "Interface/Addons/GW2_UI/textures/addonSkins/details_statusbar",
@@ -124,6 +124,7 @@ local function LoadDetailsSkin()
                 ["icon_file"] = "Interface/AddOns/GW2_UI/textures/addonSkins/details_class_icons",
                 ["no_icon"] = false,
                 ["start_after_icon"] = false,
+                ["icon_size_offset"] = 1.5,
                 ["font_size"] = 12,
                 ["font_face"] = "GW2_UI_Chat",
                 ["font_face_file"] = "Interface/AddOns/GW2_UI/fonts/trebuchet_ms.ttf",
@@ -243,7 +244,7 @@ local function LoadDetailsSkin()
                 ["space"] = {
                     ["right"] = 0,
                     ["left"] = 0,
-                    ["between"] = 1,
+                    ["between"] = 2,
                 },
                 ["texture"] = "GW2_UI_Details",
                 ["texture_file"] = "Interface/Addons/GW2_UI/textures/addonSkins/details_statusbar",
@@ -273,6 +274,7 @@ local function LoadDetailsSkin()
                 ["icon_file"] = "Interface/AddOns/GW2_UI/textures/addonSkins/details_class_icons_colored",
                 ["no_icon"] = false,
                 ["start_after_icon"] = false,
+                ["icon_size_offset"] = 1.5,
                 ["font_size"] = 12,
                 ["font_face"] = "GW2_UI_Chat",
                 ["font_face_file"] = "Interface/AddOns/GW2_UI/fonts/trebuchet_ms.ttf",
