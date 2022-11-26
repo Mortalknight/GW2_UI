@@ -767,6 +767,19 @@ local function GwPaperDollBagItemList_OnShow()
     end
 end
 
+local function EquipCursorItem()
+    local cursorItem = C_Cursor.GetCursorItem()
+    if cursorItem and cursorItem.bagID and cursorItem.slotIndex then
+        local itemID = C_Container.GetContainerItemID(cursorItem.bagID, cursorItem.slotIndex)
+        if itemID then
+            if IsEquippableItem(itemID) and not IsEquippedItem(itemID) then
+                C_Timer.After(1.1, function()print(itemID) EquipItemByName(itemID) end)
+            end
+        end
+        ClearCursor()
+    end
+end
+
 local function LoadPDBagList(fmMenu)
     local fmGDR = CreateFrame("Button", "GwDressingRoom", GwPaperDoll, "GwDressingRoom")
     local fmPD3M = GwDressingRoom.model
@@ -858,6 +871,9 @@ local function LoadPDBagList(fmMenu)
 
     fmPD3M:SetRotation(-0.15)
     Model_OnLoad(fmPD3M, 4, 0, -0.1, CharacterModelFrame_OnMouseUp)
+
+    fmPD3M:SetScript("OnReceiveDrag", EquipCursorItem)
+    fmPD3M:HookScript("OnMouseDown", EquipCursorItem)
 
     fmGPDS.header:SetFont(DAMAGE_TEXT_FONT, 14)
     fmGPDS.header:SetText(STAT_CATEGORY_ATTRIBUTES)

@@ -73,11 +73,11 @@ local function DisableBlizzardMovers()
         if not LEMO:CanEditActiveLayout() then
             if not LEMO:DoesLayoutExist("GW2_Layout") then
                 LEMO:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
-                LEMO:ApplyChanges()
+                --LEMO:ApplyChanges()
             end
 
             LEMO:SetActiveLayout("GW2_Layout")
-            LEMO:ApplyChanges()
+            --LEMO:ApplyChanges()
         end
 
         LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.IconSize, 5)
