@@ -774,7 +774,7 @@ local function EquipCursorItem()
         local itemID = C_Container.GetContainerItemID(cursorItem.bagID, cursorItem.slotIndex)
         if itemID then
             if IsEquippableItem(itemID) and not IsEquippedItem(itemID) then
-                C_Timer.After(1.1, function()print(itemID) EquipItemByName(itemID) end)
+                C_Timer.After(1.1, function() EquipItemByName(itemID) end)
             end
         end
         ClearCursor()
