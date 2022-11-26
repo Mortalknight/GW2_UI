@@ -555,9 +555,9 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
     header.windowIcon:SetTexture(icon)
 
-    header:SetWidth(frame:GetWidth())
-    header.BGLEFT:SetWidth(frame:GetWidth())
-    header.BGRIGHT:SetWidth(frame:GetWidth())
+    header:SetWidth(frame:GetWidth() - 20)
+    header.BGLEFT:SetWidth(frame:GetWidth() - 20)
+    header.BGRIGHT:SetWidth(frame:GetWidth() - 20)
 
     titleText:ClearAllPoints()
     titleText:SetParent(header)
