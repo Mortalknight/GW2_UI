@@ -372,32 +372,33 @@ local function setDetailEx(
         end
     elseif factionID and C_Reputation.IsMajorFaction(factionID) then
         local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
-        frame.StatusBar:SetMinMaxValues(0, 1)
+        if majorFactionData then
+            frame.StatusBar:SetMinMaxValues(0, 1)
 
-        frame.background2:SetVertexColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
-        frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
+            frame.background2:SetVertexColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
+            frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
 
-        if C_MajorFactions.HasMaximumRenown(factionID) then
-            --max rank
-            frame.StatusBar:SetValue(1)
+            if C_MajorFactions.HasMaximumRenown(factionID) then
+                --max rank
+                frame.StatusBar:SetValue(1)
 
-            frame.currentRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
-            frame.nextRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
+                frame.currentRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
+                frame.nextRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
 
-            frame.nextValue:SetText()
-            frame.currentValue:SetText()
-            frame.percentage:SetText("100%")
-        else
-            frame.nextRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel + 1)
-            frame.currentRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
+                frame.nextValue:SetText()
+                frame.currentValue:SetText()
+                frame.percentage:SetText("100%")
+            else
+                frame.nextRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel + 1)
+                frame.currentRank:SetText(RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel)
 
-            frame.currentValue:SetText(CommaValue(majorFactionData.renownReputationEarned or 0))
-            frame.nextValue:SetText(CommaValue(majorFactionData.renownLevelThreshold))
-            frame.percentage:SetText((math.floor((majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold * 100) .. "%"))
+                frame.currentValue:SetText(CommaValue(majorFactionData.renownReputationEarned or 0))
+                frame.nextValue:SetText(CommaValue(majorFactionData.renownLevelThreshold))
+                frame.percentage:SetText((math.floor((majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold * 100) .. "%"))
 
-            frame.StatusBar:SetValue((majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold)
+                frame.StatusBar:SetValue((majorFactionData.renownReputationEarned or 0) / majorFactionData.renownLevelThreshold)
+            end
         end
-
     else
         frame.currentRank:SetText(currentRank)
         frame.nextRank:SetText(nextRank)

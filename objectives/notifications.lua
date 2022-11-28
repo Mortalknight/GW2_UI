@@ -312,7 +312,7 @@ local function SetObjectiveNotification()
             end
         end
     end
-    if UnitIsDeadOrGhost("PLAYER") then
+    if UnitIsDeadOrGhost("player") then
         dataBefore = data
         data = getBodyPOI()
         if data == nil then data = dataBefore end

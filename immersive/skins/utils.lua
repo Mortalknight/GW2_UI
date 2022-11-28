@@ -434,7 +434,7 @@ do
 	end
 
 	local function handleButton(button, i, buttonNameTemplate)
-		local icon, texture = button.Icon or _G[buttonNameTemplate..i.."Icon"]
+		local icon, texture = button.Icon or _G[buttonNameTemplate..i.."Icon"], ""
 		if icon then
 			icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 			icon:SetInside(button)
