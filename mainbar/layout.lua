@@ -96,12 +96,14 @@ local onstate_Barlayout = [=[
             petmover:ClearAllPoints()
             petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 212)
         else
-            if mbl:GetAttribute("gw_FadeShowing") then
-                petmover:ClearAllPoints()
-                petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 212)
-            else
-                petmover:ClearAllPoints()
-                petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 120)
+            if mbl and mbl:IsShown() then
+                if mbl:GetAttribute("gw_FadeShowing") then
+                    petmover:ClearAllPoints()
+                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 212)
+                else
+                    petmover:ClearAllPoints()
+                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 120)
+                end
             end
         end
     end
@@ -134,7 +136,13 @@ local onstate_Barlayout = [=[
         if newstate == "incombat" or newstate == "outcombat" then
             buff_action = "low"
             if mbr:IsShown() then
-                buff_action = "high"
+                if newstate == "outcombat" then
+                    if mbr:GetAttribute("gw_FadeShowing") then
+                        buff_action = "high"
+                    end
+                else
+                    buff_action = "high"
+                end
             end
         elseif newstate == "petb" then
             buff_action = "hide"
