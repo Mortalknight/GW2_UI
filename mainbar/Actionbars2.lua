@@ -630,6 +630,11 @@ local function updateMainBar()
     MainMenuBar:SetUserPlaced(true)
     MainMenuBar:SetMovable(0)
 
+    --test
+    MainMenuBar.ignoreFramePositionManager = true
+    local frameContainer = MainMenuBar.isBottomManagedFrame and UIParentBottomManagedFrameContainer or UIParentRightManagedFrameContainer
+    frameContainer:RemoveManagedFrame(MainMenuBar)
+
     hooksecurefunc(MainMenuBar, "SetScale", function(_, scale)
         GW.Debug("MainMenuBar scale changed to", scale)
         if scale and scale ~= tonumber(GW.GetSetting("HUD_SCALE")) then
@@ -758,6 +763,8 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 
     fmMultibar:SetScript("OnUpdate", nil)
     fmMultibar:SetSize(used_width, used_height)
+
+    multibar.ignoreFramePositionManager = true
 
     if barName == "MultiBarLeft" then
         RegisterMovableFrame(fmMultibar, OPTION_SHOW_ACTION_BAR:format(5), barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, nil, FlyoutDirection)
