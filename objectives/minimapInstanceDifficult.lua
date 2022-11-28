@@ -69,9 +69,9 @@ local function InstanceDifficultOnEvent(self)
     if not InstanceCheck() then
         self.text:SetText("")
     else
-        local text, isHeroic, isChallengeMode
-        local groupType, difficulty, difficultyName, _, _, _, _, instanceGroupSize = select(2, GetInstanceInfo())
-        isHeroic, isChallengeMode = select(3, GetDifficultyInfo(difficulty))
+        local text
+        local difficulty, difficultyName, _, _, _, _, instanceGroupSize = select(3, GetInstanceInfo())
+        local isChallengeMode = select(4, GetDifficultyInfo(difficulty))
         local r, g, b = GetColor(difficulty)
 
         if (difficulty >= 3 and difficulty <= 7) or difficulty == 9 then
