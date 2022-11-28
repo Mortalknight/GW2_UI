@@ -267,8 +267,9 @@ local function powerCombo(self, event, ...)
         else
             showPoint = false
         end
+        print(i, showPoint, pwrMax, pwr, self.showExtraPoint)
 
-        self.combopoints["runeTex" .. i]:SetShown((i < self.showExtraPoint or showPoint))
+        self.combopoints["runeTex" .. i]:SetShown((i < self.showExtraPoint or i <= pwrMax or showPoint))
         self.combopoints["combo" .. i]:SetShown(showPoint)
         self.combopoints.comboFlare:ClearAllPoints()
         self.combopoints.comboFlare:SetPoint("CENTER", self.combopoints["combo" .. i], "CENTER", 0, 0)
