@@ -231,6 +231,7 @@ local function powerCombo(self, event, ...)
     local pwr = UnitPower("player", Enum.PowerType.ComboPoints)
     local chargedPowerPoints = GetUnitChargedPowerPoints("player")
     local old_power = self.gwPower
+    local showPoint = false
     self.gwPower = pwr
 
     if pwr > 0 and not self:IsShown() and UnitExists("target") then
@@ -238,7 +239,9 @@ local function powerCombo(self, event, ...)
     end
 
     if pwrMax == 6 or pwrMax == 9 then
-		pwrMax = 7
+		self.showExtraPoint = 7
+    else
+        self.showExtraPoint = 0
 	end
 
     -- hide all not needed ones
@@ -247,7 +250,7 @@ local function powerCombo(self, event, ...)
         self.combopoints["combo" .. i]:Hide()
     end
 
-    for i = 1, pwrMax do
+    for i = 1, self.showExtraPoint do
         if pwr >= i then
             local isCharged = chargedPowerPoints and tContains(chargedPowerPoints, i)
             if isCharged then
@@ -255,12 +258,22 @@ local function powerCombo(self, event, ...)
             else
                 self.combopoints["combo" .. i]:SetTexCoord(0.5, 1, 0.5, 0)
             end
-            self.combopoints["runeTex" .. i]:Show()
-            self.combopoints["combo" .. i]:Show()
+
+            if i >= self.showExtraPoint and pwr >= self.showExtraPoint then -- only show the extra point if we have it
+                showPoint = true
+            elseif i >= self.showExtraPoint and pwr < self.showExtraPoint then
+                showPoint = false
+            else
+                showPoint = true
+            end
+
+
+            self.combopoints["runeTex" .. i]:SetShown(showPoint)
+            self.combopoints["combo" .. i]:SetShown(showPoint)
             self.combopoints.comboFlare:ClearAllPoints()
-            self.combopoints.comboFlare:SetPoint("CENTER", self.combopoints["combo" .. i],"CENTER", 0, 0)
+            self.combopoints.comboFlare:SetPoint("CENTER", self.combopoints["combo" .. i], "CENTER", 0, 0)
             if pwr > old_power then
-                self.combopoints.comboFlare:Show()
+                self.combopoints.comboFlare:SetShown(showPoint)
                 AddToAnimation(
                     "COMBOPOINTS_FLARE",
                     0,
@@ -273,10 +286,11 @@ local function powerCombo(self, event, ...)
                     end,
                     nil,
                     function()
-                        self.combopoints.comboFlare:Hide()
+                        self.combopoints.comboFlare:SetShown(not showPoint)
                     end
                 )
             end
+
         else
             self.combopoints["combo" .. i]:Hide()
         end
