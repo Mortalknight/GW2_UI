@@ -521,12 +521,16 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
 end
 GW.setActionButtonStyle = setActionButtonStyle
 
-local function main_OnEvent(self, event)
+local function main_OnEvent(_, event)
     if event == "PLAYER_EQUIPMENT_CHANGED" then
         actionBarEquipUpdate()
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
-        local forceCombat = (event == "PLAYER_REGEN_DISABLED")
-        fadeCheck(self, forceCombat)
+        local forceCombat = event == "PLAYER_REGEN_DISABLED"
+        fadeCheck(MainMenuBar, forceCombat)
+    elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
+        GW.Libs.LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.GetSetting("HUD_SCALE")) or 1)))
+        GW.Libs.LEMO:SaveOnly()
+        --GW.Libs.LEMO:ApplyChanges()
     end
 end
 AFP("main_OnEvent", main_OnEvent)
@@ -619,10 +623,11 @@ local function updateMainBar()
 
     -- event/update handlers
     AddUpdateCB(actionBar_OnUpdate, fmActionbar)
-    fmActionbar:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-    fmActionbar:RegisterEvent("PLAYER_REGEN_DISABLED")
-    fmActionbar:RegisterEvent("PLAYER_REGEN_ENABLED")
-    fmActionbar:SetScript("OnEvent", main_OnEvent)
+    local helperFrame = CreateFrame("Frame")
+    helperFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+    helperFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+    helperFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    helperFrame:HookScript("OnEvent", main_OnEvent)
 
     -- disable default main action bar behaviors
     --MainMenuBar:UnregisterAllEvents()
@@ -631,9 +636,10 @@ local function updateMainBar()
     MainMenuBar:SetMovable(1)
     MainMenuBar:SetUserPlaced(true)
     MainMenuBar:SetMovable(0)
-
-    --test
     MainMenuBar.ignoreFramePositionManager = true
+
+    -- add a reposition hook to spec switches
+    helperFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 
     -- set fader logic
     createFaderAnim(fmActionbar, true)
@@ -909,13 +915,16 @@ actionBarEquipUpdate = function()
         "MultiBarBottomLeftButton",
         "MultiBarRightButton",
         "MultiBarLeftButton",
-        "ActionButton"
+        "ActionButton",
+        "MultiBar5Button",
+        "MultiBar6Button",
+        "MultiBar7Button"
     }
     for b = 1, #bars do
         local barname = bars[b]
         for i = 1, 12 do
             local button = _G[barname .. i]
-            if button ~= nil then
+            if button then
                 if IsEquippedAction(button.action) then
                     local borname = barname .. i .. "Border"
                     if _G[borname] then
