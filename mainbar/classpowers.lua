@@ -241,7 +241,7 @@ local function powerCombo(self, event, ...)
     if pwrMax == 6 or pwrMax == 9 then
 		self.showExtraPoint = 7
     else
-        self.showExtraPoint = 0
+        self.showExtraPoint = pwrMax
 	end
 
     -- hide all not needed ones
@@ -251,29 +251,30 @@ local function powerCombo(self, event, ...)
     end
 
     for i = 1, self.showExtraPoint do
-        if pwr >= i then
-            local isCharged = chargedPowerPoints and tContains(chargedPowerPoints, i)
-            if isCharged then
-                self.combopoints["combo" .. i]:SetTexCoord(0, 0.5, 0.5, 1)
-            else
-                self.combopoints["combo" .. i]:SetTexCoord(0.5, 1, 0.5, 0)
-            end
+        local isCharged = chargedPowerPoints and tContains(chargedPowerPoints, i)
+        if isCharged then
+            self.combopoints["combo" .. i]:SetTexCoord(0, 0.5, 0.5, 1)
+        else
+            self.combopoints["combo" .. i]:SetTexCoord(0.5, 1, 0.5, 0)
+        end
 
-            if i >= self.showExtraPoint and pwr >= self.showExtraPoint then -- only show the extra point if we have it
-                showPoint = true
-            elseif i >= self.showExtraPoint and pwr < self.showExtraPoint then
-                showPoint = false
-            else
-                showPoint = true
-            end
+        if i >= self.showExtraPoint and pwr >= self.showExtraPoint then -- only show the extra point if we have it
+            showPoint = true
+        elseif i >= self.showExtraPoint and pwr < self.showExtraPoint then
+            showPoint = false
+        elseif i < self.showExtraPoint and pwr >= i then
+            showPoint = true
+        else
+            showPoint = false
+        end
 
-
-            self.combopoints["runeTex" .. i]:SetShown(showPoint)
-            self.combopoints["combo" .. i]:SetShown(showPoint)
-            self.combopoints.comboFlare:ClearAllPoints()
-            self.combopoints.comboFlare:SetPoint("CENTER", self.combopoints["combo" .. i], "CENTER", 0, 0)
-            if pwr > old_power then
-                self.combopoints.comboFlare:SetShown(showPoint)
+        self.combopoints["runeTex" .. i]:SetShown((i < self.showExtraPoint or showPoint))
+        self.combopoints["combo" .. i]:SetShown(showPoint)
+        self.combopoints.comboFlare:ClearAllPoints()
+        self.combopoints.comboFlare:SetPoint("CENTER", self.combopoints["combo" .. i], "CENTER", 0, 0)
+        if pwr > old_power then
+            self.combopoints.comboFlare:SetShown(showPoint)
+            if showPoint then
                 AddToAnimation(
                     "COMBOPOINTS_FLARE",
                     0,
@@ -286,13 +287,10 @@ local function powerCombo(self, event, ...)
                     end,
                     nil,
                     function()
-                        self.combopoints.comboFlare:SetShown(not showPoint)
+                        self.combopoints.comboFlare:Hide()
                     end
                 )
             end
-
-        else
-            self.combopoints["combo" .. i]:Hide()
         end
     end
 end
