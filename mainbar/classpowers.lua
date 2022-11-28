@@ -237,6 +237,10 @@ local function powerCombo(self, event, ...)
         self.combopoints:Show()
     end
 
+    if pwrMax == 6 or pwrMax == 9 then
+		pwrMax = 7
+	end
+
     -- hide all not needed ones
     for i = pwrMax + 1, 9 do
         self.combopoints["runeTex" .. i]:Hide()
