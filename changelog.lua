@@ -2,7 +2,7 @@ local _, GW = ...
 local v = GW.vernotes
 
 v("6.0.0", [=[
-    - Update for 10.0.0
+    - Update for 10.0.2
 ]=])
 
 v("5.31.7", [=[
