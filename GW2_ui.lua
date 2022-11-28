@@ -667,8 +667,6 @@ local function evPlayerLogin(self)
 
     if GetSetting("QUESTTRACKER_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
         GW.LoadQuestTracker()
-    else
-        GW.AdjustQuestTracker((GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true)), (GetSetting("MINIMAP_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Minimap", true)))
     end
 
     if GetSetting("TOOLTIPS_ENABLED") then

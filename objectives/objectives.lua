@@ -1148,33 +1148,7 @@ local function bonus_OnEnter(self)
 end
 AFP("bonus_OnEnter", bonus_OnEnter)
 
-local function AdjustQuestTracker(our_bars, our_minimap)
-    if (not our_minimap) then
-        return
-    end
 
-    local o = ObjectiveTrackerFrame
-    if (o:IsUserPlaced()) then
-        return
-    end
-
-    local m = MinimapCluster
-    local x
-
-    if (our_bars) then
-        x = 310
-    else
-        x = 220
-    end
-
-    o:ClearAllPoints()
-    o:SetMovable(true)
-    o:SetUserPlaced(true)
-    o:SetPoint("TOPRIGHT", m, "BOTTOMRIGHT", x, 0)
-    o:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", x, 130)
-    o:SetMovable(false)
-end
-GW.AdjustQuestTracker = AdjustQuestTracker
 
 local function LoadQuestTracker()
     -- disable the default tracker
