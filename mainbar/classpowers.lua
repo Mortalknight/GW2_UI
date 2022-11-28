@@ -267,7 +267,6 @@ local function powerCombo(self, event, ...)
         else
             showPoint = false
         end
-        print(i, showPoint, pwrMax, pwr, self.showExtraPoint)
 
         self.combopoints["runeTex" .. i]:SetShown((i < self.showExtraPoint or i <= pwrMax or showPoint))
         self.combopoints["combo" .. i]:SetShown(showPoint)
