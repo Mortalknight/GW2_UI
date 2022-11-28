@@ -152,7 +152,7 @@ local function AdjustMaxStanceButtons(self)
     end
 
     PositionsAndSize(self)
-    StyleStanceBarButtons(self)
+    StyleStanceBarButtons()
     UpdateKeybinds()
 
     if numButtons == 0 then

@@ -599,7 +599,7 @@ local function AddInspectInfo(self, unit, numTries, r, g, b)
     end
 end
 
-local function GameTooltip_OnTooltipSetUnit(self, data)
+local function GameTooltip_OnTooltipSetUnit(self)
     if self ~= GameTooltip or self:IsForbidden() then return end
 
     local _, unit = self:GetUnit()

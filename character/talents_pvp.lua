@@ -278,14 +278,15 @@ local function UpdatePvPTab(fmTab)
 
         btn.slotIndex = i
         local info = C_SpecializationInfo.GetPvpTalentSlotInfo(i)
+        if info then
+            setSlotButton(btn, info)
+            btn:SetPoint("TOPLEFT", slotGroup, "TOPLEFT", 55 + (50 * col), -37 + (-50 * row))
 
-        setSlotButton(btn, info)
-        btn:SetPoint("TOPLEFT", slotGroup, "TOPLEFT", 55 + (50 * col), -37 + (-50 * row))
-
-        for _, talentId in ipairs(info.availableTalentIDs) do
-            if not tContains(talentIds, talentId) then
-                talentIds[tidx] = talentId
-                tidx = tidx + 1
+            for _, talentId in ipairs(info.availableTalentIDs) do
+                if not tContains(talentIds, talentId) then
+                    talentIds[tidx] = talentId
+                    tidx = tidx + 1
+                end
             end
         end
     end

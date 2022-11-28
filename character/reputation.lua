@@ -722,19 +722,21 @@ local function CollectCategories()
                     end
                 elseif C_Reputation.IsMajorFaction(factionID) then
                     local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
-                    local standing = RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel
-                    cMax = cMax + #C_MajorFactions.GetRenownLevels(factionID)
-                    cCur = cCur + majorFactionData.renownLevel
-                    if not factionTbl then factionTbl = {} end
-                    for _, v in pairs(factionTbl) do
-                        if v.isFriend == false and v.standingText == standing then
-                            v.counter = v.counter + 1
-                            found = true
-                            break
+                    if majorFactionData then
+                        local standing = RENOWN_LEVEL_LABEL .. majorFactionData.renownLevel
+                        cMax = cMax + #C_MajorFactions.GetRenownLevels(factionID)
+                        cCur = cCur + majorFactionData.renownLevel
+                        if not factionTbl then factionTbl = {} end
+                        for _, v in pairs(factionTbl) do
+                            if v.isFriend == false and v.standingText == standing then
+                                v.counter = v.counter + 1
+                                found = true
+                                break
+                            end
                         end
-                    end
-                    if not found then
-                        tinsert(factionTbl, {standingId = majorFactionData.renownLevel, isFriend = false, standingText = standing, counter = 1})
+                        if not found then
+                            tinsert(factionTbl, {standingId = majorFactionData.renownLevel, isFriend = false, standingText = standing, counter = 1})
+                        end
                     end
                 else
                     local standing = getglobal("FACTION_STANDING_LABEL" .. standingId)
