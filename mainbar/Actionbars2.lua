@@ -162,7 +162,9 @@ local function FlyoutDirection(actionbar)
                 elseif point == "CENTER" or strfind(point, "BOTTOM") then
                     button:SetAttribute("flyoutDirection", "UP")
                 end
-                ActionButton_UpdateFlyout(button)
+                if button.UpdateFlyout then
+                    button:UpdateFlyout()
+                end
             end
         end
     end
@@ -632,15 +634,6 @@ local function updateMainBar()
 
     --test
     MainMenuBar.ignoreFramePositionManager = true
-    local frameContainer = MainMenuBar.isBottomManagedFrame and UIParentBottomManagedFrameContainer or UIParentRightManagedFrameContainer
-    frameContainer:RemoveManagedFrame(MainMenuBar)
-
-    hooksecurefunc(MainMenuBar, "SetScale", function(_, scale)
-        GW.Debug("MainMenuBar scale changed to", scale)
-        if scale and scale ~= tonumber(GW.GetSetting("HUD_SCALE")) then
-            --MainMenuBar:SetScale(tonumber(GW.GetSetting("HUD_SCALE")) or 1)
-        end
-    end)
 
     -- set fader logic
     createFaderAnim(fmActionbar, true)
@@ -716,7 +709,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
                 btn:SetParent(fmMultibar)
             end
             btn:SetScript("OnUpdate", nil) -- disable the default button update handler
-            btn.SlotBackground:Kill()
+            btn.SlotBackground:SetAlpha(0)
 
             btn:SetSize(settings.size, settings.size)
             updateHotkey(btn)
@@ -732,7 +725,6 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             btn:SetPoint("TOPLEFT", fmMultibar, "TOPLEFT", btn_padding, -btn_padding_y)
             btn.gwX = btn_padding
             btn.gwY = btn_padding_y
-            btn.noGrid = nil
             btn.changedColor = false
             hooksecurefunc(btn, "SetPoint", function(_, _, parent)
                 if parent ~= fmMultibar then
@@ -763,6 +755,14 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 
     fmMultibar:SetScript("OnUpdate", nil)
     fmMultibar:SetSize(used_width, used_height)
+
+    -- to keep actionbutton style after spec switch
+    fmMultibar:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    fmMultibar:SetScript("OnEvent", function()
+        for i = 1, 12 do
+            setActionButtonStyle(buttonName .. i, nil, hideActionBarBG)
+        end
+    end)
 
     multibar.ignoreFramePositionManager = true
 
@@ -815,6 +815,9 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     multibar:SetScript("OnShow", nil)
     multibar:SetScript("OnHide", nil)
     multibar:EnableMouse(false)
+    multibar:SetMovable(1)
+    multibar:SetUserPlaced(true)
+    multibar:SetMovable(0)
 
     -- flyout direction
     FlyoutDirection(fmMultibar)
@@ -1137,8 +1140,6 @@ local function LoadActionBars(lm)
     fmActionbar.gw_Bar6 = updateMultiBar(lm, "MultiBar6", "MultiBar6Button", MULTIBAR_6_ACTIONBAR_PAGE, nil)
     fmActionbar.gw_Bar7 = updateMultiBar(lm, "MultiBar7", "MultiBar7Button", MULTIBAR_7_ACTIONBAR_PAGE, nil)
 
-    --LEM:ApplyChanges()
-
     GW.RegisterScaleFrame(fmActionbar)
 
     -- hook existing multibars to track settings changes
@@ -1156,7 +1157,7 @@ local function LoadActionBars(lm)
     hotkeyEventTrackerFrame:SetScript("OnEvent", function()
         local fmMultiBar
         for y = 0, 7 do
-            if y == 0 then 
+            if y == 0 then
                 fmMultiBar = fmActionbar
             else
                 fmMultiBar = fmActionbar["gw_Bar" .. y]
