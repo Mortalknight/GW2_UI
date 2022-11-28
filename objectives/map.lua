@@ -629,6 +629,7 @@ local function LoadMinimap()
     C_Timer.After(0.2, hoverMiniMapOut)
 
     --difficult icon
+    --[[
     local difficulty = MinimapCluster.InstanceDifficulty
     local instance = difficulty.Instance
     local guild = difficulty.Guild
@@ -650,6 +651,8 @@ local function LoadMinimap()
         guild:ClearAllPoints()
         guild:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
     end
+    ]]
+    GW.SkinMinimapInstanceDifficult()
 
     QueueStatusButton:SetSize(26, 26)
     QueueStatusButtonIcon:Kill()

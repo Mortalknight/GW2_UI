@@ -189,6 +189,7 @@ objectives\scenarioWidgets\warfronts.lua
 objectives\scenarioWidgets\emberCourt.lua
 objectives\questtracker.xml
 objectives\minimapButtons.lua
+objectives\minimapInstanceDifficult.lua
 objectives\map.lua
 objectives\worldmap.lua
 objectives\objectives.lua
