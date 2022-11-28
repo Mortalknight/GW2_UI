@@ -34,7 +34,6 @@ local function SetPetActionButtonPositionAndStyle(self)
         local point, relativeFrame, relativePoint, x, y
 
         button:SetScale(1)
-        button:SetAlpha(1)
 
         if i == 1 then
             point, relativeFrame, relativePoint, x, y = "BOTTOMLEFT", self, "BOTTOMLEFT", 3, 30
@@ -72,7 +71,7 @@ local function SetPetActionButtonPositionAndStyle(self)
 
         if buttonShine then
             buttonShine:SetSize(button:GetSize())
-            for _, v in pairs(_G["PetActionButton" .. i .. "Shine"].sparkles) do
+            for _, v in pairs(buttonShine.sparkles) do
                 v:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
                 v:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
             end
@@ -115,11 +114,23 @@ local function UpdatePetBarButtonsHot()
 end
 GW.UpdatePetBarButtonsHot = UpdatePetBarButtonsHot
 
+local function UpdateAutoCast()
+    for i, button in ipairs(GwPlayerPetFrame.buttons) do
+        local _, _, _, _, _, autoCastEnabled = GetPetActionInfo(i)
+
+        if autoCastEnabled then
+            button.AutoCastable:Show()
+        else
+            button.AutoCastable:Hide()
+        end
+    end
+end
+
 local function UpdatePetActionBar(self, event, unit)
     if (event == "UNIT_FLAGS" and unit ~= "pet") or (event == "UNIT_PET" and unit ~= "player") then return end
 
     for i, button in ipairs(self.buttons) do
-        local name, texture, isToken, isActive, _, autoCastEnabled, spellID = GetPetActionInfo(i)
+        local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(i)
         local autoCast = button.AutoCastable
         button:SetAlpha(1)
         button.isToken = isToken
@@ -164,12 +175,6 @@ local function UpdatePetActionBar(self, event, unit)
             end
         end
 
-        if autoCastEnabled then
-            autoCast:Show()
-        else
-            autoCast:Hide()
-        end
-
         if not PetHasActionBar() and texture and name ~= "PET_ACTION_FOLLOW" then
             if PetActionButton_StopFlash then
                 PetActionButton_StopFlash(button)
@@ -181,6 +186,8 @@ local function UpdatePetActionBar(self, event, unit)
             button:SetChecked(false)
         end
     end
+
+    UpdateAutoCast()
 end
 
 local function UpdatePetCooldown(self)
@@ -287,12 +294,13 @@ local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
     playerPetFrame.buttons = {}
 
-    --PetActionBar:UnregisterEvent("PET_BAR_UPDATE")
-    --PetActionBar:UnregisterEvent("UNIT_PET")
-    --PetActionBar:UnregisterEvent("PET_UI_UPDATE")
-    --PetActionBar:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-
+    PetActionBar:UnregisterEvent("PET_BAR_UPDATE")
+    PetActionBar:UnregisterEvent("UNIT_PET")
+    PetActionBar:UnregisterEvent("PET_UI_UPDATE")
+    PetActionBar:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
     PetActionBar.ignoreFramePositionManager = true
+
+    hooksecurefunc(PetActionBar, "Update", UpdateAutoCast)
 
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
