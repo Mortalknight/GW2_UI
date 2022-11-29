@@ -486,6 +486,10 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         btn.HighlightTexture:SetSize(btnWidth, btnWidth)
     end
 
+    if btn.BottomDivider then
+        btn.BottomDivider:SetAlpha(0)
+    end
+
     if btn.IconMask then btn.IconMask:Hide() end
 
     btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")

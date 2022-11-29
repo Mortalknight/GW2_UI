@@ -93,8 +93,8 @@ function lib:SetFrameSetting(frame, setting, value)
   if restrictions then
     local min, max
     if restrictions.type == Enum.EditModeSettingDisplayType.Dropdown then
-      min = 1
-      max = #restrictions.options
+      min = 0
+      max = #restrictions.options - 1
     elseif restrictions.type == Enum.EditModeSettingDisplayType.Checkbox then
       min = 0
       max = 1
