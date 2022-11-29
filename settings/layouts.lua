@@ -191,7 +191,6 @@ local function loadLayoutDropDown(layoutwin)
         elseif a.name and b.name then
             return a.name < b.name
         end
-        return a < b
     end)
 
     for i = 1, #layoutwin.buttons do
