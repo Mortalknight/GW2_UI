@@ -344,7 +344,7 @@ local function showExtraOptions(self)
     GW.MoveHudScaleableFrame.headerString:SetText(self.frameName:GetText())
     GW.MoveHudScaleableFrame.desc:Hide()
     GW.MoveHudScaleableFrame.options:Show()
-    -- options 
+    -- options
     GW.MoveHudScaleableFrame.options.scaleSlider:SetShown(self.optionScaleable)
     GW.MoveHudScaleableFrame.options.heightSlider:SetShown(self.optionHeight)
     if self.optionScaleable then
@@ -496,16 +496,26 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         moveframe.savedPoint.relativePoint = relativePoint
         moveframe.savedPoint.xOfs = xOfs
         moveframe.savedPoint.yOfs = yOfs
+
+        SetSetting(settingsName, moveframe.savedPoint)
     end
 
     if moveframe.defaultPoint == nil then
-        local point, anchor, relativePoint, xOfs, yOfs = frame:GetPoint()
+        local point, _, relativePoint, xOfs, yOfs = frame:GetPoint()
         moveframe.defaultPoint = {}
         moveframe.defaultPoint.point = point
-        moveframe.savedPoint.anchor = anchor == UIParent and "UIParent" or anchor:GetName()
+        moveframe.savedPoint.anchor = UIParent
         moveframe.defaultPoint.relativePoint = relativePoint
         moveframe.defaultPoint.xOfs = xOfs
         moveframe.defaultPoint.yOfs = yOfs
+
+        -- add default point
+        GW.DEFAULTS[settingsName] = {}
+        GW.DEFAULTS[settingsName].point = point
+        GW.DEFAULTS[settingsName].relativePoint = relativePoint
+        GW.DEFAULTS[settingsName].anchor = UIParent
+        GW.DEFAULTS[settingsName].xOfs = xOfs
+        GW.DEFAULTS[settingsName].yOfs = yOfs
     end
 
     moveframe:ClearAllPoints()
