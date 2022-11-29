@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("6.0.1", [=[
+    - Fix lua error on login
+]=])
+
 v("6.0.0", [=[
     - Update for 10.0.2
 ]=])
