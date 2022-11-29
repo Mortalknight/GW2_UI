@@ -1,7 +1,13 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("6.0.2", [=[
+FIXES
+    - Set actionbar 1 to always have 12 buttons
+]=])
+
 v("6.0.1", [=[
+FIXES
     - Fix lua error on login
 ]=])
 

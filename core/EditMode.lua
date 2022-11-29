@@ -90,6 +90,9 @@ local function DisableBlizzardMovers()
         LEMO:SetFrameSetting(MultiBar7, Enum.EditModeActionBarSetting.IconSize, 5)
 
         -- Main Actionbar
+        LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.Orientation, Enum.ActionBarOrientation.Horizontal)
+        LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.NumRows, 11)
+        LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.NumIcons, 12)
         LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.GetSetting("HUD_SCALE")) or 1)))
 
         -- PossessActionBar
