@@ -4,7 +4,7 @@ local function LoadAddonListSkin()
     if not GW.GetSetting("ADDONLIST_SKIN_ENABLED") then return end
     GW.HandlePortraitFrame(AddonList)
 
-    GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {AddonList.ScrollBox})
+    GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon", {AddonList.ScrollBox})
 
     AddonList.CloseButton:SkinButton(true)
     AddonList.EnableAllButton:SkinButton(false, true)

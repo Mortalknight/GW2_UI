@@ -13,7 +13,7 @@ local function ApplyMacroOptionsSkin()
             break
         end
     end
-    GW.CreateFrameHeaderWithBody(MacroFrame, macroHeaderText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {MacroFrameInset})
+    GW.CreateFrameHeaderWithBody(MacroFrame, macroHeaderText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MacroFrameInset})
 
     MacroFrameBg:Hide()
 
