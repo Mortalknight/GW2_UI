@@ -15,9 +15,6 @@ local function ApplyOrderHallTalentFrameSkin()
 
         frame:StripTextures(false, true)
 
-        OrderHallTalentFrame.portrait:Show()
-        OrderHallTalentFrame.portrait:SetAlpha(1)
-
         if frame.buttonPool then
             for bu in frame.buttonPool:EnumerateActive() do
                 if bu.talent then

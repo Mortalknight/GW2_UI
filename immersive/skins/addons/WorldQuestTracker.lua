@@ -48,11 +48,11 @@ local function addWQTTrackerQuest(self)
 
     for i = 1, 25 do
         wqtFrame = _G["WorldQuestTracker_Tracker" .. i]
-        
+
         if wqtFrame and wqtFrame:IsShown() then
             counter = counter + 1
             foundEvent = true
-            
+
             objectiveBlock = createNewWQTObjectiveBlock(counter)
             objectiveBlock.Header:SetText(wqtFrame.Title:GetText())
             wqtFrame.Title:Hide()
@@ -62,13 +62,13 @@ local function addWQTTrackerQuest(self)
             wqtFrame:ClearAllPoints()
             wqtFrame:SetAllPoints()
             wqtFrame.Zone:SetPoint ("TOPLEFT", wqtFrame, "TOPLEFT", 10, -7)
-            wqtFrame.Icon:RemoveMaskTexture()
-            wqtFrame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            --wqtFrame.Icon:RemoveMaskTexture( wqtFrame.Icon:GetMaskTexture(0))
+            --wqtFrame.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             wqtFrame.Circle:Hide()
             wqtFrame.Shadow:Hide()
             wqtFrame.SuperTracked:SetTexture("Interface/AddOns/GW2_UI/textures/bag/stancebar-border")
             wqtFrame.SuperTracked:SetSize(20, 20)
-            
+
             objectiveDetailBlock:Show()
             objectiveDetailBlock.ObjectiveText:SetText("")
             objectiveDetailBlock.StatusBar:Hide()
