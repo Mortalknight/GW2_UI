@@ -529,11 +529,6 @@ local function setupMicroButtons(mbf)
     EJMicroButton:SetPoint("BOTTOMLEFT", LFDMicroButton, "BOTTOMRIGHT", 4, 0)
     hooksecurefunc(EJMicroButton, "EvaluateAlertVisibility", function(self)
         MicroButtonPulseStop(self) -- hide blizzard flash
-
-        local alertShown = MainMenuMicroButton_ShowAlert(self, FIRST_RUNEFORGE_LEGENDARY_POWER_TUTORIAL, LE_FRAME_TUTORIAL_FIRST_RUNEFORGE_LEGENDARY_POWER)
-        if alertShown then
-            GW.FrameFlash(self, 1, 0.3, 1, true)
-        end
     end)
 
     -- CollectionsMicroButton
@@ -541,15 +536,6 @@ local function setupMicroButtons(mbf)
     CollectionsMicroButton:SetPoint("BOTTOMLEFT", EJMicroButton, "BOTTOMRIGHT", 4, 0)
     hooksecurefunc(CollectionsMicroButton, "EvaluateAlertVisibility", function(self)
         MicroButtonPulseStop(self) -- hide blizzard flash
-
-        local numMountsNeedingFanfare = C_MountJournal.GetNumMountsNeedingFanfare()
-        local numPetsNeedingFanfare = C_PetJournal.GetNumPetsNeedingFanfare()
-        if numMountsNeedingFanfare > self.lastNumMountsNeedingFanfare or numPetsNeedingFanfare > self.lastNumPetsNeedingFanfare then
-            local alertShown = MainMenuMicroButton_ShowAlert(self, numMountsNeedingFanfare + numPetsNeedingFanfare > 1 and COLLECTION_UNOPENED_PLURAL or COLLECTION_UNOPENED_SINGULAR)
-            if alertShown then
-                GW.FrameFlash(self, 1, 0.3, 1, true)
-            end
-        end
     end)
 
     hooksecurefunc("MicroButtonPulse", function(self)
