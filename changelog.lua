@@ -4,6 +4,7 @@ local v = GW.vernotes
 v("6.0.2", [=[
 FIXES
     - Set actionbar 1 to always have 12 buttons
+    - Actionbar taint on shapshift forms
 ]=])
 
 v("6.0.1", [=[

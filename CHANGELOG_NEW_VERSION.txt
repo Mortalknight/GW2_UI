@@ -1,6 +1,7 @@
 6.0.2
 FIXES
     - Set actionbar 1 to always have 12 buttons
+    - Actionbar taint on shapshift forms
 
 6.0.1
 FIXES

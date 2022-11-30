@@ -494,18 +494,6 @@ local function setupMicroButtons(mbf)
     TalentMicroButton:RegisterEvent("TRAIT_NODE_CHANGED")
     hooksecurefunc(TalentMicroButton, "EvaluateAlertVisibility", function(self)
         MicroButtonPulseStop(self) -- hide blizzard flash
-
-        local alertText, alertPriority = self:HasTalentAlertToShow()
-	    local pvpAlertText, pvpAlertPriority = self:HasPvpTalentAlertToShow()
-
-        if not alertText or pvpAlertPriority < alertPriority then
-            -- pvpAlert is higher priority, use that instead
-            alertText = pvpAlertText;
-        end
-
-        if alertText and MainMenuMicroButton_ShowAlert(self, alertText) then
-            GW.FrameFlash(self, 1, 0.3, 1, true)
-        end
     end)
 
     -- AchievementMicroButton
