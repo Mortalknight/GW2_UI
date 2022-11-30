@@ -123,14 +123,16 @@ local function WidgetUISetup()
         GW.RegisterMovableFrame(UIWidgetPowerBarContainerFrame, "PowerBarContainer", "PowerBarContainer_pos", "VerticalActionBarDummy", {100, 20}, {"default", "scaleable"})
         GW.RegisterMovableFrame(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "BelowMinimapContainer_pos", "VerticalActionBarDummy", {150, 30}, {"default", "scaleable"})
 
-        UIWidgetTopCenterContainerFrame:ClearAllPoints()
-        UIWidgetTopCenterContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
+        C_Timer.After(0.5, function()
+            UIWidgetTopCenterContainerFrame:ClearAllPoints()
+            UIWidgetTopCenterContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
 
-        UIWidgetPowerBarContainerFrame:ClearAllPoints()
-        UIWidgetPowerBarContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
+            UIWidgetPowerBarContainerFrame:ClearAllPoints()
+            UIWidgetPowerBarContainerFrame:SetPoint("CENTER", UIWidgetTopCenterContainerFrame.gwMover, "CENTER")
 
-        UIWidgetBelowMinimapContainerFrame:ClearAllPoints()
-        UIWidgetBelowMinimapContainerFrame:SetPoint("CENTER", UIWidgetBelowMinimapContainerFrame.gwMover, "CENTER")
+            UIWidgetBelowMinimapContainerFrame:ClearAllPoints()
+            UIWidgetBelowMinimapContainerFrame:SetPoint("CENTER", UIWidgetBelowMinimapContainerFrame.gwMover, "CENTER")
+        end)
 
         hooksecurefunc(UIWidgetTopCenterContainerFrame, "SetPoint", TopCenterPosition)
         hooksecurefunc(UIWidgetPowerBarContainerFrame, "SetPoint", TopCenterPosition)
