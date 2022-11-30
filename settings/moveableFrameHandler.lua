@@ -321,7 +321,7 @@ local function mover_OnDragStop(self)
         self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
         SetSetting(settingsName, new_point)
 
-        self.gw_frame.isMoved = false
+        self.gw_frame.isMoved = true
         self.gw_frame:SetAttribute("isMoved", new_point.hasMoved)
 
         self:SetMovable(true)
