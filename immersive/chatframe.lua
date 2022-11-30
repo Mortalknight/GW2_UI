@@ -441,14 +441,14 @@ function _G.ItemRefTooltip:SetHyperlink(data, ...)
     elseif strsub(data, 1, 3) == "squ" then
         local guid = strsub(data, 5)
         if guid and guid ~= "" then
-            if GetSetting("USE_SOCIAL_WINDOW") then
-                if InCombatLockdown() then return end
-                GwSocialWindow:SetAttribute("windowpanelopen", "quicklist")
-            else
+            --if GetSetting("USE_SOCIAL_WINDOW") then --TODO iwth social frame
+            --    if InCombatLockdown() then return end
+            --    GwSocialWindow:SetAttribute("windowpanelopen", "quicklist")
+            --else
                 if not QuickJoinFrame:IsShown() then
                     ToggleQuickJoinPanel()
                 end
-            end
+            --end
             QuickJoinFrame:SelectGroup(guid)
             QuickJoinFrame:ScrollToGroup(guid)
         end

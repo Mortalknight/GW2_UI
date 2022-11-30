@@ -332,7 +332,8 @@ local function Create_Raid_Counter()
     if GwSocialWindow then
         raidCounterFrame:SetFrameRef("GwSocialWindow", GwSocialWindow)
     end
-    raidCounterFrame:SetAttribute("ourWindow", GetSetting("USE_SOCIAL_WINDOW"))
+    --raidCounterFrame:SetAttribute("ourWindow", GetSetting("USE_SOCIAL_WINDOW")) --TODO social frame
+    raidCounterFrame:SetAttribute("ourWindow", false)
     raidCounterFrame.func = function() ToggleRaidFrame() end
     raidCounterFrame:SetAttribute(
         "_onclick",
