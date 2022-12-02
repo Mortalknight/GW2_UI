@@ -6,17 +6,6 @@ local collectedInstanceImages = false
 local lockoutColorExtended = {r = 0.3, g = 1, b = 0.3}
 local lockoutColorNormal = {r = 0.8, g = 0.8, b = 0.8}
 
--- Torghast
-local TorghastInfo
-local TorghastWidgets = {
-    {nameID = 2925, levelID = 2930}, -- Fracture Chambers
-    {nameID = 2926, levelID = 2932}, -- Skoldus Hall
-    {nameID = 2924, levelID = 2934}, -- Soulforges
-    {nameID = 2927, levelID = 2936}, -- Coldheart Interstitia
-    {nameID = 2928, levelID = 2938}, -- Mort"regar
-    {nameID = 2929, levelID = 2940}, -- The Upper Reaches
-}
-
 local InstanceNameByID = {
     -- List of not matching instanceID from EJ_GetInstanceByIndex and from GetInstanceInfo
     [749] = C_Map.GetAreaInfo(3845) -- "The Eye" vs. "Tempest Keep"
@@ -178,32 +167,6 @@ local function Time_OnEnter(self)
         end
     end
 
-    -- Torghast
-    if not TorghastInfo then
-        TorghastInfo = C_AreaPoiInfo.GetAreaPOIInfo(1543, 6640)
-    end
-
-    if TorghastInfo and C_QuestLog.IsQuestFlaggedCompleted(60136) then
-        local torghastHeader = false
-        for _, value in pairs(TorghastWidgets) do
-            local nameInfo = C_UIWidgetManager.GetTextWithStateWidgetVisualizationInfo(value.nameID)
-            if nameInfo and nameInfo.shownState == 1 then
-                if not torghastHeader then
-                    if GameTooltip:NumLines() > 0 then
-                        GameTooltip:AddLine(" ")
-                    end
-                    GameTooltip:AddLine(TorghastInfo.name)
-                    torghastHeader = true
-                end
-                local nameText = gsub(nameInfo.text, "|n", "")
-                local levelInfo = C_UIWidgetManager.GetTextWithStateWidgetVisualizationInfo(value.levelID)
-                local levelText = AVAILABLE
-                if levelInfo and levelInfo.shownState == 1 then levelText = gsub(levelInfo.text, "|n", "") end
-                GameTooltip:AddDoubleLine(nameText, levelText)
-            end
-        end
-    end
-
     if GameTooltip:NumLines() > 0 then
         GameTooltip:AddLine(" ")
     end
@@ -242,7 +205,7 @@ local function Time_OnClick(_, button)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         ToggleTimeManager()
     else
-        _G.GameTimeFrame:Click()
+        GameTimeFrame:Click()
     end
 end
 GW.Time_OnClick = Time_OnClick
