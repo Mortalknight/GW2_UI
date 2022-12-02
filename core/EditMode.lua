@@ -167,7 +167,7 @@ local function OnEvent(self, event, arg1)
             end
 
             if self.needsUpdate then
-                editMode:UpdateLayoutInfo(C_EditMode.GetLayouts)
+                editMode:UpdateLayoutInfo(C_EditMode.GetLayouts())
 
                 self.needsUpdate = false
             end
