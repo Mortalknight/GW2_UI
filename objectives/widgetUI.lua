@@ -1,14 +1,5 @@
 local _, GW = ...
 
-local atlasColors = {
-    ["UI-Frame-Bar-Fill-Blue"]				= {0.2, 0.6, 1.0},
-    ["UI-Frame-Bar-Fill-Red"]				= {0.9, 0.2, 0.2},
-    ["UI-Frame-Bar-Fill-Yellow"]			= {1.0, 0.6, 0.0},
-    ["objectivewidget-bar-fill-left"]		= {0.2, 0.6, 1.0},
-    ["objectivewidget-bar-fill-right"]		= {0.9, 0.2, 0.2},
-    ["EmberCourtScenario-Tracker-barfill"]	= {0.9, 0.2, 0.2},
-}
-
 local function EmberCourtCaptureBar() end
 
 local function PVPCaptureBar(self)
@@ -51,14 +42,6 @@ local ignoreWidgetSetID = {
     [283] = true -- Cosmic Energy
 }
 
-local function UpdateBarTexture(bar, atlas)
-    if atlasColors[atlas] then
-        bar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
-        bar:SetStatusBarColor(unpack(atlasColors[atlas]))
-    end
-end
-
-
 local function UIWidgetTemplateStatusBar(self)
     local forbidden = self:IsForbidden()
     local bar = self.Bar
@@ -68,11 +51,6 @@ local function UIWidgetTemplateStatusBar(self)
         return
     elseif forbidden or ignoreWidgetSetID[self.widgetSetID] or not bar then
         return
-    end
-
-    if bar.GetStatusBarAtlas then
-        UpdateBarTexture(bar, bar:GetStatusBarAtlas())
-        hooksecurefunc(bar, "SetStatusBarAtlas", UpdateBarTexture)
     end
 
     if not bar.backdrop then
