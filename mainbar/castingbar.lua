@@ -69,17 +69,17 @@ end
 local function AddStages(self, parent, barWidth)
     local sumDuration = 0
     local castBarLeft = self:GetLeft()
-	local castBarRight = self:GetRight()
-	local castBarWidth = castBarRight - castBarLeft
+    local castBarRight = self:GetRight()
+    local castBarWidth = castBarRight - castBarLeft
     self.StagePoints = {}
 
     local getStageDuration = function(stage)
-		if stage == self.numStages then
-			return GetUnitEmpowerHoldAtMaxTime(self.unit)
-		else
-			return GetUnitEmpowerStageDuration(self.unit, stage - 1)
-		end
-	end
+        if stage == self.numStages then
+            return GetUnitEmpowerHoldAtMaxTime(self.unit)
+        else
+            return GetUnitEmpowerStageDuration(self.unit, stage - 1)
+        end
+    end
 
     for i = 1, self.numStages - 1, 1 do
         local duration = getStageDuration(i)
@@ -106,7 +106,7 @@ local function ClearStages(self)
     end
 
     self.numStages = 0
-	table.wipe(self.StagePoints)
+    table.wipe(self.StagePoints)
 end
 GW.ClearStages = ClearStages
 
@@ -125,11 +125,10 @@ local function barReset(self)
 end
 GW.AddForProfiling("castingbar", "barReset", barReset)
 
-local function AddFinishAnimation(self, isStopped)
+local function AddFinishAnimation(self, isStopped, isChanneling)
     local highlightColor = isStopped and CASTINGBAR_TEXTURES.RED.HIGHLIGHT or self.bar.barHighLightCoords
     self.animating = true
     self.highlight:SetTexCoord(highlightColor.L, highlightColor.R, highlightColor.T, highlightColor.B)
-    self.highlight:Show()
     self.highlight:SetWidth(176)
     self.spark:Hide()
 
@@ -138,28 +137,66 @@ local function AddFinishAnimation(self, isStopped)
         self.bar:SetTexCoord(CASTINGBAR_TEXTURES.RED.NORMAL.L, CASTINGBAR_TEXTURES.RED.NORMAL.R, CASTINGBAR_TEXTURES.RED.NORMAL.T, CASTINGBAR_TEXTURES.RED.NORMAL.B)
     end
 
-    AddToAnimation(
-        self.animationName .. "Complete",
-        0,
-        1,
-        GetTime(),
-        isStopped and 0.5 or 0.2,
-        function()
-            self.highlight:SetVertexColor(1, 1, 1, lerp(1, 0.7, animations[self.animationName .. "Complete"].progress))
-        end,
-        nil,
-        function()
-            self.animating = false
-            if not self.isCasting then
-                if self:GetAlpha() > 0 then
-                    UIFrameFadeOut(self, 0.2, 1, 0)
-                    self.highlight:Hide()
-                    self.isCasting = false
-                    self.isChanneling = false
+    if isChanneling then
+        self.animating = false
+        --if not self.isCasting and not self.isChanneling then
+            if self:GetAlpha() > 0 then
+                --UIFrameFadeOut(self, 0.2, 1, 0)
+
+                AddToAnimation(
+                    self.animationName .. "FadeOut",
+                    1,
+                    0,
+                    GetTime(),
+                    0.2,
+                    function()
+                        local p = math.min(1, math.max(0, GW.animations[self.animationName .. "FadeOut"].progress))
+                        self:SetAlpha(p)
+                    end
+                )
+                self.highlight:Hide()
+                self.isCasting = false
+                self.isChanneling = false
+                self.reverseChanneling = false
+            end
+        --end
+    else
+        self.highlight:Show()
+        AddToAnimation(
+            self.animationName .. "Complete",
+            0,
+            1,
+            GetTime(),
+            isStopped and 0.5 or 0.2,
+            function()
+                self.highlight:SetVertexColor(1, 1, 1, lerp(1, 0.7, animations[self.animationName .. "Complete"].progress))
+            end,
+            nil,
+            function()
+                self.animating = false
+                if not self.isCasting and not self.isChanneling then
+                    if self:GetAlpha() > 0 then
+                        --UIFrameFadeOut(self, 0.2, 1, 0)
+                        AddToAnimation(
+                            self.animationName .. "FadeOut",
+                            1,
+                            0,
+                            GetTime(),
+                            0.2,
+                            function()
+                                local p = math.min(1, math.max(0, GW.animations[self.animationName .. "FadeOut"].progress))
+                                self:SetAlpha(p)
+                            end
+                        )
+                        self.highlight:Hide()
+                        self.isCasting = false
+                        self.isChanneling = false
+                        self.reverseChanneling = false
+                    end
                 end
             end
-        end
-    )
+        )
+    end
 end
 
 local function castBar_OnEvent(self, event, unitID, ...)
@@ -181,6 +218,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
     if unitID ~= self.unit or not self.showCastbar then
         return
     end
+
 
     if IsIn(event, "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_DELAYED") then
         if IsIn(event, "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_EMPOWER_UPDATE") then
@@ -238,7 +276,6 @@ local function castBar_OnEvent(self, event, unitID, ...)
 
         if self.reverseChanneling then
             AddStages(self)
-
         else
             ClearStages(self)
         end
@@ -285,14 +322,17 @@ local function castBar_OnEvent(self, event, unitID, ...)
             "noease"
         )
 
-        if self:GetAlpha() < 1 then
+        if StopAnimation(self.animationName .. "FadeOut") then
+            self:SetAlpha(1)
+        elseif self:GetAlpha() < 1 then
             UIFrameFadeIn(self, 0.1, 0, 1)
         end
     elseif IsIn(event, "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_EMPOWER_STOP") then
-        if (event == "UNIT_SPELLCAST_STOP" and self.castID == select(1, ...)) or 
+        if (event == "UNIT_SPELLCAST_STOP" and self.castID == select(1, ...)) or
             ((event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "UNIT_SPELLCAST_EMPOWER_STOP") and (self.isChanneling or self.reverseChanneling)) then
             if self.animating == nil or self.animating == false then
-                UIFrameFadeOut(self, 0.2, 1, 0)
+                --UIFrameFadeOut(self, 0.2, 1, 0)
+                AddFinishAnimation(self, false, true)
             end
             barReset(self)
             self.isCasting = false

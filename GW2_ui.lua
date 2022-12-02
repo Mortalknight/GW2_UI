@@ -249,7 +249,10 @@ GW.SetDeadIcon = SetDeadIcon
 local function StopAnimation(name)
     if animations[name] then
         animations[name].completed = true
+        return true
     end
+
+    return false
 end
 GW.StopAnimation = StopAnimation
 
