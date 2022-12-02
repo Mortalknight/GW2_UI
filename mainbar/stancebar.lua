@@ -210,6 +210,8 @@ end
 local function CreateStanceBar()
     local StanceButtonHolder = CreateStanceBarButtonHolder()
 
+    StanceBar:KillEditMode()
+
     StanceButtonHolder:SetFrameRef("GwStanceBarContainer", StanceButtonHolder.container)
     StanceButtonHolder:SetAttribute(
         "_onclick",

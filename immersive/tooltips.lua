@@ -1038,6 +1038,8 @@ local function LoadTooltips()
 
     hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
 
+    GameTooltipDefaultContainer:KillEditMode()
+
     if GetSetting("ADVANCED_TOOLTIP") then
         GameTooltip.StatusBar = GameTooltipStatusBar
         GameTooltip.StatusBar:SetScript("OnValueChanged", nil)

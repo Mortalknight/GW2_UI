@@ -436,6 +436,8 @@ local function LoadMinimap()
     MinimapCluster:SetScale(1)
     MinimapCluster:SetPoint("TOPRIGHT", clusterHolder, 0, 1)
 
+    MinimapCluster:KillEditMode()
+
     local mcWidth = MinimapCluster:GetWidth()
     local height, width = 20, (mcWidth - 30)
     clusterBackdrop:ClearAllPoints()

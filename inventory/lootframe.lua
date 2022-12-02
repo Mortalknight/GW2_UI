@@ -83,6 +83,8 @@ local function LoadLootFrameSkin()
         end)
     end
 
+    LootFrame:KillEditMode()
+
     LootFrame.ClosePanelButton:ClearAllPoints()
     LootFrame.ClosePanelButton:SetPoint("RIGHT", GwLootFrameTitle.BGRIGHT, "RIGHT", -5, -2)
     LootFrame.ClosePanelButton:SetSize(20,20)

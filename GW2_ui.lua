@@ -531,7 +531,8 @@ local function evPlayerLogin(self)
         return
     end
 
-    GW.DisableBlizzardMovers()
+    --GW.DisableBlizzardMovers()
+    GW.HandleBlizzarEditMode()
     GW.DisableBlizzardFrames()
 
     loaded = true

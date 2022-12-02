@@ -77,6 +77,8 @@ local function ExtraAB_BossAB_Setup()
 
     -- try to shutdown the container movement and taints
     ExtraAbilityContainer.SetSize = GW.NoOp
+    --ExtraAbilityContainer.SetPoint = GW.NoOp
+    ExtraAbilityContainer:KillEditMode()
 
     Reparent()
 

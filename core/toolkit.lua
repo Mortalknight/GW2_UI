@@ -154,17 +154,6 @@ local function Kill(object)
     object:Hide()
 end
 
-local function HandleBlizzardRegions(frame)
-    local name = frame.GetName and frame:GetName()
-    for _, area in pairs(BlizzardRegions) do
-        local object = (name and _G[name .. area]) or frame[area]
-        if object then
-            object:SetAlpha(0)
-        end
-    end
-end
-GW.HandleBlizzardRegions = HandleBlizzardRegions
-
 local function AddHover(self)
     if not self.gwHover then
         self.gwHover = self:CreateTexture(nil, "ARTWORK", nil, 7)
@@ -631,6 +620,11 @@ local function StyleButton(button, noHover, noPushed, noChecked)
     end
 end
 
+local function KillEditMode(object)
+    object.HighlightSystem = GW.NoOp
+    object.ClearHighlight = GW.NoOp
+end
+
 local function addapi(object)
     local mt = getmetatable(object).__index
     if not object.Kill then mt.Kill = Kill end
@@ -648,6 +642,7 @@ local function addapi(object)
     if not object.SetOutside then mt.SetOutside = SetOutside end
     if not object.SetInside then mt.SetInside = SetInside end
     if not object.StyleButton then mt.StyleButton = StyleButton end
+    if not object.KillEditMode then mt.KillEditMode = KillEditMode end
 end
 
 local handled = {Frame = true}
