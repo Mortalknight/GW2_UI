@@ -16,16 +16,16 @@ local function getObjectiveBlock(self, index)
 end
 GW.AddForProfiling("bonusObjective", "getObjectiveBlock", getObjectiveBlock)
 
-local function createNewWQTObjectiveBlock(blockIndex)
-    if _G["GwWQTBlock" .. blockIndex] ~= nil then
+local function createNewWQTObjectiveBlock(blockIndex, parent)
+    if _G["GwWQTBlock" .. blockIndex] then
         return _G["GwWQTBlock" .. blockIndex]
     end
 
-    local newBlock = GW.CreateTrackerObject("GwWQTBlock" .. blockIndex, GwQuesttrackerContainerWQT)
-    newBlock:SetParent(GwQuesttrackerContainerWQT)
+    local newBlock = GW.CreateTrackerObject("GwWQTBlock" .. blockIndex, parent)
+    newBlock:SetParent(parent)
 
     if blockIndex == 1 then
-        newBlock:SetPoint("TOPRIGHT", GwQuesttrackerContainerWQT, "TOPRIGHT", 0, -20)
+        newBlock:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, -20)
     else
         newBlock:SetPoint("TOPRIGHT", _G["GwWQTBlock" .. (blockIndex - 1)], "BOTTOMRIGHT", 0, 0)
     end
@@ -53,7 +53,7 @@ local function addWQTTrackerQuest(self)
             counter = counter + 1
             foundEvent = true
 
-            objectiveBlock = createNewWQTObjectiveBlock(counter)
+            objectiveBlock = createNewWQTObjectiveBlock(counter, self)
             objectiveBlock.Header:SetText(wqtFrame.Title:GetText())
             wqtFrame.Title:Hide()
             objectiveDetailBlock = getObjectiveBlock(objectiveBlock, 1)
@@ -85,13 +85,13 @@ local function addWQTTrackerQuest(self)
         end
     end
 
-    if _G.WorldQuestTrackerQuestsHeader then
-        _G.WorldQuestTrackerQuestsHeader:Hide()
-        _G.WorldQuestTrackerQuestsHeaderMinimizeButton:Hide()
+    if WorldQuestTrackerQuestsHeader then
+        WorldQuestTrackerQuestsHeader:Hide()
+        WorldQuestTrackerQuestsHeaderMinimizeButton:Hide()
     end
 
     self.header:SetShown(counter > 0 or foundEvent)
-    GwQuesttrackerContainerWQT:SetHeight(height)
+    self:SetHeight(height)
     GW.QuestTrackerLayoutChanged()
 end
 
