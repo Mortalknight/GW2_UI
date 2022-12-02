@@ -426,7 +426,6 @@ local function setupMicroButtons(mbf)
         cref:RegisterEvent("MODIFIER_STATE_CHANGED")
     else
         cref = CharacterMicroButton
-        --MicroButtonPortrait:Hide()
     end
     cref.GwSetAnchorPoint = function(self) cref_SetAnchorPoint(self, mbf) end
     cref:GwSetAnchorPoint()
