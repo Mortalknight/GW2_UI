@@ -2,6 +2,29 @@ local _, GW = ...
 
 local T = {}
 
+--dragonflight
+T[2507] = "DRAGONFLIGHT/dragonscale"
+T[2503] = "DRAGONFLIGHT/maruuk"
+T[2511] = "DRAGONFLIGHT/tuskar"
+T[2510] = "DRAGONFLIGHT/VALDRAKK"
+--[[
+Dragonscale Expedition 2507
+Iskaara Tuskarr 2511
+Maruuk Centaur 2503
+Valdrakken Accord 2510
+Artisan's Consortium - Dragon Isles Branch 2544
+Cobalt Assembly 2550
+Sabellian 2518
+Wrathion 2517
+Dragonscale Expedition 2507
+Iskaara Tuskarr 2511
+Maruuk Centaur 2503
+Valdrakken Accord 2510
+Artisan's Consortium - Dragon Isles Branch 2544
+Cobalt Assembly 2550
+Sabellian 2518
+Wrathion 2517
+]]--
 -- SL
 --T[2422] = "SL/TheWildHunt"
 --T[2439] = "SL/Avowed"
