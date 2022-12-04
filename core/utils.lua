@@ -615,12 +615,6 @@ local function setItemLevel(button, quality, itemlink, slot)
 end
 GW.setItemLevel = setItemLevel
 
-local function IsDispellableByMe(debuffType)
-    local dispel = GW.DispelClasses[GW.myclass]
-    return dispel and dispel[debuffType]
-end
-GW.IsDispellableByMe = IsDispellableByMe
-
 local function GetScreenQuadrant(frame)
     local x, y = frame:GetCenter()
     local screenWidth = GetScreenWidth()

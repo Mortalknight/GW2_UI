@@ -11,4 +11,5 @@
     <Script file="LibCustomGlow\LibCustomGlow-1.0.lua"/>
     <Script file="LibChatAnims\LibChatAnims.lua"/>
     <Script file="LibEditMode\LibEditModeOverride.lua"/>
+    <Script file="LibDispel\LibDispel.lua"/>
 </Ui>

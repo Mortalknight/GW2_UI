@@ -277,11 +277,11 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 saveAuras[frame.auraType][#saveAuras[frame.auraType] + 1] = list[index].name
             elseif UnitIsFriend(self.unit, "player") and not isBuff then
                 -- debuffs
-                if GW.ImportendRaidDebuff[list[index].spellID] and list[index].dispelType and GW.IsDispellableByMe(list[index].dispelType) then
+                if GW.ImportendRaidDebuff[list[index].spellID] and list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
                     size = size * debuffScale
                 elseif GW.ImportendRaidDebuff[list[index].spellID] then
                     size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
-                elseif list[index].dispelType and GW.IsDispellableByMe(list[index].dispelType) then
+                elseif list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
                     size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
                 end
             end

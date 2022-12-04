@@ -1,14 +1,5 @@
 local _, GW = ...
 
-GW.DispelClasses = {
-    PRIEST = {Magic = true, Disease = true},
-    SHAMAN = {Curse = true},
-    PALADIN = {Poison = true, Disease = true},
-    DRUID = {Curse = true, Poison = true},
-    MONK = {Magic = false, Disease = true, Poison = true },
-    MAGE = {Curse = true }
-}
-
 GW.PowerBarColorCustom = {
     MANA = {r = 37 / 255, g = 133 / 255, b = 240 / 255},
     RAGE = {r = 240 / 255, g = 66 / 255, b = 37 / 255},

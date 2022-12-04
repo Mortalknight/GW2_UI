@@ -553,7 +553,7 @@ local function GridUpdateDebuffs(self, profile)
 
         if debuffName and y <= 0 then
             shouldDisplay = false
-            isDispellable = debuffType and GW.IsDispellableByMe(debuffType) or false
+            isDispellable = debuffType and GW.Libs.Dispel:IsDispellableByMe(debuffType) or false
             isImportant = (showImportendInstanceDebuffs and GW.ImportendRaidDebuff[spellId]) or false
 
             if showDebuffs then
