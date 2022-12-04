@@ -20,13 +20,13 @@ local function LoadVehicleButton()
     end
 
     if GW.GetSetting("ACTIONBARS_ENABLED") then
-        --VehicleSeatIndicator_UnloadTextures = function()
-        --    VehicleSeatIndicatorBackgroundTexture:SetTexture()
-        --    VehicleSeatIndicator:Hide()
-        --    VehicleSeatIndicator.currSkin = nil
+        VehicleSeatIndicator_UnloadTextures = function()
+            VehicleSeatIndicatorBackgroundTexture:SetTexture()
+            VehicleSeatIndicator:Hide()
+            VehicleSeatIndicator.currSkin = nil
 
-        --    DurabilityFrame:SetAlerts()
-       --end
+            DurabilityFrame:SetAlerts()
+       end
     end
 end
 GW.LoadVehicleButton = LoadVehicleButton
