@@ -1189,12 +1189,5 @@ local function LoadActionBars(lm)
             end
         end
     end)
-
-    if not IsFrameModified("ExtraActionBarFrame") then
-        --GW.Debug("moving ExtraActionBarFrame")
-        --ExtraActionBarFrame:ClearAllPoints()
-        --ExtraActionBarFrame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 130)
-        --ExtraActionBarFrame:SetFrameStrata("MEDIUM")
-    end
 end
 GW.LoadActionBars = LoadActionBars

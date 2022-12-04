@@ -78,6 +78,7 @@ local function ExtraAB_BossAB_Setup()
     -- try to shutdown the container movement and taints
     ExtraAbilityContainer.SetSize = GW.NoOp
     --ExtraAbilityContainer.SetPoint = GW.NoOp
+    ExtraAbilityContainer.ignoreFramePositionManager = true
     ExtraAbilityContainer:KillEditMode()
 
     Reparent()
@@ -87,11 +88,9 @@ local function ExtraAB_BossAB_Setup()
 
     ZoneAbilityFrame:ClearAllPoints()
     ZoneAbilityFrame:SetAllPoints(ZoneAbilityHolder.gwMover)
-    ZoneAbilityFrame.ignoreInLayout = true
 
     ExtraActionBarFrame:ClearAllPoints()
     ExtraActionBarFrame:SetAllPoints(ExtraActionBarHolder.gwMover)
-    ExtraActionBarFrame.ignoreInLayout = true
 
     hooksecurefunc(ZoneAbilityFrame.SpellButtonContainer, "SetSize", ExtraButtons_ZoneScale)
     hooksecurefunc(ZoneAbilityFrame, "UpdateDisplayedZoneAbilities", function(frame)
