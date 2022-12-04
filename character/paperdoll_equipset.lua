@@ -75,11 +75,10 @@ local function GearSetButton_Edit(self)
     GearManagerPopupFrame:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
 
     GearManagerPopupFrame.mode = IconSelectorPopupFrameModes.Edit
-    GearManagerPopupFrame:Show()
     PaperDollFrame.EquipmentManagerPane.selectedSetID = self.setID
     GearManagerPopupFrame.setID = self.setID
     GearManagerPopupFrame.origName = self.setName
-    GearManagerPopupFrameMixin.OnShow(GearManagerPopupFrame)
+    GearManagerPopupFrame:Show()
 end
 
 local function DropDownOutfit_OnLoad(self)
@@ -321,9 +320,9 @@ local function LoadPDEquipset(fmMenu)
         GearManagerPopupFrame:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
 
         GearManagerPopupFrame.mode = IconSelectorPopupFrameModes.New
-        GearManagerPopupFrame:Show()
         PaperDollFrame.EquipmentManagerPane.selectedSetID = nil
-        GearManagerPopupFrameMixin.OnShow(GearManagerPopupFrame)
+        GearManagerPopupFrame:Show()
+        PaperDollEquipmentManagerPane_Update(true)
 
         -- Ignore shirt and tabard by default
 		PaperDollFrame_IgnoreSlot(4)
