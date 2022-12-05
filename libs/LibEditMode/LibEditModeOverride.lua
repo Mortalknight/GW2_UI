@@ -4,7 +4,7 @@
 
 -- Copyright 2022 plusmouse. Licensed under terms found in LICENSE file.
 
-local lib = LibStub:NewLibrary("LibEditModeOverride-1.0", 7)
+local lib = LibStub:NewLibrary("LibEditModeOverride-1.0", 8)
 
 local pointGetter = CreateFrame("Frame", nil, UIParent)
 
@@ -179,6 +179,11 @@ end
 function lib:ApplyChanges()
   assert(not InCombatLockdown(), "Cannot move frames in combat")
   lib:SaveOnly()
+
+  if not issecurevariable(DropDownList1, "numButtons") then
+    ShowUIPanel(AddonList)
+    HideUIPanel(AddonList)
+  end
 
   ShowUIPanel(EditModeManagerFrame)
   HideUIPanel(EditModeManagerFrame)
