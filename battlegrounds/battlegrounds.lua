@@ -112,7 +112,7 @@ local function setIcon(self, icon)
         return
     end
 
-    local x1, x2, y1, y2 = GetPOITextureCoords(icon)
+    local x1, x2, y1, y2 = C_Minimap.GetPOITextureCoords(icon)
     self.icon:SetTexture("Interface/Minimap/POIIcons")
     self.icon:SetTexCoord(x1, x2, y1, y2)
     self.icon:SetSize(20, 20)
@@ -136,7 +136,7 @@ local function PointsAndPOI_onEvent(self, event, ...)
     if event == "UPDATE_UI_WIDGET" then
         getPoints(...)
     end
-    
+
     if pointsAlliance == nil or pointsHorde == nil then
         return
     end
