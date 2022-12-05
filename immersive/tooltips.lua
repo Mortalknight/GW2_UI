@@ -1076,15 +1076,9 @@ local function LoadTooltips()
             end
         end)
 
-        if select(4, GetBuildInfo()) >= 100002 then
-            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetSpell)
-            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
-            TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
-        else
-            GameTooltip:HookScript("OnTooltipSetSpell", GameTooltip_OnTooltipSetSpell)
-            GameTooltip:HookScript("OnTooltipSetItem", GameTooltip_OnTooltipSetItem)
-            GameTooltip:HookScript("OnTooltipSetUnit", GameTooltip_OnTooltipSetUnit)
-        end
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetItem)
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
 
         GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
         GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)
