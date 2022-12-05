@@ -153,7 +153,7 @@ eventFrame.hideFrames = hideFrames
 local function OnEvent(self, event, arg1)
     if event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
         local editMode = EditModeManagerFrame
-        local combatLeave = event == 'PLAYER_REGEN_ENABLED'
+        local combatLeave = event == "PLAYER_REGEN_ENABLED"
         GameMenuButtonEditMode:SetEnabled(combatLeave)
 
         if combatLeave then
@@ -166,20 +166,21 @@ local function OnEvent(self, event, arg1)
                 end
             end
 
-            if self.needsUpdate then
-                editMode:UpdateLayoutInfo(C_EditMode.GetLayouts())
+            -- this cause a taint
+            --if self.needsUpdate then
+            --    editMode:UpdateLayoutInfo(C_EditMode.GetLayouts())
 
-                self.needsUpdate = false
-            end
+            --    self.needsUpdate = false
+            --end
 
-            editMode:RegisterEvent('EDIT_MODE_LAYOUTS_UPDATED')
-            editMode:RegisterUnitEvent('PLAYER_SPECIALIZATION_CHANGED', 'player')
+            editMode:RegisterEvent("EDIT_MODE_LAYOUTS_UPDATED")
+            editMode:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
         else
-            editMode:UnregisterEvent('EDIT_MODE_LAYOUTS_UPDATED')
-            editMode:UnregisterEvent('PLAYER_SPECIALIZATION_CHANGED')
+            editMode:UnregisterEvent("EDIT_MODE_LAYOUTS_UPDATED")
+            editMode:UnregisterEvent("PLAYER_SPECIALIZATION_CHANGED")
         end
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" or event == "EDIT_MODE_LAYOUTS_UPDATED" then
-        local allow = event ~= 'PLAYER_SPECIALIZATION_CHANGED' or arg1 == 'player'
+        local allow = event ~= "PLAYER_SPECIALIZATION_CHANGED" or arg1 == "player"
         if allow and not EditModeManagerFrame:IsEventRegistered(event) then
             self.needsUpdate = true
         end
@@ -266,17 +267,17 @@ local function HandleBlizzarEditMode()
     end
 
     local dialog = EditModeUnsavedChangesDialog
-    dialog.ProceedButton:SetScript('OnClick', OnProceed)
-    dialog.SaveAndProceedButton:SetScript('OnClick', OnSaveProceed)
+    dialog.ProceedButton:SetScript("OnClick", OnProceed)
+    dialog.SaveAndProceedButton:SetScript("OnClick", OnSaveProceed)
 
     EditModeManagerFrame.onCloseCallback = OnClose
 
-    hooksecurefunc(GameMenuButtonEditMode, 'SetEnabled', SetEnabled)
+    hooksecurefunc(GameMenuButtonEditMode, "SetEnabled", SetEnabled)
 
     eventFrame:RegisterEvent("EDIT_MODE_LAYOUTS_UPDATED")
     eventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-    eventFrame:RegisterEvent('PLAYER_REGEN_ENABLED')
-    eventFrame:RegisterEvent('PLAYER_REGEN_DISABLED')
+    eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     eventFrame:SetScript("OnEvent", OnEvent)
 
     -- account settings will be tainted
@@ -292,7 +293,7 @@ local function HandleBlizzarEditMode()
     end
     if CheckActionBar() then
         mixin.RefreshVehicleLeaveButton = GW.NoOp
-        --mixin.RefreshActionBarShown = GW.NoOp --TEST
+        mixin.RefreshActionBarShown = GW.NoOp --TEST
     end
 end
 GW.HandleBlizzarEditMode = HandleBlizzarEditMode
