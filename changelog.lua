@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("6.0.4", [=[
+FIXES
+    - Fix some more taint issues
+]=])
+
 v("6.0.3", [=[
 FIXES
     - Wrong GW2 moverframe value
