@@ -54,27 +54,27 @@ local function GuildEmblem()
     if guild then
         char.guildTexCoord = {guild.Emblem:GetTexCoord()}
     else
-        char.guildTexCoord = false
+        char.guildTexCoord = nil
     end
-    if char.guildTexCoord and IsInGuild() then
+    if char.guildTexCoord ~= nil and IsInGuild() then
         return "|TInterface\\GuildFrame\\GuildEmblemsLG_01:24:24:-4:1:32:32:" .. (char.guildTexCoord[1] * 32) .. ":" .. (char.guildTexCoord[7] * 32) .. ":" .. (char.guildTexCoord[2] * 32) .. ":" .. (char.guildTexCoord[8] * 32) .. "|t"
     else
         return ""
     end
 end
 
-local function InstanceDifficultOnEvent(self)
+local function InstanceDifficultOnEvent(self, _, inGuildGroup)
     self.icon:SetText("")
 
     if not InstanceCheck() then
         self.text:SetText("")
     else
         local text
-        local difficulty, difficultyName, _, _, _, _, instanceGroupSize = select(3, GetInstanceInfo())
+        local _, _, diff, difficultyName, _, _, _, _, instanceGroupSize = GetInstanceInfo()
         local isChallengeMode = select(4, GetDifficultyInfo(difficulty))
         local r, g, b = GetColor(difficulty)
 
-        if (difficulty >= 3 and difficulty <= 7) or difficulty == 9 then
+        if (diff >= 3 and diff <= 7) or diff == 9 then
             text = format("|cff%02x%02x%02x%s|r", r, g, b, instanceGroupSize)
         else
             difficultyName = string.sub(difficultyName, 1 , 1)
@@ -82,13 +82,18 @@ local function InstanceDifficultOnEvent(self)
         end
 
         self.text:SetText(text)
-        if guild and not isChallengeMode then
-            self.icon:SetText(GuildEmblem())
+        if inGuildGroup and not isChallengeMode then
+            local logo = GuildEmblem()
+            self.icon:SetText(logo)
         end
         instance:Hide()
         challenge:Hide()
         guild:Hide()
     end
+end
+
+local function HideBlizzardIcon(self)
+    self:Hide()
 end
 
 local function SkinMinimapInstanceDifficult()
@@ -109,9 +114,9 @@ local function SkinMinimapInstanceDifficult()
     d:RegisterEvent("GUILD_PARTY_STATE_UPDATED")
     d:SetScript("OnEvent", InstanceDifficultOnEvent)
 
-    instance:HookScript("OnShow", function(frame) frame:Hide() end)
-    guild:HookScript("OnShow", function(frame) frame:Hide() end)
-    challenge:HookScript("OnShow", function(frame) frame:Hide() end)
+    instance:HookScript("OnShow", HideBlizzardIcon)
+    guild:HookScript("OnShow", HideBlizzardIcon)
+    challenge:HookScript("OnShow", HideBlizzardIcon)
 
     hooksecurefunc(MinimapCluster.InstanceDifficulty, "Update", function() InstanceDifficultOnEvent(d) end)
 end
