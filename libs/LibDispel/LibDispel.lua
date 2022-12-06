@@ -56,7 +56,7 @@ do
         elseif myClass == "PRIEST" then
             local dispel = CheckSpell(527) -- Dispel Magic
             DispelList.Magic = dispel or CheckSpell(32375)
-            DispelList.Disease = (dispel and CheckSpell(390632)) or CheckSpell(213634)
+            DispelList.Disease = IsPlayerSpell(390632) or CheckSpell(213634)
         elseif myClass == "SHAMAN" then
             local purify = CheckSpell(77130) -- Purify Spirit
             local cleanse = purify or CheckSpell(51886) -- Cleanse Spirit
