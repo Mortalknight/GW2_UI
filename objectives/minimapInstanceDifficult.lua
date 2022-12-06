@@ -71,8 +71,8 @@ local function InstanceDifficultOnEvent(self, _, inGuildGroup)
     else
         local text
         local _, _, diff, difficultyName, _, _, _, _, instanceGroupSize = GetInstanceInfo()
-        local isChallengeMode = select(4, GetDifficultyInfo(difficulty))
-        local r, g, b = GetColor(difficulty)
+        local isChallengeMode = select(4, GetDifficultyInfo(diff))
+        local r, g, b = GetColor(diff)
 
         if (diff >= 3 and diff <= 7) or diff == 9 then
             text = format("|cff%02x%02x%02x%s|r", r, g, b, instanceGroupSize)
