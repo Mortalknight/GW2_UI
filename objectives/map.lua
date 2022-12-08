@@ -384,7 +384,7 @@ local function SetupHybridMinimap()
     _G.HybridMinimap.CircleMask:StripTextures()
 end
 
-local function UpdateClusterPoint(self, _, anchor)
+local function UpdateClusterPoint(_, _, anchor)
     if anchor ~= GW2UI_MinimapClusterHolder then
         MinimapCluster:ClearAllPoints()
         MinimapCluster:SetPoint("TOPRIGHT", GW2UI_MinimapClusterHolder, 0, 1)
@@ -405,18 +405,41 @@ local function LoadMinimap()
     Minimap:ClearAllPoints()
     Minimap:SetPoint("CENTER", Minimap.gwMover)
 
+    MinimapCluster:KillEditMode()
+
+    local clusterHolder = CreateFrame("Frame", "GW2UI_MinimapClusterHolder", MinimapCluster)
+    clusterHolder:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -350, -3)
+    clusterHolder:SetSize(MinimapCluster:GetSize())
+
+    local clusterBackdrop = CreateFrame("Frame", "GWUI_MinimapClusterBackdrop", MinimapCluster)
+    clusterBackdrop:SetPoint("TOPRIGHT", 0, -1)
+    clusterBackdrop:SetIgnoreParentScale(true)
+    clusterBackdrop:SetScale(1)
+    local mcWidth = MinimapCluster:GetWidth()
+    local height, width = 20, (mcWidth - 30)
+    clusterBackdrop:SetSize(width, height)
+
+    --Hide the BlopRing on Minimap
+    Minimap:SetArchBlobRingAlpha(0)
+    Minimap:SetArchBlobRingScalar(0)
+    Minimap:SetQuestBlobRingAlpha(0)
+    Minimap:SetQuestBlobRingScalar(0)
+
+    UpdateClusterPoint()
+    MinimapCluster:SetScale(1)
+    MinimapCluster:EnableMouse(false)
+    MinimapCluster:SetFrameLevel(20) -- set before minimap itself
+    hooksecurefunc(MinimapCluster, "SetPoint", UpdateClusterPoint)
+
+    Minimap:EnableMouseWheel(true)
+    Minimap:SetFrameLevel(10)
+    Minimap:SetFrameStrata("LOW")
+
     local GwMinimapShadow = CreateFrame("Frame", "GwMinimapShadow", Minimap, "GwMinimapShadow")
     local GwMapGradient = CreateFrame("Frame", "GwMapGradient", GwMinimapShadow, "GwMapGradient")
     GwMapGradient:SetParent(GwMinimapShadow)
     GwMapGradient:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
     GwMapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
-
-    local minimapLevel = Minimap:GetFrameLevel() + 2
-    Minimap:SetFrameLevel(minimapLevel)
-
-    MinimapCluster:SetFrameLevel(minimapLevel)
-    MinimapCluster:SetFrameStrata("MEDIUM")
-    Minimap:SetFrameStrata("LOW")
 
     if Minimap.backdrop then -- level to hybrid maps fixed values
         Minimap.backdrop:SetFrameLevel(99)
@@ -425,29 +448,15 @@ local function LoadMinimap()
         Minimap.backdrop:SetScale(1)
     end
 
-    local clusterHolder = CreateFrame("Frame", "GW2UI_MinimapClusterHolder", MinimapCluster)
-    local clusterBackdrop = CreateFrame("Frame", "GWUI_MinimapClusterBackdrop", MinimapCluster)
-    clusterHolder:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -350, -3)
+    Minimap:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
+    Minimap:SetScript("OnMouseDown", Minimap_OnMouseDown)
+    Minimap:SetScript("OnMouseUp", GW.NoOp)
 
-    clusterBackdrop:SetIgnoreParentScale(true)
-    clusterBackdrop:SetScale(1)
+    Minimap:HookScript("OnEnter", hoverMiniMap)
+    Minimap:HookScript("OnLeave", hoverMiniMapOut)
 
-    MinimapCluster:ClearAllPoints()
-    MinimapCluster:SetScale(1)
-    MinimapCluster:SetPoint("TOPRIGHT", clusterHolder, 0, 1)
-
-    MinimapCluster:KillEditMode()
-
-    local mcWidth = MinimapCluster:GetWidth()
-    local height, width = 20, (mcWidth - 30)
-    clusterBackdrop:ClearAllPoints()
-    clusterBackdrop:SetPoint("TOPRIGHT", 0, -1)
-    clusterBackdrop:SetSize(width, height)
-    clusterHolder:SetSize(width, height)
-
-    hooksecurefunc(MinimapCluster, "SetPoint", UpdateClusterPoint)
-
-    MinimapCluster:EnableMouse(false)
+    Minimap:HookScript("OnShow", minimap_OnShow)
+    Minimap:HookScript("OnHide", minimap_OnHide)
 
     MinimapCluster.ZoneTextButton:Kill()
     TimeManagerClockButton:Kill()
@@ -457,6 +466,7 @@ local function LoadMinimap()
     Minimap.location:SetPoint("TOP", Minimap, "TOP", 0, -2)
     Minimap.location:SetJustifyH("CENTER")
     Minimap.location:SetJustifyV("MIDDLE")
+    Minimap.location:Hide()
     Minimap.location:SetIgnoreParentScale(true)
     Minimap.location:SetScale(1)
 
@@ -491,22 +501,11 @@ local function LoadMinimap()
     end
     HandleExpansionButton()
 
-    --Hide the BlopRing on Minimap
-    Minimap:SetArchBlobRingAlpha(0)
-    Minimap:SetArchBlobRingScalar(0)
-    Minimap:SetQuestBlobRingAlpha(0)
-    Minimap:SetQuestBlobRingScalar(0)
-
     QueueStatusFrame:SetClampedToScreen(true)
 
     M.TrackingDropdown = CreateMinimapTrackingDropdown()
 
     if HybridMinimap then SetupHybridMinimap() end
-
-    Minimap:EnableMouseWheel(true)
-    Minimap:SetScript("OnMouseWheel", Minimap_OnMouseWheel)
-    Minimap:SetScript("OnMouseDown", Minimap_OnMouseDown)
-    Minimap:SetScript("OnMouseUp", GW.NoOp)
 
     M:RegisterEvent("ADDON_LOADED")
     M:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -621,39 +620,9 @@ local function LoadMinimap()
 
     hideMiniMapIcons()
 
-    Minimap:HookScript("OnEnter", hoverMiniMap)
-    Minimap:HookScript("OnLeave", hoverMiniMapOut)
-
-    Minimap:HookScript("OnShow", minimap_OnShow)
-    Minimap:HookScript("OnHide", minimap_OnHide)
-
     SetMinimapHover()
     C_Timer.After(0.2, hoverMiniMapOut)
 
-    --difficult icon
-    --[[
-    local difficulty = MinimapCluster.InstanceDifficulty
-    local instance = difficulty.Instance
-    local guild = difficulty.Guild
-    local challenge = difficulty.ChallengeMode
-
-    challenge:SetParent(Minimap)
-    instance:SetParent(Minimap)
-    guild:SetParent(Minimap)
-
-    if challenge then
-        challenge:ClearAllPoints()
-        challenge:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
-    end
-    if instance then
-        instance:ClearAllPoints()
-        instance:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
-    end
-    if guild then
-        guild:ClearAllPoints()
-        guild:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
-    end
-    ]]
     GW.SkinMinimapInstanceDifficult()
 
     QueueStatusButton:SetSize(26, 26)
