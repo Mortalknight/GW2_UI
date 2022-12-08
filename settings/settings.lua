@@ -241,18 +241,32 @@ local function AddOptionDropdown(panel, name, desc, optionName, callback, option
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
-local function WarningPrompt(text, method)
+local function WarningPrompt(text, method, point, button1Name, button2Name)
     GwWarningPrompt.string:SetText(text)
     GwWarningPrompt.method = method
+    GwWarningPrompt:ClearAllPoints()
+    if point then
+        GwWarningPrompt:SetPoint(unpack(point))
+    else
+        GwWarningPrompt:SetPoint("CENTER")
+    end
+    GwWarningPrompt.acceptButton:SetText(button1Name or ACCEPT)
+    GwWarningPrompt.cancelButton:SetText(button2Name or CANCEL)
     GwWarningPrompt:Show()
     GwWarningPrompt.input:Hide()
 end
 GW.WarningPrompt = WarningPrompt
 
-local function InputPrompt(text, method, input)
+local function InputPrompt(text, method, input, point)
     GwWarningPrompt.string:SetText(text)
     GwWarningPrompt.method = method
     GwWarningPrompt:Show()
+    GwWarningPrompt:ClearAllPoints()
+    if point then
+        GwWarningPrompt:SetPoint(unpack(point))
+    else
+        GwWarningPrompt:SetPoint("CENTER")
+    end
     GwWarningPrompt.input:Show()
     GwWarningPrompt.input:SetText(input or "")
 end
@@ -915,8 +929,6 @@ local function LoadSettings()
     local fmGWP = CreateFrame("Frame", "GwWarningPrompt", UIParent, "GwWarningPrompt")
     fmGWP.string:SetFont(UNIT_NAME_FONT, 14)
     fmGWP.string:SetTextColor(1, 1, 1)
-    fmGWP.acceptButton:SetText(ACCEPT)
-    fmGWP.cancelButton:SetText(CANCEL)
     local fnGWP_input_OnEscapePressed = function(self)
         self:ClearFocus()
     end

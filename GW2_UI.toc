@@ -48,6 +48,7 @@ core\slashcommands.lua
 core\cooldowns.lua
 core\misc.lua
 core\disableBlizzard.lua
+core\notaint.lua
 
 settings\defaults.lua
 settings\api.lua

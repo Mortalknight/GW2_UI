@@ -591,13 +591,13 @@
                 </Layers>
                 <FontString inherits="ChatFontNormal" />
             </EditBox>
-            <Button inherits="GwStandardButton" text="Accept" parentKey="acceptButton">
+            <Button inherits="GwStandardButton" text="ACCEPT" parentKey="acceptButton">
                 <Size x="85" y="20" />
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-110" y="15"/>
                 </Anchors>
             </Button>
-            <Button inherits="GwStandardButton" text="Cancel" parentKey="cancelButton">
+            <Button inherits="GwStandardButton" text="CANCEL" parentKey="cancelButton">
                 <Size x="85" y="20" />
                 <Anchors>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-15" y="15"/>
