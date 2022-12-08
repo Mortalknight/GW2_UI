@@ -626,7 +626,13 @@ local function LoadInventory()
     item_size = GetSetting("BAG_ITEM_SIZE")
 
     -- anytime a ContainerFrame has its anchors set, we re-hide it
-    hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)
+    --hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)
+    for i = 1, NUM_CONTAINER_FRAMES do
+        local cf = _G["ContainerFrame" .. i]
+        if cf then
+            cf:Kill()
+        end
+    end
 
     --hooksecurefunc("ContainerFrameItemButton_UpdateItemUpgradeIcon", CheckUpdateIcon)
 
