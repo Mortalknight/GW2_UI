@@ -89,18 +89,6 @@ local function reskinItemButtons()
 end
 GW.AddForProfiling("inventory", "reskinItemButtons", reskinItemButtons)
 
-local function hookUpdateAnchors()
-    for i = 1, NUM_CONTAINER_FRAMES do
-        local cf = _G["ContainerFrame" .. i]
-        if cf then
-            cf:ClearAllPoints()
-            cf:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-            cf:SetSize(10, 10)
-        end
-    end
-end
-GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
-
 local function CheckUpdateIcon_OnUpdate(self, elapsed)
     self.timeSinceUpgradeCheck = (self.timeSinceUpgradeCheck or 0) + elapsed
     if self.timeSinceUpgradeCheck >= 0.5 then
