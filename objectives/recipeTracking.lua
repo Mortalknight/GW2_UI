@@ -1,7 +1,6 @@
 local _, GW = ...
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local ParseObjectiveString = GW.ParseObjectiveString
-local FormatObjectiveNumbers = GW.FormatObjectiveNumbers
 local CreateObjectiveNormal = GW.CreateObjectiveNormal
 local CreateTrackerObject = GW.CreateTrackerObject
 local setBlockColor = GW.setBlockColor
@@ -197,6 +196,8 @@ local function updateRecipeLayout(self)
             _G["GwRecipeBlock" .. i].id = nil
         end
     end
+
+    GW.QuestTrackerLayoutChanged()
 end
 
 local function StartUpdate(self)
