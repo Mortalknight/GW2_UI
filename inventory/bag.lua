@@ -353,19 +353,23 @@ local function createBagBar(f)
     for bag_idx = 1, NUM_BAG_SLOTS do
         -- this name MUST have a 9-letter prefix and match the style "CharacterBag0Slot"
         -- because of hard-coded string parsing in PaperDollItemSlotButton_OnLoad
-        local name = "GwInvntryBag" .. (bag_idx - 1) .. "Slot"
-        local b = CreateFrame("ItemButton", name, f, "GwBackpackBagTemplate")
-        b.commandName = ""
+        --local name = "GwInvntryBag" .. (bag_idx - 1) .. "Slot"
+        --local b = CreateFrame("ItemButton", name, f, "GwBackpackBagTemplate")
+        --b.commandName = ""
 
         -- We depend on a number of behaviors from the default BagSlotButtonTemplate.
         -- The ID set here is NOT the usual bag_id; rather it is an offset from the
         -- id of CharacterBag0Slot, used internally by BagSlotButtonTemplate methods.
-        b:SetID(cb0_id + bag_idx - 1)
-        b.BagID = bag_idx
+        --b:SetID(cb0_id + bag_idx - 1)
+        --b.BagID = bag_idx
         -- unlike BankItemButtonBagTemplate, we must provide the GetInventorySlot method
-        b.GetInventorySlot = getInvId
+        --b.GetInventorySlot = getInvId
 
         -- remove default of capturing right-click also (we handle right-click separately)
+
+        --TEST
+        local b = _G["CharacterBag" .. bag_idx - 1 .. "Slot"]
+        b:SetParent(f)
         b:RegisterForClicks("LeftButtonUp")
         b:SetScript("OnClick", bag_OnClick)
         b:SetScript("OnMouseDown", inv.bag_OnMouseDown)
@@ -374,27 +378,30 @@ local function createBagBar(f)
 
         -- Hide default bag bar
         --_G["CharacterBag" .. bag_idx - 1 .. "Slot"]:Kill()
-        _G["CharacterBag" .. bag_idx - 1 .. "Slot"]:SetScale(0.0001)
-        _G["CharacterBag" .. bag_idx - 1 .. "Slot"]:SetAlpha(0)
+        --_G["CharacterBag" .. bag_idx - 1 .. "Slot"]:SetScale(0.0001)
+       -- _G["CharacterBag" .. bag_idx - 1 .. "Slot"]:SetAlpha(0)
 
         f.bags[bag_idx] = b
     end
 
     --Get Reagant Slot
     if CharacterReagentBag0Slot then
-        local name = "GwInvntryReagentBag0Slot"
-        local b = CreateFrame("ItemButton", name, f, "GwBackpackBagTemplate")
-        b.commandName = ""
+        --local name = "GwInvntryReagentBag0Slot"
+        --local b = CreateFrame("ItemButton", name, f, "GwBackpackBagTemplate")
+        --b.commandName = ""
 
         -- We depend on a number of behaviors from the default BagSlotButtonTemplate.
         -- The ID set here is NOT the usual bag_id; rather it is an offset from the
         -- id of CharacterBag0Slot, used internally by BagSlotButtonTemplate methods.
-        b:SetID(cb0_id + 5 - 1)
-        b.BagID = 5
+        --b:SetID(cb0_id + 5 - 1)
+        --b.BagID = 5
         -- unlike BankItemButtonBagTemplate, we must provide the GetInventorySlot method
-        b.GetInventorySlot = getInvId
+        --b.GetInventorySlot = getInvId
 
         -- remove default of capturing right-click also (we handle right-click separately)
+        --TEST
+        local b = CharacterReagentBag0Slot
+        b:SetParent(f)
         b:RegisterForClicks("LeftButtonUp")
         b:SetScript("OnClick", bag_OnClick)
         b:SetScript("OnMouseDown", inv.bag_OnMouseDown)
@@ -403,8 +410,8 @@ local function createBagBar(f)
 
         -- Hide default bag bar
         --CharacterReagentBag0Slot:Kill()
-        CharacterReagentBag0Slot:SetScale(0.0001)
-        CharacterReagentBag0Slot:SetAlpha(0)
+        --CharacterReagentBag0Slot:SetScale(0.0001)
+        --CharacterReagentBag0Slot:SetAlpha(0)
 
         f.bags[NUM_BAG_SLOTS + 1] = b
     end
@@ -417,7 +424,7 @@ GW.AddForProfiling("bag", "createBagBar", createBagBar)
 local function updateBagBar(f)
     for bag_idx = 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
         local b = f.bags[bag_idx]
-        local inv_id = b:GetInventorySlot()
+        local inv_id = C_Container.ContainerIDToInventoryID(bag_idx) --b:GetInventorySlot()
         local bag_tex = GetInventoryItemTexture("player", inv_id)
         local _, slot_tex = GetInventorySlotInfo("Bag" .. bag_idx)
 

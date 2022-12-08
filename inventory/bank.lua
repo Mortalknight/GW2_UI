@@ -230,7 +230,7 @@ local function updateBagBar(f)
     for bag_idx = 1, NUM_BANKBAGSLOTS do
         local b = f.bags[bag_idx]
         local bag_id = b:GetBagID()
-        local inv_id = b:GetInventorySlot()
+        local inv_id = C_Container.ContainerIDToInventoryID(bag_idx) --b:GetInventorySlot()
         local bag_tex = GetInventoryItemTexture("player", inv_id)
         local _, slot_tex = GetInventorySlotInfo("Bag" .. bag_idx)
 
