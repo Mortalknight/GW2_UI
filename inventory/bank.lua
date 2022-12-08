@@ -346,11 +346,12 @@ local function bank_OnShow(self)
     self:RegisterEvent("REAGENTBANK_PURCHASED")
 
     -- hide the bank frame off screen
+    BankFrame:UnregisterAllEvents()
+    BankFrame:SetScript("OnShow", nil)
+    BankFrame:SetScript("OnHide", nil)
+    BankFrame:SetParent(GW.HiddenFrame)
     BankFrame:ClearAllPoints()
-    BankFrame:SetClampedToScreen(false)
-    BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-    BankSlotsFrame:Kill()
-    BankItemAutoSortButton:Hide()
+    BankFrame:SetPoint("BOTTOM")
 
     -- make the reagent bank initialize itself
     ReagentBankFrame_OnShow(ReagentBankFrame)

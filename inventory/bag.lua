@@ -373,7 +373,9 @@ local function createBagBar(f)
         inv.reskinBagBar(b)
 
         -- Hide default bag bar
-        _G["CharacterBag" .. bag_idx - 1 .. "Slot"]:Kill()
+        --_G["CharacterBag" .. bag_idx - 1 .. "Slot"]:Kill()
+        _G["CharacterBag" .. bag_idx - 1 .. "Slot"]:SetScale(0.0001)
+        _G["CharacterBag" .. bag_idx - 1 .. "Slot"]:SetAlpha(0)
 
         f.bags[bag_idx] = b
     end
@@ -400,7 +402,9 @@ local function createBagBar(f)
         inv.reskinBagBar(b)
 
         -- Hide default bag bar
-        CharacterReagentBag0Slot:Kill()
+        --CharacterReagentBag0Slot:Kill()
+        CharacterReagentBag0Slot:SetScale(0.0001)
+        CharacterReagentBag0Slot:SetAlpha(0)
 
         f.bags[NUM_BAG_SLOTS + 1] = b
     end
@@ -642,11 +646,11 @@ local function bagHeader_OnEnter(self)
 end
 
 local function LoadBag(helpers)
-    ContainerFrameCombinedBags:SetScript('OnShow', nil)
-    ContainerFrameCombinedBags:SetScript('OnHide', nil)
-    ContainerFrameCombinedBags:SetScale(0.0001)
-    ContainerFrameCombinedBags:SetAlpha(0)
-    ContainerFrameCombinedBags:Kill()
+    ContainerFrameCombinedBags:SetScript("OnShow", nil)
+    ContainerFrameCombinedBags:SetScript("OnHide", nil)
+    ContainerFrameCombinedBags:SetParent(GW.HiddenFrame)
+    ContainerFrameCombinedBags:ClearAllPoints()
+    ContainerFrameCombinedBags:SetPoint("BOTTOM")
     SetCVar("combinedBags", 0)
 
     inv = helpers
