@@ -189,6 +189,7 @@ local function DisableBlizzardFrames()
             MultiBarRight = true,
             MultiBarBottomLeft = true,
             MultiBarBottomRight = true,
+            MicroButtonAndBagsBar = true,
             --MainMenuBar = true, -- this make the mainbar unvisible (HiddenFrame) we remove the events at the actionbars
             StanceBar = true
         }
