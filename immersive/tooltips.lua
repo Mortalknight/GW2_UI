@@ -100,10 +100,10 @@ local function SetUnitAura(self, unit, index, filter)
     self:Show()
 end
 
-local function GameTooltip_OnTooltipSetSpell(self)
+local function GameTooltip_OnTooltipSetSpell(self, data)
     if self ~= GameTooltip or self:IsForbidden() or not IsModKeyDown() then return end
 
-    local _, id = self:GetSpell()
+    local id = (data and data.id) or select(2, self:GetSpell())
     if not id then return end
 
     local ID = format(IDLine, ID, id)
@@ -262,37 +262,47 @@ local function GameTooltip_OnTooltipCleared(self)
     GameTooltip_ClearWidgetSet(self)
 end
 
-local function GameTooltip_OnTooltipSetItem(self)
+local function GameTooltip_OnTooltipSetItem(self, data)
     if self ~= GameTooltip or self:IsForbidden() then return end
 
-    local _, link = self:GetItem()
-    local num = GetItemCount(link)
-    local numall = GetItemCount(link,true)
-    local left, right, bankCount = " ", " ", " "
-    local itemCountOption = GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT")
+    local itemID, bagCount, bankCount
+    local modKey = IsModKeyDown()
 
-    if link and IsModKeyDown() then
-        right = format(("*%s|r %s"):gsub("*", GW.Gw2Color), ID, strmatch(link, ":(%w+)"))
+    if self.GetItem then
+        local _, link = self:GetItem()
+
+        if not link then return end
+
+        local itemCountOption = GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT")
+
+        if modKey then
+            itemID = format(("*%s|r %s"):gsub("*", GW.Gw2Color), ID, (data and data.id) or strmatch(link, ":(%w+)"))
+        end
+
+        if itemCountOption then
+            local num = GetItemCount(link)
+            local numall = GetItemCount(link, true)
+            if itemCountOption == "BAG" then
+                bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
+            elseif itemCountOption == "BANK" then
+                bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
+            elseif itemCountOption == "BOTH" then
+                bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
+                bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
+            end
+        end
+
+        ScanKeystone(self, link)
+    else
+        local id = data and data.id
+        if id then
+            itemID = format(("*%s|r %s"):gsub("*", GW.Gw2Color), ID, id)
+        end
     end
 
-    if itemCountOption == "BAG" then
-        left = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
-    elseif itemCountOption == "BANK" then
-        bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
-    elseif itemCountOption == "BOTH" then
-        left = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
-        bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
-    end
-
-    if left ~= " " or right ~= " " then
-        self:AddLine(" ")
-        self:AddDoubleLine(left, right)
-    end
-    if bankCount ~= " " then
-        self:AddDoubleLine(bankCount, " ")
-    end
-
-    ScanKeystone(self, link)
+    if itemID or bagCount or bankCount then self:AddLine(" ") end
+    if itemID or bagCount then self:AddDoubleLine(itemID or " ", bagCount or " ") end
+    if bankCount then self:AddDoubleLine(" ", bankCount) end
 end
 
 local function GetLevelLine(self, offset, guildName)
@@ -599,7 +609,7 @@ local function AddInspectInfo(self, unit, numTries, r, g, b)
     end
 end
 
-local function GameTooltip_OnTooltipSetUnit(self)
+local function GameTooltip_OnTooltipSetUnit(self, data)
     if self ~= GameTooltip or self:IsForbidden() then return end
 
     local _, unit = self:GetUnit()
@@ -641,7 +651,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
     end
 
     if unit and not isPlayerUnit and IsModKeyDown() and not C_PetBattles.IsInBattle() then
-        local guid = UnitGUID(unit) or ""
+        local guid = (data and data.guid) or UnitGUID(unit) or ""
         local id = tonumber(strmatch(guid, "%-(%d-)%-%x-$"), 10)
         if id then -- NPC ID"s
             self:AddLine(format(IDLine, ID, id))
