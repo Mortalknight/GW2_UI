@@ -774,7 +774,7 @@ local function LoadBag(helpers)
     hooksecurefunc("OpenBackpack", hookOpenBackpack)
     hooksecurefunc("CloseBackpack", hookCloseBackpack)
     hooksecurefunc("ToggleBackpack", hookToggleBackpack)
-    local bindings = {"TOGGLEBAG1", "TOGGLEBAG2", "TOGGLEBAG3", "TOGGLEBAG4"}
+    local bindings = {"TOGGLEBACKPACK", "TOGGLEREAGENTBAG1", "TOGGLEBAG1", "TOGGLEBAG2", "TOGGLEBAG3", "TOGGLEBAG4"}
     for _, b in pairs(bindings) do
         local key = GetBindingKey(b)
         if key then
