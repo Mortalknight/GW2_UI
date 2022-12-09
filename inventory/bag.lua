@@ -769,7 +769,8 @@ local function LoadBag(helpers)
     for _, b in pairs(bindings) do
         local key = GetBindingKey(b)
         if key then
-            SetOverrideBinding(f, false, key, "TOGGLEBACKPACK")
+            SetOverrideBinding(f, true, key, "OPENALLBAGS")
+            SetOverrideBinding(f, false, key, "OPENALLBAGS")
         end
     end
 

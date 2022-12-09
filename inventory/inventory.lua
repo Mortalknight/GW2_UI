@@ -618,7 +618,8 @@ local function LoadInventory()
     for i = 1, NUM_CONTAINER_FRAMES do
         local cf = _G["ContainerFrame" .. i]
         if cf then
-            cf:Kill()
+            cf:EnableMouse(false)
+            cf:SetAlpha(0)
         end
     end
 
