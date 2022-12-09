@@ -293,10 +293,12 @@ local function setBagBarOrder(f)
     local bag_size = 28
     local bag_padding = 4
     local rev = GetSetting("BAG_REVERSE_SORT")
+
+    f.setBagBarOrderInProgress = true
     if rev then
-        y = 5 - ((bag_size + bag_padding) * NUM_TOTAL_EQUIPPED_BAG_SLOTS)
+        y = NUM_TOTAL_EQUIPPED_BAG_SLOTS - ((bag_size + bag_padding) * NUM_TOTAL_EQUIPPED_BAG_SLOTS)
     else
-        y = 5
+        y = NUM_TOTAL_EQUIPPED_BAG_SLOTS
     end
 
     for bag_idx = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
@@ -309,6 +311,8 @@ local function setBagBarOrder(f)
             y = y - bag_size - bag_padding
         end
     end
+
+    f.setBagBarOrderInProgress = false
 end
 GW.AddForProfiling("bag", "setBagBarOrder", setBagBarOrder)
 
@@ -417,6 +421,11 @@ local function createBagBar(f)
     end
 
     setBagBarOrder(f)
+    hooksecurefunc(CharacterReagentBag0Slot, "SetPoint", function()
+        if not f.setBagBarOrderInProgress then
+            setBagBarOrder(f)
+        end
+    end)
 end
 GW.AddForProfiling("bag", "createBagBar", createBagBar)
 
