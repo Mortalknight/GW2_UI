@@ -61,6 +61,7 @@ local function DisableBlizzardFrames()
     local ourPlayerFrame = GW.GetSetting("HEALTHGLOBE_ENABLED")
     local ourCastBar = GW.GetSetting("CASTINGBAR_ENABLED")
     local ourActionbars = GW.GetSetting("ACTIONBARS_ENABLED")
+    local ourInventory = GW.GetSetting("BAGS_ENABLED")
 
     if ourPartyFrames or ourRaidFrames then
         -- calls to UpdateRaidAndPartyFrames, which as of writing this is used to show/hide the
@@ -180,6 +181,13 @@ local function DisableBlizzardFrames()
         HandleFrame(PetCastingBarFrame)
     end
 
+    if ourInventory then
+        if MicroButtonAndBagsBar then
+            MicroButtonAndBagsBar:SetParent(GW.HiddenFrame)
+            MicroButtonAndBagsBar:UnregisterAllEvents()
+        end
+    end
+
     if ourActionbars then
         local untaint = {
             MultiBar5 = true,
@@ -189,7 +197,6 @@ local function DisableBlizzardFrames()
             MultiBarRight = true,
             MultiBarBottomLeft = true,
             MultiBarBottomRight = true,
-            MicroButtonAndBagsBar = true,
             --MainMenuBar = true, -- this make the mainbar unvisible (HiddenFrame) we remove the events at the actionbars
             StanceBar = true
         }
