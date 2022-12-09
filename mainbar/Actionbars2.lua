@@ -532,9 +532,10 @@ local function main_OnEvent(_, event)
         local forceCombat = event == "PLAYER_REGEN_DISABLED"
         fadeCheck(MainMenuBar, forceCombat)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
-        GW.Libs.LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.GetSetting("HUD_SCALE")) or 1)))
-        GW.Libs.LEMO:SaveOnly()
-        --GW.Libs.LEMO:ApplyChanges()
+        if GW.Libs.LEMO:GetActiveLayout() ~= "GW2_Layout" then
+            GW.Libs.LEMO:SetActiveLayout("GW2_Layout")
+            GW.Libs.LEMO:ApplyChanges()
+        end
     end
 end
 AFP("main_OnEvent", main_OnEvent)
