@@ -544,11 +544,11 @@ local function bag_OnShow(self)
     self:RegisterEvent("BAG_UPDATE_DELAYED")
     self:RegisterEvent("CVAR_UPDATE")
     if not IsBagOpen(BACKPACK_CONTAINER) then
-        OpenBackpack()
+        --OpenBackpack() --TODO: taint atm
     end
     for i = 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
         if not IsBagOpen(i) then
-            OpenBag(i)
+            --OpenBag(i) --TODO: taint atm
         end
     end
 
@@ -603,7 +603,7 @@ local function bag_OnEvent(self, event, ...)
         if self.gw_need_bag_rescan then
             for bag_id = 1, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
                 if not IsBagOpen(bag_id) then
-                    OpenBag(bag_id)
+                    --OpenBag(bag_id) --TODO: taint atm
                 end
             end
             updateBagBar(self.ItemFrame)
