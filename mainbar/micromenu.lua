@@ -491,6 +491,7 @@ local function setupMicroButtons(mbf)
     TalentMicroButton:RegisterEvent("TRAIT_CONFIG_UPDATED")
     TalentMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
     TalentMicroButton:RegisterEvent("TRAIT_NODE_CHANGED")
+    TalentMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     hooksecurefunc(TalentMicroButton, "EvaluateAlertVisibility", function(self)
         MicroButtonPulseStop(self) -- hide blizzard flash
     end)
