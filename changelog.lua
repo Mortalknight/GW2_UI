@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("6.0.5", [=[
+FIXES
+    - Minimap lua error
+    - Bag taint
+]=])
+
 v("6.0.4", [=[
 FIXES
     - Fix some more taint issues
