@@ -9,44 +9,7 @@ local StrUpper = GW.StrUpper
 local StrLower = GW.StrLower
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
-local settingsMenuAddButton = GW.settingsMenuAddButton;
-
-local function CreateProfileSwitcher(panel, profiles, panels)
-    local valuePrev = "container"
-    for key, value in pairs(profiles) do
-        panel.selectProfile[value] = CreateFrame("Button", nil, panel.selectProfile.container, "GwDropDownItemTmpl")
-        panel.selectProfile[value]:SetWidth(120)
-        panel.selectProfile[value]:SetPoint("TOPRIGHT", panel.selectProfile[valuePrev], "BOTTOMRIGHT")
-        panel.selectProfile[value].string:SetFont(UNIT_NAME_FONT, 12)
-        panel.selectProfile[value].string:SetText(getglobal(value))
-        panel.selectProfile[value].checkbutton:Hide()
-        panel.selectProfile[value].soundButton:Hide()
-        panel.selectProfile[value].string:ClearAllPoints()
-        panel.selectProfile[value].string:SetPoint("LEFT", 5, 0)
-        panel.selectProfile[value].type = value
-        panel.selectProfile[value].panel = panels[key]
-        panel.selectProfile[value]:SetScript("OnClick", function(self)
-            for _, p in pairs(panels) do
-                p.selectProfile.string:SetText(self.string:GetText())
-                p.selectProfile.container:Hide()
-                p.selectProfile.active = self.panel
-                p:Hide()
-            end
-            self.panel:Show()
-        end)
-
-        valuePrev = value
-    end
-
-    panel.selectProfile.active = panels[1]
-    panel.selectProfile:SetScript("OnClick", function(self)
-        if self.container:IsShown() then
-            self.container:Hide()
-        else
-            self.container:Show()
-        end
-    end)
-end
+local settingsMenuAddButton = GW.settingsMenuAddButton
 
 -- Profiles
 local function LoadRaidProfile(sWindow)
@@ -62,13 +25,6 @@ local function LoadRaidProfile(sWindow)
     p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.breadcrumb:SetText(RAID)
-
-
-    p.selectProfile.label:SetText(L["Profiles"])
-    p.selectProfile.string:SetFont(UNIT_NAME_FONT, 12)
-    p.selectProfile.string:SetText(RAID)
-    p.selectProfile.container:SetParent(p)
-    p.selectProfile.type = "RAID"
 
     p.buttonRaidPreview:SetScript("OnClick", function()
         GW.GridToggleFramesPreviewRaid(_, _, false, false)
@@ -304,13 +260,6 @@ local function LoadRaidPetProfile(sWindow)
     p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.breadcrumb:SetText(PET)
 
-
-    p.selectProfile.label:SetText(L["Profiles"])
-    p.selectProfile.string:SetFont(UNIT_NAME_FONT, 12)
-    p.selectProfile.string:SetText(PET)
-    p.selectProfile.container:SetParent(p)
-    p.selectProfile.type = "RAID_PET"
-
     p.buttonRaidPreview:SetScript("OnClick", function()
         GW.GridToggleFramesPreviewRaidPet(_, _, false, false)
     end)
@@ -511,12 +460,6 @@ local function LoadPartyProfile(sWindow)
     p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.breadcrumb:SetText(PARTY)
-
-    p.selectProfile.label:SetText(L["Profiles"])
-    p.selectProfile.string:SetFont(UNIT_NAME_FONT, 12)
-    p.selectProfile.string:SetText(RAID)
-    p.selectProfile.container:SetParent(p)
-    p.selectProfile.type = "PARTY"
 
     p.buttonRaidPreview:SetScript("OnClick", function()
         GW.GridToggleFramesPreviewParty(_, _, false, false)
@@ -738,21 +681,15 @@ local function LoadPartyProfile(sWindow)
 end
 
 local function LoadRaidPanel(sWindow)
-
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
     p.header:Hide()
     p.sub:Hide()
 
-    local profileNames = {"RAID", "PARTY", "PET"}
     local profilePanles = {LoadRaidProfile(sWindow), LoadPartyProfile(sWindow), LoadRaidPetProfile(sWindow)}
 
     createCat(L["Group Frames"], L["Edit the group settings."], p, 8, nil, nil, nil, profilePanles)
 
-    settingsMenuAddButton(L["Group Frames"],p,6,nil,profilePanles)
-
-    CreateProfileSwitcher(profilePanles[1], profileNames, profilePanles)
-    CreateProfileSwitcher(profilePanles[2], profileNames, profilePanles)
-    CreateProfileSwitcher(profilePanles[3], profileNames, profilePanles)
+    settingsMenuAddButton(L["Group Frames"], p, 6, nil, profilePanles)
 
     InitPanel(profilePanles[1], false)
     InitPanel(profilePanles[2], false)
