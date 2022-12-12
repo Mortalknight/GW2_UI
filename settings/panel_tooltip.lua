@@ -5,6 +5,7 @@ local addOptionSlider = GW.AddOptionSlider
 local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function LoadTooltipPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
@@ -16,6 +17,7 @@ local function LoadTooltipPanel(sWindow)
     p.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
 
     createCat(L["Tooltips"], nil, p, 10, nil, {p})
+    settingsMenuAddButton(L["Tooltips"],p,10,nil, {})
 
     addOption(p.scroll.scrollchild, L["Cursor Tooltips"], L["Anchor the tooltips to the cursor."], "TOOLTIP_MOUSE", nil, nil, {["TOOLTIPS_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Advanced Tooltips"], L["Displays additional information in the tooltip (further information is displayed when the SHIFT key is pressed)"], "ADVANCED_TOOLTIP", function() GW.ShowRlPopup = true end, nil, {["TOOLTIPS_ENABLED"] = true})

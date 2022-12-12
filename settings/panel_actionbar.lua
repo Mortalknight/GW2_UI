@@ -9,6 +9,7 @@ local SetSetting = GW.SetSetting
 local InitPanel = GW.InitPanel
 local AddForProfiling = GW.AddForProfiling
 local StrUpper = GW.StrUpper
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function setMultibarCols(barName, setting)
     local mb = GetSetting(barName)
@@ -32,6 +33,7 @@ local function LoadActionbarPanel(sWindow)
     p.sub:SetText(ACTIONBARS_SUBTEXT)
 
     createCat(BINDING_HEADER_ACTIONBAR, nil, p, 7, nil, {p})
+    settingsMenuAddButton(BINDING_HEADER_ACTIONBAR,p,7,nil,{})
 
     addOption(p.scroll.scrollchild, L["Hide Empty Slots"], L["Hide the empty action bar slots."], "HIDEACTIONBAR_BACKGROUND_ENABLED", function() GW.ShowRlPopup = true; GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
     addOption(p.scroll.scrollchild, L["Action Button Labels"], L["Enable or disable the action button assignment text"], "BUTTON_ASSIGNMENTS", function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")

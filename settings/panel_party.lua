@@ -4,6 +4,7 @@ local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function LoadPartyPanel(sWindow)
     local p = CreateFrame("Frame", "GwSettingsPartyPanel", sWindow.panels, "GwSettingsPartyPanelTmpl")
@@ -15,6 +16,7 @@ local function LoadPartyPanel(sWindow)
     p.sub:SetText(L["Edit the party and raid options to suit your needs."])
 
     createCat(CHAT_MSG_PARTY, L["Edit the group settings."], p, 4)
+    settingsMenuAddButton(CHAT_MSG_PARTY,p,4,nil,{})
 
     addOption(p, USE_RAID_STYLE_PARTY_FRAMES, OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES, "RAID_STYLE_PARTY", function() GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true, ["RAID_FRAMES"] = true})
     addOption(p, L["Show both party frames and party grid"], format(L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."], USE_RAID_STYLE_PARTY_FRAMES), "RAID_STYLE_PARTY_AND_FRAMES", function() GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true, ["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})

@@ -5,35 +5,12 @@ local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local SetSetting = GW.SetSetting
 local AddForProfiling = GW.AddForProfiling
-
-local welcome_OnClick = function(self)
-    if self.settings then
-        self.settings:Hide()
-    end
-    GW.ShowWelcomePanel()
-    --Save current Version
-    SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
-end
-AddForProfiling("panel_modules", "welcome_OnClick", welcome_OnClick)
-
-local statusReport_OnClick = function(self)
-    if self.settings then
-        self.settings:Hide()
-    end
-    GW.ShowStatusReport()
-end
-AddForProfiling("panel_modules", "statusReport_OnClick", statusReport_OnClick)
-
-local creditst_OnClick = function(self)
-    if self.settings then
-        self.settings:Hide()
-    end
-    GW.ShowCredits()
-end
-AddForProfiling("panel_modules", "creditst_OnClick", creditst_OnClick)
+local settingsMenuAddButton = GW.settingsMenuAddButton;
+local settingMenuToggle = GW.settingMenuToggle
 
 local function LoadModulesPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsModulePanelTmpl")
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
+
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.header:SetText(L["Modules"])
@@ -41,22 +18,10 @@ local function LoadModulesPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Enable or disable the modules you need and don't need."])
 
-    p.welcome:SetParent(p)
-    p.welcome.settings = sWindow
-    p.welcome:SetText(L["Welcome"])
-    p.welcome:SetScript("OnClick", welcome_OnClick)
 
-    p.statusReport:SetParent(p)
-    p.statusReport.settings = sWindow
-    p.statusReport:SetText(LANDING_PAGE_REPORT)
-    p.statusReport:SetScript("OnClick", statusReport_OnClick)
 
-    p.credits:SetParent(p)
-    p.credits.settings = sWindow
-    p.credits:SetText(L["Credits"])
-    p.credits:SetScript("OnClick", creditst_OnClick)
-
-    createCat(L["Modules"], L["Enable and disable components"], p, 0, nil, {p})
+    createCat(L["Modules"], L["Enable and disable components"], p, 0, nil, {p},nil,nil,true)
+    settingsMenuAddButton(L["Modules"],p,0,nil, {})
 
     addOption(p.scroll.scrollchild, XPBAR_LABEL, nil, "XPBAR_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, L["Health Globe"], L["Enable the health bar replacement."], "HEALTHGLOBE_ENABLED", function() GW.ShowRlPopup = true end)
@@ -87,5 +52,7 @@ local function LoadModulesPanel(sWindow)
     addOption(p.scroll.scrollchild, FRIENDS, nil, "USE_SOCIAL_WINDOW", function() GW.ShowRlPopup = true end)
 
     InitPanel(p, true)
+    p:SetScript("OnShow", function() settingMenuToggle(true) end)
+
 end
 GW.LoadModulesPanel = LoadModulesPanel

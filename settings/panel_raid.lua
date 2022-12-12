@@ -9,6 +9,7 @@ local StrUpper = GW.StrUpper
 local StrLower = GW.StrLower
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function CreateProfileSwitcher(panel, profiles, panels)
     local valuePrev = "container"
@@ -52,10 +53,16 @@ local function LoadRaidProfile(sWindow)
     local p = CreateFrame("Frame", "GwSettingsRaidPanel", sWindow.panels, "GwSettingsRaidPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.header:SetText(RAID)
+    p.header:SetText(L["Group Frames"] )
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit the party and raid options to suit your needs."])
+
+    p.header:SetWidth(p.header:GetStringWidth())
+    p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.breadcrumb:SetText(RAID)
+
 
     p.selectProfile.label:SetText(L["Profiles"])
     p.selectProfile.string:SetFont(UNIT_NAME_FONT, 12)
@@ -287,10 +294,16 @@ local function LoadRaidPetProfile(sWindow)
     local p = CreateFrame("Frame", "GwSettingsRaidPetPanel", sWindow.panels, "GwSettingsRaidPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.header:SetText(PET)
+    p.header:SetText(L["Group Frames"] )
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit the party and raid options to suit your needs."])
+
+    p.header:SetWidth(p.header:GetStringWidth())
+    p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.breadcrumb:SetText(PET)
+
 
     p.selectProfile.label:SetText(L["Profiles"])
     p.selectProfile.string:SetFont(UNIT_NAME_FONT, 12)
@@ -489,10 +502,15 @@ local function LoadPartyProfile(sWindow)
     local p = CreateFrame("Frame", "GwSettingsRaidPartyPanel", sWindow.panels, "GwSettingsRaidPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.header:SetText(RAID)
+    p.header:SetText(L["Group Frames"])
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit the party and raid options to suit your needs."])
+
+    p.header:SetWidth(p.header:GetStringWidth())
+    p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.breadcrumb:SetText(PARTY)
 
     p.selectProfile.label:SetText(L["Profiles"])
     p.selectProfile.string:SetFont(UNIT_NAME_FONT, 12)
@@ -720,10 +738,17 @@ local function LoadPartyProfile(sWindow)
 end
 
 local function LoadRaidPanel(sWindow)
+
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
+    p.header:Hide()
+    p.sub:Hide()
+
     local profileNames = {"RAID", "PARTY", "PET"}
     local profilePanles = {LoadRaidProfile(sWindow), LoadPartyProfile(sWindow), LoadRaidPetProfile(sWindow)}
 
-    createCat(RAID, L["Edit the group settings."], profilePanles[1], 8, nil, nil, nil, profilePanles)
+    createCat(L["Group Frames"], L["Edit the group settings."], p, 8, nil, nil, nil, profilePanles)
+
+    settingsMenuAddButton(L["Group Frames"],p,6,nil,profilePanles)
 
     CreateProfileSwitcher(profilePanles[1], profileNames, profilePanles)
     CreateProfileSwitcher(profilePanles[2], profileNames, profilePanles)

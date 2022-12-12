@@ -6,6 +6,7 @@ local SetSetting = GW.SetSetting
 local ResetToDefault = GW.ResetToDefault
 local GetSettingsProfiles = GW.GetSettingsProfiles
 local AddForProfiling = GW.AddForProfiling
+local settingMenuToggle = GW.settingMenuToggle
 
 local ICONS = {}
 local ImportExportFrame = nil
@@ -639,6 +640,7 @@ local function LoadProfilesPanel(sWindow)
     p.importProfile:SetScript("OnClick", fnGCIP_OnClick)
     p.importProfile:SetPoint("TOPLEFT", p.createNewProfile, p.createNewProfile:GetTextWidth() + 25, 0)
 
+    --[[
     local fnGSPF_OnShow = function()
         sWindow.background:SetTexture("Interface/AddOns/GW2_UI/textures/profiles/profiles-bg")
     end
@@ -647,12 +649,15 @@ local function LoadProfilesPanel(sWindow)
     end
     p:SetScript("OnShow", fnGSPF_OnShow)
     p:SetScript("OnHide", fnGSPF_OnHide)
+    ]]
 
     ProfileWin.update = loadProfiles
     ProfileWin.scrollBar.doNotHide = true
     ProfileSetup(ProfileWin)
 
-    createCat(L["PROFILES"], L["Add and remove profiles."], p, 5, "Interface/AddOns/GW2_UI/textures/icons/settingsiconbg-2")
+    createCat(L["PROFILES"], L["Add and remove profiles."], p, 5, "Interface/AddOns/GW2_UI/textures/icons/settingsiconbg-2",nil,nil,nil,true)
+
+    p:SetScript("OnShow", function() settingMenuToggle(false) end)
 
     ImportExportFrame = createImportExportFrame()
 end

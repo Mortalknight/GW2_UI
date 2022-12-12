@@ -7,6 +7,7 @@ local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function LoadHudPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
@@ -18,7 +19,7 @@ local function LoadHudPanel(sWindow)
     p.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
 
     createCat(UIOPTIONS_MENU, L["Edit the HUD modules."], p, 3, nil, {p})
-
+    settingsMenuAddButton(UIOPTIONS_MENU,p,3,nil,{})
     addOption(p.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND", GW.ToggleHudBackground )
     addOption(p.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
     addOption(p.scroll.scrollchild, L["AFK Mode"], L["When you go AFK, display the AFK screen."], "AFK_MODE", GW.ToggelAfkMode)

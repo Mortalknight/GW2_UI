@@ -7,6 +7,7 @@ local addOptionText = GW.AddOptionText
 local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function LoadChatPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
@@ -18,7 +19,7 @@ local function LoadChatPanel(sWindow)
     p.sub:SetText(L["Edit chat settings."])
 
     createCat(CHAT, nil, p, 3, nil, {p}, "Interface/AddOns/GW2_UI/textures/chat/bubble_up")
-
+    settingsMenuAddButton(CHAT,p,3,nil,{})
     addOption(p.scroll.scrollchild, L["GW2 chat message style"], L["Changes the chat font, timestamp color and name display"], "CHAT_USE_GW2_STYLE", function() GW.ShowRlPopup = true end, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Fade Chat"], L["Allow the chat to fade when not in use."], "CHATFRAME_FADE", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Hide Editbox"], L["Hide the chat editbox when not in focus."], "CHATFRAME_EDITBOX_HIDE", nil, nil, {["CHATFRAME_ENABLED"] = true})

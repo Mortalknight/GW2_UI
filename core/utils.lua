@@ -548,14 +548,13 @@ local function EnableTooltip(self, text, dir, y_off)
 end
 GW.EnableTooltip = EnableTooltip
 
-local function vernotes(ver, notes)
+local function addChange(addonVersion, changeList)
     if not GW.GW_CHANGELOGS then
-        GW.GW_CHANGELOGS = ""
+        GW.GW_CHANGELOGS = {}
     end
-    GW.GW_CHANGELOGS = GW.GW_CHANGELOGS .. "\n" .. ver .. "\n\n" .. notes .. "\n\n"
+    GW.GW_CHANGELOGS[#GW.GW_CHANGELOGS + 1] = {version = addonVersion, changes = changeList}
 end
-GW.vernotes = vernotes
-
+GW.addChange = addChange
 -- create custom UIFrameFlash animation
 local function SetUpFrameFlash(frame, loop)
     frame.flasher = frame:CreateAnimationGroup("Flash")

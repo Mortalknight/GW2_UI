@@ -8,48 +8,59 @@ local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local StrUpper = GW.StrUpper
 
+local settingsMenuAddButton = GW.settingsMenuAddButton;
+
 local function LoadPlayerPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
     p.header:Hide()
     p.sub:Hide()
 
     local p_player = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
-    p_player:SetHeight(250)
-    p_player:SetWidth(512)
-    p_player:ClearAllPoints()
-    p_player:SetPoint("TOPLEFT", p, "TOPLEFT", 0, 5)
+
+
     p_player.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_player.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p_player.header:SetText(PLAYER)
     p_player.sub:SetFont(UNIT_NAME_FONT, 12)
     p_player.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p_player.sub:SetText(L["Modify the player frame settings."])
+    p_player.header:SetWidth(p_player.header:GetStringWidth())
+    p_player.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p_player.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p_player.breadcrumb:SetText(GENERAL)
 
     local p_player_aura = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
-    p_player_aura:SetHeight(190)
-    p_player_aura:SetWidth(512)
-    p_player_aura:ClearAllPoints()
-    p_player_aura:SetPoint("TOPLEFT", p_player, "BOTTOMLEFT", 0, 0)
+
+
     p_player_aura.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_player_aura.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p_player_aura.header:SetText(L["Buffs"])
+    p_player_aura.header:SetText(PLAYER)
+    p_player_aura.header:SetWidth(p_player_aura.header:GetStringWidth())
+    p_player_aura.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p_player_aura.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p_player_aura.breadcrumb:SetText(L["Buffs"])
+
     p_player_aura.sub:SetFont(UNIT_NAME_FONT, 12)
     p_player_aura.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p_player_aura.sub:SetText("")
 
     local p_player_debuff = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
-    p_player_debuff:SetHeight(190)
-    p_player_debuff:SetWidth(512)
-    p_player_debuff:ClearAllPoints()
-    p_player_debuff:SetPoint("TOPLEFT", p_player_aura, "BOTTOMLEFT", 0, 0)
+
+
     p_player_debuff.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_player_debuff.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p_player_debuff.header:SetText(L["Debuffs"])
+    p_player_debuff.header:SetText(PLAYER)
     p_player_debuff.sub:SetFont(UNIT_NAME_FONT, 12)
     p_player_debuff.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p_player_debuff.sub:SetText("")
+    p_player_debuff.header:SetWidth(p_player_debuff.header:GetStringWidth())
+    p_player_debuff.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p_player_debuff.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p_player_debuff.breadcrumb:SetText(L["Debuffs"])
 
     createCat(PLAYER, L["Modify the player frame settings."], p, 9, nil, {p_player, p_player_aura, p_player_debuff})
+
+    settingsMenuAddButton(PLAYER,p,9,nil,{p_player, p_player_aura, p_player_debuff})
 
     addOption(p_player.scroll.scrollchild, L["Player frame in target frame style"], nil, "PLAYER_AS_TARGET_FRAME", function() GW.ShowRlPopup = true end, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["Show alternative background texture"], nil, "PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND", GW.TogglePlayerFrameASettings, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})

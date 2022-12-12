@@ -4,6 +4,7 @@ local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local L = GW.L
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 
 local function LoadNotificationsPanel(sWindow)
@@ -16,7 +17,7 @@ local function LoadNotificationsPanel(sWindow)
     p.sub:SetText(nil)
 
     createCat(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, L["Edit your GW2 notifications."], p, 11, nil, {p})
-
+    settingsMenuAddButton(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL,p,11,nil,{})
     local soundKeys = {}
     for _, sound in next, GW.Libs.LSM:List("sound") do
         tinsert(soundKeys, sound)

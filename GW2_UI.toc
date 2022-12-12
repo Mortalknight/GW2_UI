@@ -52,6 +52,7 @@ core\notaint.lua
 
 settings\defaults.lua
 settings\api.lua
+settings\settings_menu.lua
 settings\settings.xml
 settings\panel_modules.xml
 settings\panel_profiles.xml
@@ -77,6 +78,8 @@ settings\welcome.lua
 settings\layouts.lua
 settings\moveableFrameHandler.lua
 settings\credits.lua
+settings\panel_overview.lua
+settings\panel_overview.xml
 
 core\EditMode.lua
 
