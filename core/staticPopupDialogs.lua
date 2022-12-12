@@ -113,7 +113,7 @@ StaticPopupDialogs["JOIN_DISCORD"] = {
         local editBox = _G[self:GetName() .. "EditBox"]
         editBox:SetText("https://discord.gg/MZZtRWt")
         editBox:SetFocus()
-        editBox:HighlightText(false)
+        editBox:HighlightText()
         local button = _G[self:GetName() .. "Button2"]
         button:ClearAllPoints()
         button:SetWidth(200)
