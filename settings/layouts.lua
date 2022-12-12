@@ -16,7 +16,7 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
 
     for k, _ in pairs(layout.frames) do
         local frame = layout.frames[k]
-        if frame and frame.settingName and _G["Gw_" .. frame.settingName] and frame.point and frame.point.point and frame.point.relativePointframe.point.relativePoint and frame.point.xOfs and frame.point.yOfs then
+        if frame and frame.settingName and _G["Gw_" .. frame.settingName] and frame.point and frame.point.point and frame.point.relativePoint and frame.point.xOfs and frame.point.yOfs then
             _G["Gw_" .. frame.settingName]:ClearAllPoints()
             _G["Gw_" .. frame.settingName]:SetPoint(frame.point.point, UIParent, frame.point.relativePoint, frame.point.xOfs, frame.point.yOfs)
             if not startUp then

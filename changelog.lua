@@ -1,10 +1,15 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("6.0.7", [=[
+FIXES
+    - Error on start
+]=])
+
 v("6.0.6", [=[
 FIXES
     - Bank issues
-    - Error on statup
+    - Error on start
 ]=])
 
 v("6.0.5", [=[

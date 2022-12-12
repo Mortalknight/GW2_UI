@@ -1,7 +1,11 @@
+6.0.7
+FIXES
+    - Error on start
+
 6.0.6
 FIXES
     - Bank issues
-    - Error on statup
+    - Error on start
 
 6.0.5
 FIXES
