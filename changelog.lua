@@ -1,6 +1,12 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("6.0.6", [=[
+FIXES
+    - Bank issues
+    - Error on statup
+]=])
+
 v("6.0.5", [=[
 FIXES
     - Minimap lua error
