@@ -816,7 +816,9 @@ local function evPlayerLogin(self)
         GW.ShowWelcomePanel()
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     elseif GetSetting("GW2_UI_VERSION") ~= GW.VERSION_STRING then
-        GW.ShowChangelogPanel()
+        ShowUIPanel(GwSettingsWindow)
+        UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
+        HideUIPanel(GameMenuFrame)
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     end
 

@@ -492,3 +492,7 @@ L["<Assign specializations>"] = true
 L["Bottom"] = true
 L["Health Bar Position"] = true
 L["One or more of the changes you have made require a UI reload."] = true
+
+--STRING WHICH NEEDS TRANSLATION
+L["Setup"] = true
+L["System info"] = true

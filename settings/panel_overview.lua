@@ -1,14 +1,10 @@
 local _, GW = ...
 local L = GW.L
-local addOption = GW.AddOption
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local SetSetting = GW.SetSetting
 local AddForProfiling = GW.AddForProfiling
-local settingsMenuAddButton = GW.settingsMenuAddButton;
 local settingMenuToggle = GW.settingMenuToggle
-local GW_CHANGELOGS = GW.GW_CHANGELOGS
-
 
 --copied from character.lua needs to be removed later
 local function CharacterMenuButton_OnLoad(self, odd)
@@ -87,24 +83,18 @@ local function LoadOverviewPanel(sWindow)
 
     p.menu.welcomebtn:SetParent(p)
     p.menu.welcomebtn.settings = sWindow
-    p.menu.welcomebtn:SetText(L["Welcome"])
+    p.menu.welcomebtn:SetText(L["Setup"])
     p.menu.welcomebtn:SetScript("OnClick", welcome_OnClick)
 
     p.menu.reportbtn:SetParent(p)
     p.menu.reportbtn.settings = sWindow
-    p.menu.reportbtn:SetText(LANDING_PAGE_REPORT)
+    p.menu.reportbtn:SetText(L["System info"])
     p.menu.reportbtn:SetScript("OnClick", statusReport_OnClick)
 
     p.menu.creditsbtn:SetParent(p)
     p.menu.creditsbtn.settings = sWindow
     p.menu.creditsbtn:SetText(L["Credits"])
     p.menu.creditsbtn:SetScript("OnClick", creditst_OnClick)
-
-
-    local fmGSWMH = GwSettingsWindowMoveHud
-
-    local fmGSWD = sWindow.discord
-    local fmGSWKB = sWindow.keyBind
 
     sWindow.headerString:SetFont(DAMAGE_TEXT_FONT, 24)
     sWindow.versionString:SetFont(UNIT_NAME_FONT, 12)
@@ -122,9 +112,6 @@ local function LoadOverviewPanel(sWindow)
         end
         GW.moveHudObjects(GW.MoveHudScaleableFrame)
     end
-    local fnGSWS_OnClick = function()
-        sWindow:Hide()
-    end
     local fnGSWD_OnClick = function()
         StaticPopup_Show("JOIN_DISCORD")
     end
@@ -137,14 +124,10 @@ local function LoadOverviewPanel(sWindow)
     p.menu.discordbtn:SetScript("OnClick", fnGSWD_OnClick)
     p.menu.keybindingsbtn:SetScript("OnClick", fmGSWKB_OnClick)
 
-
     createCat(L["Modules"], L["Enable and disable components"], p, 0, nil, {p},nil,nil,true)
-
-
 
     InitPanel(p, false)
     p:SetScript("OnShow", function() settingMenuToggle(false) end)
-    
 
     p.scroll:SetScrollChild(p.scroll.scrollchild)
 
