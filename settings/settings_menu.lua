@@ -46,9 +46,6 @@ local function createBreadCrumbFrame()
     f.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     f.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
-
-
-
     breadCrumbPool[#breadCrumbPool + 1] = f
     return f
 end
@@ -184,106 +181,101 @@ local function switchCat(self,basePanel, panelFrame)
 
 end
 
-
-
 local function searchInputChanged(self)
-  if not self:HasFocus() then return end
+    if not self:HasFocus() then return end
 
-	local text = self:GetText()
-  if text==nil or text=="" then
-    return
-  end
-  if text==SEARCH then
-    return
-  end
-  resetMenu(true)
-  hideBreadCrumbFrames()
-  self:SetTextColor(1, 1, 1)
-  switchCat(nil,GwSettingsSearchResultPanel)
+    local text = self:GetText()
+    if text==nil or text=="" then
+        return
+    end
+    if text==SEARCH then
+        return
+    end
+    resetMenu(true)
+    hideBreadCrumbFrames()
+    self:SetTextColor(1, 1, 1)
+    switchCat(nil,GwSettingsSearchResultPanel)
 
 
-  local box_padding = 8
-  local pY = -48
-  local padding = {x = box_padding, y = 0}
-  local numRows = 0
-  local first = true
-  GwSettingsSearchResultPanel.sub:Show()
+    local box_padding = 8
+    local pY = -48
+    local padding = {x = box_padding, y = 0}
+    local numRows = 0
+    local maximumXSize = 440
+    local first = true
+    GwSettingsSearchResultPanel.sub:Show()
 
-  for _,panel in pairs(GW.getOptionReference()) do
-    first = true
-    for _,of in pairs(panel.options) do
+    for _, panel in pairs(GW.getOptionReference()) do
+        first = true
+        for _, of in pairs(panel.options) do
 
-      local titleText = of.displayName
+            local titleText = of.displayName
 
-      if titleText~=nil and text~=nil and string.find(titleText, text,1,true) then
-        GwSettingsSearchResultPanel.sub:Hide()
-        -- get the original points and save them for later when we need to put the frame back
-        local point, relativeTo, relativePoint, xOfs, yOfs = of:GetPoint()
-        of.searchAble = {
-          og_parent = of:GetParent(),
-          og_point = point,
-          og_relativePoint =relativeTo,
-          og_x = xOfs,
-          og_y= yOfs,
-        }
-        matchingOptionFrames[#matchingOptionFrames + 1] = of
+            if titleText ~= nil and string.find(titleText, text, 1, true) then
+                GwSettingsSearchResultPanel.sub:Hide()
+                -- get the original points and save them for later when we need to put the frame back
+                local point, relativeTo, _, xOfs, yOfs = of:GetPoint()
+                of.searchAble = {
+                    og_parent = of:GetParent(),
+                    og_point = point,
+                    og_relativePoint = relativeTo,
+                    og_x = xOfs,
+                    og_y= yOfs,
+                }
+                matchingOptionFrames[#matchingOptionFrames + 1] = of
 
-        if first==true then
-          first = false
-          local breadCrumb = createBreadCrumbFrame()
-          breadCrumb.header:SetText(panel.header)
-          breadCrumb.header:SetWidth(breadCrumb.header:GetStringWidth())
-          breadCrumb.breadcrumb:SetText(panel.breadCrumb)
+                if first then
+                    local breadCrumb = createBreadCrumbFrame()
+                    breadCrumb.header:SetText(panel.header)
+                    breadCrumb.header:SetWidth(breadCrumb.header:GetStringWidth())
+                    breadCrumb.breadcrumb:SetText(panel.breadCrumb)
 
-          breadCrumb:ClearAllPoints()
-          breadCrumb:SetPoint("TOPLEFT",GwSettingsSearchResultPanel.scroll.scrollchild,"TOPLEFT",box_padding,padding.y)
+                    breadCrumb:ClearAllPoints()
+                    breadCrumb:SetPoint("TOPLEFT", GwSettingsSearchResultPanel.scroll.scrollchild, "TOPLEFT", box_padding, padding.y)
+                    padding.y = padding.y + (pY + box_padding)
+                    padding.x = box_padding
+                    numRows = numRows + 1
+                end
 
-          padding.y = padding.y + (pY + -box_padding)
-          padding.x = box_padding
-          numRows = numRows + 1
+                if (of.newLine and not first) or padding.x > maximumXSize  then
+                    padding.y = padding.y + (pY + box_padding)
+                    padding.x = box_padding
+                    numRows = numRows + 1
+                end
 
+                if first then
+                    first = false
+                end
+
+                of:ClearAllPoints()
+                of:SetParent(GwSettingsSearchResultPanel.scroll.scrollchild)
+                of:SetPoint("TOPLEFT", GwSettingsSearchResultPanel.scroll.scrollchild, "TOPLEFT", padding.x, padding.y)
+
+                if not of.newLine then
+                    padding.x = padding.x + of:GetWidth() + box_padding
+                else
+                    padding.x = maximumXSize + 10
+                end
+
+            end
         end
-
-
-        if of.forceNewLine and of.forceNewLine==true then
-          newLine = true
-        end
-
-        if  newLine or padding.x > 602 or (padding.x + of:GetWidth())>602 then
-            padding.y = padding.y + (pY + -box_padding)
-            padding.x = box_padding
+        -- leave room for the next breakcrumb title
+        if not first then
+            padding.y = padding.y + (pY + box_padding)
+            padding.x = box_padding + 10
             numRows = numRows + 1
         end
-
-        of:ClearAllPoints()
-        of:SetParent(GwSettingsSearchResultPanel.scroll.scrollchild)
-        of:SetPoint("TOPLEFT", GwSettingsSearchResultPanel.scroll.scrollchild, "TOPLEFT", padding.x, padding.y)
-
-        if not newLine then
-            padding.x = padding.x + of:GetWidth() + box_padding
-        else
-            padding.x = 603
-        end
-
-      end
     end
-    -- leave room for the next breakcrumb title
-    if first==false then
-      padding.y = padding.y + (pY + -box_padding)
-      padding.x = box_padding
-      numRows = numRows + 1
-    end
-  end
-  local scrollMax = max(0, numRows * -pY - GwSettingsSearchResultPanel:GetHeight() + 48)
-  GwSettingsSearchResultPanel.scroll.scrollchild:SetHeight(GwSettingsSearchResultPanel:GetHeight())
-  GwSettingsSearchResultPanel.scroll.scrollchild:SetWidth(GwSettingsSearchResultPanel.scroll:GetWidth() - 20)
-  GwSettingsSearchResultPanel.scroll.slider:SetMinMaxValues(0, scrollMax)
-  --Calculate how big the thumb is this is IMPORTANT for UX :<
-  GwSettingsSearchResultPanel.scroll.slider.thumb:SetHeight(GwSettingsSearchResultPanel.scroll.slider:GetHeight() * (GwSettingsSearchResultPanel:GetHeight() / (scrollMax + GwSettingsSearchResultPanel:GetHeight())) )
 
-  GwSettingsSearchResultPanel.scroll.slider:SetValue(1)
-  GwSettingsSearchResultPanel.scroll.maxScroll = scrollMax
+    local scrollMax = max(0, numRows * 40 - GwSettingsSearchResultPanel:GetHeight() + 48)
+    GwSettingsSearchResultPanel.scroll.scrollchild:SetHeight(GwSettingsSearchResultPanel:GetHeight())
+    GwSettingsSearchResultPanel.scroll.scrollchild:SetWidth(GwSettingsSearchResultPanel.scroll:GetWidth() - 20)
+    GwSettingsSearchResultPanel.scroll.slider:SetMinMaxValues(0, scrollMax)
+    --Calculate how big the thumb is this is IMPORTANT for UX :<
+    GwSettingsSearchResultPanel.scroll.slider.thumb:SetHeight(GwSettingsSearchResultPanel.scroll.slider:GetHeight() * (GwSettingsSearchResultPanel:GetHeight() / (scrollMax + GwSettingsSearchResultPanel:GetHeight())) )
 
+    GwSettingsSearchResultPanel.scroll.slider:SetValue(1)
+    GwSettingsSearchResultPanel.scroll.maxScroll = scrollMax
 end
 
 local function settingsMenuAddButton(name,basePanel,icon,backgroundOverride,frames)

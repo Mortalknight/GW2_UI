@@ -526,7 +526,7 @@ local function InitPanel(panel, hasScroll)
           lastOptionName = v.name
         end
         --need this for searchables
-        of.forceNewLine = forceNewLine
+        of.forceNewLine = v.forceNewLine
 
 
         optionReference[panelUniqueID].options[#optionReference[panelUniqueID].options + 1] = of
