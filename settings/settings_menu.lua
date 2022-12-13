@@ -401,7 +401,6 @@ local function loadSettingsSearchAbleMenu()
 
   -- joink!
   local fnGWP_input_OnEscapePressed = function(self)
-    print(123)
       self:ClearFocus()
   end
   local fnGWP_input_OnEnterPressed = function(self)
