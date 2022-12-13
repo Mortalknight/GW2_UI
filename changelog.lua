@@ -14,6 +14,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.0.6",{
+  {ct.bug,[=[Bank issues]=]},
+  {ct.bug,[=[Error on statup]=]}
+})
 addChange("6.0.5",{
   {ct.bug,[=[Minimap lua error]=]},
   {ct.bug,[=[Bag taint]=]}
