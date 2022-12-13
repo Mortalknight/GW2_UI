@@ -401,6 +401,7 @@ local function loadSettingsSearchAbleMenu()
 
   -- joink!
   local fnGWP_input_OnEscapePressed = function(self)
+    print(123)
       self:ClearFocus()
   end
   local fnGWP_input_OnEnterPressed = function(self)
@@ -414,5 +415,7 @@ local function loadSettingsSearchAbleMenu()
   GwSettingsMenuSearchable.search.input:SetScript("OnEditFocusLost", function(self) if self:GetText()==nil or self:GetText()=="" then self:SetTextColor(178 / 255, 178 / 255, 178 / 255) self:SetText(SEARCH) end end)
   GwSettingsMenuSearchable.search.input:SetScript("OnEnterPressed", fnGWP_input_OnEnterPressed)
   GwSettingsMenuSearchable.search.input:SetScript("OnTextChanged",searchInputChanged)
+
+  updateScrollFrame(GwSettingsMenuSearchable)
 end
 GW.loadSettingsSearchAbleMenu  = loadSettingsSearchAbleMenu
