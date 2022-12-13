@@ -267,7 +267,7 @@ local function searchInputChanged(self)
         end
     end
 
-    local scrollMax = max(0, numRows * 40 - GwSettingsSearchResultPanel:GetHeight() + 48)
+    local scrollMax = max(0, numRows * 40 - GwSettingsSearchResultPanel:GetHeight() + 50)
     GwSettingsSearchResultPanel.scroll.scrollchild:SetHeight(GwSettingsSearchResultPanel:GetHeight())
     GwSettingsSearchResultPanel.scroll.scrollchild:SetWidth(GwSettingsSearchResultPanel.scroll:GetWidth() - 20)
     GwSettingsSearchResultPanel.scroll.slider:SetMinMaxValues(0, scrollMax)
