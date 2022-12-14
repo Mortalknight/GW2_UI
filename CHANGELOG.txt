@@ -1,3 +1,7 @@
+6.0.8
+FIXES
+    - Fix for memory leak
+
 6.0.7
 FIXES
     - Error on start
@@ -166,7 +170,7 @@ NEW
     - Added indicator for unused talent points
     - Added new option 'XP Quest Percent', which shows how much % that quest gives you in relation to the total xp needed for next level
     - Added new option 'Mark Quest Reward', which marks the most valuable quest reward item
-    
+
 5.24.2
 FIXES
     - Fix rare player aura issue
@@ -345,8 +349,8 @@ FIXES
     - Healtglobe now works with mouseover addons
 
 MISC
-    - Updated raid debuffs for Sanctum of Domination (All difficulties)  
-    - Updated raid debuffs for Tazavesh, the Veiled Market (Mythic) 
+    - Updated raid debuffs for Sanctum of Domination (All difficulties)
+    - Updated raid debuffs for Tazavesh, the Veiled Market (Mythic)
 
 5.15.5
 FIXES
@@ -389,7 +393,7 @@ FIXES
 
 5.13.2
 FIXES
-    - Partyframes: Debuff stacks > 9 are now display correctly 
+    - Partyframes: Debuff stacks > 9 are now display correctly
 
 MISC
     - Partyframes: Make buff line margin smaller to show more buffs

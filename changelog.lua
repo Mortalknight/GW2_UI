@@ -1,6 +1,9 @@
 local _, GW = ...
 local v = GW.vernotes
-
+v("6.0.8", [=[
+FIXES
+    - Fix for memory leak
+]=])
 v("6.0.7", [=[
 FIXES
     - Error on start
@@ -79,9 +82,9 @@ v("5.31.2", [=[
 FIXES
     It could happen, that some frames after 2 or more reloads automaticly moves one pixel out of there default position.
     That causes that eg. the automaticly player buff/debuff positions was not changed if the right actionbar was set to show on hower.
-    
+
     To fix this: Open the Move HUD mode and reset the effected frames to there default position (right click the mover and click on Reset).
-    After that do a /reload 
+    After that do a /reload
 ]=])
 
 v("5.31.1", [=[
@@ -399,8 +402,8 @@ FIXES
     - Healtglobe now works with mouseover addons
 
 MISC
-    - Updated raid debuffs for Sanctum of Domination (All difficulties)  
-    - Updated raid debuffs for Tazavesh, the Veiled Market (Mythic) 
+    - Updated raid debuffs for Sanctum of Domination (All difficulties)
+    - Updated raid debuffs for Tazavesh, the Veiled Market (Mythic)
 ]=])
 
 v("5.15.5", [=[
@@ -452,7 +455,7 @@ FIXES
 
 v("5.13.2", [=[
 FIXES
-    - Partyframes: Debuff stacks > 9 are now display correctly 
+    - Partyframes: Debuff stacks > 9 are now display correctly
 
 MISC
     - Partyframes: Make buff line margin smaller to show more buffs
