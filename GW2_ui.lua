@@ -717,7 +717,7 @@ local function evPlayerLogin(self)
     GW.Create_Raid_Counter()
     GW.LoadRaidbuffReminder()
 
-    GW.LoadMirrorTimers()
+    --GW.LoadMirrorTimers()
     GW.LoadAutoRepair()
 
     --Create unitframes
