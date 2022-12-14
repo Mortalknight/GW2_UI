@@ -1,3 +1,7 @@
+6.0.9
+ FIXES
+     - Readd mirrortimers
+
 6.0.8
 FIXES
     - Fix for memory leak

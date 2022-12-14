@@ -13,7 +13,9 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
-
+addChange("6.0.9",{
+  {ct.bug,[=[Readd mirrortimers]=]},
+})
 addChange("6.0.8",{
   {ct.bug,[=[Fix for memory leak]=]},
 })

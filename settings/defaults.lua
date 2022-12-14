@@ -165,6 +165,27 @@ GW_DEFAULT["MAILBOX_POSITION"]["xOfs"] = 16
 GW_DEFAULT["MAILBOX_POSITION"]["yOfs"] = -116
 GW_DEFAULT["MAILBOX_POSITION"]["hasMoved"] = false
 
+GW_DEFAULT["MirrorTimer1"] = {}
+GW_DEFAULT["MirrorTimer1"].point = "TOP"
+GW_DEFAULT["MirrorTimer1"].relativePoint = "TOP"
+GW_DEFAULT["MirrorTimer1"].xOfs = 0
+GW_DEFAULT["MirrorTimer1"].yOfs = -95
+GW_DEFAULT["MirrorTimer1"].hasMoved = false
+
+GW_DEFAULT["MirrorTimer2"] = {}
+GW_DEFAULT["MirrorTimer2"].point = "TOP"
+GW_DEFAULT["MirrorTimer2"].relativePoint = "TOP"
+GW_DEFAULT["MirrorTimer2"].xOfs = 0
+GW_DEFAULT["MirrorTimer2"].yOfs = -115
+GW_DEFAULT["MirrorTimer2"].hasMoved = false
+
+GW_DEFAULT["MirrorTimer3"] = {}
+GW_DEFAULT["MirrorTimer3"].point = "TOP"
+GW_DEFAULT["MirrorTimer3"].relativePoint = "TOP"
+GW_DEFAULT["MirrorTimer3"].xOfs = 0
+GW_DEFAULT["MirrorTimer3"].yOfs = -135
+GW_DEFAULT["MirrorTimer3"].hasMoved = false
+
 GW_DEFAULT["FADE_MULTIACTIONBAR_1"] = "ALWAYS"
 GW_DEFAULT["FADE_MULTIACTIONBAR_2"] = "ALWAYS"
 GW_DEFAULT["FADE_MULTIACTIONBAR_3"] = "ALWAYS"
