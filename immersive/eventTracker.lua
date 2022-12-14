@@ -358,10 +358,10 @@ local function AddWorldMapFrame()
 
     mapFrame = CreateFrame("Frame", "GW2_EventTracker", WorldMapFrame)
     mapFrame:SetFrameStrata("MEDIUM")
-    mapFrame:SetPoint("TOPLEFT", WorldMapFrame, "BOTTOMLEFT", 0, -1)
-    mapFrame:SetPoint("TOPRIGHT", WorldMapFrame, "BOTTOMRIGHT", 0, -1)
+    mapFrame:SetPoint("TOPLEFT", WorldMapFrame, "BOTTOMLEFT", 0, 2)
+    mapFrame:SetPoint("TOPRIGHT", WorldMapFrame, "BOTTOMRIGHT", 0, 2)
     mapFrame:SetHeight(30)
-    mapFrame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    mapFrame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
 end
 
 local function UpdateTrackers()
@@ -374,7 +374,7 @@ local function UpdateTrackers()
                 tracker.profileUpdate()
             end
 
-            tracker.args.desaturate = GW.GetSetting(data.dbKey .."DESATURATE")
+            tracker.args.desaturate = GW.GetSetting(data.dbKey .. "DESATURATE")
 
             if GW.GetSetting(data.dbKey .. "ALERT") then
                 tracker.args.alert = true
