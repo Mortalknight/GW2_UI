@@ -176,9 +176,9 @@ local functionFactory = {
                     return
                 end
 
-                if self.timeLeft < self.args.alertSecond then
-                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. format(L["%s will start in %s!"], self.args.eventName, secondToTime(self.timeLeft))):gsub("*", GW.Gw2Color))
+                if self.timeLeft <= self.args.alertSecond then
                     self.args["alertCache"][self.nextEventIndex] = true
+                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. format(L["%s will start in %s!"], self.args.eventName, secondToTime(self.timeLeft))):gsub("*", GW.Gw2Color))
                 end
             end
         },
