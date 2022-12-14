@@ -962,13 +962,14 @@ local function InitPanel(panel, hasScroll)
 
     -- Scrollframe settings
     if hasScroll then
+        local maxScroll = max(0, numRows * 40 - panel:GetHeight() + 50)
         panel.scroll:SetScrollChild(panel.scroll.scrollchild)
         panel.scroll.scrollchild:SetHeight(panel:GetHeight())
         panel.scroll.scrollchild:SetWidth(panel.scroll:GetWidth() - 20)
-        panel.scroll.slider:SetMinMaxValues(0, max(0, numRows * 40 - panel:GetHeight() + 50))
-        panel.scroll.slider.thumb:SetHeight(50)
+        panel.scroll.slider:SetMinMaxValues(0, maxScroll)
+        panel.scroll.slider.thumb:SetHeight(panel.scroll.slider:GetHeight() * (panel.scroll:GetHeight() / (maxScroll + panel.scroll:GetHeight())) )
         panel.scroll.slider:SetValue(1)
-        panel.scroll.maxScroll = max(0, numRows * 40 - panel:GetHeight() + 50)
+        panel.scroll.maxScroll = maxScroll
     end
 end
 GW.InitPanel = InitPanel

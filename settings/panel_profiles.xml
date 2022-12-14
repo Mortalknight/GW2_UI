@@ -1,19 +1,32 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwSettingsProfilesPanelTmpl" inherits="GwSettingsPanelTmpl" virtual="true">
+    <Frame name="GwSettingsProfilePanelTmpl" inherits="GwSettingsPanelTmpl" virtual="true">
         <Frames>
-            <ScrollFrame parentKey="profileScroll" inherits="GwHybridScrollFrameTemplate">
-                <Size x="480" y="433"></Size>
+            <Frame parentKey="menu" inherits="GwCharacterMenu">
                 <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-170"></Anchor>
+                    <Anchor point="TOPLEFT" x="-231" y="-102"></Anchor>
+                </Anchors>
+                <Frames>
+                    <Button parentKey="newProfile" inherits="GwSettingsOverviewMenuButton"  text="NEW_COMPACT_UNIT_FRAME_PROFILE" />
+                    <Button parentKey="importProfile" inherits="GwSettingsOverviewMenuButton"  text="Import Profile">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.welcomebtn" relativePoint="TOPLEFT" x="0" y="-36"/>
+                        </Anchors>
+                    </Button>
+                </Frames>
+            </Frame>
+            <ScrollFrame parentKey="profileScroll" inherits="GwHybridScrollFrameTemplate">
+                <Size x="595" y="433"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="5" y="-150"></Anchor>
                 </Anchors>
             </ScrollFrame>
         </Frames>
     </Frame>
 
     <Button name="GwProfileItemTmpl" virtual="true">
-        <size x="470" y="66"/>
+        <size x="585" y="66"/>
         <Frames>
             <Button parentKey="item" setAllPoints="true" hidden="true">
                 <Layers>
@@ -186,13 +199,6 @@
                 <Texture parentKey="hover" file="Interface/AddOns/GW2_UI/textures/uistuff/button_hover" setAllPoints="true" hidden="true"/>
             </Layer>
         </Layers>
-    </Button>            
-
-    <Button name="GwCreateNewProfileTmpl" inherits="GwStandardButton" virtual="true" text="New Profile">
-        <Size x="70" y="20" />
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
-        </Anchors>
     </Button>
 
 </Ui>
