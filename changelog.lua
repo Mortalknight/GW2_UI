@@ -14,6 +14,9 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.0.8",{
+  {ct.bug,[=[Fix for memory leak]=]},
+})
 addChange("6.0.7",{
   {ct.bug,[=[Error on start]=]},
 })
