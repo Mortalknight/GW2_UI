@@ -50,7 +50,7 @@ local function LoadMirrorTimers()
 		end
 		local layouts = GW.GetAllLayouts()
 		for k, _ in pairs(layouts) do
-			if layouts[k] then
+			if layouts[k] and layouts[k].frames then
 				for key, _ in pairs(layouts[k].frames) do
 					if layouts[k].frames[key] and layouts[k].frames[key].settingName == "MirrorTimer" .. i and layouts[k].frames[key].point and layouts[k].frames[key].point.anchor then
 						GW2UI_LAYOUTS[k].frames[key].point.anchor = nil
