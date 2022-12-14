@@ -1,9 +1,16 @@
 local _, GW = ...
 local v = GW.vernotes
+
+v("6.0.9", [=[
+FIXES
+    - Readd mirrortimers
+]=])
+
 v("6.0.8", [=[
 FIXES
     - Fix for memory leak
 ]=])
+
 v("6.0.7", [=[
 FIXES
     - Error on start
