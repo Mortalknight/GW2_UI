@@ -13,6 +13,9 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
+addChange("6.0.10",{
+  {ct.bug,[=[Error on start]=]},
+})
 addChange("6.0.9",{
   {ct.bug,[=[Readd mirrortimers]=]},
 })
