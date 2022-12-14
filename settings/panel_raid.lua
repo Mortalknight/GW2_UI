@@ -12,8 +12,8 @@ local InitPanel = GW.InitPanel
 local settingsMenuAddButton = GW.settingsMenuAddButton
 
 -- Profiles
-local function LoadRaidProfile(sWindow)
-    local p = CreateFrame("Frame", "GwSettingsRaidPanel", sWindow.panels, "GwSettingsRaidPanelTmpl")
+local function LoadRaidProfile(panel)
+    local p = CreateFrame("Frame", "GwSettingsRaidPanel", panel, "GwSettingsRaidPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.header:SetText(L["Group Frames"] )
@@ -246,8 +246,8 @@ local function LoadRaidProfile(sWindow)
     return p
 end
 
-local function LoadRaidPetProfile(sWindow)
-    local p = CreateFrame("Frame", "GwSettingsRaidPetPanel", sWindow.panels, "GwSettingsRaidPanelTmpl")
+local function LoadRaidPetProfile(panel)
+    local p = CreateFrame("Frame", "GwSettingsRaidPetPanel", panel, "GwSettingsRaidPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.header:SetText(L["Group Frames"] )
@@ -447,8 +447,8 @@ local function LoadRaidPetProfile(sWindow)
     return p
 end
 
-local function LoadPartyProfile(sWindow)
-    local p = CreateFrame("Frame", "GwSettingsRaidPartyPanel", sWindow.panels, "GwSettingsRaidPanelTmpl")
+local function LoadPartyProfile(panel)
+    local p = CreateFrame("Frame", "GwSettingsRaidPartyPanel", panel, "GwSettingsRaidPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.header:SetText(L["Group Frames"])
@@ -685,17 +685,12 @@ local function LoadRaidPanel(sWindow)
     p.header:Hide()
     p.sub:Hide()
 
-    local profilePanles = {LoadRaidProfile(sWindow), LoadPartyProfile(sWindow), LoadRaidPetProfile(sWindow)}
-
+    local profilePanles = {LoadRaidProfile(p), LoadPartyProfile(p), LoadRaidPetProfile(p)}
     createCat(L["Group Frames"], L["Edit the group settings."], p, 8, nil, nil, nil, profilePanles)
-
     settingsMenuAddButton(L["Group Frames"], p, 6, nil, profilePanles)
 
     InitPanel(profilePanles[1], false)
     InitPanel(profilePanles[2], false)
     InitPanel(profilePanles[3], false)
-
-    profilePanles[2]:Hide()
-    profilePanles[3]:Hide()
 end
 GW.LoadRaidPanel = LoadRaidPanel

@@ -186,6 +186,7 @@ immersive\chatbubbles.lua
 immersive\tooltips.lua
 immersive\damagetext.xml
 immersive\damagetext.lua
+immersive\eventTracker.lua
 
 objectives\scenarioWidgets\heroicVisions.lua
 objectives\scenarioWidgets\jailersTower.lua

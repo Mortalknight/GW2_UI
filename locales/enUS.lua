@@ -494,5 +494,22 @@ L["Health Bar Position"] = true
 L["One or more of the changes you have made require a UI reload."] = true
 
 --STRING WHICH NEEDS TRANSLATION
+L["Vignettes"] = true
 L["Setup"] = true
 L["System info"] = true
+L["%s will start in %s!"] = true
+L["Interval"] = true
+L["Next Event"] = true
+L["Community Feast"] = true
+L["Feast"] = true
+L["Cooking"] = true
+L["Siege On Dragonbane Keep"] = true
+L["Dragonbane Keep"] = true
+L["Dragonflight World Events"] = true
+L["Desaturate icon"] = true
+L["Desaturate icon if the event is completed in this week."] = true
+L["Stop alert if completed"] = true
+L["Stop alert when the event is completed in this week."] = true
+L["Alert Second"] = true
+L["Alert will be triggered when the remaining time is less than the set value."] = true
+L["Add trackers for world events in the bottom of world map."] = true

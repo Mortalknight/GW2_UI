@@ -1,23 +1,26 @@
 local _, GW = ...
 local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
+local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local L = GW.L
 local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 
-local function LoadNotificationsPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
+local function LoadAlerts(panel)
+    local p = CreateFrame("Frame", nil, panel, "GwSettingsPanelScrollTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.header:SetText(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL)
+    p.header:SetWidth(p.header:GetStringWidth())
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(nil)
+    p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.breadcrumb:SetText(L["Vignettes"])
 
-    createCat(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, L["Edit your GW2 notifications."], p, 11, nil, {p})
-    settingsMenuAddButton(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL,p,11,nil,{})
     local soundKeys = {}
     for _, sound in next, GW.Libs.LSM:List("sound") do
         tinsert(soundKeys, sound)
@@ -251,6 +254,73 @@ local function LoadNotificationsPanel(sWindow)
         true
     )
 
-    InitPanel(p, true)
+    return p
+end
+
+local function LoadEventTracker(panel)
+    local p = CreateFrame("Frame", nil, panel, "GwSettingsPanelScrollTmpl")
+    p.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.header:SetText(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL)
+    p.header:SetWidth(p.header:GetStringWidth())
+    p.sub:SetFont(UNIT_NAME_FONT, 12)
+    p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    p.sub:SetText(L["Add trackers for world events in the bottom of world map."])
+    p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.breadcrumb:SetText(L["Dragonflight World Events"])
+
+    addOption(p.scroll.scrollchild, L["Community Feast"], nil, "WORLD_EVENTS_COMMUNITY_FEAST_ENABLED", GW.UpdateWorldEventTrackers)
+    addOption(p.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_COMMUNITY_FEAST_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true})
+    addOptionSlider(
+        p.scroll.scrollchild,
+        L["Alert Second"],
+        L["Alert will be triggered when the remaining time is less than the set value."],
+        "WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS",
+        GW.UpdateWorldEventTrackers,
+        0,
+        15000,
+        nil,
+        0,
+        {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true},
+        1
+    )
+
+    addOption(p.scroll.scrollchild, L["Siege On Dragonbane Keep"], nil, "WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED", GW.UpdateWorldEventTrackers)
+    addOption(p.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_DRAGONBANE_KEEP_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true, ["WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"] = true})
+    addOptionSlider(
+        p.scroll.scrollchild,
+        L["Alert Second"],
+        L["Alert will be triggered when the remaining time is less than the set value."],
+        "WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS",
+        GW.UpdateWorldEventTrackers,
+        0,
+        15000,
+        nil,
+        0,
+        {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true, ["WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"] = true},
+        1
+    )
+
+    return p
+end
+
+local function LoadNotificationsPanel(sWindow)
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
+    p.header:Hide()
+    p.sub:Hide()
+
+    local alerts = LoadAlerts(p)
+    local eventTracker = LoadEventTracker(p)
+
+    createCat(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, L["Edit your GW2 notifications."], p, 11, nil, {alerts, eventTracker})
+    settingsMenuAddButton(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, p, 11, nil, {alerts, eventTracker})
+
+    InitPanel(alerts, true)
+    InitPanel(eventTracker, true)
 end
 GW.LoadNotificationsPanel = LoadNotificationsPanel

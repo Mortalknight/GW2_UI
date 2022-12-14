@@ -16,8 +16,6 @@ local function LoadPlayerPanel(sWindow)
     p.sub:Hide()
 
     local p_player = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
-
-
     p_player.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_player.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p_player.header:SetText(PLAYER)
@@ -30,8 +28,6 @@ local function LoadPlayerPanel(sWindow)
     p_player.breadcrumb:SetText(GENERAL)
 
     local p_player_aura = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
-
-
     p_player_aura.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_player_aura.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p_player_aura.header:SetText(PLAYER)
@@ -39,14 +35,11 @@ local function LoadPlayerPanel(sWindow)
     p_player_aura.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     p_player_aura.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p_player_aura.breadcrumb:SetText(L["Buffs"])
-
     p_player_aura.sub:SetFont(UNIT_NAME_FONT, 12)
     p_player_aura.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p_player_aura.sub:SetText("")
 
     local p_player_debuff = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
-
-
     p_player_debuff.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_player_debuff.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p_player_debuff.header:SetText(PLAYER)
