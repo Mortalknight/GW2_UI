@@ -195,7 +195,7 @@ local functionFactory = {
                 GameTooltip:AddDoubleLine(L["Interval"] .. ":", secondToTime(self.args.interval), 1, 1, 1)
                 GameTooltip:AddDoubleLine(AUCTION_DURATION .. ":", secondToTime(self.args.duration), 1, 1, 1)
                 if self.nextEventTimestamp then
-                    GameTooltip:AddDoubleLine(L["Next Event"] .. ":", date("%m/%d %H:%M:%S", self.nextEventTimestamp), 1, 1, 1)
+                    GameTooltip:AddDoubleLine(L["Next Event"] .. ":", date(L["TimeStamp m/d h:m:s"], self.nextEventTimestamp), 1, 1, 1)
                 end
 
                 GameTooltip:AddLine(" ")
