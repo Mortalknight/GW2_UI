@@ -1,3 +1,7 @@
+6.0.10
+ FIXES
+     - Error on start
+
 6.0.9
 FIXES
     - Readd mirrortimers
