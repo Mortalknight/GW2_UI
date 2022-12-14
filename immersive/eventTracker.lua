@@ -1,6 +1,10 @@
 local _, GW = ...
 local L = GW.L
 
+--[[
+ 	Credits: fang2hou -> ElvUI_Windtools
+ ]]--
+
 local mapFrame
 
 local eventList = {
