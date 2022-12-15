@@ -20,7 +20,7 @@ local function LoadModulesPanel(sWindow)
 
 
 
-    createCat(L["Modules"], L["Enable and disable components"], p, 0, nil, {p},nil,nil,true)
+    createCat(L["Modules"], L["Enable and disable components"], p, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_settings", nil, {p},nil,nil,true)
     settingsMenuAddButton(L["Modules"],p,0,nil, {})
 
     addOption(p.scroll.scrollchild, XPBAR_LABEL, nil, "XPBAR_ENABLED", function() GW.ShowRlPopup = true end)
@@ -52,7 +52,11 @@ local function LoadModulesPanel(sWindow)
     addOption(p.scroll.scrollchild, FRIENDS, nil, "USE_SOCIAL_WINDOW", function() GW.ShowRlPopup = true end)
 
     InitPanel(p, true)
-    p:SetScript("OnShow", function() settingMenuToggle(true) end)
+    p:SetScript("OnShow", function()
+      sWindow.headerString:SetWidth(sWindow.headerString:GetStringWidth())
+      sWindow.headerBreadcrumb:SetText(GENERAL)
+       settingMenuToggle(true)
+     end)
 
 end
 GW.LoadModulesPanel = LoadModulesPanel

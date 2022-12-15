@@ -23,7 +23,8 @@ GW.getOptionReference = getOptionReference;
 
 local function switchCat(index)
     for _, l in ipairs(settings_cat) do
-        l.iconbg:Hide()
+        l.iconbg:SetTexCoord(0.505, 1, 0, 0.625)
+    --    l.iconbg:Hide()
         l.cat_panel:Hide()
 
         -- hide all profiles
@@ -36,7 +37,8 @@ local function switchCat(index)
 
     local l = settings_cat[index]
     if l then
-        l.iconbg:Show()
+        l.iconbg:SetTexCoord(0, 0.5, 0, 0.625)
+      --  l.iconbg:Show()
         l.cat_panel:Show()
         if l.cat_crollFrames then
             for _, v in pairs(l.cat_crollFrames) do
@@ -71,7 +73,7 @@ end
 AddForProfiling("settings", "switchCat", switchCat)
 
 local fnF_OnEnter = function(self)
-    self.icon:SetBlendMode("ADD")
+--    self.icon:SetBlendMode("ADD")
     GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -40)
     GameTooltip:ClearLines()
     GameTooltip:AddLine(self.cat_name, 1, 1, 1)
@@ -81,7 +83,7 @@ end
 AddForProfiling("settings", "fnF_OnEnter", fnF_OnEnter)
 
 local fnF_OnLeave = function(self)
-    self.icon:SetBlendMode("BLEND")
+  --  self.icon:SetBlendMode("BLEND")
     GameTooltip_Hide(self)
 end
 AddForProfiling("settings", "fnF_OnLeave", fnF_OnLeave)
@@ -103,19 +105,23 @@ local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon,
     f.cat_id = i
     f.cat_crollFrames = scrollFrames
     settings_cat[i] = f
-    f:SetPoint("TOPLEFT", -40, -32 + (-40 * visible_cat_button_id))
+    f:SetPoint("TOPRIGHT",GwSettingsWindow,"TOPLEFT", 1, -32 + (-40 * visible_cat_button_id))
+
+    if icon ~=nil then
+       f.iconbg:SetTexture(icon)
+    end
 
     -- set the icon requested
-    f.icon:SetTexCoord(0.25 * floor(icon / 4), 0.25 * (floor(icon / 4) + 1), 0.25 * (icon % 4), 0.25 * ((icon % 4) + 1))
-    if specialIcon then
-        f.icon:SetTexCoord(0, 1, 0, 1)
-        f.icon:SetTexture(specialIcon)
-    end
+  --  f.icon:SetTexCoord(0.25 * floor(icon / 4), 0.25 * (floor(icon / 4) + 1), 0.25 * (icon % 4), 0.25 * ((icon % 4) + 1))
+  --  if specialIcon then
+  --      f.icon:SetTexCoord(0, 1, 0, 1)
+  --      f.icon:SetTexture(specialIcon)
+  --  end
 
     -- set the bg requested
-    if bg then
-        f.iconbg:SetTexture(bg)
-    end
+  --  if bg then
+  --      f.iconbg:SetTexture(bg)
+  --  end
     if not visibleTabButton then
       f:Hide()
     else
@@ -123,8 +129,8 @@ local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon,
     end
 
     -- add handlers
-    f:SetScript("OnEnter", fnF_OnEnter)
-    f:SetScript("OnLeave", fnF_OnLeave)
+  --  f:SetScript("OnEnter", fnF_OnEnter)
+  --  f:SetScript("OnLeave", fnF_OnLeave)
     f:SetScript("OnClick", fnF_OnClick)
 end
 GW.CreateCat = CreateCat

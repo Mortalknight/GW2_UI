@@ -158,7 +158,7 @@ local function switchCat(self,basePanel, panelFrame)
   GwSettingsSearchResultPanel:Hide()
 
   for _, l in ipairs(settings_cat) do
-      l.iconbg:Hide()
+    --  l.iconbg:Hide()
       l.cat_panel:Hide()
 
       if l.cat_crollFrames then

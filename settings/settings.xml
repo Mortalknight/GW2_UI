@@ -80,7 +80,7 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-        
+
                 <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel">
                     <Size x="40" y="512"/>
                     <Anchors>
@@ -121,6 +121,13 @@
                         <Anchor point="TOPLEFT" x="30" y="40"/>
                     </Anchors>
                 </FontString>
+                <FontString parentKey="headerBreadcrumb" text="Settings" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="512" y="40"/>
+                    <Color r="1" b="0.73" g="0.93"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeKey="$parent.headerString" relativePoint="RIGHT" x="20" y="0"/>
+                    </Anchors>
+                </FontString>
                 <FontString parentKey="versionString" text="Version" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="236" y="40"/>
                     <Color r="1" b="0.73" g="0.93"/>
@@ -154,22 +161,15 @@
     </Frame>
 
     <Button name="GwSettingsLabelTmpl" virtual="true">
-        <Size x="40" y="40"/>
+        <Size x="64" y="40"></Size>
         <Layers>
             <Layer>
-                <Texture parentKey="iconbg" hidden="true" file="Interface/AddOns/GW2_UI/textures/icons/settingsiconbg">
+                <Texture parentKey="iconbg" file="Interface/AddOns/GW2_UI/textures/uistuff/tabicon_settings">
                     <Size x="64" y="40"/>
-                    <Anchors>
-                        <Anchor point="CENTER" x="-6" y="0"/>
-                    </Anchors>
-                </Texture>
-            </Layer>
-            <Layer level="OVERLAY">
-                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/icons/icon-module">
-                    <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="0"/>
                     </Anchors>
+                    <TexCoords left="0" right="0.5" top="0" bottom="0.625"/>
                 </Texture>
             </Layer>
         </Layers>

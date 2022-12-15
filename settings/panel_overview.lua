@@ -100,6 +100,11 @@ local function LoadOverviewPanel(sWindow)
     sWindow.versionString:SetFont(UNIT_NAME_FONT, 12)
     sWindow.versionString:SetText(GW.VERSION_STRING)
     sWindow.headerString:SetText(CHAT_CONFIGURATION)
+
+    sWindow.headerString:SetWidth(sWindow.headerString:GetStringWidth())
+    sWindow.headerBreadcrumb:SetFont(DAMAGE_TEXT_FONT, 14)
+    sWindow.headerBreadcrumb:SetText(CHAT_CONFIGURATION)
+
     p.menu.movehudbtn:SetText(L["Move HUD"])
 
     p.menu.keybindingsbtn:SetText(KEY_BINDING)
@@ -124,10 +129,14 @@ local function LoadOverviewPanel(sWindow)
     p.menu.discordbtn:SetScript("OnClick", fnGSWD_OnClick)
     p.menu.keybindingsbtn:SetScript("OnClick", fmGSWKB_OnClick)
 
-    createCat(L["Modules"], L["Enable and disable components"], p, 0, nil, {p},nil,nil,true)
+    createCat(L["Modules"], L["Enable and disable components"], p, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_overview", nil, {p},nil,nil,true)
 
     InitPanel(p, false)
-    p:SetScript("OnShow", function() settingMenuToggle(false) end)
+    p:SetScript("OnShow", function()
+      settingMenuToggle(false)
+      sWindow.headerString:SetWidth(sWindow.headerString:GetStringWidth())
+      sWindow.headerBreadcrumb:SetText(OVERVIEW)
+    end)
 
     p.scroll:SetScrollChild(p.scroll.scrollchild)
 
@@ -193,8 +202,5 @@ local function LoadOverviewPanel(sWindow)
 
     p.scroll.slider:SetValue(1)
     p.scroll.maxScroll = scrollMax
-
-
-
 end
 GW.LoadOverviewPanel = LoadOverviewPanel
