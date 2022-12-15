@@ -391,11 +391,7 @@ local function LoadMailSkin()
     MailFrame.footer:SetPoint("TOPRIGHT", MailFrame, "BOTTOMRIGHT", 0, 5)
     MailFrame.footer:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagfooter")
 
-    InboxFrame.heading = InboxFrame:CreateTexture("InboxHeadingBgTexture", "BACKGROUND")
-    InboxFrame.heading:SetSize(newWidth, 48)
-    InboxFrame.heading:SetPoint("BOTTOMLEFT", InboxTitleText, "TOPLEFT", -10, -21)
-    InboxFrame.heading:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagheader")
-    InboxFrame.heading:SetWidth(310)
+
 
     _G.AutoCompleteBox:StripTextures()
     _G.AutoCompleteBox:CreateBackdrop(GW.skins.constBackdropFrame)
