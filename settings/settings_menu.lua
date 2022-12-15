@@ -210,7 +210,8 @@ local function searchInputChanged(self)
         for _, of in pairs(panel.options) do
 
             local titleText = of.displayName
-
+            titleText = titleText:lower()
+            text = text:lower()
             if titleText ~= nil and string.find(titleText, text, 1, true) then
                 GwSettingsSearchResultPanel.sub:Hide()
                 -- get the original points and save them for later when we need to put the frame back
