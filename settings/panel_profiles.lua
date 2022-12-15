@@ -399,7 +399,6 @@ local function item_OnEnter(self)
     if self.canCopy then
         self.settingsButton.dropdown.copy:Show()
     end
-    self.background:SetBlendMode("ADD")
 end
 AddForProfiling("panel_profiles", "item_OnEnter", item_OnEnter)
 
@@ -428,7 +427,6 @@ local function item_OnLeave(self)
     if self.canCopy then
         self.settingsButton.dropdown.copy:Hide()
     end
-    self.background:SetBlendMode("BLEND")
 end
 AddForProfiling("panel_profiles", "item_OnLeave", item_OnLeave)
 
@@ -456,7 +454,6 @@ AddForProfiling("panel_profiles", "addProfile", addProfile)
 
 local function ItemActivateButtonOnEnter(self, triggeredFromParent)
     if self:GetParent().canActivate then
-        self.icon:SetBlendMode("ADD")
         self.icon:SetAlpha(0.5)
         self.hint:Show()
 
@@ -467,7 +464,6 @@ local function ItemActivateButtonOnEnter(self, triggeredFromParent)
 end
 
 local function ItemActivateButtonOnLeave(self, triggeredFromParent)
-    self.icon:SetBlendMode("BLEND")
     self.icon:SetAlpha(1)
     self.hint:Hide()
 
