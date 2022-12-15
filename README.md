@@ -1,6 +1,6 @@
 # GW2 UI
 
-**GW2 UI** is a meticulously crafted interface replacement that aims to increase immersion, as well as efficiency, without relying on dependencies. 
+**GW2 UI** is a meticulously crafted interface replacement that aims to increase immersion, as well as efficiency, without relying on dependencies.
 
 The entire UI is hand-painted, and hand-coded, to provide the best experience possible for players. Each interface element has been (or will be) rewritten, to provide enhanced functionality as well as improve the user experience, over the default UI.
 
@@ -12,7 +12,7 @@ This UI is designed for players who want a quick-and-easy, plug-and-play interfa
   - Hand-painted class power icons, with improved animations
   - Brand new, immersive questing interface
   - Redesigned and improved inventory interface
-  - Brand new and enhanced quest tracker, complete with tracking compass and boss frames 
+  - Brand new and enhanced quest tracker, complete with tracking compass and boss frames
 
 
 ### KNOWN ISSUES
@@ -21,7 +21,7 @@ Not compatible with the *"Paste"* addon (action bars will appear empty). This ma
 
 [![GW2 UI on Discord](https://discord.com/api/guilds/243035988614578176/widget.png?style=banner2)](https://discord.gg/MZZtRWt)
 
-[![GW2 UI on Patreon](http://i.imgur.com/gyn76CI.png)](https://www.patreon.com/gw2ui)[![GW2 UI on PayPal](http://i.imgur.com/xSSjpwd.png)](https://www.paypal.com/donate?hosted_button_id=H7E9W75TYRWX4)
+[![GW2 UI on Patreon](http://i.imgur.com/gyn76CI.png)](https://www.patreon.com/gw2ui)[![GW2 UI on PayPal](http://i.imgur.com/xSSjpwd.png)](https://www.paypal.com/donate?hosted_button_id=WBGL5GPMTNEL4)
 
 ### SCREENSHOTS
 ![alt text](https://github.com/Mortalknight/GW2_UI/blob/master/.previews/overview.jpg?raw=true)
