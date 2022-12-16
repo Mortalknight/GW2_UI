@@ -153,13 +153,12 @@
                             <Anchor point="RIGHT" relativeKey="$parent.AddFriendButton" relativePoint="LEFT" x="0" y="0"/>
                         </Anchors>
                     </Button>
-                    <EditBox parentKey="EditBox" inherits="GwStandardInputBox" autoFocus="false" frameStrata="HIGH" historyLines="32" bytes="256">
+                    <Frame parentKey="EditBox" inherits="GwStandardInputField"frameStrata="HIGH">
                         <Size x="460" y="25"/>
                         <Anchors>
                             <Anchor point="BOTTOM" x="0" y="35"/>
                         </Anchors>
-                        <FontString inherits="ChatFontNormal"/>
-                    </EditBox>
+                    </Frame>
                     <ScrollFrame parentKey="ScrollFrame" inherits="GwHybridScrollFrameTemplate">
                         <Size x="460" y="460"/>
                         <Anchors>

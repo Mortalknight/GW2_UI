@@ -299,18 +299,18 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
     if deactivateColor then
         _G[name].title:SetTextColor(0.82, 0, 0)
         if type == "slider" then
-            _G[name].input:SetTextColor(0.82, 0, 0)
+            _G[name].inputFrame.input:SetTextColor(0.82, 0, 0)
         elseif type == "text" then
-            _G[name].input:SetTextColor(0.82, 0, 0)
+            _G[name].inputFrame.input:SetTextColor(0.82, 0, 0)
         elseif type == "dropdown" then
             _G[name].button.string:SetTextColor(0.82, 0, 0)
         end
     elseif overrideColor then
         _G[name].title:SetTextColor(1, 0.65, 0)
         if type == "slider" then
-            _G[name].input:SetTextColor(1, 0.65, 0)
+            _G[name].inputFrame.input:SetTextColor(1, 0.65, 0)
         elseif type == "text" then
-            _G[name].input:SetTextColor(1, 0.65, 0)
+            _G[name].inputFrame.input:SetTextColor(1, 0.65, 0)
         elseif type == "dropdown" then
             _G[name].button.string:SetTextColor(1, 0.65, 0)
         end
@@ -321,11 +321,11 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
             _G[name].checkbutton:Enable()
         elseif type == "slider" then
             _G[name].slider:Enable()
-            _G[name].input:Enable()
-            _G[name].input:SetTextColor(0.82, 0.82, 0.82)
+            _G[name].inputFrame.input:Enable()
+            _G[name].inputFrame.input:SetTextColor(0.82, 0.82, 0.82)
         elseif type == "text" then
-            _G[name].input:Enable()
-            _G[name].input:SetTextColor(1, 1, 1)
+            _G[name].inputFrame.input:Enable()
+            _G[name].inputFrame.input:SetTextColor(1, 1, 1)
         elseif type == "dropdown" then
             _G[name].button:Enable()
             _G[name].button.string:SetTextColor(1, 1, 1)
@@ -340,11 +340,11 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
             _G[name].checkbutton:Disable()
         elseif type == "slider" then
             _G[name].slider:Disable()
-            _G[name].input:Disable()
-            _G[name].input:SetTextColor(0.4, 0.4, 0.4)
+            _G[name].inputFrame.input:Disable()
+            _G[name].inputFrame.input:SetTextColor(0.4, 0.4, 0.4)
         elseif type == "text" then
-            _G[name].input:Disable()
-            _G[name].input:SetTextColor(0.4, 0.4, 0.4)
+            _G[name].inputFrame.input:Disable()
+            _G[name].inputFrame.input:SetTextColor(0.4, 0.4, 0.4)
         elseif type == "dropdown" then
             _G[name].button:Disable()
             _G[name].button.string:SetTextColor(0.4, 0.4, 0.4)
@@ -775,8 +775,8 @@ local function InitPanel(panel, hasScroll)
                     end
                 end
             )
-            of.input:SetNumber(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
-            of.input:SetScript(
+            of.inputFrame.input:SetNumber(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
+            of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
                     if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
@@ -802,7 +802,7 @@ local function InitPanel(panel, hasScroll)
                         local min_value = v.min or 0
                         roundValue = floor((roundValue - min_value) / v.step + 0.5) * v.step + min_value
                     end
-                    self:GetParent().slider:SetValue(roundValue)
+                    self:GetParent():GetParent().slider:SetValue(roundValue)
                     self:SetText(roundValue)
                     SetSetting(v.optionName, roundValue, of.perSpec)
                     if v.callback then
@@ -811,8 +811,8 @@ local function InitPanel(panel, hasScroll)
                 end
             )
         elseif v.optionType == "text" then
-            of.input:SetText(GetSetting(of.optionName, of.perSpec) or "")
-            of.input:SetScript(
+            of.inputFrame.input:SetText(GetSetting(of.optionName, of.perSpec) or "")
+            of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
                     if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
