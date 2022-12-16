@@ -507,7 +507,6 @@ L["Feast"] = true
 L["Cooking"] = true
 L["Siege On Dragonbane Keep"] = true
 L["Dragonbane Keep"] = true
-L["Dragonflight World Events"] = true
 L["Desaturate icon"] = true
 L["Desaturate icon if the event is completed in this week."] = true
 L["Stop alert if completed"] = true
