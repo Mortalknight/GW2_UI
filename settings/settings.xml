@@ -242,7 +242,7 @@
                 </Layers>
             </Slider>
             <Frame parentKey="inputFrame" inherits="GwStandardInputField">
-                <Size x="25" y="20"/>
+                <Size x="35" y="20"/>
                 <Anchors>
                     <Anchor point="LEFT" relativeKey="$parent.slider" relativePoint="RIGHT" x="10" y="0"/>
                 </Anchors>

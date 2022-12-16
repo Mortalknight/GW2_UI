@@ -769,7 +769,7 @@ local function InitPanel(panel, hasScroll)
                     local roundValue = RoundDec(self:GetValue(), of.decimalNumbers)
 
                     SetSetting(of.optionName, roundValue, of.perSpec)
-                    self:GetParent().input:SetText(roundValue)
+                    self:GetParent().inputFrame.input:SetText(roundValue)
                     if v.callback then
                         v.callback()
                     end
