@@ -153,7 +153,7 @@
                             <Anchor point="RIGHT" relativeKey="$parent.AddFriendButton" relativePoint="LEFT" x="0" y="0"/>
                         </Anchors>
                     </Button>
-                    <Frame parentKey="EditBox" inherits="GwStandardInputField"frameStrata="HIGH">
+                    <Frame parentKey="EditBox" inherits="GwStandardInputField" frameStrata="HIGH">
                         <Size x="460" y="25"/>
                         <Anchors>
                             <Anchor point="BOTTOM" x="0" y="35"/>
