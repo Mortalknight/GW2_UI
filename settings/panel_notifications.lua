@@ -268,7 +268,7 @@ local function LoadEventTracker(panel)
     p.sub:SetText(L["Add trackers for world events in the bottom of world map."])
     p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
     p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.breadcrumb:SetText(L["Dragonflight World Events"])
+    p.breadcrumb:SetText(BATTLE_PET_SOURCE_7)
 
     addOption(p.scroll.scrollchild, L["Community Feast"], nil, "WORLD_EVENTS_COMMUNITY_FEAST_ENABLED", GW.UpdateWorldEventTrackers)
     addOption(p.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true})
