@@ -429,15 +429,9 @@ local function loadDropDown(scrollFrame)
                 if scrollFrame.data.hasCheckbox then
                     local settingstable = GetSetting(scrollFrame.data.optionName, scrollFrame.data.perSpec)
                     if type(settingstable[scrollFrame.data.options[idx]]) == "table" then
-                        if settingstable[scrollFrame.data.options[idx]].enable then
-                            slot.checkbutton:SetChecked(true)
-                        else
-                            slot.checkbutton:SetChecked(false)
-                        end
-                    elseif settingstable[scrollFrame.data.options[idx]] then
-                        slot.checkbutton:SetChecked(true)
+                        slot.checkbutton:SetChecked(settingstable[scrollFrame.data.options[idx]].enable)
                     else
-                        slot.checkbutton:SetChecked(false)
+                        slot.checkbutton:SetChecked(settingstable[scrollFrame.data.options[idx]] == nil and true or settingstable[scrollFrame.data.options[idx]])
                     end
                 end
 

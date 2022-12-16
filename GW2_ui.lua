@@ -534,6 +534,9 @@ local function evPlayerLogin(self)
         return
     end
 
+    -- Remove old debuffs from db
+    GW.RemoveOldRaidDebuffsFormProfiles()
+
     --GW.DisableBlizzardMovers()
     GW.HandleBlizzarEditMode()
     GW.DisableBlizzardFrames()

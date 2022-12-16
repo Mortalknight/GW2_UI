@@ -71,7 +71,7 @@ local function LoadAurasPanel(sWindow)
             tinsert(raidDebuffKeys, spellID)
             tinsert(raidDebuffVales, name)
 
-            GW.ImportendRaidDebuff[spellID] = settingstable[spellID]
+            GW.ImportendRaidDebuff[spellID] = settingstable[spellID] == nil and true or settingstable[spellID]
         end
     end
     addOptionDropdown(
