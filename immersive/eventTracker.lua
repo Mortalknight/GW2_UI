@@ -1,5 +1,6 @@
 local _, GW = ...
 local L = GW.L
+local GetSetting = GW.GetSetting
 
 --[[
  	Credits: fang2hou -> ElvUI_Windtools
@@ -317,7 +318,7 @@ function trackers:get(event)
 
         if functions.ticker then
             frame.tickerInstance = C_Timer.NewTicker(functions.ticker.interval, function()
-                if not GW.GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ENABLED") and not GW.GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED") then
+                if not GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ENABLED") and not GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED") then
                     return
                 end
                 functions.ticker.dateUpdater(frame)
@@ -368,18 +369,18 @@ local function UpdateTrackers()
     local lastTracker = nil
     for _, event in ipairs(eventList) do
         local data = eventData[event]
-        local tracker = GW.GetSetting(data.dbKey .. "ENABLED") and trackers:get(event) or trackers:disable(event)
+        local tracker = GetSetting(data.dbKey .. "ENABLED") and trackers:get(event) or trackers:disable(event)
         if tracker then
             if tracker.profileUpdate then
                 tracker.profileUpdate()
             end
 
-            tracker.args.desaturate = GW.GetSetting(data.dbKey .. "DESATURATE")
+            tracker.args.desaturate = GetSetting(data.dbKey .. "DESATURATE")
 
-            if GW.GetSetting(data.dbKey .. "ALERT") then
+            if GetSetting(data.dbKey .. "ALERT") then
                 tracker.args.alert = true
-                tracker.args.alertSecond = GW.GetSetting(data.dbKey .. "ALERT_SECONDS")
-                tracker.args.stopAlertIfCompleted = GW.GetSetting(data.dbKey .. "STOP_ALERT_IF_COMPLETED")
+                tracker.args.alertSecond = GetSetting(data.dbKey .. "ALERT_SECONDS")
+                tracker.args.stopAlertIfCompleted = GetSetting(data.dbKey .. "STOP_ALERT_IF_COMPLETED")
             else
                 tracker.args.alertSecond = nil
                 tracker.args.stopAlertIfCompleted = nil
@@ -395,7 +396,7 @@ local function UpdateTrackers()
         end
     end
 
-    mapFrame:SetShown(GW.GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ENABLED") or GW.GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"))
+    mapFrame:SetShown(GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ENABLED") or GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"))
 end
 GW.UpdateWorldEventTrackers = UpdateTrackers
 

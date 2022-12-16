@@ -1,8 +1,9 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
+local GetSetting = GW.GetSetting
 
 local function LoadReadyCheckSkin()
-    if not GW.GetSetting("READYCHECK_SKIN_ENABLED") then return end
+    if not GetSetting("READYCHECK_SKIN_ENABLED") then return end
 
     _G.ReadyCheckFrameYesButton:SkinButton(false, true)
     _G.ReadyCheckFrameNoButton:SkinButton(false, true)

@@ -1,6 +1,7 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
 local AFP = GW.AddProfiling
+local GetSetting = GW.GetSetting
 
 local function hook_SetSelectedCategory(list)
     if list.selectionPopoutPool then
@@ -56,7 +57,7 @@ end
 AFP("hook_SetSelectedCategory", hook_SetSelectedCategory)
 
 local function SkinBarShop()
-    if not GW.GetSetting("BARBERSHOP_SKIN_ENABLED") then return end
+    if not GetSetting("BARBERSHOP_SKIN_ENABLED") then return end
     BarberShopFrame.ResetButton:SkinButton(false, true)
     BarberShopFrame.CancelButton:SkinButton(false, true)
     BarberShopFrame.AcceptButton:SkinButton(false, true)

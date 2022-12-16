@@ -1,4 +1,5 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local function HandleGoldIcon(button)
     local Button = _G[button]
@@ -85,7 +86,7 @@ local function HandleAffixIcons(self)
 end
 
 local function SkinLookingForGroupFrames()
-    if not GW.GetSetting("LFG_SKIN_ENABLED") then return end
+    if not GetSetting("LFG_SKIN_ENABLED") then return end
 
     GW.HandlePortraitFrame(PVEFrame, false)
 
@@ -94,7 +95,7 @@ local function SkinLookingForGroupFrames()
     RaidFinderQueueFrame:StripTextures(true)
 
     GW.CreateFrameHeaderWithBody(PVEFrame, PVEFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {LFDQueueFrame, RaidFinderFrame, LFGListFrame})
-    
+
     PVEFrameBg:Hide()
     PVEFrame.shadows:Kill()
 
@@ -539,7 +540,7 @@ local function SkinLookingForGroupFrames()
 end
 
 local function ApplyPvPUISkin()
-    if not GW.GetSetting("LFG_SKIN_ENABLED") then return end
+    if not GetSetting("LFG_SKIN_ENABLED") then return end
 
     PVPUIFrame:StripTextures()
 
@@ -700,7 +701,7 @@ local function ApplyPvPUISkin()
         end
     end)
 
-    if GW.GetSetting("TOOLTIPS_ENABLED") then
+    if GetSetting("TOOLTIPS_ENABLED") then
         ConquestTooltip.NineSlice:Hide()
         ConquestTooltip:CreateBackdrop({
             bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
@@ -773,7 +774,7 @@ local function ApplyPvPUISkin()
 end
 
 local function ApplyChallengesUISkin()
-    if not GW.GetSetting("LFG_SKIN_ENABLED") then return end
+    if not GetSetting("LFG_SKIN_ENABLED") then return end
 
     ChallengesFrame:DisableDrawLayer("BACKGROUND")
     ChallengesFrameInset:StripTextures()

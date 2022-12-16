@@ -1,5 +1,6 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
+local GetSetting = GW.GetSetting
 
 -------------------------------------------------------LFGListInviteDialog-------------------------------------------------------
 local function SkinLFGListInviteDialog()
@@ -14,7 +15,7 @@ local function SkinLFGListInviteDialog()
 
         LFGListInviteDialog:CreateBackdrop(constBackdropFrame)
     end
-        
+
     hooksecurefunc("LFGListInviteDialog_Show", SkinLFGListInviteDialog_Show)
 end
 
@@ -110,7 +111,7 @@ local function SkinLFGInvitePopup()
 end
 
 local function LoadLFGSkins()
-    if not GW.GetSetting("LFG_FRAMES_SKIN_ENABLED") then return end
+    if not GetSetting("LFG_FRAMES_SKIN_ENABLED") then return end
 
     SkinLFGInvitePopup()
     SkinLFDRoleCheckPopup()

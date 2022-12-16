@@ -1387,7 +1387,7 @@ local function LoadClassPowers()
 
     -- position mover
     if (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not cpf.isMoved  then
-        local framePoint = GW.GetSetting("ClasspowerBar_pos")
+        local framePoint = GetSetting("ClasspowerBar_pos")
         local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
         local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 52 or 0
         cpf.gwMover:ClearAllPoints()

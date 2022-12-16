@@ -2,15 +2,16 @@ local _, GW = ...
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local TimeCount = GW.TimeCount
+local GetSetting = GW.GetSetting
 
 local function GetDebuffScaleBasedOnPrio()
-    local debuffScalePrio = GW.GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO")
+    local debuffScalePrio = GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO")
     local scale = 1
 
     if debuffScalePrio == "DISPELL" then
-        return tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
+        return tonumber(GetSetting("DISPELL_DEBUFFS_Scale"))
     elseif debuffScalePrio == "IMPORTANT" then
-        return tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
+        return tonumber(GetSetting("RAIDDEBUFFS_Scale"))
     end
 
     return scale
@@ -280,9 +281,9 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 if GW.ImportendRaidDebuff[list[index].spellID] and list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
                     size = size * debuffScale
                 elseif GW.ImportendRaidDebuff[list[index].spellID] then
-                    size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
+                    size = size * tonumber(GetSetting("RAIDDEBUFFS_Scale"))
                 elseif list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
-                    size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
+                    size = size * tonumber(GetSetting("DISPELL_DEBUFFS_Scale"))
                 end
             end
 

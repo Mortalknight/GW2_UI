@@ -1,7 +1,8 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local function LoadHelperFrameSkin()
-    if not GW.GetSetting("HELPFRAME_SKIN_ENABLED") then return end
+    if not GetSetting("HELPFRAME_SKIN_ENABLED") then return end
 
     HelpFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     HelpFrameTitleText:ClearAllPoints()

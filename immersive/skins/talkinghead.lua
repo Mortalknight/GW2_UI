@@ -1,7 +1,8 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local function InitTalkingHeadFrame()
-    if not GW.GetSetting("TALKINGHEAD_SKIN_ENABLED") then return end
+    if not GetSetting("TALKINGHEAD_SKIN_ENABLED") then return end
 
     -- remove TalkingHeadFrame from Alert System
     for i, alertFrameSubSystem in ipairs(AlertFrame.alertFrameSubSystems) do

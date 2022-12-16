@@ -1,5 +1,6 @@
 local _, GW =  ...
 local AFP = GW.AddProfiling
+local GetSetting = GW.GetSetting
 
 local lootQuality = {
     ["loottab-set-itemborder-white"] = nil, -- dont show white
@@ -373,7 +374,7 @@ local function encounterJournalSkin()
     hooksecurefunc("EJSuggestFrame_UpdateRewards", hook_EJSuggestFrame_UpdateRewards)
 
     --Suggestion Reward Tooltips
-    if GW.GetSetting("TOOLTIPS_ENABLED") then
+    if GetSetting("TOOLTIPS_ENABLED") then
         local tooltip = EncounterJournalTooltip
         local item1 = tooltip.Item1
         local item2 = tooltip.Item2
@@ -587,7 +588,7 @@ end
 AFP("encounterJournalSkin", encounterJournalSkin)
 
 local function LoadEncounterJournalSkin()
-    if not GW.GetSetting("ENCOUNTER_JOURNAL_SKIN_ENABLED") then
+    if not GetSetting("ENCOUNTER_JOURNAL_SKIN_ENABLED") then
         return
     end
     GW.RegisterLoadHook(encounterJournalSkin, "Blizzard_EncounterJournal", EncounterJournal)

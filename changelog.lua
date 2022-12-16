@@ -13,6 +13,11 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
+addChange("6.1.0",{
+  {ct.feature,[=[Added brand new settings page]=]},
+  {ct.feature,[=[Update raiddebuffs for season 1]=]},
+  {ct.feature,[=[Added Community Feast and Siege On Dragonbane Keep timer to worldmap]=]},
+})
 addChange("6.0.10",{
   {ct.bug,[=[Error on start]=]},
 })

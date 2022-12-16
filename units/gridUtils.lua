@@ -459,9 +459,9 @@ local function GridShowDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count
         if isImportant and isDispellable then
             size = size * GW.GetDebuffScaleBasedOnPrio()
         elseif isImportant then
-            size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
+            size = size * tonumber(GetSetting("RAIDDEBUFFS_Scale"))
         elseif isDispellable then
-            size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
+            size = size * tonumber(GetSetting("DISPELL_DEBUFFS_Scale"))
         end
     end
 

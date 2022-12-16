@@ -144,6 +144,37 @@ end
 hooksecurefunc(HelpTip, "Show", AcknowledgeTips)
 C_Timer.After(1, function() AcknowledgeTips() end)
 
+-- we need to load this function here because it is need in defaults.lua
+local function MapTable(T, fn, withKey)
+    local t = {}
+    for k,v in pairs(T) do
+        if withKey then
+            t[k] = fn(v, k)
+        else
+            t[k] = fn(v)
+        end
+    end
+    return t
+end
+GW.MapTable = MapTable
+
+local function copyTable(newTable, tableToCopy)
+    if type(newTable) ~= "table" then newTable = {} end
+
+    if type(tableToCopy) == "table" then
+        for option, value in pairs(tableToCopy) do
+            if type(value) == "table" then
+                value = copyTable(newTable[option], value)
+            end
+
+            newTable[option] = value
+        end
+    end
+
+    return newTable
+end
+GW.copyTable = copyTable
+
 --Add Shared Media
 --Font
 GW.Libs.LSM:Register("font", "GW2_UI", "Interface/AddOns/GW2_UI/fonts/menomonia.ttf", GW.Libs.LSM.LOCALE_BIT_western + GW.Libs.LSM.LOCALE_BIT_ruRU)

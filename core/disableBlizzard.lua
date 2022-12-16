@@ -2,6 +2,7 @@ local _, GW = ...
 
 local isArenaHooked = false
 local lockedFrames = {}
+local GetSetting = GW.GetSetting
 
 local MAX_PARTY = MEMBERS_PER_RAID_GROUP or MAX_PARTY_MEMBERS or 5
 local MAX_ARENA_ENEMIES = MAX_ARENA_ENEMIES or 5
@@ -49,19 +50,19 @@ end
 
 
 local function DisableBlizzardFrames()
-    local ourPartyFrames = GW.GetSetting("PARTY_FRAMES")
-    local ourRaidFrames = GW.GetSetting("RAID_FRAMES")
-    local ourBossFrames = GW.GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
-    local ourArenaFrames = not IsAddOnLoaded("sArena") and GW.GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
-    local ourPetFrame = GW.GetSetting("PETBAR_ENABLED")
-    local ourTargetFrame = GW.GetSetting("TARGET_ENABLED")
-    local ourTargetTargetFrame = GW.GetSetting("target_TARGET_ENABLED")
-    local ourFocusFrame = GW.GetSetting("FOCUS_ENABLED")
-    local ourFocusTargetFrame = GW.GetSetting("focus_TARGET_ENABLED")
-    local ourPlayerFrame = GW.GetSetting("HEALTHGLOBE_ENABLED")
-    local ourCastBar = GW.GetSetting("CASTINGBAR_ENABLED")
-    local ourActionbars = GW.GetSetting("ACTIONBARS_ENABLED")
-    local ourInventory = GW.GetSetting("BAGS_ENABLED")
+    local ourPartyFrames = GetSetting("PARTY_FRAMES")
+    local ourRaidFrames = GetSetting("RAID_FRAMES")
+    local ourBossFrames = GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
+    local ourArenaFrames = not IsAddOnLoaded("sArena") and GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
+    local ourPetFrame = GetSetting("PETBAR_ENABLED")
+    local ourTargetFrame = GetSetting("TARGET_ENABLED")
+    local ourTargetTargetFrame = GetSetting("target_TARGET_ENABLED")
+    local ourFocusFrame = GetSetting("FOCUS_ENABLED")
+    local ourFocusTargetFrame = GetSetting("focus_TARGET_ENABLED")
+    local ourPlayerFrame = GetSetting("HEALTHGLOBE_ENABLED")
+    local ourCastBar = GetSetting("CASTINGBAR_ENABLED")
+    local ourActionbars = GetSetting("ACTIONBARS_ENABLED")
+    local ourInventory = GetSetting("BAGS_ENABLED")
 
     if ourPartyFrames or ourRaidFrames then
         -- calls to UpdateRaidAndPartyFrames, which as of writing this is used to show/hide the

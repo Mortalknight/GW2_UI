@@ -1,4 +1,5 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local function RaidGroupButton_OnDragStart(raidButton)
     if InCombatLockdown() then return end
@@ -179,7 +180,7 @@ local function LoadRaidList(tabContainer)
 
     RaidFrameConvertToRaidButton:SkinButton(false, true)
     RaidFrameRaidInfoButton:SkinButton(false, true)
-    if GW.GetSetting("USE_CHARACTER_WINDOW") then
+    if GetSetting("USE_CHARACTER_WINDOW") then
         RaidFrameRaidInfoButton:SetScript("OnClick", function()
             if InCombatLockdown() then return end
             if GWCharacterCurrenyRaidInfoFrame.RaidScroll:IsVisible() then

@@ -1,7 +1,8 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local function LoadAddonListSkin()
-    if not GW.GetSetting("ADDONLIST_SKIN_ENABLED") then return end
+    if not GetSetting("ADDONLIST_SKIN_ENABLED") then return end
     GW.HandlePortraitFrame(AddonList)
 
     GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon", {AddonList.ScrollBox})

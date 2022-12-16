@@ -1,7 +1,8 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local function ApplySoulbindsSkin()
-	if not GW.GetSetting("SOULBINDS_SKIN_ENABLED") then return end
+	if not GetSetting("SOULBINDS_SKIN_ENABLED") then return end
 
 	SoulbindViewer:StripTextures()
 	local tex = SoulbindViewer:CreateTexture("bg", "BACKGROUND", nil, -7)

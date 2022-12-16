@@ -1524,7 +1524,7 @@ local function LoadAlertSystem()
         end
     end)
 
-    if GW.GetSetting("ALERTFRAME_ENABLED") then
+    if GetSetting("ALERTFRAME_ENABLED") then
         GW.AlertContainerFrame = CreateFrame("Frame", nil, UIParent)
         GW.AlertContainerFrame:SetSize(300, 5) -- 265
 

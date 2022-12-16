@@ -1,4 +1,5 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local constBackdropFrame = {
     bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
@@ -114,7 +115,7 @@ local function SkinDropDownList()
 end
 
 local function LoadDropDownSkin()
-    if not GW.GetSetting("DROPDOWN_SKIN_ENABLED") then return end
+    if not GetSetting("DROPDOWN_SKIN_ENABLED") then return end
 
     SkinDropDownList()
     SkinUIDropDownMenu()
@@ -156,10 +157,10 @@ GW.MutateInaccessableObject = MutateInaccessableObject
 
 local NavBarCheck = {
 	EncounterJournal = function()
-		return GW.GetSetting("ENCOUNTER_JOURNAL_SKIN_ENABLED")
+		return GetSetting("ENCOUNTER_JOURNAL_SKIN_ENABLED")
 	end,
 	WorldMapFrame = function()
-		return GW.GetSetting("WORLDMAP_SKIN_ENABLED")
+		return GetSetting("WORLDMAP_SKIN_ENABLED")
 	end,
 }
 

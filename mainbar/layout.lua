@@ -1,4 +1,5 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 -- this is the layout manager for all the pieces of the mainbar frame that
 -- have inter-related movement/visibility; it has intimate knowledge of the
@@ -170,8 +171,8 @@ local onstate_Barlayout = [=[
 
 local function LoadMainbarLayout()
     local l = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
-    l:SetAttribute("playerFrameAsTarget", GW.GetSetting("PLAYER_AS_TARGET_FRAME"))
-    l:SetAttribute("isEpBarShown", GW.GetSetting("XPBAR_ENABLED"))
+    l:SetAttribute("playerFrameAsTarget", GetSetting("PLAYER_AS_TARGET_FRAME"))
+    l:SetAttribute("isEpBarShown", GetSetting("XPBAR_ENABLED"))
     l:SetAttribute("_onstate-barlayout", onstate_Barlayout)
     l.oocHandler = function()
         lm:onstate_None()

@@ -1,7 +1,8 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local function LoadMiscBlizzardFrameSkins()
-    if not GW.GetSetting("MISC_SKIN_ENABLED") then return end
+    if not GetSetting("MISC_SKIN_ENABLED") then return end
 
     GW.LoadTimerTrackerSkin()
     GW.LoadGhostFrameSkin()

@@ -1,7 +1,8 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local function LoadTimeManagerSkin()
-    if not GW.GetSetting("TIMEMANAGER_SKIN_ENABLED") then return end
+    if not GetSetting("TIMEMANAGER_SKIN_ENABLED") then return end
     local TimeManagerFrame = _G.TimeManagerFrame
 
     local regions = {TimeManagerFrame:GetRegions()}
@@ -13,7 +14,7 @@ local function LoadTimeManagerSkin()
             end
         end
     end
-    
+
     TimeManagerFrame:StripTextures()
     TimeManagerFrame.tex = TimeManagerFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     local w, h = TimeManagerFrame:GetSize()

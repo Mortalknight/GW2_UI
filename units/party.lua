@@ -215,9 +215,9 @@ local function updatePartyDebuffs(self, x, y)
                 if debuffList[i].isImportant and debuffList[i].isDispellable then
                     size = size * debuffScale
                 elseif debuffList[i].isImportant then
-                    size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
+                    size = size * tonumber(GetSetting("RAIDDEBUFFS_Scale"))
                 elseif debuffList[i].isDispellable then
-                    size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
+                    size = size * tonumber(GetSetting("DISPELL_DEBUFFS_Scale"))
                 end
             end
             debuffFrame:SetSize(size, size)

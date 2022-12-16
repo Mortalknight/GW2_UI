@@ -1,27 +1,11 @@
 local _, GW = ...
 local GW_CLASS_COLORS = GW.GW_CLASS_COLORS
+local GetSetting = GW.GetSetting
 
 local afterCombatQueue = {}
 local maxUpdatesPerCircle = 5
 local EMPTY = {}
 local NIL = {}
-
-local function copyTable(newTable, tableToCopy)
-    if type(newTable) ~= "table" then newTable = {} end
-
-    if type(tableToCopy) == "table" then
-        for option, value in pairs(tableToCopy) do
-            if type(value) == "table" then
-                value = copyTable(newTable[option], value)
-            end
-
-            newTable[option] = value
-        end
-    end
-
-    return newTable
-end
-GW.copyTable = copyTable
 
 local function CombatQueue_Initialize()
     C_Timer.NewTicker(0.1, function()
@@ -133,7 +117,7 @@ local function GWGetClassColor(class, useClassColor, forNameString, alwaysUseBli
         return RAID_CLASS_COLORS.PRIEST
     end
 
-    local useBlizzardClassColor = alwaysUseBlizzardColors or GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
+    local useBlizzardClassColor = alwaysUseBlizzardColors or GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW_CLASS_COLORS[class]
     local colorForNameString
 
@@ -184,18 +168,7 @@ local function GetUnitBattlefieldFaction(unit)
 end
 GW.GetUnitBattlefieldFaction = GetUnitBattlefieldFaction
 
-local function MapTable(T, fn, withKey)
-    local t = {}
-    for k,v in pairs(T) do
-        if withKey then
-            t[k] = fn(v, k)
-        else
-            t[k] = fn(v)
-        end
-    end
-    return t
-end
-GW.MapTable = MapTable
+
 
 local function FillTable(T, map, ...)
     wipe(T)

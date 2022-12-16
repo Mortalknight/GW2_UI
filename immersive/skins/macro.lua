@@ -1,8 +1,9 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
+local GetSetting = GW.GetSetting
 
 local function ApplyMacroOptionsSkin()
-    if not GW.GetSetting("MACRO_SKIN_ENABLED") then return end
+    if not GetSetting("MACRO_SKIN_ENABLED") then return end
 
     local macroHeaderText
 

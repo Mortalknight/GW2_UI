@@ -1,28 +1,8 @@
 local _, GW = ...
-
-local InscpectSlots = {
-    ["InspectHeadSlot"] = {0, 0.25, 0, 0.25},
-    ["InspectNeckSlot"] = {0.25, 0.5, 0, 0.25},
-    ["InspectShoulderSlot"] = {0.5, 0.75, 0.5, 0.75},
-    ["InspectBackSlot"] = {0.75, 1, 0, 0.25},
-    ["InspectChestSlot"] = {0.75, 1, 0.5, 0.75},
-    ["InspectShirtSlot"] = {0.75, 1, 0.5, 0.75},
-    ["InspectTabardSlot"] = {0.25, 0.5, 0.75, 1},
-    ["InspectWristSlot"] = {0.75, 1, 0.25, 0.5},
-    ["InspectHandsSlot"] = {0, 0.25, 0.75, 1},
-    ["InspectWaistSlot"] = {0.25, 0.5, 0.5, 0.75},
-    ["InspectLegsSlot"] = {0, 0.25, 0.5, 0.75},
-    ["InspectFeetSlot"] = {0.5, 0.75, 0.25, 0.5},
-    ["InspectFinger0Slot"] = {0.5, 0.75, 0, 0.25},
-    ["InspectFinger1Slot"] = {0.5, 0.75, 0, 0.25},
-    ["InspectTrinket0Slot"] = {0.5, 0.75, 0.75, 1},
-    ["InspectTrinket1Slot"] = {0.5, 0.75, 0.75, 1},
-    ["InspectMainHandSlot"] = {0.25, 0.5, 0.25, 0.5},
-    ["InspectSecondaryHandSlot"] = {0, 0.25, 0.25, 0.5},
-}
+local GetSetting = GW.GetSetting
 
 local function SkinInspectFrameOnLoad()
-    if not GW.GetSetting("INSPECTION_SKIN_ENABLED") then return end
+    if not GetSetting("INSPECTION_SKIN_ENABLED") then return end
 
     local w, h = InspectFrame:GetSize()
     InspectFrame:StripTextures()
