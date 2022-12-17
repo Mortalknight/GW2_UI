@@ -560,11 +560,13 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     header.BGLEFT:SetWidth(frame:GetWidth() - 20)
     header.BGRIGHT:SetWidth(frame:GetWidth() - 20)
 
-    titleText:ClearAllPoints()
-    titleText:SetParent(header)
-    titleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
-    titleText:SetFont(DAMAGE_TEXT_FONT, 20)
-    titleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    if titleText then
+      titleText:ClearAllPoints()
+      titleText:SetParent(header)
+      titleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
+      titleText:SetFont(DAMAGE_TEXT_FONT, 20)
+      titleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    end
 
     local tex = frame:CreateTexture("bg", "BACKGROUND", nil, 0)
     tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
