@@ -19,12 +19,72 @@ local missing, ignored = {}, {}
 local spellIDs = {}
 local spellBookSearched = 0
 
-local function UpdateMissingAndIgnoredAuras()
-    missing = FillTable(missing, true, strsplit(",", (GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
-    ignored = FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
-    GW.Debug("Update missing and ignored grid auras")
+local settings = {
+    raidClassColor = {},
+    raidUnitHealthString = {},
+    raidUnitFlag = {},
+    raidUnitMarkers = {},
+    raidUnitPowerBar = {},
+    raidAuraTooltipInCombat = {},
+    raidShowDebuffs = {},
+    raidShowOnlyDispelDebuffs = {},
+    raidShowImportendInstanceDebuffs = {},
+    raidIndicators = {}
+}
+
+local function UpdateSettings()
+    settings.fontEnabled = GetSetting("FONTS_ENABLED")
+    settings.aurasIgnored = GetSetting("AURAS_IGNORED")
+    settings.aurasMissing = GetSetting("AURAS_MISSING")
+    settings.raidDebuffScale = GetSetting("RAIDDEBUFFS_Scale")
+    settings.raidDispelDebuffScale = GetSetting("DISPELL_DEBUFFS_Scale")
+    settings.raidIndicatorIcon = GetSetting("INDICATORS_ICON")
+    settings.raidIndicatorTime = GetSetting("INDICATORS_TIME")
+
+    settings.raidClassColor.PARTY = GetSetting("RAID_CLASS_COLOR_PARTY")
+    settings.raidClassColor.RAID_PET = GetSetting("RAID_CLASS_COLOR_PET")
+    settings.raidClassColor.RAID = GetSetting("RAID_CLASS_COLOR")
+
+    settings.raidUnitHealthString.PARTY = GetSetting("RAID_UNIT_HEALTH_PARTY")
+    settings.raidUnitHealthString.RAID_PET = GetSetting("RAID_UNIT_HEALTH_PET")
+    settings.raidUnitHealthString.RAID = GetSetting("RAID_UNIT_HEALTH")
+
+    settings.raidUnitFlag.PARTY = GetSetting("RAID_UNIT_FLAGS_PARTY")
+    settings.raidUnitFlag.RAID_PET = GetSetting("RAID_UNIT_FLAGS_PET")
+    settings.raidUnitFlag.RAID = GetSetting("RAID_UNIT_FLAGS")
+
+    settings.raidUnitMarkers.PARTY = GetSetting("RAID_UNIT_MARKERS_PARTY")
+    settings.raidUnitMarkers.RAID_PET = GetSetting("RAID_UNIT_MARKERS_PET")
+    settings.raidUnitMarkers.RAID = GetSetting("RAID_UNIT_MARKERS")
+
+    settings.raidUnitPowerBar.PARTY = GetSetting("RAID_POWER_BARS_PARTY")
+    settings.raidUnitPowerBar.RAID_PET = GetSetting("RAID_POWER_BARS_PET")
+    settings.raidUnitPowerBar.RAID = GetSetting("RAID_POWER_BARS")
+
+    settings.raidAuraTooltipInCombat.PARTY = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT_PARTY")
+    settings.raidAuraTooltipInCombat.RAID_PET = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT_PET")
+    settings.raidAuraTooltipInCombat.RAID = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT")
+
+    settings.raidShowDebuffs.PARTY = GetSetting("RAID_SHOW_DEBUFFS_PARTY")
+    settings.raidShowDebuffs.RAID_PET = GetSetting("RAID_SHOW_DEBUFFS_PET")
+    settings.raidShowDebuffs.RAID = GetSetting("RAID_SHOW_DEBUFFS")
+
+    settings.raidShowOnlyDispelDebuffs.PARTY = GetSetting("RAID_ONLY_DISPELL_DEBUFFS_PARTY")
+    settings.raidShowOnlyDispelDebuffs.RAID_PET = GetSetting("RAID_ONLY_DISPELL_DEBUFFS_PET")
+    settings.raidShowOnlyDispelDebuffs.RAID = GetSetting("RAID_ONLY_DISPELL_DEBUFFS")
+
+    settings.raidShowImportendInstanceDebuffs.PARTY = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY")
+    settings.raidShowImportendInstanceDebuffs.RAID_PET = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET")
+    settings.raidShowImportendInstanceDebuffs.RAID = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
+
+    for _, pos in ipairs(INDICATORS) do
+        settings.raidIndicators[pos] = GetSetting("INDICATOR_" .. pos, true)
+    end
+
+    missing = FillTable(missing, true, strsplit(",", (settings.aurasMissing:trim():gsub("%s*,%s*", ","))))
+    ignored = FillTable(ignored, true, strsplit(",", (settings.aurasIgnored:trim():gsub("%s*,%s*", ","))))
 end
-GW.UpdateMissingAndIgnoredAuras = UpdateMissingAndIgnoredAuras
+GW.UpdateGridSettings = UpdateSettings
 
 local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     local frame, unit = nil, ""
@@ -48,7 +108,7 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     frame.aggroborder = frame.absorbbar.aggroborder
     frame.nameNotLoaded = false
 
-    if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
+    if settings.fontEnabled then -- for any reason blizzard is not supporting UTF8 if we set this font
         frame.name:SetFont(UNIT_NAME_FONT, 12)
     end
     frame.name:SetShadowOffset(-1, -1)
@@ -142,7 +202,7 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
 
     OnEvent(frame, "load")
 
-    if GetSetting("RAID_POWER_BARS" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or "")) then
+    if settings.raidUnitPowerBar[profile] then
         frame.predictionbar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 5)
         frame.manabar:Show()
     end
@@ -163,7 +223,7 @@ local function GridUpdateRaidMarkers(self, profile)
         self.classicon:SetShown(true)
     else
         self.targetmarker = nil
-        if GetSetting("RAID_CLASS_COLOR" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or "")) or profile == "RAID_PET" then -- Raid pets have always colors
+        if settings.raidClassColor[profile] then
             self.classicon:SetTexture(nil)
         else
             self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
@@ -192,19 +252,18 @@ GW.GridSetHealPrediction = GridSetHealPrediction
 
 
 local function setHealthValue(self, healthCur, healthMax, healthPrec, profile)
-    local healthsetting = GetSetting("RAID_UNIT_HEALTH" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
     local healthstring = ""
 
-    if healthsetting == "NONE" then
+    if settings.raidUnitHealthString[profile] == "NONE" then
         self.healthstring:Hide()
         return
     end
 
-    if healthsetting == "PREC" then
+    if settings.raidUnitHealthString[profile] == "PREC" then
         self.healthstring:SetText(RoundDec(healthPrec * 100,0) .. "%")
-    elseif healthsetting == "HEALTH" then
+    elseif settings.raidUnitHealthString[profile] == "HEALTH" then
         self.healthstring:SetText(CommaValue(healthCur))
-    elseif healthsetting == "LOSTHEALTH" then
+    elseif settings.raidUnitHealthString[profile] == "LOSTHEALTH" then
         if healthMax - healthCur > 0 then healthstring = CommaValue(healthMax - healthCur) end
         self.healthstring:SetText(healthstring)
     end
@@ -246,7 +305,6 @@ local function GridSetUnitName(self, profile)
         return
     end
 
-    local flagSetting = GetSetting("RAID_UNIT_FLAGS" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
     local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
     local realmflag = ""
@@ -257,11 +315,11 @@ local function GridSetUnitName(self, profile)
         self.nameNotLoaded = true
     end
 
-    if flagSetting ~= "NONE" then
+    if settings.raidUnitFlag[profile] ~= "NONE" then
         local realmLocal = select(5, LRI:GetRealmInfoByUnit(self.unit))
 
         if realmLocal then
-            realmflag = flagSetting == "DIFFERENT" and GW.mylocal ~= realmLocal and REALM_FLAGS[realmLocal] or flagSetting == "ALL" and REALM_FLAGS[realmLocal] or ""
+            realmflag = settings.raidUnitFlag[profile] == "DIFFERENT" and GW.mylocal ~= realmLocal and REALM_FLAGS[realmLocal] or settings.raidUnitFlag[profile] == "ALL" and REALM_FLAGS[realmLocal] or ""
         end
     end
 
@@ -276,10 +334,10 @@ local function GridSetUnitName(self, profile)
     end
 
     if self.index then
-        local _, _, _, _, _, _, _, _, _, role = GetRaidRosterInfo(self.index)
-        if role == "MAINTANK" then
+        local _, _, _, _, _, _, _, _, _, role2 = GetRaidRosterInfo(self.index)
+        if role2 == "MAINTANK" then
             nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-maintank:15:15:0:-2|t " .. nameString
-        elseif role == "MAINASSIST" then
+        elseif role2 == "MAINASSIST" then
             nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-mainassist:15:15:0:-1|t " .. nameString
         end
     end
@@ -290,20 +348,19 @@ end
 GW.GridSetUnitName = GridSetUnitName
 
 local function GridUpdateAwayData(self, profile)
-    local classColor = GetSetting("RAID_CLASS_COLOR" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
     local readyCheckStatus = GetReadyCheckStatus(self.unit)
     local iconState = 0
     local _, englishClass, classIndex = UnitClass(self.unit)
 
     self.name:SetTextColor(1, 1, 1)
 
-    if classColor and englishClass then
+    if settings.raidClassColor[profile] and englishClass then
         local color = GW.GWGetClassColor(englishClass, true)
 
         self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
         self.classicon:SetShown(false)
     end
-    if not classColor and not readyCheckStatus then
+    if not settings.raidClassColor[profile] and not readyCheckStatus then
         iconState = 1
     end
     if UnitIsDeadOrGhost(self.unit) then
@@ -330,13 +387,13 @@ local function GridUpdateAwayData(self, profile)
         GW.SetClassIcon(self.classicon, classIndex)
     end
 
-    if self.targetmarker and not readyCheckStatus and GetSetting("RAID_UNIT_MARKERS" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or "")) then
+    if self.targetmarker and not readyCheckStatus and settings.raidUnitMarkers[profile] then
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
         GW.GridUpdateRaidMarkers(self)
     end
 
     if iconState == 2 then
-        if classColor then
+        if settings.raidClassColor[profile] then
             self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
         end
         GW.SetDeadIcon(self.classicon)
@@ -400,10 +457,8 @@ local function GridUpdateAwayData(self, profile)
     end
 
     -- manabar
-    local showRessourbar = GetSetting("RAID_POWER_BARS" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
-
-    self.predictionbar:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, (showRessourbar and 5 or 0))
-    self.manabar:SetShown(showRessourbar)
+    self.predictionbar:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 0, (settings.raidUnitPowerBar[profile] and 5 or 0))
+    self.manabar:SetShown(settings.raidUnitPowerBar[profile])
 end
 GW.GridUpdateAwayData = GridUpdateAwayData
 
@@ -418,7 +473,7 @@ local function onDebuffMouseUp(self, btn)
     if btn == "RightButton" and IsShiftKeyDown() then
         local name = UnitDebuff(self:GetParent().unit, self.index, self.filter)
         if name then
-            local s = GetSetting("AURAS_IGNORED") or ""
+            local s = settings.aurasIgnored or ""
             SetSetting("AURAS_IGNORED", s .. (s == "" and "" or ", ") .. name)
         end
     end
@@ -440,13 +495,13 @@ local function onBuffMouseUp(self, btn)
         if self.isMissing then
             local name = GetSpellInfo(self.index)
             if name then
-                local s = (GetSetting("AURAS_MISSING") or ""):gsub("%s*,?%s*" .. name .. "%s*,?%s*", ", "):trim(", ")
+                local s = (settings.aurasMissing or ""):gsub("%s*,?%s*" .. name .. "%s*,?%s*", ", "):trim(", ")
                 SetSetting("AURAS_MISSING", s)
             end
         else
             local name =  UnitBuff(self:GetParent().unit, self.index)
             if name then
-                local s = GetSetting("AURAS_IGNORED") or ""
+                local s = settings.aurasIgnored or ""
                 SetSetting("AURAS_IGNORED", s .. (s == "" and "" or ", ") .. name)
             end
         end
@@ -459,9 +514,9 @@ local function GridShowDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count
         if isImportant and isDispellable then
             size = size * GW.GetDebuffScaleBasedOnPrio()
         elseif isImportant then
-            size = size * tonumber(GetSetting("RAIDDEBUFFS_Scale"))
+            size = size * tonumber(settings.raidDebuffScale)
         elseif isDispellable then
-            size = size * tonumber(GetSetting("DISPELL_DEBUFFS_Scale"))
+            size = size * tonumber(settings.raidDispelDebuffScale)
         end
     end
 
@@ -483,12 +538,11 @@ local function GridShowDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count
         frame:SetScript("OnMouseUp", onDebuffMouseUp)
         frame:RegisterForClicks("RightButtonUp")
 
-        frame.tooltipSetting = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
-        if frame.tooltipSetting == "NEVER" then
+        if settings.raidAuraTooltipInCombat[profile] == "NEVER" then
             frame:EnableMouse(false)
-        elseif frame.tooltipSetting == "ALWAYS" then
+        elseif settings.raidAuraTooltipInCombat[profile] == "ALWAYS" then
             frame:EnableMouse(true)
-        elseif frame.tooltipSetting == "OUT_COMBAT" then
+        elseif settings.raidAuraTooltipInCombat[profile] == "OUT_COMBAT" then
             frame:EnableMouse(true)
         end
     end
@@ -544,9 +598,6 @@ end
 local function GridUpdateDebuffs(self, profile)
     local btnIndex, x, y = 1, 0, 0
     local shouldDisplay, isImportant, isDispellable
-    local showDebuffs = GetSetting("RAID_SHOW_DEBUFFS" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
-    local onlyDispellableDebuffs = GetSetting("RAID_ONLY_DISPELL_DEBUFFS" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
-    local showImportendInstanceDebuffs = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
 
     for i = 1, 40 do
         local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitDebuff(self.unit, i, "HARMFUL")
@@ -554,10 +605,10 @@ local function GridUpdateDebuffs(self, profile)
         if debuffName and y <= 0 then
             shouldDisplay = false
             isDispellable = debuffType and GW.Libs.Dispel:IsDispellableByMe(debuffType) or false
-            isImportant = (showImportendInstanceDebuffs and GW.ImportendRaidDebuff[spellId]) or false
+            isImportant = (settings.raidShowImportendInstanceDebuffs[profile] and GW.ImportendRaidDebuff[spellId]) or false
 
-            if showDebuffs then
-                if onlyDispellableDebuffs then
+            if settings.raidShowDebuffs[profile] then
+                if settings.raidShowOnlyDispelDebuffs[profile] then
                     if isDispellable then
                         shouldDisplay = debuffName and not (ignored[debuffName] or spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                     end
@@ -566,7 +617,7 @@ local function GridUpdateDebuffs(self, profile)
                 end
             end
 
-            if showImportendInstanceDebuffs and not shouldDisplay then
+            if settings.raidShowImportendInstanceDebuffs[profile] and not shouldDisplay then
                 shouldDisplay = isImportant
             end
 
@@ -613,12 +664,11 @@ local function GridShowBuffIcon(parent, i, btnIndex, x, y, icon, isMissing, expi
         frame:SetScript("OnMouseUp", onBuffMouseUp)
         frame:RegisterForClicks("RightButtonUp")
 
-        frame.tooltipSetting = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT" .. (profile == "PARTY" and "_PARTY" or profile == "RAID_PET" and "_PET" or ""))
-        if frame.tooltipSetting == "NEVER" then
+        if settings.raidAuraTooltipInCombat[profile] == "NEVER" then
             frame:EnableMouse(false)
-        elseif frame.tooltipSetting == "ALWAYS" then
+        elseif settings.raidAuraTooltipInCombat[profile] == "ALWAYS" then
             frame:EnableMouse(true)
-        elseif frame.tooltipSetting == "OUT_COMBAT" then
+        elseif settings.raidAuraTooltipInCombat[profile] == "OUT_COMBAT" then
             frame:EnableMouse(true)
         end
     end
@@ -714,7 +764,7 @@ local function GridUpdateBuffs(self, profile)
                 indicator = indicators[spellID]
                 if indicator then
                     for _, pos in ipairs(INDICATORS) do
-                        if GetSetting("INDICATOR_" .. pos, true) == (indicator[4] or spellID) then
+                        if settings.raidIndicators[pos] == (indicator[4] or spellID) then
                             local frame = self["indicator" .. pos]
                             local r, g, b = unpack(indicator)
 
@@ -732,14 +782,14 @@ local function GridUpdateBuffs(self, profile)
                                 end
 
                                 -- Icon
-                                if GetSetting("INDICATORS_ICON") then
+                                if settings.raidIndicatorIcon then
                                     frame.icon:SetTexture(icon)
                                 else
                                     frame.icon:SetColorTexture(r, g, b)
                                 end
 
                                 -- Cooldown
-                                if GetSetting("INDICATORS_TIME") then
+                                if settings.raidIndicatorTime then
                                     frame.cooldown:Show()
                                     frame.cooldown:SetCooldown(expires - duration, duration)
                                 else

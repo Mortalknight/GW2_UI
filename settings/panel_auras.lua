@@ -60,8 +60,8 @@ local function LoadAurasPanel(sWindow)
     createCat(L["Raid Auras"], L["Show or hide auras and edit raid aura indicators."], p, 2, nil, {p_auras, p_indicator, p_missingBuffs})
     settingsMenuAddButton(L["Raid Auras"],p,2,nil,{p_auras, p_indicator, p_missingBuffs})
 
-    addOptionText(p_auras.scroll.scrollchild, L["Ignored Auras"], L["A list of auras that should never be shown."], "AURAS_IGNORED", GW.UpdateMissingAndIgnoredAuras, nil, nil, {["RAID_FRAMES"] = true})
-    addOptionText(p_auras.scroll.scrollchild, L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], "AURAS_MISSING", GW.UpdateMissingAndIgnoredAuras, nil, nil, {["RAID_FRAMES"] = true})
+    addOptionText(p_auras.scroll.scrollchild, L["Ignored Auras"], L["A list of auras that should never be shown."], "AURAS_IGNORED", GW.UpdateGridSettings, nil, nil, {["RAID_FRAMES"] = true})
+    addOptionText(p_auras.scroll.scrollchild, L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], "AURAS_MISSING", GW.UpdateGridSettings, nil, nil, {["RAID_FRAMES"] = true})
 
     local raidDebuffKeys, raidDebuffVales = {}, {}
     local settingstable = GetSetting("RAIDDEBUFFS")
@@ -95,7 +95,10 @@ local function LoadAurasPanel(sWindow)
         L["Set important Dungeon & Raid debuff scale"],
         nil,
         "RAIDDEBUFFS_Scale",
-        nil,
+        function()
+            GW.UpdateAurasSetting()
+            GW.UpdateGridSettings()
+        end,
         0.5,
         2,
         nil,
@@ -106,7 +109,10 @@ local function LoadAurasPanel(sWindow)
         L["Set dispellable debuff scale"],
         nil,
         "DISPELL_DEBUFFS_Scale",
-        nil,
+        function()
+            GW.UpdateAurasSetting()
+            GW.UpdateGridSettings()
+        end,
         0.5,
         2,
         nil,
@@ -117,13 +123,13 @@ local function LoadAurasPanel(sWindow)
         L["Important & dispellable debuff scale priority"],
         L["If both scales could apply to a debuff, which one should be used"],
         "RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO",
-        nil,
+        GW.UpdateAurasSetting,
         {"DISPELL", "IMPORTANT", "OFF"},
         {L["Dispell > Important"], L["Important > Dispell"]}
     )
 
-    addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", nil, nil, {["RAID_FRAMES"] = true})
-    addOption(p_indicator.scroll.scrollchild, L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], "INDICATORS_TIME", nil, nil, {["RAID_FRAMES"] = true})
+    addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", GW.UpdateGridSettings, nil, {["RAID_FRAMES"] = true})
+    addOption(p_indicator.scroll.scrollchild, L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], "INDICATORS_TIME", GW.UpdateGridSettings, nil, {["RAID_FRAMES"] = true})
 
     local auraKeys, auraVals = {0}, {NONE_KEY}
     for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
@@ -144,6 +150,7 @@ local function LoadAurasPanel(sWindow)
             key,
             function()
                 SetSetting(key, tonumber(GetSetting(key, true)), true)
+                GW.UpdateGridSettings()
             end,
             auraKeys,
             auraVals,
