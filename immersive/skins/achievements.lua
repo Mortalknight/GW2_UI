@@ -115,6 +115,12 @@ local function skinAchevement()
     AchievementFrame.SearchBox:SetPoint('BOTTOMLEFT', AchievementFrameCategories, 'TOPLEFT', 0, 0)
     AchievementFrame.SearchBox:SetPoint('BOTTOMRIGHT', AchievementFrameCategories, 'TOPRIGHT', 0, 0)
 
+    GW.SkinTextBox(AchievementFrame.SearchBox.Middle, AchievementFrame.SearchBox.Left, AchievementFrame.SearchBox.Right)
+
+	AchievementFrameFilterDropDown:SkinDropDownMenu()
+	AchievementFrameFilterDropDown:ClearAllPoints()
+	AchievementFrameFilterDropDown:SetPoint('RIGHT', AchievementFrame.SearchBox, 'LEFT', 5, -5)
+
     local tex = AchievementFrameCategories:CreateTexture("bg", "BACKGROUND", nil, 0)
     tex:SetPoint("TOPLEFT", AchievementFrameCategories, "TOPLEFT", 0, 0)
     tex:SetSize(256, 512)

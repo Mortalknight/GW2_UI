@@ -463,10 +463,12 @@ local function SkinDropDownMenu(frame, buttonPaddindX)
     button.SetPoint = GW.NoOp
     button:StripTextures()
 
-    button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    GW.HandleNextPrevButton(button, "down")
+
+    --button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    --button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    --button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    --button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
 
     if text then
         text:ClearAllPoints()
