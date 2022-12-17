@@ -49,8 +49,8 @@ local function GetRaidFramesMeasures(Players)
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     -- Rows, cols and cell size
-    local sizeMax1, sizePer1 = isV and settings.raidContainerHeigh or settings.raidContainerWidth, isV and settings.raidHeight or settings.raidWidth
-    local sizeMax2, sizePer2 = isV and settings.raidContainerWidth or settings.raidContainerHeigh, isV and settings.raidWidth or settings.raidHeight
+    local sizeMax1, sizePer1 = isV and settings.raidContainerHeight or settings.raidContainerWidth, isV and settings.raidHeight or settings.raidWidth
+    local sizeMax2, sizePer2 = isV and settings.raidContainerWidth or settings.raidContainerHeight, isV and settings.raidWidth or settings.raidHeight
 
     local cells1 = Players
 
