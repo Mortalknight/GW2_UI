@@ -108,7 +108,6 @@ local function UpdateAura_OnUpdate(self, xpr, elapsed)
         else
             setLongCD(self, self.stackCount)
         end
-        print(now, text)
         self.status.duration:SetText(text)
         self.status.duration:Show()
     else -- aura without duration or invalid

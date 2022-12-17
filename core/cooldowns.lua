@@ -8,7 +8,7 @@ local TimeFormats = {
     [0] = "%dd",
     [1] = "%dh",
     [2] = "%dm",
-    [3] = "%d"
+    [3] = "%ds"
 }
 
 do
