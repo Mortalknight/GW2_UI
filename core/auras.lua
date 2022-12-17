@@ -146,7 +146,6 @@ local function setBuffData(self, buffs, i)
     end
 
     local stacks = ""
-    --local duration = ""
 
     if b.caster == "player" and (b.duration > 0 and b.duration < 120) then
         setAuraType(self, "bigBuff")
@@ -158,9 +157,6 @@ local function setBuffData(self, buffs, i)
     if b.count ~= nil and b.count > 1 then
         stacks = b.count
     end
-    --if b.timeremaning ~= nil and b.timeremaning > 0 and b.timeremaning < 500000 then
-        --duration = TimeCount(b.timeremaning)
-    --end
 
     if b.expires < 1 or b.timeremaning > 500000 then
         self.expires = nil
@@ -183,7 +179,6 @@ local function setBuffData(self, buffs, i)
     end
 
     self.auraid = b.id
-    --self.duration:SetText(duration)
     self.stacks:SetText(stacks)
     self.icon:SetTexture(b.icon)
 
