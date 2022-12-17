@@ -350,7 +350,6 @@ local function auraFrame_OnUpdate(self, elapsed)
     elseif self:IsShown() and self.expires ~= nil then
         local text, nextUpdate = GW.GetTimeInfo(self.expires - GetTime())
         self.nextUpdate = nextUpdate
-        print(text)
         self.duration:SetText(text)
     end
 
