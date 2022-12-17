@@ -15,14 +15,14 @@ AddChange(string addonVersion, table changeList)
 ]]
 addChange("6.1.0",{
   {ct.feature,[=[Added brand new settings page]=]},
-  {ct.feature,[=[Update raiddebuffs for season 1]=]},
+  {ct.feature,[=[Update raid debuffs for season 1]=]},
   {ct.feature,[=[Added Community Feast and Siege On Dragonbane Keep timer to worldmap]=]},
 })
 addChange("6.0.10",{
   {ct.bug,[=[Error on start]=]},
 })
 addChange("6.0.9",{
-  {ct.bug,[=[Readd mirrortimers]=]},
+  {ct.bug,[=[Restored mirror timers]=]},
 })
 addChange("6.0.8",{
   {ct.bug,[=[Fix for memory leak]=]},
