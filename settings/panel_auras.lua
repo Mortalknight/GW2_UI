@@ -98,6 +98,7 @@ local function LoadAurasPanel(sWindow)
         function()
             GW.UpdateAurasSetting()
             GW.UpdateGridSettings()
+            GW.UpdatePartySettings()
         end,
         0.5,
         2,
@@ -112,6 +113,7 @@ local function LoadAurasPanel(sWindow)
         function()
             GW.UpdateAurasSetting()
             GW.UpdateGridSettings()
+            GW.UpdatePartySettings()
         end,
         0.5,
         2,
