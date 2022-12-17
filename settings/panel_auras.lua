@@ -95,7 +95,7 @@ local function LoadAurasPanel(sWindow)
         L["Set important Dungeon & Raid debuff scale"],
         nil,
         "RAIDDEBUFFS_Scale",
-        nil,
+        GW.UpdateAurasSetting,
         0.5,
         2,
         nil,
@@ -106,7 +106,7 @@ local function LoadAurasPanel(sWindow)
         L["Set dispellable debuff scale"],
         nil,
         "DISPELL_DEBUFFS_Scale",
-        nil,
+        GW.UpdateAurasSetting,
         0.5,
         2,
         nil,
@@ -117,7 +117,7 @@ local function LoadAurasPanel(sWindow)
         L["Important & dispellable debuff scale priority"],
         L["If both scales could apply to a debuff, which one should be used"],
         "RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO",
-        nil,
+        GW.UpdateAurasSetting,
         {"DISPELL", "IMPORTANT", "OFF"},
         {L["Dispell > Important"], L["Important > Dispell"]}
     )
