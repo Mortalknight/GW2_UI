@@ -81,32 +81,46 @@ local function AuraOnHide(self)
     end
 end
 
+local function UpdateAura_OnUpdate(self, xpr, elapsed)
+    if self.nextUpdate > 0 then
+        self.nextUpdate = self.nextUpdate - elapsed
+        return
+    end
+
+    local now = GetTime()
+    local text, nextUpdate = GW.GetTimeInfo(self.endTime - now)
+    self.nextUpdate = nextUpdate
+
+    if self.auraType and self.auraType == 2 then -- temp weapon enchant
+        setLongCD(self, self.stackCount)
+
+        self.status.duration:SetText(text)
+        self.status.duration:Show()
+    elseif self.duration and self.duration ~= 0 then -- normal aura with duration
+        local remains = xpr - now
+        if self.duration < 121 then
+            setShortCD(self, xpr, self.duration, self.stackCount)
+            if self.duration - remains < 0.1 then
+                if GetSetting("PLAYER_AURA_ANIMATION") then
+                    self.agZoomIn:Play()
+                end
+            end
+        else
+            setLongCD(self, self.stackCount)
+        end
+        print(now, text)
+        self.status.duration:SetText(text)
+        self.status.duration:Show()
+    else -- aura without duration or invalid
+        setLongCD(self, self.stackCount)
+        self.status.duration:Hide()
+    end
+end
+
 local function AuraButton_OnUpdate(self, elapsed)
     local xpr = self.endTime
     if xpr then
-        if self.auraType and self.auraType == 2 then -- temp weapon enchant
-            setLongCD(self, self.stackCount)
-
-            self.status.duration:SetText(TimeCount(xpr - GetTime()))
-            self.status.duration:Show()
-        elseif self.duration and self.duration ~= 0 then -- normal aura with duration
-            local remains = xpr - GetTime()
-            if self.duration < 121 then
-                setShortCD(self, xpr, self.duration, self.stackCount)
-                if self.duration - remains < 0.1 then
-                    if GetSetting("PLAYER_AURA_ANIMATION") then
-                        self.agZoomIn:Play()
-                    end
-                end
-            else
-                setLongCD(self, self.stackCount)
-            end
-            self.status.duration:SetText(TimeCount(remains))
-            self.status.duration:Show()
-        else -- aura without duration or invalid
-            setLongCD(self, self.stackCount)
-            self.status.duration:Hide()
-        end
+        UpdateAura_OnUpdate(self, xpr, elapsed)
     end
 
     if self.elapsed and self.elapsed > 0.1 then
