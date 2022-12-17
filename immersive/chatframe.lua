@@ -3,6 +3,8 @@ local L = GW.L
 
 local GetSetting = GW.GetSetting
 
+local settings = {}
+
 local FindURL_Events = {
     "CHAT_MSG_WHISPER",
     "CHAT_MSG_WHISPER_INFORM",
@@ -291,8 +293,8 @@ local function setChatBackgroundColor(chatFrame)
 end
 GW.AddForProfiling("chatframe", "setChatBackgroundColor", setChatBackgroundColor)
 
-local function handleChatFrameFadeIn(chatFrame)
-    if not GetSetting("CHATFRAME_FADE") then
+local function handleChatFrameFadeIn(chatFrame, force)
+    if not GetSetting("CHATFRAME_FADE") and not force then
         return
     end
 
@@ -340,10 +342,11 @@ local function handleChatFrameFadeIn(chatFrame)
     UIFrameFadeIn(chatTab, 0.5, chatTab:GetAlpha(), 1)
     UIFrameFadeIn(chatFrame.buttonFrame, 0.5, chatFrame.buttonFrame:GetAlpha(), 1)
 end
+GW.FadeChatFrameIn = handleChatFrameFadeIn
 GW.AddForProfiling("chatframe", "handleChatFrameFadeIn", handleChatFrameFadeIn)
 
-local function handleChatFrameFadeOut(chatFrame)
-    if not GetSetting("CHATFRAME_FADE") then
+local function handleChatFrameFadeOut(chatFrame, force)
+    if not GetSetting("CHATFRAME_FADE") and not force then
         return
     end
     setChatBackgroundColor(chatFrame)
@@ -2020,8 +2023,28 @@ local function SocialQueueEvent(...)
     end
 end
 
+local function UpdateChatSettings(handleChatFade)
+    settings.shouldFading = GetSetting("CHATFRAME_FADE")
+
+    if handleChatFade then
+        for _, frameName in ipairs(CHAT_FRAMES) do
+            local frame = _G[frameName]
+            if frame and frame:IsShown() then
+                frame:SetFading(settings.shouldFading)
+                if settings.shouldFading then
+                    handleChatFrameFadeOut(frame, true)
+                else
+                    handleChatFrameFadeIn(frame, true)
+                end
+            end
+        end
+    end
+end
+GW.UpdateChatSettings = UpdateChatSettings
+
 local function LoadChat()
-    local shouldFading = GetSetting("CHATFRAME_FADE")
+    UpdateChatSettings(false)
+
     local eventFrame = CreateFrame("Frame")
 
     if QuickJoinToastButton then
@@ -2056,7 +2079,7 @@ local function LoadChat()
         styleChatWindow(frame)
         FCFTab_UpdateAlpha(frame)
         frame:SetTimeVisible(100)
-        frame:SetFading(shouldFading)
+        frame:SetFading(settings.shouldFading)
         frame:SetMaxLines(2500)
 
         local allowHooks = not ignoreChats[frame:GetID()]
@@ -2082,7 +2105,7 @@ local function LoadChat()
         styleChatWindow(chatFrame)
         FCFTab_UpdateAlpha(chatFrame)
         chatFrame:SetTimeVisible(100)
-        chatFrame:SetFading(shouldFading)
+        chatFrame:SetFading(settings.shouldFading)
     end)
 
     hooksecurefunc("FCF_DockUpdate", function()
@@ -2093,7 +2116,7 @@ local function LoadChat()
             styleChatWindow(frame)
             FCFTab_UpdateAlpha(frame)
             frame:SetTimeVisible(100)
-            frame:SetFading(shouldFading)
+            frame:SetFading(settings.shouldFading)
             if not frame.hasContainer and (isDocked == 1 or (isDocked == nil and frame:IsShown())) then
                 local fmGCC = CreateFrame("FRAME", nil, UIParent, "GwChatContainer")
                 fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
@@ -2148,7 +2171,7 @@ local function LoadChat()
 
         FCFTab_UpdateAlpha(frame)
         frame:SetTimeVisible(100)
-        frame:SetFading(shouldFading)
+        frame:SetFading(settings.shouldFading)
         if not frame.hasContainer and (isDocked == 1 or (isDocked == nil and frame:IsShown())) then
             local fmGCC = CreateFrame("FRAME", nil, UIParent, "GwChatContainer")
             fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
@@ -2201,10 +2224,13 @@ local function LoadChat()
     for _, frameName in ipairs(CHAT_FRAMES) do
         local frame = _G[frameName]
         if frame and frame:IsShown() then
-            FCF_FadeOutChatFrame(frame)
+            if settings.shouldFading then
+                handleChatFrameFadeOut(frame, true)
+            else
+                handleChatFrameFadeIn(frame, true)
+            end
         end
     end
-    FCF_FadeOutChatFrame(ChatFrame1)
 
     for _, frameName in pairs(CHAT_FRAMES) do
         _G[frameName .. "Tab"]:SetScript("OnDoubleClick", nil)
