@@ -281,7 +281,7 @@ local function GridOnUpdate(self, elapsed)
     end
     self.onUpdateDelay = 0.2
     if UnitExists(self.unit) then
-        GW.GridUpdateAwayData(self)
+        GW.GridUpdateAwayData(self, "RAID")
     end
 end
 
