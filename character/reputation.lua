@@ -1034,7 +1034,7 @@ local function LoadReputation(tabContainer)
             return
         end
         updateSavedReputation()
-        if self:GetParent():IsShown() then
+        if self:GetParent():GetParent():GetParent():IsShown() then
             updateOldData()
         end
     end
