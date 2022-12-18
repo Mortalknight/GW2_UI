@@ -112,30 +112,42 @@ local function FormatMoneyForChat(amount)
 end
 GW.FormatMoneyForChat = FormatMoneyForChat
 
-local function GWGetClassColor(class, useClassColor, forNameString, alwaysUseBlizzardColors)
-    if not class or not useClassColor then
-        return RAID_CLASS_COLORS.PRIEST
+do
+    local classColorSetting = nil
+    local function UpdateClassColorSetting()
+        classColorSetting = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     end
+    GW.UpdateClassColorSetting = UpdateClassColorSetting
 
-    local useBlizzardClassColor = alwaysUseBlizzardColors or GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
-    local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW_CLASS_COLORS[class]
-    local colorForNameString
+    local function GWGetClassColor(class, useClassColor, forNameString, alwaysUseBlizzardColors)
+        if not class or not useClassColor then
+            return RAID_CLASS_COLORS.PRIEST
+        end
 
-    if type(color) ~= "table" then return end
+        if classColorSetting == nil then
+            UpdateClassColorSetting()
+        end
 
-    if not color.colorStr then
-        color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
-    elseif strlen(color.colorStr) == 6 then
-        color.colorStr = "ff" .. color.colorStr
+        local useBlizzardClassColor = alwaysUseBlizzardColors or classColorSetting
+        local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW_CLASS_COLORS[class]
+        local colorForNameString
+
+        if type(color) ~= "table" then return end
+
+        if not color.colorStr then
+            color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
+        elseif strlen(color.colorStr) == 6 then
+            color.colorStr = "ff" .. color.colorStr
+        end
+
+        if forNameString and not useBlizzardClassColor then
+            colorForNameString = {r = min(color.r + 0.3, 1), g = min(color.g + 0.3, 1), b = min(color.b + 0.3, 1), a = color.a, colorStr = GW.RGBToHex(min(color.r + 0.3, 1), min(color.g + 0.3, 1), min(color.b + 0.3, 1), "ff")}
+        end
+
+        return forNameString and colorForNameString or color
     end
-
-    if forNameString and not useBlizzardClassColor then
-        colorForNameString = {r = min(color.r + 0.3, 1), g = min(color.g + 0.3, 1), b = min(color.b + 0.3, 1), a = color.a, colorStr = GW.RGBToHex(min(color.r + 0.3, 1), min(color.g + 0.3, 1), min(color.b + 0.3, 1), "ff")}
-    end
-
-    return forNameString and colorForNameString or color
+    GW.GWGetClassColor = GWGetClassColor
 end
-GW.GWGetClassColor = GWGetClassColor
 
 --RGB to Hex
 local function RGBToHex(r, g, b, header, ending)
