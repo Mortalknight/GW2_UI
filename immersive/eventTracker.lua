@@ -4,7 +4,31 @@ local GetSetting = GW.GetSetting
 
 --[[
  	Credits: fang2hou -> ElvUI_Windtools
- ]]--
+]]--
+
+local settings = {
+    communityFeast = {},
+    dragonbaneKeep = {}
+}
+
+local function UpdateSettings()
+    settings.communityFeast = {
+        enabled = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"),
+        desaturate = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE"),
+        alert = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ALERT"),
+        alertSeconds = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS"),
+        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED")
+    }
+
+    settings.dragonbaneKeep = {
+        enabled = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"),
+        desaturate = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE"),
+        alert = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"),
+        alertSeconds = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS"),
+        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED")
+    }
+end
+GW.UpdateEventTrackerSettings = UpdateSettings
 
 local mapFrame
 
@@ -223,7 +247,7 @@ local functionFactory = {
 
 local eventData = {
     CommunityFeast = {
-        dbKey = "WORLD_EVENTS_COMMUNITY_FEAST_",
+        dbKey = "communityFeast",
         args = {
             icon = 4687629,
             type = "loopTimer",
@@ -254,7 +278,7 @@ local eventData = {
         }
     },
     SiegeOnDragonbaneKeep = {
-        dbKey = "WORLD_EVENTS_DRAGONBANE_KEEP_",
+        dbKey = "dragonbaneKeep",
         args = {
             icon = 236469,
             type = "loopTimer",
@@ -318,7 +342,7 @@ function trackers:get(event)
 
         if functions.ticker then
             frame.tickerInstance = C_Timer.NewTicker(functions.ticker.interval, function()
-                if not GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ENABLED") and not GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED") then
+                if not settings.communityFeast.enabled and not settings.dragonbaneKeep.enabled then
                     return
                 end
                 functions.ticker.dateUpdater(frame)
@@ -366,21 +390,23 @@ local function AddWorldMapFrame()
 end
 
 local function UpdateTrackers()
+    UpdateSettings()
+
     local lastTracker = nil
     for _, event in ipairs(eventList) do
         local data = eventData[event]
-        local tracker = GetSetting(data.dbKey .. "ENABLED") and trackers:get(event) or trackers:disable(event)
+        local tracker = settings[data.dbKey].enabled and trackers:get(event) or trackers:disable(event)
         if tracker then
             if tracker.profileUpdate then
                 tracker.profileUpdate()
             end
 
-            tracker.args.desaturate = GetSetting(data.dbKey .. "DESATURATE")
+            tracker.args.desaturate = settings[data.dbKey].desaturate
 
-            if GetSetting(data.dbKey .. "ALERT") then
+            if settings[data.dbKey].alert then
                 tracker.args.alert = true
-                tracker.args.alertSecond = GetSetting(data.dbKey .. "ALERT_SECONDS")
-                tracker.args.stopAlertIfCompleted = GetSetting(data.dbKey .. "STOP_ALERT_IF_COMPLETED")
+                tracker.args.alertSecond = settings[data.dbKey].alertSeconds
+                tracker.args.stopAlertIfCompleted = settings[data.dbKey].stopAlertIfCompleted
             else
                 tracker.args.alertSecond = nil
                 tracker.args.stopAlertIfCompleted = nil
@@ -396,7 +422,7 @@ local function UpdateTrackers()
         end
     end
 
-    mapFrame:SetShown(GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ENABLED") or GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"))
+    mapFrame:SetShown(settings.communityFeast.enabled or settings.dragonbaneKeep.enabled)
 end
 GW.UpdateWorldEventTrackers = UpdateTrackers
 
