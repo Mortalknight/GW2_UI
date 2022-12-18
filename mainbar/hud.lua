@@ -8,6 +8,17 @@ local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local FACTION_BAR_COLORS = GW.FACTION_BAR_COLORS
 
+local settings = {}
+
+local function UpdateSettings()
+    settings.showHudBackground = GetSetting("HUD_BACKGROUND")
+    settings.showDynamicHud = GetSetting("HUD_SPELL_SWAP")
+    settings.showBorders = GetSetting("BORDER_ENABLED")
+end
+GW.UpdateHudSettings = UpdateSettings
+
+UpdateSettings()
+
 -- forward function defs
 local experiencebarAnimation = 0
 
@@ -715,7 +726,7 @@ GW.AddForProfiling("hud", "registerActionHudAura", registerActionHudAura)
 local currentTexture = nil
 
 local function selectBg(self)
-    if not GetSetting("HUD_BACKGROUND") or not GetSetting("HUD_SPELL_SWAP") then
+    if not settings.showHudBackground or not settings.showDynamicHud then
         return
     end
     local right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow"
@@ -772,7 +783,7 @@ end
 GW.AddForProfiling("hud", "selectBg", selectBg)
 
 local function combatHealthState(self)
-    if not GetSetting("HUD_BACKGROUND") then
+    if not settings.showHudBackground then
         return
     end
 
@@ -886,7 +897,7 @@ GW.AddForProfiling("hud", "hud_OnEvent", hud_OnEvent)
 local function ToggleHudBackground()
     if Gw2_HudBackgroud.actionBarHud.HUDBG then
         for _, f in ipairs(Gw2_HudBackgroud.actionBarHud.HUDBG) do
-            if GetSetting("HUD_BACKGROUND") then
+            if settings.showHudBackground then
                 f:Show()
             else
                 f:Hide()
@@ -895,7 +906,7 @@ local function ToggleHudBackground()
     end
 
     if Gw2_HudBackgroud.edgeTint then
-        local showBorder = GetSetting("BORDER_ENABLED")
+        local showBorder = settings.showBorders
         for _, f in ipairs(Gw2_HudBackgroud.edgeTint) do
             if showBorder then
                 f:Show()

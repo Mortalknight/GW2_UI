@@ -169,7 +169,10 @@ local function LoadAurasPanel(sWindow)
         L["Show Missing Raid Buffs Bar"],
         L["Whether to display a floating bar showing your missing buffs. This can be moved via the 'Move HUD' interface."],
         "MISSING_RAID_BUFF",
-        GW.UpdateMissingRaidBuffVisibility,
+        function()
+            GW.UpdateMissingRaidBuffSettings()
+            GW.UpdateMissingRaidBuffVisibility()
+        end,
         {"ALWAYS", "NEVER", "IN_GROUP", "IN_RAID", "IN_RAID_IN_PARTY"},
         {
             ALWAYS,
@@ -180,18 +183,21 @@ local function LoadAurasPanel(sWindow)
         }
     )
 
-    addOption(p_missingBuffs.scroll.scrollchild, L["Dimmed"], nil, "MISSING_RAID_BUFF_dimmed", function() GW.UpdateMissingRaidBuffs(GW_RaidBuffReminder, "UPDATE") end)
-    addOption(p_missingBuffs.scroll.scrollchild, L["Greyed out"], nil, "MISSING_RAID_BUFF_grayed_out", function() GW.UpdateMissingRaidBuffs(GW_RaidBuffReminder, "UPDATE") end)
-    addOption(p_missingBuffs.scroll.scrollchild, L["Animated"], L["If enabled, an animated border will surround the missing raid buffs"], "MISSING_RAID_BUFF_animated", function() GW.UpdateMissingRaidBuffs(GW_RaidBuffReminder, "UPDATE") end)
+    addOption(p_missingBuffs.scroll.scrollchild, L["Dimmed"], nil, "MISSING_RAID_BUFF_dimmed", function() GW.UpdateMissingRaidBuffSettings(); GW.UpdateMissingRaidBuffs(GW_RaidBuffReminder, "UPDATE") end)
+    addOption(p_missingBuffs.scroll.scrollchild, L["Greyed out"], nil, "MISSING_RAID_BUFF_grayed_out", function() GW.UpdateMissingRaidBuffSettings(); GW.UpdateMissingRaidBuffs(GW_RaidBuffReminder, "UPDATE") end)
+    addOption(p_missingBuffs.scroll.scrollchild, L["Animated"], L["If enabled, an animated border will surround the missing raid buffs"], "MISSING_RAID_BUFF_animated", function() GW.UpdateMissingRaidBuffSettings(); GW.UpdateMissingRaidBuffs(GW_RaidBuffReminder, "UPDATE") end)
 
-    addOption(p_missingBuffs.scroll.scrollchild, L["Invert raid buff bar"], L["If enabled, the above settings will apply to buffs you have, instead of buffs you are missing"], "MISSING_RAID_BUFF_INVERT", function() GW.UpdateMissingRaidBuffs(GW_RaidBuffReminder, "UPDATE") end, nil, nil, nil, true)
+    addOption(p_missingBuffs.scroll.scrollchild, L["Invert raid buff bar"], L["If enabled, the above settings will apply to buffs you have, instead of buffs you are missing"], "MISSING_RAID_BUFF_INVERT", function() GW.UpdateMissingRaidBuffSettings(); GW.UpdateMissingRaidBuffs(GW_RaidBuffReminder, "UPDATE") end, nil, nil, nil, true)
 
     addOptionText(
         p_missingBuffs.scroll.scrollchild,
         L["Custom buff"],
         L["Enter the spell ID of the buff you wish to track. Only one spell ID is supported. To find the spell ID of the buff you want to track, enable IDs in the tooltip settings and mouse over the icon in your aura bar."],
         "MISSING_RAID_BUFF_custom_id",
-        GW.UpdateMissingRaidBuffCustomSpell
+        function()
+            GW.UpdateMissingRaidBuffSettings()
+            GW.UpdateMissingRaidBuffCustomSpell()
+        end
     )
 
     InitPanel(p_auras, true)

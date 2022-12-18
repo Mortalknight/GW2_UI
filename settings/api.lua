@@ -72,6 +72,7 @@ local function GetSetting(name, perSpec)
     if not name then
         return nil
     end
+    GW.Debug(name)
     local profileIndex = GetActiveProfile()
 
     if GW2UI_SETTINGS_PROFILES == nil then

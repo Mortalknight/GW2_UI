@@ -26,13 +26,13 @@ local function LoadAlerts(panel)
         tinsert(soundKeys, sound)
     end
 
-    addOption(p.scroll.scrollchild, PLAYER_LEVEL_UP, nil, "ALERTFRAME_NOTIFICATION_LEVEL_UP", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, PLAYER_LEVEL_UP, nil, "ALERTFRAME_NOTIFICATION_LEVEL_UP", GW.UpdateAlertSettings, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,
         nil,
         "ALERTFRAME_NOTIFICATION_LEVEL_UP_SOUND",
-        nil,
+        GW.UpdateAlertSettings,
         soundKeys,
         soundKeys,
         nil,
@@ -45,13 +45,13 @@ local function LoadAlerts(panel)
         true
     )
 
-    addOption(p.scroll.scrollchild, L["New spell"], nil, "ALERTFRAME_NOTIFICATION_NEW_SPELL", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["New spell"], nil, "ALERTFRAME_NOTIFICATION_NEW_SPELL", GW.UpdateAlertSettings, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,
         nil,
         "ALERTFRAME_NOTIFICATION_NEW_SPELL_SOUND",
-        nil,
+        GW.UpdateAlertSettings,
         soundKeys,
         soundKeys,
         nil,
@@ -64,13 +64,13 @@ local function LoadAlerts(panel)
         true
     )
 
-    addOption(p.scroll.scrollchild, L["New mail"], nil, "ALERTFRAME_NOTIFICATION_NEW_MAIL", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["New mail"], nil, "ALERTFRAME_NOTIFICATION_NEW_MAIL", GW.UpdateAlertSettings, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,
         nil,
         "ALERTFRAME_NOTIFICATION_NEW_MAIL_SOUND",
-        nil,
+        GW.UpdateAlertSettings,
         soundKeys,
         soundKeys,
         nil,
@@ -83,13 +83,13 @@ local function LoadAlerts(panel)
         true
     )
 
-    addOption(p.scroll.scrollchild, L["Repair needed"], nil, "ALERTFRAME_NOTIFICATION_REPAIR", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Repair needed"], nil, "ALERTFRAME_NOTIFICATION_REPAIR", GW.UpdateAlertSettings, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,
         nil,
         "ALERTFRAME_NOTIFICATION_REPAIR_SOUND",
-        nil,
+        GW.UpdateAlertSettings,
         soundKeys,
         soundKeys,
         nil,
@@ -102,13 +102,13 @@ local function LoadAlerts(panel)
         true
     )
 
-    addOption(p.scroll.scrollchild, L["Paragon chest"], nil, "ALERTFRAME_NOTIFICATION_PARAGON", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Paragon chest"], nil, "ALERTFRAME_NOTIFICATION_PARAGON", GW.UpdateAlertSettings, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,
         nil,
         "ALERTFRAME_NOTIFICATION_PARAGON_SOUND",
-        nil,
+        GW.UpdateAlertSettings,
         soundKeys,
         soundKeys,
         nil,
@@ -121,13 +121,13 @@ local function LoadAlerts(panel)
         true
     )
 
-    addOption(p.scroll.scrollchild, L["Rare on minimap"], nil, "ALERTFRAME_NOTIFICATION_RARE", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Rare on minimap"], nil, "ALERTFRAME_NOTIFICATION_RARE", GW.UpdateAlertSettings, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,
         nil,
         "ALERTFRAME_NOTIFICATION_RARE_SOUND",
-        nil,
+        GW.UpdateAlertSettings,
         soundKeys,
         soundKeys,
         nil,
@@ -140,13 +140,13 @@ local function LoadAlerts(panel)
         true
     )
 
-    addOption(p.scroll.scrollchild, L["Calendar invite"], nil, "ALERTFRAME_NOTIFICATION_CALENDAR_INVITE", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Calendar invite"], nil, "ALERTFRAME_NOTIFICATION_CALENDAR_INVITE", GW.UpdateAlertSettings, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,
         nil,
         "ALERTFRAME_NOTIFICATION_CALENDAR_INVITE_SOUND",
-        nil,
+        GW.UpdateAlertSettings,
         soundKeys,
         soundKeys,
         nil,
@@ -159,13 +159,13 @@ local function LoadAlerts(panel)
         true
     )
 
-    addOption(p.scroll.scrollchild, BATTLEGROUND_HOLIDAY, nil, "ALERTFRAME_NOTIFICATION_CALL_TO_ARMS", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, BATTLEGROUND_HOLIDAY, nil, "ALERTFRAME_NOTIFICATION_CALL_TO_ARMS", GW.UpdateAlertSettings, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,
         nil,
         "ALERTFRAME_NOTIFICATION_CALL_TO_ARMS_SOUND",
-        nil,
+        GW.UpdateAlertSettings,
         soundKeys,
         soundKeys,
         nil,
@@ -178,13 +178,13 @@ local function LoadAlerts(panel)
         true
     )
 
-    addOption(p.scroll.scrollchild, L["Mage table"], nil, "ALERTFRAME_NOTIFICATION_MAGE_TABLE", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Mage table"], nil, "ALERTFRAME_NOTIFICATION_MAGE_TABLE", GW.UpdateAlertSettings, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,
         nil,
         "ALERTFRAME_NOTIFICATION_MAGE_TABLE_SOUND",
-        nil,
+        GW.UpdateAlertSettings,
         soundKeys,
         soundKeys,
         nil,
@@ -197,13 +197,13 @@ local function LoadAlerts(panel)
         true
     )
 
-    addOption(p.scroll.scrollchild, L["Ritual of Summoning"], nil, "ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Ritual of Summoning"], nil, "ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING", GW.UpdateAlertSettings, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,
         nil,
         "ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING_SOUND",
-        nil,
+        GW.UpdateAlertSettings,
         soundKeys,
         soundKeys,
         nil,
@@ -216,13 +216,13 @@ local function LoadAlerts(panel)
         true
     )
 
-    addOption(p.scroll.scrollchild, L["Soulwell"], nil, "ALERTFRAME_NOTIFICATION_SPOULWELL", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Soulwell"], nil, "ALERTFRAME_NOTIFICATION_SPOULWELL", GW.UpdateAlertSettings, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,
         nil,
         "ALERTFRAME_NOTIFICATION_SPOULWELL_SOUND",
-        nil,
+        GW.UpdateAlertSettings,
         soundKeys,
         soundKeys,
         nil,
@@ -235,13 +235,13 @@ local function LoadAlerts(panel)
         true
     )
 
-    addOption(p.scroll.scrollchild, L["Mage portal"], nil, "ALERTFRAME_NOTIFICATION_MAGE_PORTAL", nil, nil, {["ALERTFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Mage portal"], nil, "ALERTFRAME_NOTIFICATION_MAGE_PORTAL", GW.UpdateAlertSettings, nil, {["ALERTFRAME_ENABLED"] = true})
     addOptionDropdown(
         p.scroll.scrollchild,
         nil,
         nil,
         "ALERTFRAME_NOTIFICATION_MAGE_PORTAL_SOUND",
-        nil,
+        GW.UpdateAlertSettings,
         soundKeys,
         soundKeys,
         nil,
