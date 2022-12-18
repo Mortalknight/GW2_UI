@@ -657,6 +657,32 @@ local function ColorGradient(perc, ...)
 end
 GW.ColorGradient = ColorGradient
 
+local function TextGradient(text, ...)
+    local msg, total = "", string.len(text)
+    local idx, num = 0, select("#", ...) / 3
+
+    for i = 1, total do
+        local x = string.sub(text, i, i)
+        if strmatch(x, "%s") then
+            msg = msg .. x
+            idx = idx + 1
+        else
+            local segment, relperc = math.modf((idx / total) * num)
+            local r1, g1, b1, r2, g2, b2 = select((segment * 3) + 1, ...)
+
+            if not r2 then
+                msg = msg .. GW.RGBToHex(r1, g1, b1, nil, x .. '|r')
+            else
+                msg = msg .. GW.RGBToHex(r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc, nil, x ..'|r')
+                idx = idx + 1
+            end
+        end
+    end
+
+    return msg
+end
+GW.TextGradient = TextGradient
+
 local function StatusBarColorGradient(bar, value, max, backdrop)
 	if not (bar and value) then return end
 

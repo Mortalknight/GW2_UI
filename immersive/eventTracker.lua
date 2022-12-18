@@ -94,6 +94,21 @@ local function reskinStatusBar(bar)
     bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
 end
 
+local function getGradientText(text, colorTable)
+    if not text or not colorTable then
+        return text
+    end
+    return GW.TextGradient(
+        text,
+        colorTable[1].r,
+        colorTable[1].g,
+        colorTable[1].b,
+        colorTable[2].r,
+        colorTable[2].g,
+        colorTable[2].b
+    )
+end
+
 local functionFactory = {
     loopTimer = {
         init = function(self)
@@ -203,7 +218,9 @@ local functionFactory = {
 
                 if self.timeLeft <= self.args.alertSecond then
                     self.args["alertCache"][self.nextEventIndex] = true
-                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. format(L["%s will start in %s!"], self.args.eventName, secondToTime(self.timeLeft))):gsub("*", GW.Gw2Color))
+                    local eventIconString = GW.GetIconString(self.args.icon, 16, 16)
+                    local gradientName = getGradientText(self.args.eventName, self.args.barColor)
+                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. format(L["%s will start in %s!"], eventIconString .. " " .. gradientName, secondToTime(self.timeLeft))):gsub("*", GW.Gw2Color))
                 end
             end
         },
