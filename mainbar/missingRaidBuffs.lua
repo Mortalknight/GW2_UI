@@ -23,20 +23,17 @@ local checkIds = {}
 local buffInfos = {}
 local reminderBuffs = {
     Flask = {
-        -- BFA
-        [1] = 251836,			-- Flask of the Currents (238 agi)
-        [2] = 251837,			-- Flask of Endless Fathoms (238 int)
-        [3] = 251838,			-- Flask of the Vast Horizon (357 sta)
-        [4] = 251839,			-- Flask of the Undertow (238 str)
-        [5] = 298836,			-- Greater Flask of the Currents
-        [6] = 298837,			-- Greater Flask of Endless Fathoms
-        [7] = 298839,			-- Greater Flask of the Vast Horizon
-        [8] = 298841,			-- Greater Flask of the Undertow
-
-        -- Shadowlands
-        [9] = 307166,			-- Eternal FLask (190 stat)
-        [10] = 307185,			-- Spectral Flask of Power (73 stat)
-        [11] = 307187,			-- Spectral Flask of Stamina (109 sta)
+        -- Dragonflight
+        [1] = 370652, -- Phial of Static Empowerment
+        [2] = 370661, -- Phial of Icy Preservation
+		[3] = 371172, -- Phial of Tepid Versatility
+		[4] = 371186, -- Charged Phial of Alacrity
+		[5] = 371204, -- Phial of Still Air
+		[6] = 371339, -- Phial of Elemental Chaos
+		[7] = 371354, -- Phial of the Eye in the Storm
+		[8] = 371386, -- Phial of Charged Isolation
+		[9] = 373257, -- Phial of Glacial Fury
+		[10] = 374000, -- Iced Phial of Corrupting Rage
     },
     DefiledAugmentRune = {
         [1] = 224001,			-- Defiled Augumentation (15 primary stat)
@@ -74,6 +71,7 @@ local reminderBuffs = {
         [1] = 6188, -- Shadowcore Oil
         [2] = 6190, -- Embalmer's Oil
         [3] = 6200, -- Shaded Sharpening Stone -- just a fallback
+        [4] = 6201, -- Shaded Weightstone
     },
     Custom = {
         -- spellID,	-- Spell Info
