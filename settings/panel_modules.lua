@@ -23,7 +23,7 @@ local function LoadModulesPanel(sWindow)
     createCat(L["Modules"], L["Enable and disable components"], p, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_settings", nil, {p},nil,nil,true)
     settingsMenuAddButton(L["Modules"],p,0,nil, {})
 
-    addOption(p.scroll.scrollchild, XPBAR_LABEL, nil, "XPBAR_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, XPBAR_LABEL, nil, "XPBAR_ENABLED", function() GW.UpdateActionbarSettings(); GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, L["Health Globe"], L["Enable the health bar replacement."], "HEALTHGLOBE_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, DISPLAY_POWER_BARS, L["Replace the default mana/power bar."], "POWERBAR_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, FOCUS, L["Enable the focus target frame replacement."], "FOCUS_ENABLED", function() GW.ShowRlPopup = true end)
