@@ -11,6 +11,13 @@ local AFP = GW.AddProfiling
 
 local questInfo = {}
 
+local settings = {}
+
+local function UpdateSettings()
+    settings.objectivesHeight = GetSetting("QuestTracker_pos_height")
+end
+GW.UpdateObjectivesSettings = UpdateSettings
+
 local function IsQuestAutoTurnInOrAutoAccept(blockQuestID, checkType)
     for i = 1, GetNumAutoQuestPopUps() do
         local questID, popUpType = GetAutoQuestPopUp(i)
@@ -841,7 +848,7 @@ local function QuestTrackerLayoutChanged()
     -- adjust scrolframe height
     local height = GwQuesttrackerContainerRecipe:GetHeight() + GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + 60 + (GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT:GetHeight() or 0)
     local scroll = 0
-    local trackerHeight = GetSetting("QuestTracker_pos_height") - GwQuesttrackerContainerBossFrames:GetHeight() - GwQuesttrackerContainerArenaBGFrames:GetHeight() - GwQuesttrackerContainerScenario:GetHeight() - GwObjectivesNotification:GetHeight()
+    local trackerHeight = settings.objectivesHeight - GwQuesttrackerContainerBossFrames:GetHeight() - GwQuesttrackerContainerArenaBGFrames:GetHeight() - GwQuesttrackerContainerScenario:GetHeight() - GwObjectivesNotification:GetHeight()
     if height > tonumber(trackerHeight) then
         scroll = math.abs(trackerHeight - height)
     end
@@ -1162,6 +1169,8 @@ local function LoadQuestTracker()
         end
     )
 
+    UpdateSettings()
+
     --ObjectiveTrackerFrame:UnregisterAllEvents()
     ObjectiveTrackerFrame:SetScript("OnUpdate", nil)
     ObjectiveTrackerFrame:SetScript("OnSizeChanged", nil)
@@ -1171,7 +1180,7 @@ local function LoadQuestTracker()
     local fTracker = CreateFrame("Frame", "GwQuestTracker", UIParent, "GwQuestTracker")
 
     local fTraScr = CreateFrame("ScrollFrame", "GwQuestTrackerScroll", fTracker, "GwQuestTrackerScroll")
-    fTraScr:SetHeight(GetSetting("QuestTracker_pos_height"))
+    fTraScr:SetHeight(settings.objectivesHeight)
     fTraScr:SetScript(
         "OnMouseWheel",
         function(self, delta)
@@ -1378,6 +1387,6 @@ local function LoadQuestTracker()
     GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", nil, {"scaleable", "height"})
     fTracker:ClearAllPoints()
     fTracker:SetPoint("TOPLEFT", fTracker.gwMover)
-    fTracker:SetHeight(GetSetting("QuestTracker_pos_height"))
+    fTracker:SetHeight(settings.objectivesHeight)
 end
 GW.LoadQuestTracker = LoadQuestTracker

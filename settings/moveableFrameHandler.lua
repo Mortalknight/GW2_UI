@@ -272,6 +272,9 @@ local function smallSettings_resetToDefault(self)
         mf.gw_frame:SetHeight(height)
         SetSetting(mf.gw_Settings .. "_height", height)
         self:GetParent():GetParent().options.heightSlider.slider:SetValue(height)
+
+        -- update also the matching settings
+        GW.UpdateObjectivesSettings()
     end
 
     if mf.gw_postdrag then
@@ -434,6 +437,9 @@ local function heightEditBoxValueChanged(self)
 
     moverFrame.gw_frame:SetHeight(roundValue)
     moverFrame:SetHeight(roundValue)
+
+    -- update also the matching settings
+    GW.UpdateObjectivesSettings()
 end
 
 local function moverframe_OnEnter(self)
