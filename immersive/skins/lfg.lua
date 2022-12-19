@@ -260,7 +260,6 @@ local function SkinLookingForGroupFrames()
 
     LFDQueueFrameTypeDropDown:SkinDropDownMenu()
 
-    
     RaidFinderFrameRoleInset:StripTextures()
     RaidFinderQueueFrameSelectionDropDown:SkinDropDownMenu()
     RaidFinderFrameFindRaidButton:StripTextures()

@@ -450,12 +450,12 @@ local function SkinDropDownMenu(frame, buttonPaddindX)
     frame:StripTextures()
     frame:SetWidth(155)
 
-    frame:CreateBackdrop(constBackdropDropDown)
+    frame:CreateBackdrop(constBackdropDropDown, true)
     frame.backdrop:SetBackdropColor(0, 0, 0)
 
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)
-    frame.backdrop:SetPoint("TOPLEFT", 20, -2)
-    frame.backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 2, -2)
+    frame.backdrop:SetPoint("TOPLEFT", 5, -2)
+    frame.backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, -2)
 
     button:ClearAllPoints()
     button:SetPoint("RIGHT", frame, "RIGHT", buttonPaddindX or -10, 0)
