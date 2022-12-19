@@ -121,21 +121,53 @@ local function LoadDropDownSkin()
     SkinUIDropDownMenu()
 end
 GW.LoadDropDownSkin = LoadDropDownSkin
-
+--middle left right
 local function SkinTextBox(seg1, seg2, seg3)
     if seg1 ~= nil then
-        seg1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-        seg1:SetAlpha(1)
+        seg1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
+        seg1:SetAlpha(0.5)
+        seg1:ClearAllPoints()
+        seg1:SetPoint("TOPLEFT")
+        seg1:SetPoint("BOTTOMRIGHT")
     end
 
     if seg2 ~= nil then
-        seg2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+        seg2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
+        seg2:SetWidth(2)
         seg2:SetAlpha(1)
+        seg2:ClearAllPoints()
+        seg2:SetPoint("TOPLEFT")
+        seg2:SetPoint("BOTTOMLEFT")
+        seg2:SetTexCoord(0,1,1,0)
     end
 
     if seg3 ~= nil then
-        seg3:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+        seg3:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
+        seg3:SetWidth(1)
         seg3:SetAlpha(1)
+        seg3:ClearAllPoints()
+        seg3:SetPoint("TOPRIGHT")
+        seg3:SetPoint("BOTTOMRIGHT")
+
+        local pframe = seg3:GetParent()
+        --create top and bottom
+        local top = pframe:CreateTexture("top", "BACKGROUND", nil, 0)
+        pframe.top = top
+        top:ClearAllPoints();
+        top:SetHeight(2)
+        top:SetPoint("BOTTOMLEFT",pframe,"TOPLEFT",0,0)
+        top:SetPoint("BOTTOMRIGHT",pframe,"TOPRIGHT",0,0)
+        top:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+
+        local bottom = pframe:CreateTexture("bottom", "BACKGROUND", nil, 0)
+        pframe.bottom = bottom
+        bottom:ClearAllPoints();
+        bottom:SetHeight(2)
+        bottom:SetPoint("TOPLEFT",pframe,"BOTTOMLEFT",0,0)
+        bottom:SetPoint("TOPRIGHT",pframe,"BOTTOMRIGHT",0,0)
+        bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+        bottom:SetTexCoord(0,1,1,0)
+
     end
 end
 GW.SkinTextBox = SkinTextBox
@@ -366,7 +398,8 @@ local function HandleTrimScrollBar(frame, small)
 
     local track = frame.Track
     if track then
-        track:DisableDrawLayer('ARTWORK')
+    --    track:DisableDrawLayer('ARTWORK')
+  --  track:SetTexture("Interface\AddOns\GW2_UI\textures\uistuff\scrollbg")
     end
 
     local thumb = frame:GetThumb()
