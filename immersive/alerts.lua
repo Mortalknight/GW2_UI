@@ -22,6 +22,13 @@ local slots = {
     [11] = {18, INVTYPE_RANGED, 1000}
 }
 
+local ignoreDragonRidingSpells = {
+    [372608] = true,
+    [372610] = true,
+    [374990] = true,
+    [361584] = true,
+}
+
 local PARAGON_QUEST_ID = { --[questID] = {factionID}
     --Legion
     [48976] = {2170}, -- Argussian Reach
@@ -1313,7 +1320,6 @@ end
 GW.UpdateAlertSettings = UpdateSettings
 
 local function AlertContainerFrameOnEvent(self, event, ...)
-    print(event)
     if event == "PLAYER_LEVEL_UP" and settings.showLevelUp then
         local level, _, _, talentPoints, numNewPvpTalentSlots = ...
         GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
@@ -1337,6 +1343,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.levelUpSound), "Master")
     elseif event == "LEARNED_SPELL_IN_TAB" and settings.showNewSpell then
         local spellID = ...
+        if ignoreDragonRidingSpells[spellID] then return end
         local name, _, icon = GetSpellInfo(spellID)
         toastQueue[#toastQueue + 1] = {name = name, spellID = spellID, icon = icon, event = event}
         C_Timer.After(1.5, function()
