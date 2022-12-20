@@ -1,45 +1,6 @@
-6.0.10
- FIXES
-     - Error on start
-
-6.0.9
- FIXES
-     - Readd mirrortimers
-
-6.0.8
-FIXES
-    - Fix for memory leak
-
-6.0.7
-FIXES
-    - Error on start
-
-6.0.6
-FIXES
-    - Bank issues
-    - Error on start
-
-6.0.5
-FIXES
-    - Minimap lua error
-    - Bag taint
-
-6.0.4
-FIXES
-    - Fix some more taint issues
-
-6.0.3
-FIXES
-    - Wrong GW2 moverframe value
-
-6.0.2
-FIXES
-    - Set actionbar 1 to always have 12 buttons
-    - Actionbar taint on shapshift forms
-
-6.0.1
-FIXES
-    - Fix lua error on login
-
-6.0.0
-    Update for 10.0.2
+6.1.0
+NEW
+    - Added brand new settings page
+    - Update raid debuffs for season 1
+    - Added Community Feast and Siege On Dragonbane Keep timer to worldmap
+    - Added option to set currencys to unused

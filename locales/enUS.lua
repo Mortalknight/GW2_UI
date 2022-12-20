@@ -514,4 +514,5 @@ L["Stop alert when the event is completed in this week."] = true
 L["Alert Second"] = true
 L["Alert will be triggered when the remaining time is less than the set value."] = true
 L["Add trackers for world events in the bottom of world map."] = true
-
+L["Shift + Left Click"] = true
+L["Alt + Left Click"] = true

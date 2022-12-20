@@ -1,3 +1,10 @@
+6.1.0
+NEW
+    - Added brand new settings page
+    - Update raid debuffs for season 1
+    - Added Community Feast and Siege On Dragonbane Keep timer to worldmap
+    - Added option to set currencys to unused
+
 6.0.10
  FIXES
      - Error on start
