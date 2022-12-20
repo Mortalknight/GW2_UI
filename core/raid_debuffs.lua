@@ -82,6 +82,7 @@ end
     SetDefaultOnTheFly(215430) -- Thunderstrike 1
     SetDefaultOnTheFly(215429) -- Thunderstrike 2
     SetDefaultOnTheFly(203963) -- Eye of the Storm
+    SetDefaultOnTheFly(196497) -- Ravenous Leap
 -- Shadowmoon Burial Grounds
     SetDefaultOnTheFly(156776) -- Rending Voidlash
     SetDefaultOnTheFly(153692) -- Necrotic Pitch
@@ -170,6 +171,7 @@ end
     SetDefaultOnTheFly(371007) -- Splintering Shards
     SetDefaultOnTheFly(375591) -- Sappy Burst
     SetDefaultOnTheFly(385409) -- Ouch, ouch, ouch!
+    SetDefaultOnTheFly(386549) -- Waking Bane
 -- Algeth'ar Academy
     SetDefaultOnTheFly(389033) -- Lasher Toxin
     SetDefaultOnTheFly(391977) -- Oversurge
