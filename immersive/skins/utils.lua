@@ -122,51 +122,71 @@ local function LoadDropDownSkin()
 end
 GW.LoadDropDownSkin = LoadDropDownSkin
 --middle left right
-local function SkinTextBox(seg1, seg2, seg3)
-    if seg1 ~= nil then
-        seg1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
-        seg1:SetAlpha(0.5)
-        seg1:ClearAllPoints()
-        seg1:SetPoint("TOPLEFT")
-        seg1:SetPoint("BOTTOMRIGHT")
+local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex)
+    if middleTex then
+        middleTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
+        middleTex:SetAlpha(0.5)
+        middleTex:ClearAllPoints()
+        middleTex:SetPoint("TOPLEFT")
+        middleTex:SetPoint("BOTTOMRIGHT")
+        middleTex:SetAlpha(1)
     end
 
-    if seg2 ~= nil then
-        seg2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
-        seg2:SetWidth(2)
-        seg2:SetAlpha(1)
-        seg2:ClearAllPoints()
-        seg2:SetPoint("TOPLEFT")
-        seg2:SetPoint("BOTTOMLEFT")
-        seg2:SetTexCoord(0,1,1,0)
+    if leftTex then
+        leftTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
+        leftTex:SetWidth(2)
+        leftTex:SetAlpha(1)
+        leftTex:ClearAllPoints()
+        leftTex:SetPoint("TOPLEFT")
+        leftTex:SetPoint("BOTTOMLEFT")
+        leftTex:SetTexCoord(0,1,1,0)
+        leftTex:SetAlpha(1)
     end
 
-    if seg3 ~= nil then
-        seg3:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
-        seg3:SetWidth(1)
-        seg3:SetAlpha(1)
-        seg3:ClearAllPoints()
-        seg3:SetPoint("TOPRIGHT")
-        seg3:SetPoint("BOTTOMRIGHT")
+    if rightTex then
+        rightTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
+        rightTex:SetWidth(1)
+        rightTex:SetAlpha(1)
+        rightTex:ClearAllPoints()
+        rightTex:SetPoint("TOPRIGHT")
+        rightTex:SetPoint("BOTTOMRIGHT")
+        rightTex:SetAlpha(1)
 
-        local pframe = seg3:GetParent()
-        --create top and bottom
-        local top = pframe:CreateTexture("top", "BACKGROUND", nil, 0)
-        pframe.top = top
-        top:ClearAllPoints();
-        top:SetHeight(2)
-        top:SetPoint("BOTTOMLEFT",pframe,"TOPLEFT",0,0)
-        top:SetPoint("BOTTOMRIGHT",pframe,"TOPRIGHT",0,0)
-        top:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
-
-        local bottom = pframe:CreateTexture("bottom", "BACKGROUND", nil, 0)
-        pframe.bottom = bottom
-        bottom:ClearAllPoints();
-        bottom:SetHeight(2)
-        bottom:SetPoint("TOPLEFT",pframe,"BOTTOMLEFT",0,0)
-        bottom:SetPoint("TOPRIGHT",pframe,"BOTTOMRIGHT",0,0)
-        bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
-        bottom:SetTexCoord(0,1,1,0)
+        local pframe = rightTex:GetParent()
+        if topTex then
+            topTex:ClearAllPoints();
+            topTex:SetHeight(2)
+            topTex:SetPoint("BOTTOMLEFT",pframe,"TOPLEFT",0,0)
+            topTex:SetPoint("BOTTOMRIGHT",pframe,"TOPRIGHT",0,0)
+            topTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+            topTex:SetAlpha(1)
+        else
+            local top = pframe:CreateTexture("top", "BACKGROUND", nil, 0)
+            pframe.top = top
+            top:ClearAllPoints();
+            top:SetHeight(2)
+            top:SetPoint("BOTTOMLEFT",pframe,"TOPLEFT",0,0)
+            top:SetPoint("BOTTOMRIGHT",pframe,"TOPRIGHT",0,0)
+            top:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+        end
+        if bottomTex then
+            bottomTex:ClearAllPoints()
+            bottomTex:SetHeight(2)
+            bottomTex:SetPoint("TOPLEFT",pframe,"BOTTOMLEFT",0,0)
+            bottomTex:SetPoint("TOPRIGHT",pframe,"BOTTOMRIGHT",0,0)
+            bottomTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+            bottomTex:SetTexCoord(0,1,1,0)
+            bottomTex:SetAlpha(1)
+        else
+            local bottom = pframe:CreateTexture("bottom", "BACKGROUND", nil, 0)
+            pframe.bottom = bottom
+            bottom:ClearAllPoints();
+            bottom:SetHeight(2)
+            bottom:SetPoint("TOPLEFT",pframe,"BOTTOMLEFT",0,0)
+            bottom:SetPoint("TOPRIGHT",pframe,"BOTTOMRIGHT",0,0)
+            bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+            bottom:SetTexCoord(0,1,1,0)
+        end
 
     end
 end
