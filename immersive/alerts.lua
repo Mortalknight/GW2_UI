@@ -1313,6 +1313,7 @@ end
 GW.UpdateAlertSettings = UpdateSettings
 
 local function AlertContainerFrameOnEvent(self, event, ...)
+    print(event)
     if event == "PLAYER_LEVEL_UP" and settings.showLevelUp then
         local level, _, _, talentPoints, numNewPvpTalentSlots = ...
         GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
@@ -1448,7 +1449,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
                 LFG_Timer = GetTime()
             end
         end
-    elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
+    elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and (IsInRaid() or IsInGroup()) then
         local _, subEvent, _, _, srcName, _, _, _, _, _, _, spellID = CombatLogGetCurrentEventInfo()
         if not subEvent or not spellID or not srcName then return end
         if not UnitInRaid(srcName) and not UnitInParty(srcName) then return end
