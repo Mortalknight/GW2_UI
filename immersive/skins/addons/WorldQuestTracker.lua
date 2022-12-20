@@ -128,6 +128,6 @@ local function LoadWQTAddonSkin()
     )
 
     addWQTTrackerQuest(fWQT)
-    hooksecurefunc(WorldQuestTrackerAddon, "RefreshTrackerWidgets", function() addWQTTrackerQuest(fWQT) end)
+    hooksecurefunc(WorldQuestTrackerAddon, "RefreshTrackerAnchor", function() addWQTTrackerQuest(fWQT) end)
 end
 GW.LoadWQTAddonSkin = LoadWQTAddonSkin
