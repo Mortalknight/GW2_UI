@@ -116,6 +116,19 @@ local function LoadChatPanel(sWindow)
         {["CHATFRAME_ENABLED"] = true},
         1
     )
+    addOptionSlider(
+        p.scroll.scrollchild,
+        L["Maximum lines of 'Copy Chat Frame'"],
+        L["Set the maximum number of lines displayed in the Copy Chat Frame"],
+        "CHAT_MAX_COPY_CHAT_LINES",
+        nil,
+        50,
+        500,
+        nil,
+        0,
+        {["CHATFRAME_ENABLED"] = true},
+        1
+    )
     addOptionText(
         p.scroll.scrollchild,
         L["Keywords"],

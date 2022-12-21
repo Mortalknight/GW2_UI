@@ -25,19 +25,6 @@ local function LoadHudPanel(sWindow)
     addOption(p.scroll.scrollchild, L["AFK Mode"], L["When you go AFK, display the AFK screen."], "AFK_MODE", GW.ToggelAfkMode)
     addOption(p.scroll.scrollchild, L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], "QUEST_REWARDS_MOST_VALUE_ICON", function() GW.ResetQuestRewardMostValueIcon() end)
     addOption(p.scroll.scrollchild, L["XP Quest Percent"], L["Shows the xp you got from that quest in % based on your current needed xp for next level."], "QUEST_XP_PERCENT")
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Maximum lines of 'Copy Chat Frame'"],
-        L["Set the maximum number of lines displayed in the Copy Chat Frame"],
-        "CHAT_MAX_COPY_CHAT_LINES",
-        nil,
-        50,
-        500,
-        nil,
-        0,
-        {["CHATFRAME_ENABLED"] = true},
-        1
-    )
     addOption(p.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", function() GW.UpdateObjectivesNotificationSettings(); GW.ShowRlPopup = true end, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, DISPLAY_BORDERS, nil, "BORDER_ENABLED", GW.ToggleHudBackground)
