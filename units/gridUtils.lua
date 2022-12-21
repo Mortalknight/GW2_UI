@@ -347,8 +347,8 @@ local function GridSetUnitName(self, profile)
 end
 GW.GridSetUnitName = GridSetUnitName
 
-local function GridUpdateAwayData(self, profile)
-    local readyCheckStatus = GetReadyCheckStatus(self.unit)
+local function GridUpdateAwayData(self, profile, incomingSummonOrResurrectionCheck, checkReadyCheck)
+    local readyCheckStatus = checkReadyCheck and GetReadyCheckStatus(self.unit) or false
     local iconState = 0
     local _, englishClass, classIndex = UnitClass(self.unit)
 
@@ -366,10 +366,10 @@ local function GridUpdateAwayData(self, profile)
     if UnitIsDeadOrGhost(self.unit) then
         iconState = 2
     end
-    if UnitHasIncomingResurrection(self.unit) then
+    if incomingSummonOrResurrectionCheck and UnitHasIncomingResurrection(self.unit) then
         iconState = 3
     end
-    if C_IncomingSummon.HasIncomingSummon(self.unit) then
+    if incomingSummonOrResurrectionCheck and C_IncomingSummon.HasIncomingSummon(self.unit) then
         local status = C_IncomingSummon.IncomingSummonStatus(self.unit)
         if status == Enum.SummonStatus.Pending then
             iconState = 4

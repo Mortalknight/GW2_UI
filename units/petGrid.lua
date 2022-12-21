@@ -184,7 +184,7 @@ local function PetGridOnEvent(self, event, unit)
         GW.GridSetAbsorbAmount(self)
         GW.GridSetPredictionAmount(self, "RAID_PET")
         GW.GridSetHealth(self, "RAID_PET")
-        GW.GridUpdateAwayData(self, "RAID_PET")
+        GW.GridUpdateAwayData(self, "RAID_PET", true)
         GW.GridUpdateAuras(self, "RAID_PET")
         GW.GridUpdatePower(self)
         if event == "UNIT_PET" then
@@ -224,7 +224,7 @@ local function PetGridOnEvent(self, event, unit)
         GW.GridUpdateAuras(self, "RAID_PET")
         GW.GridUpdateAwayData(self, "RAID_PET")
     elseif (event == "INCOMING_RESURRECT_CHANGED" or event == "INCOMING_SUMMON_CHANGED") and unit == self.unit then
-        GW.GridUpdateAwayData(self, "RAID_PET")
+        GW.GridUpdateAwayData(self, "RAID_PET", true)
     elseif event == "RAID_TARGET_UPDATE" and settings.raidUnitMarkers then
         GW.GridUpdateRaidMarkers(self, "RAID_PET")
     end

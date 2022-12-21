@@ -112,7 +112,6 @@ local function SkinLookingForGroupFrames()
     LFDQueueFrameRoleButtonTank.shortageBorder:Kill()
     LFDQueueFrameRoleButtonDPS.shortageBorder:Kill()
     LFDQueueFrameRoleButtonHealer.shortageBorder:Kill()
-    LFGDungeonReadyStatusCloseButton:SkinButton(true)
 
     local RoleButtons1 = {
         _G.LFDQueueFrameRoleButtonHealer,
@@ -364,10 +363,12 @@ local function SkinLookingForGroupFrames()
     LFGListApplicationDialog:StripTextures()
     LFGListApplicationDialog.SignUpButton:SkinButton(false, true)
     LFGListApplicationDialog.CancelButton:SkinButton(false, true)
-    LFGListApplicationDialogDescription:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListApplicationDialogDescription)
+    GW.SkinTextBox(LFGListApplicationDialogDescription.MiddleTex, LFGListApplicationDialogDescription.LeftTex, LFGListApplicationDialogDescription.RightTex, LFGListApplicationDialogDescription.TopTex, LFGListApplicationDialogDescription.BottomTex)
+    LFGListApplicationDialog:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
 
     LFGListInviteDialog:StripTextures()
+    LFGListInviteDialog:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
     LFGListInviteDialog.AcknowledgeButton:SkinButton(false, true)
     LFGListInviteDialog.AcceptButton:SkinButton(false, true)
     LFGListInviteDialog.DeclineButton:SkinButton(false, true)

@@ -533,9 +533,9 @@ local function HandleNextPrevButton(button, arrowDir, noBackdrop)
     button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
     button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
     button:SetDisabledTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
-    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down")
 
-    local Normal, Disabled, Pushed = button:GetNormalTexture(), button:GetDisabledTexture(), button:GetPushedTexture()
+    local Normal, Disabled, Pushed, Highlight = button:GetNormalTexture(), button:GetDisabledTexture(), button:GetPushedTexture(), button:GetHighlightTexture()
 
     if noBackdrop then
         button:SetSize(20, 20)
@@ -549,12 +549,18 @@ local function HandleNextPrevButton(button, arrowDir, noBackdrop)
     Normal:SetTexCoord(0, 1, 0, 1)
     Pushed:SetTexCoord(0, 1, 0, 1)
     Disabled:SetTexCoord(0, 1, 0, 1)
+    if Highlight then
+        Highlight:SetTexCoord(0, 1, 0, 1)
+    end
 
     local rotation = ArrowRotation[arrowDir]
     if rotation then
         Normal:SetRotation(rotation)
         Pushed:SetRotation(rotation)
         Disabled:SetRotation(rotation)
+        if Highlight then
+            Highlight:SetRotation(rotation)
+        end
     end
 
     button.isSkinned = true

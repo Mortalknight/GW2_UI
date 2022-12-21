@@ -20,7 +20,7 @@ local function checkNumWatched()
 end
 GW.AddForProfiling("currency", "checkNumWatched", checkNumWatched)
 
-local function currency_OnClick(self)
+local function currency_OnClick(self, button)
     if IsModifiedClick("TOKENWATCHTOGGLE") then
         if not self.CurrencyID or not self.CurrencyIdx then
             return
@@ -37,6 +37,18 @@ local function currency_OnClick(self)
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
             C_CurrencyInfo.SetCurrencyBackpack(self.CurrencyIdx, false)
         end
+    elseif button == "LeftButton" and IsAltKeyDown() then
+        local info = C_CurrencyInfo.GetCurrencyListInfo(self.CurrencyIdx)
+
+        if info.isTypeUnused then
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+            C_CurrencyInfo.SetCurrencyUnused(self.CurrencyIdx, false)
+        else
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+            C_CurrencyInfo.SetCurrencyUnused(self.CurrencyIdx, true)
+        end
+
+        GWCharacterCurrenyRaidInfoFrame.CurrencyScroll.update(GWCharacterCurrenyRaidInfoFrame.CurrencyScroll)
     end
 end
 GW.AddForProfiling("currency", "currency_OnClick", currency_OnClick)
@@ -49,8 +61,8 @@ local function currency_OnEnter(self)
     GameTooltip:ClearLines()
     GameTooltip:SetCurrencyToken(self.CurrencyIdx)
     GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(SHOW_ON_BACKPACK, 1, 1, 1)
-    GameTooltip:AddLine(TOKEN_SHOW_ON_BACKPACK, nil, nil, nil, true)
+    GameTooltip:AddDoubleLine(SHOW_ON_BACKPACK, GW.L["Shift + Left Click"], nil, nil, nil, 1, 1, 1)
+    GameTooltip:AddDoubleLine(UNUSED, GW.L["Alt + Left Click"], nil, nil, nil, 1, 1, 1)
     GameTooltip:Show()
 end
 GW.AddForProfiling("currency", "currency_OnEnter", currency_OnEnter)

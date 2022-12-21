@@ -22,6 +22,13 @@ local slots = {
     [11] = {18, INVTYPE_RANGED, 1000}
 }
 
+local ignoreDragonRidingSpells = {
+    [372608] = true,
+    [372610] = true,
+    [374990] = true,
+    [361584] = true,
+}
+
 local PARAGON_QUEST_ID = { --[questID] = {factionID}
     --Legion
     [48976] = {2170}, -- Argussian Reach
@@ -1336,6 +1343,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.levelUpSound), "Master")
     elseif event == "LEARNED_SPELL_IN_TAB" and settings.showNewSpell then
         local spellID = ...
+        if ignoreDragonRidingSpells[spellID] then return end
         local name, _, icon = GetSpellInfo(spellID)
         toastQueue[#toastQueue + 1] = {name = name, spellID = spellID, icon = icon, event = event}
         C_Timer.After(1.5, function()
@@ -1448,7 +1456,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
                 LFG_Timer = GetTime()
             end
         end
-    elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
+    elseif event == "COMBAT_LOG_EVENT_UNFILTERED" and (IsInRaid() or IsInGroup()) then
         local _, subEvent, _, _, srcName, _, _, _, _, _, _, spellID = CombatLogGetCurrentEventInfo()
         if not subEvent or not spellID or not srcName then return end
         if not UnitInRaid(srcName) and not UnitInParty(srcName) then return end

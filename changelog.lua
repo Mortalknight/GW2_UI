@@ -17,6 +17,7 @@ addChange("6.1.0",{
   {ct.feature,[=[Added brand new settings page]=]},
   {ct.feature,[=[Update raid debuffs for season 1]=]},
   {ct.feature,[=[Added Community Feast and Siege On Dragonbane Keep timer to worldmap]=]},
+  {ct.feature,[=[Added option to set currencys to unused]=]},
 })
 addChange("6.0.10",{
   {ct.bug,[=[Error on start]=]},
