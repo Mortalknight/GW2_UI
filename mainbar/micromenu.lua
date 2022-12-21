@@ -653,14 +653,16 @@ local function checkElvUI()
     -- at this point we know we should own the microbar; fix what ElvUI did to it
     ElvUI_MicroBar = nil
 
+    ab.UpdateMicroButtonsParent = GW.NoOp
+    ab.UpdateMicroButtons = GW.NoOp
+    ab.UpdateMicroButtonTexture = GW.NoOp
     for i = 1, #MICRO_BUTTONS do
         local name = MICRO_BUTTONS[i]
         local btn = _G[name]
         if btn then
             -- remove the backdrop ElvUI adds
-            if btn.backdrop then
-                btn.backdrop:Hide()
-                btn.backdrop = nil
+            if btn.ClearBackdrop then
+                btn:ClearBackdrop()
             end
 
             -- undo the texture coords ElvUI applies
@@ -683,6 +685,8 @@ local function checkElvUI()
                 high.Show = normal.Show
                 high:Show()
             end
+
+            --btn.handleBackdrop = false
         end
     end
 
