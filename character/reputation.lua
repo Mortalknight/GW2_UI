@@ -738,7 +738,7 @@ local function CollectCategories()
                             tinsert(factionTbl, {standingId = majorFactionData.renownLevel, isFriend = false, standingText = standing, counter = 1})
                         end
                     end
-                else
+                elseif not isHeader then
                     local standing = getglobal("FACTION_STANDING_LABEL" .. standingId)
                     cMax = cMax + 8
                     cCur = cCur + standingId
