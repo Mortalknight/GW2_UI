@@ -87,14 +87,16 @@ GW.AddToAnimation = AddToAnimation
 
 local function buttonAnim(self, name, w, hover)
     local prog = animations[name].progress
-    local lerp = GW.lerp(0, w, prog)
-    local lerp2 = GW.lerp(0, 1, (prog - 0.5) / 0.5)
+    local lerp = GW.lerp(0, w + (w*0.5), prog) --
+    local lerp2 = GW.lerp(0.5, 1, (prog - 0.5) / 0.5)
 
     if lerp2 < 0 then lerp2 = 0 end
     if lerp2 > 1 then lerp2 = 1 end
 
-    hover:SetPoint("RIGHT", self, "LEFT", lerp, 0)
+    hover:SetPoint("RIGHT", self, "LEFT", math.min(w,lerp) , 0)
     hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, lerp2)
+    local stripAmount =  1 - math.max(0,(lerp / w) - 1)
+    hover:SetTexCoord(0,stripAmount,0,1)
 end
 AFP("buttonAnim", buttonAnim)
 
@@ -158,7 +160,7 @@ function GwStandardButton_OnEnter(self)
         self.animationValue,
         1,
         GetTime(),
-        0.2,
+        0.5,
         function()
             buttonAnim(self, name, w, hover)
         end
@@ -182,7 +184,7 @@ function GwStandardButton_OnLeave(self)
         self.animationValue,
         0,
         GetTime(),
-        0.2,
+        0.1,
         function()
             buttonAnim(self, name, w, hover)
         end
