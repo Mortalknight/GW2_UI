@@ -385,7 +385,7 @@ local function LoadRaidFrames()
         GridRaidUpdateFramesLayout()
 
         for i = 1, MAX_RAID_MEMBERS do
-            GW.GridUpdateFrameData(_G["GwCompactRaidFrame" .. i], i)
+            GW.GridUpdateFrameData(_G["GwCompactRaidFrame" .. i], i, "RAID")
         end
     end)
 end
