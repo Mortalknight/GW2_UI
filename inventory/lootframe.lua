@@ -6,7 +6,7 @@ local function updateLootFrameButtons(self)
     for _, button in next, { self.ScrollTarget:GetChildren() } do
         local item = button.Item
 
-        if item then
+        if item and not item.backdrop then
             local Icon = item.icon:GetTexture()
             item:StripTextures()
             item.icon:SetTexture(Icon)
@@ -70,7 +70,7 @@ local function LoadLootFrameSkin()
         edgeSize = 1
     })
 
-    if GetCVar("lootUnderMouse") == "0" then
+    if not GetCVarBool("lootUnderMouse") then
         local pos = GetSetting("LOOTFRAME_POS")
         LootFrame:ClearAllPoints()
         LootFrame:SetPoint(pos.point, nil, pos.relativePoint, pos.xOfs, pos.yOfs)
