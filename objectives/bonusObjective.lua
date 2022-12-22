@@ -176,7 +176,7 @@ local function createNewBonusObjectiveBlock(blockIndex)
 end
 
 local function setUpBlock(questIDs, collapsed)
-    local savedContainerHeight = 20
+    local savedContainerHeight = #questIDs == 0 and 1 or 20
     local shownBlocks = 0
     local blockIndex = 1
     local foundEvent = false
@@ -337,7 +337,7 @@ local function updateBonusObjective(self)
         end
     end
 
-    for _, v in pairs(tasks) do
+    for _, v in pairs(tasks or {}) do
         if trackedEventIDs[v] == nil then
             trackedEventIDs[v] = {}
             trackedEventIDs[v].ID = v

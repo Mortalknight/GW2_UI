@@ -1160,8 +1160,6 @@ local function bonus_OnEnter(self)
 end
 AFP("bonus_OnEnter", bonus_OnEnter)
 
-
-
 local function LoadQuestTracker()
     -- disable the default tracker
     ObjectiveTrackerFrame:SetMovable(1)
