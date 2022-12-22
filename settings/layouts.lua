@@ -419,7 +419,7 @@ local function specSwitchHandlerOnEvent(self, event)
         end
     end
 
-    if layoutToUse and self.smallSettingsFrame.layoutView.savedLayoutDropDown.container.contentScroll.displayButton.selectedId ~= layoutIdToUse.id then
+    if layoutToUse and self.smallSettingsFrame.layoutView.savedLayoutDropDown.container.contentScroll.displayButton.selectedId ~= layoutToUse.id then
         UpdateFramePositionForLayout(layoutToUse, self.layoutManager, true, event == "PLAYER_ENTERING_WORLD")
     end
 
