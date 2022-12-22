@@ -891,7 +891,7 @@ local function updateQuestLogLayout(self)
         if questID then
             local q = QuestCache:Get(questID)
             -- Campaing Quests
-            if q and q:IsCampaign() and not GwQuesttrackerContainerCampaign.collapsed then
+            if q and q:IsCampaign() then
                 if shouldShowCampaign then
                     GwQuesttrackerContainerCampaign.header:Show()
                     counterCampaign = counterCampaign + 1
@@ -910,13 +910,13 @@ local function updateQuestLogLayout(self)
                     GW.CombatQueue_Queue("update_tracker_campaign_itembutton_position" .. block.index, updateQuestItemPositions, {block.actionButton, savedHeightCampagin, nil, block})
                 else
                     counterCampaign = counterCampaign + 1
-                    if _G["GwCampaignBlock" .. counterCampaign] ~= nil then
+                    if _G["GwCampaignBlock" .. counterCampaign] then
                         _G["GwCampaignBlock" .. counterCampaign]:Hide()
                         _G["GwCampaignBlock" .. counterCampaign].questLogIndex = 0
                         GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. counterCampaign, UpdateQuestItem, {_G["GwCampaignBlock" .. counterCampaign]})
                     end
                 end
-            elseif q and not GwQuesttrackerContainerQuests.collapsed then
+            elseif q then
                 if shouldShowQuests then
                     GwQuesttrackerContainerQuests.header:Show()
                     counterQuest = counterQuest + 1
@@ -947,7 +947,7 @@ local function updateQuestLogLayout(self)
                     GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. block.index, updateQuestItemPositions, {block.actionButton, savedHeightQuest, "QUEST", block})
                 else
                     counterQuest = counterQuest + 1
-                    if _G["GwQuestBlock" .. counterQuest] ~= nil then
+                    if _G["GwQuestBlock" .. counterQuest] then
                         _G["GwQuestBlock" .. counterQuest]:Hide()
                         _G["GwQuestBlock" .. counterQuest].questLogIndex = 0
                         GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. counterQuest, UpdateQuestItem, {_G["GwQuestBlock" .. counterQuest]})
@@ -962,7 +962,7 @@ local function updateQuestLogLayout(self)
 
     -- hide other quests
     for i = counterCampaign + 1, 25 do
-        if _G["GwCampaignBlock" .. i] ~= nil then
+        if _G["GwCampaignBlock" .. i] then
             _G["GwCampaignBlock" .. i].questID = nil
             _G["GwCampaignBlock" .. i].questLogIndex = 0
             if _G["GwCampaignBlock" .. i].groupButton then _G["GwCampaignBlock" .. i].groupButton:SetParent(GW.HiddenFrame) end
@@ -971,7 +971,7 @@ local function updateQuestLogLayout(self)
         end
     end
     for i = counterQuest + 1, 25 do
-        if _G["GwQuestBlock" .. i] ~= nil then
+        if _G["GwQuestBlock" .. i] then
             _G["GwQuestBlock" .. i].questID = nil
             _G["GwQuestBlock" .. i].questLogIndex = 0
             if _G["GwQuestBlock" .. i].groupButton then _G["GwQuestBlock" .. i].groupButton:SetParent(GW.HiddenFrame) end
@@ -999,7 +999,7 @@ local function updateQuestLogLayoutSingle(self, questID, added)
     -- get the correct quest block for that questID
     local q = QuestCache:Get(questID)
     local isCampaign = q:IsCampaign()
-    if (isCampaign and not GwQuesttrackerContainerCampaign.collapsed)or GwQuesttrackerContainerQuests.collapsed then
+    if (isCampaign and GwQuesttrackerContainerCampaign.collapsed) or GwQuesttrackerContainerQuests.collapsed then
         self.isUpdating = false
         return
     end
