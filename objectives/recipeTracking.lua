@@ -117,7 +117,7 @@ end
 
 local function updateRecipeObjectives(block, recipeSchematic)
     local allCollacted = true
-    block.height = 35
+    block.height = 25
     block.numObjectives = 0
 
     for _, reagentSlotSchematic in ipairs(recipeSchematic.reagentSlotSchematics) do
