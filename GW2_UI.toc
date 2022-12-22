@@ -167,6 +167,7 @@ mainbar\autoRepair.lua
 
 inventory\bag.xml
 inventory\bank.xml
+inventory\autoSell.lua
 inventory\inventory.lua
 inventory\bag.lua
 inventory\bank.lua
