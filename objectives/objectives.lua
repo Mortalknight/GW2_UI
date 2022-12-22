@@ -891,7 +891,7 @@ local function updateQuestLogLayout(self)
         if questID then
             local q = QuestCache:Get(questID)
             -- Campaing Quests
-            if q and q:IsCampaign() then
+            if q and q:IsCampaign() and not GwQuesttrackerContainerCampaign.collapsed then
                 if shouldShowCampaign then
                     GwQuesttrackerContainerCampaign.header:Show()
                     counterCampaign = counterCampaign + 1
@@ -916,7 +916,7 @@ local function updateQuestLogLayout(self)
                         GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. counterCampaign, UpdateQuestItem, {_G["GwCampaignBlock" .. counterCampaign]})
                     end
                 end
-            elseif q then
+            elseif q and not GwQuesttrackerContainerQuests.collapsed then
                 if shouldShowQuests then
                     GwQuesttrackerContainerQuests.header:Show()
                     counterQuest = counterQuest + 1
@@ -998,6 +998,11 @@ local function updateQuestLogLayoutSingle(self, questID, added)
 
     -- get the correct quest block for that questID
     local q = QuestCache:Get(questID)
+    local isCampaign = q:IsCampaign()
+    if (isCampaign and not GwQuesttrackerContainerCampaign.collapsed)or GwQuesttrackerContainerQuests.collapsed then
+        self.isUpdating = false
+        return
+    end
     local questLogIndex = q:GetQuestLogIndex()
     local isFrequency = q.frequency and q.frequency > 0
     if q.frequency == nil then
@@ -1009,7 +1014,7 @@ local function updateQuestLogLayoutSingle(self, questID, added)
             end
         end
     end
-    local isCampaign = q:IsCampaign()
+
     local questWatchId = getQuestWatchId(questID)
     local questBlockOfIdOrNew = questWatchId and getBlockByIdOrCreateNew(questID, isCampaign, isFrequency)
     local blockName = isCampaign and "GwCampaignBlock" or "GwQuestBlock"
@@ -1262,6 +1267,7 @@ local function LoadQuestTracker()
     fCampaign.header.title:SetShadowOffset(1, -1)
     fCampaign.header.title:SetText(TRACKER_HEADER_CAMPAIGN_QUESTS)
 
+    fCampaign.collapsed = false
     fCampaign.header:SetScript(
         "OnMouseDown",
         function(self)
@@ -1285,6 +1291,7 @@ local function LoadQuestTracker()
     fQuest.header.title:SetShadowOffset(1, -1)
     fQuest.header.title:SetText(TRACKER_HEADER_QUESTS)
 
+    fQuest.collapsed = false
     fQuest.header:SetScript(
         "OnMouseDown",
         function(self)
