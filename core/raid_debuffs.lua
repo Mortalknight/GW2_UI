@@ -35,18 +35,9 @@ end
 -------------------- Mythic+ Specific --------------------
 ----------------------------------------------------------
 -- General Affix
-    SetDefaultOnTheFly(209858) -- Necrotic
     SetDefaultOnTheFly(226512) -- Sanguine
     SetDefaultOnTheFly(240559) -- Grievous
     SetDefaultOnTheFly(240443) -- Bursting
--- Shadowlands Season 4
-    SetDefaultOnTheFly(373364) -- Vampiric Claws
-    SetDefaultOnTheFly(373429) -- Carrion Swarm
-    SetDefaultOnTheFly(373370) -- Nightmare Cloud
-    SetDefaultOnTheFly(373391) -- Nightmare
-    SetDefaultOnTheFly(373570) -- Hypnosis
-    SetDefaultOnTheFly(373607) -- Shadowy Barrier (Hypnosis)
-    SetDefaultOnTheFly(373509) -- Shadow Claws (Stacking)
 -- Dragonflight Season 1
     SetDefaultOnTheFly(396369) -- Mark of Lightning
     SetDefaultOnTheFly(396364) -- Mark of Wind
@@ -238,3 +229,7 @@ end
     SetDefaultOnTheFly(375620) -- Ionizing Charge
     SetDefaultOnTheFly(375578) -- Flame Sentry
 -- Raszageth the Storm-Eater
+    SetDefaultOnTheFly(381615) -- Static Charge
+    SetDefaultOnTheFly(399713) -- Magnetic Charge
+    SetDefaultOnTheFly(385073) -- Ball Lightning
+    SetDefaultOnTheFly(377467) -- Fulminating Charge
