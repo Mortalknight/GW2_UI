@@ -95,6 +95,18 @@ local function addWQTTrackerQuest(self)
     GW.QuestTrackerLayoutChanged()
 end
 
+local function CollapseHeader(self, forceCollapse, forceOpen)
+    if (not self.collapsed or forceCollapse) and not forceOpen then
+        self.collapsed = true
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+    else
+        self.collapsed = false
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    end
+    addWQTTrackerQuest(GwQuesttrackerContainerWQT)
+end
+GW.CollapseWQTAddonHeader = CollapseHeader
+
 local function LoadWQTAddonSkin()
     if not GetSetting("SKIN_WQT_ENABLED") or not WorldQuestTrackerAddon then return end
 
@@ -110,20 +122,9 @@ local function LoadWQTAddonSkin()
     fWQT.header.title:SetTextColor(TRACKER_TYPE_COLOR.EVENT.r, TRACKER_TYPE_COLOR.EVENT.g, TRACKER_TYPE_COLOR.EVENT.b)
 
     fWQT.collapsed = false
-    fWQT.header:SetScript(
-        "OnMouseDown",
+    fWQT.header:SetScript("OnMouseDown",
         function(self)
-            local p = self:GetParent()
-            if not p.collapsed then
-                p.collapsed = true
-
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            else
-                p.collapsed = false
-
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-            end
-            addWQTTrackerQuest(p)
+            CollapseHeader(self:GetParent(), false, false)
         end
     )
 

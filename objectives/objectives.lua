@@ -873,14 +873,12 @@ local function updateQuestLogLayout(self)
     GwQuesttrackerContainerQuests.header:Hide()
 
     local numQuests = C_QuestLog.GetNumQuestWatches()
-    if GwQuesttrackerContainerCampaign.collapsed == true then
+    if GwQuesttrackerContainerCampaign.collapsed then
         GwQuesttrackerContainerCampaign.header:Show()
-        savedHeightCampagin = 20
         shouldShowCampaign = false
     end
-    if GwQuesttrackerContainerQuests.collapsed == true then
+    if GwQuesttrackerContainerQuests.collapsed then
         GwQuesttrackerContainerQuests.header:Show()
-        savedHeightQuest = 20
         shouldShowQuests = false
     end
 
@@ -1160,6 +1158,19 @@ local function bonus_OnEnter(self)
 end
 AFP("bonus_OnEnter", bonus_OnEnter)
 
+local function CollapseHeader(self, forceCollapse, forceOpen)
+    if (not self.collapsed or forceCollapse) and not forceOpen then
+        self.collapsed = true
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+    else
+        self.collapsed = false
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    end
+    updateQuestLogLayout(GwQuesttrackerContainerQuests)
+    QuestTrackerLayoutChanged()
+end
+GW.CollapseQuestHeader = CollapseHeader
+
 local function LoadQuestTracker()
     -- disable the default tracker
     ObjectiveTrackerFrame:SetMovable(1)
@@ -1173,6 +1184,7 @@ local function LoadQuestTracker()
     )
 
     UpdateSettings()
+    GW.UpdateChallengeModeObjectivesSettings()
 
     --ObjectiveTrackerFrame:UnregisterAllEvents()
     ObjectiveTrackerFrame:SetScript("OnUpdate", nil)
@@ -1266,19 +1278,9 @@ local function LoadQuestTracker()
     fCampaign.header.title:SetText(TRACKER_HEADER_CAMPAIGN_QUESTS)
 
     fCampaign.collapsed = false
-    fCampaign.header:SetScript(
-        "OnMouseDown",
+    fCampaign.header:SetScript("OnMouseDown",
         function(self)
-            local p = self:GetParent()
-            if not p.collapsed then
-                p.collapsed = true
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-            else
-                p.collapsed = false
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            end
-            updateQuestLogLayout(fQuest)
-            QuestTrackerLayoutChanged()
+            CollapseHeader(self:GetParent(), false, false)
         end
     )
     fCampaign.header.title:SetTextColor(TRACKER_TYPE_COLOR.CAMPAIGN.r, TRACKER_TYPE_COLOR.CAMPAIGN.g, TRACKER_TYPE_COLOR.CAMPAIGN.b)
@@ -1290,19 +1292,9 @@ local function LoadQuestTracker()
     fQuest.header.title:SetText(TRACKER_HEADER_QUESTS)
 
     fQuest.collapsed = false
-    fQuest.header:SetScript(
-        "OnMouseDown",
+    fQuest.header:SetScript("OnMouseDown",
         function(self)
-            local p = self:GetParent()
-            if not p.collapsed then
-                p.collapsed = true
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-            else
-                p.collapsed = false
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            end
-            updateQuestLogLayout(p)
-            QuestTrackerLayoutChanged()
+            CollapseHeader(self:GetParent(), false, false)
         end
     )
     fQuest.header.title:SetTextColor(TRACKER_TYPE_COLOR.QUEST.r, TRACKER_TYPE_COLOR.QUEST.g, TRACKER_TYPE_COLOR.QUEST.b)
@@ -1319,6 +1311,8 @@ local function LoadQuestTracker()
     GW.LoadBonusFrame()
     GW.LoadRecipeTracking(fRecipe)
     GW.LoadWQTAddonSkin()
+
+    GW.ToggleCollapseObjectivesInChallangeMode()
 
     hooksecurefunc("QuestObjectiveSetupBlockButton_FindGroup", function(self, questID)
         local button = self.hasGroupFinderButton and self.groupFinderButton
@@ -1386,8 +1380,16 @@ local function LoadQuestTracker()
     hooksecurefunc(fAchv, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
     hooksecurefunc(fScen, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
     fCampaign:HookScript("OnSizeChanged", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
-    GwQuesttrackerContainerCampaign.header:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
-    GwQuesttrackerContainerCampaign.header:HookScript("OnHide", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
+    GwQuesttrackerContainerCampaign.header:HookScript("OnShow", function()
+        if fQuest.shouldUpdate then
+            C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED"); fQuest.shouldUpdate = false end)
+        end
+    end)
+    GwQuesttrackerContainerCampaign.header:HookScript("OnHide", function()
+        if fQuest.shouldUpdate then
+            C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED"); fQuest.shouldUpdate = false end)
+        end
+    end)
 
     GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", nil, {"scaleable", "height"})
     fTracker:ClearAllPoints()

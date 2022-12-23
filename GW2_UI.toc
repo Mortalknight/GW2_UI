@@ -61,6 +61,7 @@ settings\panel_raid.xml
 settings\panel_party.xml
 settings\settings.lua
 settings\panel_chat.lua
+settings\panel_objectives.lua
 settings\panel_modules.lua
 settings\panel_player.lua
 settings\panel_target.lua
@@ -201,6 +202,7 @@ objectives\minimapButtons.lua
 objectives\minimapInstanceDifficult.lua
 objectives\map.lua
 objectives\worldmap.lua
+objectives\mythicPlus.lua
 objectives\objectives.lua
 objectives\scenario.lua
 objectives\notifications.lua

@@ -200,7 +200,7 @@ local function updateAchievementLayout(self)
     self.header:Hide()
 
     local numQuests = #trackedAchievements
-    if GwQuesttrackerContainerAchievement.collapsed then
+    if self.collapsed and numQuests > 0 then
         self.header:Show()
         numQuests = 0
         savedHeight = 20
@@ -236,7 +236,7 @@ local function updateAchievementLayout(self)
         end
     end
 
-    GwQuesttrackerContainerAchievement:SetHeight(savedHeight)
+    self:SetHeight(savedHeight)
 
     for i = shownIndex, 25 do
         if _G["GwAchivementBlock" .. i] ~= nil then
@@ -247,6 +247,18 @@ local function updateAchievementLayout(self)
     QuestTrackerLayoutChanged()
 end
 GW.AddForProfiling("achievement", "updateAchievementLayout", updateAchievementLayout)
+
+local function CollapseHeader(self, forceCollapse, forceOpen)
+    if (not self.collapsed or forceCollapse) and not forceOpen then
+        self.collapsed = true
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+    else
+        self.collapsed = false
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    end
+    updateAchievementLayout(GwQuesttrackerContainerAchievement)
+end
+GW.CollapseAchievementHeader = CollapseHeader
 
 local function LoadAchievementFrame()
     GwQuesttrackerContainerAchievement:RegisterEvent("TRACKED_ACHIEVEMENT_LIST_CHANGED")
@@ -261,18 +273,9 @@ local function LoadAchievementFrame()
     GwQuesttrackerContainerAchievement.header.title:SetText(TRACKER_HEADER_ACHIEVEMENTS)
 
     GwQuesttrackerContainerAchievement.collapsed = false
-    GwQuesttrackerContainerAchievement.header:SetScript(
-        "OnMouseDown",
+    GwQuesttrackerContainerAchievement.header:SetScript("OnMouseDown",
         function(self)
-            local p = self:GetParent()
-            if p.collapsed == false then
-                p.collapsed = true
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-            else
-                p.collapsed = false
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            end
-            updateAchievementLayout(p)
+            CollapseHeader(self:GetParent(), false, false)
         end
     )
     GwQuesttrackerContainerAchievement.header.title:SetTextColor(
