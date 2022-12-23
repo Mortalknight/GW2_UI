@@ -74,7 +74,7 @@ local reminderBuffs = {
         [2] = 264761, -- War-Scroll of Battle
     },
     MovementBuff = {
-        [1] = 381748
+        [1] = 381748 -- Evoker
     },
     Weapon = { -- EnchantsID
         [1] = 6188, -- Shadowcore Oil
@@ -359,7 +359,7 @@ local function UpdateMissingRaidBuffVisibility()
 
     RegisterStateDriver(GW_RaidBuffReminder, "visibility", VisibilityStates[settings.visibility])
 end
-GW. UpdateMissingRaidBuffVisibility = UpdateMissingRaidBuffVisibility
+GW.UpdateMissingRaidBuffVisibility = UpdateMissingRaidBuffVisibility
 
 local function UpdateMissingRaidBuffCustomSpell()
 	wipe(buffInfos.Custom)

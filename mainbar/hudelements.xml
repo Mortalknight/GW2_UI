@@ -15,7 +15,7 @@
     <Button name="GwAlertFrameOffsetter" toplevel="true" parent="UIParent" frameStrata="BACKGROUND" frameLevel="1" enableMouse="false" hidden="true">
         <Size x="800" y="140"/>
         <Anchors>
-            <Anchor point="BOTTOM" x="0" y="0"/>
+            <Anchor point="BOTTOM" x="0" y="300"/>
         </Anchors>
     </Button>
 
@@ -26,7 +26,6 @@
             <Anchors>
                 <Anchor point="CENTER"></Anchor>
             </Anchors>
-38
         </NormalTexture>
         <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout" alphaMode="ADD" alpha="0.5">
             <Size x="38" y="38"></Size>
