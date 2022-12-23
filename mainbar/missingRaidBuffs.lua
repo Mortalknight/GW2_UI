@@ -15,6 +15,8 @@ local function UpdateSettings()
     settings.animated = GetSetting("MISSING_RAID_BUFF_animated")
     settings.visibility = GetSetting("MISSING_RAID_BUFF")
     settings.customsId = GetSetting("MISSING_RAID_BUFF_custom_id")
+
+    DevTools_Dump(settings)
 end
 GW.UpdateMissingRaidBuffSettings = UpdateSettings
 
@@ -173,7 +175,12 @@ local function setButtonStyle(button, haveBuff)
             --LibCustomGlow.PixelGlow_Stop(button)
         end
     else
-        button.icon:SetDesaturated(settings.invert and false or settings.grayedout)
+        if settings.invert then
+            button.icon:SetDesaturated(false)
+        else
+            button.icon:SetDesaturated(settings.grayedout)
+        end
+
         button:SetAlpha(settings.invert and 1 or settings.dimmed and ALPHA or 1)
         --LibCustomGlow.PixelGlow_Stop(button)
     end
