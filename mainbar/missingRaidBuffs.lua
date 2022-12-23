@@ -78,6 +78,15 @@ local reminderBuffs = {
         [2] = 6190, -- Embalmer's Oil
         [3] = 6200, -- Shaded Sharpening Stone -- just a fallback
         [4] = 6201, -- Shaded Weightstone
+        [5] = 396147, -- chirping rune
+        [6] = 385330, -- chirping rune
+        [7] = 396148, -- chirping rune
+        [8] = 385326, -- buzzing rune
+        [9] = 385325, -- buzzing rune
+        [10] = 385327, -- buzzing rune
+        [11] = 385575, -- howling-rune
+        [12] = 385576, -- howling-rune
+        [13] = 385577, -- howling-rune
     },
     Custom = {
         -- spellID,	-- Spell Info
