@@ -15,8 +15,6 @@ local function UpdateSettings()
     settings.animated = GetSetting("MISSING_RAID_BUFF_animated")
     settings.visibility = GetSetting("MISSING_RAID_BUFF")
     settings.customsId = GetSetting("MISSING_RAID_BUFF_custom_id")
-
-    DevTools_Dump(settings)
 end
 GW.UpdateMissingRaidBuffSettings = UpdateSettings
 
