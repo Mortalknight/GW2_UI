@@ -73,6 +73,9 @@ local reminderBuffs = {
         [1] = 6673, -- Battle Shout
         [2] = 264761, -- War-Scroll of Battle
     },
+    MovementBuff = {
+        [1] = 381748
+    },
     Weapon = { -- EnchantsID
         [1] = 6188, -- Shadowcore Oil
         [2] = 6190, -- Embalmer's Oil
@@ -272,6 +275,20 @@ local function OnAuraChange(self)
     end
     setButtonStyle(self.attackPowerButton, foundBuff)
 
+    -- MovementBuff
+    foundBuff = false
+    for _, movementBuff in pairs(buffInfos.MovementBuff) do
+        if movementBuff.hasBuff then
+            self.movementButton.icon:SetTexture(movementBuff.texId)
+            foundBuff = true
+            break
+        end
+    end
+    if not foundBuff then
+        self.movementButton.icon:SetTexture(buffInfos.MovementBuff[1].texId)
+    end
+    setButtonStyle(self.movementButton, foundBuff)
+
     -- Weapon
     foundBuff = false
     for _, weaponbuff in pairs(buffInfos.Weapon) do
@@ -288,13 +305,13 @@ local function OnAuraChange(self)
 
     -- Custom
     if #buffInfos.Custom > 0 then
-        self:SetSize(249, 32)
+        self:SetSize(280, 32)
         self.customButton.icon:SetTexture(buffInfos.Custom[1].texId)
 
         if not self.customButton:IsShown() then self.customButton:Show() end
         setButtonStyle(self.customButton, buffInfos.Custom[1].hasBuff)
     else
-        self:SetSize(218, 32)
+        self:SetSize(249, 32)
         self.customButton:Hide()
         --LibCustomGlow.PixelGlow_Stop(self.customButton)
     end
@@ -377,7 +394,8 @@ local function LoadRaidbuffReminder()
     rbr.intButton = CreateIconBuff(rbr, true, rbr)
     rbr.staminaButton = CreateIconBuff(rbr.intButton, false, rbr)
     rbr.attackPowerButton = CreateIconBuff(rbr.staminaButton, false, rbr)
-    rbr.flaskButton = CreateIconBuff(rbr.attackPowerButton, false, rbr)
+    rbr.movementButton = CreateIconBuff(rbr.attackPowerButton, false, rbr)
+    rbr.flaskButton = CreateIconBuff(rbr.movementButton, false, rbr)
     rbr.foodButton = CreateIconBuff(rbr.flaskButton, false, rbr)
     rbr.daRuneButton = CreateIconBuff(rbr.foodButton, false, rbr)
     rbr.weaponButton = CreateIconBuff(rbr.daRuneButton, false, rbr)
