@@ -268,6 +268,7 @@ local function RaidGridOnEvent(self, event, unit)
                     self.classicon:SetShown(true)
                     SetClassIcon(self.classicon, classIndex)
                 end
+                self.readyCheckInProgress = false
             end
         end)
     end
