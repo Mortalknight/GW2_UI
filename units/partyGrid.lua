@@ -280,7 +280,7 @@ local function PartyGridOnEvent(self, event, unit)
         GW.GridUpdateAwayData(self, "PARTY", false, true)
     elseif event == "READY_CHECK_FINISHED" then
         C_Timer.After(1.5, function()
-            if UnitInRaid(self.unit) then
+            if UnitInParty(self.unit) then
                 local _, englishClass, classIndex = UnitClass(self.unit)
                 if settings.raidClassColor then
                     local color = GWGetClassColor(englishClass, true)
@@ -304,7 +304,7 @@ local function GridOnUpdate(self, elapsed)
         self.onUpdateDelay = self.onUpdateDelay - elapsed
         return
     end
-    self.onUpdateDelay = 0.2
+    self.onUpdateDelay = 0.4
     if UnitExists(self.unit) then
         GW.GridUpdateAwayData(self, "PARTY")
     end
