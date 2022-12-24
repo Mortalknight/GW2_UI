@@ -538,6 +538,7 @@ local function InitPanel(panel, hasScroll)
         of.options = v.options
         of.options_names = v.options_names
         of.newLine = newLine
+        of.optionType = v.optionType
 
         if (newLine and not first) or padding.x > maximumXSize then
             padding.y = padding.y + (pY + box_padding)
