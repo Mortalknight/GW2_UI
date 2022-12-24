@@ -957,8 +957,8 @@ local function updateQuestLogLayout(self)
         end
     end
 
-    GwQuesttrackerContainerCampaign:SetHeight(savedHeightCampagin)
-    GwQuesttrackerContainerQuests:SetHeight(savedHeightQuest)
+    GwQuesttrackerContainerCampaign:SetHeight(counterCampaign > 0 and savedHeightCampagin or 1)
+    GwQuesttrackerContainerQuests:SetHeight(counterQuest > 0 and savedHeightQuest or 1)
 
     -- hide other quests
     for i = counterCampaign + 1, 25 do
