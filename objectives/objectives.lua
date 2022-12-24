@@ -875,10 +875,12 @@ local function updateQuestLogLayout(self)
     local numQuests = C_QuestLog.GetNumQuestWatches()
     if GwQuesttrackerContainerCampaign.collapsed then
         GwQuesttrackerContainerCampaign.header:Show()
+        savedHeightCampagin = 20
         shouldShowCampaign = false
     end
     if GwQuesttrackerContainerQuests.collapsed then
         GwQuesttrackerContainerQuests.header:Show()
+        savedHeightQuest = 20
         shouldShowQuests = false
     end
 
