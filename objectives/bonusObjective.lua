@@ -176,7 +176,7 @@ local function createNewBonusObjectiveBlock(blockIndex)
 end
 
 local function setUpBlock(questIDs, collapsed)
-    local savedContainerHeight = #questIDs == 0 and 1 or 20
+    local savedContainerHeight = 1
     local shownBlocks = 0
     local blockIndex = 1
     local foundEvent = false
@@ -234,6 +234,10 @@ local function setUpBlock(questIDs, collapsed)
                 GwBonusObjectiveBlock.module = module
 
                 GW.CombatQueue_Queue(nil, UpdateQuestItem, {GwBonusObjectiveBlock})
+
+                if not foundEvent then
+                    savedContainerHeight = 20
+                end
 
                 foundEvent = true
 
@@ -305,6 +309,7 @@ local function setUpBlock(questIDs, collapsed)
                 blockIndex = blockIndex + 1
             else
                 shownBlocks = shownBlocks + 1
+                savedContainerHeight = 20
             end
         end
     end
