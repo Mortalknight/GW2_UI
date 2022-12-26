@@ -519,3 +519,4 @@ L["Alt + Left Click"] = true
 L["Edit objectives settings."] = true
 L["Collapse all objectives in M+"] = true
 L["Ready to craft"] = true
+L["Watch list"] = true

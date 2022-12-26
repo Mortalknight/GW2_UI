@@ -4,18 +4,14 @@ local AddToAnimation = GW.AddToAnimation
 local animations = GW.animations
 local GW_CLASS_COLORS = GW.GW_CLASS_COLORS
 local lerp = GW.lerp
+local L = GW.L
 --[[
 TODO
-Add Localization TODO_LOCALIZE_ME_WATCH_LIST
-
 Background alignment after comparison
 
 Hook up to a frame mover
  kill blizzards default frame position handling
-
 ]]
-
-local TODO_LOCALIZE_ME_WATCH_LIST = "Watch List"
 
 -- should be made utility function ?
 local function CreateColorFromTable(colorTable)
@@ -123,7 +119,7 @@ local function customCategorieInit(self,elementData)
 		categoryName = ACHIEVEMENT_SUMMARY_CATEGORY;
 		numAchievements, numCompleted = GetNumCompletedAchievements(InGuildView());
 	elseif ( id == "watchlist" ) then -- custom watchlist category
-  		categoryName = TODO_LOCALIZE_ME_WATCH_LIST;
+  		categoryName = L["Watch list"];
       local trackedAchievements = {GetTrackedAchievements()}
 
   		numAchievements = #trackedAchievements
@@ -406,8 +402,7 @@ local function skinAchievementSummaryStatusBar(self)
   local button =  _G[fname.."Button"]
 
   if button then
-    buttonHightlight =  _G[fname.."ButtonHighlight"]
-    buttonHightlight:StripTextures()
+    _G[fname.."ButtonHighlight"]:StripTextures()
   end
 
   if not spark then
@@ -462,6 +457,7 @@ end
 local function skinCriteriaStatusbar(parentFrame,self)
     if self.skinned==true then return end
     self.skinned = true
+
     self:StripTextures()
     local text = self.Text
 
@@ -474,9 +470,9 @@ local function skinCriteriaStatusbar(parentFrame,self)
 
     local bColor = barColors.incomplete
     if parentFrame.completed and parentFrame.accountWide then
-        bColor = barColors.red
-    elseif parentFrame.completed and not parentFrame.accountWide  then
         bColor = barColors.blue
+    elseif parentFrame.completed and not parentFrame.accountWide  then
+        bColor = barColors.red
     end
 
     self:SetStatusBarColor(
@@ -544,7 +540,7 @@ local function skinAchievementFrameSummaryAchievement(self)
   self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcomplete")
   self.completedBackground:SetVertexColor(1,1,1,0.7)
 
-  self.fBackground = self:CreateTexture("fBackground", "BACKGROUND", nil, o)
+  self.fBackground = self:CreateTexture("fBackground", "BACKGROUND", nil, 0)
   self.fBackground:ClearAllPoints()
   self.fBackground:SetPoint("TOPLEFT")
   self.fBackground:SetPoint("BOTTOMRIGHT")
@@ -566,11 +562,24 @@ local function skinAchievementFrameSummaryAchievement(self)
   end)
 end
 
-local function updateAchievementFrameSummaryAchievement(self)
-  if not self.skinned then
-    skinAchievementFrameSummaryAchievement(self)
-  end
-  setNormalText(self.Description)
+local function updateSummaryAchievementTexture(self, achievementID)
+    local _, _, _, _, _, _, _, _, flags = GetAchievementInfo(achievementID)
+    if bit.band(flags, ACHIEVEMENT_FLAGS_ACCOUNT) == ACHIEVEMENT_FLAGS_ACCOUNT then
+        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcomplete")
+    else
+        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebgred")
+    end
+end
+
+local function updateAchievementFrameSummaryAchievement(self, achievementID)
+    if not self.skinned then
+        skinAchievementFrameSummaryAchievement(self)
+    end
+    setNormalText(self.Description)
+    if self.achievementId ~= achievementID then
+        updateSummaryAchievementTexture(self, achievementID)
+        self.achievementId = achievementID
+    end
 end
 
 local function skinAchievementFrameListAchievement(self)
@@ -712,7 +721,7 @@ local function skinAchievementFrameListAchievement(self)
   --GuildCornerR
   --GuildCornerL
   if not self.completeFlare then
-    self.completeFlare = self:CreateTexture("completeFlare", "BACKGROUND", nil, o)
+    self.completeFlare = self:CreateTexture("completeFlare", "BACKGROUND", nil, 0)
     self.completeFlare:ClearAllPoints();
     self.completeFlare:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
     self.completeFlare:SetSize(256,128)
@@ -720,7 +729,7 @@ local function skinAchievementFrameListAchievement(self)
 
   end
   if not self.fBackground then
-    self.fBackground = self:CreateTexture("fBackground", "BACKGROUND", nil, o)
+    self.fBackground = self:CreateTexture("fBackground", "BACKGROUND", nil, 0)
     self.fBackground:ClearAllPoints();
     self.fBackground:SetPoint("TOPLEFT")
     self.fBackground:SetPoint("BOTTOMRIGHT")
@@ -785,7 +794,7 @@ local function UpdateAchievementFrameListAchievement(self)
    local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy = GetAchievementInfo(self.id);
 
    -- needed for status bars
-   self.accountWide = accountWide
+   self.accountWide = bit.band(flags, ACHIEVEMENT_FLAGS_ACCOUNT) == ACHIEVEMENT_FLAGS_ACCOUNT
    self.isGuild = isGuild
 
   local elementData = self:GetElementData()
@@ -800,18 +809,22 @@ local function UpdateAchievementFrameListAchievement(self)
       self.completedBackground:Show()
       self.cBackground:Hide()
       self.gwBackdrop:Show()
+      self.completedBackground:SetAlpha(1)
   else
       self.completedBackground:Hide()
       self.cBackground:Show()
       self.gwBackdrop:Hide()
-
+      if self.accountWide then
+        self.completedBackground:Show()
+        self.completedBackground:SetAlpha(0.1)
+      end
   end
---  self.completedBackground:Hide()
+
   self.completeFlare:Hide()
-  if ( self.accountWide ) then
-      self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebgred")
-  else
+  if self.accountWide then
       self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
+  else
+      self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebgred")
   end
 
   if ( not completed or (not wasEarnedByMe and not isGuild) ) then
@@ -1560,37 +1573,37 @@ hooksecurefunc('AchievementFrame_RefreshView', function()
   AchievementFrameSummary.Background:SetTexCoord(0,1,0,1)
 
 end)
-hooksecurefunc('AchievementFrameSummary_UpdateAchievements', function()
-  AchievementFrameSummary:ClearAllPoints()
-  AchievementFrameSummary:SetPoint("TOPLEFT",AchievementFrame,"TOPLEFT",261,0)
-  AchievementFrameSummary:SetSize(582,621)
+hooksecurefunc('AchievementFrameSummary_UpdateAchievements', function(...)
+    AchievementFrameSummary:ClearAllPoints()
+    AchievementFrameSummary:SetPoint("TOPLEFT",AchievementFrame,"TOPLEFT",261,0)
+    AchievementFrameSummary:SetSize(582,621)
 
-  local width = 592/2 - 2.5
-  local height = (AchievementFrameSummaryAchievements:GetHeight() - 32 - 10) / 2
-  AchievementFrameSummaryAchievement1:ClearAllPoints()
-  AchievementFrameSummaryAchievement1:SetPoint("TOPLEFT",AchievementFrameSummaryAchievementsHeader,"BOTTOMLEFT",0,-5)
-  AchievementFrameSummaryAchievement1:SetWidth(width)
-  AchievementFrameSummaryAchievement1:SetHeight(height)
-  updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement1)
+    local width = 592/2 - 2.5
+    local height = (AchievementFrameSummaryAchievements:GetHeight() - 32 - 10) / 2
+    AchievementFrameSummaryAchievement1:ClearAllPoints()
+    AchievementFrameSummaryAchievement1:SetPoint("TOPLEFT",AchievementFrameSummaryAchievementsHeader,"BOTTOMLEFT",0,-5)
+    AchievementFrameSummaryAchievement1:SetWidth(width)
+    AchievementFrameSummaryAchievement1:SetHeight(height)
+    updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement1, select(1, ...))
 
-  AchievementFrameSummaryAchievement2:ClearAllPoints()
-  AchievementFrameSummaryAchievement2:SetPoint("TOPLEFT",AchievementFrameSummaryAchievement1,"TOPRIGHT",5,0)
-  AchievementFrameSummaryAchievement2:SetWidth(width)
-  AchievementFrameSummaryAchievement2:SetHeight(height)
-  updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement2)
+    AchievementFrameSummaryAchievement2:ClearAllPoints()
+    AchievementFrameSummaryAchievement2:SetPoint("TOPLEFT",AchievementFrameSummaryAchievement1,"TOPRIGHT",5,0)
+    AchievementFrameSummaryAchievement2:SetWidth(width)
+    AchievementFrameSummaryAchievement2:SetHeight(height)
+    updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement2, select(2, ...))
 
-  AchievementFrameSummaryAchievement3:ClearAllPoints()
-  AchievementFrameSummaryAchievement3:SetPoint("TOPLEFT",AchievementFrameSummaryAchievement1,"BOTTOMLEFT",0,-5)
-  AchievementFrameSummaryAchievement3:SetWidth(width)
-  AchievementFrameSummaryAchievement3:SetHeight(height)
-  updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement3)
+    AchievementFrameSummaryAchievement3:ClearAllPoints()
+    AchievementFrameSummaryAchievement3:SetPoint("TOPLEFT",AchievementFrameSummaryAchievement1,"BOTTOMLEFT",0,-5)
+    AchievementFrameSummaryAchievement3:SetWidth(width)
+    AchievementFrameSummaryAchievement3:SetHeight(height)
+    updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement3, select(3, ...))
 
-  AchievementFrameSummaryAchievement4:ClearAllPoints()
-  AchievementFrameSummaryAchievement4:SetPoint("TOPLEFT",AchievementFrameSummaryAchievement3,"TOPRIGHT",5,0)
-  AchievementFrameSummaryAchievement4:SetWidth(width)
-  AchievementFrameSummaryAchievement4:SetHeight(height)
-  updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement4)
-    end)
+    AchievementFrameSummaryAchievement4:ClearAllPoints()
+    AchievementFrameSummaryAchievement4:SetPoint("TOPLEFT",AchievementFrameSummaryAchievement3,"TOPRIGHT",5,0)
+    AchievementFrameSummaryAchievement4:SetWidth(width)
+    AchievementFrameSummaryAchievement4:SetHeight(height)
+    updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement4, select(4, ...))
+        end)
 end
 
 local function LoadAchivementSkin()
