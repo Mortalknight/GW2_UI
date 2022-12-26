@@ -302,9 +302,9 @@ local function HandleAchivementsScrollControls(self)
 end
 
 local function catMenuButtonState(self,selected)
-
   if selected then
     selectedCategoryID = self.categoryID
+    UpdateCategoriesDataProvider()
   end
   ---zeeeebra
   local zebra =  (self:GetOrderIndex() % 2)==1 or false
