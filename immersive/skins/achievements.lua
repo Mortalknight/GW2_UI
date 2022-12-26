@@ -82,6 +82,7 @@ end
 -- INSTED DON'T RUN AchievementFrameCategories_OnLoad
 
 --Blizzard data values
+local hackingBlizzardFunction = false
 local FEAT_OF_STRENGTH_ID = 81;
 local GUILD_FEAT_OF_STRENGTH_ID = 15093;
 local GUILD_CATEGORY_ID = 15076;
@@ -256,9 +257,9 @@ local function AchievementFrameCategories_OnLoad(self)
     customCategorieInit(frame,elementData);
   end);
   ScrollUtil.InitScrollBoxListWithScrollBar(self.ScrollBox, self.ScrollBar, view);
+
+  hackingBlizzardFunction = true
 end
-
-
 
 local function HandleAchivementsScrollControls(self)
   self.ScrollBar:ClearAllPoints()
@@ -288,8 +289,6 @@ local function HandleAchivementsScrollControls(self)
   bg:SetPoint("BOTTOMRIGHT",0,0)
   bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton")
 
-
-
   self.ScrollBar.Forward:ClearAllPoints()
   self.ScrollBar.Forward:SetPoint("TOP",self.ScrollBar,"BOTTOM",0,0)
   self.ScrollBar.Forward:SetSize(12,12)
@@ -304,10 +303,12 @@ end
 local function catMenuButtonState(self,selected)
   if selected then
     selectedCategoryID = self.categoryID
-    UpdateCategoriesDataProvider()
+    if hackingBlizzardFunction then
+        UpdateCategoriesDataProvider()
+    end
   end
   ---zeeeebra
-  local zebra =  (self:GetOrderIndex() % 2)==1 or false
+  local zebra = (self:GetOrderIndex() % 2)==1 or false
   if zebra then
       self.Button.Background:SetVertexColor(1, 1, 1, 1)
   else
@@ -1118,35 +1119,32 @@ end
 
 
 local function updatePointsDisplay()
-
-  AchievementFrame.Header.Points:SetWidth(171)
-  AchievementFrame.Header.Points:ClearAllPoints()
-  AchievementFrame.Header.Points:SetPoint("LEFT",AchievementFrame.Header.Shield,"RIGHT",5,0)
-  AchievementFrame.Header.Points:SetJustifyH("LEFT")
-  if AchievementFrame.selectedTab and AchievementFrame.selectedTab==2 then
-    AchievementFrame.Header.Shield:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementpointiconguild");
-  else
-    if AchievementFrame.selectedTab==1 then
-      AchievementFrame.cacheAchievementPoints = AchievementFrame.Header.Points:GetText()
+    AchievementFrame.Header.Points:SetWidth(171)
+    AchievementFrame.Header.Points:ClearAllPoints()
+    AchievementFrame.Header.Points:SetPoint("LEFT",AchievementFrame.Header.Shield,"RIGHT",5,0)
+    AchievementFrame.Header.Points:SetJustifyH("LEFT")
+    if AchievementFrame.selectedTab and AchievementFrame.selectedTab==2 then
+        AchievementFrame.Header.Shield:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementpointiconguild");
+    else
+        if AchievementFrame.selectedTab==1 then
+        AchievementFrame.cacheAchievementPoints = AchievementFrame.Header.Points:GetText()
+        end
+        if AchievementFrame.selectedTab==3  and AchievementFrame.cacheAchievementPoints then
+        AchievementFrame.Header.Points:SetText(AchievementFrame.cacheAchievementPoints)
+        AchievementFrame.Header.Points:SetTextColor(1,1,1)
+        end
+        AchievementFrame.Header.Shield:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementpointicon");
     end
-    if AchievementFrame.selectedTab==3  and AchievementFrame.cacheAchievementPoints then
-      AchievementFrame.Header.Points:SetText(AchievementFrame.cacheAchievementPoints)
-      AchievementFrame.Header.Points:SetTextColor(1,1,1)
-    end
-    AchievementFrame.Header.Shield:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementpointicon");
-  end
-  AchievementFrame.Header.Shield:ClearAllPoints()
-  AchievementFrame.Header.Shield:SetPoint("TOPLEFT",AchievementFrame,"TOPLEFT",10,-25)
-  AchievementFrame.Header.Shield:SetSize(50,50)
-	AchievementFrame.Header.Shield:SetTexCoord(0, 1, 0, 1);
-
-
+        AchievementFrame.Header.Shield:ClearAllPoints()
+        AchievementFrame.Header.Shield:SetPoint("TOPLEFT",AchievementFrame,"TOPLEFT",10,-25)
+        AchievementFrame.Header.Shield:SetSize(50,50)
+        AchievementFrame.Header.Shield:SetTexCoord(0, 1, 0, 1);
 end
+
 local function skinAchevement()
     local AchievementFrame = _G.AchievementFrame
     local AchievementFrameSummary = _G.AchievementFrameSummary
     local AchievementFrameCategories = _G.AchievementFrameCategories
-
 
     --hooksecurefunc("AchievementFrameCategories_UpdateDataProvider",AchievementFrameCategories_UpdateDataProvider)
     AchievementFrameCategories_OnLoad(AchievementFrameCategories)
@@ -1157,15 +1155,11 @@ local function skinAchevement()
     AchievementFrameCategories:StripTextures()
     AchievementFrameSummary:GetChildren():Hide()
 
-
-
     AchievementFrameWaterMark:Hide()
-
 
     AchievementFrame:SetSize(853,627)
 
-
-     CreateFrame("Frame","AchivementFrameLeftPanel",AchievementFrame,"GwWindowLeftPanel");
+    CreateFrame("Frame","AchivementFrameLeftPanel",AchievementFrame,"GwWindowLeftPanel");
 
     AchievementFrameCategories:SetSize(221,426)
     AchievementFrameCategories:ClearAllPoints()
@@ -1211,22 +1205,19 @@ local function skinAchevement()
     hooksecurefunc("AchievementFrame_SetTabs",AchievementFrameTabSetTabState)
     hooksecurefunc("AchievementFrame_UpdateTabs",AchievementFrameTabSetTabState)
 
-
     hooksecurefunc("AchievementFrame_DisplayComparison",function()
       AchievementFrame:SetSize(853,627)
       updateAchievementFrameTabLayout()
-     end)
-     hooksecurefunc("AchievementFrame_ToggleAchievementFrame",function()
+    end)
+    hooksecurefunc("AchievementFrame_ToggleAchievementFrame",function()
        AchievementFrame:SetSize(853,627)
        updateAchievementFrameTabLayout()
-      end)
+    end)
 
-     AchievementFrame:HookScript("OnShow",function()
+    AchievementFrame:HookScript("OnShow",function()
        AchievementFrame:SetSize(853,627)
        updateAchievementFrameTabLayout()
-      end)
-
-
+    end)
 
     AchievementFrameHeader:ClearAllPoints()
     AchievementFrameHeader:SetPoint("BOTTOMLEFT",AchievementFrame,"TOPLEFT")
@@ -1262,16 +1253,16 @@ local function skinAchevement()
     AchievementFrame.SearchPreviewContainer:SetPoint("TOPRIGHT",AchievementFrame.SearchBox,"BOTTOMRIGHT",0,0)
 
     for i=1,5 do
-      local sp = AchievementFrame.SearchPreviewContainer["SearchPreview"..i]
-      if sp then
-         sp:SetWidth(AchievementFrame.SearchPreviewContainer:GetWidth())
-         sp.Name:SetFont(UNIT_NAME_FONT, 12, "")
-      end
+        local sp = AchievementFrame.SearchPreviewContainer["SearchPreview"..i]
+        if sp then
+            sp:SetWidth(AchievementFrame.SearchPreviewContainer:GetWidth())
+            sp.Name:SetFont(UNIT_NAME_FONT, 12, "")
+        end
     end
 
 
-	  AchievementFrameFilterDropDown:SkinDropDownMenu()
-	  AchievementFrameFilterDropDown:ClearAllPoints()
+    AchievementFrameFilterDropDown:SkinDropDownMenu()
+    AchievementFrameFilterDropDown:ClearAllPoints()
 
     AchievementFrameFilterDropDown:SetPoint('BOTTOMLEFT', AchievementFrame.SearchBox, 'TOPLEFT', 0, 10)
     AchievementFrameFilterDropDown:SetPoint('BOTTOMRIGHT', AchievementFrame.SearchBox, 'TOPRIGHT', 0, 10)
@@ -1302,8 +1293,6 @@ local function skinAchevement()
     dropdownDummyFrame:SetPoint('BOTTOMLEFT', AchievementFrame.SearchBox, 'TOPLEFT', 0, 10)
     dropdownDummyFrame:SetPoint('BOTTOMRIGHT', AchievementFrame.SearchBox, 'TOPRIGHT', 0, 10)
 
-
-
     AchievementFrameFilterDropDown:HookScript("OnShow",function()
       dropdownDummyFrame:Hide()
     end)
@@ -1331,10 +1320,6 @@ local function skinAchevement()
     HandleAchivementsScrollControls(AchievementFrameStats)
     HandleAchivementsScrollControls(AchievementFrameComparison.AchievementContainer)
     HandleAchivementsScrollControls(AchievementFrameComparison.StatContainer)
-
-
-
-
 
     local loaded = false
     hooksecurefunc(_G.AchievementFrameCategories.ScrollBox, 'Update', function(frame)
@@ -1477,7 +1462,6 @@ local function skinAchevement()
         end
     end)
 
-
     AchievementFrameComparison.StatContainer:ClearAllPoints()
     AchievementFrameComparison.StatContainer:SetPoint("TOPLEFT",AchievementFrameComparison,"TOPLEFT",0,0)
     AchievementFrameComparison.StatContainer:SetSize(582 - 10,621 - 20)
@@ -1494,120 +1478,118 @@ local function skinAchevement()
         end
     end)
 
+    AchievementFrameAchievements:StripTextures()
 
-  AchievementFrameAchievements:StripTextures()
-
-  for _, v in next, {  AchievementFrameAchievements:GetChildren() } do
-    if v then
-      v:StripTextures()
+    for _, v in next, {  AchievementFrameAchievements:GetChildren() } do
+        if v then
+        v:StripTextures()
+        end
     end
-  end
-  AchievementFrameAchievements:ClearAllPoints()
-  AchievementFrameAchievements:SetPoint("TOPLEFT",AchievementFrame,"TOPLEFT",251,-10)
-  AchievementFrameAchievements:SetSize(582 - 10,621 - 20)
+    AchievementFrameAchievements:ClearAllPoints()
+    AchievementFrameAchievements:SetPoint("TOPLEFT",AchievementFrame,"TOPLEFT",251,-10)
+    AchievementFrameAchievements:SetSize(582 - 10,621 - 20)
 
-  local LoadAchievementFrameAchievements = false
+    local LoadAchievementFrameAchievements = false
 
-  hooksecurefunc(_G.AchievementFrameAchievements.ScrollBox, 'Update', function(frame)
+    hooksecurefunc(_G.AchievementFrameAchievements.ScrollBox, 'Update', function(frame)
 
-    AchievementFrameAchievements.Background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\listbackground")
-    AchievementFrameAchievements.Background:ClearAllPoints()
-    AchievementFrameAchievements.Background:SetPoint("TOPLEFT",AchievementFrameSummary,"TOPLEFT",-11,-9)
-    AchievementFrameAchievements.Background:SetSize(608,621)
-    AchievementFrameAchievements.Background:SetTexCoord(0,1,0,1)
+        AchievementFrameAchievements.Background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\listbackground")
+        AchievementFrameAchievements.Background:ClearAllPoints()
+        AchievementFrameAchievements.Background:SetPoint("TOPLEFT",AchievementFrameSummary,"TOPLEFT",-11,-9)
+        AchievementFrameAchievements.Background:SetSize(608,621)
+        AchievementFrameAchievements.Background:SetTexCoord(0,1,0,1)
 
-      for _, child in next, { frame.ScrollTarget:GetChildren() } do
-        UpdateAchievementFrameListAchievement(child)
-      end
+        for _, child in next, { frame.ScrollTarget:GetChildren() } do
+            UpdateAchievementFrameListAchievement(child)
+        end
 
-      if LoadAchievementFrameAchievements == false then
-        LoadAchievementFrameAchievements = true
+        if LoadAchievementFrameAchievements == false then
+            LoadAchievementFrameAchievements = true
 
-        AchievementFrameAchievements.ScrollBox.view:SetPadding(0,10,0,0,5);
-        AchievementFrameAchievements.ScrollBox.view:SetElementExtentCalculator(function(dataIndex, elementData)
-      	   if SelectionBehaviorMixin.IsElementDataIntrusiveSelected(elementData) then
-      		     return math.max(AchievementTemplateMixin.CalculateSelectedHeight(elementData),120);
-      		 else
-      			return 120;
-      		end
-    	   end);
-      end
-  end)
+            AchievementFrameAchievements.ScrollBox.view:SetPadding(0,10,0,0,5);
+            AchievementFrameAchievements.ScrollBox.view:SetElementExtentCalculator(function(dataIndex, elementData)
+            if SelectionBehaviorMixin.IsElementDataIntrusiveSelected(elementData) then
+                    return math.max(AchievementTemplateMixin.CalculateSelectedHeight(elementData),120);
+                else
+                    return 120;
+                end
+            end);
+        end
+    end)
 
 
-  AchievementFrameStats:StripTextures()
+    AchievementFrameStats:StripTextures()
 
-  for _, v in next, {  AchievementFrameStats:GetChildren() } do
-    if v then
-      v:StripTextures()
+    for _, v in next, {  AchievementFrameStats:GetChildren() } do
+        if v then
+        v:StripTextures()
+        end
     end
-  end
-  AchievementFrameStats:ClearAllPoints()
-  AchievementFrameStats:SetPoint("TOPLEFT",AchievementFrame,"TOPLEFT",247,-5)
-  AchievementFrameStats:SetSize(582 - 10,621 - 20)
+    AchievementFrameStats:ClearAllPoints()
+    AchievementFrameStats:SetPoint("TOPLEFT",AchievementFrame,"TOPLEFT",247,-5)
+    AchievementFrameStats:SetSize(582 - 10,621 - 20)
 
-  local LoadAchievementFrameStats = false
+    local LoadAchievementFrameStats = false
 
-  AchievementFrameStats.Background = AchievementFrameStats:CreateTexture("Background", "BACKGROUND", nil, 0)
-  AchievementFrameStats.Background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\listbackground")
-  AchievementFrameStats.Background:ClearAllPoints()
-  AchievementFrameStats.Background:SetPoint("TOPLEFT",AchievementFrameSummary,"TOPLEFT",-11,-9)
-  AchievementFrameStats.Background:SetSize(608,621)
-  hooksecurefunc(_G.AchievementFrameStats.ScrollBox, 'Update', function(frame)
-      for _, child in next, { frame.ScrollTarget:GetChildren() } do
-        UpdateAchievementFrameListStats(child)
-      end
+    AchievementFrameStats.Background = AchievementFrameStats:CreateTexture("Background", "BACKGROUND", nil, 0)
+    AchievementFrameStats.Background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\listbackground")
+    AchievementFrameStats.Background:ClearAllPoints()
+    AchievementFrameStats.Background:SetPoint("TOPLEFT",AchievementFrameSummary,"TOPLEFT",-11,-9)
+    AchievementFrameStats.Background:SetSize(608,621)
+    hooksecurefunc(_G.AchievementFrameStats.ScrollBox, 'Update', function(frame)
+        for _, child in next, { frame.ScrollTarget:GetChildren() } do
+            UpdateAchievementFrameListStats(child)
+        end
 
-      if LoadAchievementFrameStats == false then
-        LoadAchievementFrameStats = true
-        AchievementFrameAchievements.ScrollBox.view:SetPadding(0,0,0,0,0);
-        AchievementFrameStats.ScrollBox.view:SetElementExtent(32);
-      end
-  end)
+        if LoadAchievementFrameStats == false then
+            LoadAchievementFrameStats = true
+            AchievementFrameAchievements.ScrollBox.view:SetPadding(0,0,0,0,0);
+            AchievementFrameStats.ScrollBox.view:SetElementExtent(32);
+        end
+    end)
 
-hooksecurefunc('AchievementFrame_RefreshView', function()
-  AchievementFrameSummary.Background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\listbackground")
-  AchievementFrameSummary.Background:ClearAllPoints()
-  AchievementFrameSummary.Background:SetPoint("TOPLEFT",AchievementFrameSummary,"TOPLEFT",-11,-9)
-  AchievementFrameSummary.Background:SetSize(608,621)
-  AchievementFrameSummary.Background:SetTexCoord(0,1,0,1)
+    hooksecurefunc('AchievementFrame_RefreshView', function()
+    AchievementFrameSummary.Background:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\listbackground")
+    AchievementFrameSummary.Background:ClearAllPoints()
+    AchievementFrameSummary.Background:SetPoint("TOPLEFT",AchievementFrameSummary,"TOPLEFT",-11,-9)
+    AchievementFrameSummary.Background:SetSize(608,621)
+    AchievementFrameSummary.Background:SetTexCoord(0,1,0,1)
 
-end)
-hooksecurefunc('AchievementFrameSummary_UpdateAchievements', function(...)
-    AchievementFrameSummary:ClearAllPoints()
-    AchievementFrameSummary:SetPoint("TOPLEFT",AchievementFrame,"TOPLEFT",261,0)
-    AchievementFrameSummary:SetSize(582,621)
+    end)
+    hooksecurefunc('AchievementFrameSummary_UpdateAchievements', function(...)
+        AchievementFrameSummary:ClearAllPoints()
+        AchievementFrameSummary:SetPoint("TOPLEFT",AchievementFrame,"TOPLEFT",261,0)
+        AchievementFrameSummary:SetSize(582,621)
 
-    local width = 592/2 - 2.5
-    local height = (AchievementFrameSummaryAchievements:GetHeight() - 32 - 10) / 2
-    AchievementFrameSummaryAchievement1:ClearAllPoints()
-    AchievementFrameSummaryAchievement1:SetPoint("TOPLEFT",AchievementFrameSummaryAchievementsHeader,"BOTTOMLEFT",0,-5)
-    AchievementFrameSummaryAchievement1:SetWidth(width)
-    AchievementFrameSummaryAchievement1:SetHeight(height)
-    updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement1, select(1, ...))
+        local width = 592/2 - 2.5
+        local height = (AchievementFrameSummaryAchievements:GetHeight() - 32 - 10) / 2
+        AchievementFrameSummaryAchievement1:ClearAllPoints()
+        AchievementFrameSummaryAchievement1:SetPoint("TOPLEFT",AchievementFrameSummaryAchievementsHeader,"BOTTOMLEFT",0,-5)
+        AchievementFrameSummaryAchievement1:SetWidth(width)
+        AchievementFrameSummaryAchievement1:SetHeight(height)
+        updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement1, select(1, ...))
 
-    AchievementFrameSummaryAchievement2:ClearAllPoints()
-    AchievementFrameSummaryAchievement2:SetPoint("TOPLEFT",AchievementFrameSummaryAchievement1,"TOPRIGHT",5,0)
-    AchievementFrameSummaryAchievement2:SetWidth(width)
-    AchievementFrameSummaryAchievement2:SetHeight(height)
-    updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement2, select(2, ...))
+        AchievementFrameSummaryAchievement2:ClearAllPoints()
+        AchievementFrameSummaryAchievement2:SetPoint("TOPLEFT",AchievementFrameSummaryAchievement1,"TOPRIGHT",5,0)
+        AchievementFrameSummaryAchievement2:SetWidth(width)
+        AchievementFrameSummaryAchievement2:SetHeight(height)
+        updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement2, select(2, ...))
 
-    AchievementFrameSummaryAchievement3:ClearAllPoints()
-    AchievementFrameSummaryAchievement3:SetPoint("TOPLEFT",AchievementFrameSummaryAchievement1,"BOTTOMLEFT",0,-5)
-    AchievementFrameSummaryAchievement3:SetWidth(width)
-    AchievementFrameSummaryAchievement3:SetHeight(height)
-    updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement3, select(3, ...))
+        AchievementFrameSummaryAchievement3:ClearAllPoints()
+        AchievementFrameSummaryAchievement3:SetPoint("TOPLEFT",AchievementFrameSummaryAchievement1,"BOTTOMLEFT",0,-5)
+        AchievementFrameSummaryAchievement3:SetWidth(width)
+        AchievementFrameSummaryAchievement3:SetHeight(height)
+        updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement3, select(3, ...))
 
-    AchievementFrameSummaryAchievement4:ClearAllPoints()
-    AchievementFrameSummaryAchievement4:SetPoint("TOPLEFT",AchievementFrameSummaryAchievement3,"TOPRIGHT",5,0)
-    AchievementFrameSummaryAchievement4:SetWidth(width)
-    AchievementFrameSummaryAchievement4:SetHeight(height)
-    updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement4, select(4, ...))
-        end)
+        AchievementFrameSummaryAchievement4:ClearAllPoints()
+        AchievementFrameSummaryAchievement4:SetPoint("TOPLEFT",AchievementFrameSummaryAchievement3,"TOPRIGHT",5,0)
+        AchievementFrameSummaryAchievement4:SetWidth(width)
+        AchievementFrameSummaryAchievement4:SetHeight(height)
+        updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement4, select(4, ...))
+    end)
 end
 
 local function LoadAchivementSkin()
     GW.RegisterLoadHook(skinAchevement, "Blizzard_AchievementUI")
 end
-
 GW.LoadAchivementSkin = LoadAchivementSkin
