@@ -189,6 +189,7 @@ immersive\damagetext.xml
 immersive\damagetext.lua
 immersive\eventTracker.lua
 immersive\skins\achievements.lua
+immersive\skins\achievements.xml
 
 objectives\scenarioWidgets\heroicVisions.lua
 objectives\scenarioWidgets\jailersTower.lua
