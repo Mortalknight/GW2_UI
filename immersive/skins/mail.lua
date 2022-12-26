@@ -214,14 +214,11 @@ local function SkinSendMailFrame()
     SendMailMoneyFrame:ClearAllPoints()
     SendMailMoneyFrame:SetPoint("BOTTOMRIGHT", SendMailFrame, "BOTTOMRIGHT", -40, 15)
 
-    GW.SkinTextBox(SendMailNameEditBoxLeft,SendMailNameEditBoxMiddle, SendMailNameEditBoxRight)
-    GW.SkinTextBox(SendMailSubjectEditBoxLeft,SendMailSubjectEditBoxMiddle, SendMailSubjectEditBoxRight)
-    GW.SkinTextBox(SendMailMoneyGoldLeft,SendMailMoneyGoldMiddle, SendMailMoneyGoldRight)
-    GW.SkinTextBox(SendMailMoneySilverLeft,SendMailMoneySilverMiddle, SendMailMoneySilverRight)
-    GW.SkinTextBox(SendMailMoneyCopperLeft,SendMailMoneyCopperMiddle, SendMailMoneyCopperRight)
-
-    SendMailBodyEditBox:SetFont(UNIT_NAME_FONT, 14, "")
-    SendMailBodyEditBox:SetTextColor(1, 1, 1, 1)
+    GW.SkinTextBox(SendMailNameEditBoxMiddle, SendMailNameEditBoxLeft, SendMailNameEditBoxRight, nil, nil, 5)
+    GW.SkinTextBox(SendMailSubjectEditBoxMiddle, SendMailSubjectEditBoxLeft, SendMailSubjectEditBoxRight, nil, nil, 5)
+    GW.SkinTextBox(SendMailMoneyGoldMiddle, SendMailMoneyGoldLeft, SendMailMoneyGoldRight, nil, nil, 5)
+    GW.SkinTextBox(SendMailMoneySilverMiddle, SendMailMoneySilverLeft, SendMailMoneySilverRight, nil, nil, 5, -12)
+    GW.SkinTextBox(SendMailMoneyCopperMiddle, SendMailMoneyCopperLeft, SendMailMoneyCopperRight, nil, nil, 5, -12)
 
     --reposition buttons
     SendMailMailButton:ClearAllPoints()

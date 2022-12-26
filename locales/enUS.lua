@@ -516,3 +516,6 @@ L["Alert will be triggered when the remaining time is less than the set value."]
 L["Add trackers for world events in the bottom of world map."] = true
 L["Shift + Left Click"] = true
 L["Alt + Left Click"] = true
+L["Edit objectives settings."] = true
+L["Collapse all objectives in M+"] = true
+L["Ready to craft"] = true

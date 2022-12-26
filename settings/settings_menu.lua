@@ -136,14 +136,16 @@ local function resetMenu(collapse)
 end
 
 local function  resetSearchables()
-  for k,of in pairs(matchingOptionFrames) do
+    for _, of in pairs(matchingOptionFrames) do
+        of:ClearAllPoints()
+        of:SetParent(of.searchAble.og_parent)
+        of:SetPoint(of.searchAble.og_point ,of.searchAble.og_relativePoint, of.searchAble.og_x, of.searchAble.og_y)
+        if of.searchAble.og_dd_container_parent then
+            of.container:SetParent(of.searchAble.og_dd_container_parent)
+        end
+    end
 
-    of:ClearAllPoints()
-    of:SetParent(of.searchAble.og_parent)
-    of:SetPoint(of.searchAble.og_point,of.searchAble.og_relativePoint,of.searchAble.og_x,of.searchAble.og_y)
-  end
-
-  matchingOptionFrames = {}
+    matchingOptionFrames = {}
 end
 
 local function switchCat(self,basePanel, panelFrame)
@@ -214,15 +216,19 @@ local function searchInputChanged(self)
             text = text:lower()
             if titleText ~= nil and string.find(titleText, text, 1, true) then
                 GwSettingsSearchResultPanel.sub:Hide()
-                -- get the original points and save them for later when we need to put the frame back
+                -- get the original points and save them for later when we need to put the frame back, also save the dropdown container parent
                 local point, relativeTo, _, xOfs, yOfs = of:GetPoint()
                 of.searchAble = {
                     og_parent = of:GetParent(),
                     og_point = point,
                     og_relativePoint = relativeTo,
                     og_x = xOfs,
-                    og_y= yOfs,
+                    og_y = yOfs,
+                    og_dd_container_parent = nil
                 }
+                if of.optionType == "dropdown" then
+                  of.searchAble.og_dd_container_parent = of.container:GetParent()
+                end
                 matchingOptionFrames[#matchingOptionFrames + 1] = of
 
                 if first then
@@ -251,6 +257,9 @@ local function searchInputChanged(self)
                 of:ClearAllPoints()
                 of:SetParent(GwSettingsSearchResultPanel.scroll.scrollchild)
                 of:SetPoint("TOPLEFT", GwSettingsSearchResultPanel.scroll.scrollchild, "TOPLEFT", padding.x, padding.y)
+                if of.optionType == "dropdown" then
+                  of.container:SetParent(GwSettingsSearchResultPanel.scroll)
+                end
 
                 if not of.newLine then
                     padding.x = padding.x + of:GetWidth() + box_padding

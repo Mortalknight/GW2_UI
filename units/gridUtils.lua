@@ -360,7 +360,7 @@ local function GridUpdateAwayData(self, profile, incomingSummonOrResurrectionChe
         self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
         self.classicon:SetShown(false)
     end
-    if not settings.raidClassColor[profile] and not readyCheckStatus then
+    if not settings.raidClassColor[profile] and not (readyCheckStatus or self.readyCheckInProgress) then
         iconState = 1
     end
     if UnitIsDeadOrGhost(self.unit) then
@@ -387,7 +387,7 @@ local function GridUpdateAwayData(self, profile, incomingSummonOrResurrectionChe
         GW.SetClassIcon(self.classicon, classIndex)
     end
 
-    if self.targetmarker and not readyCheckStatus and settings.raidUnitMarkers[profile] then
+    if self.targetmarker and not (readyCheckStatus or self.readyCheckInProgress) and settings.raidUnitMarkers[profile] then
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
         GW.GridUpdateRaidMarkers(self)
     end
@@ -420,7 +420,8 @@ local function GridUpdateAwayData(self, profile, incomingSummonOrResurrectionChe
         self.classicon:Show()
     end
 
-    if readyCheckStatus then
+    if readyCheckStatus or self.readyCheckInProgress then
+        self.readyCheckInProgress = true
         self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
         if readyCheckStatus == "waiting" then
             self.classicon:SetTexCoord(0, 1, 0, 0.25)

@@ -7,7 +7,6 @@ local function RAFRewards()
     end
 end
 
-
 local function LoadRecruitAFriendList(tabContainer)
     local RAFFrame = CreateFrame("Frame", "GwRAFWindow", tabContainer, "GwRAFWindow")
 
@@ -41,28 +40,8 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendFrame.RecruitList:SetAllPoints(RAFFrame.RecruitList)
 
     RecruitAFriendFrame.RecruitList.ScrollFrameInset:StripTextures()
-    RecruitAFriendFrame.RecruitList.ScrollFrame:StripTextures()
-    RecruitAFriendFrame.RecruitList.ScrollFrame:SkinScrollFrame()
-    RecruitAFriendFrame.RecruitList.ScrollFrame.Slider:StripTextures()
-    RecruitAFriendFrame.RecruitList.ScrollFrame.Slider:SetWidth(3)
-    RecruitAFriendFrame.RecruitList.ScrollFrame.Slider:SkinScrollBar()
-    RecruitAFriendFrame.RecruitList.ScrollFrame:SetSize(433, 420)
-
-    HybridScrollFrame_CreateButtons(RecruitAFriendFrame.RecruitList.ScrollFrame, "RecruitListButtonTemplate")
-
-    local buttons = RecruitAFriendFrame.RecruitList.ScrollFrame.buttons
-    for i = 1, #buttons do
-        local button = buttons[i]
-
-        button:SetSize(433, 34)
-    end
-
-    hooksecurefunc("HybridScrollFrame_Update", function(self)
-        if self == RecruitAFriendFrame.RecruitList.ScrollFrame then
-            self.scrollChild:SetHeight(420)
-            self:UpdateScrollChildRect()
-        end
-    end)
+    GW.HandleTrimScrollBar( RecruitAFriendFrame.RecruitList.ScrollBar)
+    RecruitAFriendFrame.RecruitList.ScrollBox:SetSize(433, 420)
 
     RecruitAFriendFrame.RecruitList.Header:SetSize(450, 20)
     RecruitAFriendFrame.RecruitList.Header.Background:Hide()

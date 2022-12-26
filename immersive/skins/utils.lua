@@ -122,13 +122,13 @@ local function LoadDropDownSkin()
 end
 GW.LoadDropDownSkin = LoadDropDownSkin
 --middle left right
-local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex)
+local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, leftOffset, rightOffset)
     if middleTex then
         middleTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
         middleTex:SetAlpha(0.5)
         middleTex:ClearAllPoints()
-        middleTex:SetPoint("TOPLEFT")
-        middleTex:SetPoint("BOTTOMRIGHT")
+        middleTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
+        middleTex:SetPoint("BOTTOMRIGHT", (rightOffset or 0), 0)
         middleTex:SetAlpha(1)
     end
 
@@ -137,8 +137,8 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex)
         leftTex:SetWidth(2)
         leftTex:SetAlpha(1)
         leftTex:ClearAllPoints()
-        leftTex:SetPoint("TOPLEFT")
-        leftTex:SetPoint("BOTTOMLEFT")
+        leftTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
+        leftTex:SetPoint("BOTTOMLEFT", -(leftOffset or 0), 0)
         leftTex:SetTexCoord(0,1,1,0)
         leftTex:SetAlpha(1)
     end
@@ -148,16 +148,16 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex)
         rightTex:SetWidth(1)
         rightTex:SetAlpha(1)
         rightTex:ClearAllPoints()
-        rightTex:SetPoint("TOPRIGHT")
-        rightTex:SetPoint("BOTTOMRIGHT")
+        rightTex:SetPoint("TOPRIGHT", (rightOffset or 0), 0)
+        rightTex:SetPoint("BOTTOMRIGHT", (rightOffset or 0), 0)
         rightTex:SetAlpha(1)
 
         local pframe = rightTex:GetParent()
         if topTex then
-            topTex:ClearAllPoints();
+            topTex:ClearAllPoints()
             topTex:SetHeight(2)
-            topTex:SetPoint("BOTTOMLEFT",pframe,"TOPLEFT",0,0)
-            topTex:SetPoint("BOTTOMRIGHT",pframe,"TOPRIGHT",0,0)
+            topTex:SetPoint("BOTTOMLEFT", pframe, "TOPLEFT", -(leftOffset or 0), 0)
+            topTex:SetPoint("BOTTOMRIGHT", pframe, "TOPRIGHT", (rightOffset or 0), 0)
             topTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
             topTex:SetAlpha(1)
         else
@@ -165,25 +165,25 @@ local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex)
             pframe.top = top
             top:ClearAllPoints();
             top:SetHeight(2)
-            top:SetPoint("BOTTOMLEFT",pframe,"TOPLEFT",0,0)
-            top:SetPoint("BOTTOMRIGHT",pframe,"TOPRIGHT",0,0)
+            top:SetPoint("BOTTOMLEFT",pframe,"TOPLEFT",-(leftOffset or 0),0)
+            top:SetPoint("BOTTOMRIGHT",pframe,"TOPRIGHT",(rightOffset or 0),0)
             top:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
         end
         if bottomTex then
             bottomTex:ClearAllPoints()
             bottomTex:SetHeight(2)
-            bottomTex:SetPoint("TOPLEFT",pframe,"BOTTOMLEFT",0,0)
-            bottomTex:SetPoint("TOPRIGHT",pframe,"BOTTOMRIGHT",0,0)
+            bottomTex:SetPoint("TOPLEFT",pframe,"BOTTOMLEFT",-(leftOffset or 0),0)
+            bottomTex:SetPoint("TOPRIGHT",pframe,"BOTTOMRIGHT",(rightOffset or 0),0)
             bottomTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
             bottomTex:SetTexCoord(0,1,1,0)
             bottomTex:SetAlpha(1)
         else
             local bottom = pframe:CreateTexture("bottom", "BACKGROUND", nil, 0)
             pframe.bottom = bottom
-            bottom:ClearAllPoints();
+            bottom:ClearAllPoints()
             bottom:SetHeight(2)
-            bottom:SetPoint("TOPLEFT",pframe,"BOTTOMLEFT",0,0)
-            bottom:SetPoint("TOPRIGHT",pframe,"BOTTOMRIGHT",0,0)
+            bottom:SetPoint("TOPLEFT",pframe,"BOTTOMLEFT",-(leftOffset or 0),0)
+            bottom:SetPoint("TOPRIGHT",pframe,"BOTTOMRIGHT",(rightOffset or 0),0)
             bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
             bottom:SetTexCoord(0,1,1,0)
         end

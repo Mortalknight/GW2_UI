@@ -1,5 +1,17 @@
 local _, GW = ...
 
+local atlasToTex = {
+    ["friendslist-invitebutton-horde-normal"] = [[Interface\FriendsFrame\PlusManz-Horde]],
+    ["friendslist-invitebutton-alliance-normal"] = [[Interface\FriendsFrame\PlusManz-Alliance]],
+    ["friendslist-invitebutton-default-normal"] = [[Interface\FriendsFrame\PlusManz-PlusManz]],
+}
+
+local function HandleInviteTex(self, atlas)
+    local tex = atlasToTex[atlas]
+    if tex then
+        self.ownerIcon:SetTexture(tex)
+    end
+end
 
 local function LoadFriendList(tabContainer)
     local GWFriendFrame = CreateFrame("Frame", "GWFriendFrame", tabContainer, "GWFriendFrame")
@@ -21,18 +33,19 @@ local function LoadFriendList(tabContainer)
     FriendsFrameBattlenetFrame:SetAllPoints(GWFriendFrame.headerBN)
 
     FriendsFrameStatusDropDown:SkinDropDownMenu(5)
+    FriendsFrameStatusDropDown:SetWidth(55)
     FriendsFrameStatusDropDown:SetParent(GWFriendFrame.headerDD)
     FriendsFrameStatusDropDown:ClearAllPoints()
-    FriendsFrameStatusDropDown:SetAllPoints(GWFriendFrame.headerDD)
+    FriendsFrameStatusDropDown:SetPoint("TOPLEFT", GWFriendFrame.headerDD, "TOPLEFT", 5, 0)
 
-    FriendsListFrameScrollFrame:SetParent(GWFriendFrame.list)
-    FriendsListFrameScrollFrame:ClearAllPoints()
-    FriendsListFrameScrollFrame:SetAllPoints(GWFriendFrame.list)
+    FriendsListFrame.ScrollBox:SetParent(GWFriendFrame.list)
+    FriendsListFrame.ScrollBox:ClearAllPoints()
+    FriendsListFrame.ScrollBox:SetAllPoints(GWFriendFrame.list)
 
-    FriendsListFrameScrollFrame.SetParent = GW.NoOp
-    FriendsListFrameScrollFrame.ClearAllPoints = GW.NoOp
-    FriendsListFrameScrollFrame.SetAllPoints = GW.NoOp
-    FriendsListFrameScrollFrame.SetPoint = GW.NoOp
+    FriendsListFrame.ScrollBox.SetParent = GW.NoOp
+    FriendsListFrame.ScrollBox.ClearAllPoints = GW.NoOp
+    FriendsListFrame.ScrollBox.SetAllPoints = GW.NoOp
+    FriendsListFrame.ScrollBox.SetPoint = GW.NoOp
 
     FriendsListFrame.RIDWarning:SetParent(GWFriendFrame.list)
     FriendsListFrame.RIDWarning:ClearAllPoints()
@@ -52,53 +65,50 @@ local function LoadFriendList(tabContainer)
     FriendsFrameSendMessageButton:SetPoint("BOTTOMRIGHT", GWFriendFrame.list,  "BOTTOMRIGHT", -4, -40)
     FriendsFrameSendMessageButton:SkinButton(false, true)
 
-    FriendsListFrameScrollFrame.PendingInvitesHeaderButton:SetSize(460, 30)
-    FriendsListFrameScrollFrame.PendingInvitesHeaderButton:SkinButton(false, true)
-
-    hooksecurefunc(FriendsListFrameScrollFrame.invitePool, "Acquire", function()
-        for object in pairs(_G.FriendsListFrameScrollFrame.invitePool.activeObjects) do
-            if object.isSkinned then return end
-            object.DeclineButton:SkinButton(false, true)
-            object.AcceptButton:SkinButton(false, true)
-            object.isSkinned = true
-        end
-    end)
-
-    FriendsListFrameScrollFrame.scrollBar:SkinScrollBar()
-    FriendsListFrameScrollFrame.scrollBar:SetWidth(3)
-    FriendsListFrameScrollFrame:SkinScrollFrame()
-    FriendsListFrameScrollFrameMiddle:Hide()
-    FriendsListFrameScrollFrameScrollChild:ClearAllPoints()
-    FriendsListFrameScrollFrameScrollChild:SetAllPoints(GWFriendFrame.list)
-
-    HybridScrollFrame_CreateButtons(FriendsListFrameScrollFrame, "FriendsListButtonTemplate")
+    GW.HandleTrimScrollBar(FriendsListFrame.ScrollBar)
 
     FriendsTooltip:SetParent(GWFriendFrame.list)
 
-    local buttons = FriendsListFrameScrollFrame.buttons
-    for i = 1, #buttons do
-        local button = buttons[i]
-        local icon = _G["FriendsListFrameScrollFrameButton" .. i .. "GameIcon"]
-        local name = _G["FriendsListFrameScrollFrameButton" .. i .. "Name"]
-        local info = _G["FriendsListFrameScrollFrameButton" .. i .. "Info"]
+    local INVITE_RESTRICTION_NONE = 9
+    hooksecurefunc("FriendsFrame_UpdateFriendButton", function(button)
+        if not button.IsSkinned then
+            button:SetSize(460, 34)
 
-        button:SetSize(460, 34)
+            button.gameIcon:SetSize(22, 22)
+            button.gameIcon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
+            button.gameIcon:ClearAllPoints()
+            button.gameIcon:SetPoint("RIGHT", button, "RIGHT", -24, 0)
+            button.gameIcon.SetPoint = GW.NoOp
 
-        icon:SetSize(22, 22)
-        icon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
+            button.name:SetFont(UNIT_NAME_FONT, 14)
 
-        name:SetFont(UNIT_NAME_FONT, 14)
-        info:SetFont(UNIT_NAME_FONT, 13)
+            local travelPass = button.travelPassButton
+            travelPass:SetSize(22, 22)
+            travelPass:SetPoint("TOPRIGHT", -3, -6)
+            travelPass:CreateBackdrop()
+            travelPass.NormalTexture:SetAlpha(0)
+            travelPass.PushedTexture:SetAlpha(0)
+            travelPass.DisabledTexture:SetAlpha(0)
+            travelPass.HighlightTexture:SetColorTexture(1, 1, 1, .25)
+            travelPass.HighlightTexture:SetAllPoints()
+            button.gameIcon:SetPoint("TOPRIGHT", travelPass, "TOPLEFT", -4, 0)
 
-        icon:ClearAllPoints()
-        icon:SetPoint("RIGHT", button, "RIGHT", -24, 0)
-        icon.SetPoint = GW.NoOp
-    end
+            local icon = travelPass:CreateTexture(nil, "ARTWORK")
+            icon:SetTexCoord(.1, .9, .1, .9)
+            icon:SetAllPoints()
+            button.newIcon = icon
+            travelPass.NormalTexture.ownerIcon = icon
+            hooksecurefunc(travelPass.NormalTexture, "SetAtlas", HandleInviteTex)
 
-    hooksecurefunc("HybridScrollFrame_Update", function(self)
-        if self == FriendsListFrameScrollFrame then
-            self.scrollChild:SetHeight(490)
-            self:UpdateScrollChildRect()
+            button.IsSkinned = true
+        end
+
+        if button.newIcon and button.buttonType == _G.FRIENDS_BUTTON_TYPE_BNET then
+            if FriendsFrame_GetInviteRestriction(button.id) == INVITE_RESTRICTION_NONE then
+                button.newIcon:SetVertexColor(1, 1, 1)
+            else
+                button.newIcon:SetVertexColor(.5, .5, .5)
+            end
         end
     end)
 
@@ -109,10 +119,7 @@ local function LoadFriendList(tabContainer)
     FriendsFriendsFrameDropDown:SkinDropDownMenu()
     FriendsFriendsFrame.SendRequestButton:SkinButton(false, true)
     FriendsFriendsFrame.CloseButton:SkinButton(false, true)
-    FriendsFriendsScrollFrame.scrollBar:SkinScrollBar()
-    FriendsFriendsScrollFrame.scrollBar:SetWidth(3)
-    FriendsFriendsScrollFrameMiddle:Hide()
-    FriendsFriendsScrollFrame:SkinScrollFrame()
+    GW.HandleTrimScrollBar(_G.FriendsFriendsFrame.ScrollBar)
 
     FriendsFrameBattlenetFrame.BroadcastButton:Kill()
     FriendsFrameBattlenetFrame:StripTextures()

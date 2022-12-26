@@ -419,7 +419,7 @@ local function specSwitchHandlerOnEvent(self, event)
         end
     end
 
-    if layoutToUse then
+    if layoutToUse and self.smallSettingsFrame.layoutView.savedLayoutDropDown.container.contentScroll.displayButton.selectedId ~= layoutToUse.id then
         UpdateFramePositionForLayout(layoutToUse, self.layoutManager, true, event == "PLAYER_ENTERING_WORLD")
     end
 
@@ -544,6 +544,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     specSwitchHandler:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     specSwitchHandler:SetScript("OnEvent", specSwitchHandlerOnEvent)
     specSwitchHandler.layoutManager = layoutManager
+    specSwitchHandler.smallSettingsFrame = smallSettingsFrame
 
     --GW2UI_PRIVATE_LAYOUTS= nil
 end

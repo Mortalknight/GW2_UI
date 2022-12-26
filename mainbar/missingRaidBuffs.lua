@@ -53,6 +53,12 @@ local reminderBuffs = {
         [7] = 308637,	-- Well Fed
         [8] = 327715,	-- Well Fed
         [9] = 327851,	-- Well Fed
+
+        -- DF
+        [10] = 382149,	-- Well Fed
+        [11] = 396092,	-- Well Fed
+        --[12] = 382149,	-- Well Fed
+        --[13] = 382149,	-- Well Fed
     },
     Intellect = {
         [1] = 1459, -- Arcane Intellect
@@ -67,11 +73,23 @@ local reminderBuffs = {
         [1] = 6673, -- Battle Shout
         [2] = 264761, -- War-Scroll of Battle
     },
+    MovementBuff = {
+        [1] = 381748 -- Evoker
+    },
     Weapon = { -- EnchantsID
         [1] = 6188, -- Shadowcore Oil
         [2] = 6190, -- Embalmer's Oil
         [3] = 6200, -- Shaded Sharpening Stone -- just a fallback
         [4] = 6201, -- Shaded Weightstone
+        [5] = 396147, -- chirping rune
+        [6] = 385330, -- chirping rune
+        [7] = 396148, -- chirping rune
+        [8] = 385326, -- buzzing rune
+        [9] = 385325, -- buzzing rune
+        [10] = 385327, -- buzzing rune
+        [11] = 385575, -- howling-rune
+        [12] = 385576, -- howling-rune
+        [13] = 385577, -- howling-rune
     },
     Custom = {
         -- spellID,	-- Spell Info
@@ -158,7 +176,12 @@ local function setButtonStyle(button, haveBuff)
             --LibCustomGlow.PixelGlow_Stop(button)
         end
     else
-        button.icon:SetDesaturated(settings.invert and false or settings.grayedout)
+        if settings.invert then
+            button.icon:SetDesaturated(false)
+        else
+            button.icon:SetDesaturated(settings.grayedout)
+        end
+
         button:SetAlpha(settings.invert and 1 or settings.dimmed and ALPHA or 1)
         --LibCustomGlow.PixelGlow_Stop(button)
     end
@@ -252,6 +275,20 @@ local function OnAuraChange(self)
     end
     setButtonStyle(self.attackPowerButton, foundBuff)
 
+    -- MovementBuff
+    foundBuff = false
+    for _, movementBuff in pairs(buffInfos.MovementBuff) do
+        if movementBuff.hasBuff then
+            self.movementButton.icon:SetTexture(movementBuff.texId)
+            foundBuff = true
+            break
+        end
+    end
+    if not foundBuff then
+        self.movementButton.icon:SetTexture(buffInfos.MovementBuff[1].texId)
+    end
+    setButtonStyle(self.movementButton, foundBuff)
+
     -- Weapon
     foundBuff = false
     for _, weaponbuff in pairs(buffInfos.Weapon) do
@@ -268,13 +305,13 @@ local function OnAuraChange(self)
 
     -- Custom
     if #buffInfos.Custom > 0 then
-        self:SetSize(249, 32)
+        self:SetSize(280, 32)
         self.customButton.icon:SetTexture(buffInfos.Custom[1].texId)
 
         if not self.customButton:IsShown() then self.customButton:Show() end
         setButtonStyle(self.customButton, buffInfos.Custom[1].hasBuff)
     else
-        self:SetSize(218, 32)
+        self:SetSize(249, 32)
         self.customButton:Hide()
         --LibCustomGlow.PixelGlow_Stop(self.customButton)
     end
@@ -322,7 +359,7 @@ local function UpdateMissingRaidBuffVisibility()
 
     RegisterStateDriver(GW_RaidBuffReminder, "visibility", VisibilityStates[settings.visibility])
 end
-GW. UpdateMissingRaidBuffVisibility = UpdateMissingRaidBuffVisibility
+GW.UpdateMissingRaidBuffVisibility = UpdateMissingRaidBuffVisibility
 
 local function UpdateMissingRaidBuffCustomSpell()
 	wipe(buffInfos.Custom)
@@ -357,7 +394,8 @@ local function LoadRaidbuffReminder()
     rbr.intButton = CreateIconBuff(rbr, true, rbr)
     rbr.staminaButton = CreateIconBuff(rbr.intButton, false, rbr)
     rbr.attackPowerButton = CreateIconBuff(rbr.staminaButton, false, rbr)
-    rbr.flaskButton = CreateIconBuff(rbr.attackPowerButton, false, rbr)
+    rbr.movementButton = CreateIconBuff(rbr.attackPowerButton, false, rbr)
+    rbr.flaskButton = CreateIconBuff(rbr.movementButton, false, rbr)
     rbr.foodButton = CreateIconBuff(rbr.flaskButton, false, rbr)
     rbr.daRuneButton = CreateIconBuff(rbr.foodButton, false, rbr)
     rbr.weaponButton = CreateIconBuff(rbr.daRuneButton, false, rbr)

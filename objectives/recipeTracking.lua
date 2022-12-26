@@ -117,7 +117,7 @@ end
 
 local function updateRecipeObjectives(block, recipeSchematic)
     local allCollacted = true
-    block.height = 35
+    block.height = 25
     block.numObjectives = 0
 
     for _, reagentSlotSchematic in ipairs(recipeSchematic.reagentSlotSchematics) do
@@ -137,7 +137,7 @@ local function updateRecipeObjectives(block, recipeSchematic)
     end
 
     if allCollacted then
-        addObjective(block, "Ready to craft", false, 0, 0)
+        addObjective(block, GW.L["Ready to craft"], false, 0, 0)
     end
 
     for i = block.numObjectives + 1, 20 do
@@ -157,7 +157,7 @@ local function updateRecipeLayout(self)
 
     self.header:Hide()
 
-    if self.collapsed then
+    if self.collapsed and numRecipes > 0 then
         self.header:Show()
         numRecipes = 0
         savedHeight = 20
@@ -255,6 +255,18 @@ local function OnEvent(self, event, ...)
     end
 end
 
+local function CollapseHeader(self, forceCollapse, forceOpen)
+    if (not self.collapsed or forceCollapse) and not forceOpen then
+        self.collapsed = true
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+    else
+        self.collapsed = false
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    end
+    updateRecipeLayout(GwQuesttrackerContainerRecipe)
+end
+GW.CollapseRecipeHeader = CollapseHeader
+
 local function LoadRecipeTracking(self)
     collectedItemIDs = GetAllBasicReagentItemIDs()
 
@@ -270,18 +282,9 @@ local function LoadRecipeTracking(self)
     self.header.title:SetText(PROFESSIONS_TRACKER_HEADER_PROFESSION)
 
     self.collapsed = false
-    self.header:SetScript(
-        "OnMouseDown",
+    self.header:SetScript("OnMouseDown",
         function(self)
-            local p = self:GetParent()
-            if p.collapsed == false then
-                p.collapsed = true
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-            else
-                p.collapsed = false
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            end
-            updateRecipeLayout(p)
+            CollapseHeader(self:GetParent(), false, false)
         end
     )
     self.header.title:SetTextColor(

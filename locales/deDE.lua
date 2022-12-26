@@ -547,4 +547,6 @@ L["Alert will be triggered when the remaining time is less than the set value."]
 L["Add trackers for world events in the bottom of world map."] = "Tracker für Weltereignisse unten auf der Weltkarte hinzufügen."
 L["Shift + Left Click"] = "Umschalt + Linksklick"
 L["Alt + Left Click"] = "Alt + Linksklick"
-
+L["Edit objectives settings."] = "Bearbeite die Ziele-Einstellung: Quest, M+ Timer, Scenario, Events, etc."
+L["Collapse all objectives in M+"] = "Reduziere alle Ziel-Kategorien in M+ Instancen"
+L["Ready to craft"] = "Bereits zum herstellen"

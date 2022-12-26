@@ -265,7 +265,7 @@ local function updateCurrentScenario(self, event, ...)
     numCriteria = GW.addHeroicVisionsData(GwScenarioBlock, numCriteria)
     numCriteria = GW.addJailersTowerData(GwScenarioBlock, numCriteria)
     numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget = GW.addEmberCourtData(GwScenarioBlock, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget)
-    --GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isDragonflightCookingEventWidget = GW.addDragonflightCookingEventData(GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isDragonflightCookingEventWidget)
+   -- GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isDragonflightCookingEventWidget = GW.addDragonflightCookingEventData(GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isDragonflightCookingEventWidget)
     --TODO need more work: need to find a way to get the correct zone
 
     local bonusSteps = C_Scenario.GetBonusSteps() or {}

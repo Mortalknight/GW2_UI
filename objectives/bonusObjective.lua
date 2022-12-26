@@ -176,7 +176,7 @@ local function createNewBonusObjectiveBlock(blockIndex)
 end
 
 local function setUpBlock(questIDs, collapsed)
-    local savedContainerHeight = 20
+    local savedContainerHeight = 1
     local shownBlocks = 0
     local blockIndex = 1
     local foundEvent = false
@@ -234,6 +234,10 @@ local function setUpBlock(questIDs, collapsed)
                 GwBonusObjectiveBlock.module = module
 
                 GW.CombatQueue_Queue(nil, UpdateQuestItem, {GwBonusObjectiveBlock})
+
+                if not foundEvent then
+                    savedContainerHeight = 20
+                end
 
                 foundEvent = true
 
@@ -305,6 +309,7 @@ local function setUpBlock(questIDs, collapsed)
                 blockIndex = blockIndex + 1
             else
                 shownBlocks = shownBlocks + 1
+                savedContainerHeight = 20
             end
         end
     end
@@ -337,7 +342,7 @@ local function updateBonusObjective(self)
         end
     end
 
-    for _, v in pairs(tasks) do
+    for _, v in pairs(tasks or {}) do
         if trackedEventIDs[v] == nil then
             trackedEventIDs[v] = {}
             trackedEventIDs[v].ID = v
@@ -374,6 +379,18 @@ end
 GW.updateBonusObjective = updateBonusObjective
 GW.AddForProfiling("bonusObjective", "updateBonusObjective", updateBonusObjective)
 
+local function CollapseHeader(self, forceCollapse, forceOpen)
+    if (not self.collapsed or forceCollapse) and not forceOpen then
+        self.collapsed = true
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+    else
+        self.collapsed = false
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    end
+    updateBonusObjective(GwQuesttrackerContainerBonusObjectives)
+end
+GW.CollapseBonusObjectivesHeader = CollapseHeader
+
 local function LoadBonusFrame()
     GwQuesttrackerContainerBonusObjectives:SetScript("OnEvent", updateBonusObjective)
     GwQuesttrackerContainerBonusObjectives:RegisterEvent("QUEST_LOG_UPDATE")
@@ -387,20 +404,9 @@ local function LoadBonusFrame()
     GwQuesttrackerContainerBonusObjectives.header.title:SetText(EVENTS_LABEL)
 
     GwQuesttrackerContainerBonusObjectives.collapsed = false
-    GwQuesttrackerContainerBonusObjectives.header:SetScript(
-        "OnMouseDown",
+    GwQuesttrackerContainerBonusObjectives.header:SetScript("OnMouseDown",
         function(self)
-            local p = self:GetParent()
-            if not p.collapsed then
-                p.collapsed = true
-
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            else
-                p.collapsed = false
-
-                PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-            end
-            updateBonusObjective(p)
+            CollapseHeader(self:GetParent(), false, false)
         end
     )
     GwQuesttrackerContainerBonusObjectives.header.title:SetTextColor(

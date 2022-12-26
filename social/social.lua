@@ -507,12 +507,11 @@ GW.AddForProfiling("social", "socialTab_OnEnter", socialTab_OnEnter)
 local function GWFriendsFrame_OnEvent(_, event, ...)
     if ( event == "SPELL_UPDATE_COOLDOWN" ) then
         if ( GwSocialWindow:IsShown() ) then
-            local buttons = FriendsListFrameScrollFrame.buttons;
-            for _, button in pairs(buttons) do
-                if ( button.summonButton:IsShown() ) then
+            FriendsListFrame.ScrollBox:ForEachFrame(function(button)
+                if button.summonButton and button.summonButton:IsShown() then
                     FriendsFrame_SummonButton_Update(button.summonButton);
                 end
-            end
+            end)
         end
     elseif ( event == "FRIENDLIST_UPDATE" or event == "GROUP_ROSTER_UPDATE" ) then
         FriendsList_Update();
@@ -539,7 +538,7 @@ local function GWFriendsFrame_OnEvent(_, event, ...)
         -- flash the invites header if collapsed
         local collapsed = GetCVarBool("friendInvitesCollapsed");
         if ( collapsed ) then
-            FriendsListFrameScrollFrame.PendingInvitesHeaderButton.Flash.Anim:Play();
+            FriendsListFrame_SetInviteHeaderAnimPlaying(true);
         end
         FriendsList_Update();
     elseif ( event == "BN_FRIEND_INVITE_LIST_INITIALIZED" ) then

@@ -268,6 +268,7 @@ local function RaidGridOnEvent(self, event, unit)
                     self.classicon:SetShown(true)
                     SetClassIcon(self.classicon, classIndex)
                 end
+                self.readyCheckInProgress = false
             end
         end)
     end
@@ -279,7 +280,7 @@ local function GridOnUpdate(self, elapsed)
         self.onUpdateDelay = self.onUpdateDelay - elapsed
         return
     end
-    self.onUpdateDelay = 0.2
+    self.onUpdateDelay = 0.4
     if UnitExists(self.unit) then
         GW.GridUpdateAwayData(self, "RAID")
     end
@@ -385,7 +386,7 @@ local function LoadRaidFrames()
         GridRaidUpdateFramesLayout()
 
         for i = 1, MAX_RAID_MEMBERS do
-            GW.GridUpdateFrameData(_G["GwCompactRaidFrame" .. i], i)
+            GW.GridUpdateFrameData(_G["GwCompactRaidFrame" .. i], i, "RAID")
         end
     end)
 end
