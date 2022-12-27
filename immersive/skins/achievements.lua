@@ -35,32 +35,6 @@ local barColors = {
    red = {r=153/255,g=60/255,b=48/255,a=1},
    blue = {r=48/255,g=56/255,b=153/255,a=1},
 }
--- this can be deleted if standardbutton on hover accept a 2nd argument for hover effect
-local function AchievementOnEnter(self,hover)
-    local name = tostring(self)
-    hover:SetAlpha(1)
-    AddToAnimation(
-        name,
-        self.animationValue,
-        1,
-        GetTime(),
-        0.5,
-        function()
-          local w = self:GetWidth()
-
-          local prog = animations[name].progress
-          local lerp = GW.lerp(0, w + (w*0.5), prog)
-          local lerp2 = GW.lerp(0.4, 1, (prog - 0.5) / 0.5)
-
-          if lerp2 < 0 then lerp2 = 0 end
-          if lerp2 > 1 then lerp2 = 1 end
-          hover:SetPoint("RIGHT", self, "LEFT", math.min(w,lerp) , 0)
-          hover:SetVertexColor(1,1,1,lerp2)
-          local stripAmount =  1 - math.max(0,(lerp / w) - 1)
-          hover:SetTexCoord(0,stripAmount,0,1)
-        end
-    )
-end
 
 -- Text Helper functions
 local function setSmallText(self)
@@ -375,7 +349,7 @@ local function SetupButtonHighlight(button, background)
     hl:SetVertexColor(0.8, 0.8, 0.8, 0.8)
     hl:SetInside(background)
     button:HookScript("OnEnter",function()
-      AchievementOnEnter(button,hl)
+      GW.TriggerButtonHoverAnimation(button,hl)
     end)
 end
 
@@ -559,7 +533,7 @@ local function skinAchievementFrameSummaryAchievement(self)
   self.hasSkinnedHighlight = true
 
   self:HookScript("OnEnter",function()
-    AchievementOnEnter(self,self.Highlight.Bottom)
+    GW.TriggerButtonHoverAnimation(self,self.Highlight.Bottom)
   end)
 end
 
@@ -776,7 +750,7 @@ local function skinAchievementFrameListAchievement(self)
   self.hasSkinnedHighlight = true
 
   self:HookScript("OnEnter",function()
-    AchievementOnEnter(self,self.Highlight.Bottom)
+    GW.TriggerButtonHoverAnimation(self,self.Highlight.Bottom)
   end)
 
 end

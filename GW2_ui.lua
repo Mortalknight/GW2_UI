@@ -85,21 +85,6 @@ local function AddToAnimation(name, from, to, start, duration, method, easeing, 
 end
 GW.AddToAnimation = AddToAnimation
 
-local function buttonAnim(self, name, w, hover)
-    local prog = animations[name].progress
-    local lerp = GW.lerp(0, w + (w*0.5), prog) --
-    local lerp2 = GW.lerp(0.5, 1, (prog - 0.5) / 0.5)
-
-    if lerp2 < 0 then lerp2 = 0 end
-    if lerp2 > 1 then lerp2 = 1 end
-
-    hover:SetPoint("RIGHT", self, "LEFT", math.min(w,lerp) , 0)
-    hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, lerp2)
-    local stripAmount =  1 - math.max(0,(lerp / w) - 1)
-    hover:SetTexCoord(0,stripAmount,0,1)
-end
-AFP("buttonAnim", buttonAnim)
-
 --[[
     Basic helper function for spritemaps
     mapExample = {
@@ -144,51 +129,54 @@ local function getSpriteByIndex(map, index)
 end
 GW.getSpriteByIndex = getSpriteByIndex
 
-function GwStandardButton_OnEnter(self)
+local function TriggerButtonHoverAnimation(self, hover, to, duration)
     local name = tostring(self)
-    local w = self:GetWidth()
-    local hover = self.gwHover
-    if not hover or (self.IsEnabled and not self:IsEnabled()) then
-        return
-    end
-
     hover:SetAlpha(1)
-    self.animationValue = hover.skipHover and 1 or 0
 
     AddToAnimation(
         name,
         self.animationValue,
-        1,
+        (to or 1),
         GetTime(),
-        0.5,
+        (duration or 0.5),
         function()
-            buttonAnim(self, name, w, hover)
+            local w = self:GetWidth()
+
+            local prog = animations[name].progress
+            local lerp = GW.lerp(0, w + (w * 0.5), prog)
+            local lerp2 = GW.lerp(0.4, 1, (prog - 0.5) / 0.5)
+
+            if lerp2 < 0 then lerp2 = 0 end
+            if lerp2 > 1 then lerp2 = 1 end
+            hover:SetPoint("RIGHT", self, "LEFT", math.min(w, lerp) , 0)
+            hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, lerp2)
+            local stripAmount = 1 - math.max(0, (lerp / w) - 1)
+            hover:SetTexCoord(0, stripAmount, 0, 1)
         end
     )
 end
+GW.TriggerButtonHoverAnimation = TriggerButtonHoverAnimation
+
+function GwStandardButton_OnEnter(self)
+    if not self.gwHover or (self.IsEnabled and not self:IsEnabled()) then
+        return
+    end
+
+    self.animationValue = self.gwHover.skipHover and 1 or 0
+
+    TriggerButtonHoverAnimation(self, self.gwHover)
+end
 
 function GwStandardButton_OnLeave(self)
-    local name = tostring(self)
-    local w = self:GetWidth()
-    local hover = self.gwHover
-    if not hover or (self.IsEnabled and not self:IsEnabled()) then
+    if not self.gwHover or (self.IsEnabled and not self:IsEnabled()) then
         return
     end
     if self.gwHover.skipHover then return end
 
-    hover:SetAlpha(1)
+    self.gwHover:SetAlpha(1)
     self.animationValue = 1
 
-    AddToAnimation(
-        name,
-        self.animationValue,
-        0,
-        GetTime(),
-        0.1,
-        function()
-            buttonAnim(self, name, w, hover)
-        end
-    )
+    TriggerButtonHoverAnimation(self, self.gwHover, 0, 0.1)
 end
 
 local function barAnimation(self, barWidth, sparkWidth)
