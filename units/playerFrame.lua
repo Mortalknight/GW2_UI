@@ -188,6 +188,7 @@ local function LoadPlayerFrame()
     NewUnitFrame:RegisterForClicks("AnyDown")
 
     NewUnitFrame.altBg = CreateFrame("Frame", nil, NewUnitFrame, "GwAlternativeUnitFrameBackground")
+    NewUnitFrame.altBg:SetAllPoints(NewUnitFrame)
 
     NewUnitFrame.mask = UIParent:CreateMaskTexture()
     NewUnitFrame.mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)
