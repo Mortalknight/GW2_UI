@@ -545,7 +545,7 @@ local function evPlayerLogin(self)
     GW.LoadMovers(lm.layoutFrame)
     GW.LoadSettings()
 
-    --loade some settings
+    --load some settings
     GW.UpdateClassColorSetting()
 
     -- load alert settings
