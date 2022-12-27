@@ -15,13 +15,25 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 addChange("6.1.0",{
-  {ct.feature,[=[Added brand new settings page]=]},
-  {ct.feature,[=[Update raid debuffs for season 1]=]},
-  {ct.feature,[=[Added Community Feast and Siege On Dragonbane Keep timer to worldmap]=]},
-  {ct.feature,[=[Added option to set currencys to unused]=]},
+    {ct.feature,[=[Added brand new settings page]=]},
+    {ct.feature,[=[Added Community Feast and Siege On Dragonbane Keep timer to worldmap]=]},
+    {ct.feature,[=[Added option to set currencys to unused]=]},
+    {ct.feature,[=[Added option to collaps all tracker in Mythic+]=]},
+    {ct.feature,[=[Added evoker buff to raid buff reminder]=]},
+
+    {ct.change,[=[Aura Indicator updates:
+        - Resto Druid: Adds Tranquility and Adaptive Swarm by default and moves Focused Growth (PvP) slightly left to not stack on top of Spring Blossoms.
+        - Priest: Power Infusion will display as well (from any unit) and moves Pain Supp and Guardian Spirit to the bottom.
+        - Holy Pally: Adds Barrier of Faith.]=]},
+    {ct.change,[=[Update Raid Debuff Filter and cleanded up Mythic+ Affixes]=]},
+    {ct.change,[=[Update some raid buff reminder spells]=]},
+
+    {ct.bug,[=[ix auto sell taint error]=]},
+    {ct.bug,[=[Temp fix for extra actionbutton taint]=]},
+    {ct.bug,[=[Memory and performance improvements]=]},
 })
 addChange("6.0.10",{
-  {ct.bug,[=[Error on start]=]},
+    {ct.bug,[=[Error on start]=]},
 })
 addChange("6.0.9",{
   {ct.bug,[=[Restored mirror timers]=]},

@@ -1,9 +1,24 @@
 6.1.0
 NEW
     - Added brand new settings page
-    - Update raid debuffs for season 1
     - Added Community Feast and Siege On Dragonbane Keep timer to worldmap
     - Added option to set currencys to unused
+    - Added option to collaps all tracker in Mythic+
+    - Added evoker buff to raid buff reminder
+
+CHANGES
+    - Aura Indicator updates:
+        - Resto Druid: Adds Tranquility and Adaptive Swarm by default and moves Focused Growth (PvP) slightly left to not stack on top of Spring Blossoms.
+        - Priest: Power Infusion will display as well (from any unit) and moves Pain Supp and Guardian Spirit to the bottom.
+        - Holy Pally: Adds Barrier of Faith.
+    - Update Raid Debuff Filter and cleanded up Mythic+ Affixes
+    - Update some raid buff reminder spells
+
+FIXES
+    - Fix auto sell taint error
+    - Temp fix for extra actionbutton taint
+    - Memory and performance improvements
+
 
 6.0.10
  FIXES
