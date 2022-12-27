@@ -13,6 +13,7 @@ CHANGES
         - Holy Pally: Adds Barrier of Faith.
     - Update Raid Debuff Filter and cleanded up Mythic+ Affixes
     - Update some raid buff reminder spells
+    -Social panel skin has been fixed has been readded
 
 FIXES
     - Fix auto sell taint error

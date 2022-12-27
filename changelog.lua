@@ -17,18 +17,28 @@ AddChange(string addonVersion, table changeList)
 addChange("6.1.0",{
     {ct.feature,[=[Added brand new settings page]=]},
     {ct.feature,[=[Added Community Feast and Siege On Dragonbane Keep timer to worldmap]=]},
-    {ct.feature,[=[Added option to set currencys to unused]=]},
-    {ct.feature,[=[Added option to collaps all tracker in Mythic+]=]},
+    {ct.feature,[=[Added option to set currencies to unused]=]},
+    {ct.feature,[=[Added option to collapse all objective trackers in Mythic+]=]},
     {ct.feature,[=[Added evoker buff to raid buff reminder]=]},
 
     {ct.change,[=[Aura Indicator updates:
-        - Resto Druid: Adds Tranquility and Adaptive Swarm by default and moves Focused Growth (PvP) slightly left to not stack on top of Spring Blossoms.
-        - Priest: Power Infusion will display as well (from any unit) and moves Pain Supp and Guardian Spirit to the bottom.
-        - Holy Pally: Adds Barrier of Faith.]=]},
+
+- Resto Druid:
+       Added Tranquility to default
+       Added Adaptive Swarm to default
+       Moved Focused Growth (PvP) slightly left to not stack on top of Spring Blossoms.
+
+- Priest:
+      Power Infusion will display (from any unit)
+      Moved Pain Suppression and Guardian Spirit to the bottom.
+
+- Holy Pally:
+       Added Barrier of Faith to default]=]},
+    {ct.change,[=[Social panel skin has been fixed has been readded]=]},
     {ct.change,[=[Update Raid Debuff Filter and cleanded up Mythic+ Affixes]=]},
     {ct.change,[=[Update some raid buff reminder spells]=]},
 
-    {ct.bug,[=[ix auto sell taint error]=]},
+    {ct.bug,[=[Fix for auto sell taint error]=]},
     {ct.bug,[=[Temp fix for extra actionbutton taint]=]},
     {ct.bug,[=[Memory and performance improvements]=]},
 })
