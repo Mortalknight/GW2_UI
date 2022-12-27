@@ -8,12 +8,12 @@ NEW
 
 CHANGES
     - Aura Indicator updates:
-        - Resto Druid: Adds Tranquility and Adaptive Swarm by default and moves Focused Growth (PvP) slightly left to not stack on top of Spring Blossoms.
-        - Priest: Power Infusion will display as well (from any unit) and moves Pain Supp and Guardian Spirit to the bottom.
+        - Resto Druid: Added Tranquility, addedAdaptive Swarm
+        - Priest: Added Power Infusion
         - Holy Pally: Adds Barrier of Faith.
     - Update Raid Debuff Filter and cleanded up Mythic+ Affixes
     - Update some raid buff reminder spells
-    -Social panel skin has been fixed has been readded
+    - Social panel skin has been fixed has been readded
 
 FIXES
     - Fix auto sell taint error

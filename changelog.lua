@@ -24,16 +24,14 @@ addChange("6.1.0",{
     {ct.change,[=[Aura Indicator updates:
 
 - Resto Druid:
-       Added Tranquility to default
-       Added Adaptive Swarm to default
-       Moved Focused Growth (PvP) slightly left to not stack on top of Spring Blossoms.
+       Added Tranquility
+       Added Adaptive Swarm
 
 - Priest:
-      Power Infusion will display (from any unit)
-      Moved Pain Suppression and Guardian Spirit to the bottom.
+      Added Power Infusion
 
 - Holy Pally:
-       Added Barrier of Faith to default]=]},
+       Added Barrier of Faith]=]},
     {ct.change,[=[Social panel skin has been fixed has been readded]=]},
     {ct.change,[=[Update Raid Debuff Filter and cleanded up Mythic+ Affixes]=]},
     {ct.change,[=[Update some raid buff reminder spells]=]},
