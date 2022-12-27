@@ -51,10 +51,14 @@ AddForProfiling("panel_modules", "creditst_OnClick", creditst_OnClick)
 local function getChangeLogIcon(self,tag)
 
   if tag==GW.CHANGELOGS_TYPES.bug then
-    self:SetTexCoord(0,0.5,0,1)
+    self:SetTexCoord(0,0.5,0,0.5)
+    return
+  elseif tag==GW.CHANGELOGS_TYPES.feature then
+    self:SetTexCoord(0.5,1,0,0.5)
     return
   end
-  self:SetTexCoord(0.5,1,0,1)
+  self:SetTexCoord(0,0.5,0.5,1)
+
 
 end
 
