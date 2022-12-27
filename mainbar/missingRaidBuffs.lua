@@ -74,7 +74,19 @@ local reminderBuffs = {
         [2] = 264761, -- War-Scroll of Battle
     },
     MovementBuff = {
-        [1] = 381748 -- Evoker
+        [1] = 381752, -- Evoker
+        [2] = 381732, -- Evoker
+        [3] = 381741, -- Evoker
+        [4] = 381746, -- Evoker
+        [5] = 381748, -- Evoker
+        [6] = 381749, -- Evoker
+        [7] = 381750, -- Evoker
+        [8] = 381751, -- Evoker
+        [9] = 381753, -- Evoker
+        [10] = 381754, -- Evoker
+        [11] = 381756, -- Evoker
+        [12] = 381757, -- Evoker
+        [13] = 381758, -- Evoker
     },
     Weapon = { -- EnchantsID
         [1] = 6188, -- Shadowcore Oil
