@@ -34,6 +34,7 @@
     <Script file="weeklyRewards.lua"/>
     <Script file="lfg.lua"/>
     <Script file="orderHallTalentFrame.lua"/>
+    <Script file="achievements.lua"/>
 
     <Script file="addons\immersion.lua"/>
     <Script file="addons\postal.lua"/>
