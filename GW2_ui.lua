@@ -453,7 +453,7 @@ local function evAddonLoaded(_, addonName)
     -- Skins: BLizzard & Addons
     GW.LoadWorldMapSkin()
     GW.LoadEncounterJournalSkin()
-    --GW.LoadAchivementSkin()
+    GW.LoadAchivementSkin()
     GW.LoadAlliedRacesUISkin()
     GW.LoadBarShopUISkin()
     GW.LoadBindingsUISkin()
