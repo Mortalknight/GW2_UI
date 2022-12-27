@@ -548,6 +548,6 @@ L["Add trackers for world events in the bottom of world map."] = "Tracker für W
 L["Shift + Left Click"] = "Umschalt + Linksklick"
 L["Alt + Left Click"] = "Alt + Linksklick"
 L["Edit objectives settings."] = "Bearbeite die Ziele-Einstellung: Quest, M+ Timer, Scenario, Events, etc."
-L["Collapse all objectives in M+"] = "Reduziere alle Ziel-Kategorien in M+ Instancen"
+L["Collapse all objectives in M+"] = "Reduziere alle Ziel-Kategorien in M+ Instanzen"
 L["Ready to craft"] = "Bereits zum herstellen"
 L["Watch list"] = "Beobachtungsliste"
