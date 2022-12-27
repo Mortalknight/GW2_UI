@@ -1,8 +1,9 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
+local GetSetting = GW.GetSetting
 
 local function SkinDeathRecapFrame_Loaded()
-    if not GW.GetSetting("DEATHRECAPFRAME_SKIN_ENABLED") then return end
+    if not GetSetting("DEATHRECAPFRAME_SKIN_ENABLED") then return end
 
     DeathRecapFrame.CloseButton:SkinButton(false, true)
     DeathRecapFrame.CloseXButton:SkinButton(true)

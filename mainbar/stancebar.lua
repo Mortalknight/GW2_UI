@@ -1,5 +1,5 @@
 local _, GW = ...
-
+local GetSetting = GW.GetSetting
 local NeedAdjustMaxStanceButtons = false
 local NUM_STANCE_SLOTS = NUM_STANCE_SLOTS or 10
 local WispSplode = [[Interface\Icons\Spell_Nature_WispSplode]]
@@ -30,7 +30,7 @@ local function PositionsAndSize(self)
         GwStanceBarButton1:SetPoint("TOPLEFT", self.gwMover)
         GwStanceBarButton1:SetFrameLevel(self:GetFrameLevel() + 5)
     else
-        local growDirection = GW.GetSetting("StanceBar_GrowDirection")
+        local growDirection = GetSetting("StanceBar_GrowDirection")
         local button, lastbutton
 
         self.container:ClearAllPoints()
@@ -169,14 +169,14 @@ local function StanceButton_OnEvent(self, event)
         if inCombat then
             NeedAdjustMaxStanceButtons = true
         else
-            self.container:SetShown(GW.GetSetting("StanceBarContainerState") == "open" and true or false)
+            self.container:SetShown(GetSetting("StanceBarContainerState") == "open" and true or false)
             AdjustMaxStanceButtons(self)
             NeedAdjustMaxStanceButtons = false
         end
     elseif event == "UPDATE_SHAPESHIFT_FORM" or event == "UPDATE_SHAPESHIFT_USABLE" or event == "ACTIONBAR_PAGE_CHANGED" then
-        StyleStanceBarButtons(self)
+        StyleStanceBarButtons()
     elseif event == "UPDATE_SHAPESHIFT_COOLDOWN" then
-        UpdateCooldown(self)
+        UpdateCooldown()
     elseif event == "UPDATE_BINDINGS" then
         UpdateKeybinds()
     end

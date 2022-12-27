@@ -256,6 +256,7 @@ GW.AURAS_INDICATORS = {
         [47788] =   {0.86, 0.45, 0},    -- Guardian Spirit
         [33206] =   {0.47, 0.35, 0.74}, -- Pain Suppression
         [6788]   =  {0.89, 0.1, 0.1},   -- Weakened Soul
+        [10060]   =  {1, 0.81, 0.11},  -- Power Infusion
     },
     DRUID = {
         [774] =     {0.8, 0.4, 0.8},    -- Rejuvenation
@@ -269,6 +270,8 @@ GW.AURAS_INDICATORS = {
         [102352] =  {0.2, 0.8, 0.8},    -- Cenarion Ward (HoT)
         [200389] =  {1, 1, 0.4},        -- Cultivation
         [203554] =  {1, 1, 0.4},        -- Focused Growth (PvP)
+        [391891] =  {0.01, 0.75, 0.6},  -- Adaptive Swarm
+        [157982] =  {0.75, 0.75, 0.75}, -- Tranquility
     },
     PALADIN = {
         [53563] =   {1, 0.3, 0},        -- Beacon of Light
@@ -281,6 +284,8 @@ GW.AURAS_INDICATORS = {
         [287280] =  {1, 0.5, 0},        -- Glimmer of Light
         [157047] =  {0.15, 0.58, 0.84}, -- Saved by the Light (T25 Talent)
         [204018] =  {0.2, 0.2, 1},      -- Blessing of Spellwarding
+        [148039] =  {0.98, 0.5, 0.11},  -- Barrier of Faith (accumulation)
+        [395180] =  {0.93, 0.8, 0.36},  -- Barrier of Faith (absorbtion)
     },
     SHAMAN = {
         [61295] =   {0, 0.4, 0.53},     -- Riptide

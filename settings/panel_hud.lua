@@ -7,6 +7,7 @@ local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function LoadHudPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
@@ -18,26 +19,12 @@ local function LoadHudPanel(sWindow)
     p.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
 
     createCat(UIOPTIONS_MENU, L["Edit the HUD modules."], p, 3, nil, {p})
-
-    addOption(p.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND", GW.ToggleHudBackground )
-    addOption(p.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
+    settingsMenuAddButton(UIOPTIONS_MENU,p,3,nil,{})
+    addOption(p.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND", function() GW.UpdateHudSettings(); GW.ToggleHudBackground() end)
+    addOption(p.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", GW.UpdateHudSettings, nil, {["HUD_BACKGROUND"] = true})
     addOption(p.scroll.scrollchild, L["AFK Mode"], L["When you go AFK, display the AFK screen."], "AFK_MODE", GW.ToggelAfkMode)
     addOption(p.scroll.scrollchild, L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], "QUEST_REWARDS_MOST_VALUE_ICON", function() GW.ResetQuestRewardMostValueIcon() end)
     addOption(p.scroll.scrollchild, L["XP Quest Percent"], L["Shows the xp you got from that quest in % based on your current needed xp for next level."], "QUEST_XP_PERCENT")
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["Maximum lines of 'Copy Chat Frame'"],
-        L["Set the maximum number of lines displayed in the Copy Chat Frame"],
-        "CHAT_MAX_COPY_CHAT_LINES",
-        nil,
-        50,
-        500,
-        nil,
-        0,
-        {["CHATFRAME_ENABLED"] = true},
-        1
-    )
-    addOption(p.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", function() GW.ShowRlPopup = true end, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, DISPLAY_BORDERS, nil, "BORDER_ENABLED", GW.ToggleHudBackground)
     addOption(p.scroll.scrollchild, L["Show Coordinates on World Map"], L["Show Coordinates on World Map"], "WORLDMAP_COORDS_TOGGLE", GW.ToggleWorldMapCoords)

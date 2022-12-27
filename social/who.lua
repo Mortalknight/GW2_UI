@@ -187,14 +187,14 @@ local function LoadWhoList(tabContainer)
     WhoWindow.list.InviteButton:SetScript("OnClick", function() C_PartyInfo.InviteUnit(WhoWindow.selectedName) end)
     WhoWindow.list.AddFriendButton:SetScript("OnClick", function() C_FriendList.AddFriend(WhoWindow.selectedName) end)
     WhoWindow.list.RefreshButton:SetScript("OnClick", function(self)
-        WhoFrameEditBox_OnEnterPressed(self:GetParent().EditBox)
+        WhoFrameEditBox_OnEnterPressed(self:GetParent().EditBox.input)
         self:GetParent():GetParent().selectedWho = nil
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end)
 
-    WhoWindow.list.EditBox:SetScript("OnEnterPressed", WhoFrameEditBox_OnEnterPressed)
-    WhoWindow.list.EditBox:SetScript("OnShow", EditBox_ClearFocus)
-    WhoWindow.list.EditBox:SetScript("OnEscapePressed", EditBox_ClearFocus)
+    WhoWindow.list.EditBox.input:SetScript("OnEnterPressed", WhoFrameEditBox_OnEnterPressed)
+    WhoWindow.list.EditBox.input:SetScript("OnShow", EditBox_ClearFocus)
+    WhoWindow.list.EditBox.input:SetScript("OnEscapePressed", EditBox_ClearFocus)
 
     WhoWindow.list.ScrollFrame.update = WhoList_Update
     WhoWindow.list.ScrollFrame.scrollBar.doNotHide = true
@@ -245,7 +245,7 @@ local function LoadWhoList(tabContainer)
         end
         GwSocialWindow:SetAttribute("windowpanelopen", "wholist")
 
-        GwWhoWindow.list.EditBox:SetText(msg)
+        GwWhoWindow.list.EditBox.input:SetText(msg)
         C_FriendList.SendWho(msg)
     end
 end

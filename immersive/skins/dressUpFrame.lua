@@ -1,4 +1,5 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local function BG_Resize(self)
     local w, h = self:GetParent():GetParent():GetSize()
@@ -14,7 +15,7 @@ local function SetItemQuality(slot)
 end
 
 local function LoadDressUpFrameSkin()
-    if not GW.GetSetting("INSPECTION_SKIN_ENABLED") then return end
+    if not GetSetting("INSPECTION_SKIN_ENABLED") then return end
 
     DressUpFrame:StripTextures()
     DressUpFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")

@@ -9,7 +9,7 @@ local function AddForProfiling(unit, name, ...)
     if not _G[gName] then
         _G[gName] = {}
     end
-    _G[gName][name] = ...
+    GW[name] = ...
 end
 
 -- Adds local-only function refs into global namespace so that the profiler can "see" them
@@ -23,10 +23,7 @@ local function AddProfiling(name, func)
     local unit = gsub(gsub(callLine, '%[string "@Interface\\AddOns\\GW2_UI\\', ""), '%.lua".*', "")
     unit = gsub(gsub(unit, '\\', "::"), '/', "::")
     local gName = "GW2_" .. unit
-    if not _G[gName] then
-        _G[gName] = {}
-    end
-    _G[gName][name] = func
+    GW[name] = func
 end
 
 local function Debug(...)
@@ -62,10 +59,10 @@ else
     GW.Trace = EmptyFunc
     GW.inDebug = false
 end
-if P then
+--if P then
     GW.AddForProfiling = AddForProfiling
     GW.AddProfiling = AddProfiling
-else
-    GW.AddForProfiling = EmptyFunc
-    GW.AddProfiling = EmptyFunc
-end
+--else
+--    GW.AddForProfiling = EmptyFunc
+--    GW.AddProfiling = EmptyFunc
+--end

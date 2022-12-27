@@ -8,14 +8,19 @@ local TimeFormats = {
     [0] = "%dd",
     [1] = "%dh",
     [2] = "%dm",
-    [3] = "%d"
+    [3] = "%ds",
+    [4] = "%d"
 }
 
 do
     local YEAR, DAY, HOUR, MINUTE = 31557600, 86400, 3600, 60
-    local function GetTimeInfo(s)
+    local function GetTimeInfo(s, hideSecondLabel)
         if s < MINUTE then
-            return TimeFormats[3]:format(s), 0.5
+            if hideSecondLabel then
+                return TimeFormats[4]:format(s), 0.5
+            else
+                return TimeFormats[3]:format(s), 0.5
+            end
         elseif s < HOUR then
             local mins = mod(s, HOUR) / MINUTE
             return TimeFormats[2]:format(mins), mins > 2 and 30 or 1
@@ -69,7 +74,7 @@ local function Cooldown_OnUpdate(self, elapsed)
                 self.nextUpdate = 500
             end
         elseif self.endTime then
-            local text, nextUpdate = GW.GetTimeInfo(self.endTime - now)
+            local text, nextUpdate = GW.GetTimeInfo(self.endTime - now, true)
             if not forced then
                 self.nextUpdate = nextUpdate
             end

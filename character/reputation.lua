@@ -738,7 +738,7 @@ local function CollectCategories()
                             tinsert(factionTbl, {standingId = majorFactionData.renownLevel, isFriend = false, standingText = standing, counter = 1})
                         end
                     end
-                else
+                elseif not isHeader then
                     local standing = getglobal("FACTION_STANDING_LABEL" .. standingId)
                     cMax = cMax + 8
                     cCur = cCur + standingId
@@ -1029,6 +1029,8 @@ local function LoadReputation(tabContainer)
     fmGPR.categories.detailFrames = 0
     fmGPR.categories:RegisterEvent("UPDATE_FACTION")
     fmGPR.categories:RegisterEvent("QUEST_LOG_UPDATE")
+    fmGPR.categories:RegisterEvent("MAJOR_FACTION_RENOWN_LEVEL_CHANGED")
+	fmGPR.categories:RegisterEvent("MAJOR_FACTION_UNLOCKED")
     local fnGPR_OnEvent = function(self)
         if not GW.inWorld then
             return

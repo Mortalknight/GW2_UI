@@ -6,25 +6,34 @@ local LibCustomGlow = GW.Libs.CustomGlows
 local ALPHA = 0.3
 local classColor = GW.GWGetClassColor(GW.myclass, true)
 
+local settings = {}
+
+local function UpdateSettings()
+    settings.invert = GetSetting("MISSING_RAID_BUFF_INVERT")
+    settings.dimmed = GetSetting("MISSING_RAID_BUFF_dimmed")
+    settings.grayedout = GetSetting("MISSING_RAID_BUFF_grayed_out")
+    settings.animated = GetSetting("MISSING_RAID_BUFF_animated")
+    settings.visibility = GetSetting("MISSING_RAID_BUFF")
+    settings.customsId = GetSetting("MISSING_RAID_BUFF_custom_id")
+end
+GW.UpdateMissingRaidBuffSettings = UpdateSettings
+
 -- tables
 local checkIds = {}
 local buffInfos = {}
 local reminderBuffs = {
     Flask = {
-        -- BFA
-        [1] = 251836,			-- Flask of the Currents (238 agi)
-        [2] = 251837,			-- Flask of Endless Fathoms (238 int)
-        [3] = 251838,			-- Flask of the Vast Horizon (357 sta)
-        [4] = 251839,			-- Flask of the Undertow (238 str)
-        [5] = 298836,			-- Greater Flask of the Currents
-        [6] = 298837,			-- Greater Flask of Endless Fathoms
-        [7] = 298839,			-- Greater Flask of the Vast Horizon
-        [8] = 298841,			-- Greater Flask of the Undertow
-
-        -- Shadowlands
-        [9] = 307166,			-- Eternal FLask (190 stat)
-        [10] = 307185,			-- Spectral Flask of Power (73 stat)
-        [11] = 307187,			-- Spectral Flask of Stamina (109 sta)
+        -- Dragonflight
+        [1] = 370652, -- Phial of Static Empowerment
+        [2] = 370661, -- Phial of Icy Preservation
+		[3] = 371172, -- Phial of Tepid Versatility
+		[4] = 371186, -- Charged Phial of Alacrity
+		[5] = 371204, -- Phial of Still Air
+		[6] = 371339, -- Phial of Elemental Chaos
+		[7] = 371354, -- Phial of the Eye in the Storm
+		[8] = 371386, -- Phial of Charged Isolation
+		[9] = 373257, -- Phial of Glacial Fury
+		[10] = 374000, -- Iced Phial of Corrupting Rage
     },
     DefiledAugmentRune = {
         [1] = 224001,			-- Defiled Augumentation (15 primary stat)
@@ -44,6 +53,12 @@ local reminderBuffs = {
         [7] = 308637,	-- Well Fed
         [8] = 327715,	-- Well Fed
         [9] = 327851,	-- Well Fed
+
+        -- DF
+        [10] = 382149,	-- Well Fed
+        [11] = 396092,	-- Well Fed
+        --[12] = 382149,	-- Well Fed
+        --[13] = 382149,	-- Well Fed
     },
     Intellect = {
         [1] = 1459, -- Arcane Intellect
@@ -58,10 +73,35 @@ local reminderBuffs = {
         [1] = 6673, -- Battle Shout
         [2] = 264761, -- War-Scroll of Battle
     },
+    MovementBuff = {
+        [1] = 381752, -- Evoker
+        [2] = 381732, -- Evoker
+        [3] = 381741, -- Evoker
+        [4] = 381746, -- Evoker
+        [5] = 381748, -- Evoker
+        [6] = 381749, -- Evoker
+        [7] = 381750, -- Evoker
+        [8] = 381751, -- Evoker
+        [9] = 381753, -- Evoker
+        [10] = 381754, -- Evoker
+        [11] = 381756, -- Evoker
+        [12] = 381757, -- Evoker
+        [13] = 381758, -- Evoker
+    },
     Weapon = { -- EnchantsID
         [1] = 6188, -- Shadowcore Oil
         [2] = 6190, -- Embalmer's Oil
         [3] = 6200, -- Shaded Sharpening Stone -- just a fallback
+        [4] = 6201, -- Shaded Weightstone
+        [5] = 396147, -- chirping rune
+        [6] = 385330, -- chirping rune
+        [7] = 396148, -- chirping rune
+        [8] = 385326, -- buzzing rune
+        [9] = 385325, -- buzzing rune
+        [10] = 385327, -- buzzing rune
+        [11] = 385575, -- howling-rune
+        [12] = 385576, -- howling-rune
+        [13] = 385577, -- howling-rune
     },
     Custom = {
         -- spellID,	-- Spell Info
@@ -139,21 +179,22 @@ local function CheckForBuffs()
 end
 
 local function setButtonStyle(button, haveBuff)
-    local invert = GetSetting("MISSING_RAID_BUFF_INVERT")
-    local dimmed = GetSetting("MISSING_RAID_BUFF_dimmed")
-    local grayedout = GetSetting("MISSING_RAID_BUFF_grayed_out")
-
     if not haveBuff then
-        button.icon:SetDesaturated(invert and grayedout or false)
-        button:SetAlpha(not invert and 1 or dimmed and ALPHA or 1)
-        if GetSetting("MISSING_RAID_BUFF_animated") then
+        button.icon:SetDesaturated(settings.invert and settings.grayedout or false)
+        button:SetAlpha(not settings.invert and 1 or settings.dimmed and ALPHA or 1)
+        if settings.animated then
             --LibCustomGlow.PixelGlow_Start(button, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
         else
             --LibCustomGlow.PixelGlow_Stop(button)
         end
     else
-        button.icon:SetDesaturated(invert and false or grayedout)
-        button:SetAlpha(invert and 1 or dimmed and ALPHA or 1)
+        if settings.invert then
+            button.icon:SetDesaturated(false)
+        else
+            button.icon:SetDesaturated(settings.grayedout)
+        end
+
+        button:SetAlpha(settings.invert and 1 or settings.dimmed and ALPHA or 1)
         --LibCustomGlow.PixelGlow_Stop(button)
     end
 end
@@ -246,6 +287,20 @@ local function OnAuraChange(self)
     end
     setButtonStyle(self.attackPowerButton, foundBuff)
 
+    -- MovementBuff
+    foundBuff = false
+    for _, movementBuff in pairs(buffInfos.MovementBuff) do
+        if movementBuff.hasBuff then
+            self.movementButton.icon:SetTexture(movementBuff.texId)
+            foundBuff = true
+            break
+        end
+    end
+    if not foundBuff then
+        self.movementButton.icon:SetTexture(buffInfos.MovementBuff[1].texId)
+    end
+    setButtonStyle(self.movementButton, foundBuff)
+
     -- Weapon
     foundBuff = false
     for _, weaponbuff in pairs(buffInfos.Weapon) do
@@ -262,13 +317,13 @@ local function OnAuraChange(self)
 
     -- Custom
     if #buffInfos.Custom > 0 then
-        self:SetSize(249, 32)
+        self:SetSize(280, 32)
         self.customButton.icon:SetTexture(buffInfos.Custom[1].texId)
 
         if not self.customButton:IsShown() then self.customButton:Show() end
         setButtonStyle(self.customButton, buffInfos.Custom[1].hasBuff)
     else
-        self:SetSize(218, 32)
+        self:SetSize(249, 32)
         self.customButton:Hide()
         --LibCustomGlow.PixelGlow_Stop(self.customButton)
     end
@@ -314,14 +369,14 @@ local function UpdateMissingRaidBuffVisibility()
         ["IN_RAID_IN_PARTY"] = "[petbattle] hide; [group] show; hide",
     }
 
-    RegisterStateDriver(GW_RaidBuffReminder, "visibility", VisibilityStates[GetSetting("MISSING_RAID_BUFF")])
+    RegisterStateDriver(GW_RaidBuffReminder, "visibility", VisibilityStates[settings.visibility])
 end
-GW. UpdateMissingRaidBuffVisibility = UpdateMissingRaidBuffVisibility
+GW.UpdateMissingRaidBuffVisibility = UpdateMissingRaidBuffVisibility
 
 local function UpdateMissingRaidBuffCustomSpell()
 	wipe(buffInfos.Custom)
 
-	local keywords = gsub(GetSetting("MISSING_RAID_BUFF_custom_id"), ",%s", ",")
+	local keywords = gsub(settings.customsId, ",%s", ",")
 
 	for stringValue in gmatch(keywords, "[^,]+") do
 		if stringValue ~= "" then
@@ -336,6 +391,8 @@ end
 GW.UpdateMissingRaidBuffCustomSpell = UpdateMissingRaidBuffCustomSpell
 
 local function LoadRaidbuffReminder()
+    UpdateSettings()
+
     local rbr = CreateFrame("Frame", "GW_RaidBuffReminder", UIParent)
 
     rbr:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
@@ -349,7 +406,8 @@ local function LoadRaidbuffReminder()
     rbr.intButton = CreateIconBuff(rbr, true, rbr)
     rbr.staminaButton = CreateIconBuff(rbr.intButton, false, rbr)
     rbr.attackPowerButton = CreateIconBuff(rbr.staminaButton, false, rbr)
-    rbr.flaskButton = CreateIconBuff(rbr.attackPowerButton, false, rbr)
+    rbr.movementButton = CreateIconBuff(rbr.attackPowerButton, false, rbr)
+    rbr.flaskButton = CreateIconBuff(rbr.movementButton, false, rbr)
     rbr.foodButton = CreateIconBuff(rbr.flaskButton, false, rbr)
     rbr.daRuneButton = CreateIconBuff(rbr.foodButton, false, rbr)
     rbr.weaponButton = CreateIconBuff(rbr.daRuneButton, false, rbr)

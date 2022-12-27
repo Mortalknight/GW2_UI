@@ -39,6 +39,7 @@ local EnglishClassName = {
     ["SHAMAN"] = "Shaman",
     ["WARLOCK"] = "Warlock",
     ["WARRIOR"] = "Warrior",
+    ["EVOKER"] = "Evoker",
 }
 
 local EnglishSpecName = {
@@ -78,6 +79,8 @@ local EnglishSpecName = {
     [73] = "Protection",
     [577] = "Havoc",
     [581] = "Vengeance",
+    [1467] = "Devastation",
+    [1468] = "Preservation",
 }
 
 local function GetEnglishSpecName()
@@ -206,7 +209,7 @@ local function CreateStatusFrame()
     StatusFrame.Section1.Content.Line3.Text:SetFormattedText("Paste Addon Enabled: %s", CheckForPasteAddon() and "|cffff0000Yes|r" or "|cff4beb2cNo|r")
     StatusFrame.Section1.Content.Line4.Text:SetFormattedText("Recommended Scale: |cff4beb2c%s|r", GW.getBestPixelScale())
     StatusFrame.Section1.Content.Line5.Text:SetFormattedText("UI Scale Is: %s", GW.scale == GW.getBestPixelScale() and  format("|cff4beb2c%s|r", GW.scale) or format("|cffff0000%s|r", GW.scale))
-    StatusFrame.Section2.Content.Line1.Text:SetFormattedText("WoW version: |cff4beb2c%s (build %s)|r", GW.wowpatch, GW.wowbuild) 
+    StatusFrame.Section2.Content.Line1.Text:SetFormattedText("WoW version: |cff4beb2c%s (build %s)|r", GW.wowpatch, GW.wowbuild)
     StatusFrame.Section2.Content.Line2.Text:SetFormattedText("Client Language: |cff4beb2c%s|r", GW.mylocal)
     StatusFrame.Section2.Content.Line3.Text:SetFormattedText("Display Mode: |cff4beb2c%s|r", GetDisplayMode())
     StatusFrame.Section2.Content.Line4.Text:SetFormattedText("Resolution: |cff4beb2c%s|r", GW.resolution)

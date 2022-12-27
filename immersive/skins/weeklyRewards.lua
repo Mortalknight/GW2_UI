@@ -1,4 +1,5 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local function UpdateSelection(frame)
     if not frame.backdrop then return end
@@ -56,7 +57,7 @@ local function ReskinConfirmIcon(frame)
 end
 
 local function ApplyWeeklyRewardsSkin()
-    if not GW.GetSetting("WEEKLY_REWARDS_SKIN_ENABLED") then return end
+    if not GetSetting("WEEKLY_REWARDS_SKIN_ENABLED") then return end
 
     WeeklyRewardsFrame:StripTextures()
     local tex = WeeklyRewardsFrame:CreateTexture("bg", "BACKGROUND")

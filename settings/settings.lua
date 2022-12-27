@@ -8,10 +8,23 @@ local AddForProfiling = GW.AddForProfiling
 
 local settings_cat = {}
 local all_options = {}
+local optionReference = {}
+
+--helper functions for settings
+local function getSettingsCat()
+  return settings_cat
+end
+GW.getSettingsCat = getSettingsCat;
+
+local function getOptionReference()
+  return optionReference
+end
+GW.getOptionReference = getOptionReference;
 
 local function switchCat(index)
     for _, l in ipairs(settings_cat) do
-        l.iconbg:Hide()
+        l.iconbg:SetTexCoord(0.505, 1, 0, 0.625)
+    --    l.iconbg:Hide()
         l.cat_panel:Hide()
 
         -- hide all profiles
@@ -24,13 +37,14 @@ local function switchCat(index)
 
     local l = settings_cat[index]
     if l then
-        l.iconbg:Show()
+        l.iconbg:SetTexCoord(0, 0.5, 0, 0.625)
+      --  l.iconbg:Show()
         l.cat_panel:Show()
         if l.cat_crollFrames then
-            for _, v in pairs(l.cat_crollFrames) do 
-                v.scroll.slider:SetShown(v.scroll.maxScroll > 0)
-                v.scroll.scrollUp:SetShown(v.scroll.maxScroll > 0)
-                v.scroll.scrollDown:SetShown(v.scroll.maxScroll > 0)
+            for _, v in pairs(l.cat_crollFrames) do
+                v.scroll.slider:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
+                v.scroll.scrollUp:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
+                v.scroll.scrollDown:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
             end
         end
 
@@ -59,7 +73,7 @@ end
 AddForProfiling("settings", "switchCat", switchCat)
 
 local fnF_OnEnter = function(self)
-    self.icon:SetBlendMode("ADD")
+--    self.icon:SetBlendMode("ADD")
     GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -40)
     GameTooltip:ClearLines()
     GameTooltip:AddLine(self.cat_name, 1, 1, 1)
@@ -69,7 +83,7 @@ end
 AddForProfiling("settings", "fnF_OnEnter", fnF_OnEnter)
 
 local fnF_OnLeave = function(self)
-    self.icon:SetBlendMode("BLEND")
+  --  self.icon:SetBlendMode("BLEND")
     GameTooltip_Hide(self)
 end
 AddForProfiling("settings", "fnF_OnLeave", fnF_OnLeave)
@@ -79,9 +93,9 @@ local fnF_OnClick = function(self)
 end
 AddForProfiling("settings", "fnF_OnClick", fnF_OnClick)
 
-local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon, profilePanles)
+local visible_cat_button_id  = 0
+local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon, profilePanles, visibleTabButton)
     local i = #settings_cat + 1
-
     -- create and position a new button/label for this category
     local f = CreateFrame("Button", nil, GwSettingsWindow, "GwSettingsLabelTmpl")
     f.cat_panel = panel
@@ -91,23 +105,32 @@ local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon,
     f.cat_id = i
     f.cat_crollFrames = scrollFrames
     settings_cat[i] = f
-    f:SetPoint("TOPLEFT", -40, -32 + (-40 * (i - 1)))
+    f:SetPoint("TOPRIGHT",GwSettingsWindow,"TOPLEFT", 1, -32 + (-40 * visible_cat_button_id))
 
-    -- set the icon requested
-    f.icon:SetTexCoord(0.25 * floor(icon / 4), 0.25 * (floor(icon / 4) + 1), 0.25 * (icon % 4), 0.25 * ((icon % 4) + 1))
-    if specialIcon then
-        f.icon:SetTexCoord(0, 1, 0, 1)
-        f.icon:SetTexture(specialIcon)
+    if icon ~=nil then
+       f.iconbg:SetTexture(icon)
     end
 
+    -- set the icon requested
+  --  f.icon:SetTexCoord(0.25 * floor(icon / 4), 0.25 * (floor(icon / 4) + 1), 0.25 * (icon % 4), 0.25 * ((icon % 4) + 1))
+  --  if specialIcon then
+  --      f.icon:SetTexCoord(0, 1, 0, 1)
+  --      f.icon:SetTexture(specialIcon)
+  --  end
+
     -- set the bg requested
-    if bg then
-        f.iconbg:SetTexture(bg)
+  --  if bg then
+  --      f.iconbg:SetTexture(bg)
+  --  end
+    if not visibleTabButton then
+      f:Hide()
+    else
+      visible_cat_button_id = visible_cat_button_id + 1
     end
 
     -- add handlers
-    f:SetScript("OnEnter", fnF_OnEnter)
-    f:SetScript("OnLeave", fnF_OnLeave)
+  --  f:SetScript("OnEnter", fnF_OnEnter)
+  --  f:SetScript("OnLeave", fnF_OnLeave)
     f:SetScript("OnClick", fnF_OnClick)
 end
 GW.CreateCat = CreateCat
@@ -276,18 +299,18 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
     if deactivateColor then
         _G[name].title:SetTextColor(0.82, 0, 0)
         if type == "slider" then
-            _G[name].input:SetTextColor(0.82, 0, 0)
+            _G[name].inputFrame.input:SetTextColor(0.82, 0, 0)
         elseif type == "text" then
-            _G[name].input:SetTextColor(0.82, 0, 0)
+            _G[name].inputFrame.input:SetTextColor(0.82, 0, 0)
         elseif type == "dropdown" then
             _G[name].button.string:SetTextColor(0.82, 0, 0)
         end
     elseif overrideColor then
         _G[name].title:SetTextColor(1, 0.65, 0)
         if type == "slider" then
-            _G[name].input:SetTextColor(1, 0.65, 0)
+            _G[name].inputFrame.input:SetTextColor(1, 0.65, 0)
         elseif type == "text" then
-            _G[name].input:SetTextColor(1, 0.65, 0)
+            _G[name].inputFrame.input:SetTextColor(1, 0.65, 0)
         elseif type == "dropdown" then
             _G[name].button.string:SetTextColor(1, 0.65, 0)
         end
@@ -298,11 +321,11 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
             _G[name].checkbutton:Enable()
         elseif type == "slider" then
             _G[name].slider:Enable()
-            _G[name].input:Enable()
-            _G[name].input:SetTextColor(0.82, 0.82, 0.82)
+            _G[name].inputFrame.input:Enable()
+            _G[name].inputFrame.input:SetTextColor(0.82, 0.82, 0.82)
         elseif type == "text" then
-            _G[name].input:Enable()
-            _G[name].input:SetTextColor(1, 1, 1)
+            _G[name].inputFrame.input:Enable()
+            _G[name].inputFrame.input:SetTextColor(1, 1, 1)
         elseif type == "dropdown" then
             _G[name].button:Enable()
             _G[name].button.string:SetTextColor(1, 1, 1)
@@ -317,11 +340,11 @@ local function setDependenciesOption(type, name, SetEnable, deactivateColor, ove
             _G[name].checkbutton:Disable()
         elseif type == "slider" then
             _G[name].slider:Disable()
-            _G[name].input:Disable()
-            _G[name].input:SetTextColor(0.4, 0.4, 0.4)
+            _G[name].inputFrame.input:Disable()
+            _G[name].inputFrame.input:SetTextColor(0.4, 0.4, 0.4)
         elseif type == "text" then
-            _G[name].input:Disable()
-            _G[name].input:SetTextColor(0.4, 0.4, 0.4)
+            _G[name].inputFrame.input:Disable()
+            _G[name].inputFrame.input:SetTextColor(0.4, 0.4, 0.4)
         elseif type == "dropdown" then
             _G[name].button:Disable()
             _G[name].button.string:SetTextColor(0.4, 0.4, 0.4)
@@ -406,15 +429,9 @@ local function loadDropDown(scrollFrame)
                 if scrollFrame.data.hasCheckbox then
                     local settingstable = GetSetting(scrollFrame.data.optionName, scrollFrame.data.perSpec)
                     if type(settingstable[scrollFrame.data.options[idx]]) == "table" then
-                        if settingstable[scrollFrame.data.options[idx]].enable then
-                            slot.checkbutton:SetChecked(true)
-                        else
-                            slot.checkbutton:SetChecked(false)
-                        end
-                    elseif settingstable[scrollFrame.data.options[idx]] then
-                        slot.checkbutton:SetChecked(true)
+                        slot.checkbutton:SetChecked(settingstable[scrollFrame.data.options[idx]].enable)
                     else
-                        slot.checkbutton:SetChecked(false)
+                        slot.checkbutton:SetChecked(settingstable[scrollFrame.data.options[idx]] == nil and true or settingstable[scrollFrame.data.options[idx]])
                     end
                 end
 
@@ -440,7 +457,9 @@ local function ShowColorPicker(r, g, b, a, changedCallback)
     ColorPickerFrame:Raise()
 end
 
+local panelUniqueID = 0
 local function InitPanel(panel, hasScroll)
+    panelUniqueID = panelUniqueID + 1
     if not panel or not (hasScroll and panel.scroll.scrollchild.gwOptions or panel.gwOptions) then
         return
     end
@@ -453,6 +472,8 @@ local function InitPanel(panel, hasScroll)
 
     local padding = {x = box_padding, y = hasScroll and 0 or panel.sub:GetText() and -55 or -35}
     local first = true
+    local lastOptionName = nil
+    local maximumXSize = 440
 
     for _, v in pairs(options) do
         local newLine = false
@@ -486,13 +507,40 @@ local function InitPanel(panel, hasScroll)
 
         local of = CreateFrame("Button", v.optionName, (hasScroll and panel.scroll.scrollchild or panel), optionFrameType)
 
+        -- joink the panel information we need
+        local htext = panel.header:GetText()
+        local btext = (panel.breadcrumb and panel.breadcrumb:GetText() or "")
+        if not optionReference[panelUniqueID] then
+            optionReference[panelUniqueID] = {
+              header = htext,
+              breadCrumb = btext,
+              options = {},
+            }
+        end
+
+        -- hackfix for dropdowns :<
+        if v.name==nil then
+          of.displayName = lastOptionName
+        else
+          of.displayName = v.name
+          lastOptionName = v.name
+        end
+        --need this for searchables
+        of.forceNewLine = v.forceNewLine
+
+
+        optionReference[panelUniqueID].options[#optionReference[panelUniqueID].options + 1] = of
+
+
         of.optionName = v.optionName
         of.perSpec = v.perSpec
         of.decimalNumbers = v.decimalNumbers
         of.options = v.options
         of.options_names = v.options_names
+        of.newLine = newLine
+        of.optionType = v.optionType
 
-        if (newLine and not first) or padding.x > 440 then
+        if (newLine and not first) or padding.x > maximumXSize then
             padding.y = padding.y + (pY + box_padding)
             padding.x = box_padding
             numRows = numRows + 1
@@ -722,14 +770,14 @@ local function InitPanel(panel, hasScroll)
                     local roundValue = RoundDec(self:GetValue(), of.decimalNumbers)
 
                     SetSetting(of.optionName, roundValue, of.perSpec)
-                    self:GetParent().input:SetText(roundValue)
+                    self:GetParent().inputFrame.input:SetText(roundValue)
                     if v.callback then
                         v.callback()
                     end
                 end
             )
-            of.input:SetNumber(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
-            of.input:SetScript(
+            of.inputFrame.input:SetNumber(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
+            of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
                     if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
@@ -755,7 +803,7 @@ local function InitPanel(panel, hasScroll)
                         local min_value = v.min or 0
                         roundValue = floor((roundValue - min_value) / v.step + 0.5) * v.step + min_value
                     end
-                    self:GetParent().slider:SetValue(roundValue)
+                    self:GetParent():GetParent().slider:SetValue(roundValue)
                     self:SetText(roundValue)
                     SetSetting(v.optionName, roundValue, of.perSpec)
                     if v.callback then
@@ -764,8 +812,8 @@ local function InitPanel(panel, hasScroll)
                 end
             )
         elseif v.optionType == "text" then
-            of.input:SetText(GetSetting(of.optionName, of.perSpec) or "")
-            of.input:SetScript(
+            of.inputFrame.input:SetText(GetSetting(of.optionName, of.perSpec) or "")
+            of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
                     if v.isIncompatibleAddonLoaded or v.isIncompatibleAddonLoadedButOverride then
@@ -908,19 +956,21 @@ local function InitPanel(panel, hasScroll)
         if not newLine then
             padding.x = padding.x + of:GetWidth() + box_padding
         else
-            padding.x = 450
+
+            padding.x = maximumXSize + 10
         end
     end
 
     -- Scrollframe settings
     if hasScroll then
+        local maxScroll = max(0, numRows * 40 - panel:GetHeight() + 50)
         panel.scroll:SetScrollChild(panel.scroll.scrollchild)
         panel.scroll.scrollchild:SetHeight(panel:GetHeight())
         panel.scroll.scrollchild:SetWidth(panel.scroll:GetWidth() - 20)
-        panel.scroll.slider:SetMinMaxValues(0, max(0, numRows * 40 - panel:GetHeight() + 50))
-        panel.scroll.slider.thumb:SetHeight(50)
+        panel.scroll.slider:SetMinMaxValues(0, maxScroll)
+        panel.scroll.slider.thumb:SetHeight(panel.scroll.slider:GetHeight() * (panel.scroll:GetHeight() / (maxScroll + panel.scroll:GetHeight())) )
         panel.scroll.slider:SetValue(1)
-        panel.scroll.maxScroll = max(0, numRows * 40 - panel:GetHeight() + 50)
+        panel.scroll.maxScroll = maxScroll
     end
 end
 GW.InitPanel = InitPanel
@@ -969,43 +1019,10 @@ local function LoadSettings()
     mf:SetScript("OnDragStop", fnMf_OnDragStop)
 
     local sWindow = CreateFrame("Frame", "GwSettingsWindow", UIParent, "GwSettingsWindowTmpl")
+    GW.loadSettingsSearchAbleMenu()
     sWindow:SetClampedToScreen(true)
     tinsert(UISpecialFrames, "GwSettingsWindow")
-    local fmGSWMH = GwSettingsWindowMoveHud
-    local fmGSWS = sWindow.save
-    local fmGSWD = sWindow.discord
-    local fmGSWKB = sWindow.keyBind
 
-    sWindow.headerString:SetFont(DAMAGE_TEXT_FONT, 24)
-    sWindow.versionString:SetFont(UNIT_NAME_FONT, 12)
-    sWindow.versionString:SetText(GW.VERSION_STRING)
-    sWindow.headerString:SetText(CHAT_CONFIGURATION)
-    fmGSWMH:SetText(L["Move HUD"])
-    fmGSWS:SetText(CLOSE)
-    fmGSWKB:SetText(KEY_BINDING)
-    fmGSWD:SetText(L["Join Discord"])
-
-    local fnGSWMH_OnClick = function()
-        if InCombatLockdown() then
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
-            return
-        end
-        GW.moveHudObjects(GW.MoveHudScaleableFrame)
-    end
-    local fnGSWS_OnClick = function()
-        sWindow:Hide()
-    end
-    local fnGSWD_OnClick = function()
-        StaticPopup_Show("JOIN_DISCORD")
-    end
-    local fmGSWKB_OnClick = function()
-        sWindow:Hide()
-        GW.DisplayHoverBinding()
-    end
-    fmGSWMH:SetScript("OnClick", fnGSWMH_OnClick)
-    fmGSWS:SetScript("OnClick", fnGSWS_OnClick)
-    fmGSWD:SetScript("OnClick", fnGSWD_OnClick)
-    fmGSWKB:SetScript("OnClick", fmGSWKB_OnClick)
 
     sWindow:SetScript(
         "OnShow",
@@ -1050,11 +1067,13 @@ local function LoadSettings()
     sWindow:RegisterEvent("PLAYER_REGEN_ENABLED")
     mf:Hide()
 
+    GW.LoadOverviewPanel(sWindow)
     GW.LoadModulesPanel(sWindow)
     GW.LoadPlayerPanel(sWindow)
     GW.LoadTargetPanel(sWindow)
     GW.LoadActionbarPanel(sWindow)
     GW.LoadHudPanel(sWindow)
+    GW.LoadObjectivesPanel(sWindow)
     GW.LoadChatPanel(sWindow)
     GW.LoadTooltipPanel(sWindow)
     GW.LoadPartyPanel(sWindow)

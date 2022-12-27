@@ -126,6 +126,9 @@ local function updateCurrentScenario(self, event, ...)
 
     local compassData = {}
     local showTimerAsBonus = false
+    local GwQuestTrackerTimerSavedHeight = 1
+    local isEmberCourtWidget = false
+    local isDragonflightCookingEventWidget = false
 
     compassData.TYPE = "SCENARIO"
     compassData.TITLE = "Unknown Scenario"
@@ -167,7 +170,7 @@ local function updateCurrentScenario(self, event, ...)
             GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", GW.updateQuestItemPositions, {GwScenarioBlock.actionButton, GwScenarioBlock.height, "SCENARIO", GwScenarioBlock})
         end
         for i = GwScenarioBlock.numObjectives + 1, 20 do
-            if _G[GwScenarioBlock:GetName() .. "GwQuestObjective" .. i] ~= nil then
+            if _G[GwScenarioBlock:GetName() .. "GwQuestObjective" .. i] then
                 _G[GwScenarioBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
             end
         end
@@ -176,7 +179,11 @@ local function updateCurrentScenario(self, event, ...)
         GwScenarioBlock:SetHeight(GwScenarioBlock.height)
         GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
 
-        return
+        GwQuestTrackerTimer.timer:Hide()
+
+        if not showTimerAsBonus then
+            return
+        end
     end
 
     local stageName, stageDescription, numCriteria, _, _, _, _, _, _, questID = C_Scenario.GetStepInfo()
@@ -253,16 +260,15 @@ local function updateCurrentScenario(self, event, ...)
 
     numCriteria = AddMawBuffsBelowMinimapFrame(GwScenarioBlock, numCriteria)
 
-    local GwQuestTrackerTimerSavedHeight = 1
-    local isEmberCourtWidget = false
-
     -- add special widgets here
     numCriteria = GW.addWarfrontData(GwScenarioBlock, numCriteria)
     numCriteria = GW.addHeroicVisionsData(GwScenarioBlock, numCriteria)
     numCriteria = GW.addJailersTowerData(GwScenarioBlock, numCriteria)
     numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget = GW.addEmberCourtData(GwScenarioBlock, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget)
+   -- GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isDragonflightCookingEventWidget = GW.addDragonflightCookingEventData(GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isDragonflightCookingEventWidget)
+    --TODO need more work: need to find a way to get the correct zone
 
-    local bonusSteps = C_Scenario.GetBonusSteps()
+    local bonusSteps = C_Scenario.GetBonusSteps() or {}
     local numCriteriaPrev = numCriteria
 
     for _, v in pairs(bonusSteps) do
@@ -327,14 +333,14 @@ local function updateCurrentScenario(self, event, ...)
         intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
     end
 
-    if _G.GwQuestTrackerTimer.timer:IsShown() then
+    if GwQuestTrackerTimer.timer:IsShown() then
         intGWQuestTrackerHeight = intGWQuestTrackerHeight + 40
     end
 
-    if showTimerAsBonus or isEmberCourtWidget then
-        _G.GwQuestTrackerTimer.height = GwQuestTrackerTimerSavedHeight
+    if showTimerAsBonus or isEmberCourtWidget or isDragonflightCookingEventWidget then
+        GwQuestTrackerTimer.height = GwQuestTrackerTimerSavedHeight
 
-        _G.GwQuestTrackerTimer:SetHeight(_G.GwQuestTrackerTimer.height)
+        GwQuestTrackerTimer:SetHeight(GwQuestTrackerTimer.height)
     end
 
     GwScenarioBlock:SetHeight(GwScenarioBlock.height - intGWQuestTrackerHeight)

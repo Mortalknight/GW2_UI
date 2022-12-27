@@ -23,7 +23,7 @@ local function ExtraButtons_UpdateScale()
     local scale = GetSetting("ExtraActionBarFramePos_scale")
     ExtraActionBarFrame:SetScale(scale)
 
-    local width, height = _G.ExtraActionBarFrame.button:GetSize()
+    local width, height = ExtraActionBarFrame.button:GetSize()
     ExtraActionBarHolder:SetSize(width * scale, height * scale)
     ExtraActionBarHolder.gwMover:SetSize(width * scale, height * scale)
 
@@ -60,8 +60,6 @@ local function OnEvent(self, event)
     end
 end
 
-
-
 local function ExtraAB_BossAB_Setup()
     eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("UPDATE_BINDINGS")
@@ -76,8 +74,9 @@ local function ExtraAB_BossAB_Setup()
     ZoneAbilityFrame.SpellButtonContainer.holder = ZoneAbilityHolder
 
     -- try to shutdown the container movement and taints
-    ExtraAbilityContainer.SetSize = GW.NoOp
+    --ExtraAbilityContainer.SetSize = GW.NoOp
     --ExtraAbilityContainer.SetPoint = GW.NoOp
+    ExtraAbilityContainer:EnableMouse(false)
     ExtraAbilityContainer.ignoreFramePositionManager = true
     ExtraAbilityContainer:KillEditMode()
 

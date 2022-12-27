@@ -4,6 +4,7 @@ local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function LoadPartyPanel(sWindow)
     local p = CreateFrame("Frame", "GwSettingsPartyPanel", sWindow.panels, "GwSettingsPartyPanelTmpl")
@@ -15,20 +16,21 @@ local function LoadPartyPanel(sWindow)
     p.sub:SetText(L["Edit the party and raid options to suit your needs."])
 
     createCat(CHAT_MSG_PARTY, L["Edit the group settings."], p, 4)
+    settingsMenuAddButton(CHAT_MSG_PARTY,p,4,nil,{})
 
-    addOption(p, USE_RAID_STYLE_PARTY_FRAMES, OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES, "RAID_STYLE_PARTY", function() GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true, ["RAID_FRAMES"] = true})
-    addOption(p, L["Show both party frames and party grid"], format(L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."], USE_RAID_STYLE_PARTY_FRAMES), "RAID_STYLE_PARTY_AND_FRAMES", function() GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true, ["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
-    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "PARTY_SHOW_DEBUFFS", nil, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "PARTY_ONLY_DISPELL_DEBUFFS", nil, nil, {["PARTY_FRAMES"] = true, ["PARTY_SHOW_DEBUFFS"] = true, ["RAID_STYLE_PARTY"] = false})
-    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", nil, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
-    addOption(p, L["Player frame in group"], L["Show your player frame as part of the group"], "PARTY_PLAYER_FRAME", function() GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
-    addOption(p, COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS, nil, "PARTY_SHOW_PETS", function() GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, USE_RAID_STYLE_PARTY_FRAMES, OPTION_TOOLTIP_USE_RAID_STYLE_PARTY_FRAMES, "RAID_STYLE_PARTY", function() GW.UpdatePartyGridSettings(); GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true, ["RAID_FRAMES"] = true})
+    addOption(p, L["Show both party frames and party grid"], format(L["If enabled, this will show both the stylised party frames as well as the grid frame. This setting has no effect if '%s' is enabled."], USE_RAID_STYLE_PARTY_FRAMES), "RAID_STYLE_PARTY_AND_FRAMES", function() GW.UpdatePartyGridSettings(); GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true, ["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "PARTY_SHOW_DEBUFFS", GW.UpdatePartySettings, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "PARTY_ONLY_DISPELL_DEBUFFS", GW.UpdatePartySettings, nil, {["PARTY_FRAMES"] = true, ["PARTY_SHOW_DEBUFFS"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", GW.UpdatePartySettings, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, L["Player frame in group"], L["Show your player frame as part of the group"], "PARTY_PLAYER_FRAME", function() GW.UpdatePartySettings(); GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
+    addOption(p, COMPACT_UNIT_FRAME_PROFILE_DISPLAYPETS, nil, "PARTY_SHOW_PETS", function() GW.UpdatePartySettings(); GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true, ["RAID_STYLE_PARTY"] = false})
     addOptionDropdown(
         p,
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         nil,
         "PARTY_UNIT_HEALTH",
-        nil,
+        GW.UpdatePartySettings,
         {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
         {
             COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE,

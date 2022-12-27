@@ -8,6 +8,15 @@ local ParseSimpleObjective = GW.ParseSimpleObjective
 local notifications = {}
 local questCompass = {}
 
+local settings = {}
+
+local function UpdateSettings()
+    settings.showCompass = GetSetting("SHOW_QUESTTRACKER_COMPASS")
+end
+GW.UpdateObjectivesNotificationSettings = UpdateSettings
+
+UpdateSettings()
+
 local icons = {
     QUEST = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
     CAMPAIGN = {tex = "icon-objective", l = 0.5, r = 1, t = 0, b = 0.25},
@@ -298,7 +307,7 @@ GW.AddForProfiling("notifications", "updateRadar", updateRadar)
 
 local currentCompassData
 local function SetObjectiveNotification()
-    if not GetSetting("SHOW_QUESTTRACKER_COMPASS") then return end
+    if not settings.showCompass then return end
 
     local data, dataBefore
     for k, _ in pairs(notifications) do

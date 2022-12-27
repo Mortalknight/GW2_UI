@@ -1,6 +1,7 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 local AFP = GW.AddProfiling
+local GetSetting = GW.GetSetting
 
 local function SkinHeaders(header)
     if header.IsSkinned then
@@ -475,7 +476,7 @@ end
 AFP("worldMapSkin", worldMapSkin)
 
 local function LoadWorldMapSkin()
-    if not GW.GetSetting("WORLDMAP_SKIN_ENABLED") then return end
+    if not GetSetting("WORLDMAP_SKIN_ENABLED") then return end
 
     GW.RegisterLoadHook(worldMapSkin, "Blizzard_WorldMap", WorldMapFrame)
 end

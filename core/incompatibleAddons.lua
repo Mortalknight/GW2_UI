@@ -1,4 +1,5 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local function IsIncompatibleAddonLoadedOrOverride(setting, LoadedAndOverride)
     local IncompatibleAddonLoaded = false

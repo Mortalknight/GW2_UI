@@ -6,6 +6,20 @@ local setItemLevel = GW.setItemLevel
 -- global for this deprecated in 8.3; from ContainerFrame.lua
 local MAX_CONTAINER_ITEMS = 36
 
+local settings = {}
+
+local function UpdateSettings()
+    settings.showItemQualityBorder = GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW")
+    settings.showProfessionBagColor = GetSetting("BAG_PROFESSION_BAG_COLOR")
+    settings.showItemJunkIcon = GetSetting("BAG_ITEM_JUNK_ICON_SHOW")
+    settings.showItemScrapIcon = GetSetting("BAG_ITEM_SCRAP_ICON_SHOW")
+    settings.showItemUpgradeIcon = GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW")
+    settings.showItemItemLevel = GetSetting("BAG_SHOW_ILVL")
+    settings.itemSize = GetSetting("BAG_ITEM_SIZE")
+    settings.separateBags = GetSetting("BAG_SEPARATE_BAGS")
+end
+GW.UpdateInventorySettings = UpdateSettings
+
 -- reskins an ItemButton to use GW2_UI styling
 local item_size
 local function reskinItemButton(iname, b)
@@ -125,12 +139,12 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
     t:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     t:SetAlpha(0.9)
 
-    if not GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW") then
+    if not settings.showItemQualityBorder then
         t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].r, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].g, BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Common].b)
     end
 
     local professionColors = isReagentBag and BAG_ITEM_QUALITY_COLORS[Enum.ItemQuality.Artifact] or GW.professionBagColor[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
-    if (GetSetting("BAG_PROFESSION_BAG_COLOR") or isReagentBag) and professionColors then
+    if (settings.showProfessionBagColor or isReagentBag) and professionColors then
         t:SetVertexColor(professionColors.r, professionColors.g, professionColors.b)
         t:Show()
     end
@@ -150,7 +164,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         button.isJunk = itemInfo and ((itemInfo.quality and itemInfo.quality == Enum.ItemQuality.Poor) and not itemInfo.hasNoValue) or false
 
         if button.junkIcon then
-            if button.isJunk and GetSetting("BAG_ITEM_JUNK_ICON_SHOW") then
+            if button.isJunk and settings.showItemJunkIcon then
                 button.junkIcon:Show()
             else
                 button.junkIcon:Hide()
@@ -158,7 +172,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
         end
         -- Show scrap icon if active
         if button.scrapIcon then
-            if GetSetting("BAG_ITEM_SCRAP_ICON_SHOW") then
+            if settings.showItemScrapIcon then
                 local itemLoc = ItemLocation:CreateFromBagAndSlot(bag_id, button:GetID())
                 if itemLoc and itemLoc ~= "" then
                     if (C_Item.DoesItemExist(itemLoc) and C_Item.CanScrapItem(itemLoc)) then
@@ -172,12 +186,12 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             end
         end
         -- Show upgrade icon if active
-        if GetSetting("BAG_ITEM_UPGRADE_ICON_SHOW") and button.UpgradeIcon then
+        if settings.showItemUpgradeIcon and button.UpgradeIcon then
             CheckUpdateIcon(button)
         end
 
         -- Show ilvl if active
-        if button.itemlevel and GetSetting("BAG_SHOW_ILVL") then
+        if button.itemlevel and settings.showItemItemLevel then
             setItemLevel(button, quality, itemIDOrLink)
         elseif button.itemlevel then
             button.itemlevel:SetText("")
@@ -215,10 +229,14 @@ end
 local bag_resize
 local bank_resize
 local function resizeInventory()
-    item_size = GetSetting("BAG_ITEM_SIZE")
+    item_size = settings.itemSize
     if item_size > 40 then
         item_size = 40
         SetSetting("BAG_ITEM_SIZE", 40)
+        GW.UpdateBankSettings()
+        GW.UpdateInventorySettings()
+
+
     end
     reskinItemButtons()
     if bag_resize then
@@ -488,7 +506,7 @@ local function snapFrameSize(f, cfs, size, padding, min_height)
     end
 
     local cols = f == GwBagFrame and f.gw_bag_cols or f.gw_bank_cols
-    local sep = f == GwBagFrame and GetSetting("BAG_SEPARATE_BAGS") or false
+    local sep = f == GwBagFrame and settings.separateBags or false
 
     if not cfs then
         f:SetHeight(min_height)
@@ -611,7 +629,9 @@ end
 GW.AddForProfiling("inventory", "onMoverDragStop", onMoverDragStop)
 
 local function LoadInventory()
-    item_size = GetSetting("BAG_ITEM_SIZE")
+    UpdateSettings()
+
+    item_size = settings.itemSize
 
     -- anytime a ContainerFrame has its anchors set, we re-hide it
     --hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)

@@ -83,8 +83,9 @@ local constBackdropDropDown = {
     tile = false,
     tileSize = 64,
     edgeSize = 32,
-    insets = {left = 2, right = 2, top = 2, bottom = 2}
+    insets = {left = 0, right = 0, top = 0, bottom = 0}
 }
+
 
 local function HandleBlizzardRegions(frame)
     local name = frame.GetName and frame:GetName()
@@ -450,27 +451,33 @@ local function SkinDropDownMenu(frame, buttonPaddindX)
     frame:StripTextures()
     frame:SetWidth(155)
 
-    frame:CreateBackdrop(constBackdropDropDown)
+    frame:CreateBackdrop(constBackdropDropDown, true)
     frame.backdrop:SetBackdropColor(0, 0, 0)
 
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)
-    frame.backdrop:SetPoint("TOPLEFT", 20, -2)
-    frame.backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 2, -2)
+    frame.backdrop:SetPoint("TOPLEFT", 5, -2)
+    frame.backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, -2)
 
     button:ClearAllPoints()
-    button:SetPoint("RIGHT", frame, "RIGHT", buttonPaddindX or -10, 3)
+    button:SetPoint("RIGHT", frame, "RIGHT", buttonPaddindX or -10, 0)
 
     button.SetPoint = GW.NoOp
     button:StripTextures()
 
-    button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    GW.HandleNextPrevButton(button, "down")
+
+    --button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    --button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    --button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    --button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
 
     if text then
         text:ClearAllPoints()
-        text:SetPoint("RIGHT", button, "LEFT", 4, 0)
+        text:SetPoint("LEFT", frame, "LEFT", 10, 0)
+        text:SetFont(UNIT_NAME_FONT, 12, "")
+        text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
+        text:SetHeight(frame:GetHeight())
+        text:SetJustifyV("MIDDLE")
     end
 
     if icon then
@@ -527,8 +534,9 @@ local function HandleNextPrevButton(button, arrowDir, noBackdrop)
     button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
     button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
     button:SetDisabledTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
+    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowup_down")
 
-    local Normal, Disabled, Pushed = button:GetNormalTexture(), button:GetDisabledTexture(), button:GetPushedTexture()
+    local Normal, Disabled, Pushed, Highlight = button:GetNormalTexture(), button:GetDisabledTexture(), button:GetPushedTexture(), button:GetHighlightTexture()
 
     if noBackdrop then
         button:SetSize(20, 20)
@@ -542,12 +550,18 @@ local function HandleNextPrevButton(button, arrowDir, noBackdrop)
     Normal:SetTexCoord(0, 1, 0, 1)
     Pushed:SetTexCoord(0, 1, 0, 1)
     Disabled:SetTexCoord(0, 1, 0, 1)
+    if Highlight then
+        Highlight:SetTexCoord(0, 1, 0, 1)
+    end
 
     local rotation = ArrowRotation[arrowDir]
     if rotation then
         Normal:SetRotation(rotation)
         Pushed:SetRotation(rotation)
         Disabled:SetRotation(rotation)
+        if Highlight then
+            Highlight:SetRotation(rotation)
+        end
     end
 
     button.isSkinned = true

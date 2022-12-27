@@ -30,7 +30,7 @@ local function ReplaceGossipText(button, text)
 end
 
 local function LoadGossipSkin()
-    if not GW.GetSetting("GOSSIP_SKIN_ENABLED") then return end
+    if not GetSetting("GOSSIP_SKIN_ENABLED") then return end
 
     local GossipFrame = GossipFrame
 

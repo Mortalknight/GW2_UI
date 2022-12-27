@@ -9,6 +9,7 @@ local SetSetting = GW.SetSetting
 local InitPanel = GW.InitPanel
 local AddForProfiling = GW.AddForProfiling
 local StrUpper = GW.StrUpper
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function setMultibarCols(barName, setting)
     local mb = GetSetting(barName)
@@ -32,15 +33,19 @@ local function LoadActionbarPanel(sWindow)
     p.sub:SetText(ACTIONBARS_SUBTEXT)
 
     createCat(BINDING_HEADER_ACTIONBAR, nil, p, 7, nil, {p})
+    settingsMenuAddButton(BINDING_HEADER_ACTIONBAR,p,7,nil,{})
 
-    addOption(p.scroll.scrollchild, L["Hide Empty Slots"], L["Hide the empty action bar slots."], "HIDEACTIONBAR_BACKGROUND_ENABLED", function() GW.ShowRlPopup = true; GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
-    addOption(p.scroll.scrollchild, L["Action Button Labels"], L["Enable or disable the action button assignment text"], "BUTTON_ASSIGNMENTS", function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
+    addOption(p.scroll.scrollchild, L["Hide Empty Slots"], L["Hide the empty action bar slots."], "HIDEACTIONBAR_BACKGROUND_ENABLED", function() GW.UpdateActionbarSettings(); GW.ShowRlPopup = true; GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
+    addOption(p.scroll.scrollchild, L["Action Button Labels"], L["Enable or disable the action button assignment text"], "BUTTON_ASSIGNMENTS", function() GW.UpdateActionbarSettings(); GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
     addOptionSlider(
         p.scroll.scrollchild,
         BINDING_HEADER_ACTIONBAR .. ": " .. L["Button Spacing"],
         nil,
         "MAINBAR_MARGIIN",
-        GW.UpdateMainBarHot,
+        function()
+            GW.UpdateActionbarSettings()
+            GW.UpdateMainBarHot()
+        end,
         0,
         10,
         nil,
@@ -52,7 +57,10 @@ local function LoadActionbarPanel(sWindow)
         BINDING_HEADER_MULTIACTIONBAR .. ": " .. L["Button Spacing"],
         nil,
         "MULTIBAR_MARGIIN",
-        GW.UpdateMultibarButtons,
+        function()
+            GW.UpdateActionbarSettings()
+            GW.UpdateMultibarButtons()
+        end,
         0,
         10,
         nil,
@@ -162,7 +170,7 @@ local function LoadActionbarPanel(sWindow)
         BINDING_HEADER_ACTIONBAR .. ": '" .. BINDING_HEADER_ACTIONBAR .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_8",
-        nil,
+        GW.UpdateActionbarSettings ,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -175,7 +183,7 @@ local function LoadActionbarPanel(sWindow)
         BINDING_HEADER_MULTIACTIONBAR .. ": '" .. OPTION_SHOW_ACTION_BAR:format(2) .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_1",
-        nil,
+        GW.UpdateActionbarSettings ,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -188,7 +196,7 @@ local function LoadActionbarPanel(sWindow)
         BINDING_HEADER_MULTIACTIONBAR .. ": '" .. OPTION_SHOW_ACTION_BAR:format(3) .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_2",
-        nil,
+        GW.UpdateActionbarSettings ,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -201,7 +209,7 @@ local function LoadActionbarPanel(sWindow)
         BINDING_HEADER_MULTIACTIONBAR .. ": '" .. OPTION_SHOW_ACTION_BAR:format(4) .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_3",
-        nil,
+        GW.UpdateActionbarSettings ,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -214,7 +222,7 @@ local function LoadActionbarPanel(sWindow)
         BINDING_HEADER_MULTIACTIONBAR .. ": '" .. OPTION_SHOW_ACTION_BAR:format(5) .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_4",
-        nil,
+        GW.UpdateActionbarSettings ,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -228,7 +236,7 @@ local function LoadActionbarPanel(sWindow)
         BINDING_HEADER_MULTIACTIONBAR .. ": '" .. OPTION_SHOW_ACTION_BAR:format(6) .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_5",
-        nil,
+        GW.UpdateActionbarSettings ,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -242,7 +250,7 @@ local function LoadActionbarPanel(sWindow)
         BINDING_HEADER_MULTIACTIONBAR .. ": '" .. OPTION_SHOW_ACTION_BAR:format(7) .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_6",
-        nil,
+        GW.UpdateActionbarSettings,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -256,7 +264,7 @@ local function LoadActionbarPanel(sWindow)
         BINDING_HEADER_MULTIACTIONBAR .. ": '" .. OPTION_SHOW_ACTION_BAR:format(8) .. "' " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_7",
-        nil,
+        GW.UpdateActionbarSettings,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -269,7 +277,10 @@ local function LoadActionbarPanel(sWindow)
         L["Main Bar Range Indicator"],
         nil,
         "MAINBAR_RANGEINDICATOR",
-        GW.UpdateMainBarHot,
+        function()
+            GW.UpdateActionbarSettings()
+            GW.UpdateMainBarHot()
+        end,
         {"RED_INDICATOR", "RED_OVERLAY", "BOTH", "NONE"},
         {L["%s Indicator"]:format(RED_GEM), L["Red Overlay"], STATUS_TEXT_BOTH, NONE},
         nil,
@@ -277,7 +288,7 @@ local function LoadActionbarPanel(sWindow)
         nil,
         "Actionbars"
     )
-    addOption(p.scroll.scrollchild, L["Show Macro Name"], L["Show Macro Name on Action Button"], "SHOWACTIONBAR_MACRO_NAME_ENABLED", function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons(); GW.UpdatePetBarButtonsHot() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
+    addOption(p.scroll.scrollchild, L["Show Macro Name"], L["Show Macro Name on Action Button"], "SHOWACTIONBAR_MACRO_NAME_ENABLED", function() GW.UpdateActionbarSettings(); GW.UpdatePetbarSettings(); GW.UpdateMainBarHot(); GW.UpdateMultibarButtons(); GW.UpdatePetBarButtonsHot() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
 
     InitPanel(p, true)
 end

@@ -3,6 +3,7 @@ local L = GW.L
 local addOption = GW.AddOption
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function LoadSkinsPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
@@ -15,6 +16,8 @@ local function LoadSkinsPanel(sWindow)
 
     createCat(L["Skins"], L["Adjust Skin settings."], p, 6, nil, {p})
 
+    settingsMenuAddButton(L["Skins"],p,6,nil,{})
+
     addOption(p.scroll.scrollchild, L["Alert Frames"], nil, "ALERTFRAME_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, MAINMENU_BUTTON, nil, "MAINMENU_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, L["Popup notifications"], nil, "STATICPOPUP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
@@ -26,7 +29,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Talking Head"], nil, "TALKINGHEAD_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, L["Misc Frames"], nil, "MISC_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, FLIGHT_MAP, nil, "FLIGHTMAP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
-    addOption(p.scroll.scrollchild, L["Blizzard Class Colors"], nil, "BLIZZARDCLASSCOLOR_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, L["Blizzard Class Colors"], nil, "BLIZZARDCLASSCOLOR_ENABLED", function() GW.UpdateClassColorSetting(); GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, ADDON_LIST, nil, "ADDONLIST_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, INTERFACE_OPTIONS, nil, "BLIZZARD_OPTIONS_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, KEY_BINDINGS, nil, "BINDINGS_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
@@ -51,7 +54,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p.scroll.scrollchild, LFG_TITLE, nil, "LFG_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, C_Garrison.GetTalentTreeInfo(461).title, nil, "ORDERRHALL_TALENT_FRAME_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, L["Loot Frame"], nil, "LOOTFRAME_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
-
+    --addOption(p.scroll.scrollchild, ACHIEVEMENTS, nil, "ACHIEVEMENT_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
 
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r World Quest Tracker", nil, "SKIN_WQT_ENABLED", function() GW.ShowRlPopup = true end, nil, {["QUESTTRACKER_ENABLED"] = true}, "Objectives")
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Immersion", nil, "IMMERSIONADDON_SKIN_ENABLED", function() GW.ShowRlPopup = true end)

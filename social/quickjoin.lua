@@ -28,17 +28,12 @@ local function LoadQuickJoinList(tabContainer)
     QuickJoinFrame:SetPoint("TOPLEFT", quickjoin, "TOPLEFT", 0, 0)
     QuickJoinFrame:SetPoint("BOTTOMRIGHT", quickjoin, "BOTTOMRIGHT", 0, 0)
 
-    QuickJoinFrame.ScrollFrame:SetParent(quickjoin)
-    QuickJoinFrame.ScrollFrame:ClearAllPoints()
-    QuickJoinFrame.ScrollFrame:SetPoint("TOPLEFT", quickjoin, "TOPLEFT", 0, -15)
-    QuickJoinFrame.ScrollFrame:SetPoint("BOTTOMRIGHT", quickjoin, "BOTTOMRIGHT", 0, 0)
+    QuickJoinFrame.ScrollBox:SetParent(quickjoin)
+    QuickJoinFrame.ScrollBox:ClearAllPoints()
+    QuickJoinFrame.ScrollBox:SetPoint("TOPLEFT", quickjoin, "TOPLEFT", 0, -15)
+    QuickJoinFrame.ScrollBox:SetPoint("BOTTOMRIGHT", quickjoin, "BOTTOMRIGHT", 0, 0)
 
-    QuickJoinFrame.ScrollFrame.scrollBar:SkinScrollBar()
-    QuickJoinFrame.ScrollFrame.scrollBar:SetWidth(3)
-    QuickJoinFrame.ScrollFrame:SkinScrollFrame()
-    QuickJoinScrollFrameMiddle:Hide()
-    QuickJoinFrame.ScrollFrame.ScrollChild:ClearAllPoints()
-    QuickJoinFrame.ScrollFrame.ScrollChild:SetAllPoints(QuickJoinFrame.ScrollFrame)
+    GW.HandleTrimScrollBar(_G.QuickJoinFrame.ScrollBar)
 
     QuickJoinFrame.JoinQueueButton:SetParent(quickjoin)
     QuickJoinFrame.JoinQueueButton:ClearAllPoints()
@@ -48,26 +43,8 @@ local function LoadQuickJoinList(tabContainer)
         QuickJoinFrame:JoinQueue()
     end)
 
-    HybridScrollFrame_CreateButtons(QuickJoinFrame.ScrollFrame, "QuickJoinButtonTemplate")
-
-    local buttons = QuickJoinFrame.ScrollFrame.buttons
-    for i = 1, #buttons do
-        local button = buttons[i]
-        button:SetSize(460, 25)
-    end
-
-    QuickJoinFrame.ScrollFrame.ScrollChild:SetHeight(560)
-    QuickJoinFrame.ScrollFrame:UpdateScrollChildRect()
-
     QuickJoinFrame:UpdateScrollFrame()
     QuickJoinFrame:UpdateJoinButtonState()
-
-    hooksecurefunc("HybridScrollFrame_Update", function(self)
-        if self == QuickJoinFrame.ScrollFrame then
-            self.ScrollChild:SetHeight(560)
-            self:UpdateScrollChildRect()
-        end
-    end)
 
     QuickJoinToastButton:SetScript("OnClick", function(self, button)
         if InCombatLockdown() then return end

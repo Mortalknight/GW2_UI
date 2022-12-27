@@ -11,20 +11,30 @@ local previewSteps = {5, 4, 3, 2, 1}
 local previewStep = 0
 local MAX_PARTY_MEMBERS = MAX_PARTY_MEMBERS + 1
 
+local settings = {}
+
+local function UpdateSettings()
+    settings.raidAuraTooltipInCombat = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT_PARTY")
+    settings.raidClassColor = GetSetting("RAID_CLASS_COLOR_PARTY")
+    settings.raidUnitMarkers = GetSetting("RAID_UNIT_MARKERS_PARTY")
+    settings.raidGrow = GetSetting("RAID_GROW_PARTY")
+    settings.raidWidth = GetSetting("RAID_WIDTH_PARTY")
+    settings.raidHeight = GetSetting("RAID_HEIGHT_PARTY")
+    settings.raidContainerWidth = GetSetting("RAID_CONT_WIDTH_PARTY")
+    settings.raidContainerHeight = GetSetting("RAID_CONT_HEIGHT_PARTY")
+    settings.raidUnitsPerColumn = ceil(GetSetting("RAID_UNITS_PER_COLUMN_PARTY"))
+    settings.raidByRole = GetSetting("RAID_SORT_BY_ROLE_PARTY")
+    settings.raidStyle = GetSetting("RAID_STYLE_PARTY")
+    settings.raidStyleAndPartyFrames = GetSetting("RAID_STYLE_PARTY_AND_FRAMES")
+    settings.raidAnchor = GetSetting("RAID_ANCHOR_PARTY")
+end
+GW.UpdatePartyGridSettings = UpdateSettings
 
 local function GetPartyFramesMeasures(players)
-    -- Get settings
-    local grow = GetSetting("RAID_GROW_PARTY")
-    local w = GetSetting("RAID_WIDTH_PARTY")
-    local h = GetSetting("RAID_HEIGHT_PARTY")
-    local cW = GetSetting("RAID_CONT_WIDTH_PARTY")
-    local cH = GetSetting("RAID_CONT_HEIGHT_PARTY")
-    local per = ceil(GetSetting("RAID_UNITS_PER_COLUMN_PARTY"))
-    local byRole = GetSetting("RAID_SORT_BY_ROLE_PARTY")
     local m = 2
 
     -- Determine # of players
-    if players or byRole then
+    if players or settings.raidByRole then
         players = players or max(1, GetNumGroupMembers())
     else
         players = 0
@@ -38,17 +48,17 @@ local function GetPartyFramesMeasures(players)
     end
 
     -- Directions
-    local grow1, grow2 = strsplit("+", grow)
+    local grow1, grow2 = strsplit("+", settings.raidGrow)
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     -- Rows, cols and cell size
-    local sizeMax1, sizePer1 = isV and cH or cW, isV and h or w
-    local sizeMax2, sizePer2 = isV and cW or cH, isV and w or h
+    local sizeMax1, sizePer1 = isV and settings.raidContainerHeight or settings.raidContainerWidth, isV and settings.raidHeight or settings.raidWidth
+    local sizeMax2, sizePer2 = isV and settings.raidContainerWidth or settings.raidContainerHeight, isV and settings.raidWidth or settings.raidHeight
 
     local cells1 = players
 
-    if per > 0 then
-        cells1 = min(cells1, per)
+    if settings.raidUnitsPerColumn > 0 then
+        cells1 = min(cells1, settings.raidUnitsPerColumn)
         if tonumber(sizeMax1) > 0 then
             sizePer1 = min(sizePer1, (sizeMax1 + m) / cells1 - m)
         end
@@ -149,7 +159,7 @@ local function GridPartyUpdateFramesLayout()
     end
 
     local unitString = "Party"
-    local sorted = GetSetting("RAID_SORT_BY_ROLE_PARTY") and GridSortByRole() or {}
+    local sorted = settings.raidByRole and GridSortByRole() or {}
 
     -- Position by role
     for i, v in ipairs(sorted) do
@@ -189,7 +199,7 @@ local function unhookPlayerFrame()
         return
     end
 
-    if IsInGroup() and (GetSetting("RAID_STYLE_PARTY") or GetSetting("RAID_STYLE_PARTY_AND_FRAMES")) then
+    if IsInGroup() and (settings.raidStyle or settings.raidStyleAndPartyFrames) then
         GwCompactPartyFrame1:Show()
         RegisterStateDriver(GwCompactPartyFrame1, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(GwCompactPartyFrame1.unit))
     else
@@ -215,17 +225,17 @@ local function PartyGridOnEvent(self, event, unit)
             repeat
                 frame = _G["Gw" .. name .. aura .. "ItemFrame" .. i]
                 if frame then
-                    if frame.tooltipSetting == "NEVER" then
+                    if settings.raidAuraTooltipInCombat == "NEVER" then
                         frame:EnableMouse(false)
-                    elseif frame.tooltipSetting == "ALWAYS" then
+                    elseif settings.raidAuraTooltipInCombat == "ALWAYS" then
                         frame:EnableMouse(true)
-                    elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
+                    elseif settings.raidAuraTooltipInCombat == "IN_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
                         frame:EnableMouse(false)
-                    elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
+                    elseif settings.raidAuraTooltipInCombat == "IN_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
                         frame:EnableMouse(true)
-                    elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
+                    elseif settings.raidAuraTooltipInCombat == "OUT_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
                         frame:EnableMouse(true)
-                    elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
+                    elseif settings.raidAuraTooltipInCombat == "OUT_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
                         frame:EnableMouse(false)
                     end
                 end
@@ -238,7 +248,7 @@ local function PartyGridOnEvent(self, event, unit)
         GW.GridSetAbsorbAmount(self)
         GW.GridSetPredictionAmount(self, "PARTY")
         GW.GridSetHealth(self, "PARTY")
-        GW.GridUpdateAwayData(self, "PARTY")
+        GW.GridUpdateAwayData(self, "PARTY", true, true)
         GW.GridUpdateAuras(self, "PARTY")
         GW.GridUpdatePower(self)
     elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
@@ -263,16 +273,16 @@ local function PartyGridOnEvent(self, event, unit)
         GW.GridUpdateAuras(self, "PARTY")
         GW.GridUpdateAwayData(self, "PARTY")
     elseif (event == "INCOMING_RESURRECT_CHANGED" or event == "INCOMING_SUMMON_CHANGED") and unit == self.unit then
-        GW.GridUpdateAwayData(self, "PARTY")
-    elseif event == "RAID_TARGET_UPDATE" and GetSetting("RAID_UNIT_MARKERS_PARTY") then
+        GW.GridUpdateAwayData(self, "PARTY", true)
+    elseif event == "RAID_TARGET_UPDATE" and settings.raidUnitMarkers then
         GW.GridUpdateRaidMarkers(self, "PARTY")
     elseif event == "READY_CHECK" or (event == "READY_CHECK_CONFIRM" and unit == self.unit) then
-        GW.GridUpdateAwayData(self, "PARTY")
+        GW.GridUpdateAwayData(self, "PARTY", false, true)
     elseif event == "READY_CHECK_FINISHED" then
         C_Timer.After(1.5, function()
-            if UnitInRaid(self.unit) then
+            if UnitInParty(self.unit) then
                 local _, englishClass, classIndex = UnitClass(self.unit)
-                if GetSetting("RAID_CLASS_COLOR_PARTY") then
+                if settings.raidClassColor then
                     local color = GWGetClassColor(englishClass, true)
                     self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
                     self.classicon:SetShown(false)
@@ -282,6 +292,7 @@ local function PartyGridOnEvent(self, event, unit)
                     self.classicon:SetShown(true)
                     SetClassIcon(self.classicon, classIndex)
                 end
+                self.readyCheckInProgress = false
             end
         end)
     end
@@ -293,7 +304,7 @@ local function GridOnUpdate(self, elapsed)
         self.onUpdateDelay = self.onUpdateDelay - elapsed
         return
     end
-    self.onUpdateDelay = 0.2
+    self.onUpdateDelay = 0.4
     if UnitExists(self.unit) then
         GW.GridUpdateAwayData(self, "PARTY")
     end
@@ -341,9 +352,11 @@ local function LoadPartyGrid()
     if not GwManageGroupButton then
         GW.manageButton()
 
-        -- load missing and ignored auras, do it here bcause this code is only triggered from one of the 3 grids
-        GW.UpdateMissingAndIgnoredAuras()
+        -- load missing and ignored auras, do it here because this code is only triggered from one of the 3 grids
+        GW.UpdateGridSettings()
     end
+
+    UpdateSettings()
 
     local container = CreateFrame("Frame", "GwRaidFramePartyContainer", UIParent, "GwRaidFrameContainer")
 
@@ -354,19 +367,17 @@ local function LoadPartyGrid()
     RegisterMovableFrame(container, L["Group Frames"], "raid_party_pos", "VerticalActionBarDummy", nil, {"default", "default"})
 
     hooksecurefunc(container.gwMover, "StopMovingOrSizing", function(frame)
-        local anchor = GetSetting("RAID_ANCHOR_PARTY")
-
-        if anchor == "GROWTH" then
-            local g1, g2 = strsplit("+", GetSetting("RAID_GROW_PARTY"))
-            anchor = (IsIn("DOWN", g1, g2) and "TOP" or "BOTTOM") .. (IsIn("RIGHT", g1, g2) and "LEFT" or "RIGHT")
+        if settings.raidAnchor == "GROWTH" then
+            local g1, g2 = strsplit("+", settings.raidGrow)
+            settings.raidAnchor = (IsIn("DOWN", g1, g2) and "TOP" or "BOTTOM") .. (IsIn("RIGHT", g1, g2) and "LEFT" or "RIGHT")
         end
 
-        if anchor ~= "POSITION" then
-            local x = anchor:sub(-5) == "RIGHT" and frame:GetRight() - GetScreenWidth() or anchor:sub(-4) == "LEFT" and frame:GetLeft() or frame:GetLeft() + (frame:GetWidth() - GetScreenWidth()) / 2
-            local y = anchor:sub(1, 3) == "TOP" and frame:GetTop() - GetScreenHeight() or anchor:sub(1, 6) == "BOTTOM" and frame:GetBottom() or frame:GetBottom() + (frame:GetHeight() - GetScreenHeight()) / 2
+        if settings.raidAnchor ~= "POSITION" then
+            local x = settings.raidAnchor:sub(-5) == "RIGHT" and frame:GetRight() - GetScreenWidth() or settings.raidAnchor:sub(-4) == "LEFT" and frame:GetLeft() or frame:GetLeft() + (frame:GetWidth() - GetScreenWidth()) / 2
+            local y = settings.raidAnchor:sub(1, 3) == "TOP" and frame:GetTop() - GetScreenHeight() or settings.raidAnchor:sub(1, 6) == "BOTTOM" and frame:GetBottom() or frame:GetBottom() + (frame:GetHeight() - GetScreenHeight()) / 2
 
             frame:ClearAllPoints()
-            frame:SetPoint(anchor, x, y)
+            frame:SetPoint(settings.raidAnchor, x, y)
         end
 
         if not InCombatLockdown() then

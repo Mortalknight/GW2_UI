@@ -1,20 +1,21 @@
 local _, GW = ...
+local GetSetting = GW.GetSetting
 
 local POSITION, ANCHOR_POINT, YOFFSET = "TOP", "BOTTOM", -5
 
 local function UpdateGroupLootContainer(self)
     local lastIdx = nil
-    local pt, _, relPt, _, _ = self:GetPoint()
 
     for i = 1, self.maxIndex do
         local frame = self.rollFrames[i]
         if frame then
             frame:ClearAllPoints()
-            local prevFrame = self.rollFrames[i-1]
+
+            local prevFrame = self.rollFrames[i - 1]
             if prevFrame and prevFrame ~= frame then
-                frame:SetPoint(pt, prevFrame, relPt, 0, self.reservedSize * (i-1 + 0.5))
+                frame:SetPoint("TOP", prevFrame, "BOTTOM", 0, -5)
             else
-                frame:SetPoint(pt, _G.GwAlertFrameOffsetter, pt, 0, _G.GwAlertFrameOffsetter:GetHeight())
+                frame:SetPoint("TOP", GwAlertFrameOffsetter, "TOP", 0, -5)
             end
             lastIdx = i
         end
@@ -43,7 +44,11 @@ local function RePostAlertFrame()
     end
 
     AlertFrame:ClearAllPoints()
+    GroupLootContainer:ClearAllPoints()
+
     AlertFrame:SetAllPoints(GW.AlertContainerFrame)
+
+    GroupLootContainer:SetPoint("TOP", GwAlertFrameOffsetter, "BOTTOM", 0, -5)
     if GroupLootContainer:IsShown() then
         UpdateGroupLootContainer(GroupLootContainer)
     end
@@ -87,20 +92,21 @@ local function resetAlertSubSystemAdjustPositions(subSystem)
 end
 
 local function SetupAlertFramePosition()
-    if not GW.GetSetting("ALERTFRAME_ENABLED") then return end
-    _G.GwAlertFrameOffsetter:SetHeight(205)
+    if not GetSetting("ALERTFRAME_ENABLED") then return end
+
+    GwAlertFrameOffsetter:SetHeight(205)
     hooksecurefunc("GroupLootContainer_Update", UpdateGroupLootContainer)
 
     -- override anchor function
-    for _, alertFrameSubSystem in ipairs(_G.AlertFrame.alertFrameSubSystems) do
+    for _, alertFrameSubSystem in ipairs(AlertFrame.alertFrameSubSystems) do
         resetAlertSubSystemAdjustPositions(alertFrameSubSystem)
     end
 
     -- Catch all added alert System by other addins
-    hooksecurefunc(_G.AlertFrame, "AddAlertFrameSubSystem", function(_, alertFrameSubSystem)
+    hooksecurefunc(AlertFrame, "AddAlertFrameSubSystem", function(_, alertFrameSubSystem)
         resetAlertSubSystemAdjustPositions(alertFrameSubSystem)
     end)
     -- setup AlertFrame and Bonus Roll Frame
-    hooksecurefunc(_G.AlertFrame, "UpdateAnchors", RePostAlertFrame)
+    hooksecurefunc(AlertFrame, "UpdateAnchors", RePostAlertFrame)
 end
 GW.SetupAlertFramePosition = SetupAlertFramePosition

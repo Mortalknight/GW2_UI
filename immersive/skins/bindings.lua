@@ -1,5 +1,6 @@
 local _, GW = ...
 local AFP = GW.AddProfiling
+local GetSetting = GW.GetSetting
 
 local function updateNewGlow(self)
     if self.NewOutline:IsShown() then
@@ -53,7 +54,7 @@ end
 AFP("spellbook_OnClick", spellbook_OnClick)
 
 local function ApplyClickBindingUISkin()
-    if not GW.GetSetting("BINDINGS_SKIN_ENABLED") then return end
+    if not GetSetting("BINDINGS_SKIN_ENABLED") then return end
 
     GW.HandlePortraitFrame(ClickBindingFrame, true)
 
@@ -69,7 +70,7 @@ local function ApplyClickBindingUISkin()
     ClickBindingFrame.ScrollBoxBackground:Hide()
     hooksecurefunc(ClickBindingFrame.ScrollBox, "Update", HandleScrollChild)
 
-    if GW.GetSetting("USE_SPELLBOOK_WINDOW") then
+    if GetSetting("USE_SPELLBOOK_WINDOW") then
         ClickBindingFrame.SpellbookPortrait.FrameName = "GwCharacterWindow"
 
         ClickBindingFrame.SpellbookPortrait:SetScript("OnClick", spellbook_OnClick)

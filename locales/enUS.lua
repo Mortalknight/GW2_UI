@@ -8,6 +8,8 @@ L["FONT_NARROW"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
 L["FONT_NARROW_BOLD"] = "Interface/AddOns/GW2_UI/fonts/menomonia.ttf"
 L["FONT_LIGHT"] = "Interface/AddOns/GW2_UI/fonts/menomonia-italic.ttf"
 L["FONT_DAMAGE"] = "Interface/AddOns/GW2_UI/fonts/headlines.ttf"
+-- Timestamp
+L["TimeStamp m/d h:m:s"] = "%m/%d %H:%M:%S"
 --Strings
 L["Use the GW2 UI improved action bars."] = true
 L["Fade Action Bars"] = true
@@ -492,3 +494,29 @@ L["<Assign specializations>"] = true
 L["Bottom"] = true
 L["Health Bar Position"] = true
 L["One or more of the changes you have made require a UI reload."] = true
+
+--STRING WHICH NEEDS TRANSLATION
+L["Vignettes"] = true
+L["Setup"] = true
+L["System info"] = true
+L["%s will start in %s!"] = true
+L["Interval"] = true
+L["Next Event"] = true
+L["Community Feast"] = true
+L["Feast"] = true
+L["Cooking"] = true
+L["Siege On Dragonbane Keep"] = true
+L["Dragonbane Keep"] = true
+L["Desaturate icon"] = true
+L["Desaturate icon if the event is completed in this week."] = true
+L["Stop alert if completed"] = true
+L["Stop alert when the event is completed in this week."] = true
+L["Alert Second"] = true
+L["Alert will be triggered when the remaining time is less than the set value."] = true
+L["Add trackers for world events in the bottom of world map."] = true
+L["Shift + Left Click"] = true
+L["Alt + Left Click"] = true
+L["Edit objectives settings."] = true
+L["Collapse all objectives in M+"] = true
+L["Ready to craft"] = true
+L["Watch list"] = true

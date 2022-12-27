@@ -8,7 +8,14 @@ local UpdateBuffLayout = GW.UpdateBuffLayout
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local AddActionBarCallback = GW.AddActionBarCallback
+
+local settings = {}
+
+local function UpdateSettings()
+    settings.showMarcroName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
+    settings.aurasUnder = GetSetting("PET_AURAS_UNDER")
+end
+GW.UpdatePetbarSettings = UpdateSettings
 
 local function UpdatePetActionBarIcons()
     PetActionButton1Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
@@ -24,7 +31,6 @@ GW.AddForProfiling("petbar", "UpdatePetActionBarIcons", UpdatePetActionBarIcons)
 local function SetPetActionButtonPositionAndStyle(self)
     local BUTTON_SIZE = 28
     local BUTTON_MARGIN = 3
-    local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
 
     for i, button in ipairs(self.buttons) do
         local lastButton = _G["PetActionButton" .. (i - 1)]
@@ -94,7 +100,7 @@ local function SetPetActionButtonPositionAndStyle(self)
             button:SetAttribute("_onreceivedrag", nil)
         end
 
-        button.showMacroName = showName
+        button.showMacroName = settings.showMarcroName
 
         GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, nil, true)
         GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])
@@ -107,7 +113,7 @@ local function UpdatePetBarButtonsHot()
         local btn = _G["PetActionButton" .. i]
 
         if btn then
-            btn.showMacroName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
+            btn.showMacroName = settings.showMarcroName
             GW.updateMacroName(btn)
         end
     end
@@ -281,7 +287,7 @@ end
 GW.AddForProfiling("petbar", "updatePetData", updatePetData)
 
 local function TogglePetAuraPosition()
-    GwPlayerPetFrame.auraPositionUnder = GetSetting("PET_AURAS_UNDER")
+    GwPlayerPetFrame.auraPositionUnder = settings.aurasUnder
 
     if GwPlayerPetFrame.auraPositionUnder then
         GwPlayerPetFrame.auras:ClearAllPoints()
@@ -291,6 +297,8 @@ end
 GW.TogglePetAuraPosition = TogglePetAuraPosition
 
 local function LoadPetFrame(lm)
+    UpdateSettings()
+
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
     playerPetFrame.buttons = {}
 

@@ -1,27 +1,11 @@
 local _, GW = ...
 local GW_CLASS_COLORS = GW.GW_CLASS_COLORS
+local GetSetting = GW.GetSetting
 
 local afterCombatQueue = {}
 local maxUpdatesPerCircle = 5
 local EMPTY = {}
 local NIL = {}
-
-local function copyTable(newTable, tableToCopy)
-    if type(newTable) ~= "table" then newTable = {} end
-
-    if type(tableToCopy) == "table" then
-        for option, value in pairs(tableToCopy) do
-            if type(value) == "table" then
-                value = copyTable(newTable[option], value)
-            end
-
-            newTable[option] = value
-        end
-    end
-
-    return newTable
-end
-GW.copyTable = copyTable
 
 local function CombatQueue_Initialize()
     C_Timer.NewTicker(0.1, function()
@@ -128,30 +112,42 @@ local function FormatMoneyForChat(amount)
 end
 GW.FormatMoneyForChat = FormatMoneyForChat
 
-local function GWGetClassColor(class, useClassColor, forNameString, alwaysUseBlizzardColors)
-    if not class or not useClassColor then
-        return RAID_CLASS_COLORS.PRIEST
+do
+    local classColorSetting = nil
+    local function UpdateClassColorSetting()
+        classColorSetting = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
     end
+    GW.UpdateClassColorSetting = UpdateClassColorSetting
 
-    local useBlizzardClassColor = alwaysUseBlizzardColors or GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
-    local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW_CLASS_COLORS[class]
-    local colorForNameString
+    local function GWGetClassColor(class, useClassColor, forNameString, alwaysUseBlizzardColors)
+        if not class or not useClassColor then
+            return RAID_CLASS_COLORS.PRIEST
+        end
 
-    if type(color) ~= "table" then return end
+        if classColorSetting == nil then
+            UpdateClassColorSetting()
+        end
 
-    if not color.colorStr then
-        color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
-    elseif strlen(color.colorStr) == 6 then
-        color.colorStr = "ff" .. color.colorStr
+        local useBlizzardClassColor = alwaysUseBlizzardColors or classColorSetting
+        local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW_CLASS_COLORS[class]
+        local colorForNameString
+
+        if type(color) ~= "table" then return end
+
+        if not color.colorStr then
+            color.colorStr = GW.RGBToHex(color.r, color.g, color.b, "ff")
+        elseif strlen(color.colorStr) == 6 then
+            color.colorStr = "ff" .. color.colorStr
+        end
+
+        if forNameString and not useBlizzardClassColor then
+            colorForNameString = {r = min(color.r + 0.3, 1), g = min(color.g + 0.3, 1), b = min(color.b + 0.3, 1), a = color.a, colorStr = GW.RGBToHex(min(color.r + 0.3, 1), min(color.g + 0.3, 1), min(color.b + 0.3, 1), "ff")}
+        end
+
+        return forNameString and colorForNameString or color
     end
-
-    if forNameString and not useBlizzardClassColor then
-        colorForNameString = {r = min(color.r + 0.3, 1), g = min(color.g + 0.3, 1), b = min(color.b + 0.3, 1), a = color.a, colorStr = GW.RGBToHex(min(color.r + 0.3, 1), min(color.g + 0.3, 1), min(color.b + 0.3, 1), "ff")}
-    end
-
-    return forNameString and colorForNameString or color
+    GW.GWGetClassColor = GWGetClassColor
 end
-GW.GWGetClassColor = GWGetClassColor
 
 --RGB to Hex
 local function RGBToHex(r, g, b, header, ending)
@@ -184,18 +180,7 @@ local function GetUnitBattlefieldFaction(unit)
 end
 GW.GetUnitBattlefieldFaction = GetUnitBattlefieldFaction
 
-local function MapTable(T, fn, withKey)
-    local t = {}
-    for k,v in pairs(T) do
-        if withKey then
-            t[k] = fn(v, k)
-        else
-            t[k] = fn(v)
-        end
-    end
-    return t
-end
-GW.MapTable = MapTable
+
 
 local function FillTable(T, map, ...)
     wipe(T)
@@ -548,14 +533,13 @@ local function EnableTooltip(self, text, dir, y_off)
 end
 GW.EnableTooltip = EnableTooltip
 
-local function vernotes(ver, notes)
+local function addChange(addonVersion, changeList)
     if not GW.GW_CHANGELOGS then
-        GW.GW_CHANGELOGS = ""
+        GW.GW_CHANGELOGS = {}
     end
-    GW.GW_CHANGELOGS = GW.GW_CHANGELOGS .. "\n" .. ver .. "\n\n" .. notes .. "\n\n"
+    GW.GW_CHANGELOGS[#GW.GW_CHANGELOGS + 1] = {version = addonVersion, changes = changeList}
 end
-GW.vernotes = vernotes
-
+GW.addChange = addChange
 -- create custom UIFrameFlash animation
 local function SetUpFrameFlash(frame, loop)
     frame.flasher = frame:CreateAnimationGroup("Flash")
@@ -672,6 +656,32 @@ local function ColorGradient(perc, ...)
     return r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc
 end
 GW.ColorGradient = ColorGradient
+
+local function TextGradient(text, ...)
+    local msg, total = "", string.len(text)
+    local idx, num = 0, select("#", ...) / 3
+
+    for i = 1, total do
+        local x = string.sub(text, i, i)
+        if strmatch(x, "%s") then
+            msg = msg .. x
+            idx = idx + 1
+        else
+            local segment, relperc = math.modf((idx / total) * num)
+            local r1, g1, b1, r2, g2, b2 = select((segment * 3) + 1, ...)
+
+            if not r2 then
+                msg = msg .. GW.RGBToHex(r1, g1, b1, nil, x .. '|r')
+            else
+                msg = msg .. GW.RGBToHex(r1 + (r2 - r1) * relperc, g1 + (g2 - g1) * relperc, b1 + (b2 - b1) * relperc, nil, x ..'|r')
+                idx = idx + 1
+            end
+        end
+    end
+
+    return msg
+end
+GW.TextGradient = TextGradient
 
 local function StatusBarColorGradient(bar, value, max, backdrop)
 	if not (bar and value) then return end
@@ -796,3 +806,25 @@ local function EscapeString(s)
     return gsub(s, "([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1")
 end
 GW.EscapeString = EscapeString
+
+do
+    local cuttedIconTemplate = "|T%s:%d:%d:0:0:64:64:5:59:5:59|t"
+    local cuttedIconAspectRatioTemplate = "|T%s:%d:%d:0:0:64:64:%d:%d:%d:%d|t"
+    local s = 14
+
+    local function GetIconString(icon, height, width, aspectRatio)
+        if aspectRatio and height and height > 0 and width and width > 0 then
+            local proportionality = height / width
+            local offset = ceil((54 - 54 * proportionality) / 2)
+            if proportionality > 1 then
+                return format(cuttedIconAspectRatioTemplate, icon, height, width, 5 + offset, 59 - offset, 5, 59)
+            elseif proportionality < 1 then
+                return format(cuttedIconAspectRatioTemplate, icon, height, width, 5, 59, 5 + offset, 59 - offset)
+            end
+        end
+
+        width = width or height
+        return format(cuttedIconTemplate, icon, height or s, width or s)
+    end
+    GW.GetIconString = GetIconString
+end

@@ -3,6 +3,7 @@ local L = GW.L
 local addOption = GW.AddOption
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function LoadTargetPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
@@ -10,30 +11,35 @@ local function LoadTargetPanel(sWindow)
     p.sub:Hide()
 
     local p_target = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
-    p_target:SetHeight(375)
-    p_target:SetWidth(512)
-    p_target:ClearAllPoints()
-    p_target:SetPoint("TOPLEFT", p, "TOPLEFT", 0, 0)
+
     p_target.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_target.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p_target.header:SetText(TARGET)
+    p_target.header:SetText(UNITFRAME_LABEL)
     p_target.sub:SetFont(UNIT_NAME_FONT, 12)
     p_target.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p_target.sub:SetText(L["Modify the target frame settings."])
 
+    p_target.header:SetWidth(p_target.header:GetStringWidth())
+    p_target.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p_target.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p_target.breadcrumb:SetText(TARGET)
+
     local p_focus = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
-    p_focus:SetHeight(255)
-    p_focus:SetWidth(512)
-    p_focus:ClearAllPoints()
-    p_focus:SetPoint("TOPLEFT", p_target, "BOTTOMLEFT", 0, 0)
+
     p_focus.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_focus.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p_focus.header:SetText(FOCUS)
+    p_focus.header:SetText(UNITFRAME_LABEL)
     p_focus.sub:SetFont(UNIT_NAME_FONT, 12)
     p_focus.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p_focus.sub:SetText(L["Modify the focus frame settings."])
 
-    createCat(TARGET, L["Edit the target frame settings."], p, 1, nil, {p_target, p_focus})
+    p_focus.header:SetWidth(p_focus.header:GetStringWidth())
+    p_focus.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p_focus.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p_focus.breadcrumb:SetText(FOCUS)
+
+    createCat(UNITFRAME_LABEL, L["Edit the target frame settings."], p, 1, nil, {p_target, p_focus})
+    settingsMenuAddButton(UNITFRAME_LABEL,p,1,nil, {p_target, p_focus})
 
     addOption(p_target.scroll.scrollchild, L[TARGET .. ": " .. SHOW_ENEMY_CAST], nil, "target_SHOW_CASTBAR", GW.ToggleTargetFrameSettings, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target.scroll.scrollchild, SHOW_TARGET_OF_TARGET_TEXT, L["Enable the target of target frame."], "target_TARGET_ENABLED", function() GW.ShowRlPopup = true end, nil, {["TARGET_ENABLED"] = true})

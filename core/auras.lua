@@ -1,16 +1,24 @@
 local _, GW = ...
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
-local TimeCount = GW.TimeCount
+local GetSetting = GW.GetSetting
+
+local settings = {}
+
+local function UpdateSetting()
+    settings.raidDebuffScale = GetSetting("RAIDDEBUFFS_Scale")
+    settings.raidDebuffScalePrio = GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO")
+    settings.raidDispelDebuffScale = GetSetting("DISPELL_DEBUFFS_Scale")
+end
+GW.UpdateAurasSetting = UpdateSetting
 
 local function GetDebuffScaleBasedOnPrio()
-    local debuffScalePrio = GW.GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO")
     local scale = 1
 
-    if debuffScalePrio == "DISPELL" then
-        return tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
-    elseif debuffScalePrio == "IMPORTANT" then
-        return tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
+    if settings.raidDebuffScalePrio == "DISPELL" then
+        return tonumber(settings.raidDispelDebuffScale)
+    elseif settings.raidDebuffScalePrio == "IMPORTANT" then
+        return tonumber(settings.raidDebuffScale)
     end
 
     return scale
@@ -145,7 +153,6 @@ local function setBuffData(self, buffs, i)
     end
 
     local stacks = ""
-    local duration = ""
 
     if b.caster == "player" and (b.duration > 0 and b.duration < 120) then
         setAuraType(self, "bigBuff")
@@ -156,9 +163,6 @@ local function setBuffData(self, buffs, i)
 
     if b.count ~= nil and b.count > 1 then
         stacks = b.count
-    end
-    if b.timeremaning ~= nil and b.timeremaning > 0 and b.timeremaning < 500000 then
-        duration = TimeCount(b.timeremaning)
     end
 
     if b.expires < 1 or b.timeremaning > 500000 then
@@ -182,7 +186,6 @@ local function setBuffData(self, buffs, i)
     end
 
     self.auraid = b.id
-    self.duration:SetText(duration)
     self.stacks:SetText(stacks)
     self.icon:SetTexture(b.icon)
 
@@ -258,7 +261,8 @@ local function UpdateBuffLayout(self, event, anchorPos)
             if not frame:IsShown() then
                 frame:Show()
             end
-
+            frame.nextUpdate = 0
+            frame.duration:SetText("")
             frame:SetScript("OnUpdate", frame.OnUpdatefunction)
 
             local isBig = frame.typeAura == "bigBuff"
@@ -280,9 +284,9 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 if GW.ImportendRaidDebuff[list[index].spellID] and list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
                     size = size * debuffScale
                 elseif GW.ImportendRaidDebuff[list[index].spellID] then
-                    size = size * tonumber(GW.GetSetting("RAIDDEBUFFS_Scale"))
+                    size = size * tonumber(settings.raidDebuffScale)
                 elseif list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
-                    size = size * tonumber(GW.GetSetting("DISPELL_DEBUFFS_Scale"))
+                    size = size * tonumber(settings.raidDispelDebuffScale)
                 end
             end
 
@@ -320,6 +324,7 @@ local function UpdateBuffLayout(self, event, anchorPos)
         elseif frame then
             frame:Hide()
             frame:SetScript("OnUpdate", nil)
+            frame.endTime = nil
         end
     end
 
@@ -342,16 +347,22 @@ end
 GW.AddForProfiling("auras", "auraFrame_OnEnter", auraFrame_OnEnter)
 
 local function auraFrame_OnUpdate(self, elapsed)
-    if self.throt < 0 and self.expires ~= nil and self:IsShown() then
-        self.throt = 0.2
-        self.duration:SetText(TimeCount(self.expires - GetTime()))
-        -- update tooltip
+    if self.nextUpdate > 0 then
+        self.nextUpdate = self.nextUpdate - elapsed
+    elseif self:IsShown() and self.expires ~= nil then
+        local text, nextUpdate = GW.GetTimeInfo(self.expires - GetTime())
+        self.nextUpdate = nextUpdate
+        self.duration:SetText(text)
+    end
 
+    if self.elapsed and self.elapsed > 0.1 then
         if GameTooltip:IsOwned(self) then
             auraFrame_OnEnter(self)
         end
+
+        self.elapsed = 0
     else
-        self.throt = self.throt - elapsed
+        self.elapsed = (self.elapsed or 0) + elapsed
     end
 end
 GW.AddForProfiling("auras", "auraFrame_OnUpdate", auraFrame_OnUpdate)
@@ -364,7 +375,7 @@ local function CreateAuraFrame(name, parent)
     f.cooldown:SetDrawSwipe(1)
     f.cooldown:SetReverse(false)
     f.cooldown:SetHideCountdownNumbers(true)
-    f.throt = -1
+    f.nextUpdate = 0
 
     f.status.stacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
     f.status.duration:SetFont(UNIT_NAME_FONT, 10)
@@ -385,6 +396,7 @@ end
 GW.CreateAuraFrame = CreateAuraFrame
 
 local function LoadAuras(self)
+    UpdateSetting()
     for i = 1, 40 do
         local frame = CreateAuraFrame("Gw" .. self.unit .. "buffFrame" .. i, self.auras)
         frame.unit = self.unit

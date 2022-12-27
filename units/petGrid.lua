@@ -8,14 +8,22 @@ local players
 local previewSteps = {40, 20, 10, 5}
 local previewStep = 0
 
+local settings = {}
+
+local function UpdateSettings()
+    settings.raidAuraTooltipInCombat = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT_PET")
+    settings.raidUnitMarkers = GetSetting("RAID_UNIT_MARKERS_PET")
+    settings.raidGrow = GetSetting("RAID_GROW_PET")
+    settings.raidWidth = GetSetting("RAID_WIDTH_PET")
+    settings.raidHeight = GetSetting("RAID_HEIGHT_PET")
+    settings.raidContainerWidth = GetSetting("RAID_CONT_WIDTH_PET")
+    settings.raidContainerHeight = GetSetting("RAID_CONT_HEIGHT_PET")
+    settings.raidUnitsPerColumn = ceil(GetSetting("RAID_UNITS_PER_COLUMN_PET"))
+    settings.raidAnchor = GetSetting("RAID_ANCHOR_PET")
+end
+GW.UpdatePetGridSettings = UpdateSettings
+
 local function GetRaidPetFramesMeasures(players)
-    -- Get settings
-    local grow = GetSetting("RAID_GROW_PET")
-    local w = GetSetting("RAID_WIDTH_PET")
-    local h = GetSetting("RAID_HEIGHT_PET")
-    local cW = GetSetting("RAID_CONT_WIDTH_PET")
-    local cH = GetSetting("RAID_CONT_HEIGHT_PET")
-    local per = ceil(GetSetting("RAID_UNITS_PER_COLUMN_PET"))
     local m = 2
 
     -- Determine # of players
@@ -33,17 +41,17 @@ local function GetRaidPetFramesMeasures(players)
     end
 
     -- Directions
-    local grow1, grow2 = strsplit("+", grow)
+    local grow1, grow2 = strsplit("+", settings.raidGrow)
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     -- Rows, cols and cell size
-    local sizeMax1, sizePer1 = isV and cH or cW, isV and h or w
-    local sizeMax2, sizePer2 = isV and cW or cH, isV and w or h
+    local sizeMax1, sizePer1 = isV and settings.raidContainerHeight or settings.raidContainerWidth, isV and settings.raidHeight or settings.raidWidth
+    local sizeMax2, sizePer2 = isV and settings.raidContainerWidth or settings.raidContainerHeight, isV and settings.raidWidth or settings.raidHeight
 
     local cells1 = players
 
-    if per > 0 then
-        cells1 = min(cells1, per)
+    if settings.raidUnitsPerColumn > 0 then
+        cells1 = min(cells1, settings.raidUnitsPerColumn)
         if tonumber(sizeMax1) > 0 then
             sizePer1 = min(sizePer1, (sizeMax1 + m) / cells1 - m)
         end
@@ -153,17 +161,17 @@ local function PetGridOnEvent(self, event, unit)
             repeat
                 frame = _G["Gw" .. name .. aura .. "ItemFrame" .. i]
                 if frame then
-                    if frame.tooltipSetting == "NEVER" then
+                    if settings.raidAuraTooltipInCombat == "NEVER" then
                         frame:EnableMouse(false)
-                    elseif frame.tooltipSetting == "ALWAYS" then
+                    elseif settings.raidAuraTooltipInCombat == "ALWAYS" then
                         frame:EnableMouse(true)
-                    elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
+                    elseif settings.raidAuraTooltipInCombat == "IN_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
                         frame:EnableMouse(false)
-                    elseif frame.tooltipSetting == "IN_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
+                    elseif settings.raidAuraTooltipInCombat == "IN_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
                         frame:EnableMouse(true)
-                    elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
+                    elseif settings.raidAuraTooltipInCombat == "OUT_COMBAT" and event == "PLAYER_REGEN_ENABLED" then
                         frame:EnableMouse(true)
-                    elseif frame.tooltipSetting == "OUT_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
+                    elseif settings.raidAuraTooltipInCombat == "OUT_COMBAT" and event == "PLAYER_REGEN_DISABLED" then
                         frame:EnableMouse(false)
                     end
                 end
@@ -176,7 +184,7 @@ local function PetGridOnEvent(self, event, unit)
         GW.GridSetAbsorbAmount(self)
         GW.GridSetPredictionAmount(self, "RAID_PET")
         GW.GridSetHealth(self, "RAID_PET")
-        GW.GridUpdateAwayData(self, "RAID_PET")
+        GW.GridUpdateAwayData(self, "RAID_PET", true)
         GW.GridUpdateAuras(self, "RAID_PET")
         GW.GridUpdatePower(self)
         if event == "UNIT_PET" then
@@ -216,8 +224,8 @@ local function PetGridOnEvent(self, event, unit)
         GW.GridUpdateAuras(self, "RAID_PET")
         GW.GridUpdateAwayData(self, "RAID_PET")
     elseif (event == "INCOMING_RESURRECT_CHANGED" or event == "INCOMING_SUMMON_CHANGED") and unit == self.unit then
-        GW.GridUpdateAwayData(self, "RAID_PET")
-    elseif event == "RAID_TARGET_UPDATE" and GetSetting("RAID_UNIT_MARKERS_PET") then
+        GW.GridUpdateAwayData(self, "RAID_PET", true)
+    elseif event == "RAID_TARGET_UPDATE" and settings.raidUnitMarkers then
         GW.GridUpdateRaidMarkers(self, "RAID_PET")
     end
 end
@@ -276,9 +284,11 @@ local function LoadPetGrid()
     if not GwManageGroupButton then
         GW.manageButton()
 
-        -- load missing and ignored auras, do it here bcause this code is only triggered from one of the 3 grids
-        GW.UpdateMissingAndIgnoredAuras()
+        -- load missing and ignored auras, do it here because this code is only triggered from one of the 3 grids
+        GW.UpdateGridSettings()
     end
+
+    UpdateSettings()
 
     local container = CreateFrame("Frame", "GwRaidFramePetContainer", UIParent, "GwRaidFrameContainer")
 
@@ -289,19 +299,17 @@ local function LoadPetGrid()
     RegisterMovableFrame(container, L["Raid pet's Grid"], "raid_pet_pos", "VerticalActionBarDummy", nil, {"default", "default"})
 
     hooksecurefunc(container.gwMover, "StopMovingOrSizing", function(frame)
-        local anchor = GetSetting("RAID_ANCHOR_PET")
-
-        if anchor == "GROWTH" then
-            local g1, g2 = strsplit("+", GetSetting("RAID_GROW_PET"))
-            anchor = (IsIn("DOWN", g1, g2) and "TOP" or "BOTTOM") .. (IsIn("RIGHT", g1, g2) and "LEFT" or "RIGHT")
+        if settings.raidAnchor == "GROWTH" then
+            local g1, g2 = strsplit("+", settings.raidGrow)
+            settings.raidAnchor = (IsIn("DOWN", g1, g2) and "TOP" or "BOTTOM") .. (IsIn("RIGHT", g1, g2) and "LEFT" or "RIGHT")
         end
 
-        if anchor ~= "POSITION" then
-            local x = anchor:sub(-5) == "RIGHT" and frame:GetRight() - GetScreenWidth() or anchor:sub(-4) == "LEFT" and frame:GetLeft() or frame:GetLeft() + (frame:GetWidth() - GetScreenWidth()) / 2
-            local y = anchor:sub(1, 3) == "TOP" and frame:GetTop() - GetScreenHeight() or anchor:sub(1, 6) == "BOTTOM" and frame:GetBottom() or frame:GetBottom() + (frame:GetHeight() - GetScreenHeight()) / 2
+        if settings.raidAnchor ~= "POSITION" then
+            local x = settings.raidAnchor:sub(-5) == "RIGHT" and frame:GetRight() - GetScreenWidth() or settings.raidAnchor:sub(-4) == "LEFT" and frame:GetLeft() or frame:GetLeft() + (frame:GetWidth() - GetScreenWidth()) / 2
+            local y = settings.raidAnchor:sub(1, 3) == "TOP" and frame:GetTop() - GetScreenHeight() or settings.raidAnchor:sub(1, 6) == "BOTTOM" and frame:GetBottom() or frame:GetBottom() + (frame:GetHeight() - GetScreenHeight()) / 2
 
             frame:ClearAllPoints()
-            frame:SetPoint(anchor, x, y)
+            frame:SetPoint(settings.raidAnchor, x, y)
         end
 
         if not InCombatLockdown() then

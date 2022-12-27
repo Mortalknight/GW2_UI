@@ -1,8 +1,9 @@
 local _, GW = ...
 local AFP = GW.AddProfiling
+local GetSetting = GW.GetSetting
 
 local function ApplyAlliedRacesUISkin()
-    if not GW.GetSetting("ALLIEND_RACES_UI_SKIN_ENABLED") then return end
+    if not GetSetting("ALLIEND_RACES_UI_SKIN_ENABLED") then return end
 
     AlliedRacesFrame.NineSlice:SetAlpha(0)
     AlliedRacesFramePortrait:SetAlpha(0)

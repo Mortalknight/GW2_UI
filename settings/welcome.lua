@@ -17,10 +17,8 @@ AddForProfiling("welcome", "settings_OnClick", settings_OnClick)
 local function toggle_OnClick(self)
     if self:GetText() == L["Changelog"] then
         self:GetParent().welcome:Hide()
-        self:GetParent().changelog:Show()
         self:SetText(L["Welcome"])
     else
-        self:GetParent().changelog:Hide()
         self:GetParent().welcome:Show()
         self:SetText(L["Changelog"])
     end
@@ -47,7 +45,6 @@ local function button1_OnClick()
 
     -- hide buttons
     wpanel.settings:Hide()
-    wpanel.changelogORwelcome:Hide()
 
     -- Start install Process
     if step == 0 then
@@ -226,14 +223,10 @@ local function setDefaultOpenLayout()
     wpanel.welcome.button1:Hide()
     wpanel.welcome.button2:Hide()
     wpanel.settings:Show()
-    wpanel.changelogORwelcome:Show()
 end
 
 local function createPanel()
     wpanel = CreateFrame("Frame", nil, UIParent, "GwWelcomePageTmpl")
-    wpanel.changelog.scroll:SetScrollChild(wpanel.changelog.scroll.scrollchild)
-    wpanel.changelog.scroll.scrollchild:SetSize(wpanel.changelog.scroll:GetSize())
-    wpanel.changelog.scroll.scrollchild:SetWidth(wpanel.changelog.scroll:GetWidth() - 20)
 
     wpanel.header:SetFont(DAMAGE_TEXT_FONT,30,"OUTLINE")
     wpanel.header:SetTextColor(1,0.95,0.8,1)
@@ -241,27 +234,11 @@ local function createPanel()
     wpanel.subHeader:SetFont(DAMAGE_TEXT_FONT,16,"OUTLINE")
     wpanel.subHeader:SetTextColor(0.9,0.85,0.7,1)
 
-    wpanel.changelog.header:SetFont(DAMAGE_TEXT_FONT,14)
-    wpanel.changelog.header:SetTextColor(0.8,0.75,0.6,1)
-
-    wpanel.changelog.scroll.scrollchild.text:SetFont(DAMAGE_TEXT_FONT,14)
-    wpanel.changelog.scroll.scrollchild.text:SetTextColor(0.8,0.75,0.6,1)
-
-    wpanel.changelog.header:SetText(L["Changelog"])
-
     wpanel.subHeader:SetText(GW.VERSION_STRING)
-    wpanel.changelog.scroll.scrollchild.text:SetText(GW.GW_CHANGELOGS)
-    wpanel.changelog.scroll.slider:SetMinMaxValues(0, wpanel.changelog.scroll.scrollchild.text:GetStringHeight())
-    wpanel.changelog.scroll.slider.thumb:SetHeight(100)
-    wpanel.changelog.scroll.slider:SetValue(1)
-    wpanel.changelogORwelcome:SetText(L["Changelog"])
 
     -- settings button
     wpanel.settings.target = GwSettingsWindow
     wpanel.settings:SetScript("OnClick", settings_OnClick)
-
-    -- changelog/welcome toggle button
-    wpanel.changelogORwelcome:SetScript("OnClick", toggle_OnClick)
 
     -- pixel perfect toggle
     wpanel.welcome.button0:SetScript("OnClick", button1_OnClick)
@@ -277,21 +254,7 @@ local function ShowWelcomePanel()
     end
     step = 0
     setDefaultOpenLayout()
-    wpanel.changelogORwelcome:SetText(L["Changelog"])
-    wpanel.changelog:Hide()
     wpanel.welcome:Show()
     wpanel:Show()
 end
 GW.ShowWelcomePanel = ShowWelcomePanel
-
-local function ShowChangelogPanel()
-    if not wpanel then
-        createPanel()
-    end
-    setDefaultOpenLayout()
-    wpanel.changelogORwelcome:SetText(L["Welcome"])
-    wpanel.welcome:Hide()
-    wpanel.changelog:Show()
-    wpanel:Show()
-end
-GW.ShowChangelogPanel = ShowChangelogPanel

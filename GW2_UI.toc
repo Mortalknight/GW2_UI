@@ -2,7 +2,7 @@
 ## Title: |cffffedbaGW2 UI|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
-## OptionalDeps: Details, MoveAnything, _DebugLog, BugSack, !Stragglers, ACU, Krowi_AchievementFilter
+## OptionalDeps: Details, MoveAnything, _DebugLog, BugSack, !Stragglers, ACU
 ## Version: @project-version@
 ## X-Website: https://www.curseforge.com/wow/addons/gw2-ui
 ## X-Curse-Project-ID: 94310
@@ -35,6 +35,9 @@ locales\itIT.lua
 
 core\consts.lua
 core\init.lua
+settings\defaults.lua
+settings\api.lua
+
 core\staticPopupDialogs.lua
 core\raid_debuffs.lua
 core\toolkit.lua
@@ -50,8 +53,7 @@ core\misc.lua
 core\disableBlizzard.lua
 core\notaint.lua
 
-settings\defaults.lua
-settings\api.lua
+settings\settings_menu.lua
 settings\settings.xml
 settings\panel_modules.xml
 settings\panel_profiles.xml
@@ -59,6 +61,7 @@ settings\panel_raid.xml
 settings\panel_party.xml
 settings\settings.lua
 settings\panel_chat.lua
+settings\panel_objectives.lua
 settings\panel_modules.lua
 settings\panel_player.lua
 settings\panel_target.lua
@@ -77,6 +80,8 @@ settings\welcome.lua
 settings\layouts.lua
 settings\moveableFrameHandler.lua
 settings\credits.lua
+settings\panel_overview.lua
+settings\panel_overview.xml
 
 core\EditMode.lua
 
@@ -163,6 +168,7 @@ mainbar\autoRepair.lua
 
 inventory\bag.xml
 inventory\bank.xml
+inventory\autoSell.lua
 inventory\inventory.lua
 inventory\bag.lua
 inventory\bank.lua
@@ -171,6 +177,7 @@ inventory\lootframe.lua
 inventory\extendVendor.lua
 
 immersive\skins\skins.xml
+immersive\skins\achievements.xml
 immersive\skins\worldmap.xml
 immersive\questview.xml
 immersive\toast.xml
@@ -183,16 +190,19 @@ immersive\chatbubbles.lua
 immersive\tooltips.lua
 immersive\damagetext.xml
 immersive\damagetext.lua
+immersive\eventTracker.lua
 
 objectives\scenarioWidgets\heroicVisions.lua
 objectives\scenarioWidgets\jailersTower.lua
 objectives\scenarioWidgets\warfronts.lua
 objectives\scenarioWidgets\emberCourt.lua
+objectives\scenarioWidgets\dragonflightCookingEvent.lua
 objectives\questtracker.xml
 objectives\minimapButtons.lua
 objectives\minimapInstanceDifficult.lua
 objectives\map.lua
 objectives\worldmap.lua
+objectives\mythicPlus.lua
 objectives\objectives.lua
 objectives\scenario.lua
 objectives\notifications.lua
