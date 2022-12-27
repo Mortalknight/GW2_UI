@@ -135,30 +135,6 @@ local function updateGuildButton(self, event)
 end
 AFP("updateGuildButton", updateGuildButton)
 
-local function TalentButtonOnEvent(self)
-    ClassTalentFrame_LoadUI()
-    local configId = ClassTalentFrame.TalentsTab:GetConfigID()
-    local talentTreeId = ClassTalentFrame.TalentsTab:GetTalentTreeID()
-    local excludeStagedChangesForCurrencies = ClassTalentFrame.TalentsTab.excludeStagedChangesForCurrencies
-
-    if configId and configId > 0 and talentTreeId and talentTreeId > 0 then
-        local treeCurrencyInfo = C_Traits.GetTreeCurrencyInfo(configId, talentTreeId, excludeStagedChangesForCurrencies)
-        local counter = treeCurrencyInfo[1].quantity + treeCurrencyInfo[2].quantity
-        if counter > 0 then
-            self.GwNotify:Show()
-            self.GwNotifyText:SetText(counter)
-            self.GwNotifyText:Show()
-        else
-            self.GwNotify:Hide()
-            self.GwNotifyText:Hide()
-        end
-    else
-        self.GwNotify:Hide()
-        self.GwNotifyText:Hide()
-    end
-end
-AFP("TalentButtonOnEvent", TalentButtonOnEvent)
-
 local function updateQuestLogButton(_, event)
     if event ~= "QUEST_LOG_UPDATE" then
         return
@@ -478,12 +454,13 @@ local function setupMicroButtons(mbf)
         sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
     end
     -- TalentMicroButton
+    GW.InitTalentDataText()
     TalentMicroButton:ClearAllPoints()
     TalentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
     TalentMicroButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     TalentMicroButton:HookScript("OnEnter", GW.TalentButton_OnEnter)
     TalentMicroButton:SetScript("OnClick", GW.TalentButton_OnClick)
-    TalentMicroButton:HookScript("OnEvent", TalentButtonOnEvent)
+    TalentMicroButton:HookScript("OnEvent", GW.TalentButton_OnEvent)
     TalentMicroButton:RegisterEvent("PLAYER_TALENT_UPDATE")
     TalentMicroButton:RegisterEvent("PLAYER_ENTERING_WORLD")
     TalentMicroButton:RegisterEvent("TRAIT_TREE_CURRENCY_INFO_UPDATED")
@@ -492,6 +469,9 @@ local function setupMicroButtons(mbf)
     TalentMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
     TalentMicroButton:RegisterEvent("TRAIT_NODE_CHANGED")
     TalentMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    TalentMicroButton:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    TalentMicroButton:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
+    TalentMicroButton:RegisterEvent("TRAIT_CONFIG_DELETED")
     hooksecurefunc(TalentMicroButton, "EvaluateAlertVisibility", function(self)
         MicroButtonPulseStop(self) -- hide blizzard flash
     end)
