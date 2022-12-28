@@ -95,7 +95,7 @@ local function addObjective(block, text, finished, firstunfinishedobjectiv, qty,
     if finished or not text then
         return
     end
-    
+
     block.numObjectives = block.numObjectives + 1
     local objectiveBlock = getObjectiveBlock(block, firstunfinishedobjectiv)
 
@@ -236,6 +236,7 @@ local function updateAchievementLayout(self)
         end
     end
 
+    self.oldHeight = GW.RoundInt(self:GetHeight())
     self:SetHeight(savedHeight)
 
     for i = shownIndex, 25 do

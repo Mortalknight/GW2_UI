@@ -291,6 +291,7 @@ local function setUpBlock(questIDs, collapsed)
                 end
 
                 savedContainerHeight = savedContainerHeight + GwBonusObjectiveBlock.height + 10
+                GwBonusObjectiveBlock.savedHeight = savedContainerHeight
                 if GwBonusObjectiveBlock.hasItem then
                     GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. blockIndex, GW.updateQuestItemPositions, {GwBonusObjectiveBlock.actionButton, savedContainerHeight, "EVENT", GwBonusObjectiveBlock})
                 end
@@ -351,9 +352,10 @@ local function updateBonusObjective(self)
     end
 
     local foundEvent, shownBlocks = setUpBlock(trackedEventIDs, self.collapsed)
+    GwQuesttrackerContainerBonusObjectives.numEvents = shownBlocks
 
     for i = (shownBlocks > 0 and not self.collapsed and shownBlocks + 1) or 1, 20 do
-        if _G["GwBonusObjectiveBlock" .. i] ~= nil then
+        if _G["GwBonusObjectiveBlock" .. i] then
             _G["GwBonusObjectiveBlock" .. i].questID = false
             _G["GwBonusObjectiveBlock" .. i].questLogIndex = 0
             _G["GwBonusObjectiveBlock" .. i]:Hide()

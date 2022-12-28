@@ -72,6 +72,7 @@ local function updateArenaFrameHeight()
             end
         end
     end
+    GwQuesttrackerContainerArenaBGFrames.oldHeight = GW.RoundInt(GwQuesttrackerContainerArenaBGFrames:GetHeight())
     GwQuesttrackerContainerArenaBGFrames:SetHeight(i > 0 and (35 * i) or 1)
 end
 GW.AddForProfiling("arenaFrames", "updateArenaFrameHeight", updateArenaFrameHeight)

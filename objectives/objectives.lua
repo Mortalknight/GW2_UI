@@ -907,6 +907,8 @@ local function updateQuestLogLayout(self)
                     updateQuest(self, block, q)
                     block:Show()
                     savedHeightCampagin = savedHeightCampagin + block.height
+                    -- save some values for later use
+                    block.savedHeight = savedHeightCampagin
                     GW.CombatQueue_Queue("update_tracker_campaign_itembutton_position" .. block.index, updateQuestItemPositions, {block.actionButton, savedHeightCampagin, nil, block})
                 else
                     counterCampaign = counterCampaign + 1
@@ -944,6 +946,8 @@ local function updateQuestLogLayout(self)
                     block.isFrequency = isFrequency
                     block:Show()
                     savedHeightQuest = savedHeightQuest + block.height
+
+                    block.savedHeight = savedHeightQuest
                     GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. block.index, updateQuestItemPositions, {block.actionButton, savedHeightQuest, "QUEST", block})
                 else
                     counterQuest = counterQuest + 1
@@ -957,8 +961,13 @@ local function updateQuestLogLayout(self)
         end
     end
 
+    GwQuesttrackerContainerCampaign.oldHeight = GW.RoundInt(GwQuesttrackerContainerCampaign:GetHeight())
+    GwQuesttrackerContainerQuests.oldHeight = GW.RoundInt(GwQuesttrackerContainerQuests:GetHeight())
     GwQuesttrackerContainerCampaign:SetHeight(counterCampaign > 0 and savedHeightCampagin or 1)
     GwQuesttrackerContainerQuests:SetHeight(counterQuest > 0 and savedHeightQuest or 1)
+
+    GwQuesttrackerContainerQuests.numQuests = counterQuest
+    GwQuesttrackerContainerCampaign.numQuests = counterCampaign
 
     -- hide other quests
     for i = counterCampaign + 1, 25 do
@@ -1043,6 +1052,7 @@ local function updateQuestLogLayoutSingle(self, questID, added)
             end
         end
 
+        containerName.oldHeight = GW.RoundInt(containerName:GetHeight())
         containerName:SetHeight(savedHeight)
         header:Show()
 
@@ -1159,6 +1169,39 @@ local function bonus_OnEnter(self)
     GameTooltip:Show()
 end
 AFP("bonus_OnEnter", bonus_OnEnter)
+
+local function AdjustItemButtonPositions()
+    for i = 1, 25 do
+        if _G["GwCampaignBlock" .. i] then
+            if i <= GwQuesttrackerContainerCampaign.numQuests then
+                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_position" .. _G["GwCampaignBlock" .. i].index, updateQuestItemPositions, {_G["GwCampaignBlock" .. i].actionButton, _G["GwCampaignBlock" .. i].savedHeight, nil, _G["GwCampaignBlock" .. i]})
+            else
+                GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. i, UpdateQuestItem, {_G["GwCampaignBlock" .. i]})
+            end
+        end
+        if _G["GwQuestBlock" .. i] then
+            if i <= GwQuesttrackerContainerQuests.numQuests then
+                GW.CombatQueue_Queue("update_tracker_quest_itembutton_position" .. _G["GwQuestBlock" .. i].index, updateQuestItemPositions, {_G["GwQuestBlock" .. i].actionButton, _G["GwQuestBlock" .. i].savedHeight, "QUEST", _G["GwQuestBlock" .. i]})
+            else
+                GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. i, UpdateQuestItem, {_G["GwQuestBlock" .. i]})
+            end
+        end
+
+        if i <= 20 then
+            if _G["GwBonusObjectiveBlock" .. i] then
+                if GwQuesttrackerContainerBonusObjectives.numEvents <= i then
+                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_position" .. i, GW.updateQuestItemPositions, {_G["GwBonusObjectiveBlock" .. i].actionButton, _G["GwBonusObjectiveBlock" .. i].savedHeight, "EVENT", _G["GwBonusObjectiveBlock" .. i]})
+                else
+                    GW.CombatQueue_Queue("update_tracker_bonus_itembutton_remove" .. i, UpdateQuestItem, {_G["GwBonusObjectiveBlock" .. i]})
+                end
+            end
+        end
+    end
+
+    if GwScenarioBlock.hasItem then
+        GW.CombatQueue_Queue("update_tracker_scenario_itembutton_position", updateQuestItemPositions, {GwScenarioBlock.actionButton, GwScenarioBlock.height, "SCENARIO", GwScenarioBlock})
+    end
+end
 
 local function CollapseHeader(self, forceCollapse, forceOpen)
     if (not self.collapsed or forceCollapse) and not forceOpen then
@@ -1375,23 +1418,64 @@ local function LoadQuestTracker()
     end)
 
     -- some hooks to set the itembuttons correct
-    hooksecurefunc(fBoss, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
-    hooksecurefunc(fArenaBG, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
-    fNotify:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
-    fNotify:HookScript("OnHide", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
-    hooksecurefunc(fAchv, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
-    hooksecurefunc(fScen, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
-    fCampaign:HookScript("OnSizeChanged", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED") end) end)
-    GwQuesttrackerContainerCampaign.header:HookScript("OnShow", function()
-        if fQuest.shouldUpdate then
-            C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED"); fQuest.shouldUpdate = false end)
+    local UpdateItemButtonPositionAndAdjustScrollFrame = function()
+        QuestTrackerLayoutChanged()
+        AdjustItemButtonPositions()
+    end
+
+    fBoss.oldHeight = 1
+    fArenaBG.oldHeight = 1
+    fScen.oldHeight = 1
+    fAchv.oldHeight = 1
+    fQuest.oldHeight = 1
+    fCampaign.oldHeight = 1
+
+    hooksecurefunc(fBoss, "SetHeight", function(_, height)
+        if fBoss.oldHeight ~= GW.RoundInt(height) then
+            C_Timer.After(0.25, function()
+                UpdateItemButtonPositionAndAdjustScrollFrame()
+            end)
         end
     end)
-    GwQuesttrackerContainerCampaign.header:HookScript("OnHide", function()
-        if fQuest.shouldUpdate then
-            C_Timer.After(0.25, function() tracker_OnEvent(fQuest, "QUEST_WATCH_LIST_CHANGED"); fQuest.shouldUpdate = false end)
+    hooksecurefunc(fArenaBG, "SetHeight", function(_, height)
+        if fArenaBG.oldHeight ~= GW.RoundInt(height) then
+            C_Timer.After(0.25, function()
+                UpdateItemButtonPositionAndAdjustScrollFrame()
+            end)
         end
     end)
+    hooksecurefunc(fAchv, "SetHeight", function(_, height)
+        if fAchv.oldHeight ~= GW.RoundInt(height) then
+            C_Timer.After(0.25, function()
+                UpdateItemButtonPositionAndAdjustScrollFrame()
+            end)
+        end
+    end)
+    hooksecurefunc(fScen, "SetHeight", function(_, height)
+        if fScen.oldHeight ~= GW.RoundInt(height) then
+            C_Timer.After(0.25, function()
+                UpdateItemButtonPositionAndAdjustScrollFrame()
+            end)
+        end
+    end)
+
+    hooksecurefunc(fQuest, "SetHeight", function(_, height)
+        if fQuest.oldHeight ~= GW.RoundInt(height) then
+            C_Timer.After(0.25, function()
+                UpdateItemButtonPositionAndAdjustScrollFrame()
+            end)
+        end
+    end)
+    hooksecurefunc(fCampaign, "SetHeight", function(_, height)
+        if fCampaign.oldHeight ~= GW.RoundInt(height) then
+            C_Timer.After(0.25, function()
+                UpdateItemButtonPositionAndAdjustScrollFrame()
+            end)
+        end
+    end)
+
+    fNotify:HookScript("OnShow", function() C_Timer.After(0.25, function() UpdateItemButtonPositionAndAdjustScrollFrame() end) end)
+    fNotify:HookScript("OnHide", function() C_Timer.After(0.25, function() UpdateItemButtonPositionAndAdjustScrollFrame() end) end)
 
     GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", nil, {"scaleable", "height"})
     fTracker:ClearAllPoints()

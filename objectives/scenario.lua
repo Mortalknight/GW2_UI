@@ -177,6 +177,8 @@ local function updateCurrentScenario(self, event, ...)
         AddMawBuffsBelowMinimapFrame(GwScenarioBlock, 0)
 
         GwScenarioBlock:SetHeight(GwScenarioBlock.height)
+
+        GwQuesttrackerContainerScenario.oldHeight = GW.RoundInt(GwQuesttrackerContainerScenario:GetHeight())
         GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
 
         GwQuestTrackerTimer.timer:Hide()
@@ -344,6 +346,7 @@ local function updateCurrentScenario(self, event, ...)
     end
 
     GwScenarioBlock:SetHeight(GwScenarioBlock.height - intGWQuestTrackerHeight)
+    GwQuesttrackerContainerScenario.oldHeight = GW.RoundInt(GwQuesttrackerContainerScenario:GetHeight())
     GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
 end
 GW.updateCurrentScenario = updateCurrentScenario
