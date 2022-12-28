@@ -525,8 +525,6 @@ L["<Assign specializations>"] = "<Spezialisierung zuweisen>"
 L["Bottom"] = "Unten"
 L["Health Bar Position"] = "Gesundheitsbalken Position"
 L["One or more of the changes you have made require a UI reload."] = "Eine oder mehrere Einstellungen, die du vorgenommen hast, benötigen ein Neuladen des Benutzerinterfaces um in Effekt zu treten."
-
---NEW
 L["Vignettes"] = "Vignetten"
 L["Setup"] = "Installieren"
 L["System info"] = "Systeminfo"
