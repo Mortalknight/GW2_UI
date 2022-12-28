@@ -923,7 +923,6 @@ local function LoadHudArt()
     GW.MixinHideDuringPetAndOverride(hudArtFrame)
 
     ToggleHudBackground()
-    DevTools_Dump(settings)
     GW.RegisterScaleFrame(hudArtFrame.actionBarHud)
 
     hudArtFrame:SetScript("OnEvent", hud_OnEvent)
