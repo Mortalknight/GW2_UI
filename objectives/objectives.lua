@@ -1419,6 +1419,7 @@ local function LoadQuestTracker()
 
     -- some hooks to set the itembuttons correct
     local UpdateItemButtonPositionAndAdjustScrollFrame = function()
+        GW.Debug("Update Quest Buttons")
         QuestTrackerLayoutChanged()
         AdjustItemButtonPositions()
     end
