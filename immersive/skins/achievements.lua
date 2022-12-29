@@ -1565,6 +1565,6 @@ end
 
 local function LoadAchivementSkin()
     if not GW.GetSetting("ACHIEVEMENT_SKIN_ENABLED") then return end
-    --GW.RegisterLoadHook(skinAchevement, "Blizzard_AchievementUI")
+    GW.RegisterLoadHook(skinAchevement, "Blizzard_AchievementUI")
 end
 GW.LoadAchivementSkin = LoadAchivementSkin
