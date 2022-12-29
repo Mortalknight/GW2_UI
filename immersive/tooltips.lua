@@ -56,8 +56,6 @@ local function UpdateSettings()
     settings.hideUnitTooltipInCombat = GetSetting("HIDE_TOOLTIP_IN_COMBAT_UNIT")
     settings.hideTooltipInCombat = GetSetting("HIDE_TOOLTIP_IN_COMBAT")
     settings.hideTooltipInCombatOverride = GetSetting("HIDE_TOOLTIP_IN_COMBAT_OVERRIDE")
-
-    DevTools_Dump(settings)
 end
 GW.UpdateTooltipSettings = UpdateSettings
 
