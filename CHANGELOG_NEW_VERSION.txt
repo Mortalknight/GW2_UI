@@ -10,7 +10,7 @@ FIXES
     - Fix HUD background setting
     - Fix HUD border setting
     - Fix tooltip hide in combat setting
-    - Fix tooltip healtbar setting
+    - Fix tooltip healthbar setting
 
 6.1.0
 NEW

@@ -28,7 +28,7 @@ addChange("6.1.1",{
   {ct.bug,[=[Fix HUD background setting]=]},
   {ct.bug,[=[Fix HUD border setting]=]},
   {ct.bug,[=[Fix tooltip hide in combat setting]=]},
-  {ct.bug,[=[Fix tooltip healtbar setting]=]},
+  {ct.bug,[=[Fix tooltip healthbar setting]=]},
 })
 addChange("6.1.0",{
     {ct.feature,[=[Added brand new settings page]=]},
