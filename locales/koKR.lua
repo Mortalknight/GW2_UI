@@ -518,5 +518,10 @@ L["Edit objectives settings."] = "목표 설정 수정"
 L["Collapse all objectives in M+"] = "쐐기던전 안에서 모든 목표 접기"
 L["Ready to craft"] = "크래프트 준비"
 L["Watch list"] = "감시 목록"
+L["|cffFFFFFFLeft Click:|r Show Talent Specialization UI"] = "|cffFFFFFF좌클릭:|r Show 전문화 및 특성 UI 보기"
+L["|cffFFFFFFShift + Left Click:|r Change Talent Specialization"] = "|cffFFFFFFShift + 좌클릭:|r 전문화 및 특성 변경"
+L["|cffFFFFFFControl + Left Click:|r Change Loadout"] = "|cffFFFFFFControl + 좌클릭:|r 로드아웃 변경"
+L["|cffFFFFFFRight Click:|r Change Loot Specialization"] = "|cffFFFFFF우클릭:|r 전리품 습득 전문화 변경"
+L["Loadouts"] = "로드아웃"
 
 --STRING WHICH NEEDS TRANSLATION
