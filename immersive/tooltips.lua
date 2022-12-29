@@ -737,7 +737,7 @@ local function GameTooltip_SetDefaultAnchor(self, parent)
     if self:IsForbidden() or self:GetAnchorType() ~= "ANCHOR_NONE" then return end
 
     if self.StatusBar then
-        self.StatusBar:SetAlpha(healtBarPosition == "DISABLED" and 0 or 1)
+        self.StatusBar:SetAlpha(settings.healthbarPosition == "DISABLED" and 0 or 1)
         if settings.healthbarPosition == "BOTTOM" then
             if self.StatusBar.anchoredToTop then
                 self.StatusBar:ClearAllPoints()
