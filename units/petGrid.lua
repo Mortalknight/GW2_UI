@@ -242,7 +242,7 @@ local function GridOnUpdate(self, elapsed)
     end
 end
 
-local function GridToggleFramesPreviewRaidPet(_, _, moveHudMode, hudMoving)
+local function GridToggleFramesPreviewRaidPet(moveHudMode, hudMoving)
     previewStep = max((previewStep + 1) % (#previewSteps + 1), hudMoving and 1 or 0)
 
     if previewStep == 0 or moveHudMode then
