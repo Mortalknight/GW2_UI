@@ -533,7 +533,7 @@ local function collectAllIcons()
                 if (isKnown and numSlots > 0) then
                     for k = 1, numSlots do
                         local spellID, _, isKnownSlot = GetFlyoutSlotInfo(ID, k)
-                        if isKnownSlot then
+                        if isKnownSlot and spellID then
                             local fileID = GetSpellTexture(spellID)
                             if fileID then
                                 activeIcons[fileID] = true
