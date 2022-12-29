@@ -1,3 +1,17 @@
+6.1.1
+CHANGES
+    - Update Talent Micro Button tooltip
+    - Aura Indicator updates:
+        - Evoker: Added Dream Breath (echo), Reversion (echo), Life Bind
+
+FIXES
+    - Fix game freezes with scenario tracker
+    - Fix actionbar taint on spec switch
+    - Fix HUD background setting
+    - Fix HUD border setting
+    - Fix tooltip hide in combat setting
+    - Fix tooltip healtbar setting
+
 6.1.0
 NEW
     - Added brand new settings page

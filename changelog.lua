@@ -14,6 +14,22 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
+addChange("6.1.1",{
+  {ct.change,[=[Aura Indicator updates:
+
+- Evoker:
+     Added Dream Breath (echo)
+     Added Reversion (echo)
+     Added Life Bind]=]},
+  {ct.change,[=[Update Talent Micro Button tooltip]=]},
+
+  {ct.bug,[=[Fix game freezes with scenario tracker]=]},
+  {ct.bug,[=[Fix actionbar taint on spec switch]=]},
+  {ct.bug,[=[Fix HUD background setting]=]},
+  {ct.bug,[=[Fix HUD border setting]=]},
+  {ct.bug,[=[Fix tooltip hide in combat setting]=]},
+  {ct.bug,[=[Fix tooltip healtbar setting]=]},
+})
 addChange("6.1.0",{
     {ct.feature,[=[Added brand new settings page]=]},
     {ct.feature,[=[Added Community Feast and Siege On Dragonbane Keep timer to worldmap]=]},
