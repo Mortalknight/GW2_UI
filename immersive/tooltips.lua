@@ -56,11 +56,13 @@ local function UpdateSettings()
     settings.hideUnitTooltipInCombat = GetSetting("HIDE_TOOLTIP_IN_COMBAT_UNIT")
     settings.hideTooltipInCombat = GetSetting("HIDE_TOOLTIP_IN_COMBAT")
     settings.hideTooltipInCombatOverride = GetSetting("HIDE_TOOLTIP_IN_COMBAT_OVERRIDE")
+
+    DevTools_Dump(settings)
 end
 GW.UpdateTooltipSettings = UpdateSettings
 
 local function IsModKeyDown(setting)
-    local k = setting and settings[setting] or settings.idModifier
+    local k = setting or settings.idModifier
     return k == "ALWAYS" or ((k == "SHIFT" and IsShiftKeyDown()) or (k == "CTRL" and IsControlKeyDown()) or (k == "ALT" and IsAltKeyDown()))
 end
 
@@ -928,8 +930,9 @@ local function SkinBattlePetTooltip()
 end
 
 local function shouldHiddenInCombat(tooltip)
-    if tooltip:GetUnit() then
-        local unitReaction = UnitReaction("player", tooltip:GetUnit())
+    local _, unit = tooltip:GetUnit()
+    if unit then
+        local unitReaction = UnitReaction("player", unit)
         if not unitReaction then return false end
 
         if settings.hideUnitTooltipInCombat == "ALL" or
@@ -1121,13 +1124,13 @@ local function LoadTooltips()
     eventFrame2:SetScript("OnEvent", function(_, event)
         if not settings.hideTooltipInCombat then return end
 
-        if event == "PLAYER_REGEN_DISABLED" and shouldHiddenInCombat(GameTooltip) and not IsModKeyDown("hideTooltipInCombatOverride") then
+        if event == "PLAYER_REGEN_DISABLED" and shouldHiddenInCombat(GameTooltip) and not IsModKeyDown(settings.hideTooltipInCombatOverride) then
             GameTooltip:Hide()
         end
     end)
 
     GameTooltip:HookScript("OnShow", function(self)
-        if settings.hideTooltipInCombat and InCombatLockdown() and shouldHiddenInCombat(self) and not IsModKeyDown("hideTooltipInCombatOverride") then
+        if settings.hideTooltipInCombat and InCombatLockdown() and shouldHiddenInCombat(self) and not IsModKeyDown(settings.hideTooltipInCombatOverride) then
             self:Hide()
         end
     end)
