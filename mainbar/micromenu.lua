@@ -634,7 +634,8 @@ local function checkElvUI()
     end
 
     -- at this point we know we should own the microbar; fix what ElvUI did to it
-    ElvUI_MicroBar = nil
+    ElvUI_MicroBar.backdrop:Kill()
+    ElvUI_MicroBar:Kill()
 
     ab.UpdateMicroButtonsParent = GW.NoOp
     ab.UpdateMicroButtons = GW.NoOp
