@@ -1,5 +1,4 @@
 local _, GW = ...
-local L = GW.L
 local GwSettingsMenuSearchable
 local AddToAnimation
 local animations
@@ -33,7 +32,6 @@ local function CharacterMenuButton_OnLoad(self, odd,hasArrow, margin)
     end
 
     self:GetFontString():SetPoint("LEFT", self, "LEFT", margin, 0)
-
 end
 
 --create pool for search result breadcrumbs
@@ -67,71 +65,70 @@ local function hideBreadCrumbFrames()
 end
 
 local function updateScrollFrame(self)
-  local height = 0
-   for i=1,#menuButtons do
-     local b = menuButtons[i]
-     height = height + b:GetHeight()
-     if b.content:IsVisible() then
-       height = height + b.content.height
-     end
-   end
+    local height = 0
+    for i=1,#menuButtons do
+        local b = menuButtons[i]
+        height = height + b:GetHeight()
+        if b.content:IsVisible() then
+        height = height + b.content.height
+        end
+    end
 
-  local scrollMax = max(0, height - self.scroll:GetHeight())
+    local scrollMax = max(0, height - self.scroll:GetHeight())
 
-  if scrollMax==0 then
-    self.scroll.slider.thumb:Hide()
-  else
-    self.scroll.slider.thumb:Show()
-  end
+    if scrollMax==0 then
+        self.scroll.slider.thumb:Hide()
+    else
+        self.scroll.slider.thumb:Show()
+    end
 
-  self.scroll.scrollchild:SetHeight(self.scroll:GetHeight())
-  self.scroll.scrollchild:SetWidth(self.scroll:GetWidth() - 20)
-  self.scroll.slider:SetMinMaxValues(0, scrollMax)
-  --Calculate how big the thumb is this is IMPORTANT for UX :<
-  self.scroll.slider.thumb:SetHeight(self.scroll.slider:GetHeight() * (self.scroll:GetHeight() / (scrollMax + self.scroll:GetHeight())) )
-  self.scroll.slider:SetValue(1)
-  self.scroll.maxScroll = scrollMax
-
+    self.scroll.scrollchild:SetHeight(self.scroll:GetHeight())
+    self.scroll.scrollchild:SetWidth(self.scroll:GetWidth() - 20)
+    self.scroll.slider:SetMinMaxValues(0, scrollMax)
+    --Calculate how big the thumb is this is IMPORTANT for UX :<
+    self.scroll.slider.thumb:SetHeight(self.scroll.slider:GetHeight() * (self.scroll:GetHeight() / (scrollMax + self.scroll:GetHeight())) )
+    self.scroll.slider:SetValue(1)
+    self.scroll.maxScroll = scrollMax
 end
 
 local function toggleMenuItem(self,active)
     if AddToAnimation==nil then
-      AddToAnimation = GW.AddToAnimation
-      animations = GW.animations
+        AddToAnimation = GW.AddToAnimation
+        animations = GW.animations
     end
     if active then
-      self.content:Show()
-      self.button.arrow:SetRotation(0)
-      self.content:SetHeight(self.content.height)
-      updateScrollFrame(GwSettingsMenuSearchable)
-      AddToAnimation(self:GetName(), 0,1, GetTime(), 0.2, function()
-        local p = animations[self:GetName()].progress
-        self.button.arrow:SetRotation(-1.5707*p)
-      end, "noease")
+        self.content:Show()
+        self.button.arrow:SetRotation(0)
+        self.content:SetHeight(self.content.height)
+        updateScrollFrame(GwSettingsMenuSearchable)
+        AddToAnimation(self:GetName(), 0,1, GetTime(), 0.2, function()
+            local p = animations[self:GetName()].progress
+            self.button.arrow:SetRotation(-1.5707*p)
+        end, "noease")
 
-      return
+        return
     end
     self.content:Hide()
     self.content:SetHeight(0)
     updateScrollFrame(GwSettingsMenuSearchable)
     --can be done with animation groups
     AddToAnimation(self:GetName(), 1,0, GetTime(), 0.2, function()
-      local p = animations[self:GetName()].progress
-      self.button.arrow:SetRotation(-1.5707*p)
+        local p = animations[self:GetName()].progress
+        self.button.arrow:SetRotation(-1.5707*p)
     end, "noease")
 
 end
 local function resetMenu(collapse)
     for _,menuItem in pairs(menuButtons) do
-      if menuItem.content.buttonCount>0 then
-        for _, subButton in pairs(menuItem.content.buttons) do
-          subButton.activeTexture:Hide()
+        if menuItem.content.buttonCount>0 then
+            for _, subButton in pairs(menuItem.content.buttons) do
+            subButton.activeTexture:Hide()
+            end
         end
-      end
-      menuItem.button.activeTexture:Hide()
-      if menuItem.content:IsVisible() and collapse then
-        toggleMenuItem(menuItem,false)
-      end
+        menuItem.button.activeTexture:Hide()
+        if menuItem.content:IsVisible() and collapse then
+            toggleMenuItem(menuItem,false)
+        end
     end
 end
 
@@ -198,7 +195,6 @@ local function searchInputChanged(self)
     self:SetTextColor(1, 1, 1)
     switchCat(nil,GwSettingsSearchResultPanel)
 
-
     local box_padding = 8
     local pY = -48
     local padding = {x = box_padding, y = 0}
@@ -214,7 +210,7 @@ local function searchInputChanged(self)
             local titleText = of.displayName
             titleText = titleText:lower()
             text = text:lower()
-            if titleText ~= nil and string.find(titleText, text, 1, true) then
+            if titleText ~= nil and string.find(titleText, text, 1, true) and of.optionType ~= "header" then
                 GwSettingsSearchResultPanel.sub:Hide()
                 -- get the original points and save them for later when we need to put the frame back, also save the dropdown container parent
                 local point, relativeTo, _, xOfs, yOfs = of:GetPoint()
@@ -227,7 +223,7 @@ local function searchInputChanged(self)
                     og_dd_container_parent = nil
                 }
                 if of.optionType == "dropdown" then
-                  of.searchAble.og_dd_container_parent = of.container:GetParent()
+                    of.searchAble.og_dd_container_parent = of.container:GetParent()
                 end
                 matchingOptionFrames[#matchingOptionFrames + 1] = of
 
@@ -296,14 +292,13 @@ local function settingsMenuAddButton(name,basePanel,icon,backgroundOverride,fram
 
     --anchor menuItem to last button if any
     if newButtonAnchorPoint~=nil then
-      menuItem:SetPoint("TOPLEFT",newButtonAnchorPoint,"BOTTOMLEFT",0,0)
+        menuItem:SetPoint("TOPLEFT",newButtonAnchorPoint,"BOTTOMLEFT",0,0)
     else
-      menuItem:SetPoint("TOPLEFT",GwSettingsMenuSearchable.scroll.scrollchild,"TOPLEFT",0,0)
+        menuItem:SetPoint("TOPLEFT",GwSettingsMenuSearchable.scroll.scrollchild,"TOPLEFT",0,0)
     end
 
-
     hooksecurefunc(menuItem.content, "SetHeight", function(self,height)
-      menuItem.contentSizer:SetHeight(math.max(36,height))
+        menuItem.contentSizer:SetHeight(math.max(36,height))
     end)
 
     menuItem.button:SetText(name)
@@ -312,7 +307,6 @@ local function settingsMenuAddButton(name,basePanel,icon,backgroundOverride,fram
     local zebra  = false
     local fistChildFrame = true
 
-
     --set default button count and height for margins of sub buttons
     menuItem.content.buttonCount = 0
     menuItem.content.height = menuItem:GetHeight()
@@ -320,32 +314,32 @@ local function settingsMenuAddButton(name,basePanel,icon,backgroundOverride,fram
 
     -- create sub buttons for each panel
     for _,panelFrame in pairs(frames) do
-      panelFrame:Hide()
-      local subButton = CreateFrame("Button", name.."GwSearchableSubButton"..menuItem.content.buttonCount,menuItem.content,"GwSettingsMenuSearchableSubButton")
+        panelFrame:Hide()
+        local subButton = CreateFrame("Button", name.."GwSearchableSubButton"..menuItem.content.buttonCount,menuItem.content,"GwSettingsMenuSearchableSubButton")
 
-      --Grab the breadcrumb title from the panel
-      subButton:SetText(panelFrame.breadcrumb:GetText())
+        --Grab the breadcrumb title from the panel
+        subButton:SetText(panelFrame.breadcrumb:GetText())
 
-      -- set parent button needed
-      subButton.parentButton = menuItem
-      subButton.refFrame = panelFrame;
-      --anchor subbutton to content frame
-      subButton:SetPoint("TOPLEFT",menuItem.content,"TOPLEFT",0,menuItem.content.buttonCount*-subButton:GetHeight())
-      --save total height for later usage
-      menuItem.content.height = menuItem.content.height + subButton:GetHeight()
-      menuItem.content.buttons[menuItem.content.buttonCount] = subButton
-      zebra  = (menuItem.content.buttonCount % 2)==1 or false
-      CharacterMenuButton_OnLoad(subButton,zebra,false,40)
+        -- set parent button needed
+        subButton.parentButton = menuItem
+        subButton.refFrame = panelFrame;
+        --anchor subbutton to content frame
+        subButton:SetPoint("TOPLEFT",menuItem.content,"TOPLEFT",0,menuItem.content.buttonCount*-subButton:GetHeight())
+        --save total height for later usage
+        menuItem.content.height = menuItem.content.height + subButton:GetHeight()
+        menuItem.content.buttons[menuItem.content.buttonCount] = subButton
+        zebra  = (menuItem.content.buttonCount % 2)==1 or false
+        CharacterMenuButton_OnLoad(subButton,zebra,false,40)
 
-      --setup click handler for showing panels
-      subButton:SetScript("OnClick",function()
-        resetMenu(false)
-        switchCat(subButton,basePanel,panelFrame)
-        GwSettingsMenuSearchable.search.input:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-        GwSettingsMenuSearchable.search.input:SetText(SEARCH)
-       end)
+        --setup click handler for showing panels
+        subButton:SetScript("OnClick",function()
+            resetMenu(false)
+            switchCat(subButton,basePanel,panelFrame)
+            GwSettingsMenuSearchable.search.input:SetTextColor(178 / 255, 178 / 255, 178 / 255)
+            GwSettingsMenuSearchable.search.input:SetText(SEARCH)
+        end)
 
-      menuItem.content.buttonCount = menuItem.content.buttonCount + 1
+        menuItem.content.buttonCount = menuItem.content.buttonCount + 1
     end
 
     zebra = (btnIndex % 2)==1 or false
@@ -353,27 +347,27 @@ local function settingsMenuAddButton(name,basePanel,icon,backgroundOverride,fram
         CharacterMenuButton_OnLoad(menuItem.button,zebra,true,30)
         -- set click action depending on child frames
         menuItem.button:SetScript("OnClick",function()
-          local shouldShow = not menuItem.content:IsVisible()
-           --Only display first panel if we toggle on
-           resetMenu(true)
-           if shouldShow then
-             switchCat(menuItem.content.buttons[0],basePanel, menuItem.content.buttons[0].refFrame)
-          end
-          --Display submenu
-         toggleMenuItem(menuItem, shouldShow)
-         GwSettingsMenuSearchable.search.input:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-         GwSettingsMenuSearchable.search.input:SetText(SEARCH)
-         end)
+            local shouldShow = not menuItem.content:IsVisible()
+            --Only display first panel if we toggle on
+            resetMenu(true)
+            if shouldShow then
+                switchCat(menuItem.content.buttons[0],basePanel, menuItem.content.buttons[0].refFrame)
+            end
+            --Display submenu
+            toggleMenuItem(menuItem, shouldShow)
+            GwSettingsMenuSearchable.search.input:SetTextColor(178 / 255, 178 / 255, 178 / 255)
+            GwSettingsMenuSearchable.search.input:SetText(SEARCH)
+        end)
         -- hide conent frame by default
         menuItem.content:Hide()
         menuItem.content:SetHeight(0)
     else
-      -- if no child frames we just toggle
-      CharacterMenuButton_OnLoad(menuItem.button,zebra,false,10)
-      menuItem.button:SetScript("OnClick",function()
-         resetMenu(true)
-         switchCat(menuItem.button,basePanel)
-       end)
+        -- if no child frames we just toggle
+        CharacterMenuButton_OnLoad(menuItem.button,zebra,false,10)
+        menuItem.button:SetScript("OnClick",function()
+            resetMenu(true)
+            switchCat(menuItem.button,basePanel)
+        end)
     end
 
     --Assign next buttons anchorpoint
@@ -383,48 +377,44 @@ end
 GW.settingsMenuAddButton = settingsMenuAddButton;
 
 local function settingMenuToggle(toggle)
-  if toggle then
-    GwSettingsMenuSearchable:Show()
-  else
-    GwSettingsMenuSearchable:Hide()
-  end
+    if toggle then
+        GwSettingsMenuSearchable:Show()
+    else
+        GwSettingsMenuSearchable:Hide()
+    end
 end
 GW.settingMenuToggle = settingMenuToggle
 
 local function loadSettingsSearchAbleMenu()
+    GwSettingsMenuSearchable = CreateFrame("Frame", "GwSettingsMenuSearchable",GwSettingsWindow,"GwSettingsMenuSearchable")
+    GwSettingsMenuSearchable.scroll:SetScrollChild(GwSettingsMenuSearchable.scroll.scrollchild)
 
-  GwSettingsMenuSearchable = CreateFrame("Frame", "GwSettingsMenuSearchable",GwSettingsWindow,"GwSettingsMenuSearchable")
-  GwSettingsMenuSearchable.scroll:SetScrollChild(GwSettingsMenuSearchable.scroll.scrollchild)
+    GwSettingsSearchResultPanel = CreateFrame("Frame", "GwSettingsSearchResultPanel",GwSettingsWindow.panels,"GwSettingsSearchResultPanel")
+    GwSettingsSearchResultPanel.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    GwSettingsSearchResultPanel.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    GwSettingsSearchResultPanel.header:SetText(SEARCH)
+    GwSettingsSearchResultPanel.sub:SetFont(UNIT_NAME_FONT, 12)
+    GwSettingsSearchResultPanel.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    GwSettingsSearchResultPanel.sub:SetText(SETTINGS_SEARCH_NOTHING_FOUND)
+    GwSettingsSearchResultPanel:Hide()
+    GwSettingsSearchResultPanel.scroll:SetScrollChild(GwSettingsSearchResultPanel.scroll.scrollchild)
 
+    -- joink!
+    local fnGWP_input_OnEscapePressed = function(self)
+        self:ClearFocus()
+    end
+    local fnGWP_input_OnEnterPressed = function(self)
+        self:ClearFocus()
+    end
+    GwSettingsMenuSearchable.search.input:SetFont(UNIT_NAME_FONT, 14, "")
+    GwSettingsMenuSearchable.search.input:SetTextColor(178 / 255, 178 / 255, 178 / 255)
+    GwSettingsMenuSearchable.search.input:SetText(SEARCH)
+    GwSettingsMenuSearchable.search.input:SetScript("OnEscapePressed", fnGWP_input_OnEscapePressed)
+    GwSettingsMenuSearchable.search.input:SetScript("OnEditFocusGained", function(self) if self:GetText()==SEARCH then self:SetText("") end end)
+    GwSettingsMenuSearchable.search.input:SetScript("OnEditFocusLost", function(self) if self:GetText()==nil or self:GetText()=="" then self:SetTextColor(178 / 255, 178 / 255, 178 / 255) self:SetText(SEARCH) end end)
+    GwSettingsMenuSearchable.search.input:SetScript("OnEnterPressed", fnGWP_input_OnEnterPressed)
+    GwSettingsMenuSearchable.search.input:SetScript("OnTextChanged",searchInputChanged)
 
-
-  GwSettingsSearchResultPanel = CreateFrame("Frame", "GwSettingsSearchResultPanel",GwSettingsWindow.panels,"GwSettingsSearchResultPanel")
-  GwSettingsSearchResultPanel.header:SetFont(DAMAGE_TEXT_FONT, 20)
-  GwSettingsSearchResultPanel.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-  GwSettingsSearchResultPanel.header:SetText(SEARCH)
-  GwSettingsSearchResultPanel.sub:SetFont(UNIT_NAME_FONT, 12)
-  GwSettingsSearchResultPanel.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-  GwSettingsSearchResultPanel.sub:SetText(SETTINGS_SEARCH_NOTHING_FOUND)
-  GwSettingsSearchResultPanel:Hide()
-  GwSettingsSearchResultPanel.scroll:SetScrollChild(GwSettingsSearchResultPanel.scroll.scrollchild)
-
-
-  -- joink!
-  local fnGWP_input_OnEscapePressed = function(self)
-      self:ClearFocus()
-  end
-  local fnGWP_input_OnEnterPressed = function(self)
-    self:ClearFocus()
-  end
-  GwSettingsMenuSearchable.search.input:SetFont(UNIT_NAME_FONT, 14, "")
-  GwSettingsMenuSearchable.search.input:SetTextColor(178 / 255, 178 / 255, 178 / 255)
-  GwSettingsMenuSearchable.search.input:SetText(SEARCH)
-  GwSettingsMenuSearchable.search.input:SetScript("OnEscapePressed", fnGWP_input_OnEscapePressed)
-  GwSettingsMenuSearchable.search.input:SetScript("OnEditFocusGained", function(self) if self:GetText()==SEARCH then self:SetText("") end end)
-  GwSettingsMenuSearchable.search.input:SetScript("OnEditFocusLost", function(self) if self:GetText()==nil or self:GetText()=="" then self:SetTextColor(178 / 255, 178 / 255, 178 / 255) self:SetText(SEARCH) end end)
-  GwSettingsMenuSearchable.search.input:SetScript("OnEnterPressed", fnGWP_input_OnEnterPressed)
-  GwSettingsMenuSearchable.search.input:SetScript("OnTextChanged",searchInputChanged)
-
-  updateScrollFrame(GwSettingsMenuSearchable)
+    updateScrollFrame(GwSettingsMenuSearchable)
 end
 GW.loadSettingsSearchAbleMenu  = loadSettingsSearchAbleMenu

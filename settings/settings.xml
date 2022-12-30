@@ -450,6 +450,30 @@
         </Layers>
     </Button>
 
+    <Frame name="GwOptionBoxHeader" inherits="GwStandardButton" frameStrata="HIGH" virtual="true">
+        <Size x="600" y="25"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+        </Anchors>
+        <Layers>
+            <Layer level="OVERLAY" textureSubLevel="2">
+                <FontString parentKey="title" text="SettingsHeader" inherits="GameFontNormal" justifyH="LEFT">
+                    <Size x="600" y="25"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="0" y="-10"/>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                    <Size x="600" y="2"></Size>
+                    <TexCoords left="0.5" right="1" top="0" bottom="1"/>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" x="0" y="-10"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+
     <Button name="GwStandardButton" text="" virtual="true">
         <Size x="128" y="24" />
         <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/button"/>
