@@ -135,7 +135,7 @@ local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon,
 end
 GW.CreateCat = CreateCat
 
-local function AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine)
+local function AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
     if not panel then
         return
     end
@@ -154,6 +154,7 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
     opt.incompatibleAddonsType = incompatibleAddons
     opt.isIncompatibleAddonLoaded = false
     opt.isIncompatibleAddonLoadedButOverride = false
+    opt.groupHeaderName = groupHeaderName
 
     if params then
         for k, v in pairs(params) do opt[k] = v end
@@ -178,7 +179,7 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
 end
 GW.AddOption = AddOption
 
-local function AddOptionButton(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+local function AddOptionButton(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, groupHeaderName)
     if not panel then
         return
     end
@@ -196,6 +197,7 @@ local function AddOptionButton(panel, name, desc, optionName, callback, params, 
     opt.incompatibleAddonsType = incompatibleAddons
     opt.isIncompatibleAddonLoaded = false
     opt.isIncompatibleAddonLoadedButOverride = false
+    opt.groupHeaderName = groupHeaderName
 
     if params then
         for k, v in pairs(params) do opt[k] = v end
@@ -229,8 +231,8 @@ local function AddGroupHeader(panel, name)
 end
 GW.AddGroupHeader = AddGroupHeader
 
-local function AddOptionColorPicker(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+local function AddOptionColorPicker(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
 
     opt.optionType = "colorPicker"
 
@@ -238,8 +240,8 @@ local function AddOptionColorPicker(panel, name, desc, optionName, callback, par
 end
 GW.AddOptionColorPicker = AddOptionColorPicker
 
-local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons, forceNewLine, groupHeaderName)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
 
     opt.min = min
     opt.max = max
@@ -251,16 +253,16 @@ local function AddOptionSlider(panel, name, desc, optionName, callback, min, max
 end
 GW.AddOptionSlider = AddOptionSlider
 
-local function AddOptionText(panel, name, desc, optionName, callback, multiline, params, dependence, incompatibleAddons)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+local function AddOptionText(panel, name, desc, optionName, callback, multiline, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
 
     opt.multiline = multiline
     opt.optionType = "text"
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, hasProfile, isSound, noNewLine)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, isSound, noNewLine, forceNewLine, groupHeaderName)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
 
     opt.options = {}
     opt.options = options_list
@@ -559,6 +561,7 @@ local function InitPanel(panel, hasScroll)
         of.options_names = v.options_names
         of.newLine = newLine
         of.optionType = v.optionType
+        of.groupHeaderName = v.groupHeaderName
 
         if (newLine and not first) or padding.x > maximumXSize then
             padding.y = padding.y + (pY + box_padding)

@@ -2,6 +2,7 @@ local _, GW = ...
 local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionSlider = GW.AddOptionSlider
+local addGroupHeader = GW.AddGroupHeader
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
 local L = GW.L
@@ -40,7 +41,6 @@ local function LoadAlerts(panel)
         nil,
         nil,
         nil,
-        nil,
         true,
         true
     )
@@ -56,7 +56,6 @@ local function LoadAlerts(panel)
         soundKeys,
         nil,
         {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_NEW_SPELL"] = true},
-        nil,
         nil,
         nil,
         nil,
@@ -78,7 +77,6 @@ local function LoadAlerts(panel)
         nil,
         nil,
         nil,
-        nil,
         true,
         true
     )
@@ -94,7 +92,6 @@ local function LoadAlerts(panel)
         soundKeys,
         nil,
         {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_REPAIR"] = true},
-        nil,
         nil,
         nil,
         nil,
@@ -116,7 +113,6 @@ local function LoadAlerts(panel)
         nil,
         nil,
         nil,
-        nil,
         true,
         true
     )
@@ -132,7 +128,6 @@ local function LoadAlerts(panel)
         soundKeys,
         nil,
         {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_RARE"] = true},
-        nil,
         nil,
         nil,
         nil,
@@ -154,7 +149,6 @@ local function LoadAlerts(panel)
         nil,
         nil,
         nil,
-        nil,
         true,
         true
     )
@@ -170,7 +164,6 @@ local function LoadAlerts(panel)
         soundKeys,
         nil,
         {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_CALL_TO_ARMS"] = true},
-        nil,
         nil,
         nil,
         nil,
@@ -192,7 +185,6 @@ local function LoadAlerts(panel)
         nil,
         nil,
         nil,
-        nil,
         true,
         true
     )
@@ -208,7 +200,6 @@ local function LoadAlerts(panel)
         soundKeys,
         nil,
         {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_RITUAL_OF_SUMMONING"] = true},
-        nil,
         nil,
         nil,
         nil,
@@ -230,7 +221,6 @@ local function LoadAlerts(panel)
         nil,
         nil,
         nil,
-        nil,
         true,
         true
     )
@@ -246,7 +236,6 @@ local function LoadAlerts(panel)
         soundKeys,
         nil,
         {["ALERTFRAME_ENABLED"] = true, ["ALERTFRAME_NOTIFICATION_MAGE_PORTAL"] = true},
-        nil,
         nil,
         nil,
         nil,
@@ -270,10 +259,12 @@ local function LoadEventTracker(panel)
     p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.breadcrumb:SetText(BATTLE_PET_SOURCE_7)
 
-    addOption(p.scroll.scrollchild, L["Community Feast"], nil, "WORLD_EVENTS_COMMUNITY_FEAST_ENABLED", GW.UpdateWorldEventTrackers)
-    addOption(p.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_COMMUNITY_FEAST_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true})
+    -- Community Feast
+    addGroupHeader(p.scroll.scrollchild, L["Community Feast"])
+    addOption(p.scroll.scrollchild, L["Community Feast"], nil, "WORLD_EVENTS_COMMUNITY_FEAST_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Community Feast"])
+    addOption(p.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true}, nil, nil, L["Community Feast"])
+    addOption(p.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_COMMUNITY_FEAST_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true}, nil, nil, L["Community Feast"])
+    addOption(p.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true}, nil, nil, L["Community Feast"])
     addOptionSlider(
         p.scroll.scrollchild,
         L["Alert Second"],
@@ -285,13 +276,18 @@ local function LoadEventTracker(panel)
         nil,
         0,
         {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true},
-        1
+        1,
+        nil,
+        nil,
+        L["Community Feast"]
     )
 
-    addOption(p.scroll.scrollchild, L["Siege On Dragonbane Keep"], nil, "WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED", GW.UpdateWorldEventTrackers)
-    addOption(p.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_DRAGONBANE_KEEP_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true, ["WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"] = true})
+    -- Dragonbane Keep
+    addGroupHeader(p.scroll.scrollchild, L["Siege On Dragonbane Keep"])
+    addOption(p.scroll.scrollchild, L["Siege On Dragonbane Keep"], nil, "WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Siege On Dragonbane Keep"])
+    addOption(p.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true}, nil, nil, L["Siege On Dragonbane Keep"])
+    addOption(p.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_DRAGONBANE_KEEP_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true}, nil, nil, L["Siege On Dragonbane Keep"])
+    addOption(p.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true, ["WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"] = true}, nil, nil, L["Siege On Dragonbane Keep"])
     addOptionSlider(
         p.scroll.scrollchild,
         L["Alert Second"],
@@ -303,7 +299,31 @@ local function LoadEventTracker(panel)
         nil,
         0,
         {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true, ["WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"] = true},
-        1
+        1,
+        nil,
+        nil,
+        L["Siege On Dragonbane Keep"]
+    )
+
+    -- Fishing nets
+    addGroupHeader(p.scroll.scrollchild, L["Iskaaran Fishing Net"])
+    addOption(p.scroll.scrollchild, L["Iskaaran Fishing Net"], nil, "WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Iskaaran Fishing Net"])
+    addOption(p.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"] = true}, nil, nil, L["Iskaaran Fishing Net"])
+    addOptionSlider(
+        p.scroll.scrollchild,
+        L["Alert Timeout"],
+        L["Alert will be disabled after the set value (hours)."],
+        "WORLD_EVENTS_ISKAARAN_FISHING_NET_DISABLE_ALERT_AFTER_HOURS",
+        GW.UpdateWorldEventTrackers,
+        0,
+        144,
+        nil,
+        0,
+        {["WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"] = true, ["WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT"] = true},
+        1,
+        nil,
+        nil,
+        L["Iskaaran Fishing Net"]
     )
 
     return p

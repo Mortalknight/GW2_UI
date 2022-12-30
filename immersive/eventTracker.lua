@@ -3,12 +3,15 @@ local L = GW.L
 local GetSetting = GW.GetSetting
 
 --[[
- 	Credits: fang2hou -> ElvUI_Windtools
+    Credits: fang2hou -> ElvUI_Windtools
 ]]--
 
 local settings = {
     communityFeast = {},
-    dragonbaneKeep = {}
+    dragonbaneKeep = {},
+    iskaaranFishingNet = {
+        playerData = {}
+    }
 }
 
 local function UpdateSettings()
@@ -27,14 +30,33 @@ local function UpdateSettings()
         alertSeconds = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS"),
         stopAlertIfCompleted = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED")
     }
+
+    settings.iskaaranFishingNet = {
+        enabled = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"),
+        alert = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT"),
+        disableAlertAfterHours = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_DISABLE_ALERT_AFTER_HOURS"),
+        -- this are player settings no global ones
+        playerData = GetSetting("ISKAARAN_FISHING_NET_DATA")
+    }
 end
 GW.UpdateEventTrackerSettings = UpdateSettings
 
+local function UpdateIskaaranFishingNetPlayerData(key, value)
+    if not settings.iskaaranFishingNet.playerData[key] then
+        settings.iskaaranFishingNet.playerData[key] = {}
+    end
+    settings.iskaaranFishingNet.playerData[key] = value
+
+    GW.SetSetting("ISKAARAN_FISHING_NET_DATA", settings.iskaaranFishingNet.playerData)
+end
+
 local mapFrame
+local eventHandlers = {}
 
 local eventList = {
     "CommunityFeast",
-    "SiegeOnDragonbaneKeep"
+    "SiegeOnDragonbaneKeep",
+    "IskaaranFishingNet"
 }
 
 local infoColors = {
@@ -47,6 +69,13 @@ local infoColors = {
     warning = "ffdd57"
 }
 
+local env = {
+    fishingNetPosition = {
+        [1] = {x = 0.63585, y = 0.75349},
+        [2] = {x = 0.64514, y = 0.74178}
+    }
+}
+
 local colorPlatte = {
     blue = {
         { r = 0.32941, g = 0.52157, b = 0.93333, a = 1 },
@@ -55,6 +84,10 @@ local colorPlatte = {
     red = {
         { r = 0.92549, g = 0.00000, b = 0.54902, a = 1 },
         { r = 0.98824, g = 0.40392, b = 0.40392, a = 1 }
+    },
+    purple = {
+        {r = 0.27843, g = 0.46275, b = 0.90196, a = 1},
+        {r = 0.55686, g = 0.32941, b = 0.91373, a = 1}
     },
     running = {
         { r = 0.00000, g = 0.94902, b = 0.37647, a = 1 },
@@ -216,6 +249,10 @@ local functionFactory = {
                     return
                 end
 
+                if self.args.filter and not self.args:filter() then
+                    return
+                end
+
                 if self.timeLeft <= self.args.alertSecond then
                     self.args["alertCache"][self.nextEventIndex] = true
                     local eventIconString = GW.GetIconString(self.args.icon, 16, 16)
@@ -260,6 +297,233 @@ local functionFactory = {
             end
         },
     },
+    triggerTimer = {
+        init = function(self)
+            self.icon = self:CreateTexture(nil, "ARTWORK")
+            self.icon:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+            self.icon.backdrop:SetOutside(self.icon, 1, 1)
+            self.statusBar = CreateFrame("StatusBar", nil, self)
+            self.name = self.statusBar:CreateFontString(nil, "OVERLAY")
+            self.timerText = self.statusBar:CreateFontString(nil, "OVERLAY")
+            self.runningTip = self.statusBar:CreateFontString(nil, "OVERLAY")
+
+            reskinStatusBar(self.statusBar)
+
+            self.statusBar.spark = self.statusBar:CreateTexture(nil, "ARTWORK", nil, 1)
+            self.statusBar.spark:SetTexture("Interface/CastingBar/UI-CastingBar-Spark")
+            self.statusBar.spark:SetBlendMode("ADD")
+            self.statusBar.spark:SetPoint("CENTER", self.statusBar:GetStatusBarTexture(), "RIGHT", 0, 0)
+            self.statusBar.spark:SetSize(4, 26)
+        end,
+        setup = function(self)
+            self.icon:SetTexture(self.args.icon)
+            self.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+            self.icon:SetSize(22, 22)
+            self.icon:ClearAllPoints()
+            self.icon:SetPoint("LEFT", self, "LEFT", 0, 0)
+
+            self.statusBar:ClearAllPoints()
+            self.statusBar:SetPoint("TOPLEFT", self, "LEFT", 26, 2)
+            self.statusBar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 6)
+
+            self.timerText:SetFont(UNIT_NAME_FONT, 13, "OUTLINE")
+            self.timerText:ClearAllPoints()
+            self.timerText:SetPoint("TOPRIGHT", self, "TOPRIGHT", -2, -6)
+
+            self.name:SetFont(UNIT_NAME_FONT, 13, "OUTLINE")
+            self.name:ClearAllPoints()
+            self.name:SetPoint("TOPLEFT", self, "TOPLEFT", 30, -6)
+            self.name:SetText(self.args.label)
+
+            self.runningTip:SetFont(UNIT_NAME_FONT, 13, "OUTLINE")
+            self.runningTip:SetText(self.args.runningText)
+            self.runningTip:SetPoint("CENTER", self.statusBar, "BOTTOM", 0, 0)
+        end,
+        ticker = {
+            interval = 0.3,
+            dateUpdater = function(self)
+                if not C_QuestLog.IsQuestFlaggedCompleted(70871) then
+                    self.netTable = nil
+                    return
+                end
+
+                local db = settings.iskaaranFishingNet.playerData
+                if not db then
+                    return
+                end
+
+                self.netTable = {}
+                local now = GetServerTime()
+                for netIndex = 1, #env.fishingNetPosition do
+                    if not db[netIndex] or db[netIndex] == 0 then
+                        self.netTable[netIndex] = "NOT_STARTED"
+                    else
+                        self.netTable[netIndex] = db[netIndex] + self.args.interval - now
+                    end
+                end
+            end,
+            uiUpdater = function(self)
+                local done = {}
+                local notStarted = {}
+                local waiting = {}
+
+                if self.netTable then
+                    for netIndex, timeLeft in pairs(self.netTable) do
+                        if type(timeLeft) == "string" and timeLeft == "NOT_STARTED" then
+                            tinsert(notStarted, netIndex)
+                        else
+                            if type(timeLeft) == "number" then
+                                if timeLeft <= 0 then
+                                    tinsert(done, netIndex)
+                                else
+                                    tinsert(waiting, netIndex)
+                                end
+                            end
+                        end
+                    end
+                end
+
+                local tip = ""
+
+                if #done == #env.fishingNetPosition then
+                    tip = StringByTemplate(L["All nets can be collected"], "success")
+                    self.timerText:SetText("")
+
+                    self.statusBar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColorFromTable(colorPlatte.running[1]), CreateColorFromTable(colorPlatte.running[2]))
+                    self.statusBar:SetMinMaxValues(0, 1)
+                    self.statusBar:SetValue(1)
+
+                    GW.FrameFlash(self.runningTip, 1, 0.3, 1, true)
+                elseif #waiting > 0 then
+                    if #done > 0 then
+                        local netsText = ""
+                        for i = 1, #done do
+                            netsText = netsText .. "#" .. done[i]
+                            if i ~= #done then
+                                netsText = netsText .. ", "
+                            end
+                        end
+                        tip = StringByTemplate(format(L["Net %s can be collected"], netsText), "success")
+                    else
+                        tip = QUEUED_STATUS_WAITING
+                    end
+
+                    local maxTimeLeft = 0
+                    for _, index in pairs(waiting) do
+                        if self.netTable[index] > maxTimeLeft then
+                            maxTimeLeft = self.netTable[index]
+                        end
+                    end
+
+                    if type(self.args.barColor[1]) == "number" then
+                        self.statusBar:SetStatusBarColor(unpack(self.args.barColor))
+                    else
+                        self.statusBar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColorFromTable(self.args.barColor[1]), CreateColorFromTable(self.args.barColor[2]))
+                    end
+
+                    self.timerText:SetText(secondToTime(maxTimeLeft))
+                    self.statusBar:SetMinMaxValues(0, self.args.interval)
+                    self.statusBar:SetValue(maxTimeLeft)
+
+                    GW.StopFlash(self.runningTip)
+                else
+                    tip = StringByTemplate(L["No Nets Set"], "danger")
+                    self.timerText:SetText("")
+                    self.statusBar:SetMinMaxValues(0, 1)
+                    self.statusBar:SetValue(0)
+
+                    GW.StopFlash(self.runningTip)
+                end
+
+                self.runningTip:SetText(tip)
+            end,
+            alert = function(self)
+                if not self.netTable then
+                    return
+                end
+
+                local db = settings.iskaaranFishingNet.playerData
+                if not db then
+                    return
+                end
+
+                if not self.args["alertCache"] then
+                    self.args["alertCache"] = {}
+                end
+
+                local needAnnounce = false
+                local readyNets = {}
+
+                for netIndex, timeLeft in pairs(self.netTable) do
+                    if type(timeLeft) == "number" and timeLeft <= 0 then
+                        if not self.args["alertCache"][netIndex] then
+                            self.args["alertCache"][netIndex] = {}
+                        end
+
+                        if not self.args["alertCache"][netIndex][db[netIndex]] then
+                            self.args["alertCache"][netIndex][db[netIndex]] = true
+                            local hour = self.args.disableAlertAfterHours
+                            if not hour or hour == 0 or (hour * 60 * 60 + timeLeft) > 0 then
+                                tinsert(readyNets, netIndex)
+                                needAnnounce = true
+                            end
+                        end
+                    end
+                end
+
+                if needAnnounce then
+                    local netsText = ""
+                    for i = 1, #readyNets do
+                        netsText = netsText .. "#" .. readyNets[i]
+                        if i ~= #readyNets then
+                            netsText = netsText .. ", "
+                        end
+                    end
+
+                    local eventIconString = GW.GetIconString(self.args.icon, 16, 16)
+                    local gradientName = getGradientText(self.args.eventName, self.args.barColor)
+                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. format(eventIconString .. " " .. gradientName .. " " .. L["Net %s can be collected"], netsText)):gsub("*", GW.Gw2Color))
+                end
+            end
+        },
+        tooltip = {
+            onEnter = function(self)
+                GameTooltip:ClearLines()
+                GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 8)
+                GameTooltip:SetText(GW.GetIconString(self.args.icon, 16, 16) .. " " .. self.args.eventName, 1, 1, 1)
+                GameTooltip:AddLine(" ")
+
+                if not self.netTable or #self.netTable == 0 then
+                    GameTooltip:AddLine(StringByTemplate(L["No Nets Set"], "danger"))
+                    GameTooltip:Show()
+                    return
+                end
+                GameTooltip:AddLine(L["Fishing Nets"])
+
+                for netIndex, timeLeft in pairs(self.netTable) do
+                    local text
+                    if type(timeLeft) == "number" then
+                        if timeLeft <= 0 then
+                            text = StringByTemplate(L["Can be collected"], "success")
+                        else
+                            text = StringByTemplate(secondToTime(timeLeft), "info")
+                        end
+                    else
+                        if timeLeft == "NOT_STARTED" then
+                            text = StringByTemplate(L["Can be set"], "warning")
+                        end
+                    end
+
+                    GameTooltip:AddDoubleLine(format(L["Net #%d"], netIndex), text, 1, 1, 1, 1, 1, 1)
+                end
+
+                GameTooltip:Show()
+            end,
+            onLeave = function()
+                GameTooltip:Hide()
+            end
+        }
+    }
 }
 
 local eventData = {
@@ -276,6 +540,12 @@ local eventData = {
             location = C_Map.GetMapInfo(2024).name,
             label = L["Feast"],
             runningText = L["Cooking"],
+            filter = function()
+                if not C_QuestLog.IsQuestFlaggedCompleted(67700) then
+                    return false
+                end
+                return true
+            end,
             startTimestamp = (function()
                 local timestampTable = {
                     [1] = 1670776200, -- NA
@@ -286,7 +556,7 @@ local eventData = {
                 }
                 local region = GetCurrentRegion()
                 -- TW is not a real region, so we need to check the client language if player in KR
-                if region == 2 and GetLocale() ~= "koKR" then
+                if region == 2 and GW.mylocal ~= "koKR" then
                     region = 4
                 end
 
@@ -307,6 +577,12 @@ local eventData = {
             location = C_Map.GetMapInfo(2022).name,
             barColor = colorPlatte.red,
             runningText = IN_PROGRESS,
+            filter = function()
+                if not C_QuestLog.IsQuestFlaggedCompleted(67700) then
+                    return false
+                end
+                return true
+            end,
             startTimestamp = (function()
                 local timestampTable = {
                     [1] = 1670774400, -- NA
@@ -317,15 +593,91 @@ local eventData = {
                 }
                 local region = GetCurrentRegion()
                 -- TW is not a real region, so we need to check the client language if player in KR
-                if region == 2 and GetLocale() ~= "koKR" then
+                if region == 2 and GW.mylocal ~= "koKR" then
                     region = 4
                 end
 
                 return timestampTable[region]
             end)()
         }
+    },
+    IskaaranFishingNet = {
+        dbKey = "iskaaranFishingNet",
+        args = {
+            icon = 2159815,
+            interval = 10 * 60 * 60,
+            type = "triggerTimer",
+            filter = function()
+                return C_QuestLog.IsQuestFlaggedCompleted(70871)
+            end,
+            barColor = colorPlatte.purple,
+            eventName = L["Iskaaran Fishing Net"],
+            label = L["Fishing Net"],
+            events = {
+                {
+                    "UNIT_SPELLCAST_SUCCEEDED",
+                    function(unit, _, spellID)
+                        if not unit or unit ~= "player" then
+                            return
+                        end
+
+                        if GW.locationData.mapID ~= 2022 then
+                            return
+                        end
+
+                        local lengthMap = {}
+                        local position = C_Map.GetPlayerMapPosition(GW.locationData.mapID, "player")
+                        if not position then return end
+
+                        for i, netPos in ipairs(env.fishingNetPosition) do
+                            local length = math.pow(position.x - netPos.x, 2) + math.pow(position.y - netPos.y, 2)
+                            lengthMap[i] = length
+                        end
+
+                        local min
+                        local netIndex = 0
+                        for i, length in pairs(lengthMap) do
+                            if not min or length < min then
+                                min = length
+                                netIndex = i
+                            end
+                        end
+
+                        if not min or netIndex <= 0 then
+                            return
+                        end
+
+                        local db = settings.iskaaranFishingNet.playerData
+
+                        if spellID == 377887 then -- Get Fish
+                            if db[netIndex] then
+                                db[netIndex] = nil
+                            end
+                        elseif spellID == 377883 then -- Set Net
+                            UpdateIskaaranFishingNetPlayerData(netIndex, GetServerTime() - 2)  -- cast time
+                        end
+                    end
+                }
+            }
+        }
     }
 }
+
+local function HandlerEvent(_, event, ...)
+    if eventHandlers[event] then
+        for _, handler in ipairs(eventHandlers[event]) do
+            handler(...)
+        end
+    end
+end
+
+local function AddEventHandler(event, handler)
+    if not eventHandlers[event] then
+        eventHandlers[event] = {}
+    end
+
+    tinsert(eventHandlers[event], handler)
+end
 
 local trackers = {
     pool = {}
@@ -343,6 +695,7 @@ function trackers:get(event)
     frame:SetSize(220, 30)
 
     frame.args = data.args
+    frame.dbKey = data.dbKey
 
     if functionFactory[data.args.type] then
         local functions = functionFactory[data.args.type]
@@ -359,7 +712,7 @@ function trackers:get(event)
 
         if functions.ticker then
             frame.tickerInstance = C_Timer.NewTicker(functions.ticker.interval, function()
-                if not settings.communityFeast.enabled and not settings.dragonbaneKeep.enabled then
+                if not settings.communityFeast.enabled and not settings.dragonbaneKeep.enabled and not settings.iskaaranFishingNet.enabled then
                     return
                 end
                 functions.ticker.dateUpdater(frame)
@@ -378,6 +731,12 @@ function trackers:get(event)
             frame:SetScript("OnLeave", function()
                 functions.tooltip.onLeave()
             end)
+        end
+    end
+
+    if data.args.events then
+        for _, eventToAdd in ipairs(data.args.events) do
+            AddEventHandler(eventToAdd[1], eventToAdd[2])
         end
     end
 
@@ -404,6 +763,8 @@ local function AddWorldMapFrame()
     mapFrame:SetPoint("TOPRIGHT", WorldMapFrame, "BOTTOMRIGHT", 0, 2)
     mapFrame:SetHeight(30)
     mapFrame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
+
+    mapFrame:SetScript("OnEvent", HandlerEvent)
 end
 
 local function UpdateTrackers()
@@ -424,6 +785,7 @@ local function UpdateTrackers()
                 tracker.args.alert = true
                 tracker.args.alertSecond = settings[data.dbKey].alertSeconds
                 tracker.args.stopAlertIfCompleted = settings[data.dbKey].stopAlertIfCompleted
+                tracker.args.disableAlertAfterHours = settings[data.dbKey].disableAlertAfterHours
             else
                 tracker.args.alertSecond = nil
                 tracker.args.stopAlertIfCompleted = nil
@@ -439,7 +801,7 @@ local function UpdateTrackers()
         end
     end
 
-    mapFrame:SetShown(settings.communityFeast.enabled or settings.dragonbaneKeep.enabled)
+    mapFrame:SetShown(settings.communityFeast.enabled or settings.dragonbaneKeep.enable or settings.iskaaranFishingNet.enabled)
 end
 GW.UpdateWorldEventTrackers = UpdateTrackers
 
@@ -447,5 +809,9 @@ local function LoadDragonFlightWorldEvents()
     AddWorldMapFrame()
 
     UpdateTrackers()
+
+    for event in pairs(eventHandlers) do
+        mapFrame:RegisterEvent(event)
+    end
 end
 GW.LoadDragonFlightWorldEvents = LoadDragonFlightWorldEvents

@@ -51,7 +51,6 @@ local function LoadChatPanel(sWindow)
         nil,
         nil,
         nil,
-        nil,
         true
     )
     addOptionSlider(

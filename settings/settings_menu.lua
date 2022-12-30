@@ -208,9 +208,10 @@ local function searchInputChanged(self)
         for _, of in pairs(panel.options) do
 
             local titleText = of.displayName
+            local groupHeaderName = of.groupHeaderName and of.groupHeaderName:lower() or nil
             titleText = titleText:lower()
             text = text:lower()
-            if titleText ~= nil and string.find(titleText, text, 1, true) and of.optionType ~= "header" then
+            if titleText ~= nil and (string.find(titleText, text, 1, true) or (groupHeaderName and string.find(groupHeaderName, text, 1, true))) and of.optionType ~= "header" then
                 GwSettingsSearchResultPanel.sub:Hide()
                 -- get the original points and save them for later when we need to put the frame back, also save the dropdown container parent
                 local point, relativeTo, _, xOfs, yOfs = of:GetPoint()
