@@ -149,7 +149,7 @@ local function ChatBubble_OnEvent(_, event, msg, sender)
     else
         local unit = 0
         if event == "CHAT_MSG_MONSTER_SAY" or event == "CHAT_MSG_MONSTER_YELL" then
-        unit = 1
+            unit = 1
         end
         messageToSender[msg] = {unitType = unit, message = Ambiguate(sender, "none")}
     end
