@@ -634,12 +634,17 @@ local function LoadInventory()
     item_size = settings.itemSize
 
     -- anytime a ContainerFrame has its anchors set, we re-hide it
-    --hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)
     for i = 1, NUM_CONTAINER_FRAMES do
         local cf = _G["ContainerFrame" .. i]
         if cf then
             cf:EnableMouse(false)
             cf:SetAlpha(0)
+            cf:SetParent(GW.HiddenFrame)
+            cf:ClearAllPoints()
+		    cf:SetPoint("BOTTOM")
+
+            -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
+            cf:UnregisterEvent("BAG_OPEN")
         end
     end
 
@@ -652,14 +657,6 @@ local function LoadInventory()
     hooksecurefunc("SetItemButtonQuality", hookItemQuality)
 
     --hooksecurefunc("ContainerFrame_Update", hookQuestItemBorder)
-
-    -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
-    for i = 1, NUM_CONTAINER_FRAMES do
-        local cf = _G["ContainerFrame" .. i]
-        if cf then
-            cf:UnregisterEvent("BAG_OPEN")
-        end
-    end
 
     local helpers = {}
     helpers.reskinItemButton = reskinItemButton
