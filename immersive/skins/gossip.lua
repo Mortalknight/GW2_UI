@@ -75,21 +75,34 @@ local function updateGossipOption(self)
 end
 
 local function updateModelFrame(self)
-  print("Model frame update")
-  if ( UnitExists("npc") ) then
-      self:SetUnit("npc")
-  --    self:SetCamera({4.8, 0.1707, -0.04, )
-		--	self:MakeCurrentCameraCustom();
+    print("Model frame update")
+    if ( UnitExists("npc") ) then
+        self.modelFrame:SetUnit("npc")
+        self.modelFrame:SetAnimation(804)
+        self.modelFrame:SetRotation(0)
+        self.modelFrame:SetCamDistanceScale(1)
+        self.modelFrame:SetPortraitZoom(1) -- 1 = Header; 0.75 = Torso
+        --self.modelFrame:SetFacing(5)
+        self.modelFrame:SetPaused(false)
 
-    --  local cameraID = C_TransmogCollection.GetAppearanceCameraID(322,1);
-  --    print(cameraID)
-    --	self:RefreshCamera();
-  		Model_ApplyUICamera(self, 285);
-  --    self:SetFacing(math.pi/24)
-  --    self:FreezeAnimation(804,0,1)
-  --  self:SetCamera(0)
-    --Model_ApplyUICamera(self,7)
-  end
+        self.backLayer:Show()
+        self.modelFrame:Show()
+        self.maskLayer:Show()
+    --    self:SetCamera({4.8, 0.1707, -0.04, )
+            --	self:MakeCurrentCameraCustom();
+
+        --  local cameraID = C_TransmogCollection.GetAppearanceCameraID(322,1);
+    --    print(cameraID)
+        --	self:RefreshCamera();
+            --Model_ApplyUICamera(self, 1712)
+    --    self:FreezeAnimation(804,0,1)
+    --  self:SetCamera(0)
+        --Model_ApplyUICamera(self,7)
+    else
+        self.backLayer:Hide()
+        self.modelFrame:Hide()
+        self.maskLayer:Hide()
+    end
 
 
 end
@@ -155,13 +168,6 @@ local function LoadGossipSkin()
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/listbg")
     GossipFrame.ListBackground = tex
 
-    -- npc name label
-    tex = GossipFrame:CreateTexture("listbackground", "BACKGROUND", nil, 1)
-    tex:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 592, -147)
-    tex:SetSize(256, 32)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/npcname")
-    GossipFrame.npcNameLabel = tex
-
     --custom greetings text string
     local greetings = GossipFrame:CreateFontString(nil, "ARTWORK")
     greetings:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 45, -45)
@@ -173,23 +179,44 @@ local function LoadGossipSkin()
     GossipFrame.customGossipText = greetings
 
     --create portrait
+    local portraitFrame = CreateFrame("Frame", "GwGossipModelFrame", GossipFrame)
+    portraitFrame:Show()
+    portraitFrame:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 548, 24)
+    portraitFrame:SetSize(200, 200)
 
-    local modelFrame = CreateFrame("PlayerModel","GwGossipModelFrame",GossipFrame)
+    portraitFrame.backLayer = portraitFrame:CreateTexture(nil, "BACKGROUND", nil, -1)
+    --portraitFrame.backLayer:SetTexture("") -- add custom background texture here
+    portraitFrame.backLayer:SetPoint("TOPLEFT", portraitFrame)
+	portraitFrame.backLayer:SetPoint("BOTTOMRIGHT", portraitFrame)
 
-    modelFrame:SetPoint("BOTTOMRIGHT",GossipFrame.npcNameLabel,"BOTTOMRIGHT",0,0)
-    modelFrame:SetSize(256,256)
+    portraitFrame.modelFrame = CreateFrame("PlayerModel", nil, portraitFrame, "GW2ModelLevelTemplate")
+    portraitFrame.modelFrame:SetModelDrawLayer("ARTWORK")
+    portraitFrame.modelFrame:SetPoint("TOPLEFT", portraitFrame.backLayer)
+	portraitFrame.modelFrame:SetPoint("BOTTOMRIGHT", portraitFrame.backLayer)
 
-    hooksecurefunc(GossipFrame,"Update",function() updateModelFrame(modelFrame) end)
+    portraitFrame.maskLayer = portraitFrame:CreateTexture(nil, "ARTWORK", nil, 1)
+    --portraitFrame.maskLayer:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/staggaer-animation") -- add custom overlay texture here
+	portraitFrame.maskLayer:SetPoint("TOPLEFT", portraitFrame.backLayer)
+	portraitFrame.maskLayer:SetPoint("BOTTOMRIGHT", portraitFrame.backLayer)
+
+    -- npc name label
+    portraitFrame.npcNameLabel = portraitFrame:CreateTexture(nil, "ARTWORK", nil, 2)
+    portraitFrame.npcNameLabel:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/npcname")
+    portraitFrame.npcNameLabel:SetSize(200, 32)
+	portraitFrame.npcNameLabel:SetPoint("TOPLEFT", portraitFrame, "TOPLEFT", -3, -170)
+
+
+    hooksecurefunc(GossipFrame, "Update",function() updateModelFrame(portraitFrame) end)
 
     GossipFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
     GossipFrameTitleText:ClearAllPoints()
-    GossipFrameTitleText:SetPoint("TOPLEFT",GossipFrame.npcNameLabel,"TOPLEFT",5,0)
-    GossipFrameTitleText:SetPoint("BOTTOMRIGHT",GossipFrame.npcNameLabel,"BOTTOMRIGHT",-10,0)
+    GossipFrameTitleText:SetPoint("TOPLEFT",portraitFrame.npcNameLabel,"TOPLEFT",5,0)
+    GossipFrameTitleText:SetPoint("BOTTOMRIGHT",portraitFrame.npcNameLabel,"BOTTOMRIGHT",-10,0)
     GossipFrameTitleText:SetJustifyH("LEFT")
     GossipFrame.CloseButton:SkinButton(true)
     GossipFrame.CloseButton:SetSize(20, 20)
     GossipFrame.CloseButton:ClearAllPoints()
-    GossipFrame.CloseButton:SetPoint("BOTTOMLEFT",GossipFrame.npcNameLabel,"BOTTOMRIGHT",-10,0)
+    GossipFrame.CloseButton:SetPoint("BOTTOMLEFT",portraitFrame.npcNameLabel,"BOTTOMRIGHT",-10,0)
     GossipFrame.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton")
     GossipFrame.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton")
     GossipFrame.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton")

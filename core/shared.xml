@@ -1,6 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
+    <PlayerModel name="GW2ModelLevelTemplate" useParentLevel="true" virtual="true"/>
+
     <Slider name="GwHybridScrollBarTemplate" parentKey="scrollBar" virtual="true">
         <Size x="12" y="0"></Size>
         <Layers>
