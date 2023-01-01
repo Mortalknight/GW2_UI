@@ -525,3 +525,14 @@ L["|cffFFFFFFRight Click:|r Change Loot Specialization"] = true
 L["Loadouts"] = true
 
 --STRING WHICH NEEDS TRANSLATION
+L["All nets can be collected"] = true
+L["No Nets Set"] = true
+L["Net %s can be collected"] = true
+L["Fishing Nets"] = true
+L["Can be collected"] = true
+L["Can be set"] = true
+L["Net #%d"] = true
+L["Alert will be disabled after the set value (hours)."] = true
+L["Fishing Net"] = true
+L["Iskaaran Fishing Net"] = true
+L["Alert Timeout"] = true

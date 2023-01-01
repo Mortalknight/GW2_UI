@@ -494,10 +494,10 @@ local function LoadMinimap()
 
     if ExpansionLandingPageMinimapButton.UpdateIcon then
         hooksecurefunc(ExpansionLandingPageMinimapButton, "UpdateIcon", HandleExpansionButton)
-        ExpansionLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter)
+        --ExpansionLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter) -- This was for SL
     else
         hooksecurefunc("GarrisonLandingPageMinimapButton_UpdateIcon", HandleExpansionButton)
-        GarrisonLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter)
+        --GarrisonLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter) -- This was for SL
     end
     HandleExpansionButton()
 

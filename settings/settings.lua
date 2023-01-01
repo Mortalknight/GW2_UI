@@ -135,7 +135,7 @@ local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon,
 end
 GW.CreateCat = CreateCat
 
-local function AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine)
+local function AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
     if not panel then
         return
     end
@@ -154,6 +154,7 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
     opt.incompatibleAddonsType = incompatibleAddons
     opt.isIncompatibleAddonLoaded = false
     opt.isIncompatibleAddonLoadedButOverride = false
+    opt.groupHeaderName = groupHeaderName
 
     if params then
         for k, v in pairs(params) do opt[k] = v end
@@ -178,7 +179,7 @@ local function AddOption(panel, name, desc, optionName, callback, params, depend
 end
 GW.AddOption = AddOption
 
-local function AddOptionButton(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+local function AddOptionButton(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, groupHeaderName)
     if not panel then
         return
     end
@@ -196,6 +197,7 @@ local function AddOptionButton(panel, name, desc, optionName, callback, params, 
     opt.incompatibleAddonsType = incompatibleAddons
     opt.isIncompatibleAddonLoaded = false
     opt.isIncompatibleAddonLoadedButOverride = false
+    opt.groupHeaderName = groupHeaderName
 
     if params then
         for k, v in pairs(params) do opt[k] = v end
@@ -220,8 +222,17 @@ local function AddOptionButton(panel, name, desc, optionName, callback, params, 
 end
 GW.AddOptionButton = AddOptionButton
 
-local function AddOptionColorPicker(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+local function AddGroupHeader(panel, name)
+    local opt = AddOption(panel, name)
+
+    opt.optionType = "header"
+
+    return opt
+end
+GW.AddGroupHeader = AddGroupHeader
+
+local function AddOptionColorPicker(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
 
     opt.optionType = "colorPicker"
 
@@ -229,8 +240,8 @@ local function AddOptionColorPicker(panel, name, desc, optionName, callback, par
 end
 GW.AddOptionColorPicker = AddOptionColorPicker
 
-local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+local function AddOptionSlider(panel, name, desc, optionName, callback, min, max, params, decimalNumbers, dependence, step, incompatibleAddons, forceNewLine, groupHeaderName)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
 
     opt.min = min
     opt.max = max
@@ -242,16 +253,16 @@ local function AddOptionSlider(panel, name, desc, optionName, callback, min, max
 end
 GW.AddOptionSlider = AddOptionSlider
 
-local function AddOptionText(panel, name, desc, optionName, callback, multiline, params, dependence, incompatibleAddons)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+local function AddOptionText(panel, name, desc, optionName, callback, multiline, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
 
     opt.multiline = multiline
     opt.optionType = "text"
 end
 GW.AddOptionText = AddOptionText
 
-local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, hasProfile, isSound, noNewLine)
-    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons)
+local function AddOptionDropdown(panel, name, desc, optionName, callback, options_list, option_names, params, dependence, checkbox, incompatibleAddons, tooltipType, isSound, noNewLine, forceNewLine, groupHeaderName)
+    local opt = AddOption(panel, name, desc, optionName, callback, params, dependence, incompatibleAddons, forceNewLine, groupHeaderName)
 
     opt.options = {}
     opt.options = options_list
@@ -478,17 +489,21 @@ local function InitPanel(panel, hasScroll)
     for _, v in pairs(options) do
         local newLine = false
         local optionFrameType
+        local frameType
         if v.optionType == "boolean" then
             optionFrameType = "GwOptionBoxTmpl"
+            frameType = "Button"
             newLine = false
             if v.forceNewLine and v.forceNewLine == true then
                 newLine = true
             end
         elseif v.optionType == "slider" then
             optionFrameType = "GwOptionBoxSliderTmpl"
+            frameType = "Button"
             newLine = true
         elseif v.optionType == "dropdown" then
             optionFrameType = "GwOptionBoxDropDownTmpl"
+            frameType = "Button"
             if v.noNewLine then
                 newLine = not v.noNewLine
             else
@@ -496,16 +511,23 @@ local function InitPanel(panel, hasScroll)
             end
         elseif v.optionType == "text" then
             optionFrameType = "GwOptionBoxTextTmpl"
+            frameType = "Button"
             newLine = true
         elseif v.optionType == "button" then
             optionFrameType = "GwButtonTextTmpl"
+            frameType = "Button"
             newLine = true
         elseif v.optionType == "colorPicker" then
             optionFrameType = "GwOptionBoxColorPickerTmpl"
+            frameType = "Button"
+            newLine = true
+        elseif v.optionType == "header" then
+            optionFrameType = "GwOptionBoxHeader"
+            frameType = "Frame"
             newLine = true
         end
 
-        local of = CreateFrame("Button", v.optionName, (hasScroll and panel.scroll.scrollchild or panel), optionFrameType)
+        local of = CreateFrame(frameType, v.optionName, (hasScroll and panel.scroll.scrollchild or panel), optionFrameType)
 
         -- joink the panel information we need
         local htext = panel.header:GetText()
@@ -519,7 +541,7 @@ local function InitPanel(panel, hasScroll)
         end
 
         -- hackfix for dropdowns :<
-        if v.name==nil then
+        if v.name == nil then
           of.displayName = lastOptionName
         else
           of.displayName = v.name
@@ -539,6 +561,7 @@ local function InitPanel(panel, hasScroll)
         of.options_names = v.options_names
         of.newLine = newLine
         of.optionType = v.optionType
+        of.groupHeaderName = v.groupHeaderName
 
         if (newLine and not first) or padding.x > maximumXSize then
             padding.y = padding.y + (pY + box_padding)
@@ -922,6 +945,10 @@ local function InitPanel(panel, hasScroll)
             )
             of.title:SetTextColor(0, 0, 0)
             of.title:SetShadowColor(0, 0, 0, 0)
+        elseif v.optionType == "header" then
+            of.title:SetFont(DAMAGE_TEXT_FONT, 16)
+            --of.title:SetTextColor(1, 1, 1)
+            --of.title:SetShadowColor(0, 0, 0, 1)
         end
 
         if of.perSpec then
