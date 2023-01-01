@@ -635,7 +635,7 @@ local eventData = {
                             return
                         end
 
-                        if GW.locationData.mapID ~= 2022 then
+                        if GW.locationData.mapID ~= 2022 or (spellID ~= 377887 and spellID ~= 377883) then
                             return
                         end
 
