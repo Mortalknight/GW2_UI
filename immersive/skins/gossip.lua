@@ -1,6 +1,7 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 
+
 local function ReplaceGossipFormat(button, textFormat, text)
     local newFormat, count = gsub(textFormat, "000000", "ffffff")
     if count > 0 then
@@ -27,6 +28,70 @@ local function ReplaceGossipText(button, text)
             button:SetFormattedText("|cff%s%s|r", colorStr, rawText)
         end
     end
+end
+
+local function skinGossipOption(self)
+  self.skinned = true
+
+  if self.Icon then
+    self.Icon:ClearAllPoints()
+    self.Icon:SetPoint("LEFT",self,"LEFT",0,0)
+    self.Icon:SetSize(32,32)
+    self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+
+    local hl = self:GetHighlightTexture()
+    hl:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+  --  self:SetInside(background)
+    self:HookScript("OnEnter",function()
+      GW.TriggerButtonHoverAnimation(self,hl)
+    end)
+  end
+
+  local buttonText = select(3, self:GetRegions())
+  if selfText and buttonText:IsObjectType("FontString") then
+    ReplaceGossipText(self, self:GetText())
+    hooksecurefunc(self, "SetText", ReplaceGossipText)
+    hooksecurefunc(self, "SetFormattedText", ReplaceGossipFormat)
+  end
+
+
+
+end
+local function updateGossipOption(self)
+  if not self.skinned then
+    skinGossipOption(self)
+  end
+  self:SetHeight(32)
+  if self.GetElementData~=nil then
+    local elementData = self:GetElementData()
+    if elementData.buttonType==GOSSIP_BUTTON_TYPE_DIVIDER or  elementData.buttonType==GOSSIP_BUTTON_TYPE_TITLE then
+      self:SetHeight(0)
+    end
+  end
+
+  if self.Icon then
+    self.Icon:SetSize(32,32)
+  end
+end
+
+local function updateModelFrame(self)
+  print("Model frame update")
+  if ( UnitExists("npc") ) then
+      self:SetUnit("npc")
+  --    self:SetCamera({4.8, 0.1707, -0.04, )
+		--	self:MakeCurrentCameraCustom();
+
+    --  local cameraID = C_TransmogCollection.GetAppearanceCameraID(322,1);
+  --    print(cameraID)
+    --	self:RefreshCamera();
+  		Model_ApplyUICamera(self, 285);
+  --    self:SetFacing(math.pi/24)
+  --    self:FreezeAnimation(804,0,1)
+  --  self:SetCamera(0)
+    --Model_ApplyUICamera(self,7)
+  end
+
+
 end
 
 local function LoadGossipSkin()
@@ -73,37 +138,91 @@ local function LoadGossipSkin()
 
     ItemTextScrollFrame:StripTextures()
 
-    GossipFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
+
     GossipFrame:StripTextures()
     GossipFrame:CreateBackdrop()
     tex = GossipFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
-    w, h = GossipFrame:GetSize()
-    tex:SetPoint("TOP", GossipFrame, "TOP", 0, 20)
-    tex:SetSize(w + 50, h + 70)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+
+    tex:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 0, 0)
+    tex:SetSize(1024, 512)
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/background")
     GossipFrame.tex = tex
 
+    -- list background
+    tex = GossipFrame:CreateTexture("listbackground", "BACKGROUND", nil, 1)
+    tex:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 70, -175)
+    tex:SetSize(566, 512)
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/listbg")
+    GossipFrame.ListBackground = tex
+
+    -- npc name label
+    tex = GossipFrame:CreateTexture("listbackground", "BACKGROUND", nil, 1)
+    tex:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 592, -147)
+    tex:SetSize(256, 32)
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/npcname")
+    GossipFrame.npcNameLabel = tex
+
+    --custom greetings text string
+    local greetings = GossipFrame:CreateFontString(nil, "ARTWORK")
+    greetings:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 45, -45)
+    greetings:SetPoint("BOTTOMRIGHT", GossipFrame, "TOPLEFT", 592, -165)
+    greetings:SetJustifyH("LEFT")
+    greetings:SetJustifyV("MIDDLE")
+    greetings:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
+    greetings:SetText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
+    GossipFrame.customGossipText = greetings
+
+    --create portrait
+
+    local modelFrame = CreateFrame("PlayerModel","GwGossipModelFrame",GossipFrame)
+
+    modelFrame:SetPoint("BOTTOMRIGHT",GossipFrame.npcNameLabel,"BOTTOMRIGHT",0,0)
+    modelFrame:SetSize(256,256)
+
+    hooksecurefunc(GossipFrame,"Update",function() updateModelFrame(modelFrame) end)
+
+    GossipFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
+    GossipFrameTitleText:ClearAllPoints()
+    GossipFrameTitleText:SetPoint("TOPLEFT",GossipFrame.npcNameLabel,"TOPLEFT",5,0)
+    GossipFrameTitleText:SetPoint("BOTTOMRIGHT",GossipFrame.npcNameLabel,"BOTTOMRIGHT",-10,0)
+    GossipFrameTitleText:SetJustifyH("LEFT")
     GossipFrame.CloseButton:SkinButton(true)
     GossipFrame.CloseButton:SetSize(20, 20)
-
+    GossipFrame.CloseButton:ClearAllPoints()
+    GossipFrame.CloseButton:SetPoint("BOTTOMLEFT",GossipFrame.npcNameLabel,"BOTTOMRIGHT",-10,0)
+    GossipFrame.CloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton")
+    GossipFrame.CloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton")
+    GossipFrame.CloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/gossip/closebutton")
     ItemTextFrameCloseButton:SkinButton(true)
     ItemTextFrameCloseButton:SetSize(20, 20)
 
+    GossipFrame.GreetingPanel.ScrollBox:ClearAllPoints()
+    GossipFrame.GreetingPanel.ScrollBox:SetPoint("TOPLEFT",GossipFrame.ListBackground,"TOPLEFT")
+    GossipFrame.GreetingPanel.ScrollBox:SetPoint("BOTTOMRIGHT",GossipFrame.ListBackground,"BOTTOMRIGHT")
     GW.HandleNextPrevButton(ItemTextPrevPageButton)
     GW.HandleNextPrevButton(ItemTextNextPageButton)
 
+
+    local GreetingPanelFirstLoad = true
     hooksecurefunc(GossipFrame.GreetingPanel.ScrollBox, "Update", function(frame)
         for _, button in next, { frame.ScrollTarget:GetChildren() } do
-            if not button.IsSkinned then
-                local buttonText = select(3, button:GetRegions())
-                if buttonText and buttonText:IsObjectType("FontString") then
-                    ReplaceGossipText(button, button:GetText())
-                    hooksecurefunc(button, "SetText", ReplaceGossipText)
-                    hooksecurefunc(button, "SetFormattedText", ReplaceGossipFormat)
-                end
+          updateGossipOption(button)
+        end
+        if GreetingPanelFirstLoad then
+          GreetingPanelFirstLoad = false
+          -- replace the element default size calculator
+          GossipFrame.GreetingPanel.ScrollBox.view:SetPadding(10,10,10,10,0);
+          GossipFrame.GreetingPanel.ScrollBox.view:SetElementExtentCalculator(function(dataIndex, elementData)
+        		if elementData.greetingTextFrame then
+        			   GossipFrame.customGossipText:SetText(elementData.text);
+        			return 0
+        		elseif elementData.buttonType==GOSSIP_BUTTON_TYPE_DIVIDER then
+              return 0
+            else
+        			return 32;
+        		end
+        	end);
 
-                button.IsSkinned = true
-            end
         end
     end)
 
