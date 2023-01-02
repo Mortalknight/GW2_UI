@@ -45,7 +45,8 @@ local partialIgnore = {
     "Node",
     "Note",
     "Pin",
-    "POI"
+    "POI",
+    "TTMinimapButton"
 }
 local RemoveTextureID = {
     [136430] = true,
