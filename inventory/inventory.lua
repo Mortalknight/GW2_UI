@@ -628,20 +628,33 @@ local function onMoverDragStop(self)
 end
 GW.AddForProfiling("inventory", "onMoverDragStop", onMoverDragStop)
 
+local function hookUpdateAnchors()
+    for i = 1, NUM_CONTAINER_FRAMES do
+        local cf = _G["ContainerFrame" .. i]
+        if cf then
+            cf:ClearAllPoints()
+            cf:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
+            cf:SetSize(10, 10)
+        end
+    end
+end
+GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
+
 local function LoadInventory()
     UpdateSettings()
 
     item_size = settings.itemSize
 
     -- anytime a ContainerFrame has its anchors set, we re-hide it
+    hooksecurefunc("UpdateContainerFrameAnchors", hookUpdateAnchors)
     for i = 1, NUM_CONTAINER_FRAMES do
         local cf = _G["ContainerFrame" .. i]
         if cf then
-            cf:EnableMouse(false)
-            cf:SetAlpha(0)
-            cf:SetParent(GW.HiddenFrame)
-            cf:ClearAllPoints()
-		    cf:SetPoint("BOTTOM")
+            --cf:EnableMouse(false)
+            --cf:SetAlpha(0)
+            --cf:SetParent(GW.HiddenFrame)
+            --cf:ClearAllPoints()
+		    --cf:SetPoint("BOTTOM")
 
             -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
             cf:UnregisterEvent("BAG_OPEN")
