@@ -71,8 +71,8 @@ local infoColors = {
 
 local env = {
     fishingNetPosition = {
-        [1] = {x = 0.63585, y = 0.75349},
-        [2] = {x = 0.64514, y = 0.74178}
+        [1] = {map = 2022, x = 0.63585, y = 0.75349},
+        [2] = {map = 2022, x = 0.64514, y = 0.74178}
     }
 }
 
@@ -635,7 +635,7 @@ local eventData = {
                             return
                         end
 
-                        if GW.locationData.mapID ~= 2022 or (spellID ~= 377887 and spellID ~= 377883) then
+                        if not GW.locationData.mapID or (spellID ~= 377887 and spellID ~= 377883) then
                             return
                         end
 
@@ -644,8 +644,10 @@ local eventData = {
                         if not position then return end
 
                         for i, netPos in ipairs(env.fishingNetPosition) do
-                            local length = math.pow(position.x - netPos.x, 2) + math.pow(position.y - netPos.y, 2)
-                            lengthMap[i] = length
+                            if GW.locationData.mapID == netPos.map then
+                                local length = math.pow(position.x - netPos.x, 2) + math.pow(position.y - netPos.y, 2)
+                                lengthMap[i] = length
+                            end
                         end
 
                         local min
