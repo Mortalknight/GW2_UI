@@ -4,6 +4,11 @@ local IterationCount = 500
 local SellJunkFrame = CreateFrame("FRAME")
 local SellJunkTicker, mBagID, mBagSlot
 
+local IgnoreVendors = {
+    [113831] = "Auto-Hammer",
+    [100995] = "Auto-Hammer"
+}
+
 -- automaticly vendor junk
 local function StopSelling()
     if SellJunkTicker then SellJunkTicker:Cancel() end
@@ -59,6 +64,8 @@ local function SellJunkFrame_OnEvent(self, event)
         mBagID, mBagSlot = -1, -1
         -- Do nothing if shift key is held down
         if IsShiftKeyDown() then return end
+        -- Check if we need to ignore these vendor
+        if IgnoreVendors[GW.GetUnitCreatureId("npc")] then return end
         -- Cancel existing ticker if present
         if SellJunkTicker then SellJunkTicker:Cancel() end
         -- Sell grey items using ticker (ends when all grey items are sold or iteration count reached)
