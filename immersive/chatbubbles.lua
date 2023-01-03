@@ -23,32 +23,35 @@ local function UpdateBubbleBorder(self)
     if name then self.Name:SetText() end
 
     local text = messageText:GetText()
-    if text and messageToSender[text] then
-        self.Name:SetFormattedText("|c%s%s|r", RAID_CLASS_COLORS.PRIEST.colorStr, messageToSender[text].message)
+    local senderInfo = messageToSender[text]
+    if text then
+        if senderInfo then
+            self.Name:SetFormattedText("|c%s%s|r", RAID_CLASS_COLORS.PRIEST.colorStr, messageToSender[text].message)
 
-        if messageToSender[text].unitType == 1 then
-            messageText:SetTextColor(1, 1, 1, 1)
-            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background-inverted")
-            self.bordertop:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori-inverted")
-            self.borderbottom:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori-inverted")
-            self.borderright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
-            self.borderleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
-            self.bordertopright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
-            self.bordertopleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
-            self.borderbottomleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
-            self.borderbottomright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
-        else
-            messageText:SetTextColor(0, 0, 0, 1)
-            self.background:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background")
-            self.bordertop:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori")
-            self.borderbottom:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori")
-            self.borderright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
-            self.borderleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
-            self.bordertopright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
-            self.bordertopleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
-            self.borderbottomleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
-            self.borderbottomright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
+            if senderInfo.unitType == 1 then
+                messageText:SetTextColor(1, 1, 1, 1)
+                self.background:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background-inverted")
+                self.bordertop:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori-inverted")
+                self.borderbottom:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori-inverted")
+                self.borderright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
+                self.borderleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
+                self.bordertopright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
+                self.bordertopleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
+                self.borderbottomleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
+                self.borderbottomright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border-inverted")
+                return
+            end
         end
+        messageText:SetTextColor(0, 0, 0, 1)
+        self.background:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/background")
+        self.bordertop:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori")
+        self.borderbottom:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/borderhori")
+        self.borderright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
+        self.borderleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
+        self.bordertopright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
+        self.bordertopleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
+        self.borderbottomleft:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
+        self.borderbottomright:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatbubbles/border")
     end
 end
 
