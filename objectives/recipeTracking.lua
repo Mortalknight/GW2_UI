@@ -246,6 +246,8 @@ local function OnEvent(self, event, ...)
         if tContains(collectedItemIDs, itemID) then
             StartUpdate(self)
         end
+    elseif event == "UPDATE_PENDING_MAIL" then
+        StartUpdate(self)
     elseif event == "SKILL_LINES_CHANGED" then
         for _, recipeID in ipairs(C_TradeSkillUI.GetRecipesTracked()) do
             if not C_TradeSkillUI.IsRecipeProfessionLearned(recipeID) then
@@ -273,6 +275,7 @@ local function LoadRecipeTracking(self)
     self:RegisterEvent("TRACKED_RECIPE_UPDATE")
     self:RegisterEvent("ITEM_COUNT_CHANGED")
     self:RegisterEvent("SKILL_LINES_CHANGED")
+    self:RegisterEvent("UPDATE_PENDING_MAIL")
     self:SetScript("OnEvent", OnEvent)
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
