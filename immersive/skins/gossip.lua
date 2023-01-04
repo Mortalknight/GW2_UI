@@ -73,31 +73,46 @@ local function updateGossipOption(self)
     self.Icon:SetSize(32,32)
   end
 end
-
-local function updateModelFrame(self)
+-- unit for testing
+local function updateModelFrame(self, unit) -- needs to be tested on gnomes
+    if unit==nil then
+      unit = "npc"
+    end
     print("Model frame update")
-    if ( UnitExists("npc") ) then
-        self.modelFrame:SetUnit("npc")
+    if ( UnitExists(unit) ) then
+        self.modelFrame:SetUnit(unit)
         self.modelFrame:SetAnimation(804)
         self.modelFrame:SetRotation(0)
         self.modelFrame:SetCamDistanceScale(1)
         self.modelFrame:SetPortraitZoom(1) -- 1 = Header; 0.75 = Torso
         --self.modelFrame:SetFacing(5)
-        self.modelFrame:SetPaused(false)
-
+        self.modelFrame:SetPaused(true)
         self.backLayer:Show()
         self.modelFrame:Show()
         self.maskLayer:Show()
-    --    self:SetCamera({4.8, 0.1707, -0.04, )
-            --	self:MakeCurrentCameraCustom();
+        self.modelFrame:SetSize(500,500) -- can be moved to the model frame when done here
 
-        --  local cameraID = C_TransmogCollection.GetAppearanceCameraID(322,1);
-    --    print(cameraID)
-        --	self:RefreshCamera();
-            --Model_ApplyUICamera(self, 1712)
-    --    self:FreezeAnimation(804,0,1)
-    --  self:SetCamera(0)
-        --Model_ApplyUICamera(self,7)
+        -- get frame true size
+        local trueSize = self.modelFrame:GetHeight()
+        --frame base height; models will be scaled as if the frame was this size
+        local size = 200
+        local sizeDif = (size / trueSize) / 2
+
+        -- get the camera target for the portrait view
+        local fx,fy,fz = self.modelFrame:GetCameraTarget()
+        -- get the height ( z ) here for the face
+        local _,_, z = self.modelFrame:GetCameraPosition()
+        --Let blizzard zoom us out to the frontal view
+        self.modelFrame:SetPortraitZoom(0)
+        -- rotate the model to the left (very heroic)
+        self.modelFrame:SetFacing(-0.30)
+        -- make the camera custom so we can change its position and target
+        self.modelFrame:MakeCurrentCameraCustom()
+        -- we push the model down half step so we dont distort the FOV
+        self.modelFrame:SetPosition(0,0,-( z * (sizeDif/2)))
+        -- we move set the camere target to the face and move the camere up a half step so we dont distort the FOV
+        self.modelFrame:SetCameraTarget(fx,fy,z + ( z * (sizeDif/2)))
+
     else
         self.backLayer:Hide()
         self.modelFrame:Hide()
@@ -191,8 +206,8 @@ local function LoadGossipSkin()
 
     portraitFrame.modelFrame = CreateFrame("PlayerModel", nil, portraitFrame, "GW2ModelLevelTemplate")
     portraitFrame.modelFrame:SetModelDrawLayer("ARTWORK")
-    portraitFrame.modelFrame:SetPoint("TOPLEFT", portraitFrame.backLayer)
-	portraitFrame.modelFrame:SetPoint("BOTTOMRIGHT", portraitFrame.backLayer)
+    portraitFrame.modelFrame:SetPoint("BOTTOM", portraitFrame.backLayer,"BOTTOM",20,0)
+---	portraitFrame.modelFrame:SetPoint("BOTTOMRIGHT", portraitFrame.backLayer)
 
     portraitFrame.maskLayer = portraitFrame:CreateTexture(nil, "ARTWORK", nil, 1)
     --portraitFrame.maskLayer:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/staggaer-animation") -- add custom overlay texture here
@@ -204,7 +219,6 @@ local function LoadGossipSkin()
     portraitFrame.npcNameLabel:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/npcname")
     portraitFrame.npcNameLabel:SetSize(200, 32)
 	portraitFrame.npcNameLabel:SetPoint("TOPLEFT", portraitFrame, "TOPLEFT", -3, -170)
-
 
     hooksecurefunc(GossipFrame, "Update",function() updateModelFrame(portraitFrame) end)
 
