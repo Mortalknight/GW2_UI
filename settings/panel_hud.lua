@@ -71,9 +71,9 @@ local function LoadHudPanel(sWindow)
     addOptionButton(p.scroll.scrollchild, L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], nil, function()
         local scale = GetSetting("HUD_SCALE")
         for _, mf in pairs(GW.scaleableFrames) do
-            mf.gw_frame:SetScale(scale)
+            mf.parent:SetScale(scale)
             mf:SetScale(scale)
-            GW.SetSetting(mf.gw_Settings .."_scale", scale)
+            GW.SetSetting(mf.setting .."_scale", scale)
         end
     end)
     addOptionDropdown(

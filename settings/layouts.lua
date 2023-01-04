@@ -297,7 +297,7 @@ local function CreateProfileLayout()
         GW2UI_LAYOUTS[newIdx].profileId = profileIndex
         for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
             GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex] = {}
-            GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].settingName = moveableFrame.gw_Settings
+            GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].settingName = moveableFrame.setting
             GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].point = moveableFrame.savedPoint
 
             newMoverFrameIndex = newMoverFrameIndex + 1
@@ -321,7 +321,7 @@ local function CreateNewLayout(self)
             GW2UI_LAYOUTS[newIdx].profileLayout = false
             for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
                 GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex] = {}
-                GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].settingName = moveableFrame.gw_Settings
+                GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].settingName = moveableFrame.setting
                 GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].point = moveableFrame.savedPoint
 
                 newMoverFrameIndex = newMoverFrameIndex + 1
