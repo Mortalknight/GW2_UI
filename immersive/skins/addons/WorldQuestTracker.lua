@@ -112,7 +112,7 @@ local function LoadWQTAddonSkin()
 
     local fWQT = CreateFrame("Frame", "GwQuesttrackerContainerWQT", GwQuestTrackerScrollChild, "GwQuesttrackerContainer")
     fWQT:SetParent(GwQuestTrackerScrollChild)
-    fWQT:SetPoint("TOPRIGHT", GwQuesttrackerContainerBonusObjectives, "BOTTOMRIGHT")
+    fWQT:SetPoint("TOPRIGHT", GwQuesttrackerContainerRecipe, "BOTTOMRIGHT")
 
     fWQT.header = CreateFrame("Button", nil, fWQT, "GwQuestTrackerHeader")
     fWQT.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
