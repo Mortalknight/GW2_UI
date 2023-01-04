@@ -151,10 +151,6 @@ local function updateGossipOption(self)
 
   if self.Icon then
     self.Icon:SetSize(32,32)
-    local texture = self.Icon:GetTexture()
-    self.Icon:SetTexture(texture)
-    print(self.Icon:GetTexture())
-
   end
 end
 -- unit for testing
@@ -162,7 +158,6 @@ local function updateModelFrame(self, unit) -- needs to be tested on gnomes
     if unit==nil then
       unit = "npc"
     end
-    print("Model frame update")
     if ( UnitExists(unit) ) then
         self.modelFrame:SetUnit(unit)
         self.modelFrame:SetAnimation(804)
@@ -412,13 +407,22 @@ local function LoadGossipSkin()
 
     local GreetingPanelFirstLoad = true
     hooksecurefunc(GossipFrame.GreetingPanel.ScrollBox, "Update", function(frame)
-      local numButtons = 0
         for _, button in next, { frame.ScrollTarget:GetChildren() } do
           updateGossipOption(button)
-
         end
-        print(GossipFrame.GreetingPanel.ScrollBox:GetExtent())
-          numButtons = numButtons + 1
+        -- we need to check each button for button type so we dont count titles and spacers
+        local numButtons = 0
+        GossipFrame.GreetingPanel.ScrollBox:ForEachFrame(function(self)
+          local elementData = self:GetElementData()
+          if  elementData.buttonType~=GOSSIP_BUTTON_TYPE_DIVIDER and  elementData.buttonType~=GOSSIP_BUTTON_TYPE_TITLE then
+            numButtons = numButtons + 1
+          end
+        end)
+        if numButtons>0 then
+          GossipFrame.ListBackground:Show()
+        else
+          GossipFrame.ListBackground:Hide()
+        end
 
         if GreetingPanelFirstLoad then
           GreetingPanelFirstLoad = false
