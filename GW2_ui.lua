@@ -132,21 +132,22 @@ GW.getSpriteByIndex = getSpriteByIndex
 local function TriggerButtonHoverAnimation(self, hover, to, duration)
     local name = tostring(self)
     hover:SetAlpha(1)
-
+    duration = duration or math.min(1,self:GetWidth() * 0.002)
     AddToAnimation(
         name,
         self.animationValue,
         (to or 1),
         GetTime(),
-        (duration or 0.5),
+        duration,
         function()
             local w = self:GetWidth()
 
             local prog = animations[name].progress
             local lerp = GW.lerp(0, w + (w * 0.5), prog)
-            local lerp2 = GW.lerp(0.4, 1, (prog - 0.5) / 0.5)
+            local lerp2 = GW.lerp(0.4, 1, prog)
 
-            if lerp2 < 0 then lerp2 = 0 end
+            lerp2 = math.max(0.4,math.min(1,lerp2))
+
             if lerp2 > 1 then lerp2 = 1 end
             hover:SetPoint("RIGHT", self, "LEFT", math.min(w, lerp) , 0)
             hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, lerp2)
