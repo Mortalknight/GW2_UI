@@ -305,17 +305,6 @@ local function LoadGossipSkin()
     tex:SetSize(566, 512)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/listbg")
     GossipFrame.ListBackground = tex
-
-    --custom greetings text string
-    local greetings = GossipFrame:CreateFontString(nil, "ARTWORK")
-    greetings:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 45, -45)
-    greetings:SetPoint("BOTTOMRIGHT", GossipFrame, "TOPLEFT", 592, -165)
-    greetings:SetJustifyH("LEFT")
-    greetings:SetJustifyV("MIDDLE")
-    greetings:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
-    greetings:SetText("")
-    GossipFrame.customGossipText = greetings
-
     --create portrait
     local portraitFrame = CreateFrame("Frame", "GwGossipModelFrame", GossipFrame)
     portraitFrame:Show()
@@ -333,9 +322,19 @@ local function LoadGossipSkin()
 ---	portraitFrame.modelFrame:SetPoint("BOTTOMRIGHT", portraitFrame.backLayer)
 
     portraitFrame.maskLayer = portraitFrame:CreateTexture(nil, "ARTWORK", nil, 1)
-    --portraitFrame.maskLayer:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/staggaer-animation") -- add custom overlay texture here
-	portraitFrame.maskLayer:SetPoint("TOPLEFT", portraitFrame.backLayer)
-	portraitFrame.maskLayer:SetPoint("BOTTOMRIGHT", portraitFrame.backLayer)
+    portraitFrame.maskLayer:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/modelmask") -- add custom overlay texture here
+	  portraitFrame.maskLayer:SetPoint("TOPLEFT", GossipFrame.tex)
+    portraitFrame.maskLayer:SetSize(1024,256)
+
+    --custom greetings text string
+    local greetings = portraitFrame:CreateFontString(nil, "ARTWORK")
+    greetings:SetPoint("TOPLEFT", portraitFrame.maskLayer, "TOPLEFT", 45, -45)
+    greetings:SetPoint("BOTTOMRIGHT", portraitFrame.maskLayer, "TOPLEFT", 545, -165)
+    greetings:SetJustifyH("LEFT")
+    greetings:SetJustifyV("MIDDLE")
+    greetings:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
+    greetings:SetText("")
+    GossipFrame.customGossipText = greetings
 
     -- npc name label
     portraitFrame.npcNameLabel = portraitFrame:CreateTexture(nil, "ARTWORK", nil, 2)
@@ -366,9 +365,11 @@ local function LoadGossipSkin()
     GW.HandleNextPrevButton(ItemTextPrevPageButton)
     GW.HandleNextPrevButton(ItemTextNextPageButton)
 
-    local GossipPaginControler = CreateFrame("Frame","GossipPaginControler",GossipFrame)
+    local GossipPaginControler = CreateFrame("Button","GossipPaginControler",GossipFrame)
     local GossipPagingBack = CreateFrame("Button","GossipPagingBack",GossipPaginControler,"GwCharacterMenuButtonBack")
     local GossipPagingForward = CreateFrame("Button","GossipPagingForward",GossipPaginControler,"GwCharacterMenuButtonBack")
+
+    GossipPaginControler:RegisterForClicks("LeftButtonDown","RightButtonDown")
 
     GossipPaginControler.back = GossipPagingBack
     GossipPaginControler.forward = GossipPagingForward
@@ -381,12 +382,22 @@ local function LoadGossipSkin()
     GossipPagingForward:ClearNormalTexture()
     GossipPagingBack:ClearNormalTexture()
     GossipPagingForward.backarrow:SetRotation(math.pi)
-    GossipPaginControler:SetPoint("RIGHT",portraitFrame.npcNameLabel,"LEFT",0,0)
-    GossipPagingForward:SetPoint("RIGHT",GossipPaginControler,"RIGHT",0,0)
-    GossipPagingBack:SetPoint("LEFT",GossipPaginControler,"LEFT",0,0)
+    GossipPaginControler:SetPoint("TOPLEFT",greetings,"TOPLEFT",0,0)
+    GossipPaginControler:SetPoint("BOTTOMRIGHT",greetings,"BOTTOMRIGHT",0,0)
 
-    GossipPagingForward:SetScript("OnClick",function() setGreetingsTextPaging(1) end)
-    GossipPagingBack:SetScript("OnClick",function() setGreetingsTextPaging(-1) end)
+    GossipPagingForward:SetPoint("RIGHT",portraitFrame.npcNameLabel,"LEFT",-5,0)
+    GossipPagingBack:SetPoint("RIGHT",GossipPagingForward,"LEFT",0,0)
+
+    GossipPaginControler:SetScript("OnClick",function(self,button)
+      local dir = button=="LeftButton" and -1 or 1
+      setGreetingsTextPaging(dir)
+     end)
+    GossipPagingForward:SetScript("OnClick",function()
+      setGreetingsTextPaging(1)
+    end)
+    GossipPagingBack:SetScript("OnClick",function()
+      setGreetingsTextPaging(-1)
+    end)
 
     GossipFrame:HookScript("OnShow",function()
 
