@@ -1,9 +1,13 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
+local animations = GW.animations
+local AddToAnimation = GW.AddToAnimation
 
 
 --[[
+
+TODO Greetings text above the model frame
 
 [646979]="Interface/GossipFrame/ActiveLegendaryQuestIcon",
 [132048]="Interface/GossipFrame/ActiveQuestIcon",
@@ -31,6 +35,13 @@ local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
 [1130518]="Interface/GossipFrame/WorkOrderGossipIcon",
 [528409]="Interface/GossipFrame/auctioneerGossipIcon",
 [1673939]="Interface/GossipFrame/transmogrifyGossipIcon",
+
+["Interface/GossipFrame/CampaignGossipIcons"]={
+		["CampaignActiveDailyQuestIcon"]={16, 16, 0.0078125, 0.195312, 0.015625, 0.390625, false, false, "1x"},
+		["CampaignActiveQuestIcon"]={16, 16, 0.0078125, 0.195312, 0.421875, 0.796875, false, false, "1x"},
+		["CampaignAvailableDailyQuestIcon"]={16, 16, 0.210938, 0.398438, 0.015625, 0.390625, false, false, "1x"},
+		["CampaignAvailableQuestIcon"]={16, 16, 0.210938, 0.398438, 0.421875, 0.796875, false, false, "1x"},
+		["CampaignIncompleteQuestIcon"]={16, 16, 0.414062, 0.601562, 0.015625, 0.390625, false, false, "1x"},
 
 ]]
 
@@ -185,6 +196,14 @@ local function updateModelFrame(self, unit) -- needs to be tested on gnomes
         self.modelFrame:SetPosition(0,0,-( z * (sizeDif/2)))
         -- we move set the camere target to the face and move the camere up a half step so we dont distort the FOV
         self.modelFrame:SetCameraTarget(fx,fy,z + ( z * (sizeDif/2)))
+
+        AddToAnimation("GOSSIP_MODEL", 0, 1, GetTime(), 0.8,
+        function()
+          local p = animations["GOSSIP_MODEL"].progress
+          p = math.min(1,math.max(0,(p - 0.5) / 0.5))
+          self.modelFrame:SetAlpha(p)
+
+        end)
 
     else
         self.backLayer:Hide()
@@ -374,12 +393,33 @@ local function LoadGossipSkin()
     GossipPagingForward:SetScript("OnClick",function() setGreetingsTextPaging(1) end)
     GossipPagingBack:SetScript("OnClick",function() setGreetingsTextPaging(-1) end)
 
+    GossipFrame:HookScript("OnShow",function()
+
+
+      GossipFrame.CloseButton:Hide()
+
+      AddToAnimation("GOSSIP_FRAME_FADE", 0, 1, GetTime(), 0.4,
+      function()
+        local p = animations["GOSSIP_FRAME_FADE"].progress
+        GossipFrame:SetAlpha(p)
+        portraitFrame.npcNameLabel:SetWidth(200*p)
+        portraitFrame.npcNameLabel:SetTexCoord(0, p, 0, 1)
+      end,nil,function()
+          GossipFrame.CloseButton:Show()
+      end)
+    end)
+
+
     local GreetingPanelFirstLoad = true
     hooksecurefunc(GossipFrame.GreetingPanel.ScrollBox, "Update", function(frame)
-
+      local numButtons = 0
         for _, button in next, { frame.ScrollTarget:GetChildren() } do
           updateGossipOption(button)
+
         end
+        print(GossipFrame.GreetingPanel.ScrollBox:GetExtent())
+          numButtons = numButtons + 1
+
         if GreetingPanelFirstLoad then
           GreetingPanelFirstLoad = false
           -- replace the element default size calculator
@@ -394,7 +434,6 @@ local function LoadGossipSkin()
         			return 32;
         		end
         	end);
-
         end
     end)
 
