@@ -1,6 +1,73 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
+local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
 
+
+--[[
+
+[646979]="Interface/GossipFrame/ActiveLegendaryQuestIcon",
+[132048]="Interface/GossipFrame/ActiveQuestIcon",
+[646980]="Interface/GossipFrame/AvailableLegendaryQuestIcon",
+[132049]="Interface/GossipFrame/AvailableQuestIcon",
+[132050]="Interface/GossipFrame/BankerGossipIcon",
+[132051]="Interface/GossipFrame/BattleMasterGossipIcon",
+[132052]="Interface/GossipFrame/BinderGossipIcon",
+[3532316]="Interface/GossipFrame/CampaignActiveQuestIcon",
+[3532317]="Interface/GossipFrame/CampaignAvailableQuestIcon",
+[3595324]="Interface/GossipFrame/CampaignGossipIcons",
+[3532318]="Interface/GossipFrame/CampaignIncompleteQuestIcon",
+[1019848]="Interface/GossipFrame/ChatBubbleGossipIcon",
+[368577]="Interface/GossipFrame/DailyActiveQuestIcon",
+[368364]="Interface/GossipFrame/DailyQuestIcon",
+[132053]="Interface/GossipFrame/GossipGossipIcon",
+[132054]="Interface/GossipFrame/HealerGossipIcon",
+[365195]="Interface/GossipFrame/IncompleteQuestIcon",
+[132055]="Interface/GossipFrame/PetitionGossipIcon",
+[132056]="Interface/GossipFrame/TabardGossipIcon",
+[132057]="Interface/GossipFrame/TaxiGossipIcon",
+[132058]="Interface/GossipFrame/TrainerGossipIcon",
+[132059]="Interface/GossipFrame/UnlearnGossipIcon",
+[132060]="Interface/GossipFrame/VendorGossipIcon",
+[1130518]="Interface/GossipFrame/WorkOrderGossipIcon",
+[528409]="Interface/GossipFrame/auctioneerGossipIcon",
+[1673939]="Interface/GossipFrame/transmogrifyGossipIcon",
+
+]]
+
+local function splitIter(inputstr, pat)
+    local st, g = 1, string.gmatch(inputstr, "()(" .. pat .. ")")
+    local function getter(segs, seps, sep, cap1, ...)
+        st = sep and seps + #sep
+        return string.sub(inputstr, segs, seps or -1), cap1 or sep, ...
+    end
+    return function()
+        if st then
+            return getter(st, g())
+        end
+    end
+end
+
+local function splitQuest(inputstr)
+  local t = {}
+  local i = 1
+  local length = string.len(inputstr)
+  if length<150 then
+    t[i] = inputstr
+    return t
+  end
+  local sep = "[\\.|!|?|>]%s+"
+  inputstr = inputstr:gsub("\n", " ")
+  inputstr = inputstr:gsub(" %s+", " ")
+  inputstr = inputstr:gsub("%.%.%.", "…")
+
+  for str in splitIter(inputstr, sep) do
+      if str ~= nil and str ~= "" then
+          t[i] = str
+          i = i + 1
+      end
+  end
+  return t
+end
 
 local function ReplaceGossipFormat(button, textFormat, text)
     local newFormat, count = gsub(textFormat, "000000", "ffffff")
@@ -48,7 +115,9 @@ local function skinGossipOption(self)
   end
 
   local buttonText = select(3, self:GetRegions())
-  if selfText and buttonText:IsObjectType("FontString") then
+  if buttonText and buttonText:IsObjectType("FontString") then
+    buttonText:ClearAllPoints()
+    buttonText:SetPoint("LEFT",self,"LEFT",40,0)
     ReplaceGossipText(self, self:GetText())
     hooksecurefunc(self, "SetText", ReplaceGossipText)
     hooksecurefunc(self, "SetFormattedText", ReplaceGossipFormat)
@@ -71,6 +140,10 @@ local function updateGossipOption(self)
 
   if self.Icon then
     self.Icon:SetSize(32,32)
+    local texture = self.Icon:GetTexture()
+    self.Icon:SetTexture(texture)
+    print(self.Icon:GetTexture())
+
   end
 end
 -- unit for testing
@@ -118,9 +191,43 @@ local function updateModelFrame(self, unit) -- needs to be tested on gnomes
         self.modelFrame:Hide()
         self.maskLayer:Hide()
     end
-
-
 end
+
+local greetingsText
+local currentGreetingTextIndex = 0
+
+local function setGreetingsTextPaging(dir,forceIndex)
+  local newIndex = currentGreetingTextIndex + dir
+  if forceIndex~=nil then
+    newIndex = forceIndex
+  end
+  if greetingsText and #greetingsText>0 and #greetingsText>=newIndex and newIndex>0 then
+    currentGreetingTextIndex = newIndex
+    GossipFrame.customGossipText:SetText(greetingsText[currentGreetingTextIndex]);
+
+    GossipPaginControler.forward:Show()
+    GossipPaginControler.back:Show()
+    if #greetingsText==newIndex then
+      GossipPaginControler.forward:Hide()
+    end
+    if newIndex==1 then
+      GossipPaginControler.back:Hide()
+    end
+
+  end
+end
+local function setGreetingsText(text)
+  greetingsText = splitQuest(text)
+  local firstString = ""
+  if greetingsText and #greetingsText>0 then
+    currentGreetingTextIndex = 1
+    firstString = greetingsText[currentGreetingTextIndex]
+  end
+  setGreetingsTextPaging(0,1)
+--  GossipFrame.customGossipText:SetText(firstString);
+end
+
+
 
 local function LoadGossipSkin()
     if not GetSetting("GOSSIP_SKIN_ENABLED") then return end
@@ -130,6 +237,7 @@ local function LoadGossipSkin()
     ItemTextScrollFrameScrollBar:SkinScrollBar()
     ItemTextScrollFrame:SkinScrollFrame()
     GW.HandleTrimScrollBar(GossipFrame.GreetingPanel.ScrollBar)
+    GossipFrame.GreetingPanel.GoodbyeButton:Hide()
     GossipFrame.GreetingPanel.GoodbyeButton:StripTextures()
     GossipFrame.GreetingPanel.GoodbyeButton:SkinButton(false, true)
 
@@ -152,6 +260,7 @@ local function LoadGossipSkin()
     ItemTextFrame:CreateBackdrop()
     QuestFont:SetTextColor(1, 1, 1)
     GossipFrameInset:Hide()
+    GossipFramePortrait:Hide()
 
     if GossipFrame.Background then
         GossipFrame.Background:Hide()
@@ -190,7 +299,7 @@ local function LoadGossipSkin()
     greetings:SetJustifyH("LEFT")
     greetings:SetJustifyV("MIDDLE")
     greetings:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
-    greetings:SetText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
+    greetings:SetText("")
     GossipFrame.customGossipText = greetings
 
     --create portrait
@@ -243,9 +352,31 @@ local function LoadGossipSkin()
     GW.HandleNextPrevButton(ItemTextPrevPageButton)
     GW.HandleNextPrevButton(ItemTextNextPageButton)
 
+    local GossipPaginControler = CreateFrame("Frame","GossipPaginControler",GossipFrame)
+    local GossipPagingBack = CreateFrame("Button","GossipPagingBack",GossipPaginControler,"GwCharacterMenuButtonBack")
+    local GossipPagingForward = CreateFrame("Button","GossipPagingForward",GossipPaginControler,"GwCharacterMenuButtonBack")
+
+    GossipPaginControler.back = GossipPagingBack
+    GossipPaginControler.forward = GossipPagingForward
+
+    GossipPagingBack:ClearAllPoints()
+    GossipPagingForward:ClearAllPoints()
+    GossipPaginControler:SetSize(64,32)
+    GossipPagingForward:SetSize(32,32)
+    GossipPagingBack:SetSize(32,32)
+    GossipPagingForward:ClearNormalTexture()
+    GossipPagingBack:ClearNormalTexture()
+    GossipPagingForward.backarrow:SetRotation(math.pi)
+    GossipPaginControler:SetPoint("RIGHT",portraitFrame.npcNameLabel,"LEFT",0,0)
+    GossipPagingForward:SetPoint("RIGHT",GossipPaginControler,"RIGHT",0,0)
+    GossipPagingBack:SetPoint("LEFT",GossipPaginControler,"LEFT",0,0)
+
+    GossipPagingForward:SetScript("OnClick",function() setGreetingsTextPaging(1) end)
+    GossipPagingBack:SetScript("OnClick",function() setGreetingsTextPaging(-1) end)
 
     local GreetingPanelFirstLoad = true
     hooksecurefunc(GossipFrame.GreetingPanel.ScrollBox, "Update", function(frame)
+
         for _, button in next, { frame.ScrollTarget:GetChildren() } do
           updateGossipOption(button)
         end
@@ -255,7 +386,7 @@ local function LoadGossipSkin()
           GossipFrame.GreetingPanel.ScrollBox.view:SetPadding(10,10,10,10,0);
           GossipFrame.GreetingPanel.ScrollBox.view:SetElementExtentCalculator(function(dataIndex, elementData)
         		if elementData.greetingTextFrame then
-        			   GossipFrame.customGossipText:SetText(elementData.text);
+        			  setGreetingsText(elementData.text)
         			return 0
         		elseif elementData.buttonType==GOSSIP_BUTTON_TYPE_DIVIDER then
               return 0
