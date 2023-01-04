@@ -201,7 +201,7 @@ local function UpdateMatchingLayout(self, new_point)
     local frameFound = false
     if layout then
         for i = 0, #layout.frames do
-            if layout.frames[i].settingName == self.gw_Settings then
+            if layout.frames[i].settingName == self.setting then
                 layout.frames[i].point = nil
                 layout.frames[i].point = GW.copyTable(nil, new_point)
 
@@ -214,7 +214,7 @@ local function UpdateMatchingLayout(self, new_point)
         if not frameFound then
             local newIdx = #layout.frames + 1
             layout.frames[newIdx] = {}
-            layout.frames[newIdx].settingName = self.gw_Settings
+            layout.frames[newIdx].settingName = self.setting
             layout.frames[newIdx].point = GW.copyTable(nil, new_point)
         end
     end
@@ -232,53 +232,53 @@ local function smallSettings_resetToDefault(self)
         mf.defaultPoint.yOfs
     )
 
-    local new_point = GetSetting(mf.gw_Settings)
+    local new_point = GetSetting(mf.setting)
     new_point.point = mf.defaultPoint.point
     new_point.relativePoint = mf.defaultPoint.relativePoint
     new_point.xOfs = mf.defaultPoint.xOfs
     new_point.yOfs = mf.defaultPoint.yOfs
     new_point.hasMoved = false
-    SetSetting(mf.gw_Settings, new_point)
+    SetSetting(mf.setting, new_point)
 
-    mf.gw_frame.isMoved = false
-    mf.gw_frame:SetAttribute("isMoved", new_point.hasMoved)
+    mf.parent.isMoved = false
+    mf.parent:SetAttribute("isMoved", new_point.hasMoved)
 
     --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
-    if mf.gw_Settings == "PlayerBuffFrame" or mf.gw_Settings == "PlayerDebuffFrame" then
-        SetSetting(mf.gw_Settings .. "_GrowDirection", "UP")
-    elseif mf.gw_Settings == "MicromenuPos" then
+    if mf.setting == "PlayerBuffFrame" or mf.setting == "PlayerDebuffFrame" then
+        SetSetting(mf.setting .. "_GrowDirection", "UP")
+    elseif mf.setting == "MicromenuPos" then
         -- Hide/Show BG here
-        mf.gw_frame.cf.bg:Show()
+        mf.parent.cf.bg:Show()
     end
 
     -- Set Scale back to default
     if mf.optionScaleable then
         local scale
-        if mf.gw_mhf then
+        if mf.mainHudFrame then
             scale = GetSetting("HUD_SCALE")
         else
-            scale = GetDefault(mf.gw_Settings .. "_scale")
+            scale = GetDefault(mf.setting .. "_scale")
         end
         mf:SetScale(scale)
-        mf.gw_frame:SetScale(scale)
-        SetSetting(mf.gw_Settings .. "_scale", scale)
+        mf.parent:SetScale(scale)
+        SetSetting(mf.setting .. "_scale", scale)
         self:GetParent():GetParent().options.scaleSlider.slider:SetValue(scale)
     end
 
     -- Set height back to default
     if mf.optionHeight then
-        local height = GetDefault(mf.gw_Settings .. "_height")
+        local height = GetDefault(mf.setting .. "_height")
         mf:SetHeight(height)
-        mf.gw_frame:SetHeight(height)
-        SetSetting(mf.gw_Settings .. "_height", height)
+        mf.parent:SetHeight(height)
+        SetSetting(mf.setting .. "_height", height)
         self:GetParent():GetParent().options.heightSlider.slider:SetValue(height)
 
         -- update also the matching settings
         GW.UpdateObjectivesSettings()
     end
 
-    if mf.gw_postdrag then
-        mf.gw_postdrag(mf.gw_frame)
+    if mf.postdrag then
+        mf.postdrag(mf.parent)
     end
 
     GW.UpdateHudScale()
@@ -308,7 +308,7 @@ end
 GW.AddForProfiling("index", "mover_OnDragStart", mover_OnDragStart)
 
 local function mover_OnDragStop(self)
-    local settingsName = self.gw_Settings
+    local settingsName = self.setting
     self:StopMovingOrSizing()
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
 
@@ -324,8 +324,8 @@ local function mover_OnDragStop(self)
         self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
         SetSetting(settingsName, new_point)
 
-        self.gw_frame.isMoved = true
-        self.gw_frame:SetAttribute("isMoved", new_point.hasMoved)
+        self.parent.isMoved = true
+        self.parent:SetAttribute("isMoved", new_point.hasMoved)
 
         self:SetMovable(true)
         self:SetUserPlaced(true)
@@ -334,8 +334,8 @@ local function mover_OnDragStop(self)
         UpdateMatchingLayout(self, new_point)
     end
 
-    if self.gw_postdrag then
-        self.gw_postdrag(self.gw_frame)
+    if self.postdrag then
+        self.postdrag(self.parent)
     end
     self.IsMoving = false
 end
@@ -344,19 +344,19 @@ GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
 local function showExtraOptions(self)
     GW.MoveHudScaleableFrame.child = self
     GW.MoveHudScaleableFrame.childMover = self
-    GW.MoveHudScaleableFrame.headerString:SetText(self.frameName:GetText())
+    GW.MoveHudScaleableFrame.headerString:SetText(self.textString)
     GW.MoveHudScaleableFrame.desc:Hide()
     GW.MoveHudScaleableFrame.options:Show()
     -- options
     GW.MoveHudScaleableFrame.options.scaleSlider:SetShown(self.optionScaleable)
     GW.MoveHudScaleableFrame.options.heightSlider:SetShown(self.optionHeight)
     if self.optionScaleable then
-        local scale = GetSetting(self.gw_Settings .. "_scale")
+        local scale = GetSetting(self.setting .. "_scale")
         GW.MoveHudScaleableFrame.options.scaleSlider.slider:SetValue(scale)
         GW.MoveHudScaleableFrame.options.scaleSlider.input:SetNumber(scale)
     end
     if self.optionHeight then
-        local height = GetSetting(self.gw_Settings .. "_height")
+        local height = GetSetting(self.setting .. "_height")
         GW.MoveHudScaleableFrame.options.heightSlider.slider:SetValue(height)
         GW.MoveHudScaleableFrame.options.heightSlider.input:SetNumber(height)
     end
@@ -391,12 +391,12 @@ local function sliderValueChange(self)
     local roundValue = GW.RoundDec(self:GetValue(), 2)
     local moverFrame = self:GetParent():GetParent():GetParent().child
     moverFrame:SetScale(roundValue)
-    moverFrame.gw_frame:SetScale(roundValue)
+    moverFrame.parent:SetScale(roundValue)
     self:GetParent().input:SetText(roundValue)
-    SetSetting(moverFrame.gw_Settings .."_scale", roundValue)
+    SetSetting(moverFrame.setting .."_scale", roundValue)
 
-    moverFrame.gw_frame.isMoved = true
-    moverFrame.gw_frame:SetAttribute("isMoved", true)
+    moverFrame.parent.isMoved = true
+    moverFrame.parent:SetAttribute("isMoved", true)
 end
 
 local function sliderEditBoxValueChanged(self)
@@ -410,19 +410,19 @@ local function sliderEditBoxValueChanged(self)
 
     self:GetParent().slider:SetValue(roundValue)
     self:SetText(roundValue)
-    SetSetting(moverFrame.gw_Settings .. "_scale", roundValue)
+    SetSetting(moverFrame.setting .. "_scale", roundValue)
 
-    moverFrame.gw_frame.isMoved = true
-    moverFrame.gw_frame:SetAttribute("isMoved", true)
+    moverFrame.parent.isMoved = true
+    moverFrame.parent:SetAttribute("isMoved", true)
 end
 
 local function heightSliderValueChange(self)
     local roundValue = GW.RoundDec(self:GetValue())
     local moverFrame = self:GetParent():GetParent():GetParent().child
     moverFrame:SetHeight(roundValue)
-    moverFrame.gw_frame:SetHeight(roundValue)
+    moverFrame.parent:SetHeight(roundValue)
     self:GetParent().input:SetText(roundValue)
-    SetSetting(moverFrame.gw_Settings .."_height", roundValue)
+    SetSetting(moverFrame.setting .."_height", roundValue)
 end
 
 local function heightEditBoxValueChanged(self)
@@ -433,9 +433,9 @@ local function heightEditBoxValueChanged(self)
     if tonumber(roundValue) > 1500 then self:SetText(1500) end
     if tonumber(roundValue) < 1 then self:SetText(1) end
 
-    SetSetting(moverFrame.gw_Settings .."_height", roundValue)
+    SetSetting(moverFrame.setting .."_height", roundValue)
 
-    moverFrame.gw_frame:SetHeight(roundValue)
+    moverFrame.parent:SetHeight(roundValue)
     moverFrame:SetHeight(roundValue)
 
     -- update also the matching settings
@@ -466,33 +466,90 @@ local function moverframe_OnLeave(self)
     end
 end
 
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, frameOptions, mhf, postdrag)
-    local moveframe = CreateFrame("Button", "Gw_" .. settingsName, UIParent, dummyFrame)
-    frame.gwMover = moveframe
+local function CreateMoverFrame(parent, displayName, settingsName, size, frameOptions, mhf, postdrag)
+    local mf = CreateFrame("Button", "Gw_" .. settingsName, UIParent)
+    mf:SetClampedToScreen(true)
+    mf:SetMovable(true)
+    mf:EnableMouseWheel(true)
+    mf:RegisterForDrag("LeftButton", "RightButton")
+    mf:SetFrameLevel(parent:GetFrameLevel() + 1)
+	mf:SetFrameStrata("DIALOG")
+	mf:CreateBackdrop("Transparent White")
+    mf:SetScale(parent:GetScale())
+
     if size then
-        moveframe:SetSize(unpack(size))
+        mf:SetSize(unpack(size))
     else
-        moveframe:SetSize(frame:GetSize())
+        mf:SetSize(parent:GetSize())
     end
-    moveframe:SetScale(frame:GetScale())
-    moveframe.gw_Settings = settingsName
-    moveframe.gw_frame = frame
-    moveframe.gw_mhf = mhf
-    moveframe.gw_postdrag = postdrag
-    moveframe.frameOptions = frameOptions
+    mf:Hide()
 
-    if moveframe.frameName and moveframe.frameName.SetText then
-        moveframe.frameName:SetSize(moveframe:GetSize())
-        moveframe.frameName:SetText(displayName)
+    local fs = mf:CreateFontString(nil, 'OVERLAY')
+	fs:SetFont(UNIT_NAME_FONT, 12, "")
+	fs:SetPoint("CENTER")
+	fs:SetText(displayName)
+	fs:SetJustifyH("CENTER")
+	fs:SetTextColor(1, 1, 1)
+	mf:SetFontString(fs)
+
+    mf.text = fs
+	mf.parent = parent
+	mf.postdrag = postdrag
+	mf.textString = displayName
+    mf.setting = settingsName
+    mf.mainHudFrame = mhf
+    mf.frameOptions = frameOptions
+    mf.savedPoint = GetSetting(settingsName)
+    mf.defaultPoint = GetDefault(settingsName)
+
+    -- set all options default as false
+    mf.optionScaleable = false
+    mf.optionHeight = false
+
+    for _, v in pairs(frameOptions) do
+        if v == "scaleable" then
+            local scale = GetSetting(settingsName .. "_scale")
+            mf.parent:SetScale(scale)
+            mf:SetScale(scale)
+            GW.scaleableFrames[#GW.scaleableFrames + 1] = mf
+
+            mf.optionScaleable = true
+        elseif v == "height" then
+            local height = GetSetting(settingsName .. "_height")
+            mf.parent:SetHeight(height)
+            mf:SetHeight(height)
+
+            mf.optionHeight = true
+        end
     end
 
-    moveframe:SetClampedToScreen(true)
-    moveframe:SetMovable(true)
-    moveframe:EnableMouseWheel(true)
+    parent.gwMover = mf
 
-    -- position mover (as fallback use the default position)
-    moveframe.savedPoint = GetSetting(settingsName)
-    moveframe.defaultPoint = GetDefault(settingsName)
+    mf:SetScript("OnDragStart", mover_OnDragStart)
+    mf:SetScript("OnDragStop", mover_OnDragStop)
+    mf:SetScript("OnEnter", moverframe_OnEnter)
+    mf:SetScript("OnLeave", moverframe_OnLeave)
+    mf:SetScript("OnClick", mover_options)
+
+    if mhf then
+        GW.scaleableMainHudFrames[#GW.scaleableMainHudFrames + 1] = mf
+    end
+
+    if postdrag then
+        mf:RegisterEvent("PLAYER_ENTERING_WORLD")
+        mf:SetScript("OnEvent", function(self)
+            postdrag(self.parent)
+            self:UnregisterAllEvents()
+        end)
+    end
+
+    GW.MOVABLE_FRAMES[#GW.MOVABLE_FRAMES + 1] = mf
+
+    return mf
+end
+
+local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, frameOptions, mhf, postdrag)
+    local moveframe = CreateMoverFrame(frame, displayName, settingsName, size, frameOptions, mhf, postdrag)
 
     moveframe:ClearAllPoints()
     if not moveframe.savedPoint.point or not moveframe.savedPoint.relativePoint or not moveframe.savedPoint.xOfs or not moveframe.savedPoint.yOfs then
@@ -502,11 +559,6 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     else
         moveframe:SetPoint(moveframe.savedPoint.point, UIParent, moveframe.savedPoint.relativePoint, moveframe.savedPoint.xOfs, moveframe.savedPoint.yOfs)
     end
-
-    moveframe:Hide()
-    moveframe:RegisterForDrag("LeftButton")
-    moveframe:SetScript("OnEnter", moverframe_OnEnter)
-    moveframe:SetScript("OnLeave", moverframe_OnLeave)
 
     if moveframe.savedPoint.hasMoved == nil then -- can be removed after some time
         if moveframe.defaultPoint.point == moveframe.savedPoint.point and moveframe.defaultPoint.relativePoint == moveframe.savedPoint.relativePoint and moveframe.defaultPoint.xOfs == moveframe.savedPoint.xOfs and moveframe.defaultPoint.yOfs == moveframe.savedPoint.yOfs then
@@ -526,50 +578,6 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         moveframe.savedPoint.hasMoved = frame.isMoved
         SetSetting(settingsName, moveframe.savedPoint)
     end
-
-    if mhf then
-        GW.scaleableMainHudFrames[#GW.scaleableMainHudFrames + 1] = moveframe
-    end
-
-    -- set all options default as false
-    moveframe.optionScaleable = false
-    moveframe.optionHeight = false
-
-    for _, v in pairs(frameOptions) do
-        if v == "scaleable" then
-            moveframe.optionScaleable = true
-        elseif v == "height" then
-            moveframe.optionHeight = true
-        end
-    end
-
-    moveframe:SetScript("OnClick", mover_options)
-    if frameOptions and #frameOptions > 0 then
-        if moveframe.optionScaleable then
-            local scale = GetSetting(settingsName .. "_scale")
-            moveframe.gw_frame:SetScale(scale)
-            moveframe:SetScale(scale)
-            GW.scaleableFrames[#GW.scaleableFrames + 1] = moveframe
-        end
-        if moveframe.optionHeight then
-            local height = GetSetting(settingsName .. "_height")
-            moveframe.gw_frame:SetHeight(height)
-            moveframe:SetHeight(height)
-        end
-    end
-
-    if postdrag then
-        moveframe:RegisterEvent("PLAYER_ENTERING_WORLD")
-        moveframe:SetScript("OnEvent", function(self)
-            postdrag(self.gw_frame)
-            self:UnregisterAllEvents()
-        end)
-    end
-
-    moveframe:SetScript("OnDragStart", mover_OnDragStart)
-    moveframe:SetScript("OnDragStop", mover_OnDragStop)
-
-    GW.MOVABLE_FRAMES[#GW.MOVABLE_FRAMES + 1] = moveframe
 end
 GW.RegisterMovableFrame = RegisterMovableFrame
 

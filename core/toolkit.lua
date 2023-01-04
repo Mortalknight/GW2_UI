@@ -260,6 +260,14 @@ local function CreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShif
 			bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
 			edgeSize = GW.Scale(1)
 		})
+    elseif template == "Transparent White" then
+        backdrop:SetBackdrop({
+			edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+			bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+			edgeSize = GW.Scale(1)
+		})
+
+        backdrop:SetBackdropColor(1, 1, 1, 0.4)
     elseif template then
         backdrop:SetBackdrop(template)
     else

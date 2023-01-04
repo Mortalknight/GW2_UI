@@ -350,10 +350,10 @@ local function UpdateHudScale()
     end
     -- let all mainhub frames scale with the HUD scaler, but only if they are not moved and not individual scaled
     for _, mf in pairs(GW.scaleableMainHudFrames) do
-        if not mf.gw_frame.isMoved and mf:GetScale() ~= hudScale then
-            mf.gw_frame:SetScale(hudScale)
+        if not mf.parent.isMoved and mf:GetScale() ~= hudScale then
+            mf.parent:SetScale(hudScale)
             mf:SetScale(hudScale)
-            GW.SetSetting(mf.gw_Settings .. "_scale", hudScale)
+            GW.SetSetting(mf.setting .. "_scale", hudScale)
         end
     end
 end
