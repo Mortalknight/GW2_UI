@@ -473,8 +473,8 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     mf:EnableMouseWheel(true)
     mf:RegisterForDrag("LeftButton", "RightButton")
     mf:SetFrameLevel(parent:GetFrameLevel() + 1)
-	mf:SetFrameStrata("DIALOG")
-	mf:CreateBackdrop("Transparent White")
+    mf:SetFrameStrata("DIALOG")
+    mf:CreateBackdrop("Transparent White")
     mf:SetScale(parent:GetScale())
 
     if size then
@@ -485,17 +485,17 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     mf:Hide()
 
     local fs = mf:CreateFontString(nil, 'OVERLAY')
-	fs:SetFont(UNIT_NAME_FONT, 12, "")
-	fs:SetPoint("CENTER")
-	fs:SetText(displayName)
-	fs:SetJustifyH("CENTER")
-	fs:SetTextColor(1, 1, 1)
-	mf:SetFontString(fs)
+    fs:SetFont(UNIT_NAME_FONT, 12, "")
+    fs:SetPoint("CENTER")
+    fs:SetText(displayName)
+    fs:SetJustifyH("CENTER")
+    fs:SetTextColor(1, 1, 1)
+    mf:SetFontString(fs)
 
     mf.text = fs
-	mf.parent = parent
-	mf.postdrag = postdrag
-	mf.textString = displayName
+    mf.parent = parent
+    mf.postdrag = postdrag
+    mf.textString = displayName
     mf.setting = settingsName
     mf.mainHudFrame = mhf
     mf.frameOptions = frameOptions
@@ -573,7 +573,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         frame:SetAttribute("isMoved", moveframe.savedPoint.hasMoved)
     end
 
-     --temp to migrate to new isMoved system
+    --temp to migrate to new isMoved system
     if moveframe.savedPoint.hasMoved == nil then
         moveframe.savedPoint.hasMoved = frame.isMoved
         SetSetting(settingsName, moveframe.savedPoint)
