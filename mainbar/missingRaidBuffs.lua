@@ -59,6 +59,7 @@ local reminderBuffs = {
         [11] = 396092,	-- Well Fed
         --[12] = 382149,	-- Well Fed
         --[13] = 382149,	-- Well Fed
+        [12] = 327708,	-- Well Fed
     },
     Intellect = {
         [1] = 1459, -- Arcane Intellect
