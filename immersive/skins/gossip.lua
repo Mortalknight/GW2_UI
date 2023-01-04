@@ -31,10 +31,10 @@ TODO Greetings text above the model frame
 [132057]="Interface/GossipFrame/TaxiGossipIcon",
 [132058]="Interface/GossipFrame/TrainerGossipIcon",
 [132059]="Interface/GossipFrame/UnlearnGossipIcon",
-[132060]="Interface/GossipFrame/VendorGossipIcon",
-[1130518]="Interface/GossipFrame/WorkOrderGossipIcon",
-[528409]="Interface/GossipFrame/auctioneerGossipIcon",
-[1673939]="Interface/GossipFrame/transmogrifyGossipIcon",
+[132060]="Interface/GossipFrame/VendorGossipIcon", vendoricon
+[1130518]="Interface/GossipFrame/WorkOrderGossipIcon", workordericon
+[528409]="Interface/GossipFrame/auctioneerGossipIcon", ahicon
+[1673939]="Interface/GossipFrame/transmogrifyGossipIcon", icontest
 
 ["Interface/GossipFrame/CampaignGossipIcons"]={
 		["CampaignActiveDailyQuestIcon"]={16, 16, 0.0078125, 0.195312, 0.015625, 0.390625, false, false, "1x"},
@@ -115,13 +115,30 @@ local function skinGossipOption(self)
     self.Icon:ClearAllPoints()
     self.Icon:SetPoint("LEFT",self,"LEFT",0,0)
     self.Icon:SetSize(32,32)
-    self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
+    self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/gossip/optionhover")
 
     local hl = self:GetHighlightTexture()
-    hl:SetVertexColor(0.8, 0.8, 0.8, 0.8)
+    hl:ClearAllPoints()
+    hl:SetSize(512,64)
+    hl:SetBlendMode("BLEND")
+    hl:SetDrawLayer("BACKGROUND",-7)
+    hl:SetPoint("LEFT",16,0)
+    hl:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/optionhover")
+    hl:SetVertexColor(1, 1,1, 1)
+    hl:Hide()
   --  self:SetInside(background)
     self:HookScript("OnEnter",function()
-      GW.TriggerButtonHoverAnimation(self,hl)
+      hl:Show()
+      hl:SetAlpha(0.2)
+      AddToAnimation("GOSSIP_OPTIONHOVER", 0, 1, GetTime(), 0.2,
+      function()
+        local p = animations["GOSSIP_OPTIONHOVER"].progress
+        p = math.max(0.2,p)
+        hl:SetAlpha(p)
+      end)
+    end)
+    self:HookScript("OnLeave",function()
+      hl:Hide()
     end)
   end
 
@@ -151,6 +168,8 @@ local function updateGossipOption(self)
 
   if self.Icon then
     self.Icon:SetSize(32,32)
+    --wip
+  --  self.Icon:SetTexture(132059)
   end
 end
 -- unit for testing
@@ -389,7 +408,7 @@ local function LoadGossipSkin()
     GossipPagingBack:SetPoint("RIGHT",GossipPagingForward,"LEFT",0,0)
 
     GossipPaginControler:SetScript("OnClick",function(self,button)
-      local dir = button=="LeftButton" and -1 or 1
+      local dir = button=="LeftButton" and 1 or -1
       setGreetingsTextPaging(dir)
      end)
     GossipPagingForward:SetScript("OnClick",function()
