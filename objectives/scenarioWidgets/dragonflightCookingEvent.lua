@@ -44,15 +44,6 @@ local function addDragonflightCookingEventData(GwQuestTrackerTimerSavedHeight, s
 
             isDragonflightCookingEventWidget = false
         end
-    else
-        GwQuestTrackerTimerSavedHeight = 1
-        showTimerAsBonus = false
-        if timer then
-            timer:Cancel()
-            timer = nil
-        end
-
-        isDragonflightCookingEventWidget = false
     end
 
     return GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isDragonflightCookingEventWidget
