@@ -32,6 +32,8 @@ local settings = {
     raidIndicators = {}
 }
 
+local settingsEventFrame = CreateFrame("Frame")
+
 local function UpdateSettings()
     settings.fontEnabled = GetSetting("FONTS_ENABLED")
     settings.aurasIgnored = GetSetting("AURAS_IGNORED")
@@ -83,6 +85,14 @@ local function UpdateSettings()
 
     missing = FillTable(missing, true, strsplit(",", (settings.aurasMissing:trim():gsub("%s*,%s*", ","))))
     ignored = FillTable(ignored, true, strsplit(",", (settings.aurasIgnored:trim():gsub("%s*,%s*", ","))))
+
+    -- Update this settings on a spec switch
+    if not settingsEventFrame.isSetup then
+        settingsEventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+        settingsEventFrame:SetScript("OnEvent", UpdateSettings)
+
+        settingsEventFrame.isSetup = true
+    end
 end
 GW.UpdateGridSettings = UpdateSettings
 
