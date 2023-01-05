@@ -248,7 +248,7 @@ local function delete_OnClick(self)
         function()
             deleteProfile(p.profileID)
             loadProfiles(ProfileWin)
-            GwSmallSettingsWindow.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsWindow.layoutView.savedLayoutDropDown.container.contentScroll)
+            GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll)
         end
     )
 end

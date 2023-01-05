@@ -733,14 +733,14 @@
     </Frame>
 
     <Frame name="GwSmallSettingsMoverFrame" frameStrata="FULLSCREEN_DIALOG" enableMouse="true" movable="true" parent="UIParent" virtual="true">
-        <Size x="180" y="32"></Size>
+        <Size x="370" y="32"></Size>
         <Anchors>
             <Anchor point="CENTER" x="0" y="130"></Anchor>
         </Anchors>
     </Frame>
 
-    <Frame name="GwSmallSettings" frameStrata="FULLSCREEN_DIALOG" enableMouse="true" parent="UIParent" virtual="true">
-        <Size x="180" y="285"/>
+    <Frame name="GwSmallSettingsContainer" frameStrata="FULLSCREEN_DIALOG" enableMouse="true" parent="UIParent" virtual="true">
+        <Size x="370" y="285"/>
         <Anchors>
             <Anchor point="TOP" relativeTo="GwSmallSettingsMoverFrame" relativePoint="TOP" x="0" y="-20"></Anchor>
         </Anchors>
@@ -782,16 +782,35 @@
                         <Anchor point="CENTER" relativePoint="TOPLEFT" x="-7" y="10" />
                     </Anchors>
                 </Texture>
-                <FontString parentKey="headerString" text="Special frame options" inherits="GameFontNormalSmall" justifyH="LEFT">
-                    <Size x="150" y="12"/>
+                <FontString parentKey="headerString" text="Special frame options and Layouts" inherits="GameFontNormalSmall" justifyH="LEFT">
+                    <Size x="350" y="12"/>
                     <Color r="1" b="0.73" g="0.93"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="10" y="17"/>
                     </Anchors>
                 </FontString>
+            </Layer>
+            <Layer level="ARTWORK">
+                <Texture parentKey="seperator" file="Interface/AddOns/GW2_UI/textures/hud/levelreward-sep">
+                    <Size x="1" y="285"></Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" x="182" y="0"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+
+    <Frame name="GwSmallSettings" virtual="true" hidden="false">
+        <Size x="180" y="285"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="GwSmallSettingsContainer" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+        </Anchors>
+        <Layers>
+            <Layer textureSubLevel="3">
                 <FontString parentKey="desc" text="Some text" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="148" y="160"/>
-                    <Color r="1" b="0.73" g="0.93"/>
+                    <Color r="0.6" g="0.6" b="0.6"/>
                     <Anchors>
                         <Anchor point="CENTER" x="0" y="60"/>
                     </Anchors>
@@ -799,19 +818,6 @@
             </Layer>
         </Layers>
         <Frames>
-            <Button parentKey="layoutViewToggle">
-                <Size x="20" y="20"/>
-                <Anchors>
-                    <Anchor point="TOPRIGHT" x="0" y="20"/>
-                </Anchors>
-                <Layers>
-                    <Layer>
-                        <Texture parentKey="icon" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\character\backicon">
-                            <TexCoords left="0" right="1" top="0" bottom="1"/>
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </Button>
             <Frame parentKey="options">
                 <Size x="170" y="175" />
                 <Anchors>
@@ -1039,33 +1045,17 @@
     </Frame>
 
     <Frame name="GwLayoutView" virtual="true" hidden="false">
-        <Size x="170" y="285"/>
+        <Size x="180" y="285"/>
         <Anchors>
-            <Anchor point="TOPLEFT" relativeKey="$parent.layoutViewToggle" relativePoint="TOPRIGHT" x="2" y="-20"></Anchor>
+            <Anchor point="TOPLEFT" relativeTo="GwSmallSettingsContainer" relativePoint="TOPLEFT" x="180" y="0"></Anchor>
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/bag/bagbg" setAllPoints="true">
-                    <Size x="170" y="285"/>
-                </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagheader">
-                    <Size x="170" y="40"/>
+                <FontString parentKey="desc" text="Some text" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="148" y="160"/>
+                    <Color r="0.6" g="0.6" b="0.6"/>
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0" />
-                    </Anchors>
-                </Texture>
-                <FontString parentKey="headerString" text="Layouts" inherits="GameFontNormalSmall" justifyH="LEFT">
-                    <Size x="170" y="12"/>
-                    <Color r="1" b="0.73" g="0.93"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" x="10" y="17"/>
-                    </Anchors>
-                </FontString>
-                <FontString parentKey="desc" text="Some text" inherits="GameFontNormalSmall" justifyH="LEFT">
-                    <Size x="150" y="140"/>
-                    <Color r="1" b="0.73" g="0.93"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.headerString" relativePoint="BOTTOMLEFT" x="0" y="10"/>
+                        <Anchor point="CENTER" x="0" y="60"/>
                     </Anchors>
                 </FontString>
             </Layer>
