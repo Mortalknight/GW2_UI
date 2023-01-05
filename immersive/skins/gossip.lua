@@ -511,6 +511,10 @@ local function LoadGossipSkin()
     end)
 
     local NPCFriendshipStatusBar = GossipFrame.FriendshipStatusBar
+    NPCFriendshipStatusBar:ClearAllPoints()
+    NPCFriendshipStatusBar:SetPoint("BOTTOMLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 3)
+    NPCFriendshipStatusBar:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "TOPRIGHT", -5, 3)
+    NPCFriendshipStatusBar:SetHeight(16)
     NPCFriendshipStatusBar:StripTextures()
     NPCFriendshipStatusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
     NPCFriendshipStatusBar.bg = NPCFriendshipStatusBar:CreateTexture(nil, "BACKGROUND")
