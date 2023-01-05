@@ -9,32 +9,32 @@ local AddToAnimation = GW.AddToAnimation
 
 TODO Greetings text above the model frame
 
-[646979]="Interface/GossipFrame/ActiveLegendaryQuestIcon",
-[132048]="Interface/GossipFrame/ActiveQuestIcon",
-[646980]="Interface/GossipFrame/AvailableLegendaryQuestIcon",
-[132049]="Interface/GossipFrame/AvailableQuestIcon",
-[132050]="Interface/GossipFrame/BankerGossipIcon",
-[132051]="Interface/GossipFrame/BattleMasterGossipIcon",
-[132052]="Interface/GossipFrame/BinderGossipIcon",
-[3532316]="Interface/GossipFrame/CampaignActiveQuestIcon",
-[3532317]="Interface/GossipFrame/CampaignAvailableQuestIcon",
+[646979]="Interface/GossipFrame/ActiveLegendaryQuestIcon", 646979
+[132048]="Interface/GossipFrame/ActiveQuestIcon", 132048
+[646980]="Interface/GossipFrame/AvailableLegendaryQuestIcon", 646980
+[132049]="Interface/GossipFrame/AvailableQuestIcon", 132049
+[132050]="Interface/GossipFrame/BankerGossipIcon", 132050
+[132051]="Interface/GossipFrame/BattleMasterGossipIcon",132051
+[132052]="Interface/GossipFrame/BinderGossipIcon", 132054
+[3532316]="Interface/GossipFrame/CampaignActiveQuestIcon", 3532316
+[3532317]="Interface/GossipFrame/CampaignAvailableQuestIcon", 3532317
 [3595324]="Interface/GossipFrame/CampaignGossipIcons",
-[3532318]="Interface/GossipFrame/CampaignIncompleteQuestIcon",
-[1019848]="Interface/GossipFrame/ChatBubbleGossipIcon",
-[368577]="Interface/GossipFrame/DailyActiveQuestIcon",
-[368364]="Interface/GossipFrame/DailyQuestIcon",
-[132053]="Interface/GossipFrame/GossipGossipIcon",
-[132054]="Interface/GossipFrame/HealerGossipIcon",
-[365195]="Interface/GossipFrame/IncompleteQuestIcon",
-[132055]="Interface/GossipFrame/PetitionGossipIcon",
-[132056]="Interface/GossipFrame/TabardGossipIcon",
-[132057]="Interface/GossipFrame/TaxiGossipIcon",
-[132058]="Interface/GossipFrame/TrainerGossipIcon",
-[132059]="Interface/GossipFrame/UnlearnGossipIcon",
-[132060]="Interface/GossipFrame/VendorGossipIcon", vendoricon
-[1130518]="Interface/GossipFrame/WorkOrderGossipIcon", workordericon
-[528409]="Interface/GossipFrame/auctioneerGossipIcon", ahicon
-[1673939]="Interface/GossipFrame/transmogrifyGossipIcon", icontest
+[3532318]="Interface/GossipFrame/CampaignIncompleteQuestIcon",3532318
+[1019848]="Interface/GossipFrame/ChatBubbleGossipIcon",132053
+[368577]="Interface/GossipFrame/DailyActiveQuestIcon",368577
+[368364]="Interface/GossipFrame/DailyQuestIcon", 368364
+[132053]="Interface/GossipFrame/GossipGossipIcon",132053
+[132054]="Interface/GossipFrame/HealerGossipIcon", 132054
+[365195]="Interface/GossipFrame/IncompleteQuestIcon", 365195
+[132055]="Interface/GossipFrame/PetitionGossipIcon", 132055
+[132056]="Interface/GossipFrame/TabardGossipIcon", 132056
+[132057]="Interface/GossipFrame/TaxiGossipIcon", 132057
+[132058]="Interface/GossipFrame/TrainerGossipIcon", 132058
+[132059]="Interface/GossipFrame/UnlearnGossipIcon", 132059
+[132060]="Interface/GossipFrame/VendorGossipIcon", 132060
+[1130518]="Interface/GossipFrame/WorkOrderGossipIcon", 1130518
+[528409]="Interface/GossipFrame/auctioneerGossipIcon", 528409
+[1673939]="Interface/GossipFrame/transmogrifyGossipIcon", 1673939
 
 ["Interface/GossipFrame/CampaignGossipIcons"]={
 		["CampaignActiveDailyQuestIcon"]={16, 16, 0.0078125, 0.195312, 0.015625, 0.390625, false, false, "1x"},
@@ -44,6 +44,34 @@ TODO Greetings text above the model frame
 		["CampaignIncompleteQuestIcon"]={16, 16, 0.414062, 0.601562, 0.015625, 0.390625, false, false, "1x"},
 
 ]]
+
+local CUSTOM_ICONS = {
+  [646979]= 646979,
+  [132048]= 132048,
+  [646980]= 646980,
+  [132049]= 132049,
+  [132050]= 132050,
+  [132051]= 132051,
+  [132052]= 132054,
+  [3532316]= 3532316,
+  [3532317]= 3532317,
+  [3532318]= 3532318,
+  [1019848]= 132053,
+  [368577]= 368577,
+  [368364]= 368364,
+  [132053]= 132053,
+  [132054]= 132054,
+  [365195]= 365195,
+  [132055]= 132055,
+  [132056]= 132056,
+  [132057]= 132057,
+  [132058]= 132058,
+  [132059]= 132059,
+  [132060]= 132060,
+  [1130518]= 1130518,
+  [528409]= 528409,
+  [1673939]= 1673939,
+}
 
 local function splitIter(inputstr, pat)
     local st, g = 1, string.gmatch(inputstr, "()(" .. pat .. ")")
@@ -168,8 +196,19 @@ local function updateGossipOption(self)
 
   if self.Icon then
     self.Icon:SetSize(32,32)
-    --wip
-  --  self.Icon:SetTexture(132059)
+    local atlas = self.Icon:GetAtlas()
+    if atlas then
+      self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/"..atlas)
+    else
+
+      local t = self.Icon:GetTexture()
+      if CUSTOM_ICONS[t] then
+        self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/"..t)
+      else
+        GW.Debug("Missing Gossip Icon ID: ", t)
+      end
+    end
+
   end
 end
 -- unit for testing
@@ -380,7 +419,7 @@ local function LoadGossipSkin()
 
     GossipFrame.GreetingPanel.ScrollBox:ClearAllPoints()
     GossipFrame.GreetingPanel.ScrollBox:SetPoint("TOPLEFT",GossipFrame.ListBackground,"TOPLEFT")
-    GossipFrame.GreetingPanel.ScrollBox:SetPoint("BOTTOMRIGHT",GossipFrame.ListBackground,"BOTTOMRIGHT")
+    GossipFrame.GreetingPanel.ScrollBox:SetPoint("BOTTOMRIGHT",GossipFrame.ListBackground,"BOTTOMRIGHT",0,126)
     GW.HandleNextPrevButton(ItemTextPrevPageButton)
     GW.HandleNextPrevButton(ItemTextNextPageButton)
 
