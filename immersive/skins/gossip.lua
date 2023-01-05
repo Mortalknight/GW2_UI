@@ -202,7 +202,6 @@ local function updateGossipOption(self)
     else
 
       local t = self.Icon:GetTexture()
-      print(t)
       if CUSTOM_ICONS[t] then
         self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/".. CUSTOM_ICONS[t])
       else
