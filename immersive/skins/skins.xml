@@ -11,7 +11,6 @@
     <Script file="timetracker.lua"/>
     <Script file="flightmap.lua"/>
     <Script file="addonManager.lua"/>
-    <Script file="bindings.lua"/>
     <Script file="macro.lua"/>
     <Script file="mail.lua"/>
     <Script file="barber.lua"/>
