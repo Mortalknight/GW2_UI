@@ -15,8 +15,6 @@ local function UpdateSettings()
 end
 GW.UpdateObjectivesNotificationSettings = UpdateSettings
 
-UpdateSettings()
-
 local icons = {
     QUEST = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
     CAMPAIGN = {tex = "icon-objective", l = 0.5, r = 1, t = 0, b = 0.25},

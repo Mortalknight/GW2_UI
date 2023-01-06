@@ -548,6 +548,7 @@ local function evPlayerLogin(self)
     --load some settings
     GW.UpdateClassColorSetting()
     GW.UpdateHudSettings()
+    GW.UpdateObjectivesNotificationSettings()
 
     -- load alert settings
     GW.LoadAlertSystem()
