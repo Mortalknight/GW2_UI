@@ -335,7 +335,7 @@ local function LoadRaidFrames()
     container:ClearAllPoints()
     container:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 
-    RegisterMovableFrame(container, RAID_FRAMES_LABEL, "raid_pos", "VerticalActionBarDummy", nil, {"default", "default"})
+    RegisterMovableFrame(container, RAID_FRAMES_LABEL, "raid_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
 
     hooksecurefunc(container.gwMover, "StopMovingOrSizing", function(frame)
         if settings.raidAnchor == "GROWTH" then

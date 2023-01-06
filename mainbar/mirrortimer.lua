@@ -31,7 +31,7 @@ end
 local function LoadMirrorTimers()
 	for i = 1, 3 do
 		local frame = _G["MirrorTimer" .. i]
-		GW.RegisterMovableFrame(frame, GW.L["MirrorTimer"] .. i, "MirrorTimer" .. i, "VerticalActionBarDummy", {200, 18}, {"default"})
+		GW.RegisterMovableFrame(frame, GW.L["MirrorTimer"] .. i, "MirrorTimer" .. i, ALL .. ",Blizzard,Widgets", {200, 18}, {"default"})
 		frame:ClearAllPoints()
 		frame:SetPoint("TOPLEFT", frame.gwMover)
 

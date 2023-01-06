@@ -7,6 +7,86 @@ local L = GW.L
 local moveable_window_placeholders_visible = true
 local settings_window_open_before_change = false
 
+local AllTags = {}
+
+local function filterHudMovers(filter)
+    if filter then
+        for _, mf in pairs(GW.MOVABLE_FRAMES) do
+            if string.find(mf.tags, filter, 1, true) then
+                mf:Show()
+            else
+                mf:Hide()
+            end
+        end
+    end
+end
+
+local function loadTagDropDown(tagwin)
+    local USED_DROPDOWN_HEIGHT
+
+    local offset = HybridScrollFrame_GetOffset(tagwin)
+
+    for i = 1, #tagwin.buttons do
+        local slot = tagwin.buttons[i]
+
+        local idx = i + offset
+        if idx > #AllTags then
+            -- empty row (blank starter row, final row, and any empty entries)
+            slot:Hide()
+            slot.name = nil
+        else
+            slot.name = AllTags[idx]
+
+            slot.checkbutton:Hide()
+            slot.string:ClearAllPoints()
+            slot.string:SetPoint("LEFT", 5, 0)
+            slot.soundButton:Hide()
+
+            slot.string:SetText(slot.name)
+
+            slot:Show()
+        end
+    end
+
+    USED_DROPDOWN_HEIGHT = 20 * #AllTags
+    HybridScrollFrame_Update(tagwin, USED_DROPDOWN_HEIGHT, 120)
+end
+
+local function SetupTagDropdown(tagwin)
+    HybridScrollFrame_CreateButtons(tagwin, "GwDropDownItemTmpl", 0, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
+    for i = 1, #tagwin.buttons do
+        local slot = tagwin.buttons[i]
+        slot:SetWidth(tagwin:GetWidth())
+        slot.string:SetFont(UNIT_NAME_FONT, 10)
+        slot.hover:SetAlpha(0.5)
+        if not slot.ScriptsHooked then
+            slot:HookScript("OnClick", function(self)
+                tagwin.displayButton.string:SetText(self.name)
+                if tagwin.scrollContainer:IsShown() then
+                    tagwin.scrollContainer:Hide()
+                else
+                    tagwin.scrollContainer:Show()
+                end
+
+                filterHudMovers(self.name)
+            end)
+            slot:HookScript("OnEnter", function()
+                slot.hover:Show()
+            end)
+            slot.checkbutton:HookScript("OnEnter", function()
+                slot.hover:Show()
+            end)
+            slot:HookScript("OnLeave", function()
+                slot.hover:Hide()
+            end)
+
+            slot.ScriptsHooked = true
+        end
+    end
+
+    loadTagDropDown(tagwin)
+end
+
 local function lockHudObjects(_, _, inCombatLockdown)
     GW.MoveHudScaleableFrame:UnregisterEvent("PLAYER_REGEN_DISABLED")
     GW.MoveHudScaleableFrame:Hide()
@@ -466,7 +546,7 @@ local function moverframe_OnLeave(self)
     end
 end
 
-local function CreateMoverFrame(parent, displayName, settingsName, size, frameOptions, mhf, postdrag)
+local function CreateMoverFrame(parent, displayName, settingsName, size, frameOptions, mhf, postdrag, tags)
     local mf = CreateFrame("Button", "Gw_" .. settingsName, UIParent)
     mf:SetClampedToScreen(true)
     mf:SetMovable(true)
@@ -501,6 +581,14 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     mf.frameOptions = frameOptions
     mf.savedPoint = GetSetting(settingsName)
     mf.defaultPoint = GetDefault(settingsName)
+    mf.tags = tags
+
+    for _, v in pairs({strsplit(",", tags)}) do
+        if not tContains(AllTags, v) then
+            tinsert(AllTags, v)
+            SetupTagDropdown(GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.container.contentScroll)
+        end
+    end
 
     -- set all options default as false
     mf.optionScaleable = false
@@ -548,8 +636,8 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     return mf
 end
 
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, frameOptions, mhf, postdrag)
-    local moveframe = CreateMoverFrame(frame, displayName, settingsName, size, frameOptions, mhf, postdrag)
+local function RegisterMovableFrame(frame, displayName, settingsName, tags, size, frameOptions, mhf, postdrag)
+    local moveframe = CreateMoverFrame(frame, displayName, settingsName, size, frameOptions, mhf, postdrag, tags)
 
     moveframe:ClearAllPoints()
     if not moveframe.savedPoint.point or not moveframe.savedPoint.relativePoint or not moveframe.savedPoint.xOfs or not moveframe.savedPoint.yOfs then
@@ -708,6 +796,36 @@ local function LoadMovers(layoutManager)
     end)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.text:SetText(L["Grid Size:"])
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign:Hide()
+
+    --load tag dropdown
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.title:SetFont(DAMAGE_TEXT_FONT, 12)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.title:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.title:SetText(L["Filter"])
+    local tagScrollFrame = smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.container.contentScroll
+    tagScrollFrame.scrollBar.thumbTexture:SetSize(12, 30)
+    tagScrollFrame.scrollBar:ClearAllPoints()
+    tagScrollFrame.scrollBar:SetPoint("TOPRIGHT", -3, -12)
+    tagScrollFrame.scrollBar:SetPoint("BOTTOMRIGHT", -3, 12)
+    tagScrollFrame.scrollBar.scrollUp:SetPoint("TOPRIGHT", 0, 12)
+    tagScrollFrame.scrollBar.scrollDown:SetPoint("BOTTOMRIGHT", 0, -12)
+    tagScrollFrame.scrollBar:SetFrameLevel(tagScrollFrame:GetFrameLevel() + 5)
+    tagScrollFrame.scrollContainer = smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.container
+    tagScrollFrame.displayButton = smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.button
+    tagScrollFrame:GetParent():SetParent(smallSettingsContainer.moverSettingsFrame.defaultButtons)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.button.string:SetText(ALL)
+
+    tagScrollFrame.update = loadTagDropDown
+    tagScrollFrame.scrollBar.doNotHide = false
+    SetupTagDropdown(tagScrollFrame)
+
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.button:SetScript("OnClick", function(self)
+        local dd = self:GetParent()
+        if dd.container:IsShown() then
+            dd.container:Hide()
+        else
+            dd.container:Show()
+        end
+    end)
 
     --Layout
     GW.LoadLayoutsFrame(smallSettingsContainer, layoutManager)

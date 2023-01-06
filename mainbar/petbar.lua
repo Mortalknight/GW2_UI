@@ -365,7 +365,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
     playerPetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, {"default", "scaleable"}, true)
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", ALL .. ",Unitframe", nil, {"default", "scaleable"}, true)
     lm:RegisterPetFrame(playerPetFrame)
 
     playerPetFrame:ClearAllPoints()

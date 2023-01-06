@@ -82,8 +82,8 @@ local function ExtraAB_BossAB_Setup()
 
     Reparent()
 
-    RegisterMovableFrame(ExtraActionBarHolder, L["Boss Button"], "ExtraActionBarFramePos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
-    RegisterMovableFrame(ZoneAbilityHolder, L["Zone Ability"], "ZoneAbilityFramePos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
+    RegisterMovableFrame(ExtraActionBarHolder, L["Boss Button"], "ExtraActionBarFramePos", ALL .. "," .. BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"})
+    RegisterMovableFrame(ZoneAbilityHolder, L["Zone Ability"], "ZoneAbilityFramePos", ALL .. "," .. BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"})
 
     ZoneAbilityFrame:ClearAllPoints()
     ZoneAbilityFrame:SetAllPoints(ZoneAbilityHolder.gwMover)

@@ -74,7 +74,7 @@ local function LoadLootFrameSkin()
         local pos = GetSetting("LOOTFRAME_POS")
         LootFrame:ClearAllPoints()
         LootFrame:SetPoint(pos.point, nil, pos.relativePoint, pos.xOfs, pos.yOfs)
-        RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "LOOTFRAME_POS", "VerticalActionBarDummy", nil, {"default", "scaleable"})
+        RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "LOOTFRAME_POS", ALL .. ",Blizzard", nil, {"default", "scaleable"})
         hooksecurefunc(LootFrame, "SetPoint", function(_, _, holder)
             if holder ~= LootFrame.gwMover then
                 LootFrame:ClearAllPoints()

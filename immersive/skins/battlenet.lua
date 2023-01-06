@@ -94,7 +94,7 @@ local function LoadBNToastSkin()
         end
     end
 
-    RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", "VerticalActionBarDummy", nil, {"default", "scaleable"}, nil, BNTostPostDrag)
+    RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", ALL .. ",Blizzard", nil, {"default", "scaleable"}, nil, BNTostPostDrag)
 
     hooksecurefunc(BNToastFrame, "SetPoint", hook_SetPoint)
 end

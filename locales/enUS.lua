@@ -536,3 +536,4 @@ L["Alert will be disabled after the set value (hours)."] = true
 L["Fishing Net"] = true
 L["Iskaaran Fishing Net"] = true
 L["Alert Timeout"] = true
+L["Filter"] = true

@@ -97,9 +97,9 @@ end
 local function WidgetUISetup()
     -- avoide conflict with elvui
     if not CheckElvUI() then
-        GW.RegisterMovableFrame(UIWidgetTopCenterContainerFrame, "TopWidget", "TopCenterWidget_pos", "VerticalActionBarDummy", {58, 58}, {"default", "scaleable"})
-        GW.RegisterMovableFrame(UIWidgetPowerBarContainerFrame, "PowerBarContainer", "PowerBarContainer_pos", "VerticalActionBarDummy", {100, 20}, {"default", "scaleable"})
-        GW.RegisterMovableFrame(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "BelowMinimapContainer_pos", "VerticalActionBarDummy", {150, 30}, {"default", "scaleable"})
+        GW.RegisterMovableFrame(UIWidgetTopCenterContainerFrame, "TopWidget", "TopCenterWidget_pos", ALL .. ",Blizzard,Widgets", {58, 58}, {"default", "scaleable"})
+        GW.RegisterMovableFrame(UIWidgetPowerBarContainerFrame, "PowerBarContainer", "PowerBarContainer_pos", ALL .. ",Blizzard,Widgets", {100, 20}, {"default", "scaleable"})
+        GW.RegisterMovableFrame(UIWidgetBelowMinimapContainerFrame, "BelowMinimapWidget", "BelowMinimapContainer_pos", ALL .. ",Blizzard,Widgets", {150, 30}, {"default", "scaleable"})
 
         C_Timer.After(0.5, function()
             UIWidgetTopCenterContainerFrame:ClearAllPoints()

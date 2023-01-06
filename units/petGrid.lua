@@ -296,7 +296,7 @@ local function LoadPetGrid()
     container:ClearAllPoints()
     container:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 
-    RegisterMovableFrame(container, L["Raid pet's Grid"], "raid_pet_pos", "VerticalActionBarDummy", nil, {"default", "default"})
+    RegisterMovableFrame(container, L["Raid pet's Grid"], "raid_pet_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
 
     hooksecurefunc(container.gwMover, "StopMovingOrSizing", function(frame)
         if settings.raidAnchor == "GROWTH" then

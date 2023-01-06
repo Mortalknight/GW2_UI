@@ -16,7 +16,7 @@ local function LoadVehicleButton()
         VehicleSeatIndicator:ClearAllPoints()
         VehicleSeatIndicator:SetPoint("TOPRIGHT", MinimapCluster, "BOTTOMRIGHT", 0, 0)
 
-        GW.RegisterMovableFrame(VehicleSeatIndicator, BINDING_HEADER_VEHICLE, "VEHICLE_SEAT_POS", "VerticalActionBarDummy", nil, {"default", "scaleable"})
+        GW.RegisterMovableFrame(VehicleSeatIndicator, BINDING_HEADER_VEHICLE, "VEHICLE_SEAT_POS", ALL .. ",Blizzard", nil, {"default", "scaleable"})
         VehicleSeatIndicator.PositionVehicleFrameHooked = true
     end
 
