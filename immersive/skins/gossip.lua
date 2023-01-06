@@ -73,6 +73,48 @@ local CUSTOM_ICONS = {
   [1673939]= 1673939,
 }
 
+local DEBUG_ENABLED = false
+local MODEL_POSITION_OVERRIDERS = {
+  {
+    --Baby dragons
+    oldX = 2.3854219913483,
+    oldY = 1.1516649723053,
+    oldZ = 1.0744315385818,
+    x = 0,
+    y = 0.2,
+    z = 2.0,
+  },
+  { --wrathion Dragonflight model
+    oldX = 2.4409618377686,
+    oldY =1.041432261467,
+    oldZ = 1.2235957384109,
+    x = 0,
+    y = 0.2,
+    z = 2.0,
+  },
+  { --snake-men-dragons
+    oldX = 1.1580023765564,
+    oldY =0.81407845020294,
+    oldZ = 1.2595001459122,
+    x = 1.9,
+    y = 0.3,
+    z = 1.7,
+  },
+  {oldX = 0.66019856929779, oldY =-0.18824565410614, oldZ = 0.97438132762909, x = 0, y = 0, z = 1.1,},
+  {oldX = 1.0195727348328, oldY =-0.52885949611664, oldZ = 1.2723264694214, x = 0, y = 0, z = 1.5,},
+  {oldX = 0.75523900985718, oldY =-0.39174777269363, oldZ = 0.94246399402618, x = 0, y = 0, z = 1.1,},
+  {oldX = 0.48536586761475, oldY =-0.25882887840271, oldZ = 1.3045704364777, x = 0, y = 0.2, z = 1.5,},
+  {oldX = 0.24291133880615, oldY =-0.20592048764229, oldZ = 0.94999349117279, x = 0, y = 0, z = 1.15,},
+  {oldX = 0.47681593894958, oldY =-0.32944831252098, oldZ = 1.1506718397141, x = 0, y = -0.4, z = 1.3,},
+  {oldX = 0.29181063175201, oldY =-0.2284619808197, oldZ = 0.84874707460403, x = 0.7, y = -0.1, z = 1.1,},
+  {oldX = 0.47816109657288, oldY =-0.30829229950905, oldZ = 1.0849158763885, x = 0, y = -0.2, z = 1.0849158763885,},
+  {oldX = 0.33127820491791, oldY =-0.20283228158951, oldZ = 0.98665994405746, x = 0.3, y = -0.1, z = 1.1,},
+  {oldX = 0.32186508178711, oldY =-0.21955521404743, oldZ = 0.9369757771492, x = 0.9, y = -0.2, z = 1.1,},
+  {oldX = 0.31549227237701, oldY =-0.18083333969116, oldZ = 0.89432013034821, x = 1, y = 0, z = 1.2,},
+  {oldX = 0.24291133880615, oldY =-0.20592048764229, oldZ = 0.94999349117279, x = 0.7, y = 0, z = 1.2,},
+
+}
+
 local function splitIter(inputstr, pat)
     local st, g = 1, string.gmatch(inputstr, "()(" .. pat .. ")")
     local function getter(segs, seps, sep, cap1, ...)
@@ -211,14 +253,30 @@ local function updateGossipOption(self)
 
   end
 end
+local function comparePosition(p1,p2)
+  p1 = string.format("%.5f",p1)
+  p2 = string.format("%.5f",p2)
+  if p1==p2 then
+    return true
+  end
+  return false
+end
+
+local function createModelPositionOverriderString(x,y,z,overriderX,overriderY,overriderZ)
+
+  return "{oldX = "..x..", oldY ="..y..", oldZ = "..z..", x = "..overriderX..", y = "..overriderY..", z = "..overriderZ..",},"
+end
+
 -- unit for testing
-local function updateModelFrame(self, unit) -- needs to be tested on gnomes
+local function updateModelFrame(self, unit,isDebugUpdate) -- needs to be tested on gnomes
     if unit==nil then
       unit = "npc"
     end
     if ( UnitExists(unit) ) then
+        self.modelFrame:SetPosition(0,0,0)
         self.modelFrame:SetUnit(unit)
-        self.modelFrame:SetAnimation(804)
+        self.modelFrame:SetPortraitZoom(1)
+      --  self.modelFrame:SetAnimation(804)
         self.modelFrame:SetRotation(0)
         self.modelFrame:SetCamDistanceScale(1)
         self.modelFrame:SetPortraitZoom(1) -- 1 = Header; 0.75 = Torso
@@ -227,36 +285,81 @@ local function updateModelFrame(self, unit) -- needs to be tested on gnomes
         self.backLayer:Show()
         self.modelFrame:Show()
         self.maskLayer:Show()
-        self.modelFrame:SetSize(500,500) -- can be moved to the model frame when done here
 
-        -- get frame true size
-        local trueSize = self.modelFrame:GetHeight()
-        --frame base height; models will be scaled as if the frame was this size
-        local size = 200
-        local sizeDif = (size / trueSize) / 2
 
-        -- get the camera target for the portrait view
-        local fx,fy,fz = self.modelFrame:GetCameraTarget()
-        -- get the height ( z ) here for the face
-        local _,_, z = self.modelFrame:GetCameraPosition()
-        --Let blizzard zoom us out to the frontal view
-        self.modelFrame:SetPortraitZoom(0)
-        -- rotate the model to the left (very heroic)
-        self.modelFrame:SetFacing(-0.30)
-        -- make the camera custom so we can change its position and target
-        self.modelFrame:MakeCurrentCameraCustom()
-        -- we push the model down half step so we dont distort the FOV
-        self.modelFrame:SetPosition(0,0,-( z * (sizeDif/2)))
-        -- we move set the camere target to the face and move the camere up a half step so we dont distort the FOV
-        self.modelFrame:SetCameraTarget(fx,fy,z + ( z * (sizeDif/2)))
 
-        AddToAnimation("GOSSIP_MODEL", 0, 1, GetTime(), 0.8,
-        function()
-          local p = animations["GOSSIP_MODEL"].progress
-          p = math.min(1,math.max(0,(p - 0.5) / 0.5))
-          self.modelFrame:SetAlpha(p)
+          -- get frame true size
+          local trueSize = self.modelFrame:GetHeight()
+          --frame base height; models will be scaled as if the frame was this size
+          local size = 200
+          local sizeDif = (size / trueSize) / 2
 
-        end)
+          -- get the camera target for the portrait view
+          local fx,fy,fz = self.modelFrame:GetCameraTarget()
+          -- get the height ( z ) here for the face
+          local x,y,z = self.modelFrame:GetCameraPosition()
+          local newX = 0
+          local newY = 0
+          local newZ = z
+
+          if DEBUG_ENABLED then
+
+            if not isDebugUpdate then
+              GwGossipModelDebug.x:SetText(newX)
+              GwGossipModelDebug.y:SetText(newY)
+              GwGossipModelDebug.z:SetText(newZ)
+            end
+
+            newX = GwGossipModelDebug.x:GetText()
+            newY = GwGossipModelDebug.y:GetText()
+            newZ = GwGossipModelDebug.z:GetText()
+            if newX==nil or newX=="" then
+              newX= 0
+            end
+            if newY==nil or newY=="" then
+              newY= 0
+            end
+            if newZ==nil or newZ=="" then
+              newZ= 0
+            end
+
+            if isDebugUpdate then
+              GwGossipModelDebug.editbox:SetText(createModelPositionOverriderString(x,y,z,newX,newY,newZ))
+            end
+          else
+            for _,v in pairs(MODEL_POSITION_OVERRIDERS) do
+               if comparePosition(x,v.oldX) and comparePosition(y,v.oldY) and comparePosition(z,v.oldZ) then
+                 newX = v.x
+                 newY = v.y
+                 newZ = v.z
+                 break;
+               end
+            end
+          end
+
+
+
+
+
+          --Let blizzard zoom us out to the frontal view
+          self.modelFrame:SetPortraitZoom(0)
+          -- rotate the model to the left (very heroic)
+          self.modelFrame:SetFacing(-0.30)
+          -- make the camera custom so we can change its position and target
+          self.modelFrame:MakeCurrentCameraCustom()
+          -- we push the model down half step so we dont distort the FOV
+          self.modelFrame:SetPosition(newX,newY,-( newZ * (sizeDif/2)))
+          -- we move set the camere target to the face and move the camere up a half step so we dont distort the FOV
+          self.modelFrame:SetCameraTarget(fx,fy,newZ + ( newZ * (sizeDif/2)))
+
+          if not isDebugUpdate then
+            AddToAnimation("GOSSIP_MODEL", 0, 1, GetTime(), 0.8,function()
+              local p = animations["GOSSIP_MODEL"].progress
+              p = math.min(1,math.max(0,(p - 0.5) / 0.5))
+              self.modelFrame:SetAlpha(p)
+            end)
+          end
+
 
     else
         self.backLayer:Hide()
@@ -300,6 +403,58 @@ local function setGreetingsText(text)
 end
 
 
+local function createCoordDebugInput(self,labelText,index)
+  local f = CreateFrame("EditBox", nil, self)
+  f:SetPoint("TOPLEFT",self,"BOTTOMLEFT",0,-(22 * index))
+  f:SetPoint("TOPRIGHT",self,"BOTTOMRIGHT",0,0 - (22 * index))
+  f:SetSize(20,20)
+  f:SetAutoFocus(false);
+  f:SetMultiLine(false);
+  f:SetMaxLetters(50);
+  f:SetFontObject(ChatFontNormal)
+  f:SetText("");
+
+  f.bg = f:CreateTexture(nil, "ARTWORK", nil, 1)
+  f.bg:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg") -- add custom overlay texture here
+  f.bg:SetAllPoints()
+
+  f.label = f:CreateFontString(nil, "ARTWORK")
+  f.label:SetPoint("RIGHT", f, "LEFT", 0, 0)
+  f.label:SetJustifyH("LEFT")
+  f.label:SetJustifyV("MIDDLE")
+  f.label:SetFont(UNIT_NAME_FONT, 14, "OUTLINE")
+  f.label:SetText(labelText)
+
+  f:SetScript("OnTextChanged",function() updateModelFrame(GwGossipModelFrame,nil,true) end)
+return f
+end
+local function loadPortraitDebugMode()
+  if GwGossipModelDebug then
+    return
+  end
+  --debug stuff
+  local debugModelPositionData = CreateFrame("Frame", "GwGossipModelDebug", GwGossipModelFrame)
+  debugModelPositionData:SetSize(300,300)
+  debugModelPositionData:SetPoint("TOPLEFT", GwGossipModelFrame,"BOTTOMRIGHT",0,0)
+  debugModelPositionData.bg = debugModelPositionData:CreateTexture(nil, "ARTWORK", nil, 1)
+  debugModelPositionData.bg:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg") -- add custom overlay texture here
+  debugModelPositionData.bg:SetAllPoints()
+  debugModelPositionData.bg:SetSize(300,300)
+
+  debugModelPositionData.editbox = CreateFrame("EditBox", nil, debugModelPositionData)
+  debugModelPositionData.editbox:SetPoint("TOPLEFT",debugModelPositionData,"TOPLEFT",5,-5)
+  debugModelPositionData.editbox:SetPoint("BOTTOMRIGHT",debugModelPositionData,"BOTTOMRIGHT",-5,5)
+  debugModelPositionData.editbox:SetAutoFocus(false);
+  debugModelPositionData.editbox:SetMultiLine(true);
+  debugModelPositionData.editbox:SetMaxLetters(2000);
+  debugModelPositionData.editbox:SetFontObject(ChatFontNormal)
+  debugModelPositionData.editbox:SetText("");
+
+  debugModelPositionData.x = createCoordDebugInput(debugModelPositionData,"X:",1)
+  debugModelPositionData.y = createCoordDebugInput(debugModelPositionData,"Y:",2)
+  debugModelPositionData.z = createCoordDebugInput(debugModelPositionData,"Z:",3)
+
+end
 
 local function LoadGossipSkin()
     if not GetSetting("GOSSIP_SKIN_ENABLED") then return end
@@ -364,25 +519,43 @@ local function LoadGossipSkin()
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/listbg")
     GossipFrame.ListBackground = tex
     --create portrait
-    local portraitFrame = CreateFrame("Frame", "GwGossipModelFrame", GossipFrame)
+    local portraitFrame = CreateFrame("BUTTON", "GwGossipModelFrame", GossipFrame)
     portraitFrame:Show()
     portraitFrame:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 548, 24)
     portraitFrame:SetSize(200, 200)
 
+    portraitFrame:SetScript("OnClick",function(self)
+      if IsModifiedClick("CHATLINK") then
+        if DEBUG_ENABLED then
+          GwGossipModelDebug:Hide()
+          DEBUG_ENABLED = false
+          updateModelFrame(GwGossipModelFrame)
+        else
+        loadPortraitDebugMode()
+        GwGossipModelDebug:Show()
+        DEBUG_ENABLED = true
+        updateModelFrame(GwGossipModelFrame)
+        end
+      end
+    end)
+
     portraitFrame.backLayer = portraitFrame:CreateTexture(nil, "BACKGROUND", nil, -1)
     --portraitFrame.backLayer:SetTexture("") -- add custom background texture here
     portraitFrame.backLayer:SetPoint("TOPLEFT", portraitFrame)
-	portraitFrame.backLayer:SetPoint("BOTTOMRIGHT", portraitFrame)
+	   portraitFrame.backLayer:SetPoint("BOTTOMRIGHT", portraitFrame)
 
     portraitFrame.modelFrame = CreateFrame("PlayerModel", nil, portraitFrame, "GW2ModelLevelTemplate")
     portraitFrame.modelFrame:SetModelDrawLayer("ARTWORK")
     portraitFrame.modelFrame:SetPoint("BOTTOM", portraitFrame.backLayer,"BOTTOM",20,0)
+    portraitFrame.modelFrame:SetSize(500,500)
 ---	portraitFrame.modelFrame:SetPoint("BOTTOMRIGHT", portraitFrame.backLayer)
 
     portraitFrame.maskLayer = portraitFrame:CreateTexture(nil, "ARTWORK", nil, 1)
     portraitFrame.maskLayer:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/modelmask") -- add custom overlay texture here
 	  portraitFrame.maskLayer:SetPoint("TOPLEFT", GossipFrame.tex)
     portraitFrame.maskLayer:SetSize(1024,256)
+
+
 
     --custom greetings text string
     local greetings = portraitFrame:CreateFontString(nil, "ARTWORK")
@@ -400,7 +573,9 @@ local function LoadGossipSkin()
     portraitFrame.npcNameLabel:SetSize(200, 32)
 	portraitFrame.npcNameLabel:SetPoint("TOPLEFT", portraitFrame, "TOPLEFT", -3, -170)
 
-    hooksecurefunc(GossipFrame, "Update",function() updateModelFrame(portraitFrame) end)
+    hooksecurefunc(GossipFrame, "Update",function()
+      updateModelFrame(portraitFrame)
+     end)
 
     GossipFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
     GossipFrameTitleText:ClearAllPoints()
