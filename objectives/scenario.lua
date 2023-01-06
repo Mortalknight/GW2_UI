@@ -341,12 +341,9 @@ local function updateCurrentScenario(self, event, ...)
 
     if showTimerAsBonus or isEmberCourtWidget or isDragonflightCookingEventWidget then
         GwQuestTrackerTimer.height = GwQuestTrackerTimerSavedHeight
-
-        GwQuestTrackerTimer:SetHeight(GwQuestTrackerTimer.height)
-    else
-        GwQuestTrackerTimer:SetHeight(1)
     end
 
+    GwQuestTrackerTimer:SetHeight(GwQuestTrackerTimer.height)
     GwScenarioBlock:SetHeight(GwScenarioBlock.height - intGWQuestTrackerHeight)
     GwQuesttrackerContainerScenario.oldHeight = GW.RoundInt(GwQuesttrackerContainerScenario:GetHeight())
     GwQuesttrackerContainerScenario:SetHeight(GwScenarioBlock.height)
@@ -413,7 +410,6 @@ GW.AddForProfiling("scenario", "scenarioTimerUpdateDeathCounter", scenarioTimerU
 
 local function scenarioTimerUpdate(...)
     GwQuestTrackerTimer.height = 1
-    local hasUpdatedAffixes = false
 
     for i = 1, select("#", ...) do
         local timerID = select(i, ...)
@@ -491,13 +487,11 @@ local function scenarioTimerUpdate(...)
     GwQuestTrackerTimer.deathcounter:Hide()
     GwQuestTrackerTimer:SetScript("OnUpdate", nil)
 
-    if hasUpdatedAffixes == false then
-        for _, v in ipairs(GwQuestTrackerTimer.affixes.affixes) do
-            v.affixID = nil
-            v.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss")
-        end
-        GwQuestTrackerTimer.affixes:Hide()
+    for _, v in ipairs(GwQuestTrackerTimer.affixes.affixes) do
+        v.affixID = nil
+        v.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/icon-boss")
     end
+    GwQuestTrackerTimer.affixes:Hide()
 end
 GW.AddForProfiling("scenario", "scenarioTimerUpdate", scenarioTimerUpdate)
 
@@ -606,7 +600,7 @@ local function LoadScenarioFrame()
         v:SetScript(
             "OnEnter",
             function(self)
-                if self.affixID ~= nil then
+                if self.affixID then
                     GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 0, 50)
                     GameTooltip:ClearLines()
                     local name, description = C_ChallengeMode.GetAffixInfo(self.affixID)
