@@ -3,6 +3,7 @@ local GetSetting = GW.GetSetting
 local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
+local lerp = GW.lerp
 
 
 --[[
@@ -520,6 +521,16 @@ local function LoadGossipSkin()
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/background")
     GossipFrame.tex = tex
 
+    local bgMask = UIParent:CreateMaskTexture()
+    bgMask:SetPoint("TOPLEFT", tex, "TOPLEFT", 0, 0)
+    bgMask:SetPoint("BOTTOMRIGHT", tex, "BOTTOMLEFT",0, 0)
+    bgMask:SetTexture(
+        "Interface/AddOns/GW2_UI/textures/masktest",
+        "CLAMPTOBLACKADDITIVE",
+        "CLAMPTOBLACKADDITIVE"
+    )
+    GossipFrame.tex:AddMaskTexture(bgMask)
+
     -- list background
     tex = GossipFrame:CreateTexture("listbackground", "BACKGROUND", nil, 1)
     tex:SetPoint("TOPLEFT", GossipFrame, "TOPLEFT", 70, -175)
@@ -550,7 +561,7 @@ local function LoadGossipSkin()
     portraitFrame.backLayer = portraitFrame:CreateTexture(nil, "BACKGROUND", nil, -1)
     --portraitFrame.backLayer:SetTexture("") -- add custom background texture here
     portraitFrame.backLayer:SetPoint("TOPLEFT", portraitFrame)
-	   portraitFrame.backLayer:SetPoint("BOTTOMRIGHT", portraitFrame)
+	  portraitFrame.backLayer:SetPoint("BOTTOMRIGHT", portraitFrame)
 
     portraitFrame.modelFrame = CreateFrame("PlayerModel", nil, portraitFrame, "GW2ModelLevelTemplate")
     portraitFrame.modelFrame:SetModelDrawLayer("ARTWORK")
@@ -562,6 +573,7 @@ local function LoadGossipSkin()
     portraitFrame.maskLayer:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/modelmask") -- add custom overlay texture here
 	  portraitFrame.maskLayer:SetPoint("TOPLEFT", GossipFrame.tex)
     portraitFrame.maskLayer:SetSize(1024,256)
+    portraitFrame.maskLayer:AddMaskTexture(bgMask)
 
 
 
@@ -579,7 +591,7 @@ local function LoadGossipSkin()
     portraitFrame.npcNameLabel = portraitFrame:CreateTexture(nil, "ARTWORK", nil, 2)
     portraitFrame.npcNameLabel:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/npcname")
     portraitFrame.npcNameLabel:SetSize(200, 32)
-	portraitFrame.npcNameLabel:SetPoint("TOPLEFT", portraitFrame, "TOPLEFT", -3, -170)
+	  portraitFrame.npcNameLabel:SetPoint("TOPLEFT", portraitFrame, "TOPLEFT", -3, -170)
 
     hooksecurefunc(GossipFrame, "Update",function()
       updateModelFrame(portraitFrame)
@@ -651,6 +663,8 @@ local function LoadGossipSkin()
         GossipFrame:SetAlpha(p)
         portraitFrame.npcNameLabel:SetWidth(200*p)
         portraitFrame.npcNameLabel:SetTexCoord(0, p, 0, 1)
+
+        bgMask:SetPoint("BOTTOMRIGHT", tex, "BOTTOMLEFT",lerp(0,(GossipFrame.tex:GetWidth()),p) , 0)
       end,nil,function()
           GossipFrame.CloseButton:Show()
       end)
