@@ -660,7 +660,7 @@ local function LoadGossipSkin()
       AddToAnimation("GOSSIP_FRAME_FADE", 0, 1, GetTime(), 0.4,
       function()
         local p = animations["GOSSIP_FRAME_FADE"].progress
-        GossipFrame:SetAlpha(p)
+        GossipFrame:SetAlpha(math.max(0.5,p))
         portraitFrame.npcNameLabel:SetWidth(200*p)
         portraitFrame.npcNameLabel:SetTexCoord(0, p, 0, 1)
 
