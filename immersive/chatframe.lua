@@ -635,7 +635,7 @@ end
 
 local function ReplaceProtocol(self, arg1, arg2)
     local str = self .. "://" .. arg1
- 	return (self == "Houtfit") and str .. arg2 or PrintURL(str)
+    return (self == "Houtfit") and str .. arg2 or PrintURL(str)
 end
 
 local function FindURL(msg, author, ...)
@@ -1343,12 +1343,59 @@ local function ChatFrame_SetScript(self, script, func)
 end
 
 local function GetTab(chat)
-	if not chat.tab then
-		chat.tab = _G[format("ChatFrame%sTab", chat:GetID())]
-	end
+    if not chat.tab then
+        chat.tab = _G[format("ChatFrame%sTab", chat:GetID())]
+    end
 
-	return chat.tab
+    return chat.tab
 end
+do
+    local charCount
+    local function CountLinkCharacters(self)
+        charCount = charCount + (strlen(self) + 4) -- 4 is ending '|h|r'
+    end
+
+    local repeatedText
+    local function EditBoxOnTextChanged(self)
+        local userInput = self:GetText()
+        local len = strlen(userInput)
+
+        if settings.combatTextRepeat ~= 0 and InCombatLockdown() and (not repeatedText or not strfind(userInput, repeatedText, 1, true)) then
+            local MIN_REPEAT_CHARACTERS = settings.combatTextRepeat
+            if len > MIN_REPEAT_CHARACTERS then
+                local repeatChar = true
+                for i = 1, MIN_REPEAT_CHARACTERS, 1 do
+                    local first = -1 - i
+                    if strsub(userInput, -i, -i) ~= strsub(userInput, first, first) then
+                        repeatChar = false
+                        break
+                    end
+                end
+                if repeatChar then
+                    repeatedText = userInput
+                    self:Hide()
+                    return
+                end
+            end
+        end
+
+        charCount = 0
+        gsub(userInput, '(|c%x-|H.-|h).-|h|r', CountLinkCharacters)
+        if charCount ~= 0 then len = len - charCount end
+
+        self.characterCount:SetText(len > 0 and (255 - len) or "")
+
+        if repeatedText then
+            repeatedText = nil
+        end
+
+        if repeatedText then
+            repeatedText = nil
+        end
+    end
+    GW.ChatFrameEditBoxOnTextChanged = EditBoxOnTextChanged
+end
+
 
 local function styleChatWindow(frame)
     local name = frame:GetName()
@@ -1451,7 +1498,7 @@ local function styleChatWindow(frame)
     frame.buttonFrame.minimizeButton:SetSize(24, 24)
     frame.buttonFrame:StripTextures()
 
- 	if not tab.Left then tab.Left = _G[name .. "TabLeft"] or _G[name .. "Tab"].Left end
+    if not tab.Left then tab.Left = _G[name .. "TabLeft"] or _G[name .. "Tab"].Left end
 
     hooksecurefunc(tab, "SetAlpha", function(t, alpha)
         if alpha ~= 1 and (not t.isDocked or GeneralDockManager.selected:GetID() == t:GetID()) then
@@ -1492,6 +1539,16 @@ local function styleChatWindow(frame)
     editbox:Hide()
     GW.SkinTextBox(_G[name .. "EditBoxMid"], _G[name .. "EditBoxLeft"], _G[name .. "EditBoxRight"])
 
+    --Character count
+    local charCount = editbox:CreateFontString(nil, "ARTWORK")
+    charCount:SetFont(UNIT_NAME_FONT, 10, "")
+    charCount:SetTextColor(190, 190, 190, 0.4)
+    charCount:SetPoint("TOPRIGHT", editbox, "TOPRIGHT", -5, 0)
+    charCount:SetPoint("BOTTOMRIGHT", editbox, "BOTTOMRIGHT", -5, 0)
+    charCount:SetJustifyH("CENTER")
+    charCount:SetWidth(40)
+    editbox.characterCount = charCount
+
     editbox:HookScript("OnEditFocusGained", function(editBox)
         frame.editboxHasFocus = true
         frame:SetScript(
@@ -1511,34 +1568,8 @@ local function styleChatWindow(frame)
             editBox:Hide()
         end
     end)
-    local repeatedText
 
-    editbox:HookScript("OnTextChanged", function(self)
-        local userInput = self:GetText()
-
-        if settings.combatTextRepeat ~= 0 and InCombatLockdown() and (not repeatedText or not strfind(userInput, repeatedText, 1, true)) then
-            local MIN_REPEAT_CHARACTERS = settings.combatTextRepeat
-            if strlen(userInput) > MIN_REPEAT_CHARACTERS then
-                local repeatChar = true
-                for i = 1, MIN_REPEAT_CHARACTERS, 1 do
-                    local first = -1 - i
-                    if strsub(userInput, -i, -i) ~= strsub(userInput, first, first) then
-                        repeatChar = false
-                        break
-                    end
-                end
-                if repeatChar then
-                    repeatedText = userInput
-                    self:Hide()
-                    return
-                end
-            end
-        end
-
-        if repeatedText then
-            repeatedText = nil
-        end
-    end)
+    editbox:HookScript("OnTextChanged", GW.ChatFrameEditBoxOnTextChanged )
 
     if settings.useGw2Style then
         local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
