@@ -56,6 +56,13 @@ local CASTINGBAR_TEXTURES = {
 }
 GW.CASTINGBAR_TEXTURES = CASTINGBAR_TEXTURES
 
+local settings = {}
+
+local function UpdateSettings()
+    settings.showSpellQueueWindow = GetSetting("PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW")
+end
+GW.UpdateCastingBarSettings = UpdateSettings
+
 local function createNewBarSegment(self)
     local segment = CreateFrame("Frame", self:GetName() .. "Segment" .. #self.segments + 1, self, "GwCastingBarSegmentSep")
 
@@ -316,7 +323,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
                 end
 
                 local lagWorld = select(4, GetNetStats()) / 1000
-                local sqw = GetSetting("PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW") and (tonumber(GetCVar("SpellQueueWindow")) or 0) / 1000 or 0
+                local sqw = settings.showSpellQueueWindow and (tonumber(GetCVar("SpellQueueWindow")) or 0) / 1000 or 0
                 self.latency:SetWidth(math.max(0.0001, math.min(1, ((sqw + lagWorld) / (self.endTime - self.startTime)))) * 176)
             end,
             "noease"
@@ -379,6 +386,8 @@ end
 GW.TogglePlayerEnhancedCastbar = TogglePlayerEnhancedCastbar
 
 local function LoadCastingBar(name, unit, showTradeSkills)
+    UpdateSettings()
+
     local GwCastingBar = CreateFrame("Frame", name, UIParent, "GwCastingBar")
     GwCastingBar.name:SetFont(UNIT_NAME_FONT, 12)
     GwCastingBar.name:SetShadowOffset(1, -1)
