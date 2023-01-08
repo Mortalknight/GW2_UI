@@ -54,8 +54,11 @@ GW.PopulateUnitIlvlsCache = PopulateUnitIlvlsCache
 local function InspectGearSlot(line, lineText, slotInfo)
     local enchant = strmatch(lineText, MATCH_ENCHANT)
     if enchant then
-        slotInfo.enchantText = enchant
-        slotInfo.enchantTextShort = strsub(enchant, 1, 18)
+        local text = gsub(enchant, "%s?|A.-|a", "")
+        slotInfo.enchantText = text
+        slotInfo.enchantTextShort = strsub(text, 1, 18)
+        slotInfo.enchantTextShort2 = strsub(text, 1, 13)
+        slotInfo.enchantTextReal = enchant
 
         local lr, lg, lb = line:GetTextColor()
         slotInfo.enchantColors[1] = lr

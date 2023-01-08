@@ -94,6 +94,7 @@ dataInfo\conduits.lua
 dataInfo\friends.lua
 dataInfo\system.lua
 dataInfo\durability.lua
+datainfo\characterItemInfo.lua
 
 core\auras.lua
 

@@ -154,6 +154,9 @@ local function LoadPaperDoll(tabContainer)
     addAddonButton("MyRolePlay", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false ToggleCharacter("MyRolePlayCharacterFrame") end)
     addAddonButton("TalentSetManager", GetSetting("USE_TALENT_WINDOW"), nextShadow, nextAnchor, function() TalentFrame_LoadUI() if PlayerTalentFrame_Toggle then PlayerTalentFrame_Toggle(TALENTS_TAB) end end)
 
+
+    GW.UpdateHeroPanelItemInfoSettings()
+    GW.ToggleCharacterItemInfo(true)
     CharacterFrame:SetScript(
         "OnShow",
         function()

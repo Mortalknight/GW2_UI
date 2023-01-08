@@ -537,3 +537,5 @@ L["Fishing Net"] = true
 L["Iskaaran Fishing Net"] = true
 L["Alert Timeout"] = true
 L["Filter"] = true
+L["Show character item info"] = true
+L["Display gems and enchants on the GW2 character panel"] = true

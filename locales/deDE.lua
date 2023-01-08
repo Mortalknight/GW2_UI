@@ -566,3 +566,5 @@ L["Alert will be disabled after the set value (hours)."] = "Alarm wird nach dem 
 L["Iskaaran Fishing Net"] = "Iskaaran Fischernetz"
 L["Alert Timeout"] = "Alarm Zeitüberschreitung"
 L["Filter"] = "Filter"
+L["Show character item info"] = "Zeige Charakter Gegenstandsinformationen"
+L["Display gems and enchants on the GW2 character panel"] = "Zeigt Edelsteine und Verzauberungen im GW2 Charakter Fenster an"
