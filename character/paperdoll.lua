@@ -173,9 +173,10 @@ local function LoadPaperDoll(tabContainer)
     hooksecurefunc("PaperDollFrame_UpdateCorruptedItemGlows", function(glow)
         for _, v in pairs(GW.char_equipset_SavedItems) do
             if v.HasPaperDollAzeriteItemOverlay then
-                v:UpdateCorruptedGlow(ItemLocation:CreateFromEquipmentSlot(v:GetID()), glow)     
+                v:UpdateCorruptedGlow(ItemLocation:CreateFromEquipmentSlot(v:GetID()), glow)
             end
         end
     end)
+    GwDressingRoom.background:AddMaskTexture(GwCharacterWindow.backgroundMask)
 end
 GW.LoadPaperDoll = LoadPaperDoll

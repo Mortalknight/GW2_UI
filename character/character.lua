@@ -2,7 +2,9 @@ local _, GW = ...
 local L = GW.L
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
-
+local AddToAnimation = GW.AddToAnimation
+local animations = GW.animations
+local lerp = GW.lerp
 local windowsList = {}
 local hasBeenLoaded = false
 local moveDistance, heroFrameX, heroFrameY, heroFrameLeft, heroFrameTop, heroFrameNormalScale, heroFrameEffectiveScale = 0, 0, 0, 0, 0, 1, 0
@@ -425,6 +427,31 @@ local function loadBaseFrame()
     fmGCW:WrapScript(fmGCW, "OnShow", charSecure_OnShow)
     fmGCW:WrapScript(fmGCW, "OnHide", charSecure_OnHide)
 
+    local bgMask = UIParent:CreateMaskTexture()
+    bgMask:SetPoint("TOPLEFT", fmGCW, "TOPLEFT", 0, 64)
+    bgMask:SetPoint("BOTTOMRIGHT", fmGCW, "BOTTOMLEFT",0, 0)
+    bgMask:SetTexture(
+        "Interface/AddOns/GW2_UI/textures/masktest",
+        "CLAMPTOBLACKADDITIVE",
+        "CLAMPTOBLACKADDITIVE"
+    )
+    fmGCW.background:AddMaskTexture(bgMask)
+    GwCharacterWindowHeader:AddMaskTexture(bgMask)
+    GwCharacterWindowHeaderRight:AddMaskTexture(bgMask)
+    GwCharacterWindowLeft:AddMaskTexture(bgMask)
+    fmGCW.backgroundMask = bgMask
+
+    fmGCW:HookScript("OnShow",function()
+      AddToAnimation("HERO_PANEL_ONSHOW", 0, 1, GetTime(), 0.4,
+      function()
+        local p = animations["HERO_PANEL_ONSHOW"].progress
+        fmGCW:SetAlpha(math.max(0,(p-0.5)/0.5))
+        if GwDressingRoom and GwDressingRoom.model then
+          GwDressingRoom.model:SetAlpha(math.max(0,(p-0.5)/0.5))
+        end
+        bgMask:SetPoint("BOTTOMRIGHT", fmGCW.background, "BOTTOMLEFT",lerp(0,fmGCW.background:GetWidth() + 200,p) , 0)
+      end,1)
+    end)
     -- the close button securely closes the char window
     fmGCW.close:SetAttribute("_onclick", charCloseSecure_OnClick)
 
