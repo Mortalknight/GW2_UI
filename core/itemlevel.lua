@@ -57,7 +57,7 @@ local function InspectGearSlot(line, lineText, slotInfo)
         local text = gsub(enchant, "%s?|A.-|a", "")
         slotInfo.enchantText = text
         slotInfo.enchantTextShort = strsub(text, 1, 18)
-        slotInfo.enchantTextShort2 = strsub(text, 1, 13)
+        slotInfo.enchantTextShort2 = strsub(text, 1, 11)
         slotInfo.enchantTextReal = enchant
 
         local lr, lg, lb = line:GetTextColor()

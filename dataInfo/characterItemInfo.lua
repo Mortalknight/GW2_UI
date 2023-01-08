@@ -72,10 +72,13 @@ local function CreateSlotStrings()
             local x, z, justify = GetInspectPoints(i)
 
             slot.enchantText = slot:CreateFontString(nil, "OVERLAY")
-            slot.enchantText:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
             if i ~= 1 and i ~= 3 and i ~= 16 and i ~= 17 and (i < 5 or i > 10) then
                 slot.enchantText:SetSize(40, 30)
                 slot.enchantText:SetFont(UNIT_NAME_FONT, 8, "OUTLINE")
+            else
+                slot.enchantText:SetJustifyH("LEFT")
+                slot.enchantText:SetSize(100, 30)
+                slot.enchantText:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
             end
             slot.enchantText:SetPoint(justify, slot, x + (justify == "BOTTOMLEFT" and 5 or 0), z)
 
@@ -96,7 +99,7 @@ local function UpdatePageStrings(i, iLevelDB, inspectItem, slotInfo)
     if GW.RoundInt(inspectItem.enchantText:GetWidth()) == 40 then
         inspectItem.enchantText:SetText(slotInfo.enchantTextShort2)
     else
-        inspectItem.enchantText:SetText(slotInfo.enchantTextShort)
+        inspectItem.enchantText:SetText(slotInfo.enchantText)
     end
     if slotInfo.enchantColors and next(slotInfo.enchantColors) then
         inspectItem.enchantText:SetTextColor(unpack(slotInfo.enchantColors))
