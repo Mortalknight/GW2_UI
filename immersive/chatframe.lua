@@ -1363,7 +1363,7 @@ local function styleChatWindow(frame)
     local id = frame:GetID()
     local _, fontSize, _, _, _, _, _, _, isDocked = GetChatWindowInfo(id)
 
-    local editbox = _G[name .. "EditBox"]
+    local editbox = frame.editBox
     local scroll = frame.ScrollBar
     local scrollToBottom = frame.ScrollToBottomButton
     local background = _G[name .. "Background"]
@@ -1479,15 +1479,18 @@ local function styleChatWindow(frame)
     frame:StripTextures(true)
     _G[name .. "ButtonFrame"]:Hide()
 
-    _G[format(editbox:GetName() .. "Left", id)]:Kill()
-    _G[format(editbox:GetName() .. "Mid", id)]:Kill()
-    _G[format(editbox:GetName() .. "Right", id)]:Kill()
+    local a, b, c = select(6, editbox:GetRegions())
+    a:Kill()
+    b:Kill()
+    c:Kill()
+
     editbox:ClearAllPoints()
     editbox:SetPoint("TOPLEFT", _G[name .. "ButtonFrame"], "BOTTOMLEFT", 0, 0)
     editbox:SetPoint("TOPRIGHT", background, "BOTTOMRIGHT", 0, 0)
     editbox:SetAltArrowKeyMode(false)
     editbox.editboxHasFocus = false
     editbox:Hide()
+    GW.SkinTextBox(_G[name .. "EditBoxMid"], _G[name .. "EditBoxLeft"], _G[name .. "EditBoxRight"])
 
     editbox:HookScript("OnEditFocusGained", function(editBox)
         frame.editboxHasFocus = true
