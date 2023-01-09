@@ -553,7 +553,6 @@ local function xpbar_OnEvent(self, event)
         self.RepuBar:SetPoint("TOPLEFT", 90, -8)
         self.RepuBar:SetPoint("TOPRIGHT", -90, -8)
     elseif not showBar1 and not showBar2 and showBar3 then
-        print("set")
         self.ExpBar:Hide()
         self.ExpBarCandy:Hide()
         self.ExpBar:SetValue(0)
