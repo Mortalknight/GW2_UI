@@ -65,6 +65,7 @@ end
 local function LoadOverviewPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsSplashPanelTmpl")
 
+    p.splashart:AddMaskTexture(sWindow.backgroundMask)
 
     CharacterMenuButton_OnLoad(p.menu.welcomebtn,true)
     CharacterMenuButton_OnLoad(p.menu.keybindingsbtn,false)

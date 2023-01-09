@@ -21,7 +21,7 @@ local function HandleSlashCommands(msg)
                 return
             end
             ShowUIPanel(GwSettingsWindow)
-            UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
+            --UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
         --elseif msg == "reset windows" then
         elseif msg == "/gw2 reset windows" then
             GW.SetSetting("BAG_POSITION", nil)

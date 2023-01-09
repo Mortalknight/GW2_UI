@@ -5,7 +5,7 @@
         <Layers>
           <Layer level="BACKGROUND">
 
-            <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\settingartwork">
+            <Texture parentkey="splashart" file="Interface\AddOns\GW2_UI\textures\uistuff\settingartwork">
               <Size x="612" y="400"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-20" y="0"></Anchor>

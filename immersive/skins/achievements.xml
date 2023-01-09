@@ -8,8 +8,8 @@
       <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
     </Anchors>
     <Layers>
-      <Layer  level="BACKGROUND" textureSubLevel="0">
-        <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel">
+      <Layer level="BACKGROUND" textureSubLevel="0">
+        <Texture parentKey="background" file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel">
           <Size x="40" y="512"/>
           <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="0" />

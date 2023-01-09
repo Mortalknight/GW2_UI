@@ -93,7 +93,7 @@ local function SkinMainMenu()
             end
             if not GW.InMoveHudMode then
                 ShowUIPanel(GwSettingsWindow)
-                UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
+                --UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
                 HideUIPanel(GameMenuFrame)
             end
         end

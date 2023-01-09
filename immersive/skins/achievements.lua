@@ -1561,6 +1561,29 @@ local function skinAchevement()
         AchievementFrameSummaryAchievement4:SetHeight(height)
         updateAchievementFrameSummaryAchievement(AchievementFrameSummaryAchievement4, select(4, ...))
     end)
+
+    local bgMask = UIParent:CreateMaskTexture()
+    bgMask:SetPoint("TOPLEFT", AchievementFrame, "TOPLEFT", -64, 64)
+    bgMask:SetPoint("BOTTOMRIGHT", AchievementFrame, "BOTTOMLEFT",-64, 0)
+    bgMask:SetTexture(
+        "Interface/AddOns/GW2_UI/textures/masktest",
+        "CLAMPTOBLACKADDITIVE",
+        "CLAMPTOBLACKADDITIVE"
+    )
+    AchievementFrame.tex:AddMaskTexture(bgMask)
+    AchievementFrameHeader.BGLEFT:AddMaskTexture(bgMask)
+    AchievementFrameHeader.BGRIGHT:AddMaskTexture(bgMask)
+    AchivementFrameLeftPanel.background:AddMaskTexture(bgMask)
+    AchievementFrame.backgroundMask = bgMask
+
+    AchievementFrame:HookScript("OnShow",function()
+      AddToAnimation("ACHIVEMENTFRAME_PANEL_ONSHOW", 0, 1, GetTime(), 0.4,
+      function()
+        local p = animations["ACHIVEMENTFRAME_PANEL_ONSHOW"].progress
+        AchievementFrame:SetAlpha(p)
+        bgMask:SetPoint("BOTTOMRIGHT", AchievementFrame.tex, "BOTTOMLEFT",lerp(-64,AchievementFrame.tex:GetWidth() + 200,p) , 0)
+      end,1)
+    end)
 end
 
 local function LoadAchivementSkin()

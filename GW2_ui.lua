@@ -580,7 +580,7 @@ local function evPlayerLogin(self)
                     return
                 end
                 ShowUIPanel(GwSettingsWindow)
-                UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
+
                 HideUIPanel(GameMenuFrame)
             end
         )
@@ -815,7 +815,7 @@ local function evPlayerLogin(self)
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     elseif GetSetting("GW2_UI_VERSION") ~= GW.VERSION_STRING then
         ShowUIPanel(GwSettingsWindow)
-        UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
+        --UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
         HideUIPanel(GameMenuFrame)
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     end
