@@ -65,9 +65,15 @@ local function xpbar_OnEnter(self)
         )
     end
 
-    UIFrameFadeOut(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 0)
-    UIFrameFadeOut(self.AzeritBar, 0.2, self.AzeritBar:GetAlpha(), 0)
-    UIFrameFadeOut(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 0)
+    if self.expBarShouldShow then
+        UIFrameFadeOut(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 0)
+    end
+    if self.azeritBarShouldShow then
+        UIFrameFadeOut(self.AzeritBar, 0.2, self.AzeritBar:GetAlpha(), 0)
+    end
+    if self.repuBarShouldShow then
+        UIFrameFadeOut(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 0)
+    end
 
     local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
     local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
@@ -213,6 +219,7 @@ local function xpbar_OnEvent(self, event)
                 gw_reputation_vals = friendReputationInfo.name .. " " .. REPUTATION .. " " .. CommaValue(friendReputationInfo.maxRep) .. " / " .. CommaValue(friendReputationInfo.maxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
+            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
             isFriend = true
         elseif C_Reputation.IsMajorFaction(factionID) then
             local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
@@ -228,6 +235,7 @@ local function xpbar_OnEvent(self, event)
             gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((majorFactionData.renownReputationEarned or 0)) .. " / " .. CommaValue(majorFactionData.renownLevelThreshold) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
+            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
             isMajor = true
         else
             local currentRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (standingId or 1))), GW.mysex)
@@ -244,6 +252,7 @@ local function xpbar_OnEvent(self, event)
                 gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((earnedValue - bottomValue)) .. " / " .. CommaValue((topValue - bottomValue)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
+            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
             isNormal = true
         end
 
@@ -333,80 +342,82 @@ local function xpbar_OnEvent(self, event)
             self.ExpBar:SetStatusBarColor(1, 0.2, 0.2)
     end
 
-    local GainBigExp = false
-    local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (GW.mylevel / maxPlayerLevel)))
-    if (valPrec - experiencebarAnimation) > FlareBreakPoint then
-        GainBigExp = true
-        flareAnim(self)
-    end
+    if showBar1 then
+        local GainBigExp = false
+        local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (GW.mylevel / maxPlayerLevel)))
+        if (valPrec - experiencebarAnimation) > FlareBreakPoint then
+            GainBigExp = true
+            flareAnim(self)
+        end
 
-    if experiencebarAnimation > valPrec then
-        experiencebarAnimation = 0
-    end
+        if experiencebarAnimation > valPrec then
+            experiencebarAnimation = 0
+        end
 
-    self.barOverlay.flare.soundCooldown = 0
-    local expSoundCooldown = 0
-    local startTime = GetTime()
+        self.barOverlay.flare.soundCooldown = 0
+        local expSoundCooldown = 0
+        local startTime = GetTime()
 
-    animationSpeed = Diff(experiencebarAnimation, valPrec)
-    animationSpeed = math.min(15, math.max(5, 10 * animationSpeed))
+        animationSpeed = Diff(experiencebarAnimation, valPrec)
+        animationSpeed = math.min(15, math.max(5, 10 * animationSpeed))
 
-    AddToAnimation(
-        "experiencebarAnimation",
-        experiencebarAnimation,
-        valPrec,
-        GetTime(),
-        animationSpeed,
-        function(step)
-            self.ExpBar.Spark:SetWidth(
-                math.max(
-                    8,
-                    math.min(9,self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress)
+        AddToAnimation(
+            "experiencebarAnimation",
+            experiencebarAnimation,
+            valPrec,
+            GetTime(),
+            animationSpeed,
+            function(step)
+                self.ExpBar.Spark:SetWidth(
+                    math.max(
+                        8,
+                        math.min(9,self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress)
+                    )
                 )
-            )
 
-            if not GainBigExp then
-                self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
-                self.ExpBar.Spark:SetPoint("LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8, 0)
-
-                local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"].progress) + 90
-                self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
-            end
-            self.ExpBar.Rested:SetValue(rested)
-            self.ExpBar.Rested:SetPoint("LEFT", self.ExpBar, "LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress, 0)
-
-            if GainBigExp and self.barOverlay.flare.soundCooldown < GetTime() then
-                expSoundCooldown =
-                    math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
-
+                if not GainBigExp then
                     self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
-                    self.ExpBar.Spark:SetPoint(
-                    "LEFT",
-                    self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8,
-                    0
-                )
+                    self.ExpBar.Spark:SetPoint("LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8, 0)
 
-                local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"].progress) + 90
-                self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
+                    local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"].progress) + 90
+                    self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
+                end
+                self.ExpBar.Rested:SetValue(rested)
+                self.ExpBar.Rested:SetPoint("LEFT", self.ExpBar, "LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress, 0)
 
-                self.barOverlay.flare.soundCooldown = GetTime() + expSoundCooldown
-                PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
+                if GainBigExp and self.barOverlay.flare.soundCooldown < GetTime() then
+                    expSoundCooldown =
+                        math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
 
-                animations["experiencebarAnimation"].from = step
+                        self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
+                        self.ExpBar.Spark:SetPoint(
+                        "LEFT",
+                        self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8,
+                        0
+                    )
+
+                    local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"].progress) + 90
+                    self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
+
+                    self.barOverlay.flare.soundCooldown = GetTime() + expSoundCooldown
+                    PlaySoundFile("Interface\\AddOns\\GW2_UI\\sounds\\exp_gain_ping.ogg", "SFX")
+
+                    animations["experiencebarAnimation"].from = step
+                end
             end
-        end
-    )
-    AddToAnimation(
-        "GwExperienceBarCandy",
-        experiencebarAnimation,
-        valPrec,
-        GetTime(),
-        0.3,
-        function()
-            local prog = animations["GwExperienceBarCandy"].progress
-            self.ExpBarCandy:SetValue(prog)
-        end
-    )
+        )
+        AddToAnimation(
+            "GwExperienceBarCandy",
+            experiencebarAnimation,
+            valPrec,
+            GetTime(),
+            0.3,
+            function()
+                local prog = animations["GwExperienceBarCandy"].progress
+                self.ExpBarCandy:SetValue(prog)
+            end
+        )
+    end
 
     if showBar3 then
         self.RepuBarCandy:SetValue(valPrecRepu)
@@ -444,6 +455,9 @@ local function xpbar_OnEvent(self, event)
 
     self.NextLevel:SetText(Nextlevel)
     self.CurrentLevel:SetText(restingIconString .. level)
+    self.expBarShouldShow = showBar1
+    self.azeritBarShouldShow = showBar2
+    self.repuBarShouldShow = showBar3
     if showBar1 and showBar2 and showBar3 then
         self.ExpBar:Show()
         self.ExpBarCandy:Show()
@@ -539,6 +553,7 @@ local function xpbar_OnEvent(self, event)
         self.RepuBar:SetPoint("TOPLEFT", 90, -8)
         self.RepuBar:SetPoint("TOPRIGHT", -90, -8)
     elseif not showBar1 and not showBar2 and showBar3 then
+        print("set")
         self.ExpBar:Hide()
         self.ExpBarCandy:Hide()
         self.ExpBar:SetValue(0)
@@ -1021,9 +1036,16 @@ local function LoadXPBar()
         "OnLeave",
         function(self)
             GameTooltip_Hide()
-            UIFrameFadeIn(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 1)
-            UIFrameFadeIn(self.AzeritBar, 0.2, self.AzeritBar:GetAlpha(), 1)
-            UIFrameFadeIn(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 1)
+
+            if self.expBarShouldShow then
+                UIFrameFadeIn(self.ExpBar, 0.2, self.ExpBar:GetAlpha(), 1)
+            end
+            if self.azeritBarShouldShow then
+                UIFrameFadeIn(self.AzeritBar, 0.2, self.AzeritBar:GetAlpha(), 1)
+            end
+            if self.repuBarShouldShow then
+                UIFrameFadeIn(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 1)
+            end
         end
     )
 end

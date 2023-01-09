@@ -73,7 +73,7 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-4" />
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-4"/>
                 </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/hud/xpbarCandy" />
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar" />
                 <Frames>
                     <Frame name="$parentExpBarSpark" parentKey="Spark" frameLevel="4">
                         <Size x="8" y="8" />
@@ -107,7 +107,7 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="-4" />
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="-4"/>
                 </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/hud/xpbarCandy" />
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar" />
             </StatusBar>
             <StatusBar name="$parentRepuBar" parentKey="RepuBar" defaultValue="1" frameLevel="3" minValue="0" maxValue="1">
                 <Size x="1" y="8" />
@@ -115,7 +115,7 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="90" y="4" />
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-90" y="4"/>
                 </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/hud/xpbarCandy" />
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar" />
                 <Frames>
                     <Frame name="$parentRepuBarSpark" parentKey="Spark" frameLevel="4">
                         <Size x="8" y="8" />
