@@ -53,13 +53,13 @@ local function loadProfiles(profilewin)
             slot.item.canExport = true
             slot.item.canRename = true
             slot.item.canCopy = true
-            slot.item.background:SetTexCoord(0, 1, 0, 0.5)
             slot.item.canActivate = true
+            slot.item.activeProfile:Hide()
 
             if currentProfile == validProfiles[idx].realIdx then
-                slot.item.background:SetTexCoord(0, 1, 0.5, 1)
                 slot.item.canActivate = false
                 slot.item.canDelete = false
+                slot.item.activeProfile:Show()
             end
 
             validProfiles[idx].profileCreatedDate = validProfiles[idx].profileCreatedDate or UNKNOWN

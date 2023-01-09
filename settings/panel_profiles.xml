@@ -50,6 +50,15 @@
                             <Color r="1" g="1" b="1" a="0.2"/>
                         </Texture>
                     </Layer>
+                    <Layer level="OVERLAY">
+                        <Texture parentKey="activeProfile" file="Interface\AddOns\GW2_UI\textures\uistuff\achievementhover">
+                            <size x="480" y="66"/>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                            </Anchors>
+                        </Texture>
+                    </Layer>
                     <Layer textureSubLevel="3">
                         <Texture parentKey="portraitframe" file="Interface/AddOns/GW2_UI/textures/profiles/portraitframe">
                             <size x="64" y="64"/>
