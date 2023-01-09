@@ -828,3 +828,21 @@ do
     end
     GW.GetIconString = GetIconString
 end
+
+local function GetClassIconStringWithStyle(class, width, height)
+    if not class then
+        return
+    end
+
+
+    if not width and not height then
+        return format("|T%s:0|t", "Interface/Addons/GW2_UI/Textures/classicons/" .. class .. "_flat")
+    end
+
+    if not height then
+        height = width
+    end
+
+    return format("|T%s:%d:%d:0:0:64:64:0:64:0:64|t", "Interface/Addons/GW2_UI/Textures/classicons/" .. class .. "_flat", height, width)
+end
+GW.GetClassIconStringWithStyle =GetClassIconStringWithStyle

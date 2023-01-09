@@ -56,6 +56,7 @@ local function UpdateSettings()
     settings.hideUnitTooltipInCombat = GetSetting("HIDE_TOOLTIP_IN_COMBAT_UNIT")
     settings.hideTooltipInCombat = GetSetting("HIDE_TOOLTIP_IN_COMBAT")
     settings.hideTooltipInCombatOverride = GetSetting("HIDE_TOOLTIP_IN_COMBAT_OVERRIDE")
+    settings.showPremadeGroupInfo = GetSetting("TOOLTIP_SHOW_PREMADE_GROUP_INFO")
 end
 GW.UpdateTooltipSettings = UpdateSettings
 
@@ -958,6 +959,35 @@ local function SetStyle(self, _, isEmbedded)
     })
 end
 
+local function AddPremadeGroupInfo(tooltip, resultID)
+    if not settings.showPremadeGroupInfo then
+        return
+    end
+
+    GW.LFGPI.Update(resultID)
+
+    -- split line
+    tooltip:AddLine(" ")
+    tooltip:AddLine(L["Party Info"])
+
+    -- add info
+    local data = GW.LFGPI.GetPartyInfo("{{classIcon:14}} {{specIcon:14,14}} {{classColorStart}}{{className}} ({{specName}}){{classColorEnd}}{{amountStart}} x {{amount}}{{amountEnd}}")
+
+    for _, role in ipairs(GW.LFGPI.GetRoleOrder()) do
+        for _, line in ipairs(data[role]) do
+            local icon = format("|T%s:16:16:0:0:64:64:4:60:4:60|t", GW.nameRoleIconPure[role])
+            tooltip:AddLine(icon .. " " .. line)
+        end
+    end
+
+    if not isMeetingStone then
+        tooltip:ClearAllPoints()
+        tooltip:SetPoint("TOPLEFT", LFGListFrame, "TOPRIGHT", 10, 0)
+    end
+
+    tooltip:Show()
+end
+
 local function StyleTooltips()
     for _, tt in pairs({
         ItemRefTooltip,
@@ -1072,6 +1102,10 @@ local function LoadTooltips()
     hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
 
     GameTooltipDefaultContainer:KillEditMode()
+
+    if not IsAddOnLoaded("PremadeGroupsFilter") then
+        hooksecurefunc("LFGListUtil_SetSearchEntryTooltip", AddPremadeGroupInfo)
+    end
 
     if GetSetting("ADVANCED_TOOLTIP") then
         GameTooltip.StatusBar = GameTooltipStatusBar

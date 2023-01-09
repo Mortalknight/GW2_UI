@@ -52,6 +52,7 @@ core\cooldowns.lua
 core\misc.lua
 core\disableBlizzard.lua
 core\notaint.lua
+core\LFGPlayerInfo.lua
 
 settings\settings_menu.lua
 settings\settings.xml

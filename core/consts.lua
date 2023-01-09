@@ -26,6 +26,13 @@ GW.nameRoleIcon = {
     NONE = ""
 }
 
+GW.nameRoleIconPure = {
+    TANK = "Interface/AddOns/GW2_UI/textures/party/roleicon-tank",
+    HEALER = "Interface/AddOns/GW2_UI/textures/party/roleicon-healer",
+    DAMAGER = "Interface/AddOns/GW2_UI/textures/party/roleicon-dps",
+    NONE = ""
+}
+
 GW.professionBagColor = {
     [8] = {r = .88, g = .73, b = .29}, --leatherworking
     [16] = {r = .29, g = .30, b = .88}, --inscription
