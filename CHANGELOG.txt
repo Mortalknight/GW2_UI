@@ -1,3 +1,24 @@
+6.2.0
+NEW
+    - Added new achivment skin
+    - Added new gossip skin
+    - Added fish nets timers to worldmap
+    - Added cooking event timer to scenario tracker
+    - Added option to show enchants and gems on gw2 character panel
+
+CHANGES
+    - Update chatbubbles
+    - Update Move HUD textures
+    - Add filters to Move HUD mode
+    - Added char counter to chat editbox
+
+FIXES
+    - Fix ElvUI micromenu backdrop
+    - Fix Details settings page not opens
+    - Fix wrong data in fps tooltip
+    - Fix TomTom minimap icons moves into the addon button container
+    - Fix compass settings get not applyed
+
 6.1.1
 CHANGES
     - Update Talent Micro Button tooltip

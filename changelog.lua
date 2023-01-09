@@ -14,8 +14,26 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
+addChange("6.2.0",{
+    {ct.feature,[=[Added new achivment skin]=]},
+    {ct.feature,[=[Added new gossip skin]=]},
+    {ct.feature,[=[Added fish nets timers to worldmap]=]},
+    {ct.feature,[=[Added cooking event timer to scenario tracker]=]},
+    {ct.feature,[=[Added option to show enchants and gems on gw2 character panel]=]},
+
+    {ct.change,[=[Update chatbubbles]=]},
+    {ct.change,[=[Update Move HUD textures]=]},
+    {ct.change,[=[Add filters to Move HUD mode]=]},
+    {ct.change,[=[Added char counter to chat editbox]=]},
+
+    {ct.bug,[=[Fix ElvUI micromenu backdrop]=]},
+    {ct.bug,[=[Fix Details settings page not opens]=]},
+    {ct.bug,[=[Fix wrong data in fps tooltip]=]},
+    {ct.bug,[=[Fix TomTom minimap icons moves into the addon button container]=]},
+    {ct.bug,[=[Fix compass settings get not applyed]=]},
+})
 addChange("6.1.1",{
-  {ct.change,[=[Aura Indicator updates:
+    {ct.change,[=[Aura Indicator updates:
 
 - Evoker:
      Added Dream Breath (echo)
@@ -23,12 +41,12 @@ addChange("6.1.1",{
      Added Life Bind]=]},
   {ct.change,[=[Update Talent Micro Button tooltip]=]},
 
-  {ct.bug,[=[Fix game freezes with scenario tracker]=]},
-  {ct.bug,[=[Fix actionbar taint on spec switch]=]},
-  {ct.bug,[=[Fix HUD background setting]=]},
-  {ct.bug,[=[Fix HUD border setting]=]},
-  {ct.bug,[=[Fix tooltip hide in combat setting]=]},
-  {ct.bug,[=[Fix tooltip healthbar setting]=]},
+    {ct.bug,[=[Fix game freezes with scenario tracker]=]},
+    {ct.bug,[=[Fix actionbar taint on spec switch]=]},
+    {ct.bug,[=[Fix HUD background setting]=]},
+    {ct.bug,[=[Fix HUD border setting]=]},
+    {ct.bug,[=[Fix tooltip hide in combat setting]=]},
+    {ct.bug,[=[Fix tooltip healthbar setting]=]},
 })
 addChange("6.1.0",{
     {ct.feature,[=[Added brand new settings page]=]},
@@ -57,38 +75,38 @@ addChange("6.1.0",{
     {ct.bug,[=[Memory and performance improvements]=]},
 })
 addChange("6.0.10",{
-{ct.bug,[=[Error on start]=]},
+    {ct.bug,[=[Error on start]=]},
 })
 addChange("6.0.9",{
-{ct.bug,[=[Restored mirror timers]=]},
+    {ct.bug,[=[Restored mirror timers]=]},
 })
 addChange("6.0.8",{
-{ct.bug,[=[Fix for memory leak]=]},
+    {ct.bug,[=[Fix for memory leak]=]},
 })
 addChange("6.0.7",{
-{ct.bug,[=[Error on start]=]},
+    {ct.bug,[=[Error on start]=]},
 })
 addChange("6.0.6",{
-{ct.bug,[=[Bank issues]=]},
-{ct.bug,[=[Error on start]=]}
+    {ct.bug,[=[Bank issues]=]},
+    {ct.bug,[=[Error on start]=]}
 })
 addChange("6.0.5",{
-{ct.bug,[=[Minimap lua error]=]},
-{ct.bug,[=[Bag taint]=]}
+    {ct.bug,[=[Minimap lua error]=]},
+    {ct.bug,[=[Bag taint]=]}
 })
 addChange("6.0.4",{
-{ct.bug,[=[Fix some more taint issues]=]}
+    {ct.bug,[=[Fix some more taint issues]=]},
 })
 addChange("6.0.3",{
-{ct.bug,[=[Wrong GW2 moverframe value]=]}
+    {ct.bug,[=[Wrong GW2 moverframe value]=]}
 })
 addChange("6.0.2",{
-{ct.bug,[=[Set actionbar 1 to always have 12 buttons]=]},
-{ct.bug,[=[Actionbar taint on shapshift forms]=]}
+    {ct.bug,[=[Set actionbar 1 to always have 12 buttons]=]},
+    {ct.bug,[=[Actionbar taint on shapshift forms]=]}
 })
 addChange("6.0.1",{
-{ct.bug,[=[Fix lua error on login]=]}
+    {ct.bug,[=[Fix lua error on login]=]}
 })
 addChange("6.0.0",{
-{ct.feature,[=[Update for 10.0.2]=]}
+    {ct.feature,[=[Update for 10.0.2]=]}
 })

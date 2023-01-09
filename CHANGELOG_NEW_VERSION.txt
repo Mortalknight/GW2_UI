@@ -1,36 +1,20 @@
-6.1.1
-CHANGES
-    - Update Talent Micro Button tooltip
-    - Aura Indicator updates:
-        - Evoker: Added Dream Breath (echo), Reversion (echo), Life Bind
-
-FIXES
-    - Fix game freezes with scenario tracker
-    - Fix actionbar taint on spec switch
-    - Fix HUD background setting
-    - Fix HUD border setting
-    - Fix tooltip hide in combat setting
-    - Fix tooltip healthbar setting
-
-6.1.0
+6.2.0
 NEW
-    - Added brand new settings page
-    - Added Community Feast and Siege On Dragonbane Keep timer to worldmap
-    - Added option to set currencys to unused
-    - Added option to collaps all tracker in Mythic+
-    - Added evoker buff to raid buff reminder
-
+    - Added new achivment skin
+    - Added new gossip skin
+    - Added fish nets timers to worldmap
+    - Added cooking event timer to scenario tracker
+    - Added option to show enchants and gems on gw2 character panel
 
 CHANGES
-    - Aura Indicator updates:
-        - Resto Druid: Added Tranquility, addedAdaptive Swarm
-        - Priest: Added Power Infusion
-        - Holy Pally: Adds Barrier of Faith.
-    - Update Raid Debuff Filter and cleanded up Mythic+ Affixes
-    - Update some raid buff reminder spells
-    - Social panel skin has been fixed has been readded
+    - Update chatbubbles
+    - Update Move HUD textures
+    - Add filters to Move HUD mode
+    - Added char counter to chat editbox
 
 FIXES
-    - Fix auto sell taint error
-    - Temp fix for extra actionbutton taint
-    - Memory and performance improvements
+    - Fix ElvUI micromenu backdrop
+    - Fix Details settings page not opens
+    - Fix wrong data in fps tooltip
+    - Fix TomTom minimap icons moves into the addon button container
+    - Fix compass settings get not applyed
