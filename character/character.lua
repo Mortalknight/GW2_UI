@@ -438,7 +438,6 @@ local function loadBaseFrame()
     fmGCW.background:AddMaskTexture(bgMask)
     GwCharacterWindowHeader:AddMaskTexture(bgMask)
     GwCharacterWindowHeaderRight:AddMaskTexture(bgMask)
-    GwCharacterWindowLeft:AddMaskTexture(bgMask)
     fmGCW.backgroundMask = bgMask
 
     fmGCW:HookScript("OnShow",function()
