@@ -428,8 +428,8 @@ local function loadBaseFrame()
     fmGCW:WrapScript(fmGCW, "OnHide", charSecure_OnHide)
 
     local bgMask = UIParent:CreateMaskTexture()
-    bgMask:SetPoint("TOPLEFT", fmGCW, "TOPLEFT", 0, 64)
-    bgMask:SetPoint("BOTTOMRIGHT", fmGCW, "BOTTOMLEFT",0, 0)
+    bgMask:SetPoint("TOPLEFT", fmGCW, "TOPLEFT", -64, 64)
+    bgMask:SetPoint("BOTTOMRIGHT", fmGCW, "BOTTOMLEFT",-64, 0)
     bgMask:SetTexture(
         "Interface/AddOns/GW2_UI/textures/masktest",
         "CLAMPTOBLACKADDITIVE",
@@ -445,11 +445,11 @@ local function loadBaseFrame()
       AddToAnimation("HERO_PANEL_ONSHOW", 0, 1, GetTime(), 0.4,
       function()
         local p = animations["HERO_PANEL_ONSHOW"].progress
-        fmGCW:SetAlpha(math.max(0,(p-0.5)/0.5))
+        fmGCW:SetAlpha(p)
         if GwDressingRoom and GwDressingRoom.model then
           GwDressingRoom.model:SetAlpha(math.max(0,(p-0.5)/0.5))
         end
-        bgMask:SetPoint("BOTTOMRIGHT", fmGCW.background, "BOTTOMLEFT",lerp(0,fmGCW.background:GetWidth() + 200,p) , 0)
+        bgMask:SetPoint("BOTTOMRIGHT", fmGCW.background, "BOTTOMLEFT",lerp(-64,fmGCW.background:GetWidth() + 200,p) , 0)
       end,1)
     end)
     -- the close button securely closes the char window
