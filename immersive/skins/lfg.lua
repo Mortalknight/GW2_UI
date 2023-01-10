@@ -386,7 +386,7 @@ local function SkinLookingForGroupFrames()
     GW.HandleTrimScrollBar(LFGListFrame.SearchPanel.ScrollBar)
 
     if not LFGListFrame.SearchPanel.ResultsInset.SetBackdrop then
-        _G.Mixin(LFGListFrame.SearchPanel.ResultsInset, _G.BackdropTemplateMixin)
+        Mixin(LFGListFrame.SearchPanel.ResultsInset, _G.BackdropTemplateMixin)
         LFGListFrame.SearchPanel.ResultsInset:HookScript("OnSizeChanged", LFGListFrame.SearchPanel.ResultsInset.OnBackdropSizeChanged)
     end
     LFGListFrame.SearchPanel.ResultsInset:SetBackdrop(GW.constBackdropFrameColorBorder)

@@ -206,12 +206,12 @@ end
 GW.MutateInaccessableObject = MutateInaccessableObject
 
 local NavBarCheck = {
-	EncounterJournal = function()
-		return GetSetting("ENCOUNTER_JOURNAL_SKIN_ENABLED")
-	end,
-	WorldMapFrame = function()
-		return GetSetting("WORLDMAP_SKIN_ENABLED")
-	end,
+    EncounterJournal = function()
+        return GetSetting("ENCOUNTER_JOURNAL_SKIN_ENABLED")
+    end,
+    WorldMapFrame = function()
+        return GetSetting("WORLDMAP_SKIN_ENABLED")
+    end,
 }
 
 local function SkinNavBarButtons(self)
@@ -407,8 +407,8 @@ end
 local function HandleTrimScrollBar(frame, small)
     frame:StripTextures()
 
-    ReskinScrollBarArrow(frame.Back, 'up')
-    ReskinScrollBarArrow(frame.Forward, 'down')
+    ReskinScrollBarArrow(frame.Back, "up")
+    ReskinScrollBarArrow(frame.Forward, "down")
 
     if frame.Background then
         frame.Background:Hide()
@@ -416,8 +416,8 @@ local function HandleTrimScrollBar(frame, small)
 
     local track = frame.Track
     if track then
-    --    track:DisableDrawLayer('ARTWORK')
-  --  track:SetTexture("Interface\AddOns\GW2_UI\textures\uistuff\scrollbg")
+        --track:DisableDrawLayer('ARTWORK')
+        --track:SetTexture("Interface\AddOns\GW2_UI\textures\uistuff\scrollbg")
     end
 
     local thumb = frame:GetThumb()
@@ -426,146 +426,139 @@ local function HandleTrimScrollBar(frame, small)
 
         thumb.bg = thumb:CreateTexture(nil, "ARTWORK")
         thumb.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
-        thumb:SetSize(12, thumb:GetSize())
-
-
+        thumb:SetSize(12, 12)
         if not small then
-            thumb.bg:SetPoint('TOP', 4, -1)
-            thumb.bg:SetPoint('BOTTOM', -4, 1)
+            thumb.bg:SetPoint("TOP", 4, -1)
+            thumb.bg:SetPoint("BOTTOM", -4, 1)
         end
-
-        --thumb:HookScript('OnEnter', ThumbOnEnter)
-        --thumb:HookScript('OnLeave', ThumbOnLeave)
-        --thumb:HookScript('OnMouseUp', ThumbOnMouseUp)
-        --thumb:HookScript('OnMouseDown', ThumbOnMouseDown)
     end
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar
 
 local function HandleItemButton(b, setInside)
-	if b.isSkinned then return end
+    if b.isSkinned then return end
 
-	local name = b:GetName()
-	local icon = b.icon or b.Icon or b.IconTexture or b.iconTexture or (name and (_G[name .. "IconTexture"] or _G[name .. "Icon"]))
-	local texture = icon and icon.GetTexture and icon:GetTexture()
+    local name = b:GetName()
+    local icon = b.icon or b.Icon or b.IconTexture or b.iconTexture or (name and (_G[name .. "IconTexture"] or _G[name .. "Icon"]))
+    local texture = icon and icon.GetTexture and icon:GetTexture()
 
-	b:StripTextures()
-	b:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
-	b:StyleButton()
+    b:StripTextures()
+    b:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    b:StyleButton()
 
-	if icon then
-		icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    if icon then
+        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
-		if setInside then
-			icon:SetInside(b)
-		else
-			b.backdrop:SetOutside(icon, 1, 1)
-		end
+        if setInside then
+            icon:SetInside(b)
+        else
+            b.backdrop:SetOutside(icon, 1, 1)
+        end
 
-		icon:SetParent(b.backdrop)
+        icon:SetParent(b.backdrop)
 
-		if texture then
-			icon:SetTexture(texture)
-		end
-	end
+        if texture then
+            icon:SetTexture(texture)
+        end
+    end
 
-	b.isSkinned = true
+    b.isSkinned = true
 end
 GW.HandleItemButton = HandleItemButton
 
 do
-	local function selectionOffset(frame)
-		local point, anchor, relativePoint, xOffset = frame:GetPoint()
-		if xOffset <= 0 then
-			local x = frame.BorderBox and 4 or 38
-			local y = frame.BorderBox and 0 or -10
+    local function selectionOffset(frame)
+        local point, anchor, relativePoint, xOffset = frame:GetPoint()
+        if xOffset <= 0 then
+            local x = frame.BorderBox and 4 or 38
+            local y = frame.BorderBox and 0 or -10
 
-			frame:ClearAllPoints()
-			frame:SetPoint(point, (frame == MacroPopupFrame and MacroFrame) or anchor, relativePoint, strfind(point, "LEFT") and x or -x, y)
-		end
-	end
+            frame:ClearAllPoints()
+            frame:SetPoint(point, (frame == MacroPopupFrame and MacroFrame) or anchor, relativePoint, strfind(point, "LEFT") and x or -x, y)
+        end
+    end
 
-	local function handleButton(button, i, buttonNameTemplate)
-		local icon, texture = button.Icon or _G[buttonNameTemplate..i.."Icon"], ""
-		if icon then
-			icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-			icon:SetInside(button)
-			texture = icon:GetTexture()
-		end
+    local function handleButton(button, i, buttonNameTemplate)
+        local icon, texture = button.Icon or _G[buttonNameTemplate..i.."Icon"], ""
+        if icon then
+            icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+            icon:SetInside(button)
+            texture = icon:GetTexture()
+        end
 
-		button:StripTextures()
-		button:StyleButton(nil, true)
+        button:StripTextures()
+        button:StyleButton(nil, true)
 
-		if texture then
-			icon:SetTexture(texture)
-		end
-	end
+        if texture then
+            icon:SetTexture(texture)
+        end
+    end
 
-	local function HandleIconSelectionFrame(frame, numIcons, buttonNameTemplate, nameOverride, dontOffset)
-		assert(frame, "HandleIconSelectionFrame: frame argument missing")
+    local function HandleIconSelectionFrame(frame, numIcons, buttonNameTemplate, nameOverride, dontOffset)
+        assert(frame, "HandleIconSelectionFrame: frame argument missing")
 
-		if frame.isSkinned then return end
+        if frame.isSkinned then return end
 
-		if not dontOffset then
-			frame:HookScript("OnShow", selectionOffset)
-		end
+        if not dontOffset then
+            frame:HookScript("OnShow", selectionOffset)
+        end
 
-		local borderBox = frame.BorderBox
-		local frameName = nameOverride or frame:GetName()
-		local scrollFrame = frame.ScrollFrame or _G[frameName  .. "ScrollFrame"]
-		local editBox = borderBox.IconSelectorEditBox
-		local cancel = frame.CancelButton or (borderBox and borderBox.CancelButton)
-		local okay = frame.OkayButton or (borderBox and borderBox.OkayButton)
+        local borderBox = frame.BorderBox
+        local frameName = nameOverride or frame:GetName()
+        local scrollFrame = frame.ScrollFrame or _G[frameName  .. "ScrollFrame"]
+        local editBox = borderBox.IconSelectorEditBox
+        local cancel = frame.CancelButton or (borderBox and borderBox.CancelButton)
+        local okay = frame.OkayButton or (borderBox and borderBox.OkayButton)
 
-		frame:StripTextures()
-		frame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
-		frame:SetHeight(frame:GetHeight() + 10)
+        frame:StripTextures()
+        frame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+        frame:SetHeight(frame:GetHeight() + 10)
 
-		if borderBox then
-			borderBox:StripTextures()
+        if borderBox then
+            borderBox:StripTextures()
 
-			local button = borderBox.SelectedIconArea and borderBox.SelectedIconArea.SelectedIconButton
-			if button then
-				button:DisableDrawLayer("BACKGROUND")
-				GW.HandleItemButton(button, true)
-			end
-		end
+            local button = borderBox.SelectedIconArea and borderBox.SelectedIconArea.SelectedIconButton
+            if button then
+                button:DisableDrawLayer("BACKGROUND")
+                GW.HandleItemButton(button, true)
+            end
+        end
 
-		cancel:ClearAllPoints()
-		cancel:SetPoint("BOTTOMRIGHT", frame, -4, 4)
-		cancel:SkinButton(false, true)
+        cancel:ClearAllPoints()
+        cancel:SetPoint("BOTTOMRIGHT", frame, -4, 4)
+        cancel:SkinButton(false, true)
 
-		okay:ClearAllPoints()
-		okay:SetPoint("RIGHT", cancel, "LEFT", -10, 0)
-		okay:SkinButton(false, true)
+        okay:ClearAllPoints()
+        okay:SetPoint("RIGHT", cancel, "LEFT", -10, 0)
+        okay:SkinButton(false, true)
 
-		if editBox then
-			editBox:DisableDrawLayer("BACKGROUND")
+        if editBox then
+            editBox:DisableDrawLayer("BACKGROUND")
             editBox:StripTextures()
             editBox:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
-		end
+        end
 
-		if numIcons then
-			scrollFrame:StripTextures()
-			scrollFrame:SetHeight(scrollFrame:GetHeight() + 10)
-			scrollFrame.ScrollBar:SkinScrollBar()
+        if numIcons then
+            scrollFrame:StripTextures()
+            scrollFrame:SetHeight(scrollFrame:GetHeight() + 10)
+            scrollFrame.ScrollBar:SkinScrollBar()
 
-			for i = 1, numIcons do
-				local button = _G[buttonNameTemplate..i]
-				if button then
-					handleButton(button, i, buttonNameTemplate)
-				end
-			end
-		else
-			GW.HandleTrimScrollBar(frame.IconSelector.ScrollBar)
+            for i = 1, numIcons do
+                local button = _G[buttonNameTemplate..i]
+                if button then
+                    handleButton(button, i, buttonNameTemplate)
+                end
+            end
+        else
+            GW.HandleTrimScrollBar(frame.IconSelector.ScrollBar)
 
-			for _, button in next, { frame.IconSelector.ScrollBox.ScrollTarget:GetChildren() } do
-				handleButton(button)
-			end
-		end
+            for _, button in next, { frame.IconSelector.ScrollBox.ScrollTarget:GetChildren() } do
+                handleButton(button)
+            end
+        end
 
-		frame.isSkinned = true
-	end
+        frame.isSkinned = true
+    end
     GW.HandleIconSelectionFrame = HandleIconSelectionFrame
 end
 
@@ -612,11 +605,11 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     header.BGRIGHT:SetWidth(frame:GetWidth() - 20)
 
     if titleText then
-      titleText:ClearAllPoints()
-      titleText:SetParent(header)
-      titleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
-      titleText:SetFont(DAMAGE_TEXT_FONT, 20)
-      titleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+        titleText:ClearAllPoints()
+        titleText:SetParent(header)
+        titleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
+        titleText:SetFont(DAMAGE_TEXT_FONT, 20)
+        titleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     end
 
     local tex = frame:CreateTexture("bg", "BACKGROUND", nil, 0)
