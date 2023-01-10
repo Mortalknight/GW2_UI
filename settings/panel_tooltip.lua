@@ -33,7 +33,7 @@ local function LoadTooltipPanel(sWindow)
     addOption(p.scroll.scrollchild, CHALLENGE_MODE_KEYSTONE_NAME:format("_"):gsub(": _", ""), L["Adds descriptions for mythic keystone properties to their tooltips."], "ADVANCED_TOOLTIP_SHOW_KEYSTONEINFO", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p.scroll.scrollchild, L["Show Health bar text"], nil, "ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT", function(value) GW.UpdateTooltipSettings(); if not GameTooltip:IsForbidden() then if value then GameTooltipStatusBar.text:Show(); else GameTooltipStatusBar.text:Hide() end end end, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p.scroll.scrollchild, L["Hide in combat"], L["Hide different kind of tooltips during combat."], "HIDE_TOOLTIP_IN_COMBAT", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, GW.NewSign .. L["Show premade group info"], L["Add LFG group info to tooltip."], "TOOLTIP_SHOW_PREMADE_GROUP_INFO", nil, nil, {["TOOLTIPS_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, GW.NewSign .. L["Show premade group info"], L["Add LFG group info to tooltip."], "TOOLTIP_SHOW_PREMADE_GROUP_INFO", nil, nil, {["TOOLTIPS_ENABLED"] = true}, "LfgInfo")
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Health Bar Position"],

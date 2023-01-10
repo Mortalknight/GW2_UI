@@ -904,4 +904,16 @@ GW_DEFAULT.IncompatibleAddons = {
             "!KalielsTracker",
         },
     },
+    AchievementSkin = {
+        Override = false,
+        Addons = {
+            "Krowi_AchievementFilter",
+        },
+    },
+    LfgInfo = {
+        Override = false,
+        Addons = {
+            "PremadeGroupsFilter",
+        },
+    },
 }
