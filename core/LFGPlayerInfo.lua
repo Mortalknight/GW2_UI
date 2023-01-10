@@ -1,5 +1,4 @@
 local _, GW = ...
-local L = GW.L
 
 -- Thanks to Windtools
 
@@ -16,7 +15,6 @@ local function GetRoleOrder()
 end
 GW.LFGPI.GetRoleOrder = GetRoleOrder
 
-local classFileToID = {} -- { ["WARRIOR"] = 1 }
 local localizedSpecNameToID = {} -- { ["Protection"] = 73 }
 local localizedSpecNameToIcon = {} -- { ["Protection"] = "Interface\\Icons\\ability_warrior_defensivestance" }
 
@@ -25,8 +23,6 @@ for classID = 1, 13 do
     local classFile = select(2, GetClassInfo(classID)) -- "WARRIOR"
 
     if classFile then
-        classFileToID[classFile] = classID
-
         if not localizedSpecNameToID[classFile] then
             localizedSpecNameToID[classFile] = {}
         end
@@ -49,7 +45,7 @@ end
 -- Cache
 GW.LFGPI.cache = {}
 
-local function Clear()
+local function ClearCache()
     for _, role in ipairs(roleOrder) do
         GW.LFGPI.cache[role] = {
             totalAmount = 0,
@@ -57,7 +53,6 @@ local function Clear()
         }
     end
 end
-GW.LFGPI.cache.Clear = Clear
 
 local function AddPlayer(role, class, spec)
     if not GW.LFGPI.cache[role] then
@@ -75,7 +70,6 @@ local function AddPlayer(role, class, spec)
     GW.LFGPI.cache[role].playerList[class][spec] = GW.LFGPI.cache[role].playerList[class][spec] + 1
     GW.LFGPI.cache[role].totalAmount = GW.LFGPI.cache[role].totalAmount + 1
 end
-GW.LFGPI.cache.AddPlayer = AddPlayer
 
 -- Main logic
 local function Update(resultID)
@@ -89,7 +83,7 @@ local function Update(resultID)
         GW.Debug("debug", "cache not updated correctly, the number of result.numMembers is nil or 0.")
     end
 
-    GW.LFGPI.cache.Clear()
+    ClearCache()
 
     for i = 1, result.numMembers do
         local role, class, _, spec = C_LFGList.GetSearchResultMemberInfo(resultID, i)
@@ -109,203 +103,22 @@ local function Update(resultID)
             return
         end
 
-        GW.LFGPI.cache.AddPlayer(role, class, spec)
+        AddPlayer(role, class, spec)
     end
 end
-GW.LFGPI.Update = Update
 
-local function Conduct(template, class, spec, amount)
-    -- This function allow you do a very simple template rendering.
-    -- The syntax like a mix of React and Vue.
-    -- The field between `{{` and `}}` should NOT have any space.
-    -- The {{tagStart}} and {{tagEnd}} is a tag pair like HTML tag, but it has been designed for matching latest close tag.
-    -- [Sample]
-    -- {{classIcon:14}}{{specIcon:14,18}} {{classColorStart}}{{className}}{{classColorEnd}}{{amountStart}} x {{amount}}{{amountEnd}}
+local function CreateTooltipLine(role, class, spec, amount)
+    local specIcon = localizedSpecNameToIcon[class] and localizedSpecNameToIcon[class][spec]
+    local color = GW.GWGetClassColor(class, true, true)
 
-    local result = template
-
-    -- {{classIcon}}
-    result =
-        gsub(
-        result,
-        "{{classIcon:([0-9,]-)}}",
-        function(sub)
-            if not class then
-                GW.GetIconString("warning", "className not found, class is not given.")
-                return ""
-            end
-
-            local size = {strsplit(",", sub)}
-            local height = size[1] and size[1] ~= "" and tonumber(size[1]) or 14
-            local width = size[2] and size[2] ~= "" and tonumber(size[2]) or height
-
-            return GW.GetClassIconStringWithStyle(class, width, height)
-        end
-    )
-
-    -- {{className}}
-    result =
-        gsub(
-        result,
-        "{{className}}",
-        function(sub)
-            if not class then
-                GW.GetIconString("warning", "className not found, class is not given.")
-                return ""
-            end
-
-            return LOCALIZED_CLASS_NAMES_MALE[class]
-        end
-    )
-
-    -- {{classId}}
-    result =
-        gsub(
-        result,
-        "{{classId}}",
-        function(sub)
-            if not class then
-                GW.GetIconString("warning", "classId not found, class is not given.")
-                return ""
-            end
-
-            local classID = classFileToID[class]
-
-            return classID or ""
-        end
-    )
-
-    -- {{specIcon}}
-    result =
-        gsub(
-        result,
-        "{{specIcon:([0-9,]-)}}",
-        function(sub)
-            if not spec then
-                GW.GetIconString("warning", "specIcon not found, spec is not given.")
-                return ""
-            end
-
-            if spec == "Initial" then
-                return ""
-            end
-
-            local icon = localizedSpecNameToIcon[class] and localizedSpecNameToIcon[class][spec]
-
-            local size = {strsplit(",", sub)}
-            local height = size[1] and size[1] ~= "" and tonumber(size[1]) or 14
-            local width = size[2] and size[2] ~= "" and tonumber(size[2]) or height
-
-            return icon and GW.GetIconString(icon, height, width, true) or ""
-        end
-    )
-
-    -- {{specName}}
-    result =
-        gsub(
-        result,
-        "{{specName}}",
-        function(sub)
-            if not spec then
-                GW.Debug("warning", "specName not found, spec is not given.")
-                return ""
-            end
-
-            return spec
-        end
-    )
-
-    -- {{specId}}
-    result =
-        gsub(
-        result,
-        "{{specId}}",
-        function(sub)
-            if not class then
-                GW.Debug("warning", "specId not found, spec is not given.")
-                return ""
-            end
-
-            local specID = localizedSpecNameToID[class] and localizedSpecNameToID[class][spec]
-
-            return specID or ""
-        end
-    )
-
-    -- {{classColorStart}} ... {{classColorEnd}}
-    result =
-        gsub(
-        result,
-        "{{classColorStart}}(.-){{classColorEnd}}",
-        function(sub)
-            if not class then
-                GW.Debug("warning", "className not found, class is not given.")
-                return ""
-            end
-            local color = GW.GWGetClassColor(class, true, true)
-            return  format("|c%s%s|r", color.colorStr, sub)
-        end
-    )
-
-    -- {{amountStart}} ... {{amountEnd}}
-    result =
-        gsub(
-        result,
-        "{{amountStart}}(.-){{amountEnd}}",
-        function(sub)
-            if amount <= 1 then -- should not show amount if the amount is only one
-                return ""
-            else
-                -- {{amount}}
-                if not amount then
-                    GW.Debug("warning", "amount not found, amount is not given.")
-                    return ""
-                end
-                return gsub(sub, "{{amount}}", tostring(amount))
-            end
-        end
-    )
-
-    -- {{amount}}
-    result =
-        gsub(
-        result,
-        "{{amount}}",
-        function()
-            if not amount then
-                GW.Debug("warning", "amount not found, amount is not given.")
-                return ""
-            end
-            return tostring(amount)
-        end
-    )
-
-    -- {{classColorStart}} ... {{classColorEnd}}
-    result =
-        gsub(
-        result,
-        "{{classColorStart}}(.-){{classColorEnd}}",
-        function(sub)
-            if not class then
-                GW.Debug("warning", "className not found, class is not given.")
-                return ""
-            end
-            local color = GW.GWGetClassColor(class, true, true)
-            return  format("|c%s%s|r", color.colorStr, sub)
-        end
-    )
-
-    return result
+    return format("|T%s:16:16:0:0:64:64:4:60:4:60|t", GW.nameRoleIconPure[role]) .. GW.GetClassIconStringWithStyle(class, 14, 14) .. " " .. (specIcon and GW.GetIconString(specIcon, 14, 14, true) or "") ..
+    format(" |c%s", color.colorStr) .. LOCALIZED_CLASS_NAMES_MALE[class] .. " (" .. spec .. ")|r" .. (amount <= 1 and "" or " x " .. tostring(amount))
 end
-GW.LFGPI.Conduct = Conduct
 
-local function GetPartyInfo(template)
-    if not template then
-        GW.Debug("warning", "template is nil.")
-        return
-    end
-
+local function GetPartyInfo(resultId)
     local dataTable = {}
+
+    Update(resultId)
 
     for _, role in ipairs(roleOrder) do
         dataTable[role] = {}
@@ -314,8 +127,7 @@ local function GetPartyInfo(template)
 
         for class, numberOfPlayersSortBySpec in pairs(members.playerList) do
             for spec, numberOfPlayers in pairs(numberOfPlayersSortBySpec) do
-                local result = GW.LFGPI.Conduct(template, class, spec, numberOfPlayers)
-                tinsert(dataTable[role], result)
+                tinsert(dataTable[role], CreateTooltipLine(role, class, spec, numberOfPlayers))
             end
         end
     end

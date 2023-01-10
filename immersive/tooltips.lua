@@ -964,26 +964,21 @@ local function AddPremadeGroupInfo(tooltip, resultID)
         return
     end
 
-    GW.LFGPI.Update(resultID)
-
     -- split line
     tooltip:AddLine(" ")
     tooltip:AddLine(L["Party Info"])
 
     -- add info
-    local data = GW.LFGPI.GetPartyInfo("{{classIcon:14}} {{specIcon:14,14}} {{classColorStart}}{{className}} ({{specName}}){{classColorEnd}}{{amountStart}} x {{amount}}{{amountEnd}}")
+    local data = GW.LFGPI.GetPartyInfo(resultID)
 
     for _, role in ipairs(GW.LFGPI.GetRoleOrder()) do
         for _, line in ipairs(data[role]) do
-            local icon = format("|T%s:16:16:0:0:64:64:4:60:4:60|t", GW.nameRoleIconPure[role])
-            tooltip:AddLine(icon .. " " .. line)
+            tooltip:AddLine(line)
         end
     end
 
-    if not isMeetingStone then
-        tooltip:ClearAllPoints()
-        tooltip:SetPoint("TOPLEFT", LFGListFrame, "TOPRIGHT", 10, 0)
-    end
+    tooltip:ClearAllPoints()
+    tooltip:SetPoint("TOPLEFT", LFGListFrame, "TOPRIGHT", 10, 0)
 
     tooltip:Show()
 end
