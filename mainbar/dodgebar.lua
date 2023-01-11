@@ -1,6 +1,6 @@
 local _, GW = ...
 local Debug = GW.Debug
-local MixinHideDuringPetAndMountedOverride = GW.MixinHideDuringPetAndMountedOverride
+local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
 local FrameFlash = GW.FrameFlash
 local GetSetting = GW.GetSetting
 local lerp = GW.lerp
@@ -36,8 +36,11 @@ local EMPTY_IN_RAD = 128 * math.pi / 180 -- the angle in radians for an empty ba
 local FULL_IN_RAD = 2 * math.pi / 180 -- the angle in radians for a full bar
 local DELTA_RAD = EMPTY_IN_RAD - FULL_IN_RAD
 
-local RAD_AT_START = 1.15
-local RAD_AT_END = -1.15
+local EMPTY_IN_RAD_SMALL = 1.9040214425527
+local FULL_IN_RAD_SMALL = 0
+
+local RAD_AT_START = 1
+local RAD_AT_END = -1
 
 local function fill_OnFinished(self)
     -- on finishing refill, unregister any event notifications until next spellcast
@@ -303,7 +306,7 @@ GW.AddForProfiling("dodgebar", "dodge_OnLeave", dodge_OnLeave)
 local function setupDragonBar(self)
 
     local maxVigor = UnitPowerMax("player" , DRAGON_POWERTYPE);
-    self.gwMaxCharges = maxVigor
+
     local frameName = self:GetName()
     for i=1,5 do
       local seperator = _G[frameName.."Sep"..i]
@@ -344,8 +347,8 @@ local function animateDragonBar(self,current,fraction,max)
     local l = lerp(from,to,p) / max
     local l2 = lerp(fromfraction,toFraction,p) / max
 
-    local value = lerp(EMPTY_IN_RAD,FULL_IN_RAD,l)
-    local valueFraction = lerp(EMPTY_IN_RAD,FULL_IN_RAD,l2)
+    local value = lerp(EMPTY_IN_RAD_SMALL,FULL_IN_RAD_SMALL,l)
+    local valueFraction = lerp(EMPTY_IN_RAD_SMALL,FULL_IN_RAD_SMALL,l2)
     self.arcfill.fill:SetRotation(value)
     self.arcfill.spark:SetRotation(value)
     self.arcfill.fillFractions:SetRotation(valueFraction)
@@ -384,6 +387,10 @@ local function dragonBar_OnEvent(self, event, ...)
       local current = UnitPower("player",DRAGON_POWERTYPE)
       local max = UnitPowerMax("player",DRAGON_POWERTYPE)
       local fraction = (self.lastPower and self.lastPower>current and 0) or nil
+      if not self.gwMaxCharges or max>self.gwMaxCharges then
+        self.gwMaxCharges = max
+        setupDragonBar(self)
+      end
       animateDragonBar(self,current,nil,max)
       self.lastPower = current
 
@@ -471,7 +478,7 @@ local function LoadDodgeBar(hg, asTargetFrame)
 
 
     -- setup hook to hide the dodge bar when in vehicle/override UI
-    MixinHideDuringPetAndMountedOverride(fmdb)
+    MixinHideDuringPetAndOverride(fmdb)
 
     Debug("LoadDodgeBar done")
     return fmdb
@@ -481,7 +488,8 @@ local function LoadDragonBar(hg, asTargetFrame)
 
     -- this bar gets a global name for use in key bindings
     local fmdb = CreateFrame("Button", "GwDragonBar", UIParent, "GwDodgeBarTmpl")
-    fmdb.arcfill.fill:SetVertexColor(48/255,175/255,255)
+    fmdb:SetFrameLevel(GwDodgeBar:GetFrameLevel() - 1)
+    fmdb.arcfill.fill:SetVertexColor(1,1,1,1)
     fmdb.arcfill.spark:SetVertexColor(1,1,1)
     fmdb.arcfill.fillFractions:SetVertexColor(100/255,100/255,100/255)
     fmdb.asTargetFrame = asTargetFrame
@@ -510,6 +518,14 @@ local function LoadDragonBar(hg, asTargetFrame)
     af.maskr_hover:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
     af.maskr_normal:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
     af.maskr_fraction:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
+
+    fmdb.arcfill.fill:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill-small")
+    fmdb.arcfill.fillFractions:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/fill-small")
+    af.maskr_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall")
+    af.maskr_fraction:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall")
+    af.mask_normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/masksmall")
+
+    fmdb.border.normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/border-normal-small")
 
     -- create the arc drain/fill animations
     local agFraction = af.fillFractions:CreateAnimationGroup()
