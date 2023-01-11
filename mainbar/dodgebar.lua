@@ -1,8 +1,14 @@
 local _, GW = ...
 local Debug = GW.Debug
-local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
+local MixinHideDuringPetAndMountedOverride = GW.MixinHideDuringPetAndMountedOverride
 local FrameFlash = GW.FrameFlash
 local GetSetting = GW.GetSetting
+local lerp = GW.lerp
+local animations = GW.animations
+local AddToAnimation = GW.AddToAnimation
+
+local DRAGON_POWERTYPE = 10
+
 
 -- these strings will be parsed by SecureCmdOptionParse
 -- https://wow.gamepedia.com/Secure_command_options
@@ -30,6 +36,9 @@ local EMPTY_IN_RAD = 128 * math.pi / 180 -- the angle in radians for an empty ba
 local FULL_IN_RAD = 2 * math.pi / 180 -- the angle in radians for a full bar
 local DELTA_RAD = EMPTY_IN_RAD - FULL_IN_RAD
 
+local RAD_AT_START = 1.15
+local RAD_AT_END = -1.15
+
 local function fill_OnFinished(self)
     -- on finishing refill, unregister any event notifications until next spellcast
     -- also force bar to "full" state just in case weirdness happened somewhere
@@ -52,10 +61,10 @@ local function updateAnim(self, start, duration, charges, maxCharges)
         fill_OnFinished(ag)
         return
     end
-
+    if not self.gwCharges then  self.gwCharges = 0 end
     -- spark if charge count has changed
-    if not self.gwNeedDrain and self.gwCharges ~= charges then
-        FrameFlash(self.arcfill.fill, 0.2)
+    if not self.gwNeedDrain and self.gwCharges > charges then
+  --    FrameFlash(self.arcfill.fill, 0.2)
     end
     self.gwCharges = charges
 
@@ -185,6 +194,9 @@ local function setupBar(self)
         af.sep33:Hide()
         af.sep66:Hide()
     end
+    af.sep132:Hide()
+    af.sep264:Hide()
+    af.fillFractions:Hide()
 
     updateAnim(self, start, duration, charges, maxCharges)
 end
@@ -256,9 +268,15 @@ local function dodge_OnEnter(self)
     self.border.hover:Show()
 
     -- show the spell tooltip
-    GameTooltip_SetDefaultAnchor(GameTooltip, self)
-    GameTooltip:SetSpellByID(self.spellId)
-    GameTooltip:Show()
+    if self.spellId then
+      GameTooltip_SetDefaultAnchor(GameTooltip, self)
+      GameTooltip:SetSpellByID(self.spellId)
+      GameTooltip:Show()
+    else
+      GameTooltip_SetDefaultAnchor(GameTooltip, self)
+      GameTooltip:SetSpellByID(self.spellId)
+      GameTooltip:Show()
+    end
 end
 GW.AddForProfiling("dodgebar", "dodge_OnEnter", dodge_OnEnter)
 
@@ -271,6 +289,9 @@ local function dodge_OnLeave(self)
     end
     af.fill:AddMaskTexture(af.maskr_normal)
     af.fill:RemoveMaskTexture(af.maskr_hover)
+    af.fillFractions:AddMaskTexture(af.maskr_fraction)
+    af.spark:AddMaskTexture(af.maskr_normal)
+    af.spark:RemoveMaskTexture(af.maskr_hover)
     self.border.hover:Hide()
     self.border.normal:Show()
 
@@ -278,6 +299,121 @@ local function dodge_OnLeave(self)
     GameTooltip_Hide()
 end
 GW.AddForProfiling("dodgebar", "dodge_OnLeave", dodge_OnLeave)
+
+local function setupDragonBar(self)
+
+    local maxVigor = UnitPowerMax("player" , DRAGON_POWERTYPE);
+    self.gwMaxCharges = maxVigor
+    local frameName = self:GetName()
+    for i=1,5 do
+      local seperator = _G[frameName.."Sep"..i]
+      if i<=maxVigor then
+          local p = lerp(RAD_AT_START,RAD_AT_END,i/maxVigor)
+          seperator:SetRotation(p)
+          seperator:Show()
+      else
+        seperator:Hide()
+      end
+    end
+end
+local function animateDragonBar(self,current,fraction,max)
+
+  if not max or max < 1 or not current then
+    return
+  end
+
+  if not fraction then
+    fraction = self.currentValueFraction or 0
+  end
+  local to = current
+  local from = self.currentValue or 0
+
+  local toFraction = current + fraction
+  local fromfraction =  self.currentValueFraction or 0
+  fromfraction = fromfraction + current
+  local flash = nil
+  if self.currentValue~=nil and current>self.currentValue then
+    FrameFlash(self.arcfill.spark, 0.2)
+  end
+
+  self.currentValue = current
+  self.currentValueFraction =  fraction
+  AddToAnimation("DRAGONBAR", 0, 1, GetTime(), 0.8,
+  function()
+    local p = animations["DRAGONBAR"].progress
+    local l = lerp(from,to,p) / max
+    local l2 = lerp(fromfraction,toFraction,p) / max
+
+    local value = lerp(EMPTY_IN_RAD,FULL_IN_RAD,l)
+    local valueFraction = lerp(EMPTY_IN_RAD,FULL_IN_RAD,l2)
+    self.arcfill.fill:SetRotation(value)
+    self.arcfill.spark:SetRotation(value)
+    self.arcfill.fillFractions:SetRotation(valueFraction)
+  end,1,flash)
+
+
+end
+local function updateDragonRidingState(self)
+  local dragonridingSpellIds = C_MountJournal.GetCollectedDragonridingMounts()
+  local isDragonriding = false
+  if IsMounted() then
+    for _, mountId in ipairs(dragonridingSpellIds) do
+      local spellId = select(2, C_MountJournal.GetMountInfoByID(mountId))
+      if C_UnitAuras.GetPlayerAuraBySpellID(spellId) then
+        isDragonriding = true
+      end
+    end
+  end
+  if isDragonriding==false and self:IsShown() then
+    self:Hide()
+  elseif isDragonriding and not self:IsShown() then
+    self:Show()
+  end
+end
+local thrillInstanceID
+local function dragonBar_OnEvent(self, event, ...)
+    if event == "UNIT_SPELLCAST_SUCCEEDED" then
+        -- we don't track anything until we first see our dodge skill cast
+        local spellId = select(3, ...)
+        if spellId ~= DR_FORWARD and spellId ~= DR_FLAP and spellId ~= DR_SURGE  then
+            return
+        end
+    --    self.gwNeedDrain = true
+    elseif event == "UNIT_POWER_UPDATE" then
+
+      local current = UnitPower("player",DRAGON_POWERTYPE)
+      local max = UnitPowerMax("player",DRAGON_POWERTYPE)
+      local fraction = (self.lastPower and self.lastPower>current and 0) or nil
+      animateDragonBar(self,current,nil,max)
+      self.lastPower = current
+
+
+    elseif event == "UPDATE_UI_WIDGET" then
+      local widget = ...
+      if widget.widgetSetID ~=283 then
+        return
+      end
+      local current = UnitPower("player",DRAGON_POWERTYPE)
+      local max = UnitPowerMax("player",DRAGON_POWERTYPE)
+
+      local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(widget.widgetID)
+        if widgetInfo then
+        --  updateAnim(self, GetTime(), 20, math.min(max,current + (widgetInfo.fillValue / widgetInfo.fillMax)), max)
+          animateDragonBar(self, current,(widgetInfo.fillValue / widgetInfo.fillMax), max)
+        end
+
+      elseif event=="PLAYER_MOUNT_DISPLAY_CHANGED" then
+
+        updateDragonRidingState(self)
+
+      elseif event=="PLAYER_ENTERING_WORLD" then
+        C_Timer.After(0.33, function()
+          updateDragonRidingState(self)
+          setupDragonBar(self)
+        end)
+
+      end
+end
 
 local function LoadDodgeBar(hg, asTargetFrame)
     Debug("LoadDodgeBar start")
@@ -320,7 +456,7 @@ local function LoadDodgeBar(hg, asTargetFrame)
     af.gwAnimGroup = ag
     af.gwAnimDrain = a1
     af.gwAnimFill = a2
-    ag:SetScript("OnFinished", fill_OnFinished)
+  --  ag:SetScript("OnFinished", fill_OnFinished)
 
     -- setup dodgebar event handling
     dodge_OnLeave(fmdb)
@@ -333,10 +469,80 @@ local function LoadDodgeBar(hg, asTargetFrame)
     fmdb:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     fmdb:RegisterEvent("LEARNED_SPELL_IN_TAB")
 
+
     -- setup hook to hide the dodge bar when in vehicle/override UI
-    MixinHideDuringPetAndOverride(fmdb)
+    MixinHideDuringPetAndMountedOverride(fmdb)
 
     Debug("LoadDodgeBar done")
     return fmdb
 end
+local function LoadDragonBar(hg, asTargetFrame)
+    Debug("LoadDragonBar start")
+
+    -- this bar gets a global name for use in key bindings
+    local fmdb = CreateFrame("Button", "GwDragonBar", UIParent, "GwDodgeBarTmpl")
+    fmdb.arcfill.fill:SetVertexColor(48/255,175/255,255)
+    fmdb.arcfill.spark:SetVertexColor(1,1,1)
+    fmdb.arcfill.fillFractions:SetVertexColor(100/255,100/255,100/255)
+    fmdb.asTargetFrame = asTargetFrame
+
+    fmdb:ClearAllPoints()
+    if fmdb.asTargetFrame then
+        hg.dragonBar = fmdb
+        fmdb.arcfill:SetSize(80, 72)
+        fmdb.arcfill.mask_normal:SetSize(80, 72)
+        fmdb.arcfill.mask_hover:SetSize(80, 72)
+        fmdb.arcfill.maskr_normal:SetSize(80, 72)
+        fmdb.arcfill.maskr_hover:SetSize(80, 72)
+        fmdb.arcfill.maskr_fraction:SetSize(80, 72)
+        fmdb.border:SetSize(80, 72)
+        fmdb:SetPoint("TOPLEFT", hg, "TOPLEFT", -9.5, 5)
+        fmdb:SetFrameStrata("BACKGROUND")
+        hg:HookScript("OnSizeChanged", function() fmdb:SetScale(GetSetting("player_pos_scale")) end)
+    else
+        fmdb:SetPoint("CENTER", hg, "CENTER", 0, 41)
+        GW.RegisterScaleFrame(fmdb, 1.1)
+    end
+
+    -- setting these values in the XML creates animation glitches so we do it here instead
+    local af = fmdb.arcfill
+
+    af.maskr_hover:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
+    af.maskr_normal:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
+    af.maskr_fraction:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
+
+    -- create the arc drain/fill animations
+    local agFraction = af.fillFractions:CreateAnimationGroup()
+    local agSpark = af.spark:CreateAnimationGroup()
+    local ag = af.fill:CreateAnimationGroup()
+    local a1 = ag:CreateAnimation("rotation")
+    local a2 = ag:CreateAnimation("rotation")
+
+    a1:SetOrder(1)
+    a2:SetOrder(2)
+
+    af.gwAnimGroup = ag
+    af.gwAnimDrain = a1
+    af.gwAnimFill = a2
+
+    af.fillFractions:SetRotation(EMPTY_IN_RAD)
+    ag:SetScript("OnFinished", fill_OnFinished)
+
+    -- setup dodgebar event handling
+    dodge_OnLeave(fmdb)
+    fmdb:SetScript("OnEnter", dodge_OnEnter)
+    fmdb:SetScript("OnLeave", dodge_OnLeave)
+    fmdb:SetScript("OnEvent", dragonBar_OnEvent)
+    fmdb:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
+    fmdb:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
+    fmdb:RegisterEvent("UPDATE_UI_WIDGET")
+    fmdb:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
+    fmdb:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+
+
+    Debug("LoadDragonBar done")
+    return fmdb
+end
+GW.LoadDragonBar = LoadDragonBar
 GW.LoadDodgeBar = LoadDodgeBar

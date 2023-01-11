@@ -22,6 +22,7 @@
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                     </Anchors>
+                    <Color r="1" g="1" b="1" a="0.3" />
                 </Texture>
                 <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
                     <Size x="314" y="2"/>
@@ -29,6 +30,7 @@
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="1"/>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"  x="0" y="1"/>
                     </Anchors>
+                    <Color r="1" g="1" b="1" a="0.2" />
                 </Texture>
                 <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
                     <Size x="314" y="2"/>
@@ -36,6 +38,7 @@
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="-1"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="-1"/>
                     </Anchors>
+                    <Color r="1" g="1" b="1" a="0.2" />
                     <TexCoords left="0" right="1" top="1" bottom="0" />
                 </Texture>
 
@@ -45,6 +48,7 @@
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="1" y="0"/>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="0"/>
                 </Anchors>
+                <Color r="1" g="1" b="1" a="0.2" />
             </Texture>
             <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
                 <Size x="2" y="2"/>
@@ -52,6 +56,7 @@
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="0"/>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-1" y="0"/>
                 </Anchors>
+                <Color r="1" g="1" b="1" a="0.2" />
                 <TexCoords left="1" right="0" top="0" bottom="1" />
             </Texture>
             </Layer>

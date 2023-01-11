@@ -303,8 +303,7 @@ local function lerp(v0, v1, t)
     if v0 == nil then
         v0 = 0
     end
-    local p = (v1 - v0)
-    return v0 + t * p
+   return (1 - t) * v0 + t * v1;
 end
 GW.lerp = lerp
 
@@ -431,6 +430,29 @@ local function securePetAndOverride(f, stateType)
     return true
 end
 
+local function secureHideDurinPetAndMountedgMounted(f, stateType)
+    if InCombatLockdown() then
+        return false
+    end
+    f:SetAttribute("gw_WasShowing", f:IsShown())
+    f:SetAttribute(
+        "_onstate-petoverride",
+        [=[
+        if newstate == "show" then
+            if self:GetAttribute("gw_WasShowing") then
+                self:Show()
+            end
+        elseif newstate == "hide" then
+            self:SetAttribute("gw_WasShowing", self:IsShown())
+            self:Hide()
+        end
+    ]=]
+    )
+
+    RegisterStateDriver(f, "petoverride", "[bonusbar:5] hide; [overridebar] hide; [vehicleui] hide; [petbattle] hide; [possessbar,@vehicle,exists] hide; show")
+    return true
+end
+
 local function normPetAndOverride(f, stateType)
     local f_OnShow = function()
         f.gw_WasShowing = f:IsShown()
@@ -481,7 +503,14 @@ local function MixinHideDuringPetAndOverride(f)
     end
 end
 GW.MixinHideDuringPetAndOverride = MixinHideDuringPetAndOverride
-
+local function MixinHideDuringPetAndMountedOverride(f)
+    if f:IsProtected() then
+        return secureHideDurinPetAndMountedgMounted(f)
+    else
+        return normPetAndOverride(f)
+    end
+end
+GW.MixinHideDuringPetAndMountedOverride = MixinHideDuringPetAndMountedOverride
 local function getContainerItemLinkByNameOrId(itemName, id)
     local itemLink = nil
     for bag = 0, 4 do

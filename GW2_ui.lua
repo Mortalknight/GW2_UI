@@ -686,9 +686,11 @@ local function evPlayerLogin(self)
     if GetSetting("HEALTHGLOBE_ENABLED") and not GetSetting("PLAYER_AS_TARGET_FRAME") then
         local hg = GW.LoadHealthGlobe()
         GW.LoadDodgeBar(hg, false)
+        GW.LoadDragonBar(hg, false)
     elseif GetSetting("HEALTHGLOBE_ENABLED") and GetSetting("PLAYER_AS_TARGET_FRAME") then
         local hg = GW.LoadPlayerFrame()
         GW.LoadDodgeBar(hg, true)
+        GW.LoadDragonBar(hg, true)
     end
 
     if GetSetting("POWERBAR_ENABLED") and (GetSetting("PLAYER_AS_TARGET_FRAME") and GetSetting("PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR") or not GetSetting("PLAYER_AS_TARGET_FRAME")) then
