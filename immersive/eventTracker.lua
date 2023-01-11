@@ -20,7 +20,8 @@ local function UpdateSettings()
         desaturate = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE"),
         alert = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ALERT"),
         alertSeconds = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS"),
-        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED")
+        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED"),
+        flashTaskbar = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_FLASH_TASKBAR")
     }
 
     settings.dragonbaneKeep = {
@@ -28,13 +29,15 @@ local function UpdateSettings()
         desaturate = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE"),
         alert = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"),
         alertSeconds = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS"),
-        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED")
+        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED"),
+        flashTaskbar = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_FLASH_TASKBAR")
     }
 
     settings.iskaaranFishingNet = {
         enabled = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"),
         alert = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT"),
         disableAlertAfterHours = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_DISABLE_ALERT_AFTER_HOURS"),
+        flashTaskbar = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_FLASH_TASKBAR"),
         -- this are player settings no global ones
         playerData = GetSetting("ISKAARAN_FISHING_NET_DATA")
     }
@@ -262,6 +265,9 @@ local functionFactory = {
                     local eventIconString = GW.GetIconString(self.args.icon, 16, 16)
                     local gradientName = getGradientText(self.args.eventName, self.args.barColor)
                     DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. format(L["%s will start in %s!"], eventIconString .. " " .. gradientName, secondToTime(self.timeLeft))):gsub("*", GW.Gw2Color))
+                    if self.args.flashTaskbar then
+                        FlashClientIcon()
+                    end
                 end
             end
         },
@@ -501,6 +507,9 @@ local functionFactory = {
                     local eventIconString = GW.GetIconString(self.args.icon, 16, 16)
                     local gradientName = getGradientText(self.args.eventName, self.args.barColor)
                     DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. format(eventIconString .. " " .. gradientName .. " " .. L["Net %s can be collected"], netsText)):gsub("*", GW.Gw2Color))
+                    if self.args.flashTaskbar then
+                        FlashClientIcon()
+                    end
                 end
             end
         },
@@ -800,6 +809,7 @@ local function UpdateTrackers()
             end
 
             tracker.args.desaturate = settings[data.dbKey].desaturate
+            tracker.args.flshTaskbar = settings[data.dbKey].flashTaskbar
 
             if settings[data.dbKey].alert then
                 tracker.args.alert = true

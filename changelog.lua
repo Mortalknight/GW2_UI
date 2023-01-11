@@ -20,6 +20,7 @@ addChange("6.2.0",{
     {ct.feature,[=[Added fish nets timers to worldmap]=]},
     {ct.feature,[=[Added cooking event timer to scenario tracker]=]},
     {ct.feature,[=[Added option to show enchants and gems on gw2 character panel]=]},
+    {ct.feature,[=[Added option to flash tasbbar on world event reminder]=]},
 
     {ct.change,[=[Update chatbubbles]=]},
     {ct.change,[=[Update Move HUD textures]=]},
