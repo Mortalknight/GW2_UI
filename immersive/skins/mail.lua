@@ -281,7 +281,7 @@ local function ClearMailTextures()
     MailFrame:StripTextures()
     InboxFrame:StripTextures()
     SendMailFrame:StripTextures()
-    SendMailScrollFrame:StripTextures()
+    SendMailScrollFrame:StripTextures(true)
     OpenMailFrame:StripTextures()
     OpenMailScrollFrame:StripTextures()
 
@@ -333,6 +333,9 @@ local function LoadMailSkin()
     eventFrame:RegisterEvent("MAIL_UNLOCK_SEND_ITEMS")
     eventFrame:RegisterEvent("TRIAL_STATUS_UPDATE")
     eventFrame:SetScript("OnEvent", FixMailSkin)
+
+    InvoiceTextFontNormal:SetTextColor(1, 1, 1)
+    MailTextFontNormal:SetTextColor(1, 1, 1)
 
     -- Strip and hide default textures
     ClearMailTextures()
