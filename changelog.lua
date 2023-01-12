@@ -15,23 +15,25 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 addChange("6.2.0",{
-    {ct.feature,[=[Added new achivment skin]=]},
+    {ct.feature,[=[Dragon Riding HUD background has been added]=]},
+    {ct.feature,[=[Vigor has been moved to the Dodge bar]=]},
+    {ct.feature,[=[Added new achievement skin]=]},
     {ct.feature,[=[Added new gossip skin]=]},
-    {ct.feature,[=[Added fish nets timers to worldmap]=]},
+    {ct.feature,[=[Added fish nets timers to world map]=]},
     {ct.feature,[=[Added cooking event timer to scenario tracker]=]},
     {ct.feature,[=[Added option to show enchants and gems on gw2 character panel]=]},
-    {ct.feature,[=[Added option to flash tasbbar on world event reminder]=]},
+    {ct.feature,[=[Added option to flash taskbar on world event reminder]=]},
 
-    {ct.change,[=[Update chatbubbles]=]},
+    {ct.change,[=[Update chat bubbles]=]},
     {ct.change,[=[Update Move HUD textures]=]},
     {ct.change,[=[Add filters to Move HUD mode]=]},
     {ct.change,[=[Added char counter to chat editbox]=]},
 
-    {ct.bug,[=[Fix ElvUI micromenu backdrop]=]},
+    {ct.bug,[=[Fix ElvUI micro menu backdrop]=]},
     {ct.bug,[=[Fix Details settings page not opens]=]},
     {ct.bug,[=[Fix wrong data in fps tooltip]=]},
-    {ct.bug,[=[Fix TomTom minimap icons moves into the addon button container]=]},
-    {ct.bug,[=[Fix compass settings get not applyed]=]},
+    {ct.bug,[=[Fix TomTom mini map icons moves into the addon button container]=]},
+    {ct.bug,[=[Fix compass ignoring settings]=]},
 })
 addChange("6.1.1",{
     {ct.change,[=[Aura Indicator updates:

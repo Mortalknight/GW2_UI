@@ -381,7 +381,7 @@ local function dragonBar_OnEvent(self, event, ...)
         self.gwMaxCharges = max
         setupDragonBar(self)
       end
-      animateDragonBar(self,current,nil,max)
+      animateDragonBar(self,current,fraction,max)
       self.lastPower = current
 
 

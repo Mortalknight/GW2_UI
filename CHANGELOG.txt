@@ -1,24 +1,26 @@
 6.2.0
 NEW
-    - Added new achivment skin
+    - Added Hud background for dragonriding
+    - Added Vigor to dodge bar
+    - Added new achievement skin
     - Added new gossip skin
-    - Added fish nets timers to worldmap
+    - Added fish nets timers to world map
     - Added cooking event timer to scenario tracker
     - Added option to show enchants and gems on gw2 character panel
-    - Added option to flash tasbbar on world event reminder
+    - Added option to flash taskbar on world event reminder
 
 CHANGES
-    - Update chatbubbles
+    - Update chat bubbles
     - Update Move HUD textures
     - Add filters to Move HUD mode
     - Added char counter to chat editbox
 
 FIXES
-    - Fix ElvUI micromenu backdrop
+    - Fix ElvUI micro menu backdrop
     - Fix Details settings page not opens
     - Fix wrong data in fps tooltip
-    - Fix TomTom minimap icons moves into the addon button container
-    - Fix compass settings get not applyed
+    - Fix TomTom mini map icons moves into the addon button container
+    - Fix compass ignoring settings
 
 6.1.1
 CHANGES
