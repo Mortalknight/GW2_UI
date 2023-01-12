@@ -277,7 +277,7 @@ local function dodge_OnEnter(self)
       GameTooltip:Show()
     else
       GameTooltip_SetDefaultAnchor(GameTooltip, self)
-      GameTooltip:SetSpellByID(self.spellId)
+      GameTooltip:AddLine(self.tooltip, nil, nil, nil, true)
       GameTooltip:Show()
     end
 end
@@ -397,6 +397,7 @@ local function dragonBar_OnEvent(self, event, ...)
         if widgetInfo then
         --  updateAnim(self, GetTime(), 20, math.min(max,current + (widgetInfo.fillValue / widgetInfo.fillMax)), max)
           animateDragonBar(self, current,(widgetInfo.fillValue / widgetInfo.fillMax), max)
+          self.tooltip = widgetInfo.tooltip
         end
 
       elseif event=="DRAGONRIDING_STATE_CHANGE" then
