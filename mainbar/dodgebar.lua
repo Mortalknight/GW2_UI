@@ -357,19 +357,9 @@ local function animateDragonBar(self,current,fraction,max)
 
 end
 local function updateDragonRidingState(self)
-  local dragonridingSpellIds = C_MountJournal.GetCollectedDragonridingMounts()
-  local isDragonriding = false
-  if IsMounted() then
-    for _, mountId in ipairs(dragonridingSpellIds) do
-      local spellId = select(2, C_MountJournal.GetMountInfoByID(mountId))
-      if C_UnitAuras.GetPlayerAuraBySpellID(spellId) then
-        isDragonriding = true
-      end
-    end
-  end
-  if isDragonriding==false and self:IsShown() then
+  if GwIsCurrentlyDragonRiding==false and self:IsShown() then
     self:Hide()
-  elseif isDragonriding and not self:IsShown() then
+  elseif GwIsCurrentlyDragonRiding and not self:IsShown() then
     self:Show()
   end
 end
@@ -409,7 +399,7 @@ local function dragonBar_OnEvent(self, event, ...)
           animateDragonBar(self, current,(widgetInfo.fillValue / widgetInfo.fillMax), max)
         end
 
-      elseif event=="PLAYER_MOUNT_DISPLAY_CHANGED" then
+      elseif event=="DRAGONRIDING_STATE_CHANGE" then
 
         updateDragonRidingState(self)
 
@@ -552,8 +542,9 @@ local function LoadDragonBar(hg, asTargetFrame)
     fmdb:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
     fmdb:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
     fmdb:RegisterEvent("UPDATE_UI_WIDGET")
-    fmdb:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
     fmdb:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+    hooksecurefunc("GwDragonRidingStateChange",function() dragonBar_OnEvent(fmdb,"DRAGONRIDING_STATE_CHANGE") end)
 
 
 
