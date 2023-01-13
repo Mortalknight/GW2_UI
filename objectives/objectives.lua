@@ -294,7 +294,7 @@ local function blockOnEnter(self)
         GetTime(),
         0.2,
         function(step)
-            self.hover:SetAlpha(step - 0.3)
+            self.hover:SetAlpha(math.max((step - 0.3), 0))
             self.hover:SetTexCoord(0, step, 0, 1)
         end
     )
@@ -425,7 +425,7 @@ local function getBlock(blockIndex)
 
         for bag = 0 , 5 do
             for slot = 0 , 24 do
-                local texture, _, _, _, _, _, _, _, _, itemID = GetContainerItemInfo(bag, slot)
+                local texture, _, _, _, _, _, _, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
                 if block.sourceItemId == itemID then
                     validTexture = texture
                     isFound = true
@@ -576,13 +576,13 @@ local function getBlock(blockIndex)
     end
 
     newBlock.actionButton.FakeHide = function(self)
-        self:RegisterForClicks(nil)
+        --self:RegisterForClicks(nil)
         self:SetScript("OnEnter", nil)
         self:SetScript("OnLeave", nil)
 
-        self:SetNormalTexture(nil)
-        self:SetPushedTexture(nil)
-        self:SetHighlightTexture(nil)
+        self:ClearNormalTexture()
+        self:ClearPushedTexture()
+        self:ClearHighlightTexture()
     end
 
     newBlock.actionButton:SetScript("OnEvent", newBlock.actionButton.OnEvent)

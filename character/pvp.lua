@@ -27,24 +27,24 @@ local function LoadPvpFrame(frame)
 
     PVPFrameHonorLabel:ClearAllPoints()
     PVPFrameHonorLabel:SetPoint("TOP", PVPFrameBackground, "TOP", 0, -10)
-    PVPFrameHonorLabel:SetFont(UNIT_NAME_FONT, 20)
-    PVPFrameHonorPoints:SetFont(UNIT_NAME_FONT, 20)
+    PVPFrameHonorLabel:SetFont(UNIT_NAME_FONT, 20, "")
+    PVPFrameHonorPoints:SetFont(UNIT_NAME_FONT, 20, "")
 
     PVPFrameArenaLabel:ClearAllPoints()
     PVPFrameArenaLabel:SetPoint("TOP", PVPFrameBackground, "TOP", 0, -130)
-    PVPFrameArenaLabel:SetFont(UNIT_NAME_FONT, 20)
-    PVPFrameArenaPoints:SetFont(UNIT_NAME_FONT, 20)
+    PVPFrameArenaLabel:SetFont(UNIT_NAME_FONT, 20, "")
+    PVPFrameArenaPoints:SetFont(UNIT_NAME_FONT, 20, "")
 
     PVPHonor:ClearAllPoints()
     PVPHonor:SetPoint("TOP", PVPFrameBackground, "TOP", 0, -35)
 
-    PVPHonorKillsLabel:SetFont(STANDARD_TEXT_FONT, 14)
-    PVPHonorTodayLabel:SetFont(STANDARD_TEXT_FONT, 14)
-    PVPHonorTodayKills:SetFont(STANDARD_TEXT_FONT, 14)
-    PVPHonorYesterdayLabel:SetFont(STANDARD_TEXT_FONT, 14)
-    PVPHonorYesterdayKills:SetFont(STANDARD_TEXT_FONT, 14)
-    PVPHonorLifetimeLabel:SetFont(STANDARD_TEXT_FONT, 14)
-    PVPHonorLifetimeKills:SetFont(STANDARD_TEXT_FONT, 14)
+    PVPHonorKillsLabel:SetFont(STANDARD_TEXT_FONT, 14, "")
+    PVPHonorTodayLabel:SetFont(STANDARD_TEXT_FONT, 14, "")
+    PVPHonorTodayKills:SetFont(STANDARD_TEXT_FONT, 14, "")
+    PVPHonorYesterdayLabel:SetFont(STANDARD_TEXT_FONT, 14, "")
+    PVPHonorYesterdayKills:SetFont(STANDARD_TEXT_FONT, 14, "")
+    PVPHonorLifetimeLabel:SetFont(STANDARD_TEXT_FONT, 14, "")
+    PVPHonorLifetimeKills:SetFont(STANDARD_TEXT_FONT, 14, "")
 
     PVPTeam1Standard:ClearAllPoints()
     PVPTeam1Standard:SetPoint("LEFT", PVPFrameBackground, "LEFT", 150, 40)
@@ -72,12 +72,12 @@ local function LoadBattlegroundFrame(battlegroundFrame)
 
     BattlefieldFrameFrameLabel:ClearAllPoints()
     BattlefieldFrameFrameLabel:SetPoint("TOP", BattlefieldFrame, "TOP", 0, 20)
-    BattlefieldFrameFrameLabel:SetFont(UNIT_NAME_FONT, 24)
+    BattlefieldFrameFrameLabel:SetFont(UNIT_NAME_FONT, 24, "")
     BattlefieldFrameFrameLabel:SetTextColor(1, 1, 1)
 
     BattlefieldFrameNameHeader:ClearAllPoints()
     BattlefieldFrameNameHeader:SetPoint("TOPLEFT", BattlefieldFrame, "TOPLEFT", 20, -30)
-    BattlefieldFrameNameHeader:SetFont(UNIT_NAME_FONT, 20)
+    BattlefieldFrameNameHeader:SetFont(UNIT_NAME_FONT, 20, "")
     BattlefieldFrameNameHeader:SetTextColor(1, 1, 1)
 
     if WintergraspTimer then
@@ -110,7 +110,7 @@ end
 local function menuItem_OnClick(self)
     local menuItems = self:GetParent().items
     for _, v in pairs(menuItems) do
-        v:SetNormalTexture(nil)
+        v:ClearNormalTexture()
         v.ToggleMe:Hide()
     end
     self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")

@@ -72,8 +72,8 @@ local function getClassGlyphsInBag()
         found = false
         CHACHED_CLASSGLYPHS[index] = {itemID = itemID, inBag = false, glyphType = _glyphType}
         for i = 0, NUM_BAG_SLOTS do
-            for z = 1, GetContainerNumSlots(i) do
-                if GetContainerItemID(i, z) == itemID then
+            for z = 1, C_Container.GetContainerNumSlots(i) do
+                if C_Container.GetContainerItemID(i, z) == itemID then
                     CHACHED_CLASSGLYPHS[index].inBag = true
                     found = true
                     break
@@ -170,7 +170,7 @@ local function loadGlyphList(self)
         slot:SetAttribute("type2", "macro")
 
         slot.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-        slot:SetNormalTexture(nil)
+        slot:ClearNormalTexture()
         slot:SetText("")
     end
 end

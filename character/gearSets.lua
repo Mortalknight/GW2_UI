@@ -87,7 +87,7 @@ local function LoadGeatSets()
         button.title:SetText("")
         button.bg:SetVertexColor(1, 1, 1, 1)
         button.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-        button:SetNormalTexture(nil)
+        button:ClearNormalTexture()
         button:SetText("")
 
         YPadding = -44 * i

@@ -117,12 +117,12 @@
         <Scripts>
             <OnLoad>
                 self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-                self:SetNormalTexture(nil)
+                self:ClearNormalTexture()
                 local fontString = self:GetFontString()
                 fontString:SetTextColor(1, 1, 1, 1)
                 fontString:SetShadowColor(0, 0, 0, 0)
                 fontString:SetShadowOffset(1, -1)
-                fontString:SetFont(DAMAGE_TEXT_FONT, 14)
+                fontString:SetFont(DAMAGE_TEXT_FONT, 14, "")
             </OnLoad>
         </Scripts>
     </Button>
@@ -292,7 +292,7 @@
                             <OnLoad>
                                 self:SetMinMaxValues(0, 1)
                                 self:SetStatusBarColor(240/255, 240/255, 155/255)
-                                self.value:SetFont(UNIT_NAME_FONT, 12)
+                                self.value:SetFont(UNIT_NAME_FONT, 12, "")
                                 self.value:SetShadowColor(0.8, 0.8, 0.8, 1)
                                 self.value:SetShadowOffset(1, -1)
                                 self.value:SetTextColor(0, 0, 0, 1)
@@ -335,7 +335,7 @@
                 </Layers>
                 <Scripts>
                     <OnLoad>
-                        self.header:SetFont(DAMAGE_TEXT_FONT, 14)
+                        self.header:SetFont(DAMAGE_TEXT_FONT, 14, "")
                         self.header:SetText(STAT_CATEGORY_ATTRIBUTES)
 
                         self:RegisterEvent("PET_UI_UPDATE")
@@ -362,10 +362,10 @@
         </Frames>
         <Scripts>
             <OnLoad>
-                self.characterName:SetFont(UNIT_NAME_FONT, 14)
-                self.characterData:SetFont(UNIT_NAME_FONT, 12)
-                self.itemLevel:SetFont(UNIT_NAME_FONT, 24)
-                self.itemLevelLabel:SetFont(UNIT_NAME_FONT, 12)
+                self.characterName:SetFont(UNIT_NAME_FONT, 14, "")
+                self.characterData:SetFont(UNIT_NAME_FONT, 12, "")
+                self.itemLevel:SetFont(UNIT_NAME_FONT, 24, "")
+                self.itemLevelLabel:SetFont(UNIT_NAME_FONT, 12, "")
                 self.itemLevelLabel:SetText(TRAINING_POINTS_LABEL)
                 self.backButton:SetText(CHARACTER .. ": " .. PET)
             </OnLoad>
@@ -739,7 +739,7 @@
                 </Layers>
                 <Scripts>
                     <OnLoad>
-                        self.header:SetFont(DAMAGE_TEXT_FONT, 14)
+                        self.header:SetFont(DAMAGE_TEXT_FONT, 14, "")
                         self.header:SetText("|TInterface\\AddOns\\GW2_UI\\textures\\party\\roleicon-healer:12:12:0:1|t " .. STAT_CATEGORY_ATTRIBUTES)
                         self:RegisterEvent("PLAYER_ENTERING_WORLD")
 
@@ -794,9 +794,9 @@
         </Frames>
         <Scripts>
             <OnLoad>
-                self.characterName:SetFont(UNIT_NAME_FONT, 14)
-                self.characterData:SetFont(UNIT_NAME_FONT, 12)
-                self.itemLevel:SetFont(UNIT_NAME_FONT, 12)
+                self.characterName:SetFont(UNIT_NAME_FONT, 14, "")
+                self.characterData:SetFont(UNIT_NAME_FONT, 12, "")
+                self.itemLevel:SetFont(UNIT_NAME_FONT, 12, "")
             </OnLoad>
         </Scripts>
     </Button>

@@ -277,7 +277,7 @@ GW.AddForProfiling("bank", "compactToggle", compactToggle)
 
 -- reskin all the base BankFrame ItemButtons
 local function reskinBankItemButtons()
-    local items = GetContainerNumSlots(BANK_CONTAINER)
+    local items = C_Container.GetContainerNumSlots(BANK_CONTAINER)
     for i = 1, items do
         local iname = "BankFrameItem" .. i
         local b = _G[iname]
@@ -405,7 +405,7 @@ local function LoadBank(helpers)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
     -- setup resizer stuff
-    f:SetMinResize(508, 340)
+    f:SetResizeBounds(508, 340)
     f:SetScript("OnSizeChanged", onBankFrameChangeSize)
     f.sizer.onResizeStop = onBankResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)

@@ -185,7 +185,14 @@ function SkinSliderFrame(frame)
     local orientation = frame:GetOrientation()
     local SIZE = 12
 
+    if not frame.SetBackdrop then
+        _G.Mixin(frame, _G.BackdropTemplateMixin)
+        frame:HookScript("OnSizeChanged", frame.OnBackdropSizeChanged)
+    end
     frame:SetBackdrop(nil)
+    if not frame.backdrop then
+        frame:CreateBackdrop()
+    end
     frame:SetThumbTexture("Interface/AddOns/GW2_UI/textures/sliderhandle")
 
     local thumb = frame:GetThumbTexture()

@@ -177,7 +177,7 @@ local function bag_OnUpdate(self, elapsed)
 
     local totalEmptySlots = 0
     for i = 0, 4 do
-        local numberOfFreeSlots, _ = GetContainerNumFreeSlots(i)
+        local numberOfFreeSlots, _ = C_Container.GetContainerNumFreeSlots(i)
 
         if numberOfFreeSlots ~= nil then
             totalEmptySlots = totalEmptySlots + numberOfFreeSlots

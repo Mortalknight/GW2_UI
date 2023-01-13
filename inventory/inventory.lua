@@ -31,8 +31,6 @@ local function reskinItemButton(iname, b)
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
 
-    b:SetPushedTexture(nil)
-
     if not b.gwBackdrop then
         local bd = b:CreateTexture(nil, "BACKGROUND")
         bd:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop")
@@ -132,7 +130,7 @@ end
 GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
 
 local function CheckUpdateIcon(button)
-    local _, Count, _, _, _, _, ItemLink = GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
+    local _, Count, _, _, _, _, ItemLink = C_Container.GetContainerItemInfo(button:GetParent():GetID(), button:GetID())
     if not Count then return false end -- If the stack count is 0, it's clearly not an upgrade
     if not ItemLink then return nil end -- If we didn't get an item link, but there's an item there, try again later
     local itemIsUpgrade = PawnShouldItemLinkHaveUpgradeArrow(ItemLink)
@@ -179,7 +177,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
 
     local bag_id = button:GetParent():GetID()
     local keyring = (bag_id == KEYRING_CONTAINER)
-    local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or BAG_TYP_COLORS[select(2, GetContainerNumFreeSlots(bag_id))]
+    local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or BAG_TYP_COLORS[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     local showItemLevel = button.itemlevel and itemIDOrLink and GetSetting("BAG_SHOW_ILVL") and not professionColors
 
     if itemIDOrLink then
@@ -201,7 +199,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         end
 
         -- Show junk icon if active
-        local _, _, _, rarity, _, _, _, _, noValue = GetContainerItemInfo(bag_id, button:GetID())
+        local _, _, _, rarity, _, _, _, _, noValue = C_Container.GetContainerItemInfo(bag_id, button:GetID())
         button.isJunk = (rarity and rarity == LE_ITEM_QUALITY_POOR) and not noValue
 
         if button.junkIcon then
@@ -342,7 +340,7 @@ local function takeItemButtons(p, bag_id)
     end
     cf.gw_owner = p
 
-    local num_slots = GetContainerNumSlots(bag_id)
+    local num_slots = C_Container.GetContainerNumSlots(bag_id)
     cf.gw_num_slots = num_slots
     for i = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
         local item = _G[iname .. i]
@@ -387,9 +385,8 @@ local function reskinBagBar(b)
 
     if b.SlotHighlightTexture then
         b.SlotHighlightTexture:SetAlpha(0)
+        b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
     end
-
-    b:SetPushedTexture(nil)
 end
 GW.AddForProfiling("inventory", "reskinBagBar", reskinBagBar)
 
@@ -399,8 +396,8 @@ local function reskinSearchBox(sb)
         return
     end
 
-    sb:SetFont(UNIT_NAME_FONT, 14)
-    sb.Instructions:SetFont(UNIT_NAME_FONT, 14)
+    sb:SetFont(UNIT_NAME_FONT, 14, "")
+    sb.Instructions:SetFont(UNIT_NAME_FONT, 14, "")
     sb.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
     sb.Left:SetPoint("LEFT", 0, 0)
@@ -503,13 +500,13 @@ local function updateFreeSlots(sp_str, start_idx, end_idx, opt_container)
     local free = 0
     local full = 0
     if opt_container then
-        free = GetContainerNumFreeSlots(opt_container)
-        full = GetContainerNumSlots(opt_container)
+        free = C_Container.GetContainerNumFreeSlots(opt_container)
+        full = C_Container.GetContainerNumSlots(opt_container)
     end
 
     for bag_id = start_idx, end_idx do
-        free = free + GetContainerNumFreeSlots(bag_id)
-        full = full + GetContainerNumSlots(bag_id)
+        free = free + C_Container.GetContainerNumFreeSlots(bag_id)
+        full = full + C_Container.GetContainerNumSlots(bag_id)
     end
 
     sp_str:SetText((full - free) .. " / " .. full)

@@ -50,7 +50,7 @@ StaticPopupDialogs["GW_CHANGE_PROFILE_NAME"] = {
             profileToRename["profileCreatedCharacter"] .. "\n" .. L["Last updated: "] .. changeDate
 
         -- Use hidden frame font object to calculate string width
-        GW.HiddenFrame.HiddenString:SetFont(UNIT_NAME_FONT, 14)
+        GW.HiddenFrame.HiddenString:SetFont(UNIT_NAME_FONT, 14, "")
         GW.HiddenFrame.HiddenString:SetText(text)
         profileToRename["profilename"] = text
         profileToRename["profileLastUpdated"] = changeDate
@@ -134,7 +134,7 @@ StaticPopupDialogs["GW2_WOWHEAD_URL"] = {
         local wowheadLink
         local langShort = string.sub(GW.mylocal, 1, 2) .. "."
 
-        self.text:SetFont("GameFontNormal", 12)
+        self.text:SetFont("GameFontNormal", 12, "")
         self.text:SetText(self.text:GetText() .. "|cFFffd100\n\n" .. questName .. "|r")
 
         if langShort == "en." then

@@ -91,7 +91,7 @@ local function loadCurrency(curwin)
                 slot.header:Hide()
 
                 -- parse out the currency ID to get more accurate info
-                local link = GetCurrencyListLink(idx)
+                local link = C_CurrencyInfo.GetCurrencyListLink(idx)
                 local _, _, _, _, curid, _ =
                     string.find(
                     link,
@@ -155,14 +155,14 @@ local function currencySetup(curwin)
     for i = 1, #curwin.buttons do
         local slot = curwin.buttons[i]
         slot:SetWidth(curwin:GetWidth() - 12)
-        slot.header.spaceString:SetFont(DAMAGE_TEXT_FONT, 14)
+        slot.header.spaceString:SetFont(DAMAGE_TEXT_FONT, 14, "")
         slot.header.spaceString:SetTextColor(1, 1, 1)
         slot.header.icon:ClearAllPoints()
         slot.header.icon:SetPoint("LEFT", 0, 0)
         slot.header.icon2:ClearAllPoints()
         slot.header.icon2:SetPoint("LEFT", 0, 0)
-        slot.item.spaceString:SetFont(UNIT_NAME_FONT, 12)
-        slot.item.amount:SetFont(UNIT_NAME_FONT, 12)
+        slot.item.spaceString:SetFont(UNIT_NAME_FONT, 12, "")
+        slot.item.amount:SetFont(UNIT_NAME_FONT, 12, "")
         slot.item.icon:ClearAllPoints()
         slot.item.icon:SetPoint("LEFT", 0, 0)
         if not slot.item.ScriptsHooked then
@@ -228,16 +228,16 @@ local function raidInfoSetup(raidinfo)
     for i = 1, #raidinfo.buttons do
         local slot = raidinfo.buttons[i]
         slot:SetWidth(raidinfo:GetWidth() - 12)
-        slot.item.name:SetFont(DAMAGE_TEXT_FONT, 16)
+        slot.item.name:SetFont(DAMAGE_TEXT_FONT, 16, "")
         slot.item.name:SetTextColor(1, 1, 1)
         slot.item.name:SetShadowColor(0, 0, 0, 1)
         slot.item.name:SetShadowOffset(1, -1)
 
-        slot.item.reset:SetFont(DAMAGE_TEXT_FONT, 12)
+        slot.item.reset:SetFont(DAMAGE_TEXT_FONT, 12, "")
         slot.item.reset:SetTextColor(1, 1, 1)
-        slot.item.difficult:SetFont(UNIT_NAME_FONT, 12)
+        slot.item.difficult:SetFont(UNIT_NAME_FONT, 12, "")
         slot.item.difficult:SetTextColor(1, 1, 1)
-        slot.item.id:SetFont(UNIT_NAME_FONT, 10)
+        slot.item.id:SetFont(UNIT_NAME_FONT, 10, "")
         slot.item.id:SetTextColor(1, 1, 1)
         --save frame
         slot.item.frame = raidinfo
@@ -250,7 +250,7 @@ GW.AddForProfiling("currency", "raidInfoSetup", raidInfoSetup)
 local function menuItem_OnClick(self)
     local menuItems = self:GetParent().items
     for _, v in pairs(menuItems) do
-        v:SetNormalTexture(nil)
+        v:ClearNormalTexture()
         v.ToggleMe:Hide()
     end
     self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")

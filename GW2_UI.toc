@@ -1,4 +1,4 @@
-## Interface: 30400
+## Interface: 30401
 ## Title: |cffffedbaGW2 UI|r |cFF888888Wrath|r
 ## Notes: Hud Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche

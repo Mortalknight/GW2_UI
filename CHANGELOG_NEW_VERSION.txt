@@ -1,26 +1,2 @@
-1.7.5-Wrath
-    - Fix money data info
-    - Fix chat issue
-
-1.7.4-Wrath
-    - Fix tooltip issue
-    - Fix chat issue
-
-1.7.3-Wrath
-    - Fix settings window mover issue
-
-1.7.2-Wrath
-    - Fix gear quipper skin
-
-1.7.1-Wrath
-    - Target combo points fixes
-
-1.7.0-Wrath
-NEW
-    - Added Custom Aura Tracker: You can track multiple auras. If you get this Aura it will show a flashing icon on the screen
-        - You can track as many auras as you want, only enter the Ids comma separated (Player Settings first segment)
-    - Added raidframe pet grid
-
-FIXES
-    - Target frame level color indicator
-    - Raidframe aura indicator should work correct now
+1.8.0
+    - Fixes for 3.4.1

@@ -1,3 +1,6 @@
+1.8.0
+    - Fixes for 3.4.1
+
 1.7.5-Wrath
     - Fix money data info
     - Fix chat issue

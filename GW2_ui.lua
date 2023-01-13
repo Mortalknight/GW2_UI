@@ -727,7 +727,7 @@ local function evPlayerLogin(self)
         if not IsFrameModified("UIErrorsFrame") then
             UIErrorsFrame:ClearAllPoints()
             UIErrorsFrame:SetPoint("TOP", UIParent, "TOP", 0, -190)
-            UIErrorsFrame:SetFont(STANDARD_TEXT_FONT, 14)
+            UIErrorsFrame:SetFont(STANDARD_TEXT_FONT, 14, "")
         end
     end
 

@@ -33,11 +33,11 @@ local function sellJunk()
 
     -- Traverse bags and sell grey items
     for BagID = 0, 4 do
-        for BagSlot = 1, GetContainerNumSlots(BagID) do
-            CurrentItemLink = GetContainerItemLink(BagID, BagSlot)
+        for BagSlot = 1, C_Container.GetContainerNumSlots(BagID) do
+            CurrentItemLink = C_Container.GetContainerItemLink(BagID, BagSlot)
             if CurrentItemLink then
                 _, _, Rarity, _, _, _, _, _, _, _, ItemPrice = GetItemInfo(CurrentItemLink)
-                local _, itemCount = GetContainerItemInfo(BagID, BagSlot)
+                local _, itemCount = C_Container.GetContainerItemInfo(BagID, BagSlot)
                 if Rarity == 0 and ItemPrice ~= 0 then
                     SoldCount = SoldCount + 1
                     if MerchantFrame:IsShown() then
@@ -90,7 +90,7 @@ local function SellJunkFrame_OnEvent(self, event)
         self:UnregisterEvent("ITEM_UNLOCKED")
         -- Check whether vendor refuses to buy items
         if mBagID and mBagSlot and mBagID ~= -1 and mBagSlot ~= -1 then
-            local _, count, locked = GetContainerItemInfo(mBagID, mBagSlot)
+            local _, count, locked = C_Container.GetContainerItemInfo(mBagID, mBagSlot)
             if count and not locked then
                 -- Item has been unlocked but still not sold so stop selling
                 StopSelling()
@@ -399,7 +399,7 @@ local function createBagBar(f)
         b:HookScript("OnMouseDown", inv.bag_OnMouseDown)
 
         inv.reskinBagBar(b)
-        local invID = ContainerIDToInventoryID(bag_idx)
+        local invID = C_Container.ContainerIDToInventoryID(bag_idx)
         local bagLink = GetInventoryItemLink("player", invID)
         if bagLink then
             GW.SetItemButtonQualityForBags(b, select(3, GetItemInfo(bagLink)))
@@ -464,7 +464,7 @@ local function updateBagBar(f)
         else
             b.icon:Hide()
         end
-        local invID = ContainerIDToInventoryID(bag_idx)  
+        local invID = C_Container.ContainerIDToInventoryID(bag_idx)  
         local bagLink = GetInventoryItemLink("player", invID)
         if bagLink then
             GW.SetItemButtonQualityForBags(b, select(3, GetItemInfo(bagLink)))
@@ -736,7 +736,7 @@ local function LoadBag(helpers)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
     -- setup resizer stuff
-    f:SetMinResize(304, 340)
+    f:SetResizeBounds(304, 340)
     f:SetScript("OnSizeChanged", onBagFrameChangeSize)
     f.sizer.onResizeStop = onBagResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)

@@ -138,7 +138,7 @@ local function CreateMountsPetsContainersWithButtons(type, listFrame, baseFrame,
             btn.title:SetTextColor(0.7, 0.7, 0.5, 1)
             btn.bg:SetVertexColor(1, 1, 1, 1)
             btn.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-            btn:SetNormalTexture(nil)
+            btn:ClearNormalTexture()
             btn:SetText("")
 
             YPadding = -44 * (i + 1)

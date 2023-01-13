@@ -546,7 +546,7 @@ local function target_OnEvent(self, event, unit)
         UpdateBuffLayout(self, event)
 
         if event == "PLAYER_TARGET_CHANGED" then
-            if UnitExists(self.unit) and not IsReplacingUnit() then
+            if UnitExists(self.unit) and not C_PlayerInteractionManager.IsReplacingUnit() then
                 if UnitIsEnemy(self.unit, "player") then
                     PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
                 elseif UnitIsFriend("player", self.unit) then
@@ -608,7 +608,7 @@ local function focus_OnEvent(self, event, unit)
         UpdateBuffLayout(self, event)
 
         if event == "PLAYER_FOCUS_CHANGED" then
-            if UnitExists(self.unit) and not IsReplacingUnit() then
+            if UnitExists(self.unit) and not C_PlayerInteractionManager.IsReplacingUnit() then
                 if UnitIsEnemy(self.unit, "player") then
                     PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
                 elseif UnitIsFriend("player", self.unit) then

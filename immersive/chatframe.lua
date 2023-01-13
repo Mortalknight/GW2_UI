@@ -1288,7 +1288,7 @@ end
 
 local function styleChatWindow(frame)
     local name = frame:GetName()
-    _G[name .. "TabText"]:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G[name .. "TabText"]:SetFont(DAMAGE_TEXT_FONT, 14, "")
     _G[name .. "TabText"]:SetTextColor(1, 1, 1)
 
     if frame.styled then return end
@@ -1326,31 +1326,45 @@ local function styleChatWindow(frame)
     end
 
     for _, texName in pairs(tabTexs) do
-        if texName == "Selected" then
-            _G[tab:GetName()..texName.."Right"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveright")
-            _G[tab:GetName()..texName.."Left"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactiveleft")
-            _G[tab:GetName()..texName.."Middle"]:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\chattabactive")
+        local t, l, m, r = name .. "Tab", texName .. "Left", texName .. "Middle", texName .. "Right"
+        local main = _G[t]
+        local left = _G[t .. l] or (main and main[l])
+        local middle = _G[t .. m] or (main and main[m])
+        local right = _G[t .. r] or (main and main[r])
 
-            _G[tab:GetName()..texName.."Right"]:SetBlendMode("BLEND")
-            _G[tab:GetName()..texName.."Left"]:SetBlendMode("BLEND")
-            _G[tab:GetName()..texName.."Middle"]:SetBlendMode("BLEND")
+        if texName == "Active" then
+            if left then
+                left:SetTexture("Interface/AddOns/GW2_UI/textures/chattabactiveleft")
+                left:ClearAllPoints()
+                left:SetPoint("TOPRIGHT", tab.Left, "TOPRIGHT", 0, 2)
+                left:SetBlendMode("BLEND")
+                left:SetVertexColor(1, 1, 1, 1)
+            end
 
-            _G[tab:GetName()..texName.."Right"]:SetVertexColor(1, 1, 1, 1)
-            _G[tab:GetName()..texName.."Left"]:SetVertexColor(1, 1, 1, 1)
-            _G[tab:GetName()..texName.."Middle"]:SetVertexColor(1, 1, 1, 1)
+            if middle then
+                middle:SetTexture("Interface/AddOns/GW2_UI/textures/chattabactive")
+                middle:ClearAllPoints()
+                middle:SetPoint("LEFT", tab.Middle, "LEFT", 0, 2)
+                middle:SetPoint("RIGHT", tab.Middle, "RIGHT", 0, 2 )
+                middle:SetBlendMode("BLEND")
+                middle:SetVertexColor(1, 1, 1, 1)
+            end
+            if right then
+                right:SetTexture("Interface/AddOns/GW2_UI/textures/chattabactiveright")
+                right:ClearAllPoints()
+                right:SetPoint("TOPRIGHT", tab.Right, "TOPRIGHT", 0, 2)
+                right:SetBlendMode("BLEND")
+                right:SetVertexColor(1, 1, 1, 1)
+            end
         else
-            _G[tab:GetName()..texName.."Right"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
-            _G[tab:GetName()..texName.."Left"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
-            _G[tab:GetName()..texName.."Middle"]:SetPoint("BOTTOMLEFT", background, "TOPLEFT", 0, 4)
-
-            _G[tab:GetName()..texName.."Left"]:SetTexture()
-            _G[tab:GetName()..texName.."Middle"]:SetTexture()
-            _G[tab:GetName()..texName.."Right"]:SetTexture()
+            if left then left:SetTexture() end
+            if middle then middle:SetTexture() end
+            if right then right:SetTexture() end
         end
 
-        _G[tab:GetName()..texName.."Right"]:SetHeight(28)
-        _G[tab:GetName()..texName.."Left"]:SetHeight(28)
-        _G[tab:GetName()..texName.."Middle"]:SetHeight(28)
+        if left then left:SetHeight(28) end
+        if middle then middle:SetHeight(28) end
+        if right then right:SetHeight(28) end
     end
 
     _G[name .. "ButtonFrameBottomButton"]:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\arrowdown_down")
@@ -1474,19 +1488,11 @@ local function styleChatWindow(frame)
         frame:SetFont(chatFont, fontHeight or 12, fontFlags)
         editbox:SetFont(chatFont, fontHeight or 12, fontFlags)
         _G[editbox:GetName() .. "Header"]:SetFont(chatFont, fontHeight or 12, fontFlags)
-    elseif GetSetting("FONTS_ENABLED") then
-        if fontSize and fontSize > 0 then
-            frame:SetFont(STANDARD_TEXT_FONT, fontSize)
-        elseif fontSize == nil or fontSize == 0 then
-            frame:SetFont(STANDARD_TEXT_FONT, 14)
-        end
-    end
-
-    if GetSetting("FONTS_ENABLED") then
-        if fontSize and fontSize > 0 then
-            frame:SetFont(STANDARD_TEXT_FONT, fontSize)
-        elseif fontSize == nil or fontSize == 0 then
-            frame:SetFont(STANDARD_TEXT_FONT, 14)
+    elseif GetSetting("FONTS_ENABLED") and fontSize then
+        if fontSize > 0 then
+            frame:SetFont(STANDARD_TEXT_FONT, fontSize, "")
+        elseif fontSize == 0 then
+            frame:SetFont(STANDARD_TEXT_FONT, 14, "")
         end
     end
 
@@ -1598,7 +1604,7 @@ local function BuildCopyChatFrame()
     frame:SetMovable(true)
     frame:EnableMouse(true)
     frame:SetResizable(true)
-    frame:SetMinResize(350, 100)
+    frame:SetResizeBounds(350, 100)
     frame:SetScript("OnMouseDown", function(copyChat, button)
         if button == "LeftButton" and not copyChat.isMoving then
             copyChat:StartMoving()
@@ -1644,6 +1650,11 @@ local function BuildCopyChatFrame()
     frame.editBox:EnableMouse(true)
     frame.editBox:SetAutoFocus(false)
     frame.editBox:SetFontObject(ChatFontNormal)
+    if GetSetting("CHAT_USE_GW2_STYLE") then
+        local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
+        local _, fonzSize = frame.editBox:GetFont()
+        frame.editBox:SetFont(chatFont, fonzSize or 12, "")
+    end
     frame.editBox:SetWidth(frame.scrollArea:GetWidth())
     frame.editBox:SetHeight(200)
     frame.editBox:SetScript("OnEscapePressed", function() frame:Hide() end)

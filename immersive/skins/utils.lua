@@ -37,6 +37,52 @@ local constBackdropFrameColorBorder = {
 }
 GW.constBackdropFrameColorBorder = constBackdropFrameColorBorder
 
+
+local function ReskinScrollBarArrow(frame, direction)
+    GW.HandleNextPrevButton(frame, direction)
+
+    if frame.Texture then
+        frame.Texture:SetAlpha(0)
+
+        if frame.Overlay then
+            frame.Overlay:SetAlpha(0)
+        end
+    else
+        frame:StripTextures()
+    end
+end
+
+local function HandleTrimScrollBar(frame, small)
+    frame:StripTextures()
+
+    ReskinScrollBarArrow(frame.Back, "up")
+    ReskinScrollBarArrow(frame.Forward, "down")
+
+    if frame.Background then
+        frame.Background:Hide()
+    end
+
+    local track = frame.Track
+    if track then
+        --track:DisableDrawLayer('ARTWORK')
+        --track:SetTexture("Interface\AddOns\GW2_UI\textures\uistuff\scrollbg")
+    end
+
+    local thumb = frame:GetThumb()
+    if thumb then
+        thumb:DisableDrawLayer('BACKGROUND')
+
+        thumb.bg = thumb:CreateTexture(nil, "ARTWORK")
+        thumb.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
+        thumb:SetSize(12, 12)
+        if not small then
+            thumb.bg:SetPoint("TOP", 4, -1)
+            thumb.bg:SetPoint("BOTTOM", -4, 1)
+        end
+    end
+end
+GW.HandleTrimScrollBar = HandleTrimScrollBar
+
 local function SkinUIDropDownMenu()
     hooksecurefunc("UIDropDownMenu_CreateFrames", function(level, index)
         local listFrame = _G["DropDownList" .. level]

@@ -121,14 +121,14 @@ local function setAuraType(self, typeAura)
     if typeAura == "smallbuff" then
         self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 1, -1)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -1, 1)
-        self.duration:SetFont(UNIT_NAME_FONT, 11)
+        self.duration:SetFont(UNIT_NAME_FONT, 11, "")
         self.stacks:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
     end
 
     if typeAura == "bigBuff" then
         self.icon:SetPoint("TOPLEFT", self, "TOPLEFT", 3, -3)
         self.icon:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -3, 3)
-        self.duration:SetFont(UNIT_NAME_FONT, 14)
+        self.duration:SetFont(UNIT_NAME_FONT, 14, "")
         self.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
     end
 
@@ -370,7 +370,7 @@ local function CreateAuraFrame(name, parent)
     f.throt = -1
 
     fs.stacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
-    fs.duration:SetFont(UNIT_NAME_FONT, 10)
+    fs.duration:SetFont(UNIT_NAME_FONT, 10, "")
     fs.duration:SetShadowOffset(1, -1)
 
     fs:GetParent().duration = fs.duration

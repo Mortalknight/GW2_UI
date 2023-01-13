@@ -599,7 +599,7 @@ end
 
 local function SetTooltipFonts()
     local font = UNIT_NAME_FONT
-    local fontOutline = "NONE"
+    local fontOutline = ""
     local headerSize = GetSetting("TOOLTIP_FONT_SIZE")
     local smallTextSize = GetSetting("TOOLTIP_FONT_SIZE")
     local textSize = GetSetting("TOOLTIP_FONT_SIZE")

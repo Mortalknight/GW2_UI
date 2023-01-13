@@ -49,27 +49,27 @@ end
 GW.AddForProfiling("questview", "splitQuest", splitQuest)
 
 local function styleRewards()
-    QuestInfoRewardsFrame.Header:SetFont("UNIT_NAME_FONT", 14)
+    QuestInfoRewardsFrame.Header:SetFont("UNIT_NAME_FONT", 14, "")
     QuestInfoRewardsFrame.Header:SetTextColor(1, 1, 1)
     QuestInfoRewardsFrame.Header:SetShadowColor(0, 0, 0, 1)
 
-    QuestInfoRewardsFrame.ItemChooseText:SetFont("UNIT_NAME_FONT", 12)
+    QuestInfoRewardsFrame.ItemChooseText:SetFont("UNIT_NAME_FONT", 12, "")
     QuestInfoRewardsFrame.ItemChooseText:SetTextColor(1, 1, 1)
     QuestInfoRewardsFrame.ItemChooseText:SetShadowColor(0, 0, 0, 1)
 
-    QuestInfoRewardsFrame.ItemReceiveText:SetFont("UNIT_NAME_FONT", 12)
+    QuestInfoRewardsFrame.ItemReceiveText:SetFont("UNIT_NAME_FONT", 12, "")
     QuestInfoRewardsFrame.ItemReceiveText:SetTextColor(1, 1, 1)
     QuestInfoRewardsFrame.ItemReceiveText:SetShadowColor(0, 0, 0, 1)
 
-    --QuestInfoRewardsFrame.PlayerTitleText:SetFont("UNIT_NAME_FONT", 12)
+    --QuestInfoRewardsFrame.PlayerTitleText:SetFont("UNIT_NAME_FONT", 12, "")
     --QuestInfoRewardsFrame.PlayerTitleText:SetTextColor(1, 1, 1)
     --QuestInfoRewardsFrame.PlayerTitleText:SetShadowColor(0, 0, 0, 1)
 
-    QuestInfoXPFrame.ReceiveText:SetFont("UNIT_NAME_FONT", 12)
+    QuestInfoXPFrame.ReceiveText:SetFont("UNIT_NAME_FONT", 12, "")
     QuestInfoXPFrame.ReceiveText:SetTextColor(1, 1, 1)
     QuestInfoXPFrame.ReceiveText:SetShadowColor(0, 0, 0, 1)
 
-    GwQuestviewFrameContainerDialogRequired:SetFont("UNIT_NAME_FONT", 14)
+    GwQuestviewFrameContainerDialogRequired:SetFont("UNIT_NAME_FONT", 14, "")
     GwQuestviewFrameContainerDialogRequired:SetTextColor(1, 1, 1)
     GwQuestviewFrameContainerDialogRequired:SetShadowColor(0, 0, 0, 1)
     GwQuestviewFrameContainerDialogRequired:SetText(L["Required Items:"])
@@ -486,10 +486,10 @@ end
 
 local function LoadQuestview()
     CreateFrame("Frame", "GwQuestviewFrame", UIParent, "GwQuestviewFrame")
-    GwQuestviewFrameContainerDialogString:SetFont(STANDARD_TEXT_FONT, 14)
+    GwQuestviewFrameContainerDialogString:SetFont(STANDARD_TEXT_FONT, 14, "")
     GwQuestviewFrameContainerDialogString:SetTextColor(1, 1, 1)
     GwQuestviewFrameContainerDialogQuestTitle:SetTextColor(255 / 255, 197 / 255, 39 / 255)
-    GwQuestviewFrameContainerDialogQuestTitle:SetFont(DAMAGE_TEXT_FONT, 24)
+    GwQuestviewFrameContainerDialogQuestTitle:SetFont(DAMAGE_TEXT_FONT, 24, "")
     GwQuestviewFrameContainerDeclineQuest:SetText(IGNORE)
 
     GwQuestviewFrame:SetScript(

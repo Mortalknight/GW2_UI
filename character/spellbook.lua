@@ -797,7 +797,7 @@ local function LoadSpellBook()
         menuItem.title:SetTextColor(0.7, 0.7, 0.5, 1)
         menuItem.bg:SetVertexColor(1, 1, 1, zebra)
         menuItem.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-        menuItem:SetNormalTexture(nil)
+        menuItem:ClearNormalTexture()
         menuItem:SetText("")
 
 
@@ -842,7 +842,7 @@ local function LoadSpellBook()
     menuItem.title:SetText(L["Future Spells"])
     menuItem.bg:SetVertexColor(1, 1, 1, zebra)
     menuItem.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-    menuItem:SetNormalTexture(nil)
+    menuItem:ClearNormalTexture()
     menuItem:SetText("")
     GwSpellbookUnknown.title:SetText(L["Future Spells"])
 
