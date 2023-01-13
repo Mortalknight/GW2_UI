@@ -396,7 +396,7 @@ local functionFactory = {
                                 tinsert(notStarted, netIndex)
                             end
                         elseif type(timeData) == "table" then
-                            if timeData <= 0 then
+                            if timeData.left <= 0 then
                                 tinsert(done, netIndex)
                             else
                                 tinsert(waiting, netIndex)
