@@ -376,7 +376,6 @@ local function updateDragonRidingState(self, state, isLogin)
         GwDodgeBar:SetScript("OnEnter", nil)
         GwDodgeBar:SetScript("OnLeave", nil)
 
-        print(settings.hideBLizzardVigorBar, EncounterBar:IsVisible())
         if settings.hideBLizzardVigorBar and EncounterBar:IsVisible() then
             EncounterBar:Hide()
         end
