@@ -42,10 +42,18 @@ local ignoreWidgetSetID = {
     [283] = true -- Cosmic Energy
 }
 
+local powerBarContainerWidgetSetIDsToHide = {
+    [283] = true -- dragon riding bar (vigor)
+}
+
 local function UIWidgetTemplateStatusBar(self)
     local forbidden = self:IsForbidden()
     local bar = self.Bar
 
+    if GW.GetSetting("HEALTHGLOBE_ENABLED") and not forbidden and powerBarContainerWidgetSetIDsToHide[self.widgetSetID] then
+        self.Show = self.Hide
+        self:Hide()
+    end
     if forbidden and bar then
         if bar.tooltip then bar.tooltip = nil end -- EmbeddedItemTooltip is tainted
         return
