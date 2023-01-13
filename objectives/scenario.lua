@@ -11,11 +11,13 @@ local TIME_FOR_3 = 0.6
 local TIME_FOR_2 = 0.8
 
 local function getObjectiveBlock(self, index)
-    if _G[self:GetName() .. "GwQuestObjective" .. index] then
-        _G[self:GetName() .. "GwQuestObjective" .. index]:SetScript("OnEnter", nil)
-        _G[self:GetName() .. "GwQuestObjective" .. index]:SetScript("OnLeave", nil)
-        _G[self:GetName() .. "GwQuestObjective" .. index].StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
-        return _G[self:GetName() .. "GwQuestObjective" .. index]
+    local block = _G[self:GetName() .. "GwQuestObjective" .. index]
+    if block then
+        block:SetScript("OnEnter", nil)
+        block:SetScript("OnLeave", nil)
+        block.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
+        block.isMythicKeystone = false
+        return block
     end
 
     if self.objectiveBlocksNum == nil then
@@ -45,6 +47,7 @@ local function getObjectiveBlock(self, index)
     newBlock.hasObjectToHide = false
     newBlock.objectToHide = nil
     newBlock.resetParent = false
+    newBlock.isMythicKeystone = false
     newBlock:SetScript("OnEnter", nil)
     newBlock:SetScript("OnLeave", nil)
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
@@ -54,8 +57,9 @@ end
 GW.GetScenarioObjectivesBlock = getObjectiveBlock
 GW.AddForProfiling("scenario", "getObjectiveBlock", getObjectiveBlock)
 
-local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiveType, quantity)
+local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiveType, quantity, isMythicKeystone)
     local objectiveBlock = getObjectiveBlock(block, objectiveIndex)
+    objectiveBlock.isMythicKeystone = isMythicKeystone
 
     if text then
         if objectiveBlock.hasObjectToHide then
@@ -72,7 +76,7 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
             objectiveBlock.ObjectiveText:SetTextColor(1, 1, 1)
         end
 
-        if not ParseObjectiveString(objectiveBlock, text, objectiveType, quantity) then
+        if not ParseObjectiveString(objectiveBlock, text, objectiveType, quantity, nil, nil, isMythicKeystone) then
             objectiveBlock.StatusBar:Hide()
         end
         local h = objectiveBlock.ObjectiveText:GetStringHeight() + 10
@@ -190,14 +194,14 @@ local function updateCurrentScenario(self, event, ...)
 
     local stageName, stageDescription, numCriteria, _, _, _, _, _, _, questID = C_Scenario.GetStepInfo()
 
-    local _, _, _, difficultyName, _ = GetInstanceInfo()
+    local _, _, isMythicKeystone, difficultyName, _ = GetInstanceInfo()
     if stageDescription == nil then
         stageDescription = ""
     end
     if stageName == nil then
         stageName = ""
     end
-    if difficultyName ~= nil then
+    if difficultyName then
         local level = C_ChallengeMode.GetActiveKeystoneInfo()
         if level > 0 then
             compassData.TITLE = stageName .. " |cFFFFFFFF +" .. level .. " " .. difficultyName .. "|r"
@@ -243,20 +247,18 @@ local function updateCurrentScenario(self, event, ...)
 
     for criteriaIndex = 1, numCriteria do
         local criteriaString, _, _, quantity, totalQuantity, _, _, _, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
-        local objectiveType = "progressbar"
-        if not isWeightedProgress then
-            objectiveType = "monster"
-        end
+        local objectiveType = not isWeightedProgress and "monster" or "progressbar"
         if objectiveType == "progressbar" then
             totalQuantity = 100
         end
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(quantity, totalQuantity, criteriaString),
+            ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKeystone),
             false,
             criteriaIndex,
             objectiveType,
-            quantity
+            quantity,
+            isMythicKeystone
         )
     end
 
@@ -268,7 +270,6 @@ local function updateCurrentScenario(self, event, ...)
     numCriteria = GW.addJailersTowerData(GwScenarioBlock, numCriteria)
     numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget = GW.addEmberCourtData(GwScenarioBlock, numCriteria, GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isEmberCourtWidget)
     GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isDragonflightCookingEventWidget = GW.addDragonflightCookingEventData(GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isDragonflightCookingEventWidget)
-    --TODO need more work: need to find a way to get the correct zone
 
     local bonusSteps = C_Scenario.GetBonusSteps() or {}
     local numCriteriaPrev = numCriteria

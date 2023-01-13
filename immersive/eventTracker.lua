@@ -80,7 +80,12 @@ local env = {
         [4] = {map = 2025, x = 0.57756, y = 0.65491},
         [5] = {map = 2023, x = 0.80522, y = 0.78433},
         [6] = {map = 2023, x = 0.80467, y = 0.77742}
-    }
+    },
+     fishingNetWidgetIDToIndex = {
+         -- Waking Shores
+         [4203] = 1,
+         [4317] = 2
+     }
 }
 
 local colorPlatte = {
@@ -365,10 +370,17 @@ local functionFactory = {
                 self.netTable = {}
                 local now = GetServerTime()
                 for netIndex = 1, #env.fishingNetPosition do
+                    -- update db from old version
+                    if type(db[netIndex]) ~= "table" then
+                        db[netIndex] = nil
+                    end
                     if not db[netIndex] or db[netIndex] == 0 then
                         self.netTable[netIndex] = "NOT_STARTED"
                     else
-                        self.netTable[netIndex] = db[netIndex] + self.args.interval - now
+                        self.netTable[netIndex] = {
+                            left = db[netIndex].time - now,
+                            duration = db[netIndex].duration
+                        }
                     end
                 end
             end,
@@ -378,13 +390,13 @@ local functionFactory = {
                 local waiting = {}
 
                 if self.netTable then
-                    for netIndex, timeLeft in pairs(self.netTable) do
-                        if type(timeLeft) == "string" then
-                            if timeLeft == "NOT_STARTED" then
+                    for netIndex, timeData in pairs(self.netTable) do
+                        if type(timeData) == "string" then
+                            if timeData == "NOT_STARTED" then
                                 tinsert(notStarted, netIndex)
                             end
-                        elseif type(timeLeft) == "number" then
-                            if timeLeft <= 0 then
+                        elseif type(timeData) == "table" then
+                            if timeData <= 0 then
                                 tinsert(done, netIndex)
                             else
                                 tinsert(waiting, netIndex)
@@ -418,10 +430,10 @@ local functionFactory = {
                         tip = QUEUED_STATUS_WAITING
                     end
 
-                    local maxTimeLeft = 0
+                    local maxTimeIndex
                     for _, index in pairs(waiting) do
-                        if self.netTable[index] > maxTimeLeft then
-                            maxTimeLeft = self.netTable[index]
+                        if not maxTimeIndex or self.netTable[index].left > self.netTable[maxTimeIndex].left then
+                            maxTimeIndex = index
                         end
                     end
 
@@ -431,9 +443,9 @@ local functionFactory = {
                         self.statusBar:GetStatusBarTexture():SetGradient("HORIZONTAL", CreateColorFromTable(self.args.barColor[1]), CreateColorFromTable(self.args.barColor[2]))
                     end
 
-                    self.timerText:SetText(secondToTime(maxTimeLeft))
-                    self.statusBar:SetMinMaxValues(0, self.args.interval)
-                    self.statusBar:SetValue(maxTimeLeft)
+                    self.timerText:SetText(secondToTime(self.netTable[maxTimeIndex].left))
+                    self.statusBar:SetMinMaxValues(0, self.netTable[maxTimeIndex].duration)
+                    self.statusBar:SetValue(self.netTable[maxTimeIndex].left)
 
                     GW.StopFlash(self.runningTip)
                 else
@@ -478,16 +490,16 @@ local functionFactory = {
                 local needAnnounce = false
                 local readyNets = {}
 
-                for netIndex, timeLeft in pairs(self.netTable) do
-                    if type(timeLeft) == "number" and timeLeft <= 0 then
+                for netIndex, timeData in pairs(self.netTable) do
+                    if type(timeData) == "table" and timeData.left <= 0 then
                         if not self.args["alertCache"][netIndex] then
                             self.args["alertCache"][netIndex] = {}
                         end
 
-                        if not self.args["alertCache"][netIndex][db[netIndex]] then
-                            self.args["alertCache"][netIndex][db[netIndex]] = true
+                        if not self.args["alertCache"][netIndex][db[netIndex].time] then
+                            self.args["alertCache"][netIndex][db[netIndex].time] = true
                             local hour = self.args.disableAlertAfterHours
-                            if not hour or hour == 0 or (hour * 60 * 60 + timeLeft) > 0 then
+                            if not hour or hour == 0 or (hour * 60 * 60 + timeData.left) > 0 then
                                 tinsert(readyNets, netIndex)
                                 needAnnounce = true
                             end
@@ -527,16 +539,16 @@ local functionFactory = {
                 end
                 GameTooltip:AddLine(L["Fishing Nets"])
 
-                for netIndex, timeLeft in pairs(self.netTable) do
+                for netIndex, timeData in pairs(self.netTable) do
                     local text
-                    if type(timeLeft) == "number" then
-                        if timeLeft <= 0 then
+                    if type(timeData) == "table" then
+                        if timeData.left <= 0 then
                             text = StringByTemplate(L["Can be collected"], "success")
                         else
-                            text = StringByTemplate(secondToTime(timeLeft), "info")
+                            text = StringByTemplate(secondToTime(timeData.left), "info")
                         end
                     else
-                        if timeLeft == "NOT_STARTED" then
+                        if timeData == "NOT_STARTED" then --TODO
                             text = StringByTemplate(L["Can be set"], "warning")
                         end
                     end
@@ -632,7 +644,6 @@ local eventData = {
         dbKey = "iskaaranFishingNet",
         args = {
             icon = 2159815,
-            interval = 10 * 60 * 60,
             type = "triggerTimer",
             filter = function()
                 return C_QuestLog.IsQuestFlaggedCompleted(70871)
@@ -683,7 +694,28 @@ local eventData = {
                                 db[netIndex] = nil
                             end
                         elseif spellID == 377883 then -- Set Net
-                            UpdateIskaaranFishingNetPlayerData(netIndex, GetServerTime() - 2)  -- cast time
+                            C_Timer.After(0.5, function()
+                                local namePlates = C_NamePlate.GetNamePlates(true)
+                                if #namePlates > 0 then
+                                    for _, namePlate in ipairs(namePlates) do
+                                        if namePlate and namePlate.UnitFrame and namePlate.UnitFrame.WidgetContainer then
+                                            local container = namePlate.UnitFrame.WidgetContainer
+                                            if container.timerWidgets then
+                                                for id, widget in pairs(container.timerWidgets) do
+                                                    if
+                                                        env.fishingNetWidgetIDToIndex[id] and
+                                                            env.fishingNetWidgetIDToIndex[id] == netIndex
+                                                    then
+                                                        if widget.Bar and widget.Bar.value and widget.Bar.range then
+                                                            UpdateIskaaranFishingNetPlayerData(netIndex, {time = GetServerTime() + widget.Bar.value, duration = widget.Bar.range})
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end)
                         end
                     end
                 }

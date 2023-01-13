@@ -118,10 +118,12 @@ local function ParseSimpleObjective(text)
 end
 GW.ParseSimpleObjective = ParseSimpleObjective
 
-local function ParseCriteria(quantity, totalQuantity, criteriaString)
+local function ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKeystone)
     if quantity ~= nil and totalQuantity ~= nil and criteriaString ~= nil then
         if totalQuantity == 0 then
             return string.format("%d %s", quantity, criteriaString)
+        elseif isMythicKeystone and totalQuantity == 100 then
+            return string.format("%.2f/%d %s", quantity, totalQuantity, criteriaString)
         else
             return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
         end
@@ -131,7 +133,7 @@ local function ParseCriteria(quantity, totalQuantity, criteriaString)
 end
 GW.ParseCriteria = ParseCriteria
 
-local function ParseObjectiveString(block, text, objectiveType, quantity, numItems, numNeeded)
+local function ParseObjectiveString(block, text, objectiveType, quantity, numItems, numNeeded, isMythicKeystone)
     if objectiveType == "progressbar" then
         block.StatusBar:SetMinMaxValues(0, 100)
         block.StatusBar:SetValue(quantity or 0)
@@ -215,6 +217,8 @@ local function statusBarSetValue(self)
     f.StatusBar.Spark:SetWidth(width)
     if f.StatusBar.precentage == nil or f.StatusBar.precentage == false then
         f.StatusBar.progress:SetText(v .. " / " .. mx)
+    elseif f.isMythicKeystone then
+        f.StatusBar.progress:SetText(GW.RoundDec((v / mx) * 100, 2) .. "%")
     else
         f.StatusBar.progress:SetText(math.floor((v / mx) * 100) .. "%")
     end
