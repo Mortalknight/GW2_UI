@@ -77,7 +77,7 @@ local function UpdateSettings()
     settings.xpBarEnabled = GetSetting("XPBAR_ENABLED")
     settings.playerAsTargetFrameEnabled = GetSetting("PLAYER_AS_TARGET_FRAME")
     settings.multibarMargin = tonumber(GetSetting("MULTIBAR_MARGIIN"))
-    settings.hideMultibarBackground = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
+    settings.actiobarBackdropAlpha = tonumber(GetSetting("ACTIONBAR_BACKGROUND_ALPHA"))
 
     for _, v in pairs({"MultiBarBottomLeft", "MultiBarBottomRight", "MultiBarRight", "MultiBarLeft", "MultiBar5", "MultiBar6", "MultiBar7"}) do
         settings.actionbarSetting[v] = GetSetting(v)
@@ -450,7 +450,7 @@ local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
 end
 GW.FixHotKeyPosition = FixHotKeyPosition
 
-local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton, isPet)
+local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPet)
     local btn = _G[buttonName]
     local btnWidth = btn:GetWidth()
 
@@ -545,11 +545,11 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
 
         btn.gwBackdrop = backDrop
 
-        if hideUnused then
-            btn.gwBackdrop:Hide()
-        else
-            btn.gwBackdrop:Show()
-        end
+        btn.gwBackdrop.bg:SetAlpha(settings.actiobarBackdropAlpha)
+        btn.gwBackdrop.border1:SetAlpha(settings.actiobarBackdropAlpha)
+        btn.gwBackdrop.border2:SetAlpha(settings.actiobarBackdropAlpha)
+        btn.gwBackdrop.border3:SetAlpha(settings.actiobarBackdropAlpha)
+        btn.gwBackdrop.border4:SetAlpha(settings.actiobarBackdropAlpha)
         --btn:HookScript("OnHide", hideBackdrop)
         --btn:HookScript("OnShow", showBackdrop)
     end
@@ -580,7 +580,6 @@ local function updateMainBar()
     local btn_padding = settings.mainBarMargin
 
     fmActionbar.gw_Buttons = {}
-    fmActionbar.gw_Backdrops = {}
     fmActionbar.rangeTimer = -1
     fmActionbar.fadeTimer = -1
     fmActionbar.elapsedTimer = -1
@@ -590,14 +589,6 @@ local function updateMainBar()
         fmActionbar.gw_Buttons[i] = btn
 
         if btn then
-            -- create a backdrop not attached to button because default actionbar backdrop logic is wonky
-            local backDrop = CreateFrame("Frame", nil, fmActionbar, "GwActionButtonBackdropTmpl")
-            local backDropSize = 1
-
-            backDrop:SetPoint("TOPLEFT", btn, "TOPLEFT", -backDropSize, backDropSize)
-            backDrop:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", backDropSize, -backDropSize)
-            fmActionbar.gw_Backdrops[i] = backDrop
-
             btn:SetScript("OnUpdate", nil) -- disable the default button update handler
             btn.RightDivider:Hide()
             btn.SlotArt:Hide()
@@ -610,7 +601,7 @@ local function updateMainBar()
             btn.hkBg = CreateFrame("Frame", "GwHotKeyBackDropActionButton" .. i, hotkey:GetParent(), "GwActionHotkeyBackdropTmpl")
             btn.hkBg:SetPoint("CENTER", hotkey, "CENTER", 0, 0)
             btn.hkBg.texture:SetParent(hotkey:GetParent())
-            setActionButtonStyle("ActionButton" .. i, true, nil)
+            setActionButtonStyle("ActionButton" .. i)
             updateHotkey(btn)
             hooksecurefunc(btn, "UpdateUsable", changeVertexColorActionbars)
             hooksecurefunc(btn, "UpdateFlyout", changeFlyoutStyle)
@@ -750,7 +741,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 
             btn.showMacroName = settings.showMarcroName
 
-            setActionButtonStyle(buttonName .. i, nil, settings.hideMultibarBackground)
+            setActionButtonStyle(buttonName .. i)
 
             hooksecurefunc(btn, "UpdateUsable", changeVertexColorActionbars)
             hooksecurefunc(btn, "UpdateFlyout", changeFlyoutStyle)
@@ -794,7 +785,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     fmMultibar:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     fmMultibar:SetScript("OnEvent", function()
         for i = 1, 12 do
-            setActionButtonStyle(buttonName .. i, nil, settings.hideMultibarBackground)
+            setActionButtonStyle(buttonName .. i)
         end
     end)
 
@@ -898,11 +889,11 @@ local function UpdateMultibarButtons()
                     used_height = used_height + settings.actionbarSetting[fmMultiBar.originalBarName].size + settings.multibarMargin
                 end
 
-                if settings.hideMultibarBackground then
-                    btn.gwBackdrop:Hide()
-                else
-                    btn.gwBackdrop:Show()
-                end
+                btn.gwBackdrop.bg:SetAlpha(settings.actiobarBackdropAlpha)
+                btn.gwBackdrop.border1:SetAlpha(settings.actiobarBackdropAlpha)
+                btn.gwBackdrop.border2:SetAlpha(settings.actiobarBackdropAlpha)
+                btn.gwBackdrop.border3:SetAlpha(settings.actiobarBackdropAlpha)
+                btn.gwBackdrop.border4:SetAlpha(settings.actiobarBackdropAlpha)
 
                 btn.showMacroName = settings.showMarcroName
                 updateMacroName(btn)
@@ -1147,6 +1138,12 @@ local function UpdateMainBarHot()
         if i == 6 and not settings.playerAsTargetFrameEnabled then
             btn_padding = btn_padding + 108
         end
+
+        btn.gwBackdrop.bg:SetAlpha(settings.actiobarBackdropAlpha)
+        btn.gwBackdrop.border1:SetAlpha(settings.actiobarBackdropAlpha)
+        btn.gwBackdrop.border2:SetAlpha(settings.actiobarBackdropAlpha)
+        btn.gwBackdrop.border3:SetAlpha(settings.actiobarBackdropAlpha)
+        btn.gwBackdrop.border4:SetAlpha(settings.actiobarBackdropAlpha)
 
         btn.showMacroName = settings.showMarcroName
         btn.rangeIndicatorSetting = settings.mainBarRangeIndicator

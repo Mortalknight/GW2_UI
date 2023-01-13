@@ -542,3 +542,5 @@ L["Display gems and enchants on the GW2 character panel"] = true
 L["Show premade group info"] = true
 L["Add LFG group info to tooltip."] = true
 L["Flash taskbar on reminder"] = true
+L["Empty slots alpha"] = true
+L["Set the empty action bar slots alpha value."] = true

@@ -571,3 +571,5 @@ L["Display gems and enchants on the GW2 character panel"] = "Zeigt Edelsteine un
 L["Show premade group info"] = "Zeige LFG Gruppen Info"
 L["Add LFG group info to tooltip."] = "Fügt dem Tooltip LFG Gruppeninformationen hinzu."
 L["Flash taskbar on reminder"] = "Taskleiste bei Erinnerung aufleuten"
+L["Empty slots alpha"] = "Alpha Wert für leere Plätze"
+L["Set the empty action bar slots alpha value."] = "Setze den Alpha Wert für leere Aktiontasten"

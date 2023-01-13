@@ -36,6 +36,23 @@ local function LoadActionbarPanel(sWindow)
     settingsMenuAddButton(BINDING_HEADER_ACTIONBAR,p,7,nil,{})
 
     addOption(p.scroll.scrollchild, L["Hide Empty Slots"], L["Hide the empty action bar slots."], "HIDEACTIONBAR_BACKGROUND_ENABLED", function() GW.UpdateActionbarSettings(); GW.ShowRlPopup = true; GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
+    addOptionSlider(
+        p.scroll.scrollchild,
+        L["Empty slots alpha"],
+        L["Set the empty action bar slots alpha value."],
+        "ACTIONBAR_BACKGROUND_ALPHA",
+        function()
+            GW.UpdateActionbarSettings()
+            GW.UpdateMainBarHot()
+            GW.UpdateMultibarButtons()
+        end,
+        0,
+        1,
+        nil,
+        1,
+        {["ACTIONBARS_ENABLED"] = true}
+    )
+
     addOption(p.scroll.scrollchild, L["Action Button Labels"], L["Enable or disable the action button assignment text"], "BUTTON_ASSIGNMENTS", function() GW.UpdateActionbarSettings(); GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
     addOptionSlider(
         p.scroll.scrollchild,

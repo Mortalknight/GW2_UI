@@ -102,7 +102,7 @@ local function SetPetActionButtonPositionAndStyle(self)
 
         button.showMacroName = settings.showMarcroName
 
-        GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, nil, true)
+        GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, true)
         GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])
     end
 end
