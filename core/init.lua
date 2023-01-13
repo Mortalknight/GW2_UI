@@ -59,7 +59,6 @@ GW.unitIlvlsCache = {}
 GW.skins = {}
 GW.TexCoords = {0, 1, 0, 1}
 GW.gwMocks = {}
-GW.locationData = {}
 GW.MOVABLE_FRAMES = {}
 GW.scaleableFrames = {}
 GW.scaleableMainHudFrames = {}
@@ -69,9 +68,6 @@ GW.oUF = {}
 -- money
 GW.earnedMoney = 0
 GW.spentMoney = 0
-
--- Init global function
-GW.InitLocationDataHandler()
 
 -- Init error handler
 GW.RegisterErrorHandler()
@@ -95,6 +91,7 @@ do
     AddLib("CustomGlows", "LibCustomGlow-1.0", true)
     AddLib("LEMO", "LibEditModeOverride-1.0", true)
     AddLib("Dispel", "LibDispel-1.0-GW", true)
+    AddLib("GW2Lib", "LibGW2-1.0", true)
 end
 
 do

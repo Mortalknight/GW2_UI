@@ -259,9 +259,10 @@ end
 GW.AddForProfiling("battlegrounds", "TimerFlag_OnUpdate", TimerFlag_OnUpdate)
 
 local function pvpHud_onEvent(_, event)
-    if bgs[GW.locationData.instanceMapID] ~= nil then
+    local playerInstanceMapId = GW.Libs.GW2Lib:GetPlayerInstanceMapID()
+    if bgs[playerInstanceMapId] then
         -- check if we are in the same BG or if we directly join from another BG. In that case we need to reset the score OR if we joind a new BG
-        if (lastBG > 0 and lastBG ~= GW.locationData.instanceMapID) or event == "PLAYER_ENTERING_BATTLEGROUND" then
+        if (lastBG > 0 and lastBG ~= playerInstanceMapId) or event == "PLAYER_ENTERING_BATTLEGROUND" then
             pointsAlliance = 0
             pointsHorde = 0
             gwbgs.scoreRight:SetText(0)
@@ -273,24 +274,24 @@ local function pvpHud_onEvent(_, event)
                 end
             end
         end
-        lastBG = GW.locationData.instanceMapID
-        activeBg = GW.locationData.instanceMapID
-        activeMap = GW.locationData.mapID
+        lastBG = playerInstanceMapId
+        activeBg = playerInstanceMapId
+        activeMap = GW.Libs.GW2Lib:GetPlayerLocationMapID()
         UIWidgetTopCenterContainerFrame:Hide()
 
         gwbgs.hasTimer = false
         gwbgs.TrackFlag = false
         gwbgs:SetScript("OnEvent", nil)
         gwbgs:SetScript("OnUpdate", nil)
-        gwbgs:SetScript("OnEvent", bgs[GW.locationData.instanceMapID]["OnEvent"])
-        if bgs[GW.locationData.instanceMapID]["OnUpdate"] then
-            gwbgs:SetScript("OnUpdate", bgs[GW.locationData.instanceMapID]["OnUpdate"])
+        gwbgs:SetScript("OnEvent", bgs[playerInstanceMapId]["OnEvent"])
+        if bgs[playerInstanceMapId]["OnUpdate"] then
+            gwbgs:SetScript("OnUpdate", bgs[playerInstanceMapId]["OnUpdate"])
             gwbgs.elapsedTimer = -1
         end
-        if bgs[GW.locationData.instanceMapID]["TrackFlag"] then
+        if bgs[playerInstanceMapId]["TrackFlag"] then
             gwbgs.TrackFlag = true
         end
-        if bgs[GW.locationData.instanceMapID]["hasTimer"] then
+        if bgs[playerInstanceMapId]["hasTimer"] then
             gwbgs.hasTimer = true
         end
         gwbgs:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")

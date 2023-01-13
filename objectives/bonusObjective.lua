@@ -254,7 +254,7 @@ local function setUpBlock(questIDs, collapsed)
                     compassData.X = nil
                     compassData.Y = nil
                     compassData.QUESTID = questID
-                    compassData.MAPID = GW.locationData.mapID
+                    compassData.MAPID = GW.Libs.GW2Lib:GetPlayerLocationMapID()
 
                     if simpleDesc == "" then
                         simpleDesc = ParseSimpleObjective(txt)

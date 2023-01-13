@@ -8,8 +8,9 @@ local function UpdateCoords()
         return
     end
 
-    if GW.locationData.x and GW.locationData.y then
-        CoordsFrame.Coords:SetFormattedText("%s: %.2f, %.2f", PLAYER, (GW.locationData.xText or 0), (GW.locationData.yText or 0))
+    local x, y, xT, yT = GW.Libs.GW2Lib:GetPlayerLocationCoords()
+    if x and y then
+        CoordsFrame.Coords:SetFormattedText("%s: %.2f, %.2f", PLAYER, (xT or 0), (yT or 0))
     else
         CoordsFrame.Coords:SetFormattedText("%s: %s", PLAYER, NOT_APPLICABLE)
     end

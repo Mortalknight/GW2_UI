@@ -1406,7 +1406,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             PlaySoundFile(GW.Libs.LSM:Fetch("sound",settings.paragonSound), "Master")
         end
     elseif event == "VIGNETTE_MINIMAP_UPDATED" and settings.showRare then
-        if VignetteExclusionMapIDs[GW.locationData.mapID] or IsInGroup() or IsInRaid() or IsPartyLFG() then return end
+        if VignetteExclusionMapIDs[GW.Libs.GW2Lib:GetPlayerLocationMapID()] or IsInGroup() or IsInRaid() or IsPartyLFG() then return end
 
         local vignetteGUID, onMinimap = ...
 

@@ -2,7 +2,7 @@ local _, GW = ...
 
 local timer
 local function addDragonflightCookingEventData(GwQuestTrackerTimerSavedHeight, showTimerAsBonus, isDragonflightCookingEventWidget)
-    if GW.locationData.mapID == 2024 then
+    if GW.Libs.GW2Lib:GetPlayerLocationMapID() == 2024 then
         if C_Scenario.IsInScenario() then
             local widget = C_UIWidgetManager.GetScenarioHeaderTimerWidgetVisualizationInfo(4324)
             if widget and widget.timerMax > 0 and widget.timerValue <= widget.timerMax and widget.timerValue > 1 then

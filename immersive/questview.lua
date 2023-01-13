@@ -495,7 +495,7 @@ function QuestViewMixin:lastGossip()
 end
 
 function QuestViewMixin:showQuestFrame()
-    local mapId = GW.locationData.mapID or C_Map.GetBestMapForUnit("player") or 0 -- as fallback if location service is to slow
+    local mapId = GW.Libs.GW2Lib:GetPlayerLocationMapID() or C_Map.GetBestMapForUnit("player") or 0 -- as fallback if location service is to slow
     local mapTex
     repeat
         local mapInfo = C_Map.GetMapInfo(mapId)

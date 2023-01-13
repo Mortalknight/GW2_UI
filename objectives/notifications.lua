@@ -79,15 +79,16 @@ end
 GW.AddForProfiling("notifications", "getQuestPOIText", getQuestPOIText)
 
 local function getNearestQuestPOI()
-    if not GW.locationData.mapID then
+    if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
         return nil
     end
 
     local numTrackedQuests = C_QuestLog.GetNumQuestWatches()
     local numTrackedWQ = C_QuestLog.GetNumWorldQuestWatches()
     local numQuests = C_QuestLog.GetNumQuestLogEntries()
+    local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
 
-    if (GW.locationData.x == nil or GW.locationData.y == nil) and (numTrackedQuests == 0 or numTrackedWQ == 0 or numQuests == 0) then
+    if (x == nil or y == nil) and (numTrackedQuests == 0 or numTrackedWQ == 0 or numQuests == 0) then
         return nil
     end
 
@@ -138,7 +139,7 @@ local function getNearestQuestPOI()
     if closestQuestID then
         local _, poiX, poiY = QuestPOIGetIconInfo(closestQuestID)
         if isWQ then
-            poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, GW.locationData.mapID)
+            poiX, poiY = C_TaskQuest.GetQuestLocation(closestQuestID, GW.Libs.GW2Lib:GetPlayerLocationMapID())
         end
 
         if poiX then
@@ -183,15 +184,11 @@ end
 GW.AddForProfiling("notifications", "getNearestQuestPOI", getNearestQuestPOI)
 
 local function getBodyPOI()
-    if not GW.locationData.mapID then
+    if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
         return nil
     end
 
-    if GW.locationData.x == nil or GW.locationData.y == nil then
-        return nil
-    end
-
-    local corpTable = C_DeathInfo.GetCorpseMapPosition(GW.locationData.mapID)
+    local corpTable = C_DeathInfo.GetCorpseMapPosition(GW.Libs.GW2Lib:GetPlayerLocationMapID())
     if corpTable == nil then
         return nil
     end
@@ -282,19 +279,20 @@ GW.NotificationStateChanged = NotificationStateChanged
 local square_half = math.sqrt(0.5)
 local rad_135 = math.rad(135)
 local function updateRadar(self)
-    if not GW.locationData.mapID then
+    if not GW.Libs.GW2Lib:GetPlayerLocationMapID() then
         return
     end
 
-    if GW.locationData.x == nil or GW.locationData.y == nil or self.data.X == nil then
+    local x, y = GW.Libs.GW2Lib:GetPlayerLocationCoords()
+    if x == nil or y == nil or self.data.X == nil then
         RemoveTrackerNotification(GwObjectivesNotification.compass.dataIndex)
         return
     end
 
     local pFacing = GetPlayerFacing()
     if pFacing == nil then pFacing = 0 end
-    local dir_x = self.data.X - GW.locationData.x
-    local dir_y = self.data.Y - GW.locationData.y
+    local dir_x = self.data.X - x
+    local dir_y = self.data.Y - y
     local a = math.atan2(dir_y, dir_x)
     a = rad_135 - a - pFacing
 

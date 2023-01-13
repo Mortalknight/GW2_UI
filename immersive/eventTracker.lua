@@ -648,16 +648,16 @@ local eventData = {
                             return
                         end
 
-                        if not GW.locationData.mapID or (spellID ~= 377887 and spellID ~= 377883) then
+                        if not GW.Libs.GW2Lib:GetPlayerLocationMapID() or (spellID ~= 377887 and spellID ~= 377883) then
                             return
                         end
 
                         local lengthMap = {}
-                        local position = C_Map.GetPlayerMapPosition(GW.locationData.mapID, "player")
+                        local position = C_Map.GetPlayerMapPosition(GW.Libs.GW2Lib:GetPlayerLocationMapID(), "player")
                         if not position then return end
 
                         for i, netPos in ipairs(env.fishingNetPosition) do
-                            if GW.locationData.mapID == netPos.map then
+                            if GW.Libs.GW2Lib:GetPlayerLocationMapID() == netPos.map then
                                 local length = math.pow(position.x - netPos.x, 2) + math.pow(position.y - netPos.y, 2)
                                 lengthMap[i] = length
                             end

@@ -304,113 +304,103 @@ end
 GW.AddForProfiling("dodgebar", "dodge_OnLeave", dodge_OnLeave)
 
 local function setupDragonBar(self)
-
     local maxVigor = UnitPowerMax("player" , DRAGON_POWERTYPE);
-
     local frameName = self:GetName()
+
     for i=1,5 do
-      local seperator = _G[frameName.."Sep"..i]
-      if i<=maxVigor then
-          local p = lerp(RAD_AT_START,RAD_AT_END,i/maxVigor)
-          seperator:SetRotation(p)
-          seperator:Show()
-      else
-        seperator:Hide()
-      end
+        local seperator = _G[frameName.."Sep"..i]
+        if i<=maxVigor then
+            local p = lerp(RAD_AT_START,RAD_AT_END,i/maxVigor)
+            seperator:SetRotation(p)
+            seperator:Show()
+        else
+            seperator:Hide()
+        end
     end
 end
 local function animateDragonBar(self,current,fraction,max)
+    if not max or max < 1 or not current then
+            return
+    end
 
-  if not max or max < 1 or not current then
-    return
-  end
+    if not fraction then
+        fraction = self.currentValueFraction or 0
+    end
+    local to = current
+    local from = self.currentValue or 0
 
-  if not fraction then
-    fraction = self.currentValueFraction or 0
-  end
-  local to = current
-  local from = self.currentValue or 0
+    local toFraction = current + fraction
+    local fromfraction =  self.currentValueFraction or 0
+    fromfraction = fromfraction + current
+    local flash = nil
+    if self.currentValue~=nil and current>self.currentValue then
+        FrameFlash(self.arcfill.spark, 0.2)
+    end
 
-  local toFraction = current + fraction
-  local fromfraction =  self.currentValueFraction or 0
-  fromfraction = fromfraction + current
-  local flash = nil
-  if self.currentValue~=nil and current>self.currentValue then
-    FrameFlash(self.arcfill.spark, 0.2)
-  end
+    self.currentValue = current
+    self.currentValueFraction =  fraction
+    AddToAnimation("DRAGONBAR", 0, 1, GetTime(), 0.8,
+    function()
+        local p = animations["DRAGONBAR"].progress
+        local l = lerp(from,to,p) / max
+        local l2 = lerp(fromfraction,toFraction,p) / max
 
-  self.currentValue = current
-  self.currentValueFraction =  fraction
-  AddToAnimation("DRAGONBAR", 0, 1, GetTime(), 0.8,
-  function()
-    local p = animations["DRAGONBAR"].progress
-    local l = lerp(from,to,p) / max
-    local l2 = lerp(fromfraction,toFraction,p) / max
-
-    local value = lerp(EMPTY_IN_RAD_SMALL,FULL_IN_RAD_SMALL,l)
-    local valueFraction = lerp(EMPTY_IN_RAD_SMALL,FULL_IN_RAD_SMALL,l2)
-    self.arcfill.fill:SetRotation(value)
-    self.arcfill.spark:SetRotation(value)
-    self.arcfill.fillFractions:SetRotation(valueFraction)
-  end,1,flash)
-
-
+        local value = lerp(EMPTY_IN_RAD_SMALL,FULL_IN_RAD_SMALL,l)
+        local valueFraction = lerp(EMPTY_IN_RAD_SMALL,FULL_IN_RAD_SMALL,l2)
+        self.arcfill.fill:SetRotation(value)
+        self.arcfill.spark:SetRotation(value)
+        self.arcfill.fillFractions:SetRotation(valueFraction)
+    end,1,flash)
 end
-local function updateDragonRidingState(self)
-  if GwIsCurrentlyDragonRiding==false and self:IsShown() then
-    self:Hide()
-  elseif GwIsCurrentlyDragonRiding and not self:IsShown() then
-    self:Show()
-  end
+
+local function updateDragonRidingState(self, state, isLogin)
+    if isLogin then
+        updateDragonRidingState(self)
+        setupDragonBar(self)
+    end
+    if not state and self:IsShown() then
+        self:Hide()
+    elseif state and not self:IsShown() then
+        self:Show()
+    end
 end
-local thrillInstanceID
+
 local function dragonBar_OnEvent(self, event, ...)
     if event == "UNIT_SPELLCAST_SUCCEEDED" then
         -- we don't track anything until we first see our dodge skill cast
-        local spellId = select(3, ...)
-        if spellId ~= DR_FORWARD and spellId ~= DR_FLAP and spellId ~= DR_SURGE  then
+        --local spellId = select(3, ...)
+        --if spellId ~= DR_FORWARD and spellId ~= DR_FLAP and spellId ~= DR_SURGE  then
+        --    return
+        --end
+        -- self.gwNeedDrain = true
+    elseif event == "UNIT_POWER_UPDATE" then
+        local current = UnitPower("player", DRAGON_POWERTYPE)
+        local max = UnitPowerMax("player", DRAGON_POWERTYPE)
+        local fraction = (self.lastPower and self.lastPower > current and 0) or nil
+        if not self.gwMaxCharges or max > self.gwMaxCharges then
+            self.gwMaxCharges = max
+            setupDragonBar(self)
+        end
+        animateDragonBar(self, current, fraction, max)
+        self.lastPower = current
+    elseif event == "UPDATE_UI_WIDGET" then
+        local widget = ...
+        if widget.widgetSetID ~= 283 then
             return
         end
-    --    self.gwNeedDrain = true
-    elseif event == "UNIT_POWER_UPDATE" then
+        local current = UnitPower("player", DRAGON_POWERTYPE)
+        local max = UnitPowerMax("player", DRAGON_POWERTYPE)
 
-      local current = UnitPower("player",DRAGON_POWERTYPE)
-      local max = UnitPowerMax("player",DRAGON_POWERTYPE)
-      local fraction = (self.lastPower and self.lastPower>current and 0) or nil
-      if not self.gwMaxCharges or max>self.gwMaxCharges then
-        self.gwMaxCharges = max
-        setupDragonBar(self)
-      end
-      animateDragonBar(self,current,fraction,max)
-      self.lastPower = current
-
-
-    elseif event == "UPDATE_UI_WIDGET" then
-      local widget = ...
-      if widget.widgetSetID ~=283 then
-        return
-      end
-      local current = UnitPower("player",DRAGON_POWERTYPE)
-      local max = UnitPowerMax("player",DRAGON_POWERTYPE)
-
-      local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(widget.widgetID)
+        local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(widget.widgetID)
         if widgetInfo then
-        --  updateAnim(self, GetTime(), 20, math.min(max,current + (widgetInfo.fillValue / widgetInfo.fillMax)), max)
-          animateDragonBar(self, current,(widgetInfo.fillValue / widgetInfo.fillMax), max)
-          self.tooltip = widgetInfo.tooltip
+            --updateAnim(self, GetTime(), 20, math.min(max,current + (widgetInfo.fillValue / widgetInfo.fillMax)), max)
+            animateDragonBar(self, current, (widgetInfo.fillValue / widgetInfo.fillMax), max)
+            self.tooltip = widgetInfo.tooltip
         end
-
-      elseif event=="DRAGONRIDING_STATE_CHANGE" then
-
-        updateDragonRidingState(self)
-
-      elseif event=="PLAYER_ENTERING_WORLD" then
-        C_Timer.After(0.33, function()
-          updateDragonRidingState(self)
-          setupDragonBar(self)
-        end)
-
-      end
+    elseif event == "GW2_PLAYER_DRAGONRIDING_STATE_CHANGE" then
+        local state, isLogin = ...
+        updateDragonRidingState(self, state, isLogin)
+    end
 end
 
 local function LoadDodgeBar(hg, asTargetFrame)
@@ -454,7 +444,7 @@ local function LoadDodgeBar(hg, asTargetFrame)
     af.gwAnimGroup = ag
     af.gwAnimDrain = a1
     af.gwAnimFill = a2
-  --  ag:SetScript("OnFinished", fill_OnFinished)
+    -- ag:SetScript("OnFinished", fill_OnFinished)
 
     -- setup dodgebar event handling
     dodge_OnLeave(fmdb)
@@ -466,7 +456,6 @@ local function LoadDodgeBar(hg, asTargetFrame)
     fmdb:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmdb:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     fmdb:RegisterEvent("LEARNED_SPELL_IN_TAB")
-
 
     -- setup hook to hide the dodge bar when in vehicle/override UI
     MixinHideDuringPetAndOverride(fmdb)
@@ -540,14 +529,14 @@ local function LoadDragonBar(hg, asTargetFrame)
     fmdb:SetScript("OnEnter", dodge_OnEnter)
     fmdb:SetScript("OnLeave", dodge_OnLeave)
     fmdb:SetScript("OnEvent", dragonBar_OnEvent)
-    fmdb:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
+
+    GW.Libs.GW2Lib.RegisterCallback(fmdb, "GW2_PLAYER_DRAGONRIDING_STATE_CHANGE", function(event, ...)
+        dragonBar_OnEvent(fmdb, event, ...)
+    end)
+
+    --fmdb:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
     fmdb:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
     fmdb:RegisterEvent("UPDATE_UI_WIDGET")
-    fmdb:RegisterEvent("PLAYER_ENTERING_WORLD")
-
-    hooksecurefunc("GwDragonRidingStateChange",function() dragonBar_OnEvent(fmdb,"DRAGONRIDING_STATE_CHANGE") end)
-
-
 
     Debug("LoadDragonBar done")
     return fmdb

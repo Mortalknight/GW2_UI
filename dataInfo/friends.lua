@@ -356,7 +356,8 @@ local function Friends_OnEnter(self)
     if onlineFriends > 0 then
         for _, info in ipairs(friendTable) do
             if info.online then
-                if GW.locationData.ZoneText and (GW.locationData.ZoneText == info.zone) then zonec = activezone else zonec = inactivezone end
+                local zoneText = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
+                if zoneText and (zoneText == info.zone) then zonec = activezone else zonec = inactivezone end
                 classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
                 if not classc then classc = levelc end
 
@@ -392,7 +393,8 @@ local function Friends_OnEnter(self)
 
                         TooltipAddXLine(true, header, format(levelNameString .. "%s%s", levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.characterName, inGroup(info.characterName, info.realmName), status), info.accountName, 238, 238, 238, 238, 238, 238)
                         if shiftDown then
-                            if GW.locationData.ZoneText and (GW.locationData.ZoneText == info.zoneName) then zonec = activezone else zonec = inactivezone end
+                            local zoneText = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
+                            if zoneText and (zoneText == info.zoneName) then zonec = activezone else zonec = inactivezone end
                             if GW.myrealm == info.realmName then realmc = activezone else realmc = inactivezone end
                             TooltipAddXLine(true, header, info.zoneName, info.realmName, zonec.r, zonec.g, zonec.b, realmc.r, realmc.g, realmc.b)
                         end

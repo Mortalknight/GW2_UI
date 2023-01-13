@@ -138,7 +138,8 @@ local function Guild_OnEnter(self)
             break
         end
 
-        if GW.locationData.ZoneText and (GW.locationData.ZoneText == info.zone) then
+        local zoneText = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
+        if zoneText and (zoneText == info.zone) then
             zonec = activezone
         else
             zonec = inactivezone
