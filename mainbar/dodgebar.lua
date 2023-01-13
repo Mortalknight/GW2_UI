@@ -484,7 +484,7 @@ local function LoadDragonBar(hg, asTargetFrame)
     Debug("LoadDragonBar start")
 
     -- this bar gets a global name for use in key bindings
-    local fmdb = CreateFrame("Button", "GwDragonBar", UIParent, "GwDodgeBarTmpl")
+    local fmdb = CreateFrame("Button", "GwDragonBar", UIParent, "UnsecureDodgeBar")
     fmdb:SetFrameLevel(GwDodgeBar:GetFrameLevel() - 1)
     fmdb.arcfill.fill:SetVertexColor(1,1,1,1)
     fmdb.arcfill.spark:SetVertexColor(1,1,1)
