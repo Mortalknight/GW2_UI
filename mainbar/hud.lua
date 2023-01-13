@@ -741,6 +741,7 @@ local function selectBg(self)
     if not settings.showHudBackground or not settings.showDynamicHud then
         return
     end
+
     local right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow"
     local left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow"
 
@@ -760,9 +761,9 @@ local function selectBg(self)
         end
     end
 
-    if GwIsCurrentlyDragonRiding then
-      right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow-dragon"
-      left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow-dragon"
+    if GW.Libs.GW2Lib:IsPlayerDragonRiding() then
+        right = "Interface/AddOns/GW2_UI/textures/hud/rightshadow-dragon"
+        left = "Interface/AddOns/GW2_UI/textures/hud/leftshadow-dragon"
     end
 
     if UnitAffectingCombat("player") then
@@ -946,7 +947,9 @@ local function LoadHudArt()
 
     hudArtFrame:SetScript("OnEvent", hud_OnEvent)
 
-    hooksecurefunc("GwDragonRidingStateChange",function() selectBg(hudArtFrame) end)
+    GW.Libs.GW2Lib.RegisterCallback(hudArtFrame, "GW2_PLAYER_DRAGONRIDING_STATE_CHANGE", function()
+        selectBg(hudArtFrame)
+    end)
 
     hudArtFrame:RegisterEvent("UNIT_AURA")
     hudArtFrame:RegisterEvent("PLAYER_ALIVE")

@@ -573,3 +573,4 @@ L["Add LFG group info to tooltip."] = "Fügt dem Tooltip LFG Gruppeninformatione
 L["Flash taskbar on reminder"] = "Taskleiste bei Erinnerung aufleuten"
 L["Empty slots alpha"] = "Alpha Wert für leere Plätze"
 L["Set the empty action bar slots alpha value."] = "Setze den Alpha Wert für leere Aktiontasten"
+L["Hide Blizzard dragon riding vigor"] = "Versteke Blizzard Drachenreiten Elan-Bar"

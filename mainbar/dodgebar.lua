@@ -8,7 +8,12 @@ local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 
 local DRAGON_POWERTYPE = 10
+local settings = {}
 
+local function UpdateSettings()
+    settings.hideBLizzardVigorBar = GetSetting("HIDE_BLIZZARD_VIGOR_BAR")
+end
+GW.UpdateDoddgeBarSettings = UpdateSettings
 
 -- these strings will be parsed by SecureCmdOptionParse
 -- https://wow.gamepedia.com/Secure_command_options
@@ -350,7 +355,7 @@ local function animateDragonBar(self,current,fraction,max)
         self.arcfill.fill:SetRotation(value)
         self.arcfill.spark:SetRotation(value)
         self.arcfill.fillFractions:SetRotation(valueFraction)
-    end,1,flash)
+    end, 1, flash)
 end
 
 local function updateDragonRidingState(self, state, isLogin)
@@ -358,10 +363,23 @@ local function updateDragonRidingState(self, state, isLogin)
         updateDragonRidingState(self)
         setupDragonBar(self)
     end
+
     if not state and self:IsShown() then
         self:Hide()
+        GwDodgeBar:SetScript("OnEnter", dodge_OnEnter)
+        GwDodgeBar:SetScript("OnLeave", dodge_OnLeave)
+        if settings.hideBLizzardVigorBar and not EncounterBar:IsVisible() then
+            C_Timer.After(0.5, function() EncounterBar:Show() end)
+        end
     elseif state and not self:IsShown() then
         self:Show()
+        GwDodgeBar:SetScript("OnEnter", nil)
+        GwDodgeBar:SetScript("OnLeave", nil)
+
+        print(settings.hideBLizzardVigorBar, EncounterBar:IsVisible())
+        if settings.hideBLizzardVigorBar and EncounterBar:IsVisible() then
+            EncounterBar:Hide()
+        end
     end
 end
 

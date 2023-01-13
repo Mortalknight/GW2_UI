@@ -64,6 +64,7 @@ local function LoadPlayerPanel(sWindow)
     addOption(p_player.scroll.scrollchild, L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], "CASTINGBAR_DATA", function(value) GW.TogglePlayerEnhancedCastbar(GwCastingBarPlayer, value); GW.TogglePlayerEnhancedCastbar(GwCastingBarPet, value); end, nil, {["CASTINGBAR_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["Show spell queue window on castingbar"], nil, "PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW", nil, nil, {["CASTINGBAR_ENABLED"] = true, ["CASTINGBAR_DATA"] = true})
     addOption(p_player.scroll.scrollchild, GW.NewSign .. L["Show character item info"], L["Display gems and enchants on the GW2 character panel"], "SHOW_CHARACTER_ITEM_INFO", function() GW.UpdateHeroPanelItemInfoSettings(); GW.ToggleCharacterItemInfo() end, nil, {["USE_CHARACTER_WINDOW"] = true, ["CASTINGBAR_DATA"] = true})
+    addOption(p_player.scroll.scrollchild, GW.NewSign .. L["Hide Blizzard dragon riding vigor"], nil, "HIDE_BLIZZARD_VIGOR_BAR", GW.UpdateDoddgeBarSettings, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, PET .. ": " .. L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "PET_FLOATING_COMBAT_TEXT", function() GW.ShowRlPopup = true end, nil, {["PETBAR_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, PET .. ": " .. L["Show auras below"], nil, "PET_AURAS_UNDER", function() GW.UpdatePetbarSettings(); GW.TogglePetAuraPosition() end, nil, {["PETBAR_ENABLED"] = true})
     addOptionDropdown(

@@ -544,3 +544,4 @@ L["Add LFG group info to tooltip."] = true
 L["Flash taskbar on reminder"] = true
 L["Empty slots alpha"] = true
 L["Set the empty action bar slots alpha value."] = true
+L["Hide Blizzard dragon riding vigor"] = true
