@@ -118,12 +118,16 @@ local function ParseSimpleObjective(text)
 end
 GW.ParseSimpleObjective = ParseSimpleObjective
 
-local function ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKeystone, mythicKeystoneCurrentValue)
+local function ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKeystone, mythicKeystoneCurrentValue, isWeightedProgress)
     if quantity ~= nil and totalQuantity ~= nil and criteriaString ~= nil then
-        if totalQuantity == 0 then
+        if isMythicKeystone then
+            if isWeightedProgress then
+                return string.format("%.2f/%d %s", (mythicKeystoneCurrentValue / totalQuantity * 100), 100, criteriaString)
+            else
+                return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
+            end
+        elseif totalQuantity == 0 then
             return string.format("%d %s", quantity, criteriaString)
-        elseif isMythicKeystone then
-            return string.format("%.2f/%d %s", (mythicKeystoneCurrentValue / totalQuantity * 100), totalQuantity, criteriaString)
         else
             return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
         end

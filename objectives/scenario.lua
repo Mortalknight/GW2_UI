@@ -257,7 +257,7 @@ local function updateCurrentScenario(self, event, ...)
         end
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKeystone, mythicKeystoneCurrentValue),
+            ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKeystone, mythicKeystoneCurrentValue, isWeightedProgress),
             false,
             criteriaIndex,
             objectiveType,
