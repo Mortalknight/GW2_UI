@@ -230,7 +230,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
     if IsIn(event, "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_DELAYED") then
         if IsIn(event, "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_EMPOWER_UPDATE") then
             spell, _, icon, startTime, endTime, isTradeSkill, _, spellID, _, numStages = UnitChannelInfo(self.unit)
-            local isChargeSpell = numStages > 0
+            local isChargeSpell = (numStages or 0) > 0
             if isChargeSpell then
                 endTime = endTime + GetUnitEmpowerHoldAtMaxTime(self.unit)
             end
