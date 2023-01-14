@@ -122,7 +122,7 @@ local function ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKe
     if quantity ~= nil and totalQuantity ~= nil and criteriaString ~= nil then
         if isMythicKeystone then
             if isWeightedProgress then
-                return string.format("%.2f% (%d/%d) %s", (mythicKeystoneCurrentValue / totalQuantity * 100), mythicKeystoneCurrentValue, totalQuantity, criteriaString)
+                return string.format("%.2f", (mythicKeystoneCurrentValue / totalQuantity * 100)) .."% " ..  string.format("(%s/%s) %s", mythicKeystoneCurrentValue, totalQuantity, criteriaString)
             else
                 return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
             end
