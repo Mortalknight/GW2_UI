@@ -537,77 +537,80 @@ local function SkinLookingForGroupFrames()
         end
     end)
 
-    if not GW.IsIncompatibleAddonLoadedOrOverride("LfgInfo", true) then
-        local ReskinIcon = function(parent, icon, class, role)
-            if role then
-                icon:SetAlpha(1)
-            else
-                icon:SetAlpha(0)
-            end
+    C_Timer.After(2, function()
+        if not GW.IsIncompatibleAddonLoadedOrOverride("LfgInfo", true) then
+            local ReskinIcon = function(parent, icon, class, role)
+                if role then
+                    icon:SetAlpha(1)
+                else
+                    icon:SetAlpha(0)
+                end
 
-            if parent then
-                -- Create bar in class color behind
-                if class then
-                    if not icon.line then
-                        local line = parent:CreateTexture(nil, "ARTWORK")
-                        line:SetTexture("Interface/Addons/GW2_UI/Textures/uistuff/gwstatusbar")
-                        line:SetSize(16, 3)
-                        line:SetPoint("TOP", icon, "BOTTOM", 0, -1)
-                        icon.line = line
+                if parent then
+                    -- Create bar in class color behind
+                    if class then
+                        if not icon.line then
+                            local line = parent:CreateTexture(nil, "ARTWORK")
+                            line:SetTexture("Interface/Addons/GW2_UI/Textures/uistuff/gwstatusbar")
+                            line:SetSize(16, 3)
+                            line:SetPoint("TOP", icon, "BOTTOM", 0, -1)
+                            icon.line = line
+                        end
+
+                        local color = GW.GWGetClassColor(class, true, false)
+                        icon.line:SetVertexColor(color.r, color.g, color.b)
+                        icon.line:SetAlpha(1)
+                    elseif parent and icon.line then
+                        icon.line:SetAlpha(0)
                     end
-
-                    local color = GW.GWGetClassColor(class, true, false)
-                    icon.line:SetVertexColor(color.r, color.g, color.b)
-                    icon.line:SetAlpha(1)
-                elseif parent and icon.line then
-                    icon.line:SetAlpha(0)
                 end
             end
+
+            hooksecurefunc("LFGListGroupDataDisplayEnumerate_Update", function(enumerate)
+                local button = enumerate:GetParent():GetParent()
+                if not button.resultID then
+                    return
+                end
+
+                local result = C_LFGList.GetSearchResultInfo(button.resultID)
+
+                if not result then
+                    return
+                end
+
+                -- order in lfg view
+                local cache = {
+                    TANK = {},
+                    HEALER = {},
+                    DAMAGER = {}
+                }
+
+                for i = 1, result.numMembers do
+                    local role, class = C_LFGList.GetSearchResultMemberInfo(button.resultID, i)
+                    tinsert(cache[role], {class = class, role = role})
+                end
+
+                for i = 5, 1, -1 do -- The index of icon starts from right
+                    local icon = enumerate["Icon" .. i]
+                    if icon and icon.SetTexture then
+                        if #cache.TANK > 0 then
+                            ReskinIcon(enumerate, icon, cache.TANK[1].class, cache.TANK[1].role)
+                            tremove(cache.TANK, 1)
+                        elseif #cache.HEALER > 0 then
+                            ReskinIcon(enumerate, icon, cache.HEALER[1].class, cache.HEALER[1].role)
+                            tremove(cache.HEALER, 1)
+                        elseif #cache.DAMAGER > 0 then
+                            ReskinIcon(enumerate, icon, cache.DAMAGER[1].class, cache.DAMAGER[1].role)
+                            tremove(cache.DAMAGER, 1)
+                        else
+                            ReskinIcon(enumerate, icon)
+                        end
+                    end
+                end
+            end)
         end
 
-        hooksecurefunc("LFGListGroupDataDisplayEnumerate_Update", function(enumerate)
-            local button = enumerate:GetParent():GetParent()
-            if not button.resultID then
-                return
-            end
-
-            local result = C_LFGList.GetSearchResultInfo(button.resultID)
-
-            if not result then
-                return
-            end
-
-            -- order in lfg view
-            local cache = {
-                TANK = {},
-                HEALER = {},
-                DAMAGER = {}
-            }
-
-            for i = 1, result.numMembers do
-                local role, class = C_LFGList.GetSearchResultMemberInfo(button.resultID, i)
-                tinsert(cache[role], {class = class, role = role})
-            end
-
-            for i = 5, 1, -1 do -- The index of icon starts from right
-                local icon = enumerate["Icon" .. i]
-                if icon and icon.SetTexture then
-                    if #cache.TANK > 0 then
-                        ReskinIcon(enumerate, icon, cache.TANK[1].class, cache.TANK[1].role)
-                        tremove(cache.TANK, 1)
-                    elseif #cache.HEALER > 0 then
-                        ReskinIcon(enumerate, icon, cache.HEALER[1].class, cache.HEALER[1].role)
-                        tremove(cache.HEALER, 1)
-                    elseif #cache.DAMAGER > 0 then
-                        ReskinIcon(enumerate, icon, cache.DAMAGER[1].class, cache.DAMAGER[1].role)
-                        tremove(cache.DAMAGER, 1)
-                    else
-                        ReskinIcon(enumerate, icon)
-                    end
-                end
-            end
-        end)
-    end
+    end)
 end
 
 local function ApplyPvPUISkin()
