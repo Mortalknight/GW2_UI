@@ -118,12 +118,12 @@ local function ParseSimpleObjective(text)
 end
 GW.ParseSimpleObjective = ParseSimpleObjective
 
-local function ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKeystone)
+local function ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKeystone, mythicKeystoneCurrentValue)
     if quantity ~= nil and totalQuantity ~= nil and criteriaString ~= nil then
         if totalQuantity == 0 then
             return string.format("%d %s", quantity, criteriaString)
-        elseif isMythicKeystone and totalQuantity == 100 then
-            return string.format("%.2f/%d %s", quantity, totalQuantity, criteriaString)
+        elseif isMythicKeystone then
+            return string.format("%.2f/%d %s", (mythicKeystoneCurrentValue / totalQuantity * 100), totalQuantity, criteriaString)
         else
             return string.format("%d/%d %s", quantity, totalQuantity, criteriaString)
         end
@@ -133,7 +133,7 @@ local function ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKe
 end
 GW.ParseCriteria = ParseCriteria
 
-local function ParseObjectiveString(block, text, objectiveType, quantity, numItems, numNeeded, isMythicKeystone)
+local function ParseObjectiveString(block, text, objectiveType, quantity, numItems, numNeeded)
     if objectiveType == "progressbar" then
         block.StatusBar:SetMinMaxValues(0, 100)
         block.StatusBar:SetValue(quantity or 0)

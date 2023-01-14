@@ -194,7 +194,8 @@ local function updateCurrentScenario(self, event, ...)
 
     local stageName, stageDescription, numCriteria, _, _, _, _, _, _, questID = C_Scenario.GetStepInfo()
 
-    local _, _, isMythicKeystone, difficultyName, _ = GetInstanceInfo()
+    local _, _, difficultyID, difficultyName = GetInstanceInfo()
+    local isMythicKeystone = difficultyID == 8
     if stageDescription == nil then
         stageDescription = ""
     end
@@ -246,14 +247,17 @@ local function updateCurrentScenario(self, event, ...)
     GW.CombatQueue_Queue(nil, UpdateQuestItem, {GwScenarioBlock})
 
     for criteriaIndex = 1, numCriteria do
-        local criteriaString, _, _, quantity, totalQuantity, _, _, _, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
+        local criteriaString, _, _, quantity, totalQuantity, _, _, mythicKeystoneCurrentValue, _, _, _, _, isWeightedProgress = C_Scenario.GetCriteriaInfo(criteriaIndex)
         local objectiveType = not isWeightedProgress and "monster" or "progressbar"
-        if objectiveType == "progressbar" then
+        if objectiveType == "progressbar" and not isMythicKeystone then
             totalQuantity = 100
+        end
+        if isMythicKeystone then
+            mythicKeystoneCurrentValue = strtrim(mythicKeystoneCurrentValue, "%") or 1
         end
         addObjectiveBlock(
             GwScenarioBlock,
-            ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKeystone),
+            ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKeystone, mythicKeystoneCurrentValue),
             false,
             criteriaIndex,
             objectiveType,
