@@ -360,7 +360,6 @@ end
 
 local function updateDragonRidingState(self, state, isLogin)
     if isLogin or (self.gwMaxCharges and (self.gwMaxCharges == nil or self.gwMaxCharges == 0)) then
-        updateDragonRidingState(self)
         setupDragonBar(self)
     end
 
