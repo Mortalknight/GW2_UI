@@ -84,6 +84,7 @@ do
     AddLib("AceLocale", "AceLocale-3.0", true)
     AddLib("LibDetours", "LibDetours-1.0", true)
     AddLib("CI", "LibClassicInspector", true)
+    AddLib("LibGearScore", "LibGearScore.1000", true)
 end
 
 do

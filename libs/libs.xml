@@ -12,4 +12,5 @@
     <Script file="LibFrameFade\LibFrameFade.lua"/>
     <Script file="LibDetours-1.0\LibDetours-1.0.lua"/>
     <Script file="LibClassicInspector\LibClassicInspector.lua"/>
+    <Script file="LibGearScore-1.0\LibGearScore-1.0.lua"/>
 </Ui>

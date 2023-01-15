@@ -354,7 +354,7 @@ local function PaperDollUpdateStats()
     end
 
     --durability
-    grid, x, y, numShownStats = setStatFrame("DURABILITY", numShownStats, "DURABILITY", nil, nil, grid, x, y)
+    grid, x, y, numShownStats = setStatFrame("DURABILITY", numShownStats, DURABILITY, nil, nil, grid, x, y)
 end
 GW.PaperDollUpdateStats = PaperDollUpdateStats
 
@@ -880,6 +880,10 @@ local function LoadPaperDoll()
 
     PaperDollUpdateStats()
     PaperDollUpdatePetStats()
+    C_Timer.After(1, function()
+        PaperDollUpdateStats()
+        PaperDollUpdatePetStats()
+    end)
 
     GwDressingRoomPet.model.expBar:SetScript("OnEnter", function(self)
         self.value:Show()

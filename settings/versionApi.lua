@@ -5,22 +5,24 @@ GW.api = {}
 local function GetAverageItemLevel()
     if GW.tocversion > 40000 then
         return _G.GetAverageItemLevel()
-    elseif TT_GS then
-        local MyGearScore, MyItemLevel  = TT_GS:GetScore(UnitName("player"), true)
-        return MyGearScore, MyItemLevel
+    else
+        local _, gearScore = GW.Libs.LibGearScore:GetScore("player")
+        return gearScore.GearScore, gearScore.AvgItemLevel
     end
-    return 0, 0
 end
 GW.api.GetAverageItemLevel = GetAverageItemLevel
 
-local function GetItemLevelColor(MyGearScore)
+local function GetItemLevelColor()
     if GW.tocversion > 40000 then
         return _G.GetItemLevelColor()
-    elseif TT_GS then
-	    local r, g, b = TT_GS:GetQuality(MyGearScore)
-        return r, g, b
+    else
+        local _, gearScore = GW2_ADDON.Libs.LibGearScore:GetScore("player")
+        if gearScore.Color then
+            return gearScore.Color.r, gearScore.Color.g, gearScore.Color.b
+        else
+            return 0, 0, 0
+        end
     end
-    return 0, 0, 0
 end
 GW.api.GetItemLevelColor = GetItemLevelColor
 

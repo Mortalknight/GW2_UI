@@ -244,12 +244,9 @@ local function AddInspectInfo(self, unit, numTries, r, g, b)
     if not unitGUID then return end
     local specIndex = CI:GetSpecialization(unitGUID) or 1
     local x1, x2, x3 = 0, 0, 0
-    local gearscore, avg_ilvl = 0, 0
 
     x1, x2, x3 = CI:GetTalentPoints(unitGUID)
-    if TT_GS then
-        gearscore, avg_ilvl = TT_GS:GetScore(unitGUID, true)
-    end
+    local _, gearScore = GW.Libs.LibGearScore:GetScore(unitGUID)
 
     if unitGUID == UnitGUID("player") then
         self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(GW.myclass, specIndex, true), x1, x2, x3), nil, nil, nil, r, g, b)
@@ -258,12 +255,9 @@ local function AddInspectInfo(self, unit, numTries, r, g, b)
         self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(className, specIndex, true), x1, x2, x3), nil, nil, nil, r, g, b)  
     end
 
-    if avg_ilvl > 0 then
-        self:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":" ,avg_ilvl, nil, nil, nil, 1, 1, 1)
-    end
-
-    if gearscore > 0 then
-        self:AddDoubleLine("GearScore:" , gearscore, nil, nil, nil, 1, 1, 1)
+    if gearScore then
+        self:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":" , gearScore.AvgItemLevel, nil, nil, nil, 1, 1, 1)
+        self:AddDoubleLine("GearScore:" , gearScore.GearScore, nil, nil, nil, 1, 1, 1)
     end
 end
 
@@ -685,7 +679,7 @@ local function LoadTooltips()
         eventFrame:SetScript("OnEvent", function()
             if not GameTooltip:IsForbidden() and GameTooltip:IsShown() then
                 local owner = GameTooltip:GetOwner()
-                if owner == UIParent and UnitExists("mouseover") then
+                if (owner == UIParent or (GW2_PlayerFrame and owner == GW2_PlayerFrame)) and UnitExists("mouseover") then
                     GameTooltip:SetUnit("mouseover")
                 end
             end
