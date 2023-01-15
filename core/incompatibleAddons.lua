@@ -14,7 +14,7 @@ local function CheckIfNewIncompatibleAddonsAreAdded(savedOnes)
                 needUpdateSavedOnes = true
             end
         end
-        if not shouldAddSetting then
+        if not shouldAddSetting and not savedOnes[defaultSetting] then
             savedOnes[defaultSetting] = GW.copyTable(nil, defaultTable)
             needUpdateSavedOnes = true
         end
