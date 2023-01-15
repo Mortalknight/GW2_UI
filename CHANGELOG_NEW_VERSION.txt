@@ -8,12 +8,13 @@ NEW
     - Added cooking event timer to scenario tracker
     - Added option to show enchants and gems on gw2 character panel
     - Added option to flash taskbar on world event reminder
-
+    - Added group info to premade group list and group tooltips
 CHANGES
     - Update chat bubbles
     - Update Move HUD textures
     - Add filters to Move HUD mode
     - Added char counter to chat editbox
+    - The info block in Mythic+ dungeons now shows more precise progress information
 
 FIXES
     - Fix ElvUI micro menu backdrop

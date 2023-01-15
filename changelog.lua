@@ -23,11 +23,13 @@ addChange("6.2.0",{
     {ct.feature,[=[Added cooking event timer to scenario tracker]=]},
     {ct.feature,[=[Added option to show enchants and gems on gw2 character panel]=]},
     {ct.feature,[=[Added option to flash taskbar on world event reminder]=]},
+    {ct.feature,[=[Added group info to premade group list and group tooltips]=]},
 
     {ct.change,[=[Update chat bubbles]=]},
     {ct.change,[=[Update Move HUD textures]=]},
     {ct.change,[=[Add filters to Move HUD mode]=]},
     {ct.change,[=[Added char counter to chat editbox]=]},
+    {ct.change,[=[The info block in Mythic+ dungeons now shows more precise progress information]=]},
 
     {ct.bug,[=[Fix ElvUI micro menu backdrop]=]},
     {ct.bug,[=[Fix Details settings page not opens]=]},
