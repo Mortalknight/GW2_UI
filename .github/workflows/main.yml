@@ -11,6 +11,7 @@ on:
 env:
   # for github releases, this secret is automatically provided to the workflow
   GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+  CF_API_KEY: ${{ secrets.CF_API_KEY }}
 
 jobs:
   release: # "release" is a job, you can name it anything you want
