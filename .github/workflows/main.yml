@@ -5,6 +5,7 @@ on:
   push:
     tags:
         - '[0-9]+.[0-9]+.[0-9]+'
+        - '!*-Wrath'
 
 env:
   # for github releases, this secret is automatically provided to the workflow
