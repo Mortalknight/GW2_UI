@@ -1,3 +1,9 @@
+6.2.1
+FIXES
+    - Fix ElvUI micro menu error
+    - Fix ElvUI actionbar lua error if our actionbars are disabled
+    - Fix ElvUI battle.net frame error if both module are enabled
+
 6.2.0
 NEW
     - Added Hud background for dragon riding

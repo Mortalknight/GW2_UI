@@ -14,6 +14,11 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
+addChange("6.2.1",{
+    {ct.bug,[=[Fix ElvUI micro menu error]=]},
+    {ct.bug,[=[Fix ElvUI actionbar lua error if our actionbars are disabled]=]},
+    {ct.bug,[=[Fix ElvUI battle.net frame error if both module are enabled]=]},
+})
 addChange("6.2.0",{
     {ct.feature,[=[Dragon Riding HUD background has been added]=]},
     {ct.feature,[=[Vigor has been moved to the Dodge bar]=]},

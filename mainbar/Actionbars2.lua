@@ -545,11 +545,13 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
 
         btn.gwBackdrop = backDrop
 
-        btn.gwBackdrop.bg:SetAlpha(settings.actiobarBackdropAlpha)
-        btn.gwBackdrop.border1:SetAlpha(settings.actiobarBackdropAlpha)
-        btn.gwBackdrop.border2:SetAlpha(settings.actiobarBackdropAlpha)
-        btn.gwBackdrop.border3:SetAlpha(settings.actiobarBackdropAlpha)
-        btn.gwBackdrop.border4:SetAlpha(settings.actiobarBackdropAlpha)
+        if not isStanceButton and not isPet then
+            btn.gwBackdrop.bg:SetAlpha(settings.actiobarBackdropAlpha)
+            btn.gwBackdrop.border1:SetAlpha(settings.actiobarBackdropAlpha)
+            btn.gwBackdrop.border2:SetAlpha(settings.actiobarBackdropAlpha)
+            btn.gwBackdrop.border3:SetAlpha(settings.actiobarBackdropAlpha)
+            btn.gwBackdrop.border4:SetAlpha(settings.actiobarBackdropAlpha)
+        end
         --btn:HookScript("OnHide", hideBackdrop)
         --btn:HookScript("OnShow", showBackdrop)
     end

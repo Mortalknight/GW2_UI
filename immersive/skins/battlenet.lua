@@ -94,6 +94,9 @@ local function LoadBNToastSkin()
         end
     end
 
+    -- do not trigger this code if ElvUI controlls that frame
+    if BNToastFrame and BNToastFrame.mover and BNToastFrame.mover:GetName() == "BNETMover" then return end
+
     RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", ALL .. ",Blizzard", nil, {"default", "scaleable"}, nil, BNTostPostDrag)
 
     hooksecurefunc(BNToastFrame, "SetPoint", hook_SetPoint)
