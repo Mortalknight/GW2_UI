@@ -37,6 +37,36 @@ local constBackdropFrameColorBorder = {
 }
 GW.constBackdropFrameColorBorder = constBackdropFrameColorBorder
 
+local function HandleItemButton(b, setInside)
+    if b.isSkinned then return end
+
+    local name = b:GetName()
+    local icon = b.icon or b.Icon or b.IconTexture or b.iconTexture or (name and (_G[name .. "IconTexture"] or _G[name .. "Icon"]))
+    local texture = icon and icon.GetTexture and icon:GetTexture()
+
+    b:StripTextures()
+    b:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    b:StyleButton()
+
+    if icon then
+        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+
+        if setInside then
+            icon:SetInside(b)
+        else
+            b.backdrop:SetOutside(icon, 1, 1)
+        end
+
+        icon:SetParent(b.backdrop)
+
+        if texture then
+            icon:SetTexture(texture)
+        end
+    end
+
+    b.isSkinned = true
+end
+GW.HandleItemButton = HandleItemButton
 
 local function ReskinScrollBarArrow(frame, direction)
     GW.HandleNextPrevButton(frame, direction)

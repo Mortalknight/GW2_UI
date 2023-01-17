@@ -8,7 +8,7 @@ local function ApplyMacroOptionsSkin()
 
     local MacroFrame = _G.MacroFrame
 
-    _G.MacroFrameBg:Hide()
+    MacroFrameBg:Hide()
     MacroFrame.TitleBg:Hide()
     MacroFrame.TopTileStreaks:Hide()
 
@@ -44,9 +44,11 @@ local function ApplyMacroOptionsSkin()
     tex:SetSize(w + 50, h + 50)
     MacroFrame.tex = tex
 
-    _G.MacroButtonScrollFrameScrollBar:SkinScrollBar()
+    MacroFrame.MacroSelector.ScrollBox:StripTextures()
+    MacroFrame.MacroSelector.ScrollBox:CreateBackdrop(constBackdropFrame)
+    MacroFrameTextBackground.NineSlice:CreateBackdrop(constBackdropFrame)
+    GW.HandleTrimScrollBar(MacroFrame.MacroSelector.ScrollBar)
     _G.MacroFrameScrollFrameScrollBar:SkinScrollBar()
-    _G.MacroButtonScrollFrame:SkinScrollFrame()
 
     local buttons = {
         _G.MacroSaveButton,
@@ -80,9 +82,18 @@ local function ApplyMacroOptionsSkin()
     end
 
     _G.MacroFrameSelectedMacroButton:DisableDrawLayer("BACKGROUND")
-    _G.MacroFrameSelectedMacroButtonIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    _G.MacroFrameSelectedMacroButton.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     _G.MacroFrameSelectedMacroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
-    hooksecurefunc("MacroFrame_ShowDetails", function() _G.MacroFrameSelectedMacroBackground:Hide() end)
+    --hooksecurefunc("MacroFrame_ShowDetails", function() _G.MacroFrameSelectedMacroBackground:Hide() end)
+
+    hooksecurefunc(MacroFrame.MacroSelector.ScrollBox, "Update", function()
+        for _, button in next, { MacroFrame.MacroSelector.ScrollBox.ScrollTarget:GetChildren() } do
+            if button.Icon and not button.isSkinned then
+                GW.HandleItemButton(button, true)
+            end
+        end
+    end)
+
 
     -- Skin all buttons
     for i = 1, _G.MAX_ACCOUNT_MACROS do
@@ -120,11 +131,11 @@ local function ApplyMacroOptionsSkin()
     -- Popout Frame
     MacroPopupFrame.BorderBox.OkayButton:SkinButton(false, true)
     MacroPopupFrame.BorderBox.CancelButton:SkinButton(false, true)
-    _G.MacroPopupScrollFrameScrollBar:SkinScrollBar()
-    _G.MacroPopupScrollFrame:SkinScrollFrame()
-    _G.MacroPopupNameLeft:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
-    _G.MacroPopupNameMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
-    _G.MacroPopupNameRight:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+
+    GW.HandleTrimScrollBar(MacroPopupFrame.IconSelector.ScrollBar)
+    MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameLeft:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+    MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+    MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameRight:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
 
     local r = {MacroPopupFrame.BorderBox:GetRegions()}
     for _,c in pairs(r) do
@@ -137,33 +148,35 @@ local function ApplyMacroOptionsSkin()
     MacroPopupFrame:SetSize(MacroPopupFrame:GetSize(), MacroPopupFrame:GetSize() + 5)
     MacroPopupFrame:CreateBackdrop(constBackdropFrame)
 
-    for i = 1, _G.NUM_MACRO_ICONS_SHOWN do
-        local button = _G["MacroPopupButton" .. i]
-        if button then
-            button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
-            button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
-            local r = {button:GetRegions()}
-            local ii = 1
-            for _,c in pairs(r) do
-                if c:GetObjectType() == "Texture" then
-                    if ii == 1 then
-                        c:SetTexture("Interface/AddOns/GW2_UI/textures/spelliconempty")
-                        c:SetSize(button:GetSize())
-                    end
-                    ii = ii + 1
-                end
-            end
 
-            local icon = _G["MacroPopupButton" .. i .. "Icon"]
-            if icon then
-                icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-            end
-        end
+    MacroPopupFrame.BorderBox:StripTextures()
+    local button = MacroPopupFrame.BorderBox.SelectedIconArea and MacroPopupFrame.BorderBox.SelectedIconArea.SelectedIconButton
+    if button then
+        button:DisableDrawLayer("BACKGROUND")
+        GW.HandleItemButton(button, true)
     end
 
     MacroPopupFrame:HookScript("OnShow", function(self)
         self:ClearAllPoints()
         self:SetPoint("TOPLEFT", MacroFrame, "TOPRIGHT", 10, 0)
+
+        for _, button in next, { MacroPopupFrame.IconSelector.ScrollBox.ScrollTarget:GetChildren() } do
+            local icon, texture = button.Icon, nil
+            button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+            if icon then
+                icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+                icon:SetInside(button)
+                texture = icon:GetTexture()
+            end
+
+            button:StripTextures()
+            button:CreateBackdrop()
+            button:StyleButton(nil, true)
+
+            if texture then
+                icon:SetTexture(texture)
+            end
+        end
     end)
 end
 
