@@ -1047,6 +1047,7 @@ local function updateQuestLogLayout(self)
         savedHeight = 20
     end
 
+    GwQuesttrackerContainerQuests.oldHeight = GW.RoundInt(GwQuesttrackerContainerQuests:GetHeight())
     GwQuesttrackerContainerQuests:SetHeight(savedHeight)
     for i = (GwQuesttrackerContainerQuests.collapsed and 0 or #GW.trackedQuests + 1), 25 do
         if _G["GwQuestBlock" .. i] then
@@ -1389,10 +1390,46 @@ local function LoadQuestTracker()
         fQuest._GetNumQuestWatches = GetNumQuestWatches
     end
 
-    hooksecurefunc(fBoss, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
-    hooksecurefunc(fArenaBG, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
-    fNotify:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
-    fNotify:HookScript("OnHide", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
-    hooksecurefunc(fAchv, "SetHeight", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
+    -- some hooks to set the itembuttons correct
+    local UpdateItemButtonPositionAndAdjustScrollFrame = function()
+        tracker_OnEvent(fQuest)
+    end
+
+    fBoss.oldHeight = 1
+    fArenaBG.oldHeight = 1
+    fAchv.oldHeight = 1
+    fQuest.oldHeight = 1
+
+    hooksecurefunc(fBoss, "SetHeight", function(_, height)
+        if fBoss.oldHeight ~= GW.RoundInt(height) then
+            C_Timer.After(0.25, function()
+                UpdateItemButtonPositionAndAdjustScrollFrame()
+            end)
+        end
+    end)
+    hooksecurefunc(fArenaBG, "SetHeight", function(_, height)
+        if fArenaBG.oldHeight ~= GW.RoundInt(height) then
+            C_Timer.After(0.25, function()
+                UpdateItemButtonPositionAndAdjustScrollFrame()
+            end)
+        end
+    end)
+    hooksecurefunc(fAchv, "SetHeight", function(_, height)
+        if fAchv.oldHeight ~= GW.RoundInt(height) then
+            C_Timer.After(0.25, function()
+                UpdateItemButtonPositionAndAdjustScrollFrame()
+            end)
+        end
+    end)
+    hooksecurefunc(fQuest, "SetHeight", function(_, height)
+        if fQuest.oldHeight ~= GW.RoundInt(height) then
+            C_Timer.After(0.25, function()
+                UpdateItemButtonPositionAndAdjustScrollFrame()
+            end)
+        end
+    end)
+
+    fNotify:HookScript("OnShow", function() C_Timer.After(0.25, function() UpdateItemButtonPositionAndAdjustScrollFrame() end) end)
+    fNotify:HookScript("OnHide", function() C_Timer.After(0.25, function() UpdateItemButtonPositionAndAdjustScrollFrame() end) end)
 end
 GW.LoadQuestTracker = LoadQuestTracker

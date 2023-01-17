@@ -240,6 +240,7 @@ local function updateAchievementLayout(self)
         end
     end
 
+    GwQuesttrackerContainerAchievement.oldHeight = GW.RoundInt(GwQuesttrackerContainerAchievement:GetHeight())
     GwQuesttrackerContainerAchievement:SetHeight(savedHeight)
 
     for i = shownIndex, 25 do

@@ -260,6 +260,8 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 frame:Show()
             end
 
+            frame.nextUpdate = 0
+            frame.duration:SetText("")
             frame:SetScript("OnUpdate", frame.OnUpdatefunction)
 
             local isBig = frame.typeAura == "bigBuff"
@@ -344,16 +346,22 @@ GW.AddForProfiling("auras", "auraFrame_OnEnter", auraFrame_OnEnter)
 
 
 local function auraFrame_OnUpdate(self, elapsed)
-    if self.throt < 0 and self.expires ~= nil and self:IsShown() then
-        self.throt = 0.2
-        self.duration:SetText(TimeCount(self.expires - GetTime()))
-        -- update tooltip
+    if self.nextUpdate > 0 then
+        self.nextUpdate = self.nextUpdate - elapsed
+    elseif self:IsShown() and self.expires ~= nil then
+        local text, nextUpdate = GW.GetTimeInfo(self.expires - GetTime())
+        self.nextUpdate = nextUpdate
+        self.duration:SetText(text)
+    end
 
+    if self.elapsed and self.elapsed > 0.1 then
         if GameTooltip:IsOwned(self) then
             auraFrame_OnEnter(self)
         end
+
+        self.elapsed = 0
     else
-        self.throt = self.throt - elapsed
+        self.elapsed = (self.elapsed or 0) + elapsed
     end
 end
 GW.AddForProfiling("auras", "auraFrame_OnUpdate", auraFrame_OnUpdate)
@@ -367,7 +375,7 @@ local function CreateAuraFrame(name, parent)
     f.cooldown:SetDrawSwipe(1)
     f.cooldown:SetReverse(false)
     f.cooldown:SetHideCountdownNumbers(true)
-    f.throt = -1
+    f.nextUpdate = 0
 
     fs.stacks:SetFont(UNIT_NAME_FONT, 11, "OUTLINED")
     fs.duration:SetFont(UNIT_NAME_FONT, 10, "")

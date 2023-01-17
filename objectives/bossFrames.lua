@@ -24,6 +24,7 @@ local function updateBossFrameHeight()
         end
     end
 
+    GwQuesttrackerContainerBossFrames.oldHeight = GW.RoundInt(GwQuesttrackerContainerBossFrames:GetHeight())
     GwQuesttrackerContainerBossFrames:SetHeight(i > 0 and height or 1)
 end
 GW.AddForProfiling("bossFrames", "updateBossFrameHeight", updateBossFrameHeight)
