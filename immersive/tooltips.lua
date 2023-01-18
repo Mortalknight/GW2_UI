@@ -455,7 +455,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
             GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColorStr, name or UNKNOWN)
         end
 
-        return (UnitIsTapDenied(unit) and {rr = 159 / 255, g = 159 / 255, b = 159 / 255}) or nameColor
+        return (UnitIsTapDenied(unit) and {r = 159 / 255, g = 159 / 255, b = 159 / 255}) or nameColor
     end
 end
 

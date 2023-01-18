@@ -64,7 +64,7 @@ local function AuraOnEnter(self)
 
     self.elapsed = 1
 end
-GW.AddForProfiling("aurabar_secure", "aura_OnEnter", aura_OnEnter)
+GW.AddForProfiling("aurabar_secure", "aura_OnEnter", AuraOnEnter)
 
 local function AuraOnShow(self)
     if self.enchantIndex then
