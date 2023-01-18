@@ -196,9 +196,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         if unitReaction and unitReaction >= 5 then nameColor = COLOR_FRIENDLY[1] end --Friend
         local nameColorStr = nameColor.colorStr or RGBToHex(nameColor.r, nameColor.g, nameColor.b, "ff")
 
-        if not isPetCompanion then
-            GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColorStr, name or UNKNOWN)
-        end
+        GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColorStr, name or UNKNOWN)
 
         return (UnitIsTapDenied(unit) and {r = 159 / 255, g = 159 / 255, b = 159 / 255}) or nameColor
      end
@@ -594,9 +592,9 @@ end
 local function SetTooltipFonts()
     local font = UNIT_NAME_FONT
     local fontOutline = ""
-    local headerSize = GetSetting("TOOLTIP_FONT_SIZE")
-    local smallTextSize = GetSetting("TOOLTIP_FONT_SIZE")
-    local textSize = GetSetting("TOOLTIP_FONT_SIZE")
+    local headerSize = tonumber(GetSetting("TOOLTIP_FONT_SIZE"))
+    local smallTextSize = tonumber(GetSetting("TOOLTIP_FONT_SIZE"))
+    local textSize = tonumber(GetSetting("TOOLTIP_FONT_SIZE"))
 
     GameTooltipHeaderText:SetFont(font, headerSize, fontOutline)
     GameTooltipTextSmall:SetFont(font, smallTextSize, fontOutline)
@@ -604,11 +602,11 @@ local function SetTooltipFonts()
 
     if GameTooltip.hasMoney then
         for i = 1, GameTooltip.numMoneyFrames do
-            _G["GameTooltipMoneyFrame"..i.."PrefixText"]:SetFont(font, textSize, fontOutline)
-            _G["GameTooltipMoneyFrame"..i.."SuffixText"]:SetFont(font, textSize, fontOutline)
-            _G["GameTooltipMoneyFrame"..i.."GoldButtonText"]:SetFont(font, textSize, fontOutline)
-            _G["GameTooltipMoneyFrame"..i.."SilverButtonText"]:SetFont(font, textSize, fontOutline)
-            _G["GameTooltipMoneyFrame"..i.."CopperButtonText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "PrefixText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "SuffixText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "GoldButtonText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "SilverButtonText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "CopperButtonText"]:SetFont(font, textSize, fontOutline)
         end
     end
 

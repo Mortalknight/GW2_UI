@@ -91,7 +91,7 @@ local function LoadTooltipPanel(sWindow)
         0,
         {["TOOLTIPS_ENABLED"] = true},
         1
-    )    
+    )
     addOptionDropdown(
         p,
         L["Modifier for IDs"],
