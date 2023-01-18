@@ -31,6 +31,7 @@ local function GetTimeInfo(s)
         return TimeFormats[0]:format(ceil(s / DAY)), days > 1 and (s - (days * DAY - HALFDAYISH)) or (s - DAYISH)
     end
 end
+GW.GetTimeInfo = GetTimeInfo
 
 local function Cooldown_IsEnabled(self)
     if self.forceEnabled then
