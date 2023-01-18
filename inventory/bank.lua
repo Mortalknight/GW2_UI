@@ -298,8 +298,9 @@ local function bank_OnShow(self)
 
     -- hide the bank frame off screen
     BankFrame:ClearAllPoints()
+    BankFrame:SetClampedToScreen(false)
     BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-    BankSlotsFrame:Hide()
+    BankSlotsFrame:Kill()
 
     OpenAllBags(self)
     updateBagBar(self.ItemFrame)
@@ -393,7 +394,16 @@ local function LoadBank(helpers)
     hooksecurefunc(BankFrame, "Raise", function()
         BankFrame:ClearAllPoints()
         BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-        BankSlotsFrame:Hide()
+        BankSlotsFrame:Kill()
+    end)
+
+    hooksecurefunc(BankFrame, "SetPoint", function()
+        if not BankFrame.gwSkipSetPoint then
+            BankFrame.gwSkipSetPoint = true
+            BankFrame:ClearAllPoints()
+            BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
+            BankFrame.gwSkipSetPoint = false
+        end
     end)
 
     -- setup movable stuff
