@@ -38,8 +38,7 @@ local function sellJunk()
             if itemLink and not info.hasNoValue then
                 local _, _, rarity, _, _, _, _, _, _, _, _, classID, _, bindType = GetItemInfo(itemLink)
                 if rarity and rarity == 0
-                and (classID ~= 12 or bindType ~= 4)
-                and (not IsCosmeticItem(itemLink)) then
+                and (classID ~= 12 or bindType ~= 4) then
                     if MerchantFrame:IsShown() then
                         counter = counter + 1
                         -- If merchant frame is open, vendor the item
