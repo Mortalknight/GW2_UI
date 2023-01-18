@@ -24,7 +24,7 @@
             <Cooldown parentKey="cooldown" inherits="CooldownFrameTemplate"/>
         </Frames>
         <NormalTexture parentKey="NormalTexture" file="Interface\Buttons\UI-Quickslot2">
-            <Size x="42" y="42"/>
+            <Size x="26" y="26"/>
             <Anchors>
                 <Anchor point="CENTER"/>
             </Anchors>

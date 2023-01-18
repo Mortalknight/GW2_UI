@@ -488,7 +488,7 @@ local function getBlock(blockIndex)
             return
         end
 
-        local start, duration, enabled = GetItemCooldown(self.itemID)
+        local start, duration, enabled = C_Container.GetItemCooldown(self.itemID)
 
         if enabled and duration > 3 and enabled == 1 then
             self.cooldown:Show()
