@@ -1040,7 +1040,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                 local client = accountInfo.gameAccountInfo and accountInfo.gameAccountInfo.clientProgram
                 if client and client ~= "" then
                     local characterName = BNet_GetValidatedCharacterName(accountInfo.gameAccountInfo.characterName, accountInfo.battleTag, client) or ""
-                    local characterNameText = BNet_GetClientEmbeddedTexture(client, 14)..characterName
+                    local characterNameText = BNet_GetClientEmbeddedAtlas(client, 14)..characterName
                     local linkDisplayText = ("[%s] (%s)"):format(arg2, characterNameText)
                     local playerLink = GetBNPlayerLink(arg2, linkDisplayText, arg13, arg11, chatGroup, 0)
                     message = format(globalstring, playerLink)

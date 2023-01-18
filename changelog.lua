@@ -1,5 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
+
+v("1.8.1 Wrath", [=[
+    - Fixes for 3.4.1
+]=])
+
 v("1.8.0 Wrath", [=[
     - Fixes for 3.4.1
 ]=])

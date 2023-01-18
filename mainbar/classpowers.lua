@@ -52,7 +52,7 @@ local function powerCombo(self, event, ...)
                     GetTime(),
                     0.5,
                     function()
-                        local p = animations["COMBOPOINTS_FLARE"].progress
+                        local p = math.min(1, math.max(0, animations["COMBOPOINTS_FLARE"].progress))
                         self.combopoints.comboFlare:SetAlpha(p)
                     end,
                     nil,
@@ -183,7 +183,7 @@ local function powerRune(self)
                         GetTime(),
                         0.5,
                         function()
-                            f.flare:SetAlpha(animations["HOLY_POWER_FLARE_ANIMATION"].progress)
+                            f.flare:SetAlpha(math.min(1, math.max(0 ,animations["HOLY_POWER_FLARE_ANIMATION"].progress)))
                         end
                     )
                 end

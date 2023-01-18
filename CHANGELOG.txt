@@ -1,3 +1,6 @@
+1.8.1-Wrath
+    - Fixes for 3.4.1
+
 1.8.0-Wrath
     - Fixes for 3.4.1
 

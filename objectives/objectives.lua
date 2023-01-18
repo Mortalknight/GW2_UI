@@ -1431,5 +1431,13 @@ local function LoadQuestTracker()
 
     fNotify:HookScript("OnShow", function() C_Timer.After(0.25, function() UpdateItemButtonPositionAndAdjustScrollFrame() end) end)
     fNotify:HookScript("OnHide", function() C_Timer.After(0.25, function() UpdateItemButtonPositionAndAdjustScrollFrame() end) end)
+
+    -- Update all quests if questue is loaded
+    local QuestieInit = QuestieLoader and QuestieLoader:ImportModule("QuestieInit")
+    if QuestieInit then
+        C_Timer.After(10, function()
+            UpdateItemButtonPositionAndAdjustScrollFrame()
+        end)
+    end
 end
 GW.LoadQuestTracker = LoadQuestTracker

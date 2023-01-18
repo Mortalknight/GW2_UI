@@ -38,7 +38,7 @@ local function ComboFrame_Update(self)
                         GetTime(),
                         0.5,
                         function()
-                            local p = animations["COMBOPOINTS_FLARE"].progress
+                            local p = math.min(1, math.max(0, animations["COMBOPOINTS_FLARE"].progress))
                             self.comboFlare:SetAlpha(p)
                         end,
                         nil,
