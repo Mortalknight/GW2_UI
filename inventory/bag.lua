@@ -28,28 +28,27 @@ end
 
 local function sellJunk()
     -- Variables
-    local SoldCount, Rarity, ItemPrice = 0, 0, 0
-    local CurrentItemLink
+    local counter = 0
 
     -- Traverse bags and sell grey items
     for BagID = 0, 4 do
-        for BagSlot = 1, C_Container.GetContainerNumSlots(BagID) do
-            CurrentItemLink = C_Container.GetContainerItemLink(BagID, BagSlot)
-            if CurrentItemLink then
-                _, _, Rarity, _, _, _, _, _, _, _, ItemPrice = GetItemInfo(CurrentItemLink)
-                local _, itemCount = C_Container.GetContainerItemInfo(BagID, BagSlot)
-                if Rarity == 0 and ItemPrice ~= 0 then
-                    SoldCount = SoldCount + 1
+        for slotID = 1, C_Container.GetContainerNumSlots(BagID) do
+            local info = C_Container.GetContainerItemInfo(BagID, slotID)
+            local itemLink = info and info.hyperlink
+            if itemLink and not info.hasNoValue then
+                local _, _, rarity, _, _, _, _, _, _, _, _, classID, _, bindType = GetItemInfo(itemLink)
+                if rarity and rarity == 0
+                and (classID ~= 12 or bindType ~= 4)
+                and (not IsCosmeticItem(itemLink)) then
                     if MerchantFrame:IsShown() then
+                        counter = counter + 1
                         -- If merchant frame is open, vendor the item
-                        C_Container.UseContainerItem(BagID, BagSlot)
+                        C_Container.UseContainerItem(BagID, slotID)
                         -- Perform actions on first iteration
                         if SellJunkTicker._remainingIterations == IterationCount then
-                            -- Calculate total price
-                            totalPrice = totalPrice + (ItemPrice * itemCount)
                             -- Store first sold bag slot for analysis
-                            if SoldCount == 1 then
-                                mBagID, mBagSlot = BagID, BagSlot
+                            if counter == 1 then
+                                mBagID, mBagSlot = BagID, slotID
                             end
                         end
                     else
@@ -63,7 +62,7 @@ local function sellJunk()
     end
 
     -- Stop selling if no items were sold for this iteration or iteration limit was reached
-    if SoldCount == 0 or SellJunkTicker and SellJunkTicker._remainingIterations == 1 then 
+    if counter == 0 or SellJunkTicker and SellJunkTicker._remainingIterations == 1 then
         StopSelling() 
         if totalPrice > 0 then 
             DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["Sold Junk for: %s"]:format(FormatMoneyForChat(totalPrice)))
@@ -90,8 +89,8 @@ local function SellJunkFrame_OnEvent(self, event)
         self:UnregisterEvent("ITEM_UNLOCKED")
         -- Check whether vendor refuses to buy items
         if mBagID and mBagSlot and mBagID ~= -1 and mBagSlot ~= -1 then
-            local _, count, locked = C_Container.GetContainerItemInfo(mBagID, mBagSlot)
-            if count and not locked then
+            local itemInfo = C_Container.GetContainerItemInfo(mBagID, mBagSlot)
+            if itemInfo.stackCount and not itemInfo.isLocked then
                 -- Item has been unlocked but still not sold so stop selling
                 StopSelling()
             end

@@ -425,9 +425,9 @@ local function getBlock(blockIndex)
 
         for bag = 0 , 5 do
             for slot = 0 , 24 do
-                local texture, _, _, _, _, _, _, _, _, itemID = C_Container.GetContainerItemInfo(bag, slot)
-                if block.sourceItemId == itemID then
-                    validTexture = texture
+                local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
+                if block.sourceItemId == itemInfo.itemID then
+                    validTexture = itemInfo.iconFileID
                     isFound = true
                     break
                 end

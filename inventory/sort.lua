@@ -21,7 +21,7 @@ end
 function _G.GW_SortBankBags()
     CONTAINERS = {unpack(BANK_BAG_CONTAINERS)}
     for i = #CONTAINERS, 1, -1 do
-        if C_Container.GetBankBagSlotFlag(i - 1, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
+        if C_Container.GetBagSlotFlag(i - 1, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
             tremove(CONTAINERS, i)
         end
     end
@@ -363,7 +363,7 @@ do
                 local item = Item(container, position)
                 if item then
                     local itemInfo = C_Container.GetContainerItemInfo(container, position)
-                    if itemInfo.locked then
+                    if itemInfo.isLocked then
                         return false
                     end
                     slot.item = item

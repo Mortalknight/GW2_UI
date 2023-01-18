@@ -200,7 +200,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
             GameTooltipTextLeft1:SetFormattedText("|c%s%s|r", nameColorStr, name or UNKNOWN)
         end
 
-        return (UnitIsTapDenied(unit) and {rr = 159 / 255, g = 159 / 255, b = 159 / 255}) or nameColor
+        return (UnitIsTapDenied(unit) and {r = 159 / 255, g = 159 / 255, b = 159 / 255}) or nameColor
      end
 end
 
@@ -298,7 +298,7 @@ local function GameTooltip_OnTooltipSetUnit(self)
         end
     end
 
-    if color then
+    if color and color.r and color.g and color.b then
         self.StatusBar:SetStatusBarColor(color.r, color.g, color.b)
     else
         self.StatusBar:SetStatusBarColor(159 / 255, 159 / 255, 159 / 255)

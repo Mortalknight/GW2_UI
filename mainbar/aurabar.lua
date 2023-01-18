@@ -64,7 +64,7 @@ local function AuraOnEnter(self)
 
     self.elapsed = 1
 end
-GW.AddForProfiling("aurabar_secure", "aura_OnEnter", aura_OnEnter)
+GW.AddForProfiling("aurabar_secure", "aura_OnEnter", AuraOnEnter)
 
 local function AuraOnShow(self)
     if self.enchantIndex then
@@ -81,32 +81,45 @@ local function AuraOnHide(self)
     end
 end
 
+local function UpdateAura_OnUpdate(self, xpr, elapsed)
+    if self.nextUpdate > 0 then
+        self.nextUpdate = self.nextUpdate - elapsed
+        return
+    end
+
+    local now = GetTime()
+    local text, nextUpdate = GW.GetTimeInfo(self.endTime - now)
+    self.nextUpdate = nextUpdate
+
+    if self.auraType and self.auraType == 2 then -- temp weapon enchant
+        setLongCD(self, self.stackCount)
+
+        self.status.duration:SetText(text)
+        self.status.duration:Show()
+    elseif self.duration and self.duration ~= 0 then -- normal aura with duration
+        local remains = xpr - now
+        if self.duration < 121 then
+            setShortCD(self, xpr, self.duration, self.stackCount)
+            if self.duration - remains < 0.1 then
+                if GetSetting("PLAYER_AURA_ANIMATION") then
+                    self.agZoomIn:Play()
+                end
+            end
+        else
+            setLongCD(self, self.stackCount)
+        end
+        self.status.duration:SetText(text)
+        self.status.duration:Show()
+    else -- aura without duration or invalid
+        setLongCD(self, self.stackCount)
+        self.status.duration:Hide()
+    end
+end
+
 local function AuraButton_OnUpdate(self, elapsed)
     local xpr = self.endTime
     if xpr then
-        if self.auraType and self.auraType == 2 then -- temp weapon enchant
-            setLongCD(self, self.stackCount)
-
-            self.status.duration:SetText(TimeCount(xpr - GetTime()))
-            self.status.duration:Show()
-        elseif self.duration and self.duration ~= 0 then -- normal aura with duration
-            local remains = xpr - GetTime()
-            if self.duration < 121 then
-                setShortCD(self, xpr, self.duration, self.stackCount)
-                if self.duration - remains < 0.1 then
-                    if GetSetting("PLAYER_AURA_ANIMATION") then
-                        self.agZoomIn:Play()
-                    end
-                end
-            else
-                setLongCD(self, self.stackCount)
-            end
-            self.status.duration:SetText(TimeCount(remains))
-            self.status.duration:Show()
-        else -- aura without duration or invalid
-            setLongCD(self, self.stackCount)
-            self.status.duration:Hide()
-        end
+        UpdateAura_OnUpdate(self, xpr, elapsed)
     end
 
     if self.elapsed and self.elapsed > 0.1 then
@@ -186,7 +199,7 @@ local function SetIcon(self, icon, dtype, auraType)
 end
 
 local function UpdateAura(self, index)
-    local name, icon, count, dtype, duration, expires = UnitAura(self.header:GetAttribute("unit"), index, self:GetFilter())
+    local name, icon, count, dtype, duration, expires = UnitAura(self.header:GetUnit(), index, self:GetFilter())
     if not name then return end
 
     local auraType = self.header:GetAType()
@@ -320,6 +333,8 @@ function GwAuraTmpl_OnLoad(self)
     self:SetScript("OnHide", AuraOnHide)
     self:SetScript("OnLeave", GameTooltip_Hide)
 
+    self:RegisterForClicks("AnyUp", "AnyDown")
+
     self.gwInit = true
 end
 
@@ -363,7 +378,6 @@ local function UpdateAuraHeader(header, settingName)
     header:SetAttribute("template", aura_tmpl)
     header:SetAttribute("separateOwn", tonumber(GW.RoundDec(GetSetting(settingName .. "_Seperate"))))
     header:SetAttribute("wrapAfter", wrap_num)
-    header:SetAttribute("maxWraps", 8)
     header:SetAttribute("minWidth", (size + 1) * wrap_num)
     header:SetAttribute("minHeight", (size + 1))
     header:SetAttribute("point", ap)
@@ -380,10 +394,6 @@ local function UpdateAuraHeader(header, settingName)
     local child = select(index, header:GetChildren())
     while child do
         child:SetSize(size, size)
-
-        if index > (8 * wrap_num) and child:IsShown() then
-			child:Hide()
-		end
 
         index = index + 1
         child = select(index, header:GetChildren())
@@ -500,4 +510,3 @@ local function LoadPlayerAuras(lm)
     loadAuras(lm)
 end
 GW.LoadPlayerAuras = LoadPlayerAuras
-
