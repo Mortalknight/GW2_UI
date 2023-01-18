@@ -246,15 +246,15 @@ local function setChatBackgroundColor(chatFrame)
 end
 GW.AddForProfiling("chatframe", "setChatBackgroundColor", setChatBackgroundColor)
 
-local function handleChatFrameFadeIn(chatFrame)
-    if not GetSetting("CHATFRAME_FADE") then
+local function handleChatFrameFadeIn(chatFrame, force)
+    if not GetSetting("CHATFRAME_FADE") and not force then
         return
     end
 
     setChatBackgroundColor(chatFrame)
     local frameName = chatFrame:GetName()
     for _, v in pairs(CHAT_FRAME_TEXTURES) do
-        local object = _G[chatFrame:GetName() .. v]
+        local object = _G[frameName .. v]
         if object and object:IsShown() then
             UIFrameFadeIn(object, 0.5, object:GetAlpha(), 1)
         end
@@ -263,9 +263,7 @@ local function handleChatFrameFadeIn(chatFrame)
     if chatFrame.isDocked == 1 then
         for _, v in pairs(gw_fade_frames) do
             if v == ChatFrameToggleVoiceDeafenButton or v == ChatFrameToggleVoiceMuteButton then
-                if v == ChatFrameToggleVoiceDeafenButton and ChatFrameToggleVoiceDeafenButton:IsShown() then
-                    UIFrameFadeIn(v, 0.5, v:GetAlpha(), 1)
-                elseif v == ChatFrameToggleVoiceMuteButton and ChatFrameToggleVoiceMuteButton:IsShown() then
+                if v:IsShown() then
                     UIFrameFadeIn(v, 0.5, v:GetAlpha(), 1)
                 end
             else
@@ -297,8 +295,8 @@ local function handleChatFrameFadeIn(chatFrame)
 end
 GW.AddForProfiling("chatframe", "handleChatFrameFadeIn", handleChatFrameFadeIn)
 
-local function handleChatFrameFadeOut(chatFrame)
-    if not GetSetting("CHATFRAME_FADE") then
+local function handleChatFrameFadeOut(chatFrame, force)
+    if not GetSetting("CHATFRAME_FADE") and not force then
         return
     end
 
@@ -312,7 +310,7 @@ local function handleChatFrameFadeOut(chatFrame)
     local frameName = chatFrame:GetName()
 
     for _, v in pairs(CHAT_FRAME_TEXTURES) do
-        local object = _G[chatFrame:GetName() .. v]
+        local object = _G[frameName .. v]
         if object and object:IsShown() then
             UIFrameFadeOut(object, 2, object:GetAlpha(), 0)
         end
@@ -329,7 +327,9 @@ local function handleChatFrameFadeOut(chatFrame)
                 UIFrameFadeOut(v, 2, v:GetAlpha(), 0)
             end
         end
-        UIFrameFadeOut(ChatFrame1.Container, 2, ChatFrame1.Container:GetAlpha(), chatAlpha)
+        if chatFrame.Container then
+            UIFrameFadeOut(ChatFrame1.Container, 2, ChatFrame1.Container:GetAlpha(), chatAlpha)
+        end
     elseif chatFrame.isDocked == nil then
         if chatFrame.Container then
             UIFrameFadeOut(chatFrame.Container, 2, chatFrame.Container:GetAlpha(), chatAlpha)
@@ -1286,6 +1286,53 @@ local function ChatFrame_SetScript(self, script, func)
     end
 end
 
+do
+    local charCount
+    local function CountLinkCharacters(self)
+        charCount = charCount + (strlen(self) + 4) -- 4 is ending '|h|r'
+    end
+
+    local repeatedText
+    local function EditBoxOnTextChanged(self)
+        local userInput = self:GetText()
+        local len = strlen(userInput)
+
+        if tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT")) ~= 0 and InCombatLockdown() and (not repeatedText or not strfind(userInput, repeatedText, 1, true)) then
+            local MIN_REPEAT_CHARACTERS = tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT"))
+            if len > MIN_REPEAT_CHARACTERS then
+                local repeatChar = true
+                for i = 1, MIN_REPEAT_CHARACTERS, 1 do
+                    local first = -1 - i
+                    if strsub(userInput, -i, -i) ~= strsub(userInput, first, first) then
+                        repeatChar = false
+                        break
+                    end
+                end
+                if repeatChar then
+                    repeatedText = userInput
+                    self:Hide()
+                    return
+                end
+            end
+        end
+
+        charCount = 0
+        gsub(userInput, '(|c%x-|H.-|h).-|h|r', CountLinkCharacters)
+        if charCount ~= 0 then len = len - charCount end
+
+        self.characterCount:SetText(len > 0 and (255 - len) or "")
+
+        if repeatedText then
+            repeatedText = nil
+        end
+
+        if repeatedText then
+            repeatedText = nil
+        end
+    end
+    GW.ChatFrameEditBoxOnTextChanged = EditBoxOnTextChanged
+end
+
 local function styleChatWindow(frame)
     local name = frame:GetName()
     _G[name .. "TabText"]:SetFont(DAMAGE_TEXT_FONT, 14, "")
@@ -1434,6 +1481,16 @@ local function styleChatWindow(frame)
     editbox.editboxHasFocus = false
     editbox:Hide()
 
+    --Character count
+    local charCount = editbox:CreateFontString(nil, "ARTWORK")
+    charCount:SetFont(UNIT_NAME_FONT, 10, "")
+    charCount:SetTextColor(190, 190, 190, 0.4)
+    charCount:SetPoint("TOPRIGHT", editbox, "TOPRIGHT", -5, 0)
+    charCount:SetPoint("BOTTOMRIGHT", editbox, "BOTTOMRIGHT", -5, 0)
+    charCount:SetJustifyH("CENTER")
+    charCount:SetWidth(40)
+    editbox.characterCount = charCount
+
     editbox:HookScript("OnEditFocusGained", function(editBox)
         frame.editboxHasFocus = true
         frame:SetScript(
@@ -1453,34 +1510,7 @@ local function styleChatWindow(frame)
             editBox:Hide()
         end
     end)
-
-    local repeatedText
-    editbox:HookScript("OnTextChanged", function(self)
-        local userInput = self:GetText()
-
-        if tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT")) ~= 0 and InCombatLockdown() and (not repeatedText or not strfind(userInput, repeatedText, 1, true)) then
-            local MIN_REPEAT_CHARACTERS = tonumber(GetSetting("CHAT_INCOMBAT_TEXT_REPEAT"))
-            if strlen(userInput) > MIN_REPEAT_CHARACTERS then
-                local repeatChar = true
-                for i = 1, MIN_REPEAT_CHARACTERS, 1 do
-                    local first = -1 - i
-                    if strsub(userInput, -i, -i) ~= strsub(userInput, first, first) then
-                        repeatChar = false
-                        break
-                    end
-                end
-                if repeatChar then
-                    repeatedText = userInput
-                    self:Hide()
-                    return
-                end
-            end
-        end
-
-        if repeatedText then
-            repeatedText = nil
-        end
-    end)
+    editbox:HookScript("OnTextChanged", GW.ChatFrameEditBoxOnTextChanged)
 
     if GetSetting("CHAT_USE_GW2_STYLE") then
         local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
@@ -2014,10 +2044,13 @@ local function LoadChat()
     for _, frameName in ipairs(CHAT_FRAMES) do
         local frame = _G[frameName]
         if frame and frame:IsShown() then
-            FCF_FadeOutChatFrame(frame)
+            if shouldFading then
+                handleChatFrameFadeOut(frame, true)
+            else
+                handleChatFrameFadeIn(frame, true)
+            end
         end
     end
-    FCF_FadeOutChatFrame(ChatFrame1)
 
     for _, frameName in pairs(CHAT_FRAMES) do
         _G[frameName .. "Tab"]:SetScript("OnDoubleClick", nil)
