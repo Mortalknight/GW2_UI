@@ -190,8 +190,10 @@ function LT(a, b)
 end
 
 function Move(src, dst)
-    local texture, _, srcLocked = C_Container.GetContainerItemInfo(src.container, src.position)
-    local _, _, dstLocked = C_Container.GetContainerItemInfo(dst.container, dst.position)
+    local srcItemInfo = C_Container.GetContainerItemInfo(src.container, src.position)
+    local texture, srcLocked = srcItemInfo.iconFileID, srcItemInfo.isLocked
+    local dstItemInfo = C_Container.GetContainerItemInfo(dst.container, dst.position)
+    local dstLocked = dstItemInfo and dstItemInfo.isLocked
 
     if texture and not srcLocked and not dstLocked then
         ClearCursor()
@@ -360,13 +362,13 @@ do
                 local slot = {container=container, position=position, class=class}
                 local item = Item(container, position)
                 if item then
-                    local _, count, locked = C_Container.GetContainerItemInfo(container, position)
-                    if locked then
+                    local itemInfo = C_Container.GetContainerItemInfo(container, position)
+                    if itemInfo.locked then
                         return false
                     end
                     slot.item = item
-                    slot.count = count
-                    counts[item] = (counts[item] or 0) + count
+                    slot.count = itemInfo.stackCount
+                    counts[item] = (counts[item] or 0) + itemInfo.stackCount
                 end
                 insert(model, slot)
             end

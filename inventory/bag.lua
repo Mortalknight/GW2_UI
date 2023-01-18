@@ -42,7 +42,7 @@ local function sellJunk()
                     SoldCount = SoldCount + 1
                     if MerchantFrame:IsShown() then
                         -- If merchant frame is open, vendor the item
-                        UseContainerItem(BagID, BagSlot)
+                        C_Container.UseContainerItem(BagID, BagSlot)
                         -- Perform actions on first iteration
                         if SellJunkTicker._remainingIterations == IterationCount then
                             -- Calculate total price
