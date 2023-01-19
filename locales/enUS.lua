@@ -527,7 +527,8 @@ L["Loadouts"] = true
 --STRING WHICH NEEDS TRANSLATION
 L["All nets can be collected"] = true
 L["No Nets Set"] = true
-L["Net %s can be collected"] = true
+L["Not Set"] = true
+L["%s can be collected"] = true
 L["Fishing Nets"] = true
 L["Can be collected"] = true
 L["Can be set"] = true

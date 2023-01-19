@@ -74,18 +74,25 @@ local infoColors = {
 
 local env = {
     fishingNetPosition = {
+        -- Waking Shores
         [1] = {map = 2022, x = 0.63585, y = 0.75349},
         [2] = {map = 2022, x = 0.64514, y = 0.74178},
-        [3] = {map = 2025, x = 0.56782, y = 0.65178},
-        [4] = {map = 2025, x = 0.57756, y = 0.65491},
-        [5] = {map = 2023, x = 0.80522, y = 0.78433},
-        [6] = {map = 2023, x = 0.80467, y = 0.77742}
+        -- Lava
+        [3] = {map = 2022, x = 0.33722, y = 0.65047},
+        [4] = {map = 2022, x = 0.34376, y = 0.64763},
+        -- Thaldraszus
+        [5] = {map = 2025, x = 0.56782, y = 0.65178},
+        [6] = {map = 2025, x = 0.57756, y = 0.65491},
+        -- Ohn'ahran Plains
+        [7] = {map = 2023, x = 0.80522, y = 0.78433},
+        [8] = {map = 2023, x = 0.80467, y = 0.77742}
     },
-     fishingNetWidgetIDToIndex = {
-         -- Waking Shores
-         [4203] = 1,
-         [4317] = 2
-     }
+    fishingNetWidgetIDToIndex = {
+        -- data mining: https://wow.tools/dbc/?dbc=uiwidget&build=10.0.5.47621#page=1&colFilter[3]=exact%3A2087
+        -- Waking Shores
+        [4203] = 1,
+        [4317] = 2
+    }
 }
 
 local colorPlatte = {
@@ -489,6 +496,7 @@ local functionFactory = {
 
                 local needAnnounce = false
                 local readyNets = {}
+                local bonusReady = false
 
                 for netIndex, timeData in pairs(self.netTable) do
                     if type(timeData) == "table" and timeData.left <= 0 then
@@ -500,7 +508,10 @@ local functionFactory = {
                             self.args["alertCache"][netIndex][db[netIndex].time] = true
                             local hour = self.args.disableAlertAfterHours
                             if not hour or hour == 0 or (hour * 60 * 60 + timeData.left) > 0 then
-                                tinsert(readyNets, netIndex)
+                                readyNets[netIndex] = true
+                                if netIndex > 2 then
+                                    bonusReady = true
+                                end
                                 needAnnounce = true
                             end
                         end
@@ -509,16 +520,24 @@ local functionFactory = {
 
                 if needAnnounce then
                     local netsText = ""
-                    for i = 1, #readyNets do
-                        netsText = netsText .. "#" .. readyNets[i]
-                        if i ~= #readyNets then
+
+                    if readyNets[1] and readyNets[2] then
+                        netsText = netsText .. format(L["Net #%d"], 1) .. ", " .. format(L["Net #%d"], 2)
+                    elseif readyNets[1] then
+                        netsText = netsText .. format(L["Net #%d"], 1)
+                    elseif readyNets[2] then
+                        netsText = netsText .. format(L["Net #%d"], 2)
+                    end
+                    if bonusReady then
+                        if readyNets[1] or readyNets[2] then
                             netsText = netsText .. ", "
                         end
+                        netsText = netsText .. L["Bonus Net"]
                     end
 
                     local eventIconString = GW.GetIconString(self.args.icon, 16, 16)
                     local gradientName = getGradientText(self.args.eventName, self.args.barColor)
-                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. format(eventIconString .. " " .. gradientName .. " " .. L["Net %s can be collected"], netsText)):gsub("*", GW.Gw2Color))
+                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. format(eventIconString .. " " .. gradientName .. " " .. L["%s can be collected"], netsText)):gsub("*", GW.Gw2Color))
                     if self.args.flashTaskbar then
                         FlashClientIcon()
                     end
@@ -539,6 +558,11 @@ local functionFactory = {
                 end
                 GameTooltip:AddLine(L["Fishing Nets"])
 
+                local netIndex1Status  -- Always
+                local netIndex2Status  -- Always
+                local bonusNetStatus  -- Bonus
+                local bonusTimeLeft = 0
+
                 for netIndex, timeData in pairs(self.netTable) do
                     local text
                     if type(timeData) == "table" then
@@ -547,13 +571,31 @@ local functionFactory = {
                         else
                             text = StringByTemplate(secondToTime(timeData.left), "info")
                         end
+
+                        -- only show latest bonus net
+                        if netIndex > 2 and timeData.left > bonusTimeLeft then
+                            bonusTimeLeft = timeData.left
+                            bonusNetStatus = text
+                        end
                     else
                         if timeData == "NOT_STARTED" then --TODO
                             text = StringByTemplate(L["Can be set"], "warning")
                         end
                     end
 
-                    GameTooltip:AddDoubleLine(format(L["Net #%d"], netIndex), text, 1, 1, 1, 1, 1, 1)
+                    if netIndex == 1 then
+                        netIndex1Status = text
+                    elseif netIndex == 2 then
+                        netIndex2Status = text
+                    end
+                end
+
+                GameTooltip:AddDoubleLine(format(L["Net #%d"], 1), netIndex1Status)
+                GameTooltip:AddDoubleLine(format(L["Net #%d"], 2), netIndex2Status)
+                if bonusNetStatus then
+                    GameTooltip:AddDoubleLine(L["Bonus Net"], bonusNetStatus)
+                else -- no bonus net
+                    GameTooltip:AddDoubleLine(L["Bonus Net"], StringByTemplate(L["Not Set"], "danger"))
                 end
 
                 GameTooltip:Show()
