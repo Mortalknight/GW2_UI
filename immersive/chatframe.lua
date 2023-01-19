@@ -343,7 +343,6 @@ local function handleChatFrameFadeIn(chatFrame, force)
     UIFrameFadeIn(chatTab, 0.5, chatTab:GetAlpha(), 1)
     UIFrameFadeIn(chatFrame.buttonFrame, 0.5, chatFrame.buttonFrame:GetAlpha(), 1)
 end
-GW.FadeChatFrameIn = handleChatFrameFadeIn
 GW.AddForProfiling("chatframe", "handleChatFrameFadeIn", handleChatFrameFadeIn)
 
 local function handleChatFrameFadeOut(chatFrame, force)
@@ -1569,7 +1568,7 @@ local function styleChatWindow(frame)
         end
     end)
 
-    editbox:HookScript("OnTextChanged", GW.ChatFrameEditBoxOnTextChanged )
+    editbox:HookScript("OnTextChanged", GW.ChatFrameEditBoxOnTextChanged)
 
     if settings.useGw2Style then
         local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
