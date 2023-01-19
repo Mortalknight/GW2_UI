@@ -16,41 +16,39 @@ local BAG_WINDOW_SIZE = 480
 
 local IterationCount, totalPrice = 500, 0
 local SellJunkFrame = CreateFrame("FRAME")
-local SellJunkTicker, SellJunkTickerIterations, mBagID, mBagSlot
+local SellJunkTicker
 
 -- automaticly vendor junk
 local function StopSelling()
-    if SellJunkTicker then SellJunkTicker:Cancel() end
+    if SellJunkTicker then SellJunkTicker._cancelled = true end
     GwBagFrame.smsj:Hide()
     SellJunkFrame:UnregisterEvent("ITEM_LOCKED")
-    SellJunkFrame:UnregisterEvent("ITEM_UNLOCKED")
+    SellJunkFrame:UnregisterEvent("UI_ERROR_MESSAGE")
 end
 
 local function sellJunk()
     -- Variables
-    local counter = 0
+    local soldCount, rarity, itemPrice, classID, bindType = 0, 0, 0, 0, 0
+    local ItemLink
 
     -- Traverse bags and sell grey items
     for BagID = 0, 4 do
         for slotID = 1, C_Container.GetContainerNumSlots(BagID) do
-            local info = C_Container.GetContainerItemInfo(BagID, slotID)
-            local itemLink = info and info.hyperlink
-            if itemLink and not info.hasNoValue then
-                local _, _, rarity, _, _, _, _, _, _, _, ItemPrice, classID, _, bindType = GetItemInfo(itemLink)
-                if rarity and rarity == 0
-                and (classID ~= 12 or bindType ~= 4) then
+            ItemLink = C_Container.GetContainerItemLink(BagID, slotID)
+            if ItemLink then
+                _, _, rarity, _, _, _, _, _, _, _, itemPrice, classID, _, bindType = GetItemInfo(ItemLink)
+                local itemInfo = C_Container.GetContainerItemInfo(BagID, slotID)
+                local itemCount = itemInfo.stackCount or 1
+
+                if rarity and rarity == 0 and itemPrice ~= 0 and (classID ~= 12 or bindType ~= 4) then
+                    soldCount = soldCount + 1
                     if MerchantFrame:IsShown() then
-                        counter = counter + 1
                         -- If merchant frame is open, vendor the item
                         C_Container.UseContainerItem(BagID, slotID)
                         -- Perform actions on first iteration
-                        if SellJunkTickerIterations == IterationCount then
+                        if SellJunkTicker._remainingIterations == IterationCount then
                             -- Calculate total price
-                            totalPrice = totalPrice + (ItemPrice * info.stackCount)
-                            -- Store first sold bag slot for analysis
-                            if counter == 1 then
-                                mBagID, mBagSlot = BagID, slotID
-                            end
+                            totalPrice = totalPrice + (itemPrice * itemCount)
                         end
                     else
                         -- If merchant frame is not open, stop selling
@@ -63,45 +61,58 @@ local function sellJunk()
     end
 
     -- Stop selling if no items were sold for this iteration or iteration limit was reached
-    if counter == 0 or SellJunkTicker and SellJunkTickerIterations == 1 then
-        StopSelling() 
-        if totalPrice > 0 then 
+    if soldCount == 0 or SellJunkTicker and SellJunkTicker._remainingIterations == 1 then
+        StopSelling()
+        if totalPrice > 0 then
             DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["Sold Junk for: %s"]:format(FormatMoneyForChat(totalPrice)))
         end
     end
-
-    SellJunkTickerIterations = SellJunkTickerIterations - 1
 end
 
-local function SellJunkFrame_OnEvent(self, event)
+local function NewAutoSellTicker(duration, callback, iterations)
+    local ticker = setmetatable({}, TickerMetatable)
+    ticker._remainingIterations = iterations
+    ticker._callback = function()
+        if not ticker._cancelled then
+            callback(ticker)
+            --Make sure we weren't cancelled during the callback
+            if not ticker._cancelled then
+                if ticker._remainingIterations then
+                    ticker._remainingIterations = ticker._remainingIterations - 1
+                end
+                if not ticker._remainingIterations or ticker._remainingIterations > 0 then
+                    C_Timer.After(duration, ticker._callback)
+                end
+            end
+        end
+    end
+    C_Timer.After(duration, ticker._callback)
+    return ticker
+end
+
+local function SellJunkFrame_OnEvent(self, event, arg1)
     if event == "MERCHANT_SHOW" then
-        -- Reset variables
-        totalPrice, mBagID, mBagSlot = 0, -1, -1
+        -- Check for vendors that refuse to buy items
+        self:RegisterEvent("UI_ERROR_MESSAGE")
+        -- Reset variable
+        totalPrice = 0
         -- Do nothing if shift key is held down
         if IsShiftKeyDown() then return end
         -- Cancel existing ticker if present
-        if SellJunkTicker then SellJunkTicker:Cancel() end
+        if SellJunkTicker then SellJunkTicker._cancelled = true end
         -- Sell grey items using ticker (ends when all grey items are sold or iteration count reached)
-        SellJunkTickerIterations = IterationCount
-        SellJunkTicker = C_Timer.NewTicker(0.2, sellJunk, IterationCount)
+        SellJunkTicker = NewAutoSellTicker(0.2, sellJunk, IterationCount)
         self:RegisterEvent("ITEM_LOCKED")
-        self:RegisterEvent("ITEM_UNLOCKED")
     elseif event == "ITEM_LOCKED" then
         GwBagFrame.smsj:Show()
         self:UnregisterEvent("ITEM_LOCKED")
-    elseif event == "ITEM_UNLOCKED" then
-        self:UnregisterEvent("ITEM_UNLOCKED")
-        -- Check whether vendor refuses to buy items
-        if mBagID and mBagSlot and mBagID ~= -1 and mBagSlot ~= -1 then
-            local itemInfo = C_Container.GetContainerItemInfo(mBagID, mBagSlot)
-            if itemInfo.stackCount and not itemInfo.isLocked then
-                -- Item has been unlocked but still not sold so stop selling
-                StopSelling()
-            end
-        end
     elseif event == "MERCHANT_CLOSED" then
         -- If merchant frame is closed, stop selling
         StopSelling()
+    elseif event == "UI_ERROR_MESSAGE" then
+        if arg1 == 46 then
+            StopSelling() -- Vendor refuses to buy items
+        end
     end
 end
 

@@ -784,7 +784,7 @@ local function addAddonButton(name, setting, shadow, anchor, showFunction, hideO
         nextAnchor = GwCharacterMenu.buttonName
 
         if name == "GearQuipper-TBC" then
-            GwCharacterMenu.buttonName:SetText("GearQuipper TBC")
+            GwCharacterMenu.buttonName:SetText("GearQuipper Wrath")
             GqUiFrame:ClearAllPoints()
             GqUiFrame:SetParent(GwCharacterWindow)
             GqUiFrame:SetPoint("TOPRIGHT", GwCharacterWindow, "TOPRIGHT", 350, -12)
@@ -862,9 +862,9 @@ local function LoadWindows()
 
                 -- add addon buttons here
                 if GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6 then
-                    nextShadow = false
-                else
                     nextShadow = true
+                else
+                    nextShadow = false
                 end
                 nextAnchor = (GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6) and GwCharacterMenu.petMenu or GwCharacterMenu.gearMenu
                 addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end, true)
