@@ -16,7 +16,7 @@ local BAG_WINDOW_SIZE = 480
 
 local IterationCount, totalPrice = 500, 0
 local SellJunkFrame = CreateFrame("FRAME")
-local SellJunkTicker, mBagID, mBagSlot
+local SellJunkTicker, SellJunkTickerIterations, mBagID, mBagSlot
 
 -- automaticly vendor junk
 local function StopSelling()
@@ -36,7 +36,7 @@ local function sellJunk()
             local info = C_Container.GetContainerItemInfo(BagID, slotID)
             local itemLink = info and info.hyperlink
             if itemLink and not info.hasNoValue then
-                local _, _, rarity, _, _, _, _, _, _, _, _, classID, _, bindType = GetItemInfo(itemLink)
+                local _, _, rarity, _, _, _, _, _, _, _, ItemPrice, classID, _, bindType = GetItemInfo(itemLink)
                 if rarity and rarity == 0
                 and (classID ~= 12 or bindType ~= 4) then
                     if MerchantFrame:IsShown() then
@@ -44,7 +44,9 @@ local function sellJunk()
                         -- If merchant frame is open, vendor the item
                         C_Container.UseContainerItem(BagID, slotID)
                         -- Perform actions on first iteration
-                        if SellJunkTicker._remainingIterations == IterationCount then
+                        if SellJunkTickerIterations == IterationCount then
+                            -- Calculate total price
+                            totalPrice = totalPrice + (ItemPrice * info.stackCount)
                             -- Store first sold bag slot for analysis
                             if counter == 1 then
                                 mBagID, mBagSlot = BagID, slotID
@@ -61,12 +63,14 @@ local function sellJunk()
     end
 
     -- Stop selling if no items were sold for this iteration or iteration limit was reached
-    if counter == 0 or SellJunkTicker and SellJunkTicker._remainingIterations == 1 then
+    if counter == 0 or SellJunkTicker and SellJunkTickerIterations == 1 then
         StopSelling() 
         if totalPrice > 0 then 
             DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["Sold Junk for: %s"]:format(FormatMoneyForChat(totalPrice)))
         end
     end
+
+    SellJunkTickerIterations = SellJunkTickerIterations - 1
 end
 
 local function SellJunkFrame_OnEvent(self, event)
@@ -78,6 +82,7 @@ local function SellJunkFrame_OnEvent(self, event)
         -- Cancel existing ticker if present
         if SellJunkTicker then SellJunkTicker:Cancel() end
         -- Sell grey items using ticker (ends when all grey items are sold or iteration count reached)
+        SellJunkTickerIterations = IterationCount
         SellJunkTicker = C_Timer.NewTicker(0.2, sellJunk, IterationCount)
         self:RegisterEvent("ITEM_LOCKED")
         self:RegisterEvent("ITEM_UNLOCKED")
