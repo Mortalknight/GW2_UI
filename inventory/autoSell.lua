@@ -56,15 +56,17 @@ local function sellJunk()
                 end
 
                 -- 10.0.5
-                local _, sourceID = C_TransmogCollection.GetItemInfo(itemID)
-                if sourceID then
-                    local _, _, _, _, isCollected = C_TransmogCollection.GetAppearanceSourceInfo(sourceID)
-                    local _, canCollect = C_TransmogCollection.PlayerCanCollectSource(sourceID)
-                    if not isCollected then
-                        -- Item is not collected at all
-                        if canCollect then
-                            -- Gear is designed for my character and exclude gear designed for my character is checked so do not sell
-                            rarity = 20
+                if itemID then
+                    local _, sourceID = C_TransmogCollection.GetItemInfo(itemID)
+                    if sourceID then
+                        local _, _, _, _, isCollected = C_TransmogCollection.GetAppearanceSourceInfo(sourceID)
+                        local _, canCollect = C_TransmogCollection.PlayerCanCollectSource(sourceID)
+                        if not isCollected then
+                            -- Item is not collected at all
+                            if canCollect then
+                                -- Gear is designed for my character and exclude gear designed for my character is checked so do not sell
+                                rarity = 20
+                            end
                         end
                     end
                 end
