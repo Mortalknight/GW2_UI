@@ -145,7 +145,7 @@ local function  resetSearchables()
     matchingOptionFrames = {}
 end
 
-local function switchCat(self,basePanel, panelFrame)
+local function switchCat(self, basePanel, panelFrame)
 
   local settings_cat = GW.getSettingsCat()
   resetSearchables()
@@ -383,6 +383,7 @@ local function settingMenuToggle(toggle)
     else
         GwSettingsMenuSearchable:Hide()
     end
+    GwSettingsSearchResultPanel:Hide()
 end
 GW.settingMenuToggle = settingMenuToggle
 
