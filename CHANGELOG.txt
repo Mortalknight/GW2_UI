@@ -1,3 +1,8 @@
+1.8.2-Wrath
+    - Fixes for 3.4.1
+    - Update Ulduar Raid debuffs
+    - Added chat editbox char counter
+
 1.8.1-Wrath
     - Fixes for 3.4.1
 
