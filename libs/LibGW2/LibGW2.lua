@@ -121,7 +121,7 @@ do
         end
     end
 
-    local function UpdateDragonRidingState(event)
+    local function UpdateDragonRidingState(isLogin, useDelay)
         if IsMounted() then
             local dragonridingSpellIds = C_MountJournal.GetCollectedDragonridingMounts()
             lib.isDragonRiding = false
@@ -135,16 +135,26 @@ do
         else
             lib.isDragonRiding = false
         end
-        lib.callbacks:Fire("GW2_PLAYER_DRAGONRIDING_STATE_CHANGE", lib.isDragonRiding, event == "PLAYER_ENTERING_WORLD")
+        if useDelay then
+            C_Timer.After(1, function()
+                UpdateDragonRidingState(true)
+            end)
+        else
+            lib.callbacks:Fire("GW2_PLAYER_DRAGONRIDING_STATE_CHANGE", lib.isDragonRiding, isLogin)
+        end
     end
 
-    local function HandleEvents(_, event)
+    local function HandleEvents(_, event, ...)
         if event == "CRITERIA_UPDATE" or event == "PLAYER_STOPPED_MOVING" or event == "PLAYER_CONTROL_GAINED" then
-            CoordsWatcherStop(event)
+            CoordsWatcherStop()
         elseif event == "PLAYER_STARTED_MOVING" or event == "PLAYER_CONTROL_LOST" then
             CoordsWatcherStart()
-        elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" or event == "PLAYER_ENTERING_WORLD" then
-            UpdateDragonRidingState(event)
+        elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" then
+            UpdateDragonRidingState()
+        elseif event == "PLAYER_ENTERING_WORLD" then
+            local isLogin, isReload = ...do
+                UpdateDragonRidingState(isLogin or isReload, true)
+            end
         else
             MapInfoUpdateMapId()
             lib.locationData.instanceMapID = select(8, GetInstanceInfo())
