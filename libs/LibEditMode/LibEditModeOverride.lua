@@ -4,7 +4,9 @@
 
 -- Copyright 2022 plusmouse. Licensed under terms found in LICENSE file.
 
-local lib = LibStub:NewLibrary("LibEditModeOverride-1.0", 8)
+local lib = LibStub:NewLibrary("LibEditModeOverride-1.0", 9)
+
+if not lib then return end
 
 local pointGetter = CreateFrame("Frame", nil, UIParent)
 
@@ -93,8 +95,14 @@ function lib:SetFrameSetting(frame, setting, value)
   if restrictions then
     local min, max
     if restrictions.type == Enum.EditModeSettingDisplayType.Dropdown then
-      min = 0
-      max = #restrictions.options - 1
+      for _, option in pairs(restrictions.options) do
+        if min == nil or min > option.value then
+          min = option.value
+        end
+        if max == nil or max < option.value then
+          max = option.value
+        end
+      end
     elseif restrictions.type == Enum.EditModeSettingDisplayType.Checkbox then
       min = 0
       max = 1
@@ -216,6 +224,7 @@ function lib:AddLayout(layoutType, layoutName)
   end
 
   table.insert(layoutInfo.layouts, newLayoutIndex, newLayout)
+  print(newLayoutIndex)
   C_EditMode.OnLayoutAdded(newLayoutIndex)
   C_EditMode.SetActiveLayout(newLayoutIndex)
 end
