@@ -149,8 +149,24 @@ local function changeVertexColorActionbars(btn)
             btn.icon:SetVertexColor(out_R, out_G, out_B)
         end
     end
+
 end
 AFP("changeVertexColorActionbars", changeVertexColorActionbars)
+
+local function UpdateActionbarBorders(btn)
+    local texture = GetActionTexture(btn.action)
+    if texture then
+        btn.gwBackdrop.border1:SetAlpha(1)
+        btn.gwBackdrop.border2:SetAlpha(1)
+        btn.gwBackdrop.border3:SetAlpha(1)
+        btn.gwBackdrop.border4:SetAlpha(1)
+    else
+        btn.gwBackdrop.border1:SetAlpha(settings.actiobarBackdropAlpha)
+        btn.gwBackdrop.border2:SetAlpha(settings.actiobarBackdropAlpha)
+        btn.gwBackdrop.border3:SetAlpha(settings.actiobarBackdropAlpha)
+        btn.gwBackdrop.border4:SetAlpha(settings.actiobarBackdropAlpha)
+    end
+end
 
 local function changeFlyoutStyle(self)
     if not self.FlyoutArrow then
@@ -607,6 +623,7 @@ local function updateMainBar()
             updateHotkey(btn)
             hooksecurefunc(btn, "UpdateUsable", changeVertexColorActionbars)
             hooksecurefunc(btn, "UpdateFlyout", changeFlyoutStyle)
+            hooksecurefunc(btn, "Update", UpdateActionbarBorders)
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
@@ -747,6 +764,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 
             hooksecurefunc(btn, "UpdateUsable", changeVertexColorActionbars)
             hooksecurefunc(btn, "UpdateFlyout", changeFlyoutStyle)
+            hooksecurefunc(btn, "Update", UpdateActionbarBorders)
 
             btn:ClearAllPoints()
             btn:SetPoint("TOPLEFT", fmMultibar, "TOPLEFT", btn_padding, -btn_padding_y)
