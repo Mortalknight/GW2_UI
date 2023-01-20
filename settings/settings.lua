@@ -1115,12 +1115,14 @@ local function LoadSettings()
           lerp = GW.lerp
       end
 
-      AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW", 0, 1, GetTime(), 0.4,
+      AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
       function()
         local p = animations["SETTINGSFRAME_PANEL_ONSHOW"].progress
         sWindow:SetAlpha(p)
-        bgMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT",lerp(-64,sWindow.background:GetWidth() + 200,p) , 0)
-      end,1)
+        bgMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT",lerp(-64,sWindow.background:GetWidth(), p) , 0)
+      end,1,function()
+        bgMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT",sWindow.background:GetWidth() + 200, 0)
+      end)
     end)
 
     GW.LoadOverviewPanel(sWindow)

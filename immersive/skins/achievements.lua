@@ -1577,12 +1577,14 @@ local function skinAchevement()
     AchievementFrame.backgroundMask = bgMask
 
     AchievementFrame:HookScript("OnShow",function()
-      AddToAnimation("ACHIVEMENTFRAME_PANEL_ONSHOW", 0, 1, GetTime(), 0.4,
+      AddToAnimation("ACHIVEMENTFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
       function()
         local p = animations["ACHIVEMENTFRAME_PANEL_ONSHOW"].progress
         AchievementFrame:SetAlpha(p)
-        bgMask:SetPoint("BOTTOMRIGHT", AchievementFrame.tex, "BOTTOMLEFT",lerp(-64,AchievementFrame.tex:GetWidth() + 200,p) , 0)
-      end,1)
+        bgMask:SetPoint("BOTTOMRIGHT", AchievementFrame.tex, "BOTTOMLEFT",lerp(-64,AchievementFrame.tex:GetWidth(),p) , 0)
+      end,1,function()
+        bgMask:SetPoint("BOTTOMRIGHT", AchievementFrame.tex, "BOTTOMLEFT",AchievementFrame.tex:GetWidth() + 200 , 0)
+      end)
     end)
 end
 

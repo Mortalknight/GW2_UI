@@ -382,3 +382,5 @@ GW.MagePortals = {
     [344597] = true,	-- Oribos
     [395289] = true,	-- DF
 }
+
+GW.WINDOW_FADE_DURATION = 0.2
