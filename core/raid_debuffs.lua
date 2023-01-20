@@ -11,22 +11,22 @@ end
 -------------------------------------------------
 -------------------- Dungeons -------------------
 -------------------------------------------------
-	-- Ahn'kahet: The Old Kingdom
-	-- Azjol-Nerub
-	-- Drak'Tharon Keep
-	-- Gundrak
-	-- Halls of Lightning
-	-- Halls of Reflection
-	-- Halls of Stone
-	-- Pit of Saron
-	-- The Culling of Stratholme
-	-- The Forge of Souls
-	-- The Nexus
-	-- The Oculus
-	-- The Violet Hold
-	-- Trial of the Champion
-	-- Utgarde Keep
-	-- Utgarde Pinnacle
+    -- Ahn'kahet: The Old Kingdom
+    -- Azjol-Nerub
+    -- Drak'Tharon Keep
+    -- Gundrak
+    -- Halls of Lightning
+    -- Halls of Reflection
+    -- Halls of Stone
+    -- Pit of Saron
+    -- The Culling of Stratholme
+    -- The Forge of Souls
+    -- The Nexus
+    -- The Oculus
+    -- The Violet Hold
+    -- Trial of the Champion
+    -- Utgarde Keep
+    -- Utgarde Pinnacle
 -------------------------------------------------
 -------------------- Phase 1 --------------------
 -------------------------------------------------
@@ -104,19 +104,79 @@ end
 -------------------------------------------------
 -- Ulduar
     -- Flame Leviathan
+    SetDefaultOnTheFly(62376) -- Battering Ram
+    SetDefaultOnTheFly(62374) -- Pursued
     -- Ignis the Furnace Master
+    SetDefaultOnTheFly(62717) -- Slag Pot
     -- Razorscale
+    SetDefaultOnTheFly(64016) -- Flame Buffet
+    SetDefaultOnTheFly(64771) -- Fuse Armor
+    SetDefaultOnTheFly(64757) -- Stormstrike
     -- XT-002 Deconstructor
-    -- The Assembly of Iron
+    SetDefaultOnTheFly(63018) -- Searing Light
+    SetDefaultOnTheFly(63024) -- Gravity Bomb
+    -- Assembly of Iron
+    SetDefaultOnTheFly(61886) -- Lightning Tendrils
+    SetDefaultOnTheFly(61878) -- Overload
+    SetDefaultOnTheFly(62269) -- Rune of Death
+    SetDefaultOnTheFly(61903) -- Fusion Punch
+    SetDefaultOnTheFly(61888) -- Overwhelming Power
+    SetDefaultOnTheFly(44008) -- Static Disruption
     -- Kologarn
+    SetDefaultOnTheFly(63355) -- Crunch Armor
+    SetDefaultOnTheFly(64290) -- Stone Grip
+    SetDefaultOnTheFly(63978) -- Stone Nova
     -- Auriaya
-    -- Hodir
-    -- Thorim
+    SetDefaultOnTheFly(64669) -- Feral Pounce
+    SetDefaultOnTheFly(64496) -- Feral Rush
+    SetDefaultOnTheFly(64396) -- Guardian Swarm
+    SetDefaultOnTheFly(64667) -- Rip Flesh
+    SetDefaultOnTheFly(64666) -- Savage Pounce
+    SetDefaultOnTheFly(64389) -- Sentinel Blast
     -- Freya
+    SetDefaultOnTheFly(62243) -- Unstable Sun Beam
+    SetDefaultOnTheFly(62310) -- Impale
+    SetDefaultOnTheFly(62438) -- Iron Roots
+    SetDefaultOnTheFly(62354) -- Broken Bones
+    SetDefaultOnTheFly(62283) -- Iron Roots
+    SetDefaultOnTheFly(63571) -- Nature's Fury
+    -- Hodir
+    SetDefaultOnTheFly(62039) -- Biting Cold
+    SetDefaultOnTheFly(61969) -- Flash Freeze
+    SetDefaultOnTheFly(62469) -- Freeze
     -- Mimiron
+    SetDefaultOnTheFly(63666) -- Napalm Shell
+    SetDefaultOnTheFly(64533) -- Heat Wave
+    SetDefaultOnTheFly(64616) -- Deafening Siren
+    SetDefaultOnTheFly(64668) -- Magnetic Field
+    -- Thorim
+    SetDefaultOnTheFly(62415) -- Acid Breath
+    SetDefaultOnTheFly(62318) -- Barbed Shot
+    SetDefaultOnTheFly(62576) -- Blizzard
+    SetDefaultOnTheFly(32323) -- Charge
+    SetDefaultOnTheFly(64971) -- Electro Shock
+    SetDefaultOnTheFly(62605) -- Frost Nova
+    SetDefaultOnTheFly(64970) -- Fuse Lightning
+    SetDefaultOnTheFly(62418) -- Impale
+    SetDefaultOnTheFly(35054) -- Mortal Strike
+    SetDefaultOnTheFly(62420) -- Shield Smash
+    SetDefaultOnTheFly(62042) -- Stormhammer
+    SetDefaultOnTheFly(57807) -- Sunder Armor
+    SetDefaultOnTheFly(62417) -- Sweep
+    SetDefaultOnTheFly(62130) -- Unbalancing Strike
+    SetDefaultOnTheFly(64151) -- Whirling Trip
+    SetDefaultOnTheFly(40652) -- Wing Clip
     -- General Vezax
+    SetDefaultOnTheFly(63276) -- Mark of the Faceless
+    SetDefaultOnTheFly(63420) -- Profound Darkness
     -- Yogg-Saron
-    -- Algalon the Observer
+    SetDefaultOnTheFly(63802) -- Brain Link
+    SetDefaultOnTheFly(64157) -- Curse of Doom
+    SetDefaultOnTheFly(63830) -- Malady of the Mind
+    SetDefaultOnTheFly(63138) -- Sara's Fervor
+    SetDefaultOnTheFly(63134) -- Sara's Blessing
+    SetDefaultOnTheFly(64125) -- Squeeze
+    SetDefaultOnTheFly(64412) -- Phase Punch
 -------------------------------------------------
 -------------------- Phase 3 --------------------
 -------------------------------------------------
