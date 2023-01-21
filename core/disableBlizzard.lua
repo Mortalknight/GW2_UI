@@ -180,6 +180,10 @@ local function DisableBlizzardFrames()
     if ourCastBar then
         HandleFrame(PlayerCastingBarFrame)
         HandleFrame(PetCastingBarFrame)
+
+        -- disbale blizzard castingbar mover
+        PlayerCastingBarFrame:HookScript("OnShow", function() PlayerCastingBarFrame:Hide() end)
+        PlayerCastingBarFrame:KillEditMode()
     end
 
     if ourInventory then

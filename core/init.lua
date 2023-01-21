@@ -89,7 +89,7 @@ do
     AddLib("LibBase64", "LibBase64-1.0_GW2", true)
     AddLib("AceLocale", "AceLocale-3.0", true)
     AddLib("CustomGlows", "LibCustomGlow-1.0", true)
-    AddLib("LEMO", "LibEditModeOverride-1.0-GW2", true)
+    AddLib("LEMO", "LibEditModeOverride-1.0", true)
     AddLib("Dispel", "LibDispel-1.0-GW", true)
     AddLib("GW2Lib", "LibGW2-1.0", true)
 end
