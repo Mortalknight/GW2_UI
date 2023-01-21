@@ -218,6 +218,7 @@ local function encounterJournalSkin()
 
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
 
+    GW.HandleTabs(EncounterJournalMonthlyActivitiesTab, true)
     GW.HandleTabs(EncounterJournalSuggestTab, true)
     GW.HandleTabs(EncounterJournalDungeonTab, true)
     GW.HandleTabs(EncounterJournalRaidTab, true)
