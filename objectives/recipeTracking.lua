@@ -5,7 +5,8 @@ local CreateObjectiveNormal = GW.CreateObjectiveNormal
 local CreateTrackerObject = GW.CreateTrackerObject
 local setBlockColor = GW.setBlockColor
 
-local collectedItemIDs = {}
+local itemIDs, currencyIDs = {}, {}
+local IsRecrafting = true
 
 local function CreateRecipeDropdown(block)
     return {
@@ -149,11 +150,10 @@ local function updateRecipeObjectives(block, recipeSchematic)
     block:SetHeight(block.height)
 end
 
-local function updateRecipeLayout(self)
-    local numRecipes = #C_TradeSkillUI.GetRecipesTracked()
+local function updateRecipeLayout(self, isRecraft)
+    local numRecipes = #C_TradeSkillUI.GetRecipesTracked(isRecraft)
     local savedHeight = 1
     local shownIndex = 1
-    local isRecraft = false
 
     self.header:Hide()
 
@@ -164,7 +164,7 @@ local function updateRecipeLayout(self)
     end
 
     for i = 1, numRecipes do
-        local recipeID = C_TradeSkillUI.GetRecipesTracked()[i]
+        local recipeID = C_TradeSkillUI.GetRecipesTracked(isRecraft)[i]
         local recipeSchematic = C_TradeSkillUI.GetRecipeSchematic(recipeID, isRecraft)
 
         self.header:Show()
@@ -206,19 +206,28 @@ local function StartUpdate(self)
     end
 
     self.continuableContainer = ContinuableContainer:Create()
-    for _, recipeID in ipairs(C_TradeSkillUI.GetRecipesTracked()) do
-        local itemIDs = Professions.CreateRecipeItemIDsForAllBasicReagents(recipeID)
-        for _, item in ipairs(ItemUtil.TransformItemIDsToItems(itemIDs)) do
-            self.continuableContainer:AddContinuable(item)
-        end
-    end
+    local function LoadItems(recipes)
+		for _, recipeID in ipairs(recipes) do
+			local reagents = Professions.CreateRecipeReagentsForAllBasicReagents(recipeID)
+			for reagentIndex, reagent in ipairs(reagents) do
+				if reagent.itemID then
+					self.continuableContainer:AddContinuable(Item:CreateFromItemID(reagent.itemID))
+				end
+			end
+		end
+	end
+
+    -- Load regular and recraft recipe items.
+	LoadItems(C_TradeSkillUI.GetRecipesTracked(IsRecrafting))
+	LoadItems(C_TradeSkillUI.GetRecipesTracked(not IsRecrafting))
 
     -- We can continue to layout each of the blocks if every item is loaded, otherwise
     -- we need to wait until the items load, then notify the objective tracker to try again.
     local allLoaded = true
     local function OnItemsLoaded()
         if allLoaded then
-            updateRecipeLayout(self)
+            updateRecipeLayout(self, IsRecrafting)
+            updateRecipeLayout(self, not IsRecrafting)
         end
     end
     -- The assignment of allLoaded is only meaningful if false. If and when the callback
@@ -228,32 +237,53 @@ local function StartUpdate(self)
 end
 
 local function GetAllBasicReagentItemIDs()
-    local itemIDs = {}
-    for _, recipeID in ipairs(C_TradeSkillUI.GetRecipesTracked()) do
-        for _, itemID in ipairs(Professions.CreateRecipeItemIDsForAllBasicReagents(recipeID)) do
-            table.insert(itemIDs, itemID)
+    local currencyIDsTemp = {}
+    local itemIDsTemp = {}
+    local function AddIDs(isRecraft)
+        for _, recipeID in ipairs(C_TradeSkillUI.GetRecipesTracked(isRecraft)) do
+            for _, reagent in ipairs(Professions.CreateRecipeReagentsForAllBasicReagents(recipeID)) do
+                if reagent.itemID then
+                    table.insert(itemIDsTemp, reagent.itemID)
+                elseif reagent.currencyID then
+                    table.insert(currencyIDsTemp, reagent.currencyID)
+                end
+            end
         end
     end
-    return itemIDs
+
+    AddIDs(IsRecrafting)
+    AddIDs(not IsRecrafting)
+    return itemIDsTemp, currencyIDsTemp
+end
+
+local function UntrackRecipeIfUnlearned(isRecraft)
+    for _, recipeID in ipairs(C_TradeSkillUI.GetRecipesTracked(isRecraft)) do
+        if not C_TradeSkillUI.IsRecipeProfessionLearned(recipeID) then
+            local track = false;
+            C_TradeSkillUI.SetRecipeTracked(recipeID, track, isRecraft)
+        end
+    end
 end
 
 local function OnEvent(self, event, ...)
     if event == "TRACKED_RECIPE_UPDATE" then
-        collectedItemIDs = GetAllBasicReagentItemIDs()
+        itemIDs, currencyIDs = GetAllBasicReagentItemIDs()
         StartUpdate(self)
     elseif event == "ITEM_COUNT_CHANGED" then
         local itemID = ...
-        if tContains(collectedItemIDs, itemID) then
+        if tContains(itemIDs, itemID) then
+            StartUpdate(self)
+        end
+    elseif event == "CURRENCY_DISPLAY_UPDATE" then
+        local currencyID = ...
+        if tContains(currencyIDs, currencyID) then
             StartUpdate(self)
         end
     elseif event == "UPDATE_PENDING_MAIL" then
         StartUpdate(self)
     elseif event == "SKILL_LINES_CHANGED" then
-        for _, recipeID in ipairs(C_TradeSkillUI.GetRecipesTracked()) do
-            if not C_TradeSkillUI.IsRecipeProfessionLearned(recipeID) then
-                C_TradeSkillUI.SetRecipeTracked(recipeID, false)
-            end
-        end
+        UntrackRecipeIfUnlearned(IsRecrafting)
+		UntrackRecipeIfUnlearned(not IsRecrafting)
     end
 end
 
@@ -265,16 +295,18 @@ local function CollapseHeader(self, forceCollapse, forceOpen)
         self.collapsed = false
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
-    updateRecipeLayout(GwQuesttrackerContainerRecipe)
+    updateRecipeLayout(GwQuesttrackerContainerRecipe, IsRecrafting)
+    updateRecipeLayout(GwQuesttrackerContainerRecipe, not IsRecrafting)
 end
 GW.CollapseRecipeHeader = CollapseHeader
 
 local function LoadRecipeTracking(self)
-    collectedItemIDs = GetAllBasicReagentItemIDs()
+    itemIDs, currencyIDs = GetAllBasicReagentItemIDs()
 
     self:RegisterEvent("TRACKED_RECIPE_UPDATE")
     self:RegisterEvent("ITEM_COUNT_CHANGED")
     self:RegisterEvent("SKILL_LINES_CHANGED")
+    self:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
     self:RegisterEvent("UPDATE_PENDING_MAIL")
     self:SetScript("OnEvent", OnEvent)
 
@@ -296,6 +328,7 @@ local function LoadRecipeTracking(self)
         TRACKER_TYPE_COLOR.RECIPE.b
     )
 
-    updateRecipeLayout(self)
+    updateRecipeLayout(self, IsRecrafting)
+    updateRecipeLayout(self, not IsRecrafting)
 end
 GW.LoadRecipeTracking = LoadRecipeTracking
