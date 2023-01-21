@@ -643,6 +643,8 @@ GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
 local function LoadInventory()
     UpdateSettings()
 
+    BagsBar:KillEditMode()
+
     item_size = settings.itemSize
 
     -- anytime a ContainerFrame has its anchors set, we re-hide it

@@ -720,6 +720,8 @@ local function LoadMicroMenu()
         return
     end
 
+    MicroMenu:KillEditMode()
+
     -- create our micro button container frame
     local mbf = CreateFrame("Frame", "Gw2MicroBarFrame", UIParent, "GwMicroButtonFrameTmpl")
     local postDragFunction = function(mbf)
