@@ -96,7 +96,7 @@ local actionBar_OnUpdate
 local function hideBlizzardsActionbars()
     for _, v in pairs(GW_BLIZZARD_HIDE_FRAMES) do
         if v and v.Hide ~= nil then
-            v:Hide()
+            v:SetAlpha(0)
             if v.UnregisterAllEvents ~= nil then
                 v:UnregisterAllEvents()
             end
