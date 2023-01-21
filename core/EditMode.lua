@@ -133,6 +133,7 @@ local function HandleBlizzarEditMode()
         LEMO:ApplyChanges()
         LEMO:SetActiveLayout("GW2_Layout")
         LEMO:ApplyChanges()
+        LEMO:LoadLayouts()
     end
 
     local dialog = EditModeUnsavedChangesDialog
