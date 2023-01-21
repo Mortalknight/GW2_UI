@@ -4,7 +4,7 @@
 
 -- Copyright 2022 plusmouse. Licensed under terms found in LICENSE file.
 
-local lib = LibStub:NewLibrary("LibEditModeOverride-1.0", 9)
+local lib = LibStub:NewLibrary("LibEditModeOverride-1.0-GW2", 9)
 
 if not lib then return end
 
@@ -193,8 +193,10 @@ function lib:ApplyChanges()
     HideUIPanel(AddonList)
   end
 
-  ShowUIPanel(EditModeManagerFrame)
-  HideUIPanel(EditModeManagerFrame)
+  C_Timer.After(1, function()
+    ShowUIPanel(EditModeManagerFrame)
+    HideUIPanel(EditModeManagerFrame)
+  end)
 end
 
 function lib:DoesLayoutExist(layoutName)
@@ -224,8 +226,7 @@ function lib:AddLayout(layoutType, layoutName)
   end
 
   table.insert(layoutInfo.layouts, newLayoutIndex, newLayout)
-  print(newLayoutIndex)
-  C_EditMode.OnLayoutAdded(newLayoutIndex)
+  C_EditMode.OnLayoutAdded(newLayoutIndex, true)
   C_EditMode.SetActiveLayout(newLayoutIndex)
 end
 

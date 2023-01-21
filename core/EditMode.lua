@@ -131,6 +131,8 @@ local function HandleBlizzarEditMode()
         LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainMenuBar, "TOP", -110, 40)
 
         LEMO:ApplyChanges()
+        LEMO:SetActiveLayout("GW2_Layout")
+        LEMO:ApplyChanges()
     end
 
     local dialog = EditModeUnsavedChangesDialog
