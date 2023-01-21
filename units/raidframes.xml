@@ -65,7 +65,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK">
-                <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusba">
+                <Texture file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
                     <Color r="0" g="0" b="0" a="1"></Color>
                     <Anchors>
                         <Anchor point="TOPLEFT" x="1" y="-1"></Anchor>
