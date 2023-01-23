@@ -95,22 +95,13 @@ local function LoadHudPanel(sWindow)
         p.scroll.scrollchild,
         L["Minimap details"],
         L["Always show Minimap details."],
-        "MINIMAP_HOVER",
+        "MINIMAP_ALWAYS_SHOW_HOVER_DETAILS",
         GW.SetMinimapHover,
-        {"NONE", "ALL", "CLOCK", "ZONE", "COORDS", "CLOCKZONE", "CLOCKCOORDS", "ZONECOORDS"},
-        {
-            NONE_KEY,
-            ALL,
-            TIMEMANAGER_TITLE,
-            ZONE,
-            L["Coordinates"],
-            TIMEMANAGER_TITLE .. " + " .. ZONE,
-            TIMEMANAGER_TITLE .. " + " .. L["Coordinates"],
-            ZONE .. " + " .. L["Coordinates"]
-        },
+        {"CLOCK", "ZONE", "COORDS"},
+        {TIMEMANAGER_TITLE, ZONE, L["Coordinates"]},
         nil,
         {["MINIMAP_ENABLED"] = true},
-        nil,
+        true,
         "Minimap"
     )
     addOptionSlider(

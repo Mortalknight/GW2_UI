@@ -12,43 +12,26 @@ MAP_FRAMES_HIDE[4] = MiniMapTracking
 
 local M = CreateFrame("Frame")
 
-local MAP_FRAMES_HOVER = {}
+local minimapDetails = {
+    ["ZONE"] = "GwMapGradient",
+    ["CLOCK"] = "GwMapTime",
+    ["COORDS"] = "GwMapCoords"
+}
+
+local settings = {
+    hoverDetailsStay = {},
+}
+
+local function UpdateSettings()
+    settings.hoverDetailsStay = GetSetting("MINIMAP_ALWAYS_SHOW_HOVER_DETAILS")
+end
+GW.UpdateMinimapSettings = UpdateSettings
 
 local function SetMinimapHover()
-    local hoverSetting = GetSetting("MINIMAP_HOVER")
-
-    wipe(MAP_FRAMES_HOVER)
-
-    if hoverSetting == "NONE" then
-        MAP_FRAMES_HOVER[1] = GwMapGradient
-        MAP_FRAMES_HOVER[2] = Minimap.location
-        MAP_FRAMES_HOVER[3] = GwMapTime
-        MAP_FRAMES_HOVER[4] = GwMapCoords
-    elseif hoverSetting == "CLOCK" then
-        MAP_FRAMES_HOVER[1] = GwMapGradient
-        MAP_FRAMES_HOVER[2] = Minimap.location
-        MAP_FRAMES_HOVER[3] = GwMapCoords
-    elseif hoverSetting == "ZONE" then
-        MAP_FRAMES_HOVER[1] = GwMapTime
-        MAP_FRAMES_HOVER[2] = GwMapCoords
-    elseif hoverSetting == "COORDS" then
-        MAP_FRAMES_HOVER[1] = GwMapGradient
-        MAP_FRAMES_HOVER[2] = Minimap.location
-        MAP_FRAMES_HOVER[3] = GwMapTime
-    elseif hoverSetting == "CLOCKZONE" then
-        MAP_FRAMES_HOVER[1] = GwMapCoords
-    elseif hoverSetting == "CLOCKCOORDS" then
-        MAP_FRAMES_HOVER[1] = GwMapGradient
-        MAP_FRAMES_HOVER[2] = Minimap.location
-    elseif hoverSetting == "ZONECOORDS" then
-        MAP_FRAMES_HOVER[1] = GwMapTime
-    end
-
     -- show all and hide not needes
-    GwMapGradient:SetAlpha(1)
-    Minimap.location:SetAlpha(1)
-    GwMapTime:SetAlpha(1)
-    GwMapCoords:SetAlpha(1)
+    for _, v in pairs(minimapDetails) do
+        if v and _G[v] then _G[v]:SetAlpha(1) end
+    end
 
     GW.hoverMiniMapOut()
 end
@@ -104,29 +87,19 @@ local function MapCoordsMiniMap_OnClick(self, button)
 end
 GW.AddForProfiling("map", "MapCoordsMiniMap_OnClick", MapCoordsMiniMap_OnClick)
 
-local function hoverMiniMap()
-    for _, v in ipairs(MAP_FRAMES_HOVER) do
-        if v then
-            UIFrameFadeIn(v, 0.2, v:GetAlpha(), 1)
-            if v == GwMapCoords then
-                v.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(v) end)
-            end
+local function hoverMiniMapIn()
+    for k, v in pairs(settings.hoverDetailsStay) do
+        if v == false and minimapDetails[k] and _G[minimapDetails[k]] then
+            UIFrameFadeIn(_G[minimapDetails[k]], 0.2, _G[minimapDetails[k]]:GetAlpha(), 1)
         end
     end
 end
-GW.AddForProfiling("map", "hoverMiniMap", hoverMiniMap)
+GW.AddForProfiling("map", "hoverMiniMapIn", hoverMiniMapIn)
 
 local function hoverMiniMapOut()
-    for _, v in ipairs(MAP_FRAMES_HOVER) do
-        if v then
-            UIFrameFadeOut(v, 0.2, v:GetAlpha(), 0)
-            if v == GwMapCoords then
-                v:SetScript("OnUpdate", nil)
-                if v.CoordsTimer then
-                    v.CoordsTimer:Cancel()
-                    v.CoordsTimer = nil
-                end
-            end
+    for k, v in pairs(settings.hoverDetailsStay) do
+        if v == false and minimapDetails[k] and _G[minimapDetails[k]] then
+            UIFrameFadeOut(_G[minimapDetails[k]], 0.2, _G[minimapDetails[k]]:GetAlpha(), 0)
         end
     end
 end
@@ -219,11 +192,18 @@ local function ToogleMinimapCoorsLable()
         GwMapCoords:SetScript("OnClick", MapCoordsMiniMap_OnClick)
         GwMapCoords:SetScript("OnLeave", GameTooltip_Hide)
 
-        -- only set the coords updater here if they are showen always
-        local hoverSetting = GetSetting("MINIMAP_HOVER")
-        if hoverSetting == "COORDS" or hoverSetting == "CLOCKCOORDS" or hoverSetting == "ZONECOORDS" or hoverSetting == "ALL" then
-            GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
-        end
+        hooksecurefunc(GwMapCoords, "SetAlpha", function(self, a)
+            if a == 1 then
+                if not self.CoordsTimer then
+                    self.CoordsTimer = C_Timer.NewTicker(0.3, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
+                end
+            elseif a == 0 then
+                if self.CoordsTimer then
+                    self.CoordsTimer:Cancel()
+                    self.CoordsTimer = nil
+                end
+            end
+        end)
     else
         GwMapCoords:Hide()
         GwMapCoords:SetScript("OnEnter", nil)
@@ -306,8 +286,8 @@ local function GetLocTextColor()
 end
 
 local function Update_ZoneText()
-    Minimap.location:SetText(GetMinimapZoneText())
-    Minimap.location:SetTextColor(GetLocTextColor())
+    GwMapGradient.location:SetText(GetMinimapZoneText())
+    GwMapGradient.location:SetTextColor(GetLocTextColor())
 end
 
 local function CreateMinimapTrackingDropdown()
@@ -396,6 +376,8 @@ local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = GetMinimapShape
 
+    GW.UpdateMinimapSettings()
+
     Minimap:SetMaskTexture(130937)
     Minimap:SetScale(1.2)
 
@@ -453,7 +435,7 @@ local function LoadMinimap()
     Minimap:SetScript("OnMouseDown", Minimap_OnMouseDown)
     Minimap:SetScript("OnMouseUp", GW.NoOp)
 
-    Minimap:HookScript("OnEnter", hoverMiniMap)
+    Minimap:HookScript("OnEnter", hoverMiniMapIn)
     Minimap:HookScript("OnLeave", hoverMiniMapOut)
 
     Minimap:HookScript("OnShow", minimap_OnShow)
@@ -463,13 +445,12 @@ local function LoadMinimap()
     TimeManagerClockButton:Kill()
     MinimapCluster.Tracking.Button:SetParent(GW.HiddenFrame)
 
-    Minimap.location = Minimap:CreateFontString(nil, "OVERLAY", "GW_Standard_Button_Font_Small")
-    Minimap.location:SetPoint("TOP", Minimap, "TOP", 0, -2)
-    Minimap.location:SetJustifyH("CENTER")
-    Minimap.location:SetJustifyV("MIDDLE")
-    Minimap.location:Hide()
-    Minimap.location:SetIgnoreParentScale(true)
-    Minimap.location:SetScale(1)
+    GwMapGradient.location = GwMapGradient:CreateFontString(nil, "OVERLAY", "GW_Standard_Button_Font_Small", 7)
+    GwMapGradient.location:SetPoint("TOP", Minimap, "TOP", 0, -2)
+    GwMapGradient.location:SetJustifyH("CENTER")
+    GwMapGradient.location:SetJustifyV("MIDDLE")
+    GwMapGradient.location:SetIgnoreParentScale(true)
+    GwMapGradient.location:SetScale(1)
 
     local killFrames = {
         MinimapBorder,
