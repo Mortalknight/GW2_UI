@@ -86,7 +86,7 @@ local function updateHealthData(self, anims)
     if anims then
         -- animate health transition
         local ag = anti.gwAnimGroup
-        ag:Stop()
+        ag:Finish()
         local _, _, _, _, y = anti:GetPoint()
         anti:ClearAllPoints()
         anti:SetPoint("CENTER", self.fill, "CENTER", hpx_off, y)
@@ -98,7 +98,7 @@ local function updateHealthData(self, anims)
 
         -- animate absorb under transition
         local ag2 = au.gwAnimGroup
-        ag2:Stop()
+        ag2:Finish()
         local _, _, _, _, y2 = au:GetPoint()
         au:ClearAllPoints()
         au:SetPoint("CENTER", self.fill, "CENTER", hpx_off, y2)
