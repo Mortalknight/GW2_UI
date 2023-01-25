@@ -91,7 +91,10 @@ local env = {
         -- data mining: https://wow.tools/dbc/?dbc=uiwidget&build=10.0.5.47621#page=1&colFilter[3]=exact%3A2087
         -- Waking Shores
         [4203] = 1,
-        [4317] = 2
+        [4317] = 2,
+        -- Thaldraszus
+        [4388] = 5,
+        [4398] = 6,
     }
 }
 
@@ -919,3 +922,101 @@ local function LoadDragonFlightWorldEvents()
     end
 end
 GW.LoadDragonFlightWorldEvents = LoadDragonFlightWorldEvents
+
+
+_G["SLASH_GWSLASH1"] = "/gw2"
+
+SlashCmdList["GWSLASH"] = function(msg)
+    if msg == "fnet forceUpdate" then
+        local map = C_Map.GetBestMapForUnit("player")
+        if not map then
+            return
+        end
+
+        local position = C_Map.GetPlayerMapPosition(map, "player")
+
+        if not position then
+            return
+        end
+
+        local lengthMap = {}
+
+        for i, netPos in ipairs(env.fishingNetPosition) do
+            if map == netPos.map then
+                local length = math.pow(position.x - netPos.x, 2) + math.pow(position.y - netPos.y, 2)
+                lengthMap[i] = length
+            end
+        end
+
+        local min
+        local netIndex = 0
+        for i, length in pairs(lengthMap) do
+            if not min or length < min then
+                min = length
+                netIndex = i
+            end
+        end
+
+        if not min or netIndex <= 0 then
+            return
+        end
+
+        local db = settings.iskaaranFishingNet.playerData
+
+        local namePlates = C_NamePlate.GetNamePlates(true)
+        if #namePlates > 0 then
+            for _, namePlate in ipairs(namePlates) do
+                if namePlate and namePlate.UnitFrame and namePlate.UnitFrame.WidgetContainer then
+                    local container = namePlate.UnitFrame.WidgetContainer
+                    if container.timerWidgets then
+                        for id, widget in pairs(container.timerWidgets) do
+                            if env.fishingNetWidgetIDToIndex[id] and env.fishingNetWidgetIDToIndex[id] == netIndex then
+                                if widget.Bar and widget.Bar.value then
+                                    db[netIndex] = {
+                                        time = GetServerTime() + widget.Bar.value,
+                                        duration = widget.Bar.range
+                                    }
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    if msg == "findNet" then
+        local map = C_Map.GetBestMapForUnit("player")
+        if not map then
+            return
+        end
+
+        local position = C_Map.GetPlayerMapPosition(map, "player")
+
+        if not position then
+            return
+        end
+
+        local namePlates = C_NamePlate.GetNamePlates(true)
+        if #namePlates > 0 then
+            for _, namePlate in ipairs(namePlates) do
+                if namePlate and namePlate.UnitFrame and namePlate.UnitFrame.WidgetContainer then
+                    local container = namePlate.UnitFrame.WidgetContainer
+                    if container.timerWidgets then
+                        for id, widget in pairs(container.timerWidgets) do
+                            if widget.Bar and widget.Bar.value then
+                                print("------------")
+                                print("mapID", map)
+                                print("mapName", C_Map.GetMapInfo(map).name)
+                                print("position", position.x, position.y)
+                                print("widgetID", id)
+                                print("timeLeft", widget.Bar.value, secondToTime(widget.Bar.value))
+                                print("------------")
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
