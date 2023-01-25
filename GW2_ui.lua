@@ -457,7 +457,7 @@ local function evAddonLoaded(_, addonName)
     GW.LoadSocketUISkin()
     GW.LoadSoulbindsSkin()
     GW.LoadWeeklyRewardsSkin()
-    GW.LoadStatusbarTest()
+    --GW.LoadStatusbarTest()
 end
 AFP("evAddonLoaded", evAddonLoaded)
 
