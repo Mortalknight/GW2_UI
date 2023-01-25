@@ -20,6 +20,8 @@ local GW_BLIZZARD_HIDE_FRAMES = {
     MainMenuBar.EndCaps.LeftEndCap,
     MainMenuBar.EndCaps.RightEndCap,
     MainMenuBar.ActionBarPageNumber,
+    MainMenuBar.ActionBarPageNumber.UpButton,
+    MainMenuBar.ActionBarPageNumber.DownButton,
     MainMenuBar.BorderArt,
     ReputationWatchBar,
     HonorWatchBar,
@@ -95,9 +97,10 @@ local actionBar_OnUpdate
 
 local function hideBlizzardsActionbars()
     for _, v in pairs(GW_BLIZZARD_HIDE_FRAMES) do
-        if v and v.Hide ~= nil then
+        if v then
             v:SetAlpha(0)
-            if v.UnregisterAllEvents ~= nil then
+            v:EnableMouse(false)
+            if v.UnregisterAllEvents then
                 v:UnregisterAllEvents()
             end
         end
