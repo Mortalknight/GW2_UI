@@ -647,8 +647,13 @@ local function StyleButton(button, noHover, noPushed, noChecked)
 end
 
 local function KillEditMode(object)
-    object.HighlightSystem = GW.NoOp
-    object.ClearHighlight = GW.NoOp
+    --object.HighlightSystem = GW.NoOp  --TAINT
+    --object.ClearHighlight = GW.NoOp
+    object.Selection:SetScript("OnDragStart", nil)
+    object.Selection:SetScript("OnDragStop", nil)
+    object.Selection:SetScript("OnMouseDown", nil)
+    object.Selection:SetAlpha(0)
+    object.Selection:EnableMouse(false)
 end
 
 local function addapi(object)

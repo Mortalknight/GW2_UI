@@ -96,7 +96,7 @@ local actionBar_OnUpdate
 local function hideBlizzardsActionbars()
     for _, v in pairs(GW_BLIZZARD_HIDE_FRAMES) do
         if v and v.Hide ~= nil then
-            v:Hide()
+            v:SetAlpha(0)
             if v.UnregisterAllEvents ~= nil then
                 v:UnregisterAllEvents()
             end
@@ -581,10 +581,13 @@ local function main_OnEvent(_, event)
         local forceCombat = event == "PLAYER_REGEN_DISABLED"
         fadeCheck(MainMenuBar, forceCombat)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
-        if GW.Libs.LEMO:GetActiveLayout() ~= "GW2_Layout" then
-            GW.Libs.LEMO:SetActiveLayout("GW2_Layout")
-            GW.Libs.LEMO:ApplyChanges()
-        end
+        C_Timer.After(1.1, function()
+            GW.Libs.LEMO:LoadLayouts()
+            if GW.Libs.LEMO:GetActiveLayout() ~= "GW2_Layout" then
+                GW.Libs.LEMO:SetActiveLayout("GW2_Layout")
+                GW.Libs.LEMO:ApplyChanges()
+            end
+        end)
     end
 end
 AFP("main_OnEvent", main_OnEvent)

@@ -527,8 +527,6 @@ local function evPlayerLogin(self)
 
     -- Remove old debuffs from db
     GW.RemoveOldRaidDebuffsFormProfiles()
-
-    GW.HandleBlizzarEditMode()
     GW.DisableBlizzardFrames()
 
     loaded = true
@@ -827,6 +825,8 @@ local function evPlayerLogin(self)
     self:SetScript("OnUpdate", gw_OnUpdate)
 
     GW.UpdateCharData()
+
+    GW.HandleBlizzardEditMode()
 end
 AFP("evPlayerLogin", evPlayerLogin)
 

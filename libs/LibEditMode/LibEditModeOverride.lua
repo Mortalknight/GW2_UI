@@ -1,12 +1,10 @@
--- Copyright 2022 plusmouse. Licensed under terms found in LICENSE file.
--- https://github.com/plusmouse/LibEditModeOverride
+-- Copyright 2022-2023 plusmouse. Licensed under terms found in LICENSE file.
 
-
--- Copyright 2022 plusmouse. Licensed under terms found in LICENSE file.
-
-local lib = LibStub:NewLibrary("LibEditModeOverride-1.0", 9)
+local lib = LibStub:NewLibrary("LibEditModeOverride-1.0", 10)
 
 if not lib then return end
+
+local activeLayoutPending = false
 
 local pointGetter = CreateFrame("Frame", nil, UIParent)
 
@@ -181,6 +179,10 @@ end
 function lib:SaveOnly()
   assert(layoutInfo, LOAD_ERROR)
   C_EditMode.SaveLayouts(layoutInfo)
+  if activeLayoutPending then
+    C_EditMode.SetActiveLayout(layoutInfo.activeLayout)
+    activeLayoutPending = false
+  end
   reconciledLayouts = true -- Would have updated for new/old systems in LoadLayouts
 end
 
@@ -224,9 +226,7 @@ function lib:AddLayout(layoutType, layoutName)
   end
 
   table.insert(layoutInfo.layouts, newLayoutIndex, newLayout)
-  print(newLayoutIndex)
-  C_EditMode.OnLayoutAdded(newLayoutIndex)
-  C_EditMode.SetActiveLayout(newLayoutIndex)
+  self:SetActiveLayout(layoutName)
 end
 
 function lib:DeleteLayout(layoutName)
@@ -276,7 +276,8 @@ function lib:SetActiveLayout(layoutName)
   local index = GetLayoutIndex(layoutName)
 
   layoutInfo.activeLayout = index
-  C_EditMode.SetActiveLayout(index)
+
+  activeLayoutPending = true
 end
 
 function lib:GetActiveLayout()

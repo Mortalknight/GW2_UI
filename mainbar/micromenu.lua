@@ -720,6 +720,8 @@ local function LoadMicroMenu()
         return
     end
 
+    MicroMenu:KillEditMode()
+
     -- create our micro button container frame
     local mbf = CreateFrame("Frame", "Gw2MicroBarFrame", UIParent, "GwMicroButtonFrameTmpl")
     local postDragFunction = function(mbf)
@@ -735,7 +737,7 @@ local function LoadMicroMenu()
     -- custom button overrides & behaviors for each button where necessary
     setupMicroButtons(mbf.cf)
 
-    hooksecurefunc("MoveMicroButtons", hook_MoveMicroButtons)
+    --hooksecurefunc("MoveMicroButtons", hook_MoveMicroButtons) -- 10.0.5
     hooksecurefunc("UpdateMicroButtons", hook_UpdateMicroButtons)
 
     -- get rid of the super-persistent PvP talent selector alert TODO
