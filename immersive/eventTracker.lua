@@ -95,6 +95,15 @@ local env = {
         -- Thaldraszus
         [4388] = 5,
         [4398] = 6,
+        --UNKNOWN
+        --[4319] = 5,
+        --[4318] = 5,
+        --[4364] = 5,
+        --[4365] = 5,
+        --[4389] = 5,
+        --[4397] = 5,
+        --[4399] = 5,
+        --[4400] = 5,
     }
 }
 
@@ -581,7 +590,7 @@ local functionFactory = {
                             bonusNetStatus = text
                         end
                     else
-                        if timeData == "NOT_STARTED" then --TODO
+                        if timeData == "NOT_STARTED" then
                             text = StringByTemplate(L["Can be set"], "warning")
                         end
                     end
