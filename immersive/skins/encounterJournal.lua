@@ -213,8 +213,9 @@ local function encounterJournalSkin()
     local InstanceSelect = EJ.instanceSelect
     InstanceSelect.bg:Kill()
 
-    InstanceSelect.bg:Kill()
     InstanceSelect.tierDropDown:SkinDropDownMenu()
+    EncounterJournalInstanceSelectBG:SetAlpha(0)
+    EncounterJournalMonthlyActivitiesFrame.Bg:SetAlpha(0)
 
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
 
