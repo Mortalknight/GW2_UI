@@ -8,33 +8,66 @@ local setBlockColor = GW.setBlockColor
 local itemIDs, currencyIDs = {}, {}
 local IsRecrafting = true
 
-local function CreateRecipeDropdown(block)
-    return {
-        {text = block.title, isTitle = true, notCheckable = true},
-        {text = PROFESSIONS_TRACKING_VIEW_RECIPE, isTitle = false, notCheckable = true, func = function() C_TradeSkillUI.OpenRecipe(block.id) end},
-        {text = PROFESSIONS_UNTRACK_RECIPE, hasArrow = false, notCheckable = true, func = function() C_TradeSkillUI.SetRecipeTracked(block.id, false) end},
-    }
+local function GetRecipeID(block)
+    return math.abs(block.id)
+end
+
+local function IsRecraftBlock(block)
+    return block.id < 0
+end
+
+function RecipeObjectiveTracker_OnOpenDropDown(self)
+    local block = self.activeFrame
+
+    local info = UIDropDownMenu_CreateInfo()
+    info.notCheckable = 1
+
+    if not IsRecraftBlock(block) then
+        info.text = PROFESSIONS_TRACKING_VIEW_RECIPE
+        info.func = function()
+            if not ProfessionsFrame then
+                ProfessionsFrame_LoadUI()
+                ProfessionsFrame_LoadUI()
+            end
+            C_TradeSkillUI.OpenRecipe(GetRecipeID(block))
+            C_Timer.After(0, function() C_TradeSkillUI.OpenRecipe(GetRecipeID(block)) end)
+        end
+        info.arg1 = block.id
+        info.checked = false
+        UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+    end
+
+    info.text = PROFESSIONS_UNTRACK_RECIPE
+    info.func = function()
+        C_TradeSkillUI.SetRecipeTracked(GetRecipeID(block), false, IsRecraftBlock(block))
+    end
+    info.arg1 = block.id
+    info.checked = false
+    UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
 end
 
 local function recipe_OnClick(self, button)
     if IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() then
-        local link = C_TradeSkillUI.GetRecipeLink(self.id)
+        local link = C_TradeSkillUI.GetRecipeLink(GetRecipeID(self))
         if link then
             ChatEdit_InsertLink(link)
         end
     elseif button ~= "RightButton" then
+        CloseDropDownMenus()
         if not ProfessionsFrame then
             ProfessionsFrame_LoadUI()
             ProfessionsFrame_LoadUI()
         end
         if IsModifiedClick("RECIPEWATCHTOGGLE") then
-            C_TradeSkillUI.SetRecipeTracked(self.id, false)
+            C_TradeSkillUI.SetRecipeTracked(GetRecipeID(self), false, IsRecraftBlock(self))
         else
-            C_TradeSkillUI.OpenRecipe(self.id)
+            if not IsRecraftBlock(self) then
+                C_TradeSkillUI.OpenRecipe(GetRecipeID(self))
+                C_Timer.After(0, function() C_TradeSkillUI.OpenRecipe(GetRecipeID(self)) end)
+            end
         end
     else
-        GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-        EasyMenu(self.gwDropdown, GW.EasyMenu, nil, nil, nil, "MENU")
+        ObjectiveTracker_ToggleDropDown(self, RecipeObjectiveTracker_OnOpenDropDown)
     end
 end
 
@@ -179,8 +212,6 @@ local function updateRecipeLayout(self, isRecraft)
 
         block:Show()
 
-        block.gwDropdown = CreateRecipeDropdown(block)
-
         block:SetScript("OnClick", recipe_OnClick)
 
         savedHeight = savedHeight + block.height
@@ -207,19 +238,19 @@ local function StartUpdate(self)
 
     self.continuableContainer = ContinuableContainer:Create()
     local function LoadItems(recipes)
-		for _, recipeID in ipairs(recipes) do
-			local reagents = Professions.CreateRecipeReagentsForAllBasicReagents(recipeID)
-			for reagentIndex, reagent in ipairs(reagents) do
-				if reagent.itemID then
-					self.continuableContainer:AddContinuable(Item:CreateFromItemID(reagent.itemID))
-				end
-			end
-		end
-	end
+        for _, recipeID in ipairs(recipes) do
+            local reagents = Professions.CreateRecipeReagentsForAllBasicReagents(recipeID)
+            for reagentIndex, reagent in ipairs(reagents) do
+                if reagent.itemID then
+                    self.continuableContainer:AddContinuable(Item:CreateFromItemID(reagent.itemID))
+                end
+            end
+        end
+    end
 
     -- Load regular and recraft recipe items.
-	LoadItems(C_TradeSkillUI.GetRecipesTracked(IsRecrafting))
-	LoadItems(C_TradeSkillUI.GetRecipesTracked(not IsRecrafting))
+    LoadItems(C_TradeSkillUI.GetRecipesTracked(IsRecrafting))
+    LoadItems(C_TradeSkillUI.GetRecipesTracked(not IsRecrafting))
 
     -- We can continue to layout each of the blocks if every item is loaded, otherwise
     -- we need to wait until the items load, then notify the objective tracker to try again.
@@ -283,7 +314,7 @@ local function OnEvent(self, event, ...)
         StartUpdate(self)
     elseif event == "SKILL_LINES_CHANGED" then
         UntrackRecipeIfUnlearned(IsRecrafting)
-		UntrackRecipeIfUnlearned(not IsRecrafting)
+        UntrackRecipeIfUnlearned(not IsRecrafting)
     end
 end
 
