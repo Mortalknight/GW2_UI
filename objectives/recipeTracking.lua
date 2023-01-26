@@ -16,7 +16,7 @@ local function IsRecraftBlock(block)
     return block.id < 0
 end
 
-function RecipeObjectiveTracker_OnOpenDropDown(self)
+local function RecipeObjectiveTracker_OnOpenDropDown(self)
     local block = self.activeFrame
 
     local info = UIDropDownMenu_CreateInfo()
@@ -72,13 +72,13 @@ local function recipe_OnClick(self, button)
 end
 
 local function getObjectiveBlock(self)
-    if _G[self:GetName() .. "GwRecipeObjective" .. self.numObjectives] then
-        return _G[self:GetName() .. "GwRecipeObjective" .. self.numObjectives]
+    if _G[self:GetName() .. "Objective" .. self.numObjectives] then
+        return _G[self:GetName() .. "Objective" .. self.numObjectives]
     end
 
     self.objectiveBlocks = self.objectiveBlocks or {}
 
-    local newBlock = CreateObjectiveNormal(self:GetName() .. "GwRecipeObjective" .. self.numObjectives, self)
+    local newBlock = CreateObjectiveNormal(self:GetName() .. "Objective" .. self.numObjectives, self)
     newBlock:SetParent(self)
 
     self.objectiveBlocks[#self.objectiveBlocks] = newBlock
@@ -86,7 +86,7 @@ local function getObjectiveBlock(self)
     if self.numObjectives == 1 then
         newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
     else
-        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "GwRecipeObjective" .. self.numObjectives - 1], "BOTTOMRIGHT", 0, 0)
+        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. self.numObjectives - 1], "BOTTOMRIGHT", 0, 0)
     end
 
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
@@ -175,8 +175,8 @@ local function updateRecipeObjectives(block, recipeSchematic)
     end
 
     for i = block.numObjectives + 1, 20 do
-        if _G[block:GetName() .. "GwRecipeObjective" .. i] then
-            _G[block:GetName() .. "GwRecipeObjective" .. i]:Hide()
+        if _G[block:GetName() .. "Objective" .. i] then
+            _G[block:GetName() .. "Objective" .. i]:Hide()
         end
     end
 
@@ -240,7 +240,7 @@ local function StartUpdate(self)
     local function LoadItems(recipes)
         for _, recipeID in ipairs(recipes) do
             local reagents = Professions.CreateRecipeReagentsForAllBasicReagents(recipeID)
-            for reagentIndex, reagent in ipairs(reagents) do
+            for _, reagent in ipairs(reagents) do
                 if reagent.itemID then
                     self.continuableContainer:AddContinuable(Item:CreateFromItemID(reagent.itemID))
                 end
