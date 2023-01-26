@@ -630,6 +630,7 @@ local function updateMainBar()
             hooksecurefunc(btn, "UpdateUsable", changeVertexColorActionbars)
             hooksecurefunc(btn, "UpdateFlyout", changeFlyoutStyle)
             hooksecurefunc(btn, "Update", UpdateActionbarBorders)
+            UpdateActionbarBorders(btn)
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)
