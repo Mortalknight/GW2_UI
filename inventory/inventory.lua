@@ -182,6 +182,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
 
     if itemIDOrLink then
         local isQuestItem = select(12, GetItemInfo(itemIDOrLink))
+        if quality == nil then quality = 0 end
 
         if quality >= LE_ITEM_QUALITY_COMMON and BAG_ITEM_QUALITY_COLORS[quality] then
             t:SetVertexColor(BAG_ITEM_QUALITY_COLORS[quality].r, BAG_ITEM_QUALITY_COLORS[quality].g, BAG_ITEM_QUALITY_COLORS[quality].b)

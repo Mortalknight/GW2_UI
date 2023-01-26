@@ -467,13 +467,59 @@ local function SetStyle(self, _, isEmbedded)
     if self.Delimiter2 then self.Delimiter2:SetTexture() end
 
 
-    self.NineSlice:Hide()
-    self:CreateBackdrop({
+    if not self.NineSlice.SetBackdrop then
+        Mixin(self.NineSlice, BackdropTemplateMixin)
+        self.NineSlice:HookScript('OnSizeChanged', self.NineSlice.OnBackdropSizeChanged)
+    end
+
+    self.NineSlice:SetBackdrop({
         bgFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background",
-        edgeFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Border",
-        edgeSize = GW.Scale(32),
-        insets = {left = 2, right = 2, top = 2, bottom = 2}
+        edgeFile = "Interface/AddOns/GW2_UI/textures/white",
+        edgeSize = GW.Scale(1)
     })
+
+    local backdrop = {
+        edgeFile = "Interface/AddOns/GW2_UI/textures/white",
+        edgeSize =  GW.Scale(1)
+    }
+
+    local level = self.NineSlice:GetFrameLevel()
+    if not self.NineSlice.iborder then
+        local border = CreateFrame('Frame', nil, self.NineSlice, 'BackdropTemplate')
+        border:SetBackdrop(backdrop)
+        border:SetBackdropBorderColor(0, 0, 0, 0.6)
+        border:SetFrameLevel(level)
+        border:SetInside(self.NineSlice)
+        self.NineSlice.iborder = border
+    end
+
+    if not self.NineSlice.oborder then
+        local border = CreateFrame('Frame', nil, self.NineSlice, 'BackdropTemplate')
+        border:SetBackdrop(backdrop)
+        border:SetBackdropBorderColor(0, 0, 0, 0.6)
+        border:SetFrameLevel(level)
+        border:SetOutside(self.NineSlice)
+        self.NineSlice.oborder = border
+    end
+
+    self.NineSlice:SetBackdropBorderColor(0, 0, 0, 0.6)
+    if not self.NineSlice.gwHookedBorderColor then
+        hooksecurefunc(self.NineSlice, "SetBackdropBorderColor", function(self, r, g, b, a)
+            if r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0.6 then
+                self:SetBackdropBorderColor(0, 0, 0, 0.6)
+            end
+        end)
+
+        if PawnSetTooltipBorderColor then
+            hooksecurefunc("PawnSetTooltipBorderColor", function(_, r, g, b, a)
+                if r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0.6 then
+                    self.NineSlice:SetBackdropBorderColor(0, 0, 0, 0.6)
+                end
+            end)
+        end
+
+        self.NineSlice.gwHookedBorderColor = true
+    end
 end
 
 local function StyleTooltips()
