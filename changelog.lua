@@ -1,12 +1,15 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.8.3 Wrath", [=[
+    - Work better with different addons which added own tooltips
+]=])
+
 v("1.8.2 Wrath", [=[
     - Fixes for 3.4.1
     - Update Ulduar Raid debuffs
     - Added chat editbox char counter
 ]=])
-
 
 v("1.8.1 Wrath", [=[
     - Fixes for 3.4.1

@@ -375,15 +375,6 @@ local function movePlacement(self)
 end
 GW.AddForProfiling("tooltips", "movePlacement", movePlacement)
 
-local constBackdropArgs = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background",
-    edgeFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Border",
-    tile = false,
-    tileSize = 64,
-    edgeSize = 32,
-    insets = {left = 2, right = 2, top = 2, bottom = 2}
-}
-
 local function anchorTooltip(self, p)
     self:SetOwner(p, GetSetting("CURSOR_ANCHOR_TYPE"), GetSetting("ANCHOR_CURSOR_OFFSET_X"), GetSetting("ANCHOR_CURSOR_OFFSET_Y"))
 end
@@ -397,11 +388,9 @@ local function SetItemRef()
         ItemRefCloseButton:SetSize(20, 20)
         ItemRefCloseButton:ClearAllPoints()
         ItemRefCloseButton:SetPoint("TOPRIGHT", -3, -3)
-        ItemRefTooltip:StripTextures()
-        ItemRefTooltip:CreateBackdrop(constBackdropArgs)
 
-        if IsAddOnLoaded("Pawn") then
-            if ItemRefTooltip.PawnIconFrame then ItemRefTooltip.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
+        if ItemRefTooltip.PawnIconFrame then
+            ItemRefTooltip.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         end
     end
 end
@@ -475,32 +464,8 @@ local function SetStyle(self, _, isEmbedded)
     self.NineSlice:SetBackdrop({
         bgFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background",
         edgeFile = "Interface/AddOns/GW2_UI/textures/white",
-        edgeSize = GW.Scale(1)
+        edgeSize = GW.Scale(2)
     })
-
-    local backdrop = {
-        edgeFile = "Interface/AddOns/GW2_UI/textures/white",
-        edgeSize =  GW.Scale(1)
-    }
-
-    local level = self.NineSlice:GetFrameLevel()
-    if not self.NineSlice.iborder then
-        local border = CreateFrame('Frame', nil, self.NineSlice, 'BackdropTemplate')
-        border:SetBackdrop(backdrop)
-        border:SetBackdropBorderColor(0, 0, 0, 0.6)
-        border:SetFrameLevel(level)
-        border:SetInside(self.NineSlice)
-        self.NineSlice.iborder = border
-    end
-
-    if not self.NineSlice.oborder then
-        local border = CreateFrame('Frame', nil, self.NineSlice, 'BackdropTemplate')
-        border:SetBackdrop(backdrop)
-        border:SetBackdropBorderColor(0, 0, 0, 0.6)
-        border:SetFrameLevel(level)
-        border:SetOutside(self.NineSlice)
-        self.NineSlice.oborder = border
-    end
 
     self.NineSlice:SetBackdropBorderColor(0, 0, 0, 0.6)
     if not self.NineSlice.gwHookedBorderColor then
