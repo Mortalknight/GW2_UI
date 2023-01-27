@@ -4,9 +4,11 @@
     for Classic/TBC/WOTLK
 
     Requires: LibStub, CallbackHandler-1.0, LibDetours-1.0
-    Version: 6 (2022-11-09)
+    Version: 9 (2022-12-11)
 
 --]]
+
+local LCI_VERSION = 9
 
 local clientVersionString = GetBuildInfo()
 local clientBuildMajor = string.byte(clientVersionString, 1)
@@ -19,7 +21,7 @@ assert(LibStub, "LibClassicInspector requires LibStub")
 assert(LibStub:GetLibrary("CallbackHandler-1.0", true), "LibClassicInspector requires CallbackHandler-1.0")
 assert(LibStub:GetLibrary("LibDetours-1.0", true), "LibClassicInspector requires LibDetours-1.0")
 
-local lib, oldminor = LibStub:NewLibrary("LibClassicInspector", 6)
+local lib, oldminor = LibStub:NewLibrary("LibClassicInspector", LCI_VERSION)
 
 -- already loaded
 if (not lib) then
@@ -59,6 +61,8 @@ local isWotlk = clientBuildMajor == 51
 local isTBC = clientBuildMajor == 50
 local isClassic = clientBuildMajor == 49
 
+local playerClass = select(2, UnitClass("player"))
+
 lib.callbacks = lib.callbacks or LibStub("CallbackHandler-1.0"):New(lib)
 lib.frame = lib.frame or CreateFrame("Frame")
 lib.cache = lib.cache or {["len"] = 0}
@@ -94,16 +98,16 @@ lib.spec_table_localized = lib.spec_table_localized or {
 }
 elseif (GetLocale() == "esES") then
 lib.spec_table_localized = lib.spec_table_localized or {
-    ["WARRIOR"] = {"Arms", "Fury", "Protection"},
-    ["PALADIN"] = {"Holy", "Protection", "Retribution"},
-    ["HUNTER"] = {"Beast Mastery", "Marksmanship", "Survival"},
-    ["ROGUE"] = {"Assassination", "Combat", "Subtlety"},
-    ["PRIEST"] = {"Discipline", "Holy", "Shadow"},
-    ["DEATHKNIGHT"] = {"Blood", "Frost", "Unholy"},
-    ["SHAMAN"] = {"Elemental", "Enhancement", "Restoration"},
-    ["MAGE"] = {"Arcane", "Fire", "Frost"},
-    ["WARLOCK"] = {"Affliction", "Demonology", "Destruction"},
-    ["DRUID"] = {"Balance", "Feral Combat", "Restoration"}
+    ["WARRIOR"] = {"Armas", "Furia", "Protecci\195\179n"},
+    ["PALADIN"] = {"Sagrado", "Protecci\195\179n", "Reprensi\195\179n"},
+    ["HUNTER"] = {"Bestias", "Punter\195\173a", "Supervivencia"},
+    ["ROGUE"] = {"Asesinato", "Combate", "Sutileza"},
+    ["PRIEST"] = {"Disciplina", "Sagrado", "Sombra"},
+    ["DEATHKNIGHT"] = {"Sangre", "Escarcha", "Profano"},
+    ["SHAMAN"] = {"Elemental", "Mejora", "Restauraci\195\179n"},
+    ["MAGE"] = {"Arcano", "Fuego", "Escarcha"},
+    ["WARLOCK"] = {"Aflicci\195\179n", "Demonolog\195\173a", "Destrucci\195\179n"},
+    ["DRUID"] = {"Equilibrio", "Combate feral", "Restauraci\195\179n"}
 }
 elseif (GetLocale() == "esMX") then
 lib.spec_table_localized = lib.spec_table_localized or {
@@ -146,16 +150,16 @@ lib.spec_table_localized = lib.spec_table_localized or {
 }
 elseif (GetLocale() == "koKR") then
 lib.spec_table_localized = lib.spec_table_localized or {
-    ["WARRIOR"] = {"Arms", "Fury", "Protection"},
-    ["PALADIN"] = {"Holy", "Protection", "Retribution"},
-    ["HUNTER"] = {"Beast Mastery", "Marksmanship", "Survival"},
-    ["ROGUE"] = {"Assassination", "Combat", "Subtlety"},
-    ["PRIEST"] = {"Discipline", "Holy", "Shadow"},
-    ["DEATHKNIGHT"] = {"Blood", "Frost", "Unholy"},
-    ["SHAMAN"] = {"Elemental", "Enhancement", "Restoration"},
-    ["MAGE"] = {"Arcane", "Fire", "Frost"},
-    ["WARLOCK"] = {"Affliction", "Demonology", "Destruction"},
-    ["DRUID"] = {"Balance", "Feral Combat", "Restoration"}
+    ["WARRIOR"] = {"\235\172\180\234\184\176", "\235\182\132\235\133\184", "\235\176\169\236\150\180"},
+    ["PALADIN"] = {"\236\139\160\236\132\177", "\235\179\180\237\152\184", "\236\167\149\235\178\140"},
+    ["HUNTER"] = {"\236\149\188\236\136\152", "\236\130\172\234\178\169", "\236\131\157\236\161\180"},
+    ["ROGUE"] = {"\236\149\148\236\130\180", "\236\160\132\237\136\172", "\236\158\160\237\150\137"},
+    ["PRIEST"] = {"\236\136\152\236\150\145", "\236\139\160\236\132\177", "\236\149\148\237\157\145"},
+    ["DEATHKNIGHT"] = {"\237\152\136\234\184\176", "\235\131\137\234\184\176", "\235\182\128\236\160\149"},
+    ["SHAMAN"] = {"\236\160\149\234\184\176", "\234\179\160\236\150\145", "\237\154\140\235\179\181"},
+    ["MAGE"] = {"\235\185\132\236\160\132", "\237\153\148\236\151\188", "\235\131\137\234\184\176"},
+    ["WARLOCK"] = {"\234\179\160\237\134\181", "\236\149\133\235\167\136", "\237\140\140\234\180\180"},
+    ["DRUID"] = {"\236\161\176\237\153\148", "\236\149\188\236\132\177", "\237\154\140\235\179\181"}
 }
 elseif (GetLocale() == "ruRU") then
 lib.spec_table_localized = lib.spec_table_localized or {
@@ -216,6 +220,424 @@ end
 -- TODO: talent IDs
 -- TODO: localization
 if (isWotlk) then
+lib.tracked_achievements = lib.tracked_achievements or {}
+lib.glyphs_table = lib.glyphs_table or {
+["WARRIOR"] = {
+    [1] = {
+    [1] = 58353,  -- Glyph of Taunt
+    [2] = 58355,  -- Glyph of Rapid Charge
+    [3] = 58356,  -- Glyph of Resonating Power
+    [4] = 58357,  -- Glyph of Heroic Strike
+    [5] = 58364,  -- Glyph of Revenge
+    [6] = 58365,  -- Glyph of Barbaric Insults
+    [7] = 58366,  -- Glyph of Cleaving
+    [8] = 58367,  -- Glyph of Execution
+    [9] = 58368,  -- Glyph of Mortal Strike
+    [10] = 58369, -- Glyph of Bloodthirst
+    [11] = 58370, -- Glyph of Whirlwind
+    [12] = 58372, -- Glyph of Hamstring
+    [13] = 58375, -- Glyph of Blocking
+    [14] = 58376, -- Glyph of Last Stand
+    [15] = 58377, -- Glyph of Intervene
+    [16] = 58382, -- Glyph of Victory Rush
+    [17] = 58384, -- Glyph of Sweeping Strikes
+    [18] = 58385, -- Glyph of Rending
+    [19] = 58386, -- Glyph of Overpower
+    [20] = 58387, -- Glyph of Sunder Armor
+    [21] = 58388, -- Glyph of Devastate
+    [22] = 63324, -- Glyph of Bladestorm
+    [23] = 63325, -- Glyph of Shockwave
+    [24] = 63326, -- Glyph of Vigilance
+    [25] = 63327, -- Glyph of Enraged Regeneration
+    [26] = 63328, -- Glyph of Spell Reflection
+    [27] = 63329  -- Glyph of Shield Wall
+    },
+    [2] = {
+    [1] = 58095,  -- Glyph of Battle
+    [2] = 58096,  -- Glyph of Bloodrage
+    [3] = 58097,  -- Glyph of Charge
+    [4] = 58098,  -- Glyph of Thunder Clap
+    [5] = 58099,  -- Glyph of Mocking Blow
+    [6] = 58104,  -- Glyph of Enduring Victory
+    [7] = 68164   -- Glyph of Command
+    },
+},
+["PALADIN"] = {
+    [1] = {
+    [1] = 54922,  -- Glyph of Judgement
+    [2] = 54923,  -- Glyph of Hammer of Justice
+    [3] = 54924,  -- Glyph of Spiritual Attunement
+    [4] = 54925,  -- Glyph of Seal of Command
+    [5] = 54926,  -- Glyph of Hammer of Wrath
+    [6] = 54927,  -- Glyph of Crusader Strike
+    [7] = 54928,  -- Glyph of Consecration
+    [8] = 54929,  -- Glyph of Righteous Defense
+    [9] = 54930,  -- Glyph of Avenger's Shield
+    [10] = 54931, -- Glyph of Turn Evil
+    [11] = 54934, -- Glyph of Exorcism
+    [12] = 54935, -- Glyph of Cleansing
+    [13] = 54936, -- Glyph of Flash of Light
+    [14] = 54937, -- Glyph of Holy Light
+    [15] = 54938, -- Glyph of Avenging Wrath
+    [16] = 54939, -- Glyph of Divinity
+    [17] = 54940, -- Glyph of Seal of Wisdom
+    [18] = 54943, -- Glyph of Seal of Light
+    [19] = 56414, -- Glyph of Seal of Righteousness
+    [20] = 56416, -- Glyph of Seal of Vengeance
+    [21] = 56420, -- Glyph of Holy Wrath
+    [22] = 63218, -- Glyph of Beacon of Light
+    [23] = 63219, -- Glyph of Hammer of the Righteous
+    [24] = 63220, -- Glyph of Divine Storm
+    [25] = 63222, -- Glyph of Shield of Righteousness
+    [26] = 63223, -- Glyph of Divine Plea
+    [27] = 63224, -- Glyph of Holy Shock
+    [28] = 63225  -- Glyph of Salvation
+    },
+    [2] = {
+    [1] = 57937,  -- Glyph of Blessing of Kings
+    [2] = 57947,  -- Glyph of Sense Undead
+    [3] = 57954,  -- Glyph of the Wise
+    [4] = 57955,  -- Glyph of Lay on Hands
+    [5] = 57958,  -- Glyph of Blessing of Might
+    [6] = 57979   -- Glyph of Blessing of Wisdom
+    },
+},
+["HUNTER"] = {
+    [1] = {
+    [1] = 56824,  -- Glyph of Aimed Shot
+    [2] = 56826,  -- Glyph of Steady Shot
+    [3] = 56828,  -- Glyph of Rapid Fire
+    [4] = 56829,  -- Glyph of Hunter's Mark
+    [5] = 56830,  -- Glyph of Bestial Wrath
+    [6] = 56832,  -- Glyph of Serpent Sting
+    [7] = 56833,  -- Glyph of Mending
+    [8] = 56836,  -- Glyph of Multi-Shot
+    [9] = 56838,  -- Glyph of Volley
+    [10] = 56841, -- Glyph of Arcane Shot
+    [11] = 56842, -- Glyph of Trueshot Aura
+    [12] = 56844, -- Glyph of Disengage
+    [13] = 56845, -- Glyph of Freezing Trap
+    [14] = 56846, -- Glyph of Immolation Trap
+    [15] = 56847, -- Glyph of Frost Trap
+    [16] = 56848, -- Glyph of Wyvern Sting
+    [17] = 56849, -- Glyph of Snake Trap
+    [18] = 56850, -- Glyph of Deterrence
+    [19] = 56851, -- Glyph of Aspect of the Viper
+    [20] = 56856, -- Glyph of the Hawk
+    [21] = 56857, -- Glyph of the Beast
+    [22] = 63065, -- Glyph of Chimera Shot
+    [23] = 63066, -- Glyph of Explosive Shot
+    [24] = 63067, -- Glyph of Kill Shot
+    [25] = 63068, -- Glyph of Explosive Trap
+    [26] = 63069, -- Glyph of Scatter Shot
+    [27] = 63086  -- Glyph of Raptor Strike
+    },
+    [2] = {
+    [1] = 57866,  -- Glyph of Revive Pet
+    [2] = 57870,  -- Glyph of Mend Pet
+    [3] = 57900,  -- Glyph of Possessed Strength
+    [4] = 57902,  -- Glyph of Scare Beast
+    [5] = 57903,  -- Glyph of Feign Death
+    [6] = 57904   -- Glyph of the Pack
+    },
+},
+["ROGUE"] = {
+    [1] = {
+    [1] = 56798,  -- Glyph of Sap
+    [2] = 56799,  -- Glyph of Evasion
+    [3] = 56800,  -- Glyph of Backstab
+    [4] = 56801,  -- Glyph of Rupture
+    [5] = 56802,  -- Glyph of Eviscerate
+    [6] = 56803,  -- Glyph of Expose Armor
+    [7] = 56804,  -- Glyph of Feint
+    [8] = 56805,  -- Glyph of Vigor
+    [9] = 56806,  -- Glyph of Deadly Throw
+    [10] = 56807, -- Glyph of Hemorrhage
+    [11] = 56808, -- Glyph of Adrenaline Rush
+    [12] = 56809, -- Glyph of Gouge
+    [13] = 56810, -- Glyph of Slice and Dice
+    [14] = 56811, -- Glyph of Sprint
+    [15] = 56812, -- Glyph of Garrote
+    [16] = 56813, -- Glyph of Ambush
+    [17] = 56814, -- Glyph of Ghostly Strike
+    [18] = 56818, -- Glyph of Blade Flurry
+    [19] = 56819, -- Glyph of Preparation
+    [20] = 56820, -- Glyph of Crippling Poison
+    [21] = 56821, -- Glyph of Sinister Strike
+    [22] = 63239, -- Glyph of Cloak of Shadows
+    [23] = 63249, -- Glyph of Hunger of Blood
+    [24] = 63252, -- Glyph of Killing Spree
+    [25] = 63253, -- Glyph of Shadow Dance
+    [26] = 63254, -- Glyph of Fan of Knives
+    [27] = 63256, -- Glyph of Tricks of the Trade
+    [28] = 63268, -- Glyph of Mutilate
+    [29] = 64199  -- Glyph of Envenom
+    },
+    [2] = {
+    [1] = 58017,  -- Glyph of Pick Pocket
+    [2] = 58027,  -- Glyph of Pick Lock
+    [3] = 58032,  -- Glyph of Distract
+    [4] = 58033,  -- Glyph of Safe Fall
+    [5] = 58038,  -- Glyph of Vanish
+    [6] = 58039   -- Glyph of Blurred Speed
+    },
+},
+["PRIEST"] = {
+    [1] = {
+    [1] = 55672,  -- Glyph of Power Word: Shield
+    [2] = 55673,  -- Glyph of Lightwell
+    [3] = 55674,  -- Glyph of Renew
+    [4] = 55675,  -- Glyph of Circle of Healing
+    [5] = 55676,  -- Glyph of Psychic Scream
+    [6] = 55677,  -- Glyph of Dispel Magic
+    [7] = 55678,  -- Glyph of Fear Ward
+    [8] = 55679,  -- Glyph of Flash Heal
+    [9] = 55680,  -- Glyph of Prayer of Healing
+    [10] = 55681, -- Glyph of Shadow Word: Pain
+    [11] = 55682, -- Glyph of Shadow Word: Death
+    [12] = 55683, -- Glyph of Holy Nova
+    [13] = 55684, -- Glyph of Fade
+    [14] = 55685, -- Glyph of Spirit of Redemption
+    [15] = 55686, -- Glyph of Inner Fire
+    [16] = 55687, -- Glyph of Mind Flay
+    [17] = 55688, -- Glyph of Mind Control
+    [18] = 55689, -- Glyph of Shadow
+    [19] = 55690, -- Glyph of Scourge Imprisonment
+    [20] = 55691, -- Glyph of Mass Dispel
+    [21] = 55692, -- Glyph of Smite
+    [22] = 63229, -- Glyph of Dispersion
+    [23] = 63231, -- Glyph of Guardian Spirit
+    [24] = 63235, -- Glyph of Penance
+    [25] = 63237, -- Glyph of Mind Sear
+    [26] = 63246, -- Glyph of Hymn of Hope
+    [27] = 63248  -- Glyph of Pain Suppression
+    },
+    [2] = {
+    [1] = 57985,  -- Glyph of Fading
+    [2] = 57986,  -- Glyph of Shackle Undead
+    [3] = 57987,  -- Glyph of Levitate
+    [4] = 58009,  -- Glyph of Fortitude
+    [5] = 58015,  -- Glyph of Shadow Protection
+    [6] = 58228   -- Glyph of Shadowfiend
+    },
+},
+["DEATHKNIGHT"] = {
+    [1] = {
+    [1] = 58613,  -- Glyph of Dark Command
+    [2] = 58616,  -- Glyph of Heart Strike
+    [3] = 58618,  -- Glyph of Strangulate
+    [4] = 58620,  -- Glyph of Chains of Ice
+    [5] = 58623,  -- Glyph of Anti-Magic Shell
+    [6] = 58625,  -- Glyph of Icebound Fortitude
+    [7] = 58629,  -- Glyph of Death and Decay
+    [8] = 58631,  -- Glyph of Icy Touch
+    [9] = 58635,  -- Glyph of Unbreakable Armor
+    [10] = 58642, -- Glyph of Scourge Strike
+    [11] = 58647, -- Glyph of Frost Strike
+    [12] = 58657, -- Glyph of Plague Strike
+    [13] = 58669, -- Glyph of Rune Strike
+    [14] = 58671, -- Glyph of Obliterate
+    [15] = 58673, -- Glyph of Bone Shield
+    [16] = 58676, -- Glyph of Vampiric Blood
+    [17] = 58686, -- Glyph of the Ghoul
+    [18] = 59327, -- Glyph of Rune Tap
+    [19] = 59332, -- Glyph of Blood Strike
+    [20] = 59336, -- Glyph of Death Strike
+    [21] = 62259, -- Glyph of Death Grip
+    [22] = 63330, -- Glyph of Dancing Rune Weapon
+    [23] = 63331, -- Glyph of Hungering Cold
+    [24] = 63332, -- Glyph of Unholy Blight
+    [25] = 63333, -- Glyph of Dark Death
+    [26] = 63334, -- Glyph of Disease
+    [27] = 63335  -- Glyph of Howling Blast
+    },
+    [2] = {
+    [1] = 58640,  -- Glyph of Blood Tap
+    [2] = 58677,  -- Glyph of Death's Embrace
+    [3] = 58680,  -- Glyph of Horn of Winter
+    [4] = 59307,  -- Glyph of Corpse Explosion
+    [5] = 59309,  -- Glyph of Pestilence
+    [6] = 60200   -- Glyph of Raise Dead
+    },
+},
+["SHAMAN"] = {
+    [1] = {
+    [1] = 55436,  -- Glyph of Water Mastery
+    [2] = 55437,  -- Glyph of Chain Heal
+    [3] = 55438,  -- Glyph of Lesser Healing Wave
+    [4] = 55439,  -- Glyph of Earthliving Weapon
+    [5] = 55440,  -- Glyph of Healing Wave
+    [6] = 55441,  -- Glyph of Mana Tide
+    [7] = 55442,  -- Glyph of Shocking
+    [8] = 55443,  -- Glyph of Frost Shock
+    [9] = 55444,  -- Glyph of Lava Lash
+    [10] = 55445, -- Glyph of Windfury Weapon
+    [11] = 55446, -- Glyph of Stormstrike
+    [12] = 55447, -- Glyph of Flame Shock
+    [13] = 55448, -- Glyph of Lightning Shield
+    [14] = 55449, -- Glyph of Chain Lightning
+    [15] = 55450, -- Glyph of Fire Nova
+    [16] = 55451, -- Glyph of Flametongue Weapon
+    [17] = 55452, -- Glyph of Elemental Mastery
+    [18] = 55453, -- Glyph of Lightning Bolt
+    [19] = 55454, -- Glyph of Lava
+    [20] = 55455, -- Glyph of Fire Elemental Totem
+    [21] = 55456, -- Glyph of Healing Stream Totem
+    [22] = 63270, -- Glyph of Thunder
+    [23] = 63271, -- Glyph of Feral Spirit
+    [24] = 63273, -- Glyph of Riptide
+    [25] = 63279, -- Glyph of Earth Shield
+    [26] = 63280, -- Glyph of Totem of Wrath
+    [27] = 63291, -- Glyph of Hex
+    [28] = 63298  -- Glyph of Stoneclaw Totem
+    },
+    [2] = {
+    [1] = 58055,  -- Glyph of Water Breathing
+    [2] = 58057,  -- Glyph of Water Walking
+    [3] = 58058,  -- Glyph of Astral Recall
+    [4] = 58059,  -- Glyph of Renewed Life
+    [5] = 58063,  -- Glyph of Water Shield
+    [6] = 59289,  -- Glyph of Ghost Wolf
+    [7] = 62132   -- Glyph of Thunderstorm
+    },
+},
+["MAGE"] = {
+    [1] = {
+    [1] = 56360,  -- Glyph of Arcane Explosion
+    [2] = 56363,  -- Glyph of Arcane Missiles
+    [3] = 56364,  -- Glyph of Remove Curse
+    [4] = 56365,  -- Glyph of Blink
+    [5] = 56366,  -- Glyph of Invisibility
+    [6] = 56367,  -- Glyph of Mana Gem
+    [7] = 56368,  -- Glyph of Fireball
+    [8] = 56369,  -- Glyph of Fire Blast
+    [9] = 56370,  -- Glyph of Frostbolt
+    [10] = 56371, -- Glyph of Scorch
+    [11] = 56372, -- Glyph of Ice Block
+    [12] = 56373, -- Glyph of Water Elemental
+    [13] = 56374, -- Glyph of Icy Veins
+    [14] = 56375, -- Glyph of Polymorph
+    [15] = 56376, -- Glyph of Frost Nova
+    [16] = 56377, -- Glyph of Ice Lance
+    [17] = 56380, -- Glyph of Evocation
+    [18] = 56381, -- Glyph of Arcane Power
+    [19] = 56382, -- Glyph of Molten Armor
+    [20] = 56383, -- Glyph of Mage Armor
+    [21] = 56384, -- Glyph of Ice Armor
+    [22] = 61205, -- Glyph of Frostfire
+    [23] = 62210, -- Glyph of Arcane Blast
+    [24] = 63090, -- Glyph of Deep Freeze
+    [25] = 63091, -- Glyph of Living Bomb
+    [26] = 63092, -- Glyph of Arcane Barrage
+    [27] = 63093, -- Glyph of Mirror Image
+    [28] = 63095, -- Glyph of Ice Barrier
+    [29] = 70937  -- Glyph of Eternal Water
+    },
+    [2] = {
+    [1] = 52648,  -- Glyph of the Penguin
+    [2] = 57924,  -- Glyph of Arcane Intellect
+    [3] = 57925,  -- Glyph of Slow Fall
+    [4] = 57926,  -- Glyph of Fire Ward
+    [5] = 57927,  -- Glyph of Frost Ward
+    [6] = 57928,  -- Glyph of Frost Armor
+    [7] = 62126   -- Glyph of Blast Wave
+    },
+},
+["WARLOCK"] = {
+    [1] = {
+    [1] = 56216,  -- Glyph of Siphon Life
+    [2] = 56217,  -- Glyph of Howl of Terror
+    [3] = 56218,  -- Glyph of Corruption
+    [4] = 56224,  -- Glyph of Healthstone
+    [5] = 56226,  -- Glyph of Searing Pain
+    [6] = 56228,  -- Glyph of Immolate
+    [7] = 56229,  -- Glyph of Shadowburn
+    [8] = 56231,  -- Glyph of Soulstone
+    [9] = 56232,  -- Glyph of Death Coil
+    [10] = 56233, -- Glyph of Unstable Affliction
+    [11] = 56235, -- Glyph of Conflagrate
+    [12] = 56238, -- Glyph of Health Funnel
+    [13] = 56240, -- Glyph of Shadow Bolt
+    [14] = 56241, -- Glyph of Curse of Agony
+    [15] = 56242, -- Glyph of Incinerate
+    [16] = 56244, -- Glyph of Fear
+    [17] = 56246, -- Glyph of Felguard
+    [18] = 56247, -- Glyph of Voidwalker
+    [19] = 56248, -- Glyph of Imp
+    [20] = 56249, -- Glyph of Felhunter
+    [21] = 56250, -- Glyph of Succubus
+    [22] = 63302, -- Glyph of Haunt
+    [23] = 63303, -- Glyph of Metamorphosis
+    [24] = 63304, -- Glyph of Chaos Bolt
+    [25] = 63309, -- Glyph of Demonic Circle
+    [26] = 63310, -- Glyph of Shadowflame
+    [27] = 63312, -- Glyph of Soul Link
+    [28] = 63320, -- Glyph of Life Tap
+    [29] = 70947  -- Glyph of Quick Decay
+    },
+    [2] = {
+    [1] = 58070,  -- Glyph of Drain Soul
+    [2] = 58079,  -- Glyph of Unending Breath
+    [3] = 58080,  -- Glyph of Curse of Exhausion
+    [4] = 58081,  -- Glyph of Kilrogg
+    [5] = 58094,  -- Glyph of Souls
+    [6] = 58107   -- Glyph of Subjugate Demon
+    },
+},
+["DRUID"] = {
+    [1] = {
+    [1] = 54733,  -- Glyph of Rebirth
+    [2] = 54743,  -- Glyph of Regrowth
+    [3] = 54754,  -- Glyph of Rejuvenation
+    [4] = 54756,  -- Glyph of Wrath
+    [5] = 54760,  -- Glyph of Entangling Roots
+    [6] = 54810,  -- Glyph of Frenzied Regeneration
+    [7] = 54811,  -- Glyph of Maul
+    [8] = 54812,  -- Glyph of Growling
+    [9] = 54813,  -- Glyph of Mangle
+    [10] = 54815, -- Glyph of Shred
+    [11] = 54818, -- Glyph of Rip
+    [12] = 54821, -- Glyph of Rake
+    [13] = 54824, -- Glyph of Swiftmend
+    [14] = 54825, -- Glyph of Healing Touch
+    [15] = 54826, -- Glyph of Lifebloom
+    [16] = 54828, -- Glyph of Starfall
+    [17] = 54829, -- Glyph of Moonfire
+    [18] = 54830, -- Glyph of Insect Swarm
+    [19] = 54831, -- Glyph of Hurricane
+    [20] = 54832, -- Glyph of Innervate
+    [21] = 54845, -- Glyph of Starfire
+    [22] = 62080, -- Glyph of Focus
+    [23] = 62969, -- Glyph of Berserk
+    [24] = 62970, -- Glyph of Wild Growth
+    [25] = 62971, -- Glyph of Nourish
+    [26] = 63055, -- Glyph of Savage Roar
+    [27] = 63056, -- Glyph of Monsoon
+    [28] = 63057, -- Glyph of Barkskin
+    [29] = 65243, -- Glyph of Survival Instincts
+    [30] = 67598, -- Glyph of Claw
+    [31] = 71013  -- Glyph of Rapid Rejuvenation
+    },
+    [2] = {
+    [1] = 57855,  -- Glyph of the Wild
+    [2] = 57856,  -- Glyph of Aquatic Form
+    [3] = 57857,  -- Glyph of Unburdened Rebirth
+    [4] = 57858,  -- Glyph of Challenging Roar
+    [5] = 57862,  -- Glyph of Thorns
+    [6] = 59219,  -- Glyph of Dash
+    [7] = 62135   -- Glyph of Typhoon
+    },
+}
+}
+if (not lib.glyph_r_tbl) then
+    lib.glyph_r_tbl = {}
+    for k,v in pairs (lib.glyphs_table[playerClass][1]) do
+        lib.glyph_r_tbl[v] = k
+    end
+    for k,v in pairs (lib.glyphs_table[playerClass][2]) do
+        lib.glyph_r_tbl[v] = k
+    end
+end
 lib.talents_table = lib.talents_table or {
     ["HUNTER"] = {
         [1] = {
@@ -2308,6 +2730,9 @@ local spec_table = lib.spec_table
 local spec_table_localized = lib.spec_table_localized
 local talents_table = lib.talents_table
 local guildies = lib.guildies
+local tracked_achievements = lib.tracked_achievements
+local glyphs_table = lib.glyphs_table
+local glyph_r_tbl = lib.glyph_r_tbl
 
 local function getPlayerGUID(arg)
     if (arg) then
@@ -2350,7 +2775,7 @@ local function getCacheUser2(guid)
     return user
 end
 
-local function addCacheUser(guid, inventory, talents, achievements)
+local function addCacheUser(guid, inventory, talents, achievements, glyphs)
     local user = {["guid"] = guid}
     if(inventory) then
         user.inventory = inventory
@@ -2366,7 +2791,12 @@ local function addCacheUser(guid, inventory, talents, achievements)
         user.achievements = achievements
     else
         user.achievements = {["time"] = 0}
-    end    
+    end
+    if(glyphs) then
+        user.glyphs = glyphs
+    else
+        user.glyphs = {["time"] = 0}
+    end
     if (not cache.first) then
         cache.first = user
         cache.last = user
@@ -2408,7 +2838,7 @@ local function cacheUserInventory(unit)
     if(user) then
         user.inventory = inventory
     else
-        addCacheUser(guid, inventory, nil, nil)
+        addCacheUser(guid, inventory, nil, nil, nil)
     end
     -- Fire INVENTORY_READY(guid, isInspect[, unit]) callback
     lib.callbacks:Fire("INVENTORY_READY", guid, true, unit)
@@ -2431,7 +2861,7 @@ local function cacheUserTalents(unit)
     if(user) then
         user.talents = talents
     else
-        addCacheUser(guid, nil, talents, nil)
+        addCacheUser(guid, nil, talents, nil, nil)
     end
     -- Fire TALENTS_READY(guid, isInspect[, unit]) callback
     lib.callbacks:Fire("TALENTS_READY", guid, true, unit)
@@ -2439,12 +2869,31 @@ end
 
 local function cacheUserAchievements(guid)
     local achievements = {["time"] = time(), ["t_pts"] = GetComparisonAchievementPoints()}
+    for k,v in pairs(tracked_achievements) do
+        if (v == 1) then
+            achievements[k] = GetComparisonStatistic(k)
+        else
+            achievements[k] = {GetAchievementComparisonInfo(k)}
+        end
+    end
     local user = getCacheUser(guid)
     if(user) then
         user.achievements = achievements
     else
-        addCacheUser(guid, nil, nil, achievements)
+        addCacheUser(guid, nil, nil, achievements, nil)
     end
+end
+
+local function tryCompare(unit)
+    if (AchievementFrameComparison) then
+        AchievementFrameComparison:UnregisterEvent("INSPECT_ACHIEVEMENT_READY")
+    end
+    if (not AchievementFrame or not AchievementFrame.isComparison) then
+        ClearAchievementComparisonUnit()
+        SetAchievementComparisonUnit(unit)
+        return true
+    end
+    return false
 end
 
 local function tryInspect(unit, refresh)
@@ -2460,9 +2909,7 @@ local function tryInspect(unit, refresh)
                     ret = true
                 end
                 if (isWotlk and user.achievements.time < t) then
-                    if (not AchievementFrame or not AchievementFrame.isComparison) then
-                        ClearAchievementComparisonUnit()
-                        SetAchievementComparisonUnit(unit)
+                    if (tryCompare(unit)) then
                         ret = true
                     end
                 end
@@ -2472,18 +2919,15 @@ local function tryInspect(unit, refresh)
                     ret = true
                 end
                 if (isWotlk and user.achievements.time == 0) then
-                    if (not AchievementFrame or not AchievementFrame.isComparison) then
-                        ClearAchievementComparisonUnit()
-                        SetAchievementComparisonUnit(unit)
+                    if (tryCompare(unit)) then
                         ret = true
                     end
                 end
             end
         else
             NotifyInspect(unit)
-            if (isWotlk and (not AchievementFrame or not AchievementFrame.isComparison)) then
-                ClearAchievementComparisonUnit()
-                SetAchievementComparisonUnit(unit)
+            if (isWotlk) then
+                tryCompare(unit)
             end
             return true
         end
@@ -2511,7 +2955,9 @@ function f:UNIT_INVENTORY_CHANGED(event, unit)
 end
 function f:CHAT_MSG_ADDON(event, prefix, text, channelType, senderFullName, sender)
     if (prefix ~= C_PREFIX) then return end
-    if (strsub(text, 1, 3) == "00-") then
+    if (string.byte(text, 1) ~= 48 or string.byte(text, 3) ~= 45) then return end
+    local v = string.byte(text, 2)
+    if (v == 48 or v == 49) then
         local guid = UnitGUID(sender)
         if (not guid or not GUIDIsPlayer(guid)) then
             if (not IsInGuild()) then return end
@@ -2538,14 +2984,36 @@ function f:CHAT_MSG_ADDON(event, prefix, text, channelType, senderFullName, send
                 end
             end
         end
+        local glyphs
+        if (isWotlk and v == 49) then
+            glyphs = {["time"] = time()}
+            for x = 1, 12 do
+                y = y + 1
+                local z = tonumber(string.byte(s,y))
+                z = z and (z-48) or -1
+                if (x == 1 or x == 4 or x == 6 or x == 7 or x == 10 or x == 12) then
+                    if (z < 0 or z > #glyphs_table[class][1]) then return end
+                else
+                    if (z < 0 or z > #glyphs_table[class][2]) then return end
+                end
+                glyphs[x] = z
+            end
+        end
         local user = getCacheUser(guid)
         if(user) then
             user.talents = talents
+            if (glyphs) then
+                user.glyphs = glyphs
+            end
         else
-            addCacheUser(guid, nil, talents, nil)
+            addCacheUser(guid, nil, talents, nil, glyphs)
         end
         -- Fire TALENTS_READY(guid, isInspect[, unit]) callback
         lib.callbacks:Fire("TALENTS_READY", guid, false, nil)
+        if (glyphs) then
+            -- Fire GLYPHS_READY(guid, isInspect[, unit]) callback
+            lib.callbacks:Fire("GLYPHS_READY", guid, false, nil)
+        end
     end
 end
 function f:GUILD_ROSTER_UPDATE()
@@ -2585,17 +3053,11 @@ function f:INSPECT_ACHIEVEMENT_READY(event, guid, ...)
     if (guid and GUIDIsPlayer(guid)) then
         cacheUserAchievements(guid)
         -- Fire ACHIEVEMENTS_READY(guid, isInspect) callback
-        lib.callbacks:Fire("ACHIEVEMENTS_READY", guid, true)
+        lib.callbacks:Fire("ACHIEVEMENTS_READY", guid, true, nil)
     end
     if (AchievementFrame and AchievementFrame.isComparison and AchievementFrameComparison) then
         AchievementFrameComparison_OnEvent(AchievementFrameComparison, event, guid, ...)
     end
-end
-if (not AchievementFrame or not AchievementFrameComparison) then
-    AchievementFrame_LoadUI()
-end
-if (AchievementFrameComparison) then
-    AchievementFrameComparison:UnregisterEvent("INSPECT_ACHIEVEMENT_READY")
 end
 end
 
@@ -2620,12 +3082,24 @@ C_ChatInfo.RegisterAddonMessagePrefix(C_PREFIX)
 
 local function sendInfo()
     if (IsInGroup() or IsInGuild()) then
-        local s = "00-"
+        local s = "01-"
         s = s .. (isWotlk and GetActiveTalentGroup(false, false) or 1)
         for x = 1, (isWotlk and 2 or 1) do
             for i = 1, 3 do  -- GetNumTalentTabs
                 for j = 1, GetNumTalents(i, false, false) do
                     s = s .. select(5, GetTalentInfo(i, j, false, false, x))
+                end
+            end
+        end
+        if (isWotlk) then
+            for x = 1, 2 do
+                for i = 1, 6 do
+                    local z = select(3, GetGlyphSocketInfo(i, x))
+                    if (z) then
+                        s = s..string.char(glyph_r_tbl[z]+48)
+                    else
+                        s = s.."0"
+                    end
                 end
             end
         end
@@ -2643,7 +3117,7 @@ end
 
 local function inspectQueueTick()
     if (InCombatLockdown() or not UnitExists("player") or not UnitIsConnected("player") or UnitIsDeadOrGhost("player")) then return end
-    if (time() >= nextInspectTime) then
+    if (GetTime() >= nextInspectTime) then
         if (UnitExists("target") and tryInspect("target", true)) then
             return
         elseif (#queue > 0) then
@@ -2691,7 +3165,7 @@ end
 lib.infoTicker = NewTicker(INSPECTOR_INFO_MIN_INTERVAL, infoTick)
 
 Detours:SecureHook(lib, "NotifyInspect", function()
-    nextInspectTime = time()+INSPECTOR_INSPECT_DELAY
+    nextInspectTime = GetTime()+INSPECTOR_INSPECT_DELAY
 end)
 
 -- fix blizzard CanInspect
@@ -2811,11 +3285,10 @@ function lib:DoInspect(unitorguid)
         guid = UnitGUID(unit)
     end
     if (lib:CanInspect(unit)) then
-        if (time() >= nextInspectTime) then
+        if (GetTime() >= nextInspectTime) then
             NotifyInspect(unit)
-            if (isWotlk and (not AchievementFrame or not AchievementFrame.isComparison)) then
-                ClearAchievementComparisonUnit()
-                SetAchievementComparisonUnit(unit)
+            if (isWotlk) then
+                tryCompare(unit)
             end
             return 1
         else
@@ -2845,15 +3318,17 @@ end
 --     @string unitorguid          - unit token or guid
 --
 --  Returns
---     @number talentsCacheTime    - time when talents were last cached or 0 if not found
---     @number inventoryCacheTime  - time when inventory was last cached or 0 if not found
+--     @number talentsTime         - time when talents were last cached or 0 if not found
+--     @number inventoryTime       - time when inventory was last cached or 0 if not found
+--     @number achievementsTime    - time when achievements were last cached or 0 if not found
+--     @number glyphsTime          - time when glyphs were last cached or 0 if not found
 --
 function lib:GetLastCacheTime(unitorguid)
     local user = getCacheUser2(getPlayerGUID(unitorguid))
     if (user) then
-        return user.talents.time, user.inventory.time
+        return user.talents.time, user.inventory.time, user.achievements.time, user.glyphs.time
     end
-    return 0, 0
+    return 0, 0, 0, 0
 end
 
 
@@ -2870,7 +3345,7 @@ end
 --
 function lib:GetSpecializationName(class, tabIndex, localized)
     assert(class == "WARRIOR" or class == "PALADIN" or class == "HUNTER" or class == "ROGUE" or class == "PRIEST" or class == "SHAMAN" or 
-           class == "MAGE" or class == "WARLOCK" or class == "DRUID" or (isWotlk and class == "DEATHKNIGHT"), "invalid class")
+        class == "MAGE" or class == "WARLOCK" or class == "DRUID" or (isWotlk and class == "DEATHKNIGHT"), "invalid class")
     local n = tonumber(tabIndex) or 0
     assert(n > 0 and n < 4, "tabIndex is not a valid number (1-3)")
     return localized and spec_table_localized[class][tabIndex] or spec_table[class][tabIndex]
@@ -2889,7 +3364,7 @@ end
 --
 function lib:GetNumTalentsByClass(class, tabIndex)
     assert(class == "WARRIOR" or class == "PALADIN" or class == "HUNTER" or class == "ROGUE" or class == "PRIEST" or class == "SHAMAN" or 
-           class == "MAGE" or class == "WARLOCK" or class == "DRUID" or (isWotlk and class == "DEATHKNIGHT"), "invalid class")
+        class == "MAGE" or class == "WARLOCK" or class == "DRUID" or (isWotlk and class == "DEATHKNIGHT"), "invalid class")
     local n = tonumber(tabIndex) or 0
     assert(n > 0 and n < 4, "tabIndex is not a valid number (1-3)")
     return #talents_table[class][tabIndex]
@@ -3108,7 +3583,7 @@ end
 --
 function lib:GetTalentInfoByClass(class, tabIndex, talentIndex)
     assert(class == "WARRIOR" or class == "PALADIN" or class == "HUNTER" or class == "ROGUE" or class == "PRIEST" or class == "SHAMAN" or 
-           class == "MAGE" or class == "WARLOCK" or class == "DRUID" or (isWotlk and class == "DEATHKNIGHT"), "invalid class")
+        class == "MAGE" or class == "WARLOCK" or class == "DRUID" or (isWotlk and class == "DEATHKNIGHT"), "invalid class")
     tabIndex = tonumber(tabIndex) or 0
     assert(tabIndex > 0 and tabIndex < 4, "tabIndex is not a valid number (1-3)")
     talentIndex = tonumber(talentIndex) or 0
@@ -3374,4 +3849,314 @@ function lib:GetTotalAchievementPoints(unitorguid)
         end
     end
     return nil
+end
+
+
+--------------------------------------------------------------------------
+-- ClassicInspector:GetAchievementInfo(unitorguid, achievementID)
+--
+--  Parameters
+--     @string  unitorguid         - unit token or guid
+--     @number  achievementID      - achievement ID (type=achievement)
+--
+--  Returns
+--     @boolean completed          - is achievement completed
+--     @number  month              - month of completion
+--     @number  day                - day of completion
+--     @number  year               - year of completion
+--
+function lib:GetAchievementInfo(unitorguid, achievementID)
+    if (not isWotlk) then
+        return nil
+    end
+    local guid = getPlayerGUID(unitorguid)
+    if (not guid) then
+        return nil
+    end
+    local id = tonumber(achievementID) or 0
+    assert(id > 0, "achievementID is not a valid number")
+    if (not tracked_achievements[id]) then
+        assert(select(15,GetAchievementInfo(id))==false, "achievementID is not a valid achievement ID")
+        tracked_achievements[id] = 0
+    end
+    assert(tracked_achievements[id]==0, "achievementID is not a valid achievement ID")
+    if (guid == UnitGUID("player")) then
+        local _, _, _, completed, month, day, year = GetAchievementInfo(id)
+        return completed, month, day, year
+    else
+        local user = getCacheUser2(guid)
+        if (user and user.achievements.time > 0 and user.achievements[id]) then
+            return unpack(user.achievements[id])
+        end
+    end
+    return nil
+end
+
+
+--------------------------------------------------------------------------
+-- ClassicInspector:GetStatistic(unitorguid, achievementID)
+--
+--  Parameters
+--     @string unitorguid          - unit token or guid
+--     @number achievementID       - achievement ID (type=statistic)
+--
+--  Returns
+--     @string value               - value of the statistic as displayed in-game
+--
+function lib:GetStatistic(unitorguid, achievementID)
+    if (not isWotlk) then
+        return nil
+    end
+    local guid = getPlayerGUID(unitorguid)
+    if (not guid) then
+        return nil
+    end
+    local id = tonumber(achievementID) or 0
+    assert(id > 0, "achievementID is not a valid number")
+    if (not tracked_achievements[id]) then
+        assert(select(15,GetAchievementInfo(id)), "achievementID is not a valid statistic ID")
+        tracked_achievements[id] = 1
+    end
+    assert(tracked_achievements[id]==1, "achievementID is not a valid statistic ID")
+    if (guid == UnitGUID("player")) then
+        local s = GetStatistic(id)
+        return s
+    else
+        local user = getCacheUser2(guid)
+        if (user and user.achievements.time > 0) then
+            return user.achievements[id]
+        end
+    end
+    return nil
+end
+
+
+--------------------------------------------------------------------------
+-- ClassicInspector:AddTrackedAchievement(achievementID)
+--
+--  Parameters
+--     @number  achievementID      - achievement ID (type=achievement/statistic)
+--
+--  Returns
+--     @boolean success            - achievementID is valid and added to tracking list
+--     @boolean isStatistic        - is achievement type a statistic
+--
+function lib:AddTrackedAchievement(achievementID)
+    if (not isWotlk) then
+        return nil
+    end
+    local id = tonumber(achievementID) or 0
+    assert(id > 0, "achievementID is not a valid number")
+    if (not tracked_achievements[id]) then
+        local type = select(15,GetAchievementInfo(id))
+        assert(type ~= nil, "achievementID is not a valid achievement ID")
+        tracked_achievements[id] = type and 1 or 0
+    end
+    return true, tracked_achievements[id]==1
+end
+
+
+--------------------------------------------------------------------------
+-- ClassicInspector:GetGlyphSocketInfo(unitorguid, socketID[, group])
+--
+--  Parameters
+--     @string unitorguid          - unit token or guid
+--     @number socketID            - socket index to query, ranging from 1 to 6 (NUM_GLYPH_SLOTS)
+--     @number [group]             - talent group or the current active talent group if nil
+--
+--  Returns
+--     @boolean enabled            - true if the socket has a glyph inserted
+--     @number glyphType           - type of glyph accepted by this socket (GLYPHTYPE_MAJOR=1 or GLYPHTYPE_MINOR=2)
+--     @number glyphSpellID        - spell ID of the socketed glyph
+--     @number iconFile            - file ID of the sigil icon associated with the socketed glyph
+--
+function lib:GetGlyphSocketInfo(unitorguid, socketID, _group)
+    if (not isWotlk) then
+        return nil
+    end
+    local n = tonumber(socketID) or 0
+    assert(n >= 1 and n <= 6, "socketID is not a valid number")    
+    local guid = getPlayerGUID(unitorguid)
+    if (not guid) then
+        return nil
+    end
+    if (not _group) then
+        _group = lib:GetActiveTalentGroup(guid)
+        if (not _group) then
+            return nil
+        end
+    end
+    local group = tonumber(_group) or 0
+    assert(group == 1 or group == 2, "group is not a valid number (1-2)")
+    local _, class = GetPlayerInfoByGUID(guid)
+    if (not class) then
+        return nil
+    end    
+    if (guid == UnitGUID("player")) then
+        return GetGlyphSocketInfo(n, group)
+    else
+        local user = getCacheUser2(guid)
+        if (user and user.glyphs.time > 0) then
+            local enabled = false
+            local glyphType, glyphSpellID
+            if (n == 1 or n == 4 or n == 6) then
+                glyphType = 1 -- GLYPHTYPE_MAJOR
+            else
+                glyphType = 2 -- GLYPHTYPE_MINOR
+            end
+            local x = user.glyphs[(group==1) and n or (n+6)]
+            if (x > 0) then
+                glyphSpellID = glyphs_table[class][glyphType][x]
+                enabled = true
+            end
+            return enabled, glyphType, glyphSpellID, 0
+        end
+    end
+    return nil
+end
+
+
+--------------------------------------------------------------------------
+-- ClassicInspector:HasGlyph(unitorguid, glyphSpellID[, group])
+--
+--  Parameters
+--     @string unitorguid          - unit token or guid
+--     @number glyphSpellID        - spell ID of the socketed glyph
+--     @number [group]             - talent group or the current active talent group if nil
+--
+--  Returns
+--     @boolean enabled            - true if the player has socketed glyph with matching ID
+--
+function lib:HasGlyph(unitorguid, glyphSpellID, _group)
+    if (not isWotlk) then
+        return nil
+    end
+    local guid = getPlayerGUID(unitorguid)
+    if (not guid) then
+        return nil
+    end
+    if (not _group) then
+        _group = lib:GetActiveTalentGroup(guid)
+        if (not _group) then
+            return nil
+        end
+    end
+    local group = tonumber(_group) or 0
+    assert(group == 1 or group == 2, "group is not a valid number (1-2)")
+    local _, class = GetPlayerInfoByGUID(guid)
+    if (not class) then
+        return nil
+    end    
+    if (guid == UnitGUID("player")) then
+        for i=1,6 do
+            local enabled, _, id = GetGlyphSocketInfo(i, group)
+            if (enabled and id == glyphSpellID) then
+                return true
+            end
+        end
+        return false
+    else
+        local user = getCacheUser2(guid)
+        if (user and user.glyphs.time > 0) then
+            for i=1,6 do
+                local x = user.glyphs[(group==1) and i or (i+6)]
+                if (x > 0) then
+                    if (i == 1 or i == 4 or i == 6) then
+                        if (glyphs_table[class][1][x] == glyphSpellID) then
+                            return true
+                        end
+                    else
+                        if (glyphs_table[class][2][x] == glyphSpellID) then
+                            return true
+                        end
+                    end
+                end
+            end
+            return false
+        end
+    end
+    return nil
+end
+
+
+--------------------------------------------------------------------------
+-- ClassicInspector:GetGlyphs(unitorguid[, group])
+--
+--  Parameters
+--     @string unitorguid          - unit token or guid
+--     @number [group]             - talent group or the current active talent group if nil
+--
+--  Returns
+--     @number glyphSpellID1       - spell ID of glyph in socket 1 (MAJOR)
+--     @number glyphSpellID2       - spell ID of glyph in socket 2 (MINOR)
+--     @number glyphSpellID3       - spell ID of glyph in socket 3 (MINOR)
+--     @number glyphSpellID4       - spell ID of glyph in socket 4 (MAJOR)
+--     @number glyphSpellID5       - spell ID of glyph in socket 5 (MINOR)
+--     @number glyphSpellID6       - spell ID of glyph in socket 6 (MAJOR)
+--
+function lib:GetGlyphs(unitorguid, _group)
+    if (not isWotlk) then
+        return nil
+    end
+    local guid = getPlayerGUID(unitorguid)
+    if (not guid) then
+        return nil
+    end
+    if (not _group) then
+        _group = lib:GetActiveTalentGroup(guid)
+        if (not _group) then
+            return nil
+        end
+    end
+    local group = tonumber(_group) or 0
+    assert(group == 1 or group == 2, "group is not a valid number (1-2)")
+    local _, class = GetPlayerInfoByGUID(guid)
+    if (not class) then
+        return nil
+    end
+    local glyphs = {}
+    if (guid == UnitGUID("player")) then
+        for i=1,6 do
+            local enabled, _, id = GetGlyphSocketInfo(i, group)
+            if (enabled and id) then
+                glyphs[i] = id
+            else
+                glyphs[i] = 0
+            end
+        end
+        return unpack(glyphs)
+    else
+        local user = getCacheUser2(guid)
+        if (user and user.glyphs.time > 0) then
+            for i=1,6 do
+                local x = user.glyphs[(group==1) and i or (i+6)]
+                if (x == 0) then
+                    glyphs[i] = 0
+                else
+                    if (i == 1 or i == 4 or i == 6) then
+                        if (glyphs_table[class][1][x]) then
+                            glyphs[i] = glyphs_table[class][1][x]
+                        end
+                    else
+                        if (glyphs_table[class][2][x]) then
+                            glyphs[i] = glyphs_table[class][2][x]
+                        end
+                    end
+                end
+            end
+            return unpack(glyphs)
+        end
+    end
+    return nil
+end
+
+
+--------------------------------------------------------------------------
+-- ClassicInspector:Version()
+--
+--  Returns
+--     @number version             - library version
+--
+function lib:Version()
+    return LCI_VERSION
 end

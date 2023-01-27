@@ -15,7 +15,7 @@
 --       GearScore = GearScore, -- Number
 --       AvgItemLevel = AvgItemLevel, -- Number
 --       FLOPScore = FLOPScore, -- Number (bonus or minus itemlevels for Flame Leviathan vehicles)
---       HeraldFails = hashTable, -- {slot = itemlevel}
+--       HeraldFails = hashTable, -- {slotName = itemlevel}
 --       RawTime = RawTime, -- nilable: unixtime (can feed to date(fmt,RawTime) to get back human readable datetime)
 --       Color = color, -- nilable: ColorMixin
 --       FLOPColor = color, -- ColorMixin
@@ -54,7 +54,7 @@
 --     LibGearScore-1.0 does NOT initiate Inspects, it only passively monitors inspect results.
 -----------------------------------------------------------------------------------------------------------------------
 
-local MAJOR, MINOR = "LibGearScore.1000", 6
+local MAJOR, MINOR = "LibGearScore.1000", 7
 assert(LibStub, format("%s requires LibStub.", MAJOR))
 local lib, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 
@@ -79,7 +79,11 @@ local max = _G.math.max
 local min = _G.math.min
 local modf = _G.math.modf
 
-local ScanTip = _G["LibGearScoreScanTooltip.1000"] or CreateFrame("GameTooltip", "LibGearScoreScanTooltip.1000", UIParent, "GameTooltipTemplate")
+local ScanTip = _G["LibGearScoreScanTooltip.1000"] or CreateFrame("GameTooltip", "LibGearScoreScanTooltip.1000", nil, "GameTooltipTemplate")
+if not ScanTip:IsOwned(WorldFrame) then
+  ScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
+end
+ScanTip:Hide()
 lib.callbacks = lib.callbacks or LibStub:GetLibrary("CallbackHandler-1.0"):New(lib)
 
 local BRACKET_SIZE = 1000
@@ -452,8 +456,12 @@ lib.ItemScoreData = setmetatable({},{__index = function(cache, item)
 end})
 
 local function GetUnitSlotLink(unit, slot)
-  ScanTip:SetOwner(UIParent, "ANCHOR_NONE")
+  if not ScanTip:IsOwned(WorldFrame) then
+    ScanTip:SetOwner(WorldFrame, "ANCHOR_NONE")
+  end
+  ScanTip:ClearLines()
   ScanTip:SetInventoryItem(unit, slot)
+  ScanTip:Hide()
   return GetInventoryItemLink(unit, slot) or select(2, ScanTip:GetItem())
 end
 
@@ -538,11 +546,12 @@ local function CacheScore(guid, unit, level)
         end
       end
       if Herald_ItemSlots[slot] then
+        local slotName = SlotMap[slot]
         if ItemLevel > Herald_ItemSlots[slot] then
-          HeraldFails[slot] = ItemLevel
+          HeraldFails[slotName] = ItemLevel
         else
-          if HeraldFails[slot] then
-            HeraldFails[slot] = nil
+          if HeraldFails[slotName] then
+            HeraldFails[slotName] = nil
           end
         end
       end
@@ -690,6 +699,19 @@ function lib:VehicleMath(itemlevels_extra, base)
   end
 end
 
+-- return overall pass/fail and the array of fail slots
+function lib:HeraldCheck(unitorguid)
+  local guid = ResolveGUID(unitorguid)
+  if (guid) then
+    local scoreData = lib.PlayerScoreData[guid]
+    if scoreData and scoreData.HeraldFails then
+      local fail = tCount(scoreData.HeraldFails)>0
+      local pass = not fail
+      return pass, scoreData.HeraldFails, scoreData.HeraldColor
+    end
+  end
+end
+
 ---------------
 --- Testing ---
 ---------------
@@ -704,14 +726,14 @@ local function TargetScore()
       else
         print("GearScore: "..scoreData.Color:WrapTextInColorCode(scoreData.GearScore))
         if scoreData.FLOPScore then
-          print("Leviathan: "..scoreData.FLOPColor:WrapTextInColorCode(scoreData.FLOPScore))
+          print("Vehicles: "..scoreData.FLOPColor:WrapTextInColorCode(scoreData.FLOPScore))
           local percent_delta = lib:VehicleMath(scoreData.FLOPScore)
           print(format("  %s%%",scoreData.FLOPColor:WrapTextInColorCode(percent_delta)))
         end
         if tCount(scoreData.HeraldFails) > 0 then
           print("Herald: "..scoreData.HeraldColor:WrapTextInColorCode(_G.NO))
           for k,v in pairs(scoreData.HeraldFails) do
-            print(format("  %s:%s",SlotMap[k],scoreData.HeraldColor:WrapTextInColorCode(v)))
+            print(format("  %s: %s",k,scoreData.HeraldColor:WrapTextInColorCode(v)))
           end
         else
           print("Herald: "..scoreData.HeraldColor:WrapTextInColorCode(_G.YES))
