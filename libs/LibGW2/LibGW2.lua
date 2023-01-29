@@ -39,7 +39,7 @@ function lib:GetPlayerLocationZoneText()
 end
 
 function lib:GetPlayerLocationCoords()
-    return lib.locationData.x, lib.locationData.x, lib.locationData.xText, lib.locationData.yText
+    return lib.locationData.x, lib.locationData.y, lib.locationData.xText, lib.locationData.yText
 end
 
 do
@@ -146,7 +146,7 @@ do
 
     local function HandleEvents(_, event, ...)
         if event == "CRITERIA_UPDATE" or event == "PLAYER_STOPPED_MOVING" or event == "PLAYER_CONTROL_GAINED" then
-            CoordsWatcherStop()
+            CoordsWatcherStop(event)
         elseif event == "PLAYER_STARTED_MOVING" or event == "PLAYER_CONTROL_LOST" then
             CoordsWatcherStart()
         elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" then

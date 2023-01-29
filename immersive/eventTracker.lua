@@ -718,12 +718,12 @@ local eventData = {
                         end
 
                         local lengthMap = {}
-                        local position = C_Map.GetPlayerMapPosition(GW.Libs.GW2Lib:GetPlayerLocationMapID(), "player")
-                        if not position then return end
+                        local x, y = GW2_ADDON.Libs.GW2Lib:GetPlayerLocationCoords()
+                        if not x or not y then return end
 
                         for i, netPos in ipairs(env.fishingNetPosition) do
                             if GW.Libs.GW2Lib:GetPlayerLocationMapID() == netPos.map then
-                                local length = math.pow(position.x - netPos.x, 2) + math.pow(position.y - netPos.y, 2)
+                                local length = math.pow(x - netPos.x, 2) + math.pow(y - netPos.y, 2)
                                 lengthMap[i] = length
                             end
                         end

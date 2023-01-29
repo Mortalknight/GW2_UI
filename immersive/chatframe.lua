@@ -1550,17 +1550,17 @@ local function styleChatWindow(frame)
 
     editbox:HookScript("OnEditFocusGained", function(editBox)
         frame.editboxHasFocus = true
-        frame:SetScript(
-            "OnUpdate",
-            function()
-                handleChatFrameFadeIn(frame)
-            end
-        )
+        --frame:SetScript(
+        --    "OnUpdate",
+        --    function()
+        --        handleChatFrameFadeIn(frame)
+        --    end
+        --)
         FCF_FadeInChatFrame(frame)
         editBox:Show()
     end)
     editbox:HookScript("OnEditFocusLost", function(editBox)
-        frame:SetScript("OnUpdate", nil)
+        --frame:SetScript("OnUpdate", nil)
         frame.editboxHasFocus = false
         FCF_FadeOutChatFrame(frame)
         if settings.hideEditbox then
@@ -2136,8 +2136,8 @@ local function LoadChat()
 
         local allowHooks = not ignoreChats[frame:GetID()]
         if allowHooks and not frame.OldAddMessage then
-            --Don"t add timestamps to combat log, they don"t work.
-            --This usually taints, but LibChatAnims should make sure it doesn"t
+            --Don't add timestamps to combat log, they don't work.
+            --This usually taints, but LibChatAnims should make sure it doesn't
             frame.OldAddMessage = frame.AddMessage
             frame.AddMessage = AddMessage
         end
