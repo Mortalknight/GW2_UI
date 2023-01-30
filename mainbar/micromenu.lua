@@ -366,6 +366,53 @@ local function update_OnEnter(self)
 end
 AFP("update_OnEnter", update_OnEnter)
 
+-- mail icon
+local function mailIconOnEvent(self, event)
+    if event == "UPDATE_PENDING_MAIL" then
+        if HasNewMail() then
+            self:Show()
+            self.GwNotify:Show()
+            if GameTooltip:IsOwned(self) then
+                MinimapMailFrameUpdate()
+            end
+        else
+            self:Hide()
+            self.GwNotify:Hide()
+        end
+    end
+end
+
+local function mailIconOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    if GameTooltip:IsOwned(self) then
+        MinimapMailFrameUpdate()
+    end
+end
+
+--workoOrderIcon
+local function workOrderIconOnEvent(self, event)
+    if event == "CRAFTINGORDERS_UPDATE_PERSONAL_ORDER_COUNTS" or event == "PLAYER_ENTERING_WORLD" then
+        self.countInfos = C_CraftingOrders.GetPersonalOrdersInfo()
+        if #self.countInfos > 0 then
+            self:Show()
+            self.GwNotify:Show()
+        else
+            self:Hide()
+            self.GwNotify:Hide()
+        end
+    end
+end
+
+local function workOrderIconOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    local wrap = false
+    GameTooltip_AddNormalLine(GameTooltip, MAILFRAME_CRAFTING_ORDERS_TOOLTIP_TITLE, wrap)
+    for _, countInfo in ipairs(self.countInfos) do
+        GameTooltip_AddNormalLine(GameTooltip, PERSONAL_CRAFTING_ORDERS_AVAIL_FMT:format(countInfo.numPersonalOrders, countInfo.professionName), wrap)
+    end
+    GameTooltip:Show()
+end
+
 local function setupMicroButtons(mbf)
     -- CharacterMicroButton
     -- determine if we are using the default char button (for default charwin)
@@ -600,6 +647,34 @@ local function setupMicroButtons(mbf)
     updateIcon:SetPoint("BOTTOMLEFT", greatVaultIcon, "BOTTOMRIGHT", 4, 0)
     updateIcon:Hide()
     updateIcon:HookScript("OnEnter", update_OnEnter)
+
+    -- Mail icon
+    local mailIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
+    mailIcon:RegisterEvent("UPDATE_PENDING_MAIL")
+    mailIcon.newbieText = nil
+    mailIcon.tooltipText = ""
+    reskinMicroButton(mailIcon, "MailMicroButton", mbf)
+    mailIcon:ClearAllPoints()
+    mailIcon:SetPoint("BOTTOMLEFT", updateIcon, "BOTTOMRIGHT", 4, 0)
+    mailIcon:Hide()
+    mailIcon:HookScript("OnEnter", mailIconOnEnter)
+    mailIcon:HookScript("OnLeave", GameTooltip_Hide)
+    mailIcon:SetScript("OnEvent", mailIconOnEvent)
+
+    -- workorder icon
+    local workOrderIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
+    workOrderIcon:RegisterEvent("CRAFTINGORDERS_UPDATE_PERSONAL_ORDER_COUNTS")
+    workOrderIcon:RegisterEvent("PLAYER_ENTERING_WORLD")
+    workOrderIcon.newbieText = nil
+    workOrderIcon.tooltipText = ""
+    reskinMicroButton(workOrderIcon, "WorkOrderMicroButton", mbf)
+    workOrderIcon:ClearAllPoints()
+    workOrderIcon:SetPoint("BOTTOMLEFT", mailIcon, "BOTTOMRIGHT", 4, 0)
+    workOrderIcon:Hide()
+    workOrderIcon:HookScript("OnEnter", workOrderIconOnEnter)
+    workOrderIcon:HookScript("OnLeave", GameTooltip_Hide)
+    workOrderIcon:SetScript("OnEvent", workOrderIconOnEvent)
+
 end
 AFP("setupMicroButtons", setupMicroButtons)
 

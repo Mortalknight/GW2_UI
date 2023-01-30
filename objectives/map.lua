@@ -114,18 +114,12 @@ local function minimap_OnShow()
     if GwAddonToggle and GwAddonToggle.gw_Showing then
         GwAddonToggle:Show()
     end
-    if GwMailButton and GwMailButton.gw_Showing then
-        GwMailButton:Show()
-    end
 end
 GW.AddForProfiling("map", "minimap_OnShow", minimap_OnShow)
 
 local function minimap_OnHide()
     if GwAddonToggle then
         GwAddonToggle:Hide()
-    end
-    if GwMailButton then
-        GwMailButton:Hide()
     end
 end
 GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
@@ -135,14 +129,12 @@ local function setMinimapButtons(side)
     QueueStatusButton:ClearAllPoints()
     GameTimeFrame:ClearAllPoints()
     expButton:ClearAllPoints()
-    GwMailButton:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
 
     if side == "left" then
         GameTimeFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -2)
-        GwMailButton:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
-        QueueStatusButton:SetPoint("TOP", GwMailButton, "BOTTOM", 0, 0)
+        QueueStatusButton:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
         GwAddonToggle:SetPoint("TOP", QueueStatusButton, "BOTTOM", -3, 0)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
         expButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 0, -3)
@@ -154,8 +146,7 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
     else
         GameTimeFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -2)
-        GwMailButton:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
-        QueueStatusButton:SetPoint("TOP", GwMailButton, "BOTTOM", 0, 0)
+        QueueStatusButton:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
         GwAddonToggle:SetPoint("TOP", QueueStatusButton, "BOTTOM", 3, 0)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
         expButton:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 2, -3)
@@ -165,7 +156,6 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetNormalTexture():SetTexCoord(1, 0, 0, 1)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(1, 0, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(1, 0, 0, 1)
-
     end
 
     QueueStatusButton:SetParent(UIParent)
@@ -464,7 +454,8 @@ local function LoadMinimap()
         MiniMapTracking,
         Minimap.ZoomIn,
         Minimap.ZoomOut,
-        MinimapCompassTexture
+        MinimapCompassTexture,
+        MinimapCluster.IndicatorFrame
     }
 
     MinimapCluster.BorderTop:StripTextures()
@@ -554,37 +545,6 @@ local function LoadMinimap()
         GameTimeFrame:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
         GameTimeFrame:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
     end)
-
-    --Mail Button
-    local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")
-    local fnGwMailButton_OnEvent = function(self, event)
-        if event == "UPDATE_PENDING_MAIL" then
-            if (HasNewMail()) then
-                if Minimap:IsShown() then
-                    self:Show()
-                end
-                self.gw_Showing = true
-                if (GameTooltip:IsOwned(self)) then
-                    MinimapMailFrameUpdate()
-                end
-            else
-                self:Hide()
-                self.gw_Showing = false
-            end
-        end
-    end
-    local fnGwMailButton_OnEnter = function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -55)
-        if (GameTooltip:IsOwned(self)) then
-            MinimapMailFrameUpdate()
-        end
-    end
-    GwMailButton:SetScript("OnEvent", fnGwMailButton_OnEvent)
-    GwMailButton:SetScript("OnEnter", fnGwMailButton_OnEnter)
-    GwMailButton:SetScript("OnLeave", GameTooltip_Hide)
-    GwMailButton.gw_Showing = false
-    GwMailButton:RegisterEvent("UPDATE_PENDING_MAIL")
-    GwMailButton:SetFrameLevel(GwMailButton:GetFrameLevel() + 1)
 
     -- Addon Icons
     GW.CreateMinimapButtonsSack()
