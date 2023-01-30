@@ -326,7 +326,6 @@ local function updateItemSlot(self)
 
     local quality = GetInventoryItemQuality("player", slot)
     setItemButtonQuality(self, quality)
-    setItemLevel(self, quality, nil, slot)
 end
 GW.AddForProfiling("paperdoll_equipment", "updateItemSlot", updateItemSlot)
 
@@ -757,6 +756,8 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     EquipSlotList[#EquipSlotList + 1] = slot:GetID()
     slotButtons[#slotButtons + 1] = slot
 
+    updateItemSlot(slot)
+
     slot.IsGW2Hooked = true
 end
 
@@ -823,12 +824,10 @@ local function LoadPDBagList(fmMenu)
         if not button.IsGW2Hooked then return end
         local textureName = GetInventoryItemTexture("player", button:GetID())
         if not textureName then
-            updateItemSlot(button)
             button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/slot-bg")
             button.icon:SetTexCoord(unpack(PlayerSlots[button:GetName()]))
         else
             button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-            updateItemSlot(button)
         end
     end)
 

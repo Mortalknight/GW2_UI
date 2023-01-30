@@ -82,6 +82,8 @@ local function CreateSlotStrings()
             end
             slot.enchantText:SetPoint(justify, slot, x + (justify == "BOTTOMLEFT" and 5 or 0), z)
 
+            slot.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
+
             for u = 1, 10 do
                 local offset = (u - 1) * 13
                 local offsetY = -2
@@ -93,9 +95,7 @@ local function CreateSlotStrings()
     end
 end
 
-local function UpdatePageStrings(i, iLevelDB, inspectItem, slotInfo)
-    iLevelDB[i] = slotInfo.iLvl
-
+local function UpdatePageStrings(i, inspectItem, slotInfo)
     if GW.RoundInt(inspectItem.enchantText:GetWidth()) == 40 then
         inspectItem.enchantText:SetText(slotInfo.enchantTextShort2)
     else
@@ -122,51 +122,45 @@ local function UpdatePageStrings(i, iLevelDB, inspectItem, slotInfo)
             backdrop:Hide()
         end
     end
+
+    inspectItem.itemlevel:SetText(slotInfo.iLvl)
+    if slotInfo.itemLevelColors[1] and slotInfo.itemLevelColors[2] and slotInfo.itemLevelColors[3] then
+        inspectItem.itemlevel:SetTextColor(slotInfo.itemLevelColors[1], slotInfo.itemLevelColors[2], slotInfo.itemLevelColors[3])
+    end
 end
 
-local function TryGearAgain(i, deepScan, iLevelDB, inspectItem)
+local function TryGearAgain(i, deepScan, inspectItem)
     C_Timer.After(0.05, function()
-        local unit = "player"
-        local slotInfo = GW.GetGearSlotInfo(unit, i, nil, deepScan)
+        local slotInfo = GW.GetGearSlotInfo("player", i, nil, deepScan)
         if slotInfo == "tooSoon" then return end
 
-        UpdatePageStrings(i, iLevelDB, inspectItem, slotInfo)
+        UpdatePageStrings(i, inspectItem, slotInfo)
     end)
 end
 
 do
-    local iLevelDB = {}
-    local function UpdatePageInfo(event)
-        wipe(iLevelDB)
-
-        local waitForItems
+    local function UpdatePageInfo()
         for i = 1, 17 do
             if i ~= 4 then
                 local inspectItem = _G[InspectItems[i]]
                 inspectItem.enchantText:SetText("")
 
-                local unit = "player"
-                local slotInfo = GW.GetGearSlotInfo(unit, i, nil, true)
+                local slotInfo = GW.GetGearSlotInfo("player", i, nil, true)
                 if slotInfo == "tooSoon" then
-                    if not waitForItems then waitForItems = true end
-                    TryGearAgain(i, true, iLevelDB, inspectItem)
+                    TryGearAgain(i, true, inspectItem)
                 else
-                    UpdatePageStrings(i, iLevelDB, inspectItem, slotInfo)
+                    UpdatePageStrings(i, inspectItem, slotInfo)
                 end
             end
-        end
-
-        if event and event == "PLAYER_EQUIPMENT_CHANGED" then
-            return
         end
     end
     GW.UpdatePageInfo = UpdatePageInfo
 end
 
 local function UpdateCharacterInfo(_, event)
-    if whileOpenEvents[event] and not GwCharacterWindow:IsShown() then return end
+    if (not settings.enabled) or (whileOpenEvents[event] and not GwCharacterWindow:IsShown()) then return end
 
-    GW.UpdatePageInfo(event)
+    GW.UpdatePageInfo()
 end
 
 local function ToggleCharacterItemInfo(setup)
@@ -194,6 +188,7 @@ local function ToggleCharacterItemInfo(setup)
             if i ~= 4 then
                 local inspectItem = _G[InspectItems[i]]
                 inspectItem.enchantText:SetText("")
+                inspectItem.itemlevel:SetText("")
 
                 for y = 1, 10 do
                     inspectItem["textureSlot" .. y]:SetTexture()

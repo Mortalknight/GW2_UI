@@ -70,7 +70,7 @@ local function InspectGearSlot(line, lineText, slotInfo)
     if itemLevel then
         slotInfo.iLvl = tonumber(itemLevel)
 
-        local tr, tg, tb = _G.GW2_UI_ScanTooltipTextLeft1:GetTextColor()
+        local tr, tg, tb = GW2_UI_ScanTooltipTextLeft1:GetTextColor()
         slotInfo.itemLevelColors[1] = tr
         slotInfo.itemLevelColors[2] = tg
         slotInfo.itemLevelColors[3] = tb
@@ -127,7 +127,6 @@ local function ScanTooltipTextures()
                 tt.essences[step][1] = selected            --essence texture if selected or nil
                 tt.essences[step][2] = tex:GetAtlas()    --atlas place "tooltip-heartofazerothessence-major" or "tooltip-heartofazerothessence-minor"
                 tt.essences[step][3] = texture            --border texture placed by the atlas
-                --`CollectEssenceInfo` will add 4 (hex quality color) and 5 (essence name)
 
                 step = step + 1
 
@@ -178,7 +177,7 @@ local function GetGearSlotInfo(unit, slot, itemlink, deepScan)
             end
         end
     else
-        local firstLine = _G.GW2_UI_ScanTooltipTextLeft1:GetText()
+        local firstLine = GW2_UI_ScanTooltipTextLeft1:GetText()
         if firstLine == RETRIEVING_ITEM_INFO then
             return "tooSoon"
         end

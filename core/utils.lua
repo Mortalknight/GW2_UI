@@ -617,7 +617,7 @@ local function setItemLevel(button, quality, itemlink, slot)
             r, g, b = GetItemQualityColor(quality)
             button.itemlevel:SetTextColor(r, g, b, 1)
         end
-        local slotInfo = GW.GetGearSlotInfo("player", slot, itemlink)
+        local slotInfo = GW.GetGearSlotInfo("player", slot, itemlink, false)
         button.itemlevel:SetText(slotInfo.iLvl)
         button.itemlevel:SetTextColor(r, g, b, 1)
     else
