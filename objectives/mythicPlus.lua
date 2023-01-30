@@ -16,6 +16,7 @@ local function OnEvent(_, event)
         GwQuesttrackerContainerQuests.shouldUpdate = false
         GW.CollapseQuestHeader(GwQuesttrackerContainerQuests, true, false)
         GW.CollapseRecipeHeader(GwQuesttrackerContainerRecipe, true, false)
+        GW.CollapseonthlyActivitiesHeader(GwQuesttrackerContainerMonthlyActivity, true, false)
         GW:CollapseBonusObjectivesHeader(GwQuesttrackerContainerBonusObjectives, true, false)
         GW.CollapseAchievementHeader(GwQuesttrackerContainerAchievement, true, false)
         if GwQuesttrackerContainerWQT then
@@ -27,6 +28,7 @@ local function OnEvent(_, event)
         GwQuesttrackerContainerQuests.shouldUpdate = false
         GW.CollapseQuestHeader(GwQuesttrackerContainerQuests, false, true)
         GW.CollapseRecipeHeader(GwQuesttrackerContainerRecipe, false, true)
+        GW.CollapseonthlyActivitiesHeader(GwQuesttrackerContainerMonthlyActivity, false, true)
         GW:CollapseBonusObjectivesHeader(GwQuesttrackerContainerBonusObjectives, false, true)
         GW.CollapseAchievementHeader(GwQuesttrackerContainerAchievement, false, true)
         if GwQuesttrackerContainerWQT then

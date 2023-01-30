@@ -643,6 +643,11 @@ GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
 local function LoadInventory()
     UpdateSettings()
 
+    BagsBar:KillEditMode()
+
+    if BagBarExpandToggle then
+        BagBarExpandToggle:SetParent(GW.HiddenFrame)
+    end
     item_size = settings.itemSize
 
     -- anytime a ContainerFrame has its anchors set, we re-hide it

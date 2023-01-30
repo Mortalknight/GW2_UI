@@ -20,6 +20,8 @@ local GW_BLIZZARD_HIDE_FRAMES = {
     MainMenuBar.EndCaps.LeftEndCap,
     MainMenuBar.EndCaps.RightEndCap,
     MainMenuBar.ActionBarPageNumber,
+    MainMenuBar.ActionBarPageNumber.UpButton,
+    MainMenuBar.ActionBarPageNumber.DownButton,
     MainMenuBar.BorderArt,
     ReputationWatchBar,
     HonorWatchBar,
@@ -95,9 +97,10 @@ local actionBar_OnUpdate
 
 local function hideBlizzardsActionbars()
     for _, v in pairs(GW_BLIZZARD_HIDE_FRAMES) do
-        if v and v.Hide ~= nil then
-            v:Hide()
-            if v.UnregisterAllEvents ~= nil then
+        if v then
+            v:SetAlpha(0)
+            v:EnableMouse(false)
+            if v.UnregisterAllEvents then
                 v:UnregisterAllEvents()
             end
         end
@@ -581,10 +584,13 @@ local function main_OnEvent(_, event)
         local forceCombat = event == "PLAYER_REGEN_DISABLED"
         fadeCheck(MainMenuBar, forceCombat)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
-        if GW.Libs.LEMO:GetActiveLayout() ~= "GW2_Layout" then
-            GW.Libs.LEMO:SetActiveLayout("GW2_Layout")
-            GW.Libs.LEMO:ApplyChanges()
-        end
+        C_Timer.After(1.1, function()
+            GW.Libs.LEMO:LoadLayouts()
+            if GW.Libs.LEMO:GetActiveLayout() ~= "GW2_Layout" then
+                GW.Libs.LEMO:SetActiveLayout("GW2_Layout")
+                GW.Libs.LEMO:ApplyChanges()
+            end
+        end)
     end
 end
 AFP("main_OnEvent", main_OnEvent)
@@ -624,6 +630,7 @@ local function updateMainBar()
             hooksecurefunc(btn, "UpdateUsable", changeVertexColorActionbars)
             hooksecurefunc(btn, "UpdateFlyout", changeFlyoutStyle)
             hooksecurefunc(btn, "Update", UpdateActionbarBorders)
+            UpdateActionbarBorders(btn)
 
             hotkey:SetPoint("BOTTOMLEFT", btn, "BOTTOMLEFT", 0, 0)
             hotkey:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 0, 0)

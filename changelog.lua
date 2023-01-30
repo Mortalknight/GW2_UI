@@ -14,6 +14,9 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
+addChange("6.2.2",{
+    {ct.change,[=[Fixes for 10.0.5]=]},
+})
 addChange("6.2.1",{
     {ct.bug,[=[Fix ElvUI micro menu error]=]},
     {ct.bug,[=[Fix ElvUI actionbar lua error if our actionbars are disabled]=]},

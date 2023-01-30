@@ -427,33 +427,33 @@ local function loadBaseFrame()
     fmGCW:WrapScript(fmGCW, "OnShow", charSecure_OnShow)
     fmGCW:WrapScript(fmGCW, "OnHide", charSecure_OnHide)
 
-    local bgMask = UIParent:CreateMaskTexture()
-    bgMask:SetPoint("TOPLEFT", fmGCW, "TOPLEFT", -64, 64)
-    bgMask:SetPoint("BOTTOMRIGHT", fmGCW, "BOTTOMLEFT",-64, 0)
-    bgMask:SetTexture(
+    fmGCW.backgroundMask = UIParent:CreateMaskTexture()
+    fmGCW.backgroundMask:SetPoint("TOPLEFT", fmGCW, "TOPLEFT", -64, 64)
+    fmGCW.backgroundMask:SetPoint("BOTTOMRIGHT", fmGCW, "BOTTOMLEFT",-64, 0)
+    fmGCW.backgroundMask:SetTexture(
         "Interface/AddOns/GW2_UI/textures/masktest",
         "CLAMPTOBLACKADDITIVE",
         "CLAMPTOBLACKADDITIVE"
     )
-    fmGCW.background:AddMaskTexture(bgMask)
-    GwCharacterWindowHeader:AddMaskTexture(bgMask)
-    GwCharacterWindowHeaderRight:AddMaskTexture(bgMask)
-    GwCharacterWindowLeft:AddMaskTexture(bgMask)
-    fmGCW.backgroundMask = bgMask
+
+    fmGCW.background:AddMaskTexture(fmGCW.backgroundMask)
+    GwCharacterWindowHeader:AddMaskTexture(fmGCW.backgroundMask)
+    GwCharacterWindowHeaderRight:AddMaskTexture(fmGCW.backgroundMask)
+    GwCharacterWindowLeft:AddMaskTexture(fmGCW.backgroundMask)
 
     fmGCW:HookScript("OnShow",function()
-      AddToAnimation("HERO_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
-      function()
-        local p = animations["HERO_PANEL_ONSHOW"].progress
-        fmGCW:SetAlpha(p)
-        if GwDressingRoom and GwDressingRoom.model then
-          GwDressingRoom.model:SetAlpha(math.max(0,(p-0.5)/0.5))
-        end
-        bgMask:SetPoint("BOTTOMRIGHT", fmGCW.background, "BOTTOMLEFT",lerp(-64,fmGCW.background:GetWidth(),p) , 0)
-      end,1,function()
-        bgMask:SetPoint("BOTTOMRIGHT", fmGCW.background, "BOTTOMLEFT",fmGCW.background:GetWidth() + 200 , 0)
-      end)
+        AddToAnimation("HERO_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
+        function(p)
+            fmGCW:SetAlpha(p)
+            if GwDressingRoom and GwDressingRoom.model then
+                GwDressingRoom.model:SetAlpha(math.max(0, (p - 0.5) / 0.5))
+            end
+            fmGCW.backgroundMask:SetPoint("BOTTOMRIGHT", fmGCW.background, "BOTTOMLEFT", lerp(-64, fmGCW.background:GetWidth(), p) , 0)
+        end, 1, function()
+            fmGCW.backgroundMask:SetPoint("BOTTOMRIGHT", fmGCW.background, "BOTTOMLEFT", fmGCW.background:GetWidth() + 200 , 0)
+        end)
     end)
+
     -- the close button securely closes the char window
     fmGCW.close:SetAttribute("_onclick", charCloseSecure_OnClick)
 

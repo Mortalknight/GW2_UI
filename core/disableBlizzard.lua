@@ -142,7 +142,6 @@ local function DisableBlizzardFrames()
 
     if ourPetFrame then
         HandleFrame(PetFrame)
-        --PetActionBar.UpdateGridLayout = GW.NoOp -- taints the mainactionbar keybinds
     end
 
     if ourTargetFrame then
@@ -180,6 +179,10 @@ local function DisableBlizzardFrames()
     if ourCastBar then
         HandleFrame(PlayerCastingBarFrame)
         HandleFrame(PetCastingBarFrame)
+
+        -- disbale blizzard castingbar mover
+        PlayerCastingBarFrame:HookScript("OnShow", function() PlayerCastingBarFrame:Hide() end)
+        PlayerCastingBarFrame:KillEditMode()
     end
 
     if ourInventory then
@@ -210,9 +213,9 @@ local function DisableBlizzardFrames()
             end
         end
 
-        MainMenuBar.SetPositionForStatusBars = GW.NoOp
-        MultiActionBar_HideAllGrids = GW.NoOp
-        MultiActionBar_ShowAllGrids = GW.NoOp
+        --MainMenuBar.SetPositionForStatusBars = GW.NoOp
+        --MultiActionBar_HideAllGrids = GW.NoOp
+        --MultiActionBar_ShowAllGrids = GW.NoOp
     end
 end
 GW.DisableBlizzardFrames = DisableBlizzardFrames

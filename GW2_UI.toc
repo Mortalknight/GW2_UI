@@ -1,4 +1,4 @@
-## Interface: 100002
+## Interface: 100005
 ## Title: |cffffedbaGW2 UI|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
@@ -212,6 +212,7 @@ objectives\scenario.lua
 objectives\notifications.lua
 objectives\bonusObjective.lua
 objectives\recipeTracking.lua
+objectives\monthlyActivitiesTracking.lua
 objectives\bossFrames.lua
 objectives\arenaFrames.lua
 objectives\achievement.lua

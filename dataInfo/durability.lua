@@ -37,9 +37,6 @@ local function collectDurability(self)
             GW.ScanTooltip:Show()
 
             if GW.ScanTooltip.GetTooltipData then
-				GW.ScanTooltip:SetInventoryItem("player", idx)
-				GW.ScanTooltip:Show()
-
 				local data = GW.ScanTooltip:GetTooltipData()
 				totalRepairCost = totalRepairCost + (data and data.repairCost or 0)
 			else

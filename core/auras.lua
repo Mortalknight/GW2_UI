@@ -92,9 +92,11 @@ local function getDebuffs(unit, filter, revert)
     local debuffList = {}
     local showImportant = filter == "IMPORTANT"
     local counter = 0
-    local filterToUse = filter == "IMPORTANT" and nil or filter
+    local filterToUse = nil
     local name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID
-
+    if not showImportant then
+        filterToUse = filter
+    end
     for i = 1, 40 do
         name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitDebuff(unit, i, filterToUse)
         if name and ((showImportant and (caster == "player" or GW.ImportendRaidDebuff[spellID])) or not showImportant) then

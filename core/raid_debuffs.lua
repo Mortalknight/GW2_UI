@@ -75,6 +75,8 @@ end
     SetDefaultOnTheFly(203963) -- Eye of the Storm
     SetDefaultOnTheFly(196497) -- Ravenous Leap
     SetDefaultOnTheFly(193660) -- Felblaze Rush
+    SetDefaultOnTheFly(192133) --
+    SetDefaultOnTheFly(192132) --
 -- Shadowmoon Burial Grounds
     SetDefaultOnTheFly(156776) -- Rending Voidlash
     SetDefaultOnTheFly(153692) -- Necrotic Pitch
