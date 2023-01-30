@@ -55,18 +55,22 @@ local function InspectGearSlot(data, line, lineText, slotInfo)
         slotInfo.enchantTextShort2 = strsub(text, 1, 11)
         slotInfo.enchantTextReal = enchant
 
-        slotInfo.enchantColors[1] = line.args[3].colorVal.r
-        slotInfo.enchantColors[2] = line.args[3].colorVal.g
-        slotInfo.enchantColors[3] = line.args[3].colorVal.b
+        if line.args[3] and line.args[3].colorVal then
+            slotInfo.enchantColors[1] = line.args[3].colorVal.r
+            slotInfo.enchantColors[2] = line.args[3].colorVal.g
+            slotInfo.enchantColors[3] = line.args[3].colorVal.b
+        end
     end
 
     local itemLevel = lineText and (strmatch(lineText, MATCH_ITEM_LEVEL_ALT) or strmatch(lineText, MATCH_ITEM_LEVEL))
     if itemLevel then
         slotInfo.iLvl = tonumber(itemLevel)
 
-        slotInfo.itemLevelColors[1] = data.lines[1].args[3].colorVal.r
-        slotInfo.itemLevelColors[2] = data.lines[1].args[3].colorVal.g
-        slotInfo.itemLevelColors[3] = data.lines[1].args[3].colorVal.b
+        if data.lines[1].args[3] and data.lines[1].args[3].colorVal then
+            slotInfo.itemLevelColors[1] = data.lines[1].args[3].colorVal.r
+            slotInfo.itemLevelColors[2] = data.lines[1].args[3].colorVal.g
+            slotInfo.itemLevelColors[3] = data.lines[1].args[3].colorVal.b
+        end
     end
 end
 
@@ -80,7 +84,7 @@ local function ScanTooltipTextures(data, slotInfo)
     local idx = 1
     for i = 1, #data.lines do
         local texture = nil
-        if data.lines[i].args[4] and data.lines[i].args[4].field == "gemIcon" then
+        if data.lines[i].args[4] and data.lines[i].args[4].field and data.lines[i].args[4].field == "gemIcon" then
             texture = data.lines[i].args[4].intVal
         end
 
@@ -114,7 +118,7 @@ do
                 local line = data.lines[x]
                 if line then
                     local lineText = line.args[2].stringVal
-                    if x == 1 and lineText == RETRIEVING_ITEM_INFO then
+                    if lineText and x == 1 and lineText == RETRIEVING_ITEM_INFO then
                         return "tooSoon"
                     else
                         InspectGearSlot(data, line, lineText, slotInfo)
@@ -122,7 +126,8 @@ do
                 end
             end
         else
-            if data.lines[1].args[2].field == "leftText" and data.lines[1].args[2].stringVal == RETRIEVING_ITEM_INFO then
+            if data.lines[1].args[2] and data.lines[1].args[2].field and data.lines[1].args[2].field == "leftText" and data.lines[1].args[2].stringVal
+            and data.lines[1].args[2].stringVal == RETRIEVING_ITEM_INFO then
                 return "tooSoon"
             end
 
