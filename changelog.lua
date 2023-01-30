@@ -14,6 +14,14 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
+
+addChange("6.3.0",{
+    {ct.feature,[=[Added workorder indicator to micromenu]=]},
+
+    {ct.change,[=[Move "new mail" indicator to micromenu]=]},
+
+    {ct.bug,[=[Performance improvements]=]},
+})
 addChange("6.2.2",{
     {ct.change,[=[Fixes for 10.0.5]=]},
 })

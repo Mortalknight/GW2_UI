@@ -1,3 +1,13 @@
+6.3.0
+NEW
+    - Added workorder indicator to micromenu
+
+CHANGES
+    - Move "new mail" indicator to micromenu
+
+FIXES
+    - Performance improvements
+
 6.2.2
 FIXES
     - Fixes for 10.0.5

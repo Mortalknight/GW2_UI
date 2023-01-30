@@ -1,34 +1,9 @@
-6.2.2
-FIXES
-    - Fixes for 10.0.5
-
-6.2.1
-FIXES
-    - Fix ElvUI micro menu error
-    - Fix ElvUI actionbar lua error if our actionbars are disabled
-    - Fix ElvUI battle.net frame error if both module are enabled
-
-6.2.0
+6.3.0
 NEW
-    - Added Hud background for dragon riding
-    - Added Vigor to dodge bar
-    - Added new achievement skin
-    - Added new gossip skin
-    - Added fish nets timers to world map
-    - Added cooking event timer to scenario tracker
-    - Added option to show enchants and gems on gw2 character panel
-    - Added option to flash taskbar on world event reminder
-    - Added group info to premade group list and group tooltips
+    - Added workorder indicator to micromenu
+
 CHANGES
-    - Update chat bubbles
-    - Update Move HUD textures
-    - Add filters to Move HUD mode
-    - Added char counter to chat editbox
-    - The info block in Mythic+ dungeons now shows more precise progress information
+    - Move "new mail" indicator to micromenu
 
 FIXES
-    - Fix ElvUI micro menu backdrop
-    - Fix Details settings page not opens
-    - Fix wrong data in fps tooltip
-    - Fix TomTom mini map icons moves into the addon button container
-    - Fix compass ignoring settings
+    - Performance improvements
