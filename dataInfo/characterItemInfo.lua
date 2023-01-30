@@ -95,7 +95,7 @@ local function CreateSlotStrings()
     end
 end
 
-local function UpdatePageStrings(i, inspectItem, slotInfo)
+local function UpdatePageStrings(inspectItem, slotInfo)
     if GW.RoundInt(inspectItem.enchantText:GetWidth()) == 40 then
         inspectItem.enchantText:SetText(slotInfo.enchantTextShort2)
     else
@@ -124,7 +124,7 @@ local function UpdatePageStrings(i, inspectItem, slotInfo)
     end
 
     inspectItem.itemlevel:SetText(slotInfo.iLvl)
-    if slotInfo.itemLevelColors[1] and slotInfo.itemLevelColors[2] and slotInfo.itemLevelColors[3] then
+    if slotInfo.itemLevelColors and slotInfo.itemLevelColors[1] and slotInfo.itemLevelColors[2] and slotInfo.itemLevelColors[3] then
         inspectItem.itemlevel:SetTextColor(slotInfo.itemLevelColors[1], slotInfo.itemLevelColors[2], slotInfo.itemLevelColors[3])
     end
 end
@@ -134,7 +134,7 @@ local function TryGearAgain(i, deepScan, inspectItem)
         local slotInfo = GW.GetGearSlotInfo("player", i, nil, deepScan)
         if slotInfo == "tooSoon" then return end
 
-        UpdatePageStrings(i, inspectItem, slotInfo)
+        UpdatePageStrings(inspectItem, slotInfo)
     end)
 end
 
@@ -149,7 +149,7 @@ do
                 if slotInfo == "tooSoon" then
                     TryGearAgain(i, true, inspectItem)
                 else
-                    UpdatePageStrings(i, inspectItem, slotInfo)
+                    UpdatePageStrings(inspectItem, slotInfo)
                 end
             end
         end
