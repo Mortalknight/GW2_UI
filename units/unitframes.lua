@@ -256,7 +256,7 @@ local function setUnitPortraitFrame(self)
 
     --if DBM or BigWigs is load, check if target is a boss and set boss frame
     local foundBossMod = false
-    if IsAddOnLoaded("DBM-Core") and DBM and DBM.ModLists then
+    if DBM and DBM.ModLists then
         local npcId = GW.GetUnitCreatureId(self.unit)
 
         for modId, _ in pairs(DBM.ModLists) do
@@ -271,7 +271,7 @@ local function setUnitPortraitFrame(self)
                 break
             end
         end
-    elseif IsAddOnLoaded("BigWigs") and BigWigs then
+    elseif BigWigs then
         local npcId = GW.GetUnitCreatureId(self.unit)
         local BWMods = BigWigs:GetEnableMobs()
         if BWMods[npcId] then
@@ -292,7 +292,7 @@ local function updateAvgItemLevel(self, guid)
     if guid == UnitGUID(self.unit) and CanInspect(self.unit) then
         local itemLevel, retryUnit, retryTable, iLevelDB = GW.GetUnitItemLevel(self.unit)
         if itemLevel == "tooSoon" then
-            GW.Wait(0.05, function()
+            C_Timer.After(0.05, function()
                 local canUpdate = true
                 for _, x in ipairs(retryTable) do
                     local slotInfo = GW.GetGearSlotInfo(retryUnit, x)
@@ -300,6 +300,7 @@ local function updateAvgItemLevel(self, guid)
                         canUpdate = false
                     else
                         iLevelDB[x] = slotInfo.iLvl
+                        slotInfo = nil -- clear cache
                     end
                 end
 

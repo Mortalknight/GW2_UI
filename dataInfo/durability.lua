@@ -3,6 +3,7 @@ local _, GW = ...
 local totalDurability = 0
 local invDurability = {}
 local totalRepairCost
+local tooltipData
 
 local slots = {
     [1] = INVTYPE_HEAD,
@@ -32,18 +33,12 @@ local function collectDurability(self)
             if perc < totalDurability then
                 totalDurability = perc
             end
-
-            GW.ScanTooltip:SetInventoryItem("player", idx)
-            GW.ScanTooltip:Show()
-
-            if GW.ScanTooltip.GetTooltipData then
-				local data = GW.ScanTooltip:GetTooltipData()
-				totalRepairCost = totalRepairCost + (data and data.repairCost or 0)
-			else
-				totalRepairCost = totalRepairCost + select(3, GW.ScanTooltip:SetInventoryItem("player", idx))
-			end
+            tooltipData = C_TooltipInfo.GetInventoryItem("player", idx)
+            TooltipUtil.SurfaceArgs(tooltipData)
+			totalRepairCost = totalRepairCost + (tooltipData and tooltipData.repairCost or 0)
         end
     end
+    tooltipData = nil
     self.Value:SetFormattedText("%d%%", totalDurability)
 end
 GW.collectDurability = collectDurability

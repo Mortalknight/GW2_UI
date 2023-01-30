@@ -577,6 +577,7 @@ local function TT_OnEvent(_, event, unitGUID)
                         canUpdate = false
                     else
                         iLevelDB[x] = slotInfo.iLvl
+                        slotInfo = nil --clear cache
                     end
                 end
 
@@ -945,7 +946,7 @@ local function shouldHiddenInCombat(tooltip)
 end
 
 local function SetStyle(self, _, isEmbedded)
-    if not self or (self == GW.ScanTooltip or isEmbedded or self.IsEmbedded or not self.NineSlice) or self:IsForbidden() then return end
+    if not self or (isEmbedded or self.IsEmbedded or not self.NineSlice) or self:IsForbidden() then return end
 
     if self.Delimiter1 then self.Delimiter1:SetTexture() end
     if self.Delimiter2 then self.Delimiter2:SetTexture() end

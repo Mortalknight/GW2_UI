@@ -21,10 +21,6 @@ local InspectItems = {
     "CharacterSecondaryHandSlot",
 }
 
-local whileOpenEvents = {
-    UPDATE_INVENTORY_DURABILITY = true,
-}
-
 local settings = {}
 
 local function UpdateSettings()
@@ -135,6 +131,7 @@ local function TryGearAgain(i, deepScan, inspectItem)
         if slotInfo == "tooSoon" then return end
 
         UpdatePageStrings(inspectItem, slotInfo)
+        slotInfo = nil
     end)
 end
 
@@ -150,6 +147,7 @@ do
                     TryGearAgain(i, true, inspectItem)
                 else
                     UpdatePageStrings(inspectItem, slotInfo)
+                    slotInfo = nil
                 end
             end
         end
@@ -157,10 +155,13 @@ do
     GW.UpdatePageInfo = UpdatePageInfo
 end
 
-local function UpdateCharacterInfo(_, event)
-    if (not settings.enabled) or (whileOpenEvents[event] and not GwCharacterWindow:IsShown()) then return end
+local function UpdateCharacterInfo(self, event)
+    if not settings.enabled then return end
+    self.needsUpdate = event == "PLAYER_EQUIPMENT_CHANGED" -- set the values for the next time the char window gets open
+    if not GwCharacterWindow:IsShown() then return end
 
     GW.UpdatePageInfo()
+    self.needsUpdate = false
 end
 
 local function ToggleCharacterItemInfo(setup)
@@ -169,21 +170,24 @@ local function ToggleCharacterItemInfo(setup)
     end
 
     if settings.enabled then
+        f.needsUpdate = true
         f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-        f:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
         f:SetScript("OnEvent", UpdateCharacterInfo)
         if not f.CharacterInfoHooked then
-            GwCharacterWindow:HookScript("OnShow", UpdateCharacterInfo)
+            GwCharacterWindow:HookScript("OnShow", function()
+                if f.needsUpdate then
+                    UpdateCharacterInfo(f)
+                end
+            end)
             f.CharacterInfoHooked = true
         end
 
         if not setup then
-            UpdateCharacterInfo()
+            UpdateCharacterInfo(f)
         end
     else
         f:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
-        f:UnregisterEvent("UPDATE_INVENTORY_DURABILITY")
-
+        f.needsUpdate = false
         for i = 1, 17 do
             if i ~= 4 then
                 local inspectItem = _G[InspectItems[i]]
