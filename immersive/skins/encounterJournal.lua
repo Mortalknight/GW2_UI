@@ -225,6 +225,8 @@ local function encounterJournalSkin()
     GW.HandleTabs(EncounterJournalRaidTab, true)
     GW.HandleTabs(EncounterJournalLootJournalTab, true)
 
+    EncounterJournalMonthlyActivitiesFrame.HelpButton:Kill()
+
     local EncounterInfo = EJ.encounter.info
 
     --EncounterInfo.tex = EncounterInfo:CreateTexture("bg", "BACKGROUND", nil, 7)
