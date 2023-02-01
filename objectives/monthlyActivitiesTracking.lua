@@ -149,6 +149,7 @@ local function updateActivityObjectives(block, requirements)
         if not requirement.completed then
             local criteriaString = requirement.requirementText
             criteriaString = string.gsub(criteriaString, " / ", "/")
+            criteriaString = string.gsub(criteriaString, "- ", "")
             addObjective(block, criteriaString, false, 0, 0)
         end
     end
@@ -187,8 +188,11 @@ local function Update(self)
             if block == nil then
                 return
             end
+
+            DevTools_Dump(activityInfo)
             block.id = activityID
             block.title = activityName
+            block.Header:SetText(activityName)
             -- criteria
             updateActivityObjectives(block, requirements)
             block:Show()

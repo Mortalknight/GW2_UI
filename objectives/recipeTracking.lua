@@ -140,7 +140,7 @@ local function addObjective(block, text, finished, qty, totalqty)
     objectiveBlock:SetHeight(h)
     if objectiveBlock.StatusBar:IsShown() then
         if block.numObjectives >= 1 then
-            h = h + objectiveBlock.StatusBar:GetHeight() + 5
+            h = h + objectiveBlock.StatusBar:GetHeight() + 10
         else
             h = h + objectiveBlock.StatusBar:GetHeight() + 5
         end
@@ -151,7 +151,7 @@ end
 
 local function updateRecipeObjectives(block, recipeSchematic)
     local allCollacted = true
-    block.height = 25
+    block.height = 35
     block.numObjectives = 0
 
     for _, reagentSlotSchematic in ipairs(recipeSchematic.reagentSlotSchematics) do
@@ -199,6 +199,10 @@ local function updateRecipeLayout(self, isRecraft)
     for i = 1, numRecipes do
         local recipeID = C_TradeSkillUI.GetRecipesTracked(isRecraft)[i]
         local recipeSchematic = C_TradeSkillUI.GetRecipeSchematic(recipeID, isRecraft)
+
+        if i == 1 then
+            savedHeight = 20
+        end
 
         self.header:Show()
         local block = getBlock(shownIndex)
