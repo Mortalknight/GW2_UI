@@ -189,7 +189,6 @@ local function Update(self)
                 return
             end
 
-            DevTools_Dump(activityInfo)
             block.id = activityID
             block.title = activityName
             block.Header:SetText(activityName)
