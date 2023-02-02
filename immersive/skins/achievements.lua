@@ -303,14 +303,14 @@ local function catMenuButtonState(self,selected)
       self.Button.arrow:SetRotation(0)
     end
   else
-    self.Button.Label:SetPoint("LEFT", self, "LEFT", 10, 0)
+    self.Button.Label:SetPoint("LEFT", self, "LEFT", 30, 0)
     self.Button.arrow:Hide()
   end
 
   --for summary and watchlist
   local iconTexture = "Interface/AddOns/GW2_UI/textures/uistuff/arrow_right"
   if self.categoryID=="summary" or self.categoryID=="watchlist" then
-    local iconTexture =  self.categoryID=="watchlist" and "Interface/AddOns/GW2_UI/textures/uistuff/watchicon" or "Interface/AddOns/GW2_UI/textures/uistuff/hamburger"
+    iconTexture = self.categoryID=="watchlist" and "Interface/AddOns/GW2_UI/textures/uistuff/watchicon" or "Interface/AddOns/GW2_UI/textures/uistuff/hamburger"
     self.Button.arrow:SetTexture(iconTexture)
     self.Button.arrow:SetSize(25,25)
     self.Button.arrow:Show()
@@ -318,10 +318,7 @@ local function catMenuButtonState(self,selected)
     self.Button.Label:SetPoint("LEFT", self, "LEFT", 40, 0)
   else
     self.Button.arrow:SetTexture(iconTexture)
-
   end
-
-
 end
 
 local function CatMenuButton(self, button, odd,hasArrow, margin)
