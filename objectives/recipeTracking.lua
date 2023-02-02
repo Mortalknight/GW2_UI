@@ -13,7 +13,7 @@ local function GetRecipeID(block)
 end
 
 local function IsRecraftBlock(block)
-    return block.id < 0
+    return block.isRecraft
 end
 
 local function RecipeObjectiveTracker_OnOpenDropDown(self)
@@ -183,44 +183,56 @@ local function updateRecipeObjectives(block, recipeSchematic)
     block:SetHeight(block.height)
 end
 
-local function updateRecipeLayout(self, isRecraft)
-    local numRecipes = #C_TradeSkillUI.GetRecipesTracked(isRecraft)
+local function CreateTrackedBlock(self, idx, isRecraft, savedHeight, shownIndex)
+    local recipeID = C_TradeSkillUI.GetRecipesTracked(isRecraft)[idx]
+    local recipeSchematic = C_TradeSkillUI.GetRecipeSchematic(recipeID, isRecraft)
+
+    if idx == 1 then
+        savedHeight = 20
+    end
+
+    self.header:Show()
+    local block = getBlock(shownIndex)
+    if block == nil then
+        return 0, 0
+    end
+    block.id = recipeID
+    block.isRecraft = isRecraft
+    block.title = recipeSchematic.name
+    updateRecipeObjectives(block, recipeSchematic)
+    block.Header:SetText(recipeSchematic.name)
+
+    block:Show()
+
+    block:SetScript("OnClick", recipe_OnClick)
+
+    savedHeight = savedHeight + block.height
+
+    shownIndex = shownIndex + 1
+
+    return savedHeight, shownIndex
+end
+
+local function updateRecipeLayout(self)
+    local numRecipes = #C_TradeSkillUI.GetRecipesTracked(true)
+    local numRecipesRecraft = #C_TradeSkillUI.GetRecipesTracked(false)
     local savedHeight = 1
     local shownIndex = 1
 
     self.header:Hide()
 
-    if self.collapsed and numRecipes > 0 then
+    if self.collapsed and (numRecipes + numRecipesRecraft) > 0 then
         self.header:Show()
         numRecipes = 0
+        numRecipesRecraft = 0
         savedHeight = 20
     end
 
     for i = 1, numRecipes do
-        local recipeID = C_TradeSkillUI.GetRecipesTracked(isRecraft)[i]
-        local recipeSchematic = C_TradeSkillUI.GetRecipeSchematic(recipeID, isRecraft)
-
-        if i == 1 then
-            savedHeight = 20
-        end
-
-        self.header:Show()
-        local block = getBlock(shownIndex)
-        if block == nil then
-            return
-        end
-        block.id = recipeID
-        block.title = recipeSchematic.name
-        updateRecipeObjectives(block, recipeSchematic)
-        block.Header:SetText(recipeSchematic.name)
-
-        block:Show()
-
-        block:SetScript("OnClick", recipe_OnClick)
-
-        savedHeight = savedHeight + block.height
-
-        shownIndex = shownIndex + 1
+        savedHeight, shownIndex = CreateTrackedBlock(self, i, true, savedHeight, shownIndex)
+    end
+    for i = 1, numRecipesRecraft do
+        savedHeight, shownIndex = CreateTrackedBlock(self, i, false, savedHeight, shownIndex)
     end
 
     self:SetHeight(savedHeight)
@@ -229,6 +241,7 @@ local function updateRecipeLayout(self, isRecraft)
         if _G["GwRecipeBlock" .. i] then
             _G["GwRecipeBlock" .. i]:Hide()
             _G["GwRecipeBlock" .. i].id = nil
+            _G["GwRecipeBlock" .. i].isRecraft = nil
         end
     end
 
@@ -261,8 +274,9 @@ local function StartUpdate(self)
     local allLoaded = true
     local function OnItemsLoaded()
         if allLoaded then
-            updateRecipeLayout(self, IsRecrafting)
-            updateRecipeLayout(self, not IsRecrafting)
+            updateRecipeLayout(self)
+        else
+            StartUpdate(self)
         end
     end
     -- The assignment of allLoaded is only meaningful if false. If and when the callback
@@ -330,8 +344,7 @@ local function CollapseHeader(self, forceCollapse, forceOpen)
         self.collapsed = false
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
-    updateRecipeLayout(GwQuesttrackerContainerRecipe, IsRecrafting)
-    updateRecipeLayout(GwQuesttrackerContainerRecipe, not IsRecrafting)
+    updateRecipeLayout(GwQuesttrackerContainerRecipe)
 end
 GW.CollapseRecipeHeader = CollapseHeader
 
@@ -363,7 +376,6 @@ local function LoadRecipeTracking(self)
         TRACKER_TYPE_COLOR.RECIPE.b
     )
 
-    updateRecipeLayout(self, IsRecrafting)
-    updateRecipeLayout(self, not IsRecrafting)
+    updateRecipeLayout(self)
 end
 GW.LoadRecipeTracking = LoadRecipeTracking
