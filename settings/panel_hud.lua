@@ -4,35 +4,79 @@ local addOption = GW.AddOption
 local addOptionButton = GW.AddOptionButton
 local addOptionSlider = GW.AddOptionSlider
 local addOptionDropdown = GW.AddOptionDropdown
+local addGroupHeader = GW.AddGroupHeader
 local createCat = GW.CreateCat
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
 local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function LoadHudPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
-    p.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.header:SetText(UIOPTIONS_MENU)
-    p.sub:SetFont(UNIT_NAME_FONT, 12)
-    p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
+    p.header:Hide()
+    p.sub:Hide()
 
-    createCat(UIOPTIONS_MENU, L["Edit the HUD modules."], p, 3, nil, {p})
-    settingsMenuAddButton(UIOPTIONS_MENU,p,3,nil,{})
-    addOption(p.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND", function() GW.UpdateHudSettings(); GW.ToggleHudBackground() end)
-    addOption(p.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", GW.UpdateHudSettings, nil, {["HUD_BACKGROUND"] = true})
-    addOption(p.scroll.scrollchild, L["AFK Mode"], L["When you go AFK, display the AFK screen."], "AFK_MODE", GW.ToggelAfkMode)
-    addOption(p.scroll.scrollchild, L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], "QUEST_REWARDS_MOST_VALUE_ICON", function() GW.ResetQuestRewardMostValueIcon() end)
-    addOption(p.scroll.scrollchild, L["XP Quest Percent"], L["Shows the xp you got from that quest in % based on your current needed xp for next level."], "QUEST_XP_PERCENT")
-    addOption(p.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU", function() GW.ShowRlPopup = true end)
-    addOption(p.scroll.scrollchild, DISPLAY_BORDERS, nil, "BORDER_ENABLED", GW.ToggleHudBackground)
-    addOption(p.scroll.scrollchild, L["Show Coordinates on World Map"], L["Show Coordinates on World Map"], "WORLDMAP_COORDS_TOGGLE", GW.ToggleWorldMapCoords)
-    addOption(p.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", GW.ToogleMinimapFpsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
-    addOption(p.scroll.scrollchild, L["Show Coordinates on Minimap"], L["Show Coordinates on Minimap"], "MINIMAP_COORDS_TOGGLE", GW.ToogleMinimapCoorsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
-    addOption(p.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", function() GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true})
+    local general = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
+    general.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    general.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    general.header:SetText(BINDING_HEADER_ACTIONBAR)
+    general.sub:SetFont(UNIT_NAME_FONT, 12)
+    general.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    general.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
+    general.header:SetWidth(general.header:GetStringWidth())
+    general.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    general.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    general.breadcrumb:SetText(GENERAL)
+
+    local minimap = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
+    minimap.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    minimap.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    minimap.header:SetText(BINDING_HEADER_ACTIONBAR)
+    minimap.sub:SetFont(UNIT_NAME_FONT, 12)
+    minimap.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    minimap.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
+    minimap.header:SetWidth(minimap.header:GetStringWidth())
+    minimap.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    minimap.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    minimap.breadcrumb:SetText(MINIMAP_LABEL)
+
+    local worldmap = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
+    worldmap.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    worldmap.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    worldmap.header:SetText(BINDING_HEADER_ACTIONBAR)
+    worldmap.sub:SetFont(UNIT_NAME_FONT, 12)
+    worldmap.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    worldmap.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
+    worldmap.header:SetWidth(worldmap.header:GetStringWidth())
+    worldmap.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    worldmap.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    worldmap.breadcrumb:SetText(WORLDMAP_BUTTON)
+
+    local fct = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
+    fct.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    fct.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    fct.header:SetText(BINDING_HEADER_ACTIONBAR)
+    fct.sub:SetFont(UNIT_NAME_FONT, 12)
+    fct.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    fct.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
+    fct.header:SetWidth(fct.header:GetStringWidth())
+    fct.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    fct.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    fct.breadcrumb:SetText(COMBAT_TEXT_LABEL)
+
+    createCat(UIOPTIONS_MENU, L["Edit the HUD modules."], p, {general, minimap, worldmap, fct})
+    settingsMenuAddButton(UIOPTIONS_MENU, p, {general, minimap, worldmap, fct})
+
+    --GENERAL
+    addOption(general.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND", function() GW.UpdateHudSettings(); GW.ToggleHudBackground() end)
+    addOption(general.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", GW.UpdateHudSettings, nil, {["HUD_BACKGROUND"] = true})
+    addOption(general.scroll.scrollchild, L["AFK Mode"], L["When you go AFK, display the AFK screen."], "AFK_MODE", GW.ToggelAfkMode)
+    addOption(general.scroll.scrollchild, L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], "QUEST_REWARDS_MOST_VALUE_ICON", function() GW.ResetQuestRewardMostValueIcon() end)
+    addOption(general.scroll.scrollchild, L["XP Quest Percent"], L["Shows the xp you got from that quest in % based on your current needed xp for next level."], "QUEST_XP_PERCENT")
+    addOption(general.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU", function() GW.ShowRlPopup = true end)
+    addOption(general.scroll.scrollchild, DISPLAY_BORDERS, L["Toggle the borders around the screen"], "BORDER_ENABLED", GW.ToggleHudBackground)
+    addOption(general.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", function() GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true})
     addOption(
-        p.scroll.scrollchild,
+        general.scroll.scrollchild,
         L["Pixel Perfect Mode"],
         L["Scales the UI into a Pixel Perfect Mode. This is dependent on screen resolution."],
         "PIXEL_PERFECTION",
@@ -41,24 +85,8 @@ local function LoadHudPanel(sWindow)
             GW.PixelPerfection()
         end
     )
-
-    addOptionDropdown(
-        p.scroll.scrollchild,
-        COMBAT_TEXT_LABEL,
-        COMBAT_SUBTEXT,
-        "GW_COMBAT_TEXT_MODE",
-        function() GW.ShowRlPopup = true end,
-        {"GW2", "BLIZZARD", "OFF"},
-        {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS},
-        nil,
-        nil,
-        nil,
-        "FloatingCombatText"
-    )
-    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
-    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOptionSlider(
-        p.scroll.scrollchild,
+        general.scroll.scrollchild,
         L["HUD Scale"],
         L["Change the HUD size."],
         "HUD_SCALE",
@@ -68,7 +96,7 @@ local function LoadHudPanel(sWindow)
         nil,
         2
     )
-    addOptionButton(p.scroll.scrollchild, L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], nil, function()
+    addOptionButton(general.scroll.scrollchild, L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], nil, function()
         local scale = GetSetting("HUD_SCALE")
         for _, mf in pairs(GW.scaleableFrames) do
             mf.parent:SetScale(scale)
@@ -77,7 +105,7 @@ local function LoadHudPanel(sWindow)
         end
     end)
     addOptionDropdown(
-        p.scroll.scrollchild,
+        general.scroll.scrollchild,
         L["Show Role Bar"],
         L["Whether to display a floating bar showing your group or raid's role composition. This can be moved via the 'Move HUD' interface."],
         "ROLE_BAR",
@@ -92,7 +120,37 @@ local function LoadHudPanel(sWindow)
         }
     )
     addOptionDropdown(
-        p.scroll.scrollchild,
+        general.scroll.scrollchild,
+        L["Auto Repair"],
+        L["Automatically repair using the following method when visiting a merchant."],
+        "AUTO_REPAIR",
+        nil,
+        {"NONE", "PLAYER", "GUILD"},
+        {
+            NONE_KEY,
+            PLAYER,
+            GUILD,
+        }
+    )
+    addOptionSlider(
+        general.scroll.scrollchild,
+        L["Extended Vendor"],
+        L["The number of pages shown in the merchant frame. Set 1 to disable."],
+        "EXTENDED_VENDOR_NUM_PAGES",
+        function() GW.ShowRlPopup = true end,
+        1,
+        6,
+        nil,
+        0,
+        nil,
+        1
+    )
+    --MINIMAP
+    addOption(minimap.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", GW.ToogleMinimapFpsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
+    addOption(minimap.scroll.scrollchild, L["Disable FPS tooltip"], nil, "MINIMAP_FPS_TOOLTIP_DISABLED", GW.UpdateMinimapSystemDataInfoSettings, nil, {["MINIMAP_ENABLED"] = true, ["MINIMAP_FPS"] = true}, "Minimap")
+    addOption(minimap.scroll.scrollchild, L["Show Coordinates on Minimap"], L["Show Coordinates on Minimap"], "MINIMAP_COORDS_TOGGLE", GW.ToogleMinimapCoorsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
+    addOptionDropdown(
+        minimap.scroll.scrollchild,
         L["Minimap details"],
         L["Always show Minimap details."],
         "MINIMAP_ALWAYS_SHOW_HOVER_DETAILS",
@@ -105,7 +163,7 @@ local function LoadHudPanel(sWindow)
         "Minimap"
     )
     addOptionSlider(
-        p.scroll.scrollchild,
+        minimap.scroll.scrollchild,
         L["Minimap Scale"],
         L["Change the Minimap size."],
         "MINIMAP_SCALE",
@@ -121,33 +179,98 @@ local function LoadHudPanel(sWindow)
         {["MINIMAP_ENABLED"] = true},
         1
     )
-    addOptionDropdown(
-        p.scroll.scrollchild,
-        L["Auto Repair"],
-        L["Automatically repair using the following method when visiting a merchant."],
-        "AUTO_REPAIR",
-        nil,
-        {"NONE", "PLAYER", "GUILD"},
-        {
-            NONE_KEY,
-            PLAYER,
-            GUILD,
-        }
-    )
+    --WORLDMAP
+    addOption(worldmap.scroll.scrollchild, L["Show Coordinates on World Map"], L["Show Coordinates on World Map"], "WORLDMAP_COORDS_TOGGLE", GW.ToggleWorldMapCoords)
+    -- Community Feast
+    addGroupHeader(worldmap.scroll.scrollchild, L["Community Feast"])
+    addOption(worldmap.scroll.scrollchild, L["Community Feast"], nil, "WORLD_EVENTS_COMMUNITY_FEAST_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Community Feast"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true}, nil, nil, L["Community Feast"])
+    addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_COMMUNITY_FEAST_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true}, nil, nil, L["Community Feast"])
+    addOption(worldmap.scroll.scrollchild, GW.NewSign .. L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_COMMUNITY_FEAST_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true}, nil, nil, L["Community Feast"])
+    addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true}, nil, nil, L["Community Feast"])
     addOptionSlider(
-        p.scroll.scrollchild,
-        L["Extended Vendor"],
-        L["The number of pages shown in the merchant frame. Set 1 to disable."],
-        "EXTENDED_VENDOR_NUM_PAGES",
-        function() GW.ShowRlPopup = true end,
-        1,
-        6,
+        worldmap.scroll.scrollchild,
+        L["Alert Second"],
+        L["Alert will be triggered when the remaining time is less than the set value."],
+        "WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS",
+        GW.UpdateWorldEventTrackers,
+        0,
+        3600,
         nil,
         0,
+        {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true},
+        1,
         nil,
-        1
+        nil,
+        L["Community Feast"]
     )
 
-    InitPanel(p, true)
+   -- Dragonbane Keep
+    addGroupHeader(worldmap.scroll.scrollchild, L["Siege On Dragonbane Keep"])
+    addOption(worldmap.scroll.scrollchild, L["Siege On Dragonbane Keep"], nil, "WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Siege On Dragonbane Keep"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true}, nil, nil, L["Siege On Dragonbane Keep"])
+    addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_DRAGONBANE_KEEP_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true}, nil, nil, L["Siege On Dragonbane Keep"])
+    addOption(worldmap.scroll.scrollchild, GW.NewSign .. L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_DRAGONBANE_KEEP_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true, ["WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"] = true}, nil, nil, L["Siege On Dragonbane Keep"])
+    addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true, ["WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"] = true}, nil, nil, L["Siege On Dragonbane Keep"])
+    addOptionSlider(
+        worldmap.scroll.scrollchild,
+        L["Alert Second"],
+        L["Alert will be triggered when the remaining time is less than the set value."],
+        "WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS",
+        GW.UpdateWorldEventTrackers,
+        0,
+        3600,
+        nil,
+        0,
+        {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true, ["WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"] = true},
+        1,
+        nil,
+        nil,
+        L["Siege On Dragonbane Keep"]
+    )
+
+    -- Fishing nets
+    addGroupHeader(worldmap.scroll.scrollchild, L["Iskaaran Fishing Net"])
+    addOption(worldmap.scroll.scrollchild, GW.NewSign .. L["Iskaaran Fishing Net"], nil, "WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Iskaaran Fishing Net"])
+    addOption(worldmap.scroll.scrollchild, GW.NewSign .. COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"] = true}, nil, nil, L["Iskaaran Fishing Net"])
+    addOption(worldmap.scroll.scrollchild, GW.NewSign .. L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_ISKAARAN_FISHING_NET_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"] = true, ["WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT"] = true}, nil, nil, L["Iskaaran Fishing Net"])
+    addOptionSlider(
+        worldmap.scroll.scrollchild,
+        GW.NewSign .. L["Alert Timeout"],
+        L["Alert will be disabled after the set value (hours)."],
+        "WORLD_EVENTS_ISKAARAN_FISHING_NET_DISABLE_ALERT_AFTER_HOURS",
+        GW.UpdateWorldEventTrackers,
+        0,
+        144,
+        nil,
+        0,
+        {["WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"] = true, ["WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT"] = true},
+        1,
+        nil,
+        nil,
+        L["Iskaaran Fishing Net"]
+    )
+
+    --FCT
+    addOptionDropdown(
+        fct.scroll.scrollchild,
+        COMBAT_TEXT_LABEL,
+        COMBAT_SUBTEXT,
+        "GW_COMBAT_TEXT_MODE",
+        function() GW.ShowRlPopup = true end,
+        {"GW2", "BLIZZARD", "OFF"},
+        {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS},
+        nil,
+        nil,
+        nil,
+        "FloatingCombatText"
+    )
+    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+
+    InitPanel(general, true)
+    InitPanel(minimap, true)
+    InitPanel(worldmap, true)
+    InitPanel(fct, true)
 end
 GW.LoadHudPanel = LoadHudPanel

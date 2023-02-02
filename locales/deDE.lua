@@ -330,7 +330,7 @@ L["RL"] = true
 L["Role Bar"] = "Rollenbar"
 L["Role Icon"] = "Rollen-Icon"
 L["RW"] = true
-L["Save and Reload"] = [=[Speichern und 
+L["Save and Reload"] = [=[Speichern und
 neu laden]=]
 L["Saved Dungeon(s)"] = "Gespeicherte Instanz(en)"
 L["Saved Raid(s)"] = "Gespeicherte Schlachtzüge"
@@ -576,3 +576,6 @@ L["Empty slots alpha"] = "Alpha Wert für leere Plätze"
 L["Set the empty action bar slots alpha value."] = "Setze den Alpha Wert für leere Aktiontasten"
 L["Hide Blizzard dragon riding vigor"] = "Versteke Blizzard Drachenreiten Elan-Bar"
 L["Bonus Net"] = "Bonus Netz"
+L["Width"] = "Breite"
+L["Toggle the borders around the screen"] = "Zeige oder verstecke den Rahmen am Rand des Bildschirms"
+L["Disable FPS tooltip"] = "FPS Tooltip deaktiviere"

@@ -15,8 +15,8 @@ local function LoadObjectivesPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit objectives settings."])
 
-    createCat(OBJECTIVES_TRACKER_LABEL, nil, p, 3, nil, {p}, "Interface/AddOns/GW2_UI/textures/chat/bubble_up")
-    settingsMenuAddButton(OBJECTIVES_TRACKER_LABEL, p, 3, nil, {})
+    createCat(OBJECTIVES_TRACKER_LABEL, nil, p, {p})
+    settingsMenuAddButton(OBJECTIVES_TRACKER_LABEL, p, {})
     addOption(p.scroll.scrollchild, L["Collapse all objectives in M+"], nil, "OBJECTIVES_COLLAPSE_IN_M_PLUS", function() GW.UpdateChallengeModeObjectivesSettings(); GW.ToggleCollapseObjectivesInChallangeMode() end, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", function() GW.UpdateObjectivesNotificationSettings(); GW.ShowRlPopup = true end, nil, {["QUESTTRACKER_ENABLED"] = true})
 

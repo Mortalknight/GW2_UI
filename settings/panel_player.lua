@@ -51,9 +51,9 @@ local function LoadPlayerPanel(sWindow)
     p_player_debuff.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p_player_debuff.breadcrumb:SetText(L["Debuffs"])
 
-    createCat(PLAYER, L["Modify the player frame settings."], p, 9, nil, {p_player, p_player_aura, p_player_debuff})
+    createCat(PLAYER, L["Modify the player frame settings."], p, {p_player, p_player_aura, p_player_debuff})
 
-    settingsMenuAddButton(PLAYER,p,9,nil,{p_player, p_player_aura, p_player_debuff})
+    settingsMenuAddButton(PLAYER, p, {p_player, p_player_aura, p_player_debuff})
 
     addOption(p_player.scroll.scrollchild, L["Player frame in target frame style"], nil, "PLAYER_AS_TARGET_FRAME", function() GW.UpdateActionbarSettings(); GW.ShowRlPopup = true end, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["Show alternative background texture"], nil, "PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND", GW.TogglePlayerFrameASettings, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
@@ -88,29 +88,6 @@ local function LoadPlayerPanel(sWindow)
         {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH},
         nil,
         {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = false}
-    )
-
-    addOptionDropdown(
-        p_player.scroll.scrollchild,
-        L["Class Totems Sorting"],
-        nil,
-        "TotemBar_SortDirection",
-        function() GW.UpdateTotembar(GW_TotemBar) end,
-        {"ASC", "DSC"},
-        {L["Ascending"], L["Descending"]},
-        nil,
-        {["HEALTHGLOBE_ENABLED"] = true}
-    )
-    addOptionDropdown(
-        p_player.scroll.scrollchild,
-        L["Class Totems Growth Direction"],
-        function() GW.UpdateTotembar(GW_TotemBar) end,
-        "TotemBar_GrowDirection",
-        function() GW.UpdateTotembar(GW_TotemBar) end,
-        {"HORIZONTAL", "VERTICAL"},
-        {L["Horizontal"], L["Vertical"]},
-        nil,
-        {["HEALTHGLOBE_ENABLED"] = true}
     )
     addOptionText(p_player.scroll.scrollchild,
         L["Dodge Bar Ability"],

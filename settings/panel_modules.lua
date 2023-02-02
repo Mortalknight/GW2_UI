@@ -18,10 +18,8 @@ local function LoadModulesPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Enable or disable the modules you need and don't need."])
 
-
-
-    createCat(L["Modules"], L["Enable and disable components"], p, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_settings", nil, {p},nil,nil,true)
-    settingsMenuAddButton(L["Modules"],p,0,nil, {})
+    createCat(L["Modules"], L["Enable and disable components"], p, {p}, nil, true)
+    settingsMenuAddButton(L["Modules"], p, {})
 
     addOption(p.scroll.scrollchild, XPBAR_LABEL, nil, "XPBAR_ENABLED", function() GW.UpdateActionbarSettings(); GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, L["Health Globe"], L["Enable the health bar replacement."], "HEALTHGLOBE_ENABLED", function() GW.ShowRlPopup = true end)
@@ -53,10 +51,9 @@ local function LoadModulesPanel(sWindow)
 
     InitPanel(p, true)
     p:SetScript("OnShow", function()
-      sWindow.headerString:SetWidth(sWindow.headerString:GetStringWidth())
-      sWindow.headerBreadcrumb:SetText(GENERAL)
-       settingMenuToggle(true)
-     end)
-
+        sWindow.headerString:SetWidth(sWindow.headerString:GetStringWidth())
+        sWindow.headerBreadcrumb:SetText(GENERAL)
+        settingMenuToggle(true)
+    end)
 end
 GW.LoadModulesPanel = LoadModulesPanel

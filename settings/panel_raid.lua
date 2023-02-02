@@ -714,8 +714,8 @@ local function LoadRaidPanel(sWindow)
     p.sub:Hide()
 
     local profilePanles = {LoadRaidProfile(p), LoadPartyProfile(p), LoadRaidPetProfile(p)}
-    createCat(L["Group Frames"], L["Edit the group settings."], p, 8, nil, nil, nil, profilePanles)
-    settingsMenuAddButton(L["Group Frames"], p, 6, nil, profilePanles)
+    createCat(L["Group Frames"], L["Edit the group settings."], p, nil, profilePanles)
+    settingsMenuAddButton(L["Group Frames"], p, profilePanles)
 
     InitPanel(profilePanles[1], false)
     InitPanel(profilePanles[2], false)

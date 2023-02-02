@@ -10,7 +10,7 @@ local menuButtons = {}
 local GwSettingsSearchResultPanel;
 local matchingOptionFrames = {}
 
-local function CharacterMenuButton_OnLoad(self, odd,hasArrow, margin)
+local function CharacterMenuButton_OnLoad(self, odd, hasArrow, margin, isSubCat)
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
     if odd then
         self:ClearNormalTexture()
@@ -28,10 +28,11 @@ local function CharacterMenuButton_OnLoad(self, odd,hasArrow, margin)
     self.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
     self.arrow:SetSize(16,16)
     if not hasArrow then
-      self.arrow:Hide()
+        self.arrow:Hide()
+        self:GetFontString():SetPoint("LEFT", self, "LEFT", margin + (isSubCat and 0 or 20), 0)
+    else
+        self:GetFontString():SetPoint("LEFT", self, "LEFT", margin, 0)
     end
-
-    self:GetFontString():SetPoint("LEFT", self, "LEFT", margin, 0)
 end
 
 --create pool for search result breadcrumbs
@@ -193,7 +194,7 @@ local function searchInputChanged(self)
     resetMenu(true)
     hideBreadCrumbFrames()
     self:SetTextColor(1, 1, 1)
-    switchCat(nil,GwSettingsSearchResultPanel)
+    switchCat(nil, GwSettingsSearchResultPanel)
 
     local box_padding = 8
     local pY = -48
@@ -285,28 +286,27 @@ local function searchInputChanged(self)
     GwSettingsSearchResultPanel.scroll.maxScroll = scrollMax
 end
 
-local function settingsMenuAddButton(name,basePanel,icon,backgroundOverride,frames)
+local function settingsMenuAddButton(name, basePanel, frames)
     --Create base menu item button and container
-    local menuItem = CreateFrame("Frame", name.."GwSearchableItem",GwSettingsMenuSearchable.scroll.scrollchild,"GwSettingsMenuSearchableItem")
+    local menuItem = CreateFrame("Frame", name .. "GwSearchableItem", GwSettingsMenuSearchable.scroll.scrollchild, "GwSettingsMenuSearchableItem")
 
-    menuButtons[#menuButtons + 1] = menuItem;
+    menuButtons[#menuButtons + 1] = menuItem
 
     --anchor menuItem to last button if any
-    if newButtonAnchorPoint~=nil then
-        menuItem:SetPoint("TOPLEFT",newButtonAnchorPoint,"BOTTOMLEFT",0,0)
+    if newButtonAnchorPoint then
+        menuItem:SetPoint("TOPLEFT", newButtonAnchorPoint, "BOTTOMLEFT", 0, 0)
     else
-        menuItem:SetPoint("TOPLEFT",GwSettingsMenuSearchable.scroll.scrollchild,"TOPLEFT",0,0)
+        menuItem:SetPoint("TOPLEFT", GwSettingsMenuSearchable.scroll.scrollchild, "TOPLEFT", 0, 0)
     end
 
-    hooksecurefunc(menuItem.content, "SetHeight", function(self,height)
-        menuItem.contentSizer:SetHeight(math.max(36,height))
+    hooksecurefunc(menuItem.content, "SetHeight", function(_, height)
+        menuItem.contentSizer:SetHeight(math.max(36, height))
     end)
 
     menuItem.button:SetText(name)
 
     --load button styling
     local zebra  = false
-    local fistChildFrame = true
 
     --set default button count and height for margins of sub buttons
     menuItem.content.buttonCount = 0
@@ -314,28 +314,28 @@ local function settingsMenuAddButton(name,basePanel,icon,backgroundOverride,fram
     menuItem.content.buttons = {}
 
     -- create sub buttons for each panel
-    for _,panelFrame in pairs(frames) do
+    for _, panelFrame in pairs(frames) do
         panelFrame:Hide()
-        local subButton = CreateFrame("Button", name.."GwSearchableSubButton"..menuItem.content.buttonCount,menuItem.content,"GwSettingsMenuSearchableSubButton")
+        local subButton = CreateFrame("Button", name .. "GwSearchableSubButton" .. menuItem.content.buttonCount, menuItem.content, "GwSettingsMenuSearchableSubButton")
 
         --Grab the breadcrumb title from the panel
         subButton:SetText(panelFrame.breadcrumb:GetText())
 
         -- set parent button needed
         subButton.parentButton = menuItem
-        subButton.refFrame = panelFrame;
+        subButton.refFrame = panelFrame
         --anchor subbutton to content frame
-        subButton:SetPoint("TOPLEFT",menuItem.content,"TOPLEFT",0,menuItem.content.buttonCount*-subButton:GetHeight())
+        subButton:SetPoint("TOPLEFT", menuItem.content, "TOPLEFT", 0, menuItem.content.buttonCount * -subButton:GetHeight())
         --save total height for later usage
         menuItem.content.height = menuItem.content.height + subButton:GetHeight()
         menuItem.content.buttons[menuItem.content.buttonCount] = subButton
-        zebra  = (menuItem.content.buttonCount % 2)==1 or false
-        CharacterMenuButton_OnLoad(subButton,zebra,false,40)
+        zebra = (menuItem.content.buttonCount % 2) == 1 or false
+        CharacterMenuButton_OnLoad(subButton, zebra, false, 40, true)
 
         --setup click handler for showing panels
         subButton:SetScript("OnClick",function()
             resetMenu(false)
-            switchCat(subButton,basePanel,panelFrame)
+            switchCat(subButton, basePanel, panelFrame)
             GwSettingsMenuSearchable.search.input:SetTextColor(178 / 255, 178 / 255, 178 / 255)
             GwSettingsMenuSearchable.search.input:SetText(SEARCH)
         end)
@@ -343,16 +343,16 @@ local function settingsMenuAddButton(name,basePanel,icon,backgroundOverride,fram
         menuItem.content.buttonCount = menuItem.content.buttonCount + 1
     end
 
-    zebra = (btnIndex % 2)==1 or false
+    zebra = (btnIndex % 2) == 1 or false
     if menuItem.content.buttonCount > 0 then
-        CharacterMenuButton_OnLoad(menuItem.button,zebra,true,30)
+        CharacterMenuButton_OnLoad(menuItem.button, zebra, true, 30)
         -- set click action depending on child frames
-        menuItem.button:SetScript("OnClick",function()
+        menuItem.button:SetScript("OnClick", function()
             local shouldShow = not menuItem.content:IsVisible()
             --Only display first panel if we toggle on
             resetMenu(true)
             if shouldShow then
-                switchCat(menuItem.content.buttons[0],basePanel, menuItem.content.buttons[0].refFrame)
+                switchCat(menuItem.content.buttons[0], basePanel, menuItem.content.buttons[0].refFrame)
             end
             --Display submenu
             toggleMenuItem(menuItem, shouldShow)
@@ -364,10 +364,10 @@ local function settingsMenuAddButton(name,basePanel,icon,backgroundOverride,fram
         menuItem.content:SetHeight(0)
     else
         -- if no child frames we just toggle
-        CharacterMenuButton_OnLoad(menuItem.button,zebra,false,10)
-        menuItem.button:SetScript("OnClick",function()
+        CharacterMenuButton_OnLoad(menuItem.button, zebra, false, 10)
+        menuItem.button:SetScript("OnClick", function()
             resetMenu(true)
-            switchCat(menuItem.button,basePanel)
+            switchCat(menuItem.button, basePanel)
         end)
     end
 

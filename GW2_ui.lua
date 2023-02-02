@@ -549,6 +549,7 @@ local function evPlayerLogin(self)
     GW.UpdateHudSettings()
     GW.UpdateObjectivesNotificationSettings()
     GW.UpdateDoddgeBarSettings()
+    GW.UpdateMinimapSystemDataInfoSettings()
 
     -- load alert settings
     GW.LoadAlertSystem()

@@ -653,14 +653,14 @@ local function LoadProfilesPanel(sWindow)
     ProfileWin.scrollBar.doNotHide = false
     ProfileSetup(ProfileWin)
 
-    createCat(L["PROFILES"], L["Add and remove profiles."], p, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_profiles", "Interface/AddOns/GW2_UI/textures/icons/settingsiconbg-2",nil,nil,nil,true)
+    createCat(L["PROFILES"], L["Add and remove profiles."], p, nil, nil, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_profiles")
 
     p:SetScript("OnShow", function()
-      settingMenuToggle(false)
-      sWindow.headerString:SetWidth(sWindow.headerString:GetStringWidth())
-      local s = L["PROFILES"]
+        settingMenuToggle(false)
+        sWindow.headerString:SetWidth(sWindow.headerString:GetStringWidth())
+        local s = L["PROFILES"]
 
-      sWindow.headerBreadcrumb:SetText(s:lower():gsub("^%l", string.upper))
+        sWindow.headerBreadcrumb:SetText(s:lower():gsub("^%l", string.upper))
     end)
 
     ImportExportFrame = createImportExportFrame()

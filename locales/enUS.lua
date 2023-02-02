@@ -523,8 +523,6 @@ L["|cffFFFFFFShift + Left Click:|r Change Talent Specialization"] = true
 L["|cffFFFFFFControl + Left Click:|r Change Loadout"] = true
 L["|cffFFFFFFRight Click:|r Change Loot Specialization"] = true
 L["Loadouts"] = true
-
---STRING WHICH NEEDS TRANSLATION
 L["All nets can be collected"] = true
 L["No Nets Set"] = true
 L["Not Set"] = true
@@ -547,3 +545,8 @@ L["Empty slots alpha"] = true
 L["Set the empty action bar slots alpha value."] = true
 L["Hide Blizzard dragon riding vigor"] = true
 L["Bonus Net"] = true
+
+--NEW
+L["Width"] = true
+L["Toggle the borders around the screen"] = true
+L["Disable FPS tooltip"] = true

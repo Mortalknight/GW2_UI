@@ -38,8 +38,8 @@ local function LoadTargetPanel(sWindow)
     p_focus.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p_focus.breadcrumb:SetText(FOCUS)
 
-    createCat(UNITFRAME_LABEL, L["Edit the target frame settings."], p, 1, nil, {p_target, p_focus})
-    settingsMenuAddButton(UNITFRAME_LABEL,p,1,nil, {p_target, p_focus})
+    createCat(UNITFRAME_LABEL, L["Edit the target frame settings."], p, {p_target, p_focus})
+    settingsMenuAddButton(UNITFRAME_LABEL,p,{p_target, p_focus})
 
     addOption(p_target.scroll.scrollchild, L[TARGET .. ": " .. SHOW_ENEMY_CAST], nil, "target_SHOW_CASTBAR", GW.ToggleTargetFrameSettings, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target.scroll.scrollchild, SHOW_TARGET_OF_TARGET_TEXT, L["Enable the target of target frame."], "target_TARGET_ENABLED", function() GW.ShowRlPopup = true end, nil, {["TARGET_ENABLED"] = true})

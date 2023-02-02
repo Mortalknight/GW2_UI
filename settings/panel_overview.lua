@@ -134,7 +134,7 @@ local function LoadOverviewPanel(sWindow)
     p.menu.discordbtn:SetScript("OnClick", fnGSWD_OnClick)
     p.menu.keybindingsbtn:SetScript("OnClick", fmGSWKB_OnClick)
 
-    createCat(L["Modules"], L["Enable and disable components"], p, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_overview", nil, {p},nil,nil,true)
+    createCat(L["Modules"], L["Enable and disable components"], p, {p}, nil, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_overview")
 
     InitPanel(p, false)
     p:SetScript("OnShow", function()

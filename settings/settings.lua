@@ -97,7 +97,7 @@ end
 AddForProfiling("settings", "fnF_OnClick", fnF_OnClick)
 
 local visible_cat_button_id  = 0
-local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon, profilePanles, visibleTabButton)
+local function CreateCat(name, desc, panel, scrollFrames, profilePanles, visibleTabButton, icon)
     local i = #settings_cat + 1
     -- create and position a new button/label for this category
     local f = CreateFrame("Button", nil, GwSettingsWindow, "GwSettingsLabelTmpl")
@@ -108,32 +108,18 @@ local function CreateCat(name, desc, panel, icon, bg, scrollFrames, specialIcon,
     f.cat_id = i
     f.cat_crollFrames = scrollFrames
     settings_cat[i] = f
-    f:SetPoint("TOPRIGHT",GwSettingsWindow,"TOPLEFT", 1, -32 + (-40 * visible_cat_button_id))
+    f:SetPoint("TOPRIGHT", GwSettingsWindow,"TOPLEFT", 1, -32 + (-40 * visible_cat_button_id))
 
-    if icon ~=nil then
-       f.iconbg:SetTexture(icon)
-    end
-
-    -- set the icon requested
-  --  f.icon:SetTexCoord(0.25 * floor(icon / 4), 0.25 * (floor(icon / 4) + 1), 0.25 * (icon % 4), 0.25 * ((icon % 4) + 1))
-  --  if specialIcon then
-  --      f.icon:SetTexCoord(0, 1, 0, 1)
-  --      f.icon:SetTexture(specialIcon)
-  --  end
-
-    -- set the bg requested
-  --  if bg then
-  --      f.iconbg:SetTexture(bg)
-  --  end
     if not visibleTabButton then
-      f:Hide()
+        f:Hide()
     else
-      visible_cat_button_id = visible_cat_button_id + 1
+        visible_cat_button_id = visible_cat_button_id + 1
     end
 
-    -- add handlers
-  --  f:SetScript("OnEnter", fnF_OnEnter)
-  --  f:SetScript("OnLeave", fnF_OnLeave)
+    if icon then
+        f.iconbg:SetTexture(icon)
+    end
+
     f:SetScript("OnClick", fnF_OnClick)
 end
 GW.CreateCat = CreateCat
