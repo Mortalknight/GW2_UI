@@ -550,3 +550,4 @@ L["Bonus Net"] = true
 L["Width"] = true
 L["Toggle the borders around the screen"] = true
 L["Disable FPS tooltip"] = true
+L["Main Action Bar"] = true
