@@ -157,7 +157,7 @@ end
 
 local function UpdateCharacterInfo(self, event)
     if not settings.enabled then return end
-    self.needsUpdate = event == "PLAYER_EQUIPMENT_CHANGED" -- set the values for the next time the char window gets open
+    self.needsUpdate = event == "PLAYER_EQUIPMENT_CHANGED" or (event == "UPDATE_INVENTORY_DURABILITY" and GwCharacterWindow:IsShown()) -- set the values for the next time the char window gets open
     if not GwCharacterWindow:IsShown() then return end
 
     GW.UpdatePageInfo()
@@ -172,6 +172,7 @@ local function ToggleCharacterItemInfo(setup)
     if settings.enabled then
         f.needsUpdate = true
         f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
+        f:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
         f:SetScript("OnEvent", UpdateCharacterInfo)
         if not f.CharacterInfoHooked then
             GwCharacterWindow:HookScript("OnShow", function()
@@ -187,6 +188,7 @@ local function ToggleCharacterItemInfo(setup)
         end
     else
         f:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
+        f:UnregisterEvent("UPDATE_INVENTORY_DURABILITY")
         f.needsUpdate = false
         for i = 1, 17 do
             if i ~= 4 then
