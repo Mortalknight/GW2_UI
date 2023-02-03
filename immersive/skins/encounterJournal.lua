@@ -219,11 +219,17 @@ local function encounterJournalSkin()
 
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
 
-    GW.HandleTabs(EncounterJournalMonthlyActivitiesTab, true)
-    GW.HandleTabs(EncounterJournalSuggestTab, true)
-    GW.HandleTabs(EncounterJournalDungeonTab, true)
-    GW.HandleTabs(EncounterJournalRaidTab, true)
-    GW.HandleTabs(EncounterJournalLootJournalTab, true)
+    local tabs = {EncounterJournalMonthlyActivitiesTab, EncounterJournalSuggestTab, EncounterJournalDungeonTab, EncounterJournalRaidTab, EncounterJournalLootJournalTab}
+    for _, tab in pairs(tabs) do
+        GW.HandleTabs(tab, true)
+        tab:HookScript("OnClick", function(self)
+            for _, t in pairs(tabs) do
+                if t:GetName() ~= self:GetName() then
+                    t.hover:SetAlpha(0)
+                end
+            end
+        end)
+    end
 
     EncounterJournalMonthlyActivitiesFrame.HelpButton:Kill()
 
@@ -445,13 +451,13 @@ local function encounterJournalSkin()
             end
             -- check for selceted boss
             if (child.encounterID == EncounterJournal.encounter.infoFrame.encounterID) then
-                child.gwHover.skipHover = true
-                child.gwHover:SetAlpha(1)
-                child.gwHover:SetPoint("RIGHT", child, "LEFT", child:GetWidth(), 0)
+                child.hover.skipHover = true
+                child.hover:SetAlpha(1)
+                child.hover:SetPoint("RIGHT", child, "LEFT", child:GetWidth(), 0)
             else
-                child.gwHover.skipHover = false
-                child.gwHover:SetAlpha(1)
-                child.gwHover:SetPoint("RIGHT", child, "LEFT", 0, 0)
+                child.hover.skipHover = false
+                child.hover:SetAlpha(1)
+                child.hover:SetPoint("RIGHT", child, "LEFT", 0, 0)
             end
         end
     end)
