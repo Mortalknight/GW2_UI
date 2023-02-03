@@ -33,7 +33,8 @@ local function LoadQuickJoinList(tabContainer)
     QuickJoinFrame.ScrollBox:SetPoint("TOPLEFT", quickjoin, "TOPLEFT", 0, -15)
     QuickJoinFrame.ScrollBox:SetPoint("BOTTOMRIGHT", quickjoin, "BOTTOMRIGHT", 0, 0)
 
-    GW.HandleTrimScrollBar(_G.QuickJoinFrame.ScrollBar)
+    GW.HandleTrimScrollBar(QuickJoinFrame.ScrollBar)
+    GW.HandleAchivementsScrollControls(QuickJoinFrame)
 
     QuickJoinFrame.JoinQueueButton:SetParent(quickjoin)
     QuickJoinFrame.JoinQueueButton:ClearAllPoints()

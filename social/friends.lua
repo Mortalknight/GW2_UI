@@ -66,6 +66,7 @@ local function LoadFriendList(tabContainer)
     FriendsFrameSendMessageButton:SkinButton(false, true)
 
     GW.HandleTrimScrollBar(FriendsListFrame.ScrollBar)
+    GW.HandleAchivementsScrollControls(FriendsListFrame)
 
     FriendsTooltip:SetParent(GWFriendFrame.list)
 
@@ -119,7 +120,8 @@ local function LoadFriendList(tabContainer)
     FriendsFriendsFrameDropDown:SkinDropDownMenu()
     FriendsFriendsFrame.SendRequestButton:SkinButton(false, true)
     FriendsFriendsFrame.CloseButton:SkinButton(false, true)
-    GW.HandleTrimScrollBar(_G.FriendsFriendsFrame.ScrollBar)
+    GW.HandleTrimScrollBar(FriendsFriendsFrame.ScrollBar)
+    GW.HandleAchivementsScrollControls(FriendsFriendsFrame)
 
     FriendsFrameBattlenetFrame.BroadcastButton:Kill()
     FriendsFrameBattlenetFrame:StripTextures()

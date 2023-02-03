@@ -272,6 +272,11 @@ local function CreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShif
 		})
 
         backdrop:SetBackdropColor(1, 1, 1, 0.4)
+    elseif template == "ScrollBar" then
+        backdrop:SetBackdrop({
+			bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle",
+			edgeSize = GW.Scale(1)
+		})
     elseif template then
         backdrop:SetBackdrop(template)
     else

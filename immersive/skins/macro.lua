@@ -34,6 +34,7 @@ local function ApplyMacroOptionsSkin()
     end
 
     GW.HandleTrimScrollBar(MacroFrame.MacroSelector.ScrollBar)
+    GW.HandleAchivementsScrollControls(MacroFrame.MacroSelector)
     MacroFrameScrollFrameScrollBar:SkinScrollBar()
 
     local buttons = {

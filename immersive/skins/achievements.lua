@@ -244,8 +244,7 @@ local function HandleAchivementsScrollControls(self)
   self.ScrollBar.Track:ClearAllPoints()
   self.ScrollBar.Track:SetPoint("TOPLEFT",self.ScrollBar,"TOPLEFT",0,0)
   self.ScrollBar.Track:SetPoint("BOTTOMRIGHT",self.ScrollBar,"BOTTOMRIGHT",0,0)
-  self.ScrollBar.Track.Thumb.bg:SetWidth(12)
-
+  self.ScrollBar.Track.Thumb.backdrop:SetWidth(12)
 
   local bg = self.ScrollBar.Track:CreateTexture("bg", "BACKGROUND", nil, 0)
   bg:ClearAllPoints();

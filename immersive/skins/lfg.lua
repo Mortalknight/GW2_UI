@@ -299,6 +299,7 @@ local function SkinLookingForGroupFrames()
     LFRQueueFrameCommentScrollFrame:SkinScrollFrame()
     LFRQueueFrameCommentScrollFrameScrollBar:SkinScrollBar()
     GW.HandleTrimScrollBar(LFDQueueFrameSpecific.ScrollBar)
+    GW.HandleAchivementsScrollControls(LFDQueueFrameSpecific)
 
     _G[_G.LFDQueueFrame.PartyBackfill:GetName().."BackfillButton"]:SkinButton(false, true)
     _G[_G.LFDQueueFrame.PartyBackfill:GetName().."NoBackfillButton"]:SkinButton(false, true)
@@ -391,6 +392,7 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.SearchPanel.SignUpButton:SetPoint("BOTTOMRIGHT", -6, 3)
     LFGListFrame.SearchPanel.ResultsInset:StripTextures()
     GW.HandleTrimScrollBar(LFGListFrame.SearchPanel.ScrollBar)
+    GW.HandleAchivementsScrollControls(LFGListFrame.SearchPanel)
 
     if not LFGListFrame.SearchPanel.ResultsInset.SetBackdrop then
         Mixin(LFGListFrame.SearchPanel.ResultsInset, _G.BackdropTemplateMixin)
@@ -500,6 +502,7 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.ApplicationViewer.BrowseGroupsButton:SetSize(120, 22)
 
     GW.HandleTrimScrollBar(LFGListFrame.ApplicationViewer.ScrollBar)
+    GW.HandleAchivementsScrollControls(LFGListFrame.ApplicationViewer)
     --LFGListFrame.ApplicationViewer.ScrollBar:ClearAllPoints()
     --LFGListFrame.ApplicationViewer.ScrollBar:SetPoint("TOPLEFT", LFGListFrame.ApplicationViewer.Inset, "TOPRIGHT", 0, -16)
     --LFGListFrame.ApplicationViewer.ScrollBar:SetPoint("BOTTOMLEFT", LFGListFrame.ApplicationViewer.Inset, "BOTTOMRIGHT", 0, 16)
@@ -681,6 +684,7 @@ local function ApplyPvPUISkin()
     end
 
     GW.HandleTrimScrollBar(HonorFrame.SpecificScrollBar)
+    GW.HandleAchivementsScrollControls(HonorFrame, "SpecificScrollBar")
     HonorFrameTypeDropDown:SkinDropDownMenu()
     HonorFrameQueueButton:SkinButton(false, true)
 

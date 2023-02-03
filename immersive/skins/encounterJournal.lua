@@ -218,6 +218,7 @@ local function encounterJournalSkin()
     EncounterJournalMonthlyActivitiesFrame.Bg:SetAlpha(0)
 
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
+    GW.HandleAchivementsScrollControls(InstanceSelect)
 
     local tabs = {EncounterJournalMonthlyActivitiesTab, EncounterJournalSuggestTab, EncounterJournalDungeonTab, EncounterJournalRaidTab, EncounterJournalLootJournalTab}
     for _, tab in pairs(tabs) do
@@ -275,7 +276,9 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInfoResetButtonTexture:SetTexCoord(0.90625000, 0.94726563, 0.00097656, 0.02050781)
 
     GW.HandleTrimScrollBar(EncounterInfo.BossesScrollBar)
+    GW.HandleAchivementsScrollControls(EncounterInfo, "BossesScrollBar")
     GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInstanceFrame.LoreScrollBar)
+    GW.HandleAchivementsScrollControls(EncounterJournalEncounterFrameInstanceFrame, "LoreScrollBar")
 
     EncounterJournalEncounterFrameInstanceFrameBG:SetScale(0.85)
     EncounterJournalEncounterFrameInstanceFrameBG:ClearAllPoints()
@@ -292,6 +295,7 @@ local function encounterJournalSkin()
     EncounterInfo.detailsScroll.ScrollBar:SetWidth(3)
 
     GW.HandleTrimScrollBar(EncounterInfo.LootContainer.ScrollBar)
+    GW.HandleAchivementsScrollControls(EncounterInfo.LootContainer)
 
     EncounterInfo.detailsScroll:SetHeight(360)
     EncounterInfo.LootContainer:SetHeight(360)
@@ -323,6 +327,7 @@ local function encounterJournalSkin()
     EncounterJournalSearchResultsCloseButton:SkinButton(true)
     EncounterJournalSearchResultsCloseButton:SetSize(20, 20)
     GW.HandleTrimScrollBar(EncounterJournalSearchResults.ScrollBar)
+    GW.HandleAchivementsScrollControls(EncounterJournalSearchResults)
 
     for i = 1, AJ_MAX_NUM_SUGGESTIONS do
         local suggestion = EJ.suggestFrame["Suggestion" .. i]
@@ -404,6 +409,7 @@ local function encounterJournalSkin()
     LJ.RuneforgePowerFilterDropDownButton:SetFrameLevel(10)
 
     GW.HandleTrimScrollBar(EncounterJournal.LootJournal.ScrollBar)
+    GW.HandleAchivementsScrollControls(EncounterJournal.LootJournal)
 
     for _, button in next, {EncounterJournalEncounterFrameInfoFilterToggle, EncounterJournalEncounterFrameInfoSlotFilterToggle } do
         button:SkinButton(false, true, nil, nil, true)
