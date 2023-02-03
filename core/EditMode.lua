@@ -29,10 +29,8 @@ local function OnEvent(self, event)
             --/run GW2_ADDON.Libs.LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GetSetting("HUD_SCALE")) or 1))); GW2_ADDON.Libs.LEMO:ApplyChanges()
             LEMO:LoadLayouts()
 
-            if not LEMO:CanEditActiveLayout() then
-                if not LEMO:DoesLayoutExist("GW2_Layout") then
-                    LEMO:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
-                end
+            if not LEMO:CanEditActiveLayout() or not LEMO:DoesLayoutExist("GW2_Layout") then
+                LEMO:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
                 LEMO:SetActiveLayout("GW2_Layout")
             end
 
