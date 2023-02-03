@@ -670,7 +670,7 @@ end
 GW.RegisterMovableFrame = RegisterMovableFrame
 
 local function MoveFrameByPixel(nudgeX, nudgeY)
-    local mover = GwSmallSettingsContainer.childMover
+    local mover = GwSmallSettingsContainer.moverSettingsFrame.childMover
 
     local point, _, anchorPoint, x, y = mover:GetPoint()
     x = x + nudgeX
