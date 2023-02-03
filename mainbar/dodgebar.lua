@@ -382,18 +382,11 @@ local function updateDragonRidingState(self, state, isLogin)
 end
 
 local function dragonBar_OnEvent(self, event, ...)
-    if event == "UNIT_SPELLCAST_SUCCEEDED" then
-        -- we don't track anything until we first see our dodge skill cast
-        --local spellId = select(3, ...)
-        --if spellId ~= DR_FORWARD and spellId ~= DR_FLAP and spellId ~= DR_SURGE  then
-        --    return
-        --end
-        -- self.gwNeedDrain = true
-    elseif event == "UNIT_POWER_UPDATE" then
+    if event == "UNIT_POWER_UPDATE" then
         local current = UnitPower("player", DRAGON_POWERTYPE)
         local max = UnitPowerMax("player", DRAGON_POWERTYPE)
         local fraction = (self.lastPower and self.lastPower > current and 0) or nil
-        if not self.gwMaxCharges or max > self.gwMaxCharges then
+        if not self.gwMaxCharges or (max > self.gwMaxCharges and max >= 3) then
             self.gwMaxCharges = max
             setupDragonBar(self)
         end
@@ -524,8 +517,6 @@ local function LoadDragonBar(hg, asTargetFrame)
     fmdb.border.normal:SetTexture("Interface/AddOns/GW2_UI/textures/dodgebar/border-normal-small")
 
     -- create the arc drain/fill animations
-    local agFraction = af.fillFractions:CreateAnimationGroup()
-    local agSpark = af.spark:CreateAnimationGroup()
     local ag = af.fill:CreateAnimationGroup()
     local a1 = ag:CreateAnimation("rotation")
     local a2 = ag:CreateAnimation("rotation")
@@ -550,7 +541,6 @@ local function LoadDragonBar(hg, asTargetFrame)
         dragonBar_OnEvent(fmdb, event, ...)
     end)
 
-    --fmdb:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
     fmdb:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
     fmdb:RegisterEvent("UPDATE_UI_WIDGET")
 
