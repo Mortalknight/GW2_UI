@@ -96,14 +96,15 @@ local function LoadHudPanel(sWindow)
         nil,
         2
     )
-    addOptionButton(general.scroll.scrollchild, L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], nil, function()
-        local scale = GetSetting("HUD_SCALE")
-        for _, mf in pairs(GW.scaleableFrames) do
-            mf.parent:SetScale(scale)
-            mf:SetScale(scale)
-            GW.SetSetting(mf.setting .."_scale", scale)
-        end
-    end)
+    addOptionButton(general.scroll.scrollchild, L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], "GWTEST",
+        function()
+            local scale = GetSetting("HUD_SCALE")
+            for _, mf in pairs(GW.scaleableFrames) do
+                mf.parent:SetScale(scale)
+                mf:SetScale(scale)
+                GW.SetSetting(mf.setting .."_scale", scale)
+            end
+        end)
     addOptionDropdown(
         general.scroll.scrollchild,
         L["Show Role Bar"],

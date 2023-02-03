@@ -222,20 +222,28 @@ local function SkinLookingForGroupFrames()
         for i = 1, 3 do
             local bu = GroupFinderFrame["groupButton" .. i]
             if i == idx then
-                bu.gwHover.skipHover = true
-                bu.gwHover:SetAlpha(1)
-                bu.gwHover:SetPoint("RIGHT", bu, "LEFT", bu:GetWidth(), 0)
+                bu.hover.skipHover = true
+                bu.hover:SetAlpha(1)
+                bu.hover:SetPoint("RIGHT", bu, "LEFT", bu:GetWidth(), 0)
             else
-                bu.gwHover.skipHover = false
-                bu.gwHover:SetAlpha(1)
-                bu.gwHover:SetPoint("RIGHT", bu, "LEFT", 0, 0)
+                bu.hover.skipHover = false
+                bu.hover:SetAlpha(1)
+                bu.hover:SetPoint("RIGHT", bu, "LEFT", 0, 0)
             end
 
         end
     end)
 
-    for i = 1, 3 do
-        _G["PVEFrameTab" .. i]:SkinButton(false, true, nil, nil, true)
+    local tabs = {PVEFrameTab1, PVEFrameTab2, PVEFrameTab3}
+    for _, tab in pairs(tabs) do
+        GW.HandleTabs(tab, true)
+        tab:HookScript("OnClick", function(self)
+            for _, t in pairs(tabs) do
+                if t:GetName() ~= self:GetName() then
+                    t.hover:SetAlpha(0)
+                end
+            end
+        end)
     end
 
     -- Raid finder
@@ -634,13 +642,13 @@ local function ApplyPvPUISkin()
         for i = 1, 3 do
             local bu = _G["PVPQueueFrameCategoryButton" .. i]
             if i == idx then
-                bu.gwHover.skipHover = true
-                bu.gwHover:SetAlpha(1)
-                bu.gwHover:SetPoint("RIGHT", bu, "LEFT", bu:GetWidth(), 0)
+                bu.hover.skipHover = true
+                bu.hover:SetAlpha(1)
+                bu.hover:SetPoint("RIGHT", bu, "LEFT", bu:GetWidth(), 0)
             else
-                bu.gwHover.skipHover = false
-                bu.gwHover:SetAlpha(1)
-                bu.gwHover:SetPoint("RIGHT", bu, "LEFT", 0, 0)
+                bu.hover.skipHover = false
+                bu.hover:SetAlpha(1)
+                bu.hover:SetPoint("RIGHT", bu, "LEFT", 0, 0)
             end
         end
     end)

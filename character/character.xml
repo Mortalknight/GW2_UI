@@ -153,20 +153,7 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="BORDER">
-                <Texture parentKey="gwHover" alpha="0" file="Interface\AddOns\GW2_UI\textures\character\menu-hover">
-
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
-                          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
         </Layers>
-        <Scripts>
-            <OnEnter function="GwStandardButton_OnEnter"/>
-            <OnLeave function="GwStandardButton_OnLeave"/>
-        </Scripts>
     </Button>
 
     <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButton" virtual="true">

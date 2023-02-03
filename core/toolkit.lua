@@ -156,14 +156,14 @@ local function Kill(object)
 end
 
 local function AddHover(self)
-    if not self.gwHover then
-        self.gwHover = self:CreateTexture(nil, "ARTWORK", nil, 7)
-        self.gwHover:SetPoint("LEFT", self, "LEFT")
-        self.gwHover:SetPoint("TOP", self, "TOP")
-        self.gwHover:SetPoint("BOTTOM", self, "BOTTOM")
-        self.gwHover:SetPoint("RIGHT", self, "RIGHT")
-        self.gwHover:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
-        self.gwHover:SetAlpha(0)
+    if not self.hover then
+        self.hover = self:CreateTexture(nil, "ARTWORK", nil, 7)
+        self.hover:SetPoint("LEFT", self, "LEFT")
+        self.hover:SetPoint("TOP", self, "TOP")
+        self.hover:SetPoint("BOTTOM", self, "BOTTOM")
+        self.hover:SetPoint("RIGHT", self, "RIGHT")
+        self.hover:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
+        self.hover:SetAlpha(0)
 
         self:HookScript("OnEnter", GwStandardButton_OnEnter)
         self:HookScript("OnLeave", GwStandardButton_OnLeave)
@@ -332,7 +332,7 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover, s
     end
 
     if (not isXButton or onlyHover) and not noHover then
-        button:AddHover()
+        AddHover(button)
     end
 
     button.isSkinned = true

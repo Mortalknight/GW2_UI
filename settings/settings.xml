@@ -450,7 +450,7 @@
         </Layers>
     </Button>
 
-    <Frame name="GwOptionBoxHeader" inherits="GwStandardButton" frameStrata="HIGH" virtual="true">
+    <Frame name="GwOptionBoxHeader" frameStrata="HIGH" virtual="true">
         <Size x="600" y="25"/>
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -481,7 +481,7 @@
         <NormalFont style="gw_button_font_black"/>
         <HighlightFont style="gw_button_font_black"/>
         <Layers>
-            <Layer textureSubLevel="3">
+            <Layer level="ARTWORK" textureSubLevel="7">
                 <Texture parentKey="hover" file="Interface/AddOns/GW2_UI/textures/uistuff/button_hover">
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT"/>
@@ -493,8 +493,10 @@
             </Layer>
         </Layers>
         <Scripts>
-            <OnEnter function="GwStandardButton_OnEnter"/>
-            <OnLeave function="GwStandardButton_OnLeave"/>
+            <OnShow>
+                self:HookScript("OnEnter", GwStandardButton_OnEnter)
+                self:HookScript("OnLeave", GwStandardButton_OnLeave)
+            </OnShow>
         </Scripts>
     </Button>
 
@@ -1461,56 +1463,56 @@
     </Frame>
 
     <Frame name ="GwSettingsMenuSearchableItem" virtual="true">
-      <Size x="221" y="36"/>
-      <Anchors>
-          <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
-      </Anchors>
-      <Frames>
-        <Button parentKey="button" inherits="GwCharacterMenuButtonTemplate"  text="">
-          <Anchors>
-              <Anchor point="TOPLEFT"/>
-          </Anchors>
-          <Layers>
-              <Layer textureSubLevel="OVERLAY">
-                  <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover" hidden="true">
-                      <Anchors>
-                          <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
-                          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
-                      </Anchors>
-                  </Texture>
-              </Layer>
-          </Layers>
-        </Button>
+        <Size x="221" y="36"/>
+        <Anchors>
+            <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+        </Anchors>
+        <Frames>
+            <Button parentKey="button" inherits="GwCharacterMenuButtonTemplate"  text="">
+                <Anchors>
+                    <Anchor point="TOPLEFT"/>
+                </Anchors>
+                <Layers>
+                    <Layer textureSubLevel="OVERLAY">
+                        <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover" hidden="true">
+                            <Anchors>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+            </Button>
 
-        <Frame parentKey="content">
-          <Size x="221" y="36"/>
-          <Anchors>
-              <Anchor point="TOPLEFT" relativeKey="$parent.button" relativePoint="BOTTOMLEFT"/>
-          </Anchors>
-        </Frame>
-        <Frame parentKey="contentSizer">
-          <Size x="221" y="36"/>
-          <Anchors>
-              <Anchor point="TOPLEFT" relativeKey="$parent.button" relativePoint="TOPLEFT"/>
-          </Anchors>
-        </Frame>
-      </Frames>
+            <Frame parentKey="content">
+                <Size x="221" y="36"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.button" relativePoint="BOTTOMLEFT"/>
+                </Anchors>
+            </Frame>
+            <Frame parentKey="contentSizer">
+                <Size x="221" y="36"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.button" relativePoint="TOPLEFT"/>
+                </Anchors>
+            </Frame>
+        </Frames>
     </Frame>
 
     <Button name="GwSettingsMenuSearchableSubButton" inherits="GwCharacterMenuButtonTemplate"  text="" virtual="true">
-      <Anchors>
-          <Anchor point="TOPLEFT"/>
-      </Anchors>
-      <Layers>
-          <Layer>
-              <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover" hidden="true">
-                  <Anchors>
-                      <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
-                      <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
-                  </Anchors>
-              </Texture>
-          </Layer>
-      </Layers>
+        <Anchors>
+            <Anchor point="TOPLEFT"/>
+        </Anchors>
+        <Layers>
+            <Layer>
+                <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
     </Button>
 
     <Frame name="GwSettingsSearchResultPanel" inherits="GwSettingsPanelScrollTmpl" virtual="true">

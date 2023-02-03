@@ -219,7 +219,7 @@
     </Frame>
 
     <Button name="GwSettingsOverviewMenuButton" inherits="GwCharacterMenuButtonTemplate"  text="" virtual="true">
-      <Size x="221" y="36"></Size>
+        <Size x="221" y="36"></Size>
     </Button>
 
 </Ui>

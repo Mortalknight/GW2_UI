@@ -12,7 +12,7 @@ local AFP = GW.AddProfiling
 
 local animations = GW.animations
 
-local l = CreateFrame("Frame", nil, UIParent) -- Main event frame
+local l = CreateFrame("Frame") -- Main event frame
 
 GW.VERSION_STRING = "GW2_UI @project-version@"
 
@@ -132,26 +132,25 @@ GW.getSpriteByIndex = getSpriteByIndex
 local function TriggerButtonHoverAnimation(self, hover, to, duration)
     local name = tostring(self)
     hover:SetAlpha(1)
-    duration = duration or math.min(1,self:GetWidth() * 0.002)
+    duration = duration or math.min(1, self:GetWidth() * 0.002)
     AddToAnimation(
         name,
         self.animationValue,
         (to or 1),
         GetTime(),
         duration,
-        function()
+        function(p)
             local w = self:GetWidth()
 
-            local prog = animations[name].progress
-            local lerp = GW.lerp(0, w + (w * 0.5), prog)
-            local lerp2 = GW.lerp(0.4, 1, prog)
+            local lerp = GW.lerp(0, w + (w * 0.5), p)
+            local lerp2 = GW.lerp(0.4, 1, p)
+            local stripAmount = 1 - math.max(0, (lerp / w) - 1)
 
-            lerp2 = math.max(0.4,math.min(1,lerp2))
+            lerp2 = math.max(0.4, math.min(1, lerp2))
 
             if lerp2 > 1 then lerp2 = 1 end
             hover:SetPoint("RIGHT", self, "LEFT", math.min(w, lerp) , 0)
             hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, lerp2)
-            local stripAmount = 1 - math.max(0, (lerp / w) - 1)
             hover:SetTexCoord(0, stripAmount, 0, 1)
         end
     )
@@ -159,25 +158,23 @@ end
 GW.TriggerButtonHoverAnimation = TriggerButtonHoverAnimation
 
 function GwStandardButton_OnEnter(self)
-    if not self.gwHover or (self.IsEnabled and not self:IsEnabled()) then
+    if not self.hover or (self.IsEnabled and not self:IsEnabled()) then
         return
     end
+    self.animationValue = self.hover.skipHover and 1 or 0
 
-    self.animationValue = self.gwHover.skipHover and 1 or 0
-
-    TriggerButtonHoverAnimation(self, self.gwHover)
+    TriggerButtonHoverAnimation(self, self.hover)
 end
 
 function GwStandardButton_OnLeave(self)
-    if not self.gwHover or (self.IsEnabled and not self:IsEnabled()) then
+    if not self.hover or (self.IsEnabled and not self:IsEnabled()) then
         return
     end
-    if self.gwHover.skipHover then return end
-
-    self.gwHover:SetAlpha(1)
+    if self.hover.skipHover then return end
+    self.hover:SetAlpha(1)
     self.animationValue = 1
 
-    TriggerButtonHoverAnimation(self, self.gwHover, 0, 0.1)
+    TriggerButtonHoverAnimation(self, self.hover, 0, 0.1)
 end
 
 local function barAnimation(self, barWidth, sparkWidth)
@@ -275,11 +272,11 @@ local function gw_OnUpdate(_, elapsed)
             else
                 v.progress = GW.lerp(v.from, v.to, 1)
             end
-            if v.method ~= nil then
+            if v.method then
                 v.method(v.progress)
             end
 
-            if v.onCompleteCallback ~= nil then
+            if v.onCompleteCallback then
                 v.onCompleteCallback()
             end
 
@@ -288,8 +285,7 @@ local function gw_OnUpdate(_, elapsed)
         end
         if v.completed == false then
             if v.easeing == nil then
-                v.progress =
-                    GW.lerp(v.from, v.to, math.sin((GetTime() - v.start) / v.duration * math.pi * 0.5))
+                v.progress = GW.lerp(v.from, v.to, math.sin((GetTime() - v.start) / v.duration * math.pi * 0.5))
             else
                 v.progress = GW.lerp(v.from, v.to, (GetTime() - v.start) / v.duration)
             end
@@ -457,6 +453,7 @@ local function evAddonLoaded(_, addonName)
     GW.LoadSocketUISkin()
     GW.LoadSoulbindsSkin()
     GW.LoadWeeklyRewardsSkin()
+    GW.LoadPerksProgramSkin()
     --GW.LoadStatusbarTest()
 end
 AFP("evAddonLoaded", evAddonLoaded)
@@ -619,8 +616,6 @@ local function evPlayerLogin(self)
     GW.LoadVehicleButton()
     GW.MakeAltPowerBarMovable()
     GW.WidgetUISetup()
-
-
 
     --Create hud art
     hudArtFrame = GW.LoadHudArt()
@@ -824,7 +819,6 @@ local function evPlayerLogin(self)
     end
 
     self:SetScript("OnUpdate", gw_OnUpdate)
-
     GW.UpdateCharData()
 
     GW.HandleBlizzardEditMode()

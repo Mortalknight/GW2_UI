@@ -759,7 +759,7 @@ local function skinInvasionAlert(frame)
             end
             -- Icon border
             if icon and icon:IsObjectType('Texture') then
-                if icon:GetTexture() == "Interface\\Icons\\Ability_Warlock_DemonicPower" then
+                if icon:GetTexture() == 236293 then
                     icon.b = CreateFrame("Frame", nil, frame)
                     icon.b:SetPoint("TOPLEFT", icon, "TOPLEFT", -2, 2)
                     icon.b:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 2, -2)
@@ -1500,6 +1500,7 @@ local function LoadAlertSystem()
         -- Achievements
         hooksecurefunc(AchievementAlertSystem, "setUpFunction", skinAchievementAlert)
         hooksecurefunc(CriteriaAlertSystem, "setUpFunction", skinCriteriaAlert)
+        hooksecurefunc(MonthlyActivityAlertSystem, "setUpFunction", skinCriteriaAlert)
 
         -- Encounters
         hooksecurefunc(DungeonCompletionAlertSystem, "setUpFunction", skinDungeonCompletionAlert)
@@ -1527,6 +1528,9 @@ local function LoadAlertSystem()
         hooksecurefunc(NewPetAlertSystem, "setUpFunction", skinNewPetAlert)
         hooksecurefunc(NewMountAlertSystem, "setUpFunction", skinNewPetAlert)
         hooksecurefunc(NewToyAlertSystem, "setUpFunction", skinNewPetAlert)
+
+        -- Cosmetics
+        hooksecurefunc(NewCosmeticAlertFrameSystem, "setUpFunction", skinNewPetAlert)
 
         -- Garrisons
         hooksecurefunc(GarrisonFollowerAlertSystem, "setUpFunction", skinGarrisonFollowerAlert)
