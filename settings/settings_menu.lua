@@ -313,6 +313,8 @@ local function settingsMenuAddButton(name, basePanel, frames)
     menuItem.content.height = menuItem:GetHeight()
     menuItem.content.buttons = {}
 
+    menuItem.basePanel = basePanel
+
     -- create sub buttons for each panel
     for _, panelFrame in pairs(frames) do
         panelFrame:Hide()
@@ -387,7 +389,7 @@ local function settingMenuToggle(toggle)
 end
 GW.settingMenuToggle = settingMenuToggle
 
-local function loadSettingsSearchAbleMenu()
+local function loadSettingsSearchAbleMenu(sWindow)
     GwSettingsMenuSearchable = CreateFrame("Frame", "GwSettingsMenuSearchable",GwSettingsWindow,"GwSettingsMenuSearchable")
     GwSettingsMenuSearchable.scroll:SetScrollChild(GwSettingsMenuSearchable.scroll.scrollchild)
 
@@ -417,6 +419,14 @@ local function loadSettingsSearchAbleMenu()
     GwSettingsMenuSearchable.search.input:SetScript("OnEnterPressed", fnGWP_input_OnEnterPressed)
     GwSettingsMenuSearchable.search.input:SetScript("OnTextChanged",searchInputChanged)
 
-    updateScrollFrame(GwSettingsMenuSearchable)
+    -- load the scrollbox on first load
+    GwSettingsMenuSearchable.firstTimeLoaded = true
+    GwSettingsMenuSearchable:HookScript("OnShow", function()
+        if GwSettingsMenuSearchable.firstTimeLoaded then
+            resetMenu(true)
+            switchCat(_G[GW.L["Modules"] .. "GwSearchableItem"].button, _G[GW.L["Modules"] .. "GwSearchableItem"].basePanel)
+            GwSettingsMenuSearchable.firstTimeLoaded = false
+        end
+    end)
 end
 GW.loadSettingsSearchAbleMenu  = loadSettingsSearchAbleMenu
