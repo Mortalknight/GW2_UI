@@ -199,8 +199,6 @@ local function getNewEquipmentSetButton(i)
     end
     GwPaperDollOutfits.buttons = GwPaperDollOutfits.buttons + 1
 
-    f.standardOnClick = f:GetScript("OnEnter")
-
     f:GetFontString():ClearAllPoints()
     f:GetFontString():SetPoint("TOP", f, "TOP", 0, -20)
 
@@ -242,7 +240,6 @@ drawItemSetList = function()
                 function(self)
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                     GameTooltip:SetEquipmentSet(self.setID)
-                    self.standardOnClick(self)
                 end
             )
 
