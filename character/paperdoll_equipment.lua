@@ -829,6 +829,7 @@ local function LoadPDBagList(fmMenu)
         else
             button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
         end
+        updateItemSlot(button)
     end)
 
     EquipmentFlyoutFrame:Kill()
