@@ -1,3 +1,17 @@
+6.4.0
+NEW
+    - Added Trade Post skin
+
+CHANGES
+    - Restructur settings, to make some settings easier to find
+
+
+FIXES
+    - Talent micro button tooltip is hidding corret now
+    - Correct monthly activity tracker issues
+    - Correct recipe tracking issues
+    - Performance improvements
+
 6.3.1
 NEW
     - Added workorder indicator to micromenu

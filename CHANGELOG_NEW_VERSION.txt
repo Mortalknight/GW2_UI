@@ -1,9 +1,13 @@
-6.3.1
+6.4.0
 NEW
-    - Added workorder indicator to micromenu
+    - Added Trade Post skin
 
 CHANGES
-    - Move "new mail" indicator to micromenu
+    - Restructur settings, to make some settings easier to find
+
 
 FIXES
+    - Talent micro button tooltip is hidding corret now
+    - Correct monthly activity tracker issues
+    - Correct recipe tracking issues
     - Performance improvements

@@ -15,6 +15,16 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.4.10",{
+    {ct.feature,[=[Added Trade Post skin]=]},
+
+    {ct.change,[=[Restructur settings, to make some settings easier to find]=]},
+
+    {ct.bug,[=[Talent micro button tooltip is hidding corret now]=]},
+    {ct.bug,[=[Correct monthly activity tracker issues]=]},
+    {ct.bug,[=[Correct recipe tracking issues]=]},
+    {ct.bug,[=[Performance improvements]=]},
+})
 addChange("6.3.1",{
     {ct.feature,[=[Added workorder indicator to micromenu]=]},
 
