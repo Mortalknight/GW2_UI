@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.8.4 Wrath", [=[
+    - Skin main menu shop button
+]=])
+
 v("1.8.3 Wrath", [=[
     - Work better with different addons which added own tooltips
 ]=])

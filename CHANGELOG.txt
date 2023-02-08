@@ -1,3 +1,6 @@
+1.8.4-Wrath
+    - Skin main menu shop button
+
 1.8.3-Wrath
     - Work better with different addons which added own tooltips
 
