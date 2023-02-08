@@ -3,6 +3,7 @@ local L = GW.L
 
 local BUTTONS = {
     {button = _G.GameMenuButtonHelp         , sprite = {1, 1}},
+    {button = _G.GameMenuButtonStore        , sprite = {2, 1}},
     {button = _G.GameMenuButtonOptions      , sprite = {4, 1}},
     {button = _G.GameMenuButtonUIOptions    , sprite = {1, 2}},
     {button = _G.GameMenuButtonKeybindings  , sprite = {2, 2}},
