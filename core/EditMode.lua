@@ -28,9 +28,11 @@ local function OnEvent(self, event)
             -- do that in the users profile, if this is not editable we create a gw2 profile with needed actionbar settings
             --/run GW2_ADDON.Libs.LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GetSetting("HUD_SCALE")) or 1))); GW2_ADDON.Libs.LEMO:ApplyChanges()
             LEMO:LoadLayouts()
-
-            if not LEMO:CanEditActiveLayout() or not LEMO:DoesLayoutExist("GW2_Layout") then
-                LEMO:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
+            local doesGw2LayoutExists = LEMO:DoesLayoutExist("GW2_Layout")
+            if not LEMO:CanEditActiveLayout() or not doesGw2LayoutExists then
+                if not doesGw2LayoutExists then
+                    LEMO:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
+                end
                 LEMO:SetActiveLayout("GW2_Layout")
             end
 
