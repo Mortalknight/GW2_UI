@@ -4,11 +4,11 @@
     for Classic/TBC/WOTLK
 
     Requires: LibStub, CallbackHandler-1.0, LibDetours-1.0
-    Version: 9 (2022-12-11)
+    Version: 10 (2023-02-10)
 
 --]]
 
-local LCI_VERSION = 9
+local LCI_VERSION = 10
 
 local clientVersionString = GetBuildInfo()
 local clientBuildMajor = string.byte(clientVersionString, 1)
@@ -291,7 +291,8 @@ lib.glyphs_table = lib.glyphs_table or {
     [25] = 63222, -- Glyph of Shield of Righteousness
     [26] = 63223, -- Glyph of Divine Plea
     [27] = 63224, -- Glyph of Holy Shock
-    [28] = 63225  -- Glyph of Salvation
+    [28] = 63225, -- Glyph of Salvation
+    [29] = 405004 -- Glyph of Reckoning
     },
     [2] = {
     [1] = 57937,  -- Glyph of Blessing of Kings
@@ -2957,7 +2958,7 @@ function f:CHAT_MSG_ADDON(event, prefix, text, channelType, senderFullName, send
     if (prefix ~= C_PREFIX) then return end
     if (string.byte(text, 1) ~= 48 or string.byte(text, 3) ~= 45) then return end
     local v = string.byte(text, 2)
-    if (v == 48 or v == 49) then
+    if (v == 48 or v == 49 or v == 50) then
         local guid = UnitGUID(sender)
         if (not guid or not GUIDIsPlayer(guid)) then
             if (not IsInGuild()) then return end
@@ -2985,7 +2986,7 @@ function f:CHAT_MSG_ADDON(event, prefix, text, channelType, senderFullName, send
             end
         end
         local glyphs
-        if (isWotlk and v == 49) then
+        if (isWotlk and v == 50) then
             glyphs = {["time"] = time()}
             for x = 1, 12 do
                 y = y + 1
@@ -3082,7 +3083,7 @@ C_ChatInfo.RegisterAddonMessagePrefix(C_PREFIX)
 
 local function sendInfo()
     if (IsInGroup() or IsInGuild()) then
-        local s = "01-"
+        local s = "02-"
         s = s .. (isWotlk and GetActiveTalentGroup(false, false) or 1)
         for x = 1, (isWotlk and 2 or 1) do
             for i = 1, 3 do  -- GetNumTalentTabs

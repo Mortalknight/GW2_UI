@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.8.5 Wrath", [=[
+    - Update lib
+]=])
+
 v("1.8.4 Wrath", [=[
     - Skin main menu shop button
 ]=])
