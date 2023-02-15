@@ -15,7 +15,12 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
-addChange("6.4.10",{
+addChange("6.4.1",{
+    {ct.bug,[=[Create the GW2_Layout only if it does not exist]=]},
+    {ct.bug,[=[Fix an issue where the default target of target/focus frame is not visible if our target/focus module is turned off]=]},
+})
+
+addChange("6.4.0",{
     {ct.feature,[=[Added Trade Post skin]=]},
 
     {ct.change,[=[Restructur settings, to make some settings easier to find]=]},
