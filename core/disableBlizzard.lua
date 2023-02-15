@@ -149,7 +149,7 @@ local function DisableBlizzardFrames()
         HandleFrame(ComboFrame)
     end
 
-    if ourTargetTargetFrame then
+    if ourTargetFrame and ourTargetTargetFrame then
         HandleFrame(TargetFrameToT)
     end
 
@@ -157,7 +157,7 @@ local function DisableBlizzardFrames()
         HandleFrame(FocusFrame)
     end
 
-    if ourFocusTargetFrame then
+    if ourFocusFrame and ourFocusTargetFrame then
         HandleFrame(TargetofFocusFrame)
     end
 
