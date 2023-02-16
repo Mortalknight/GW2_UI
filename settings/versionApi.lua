@@ -16,7 +16,7 @@ local function GetItemLevelColor()
     if GW.tocversion > 40000 then
         return _G.GetItemLevelColor()
     else
-        local _, gearScore = GW2_ADDON.Libs.LibGearScore:GetScore("player")
+        local _, gearScore = GW.Libs.LibGearScore:GetScore("player")
         if gearScore.Color then
             return gearScore.Color.r, gearScore.Color.g, gearScore.Color.b
         else

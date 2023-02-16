@@ -291,11 +291,17 @@ local function setPetStatFrame(stat, index, statText, tooltip, tooltip2, grid, x
     return grid, x, y, index + 1
 end
 
-local function PaperDollUpdateStats()
-    local gearScore, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
-    local r, g, b = GW.api.GetItemLevelColor(gearScore)
+local function UpdateItemLevelAndGearScore(gearScoreData)
+    local gearScore, avgItemLevelEquipped, r, g, b
+    if gearScoreData then
+        gearScore, avgItemLevelEquipped = gearScoreData.GearScore, gearScoreData.AvgItemLevel
+        r, g, b = gearScoreData.Color.r, gearScoreData.Color.g, gearScoreData.Color.b
+    else
+        gearScore, avgItemLevelEquipped = GW.api.GetAverageItemLevel()
+        r, g, b = GW.api.GetItemLevelColor(gearScore)
+    end
+
     local hexColor = ""
-    local statText, tooltip1, tooltip2
 
     if gearScore > 0 and avgItemLevelEquipped > 0 then
         avgItemLevelEquipped = avgItemLevelEquipped and math.floor(avgItemLevelEquipped) or 0
@@ -308,7 +314,10 @@ local function PaperDollUpdateStats()
     else
         GwDressingRoom.itemLevel:SetText("")
     end
+end
 
+local function PaperDollUpdateStats()
+    local statText, tooltip1, tooltip2
     local numShownStats = 1
     local grid = 1
     local x = 0
@@ -883,6 +892,14 @@ local function LoadPaperDoll()
     C_Timer.After(1, function()
         PaperDollUpdateStats()
         PaperDollUpdatePetStats()
+    end)
+
+    -- setup gearscore
+    UpdateItemLevelAndGearScore()
+    GW.Libs.LibGearScore.RegisterCallback("GW2_UI", "LibGearScore_Update", function(_, _, gearScore)
+        if gearScore and gearScore.PlayerName == GW.myname then
+            UpdateItemLevelAndGearScore(gearScore)
+        end
     end)
 
     GwDressingRoomPet.model.expBar:SetScript("OnEnter", function(self)

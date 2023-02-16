@@ -1,6 +1,10 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("1.8.7 Wrath", [=[
+    - Update player gear score and equip change
+]=])
+
 v("1.8.6 Wrath", [=[
     - Lix lua error in pvp
 ]=])
