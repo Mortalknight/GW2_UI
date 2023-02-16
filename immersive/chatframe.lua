@@ -1132,18 +1132,18 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             if strsub(chatType, 1, 7) == "MONSTER" or strsub(chatType, 1, 9) == "RAID_BOSS" then
                 showLink = nil
                 -- fix blizzard formatting errors from localization strings
-                arg1 = gsub(arg1, "%%%d", "%%s")
+                --arg1 = gsub(arg1, "%%%d", "%%s")
                 arg1 = gsub(arg1, "(%d%%)([^%%%a])", "%1%%%2")
                 arg1 = gsub(arg1, "(%d%%)$", "%1%%")
             else
                 arg1 = gsub(arg1, "%%", "%%%%")
             end
 
-            -- Search for icon links and replace them with texture links.
-            arg1 = C_ChatInfo.ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrame_CanChatGroupPerformExpressionExpansion(chatGroup)) -- If arg17 is true, don"t convert to raid icons
-
             --Remove groups of many spaces
             arg1 = RemoveExtraSpaces(arg1)
+
+            -- Search for icon links and replace them with texture links.
+            arg1 = C_ChatInfo.ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrame_CanChatGroupPerformExpressionExpansion(chatGroup)) -- If arg17 is true, don"t convert to raid icons
 
             local playerLink
             local playerLinkDisplayText = coloredName
@@ -1159,7 +1159,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             end
 
             local isCommunityType = chatType == "COMMUNITIES_CHANNEL"
-            local playerName, lineID, bnetIDAccount = arg2, arg11, arg13
+            local playerName, lineID, bnetIDAccount = (nameWithRealm ~= arg2 and nameWithRealm) or arg2, arg11, arg13
             if isCommunityType then
                 local isBattleNetCommunity = bnetIDAccount ~= nil and bnetIDAccount ~= 0
                 local messageInfo, clubId, streamId = C_Club.GetInfoFromLastCommunityChatLine()
@@ -1173,15 +1173,10 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                 else
                     playerLink = playerLinkDisplayText
                 end
+            elseif chatType == "BN_WHISPER" or chatType == "BN_WHISPER_INFORM" then
+                playerLink = GetBNPlayerLink(playerName, playerLinkDisplayText, bnetIDAccount, lineID, chatGroup, chatTarget)
             else
-                if chatType == "BN_WHISPER" or chatType == "BN_WHISPER_INFORM" then
-                    playerLink = GetBNPlayerLink(playerName, playerLinkDisplayText, bnetIDAccount, lineID, chatGroup, chatTarget)
-                elseif ((chatType == "GUILD" or chatType == "TEXT_EMOTE") or arg14) and (nameWithRealm and nameWithRealm ~= playerName) then
-                    playerName = nameWithRealm
-                    playerLink = GetPlayerLink(playerName, playerLinkDisplayText, lineID, chatGroup, chatTarget)
-                else
-                    playerLink = GetPlayerLink(playerName, playerLinkDisplayText, lineID, chatGroup, chatTarget)
-                end
+                playerLink = GetPlayerLink(playerName, playerLinkDisplayText, lineID, chatGroup, chatTarget)
             end
 
             local message = arg1
@@ -1351,7 +1346,7 @@ end
 do
     local charCount
     local function CountLinkCharacters(self)
-        charCount = charCount + (strlen(self) + 4) -- 4 is ending '|h|r'
+        charCount = charCount + (strlen(self) + 4) -- 4 is ending "|h|r"
     end
 
     local repeatedText
@@ -1379,7 +1374,7 @@ do
         end
 
         charCount = 0
-        gsub(userInput, '(|c%x-|H.-|h).-|h|r', CountLinkCharacters)
+        gsub(userInput, "(|c%x-|H.-|h).-|h|r", CountLinkCharacters)
         if charCount ~= 0 then len = len - charCount end
 
         self.characterCount:SetText(len > 0 and (255 - len) or "")
