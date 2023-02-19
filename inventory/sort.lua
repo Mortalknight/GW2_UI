@@ -11,7 +11,7 @@ BANK_BAG_CONTAINERS = {-1, 5, 6, 7, 8, 9, 10, 11}
 function _G.GW_SortBags()
     CONTAINERS = {unpack(BAG_CONTAINERS)}
     for i = #CONTAINERS, 1, -1 do
-        if C_Container.GetBagSlotFlag(i - 1, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
+        if C_Container.GetBagSlotFlag(CONTAINERS[i], LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
             tremove(CONTAINERS, i)
         end
     end
@@ -21,7 +21,7 @@ end
 function _G.GW_SortBankBags()
     CONTAINERS = {unpack(BANK_BAG_CONTAINERS)}
     for i = #CONTAINERS, 1, -1 do
-        if C_Container.GetBagSlotFlag(i - 1, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
+        if C_Container.GetBagSlotFlag(CONTAINERS[i], LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) then
             tremove(CONTAINERS, i)
         end
     end
@@ -47,7 +47,7 @@ end
 
 
 
-local SPECIAL = set(5462, 9173, 11511, 13347, 32542, 33219, 38233, 40110, 43499, 198647)
+local SPECIAL = set(5462, 9173, 11511, 13347, 32542, 33219, 38233, 40110, 43499, 43824, 198647)
 
 local KEYS = set(9240, 11511, 12324, 12384, 13544, 16309, 17191, 20402)
 
@@ -190,12 +190,10 @@ function LT(a, b)
 end
 
 function Move(src, dst)
-    local srcItemInfo = C_Container.GetContainerItemInfo(src.container, src.position)
-    local texture, srcLocked = srcItemInfo.iconFileID, srcItemInfo.isLocked
-    local dstItemInfo = C_Container.GetContainerItemInfo(dst.container, dst.position)
-    local dstLocked = dstItemInfo and dstItemInfo.isLocked
+    local srcContainerInfo = C_Container.GetContainerItemInfo(src.container, src.position)
+ 	local dstContainerInfo = C_Container.GetContainerItemInfo(dst.container, dst.position)
 
-    if texture and not srcLocked and not dstLocked then
+     if srcContainerInfo and not srcContainerInfo.isLocked and (not dstContainerInfo or not dstContainerInfo.isLocked) then
         ClearCursor()
         C_Container.PickupContainerItem(src.container, src.position)
         C_Container.PickupContainerItem(dst.container, dst.position)
@@ -291,7 +289,7 @@ function Sort()
                 for _, src in ipairs(model) do
                     if src.item == dst.targetItem
                         and src ~= dst
-                        and not (dst.item and src.class and src.class ~= itemClasses[dst.item])
+                        and not (dst.item and src.class and not itemClasses[dst.item][src.class])
                         and not (src.targetItem and src.item == src.targetItem and src.count <= src.targetCount)
                     then
                         rank[src] = abs(src.count - dst.targetCount + (dst.item == dst.targetItem and dst.count or 0))
@@ -362,29 +360,15 @@ do
                 local slot = {container=container, position=position, class=class}
                 local item = Item(container, position)
                 if item then
-                    local itemInfo = C_Container.GetContainerItemInfo(container, position)
-                    if itemInfo.isLocked then
+                    local containerInfo = C_Container.GetContainerItemInfo(container, position)
+ 					if containerInfo and containerInfo.isLocked then
                         return false
                     end
                     slot.item = item
-                    slot.count = itemInfo.stackCount
-                    counts[item] = (counts[item] or 0) + itemInfo.stackCount
+                    slot.count = containerInfo.stackCount
+ 					counts[item] = (counts[item] or 0) + containerInfo.stackCount
                 end
                 insert(model, slot)
-            end
-        end
-
-        local free = {}
-        for item, count in pairs(counts) do
-            local stacks = ceil(count / itemStacks[item])
-            free[item] = stacks
-            if itemClasses[item] then
-                free[itemClasses[item]] = (free[itemClasses[item]] or 0) + stacks
-            end
-        end
-        for _, slot in ipairs(model) do
-            if slot.class and free[slot.class] then
-                free[slot.class] = free[slot.class] - 1
             end
         end
 
@@ -397,16 +381,16 @@ do
         for _, slot in ipairs(model) do
             if slot.class then
                 for _, item in ipairs(items) do
-                    if itemClasses[item] == slot.class and assign(slot, item) then
+                    if itemClasses[item][slot.class] and assign(slot, item) then
                         break
                     end
                 end
-            else
+            end
+        end
+        for _, slot in ipairs(model) do
+            if not slot.class then
                 for _, item in ipairs(items) do
-                    if (not itemClasses[item] or free[itemClasses[item]] > 0) and assign(slot, item) then
-                        if itemClasses[item] then
-                            free[itemClasses[item]] = free[itemClasses[item]] - 1
-                        end
+                    if assign(slot, item) then
                         break
                     end
                 end
@@ -458,40 +442,44 @@ function Item(container, position)
 
         -- soul shards
         elseif itemID == 6265 then
-            tinsert(sortKey, 12)
+            tinsert(sortKey, 13)
 
         -- conjured items
         elseif conjured then
-            tinsert(sortKey, 13)
+            tinsert(sortKey, 14)
 
         -- soulbound items
         elseif soulbound then
             tinsert(sortKey, 5)
 
+        -- heirlooms
+ 		elseif quality == 7 then
+            tinsert(sortKey, 6)
+
         -- reagents
         elseif classId == 9 then
-            tinsert(sortKey, 6)
+            tinsert(sortKey, 7)
 
         -- quest items
         elseif bindType == 4 then
-            tinsert(sortKey, 8)
+            tinsert(sortKey, 9)
 
         -- consumables
         elseif usable and classId ~= 1 and classId ~= 2 and classId ~= 8 or classId == 4 then
-            tinsert(sortKey, 7)
+            tinsert(sortKey, 8)
 
         -- higher quality
         elseif quality > 1 then
-            tinsert(sortKey, 9)
+            tinsert(sortKey, 10)
 
         -- common quality
         elseif quality == 1 then
-            tinsert(sortKey, 10)
+            tinsert(sortKey, 11)
             tinsert(sortKey, -sellPrice)
 
         -- junk
         elseif quality == 0 then
-            tinsert(sortKey, 11)
+            tinsert(sortKey, 12)
             tinsert(sortKey, sellPrice)
         end
 
@@ -511,10 +499,10 @@ function Item(container, position)
         itemStacks[key] = stack
         itemSortKeys[key] = sortKey
 
+        itemClasses[key] = {}
         for class, info in pairs(CLASSES) do
             if info.items[itemID] then
-                itemClasses[key] = class
-                break
+                itemClasses[key][class] = true
             end
         end
 
