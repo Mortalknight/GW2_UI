@@ -696,42 +696,6 @@ local function AddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, type
     self.OldAddMessage(self, msg, infoR, infoG, infoB, infoID, accessID, typeID)
 end
 
---Copied from FrameXML ChatFrame.lua and modified to add CUSTOM_CLASS_COLORS
-local seenGroups = {}
-local function ChatFrame_ReplaceIconAndGroupExpressions(message, noIconReplacement, noGroupReplacement)
-	wipe(seenGroups)
-
-	local ICON_LIST, ICON_TAG_LIST, GROUP_TAG_LIST = ICON_LIST, ICON_TAG_LIST, GROUP_TAG_LIST
-	for tag in gmatch(message, '%b{}') do
-		local term = strlower(gsub(tag, '[{}]', ''))
-		if not noIconReplacement and ICON_TAG_LIST[term] and ICON_LIST[ICON_TAG_LIST[term]] then
-			message = gsub(message, tag, ICON_LIST[ICON_TAG_LIST[term]] .. '0|t')
-		elseif not noGroupReplacement and GROUP_TAG_LIST[term] then
-			local groupIndex = GROUP_TAG_LIST[term]
-			if not seenGroups[groupIndex] then
-				seenGroups[groupIndex] = true
-				local groupList = '['
-				for i = 1, GetNumGroupMembers() do
-					local name, _, subgroup, _, _, classFileName = GetRaidRosterInfo(i)
-					if name and subgroup == groupIndex then
-						local classColorTable = GW.GWGetClassColor(classFileName, true, true)
-						if classColorTable then
-							name = format('|cff%.2x%.2x%.2x%s|r', classColorTable.r*255, classColorTable.g*255, classColorTable.b*255, name)
-						end
-						groupList = groupList..(groupList == '[' and '' or PLAYER_LIST_DELIMITER)..name
-					end
-				end
-				if groupList ~= '[' then
-					groupList = groupList..']'
-					message = gsub(message, tag, groupList, 1)
-				end
-			end
-		end
-	end
-
-	return message
-end
-
 -- copied from ChatFrame.lua
 local function GetPFlag(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
     -- Renaming for clarity:
@@ -1077,18 +1041,18 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             if strsub(chatType, 1, 7) == "MONSTER" or strsub(chatType, 1, 9) == "RAID_BOSS" then
                 showLink = nil
                 -- fix blizzard formatting errors from localization strings
-                arg1 = gsub(arg1, "%%%d", "%%s")
+                --arg1 = gsub(arg1, "%%%d", "%%s")
                 arg1 = gsub(arg1, "(%d%%)([^%%%a])", "%1%%%2")
                 arg1 = gsub(arg1, "(%d%%)$", "%1%%")
             else
                 arg1 = gsub(arg1, "%%", "%%%%")
             end
 
-            -- Search for icon links and replace them with texture links.
-            arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrame_CanChatGroupPerformExpressionExpansion(chatGroup)) -- If arg17 is true, don"t convert to raid icons
-
             --Remove groups of many spaces
             arg1 = RemoveExtraSpaces(arg1)
+
+            -- Search for icon links and replace them with texture links.
+            arg1 = ChatFrame_ReplaceIconAndGroupExpressions(arg1, arg17, not ChatFrame_CanChatGroupPerformExpressionExpansion(chatGroup)) -- If arg17 is true, don"t convert to raid icons
 
             local playerLink
             local playerLinkDisplayText = coloredName
@@ -1104,7 +1068,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             end
 
             local isCommunityType = chatType == "COMMUNITIES_CHANNEL"
-            local playerName, lineID, bnetIDAccount = arg2, arg11, arg13
+            local playerName, lineID, bnetIDAccount = (nameWithRealm ~= arg2 and nameWithRealm) or arg2, arg11, arg13
             if isCommunityType then
                 local isBattleNetCommunity = bnetIDAccount ~= nil and bnetIDAccount ~= 0
                 local messageInfo, clubId, streamId = C_Club.GetInfoFromLastCommunityChatLine()
@@ -1118,15 +1082,10 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
                 else
                     playerLink = playerLinkDisplayText
                 end
+            elseif chatType == "BN_WHISPER" or chatType == "BN_WHISPER_INFORM" then
+                playerLink = GetBNPlayerLink(playerName, playerLinkDisplayText, bnetIDAccount, lineID, chatGroup, chatTarget)
             else
-                if chatType == "BN_WHISPER" or chatType == "BN_WHISPER_INFORM" then
-                    playerLink = GetBNPlayerLink(playerName, playerLinkDisplayText, bnetIDAccount, lineID, chatGroup, chatTarget)
-                elseif ((chatType == "GUILD" or chatType == "TEXT_EMOTE") or arg14) and (nameWithRealm and nameWithRealm ~= playerName) then
-                    playerName = nameWithRealm
-                    playerLink = GetPlayerLink(playerName, playerLinkDisplayText, lineID, chatGroup, chatTarget)
-                else
-                    playerLink = GetPlayerLink(playerName, playerLinkDisplayText, lineID, chatGroup, chatTarget)
-                end
+                playerLink = GetPlayerLink(playerName, playerLinkDisplayText, lineID, chatGroup, chatTarget)
             end
 
             local message = arg1
