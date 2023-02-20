@@ -218,9 +218,10 @@ local function TalentButton_OnClick(self, button)
     if button == "LeftButton" then
         local frame = ClassTalentFrame
         if not frame then
-            LoadAddOn("Blizzard_ClassTalentUI")
+            ClassTalentFrame_LoadUI()
             frame = ClassTalentFrame
         end
+        ClassTalentFrame:SetInspecting(nil)
 
         if IsShiftKeyDown() then
             menu = specList
