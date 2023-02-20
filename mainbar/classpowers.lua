@@ -341,8 +341,8 @@ GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
 -- EVOKER
 local FillingAnimationTime = 5.0
 
-local function Essence_OnUpdate(self, elapsed) 
-    local peace, interrupted = GetPowerRegenForPowerType(Enum.PowerType.Essence)
+local function Essence_OnUpdate(self)
+    local peace = GetPowerRegenForPowerType(Enum.PowerType.Essence)
     if (peace == nil or peace == 0) then
         peace = 0.2
     end
@@ -360,16 +360,16 @@ local function SetEssennceFull(self)
 end
 
 local function AnimOut(self)
-    if (self.EssenceFull:IsShown() or self.EssenceFilling:IsShown() or self.EssenceFillDone:IsShown()) then 
+    if (self.EssenceFull:IsShown() or self.EssenceFilling:IsShown() or self.EssenceFillDone:IsShown()) then
         self.EssenceDepleting:Show()
-        self.EssenceFilling:Hide();
-        self.EssenceEmpty:Hide();
+        self.EssenceFilling:Hide()
+        self.EssenceEmpty:Hide()
         self.EssenceFillDone:Hide()
-        self.EssenceFull:Hide();
+        self.EssenceFull:Hide()
         self.EssenceFilling.FillingAnim:Stop()
         self.EssenceFilling.CircleAnim:Stop()
         self:SetScript("OnUpdate", nil)
-    end 
+    end
 end
 
 local function AnimIn(self, animationSpeedMultiplier)
@@ -391,24 +391,31 @@ local function powerEssence(self, event, ...)
 
     local pwrMax = UnitPowerMax("player", Enum.PowerType.Essence)
     local pwr = UnitPower("player", Enum.PowerType.Essence)
-    local old_power = self.gwPower
     self.gwPower = pwr
 
+    for i = 1 , 6 do
+        if i <= pwrMax then
+            self.evoker["essence" .. i]:Show()
+        else
+            self.evoker["essence" .. i]:Hide()
+        end
+    end
+
     for i = 1, min(pwr, 6) do
-        SetEssennceFull(self.evoker["essence" ..i])
+        SetEssennceFull(self.evoker["essence" .. i])
     end
     for i = pwr + 1, 6 do
-        AnimOut(self.evoker["essence" ..i])
+        AnimOut(self.evoker["essence" .. i])
     end
 
     local isAtMaxPoints = pwr == pwrMax
-    local peace, interrupted = GetPowerRegenForPowerType(Enum.PowerType.Essence)
+    local peace = GetPowerRegenForPowerType(Enum.PowerType.Essence)
     if (peace == nil or peace == 0) then
         peace = 0.2
     end
     local cooldownDuration = 1 / peace
     local animationSpeedMultiplier = FillingAnimationTime / cooldownDuration;
-    if (not isAtMaxPoints and self.evoker["essence" .. pwr + 1] and not self.evoker["essence" .. pwr + 1].EssenceFull:IsShown()) then 
+    if (not isAtMaxPoints and self.evoker["essence" .. pwr + 1] and not self.evoker["essence" .. pwr + 1].EssenceFull:IsShown()) then
         AnimIn(self.evoker["essence" .. pwr + 1], animationSpeedMultiplier)
     end
 end
@@ -428,9 +435,6 @@ local function setEssenceBar(f)
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
     f:RegisterUnitEvent("UNIT_POWER_POINT_CHARGE", "player")
-
-
-
 end
 GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
 
