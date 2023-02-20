@@ -9,11 +9,8 @@ local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
 local nameRoleIcon = GW.nameRoleIcon
 local GetSetting = GW.GetSetting
-local arenaFrames = {}
-local arenaPrepFrames = {}
 
 local countArenaFrames = 0
-local countArenaPrepFrames = 0
 local MAX_ARENA_ENEMIES = MAX_ARENA_ENEMIES or 5
 
 local FractionIcon = {}
@@ -56,24 +53,24 @@ local function setCompass()
     AddTrackerNotification(compassData, true)
 end
 
-local function updateArenaFrameHeight()
+local function updateArenaFrameHeight(self)
     local i = 0
 
-    for k, frame in pairs(arenaFrames) do
+    for k, frame in pairs(self.arenaFrames) do
         if frame:IsShown() then
             i = k
         end
     end
 
     if i == 0 then
-        for k, frame in pairs(arenaPrepFrames) do
+        for k, frame in pairs(self.arenaPrepFrames) do
             if frame:IsShown() then
                 i = k
             end
         end
     end
-    GwQuesttrackerContainerArenaBGFrames.oldHeight = GW.RoundInt(GwQuesttrackerContainerArenaBGFrames:GetHeight())
-    GwQuesttrackerContainerArenaBGFrames:SetHeight(i > 0 and (35 * i) or 1)
+    self.oldHeight = GW.RoundInt(self:GetHeight())
+    self:SetHeight(i > 0 and (35 * i) or 1)
 end
 GW.AddForProfiling("arenaFrames", "updateArenaFrameHeight", updateArenaFrameHeight)
 
@@ -180,7 +177,7 @@ local function arenaFrame_OnEvent(self, event)
         updateArena_Power(self)
     elseif event == "PLAYER_TARGET_CHANGED" then
         updateArena_Name(self)
-    elseif IsIn(event, "PLAYER_ENTERING_WORLD", "PLAYER_ENTERING_BATTLEGROUND", "UNIT_NAME_UPDATE", "ARENA_OPPONENT_UPDATE") then 
+    elseif IsIn(event, "PLAYER_ENTERING_WORLD", "PLAYER_ENTERING_BATTLEGROUND", "UNIT_NAME_UPDATE", "ARENA_OPPONENT_UPDATE") then
         updateArena_Health(self)
         updateArena_Power(self)
         updateArena_Name(self)
@@ -188,50 +185,7 @@ local function arenaFrame_OnEvent(self, event)
 end
 GW.AddForProfiling("arenaFrames", "arenaFrame_OnEvent", arenaFrame_OnEvent)
 
-local function arenaPrepFrame_OnEvent()
-    local numOpps = GetNumArenaOpponentSpecs()
-
-    if ArenaPrepFrames then
-        ArenaPrepFrames:Kill()
-    end
-
-    for i = 1, MAX_ARENA_ENEMIES do
-        local prepFrame = arenaPrepFrames[i]
-        if i <= numOpps then
-            local specID, gender = GetArenaOpponentSpec(i)
-            if specID > 0 then
-                local nameString = UNKNOWN
-                local className, classFile
-                local _, specName, _, _, role, class = GetSpecializationInfoByID(specID, gender)
-                for y = 1, GetNumClasses() do
-                    className, classFile = GetClassInfo(y)
-                    if class == classFile then
-                        break
-                    end
-                end
-                if nameRoleIcon[role] ~= nil then
-                    nameString = nameRoleIcon[role] .. className .. " - " .. specName
-                else
-                    nameString = className .. " - " .. specName
-                end
-                prepFrame.name:SetText(nameString)
-                prepFrame.health:SetStatusBarColor(0.5, 0.5, 0.5)
-                prepFrame.power:SetStatusBarColor(0.5, 0.5, 0.5)
-                SetClassIcon(prepFrame.icon, class)
-                prepFrame:Show()
-            else
-                prepFrame:Hide()
-            end
-        else
-            prepFrame:Hide()
-        end
-    end
-
-    updateArenaFrameHeight()
-end
-GW.AddForProfiling("arenaFrames", "arenaPrepFrame_OnEvent", arenaPrepFrame_OnEvent)
-
-local function registerFrame(i)
+local function registerFrame(i, container)
     local arenaFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerAreanaFrameTemp")
     local unit = "arena" .. i
     local yOffset = GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
@@ -276,13 +230,13 @@ local function registerFrame(i)
         "OnShow",
         function(self)
             --Hide prep frames
-            for _, frame in pairs(arenaPrepFrames) do
+            for _, frame in pairs(container.arenaPrepFrames) do
                 if frame:IsShown() then
                     frame:Hide()
                 end
             end
 
-            updateArenaFrameHeight()
+            updateArenaFrameHeight(container)
 
             updateArena_Health(self)
             updateArena_Power(self)
@@ -296,7 +250,7 @@ local function registerFrame(i)
         "OnHide",
         function()
             countArenaFrames = countArenaFrames - 1
-            updateArenaFrameHeight()
+            updateArenaFrameHeight(container)
             local _, instanceType = IsInInstance()
             if countArenaFrames < 1 and instanceType ~= "arena" and instanceType ~= "pvp" then
                 RemoveTrackerNotificationOfType("ARENA")
@@ -311,7 +265,7 @@ local function registerFrame(i)
 end
 GW.AddForProfiling("arenaFrames", "registerFrame", registerFrame)
 
-local function registerPrepFrame(i)
+local function registerPrepFrame(i, container)
     local arenaPrepFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerArenaPrepFrameTemp")
     local yOffset = GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
     local p = yOffset + ((35 * i) - 35)
@@ -327,8 +281,7 @@ local function registerPrepFrame(i)
     arenaPrepFrame:SetScript(
         "OnShow",
         function()
-            updateArenaFrameHeight()
-            countArenaPrepFrames = countArenaPrepFrames + 1
+            updateArenaFrameHeight(container)
         end
     )
 
@@ -336,33 +289,84 @@ local function registerPrepFrame(i)
 end
 GW.AddForProfiling("arenaFrames", "registerPrepFrame", registerPrepFrame)
 
-local function LoadArenaFrame()
-    for i = 1, MAX_ARENA_ENEMIES do
-        arenaFrames[i] = registerFrame(i)
-        arenaPrepFrames[i] = registerPrepFrame(i)
-    end
-
-    --create prepframe frame to handle events
-    local arenaPrepFrame = CreateFrame("Frame")
-    arenaPrepFrame:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
-    arenaPrepFrame:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
-    arenaPrepFrame:SetScript("OnEvent", arenaPrepFrame_OnEvent)
-
-    -- Log event for compass Header
-    local f = CreateFrame("Frame")
-    f:RegisterEvent("PLAYER_ENTERING_WORLD")
-    f:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
-    f:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
-    f:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
-    f:SetScript("OnEvent", function()
+local function ArenaFrameOnEvent(self, event)
+    -- handle compass header
+    if IsIn(event, "PLAYER_ENTERING_WORLD", "PLAYER_ENTERING_BATTLEGROUND", "PVP_BRAWL_INFO_UPDATED", "UPDATE_BATTLEFIELD_STATUS") then
         C_Timer.After(0.8, function()
             local _, instanceType = IsInInstance()
             if instanceType == "arena" or instanceType == "pvp" then
                 setCompass()
-                updateArenaFrameHeight()
+                updateArenaFrameHeight(self)
             end
         end)
-    end)
-    C_Timer.After(0.01, function() updateArenaFrameHeight() end)
+    elseif event == "ARENA_PREP_OPPONENT_SPECIALIZATIONS" then
+        local numOpps = GetNumArenaOpponentSpecs()
+
+        if ArenaPrepFrames then
+            ArenaPrepFrames:Kill()
+        end
+
+        for i = 1, MAX_ARENA_ENEMIES do
+            local prepFrame = self.arenaPrepFrames[i]
+            if i <= numOpps then
+                local specID, gender = GetArenaOpponentSpec(i)
+                if specID > 0 then
+                    local nameString = UNKNOWN
+                    local className, classFile
+                    local _, specName, _, _, role, class = GetSpecializationInfoByID(specID, gender)
+                    for y = 1, GetNumClasses() do
+                        className, classFile = GetClassInfo(y)
+                        if class == classFile then
+                            break
+                        end
+                    end
+                    if nameRoleIcon[role] then
+                        nameString = nameRoleIcon[role] .. className .. " - " .. specName
+                    else
+                        nameString = className .. " - " .. specName
+                    end
+                    prepFrame.name:SetText(nameString)
+                    prepFrame.health:SetStatusBarColor(0.5, 0.5, 0.5)
+                    prepFrame.power:SetStatusBarColor(0.5, 0.5, 0.5)
+                    SetClassIcon(prepFrame.icon, class)
+                    prepFrame:Show()
+                else
+                    prepFrame:Hide()
+                end
+            else
+                prepFrame:Hide()
+            end
+        end
+
+        updateArenaFrameHeight(self)
+    end
+end
+GW.AddForProfiling("arenaFrames", "arenaPrepFrame_OnEvent", ArenaFrameOnEvent)
+
+local function LoadArenaFrame(self)
+    self.arenaFrames = {}
+    self.arenaPrepFrames = {}
+    for i = 1, MAX_ARENA_ENEMIES do
+        self.arenaFrames[i] = registerFrame(i, self)
+        self.arenaPrepFrames[i] = registerPrepFrame(i, self)
+    end
+
+    --event for arena prep frames
+    self:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")
+    self:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+
+    -- Log event for compass Header
+    self:RegisterEvent("PLAYER_ENTERING_WORLD")
+    self:RegisterEvent("PLAYER_ENTERING_BATTLEGROUND")
+    self:RegisterEvent("PVP_BRAWL_INFO_UPDATED")
+    self:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
+    self:SetScript("OnEvent", ArenaFrameOnEvent)
+
+    local numOpps = GetNumArenaOpponentSpecs()
+	if numOpps and numOpps > 0 then
+		ArenaFrameOnEvent(self, "ARENA_PREP_OPPONENT_SPECIALIZATIONS")
+	end
+
+    C_Timer.After(0.01, function() updateArenaFrameHeight(self) end)
 end
 GW.LoadArenaFrame = LoadArenaFrame

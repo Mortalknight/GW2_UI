@@ -1361,7 +1361,7 @@ local function LoadQuestTracker()
 
     GW.LoadBossFrame()
     if not IsAddOnLoaded("sArena") then
-        GW.LoadArenaFrame()
+        GW.LoadArenaFrame(fArenaBG)
     end
     GW.LoadScenarioFrame()
     GW.LoadAchievementFrame()
