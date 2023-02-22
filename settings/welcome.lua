@@ -14,27 +14,6 @@ local function settings_OnClick(self)
 end
 AddForProfiling("welcome", "settings_OnClick", settings_OnClick)
 
-local function toggle_OnClick(self)
-    if self:GetText() == L["Changelog"] then
-        self:GetParent().welcome:Hide()
-        self:SetText(L["Welcome"])
-    else
-        self:GetParent().welcome:Show()
-        self:SetText(L["Changelog"])
-    end
-end
-AddForProfiling("welcome", "toggle_OnClick", toggle_OnClick)
-
-local function movehud_OnClick(self)
-    if InCombatLockdown() then
-        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
-        return
-    end
-    self:GetParent():Hide()
-    GW.moveHudObjects(GW.MoveHudScaleableFrame)
-end
-AddForProfiling("welcome", "movehud_OnClick", movehud_OnClick)
-
 local function button1_OnClick()
     -- reset font settings
     wpanel.welcome.header:SetFont(DAMAGE_TEXT_FONT,24)

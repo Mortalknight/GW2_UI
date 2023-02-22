@@ -51,12 +51,6 @@
         </Frames>
     </Button>
 
-    <Button name="GwMailButton" frameStrata="MEDIUM" toplevel="true" virtual="true" hidden="true">
-        <Size x="31" y="31"/>
-        <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/mail"></NormalTexture>
-        <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/mail" alphaMode="ADD" alpha="0.5"></HighlightTexture>
-    </Button>
-
     <Frame name="GwLfgQueueIcon"  virtual="true">
         <Size x="26" y="26"></Size>
         <Animations>

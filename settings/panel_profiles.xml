@@ -8,8 +8,8 @@
                     <Anchor point="TOPLEFT" x="-231" y="-102"></Anchor>
                 </Anchors>
                 <Frames>
-                    <Button parentKey="newProfile" inherits="GwSettingsOverviewMenuButton"  text="NEW_COMPACT_UNIT_FRAME_PROFILE" />
-                    <Button parentKey="importProfile" inherits="GwSettingsOverviewMenuButton"  text="Import Profile">
+                    <Button parentKey="newProfile" inherits="GwSettingsOverviewMenuButton" text="NEW_COMPACT_UNIT_FRAME_PROFILE" />
+                    <Button parentKey="importProfile" inherits="GwSettingsOverviewMenuButton" text="Import Profile">
                         <Anchors>
                             <Anchor point="TOPLEFT" relativeKey="$parent.welcomebtn" relativePoint="TOPLEFT" x="0" y="-36"/>
                         </Anchors>

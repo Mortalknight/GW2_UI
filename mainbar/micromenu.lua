@@ -7,19 +7,26 @@ local updateIcon
 local PERFORMANCE_BAR_UPDATE_INTERVAL = 1
 
 local MICRO_BUTTONS = {
-	"CharacterMicroButton",
-	"SpellbookMicroButton",
-	"TalentMicroButton",
-	"AchievementMicroButton",
-	"QuestLogMicroButton",
-	"GuildMicroButton",
-	"LFDMicroButton",
-	"EJMicroButton",
-	"CollectionsMicroButton",
-	"MainMenuMicroButton",
-	"HelpMicroButton",
-	"StoreMicroButton",
-	}
+    "CharacterMicroButton",
+    "SpellbookMicroButton",
+    "TalentMicroButton",
+    "AchievementMicroButton",
+    "QuestLogMicroButton",
+    "GuildMicroButton",
+    "LFDMicroButton",
+    "EJMicroButton",
+    "CollectionsMicroButton",
+    "MainMenuMicroButton",
+    "HelpMicroButton",
+    "StoreMicroButton",
+    }
+
+local settings = {}
+
+local function UpdateSettings()
+    settings.fadeMicromenu = GetSetting("FADE_MICROMENU")
+end
+GW.UpdateMicroMenuSettings = UpdateSettings
 
 do
     local SendMessageWaiting
@@ -125,8 +132,8 @@ local function updateGuildButton(self, event)
         end
     elseif event == "MODIFIER_STATE_CHANGED" then
         if not IsAltKeyDown() and GetMouseFocus() == self then
-			GW.Guild_OnEnter(self)
-		end
+            GW.Guild_OnEnter(self)
+        end
     elseif event == "GUILD_MOTD" then
         if GetMouseFocus() == self then
             GW.Guild_OnEnter(self)
@@ -236,7 +243,7 @@ local function reskinMicroButton(btn, name, mbf)
     btn:SetPushedTexture(tex)
     btn:SetHighlightTexture(tex)
 
-		--hackfix for texture size
+        --hackfix for texture size
     local t = btn:GetDisabledTexture()
     t:ClearAllPoints()
     t:SetPoint("CENTER",btn,"CENTER",0,0)
@@ -259,7 +266,7 @@ local function reskinMicroButton(btn, name, mbf)
 
     if btn.Flash then
         btn.Flash:SetInside()
-		btn.Flash:SetTexture()
+        btn.Flash:SetTexture()
     end
 
     if btn.FlashBorder then
@@ -502,8 +509,8 @@ local function setupMicroButtons(mbf)
     end
     -- TalentMicroButton create aur own to prevent actionbar taint
     local taltenMicroButton = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
-	taltenMicroButton.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
-	taltenMicroButton.newbieText = NEWBIE_TOOLTIP_TALENTS
+    taltenMicroButton.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
+    taltenMicroButton.newbieText = NEWBIE_TOOLTIP_TALENTS
     reskinMicroButton(taltenMicroButton, "TalentMicroButton", mbf)
 
     GW.InitTalentDataText()
@@ -598,7 +605,7 @@ local function setupMicroButtons(mbf)
     StoreMicroButton:SetPoint("BOTTOMLEFT", HelpMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- great vault icom
-    local greatVaultIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
+    local greatVaultIcon = CreateFrame("Button", "Gw2GreateVaultMicroMenuButton", mbf, "MainMenuBarMicroButton")
     greatVaultIcon.newbieText = nil
     greatVaultIcon.tooltipText = RATED_PVP_WEEKLY_VAULT
     reskinMicroButton(greatVaultIcon, "GreatVaultMicroButton", mbf)
@@ -638,14 +645,17 @@ local function setupMicroButtons(mbf)
             end)
         end
     end)
+end
+AFP("setupMicroButtons", setupMicroButtons)
 
+local function SetupNotificationArea(mbf)
     -- Update icon
     updateIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
     updateIcon.newbieText = nil
     updateIcon.tooltipText = ""
     reskinMicroButton(updateIcon, "UpdateMicroButton", mbf)
     updateIcon:ClearAllPoints()
-    updateIcon:SetPoint("BOTTOMLEFT", greatVaultIcon, "BOTTOMRIGHT", 4, 0)
+    updateIcon:SetPoint("BOTTOMLEFT", Gw2GreateVaultMicroMenuButton, "BOTTOMRIGHT", 4, 0)
     updateIcon:Hide()
     updateIcon:HookScript("OnEnter", update_OnEnter)
 
@@ -675,9 +685,7 @@ local function setupMicroButtons(mbf)
     workOrderIcon:HookScript("OnEnter", workOrderIconOnEnter)
     workOrderIcon:HookScript("OnLeave", GameTooltip_Hide)
     workOrderIcon:SetScript("OnEvent", workOrderIconOnEvent)
-
 end
-AFP("setupMicroButtons", setupMicroButtons)
 
 local function checkElvUI()
     -- ElvUI re-styles the MicroButton bar even if it is disabled in their options.
@@ -784,7 +792,7 @@ end
 AFP("hook_MainMenuMicroButton_ShowAlert", hook_MainMenuMicroButton_ShowAlert)
 
 local function mbf_OnLeave(self)
-    if not self:IsMouseOver() then
+    if not self:IsMouseOver() and settings.fadeMicromenu then
         self:fadeOut()
     end
 end
@@ -795,6 +803,8 @@ local function LoadMicroMenu()
     if checkElvUI() then
         return
     end
+
+    UpdateSettings()
 
     MicroMenu:KillEditMode()
 
@@ -813,6 +823,9 @@ local function LoadMicroMenu()
     -- custom button overrides & behaviors for each button where necessary
     setupMicroButtons(mbf.cf)
 
+    -- setup our notification area
+    SetupNotificationArea(mbf)
+
     --hooksecurefunc("MoveMicroButtons", hook_MoveMicroButtons) -- 10.0.5
     hooksecurefunc("UpdateMicroButtons", hook_UpdateMicroButtons)
 
@@ -828,50 +841,50 @@ local function LoadMicroMenu()
     end
 
     -- if set to fade micro menu, add fader
-    if GetSetting("FADE_MICROMENU") then
-        mbf.cf:SetAttribute("fadeTime", 0.15)
+    mbf.cf:SetAttribute("shouldFade", settings.fadeMicromenu)
+    mbf.cf:SetAttribute("fadeTime", 0.15)
 
-        local fo = mbf.cf:CreateAnimationGroup("fadeOut")
-        local fi = mbf.cf:CreateAnimationGroup("fadeIn")
-        local fadeOut = fo:CreateAnimation("Alpha")
-        local fadeIn = fi:CreateAnimation("Alpha")
-        fo:SetScript("OnFinished", function(self)
-            self:GetParent():SetAlpha(0)
-        end)
-        fadeOut:SetStartDelay(0.25)
-        fadeOut:SetFromAlpha(1.0)
-        fadeOut:SetToAlpha(0.0)
-        fadeOut:SetDuration(mbf.cf:GetAttribute("fadeTime"))
-        fadeIn:SetFromAlpha(0.0)
-        fadeIn:SetToAlpha(1.0)
-        fadeIn:SetDuration(mbf.cf:GetAttribute("fadeTime"))
-        mbf.cf.fadeOut = function()
-            fi:Stop()
-            fo:Stop()
-            fo:Play()
-        end
-        mbf.cf.fadeIn = function(self)
-            self:SetAlpha(1)
-            fi:Stop()
-            fo:Stop()
-            fi:Play()
-        end
-
-        mbf:SetFrameRef("cf", mbf.cf)
-
-        mbf:SetAttribute("_onenter", [=[
-            local cf = self:GetFrameRef("cf")
-            if cf:IsShown() then
-                return
-            end
-            cf:UnregisterAutoHide()
-            cf:Show()
-            cf:CallMethod("fadeIn", cf)
-            cf:RegisterAutoHide(cf:GetAttribute("fadeTime") + 0.25)
-        ]=])
-        mbf.cf:HookScript("OnLeave", mbf_OnLeave)
-        mbf.cf:Hide()
+    local fo = mbf.cf:CreateAnimationGroup("fadeOut")
+    local fi = mbf.cf:CreateAnimationGroup("fadeIn")
+    local fadeOut = fo:CreateAnimation("Alpha")
+    local fadeIn = fi:CreateAnimation("Alpha")
+    fo:SetScript("OnFinished", function(self)
+        self:GetParent():SetAlpha(0)
+    end)
+    fadeOut:SetStartDelay(0.25)
+    fadeOut:SetFromAlpha(1.0)
+    fadeOut:SetToAlpha(0.0)
+    fadeOut:SetDuration(mbf.cf:GetAttribute("fadeTime"))
+    fadeIn:SetFromAlpha(0.0)
+    fadeIn:SetToAlpha(1.0)
+    fadeIn:SetDuration(mbf.cf:GetAttribute("fadeTime"))
+    mbf.cf.fadeOut = function()
+        fi:Stop()
+        fo:Stop()
+        fo:Play()
     end
+    mbf.cf.fadeIn = function(self)
+        self:SetAlpha(1)
+        fi:Stop()
+        fo:Stop()
+        fi:Play()
+    end
+
+    mbf:SetFrameRef("cf", mbf.cf)
+
+    mbf:SetAttribute("_onenter", [=[
+        local cf = self:GetFrameRef("cf")
+        local shouldFade = cf:GetAttribute("shouldFade")
+        if cf:IsShown() or not shouldFadethen
+            return
+        end
+        cf:UnregisterAutoHide()
+        cf:Show()
+        cf:CallMethod("fadeIn", cf)
+        cf:RegisterAutoHide(cf:GetAttribute("fadeTime") + 0.25)
+    ]=])
+    mbf.cf:HookScript("OnLeave", mbf_OnLeave)
+    mbf.cf:SetShown(not shouldFade)
 
     -- fix alert positions and hide the micromenu bar
     MicroButtonAndBagsBar:SetAlpha(0)
