@@ -484,8 +484,11 @@ local function setupMicroButtons(mbf)
     -- HelpMicroButton
     HelpMicroButton:ClearAllPoints()
     HelpMicroButton:SetPoint("BOTTOMLEFT", MainMenuMicroButton, "BOTTOMRIGHT", 4, 0)
+end
+GW.AddForProfiling("micromenu", "setupMicroButtons", setupMicroButtons)
 
-    -- Update icon
+local function SetupNotificationArea(mbf)
+-- Update icon
     updateIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
     updateIcon.newbieText = nil
     updateIcon.tooltipText = ""
@@ -514,7 +517,6 @@ local function setupMicroButtons(mbf)
     mailIcon:HookScript("OnLeave", GameTooltip_Hide)
     mailIcon:SetScript("OnEvent", mailIconOnEvent)
 end
-GW.AddForProfiling("micromenu", "setupMicroButtons", setupMicroButtons)
 
 local function checkElvUI()
     -- ElvUI re-styles the MicroButton bar even if it is disabled in their options.
@@ -599,7 +601,7 @@ local function LoadMicroMenu()
     end
 
     -- create our micro button container frame
-    local mbf = CreateFrame("Frame", nil, UIParent, "GwMicroButtonFrameTmpl")
+    local mbf = CreateFrame("Frame", "Gw2MicroBarFrame", UIParent, "GwMicroButtonFrameTmpl")
     local postDragFunction = function(mbf)
         mbf.cf.bg:SetShown(not mbf.isMoved)
     end
@@ -612,6 +614,9 @@ local function LoadMicroMenu()
     -- re-do anchoring of the micro buttons to our preferred ordering and setup
     -- custom button overrides & behaviors for each button where necessary
     setupMicroButtons(mbf.cf)
+
+    -- setup our notification area
+    SetupNotificationArea(mbf)
 
     -- undo micro button position and visibility changes done by others
     for i = 1, #MICRO_BUTTONS do
@@ -647,53 +652,54 @@ local function LoadMicroMenu()
     end
 
     -- if set to fade micro menu, add fader
-    if GetSetting("FADE_MICROMENU") then
-        mbf.cf:SetAttribute("fadeTime", 0.15)
+    local shouldFade = GetSetting("FADE_MICROMENU")
+    mbf.cf:SetAttribute("shouldFade", shouldFade)
+    mbf.cf:SetAttribute("fadeTime", 0.15)
 
-        local fo = mbf.cf:CreateAnimationGroup("fadeOut")
-        local fi = mbf.cf:CreateAnimationGroup("fadeIn")
-        local fadeOut = fo:CreateAnimation("Alpha")
-        local fadeIn = fi:CreateAnimation("Alpha")
-        fo:SetScript("OnFinished", function(self)
-            self:GetParent():SetAlpha(0)
-        end)
-        fadeOut:SetStartDelay(0.25)
-        fadeOut:SetFromAlpha(1.0)
-        fadeOut:SetToAlpha(0.0)
-        fadeOut:SetDuration(mbf.cf:GetAttribute("fadeTime"))
-        fadeIn:SetFromAlpha(0.0)
-        fadeIn:SetToAlpha(1.0)
-        fadeIn:SetDuration(mbf.cf:GetAttribute("fadeTime"))
-        mbf.cf.fadeOut = function()
-            fi:Stop()
-            fo:Stop()
-            fo:Play()
-        end
-        mbf.cf.fadeIn = function(self)
-            self:SetAlpha(1)
-            fi:Stop()
-            fo:Stop()
-            fi:Play()
-        end
-
-        mbf:SetFrameRef("cf", mbf.cf)
-
-        mbf:SetAttribute("_onenter", [=[
-            local cf = self:GetFrameRef("cf")
-            if cf:IsShown() then
-                return
-            end
-            cf:UnregisterAutoHide()
-            cf:Show()
-            cf:CallMethod("fadeIn", cf)
-            cf:RegisterAutoHide(cf:GetAttribute("fadeTime") + 0.25)
-        ]=])
-        mbf.cf:HookScript("OnLeave", function(self)
-            if not self:IsMouseOver() then
-                self:fadeOut()
-            end
-        end)
-        mbf.cf:Hide()
+    local fo = mbf.cf:CreateAnimationGroup("fadeOut")
+    local fi = mbf.cf:CreateAnimationGroup("fadeIn")
+    local fadeOut = fo:CreateAnimation("Alpha")
+    local fadeIn = fi:CreateAnimation("Alpha")
+    fo:SetScript("OnFinished", function(self)
+        self:GetParent():SetAlpha(0)
+    end)
+    fadeOut:SetStartDelay(0.25)
+    fadeOut:SetFromAlpha(1.0)
+    fadeOut:SetToAlpha(0.0)
+    fadeOut:SetDuration(mbf.cf:GetAttribute("fadeTime"))
+    fadeIn:SetFromAlpha(0.0)
+    fadeIn:SetToAlpha(1.0)
+    fadeIn:SetDuration(mbf.cf:GetAttribute("fadeTime"))
+    mbf.cf.fadeOut = function()
+        fi:Stop()
+        fo:Stop()
+        fo:Play()
     end
+    mbf.cf.fadeIn = function(self)
+        self:SetAlpha(1)
+        fi:Stop()
+        fo:Stop()
+        fi:Play()
+    end
+
+    mbf:SetFrameRef("cf", mbf.cf)
+
+    mbf:SetAttribute("_onenter", [=[
+        local cf = self:GetFrameRef("cf")
+        local shouldFade = cf:GetAttribute("shouldFade")
+        if cf:IsShown() or not shouldFade then
+            return
+        end
+        cf:UnregisterAutoHide()
+        cf:Show()
+        cf:CallMethod("fadeIn", cf)
+        cf:RegisterAutoHide(cf:GetAttribute("fadeTime") + 0.25)
+    ]=])
+    mbf.cf:HookScript("OnLeave", function(self)
+        if not self:IsMouseOver() and GetSetting("FADE_MICROMENU") then
+            self:fadeOut()
+        end
+    end)
+    mbf.cf:SetShown(not shouldFade)
 end
 GW.LoadMicroMenu = LoadMicroMenu
