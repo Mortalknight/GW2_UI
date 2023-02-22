@@ -11,7 +11,6 @@ MAP_FRAMES_HIDE[2] = MiniMapVoiceChatFrame
 MAP_FRAMES_HIDE[3] = MiniMapTrackingButton
 MAP_FRAMES_HIDE[4] = MiniMapTracking
 MAP_FRAMES_HIDE[5] = MinimapToggleButton
-MAP_FRAMES_HIDE[6] = GameTimeFrame
 
 local MAP_FRAMES_HOVER = {}
 
@@ -46,27 +45,36 @@ end
 GW.SetMinimapHover = SetMinimapHover
 
 local function setMinimapButtons(side)
-    MiniMapBattlefieldIcon:ClearAllPoints()
-    GwCalendarButton:ClearAllPoints()
+    MiniMapBattlefieldFrame:ClearAllPoints()
+    GameTimeFrame:ClearAllPoints()
     MiniMapLFGFrame:ClearAllPoints()
-    GwMailButton:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
 
     if side == "left" then
-        GwCalendarButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -2)
-        MiniMapBattlefieldIcon:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -8.5, -69)
-        MiniMapLFGFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -5, -7)
-        GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -10, -47)
-        GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -127)
+        GameTimeFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -2)
+        MiniMapBattlefieldFrame:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
+        MiniMapLFGFrame:SetPoint("TOP", MiniMapBattlefieldFrame, "BOTTOM", 0, 0)
+        GwAddonToggle:SetPoint("TOP", MiniMapLFGFrame, "BOTTOM", -3, 0)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
+
+        --flip GwAddonToggle icon
+
+        GwAddonToggle:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
+        GwAddonToggle:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
+        GwAddonToggle:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
     else
-        GwCalendarButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -2)
-        MiniMapBattlefieldIcon:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -69)
-        MiniMapLFGFrame:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 5, -7)
-        GwMailButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 14, -47)
-        GwAddonToggle:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -127)
+        GameTimeFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -2)
+        MiniMapBattlefieldFrame:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
+        MiniMapLFGFrame:SetPoint("TOP", MiniMapBattlefieldFrame, "BOTTOM", 0, 0)
+        GwAddonToggle:SetPoint("TOP", MiniMapLFGFrame, "BOTTOM", 3, 0)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
+
+        --flip GwAddonToggle icon
+
+        GwAddonToggle:GetNormalTexture():SetTexCoord(1, 0, 0, 1)
+        GwAddonToggle:GetHighlightTexture():SetTexCoord(1, 0, 0, 1)
+        GwAddonToggle:GetPushedTexture():SetTexCoord(1, 0, 0, 1)
     end
 end
 
@@ -84,7 +92,7 @@ local function MinimapPostDrag(self)
 end
 
 local function lfgAnimPvPStop()
-    MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFGMicroButton-Down")
+    MiniMapBattlefieldIcon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\LFDMicroButton-Down")
     MiniMapBattlefieldFrame.animationCircle:Hide()
     MiniMapBattlefieldIcon:SetTexCoord(unpack(GW.TexCoords))
 end
@@ -118,7 +126,7 @@ end
 GW.AddForProfiling("map", "lfgAnimPvP", lfgAnimPvP)
 
 local function lfgAnimStop()
-    MiniMapLFGFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFGMicroButton-Down")
+    MiniMapLFGFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\LFDMicroButton-Down")
     MiniMapLFGFrame.animationCircle:Hide()
     MiniMapLFGFrameIconTexture:SetTexCoord(unpack(GW.TexCoords))
 end
@@ -134,7 +142,7 @@ local function lfgAnim(_, elapse)
 
     MiniMapLFGFrame.animationCircle:Show()
 
-    MiniMapLFGFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\LFGMicroButton-Down")
+    MiniMapLFGFrameIconTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\icons\\LFDMicroButton-Down")
 
     local rot = MiniMapLFGFrame.animationCircle.background:GetRotation() + (1.5 * elapse)
 
@@ -282,27 +290,15 @@ local function getMinimapShape()
 end
 
 local function minimap_OnShow()
-    if GwCalendarButton then
-        GwCalendarButton:Show()
-    end
     if GwAddonToggle and GwAddonToggle.gw_Showing then
         GwAddonToggle:Show()
-    end
-    if GwMailButton and GwMailButton.gw_Showing then
-        GwMailButton:Show()
     end
 end
 GW.AddForProfiling("map", "minimap_OnShow", minimap_OnShow)
 
 local function minimap_OnHide()
-    if GwCalendarButton then
-        GwCalendarButton:Hide()
-    end
     if GwAddonToggle then
         GwAddonToggle:Hide()
-    end
-    if GwMailButton then
-        GwMailButton:Hide()
     end
 end
 GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
@@ -361,7 +357,7 @@ local function LoadMinimap()
     MiniMapLFGFrameIcon:HookScript("OnUpdate", lfgAnim)
     MiniMapLFGFrame:HookScript("OnHide", lfgAnimStop)
     MiniMapLFGFrameIconTexture:SetSize(20, 20)
-    MiniMapLFGFrameIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMicroButton-Down")
+    MiniMapLFGFrameIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
     MiniMapLFGFrameIcon:SetSize(20, 20)
 
     --hooksecurefunc("BattlefieldFrame_OnUpdate", lfgAnimPvP)
@@ -463,15 +459,11 @@ local function LoadMinimap()
     MinimapBorder:Hide()
     MiniMapWorldMapButton:Kill()
 
-    MiniMapMailFrame:ClearAllPoints()
     MinimapZoneText:ClearAllPoints()
 
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
     MiniMapTracking:SetPoint("TOPLEFT", Minimap, -15, -30)
-    MiniMapMailFrame:SetPoint("TOPLEFT", Minimap, 45, 15)
-    MiniMapBattlefieldFrame:ClearAllPoints()
-    MiniMapBattlefieldFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 45, 0)
     --MiniMapLFGFrame:ClearAllPoints()
     --MiniMapLFGFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 45, 0)
 
@@ -487,53 +479,21 @@ local function LoadMinimap()
 
     MiniMapBattlefieldBorder:SetTexture(nil)
     BattlegroundShine:SetTexture(nil)
-    MiniMapBattlefieldFrame:ClearAllPoints()
-    MiniMapBattlefieldFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -69)
 
-    GwCalendarButton = CreateFrame("Button", "GwCalendarButton", UIParent, "GwCalendarButton")
-    local fnGwCalendarButton_OnEnter = function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -70)
-        GameTooltip:AddLine(GAMETIME_TOOLTIP_TOGGLE_CALENDAR, 1, 1, 1)
-        GameTooltip:Show()
-    end
-    GwCalendarButton:SetScript("OnEnter", fnGwCalendarButton_OnEnter)
-    GwCalendarButton:SetScript("OnLeave", GameTooltip_Hide)
-    GwCalendarButton:SetScript("OnClick", GameTimeFrame_OnClick)
-    GwCalendarButton.gw_Showing = true
-    GwCalendarButton.Text:SetFont(UNIT_NAME_FONT, 14)
-    GwCalendarButton.Text:SetTextColor(0, 0, 0)
-    GwCalendarButton.Text:SetText(date("%d"))
+    --CalenderIcon
+    GameTimeFrame:SetParent(Minimap)
+    GameTimeFrame:SetHitRectInsets(0, 0, 0, 0)
+    GameTimeFrame:SetSize(32, 32)
 
-    local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")
-    local fnGwMailButton_OnEvent = function(self, event, ...)
-        if (event == "UPDATE_PENDING_MAIL") then
-            if (HasNewMail()) then
-                if Minimap:IsShown() then
-                    self:Show()
-                end
-                self.gw_Showing = true
-                if (GameTooltip:IsOwned(self)) then
-                    MinimapMailFrameUpdate()
-                end
-            else
-                self:Hide()
-                self.gw_Showing = false
-            end
-        end
-    end
-    local fnGwMailButton_OnEnter = function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -55)
-        if (GameTooltip:IsOwned(self)) then
-            MinimapMailFrameUpdate()
-        end
-    end
-    GwMailButton:SetScript("OnEvent", fnGwMailButton_OnEvent)
-    GwMailButton:SetScript("OnEnter", fnGwMailButton_OnEnter)
-    GwMailButton:SetScript("OnLeave", GameTooltip_Hide)
-    GwMailButton.gw_Showing = false
-    GwMailButton:RegisterEvent("UPDATE_PENDING_MAIL")
-    GwMailButton:SetFrameLevel(GwMailButton:GetFrameLevel() + 1)
-    GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -12, -47)
+    hooksecurefunc("GameTimeFrame_SetDate", function()
+        GameTimeFrame:StripTextures()
+        GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/icons/calendar")
+        GameTimeFrame:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/icons/calendar")
+        GameTimeFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/Textures/icons/calendar")
+        GameTimeFrame:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
+        GameTimeFrame:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
+        GameTimeFrame:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
+    end)
 
     GW.CreateMinimapButtonsSack()
 
@@ -605,7 +565,7 @@ local function LoadMinimap()
     Minimap:SetSize(size, size)
 
     -- mobeable stuff
-    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", "VerticalActionBarDummy", {size, size}, {"default"}, nil, MinimapPostDrag)
+    GW.RegisterMovableFrame(Minimap, MINIMAP_LABEL, "MinimapPos", ALL .. ",Blizzard,Map", {Minimap:GetSize()}, {"default"}, nil, MinimapPostDrag)
     Minimap:ClearAllPoints()
     Minimap:SetPoint("TOPLEFT", Minimap.gwMover)
     -- check on which side we need to set the buttons

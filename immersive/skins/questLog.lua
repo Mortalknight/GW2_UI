@@ -265,9 +265,9 @@ local function LoadQuestLogFrameSkin()
 				local _, _, _, isHeader, isCollapsed = GetQuestLogTitle(questIndex)
 				if isHeader then
 					if isCollapsed then
-						buttons[i]:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/arrow_right")
+						buttons[i]:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrow_right")
 					else
-						buttons[i]:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/arrowdown_down")
+						buttons[i]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
 					end
 				end
 			end

@@ -129,7 +129,7 @@ local function worldMapSkin()
 
     scaleHandle.t = scaleHandle:CreateTexture(nil, "OVERLAY")
     scaleHandle.t:SetAllPoints()
-    scaleHandle.t:SetTexture("Interface/AddOns/GW2_UI/textures/resize")
+    scaleHandle.t:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/resize")
     scaleHandle.t:SetDesaturated(true)
 
     -- Create scale frame

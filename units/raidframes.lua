@@ -294,7 +294,7 @@ local function GridOnUpdate(self, elapsed)
     end
 end
 
-local function GridToggleFramesPreviewRaid(_, _, moveHudMode, hudMoving)
+local function GridToggleFramesPreviewRaid(moveHudMode, hudMoving)
     previewStep = max((previewStep + 1) % (#previewSteps + 1), hudMoving and 1 or 0)
 
     if previewStep == 0 or moveHudMode then
@@ -347,7 +347,7 @@ local function LoadRaidFrames()
     container:ClearAllPoints()
     container:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 
-    RegisterMovableFrame(container, RAID_FRAMES_LABEL, "raid_pos", "VerticalActionBarDummy", nil, {"default", "default"})
+    RegisterMovableFrame(container, RAID_FRAMES_LABEL, "raid_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
 
     hooksecurefunc(container.gwMover, "StopMovingOrSizing", function(frame)
         local anchor = GetSetting("RAID_ANCHOR")
@@ -379,12 +379,12 @@ local function LoadRaidFrames()
     GridRaidUpdateFramesLayout()
 
     GwSettingsWindowMoveHud:HookScript("OnClick", function ()
-        GW.GridToggleFramesPreviewRaid(_, _, true, true)
-        GW.GridToggleFramesPreviewParty(_, _, true, true)
+        GW.GridToggleFramesPreviewRaid(true, true)
+        GW.GridToggleFramesPreviewParty(true, true)
     end)
-    GwSmallSettingsWindow.defaultButtons.lockHud:HookScript("OnClick", function()
-        GW.GridToggleFramesPreviewRaid(_, _, true, true)
-        GW.GridToggleFramesPreviewParty(_, _, true, true)
+    GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.lockHud:HookScript("OnClick", function()
+        GW.GridToggleFramesPreviewRaid(true, true)
+        GW.GridToggleFramesPreviewParty(true, true)
     end)
 
     container:RegisterEvent("RAID_ROSTER_UPDATE")

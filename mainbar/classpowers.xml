@@ -8,12 +8,12 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar-bg">
                     <Size x="256" y="32"></Size>
                 </Texture>
             </Layer>
             <Layer level="OVERLAY">
-                <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                <Texture parentKey="fill" file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar">
                     <Size x="320" y="40"></Size>
                 </Texture>
             </Layer>

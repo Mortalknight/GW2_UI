@@ -125,9 +125,9 @@ local function SkinBlizzardOptions()
 
     _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest.Texture:SetTexture()
 
-    _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
-    _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_up")
-    _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\bubble_down")
+    _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")
+    _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_up")
+    _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")
 
     -- Voice Sliders
     UnitPopupVoiceSpeakerVolume.Slider:SkinSliderFrame()
@@ -152,7 +152,7 @@ local function SkinBlizzardOptions()
         if newProfileDialog.editBox then
             _G[newProfileDialog.editBox:GetName() .. "Left"]:Hide()
             _G[newProfileDialog.editBox:GetName() .. "Right"]:Hide()
-            _G[newProfileDialog.editBox:GetName() .. "Mid"]:SetTexture("Interface/AddOns/GW2_UI/textures/gwstatusbar-bg")
+            _G[newProfileDialog.editBox:GetName() .. "Mid"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
             _G[newProfileDialog.editBox:GetName() .. "Mid"]:ClearAllPoints()
             _G[newProfileDialog.editBox:GetName() .. "Mid"]:SetPoint("TOPLEFT", _G[newProfileDialog.editBox:GetName() .. "Left"], "BOTTOMRIGHT", -25, 3)
             _G[newProfileDialog.editBox:GetName() .. "Mid"]:SetPoint("BOTTOMRIGHT", _G[newProfileDialog.editBox:GetName() .. "Right"], "TOPLEFT", 25, -3)

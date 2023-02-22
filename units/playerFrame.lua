@@ -152,7 +152,7 @@ local function LoadPlayerFrame()
     NewUnitFrame.unit = "player"
     NewUnitFrame.type = "NormalTarget"
 
-    RegisterMovableFrame(NewUnitFrame, PLAYER, "player_pos", "GwTargetFrameTemplateDummy", nil, {"default", "scaleable"})
+    RegisterMovableFrame(NewUnitFrame, PLAYER, "player_pos",  ALL .. ",Unitframe", nil, {"default", "scaleable"})
 
     NewUnitFrame:ClearAllPoints()
     NewUnitFrame:SetPoint("TOPLEFT", NewUnitFrame.gwMover)

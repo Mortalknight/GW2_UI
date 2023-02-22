@@ -191,7 +191,7 @@ local function loadAFKAnimation()
     local classColor = GWGetClassColor(GW.myclass, true, true)
 
     local BackdropFrame = {
-        bgFile = "Interface/AddOns/GW2_UI/textures/welcome-bg",
+        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg",
         edgeFile = "",
         tile = false,
         tileSize = 64,

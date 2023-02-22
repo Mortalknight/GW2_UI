@@ -352,7 +352,7 @@ local function Create_Raid_Counter()
         raidCounterFrame.damager:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:15:15:0:0:64:64:4:60:4:60|t" .. damage)
     end)
 
-    GW.RegisterMovableFrame(raidCounterFrame, GW.L["Role Bar"], "ROLE_BAR_pos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
+    GW.RegisterMovableFrame(raidCounterFrame, GW.L["Role Bar"], "ROLE_BAR_pos", ALL .. ",Group,Raid", nil, {"default", "scaleable"})
     raidCounterFrame:ClearAllPoints()
     raidCounterFrame:SetPoint("TOPLEFT", raidCounterFrame.gwMover)
 

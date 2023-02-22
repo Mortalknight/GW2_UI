@@ -38,8 +38,8 @@
                         <Anchors>
                             <Anchor point="RIGHT" relativePoint="RIGHT" x="5"/>
                         </Anchors>
-                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                         <Scripts>
                             <OnShow>
                                 self:SetChecked( GetCVarBool("ShowAllSpellRanks"))
@@ -92,7 +92,7 @@
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-12"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="12"></Anchor>
                 </Anchors>
-                <ThumbTexture name="$parentThumb" parentKey="thumb" file="Interface\AddOns\GW2_UI\textures\scrollbarmiddle">
+                <ThumbTexture name="$parentThumb" parentKey="thumb" file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbarmiddle">
                     <Size x="12" y="100"/>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP" ></Anchor>
@@ -100,7 +100,7 @@
                 </ThumbTexture>
                 <Layers>
                     <Layer>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\scrollbg">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbg">
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP"></Anchor>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM"></Anchor>
@@ -125,7 +125,7 @@
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbutton">
                             <Size x="12" y="12"></Size>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -141,7 +141,7 @@
                 </Anchors>
                 <Layers>
                     <Layer>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\scrollbutton">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\scrollbutton">
                             <Size x="12" y="12"></Size>
                             <Anchors>
                                 <Anchor point="TOP" relativePoint="TOP"></Anchor>

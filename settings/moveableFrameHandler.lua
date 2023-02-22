@@ -7,6 +7,86 @@ local L = GW.L
 local moveable_window_placeholders_visible = true
 local settings_window_open_before_change = false
 
+local AllTags = {}
+
+local function filterHudMovers(filter)
+    if filter then
+        for _, mf in pairs(GW.MOVABLE_FRAMES) do
+            if string.find(mf.tags, filter, 1, true) then
+                mf:Show()
+            else
+                mf:Hide()
+            end
+        end
+    end
+end
+
+local function loadTagDropDown(tagwin)
+    local USED_DROPDOWN_HEIGHT
+
+    local offset = HybridScrollFrame_GetOffset(tagwin)
+
+    for i = 1, #tagwin.buttons do
+        local slot = tagwin.buttons[i]
+
+        local idx = i + offset
+        if idx > #AllTags then
+            -- empty row (blank starter row, final row, and any empty entries)
+            slot:Hide()
+            slot.name = nil
+        else
+            slot.name = AllTags[idx]
+
+            slot.checkbutton:Hide()
+            slot.string:ClearAllPoints()
+            slot.string:SetPoint("LEFT", 5, 0)
+            slot.soundButton:Hide()
+
+            slot.string:SetText(slot.name)
+
+            slot:Show()
+        end
+    end
+
+    USED_DROPDOWN_HEIGHT = 20 * #AllTags
+    HybridScrollFrame_Update(tagwin, USED_DROPDOWN_HEIGHT, 120)
+end
+
+local function SetupTagDropdown(tagwin)
+    HybridScrollFrame_CreateButtons(tagwin, "GwDropDownItemTmpl", 0, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
+    for i = 1, #tagwin.buttons do
+        local slot = tagwin.buttons[i]
+        slot:SetWidth(tagwin:GetWidth())
+        slot.string:SetFont(UNIT_NAME_FONT, 10)
+        slot.hover:SetAlpha(0.5)
+        if not slot.ScriptsHooked then
+            slot:HookScript("OnClick", function(self)
+                tagwin.displayButton.string:SetText(self.name)
+                if tagwin.scrollContainer:IsShown() then
+                    tagwin.scrollContainer:Hide()
+                else
+                    tagwin.scrollContainer:Show()
+                end
+
+                filterHudMovers(self.name)
+            end)
+            slot:HookScript("OnEnter", function()
+                slot.hover:Show()
+            end)
+            slot.checkbutton:HookScript("OnEnter", function()
+                slot.hover:Show()
+            end)
+            slot:HookScript("OnLeave", function()
+                slot.hover:Hide()
+            end)
+
+            slot.ScriptsHooked = true
+        end
+    end
+
+    loadTagDropDown(tagwin)
+end
+
 local function lockHudObjects(_, _, inCombatLockdown)
     GW.MoveHudScaleableFrame:UnregisterEvent("PLAYER_REGEN_DISABLED")
     GW.MoveHudScaleableFrame:Hide()
@@ -23,11 +103,11 @@ local function lockHudObjects(_, _, inCombatLockdown)
         mf:SetMovable(false)
         mf:Hide()
     end
-    if GW.MoveHudScaleableFrame.defaultButtons.showGrid.grid then
-        GW.MoveHudScaleableFrame.defaultButtons.showGrid.grid:Hide()
-        GW.MoveHudScaleableFrame.defaultButtons.gridAlign:Hide()
-        GW.MoveHudScaleableFrame.defaultButtons.showGrid.forceHide = false
-        GW.MoveHudScaleableFrame.defaultButtons.showGrid:SetText(L["Show grid"])
+    if GW.MoveHudScaleableFrame.moverSettingsFrame.defaultButtons.showGrid.grid then
+        GW.MoveHudScaleableFrame.moverSettingsFrame.defaultButtons.showGrid.grid:Hide()
+        GW.MoveHudScaleableFrame.moverSettingsFrame.defaultButtons.gridAlign:Hide()
+        GW.MoveHudScaleableFrame.moverSettingsFrame.defaultButtons.showGrid.forceHide = false
+        GW.MoveHudScaleableFrame.moverSettingsFrame.defaultButtons.showGrid:SetText(L["Show grid"])
     end
 
     -- enable main bar layout manager and trigger the changes
@@ -41,13 +121,13 @@ GW.AddForProfiling("settings", "lockHudObjects", lockHudObjects)
 
 local function toggleHudPlaceholders()
     for _, mf in pairs(GW.MOVABLE_FRAMES) do
-        if mf.Background then
+        if mf.backdrop then
             if moveable_window_placeholders_visible then
-                mf.Background:Hide()
-                GW.MoveHudScaleableFrame.defaultButtons.hidePlaceholder:SetText(L["Show placeholders"])
+                mf.backdrop:Hide()
+                GW.MoveHudScaleableFrame.moverSettingsFrame.defaultButtons.hidePlaceholder:SetText(L["Show placeholders"])
             else
-                mf.Background:Show()
-                GW.MoveHudScaleableFrame.defaultButtons.hidePlaceholder:SetText(L["Hide placeholders"])
+                mf.backdrop:Show()
+                GW.MoveHudScaleableFrame.moverSettingsFrame.defaultButtons.hidePlaceholder:SetText(L["Hide placeholders"])
             end
         end
     end
@@ -67,8 +147,8 @@ local function moveHudObjects(self)
         mf:SetMovable(true)
         mf:Show()
     end
-    GW.MoveHudScaleableFrame.options:Hide()
-    GW.MoveHudScaleableFrame.desc:Show()
+    GW.MoveHudScaleableFrame.moverSettingsFrame.options:Hide()
+    GW.MoveHudScaleableFrame.moverSettingsFrame.desc:Show()
     GW.MoveHudScaleableFrame:Show()
 
     -- disable main bar layout manager
@@ -196,12 +276,12 @@ local function Grid_Show_Hide(self)
 end
 
 local function UpdateMatchingLayout(self, new_point)
-    local selectedLayoutId = GwSmallSettingsWindow.layoutView.savedLayoutDropDown.button.selectedId
+    local selectedLayoutId = GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.selectedId
     local layout = selectedLayoutId and GW.GetLayoutById(selectedLayoutId) or nil
     local frameFound = false
     if layout then
         for i = 0, #layout.frames do
-            if layout.frames[i].settingName == self.gw_Settings then
+            if layout.frames[i].settingName == self.setting then
                 layout.frames[i].point = nil
                 layout.frames[i].point = GW.CopyTable(nil, new_point)
 
@@ -209,11 +289,12 @@ local function UpdateMatchingLayout(self, new_point)
                 break
             end
         end
+
         -- could be a new moveable frame which is not at the layout settings, so we need to add it here
         if not frameFound then
             local newIdx = #layout.frames + 1
             layout.frames[newIdx] = {}
-            layout.frames[newIdx].settingName = self.gw_Settings
+            layout.frames[newIdx].settingName = self.setting
             layout.frames[newIdx].point = GW.CopyTable(nil, new_point)
         end
     end
@@ -231,50 +312,53 @@ local function smallSettings_resetToDefault(self)
         mf.defaultPoint.yOfs
     )
 
-    local new_point = GetSetting(mf.gw_Settings)
+    local new_point = GetSetting(mf.setting)
     new_point.point = mf.defaultPoint.point
     new_point.relativePoint = mf.defaultPoint.relativePoint
     new_point.xOfs = mf.defaultPoint.xOfs
     new_point.yOfs = mf.defaultPoint.yOfs
     new_point.hasMoved = false
-    SetSetting(mf.gw_Settings, new_point)
+    SetSetting(mf.setting, new_point)
 
-    mf.gw_frame.isMoved = false
-    mf.gw_frame:SetAttribute("isMoved", new_point.hasMoved)
+    mf.parent.isMoved = false
+    mf.parent:SetAttribute("isMoved", new_point.hasMoved)
 
     --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
-    if mf.gw_Settings == "PlayerBuffFrame" or mf.gw_Settings == "PlayerDebuffFrame" then
-        SetSetting(mf.gw_Settings .. "_GrowDirection", "UP")
-    elseif mf.gw_Settings == "MicromenuPos" then
+    if mf.setting == "PlayerBuffFrame" or mf.setting == "PlayerDebuffFrame" then
+        SetSetting(mf.setting .. "_GrowDirection", "UP")
+    elseif mf.setting == "MicromenuPos" then
         -- Hide/Show BG here
-        mf.gw_frame.cf.bg:Show()
+        mf.parent.cf.bg:Show()
     end
 
     -- Set Scale back to default
     if mf.optionScaleable then
         local scale
-        if mf.gw_mhf then
+        if mf.mainHudFrame then
             scale = GetSetting("HUD_SCALE")
         else
-            scale = GetDefault(mf.gw_Settings .. "_scale")
+            scale = GetDefault(mf.setting .. "_scale")
         end
         mf:SetScale(scale)
-        mf.gw_frame:SetScale(scale)
-        SetSetting(mf.gw_Settings .. "_scale", scale)
+        mf.parent:SetScale(scale)
+        SetSetting(mf.setting .. "_scale", scale)
         self:GetParent():GetParent().options.scaleSlider.slider:SetValue(scale)
     end
 
     -- Set height back to default
     if mf.optionHeight then
-        local height = GetDefault(mf.gw_Settings .. "_height")
+        local height = GetDefault(mf.setting .. "_height")
         mf:SetHeight(height)
-        mf.gw_frame:SetHeight(height)
-        SetSetting(mf.gw_Settings .. "_height", height)
+        mf.parent:SetHeight(height)
+        SetSetting(mf.setting .. "_height", height)
         self:GetParent():GetParent().options.heightSlider.slider:SetValue(height)
+
+        -- update also the matching settings
+        GW.UpdateObjectivesSettings()
     end
 
-    if mf.gw_postdrag then
-        mf.gw_postdrag(mf.gw_frame)
+    if mf.postdrag then
+        mf.postdrag(mf.parent)
     end
 
     GW.UpdateHudScale()
@@ -283,9 +367,9 @@ local function smallSettings_resetToDefault(self)
     UpdateMatchingLayout(mf, new_point)
 
     -- run layout manager
-    GwSmallSettingsWindow.layoutManager:SetAttribute("inMoveHudMode", false)
-    GwSmallSettingsWindow.layoutManager:GetScript("OnEvent")(GwSmallSettingsWindow.layoutManager)
-    GwSmallSettingsWindow.layoutManager:SetAttribute("inMoveHudMode", true)
+    GwSmallSettingsContainer.layoutManager:SetAttribute("inMoveHudMode", false)
+    GwSmallSettingsContainer.layoutManager:GetScript("OnEvent")(GwSmallSettingsContainer.layoutManager)
+    GwSmallSettingsContainer.layoutManager:SetAttribute("inMoveHudMode", true)
 end
 GW.AddForProfiling("index", "smallSettings_resetToDefault", smallSettings_resetToDefault)
 
@@ -304,12 +388,12 @@ end
 GW.AddForProfiling("index", "mover_OnDragStart", mover_OnDragStart)
 
 local function mover_OnDragStop(self)
-    local settingsName = self.gw_Settings
+    local settingsName = self.setting
     self:StopMovingOrSizing()
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
 
-   -- for layouts: if newPoint is old point, do not update the setting
-   if self.defaultPoint.point ~= point or self.defaultPoint.relativePoint ~= relativePoint or self.defaultPoint.xOfs ~= xOfs or self.defaultPoint.yOfs ~= yOfs then
+    -- for layouts: if newPoint is old point, do not update the setting
+    if self.defaultPoint.point ~= point or self.defaultPoint.relativePoint ~= relativePoint or self.defaultPoint.xOfs ~= xOfs or self.defaultPoint.yOfs ~= yOfs then
         local new_point = GetSetting(settingsName)
         new_point.point = point
         new_point.relativePoint = relativePoint
@@ -320,8 +404,8 @@ local function mover_OnDragStop(self)
         self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
         SetSetting(settingsName, new_point)
 
-        self.gw_frame.isMoved = false
-        self.gw_frame:SetAttribute("isMoved", new_point.hasMoved)
+        self.parent.isMoved = true
+        self.parent:SetAttribute("isMoved", new_point.hasMoved)
 
         self:SetMovable(true)
         self:SetUserPlaced(true)
@@ -330,53 +414,53 @@ local function mover_OnDragStop(self)
         UpdateMatchingLayout(self, new_point)
     end
 
-    if self.gw_postdrag then
-        self.gw_postdrag(self.gw_frame)
+    if self.postdrag then
+        self.postdrag(self.parent)
     end
     self.IsMoving = false
 end
 GW.AddForProfiling("index", "mover_OnDragStop", mover_OnDragStop)
 
 local function showExtraOptions(self)
-    GW.MoveHudScaleableFrame.child = self
-    GW.MoveHudScaleableFrame.childMover = self
-    GW.MoveHudScaleableFrame.headerString:SetText(self.frameName:GetText())
-    GW.MoveHudScaleableFrame.desc:Hide()
-    GW.MoveHudScaleableFrame.options:Show()
-    -- options 
-    GW.MoveHudScaleableFrame.options.scaleSlider:SetShown(self.optionScaleable)
-    GW.MoveHudScaleableFrame.options.heightSlider:SetShown(self.optionHeight)
+    GW.MoveHudScaleableFrame.moverSettingsFrame.child = self
+    GW.MoveHudScaleableFrame.moverSettingsFrame.childMover = self
+    GW.MoveHudScaleableFrame.headerString:SetText(self.textString .. " & Layouts")
+    GW.MoveHudScaleableFrame.moverSettingsFrame.desc:Hide()
+    GW.MoveHudScaleableFrame.moverSettingsFrame.options:Show()
+    -- options
+    GW.MoveHudScaleableFrame.moverSettingsFrame.options.scaleSlider:SetShown(self.optionScaleable)
+    GW.MoveHudScaleableFrame.moverSettingsFrame.options.heightSlider:SetShown(self.optionHeight)
     if self.optionScaleable then
-        local scale = GetSetting(self.gw_Settings .. "_scale")
-        GW.MoveHudScaleableFrame.options.scaleSlider.slider:SetValue(scale)
-        GW.MoveHudScaleableFrame.options.scaleSlider.input:SetNumber(scale)
+        local scale = GetSetting(self.setting .. "_scale")
+        GW.MoveHudScaleableFrame.moverSettingsFrame.options.scaleSlider.slider:SetValue(scale)
+        GW.MoveHudScaleableFrame.moverSettingsFrame.options.scaleSlider.input:SetNumber(scale)
     end
     if self.optionHeight then
-        local height = GetSetting(self.gw_Settings .. "_height")
-        GW.MoveHudScaleableFrame.options.heightSlider.slider:SetValue(height)
-        GW.MoveHudScaleableFrame.options.heightSlider.input:SetNumber(height)
+        local height = GetSetting(self.setting .. "_height")
+        GW.MoveHudScaleableFrame.moverSettingsFrame.options.heightSlider.slider:SetValue(height)
+        GW.MoveHudScaleableFrame.moverSettingsFrame.options.heightSlider.input:SetNumber(height)
     end
 
-    if GW.MoveHudScaleableFrame.activeFlasher then
-        GW.StopFlash(GW.MoveHudScaleableFrame.activeFlasher)
-        UIFrameFadeOut(GW.MoveHudScaleableFrame.activeFlasher, 0.5, GW.MoveHudScaleableFrame.activeFlasher:GetAlpha(), 0.5)
+    if GW.MoveHudScaleableFrame.moverSettingsFrame.activeFlasher then
+        GW.StopFlash(GW.MoveHudScaleableFrame.moverSettingsFrame.activeFlasher)
+        UIFrameFadeOut(GW.MoveHudScaleableFrame.moverSettingsFrame.activeFlasher, 0.5, GW.MoveHudScaleableFrame.moverSettingsFrame.activeFlasher:GetAlpha(), 0.5)
     end
-    GW.MoveHudScaleableFrame.activeFlasher = self
+    GW.MoveHudScaleableFrame.moverSettingsFrame.activeFlasher = self
     GW.FrameFlash(self, 1.5, 0.5, 1, true)
 end
 
 local function hideExtraOptions()
-    GW.MoveHudScaleableFrame.child = nil
-    GW.MoveHudScaleableFrame.childMover = nil
-    GW.MoveHudScaleableFrame.headerString:SetText(L["Extra Frame Options"])
-    GW.MoveHudScaleableFrame.options:Hide()
-    GW.MoveHudScaleableFrame.desc:SetText(L["Left click on a moverframe to show extra frame options"])
-    GW.MoveHudScaleableFrame.desc:Show()
-    GW.StopFlash(GW.MoveHudScaleableFrame.activeFlasher)
+    GW.MoveHudScaleableFrame.moverSettingsFrame.child = nil
+    GW.MoveHudScaleableFrame.moverSettingsFrame.childMover = nil
+    GW.MoveHudScaleableFrame.headerString:SetText(L["Extra Frame Options"] .. " & Layouts")
+    GW.MoveHudScaleableFrame.moverSettingsFrame.options:Hide()
+    GW.MoveHudScaleableFrame.moverSettingsFrame.desc:SetText(L["Left click on a moverframe to show extra frame options"])
+    GW.MoveHudScaleableFrame.moverSettingsFrame.desc:Show()
+    GW.StopFlash(GW.MoveHudScaleableFrame.moverSettingsFrame.activeFlasher)
 end
 
 local function mover_options(self)
-    if GW.MoveHudScaleableFrame.child == self then
+    if GW.MoveHudScaleableFrame.moverSettingsFrame.child == self then
         hideExtraOptions()
     else
         showExtraOptions(self)
@@ -387,12 +471,12 @@ local function sliderValueChange(self)
     local roundValue = GW.RoundDec(self:GetValue(), 2)
     local moverFrame = self:GetParent():GetParent():GetParent().child
     moverFrame:SetScale(roundValue)
-    moverFrame.gw_frame:SetScale(roundValue)
+    moverFrame.parent:SetScale(roundValue)
     self:GetParent().input:SetText(roundValue)
-    SetSetting(moverFrame.gw_Settings .."_scale", roundValue)
+    SetSetting(moverFrame.setting .."_scale", roundValue)
 
-    moverFrame.gw_frame.isMoved = true
-    moverFrame.gw_frame:SetAttribute("isMoved", true)
+    moverFrame.parent.isMoved = true
+    moverFrame.parent:SetAttribute("isMoved", true)
 end
 
 local function sliderEditBoxValueChanged(self)
@@ -406,19 +490,19 @@ local function sliderEditBoxValueChanged(self)
 
     self:GetParent().slider:SetValue(roundValue)
     self:SetText(roundValue)
-    SetSetting(moverFrame.gw_Settings .. "_scale", roundValue)
+    SetSetting(moverFrame.setting .. "_scale", roundValue)
 
-    moverFrame.gw_frame.isMoved = true
-    moverFrame.gw_frame:SetAttribute("isMoved", true)
+    moverFrame.parent.isMoved = true
+    moverFrame.parent:SetAttribute("isMoved", true)
 end
 
 local function heightSliderValueChange(self)
     local roundValue = GW.RoundDec(self:GetValue())
     local moverFrame = self:GetParent():GetParent():GetParent().child
     moverFrame:SetHeight(roundValue)
-    moverFrame.gw_frame:SetHeight(roundValue)
+    moverFrame.parent:SetHeight(roundValue)
     self:GetParent().input:SetText(roundValue)
-    SetSetting(moverFrame.gw_Settings .."_height", roundValue)
+    SetSetting(moverFrame.setting .."_height", roundValue)
 end
 
 local function heightEditBoxValueChanged(self)
@@ -429,10 +513,13 @@ local function heightEditBoxValueChanged(self)
     if tonumber(roundValue) > 1500 then self:SetText(1500) end
     if tonumber(roundValue) < 1 then self:SetText(1) end
 
-    SetSetting(moverFrame.gw_Settings .."_height", roundValue)
+    SetSetting(moverFrame.setting .."_height", roundValue)
 
-    moverFrame.gw_frame:SetHeight(roundValue)
+    moverFrame.parent:SetHeight(roundValue)
     moverFrame:SetHeight(roundValue)
+
+    -- update also the matching settings
+    GW.UpdateObjectivesSettings()
 end
 
 local function moverframe_OnEnter(self)
@@ -459,31 +546,99 @@ local function moverframe_OnLeave(self)
     end
 end
 
-local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame, size, frameOptions, mhf, postdrag)
-    local moveframe = CreateFrame("Button", "Gw_" .. settingsName, UIParent, dummyFrame)
-    frame.gwMover = moveframe
+local function CreateMoverFrame(parent, displayName, settingsName, size, frameOptions, mhf, postdrag, tags)
+    local mf = CreateFrame("Button", "Gw_" .. settingsName, UIParent)
+    mf:SetClampedToScreen(true)
+    mf:SetMovable(true)
+    mf:EnableMouseWheel(true)
+    mf:RegisterForDrag("LeftButton", "RightButton")
+    mf:SetFrameLevel(parent:GetFrameLevel() + 1)
+    mf:SetFrameStrata("DIALOG")
+    mf:CreateBackdrop("Transparent White")
+    mf:SetScale(parent:GetScale())
+
     if size then
-        moveframe:SetSize(unpack(size))
+        mf:SetSize(unpack(size))
     else
-        moveframe:SetSize(frame:GetSize())
+        mf:SetSize(parent:GetSize())
     end
-    moveframe:SetScale(frame:GetScale())
-    moveframe.gw_Settings = settingsName
-    moveframe.gw_frame = frame
-    moveframe.gw_mhf = mhf
-    moveframe.gw_postdrag = postdrag
-    moveframe.frameOptions = frameOptions
+    mf:Hide()
 
-    if moveframe.frameName and moveframe.frameName.SetText then
-        moveframe.frameName:SetSize(moveframe:GetSize())
-        moveframe.frameName:SetText(displayName)
+    local fs = mf:CreateFontString(nil, 'OVERLAY')
+    fs:SetFont(UNIT_NAME_FONT, 12, "")
+    fs:SetPoint("CENTER")
+    fs:SetText(displayName)
+    fs:SetJustifyH("CENTER")
+    fs:SetTextColor(1, 1, 1)
+    mf:SetFontString(fs)
+
+    mf.text = fs
+    mf.parent = parent
+    mf.postdrag = postdrag
+    mf.textString = displayName
+    mf.setting = settingsName
+    mf.mainHudFrame = mhf
+    mf.frameOptions = frameOptions
+    mf.savedPoint = GetSetting(settingsName)
+    mf.defaultPoint = GetDefault(settingsName)
+    mf.tags = tags
+
+    for _, v in pairs({strsplit(",", tags)}) do
+        if not tContains(AllTags, v) then
+            tinsert(AllTags, v)
+            SetupTagDropdown(GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.container.contentScroll)
+        end
     end
 
-    moveframe:SetClampedToScreen(true)
+    -- set all options default as false
+    mf.optionScaleable = false
+    mf.optionHeight = false
 
-    -- position mover (as fallback use the default position)
-    moveframe.savedPoint = GetSetting(settingsName)
-    moveframe.defaultPoint = GetDefault(settingsName)
+    for _, v in pairs(frameOptions) do
+        if v == "scaleable" then
+            local scale = GetSetting(settingsName .. "_scale")
+            mf.parent:SetScale(scale)
+            mf:SetScale(scale)
+            GW.scaleableFrames[#GW.scaleableFrames + 1] = mf
+
+            mf.optionScaleable = true
+        elseif v == "height" then
+            local height = GetSetting(settingsName .. "_height")
+            mf.parent:SetHeight(height)
+            mf:SetHeight(height)
+
+            mf.optionHeight = true
+        end
+    end
+
+    parent.gwMover = mf
+
+    mf:SetScript("OnDragStart", mover_OnDragStart)
+    mf:SetScript("OnDragStop", mover_OnDragStop)
+    mf:SetScript("OnEnter", moverframe_OnEnter)
+    mf:SetScript("OnLeave", moverframe_OnLeave)
+    mf:SetScript("OnClick", mover_options)
+
+    if mhf then
+        GW.scaleableMainHudFrames[#GW.scaleableMainHudFrames + 1] = mf
+    end
+
+    if postdrag then
+        mf:RegisterEvent("PLAYER_ENTERING_WORLD")
+        mf:SetScript("OnEvent", function(self)
+            postdrag(self.parent)
+            self:UnregisterAllEvents()
+        end)
+    end
+
+    GW.MOVABLE_FRAMES[#GW.MOVABLE_FRAMES + 1] = mf
+
+    return mf
+end
+
+local function RegisterMovableFrame(frame, displayName, settingsName, tags, size, frameOptions, mhf, postdrag)
+    local moveframe = CreateMoverFrame(frame, displayName, settingsName, size, frameOptions, mhf, postdrag, tags)
+
     moveframe:ClearAllPoints()
     if not moveframe.savedPoint.point or not moveframe.savedPoint.relativePoint or not moveframe.savedPoint.xOfs or not moveframe.savedPoint.yOfs then
         -- use default position
@@ -492,11 +647,6 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     else
         moveframe:SetPoint(moveframe.savedPoint.point, UIParent, moveframe.savedPoint.relativePoint, moveframe.savedPoint.xOfs, moveframe.savedPoint.yOfs)
     end
-
-    moveframe:Hide()
-    moveframe:RegisterForDrag("LeftButton")
-    moveframe:SetScript("OnEnter", moverframe_OnEnter)
-    moveframe:SetScript("OnLeave", moverframe_OnLeave)
 
     if moveframe.savedPoint.hasMoved == nil then -- can be removed after some time
         if moveframe.defaultPoint.point == moveframe.savedPoint.point and moveframe.defaultPoint.relativePoint == moveframe.savedPoint.relativePoint and moveframe.defaultPoint.xOfs == moveframe.savedPoint.xOfs and moveframe.defaultPoint.yOfs == moveframe.savedPoint.yOfs then
@@ -516,57 +666,11 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
         moveframe.savedPoint.hasMoved = frame.isMoved
         SetSetting(settingsName, moveframe.savedPoint)
     end
-
-    if mhf then
-        GW.scaleableMainHudFrames[#GW.scaleableMainHudFrames + 1] = moveframe
-    end
-
-    -- set all options default as off
-    moveframe.optionScaleable = false
-    moveframe.optionHeight = false
-
-    if frameOptions then
-        for _, v in pairs(frameOptions) do
-            if v == "scaleable" then
-                moveframe.optionScaleable = true
-            elseif v == "height" then
-                moveframe.optionHeight = true
-            end
-        end
-    end
-
-    moveframe:SetScript("OnClick", mover_options)
-    if frameOptions and #frameOptions > 0 then
-        if moveframe.optionScaleable then
-            local scale = GetSetting(settingsName .. "_scale")
-            moveframe.gw_frame:SetScale(scale)
-            moveframe:SetScale(scale)
-            GW.scaleableFrames[#GW.scaleableFrames + 1] = moveframe
-        end
-        if moveframe.optionHeight then
-            local height = GetSetting(settingsName .. "_height")
-            moveframe.gw_frame:SetHeight(height)
-            moveframe:SetHeight(height)
-        end
-    end
-
-    if postdrag then
-        moveframe:RegisterEvent("PLAYER_ENTERING_WORLD")
-        moveframe:SetScript("OnEvent", function(self)
-            postdrag(self.gw_frame)
-            self:UnregisterAllEvents()
-        end)
-    end
-
-    moveframe:SetScript("OnDragStart", mover_OnDragStart)
-    moveframe:SetScript("OnDragStop", mover_OnDragStop)
-
-    GW.MOVABLE_FRAMES[#GW.MOVABLE_FRAMES + 1] = moveframe
 end
 GW.RegisterMovableFrame = RegisterMovableFrame
 
 local function MoveFrameByPixel(nudgeX, nudgeY)
-    local mover = GwSmallSettingsWindow.childMover
+    local mover = GwSmallSettingsContainer.moverSettingsFrame.childMover
 
     local point, _, anchorPoint, x, y = mover:GetPoint()
     x = x + nudgeX
@@ -590,104 +694,143 @@ local function LoadMovers(layoutManager)
     mf:SetScript("OnDragStart", fnMf_OnDragStart)
     mf:SetScript("OnDragStop", fnMf_OnDragStop)
 
-    local moverSettingsFrame = CreateFrame("Frame", "GwSmallSettingsWindow", UIParent, "GwSmallSettings")
-    GW.MoveHudScaleableFrame = moverSettingsFrame
-    moverSettingsFrame.layoutManager = layoutManager
+    local smallSettingsContainer = CreateFrame("Frame", "GwSmallSettingsContainer", UIParent, "GwSmallSettingsContainer")
+    smallSettingsContainer.moverSettingsFrame = CreateFrame("Frame", "GwSmallSettingsWindow", smallSettingsContainer, "GwSmallSettings")
+    GW.MoveHudScaleableFrame = smallSettingsContainer
+    smallSettingsContainer.layoutManager = layoutManager
 
-    tinsert(UISpecialFrames, "GwSmallSettingsWindow")
+    tinsert(UISpecialFrames, "GwSmallSettingsContainer")
 
-    moverSettingsFrame.options.scaleSlider.slider:SetMinMaxValues(0.5, 1.5)
-    moverSettingsFrame.options.scaleSlider.slider:SetValue(1)
-    moverSettingsFrame.options.scaleSlider.slider:SetScript("OnValueChanged", sliderValueChange)
-    moverSettingsFrame.options.scaleSlider.input:SetNumber(1)
-    moverSettingsFrame.options.scaleSlider.input:SetFont(UNIT_NAME_FONT, 8, "")
-    moverSettingsFrame.options.scaleSlider.input:SetScript("OnEnterPressed", sliderEditBoxValueChanged)
+    --set correct separator rotation
+    local angle = math.rad(90)
+	local cos, sin = math.cos(angle), math.sin(angle)
+	smallSettingsContainer.seperator:SetTexCoord((sin - cos), -(cos + sin), -cos, -sin, sin, -cos, 0, 0)
 
-    moverSettingsFrame.options.heightSlider.slider:SetMinMaxValues(1, 1500)
-    moverSettingsFrame.options.heightSlider.slider:SetValue(1)
-    moverSettingsFrame.options.heightSlider.slider:SetScript("OnValueChanged", heightSliderValueChange)
-    moverSettingsFrame.options.heightSlider.input:SetNumber(1)
-    moverSettingsFrame.options.heightSlider.input:SetFont(UNIT_NAME_FONT, 7, "")
-    moverSettingsFrame.options.heightSlider.input:SetScript("OnEnterPressed", heightEditBoxValueChanged)
+    smallSettingsContainer.headerString:SetFont(UNIT_NAME_FONT, 14, "")
+    smallSettingsContainer.headerString:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    smallSettingsContainer.headerString:SetText(L["Extra Frame Options"] .. " & Layouts")
 
-    moverSettingsFrame.desc:SetText(L["Left click on a moverframe to show extra frame options"])
-    moverSettingsFrame.desc:SetFont(UNIT_NAME_FONT, 12)
-    moverSettingsFrame.options.scaleSlider.title:SetFont(UNIT_NAME_FONT, 12, "")
-    moverSettingsFrame.options.scaleSlider.title:SetText(L["Scale"])
-    moverSettingsFrame.options.heightSlider.title:SetFont(UNIT_NAME_FONT, 12, "")
-    moverSettingsFrame.options.heightSlider.title:SetText(COMPACT_UNIT_FRAME_PROFILE_FRAMEHEIGHT)
-    moverSettingsFrame.headerString:SetFont(UNIT_NAME_FONT, 14, "")
-    moverSettingsFrame.headerString:SetText(L["Extra Frame Options"])
+    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetMinMaxValues(0.5, 1.5)
+    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetValue(1)
+    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetScript("OnValueChanged", sliderValueChange)
+    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.input:SetNumber(1)
+    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.input:SetFont(UNIT_NAME_FONT, 8, "")
+    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.input:SetScript("OnEnterPressed", sliderEditBoxValueChanged)
 
-    moverSettingsFrame.options.movers.title:SetText(NPE_MOVE )
-    moverSettingsFrame.options.movers.title:SetFont(UNIT_NAME_FONT, 12, "")
-    GW.HandleNextPrevButton(moverSettingsFrame.options.movers.left, "left")
-    GW.HandleNextPrevButton(moverSettingsFrame.options.movers.right, "right")
-    GW.HandleNextPrevButton(moverSettingsFrame.options.movers.up, "up")
-    GW.HandleNextPrevButton(moverSettingsFrame.options.movers.down, "down")
-    moverSettingsFrame.options.movers.left:SetScript("OnClick", function() MoveFrameByPixel(-1, 0) end)
-    moverSettingsFrame.options.movers.right:SetScript("OnClick", function() MoveFrameByPixel(1, 0) end)
-    moverSettingsFrame.options.movers.up:SetScript("OnClick", function() MoveFrameByPixel(0, 1) end)
-    moverSettingsFrame.options.movers.down:SetScript("OnClick", function() MoveFrameByPixel(0, -1) end)
+    smallSettingsContainer.moverSettingsFrame.options.heightSlider.slider:SetMinMaxValues(1, 1500)
+    smallSettingsContainer.moverSettingsFrame.options.heightSlider.slider:SetValue(1)
+    smallSettingsContainer.moverSettingsFrame.options.heightSlider.slider:SetScript("OnValueChanged", heightSliderValueChange)
+    smallSettingsContainer.moverSettingsFrame.options.heightSlider.input:SetNumber(1)
+    smallSettingsContainer.moverSettingsFrame.options.heightSlider.input:SetFont(UNIT_NAME_FONT, 7, "")
+    smallSettingsContainer.moverSettingsFrame.options.heightSlider.input:SetScript("OnEnterPressed", heightEditBoxValueChanged)
 
-    moverSettingsFrame:SetScript("OnShow", function()
+    smallSettingsContainer.moverSettingsFrame.desc:SetText(L["Left click on a moverframe to show extra frame options"])
+    smallSettingsContainer.moverSettingsFrame.desc:SetFont(UNIT_NAME_FONT, 12, "")
+    smallSettingsContainer.moverSettingsFrame.desc:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.title:SetFont(UNIT_NAME_FONT, 12, "")
+    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.title:SetText(L["Scale"])
+    smallSettingsContainer.moverSettingsFrame.options.heightSlider.title:SetFont(UNIT_NAME_FONT, 12, "")
+    smallSettingsContainer.moverSettingsFrame.options.heightSlider.title:SetText(COMPACT_UNIT_FRAME_PROFILE_FRAMEHEIGHT)
+
+    smallSettingsContainer.moverSettingsFrame.options.movers.title:SetText(NPE_MOVE )
+    smallSettingsContainer.moverSettingsFrame.options.movers.title:SetFont(UNIT_NAME_FONT, 12, "")
+    GW.HandleNextPrevButton(smallSettingsContainer.moverSettingsFrame.options.movers.left, "left")
+    GW.HandleNextPrevButton(smallSettingsContainer.moverSettingsFrame.options.movers.right, "right")
+    GW.HandleNextPrevButton(smallSettingsContainer.moverSettingsFrame.options.movers.up, "up")
+    GW.HandleNextPrevButton(smallSettingsContainer.moverSettingsFrame.options.movers.down, "down")
+    smallSettingsContainer.moverSettingsFrame.options.movers.left:SetScript("OnClick", function() MoveFrameByPixel(-1, 0) end)
+    smallSettingsContainer.moverSettingsFrame.options.movers.right:SetScript("OnClick", function() MoveFrameByPixel(1, 0) end)
+    smallSettingsContainer.moverSettingsFrame.options.movers.up:SetScript("OnClick", function() MoveFrameByPixel(0, 1) end)
+    smallSettingsContainer.moverSettingsFrame.options.movers.down:SetScript("OnClick", function() MoveFrameByPixel(0, -1) end)
+
+    smallSettingsContainer:SetScript("OnShow", function()
         mf:Show()
     end)
-    moverSettingsFrame:SetScript("OnHide", function()
+    smallSettingsContainer:SetScript("OnHide", function()
         lockHudObjects()
         mf:Hide()
     end)
-    moverSettingsFrame:SetScript("OnEvent", HandleMoveHudEvents)
+    smallSettingsContainer:SetScript("OnEvent", HandleMoveHudEvents)
 
-    moverSettingsFrame.options.default:SetScript("OnClick", smallSettings_resetToDefault)
+    smallSettingsContainer.moverSettingsFrame.options.default:SetScript("OnClick", smallSettings_resetToDefault)
 
     -- lock, placeholder and grid button
-    moverSettingsFrame.defaultButtons.lockHud:SetScript("OnClick", lockHudObjects)
-    moverSettingsFrame.defaultButtons.lockHud:SetText(L["Lock HUD"])
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.lockHud:SetScript("OnClick", lockHudObjects)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.lockHud:SetText(L["Lock HUD"])
 
-    moverSettingsFrame.defaultButtons.hidePlaceholder:SetScript("OnClick", toggleHudPlaceholders)
-    moverSettingsFrame.defaultButtons.hidePlaceholder:SetText(L["Hide placeholders"])
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.hidePlaceholder:SetScript("OnClick", toggleHudPlaceholders)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.hidePlaceholder:SetText(L["Hide placeholders"])
 
-    moverSettingsFrame.defaultButtons.showGrid:SetScript("OnClick", Grid_Show_Hide)
-    moverSettingsFrame.defaultButtons.showGrid:SetText(L["Show grid"])
-    moverSettingsFrame.defaultButtons.showGrid.gridSize = 64
-    moverSettingsFrame.defaultButtons.showGrid.forceHide = false
-    create_grid(moverSettingsFrame.defaultButtons.showGrid)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid:SetScript("OnClick", Grid_Show_Hide)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid:SetText(L["Show grid"])
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid.gridSize = 64
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid.forceHide = false
+    create_grid(smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid)
 
-    moverSettingsFrame.defaultButtons.gridAlign:SetScript("OnEscapePressed", function(eb)
-        eb:SetText(moverSettingsFrame.defaultButtons.showGrid.gridSize)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnEscapePressed", function(eb)
+        eb:SetText(smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid.gridSize)
         EditBox_ClearFocus(eb)
     end)
-    moverSettingsFrame.defaultButtons.gridAlign:SetScript("OnEnterPressed", function(eb)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnEnterPressed", function(eb)
         local text = eb:GetText()
         if tonumber(text) then
             if tonumber(text) <= 256 and tonumber(text) >= 4 then
-                moverSettingsFrame.defaultButtons.showGrid.gridSize = tonumber(text)
+                smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid.gridSize = tonumber(text)
             else
-                eb:SetText(moverSettingsFrame.defaultButtons.showGrid.gridSize)
+                eb:SetText(smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid.gridSize)
             end
         else
-            eb:SetText(moverSettingsFrame.defaultButtons.showGrid.gridSize)
+            eb:SetText(smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid.gridSize)
         end
-        moverSettingsFrame.defaultButtons.showGrid.forceHide = false
-        Grid_Show_Hide(moverSettingsFrame.defaultButtons.showGrid)
+        smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid.forceHide = false
+        Grid_Show_Hide(smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid)
         EditBox_ClearFocus(eb)
     end)
-    moverSettingsFrame.defaultButtons.gridAlign:SetScript("OnEditFocusLost", function(eb)
-        eb:SetText(moverSettingsFrame.defaultButtons.showGrid.gridSize)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnEditFocusLost", function(eb)
+        eb:SetText(smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid.gridSize)
     end)
-    moverSettingsFrame.defaultButtons.gridAlign:SetScript("OnEditFocusGained", moverSettingsFrame.defaultButtons.gridAlign.HighlightText)
-    moverSettingsFrame.defaultButtons.gridAlign:SetScript("OnShow", function(eb)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnEditFocusGained", smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.HighlightText)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnShow", function(eb)
         EditBox_ClearFocus(eb)
-        eb:SetText(moverSettingsFrame.defaultButtons.showGrid.gridSize)
+        eb:SetText(smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid.gridSize)
     end)
-    moverSettingsFrame.defaultButtons.gridAlign.text:SetText(L["Grid Size:"])
-    moverSettingsFrame.defaultButtons.gridAlign:Hide()
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.text:SetText(L["Grid Size:"])
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign:Hide()
+
+    --load tag dropdown
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.title:SetFont(DAMAGE_TEXT_FONT, 12)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.title:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.title:SetText(L["Filter"])
+    local tagScrollFrame = smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.container.contentScroll
+    tagScrollFrame.scrollBar.thumbTexture:SetSize(12, 30)
+    tagScrollFrame.scrollBar:ClearAllPoints()
+    tagScrollFrame.scrollBar:SetPoint("TOPRIGHT", -3, -12)
+    tagScrollFrame.scrollBar:SetPoint("BOTTOMRIGHT", -3, 12)
+    tagScrollFrame.scrollBar.scrollUp:SetPoint("TOPRIGHT", 0, 12)
+    tagScrollFrame.scrollBar.scrollDown:SetPoint("BOTTOMRIGHT", 0, -12)
+    tagScrollFrame.scrollBar:SetFrameLevel(tagScrollFrame:GetFrameLevel() + 5)
+    tagScrollFrame.scrollContainer = smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.container
+    tagScrollFrame.displayButton = smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.button
+    tagScrollFrame:GetParent():SetParent(smallSettingsContainer.moverSettingsFrame.defaultButtons)
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.button.string:SetText(ALL)
+
+    tagScrollFrame.update = loadTagDropDown
+    tagScrollFrame.scrollBar.doNotHide = false
+    SetupTagDropdown(tagScrollFrame)
+
+    smallSettingsContainer.moverSettingsFrame.defaultButtons.tagDropdown.button:SetScript("OnClick", function(self)
+        local dd = self:GetParent()
+        if dd.container:IsShown() then
+            dd.container:Hide()
+        else
+            dd.container:Show()
+        end
+    end)
 
     --Layout
-    GW.LoadLayoutsFrame(moverSettingsFrame, layoutManager)
+    GW.LoadLayoutsFrame(smallSettingsContainer, layoutManager)
 
-    moverSettingsFrame:Hide()
+    smallSettingsContainer:Hide()
     mf:Hide()
 end
 GW.LoadMovers = LoadMovers

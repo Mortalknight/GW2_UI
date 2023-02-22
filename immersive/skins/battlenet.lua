@@ -26,6 +26,6 @@ local function SkinBNToastFrame()
         self.SetPoint = GW.NoOp
     end)
 
-    RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
+    RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", ALL .. ",Blizzard", nil, {"default", "scaleable"}, nil, BNTostPostDrag)
 end
 GW.SkinBNToastFrame = SkinBNToastFrame

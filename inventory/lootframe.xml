@@ -7,11 +7,19 @@
             <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT"/>
         </Anchors>
         <Layers>
+            <Layer level="ARTWORK" textureSubLevel="1">
+                <Texture parentKey="windowIcon" file="Interface\AddOns\GW2_UI\textures\character\loot-window-icon">
+                  <Size x="84" y="84"></Size>
+                  <Anchors>
+                      <Anchor point="CENTER" relativeKey="$parent.BGLEFT" relativePoint="LEFT" x="21" y="0" />
+                  </Anchors>
+              </Texture>
+            </Layer>
             <Layer level="BACKGROUND" textureSubLevel="1">
                 <Texture parentKey="BG" file="Interface/AddOns/GW2_UI/textures/bag/lootframebg">
-                    <Size x="256" y="256"></Size>
+                    <Size x="170" y="256"></Size>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-11" y="-30"/>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-30"/>
                     </Anchors>
                 </Texture>
             </Layer>
@@ -36,7 +44,7 @@
                     <Size x="170" y="41"></Size>
                     <Color r="1" b="0.73" g="0.93"></Color>
                     <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.BGLEFT" x="10" y="0"/>
+                        <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.BGLEFT" x="54" y="0"/>
                     </Anchors>
                 </FontString>
             </Layer>

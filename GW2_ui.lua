@@ -149,51 +149,52 @@ local function getSpriteByIndex(map, index)
 end
 GW.getSpriteByIndex = getSpriteByIndex
 
-function GwStandardButton_OnEnter(self)
+local function TriggerButtonHoverAnimation(self, hover, to, duration)
     local name = tostring(self)
-    local w = self:GetWidth()
-    local hover = self.gwHover
-    if not hover or (self.IsEnabled and not self:IsEnabled()) then
-        return
-    end
-
     hover:SetAlpha(1)
-    self.animationValue = hover.skipHover and 1 or 0
-
+    duration = duration or math.min(1, self:GetWidth() * 0.002)
     AddToAnimation(
         name,
         self.animationValue,
-        1,
+        (to or 1),
         GetTime(),
-        0.2,
-        function()
-            buttonAnim(self, name, w, hover)
+        duration,
+        function(p)
+            local w = self:GetWidth()
+
+            local lerp = GW.lerp(0, w + (w * 0.5), p)
+            local lerp2 = GW.lerp(0.4, 1, p)
+            local stripAmount = 1 - math.max(0, (lerp / w) - 1)
+
+            lerp2 = math.max(0.4, math.min(1, lerp2))
+
+            if lerp2 > 1 then lerp2 = 1 end
+            hover:SetPoint("RIGHT", self, "LEFT", math.min(w, lerp) , 0)
+            hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, lerp2)
+            hover:SetTexCoord(0, stripAmount, 0, 1)
         end
     )
 end
+GW.TriggerButtonHoverAnimation = TriggerButtonHoverAnimation
 
-function GwStandardButton_OnLeave(self)
-    local name = tostring(self)
-    local w = self:GetWidth()
-    local hover = self.gwHover
-    if not hover or (self.IsEnabled and not self:IsEnabled()) then
+function GwStandardButton_OnEnter(self)
+    if not self.hover or (self.IsEnabled and not self:IsEnabled()) then
         return
     end
-    if self.gwHover.skipHover then return end
+    self.animationValue = self.hover.skipHover and 1 or 0
 
-    hover:SetAlpha(1)
+    TriggerButtonHoverAnimation(self, self.hover)
+end
+
+function GwStandardButton_OnLeave(self)
+    if not self.hover or (self.IsEnabled and not self:IsEnabled()) then
+        return
+    end
+    if self.hover.skipHover then return end
+    self.hover:SetAlpha(1)
     self.animationValue = 1
 
-    AddToAnimation(
-        name,
-        self.animationValue,
-        0,
-        GetTime(),
-        0.2,
-        function()
-            buttonAnim(self, name, w, hover)
-        end
-    )
+    TriggerButtonHoverAnimation(self, self.hover, 0, 0.1)
 end
 
 local function barAnimation(self, barWidth, sparkWidth)
@@ -351,7 +352,7 @@ GW.PixelPerfection = PixelPerfection
 
 local SCALE_HUD_FRAMES = {}
 local function UpdateHudScale()
-    local hudScale = GetSetting("HUD_SCALE")
+    local hudScale = tonumber(GetSetting("HUD_SCALE")) or 1
     for _, f in ipairs(SCALE_HUD_FRAMES) do
         if f then
             local fm = f.gwMover
@@ -367,10 +368,10 @@ local function UpdateHudScale()
     end
     -- let all mainhub frames scale with the HUD scaler, but only if they are not moved and not individual scaled
     for _, mf in pairs(GW.scaleableMainHudFrames) do
-        if not mf.gw_frame.isMoved and mf:GetScale() ~= hudScale then
-            mf.gw_frame:SetScale(hudScale)
+        if not mf.parent.isMoved and mf:GetScale() ~= hudScale then
+            mf.parent:SetScale(hudScale)
             mf:SetScale(hudScale)
-            GW.SetSetting(mf.gw_Settings .. "_scale", hudScale)
+            GW.SetSetting(mf.setting .. "_scale", hudScale)
         end
     end
 end
@@ -603,12 +604,11 @@ local function evPlayerLogin(self)
     else
         hudArtFrame.actionBarHud:ClearAllPoints()
         hudArtFrame.actionBarHud:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)
-        hudArtFrame.edgeTintBottom1:ClearAllPoints()
-        hudArtFrame.edgeTintBottom1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
-        hudArtFrame.edgeTintBottom1:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", 0, 0)
-        hudArtFrame.edgeTintBottom2:ClearAllPoints()
-        hudArtFrame.edgeTintBottom2:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
-        hudArtFrame.edgeTintBottom2:SetPoint("BOTTOMLEFT", UIParent, "BOTTOM", 0, 0)
+
+        hudArtFrame.edgeTintBottomCornerLeft:ClearAllPoints()
+        hudArtFrame.edgeTintBottomCornerLeft:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 0, 0)
+        hudArtFrame.edgeTintBottomCornerRight:ClearAllPoints()
+        hudArtFrame.edgeTintBottomCornerRight:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", 0, 0)
     end
 
     if GetSetting("FONTS_ENABLED") then
@@ -798,7 +798,9 @@ local function evPlayerLogin(self)
         GW.ShowWelcomePanel()
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     elseif GetSetting("GW2_UI_VERSION") ~= GW.VERSION_STRING then
-        GW.ShowChangelogPanel()
+        ShowUIPanel(GwSettingsWindow)
+        --UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
+        HideUIPanel(GameMenuFrame)
         SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
     end
 

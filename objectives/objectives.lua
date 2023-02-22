@@ -456,7 +456,7 @@ local function getBlock(blockIndex)
             self:SetAttribute("item", "item:" .. tostring(self.itemID))
             self:SetNormalTexture(validTexture)
             self:SetPushedTexture(validTexture)
-            self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+            self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
             self:GetNormalTexture():SetTexCoord(0.1, 0.9, 0.1, 0.9)
             self:GetPushedTexture():SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
@@ -1337,7 +1337,7 @@ local function LoadQuestTracker()
         end
     end)
 
-    GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", {350, 10}, {"scaleable", "height"})
+    GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", ALL, nil, {"scaleable", "height"})
     fTracker:ClearAllPoints()
     fTracker:SetPoint("TOPLEFT", fTracker.gwMover)
     fTracker:SetHeight(GetSetting("QuestTracker_pos_height"))

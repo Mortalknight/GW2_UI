@@ -299,7 +299,7 @@ local function GridOnUpdate(self, elapsed)
     end
 end
 
-local function GridToggleFramesPreviewParty(_, _, moveHudMode, hudMoving)
+local function GridToggleFramesPreviewParty(moveHudMode, hudMoving)
     previewStep = max((previewStep + 1) % (#previewSteps + 1), hudMoving and 1 or 0)
 
     if previewStep == 0 or moveHudMode then
@@ -310,7 +310,7 @@ local function GridToggleFramesPreviewParty(_, _, moveHudMode, hudMoving)
                 _G["GwCompactPartyFrame" .. i]:SetAttribute("unit", i == 1 and "player" or "party" .. i - 1)
                 UnregisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility")
                 RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(_G["GwCompactPartyFrame" .. i].unit))
-                PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
+                GW.PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
             end
         end
     else
@@ -321,7 +321,7 @@ local function GridToggleFramesPreviewParty(_, _, moveHudMode, hudMoving)
                 _G["GwCompactPartyFrame" .. i]:SetAttribute("unit", "player")
                 UnregisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility")
                 RegisterStateDriver(_G["GwCompactPartyFrame" .. i], "visibility", ("%s"):format((i > previewSteps[previewStep] and "hide" or "show")))
-                PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
+                GW.PartyGridOnEvent(_G["GwCompactPartyFrame" .. i], "load")
             end
         end
         GridPartyUpdateFramesPosition()
@@ -351,7 +351,7 @@ local function LoadPartyGrid()
     container:ClearAllPoints()
     container:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 
-    RegisterMovableFrame(container, L["Group Frames"], "raid_party_pos", "VerticalActionBarDummy", nil, {"default", "default"})
+    RegisterMovableFrame(container, L["Group Frames"], "raid_party_pos", ALL .. ",Unitframe,Group", nil, {"default", "default"})
 
     hooksecurefunc(container.gwMover, "StopMovingOrSizing", function(frame)
         local anchor = GetSetting("RAID_ANCHOR_PARTY")

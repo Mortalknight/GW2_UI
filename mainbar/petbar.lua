@@ -256,7 +256,7 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterEvent("UNIT_HAPPINESS")
     playerPetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", "GwPetFrameDummy", nil, {"default", "scaleable"}, true)
+    RegisterMovableFrame(playerPetFrame, PET, "pet_pos", ALL .. ",Unitframe", nil, {"default", "scaleable"}, true)
 
     playerPetFrame:ClearAllPoints()
     playerPetFrame:SetPoint("TOPLEFT", playerPetFrame.gwMover)
@@ -273,6 +273,7 @@ local function LoadPetFrame(lm)
         for i = 1, 12 do
             if playerPetFrame.gwButton[i] then
                 GW.updateHotkey(playerPetFrame.gwButton[i])
+                GW.FixHotKeyPosition(playerPetFrame.gwButton[i], false, true)
             end
         end
     end)

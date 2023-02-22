@@ -8,12 +8,12 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar-bg">
+                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar-bg">
                     <Size x="318" y="20"></Size>
                 </Texture>
             </Layer>
             <Layer level="BORDER">
-                <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar">
                     <Size x="314" y="16"/>
                     <Anchors>
                         <Anchor point="LEFT" x="2" y="0"/>
@@ -31,7 +31,7 @@
                 <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbarCandy"/>
                 <Layers>
                     <Layer>
-                        <Texture parentKey="spark" name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\bloodspark">
+                        <Texture parentKey="spark" name="$parentSpark" file="Interface\AddOns\GW2_UI\textures\hud\bloodspark">
                             <Anchors>
                                 <Anchor point="RIGHT" x="0" y="0"/>
                             </Anchors>
@@ -45,7 +45,7 @@
                 <Anchors>
                     <Anchor point="LEFT" x="2" y="0"/>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarTexture file="Interface\AddOns\GW2_UI\textures\uistuff\gwstatusbar"/>
                 <Layers>
                     <Layer level="OVERLAY">
                         <FontString parentKey="label" name="$parentString" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">

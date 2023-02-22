@@ -234,7 +234,7 @@ local function GridOnUpdate(self, elapsed)
     end
 end
 
-local function GridToggleFramesPreviewRaidPet(_, _, moveHudMode, hudMoving)
+local function GridToggleFramesPreviewRaidPet(moveHudMode, hudMoving)
     previewStep = max((previewStep + 1) % (#previewSteps + 1), hudMoving and 1 or 0)
 
     if previewStep == 0 or moveHudMode then
@@ -286,7 +286,7 @@ local function LoadPetGrid()
     container:ClearAllPoints()
     container:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 
-    RegisterMovableFrame(container, L["Raid pet's Grid"], "raid_pet_pos", "VerticalActionBarDummy", nil, {"default", "default"})
+    RegisterMovableFrame(container, L["Raid pet's Grid"], "raid_pet_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
 
     hooksecurefunc(container.gwMover, "StopMovingOrSizing", function(frame)
         local anchor = GetSetting("RAID_ANCHOR_PET")

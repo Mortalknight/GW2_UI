@@ -106,7 +106,7 @@ local function LoadDetailsSkin()
                     0, -- [4]
                 },
                 ["texture_background"] = "GW2_UI",
-                ["texture_background_file"] = "Interface/Addons/GW2_UI/textures/hud/castinbar-white",
+                ["texture_background_file"] = "Interface/Addons/GW2_UI/textures/hud/hud/castinbar-white",
                 ["texture_background_class_color"] = false,
                 ["fixed_texture_background_color"] = {
                     0, -- [1]
@@ -255,7 +255,7 @@ local function LoadDetailsSkin()
                     0, -- [4]
                 },
                 ["texture_background"] = "GW2_UI",
-                ["texture_background_file"] = "Interface/Addons/GW2_UI/textures/hud/castinbar-white",
+                ["texture_background_file"] = "Interface/Addons/GW2_UI/textures/hud/hud/castinbar-white",
                 ["texture_background_class_color"] = false,
                 ["fixed_texture_background_color"] = {
                     0, -- [1]

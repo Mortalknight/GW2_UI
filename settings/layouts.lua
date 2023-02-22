@@ -3,20 +3,20 @@ local L = GW.L
 
 local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdown, startUp)
     if updateDropdown then
-        GwSmallSettingsWindow.layoutView.savedLayoutDropDown.button.string:SetText(layout.name)
-        GwSmallSettingsWindow.layoutView.savedLayoutDropDown.button.layoutName = layout.name
-        GwSmallSettingsWindow.layoutView.savedLayoutDropDown.button.selectedId = layout.id
-        GwSmallSettingsWindow.layoutView.savedLayoutDropDown.button.setByUpdateFramePositionForLayout = true
+        GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.string:SetText(layout.name)
+        GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.layoutName = layout.name
+        GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.selectedId = layout.id
+        GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.setByUpdateFramePositionForLayout = true
 
-        GwSmallSettingsWindow.layoutView.specsDropDown.container.contentScroll.update(GwSmallSettingsWindow.layoutView.specsDropDown.container.contentScroll)
+        GwSmallSettingsContainer.layoutView.specsDropDown.container.contentScroll.update(GwSmallSettingsContainer.layoutView.specsDropDown.container.contentScroll)
 
-        GwSmallSettingsWindow.layoutView.delete:SetEnabled(not layout.profileLayout)
-        GwSmallSettingsWindow.layoutView.rename:SetEnabled(not layout.profileLayout)
+        GwSmallSettingsContainer.layoutView.delete:SetEnabled(not layout.profileLayout)
+        GwSmallSettingsContainer.layoutView.rename:SetEnabled(not layout.profileLayout)
     end
 
     for k, _ in pairs(layout.frames) do
         local frame = layout.frames[k]
-        if frame and frame.settingName and _G["Gw_" .. frame.settingName] then
+        if frame and frame.settingName and _G["Gw_" .. frame.settingName] and frame.point and frame.point.point and frame.point.relativePoint and frame.point.xOfs and frame.point.yOfs then
             _G["Gw_" .. frame.settingName]:ClearAllPoints()
             _G["Gw_" .. frame.settingName]:SetPoint(frame.point.point, UIParent, frame.point.relativePoint, frame.point.xOfs, frame.point.yOfs)
             if not startUp then
@@ -83,7 +83,7 @@ local function loadSpecDropDown(specwin)
         if id then
             specs[index] = {}
             specs[index].name = format("|T%s:14:14:0:0:64:64:4:60:4:60|t %s |cFF888888(%s)|r", icon, name, getglobal(role))
-            specs[index].id = index
+            specs[index].id = id
             specs[index].idx = index
         end
     end
@@ -244,11 +244,11 @@ local function SetupLayouts(layoutwin)
 
                 -- prevent profile layouts from deletion
                 if self.id and GW2UI_LAYOUTS[self.id] and GW2UI_LAYOUTS[self.id].profileLayout then
-                    GwSmallSettingsWindow.layoutView.delete:Disable()
-                    GwSmallSettingsWindow.layoutView.rename:Disable()
+                    GwSmallSettingsContainer.layoutView.delete:Disable()
+                    GwSmallSettingsContainer.layoutView.rename:Disable()
                 else
-                    GwSmallSettingsWindow.layoutView.delete:Enable()
-                    GwSmallSettingsWindow.layoutView.rename:Enable()
+                    GwSmallSettingsContainer.layoutView.delete:Enable()
+                    GwSmallSettingsContainer.layoutView.rename:Enable()
                 end
 
                 -- load layout
@@ -298,7 +298,7 @@ local function CreateProfileLayout()
         GW2UI_LAYOUTS[newIdx].profileId = profileIndex
         for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
             GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex] = {}
-            GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].settingName = moveableFrame.gw_Settings
+            GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].settingName = moveableFrame.setting
             GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].point = moveableFrame.savedPoint
 
             newMoverFrameIndex = newMoverFrameIndex + 1
@@ -322,7 +322,7 @@ local function CreateNewLayout(self)
             GW2UI_LAYOUTS[newIdx].profileLayout = false
             for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
                 GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex] = {}
-                GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].settingName = moveableFrame.gw_Settings
+                GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].settingName = moveableFrame.setting
                 GW2UI_LAYOUTS[newIdx].frames[newMoverFrameIndex].point = moveableFrame.savedPoint
 
                 newMoverFrameIndex = newMoverFrameIndex + 1
@@ -420,7 +420,7 @@ local function specSwitchHandlerOnEvent(self, event)
         end
     end
 
-    if layoutToUse then
+    if layoutToUse and self.smallSettingsFrame.layoutView.savedLayoutDropDown.container.contentScroll.displayButton.selectedId ~= layoutToUse.id then
         UpdateFramePositionForLayout(layoutToUse, self.layoutManager, true, event == "PLAYER_ENTERING_WORLD")
     end
 
@@ -432,26 +432,16 @@ end
 local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     --GW2UI_LAYOUTS = nil
     smallSettingsFrame.layoutView = CreateFrame("Frame", nil, smallSettingsFrame, "GwLayoutView")
-    smallSettingsFrame.layoutView.headerString:SetFont(UNIT_NAME_FONT, 14)
     smallSettingsFrame.layoutView.desc:SetFont(UNIT_NAME_FONT, 12)
+    smallSettingsFrame.layoutView.desc:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     smallSettingsFrame.layoutView.desc:SetText(L["Assign layouts to a spec. The layout will be automatically changed on a spec switch.\n\nLayouts has always priority for profile settings."])
-    smallSettingsFrame.layoutView.isExpanded = true
-    smallSettingsFrame.layoutViewToggle:SetScript("OnClick", function()
-        if smallSettingsFrame.layoutView.isExpanded then
-            smallSettingsFrame.layoutViewToggle.icon:SetTexCoord(1, 0, 1, 0)
-            smallSettingsFrame.layoutView.isExpanded = false
-            smallSettingsFrame.layoutView:Hide()
-        else
-            smallSettingsFrame.layoutViewToggle.icon:SetTexCoord(0, 1, 0, 1)
-            smallSettingsFrame.layoutView.isExpanded = true
-            smallSettingsFrame.layoutView:Show()
-        end
-    end)
 
     smallSettingsFrame.layoutView.savedLayoutDropDown.title:SetFont(DAMAGE_TEXT_FONT, 12)
+    smallSettingsFrame.layoutView.savedLayoutDropDown.title:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     smallSettingsFrame.layoutView.savedLayoutDropDown.title:SetText("Layouts")
 
     smallSettingsFrame.layoutView.specsDropDown.title:SetFont(DAMAGE_TEXT_FONT, 12)
+    smallSettingsFrame.layoutView.specsDropDown.title:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     smallSettingsFrame.layoutView.specsDropDown.title:SetText(SPECIALIZATION)
 
     -- start with the current profile layout add it at the timer function in case this is the first login
@@ -472,8 +462,8 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
                     smallSettingsFrame.layoutView.savedLayoutDropDown.button.layoutName = allLayouts[i].name
                     smallSettingsFrame.layoutView.savedLayoutDropDown.button.selectedId = allLayouts[i].id
 
-                    GwSmallSettingsWindow.layoutView.delete:Disable()
-                    GwSmallSettingsWindow.layoutView.rename:Disable()
+                    GwSmallSettingsContainer.layoutView.delete:Disable()
+                    GwSmallSettingsContainer.layoutView.rename:Disable()
                     break
                 end
             end
@@ -539,12 +529,13 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
 
     -- specswitch detaction things
     local specSwitchHandler = CreateFrame("Frame")
-    specSwitchHandler.currentSpecIdx = GetActiveTalentGroup() -- sometimes PLAYER_SPECIALIZATION_CHANGED fired twice, so we prevent a double call
+    specSwitchHandler.currentSpecIdx = GetActiveTalentGroup() -- sometimes ACTIVE_TALENT_GROUP_CHANGED fired twice, so we prevent a double call
 
     specSwitchHandler:RegisterEvent("PLAYER_ENTERING_WORLD") -- for start up
     specSwitchHandler:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     specSwitchHandler:SetScript("OnEvent", specSwitchHandlerOnEvent)
     specSwitchHandler.layoutManager = layoutManager
+    specSwitchHandler.smallSettingsFrame = smallSettingsFrame
 
     --GW2UI_PRIVATE_LAYOUTS= nil
 end

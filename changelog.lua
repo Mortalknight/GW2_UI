@@ -1,6 +1,19 @@
 local _, GW = ...
-local v = GW.vernotes
+local addChange = GW.addChange
 
+local ct = {
+  bug=1,
+  feature=2,
+  change=3,
+}
+GW.CHANGELOGS_TYPES = ct
+
+addChange("2.0.0",{
+    {ct.feature,[=[New settings frame]=]},
+    {ct.feature,[=[FUpdate many textures]=]},
+})
+
+--[[
 v("1.8.7 Wrath", [=[
     - Update player gear score and equip change
 ]=])
@@ -245,4 +258,4 @@ v("1.0.1 Wrath", [=[
 v("1.0.0 Wrath", [=[
     - First release
 ]=])
-
+]]

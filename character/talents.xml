@@ -125,7 +125,7 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="background" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\button_hover" hidden="true">
+                <Texture parentKey="background" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\uistuff\button_hover" hidden="true">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>

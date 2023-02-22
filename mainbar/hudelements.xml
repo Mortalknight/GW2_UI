@@ -20,74 +20,36 @@
         </Anchors>
     </Button>
 
-    <Button name="GwAddonToggle" virtual="true">
-        <Size x="40" y="40"/>
-        <Layers>
-            <Layer level="OVERLAY">
-                <Texture name="$parentTexture" parentKey="Texture" file="Interface/AddOns/GW2_UI/textures/icon-module">
-                    <Size x="35" y="35"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" x="0" y="0"></Anchor>
-                    </Anchors>
-                    <TexCoords left="0" right="0.25" top="0" bottom="0.25" />
-                </Texture>
-            </Layer>
-        </Layers>
+    <Button name="GwAddonToggle" frameStrata="MEDIUM" virtual="true">
+        <Size x="38" y="38"/>
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout">
+            <Size x="38" y="38"></Size>
+            <Anchors>
+                <Anchor point="CENTER"></Anchor>
+            </Anchors>
+        </NormalTexture>
+        <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout" alphaMode="ADD" alpha="0.5">
+            <Size x="38" y="38"></Size>
+            <Anchors>
+                <Anchor point="CENTER"></Anchor>
+            </Anchors>
+
+        </HighlightTexture>
+        <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout" alpha="0.5">
+            <Size x="38" y="38"></Size>
+            <Anchors>
+                <Anchor point="CENTER"></Anchor>
+            </Anchors>
+
+        </PushedTexture>
         <Frames>
             <Frame parentKey="container" hidden="true">
-                <Size x="40" y="35"/>
+                <Size x="35" y="30"/>
                 <Anchors>
                     <Anchor point="RIGHT" relativePoint="LEFT"></Anchor>
                 </Anchors>
-                <Layers>
-                    <Layer level="BACKGROUND">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
-                            <Size x="40" y="35"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
-                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="2" y="-2"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                    <Layer level="ARTWORK" textureSubLevel="2">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
-                            <Size x="2" y="2"></Size>
-                            <Anchors>
-                                <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT"></Anchor>
-                                <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
-                            <Size x="2" y="2"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
-                                <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
-                            <Size x="2" y="2"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
-                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
-                            <Size x="2" y="2"></Size>
-                            <Anchors>
-                                <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
-                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
-
             </Frame>
         </Frames>
-    </Button>
-    <Button name="GwMailButton" frameStrata="LOW" toplevel="true" virtual="true" hidden="true">
-        <Size x="30" y="30"/>
-        <NormalTexture file="Interface\AddOns\GW2_UI\textures\mail"></NormalTexture>
-        <PushedTexture file="Interface\AddOns\GW2_UI\textures\mail"></PushedTexture >
     </Button>
 
     <Button name="GwStanceBarButton" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate" virtual="true">
@@ -108,7 +70,7 @@
         <Size x="32" y="32"></Size>
         <Layers>
             <Layer>
-                <Texture file="Interface\AddOns\GW2_UI\textures\gradient">
+                <Texture file="Interface\AddOns\GW2_UI\textures\uistuff\gradient">
                     <Color r="0" g="0" b="0" a="0.7"></Color>
                     <Anchors>
                         <Anchor point="TOP" relativePoint="TOP"></Anchor>
@@ -215,7 +177,7 @@
         </Anchors>
         <Layers>
             <Layer>
-                <Texture file="Interface/AddOns/GW2_UI/textures/breathmeter">
+                <Texture file="Interface/AddOns/GW2_UI/textures/hud/breathmeter">
                     <Color r="0.2" b="0.2" g="0.2" a="0.5"></Color>
                     <Size x="258" y="22"></Size>
                     <Anchors>
@@ -230,7 +192,7 @@
                 <Anchors>
                     <Anchor point="LEFT" x="1"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/breathmeter"/>
+                <BarTexture file="Interface/AddOns/GW2_UI/textures/hud/breathmeter"/>
                 <Layers>
                     <Layer level="OVERLAY" textureSubLevel="2">
                         <FontString parentKey="name" text="" justifyH="CENTER">
@@ -249,7 +211,7 @@
         <Size x="20" y="4"></Size>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="-1">
-                <Texture name="$parentTexture" parentKey="texture" file="Interface\AddOns\GW2_UI\textures\chatframebackground">
+                <Texture name="$parentTexture" parentKey="texture" file="Interface\AddOns\GW2_UI\textures\chat\chatframebackground">
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                         <Anchor point="RIGHT" relativePoint="RIGHT" x="0" y="0"></Anchor>
@@ -259,14 +221,14 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="0">
-                <Texture name="$parentRight" file="Interface\AddOns\GW2_UI\textures\chatframeborder">
+                <Texture name="$parentRight" file="Interface\AddOns\GW2_UI\textures\chat\chatframeborder">
                     <Size x="2" y="2"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture name="$parentRight" file="Interface\AddOns\GW2_UI\textures\chatdockbg">
+                <Texture name="$parentRight" file="Interface\AddOns\GW2_UI\textures\chat\chatdockbg">
                     <Size x="2" y="25"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -275,7 +237,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="0">
-                <Texture name="$parentEditBox" parentKey="EditBox" file="Interface\AddOns\GW2_UI\textures\chateditboxmid">
+                <Texture name="$parentEditBox" parentKey="EditBox" file="Interface\AddOns\GW2_UI\textures\chat\chateditboxmid">
                     <Size x="2" y="32"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
@@ -293,7 +255,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\levelrewardframe">
+                <Texture name="$parentBackground" file="Interface\AddOns\GW2_UI\textures\hud\levelrewardframe">
                     <Size x="512" y="512"></Size>
                     <Anchors>
                         <Anchor point="CENTER"></Anchor>
@@ -329,20 +291,20 @@
                 </Anchors>
                 <Layers>
                     <layer level="BACKGROUND">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\levelrewardframe">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\hud\levelrewardframe">
                             <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                             <Size x="40" y="40"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\hud\levelreward-sep">
                             <Size x="512" y="2"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="TOP" y="2"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\hud\levelreward-sep">
                             <Size x="512" y="2"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
@@ -370,14 +332,14 @@
                 </Anchors>
                 <Layers>
                     <layer level="BACKGROUND">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\levelrewardframe">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\hud\levelrewardframe">
                             <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                             <Size x="40" y="40"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\hud\levelreward-sep">
                             <Size x="512" y="2"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
@@ -405,14 +367,14 @@
                 </Anchors>
                 <Layers>
                     <layer level="BACKGROUND">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\levelrewardframe">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\hud\levelrewardframe">
                             <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                             <Size x="40" y="40"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\hud\levelreward-sep">
                             <Size x="512" y="2"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
@@ -440,14 +402,14 @@
                 </Anchors>
                 <Layers>
                     <layer level="BACKGROUND">
-                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\levelrewardframe">
+                        <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\textures\hud\levelrewardframe">
                             <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
                             <Size x="40" y="40"></Size>
                             <Anchors>
                                 <Anchor point="LEFT" relativePoint="LEFT" x="10"></Anchor>
                             </Anchors>
                         </Texture>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\levelreward-sep">
+                        <Texture file="Interface\AddOns\GW2_UI\textures\hud\levelreward-sep">
                             <Size x="512" y="2"></Size>
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="BOTTOM" y="-2"></Anchor>
@@ -478,7 +440,7 @@
         </Anchors>
         <Layers>
             <Layer>
-                <Texture file="Interface\AddOns\GW2_UI\textures\mapshadow">
+                <Texture file="Interface\AddOns\GW2_UI\textures\hud\mapshadow">
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
@@ -495,7 +457,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\castingbars">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\units\castingbars">
                     <Size x="176" y="15"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -506,7 +468,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="3">
-                <Texture parentKey="latency" file="Interface\AddOns\GW2_UI\textures\castingbars">
+                <Texture parentKey="latency" file="Interface\AddOns\GW2_UI\textures\units\castingbars">
                     <Size x="176" y="15"></Size>
                     <Anchors>
                         <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
@@ -516,7 +478,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="2">
-                <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\castingbars">
+                <Texture parentKey="bar" file="Interface\AddOns\GW2_UI\textures\units\castingbars">
                     <Size x="176" y="15"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
@@ -525,7 +487,7 @@
                 </Texture>
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="4">
-                <Texture parentKey="spark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\statusbar-spark-white">
+                <Texture parentKey="spark" alphaMode="ADD" file="Interface\AddOns\GW2_UI\textures\uistuff\statusbar-spark-white">
                     <Size x="15" y="15"></Size>
                     <Anchors>
                         <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
@@ -564,7 +526,7 @@
         </Anchors>
         <Layers>
             <Layer level="ARTWORK" textureSubLevel="-8">
-                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\lfd-animation">
+                <Texture parentKey="background" file="Interface\AddOns\GW2_UI\textures\hud\lfd-animation">
                     <Size x="1" y="1"></Size>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -574,22 +536,5 @@
             </Layer>
         </Layers>
     </Frame>
-
-    <Button name="GwCalendarButton" virtual="true">
-        <Size x="40" y="40"/>
-        <NormalTexture file="Interface\AddOns\GW2_UI\textures\icon-calendar-Up"></NormalTexture>
-        <PushedTexture file="Interface\AddOns\GW2_UI\textures\icon-calendar"></PushedTexture>
-        <Layers>
-            <Layer level="OVERLAY">
-                <FontString name="GwDateText" parentKey="Text" justifyH="CENTER" justifyV="MIDDLE">
-                    <Size x="40" y="40"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
-                    </Anchors>
-
-                </FontString>
-            </Layer>
-        </Layers>
-    </Button>
 
 </Ui>

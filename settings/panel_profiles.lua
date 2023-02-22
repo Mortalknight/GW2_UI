@@ -6,6 +6,7 @@ local SetSetting = GW.SetSetting
 local ResetToDefault = GW.ResetToDefault
 local GetSettingsProfiles = GW.GetSettingsProfiles
 local AddForProfiling = GW.AddForProfiling
+local settingMenuToggle = GW.settingMenuToggle
 
 local ICONS = {}
 local ImportExportFrame = nil
@@ -52,13 +53,13 @@ local function loadProfiles(profilewin)
             slot.item.canExport = true
             slot.item.canRename = true
             slot.item.canCopy = true
-            slot.item.background:SetTexCoord(0, 1, 0, 0.5)
             slot.item.canActivate = true
+            slot.item.activeProfile:Hide()
 
             if currentProfile == validProfiles[idx].realIdx then
-                slot.item.background:SetTexCoord(0, 1, 0.5, 1)
                 slot.item.canActivate = false
                 slot.item.canDelete = false
+                slot.item.activeProfile:Show()
             end
 
             validProfiles[idx].profileCreatedDate = validProfiles[idx].profileCreatedDate or UNKNOWN
@@ -88,8 +89,7 @@ local function loadProfiles(profilewin)
     HybridScrollFrame_Update(profilewin, USED_PROFILE_HEIGHT, 433)
 end
 
-
-local function createImportExportFrame(settingsWindow)
+local function createImportExportFrame()
     local frame = CreateFrame("Frame", "GW_ImportExportFrame", UIParent)
 
     frame:SetSize(700, 600)
@@ -101,7 +101,7 @@ local function createImportExportFrame(settingsWindow)
 
     frame.bg = frame:CreateTexture(nil, "ARTWORK")
     frame.bg:SetAllPoints()
-    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/welcome-bg")
+    frame.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg")
 
     frame.header = frame:CreateFontString(nil, "OVERLAY")
     frame.header:SetFont(DAMAGE_TEXT_FONT, 30, "OUTLINE")
@@ -131,7 +131,7 @@ local function createImportExportFrame(settingsWindow)
     end)
     frame.scrollArea.bg = frame.scrollArea:CreateTexture(nil, "ARTWORK")
     frame.scrollArea.bg:SetAllPoints()
-    frame.scrollArea.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chatframebackground")
+    frame.scrollArea.bg:SetTexture("Interface/AddOns/GW2_UI/textures/chat/chatframebackground")
 
     -- added description here
     frame.description = frame:CreateFontString(nil, "OVERLAY")
@@ -151,11 +151,14 @@ local function createImportExportFrame(settingsWindow)
 
     frame.editBox:SetScript("OnEscapePressed", function() frame:Hide() end)
     frame.scrollArea:SetScrollChild(frame.editBox)
-    frame.editBox:SetScript("OnTextChanged", function(_, userInput)
+    frame.editBox:SetScript("OnTextChanged", function(self, userInput)
         if userInput then return end
         local _, max = frame.scrollArea.ScrollBar:GetMinMaxValues()
         for _ = 1, max do
             ScrollFrameTemplate_OnMouseWheel(frame.scrollArea, -1)
+        end
+        if strlen(self:GetText()) > 0 and string.sub(self:GetText(), -1) == "=" then
+            frame.decode:Enable()
         end
     end)
 
@@ -177,7 +180,7 @@ local function createImportExportFrame(settingsWindow)
         local profileName, profilePlayer, version = GW.ImportProfile(frame.editBox:GetText())
 
         frame.result:SetText("")
-        if profileName and profilePlayer and version == "Classic" then
+        if profileName and profilePlayer and version == "Retail" then
             frame.subheader:SetText(profileName .. " - " .. profilePlayer .. " - " .. version)
             frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully imported!"])
             frame.editBox:SetText("")
@@ -207,6 +210,7 @@ local function createImportExportFrame(settingsWindow)
             local importString = format("%s::%s::%s::%s", decodedString, profileName, profilePlayer, version)
             frame.editBox:SetText(importString)
             frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully decoded!"])
+            frame.decode:Disable()
         end
     end)
 
@@ -244,7 +248,7 @@ local function delete_OnClick(self)
         function()
             deleteProfile(p.profileID)
             loadProfiles(ProfileWin)
-            GwSmallSettingsWindow.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsWindow.layoutView.savedLayoutDropDown.container.contentScroll)
+            GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll)
         end
     )
 end
@@ -395,7 +399,6 @@ local function item_OnEnter(self)
     if self.canCopy then
         self.settingsButton.dropdown.copy:Show()
     end
-    self.background:SetBlendMode("ADD")
 end
 AddForProfiling("panel_profiles", "item_OnEnter", item_OnEnter)
 
@@ -424,7 +427,6 @@ local function item_OnLeave(self)
     if self.canCopy then
         self.settingsButton.dropdown.copy:Hide()
     end
-    self.background:SetBlendMode("BLEND")
 end
 AddForProfiling("panel_profiles", "item_OnLeave", item_OnLeave)
 
@@ -434,7 +436,7 @@ local function addProfile(name, profileData, copy)
 
     if copy then
         GW2UI_SETTINGS_PROFILES[newIdx] = profileData
-        GW2UI_SETTINGS_PROFILES[newIdx].profilename = name
+        GW2UI_SETTINGS_PROFILES[newIdx]["profilename"] = name
     elseif profileData then
         GW2UI_SETTINGS_PROFILES[newIdx] = profileData
     else
@@ -452,7 +454,6 @@ AddForProfiling("panel_profiles", "addProfile", addProfile)
 
 local function ItemActivateButtonOnEnter(self, triggeredFromParent)
     if self:GetParent().canActivate then
-        self.icon:SetBlendMode("ADD")
         self.icon:SetAlpha(0.5)
         self.hint:Show()
 
@@ -463,7 +464,6 @@ local function ItemActivateButtonOnEnter(self, triggeredFromParent)
 end
 
 local function ItemActivateButtonOnLeave(self, triggeredFromParent)
-    self.icon:SetBlendMode("BLEND")
     self.icon:SetAlpha(1)
     self.hint:Hide()
 
@@ -533,7 +533,7 @@ local function collectAllIcons()
                 if (isKnown and numSlots > 0) then
                     for k = 1, numSlots do
                         local spellID, _, isKnownSlot = GetFlyoutSlotInfo(ID, k)
-                        if isKnownSlot then
+                        if isKnownSlot and spellID then
                             local fileID = GetSpellTexture(spellID)
                             if fileID then
                                 activeIcons[fileID] = true
@@ -555,8 +555,28 @@ local function collectAllIcons()
     GetMacroItemIcons(ICONS)
 end
 
+--copied from character.lua needs to be removed later
+local function CharacterMenuButton_OnLoad(self, odd)
+    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    if odd then
+        self:ClearNormalTexture()
+    else
+        self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
+    end
+    self:GetFontString():SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    self:GetFontString():SetShadowColor(0, 0, 0, 0)
+    self:GetFontString():SetShadowOffset(1, -1)
+    self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14)
+    self:GetFontString():SetJustifyH("LEFT")
+    self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
+end
+
 local function LoadProfilesPanel(sWindow)
-    local p = CreateFrame("Frame", "TgWEST", sWindow.panels, "GwSettingsProfilesPanelTmpl")
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsProfilePanelTmpl")
+
+    CharacterMenuButton_OnLoad(p.menu.newProfile, true)
+    CharacterMenuButton_OnLoad(p.menu.importProfile, false)
+
     ProfileWin = p.profileScroll
 
     collectAllIcons()
@@ -570,13 +590,12 @@ local function LoadProfilesPanel(sWindow)
 
     p.resetToDefaultFrame = CreateFrame("Button", nil, p, "GwProfileItemTmpl")
     p.resetToDefaultFrame:SetPoint("TOPLEFT", 5, -65)
-    p.resetToDefaultFrame:SetWidth(p:GetWidth() - 15)
 
     p.resetToDefaultFrame:SetScript("OnEnter", item_OnEnter)
     p.resetToDefaultFrame:SetScript("OnLeave", item_OnLeave)
     item_OnLoad(p.resetToDefaultFrame.item)
 
-    p.resetToDefaultFrame.item.activateButton.icon:SetTexture(135879)
+    p.resetToDefaultFrame.item.activateButton.icon:SetTexture("Interface/icons/inv_corgi2")
 
     p.resetToDefaultFrame.item.hasOptions = false
     p.resetToDefaultFrame.item.canDelete = false
@@ -603,9 +622,7 @@ local function LoadProfilesPanel(sWindow)
     p.resetToDefaultFrame.item.defaultSettings:Show()
     p.resetToDefaultFrame.item:Show()
 
-    p.createNewProfile = CreateFrame("Button", nil, p.resetToDefaultFrame, "GwCreateNewProfileTmpl")
-    p.createNewProfile:SetText(NEW_COMPACT_UNIT_FRAME_PROFILE)
-    p.createNewProfile:SetWidth(p.createNewProfile:GetTextWidth() + 10)
+    p.menu.newProfile:SetText(NEW_COMPACT_UNIT_FRAME_PROFILE)
     local fnGCNP_OnClick = function()
         GW.InputPrompt(
             NEW_COMPACT_UNIT_FRAME_PROFILE,
@@ -615,12 +632,9 @@ local function LoadProfilesPanel(sWindow)
             end
         )
     end
-    p.createNewProfile:SetScript("OnClick", fnGCNP_OnClick)
-    p.createNewProfile:SetPoint("TOPLEFT", 5, -75)
+    p.menu.newProfile:SetScript("OnClick", fnGCNP_OnClick)
 
-    p.importProfile = CreateFrame("Button", nil, p.resetToDefaultFrame, "GwCreateNewProfileTmpl")
-    p.importProfile:SetText(L["Import Profile"])
-    p.importProfile:SetWidth( p.importProfile:GetTextWidth() + 10)
+    p.menu.importProfile:SetText(L["Import Profile"])
     local fnGCIP_OnClick = function()
         ImportExportFrame:Show()
         ImportExportFrame.header:SetText(L["Import Profile"])
@@ -633,23 +647,21 @@ local function LoadProfilesPanel(sWindow)
         ImportExportFrame.result:SetText("")
         ImportExportFrame.editBox:SetFocus()
     end
-    p.importProfile:SetScript("OnClick", fnGCIP_OnClick)
-    p.importProfile:SetPoint("TOPLEFT", p.createNewProfile, p.createNewProfile:GetTextWidth() + 25, 0)
-
-    local fnGSPF_OnShow = function()
-        sWindow.background:SetTexture("Interface/AddOns/GW2_UI/textures/profiles/profiles-bg")
-    end
-    local fnGSPF_OnHide = function()
-        sWindow.background:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagbg")
-    end
-    p:SetScript("OnShow", fnGSPF_OnShow)
-    p:SetScript("OnHide", fnGSPF_OnHide)
+    p.menu.importProfile:SetScript("OnClick", fnGCIP_OnClick)
 
     ProfileWin.update = loadProfiles
-    ProfileWin.scrollBar.doNotHide = true
+    ProfileWin.scrollBar.doNotHide = false
     ProfileSetup(ProfileWin)
 
-    createCat(L["Profiles"], L["Add and remove profiles."], p, 5, "Interface/AddOns/GW2_UI/textures/settingsiconbg-2")
+    createCat(L["PROFILES"], L["Add and remove profiles."], p, nil, nil, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_profiles")
+
+    p:SetScript("OnShow", function()
+        settingMenuToggle(false)
+        sWindow.headerString:SetWidth(sWindow.headerString:GetStringWidth())
+        local s = L["PROFILES"]
+
+        sWindow.headerBreadcrumb:SetText(s:lower():gsub("^%l", string.upper))
+    end)
 
     ImportExportFrame = createImportExportFrame()
 end

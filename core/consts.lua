@@ -188,14 +188,14 @@ GW.FACTION_COLOR = {
 }
 
 local TARGET_FRAME_ART = {
-    ["minus"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow",
-    ["normal"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow",
-    ["elite"] = "Interface\\AddOns\\GW2_UI\\textures\\targetShadowElit",
-    ["rare"] = "Interface\\AddOns\\GW2_UI\\textures\\targetShadowRare",
-    ["rareelite"] = "Interface\\AddOns\\GW2_UI\\textures\\targetShadowRare",
-    ["worldboss"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow",
-    ["boss"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow_boss",
-    ["realboss"] = "Interface\\AddOns\\GW2_UI\\textures\\targetshadow-raidboss" 
+    ["minus"] = "Interface\\AddOns\\GW2_UI\\textures\\units\\targetshadow",
+    ["normal"] = "Interface\\AddOns\\GW2_UI\\textures\\units\\targetshadow",
+    ["elite"] = "Interface\\AddOns\\GW2_UI\\textures\\units\\targetShadowElit",
+    ["rare"] = "Interface\\AddOns\\GW2_UI\\textures\\units\\targetShadowRare",
+    ["rareelite"] = "Interface\\AddOns\\GW2_UI\\textures\\units\\targetShadowRare",
+    ["worldboss"] = "Interface\\AddOns\\GW2_UI\\textures\\units\\targetshadow",
+    ["boss"] = "Interface\\AddOns\\GW2_UI\\textures\\units\\targetshadow_boss",
+    ["realboss"] = "Interface\\AddOns\\GW2_UI\\textures\\units\\targetshadow-raidboss"
 }
 GW.TARGET_FRAME_ART = TARGET_FRAME_ART
 
@@ -309,3 +309,5 @@ local AURAS_MISSING = {
     --1459    -- Arcane Intellect
 }
 GW.AURAS_MISSING = AURAS_MISSING
+
+GW.WINDOW_FADE_DURATION = 0.2

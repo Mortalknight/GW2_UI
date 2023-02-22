@@ -54,21 +54,21 @@ local function CreateSection(width, height, parent, anchor1, anchorTo, anchor2, 
         Divider:SetHeight(2)
         Divider:SetPoint("LEFT", section.Header, "LEFT", -20, 0)
         Divider:SetPoint("RIGHT", section.Header, "RIGHT", 20, 0)
-        Divider:SetTexture("Interface/AddOns/GW2_UI/textures/levelreward-sep")
+        Divider:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep")
         section.Header.Divider = Divider
     else
         local leftDivider = section.Header:CreateTexture(nil, "ARTWORK")
         leftDivider:SetHeight(2)
         leftDivider:SetPoint("LEFT", section.Header, "LEFT", -10, 0)
         leftDivider:SetPoint("RIGHT", section.Header.Text, "LEFT", 20, 0)
-        leftDivider:SetTexture("Interface/AddOns/GW2_UI/textures/levelreward-sep")
+        leftDivider:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep")
         section.Header.LeftDivider = leftDivider
 
         local rightDivider = section.Header:CreateTexture(nil, "ARTWORK")
         rightDivider:SetHeight(2)
         rightDivider:SetPoint("RIGHT", section.Header, "RIGHT", 10, 0)
         rightDivider:SetPoint("LEFT", section.Header.Text, "RIGHT", -20, 0)
-        rightDivider:SetTexture("Interface/AddOns/GW2_UI/textures/levelreward-sep")
+        rightDivider:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep")
         section.Header.RightDivider = rightDivider
     end
 
@@ -77,7 +77,7 @@ end
 
 local function CreateCreditsFrame()
     local BackdropFrame = {
-        bgFile = "Interface/AddOns/GW2_UI/textures/welcome-bg",
+        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg",
         edgeFile = "",
         tile = false,
         tileSize = 64,

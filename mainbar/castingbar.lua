@@ -193,7 +193,7 @@ local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
     TogglePlayerEnhancedCastbar(GwCastingBar, GwCastingBar.showDetails)
 
     if name == "GwCastingBarPlayer" then
-        RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", "GwCastFrameDummy", nil, {"default", "scaleable"})
+        RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", ALL .. ",Blizzard", nil, {"default", "scaleable"})
         GwCastingBar:ClearAllPoints()
         GwCastingBar:SetPoint("TOPLEFT", GwCastingBar.gwMover)
     else

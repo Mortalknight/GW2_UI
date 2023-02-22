@@ -9,62 +9,25 @@ local StrUpper = GW.StrUpper
 local StrLower = GW.StrLower
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
-
-local function CreateProfileSwitcher(panel, profiles, panels)
-    local valuePrev = "container"
-    for key, value in pairs(profiles) do
-        panel.selectProfile[value] = CreateFrame("Button", nil, panel.selectProfile.container, "GwDropDownItemTmpl")
-        panel.selectProfile[value]:SetWidth(120)
-        panel.selectProfile[value]:SetPoint("TOPRIGHT", panel.selectProfile[valuePrev], "BOTTOMRIGHT")
-        panel.selectProfile[value].string:SetFont(UNIT_NAME_FONT, 12)
-        panel.selectProfile[value].string:SetText(getglobal(value))
-        panel.selectProfile[value].checkbutton:Hide()
-        panel.selectProfile[value].soundButton:Hide()
-        panel.selectProfile[value].string:ClearAllPoints()
-        panel.selectProfile[value].string:SetPoint("LEFT", 5, 0)
-        panel.selectProfile[value].type = value
-        panel.selectProfile[value].panel = panels[key]
-        panel.selectProfile[value]:SetScript("OnClick", function(self)
-            for _, p in pairs(panels) do
-                p.selectProfile.string:SetText(self.string:GetText())
-                p.selectProfile.container:Hide()
-                p.selectProfile.active = self.panel
-                p:Hide()
-            end
-            self.panel:Show()
-        end)
-
-        valuePrev = value
-    end
-
-    panel.selectProfile.active = panels[1]
-    panel.selectProfile:SetScript("OnClick", function(self)
-        if self.container:IsShown() then
-            self.container:Hide()
-        else
-            self.container:Show()
-        end
-    end)
-end
+local settingsMenuAddButton = GW.settingsMenuAddButton
 
 -- Profiles
-local function LoadRaidProfile(sWindow)
-    local p = CreateFrame("Frame", "GwSettingsRaidPanel", sWindow.panels, "GwSettingsRaidPanelTmpl")
+local function LoadRaidProfile(panel)
+    local p = CreateFrame("Frame", "GwSettingsRaidPanel", panel, "GwSettingsRaidPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.header:SetText(RAID)
+    p.header:SetText(L["Group Frames"] )
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit the party and raid options to suit your needs."])
 
-    p.selectProfile.label:SetText(L["Profiles"])
-    p.selectProfile.string:SetFont(UNIT_NAME_FONT, 12)
-    p.selectProfile.string:SetText(RAID)
-    p.selectProfile.container:SetParent(p)
-    p.selectProfile.type = "RAID"
+    p.header:SetWidth(p.header:GetStringWidth())
+    p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.breadcrumb:SetText(RAID)
 
     p.buttonRaidPreview:SetScript("OnClick", function()
-        GW.GridToggleFramesPreviewRaid(_, _, false, false)
+        GW.GridToggleFramesPreviewRaid(false, false)
     end)
     p.buttonRaidPreview:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
@@ -264,23 +227,22 @@ local function LoadRaidProfile(sWindow)
     return p
 end
 
-local function LoadRaidPetProfile(sWindow)
-    local p = CreateFrame("Frame", "GwSettingsRaidPetPanel", sWindow.panels, "GwSettingsRaidPanelTmpl")
+local function LoadRaidPetProfile(panel)
+    local p = CreateFrame("Frame", "GwSettingsRaidPetPanel", panel, "GwSettingsRaidPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.header:SetText(PET)
+    p.header:SetText(L["Group Frames"] )
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit the party and raid options to suit your needs."])
 
-    p.selectProfile.label:SetText(L["Profiles"])
-    p.selectProfile.string:SetFont(UNIT_NAME_FONT, 12)
-    p.selectProfile.string:SetText(PET)
-    p.selectProfile.container:SetParent(p)
-    p.selectProfile.type = "RAID_PET"
+    p.header:SetWidth(p.header:GetStringWidth())
+    p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.breadcrumb:SetText(PET)
 
     p.buttonRaidPreview:SetScript("OnClick", function()
-        GW.GridToggleFramesPreviewRaidPet(_, _, false, false)
+        GW.GridToggleFramesPreviewRaidPet(false, false)
     end)
     p.buttonRaidPreview:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
@@ -466,23 +428,22 @@ local function LoadRaidPetProfile(sWindow)
     return p
 end
 
-local function LoadPartyProfile(sWindow)
-    local p = CreateFrame("Frame", "GwSettingsRaidPartyPanel", sWindow.panels, "GwSettingsRaidPanelTmpl")
+local function LoadPartyProfile(panel)
+    local p = CreateFrame("Frame", "GwSettingsRaidPartyPanel", panel, "GwSettingsRaidPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.header:SetText(RAID)
+    p.header:SetText(L["Group Frames"])
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit the party and raid options to suit your needs."])
 
-    p.selectProfile.label:SetText(L["Profiles"])
-    p.selectProfile.string:SetFont(UNIT_NAME_FONT, 12)
-    p.selectProfile.string:SetText(RAID)
-    p.selectProfile.container:SetParent(p)
-    p.selectProfile.type = "PARTY"
+    p.header:SetWidth(p.header:GetStringWidth())
+    p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p.breadcrumb:SetText(PARTY)
 
     p.buttonRaidPreview:SetScript("OnClick", function()
-        GW.GridToggleFramesPreviewParty(_, _, false, false)
+        GW.GridToggleFramesPreviewParty(false, false)
     end)
     p.buttonRaidPreview:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
@@ -683,20 +644,16 @@ local function LoadPartyProfile(sWindow)
 end
 
 local function LoadRaidPanel(sWindow)
-    local profileNames = {"RAID", "PARTY", "PET"}
-    local profilePanles = {LoadRaidProfile(sWindow), LoadPartyProfile(sWindow), LoadRaidPetProfile(sWindow)}
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
+    p.header:Hide()
+    p.sub:Hide()
 
-    createCat(RAID, L["Edit the group settings."], profilePanles[1], 8, nil, nil, nil, profilePanles)
-
-    CreateProfileSwitcher(profilePanles[1], profileNames, profilePanles)
-    CreateProfileSwitcher(profilePanles[2], profileNames, profilePanles)
-    CreateProfileSwitcher(profilePanles[3], profileNames, profilePanles)
+    local profilePanles = {LoadRaidProfile(p), LoadPartyProfile(p), LoadRaidPetProfile(p)}
+    createCat(L["Group Frames"], L["Edit the group settings."], p, nil, profilePanles)
+    settingsMenuAddButton(L["Group Frames"], p, profilePanles)
 
     InitPanel(profilePanles[1], false)
     InitPanel(profilePanles[2], false)
     InitPanel(profilePanles[3], false)
-
-    profilePanles[2]:Hide()
-    profilePanles[3]:Hide()
 end
 GW.LoadRaidPanel = LoadRaidPanel

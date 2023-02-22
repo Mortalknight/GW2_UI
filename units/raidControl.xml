@@ -82,7 +82,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
 
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="-5" y="3"></Anchor>
@@ -132,14 +132,14 @@
                 </Layers>
                 <Frames>
                     <Button parentKey="readyCheck" inherits="GwStandardButton" text="READY_CHECK">
-                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/readycheck-button"></NormalTexture>
+                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button"></NormalTexture>
                         <Size x="190" y="20" />
                         <Anchors>
                             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-155"></Anchor>
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY">
-                                <Texture file="Interface/AddOns/GW2_UI/textures/readycheck-icon">
+                                <Texture file="Interface/AddOns/GW2_UI/textures/party/readycheck-icon">
                                     <Size x="15" y="15"></Size>
                                     <Anchors>
                                         <Anchor point="LEFT" relativePoint="LEFT" x="2" y="-1"></Anchor>

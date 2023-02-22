@@ -330,6 +330,18 @@ local function updateHotkey(self)
         return
     end
 
+    if GetSetting("BUTTON_ASSIGNMENTS") then
+        hotkey:Show()
+        if self.hkBg then
+            self.hkBg.texture:Show()
+        end
+    else
+        hotkey:Hide()
+        if self.hkBg then
+            self.hkBg.texture:Hide()
+        end
+    end
+
     text = gsub(text, "(s%-)", "S")
     text = gsub(text, "(a%-)", "A")
     text = gsub(text, "(c%-)", "C")
@@ -349,7 +361,7 @@ local function updateHotkey(self)
     text = gsub(text, KEY_MOUSEWHEELDOWN, 'MwD')
     text = gsub(text, KEY_MOUSEWHEELUP, 'MwU')
 
-    if hotkey:GetText() == RANGE_INDICATOR or not GetSetting("BUTTON_ASSIGNMENTS") then
+    if hotkey:GetText() == RANGE_INDICATOR then
         hotkey:SetText("")
     else
         hotkey:SetText(text)
@@ -384,22 +396,32 @@ local function showBackdrop(self)
 end
 GW.AddForProfiling("Actionbars2", "showBackdrop", showBackdrop)
 
+local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
+    button.HotKey:ClearAllPoints()
+    if isPetButton or isStanceButton then
+        button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 5)
+    elseif isMainBar then
+        button.HotKey:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, 0)
+        button.HotKey:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+        button.HotKey:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
+        button.HotKey:SetTextColor(1, 1, 1)
+    else
+        button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 0)
+    end
+    button.HotKey:SetJustifyH("CENTER")
+end
+GW.FixHotKeyPosition = FixHotKeyPosition
+
 local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton, isPet)
     local btn = _G[buttonName]
 
     if btn.icon ~= nil then
         btn.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     end
-    if btn.HotKey ~= nil then
-        btn.HotKey:ClearAllPoints()
-        if isPet then
-            btn.HotKey:SetPoint("CENTER", btn, "BOTTOM", 0, 5)
-        else
-            btn.HotKey:SetPoint("CENTER", btn, "BOTTOM", 0, 0)
-        end
-        btn.HotKey:SetJustifyH("CENTER")
+    if btn.HotKey then
+        FixHotKeyPosition(btn, isStanceButton, isPet)
     end
-    if btn.Count ~= nil then
+    if btn.Count then
         btn.Count:ClearAllPoints()
         btn.Count:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -3, -3)
         btn.Count:SetJustifyH("RIGHT")
@@ -441,9 +463,9 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         btn.SpellHighlightTexture:SetSize(btn:GetWidth(), btn:GetWidth())
     end
 
-    btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/actionbutton-pressed")
-    btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
-    btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+    btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
+    btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
+    btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
 
     updateMacroName(btn)
 
@@ -713,14 +735,14 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     fmMultibar:SetSize(used_width, used_height)
 
     if barName == "MultiBarLeft" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, nil, FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR4_TEXT, barName, ALL .. "," .. BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, nil, FlyoutDirection)
     elseif barName == "MultiBarRight" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, nil, FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR3_TEXT, barName, ALL .. "," .. BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, nil, FlyoutDirection)
     elseif barName == "MultiBarBottomLeft" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, true, FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR1_TEXT, barName, ALL .. "," .. BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, true, FlyoutDirection)
         lm:RegisterMultiBarLeft(fmMultibar)
     elseif barName == "MultiBarBottomRight" then
-        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, "VerticalActionBarDummy", nil, {"default", "scaleable"}, true, FlyoutDirection)
+        RegisterMovableFrame(fmMultibar, SHOW_MULTIBAR2_TEXT, barName, ALL .. "," .. BINDING_HEADER_ACTIONBAR, nil, {"default", "scaleable"}, true, FlyoutDirection)
         lm:RegisterMultiBarRight(fmMultibar)
     end
 
@@ -1104,15 +1126,15 @@ local function changeFlyoutStyle(self)
 
     self.FlyoutBorder:Hide()
     self.FlyoutBorderShadow:Hide()
-    SpellFlyoutHorizontalBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background")
-    SpellFlyoutVerticalBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background")
-    SpellFlyoutBackgroundEnd:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Tooltip-Background")
+    SpellFlyoutHorizontalBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\UI-Tooltip-Background")
+    SpellFlyoutVerticalBackground:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\UI-Tooltip-Background")
+    SpellFlyoutBackgroundEnd:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\UI-Tooltip-Background")
 
     local i = 1
     local btn = _G["SpellFlyoutButton1"]
     while btn do
-        btn:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\actionbutton-pressed")
-        btn:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\UI-Quickslot-Depress")
+        btn:SetPushedTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\actionbutton-pressed")
+        btn:SetHighlightTexture("Interface\\AddOns\\GW2_UI\\textures\\uistuff\\UI-Quickslot-Depress")
         i = i + 1
         btn = _G["SpellFlyoutButton" .. i]
     end
@@ -1214,6 +1236,7 @@ local function LoadActionBars(lm)
             if fmMultiBar.gw_IsEnabled then
                 for i = 1, 12 do
                     updateHotkey(fmMultiBar.gw_Buttons[i])
+                    FixHotKeyPosition(fmMultiBar.gw_Buttons[i], false, false, y == 0)
                 end
             end
         end

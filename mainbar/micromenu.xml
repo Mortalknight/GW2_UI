@@ -1,11 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwMicroButtonFrameTmpl" topLevel="true" frameStrata="HIGH" inherits="SecureHandlerEnterLeaveTemplate" virtual="true">
-        <Size x="280" y="40"/>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="1"></Anchor>
-        </Anchors>
+    <Frame name="GwMicroButtonFrameTmpl" topLevel="true" frameStrata="LOW" inherits="SecureHandlerEnterLeaveTemplate" virtual="true">
+        <Size x="408" y="41"/>
         <Frames>
             <Frame parentKey="cf" inherits="SecureFrameTemplate">
                 <Anchors>
@@ -14,8 +11,8 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture parentKey="bg" file="Interface/AddOns/GW2_UI/textures/windowcornermenu">
-                            <Size x="350" y="64"></Size>
+                        <Texture parentKey="bg" file="Interface/AddOns/GW2_UI/textures/uistuff/windowcornermenu">
+                            <Size x="512" y="128"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT"/>
                             </Anchors>

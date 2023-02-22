@@ -155,7 +155,7 @@ local function LoadCustomAuraTracker()
     eventFrame:Hide()
     eventFrame.icons = {}
 
-    GW.RegisterMovableFrame(eventFrame, "Aura Tracker", "AuraTrackerPos", "VerticalActionBarDummy", nil, {"default", "scaleable"})
+    GW.RegisterMovableFrame(eventFrame, "Aura Tracker", "AuraTrackerPos", ALL, nil, {"default", "scaleable"})
     eventFrame:SetPoint("TOPLEFT", eventFrame.gwMover)
 
     GW.UpdateTrackedAuras()

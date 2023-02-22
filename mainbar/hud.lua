@@ -153,8 +153,8 @@ local function xpbar_OnEvent(self, event)
 
     self.NextLevel:SetTextColor(1, 1, 1)
     self.CurrentLevel:SetTextColor(1, 1, 1)
-    self.labelRight:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label")
-    self.labelLeft:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\level-label")
+    self.labelRight:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label")
+    self.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label")
 
     local GainBigExp = false
     local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (GW.mylevel / GetMaxPlayerLevel())))
@@ -491,17 +491,17 @@ local function selectBg(self)
     if not GetSetting("HUD_BACKGROUND") or not GetSetting("HUD_SPELL_SWAP") then
         return
     end
-    local right = "Interface\\AddOns\\GW2_UI\\textures\\rightshadow"
-    local left = "Interface\\AddOns\\GW2_UI\\textures\\leftshadow"
+    local right = "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow"
+    local left = "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadow"
 
     if UnitIsDeadOrGhost("player") then
-        right = "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_dead"
-        left = "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_dead"
+        right = "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow_dead"
+        left = "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadow_dead"
     end
 
     if UnitAffectingCombat("player") then
-        right = "Interface\\AddOns\\GW2_UI\\textures\\rightshadowcombat"
-        left = "Interface\\AddOns\\GW2_UI\\textures\\leftshadowcombat"
+        right = "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadowcombat"
+        left = "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadowcombat"
 
         local bolFound = false
         for i = 1, 40 do
@@ -568,56 +568,56 @@ GW.AddForProfiling("hud", "combatHealthState", combatHealthState)
 
 registerActionHudAura(
     31842,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadow_holy",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow_holy",
     "player"
 )
 registerActionHudAura(
     31884,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_holy",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_holy",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadow_holy",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow_holy",
     "player"
 )
 registerActionHudAura(
     5487,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_bear",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_bear",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadow_bear",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow_bear",
     "player"
 )
 registerActionHudAura(
     768,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_cat",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_cat",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadow_cat",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow_cat",
     "player"
 )
 registerActionHudAura(
     51271,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_frost",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_frost",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadow_frost",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow_frost",
     "player"
 )
 registerActionHudAura(
     187827,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_metamorph",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_metamorph",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadow_metamorph",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow_metamorph",
     "player"
 )
 registerActionHudAura(
     215785,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_fire",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_fire",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadow_shaman_fire",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow_shaman_fire",
     "player"
 )
 registerActionHudAura(
     77762,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_fire",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_fire",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadow_shaman_fire",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow_shaman_fire",
     "player"
 )
 registerActionHudAura(
     201846,
-    "Interface\\AddOns\\GW2_UI\\textures\\leftshadow_shaman_storm",
-    "Interface\\AddOns\\GW2_UI\\textures\\rightshadow_shaman_storm",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\leftshadow_shaman_storm",
+    "Interface\\AddOns\\GW2_UI\\textures\\hud\\rightshadow_shaman_storm",
     "player"
 )
 

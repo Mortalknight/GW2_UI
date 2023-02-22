@@ -41,7 +41,7 @@ local function MirrorTimer_Show(timer, value, maxvalue, scale, paused, label)
     local color = MirrorTimerColors[timer]
     dialog.bar:SetMinMaxValues(0, (maxvalue / 1000))
     dialog.bar:SetValue(dialog.value)
-    dialog.bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/castinbar-white")
+    dialog.bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
     dialog.bar:SetStatusBarColor(color.r, color.g, color.b)
     dialog:Show()
 end

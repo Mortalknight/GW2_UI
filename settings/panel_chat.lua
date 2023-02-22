@@ -7,6 +7,7 @@ local addOptionText = GW.AddOptionText
 local addOptionDropdown = GW.AddOptionDropdown
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function LoadChatPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
@@ -17,7 +18,8 @@ local function LoadChatPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Edit chat settings."])
 
-    createCat(CHAT, nil, p, 3, nil, {p}, "Interface/AddOns/GW2_UI/textures/bubble_up")
+    createCat(CHAT, nil, p, {p})
+    settingsMenuAddButton(CHAT, p, {})
 
     addOption(p.scroll.scrollchild, L["GW2 chat message style"], L["Changes the chat font, timestamp color and name display"], "CHAT_USE_GW2_STYLE", function() GW.ShowRlPopup = true end, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Fade Chat"], L["Allow the chat to fade when not in use."], "CHATFRAME_FADE", nil, nil, {["CHATFRAME_ENABLED"] = true})
@@ -29,7 +31,19 @@ local function LoadChatPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Class Color Mentions"], L["Use class color for the names of players when they are mentioned."], "CHAT_CLASS_COLOR_MENTIONS", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Emotion Icons"], L["Display emotion icons in chat"], "CHAT_KEYWORDS_EMOJI", function(value) GW_EmoteFrame:Hide(); for _, frameName in ipairs(CHAT_FRAMES) do if _G[frameName].buttonEmote then _G[frameName].buttonEmote:SetShown(value); end end end, nil, {["CHATFRAME_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Add timestamp to all messages"], nil, "CHAT_ADD_TIMESTAMP_TO_ALL", nil, nil, {["CHATFRAME_ENABLED"] = true})
-
+    addOptionSlider(
+        p.scroll.scrollchild,
+        L["Maximum lines of 'Copy Chat Frame'"],
+        L["Set the maximum number of lines displayed in the Copy Chat Frame"],
+        "CHAT_MAX_COPY_CHAT_LINES",
+        nil,
+        50,
+        500,
+        nil,
+        0,
+        {["CHATFRAME_ENABLED"] = true},
+        1
+    )
     local soundKeys = {}
     for _, sound in next, GW.Libs.LSM:List("sound") do
         tinsert(soundKeys, sound)

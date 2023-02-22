@@ -116,57 +116,42 @@ local function updateGuildButton(self, event)
 end
 GW.AddForProfiling("micromenu", "updateGuildButton", updateGuildButton)
 
-local AddonMemoryArray = {}
-local function LatencyInfoToolTip()
-    local frameRate = GW.RoundInt(GetFramerate())
-    local down, up, lagHome, lagWorld = GetNetStats()
-    local addonMemory = 0
-    local numAddons = GetNumAddOns()
-
-    -- wipe and reuse our memtable to avoid temp pre-GC bloat on the tooltip (still get a bit from the sort)
-    for i = 1, #AddonMemoryArray do
-        AddonMemoryArray[i]["addonIndex"] = 0
-        AddonMemoryArray[i]["addonMemory"] = 0
+local function hook_MainMenuMicroButton_OnUpdate()
+    -- the main menu button routinely updates its texture based on streaming download
+    -- status and net performance; we undo those changes here on each update interval
+    local m = MainMenuMicroButton
+    if m.updateInterval ~= PERFORMANCE_BAR_UPDATE_INTERVAL then
+        return
     end
+    m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
+    m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
+    m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
+    m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
+    m.MainMenuBarPerformanceBar:SetAlpha(0)
+    m.MainMenuBarPerformanceBar:SetScale(0.00001)
+end
 
-    UpdateAddOnMemoryUsage()
-    GameTooltip:SetOwner(MainMenuMicroButton, "ANCHOR_BOTTOMLEFT", 16 + (GameTooltip:GetWidth() / 2), -10)
-    GameTooltip:ClearLines()
-    GameTooltip_AddNewbieTip(MainMenuMicroButton, MainMenuMicroButton.tooltipText, 1.0, 1.0, 1.0, MainMenuMicroButton.newbieText)
-    GameTooltip:AddLine(" ")
-    GameTooltip:AddLine(L["FPS "] .. frameRate .." fps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(L["Latency (Home) "] .. lagHome .." ms", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(L["Latency (World) "] .. lagWorld .." ms", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(L["Bandwidth (Download) "] .. RoundDec(down,2) .. " Kbps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(L["Bandwidth (Upload) "] .. RoundDec(up,2) .. " Kbps", 0.8, 0.8, 0.8)
-    GameTooltip:AddLine(" ", 0.8, 0.8, 0.8)
-
-    for i = 1, numAddons do
-        addonMemory = addonMemory + GetAddOnMemoryUsage(i)
-    end
-
-    GameTooltip:AddLine(L["Memory for Addons: "] .. RoundDec(addonMemory / 1024, 2) .. " MB", 0.8, 0.8, 0.8)
-
-    for i = 1, numAddons do
-        if type(AddonMemoryArray[i]) ~= "table" then
-            AddonMemoryArray[i] = {}
-        end
-        AddonMemoryArray[i]["addonIndex"] = i
-        AddonMemoryArray[i]["addonMemory"] = GetAddOnMemoryUsage(i)
-    end
-
-    table.sort(AddonMemoryArray, function(a, b) return a["addonMemory"] > b["addonMemory"] end)
-
-    for _, v in pairs(AddonMemoryArray) do
-            if v["addonIndex"] ~= 0 and (IsAddOnLoaded(v["addonIndex"]) and v["addonMemory"] ~= 0) then
-                addonMemory = RoundDec(v["addonMemory"] / 1024, 2)
-                if addonMemory ~= "0.00" then
-                    GameTooltip:AddLine("(" .. addonMemory .. " MB) " .. GetAddOnInfo(v["addonIndex"]), 0.8, 0.8, 0.8)
-                end
+-- mail icon
+local function mailIconOnEvent(self, event)
+    if event == "UPDATE_PENDING_MAIL" then
+        if HasNewMail() then
+            self:Show()
+            self.GwNotify:Show()
+            if GameTooltip:IsOwned(self) then
+                MinimapMailFrameUpdate()
             end
+        else
+            self:Hide()
+            self.GwNotify:Hide()
+        end
     end
-    GameTooltip:Show()
+end
+
+local function mailIconOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    if GameTooltip:IsOwned(self) then
+        MinimapMailFrameUpdate()
+    end
 end
 
 local function bag_OnUpdate(self, elapsed)
@@ -196,14 +181,18 @@ GW.AddForProfiling("micromenu", "bag_OnUpdate", bag_OnUpdate)
 
 local function reskinMicroButton(btn, name, mbf)
     btn:SetParent(mbf)
-    local tex = "Interface/AddOns/GW2_UI/Textures/" .. name .. "-Up"
+    hooksecurefunc(btn, "SetParent", function(self, parent)
+        if parent ~= mbf then
+            self:SetParent(mbf)
+        end
+    end)
+
+    local tex = "Interface/AddOns/GW2_UI/textures/icons/microicons/" .. name .. "-Up"
 
     btn:SetSize(24, 24)
     btn:SetHitRectInsets(0, 0, 0, 0)
-
-
     if name == "PVPMicroButton" then
-        tex = "Interface/AddOns/GW2_UI/Textures/" .. GW.myfaction
+        tex = "Interface/AddOns/GW2_UI/Textures/battleground/" .. GW.myfaction
         if btn.texture then
             btn.texture:Kill()
         end
@@ -215,19 +204,48 @@ local function reskinMicroButton(btn, name, mbf)
     btn:SetHighlightTexture(tex)
 
     if name == "PVPMicroButton" then
-        tex = "Interface/AddOns/GW2_UI/Textures/" .. GW.myfaction
+        tex = "Interface/AddOns/GW2_UI/Textures/battleground/" .. GW.myfaction
         btn:SetSize(22, 22)
 
         btn:GetDisabledTexture():SetDesaturated(true)
         btn:GetNormalTexture():SetDesaturated(true)
         btn:GetPushedTexture():SetDesaturated(true)
         btn:GetHighlightTexture():SetDesaturated(true)
+    else
+        --hackfix for texture size
+        local t = btn:GetDisabledTexture()
+        t:ClearAllPoints()
+        t:SetPoint("CENTER",btn,"CENTER",0,0)
+        t:SetSize(32,32)
+
+        t = btn:GetNormalTexture()
+        t:ClearAllPoints()
+        t:SetPoint("CENTER",btn,"CENTER",0,0)
+        t:SetSize(32,32)
+
+        t = btn:GetPushedTexture()
+        t:ClearAllPoints()
+        t:SetPoint("CENTER",btn,"CENTER",0,0)
+        t:SetSize(32,32)
+
+        t = btn:GetHighlightTexture()
+        t:ClearAllPoints()
+        t:SetPoint("CENTER",btn,"CENTER",0,0)
+        t:SetSize(32,32)
     end
 
     if btn.Flash then
-        -- hide the flash frames off-screen
-        btn.Flash:ClearAllPoints()
-        btn.Flash:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 440)
+        btn.Flash:SetInside()
+		btn.Flash:SetTexture()
+    end
+
+    if btn.FlashBorder then
+        btn.FlashBorder:SetAlpha(0)
+        btn.FlashBorder:SetScale(0.00001)
+    end
+    if btn.FlashContent then
+        btn.FlashContent:SetAlpha(0)
+        btn.FlashContent:SetScale(0.00001)
     end
 
     btn.GwNotify = btn:CreateTexture(nil, "OVERLAY")
@@ -236,13 +254,13 @@ local function reskinMicroButton(btn, name, mbf)
 
     btn.GwNotify:SetSize(18, 18)
     btn.GwNotify:SetPoint("CENTER", btn, "BOTTOM", 6, 3)
-    btn.GwNotify:SetTexture("Interface/AddOns/GW2_UI/textures/notification-backdrop")
+    btn.GwNotify:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
     btn.GwNotify:SetVertexColor(1, 0, 0, 1)
     btn.GwNotify:Hide()
 
     btn.GwNotifyDark:SetSize(18, 18)
     btn.GwNotifyDark:SetPoint("CENTER", btn, "BOTTOM", 6, 3)
-    btn.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/notification-backdrop")
+    btn.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
     btn.GwNotifyDark:SetVertexColor(0, 0, 0, 0.7)
     btn.GwNotifyDark:Hide()
 
@@ -360,6 +378,10 @@ local function setupMicroButtons(mbf)
         )
 
         disableMicroButton(SpellbookMicroButton, true)
+        SpellbookMicroButton:ClearAllPoints()
+        SpellbookMicroButton:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
+        SpellbookMicroButton:SetAlpha(0)
+        SpellbookMicroButton:EnableMouse(false)
     else
         -- SpellbookMicroButton
         sref = SpellbookMicroButton
@@ -387,7 +409,7 @@ local function setupMicroButtons(mbf)
         )
 
         TalentMicroButton:ClearAllPoints()
-        TalentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
+        TalentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 8, 0) -- 8 because blizzard is setting is Achievement Button position back to 0, so we add the space here
         TalentMicroButton:SetAlpha(0)
         TalentMicroButton:EnableMouse(false)
     else
@@ -421,8 +443,8 @@ local function setupMicroButtons(mbf)
     local pvpref
     if GetSetting("USE_CHARACTER_WINDOW") then
         pvpref = CreateFrame("Button", "GwPvpMicroButton", mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
-        pvpref.tooltipText = MicroButtonTooltipText(TALENTS, "TOGGLETALENTS")
-        pvpref.newbieText = NEWBIE_TOOLTIP_TALENTS
+        pvpref.tooltipText = MicroButtonTooltipText(PLAYER_V_PLAYER, "TOGGLECHARACTER4")
+        pvpref.newbieText = NEWBIE_TOOLTIP_PVP
         reskinMicroButton(pvpref, "PVPMicroButton", mbf)
         pvpref:ClearAllPoints()
         pvpref:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
@@ -437,7 +459,11 @@ local function setupMicroButtons(mbf)
             ]=]
         )
 
-        disableMicroButton(PVPMicroButton, true)
+        --disableMicroButton(PVPMicroButton, true)
+        PVPMicroButton:ClearAllPoints()
+        PVPMicroButton:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
+        PVPMicroButton:SetAlpha(0)
+        PVPMicroButton:EnableMouse(false)
     else
         pvpref = PVPMicroButton
         pvpref:ClearAllPoints()
@@ -453,26 +479,7 @@ local function setupMicroButtons(mbf)
     MainMenuMicroButton:SetPoint("BOTTOMLEFT", LFGMicroButton, "BOTTOMRIGHT", 4, 0)
     MainMenuBarPerformanceBar:SetAlpha(0)
 	MainMenuBarPerformanceBar:SetScale(0.00001)
-    MainMenuMicroButton:HookScript(
-        "OnUpdate",
-        function()
-            -- the main menu button routinely updates its texture based on streaming download
-            -- status and net performance; we undo those changes here on each update interval
-            local m = MainMenuMicroButton
-            if m.updateInterval ~= PERFORMANCEBAR_UPDATE_INTERVAL then
-                return
-            end
-            m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
-            m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
-            m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
-            m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up")
-            MainMenuBarPerformanceBar:SetAlpha(0)
-	        MainMenuBarPerformanceBar:SetScale(0.00001)
-            if MainMenuMicroButton.hover then
-                LatencyInfoToolTip()
-            end
-        end
-    )
+    MainMenuMicroButton:HookScript("OnUpdate", hook_MainMenuMicroButton_OnUpdate)
 
     -- HelpMicroButton
     HelpMicroButton:ClearAllPoints()
@@ -493,6 +500,19 @@ local function setupMicroButtons(mbf)
         GameTooltip:AddLine(self.tooltipText)
         GameTooltip:Show()
     end)
+
+    -- Mail icon
+    local mailIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
+    mailIcon:RegisterEvent("UPDATE_PENDING_MAIL")
+    mailIcon.newbieText = nil
+    mailIcon.tooltipText = ""
+    reskinMicroButton(mailIcon, "MailMicroButton", mbf)
+    mailIcon:ClearAllPoints()
+    mailIcon:SetPoint("BOTTOMLEFT", updateIcon, "BOTTOMRIGHT", 4, 0)
+    mailIcon:Hide()
+    mailIcon:HookScript("OnEnter", mailIconOnEnter)
+    mailIcon:HookScript("OnLeave", GameTooltip_Hide)
+    mailIcon:SetScript("OnEvent", mailIconOnEvent)
 end
 GW.AddForProfiling("micromenu", "setupMicroButtons", setupMicroButtons)
 
@@ -527,16 +547,21 @@ local function checkElvUI()
     end
 
     -- at this point we know we should own the microbar; fix what ElvUI did to it
-    ElvUI_MicroBar = nil
+    if ElvUI_MicroBar.backdrop then
+        ElvUI_MicroBar.backdrop:Kill()
+    end
+    ElvUI_MicroBar:Kill()
 
+    ab.UpdateMicroButtonsParent = GW.NoOp
+    ab.UpdateMicroButtons = GW.NoOp
+    ab.UpdateMicroButtonTexture = GW.NoOp
     for i = 1, #MICRO_BUTTONS do
         local name = MICRO_BUTTONS[i]
         local btn = _G[name]
         if btn then
             -- remove the backdrop ElvUI adds
-            if btn.backdrop then
-                btn.backdrop:Hide()
-                btn.backdrop = nil
+            if btn.ClearBackdrop then
+                btn:ClearBackdrop()
             end
 
             -- undo the texture coords ElvUI applies
@@ -559,6 +584,8 @@ local function checkElvUI()
                 high.Show = normal.Show
                 high:Show()
             end
+
+            --btn.handleBackdrop = false
         end
     end
 
@@ -576,7 +603,7 @@ local function LoadMicroMenu()
     local postDragFunction = function(mbf)
         mbf.cf.bg:SetShown(not mbf.isMoved)
     end
-    GW.RegisterMovableFrame(mbf, GW.L["Micro Bar"], "MicromenuPos", "VerticalActionBarDummy", nil, {"default"}, nil, postDragFunction)
+    GW.RegisterMovableFrame(mbf, GW.L["Micro Bar"], "MicromenuPos", ALL .. ",Blizzard,Widgets", nil, {"default"}, nil, postDragFunction)
     mbf:SetPoint("TOPLEFT", mbf.gwMover)
 
     -- reskin all default (and custom) micro buttons to our styling
@@ -607,10 +634,10 @@ local function LoadMicroMenu()
             HelpMicroButton:Show()
             MicroButtonPortrait:Hide()
             local m = SocialsMicroButton
-            m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
-            m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
-            m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
-            m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/GuildMicroButton-Up")
+            m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+            m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+            m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+            m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
         end
     )
 

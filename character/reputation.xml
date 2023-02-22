@@ -14,7 +14,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="-3" y="0"></Anchor>
                                 <Anchor point="BOTTOMRIGHT" x="3" y="0"></Anchor>
@@ -68,13 +68,13 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture parentKey="statusbarbg" file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                        <Texture parentKey="statusbarbg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                             <Size x="205" y="8"></Size>
                             <Anchors>
                                 <Anchor point="BOTTOM" relativePoint="BOTTOM" x="-5" y="6"></Anchor>
                             </Anchors>
                         </Texture>       
-                        <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/gwstatusbar">
+                        <Texture parentKey="zebra" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                             <Size x="32" y="32"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
@@ -114,10 +114,10 @@
                         <Anchors>
                             <Anchor point="BOTTOM" relativePoint="BOTTOM" x="-5" y="8"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface/AddOns/GW2_UI/textures/gwstatusbar"/>
+                        <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                         <Layers>
                             <Layer level="ARTWORK">
-                                <Texture parentKey="Spark" file="Interface/AddOns/GW2_UI/textures/statusbar-spark-white">
+                                <Texture parentKey="Spark" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
                                     <Size x="10" y="4"></Size>
                                     <Anchors>
                                         <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>
@@ -210,7 +210,7 @@
                         </Texture>
                     </Layer>
                     <Layer level="ARTWORK" textureSubLevel="3">
-                        <Texture parentKey="statusbarbg" file="Interface/AddOns/GW2_UI/textures/gwstatusbar-bg">
+                        <Texture parentKey="statusbarbg" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
                             <Size x="201" y="14"></Size>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeKey="$parent.name" relativePoint="BOTTOMLEFT" x="-2" y="2"></Anchor>
@@ -291,8 +291,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -317,8 +317,8 @@
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" x="5"/>
                                         </Anchors>
-                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
-                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkbox"/>
+                                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"/>
                                     </CheckButton>
                                 </Frames>
                             </Button>
@@ -330,10 +330,10 @@
                             <Anchor point="TOPLEFT" relativeKey="$parent.name" relativePoint="BOTTOMLEFT" x="0" y="0"></Anchor>
                             <Anchor point="TOPRIGHT" relativeKey="$parent.name" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface/AddOns/GW2_UI/textures/gwstatusbar"/>
+                        <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                         <Layers>
                             <Layer level="OVERLAY">
-                                <Texture parentKey="spark" file="Interface/AddOns/GW2_UI/textures/statusbar-spark-white">
+                                <Texture parentKey="spark" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
                                     <Size x="10" y="10"></Size>
                                     <Anchors>
                                         <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"></Anchor>

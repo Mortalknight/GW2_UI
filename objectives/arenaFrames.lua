@@ -17,8 +17,8 @@ local countArenaPrepFrames = 0
 local MAX_ARENA_ENEMIES = MAX_ARENA_ENEMIES or 5
 
 local FractionIcon = {}
-    FractionIcon.Alliance = "|TInterface/AddOns/GW2_UI/textures/Alliance:16:16:0:0|t "
-    FractionIcon.Horde = "|TInterface/AddOns/GW2_UI/textures/Horde:16:16:0:0|t "
+    FractionIcon.Alliance = "|TInterface/AddOns/GW2_UI/textures/battleground/Alliance:16:16:0:0|t "
+    FractionIcon.Horde = "|TInterface/AddOns/GW2_UI/textures/battleground/Horde:16:16:0:0|t "
     FractionIcon.NONE = ""
 
 local function setCompass()

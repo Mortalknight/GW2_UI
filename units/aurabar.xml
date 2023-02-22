@@ -4,7 +4,7 @@
         <Size x="26" y="26"/>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="backdrop" file="Interface\AddOns\GW2_UI\textures\spelliconempty">
+                <Texture parentKey="backdrop" file="Interface/AddOns/GW2_UI/textures/uistuff/spelliconempty">
                     <Size x="26" y="26"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -13,21 +13,22 @@
                 </Texture>
             </Layer>
             <Layer>
-                <Texture parentKey="buffIcon" file="Interface\AddOns\GW2_UI\textures\gwstatusbar">
+                <Texture parentKey="buffIcon" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Size x="24" y="24"/>
                     <TexCoords left="0.1" right="0.9" top="0.1" bottom="0.9" />
+
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-1"/>
                         <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="1"/>
                     </Anchors>
                 </Texture>
-                <FontString  parentKey="buffDuration" text="" inherits="GameFontNormalSmall" justifyH="CENTER">
+                <FontString parentKey="buffDuration" text="" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="32" y="12"/>
                     <Anchors>
                         <Anchor point="BOTTOM" x="0" y="-12"/>
                     </Anchors>
                 </FontString>
-                <FontString  parentKey="buffStacks" text="" inherits="GameFontNormalSmall" justifyH="CENTER">
+                <FontString parentKey="buffStacks" text="" inherits="GameFontNormalSmall" justifyH="CENTER">
                     <Size x="32" y="32"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>

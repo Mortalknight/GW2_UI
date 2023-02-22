@@ -8,6 +8,7 @@ local createCat = GW.CreateCat
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local InitPanel = GW.InitPanel
+local settingsMenuAddButton = GW.settingsMenuAddButton
 
 local function LoadAurasPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
@@ -15,10 +16,6 @@ local function LoadAurasPanel(sWindow)
     p.sub:Hide()
 
     local p_auras = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
-    p_auras:SetHeight(180)
-    p_auras:SetWidth(512)
-    p_auras:ClearAllPoints()
-    p_auras:SetPoint("TOPLEFT", p, "TOPLEFT", 0, 0)
     p_auras.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_auras.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p_auras.header:SetText(L["Raid Auras"])
@@ -26,19 +23,28 @@ local function LoadAurasPanel(sWindow)
     p_auras.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p_auras.sub:SetText(L["Edit which buffs and debuffs are shown."])
 
+    p_auras.header:SetWidth(p_auras.header:GetStringWidth())
+    p_auras.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p_auras.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p_auras.breadcrumb:SetText(GENERAL)
+
     local p_indicator = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
-    p_indicator:SetHeight(445)
-    p_indicator:SetWidth(512)
-    p_indicator:ClearAllPoints()
-    p_indicator:SetPoint("TOPLEFT", p_auras, "BOTTOMLEFT", 0, 0)
+
     p_indicator.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p_indicator.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p_indicator.header:SetText(L["Raid Indicators"])
+    p_indicator.header:SetText(L["Raid Auras"])
     p_indicator.sub:SetFont(UNIT_NAME_FONT, 12)
     p_indicator.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p_indicator.sub:SetText(L["Edit raid aura indicators."])
 
-    createCat(L["Raid Auras"], L["Show or hide auras and edit raid aura indicators."], p, 2, nil, {p_auras, p_indicator})
+    p_indicator.header:SetWidth(p_indicator.header:GetStringWidth())
+    p_indicator.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    p_indicator.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    p_indicator.breadcrumb:SetText(L["Raid Indicators"])
+
+
+    createCat(L["Raid Auras"], L["Show or hide auras and edit raid aura indicators."], p, {p_auras, p_indicator})
+    settingsMenuAddButton(L["Raid Auras"], p, {p_auras, p_indicator})
 
     addOptionText(p_auras.scroll.scrollchild, L["Ignored Auras"], L["A list of auras that should never be shown."], "AURAS_IGNORED", GW.UpdateMissingAndIgnoredAuras, nil, nil, {["RAID_FRAMES"] = true})
     addOptionText(p_auras.scroll.scrollchild, L["Missing Buffs"], L["A list of buffs that should only be shown when they are missing."], "AURAS_MISSING", GW.UpdateMissingAndIgnoredAuras, nil, nil, {["RAID_FRAMES"] = true})

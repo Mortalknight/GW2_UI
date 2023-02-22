@@ -382,9 +382,9 @@ GW.AddForProfiling("tooltips", "anchorTooltip", anchorTooltip)
 
 local function SetItemRef()
     if ItemRefTooltip:IsShown() then
-        ItemRefCloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/window-close-button-normal")
-        ItemRefCloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
-        ItemRefCloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
+        ItemRefCloseButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal")
+        ItemRefCloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
+        ItemRefCloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-hover")
         ItemRefCloseButton:SetSize(20, 20)
         ItemRefCloseButton:ClearAllPoints()
         ItemRefCloseButton:SetPoint("TOPRIGHT", -3, -3)
@@ -414,7 +414,7 @@ local function GameTooltip_ShowStatusBar(self)
 
     sb:StripTextures()
     sb:CreateBackdrop(GW.skins.constBackdropFrameBorder)
-    sb:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/gwstatusbar")
+    sb:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
 end
 
 local function GameTooltip_ShowProgressBar(self)
@@ -429,7 +429,7 @@ local function GameTooltip_ShowProgressBar(self)
         sb.Bar:StripTextures()
         sb.Bar:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
         sb.Bar.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
-        sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/gwstatusbar")
+        sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
     end
 end
 
@@ -462,8 +462,8 @@ local function SetStyle(self, _, isEmbedded)
     end
 
     self.NineSlice:SetBackdrop({
-        bgFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background",
-        edgeFile = "Interface/AddOns/GW2_UI/textures/white",
+        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+        edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
         edgeSize = GW.Scale(2)
     })
 
@@ -642,7 +642,7 @@ local function LoadTooltips()
     StyleTooltips()
 
     -- Skin GameTooltip Status Bar
-    GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/castinbar-white")
+    GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
     GameTooltipStatusBar:CreateBackdrop()
     GameTooltipStatusBar:ClearAllPoints()
     GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", GW.BorderSize, -(GW.SpacingSize * 3))
@@ -662,7 +662,7 @@ local function LoadTooltips()
     end
     SetTooltipFonts()
 
-    RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", "VerticalActionBarDummy", {230, 80}, {"default"})
+    RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", ALL .. ",Blizzard", {230, 80}, {"default"})
 
     hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
 

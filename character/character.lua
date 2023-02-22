@@ -132,13 +132,13 @@ local function PaperDollPetStats_OnEvent(self, event, ...)
     if event == "PET_UI_UPDATE" or event == "PET_BAR_UPDATE" or (event == "UNIT_PET" and unit == "player") then
         if GwPetContainer:IsVisible() and not HasPetUI() then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
-            GwCharacterMenu.petMenu:Disable()
+            GwHeroPanelMenu.petMenu:Disable()
             return
         end
     elseif event == "PET_UI_CLOSE" then
         if GwPetContainer:IsVisible() then
             GwCharacterWindow:SetAttribute("windowpanelopen", "paperdoll")
-            GwCharacterMenu.petMenu:Disable()
+            GwHeroPanelMenu.petMenu:Disable()
             return
         end
     end
@@ -370,7 +370,7 @@ GW.PaperDollUpdateStats = PaperDollUpdateStats
 local function PaperDollUpdatePetStats()
     local hasUI, isHunterPet = HasPetUI()
     local statText, tooltip1, tooltip2
-    GwCharacterMenu.petMenu:SetShown(GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6)
+    GwHeroPanelMenu.petMenu:SetShown(GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6)
     if not hasUI then return end
 
     local numShownStats = 1
@@ -378,7 +378,7 @@ local function PaperDollUpdatePetStats()
     local x = 0
     local y = 0
 
-    GwCharacterMenu.petMenu:Enable()
+    GwHeroPanelMenu.petMenu:Enable()
     GwDressingRoomPet.model:SetUnit("pet")
     GwDressingRoomPet.characterName:SetText(UnitPVPName("pet") .. " - " .. GUILD_RECRUITMENT_LEVEL .. " " .. UnitLevel("pet"))
     GwCharacterWindow:SetAttribute("HasPetUI", hasUI)
@@ -665,7 +665,7 @@ function GwToggleCharacter(tab, onlyShow)
 
     local CHARACTERFRAME_DEFAULTFRAMES= {}
 
-    CHARACTERFRAME_DEFAULTFRAMES["PaperDollFrame"] = GwCharacterMenu
+    CHARACTERFRAME_DEFAULTFRAMES["PaperDollFrame"] = GwHeroPanelMenu
     CHARACTERFRAME_DEFAULTFRAMES["ReputationFrame"] = GwPaperReputation
     CHARACTERFRAME_DEFAULTFRAMES["SkillFrame"] = GwPaperSkills
     CHARACTERFRAME_DEFAULTFRAMES["PetPaperDollFrame"] = GwPetContainer
@@ -781,7 +781,7 @@ end
 local function LoadPaperDoll()
     CreateFrame("Frame", "GwCharacterWindowContainer", GwCharacterWindow, "GwCharacterWindowContainer")
     CreateFrame("Button", "GwDressingRoom", GwCharacterWindowContainer, "GwDressingRoom")
-    CreateFrame("Frame", "GwCharacterMenu", GwCharacterWindowContainer, "GwCharacterMenu")
+    CreateFrame("Frame", "GwHeroPanelMenu", GwCharacterWindowContainer, "GwCharacterMenuFilledTemplate")
     CreateFrame("Frame", "GwPaperHonor", GwCharacterWindowContainer, "GwPaperHonor")
     CreateFrame("Frame", "GwPaperBattleground", GwCharacterWindowContainer, "GwPaperBattleground")
     CreateFrame("Frame", "GwPaperSkills", GwCharacterWindowContainer, "GwPaperSkills")
