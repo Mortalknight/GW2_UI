@@ -875,7 +875,7 @@ local function LoadMicroMenu()
     mbf:SetAttribute("_onenter", [=[
         local cf = self:GetFrameRef("cf")
         local shouldFade = cf:GetAttribute("shouldFade")
-        if cf:IsShown() or not shouldFadethen
+        if cf:IsShown() or not shouldFade then
             return
         end
         cf:UnregisterAutoHide()
@@ -884,7 +884,7 @@ local function LoadMicroMenu()
         cf:RegisterAutoHide(cf:GetAttribute("fadeTime") + 0.25)
     ]=])
     mbf.cf:HookScript("OnLeave", mbf_OnLeave)
-    mbf.cf:SetShown(not shouldFade)
+    mbf.cf:SetShown(not settings.fadeMicromenu)
 
     -- fix alert positions and hide the micromenu bar
     MicroButtonAndBagsBar:SetAlpha(0)
