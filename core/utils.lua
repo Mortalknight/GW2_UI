@@ -875,4 +875,19 @@ local function GetClassIconStringWithStyle(class, width, height)
 
     return format("|T%s:%d:%d:0:0:64:64:0:64:0:64|t", "Interface/Addons/GW2_UI/Textures/classicons/" .. class .. "_flat", height, width)
 end
-GW.GetClassIconStringWithStyle =GetClassIconStringWithStyle
+GW.GetClassIconStringWithStyle = GetClassIconStringWithStyle
+
+local function IsGroupMember(name)
+	if name then
+		if UnitInParty(name) then
+			return 1
+		elseif UnitInRaid(name) then
+			return 2
+		elseif name == GW.myname then
+			return 3
+		end
+	end
+
+	return false
+end
+GW.IsGroupMember = IsGroupMember
