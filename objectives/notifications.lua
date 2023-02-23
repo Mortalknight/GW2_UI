@@ -354,7 +354,7 @@ local function SetObjectiveNotification()
     end
 
     if icons[data.TYPE] ~= nil then
-        GwObjectivesNotification.icon:SetTexture("Interface/AddOns/GW2_UI/textures/" .. icons[data.TYPE].tex)
+        GwObjectivesNotification.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
         GwObjectivesNotification.icon:SetTexCoord(icons[data.TYPE].l, icons[data.TYPE].r, icons[data.TYPE].t, icons[data.TYPE].b)
 
         if progress ~= nil and icons[data.TYPE] then
@@ -370,7 +370,7 @@ local function SetObjectiveNotification()
         GwObjectivesNotification.compass.dataIndex = data.ID
 
         if icons[data.TYPE] ~= nil then
-            GwObjectivesNotification.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/" .. icons[data.TYPE].tex)
+            GwObjectivesNotification.compass.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/" .. icons[data.TYPE].tex)
             GwObjectivesNotification.compass.icon:SetTexCoord(icons[data.TYPE].l, icons[data.TYPE].r, icons[data.TYPE].t, icons[data.TYPE].b)
         else
             GwObjectivesNotification.compass.icon:SetTexture(nil)
