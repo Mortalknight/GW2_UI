@@ -184,9 +184,9 @@ local function setButtonStyle(button, haveBuff)
         button.icon:SetDesaturated(settings.invert and settings.grayedout or false)
         button:SetAlpha(not settings.invert and 1 or settings.dimmed and ALPHA or 1)
         if settings.animated then
-            --LibCustomGlow.PixelGlow_Start(button, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
+            LibCustomGlow.PixelGlow_Start(button, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
         else
-            --LibCustomGlow.PixelGlow_Stop(button)
+            LibCustomGlow.PixelGlow_Stop(button)
         end
     else
         if settings.invert then
@@ -196,7 +196,7 @@ local function setButtonStyle(button, haveBuff)
         end
 
         button:SetAlpha(settings.invert and 1 or settings.dimmed and ALPHA or 1)
-        --LibCustomGlow.PixelGlow_Stop(button)
+        LibCustomGlow.PixelGlow_Stop(button)
     end
 end
 
@@ -233,6 +233,7 @@ local function OnAuraChange(self)
     setButtonStyle(self.foodButton, foundBuff)
 
     --Da Runes
+    --[[ -- gone with DF
     foundBuff = false
     for _, darunebuff in pairs(buffInfos.DefiledAugmentRune) do
         if darunebuff.hasBuff then
@@ -245,6 +246,7 @@ local function OnAuraChange(self)
         self.daRuneButton.icon:SetTexture(buffInfos.DefiledAugmentRune[1].texId)
     end
     setButtonStyle(self.daRuneButton, foundBuff)
+    ]]
 
     -- Int
     foundBuff = false
@@ -410,8 +412,8 @@ local function LoadRaidbuffReminder()
     rbr.movementButton = CreateIconBuff(rbr.attackPowerButton, false, rbr)
     rbr.flaskButton = CreateIconBuff(rbr.movementButton, false, rbr)
     rbr.foodButton = CreateIconBuff(rbr.flaskButton, false, rbr)
-    rbr.daRuneButton = CreateIconBuff(rbr.foodButton, false, rbr)
-    rbr.weaponButton = CreateIconBuff(rbr.daRuneButton, false, rbr)
+    --rbr.daRuneButton = CreateIconBuff(rbr.foodButton, false, rbr)
+    rbr.weaponButton = CreateIconBuff(rbr.foodButton, false, rbr)
     rbr.customButton = CreateIconBuff(rbr.weaponButton, false, rbr)
 
     GetBuffInfos()
