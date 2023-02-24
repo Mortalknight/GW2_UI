@@ -124,6 +124,7 @@ mainbar\dodgebar.xml
 mainbar\5sr.lua
 mainbar\mirrortimer.lua
 mainbar\hud.lua
+mainbar\experiencebar.lua
 mainbar\stancebar.lua
 mainbar\customTrackAura.lua
 mainbar\customTrackAura.xml

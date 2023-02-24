@@ -1102,8 +1102,7 @@ local function LoadSettings()
       end
 
       AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
-      function()
-        local p = animations["SETTINGSFRAME_PANEL_ONSHOW"].progress
+      function(p)
         sWindow:SetAlpha(p)
         bgMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT",lerp(-64,sWindow.background:GetWidth(), p) , 0)
       end,1,function()

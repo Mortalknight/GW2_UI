@@ -599,6 +599,8 @@ GW_DEFAULT["ROLE_BAR_pos"]["hasMoved"] = false
 GW_DEFAULT["ROLE_BAR_pos_scale"] = 1
 GW_DEFAULT["ROLE_BAR"] = "IN_RAID"
 
+GW_DEFAULT["FADE_EXP_BAR"] = false
+
 -- incompatible addons
 GW_DEFAULT.IncompatibleAddons = {
     Actionbars = {

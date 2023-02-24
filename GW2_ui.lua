@@ -600,7 +600,7 @@ local function evPlayerLogin(self)
 
     --Create experiencebar
     if GetSetting("XPBAR_ENABLED") then
-        GW.LoadXPBar()
+        GW.LoadXPBar(hudArtFrame)
     else
         hudArtFrame.actionBarHud:ClearAllPoints()
         hudArtFrame.actionBarHud:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 0)

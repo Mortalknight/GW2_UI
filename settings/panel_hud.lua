@@ -72,6 +72,7 @@ local function LoadHudPanel(sWindow)
     addOption(general.scroll.scrollchild, L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], "QUEST_REWARDS_MOST_VALUE_ICON", function() GW.ResetQuestRewardMostValueIcon() end)
     addOption(general.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", function() GW.ShowRlPopup = true end, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOption(general.scroll.scrollchild, L["Show Quest XP on Quest Tracker"], nil, "QUESTTRACKER_SHOW_XP", function() GW.UpdateQuestTracker(GwQuesttrackerContainerQuests) end, nil, {["QUESTTRACKER_ENABLED"] = true})
+    addOption(general.scroll.scrollchild, L["Fade experiencebar"], L["Show experiencebar only on hover"], "FADE_EXP_BAR", function(value) GW.UpdateExperiencebarSettings(not value) end, nil, {["XPBAR_ENABLED"] = true})
     addOptionDropdown(
         general.scroll.scrollchild,
         L["Quest Tracker sorting"],
