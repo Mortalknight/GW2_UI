@@ -36,25 +36,30 @@ local function worldMapSkin()
     WorldMapFrame:StripTextures()
     WorldMapFrame.BlackoutFrame:Hide()
 
-    local tex = WorldMapFrame:CreateTexture("bg", "BACKGROUND")
-    local w, h = WorldMapFrame:GetSize()
-    tex:SetPoint("TOP", WorldMapFrame, "TOP", 10, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    tex:SetSize(w + 110, h + 50)
-    WorldMapFrame.tex = tex
+    local headerText
+    local r = {WorldMapFrame.BorderFrame:GetRegions()}
+    for _,c in pairs(r) do
+        if c:GetObjectType() == "Texture" then
+            c:Hide()
+        elseif c:GetObjectType() == "FontString" then
+            headerText = c
+        end
+    end
+
+    GW.CreateFrameHeaderWithBody(WorldMapFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 30)
 
     WorldMapContinentDropDown:SkinDropDownMenu()
     WorldMapZoneDropDown:SkinDropDownMenu()
     WorldMapZoneMinimapDropDown:SkinDropDownMenu()
 
-    WorldMapContinentDropDown:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 330, -35)
+    WorldMapContinentDropDown:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 330, -42)
     WorldMapContinentDropDown:SetWidth(205)
     WorldMapContinentDropDown:SetHeight(33)
     WorldMapZoneDropDown:SetPoint("LEFT", WorldMapContinentDropDown, "RIGHT", -20, 0)
     WorldMapZoneDropDown:SetWidth(205)
     WorldMapZoneDropDown:SetHeight(33)
 
-    WorldMapZoomOutButton:SetPoint("LEFT", WorldMapZoneDropDown, "RIGHT", 3, 3)
+    WorldMapZoomOutButton:SetPoint("LEFT", WorldMapZoneDropDown, "RIGHT", 3, 2)
     WorldMapZoomOutButton:SetHeight(21)
 
     WorldMapZoomOutButton:SkinButton(false, true)
@@ -62,7 +67,7 @@ local function worldMapSkin()
     WorldMapFrameCloseButton:SkinButton(true)
     WorldMapFrameCloseButton:SetSize(25, 25)
     WorldMapFrameCloseButton:ClearAllPoints()
-    WorldMapFrameCloseButton:SetPoint("TOPRIGHT", WorldMapFrame, "TOPRIGHT", 20, -25)
+    WorldMapFrameCloseButton:SetPoint("TOPRIGHT", WorldMapFrame, "TOPRIGHT", 0, 0)
     WorldMapFrameCloseButton:SetFrameLevel(WorldMapFrameCloseButton:GetFrameLevel() + 2)
 
     ShowUIPanel(WorldMapFrame)

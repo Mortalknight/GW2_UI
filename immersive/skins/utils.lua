@@ -383,7 +383,7 @@ local function HandlePortraitFrame(frame, createBackdrop)
 end
 GW.HandlePortraitFrame = HandlePortraitFrame
 
-local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds)
+local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds, yOffset)
     local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
     header.windowIcon:SetTexture(icon)
 
@@ -401,7 +401,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
 
     local tex = frame:CreateTexture("bg", "BACKGROUND", nil, 0)
     tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
-    tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+    tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, yOffset or 0)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")
     frame.tex = tex
 
