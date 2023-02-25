@@ -37,6 +37,13 @@ local constBackdropFrameColorBorder = {
 }
 GW.constBackdropFrameColorBorder = constBackdropFrameColorBorder
 
+local constBackdropFrameColorBorderNoBackground = {
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+    bgFile = "",
+    edgeSize = 1
+}
+GW.constBackdropFrameColorBorderNoBackground = constBackdropFrameColorBorderNoBackground
+
 local function HandleItemButton(b, setInside)
     if b.isSkinned then return end
 
@@ -193,20 +200,70 @@ local function HandleIcon(icon, backdrop, backdropTexture)
 end
 GW.HandleIcon = HandleIcon
 
-local function SkinTextBox(seg1, seg2, seg3)
-    if seg1 ~= nil then
-        seg1:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-        seg1:SetAlpha(1)
+local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, leftOffset, rightOffset)
+    if middleTex then
+        middleTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
+        middleTex:SetAlpha(0.5)
+        middleTex:ClearAllPoints()
+        middleTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
+        middleTex:SetPoint("BOTTOMRIGHT", (rightOffset or 0), 0)
+        middleTex:SetAlpha(1)
     end
-
-    if seg2 ~= nil then
-        seg2:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-        seg2:SetAlpha(1)
+    if leftTex then
+        leftTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
+        leftTex:SetWidth(2)
+        leftTex:SetAlpha(1)
+        leftTex:ClearAllPoints()
+        leftTex:SetPoint("TOPLEFT", -(leftOffset or 0), 0)
+        leftTex:SetPoint("BOTTOMLEFT", -(leftOffset or 0), 0)
+        leftTex:SetTexCoord(0,1,1,0)
+        leftTex:SetAlpha(1)
     end
+    if rightTex then
+        rightTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical")
+        rightTex:SetWidth(1)
+        rightTex:SetAlpha(1)
+        rightTex:ClearAllPoints()
+        rightTex:SetPoint("TOPRIGHT", (rightOffset or 0), 0)
+        rightTex:SetPoint("BOTTOMRIGHT", (rightOffset or 0), 0)
+        rightTex:SetAlpha(1)
+        local pframe = rightTex:GetParent()
+        if topTex then
+            topTex:ClearAllPoints()
+            topTex:SetHeight(2)
+            topTex:SetPoint("BOTTOMLEFT", pframe, "TOPLEFT", -(leftOffset or 0), 0)
+            topTex:SetPoint("BOTTOMRIGHT", pframe, "TOPRIGHT", (rightOffset or 0), 0)
+            topTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+            topTex:SetAlpha(1)
+        else
+            local top = pframe:CreateTexture(nil, "BACKGROUND", nil, 0)
+            pframe.top = top
+            top:ClearAllPoints()
+            top:SetHeight(2)
+            top:SetPoint("BOTTOMLEFT", pframe, "TOPLEFT", -(leftOffset or 0), 0)
+            top:SetPoint("BOTTOMRIGHT", pframe, "TOPRIGHT", (rightOffset or 0), 0)
+            top:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+            if middleTex then return end
+        end
+        if bottomTex then
+            bottomTex:ClearAllPoints()
+            bottomTex:SetHeight(2)
+            bottomTex:SetPoint("TOPLEFT",pframe,"BOTTOMLEFT",-(leftOffset or 0),0)
+            bottomTex:SetPoint("TOPRIGHT",pframe,"BOTTOMRIGHT",(rightOffset or 0),0)
+            bottomTex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+            bottomTex:SetTexCoord(0, 1, 1, 0)
+            bottomTex:SetAlpha(1)
+        else
+            local bottom = pframe:CreateTexture(nil, "BACKGROUND", nil, 0)
+            pframe.bottom = bottom
+            bottom:ClearAllPoints()
+            bottom:SetHeight(2)
+            bottom:SetPoint("TOPLEFT", pframe, "BOTTOMLEFT", -(leftOffset or 0), 0)
+            bottom:SetPoint("TOPRIGHT", pframe, "BOTTOMRIGHT", (rightOffset or 0), 0)
+            bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel")
+            bottom:SetTexCoord(0, 1, 1, 0)
+        end
 
-    if seg3 ~= nil then
-        seg3:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-        seg3:SetAlpha(1)
     end
 end
 GW.SkinTextBox = SkinTextBox
@@ -275,3 +332,88 @@ local function Scale(x)
     end
 end
 GW.Scale = Scale
+
+local function HandlePortraitFrame(frame, createBackdrop)
+    local name = frame and frame.GetName and frame:GetName()
+    local insetFrame = name and _G[name .. "Inset"] or frame.Inset
+    local portraitFrame = name and _G[name .. "Portrait"] or frame.Portrait or frame.portrait
+    local portraitFrameOverlay = name and _G[name .. "PortraitOverlay"] or frame.PortraitOverlay
+    local artFrameOverlay = name and _G[name .. "ArtOverlayFrame"] or frame.ArtOverlayFrame
+
+    frame:StripTextures()
+
+    if portraitFrame then portraitFrame:SetAlpha(0) end
+    if portraitFrameOverlay then portraitFrameOverlay:SetAlpha(0) end
+    if artFrameOverlay then artFrameOverlay:SetAlpha(0) end
+
+    if insetFrame then
+        if insetFrame.InsetBorderTop then insetFrame.InsetBorderTop:Hide() end
+        if insetFrame.InsetBorderTopLeft then insetFrame.InsetBorderTopLeft:Hide() end
+        if insetFrame.InsetBorderTopRight then insetFrame.InsetBorderTopRight:Hide() end
+
+        if insetFrame.InsetBorderBottom then insetFrame.InsetBorderBottom:Hide() end
+        if insetFrame.InsetBorderBottomLeft then insetFrame.InsetBorderBottomLeft:Hide() end
+        if insetFrame.InsetBorderBottomRight then insetFrame.InsetBorderBottomRight:Hide() end
+
+        if insetFrame.InsetBorderLeft then insetFrame.InsetBorderLeft:Hide() end
+        if insetFrame.InsetBorderRight then insetFrame.InsetBorderRight:Hide() end
+
+        if insetFrame.Bg then insetFrame.Bg:Hide() end
+    end
+
+    if frame.CloseButton then
+        frame.CloseButton:SkinButton(true)
+        frame.CloseButton:SetSize(20, 20)
+    end
+
+    if createBackdrop and not frame.backdrop then
+        --local tex = frame:CreateTexture("bg", "BACKGROUND", -7)
+        --tex:SetPoint("TOP", frame, "TOP", 0, 25)
+        --tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+        --local w, h = frame:GetSize()
+        --tex:SetSize(w + 50, h + 50)
+        --frame.tex = tex
+        frame:CreateBackdrop({
+            edgeFile = "",
+            bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
+            edgeSize = 1
+        }, true, 50, 50, nil, 25)
+    end
+
+end
+GW.HandlePortraitFrame = HandlePortraitFrame
+
+local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds)
+    local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
+    header.windowIcon:SetTexture(icon)
+
+    header:SetWidth(frame:GetWidth() - 20)
+    header.BGLEFT:SetWidth(frame:GetWidth() - 20)
+    header.BGRIGHT:SetWidth(frame:GetWidth() - 20)
+
+    if titleText then
+        titleText:ClearAllPoints()
+        titleText:SetParent(header)
+        titleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
+        titleText:SetFont(DAMAGE_TEXT_FONT, 20)
+        titleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    end
+
+    local tex = frame:CreateTexture("bg", "BACKGROUND", nil, 0)
+    tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
+    tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+    tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")
+    frame.tex = tex
+
+    if detailBackgrounds then
+        for _, v in pairs(detailBackgrounds) do
+            local detailBg = v:CreateTexture("bg", "BACKGROUND", nil, 0)
+            detailBg:SetPoint("TOPLEFT", v, "TOPLEFT", 0,0)
+            detailBg:SetPoint("BOTTOMRIGHT", v, "BOTTOMRIGHT", 0, 0)
+            detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+            detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
+            v.tex = detailBg
+        end
+    end
+end
+GW.CreateFrameHeaderWithBody = CreateFrameHeaderWithBody

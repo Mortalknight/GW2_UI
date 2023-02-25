@@ -1,12 +1,24 @@
 local _, GW = ...
-local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 local constBackdropFrame = GW.skins.constBackdropFrame
 
 local function ApplyMacroOptionsSkin()
     if not GW.GetSetting("MACRO_SKIN_ENABLED") then return end
-    MacroFrame_LoadUI()
+    local macroHeaderText
 
-    local MacroFrame = _G.MacroFrame
+    local r = {MacroFrame:GetRegions()}
+    local i = 1
+    for _,c in pairs(r) do
+        if c:GetObjectType() == "Texture" then
+            c:Hide()
+        elseif c:GetObjectType() == "FontString" then
+            if i == 2 then macroHeaderText = c end
+            i = i + 1
+        end
+    end
+
+    GW.CreateFrameHeaderWithBody(MacroFrame, macroHeaderText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MacroFrameInset})
+
+    MacroFrameBg:Hide()
 
     MacroFrameBg:Hide()
     MacroFrame.TitleBg:Hide()
@@ -21,32 +33,20 @@ local function ApplyMacroOptionsSkin()
     _G.MacroFrameInsetInsetBotRightCorner:Hide()
     _G.MacroFrameInsetInsetBotLeftCorner:Hide()
 
-    _G.MacroFrameInset:CreateBackdrop(constBackdropFrameBorder)
-    _G.MacroHorizontalBarLeft:Hide()
-    MacroFrameTextBackground:StripTextures() -- TODO
-    _G.MacroFrameTextBackground:CreateBackdrop(constBackdropFrame)
+    MacroFrame:CreateBackdrop()
 
-    local r = {MacroFrame:GetRegions()}
-    local i = 1
+    MacroHorizontalBarLeft:Hide()
+    MacroFrameTextBackground:StripTextures()
+    MacroFrameTextBackground:CreateBackdrop(constBackdropFrame)
+
     for _,c in pairs(r) do
         if c:GetObjectType() == "Texture" then
             c:Hide()
-        elseif c:GetObjectType() == "FontString" then
-            if i == 2 then c:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE") end
-            i = i + 1
         end
     end
 
-    local tex = MacroFrame:CreateTexture("bg", "BACKGROUND")
-    tex:SetPoint("TOP", MacroFrame, "TOP", 0, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    local w, h = MacroFrame:GetSize()
-    tex:SetSize(w + 50, h + 50)
-    MacroFrame.tex = tex
-
     MacroFrame.MacroSelector.ScrollBox:StripTextures()
     MacroFrame.MacroSelector.ScrollBox:CreateBackdrop(constBackdropFrame)
-    MacroFrameTextBackground.NineSlice:CreateBackdrop(constBackdropFrame)
     GW.HandleTrimScrollBar(MacroFrame.MacroSelector.ScrollBar)
     _G.MacroFrameScrollFrameScrollBar:SkinScrollBar()
 
@@ -81,10 +81,13 @@ local function ApplyMacroOptionsSkin()
         end
     end
 
-    _G.MacroFrameSelectedMacroButton:DisableDrawLayer("BACKGROUND")
-    _G.MacroFrameSelectedMacroButton.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    _G.MacroFrameSelectedMacroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
-    --hooksecurefunc("MacroFrame_ShowDetails", function() _G.MacroFrameSelectedMacroBackground:Hide() end)
+    MacroFrameSelectedMacroButton:StripTextures()
+    MacroFrameSelectedMacroButton:StyleButton()
+    MacroFrameSelectedMacroButton:GetNormalTexture():SetTexture()
+    MacroFrameSelectedMacroButton.Icon:SetInside()
+    MacroFrameSelectedMacroButton.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    MacroFrameSelectedMacroBackground:Kill()
+    MacroFrameSelectedMacroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
 
     hooksecurefunc(MacroFrame.MacroSelector.ScrollBox, "Update", function()
         for _, button in next, { MacroFrame.MacroSelector.ScrollBox.ScrollTarget:GetChildren() } do
@@ -93,7 +96,6 @@ local function ApplyMacroOptionsSkin()
             end
         end
     end)
-
 
     -- Skin all buttons
     for i = 1, _G.MAX_ACCOUNT_MACROS do
@@ -133,9 +135,7 @@ local function ApplyMacroOptionsSkin()
     MacroPopupFrame.BorderBox.CancelButton:SkinButton(false, true)
 
     GW.HandleTrimScrollBar(MacroPopupFrame.IconSelector.ScrollBar)
-    MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameLeft:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-    MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
-    MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameRight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
+    GW.SkinTextBox(MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameMiddle, MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameLeft, MacroPopupFrame.BorderBox.IconSelectorEditBox.IconSelectorPopupNameRight, nil, nil, 4, 4)
 
     local r = {MacroPopupFrame.BorderBox:GetRegions()}
     for _,c in pairs(r) do

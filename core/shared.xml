@@ -78,4 +78,38 @@
         </Frames>
     </ScrollFrame>
 
+    <Frame name="GwFrameHeader" virtual="true">
+        <Size x="170" y="64"/>
+        <Anchors>
+          <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="0" y="-32" />
+          <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="-32" />
+        </Anchors>
+        <Layers>
+          <Layer level="ARTWORK" textureSubLevel="1">
+              <Texture parentKey="windowIcon" file="Interface\AddOns\GW2_UI\textures\character\worldmap-window-icon">
+                  <Size x="84" y="84"></Size>
+                  <Anchors>
+                      <Anchor point="CENTER" relativeKey="$parent.BGLEFT" relativePoint="LEFT" x="21" y="0" />
+                  </Anchors>
+              </Texture>
+            </Layer>
+            <Layer level="BACKGROUND" textureSubLevel="2">
+                <Texture parentKey="BGLEFT" file="Interface/AddOns/GW2_UI/textures/bag/bagheader">
+                    <Size x="512" y="41"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-2" y="0" />
+                    </Anchors>
+                    <TexCoords left="0" right="1" top="0.35" bottom="1"/>
+                </Texture>
+                <Texture parentKey="BGRIGHT" file="Interface/AddOns/GW2_UI/textures/bag/bagheader-right">
+                    <Size x="512" y="64"></Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                    </Anchors>
+
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+
 </Ui>

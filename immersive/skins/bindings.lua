@@ -2,8 +2,6 @@ local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 
 local function ApplyBindingsUISkin()
-    KeyBindingFrame_LoadUI()
-
     local buttons = {
         "defaultsButton",
         "unbindButton",
@@ -27,26 +25,23 @@ local function ApplyBindingsUISkin()
     KeyBindingFrame.header.text:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     _G.KeyBindingFrame:SetBackdrop(nil)
 
-    KeyBindingFrameBg:Hide()
-    local tex = KeyBindingFrame:CreateTexture("bg", "BACKGROUND")
-    tex:SetPoint("TOP", KeyBindingFrame, "TOP", 0, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    local w, h = KeyBindingFrame:GetSize()
-    tex:SetSize(w + 50, h + 50)
-    KeyBindingFrame.tex = tex
+    KeyBindingFrameCategoryList:StripTextures()
+    KeyBindingFrameCategoryList:CreateBackdrop(constBackdropFrameBorder, true)
+
+    KeyBindingFrame.bindingsContainer:StripTextures()
+    KeyBindingFrame.bindingsContainer:CreateBackdrop(constBackdropFrameBorder, true)
+
+    GW.CreateFrameHeaderWithBody(KeyBindingFrame, KeyBindingFrame.header.text, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon", {KeyBindingFrameCategoryList, KeyBindingFrame.bindingsContainer})
 
     KeyBindingFrame.bottomSeparator:Hide()
 
-    KeyBindingFrameCategoryList:StripTextures()
-    KeyBindingFrameCategoryList:CreateBackdrop(constBackdropFrameBorder)
-    KeyBindingFrame.bindingsContainer:StripTextures()
-    KeyBindingFrame.bindingsContainer:CreateBackdrop(constBackdropFrameBorder)
-
     KeyBindingFrame.characterSpecificButton:SkinCheckButton()
     KeyBindingFrame.characterSpecificButton:SetSize(15, 15)
+    KeyBindingFrame.characterSpecificButton:ClearAllPoints()
+    KeyBindingFrame.characterSpecificButton:SetPoint("TOPLEFT", KeyBindingFrame, "TOPRIGHT", -245, -10)
 
-    _G.KeyBindingFrameScrollFrame:SkinScrollFrame()
-    _G.KeyBindingFrameScrollFrameScrollBar:SkinScrollBar()
+    KeyBindingFrameScrollFrame:SkinScrollFrame()
+    KeyBindingFrameScrollFrameScrollBar:SkinScrollBar()
 
     hooksecurefunc("BindingButtonTemplate_SetupBindingButton", function(binding, button)
         button:SkinButton(false, true)

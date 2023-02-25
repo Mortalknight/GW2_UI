@@ -32,7 +32,7 @@ local function LoadTimeManagerSkin()
     _G.TimeManagerAlarmMinuteDropDown:SetWidth(80)
     _G.TimeManagerAlarmAMPMDropDown:SetWidth(80)
 
-    GW.SkinTextBox(_G.TimeManagerAlarmMessageEditBox.Left, _G.TimeManagerAlarmMessageEditBox.Right, _G.TimeManagerAlarmMessageEditBox.Middle)
+    GW.SkinTextBox(_G.TimeManagerAlarmMessageEditBox.Middle, _G.TimeManagerAlarmMessageEditBox.Left, _G.TimeManagerAlarmMessageEditBox.Right, nil, nil, 4, 4)
     _G.TimeManagerAlarmEnabledButton:SkinCheckButton()
     _G.TimeManagerMilitaryTimeCheck:SkinCheckButton()
     _G.TimeManagerLocalTimeCheck:SkinCheckButton()

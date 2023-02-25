@@ -1,19 +1,14 @@
 local _, GW = ...
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
-local SkinButton = GW.skins.SkinButton
-local SkinDropDownMenu = GW.skins.SkinDropDownMenu
-local SkinCheckButton = GW.skins.SkinCheckButton
-local SkinTab = GW.skins.SkinTab
-local SkinSliderFrame = GW.skins.SkinSliderFrame
 
 local function SkinBlizzardOptions()
     if not GW.GetSetting("BLIZZARD_OPTIONS_SKIN_ENABLED") then return end
     --Interface and System Options
-    local OptionsFrames = {_G.InterfaceOptionsFrameCategories, _G.InterfaceOptionsFramePanelContainer, _G.InterfaceOptionsFrameAddOns, _G.VideoOptionsFrameCategoryFrame, _G.VideoOptionsFramePanelContainer, _G.Display_, _G.Graphics_, _G.RaidGraphics_, _G.AudioOptionsSoundPanelHardware, _G.AudioOptionsSoundPanelVolume, _G.AudioOptionsSoundPanelPlayback, _G.AudioOptionsVoicePanelTalking, _G.AudioOptionsVoicePanelListening, _G.AudioOptionsVoicePanelBinding}
+    local OptionsFrames = {_G.Display_, _G.Graphics_, _G.RaidGraphics_, _G.AudioOptionsSoundPanelHardware, _G.AudioOptionsSoundPanelVolume, _G.AudioOptionsSoundPanelPlayback, _G.AudioOptionsVoicePanelTalking, _G.AudioOptionsVoicePanelListening, _G.AudioOptionsVoicePanelBinding}
     local OptionsButtons = {_G.GraphicsButton, _G.RaidButton}
 
     local InterfaceOptions = {
-        _G.InterfaceOptionsFrame, 
+        _G.InterfaceOptionsFrame,
         _G.InterfaceOptionsControlsPanel,
         _G.InterfaceOptionsCombatPanel,
         _G.InterfaceOptionsCombatPanelEnemyCastBars,
@@ -54,46 +49,34 @@ local function SkinBlizzardOptions()
         _G.AudioOptionsVoicePanelChatMode2,
         }
 
-    local InterfaceOptionsFrame = _G.InterfaceOptionsFrame
-    InterfaceOptionsFrameHeader:Hide()
-
-    -- _G.InterfaceOptionsFrameTab1TabSpacer:Hide()
-    -- _G.InterfaceOptionsFrameTab2TabSpacer1:Hide()
-    -- _G.InterfaceOptionsFrameTab2TabSpacer2:Hide()
-    InterfaceOptionsFrameHeaderText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
-    _G.InterfaceOptionsDisplayPanelResetTutorials:ClearAllPoints()
-    _G.InterfaceOptionsDisplayPanelResetTutorials:SetPoint("LEFT", _G.InterfaceOptionsDisplayPanelShowTutorials, "RIGHT", 150, 0)
-
-    --hooksecurefunc("InterfaceOptionsFrame_TabOnClick", function()
-    --    _G.InterfaceOptionsFrameTab1TabSpacer:Hide()
-    --   _G.InterfaceOptionsFrameTab2TabSpacer1:Hide()
-    --    _G.InterfaceOptionsFrameTab2TabSpacer2:Hide()
-    --end)
-
-    local VideoOptionsFrame = _G.VideoOptionsFrame
-    VideoOptionsFrameHeader:Hide()
-    VideoOptionsFrameHeaderText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
-
-    InterfaceOptionsFrame:SetBackdrop(nil)
-    local tex = InterfaceOptionsFrame:CreateTexture("bg", "BACKGROUND")
-    tex:SetPoint("TOP", InterfaceOptionsFrame, "TOP", 0, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    local w, h = InterfaceOptionsFrame:GetSize()
-    tex:SetSize(w + 50, h + 50)
-    InterfaceOptionsFrame.tex = tex
-
-    VideoOptionsFrame:SetBackdrop(nil)
-    local tex = VideoOptionsFrame:CreateTexture("bg", "BACKGROUND")
-    tex:SetPoint("TOP", VideoOptionsFrame, "TOP", 0, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    local w, h = VideoOptionsFrame:GetSize()
-    tex:SetSize(w + 50, h + 50)
-    VideoOptionsFrame.tex = tex
-
     for _, Frame in pairs(OptionsFrames) do
         Frame:StripTextures()
         Frame:CreateBackdrop(constBackdropFrameBorder)
     end
+
+    InterfaceOptionsFrameCategories:StripTextures()
+    InterfaceOptionsFramePanelContainer:StripTextures()
+    InterfaceOptionsFrameAddOns:StripTextures()
+    VideoOptionsFrameCategoryFrame:StripTextures()
+    VideoOptionsFramePanelContainer:StripTextures()
+
+    InterfaceOptionsFrameCategories:CreateBackdrop(constBackdropFrameBorder, true)
+    InterfaceOptionsFramePanelContainer:CreateBackdrop(constBackdropFrameBorder, true)
+    InterfaceOptionsFrameAddOns:CreateBackdrop(constBackdropFrameBorder, true)
+    VideoOptionsFrameCategoryFrame:CreateBackdrop(constBackdropFrameBorder, true)
+    VideoOptionsFramePanelContainer:CreateBackdrop(constBackdropFrameBorder, true)
+
+    VideoOptionsFrame:SetBackdrop(nil)
+    InterfaceOptionsFrame:SetBackdrop(nil)
+    VideoOptionsFrameHeader:Hide()
+    InterfaceOptionsFrameHeader:Hide()
+
+    GW.CreateFrameHeaderWithBody(InterfaceOptionsFrame, InterfaceOptionsFrameHeaderText, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon", {InterfaceOptionsFrameCategories, InterfaceOptionsFramePanelContainer, InterfaceOptionsFrameAddOns})
+
+    InterfaceOptionsDisplayPanelResetTutorials:ClearAllPoints()
+    InterfaceOptionsDisplayPanelResetTutorials:SetPoint("LEFT", _G.InterfaceOptionsDisplayPanelShowTutorials, "RIGHT", 150, 0)
+
+    GW.CreateFrameHeaderWithBody(VideoOptionsFrame, VideoOptionsFrameHeaderText, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon", {VideoOptionsFrameCategoryFrame, VideoOptionsFramePanelContainer})
 
     for _, Tab in pairs(OptionsButtons) do
         Tab:SkinTab()
