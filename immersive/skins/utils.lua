@@ -392,14 +392,24 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     header.BGRIGHT:SetWidth(frame:GetWidth() - 20)
 
     if titleText then
-        titleText:ClearAllPoints()
-        titleText:SetParent(header)
-        titleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
-        titleText:SetFont(DAMAGE_TEXT_FONT, 20)
-        titleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+        if type(titleText) ~= "string" then
+            titleText:ClearAllPoints()
+            titleText:SetParent(header)
+            titleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
+            titleText:SetFont(DAMAGE_TEXT_FONT, 20)
+            titleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+        else
+            header.headerText = header:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            header.headerText:ClearAllPoints()
+            header.headerText:SetParent(header)
+            header.headerText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
+            header.headerText:SetFont(DAMAGE_TEXT_FONT, 20)
+            header.headerText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+            header.headerText:SetText(titleText)
+        end
     end
 
-    local tex = frame:CreateTexture("bg", "BACKGROUND", nil, 0)
+    local tex = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
     tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
     tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, yOffset or 0)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")

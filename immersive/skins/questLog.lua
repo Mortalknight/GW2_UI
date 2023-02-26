@@ -165,7 +165,7 @@ local function LoadQuestLogFrameSkin()
 		object:SkinScrollBar()
 	end
 
-    local ScrollBars = {
+    ScrollBars = {
 		QuestDetailScrollFrame,
 		QuestGreetingScrollFrame,
 		QuestLogDetailScrollFrame,
@@ -414,23 +414,17 @@ local function LoadQuestLogFrameSkin()
 	QuestFramePushQuestButton:SetPoint('LEFT', QuestLogFrameAbandonButton, 'RIGHT', 1, 0)
 	QuestFramePushQuestButton:SetPoint('RIGHT', QuestLogFrameTrackButton, 'LEFT', -1, 0)
 
+	GW.CreateFrameHeaderWithBody(QuestLogFrame, QuestLogTitleText:GetText(), "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {QuestLogListScrollFrame, QuestLogDetailScrollFrame}, 10)
+	QuestLogListScrollFrame:CreateBackdrop(GW.skins.constBackdropFrameBorder, true, 2, 2)
+    QuestLogDetailScrollFrame:CreateBackdrop(GW.skins.constBackdropFrameBorder, true, 2, 4)
+	QuestLogFrameCancelButton:SetPoint('BOTTOMRIGHT', QuestLogFrame, 'BOTTOMRIGHT', -25, 12)
 
-    local w, h = QuestLogFrame:GetSize()
-    QuestLogFrame:StripTextures()
-    QuestLogFrame.tex = QuestLogFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
-    QuestLogFrame.tex:SetPoint("TOP", QuestLogFrame, "TOP", 0, 20)
-    QuestLogFrame.tex:SetSize(w + 30, h + 110)
-    QuestLogFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-
-	QuestLogTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
-
+	QuestLogFrameCloseButton:SetPoint("TOPRIGHT", QuestLogFrame, "TOPRIGHT", -5, -3)
     QuestLogFrameCloseButton:SkinButton(true)
     QuestLogFrameCloseButton:SetSize(20, 20)
 
     QuestLogDetailFrameCloseButton:SkinButton(true)
     QuestLogDetailFrameCloseButton:SetSize(20, 20)
-
-	QuestLogFrameCancelButton:SetPoint('BOTTOMRIGHT', QuestLogFrame, 'BOTTOMRIGHT', -25, 12)
 
 	QuestGreetingFrameHorizontalBreak:Kill()
 
@@ -445,8 +439,6 @@ local function LoadQuestLogFrameSkin()
 
     QuestLogCount:StripTextures()
     QuestLogCount:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorde, true)
-    QuestLogListScrollFrame:CreateBackdrop(GW.skins.constBackdropFrame, true, 2, 2)
-    QuestLogDetailScrollFrame:CreateBackdrop(GW.skins.constBackdropFrame, true, 8, 4)
 
     --- mover
     QuestLogFrame:EnableMouse(true)
