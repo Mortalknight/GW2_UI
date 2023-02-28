@@ -188,7 +188,7 @@ GW.TogglePetAuraPosition = TogglePetAuraPosition
 
 local function LoadPetFrame(lm)
     -- disable default PetFrame stuff
-    PetFrame:Kill()
+    PetFrame:GwKill()
 
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
 

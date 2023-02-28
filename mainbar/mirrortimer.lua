@@ -86,7 +86,7 @@ end
 
 local function LoadMirrorTimers()
     for i = 1, _G.MIRRORTIMER_NUMTIMERS do
-        _G["MirrorTimer" .. i]:Kill()
+        _G["MirrorTimer" .. i]:GwKill()
 
         local mirrorTimer = CreateFrame("Frame", "GwMirrorTimer" .. i, UIParent, "GwMirrorTimer")
         if i > 1 then

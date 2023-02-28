@@ -4,8 +4,8 @@ local constBackdropFrame = GW.skins.constBackdropFrame
 local function LoadReadyCheckSkin()
     if not GW.GetSetting("READYCHECK_SKIN_ENABLED") then return end
 
-    _G.ReadyCheckFrameYesButton:SkinButton(false, true)
-    _G.ReadyCheckFrameNoButton:SkinButton(false, true)
+    _G.ReadyCheckFrameYesButton:GwSkinButton(false, true)
+    _G.ReadyCheckFrameNoButton:GwSkinButton(false, true)
 
     local r = {_G.ReadyCheckListenerFrame:GetRegions()}
     for _,c in pairs(r) do
@@ -14,7 +14,7 @@ local function LoadReadyCheckSkin()
         end
     end
 
-    _G.ReadyCheckListenerFrame:CreateBackdrop(constBackdropFrame)
+    _G.ReadyCheckListenerFrame:GwCreateBackdrop(constBackdropFrame)
     _G.ReadyCheckPortrait:Show()
     _G.ReadyCheckPortrait:SetDrawLayer("OVERLAY", 2)
 end

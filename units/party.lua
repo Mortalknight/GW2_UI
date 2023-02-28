@@ -708,7 +708,7 @@ local function hideBlizzardPartyFrame()
 
     for i = 1, MAX_PARTY_MEMBERS do
         if _G["PartyMemberFrame" .. i] then
-            _G["PartyMemberFrame" .. i]:Kill()
+            _G["PartyMemberFrame" .. i]:GwKill()
         end
     end
 

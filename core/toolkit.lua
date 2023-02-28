@@ -96,7 +96,7 @@ end
 
 local function StripRegion(which, object, kill, alpha)
     if kill then
-        object:Kill()
+        object:GwKill()
     elseif alpha then
         object:SetAlpha(0)
     elseif which == STRIP_TEX then
@@ -114,8 +114,8 @@ local function StripType(which, object, kill, alpha)
             local FrameName = object.GetName and object:GetName()
             for _, Blizzard in pairs(StripTexturesBlizzFrames) do
                 local BlizzFrame = object[Blizzard] or (FrameName and _G[FrameName..Blizzard])
-                if BlizzFrame and BlizzFrame.StripTextures then
-                    BlizzFrame:StripTextures(kill, alpha)
+                if BlizzFrame and BlizzFrame.GwStripTextures then
+                    BlizzFrame:GwStripTextures(kill, alpha)
                 end
             end
         end
@@ -131,11 +131,11 @@ local function StripType(which, object, kill, alpha)
     end
 end
 
-local function StripTextures(object, kill, alpha)
+local function GwStripTextures(object, kill, alpha)
     StripType(STRIP_TEX, object, kill, alpha)
 end
 
-local function Kill(object)
+local function GwKill(object)
     if object.UnregisterAllEvents then
         object:UnregisterAllEvents()
         object:SetParent(GW.HiddenFrame)
@@ -157,7 +157,7 @@ local function HandleBlizzardRegions(frame)
 end
 GW.HandleBlizzardRegions = HandleBlizzardRegions
 
-local function AddHover(self)
+local function GwAddHover(self)
     if not self.hover then
         local hover = self:CreateTexture(nil, "ARTWORK")
         hover:SetPoint("LEFT", self, "LEFT")
@@ -173,7 +173,7 @@ local function AddHover(self)
     end
 end
 
-local function SkinCheckButton(button)
+local function GwSkinCheckButton(button)
     if button.SetNormalTexture then button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkbox") end
     if button.SetCheckedTexture then button:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked") end
     if button.SetDisabledCheckedTexture then button:SetDisabledCheckedTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked") end
@@ -181,7 +181,7 @@ local function SkinCheckButton(button)
     if button.SetDisabledTexture then button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/window-close-button-normal") end
 end
 
-function SkinSliderFrame(frame)
+local function GwSkinSliderFrame(frame)
     local orientation = frame:GetOrientation()
     local SIZE = 12
 
@@ -191,7 +191,7 @@ function SkinSliderFrame(frame)
     end
     frame:SetBackdrop(nil)
     if not frame.backdrop then
-        frame:CreateBackdrop()
+        frame:GwCreateBackdrop()
     end
     frame:SetThumbTexture("Interface/AddOns/GW2_UI/textures/uistuff/sliderhandle")
 
@@ -240,7 +240,7 @@ local function BackdropFrameLower(backdrop, parent)
     end
 end
 
-local function CreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShift, yShift)
+local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShift, yShift)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
     local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
     if not frame.backdrop then frame.backdrop = backdrop end
@@ -303,16 +303,16 @@ local function CreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShif
     BackdropFrameLower(backdrop, parent)
 end
 
-local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover, strip, transparent)
+local function GwSkinButton(button, isXButton, setTextColor, onlyHover, noHover, strip, transparent)
     if not button then return end
     if button.isSkinned then return end
 
-    if strip then button:StripTextures(nil, true) end
+    if strip then button:GwStripTextures(nil, true) end
 
     HandleBlizzardRegions(button)
 
     if isXButton then
-        button:StripTextures()
+        button:GwStripTextures()
     end
 
     if not onlyHover then
@@ -358,14 +358,14 @@ local function SkinButton(button, isXButton, setTextColor, onlyHover, noHover, s
     end
 
     if (not isXButton or onlyHover) and not noHover then
-        button:AddHover()
+        button:GwAddHover()
     end
 
     button.isSkinned = true
 end
 
-local function SkinTab(tabButton)
-    tabButton:CreateBackdrop()
+local function GwSkinTab(tabButton)
+    tabButton:GwCreateBackdrop()
 
     if tabButton.SetNormalTexture then tabButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/units/unittab") end
     if tabButton.SetHighlightTexture then 
@@ -394,7 +394,7 @@ local function SkinTab(tabButton)
     end
 end
 
-local function SkinScrollFrame(frame)
+local function GwSkinScrollFrame(frame)
     if frame.scrollBorderTop then frame.scrollBorderTop:Hide() end
     if frame.scrollBorderBottom then frame.scrollBorderBottom:Hide() end
     if frame.scrollFrameScrollBarBackground then frame.scrollFrameScrollBarBackground:Hide() end
@@ -427,7 +427,7 @@ local function SkinScrollFrame(frame)
     end
 end
 
-local function SkinScrollBar(frame)
+local function GwSkinScrollBar(frame)
     local parent = frame:GetParent()
     local ScrollUpButton = GrabScrollBarElement(frame, "ScrollUpButton") or GrabScrollBarElement(frame, "UpButton") or GrabScrollBarElement(frame, "ScrollUp") or GrabScrollBarElement(parent, "scrollUp")
     local ScrollDownButton = GrabScrollBarElement(frame, "ScrollDownButton") or GrabScrollBarElement(frame, "DownButton") or GrabScrollBarElement(frame, "ScrollDown") or GrabScrollBarElement(parent, "scrollDown")
@@ -453,16 +453,16 @@ local function SkinScrollBar(frame)
     end
 end
 
-local function SkinDropDownMenu(frame, buttonPaddindX)
+local function GwSkinDropDownMenu(frame, buttonPaddindX)
     local frameName = frame.GetName and frame:GetName()
     local button = frame.Button or frameName and (_G[frameName .. "Button"] or _G[frameName .. "_Button"])
     local text = frameName and _G[frameName .. "Text"] or frame.Text
     local icon = frame.Icon
 
-    frame:StripTextures()
+    frame:GwStripTextures()
     frame:SetWidth(155)
 
-    frame:CreateBackdrop(constBackdropDropDown)
+    frame:GwCreateBackdrop(constBackdropDropDown)
     frame.backdrop:SetBackdropColor(0, 0, 0)
 
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)
@@ -473,7 +473,7 @@ local function SkinDropDownMenu(frame, buttonPaddindX)
     button:SetPoint("RIGHT", frame, "RIGHT", buttonPaddindX or -10, 3)
 
     button.SetPoint = GW.NoOp
-    button:StripTextures()
+    button:GwStripTextures()
 
     button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
@@ -508,7 +508,7 @@ local function HandleNextPrevButton(button, arrowDir)
         end
     end
 
-    button:StripTextures()
+    button:GwStripTextures()
 
     button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
     button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
@@ -534,7 +534,7 @@ local function HandleNextPrevButton(button, arrowDir)
 end
 GW.HandleNextPrevButton = HandleNextPrevButton
 
-local function SetOutside(obj, anchor, xOffset, yOffset, anchor2, noScale)
+local function GwSetOutside(obj, anchor, xOffset, yOffset, anchor2, noScale)
     if not anchor then anchor = obj:GetParent() end
 
     if not xOffset then xOffset = GW.BorderSize end
@@ -550,7 +550,7 @@ local function SetOutside(obj, anchor, xOffset, yOffset, anchor2, noScale)
     obj:SetPoint('BOTTOMRIGHT', anchor2 or anchor, 'BOTTOMRIGHT', x, -y)
 end
 
-local function SetInside(obj, anchor, xOffset, yOffset, anchor2, noScale)
+local function GwSetInside(obj, anchor, xOffset, yOffset, anchor2, noScale)
     if not anchor then anchor = obj:GetParent() end
 
     if not xOffset then xOffset = GW.BorderSize end
@@ -566,10 +566,10 @@ local function SetInside(obj, anchor, xOffset, yOffset, anchor2, noScale)
     obj:SetPoint('BOTTOMRIGHT', anchor2 or anchor, 'BOTTOMRIGHT', -x, y)
 end
 
-local function StyleButton(button, noHover, noPushed, noChecked)
+local function GwStyleButton(button, noHover, noPushed, noChecked)
 	if button.SetHighlightTexture and not button.hover and not noHover then
 		local hover = button:CreateTexture()
-		hover:SetInside()
+		hover:GwSetInside()
 		hover:SetBlendMode("ADD")
 		hover:SetColorTexture(1, 1, 1, 0.3)
 		button:SetHighlightTexture(hover)
@@ -578,7 +578,7 @@ local function StyleButton(button, noHover, noPushed, noChecked)
 
 	if button.SetPushedTexture and not button.pushed and not noPushed then
 		local pushed = button:CreateTexture()
-		pushed:SetInside()
+		pushed:GwSetInside()
 		pushed:SetBlendMode("ADD")
 		pushed:SetColorTexture(0.9, 0.8, 0.1, 0.3)
 		button:SetPushedTexture(pushed)
@@ -587,7 +587,7 @@ local function StyleButton(button, noHover, noPushed, noChecked)
 
 	if button.SetCheckedTexture and not button.checked and not noChecked then
 		local checked = button:CreateTexture()
-		checked:SetInside()
+		checked:GwSetInside()
 		checked:SetBlendMode("ADD")
 		checked:SetColorTexture(1, 1, 1, 0.3)
 		button:SetCheckedTexture(checked)
@@ -596,26 +596,26 @@ local function StyleButton(button, noHover, noPushed, noChecked)
 
 	if button.cooldown then
 		button.cooldown:SetDrawEdge(false)
-		button.cooldown:SetInside(button, 0, 0)
+		button.cooldown:GwSetInside(button, 0, 0)
 	end
 end
 
 local function addapi(object)
     local mt = getmetatable(object).__index
-    if not object.Kill then mt.Kill = Kill end
-    if not object.StripTextures then mt.StripTextures = StripTextures end
-    if not object.AddHover then mt.AddHover = AddHover end
-    if not object.SkinCheckButton then mt.SkinCheckButton = SkinCheckButton end
-    if not object.SkinSliderFrame then mt.SkinSliderFrame = SkinSliderFrame end
-    if not object.CreateBackdrop then mt.CreateBackdrop = CreateBackdrop end
-    if not object.SkinButton then mt.SkinButton = SkinButton end
-    if not object.SkinTab then mt.SkinTab = SkinTab end
-    if not object.SkinScrollFrame then mt.SkinScrollFrame = SkinScrollFrame end
-    if not object.SkinScrollBar then mt.SkinScrollBar = SkinScrollBar end
-    if not object.SkinDropDownMenu then mt.SkinDropDownMenu = SkinDropDownMenu end
-    if not object.SetOutside then mt.SetOutside = SetOutside end
-    if not object.SetInside then mt.SetInside = SetInside end
-    if not object.StyleButton then mt.StyleButton = StyleButton end
+    if not object.GwKill then mt.GwKill = GwKill end
+    if not object.GwStripTextures then mt.GwStripTextures = GwStripTextures end
+    if not object.GwAddHover then mt.GwAddHover = GwAddHover end
+    if not object.GwSkinCheckButton then mt.GwSkinCheckButton = GwSkinCheckButton end
+    if not object.GwSkinSliderFrame then mt.GwSkinSliderFrame = GwSkinSliderFrame end
+    if not object.GwCreateBackdrop then mt.GwCreateBackdrop = GwCreateBackdrop end
+    if not object.GwSkinButton then mt.GwSkinButton = GwSkinButton end
+    if not object.GwSkinTab then mt.GwSkinTab = GwSkinTab end
+    if not object.GwSkinScrollFrame then mt.GwSkinScrollFrame = GwSkinScrollFrame end
+    if not object.GwSkinScrollBar then mt.GwSkinScrollBar = GwSkinScrollBar end
+    if not object.GwSkinDropDownMenu then mt.GwSkinDropDownMenu = GwSkinDropDownMenu end
+    if not object.GwSetOutside then mt.GwSetOutside = GwSetOutside end
+    if not object.GwSetInside then mt.GwSetInside = GwSetInside end
+    if not object.GwStyleButton then mt.GwStyleButton = GwStyleButton end
 end
 
 local handled = {["Frame"] = true}

@@ -413,8 +413,8 @@ local function GameTooltip_ShowStatusBar(self)
     local sb = self.statusBarPool:GetNextActive()
     if not sb or sb.backdrop then return end
 
-    sb:StripTextures()
-    sb:CreateBackdrop(GW.skins.constBackdropFrameBorder)
+    sb:GwStripTextures()
+    sb:GwCreateBackdrop(GW.skins.constBackdropFrameBorder)
     sb:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
 end
 
@@ -427,8 +427,8 @@ local function GameTooltip_ShowProgressBar(self)
     self.progressBar = sb.Bar
 
     if not sb.Bar.backdrop then
-        sb.Bar:StripTextures()
-        sb.Bar:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+        sb.Bar:GwStripTextures()
+        sb.Bar:GwCreateBackdrop(GW.constBackdropFrameColorBorder, true)
         sb.Bar.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
         sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
     end
@@ -644,7 +644,7 @@ local function LoadTooltips()
 
     -- Skin GameTooltip Status Bar
     GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
-    GameTooltipStatusBar:CreateBackdrop()
+    GameTooltipStatusBar:GwCreateBackdrop()
     GameTooltipStatusBar:ClearAllPoints()
     GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", GW.BorderSize, -(GW.SpacingSize * 3))
     GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -GW.BorderSize, -(GW.SpacingSize * 3))

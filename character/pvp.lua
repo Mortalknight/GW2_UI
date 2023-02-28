@@ -23,7 +23,7 @@ local function LoadPvpFrame(frame)
     PVPFrameBackground:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -60)
     PVPFrameBackground:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 8)
 
-    PVPFrame:StripTextures(true)
+    PVPFrame:GwStripTextures(true)
 
     PVPFrameHonorLabel:ClearAllPoints()
     PVPFrameHonorLabel:SetPoint("TOP", PVPFrameBackground, "TOP", 0, -10)
@@ -65,7 +65,7 @@ local function LoadBattlegroundFrame(battlegroundFrame)
     BattlefieldFrame:SetPoint("BOTTOMRIGHT", battlegroundFrame, "BOTTOMRIGHT", 0, 8)
 
 
-    BattlefieldFrame:StripTextures()
+    BattlefieldFrame:GwStripTextures()
     BattlefieldFrameBGTex:Hide()
 
     BattlefieldFrameCloseButton:Hide()
@@ -100,8 +100,8 @@ local function LoadBattlegroundFrame(battlegroundFrame)
     BattlefieldFrameJoinButton:ClearAllPoints()
     BattlefieldFrameJoinButton:SetPoint("RIGHT", BattlefieldFrame, "BOTTOMRIGHT", -20, 20)
 
-    BattlefieldFrameJoinButton:SkinButton(false, true)
-    BattlefieldFrameGroupJoinButton:SkinButton(false, true)
+    BattlefieldFrameJoinButton:GwSkinButton(false, true)
+    BattlefieldFrameGroupJoinButton:GwSkinButton(false, true)
 
     BattlefieldFrameInfoScrollFrameChildFrameRewardsInfoDescription:SetTextColor(1, 1, 1)
     BattlefieldFrameInfoScrollFrameChildFrameDescription:SetTextColor(1, 1, 1)

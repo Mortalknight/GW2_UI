@@ -1,10 +1,10 @@
 local _, GW = ...
 
 local function SkinGearQuipper()
-    GqUiFrame:StripTextures()
-    GqEventBindingFrame:StripTextures()
+    GqUiFrame:GwStripTextures()
+    GqEventBindingFrame:GwStripTextures()
 
-    GqUiFrame.CloseButton:SkinButton(true)
+    GqUiFrame.CloseButton:GwSkinButton(true)
     GqUiFrame.CloseButton:SetSize(20, 20)
 
     local tex = GqUiFrame:CreateTexture("bg", "BACKGROUND")
@@ -19,13 +19,13 @@ local function SkinGearQuipper()
         GqUiFrame:SetPoint("TOPRIGHT", 350, -12)
     end)
 
-    GqUiFrame_BtnSaveSet:SkinButton(false, true)
-    GqUiFrame_BtnRemoveSet:SkinButton(false, true)
-    GqUiFrame_BtnOptions:SkinButton(false, true)
-    GqUiScrollFrame:StripTextures()
-    GqUiScrollFrame:CreateBackdrop(GW.skins.constBackdropFrame, true, 10)
-    GqUiEventBindingsScrollFrame:StripTextures()
-    GqUiEventBindingsScrollFrame:CreateBackdrop(GW.skins.constBackdropFrame, true, 10)
+    GqUiFrame_BtnSaveSet:GwSkinButton(false, true)
+    GqUiFrame_BtnRemoveSet:GwSkinButton(false, true)
+    GqUiFrame_BtnOptions:GwSkinButton(false, true)
+    GqUiScrollFrame:GwStripTextures()
+    GqUiScrollFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true, 10)
+    GqUiEventBindingsScrollFrame:GwStripTextures()
+    GqUiEventBindingsScrollFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true, 10)
     GqUiScrollFrameVSlider.RightEdge:Hide()
     GqUiScrollFrameVSlider.LeftEdge:Hide()
     GqUiScrollFrameVSlider.BottomLeftCorner:Hide()
@@ -34,8 +34,8 @@ local function SkinGearQuipper()
     GqUiScrollFrameVSlider.TopLeftCorner:Hide()
     GqUiScrollFrameVSlider.TopRightCorner:Hide()
     GqUiScrollFrameVSlider.TopEdge:Hide()
-    GqUiScrollFrameVSlider:StripTextures()
-    GqUiScrollFrameVSlider:SkinScrollBar()
+    GqUiScrollFrameVSlider:GwStripTextures()
+    GqUiScrollFrameVSlider:GwSkinScrollBar()
     GqUiScrollFrameVSlider.Center:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
     GqUiScrollFrameVSlider.Center:SetWidth(3)
 
@@ -47,23 +47,23 @@ local function SkinGearQuipper()
     GqUiEventBindingsScrollFrameVSlider.TopLeftCorner:Hide()
     GqUiEventBindingsScrollFrameVSlider.TopRightCorner:Hide()
     GqUiEventBindingsScrollFrameVSlider.TopEdge:Hide()
-    GqUiEventBindingsScrollFrameVSlider:StripTextures()
-    GqUiEventBindingsScrollFrameVSlider:SkinScrollBar()
+    GqUiEventBindingsScrollFrameVSlider:GwStripTextures()
+    GqUiEventBindingsScrollFrameVSlider:GwSkinScrollBar()
     GqUiEventBindingsScrollFrameVSlider.Center:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
     GqUiEventBindingsScrollFrameVSlider.Center:SetWidth(3)
 
     hooksecurefunc(gearquipper, "InitUI", function()
-        GwCharacterWindow.paperDollButton:Kill()
-        GwCharacterWindow.paperDollLabel:Kill()
+        GwCharacterWindow.paperDollButton:GwKill()
+        GwCharacterWindow.paperDollLabel:GwKill()
     end)
 
-    GqUiEventBindingsScrollFrameVSlider:SkinScrollBar()
-    GqEventBindingFrame_CbDisableEvents:SkinCheckButton()
+    GqUiEventBindingsScrollFrameVSlider:GwSkinScrollBar()
+    GqEventBindingFrame_CbDisableEvents:GwSkinCheckButton()
     GqEventBindingFrame_CbDisableEvents:SetSize(15, 15)
 
     hooksecurefunc(gearquipper, "ShowSetInfo", function()
         if not GqUiSetInfoFrame_CheckButtonPartial.hookedGW then
-            GqUiSetInfoFrame_CheckButtonPartial:SkinCheckButton()
+            GqUiSetInfoFrame_CheckButtonPartial:GwSkinCheckButton()
             GqUiSetInfoFrame_CheckButtonPartial:SetSize(15, 15)
 
             GqUiSetInfoFrame_CheckButtonPartial:ClearAllPoints()
@@ -72,7 +72,7 @@ local function SkinGearQuipper()
         end
 
         if not GqUiSetInfoFrame_CheckButtonActionSlots.hookedGW then
-            GqUiSetInfoFrame_CheckButtonActionSlots:SkinCheckButton()
+            GqUiSetInfoFrame_CheckButtonActionSlots:GwSkinCheckButton()
             GqUiSetInfoFrame_CheckButtonActionSlots:SetSize(15, 15)
 
             GqUiSetInfoFrame_CheckButtonActionSlots:ClearAllPoints()
@@ -91,7 +91,7 @@ local function SkinGearQuipper()
     hooksecurefunc(gearquipper, "CreateSlotStateBox", function(_, slotName)
         local btn =_G[slotName .. "StateBox"]
         if not btn.hookedGW then
-            btn:SkinCheckButton()
+            btn:GwSkinCheckButton()
             btn:SetSize(15, 15)
             btn.hookedGW = true
         end
@@ -100,14 +100,14 @@ local function SkinGearQuipper()
 
     hooksecurefunc(gearquipper, "RefreshSetList", function()
         if not GqAddSetButton.hookedGW then
-            GqAddSetButton:SkinButton(false, true)
+            GqAddSetButton:GwSkinButton(false, true)
             GqAddSetButton.hookedGW = true
         end
 
         local setNames = gearquipper:LoadSetNames()
         for index, _ in ipairs(setNames) do
             if not _G["GqUiSetCheckBox_" .. index].hookedGW then
-                _G["GqUiSetCheckBox_" .. index]:SkinCheckButton()
+                _G["GqUiSetCheckBox_" .. index]:GwSkinCheckButton()
                 _G["GqUiSetCheckBox_" .. index]:SetSize(15, 15)
                 _G["GqUiSetCheckBox_" .. index].hookedGW = true
             end
@@ -116,31 +116,31 @@ local function SkinGearQuipper()
 
     hooksecurefunc(gearquipper, "RefreshEventEntries", function()
         if not GqAddEventBinding.hookedGW then
-            GqAddEventBinding:SkinButton(false, true)
+            GqAddEventBinding:GwSkinButton(false, true)
             GqAddEventBinding.hookedGW = true
         end
     end)
 
-    GqUiFrameEvents:StripTextures()
-    GqUiFrameEvents.CloseButton:SkinButton(true)
+    GqUiFrameEvents:GwStripTextures()
+    GqUiFrameEvents.CloseButton:GwSkinButton(true)
     GqUiFrameEvents.CloseButton:SetSize(20, 20)
-    GqUiFrameEvents:CreateBackdrop(GW.skins.constBackdropFrame, true, 10)
+    GqUiFrameEvents:GwCreateBackdrop(GW.skins.constBackdropFrame, true, 10)
 
-    GqUiFrameEvents_CbPVE:SkinCheckButton()
+    GqUiFrameEvents_CbPVE:GwSkinCheckButton()
     GqUiFrameEvents_CbPVE:SetSize(15, 15)
 
-    GqUiFrameEvents_CbPVP:SkinCheckButton()
+    GqUiFrameEvents_CbPVP:GwSkinCheckButton()
     GqUiFrameEvents_CbPVP:SetSize(15, 15)
 
-    GqUiFrameEvents_BtnApply:SkinButton(false, true)
-    GqUiFrameEvents_BtnCancel:SkinButton(false, true)
+    GqUiFrameEvents_BtnApply:GwSkinButton(false, true)
+    GqUiFrameEvents_BtnCancel:GwSkinButton(false, true)
 
     hooksecurefunc("GqUiFrameEvents_OnShow", function()
         if not GqUiFrameEvents_CbEventType.hookedGW then
-            GqUiFrameEvents_CbEventType:SkinDropDownMenu()
+            GqUiFrameEvents_CbEventType:GwSkinDropDownMenu()
             GqUiFrameEvents_CbEventType:SetWidth(185)
 
-            GqUiFrameEvents_CbSetName:SkinDropDownMenu()
+            GqUiFrameEvents_CbSetName:GwSkinDropDownMenu()
             GqUiFrameEvents_CbSetName:SetWidth(185)
 
             GqUiFrameEvents_CbEventType.hookedGW = true
@@ -151,11 +151,11 @@ local function SkinGearQuipper()
         local btn = _G["GqUiBindingEntry_" .. index .. "_BtnDelete"]
         local dd = _G["GqUiBindingEntry_" .. index .. "_SetDropdown"]
         if not btn.hookedGW then
-            btn:SkinButton(false, true)
+            btn:GwSkinButton(false, true)
             btn.hookedGW = true
         end
         if not dd.hookedGW then
-            dd:SkinDropDownMenu()
+            dd:GwSkinDropDownMenu()
             dd:SetWidth(160)
             dd.hookedGW = true
         end

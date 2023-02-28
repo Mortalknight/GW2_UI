@@ -90,7 +90,7 @@ local function CreateCreditsFrame()
     CreditsFrame:SetSize(320, 815)
     CreditsFrame:SetPoint("CENTER", UIParent, "CENTER")
     CreditsFrame:SetFrameStrata("HIGH")
-    CreditsFrame:CreateBackdrop(BackdropFrame)
+    CreditsFrame:GwCreateBackdrop(BackdropFrame)
     CreditsFrame:SetMovable(true)
     CreditsFrame:Hide()
 

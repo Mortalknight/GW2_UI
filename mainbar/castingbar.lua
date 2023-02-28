@@ -168,7 +168,7 @@ end
 GW.TogglePlayerEnhancedCastbar = TogglePlayerEnhancedCastbar
 
 local function LoadCastingBar(castingBarType, name, unit, showTradeSkills)
-    castingBarType:Kill()
+    castingBarType:GwKill()
 
     local GwCastingBar = CreateFrame("Frame", name, UIParent, "GwCastingBar")
     GwCastingBar.latency:Hide()

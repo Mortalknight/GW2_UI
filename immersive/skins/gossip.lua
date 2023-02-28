@@ -32,34 +32,34 @@ end
 local function LoadGossipSkin()
     if not GetSetting("GOSSIP_SKIN_ENABLED") then return end
 
-    ItemTextFrame:StripTextures(true)
-    ItemTextFrame:CreateBackdrop()
+    ItemTextFrame:GwStripTextures(true)
+    ItemTextFrame:GwCreateBackdrop()
 
     ItemTextFrame.tex = ItemTextFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     ItemTextFrame.tex:SetPoint("TOP", ItemTextFrame, "TOP", 0, 20)
     ItemTextFrame.tex:SetSize(ItemTextFrame:GetSize())
     ItemTextFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
 
-    ItemTextScrollFrame:StripTextures()
+    ItemTextScrollFrame:GwStripTextures()
 
     GW.HandleTrimScrollBar(GossipFrame.GreetingPanel.ScrollBar)
-    ItemTextScrollFrameScrollBar:SkinScrollBar()
-    ItemTextScrollFrame:SkinScrollFrame()
+    ItemTextScrollFrameScrollBar:GwSkinScrollBar()
+    ItemTextScrollFrame:GwSkinScrollFrame()
 
     GossipFrame.TitleContainer.TitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
-    GossipFrame:StripTextures()
-    GossipFrame:CreateBackdrop()
-    GossipFrame.GreetingPanel:StripTextures()
+    GossipFrame:GwStripTextures()
+    GossipFrame:GwCreateBackdrop()
+    GossipFrame.GreetingPanel:GwStripTextures()
     GossipFrame.tex = GossipFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     GossipFrame.tex:SetPoint("TOP", GossipFrame, "TOP", 0, 20)
     GossipFrame.tex:SetSize(GossipFrame:GetSize())
     GossipFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
 
-    GossipFrame.CloseButton:SkinButton(true)
+    GossipFrame.CloseButton:GwSkinButton(true)
     GossipFrame.CloseButton:SetSize(20, 20)
 
-    GossipFrame.GreetingPanel.GoodbyeButton:StripTextures()
-    GossipFrame.GreetingPanel.GoodbyeButton:SkinButton(false, true)
+    GossipFrame.GreetingPanel.GoodbyeButton:GwStripTextures()
+    GossipFrame.GreetingPanel.GoodbyeButton:GwSkinButton(false, true)
 
     GW.HandleNextPrevButton(ItemTextPrevPageButton)
     GW.HandleNextPrevButton(ItemTextNextPageButton)
@@ -71,7 +71,7 @@ local function LoadGossipSkin()
         end
     end)
 
-    ItemTextFrame:StripTextures(true)
+    ItemTextFrame:GwStripTextures(true)
     QuestFont:SetTextColor(1, 1, 1)
 
     if GossipFrame.Background then
@@ -93,11 +93,11 @@ local function LoadGossipSkin()
         end
     end)
 
-    ItemTextCloseButton:SkinButton(true)
+    ItemTextCloseButton:GwSkinButton(true)
     ItemTextCloseButton:SetSize(20, 20)
 
     local NPCFriendshipStatusBar = NPCFriendshipStatusBar
-    NPCFriendshipStatusBar:StripTextures()
+    NPCFriendshipStatusBar:GwStripTextures()
     NPCFriendshipStatusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
     NPCFriendshipStatusBar.bg = NPCFriendshipStatusBar:CreateTexture(nil, "BACKGROUND")
     NPCFriendshipStatusBar.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")

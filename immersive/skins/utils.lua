@@ -51,17 +51,17 @@ local function HandleItemButton(b, setInside)
     local icon = b.icon or b.Icon or b.IconTexture or b.iconTexture or (name and (_G[name .. "IconTexture"] or _G[name .. "Icon"]))
     local texture = icon and icon.GetTexture and icon:GetTexture()
 
-    b:StripTextures()
-    b:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
-    b:StyleButton()
+    b:GwStripTextures()
+    b:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    b:GwStyleButton()
 
     if icon then
         icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
         if setInside then
-            icon:SetInside(b)
+            icon:GwSetInside(b)
         else
-            b.backdrop:SetOutside(icon, 1, 1)
+            b.backdrop:GwSetOutside(icon, 1, 1)
         end
 
         icon:SetParent(b.backdrop)
@@ -85,12 +85,12 @@ local function ReskinScrollBarArrow(frame, direction)
             frame.Overlay:SetAlpha(0)
         end
     else
-        frame:StripTextures()
+        frame:GwStripTextures()
     end
 end
 
 local function HandleTrimScrollBar(frame, small)
-    frame:StripTextures()
+    frame:GwStripTextures()
 
     ReskinScrollBarArrow(frame.Back, "up")
     ReskinScrollBarArrow(frame.Forward, "down")
@@ -133,12 +133,12 @@ local function SkinUIDropDownMenu()
         end
 
         local Backdrop = _G[listFrameName .. "Backdrop"]
-        Backdrop:StripTextures()
-        Backdrop:CreateBackdrop(constBackdropFrame)
+        Backdrop:GwStripTextures()
+        Backdrop:GwCreateBackdrop(constBackdropFrame)
 
         local menuBackdrop = _G[listFrameName .. "MenuBackdrop"]
-        menuBackdrop:StripTextures()
-        menuBackdrop:CreateBackdrop(constBackdropFrame)
+        menuBackdrop:GwStripTextures()
+        menuBackdrop:GwCreateBackdrop(constBackdropFrame)
     end)
 end
 
@@ -161,7 +161,7 @@ local function SkinDropDownList()
             uncheck:SetTexCoord(unpack(GW.TexCoords))
             uncheck:SetSize(13, 13)
             if not button.backdrop then
-                button:CreateBackdrop()
+                button:GwCreateBackdrop()
             end
 
             button.backdrop:Hide()
@@ -195,7 +195,7 @@ local function HandleIcon(icon, backdrop, backdropTexture)
     icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
     if backdrop and not icon.backdrop then
-        icon:CreateBackdrop(backdropTexture)
+        icon:GwCreateBackdrop(backdropTexture)
     end
 end
 GW.HandleIcon = HandleIcon
@@ -270,7 +270,7 @@ GW.SkinTextBox = SkinTextBox
 
 do
     local function iconBorderColor(border, r, g, b, a)
-        border:StripTextures()
+        border:GwStripTextures()
 
         if border.customFunc then
             local br, bg, bb = 1, 1, 1
@@ -299,7 +299,7 @@ do
         border.customBackdrop = backdrop
 
         if not border.IconBorderHooked then
-            border:StripTextures()
+            border:GwStripTextures()
 
             hooksecurefunc(border, "SetVertexColor", iconBorderColor)
             hooksecurefunc(border, "Hide", iconBorderHide)
@@ -340,7 +340,7 @@ local function HandlePortraitFrame(frame, createBackdrop)
     local portraitFrameOverlay = name and _G[name .. "PortraitOverlay"] or frame.PortraitOverlay
     local artFrameOverlay = name and _G[name .. "ArtOverlayFrame"] or frame.ArtOverlayFrame
 
-    frame:StripTextures()
+    frame:GwStripTextures()
 
     if portraitFrame then portraitFrame:SetAlpha(0) end
     if portraitFrameOverlay then portraitFrameOverlay:SetAlpha(0) end
@@ -362,7 +362,7 @@ local function HandlePortraitFrame(frame, createBackdrop)
     end
 
     if frame.CloseButton then
-        frame.CloseButton:SkinButton(true)
+        frame.CloseButton:GwSkinButton(true)
         frame.CloseButton:SetSize(20, 20)
     end
 
@@ -373,7 +373,7 @@ local function HandlePortraitFrame(frame, createBackdrop)
         --local w, h = frame:GetSize()
         --tex:SetSize(w + 50, h + 50)
         --frame.tex = tex
-        frame:CreateBackdrop({
+        frame:GwCreateBackdrop({
             edgeFile = "",
             bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
             edgeSize = 1

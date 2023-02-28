@@ -729,7 +729,7 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot:SetPoint(unpack(anchor))
     slot:SetParent(parent)
     slot:SetSize(size, size)
-    slot:StripTextures()
+    slot:GwStripTextures()
     slot:SetFrameLevel(parent:GetFrameLevel() + 15)
 
     if slot.icon then

@@ -300,7 +300,7 @@ local function bank_OnShow(self)
     BankFrame:ClearAllPoints()
     BankFrame:SetClampedToScreen(false)
     BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-    BankSlotsFrame:Kill()
+    BankSlotsFrame:GwKill()
 
     OpenAllBags(self)
     updateBagBar(self.ItemFrame)
@@ -394,7 +394,7 @@ local function LoadBank(helpers)
     hooksecurefunc(BankFrame, "Raise", function()
         BankFrame:ClearAllPoints()
         BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-        BankSlotsFrame:Kill()
+        BankSlotsFrame:GwKill()
     end)
 
     hooksecurefunc(BankFrame, "SetPoint", function()
@@ -504,7 +504,7 @@ local function LoadBank(helpers)
     do
         EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
         local dd = f.buttonSettings.dropdown
-        dd:CreateBackdrop(GW.skins.constBackdropFrame)
+        dd:GwCreateBackdrop(GW.skins.constBackdropFrame)
         f.buttonSettings:HookScript(
             "OnClick",
             function(self)

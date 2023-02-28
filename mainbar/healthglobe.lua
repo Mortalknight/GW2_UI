@@ -322,7 +322,7 @@ local function LoadHealthGlobe()
     -- set handlers for health globe and disable default player frame
     if GW.wowbuild >= 42873 then
         PlayerFrame:SetScript("OnEvent", nil)
-        PlayerFrame:Kill()
+        PlayerFrame:GwKill()
     else
         PlayerFrame:SetParent(GW.HiddenFrame)
     end

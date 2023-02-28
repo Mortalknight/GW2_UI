@@ -44,7 +44,7 @@ local function handleItemButton(item)
     if not item then return end
 
     if item then
-        item:CreateBackdrop("Transparent", true, -1, -1)
+        item:GwCreateBackdrop("Transparent", true, -1, -1)
         item:SetSize(143, 40)
         item:SetFrameLevel(item:GetFrameLevel() + 2)
     end
@@ -133,7 +133,7 @@ local function LoadQuestLogFrameSkin()
 		QuestRewardScrollFrame
 	}
 	for _, object in pairs(QuestStrip) do
-		object:StripTextures(true)
+		object:GwStripTextures(true)
 	end
 
     local QuestButtons = {
@@ -150,8 +150,8 @@ local function LoadQuestLogFrameSkin()
 		QuestLogFrameCancelButton
 	}
 	for _, button in pairs(QuestButtons) do
-		button:StripTextures()
-		button:SkinButton(false, true)
+		button:GwStripTextures()
+		button:GwSkinButton(false, true)
 	end
 
     local ScrollBars = {
@@ -162,7 +162,7 @@ local function LoadQuestLogFrameSkin()
 		QuestRewardScrollFrameScrollBar
 	}
 	for _, object in pairs(ScrollBars) do
-		object:SkinScrollBar()
+		object:GwSkinScrollBar()
 	end
 
     ScrollBars = {
@@ -173,7 +173,7 @@ local function LoadQuestLogFrameSkin()
 		QuestRewardScrollFrame
 	}
 	for _, object in pairs(ScrollBars) do
-		object:SkinScrollFrame()
+		object:GwSkinScrollFrame()
 	end
 
     for frame, numItems in pairs({ QuestLogItem = MAX_NUM_ITEMS, QuestProgressItem = MAX_REQUIRED_ITEMS }) do
@@ -415,18 +415,18 @@ local function LoadQuestLogFrameSkin()
 	QuestFramePushQuestButton:SetPoint('RIGHT', QuestLogFrameTrackButton, 'LEFT', -1, 0)
 
 	GW.CreateFrameHeaderWithBody(QuestLogFrame, QuestLogTitleText:GetText(), "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {QuestLogListScrollFrame, QuestLogDetailScrollFrame}, 10)
-	QuestLogListScrollFrame:CreateBackdrop(GW.skins.constBackdropFrameBorder, true, 2, 2)
-    QuestLogDetailScrollFrame:CreateBackdrop(GW.skins.constBackdropFrameBorder, true, 2, 4)
+	QuestLogListScrollFrame:GwCreateBackdrop(GW.skins.constBackdropFrameBorder, true, 2, 2)
+    QuestLogDetailScrollFrame:GwCreateBackdrop(GW.skins.constBackdropFrameBorder, true, 2, 4)
 	QuestLogFrameCancelButton:SetPoint('BOTTOMRIGHT', QuestLogFrame, 'BOTTOMRIGHT', -25, 12)
 
 	QuestLogFrameCloseButton:SetPoint("TOPRIGHT", QuestLogFrame, "TOPRIGHT", -5, -3)
-    QuestLogFrameCloseButton:SkinButton(true)
+    QuestLogFrameCloseButton:GwSkinButton(true)
     QuestLogFrameCloseButton:SetSize(20, 20)
 
-    QuestLogDetailFrameCloseButton:SkinButton(true)
+    QuestLogDetailFrameCloseButton:GwSkinButton(true)
     QuestLogDetailFrameCloseButton:SetSize(20, 20)
 
-	QuestGreetingFrameHorizontalBreak:Kill()
+	QuestGreetingFrameHorizontalBreak:GwKill()
 
 	QuestLogListScrollFrame:SetWidth(303)
 	QuestLogDetailScrollFrame:SetWidth(303)
@@ -437,8 +437,8 @@ local function LoadQuestLogFrameSkin()
 
 	QuestLogSkillHighlight:SetAlpha(0.35)
 
-    QuestLogCount:StripTextures()
-    QuestLogCount:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorde, true)
+    QuestLogCount:GwStripTextures()
+    QuestLogCount:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorde, true)
 
     --- mover
     QuestLogFrame:EnableMouse(true)
@@ -453,47 +453,47 @@ local function LoadQuestLogFrameSkin()
     end)
 
     QuestFrameNpcNameText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
-    QuestFrame:StripTextures()
-    QuestFrame:CreateBackdrop()
+    QuestFrame:GwStripTextures()
+    QuestFrame:GwCreateBackdrop()
     QuestFrame.tex = QuestFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     QuestFrame.tex:SetPoint("TOP", QuestFrame, "TOP", 0, 20)
     QuestFrame.tex:SetSize(QuestFrame:GetSize())
     QuestFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
 
-    QuestFrameCloseButton:SkinButton(true)
+    QuestFrameCloseButton:GwSkinButton(true)
     QuestFrameCloseButton:SetSize(20, 20)
 
-    QuestFrameDetailPanel:StripTextures(nil, true)
-    QuestDetailScrollFrame:StripTextures()
-    QuestProgressScrollFrame:StripTextures()
-    QuestGreetingScrollFrame:StripTextures()
+    QuestFrameDetailPanel:GwStripTextures(nil, true)
+    QuestDetailScrollFrame:GwStripTextures()
+    QuestProgressScrollFrame:GwStripTextures()
+    QuestGreetingScrollFrame:GwStripTextures()
 
     QuestFrameDetailPanel.SealMaterialBG:SetAlpha(0)
     QuestFrameRewardPanel.SealMaterialBG:SetAlpha(0)
     QuestFrameProgressPanel.SealMaterialBG:SetAlpha(0)
     QuestFrameGreetingPanel.SealMaterialBG:SetAlpha(0)
 
-    QuestFrameGreetingPanel:StripTextures(true)
-    QuestFrameGreetingGoodbyeButton:SkinButton(false, true)
-    QuestGreetingFrameHorizontalBreak:Kill()
+    QuestFrameGreetingPanel:GwStripTextures(true)
+    QuestFrameGreetingGoodbyeButton:GwSkinButton(false, true)
+    QuestGreetingFrameHorizontalBreak:GwKill()
 
-    QuestDetailScrollChildFrame:StripTextures(true)
-    QuestRewardScrollChildFrame:StripTextures(true)
-    QuestFrameProgressPanel:StripTextures(true)
-    QuestFrameRewardPanel:StripTextures(true)
+    QuestDetailScrollChildFrame:GwStripTextures(true)
+    QuestRewardScrollChildFrame:GwStripTextures(true)
+    QuestFrameProgressPanel:GwStripTextures(true)
+    QuestFrameRewardPanel:GwStripTextures(true)
 
-    QuestProgressScrollFrameScrollBar:SkinScrollBar()
-    QuestProgressScrollFrame:SkinScrollFrame()
+    QuestProgressScrollFrameScrollBar:GwSkinScrollBar()
+    QuestProgressScrollFrame:GwSkinScrollFrame()
 
-    QuestFrameAcceptButton:SkinButton(false, true)
-    QuestFrameDeclineButton:SkinButton(false, true)
-    QuestFrameCompleteButton:SkinButton(false, true)
-    QuestFrameGoodbyeButton:SkinButton(false, true)
-    QuestFrameCompleteQuestButton:SkinButton(false, true)
+    QuestFrameAcceptButton:GwSkinButton(false, true)
+    QuestFrameDeclineButton:GwSkinButton(false, true)
+    QuestFrameCompleteButton:GwSkinButton(false, true)
+    QuestFrameGoodbyeButton:GwSkinButton(false, true)
+    QuestFrameCompleteQuestButton:GwSkinButton(false, true)
 
-    QuestNPCModelTextFrame:StripTextures()
+    QuestNPCModelTextFrame:GwStripTextures()
     w, h = QuestNPCModelTextFrame:GetSize()
-    QuestNPCModelTextFrame:StripTextures()
+    QuestNPCModelTextFrame:GwStripTextures()
     QuestNPCModelTextFrame.tex = QuestNPCModelTextFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     QuestNPCModelTextFrame.tex:SetPoint("TOP", QuestNPCModelTextFrame, "TOP", 0, 20)
     QuestNPCModelTextFrame.tex:SetSize(w + 30, h + 60)

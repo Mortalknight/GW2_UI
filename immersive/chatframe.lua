@@ -1427,7 +1427,7 @@ local function styleChatWindow(frame)
 
     frame:SetClampRectInsets(0,0,0,0)
     frame:SetClampedToScreen(false)
-    frame:StripTextures(true)
+    frame:GwStripTextures(true)
     _G[name.."ButtonFrame"]:Hide()
 
     _G[format(editbox:GetName() .. "Left", id)]:Hide()
@@ -1624,7 +1624,7 @@ local function BuildCopyChatFrame()
     frame.scrollArea = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
     frame.scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", 8, -30)
     frame.scrollArea:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 8)
-    frame.scrollArea.ScrollBar:SkinScrollBar()
+    frame.scrollArea.ScrollBar:GwSkinScrollBar()
     frame.scrollArea:SetScript("OnSizeChanged", function(scroll)
         frame.editBox:SetWidth(scroll:GetWidth())
         frame.editBox:SetHeight(scroll:GetHeight())
@@ -1661,12 +1661,12 @@ local function BuildCopyChatFrame()
     frame.close:SetFrameLevel(frame.close:GetFrameLevel() + 1)
     frame.close:EnableMouse(true)
     frame.close:SetSize(20, 20)
-    frame.close:SkinButton(true)
+    frame.close:GwSkinButton(true)
 end
 
 local function BuildEmoticonTableFrame()
     local frame = CreateFrame("Frame", "GW_EmoteFrame", UIParent)
-    frame:CreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
+    frame:GwCreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
     frame:SetWidth(160)
     frame:SetHeight(134)
     frame:SetPoint("BOTTOMLEFT", ChatFrame1Tab, "TOPLEFT", 0, 5)
@@ -1930,8 +1930,8 @@ local function LoadChat()
         if chatFrame.minimized then
             if chatFrame.Container then chatFrame.Container:SetAlpha(0) end
             if not chatFrame.minFrame.minimiizeStyled then
-                chatFrame.minFrame:StripTextures(true)
-                chatFrame.minFrame:CreateBackdrop(GW.skins.constBackdropFrame)
+                chatFrame.minFrame:GwStripTextures(true)
+                chatFrame.minFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
@@ -2026,8 +2026,8 @@ local function LoadChat()
     for i = 1, #ChatMenus do
         _G[ChatMenus[i]]:HookScript("OnShow",
             function(self)
-                self:StripTextures()
-                self:CreateBackdrop(GW.skins.constBackdropFrame)
+                self:GwStripTextures()
+                self:GwCreateBackdrop(GW.skins.constBackdropFrame)
             end)
     end
 
@@ -2054,7 +2054,7 @@ local function LoadChat()
     ChatFrameChannelButton:SetWidth(20)
     ChatFrameChannelButton.Flash:SetHeight(20)
     ChatFrameChannelButton.Flash:SetWidth(20)
-    ChatFrameChannelButton.Icon:Kill()
+    ChatFrameChannelButton.Icon:GwKill()
     hooksecurefunc(ChatFrameChannelButton, "SetIconToState", function(self, joined)
         if joined then
             self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")

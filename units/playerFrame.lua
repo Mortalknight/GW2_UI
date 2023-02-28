@@ -261,7 +261,7 @@ local function LoadPlayerFrame()
 
     if not GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
 
-    PlayerFrame:Kill()
+    PlayerFrame:GwKill()
 
     --hide unsed things from default target frame
     NewUnitFrame.castingbarBackground:Hide()

@@ -7,10 +7,10 @@ local function SkinMerchantFrameItemButton(i)
     local icon = button.icon
     local iconBorder = button.IconBorder
     local item = _G["MerchantItem" .. i]
-    item:StripTextures(true)
-    item:CreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
+    item:GwStripTextures(true)
+    item:GwCreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
 
-    button:StripTextures()
+    button:GwStripTextures()
     button:SetPoint("TOPLEFT", item, "TOPLEFT", 4, -4)
 
     icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
@@ -34,14 +34,14 @@ GW.SkinMerchantFrameItemButton = SkinMerchantFrameItemButton
 local function LoadMerchantFrameSkin()
     if not GW.GetSetting("MERCHANT_SKIN_ENABLED") then return end
 
-    MerchantFrame:StripTextures()
+    MerchantFrame:GwStripTextures()
     MerchantFrame.TitleBg:Hide()
     MerchantFrame.TopTileStreaks:Hide()
-    MerchantFrame:CreateBackdrop()
+    MerchantFrame:GwCreateBackdrop()
 
-    MerchantFrameInset:CreateBackdrop(constBackdropFrameBorder)
+    MerchantFrameInset:GwCreateBackdrop(constBackdropFrameBorder)
 
-    MerchantFrameCloseButton:SkinButton(true)
+    MerchantFrameCloseButton:GwSkinButton(true)
     MerchantFrameCloseButton:SetSize(20, 20)
 
     local tex = MerchantFrame:CreateTexture("bg", "BACKGROUND")
@@ -66,19 +66,19 @@ local function LoadMerchantFrameSkin()
 
     MerchantFrame:SetWidth(360)
 
-    MerchantBuyBackItem:StripTextures(true)
-    MerchantBuyBackItem:CreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
+    MerchantBuyBackItem:GwStripTextures(true)
+    MerchantBuyBackItem:GwCreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
     MerchantBuyBackItem.backdrop:SetPoint("TOPLEFT", -6, 6)
     MerchantBuyBackItem.backdrop:SetPoint("BOTTOMRIGHT", 6, -6)
 
 
-    MerchantMoneyBg:StripTextures()
-    MerchantMoneyInset:StripTextures()
+    MerchantMoneyBg:GwStripTextures()
+    MerchantMoneyInset:GwStripTextures()
 
     MerchantItem1:SetPoint("TOPLEFT", MerchantFrame, "TOPLEFT", 24, -69)
 
-    MerchantFrameTab1:SkinButton(false, true)
-    MerchantFrameTab2:SkinButton(false, true)
+    MerchantFrameTab1:GwSkinButton(false, true)
+    MerchantFrameTab2:GwSkinButton(false, true)
 
     MerchantFrameTab1:SetSize(80, 24)
     MerchantFrameTab2:SetSize(80, 24)
@@ -96,7 +96,7 @@ local function LoadMerchantFrameSkin()
         SkinMerchantFrameItemButton(i)
     end
 
-    MerchantBuyBackItemItemButton:StripTextures()
+    MerchantBuyBackItemItemButton:GwStripTextures()
 
     local backDrop = CreateFrame("Frame", nil, MerchantBuyBackItemItemButton, "GwActionButtonBackdropTmpl")
     local backDropSize = 1
@@ -120,13 +120,13 @@ local function LoadMerchantFrameSkin()
     MerchantBuyBackItemItemButtonIconTexture:SetPoint("TOPLEFT", 1, -1)
     MerchantBuyBackItemItemButtonIconTexture:SetPoint("BOTTOMRIGHT", -1, 1)
 
-    MerchantRepairItemButton:SkinButton(false, false, true)
+    MerchantRepairItemButton:GwSkinButton(false, false, true)
     MerchantRepairItemButton:GetRegions():SetTexCoord(0.04, 0.24, 0.06, 0.5)
 
-    MerchantGuildBankRepairButton:SkinButton(false, false, true)
+    MerchantGuildBankRepairButton:GwSkinButton(false, false, true)
     MerchantGuildBankRepairButtonIcon:SetTexCoord(0.61, 0.82, 0.1, 0.52)
 
-    MerchantRepairAllButton:SkinButton(false, false, true)
+    MerchantRepairAllButton:GwSkinButton(false, false, true)
     MerchantRepairAllIcon:SetTexCoord(0.34, 0.1, 0.34, 0.535, 0.535, 0.1, 0.535, 0.535)
 
     -- added repar cost to the tooltio
