@@ -1,5 +1,4 @@
 local _, GW = ...
-local constBackdropFrame = GW.skins.constBackdropFrame
 local GetSetting = GW.GetSetting
 
 local function ApplyMacroOptionsSkin()
@@ -14,7 +13,7 @@ local function ApplyMacroOptionsSkin()
             break
         end
     end
-    GW.CreateFrameHeaderWithBody(MacroFrame, macroHeaderText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MacroFrameInset})
+    GW.CreateFrameHeaderWithBody(MacroFrame, macroHeaderText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MacroFrameInset, MacroFrame.MacroSelector.ScrollBox})
 
     MacroFrameBg:Hide()
 
@@ -24,8 +23,14 @@ local function ApplyMacroOptionsSkin()
 
     MacroFrameInset.NineSlice:Hide()
     MacroHorizontalBarLeft:Hide()
-    MacroFrameTextBackground:GwStripTextures()
-    MacroFrameTextBackground:GwCreateBackdrop(constBackdropFrame)
+
+    if not MacroFrameTextBackground.NineSlice.SetBackdrop then
+        Mixin(MacroFrameTextBackground.NineSlice, BackdropTemplateMixin)
+        MacroFrameTextBackground.NineSlice:HookScript("OnSizeChanged", MacroFrameTextBackground.NineSlice.OnBackdropSizeChanged)
+    end
+
+    MacroFrameTextBackground.NineSlice:SetBackdrop(GW.constBackdropFrameColorBorder)
+    MacroFrameTextBackground.NineSlice:SetBackdropBorderColor(0, 0, 0)
 
     for _,c in pairs(r) do
         if c:GetObjectType() == "Texture" then
@@ -56,6 +61,11 @@ local function ApplyMacroOptionsSkin()
     MacroFrameCloseButton:SetPoint("TOPRIGHT", 0, 0)
     MacroFrameTab1:GwSkinTab()
     MacroFrameTab2:GwSkinTab()
+
+    MacroFrameTab1:SetPoint("TOPLEFT", MacroFrame, "TOPLEFT", 12, -30)
+    MacroFrameTab2:SetPoint("LEFT", MacroFrameTab1, "RIGHT", 4, 0)
+    MacroFrameTab1.Text:SetAllPoints(MacroFrameTab1)
+    MacroFrameTab2.Text:SetAllPoints(MacroFrameTab2)
 
     MacroFrameSelectedMacroButton:GwStripTextures()
     MacroFrameSelectedMacroButton:GwStyleButton()
