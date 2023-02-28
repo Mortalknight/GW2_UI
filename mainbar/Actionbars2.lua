@@ -77,7 +77,7 @@ local function UpdateSettings()
     settings.showMarcroName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
     settings.mainBarRangeIndicator = GetSetting("MAINBAR_RANGEINDICATOR")
     settings.xpBarEnabled = GetSetting("XPBAR_ENABLED")
-    settings.playerAsTargetFrameEnabled = GetSetting("PLAYER_AS_TARGET_FRAME")
+    settings.playerAsTargetFrameEnabled = GetSetting("PLAYER_AS_TARGET_FRAME") --or not GetSetting("HEALTHGLOBE_ENABLED")
     settings.multibarMargin = tonumber(GetSetting("MULTIBAR_MARGIIN"))
     settings.actiobarBackdropAlpha = tonumber(GetSetting("ACTIONBAR_BACKGROUND_ALPHA"))
 
@@ -317,15 +317,13 @@ local function fadeCheck(self, forceCombat)
 
                 self.gw_DirtySetting = false
             else
-                local inFocus
+                local inFocus = true
                 if fadeOption == "MOUSE_OVER" or fadeOption == "INCOMBAT" then
                     if f:IsMouseOver(100, -100, -100, 100) then
                         inFocus = true
                     else
                         inFocus = false
                     end
-                else
-                    inFocus = true
                 end
                 local isFlyout = false
                 if testFlyout and testFlyout == f then
@@ -337,7 +335,7 @@ local function fadeCheck(self, forceCombat)
                 if not f.gw_IsEnabled then
                     forceHide = true
                 end
-                if f:IsShown() and forceHide ~= true and ((inFocus and (fadeOption == "MOUSE_OVER" or fadeOption == "INCOMBAT") and not inCombat) or (inFocus or (inCombat and fadeOption == "INCOMBAT")) or isFlyout or fadeOption == "ALWAYS") then
+                if f:IsShown() and not forceHide and ((inFocus and (fadeOption == "MOUSE_OVER" or fadeOption == "INCOMBAT") and not inCombat) or (inFocus or (inCombat and fadeOption == "INCOMBAT")) or isFlyout or fadeOption == "ALWAYS") then
                     -- should be showing
                     if not busy and curAlpha < 1.0 then
                         actionBarFrameShow(f)
@@ -555,7 +553,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
 
     updateMacroName(btn)
 
-    if noBackDrop == nil or noBackDrop == false then
+    if btn.gwBackdrop == nil and (noBackDrop == nil or noBackDrop == false) then
         local backDrop = CreateFrame("Frame", nil, btn, "GwActionButtonBackdropTmpl")
         local backDropSize = 1
 

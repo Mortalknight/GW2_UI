@@ -106,7 +106,7 @@ local function SetPetActionButtonPositionAndStyle(self)
         GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])
     end
 end
-GW.AddForProfiling("petbar", "setPetBar", setPetBar)
+GW.AddForProfiling("petbar", "SetPetActionButtonPositionAndStyle", SetPetActionButtonPositionAndStyle)
 
 local function UpdatePetBarButtonsHot()
     for i = 1, 12 do

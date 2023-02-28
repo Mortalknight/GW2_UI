@@ -76,11 +76,9 @@ local function ApplyMacroOptionsSkin()
     MacroPopupFrame:HookScript("OnShow", function(self)
         self:ClearAllPoints()
         self:SetPoint("TOPLEFT", MacroFrame, "TOPRIGHT", 10, 0)
-    end)
 
-    MacroPopupFrame:HookScript("OnShow", function(frame)
-        if not frame.isSkinned then
-            GW.HandleIconSelectionFrame(frame, nil, nil, "MacroPopup")
+        if not self.isSkinned then
+            GW.HandleIconSelectionFrame(self, nil, nil, "MacroPopup")
         end
     end)
 end
