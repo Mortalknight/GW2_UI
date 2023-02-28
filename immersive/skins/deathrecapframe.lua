@@ -5,14 +5,14 @@ local GetSetting = GW.GetSetting
 local function SkinDeathRecapFrame_Loaded()
     if not GetSetting("DEATHRECAPFRAME_SKIN_ENABLED") then return end
 
-    DeathRecapFrame.CloseButton:SkinButton(false, true)
-    DeathRecapFrame.CloseXButton:SkinButton(true)
+    DeathRecapFrame.CloseButton:GwSkinButton(false, true)
+    DeathRecapFrame.CloseXButton:GwSkinButton(true)
 
     DeathRecapFrame.CloseXButton:SetSize(20, 20)
     DeathRecapFrame.CloseXButton:ClearAllPoints()
     DeathRecapFrame.CloseXButton:SetPoint("TOPRIGHT", -3, -3)
 
-    DeathRecapFrame:CreateBackdrop(constBackdropFrame)
+    DeathRecapFrame:GwCreateBackdrop(constBackdropFrame)
     DeathRecapFrameBorderTopLeft:Hide()
     DeathRecapFrameBorderTopRight:Hide()
     DeathRecapFrameBorderBottomLeft:Hide()

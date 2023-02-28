@@ -7,13 +7,13 @@ local function LoadAddonListSkin()
 
     GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon", {AddonList.ScrollBox})
 
-    AddonList.CloseButton:SkinButton(true)
-    AddonList.EnableAllButton:SkinButton(false, true)
-    AddonList.DisableAllButton:SkinButton(false, true)
-    AddonList.OkayButton:SkinButton(false, true)
-    AddonList.CancelButton:SkinButton(false, true)
-    AddonCharacterDropDown:SkinDropDownMenu()
-    AddonListForceLoad:SkinCheckButton()
+    AddonList.CloseButton:GwSkinButton(true)
+    AddonList.EnableAllButton:GwSkinButton(false, true)
+    AddonList.DisableAllButton:GwSkinButton(false, true)
+    AddonList.OkayButton:GwSkinButton(false, true)
+    AddonList.CancelButton:GwSkinButton(false, true)
+    AddonCharacterDropDown:GwSkinDropDownMenu()
+    AddonListForceLoad:GwSkinCheckButton()
     AddonListForceLoad:SetSize(10, 10)
     AddonListForceLoad:ClearAllPoints()
     AddonListForceLoad:SetPoint("TOPRIGHT", AddonList, "TOPRIGHT", -110, -55)
@@ -72,10 +72,10 @@ local function LoadAddonListSkin()
     hooksecurefunc(AddonList.ScrollBox, "Update", function(frame)
         for _, child in next, {frame.ScrollTarget:GetChildren()} do
             if not child.IsSkinned then
-                child.Enabled:SkinCheckButton()
+                child.Enabled:GwSkinCheckButton()
                 child.Enabled:SetSize(15, 15)
                 child.Enabled:SetHitRectInsets(0, 0, 0, 0)
-                child.LoadAddonButton:SkinButton(false, true)
+                child.LoadAddonButton:GwSkinButton(false, true)
 
                 child.IsSkinned = true
             end

@@ -303,7 +303,7 @@ local function ArenaFrameOnEvent(self, event)
         local numOpps = GetNumArenaOpponentSpecs()
 
         if ArenaPrepFrames then
-            ArenaPrepFrames:Kill()
+            ArenaPrepFrames:GwKill()
         end
 
         for i = 1, MAX_ARENA_ENEMIES do

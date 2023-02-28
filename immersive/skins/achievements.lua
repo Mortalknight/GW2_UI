@@ -343,7 +343,7 @@ local function SetupButtonHighlight(button, background)
 
     local hl = button:GetHighlightTexture()
     hl:SetVertexColor(0.8, 0.8, 0.8, 0.8)
-    hl:SetInside(background)
+    hl:GwSetInside(background)
     button:HookScript("OnEnter",function()
       GW.TriggerButtonHoverAnimation(button,hl)
     end)
@@ -363,7 +363,7 @@ local function skinAchievementSummaryHeaders(self)
   setTitleText(text)
 end
 local function skinAchievementSummaryStatusBar(self)
-  self:StripTextures()
+  self:GwStripTextures()
   local fname = self:GetName()
   local bar = _G[fname.."FillBar"]
   local fill = _G[fname.."Bar"]
@@ -373,7 +373,7 @@ local function skinAchievementSummaryStatusBar(self)
   local button =  _G[fname.."Button"]
 
   if button then
-    _G[fname.."ButtonHighlight"]:StripTextures()
+    _G[fname.."ButtonHighlight"]:GwStripTextures()
   end
 
   if not spark then
@@ -429,7 +429,7 @@ local function skinCriteriaStatusbar(parentFrame,self)
     if self.skinned==true then return end
     self.skinned = true
 
-    self:StripTextures()
+    self:GwStripTextures()
     local text = self.Text
 
     local bar = select(1,self:GetRegions())
@@ -461,7 +461,7 @@ end
 local function skinAchievementFrameSummaryAchievement(self)
 
   self.skinned = true
-  self:StripTextures()
+  self:GwStripTextures()
 
 
 
@@ -518,7 +518,7 @@ local function skinAchievementFrameSummaryAchievement(self)
   self.fBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar")
   self.fBackground:SetVertexColor(1,1,1,0.2)
 
-  self.Highlight:StripTextures()
+  self.Highlight:GwStripTextures()
   self.Highlight.Bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementhover")
   self.Highlight.Bottom:SetBlendMode("ADD")
   self.Highlight.Bottom:ClearAllPoints()
@@ -555,7 +555,7 @@ end
 
 local function skinAchievementFrameListAchievement(self)
   self.skinned = true
-  self:StripTextures()
+  self:GwStripTextures()
 
   self:SetHeight(120)
 
@@ -735,7 +735,7 @@ local function skinAchievementFrameListAchievement(self)
   end)
 
 
-  self.Highlight:StripTextures()
+  self.Highlight:GwStripTextures()
   self.Highlight.Bottom:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementhover")
   self.Highlight.Bottom:SetBlendMode("ADD")
   self.Highlight.Bottom:ClearAllPoints()
@@ -879,7 +879,7 @@ end
 
 local function skinAchievementFrameTab(self,index)
   self.skinned = true
-  self:StripTextures()
+  self:GwStripTextures()
   self:SetSize(64,40)
   self.Text:Hide()
 
@@ -951,7 +951,7 @@ local function skinAchievementComparison(self,isPlayer)
 
   local parent = self:GetParent()
 
-  self:StripTextures()
+  self:GwStripTextures()
   self:SetHeight(80)
   self:SetWidth( isPlayer and 395 or  172 )
   self.Icon:Hide()
@@ -1050,7 +1050,7 @@ local function updateAchievementComparison(self,isPlayer)
 end
 
 local function skinAchievementCompareSummaryStatusBar(self,isPlayer)
-  self:StripTextures()
+  self:GwStripTextures()
 
   local bar = select(6,self:GetRegions())
   local title = self.Title
@@ -1119,10 +1119,10 @@ local function skinAchevement()
     --hooksecurefunc("AchievementFrameCategories_UpdateDataProvider",AchievementFrameCategories_UpdateDataProvider)
     AchievementFrameCategories_OnLoad(AchievementFrameCategories)
 
-    AchievementFrame:StripTextures()
-    AchievementFrame.Header:StripTextures()
-    AchievementFrameSummary:StripTextures()
-    AchievementFrameCategories:StripTextures()
+    AchievementFrame:GwStripTextures()
+    AchievementFrame.Header:GwStripTextures()
+    AchievementFrameSummary:GwStripTextures()
+    AchievementFrameCategories:GwStripTextures()
     AchievementFrameSummary:GetChildren():Hide()
 
     AchievementFrameWaterMark:Hide()
@@ -1197,7 +1197,7 @@ local function skinAchevement()
     AchievementFrame.tex:SetSize(853,853)
     AchievementFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/windowbg")
 
-    AchievementFrameCloseButton:SkinButton(true)
+    AchievementFrameCloseButton:GwSkinButton(true)
     AchievementFrameCloseButton:SetSize(20, 20)
     AchievementFrameCloseButton:SetPoint("TOPRIGHT",-10,30)
 
@@ -1217,7 +1217,7 @@ local function skinAchevement()
     AchievementFrame.SearchBox.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
 
-    AchievementFrame.SearchPreviewContainer:StripTextures()
+    AchievementFrame.SearchPreviewContainer:GwStripTextures()
     AchievementFrame.SearchPreviewContainer:ClearAllPoints()
     AchievementFrame.SearchPreviewContainer:SetPoint("TOPLEFT",AchievementFrame.SearchBox,"BOTTOMLEFT",0,0)
     AchievementFrame.SearchPreviewContainer:SetPoint("TOPRIGHT",AchievementFrame.SearchBox,"BOTTOMRIGHT",0,0)
@@ -1231,7 +1231,7 @@ local function skinAchevement()
     end
 
 
-    AchievementFrameFilterDropDown:SkinDropDownMenu()
+    AchievementFrameFilterDropDown:GwSkinDropDownMenu()
     AchievementFrameFilterDropDown:ClearAllPoints()
 
     AchievementFrameFilterDropDown:SetPoint('BOTTOMLEFT', AchievementFrame.SearchBox, 'TOPLEFT', 0, 10)
@@ -1298,7 +1298,7 @@ local function skinAchevement()
             local button = child.Button
             if button then
                 if not button.IsSkinned then
-                    button:StripTextures()
+                    button:GwStripTextures()
                     button.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
                     button.Background:ClearAllPoints()
                     button.Background:SetPoint("TOPLEFT",button,"TOPLEFT",0,0)
@@ -1369,10 +1369,10 @@ local function skinAchevement()
     reanchorSummaryCategoriy(10)
 
 
-    AchievementFrameComparison:StripTextures()
+    AchievementFrameComparison:GwStripTextures()
     for _, v in next, {  AchievementFrameComparison:GetChildren() } do
       if v then
-        v:StripTextures()
+        v:GwStripTextures()
       end
     end
     AchievementFrameComparison:ClearAllPoints()
@@ -1398,9 +1398,9 @@ local function skinAchevement()
     AchievementFrameComparison.Summary.Player:SetSize(395,45)
     AchievementFrameComparison.Summary.Friend:SetSize(172,45)
 
-    AchievementFrameComparison.Summary:StripTextures()
-    AchievementFrameComparison.Summary.Player:StripTextures()
-    AchievementFrameComparison.Summary.Friend:StripTextures()
+    AchievementFrameComparison.Summary:GwStripTextures()
+    AchievementFrameComparison.Summary.Player:GwStripTextures()
+    AchievementFrameComparison.Summary.Friend:GwStripTextures()
 
     AchievementFrameComparison.Summary.bg = AchievementFrameComparison.Summary:CreateTexture("bg", "BACKGROUND", nil, 0)
     AchievementFrameComparison.Summary.bg:ClearAllPoints();
@@ -1448,11 +1448,11 @@ local function skinAchevement()
         end
     end)
 
-    AchievementFrameAchievements:StripTextures()
+    AchievementFrameAchievements:GwStripTextures()
 
     for _, v in next, {  AchievementFrameAchievements:GetChildren() } do
         if v then
-        v:StripTextures()
+        v:GwStripTextures()
         end
     end
     AchievementFrameAchievements:ClearAllPoints()
@@ -1488,11 +1488,11 @@ local function skinAchevement()
     end)
 
 
-    AchievementFrameStats:StripTextures()
+    AchievementFrameStats:GwStripTextures()
 
     for _, v in next, {  AchievementFrameStats:GetChildren() } do
         if v then
-        v:StripTextures()
+        v:GwStripTextures()
         end
     end
     AchievementFrameStats:ClearAllPoints()

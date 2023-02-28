@@ -17,18 +17,18 @@ end
 local function LoadDressUpFrameSkin()
     if not GetSetting("INSPECTION_SKIN_ENABLED") then return end
 
-    DressUpFrame:StripTextures()
+    DressUpFrame:GwStripTextures()
     DressUpFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
-    DressUpFrameCloseButton:SkinButton(true)
+    DressUpFrameCloseButton:GwSkinButton(true)
     DressUpFrameCloseButton:SetSize(20, 20)
-    DressUpFrameResetButton:SkinButton(false, true)
-    DressUpFrameCancelButton:SkinButton(false, true)
+    DressUpFrameResetButton:GwSkinButton(false, true)
+    DressUpFrameCancelButton:GwSkinButton(false, true)
 
     -- 9.1.5 part
     if DressUpFrame.LinkButton then
-        DressUpFrame.LinkButton:SkinButton(false, true)
-        DressUpFrame.ToggleOutfitDetailsButton:CreateBackdrop()
-        DressUpFrame.ToggleOutfitDetailsButton:SkinButton(false, true, false, true)
+        DressUpFrame.LinkButton:GwSkinButton(false, true)
+        DressUpFrame.ToggleOutfitDetailsButton:GwCreateBackdrop()
+        DressUpFrame.ToggleOutfitDetailsButton:GwSkinButton(false, true, false, true)
 
         local icon = DressUpFrame.ToggleOutfitDetailsButton:CreateTexture(nil, "OVERLAY")
         icon:SetPoint("TOPLEFT", 0, 0)
@@ -38,18 +38,18 @@ local function LoadDressUpFrameSkin()
 
         DressUpFrame.OutfitDetailsPanel:DisableDrawLayer("BACKGROUND")
         DressUpFrame.OutfitDetailsPanel:DisableDrawLayer("OVERLAY")
-        DressUpFrame.OutfitDetailsPanel:CreateBackdrop(GW.skins.constBackdropFrame)
+        DressUpFrame.OutfitDetailsPanel:GwCreateBackdrop(GW.skins.constBackdropFrame)
     end
 
-    DressUpFrameOutfitDropDown:SkinDropDownMenu()
+    DressUpFrameOutfitDropDown:GwSkinDropDownMenu()
     DressUpFrameOutfitDropDown.backdrop:ClearAllPoints()
     DressUpFrameOutfitDropDown.backdrop:SetPoint("TOPLEFT", 0, 5)
     DressUpFrameOutfitDropDown.backdrop:SetPoint("BOTTOMRIGHT", DressUpFrameOutfitDropDownButton, "BOTTOMRIGHT", 2, -2)
     DressUpFrameOutfitDropDownText:ClearAllPoints()
     DressUpFrameOutfitDropDownText:SetPoint("RIGHT", DressUpFrameOutfitDropDownButton, "LEFT", 25, 0)
-    DressUpFrameOutfitDropDown.SaveButton:SkinButton(false, true)
+    DressUpFrameOutfitDropDown.SaveButton:GwSkinButton(false, true)
     DressUpFrameOutfitDropDown.SaveButton:SetPoint("LEFT", DressUpFrameOutfitDropDown, "RIGHT", -7, 3)
-    DressUpFrame.MaximizeMinimizeFrame:HandleMaxMinFrame()
+    DressUpFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()
 
     local tex = DressUpFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     tex:SetPoint("TOP", DressUpFrame, "TOP", 0, 20)
@@ -75,7 +75,7 @@ local function LoadDressUpFrameSkin()
 
             for slot in self.slotPool:EnumerateActive() do
                 if not slot.backdrop then
-                    slot.Icon:CreateBackdrop("Transparent", true, 1, 1)
+                    slot.Icon:GwCreateBackdrop("Transparent", true, 1, 1)
                     slot.IconBorder:SetAlpha(0)
                     GW.HandleIcon(slot.Icon)
                 end
@@ -90,24 +90,24 @@ local function LoadDressUpFrameSkin()
     end
 
     -- Wardrobe edit frame
-    WardrobeOutfitFrame:StripTextures(true)
-    WardrobeOutfitFrame:CreateBackdrop(GW.skins.constBackdropFrame)
+    WardrobeOutfitFrame:GwStripTextures(true)
+    WardrobeOutfitFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
 
-    WardrobeOutfitEditFrame:StripTextures(true)
-    WardrobeOutfitEditFrame:CreateBackdrop(GW.skins.constBackdropFrame)
-    WardrobeOutfitEditFrame.EditBox:StripTextures()
+    WardrobeOutfitEditFrame:GwStripTextures(true)
+    WardrobeOutfitEditFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
+    WardrobeOutfitEditFrame.EditBox:GwStripTextures()
     GW.SkinTextBox(WardrobeOutfitEditFrame.EditBox.MiddleTexture, WardrobeOutfitEditFrame.EditBox.LeftTexture, WardrobeOutfitEditFrame.EditBox.RightTexture)
-    WardrobeOutfitEditFrame.AcceptButton:SkinButton(false, true)
-    WardrobeOutfitEditFrame.CancelButton:SkinButton(false, true)
-    WardrobeOutfitEditFrame.DeleteButton:SkinButton(false, true)
+    WardrobeOutfitEditFrame.AcceptButton:GwSkinButton(false, true)
+    WardrobeOutfitEditFrame.CancelButton:GwSkinButton(false, true)
+    WardrobeOutfitEditFrame.DeleteButton:GwSkinButton(false, true)
 
     -- SideDressUpFrame
-    SideDressUpFrameCloseButton:SkinButton(true)
+    SideDressUpFrameCloseButton:GwSkinButton(true)
     SideDressUpFrameCloseButton:SetSize(18, 18)
-    SideDressUpFrame.ResetButton:SkinButton(false, true)
-    SideDressUpFrame:StripTextures()
+    SideDressUpFrame.ResetButton:GwSkinButton(false, true)
+    SideDressUpFrame:GwStripTextures()
     SideDressUpFrame.BGTopLeft:Hide()
 	SideDressUpFrame.BGBottomLeft:Hide()
-    SideDressUpFrame:CreateBackdrop(GW.skins.constBackdropFrame, true, -2, -2)
+    SideDressUpFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true, -2, -2)
 end
 GW.LoadDressUpFrameSkin = LoadDressUpFrameSkin

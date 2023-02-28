@@ -10,7 +10,7 @@ local function gwSetStaticPopupSize()
         _G["StaticPopup" .. i .. "ItemFrame"].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         _G["StaticPopup" .. i .. "ItemFrameNormalTexture"]:SetTexture(nil)
-        _G["StaticPopup" .. i .. "CloseButton"]:SkinButton(true)
+        _G["StaticPopup" .. i .. "CloseButton"]:GwSkinButton(true)
         _G["StaticPopup" .. i .. "CloseButton"]:SetSize(20, 20)
         _G["StaticPopup" .. i .. "CloseButton"]:ClearAllPoints()
         _G["StaticPopup" .. i .. "CloseButton"]:SetPoint("TOPRIGHT", -20, -5)
@@ -23,7 +23,7 @@ local function LoadStaticPopupSkin()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
 
-        StaticPopup:CreateBackdrop()
+        StaticPopup:GwCreateBackdrop()
         StaticPopup.CoverFrame:Hide()
         StaticPopup.Separator:Hide()
         StaticPopup.Border:Hide()
@@ -37,9 +37,9 @@ local function LoadStaticPopupSkin()
         --Style Buttons (upto 5)
         for ii = 1, 5 do
             if ii < 5 then
-                _G["StaticPopup" .. i .. "Button" .. ii]:SkinButton(false, true)
+                _G["StaticPopup" .. i .. "Button" .. ii]:GwSkinButton(false, true)
             else
-                _G["StaticPopup" .. i .. "ExtraButton"]:SkinButton(false, true)
+                _G["StaticPopup" .. i .. "ExtraButton"]:GwSkinButton(false, true)
             end
         end
 
@@ -69,10 +69,10 @@ local function LoadStaticPopupSkin()
             local closeButton = self.closeDialog.ConfirmButton or (dialogName and _G[dialogName .. "ConfirmButton"])
             local resumeButton = self.closeDialog.ResumeButton or (dialogName and _G[dialogName .. "ResumeButton"])
             if closeButton then 
-                closeButton:SkinButton(false, true)
+                closeButton:GwSkinButton(false, true)
             end
             if resumeButton then
-                resumeButton:SkinButton(false, true)
+                resumeButton:GwSkinButton(false, true)
             end
         end
     end)
@@ -87,8 +87,8 @@ local function LoadStaticPopupSkin()
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
             self.CloseDialog.tex = tex
 
-            self.CloseDialog.ConfirmButton:SkinButton(false, true)
-            self.CloseDialog.ResumeButton:SkinButton(false, true)
+            self.CloseDialog.ConfirmButton:GwSkinButton(false, true)
+            self.CloseDialog.ResumeButton:GwSkinButton(false, true)
         end
     end)
 end

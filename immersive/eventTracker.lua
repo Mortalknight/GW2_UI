@@ -153,8 +153,8 @@ end
 
 local function reskinStatusBar(bar)
     bar:SetFrameLevel(bar:GetFrameLevel() + 1)
-    bar:StripTextures()
-    bar:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    bar:GwStripTextures()
+    bar:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
     bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
 end
 
@@ -177,8 +177,8 @@ local functionFactory = {
     loopTimer = {
         init = function(self)
             self.icon = self:CreateTexture(nil, "ARTWORK")
-            self.icon:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
-            self.icon.backdrop:SetOutside(self.icon, 1, 1)
+            self.icon:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+            self.icon.backdrop:GwSetOutside(self.icon, 1, 1)
             self.statusBar = CreateFrame("StatusBar", nil, self)
             self.name = self.statusBar:CreateFontString(nil, "OVERLAY")
             self.timerText = self.statusBar:CreateFontString(nil, "OVERLAY")
@@ -334,8 +334,8 @@ local functionFactory = {
     triggerTimer = {
         init = function(self)
             self.icon = self:CreateTexture(nil, "ARTWORK")
-            self.icon:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
-            self.icon.backdrop:SetOutside(self.icon, 1, 1)
+            self.icon:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+            self.icon.backdrop:GwSetOutside(self.icon, 1, 1)
             self.statusBar = CreateFrame("StatusBar", nil, self)
             self.name = self.statusBar:CreateFontString(nil, "OVERLAY")
             self.timerText = self.statusBar:CreateFontString(nil, "OVERLAY")
@@ -877,7 +877,7 @@ local function AddWorldMapFrame()
     mapFrame:SetPoint("TOPLEFT", WorldMapFrame, "BOTTOMLEFT", 0, 2)
     mapFrame:SetPoint("TOPRIGHT", WorldMapFrame, "BOTTOMRIGHT", 0, 2)
     mapFrame:SetHeight(30)
-    mapFrame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
+    mapFrame:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
 
     mapFrame:SetScript("OnEvent", HandlerEvent)
 end

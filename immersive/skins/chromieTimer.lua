@@ -4,11 +4,11 @@ local GetSetting = GW.GetSetting
 local function ApplyChromieTimerSkin()
     if not GetSetting("CHROMIE_TIME_SKIN_ENABLED") then return end
 
-    ChromieTimeFrame.CloseButton:SkinButton(true)
+    ChromieTimeFrame.CloseButton:GwSkinButton(true)
     ChromieTimeFrame.CloseButton:SetSize(20, 20)
-    ChromieTimeFrame.SelectButton:SkinButton(false, true)
+    ChromieTimeFrame.SelectButton:GwSkinButton(false, true)
 
-    ChromieTimeFrame:StripTextures()
+    ChromieTimeFrame:GwStripTextures()
     ChromieTimeFrame.Background:Hide()
     local tex = ChromieTimeFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", ChromieTimeFrame, "TOP", 0, 25)
@@ -19,11 +19,11 @@ local function ApplyChromieTimerSkin()
 
     local Title = ChromieTimeFrame.Title
     Title:DisableDrawLayer("BACKGROUND")
-    Title:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    Title:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
 
     local InfoFrame = ChromieTimeFrame.CurrentlySelectedExpansionInfoFrame
     InfoFrame:DisableDrawLayer("BACKGROUND")
-    InfoFrame:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    InfoFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
     InfoFrame.Name:SetTextColor(1, 0.8, 0)
     InfoFrame.Description:SetTextColor(1, 1, 1)
 end

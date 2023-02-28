@@ -182,7 +182,7 @@ local function DisableBlizzardFrames()
 
         -- disbale blizzard castingbar mover
         PlayerCastingBarFrame:HookScript("OnShow", function() PlayerCastingBarFrame:Hide() end)
-        PlayerCastingBarFrame:KillEditMode()
+        PlayerCastingBarFrame:GwKillEditMode()
     end
 
     if ourInventory then

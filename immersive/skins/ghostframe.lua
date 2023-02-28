@@ -8,7 +8,7 @@ local function LoadGhostFrameSkin()
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button")
     tex:SetSize(_G.GhostFrameContentsFrame:GetSize())
     GhostFrame.tex = tex
-    GhostFrame:SkinButton(false, false, true)
+    GhostFrame:GwSkinButton(false, false, true)
 
     _G.GhostFrameContentsFrameText:SetTextColor(0, 0, 0, 1)
     _G.GhostFrameContentsFrameText:SetShadowOffset(0, 0)

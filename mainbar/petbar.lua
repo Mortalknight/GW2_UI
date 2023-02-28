@@ -307,7 +307,7 @@ local function LoadPetFrame(lm)
     PetActionBar:UnregisterEvent("PET_UI_UPDATE")
     PetActionBar:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
     PetActionBar.ignoreFramePositionManager = true
-    PetActionBar:KillEditMode()
+    PetActionBar:GwKillEditMode()
 
     hooksecurefunc(PetActionBar, "Update", UpdateAutoCast)
 

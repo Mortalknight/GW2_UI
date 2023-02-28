@@ -5,11 +5,11 @@ local function SkinInspectFrameOnLoad()
     if not GetSetting("INSPECTION_SKIN_ENABLED") then return end
 
     local w, h = InspectFrame:GetSize()
-    InspectFrame:StripTextures()
+    InspectFrame:GwStripTextures()
     InspectFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
-    InspectFrameCloseButton:SkinButton(true)
+    InspectFrameCloseButton:GwSkinButton(true)
     InspectFrameCloseButton:SetSize(20, 20)
-    InspectPaperDollFrame.ViewButton:SkinButton(false, true)
+    InspectPaperDollFrame.ViewButton:GwSkinButton(false, true)
     if not InspectFrame.tex then
         local tex = InspectFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
         tex:SetPoint("TOP", InspectFrame, "TOP", 0, 20)
@@ -52,18 +52,18 @@ local function SkinInspectFrameOnLoad()
         text:SetPoint("CENTER", tab, "CENTER", (tab.deselectedTextX or 0), (tab.deselectedTextY or 2))
     end)
 
-    InspectModelFrame:StripTextures()
-    InspectModelFrameBorderTopLeft:Kill()
-    InspectModelFrameBorderTopRight:Kill()
-    InspectModelFrameBorderTop:Kill()
-    InspectModelFrameBorderLeft:Kill()
-    InspectModelFrameBorderRight:Kill()
-    InspectModelFrameBorderBottomLeft:Kill()
-    InspectModelFrameBorderBottomRight:Kill()
-    InspectModelFrameBorderBottom:Kill()
-    InspectModelFrameBorderBottom2:Kill()
+    InspectModelFrame:GwStripTextures()
+    InspectModelFrameBorderTopLeft:GwKill()
+    InspectModelFrameBorderTopRight:GwKill()
+    InspectModelFrameBorderTop:GwKill()
+    InspectModelFrameBorderLeft:GwKill()
+    InspectModelFrameBorderRight:GwKill()
+    InspectModelFrameBorderBottomLeft:GwKill()
+    InspectModelFrameBorderBottomRight:GwKill()
+    InspectModelFrameBorderBottom:GwKill()
+    InspectModelFrameBorderBottom2:GwKill()
 
-    InspectPaperDollItemsFrame.InspectTalents:SkinButton(false, true)
+    InspectPaperDollItemsFrame.InspectTalents:GwSkinButton(false, true)
 
     InspectModelFrame.BackgroundOverlay:SetColorTexture(0, 0, 0)
 
@@ -86,14 +86,14 @@ local function SkinInspectFrameOnLoad()
             GW.HandleIcon(Slot.icon, true, GW.constBackdropFrameColorBorder)
 
             Slot.icon.backdrop:SetFrameLevel(Slot:GetFrameLevel())
-            Slot.icon:SetInside()
-            Slot:StripTextures()
+            Slot.icon:GwSetInside()
+            Slot:GwStripTextures()
             GW.HandleIconBorder(Slot.IconBorder, Slot.icon.backdrop)
         end
     end
 
-    InspectPVPFrame.BG:Kill()
-    InspectGuildFrameBG:Kill()
+    InspectPVPFrame.BG:GwKill()
+    InspectGuildFrameBG:GwKill()
 end
 
 local function LoadInspectFrameSkin()

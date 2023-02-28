@@ -167,7 +167,7 @@ local function CreateStatusFrame()
     StatusFrame:SetSize(320, 720)
     StatusFrame:SetPoint("CENTER", UIParent, "CENTER")
     StatusFrame:SetFrameStrata("HIGH")
-    StatusFrame:CreateBackdrop(BackdropFrame)
+    StatusFrame:GwCreateBackdrop(BackdropFrame)
     StatusFrame:SetMovable(true)
     StatusFrame:Hide()
 

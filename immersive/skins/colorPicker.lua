@@ -148,7 +148,7 @@ local function SkinAndEnhanceColorPicker()
     ColorPickerFrame.tex = tex
     ColorPickerFrame.Border:Hide()
 
-    ColorPickerFrame.Header:StripTextures()
+    ColorPickerFrame.Header:GwStripTextures()
     ColorPickerFrame.Header.Text:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
 
     ColorPickerCancelButton:ClearAllPoints()
@@ -157,9 +157,9 @@ local function SkinAndEnhanceColorPicker()
     ColorPickerCancelButton:SetPoint("BOTTOMLEFT", ColorPickerFrame, "BOTTOM", 0, 6)
     ColorPickerOkayButton:SetPoint("BOTTOMLEFT", ColorPickerFrame,"BOTTOMLEFT", 6,6)
     ColorPickerOkayButton:SetPoint("RIGHT", ColorPickerCancelButton,"LEFT", -4,0)
-    OpacitySliderFrame:SkinSliderFrame()
-    ColorPickerOkayButton:SkinButton(false, true)
-    ColorPickerCancelButton:SkinButton(false, true)
+    OpacitySliderFrame:GwSkinSliderFrame()
+    ColorPickerOkayButton:GwSkinButton(false, true)
+    ColorPickerCancelButton:GwSkinButton(false, true)
 
     ColorPickerFrame:HookScript("OnShow", function(frame)
         if frame.hasOpacity then

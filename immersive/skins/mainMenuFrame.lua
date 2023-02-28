@@ -113,7 +113,7 @@ local function SkinMainMenu()
             c:Hide()
         end
     end
-    GameMenuFrame:CreateBackdrop(nil)
+    GameMenuFrame:GwCreateBackdrop(nil)
 
     local tex = GameMenuFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", GameMenuFrame, "TOP", 0, -10)

@@ -4,8 +4,8 @@ local function ApplySocketUISkin()
     if not GetSetting("SOCKET_SKIN_ENABLED") then return end
 
     ItemSocketingFramePortrait:Hide()
-    ItemSocketingFrame:StripTextures()
-    _G.ItemSocketingFrameCloseButton:SkinButton(true)
+    ItemSocketingFrame:GwStripTextures()
+    _G.ItemSocketingFrameCloseButton:GwSkinButton(true)
     _G.ItemSocketingFrameCloseButton:SetSize(20, 20)
 
     local regions = {ItemSocketingFrame:GetRegions()}
@@ -28,21 +28,21 @@ local function ApplySocketUISkin()
 
     ItemSocketingDescription:DisableDrawLayer('BORDER')
 	ItemSocketingDescription:DisableDrawLayer('BACKGROUND')
-    ItemSocketingScrollFrame:StripTextures()
+    ItemSocketingScrollFrame:GwStripTextures()
 
-    ItemSocketingScrollFrameScrollBar:SkinScrollBar()
-    ItemSocketingScrollFrame:SkinScrollFrame()
+    ItemSocketingScrollFrameScrollBar:GwSkinScrollBar()
+    ItemSocketingScrollFrame:GwSkinScrollFrame()
 
     for i = 1, _G.MAX_NUM_SOCKETS  do
         local button_bracket = _G[("ItemSocketingSocket%dBracketFrame"):format(i)]
         local button_icon = _G[("ItemSocketingSocket%dIconTexture"):format(i)]
-        button_bracket:Kill()
+        button_bracket:GwKill()
         button_icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     end
 
     _G.ItemSocketingSocketButton:ClearAllPoints()
     _G.ItemSocketingSocketButton:SetPoint("BOTTOMRIGHT", ItemSocketingFrame, "BOTTOMRIGHT", -5, -10)
-    _G.ItemSocketingSocketButton:SkinButton(false, true)
+    _G.ItemSocketingSocketButton:GwSkinButton(false, true)
 
     ItemSocketingFrame.mover = CreateFrame("Frame", nil, ItemSocketingFrame)
     ItemSocketingFrame.mover:EnableMouse(true)

@@ -175,11 +175,11 @@ local function LoadRaidList(tabContainer)
     RaidFrame.RoleCount.DamagerIcon:SetTexture("Interface/AddOns/GW2_UI/textures/party/roleicon-dps")
     RaidFrame.RoleCount.DamagerIcon:SetSize(20, 20)
 
-    RaidFrameAllAssistCheckButton:SkinCheckButton()
+    RaidFrameAllAssistCheckButton:GwSkinCheckButton()
     RaidFrameAllAssistCheckButton:SetSize(18, 18)
 
-    RaidFrameConvertToRaidButton:SkinButton(false, true)
-    RaidFrameRaidInfoButton:SkinButton(false, true)
+    RaidFrameConvertToRaidButton:GwSkinButton(false, true)
+    RaidFrameRaidInfoButton:GwSkinButton(false, true)
     if GetSetting("USE_CHARACTER_WINDOW") then
         RaidFrameRaidInfoButton:SetScript("OnClick", function()
             if InCombatLockdown() then return end
@@ -209,15 +209,15 @@ local function LoadRaidList(tabContainer)
         local obj = _G[object]
         if obj then
             obj:SetSize(230, 120)
-            obj:StripTextures()
+            obj:GwStripTextures()
             _G[object .. "Label"]:SetNormalFontObject("GameFontNormal")
             _G[object .. "Label"]:SetHighlightFontObject("GameFontHighlight")
             for j = 1, 5 do
                 local slot = _G[object .. "Slot" .. j]
                 if slot then
-                    slot:StripTextures()
+                    slot:GwStripTextures()
                     slot:SetSize(220, 22)
-                    slot:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+                    slot:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
                 end
             end
         end
@@ -225,9 +225,9 @@ local function LoadRaidList(tabContainer)
 
     for i = 1, _G.MAX_RAID_GROUPS * 5 do
         _G["RaidGroupButton" .. i]:SetSize(220, 22)
-        _G["RaidGroupButton" .. i]:SkinButton(false, true, true)
-        _G["RaidGroupButton" .. i]:StripTextures()
-        _G["RaidGroupButton" .. i]:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+        _G["RaidGroupButton" .. i]:GwSkinButton(false, true, true)
+        _G["RaidGroupButton" .. i]:GwStripTextures()
+        _G["RaidGroupButton" .. i]:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
         _G["RaidGroupButton" .. i .. "Name"]:SetFont(UNIT_NAME_FONT, 10)
         _G["RaidGroupButton" .. i .. "Level"]:SetFont(UNIT_NAME_FONT, 10)
         _G["RaidGroupButton" .. i .. "Class"]:SetFont(UNIT_NAME_FONT, 10)

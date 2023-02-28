@@ -265,7 +265,7 @@ local function reskinMicroButton(btn, name, mbf)
     t:SetSize(32,32)
 
     if btn.Flash then
-        btn.Flash:SetInside()
+        btn.Flash:GwSetInside()
         btn.Flash:SetTexture()
     end
 
@@ -719,9 +719,9 @@ local function checkElvUI()
 
     -- at this point we know we should own the microbar; fix what ElvUI did to it
     if ElvUI_MicroBar.backdrop then
-        ElvUI_MicroBar.backdrop:Kill()
+        ElvUI_MicroBar.backdrop:GwKill()
     end
-    ElvUI_MicroBar:Kill()
+    ElvUI_MicroBar:GwKill()
 
     ab.UpdateMicroButtonsParent = GW.NoOp
     ab.UpdateMicroButtons = GW.NoOp
@@ -806,7 +806,7 @@ local function LoadMicroMenu()
 
     UpdateSettings()
 
-    MicroMenu:KillEditMode()
+    MicroMenu:GwKillEditMode()
 
     -- create our micro button container frame
     local mbf = CreateFrame("Frame", "Gw2MicroBarFrame", UIParent, "GwMicroButtonFrameTmpl")

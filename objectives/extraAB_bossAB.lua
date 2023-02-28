@@ -78,7 +78,7 @@ local function ExtraAB_BossAB_Setup()
     --ExtraAbilityContainer.SetPoint = GW.NoOp
     ExtraAbilityContainer:EnableMouse(false)
     ExtraAbilityContainer.ignoreFramePositionManager = true
-    ExtraAbilityContainer:KillEditMode()
+    ExtraAbilityContainer:GwKillEditMode()
 
     Reparent()
 
@@ -99,12 +99,12 @@ local function ExtraAB_BossAB_Setup()
                 spellButton:GetHighlightTexture():SetColorTexture(1, 1, 1, 0.25)
                 spellButton.Icon:SetDrawLayer("ARTWORK", -1)
                 spellButton.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-                spellButton.Icon:SetInside()
+                spellButton.Icon:GwSetInside()
 
                 if spellButton.Cooldown then
                     spellButton.Cooldown.CooldownOverride = "actionbar"
                     GW.RegisterCooldown(spellButton.Cooldown)
-                    spellButton.Cooldown:SetInside(spellButton)
+                    spellButton.Cooldown:GwSetInside(spellButton)
                 end
 
                 spellButton.holder = ZoneAbilityHolder
@@ -120,7 +120,7 @@ local function ExtraAB_BossAB_Setup()
             local name = button.GetName and button:GetName()
             local cooldown = name and _G[name .. "Cooldown"]
             if cooldown then
-                cooldown:SetInside()
+                cooldown:GwSetInside()
                 cooldown:SetDrawEdge(false)
                 cooldown:SetSwipeColor(0, 0, 0, 1)
                 GW.RegisterCooldown(cooldown)

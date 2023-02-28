@@ -2,17 +2,17 @@ local _, GW = ...
 
 local function LoadPostalAddonSkin()
     if PostalOpenAllButton then
-        PostalOpenAllButton:SkinButton(false, true)
+        PostalOpenAllButton:GwSkinButton(false, true)
     end
 
     if PostalSelectOpenButton then
-        PostalSelectOpenButton:SkinButton(false, true)
+        PostalSelectOpenButton:GwSkinButton(false, true)
         PostalSelectOpenButton:SetPoint("TOPRIGHT", MailFrameTab2, "TOPRIGHT", -85, -35)
         PostalSelectOpenButton:SetSize(SendMailCancelButton:GetSize())
     end
 
     if PostalSelectReturnButton then
-        PostalSelectReturnButton:SkinButton(false, true)
+        PostalSelectReturnButton:GwSkinButton(false, true)
         PostalSelectReturnButton:SetPoint("TOPLEFT", PostalSelectOpenButton, "TOPRIGHT", 2, 0)
         PostalSelectReturnButton:SetSize(PostalSelectOpenButton:GetSize())
     end

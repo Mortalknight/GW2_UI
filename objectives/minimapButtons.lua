@@ -112,7 +112,7 @@ local function SkinMinimapButton(button)
     button:SetFrameLevel(Minimap:GetFrameLevel() + 10)
     button:SetFrameStrata(Minimap:GetFrameStrata())
     button:SetSize(25, 25)
-    button:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
+    button:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
     button:HookScript("OnEnter", function(self)
         if self.icon then self.icon:SetBlendMode("ADD") end
         if self.texture then self.texture:SetBlendMode("ADD") end
@@ -206,7 +206,7 @@ local function CreateMinimapButtonsSack()
     minimapButton:SetScript("OnEvent", GrabIcons)
     minimapButton:RegisterEvent("PLAYER_ENTERING_WORLD")
     minimapButton:SetFrameStrata("MEDIUM")
-    minimapButton.container:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    minimapButton.container:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
     minimapButton.gw_Showing = false
     GrabIcons(minimapButton)
 

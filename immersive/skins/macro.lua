@@ -20,12 +20,12 @@ local function ApplyMacroOptionsSkin()
 
     MacroFrame.NineSlice:Hide()
     MacroFrame.TopTileStreaks:Hide()
-    MacroFrame:CreateBackdrop()
+    MacroFrame:GwCreateBackdrop()
 
     MacroFrameInset.NineSlice:Hide()
     MacroHorizontalBarLeft:Hide()
-    MacroFrameTextBackground:StripTextures()
-    MacroFrameTextBackground:CreateBackdrop(constBackdropFrame)
+    MacroFrameTextBackground:GwStripTextures()
+    MacroFrameTextBackground:GwCreateBackdrop(constBackdropFrame)
 
     for _,c in pairs(r) do
         if c:GetObjectType() == "Texture" then
@@ -35,7 +35,7 @@ local function ApplyMacroOptionsSkin()
 
     GW.HandleTrimScrollBar(MacroFrame.MacroSelector.ScrollBar)
     GW.HandleAchivementsScrollControls(MacroFrame.MacroSelector)
-    MacroFrameScrollFrameScrollBar:SkinScrollBar()
+    MacroFrameScrollFrameScrollBar:GwSkinScrollBar()
 
     local buttons = {
         MacroSaveButton,
@@ -47,22 +47,22 @@ local function ApplyMacroOptionsSkin()
     }
 
     for i = 1, #buttons do
-        buttons[i]:SkinButton(false, true)
+        buttons[i]:GwSkinButton(false, true)
     end
 
-    MacroFrameCloseButton:SkinButton(true)
+    MacroFrameCloseButton:GwSkinButton(true)
     MacroFrameCloseButton:SetSize(25, 25)
     MacroFrameCloseButton:ClearAllPoints()
     MacroFrameCloseButton:SetPoint("TOPRIGHT", 0, 0)
-    MacroFrameTab1:SkinTab()
-    MacroFrameTab2:SkinTab()
+    MacroFrameTab1:GwSkinTab()
+    MacroFrameTab2:GwSkinTab()
 
-    MacroFrameSelectedMacroButton:StripTextures()
-    MacroFrameSelectedMacroButton:StyleButton()
+    MacroFrameSelectedMacroButton:GwStripTextures()
+    MacroFrameSelectedMacroButton:GwStyleButton()
     MacroFrameSelectedMacroButton:GetNormalTexture():SetTexture()
-    MacroFrameSelectedMacroButton.Icon:SetInside()
+    MacroFrameSelectedMacroButton.Icon:GwSetInside()
     MacroFrameSelectedMacroButton.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    MacroFrameSelectedMacroBackground:Kill()
+    MacroFrameSelectedMacroBackground:GwKill()
     MacroFrameSelectedMacroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
 
     hooksecurefunc(MacroFrame.MacroSelector.ScrollBox, "Update", function()

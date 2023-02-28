@@ -506,8 +506,8 @@ end
 
 local function LoadPlayerAuras(lm)
     -- hide default buffs
-    BuffFrame:Kill()
-    DebuffFrame:Kill()
+    BuffFrame:GwKill()
+    DebuffFrame:GwKill()
 
     loadAuras(lm)
 end

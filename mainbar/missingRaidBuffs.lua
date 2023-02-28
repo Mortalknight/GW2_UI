@@ -398,7 +398,7 @@ local function LoadRaidbuffReminder()
 
     local rbr = CreateFrame("Frame", "GW_RaidBuffReminder", UIParent)
 
-    rbr:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    rbr:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
 
     rbr:SetSize(218, 32)
 

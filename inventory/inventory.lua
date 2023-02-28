@@ -643,7 +643,7 @@ GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
 local function LoadInventory()
     UpdateSettings()
 
-    BagsBar:KillEditMode()
+    BagsBar:GwKillEditMode()
 
     if BagBarExpandToggle then
         BagBarExpandToggle:SetParent(GW.HiddenFrame)
@@ -700,11 +700,11 @@ local function LoadInventory()
     bank_resize = GW.LoadBank(helpers) --TODO OpenAllBags() causes a taint
 
     -- Skin StackSplit
-    StackSplitFrame:StripTextures()
-    StackSplitFrame:CreateBackdrop(GW.skins.constBackdropFrame)
+    StackSplitFrame:GwStripTextures()
+    StackSplitFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
 
-    StackSplitFrame.OkayButton:SkinButton(false, true)
-    StackSplitFrame.CancelButton:SkinButton(false, true)
+    StackSplitFrame.OkayButton:GwSkinButton(false, true)
+    StackSplitFrame.CancelButton:GwSkinButton(false, true)
 
     StackSplitFrame.RightButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
     StackSplitFrame.RightButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")

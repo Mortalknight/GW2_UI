@@ -619,7 +619,7 @@ AFP("main_OnEvent", main_OnEvent)
 local function updateMainBar()
     local fmActionbar = MainMenuBar
 
-    MainMenuBar:KillEditMode()
+    MainMenuBar:GwKillEditMode()
 
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
     local btn_padding = settings.mainBarMargin
@@ -760,7 +760,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local btn_padding_y = 0
     local btn_this_row = 0
 
-    multibar:KillEditMode()
+    multibar:GwKillEditMode()
 
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
     GW.MixinHideDuringPetAndOverride(fmMultibar)
@@ -960,7 +960,7 @@ local function setLeaveVehicleButton()
     MainMenuBarVehicleLeaveButton:ClearAllPoints()
     MainMenuBarVehicleLeaveButton:SetPoint("LEFT", ActionButton12, "RIGHT", 0, 0)
 
-    MainMenuBarVehicleLeaveButton:KillEditMode()
+    MainMenuBarVehicleLeaveButton:GwKillEditMode()
 
     hooksecurefunc(MainMenuBarVehicleLeaveButton, "SetPoint", function(_, _, parent)
         if parent ~= ActionButton12 then

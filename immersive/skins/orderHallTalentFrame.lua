@@ -6,7 +6,7 @@ local function ApplyOrderHallTalentFrameSkin()
 
     GW.HandlePortraitFrame(OrderHallTalentFrame, true)
     OrderHallTalentFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")
-    OrderHallTalentFrame.BackButton:SkinButton(false, true)
+    OrderHallTalentFrame.BackButton:GwSkinButton(false, true)
     GW.HandleIcon(OrderHallTalentFrame.Currency.Icon, true)
     OrderHallTalentFrame.OverlayElements:SetAlpha(0)
 
@@ -14,7 +14,7 @@ local function ApplyOrderHallTalentFrameSkin()
         if frame.CloseButton.Border then frame.CloseButton.Border:SetAlpha(0) end
         if frame.CurrencyBG then frame.CurrencyBG:SetAlpha(0) end
 
-        frame:StripTextures(false, true)
+        frame:GwStripTextures(false, true)
 
         if frame.buttonPool then
             for bu in frame.buttonPool:EnumerateActive() do
@@ -28,7 +28,7 @@ local function ApplyOrderHallTalentFrameSkin()
                     bu.Border:SetAlpha(0)
                     bu.Highlight:SetColorTexture(1, 1, 1, 0.25)
                     bu.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-                    bu.Icon:SetInside()
+                    bu.Icon:GwSetInside()
                     local isAvailable = bu.talent.talentAvailability == Enum.GarrisonTalentAvailability.Available
                     local overrideDisplayAsAvailable = bu.talent.talentAvailability == Enum.GarrisonTalentAvailability.UnavailableNotEnoughResources
                     local canDisplayAsAvailable = bu.talent.talentAvailability == Enum.GarrisonTalentAvailability.UnavailableAnotherIsResearching or bu.talent.talentAvailability == Enum.GarrisonTalentAvailability.UnavailableAlreadyHave

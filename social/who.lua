@@ -149,7 +149,7 @@ local function LoadWhoList(tabContainer)
 
     for _, object in pairs(Headers) do
         local frame = WhoWindow.list[object]
-        frame:StripTextures()
+        frame:GwStripTextures()
         local r = {frame:GetRegions()}
         for _,c in pairs(r) do
             if c:GetObjectType() == "FontString" then
@@ -159,11 +159,11 @@ local function LoadWhoList(tabContainer)
     end
 
     for _, object in pairs(Headers) do
-        if object ~= "ColumnHeader2" then WhoWindow.list[object]:SkinButton(false, true) end
+        if object ~= "ColumnHeader2" then WhoWindow.list[object]:GwSkinButton(false, true) end
     end
 
     WhoWindow.list.ColumnHeader2.DropDown:SetSize(135, 24)
-    WhoWindow.list.ColumnHeader2.DropDown:StripTextures()
+    WhoWindow.list.ColumnHeader2.DropDown:GwStripTextures()
     WhoWindow.list.ColumnHeader2.DropDown.tex = WhoWindow.list.ColumnHeader2.DropDown:CreateTexture("bg", "ARTWORK")
     WhoWindow.list.ColumnHeader2.DropDown.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button")
     WhoWindow.list.ColumnHeader2.DropDown.tex:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2.DropDown, "TOPLEFT", 1, 0)
@@ -179,7 +179,7 @@ local function LoadWhoList(tabContainer)
     WhoWindow.list.ColumnHeader2.DropDown.Button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     WhoWindow.list.ColumnHeader2.DropDown.Button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     WhoWindow.list.ColumnHeader2.DropDown.Button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    WhoWindow.list.ColumnHeader2.DropDown:SkinButton(false, false, true)
+    WhoWindow.list.ColumnHeader2.DropDown:GwSkinButton(false, false, true)
     WhoWindow.list.ColumnHeader2.DropDown.hover:ClearAllPoints()
     WhoWindow.list.ColumnHeader2.DropDown.hover:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2.DropDown, "TOPLEFT", 1, 0)
     WhoWindow.list.ColumnHeader2.DropDown.hover:SetPoint("BOTTOMRIGHT", WhoWindow.list.ColumnHeader2.DropDown, "BOTTOMRIGHT", -2, 8)

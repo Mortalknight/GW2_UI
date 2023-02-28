@@ -8,7 +8,7 @@ local function ApplyAlliedRacesUISkin()
     AlliedRacesFrame.NineSlice:SetAlpha(0)
     AlliedRacesFramePortrait:SetAlpha(0)
     AlliedRacesFrameBg:SetAlpha(0)
-    AlliedRacesFrame.ModelFrame:StripTextures()
+    AlliedRacesFrame.ModelFrame:GwStripTextures()
 
     select(2, AlliedRacesFrame.ModelFrame:GetRegions()):Hide()
 
@@ -23,19 +23,19 @@ local function ApplyAlliedRacesUISkin()
 
     AlliedRacesFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
 
-    AlliedRacesFrameCloseButton:SkinButton(true)
+    AlliedRacesFrameCloseButton:GwSkinButton(true)
     AlliedRacesFrameCloseButton:SetSize(20, 20)
 
     local scrollFrame = AlliedRacesFrame.RaceInfoFrame.ScrollFrame
     scrollFrame.ScrollBar.Border:Hide()
     scrollFrame.ScrollBar.ScrollUpBorder:Hide()
     scrollFrame.ScrollBar.ScrollDownBorder:Hide()
-    scrollFrame:SkinScrollFrame()
-    scrollFrame.ScrollBar:SkinScrollBar()
+    scrollFrame:GwSkinScrollFrame()
+    scrollFrame.ScrollBar:GwSkinScrollBar()
 
-    scrollFrame.Child:StripTextures()
-    scrollFrame.Child.ObjectivesFrame:StripTextures()
-    scrollFrame.Child.ObjectivesFrame:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    scrollFrame.Child:GwStripTextures()
+    scrollFrame.Child.ObjectivesFrame:GwStripTextures()
+    scrollFrame.Child.ObjectivesFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
 
     AlliedRacesFrame.RaceInfoFrame.AlliedRacesRaceName:SetTextColor(1, 0.8, 0)
     scrollFrame.Child.RaceDescriptionText:SetTextColor(1, 1, 1)

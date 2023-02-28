@@ -55,8 +55,8 @@ local function ApplyCovenantSanctumSkin()
     CovenantSanctumFrame.LevelFrame.Background:SetAlpha(0)
 
     local UpgradesTab = CovenantSanctumFrame.UpgradesTab
-    UpgradesTab.Background:CreateBackdrop(GW.skins.constBackdropFrame, true)
-    UpgradesTab.DepositButton:SkinButton(false, true)
+    UpgradesTab.Background:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
+    UpgradesTab.DepositButton:GwSkinButton(false, true)
     UpgradesTab.DepositButton:SetFrameLevel(10)
     UpgradesTab.CurrencyBackground:SetAlpha(0)
     ReplaceCurrencies(UpgradesTab.CurrencyDisplayGroup)
@@ -68,8 +68,8 @@ local function ApplyCovenantSanctumSkin()
     end
 
     local TalentList = CovenantSanctumFrame.UpgradesTab.TalentsList
-    TalentList:CreateBackdrop(GW.skins.constBackdropFrame, true)
-    TalentList.UpgradeButton:SkinButton(false, true)
+    TalentList:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
+    TalentList.UpgradeButton:GwSkinButton(false, true)
     TalentList.UpgradeButton:SetFrameLevel(10)
     TalentList.IntroBox.Background:Hide()
     hooksecurefunc(TalentList, "Refresh", ReskinTalents)
@@ -79,7 +79,7 @@ local function ApplyCovenantSanctumSkin()
 
     CovenantSanctumFrame:HookScript("OnShow", function()
         if not CovenantSanctumFrame.IsSkinned then
-            --CovenantSanctumFrame:CreateBackdrop(GW.skins.constBackdropFrame, true)
+            --CovenantSanctumFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
 
             local tex = CovenantSanctumFrame:CreateTexture("bg", "BACKGROUND")
             tex:SetPoint("TOP", CovenantSanctumFrame, "TOP", 0, 25)
@@ -90,7 +90,7 @@ local function ApplyCovenantSanctumSkin()
             CovenantSanctumFrame.NineSlice:SetAlpha(0)
 
             CovenantSanctumFrame.CloseButton.Border:SetAlpha(0)
-            CovenantSanctumFrame.CloseButton:SkinButton(true)
+            CovenantSanctumFrame.CloseButton:GwSkinButton(true)
             CovenantSanctumFrame.CloseButton:SetSize(20, 20)
             CovenantSanctumFrame.CloseButton:ClearAllPoints()
             CovenantSanctumFrame.CloseButton:SetPoint("TOPRIGHT", CovenantSanctumFrame, "TOPRIGHT", 2, 2)

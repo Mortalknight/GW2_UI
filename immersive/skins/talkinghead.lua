@@ -41,7 +41,7 @@ local function InitTalkingHeadFrame()
     TalkingHeadFrame.TextFrame.Text:SetShadowColor(0, 0, 0, 1)
     TalkingHeadFrame.TextFrame.Text:SetShadowOffset(2, -2)
 
-    TalkingHeadFrame.MainFrame.CloseButton:SkinButton(true)
+    TalkingHeadFrame.MainFrame.CloseButton:GwSkinButton(true)
     TalkingHeadFrame.MainFrame.CloseButton:SetSize(25, 25)
     TalkingHeadFrame.MainFrame.CloseButton:ClearAllPoints()
     TalkingHeadFrame.MainFrame.CloseButton:SetPoint("TOPRIGHT", -30, -8)

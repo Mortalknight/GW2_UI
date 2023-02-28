@@ -8,8 +8,8 @@ local function LoadHelperFrameSkin()
     HelpFrameTitleText:ClearAllPoints()
     HelpFrameTitleText:SetPoint("TOP", HelpFrame, "TOP", 0, 5)
 
-    HelpFrame:StripTextures(true)
-    HelpFrame:CreateBackdrop()
+    HelpFrame:GwStripTextures(true)
+    HelpFrame:GwCreateBackdrop()
     local tex = HelpFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", HelpFrame, "TOP", 0, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
@@ -17,14 +17,14 @@ local function LoadHelperFrameSkin()
     tex:SetSize(w + 50, h + 50)
     HelpFrame.tex = tex
 
-    HelpFrame.CloseButton:SkinButton(true)
+    HelpFrame.CloseButton:GwSkinButton(true)
     HelpFrame.CloseButton:SetSize(25, 25)
     HelpFrame.CloseButton:ClearAllPoints()
     HelpFrame.CloseButton:SetPoint("TOPRIGHT", _G.HelpFrame, "TOPRIGHT", 0, 5)
 
     local browser = _G.HelpBrowser
-    browser.BrowserInset:StripTextures()
-    browser:CreateBackdrop()
+    browser.BrowserInset:GwStripTextures()
+    browser:GwCreateBackdrop()
     browser.backdrop:ClearAllPoints()
     browser.backdrop:SetPoint("TOPLEFT", browser, "TOPLEFT", -1, 1)
     browser.backdrop:SetPoint("BOTTOMRIGHT", browser, "BOTTOMRIGHT", 1, -2)

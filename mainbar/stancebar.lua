@@ -92,7 +92,7 @@ local function StyleStanceBarButtons()
             local texture, isActive, isCastable, spellID = GetShapeshiftFormInfo(i)
 
             button.icon:SetTexture((not isActive and spellID and GetSpellTexture(spellID)) or WispSplode)
-            button.icon:SetInside()
+            button.icon:GwSetInside()
             button:SetSize(30, 30)
             button.cooldown:SetAlpha(texture and 1 or 0)
             if isActive then
@@ -210,7 +210,7 @@ end
 local function CreateStanceBar()
     local StanceButtonHolder = CreateStanceBarButtonHolder()
 
-    StanceBar:KillEditMode()
+    StanceBar:GwKillEditMode()
 
     StanceButtonHolder:SetFrameRef("GwStanceBarContainer", StanceButtonHolder.container)
     StanceButtonHolder:SetAttribute(

@@ -846,8 +846,8 @@ local function GameTooltip_ShowProgressBar(self)
     self.progressBar = sb.Bar
 
     if not sb.Bar.backdrop then
-        sb.Bar:StripTextures()
-        sb.Bar:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+        sb.Bar:GwStripTextures()
+        sb.Bar:GwCreateBackdrop(GW.constBackdropFrameColorBorder, true)
         sb.Bar.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
         sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
     end
@@ -859,14 +859,14 @@ local function GameTooltip_ShowStatusBar(self)
     local sb = self.statusBarPool:GetNextActive()
     if not sb or sb.backdrop then return end
 
-    sb:StripTextures()
-    sb:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+    sb:GwStripTextures()
+    sb:GwCreateBackdrop(GW.constBackdropFrameColorBorder, true)
     sb.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
     sb:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
 end
 
 local function SkinItemRefTooltipCloseButton()
-    ItemRefTooltip.CloseButton:SkinButton(true)
+    ItemRefTooltip.CloseButton:GwSkinButton(true)
     ItemRefTooltip.CloseButton:SetSize(20, 20)
     ItemRefTooltip.CloseButton:ClearAllPoints()
     ItemRefTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
@@ -879,8 +879,8 @@ end
 local function SkinQueueStatusFrame()
     local QueueStatusFrame = QueueStatusFrame
 
-    QueueStatusFrame:StripTextures()
-    QueueStatusFrame:CreateBackdrop({
+    QueueStatusFrame:GwStripTextures()
+    QueueStatusFrame:GwCreateBackdrop({
         bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
         edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
         tile = false,
@@ -893,7 +893,7 @@ end
 local function SkinBattlePetTooltip()
     local skin_battle_pet_tt = function(self)
         self.NineSlice:Hide()
-        self:CreateBackdrop({
+        self:GwCreateBackdrop({
             bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
             edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
             tile = false,
@@ -952,7 +952,7 @@ local function SetStyle(self, _, isEmbedded)
     if self.Delimiter2 then self.Delimiter2:SetTexture() end
 
     self.NineSlice:Hide()
-    self:CreateBackdrop({
+    self:GwCreateBackdrop({
         bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
         edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
         edgeSize = GW.Scale(32),
@@ -1065,7 +1065,7 @@ local function LoadTooltips()
 
     -- Skin GameTooltip Status Bar
     GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
-    GameTooltipStatusBar:CreateBackdrop()
+    GameTooltipStatusBar:GwCreateBackdrop()
     GameTooltipStatusBar:ClearAllPoints()
     GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", GW.BorderSize, -(GW.SpacingSize * 3))
     GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -GW.BorderSize, -(GW.SpacingSize * 3))
@@ -1097,7 +1097,7 @@ local function LoadTooltips()
 
     hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
 
-    GameTooltipDefaultContainer:KillEditMode()
+    GameTooltipDefaultContainer:GwKillEditMode()
 
     if not GW.IsIncompatibleAddonLoadedOrOverride("LfgInfo", true)  then
         hooksecurefunc("LFGListUtil_SetSearchEntryTooltip", AddPremadeGroupInfo)

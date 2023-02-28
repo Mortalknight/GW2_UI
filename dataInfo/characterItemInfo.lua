@@ -43,7 +43,7 @@ local function CreateInspectTexture(slot, x, y)
     end
 
     backdrop:SetBackdropColor(0, 0, 0, 0)
-    backdrop:SetOutside(texture)
+    backdrop:GwSetOutside(texture)
     backdrop:Hide()
 
     return texture, backdrop

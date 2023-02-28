@@ -21,21 +21,21 @@ local function SkinPerksProgram()
     if not GW.GetSetting("PERK_PROGRAM_SKIN_ENABLED") then return end
 
     if PerksProgramFrame.ProductsFrame then
-        PerksProgramFrame.ProductsFrame.PerksProgramFilter.FilterDropDownButton:SkinButton(false, true)
+        PerksProgramFrame.ProductsFrame.PerksProgramFilter.FilterDropDownButton:GwSkinButton(false, true)
         PerksProgramFrame.ProductsFrame.PerksProgramCurrencyFrame.Text:SetFont("UNIT_NAME_FONT", 30)
         GW.HandleIcon(PerksProgramFrame.ProductsFrame.PerksProgramCurrencyFrame.Icon)
         PerksProgramFrame.ProductsFrame.PerksProgramCurrencyFrame.Icon:SetSize(30, 30)
 
-        PerksProgramFrame.ProductsFrame.PerksProgramProductDetailsContainerFrame:StripTextures()
-        PerksProgramFrame.ProductsFrame.PerksProgramProductDetailsContainerFrame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
-        PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer:StripTextures()
-        PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
-        PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer.PerksProgramHoldFrame:StripTextures()
+        PerksProgramFrame.ProductsFrame.PerksProgramProductDetailsContainerFrame:GwStripTextures()
+        PerksProgramFrame.ProductsFrame.PerksProgramProductDetailsContainerFrame:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
+        PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer:GwStripTextures()
+        PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
+        PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer.PerksProgramHoldFrame:GwStripTextures()
         GW.HandleTrimScrollBar(PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer.ScrollBar, true)
         GW.HandleAchivementsScrollControls(PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer)
-        PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer.PerksProgramHoldFrame:StripTextures()
-        PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer.PerksProgramHoldFrame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
-        PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer.PerksProgramHoldFrame.backdrop:SetInside(3, 3)
+        PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer.PerksProgramHoldFrame:GwStripTextures()
+        PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer.PerksProgramHoldFrame:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
+        PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer.PerksProgramHoldFrame.backdrop:GwSetInside(3, 3)
 
         hooksecurefunc(PerksProgramFrame.ProductsFrame.ProductsScrollBoxContainer.ScrollBox, "Update", function(container)
             container:ForEachFrame(HandleRewardButton)
@@ -44,19 +44,19 @@ local function SkinPerksProgram()
 
     if PerksProgramFrame.FooterFrame then
         PerksProgramFrame.FooterFrame.LeaveButton:SetText(LEAVE)
-        PerksProgramFrame.FooterFrame.LeaveButton:SkinButton(false, true)
-        PerksProgramFrame.FooterFrame.PurchaseButton:SkinButton(false, true)
-        PerksProgramFrame.FooterFrame.RefundButton:SkinButton(false, true)
+        PerksProgramFrame.FooterFrame.LeaveButton:GwSkinButton(false, true)
+        PerksProgramFrame.FooterFrame.PurchaseButton:GwSkinButton(false, true)
+        PerksProgramFrame.FooterFrame.RefundButton:GwSkinButton(false, true)
 
-        PerksProgramFrame.FooterFrame.RotateButtonContainer.RotateLeftButton:SkinButton(false, true)
-        PerksProgramFrame.FooterFrame.RotateButtonContainer.RotateRightButton:SkinButton(false, true)
+        PerksProgramFrame.FooterFrame.RotateButtonContainer.RotateLeftButton:GwSkinButton(false, true)
+        PerksProgramFrame.FooterFrame.RotateButtonContainer.RotateRightButton:GwSkinButton(false, true)
         PerksProgramFrame.FooterFrame.RotateButtonContainer.RotateLeftButton.Icon:SetDesaturated(true)
         PerksProgramFrame.FooterFrame.RotateButtonContainer.RotateRightButton.Icon:SetDesaturated(true)
 
-        PerksProgramFrame.FooterFrame.TogglePlayerPreview:SkinCheckButton()
+        PerksProgramFrame.FooterFrame.TogglePlayerPreview:GwSkinCheckButton()
         PerksProgramFrame.FooterFrame.TogglePlayerPreview:SetSize(20, 20)
 
-        PerksProgramFrame.FooterFrame.ToggleHideArmor:SkinCheckButton()
+        PerksProgramFrame.FooterFrame.ToggleHideArmor:GwSkinCheckButton()
         PerksProgramFrame.FooterFrame.ToggleHideArmor:SetSize(20, 20)
     end
 end

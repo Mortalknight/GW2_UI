@@ -15,35 +15,35 @@ local function LoadTimeManagerSkin()
         end
     end
 
-    TimeManagerFrame:StripTextures()
+    TimeManagerFrame:GwStripTextures()
     TimeManagerFrame.tex = TimeManagerFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     local w, h = TimeManagerFrame:GetSize()
     TimeManagerFrame.tex:SetPoint("TOP", TimeManagerFrame, "TOP", 0, 20)
     TimeManagerFrame.tex:SetSize(w + 50, h + 20)
     TimeManagerFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
 
-    TimeManagerFrame.CloseButton:SkinButton(true)
+    TimeManagerFrame.CloseButton:GwSkinButton(true)
     TimeManagerFrame.CloseButton:SetSize(20, 20)
 
-    _G.TimeManagerAlarmHourDropDown:SkinDropDownMenu()
-    _G.TimeManagerAlarmMinuteDropDown:SkinDropDownMenu()
-    _G.TimeManagerAlarmAMPMDropDown:SkinDropDownMenu()
+    _G.TimeManagerAlarmHourDropDown:GwSkinDropDownMenu()
+    _G.TimeManagerAlarmMinuteDropDown:GwSkinDropDownMenu()
+    _G.TimeManagerAlarmAMPMDropDown:GwSkinDropDownMenu()
 
     _G.TimeManagerAlarmHourDropDown:SetWidth(80)
     _G.TimeManagerAlarmMinuteDropDown:SetWidth(80)
     _G.TimeManagerAlarmAMPMDropDown:SetWidth(80)
 
     --GW.SkinTextBox(_G.TimeManagerAlarmMessageEditBox.Middle, _G.TimeManagerAlarmMessageEditBox.Left, _G.TimeManagerAlarmMessageEditBox.Right)
-    _G.TimeManagerAlarmEnabledButton:SkinCheckButton()
-    _G.TimeManagerMilitaryTimeCheck:SkinCheckButton()
-    _G.TimeManagerLocalTimeCheck:SkinCheckButton()
+    _G.TimeManagerAlarmEnabledButton:GwSkinCheckButton()
+    _G.TimeManagerMilitaryTimeCheck:GwSkinCheckButton()
+    _G.TimeManagerLocalTimeCheck:GwSkinCheckButton()
 
     _G.TimeManagerAlarmEnabledButton:SetSize(16, 16)
     _G.TimeManagerMilitaryTimeCheck:SetSize(16, 16)
     _G.TimeManagerLocalTimeCheck:SetSize(16, 16)
 
     local TimeManagerStopwatchCheck = _G.TimeManagerStopwatchCheck
-    _G.TimeManagerStopwatchFrame:StripTextures()
+    _G.TimeManagerStopwatchFrame:GwStripTextures()
     TimeManagerStopwatchCheck:GetNormalTexture():SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
     local hover = TimeManagerStopwatchCheck:CreateTexture()
@@ -53,10 +53,10 @@ local function LoadTimeManagerSkin()
     TimeManagerStopwatchCheck:SetHighlightTexture(hover)
 
     local StopwatchFrame = _G.StopwatchFrame
-    StopwatchFrame:StripTextures()
-    StopwatchFrame:CreateBackdrop(GW.skins.constBackdropFrame)
+    StopwatchFrame:GwStripTextures()
+    StopwatchFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
 
-    _G.StopwatchTabFrame:StripTextures()
-    _G.StopwatchCloseButton:SkinButton(true)
+    _G.StopwatchTabFrame:GwStripTextures()
+    _G.StopwatchCloseButton:GwSkinButton(true)
 end
 GW.LoadTimeManagerSkin = LoadTimeManagerSkin

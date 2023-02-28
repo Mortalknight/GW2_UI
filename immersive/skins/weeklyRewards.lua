@@ -14,7 +14,7 @@ end
 local r, g, b = GetItemQualityColor(Enum.ItemQuality.Epic or 4)
 local function SkinRewardIcon(itemFrame)
     if not itemFrame.IsSkinned then
-        itemFrame:CreateBackdrop("Transparent")
+        itemFrame:GwCreateBackdrop("Transparent")
         itemFrame:DisableDrawLayer("BORDER")
         itemFrame.Icon:SetPoint("LEFT", 6, 0)
         GW.HandleIcon(itemFrame.Icon, true)
@@ -39,7 +39,7 @@ local function SkinActivityFrame(frame, isObject)
     end
 
     if frame.Background then
-        frame.Background:CreateBackdrop()
+        frame.Background:GwCreateBackdrop()
     end
 end
 
@@ -59,7 +59,7 @@ end
 local function ApplyWeeklyRewardsSkin()
     if not GetSetting("WEEKLY_REWARDS_SKIN_ENABLED") then return end
 
-    WeeklyRewardsFrame:StripTextures()
+    WeeklyRewardsFrame:GwStripTextures()
     local tex = WeeklyRewardsFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", WeeklyRewardsFrame, "TOP", 0, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
@@ -67,14 +67,14 @@ local function ApplyWeeklyRewardsSkin()
     tex:SetSize(w + 50, h + 50)
     WeeklyRewardsFrame.tex = tex
 
-    WeeklyRewardsFrame.HeaderFrame:StripTextures()
-    WeeklyRewardsFrame.HeaderFrame:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    WeeklyRewardsFrame.HeaderFrame:GwStripTextures()
+    WeeklyRewardsFrame.HeaderFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
     WeeklyRewardsFrame.HeaderFrame:ClearAllPoints()
     WeeklyRewardsFrame.HeaderFrame:SetPoint("TOP", 1, -42)
 
-    WeeklyRewardsFrame.CloseButton:SkinButton(true)
+    WeeklyRewardsFrame.CloseButton:GwSkinButton(true)
     WeeklyRewardsFrame.CloseButton:SetSize(20, 20)
-    WeeklyRewardsFrame.SelectRewardButton:SkinButton(false, true)
+    WeeklyRewardsFrame.SelectRewardButton:GwSkinButton(false, true)
 
     SkinActivityFrame(WeeklyRewardsFrame.RaidFrame)
     SkinActivityFrame(WeeklyRewardsFrame.MythicFrame)
@@ -102,7 +102,7 @@ local function ApplyWeeklyRewardsSkin()
     hooksecurefunc(WeeklyRewardsFrame, "UpdateOverlay", function()
         local overlay = WeeklyRewardsFrame.Overlay
         if overlay then
-            overlay:StripTextures()
+            overlay:GwStripTextures()
             if not overlay.SetBackdrop then
                 _G.Mixin(overlay, _G.BackdropTemplateMixin)
                 overlay:HookScript("OnSizeChanged", overlay.OnBackdropSizeChanged)

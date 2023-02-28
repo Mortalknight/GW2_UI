@@ -22,14 +22,14 @@ local function hook_SetSelectedCategory(list)
                 popoutButton.HighlightTexture:SetAlpha(0)
                 popoutButton.NormalTexture:SetAlpha(0)
 
-                popoutButton.Popout:StripTextures()
-                popoutButton.Popout:CreateBackdrop(constBackdropFrame)
+                popoutButton.Popout:GwStripTextures()
+                popoutButton.Popout:GwCreateBackdrop(constBackdropFrame)
                 popoutButton.Popout.backdrop:SetFrameLevel(popoutButton.Popout:GetFrameLevel())
 
-                popoutButton:SkinButton(false, true, false, true)
-                popoutButton:CreateBackdrop(GW.constBackdropFrameColorBorder)
+                popoutButton:GwSkinButton(false, true, false, true)
+                popoutButton:GwCreateBackdrop(GW.constBackdropFrameColorBorder)
                 popoutButton.backdrop:SetBackdropBorderColor(0, 0, 0)
-                popoutButton.backdrop:SetInside(nil, 4, 4)
+                popoutButton.backdrop:GwSetInside(nil, 4, 4)
 
                 popoutButton:HookScript("OnEnter", function()
                     popoutButton.backdrop:SetBackdropBorderColor(1, 1, 1)
@@ -47,7 +47,7 @@ local function hook_SetSelectedCategory(list)
     if optionPool then
         for button in optionPool:EnumerateActive() do
             if not button.isSkinned then
-                button.Button:SkinCheckButton()
+                button.Button:GwSkinCheckButton()
                 button.Button:SetSize(20, 20)
                 button.isSkinned = true
             end
@@ -58,19 +58,19 @@ AFP("hook_SetSelectedCategory", hook_SetSelectedCategory)
 
 local function SkinBarShop()
     if not GetSetting("BARBERSHOP_SKIN_ENABLED") then return end
-    BarberShopFrame.ResetButton:SkinButton(false, true)
-    BarberShopFrame.CancelButton:SkinButton(false, true)
-    BarberShopFrame.AcceptButton:SkinButton(false, true)
+    BarberShopFrame.ResetButton:GwSkinButton(false, true)
+    BarberShopFrame.CancelButton:GwSkinButton(false, true)
+    BarberShopFrame.AcceptButton:GwSkinButton(false, true)
 
     BarberShopFrame.TopBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
     BarberShopFrame.LeftBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
     BarberShopFrame.RightBackgroundOverlay:SetDrawLayer("BACKGROUND", 0)
 
-    CharCustomizeFrame.SmallButtons.ResetCameraButton:SkinButton(false, false, false, true, false, true)
-    CharCustomizeFrame.SmallButtons.ZoomOutButton:SkinButton(false, false, false, true, false, true)
-    CharCustomizeFrame.SmallButtons.ZoomInButton:SkinButton(false, false, false, true, false, true)
-    CharCustomizeFrame.SmallButtons.RotateLeftButton:SkinButton(false, false, false, true, false, true)
-    CharCustomizeFrame.SmallButtons.RotateRightButton:SkinButton(false, false, false, true, false, true)
+    CharCustomizeFrame.SmallButtons.ResetCameraButton:GwSkinButton(false, false, false, true, false, true)
+    CharCustomizeFrame.SmallButtons.ZoomOutButton:GwSkinButton(false, false, false, true, false, true)
+    CharCustomizeFrame.SmallButtons.ZoomInButton:GwSkinButton(false, false, false, true, false, true)
+    CharCustomizeFrame.SmallButtons.RotateLeftButton:GwSkinButton(false, false, false, true, false, true)
+    CharCustomizeFrame.SmallButtons.RotateRightButton:GwSkinButton(false, false, false, true, false, true)
 
     hooksecurefunc(CharCustomizeFrame, "SetSelectedCategory", hook_SetSelectedCategory)
 end

@@ -51,9 +51,9 @@ local function LoadBNToastSkin()
         })
     end
 
-    BNToastFrame.CloseButton:SkinButton(true)
+    BNToastFrame.CloseButton:GwSkinButton(true)
 
-    ReportFrame:StripTextures()
+    ReportFrame:GwStripTextures()
     if not ReportFrame.SetBackdrop then
         Mixin(ReportFrame, BackdropTemplateMixin)
         ReportFrame:HookScript("OnSizeChanged", ReportFrame.OnBackdropSizeChanged)
@@ -65,16 +65,16 @@ local function LoadBNToastSkin()
         edgeSize = GW.Scale(1)
     })
 
-    ReportFrame.Comment:StripTextures()
-    ReportFrame.Comment:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    ReportFrame.Comment:GwStripTextures()
+    ReportFrame.Comment:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
     GW.HandleBlizzardRegions(ReportFrame.Comment)
-    ReportFrame.CloseButton:SkinButton(true)
-    ReportFrame.ReportButton:SkinButton(false, true)
-    ReportFrame.ReportingMajorCategoryDropdown:SkinDropDownMenu()
+    ReportFrame.CloseButton:GwSkinButton(true)
+    ReportFrame.ReportButton:GwSkinButton(false, true)
+    ReportFrame.ReportingMajorCategoryDropdown:GwSkinDropDownMenu()
 
     ReportFrame.CloseButton:SetSize(20, 20)
 
-    BattleTagInviteFrame:StripTextures()
+    BattleTagInviteFrame:GwStripTextures()
 
     if not BattleTagInviteFrame.SetBackdrop then
         Mixin(BattleTagInviteFrame, BackdropTemplateMixin)
@@ -90,7 +90,7 @@ local function LoadBNToastSkin()
     for i = 1, BattleTagInviteFrame:GetNumChildren() do
         local child = select(i, BattleTagInviteFrame:GetChildren())
         if child:IsObjectType("Button") then
-            child:SkinButton(false, true)
+            child:GwSkinButton(false, true)
         end
     end
 

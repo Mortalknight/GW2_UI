@@ -3,7 +3,7 @@ local _, GW = ...
 local function RAFRewards()
     for reward in RecruitAFriendRewardsFrame.rewardPool:EnumerateActive() do
         reward.Button.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        reward.Button.IconBorder:Kill()
+        reward.Button.IconBorder:GwKill()
     end
 end
 
@@ -21,7 +21,7 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendFrame.RewardClaiming.Bracket_BottomRight:Hide()
     RecruitAFriendFrame.RewardClaiming.Bracket_BottomLeft:Hide()
 
-    RecruitAFriendFrame.RewardClaiming.ClaimOrViewRewardButton:SkinButton(false, true)
+    RecruitAFriendFrame.RewardClaiming.ClaimOrViewRewardButton:GwSkinButton(false, true)
 
     RecruitAFriendFrame.RewardClaiming.MonthCount:ClearAllPoints()
     RecruitAFriendFrame.RewardClaiming.MonthCount:SetPoint("TOPLEFT", 120, -15)
@@ -39,7 +39,7 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendFrame.RecruitList:ClearAllPoints()
     RecruitAFriendFrame.RecruitList:SetAllPoints(RAFFrame.RecruitList)
 
-    RecruitAFriendFrame.RecruitList.ScrollFrameInset:StripTextures()
+    RecruitAFriendFrame.RecruitList.ScrollFrameInset:GwStripTextures()
     GW.HandleTrimScrollBar(RecruitAFriendFrame.RecruitList.ScrollBar)
     GW.HandleAchivementsScrollControls(RecruitAFriendFrame.RecruitList)
     RecruitAFriendFrame.RecruitList.ScrollBox:SetSize(433, 420)
@@ -52,14 +52,14 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendFrame.RecruitmentButton:SetParent(RAFFrame.RecruitList)
     RecruitAFriendFrame.RecruitmentButton:ClearAllPoints()
     RecruitAFriendFrame.RecruitmentButton:SetPoint("BOTTOMLEFT", RecruitAFriendFrame.RecruitList.ScrollFrame,  "BOTTOMLEFT", 4, -20)
-    RecruitAFriendFrame.RecruitmentButton:SkinButton(false, true)
+    RecruitAFriendFrame.RecruitmentButton:GwSkinButton(false, true)
 
-    RecruitAFriendFrame.SplashFrame.OKButton:SkinButton(false, true)
+    RecruitAFriendFrame.SplashFrame.OKButton:GwSkinButton(false, true)
 
-    RecruitAFriendRewardsFrame.CloseButton:SkinButton(true)
+    RecruitAFriendRewardsFrame.CloseButton:GwSkinButton(true)
     RecruitAFriendRewardsFrame.CloseButton:SetSize(20, 20)
-    RecruitAFriendRewardsFrame:StripTextures()
-    RecruitAFriendRewardsFrame:CreateBackdrop(GW.skins.constBackdropFrame, true)
+    RecruitAFriendRewardsFrame:GwStripTextures()
+    RecruitAFriendRewardsFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
     hooksecurefunc(RecruitAFriendRewardsFrame, "UpdateRewards", RAFRewards)
     RAFRewards()
 end

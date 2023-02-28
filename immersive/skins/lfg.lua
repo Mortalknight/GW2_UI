@@ -9,7 +9,7 @@ local function HandleGoldIcon(button)
     local nameFrame = _G[button.."NameFrame"]
     local iconTexture = _G[button.."IconTexture"]
 
-    Button:CreateBackdrop()
+    Button:GwCreateBackdrop()
     Button.backdrop:ClearAllPoints()
     Button.backdrop:SetPoint("LEFT", 1, 0)
     Button.backdrop:SetSize(42, 42)
@@ -17,7 +17,7 @@ local function HandleGoldIcon(button)
     iconTexture:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     iconTexture:SetDrawLayer("OVERLAY")
     iconTexture:SetParent(Button.backdrop)
-    iconTexture:SetInside()
+    iconTexture:GwSetInside()
 
     count:SetParent(Button.backdrop)
     count:SetDrawLayer("OVERLAY")
@@ -30,7 +30,7 @@ local function SkinItemButton(parentFrame, _, index)
     local parentName = parentFrame:GetName()
     local item = _G[parentName .. "Item" .. index]
     if item and not item.backdrop then
-        item:CreateBackdrop()
+        item:GwCreateBackdrop()
         item.backdrop:ClearAllPoints()
         item.backdrop:SetPoint("LEFT", 1, 0)
         item.backdrop:SetSize(42, 42)
@@ -38,7 +38,7 @@ local function SkinItemButton(parentFrame, _, index)
         item.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
         item.Icon:SetDrawLayer("OVERLAY")
         item.Icon:SetParent(item.backdrop)
-        item.Icon:SetInside()
+        item.Icon:GwSetInside()
 
         item.Count:SetDrawLayer("OVERLAY")
         item.Count:SetParent(item.backdrop)
@@ -90,17 +90,17 @@ local function SkinLookingForGroupFrames()
 
     GW.HandlePortraitFrame(PVEFrame, false)
 
-    LFDQueueFrame:StripTextures(true)
-    RaidFinderFrame:StripTextures()
-    RaidFinderQueueFrame:StripTextures(true)
+    LFDQueueFrame:GwStripTextures(true)
+    RaidFinderFrame:GwStripTextures()
+    RaidFinderQueueFrame:GwStripTextures(true)
 
     GW.CreateFrameHeaderWithBody(PVEFrame, PVEFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {LFDQueueFrame, RaidFinderFrame, LFGListFrame})
 
     PVEFrameBg:Hide()
-    PVEFrame.shadows:Kill()
+    PVEFrame.shadows:GwKill()
 
-    LFDQueueFramePartyBackfillBackfillButton:SkinButton(false, true)
-    LFDQueueFramePartyBackfillNoBackfillButton:SkinButton(false, true)
+    LFDQueueFramePartyBackfillBackfillButton:GwSkinButton(false, true)
+    LFDQueueFramePartyBackfillNoBackfillButton:GwSkinButton(false, true)
 
     GroupFinderFrame.groupButton1.icon:SetTexture(133076) -- interface/icons/inv_helmet_08.blp
     GroupFinderFrame.groupButton2.icon:SetTexture(133074) -- interface/icons/inv_helmet_06.blp
@@ -109,9 +109,9 @@ local function SkinLookingForGroupFrames()
     LFDQueueFrameRoleButtonTankIncentiveIcon:SetAlpha(0)
     LFDQueueFrameRoleButtonHealerIncentiveIcon:SetAlpha(0)
     LFDQueueFrameRoleButtonDPSIncentiveIcon:SetAlpha(0)
-    LFDQueueFrameRoleButtonTank.shortageBorder:Kill()
-    LFDQueueFrameRoleButtonDPS.shortageBorder:Kill()
-    LFDQueueFrameRoleButtonHealer.shortageBorder:Kill()
+    LFDQueueFrameRoleButtonTank.shortageBorder:GwKill()
+    LFDQueueFrameRoleButtonDPS.shortageBorder:GwKill()
+    LFDQueueFrameRoleButtonHealer.shortageBorder:GwKill()
 
     local RoleButtons1 = {
         _G.LFDQueueFrameRoleButtonHealer,
@@ -129,13 +129,13 @@ local function SkinLookingForGroupFrames()
 
     for _, roleButton in pairs(RoleButtons1) do
         local checkButton = roleButton.checkButton or roleButton.CheckButton
-        checkButton:SkinCheckButton()
+        checkButton:GwSkinCheckButton()
         checkButton:SetSize(15, 15)
     end
 
     hooksecurefunc("SetCheckButtonIsRadio", function(self)
         if not self.isSkinnedGW2_UI then
-            self:SkinCheckButton()
+            self:GwSkinCheckButton()
             self:SetSize(15, 15)
         end
     end)
@@ -208,9 +208,9 @@ local function SkinLookingForGroupFrames()
 
     for i = 1, 3 do
         local bu = GroupFinderFrame["groupButton" .. i]
-        bu.ring:Kill()
-        bu.bg:Kill()
-        bu:SkinButton(false, true)
+        bu.ring:GwKill()
+        bu.bg:GwKill()
+        bu:GwSkinButton(false, true)
 
         bu.icon:SetSize(45, 45)
         bu.icon:ClearAllPoints()
@@ -247,10 +247,10 @@ local function SkinLookingForGroupFrames()
     end
 
     -- Raid finder
-    LFDQueueFrameFindGroupButton:SkinButton(false, true)
+    LFDQueueFrameFindGroupButton:GwSkinButton(false, true)
 
-    LFDParentFrame:StripTextures()
-    LFDParentFrameInset:StripTextures()
+    LFDParentFrame:GwStripTextures()
+    LFDParentFrameInset:GwStripTextures()
 
     HandleGoldIcon("LFDQueueFrameRandomScrollFrameChildFrameMoneyReward")
     HandleGoldIcon("RaidFinderQueueFrameScrollFrameChildFrameMoneyReward")
@@ -265,16 +265,16 @@ local function SkinLookingForGroupFrames()
         end
     end)
 
-    LFDQueueFrameTypeDropDown:SkinDropDownMenu()
+    LFDQueueFrameTypeDropDown:GwSkinDropDownMenu()
 
-    RaidFinderFrameRoleInset:StripTextures()
-    RaidFinderQueueFrameSelectionDropDown:SkinDropDownMenu()
-    RaidFinderFrameFindRaidButton:StripTextures()
-    RaidFinderFrameFindRaidButton:SkinButton(false, true)
-    RaidFinderQueueFrame:StripTextures()
-    RaidFinderQueueFrameScrollFrameScrollBar:StripTextures()
-    RaidFinderQueueFrameScrollFrame:SkinScrollFrame()
-    RaidFinderQueueFrameScrollFrameScrollBar:SkinScrollBar()
+    RaidFinderFrameRoleInset:GwStripTextures()
+    RaidFinderQueueFrameSelectionDropDown:GwSkinDropDownMenu()
+    RaidFinderFrameFindRaidButton:GwStripTextures()
+    RaidFinderFrameFindRaidButton:GwSkinButton(false, true)
+    RaidFinderQueueFrame:GwStripTextures()
+    RaidFinderQueueFrameScrollFrameScrollBar:GwStripTextures()
+    RaidFinderQueueFrameScrollFrame:GwSkinScrollFrame()
+    RaidFinderQueueFrameScrollFrameScrollBar:GwSkinScrollBar()
 
     --Skin Reward Items (This works for all frames, LFD, Raid, Scenario)
     hooksecurefunc("LFGRewardsFrame_SetItemButton", SkinItemButton)
@@ -282,8 +282,8 @@ local function SkinLookingForGroupFrames()
     -- Looking for raid
     LFRBrowseFrame:HookScript("OnShow", function()
         if not LFRBrowseFrameListScrollFrameScrollBar.skinned then
-            LFRBrowseFrameListScrollFrame:SkinScrollFrame()
-            LFRBrowseFrameListScrollFrameScrollBar:SkinScrollBar()
+            LFRBrowseFrameListScrollFrame:GwSkinScrollFrame()
+            LFRBrowseFrameListScrollFrameScrollBar:GwSkinScrollBar()
             LFRBrowseFrameListScrollFrameScrollBar.skinned = true
         end
     end)
@@ -293,65 +293,65 @@ local function SkinLookingForGroupFrames()
     LFRBrowseFrameColumnHeader1:SetWidth(94)
     LFRBrowseFrameColumnHeader2:SetWidth(38)
 
-    LFRQueueFrameFindGroupButton:SkinButton(false, true)
-    LFRQueueFrameAcceptCommentButton:SkinButton(false, true)
+    LFRQueueFrameFindGroupButton:GwSkinButton(false, true)
+    LFRQueueFrameAcceptCommentButton:GwSkinButton(false, true)
 
-    LFRQueueFrameCommentScrollFrame:SkinScrollFrame()
-    LFRQueueFrameCommentScrollFrameScrollBar:SkinScrollBar()
+    LFRQueueFrameCommentScrollFrame:GwSkinScrollFrame()
+    LFRQueueFrameCommentScrollFrameScrollBar:GwSkinScrollBar()
     GW.HandleTrimScrollBar(LFDQueueFrameSpecific.ScrollBar)
     GW.HandleAchivementsScrollControls(LFDQueueFrameSpecific)
 
-    _G[_G.LFDQueueFrame.PartyBackfill:GetName().."BackfillButton"]:SkinButton(false, true)
-    _G[_G.LFDQueueFrame.PartyBackfill:GetName().."NoBackfillButton"]:SkinButton(false, true)
-    _G[_G.RaidFinderQueueFrame.PartyBackfill:GetName().."BackfillButton"]:SkinButton(false, true)
-    _G[_G.RaidFinderQueueFrame.PartyBackfill:GetName().."NoBackfillButton"]:SkinButton(false, true)
-    LFDQueueFrameRandomScrollFrameScrollBar:StripTextures()
-    LFDQueueFrameRandomScrollFrameScrollBar:SkinScrollBar()
-    LFDQueueFrameRandomScrollFrame:SkinScrollFrame()
+    _G[_G.LFDQueueFrame.PartyBackfill:GetName().."BackfillButton"]:GwSkinButton(false, true)
+    _G[_G.LFDQueueFrame.PartyBackfill:GetName().."NoBackfillButton"]:GwSkinButton(false, true)
+    _G[_G.RaidFinderQueueFrame.PartyBackfill:GetName().."BackfillButton"]:GwSkinButton(false, true)
+    _G[_G.RaidFinderQueueFrame.PartyBackfill:GetName().."NoBackfillButton"]:GwSkinButton(false, true)
+    LFDQueueFrameRandomScrollFrameScrollBar:GwStripTextures()
+    LFDQueueFrameRandomScrollFrameScrollBar:GwSkinScrollBar()
+    LFDQueueFrameRandomScrollFrame:GwSkinScrollFrame()
 
     --LFGListFrame
-    LFGListFrame.CategorySelection.Inset:StripTextures()
-    LFGListFrame.CategorySelection.StartGroupButton:SkinButton(false, true)
+    LFGListFrame.CategorySelection.Inset:GwStripTextures()
+    LFGListFrame.CategorySelection.StartGroupButton:GwSkinButton(false, true)
     LFGListFrame.CategorySelection.StartGroupButton:ClearAllPoints()
     LFGListFrame.CategorySelection.StartGroupButton:SetPoint("BOTTOMLEFT", -1, 3)
-    LFGListFrame.CategorySelection.FindGroupButton:SkinButton(false, true)
+    LFGListFrame.CategorySelection.FindGroupButton:GwSkinButton(false, true)
     LFGListFrame.CategorySelection.FindGroupButton:ClearAllPoints()
     LFGListFrame.CategorySelection.FindGroupButton:SetPoint("BOTTOMRIGHT", -6, 3)
 
-    LFGListFrame.EntryCreation.Inset:StripTextures()
-    LFGListFrame.EntryCreation.CancelButton:SkinButton(false, true)
-    LFGListFrame.EntryCreation.ListGroupButton:SkinButton(false, true)
+    LFGListFrame.EntryCreation.Inset:GwStripTextures()
+    LFGListFrame.EntryCreation.CancelButton:GwSkinButton(false, true)
+    LFGListFrame.EntryCreation.ListGroupButton:GwSkinButton(false, true)
     LFGListFrame.EntryCreation.CancelButton:ClearAllPoints()
     LFGListFrame.EntryCreation.CancelButton:SetPoint("BOTTOMLEFT", -1, 3)
     LFGListFrame.EntryCreation.ListGroupButton:ClearAllPoints()
     LFGListFrame.EntryCreation.ListGroupButton:SetPoint("BOTTOMRIGHT", -6, 3)
-    LFGListFrame.EntryCreation.Description:CreateBackdrop(GW.skins.constBackdropFrame, true, 5, 5)
+    LFGListFrame.EntryCreation.Description:GwCreateBackdrop(GW.skins.constBackdropFrame, true, 5, 5)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.Description)
 
-    LFGListFrame.EntryCreation.ItemLevel.EditBox:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.ItemLevel.EditBox:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.ItemLevel.EditBox)
-    LFGListFrame.EntryCreation.MythicPlusRating.EditBox:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.MythicPlusRating.EditBox:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.MythicPlusRating.EditBox)
-    LFGListFrame.EntryCreation.Name:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.Name:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.Name)
-    LFGListFrame.EntryCreation.PVPRating.EditBox:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.PVPRating.EditBox:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.PVPRating.EditBox)
-    LFGListFrame.EntryCreation.PvpItemLevel.EditBox:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.PvpItemLevel.EditBox:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.PvpItemLevel.EditBox)
-    LFGListFrame.EntryCreation.VoiceChat.EditBox:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.VoiceChat.EditBox:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.VoiceChat.EditBox)
 
-    LFGListEntryCreationActivityDropDown:SkinDropDownMenu()
-    LFGListEntryCreationGroupDropDown:SkinDropDownMenu()
-    LFGListEntryCreationPlayStyleDropdown:SkinDropDownMenu()
+    LFGListEntryCreationActivityDropDown:GwSkinDropDownMenu()
+    LFGListEntryCreationGroupDropDown:GwSkinDropDownMenu()
+    LFGListEntryCreationPlayStyleDropdown:GwSkinDropDownMenu()
 
-    LFGListFrame.EntryCreation.CrossFactionGroup.CheckButton:SkinCheckButton()
-    LFGListFrame.EntryCreation.ItemLevel.CheckButton:SkinCheckButton()
-    LFGListFrame.EntryCreation.MythicPlusRating.CheckButton:SkinCheckButton()
-    LFGListFrame.EntryCreation.PrivateGroup.CheckButton:SkinCheckButton()
-    LFGListFrame.EntryCreation.PVPRating.CheckButton:SkinCheckButton()
-    LFGListFrame.EntryCreation.PvpItemLevel.CheckButton:SkinCheckButton()
-    LFGListFrame.EntryCreation.VoiceChat.CheckButton:SkinCheckButton()
+    LFGListFrame.EntryCreation.CrossFactionGroup.CheckButton:GwSkinCheckButton()
+    LFGListFrame.EntryCreation.ItemLevel.CheckButton:GwSkinCheckButton()
+    LFGListFrame.EntryCreation.MythicPlusRating.CheckButton:GwSkinCheckButton()
+    LFGListFrame.EntryCreation.PrivateGroup.CheckButton:GwSkinCheckButton()
+    LFGListFrame.EntryCreation.PVPRating.CheckButton:GwSkinCheckButton()
+    LFGListFrame.EntryCreation.PvpItemLevel.CheckButton:GwSkinCheckButton()
+    LFGListFrame.EntryCreation.VoiceChat.CheckButton:GwSkinCheckButton()
 
     LFGListFrame.EntryCreation.CrossFactionGroup.CheckButton:SetSize(15, 15)
     LFGListFrame.EntryCreation.ItemLevel.CheckButton:SetSize(15, 15)
@@ -361,36 +361,36 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.EntryCreation.PvpItemLevel.CheckButton:SetSize(15, 15)
     LFGListFrame.EntryCreation.VoiceChat.CheckButton:SetSize(15, 15)
 
-    LFGListFrame.EntryCreation.ActivityFinder.Dialog:StripTextures()
-    LFGListFrame.EntryCreation.ActivityFinder.Dialog.BorderFrame:StripTextures()
+    LFGListFrame.EntryCreation.ActivityFinder.Dialog:GwStripTextures()
+    LFGListFrame.EntryCreation.ActivityFinder.Dialog.BorderFrame:GwStripTextures()
 
-    LFGListFrame.EntryCreation.ActivityFinder.Dialog.EntryBox:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.ActivityFinder.Dialog.EntryBox:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.ActivityFinder.Dialog.EntryBox)
-    LFGListFrame.EntryCreation.ActivityFinder.Dialog.SelectButton:SkinButton(false, true)
-    LFGListFrame.EntryCreation.ActivityFinder.Dialog.CancelButton:SkinButton(false, true)
+    LFGListFrame.EntryCreation.ActivityFinder.Dialog.SelectButton:GwSkinButton(false, true)
+    LFGListFrame.EntryCreation.ActivityFinder.Dialog.CancelButton:GwSkinButton(false, true)
 
-    LFGListApplicationDialog:StripTextures()
-    LFGListApplicationDialog.SignUpButton:SkinButton(false, true)
-    LFGListApplicationDialog.CancelButton:SkinButton(false, true)
+    LFGListApplicationDialog:GwStripTextures()
+    LFGListApplicationDialog.SignUpButton:GwSkinButton(false, true)
+    LFGListApplicationDialog.CancelButton:GwSkinButton(false, true)
     GW.HandleBlizzardRegions(LFGListApplicationDialogDescription)
     GW.SkinTextBox(LFGListApplicationDialogDescription.MiddleTex, LFGListApplicationDialogDescription.LeftTex, LFGListApplicationDialogDescription.RightTex, LFGListApplicationDialogDescription.TopTex, LFGListApplicationDialogDescription.BottomTex)
-    LFGListApplicationDialog:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
+    LFGListApplicationDialog:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
 
-    LFGListInviteDialog:StripTextures()
-    LFGListInviteDialog:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
-    LFGListInviteDialog.AcknowledgeButton:SkinButton(false, true)
-    LFGListInviteDialog.AcceptButton:SkinButton(false, true)
-    LFGListInviteDialog.DeclineButton:SkinButton(false, true)
+    LFGListInviteDialog:GwStripTextures()
+    LFGListInviteDialog:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
+    LFGListInviteDialog.AcknowledgeButton:GwSkinButton(false, true)
+    LFGListInviteDialog.AcceptButton:GwSkinButton(false, true)
+    LFGListInviteDialog.DeclineButton:GwSkinButton(false, true)
 
     GW.SkinTextBox(LFGListFrame.SearchPanel.SearchBox.Middle, LFGListFrame.SearchPanel.SearchBox.Left, LFGListFrame.SearchPanel.SearchBox.Right)
-    LFGListFrame.SearchPanel.BackButton:SkinButton(false, true)
-    LFGListFrame.SearchPanel.SignUpButton:SkinButton(false, true)
-    LFGListFrame.CategorySelection.StartGroupButton:SkinButton(false, true)
+    LFGListFrame.SearchPanel.BackButton:GwSkinButton(false, true)
+    LFGListFrame.SearchPanel.SignUpButton:GwSkinButton(false, true)
+    LFGListFrame.CategorySelection.StartGroupButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.BackButton:ClearAllPoints()
     LFGListFrame.SearchPanel.BackButton:SetPoint("BOTTOMLEFT", -1, 3)
     LFGListFrame.SearchPanel.SignUpButton:ClearAllPoints()
     LFGListFrame.SearchPanel.SignUpButton:SetPoint("BOTTOMRIGHT", -6, 3)
-    LFGListFrame.SearchPanel.ResultsInset:StripTextures()
+    LFGListFrame.SearchPanel.ResultsInset:GwStripTextures()
     GW.HandleTrimScrollBar(LFGListFrame.SearchPanel.ScrollBar)
     GW.HandleAchivementsScrollControls(LFGListFrame.SearchPanel)
 
@@ -401,30 +401,30 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.SearchPanel.ResultsInset:SetBackdrop(GW.constBackdropFrameColorBorder)
     LFGListFrame.SearchPanel.ResultsInset:SetBackdropBorderColor(0, 0, 0, 1)
 
-    LFGListFrame.SearchPanel.FilterButton:SkinButton(false, true)
+    LFGListFrame.SearchPanel.FilterButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.FilterButton:SetPoint("LEFT", LFGListFrame.SearchPanel.SearchBox, "RIGHT", 5, 0)
     LFGListFrame.SearchPanel.FilterButton.Icon:SetDesaturated(true)
-    LFGListFrame.SearchPanel.RefreshButton:SkinButton(false, true)
-    LFGListFrame.SearchPanel.BackToGroupButton:SkinButton(false, true)
+    LFGListFrame.SearchPanel.RefreshButton:GwSkinButton(false, true)
+    LFGListFrame.SearchPanel.BackToGroupButton:GwSkinButton(false, true)
     LFGListFrame.SearchPanel.RefreshButton:SetSize(24, 24)
     LFGListFrame.SearchPanel.RefreshButton.Icon:SetDesaturated(true)
     LFGListFrame.SearchPanel.RefreshButton.Icon:SetPoint("CENTER")
 
     hooksecurefunc("LFGListApplicationViewer_UpdateApplicant", function(button)
         if not button.DeclineButton.template then
-            button.DeclineButton:SkinButton(false, true)
+            button.DeclineButton:GwSkinButton(false, true)
         end
         if not button.InviteButton.template then
-            button.InviteButton:SkinButton(false, true)
+            button.InviteButton:GwSkinButton(false, true)
         end
         if not button.InviteButtonSmall.template then
-            button.InviteButtonSmall:SkinButton(false, true)
+            button.InviteButtonSmall:GwSkinButton(false, true)
         end
     end)
 
     hooksecurefunc("LFGListSearchEntry_Update", function(button)
         if not button.CancelButton.template then
-            button.CancelButton:SkinButton(true)
+            button.CancelButton:GwSkinButton(true)
             button.CancelButton:SetSize(18, 18)
         end
     end)
@@ -433,7 +433,7 @@ local function SkinLookingForGroupFrames()
         for i = 1, LFGListFrame.SearchPanel.AutoCompleteFrame:GetNumChildren() do
             local child = select(i, LFGListFrame.SearchPanel.AutoCompleteFrame:GetChildren())
             if child and not child.isSkinned and child:IsObjectType("Button") then
-                child:SkinButton(false, true)
+                child:GwSkinButton(false, true)
                 child.isSkinned = true
             end
         end
@@ -452,8 +452,8 @@ local function SkinLookingForGroupFrames()
         panel.AutoCompleteFrame:SetHeight(numResults * (panel.AutoCompleteFrame.Results[1]:GetHeight() + 3.5) + 8)
     end)
 
-    LFGListFrame.SearchPanel.AutoCompleteFrame:StripTextures()
-    LFGListFrame.SearchPanel.AutoCompleteFrame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    LFGListFrame.SearchPanel.AutoCompleteFrame:GwStripTextures()
+    LFGListFrame.SearchPanel.AutoCompleteFrame:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
     LFGListFrame.SearchPanel.AutoCompleteFrame.backdrop:SetPoint("TOPLEFT", LFGListFrame.SearchPanel.AutoCompleteFrame, "TOPLEFT", 0, 3)
     LFGListFrame.SearchPanel.AutoCompleteFrame.backdrop:SetPoint("BOTTOMRIGHT", LFGListFrame.SearchPanel.AutoCompleteFrame, "BOTTOMRIGHT", 6, 3)
 
@@ -462,10 +462,10 @@ local function SkinLookingForGroupFrames()
 
     --ApplicationViewer (Custom Groups)
     LFGListFrame.ApplicationViewer.InfoBackground:Hide()
-    --LFGListFrame.ApplicationViewer.InfoBackground:CreateBackdrop("Transparent")
-    LFGListFrame.ApplicationViewer.AutoAcceptButton:SkinCheckButton()
+    --LFGListFrame.ApplicationViewer.InfoBackground:GwCreateBackdrop("Transparent")
+    LFGListFrame.ApplicationViewer.AutoAcceptButton:GwSkinCheckButton()
 
-    LFGListFrame.ApplicationViewer.Inset:StripTextures()
+    LFGListFrame.ApplicationViewer.Inset:GwStripTextures()
     if not LFGListFrame.ApplicationViewer.Inset.SetBackdrop then
         _G.Mixin(LFGListFrame.ApplicationViewer.Inset, _G.BackdropTemplateMixin)
         LFGListFrame.ApplicationViewer.Inset:HookScript("OnSizeChanged", LFGListFrame.ApplicationViewer.Inset.OnBackdropSizeChanged)
@@ -473,10 +473,10 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.ApplicationViewer.Inset:SetBackdrop(GW.constBackdropFrameColorBorder)
     LFGListFrame.ApplicationViewer.Inset:SetBackdropBorderColor(0, 0, 0, 1)
 
-    LFGListFrame.ApplicationViewer.NameColumnHeader:SkinButton(false, true)
-    LFGListFrame.ApplicationViewer.RoleColumnHeader:SkinButton(false, true)
-    LFGListFrame.ApplicationViewer.ItemLevelColumnHeader:SkinButton(false, true)
-    LFGListFrame.ApplicationViewer.RatingColumnHeader:SkinButton(false, true)
+    LFGListFrame.ApplicationViewer.NameColumnHeader:GwSkinButton(false, true)
+    LFGListFrame.ApplicationViewer.RoleColumnHeader:GwSkinButton(false, true)
+    LFGListFrame.ApplicationViewer.ItemLevelColumnHeader:GwSkinButton(false, true)
+    LFGListFrame.ApplicationViewer.RatingColumnHeader:GwSkinButton(false, true)
     LFGListFrame.ApplicationViewer.NameColumnHeader:ClearAllPoints()
     LFGListFrame.ApplicationViewer.NameColumnHeader:SetPoint("BOTTOMLEFT", LFGListFrame.ApplicationViewer.Inset, "TOPLEFT", 0, 1)
     LFGListFrame.ApplicationViewer.RoleColumnHeader:ClearAllPoints()
@@ -486,15 +486,15 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.ApplicationViewer.RatingColumnHeader:ClearAllPoints()
     LFGListFrame.ApplicationViewer.RatingColumnHeader:SetPoint("LEFT", LFGListFrame.ApplicationViewer.ItemLevelColumnHeader, "RIGHT", 1, 0)
 
-    LFGListFrame.ApplicationViewer.RefreshButton:SkinButton(false, true)
+    LFGListFrame.ApplicationViewer.RefreshButton:GwSkinButton(false, true)
     LFGListFrame.ApplicationViewer.RefreshButton:SetSize(24, 24)
     LFGListFrame.ApplicationViewer.RefreshButton:ClearAllPoints()
     LFGListFrame.ApplicationViewer.RefreshButton:SetPoint("BOTTOMRIGHT", LFGListFrame.ApplicationViewer.Inset, "TOPRIGHT", 16, 4)
     LFGListFrame.ApplicationViewer.RefreshButton.Icon:SetDesaturated(true)
 
-    LFGListFrame.ApplicationViewer.RemoveEntryButton:SkinButton(false, true)
-    LFGListFrame.ApplicationViewer.EditButton:SkinButton(false, true)
-    LFGListFrame.ApplicationViewer.BrowseGroupsButton:SkinButton(false, true)
+    LFGListFrame.ApplicationViewer.RemoveEntryButton:GwSkinButton(false, true)
+    LFGListFrame.ApplicationViewer.EditButton:GwSkinButton(false, true)
+    LFGListFrame.ApplicationViewer.BrowseGroupsButton:GwSkinButton(false, true)
     LFGListFrame.ApplicationViewer.EditButton:ClearAllPoints()
     LFGListFrame.ApplicationViewer.EditButton:SetPoint("BOTTOMRIGHT", -6, 3)
     LFGListFrame.ApplicationViewer.BrowseGroupsButton:ClearAllPoints()
@@ -529,10 +529,10 @@ local function SkinLookingForGroupFrames()
 
                 button.Icon:SetDrawLayer("BACKGROUND", 2)
                 button.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-                button.Icon:SetInside()
+                button.Icon:GwSetInside()
                 button.Cover:Hide()
                 button.HighlightTexture:SetColorTexture(1, 1, 1, 0.1)
-                button.HighlightTexture:SetInside()
+                button.HighlightTexture:GwSetInside()
 
                 button.Label:SetFontObject("GameFontNormal")
                 button.isSkinned = true
@@ -627,13 +627,13 @@ end
 local function ApplyPvPUISkin()
     if not GetSetting("LFG_SKIN_ENABLED") then return end
 
-    PVPUIFrame:StripTextures()
+    PVPUIFrame:GwStripTextures()
 
     for i = 1, 3 do
         local bu = _G["PVPQueueFrameCategoryButton" .. i]
-        bu.Ring:Kill()
-        bu.Background:Kill()
-        bu:SkinButton(false, true)
+        bu.Ring:GwKill()
+        bu.Background:GwKill()
+        bu:GwSkinButton(false, true)
 
         bu.Icon:SetSize(45, 45)
         bu.Icon:ClearAllPoints()
@@ -656,23 +656,23 @@ local function ApplyPvPUISkin()
         end
     end)
 
-    PVPQueueFrame.HonorInset:StripTextures()
+    PVPQueueFrame.HonorInset:GwStripTextures()
 
     PVPQueueFrame.CategoryButton1.Icon:SetTexture(236396) -- interface/icons/achievement_bg_winwsg.blp
     PVPQueueFrame.CategoryButton2.Icon:SetTexture(236368) -- interface/icons/achievement_bg_killxenemies_generalsroom.blp
     PVPQueueFrame.CategoryButton3.Icon:SetTexture(464820) -- interface/icons/achievement_general_stayclassy.blp
 
     local SeasonReward = PVPQueueFrame.HonorInset.RatedPanel.SeasonRewardFrame
-    SeasonReward:CreateBackdrop()
-    SeasonReward.Icon:SetInside(SeasonReward.backdrop)
+    SeasonReward:GwCreateBackdrop()
+    SeasonReward.Icon:GwSetInside(SeasonReward.backdrop)
     SeasonReward.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     SeasonReward.CircleMask:Hide()
     SeasonReward.Ring:Hide()
 
     -- Honor Frame
     local HonorFrame = _G.HonorFrame
-    HonorFrame:StripTextures()
-    ConquestFrame:StripTextures()
+    HonorFrame:GwStripTextures()
+    ConquestFrame:GwStripTextures()
 
     for _, v in pairs({HonorFrame, ConquestFrame  }) do
         local detailBg = v:CreateTexture("bg", "BACKGROUND", nil, 0)
@@ -685,11 +685,11 @@ local function ApplyPvPUISkin()
 
     GW.HandleTrimScrollBar(HonorFrame.SpecificScrollBar)
     GW.HandleAchivementsScrollControls(HonorFrame, "SpecificScrollBar")
-    HonorFrameTypeDropDown:SkinDropDownMenu()
-    HonorFrameQueueButton:SkinButton(false, true)
+    HonorFrameTypeDropDown:GwSkinDropDownMenu()
+    HonorFrameQueueButton:GwSkinButton(false, true)
 
     local BonusFrame = HonorFrame.BonusFrame
-    BonusFrame:StripTextures()
+    BonusFrame:GwStripTextures()
     BonusFrame.ShadowOverlay:Hide()
     BonusFrame.WorldBattlesTexture:Hide()
 
@@ -700,9 +700,9 @@ local function ApplyPvPUISkin()
         reward.Border:Hide()
         reward.CircleMask:Hide()
         GW.HandleIcon(reward.Icon)
-        reward.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder , true)
+        reward.Icon:GwCreateBackdrop(GW.constBackdropFrameColorBorder , true)
 
-        reward.EnlistmentBonus:StripTextures()
+        reward.EnlistmentBonus:GwStripTextures()
         reward.EnlistmentBonus:SetSize(20, 20)
         reward.EnlistmentBonus:SetPoint("TOPRIGHT", 2, 2)
 
@@ -729,9 +729,9 @@ local function ApplyPvPUISkin()
         if s.bg then s.bg:SetDesaturated(true) end
     end)
 
-    HonorFrame.TankIcon.checkButton:SkinCheckButton()
-    HonorFrame.HealerIcon.checkButton:SkinCheckButton()
-    HonorFrame.DPSIcon.checkButton:SkinCheckButton()
+    HonorFrame.TankIcon.checkButton:GwSkinCheckButton()
+    HonorFrame.HealerIcon.checkButton:GwSkinCheckButton()
+    HonorFrame.DPSIcon.checkButton:GwSkinCheckButton()
     HonorFrame.TankIcon.checkButton:SetSize(15, 15)
     HonorFrame.HealerIcon.checkButton:SetSize(15, 15)
     HonorFrame.DPSIcon.checkButton:SetSize(15, 15)
@@ -740,11 +740,11 @@ local function ApplyPvPUISkin()
     
     ConquestFrame.ShadowOverlay:Hide()
 
-    ConquestJoinButton:SkinButton(false, true)
+    ConquestJoinButton:GwSkinButton(false, true)
 
-    ConquestFrame.TankIcon.checkButton:SkinCheckButton()
-    ConquestFrame.HealerIcon.checkButton:SkinCheckButton()
-    ConquestFrame.DPSIcon.checkButton:SkinCheckButton()
+    ConquestFrame.TankIcon.checkButton:GwSkinCheckButton()
+    ConquestFrame.HealerIcon.checkButton:GwSkinCheckButton()
+    ConquestFrame.DPSIcon.checkButton:GwSkinCheckButton()
     ConquestFrame.TankIcon.checkButton:SetSize(15, 15)
     ConquestFrame.HealerIcon.checkButton:SetSize(15, 15)
     ConquestFrame.DPSIcon.checkButton:SetSize(15, 15)
@@ -754,7 +754,7 @@ local function ApplyPvPUISkin()
         reward.Border:Hide()
         reward.CircleMask:Hide()
         GW.HandleIcon(reward.Icon)
-        reward.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+        reward.Icon:GwCreateBackdrop(GW.constBackdropFrameColorBorder, true)
     end
 
     -- Item Borders for HonorFrame & ConquestFrame ------FEHLER
@@ -781,7 +781,7 @@ local function ApplyPvPUISkin()
             local r, g, b = GetItemQualityColor(rewardQuaility)
             rewardFrame.Icon:SetTexture(rewardTexture)
             if not rewardFrame.Icon.backdrop then
-                rewardFrame.Icon:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+                rewardFrame.Icon:GwCreateBackdrop(GW.constBackdropFrameColorBorder, true)
             end
             rewardFrame.Icon.backdrop:SetBackdropBorderColor(r, g, b)
         end
@@ -789,7 +789,7 @@ local function ApplyPvPUISkin()
 
     if GetSetting("TOOLTIPS_ENABLED") then
         ConquestTooltip.NineSlice:Hide()
-        ConquestTooltip:CreateBackdrop({
+        ConquestTooltip:GwCreateBackdrop({
             bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
             edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
             edgeSize = GW.Scale(32),
@@ -817,8 +817,8 @@ local function ApplyPvPUISkin()
 
     -- New Season Frame
     local NewSeasonPopup = _G.PVPQueueFrame.NewSeasonPopup
-    NewSeasonPopup.Leave:SkinButton(false, true)
-    NewSeasonPopup:StripTextures()
+    NewSeasonPopup.Leave:GwSkinButton(false, true)
+    NewSeasonPopup:GwStripTextures()
     if not NewSeasonPopup.SetBackdrop then
         _G.Mixin(NewSeasonPopup, _G.BackdropTemplateMixin)
         NewSeasonPopup:HookScript("OnSizeChanged", NewSeasonPopup.OnBackdropSizeChanged)
@@ -827,11 +827,11 @@ local function ApplyPvPUISkin()
     NewSeasonPopup:SetFrameLevel(5)
 
     local RewardFrame = NewSeasonPopup.SeasonRewardFrame
-    RewardFrame:CreateBackdrop()
+    RewardFrame:GwCreateBackdrop()
     RewardFrame.CircleMask:Hide()
     RewardFrame.Ring:Hide()
     RewardFrame.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    RewardFrame.backdrop:SetOutside(RewardFrame.Icon)
+    RewardFrame.backdrop:GwSetOutside(RewardFrame.Icon)
 
     if NewSeasonPopup.NewSeason then
         NewSeasonPopup.NewSeason:SetTextColor(1, 0.8, 0)
@@ -863,7 +863,7 @@ local function ApplyChallengesUISkin()
     if not GetSetting("LFG_SKIN_ENABLED") then return end
 
     ChallengesFrame:DisableDrawLayer("BACKGROUND")
-    ChallengesFrameInset:StripTextures()
+    ChallengesFrameInset:GwStripTextures()
 
     -- Mythic+ KeyStoneFrame
     local tex = ChallengesKeystoneFrame:CreateTexture("bg", "BACKGROUND")
@@ -873,9 +873,9 @@ local function ApplyChallengesUISkin()
     tex:SetSize(w + 50, h + 50)
     ChallengesKeystoneFrame.tex = tex
 
-    ChallengesKeystoneFrame.CloseButton:SkinButton(true)
+    ChallengesKeystoneFrame.CloseButton:GwSkinButton(true)
     ChallengesKeystoneFrame.CloseButton:SetSize(20, 20)
-    ChallengesKeystoneFrame.StartButton:SkinButton(false, true)
+    ChallengesKeystoneFrame.StartButton:GwSkinButton(false, true)
     GW.HandleIcon(ChallengesKeystoneFrame.KeystoneSlot.Texture, true)
 
     ChallengesKeystoneFrame.DungeonName:SetFont(DAMAGE_TEXT_FONT, 26, "OUTLINE")
@@ -912,7 +912,7 @@ local function ApplyChallengesUISkin()
                 GW.HandleIcon(child.Icon, true)
                 child.Icon:SetDrawLayer("ARTWORK")
                 child.HighestLevel:SetDrawLayer("OVERLAY")
-                child.Icon:SetInside()
+                child.Icon:GwSetInside()
             end
         end
     end)
@@ -934,8 +934,8 @@ local function ApplyChallengesUISkin()
 
     -- New Season Frame
     local NoticeFrame = ChallengesFrame.SeasonChangeNoticeFrame
-    NoticeFrame.Leave:SkinButton(false, true)
-    NoticeFrame:StripTextures()
+    NoticeFrame.Leave:GwSkinButton(false, true)
+    NoticeFrame:GwStripTextures()
 
     if not NoticeFrame.SetBackdrop then
         _G.Mixin(NoticeFrame, _G.BackdropTemplateMixin)

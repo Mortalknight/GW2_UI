@@ -365,7 +365,7 @@ local function bank_OnShow(self)
     BankFrame:ClearAllPoints()
     BankFrame:SetClampedToScreen(false)
     BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-    BankSlotsFrame:Kill()
+    BankSlotsFrame:GwKill()
     BankItemAutoSortButton:Hide()
 
     -- make the reagent bank initialize itself
@@ -500,7 +500,7 @@ local function LoadBank(helpers)
     hooksecurefunc(BankFrame, "Raise", function()
         BankFrame:ClearAllPoints()
         BankFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2000, 2000)
-        BankSlotsFrame:Kill()
+        BankSlotsFrame:GwKill()
         BankItemAutoSortButton:Hide()
     end)
 
@@ -612,7 +612,7 @@ local function LoadBank(helpers)
     do
         EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
         local dd = f.buttonSettings.dropdown
-        dd:CreateBackdrop(GW.skins.constBackdropFrame)
+        dd:GwCreateBackdrop(GW.skins.constBackdropFrame)
         f.buttonSettings:SetScript(
             "OnClick",
             function(self)

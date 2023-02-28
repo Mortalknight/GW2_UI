@@ -554,7 +554,7 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     mf:RegisterForDrag("LeftButton", "RightButton")
     mf:SetFrameLevel(parent:GetFrameLevel() + 1)
     mf:SetFrameStrata("DIALOG")
-    mf:CreateBackdrop("Transparent White")
+    mf:GwCreateBackdrop("Transparent White")
     mf:SetScale(parent:GetScale())
 
     if size then

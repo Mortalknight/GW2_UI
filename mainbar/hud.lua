@@ -969,7 +969,7 @@ GW.LoadHudArt = LoadHudArt
 
 local function LoadXPBar()
 
-    StatusTrackingBarManager:Kill()
+    StatusTrackingBarManager:GwKill()
     GW.LoadUpcomingSpells()
 
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")

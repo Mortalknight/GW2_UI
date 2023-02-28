@@ -352,7 +352,7 @@ local function SetupHybridMinimap()
     MapCanvas:SetScript("OnMouseDown", MapCanvas_OnMouseDown)
     MapCanvas:SetScript("OnMouseUp", GW.NoOp)
 
-    _G.HybridMinimap.CircleMask:StripTextures()
+    _G.HybridMinimap.CircleMask:GwStripTextures()
 end
 
 local function UpdateClusterPoint(_, _, anchor)
@@ -378,7 +378,7 @@ local function LoadMinimap()
     Minimap:ClearAllPoints()
     Minimap:SetPoint("CENTER", Minimap.gwMover)
 
-    MinimapCluster:KillEditMode()
+    MinimapCluster:GwKillEditMode()
 
     local clusterHolder = CreateFrame("Frame", "GW2UI_MinimapClusterHolder", MinimapCluster)
     clusterHolder:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -350, -3)
@@ -431,8 +431,8 @@ local function LoadMinimap()
     Minimap:HookScript("OnShow", minimap_OnShow)
     Minimap:HookScript("OnHide", minimap_OnHide)
 
-    MinimapCluster.ZoneTextButton:Kill()
-    TimeManagerClockButton:Kill()
+    MinimapCluster.ZoneTextButton:GwKill()
+    TimeManagerClockButton:GwKill()
     MinimapCluster.Tracking.Button:SetParent(GW.HiddenFrame)
 
     GwMapGradient.location = GwMapGradient:CreateFontString(nil, "OVERLAY", "GW_Standard_Button_Font_Small", 7)
@@ -458,11 +458,11 @@ local function LoadMinimap()
         MinimapCluster.IndicatorFrame
     }
 
-    MinimapCluster.BorderTop:StripTextures()
-    MinimapCluster.Tracking.Background:StripTextures()
+    MinimapCluster.BorderTop:GwStripTextures()
+    MinimapCluster.Tracking.Background:GwStripTextures()
 
     for _, frame in next, killFrames do
-        frame:Kill()
+        frame:GwKill()
     end
 
     if ExpansionLandingPageMinimapButton.UpdateIcon then
@@ -489,9 +489,9 @@ local function LoadMinimap()
         if event == "ADDON_LOADED" then
             local addon = ...
             if addon == "Blizzard_TimeManager" then
-                TimeManagerClockButton:Kill()
+                TimeManagerClockButton:GwKill()
             elseif addon == "Blizzard_FeedbackUI" then
-                FeedbackUIButton:Kill()
+                FeedbackUIButton:GwKill()
             elseif addon == "Blizzard_HybridMinimap" then
                 SetupHybridMinimap()
             elseif addon == "Blizzard_EncounterJournal" then
@@ -537,7 +537,7 @@ local function LoadMinimap()
     GameTimeFrame:SetSize(32, 32)
 
     hooksecurefunc("GameTimeFrame_SetDate", function()
-        GameTimeFrame:StripTextures()
+        GameTimeFrame:GwStripTextures()
         GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/calendar")
         GameTimeFrame:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/calendar")
         GameTimeFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/calendar")
@@ -568,7 +568,7 @@ local function LoadMinimap()
     GW.SkinMinimapInstanceDifficult()
 
     QueueStatusButton:SetSize(26, 26)
-    QueueStatusButtonIcon:Kill()
+    QueueStatusButtonIcon:GwKill()
     QueueStatusButtonIcon.texture:SetTexture(nil)
     QueueStatusButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton")
     QueueStatusButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMinimapButton-Highlight")

@@ -58,12 +58,12 @@ local function SkinUIDropDownMenu()
         end
 
         local Backdrop = _G[listFrameName .. "Backdrop"]
-        Backdrop:StripTextures()
-        Backdrop:CreateBackdrop(constBackdropFrame)
+        Backdrop:GwStripTextures()
+        Backdrop:GwCreateBackdrop(constBackdropFrame)
 
         local menuBackdrop = _G[listFrameName .. "MenuBackdrop"]
-        menuBackdrop:StripTextures()
-        menuBackdrop:CreateBackdrop(constBackdropFrame)
+        menuBackdrop:GwStripTextures()
+        menuBackdrop:GwCreateBackdrop(constBackdropFrame)
     end)
 end
 
@@ -86,7 +86,7 @@ local function SkinDropDownList()
             uncheck:SetTexCoord(unpack(GW.TexCoords))
             uncheck:SetSize(13, 13)
             if not button.backdrop then
-                button:CreateBackdrop()
+                button:GwCreateBackdrop()
             end
 
             button.backdrop:Hide()
@@ -102,7 +102,7 @@ local function SkinDropDownList()
         --Check if Raider.IO Entry is added
         if IsAddOnLoaded("RaiderIO") and _G.RaiderIO_CustomDropDownList then
             _G["RaiderIO_CustomDropDownListMenuBackdrop"]:Hide()
-            _G["RaiderIO_CustomDropDownList"]:CreateBackdrop(constBackdropFrame)
+            _G["RaiderIO_CustomDropDownList"]:GwCreateBackdrop(constBackdropFrame)
         end
     end)
 
@@ -220,8 +220,8 @@ local function SkinNavBarButtons(self)
 
     local navButton = self.navList[#self.navList]
     if navButton and not navButton.isSkinned then
-        navButton:StripTextures()
-        --navButton:SkinButton(false, false, true)
+        navButton:GwStripTextures()
+        --navButton:GwSkinButton(false, false, true)
 
         local r = {navButton:GetRegions()}
         for _,c in pairs(r) do
@@ -251,7 +251,7 @@ local function SkinNavBarButtons(self)
         end)
 
         if navButton.MenuArrowButton then
-            navButton.MenuArrowButton:StripTextures()
+            navButton.MenuArrowButton:GwStripTextures()
             if navButton.MenuArrowButton.Art then
                 navButton.MenuArrowButton.Art:SetTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowdown_down")
                 navButton.MenuArrowButton.Art:SetTexCoord(0, 1, 0, 1)
@@ -273,7 +273,7 @@ local function HandlePortraitFrame(frame, createBackdrop)
     local portraitFrameOverlay = name and _G[name .. "PortraitOverlay"] or frame.PortraitOverlay
     local artFrameOverlay = name and _G[name .. "ArtOverlayFrame"] or frame.ArtOverlayFrame
 
-    frame:StripTextures()
+    frame:GwStripTextures()
 
     if portraitFrame then portraitFrame:SetAlpha(0) end
     if portraitFrameOverlay then portraitFrameOverlay:SetAlpha(0) end
@@ -295,7 +295,7 @@ local function HandlePortraitFrame(frame, createBackdrop)
     end
 
     if frame.CloseButton then
-        frame.CloseButton:SkinButton(true)
+        frame.CloseButton:GwSkinButton(true)
         frame.CloseButton:SetSize(20, 20)
     end
 
@@ -306,7 +306,7 @@ local function HandlePortraitFrame(frame, createBackdrop)
         --local w, h = frame:GetSize()
         --tex:SetSize(w + 50, h + 50)
         --frame.tex = tex
-        frame:CreateBackdrop({
+        frame:GwCreateBackdrop({
             edgeFile = "",
             bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
             edgeSize = 1
@@ -320,14 +320,14 @@ local function HandleIcon(icon, backdrop, backdropTexture)
     icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
     if backdrop and not icon.backdrop then
-        icon:CreateBackdrop(backdropTexture)
+        icon:GwCreateBackdrop(backdropTexture)
     end
 end
 GW.HandleIcon = HandleIcon
 
 do
     local function iconBorderColor(border, r, g, b, a)
-        border:StripTextures()
+        border:GwStripTextures()
 
         if border.customFunc then
             local br, bg, bb = 1, 1, 1
@@ -356,7 +356,7 @@ do
         border.customBackdrop = backdrop
 
         if not border.IconBorderHooked then
-            border:StripTextures()
+            border:GwStripTextures()
 
             hooksecurefunc(border, "SetVertexColor", iconBorderColor)
             hooksecurefunc(border, "Hide", iconBorderHide)
@@ -400,7 +400,7 @@ local function ReskinScrollBarArrow(frame, direction)
             frame.Overlay:SetAlpha(0)
         end
     else
-        frame:StripTextures()
+        frame:GwStripTextures()
     end
 end
 
@@ -441,7 +441,7 @@ end
 GW.HandleAchivementsScrollControls = HandleAchivementsScrollControls
 
 local function HandleTrimScrollBar(frame, small)
-    frame:StripTextures()
+    frame:GwStripTextures()
 
     ReskinScrollBarArrow(frame.Back, "up")
     ReskinScrollBarArrow(frame.Forward, "down")
@@ -458,7 +458,7 @@ local function HandleTrimScrollBar(frame, small)
     local thumb = frame:GetThumb()
     if thumb then
         thumb:DisableDrawLayer("BACKGROUND")
-        thumb:CreateBackdrop("ScrollBar")
+        thumb:GwCreateBackdrop("ScrollBar")
         thumb.backdrop:SetFrameLevel(thumb:GetFrameLevel() + 1)
         thumb:SetSize(12, 12)
         if not small then
@@ -477,17 +477,17 @@ local function HandleItemButton(b, setInside)
     local icon = b.icon or b.Icon or b.IconTexture or b.iconTexture or (name and (_G[name .. "IconTexture"] or _G[name .. "Icon"]))
     local texture = icon and icon.GetTexture and icon:GetTexture()
 
-    b:StripTextures()
-    b:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
-    b:StyleButton()
+    b:GwStripTextures()
+    b:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    b:GwStyleButton()
 
     if icon then
         icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
         if setInside then
-            icon:SetInside(b)
+            icon:GwSetInside(b)
         else
-            b.backdrop:SetOutside(icon, 1, 1)
+            b.backdrop:GwSetOutside(icon, 1, 1)
         end
 
         icon:SetParent(b.backdrop)
@@ -517,12 +517,12 @@ do
         local icon, texture = button.Icon or _G[buttonNameTemplate..i.."Icon"], ""
         if icon then
             icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-            icon:SetInside(button)
+            icon:GwSetInside(button)
             texture = icon:GetTexture()
         end
 
-        button:StripTextures()
-        button:StyleButton(nil, true)
+        button:GwStripTextures()
+        button:GwStyleButton(nil, true)
 
         if texture then
             icon:SetTexture(texture)
@@ -545,12 +545,12 @@ do
         local cancel = frame.CancelButton or (borderBox and borderBox.CancelButton)
         local okay = frame.OkayButton or (borderBox and borderBox.OkayButton)
 
-        frame:StripTextures()
-        frame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+        frame:GwStripTextures()
+        frame:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
         frame:SetHeight(frame:GetHeight() + 10)
 
         if borderBox then
-            borderBox:StripTextures()
+            borderBox:GwStripTextures()
 
             local button = borderBox.SelectedIconArea and borderBox.SelectedIconArea.SelectedIconButton
             if button then
@@ -561,22 +561,22 @@ do
 
         cancel:ClearAllPoints()
         cancel:SetPoint("BOTTOMRIGHT", frame, -4, 4)
-        cancel:SkinButton(false, true)
+        cancel:GwSkinButton(false, true)
 
         okay:ClearAllPoints()
         okay:SetPoint("RIGHT", cancel, "LEFT", -10, 0)
-        okay:SkinButton(false, true)
+        okay:GwSkinButton(false, true)
 
         if editBox then
             editBox:DisableDrawLayer("BACKGROUND")
-            editBox:StripTextures()
-            editBox:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+            editBox:GwStripTextures()
+            editBox:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
         end
 
         if numIcons then
-            scrollFrame:StripTextures()
+            scrollFrame:GwStripTextures()
             scrollFrame:SetHeight(scrollFrame:GetHeight() + 10)
-            scrollFrame.ScrollBar:SkinScrollBar()
+            scrollFrame.ScrollBar:GwSkinScrollBar()
 
             for i = 1, numIcons do
                 local button = _G[buttonNameTemplate..i]
@@ -620,11 +620,11 @@ local function HandleTabs(tab, skinAsButton)
     if highlightTex then
         highlightTex:SetTexture()
     else
-        tab:StripTextures()
+        tab:GwStripTextures()
     end
 
     if skinAsButton then
-        tab:SkinButton(false, true)
+        tab:GwSkinButton(false, true)
     end
     tab:SetHitRectInsets(0, 0, 0, 0)
     tab:GetFontString():SetTextColor(0, 0, 0)

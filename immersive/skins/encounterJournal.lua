@@ -43,7 +43,7 @@ local function SkinOverviewInfo(self, _, index)
             select(i, header.button:GetRegions()):SetTexture()
         end
 
-        header.button:SkinButton(false, true)
+        header.button:GwSkinButton(false, true)
 
         header.descriptionBG:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
         header.descriptionBGBottom:SetAlpha(0)
@@ -89,7 +89,7 @@ local function SkinAbilitiesInfo()
             header.button.expandedIcon:SetTextColor(0, 0, 0)
             header.button.expandedIcon.SetTextColor = GW.NoOp
 
-            header.button:SkinButton(false, true)
+            header.button:GwSkinButton(false, true)
 
             header.button.bg = CreateFrame("Frame", nil, header.button)
             header.button.bg:SetFrameLevel(header.button.bg:GetFrameLevel() - 1)
@@ -113,7 +113,7 @@ local function hook_EJSuggestFrame_RefreshDisplay()
         local sugg = next(data) and EncounterJournal.suggestFrame["Suggestion" .. i]
         if sugg then
             if not sugg.icon.backdrop then
-                sugg.icon:CreateBackdrop()
+                sugg.icon:GwCreateBackdrop()
             end
 
             sugg.icon:SetMask("")
@@ -128,7 +128,7 @@ local function hook_EJSuggestFrame_UpdateRewards(sugg)
     local rewardData = sugg.reward.data
     if rewardData then
         if not sugg.reward.icon.backdrop then
-            sugg.reward.icon:CreateBackdrop("Transparent", true)
+            sugg.reward.icon:GwCreateBackdrop("Transparent", true)
             sugg.reward.icon.backdrop:SetFrameLevel(3)
         end
 
@@ -165,8 +165,8 @@ local function encounterJournalSkin()
     GW.HandlePortraitFrame(EJ)
     GW.CreateFrameHeaderWithBody(EJ, EncounterJournalTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon")
 
-    EJ.navBar:StripTextures()
-    EJ.navBar.overlay:StripTextures()
+    EJ.navBar:GwStripTextures()
+    EJ.navBar.overlay:GwStripTextures()
     EJ.navBar:SetPoint("TOPLEFT", 0, -33)
     EJ.navBar.SetPoint = GW.NoOp
 
@@ -182,7 +182,7 @@ local function encounterJournalSkin()
     EJ.innertex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
     EJ.innertex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
-    EJ.navBar.homeButton:StripTextures()
+    EJ.navBar.homeButton:GwStripTextures()
     local r = {EJ.navBar.homeButton:GetRegions()}
     for _,c in pairs(r) do
         if c:GetObjectType() == "FontString" then
@@ -211,9 +211,9 @@ local function encounterJournalSkin()
     EncounterJournal.searchBox:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", -15, -25)
 
     local InstanceSelect = EJ.instanceSelect
-    InstanceSelect.bg:Kill()
+    InstanceSelect.bg:GwKill()
 
-    InstanceSelect.tierDropDown:SkinDropDownMenu()
+    InstanceSelect.tierDropDown:GwSkinDropDownMenu()
     EncounterJournalInstanceSelectBG:SetAlpha(0)
     EncounterJournalMonthlyActivitiesFrame.Bg:SetAlpha(0)
 
@@ -232,7 +232,7 @@ local function encounterJournalSkin()
         end)
     end
 
-    EncounterJournalMonthlyActivitiesFrame.HelpButton:Kill()
+    EncounterJournalMonthlyActivitiesFrame.HelpButton:GwKill()
 
     local EncounterInfo = EJ.encounter.info
 
@@ -242,18 +242,18 @@ local function encounterJournalSkin()
     --EncounterInfo.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
     --EncounterInfo.tex:SetTexCoord(0, 0.70703125, 0, 0.580078125)
 
-    EncounterInfo.encounterTitle:Kill()
+    EncounterInfo.encounterTitle:GwKill()
 
     GW.HandleIcon(EncounterInfo.instanceButton.icon, true)
     EncounterInfo.instanceButton.icon:SetTexCoord(0, 1, 0, 1)
     EncounterInfo.instanceButton:SetNormalTexture("")
     EncounterInfo.instanceButton:SetHighlightTexture("")
 
-    EncounterInfo.leftShadow:Kill()
-    EncounterInfo.rightShadow:Kill()
-    EncounterInfo.model.dungeonBG:Kill()
+    EncounterInfo.leftShadow:GwKill()
+    EncounterInfo.rightShadow:GwKill()
+    EncounterInfo.model.dungeonBG:GwKill()
     EncounterJournalEncounterFrameInfoBG:SetHeight(385)
-    EncounterJournalEncounterFrameInfoModelFrameShadow:Kill()
+    EncounterJournalEncounterFrameInfoModelFrameShadow:GwKill()
 
     EncounterInfo.instanceButton:ClearAllPoints()
     EncounterInfo.instanceButton:SetPoint("TOPLEFT",EncounterInfo, "TOPLEFT", 0, 0)
@@ -261,14 +261,14 @@ local function encounterJournalSkin()
     EncounterInfo.instanceTitle:ClearAllPoints()
     EncounterInfo.instanceTitle:SetPoint("BOTTOM", EncounterInfo.bossesScroll, "TOP", 10, 15)
 
-    EncounterInfo.difficulty:StripTextures()
-    EncounterInfo.reset:StripTextures()
+    EncounterInfo.difficulty:GwStripTextures()
+    EncounterInfo.reset:GwStripTextures()
 
     -- buttons
     EncounterInfo.difficulty:ClearAllPoints()
     EncounterInfo.difficulty:SetPoint("BOTTOMRIGHT", EncounterJournalEncounterFrameInfoBG, "TOPRIGHT", -5, 7)
-    EncounterInfo.reset:SkinButton(false, true)
-    EncounterInfo.difficulty:SkinButton(false, true, nil, nil, true)
+    EncounterInfo.reset:GwSkinButton(false, true)
+    EncounterInfo.difficulty:GwSkinButton(false, true, nil, nil, true)
 
     EncounterInfo.reset:ClearAllPoints()
     EncounterInfo.reset:SetPoint("TOPRIGHT",EncounterInfo.difficulty, "TOPLEFT", -10, 0)
@@ -288,10 +288,10 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInstanceFrameMapButton:ClearAllPoints()
     EncounterJournalEncounterFrameInstanceFrameMapButton:SetPoint("LEFT", 55, -56)
 
-    EncounterInfo.overviewScroll.ScrollBar:SkinScrollBar()
+    EncounterInfo.overviewScroll.ScrollBar:GwSkinScrollBar()
     EncounterInfo.overviewScroll.ScrollBar:SetWidth(3)
 
-    EncounterInfo.detailsScroll.ScrollBar:SkinScrollBar()
+    EncounterInfo.detailsScroll.ScrollBar:GwSkinScrollBar()
     EncounterInfo.detailsScroll.ScrollBar:SetWidth(3)
 
     GW.HandleTrimScrollBar(EncounterInfo.LootContainer.ScrollBar)
@@ -305,7 +305,7 @@ local function encounterJournalSkin()
         local info = EncounterJournal.encounter.info
 
         local tab = info[name]
-        tab:SkinButton(false, true)
+        tab:GwSkinButton(false, true)
 
         tab:ClearAllPoints()
 
@@ -320,11 +320,11 @@ local function encounterJournalSkin()
         end
     end
 
-    EncounterJournalSearchResults:StripTextures()
-    EncounterJournalSearchResults:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
-    EncounterJournalSearchBox.searchPreviewContainer:StripTextures()
+    EncounterJournalSearchResults:GwStripTextures()
+    EncounterJournalSearchResults:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    EncounterJournalSearchBox.searchPreviewContainer:GwStripTextures()
 
-    EncounterJournalSearchResultsCloseButton:SkinButton(true)
+    EncounterJournalSearchResultsCloseButton:GwSkinButton(true)
     EncounterJournalSearchResultsCloseButton:SetSize(20, 20)
     GW.HandleTrimScrollBar(EncounterJournalSearchResults.ScrollBar)
     GW.HandleAchivementsScrollControls(EncounterJournalSearchResults)
@@ -332,12 +332,12 @@ local function encounterJournalSkin()
     for i = 1, AJ_MAX_NUM_SUGGESTIONS do
         local suggestion = EJ.suggestFrame["Suggestion" .. i]
         if i == 1 then
-            suggestion.button:SkinButton(false, true)
+            suggestion.button:GwSkinButton(false, true)
             suggestion.button:SetFrameLevel(4)
             GW.HandleNextPrevButton(suggestion.prevButton, nil, true)
             GW.HandleNextPrevButton(suggestion.nextButton, nil, true)
         else
-            suggestion.centerDisplay.button:SkinButton(false, true)
+            suggestion.centerDisplay.button:GwSkinButton(false, true)
         end
     end
 
@@ -393,29 +393,29 @@ local function encounterJournalSkin()
         local tooltip = EncounterJournalTooltip
         local item1 = tooltip.Item1
         local item2 = tooltip.Item2
-        tooltip:StripTextures()
-        tooltip:CreateBackdrop(constBackdropArgs)
+        tooltip:GwStripTextures()
+        tooltip:GwCreateBackdrop(constBackdropArgs)
         GW.HandleIcon(item1.icon)
         GW.HandleIcon(item2.icon)
-        item1.IconBorder:Kill()
-        item2.IconBorder:Kill()
+        item1.IconBorder:GwKill()
+        item2.IconBorder:GwKill()
     end
 
     --Powers
     local LJ = EJ.LootJournal
-    LJ.ClassDropDownButton:SkinButton(false, true, nil, nil, true)
+    LJ.ClassDropDownButton:GwSkinButton(false, true, nil, nil, true)
     LJ.ClassDropDownButton:SetFrameLevel(10)
-    LJ.RuneforgePowerFilterDropDownButton:SkinButton(false, true, nil, nil, true)
+    LJ.RuneforgePowerFilterDropDownButton:GwSkinButton(false, true, nil, nil, true)
     LJ.RuneforgePowerFilterDropDownButton:SetFrameLevel(10)
 
     GW.HandleTrimScrollBar(EncounterJournal.LootJournal.ScrollBar)
     GW.HandleAchivementsScrollControls(EncounterJournal.LootJournal)
 
     for _, button in next, {EncounterJournalEncounterFrameInfoFilterToggle, EncounterJournalEncounterFrameInfoSlotFilterToggle } do
-        button:SkinButton(false, true, nil, nil, true)
+        button:GwSkinButton(false, true, nil, nil, true)
     end
 
-    LJ:StripTextures()
+    LJ:GwStripTextures()
     --LJ.tex = LJ:CreateTexture("bg", "BACKGROUND", nil, 0)
     --LJ.tex:SetPoint("TOPLEFT", LJ, "TOPLEFT", -1, 1)
     --LJ.tex:SetPoint("BOTTOMRIGHT", LJ, "BOTTOMRIGHT", 1, -1)
@@ -429,14 +429,14 @@ local function encounterJournalSkin()
                 child:SetHighlightTexture("")
                 child:SetPushedTexture("")
                 if child.SetDisabledTexture then child:SetDisabledTexture("") end
-                child:CreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
+                child:GwCreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
                 child.hovertex = child:CreateTexture(nil, "ARTWORK", nil, 7)
                 child.hovertex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border")
                 child.hovertex:SetAllPoints(child)
                 child.hovertex:Hide()
                 child:HookScript("OnEnter", SetModifiedBackdrop)
                 child:HookScript("OnLeave", SetOriginalBackdrop)
-                child.bgImage:SetInside(2, 2)
+                child.bgImage:GwSetInside(2, 2)
                 child.bgImage:SetTexCoord(.08, .6, .08, .6)
                 child.bgImage:SetDrawLayer("ARTWORK", 5)
                 child.isSkinned = true
@@ -448,7 +448,7 @@ local function encounterJournalSkin()
         for _, child in next, { frame.ScrollTarget:GetChildren() } do
             if not child.isSkinned then
 
-                child:SkinButton(false, true, nil, nil, true)
+                child:GwSkinButton(false, true, nil, nil, true)
                 child.creature:ClearAllPoints()
                 child.creature:SetPoint("TOPLEFT", 1, -4)
                 child.isSkinned = true
@@ -513,7 +513,7 @@ local function encounterJournalSkin()
                 end
 
                 if not child.backdrop then
-                    child:CreateBackdrop("Transparent")
+                    child:GwCreateBackdrop("Transparent")
                     child.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
                     child.backdrop:SetPoint("TOPLEFT")
                     child.backdrop:SetPoint("BOTTOMRIGHT", 0, 1)
@@ -528,7 +528,7 @@ local function encounterJournalSkin()
     hooksecurefunc("EncounterJournal_SetBullets", SkinOverviewInfoBullets)
     hooksecurefunc("EncounterJournal_ToggleHeaders", SkinAbilitiesInfo)
 
-    EncounterJournalEncounterFrameInfoBG:Kill()
+    EncounterJournalEncounterFrameInfoBG:GwKill()
     EncounterInfo.detailsScroll.child.description:SetTextColor(1, 1, 1)
     EncounterInfo.overviewScroll.child.loreDescription:SetTextColor(1, 1, 1)
 
@@ -543,7 +543,7 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInstanceFrameBG:SetTexCoord(0.71, 0.06, 0.582, 0.08)
     EncounterJournalEncounterFrameInstanceFrameBG:SetRotation(rad(180))
     EncounterJournalEncounterFrameInstanceFrameBG:SetScale(0.7)
-    EncounterJournalEncounterFrameInstanceFrameBG:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    EncounterJournalEncounterFrameInstanceFrameBG:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
     EncounterJournalEncounterFrameInstanceFrame.titleBG:SetAlpha(0)
     EncounterJournalEncounterFrameInstanceFrameTitle:SetTextColor(1, 1, 1)
     EncounterJournalEncounterFrameInstanceFrameTitle:SetFont(UNIT_NAME_FONT, 25, "")
@@ -557,26 +557,26 @@ local function encounterJournalSkin()
 
     local parchment = LJ:GetRegions()
     if parchment then
-        parchment:Kill()
+        parchment:GwKill()
     end
 
     local LootDropdown = EncounterJournalLootJournalViewDropDown
-    LootDropdown:SkinDropDownMenu()
+    LootDropdown:GwSkinDropDownMenu()
     LootDropdown:SetScript("OnShow", function(dd) dd:SetFrameLevel(5) end) -- might be able to hook a function later; hotfix builds didn"t export Blizzard_LootJournalItems.xml
 
     do -- Item Sets
         local ItemSetsFrame = EJ.LootJournalItems.ItemSetsFrame
-        ItemSetsFrame.ClassButton:SkinButton(false, true)
-        ItemSetsFrame.scrollBar:SkinScrollBar()
+        ItemSetsFrame.ClassButton:GwSkinButton(false, true)
+        ItemSetsFrame.scrollBar:GwSkinScrollBar()
 
-        EJ.LootJournalItems:StripTextures()
-        EJ.LootJournalItems:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+        EJ.LootJournalItems:GwStripTextures()
+        EJ.LootJournalItems:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
 
         hooksecurefunc(ItemSetsFrame, "UpdateList", function(frame)
             if frame.buttons then
                 for _, button in ipairs(frame.buttons) do
                     if button and not button.backdrop then
-                        button:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+                        button:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
                         button.Background:Hide()
                     end
                 end

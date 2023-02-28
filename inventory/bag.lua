@@ -310,7 +310,7 @@ local function createBagBar(f)
         inv.reskinBagBar(b)
 
         -- Hide default bag bar
-        --_G["CharacterBag" .. bag_idx - 1 .. "Slot"]:Kill()
+        --_G["CharacterBag" .. bag_idx - 1 .. "Slot"]:GwKill()
         --_G["CharacterBag" .. bag_idx - 1 .. "Slot"]:SetScale(0.0001)
        -- _G["CharacterBag" .. bag_idx - 1 .. "Slot"]:SetAlpha(0)
 
@@ -342,7 +342,7 @@ local function createBagBar(f)
         inv.reskinBagBar(b)
 
         -- Hide default bag bar
-        --CharacterReagentBag0Slot:Kill()
+        --CharacterReagentBag0Slot:GwKill()
         --CharacterReagentBag0Slot:SetScale(0.0001)
         --CharacterReagentBag0Slot:SetAlpha(0)
 
@@ -736,7 +736,7 @@ local function LoadBag(helpers)
     do
         EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
         local dd = f.buttonSettings.dropdown
-        dd:CreateBackdrop(GW.skins.constBackdropFrame)
+        dd:GwCreateBackdrop(GW.skins.constBackdropFrame)
         f.buttonSettings:HookScript(
             "OnClick",
             function(self)

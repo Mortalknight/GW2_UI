@@ -92,7 +92,7 @@ local function SkinOpenMailFrame()
 
     OpenMailFrame.NineSlice:Hide()
     OpenMailFrame.TopTileStreaks:Hide()
-    OpenMailFrame:CreateBackdrop(nil)
+    OpenMailFrame:GwCreateBackdrop(nil)
     OpenMailFrame:SetParent(MailFrame)
 
     OpenMailSenderLabel:Hide()
@@ -105,8 +105,8 @@ local function SkinOpenMailFrame()
     OpenMailSubject:SetFont(UNIT_NAME_FONT, 12)
     OpenMailSubject:SetTextColor(1, 1, 1, 1)
 
-    OpenMailReportSpamButton:SkinButton(false, true)
-    OpenMailReplyButton:SkinButton(false, true)
+    OpenMailReportSpamButton:GwSkinButton(false, true)
+    OpenMailReplyButton:GwSkinButton(false, true)
     OpenMailReplyButton:SetPoint("RIGHT", OpenMailDeleteButton, "LEFT", -5,  0)
     OpenMailReplyButton:SetScript("OnClick", function()
         OpenMail_Reply()
@@ -119,21 +119,21 @@ local function SkinOpenMailFrame()
         SetSendMailShowing(true)
     end)
 
-    OpenMailDeleteButton:SkinButton(false, true)
+    OpenMailDeleteButton:GwSkinButton(false, true)
     OpenMailDeleteButton:SetPoint("RIGHT", OpenMailCancelButton, "LEFT", -5, 0)
 
-    OpenMailCancelButton:SkinButton(false, true)
+    OpenMailCancelButton:GwSkinButton(false, true)
     OpenMailCancelButton:SetPoint("BOTTOMRIGHT", OpenMailFrame, "BOTTOMRIGHT", -7, -31)
 
-    OpenAllMail:SkinButton(false, true)
-    OpenMailScrollChildFrame:SkinScrollFrame()
-    OpenMailScrollFrameScrollBar:SkinScrollBar()
+    OpenAllMail:GwSkinButton(false, true)
+    OpenMailScrollChildFrame:GwSkinScrollFrame()
+    OpenMailScrollFrameScrollBar:GwSkinScrollBar()
 
     for i = 1, _G.ATTACHMENTS_MAX_RECEIVE do
         local b = _G["OpenMailAttachmentButton" .. i]
         local t = _G["OpenMailAttachmentButton" .. i .. "IconTexture"]
 
-    b:StripTextures()
+    b:GwStripTextures()
 
         if b then
             b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
@@ -205,11 +205,11 @@ local function SkinSendMailFrame()
     SendMailMoneyBg:Hide()
     SendMailMoneyInset:Hide()
 
-    SendMailCancelButton:SkinButton(false, true)
-    SendMailMailButton:SkinButton(false, true)
+    SendMailCancelButton:GwSkinButton(false, true)
+    SendMailMailButton:GwSkinButton(false, true)
 
-    SendMailScrollChildFrame:SkinScrollFrame()
-    SendMailScrollFrameScrollBar:SkinScrollBar()
+    SendMailScrollChildFrame:GwSkinScrollFrame()
+    SendMailScrollFrameScrollBar:GwSkinScrollBar()
 
     SendMailMoneyFrame:ClearAllPoints()
     SendMailMoneyFrame:SetPoint("BOTTOMRIGHT", SendMailFrame, "BOTTOMRIGHT", -40, 15)
@@ -240,7 +240,7 @@ local function SkinSendMailFrame()
     cancelButton:SetPoint("RIGHT", SendMailCancelButton, "LEFT", -5, 0)
     cancelButton:SetText(CANCEL)
     cancelButton:SetSize(SendMailCancelButton:GetSize())
-    cancelButton:SkinButton(false, true)
+    cancelButton:GwSkinButton(false, true)
     cancelButton:SetScript("OnClick", function(self)
         SendMailFrame_Reset()
         --clear attachments
@@ -255,12 +255,12 @@ local function SkinSendMailFrame()
 end
 
 local function SkinComposeButton()
-    MailFrameTab2:StripTextures()
+    MailFrameTab2:GwStripTextures()
     MailFrameTab2:SetSize(310, 24)
     MailFrameTab2.SetWidth = GW.NoOp
 
     MailFrameTab2:SetText(SENDMAIL)
-    MailFrameTab2:SkinButton(false, true)
+    MailFrameTab2:GwSkinButton(false, true)
     MailFrameTab2:SetScript("OnClick", function()
         OpenMailFrame:Hide()
         MailFrameTab_OnClick(self, 2)
@@ -276,32 +276,32 @@ local function ClearMailTextures()
     MailFrameTitleText:Hide()
     _G.MailFrameBg:Hide()
     _G.MailFrameInset.NineSlice:Hide()
-    _G.MailFrameInset:CreateBackdrop()
+    _G.MailFrameInset:GwCreateBackdrop()
 
-    MailFrame:StripTextures()
-    InboxFrame:StripTextures()
-    SendMailFrame:StripTextures()
-    SendMailScrollFrame:StripTextures(true)
-    OpenMailFrame:StripTextures()
-    OpenMailScrollFrame:StripTextures()
+    MailFrame:GwStripTextures()
+    InboxFrame:GwStripTextures()
+    SendMailFrame:GwStripTextures()
+    SendMailScrollFrame:GwStripTextures(true)
+    OpenMailFrame:GwStripTextures()
+    OpenMailScrollFrame:GwStripTextures()
 
-    SendMailScrollFrame:CreateBackdrop(GW.skins.constBackdropFrame)
+    SendMailScrollFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
 
     MailFrame.NineSlice:Hide()
     MailFrame.TopTileStreaks:Hide()
-    MailFrame:CreateBackdrop()
+    MailFrame:GwCreateBackdrop()
 
     OpenMailLetterButtonIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    OpenMailLetterButton:StripTextures()
+    OpenMailLetterButton:GwStripTextures()
     OpenMailMoneyButtonIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-    OpenMailMoneyButton:StripTextures()
+    OpenMailMoneyButton:GwStripTextures()
 
     for i = 1, _G.INBOXITEMS_TO_DISPLAY do
         local bg = _G["MailItem" .. i]
-        bg:StripTextures()
+        bg:GwStripTextures()
 
         local btn = _G["MailItem" .. i .. "Button"]
-        btn:StripTextures()
+        btn:GwStripTextures()
 
         local t = _G["MailItem" .. i .. "ButtonIcon"]
         t:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -378,7 +378,7 @@ local function LoadMailSkin()
     MailFrame.headingRight:SetPoint("BOTTOMRIGHT", MailFrame, "TOPRIGHT", 0, 0)
     MailFrame.headingRight:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagheader-right")
 
-    MailFrame.CloseButton:SkinButton(true, false)
+    MailFrame.CloseButton:GwSkinButton(true, false)
     MailFrame.CloseButton:SetSize(20, 20)
     MailFrame.CloseButton:ClearAllPoints()
     MailFrame.CloseButton:SetPoint("TOPRIGHT", MailFrame, "TOPRIGHT", -10, 30)
@@ -393,8 +393,8 @@ local function LoadMailSkin()
 
 
 
-    _G.AutoCompleteBox:StripTextures()
-    _G.AutoCompleteBox:CreateBackdrop(GW.skins.constBackdropFrame)
+    _G.AutoCompleteBox:GwStripTextures()
+    _G.AutoCompleteBox:GwCreateBackdrop(GW.skins.constBackdropFrame)
 
     -- movable stuff
     local pos = GetSetting("MAILBOX_POSITION")

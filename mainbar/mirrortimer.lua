@@ -7,7 +7,7 @@ local function HandleMirrorTimer()
 		if not frame.atlasHolder then
 			frame.atlasHolder = CreateFrame("Frame", nil, frame)
 			frame.atlasHolder:SetClipsChildren(true)
-			frame.atlasHolder:SetInside()
+			frame.atlasHolder:GwSetInside()
 
 			frame.StatusBar:SetParent(frame.atlasHolder)
 			frame.StatusBar:ClearAllPoints()
@@ -20,8 +20,8 @@ local function HandleMirrorTimer()
 			frame.Text:SetPoint("CENTER", frame.StatusBar, 0, 1)
 		end
 
-		frame:StripTextures()
-		frame:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+		frame:GwStripTextures()
+		frame:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
 
 		i = i + 1
 		frame = _G["MirrorTimer" .. i]

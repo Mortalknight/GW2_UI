@@ -8,7 +8,7 @@ local function updateLootFrameButtons(self)
 
         if item and not item.backdrop then
             local Icon = item.icon:GetTexture()
-            item:StripTextures()
+            item:GwStripTextures()
             item.icon:SetTexture(Icon)
 
             GW.HandleIcon(item.icon, true, GW.constBackdropFrameColorBorder)
@@ -44,7 +44,7 @@ end
 local function LoadLootFrameSkin()
     if not GetSetting("LOOTFRAME_SKIN_ENABLED") then return end
 
-    LootFrame:StripTextures()
+    LootFrame:GwStripTextures()
     LootFrameBg:Hide()
     LootFrameTitleText:Hide()
 
@@ -83,7 +83,7 @@ local function LoadLootFrameSkin()
         end)
     end
 
-    LootFrame:KillEditMode()
+    LootFrame:GwKillEditMode()
 
     LootFrame.ClosePanelButton:ClearAllPoints()
     LootFrame.ClosePanelButton:SetPoint("RIGHT", GwLootFrameTitle.BGRIGHT, "RIGHT", -5, -2)
