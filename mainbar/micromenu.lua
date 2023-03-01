@@ -25,6 +25,7 @@ local settings = {}
 
 local function UpdateSettings()
     settings.fadeMicromenu = GetSetting("FADE_MICROMENU")
+    settings.showEventTimerIcon = GetSetting("MICROMENU_EVENT_TIMER_ICON")
 end
 GW.UpdateMicroMenuSettings = UpdateSettings
 
@@ -420,6 +421,30 @@ local function workOrderIconOnEnter(self)
     GameTooltip:Show()
 end
 
+local function ToggleEventTimerIcon(mbf)
+    Gw2UpdateMicroMenuButton:ClearAllPoints()
+
+    if settings.showEventTimerIcon then
+        if not Gw2EventTimerMicroMenuButton then
+            local eventTimerIcon = CreateFrame("Button", "Gw2EventTimerMicroMenuButton", mbf, "MainMenuBarMicroButton")
+            eventTimerIcon.newbieText = nil
+            eventTimerIcon.tooltipText = L["Event timer"]
+            reskinMicroButton(eventTimerIcon, "EventTimerMicroButton", mbf)
+            eventTimerIcon:ClearAllPoints()
+            eventTimerIcon:SetPoint("BOTTOMLEFT", Gw2GreateVaultMicroMenuButton, "BOTTOMRIGHT", 4, 0)
+            eventTimerIcon:SetScript("OnEnter", GW.EventTrackerFunctions.onEnterAll)
+        end
+
+        Gw2EventTimerMicroMenuButton:Show()
+
+        updateIcon:SetPoint("BOTTOMLEFT", Gw2EventTimerMicroMenuButton, "BOTTOMRIGHT", 4, 0)
+    else
+        Gw2EventTimerMicroMenuButton:Hide()
+        updateIcon:SetPoint("BOTTOMLEFT", Gw2GreateVaultMicroMenuButton, "BOTTOMRIGHT", 4, 0)
+    end
+end
+GW.ToggleEventTimerMicroMenuIcon = ToggleEventTimerIcon
+
 local function setupMicroButtons(mbf)
     -- CharacterMicroButton
     -- determine if we are using the default char button (for default charwin)
@@ -621,7 +646,7 @@ local function setupMicroButtons(mbf)
             end
         end
     end)
-    -- Disable icon till level 60 then lets flash it one time
+    -- Disable icon till level 70 then lets flash it one time
     greatVaultIcon:SetEnabled(IsPlayerAtEffectiveMaxLevel())
     greatVaultIcon:RegisterEvent("PLAYER_LEVEL_UP")
     greatVaultIcon:RegisterEvent("WEEKLY_REWARDS_UPDATE")
@@ -650,7 +675,7 @@ AFP("setupMicroButtons", setupMicroButtons)
 
 local function SetupNotificationArea(mbf)
     -- Update icon
-    updateIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
+    updateIcon = CreateFrame("Button", "Gw2UpdateMicroMenuButton", mbf, "MainMenuBarMicroButton")
     updateIcon.newbieText = nil
     updateIcon.tooltipText = ""
     reskinMicroButton(updateIcon, "UpdateMicroButton", mbf)
@@ -825,6 +850,9 @@ local function LoadMicroMenu()
 
     -- setup our notification area
     SetupNotificationArea(mbf)
+
+    -- event timer icon
+    ToggleEventTimerIcon(mbf.cf)
 
     --hooksecurefunc("MoveMicroButtons", hook_MoveMicroButtons) -- 10.0.5
     hooksecurefunc("UpdateMicroButtons", hook_UpdateMicroButtons)

@@ -173,7 +173,256 @@ local function getGradientText(text, colorTable)
     )
 end
 
+local eventData = {
+    CommunityFeast = {
+        dbKey = "communityFeast",
+        args = {
+            icon = 4687629,
+            type = "loopTimer",
+            questID = 70893,
+            duration = 16 * 60,
+            interval = 1.5 * 60 * 60,
+            barColor = colorPlatte.blue,
+            eventName = L["Community Feast"],
+            location = C_Map.GetMapInfo(2024).name,
+            label = L["Feast"],
+            runningText = L["Cooking"],
+            filter = function()
+                if not C_QuestLog.IsQuestFlaggedCompleted(67700) then
+                    return false
+                end
+                return true
+            end,
+            startTimestamp = (function()
+                local timestampTable = {
+                    [1] = 1675765800, -- NA
+                    [2] = 1675767600, -- KR
+                    [3] = 1676017800, -- EU
+                    [4] = 1675767600, -- TW
+                    [5] = 1675767600 -- CN
+                }
+                local region = GetCurrentRegion()
+                -- TW is not a real region, so we need to check the client language if player in KR
+                if region == 2 and GW.mylocal ~= "koKR" then
+                    region = 4
+                end
+
+                return timestampTable[region]
+            end)()
+        }
+    },
+    SiegeOnDragonbaneKeep = {
+        dbKey = "dragonbaneKeep",
+        args = {
+            icon = 236469,
+            type = "loopTimer",
+            questID = 70866,
+            duration = 10 * 60,
+            interval = 2 * 60 * 60,
+            eventName = L["Siege On Dragonbane Keep"],
+            label = L["Dragonbane Keep"],
+            location = C_Map.GetMapInfo(2022).name,
+            barColor = colorPlatte.red,
+            runningText = IN_PROGRESS,
+            filter = function()
+                if not C_QuestLog.IsQuestFlaggedCompleted(67700) then
+                    return false
+                end
+                return true
+            end,
+            startTimestamp = (function()
+                local timestampTable = {
+                    [1] = 1670774400, -- NA
+                    [2] = 1670770800, -- KR
+                    [3] = 1670774400, -- EU
+                    [4] = 1670770800, -- TW
+                    [5] = 1670770800 -- CN
+                }
+                local region = GetCurrentRegion()
+                -- TW is not a real region, so we need to check the client language if player in KR
+                if region == 2 and GW.mylocal ~= "koKR" then
+                    region = 4
+                end
+
+                return timestampTable[region]
+            end)()
+        }
+    },
+    IskaaranFishingNet = {
+        dbKey = "iskaaranFishingNet",
+        args = {
+            icon = 2159815,
+            type = "triggerTimer",
+            filter = function()
+                return C_QuestLog.IsQuestFlaggedCompleted(70871)
+            end,
+            barColor = colorPlatte.purple,
+            eventName = L["Iskaaran Fishing Net"],
+            label = L["Fishing Net"],
+            events = {
+                {
+                    "UNIT_SPELLCAST_SUCCEEDED",
+                    function(unit, _, spellID)
+                        if not unit or unit ~= "player" then
+                            return
+                        end
+
+                        if not GW.Libs.GW2Lib:GetPlayerLocationMapID() or (spellID ~= 377887 and spellID ~= 377883) then
+                            return
+                        end
+
+                        local lengthMap = {}
+                        local x, y = GW2_ADDON.Libs.GW2Lib:GetPlayerLocationCoords()
+                        if not x or not y then return end
+
+                        for i, netPos in ipairs(env.fishingNetPosition) do
+                            if GW.Libs.GW2Lib:GetPlayerLocationMapID() == netPos.map then
+                                local length = math.pow(x - netPos.x, 2) + math.pow(y - netPos.y, 2)
+                                lengthMap[i] = length
+                            end
+                        end
+
+                        local min
+                        local netIndex = 0
+                        for i, length in pairs(lengthMap) do
+                            if not min or length < min then
+                                min = length
+                                netIndex = i
+                            end
+                        end
+
+                        if not min or netIndex <= 0 then
+                            return
+                        end
+
+                        local db = settings.iskaaranFishingNet.playerData
+
+                        if spellID == 377887 then -- Get Fish
+                            if db[netIndex] then
+                                db[netIndex] = nil
+                            end
+                        elseif spellID == 377883 then -- Set Net
+                            C_Timer.After(0.5, function()
+                                local namePlates = C_NamePlate.GetNamePlates(true)
+                                if #namePlates > 0 then
+                                    for _, namePlate in ipairs(namePlates) do
+                                        if namePlate and namePlate.UnitFrame and namePlate.UnitFrame.WidgetContainer then
+                                            local container = namePlate.UnitFrame.WidgetContainer
+                                            if container.timerWidgets then
+                                                for id, widget in pairs(container.timerWidgets) do
+                                                    if
+                                                        env.fishingNetWidgetIDToIndex[id] and
+                                                            env.fishingNetWidgetIDToIndex[id] == netIndex
+                                                    then
+                                                        if widget.Bar and widget.Bar.value and widget.Bar.range then
+                                                            UpdateIskaaranFishingNetPlayerData(netIndex, {time = GetServerTime() + widget.Bar.value, duration = widget.Bar.range})
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end)
+                        end
+                    end
+                }
+            }
+        }
+    }
+}
+
 local functionFactory = {
+    onEnterAll = function(self)
+        GameTooltip:ClearLines()
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip_SetTitle(GameTooltip, self.tooltipText)
+        GameTooltip:AddLine(" ")
+        for _, event in ipairs(eventList) do
+            local data = eventData[event]
+
+            if settings[data.dbKey].enabled then
+                if event  == "IskaaranFishingNet" then
+                    GameTooltip:AddLine(GW.GetIconString(data.args.icon, 16, 16) .. " " .. data.args.eventName, 1, 1, 1)
+                    GameTooltip:AddLine(" ")
+
+                    if not data.netTable or #data.netTable == 0 then
+                        GameTooltip:AddLine(StringByTemplate(L["No Nets Set"], "danger"))
+                        GameTooltip:Show()
+                        return
+                    end
+                    GameTooltip:AddLine(L["Fishing Nets"])
+
+                    local netIndex1Status  -- Always
+                    local netIndex2Status  -- Always
+                    local bonusNetStatus  -- Bonus
+                    local bonusTimeLeft = 0
+
+                    for netIndex, timeData in pairs(data.netTable) do
+                        local text
+                        if type(timeData) == "table" then
+                            if timeData.left <= 0 then
+                                text = StringByTemplate(L["Can be collected"], "success")
+                            else
+                                text = StringByTemplate(secondToTime(timeData.left), "info")
+                            end
+
+                            -- only show latest bonus net
+                            if netIndex > 2 and timeData.left > bonusTimeLeft then
+                                bonusTimeLeft = timeData.left
+                                bonusNetStatus = text
+                            end
+                        else
+                            if timeData == "NOT_STARTED" then
+                                text = StringByTemplate(L["Can be set"], "warning")
+                            end
+                        end
+
+                        if netIndex == 1 then
+                            netIndex1Status = text
+                        elseif netIndex == 2 then
+                            netIndex2Status = text
+                        end
+                    end
+
+                    GameTooltip:AddDoubleLine(format(L["Net #%d"], 1), netIndex1Status)
+                    GameTooltip:AddDoubleLine(format(L["Net #%d"], 2), netIndex2Status)
+                    if bonusNetStatus then
+                        GameTooltip:AddDoubleLine(L["Bonus Net"], bonusNetStatus)
+                    else -- no bonus net
+                        GameTooltip:AddDoubleLine(L["Bonus Net"], StringByTemplate(L["Not Set"], "danger"))
+                    end
+                else
+                    GameTooltip:AddLine(GW.GetIconString(data.args.icon, 16, 16) .. " " .. data.args.eventName, 1, 1, 1)
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddDoubleLine(LOCATION_COLON, data.args.location, 1, 1, 1)
+
+                    GameTooltip:AddLine(" ")
+                    GameTooltip:AddDoubleLine(L["Interval"] .. ":", secondToTime(data.args.interval), 1, 1, 1)
+                    GameTooltip:AddDoubleLine(AUCTION_DURATION .. ":", secondToTime(data.args.duration), 1, 1, 1)
+                    if data.nextEventTimestamp then
+                        GameTooltip:AddDoubleLine(L["Next Event"] .. ":", date(L["TimeStamp m/d h:m:s"], data.nextEventTimestamp), 1, 1, 1)
+                    end
+
+                    GameTooltip:AddLine(" ")
+                    if data.isRunning then
+                        GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(data.args.runningText, "success"), 1, 1, 1)
+                    else
+                        GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(QUEUED_STATUS_WAITING, "greyLight"), 1, 1, 1)
+                    end
+
+                    if data.isCompleted then
+                        GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_COMPLETED, "success"), 1, 1, 1)
+                    else
+                        GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_NOT_COMPLETED, "danger"), 1, 1, 1)
+                    end
+                    GameTooltip:AddLine(" ")
+                end
+            end
+        end
+
+        GameTooltip:Show()
+    end,
     loopTimer = {
         init = function(self)
             self.icon = self:CreateTexture(nil, "ARTWORK")
@@ -328,7 +577,7 @@ local functionFactory = {
             end,
             onLeave = function()
                 GameTooltip:Hide()
-            end
+            end,
         },
     },
     triggerTimer = {
@@ -618,165 +867,7 @@ local functionFactory = {
         }
     }
 }
-
-local eventData = {
-    CommunityFeast = {
-        dbKey = "communityFeast",
-        args = {
-            icon = 4687629,
-            type = "loopTimer",
-            questID = 70893,
-            duration = 16 * 60,
-            interval = 1.5 * 60 * 60,
-            barColor = colorPlatte.blue,
-            eventName = L["Community Feast"],
-            location = C_Map.GetMapInfo(2024).name,
-            label = L["Feast"],
-            runningText = L["Cooking"],
-            filter = function()
-                if not C_QuestLog.IsQuestFlaggedCompleted(67700) then
-                    return false
-                end
-                return true
-            end,
-            startTimestamp = (function()
-                local timestampTable = {
-                    [1] = 1675765800, -- NA
-                    [2] = 1675767600, -- KR
-                    [3] = 1676017800, -- EU
-                    [4] = 1675767600, -- TW
-                    [5] = 1675767600 -- CN
-                }
-                local region = GetCurrentRegion()
-                -- TW is not a real region, so we need to check the client language if player in KR
-                if region == 2 and GW.mylocal ~= "koKR" then
-                    region = 4
-                end
-
-                return timestampTable[region]
-            end)()
-        }
-    },
-    SiegeOnDragonbaneKeep = {
-        dbKey = "dragonbaneKeep",
-        args = {
-            icon = 236469,
-            type = "loopTimer",
-            questID = 70866,
-            duration = 10 * 60,
-            interval = 2 * 60 * 60,
-            eventName = L["Siege On Dragonbane Keep"],
-            label = L["Dragonbane Keep"],
-            location = C_Map.GetMapInfo(2022).name,
-            barColor = colorPlatte.red,
-            runningText = IN_PROGRESS,
-            filter = function()
-                if not C_QuestLog.IsQuestFlaggedCompleted(67700) then
-                    return false
-                end
-                return true
-            end,
-            startTimestamp = (function()
-                local timestampTable = {
-                    [1] = 1670774400, -- NA
-                    [2] = 1670770800, -- KR
-                    [3] = 1670774400, -- EU
-                    [4] = 1670770800, -- TW
-                    [5] = 1670770800 -- CN
-                }
-                local region = GetCurrentRegion()
-                -- TW is not a real region, so we need to check the client language if player in KR
-                if region == 2 and GW.mylocal ~= "koKR" then
-                    region = 4
-                end
-
-                return timestampTable[region]
-            end)()
-        }
-    },
-    IskaaranFishingNet = {
-        dbKey = "iskaaranFishingNet",
-        args = {
-            icon = 2159815,
-            type = "triggerTimer",
-            filter = function()
-                return C_QuestLog.IsQuestFlaggedCompleted(70871)
-            end,
-            barColor = colorPlatte.purple,
-            eventName = L["Iskaaran Fishing Net"],
-            label = L["Fishing Net"],
-            events = {
-                {
-                    "UNIT_SPELLCAST_SUCCEEDED",
-                    function(unit, _, spellID)
-                        if not unit or unit ~= "player" then
-                            return
-                        end
-
-                        if not GW.Libs.GW2Lib:GetPlayerLocationMapID() or (spellID ~= 377887 and spellID ~= 377883) then
-                            return
-                        end
-
-                        local lengthMap = {}
-                        local x, y = GW2_ADDON.Libs.GW2Lib:GetPlayerLocationCoords()
-                        if not x or not y then return end
-
-                        for i, netPos in ipairs(env.fishingNetPosition) do
-                            if GW.Libs.GW2Lib:GetPlayerLocationMapID() == netPos.map then
-                                local length = math.pow(x - netPos.x, 2) + math.pow(y - netPos.y, 2)
-                                lengthMap[i] = length
-                            end
-                        end
-
-                        local min
-                        local netIndex = 0
-                        for i, length in pairs(lengthMap) do
-                            if not min or length < min then
-                                min = length
-                                netIndex = i
-                            end
-                        end
-
-                        if not min or netIndex <= 0 then
-                            return
-                        end
-
-                        local db = settings.iskaaranFishingNet.playerData
-
-                        if spellID == 377887 then -- Get Fish
-                            if db[netIndex] then
-                                db[netIndex] = nil
-                            end
-                        elseif spellID == 377883 then -- Set Net
-                            C_Timer.After(0.5, function()
-                                local namePlates = C_NamePlate.GetNamePlates(true)
-                                if #namePlates > 0 then
-                                    for _, namePlate in ipairs(namePlates) do
-                                        if namePlate and namePlate.UnitFrame and namePlate.UnitFrame.WidgetContainer then
-                                            local container = namePlate.UnitFrame.WidgetContainer
-                                            if container.timerWidgets then
-                                                for id, widget in pairs(container.timerWidgets) do
-                                                    if
-                                                        env.fishingNetWidgetIDToIndex[id] and
-                                                            env.fishingNetWidgetIDToIndex[id] == netIndex
-                                                    then
-                                                        if widget.Bar and widget.Bar.value and widget.Bar.range then
-                                                            UpdateIskaaranFishingNetPlayerData(netIndex, {time = GetServerTime() + widget.Bar.value, duration = widget.Bar.range})
-                                                        end
-                                                    end
-                                                end
-                                            end
-                                        end
-                                    end
-                                end
-                            end)
-                        end
-                    end
-                }
-            }
-        }
-    }
-}
+GW.EventTrackerFunctions = functionFactory
 
 local function HandlerEvent(_, event, ...)
     if eventHandlers[event] then
