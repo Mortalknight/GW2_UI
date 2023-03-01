@@ -320,13 +320,13 @@ local function OnAuraChange(self)
 
     -- Custom
     if #buffInfos.Custom > 0 then
-        self:SetSize(280, 32)
+        self:SetSize(249, 32)
         self.customButton.icon:SetTexture(buffInfos.Custom[1].texId)
 
         if not self.customButton:IsShown() then self.customButton:Show() end
         setButtonStyle(self.customButton, buffInfos.Custom[1].hasBuff)
     else
-        self:SetSize(249, 32)
+        self:SetSize(218, 32)
         self.customButton:Hide()
         --LibCustomGlow.PixelGlow_Stop(self.customButton)
     end
@@ -400,7 +400,7 @@ local function LoadRaidbuffReminder()
 
     rbr:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
 
-    rbr:SetSize(218, 32)
+    rbr:SetSize(190, 32)
 
     GW.RegisterMovableFrame(rbr, L["Missing Raid Buffs Bar"], "MISSING_RAID_BUFF_pos", ALL .. ",Raid,Aura", nil, {"default", "scaleable"})
     rbr:ClearAllPoints()
