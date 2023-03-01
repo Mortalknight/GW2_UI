@@ -100,6 +100,7 @@ local Smileys = {}
 local SmileysForMenu = {}
 local socialQueueCache = {}
 local ignoreChats = {[2] = "Log", [3] = "Voice"}
+local copyLines = {}
 
 local SoundTimer
 
@@ -161,12 +162,7 @@ local gw2StaffList = {
 
 local function colorizeLine(text, r, g, b)
     local hexCode = GW.RGBToHex(r, g, b)
-    local hexReplacement = format("|r%s", hexCode)
-
-    text = gsub(text, "|r", hexReplacement) --If the message contains color strings then we need to add message color hex code after every "|r"
-    text = format("%s%s|r", hexCode, text) --Add message color
-
-    return text
+    return format("%s%s|r", hexCode, text)
 end
 
 local canChangeMessage = function(arg1, id)
@@ -180,7 +176,7 @@ end
 local removeIconFromLine
 do
     local raidIconFunc = function(x)
-        local x = x ~= "" and _G["RAID_TARGET_" .. x]
+        x = x ~= "" and _G["RAID_TARGET_" .. x]
         return x and ("{" .. strlower(x) .. "}") or ""
     end
     local stripTextureFunc = function(w, x, y)
@@ -189,9 +185,7 @@ do
         end
     end
     local hyperLinkFunc = function(w, _, y)
-        if w ~= "" then
-            return
-        end
+        if w ~= "" then return end
         return y
     end
     local fourString = function(v, w, x, y)
@@ -199,31 +193,48 @@ do
     end
 
     removeIconFromLine = function(text)
-        text = gsub(text, "|TInterface/TargetingFrame/UI%-RaidTargetingIcon_(%d+):0|t", raidIconFunc) --converts raid icons into {star} etc, if possible.
+        text = gsub(text, [[|TInterface\TargetingFrame\UI%-RaidTargetingIcon_(%d+):0|t]], raidIconFunc) --converts raid icons into {star} etc, if possible.
         text = gsub(text, "(%s?)(|?)|[TA].-|[ta](%s?)", stripTextureFunc) --strip any other texture out but keep a single space from the side(s).
         text = gsub(text, "(|?)|H(.-)|h(.-)|h", hyperLinkFunc) --strip hyperlink data only keeping the actual text.
-        text = gsub(text, "(%d-)(.-)|4(.-):(.-);", fourString) --stuff where it goes "day" or "days" like played; tech this is wrong but okayish
+        text = gsub(text, "(%d+)(.-)|4(.-):(.-);", fourString) --stuff where it goes 'day' or 'days' like played; tech this is wrong but okayish
         return text
     end
 end
 
-local function getLines(frame, copyLines)
+local function getLines(frame)
     local index = 1
     local maxMessages, frameMessages = settings.maxCopyChatLines, frame:GetNumMessages()
     local startLine = frameMessages <= maxMessages and 1 or frameMessages + 1 - maxMessages
 
-    for i = startLine, frame:GetNumMessages() do
+    for i = startLine, frameMessages do
         local message, r, g, b = frame:GetMessageInfo(i)
         if message and not isMessageProtected(message) then
-            r, g, b = r or 1, g or 1, b or 1            --Set fallback color values
-            message = removeIconFromLine(message)       --Remove icons
-            message = colorizeLine(message, r, g, b)    --Add text color
+            r, g, b = r or 1, g or 1, b or 1
+            message = removeIconFromLine(message)
+            message = colorizeLine(message, r, g, b)
             copyLines[index] = message
             index = index + 1
         end
     end
 
-    return index - 1, copyLines
+    return index - 1
+end
+
+local function ShowCopyChatFrame(frame)
+    if not GW2_UICopyChatFrame:IsShown() then
+        frame = frame:GetParent()
+        local _, fontSize = FCF_GetChatWindowInfo(frame:GetID())
+
+        if fontSize < 10 then fontSize = 12 end
+        FCF_SetChatWindowFontSize(frame, frame, 0.01)
+        GW2_UICopyChatFrame:Show()
+        local lineCount = getLines(frame)
+        local text = table.concat(copyLines, " \n", 1, lineCount)
+        FCF_SetChatWindowFontSize(frame, frame, fontSize)
+        GW2_UICopyChatFrame.editBox:SetText(text)
+    else
+        GW2_UICopyChatFrame:Hide()
+    end
 end
 
 local function setButtonPosition(frame)
@@ -1390,7 +1401,6 @@ do
     GW.ChatFrameEditBoxOnTextChanged = EditBoxOnTextChanged
 end
 
-
 local function styleChatWindow(frame)
     local name = frame:GetName()
     local tab = GetTab(frame)
@@ -1593,22 +1603,7 @@ local function styleChatWindow(frame)
     frame.button.tex:SetAllPoints()
     frame.button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
 
-    frame.button:SetScript("OnMouseUp", function()
-        if not GW2_UICopyChatFrame:IsShown() then
-            local copyLines = {}
-            local _, fontSize = FCF_GetChatWindowInfo(frame:GetID())
-            if fontSize < 10 then fontSize = 12 end
-            FCF_SetChatWindowFontSize(frame, frame, 0.01)
-            GW2_UICopyChatFrame:Show()
-            local lineCt = getLines(frame, copyLines)
-            local text = table.concat(copyLines, " \n", 1, lineCt)
-            FCF_SetChatWindowFontSize(frame, frame, fontSize)
-            GW2_UICopyChatFrame.editBox:SetText(text)
-            wipe(copyLines)
-        else
-            GW2_UICopyChatFrame:Hide()
-        end
-    end)
+    frame.button:SetScript("OnMouseUp", ShowCopyChatFrame)
 
     frame.button:SetScript("OnEnter", function(button) button:SetAlpha(1) end)
     frame.button:SetScript("OnLeave", function(button)
