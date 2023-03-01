@@ -439,7 +439,9 @@ local function ToggleEventTimerIcon(mbf)
 
         updateIcon:SetPoint("BOTTOMLEFT", Gw2EventTimerMicroMenuButton, "BOTTOMRIGHT", 4, 0)
     else
-        Gw2EventTimerMicroMenuButton:Hide()
+        if Gw2EventTimerMicroMenuButton then
+            Gw2EventTimerMicroMenuButton:Hide()
+        end
         updateIcon:SetPoint("BOTTOMLEFT", Gw2GreateVaultMicroMenuButton, "BOTTOMRIGHT", 4, 0)
     end
 end
