@@ -293,13 +293,13 @@ local function GameTooltip_OnTooltipCleared(self)
 end
 
 local function GameTooltip_OnTooltipSetItem(self, data)
-    if self ~= GameTooltip or self:IsForbidden() then return end
+    if (self ~= GameTooltip and self ~= ShoppingTooltip1 and self ~= ShoppingTooltip2) or self:IsForbidden() then return end
 
     local itemID, bagCount, bankCount
     local modKey = IsModKeyDown()
-
-    if self.GetItem then
-        local _, link = self:GetItem()
+    local GetItem = TooltipUtil.GetDisplayedItem or self.GetItem
+    if GetItem then
+        local _, link = GetItem(self)
 
         if not link then return end
 
