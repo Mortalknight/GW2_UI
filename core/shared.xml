@@ -99,7 +99,7 @@
                 <Texture parentKey="BGLEFT" file="Interface/AddOns/GW2_UI/textures/bag/bagheader">
                     <Size x="512" y="41"></Size>
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-2" y="0" />
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
                     </Anchors>
                     <TexCoords left="0" right="1" top="0.35" bottom="1"/>
                 </Texture>
