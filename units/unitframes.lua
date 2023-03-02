@@ -799,8 +799,8 @@ local function LoadTarget()
         CombatFeedback_Initialize(fctf, font, 30)
     end
 
-    TargetFrame:Kill()
-    ComboFrame:Kill()
+    TargetFrame:GwKill()
+    ComboFrame:GwKill()
 end
 GW.LoadTarget = LoadTarget
 

@@ -334,40 +334,59 @@ end
 
 local function GameTooltip_OnTooltipCleared(self)
     if self:IsForbidden() then return end
-    self.itemCleared = nil
+
+    GameTooltip_ClearMoney(self)
+    GameTooltip_ClearStatusBars(self)
+    GameTooltip_ClearProgressBars(self)
+    GameTooltip_ClearWidgetSet(self)
 end
 
 local function GameTooltip_OnTooltipSetItem(self)
-    if self:IsForbidden() then return end
+    if (self ~= GameTooltip and self ~= ShoppingTooltip1 and self ~= ShoppingTooltip2) or self:IsForbidden() then return end
 
-    local _, link = self:GetItem()
-    local num = GetItemCount(link)
-    local numall = GetItemCount(link,true)
-    local left, right, bankCount = " ", " ", " "
-    local itemCountOption = GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT")
+    local owner = self:GetOwner()
+    local ownerName = owner and owner.GetName and owner:GetName()
+    local GetItem = (TooltipUtil and TooltipUtil.GetDisplayedItem) or self.GetItem
 
-    if link and IsModKeyDown() then
-        right = format(("*%s|r %s"):gsub("*", GW.Gw2Color), ID, strmatch(link, ":(%w+)"))
-    end
+    if GetItem then
+        local name, link = GetItem(self)
+        if name == "" and CraftFrame and CraftFrame:IsShown() then
+            local reagentIndex = ownerName and tonumber(strmatch(ownerName, 'Reagent(%d+)'))
+           if reagentIndex then link = GetCraftReagentItemLink(GetCraftSelectionIndex(), reagentIndex) end
+        end
 
-    if itemCountOption == "BAG" then
-        left = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
-    elseif itemCountOption == "BANK" then
-        bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
-    elseif itemCountOption == "BOTH" then
-        left = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
-        bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
-    end
+        if not link then return end
 
-    if left ~= " " or right ~= " " then
-        self:AddLine(" ")
-        self:AddDoubleLine(left, right)
-    end
-    if bankCount ~= " " then
-        self:AddDoubleLine(bankCount, " ")
+        local left, right, bankCount = " ", " ", " "
+        local itemCountOption = GetSetting("ADVANCED_TOOLTIP_OPTION_ITEMCOUNT")
+
+        if IsModKeyDown() then
+            right = format(("*%s|r %s"):gsub("*", GW.Gw2Color), ID, strmatch(link, ":(%w+)"))
+        end
+
+        if itemCountOption ~= "NONE" then
+            local num = GetItemCount(link)
+            local numall = GetItemCount(link, true)
+
+            if itemCountOption == "BAG" then
+                left = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
+            elseif itemCountOption == "BANK" then
+                bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
+            elseif itemCountOption == "BOTH" then
+                left = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
+                bankCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), BANK, (numall - num))
+            end
+        end
+
+        if left ~= " " or right ~= " " then
+            self:AddLine(" ")
+            self:AddDoubleLine(left, right)
+        end
+        if bankCount ~= " " then
+            self:AddDoubleLine(bankCount, " ")
+        end
     end
 end
-
 
 local function movePlacement(self)
     local settings = GetSetting("GameTooltipPos")
@@ -413,8 +432,8 @@ local function GameTooltip_ShowStatusBar(self)
     local sb = self.statusBarPool:GetNextActive()
     if not sb or sb.backdrop then return end
 
-    sb:StripTextures()
-    sb:CreateBackdrop(GW.skins.constBackdropFrameBorder)
+    sb:GwStripTextures()
+    sb:GwCreateBackdrop(GW.skins.constBackdropFrameBorder)
     sb:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
 end
 
@@ -427,8 +446,8 @@ local function GameTooltip_ShowProgressBar(self)
     self.progressBar = sb.Bar
 
     if not sb.Bar.backdrop then
-        sb.Bar:StripTextures()
-        sb.Bar:CreateBackdrop(GW.constBackdropFrameColorBorder, true)
+        sb.Bar:GwStripTextures()
+        sb.Bar:GwCreateBackdrop(GW.constBackdropFrameColorBorder, true)
         sb.Bar.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
         sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
     end
@@ -644,7 +663,7 @@ local function LoadTooltips()
 
     -- Skin GameTooltip Status Bar
     GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
-    GameTooltipStatusBar:CreateBackdrop()
+    GameTooltipStatusBar:GwCreateBackdrop()
     GameTooltipStatusBar:ClearAllPoints()
     GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", GW.BorderSize, -(GW.SpacingSize * 3))
     GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -GW.BorderSize, -(GW.SpacingSize * 3))

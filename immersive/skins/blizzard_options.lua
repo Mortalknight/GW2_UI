@@ -50,21 +50,21 @@ local function SkinBlizzardOptions()
         }
 
     for _, Frame in pairs(OptionsFrames) do
-        Frame:StripTextures()
-        Frame:CreateBackdrop(constBackdropFrameBorder)
+        Frame:GwStripTextures()
+        Frame:GwCreateBackdrop(constBackdropFrameBorder)
     end
 
-    InterfaceOptionsFrameCategories:StripTextures()
-    InterfaceOptionsFramePanelContainer:StripTextures()
-    InterfaceOptionsFrameAddOns:StripTextures()
-    VideoOptionsFrameCategoryFrame:StripTextures()
-    VideoOptionsFramePanelContainer:StripTextures()
+    InterfaceOptionsFrameCategories:GwStripTextures()
+    InterfaceOptionsFramePanelContainer:GwStripTextures()
+    InterfaceOptionsFrameAddOns:GwStripTextures()
+    VideoOptionsFrameCategoryFrame:GwStripTextures()
+    VideoOptionsFramePanelContainer:GwStripTextures()
 
-    InterfaceOptionsFrameCategories:CreateBackdrop(constBackdropFrameBorder, true)
-    InterfaceOptionsFramePanelContainer:CreateBackdrop(constBackdropFrameBorder, true)
-    InterfaceOptionsFrameAddOns:CreateBackdrop(constBackdropFrameBorder, true)
-    VideoOptionsFrameCategoryFrame:CreateBackdrop(constBackdropFrameBorder, true)
-    VideoOptionsFramePanelContainer:CreateBackdrop(constBackdropFrameBorder, true)
+    InterfaceOptionsFrameCategories:GwCreateBackdrop(constBackdropFrameBorder, true)
+    InterfaceOptionsFramePanelContainer:GwCreateBackdrop(constBackdropFrameBorder, true)
+    InterfaceOptionsFrameAddOns:GwCreateBackdrop(constBackdropFrameBorder, true)
+    VideoOptionsFrameCategoryFrame:GwCreateBackdrop(constBackdropFrameBorder, true)
+    VideoOptionsFramePanelContainer:GwCreateBackdrop(constBackdropFrameBorder, true)
 
     VideoOptionsFrame:SetBackdrop(nil)
     InterfaceOptionsFrame:SetBackdrop(nil)
@@ -79,7 +79,7 @@ local function SkinBlizzardOptions()
     GW.CreateFrameHeaderWithBody(VideoOptionsFrame, VideoOptionsFrameHeaderText, "Interface/AddOns/GW2_UI/textures/character/settings-window-icon", {VideoOptionsFrameCategoryFrame, VideoOptionsFramePanelContainer})
 
     for _, Tab in pairs(OptionsButtons) do
-        Tab:SkinTab()
+        Tab:GwSkinTab()
     end
 
     for _, Panel in pairs(InterfaceOptions) do
@@ -87,20 +87,20 @@ local function SkinBlizzardOptions()
             for i = 1, Panel:GetNumChildren() do
                 local Child = select(i, Panel:GetChildren())
                 if Child:IsObjectType("CheckButton") then
-                    Child:SkinCheckButton()
+                    Child:GwSkinCheckButton()
                     Child:SetSize(15, 15)
                 elseif Child:IsObjectType("Button") then
                     if Child == InterfaceOptionsFrameTab1 or Child == InterfaceOptionsFrameTab2 then
-                        Child:SkinTab()
+                        Child:GwSkinTab()
                     else
-                        Child:SkinButton(false, true)
+                        Child:GwSkinButton(false, true)
                     end
                 elseif Child:IsObjectType("Slider") then
-                    Child:SkinSliderFrame()
+                    Child:GwSkinSliderFrame()
                 elseif Child:IsObjectType("Tab") then
-                    Child:SkinTab()
+                    Child:GwSkinTab()
                 elseif Child:IsObjectType("Frame") and Child.Left and Child.Middle and Child.Right then
-                    Child:SkinDropDownMenu()
+                    Child:GwSkinDropDownMenu()
                 end
             end
         end
@@ -113,9 +113,9 @@ local function SkinBlizzardOptions()
     _G.AudioOptionsVoicePanel.TestInputDevice.ToggleTest:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")
 
     -- Voice Sliders
-    UnitPopupVoiceSpeakerVolume.Slider:SkinSliderFrame()
-    UnitPopupVoiceMicrophoneVolume.Slider:SkinSliderFrame()
-    UnitPopupVoiceUserVolume.Slider:SkinSliderFrame()
+    UnitPopupVoiceSpeakerVolume.Slider:GwSkinSliderFrame()
+    UnitPopupVoiceMicrophoneVolume.Slider:GwSkinSliderFrame()
+    UnitPopupVoiceUserVolume.Slider:GwSkinSliderFrame()
 
     --Create New Raid Profle
     local newProfileDialog = _G.CompactUnitFrameProfilesNewProfileDialog
@@ -128,9 +128,9 @@ local function SkinBlizzardOptions()
 
         newProfileDialog:SetBackdrop(nil)
 
-        _G.CompactUnitFrameProfilesNewProfileDialogBaseProfileSelector:SkinDropDownMenu()
-        _G.CompactUnitFrameProfilesNewProfileDialogCreateButton:SkinButton(false, true)
-        _G.CompactUnitFrameProfilesNewProfileDialogCancelButton:SkinButton(false, true)
+        _G.CompactUnitFrameProfilesNewProfileDialogBaseProfileSelector:GwSkinDropDownMenu()
+        _G.CompactUnitFrameProfilesNewProfileDialogCreateButton:GwSkinButton(false, true)
+        _G.CompactUnitFrameProfilesNewProfileDialogCancelButton:GwSkinButton(false, true)
 
         if newProfileDialog.editBox then
             _G[newProfileDialog.editBox:GetName() .. "Left"]:Hide()
@@ -153,8 +153,8 @@ local function SkinBlizzardOptions()
 
         deleteProfileDialog:SetBackdrop(nil)
 
-        _G.CompactUnitFrameProfilesDeleteProfileDialogDeleteButton:SkinButton(false, true)
-        _G.CompactUnitFrameProfilesDeleteProfileDialogCancelButton:SkinButton(false, true)
+        _G.CompactUnitFrameProfilesDeleteProfileDialogDeleteButton:GwSkinButton(false, true)
+        _G.CompactUnitFrameProfilesDeleteProfileDialogCancelButton:GwSkinButton(false, true)
     end
 end
 GW.SkinBlizzardOptions = SkinBlizzardOptions

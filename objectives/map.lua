@@ -457,7 +457,7 @@ local function LoadMinimap()
 
     MinimapCluster:SetAlpha(0.0)
     MinimapBorder:Hide()
-    MiniMapWorldMapButton:Kill()
+    MiniMapWorldMapButton:GwKill()
 
     MinimapZoneText:ClearAllPoints()
 
@@ -486,7 +486,7 @@ local function LoadMinimap()
     GameTimeFrame:SetSize(32, 32)
 
     hooksecurefunc("GameTimeFrame_SetDate", function()
-        GameTimeFrame:StripTextures()
+        GameTimeFrame:GwStripTextures()
         GameTimeFrame:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/icons/calendar")
         GameTimeFrame:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/icons/calendar")
         GameTimeFrame:SetHighlightTexture("Interface/AddOns/GW2_UI/Textures/icons/calendar")

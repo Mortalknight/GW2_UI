@@ -192,7 +192,7 @@ local function arenaPrepFrame_OnEvent()
     local numOpps = GetNumArenaOpponentSpecs()
 
     if ArenaPrepFrames then
-        ArenaPrepFrames:Kill()
+        ArenaPrepFrames:GwKill()
     end
 
     for i = 1, MAX_ARENA_ENEMIES do
@@ -343,10 +343,10 @@ local function LoadArenaFrame()
         arenaFrames[i] = registerFrame(i)
         --arenaPrepFrames[i] = registerPrepFrame(i)
         if _G["ArenaEnemyFrame" .. i] ~= nil then
-            _G["ArenaEnemyFrame" .. i]:Kill()
+            _G["ArenaEnemyFrame" .. i]:GwKill()
         end
         if _G["ArenaEnemyFrame" .. i .. "PetFrame"] ~= nil then
-            _G["ArenaEnemyFrame" .. i .. "PetFrame"]:Kill()
+            _G["ArenaEnemyFrame" .. i .. "PetFrame"]:GwKill()
         end
     end
 

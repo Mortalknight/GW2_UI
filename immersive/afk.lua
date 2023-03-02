@@ -226,7 +226,7 @@ local function loadAFKAnimation()
     AFKMode.bottom = CreateFrame("Frame", nil, AFKMode)
     AFKMode.bottom:SetFrameLevel(0)
     AFKMode.bottom:SetPoint("BOTTOM", AFKMode, "BOTTOM", 0, -5)
-    AFKMode.bottom:CreateBackdrop(BackdropFrame)
+    AFKMode.bottom:GwCreateBackdrop(BackdropFrame)
     AFKMode.bottom:SetWidth(GetScreenWidth() + (GW.border * 2))
     AFKMode.bottom:SetHeight(GetScreenHeight() * (1.5 / 10))
 

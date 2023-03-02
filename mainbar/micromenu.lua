@@ -194,7 +194,7 @@ local function reskinMicroButton(btn, name, mbf)
     if name == "PVPMicroButton" then
         tex = "Interface/AddOns/GW2_UI/Textures/battleground/" .. GW.myfaction
         if btn.texture then
-            btn.texture:Kill()
+            btn.texture:GwKill()
         end
     end
 
@@ -235,7 +235,7 @@ local function reskinMicroButton(btn, name, mbf)
     end
 
     if btn.Flash then
-        btn.Flash:SetInside()
+        btn.Flash:GwSetInside()
 		btn.Flash:SetTexture()
     end
 
@@ -292,7 +292,7 @@ local function disableMicroButton(btn, hideOnly)
         btn:Disable()
         btn:UnregisterAllEvents()
         btn:SetScript("OnUpdate", nil)
-        btn:Kill()
+        btn:GwKill()
     end
 end
 
@@ -550,9 +550,9 @@ local function checkElvUI()
 
     -- at this point we know we should own the microbar; fix what ElvUI did to it
     if ElvUI_MicroBar.backdrop then
-        ElvUI_MicroBar.backdrop:Kill()
+        ElvUI_MicroBar.backdrop:GwKill()
     end
-    ElvUI_MicroBar:Kill()
+    ElvUI_MicroBar:GwKill()
 
     ab.UpdateMicroButtonsParent = GW.NoOp
     ab.UpdateMicroButtons = GW.NoOp

@@ -1187,7 +1187,7 @@ local function LoadQuestTracker()
     -- disable the default tracker
     WatchFrame:SetMovable(1)
     WatchFrame:SetUserPlaced(true)
-    WatchFrame:Kill()
+    WatchFrame:GwKill()
     WatchFrame:SetScript(
         "OnShow",
         function()

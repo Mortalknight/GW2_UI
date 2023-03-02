@@ -120,6 +120,6 @@ local function CreateStanceBar()
 
     SetStanceButtons(StanceBarButton)
 
-    StanceBarFrame:Kill()
+    StanceBarFrame:GwKill()
 end
 GW.CreateStanceBar = CreateStanceBar

@@ -67,8 +67,9 @@ local function xpbar_OnEvent(self, event)
         return
     end
 
+    local maxPlayerLevel = GetMaxPlayerLevel()
     local level = GW.mylevel
-    local Nextlevel = math.min(GetMaxPlayerLevel(), GW.mylevel + 1)
+    local Nextlevel = math.min(maxPlayerLevel, GW.mylevel + 1)
     local lockLevelTextUnderMaxLevel = level < Nextlevel
 
     local valCurrent = UnitXP("Player")
@@ -146,10 +147,11 @@ local function xpbar_OnEvent(self, event)
         self.PetBar.petBarAnimation = valPrecPet
     end
 
+    local texture = (maxPlayerLevel == GW.mylevel) and "Interface/AddOns/GW2_UI/textures/hud/level-label-azerit" or "Interface/AddOns/GW2_UI/textures/hud/level-label"
     self.NextLevel:SetTextColor(1, 1, 1)
     self.CurrentLevel:SetTextColor(1, 1, 1)
-    self.labelRight:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label")
-    self.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label")
+    self.labelRight:SetTexture(texture)
+    self.labelLeft:SetTexture(texture)
 
     local GainBigExp = false
     local FlareBreakPoint = math.max(0.05, 0.15 * (1 - (GW.mylevel / GetMaxPlayerLevel())))

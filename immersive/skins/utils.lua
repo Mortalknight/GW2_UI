@@ -51,17 +51,17 @@ local function HandleItemButton(b, setInside)
     local icon = b.icon or b.Icon or b.IconTexture or b.iconTexture or (name and (_G[name .. "IconTexture"] or _G[name .. "Icon"]))
     local texture = icon and icon.GetTexture and icon:GetTexture()
 
-    b:StripTextures()
-    b:CreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
-    b:StyleButton()
+    b:GwStripTextures()
+    b:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    b:GwStyleButton()
 
     if icon then
         icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
         if setInside then
-            icon:SetInside(b)
+            icon:GwSetInside(b)
         else
-            b.backdrop:SetOutside(icon, 1, 1)
+            b.backdrop:GwSetOutside(icon, 1, 1)
         end
 
         icon:SetParent(b.backdrop)
@@ -85,12 +85,48 @@ local function ReskinScrollBarArrow(frame, direction)
             frame.Overlay:SetAlpha(0)
         end
     else
-        frame:StripTextures()
+        frame:GwStripTextures()
     end
 end
 
+local function HandleAchivementsScrollControls(self, specifiedScrollBar)
+    local scrollBar = specifiedScrollBar and self[specifiedScrollBar] or self.ScrollBar
+    scrollBar:SetWidth(20)
+
+    scrollBar.Track:ClearAllPoints()
+    scrollBar.Track:SetPoint("TOPLEFT", scrollBar, "TOPLEFT", 0, -12)
+    scrollBar.Track:SetPoint("BOTTOMRIGHT", scrollBar, "BOTTOMRIGHT", 0, 12)
+    scrollBar.Track.Thumb.backdrop:SetWidth(12)
+
+    local bg = scrollBar.Track:CreateTexture(nil, "BACKGROUND", nil, 0)
+    bg:ClearAllPoints()
+    bg:SetPoint("TOP", 0, 0)
+    bg:SetPoint("BOTTOM", 0, 0)
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
+
+    scrollBar.Back:ClearAllPoints()
+    scrollBar.Back:SetPoint("BOTTOM", scrollBar, "TOP", 0, -13)
+    scrollBar.Back:SetSize(12,12)
+    bg = scrollBar.Back:CreateTexture(nil, "BACKGROUND", nil, 0)
+    bg:ClearAllPoints();
+    bg:SetPoint("TOPLEFT",0,0)
+    bg:SetPoint("BOTTOMRIGHT",0,0)
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton")
+
+    scrollBar.Forward:ClearAllPoints()
+    scrollBar.Forward:SetPoint("TOP", scrollBar, "BOTTOM", 0, 13)
+    scrollBar.Forward:SetSize(12,12)
+    bg = scrollBar.Forward:CreateTexture(nil, "BACKGROUND", nil, 0)
+    bg:ClearAllPoints();
+    bg:SetPoint("TOPLEFT",0,0)
+    bg:SetPoint("BOTTOMRIGHT",0,0)
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton")
+    bg:SetTexCoord(0,1,1,0)
+end
+GW.HandleAchivementsScrollControls = HandleAchivementsScrollControls
+
 local function HandleTrimScrollBar(frame, small)
-    frame:StripTextures()
+    frame:GwStripTextures()
 
     ReskinScrollBarArrow(frame.Back, "up")
     ReskinScrollBarArrow(frame.Forward, "down")
@@ -101,20 +137,19 @@ local function HandleTrimScrollBar(frame, small)
 
     local track = frame.Track
     if track then
-        --track:DisableDrawLayer('ARTWORK')
-        --track:SetTexture("Interface\AddOns\GW2_UI\textures\uistuff\scrollbg")
+        track:DisableDrawLayer("ARTWORK")
     end
 
     local thumb = frame:GetThumb()
     if thumb then
-        thumb:DisableDrawLayer('BACKGROUND')
-
-        thumb.bg = thumb:CreateTexture(nil, "ARTWORK")
-        thumb.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
+        thumb:DisableDrawLayer("BACKGROUND")
+        thumb:GwCreateBackdrop("ScrollBar")
+        thumb.backdrop:SetFrameLevel(thumb:GetFrameLevel() + 1)
         thumb:SetSize(12, 12)
         if not small then
-            thumb.bg:SetPoint("TOP", 4, -1)
-            thumb.bg:SetPoint("BOTTOM", -4, 1)
+            thumb.backdrop:ClearAllPoints()
+            thumb.backdrop:SetPoint("TOP", 4, -1)
+            thumb.backdrop:SetPoint("BOTTOM", -4, 1)
         end
     end
 end
@@ -133,12 +168,12 @@ local function SkinUIDropDownMenu()
         end
 
         local Backdrop = _G[listFrameName .. "Backdrop"]
-        Backdrop:StripTextures()
-        Backdrop:CreateBackdrop(constBackdropFrame)
+        Backdrop:GwStripTextures()
+        Backdrop:GwCreateBackdrop(constBackdropFrame)
 
         local menuBackdrop = _G[listFrameName .. "MenuBackdrop"]
-        menuBackdrop:StripTextures()
-        menuBackdrop:CreateBackdrop(constBackdropFrame)
+        menuBackdrop:GwStripTextures()
+        menuBackdrop:GwCreateBackdrop(constBackdropFrame)
     end)
 end
 
@@ -161,7 +196,7 @@ local function SkinDropDownList()
             uncheck:SetTexCoord(unpack(GW.TexCoords))
             uncheck:SetSize(13, 13)
             if not button.backdrop then
-                button:CreateBackdrop()
+                button:GwCreateBackdrop()
             end
 
             button.backdrop:Hide()
@@ -195,7 +230,7 @@ local function HandleIcon(icon, backdrop, backdropTexture)
     icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
     if backdrop and not icon.backdrop then
-        icon:CreateBackdrop(backdropTexture)
+        icon:GwCreateBackdrop(backdropTexture)
     end
 end
 GW.HandleIcon = HandleIcon
@@ -270,7 +305,7 @@ GW.SkinTextBox = SkinTextBox
 
 do
     local function iconBorderColor(border, r, g, b, a)
-        border:StripTextures()
+        border:GwStripTextures()
 
         if border.customFunc then
             local br, bg, bb = 1, 1, 1
@@ -299,7 +334,7 @@ do
         border.customBackdrop = backdrop
 
         if not border.IconBorderHooked then
-            border:StripTextures()
+            border:GwStripTextures()
 
             hooksecurefunc(border, "SetVertexColor", iconBorderColor)
             hooksecurefunc(border, "Hide", iconBorderHide)
@@ -340,7 +375,7 @@ local function HandlePortraitFrame(frame, createBackdrop)
     local portraitFrameOverlay = name and _G[name .. "PortraitOverlay"] or frame.PortraitOverlay
     local artFrameOverlay = name and _G[name .. "ArtOverlayFrame"] or frame.ArtOverlayFrame
 
-    frame:StripTextures()
+    frame:GwStripTextures()
 
     if portraitFrame then portraitFrame:SetAlpha(0) end
     if portraitFrameOverlay then portraitFrameOverlay:SetAlpha(0) end
@@ -362,7 +397,7 @@ local function HandlePortraitFrame(frame, createBackdrop)
     end
 
     if frame.CloseButton then
-        frame.CloseButton:SkinButton(true)
+        frame.CloseButton:GwSkinButton(true)
         frame.CloseButton:SetSize(20, 20)
     end
 
@@ -373,7 +408,7 @@ local function HandlePortraitFrame(frame, createBackdrop)
         --local w, h = frame:GetSize()
         --tex:SetSize(w + 50, h + 50)
         --frame.tex = tex
-        frame:CreateBackdrop({
+        frame:GwCreateBackdrop({
             edgeFile = "",
             bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
             edgeSize = 1
@@ -392,14 +427,24 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     header.BGRIGHT:SetWidth(frame:GetWidth() - 20)
 
     if titleText then
-        titleText:ClearAllPoints()
-        titleText:SetParent(header)
-        titleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
-        titleText:SetFont(DAMAGE_TEXT_FONT, 20)
-        titleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+        if type(titleText) ~= "string" then
+            titleText:ClearAllPoints()
+            titleText:SetParent(header)
+            titleText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
+            titleText:SetFont(DAMAGE_TEXT_FONT, 20)
+            titleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+        else
+            header.headerText = header:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            header.headerText:ClearAllPoints()
+            header.headerText:SetParent(header)
+            header.headerText:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 64, 10)
+            header.headerText:SetFont(DAMAGE_TEXT_FONT, 20)
+            header.headerText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+            header.headerText:SetText(titleText)
+        end
     end
 
-    local tex = frame:CreateTexture("bg", "BACKGROUND", nil, 0)
+    local tex = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
     tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
     tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, yOffset or 0)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")

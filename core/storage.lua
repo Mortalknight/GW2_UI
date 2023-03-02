@@ -6,10 +6,6 @@ local LoadStorage = function ()
     GW2UI_STORAGE2 = GW2UI_STORAGE2 or {}
     storage = GW2UI_STORAGE2
 
-    -- Update Chardata
-    GW.UpdateCharData()
-    GW.UpdateMoney()
-
     -- Migrate data to new table (temp function)
     if GW2UI_STORAGE then
         local oldStorage = GW2UI_STORAGE
@@ -121,7 +117,7 @@ local UpdateMoney = function ()
     local money = GetMoney()
 
     -- first store old money
-    local OldMoney = GetStorage("money") or 0
+    local OldMoney = GetStorage("money") or money
 
     local change = money - OldMoney
     if OldMoney > money then        -- Lost Money
@@ -139,5 +135,6 @@ local UpdateCharData = function ()
     SetStorage("name", GW.myname)
     SetStorage("faction", GW.myfaction)
     SetStorage("class", GW.myclass)
+    UpdateMoney()
 end
 GW.UpdateCharData = UpdateCharData

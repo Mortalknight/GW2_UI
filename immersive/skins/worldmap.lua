@@ -33,7 +33,7 @@ end
 
 local function worldMapSkin()
     if not GW.GetSetting("WORLDMAP_SKIN_ENABLED") then return end
-    WorldMapFrame:StripTextures()
+    WorldMapFrame:GwStripTextures()
     WorldMapFrame.BlackoutFrame:Hide()
 
     local headerText
@@ -48,9 +48,9 @@ local function worldMapSkin()
 
     GW.CreateFrameHeaderWithBody(WorldMapFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 30)
 
-    WorldMapContinentDropDown:SkinDropDownMenu()
-    WorldMapZoneDropDown:SkinDropDownMenu()
-    WorldMapZoneMinimapDropDown:SkinDropDownMenu()
+    WorldMapContinentDropDown:GwSkinDropDownMenu()
+    WorldMapZoneDropDown:GwSkinDropDownMenu()
+    WorldMapZoneMinimapDropDown:GwSkinDropDownMenu()
 
     WorldMapContinentDropDown:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 330, -42)
     WorldMapContinentDropDown:SetWidth(205)
@@ -62,9 +62,9 @@ local function worldMapSkin()
     WorldMapZoomOutButton:SetPoint("LEFT", WorldMapZoneDropDown, "RIGHT", 3, 2)
     WorldMapZoomOutButton:SetHeight(21)
 
-    WorldMapZoomOutButton:SkinButton(false, true)
+    WorldMapZoomOutButton:GwSkinButton(false, true)
 
-    WorldMapFrameCloseButton:SkinButton(true)
+    WorldMapFrameCloseButton:GwSkinButton(true)
     WorldMapFrameCloseButton:SetSize(25, 25)
     WorldMapFrameCloseButton:ClearAllPoints()
     WorldMapFrameCloseButton:SetPoint("TOPRIGHT", WorldMapFrame, "TOPRIGHT", 0, 0)
@@ -233,7 +233,7 @@ local function worldMapSkin()
         break
     end
 
-    if Questie_Toggle then Questie_Toggle:SkinButton(false, true) end
+    if Questie_Toggle then Questie_Toggle:GwSkinButton(false, true) end
 end
 
 local function LoadWorldMapSkin()

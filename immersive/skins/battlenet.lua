@@ -13,7 +13,7 @@ local function SkinBNToastFrame()
     tex:SetSize(BNToastFrame:GetSize())
     BNToastFrame.tex = tex
 
-    BNToastFrame.CloseButton:SkinButton(true)
+    BNToastFrame.CloseButton:GwSkinButton(true)
 
     BNToastFrame:HookScript("OnShow", function(self)
         self.tex:SetSize(_G.BNToastFrame:GetSize())

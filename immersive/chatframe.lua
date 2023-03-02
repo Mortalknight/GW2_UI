@@ -38,7 +38,7 @@ local DEFAULT_STRINGS = {
     INSTANCE_CHAT_LEADER = L["IL"],
     PET_BATTLE_COMBAT_LOG = PET_BATTLE_COMBAT_LOG,
 }
-    
+
 local hyperlinkTypes = {
     achievement = true,
     apower = true,
@@ -96,6 +96,7 @@ local hooks = {}
 local Smileys = {}
 local SmileysForMenu = {}
 local ignoreChats = {[2] = "Log", [3] = "Voice"}
+local copyLines = {}
 
 local SoundTimer
 
@@ -133,12 +134,7 @@ local gw_fade_frames = {
 
 local function colorizeLine(text, r, g, b)
     local hexCode = GW.RGBToHex(r, g, b)
-    local hexReplacement = format("|r%s", hexCode)
-
-    text = gsub(text, "|r", hexReplacement) --If the message contains color strings then we need to add message color hex code after every "|r"
-    text = format("%s%s|r", hexCode, text) --Add message color
-
-    return text
+    return format("%s%s|r", hexCode, text)
 end
 
 local canChangeMessage = function(arg1, id)
@@ -152,7 +148,7 @@ end
 local removeIconFromLine
 do
     local raidIconFunc = function(x)
-        local x = x ~= "" and _G["RAID_TARGET_" .. x]
+        x = x ~= "" and _G["RAID_TARGET_" .. x]
         return x and ("{" .. strlower(x) .. "}") or ""
     end
     local stripTextureFunc = function(w, x, y)
@@ -170,31 +166,48 @@ do
         return format("%s%s%s", v, w, (v and v == "1" and x) or y)
     end
     removeIconFromLine = function(text)
-        text = gsub(text, "|TInterface\\TargetingFrame\\UI%-RaidTargetingIcon_(%d+):0|t", raidIconFunc) --converts raid icons into {star} etc, if possible.
+        text = gsub(text, [[|TInterface\TargetingFrame\UI%-RaidTargetingIcon_(%d+):0|t]], raidIconFunc) --converts raid icons into {star} etc, if possible.
         text = gsub(text, "(%s?)(|?)|[TA].-|[ta](%s?)", stripTextureFunc) --strip any other texture out but keep a single space from the side(s).
         text = gsub(text, "(|?)|H(.-)|h(.-)|h", hyperLinkFunc) --strip hyperlink data only keeping the actual text.
-        text = gsub(text, "(%d-)(.-)|4(.-):(.-);", fourString) --stuff where it goes 'day' or 'days' like played; tech this is wrong but okayish
+        text = gsub(text, "(%d+)(.-)|4(.-):(.-);", fourString) --stuff where it goes 'day' or 'days' like played; tech this is wrong but okayish
         return text
     end
 end
 
-local function getLines(frame, copyLines)
+local function getLines(frame)
     local index = 1
     local maxMessages, frameMessages = tonumber(GetSetting("CHAT_MAX_COPY_CHAT_LINES")), frame:GetNumMessages()
     local startLine = frameMessages <= maxMessages and 1 or frameMessages + 1 - maxMessages
 
-    for i = startLine, frame:GetNumMessages() do
+    for i = startLine, frameMessages do
         local message, r, g, b = frame:GetMessageInfo(i)
         if message and not isMessageProtected(message) then
-            r, g, b = r or 1, g or 1, b or 1            --Set fallback color values
-            message = removeIconFromLine(message)       --Remove icons
-            message = colorizeLine(message, r, g, b)    --Add text color
+            r, g, b = r or 1, g or 1, b or 1
+            message = removeIconFromLine(message)
+            message = colorizeLine(message, r, g, b)
             copyLines[index] = message
             index = index + 1
         end
     end
 
-    return index - 1, copyLines
+    return index - 1
+end
+
+local function ShowCopyChatFrame(frame)
+    if not GW2_UICopyChatFrame:IsShown() then
+        frame = frame:GetParent()
+        local _, fontSize = FCF_GetChatWindowInfo(frame:GetID())
+
+        if fontSize < 10 then fontSize = 12 end
+        FCF_SetChatWindowFontSize(frame, frame, 0.01)
+        GW2_UICopyChatFrame:Show()
+        local lineCount = getLines(frame)
+        local text = table.concat(copyLines, " \n", 1, lineCount)
+        FCF_SetChatWindowFontSize(frame, frame, fontSize)
+        GW2_UICopyChatFrame.editBox:SetText(text)
+    else
+        GW2_UICopyChatFrame:Hide()
+    end
 end
 
 local function setButtonPosition(self)
@@ -1427,7 +1440,7 @@ local function styleChatWindow(frame)
 
     frame:SetClampRectInsets(0,0,0,0)
     frame:SetClampedToScreen(false)
-    frame:StripTextures(true)
+    frame:GwStripTextures(true)
     _G[name.."ButtonFrame"]:Hide()
 
     _G[format(editbox:GetName() .. "Left", id)]:Hide()
@@ -1499,22 +1512,7 @@ local function styleChatWindow(frame)
     frame.button.tex:SetAllPoints()
     frame.button.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
 
-    frame.button:SetScript("OnMouseUp", function()
-        if not GW2_UICopyChatFrame:IsShown() then
-            local copyLines = {}
-            local _, fontSize = FCF_GetChatWindowInfo(frame:GetID())
-            if fontSize < 10 then fontSize = 12 end
-            FCF_SetChatWindowFontSize(frame, frame, 0.01)
-            GW2_UICopyChatFrame:Show()
-            local lineCt = getLines(frame, copyLines)
-            local text = table.concat(copyLines, " \n", 1, lineCt)
-            FCF_SetChatWindowFontSize(frame, frame, fontSize)
-            GW2_UICopyChatFrame.editBox:SetText(text)
-            wipe(copyLines)
-        else
-            GW2_UICopyChatFrame:Hide()
-        end
-    end)
+    frame.button:SetScript("OnMouseUp", ShowCopyChatFrame)
 
     frame.button:SetScript("OnEnter", function(button) button:SetAlpha(1) end)
     frame.button:SetScript("OnLeave", function(button)
@@ -1624,7 +1622,7 @@ local function BuildCopyChatFrame()
     frame.scrollArea = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
     frame.scrollArea:SetPoint("TOPLEFT", frame, "TOPLEFT", 8, -30)
     frame.scrollArea:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 8)
-    frame.scrollArea.ScrollBar:SkinScrollBar()
+    frame.scrollArea.ScrollBar:GwSkinScrollBar()
     frame.scrollArea:SetScript("OnSizeChanged", function(scroll)
         frame.editBox:SetWidth(scroll:GetWidth())
         frame.editBox:SetHeight(scroll:GetHeight())
@@ -1661,12 +1659,12 @@ local function BuildCopyChatFrame()
     frame.close:SetFrameLevel(frame.close:GetFrameLevel() + 1)
     frame.close:EnableMouse(true)
     frame.close:SetSize(20, 20)
-    frame.close:SkinButton(true)
+    frame.close:GwSkinButton(true)
 end
 
 local function BuildEmoticonTableFrame()
     local frame = CreateFrame("Frame", "GW_EmoteFrame", UIParent)
-    frame:CreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
+    frame:GwCreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
     frame:SetWidth(160)
     frame:SetHeight(134)
     frame:SetPoint("BOTTOMLEFT", ChatFrame1Tab, "TOPLEFT", 0, 5)
@@ -1930,8 +1928,8 @@ local function LoadChat()
         if chatFrame.minimized then
             if chatFrame.Container then chatFrame.Container:SetAlpha(0) end
             if not chatFrame.minFrame.minimiizeStyled then
-                chatFrame.minFrame:StripTextures(true)
-                chatFrame.minFrame:CreateBackdrop(GW.skins.constBackdropFrame)
+                chatFrame.minFrame:GwStripTextures(true)
+                chatFrame.minFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
@@ -2026,8 +2024,8 @@ local function LoadChat()
     for i = 1, #ChatMenus do
         _G[ChatMenus[i]]:HookScript("OnShow",
             function(self)
-                self:StripTextures()
-                self:CreateBackdrop(GW.skins.constBackdropFrame)
+                self:GwStripTextures()
+                self:GwCreateBackdrop(GW.skins.constBackdropFrame)
             end)
     end
 
@@ -2054,7 +2052,7 @@ local function LoadChat()
     ChatFrameChannelButton:SetWidth(20)
     ChatFrameChannelButton.Flash:SetHeight(20)
     ChatFrameChannelButton.Flash:SetWidth(20)
-    ChatFrameChannelButton.Icon:Kill()
+    ChatFrameChannelButton.Icon:GwKill()
     hooksecurefunc(ChatFrameChannelButton, "SetIconToState", function(self, joined)
         if joined then
             self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
