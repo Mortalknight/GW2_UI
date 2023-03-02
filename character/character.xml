@@ -114,7 +114,7 @@
     <Button name="GwCharacterMenuButtonBack" inherits="GwStandardButton" virtual="true">
         <Layers>
             <Layer level="OVERLAY" textureSubLevel="8">
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\backicon">
+                <Texture parentKey="backarrow" file="Interface\AddOns\GW2_UI\textures\character\backicon">
                     <Size x="32" y="32"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
