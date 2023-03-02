@@ -84,7 +84,7 @@ local function createNormalUnitFrameSmall(ftype)
 
     f.healthValue = 0
 
-    f.barWidth = 146
+    f.barWidth = 147
 
     f:SetScript("OnEnter", normalUnitFrame_OnEnter)
     f:SetScript("OnLeave", GameTooltip_Hide)
@@ -167,6 +167,13 @@ local function healthBarAnimation(self, powerPrec, norm)
         hbSpark = self.healthbarFlashSpark
     end
 
+    if powerPrec>=1 or powerPrec<=0 then
+        hbSpark:Hide()
+    else
+        hbSpark:Show()
+        hbSpark:SetWidth(powerBarWidth/12)
+    end
+
     hbSpark:SetTexCoord(
         self.frameInvert and bloodSpark[bI].right or bloodSpark[bI].left,
         self.frameInvert and bloodSpark[bI].left or bloodSpark[bI].right,
@@ -184,7 +191,7 @@ local function healthBarAnimation(self, powerPrec, norm)
         self.frameInvert and "LEFT" or "RIGHT",
         hbbg,
         self.frameInvert and "RIGHT" or "LEFT",
-        (math.max(0, math.min(powerBarWidth, spark)) * (self.frameInvert and -1 or 1)) + (self.frameInvert and -1 or 1),
+        (math.max(0, math.min(powerBarWidth, spark)) * (self.frameInvert and -1 or 1)), -- + (self.frameInvert and -1 or 1),
         0
     )
 end

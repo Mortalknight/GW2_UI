@@ -86,7 +86,7 @@ local constBackdropDropDown = {
     tile = false,
     tileSize = 64,
     edgeSize = 32,
-    insets = {left = 2, right = 2, top = 2, bottom = 2}
+    insets = {left = 0, right = 0, top = 0, bottom = 0}
 }
 
 local function GrabScrollBarElement(frame, element)
@@ -470,7 +470,7 @@ local function GwSkinDropDownMenu(frame, buttonPaddindX)
     frame.backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 2, -2)
 
     button:ClearAllPoints()
-    button:SetPoint("RIGHT", frame, "RIGHT", buttonPaddindX or -10, 3)
+    button:SetPoint("RIGHT", frame, "RIGHT", buttonPaddindX or -10, 0)
 
     button.SetPoint = GW.NoOp
     button:GwStripTextures()
@@ -482,7 +482,11 @@ local function GwSkinDropDownMenu(frame, buttonPaddindX)
 
     if text then
         text:ClearAllPoints()
-        text:SetPoint("RIGHT", button, "LEFT", 4, 0)
+        text:SetPoint("LEFT", frame, "LEFT", 10, 0)
+        text:SetFont(UNIT_NAME_FONT, 12, "")
+        text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
+        text:SetHeight(frame:GetHeight())
+        text:SetJustifyV("MIDDLE")
     end
 
     if icon then

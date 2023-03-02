@@ -96,15 +96,6 @@ local function AddToAnimation(name, from, to, start, duration, method, easeing, 
 end
 GW.AddToAnimation = AddToAnimation
 
-local function buttonAnim(self, name, w, hover)
-    local prog = animations[name].progress
-    local lerp = GW.lerp(0, w, prog)
-
-    hover:SetPoint("RIGHT", self, "LEFT", lerp, 0)
-    hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, GW.lerp(0, 1, (prog - 0.5) / 0.5))
-end
-AFP("buttonAnim", buttonAnim)
-
 --[[
     Basic helper function for spritemaps
     mapExample = {
