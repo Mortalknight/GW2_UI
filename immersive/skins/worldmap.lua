@@ -296,7 +296,7 @@ local function worldMapSkin()
     local WorldMapFrame = _G.WorldMapFrame
 
     WorldMapFrame:GwStripTextures()
-    GW.CreateFrameHeaderWithBody(WorldMapFrame, WorldMapFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", {QuestMapFrame})
+    GW.CreateFrameHeaderWithBody(WorldMapFrame, WorldMapFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {QuestMapFrame})
 
     WorldMapFrame.BorderFrame:GwStripTextures()
     WorldMapFrame.BorderFrame:SetFrameStrata(WorldMapFrame:GetFrameStrata())
