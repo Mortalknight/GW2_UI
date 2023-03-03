@@ -191,13 +191,13 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
         end
     end
 
-    local activeColorTable = GetSetting("GW_COMBAT_TEXT_BLIZZARD_COLOR") and colorTable.blizzard or colorTable.gw
+    local activeColorTable = GW.GetSetting("GW_COMBAT_TEXT_BLIZZARD_COLOR") and colorTable.blizzard or colorTable.gw
 
     self.string:SetTextColor(activeColorTable[colorSource].r, activeColorTable[colorSource].g, activeColorTable[colorSource].b, activeColorTable[colorSource].a)
 end
 
 local function formatDamageValue(amount)
-    return GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT") and CommaValue(amount) or amount
+    return GW.GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT") and CommaValue(amount) or amount
 end
 
 local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed,periodic)
