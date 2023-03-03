@@ -191,48 +191,32 @@ local function reskinMicroButton(btn, name, mbf)
 
     btn:SetSize(24, 24)
     btn:SetHitRectInsets(0, 0, 0, 0)
-    if name == "PVPMicroButton" then
-        tex = "Interface/AddOns/GW2_UI/Textures/battleground/" .. GW.myfaction
-        if btn.texture then
-            btn.texture:GwKill()
-        end
-    end
 
     btn:SetDisabledTexture(tex)
     btn:SetNormalTexture(tex)
     btn:SetPushedTexture(tex)
     btn:SetHighlightTexture(tex)
 
-    if name == "PVPMicroButton" then
-        tex = "Interface/AddOns/GW2_UI/Textures/battleground/" .. GW.myfaction
-        btn:SetSize(22, 22)
+    --hackfix for texture size
+    local t = btn:GetDisabledTexture()
+    t:ClearAllPoints()
+    t:SetPoint("CENTER",btn,"CENTER",0,0)
+    t:SetSize(32,32)
 
-        btn:GetDisabledTexture():SetDesaturated(true)
-        btn:GetNormalTexture():SetDesaturated(true)
-        btn:GetPushedTexture():SetDesaturated(true)
-        btn:GetHighlightTexture():SetDesaturated(true)
-    else
-        --hackfix for texture size
-        local t = btn:GetDisabledTexture()
-        t:ClearAllPoints()
-        t:SetPoint("CENTER",btn,"CENTER",0,0)
-        t:SetSize(32,32)
+    t = btn:GetNormalTexture()
+    t:ClearAllPoints()
+    t:SetPoint("CENTER",btn,"CENTER",0,0)
+    t:SetSize(32,32)
 
-        t = btn:GetNormalTexture()
-        t:ClearAllPoints()
-        t:SetPoint("CENTER",btn,"CENTER",0,0)
-        t:SetSize(32,32)
+    t = btn:GetPushedTexture()
+    t:ClearAllPoints()
+    t:SetPoint("CENTER",btn,"CENTER",0,0)
+    t:SetSize(32,32)
 
-        t = btn:GetPushedTexture()
-        t:ClearAllPoints()
-        t:SetPoint("CENTER",btn,"CENTER",0,0)
-        t:SetSize(32,32)
-
-        t = btn:GetHighlightTexture()
-        t:ClearAllPoints()
-        t:SetPoint("CENTER",btn,"CENTER",0,0)
-        t:SetSize(32,32)
-    end
+    t = btn:GetHighlightTexture()
+    t:ClearAllPoints()
+    t:SetPoint("CENTER",btn,"CENTER",0,0)
+    t:SetSize(32,32)
 
     if btn.Flash then
         btn.Flash:GwSetInside()
@@ -445,7 +429,7 @@ local function setupMicroButtons(mbf)
         pvpref = CreateFrame("Button", "GwPvpMicroButton", mbf, "SecureHandlerClickTemplate,MainMenuBarMicroButton")
         pvpref.tooltipText = MicroButtonTooltipText(PLAYER_V_PLAYER, "TOGGLECHARACTER4")
         pvpref.newbieText = NEWBIE_TOOLTIP_PVP
-        reskinMicroButton(pvpref, "PVPMicroButton", mbf)
+        reskinMicroButton(pvpref, "PvpMicroButton", mbf)
         pvpref:ClearAllPoints()
         pvpref:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
 

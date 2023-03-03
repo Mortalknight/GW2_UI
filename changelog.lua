@@ -9,8 +9,8 @@ local ct = {
 GW.CHANGELOGS_TYPES = ct
 
 addChange("2.0.0",{
-    {ct.feature,[=[New settings frame]=]},
-    {ct.feature,[=[FUpdate many textures]=]},
+    {ct.feature,[=[Merged art updates from retail version]=]},
+    {ct.feature,[=[Added option to fade xp bar]=]},
 })
 
 --[[
