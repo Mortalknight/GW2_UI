@@ -429,7 +429,7 @@ local function ToggleEventTimerIcon(mbf)
             local eventTimerIcon = CreateFrame("Button", "Gw2EventTimerMicroMenuButton", mbf, "MainMenuBarMicroButton")
             eventTimerIcon.newbieText = nil
             eventTimerIcon.tooltipText = L["Event timer"]
-            reskinMicroButton(eventTimerIcon, "EventTimerMicroButton", mbf)
+            reskinMicroButton(eventTimerIcon, "EventMicroButton", mbf)
             eventTimerIcon:ClearAllPoints()
             eventTimerIcon:SetPoint("BOTTOMLEFT", Gw2GreateVaultMicroMenuButton, "BOTTOMRIGHT", 4, 0)
             eventTimerIcon:SetScript("OnEnter", GW.EventTrackerFunctions.onEnterAll)
