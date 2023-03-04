@@ -8,6 +8,13 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.0.1",{
+    {ct.bug,[=[Fix resting icon]=]},
+    {ct.bug,[=[Fix mail icon tooltip]=]},
+    {ct.bug,[=[Fix stancebar icon]=]},
+    {ct.bug,[=[Fix minimap tracking icon]=]},
+})
+
 addChange("2.0.0",{
     {ct.feature,[=[Merged art updates from retail version]=]},
     {ct.feature,[=[Added option to fade xp bar]=]},

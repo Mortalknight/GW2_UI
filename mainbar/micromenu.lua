@@ -1,7 +1,6 @@
 local _, GW = ...
 local L = GW.L
 local GetSetting = GW.GetSetting
-local RoundDec = GW.RoundDec
 local updateIcon
 
 do
@@ -162,7 +161,7 @@ local function bag_OnUpdate(self, elapsed)
 
     local totalEmptySlots = 0
     for i = 0, 4 do
-        local numberOfFreeSlots, _ = C_Container.GetContainerNumFreeSlots(i)
+        local numberOfFreeSlots = C_Container.GetContainerNumFreeSlots(i)
 
         if numberOfFreeSlots ~= nil then
             totalEmptySlots = totalEmptySlots + numberOfFreeSlots
@@ -487,6 +486,7 @@ local function SetupNotificationArea(mbf)
         GameTooltip:AddLine(self.tooltipText)
         GameTooltip:Show()
     end)
+    updateIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
 
     -- Mail icon
     local mailIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
@@ -497,9 +497,10 @@ local function SetupNotificationArea(mbf)
     mailIcon:ClearAllPoints()
     mailIcon:SetPoint("BOTTOMLEFT", updateIcon, "BOTTOMRIGHT", 4, 0)
     mailIcon:Hide()
-    mailIcon:HookScript("OnEnter", mailIconOnEnter)
-    mailIcon:HookScript("OnLeave", GameTooltip_Hide)
+    mailIcon:SetScript("OnEnter", mailIconOnEnter)
+    mailIcon:SetScript("OnLeave", GameTooltip_Hide)
     mailIcon:SetScript("OnEvent", mailIconOnEvent)
+    mailIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
 end
 
 local function checkElvUI()

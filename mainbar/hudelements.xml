@@ -54,8 +54,8 @@
 
     <Button name="GwStanceBarButton" inherits="SecureHandlerClickTemplate,SecureHandlerStateTemplate" virtual="true">
         <Size x="30" y="30"></Size>
-        <NormalTexture file="Interface/AddOns/GW2_UI/textures/stance-icon"/>
-        <PushedTexture file="Interface/AddOns/GW2_UI/textures/stance-icon"/>
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/stance-icon"/>
+        <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/stance-icon"/>
         <Frames>
             <Frame parentKey="container" hidden="true">
                 <Size x="35" y="35"/>
@@ -96,7 +96,7 @@
         </Anchors>
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\Textures\track-icons-map">
+                <Texture parentKey="icon" file="Interface\AddOns\GW2_UI\Textures\icons\track-icons-map">
                     <Size>
                         <AbsDimension x="30" y="30"/>
                     </Size>
@@ -109,7 +109,7 @@
         <Scripts>
             <OnMouseUp>
                 ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "MiniMapTracking", 0, -5)
-            </OnMouseUp> 
+            </OnMouseUp>
             <OnEnter>
                 GameTooltip:SetOwner(self, "ANCHOR_LEFT");
                 GameTooltip:SetText(TRACKING, 1, 1, 1);

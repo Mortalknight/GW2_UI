@@ -1,3 +1,9 @@
+2.0.1-Wrath
+    - Fix resting icon
+    - Fix mail icon tooltip
+    - Fix stancebar icon
+    - Fix minimap tracking icon
+
 2.0.0-Wrath
     - Merged art updates from retail version
     - Added option to fade xp bar

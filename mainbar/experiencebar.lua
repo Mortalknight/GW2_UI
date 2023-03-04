@@ -82,7 +82,7 @@ local function xpbar_OnEvent(self, event)
     local showBar2 = select(2, HasPetUI()) and UnitLevel("pet") < level -- Pet
     local showBar3 = false -- Repu
 
-    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\resting-icon:16:16:0:0|t " or ""
+    local restingIconString = IsResting() and " |TInterface/AddOns/GW2_UI/textures/icons/resting-icon:16:16:0:0|t " or ""
 
     if rested == nil or (rested / valMax) == 0 then
         rested = 0
