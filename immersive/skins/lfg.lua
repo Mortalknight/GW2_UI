@@ -737,7 +737,6 @@ local function ApplyPvPUISkin()
     HonorFrame.DPSIcon.checkButton:SetSize(15, 15)
 
     -- Conquest Frame
-    
     ConquestFrame.ShadowOverlay:Hide()
 
     ConquestJoinButton:GwSkinButton(false, true)
@@ -749,7 +748,7 @@ local function ApplyPvPUISkin()
     ConquestFrame.HealerIcon.checkButton:SetSize(15, 15)
     ConquestFrame.DPSIcon.checkButton:SetSize(15, 15)
 
-    for _, bu in pairs({ConquestFrame.Arena2v2, ConquestFrame.Arena3v3, ConquestFrame.RatedBG}) do
+    for _, bu in pairs({ConquestFrame.RatedSoloShuffle, ConquestFrame.Arena2v2, ConquestFrame.Arena3v3, ConquestFrame.RatedBG}) do
         local reward = bu.Reward
         reward.Border:Hide()
         reward.CircleMask:Hide()
@@ -757,9 +756,9 @@ local function ApplyPvPUISkin()
         reward.Icon:GwCreateBackdrop(GW.constBackdropFrameColorBorder, true)
     end
 
-    -- Item Borders for HonorFrame & ConquestFrame ------FEHLER
+    -- Item Borders for HonorFrame & ConquestFrame
     hooksecurefunc("PVPUIFrame_ConfigureRewardFrame", function(rewardFrame, _, _, itemRewards, currencyRewards)
-        local rewardTexture, rewardQuaility = nil, 1
+        local rewardTexture, rewardQuaility, _ = nil, 1
 
         if currencyRewards then
             for _, reward in ipairs(currencyRewards) do
@@ -776,7 +775,6 @@ local function ApplyPvPUISkin()
                 _, _, rewardQuaility, _, _, _, _, _, _, rewardTexture = GetItemInfo(reward.id)
             end
         end
-
         if rewardTexture then
             local r, g, b = GetItemQualityColor(rewardQuaility)
             rewardFrame.Icon:SetTexture(rewardTexture)
