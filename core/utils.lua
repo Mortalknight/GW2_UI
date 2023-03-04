@@ -300,12 +300,20 @@ end
 GW.Diff = Diff
 
 local function lerp(v0, v1, t)
+  t = max(0,min(1,t))
     if v0 == nil then
         v0 = 0
     end
    return (1 - t) * v0 + t * v1;
 end
 GW.lerp = lerp
+local function lerpEaseOut(v0,v1,t)
+  print(t)
+  t = math.sin(t * math.pi * 0.5);
+
+  return lerp(v0,v1,t)
+end
+GW.lerpEaseOut = lerpEaseOut
 
 local function Length(T)
     local count = 0

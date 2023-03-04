@@ -6,7 +6,7 @@
       <Anchors>
           <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
       </Anchors>
-      <BarTexture parentKey="bar" file="Interface/AddOns/GW2_UI/textures/hud/castingbar"/>
+      <BarTexture parentKey="bar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
       <Layers>
         <Layer level="BACKGROUND">
           <Texture name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
