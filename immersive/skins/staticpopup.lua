@@ -5,7 +5,7 @@ local function gwSetStaticPopupSize()
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]
         StaticPopup.tex:SetSize(StaticPopup:GetSize())
-        _G["StaticPopup" .. i .. "AlertIcon"]:SetTexture("Interface/AddOns/GW2_UI/textures/icons/warning-icon") 
+        _G["StaticPopup" .. i .. "AlertIcon"]:SetTexture("Interface/AddOns/GW2_UI/textures/icons/warning-icon")
         _G["StaticPopup" .. i .. "ItemFrameNameFrame"]:SetTexture(nil)
         _G["StaticPopup" .. i .. "ItemFrame"].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         _G["StaticPopup" .. i .. "ItemFrameIconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
@@ -80,7 +80,7 @@ local function LoadStaticPopupSkin()
     hooksecurefunc("MovieFrame_PlayMovie", function(self)
         if self and self.CloseDialog and not self.CloseDialog.template then
             self.CloseDialog.Border:Hide()
-            
+
             local tex = self.CloseDialog:CreateTexture("bg", "BACKGROUND")
             tex:SetPoint("TOP", self.CloseDialog, "TOP", 0, 0)
             tex:SetSize(self.CloseDialog:GetSize())

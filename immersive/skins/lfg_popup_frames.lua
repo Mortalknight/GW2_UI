@@ -5,8 +5,6 @@ local GetSetting = GW.GetSetting
 -------------------------------------------------------LFGDungeonReadyStatus-------------------------------------------------------
 local function SkinLFGDungeonReadyStatus()
     local SkinLFGDungeonReadyStatus_OnUpdate = function()
-        local LFGDungeonReadyStatus = _G.LFGDungeonReadyStatus
-
         LFGDungeonReadyStatus.Border:Hide()
         LFGDungeonReadyStatusCloseButton:GwSkinButton(true)
         LFGDungeonReadyStatusCloseButton:SetSize(20, 20)
@@ -22,7 +20,6 @@ end
 -------------------------------------------------------LFGDungeonReadyDialog-------------------------------------------------------
 local function SkinLFGDungeonReadyDialog()
     local SkinLFGDungeonReadyDialog_OnUpdate = function()
-        local LFGDungeonReadyDialog = _G.LFGDungeonReadyDialog
         LFGDungeonReadyDialog:GwStripTextures()
 
         LFGDungeonReadyDialogCloseButton:GwSkinButton(true)
@@ -44,8 +41,6 @@ end
 -------------------------------------------------------LFDRoleCheckPopup-------------------------------------------------------
 local function SkinLFDRoleCheckPopup()
     local SkinLFDRoleCheckPopup_OnUpdate = function()
-        local LFDRoleCheckPopup = _G.LFDRoleCheckPopup
-
         LFDRoleCheckPopup:GwCreateBackdrop(constBackdropFrame)
         LFDRoleCheckPopup.Border:Hide()
         LFDRoleCheckPopupAcceptButton:GwSkinButton(false, true)

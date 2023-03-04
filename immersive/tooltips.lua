@@ -877,8 +877,6 @@ local function SkinItemRefTooltipCloseButton()
 end
 
 local function SkinQueueStatusFrame()
-    local QueueStatusFrame = QueueStatusFrame
-
     QueueStatusFrame:GwStripTextures()
     QueueStatusFrame:GwCreateBackdrop({
         bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
