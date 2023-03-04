@@ -161,7 +161,7 @@ local function UpcomingSpellsFrameOnShow(self)
         end
     )
 end
-GW.AddForProfiling("hud", "levelingRewards_OnShow", levelingRewards_OnShow)
+GW.AddForProfiling("hud", "UpcomingSpellsFrameOnShow", UpcomingSpellsFrameOnShow)
 
 local function LoadUpcomingSpells()
     local upcomingSpellsFrame = CreateFrame("Frame", "GwLevelingRewards", UIParent, "GwLevelingRewards")

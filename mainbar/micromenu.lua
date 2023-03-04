@@ -685,6 +685,7 @@ local function SetupNotificationArea(mbf)
     updateIcon:SetPoint("BOTTOMLEFT", Gw2GreateVaultMicroMenuButton, "BOTTOMRIGHT", 4, 0)
     updateIcon:Hide()
     updateIcon:HookScript("OnEnter", update_OnEnter)
+    updateIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
 
     -- Mail icon
     local mailIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
@@ -698,6 +699,7 @@ local function SetupNotificationArea(mbf)
     mailIcon:HookScript("OnEnter", mailIconOnEnter)
     mailIcon:HookScript("OnLeave", GameTooltip_Hide)
     mailIcon:SetScript("OnEvent", mailIconOnEvent)
+    mailIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
 
     -- workorder icon
     local workOrderIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
@@ -712,6 +714,7 @@ local function SetupNotificationArea(mbf)
     workOrderIcon:HookScript("OnEnter", workOrderIconOnEnter)
     workOrderIcon:HookScript("OnLeave", GameTooltip_Hide)
     workOrderIcon:SetScript("OnEvent", workOrderIconOnEvent)
+    workOrderIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
 end
 
 local function checkElvUI()
