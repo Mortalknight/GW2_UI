@@ -559,7 +559,7 @@ local function setupMicroButtons(mbf)
     taltenMicroButton:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     taltenMicroButton:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
     taltenMicroButton:RegisterEvent("TRAIT_CONFIG_DELETED")
-    disableMicroButton(TalentMicroButton)
+    disableMicroButton(TalentMicroButton, true)
 
     -- AchievementMicroButton
     AchievementMicroButton:ClearAllPoints()
