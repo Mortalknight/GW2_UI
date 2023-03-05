@@ -25,8 +25,8 @@ do
         if event == "CHAT_MSG_ADDON" then
             if sender == myName then return end
             if prefix == "GW2UI_VERSIONCHK" then
-                local version, subversion, hotfix = string.match(message, "GW2_UI v(%d+).(%d+).(%d+)")
-                local currentVersion, currentSubversion, currentHotfix = string.match(GW.VERSION_STRING, "GW2_UI v(%d+).(%d+).(%d+)")
+                local version, subversion, hotfix = string.match(message, "GW2_UI (%d+).(%d+).(%d+)")
+                local currentVersion, currentSubversion, currentHotfix = string.match(GW2_ADDON.VERSION_STRING, "GW2_UI (%d+).(%d+).(%d+)")
                 local isUpdate = false
                 if version == nil or subversion == nil or hotfix == nil or currentVersion == nil or currentSubversion == nil or currentHotfix == nil then return end
 
