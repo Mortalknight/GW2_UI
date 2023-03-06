@@ -654,7 +654,7 @@ local function CheckForClassIndicatorForSpellId(self, classIndicators, id, expir
     local posSetting
     local showAsNormalBuff = true
     for _, pos in ipairs(INDICATORS) do
-        posSetting = GetSetting("INDICATOR_" .. pos, true)
+        posSetting = GetSetting("INDICATOR_" .. pos)
 
         if posSetting and type(posSetting) ~= "table" and posSetting > 0 then
             for spellId, indicatorData in pairs(classIndicators) do
