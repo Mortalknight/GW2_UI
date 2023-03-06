@@ -1,18 +1,10 @@
-6.4.1
-FIXES
-    - Create the GW2_Layout only if it does not exist
-    - Fix an issue where the default target of target/focus frame is not visible if our target/focus module is turned off
-
-6.4.0
+6.5.0
 NEW
-    - Added Trade Post skin
+    - Added option to add a new micromenu icon to show event timers at the tooltip
+
+FIXES
+    - Fix copy chat corloring
+    - Hopefully fix ui flickering
 
 CHANGES
-    - Restructur settings, to make some settings easier to find
-
-
-FIXES
-    - Talent micro button tooltip is hidding corret now
-    - Correct monthly activity tracker issues
-    - Correct recipe tracking issues
-    - Performance improvements
+    - Show micromenu notification also if the micromenu is fade out

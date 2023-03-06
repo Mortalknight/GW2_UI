@@ -52,8 +52,8 @@ do
         if event == "CHAT_MSG_ADDON" then
             if sender == myName then return end
             if prefix == "GW2UI_VERSIONCHK" then
-                local version, subversion, hotfix = string.match(message, "GW2_UI v(%d+).(%d+).(%d+)")
-                local currentVersion, currentSubversion, currentHotfix = string.match(GW.VERSION_STRING, "GW2_UI v(%d+).(%d+).(%d+)")
+                local version, subversion, hotfix = string.match(message, "GW2_UI (%d+).(%d+).(%d+)")
+                local currentVersion, currentSubversion, currentHotfix = string.match(GW.VERSION_STRING, "GW2_UI (%d+).(%d+).(%d+)")
                 local isUpdate = false
                 if version == nil or subversion == nil or hotfix == nil or currentVersion == nil or currentSubversion == nil or currentHotfix == nil then return end
 
@@ -559,7 +559,7 @@ local function setupMicroButtons(mbf)
     taltenMicroButton:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     taltenMicroButton:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
     taltenMicroButton:RegisterEvent("TRAIT_CONFIG_DELETED")
-    disableMicroButton(TalentMicroButton)
+    disableMicroButton(TalentMicroButton, true)
 
     -- AchievementMicroButton
     AchievementMicroButton:ClearAllPoints()

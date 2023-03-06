@@ -15,6 +15,15 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.5.0",{
+    {ct.feature,[=[Added option to add a new micromenu icon to show event timers at the tooltip]=]},
+
+    {ct.bug,[=[Fix copy chat corloring]=]},
+    {ct.bug,[=[Hopefully fix ui flickering]=]},
+
+    {ct.change,[=[Show micromenu notification also if the micromenu is fade out]=]},
+})
+
 addChange("6.4.1",{
     {ct.bug,[=[Create the GW2_Layout only if it does not exist]=]},
     {ct.bug,[=[Fix an issue where the default target of target/focus frame is not visible if our target/focus module is turned off]=]},

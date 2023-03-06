@@ -187,6 +187,7 @@ local eventData = {
             location = C_Map.GetMapInfo(2024).name,
             label = L["Feast"],
             runningText = L["Cooking"],
+            frame = nil,
             filter = function()
                 if not C_QuestLog.IsQuestFlaggedCompleted(67700) then
                     return false
@@ -224,6 +225,7 @@ local eventData = {
             location = C_Map.GetMapInfo(2022).name,
             barColor = colorPlatte.red,
             runningText = IN_PROGRESS,
+            frame = nil,
             filter = function()
                 if not C_QuestLog.IsQuestFlaggedCompleted(67700) then
                     return false
@@ -259,6 +261,7 @@ local eventData = {
             barColor = colorPlatte.purple,
             eventName = L["Iskaaran Fishing Net"],
             label = L["Fishing Net"],
+            frame = nil,
             events = {
                 {
                     "UNIT_SPELLCAST_SUCCEEDED",
@@ -358,7 +361,7 @@ local functionFactory = {
                     local bonusNetStatus  -- Bonus
                     local bonusTimeLeft = 0
 
-                    for netIndex, timeData in pairs(data.netTable) do
+                    for netIndex, timeData in pairs(data.frame.netTable) do
                         local text
                         if type(timeData) == "table" then
                             if timeData.left <= 0 then
@@ -405,13 +408,13 @@ local functionFactory = {
                     end
 
                     GameTooltip:AddLine(" ")
-                    if data.isRunning then
+                    if data.frame.isRunning then
                         GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(data.args.runningText, "success"), 1, 1, 1)
                     else
                         GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(QUEUED_STATUS_WAITING, "greyLight"), 1, 1, 1)
                     end
 
-                    if data.isCompleted then
+                    if data.frame.isCompleted then
                         GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_COMPLETED, "success"), 1, 1, 1)
                     else
                         GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_NOT_COMPLETED, "danger"), 1, 1, 1)
@@ -902,6 +905,7 @@ function trackers:get(event)
 
     frame.args = data.args
     frame.dbKey = data.dbKey
+    data.frame = frame
 
     if functionFactory[data.args.type] then
         local functions = functionFactory[data.args.type]
