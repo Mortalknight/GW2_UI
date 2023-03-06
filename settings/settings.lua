@@ -653,7 +653,7 @@ local function InitPanel(panel, hasScroll)
                             of.container:Show()
                         end
 
-                        SetSetting(self.optionName, self.option, self:GetParent():GetParent().data.perSpec)
+                        SetSetting(self.optionName, self.option)
 
                         if v.callback then
                             v.callback()
@@ -667,7 +667,7 @@ local function InitPanel(panel, hasScroll)
                             toSet = true
                         end
 
-                        SetSetting(self:GetParent().optionName, toSet, self:GetParent():GetParent():GetParent().data.perSpec, self:GetParent().option)
+                        SetSetting(self:GetParent().optionName, toSet, self:GetParent().option)
 
                         if v.callback then
                             v.callback(toSet, self:GetParent().option)
@@ -759,7 +759,7 @@ local function InitPanel(panel, hasScroll)
             )
         elseif v.optionType == "slider" then
             of.slider:SetMinMaxValues(v.min, v.max)
-            of.slider:SetValue(GetSetting(of.optionName, of.perSpec))
+            of.slider:SetValue(GetSetting(of.optionName))
             if v.step then of.slider:SetValueStep(v.step) end
             of.slider:SetObeyStepOnDrag(true)
             of.slider:SetScript(
@@ -775,12 +775,12 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetValue(GetSetting(of.optionName, of.perSpec))
+                        self:SetValue(GetSetting(of.optionName))
                         return
                     end
                     local roundValue = RoundDec(self:GetValue(), of.decimalNumbers)
 
-                    SetSetting(of.optionName, roundValue, of.perSpec)
+                    SetSetting(of.optionName, roundValue)
                     self:GetParent().inputFrame.input:SetText(roundValue)
                     if v.callback then
                         v.callback()
@@ -816,14 +816,14 @@ local function InitPanel(panel, hasScroll)
                     end
                     self:GetParent():GetParent().slider:SetValue(roundValue)
                     self:SetText(roundValue)
-                    SetSetting(v.optionName, roundValue, of.perSpec)
+                    SetSetting(v.optionName, roundValue)
                     if v.callback then
                         v.callback()
                     end
                 end
             )
         elseif v.optionType == "text" then
-            of.inputFrame.input:SetText(GetSetting(of.optionName, of.perSpec) or "")
+            of.inputFrame.input:SetText(GetSetting(of.optionName) or "")
             of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
@@ -841,14 +841,14 @@ local function InitPanel(panel, hasScroll)
                         return
                     end
                     self:ClearFocus()
-                    SetSetting(of.optionName, self:GetText(), of.perSpec)
+                    SetSetting(of.optionName, self:GetText())
                     if v.callback then
                         v.callback(self)
                     end
                 end
             )
         elseif v.optionType == "boolean" then
-            of.checkbutton:SetChecked(GetSetting(of.optionName, of.perSpec))
+            of.checkbutton:SetChecked(GetSetting(of.optionName))
             of.checkbutton:SetScript(
                 "OnClick",
                 function(self, button)
@@ -870,7 +870,7 @@ local function InitPanel(panel, hasScroll)
                     if self:GetChecked() then
                         toSet = true
                     end
-                    SetSetting(of.optionName, toSet, of.perSpec)
+                    SetSetting(of.optionName, toSet)
 
                     if v.callback ~= nil then
                         v.callback(toSet, of.optionName)
@@ -899,7 +899,7 @@ local function InitPanel(panel, hasScroll)
                         toSet = false
                     end
                     self.checkbutton:SetChecked(toSet)
-                    SetSetting(of.optionName, toSet, of.perSpec)
+                    SetSetting(of.optionName, toSet)
 
                     if v.callback ~= nil then
                         v.callback(toSet, of.optionName)
