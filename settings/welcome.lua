@@ -24,7 +24,6 @@ local function button1_OnClick()
 
     -- hide buttons
     wpanel.settings:Hide()
-    wpanel.changelogORwelcome:Hide()
 
     -- Start install Process
     if step == 0 then
