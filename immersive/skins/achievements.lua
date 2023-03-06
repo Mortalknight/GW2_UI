@@ -363,43 +363,43 @@ local function skinAchievementSummaryHeaders(self)
   setTitleText(text)
 end
 local function skinAchievementSummaryStatusBar(self)
-  self:GwStripTextures()
-  local fname = self:GetName()
-  local bar = _G[fname.."FillBar"]
-  local fill = _G[fname.."Bar"]
-  local title = _G[fname.."Title"] or self.Label
-  local text = _G[fname.."Text"]
-  local spark = _G[fname.."Spark"]
-  local button =  _G[fname.."Button"]
+    self:GwStripTextures()
+    local fname = self:GetName()
+    local bar = _G[fname.."FillBar"]
+    local fill = _G[fname.."Bar"]
+    local title = _G[fname.."Title"] or self.Label
+    local text = _G[fname.."Text"]
+    local spark = _G[fname.."Spark"]
+    local button =  _G[fname.."Button"]
 
-  if button then
-    _G[fname.."ButtonHighlight"]:GwStripTextures()
-  end
+    if button then
+        _G[fname.."ButtonHighlight"]:GwStripTextures()
+    end
 
-  if not spark then
-    self.spark = self:CreateTexture(fname.."Spark", "BORDER", nil, 7)
-    self.spark:ClearAllPoints();
-    self.spark:SetPoint("RIGHT",fill,"RIGHT", 0,0)
-    self.spark:SetSize(10,fill:GetHeight())
-    self.spark:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white")
-  end
+    if not spark then
+        self.spark = self:CreateTexture(fname.."Spark", "BORDER", nil, 7)
+        self.spark:ClearAllPoints();
+        self.spark:SetPoint("RIGHT",fill,"RIGHT", 0,0)
+        self.spark:SetSize(10,fill:GetHeight())
+        self.spark:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white")
+    end
 
-  fill:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
-  self:SetStatusBarColor(GW_CLASS_COLORS[GW.myclass].r,GW_CLASS_COLORS[GW.myclass].g,GW_CLASS_COLORS[GW.myclass].b,1)
+    fill:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    self:SetStatusBarColor(GW_CLASS_COLORS[GW.myclass].r,GW_CLASS_COLORS[GW.myclass].g,GW_CLASS_COLORS[GW.myclass].b,1)
 
-  bar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/StatusBar")
-  bar:SetVertexColor(1,1,1,0.5)
-  title:ClearAllPoints()
-  title:SetPoint("BOTTOMLEFT",self,"TOPLEFT",0,5)
-  setNormalText(title)
+    bar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/StatusBar")
+    bar:SetVertexColor(1, 1, 1, 0.5)
+    bar:GwSetOutside()
+    title:ClearAllPoints()
+    title:SetPoint("BOTTOMLEFT",self,"TOPLEFT",0,5)
+    setNormalText(title)
 
-  text:ClearAllPoints()
-  text:SetPoint("RIGHT",self,"RIGHT",-5,0)
-  text:SetFont(DAMAGE_TEXT_FONT,11)
-  text:SetTextColor(1,1,1)
-  text:SetHeight(bar:GetHeight())
-  text:SetJustifyV("MIDDLE")
-
+    text:ClearAllPoints()
+    text:SetPoint("RIGHT",self,"RIGHT",-5,0)
+    text:SetFont(DAMAGE_TEXT_FONT,11)
+    text:SetTextColor(1,1,1)
+    text:SetHeight(bar:GetHeight())
+    text:SetJustifyV("MIDDLE")
 end
 
 local function reanchorSummaryCategoriy(index)
