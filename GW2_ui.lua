@@ -12,7 +12,7 @@ local AFP = GW.AddProfiling
 
 local animations = GW.animations
 
-local l = CreateFrame("Frame", nil, UIParent) -- Main event frame
+local l = CreateFrame("Frame") -- Main event frame
 
 GW.VERSION_STRING = "GW2_UI @project-version@-Wrath"
 

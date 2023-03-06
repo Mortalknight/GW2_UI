@@ -168,8 +168,8 @@ local function GwAddHover(self)
         self.hover = hover
         self.hover:SetAlpha(0)
 
-        self:SetScript("OnEnter", GwStandardButton_OnEnter)
-        self:SetScript("OnLeave", GwStandardButton_OnLeave)
+        self:HookScript("OnEnter", GwStandardButton_OnEnter)
+        self:HookScript("OnLeave", GwStandardButton_OnLeave)
     end
 end
 
