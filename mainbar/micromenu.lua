@@ -628,6 +628,9 @@ local function LoadMicroMenu()
             m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
             m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
             m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+
+            AchievementMicroButton:ClearAllPoints()
+            AchievementMicroButton:SetPoint("BOTTOMLEFT", (GwTalentMicroButton and "GwTalentMicroButton" or TalenMicroButton), "BOTTOMRIGHT", 4, 0)
         end
     )
 
