@@ -99,6 +99,21 @@ local function MountCrintterItemOnClick(self)
     else
         self.baseFrame.summon:SetText(self.petType == "MOUNT" and MOUNT or SUMMON)
     end
+
+    if IsModifiedClick() then
+        local id = self.spellID
+        if IsModifiedClick("CHATLINK") then
+            if MacroFrame and MacroFrame:IsShown() then
+                local spellName = GetSpellInfo(id)
+                ChatEdit_InsertLink(spellName)
+            else
+                local spellLink = GetSpellLink(id)
+                ChatEdit_InsertLink(spellLink)
+            end
+        elseif IsModifiedClick("PICKUPACTION") then
+           self:GetScript("OnDragStart")()
+        end
+    end
 end
 GW.MountCrintterItemOnClick = MountCrintterItemOnClick
 
