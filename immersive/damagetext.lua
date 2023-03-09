@@ -1,4 +1,5 @@
 local _, GW = ...
+local AFP = GW.AddProfiling
 local AddToAnimation = GW.AddToAnimation
 local animations = GW.animations
 local CommaValue = GW.CommaValue
@@ -83,6 +84,8 @@ local function animateTextCritical(frame, offsetIndex)
         end
     )
 end
+AFP("animateTextCritical", animateTextCritical)
+
 local function animateTextNormal(frame, offsetIndex)
     local aName = frame:GetName()
 
@@ -125,6 +128,7 @@ local function animateTextNormal(frame, offsetIndex)
         end
     )
 end
+AFP("animateTextNormal", animateTextNormal)
 
 local createdFramesIndex = 0
 local function createNewFontElement(self)
@@ -138,6 +142,7 @@ local function createNewFontElement(self)
     createdFramesIndex = createdFramesIndex + 1
     return f
 end
+AFP("createNewFontElement", createNewFontElement)
 
 local function getFontElement(self)
     for _,f in pairs(fontStringList) do
@@ -154,6 +159,8 @@ local function getFontElement(self)
         return f
     end
 end
+AFP("getFontElement", getFontElement)
+
 local function setElementData(self, critical, source, missType, blocked, absorbed,periodic)
     if missType then
         self.critTexture:Hide()
@@ -197,10 +204,12 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
 
     self.string:SetTextColor(activeColorTable[colorSource].r, activeColorTable[colorSource].g, activeColorTable[colorSource].b, activeColorTable[colorSource].a)
 end
+AFP("setElementData", setElementData)
 
 local function formatDamageValue(amount)
     return GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT") and CommaValue(amount) or amount
 end
+AFP("formatDamageValue", formatDamageValue)
 
 local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed,periodic)
     local f = getFontElement(self)
@@ -248,6 +257,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
     end
     animateTextNormal(f, namePlatesOffsets[nameplate])
 end
+AFP("displayDamageText", displayDamageText)
 
 local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlags, _, destGUID, _, _, _, ...)
     local targetUnit = guidToUnit[destGUID]
@@ -302,6 +312,7 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
         end
     end
 end
+AFP("handleCombatLogEvent", handleCombatLogEvent)
 
 local function onNamePlateAdded(_, _, unitID)
     local guid = UnitGUID(unitID)
@@ -310,6 +321,7 @@ local function onNamePlateAdded(_, _, unitID)
         guidToUnit[guid] = unitID
     end
 end
+AFP("onNamePlateAdded", onNamePlateAdded)
 
 local function onNamePlateRemoved(_, _, unitID)
     local guid = unitToGuid[unitID]
@@ -323,10 +335,12 @@ local function onNamePlateRemoved(_, _, unitID)
         end
     end
 end
+AFP("onNamePlateRemoved", onNamePlateRemoved)
 
 local function onCombatLogEvent(self)
     handleCombatLogEvent(self, CombatLogGetCurrentEventInfo())
 end
+AFP("onNamePlateRemoved", onNamePlateRemoved)
 
 local function LoadDamageText()
     playerGUID = UnitGUID("player")

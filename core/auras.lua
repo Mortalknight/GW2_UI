@@ -58,7 +58,7 @@ GW.AddForProfiling("auras", "sortAuraList", sortAuraList)
 local function getBuffs(unit, filter, revert)
     local buffList = {}
     local name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID
-
+    local time = GetTime()
     if filter == nil then
         filter = ""
     end
@@ -80,7 +80,7 @@ local function getBuffs(unit, filter, revert)
             bli.shouldConsolidate = shouldConsolidate
             bli.spellID = spellID
 
-            bli.timeremaning = bli.duration <= 0 and 500001 or bli.expires - GetTime()
+            bli.timeremaning = bli.duration <= 0 and 500001 or bli.expires - time
         end
     end
 
@@ -93,6 +93,7 @@ local function getDebuffs(unit, filter, revert)
     local showImportant = filter == "IMPORTANT"
     local counter = 0
     local filterToUse = nil
+    local time = GetTime()
     local name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID
     if not showImportant then
         filterToUse = filter
@@ -100,7 +101,7 @@ local function getDebuffs(unit, filter, revert)
     for i = 1, 40 do
         name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitDebuff(unit, i, filterToUse)
         if name and ((showImportant and (caster == "player" or GW.ImportendRaidDebuff[spellID])) or not showImportant) then
-            counter = #debuffList + 1
+            counter = counter + 1
             debuffList[counter] = {}
             local dbi = debuffList[counter]
             dbi.id = i
@@ -116,7 +117,7 @@ local function getDebuffs(unit, filter, revert)
             dbi.shouldConsolidate = shouldConsolidate
             dbi.spellID  = spellID
 
-            dbi.timeremaning = dbi.duration <= 0 and 500001 or dbi.expires - GetTime()
+            dbi.timeremaning = dbi.duration <= 0 and 500001 or dbi.expires - time
         end
     end
 

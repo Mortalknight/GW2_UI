@@ -264,9 +264,10 @@ GW.AddUpdateCB = AddUpdateCB
 local function gw_OnUpdate(_, elapsed)
     local foundAnimation = false
     local count = 0
+    local time = GetTime()
     for _, v in pairs(animations) do
         count = count + 1
-        if v.completed == false and GetTime() >= (v.start + v.duration) then
+        if v.completed == false and time >= (v.start + v.duration) then
             if v.easeing == nil then
                 v.progress = GW.lerp(v.from, v.to, math.sin(1 * math.pi * 0.5))
             else
@@ -285,9 +286,9 @@ local function gw_OnUpdate(_, elapsed)
         end
         if v.completed == false then
             if v.easeing == nil then
-                v.progress = GW.lerp(v.from, v.to, math.sin((GetTime() - v.start) / v.duration * math.pi * 0.5))
+                v.progress = GW.lerp(v.from, v.to, math.sin((time - v.start) / v.duration * math.pi * 0.5))
             else
-                v.progress = GW.lerp(v.from, v.to, (GetTime() - v.start) / v.duration)
+                v.progress = GW.lerp(v.from, v.to, (time - v.start) / v.duration)
             end
             v.method(v.progress)
             foundAnimation = true
@@ -301,10 +302,10 @@ local function gw_OnUpdate(_, elapsed)
     --Swim hud
     if lastSwimState ~= IsSwimming() then
         if IsSwimming() then
-            AddToAnimation("swimAnimation", swimAnimation, 1, GetTime(), 0.1, swimAnim)
+            AddToAnimation("swimAnimation", swimAnimation, 1, time, 0.1, swimAnim)
             swimAnimation = 1
         else
-            AddToAnimation("swimAnimation", swimAnimation, 0, GetTime(), 3.0, swimAnim)
+            AddToAnimation("swimAnimation", swimAnimation, 0, time, 3.0, swimAnim)
             swimAnimation = 0
         end
         lastSwimState = IsSwimming()
