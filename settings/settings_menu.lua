@@ -132,8 +132,9 @@ local function resetMenu(collapse)
         end
     end
 end
+GW.ResetSettingsMenuCategories = resetMenu
 
-local function  resetSearchables()
+local function resetSearchables()
     for _, of in pairs(matchingOptionFrames) do
         of:ClearAllPoints()
         of:SetParent(of.searchAble.og_parent)
@@ -146,40 +147,48 @@ local function  resetSearchables()
     matchingOptionFrames = {}
 end
 
+GW.lastSelectedSettingsMenuCategorie = {
+    button = nil,
+    basePanel = nil,
+    panelFrame = nil
+}
 local function switchCat(self, basePanel, panelFrame)
+    local settings_cat = GW.getSettingsCat()
+    resetSearchables()
+    if self then
+        self.activeTexture:Show()
+    end
 
-  local settings_cat = GW.getSettingsCat()
-  resetSearchables()
-  if self then
-    self.activeTexture:Show()
-  end
+    --hide search results
+    GwSettingsSearchResultPanel:Hide()
 
-  --hide search results
-  GwSettingsSearchResultPanel:Hide()
+    for _, l in ipairs(settings_cat) do
+        --  l.iconbg:Hide()
+        l.cat_panel:Hide()
 
-  for _, l in ipairs(settings_cat) do
-    --  l.iconbg:Hide()
-      l.cat_panel:Hide()
+        if l.cat_crollFrames then
+            for _, v in pairs(l.cat_crollFrames) do
+                v:Hide()
+            end
+        end
+        -- hide all profiles
+        if l.cat_profilePanels then
+            for _, pp in ipairs(l.cat_profilePanels) do
+                pp:Hide()
+            end
+        end
+    end
+    basePanel:Show()
 
-      if l.cat_crollFrames then
-          for _, v in pairs(l.cat_crollFrames) do
-            v:Hide()
-          end
-      end
-      -- hide all profiles
-      if l.cat_profilePanels then
-          for _, pp in ipairs(l.cat_profilePanels) do
-              pp:Hide()
-          end
-      end
-  end
-  basePanel:Show()
+    if panelFrame then
+        panelFrame:Show()
+    end
 
-  if panelFrame then
-    panelFrame:Show()
-  end
-
+    GW.lastSelectedSettingsMenuCategorie.button = self
+    GW.lastSelectedSettingsMenuCategorie.basePanel = basePanel
+    GW.lastSelectedSettingsMenuCategorie.panelFrame = panelFrame
 end
+GW.SwitchSettingsMenuCategorie = switchCat
 
 local function searchInputChanged(self)
     if not self:HasFocus() then return end

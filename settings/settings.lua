@@ -27,48 +27,28 @@ GW.getOptionReference = getOptionReference;
 local function switchCat(index)
     for _, l in ipairs(settings_cat) do
         l.iconbg:SetTexCoord(0.505, 1, 0, 0.625)
-    --    l.iconbg:Hide()
         l.cat_panel:Hide()
-
-        -- hide all profiles
-        if l.cat_profilePanels then
-            for _, pp in ipairs(l.cat_profilePanels) do
-                pp:Hide()
-            end
-        end
     end
-
     local l = settings_cat[index]
     if l then
         l.iconbg:SetTexCoord(0, 0.5, 0, 0.625)
-      --  l.iconbg:Show()
-        l.cat_panel:Show()
-        if l.cat_crollFrames then
-            for _, v in pairs(l.cat_crollFrames) do
-                v.scroll.slider:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
-                v.scroll.scrollUp:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
-                v.scroll.scrollDown:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
-            end
-        end
+        if index == 2 and GW.lastSelectedSettingsMenuCategorie and GW.lastSelectedSettingsMenuCategorie.button and GW.lastSelectedSettingsMenuCategorie.basePanel then -- Index = 2 is Settings Panel
+            l.cat_panel:Show()
+            GW.ResetSettingsMenuCategories(false)
+            GW.SwitchSettingsMenuCategorie(GW.lastSelectedSettingsMenuCategorie.button, GW.lastSelectedSettingsMenuCategorie.basePanel, GW.lastSelectedSettingsMenuCategorie.panelFrame)
 
-        -- open the last shown profile
-        if l.cat_profilePanels then
-            l.cat_panel:Hide()
-            if l.cat_panel == l.cat_panel.selectProfile.active then
-                l.cat_panel:Show()
-                l.cat_panel.selectProfile.string:SetText(getglobal(l.cat_panel.selectProfile.type))
-                UIFrameFadeIn(l.cat_panel, 0.2, 0, 1)
-            else
-                for _, pp in ipairs(l.cat_profilePanels) do
-                    if pp == l.cat_panel.selectProfile.active then
-                        pp:Show()
-                        pp.selectProfile.string:SetText(getglobal(pp.selectProfile.type))
-                        UIFrameFadeIn(pp, 0.2, 0, 1)
-                        break
-                    end
+            UIFrameFadeIn(GW.lastSelectedSettingsMenuCategorie.basePanel, 0.2, 0, 1)
+        else
+            l.cat_panel:Show()
+
+            if l.cat_crollFrames then
+                for _, v in pairs(l.cat_crollFrames) do
+                    v.scroll.slider:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
+                    v.scroll.scrollUp:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
+                    v.scroll.scrollDown:SetShown((v.scroll.maxScroll~=nil and v.scroll.maxScroll > 0))
                 end
             end
-        else
+
             UIFrameFadeIn(l.cat_panel, 0.2, 0, 1)
         end
     end
@@ -97,18 +77,17 @@ end
 AddForProfiling("settings", "fnF_OnClick", fnF_OnClick)
 
 local visible_cat_button_id  = 0
-local function CreateCat(name, desc, panel, scrollFrames, profilePanles, visibleTabButton, icon)
+local function CreateCat(name, desc, panel, scrollFrames, visibleTabButton, icon)
     local i = #settings_cat + 1
     -- create and position a new button/label for this category
     local f = CreateFrame("Button", nil, GwSettingsWindow, "GwSettingsLabelTmpl")
     f.cat_panel = panel
-    f.cat_profilePanels = profilePanles
     f.cat_name = name
     f.cat_desc = desc
     f.cat_id = i
     f.cat_crollFrames = scrollFrames
     settings_cat[i] = f
-    f:SetPoint("TOPRIGHT", GwSettingsWindow,"TOPLEFT", 1, -32 + (-40 * visible_cat_button_id))
+    f:SetPoint("TOPRIGHT", GwSettingsWindow, "TOPLEFT", 1, -32 + (-40 * visible_cat_button_id))
 
     if not visibleTabButton then
         f:Hide()
@@ -1095,20 +1074,20 @@ local function LoadSettings()
     sWindow.backgroundMask = bgMask
 
     sWindow:HookScript("OnShow",function()
-      if AddToAnimation==nil then
-          AddToAnimation = GW.AddToAnimation
-          animations = GW.animations
-          lerp = GW.lerp
-      end
+        if AddToAnimation==nil then
+            AddToAnimation = GW.AddToAnimation
+            animations = GW.animations
+            lerp = GW.lerp
+        end
 
-      AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
-      function()
-        local p = animations["SETTINGSFRAME_PANEL_ONSHOW"].progress
-        sWindow:SetAlpha(p)
-        bgMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT",lerp(-64,sWindow.background:GetWidth(), p) , 0)
-      end,1,function()
-        bgMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT",sWindow.background:GetWidth() + 200, 0)
-      end)
+        AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
+        function()
+            local p = animations["SETTINGSFRAME_PANEL_ONSHOW"].progress
+            sWindow:SetAlpha(p)
+            bgMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT",lerp(-64,sWindow.background:GetWidth(), p) , 0)
+        end,1,function()
+            bgMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT",sWindow.background:GetWidth() + 200, 0)
+        end)
     end)
 
     GW.LoadOverviewPanel(sWindow)

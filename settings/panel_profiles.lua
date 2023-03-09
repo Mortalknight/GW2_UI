@@ -653,7 +653,7 @@ local function LoadProfilesPanel(sWindow)
     ProfileWin.scrollBar.doNotHide = false
     ProfileSetup(ProfileWin)
 
-    createCat(L["PROFILES"], L["Add and remove profiles."], p, nil, nil, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_profiles")
+    createCat(L["PROFILES"], L["Add and remove profiles."], p, nil, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_profiles")
 
     p:SetScript("OnShow", function()
         settingMenuToggle(false)

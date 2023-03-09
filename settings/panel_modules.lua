@@ -18,7 +18,7 @@ local function LoadModulesPanel(sWindow)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     p.sub:SetText(L["Enable or disable the modules you need and don't need."])
 
-    createCat(L["Modules"], L["Enable and disable components"], p, {p}, nil, true)
+    createCat(L["Modules"], L["Enable and disable components"], p, {p}, true)
     settingsMenuAddButton(L["Modules"], p, {})
 
     addOption(p.scroll.scrollchild, XPBAR_LABEL, nil, "XPBAR_ENABLED", function() GW.UpdateActionbarSettings(); GW.ShowRlPopup = true end)
