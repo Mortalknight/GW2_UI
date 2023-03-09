@@ -393,18 +393,25 @@ local function mover_OnDragStop(self)
     local point, _, relativePoint, xOfs, yOfs = self:GetPoint()
 
     -- for layouts: if newPoint is old point, do not update the setting
-    if self.defaultPoint.point ~= point or self.defaultPoint.relativePoint ~= relativePoint or self.defaultPoint.xOfs ~= xOfs or self.defaultPoint.yOfs ~= yOfs then
+    if self.savedPoint.point ~= point or self.savedPoint.relativePoint ~= relativePoint or self.savedPoint.xOfs ~= xOfs or self.savedPoint.yOfs ~= yOfs then
         local new_point = GetSetting(settingsName)
         new_point.point = point
         new_point.relativePoint = relativePoint
         new_point.xOfs = xOfs and GW.RoundInt(xOfs) or 0
         new_point.yOfs = yOfs and GW.RoundInt(yOfs) or 0
-        new_point.hasMoved = true
+
+        -- check if frame moved or back at default position
+        if self.defaultPoint.point == point and self.defaultPoint.relativePoint == relativePoint and self.defaultPoint.xOfs == xOfs and self.defaultPoint.yOfs == yOfs then
+            new_point.hasMoved = false
+        else
+            new_point.hasMoved = true
+        end
         self:ClearAllPoints()
         self:SetPoint(point, UIParent, relativePoint, xOfs, yOfs)
         SetSetting(settingsName, new_point)
+        self.savedPoint = GW.copyTable(nil, new_point)
 
-        self.parent.isMoved = true
+        self.parent.isMoved = new_point.hasMoved
         self.parent:SetAttribute("isMoved", new_point.hasMoved)
 
         self:SetMovable(true)
