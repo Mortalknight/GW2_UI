@@ -92,6 +92,10 @@ do
     local function CoordsWatcherStart()
         lib.locationData.coordsWatching = true
         lib.locationData.coordsFalling = nil
+        if CoordsTicker then
+            CoordsTicker:Cancel()
+            CoordsTicker = nil
+        end
         CoordsTicker = C_Timer.NewTicker(0.1, function() CoordsUpdate() end)
         if CoordsStopTimer then
             CoordsStopTimer:Cancel()
