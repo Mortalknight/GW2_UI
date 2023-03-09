@@ -1,3 +1,7 @@
+6.5.1
+FIXES
+    - Fixed memory leak cause by channeling spells
+
 6.5.0
 NEW
     - Added option to add a new micromenu icon to show event timers at the tooltip

@@ -921,6 +921,10 @@ function trackers:get(event)
         end
 
         if functions.ticker then
+            if frame.tickerInstance then
+                frame.tickerInstance:Cancel()
+                frame.tickerInstance = nil
+            end
             frame.tickerInstance = C_Timer.NewTicker(functions.ticker.interval, function()
                 if not settings.communityFeast.enabled and not settings.dragonbaneKeep.enabled and not settings.iskaaranFishingNet.enabled then
                     return

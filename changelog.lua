@@ -15,6 +15,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+addChange("6.5.1",{
+    {ct.bug,[=[Fixed memory leak cause by channeling spells]=]},
+})
+
 addChange("6.5.0",{
     {ct.feature,[=[Added option to add a new micromenu icon to show event timers at the tooltip]=]},
 

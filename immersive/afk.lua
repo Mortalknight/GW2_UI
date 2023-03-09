@@ -44,6 +44,10 @@ local function SetAFK(self, status)
         self.bottom.model:SetCamDistanceScale(4.5)
         self.bottom.model.idleDuration = 1
         self.startTime = GetTime()
+        if self.timer then
+            self.timer:Cancel()
+            self.timer = nil
+        end
         self.timer = C_Timer.NewTicker(1, function() UpdateTimer(self) end)
 
         self.chat:RegisterEvent("CHAT_MSG_WHISPER")

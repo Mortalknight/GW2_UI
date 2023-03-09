@@ -1565,6 +1565,10 @@ local function LoadAlertSystem()
     end)
     hooksecurefunc("AlertFrame_PlayOutAnimation", function(self)
         if self.flareIcon then
+            if self.timer then
+                self.timer:Cancel()
+                self.timer = nil
+            end
             self.timer = C_Timer.NewTicker(self.duration or 4, function()
                 if not self:IsShown() then
                     self.flareIcon.animationGroup1:Stop()

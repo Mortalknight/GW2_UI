@@ -275,6 +275,10 @@ local function setUpBlock(questIDs, collapsed)
                 -- try to add a timer here
                 TryAddingExpirationWarningLine(GwBonusObjectiveBlock, numObjectives + 1)
                 if GwBonusObjectiveBlock.tickerSeconds > 0 then
+                    if GwBonusObjectiveBlock.ticker then
+                        GwBonusObjectiveBlock.ticker:Cancel()
+                        GwBonusObjectiveBlock.ticker = nil
+                    end
                     GwBonusObjectiveBlock.ticker = C_Timer.NewTicker(GwBonusObjectiveBlock.tickerSeconds, function()
                         GW.updateBonusObjective(GwQuesttrackerContainerBonusObjectives)
                     end)
