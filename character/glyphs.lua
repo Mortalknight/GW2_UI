@@ -312,6 +312,10 @@ local function LoadGlyphes()
     glyphesFrame:SetScript("OnEvent", GlyphFrameOnEvent)
 
     GwGlyphsList:SetScript("OnShow", function()
+        if GwGlyphsList.OnUpdateTimer then
+            GwGlyphsList.OnUpdateTimer:Cancel()
+            GwGlyphsList.OnUpdateTimer = nil
+        end
         GwGlyphsList.OnUpdateTimer = C_Timer.NewTicker(0.2, GlyphFrameOnUpdateTimer)
         UpdateGlyphList()
     end)

@@ -384,6 +384,9 @@ local function SetObjectiveNotification()
             GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
         elseif not currentCompassData then
             currentCompassData = GwObjectivesNotification.compass.dataIndex
+            if GwObjectivesNotification.compass.Timer then
+                GwObjectivesNotification.compass.Timer:Cancel()
+            end
             GwObjectivesNotification.compass.Timer = C_Timer.NewTicker(0.025, function() updateRadar(GwObjectivesNotification.compass) end)
         end
         GwObjectivesNotification.icon:SetTexture(nil)

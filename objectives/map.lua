@@ -222,6 +222,10 @@ local function hoverMiniMap()
         if child ~= nil then
             UIFrameFadeIn(child, 0.2, child:GetAlpha(), 1)
             if child == GwMapCoords then
+                if GwMapCoords.CoordsTimer then
+                    GwMapCoords.CoordsTimer:Cancel()
+                    GwMapCoords.CoordsTimer = nil
+                end
                 GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
             end
         end
@@ -313,6 +317,10 @@ local function ToogleMinimapCoorsLable()
         -- only set the coords updater here if they are showen always
         local hoverSetting = GetSetting("MINIMAP_HOVER")
         if hoverSetting == "COORDS" or hoverSetting == "CLOCKCOORDS" or hoverSetting == "ZONECOORDS" or hoverSetting == "ALL" then
+            if GwMapCoords.CoordsTimer then
+                GwMapCoords.CoordsTimer:Cancel()
+                GwMapCoords.CoordsTimer = nil
+            end
             GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
         end
     else

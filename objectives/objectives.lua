@@ -1321,6 +1321,10 @@ local function LoadQuestTracker()
     compassUpdateFrame:SetScript("OnEvent", function(self, event, ...)
         -- Events for start updating
         if GW.IsIn(event, "PLAYER_STARTED_MOVING", "PLAYER_CONTROL_LOST") then
+            if self.Ticker then
+                self.Ticker:Cancel()
+                self.Ticker = nil
+            end
             self.Ticker = C_Timer.NewTicker(1, function() tracker_OnUpdate() end)
         elseif GW.IsIn(event, "PLAYER_STOPPED_MOVING", "PLAYER_CONTROL_GAINED") then -- Events for stop updating
             if self.Ticker then

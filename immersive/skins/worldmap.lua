@@ -266,6 +266,11 @@ local function AddCoordsToWorldMap()
     WorldMapFrame:HookScript("OnShow", function()
         if not CoordsTimer then
             UpdateCoords()
+
+            if CoordsTimer then
+                CoordsTimer:Cancel()
+                CoordsTimer =nil
+            end
             CoordsTimer = C_Timer.NewTicker(0.1, function() UpdateCoords() end)
         end
     end)

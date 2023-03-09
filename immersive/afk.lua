@@ -41,6 +41,10 @@ local function SetAFK(self, status)
         self.bottom.model:SetAnimation(67)
         self.bottom.model.idleDuration = 30
         self.startTime = GetTime()
+        if self.timer then
+            self.timer:Cancel()
+            self.timer =nil
+        end
         self.timer = C_Timer.NewTicker(1, function() UpdateTimer(self) end)
 
         self.chat:RegisterEvent("CHAT_MSG_WHISPER")
@@ -55,7 +59,7 @@ local function SetAFK(self, status)
 
         self.timer:Cancel()
         if self.animTimer then self.animTimer:Cancel() end
-        
+
         self.bottom.time:SetText("00:00")
 
         self.chat:UnregisterAllEvents()
