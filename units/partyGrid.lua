@@ -248,7 +248,8 @@ local function PartyGridOnEvent(self, event, unit)
         GW.GridSetAbsorbAmount(self)
         GW.GridSetPredictionAmount(self, "PARTY")
         GW.GridSetHealth(self, "PARTY")
-        GW.GridUpdateAwayData(self, "PARTY", true, true)
+        GW.GridUpdateAwayData(self, "PARTY", true)
+        GW.GripToggleSummonOrResurrection(self, "PARTY")
         GW.GridUpdateAuras(self, "PARTY")
         GW.GridUpdatePower(self)
     elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
@@ -273,11 +274,11 @@ local function PartyGridOnEvent(self, event, unit)
         GW.GridUpdateAuras(self, "PARTY")
         GW.GridUpdateAwayData(self, "PARTY")
     elseif (event == "INCOMING_RESURRECT_CHANGED" or event == "INCOMING_SUMMON_CHANGED") and unit == self.unit then
-        GW.GridUpdateAwayData(self, "PARTY", true)
+        GW.GripToggleSummonOrResurrection(self, "PARTY")
     elseif event == "RAID_TARGET_UPDATE" and settings.raidUnitMarkers then
         GW.GridUpdateRaidMarkers(self, "PARTY")
     elseif event == "READY_CHECK" or (event == "READY_CHECK_CONFIRM" and unit == self.unit) then
-        GW.GridUpdateAwayData(self, "PARTY", false, true)
+        GW.GridUpdateAwayData(self, "PARTY", true)
     elseif event == "READY_CHECK_FINISHED" then
         C_Timer.After(1.5, function()
             if UnitInParty(self.unit) then

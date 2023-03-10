@@ -7,6 +7,7 @@
             <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
         </Anchors>
     </Frame>
+
     <Frame name="GwRaidFrameIndicator" frameLevel="6" hidden="true" virtual="true">
         <Size x="13" y="13"/>
         <Layers>
@@ -46,6 +47,7 @@
             </Cooldown>
         </Frames>
     </Frame>
+
     <Button name="GwRaidFrame" frameStrata="LOW" toplevel="true" parent="GwRaidFrameContainer" inherits="SecureUnitButtonTemplate" virtual="true">
         <Size x="55" y="47"></Size>
         <Anchors>
@@ -122,7 +124,7 @@
                     </StatusBar>
                 </Frames>
             </StatusBar>
-        
+
             <StatusBar parentKey="manabar" hidden="true" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="65" y="3"></Size>
                 <Anchors>
@@ -190,6 +192,13 @@
                     <Layer level="OVERLAY">
                         <Texture parentKey="classicon" file="Interface\AddOns\GW2_UI\textures\party\classicons">
                             <Size x="25" y="25"></Size>
+                            <Anchors>
+                                <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                            </Anchors>
+                        </Texture>
+                        <Texture parentKey="summonResurrectionIcon" hidden="true">
+                            <Size x="25" y="25"></Size>
+                            <TexCoords left="0" right="1" top="0" bottom="1" />
                             <Anchors>
                                 <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
                             </Anchors>

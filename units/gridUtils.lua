@@ -357,7 +357,43 @@ local function GridSetUnitName(self, profile)
 end
 GW.GridSetUnitName = GridSetUnitName
 
-local function GridUpdateAwayData(self, profile, incomingSummonOrResurrectionCheck, checkReadyCheck)
+local function GripToggleSummonOrResurrection(self, profile)
+    local incomingSummon = C_IncomingSummon.HasIncomingSummon(self.unit)
+    local incomingResurrection = UnitHasIncomingResurrection(self.unit)
+
+    if incomingResurrection then
+        self.summonResurrectionIcon:SetTexture("Interface/RaidFrame/Raid-Icon-Rez")
+
+        self.summonResurrectionIcon:Show()
+        self.classicon:Hide()
+    elseif incomingSummon then
+        local status = C_IncomingSummon.IncomingSummonStatus(self.unit)
+        if status == Enum.SummonStatus.Pending then
+            self.summonResurrectionIcon:SetAtlas("Raid-Icon-SummonPending")
+        elseif status == Enum.SummonStatus.Accepted then
+            self.summonResurrectionIcon:SetAtlas("Raid-Icon-SummonAccepted")
+        elseif status == Enum.SummonStatus.Declined then
+            self.summonResurrectionIcon:SetAtlas("Raid-Icon-SummonDeclined")
+        end
+
+        self.summonResurrectionIcon:Show()
+        self.classicon:Hide()
+    else
+        self.summonResurrectionIcon:Hide()
+        self.classicon:SetShown(not settings.raidClassColor[profile])
+    end
+end
+GW.GripToggleSummonOrResurrection = GripToggleSummonOrResurrection
+
+local function ShouldShowClassIcon(self, shouldShow)
+    if self.summonResurrectionIcon:IsShown() then
+        self.classicon:SetShown(false)
+    else
+        self.classicon:SetShown(shouldShow)
+    end
+end
+
+local function GridUpdateAwayData(self, profile, checkReadyCheck)
     local readyCheckStatus = checkReadyCheck and GetReadyCheckStatus(self.unit) or false
     local iconState = 0
     local _, englishClass, classIndex = UnitClass(self.unit)
@@ -368,7 +404,7 @@ local function GridUpdateAwayData(self, profile, incomingSummonOrResurrectionChe
         local color = GW.GWGetClassColor(englishClass, true)
 
         self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
-        self.classicon:SetShown(false)
+        ShouldShowClassIcon(self, false)
     end
     if not settings.raidClassColor[profile] and not (readyCheckStatus or self.readyCheckInProgress) then
         iconState = 1
@@ -376,23 +412,10 @@ local function GridUpdateAwayData(self, profile, incomingSummonOrResurrectionChe
     if UnitIsDeadOrGhost(self.unit) then
         iconState = 2
     end
-    if incomingSummonOrResurrectionCheck and UnitHasIncomingResurrection(self.unit) then
-        iconState = 3
-    end
-    if incomingSummonOrResurrectionCheck and C_IncomingSummon.HasIncomingSummon(self.unit) then
-        local status = C_IncomingSummon.IncomingSummonStatus(self.unit)
-        if status == Enum.SummonStatus.Pending then
-            iconState = 4
-        elseif status == Enum.SummonStatus.Accepted then
-            iconState = 5
-        elseif status == Enum.SummonStatus.Declined then
-            iconState = 6
-        end
-    end
 
     if iconState == 1 then
         self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
-        self.classicon:SetShown(true)
+        ShouldShowClassIcon(self, true)
         self.healthbar:SetStatusBarColor(0.207, 0.392, 0.168)
         GW.SetClassIcon(self.classicon, classIndex)
     end
@@ -408,26 +431,7 @@ local function GridUpdateAwayData(self, profile, incomingSummonOrResurrectionChe
         end
         GW.SetDeadIcon(self.classicon)
         self.name:SetTextColor(255, 0, 0)
-        self.classicon:Show()
-    end
-
-    if iconState == 3 then
-        self.classicon:SetTexture("Interface/RaidFrame/Raid-Icon-Rez")
-        self.classicon:SetTexCoord(unpack(GW.TexCoords))
-        self.name:SetTextColor(1, 1, 1)
-        self.classicon:Show()
-    end
-    if iconState == 4 or iconState == 5 or iconState == 6 then
-        self.classicon:SetTexCoord(unpack(GW.TexCoords))
-        if iconState == 4 then
-            self.classicon:SetAtlas("Raid-Icon-SummonPending")
-        elseif iconState == 5 then
-            self.classicon:SetAtlas("Raid-Icon-SummonAccepted")
-        elseif iconState == 6 then
-            self.classicon:SetAtlas("Raid-Icon-SummonDeclined")
-        end
-
-        self.classicon:Show()
+        ShouldShowClassIcon(self, true)
     end
 
     if readyCheckStatus or self.readyCheckInProgress then
@@ -441,14 +445,14 @@ local function GridUpdateAwayData(self, profile, incomingSummonOrResurrectionChe
             self.classicon:SetTexCoord(0, 1, 0.50, 0.75)
         end
         if not self.classicon:IsShown() then
-            self.classicon:Show()
+            ShouldShowClassIcon(self, true)
         end
     end
 
     if not UnitIsConnected(self.unit) then
         self.classicon:SetTexture("Interface/CharacterFrame/Disconnect-Icon")
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
-        self.classicon:Show()
+        ShouldShowClassIcon(self, true)
         self.healthbar:SetStatusBarColor(0.3, 0.3, 0.3, 1)
     end
 
