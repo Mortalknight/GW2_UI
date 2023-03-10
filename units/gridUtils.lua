@@ -110,9 +110,10 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     end
     frame.parent = parent
 
-    frame.name = _G[frame:GetName() .. "Data"].name
-    frame.healthstring = _G[frame:GetName() .. "Data"].healthstring
-    frame.classicon = _G[frame:GetName() .. "Data"].classicon
+    frame.name = frame.data.name
+    frame.healthstring = frame.data.healthstring
+    frame.classicon = frame.data.classicon
+    frame.summonResurrectionIcon = frame.data.summonResurrectionIcon
     frame.healthbar = frame.predictionbar.healthbar
     frame.absorbbar = frame.healthbar.absorbbar
     frame.aggroborder = frame.absorbbar.aggroborder

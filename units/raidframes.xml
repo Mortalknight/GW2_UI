@@ -183,7 +183,7 @@
                 <Anchors><Anchor point="RIGHT" x="-0.3"></Anchor></Anchors>
             </Frame>
 
-            <Frame name="$parentData" frameLevel="5">
+            <Frame parentKey="data" name="$parentData" frameLevel="5">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
                     <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
