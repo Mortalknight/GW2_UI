@@ -435,6 +435,11 @@ local function GridUpdateAwayData(self, profile, checkReadyCheck)
         ShouldShowClassIcon(self, true)
     end
 
+    -- only if the icon is shown to remove stucked icons
+    if self.summonResurrectionIcon:IsShown() then
+        GripToggleSummonOrResurrection(self, profile) -- prio 3 and 4
+    end
+
     if readyCheckStatus or self.readyCheckInProgress then
         self.readyCheckInProgress = true
         self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
