@@ -7,6 +7,7 @@ local tthead = GW.myfaction == "Alliance" and GW.FACTION_COLOR[2] or GW.FACTION_
 local activezone, inactivezone = {r = 0.3, g = 1.0, b = 0.3}, {r = 0.65, g = 0.65, b = 0.65}
 local levelNameString = "|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r"
 local levelNameClassString = "|cff%02x%02x%02x%d|r %s%s%s"
+local retailID, classicID, tbcID, wrathID = WOW_PROJECT_MAINLINE, WOW_PROJECT_CLASSIC, WOW_PROJECT_BURNING_CRUSADE_CLASSIC or 5, WOW_PROJECT_WRATH_CLASSIC or 11
 
 local menuList = {
     {text = OPTIONS_MENU, isTitle = true, notCheckable = true},
@@ -68,46 +69,28 @@ local statusTable = {
     DND = " |cffFFFFFF[|r|cffFF3333" .. DND .. "|r|cffFFFFFF]|r"
 }
 
-local clientTags = {
-    [BNET_CLIENT_WOW] = "WoW",
-    --[BNET_CLIENT_WTCG] = "HS",
-    --[BNET_CLIENT_HEROES] = "HotS",
-    --[BNET_CLIENT_OVERWATCH] = "OW",
-    --[BNET_CLIENT_D2] = "D2",
-    --[BNET_CLIENT_D3] = "D3",
-    --[BNET_CLIENT_SC] = "SC",
-    --[BNET_CLIENT_SC2] = "SC2",
-    --[BNET_CLIENT_WC3] = "WC3",
-    --[BNET_CLIENT_ARCADE] = "AC",
-    --[BNET_CLIENT_CRASH4] = "CB4",
-    --[BNET_CLIENT_COD] = "BO4",
-    --[BNET_CLIENT_COD_MW] = "MW",
-    --[BNET_CLIENT_COD_MW2] = "MW2",
-    --[BNET_CLIENT_COD_BOCW] = "CW",
-    --[BNET_CLIENT_DI] = "DI",
-    --BSAp = COMMUNITIES_PRESENCE_MOBILE_CHAT,
-}
-
-
-local clientIndex = {
-    [BNET_CLIENT_WOW] = 1,
-    --[BNET_CLIENT_WTCG] = 2,
-    --[BNET_CLIENT_HEROES] = 3,
-    --[BNET_CLIENT_OVERWATCH] = 4,
-    --[BNET_CLIENT_D2] = 5,
-    --[BNET_CLIENT_D3] = 6,
-    --[BNET_CLIENT_SC] = 7,
-    --[BNET_CLIENT_SC2] = 8,
-    --[BNET_CLIENT_WC3] = 9,
-    --[BNET_CLIENT_ARCADE] = 10,
-    --[BNET_CLIENT_CRASH4] = 11,
-    --[BNET_CLIENT_COD] = 12,
-    --[BNET_CLIENT_COD_MW] = 13,
-    --[BNET_CLIENT_COD_MW2] = 14,
-    --[BNET_CLIENT_COD_BOCW] = 15,
-    --[BNET_CLIENT_DI] = 16,
-    App = 17,
-    BSAp = 18,
+local clientList = {
+    WoW =	{ index = 1, tag = "WoW",	name = "World of Warcraft"},
+    WTCG =	{ index = 2, tag = "HS",	name = "Hearthstone"},
+    Hero =	{ index = 3, tag = "HotS",	name = "Heroes of the Storm"},
+    Pro =	{ index = 4, tag = "OW",	name = "Overwatch"},
+    OSI =	{ index = 5, tag = "D2",	name = "Diablo 2: Resurrected"},
+    D3 =	{ index = 6, tag = "D3",	name = "Diablo 3"},
+    ANBS =	{ index = 7, tag = "DI",	name = "Diablo Immortal"},
+    S1 =	{ index = 8, tag = "SC",	name = "Starcraft"},
+    S2 =	{ index = 9, tag = "SC2",	name = "Starcraft 2"},
+    W3 =	{ index = 10, tag = "WC3",	name = "Warcraft 3: Reforged"},
+    RTRO =	{ index = 11, tag = "AC",	name = "Arcade Collection"},
+    WLBY =	{ index = 12, tag = "CB4",	name = "Crash Bandicoot 4"},
+    VIPR =	{ index = 13, tag = "BO4",	name = "COD: Black Ops 4"},
+    ODIN =	{ index = 14, tag = "WZ",	name = "COD: Warzone"},
+    AUKS =	{ index = 15, tag = "WZ2",	name = "COD: Warzone 2"},
+    LAZR =	{ index = 16, tag = "MW2",	name = "COD: Modern Warfare 2"},
+    ZEUS =	{ index = 17, tag = "CW",	name = "COD: Cold War"},
+    FORE =	{ index = 18, tag = "VG",	name = "COD: Vanguard"},
+    GRY = 	{ index = 19, tag = "AR",	name = "Warcraft Arclight Rumble"},
+    App =	{ index = 20, tag = "App",	name = "App"},
+    BSAp =	{ index = 21, tag = COMMUNITIES_PRESENCE_MOBILE_CHAT, name = COMMUNITIES_PRESENCE_MOBILE_CHAT}
 }
 
 local function inGroup(name, realmName)
@@ -117,7 +100,6 @@ local function inGroup(name, realmName)
 
     return (UnitInParty(name) or UnitInRaid(name)) and "|cffaaaaaa*|r" or ""
 end
-
 
 local function BuildFriendTable(total)
     wipe(friendTable)
@@ -169,13 +151,13 @@ end
 
 local function clientSort(a, b)
     if a and b then
-        if clientIndex[a] and clientIndex[b] then
-            return clientIndex[a] < clientIndex[b]
+        local A, B = clientList[a], clientList[b]
+        if A and B then
+            return A.index < B.index
         end
         return a < b
     end
 end
-
 
 local function AddToBNTable(bnIndex, bnetIDAccount, accountName, battleTag, characterName, bnetIDGameAccount, client, isOnline, isBnetAFK, isBnetDND, noteText, wowProjectID, realmName, faction, race, className, zoneName, level, guid, gameText)
     className = GW.UnlocalizedClassName(className) or ""
@@ -203,20 +185,19 @@ local function AddToBNTable(bnIndex, bnetIDAccount, accountName, battleTag, char
         gameText = gameText				--19
     }
 
-    if strmatch(gameText, BNET_FRIEND_TOOLTIP_WOW_CLASSIC) then
+    if wowProjectID == classicID or wowProjectID == tbcID or wowProjectID == wrathID then
         obj.classicText, obj.realmName = strmatch(gameText, "(.-)%s%-%s(.+)")
     end
 
     BNTable[bnIndex] = obj
 
     if tableList[client] then
-        tableList[client][#tableList[client]+1] = BNTable[bnIndex]
+        tableList[client][#tableList[client] + 1] = BNTable[bnIndex]
     else
         tableList[client] = {}
         tableList[client][1] = BNTable[bnIndex]
     end
 end
-
 
 local function PopulateBNTable(bnIndex, bnetIDAccount, accountName, battleTag, characterName, bnetIDGameAccount, client, isOnline, isBnetAFK, isBnetDND, noteText, wowProjectID, realmName, faction, race, class, zoneName, level, guid, gameText, hasFocus)
     for i = 1, bnIndex do
@@ -267,7 +248,9 @@ local function PopulateBNTable(bnIndex, bnetIDAccount, accountName, battleTag, c
 end
 
 local function BuildBNTable(total)
-    for _, v in pairs(tableList) do wipe(v) end
+    for _, v in pairs(tableList) do
+        wipe(v)
+    end
     wipe(BNTable)
     wipe(clientSorted)
 
@@ -319,9 +302,9 @@ local function Friends_OnEnter(self)
     local onlineFriends = C_FriendList.GetNumOnlineFriends()
     local numberOfFriends = C_FriendList.GetNumFriends()
     local totalBNet, numBNetOnline = BNGetNumFriends()
-    local totalonline = onlineFriends + numBNetOnline
+    local totalOnline = onlineFriends + numBNetOnline
+    lastTooltipXLineHeader = nil
 
-    if totalonline == 0 then return end
 
     GameTooltip:ClearLines()
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -337,10 +320,13 @@ local function Friends_OnEnter(self)
             GameTooltip:AddLine(disabledTooltipText, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
         end
     end
+
+    if totalOnline == 0 then
+        GameTooltip:Show()
+        return
+    end
+
     GameTooltip:AddLine(" ")
-
-
-    lastTooltipXLineHeader = nil
 
     if not dataValid then
         if numberOfFriends > 0 then BuildFriendTable(numberOfFriends) end
@@ -349,10 +335,14 @@ local function Friends_OnEnter(self)
     end
 
     local totalfriends = numberOfFriends + totalBNet
-    local zonec, classc, levelc, realmc
+    local zonec, classc, levelc, realmc, zoneText
     local shiftDown = IsShiftKeyDown()
 
-    GameTooltip:AddDoubleLine(FRIENDS_LIST, format(totalOnlineString, totalonline, totalfriends), tthead.r, tthead.g, tthead.b, tthead.r, tthead.g, tthead.b)
+    if shiftDown then
+        zoneText = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
+    end
+
+    GameTooltip:AddDoubleLine(FRIENDS_LIST, format(totalOnlineString, totalOnline, totalfriends), tthead.r, tthead.g, tthead.b, tthead.r, tthead.g, tthead.b)
     if onlineFriends > 0 then
         for _, info in ipairs(friendTable) do
             if info.online then
@@ -380,7 +370,8 @@ local function Friends_OnEnter(self)
                         status = ""
                     end
 
-                    local header = format("%s (%s)", BATTLENET_OPTIONS_LABEL, info.classicText or clientTags[client] or client)
+                    local clientInfo = clientList[client]
+                    local header = format("%s (%s)", BATTLENET_OPTIONS_LABEL, info.classicText or (clientInfo and clientInfo.tag) or client)
                     if info.client and info.client == BNET_CLIENT_WOW then
                         classc = GW.GWGetClassColor(info.className, true, true)
                         if info.level and info.level ~= "" then
@@ -393,7 +384,6 @@ local function Friends_OnEnter(self)
 
                         TooltipAddXLine(true, header, format(levelNameString .. "%s%s", levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.characterName, inGroup(info.characterName, info.realmName), status), info.accountName, 238, 238, 238, 238, 238, 238)
                         if shiftDown then
-                            local zoneText = GW.Libs.GW2Lib:GetPlayerLocationZoneText()
                             if zoneText and (zoneText == info.zoneName) then zonec = activezone else zonec = inactivezone end
                             if GW.myrealm == info.realmName then realmc = activezone else realmc = inactivezone end
                             TooltipAddXLine(true, header, info.zoneName, info.realmName, zonec.r, zonec.g, zonec.b, realmc.r, realmc.g, realmc.b)
@@ -415,7 +405,7 @@ GW.Friends_OnEnter = Friends_OnEnter
 
 local function Friends_OnEvent(self, event, message)
     if event == "CHAT_MSG_SYSTEM" then
-        if not (strfind(message, gsub(ERR_FRIEND_ONLINE_SS, "\124Hplayer:%%s\124h%[%%s%]\124h", "")) or strfind(message, gsub(ERR_FRIEND_OFFLINE_S, "%%s", ""))) then return end
+        if not (strfind(message, gsub(ERR_FRIEND_ONLINE_SS, "|Hplayer:%%s|h%[%%s%]|h","")) or strfind(message, gsub(ERR_FRIEND_OFFLINE_S, "%%s", ""))) then return end
     end
     dataValid = false
 
@@ -463,7 +453,7 @@ local function Friends_OnClick(self, button)
                     menuList[3].menuList[menuCountWhispers] = {text = realID, arg1 = realID, arg2 = true, notCheckable = true, func = whisperClick}
                 end
 
-                if (info.client and info.client == BNET_CLIENT_WOW) and inGroup(info.characterName, info.realmName) == "" then
+                if (info.client and info.client == retailID) and inGroup(info.characterName, info.realmName) == "" then
                     local classc, levelc = GW.GWGetClassColor(info.className, true, true), GetQuestDifficultyColor(info.level)
                     if not classc then classc = levelc end
 
