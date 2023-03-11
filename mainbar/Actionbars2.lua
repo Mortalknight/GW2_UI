@@ -172,19 +172,23 @@ local function UpdateActionbarBorders(btn)
 end
 
 local function changeFlyoutStyle(self)
-    if not self.FlyoutArrow then
-        return
-    end
+    if not self.FlyoutArrowContainer or not self.FlyoutBorderShadow then
+		return
+	end
 
-    self.FlyoutBorder:Hide()
     self.FlyoutBorderShadow:Hide()
-    SpellFlyoutHorizontalBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
-    SpellFlyoutVerticalBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
-    SpellFlyoutBackgroundEnd:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
+    SpellFlyout.Background.End:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
+    SpellFlyout.Background.HorizontalMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
+    SpellFlyout.Background.VerticalMiddle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
+    SpellFlyout.Background.Start:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
 
     local i = 1
     local btn = _G["SpellFlyoutButton1"]
     while btn do
+        if btn.NormalTexture then
+            btn:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal")
+        end
+        btn.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
         btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
         i = i + 1
@@ -613,6 +617,13 @@ local function main_OnEvent(_, event)
             end
         end)
     end
+
+    -- keep actionbutton style
+    if event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_LEVEL_UP" then
+        for i = 1, 12 do
+            setActionButtonStyle("ActionButton" .. i)
+        end
+    end
 end
 AFP("main_OnEvent", main_OnEvent)
 
@@ -695,6 +706,7 @@ local function updateMainBar()
     helperFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
     helperFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     helperFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    helperFrame:RegisterEvent("PLAYER_LEVEL_UP")
     helperFrame:HookScript("OnEvent", main_OnEvent)
 
     -- disable default main action bar behaviors
