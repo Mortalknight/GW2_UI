@@ -2,6 +2,7 @@ local _, GW = ...
 local AFP = GW.AddProfiling
 local AddToAnimation = GW.AddToAnimation
 local CommaValue = GW.CommaValue
+local CountTable  = GW.CountTable
 local playerGUID
 local unitToGuid = {}
 local guidToUnit = {}
@@ -33,14 +34,16 @@ local NUM_OBJECTS_HARDLIMIT = 20
 local NORMAL_ANIMATION_DURATION = 0.7
 local CRITICAL_ANIMATION_DURATION = 1.2
 
-local STACKING_NORMAL_ANIMATION_DURATION = 7
-local STACKING_CRITICAL_ANIMATION_DURATION = 7
+local STACKING_NORMAL_ANIMATION_DURATION = 2
+local STACKING_CRITICAL_ANIMATION_DURATION = 2
 local STACKING_NORMAL_ANIMATION_OFFSET_Y = 70
 
 local CRITICAL_SCALE_MODIFIER = 1.5
 local PET_SCALE_MODIFIER = 0.7
 
 local NORMAL_ANIMATION_OFFSET_Y = 20
+
+
 
 local stackingContainer
 
@@ -57,6 +60,23 @@ local function UpdateSettings()
 end
 GW.UpdateDameTextSettings = UpdateSettings
 
+local function stackingContainerOnUpdate (self,delta)
+  -- for each damage text instance
+  local NUM_ACTIVE_DAMAGETEXT_FRAMES = CountTable(stackingContainer.activeFrames)
+  local index = 0
+  for _, f in pairs(stackingContainer.activeFrames) do
+    local offsetY = 32*index
+    offsetY = offsetY + -((NUM_ACTIVE_DAMAGETEXT_FRAMES * (32/2)))
+    local frameOffset = (f.offsetY or 0)
+    offsetY = offsetY + frameOffset
+    f:ClearAllPoints()
+    f:SetPoint("CENTER", stackingContainer, "CENTER", 0,offsetY )
+    index = index + 1
+    print(index)
+  end
+
+end
+
 local function animateTextCriticalForStackingFormat(frame)
     local aName = frame:GetName()
 
@@ -67,8 +87,9 @@ local function animateTextCriticalForStackingFormat(frame)
         GetTime(),
         STACKING_CRITICAL_ANIMATION_DURATION,
         function(p)
-            local offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p * 2)
+            local offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p)
             local pet_scale = 1
+            frame.offsetY = offsetY
             if frame.pet then
                 pet_scale = PET_SCALE_MODIFIER
             end
@@ -80,7 +101,7 @@ local function animateTextCriticalForStackingFormat(frame)
                 frame:SetScale(pet_scale)
             end
 
-            frame:SetPoint("BOTTOM", frame.anchorFrame, "TOP", 0, offsetY)
+          --  frame:SetPoint("BOTTOM", frame.anchorFrame, "TOP", 0, offsetY)
 
             if p > 0.7 then
                 local alphaFade = p - 0.7
@@ -94,6 +115,7 @@ local function animateTextCriticalForStackingFormat(frame)
         end,
         nil,
         function()
+            table.remove(stackingContainer.activeFrames,1)
             frame:SetScale(1)
             frame:Hide()
         end
@@ -111,10 +133,11 @@ local function animateTextNormalForStackingFormat(frame)
         GetTime(),
         STACKING_NORMAL_ANIMATION_DURATION,
         function(p)
-            local offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p * 2)
+            local offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p)
             local pet_scale = frame.pet and PET_SCALE_MODIFIER or 1
             frame:SetScale(1 * pet_scale)
-            frame:SetPoint("BOTTOM", frame.anchorFrame, "TOP", 0, offsetY)
+            frame.offsetY = offsetY
+          --  frame:SetPoint("BOTTOM", frame.anchorFrame, "TOP", 0, offsetY)
 
             if p > 0.7 then
                 local alphaFade = p - 0.7
@@ -128,6 +151,7 @@ local function animateTextNormalForStackingFormat(frame)
         end,
         nil,
         function()
+            table.remove(stackingContainer.activeFrames,1)
             frame:SetScale(1)
             frame:Hide()
         end
@@ -235,6 +259,7 @@ local function createNewFontElement(self)
 
     local f = CreateFrame("FRAME", "GwDamageTextElement" .. createdFramesIndex, self, "GwDamageText")
     f.string:SetJustifyV("MIDDLE")
+
     f.id = createdFramesIndex
     table.insert(fontStringList, f)
     createdFramesIndex = createdFramesIndex + 1
@@ -302,7 +327,9 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
 
     self.string:SetTextColor(usedColorTable[colorSource].r, usedColorTable[colorSource].g, usedColorTable[colorSource].b, usedColorTable[colorSource].a)
 
+
     self:Show()
+
     self:ClearAllPoints()
 end
 AFP("setElementData", setElementData)
@@ -360,7 +387,8 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         local lastShownElement = getLatestShownElement(f)
         f.anchorFrame = stackingContainer
         f.string:SetJustifyV("LEFT")
-
+        -- Add damage text to array of active Elements
+        table.insert(stackingContainer.activeFrames,f)
         print(f.anchorFrame.id, f.id)
 
         setElementData(f, critical, source, missType, blocked, absorbed, periodic)
@@ -477,6 +505,8 @@ local function ToggleFormat()
             GW.RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", ALL .. ",FCT", nil, {"default", "scaleable"})
             stackingContainer:ClearAllPoints()
             stackingContainer:SetPoint("TOPLEFT", stackingContainer.gwMover)
+            stackingContainer:SetScript("OnUpdate",stackingContainerOnUpdate)
+            stackingContainer.activeFrames = {}
         end
         NUM_OBJECTS_HARDLIMIT = 50 -- testing
 
