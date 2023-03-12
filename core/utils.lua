@@ -315,6 +315,23 @@ local function lerpEaseOut(v0,v1,t)
 end
 GW.lerpEaseOut = lerpEaseOut
 
+local function signum(number)
+   if number > 0 then
+      return 1
+   elseif number < 0 then
+      return -1
+   else
+      return 0
+   end
+end
+
+local function MoveTowards( current,  target,  maxDelta)
+    if math.abs(target - current) <= maxDelta then
+      return target;
+    end
+    return current + signum(target - current) * maxDelta;
+end
+GW.MoveTowards = MoveTowards
 local function Length(T)
     local count = 0
     for _ in pairs(T) do

@@ -3,6 +3,7 @@ local AFP = GW.AddProfiling
 local AddToAnimation = GW.AddToAnimation
 local CommaValue = GW.CommaValue
 local CountTable  = GW.CountTable
+local MoveTowards = GW.MoveTowards
 local playerGUID
 local unitToGuid = {}
 local guidToUnit = {}
@@ -34,9 +35,11 @@ local NUM_OBJECTS_HARDLIMIT = 20
 local NORMAL_ANIMATION_DURATION = 0.7
 local CRITICAL_ANIMATION_DURATION = 1.2
 
-local STACKING_NORMAL_ANIMATION_DURATION = 2
-local STACKING_CRITICAL_ANIMATION_DURATION = 2
-local STACKING_NORMAL_ANIMATION_OFFSET_Y = 70
+local STACKING_NORMAL_ANIMATION_DURATION = 1
+local STACKING_CRITICAL_ANIMATION_DURATION = 1
+local STACKING_NORMAL_ANIMATION_OFFSET_Y = 10
+local STACKING_NORMAL_ANIMATION_OFFSET_X = -20
+local STACKING_MOVESPEED = 10
 
 local CRITICAL_SCALE_MODIFIER = 1.5
 local PET_SCALE_MODIFIER = 0.7
@@ -64,22 +67,29 @@ local function stackingContainerOnUpdate (self,delta)
   -- for each damage text instance
   local NUM_ACTIVE_DAMAGETEXT_FRAMES = CountTable(stackingContainer.activeFrames)
   local index = 0
+  local newOffsetValue = -((NUM_ACTIVE_DAMAGETEXT_FRAMES * (32/2)))
+  local currentOffsetValue = stackingContainer.offsetValue or 0
+
+  stackingContainer.offsetValue = MoveTowards(currentOffsetValue,newOffsetValue ,STACKING_MOVESPEED * delta)
+
   for _, f in pairs(stackingContainer.activeFrames) do
     local offsetY = 32*index
-    offsetY = offsetY + -((NUM_ACTIVE_DAMAGETEXT_FRAMES * (32/2)))
+    offsetY = offsetY + stackingContainer.offsetValue
     local frameOffset = (f.offsetY or 0)
+    local frameOffsetX = (f.offsetX or 0)
     offsetY = offsetY + frameOffset
     f:ClearAllPoints()
-    f:SetPoint("CENTER", stackingContainer, "CENTER", 0,offsetY )
+    f.oldOffsetY = f.oldOffsetY or offsetY
+    f.oldOffsetY =  MoveTowards(f.oldOffsetY,offsetY ,NUM_ACTIVE_DAMAGETEXT_FRAMES * delta)
+    f:SetPoint("CENTER", stackingContainer, "CENTER", frameOffsetX, f.oldOffsetY)
     index = index + 1
-    print(index)
   end
 
 end
 
 local function animateTextCriticalForStackingFormat(frame)
     local aName = frame:GetName()
-
+    frame.oldOffsetY = nil
     AddToAnimation(
         aName,
         0,
@@ -90,12 +100,13 @@ local function animateTextCriticalForStackingFormat(frame)
             local offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p)
             local pet_scale = 1
             frame.offsetY = offsetY
+            frame.offsetX =  0
             if frame.pet then
                 pet_scale = PET_SCALE_MODIFIER
             end
             if p < 0.25 then
                 local scaleFade = p - 0.25
-
+                frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X,0, scaleFade / 0.25)
                 frame:SetScale(GW.lerp(1 * pet_scale * CRITICAL_SCALE_MODIFIER, pet_scale, scaleFade / 0.25))
             else
                 frame:SetScale(pet_scale)
@@ -125,7 +136,7 @@ AFP("animateTextCriticalForStackingFormat", animateTextCriticalForStackingFormat
 
 local function animateTextNormalForStackingFormat(frame)
     local aName = frame:GetName()
-
+    frame.oldOffsetY = nil
     AddToAnimation(
         aName,
         0,
@@ -134,11 +145,16 @@ local function animateTextNormalForStackingFormat(frame)
         STACKING_NORMAL_ANIMATION_DURATION,
         function(p)
             local offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p)
+            frame.offsetX =  0
             local pet_scale = frame.pet and PET_SCALE_MODIFIER or 1
             frame:SetScale(1 * pet_scale)
             frame.offsetY = offsetY
           --  frame:SetPoint("BOTTOM", frame.anchorFrame, "TOP", 0, offsetY)
 
+            if p < 0.25 then
+              local scaleFade = p - 0.25
+              frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X,0, scaleFade / 0.25)
+            end
             if p > 0.7 then
                 local alphaFade = p - 0.7
                 local lerp = GW.lerp(1, 0, alphaFade / 0.3)
@@ -254,7 +270,7 @@ AFP("animateTextNormalForDefaultFormat", animateTextNormalForDefaultFormat)
 local createdFramesIndex = 0
 local function createNewFontElement(self)
     if createdFramesIndex >= NUM_OBJECTS_HARDLIMIT then
-        return nil
+  --      return nil
     end
 
     local f = CreateFrame("FRAME", "GwDamageTextElement" .. createdFramesIndex, self, "GwDamageText")
