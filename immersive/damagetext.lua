@@ -39,13 +39,12 @@ local STACKING_NORMAL_ANIMATION_DURATION = 1
 local STACKING_CRITICAL_ANIMATION_DURATION = 1
 local STACKING_NORMAL_ANIMATION_OFFSET_Y = 10
 local STACKING_NORMAL_ANIMATION_OFFSET_X = -20
-local STACKING_MOVESPEED = 10
+local STACKING_MOVESPEED = 1
 
 local CRITICAL_SCALE_MODIFIER = 1.5
 local PET_SCALE_MODIFIER = 0.7
 
 local NORMAL_ANIMATION_OFFSET_Y = 20
-
 
 
 local stackingContainer
@@ -63,17 +62,16 @@ local function UpdateSettings()
 end
 GW.UpdateDameTextSettings = UpdateSettings
 
-local function stackingContainerOnUpdate (self,delta)
+local function stackingContainerOnUpdate (self, delta)
   -- for each damage text instance
   local NUM_ACTIVE_DAMAGETEXT_FRAMES = CountTable(stackingContainer.activeFrames)
   local index = 0
-  local newOffsetValue = -((NUM_ACTIVE_DAMAGETEXT_FRAMES * (32/2)))
+  local newOffsetValue = -((NUM_ACTIVE_DAMAGETEXT_FRAMES * (20/2)))
   local currentOffsetValue = stackingContainer.offsetValue or 0
 
-  stackingContainer.offsetValue = MoveTowards(currentOffsetValue,newOffsetValue ,STACKING_MOVESPEED * delta)
-
+  stackingContainer.offsetValue = MoveTowards(currentOffsetValue, newOffsetValue ,STACKING_MOVESPEED)
   for _, f in pairs(stackingContainer.activeFrames) do
-    local offsetY = 32*index
+    local offsetY = 20*index
     offsetY = offsetY + stackingContainer.offsetValue
     local frameOffset = (f.offsetY or 0)
     local frameOffsetX = (f.offsetX or 0)
@@ -82,7 +80,7 @@ local function stackingContainerOnUpdate (self,delta)
     if f.oldOffsetY ==nil then
       f.oldOffsetY  = offsetY
     end
-    f.oldOffsetY =  MoveTowards(f.oldOffsetY,offsetY ,NUM_ACTIVE_DAMAGETEXT_FRAMES * delta)
+    f.oldOffsetY =  MoveTowards(f.oldOffsetY, offsetY, NUM_ACTIVE_DAMAGETEXT_FRAMES)
     f:SetPoint("CENTER", stackingContainer, "CENTER", frameOffsetX, f.oldOffsetY)
     index = index + 1
   end
@@ -359,7 +357,7 @@ AFP("formatDamageValue", formatDamageValue)
 
 local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic)
     local f = getFontElement(self)
-    f.string:SetText(missType and getglobal(missType) or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount) .. " ID:" ..f.id)
+    f.string:SetText(missType and getglobal(missType) or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount))
 
     if settings.usedFormat == formats.Default then
         local nameplate
@@ -402,20 +400,18 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         end
         animateTextNormalForDefaultFormat(f, namePlatesOffsets[nameplate])
     elseif settings.usedFormat == formats.Stacking then
-        local lastShownElement = getLatestShownElement(f)
         f.anchorFrame = stackingContainer
-        f.string:SetJustifyV("LEFT")
+        f.string:SetJustifyH("Left")
         -- Add damage text to array of active Elements
-        table.insert(stackingContainer.activeFrames,f)
-        print(f.anchorFrame.id, f.id)
+        table.insert(stackingContainer.activeFrames, f)
 
         setElementData(f, critical, source, missType, blocked, absorbed, periodic)
 
         -- add to animation here
         if critical and not periodic then
-            animateTextCriticalForStackingFormat(f, (lastShownElement and true or false))
+            animateTextCriticalForStackingFormat(f)
         else
-            animateTextNormalForStackingFormat(f, (lastShownElement and true or false))
+            animateTextNormalForStackingFormat(f)
         end
     end
 end

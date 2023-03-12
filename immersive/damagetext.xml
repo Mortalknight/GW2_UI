@@ -8,7 +8,7 @@
                 <Texture parentKey="critTexture" hidden="true" file="Interface\AddOns\GW2_UI\textures\uistuff\combattext-critical">
                     <Size x="64" y="32"></Size>
                     <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
                 <Texture parentKey="bleedTexture" hidden="true" file="Interface\AddOns\GW2_UI\textures\uistuff\combattext-bleed">
@@ -22,7 +22,7 @@
                 <FontString parentKey="string" inherits="GameFontNormal" text="100" justifyV="MIDDLE">
                     <Size x="500" y="30"></Size>
                     <Anchors>
-                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0" />
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0" />
                     </Anchors>
                 </FontString>
             </Layer>
