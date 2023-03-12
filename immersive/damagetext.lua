@@ -20,12 +20,14 @@ local colorTable ={
     gw = {
         spell = {r = 1, g = 1, b = 1, a = 1},
         melee = {r = 1, g = 1, b = 1, a = 1},
-        pet = {r = 1, g = 0.2, b= 0.2, a = 1}
+        pet = {r = 1, g = 0.2, b= 0.2, a = 1},
+        heal = {r = 25 / 255, g = 255 / 255, b = 25 / 255, a = 1},
     },
     blizzard = {
         spell = {r = 1, g = 1, b = 0, a = 1},
         melee = {r = 1, g = 1, b = 1, a = 1},
-        pet = {r = 1, g = 1, b = 1, a = 1}
+        pet = {r = 1, g = 1, b = 1, a = 1},
+        heal = {r = 25 / 255, g = 255 / 255, b = 25 / 255, a = 1},
     }
 }
 
@@ -69,7 +71,7 @@ local function stackingContainerOnUpdate (_, delta)
   local newOffsetValue = -((NUM_ACTIVE_DAMAGETEXT_FRAMES * (20/2)))
   local currentOffsetValue = stackingContainer.offsetValue or 0
 
-  stackingContainer.offsetValue = MoveTowards(currentOffsetValue, newOffsetValue ,STACKING_MOVESPEED)
+  stackingContainer.offsetValue = MoveTowards(currentOffsetValue, newOffsetValue,STACKING_MOVESPEED)
   for _, f in pairs(stackingContainer.activeFrames) do
     local offsetY = 20*index
     offsetY = offsetY + stackingContainer.offsetValue
@@ -300,20 +302,7 @@ local function getFontElement(self)
 end
 AFP("getFontElement", getFontElement)
 
-local function getLatestShownElement(frame)
-    local returnValue = nil
-    local highestId = -1
-    for _, f in pairs(fontStringList) do
-        if f ~= frame and f:IsShown() and f.id > highestId then
-            returnValue = f
-            highestId = f.id
-        end
-    end
-
-    return returnValue
-end
-
-local function setElementData(self, critical, source, missType, blocked, absorbed, periodic)
+local function setElementData(self, critical, source, missType, blocked, absorbed, periodic, overhealing)
     if missType then
         self.critTexture:Hide()
         self.string:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINED")
@@ -339,7 +328,7 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
 
     self.pet = source == "pet"
 
-    local colorSource = (source == "pet" or source == "melee") and source or "spell"
+    local colorSource = (source == "pet" or source == "melee" or source == "heal") and source or "spell"
 
     self.string:SetTextColor(usedColorTable[colorSource].r, usedColorTable[colorSource].g, usedColorTable[colorSource].b, usedColorTable[colorSource].a)
 
@@ -355,7 +344,7 @@ local function formatDamageValue(amount)
 end
 AFP("formatDamageValue", formatDamageValue)
 
-local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic)
+local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic, overhealing)
     local f = getFontElement(self)
     f.string:SetText(missType and getglobal(missType) or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount))
 
@@ -405,7 +394,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         -- Add damage text to array of active Elements
         table.insert(stackingContainer.activeFrames, f)
 
-        setElementData(f, critical, source, missType, blocked, absorbed, periodic)
+        setElementData(f, critical, source, missType, blocked, absorbed, periodic, overhealing)
 
         -- add to animation here
         if critical and not periodic then
@@ -447,6 +436,10 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
                 _, _, _, missType = ...
             end
             displayDamageText(self, destGUID, nil, nil, nil, missType)
+        elseif settings.usedFormat == formats.Stacking and string.find(event, "_HEAL") then
+            local amount, overhealing, absorbed, critical = select(4, ...)
+
+            displayDamageText(self, destGUID, amount, critical, "heal", nil, nil, nil, nil, overhealing)
         end
     elseif (bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_GUARDIAN) > 0 or bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PET) > 0) and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) > 0 then -- caster is player pet
         if (string.find(event, "_DAMAGE")) then
