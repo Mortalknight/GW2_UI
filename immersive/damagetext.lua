@@ -79,7 +79,9 @@ local function stackingContainerOnUpdate (self,delta)
     local frameOffsetX = (f.offsetX or 0)
     offsetY = offsetY + frameOffset
     f:ClearAllPoints()
-    f.oldOffsetY = f.oldOffsetY or offsetY
+    if f.oldOffsetY ==nil then
+      f.oldOffsetY  = offsetY
+    end
     f.oldOffsetY =  MoveTowards(f.oldOffsetY,offsetY ,NUM_ACTIVE_DAMAGETEXT_FRAMES * delta)
     f:SetPoint("CENTER", stackingContainer, "CENTER", frameOffsetX, f.oldOffsetY)
     index = index + 1
