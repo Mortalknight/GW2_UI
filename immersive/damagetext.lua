@@ -27,7 +27,7 @@ local colorTable ={
         spell = {r = 1, g = 1, b = 0, a = 1},
         melee = {r = 1, g = 1, b = 1, a = 1},
         pet = {r = 1, g = 1, b = 1, a = 1},
-        heal = {r = 25 / 255, g = 25 / 255, b = 25 / 255, a = 1},
+        heal = {r = 25 / 255, g = 255 / 255, b = 25 / 255, a = 1},
     }
 }
 
@@ -114,8 +114,6 @@ local function animateTextCriticalForStackingFormat(frame)
                 frame:SetScale(pet_scale)
             end
 
-          --  frame:SetPoint("BOTTOM", frame.anchorFrame, "TOP", 0, offsetY)
-
             if p > 0.7 then
                 local alphaFade = p - 0.7
                 local lerp = GW.lerp(1, 0, alphaFade / 0.3)
@@ -151,7 +149,6 @@ local function animateTextNormalForStackingFormat(frame)
             local pet_scale = frame.pet and PET_SCALE_MODIFIER or 1
             frame:SetScale(1 * pet_scale)
             frame.offsetY = offsetY
-          --  frame:SetPoint("BOTTOM", frame.anchorFrame, "TOP", 0, offsetY)
 
             if p < 0.25 then
               local scaleFade = p - 0.25
@@ -302,7 +299,7 @@ local function getFontElement(self)
 end
 AFP("getFontElement", getFontElement)
 
-local function setElementData(self, critical, source, missType, blocked, absorbed, periodic, overhealing)
+local function setElementData(self, critical, source, missType, blocked, absorbed, periodic)
     if missType then
         self.critTexture:Hide()
         self.string:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINED")
@@ -328,10 +325,9 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
 
     self.pet = source == "pet"
 
-    local colorSource = (source == "pet" or source == "melee" or source == "heal") and source or "spell"
+    local colorSource = (source == "pet" or source == "melee") and source or source == "heal" and "heal" or "spell"
 
     self.string:SetTextColor(usedColorTable[colorSource].r, usedColorTable[colorSource].g, usedColorTable[colorSource].b, usedColorTable[colorSource].a)
-
 
     self:Show()
 
@@ -344,7 +340,7 @@ local function formatDamageValue(amount)
 end
 AFP("formatDamageValue", formatDamageValue)
 
-local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic, overhealing)
+local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic)
     local f = getFontElement(self)
     f.string:SetText(missType and getglobal(missType) or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount))
 
@@ -394,7 +390,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         -- Add damage text to array of active Elements
         table.insert(stackingContainer.activeFrames, f)
 
-        setElementData(f, critical, source, missType, blocked, absorbed, periodic, overhealing)
+        setElementData(f, critical, source, missType, blocked, absorbed, periodic)
 
         -- add to animation here
         if critical and not periodic then
@@ -438,8 +434,9 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
             displayDamageText(self, destGUID, nil, nil, nil, missType)
         elseif settings.usedFormat == formats.Stacking and string.find(event, "_HEAL") then
             local amount, overhealing, absorbed, critical = select(4, ...)
-
-            displayDamageText(self, destGUID, amount, critical, "heal", nil, nil, absorbed, nil, overhealing)
+            if amount - overhealing > 0 then
+                displayDamageText(self, destGUID, (amount - overhealing), critical, "heal", nil, nil, (absorbed > 0 and absorbed or nil))
+            end
         end
     elseif (bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_GUARDIAN) > 0 or bit.band(sourceFlags, COMBATLOG_OBJECT_TYPE_PET) > 0) and bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MINE) > 0 then -- caster is player pet
         if (string.find(event, "_DAMAGE")) then
