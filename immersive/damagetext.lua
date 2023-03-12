@@ -3,7 +3,6 @@ local AFP = GW.AddProfiling
 local AddToAnimation = GW.AddToAnimation
 local animations = GW.animations
 local CommaValue = GW.CommaValue
-local GetSetting = GW.GetSetting
 local playerGUID
 local unitToGuid = {}
 local guidToUnit = {}
@@ -11,6 +10,8 @@ local guidToUnit = {}
 local fontStringList = {}
 local namePlatesOffsets = {}
 local namePlatesCriticalOffsets = {}
+
+local settings = {}
 
 local colorTable ={
     gw = {
@@ -35,6 +36,12 @@ local CRITICAL_SCALE_MODIFIER = 1.5
 local PET_SCALE_MODIFIER = 0.7
 
 local NORMAL_ANIMATION_OFFSET_Y = 20
+
+local function UpdateSettings()
+    settings.useBlizzardColor = GW.GetSetting("GW_COMBAT_TEXT_BLIZZARD_COLOR")
+    settings.useCommaFormat = GW.GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT")
+end
+GW.UpdateDameTextSettings = UpdateSettings
 
 local function animateTextCritical(frame, offsetIndex)
     local aName = frame:GetName()
@@ -200,14 +207,14 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
         end
     end
 
-    local activeColorTable = GetSetting("GW_COMBAT_TEXT_BLIZZARD_COLOR") and colorTable.blizzard or colorTable.gw
+    local activeColorTable = settings.useBlizzardColor and colorTable.blizzard or colorTable.gw
 
     self.string:SetTextColor(activeColorTable[colorSource].r, activeColorTable[colorSource].g, activeColorTable[colorSource].b, activeColorTable[colorSource].a)
 end
 AFP("setElementData", setElementData)
 
 local function formatDamageValue(amount)
-    return GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT") and CommaValue(amount) or amount
+    return settings.useCommaFormat and CommaValue(amount) or amount
 end
 AFP("formatDamageValue", formatDamageValue)
 
@@ -343,6 +350,8 @@ end
 AFP("onNamePlateRemoved", onNamePlateRemoved)
 
 local function LoadDamageText()
+    UpdateSettings()
+
     playerGUID = UnitGUID("player")
 
     local f = CreateFrame("Frame")
