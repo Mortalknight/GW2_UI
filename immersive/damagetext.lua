@@ -62,7 +62,7 @@ local function UpdateSettings()
 end
 GW.UpdateDameTextSettings = UpdateSettings
 
-local function stackingContainerOnUpdate (self, delta)
+local function stackingContainerOnUpdate (_, delta)
   -- for each damage text instance
   local NUM_ACTIVE_DAMAGETEXT_FRAMES = CountTable(stackingContainer.activeFrames)
   local index = 0
@@ -373,7 +373,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
 
         f.anchorFrame = nameplate
         f.unit = unit
-        f.string:SetJustifyV("MIDDLE")
+        f.string:SetJustifyH("Left")
 
         setElementData(f, critical, source, missType, blocked, absorbed, periodic)
 
@@ -505,6 +505,8 @@ local function ToggleFormat()
         -- hide the other format things
         if stackingContainer then
             -- TODO remove from Move Hud mode
+
+            stackingContainer:SetScript("OnUpdate", nil)
         end
 
         NUM_OBJECTS_HARDLIMIT = 20
@@ -519,7 +521,7 @@ local function ToggleFormat()
             GW.RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", ALL .. ",FCT", nil, {"default", "scaleable"})
             stackingContainer:ClearAllPoints()
             stackingContainer:SetPoint("TOPLEFT", stackingContainer.gwMover)
-            stackingContainer:SetScript("OnUpdate",stackingContainerOnUpdate)
+            stackingContainer:SetScript("OnUpdate", stackingContainerOnUpdate)
             stackingContainer.activeFrames = {}
         end
         NUM_OBJECTS_HARDLIMIT = 50 -- testing
