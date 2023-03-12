@@ -4,21 +4,30 @@
     <Frame name="GwDamageText" enableMouse="false" virtual="true">
         <Size x="50" y="30"></Size>
         <Layers>
-            <Layer level="BACKGROUND" textureSubLevel="-8">
+          <Layer level="BACKGROUND" textureSubLevel="-8">
+                <Texture parentKey="peroidicBackground" hidden="false"  file="Interface\AddOns\GW2_UI\textures\uistuff\periodic-bg">
+                <Size x="24" y="20"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.string" relativePoint="TOPLEFT" x="-24" y="-3"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativeKey="$parent.string" relativePoint="BOTTOMRIGHT" x="10" y="3"></Anchor>
+                </Anchors>
+            </Texture>
+          </Layer>
+            <Layer level="BACKGROUND" textureSubLevel="-7">
                 <Texture parentKey="critTexture" hidden="true" file="Interface\AddOns\GW2_UI\textures\uistuff\combattext-critical">
                     <Size x="64" y="32"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="bleedTexture" hidden="true" file="Interface\AddOns\GW2_UI\textures\uistuff\combattext-bleed">
+                <Texture parentKey="bleedTexture" hidden="true" file="Interface\AddOns\GW2_UI\textures\icons\elementicon">
                     <Size x="24" y="24"></Size>
                     <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.string" relativePoint="LEFT" x="-5" y="5"></Anchor>
+                        <Anchor point="RIGHT" relativeKey="$parent.string" relativePoint="LEFT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="BACKGROUND" textureSubLevel="-7">
+            <Layer level="BACKGROUND" textureSubLevel="-6">
                 <FontString parentKey="string" inherits="GameFontNormal" text="100" justifyV="MIDDLE">
                     <Size x="500" y="30"></Size>
                     <Anchors>

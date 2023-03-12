@@ -4,6 +4,7 @@ local AddToAnimation = GW.AddToAnimation
 local CommaValue = GW.CommaValue
 local CountTable  = GW.CountTable
 local MoveTowards = GW.MoveTowards
+local getSpriteByIndex = GW.getSpriteByIndex
 local playerGUID
 local unitToGuid = {}
 local guidToUnit = {}
@@ -15,6 +16,13 @@ local namePlatesCriticalOffsets = {}
 local eventHandler = CreateFrame("Frame")
 
 local settings = {}
+
+local elementIcons = {
+    width = 512,
+    height = 256,
+    colums = 4,
+    rows = 2
+}
 
 local colorTable ={
     gw = {
@@ -63,6 +71,40 @@ local function UpdateSettings()
     usedColorTable = settings.useBlizzardColor and colorTable.blizzard or colorTable.gw
 end
 GW.UpdateDameTextSettings = UpdateSettings
+
+local function getSchoolIndex(school)
+  if school==1 then -- 	Physical
+    return 0
+  end
+  if school==2 then -- 	Holy
+    return 1
+  end
+  if school==4 then -- 	Fire
+    return 6
+  end
+  if school==8 then -- 	Nature
+    return 2
+  end
+  if school==16 then -- 	Frost
+    return 5
+  end
+  if school==32 then -- 	Shadow
+    return 3
+  end
+  if school==64 then -- 	Arcane
+    return 4
+  end
+
+end
+local function getSchoolIconMap(self,school)
+  local iconID = getSchoolIndex(school)
+  if iconID==nil then
+    return false
+  end
+  local l,r,t,b = getSpriteByIndex(elementIcons,iconID)
+  self:SetTexCoord(l,r,t,b)
+  return true
+end
 
 local function stackingContainerOnUpdate (_, delta)
   -- for each damage text instance
@@ -299,7 +341,7 @@ local function getFontElement(self)
 end
 AFP("getFontElement", getFontElement)
 
-local function setElementData(self, critical, source, missType, blocked, absorbed, periodic)
+local function setElementData(self, critical, source, missType, blocked, absorbed, periodic,school)
     if missType then
         self.critTexture:Hide()
         self.string:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINED")
@@ -317,10 +359,13 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
         self.string:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
         self.crit = false
     end
-    if periodic then
+
+    if periodic and getSchoolIconMap(self.bleedTexture,school) then
         self.bleedTexture:Show()
+        self.peroidicBackground:Show();
     else
         self.bleedTexture:Hide()
+        self.peroidicBackground:Hide();
     end
 
     self.pet = source == "pet"
@@ -340,7 +385,7 @@ local function formatDamageValue(amount)
 end
 AFP("formatDamageValue", formatDamageValue)
 
-local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic)
+local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic,school)
     local f = getFontElement(self)
     f.string:SetText(missType and getglobal(missType) or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount))
 
@@ -360,7 +405,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         f.unit = unit
         f.string:SetJustifyH("Left")
 
-        setElementData(f, critical, source, missType, blocked, absorbed, periodic)
+        setElementData(f, critical, source, missType, blocked, absorbed, periodic,school)
 
         if namePlatesOffsets[nameplate] == nil then
             namePlatesOffsets[nameplate] = 0
@@ -390,7 +435,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         -- Add damage text to array of active Elements
         table.insert(stackingContainer.activeFrames, f)
 
-        setElementData(f, critical, source, missType, blocked, absorbed, periodic)
+        setElementData(f, critical, source, missType, blocked, absorbed, periodic,school)
 
         -- add to animation here
         if critical and not periodic then
@@ -409,6 +454,7 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
     local _
     if playerGUID == sourceGUID then
         local periodic = false
+        local element = nil
         if (string.find(event, "_DAMAGE")) then
             local spellName, amount, blocked, absorbed, critical
             if (string.find(event, "SWING")) then
@@ -416,12 +462,12 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
             elseif (string.find(event, "ENVIRONMENTAL")) then
                 spellName, amount, _, _, _, blocked, absorbed, critical = ...
               elseif (string.find(event, "PERIODIC")) then
-                  _, spellName, _, amount, _, _, _, blocked, absorbed, critical = ...
+                  _, spellName, element, amount, _, _, _, blocked, absorbed, critical = ...
                   periodic = true
               else
                 _, spellName, _, amount, _, _, _, blocked, absorbed, critical = ...
             end
-            displayDamageText(self, destGUID, amount, critical, spellName, nil, blocked, absorbed,periodic)
+            displayDamageText(self, destGUID, amount, critical, spellName, nil, blocked, absorbed,periodic,element)
         elseif (string.find(event, "_MISSED")) then
             local missType
             if (string.find(event, "RANGE") or string.find(event, "SPELL")) then
