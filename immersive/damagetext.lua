@@ -1,7 +1,6 @@
 local _, GW = ...
 local AFP = GW.AddProfiling
 local AddToAnimation = GW.AddToAnimation
-local animations = GW.animations
 local CommaValue = GW.CommaValue
 local playerGUID
 local unitToGuid = {}
@@ -10,6 +9,8 @@ local guidToUnit = {}
 local fontStringList = {}
 local namePlatesOffsets = {}
 local namePlatesCriticalOffsets = {}
+
+local eventHandler = CreateFrame("Frame")
 
 local settings = {}
 
@@ -32,18 +33,109 @@ local NUM_OBJECTS_HARDLIMIT = 20
 local NORMAL_ANIMATION_DURATION = 0.7
 local CRITICAL_ANIMATION_DURATION = 1.2
 
+local STACKING_NORMAL_ANIMATION_DURATION = 7
+local STACKING_CRITICAL_ANIMATION_DURATION = 7
+local STACKING_NORMAL_ANIMATION_OFFSET_Y = 70
+
 local CRITICAL_SCALE_MODIFIER = 1.5
 local PET_SCALE_MODIFIER = 0.7
 
 local NORMAL_ANIMATION_OFFSET_Y = 20
 
+local stackingContainer
+
+local formats = {Default = "Default", Stacking = "Stacking"}
+
+local usedColorTable
 local function UpdateSettings()
     settings.useBlizzardColor = GW.GetSetting("GW_COMBAT_TEXT_BLIZZARD_COLOR")
     settings.useCommaFormat = GW.GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT")
+
+    settings.usedFormat = formats.Stacking -- Default
+
+    usedColorTable = settings.useBlizzardColor and colorTable.blizzard or colorTable.gw
 end
 GW.UpdateDameTextSettings = UpdateSettings
 
-local function animateTextCritical(frame, offsetIndex)
+local function animateTextCriticalForStackingFormat(frame)
+    local aName = frame:GetName()
+
+    AddToAnimation(
+        aName,
+        0,
+        1,
+        GetTime(),
+        STACKING_CRITICAL_ANIMATION_DURATION,
+        function(p)
+            local offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p * 2)
+            local pet_scale = 1
+            if frame.pet then
+                pet_scale = PET_SCALE_MODIFIER
+            end
+            if p < 0.25 then
+                local scaleFade = p - 0.25
+
+                frame:SetScale(GW.lerp(1 * pet_scale * CRITICAL_SCALE_MODIFIER, pet_scale, scaleFade / 0.25))
+            else
+                frame:SetScale(pet_scale)
+            end
+
+            frame:SetPoint("BOTTOM", frame.anchorFrame, "TOP", 0, offsetY)
+
+            if p > 0.7 then
+                local alphaFade = p - 0.7
+                local lerp = GW.lerp(1, 0, alphaFade / 0.3)
+                if lerp < 0 then lerp = 0 end
+                if lerp > 1 then lerp = 1 end
+                frame:SetAlpha(lerp)
+            else
+                frame:SetAlpha(1)
+            end
+        end,
+        nil,
+        function()
+            frame:SetScale(1)
+            frame:Hide()
+        end
+    )
+end
+AFP("animateTextCriticalForStackingFormat", animateTextCriticalForStackingFormat)
+
+local function animateTextNormalForStackingFormat(frame)
+    local aName = frame:GetName()
+
+    AddToAnimation(
+        aName,
+        0,
+        1,
+        GetTime(),
+        STACKING_NORMAL_ANIMATION_DURATION,
+        function(p)
+            local offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p * 2)
+            local pet_scale = frame.pet and PET_SCALE_MODIFIER or 1
+            frame:SetScale(1 * pet_scale)
+            frame:SetPoint("BOTTOM", frame.anchorFrame, "TOP", 0, offsetY)
+
+            if p > 0.7 then
+                local alphaFade = p - 0.7
+                local lerp = GW.lerp(1, 0, alphaFade / 0.3)
+                if lerp < 0 then lerp = 0 end
+                if lerp > 1 then lerp = 1 end
+                frame:SetAlpha(lerp)
+            else
+                frame:SetAlpha(1)
+            end
+        end,
+        nil,
+        function()
+            frame:SetScale(1)
+            frame:Hide()
+        end
+    )
+end
+AFP("animateTextNormalForStackingFormat", animateTextNormalForStackingFormat)
+
+local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
     local aName = frame:GetName()
 
     AddToAnimation(
@@ -52,8 +144,7 @@ local function animateTextCritical(frame, offsetIndex)
         1,
         GetTime(),
         CRITICAL_ANIMATION_DURATION,
-        function()
-            local p = animations[aName].progress
+        function(p)
             local pet_scale = 1
             if frame.pet then
                 pet_scale = PET_SCALE_MODIFIER
@@ -91,9 +182,9 @@ local function animateTextCritical(frame, offsetIndex)
         end
     )
 end
-AFP("animateTextCritical", animateTextCritical)
+AFP("animateTextCriticalForDefaultFormat", animateTextCriticalForDefaultFormat)
 
-local function animateTextNormal(frame, offsetIndex)
+local function animateTextNormalForDefaultFormat(frame, offsetIndex)
     local aName = frame:GetName()
 
     AddToAnimation(
@@ -102,8 +193,7 @@ local function animateTextNormal(frame, offsetIndex)
         1,
         GetTime(),
         NORMAL_ANIMATION_DURATION,
-        function()
-            local p = animations[aName].progress
+        function(p)
             local offsetY = NORMAL_ANIMATION_OFFSET_Y * p
             local pet_scale = 1
             if frame.pet then
@@ -135,7 +225,7 @@ local function animateTextNormal(frame, offsetIndex)
         end
     )
 end
-AFP("animateTextNormal", animateTextNormal)
+AFP("animateTextNormalForDefaultFormat", animateTextNormalForDefaultFormat)
 
 local createdFramesIndex = 0
 local function createNewFontElement(self)
@@ -145,6 +235,7 @@ local function createNewFontElement(self)
 
     local f = CreateFrame("FRAME", "GwDamageTextElement" .. createdFramesIndex, self, "GwDamageText")
     f.string:SetJustifyV("MIDDLE")
+    f.id = createdFramesIndex
     table.insert(fontStringList, f)
     createdFramesIndex = createdFramesIndex + 1
     return f
@@ -152,7 +243,7 @@ end
 AFP("createNewFontElement", createNewFontElement)
 
 local function getFontElement(self)
-    for _,f in pairs(fontStringList) do
+    for _, f in pairs(fontStringList) do
         if not f:IsShown() then
             return f
         end
@@ -162,22 +253,31 @@ local function getFontElement(self)
     if newFrame ~= nil then
         return newFrame
     end
-    for _,f in pairs(fontStringList) do
+    for _, f in pairs(fontStringList) do
         return f
     end
 end
 AFP("getFontElement", getFontElement)
 
-local function setElementData(self, critical, source, missType, blocked, absorbed,periodic)
+local function getLatestShownElement(frame)
+    local returnValue = nil
+    local highestId = -1
+    for _, f in pairs(fontStringList) do
+        if f ~= frame and f:IsShown() and f.id > highestId then
+            returnValue = f
+            highestId = f.id
+        end
+    end
+
+    return returnValue
+end
+
+local function setElementData(self, critical, source, missType, blocked, absorbed, periodic)
     if missType then
         self.critTexture:Hide()
         self.string:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINED")
         self.crit = false
-    elseif blocked then
-        self.critTexture:Hide()
-        self.string:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
-        self.crit = false
-    elseif absorbed then
+    elseif blocked or absorbed then
         self.critTexture:Hide()
         self.string:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
         self.crit = false
@@ -196,20 +296,14 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
         self.bleedTexture:Hide()
     end
 
+    self.pet = source == "pet"
 
-    self.pet = false
+    local colorSource = (source == "pet" or source == "melee") and source or "spell"
 
-    local colorSource = "spell"
-    if source == "pet" or source == "melee" then
-        colorSource = source
-        if source == "pet" then
-            self.pet = true
-        end
-    end
+    self.string:SetTextColor(usedColorTable[colorSource].r, usedColorTable[colorSource].g, usedColorTable[colorSource].b, usedColorTable[colorSource].a)
 
-    local activeColorTable = settings.useBlizzardColor and colorTable.blizzard or colorTable.gw
-
-    self.string:SetTextColor(activeColorTable[colorSource].r, activeColorTable[colorSource].g, activeColorTable[colorSource].b, activeColorTable[colorSource].a)
+    self:Show()
+    self:ClearAllPoints()
 end
 AFP("setElementData", setElementData)
 
@@ -218,59 +312,74 @@ local function formatDamageValue(amount)
 end
 AFP("formatDamageValue", formatDamageValue)
 
-local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed,periodic)
+local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic)
     local f = getFontElement(self)
-    f.string:SetText(missType and getglobal(missType) or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount))
+    f.string:SetText(missType and getglobal(missType) or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount) .. " ID:" ..f.id)
 
-    local nameplate
-    local unit = guidToUnit[guid]
+    if settings.usedFormat == formats.Default then
+        local nameplate
+        local unit = guidToUnit[guid]
 
-    if unit then
-        nameplate = C_NamePlate.GetNamePlateForUnit(unit)
-    end
-
-    if nameplate == nil then
-        return
-    end
-
-    f.anchorFrame = nameplate
-    f.unit = unit
-
-    setElementData(f, critical, source, missType, blocked, absorbed,periodic)
-
-    f:Show()
-    f:ClearAllPoints()
-
-    if namePlatesOffsets[nameplate] == nil then
-        namePlatesOffsets[nameplate] = 0
-    else
-        namePlatesOffsets[nameplate] = namePlatesOffsets[nameplate] + 1
-        if namePlatesOffsets[nameplate] > 2 then
-            namePlatesOffsets[nameplate] = 0
+        if unit then
+            nameplate = C_NamePlate.GetNamePlateForUnit(unit)
         end
-    end
 
-    if critical and not periodic then
-        if namePlatesCriticalOffsets[nameplate] == nil then
-            namePlatesCriticalOffsets[nameplate] = 0
+        if nameplate == nil then
+            return
+        end
+
+        f.anchorFrame = nameplate
+        f.unit = unit
+        f.string:SetJustifyV("MIDDLE")
+
+        setElementData(f, critical, source, missType, blocked, absorbed, periodic)
+
+        if namePlatesOffsets[nameplate] == nil then
+            namePlatesOffsets[nameplate] = 0
         else
-            namePlatesCriticalOffsets[nameplate] = namePlatesCriticalOffsets[nameplate] + 1
-            if namePlatesCriticalOffsets[nameplate] > 2 then
-                namePlatesCriticalOffsets[nameplate] = 0
+            namePlatesOffsets[nameplate] = namePlatesOffsets[nameplate] + 1
+            if namePlatesOffsets[nameplate] > 2 then
+                namePlatesOffsets[nameplate] = 0
             end
         end
-        animateTextCritical(f, namePlatesCriticalOffsets[nameplate])
-        return
+
+        if critical and not periodic then
+            if namePlatesCriticalOffsets[nameplate] == nil then
+                namePlatesCriticalOffsets[nameplate] = 0
+            else
+                namePlatesCriticalOffsets[nameplate] = namePlatesCriticalOffsets[nameplate] + 1
+                if namePlatesCriticalOffsets[nameplate] > 2 then
+                    namePlatesCriticalOffsets[nameplate] = 0
+                end
+            end
+            animateTextCriticalForDefaultFormat(f, namePlatesCriticalOffsets[nameplate])
+            return
+        end
+        animateTextNormalForDefaultFormat(f, namePlatesOffsets[nameplate])
+    elseif settings.usedFormat == formats.Stacking then
+        local lastShownElement = getLatestShownElement(f)
+        f.anchorFrame = stackingContainer
+        f.string:SetJustifyV("LEFT")
+
+        print(f.anchorFrame.id, f.id)
+
+        setElementData(f, critical, source, missType, blocked, absorbed, periodic)
+
+        -- add to animation here
+        if critical and not periodic then
+            animateTextCriticalForStackingFormat(f, (lastShownElement and true or false))
+        else
+            animateTextNormalForStackingFormat(f, (lastShownElement and true or false))
+        end
     end
-    animateTextNormal(f, namePlatesOffsets[nameplate])
 end
 AFP("displayDamageText", displayDamageText)
 
 local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlags, _, destGUID, _, _, _, ...)
     local targetUnit = guidToUnit[destGUID]
     -- if targetNameplate doesnt exists, ignore
-    if not targetUnit then return end
-
+    if settings.usedFormat == formats.Default and not targetUnit then return end
+    local _
     if playerGUID == sourceGUID then
         local periodic = false
         if (string.find(event, "_DAMAGE")) then
@@ -349,23 +458,55 @@ local function onCombatLogEvent(self)
 end
 AFP("onNamePlateRemoved", onNamePlateRemoved)
 
+local function ToggleFormat()
+    if settings.usedFormat == formats.Default then
+        -- hide the other format things
+        if stackingContainer then
+            -- TODO remove from Move Hud mode
+        end
+
+        NUM_OBJECTS_HARDLIMIT = 20
+
+        eventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+        eventHandler:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+    elseif settings.usedFormat == formats.Stacking then
+        if not stackingContainer then
+            stackingContainer = CreateFrame("Frame", "GWTEST", UIParent)
+            stackingContainer:SetSize(200, 400)
+            stackingContainer:ClearAllPoints()
+            GW.RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", ALL .. ",FCT", nil, {"default", "scaleable"})
+            stackingContainer:ClearAllPoints()
+            stackingContainer:SetPoint("TOPLEFT", stackingContainer.gwMover)
+        end
+        NUM_OBJECTS_HARDLIMIT = 50 -- testing
+
+        eventHandler:UnregisterEvent("NAME_PLATE_UNIT_ADDED")
+        eventHandler:UnregisterEvent("NAME_PLATE_UNIT_REMOVED")
+
+        wipe(unitToGuid)
+        wipe(guidToUnit)
+
+        stackingContainer:Show()
+        stackingContainer:EnableMouse(false)
+    end
+end
+
 local function LoadDamageText()
     UpdateSettings()
 
+    ToggleFormat()
+
     playerGUID = UnitGUID("player")
 
-    local f = CreateFrame("Frame")
-    f:RegisterEvent("NAME_PLATE_UNIT_ADDED")
-    f:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
-    f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    eventHandler:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
-    f:SetScript("OnEvent", function(_, event, ...)
+    eventHandler:SetScript("OnEvent", function(_, event, ...)
         if event == "NAME_PLATE_UNIT_ADDED" then
-            onNamePlateAdded(f, event, ...)
+            onNamePlateAdded(eventHandler, event, ...)
         elseif event == "NAME_PLATE_UNIT_REMOVED" then
-            onNamePlateRemoved(f, event, ...)
+            onNamePlateRemoved(eventHandler, event, ...)
         elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-            onCombatLogEvent(f)
+            onCombatLogEvent(eventHandler)
         end
     end)
 end

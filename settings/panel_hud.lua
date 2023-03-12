@@ -101,7 +101,7 @@ local function LoadHudPanel(sWindow)
         nil,
         2
     )
-    addOptionButton(general.scroll.scrollchild, L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], "GWTEST",
+    addOptionButton(general.scroll.scrollchild, L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], "GW2_Apply_all_Button",
         function()
             local scale = GetSetting("HUD_SCALE")
             for _, mf in pairs(GW.scaleableFrames) do
