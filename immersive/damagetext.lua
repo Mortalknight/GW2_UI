@@ -11,6 +11,7 @@ local guidToUnit = {}
 
 local fontStringList = {}
 local namePlatesOffsets = {}
+local namePlateClassicGrid = {}
 local namePlatesCriticalOffsets = {}
 
 local eventHandler = CreateFrame("Frame")
@@ -58,15 +59,462 @@ local NORMAL_ANIMATION_OFFSET_Y = 20
 
 
 local stackingContainer
+local ClassicDummyFrame
 
-local formats = {Default = "Default", Stacking = "Stacking"}
+local formats = {Default = "Default", Stacking = "Stacking",Classic = "Classic"}
+
+local NORMAL_ANIMATION
+local CRITICAL_ANIMATION
+
+local classicGridData={
+  {x =1, y=0},
+  {x =0, y=-1},
+  {x =0, y=1},
+  {x =-1, y=0},
+  {x =-1, y=-1},
+  {x =1, y=-1},
+  {x =1, y=1},
+  {x =-1, y=1},
+  {x =0, y=2},
+  {x =2, y=0},
+  {x =-2, y=0},
+  {x =0, y=-2},
+  {x =-2, y=-1},
+  {x =1, y=-2},
+  {x =2, y=1},
+  {x =2, y=-1},
+  {x =-1, y=-2},
+  {x =-1, y=2},
+  {x =-2, y=1},
+  {x =1, y=2},
+  {x =2, y=2},
+  {x =2, y=-2},
+  {x =-2, y=-2},
+  {x =-2, y=2},
+  {x =0, y=-3},
+  {x =-3, y=0},
+  {x =0, y=3},
+  {x =3, y=0},
+  {x =-1, y=3},
+  {x =3, y=1},
+  {x =3, y=-1},
+  {x =-1, y=-3},
+  {x =1, y=3},
+  {x =-3, y=-1},
+  {x =-3, y=1},
+  {x =1, y=-3},
+  {x =2, y=-3},
+  {x =-2, y=-3},
+  {x =-3, y=2},
+  {x =3, y=2},
+  {x =-2, y=3},
+  {x =-3, y=-2},
+  {x =3, y=-2},
+  {x =2, y=3},
+  {x =0, y=-4},
+  {x =4, y=0},
+  {x =-4, y=0},
+  {x =0, y=4},
+  {x =-1, y=-4},
+  {x =4, y=-1},
+  {x =-4, y=1},
+  {x =-4, y=-1},
+  {x =4, y=1},
+  {x =-1, y=4},
+  {x =1, y=-4},
+  {x =1, y=4},
+  {x =-3, y=-3},
+  {x =3, y=3},
+  {x =3, y=-3},
+  {x =-3, y=3},
+  {x =4, y=-2},
+  {x =-4, y=-2},
+  {x =2, y=-4},
+  {x =2, y=4},
+  {x =4, y=2},
+  {x =-4, y=2},
+  {x =-2, y=-4},
+  {x =-2, y=4},
+  {x =5, y=0},
+  {x =-5, y=0},
+  {x =3, y=-4},
+  {x =-4, y=3},
+  {x =-3, y=4},
+  {x =0, y=-5},
+  {x =-4, y=-3},
+  {x =0, y=5},
+  {x =4, y=-3},
+  {x =3, y=4},
+  {x =4, y=3},
+  {x =-3, y=-4},
+  {x =-1, y=5},
+  {x =5, y=1},
+  {x =1, y=5},
+  {x =-1, y=-5},
+  {x =-5, y=1},
+  {x =-5, y=-1},
+  {x =1, y=-5},
+  {x =5, y=-1},
+  {x =2, y=5},
+  {x =-5, y=-2},
+  {x =-2, y=-5},
+  {x =5, y=2},
+  {x =5, y=-2},
+  {x =-2, y=5},
+  {x =-5, y=2},
+  {x =2, y=-5},
+  {x =4, y=4},
+  {x =-4, y=4},
+  {x =-4, y=-4},
+  {x =4, y=-4},
+  {x =-3, y=5},
+  {x =-5, y=3},
+  {x =-5, y=-3},
+  {x =5, y=3},
+  {x =3, y=5},
+  {x =-3, y=-5},
+  {x =5, y=-3},
+  {x =3, y=-5},
+  {x =6, y=0},
+  {x =0, y=6},
+  {x =0, y=-6},
+  {x =-6, y=0},
+  {x =1, y=-6},
+  {x =-1, y=6},
+  {x =-1, y=-6},
+  {x =1, y=6},
+  {x =6, y=-1},
+  {x =-6, y=1},
+  {x =-6, y=-1},
+  {x =6, y=1},
+  {x =6, y=2},
+  {x =-6, y=2},
+  {x =-2, y=6},
+  {x =-6, y=-2},
+  {x =-2, y=-6},
+  {x =2, y=-6},
+  {x =2, y=6},
+  {x =6, y=-2},
+  {x =-5, y=-4},
+  {x =-4, y=5},
+  {x =5, y=4},
+  {x =4, y=-5},
+  {x =-4, y=-5},
+  {x =5, y=-4},
+  {x =-5, y=4},
+  {x =4, y=5},
+  {x =6, y=-3},
+  {x =6, y=3},
+  {x =3, y=6},
+  {x =3, y=-6},
+  {x =-6, y=3},
+  {x =-3, y=-6},
+  {x =-3, y=6},
+  {x =-6, y=-3},
+  {x =0, y=-7},
+  {x =7, y=0},
+  {x =-7, y=0},
+  {x =0, y=7},
+  {x =5, y=5},
+  {x =5, y=-5},
+  {x =-5, y=-5},
+  {x =7, y=1},
+  {x =-1, y=-7},
+  {x =1, y=7},
+  {x =1, y=-7},
+  {x =-1, y=7},
+  {x =-7, y=-1},
+  {x =-7, y=1},
+  {x =7, y=-1},
+  {x =-5, y=5},
+  {x =4, y=6},
+  {x =6, y=4},
+  {x =4, y=-6},
+  {x =6, y=-4},
+  {x =-6, y=-4},
+  {x =-6, y=4},
+  {x =-4, y=6},
+  {x =-4, y=-6},
+  {x =2, y=7},
+  {x =-7, y=-2},
+  {x =2, y=-7},
+  {x =-2, y=7},
+  {x =-7, y=2},
+  {x =7, y=-2},
+  {x =7, y=2},
+  {x =-2, y=-7},
+  {x =3, y=7},
+  {x =-7, y=-3},
+  {x =-7, y=3},
+  {x =3, y=-7},
+  {x =-3, y=-7},
+  {x =7, y=-3},
+  {x =-3, y=7},
+  {x =7, y=3},
+  {x =6, y=-5},
+  {x =6, y=5},
+  {x =5, y=6},
+  {x =-5, y=-6},
+  {x =-6, y=5},
+  {x =-5, y=6},
+  {x =5, y=-6},
+  {x =-6, y=-5},
+  {x =0, y=-8},
+  {x =8, y=0},
+  {x =0, y=8},
+  {x =-8, y=0},
+  {x =-4, y=7},
+  {x =1, y=8},
+  {x =7, y=-4},
+  {x =-1, y=8},
+  {x =7, y=4},
+  {x =-4, y=-7},
+  {x =1, y=-8},
+  {x =4, y=-7},
+  {x =8, y=1},
+  {x =4, y=7},
+  {x =-8, y=-1},
+  {x =-8, y=1},
+  {x =-7, y=-4},
+  {x =-1, y=-8},
+  {x =-7, y=4},
+  {x =8, y=-1},
+  {x =8, y=2},
+  {x =2, y=-8},
+  {x =-8, y=2},
+  {x =-2, y=8},
+  {x =-2, y=-8},
+  {x =8, y=-2},
+  {x =-8, y=-2},
+  {x =2, y=8},
+  {x =6, y=-6},
+  {x =6, y=6},
+  {x =-6, y=6},
+  {x =-6, y=-6},
+  {x =3, y=8},
+  {x =8, y=3},
+  {x =-8, y=3},
+  {x =3, y=-8},
+  {x =8, y=-3},
+  {x =-3, y=8},
+  {x =-8, y=-3},
+  {x =-3, y=-8},
+  {x =-5, y=-7},
+  {x =7, y=-5},
+  {x =-7, y=-5},
+  {x =7, y=5},
+  {x =5, y=7},
+  {x =-5, y=7},
+  {x =-7, y=5},
+  {x =5, y=-7},
+  {x =4, y=8},
+  {x =4, y=-8},
+  {x =8, y=-4},
+  {x =-4, y=8},
+  {x =-4, y=-8},
+  {x =8, y=4},
+  {x =-8, y=-4},
+  {x =-8, y=4},
+  {x =0, y=-9},
+  {x =-9, y=0},
+  {x =9, y=0},
+  {x =0, y=9},
+  {x =9, y=1},
+  {x =-9, y=1},
+  {x =-1, y=9},
+  {x =1, y=-9},
+  {x =1, y=9},
+  {x =-1, y=-9},
+  {x =9, y=-1},
+  {x =-9, y=-1},
+  {x =-7, y=6},
+  {x =-2, y=-9},
+  {x =6, y=-7},
+  {x =9, y=-2},
+  {x =-6, y=-7},
+  {x =-2, y=9},
+  {x =-9, y=2},
+  {x =-7, y=-6},
+  {x =2, y=9},
+  {x =7, y=6},
+  {x =2, y=-9},
+  {x =6, y=7},
+  {x =-9, y=-2},
+  {x =-6, y=7},
+  {x =9, y=2},
+  {x =7, y=-6},
+  {x =8, y=-5},
+  {x =-5, y=-8},
+  {x =8, y=5},
+  {x =5, y=8},
+  {x =-5, y=8},
+  {x =-8, y=-5},
+  {x =5, y=-8},
+  {x =-8, y=5},
+  {x =-3, y=-9},
+  {x =9, y=3},
+  {x =3, y=9},
+  {x =-9, y=-3},
+  {x =3, y=-9},
+  {x =-3, y=9},
+  {x =-9, y=3},
+  {x =9, y=-3},
+  {x =9, y=-4},
+  {x =-9, y=4},
+  {x =4, y=9},
+  {x =-9, y=-4},
+  {x =-4, y=9},
+  {x =9, y=4},
+  {x =4, y=-9},
+  {x =-4, y=-9},
+  {x =7, y=-7},
+  {x =-7, y=7},
+  {x =7, y=7},
+  {x =-7, y=-7},
+  {x =6, y=-8},
+  {x =0, y=10},
+  {x =-8, y=-6},
+  {x =6, y=8},
+  {x =8, y=6},
+  {x =-8, y=6},
+  {x =0, y=-10},
+  {x =-6, y=-8},
+  {x =-10, y=0},
+  {x =8, y=-6},
+  {x =-6, y=8},
+  {x =10, y=0},
+  {x =1, y=10},
+  {x =-10, y=1},
+  {x =1, y=-10},
+  {x =-10, y=-1},
+  {x =10, y=1},
+  {x =-1, y=10},
+  {x =10, y=-1},
+  {x =-1, y=-10},
+  {x =10, y=-2},
+  {x =2, y=10},
+  {x =-10, y=-2},
+  {x =-2, y=-10},
+  {x =2, y=-10},
+  {x =-2, y=10},
+  {x =10, y=2},
+  {x =-10, y=2},
+  {x =-9, y=5},
+  {x =9, y=5},
+  {x =9, y=-5},
+  {x =-9, y=-5},
+  {x =5, y=-9},
+  {x =5, y=9},
+  {x =-5, y=-9},
+  {x =-5, y=9},
+  {x =10, y=3},
+  {x =10, y=-3},
+  {x =-10, y=3},
+  {x =-10, y=-3},
+  {x =-3, y=10},
+  {x =3, y=-10},
+  {x =-3, y=-10},
+  {x =3, y=10},
+  {x =8, y=-7},
+  {x =8, y=7},
+  {x =7, y=8},
+  {x =7, y=-8},
+  {x =-7, y=-8},
+  {x =-7, y=8},
+  {x =-8, y=7},
+  {x =-8, y=-7},
+  {x =-10, y=-4},
+  {x =-4, y=-10},
+  {x =-4, y=10},
+  {x =4, y=-10},
+  {x =10, y=4},
+  {x =4, y=10},
+  {x =-10, y=4},
+  {x =10, y=-4},
+  {x =9, y=6},
+  {x =6, y=9},
+  {x =9, y=-6},
+  {x =6, y=-9},
+  {x =-9, y=-6},
+  {x =-6, y=-9},
+  {x =-9, y=6},
+  {x =-6, y=9},
+  {x =-5, y=10},
+  {x =-5, y=-10},
+  {x =10, y=5},
+  {x =10, y=-5},
+  {x =-10, y=5},
+  {x =5, y=10},
+  {x =5, y=-10},
+  {x =-10, y=-5},
+  {x =8, y=8},
+  {x =-8, y=8},
+  {x =8, y=-8},
+  {x =-8, y=-8},
+  {x =7, y=9},
+  {x =-7, y=9},
+  {x =-9, y=-7},
+  {x =-9, y=7},
+  {x =9, y=-7},
+  {x =7, y=-9},
+  {x =-7, y=-9},
+  {x =9, y=7},
+  {x =10, y=-6},
+  {x =-10, y=6},
+  {x =6, y=-10},
+  {x =10, y=6},
+  {x =6, y=10},
+  {x =-10, y=-6},
+  {x =-6, y=-10},
+  {x =-6, y=10},
+  {x =9, y=-8},
+  {x =-9, y=-8},
+  {x =8, y=-9},
+  {x =-8, y=-9},
+  {x =8, y=9},
+  {x =9, y=8},
+  {x =-9, y=8},
+  {x =-8, y=9},
+  {x =7, y=-10},
+  {x =-7, y=-10},
+  {x =10, y=-7},
+  {x =-7, y=10},
+  {x =-10, y=7},
+  {x =-10, y=-7},
+  {x =7, y=10},
+  {x =10, y=7},
+  {x =-9, y=9},
+  {x =9, y=-9},
+  {x =9, y=9},
+  {x =-9, y=-9},
+  {x =-10, y=8},
+  {x =-8, y=-10},
+  {x =-8, y=10},
+  {x =-10, y=-8},
+  {x =8, y=-10},
+  {x =10, y=8},
+  {x =10, y=-8},
+  {x =8, y=10},
+  {x =10, y=-9},
+  {x =-10, y=-9},
+  {x =9, y=10},
+  {x =9, y=-10},
+  {x =-9, y=10},
+  {x =-9, y=-10},
+  {x =10, y=9},
+  {x =-10, y=9},
+  {x =-10, y=-10},
+  {x =-10, y=10},
+  {x =10, y=-10},
+  {x =10, y=10},
+}
 
 local usedColorTable
 local function UpdateSettings()
     settings.useBlizzardColor = GW.GetSetting("GW_COMBAT_TEXT_BLIZZARD_COLOR")
     settings.useCommaFormat = GW.GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT")
 
-    settings.usedFormat = formats.Stacking -- Default
+    settings.usedFormat = formats.Classic -- Default
 
     usedColorTable = settings.useBlizzardColor and colorTable.blizzard or colorTable.gw
 end
@@ -308,6 +756,127 @@ local function animateTextNormalForDefaultFormat(frame, offsetIndex)
 end
 AFP("animateTextNormalForDefaultFormat", animateTextNormalForDefaultFormat)
 
+--CLASSIC
+
+local function animateTextCriticalForClassicFormat(frame, gridIndex,x,y)
+    local aName = frame:GetName()
+
+    AddToAnimation(
+        aName,
+        0,
+        1,
+        GetTime(),
+        CRITICAL_ANIMATION_DURATION,
+        function(p)
+            local pet_scale = 1
+            if frame.pet then
+                pet_scale = PET_SCALE_MODIFIER
+            end
+            if p < 0.25 then
+                local scaleFade = p - 0.25
+
+                frame:SetScale(GW.lerp(1 * pet_scale * CRITICAL_SCALE_MODIFIER, pet_scale, scaleFade / 0.25))
+            else
+                frame:SetScale(pet_scale)
+            end
+
+            if offsetIndex == 0 then
+                frame:SetPoint("TOP", frame.anchorFrame, "BOTTOM", 0, 0)
+            elseif offsetIndex == 1 then
+                frame:SetPoint("TOP", frame.anchorFrame, "BOTTOMLEFT", 0, 0)
+            elseif offsetIndex== 2 then
+                frame:SetPoint("TOP", frame.anchorFrame, "BOTTOMRIGHT", 0, 0)
+            end
+
+            if p > 0.7 then
+                local alphaFade = p - 0.7
+                local lerp = GW.lerp(1, 0, alphaFade / 0.3)
+                if lerp < 0 then lerp = 0 end
+                if lerp > 1 then lerp = 1 end
+                frame:SetAlpha(lerp)
+            else
+                frame:SetAlpha(1)
+            end
+        end,
+        nil,
+        function()
+          if gridIndex~=nil then
+            namePlateClassicGrid[frame.anchorFrame][gridIndex] = nil
+          end
+            frame:SetScale(1)
+            frame:Hide()
+        end
+    )
+end
+AFP("animateTextCriticalForClassicFormat", animateTextCriticalForClassicFormat)
+
+local function animateTextNormalForClassicFormat(frame, gridIndex,x,y)
+    local aName = frame:GetName()
+
+    AddToAnimation(
+        aName,
+        0,
+        1,
+        GetTime(),
+        NORMAL_ANIMATION_DURATION,
+        function(p)
+            local offsetY = NORMAL_ANIMATION_OFFSET_Y * p
+            local pet_scale = 1
+            if frame.pet then
+                pet_scale = PET_SCALE_MODIFIER
+            end
+            frame:SetScale(1 * pet_scale)
+        --[[    if offsetIndex == 0 then
+                frame:SetPoint("BOTTOM", frame.anchorFrame, "TOP", 0, offsetY)
+            elseif offsetIndex== 1 then
+                frame:SetPoint("BOTTOM", frame.anchorFrame, "TOPLEFT", 0, offsetY)
+            elseif offsetIndex== 2 then
+                frame:SetPoint("BOTTOM", frame.anchorFrame, "TOPRIGHT", 0, offsetY)
+            end
+            ]]
+            frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
+
+            if p > 0.7 then
+                local alphaFade = p - 0.7
+                local lerp = GW.lerp(1, 0, alphaFade / 0.3)
+                if lerp < 0 then lerp = 0 end
+                if lerp > 1 then lerp = 1 end
+                frame:SetAlpha(lerp)
+            else
+                frame:SetAlpha(1)
+            end
+        end,
+        nil,
+        function()
+            if gridIndex~=nil then
+              namePlateClassicGrid[frame.anchorFrame][gridIndex] = nil
+            end
+            frame:SetScale(1)
+            frame:Hide()
+        end
+    )
+end
+AFP("animateTextNormalForClassicFormat", animateTextNormalForClassicFormat)
+
+
+
+local function classicPositionGrid(namePlate)
+  if namePlateClassicGrid[namePlate]==nil then
+    namePlateClassicGrid[namePlate] = {}
+  end
+
+  for i=1,100 do
+
+    if namePlateClassicGrid[namePlate][i]==nil then
+      namePlateClassicGrid[namePlate][i] = true
+      return i,classicGridData[i].x,classicGridData[i].y
+    end
+  end
+
+  return nil,1,0
+
+end
+
 local createdFramesIndex = 0
 local function createNewFontElement(self)
     if createdFramesIndex >= NUM_OBJECTS_HARDLIMIT then
@@ -389,7 +958,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
     local f = getFontElement(self)
     f.string:SetText(missType and getglobal(missType) or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount))
 
-    if settings.usedFormat == formats.Default then
+    if settings.usedFormat == formats.Default or settings.usedFormat == formats.Classic then
         local nameplate
         local unit = guidToUnit[guid]
 
@@ -397,8 +966,12 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
             nameplate = C_NamePlate.GetNamePlateForUnit(unit)
         end
 
-        if nameplate == nil then
-            return
+        if nameplate == nil   then
+            if settings.usedFormat == formats.Default then
+              return
+            end
+            nameplate = ClassicDummyFrame
+
         end
 
         f.anchorFrame = nameplate
@@ -425,10 +998,18 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
                     namePlatesCriticalOffsets[nameplate] = 0
                 end
             end
-            animateTextCriticalForDefaultFormat(f, namePlatesCriticalOffsets[nameplate])
+            if settings.usedFormat == formats.Default then
+              CRITICAL_ANIMATION(f, namePlatesCriticalOffsets[namePlate])
+            else
+              CRITICAL_ANIMATION(f, classicPositionGrid(nameplate))
+            end
             return
         end
-        animateTextNormalForDefaultFormat(f, namePlatesOffsets[nameplate])
+        if settings.usedFormat == formats.Default then
+          NORMAL_ANIMATION(f, namePlatesOffsets[nameplate])
+        else
+          NORMAL_ANIMATION(f, classicPositionGrid(nameplate))
+        end
     elseif settings.usedFormat == formats.Stacking then
         f.anchorFrame = stackingContainer
         f.string:SetJustifyH("Left")
@@ -439,9 +1020,9 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
 
         -- add to animation here
         if critical and not periodic then
-            animateTextCriticalForStackingFormat(f)
+            CRITICAL_ANIMATION(f)
         else
-            animateTextNormalForStackingFormat(f)
+            NORMAL_ANIMATION(f)
         end
     end
 end
@@ -537,7 +1118,7 @@ end
 AFP("onNamePlateRemoved", onNamePlateRemoved)
 
 local function ToggleFormat()
-    if settings.usedFormat == formats.Default then
+    if settings.usedFormat == formats.Default or settings.usedFormat == formats.Classic then
         -- hide the other format things
         if stackingContainer then
             -- TODO remove from Move Hud mode
@@ -546,6 +1127,21 @@ local function ToggleFormat()
         end
 
         NUM_OBJECTS_HARDLIMIT = 20
+
+        if settings.usedFormat == formats.Classic then
+          if not GwDamageTextFrame then
+            ClassicDummyFrame = CreateFrame("Frame", "GwDamageTextFrame", UIParent)
+            ClassicDummyFrame:ClearAllPoints()
+            ClassicDummyFrame:SetPoint("CENTER",UIParent,"CENTER",0,0)
+            ClassicDummyFrame:SetSize(100, 50)
+          end
+
+          CRITICAL_ANIMATION = animateTextCriticalForClassicFormat
+          NORMAL_ANIMATION = animateTextNormalForClassicFormat
+        else
+          CRITICAL_ANIMATION = animateTextCriticalForDefaultFormat
+          NORMAL_ANIMATION = animateTextNormalForDefaultFormat
+        end
 
         eventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED")
         eventHandler:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
@@ -560,6 +1156,10 @@ local function ToggleFormat()
             stackingContainer:SetScript("OnUpdate", stackingContainerOnUpdate)
             stackingContainer.activeFrames = {}
         end
+
+        CRITICAL_ANIMATION = animateTextCriticalForStackingFormat
+        NORMAL_ANIMATION = animateTextNormalForStackingFormat
+
         NUM_OBJECTS_HARDLIMIT = 50 -- testing
 
         eventHandler:UnregisterEvent("NAME_PLATE_UNIT_ADDED")
