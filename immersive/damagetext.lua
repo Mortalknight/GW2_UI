@@ -521,67 +521,63 @@ end
 GW.UpdateDameTextSettings = UpdateSettings
 
 local function getSchoolIndex(school)
-  if school==1 then -- 	Physical
-    return 0
-  end
-  if school==2 then -- 	Holy
-    return 1
-  end
-  if school==4 then -- 	Fire
-    return 6
-  end
-  if school==8 then -- 	Nature
-    return 2
-  end
-  if school==16 then -- 	Frost
-    return 5
-  end
-  if school==32 then -- 	Shadow
-    return 3
-  end
-  if school==64 then -- 	Arcane
-    return 4
-  end
-
-end
-local function getSchoolIconMap(self,school)
-  local iconID = getSchoolIndex(school)
-  if iconID==nil then
-    return false
-  end
-  local l,r,t,b = getSpriteByIndex(elementIcons,iconID)
-  self:SetTexCoord(l,r,t,b)
-  return true
-end
-
-local function stackingContainerOnUpdate (_, delta)
-  -- for each damage text instance
-  local NUM_ACTIVE_DAMAGETEXT_FRAMES = CountTable(stackingContainer.activeFrames)
-  local index = 0
-  local newOffsetValue = -((NUM_ACTIVE_DAMAGETEXT_FRAMES * (20/2)))
-  local currentOffsetValue = stackingContainer.offsetValue or 0
-
-  stackingContainer.offsetValue = MoveTowards(currentOffsetValue, newOffsetValue, STACKING_MOVESPEED)
-  for _, f in pairs(stackingContainer.activeFrames) do
-    local offsetY = 20*index
-    offsetY = offsetY + stackingContainer.offsetValue
-    local frameOffset = (f.offsetY or 0)
-    local frameOffsetX = (f.offsetX or 0)
-    offsetY = offsetY + frameOffset
-    f:ClearAllPoints()
-    if f.oldOffsetY ==nil then
-      f.oldOffsetY  = offsetY
+    if school == 1 then         -- 	Physical
+        return 0
+    elseif school == 2 then     -- 	Holy
+        return 1
+    elseif school == 4 then     -- 	Fire
+        return 6
+    elseif school == 8 then     -- 	Nature
+        return 2
+    elseif school == 16 then    -- 	Frost
+        return 5
+    elseif school == 32 then    -- 	Shadow
+        return 3
+    elseif school == 64 then    -- 	Arcane
+        return 4
+    else
+        return false
     end
-    f.oldOffsetY =  MoveTowards(f.oldOffsetY, offsetY, NUM_ACTIVE_DAMAGETEXT_FRAMES)
-    f:SetPoint("CENTER", stackingContainer, "CENTER", frameOffsetX, f.oldOffsetY)
-    index = index + 1
-  end
+end
+local function getSchoolIconMap(self, school)
+    local iconID = getSchoolIndex(school)
+    if iconID then
+        self:SetTexCoord(getSpriteByIndex(elementIcons, iconID))
+        return true
+    else
+        return false
+    end
+end
 
+--STACKING
+local function stackingContainerOnUpdate ()
+    -- for each damage text instance
+    local NUM_ACTIVE_DAMAGETEXT_FRAMES = CountTable(stackingContainer.activeFrames)
+    local index = 0
+    local newOffsetValue = -((NUM_ACTIVE_DAMAGETEXT_FRAMES * (20 / 2)))
+    local currentOffsetValue = stackingContainer.offsetValue or 0
+
+    stackingContainer.offsetValue = MoveTowards(currentOffsetValue, newOffsetValue, STACKING_MOVESPEED)
+    for _, f in pairs(stackingContainer.activeFrames) do
+        local offsetY = 20 * index
+        offsetY = offsetY + stackingContainer.offsetValue
+        local frameOffset = (f.offsetY or 0)
+        local frameOffsetX = (f.offsetX or 0)
+        offsetY = offsetY + frameOffset
+        f:ClearAllPoints()
+        if f.oldOffsetY == nil then
+            f.oldOffsetY  = offsetY
+        end
+        f.oldOffsetY =  MoveTowards(f.oldOffsetY, offsetY, NUM_ACTIVE_DAMAGETEXT_FRAMES)
+        f:SetPoint("CENTER", stackingContainer, "CENTER", frameOffsetX, f.oldOffsetY)
+        index = index + 1
+    end
 end
 
 local function animateTextCriticalForStackingFormat(frame)
     local aName = frame:GetName()
     frame.oldOffsetY = nil
+
     AddToAnimation(
         aName,
         0,
@@ -590,18 +586,14 @@ local function animateTextCriticalForStackingFormat(frame)
         STACKING_CRITICAL_ANIMATION_DURATION,
         function(p)
             local offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p)
-            local pet_scale = 1
             frame.offsetY = offsetY
             frame.offsetX =  0
-            if frame.pet then
-                pet_scale = PET_SCALE_MODIFIER
-            end
             if p < 0.25 then
                 local scaleFade = p - 0.25
-                frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X,0, scaleFade / 0.25)
-                frame:SetScale(GW.lerp(1 * pet_scale * CRITICAL_SCALE_MODIFIER, pet_scale, scaleFade / 0.25))
+                frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X, 0, scaleFade / 0.25)
+                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.textScaleModifier, scaleFade / 0.25))
             else
-                frame:SetScale(pet_scale)
+                frame:SetScale(frame.textScaleModifier)
             end
 
             if p > 0.7 then
@@ -627,6 +619,7 @@ AFP("animateTextCriticalForStackingFormat", animateTextCriticalForStackingFormat
 local function animateTextNormalForStackingFormat(frame)
     local aName = frame:GetName()
     frame.oldOffsetY = nil
+
     AddToAnimation(
         aName,
         0,
@@ -636,13 +629,12 @@ local function animateTextNormalForStackingFormat(frame)
         function(p)
             local offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p)
             frame.offsetX =  0
-            local pet_scale = frame.pet and PET_SCALE_MODIFIER or 1
-            frame:SetScale(1 * pet_scale)
+            frame:SetScale(1 * frame.textScaleModifier)
             frame.offsetY = offsetY
 
             if p < 0.25 then
               local scaleFade = p - 0.25
-              frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X,0, scaleFade / 0.25)
+              frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X, 0, scaleFade / 0.25)
             end
             if p > 0.7 then
                 local alphaFade = p - 0.7
@@ -664,6 +656,7 @@ local function animateTextNormalForStackingFormat(frame)
 end
 AFP("animateTextNormalForStackingFormat", animateTextNormalForStackingFormat)
 
+-- DEFAULT
 local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
     local aName = frame:GetName()
 
@@ -674,16 +667,12 @@ local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
         GetTime(),
         CRITICAL_ANIMATION_DURATION,
         function(p)
-            local pet_scale = 1
-            if frame.pet then
-                pet_scale = PET_SCALE_MODIFIER
-            end
             if p < 0.25 then
                 local scaleFade = p - 0.25
 
-                frame:SetScale(GW.lerp(1 * pet_scale * CRITICAL_SCALE_MODIFIER, pet_scale, scaleFade / 0.25))
+                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.textScaleModifier, scaleFade / 0.25))
             else
-                frame:SetScale(pet_scale)
+                frame:SetScale(frame.textScaleModifier)
             end
 
             if offsetIndex == 0 then
@@ -724,11 +713,8 @@ local function animateTextNormalForDefaultFormat(frame, offsetIndex)
         NORMAL_ANIMATION_DURATION,
         function(p)
             local offsetY = NORMAL_ANIMATION_OFFSET_Y * p
-            local pet_scale = 1
-            if frame.pet then
-                pet_scale = PET_SCALE_MODIFIER
-            end
-            frame:SetScale(1 * pet_scale)
+
+            frame:SetScale(1 * frame.textScaleModifier )
             if offsetIndex == 0 then
                 frame:SetPoint("BOTTOM", frame.anchorFrame, "TOP", 0, offsetY)
             elseif offsetIndex== 1 then
@@ -757,8 +743,7 @@ end
 AFP("animateTextNormalForDefaultFormat", animateTextNormalForDefaultFormat)
 
 --CLASSIC
-
-local function animateTextCriticalForClassicFormat(frame, gridIndex,x,y)
+local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
     local aName = frame:GetName()
 
     AddToAnimation(
@@ -768,25 +753,15 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex,x,y)
         GetTime(),
         CRITICAL_ANIMATION_DURATION,
         function(p)
-            local pet_scale = 1
-            if frame.pet then
-                pet_scale = PET_SCALE_MODIFIER
-            end
             if p < 0.25 then
                 local scaleFade = p - 0.25
 
-                frame:SetScale(GW.lerp(1 * pet_scale * CRITICAL_SCALE_MODIFIER, pet_scale, scaleFade / 0.25))
+                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.textScaleModifier, scaleFade / 0.25))
             else
-                frame:SetScale(pet_scale)
+                frame:SetScale(frame.textScaleModifier)
             end
 
-            if offsetIndex == 0 then
-                frame:SetPoint("TOP", frame.anchorFrame, "BOTTOM", 0, 0)
-            elseif offsetIndex == 1 then
-                frame:SetPoint("TOP", frame.anchorFrame, "BOTTOMLEFT", 0, 0)
-            elseif offsetIndex== 2 then
-                frame:SetPoint("TOP", frame.anchorFrame, "BOTTOMRIGHT", 0, 0)
-            end
+            frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
 
             if p > 0.7 then
                 local alphaFade = p - 0.7
@@ -820,20 +795,7 @@ local function animateTextNormalForClassicFormat(frame, gridIndex,x,y)
         GetTime(),
         NORMAL_ANIMATION_DURATION,
         function(p)
-            local offsetY = NORMAL_ANIMATION_OFFSET_Y * p
-            local pet_scale = 1
-            if frame.pet then
-                pet_scale = PET_SCALE_MODIFIER
-            end
-            frame:SetScale(1 * pet_scale)
-        --[[    if offsetIndex == 0 then
-                frame:SetPoint("BOTTOM", frame.anchorFrame, "TOP", 0, offsetY)
-            elseif offsetIndex== 1 then
-                frame:SetPoint("BOTTOM", frame.anchorFrame, "TOPLEFT", 0, offsetY)
-            elseif offsetIndex== 2 then
-                frame:SetPoint("BOTTOM", frame.anchorFrame, "TOPRIGHT", 0, offsetY)
-            end
-            ]]
+            frame:SetScale(1 * frame.textScaleModifier)
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
 
             if p > 0.7 then
@@ -858,23 +820,19 @@ local function animateTextNormalForClassicFormat(frame, gridIndex,x,y)
 end
 AFP("animateTextNormalForClassicFormat", animateTextNormalForClassicFormat)
 
-
-
 local function classicPositionGrid(namePlate)
-  if namePlateClassicGrid[namePlate]==nil then
-    namePlateClassicGrid[namePlate] = {}
-  end
-
-  for i=1,100 do
-
-    if namePlateClassicGrid[namePlate][i]==nil then
-      namePlateClassicGrid[namePlate][i] = true
-      return i,classicGridData[i].x,classicGridData[i].y
+    if namePlateClassicGrid[namePlate] == nil then
+        namePlateClassicGrid[namePlate] = {}
     end
-  end
 
-  return nil,1,0
+    for i = 1, 100 do
+        if namePlateClassicGrid[namePlate][i] == nil then
+            namePlateClassicGrid[namePlate][i] = true
+            return i, classicGridData[i].x, classicGridData[i].y
+        end
+    end
 
+    return nil, 1, 0
 end
 
 local createdFramesIndex = 0
@@ -938,6 +896,7 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
     end
 
     self.pet = source == "pet"
+    self.textScaleModifier = self.pet and PET_SCALE_MODIFIER or 1
 
     local colorSource = (source == "pet" or source == "melee") and source or source == "heal" and "heal" or "spell"
 
@@ -1048,7 +1007,7 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
               else
                 _, spellName, _, amount, _, _, _, blocked, absorbed, critical = ...
             end
-            displayDamageText(self, destGUID, amount, critical, spellName, nil, blocked, absorbed,periodic,element)
+            displayDamageText(self, destGUID, amount, critical, spellName, nil, blocked, absorbed, periodic, element)
         elseif (string.find(event, "_MISSED")) then
             local missType
             if (string.find(event, "RANGE") or string.find(event, "SPELL")) then
@@ -1104,8 +1063,8 @@ local function onNamePlateRemoved(_, _, unitID)
     unitToGuid[unitID] = nil
     guidToUnit[guid] = nil
 
-    for _,f in pairs(fontStringList) do
-        if f.unit ~= nil and f.unit == unitID then
+    for _, f in pairs(fontStringList) do
+        if f.unit and f.unit == unitID then
             f:Hide()
         end
     end
@@ -1124,31 +1083,33 @@ local function ToggleFormat()
             -- TODO remove from Move Hud mode
 
             stackingContainer:SetScript("OnUpdate", nil)
+            stackingContainer:Hide()
         end
 
         NUM_OBJECTS_HARDLIMIT = 20
 
         if settings.usedFormat == formats.Classic then
-          if not GwDamageTextFrame then
-            ClassicDummyFrame = CreateFrame("Frame", "GwDamageTextFrame", UIParent)
-            ClassicDummyFrame:ClearAllPoints()
-            ClassicDummyFrame:SetPoint("CENTER",UIParent,"CENTER",0,0)
-            ClassicDummyFrame:SetSize(100, 50)
-          end
+            if not ClassicDummyFrame then
+                ClassicDummyFrame = CreateFrame("Frame", nil, UIParent)
+                ClassicDummyFrame:ClearAllPoints()
+                ClassicDummyFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+                ClassicDummyFrame:SetSize(100, 50)
+            end
 
-          CRITICAL_ANIMATION = animateTextCriticalForClassicFormat
-          NORMAL_ANIMATION = animateTextNormalForClassicFormat
-        else
-          CRITICAL_ANIMATION = animateTextCriticalForDefaultFormat
-          NORMAL_ANIMATION = animateTextNormalForDefaultFormat
+            CRITICAL_ANIMATION = animateTextCriticalForClassicFormat
+            NORMAL_ANIMATION = animateTextNormalForClassicFormat
+            else
+            CRITICAL_ANIMATION = animateTextCriticalForDefaultFormat
+            NORMAL_ANIMATION = animateTextNormalForDefaultFormat
         end
 
         eventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED")
         eventHandler:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
     elseif settings.usedFormat == formats.Stacking then
         if not stackingContainer then
-            stackingContainer = CreateFrame("Frame", "GWTEST", UIParent)
+            stackingContainer = CreateFrame("Frame", nil, UIParent)
             stackingContainer:SetSize(200, 400)
+            stackingContainer:EnableMouse(false)
             stackingContainer:ClearAllPoints()
             GW.RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", ALL .. ",FCT", nil, {"default", "scaleable"})
             stackingContainer:ClearAllPoints()
@@ -1169,7 +1130,6 @@ local function ToggleFormat()
         wipe(guidToUnit)
 
         stackingContainer:Show()
-        stackingContainer:EnableMouse(false)
     end
 end
 
