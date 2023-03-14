@@ -1022,7 +1022,7 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
                 _, _, _, missType = ...
             end
             displayDamageText(self, destGUID, nil, nil, nil, missType)
-        elseif settings.usedFormat == formats.Stacking and string.find(event, "_HEAL") then
+        elseif (settings.usedFormat == formats.Stacking or (settings.usedFormat == formats.Classic and settings.classicFormatAnchorPoint == "Center")) and string.find(event, "_HEAL") then
             local amount, overhealing, absorbed, critical = select(4, ...)
             if amount - overhealing > 0 then
                 displayDamageText(self, destGUID, (amount - overhealing), critical, "heal", nil, nil, (absorbed > 0 and absorbed or nil))
