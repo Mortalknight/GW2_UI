@@ -566,7 +566,7 @@ local function stackingContainerOnUpdate ()
         offsetY = offsetY + frameOffset
         f:ClearAllPoints()
         if f.oldOffsetY == nil then
-            f.oldOffsetY  = offsetY
+            f.oldOffsetY = offsetY
         end
         f.oldOffsetY =  MoveTowards(f.oldOffsetY, offsetY, NUM_ACTIVE_DAMAGETEXT_FRAMES)
         f:SetPoint("CENTER", stackingContainer, "CENTER", frameOffsetX, f.oldOffsetY)
@@ -648,7 +648,7 @@ local function animateTextNormalForStackingFormat(frame)
         end,
         nil,
         function()
-            table.remove(stackingContainer.activeFrames,1)
+            table.remove(stackingContainer.activeFrames, 1)
             frame:SetScale(1)
             frame:Hide()
         end
@@ -919,7 +919,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
 
     if settings.usedFormat == formats.Default or settings.usedFormat == formats.Classic then
         local nameplate
-        if settings.classicFormatAnchorPoint == "Center" then
+        if settings.classicFormatAnchorPoint == "Center" and settings.usedFormat == formats.Classic then
             nameplate = ClassicDummyFrame
         else
             local unit = guidToUnit[guid]
@@ -941,7 +941,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         f.anchorFrame = nameplate
         f.string:SetJustifyH("Left")
 
-        setElementData(f, critical, source, missType, blocked, absorbed, periodic,school)
+        setElementData(f, critical, source, missType, blocked, absorbed, periodic, school)
 
         if namePlatesOffsets[nameplate] == nil then
             namePlatesOffsets[nameplate] = 0
@@ -979,7 +979,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         -- Add damage text to array of active Elements
         table.insert(stackingContainer.activeFrames, f)
 
-        setElementData(f, critical, source, missType, blocked, absorbed, periodic,school)
+        setElementData(f, critical, source, missType, blocked, absorbed, periodic, school)
 
         -- add to animation here
         if critical then
@@ -1075,97 +1075,134 @@ local function onNamePlateRemoved(_, _, unitID)
 end
 AFP("onNamePlateRemoved", onNamePlateRemoved)
 
+local function RescanAllNameplates()
+    for _, frame in pairs(C_NamePlate.GetNamePlates(false)) do
+        local guid = UnitGUID(frame.namePlateUnitToken)
+        if guid then
+            unitToGuid[frame.namePlateUnitToken] = guid
+            guidToUnit[guid] = frame.namePlateUnitToken
+        end
+    end
+end
+
 local function onCombatLogEvent(self)
     handleCombatLogEvent(self, CombatLogGetCurrentEventInfo())
 end
 AFP("onNamePlateRemoved", onNamePlateRemoved)
 
-local function ToggleFormat()
-    if settings.usedFormat == formats.Default or settings.usedFormat == formats.Classic then
-        -- hide the other format things
-        if stackingContainer then
-            -- TODO remove from Move Hud mode
+local function ToggleFormat(activate)
+    if activate then
+        eventHandler:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
-            stackingContainer:SetScript("OnUpdate", nil)
-            stackingContainer:Hide()
-        end
+        eventHandler:SetScript("OnEvent", function(_, event, ...)
+            if event == "NAME_PLATE_UNIT_ADDED" then
+                onNamePlateAdded(eventHandler, event, ...)
+            elseif event == "NAME_PLATE_UNIT_REMOVED" then
+                onNamePlateRemoved(eventHandler, event, ...)
+            elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
+                onCombatLogEvent(eventHandler)
+            end
+        end)
 
-        NUM_OBJECTS_HARDLIMIT = 20
-
-        if settings.usedFormat == formats.Classic then
-            if not ClassicDummyFrame then
-                ClassicDummyFrame = CreateFrame("Frame", nil, UIParent)
-                ClassicDummyFrame:ClearAllPoints()
-                ClassicDummyFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-                ClassicDummyFrame:SetSize(100, 50)
+        if settings.usedFormat == formats.Default or settings.usedFormat == formats.Classic then
+            -- hide the other format things
+            if stackingContainer then
+                -- TODO remove from Move Hud mode
+                stackingContainer:SetScript("OnUpdate", nil)
+                stackingContainer:Hide()
+                wipe(stackingContainer.activeFrames)
             end
 
-            CRITICAL_ANIMATION = animateTextCriticalForClassicFormat
-            NORMAL_ANIMATION = animateTextNormalForClassicFormat
+            NUM_OBJECTS_HARDLIMIT = 20
 
-            if settings.classicFormatAnchorPoint == "Nameplates" then
+            if settings.usedFormat == formats.Classic then
+                if not ClassicDummyFrame then
+                    ClassicDummyFrame = CreateFrame("Frame", nil, UIParent)
+                    ClassicDummyFrame:ClearAllPoints()
+                    ClassicDummyFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+                    ClassicDummyFrame:SetSize(100, 50)
+                    ClassicDummyFrame:EnableMouse(false)
+                end
+
+                CRITICAL_ANIMATION = animateTextCriticalForClassicFormat
+                NORMAL_ANIMATION = animateTextNormalForClassicFormat
+
+                if settings.classicFormatAnchorPoint == "Nameplates" then
+                    eventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+                    eventHandler:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+
+                    RescanAllNameplates()
+                else
+                    eventHandler:UnregisterEvent("NAME_PLATE_UNIT_ADDED")
+                    eventHandler:UnregisterEvent("NAME_PLATE_UNIT_REMOVED")
+
+                    wipe(unitToGuid)
+                    wipe(guidToUnit)
+                end
+
+                ClassicDummyFrame:Show()
+            else
+                CRITICAL_ANIMATION = animateTextCriticalForDefaultFormat
+                NORMAL_ANIMATION = animateTextNormalForDefaultFormat
+
                 eventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED")
                 eventHandler:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
-            else
-                eventHandler:UnregisterEvent("NAME_PLATE_UNIT_ADDED")
-                eventHandler:UnregisterEvent("NAME_PLATE_UNIT_REMOVED")
 
-                wipe(unitToGuid)
-                wipe(guidToUnit)
+                RescanAllNameplates()
             end
-        else
-            CRITICAL_ANIMATION = animateTextCriticalForDefaultFormat
-            NORMAL_ANIMATION = animateTextNormalForDefaultFormat
+        elseif settings.usedFormat == formats.Stacking then
+            if not stackingContainer then
+                stackingContainer = CreateFrame("Frame", nil, UIParent)
+                stackingContainer:SetSize(200, 400)
+                stackingContainer:EnableMouse(false)
+                stackingContainer:ClearAllPoints()
+                GW.RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", ALL .. ",FCT", nil, {"default", "scaleable"})
+                stackingContainer:ClearAllPoints()
+                stackingContainer:SetPoint("TOPLEFT", stackingContainer.gwMover)
+                stackingContainer.activeFrames = {}
+            end
 
-            eventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED")
-            eventHandler:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
-        end
-    elseif settings.usedFormat == formats.Stacking then
-        if not stackingContainer then
-            stackingContainer = CreateFrame("Frame", nil, UIParent)
-            stackingContainer:SetSize(200, 400)
-            stackingContainer:EnableMouse(false)
-            stackingContainer:ClearAllPoints()
-            GW.RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", ALL .. ",FCT", nil, {"default", "scaleable"})
-            stackingContainer:ClearAllPoints()
-            stackingContainer:SetPoint("TOPLEFT", stackingContainer.gwMover)
+            if ClassicDummyFrame then
+                ClassicDummyFrame:Hide()
+            end
+
+            CRITICAL_ANIMATION = animateTextCriticalForStackingFormat
+            NORMAL_ANIMATION = animateTextNormalForStackingFormat
+
+            NUM_OBJECTS_HARDLIMIT = 50
+
+            eventHandler:UnregisterEvent("NAME_PLATE_UNIT_ADDED")
+            eventHandler:UnregisterEvent("NAME_PLATE_UNIT_REMOVED")
+
+            wipe(unitToGuid)
+            wipe(guidToUnit)
+
+            wipe(stackingContainer.activeFrames)
             stackingContainer:SetScript("OnUpdate", stackingContainerOnUpdate)
-            stackingContainer.activeFrames = {}
+            stackingContainer:Show()
         end
-
-        CRITICAL_ANIMATION = animateTextCriticalForStackingFormat
-        NORMAL_ANIMATION = animateTextNormalForStackingFormat
-
-        NUM_OBJECTS_HARDLIMIT = 50
-
-        eventHandler:UnregisterEvent("NAME_PLATE_UNIT_ADDED")
-        eventHandler:UnregisterEvent("NAME_PLATE_UNIT_REMOVED")
+    else
+        eventHandler:UnregisterAllEvents()
+        eventHandler:SetScript("OnEvent", nil)
 
         wipe(unitToGuid)
         wipe(guidToUnit)
 
-        stackingContainer:Show()
+        if stackingContainer then
+            -- TODO remove from Move Hud mode
+            stackingContainer:SetScript("OnUpdate", nil)
+            stackingContainer:Hide()
+        end
+        if ClassicDummyFrame then
+            ClassicDummyFrame:Hide()
+        end
     end
 end
 GW.FloatingCombatTextToggleFormat = ToggleFormat
 
-local function LoadDamageText()
+local function LoadDamageText(activate)
     UpdateSettings()
-
-    ToggleFormat()
-
+    ToggleFormat(activate)
     playerGUID = UnitGUID("player")
-
-    eventHandler:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-
-    eventHandler:SetScript("OnEvent", function(_, event, ...)
-        if event == "NAME_PLATE_UNIT_ADDED" then
-            onNamePlateAdded(eventHandler, event, ...)
-        elseif event == "NAME_PLATE_UNIT_REMOVED" then
-            onNamePlateRemoved(eventHandler, event, ...)
-        elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-            onCombatLogEvent(eventHandler)
-        end
-    end)
 end
 GW.LoadDamageText = LoadDamageText

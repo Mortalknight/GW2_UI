@@ -636,7 +636,7 @@ local function InitPanel(panel, hasScroll)
                         SetSetting(self.optionName, self.option, self:GetParent():GetParent().data.perSpec)
 
                         if v.callback then
-                            v.callback()
+                            v.callback(self.option)
                         end
                         --Check all dependencies on this option
                         checkDependenciesOnLoad()
@@ -1049,7 +1049,7 @@ local function LoadSettings()
             if event == "PLAYER_REGEN_DISABLED" and self:IsShown() then
                 self:Hide()
                 mf:Hide()
-                DEFAULT_CHAT_FRAME:AddMessage(("*GW2GW2_UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
+                DEFAULT_CHAT_FRAME:AddMessage(("*GW2_UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
                 sWindow.wasOpen = true
             elseif event == "PLAYER_REGEN_ENABLED" and self.wasOpen then
                 self:Show()

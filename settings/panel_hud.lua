@@ -263,7 +263,18 @@ local function LoadHudPanel(sWindow)
         COMBAT_TEXT_LABEL,
         COMBAT_SUBTEXT,
         "GW_COMBAT_TEXT_MODE",
-        function() GW.ShowRlPopup = true end,
+        function(value)
+            if value == "GW2" then
+                C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+                GW.LoadDamageText(true)
+            elseif value == "BLIZZARD" then
+                C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
+                GW.FloatingCombatTextToggleFormat(false)
+            else
+                C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+                GW.FloatingCombatTextToggleFormat(false)
+            end
+        end,
         {"GW2", "BLIZZARD", "OFF"},
         {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS},
         nil,
@@ -279,7 +290,7 @@ local function LoadHudPanel(sWindow)
         L["GW2 floating combat text style"],
         nil,
         "GW_COMBAT_TEXT_STYLE",
-        function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat() end,
+        function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat(true) end,
         {"Default", "Stacking", "Classic"},
         {DEFAULT, L["Stacking"], EXPANSION_NAME0},
         nil,
@@ -293,7 +304,7 @@ local function LoadHudPanel(sWindow)
         L["GW2 floating combat text style"],
         nil,
         "GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR",
-        function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat() end,
+        function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat(true) end,
         {"Nameplates", "Center"},
         {NAMEPLATES_LABEL, L["Center of screen"]},
         nil,
