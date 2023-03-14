@@ -55,6 +55,9 @@ local STACKING_MOVESPEED = 1
 local CRITICAL_SCALE_MODIFIER = 1.5
 local PET_SCALE_MODIFIER = 0.7
 
+local CLASSIC_NUM_HITS = 0
+local CLASSIC_AVARAGE_HIT = 0
+
 local NORMAL_ANIMATION_OFFSET_Y = 20
 
 
@@ -549,6 +552,25 @@ local function getSchoolIconMap(self, school)
     end
 end
 
+local function calcAvarageHit(amount)
+  if CLASSIC_NUM_HITS>100 then
+     return
+   end
+   CLASSIC_NUM_HITS = CLASSIC_NUM_HITS + 1
+   CLASSIC_AVARAGE_HIT = CLASSIC_AVARAGE_HIT + amount;
+end
+local function getAvrageHitModifier(amount,critical)
+  if amount==nil then return 0 end
+
+	local a = CLASSIC_AVARAGE_HIT / CLASSIC_NUM_HITS;
+
+	local n = math.min(1.5,math.max(0.7,(amount / a)))
+	if critical then
+		return n / 2
+	end
+	return n
+end
+
 --STACKING
 local function stackingContainerOnUpdate ()
     -- for each damage text instance
@@ -751,14 +773,14 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
         0,
         1,
         GetTime(),
-        CRITICAL_ANIMATION_DURATION,
+        CRITICAL_ANIMATION_DURATION  *( frame.dynamicScale + CRITICAL_SCALE_MODIFIER) ,
         function(p)
-            if p < 0.25 then
-                local scaleFade = p - 0.25
 
-                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.textScaleModifier, scaleFade / 0.25))
+          if p < 0.05 and not frame.periodic then
+                local scaleFade = p - 0.05
+                frame:SetScale(math.max(0.1,GW.lerp(1.5 * frame.dynamicScale * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.dynamicScale, scaleFade / 0.05)))
             else
-                frame:SetScale(frame.textScaleModifier)
+                frame:SetScale(math.max(0.1,frame.dynamicScale * frame.textScaleModifier  * CRITICAL_SCALE_MODIFIER ))
             end
 
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
@@ -787,7 +809,10 @@ AFP("animateTextCriticalForClassicFormat", animateTextCriticalForClassicFormat)
 
 local function animateTextNormalForClassicFormat(frame, gridIndex,x,y)
     local aName = frame:GetName()
-
+    local animationDuration =  NORMAL_ANIMATION_DURATION * frame.dynamicScale
+  	if frame.periodic then
+  		animationDuration  = NORMAL_ANIMATION_DURATION * 2
+  	end
     AddToAnimation(
         aName,
         0,
@@ -795,18 +820,19 @@ local function animateTextNormalForClassicFormat(frame, gridIndex,x,y)
         GetTime(),
         NORMAL_ANIMATION_DURATION,
         function(p)
-            frame:SetScale(1 * frame.textScaleModifier)
-            frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
 
-            if p > 0.7 then
-                local alphaFade = p - 0.7
-                local lerp = GW.lerp(1, 0, alphaFade / 0.3)
-                if lerp < 0 then lerp = 0 end
-                if lerp > 1 then lerp = 1 end
-                frame:SetAlpha(lerp)
-            else
-                frame:SetAlpha(1)
-            end
+          if p < 0.10 and not frame.periodic then
+              local scaleFade = p - 0.10
+              frame:SetScale(math.max(0.1,GW.lerp(1.2 * frame.dynamicScale * frame.textScaleModifier , frame.dynamicScale, scaleFade / 0.10)))
+          else
+            frame:SetScale(math.max(0.1,frame.dynamicScale * frame.textScaleModifier))
+          end
+        if p > 0.9 then
+              local alphaFade = p - 0.9
+              frame:SetAlpha(GW.lerp(1, 0, alphaFade / 0.1))
+          else
+              frame:SetAlpha(1)
+          end
         end,
         nil,
         function()
@@ -951,7 +977,8 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
                 namePlatesOffsets[nameplate] = 0
             end
         end
-
+        calcAvarageHit(amount)
+        f.dynamicScale = getAvrageHitModifier(amount,critical)
         if critical then
             if namePlatesCriticalOffsets[nameplate] == nil then
                 namePlatesCriticalOffsets[nameplate] = 0
@@ -961,6 +988,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
                     namePlatesCriticalOffsets[nameplate] = 0
                 end
             end
+
             if settings.usedFormat == formats.Default then
                 CRITICAL_ANIMATION(f, namePlatesCriticalOffsets[nameplate])
             else
