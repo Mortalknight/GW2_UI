@@ -952,7 +952,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
             end
         end
 
-        if critical and not periodic then
+        if critical then
             if namePlatesCriticalOffsets[nameplate] == nil then
                 namePlatesCriticalOffsets[nameplate] = 0
             else
@@ -982,7 +982,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         setElementData(f, critical, source, missType, blocked, absorbed, periodic,school)
 
         -- add to animation here
-        if critical and not periodic then
+        if critical then
             CRITICAL_ANIMATION(f)
         else
             NORMAL_ANIMATION(f)
