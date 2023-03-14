@@ -274,6 +274,34 @@ local function LoadHudPanel(sWindow)
     addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
 
+    addOptionDropdown(
+        fct.scroll.scrollchild,
+        L["GW2 floating combat text style"],
+        nil,
+        "GW_COMBAT_TEXT_STYLE",
+        function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat() end,
+        {"Default", "Stacking", "Classic"},
+        {DEFAULT, L["Stacking"], EXPANSION_NAME0},
+        nil,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        nil,
+        "FloatingCombatText"
+    )
+
+    addOptionDropdown(
+        fct.scroll.scrollchild,
+        L["GW2 floating combat text style"],
+        nil,
+        "GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR",
+        function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat() end,
+        {"Nameplates", "Center"},
+        {NAMEPLATES_LABEL, L["Center of screen"]},
+        nil,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = EXPANSION_NAME0},
+        nil,
+        "FloatingCombatText"
+    )
+
     InitPanel(general, true)
     InitPanel(minimap, true)
     InitPanel(worldmap, true)

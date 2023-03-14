@@ -513,8 +513,8 @@ local usedColorTable
 local function UpdateSettings()
     settings.useBlizzardColor = GW.GetSetting("GW_COMBAT_TEXT_BLIZZARD_COLOR")
     settings.useCommaFormat = GW.GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT")
-
-    settings.usedFormat = formats.Classic -- Default
+    settings.usedFormat = GW.GetSetting("GW_COMBAT_TEXT_STYLE")
+    settings.classicFormatAnchorPoint = GW.GetSetting("GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR")
 
     usedColorTable = settings.useBlizzardColor and colorTable.blizzard or colorTable.gw
 end
@@ -919,22 +919,26 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
 
     if settings.usedFormat == formats.Default or settings.usedFormat == formats.Classic then
         local nameplate
-        local unit = guidToUnit[guid]
-
-        if unit then
-            nameplate = C_NamePlate.GetNamePlateForUnit(unit)
-        end
-
-        if nameplate == nil   then
-            if settings.usedFormat == formats.Default then
-              return
-            end
+        if settings.classicFormatAnchorPoint == "Center" then
             nameplate = ClassicDummyFrame
+        else
+            local unit = guidToUnit[guid]
 
+            if unit then
+                nameplate = C_NamePlate.GetNamePlateForUnit(unit)
+                f.unit = unit
+            end
+
+            if not nameplate then
+                if settings.usedFormat == formats.Default then
+                    return
+                else
+                    nameplate = ClassicDummyFrame -- use as fallback if namplates out off range
+                end
+            end
         end
 
         f.anchorFrame = nameplate
-        f.unit = unit
         f.string:SetJustifyH("Left")
 
         setElementData(f, critical, source, missType, blocked, absorbed, periodic,school)
@@ -958,16 +962,16 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
                 end
             end
             if settings.usedFormat == formats.Default then
-              CRITICAL_ANIMATION(f, namePlatesCriticalOffsets[namePlate])
+                CRITICAL_ANIMATION(f, namePlatesCriticalOffsets[nameplate])
             else
-              CRITICAL_ANIMATION(f, classicPositionGrid(nameplate))
+                CRITICAL_ANIMATION(f, classicPositionGrid(nameplate))
             end
             return
         end
         if settings.usedFormat == formats.Default then
-          NORMAL_ANIMATION(f, namePlatesOffsets[nameplate])
+            NORMAL_ANIMATION(f, namePlatesOffsets[nameplate])
         else
-          NORMAL_ANIMATION(f, classicPositionGrid(nameplate))
+            NORMAL_ANIMATION(f, classicPositionGrid(nameplate))
         end
     elseif settings.usedFormat == formats.Stacking then
         f.anchorFrame = stackingContainer
@@ -1098,13 +1102,24 @@ local function ToggleFormat()
 
             CRITICAL_ANIMATION = animateTextCriticalForClassicFormat
             NORMAL_ANIMATION = animateTextNormalForClassicFormat
+
+            if settings.classicFormatAnchorPoint == "Nameplates" then
+                eventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+                eventHandler:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
             else
+                eventHandler:UnregisterEvent("NAME_PLATE_UNIT_ADDED")
+                eventHandler:UnregisterEvent("NAME_PLATE_UNIT_REMOVED")
+
+                wipe(unitToGuid)
+                wipe(guidToUnit)
+            end
+        else
             CRITICAL_ANIMATION = animateTextCriticalForDefaultFormat
             NORMAL_ANIMATION = animateTextNormalForDefaultFormat
-        end
 
-        eventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED")
-        eventHandler:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+            eventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+            eventHandler:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
+        end
     elseif settings.usedFormat == formats.Stacking then
         if not stackingContainer then
             stackingContainer = CreateFrame("Frame", nil, UIParent)
@@ -1121,7 +1136,7 @@ local function ToggleFormat()
         CRITICAL_ANIMATION = animateTextCriticalForStackingFormat
         NORMAL_ANIMATION = animateTextNormalForStackingFormat
 
-        NUM_OBJECTS_HARDLIMIT = 50 -- testing
+        NUM_OBJECTS_HARDLIMIT = 50
 
         eventHandler:UnregisterEvent("NAME_PLATE_UNIT_ADDED")
         eventHandler:UnregisterEvent("NAME_PLATE_UNIT_REMOVED")
@@ -1132,6 +1147,7 @@ local function ToggleFormat()
         stackingContainer:Show()
     end
 end
+GW.FloatingCombatTextToggleFormat = ToggleFormat
 
 local function LoadDamageText()
     UpdateSettings()
