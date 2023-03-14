@@ -1142,6 +1142,10 @@ local function ToggleFormat(activate)
 
                 ClassicDummyFrame:Show()
             else
+                if ClassicDummyFrame then
+                    ClassicDummyFrame:Hide()
+                end
+
                 CRITICAL_ANIMATION = animateTextCriticalForDefaultFormat
                 NORMAL_ANIMATION = animateTextNormalForDefaultFormat
 
@@ -1149,6 +1153,8 @@ local function ToggleFormat(activate)
                 eventHandler:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 
                 RescanAllNameplates()
+
+                wipe(namePlateClassicGrid)
             end
         elseif settings.usedFormat == formats.Stacking then
             if not stackingContainer then
@@ -1176,8 +1182,9 @@ local function ToggleFormat(activate)
 
             wipe(unitToGuid)
             wipe(guidToUnit)
-
+            wipe(namePlateClassicGrid)
             wipe(stackingContainer.activeFrames)
+
             stackingContainer:SetScript("OnUpdate", stackingContainerOnUpdate)
             stackingContainer:Show()
         end
