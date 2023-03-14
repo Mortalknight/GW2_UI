@@ -620,10 +620,7 @@ local function animateTextCriticalForStackingFormat(frame)
 
             if p > 0.7 then
                 local alphaFade = p - 0.7
-                local lerp = GW.lerp(1, 0, alphaFade / 0.3)
-                if lerp < 0 then lerp = 0 end
-                if lerp > 1 then lerp = 1 end
-                frame:SetAlpha(lerp)
+                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, alphaFade / 0.3))))
             else
                 frame:SetAlpha(1)
             end
@@ -660,10 +657,7 @@ local function animateTextNormalForStackingFormat(frame)
             end
             if p > 0.7 then
                 local alphaFade = p - 0.7
-                local lerp = GW.lerp(1, 0, alphaFade / 0.3)
-                if lerp < 0 then lerp = 0 end
-                if lerp > 1 then lerp = 1 end
-                frame:SetAlpha(lerp)
+                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, alphaFade / 0.3))))
             else
                 frame:SetAlpha(1)
             end
@@ -707,10 +701,7 @@ local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
 
             if p > 0.7 then
                 local alphaFade = p - 0.7
-                local lerp = GW.lerp(1, 0, alphaFade / 0.3)
-                if lerp < 0 then lerp = 0 end
-                if lerp > 1 then lerp = 1 end
-                frame:SetAlpha(lerp)
+                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, alphaFade / 0.3))))
             else
                 frame:SetAlpha(1)
             end
@@ -747,10 +738,7 @@ local function animateTextNormalForDefaultFormat(frame, offsetIndex)
 
             if p > 0.7 then
                 local alphaFade = p - 0.7
-                local lerp = GW.lerp(1, 0, alphaFade / 0.3)
-                if lerp < 0 then lerp = 0 end
-                if lerp > 1 then lerp = 1 end
-                frame:SetAlpha(lerp)
+                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, alphaFade / 0.3))))
             else
                 frame:SetAlpha(1)
             end
@@ -787,10 +775,7 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
 
             if p > 0.7 then
                 local alphaFade = p - 0.7
-                local lerp = GW.lerp(1, 0, alphaFade / 0.3)
-                if lerp < 0 then lerp = 0 end
-                if lerp > 1 then lerp = 1 end
-                frame:SetAlpha(lerp)
+                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, alphaFade / 0.3))))
             else
                 frame:SetAlpha(1)
             end
@@ -820,16 +805,16 @@ local function animateTextNormalForClassicFormat(frame, gridIndex,x,y)
         GetTime(),
         NORMAL_ANIMATION_DURATION,
         function(p)
-
-          if p < 0.10 and not frame.periodic then
-              local scaleFade = p - 0.10
-              frame:SetScale(math.max(0.1,GW.lerp(1.2 * frame.dynamicScale * frame.textScaleModifier , frame.dynamicScale, scaleFade / 0.10)))
-          else
-            frame:SetScale(math.max(0.1,frame.dynamicScale * frame.textScaleModifier))
-          end
-        if p > 0.9 then
+            frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
+            if p < 0.10 and not frame.periodic then
+                local scaleFade = p - 0.10
+                frame:SetScale(math.max(0.1,GW.lerp(1.2 * frame.dynamicScale * frame.textScaleModifier , frame.dynamicScale, scaleFade / 0.10)))
+            else
+                frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier))
+            end
+            if p > 0.9 then
               local alphaFade = p - 0.9
-              frame:SetAlpha(GW.lerp(1, 0, alphaFade / 0.1))
+              frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, alphaFade / 0.1))))
           else
               frame:SetAlpha(1)
           end
@@ -869,6 +854,7 @@ local function createNewFontElement(self)
 
     local f = CreateFrame("FRAME", "GwDamageTextElement" .. createdFramesIndex, self, "GwDamageText")
     f.string:SetJustifyV("MIDDLE")
+    f.string:SetJustifyH("Left")
 
     f.id = createdFramesIndex
     table.insert(fontStringList, f)
@@ -923,6 +909,7 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
 
     self.pet = source == "pet"
     self.textScaleModifier = self.pet and PET_SCALE_MODIFIER or 1
+    self.periodic = periodic
 
     local colorSource = (source == "pet" or source == "melee") and source or source == "heal" and "heal" or "spell"
 
@@ -964,8 +951,10 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
             end
         end
 
+        calcAvarageHit(amount)
+
         f.anchorFrame = nameplate
-        f.string:SetJustifyH("Left")
+        f.dynamicScale = getAvrageHitModifier(amount,critical)
 
         setElementData(f, critical, source, missType, blocked, absorbed, periodic, school)
 
@@ -977,8 +966,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
                 namePlatesOffsets[nameplate] = 0
             end
         end
-        calcAvarageHit(amount)
-        f.dynamicScale = getAvrageHitModifier(amount,critical)
+
         if critical then
             if namePlatesCriticalOffsets[nameplate] == nil then
                 namePlatesCriticalOffsets[nameplate] = 0
@@ -1003,7 +991,6 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         end
     elseif settings.usedFormat == formats.Stacking then
         f.anchorFrame = stackingContainer
-        f.string:SetJustifyH("Left")
         -- Add damage text to array of active Elements
         table.insert(stackingContainer.activeFrames, f)
 
