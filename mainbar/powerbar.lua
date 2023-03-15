@@ -37,38 +37,24 @@ local function powerBar_OnUpdate(self)
         powerPrec = math.min(1, power / powerMax)
     end
 
-    local bit = powerBarWidth / 15
-    local spark = bit * math.floor(15 * (powerPrec))
 
-    local spark_current = (bit * (15 * (powerPrec)) - spark) / bit
 
-    local bI = math.min(16, math.max(1, math.floor(17 - (16 * spark_current))))
-
-    self.powerCandySpark:SetTexCoord(
-        bloodSpark[bI].left,
-        bloodSpark[bI].right,
-        bloodSpark[bI].top,
-        bloodSpark[bI].bottom
-    )
-    local barPoint = spark + 3
     if powerPrec == 0 then
-        self.bar:Hide()
+        self:Hide()
     else
-        self.bar:Show()
+        self:Show()
     end
 
-    self.powerCandySpark:SetPoint("LEFT", self.bar, "RIGHT", -2, 0)
-    self.bar:SetPoint("RIGHT", self, "LEFT", barPoint, 0)
-
-    self.powerBar:SetValue(0)
-    self.powerCandy:SetValue(0)
+    print("Onupdate")
+    self:SetFillAmount(0)
+--    self.powerCandy:SetValue(0)
 
     if self.textUpdate < GetTime() then
         self.powerBarString:SetText(CommaValue(powerMax * powerPrec))
         self.textUpdate = GetTime() + 0.2
     end
 
-    self.animationCurrent = powerPrec
+  --  self.animationCurrent = powerPrec
 end
 GW.AddForProfiling("playerhud", "powerBar_OnUpdate", powerBar_OnUpdate)
 
@@ -82,7 +68,7 @@ local function UpdatePowerData(self, forcePowerType, powerToken)
     local power = UnitPower("player", forcePowerType)
     local powerMax = UnitPowerMax("player", forcePowerType)
     local powerPrec
-    local powerBarWidth = self.statusBar:GetWidth()
+    local powerBarWidth = self:GetWidth()
 
     self.powerType = forcePowerType
     self.lostKnownPower = power
@@ -98,12 +84,24 @@ local function UpdatePowerData(self, forcePowerType, powerToken)
 
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
-        self.statusBar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
-        self.candy.spark:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
-        self.candy:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
-        self.bar:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
+        self:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+    --    self.candy.spark:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
+      --  self.candy:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+    --    self.bar:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
+    self:SetFillAmount(powerPrec)
+    self.label:SetText(CommaValue(self.lostKnownPower))
 
+    if self.lastPowerType ~= self.powerType and self == GwPlayerPowerBar then
+        self.lastPowerType = self.powerType
+        self.powerBarString = self.label
+    if self.powerType == nil or self.powerType == 1 or self.powerType == 6 or self.powerType == 13 or self.powerType == 8 then
+        self.barOnUpdate = nil
+    else
+        self.barOnUpdate = powerBar_OnUpdate
+    end
+  end
+--[[
     if self.animationCurrent == nil then
         self.animationCurrent = 0
     end
@@ -173,11 +171,13 @@ local function UpdatePowerData(self, forcePowerType, powerToken)
             self:SetScript("OnUpdate", powerBar_OnUpdate)
         end
     end
+    ]]
 end
 GW.UpdatePowerData = UpdatePowerData
 
 local function LoadPowerBar()
-    local playerPowerBar = CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
+    local playerPowerBar = GW.createNewStatusbar("GwPlayerPowerBar",UIParent,nil,true)
+    --CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
 
     GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "PowerBar_pos", ALL .. ",Unitframe,Power", nil, {"default", "scaleable"}, true)
 
@@ -194,7 +194,7 @@ local function LoadPowerBar()
     end
     GW.MixinHideDuringPetAndOverride(playerPowerBar)
 
-    playerPowerBar.candy.spark:ClearAllPoints()
+
 
     playerPowerBar:SetScript(
         "OnEvent",
@@ -211,7 +211,7 @@ local function LoadPowerBar()
         end
     )
 
-    playerPowerBar.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 14)
+    playerPowerBar.label:SetFont(DAMAGE_TEXT_FONT, 14)
 
     playerPowerBar:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
     playerPowerBar:RegisterUnitEvent("UNIT_MAXPOWER", "player")
