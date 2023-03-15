@@ -247,10 +247,6 @@ local function setShaman(f)
         MultiCastActionBarFrame:SetParent(f)
         MultiCastActionBarFrame:ClearAllPoints()
         MultiCastActionBarFrame:SetAllPoints(f)
-
-        f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
-
     elseif InCombatLockdown() then
         f.Script:RegisterEvent("PLAYER_REGEN_ENABLED")
     end
