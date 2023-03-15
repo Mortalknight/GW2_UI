@@ -241,24 +241,17 @@ GW.AddForProfiling("classpowers", "setDruid", setDruid)
 
 --SHAMAN
 local function setShaman(f)
-    if MultiCastActionBarFrame:GetParent() ~= f and not InCombatLockdown() then
-        MultiCastActionBarFrame.SetParent = nil
-        MultiCastActionBarFrame.ClearAllPoints = nil
-        MultiCastActionBarFrame.SetAllPoints = nil
-        MultiCastActionBarFrame.SetPoint = nil
+    if not InCombatLockdown() then
+        UIPARENT_MANAGED_FRAME_POSITIONS.MultiCastActionBarFrame = nil
 
         MultiCastActionBarFrame:SetParent(f)
         MultiCastActionBarFrame:ClearAllPoints()
         MultiCastActionBarFrame:SetAllPoints(f)
 
-        MultiCastActionBarFrame.SetParent = GW.NoOp
-        MultiCastActionBarFrame.ClearAllPoints = GW.NoOp
-        MultiCastActionBarFrame.SetAllPoints = GW.NoOp
-        MultiCastActionBarFrame.SetPoint = GW.NoOp
-
         f:ClearAllPoints()
         f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, 0)
-    elseif MultiCastActionBarFrame:GetParent() ~= f and InCombatLockdown() then
+
+    elseif InCombatLockdown() then
         f.Script:RegisterEvent("PLAYER_REGEN_ENABLED")
     end
 
