@@ -11,7 +11,7 @@ local uniqueID  = 0
 
 
 
-  
+
   Bar:SetFillAmount(amount)
     Sets the fill amount of the bar to bar, Animates over time if smooth was set when bar was created
 
@@ -33,7 +33,10 @@ local function getAnimationDuration(self,val1,val2,width)
   local t = (width * math.abs(val1 - val2)) / speed
   return t
 end
-
+local function GetFillAmount(self)
+  if not self.fillAmount then return 0 end
+  return self.fillAmount
+end
 local function SetFillAmount(self,value)
 
   local totalWidth = self:GetWidth()
