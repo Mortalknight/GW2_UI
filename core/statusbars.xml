@@ -2,7 +2,7 @@
 ..\FrameXML\UI.xsd">
 
   <StatusBar name="GwStatusBarTemplate" minValue="0" maxValue="1" virtual="true">
-      <Size x="400" y="24"></Size>
+      <Size x="314" y="18"></Size>
       <Anchors>
           <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
       </Anchors>
@@ -11,13 +11,6 @@
         <Layer level="BACKGROUND">
           <Texture name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
               <Size x="318" y="20"></Size>
-          </Texture>
-          <Texture parentKey="test" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
-              <Size x="318" y="20"></Size>
-              <Anchors>
-                  <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
-                  <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="-10"/>
-              </Anchors>
           </Texture>
             <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
                 <Size x="314" y="2"/>
@@ -52,8 +45,8 @@
         </Texture>
         </Layer>
           <Layer level="OVERLAY" textureSubLevel="2">
-              <FontString parentKey="currentValue" text="Unknown" justifyH="CENTER">
-                  <Size x="4" y="20"></Size>
+              <FontString parentKey="label" text="Unknown" justifyH="CENTER">
+                  <Size x="200" y="20"></Size>
                   <Anchors>
                       <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                   </Anchors>

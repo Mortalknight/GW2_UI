@@ -5,9 +5,26 @@ local lerp = GW.lerp
 local numSpritesInAnimation = 15
 local uniqueID  = 0
 
-local function getAnimationDuration(val1,val2,width)
+--[[
+
+
+  Bar:SetFillAmount(amount)
+    Sets the fill amount of the bar to bar, Animates over time if smooth was set when bar was created
+
+  Bar:GetFillAmount()
+    returns the bars current fill amount. if animating returns the current animating value
+
+  bar.barOnUpdate
+      used for hooking custom onupdate function to the bars animation. Does nothing if the bar is not set to animate
+
+
+
+]]
+
+local function getAnimationDuration(self,val1,val2,width)
   if width ==nil then width = 0 end
-  local t = (width * math.abs(val1 - val2)) / 100
+  local speed = self.speed or 100
+  local t = (width * math.abs(val1 - val2)) / speed
   return t
 end
 
@@ -25,6 +42,7 @@ local function SetFillAmount(self,value)
   local bI = math.min(numSpritesInAnimation, math.max(1, math.floor((numSpritesInAnimation ) - (numSpritesInAnimation * spark_current))))
   local fill_threshold = (1/numSpritesInAnimation) * ( math.floor(numSpritesInAnimation * value) + 1)
   local maskTest = (totalWidth * fill_threshold) - bit
+
   if not self.bI or bI~=self.bI then
     local newMask = self.maskContainer["mask"..bI]
     self.bar:AddMaskTexture(newMask)
@@ -44,7 +62,7 @@ local function animateStatusBar(self,value)
 
   local to = value
   local from = self:GetFillAmount()
-  local duration = getAnimationDuration(to,from,self:GetWidth())
+  local duration = getAnimationDuration(self,to,from,self:GetWidth())
 
   AddToAnimation("GWBAR"..self.uniqueID, from, to, GetTime(), duration, function(p)
 
@@ -62,7 +80,11 @@ local function  barUpdate(self,delta)
   local newValue = lerpEaseOut(self.animatedStartValue,self.animatedValue,self.animatedTime/self.animatedDuration)
   SetFillAmount(self,newValue)
   if self.animatedTime>=self.animatedDuration then
+  --  SetFillAmount(self,self.animatedValue)
     self:SetScript("OnUpdate",nil)
+  end
+  if self.barOnUpdate then
+    self.barOnUpdate(self)
   end
 --[[
     local direction = 1;
@@ -85,8 +107,8 @@ local function onupdate_AnimateBar(self,value)
     self.animatedValue = value;
     self.animatedStartValue = GetFillAmount(self)
     self.animatedTime =0
-    self.animatedDuration = getAnimationDuration(self.animatedStartValue , self.animatedValue,self:GetWidth())
-    self.test:SetPoint("TOPRIGHT",self.bar,"BOTTOMLEFT",self:GetWidth()*value,0)
+    self.animatedDuration = getAnimationDuration(self,self.animatedStartValue , self.animatedValue,self:GetWidth())
+
 
     self:SetScript("OnUpdate",barUpdate)
 end
@@ -107,9 +129,10 @@ local function hookStatusbarBehaviour(statusBar,smooth)
 
 
 end
-
-local function createNewStatusBar(parent,smooth)
-  local statusBar = CreateFrame("StatusBar",nil, parent, "GwStatusBarTemplate")
+GW.hookStatusbarBehaviour = hookStatusbarBehaviour
+local function createNewStatusBar(name,parent,template,smooth)
+  template = template or "GwStatusBarTemplate"
+  local statusBar = CreateFrame("StatusBar",name, parent, template)
   hookStatusbarBehaviour(statusBar,smooth)
   return statusBar
 end
