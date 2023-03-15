@@ -266,14 +266,22 @@ local function LoadHudPanel(sWindow)
         function(value)
             if value == "GW2" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+                if GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS") then
+                    C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+                else
+                    C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
+                end
                 GW.LoadDamageText(true)
             elseif value == "BLIZZARD" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
+                C_CVar.SetCVar("floatingCombatTextCombafloatingCombatTextCombatHealingtDamage", "1")
                 GW.FloatingCombatTextToggleFormat(false)
             else
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+                C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
                 GW.FloatingCombatTextToggleFormat(false)
             end
+
         end,
         {"GW2", "BLIZZARD", "OFF"},
         {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS},
@@ -301,7 +309,7 @@ local function LoadHudPanel(sWindow)
 
     addOptionDropdown(
         fct.scroll.scrollchild,
-        L["GW2 floating combat text style"],
+        L["Classic combat text anchoring"],
         nil,
         "GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR",
         function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat(true) end,
@@ -312,6 +320,7 @@ local function LoadHudPanel(sWindow)
         nil,
         "FloatingCombatText"
     )
+    addOption(fct.scroll.scrollchild, OPTION_TOOLTIP_COMPACT_UNIT_FRAME_PROFILE_DISPLAYHEALPREDICTION, nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
 
     InitPanel(general, true)
     InitPanel(minimap, true)
