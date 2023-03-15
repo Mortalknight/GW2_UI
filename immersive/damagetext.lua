@@ -543,7 +543,9 @@ local function getSchoolIndex(school)
     end
 end
 local function getSchoolIconMap(self, school)
+
     local iconID = getSchoolIndex(school)
+
     if iconID then
         self:SetTexCoord(getSpriteByIndex(elementIcons, iconID))
         return true
@@ -569,6 +571,20 @@ local function getAvrageHitModifier(amount,critical)
 		return n / 2
 	end
 	return n
+end
+local function classicPositionGrid(namePlate)
+    if namePlateClassicGrid[namePlate] == nil then
+        namePlateClassicGrid[namePlate] = {}
+    end
+
+    for i = 1, 100 do
+        if namePlateClassicGrid[namePlate][i] == nil then
+            namePlateClassicGrid[namePlate][i] = true
+            return i, classicGridData[i].x, classicGridData[i].y
+        end
+    end
+
+    return nil, 1, 0
 end
 
 --STACKING
@@ -763,7 +779,10 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
         GetTime(),
         CRITICAL_ANIMATION_DURATION  *( frame.dynamicScale + CRITICAL_SCALE_MODIFIER) ,
         function(p)
-
+          if frame.anchorFrame==nil or not frame.anchorFrame:IsShown() then
+            frame.anchorFrame = ClassicDummyFrame
+            classicPositionGrid(frame.anchorFrame)
+          end
           if p < 0.05 and not frame.periodic then
                 local scaleFade = p - 0.05
                 frame:SetScale(math.max(0.1,GW.lerp(1.5 * frame.dynamicScale * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.dynamicScale, scaleFade / 0.05)))
@@ -805,6 +824,10 @@ local function animateTextNormalForClassicFormat(frame, gridIndex,x,y)
         GetTime(),
         NORMAL_ANIMATION_DURATION,
         function(p)
+            if frame.anchorFrame==nil or not frame.anchorFrame:IsShown() then
+              frame.anchorFrame = ClassicDummyFrame
+              classicPositionGrid(frame.anchorFrame)
+            end
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
             if p < 0.10 and not frame.periodic then
                 local scaleFade = p - 0.10
@@ -831,20 +854,7 @@ local function animateTextNormalForClassicFormat(frame, gridIndex,x,y)
 end
 AFP("animateTextNormalForClassicFormat", animateTextNormalForClassicFormat)
 
-local function classicPositionGrid(namePlate)
-    if namePlateClassicGrid[namePlate] == nil then
-        namePlateClassicGrid[namePlate] = {}
-    end
 
-    for i = 1, 100 do
-        if namePlateClassicGrid[namePlate][i] == nil then
-            namePlateClassicGrid[namePlate][i] = true
-            return i, classicGridData[i].x, classicGridData[i].y
-        end
-    end
-
-    return nil, 1, 0
-end
 
 local createdFramesIndex = 0
 local function createNewFontElement(self)
@@ -901,10 +911,10 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
 
     if periodic and getSchoolIconMap(self.bleedTexture,school) then
         self.bleedTexture:Show()
-        self.peroidicBackground:Show();
+        self.peroidicBackground:Show()
     else
         self.bleedTexture:Hide()
-        self.peroidicBackground:Hide();
+        self.peroidicBackground:Hide()
     end
 
     self.pet = source == "pet"
@@ -1081,6 +1091,10 @@ local function onNamePlateRemoved(_, _, unitID)
 
     unitToGuid[unitID] = nil
     guidToUnit[guid] = nil
+
+    if settings.usedFormat == formats.Classic then
+      return
+    end
 
     for _, f in pairs(fontStringList) do
         if f.unit and f.unit == unitID then
