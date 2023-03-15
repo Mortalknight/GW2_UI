@@ -8,6 +8,13 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.0.2",{
+    {ct.bug,[=[Fix installation process]=]},
+    {ct.bug,[=[Fix some memory leaks]=]},
+    {ct.bug,[=[Mounts and pets can not be linked into chat or macro frame]=]},
+    {ct.bug,[=[Fix raid aura indicators]=]},
+})
+
 addChange("2.0.1",{
     {ct.bug,[=[Fix resting icon]=]},
     {ct.bug,[=[Fix mail icon tooltip]=]},

@@ -1,3 +1,9 @@
+2.0.2-Wrath
+    - Fix installation process
+    - Fix some memory leaks
+    - Mounts and pets can not be linked into chat or macro frame
+    - Fix raid aura indicators
+
 2.0.1-Wrath
     - Fix resting icon
     - Fix mail icon tooltip
