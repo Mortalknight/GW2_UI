@@ -960,8 +960,9 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
                 end
             end
         end
-
-        calcAvarageHit(amount)
+        if amount and amount > 0 then
+            calcAvarageHit(amount)
+        end
 
         f.anchorFrame = nameplate
         f.dynamicScale = getAvrageHitModifier(amount,critical)
