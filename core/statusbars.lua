@@ -17,6 +17,8 @@ local uniqueID  = 0
   bar.barOnUpdate
       used for hooking custom onupdate function to the bars animation. Does nothing if the bar is not set to animate
 
+  bar.speed
+    used to set custom speed, default is 100 (pixels / second)
 
 
 ]]
@@ -58,21 +60,6 @@ local function SetFillAmount(self,value)
       self.fill_threshold = fill_threshold
   end
 end
-local function animateStatusBar(self,value)
-
-  local to = value
-  local from = self:GetFillAmount()
-  local duration = getAnimationDuration(self,to,from,self:GetWidth())
-
-  AddToAnimation("GWBAR"..self.uniqueID, from, to, GetTime(), duration, function(p)
-
-    SetFillAmount(self,p)
-  end, nil, nil, nil)
-end
-local function GetFillAmount(self)
-  if not self.fillAmount then return 0 end
-  return self.fillAmount
-end
 
 local function  barUpdate(self,delta)
 
@@ -86,21 +73,7 @@ local function  barUpdate(self,delta)
   if self.barOnUpdate then
     self.barOnUpdate(self)
   end
---[[
-    local direction = 1;
-    local clampVal = self.animatedValue
-    local newValue = GetFillAmount(self)
-    if self.animatedValue<self.animatedStartValue then
-       direction = -1
-       newValue = max(newValue + direction * 0.5 * delta,self.animatedValue);
-     else
-       newValue = min(newValue + direction * 0.5 * delta,self.animatedValue);
-     end
-    SetFillAmount(self,newValue)
-    if newValue==self.animatedValue then
-      self:SetScript("OnUpdate",nil)
-    end
-    ]]
+
 end
 
 local function onupdate_AnimateBar(self,value)
@@ -108,7 +81,6 @@ local function onupdate_AnimateBar(self,value)
     self.animatedStartValue = GetFillAmount(self)
     self.animatedTime =0
     self.animatedDuration = getAnimationDuration(self,self.animatedStartValue , self.animatedValue,self:GetWidth())
-
 
     self:SetScript("OnUpdate",barUpdate)
 end
