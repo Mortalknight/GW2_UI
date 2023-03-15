@@ -33,6 +33,30 @@ local function getAnimationDuration(self,val1,val2,width)
   local t = (width * math.abs(val1 - val2)) / speed
   return t
 end
+
+local function removeMask(self,mask)
+  self.internalBar:RemoveMaskTexture(mask)
+
+  if self.maskedTextures==nil then
+     return
+   end
+
+   for _,texture in pairs(self.maskedTextures) do
+     texture:RemoveMaskTexture(mask)
+  end
+end
+local function addMask(self,mask)
+  self.internalBar:AddMaskTexture(mask)
+
+  if self.maskedTextures==nil then
+     return
+   end
+
+  for _,texture in pairs(self.maskedTextures) do
+    texture:AddMaskTexture(mask)
+  end
+end
+
 local function GetFillAmount(self)
   if not self.fillAmount then return 0 end
   return self.fillAmount
@@ -54,10 +78,10 @@ local function SetFillAmount(self,value)
 
   if not self.bI or bI~=self.bI then
     local newMask = self.maskContainer["mask"..bI]
-    self.bar:AddMaskTexture(newMask)
+    self:addMask(newMask)
     if self.bI~=nil then
       local oldMask = self.maskContainer["mask"..self.bI]
-      self.bar:RemoveMaskTexture(oldMask)
+      self:removeMask(oldMask)
     end
     self.bI = bI
   end
@@ -92,6 +116,17 @@ local function onupdate_AnimateBar(self,value)
     self:SetScript("OnUpdate",barUpdate)
 end
 
+local function addToBarMask(self,texture)
+  if texture==nil then
+     return
+   end
+
+  if self.maskedTextures == nil then
+    self.maskedTextures  ={}
+  end
+  self.maskedTextures[#self.maskedTextures +  1] = texture
+
+end
 local function hookStatusbarBehaviour(statusBar,smooth)
 
   if not AddToAnimation then
@@ -100,11 +135,14 @@ local function hookStatusbarBehaviour(statusBar,smooth)
   end
 
   uniqueID = uniqueID + 1
-  statusBar.maskContainer:SetSize(statusBar.bar:GetWidth() / numSpritesInAnimation,statusBar.bar:GetHeight())
+  statusBar.maskContainer:SetSize(statusBar.internalBar:GetWidth() / numSpritesInAnimation,statusBar.internalBar:GetHeight())
   statusBar.fill_threshold = 0
   statusBar.GetFillAmount = GetFillAmount
   statusBar.SetFillAmount = smooth and onupdate_AnimateBar or SetFillAmount
+  statusBar.addToBarMask = addToBarMask
   statusBar.uniqueID = uniqueID
+  statusBar.addMask = addMask
+  statusBar.removeMask = removeMask
 
 
 end

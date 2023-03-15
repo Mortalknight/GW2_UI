@@ -84,7 +84,7 @@ local function UpdatePowerData(self, forcePowerType, powerToken)
 
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
-        self:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+        self.bar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     --    self.candy.spark:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
       --  self.candy:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     --    self.bar:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
@@ -177,6 +177,7 @@ GW.UpdatePowerData = UpdatePowerData
 
 local function LoadPowerBar()
     local playerPowerBar = GW.createNewStatusbar("GwPlayerPowerBar",UIParent,nil,true)
+    playerPowerBar.bar = playerPowerBar
     --CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
 
     GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "PowerBar_pos", ALL .. ",Unitframe,Power", nil, {"default", "scaleable"}, true)

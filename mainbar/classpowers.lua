@@ -54,13 +54,13 @@ local function animFlare(f, scale, offset, duration, rotate)
 end
 GW.AddForProfiling("classpowers", "animFlare", animFlare)
 
-local function decayCounter_OnAnim()
+local function decayCounter_OnAnim(self)
     local f = CPWR_FRAME
     local fdc = f.decayCounter
-    local p = animations["DECAYCOUNTER_BAR"].progress
+    local p =(self.expires - GetTime()) / self.duration
     local px = p * 262
     fdc.precentage = p
-    fdc.bar:SetValue(p)
+    fdc.bar:SetFillAmount(p)
     fdc.bar.spark:ClearAllPoints()
     fdc.bar.spark:SetPoint("RIGHT", fdc.bar, "LEFT", px, 0)
     fdc.bar.spark:SetWidth(math.min(15, math.max(1, px)))
@@ -626,7 +626,11 @@ local function powerFrenzy(self, event)
     self.gwPower = expires
     if event == "CLASS_POWER_INIT" or expires > old_expires then
         local pre = (expires - GetTime()) / duration
-        AddToAnimation("DECAYCOUNTER_BAR", pre, 0, GetTime(), expires - GetTime(), decayCounter_OnAnim, "noease")
+
+        self.decayCounter.duration = duration
+        self.decayCounter.expires = expires
+        self.decayCounter:SetScript("OnUpdate",decayCounter_OnAnim)
+      --  AddToAnimation("DECAYCOUNTER_BAR", pre, 0, GetTime(), expires - GetTime(), decayCounter_OnAnim, "noease")
         if event ~= "CLASS_POWER_INIT" then
             AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
         end
@@ -1386,6 +1390,14 @@ end
 
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
+    GW.hookStatusbarBehaviour(cpf.staggerBar.ironskin,false)
+    GW.hookStatusbarBehaviour(cpf.decayCounter.bar,false)
+
+
+    cpf.decayCounter.bar:addToBarMask(cpf.decayCounter.bar.texture1)
+    cpf.decayCounter.bar:addToBarMask(cpf.decayCounter.bar.texture2)
+    cpf.decayCounter.bar:addToBarMask(cpf.decayCounter.bar.spark)
+
 
     GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", ALL .. ",Unitframe,Power", {316, 32}, {"default", "scaleable"}, true)
 
@@ -1411,39 +1423,39 @@ local function LoadClassPowers()
     if cpf.ourPowerBar then
         local anchorFrame = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame or _G.GwPlayerPowerBar
         local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame.powerbar:GetWidth() or _G.GwPlayerPowerBar:GetWidth()
-        local lmb = CreateFrame("Frame", nil, anchorFrame, "GwPlayerPowerBar")
+        local lmb =  GW.createNewStatusbar("GwPlayerAltClassLmb",UIParent,nil,true)
+        lmb.bar = lmb;
         GW.MixinHideDuringPetAndOverride(lmb)
         cpf.lmb = lmb
-        lmb.candy.spark:ClearAllPoints()
 
-        lmb.bar:SetHeight(5)
-        lmb.candy:SetHeight(5)
-        lmb.candy.spark:SetHeight(5)
-        lmb.statusBar:SetHeight(5)
+
+        lmb:SetHeight(5)
+
         lmb:ClearAllPoints()
         if GetSetting("PLAYER_AS_TARGET_FRAME") then
             lmb:SetPoint("LEFT", anchorFrame.castingbarBackground, "LEFT", 2, 5)
             lmb:SetSize(barWidth + 2, 7)
-            lmb.statusBar:SetWidth(barWidth - 2)
+            lmb:SetWidth(barWidth - 2)
         else
             lmb:SetPoint("TOPLEFT", anchorFrame, "TOPLEFT", 0, 5)
             lmb:SetSize(barWidth, 7)
         end
         lmb:SetFrameStrata("MEDIUM")
-        lmb.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
+        lmb.label:SetFont(DAMAGE_TEXT_FONT, 8)
     end
 
     -- create an extra mana power bar that is used sometimes
     local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
     local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 52 or 0
-    local exbar = CreateFrame("Frame", nil, cpf, "GwPlayerPowerBar")
+    local exbar = GW.createNewStatusbar("GwPlayerAltClassExBar",UIParent,nil,true)
+    exbar.bar =exbar
     GW.MixinHideDuringPetAndOverride(exbar)
     cpf.exbar = exbar
-    exbar.candy.spark:ClearAllPoints()
+
     exbar:ClearAllPoints()
     exbar:SetPoint("BOTTOMLEFT", cpf, "BOTTOMLEFT", 0 + xOff, 5 - yOff)
     exbar:SetFrameStrata("MEDIUM")
-    exbar.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 14)
+    exbar.label:SetFont(DAMAGE_TEXT_FONT, 14)
 
     -- set a bunch of other init styling stuff
     cpf.decayCounter.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")

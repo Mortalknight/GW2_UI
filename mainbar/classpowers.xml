@@ -381,7 +381,7 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <StatusBar parentKey="bar" defaultValue="1" minValue="0" maxValue="1">
+                    <StatusBar parentKey="bar" defaultValue="1" minValue="0" maxValue="1" inherits="GwStatusBarBar">
                         <Size x="262" y="14"></Size>
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="4" y="0"></Anchor>
@@ -1012,7 +1012,7 @@
                             </Layer>
                         </Layers>
                     </Frame>
-                    <StatusBar parentKey="ironskin" defaultValue="0" minValue="0" maxValue="23">
+                    <StatusBar parentKey="ironskin" defaultValue="0" minValue="0" maxValue="23" inherits="GwStatusBarBar">
                         <Size x="316" y="2"></Size>
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.ironSkinBg" x="2" y="2"></Anchor>
@@ -1069,7 +1069,7 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <StatusBar parentKey="bar" defaultValue="1" minValue="0" maxValue="1">
+                    <StatusBar parentKey="bar" defaultValue="1" minValue="0" maxValue="1" inherits="GwStatusBarBar">
                         <Size x="310" y="14"></Size>
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="4" y="0"></Anchor>
