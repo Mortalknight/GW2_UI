@@ -6,8 +6,12 @@ local numSpritesInAnimation = 15
 local uniqueID  = 0
 
 --[[
+  TODO
+    Implement Vertical bars (for healglobe etc)
 
 
+
+  
   Bar:SetFillAmount(amount)
     Sets the fill amount of the bar to bar, Animates over time if smooth was set when bar was created
 
