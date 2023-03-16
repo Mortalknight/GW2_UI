@@ -60,11 +60,10 @@ local CLASSIC_AVARAGE_HIT = 0
 
 local NORMAL_ANIMATION_OFFSET_Y = 20
 
-
 local stackingContainer
 local ClassicDummyFrame
 
-local formats = {Default = "Default", Stacking = "Stacking",Classic = "Classic"}
+local formats = {Default = "Default", Stacking = "Stacking", Classic = "Classic"}
 
 local NORMAL_ANIMATION
 local CRITICAL_ANIMATION
@@ -556,18 +555,18 @@ local function getSchoolIconMap(self, school)
 end
 
 local function calcAvarageHit(amount)
-  if CLASSIC_NUM_HITS>100 then
-     return
-   end
-   CLASSIC_NUM_HITS = CLASSIC_NUM_HITS + 1
-   CLASSIC_AVARAGE_HIT = CLASSIC_AVARAGE_HIT + amount;
+    if CLASSIC_NUM_HITS>100 then
+        return
+    end
+    CLASSIC_NUM_HITS = CLASSIC_NUM_HITS + 1
+    CLASSIC_AVARAGE_HIT = CLASSIC_AVARAGE_HIT + amount
 end
 local function getAvrageHitModifier(amount,critical)
-  if amount==nil then return 0 end
+  if amount == nil then return 0 end
 
 	local a = CLASSIC_AVARAGE_HIT / CLASSIC_NUM_HITS;
 
-	local n = math.min(1.5,math.max(0.7,(amount / a)))
+	local n = math.min(1.5, math.max(0.7, (amount / a)))
 	if critical then
 		return n / 2
 	end
@@ -638,8 +637,7 @@ local function animateTextCriticalForStackingFormat(frame)
             end
 
             if p > 0.7 then
-                local alphaFade = p - 0.7
-                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, alphaFade / 0.3))))
+                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))))
             else
                 frame:SetAlpha(1)
             end
@@ -665,18 +663,15 @@ local function animateTextNormalForStackingFormat(frame)
         GetTime(),
         STACKING_NORMAL_ANIMATION_DURATION,
         function(p)
-            local offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p)
             frame.offsetX =  0
             frame:SetScale(1 * frame.textScaleModifier)
-            frame.offsetY = offsetY
+            frame.offsetY = -(STACKING_NORMAL_ANIMATION_OFFSET_Y * p)
 
             if p < 0.25 then
-            local scaleFade = p - 0.25
-            frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X, 0, scaleFade / 0.25)
+                frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X, 0, (p - 0.25) / 0.25)
             end
             if p > 0.7 then
-                local alphaFade = p - 0.7
-                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, alphaFade / 0.3))))
+                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))))
             else
                 frame:SetAlpha(1)
             end
@@ -719,8 +714,7 @@ local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
             end
 
             if p > 0.7 then
-                local alphaFade = p - 0.7
-                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, alphaFade / 0.3))))
+                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))))
             else
                 frame:SetAlpha(1)
             end
@@ -756,8 +750,7 @@ local function animateTextNormalForDefaultFormat(frame, offsetIndex)
             end
 
             if p > 0.7 then
-                local alphaFade = p - 0.7
-                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, alphaFade / 0.3))))
+                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))))
             else
                 frame:SetAlpha(1)
             end
@@ -780,24 +773,22 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
         0,
         1,
         GetTime(),
-        CRITICAL_ANIMATION_DURATION  *( frame.dynamicScale + CRITICAL_SCALE_MODIFIER) ,
+        CRITICAL_ANIMATION_DURATION  * (frame.dynamicScale + CRITICAL_SCALE_MODIFIER),
         function(p)
-          if frame.anchorFrame==nil or not frame.anchorFrame:IsShown() then
-            frame.anchorFrame = ClassicDummyFrame
-            classicPositionGrid(frame.anchorFrame)
-          end
-          if p < 0.05 and not frame.periodic then
-                local scaleFade = p - 0.05
-                frame:SetScale(math.max(0.1,GW.lerp(1.5 * frame.dynamicScale * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.dynamicScale, scaleFade / 0.05)))
+            if frame.anchorFrame == nil or not frame.anchorFrame:IsShown() then
+                frame.anchorFrame = ClassicDummyFrame
+                classicPositionGrid(frame.anchorFrame)
+            end
+            if p < 0.05 and not frame.periodic then
+                frame:SetScale(math.max(0.1, GW.lerp(1.5 * frame.dynamicScale * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.dynamicScale, (p - 0.05) / 0.05)))
             else
-                frame:SetScale(math.max(0.1,frame.dynamicScale * frame.textScaleModifier  * CRITICAL_SCALE_MODIFIER ))
+                frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER))
             end
 
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
 
             if p > 0.7 then
-                local alphaFade = p - 0.7
-                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, alphaFade / 0.3))))
+                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))))
             else
                 frame:SetAlpha(1)
             end
@@ -814,12 +805,9 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
 end
 AFP("animateTextCriticalForClassicFormat", animateTextCriticalForClassicFormat)
 
-local function animateTextNormalForClassicFormat(frame, gridIndex,x,y)
+local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
     local aName = frame:GetName()
-    local animationDuration =  NORMAL_ANIMATION_DURATION * frame.dynamicScale
-  	if frame.periodic then
-  		animationDuration  = NORMAL_ANIMATION_DURATION * 2
-  	end
+
     AddToAnimation(
         aName,
         0,
@@ -828,22 +816,20 @@ local function animateTextNormalForClassicFormat(frame, gridIndex,x,y)
         NORMAL_ANIMATION_DURATION,
         function(p)
             if frame.anchorFrame==nil or not frame.anchorFrame:IsShown() then
-              frame.anchorFrame = ClassicDummyFrame
-              classicPositionGrid(frame.anchorFrame)
+                frame.anchorFrame = ClassicDummyFrame
+                classicPositionGrid(frame.anchorFrame)
             end
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
             if p < 0.10 and not frame.periodic then
-                local scaleFade = p - 0.10
-                frame:SetScale(math.max(0.1,GW.lerp(1.2 * frame.dynamicScale * frame.textScaleModifier , frame.dynamicScale, scaleFade / 0.10)))
+                frame:SetScale(math.max(0.1, GW.lerp(1.2 * frame.dynamicScale * frame.textScaleModifier, frame.dynamicScale, (p - 0.10) / 0.10)))
             else
                 frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier))
             end
             if p > 0.9 then
-              local alphaFade = p - 0.9
-              frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, alphaFade / 0.1))))
-          else
-              frame:SetAlpha(1)
-          end
+                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.9) / 0.1))))
+            else
+                frame:SetAlpha(1)
+            end
         end,
         nil,
         function()
@@ -856,8 +842,6 @@ local function animateTextNormalForClassicFormat(frame, gridIndex,x,y)
     )
 end
 AFP("animateTextNormalForClassicFormat", animateTextNormalForClassicFormat)
-
-
 
 local createdFramesIndex = 0
 local function createNewFontElement(self)
@@ -893,7 +877,7 @@ local function getFontElement(self)
 end
 AFP("getFontElement", getFontElement)
 
-local function setElementData(self, critical, source, missType, blocked, absorbed, periodic,school)
+local function setElementData(self, critical, source, missType, blocked, absorbed, periodic, school)
     if missType then
         self.critTexture:Hide()
         self.string:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINED")
@@ -912,7 +896,7 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
         self.crit = false
     end
 
-    if periodic and getSchoolIconMap(self.bleedTexture,school) then
+    if periodic and getSchoolIconMap(self.bleedTexture, school) then
         self.bleedTexture:Show()
         self.peroidicBackground:Show()
     else
