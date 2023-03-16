@@ -589,9 +589,11 @@ local function classicPositionGrid(namePlate)
 end
 
 --STACKING
-local function stackingContainerOnUpdate ()
+local function stackingContainerOnUpdate()
     -- for each damage text instance
     local NUM_ACTIVE_DAMAGETEXT_FRAMES = CountTable(stackingContainer.activeFrames)
+    if NUM_ACTIVE_DAMAGETEXT_FRAMES <= 0 then return end
+
     local index = 0
     local newOffsetValue = -((NUM_ACTIVE_DAMAGETEXT_FRAMES * (20 / 2)))
     local currentOffsetValue = stackingContainer.offsetValue or 0
