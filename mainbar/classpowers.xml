@@ -386,7 +386,7 @@
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="4" y="0"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
+                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                         <BarColor r="0.623" g="0.141" b="0.078"></BarColor>
                         <Layers>
                             <Layer level="ARTWORK" textureSubLevel="1">
@@ -1017,7 +1017,7 @@
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" relativeKey="$parent.ironSkinBg" x="2" y="2"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
+                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                     </StatusBar>
                 </Frames>
             </Frame>
@@ -1074,7 +1074,7 @@
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="4" y="0"></Anchor>
                         </Anchors>
-                        <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
+                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                         <BarColor r="0.95" g="0.25" b="0.05"></BarColor>
                         <Layers>
                             <Layer level="ARTWORK" textureSubLevel="1">

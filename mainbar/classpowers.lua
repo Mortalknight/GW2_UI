@@ -58,12 +58,15 @@ local function decayCounter_OnAnim(self)
     local f = CPWR_FRAME
     local fdc = f.decayCounter
     local p =(self.expires - GetTime()) / self.duration
-    local px = p * 262
+    local px = p * fdc.bar:GetWidth()
     fdc.precentage = p
     fdc.bar:SetFillAmount(p)
     fdc.bar.spark:ClearAllPoints()
-    fdc.bar.spark:SetPoint("RIGHT", fdc.bar, "LEFT", px, 0)
-    fdc.bar.spark:SetWidth(math.min(15, math.max(1, px)))
+    fdc.bar.spark:SetPoint("RIGHT", fdc.bar, "LEFT",max(20,min(px+5,fdc:GetWidth()-20)), 0)
+    fdc.bar.spark:SetWidth(20)
+    if p<=0 then
+      self:SetScript("OnUpdate",nil)
+    end
 end
 GW.AddForProfiling("classpowers", "decayCounter_OnAnim", decayCounter_OnAnim)
 
@@ -1391,7 +1394,7 @@ end
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
     GW.hookStatusbarBehaviour(cpf.staggerBar.ironskin,false)
-    GW.hookStatusbarBehaviour(cpf.decayCounter.bar,false)
+    GW.hookStatusbarBehaviour(cpf.decayCounter.bar,true)
 
 
     cpf.decayCounter.bar:addToBarMask(cpf.decayCounter.bar.texture1)
