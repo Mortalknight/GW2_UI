@@ -120,7 +120,7 @@ local function addToBarMask(self,texture)
   if texture==nil then
      return
    end
-
+   texture:AddMaskTexture(self.mask)
   if self.maskedTextures == nil then
     self.maskedTextures  ={}
   end
@@ -145,8 +145,11 @@ local function hookStatusbarBehaviour(statusBar,smooth)
   statusBar.removeMask = removeMask
 
   statusBar.maskContainer:ClearAllPoints()
-
   statusBar.maskContainer:SetPoint("LEFT",statusBar.internalBar,"LEFT",0,0)
+
+  statusBar.mask:SetPoint("LEFT",statusBar.maskContainer,"RIGHT",-2,0)
+  statusBar.mask:SetPoint("RIGHT",statusBar,"RIGHT",0,0)
+  statusBar.internalBar:AddMaskTexture(statusBar.mask)
 
   return statusBar
 end

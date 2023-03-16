@@ -17,10 +17,10 @@
                       <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                   </Anchors>
               </FontString>
-              <MaskTexture parentKey="mask" file="Interface/AddOns/GW2_UI/textures/hud/barmask/3" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAPMTOWHITE">
+              <MaskTexture parentKey="mask" file="Interface/AddOns/GW2_UI/textures/hud/barmask/0" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAPMTOWHITE">
                   <Size x="24" y="24"/>
                   <Anchors>
-                      <Anchor point="LEFT" relativeKey="$parent.internalBar" relativePoint="LEFT" x="0" y="0"></Anchor>
+                      <Anchor point="LEFT" relativeKey="$parent.maskContainer" relativePoint="RIGHT" x="0" y="0"></Anchor>
                   </Anchors>
               </MaskTexture>
           </Layer>
