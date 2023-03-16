@@ -30,11 +30,12 @@ GW.AddForProfiling("unitframes", "normalUnitFrame_OnEnter", normalUnitFrame_OnEn
 
 local function createNormalUnitFrame(ftype, revert)
     local f = CreateFrame("Button", ftype, UIParent, revert and "GwNormalUnitFrameInvert" or "GwNormalUnitFrame")
-
+    GW.hookStatusbarBehaviour(f.healthbar,true)
+    GW.hookStatusbarBehaviour(f.healthbar.absorbOverlay,true)
     f.frameInvert = revert
 
-    f.healthString:SetFont(UNIT_NAME_FONT, 11)
-    f.healthString:SetShadowOffset(1, -1)
+    f.healthbar.absorbOverlay.healthString:SetFont(UNIT_NAME_FONT, 11)
+    f.healthbar.absorbOverlay.healthString:SetShadowOffset(1, -1)
 
     if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
         f.nameString:SetFont(UNIT_NAME_FONT, 14)
@@ -71,9 +72,10 @@ GW.AddForProfiling("unitframes", "createNormalUnitFrame", createNormalUnitFrame)
 
 local function createNormalUnitFrameSmall(ftype)
     local f = CreateFrame("Button", ftype, UIParent, "GwNormalUnitFrameSmall")
-
-    f.healthString:SetFont(UNIT_NAME_FONT, 11)
-    f.healthString:SetShadowOffset(1, -1)
+    GW.hookStatusbarBehaviour(f.healthbar,true)
+    GW.hookStatusbarBehaviour(f.healthbar.absorbOverlay,true)
+    f.healthbar.absorbOverlay.healthString:SetFont(UNIT_NAME_FONT, 11)
+    f.healthbar.absorbOverlay.healthString:SetShadowOffset(1, -1)
 
     if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
         f.nameString:SetFont(UNIT_NAME_FONT, 14)
@@ -111,7 +113,7 @@ local function updateHealthTextString(self, health, healthPrecentage)
         healthString = healthString .. CommaValue(healthPrecentage * 100) .. "%"
     end
 
-    self.healthString:SetText(healthString)
+    self.healthbar.absorbOverlay.healthString:SetText(healthString)
 end
 GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextString)
 
@@ -120,10 +122,11 @@ local function updateHealthbarColor(self)
         local _, englishClass = UnitClass(self.unit)
         local color = GWGetClassColor(englishClass, true)
 
-        self.healthbar:SetVertexColor(color.r, color.g, color.b, color.a)
-        self.healthbarSpark:SetVertexColor(color.r, color.g, color.b, color.a)
-        self.healthbarFlash:SetVertexColor(color.r, color.g, color.b, color.a)
-        self.healthbarFlashSpark:SetVertexColor(color.r, color.g, color.b, color.a)
+        self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
+      --  self.healthbar:SetVertexColor(color.r, color.g, color.b, color.a)
+      -- self.healthbarSpark:SetVertexColor(color.r, color.g, color.b, color.a)
+      --  self.healthbarFlash:SetVertexColor(color.r, color.g, color.b, color.a)
+      --  self.healthbarFlashSpark:SetVertexColor(color.r, color.g, color.b, color.a)
 
         self.nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
     else
@@ -138,10 +141,11 @@ local function updateHealthbarColor(self)
         if UnitIsTapDenied(self.unit) then
             nameColor = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
         end
-        self.healthbar:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
-        self.healthbarSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
-        self.healthbarFlash:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
-        self.healthbarFlashSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+        self.healthbar:SetStatusBarColor(nameColor.r, nameColor.g, nameColor.b, 1)
+    --    self.healthbar:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+    --    self.healthbarSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+    --    self.healthbarFlash:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+    --    self.healthbarFlashSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
         self.nameString:SetTextColor(nameColor.r, nameColor.g, nameColor.b, 1)
     end
 
@@ -629,23 +633,27 @@ local function updateHealthValues(self, event)
 
     -- absorb calc got inlined here because nothing else uses this
     local absbarbg = self.absorbbarbg
-    local absbar = self.absorbbar
+    local absbar = self.healthbar.absorbOverlay
+
     if absorb == 0 then
         -- very common case; short-circuit this for performance
         absbarbg:SetAlpha(0.0)
-        absbar:SetAlpha(0.0)
+      --  absbar:SetAlpha(0.0)
+      --  absbar:SetFillAmount(0)
+      absbar:SetFillAmount(0)
     else
-        local absorbAmount = healthPrecentage + absorbPrecentage
-        local absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
+      local absorbAmount = healthPrecentage + absorbPrecentage
+      local absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
 
-        absbarbg:SetWidth(math.min((self.barWidth - 1), math.max(1, self.barWidth * absorbAmount)))
-        absbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * absorbAmount2)))
 
-        absbarbg:SetTexCoord(0, math.min(1, 1 * absorbAmount), 0, 1)
-        absbar:SetTexCoord(0, math.min(1, 1 * absorbAmount2), 0, 1)
 
-        absbarbg:SetAlpha(math.max(0, math.min(1, (1 * (absorbPrecentage / 0.1)))))
-        absbar:SetAlpha(math.max(0, math.min(1, (1 * (absorbPrecentage / 0.1)))))
+      absbarbg:SetWidth(math.min((self.barWidth - 1), math.max(1, self.barWidth * absorbAmount)))
+
+      absbarbg:SetTexCoord(0, math.min(1, 1 * absorbAmount), 0, 1)
+
+      absbarbg:SetAlpha(math.max(0, math.min(1, (1 * (absorbPrecentage / 0.1)))))
+
+      absbar:SetFillAmount(absorbAmount2)
     end
 
     --prediction calc
@@ -659,6 +667,12 @@ local function updateHealthValues(self, event)
         predictionbar:SetTexCoord(0, math.min(1, 1 * predictionAmount), 0, 1)
         predictionbar:SetAlpha(math.max(0, math.min(1, (1 * (predictionPrecentage / 0.1)))))
     end
+    self.healthbar:SetFillAmount(healthPrecentage)
+    self.healthbar.barOnUpdate = function()
+      updateHealthTextString(self, health, self.healthbar:GetFillAmount())
+    end
+--[[
+
 
     healthBarAnimation(self, healthPrecentage, true)
     if animationSpeed == 0 then
@@ -688,6 +702,8 @@ local function updateHealthValues(self, event)
             end
         )
     end
+  ]]
+
 end
 GW.AddForProfiling("unitframes", "updateHealthValues", updateHealthValues)
 
@@ -924,6 +940,8 @@ local function LoadTarget()
     if NewUnitFrame.frameInvert then
         NewUnitFrame.altBg.backgroundOverlay:SetTexCoord(1, 0, 0, 1)
         NewUnitFrame.altBg.backgroundOverlay:SetPoint("CENTER", -15, -5)
+        NewUnitFrame.healthbar:ClearAllPoints()
+        NewUnitFrame.healthbar:SetPoint("RIGHT",NewUnitFrame.healthbarBackground,"RIGHT",-1,0)
     else
         NewUnitFrame.altBg:SetAllPoints(NewUnitFrame)
     end

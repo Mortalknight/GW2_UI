@@ -86,7 +86,7 @@ local function SetFillAmount(self,value)
     self.bI = bI
   end
   if self.fill_threshold~=fill_threshold then
-      self.maskContainer:SetPoint("LEFT",self.bar,"LEFT",spark,0)
+      self.maskContainer:SetPoint("LEFT",self.internalBar,"LEFT",spark,0)
       self:SetValue(fill_threshold)
       self.fill_threshold = fill_threshold
   end
@@ -144,7 +144,11 @@ local function hookStatusbarBehaviour(statusBar,smooth)
   statusBar.addMask = addMask
   statusBar.removeMask = removeMask
 
+  statusBar.maskContainer:ClearAllPoints()
 
+  statusBar.maskContainer:SetPoint("LEFT",statusBar.internalBar,"LEFT",0,0)
+
+  return statusBar
 end
 GW.hookStatusbarBehaviour = hookStatusbarBehaviour
 local function createNewStatusBar(name,parent,template,smooth)
