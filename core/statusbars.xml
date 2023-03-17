@@ -10,6 +10,7 @@
       </Anchors>
       <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
       <Layers>
+
           <Layer level="OVERLAY" textureSubLevel="2">
               <FontString parentKey="label" text="Unknown" justifyH="CENTER">
                   <Size x="200" y="20"></Size>

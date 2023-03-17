@@ -76,6 +76,10 @@ local function SetFillAmount(self,value)
   local fill_threshold = (1/numSpritesInAnimation) * ( math.floor(numSpritesInAnimation * value) + 1)
   local maskTest = (totalWidth * fill_threshold) - bit
 
+  if self.spark~=nil then
+    self.spark:SetPoint("RIGHT",self.internalBar,"LEFT",barWidth + self.spark:GetWidth()/2,0)
+  end
+
   if not self.bI or bI~=self.bI then
     local newMask = self.maskContainer["mask"..bI]
     self:addMask(newMask)
@@ -148,8 +152,12 @@ local function hookStatusbarBehaviour(statusBar,smooth)
   statusBar.maskContainer:SetPoint("LEFT",statusBar.internalBar,"LEFT",0,0)
 
   statusBar.mask:SetPoint("LEFT",statusBar.maskContainer,"RIGHT",-2,0)
-  statusBar.mask:SetPoint("RIGHT",statusBar,"RIGHT",0,0)
+  --statusBar.mask:SetPoint("RIGHT",statusBar,"RIGHT",0,0)
   statusBar.internalBar:AddMaskTexture(statusBar.mask)
+
+  if statusBar.spark ~=nil then
+    statusBar:addToBarMask(statusBar.spark)
+  end
 
   return statusBar
 end
@@ -169,7 +177,8 @@ local function LoadStatusbarTest()
   local test2  = createNewStatusBar("test2",UIParent,nil,true)
   test2:SetPoint("CENTER",0,-90)
 
-
+  test1:SetStatusBarColor(0.3,0,0,1)
+  test2:SetStatusBarColor(0.3,0,0,1)
     local delay = 0
     local delay2 = 0
     test1:SetScript("OnUpdate",function(self,delta)
