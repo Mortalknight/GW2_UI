@@ -147,6 +147,7 @@ local function hookStatusbarBehaviour(statusBar,smooth)
   statusBar.fill_threshold = 0
   statusBar.GetFillAmount = GetFillAmount
   statusBar.SetFillAmount = smooth and onupdate_AnimateBar or SetFillAmount
+  statusBar.ForceFIllAmount = SetFillAmount
   statusBar.addToBarMask = addToBarMask
   statusBar.uniqueID = uniqueID
   statusBar.addMask = addMask

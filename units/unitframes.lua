@@ -636,28 +636,19 @@ local function updateHealthValues(self, event)
 
     local animationSpeed
 
-    if event == "UNIT_TARGET" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_TARGET_CHANGED" then
-        animationSpeed = 0
-        self.healthValue = healthPrecentage
-        StopAnimation(self:GetName() .. self.unit)
-    else
-        animationSpeed = Diff(self.healthValue, healthPrecentage)
-        animationSpeed = math.min(1, math.max(0.2, 2 * animationSpeed))
-    end
 
     -- absorb calc got inlined here because nothing else uses this
     local absbarbg = self.absorbbarbg
     local absbar = self.healthbar.absorbOverlay
-
+    local absorbAmount = 0
+    local absorbAmount2 =0
     if absorb == 0 then
-        -- very common case; short-circuit this for performance
+
         absbarbg:SetAlpha(0.0)
-      --  absbar:SetAlpha(0.0)
-      --  absbar:SetFillAmount(0)
-      absbar:SetFillAmount(0)
+
     else
-      local absorbAmount = healthPrecentage + absorbPrecentage
-      local absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
+      absorbAmount = healthPrecentage + absorbPrecentage
+      absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
 
 
 
@@ -667,7 +658,7 @@ local function updateHealthValues(self, event)
 
       absbarbg:SetAlpha(math.max(0, math.min(1, (1 * (absorbPrecentage / 0.1)))))
 
-      absbar:SetFillAmount(absorbAmount2)
+
     end
 
     --prediction calc
@@ -681,7 +672,16 @@ local function updateHealthValues(self, event)
         predictionbar:SetTexCoord(0, math.min(1, 1 * predictionAmount), 0, 1)
         predictionbar:SetAlpha(math.max(0, math.min(1, (1 * (predictionPrecentage / 0.1)))))
     end
-    self.healthbar:SetFillAmount(healthPrecentage)
+
+    if event == "UNIT_TARGET" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_TARGET_CHANGED" then
+        self.healthbar:ForceFIllAmount(healthPrecentage)
+        absbar:ForceFIllAmount(absorbAmount2)
+    else
+        self.healthbar:SetFillAmount(healthPrecentage)
+        absbar:SetFillAmount(absorbAmount2)
+    end
+
+
     self.healthbar.barOnUpdate = function()
       updateHealthTextString(self, health, self.healthbar:GetFillAmount())
     end
