@@ -32,6 +32,7 @@ local function createNormalUnitFrame(ftype, revert)
     local f = CreateFrame("Button", ftype, UIParent, revert and "GwNormalUnitFrameInvert" or "GwNormalUnitFrame")
     GW.hookStatusbarBehaviour(f.healthbar,true)
     GW.hookStatusbarBehaviour(f.healthbar.absorbOverlay,true)
+    GW.hookStatusbarBehaviour(f.castingbarNormal,false)
     f.frameInvert = revert
 
     f.healthbar.absorbOverlay.healthString:SetFont(UNIT_NAME_FONT, 11)
@@ -74,6 +75,7 @@ local function createNormalUnitFrameSmall(ftype)
     local f = CreateFrame("Button", ftype, UIParent, "GwNormalUnitFrameSmall")
     GW.hookStatusbarBehaviour(f.healthbar,true)
     GW.hookStatusbarBehaviour(f.healthbar.absorbOverlay,true)
+    GW.hookStatusbarBehaviour(f.castingbarNormal,false)
     f.healthbar.absorbOverlay.healthString:SetFont(UNIT_NAME_FONT, 11)
     f.healthbar.absorbOverlay.healthString:SetShadowOffset(1, -1)
 
@@ -366,6 +368,11 @@ end
 GW.AddForProfiling("unitframes", "unitFrameData", unitFrameData)
 
 local function normalCastBarAnimation(self, powerPrec)
+
+  self.castingbarNormal:SetFillAmount(powerPrec)
+  --[[
+
+
     local powerBarWidth = self.barWidth
     self.castingbarNormal:SetWidth(math.max(1, powerPrec * powerBarWidth))
     self.castingbarNormalSpark:SetWidth(math.min(15, math.max(1, powerPrec * powerBarWidth)))
@@ -387,6 +394,7 @@ local function normalCastBarAnimation(self, powerPrec)
             end
         end
     end
+      ]]
 end
 GW.AddForProfiling("unitframes", "normalCastBarAnimation", normalCastBarAnimation)
 
@@ -473,7 +481,7 @@ local function updateCastValues(self)
         barHighlightTexture = GW.CASTINGBAR_TEXTURES.GREEN.HIGHLIGHT
     end
 
-    self.castingbarNormal:SetTexCoord(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
+    --WIP self.castingbarNormal:SetTexCoord(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
 
     local isChargeSpell = numStages and numStages > 0 or false
 
@@ -597,6 +605,7 @@ GW.AddForProfiling("unitframes", "updateThreatValues", updateThreatValues)
 
 local function updateHealthValues(self, event)
     local health = UnitHealth(self.unit)
+    local unitIsDead = UnitIsDeadOrGhost(self.unit)
     local healthMax = UnitHealthMax(self.unit)
     local absorb = UnitGetTotalAbsorbs(self.unit)
     local prediction = UnitGetIncomingHeals(self.unit) or 0
@@ -606,6 +615,11 @@ local function updateHealthValues(self, event)
 
     if health > 0 and healthMax > 0 then
         healthPrecentage = health / healthMax
+    end
+    if unitIsDead then
+      healthPrecentage = 0
+      health = 0
+      healtMax = 0
     end
 
     if absorb > 0 and healthMax > 0 then

@@ -147,12 +147,7 @@
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="castingbarNormal" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
-                    <Size x="213" y="13"/>
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
+
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="6">
                 <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd">
@@ -176,7 +171,7 @@
                 </Texture>
 
 
-                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF" hidden="true">
+                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castinbars/yellow-hightlight" hidden="true">
                     <Size x="213" y="12"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
@@ -256,6 +251,24 @@
                 </Layers>
               </StatusBar>
             </Frames>
+          </StatusBar>
+          <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
+            <BarTexture  parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castinbars/yellow-norm"/>
+            <Size x="213" y="13"/>
+            <Anchors>
+                <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
+            </Anchors>
+            <Layers>
+              <Layer textureSubLevel="1">
+                <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
+                    <Size x="24" y="13"/>
+                    <Anchors>
+                        <Anchor point="RIGHT"  relativeKey="$parent.internalBar" relativePoint="LEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <Color r="1" g="1" b="1" a="0.7"></Color>
+                </Texture>
+              </Layer>
+            </Layers>
           </StatusBar>
             <Frame parentKey="auras">
                 <Size x="215" y="100"/>
@@ -369,12 +382,7 @@
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="castingbarNormal" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
-                    <Size x="148" y="13"/>
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
+
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="6">
                 <Texture parentKey="castingbarNormalSpark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
@@ -386,7 +394,7 @@
                 </Texture>
 
 
-                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF" hidden="true">
+                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castinbars/yellow-highlight" hidden="true">
                     <Size x="148" y="12"></Size>
                     <Anchors>
                        <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
@@ -444,6 +452,24 @@
                 </Layers>
               </StatusBar>
             </Frames>
+          </StatusBar>
+          <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
+            <BarTexture  parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castinbars/yellow-norm"/>
+            <Size x="148" y="13"/>
+            <Anchors>
+                <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
+            </Anchors>
+            <Layers>
+              <Layer textureSubLevel="1">
+                <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
+                    <Size x="16" y="13"/>
+                    <Anchors>
+                        <Anchor point="RIGHT" relativeKey="$parent.internalBar" relativePoint="LEFT" x="0" y="0"></Anchor>
+                    </Anchors>
+                    <Color r="1" g="1" b="1" a="0.7"></Color>
+                </Texture>
+              </Layer>
+            </Layers>
           </StatusBar>
             <Frame parentKey="auras">
                 <Size x="257" y="100"/>
@@ -583,12 +609,7 @@
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="castingbarNormal" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
-                    <Size x="213" y="13"/>
-                    <Anchors>
-                        <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
-                    </Anchors>
-                </Texture>
+
             </Layer>
             <Layer level="ARTWORK" textureSubLevel="6">
                 <Texture parentKey="raidmarker" file="Interface\AddOns\GW2_UI\textures\asd">
@@ -603,16 +624,10 @@
                         <Anchor point="CENTER" relativeKey="$parent.prestigeString" relativePoint="CENTER" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-                <Texture parentKey="castingbarNormalSpark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
-                    <Size x="16" y="13"/>
-                    <Anchors>
-                        <Anchor point="RIGHT" relativeKey="$parent.castingbarNormal" relativePoint="RIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                    <Color r="1" g="1" b="1" a="0.7"></Color>
-                </Texture>
 
 
-                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF" hidden="true">
+
+                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castinbars/yellow-highlight" hidden="true">
                     <Size x="213" y="12"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
@@ -685,6 +700,24 @@
                             <Anchor point="RIGHT" relativeKey="$parent.healthbarBackground" relativePoint="RIGHT" x="-5" y="0"></Anchor>
                         </Anchors>
                     </FontString>
+                  </Layer>
+                </Layers>
+              </StatusBar>
+              <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
+                <BarTexture  parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castinbars/yellow-norm"/>
+                <Size x="213" y="13"/>
+                <Anchors>
+                    <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
+                </Anchors>
+                <Layers>
+                  <Layer textureSubLevel="1">
+                    <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
+                        <Size x="16" y="13"/>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativeKey="$parent.internalBar" relativePoint="LEFT" x="0" y="0"></Anchor>
+                        </Anchors>
+                        <Color r="1" g="1" b="1" a="0.7"></Color>
+                    </Texture>
                   </Layer>
                 </Layers>
               </StatusBar>
