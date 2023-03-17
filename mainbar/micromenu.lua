@@ -399,7 +399,7 @@ local function setupMicroButtons(mbf)
         -- TalentMicroButton
         tref = TalentMicroButton
         tref:ClearAllPoints()
-        tref:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
+        tref:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 8, 0)
     end
 
     -- AchievementMicroButton
@@ -630,7 +630,7 @@ local function LoadMicroMenu()
             m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
 
             AchievementMicroButton:ClearAllPoints()
-            AchievementMicroButton:SetPoint("BOTTOMLEFT", (GwTalentMicroButton and "GwTalentMicroButton" or TalenMicroButton), "BOTTOMRIGHT", 4, 0)
+            AchievementMicroButton:SetPoint("BOTTOMLEFT", (GwTalentMicroButton or TalentMicroButton), "BOTTOMRIGHT", 4, 0)
         end
     )
 
