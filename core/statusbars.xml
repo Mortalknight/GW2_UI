@@ -164,7 +164,7 @@
                   <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
                   <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="0"/>
               </Anchors>
-              
+
           </Texture>
             <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
                 <Size x="318" y="2"/>

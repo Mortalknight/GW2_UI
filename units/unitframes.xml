@@ -55,42 +55,12 @@
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.portrait" relativePoint="RIGHT" x="4" y="-2"></Anchor>
                     </Anchors>
-                    <Color r="1" g="1" b="1" a="0.5"></Color>
-                </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
-                    <Size x="314" y="1"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"   relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="1"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT"  x="0" y="1"/>
-                    </Anchors>
-                </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
-                    <Size x="314" y="1"/>
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="0" y="-1"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMRIGHT"  x="0" y="-1"/>
-                    </Anchors>
-                    <TexCoords left="0" right="1" top="1" bottom="0" />
+                    <Color r="1" g="1" b="1" a="0"></Color>
                 </Texture>
 
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
-                    <Size x="2" y="2"/>
-                    <Anchors>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="1" y="0"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMRIGHT" x="1" y="0"/>
-                    </Anchors>
-                </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
-                    <Size x="2" y="2"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="-1" y="0"/>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="-1" y="0"/>
-                    </Anchors>
-                    <TexCoords left="1" right="0" top="0" bottom="1" />
-                </Texture>
 
                 <Texture parentKey="powerbarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
-                    <Size x="213" y="5"/>
+                    <Size x="215" y="5"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="0" y="-2"></Anchor>
                     </Anchors>
@@ -261,7 +231,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar parentKey="healthbar" inherits="GwStatusBarBar">
+            <StatusBar parentKey="healthbar" inherits="GwStatusBarTemplate">
             <Size x="213" y="13"/>
             <Anchors>
                 <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
@@ -314,40 +284,11 @@
                     <Anchors>
                         <Anchor point="LEFT" relativePoint="LEFT" x="4" y="4"></Anchor>
                     </Anchors>
-                </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
-                    <Size x="314" y="1"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"   relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="1"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT"  x="0" y="1"/>
-                    </Anchors>
-                </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
-                    <Size x="314" y="1"/>
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="0" y="-1"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMRIGHT"  x="0" y="-1"/>
-                    </Anchors>
-                    <TexCoords left="0" right="1" top="1" bottom="0" />
+                    <Color r="1" g="1" b="1" a="0"></Color>
                 </Texture>
 
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
-                    <Size x="2" y="2"/>
-                    <Anchors>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="1" y="0"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMRIGHT" x="1" y="0"/>
-                    </Anchors>
-                </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
-                    <Size x="2" y="2"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="-1" y="0"/>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="-1" y="0"/>
-                    </Anchors>
-                    <TexCoords left="1" right="0" top="0" bottom="1" />
-                </Texture>
                 <Texture parentKey="powerbarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
-                    <Size x="148" y="5"/>
+                    <Size x="150" y="5"/>
                     <Anchors>
                         <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="0" y="-2"></Anchor>
                     </Anchors>
@@ -478,7 +419,7 @@
             </Layer>
         </Layers>
         <Frames>
-          <StatusBar parentKey="healthbar" inherits="GwStatusBarBar">
+          <StatusBar parentKey="healthbar" inherits="GwStatusBarTemplate">
             <Size x="148" y="15"/>
             <Anchors>
                 <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
@@ -549,37 +490,7 @@
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.portrait" relativePoint="LEFT" x="-4" y="-2"></Anchor>
                     </Anchors>
-                    <Color r="1" g="1" b="1" a="0.5"></Color>
-                </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
-                    <Anchors>
-                        <Anchor point="TOPLEFT"   relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="0" y="1"/>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT"  x="0" y="1"/>
-                    </Anchors>
-                    </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
-                    <Size x="314" y="1"/>
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="0" y="-1"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMRIGHT"  x="0" y="-1"/>
-                    </Anchors>
-                    <TexCoords left="0" right="1" top="1" bottom="0" />
-                </Texture>
-
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
-                    <Size x="2" y="2"/>
-                    <Anchors>
-                        <Anchor point="TOPRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="TOPRIGHT" x="1" y="0"/>
-                        <Anchor point="BOTTOMRIGHT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMRIGHT" x="1" y="0"/>
-                    </Anchors>
-                </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
-                    <Size x="2" y="2"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.healthbarBackground" relativePoint="TOPLEFT" x="-1" y="0"/>
-                        <Anchor point="BOTTOMLEFT" relativeKey="$parent.healthbarBackground" relativePoint="BOTTOMLEFT" x="-1" y="0"/>
-                    </Anchors>
-                    <TexCoords left="1" right="0" top="0" bottom="1" />
+                    <Color r="1" g="1" b="1" a="0"></Color>
                 </Texture>
 
                 <Texture parentKey="powerbarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
@@ -754,7 +665,7 @@
             </Layer>
         </Layers>
         <Frames>
-          <StatusBar parentKey="healthbar" inherits="GwStatusBarBar">
+          <StatusBar parentKey="healthbar" inherits="GwStatusBarTemplate">
             <Size x="213" y="13"/>
               <Anchors>
                 <Anchor point="RIGHT" relativeKey="$parent.healthbarBackground" relativePoint="RIGHT" x="-1" y="0"></Anchor>

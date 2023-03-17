@@ -60,7 +60,7 @@ local function createNormalUnitFrame(ftype, revert)
 
     f.healthValue = 0
 
-    f.barWidth = 212
+    f.barWidth = 214
 
     f:SetScript("OnEnter", normalUnitFrame_OnEnter)
     f:SetScript("OnLeave", GameTooltip_Hide)
@@ -90,7 +90,7 @@ local function createNormalUnitFrameSmall(ftype)
 
     f.healthValue = 0
 
-    f.barWidth = 147
+    f.barWidth = 149
 
     f:SetScript("OnEnter", normalUnitFrame_OnEnter)
     f:SetScript("OnLeave", GameTooltip_Hide)
