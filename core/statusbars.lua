@@ -165,8 +165,8 @@ GW.createNewStatusbar = createNewStatusBar
 
 
 local function LoadStatusbarTest()
-  local test1  = createNewStatusBar(UIParent,false)
-  local test2  = createNewStatusBar(UIParent,true)
+  local test1  = createNewStatusBar("test1",UIParent,nil,false)
+  local test2  = createNewStatusBar("test2",UIParent,nil,true)
   test2:SetPoint("CENTER",0,-90)
 
 
