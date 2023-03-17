@@ -34,6 +34,13 @@
             </Anchors>
             <Layers>
               <Layer>
+                <MaskTexture parentKey="mask0" file="Interface/AddOns/GW2_UI/textures/hud/barmask/0" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
+                    <Size x="24" y="24"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                    </Anchors>
+                </MaskTexture>
                 <MaskTexture parentKey="mask1" file="Interface/AddOns/GW2_UI/textures/hud/barmask/sharp/1" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
                     <Size x="24" y="24"/>
                     <Anchors>

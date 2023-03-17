@@ -76,8 +76,12 @@ local function SetFillAmount(self,value)
   local fill_threshold = (1/numSpritesInAnimation) * ( math.floor(numSpritesInAnimation * value) + 1)
   local maskTest = (totalWidth * fill_threshold) - bit
 
+  if value == 0 then
+    bI = 0
+  end
+
   if self.spark~=nil then
-    self.spark:SetPoint("RIGHT",self.internalBar,"LEFT",barWidth + self.spark:GetWidth()/2,0)
+    self.spark:SetPoint("RIGHT",self.maskContainer,"LEFT", fill_threshold + (spark_current * self.maskContainer:GetWidth()) + 5  ,0)
   end
 
   if not self.bI or bI~=self.bI then
