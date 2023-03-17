@@ -22,8 +22,8 @@ local uniqueID  = 0
   Bar:GetFillAmount()
     returns the bars current fill amount. if animating returns the current animating value
 
-  bar.barOnUpdate
-      used for hooking custom onupdate function to the bars animation. Does nothing if the bar is not set to animate
+  bar.barOnUpdate (self)
+      used for hooking custom onupdate function to the bars animation. triggers everytime bar value changes (if animated every frame during animation)
 
   bar.speed
     used to set custom speed, default is 100 (pixels / second)
@@ -102,6 +102,9 @@ local function SetFillAmount(self,value)
       self:SetValue(fill_threshold)
       self.fill_threshold = fill_threshold
   end
+  if self.barOnUpdate then
+    self.barOnUpdate(self)
+  end
 end
 
 local function  barUpdate(self,delta)
@@ -113,9 +116,7 @@ local function  barUpdate(self,delta)
   --  SetFillAmount(self,self.animatedValue)
     self:SetScript("OnUpdate",nil)
   end
-  if self.barOnUpdate then
-    self.barOnUpdate(self)
-  end
+
 
 end
 
