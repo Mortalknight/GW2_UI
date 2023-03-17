@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.0.3",{
+    {ct.bug,[=[Fix micro menu issue if talent module is disabled]=]},
+})
+
 addChange("2.0.2",{
     {ct.bug,[=[Fix installation process]=]},
     {ct.bug,[=[Fix some memory leaks]=]},

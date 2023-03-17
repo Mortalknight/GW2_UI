@@ -1,3 +1,6 @@
+2.0.3-Wrath
+    - Fix micro menu issue if talent module is disabled
+
 2.0.2-Wrath
     - Fix installation process
     - Fix some memory leaks
