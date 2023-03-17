@@ -15,6 +15,10 @@ local uniqueID  = 0
   Bar:SetFillAmount(amount)
     Sets the fill amount of the bar to bar, Animates over time if smooth was set when bar was created
 
+  Bar:ForceFIllAmount(amount)
+    always sets the bar value without animatiuon
+
+
   Bar:GetFillAmount()
     returns the bars current fill amount. if animating returns the current animating value
 
