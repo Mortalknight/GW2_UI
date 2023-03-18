@@ -110,17 +110,14 @@ local function SetFillAmount(self,value)
   end
 end
 
-local function  barUpdate(self,delta)
-
+local function barUpdate(self,delta)
   self.animatedTime = self.animatedTime + delta
-  local newValue = lerpEaseOut(self.animatedStartValue,self.animatedValue,self.animatedTime/self.animatedDuration)
-  SetFillAmount(self,newValue)
   if self.animatedTime>=self.animatedDuration then
-  --  SetFillAmount(self,self.animatedValue)
     self:SetScript("OnUpdate",nil)
+  else
+    local newValue = lerpEaseOut(self.animatedStartValue,self.animatedValue,self.animatedTime/self.animatedDuration)
+    SetFillAmount(self,newValue)
   end
-
-
 end
 
 local function onupdate_AnimateBar(self,value)
