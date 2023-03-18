@@ -85,7 +85,10 @@ local function SetFillAmount(self,value)
   end
 
   if self.spark~=nil then
-    self.spark:SetPoint("RIGHT",self.maskContainer,"LEFT", fill_threshold + (spark_current * self.maskContainer:GetWidth()) + 5  ,0)
+    local  sparkPosition = max(0,(spark - self.maskContainer:GetWidth()) + (spark_current * self.maskContainer:GetWidth()) - (self.spark:GetWidth()/2) + 5)
+    self.spark:ClearAllPoints()
+    self.spark:SetPoint("LEFT",self.internalBar,"LEFT",sparkPosition ,0)
+
   end
 
   if not self.bI or bI~=self.bI then
