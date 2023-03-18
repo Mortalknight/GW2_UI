@@ -188,7 +188,6 @@
         </Anchors>
         <Layers>
             <Layer Level="BACKGROUND">
-
                 <Texture name="$parentSep" alphaMode="add" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
                     <Color r="1" b="1" g="1" a="0.6"></Color>
                     <Size x="300" y="1"></Size>
@@ -197,14 +196,12 @@
                     </Anchors>
                 </Texture>
                 <Texture name="$parentHoverBg" parentKey="hover" hidden="true" file="Interface/AddOns/GW2_UI/textures/questview/compas-bg">
-
                     <Size x="300" y="70"></Size>
                     <Anchors>
                         <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" y="0"></Anchor>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" y="0"></Anchor>
                     </Anchors>
                 </Texture>
-
                 <Texture name="$parentFlare" parentKey="flare" hidden="true" file="Interface/AddOns/GW2_UI/textures/hud/expflare">
                     <Size x="150" y="150"></Size>
                     <Anchors>
@@ -282,6 +279,16 @@
                         </Texture>
                     </Layer>
                 </Layers>
+            </Button>
+            <Button parentKey="groupButton" hidden="true">
+                <Size x="25" y="25"></Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x="0" y="-25"></Anchor>
+                </Anchors>
+                <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down"/>
+                <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down"/>
+                <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down" alphaMode="ADD"/>
+                <DisabledTexture file="Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down"/>
             </Button>
         </Frames>
     </Button>
