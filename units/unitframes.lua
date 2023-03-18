@@ -456,7 +456,7 @@ local function hideCastBar(self)
     self.castingbarSpark:Hide()
 
     self.castingbarNormal:Hide()
-    self.castingbarNormalSpark:Hide()
+
     self.castingbarBackground:ClearAllPoints()
     self.castingbarBackground:SetPoint("TOPLEFT", self.powerbarBackground, "BOTTOMLEFT", self.type == "NormalTarget" and -2 or 0, 19)
 
@@ -534,7 +534,6 @@ local function updateCastValues(self)
     if notInterruptible then
         self.castingString:SetText(name)
         self.castingbarNormal:Hide()
-        self.castingbarNormalSpark:Hide()
 
         self.castingbar:Show()
         self.castingbarSpark:Show()
@@ -554,7 +553,6 @@ local function updateCastValues(self)
         self.castingbarSpark:Hide()
 
         self.castingbarNormal:Show()
-        self.castingbarNormalSpark:Show()
     end
 
     if self.reverseChanneling then
