@@ -344,6 +344,11 @@ local function CreateTrackerObject(name, parent)
         RemoveAutoQuestPopUp(self:GetParent().id)
         self:Hide()
     end)
+    f.groupButton:SetScript("OnClick", function(self)
+        if self:GetParent().hasGroupFinderButton then
+            LFGListUtil_FindQuestGroup(self:GetParent().id, true)
+        end
+    end)
 
     return f
 end
@@ -385,14 +390,14 @@ end
 AFP("getObjectiveBlock", getObjectiveBlock)
 
 local function getBlockQuest(blockIndex, isFrequency)
-    if _G["GwQuestBlock" .. blockIndex] ~= nil then
+    if _G["GwQuestBlock" .. blockIndex] then
         local block = _G["GwQuestBlock" .. blockIndex]
         -- set the correct block color for an existing block here
         setBlockColor(block, isFrequency and "DAILY" or "QUEST")
         block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
         block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
         for i = 1, 20 do
-            if _G[block:GetName() .. "GwQuestObjective" .. i] ~= nil then
+            if _G[block:GetName() .. "GwQuestObjective" .. i] then
                 _G[block:GetName() .. "GwQuestObjective" .. i].StatusBar:SetStatusBarColor(block.color.r, block.color.g, block.color.b)
             end
         end
@@ -633,11 +638,13 @@ local function updateQuest(self, block, quest)
     local questLogIndex = quest:GetQuestLogIndex()
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
     local questFailed = C_QuestLog.IsFailed(questID)
+    local hasGroupFinderButton = C_LFGList.CanCreateQuestGroup(questID)
 
     block.height = 25
     block.numObjectives = 0
     block.turnin:SetShown(IsQuestAutoTurnInOrAutoAccept(questID, "COMPLETE"))
     block.popupQuestAccept:SetShown(IsQuestAutoTurnInOrAutoAccept(questID, "OFFER"))
+    block.groupButton:SetShown(hasGroupFinderButton)
 
     if questID and questLogIndex and questLogIndex > 0 then
         if requiredMoney then
@@ -649,6 +656,7 @@ local function updateQuest(self, block, quest)
         block.questID = questID
         block.id = questID
         block.questLogIndex = questLogIndex
+        block.hasGroupFinderButton = hasGroupFinderButton
 
         block.Header:SetText(quest.title)
 
@@ -709,11 +717,13 @@ local function updateQuestByID(self, block, quest, questID, questLogIndex)
     local isComplete = quest:IsComplete()
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
     local questFailed = C_QuestLog.IsFailed(questID)
+    local hasGroupFinderButton = C_LFGList.CanCreateQuestGroup(questID)
 
     block.height = 25
     block.numObjectives = 0
     block.turnin:SetShown(IsQuestAutoTurnInOrAutoAccept(questID, "COMPLETE"))
     block.popupQuestAccept:SetShown(IsQuestAutoTurnInOrAutoAccept(questID, "OFFER"))
+    block.groupButton:SetShown(hasGroupFinderButton)
 
     if requiredMoney then
         self.watchMoneyReasons = self.watchMoneyReasons + 1
@@ -724,6 +734,7 @@ local function updateQuestByID(self, block, quest, questID, questLogIndex)
     block.questID = questID
     block.id = questID
     block.questLogIndex = questLogIndex
+    block.hasGroupFinderButton = hasGroupFinderButton
 
     block.Header:SetText(quest.title)
 
@@ -982,7 +993,6 @@ local function updateQuestLogLayout(self)
         if _G["GwCampaignBlock" .. i] then
             _G["GwCampaignBlock" .. i].questID = nil
             _G["GwCampaignBlock" .. i].questLogIndex = 0
-            if _G["GwCampaignBlock" .. i].groupButton then _G["GwCampaignBlock" .. i].groupButton:SetParent(GW.HiddenFrame) end
             _G["GwCampaignBlock" .. i]:Hide()
             GW.CombatQueue_Queue("update_tracker_campaign_itembutton_remove" .. i, UpdateQuestItem, {_G["GwCampaignBlock" .. i]})
         end
@@ -991,7 +1001,6 @@ local function updateQuestLogLayout(self)
         if _G["GwQuestBlock" .. i] then
             _G["GwQuestBlock" .. i].questID = nil
             _G["GwQuestBlock" .. i].questLogIndex = 0
-            if _G["GwQuestBlock" .. i].groupButton then _G["GwQuestBlock" .. i].groupButton:SetParent(GW.HiddenFrame) end
             _G["GwQuestBlock" .. i]:Hide()
             GW.CombatQueue_Queue("update_tracker_quest_itembutton_remove" .. i, UpdateQuestItem, {_G["GwQuestBlock" .. i]})
         end
@@ -1371,29 +1380,6 @@ local function LoadQuestTracker()
     GW.LoadWQTAddonSkin()
 
     GW.ToggleCollapseObjectivesInChallangeMode()
-
-    hooksecurefunc("QuestObjectiveSetupBlockButton_FindGroup", function(self, questID)
-        local button = self.hasGroupFinderButton and self.groupFinderButton
-
-        if button then
-            local block = getBlockById(questID)
-            local blockBonus = GW.getBonusBlockById(questID)
-            if block or blockBonus then
-                button:SetParent(block or blockBonus)
-                button:ClearAllPoints()
-                button:SetPoint("TOPRIGHT", block or blockBonus, "TOPLEFT", 0, -25)
-                button:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-                button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-                button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-                button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
-                button.Icon:Hide()
-                button.Icon:SetAtlas(nil)
-                button:SetSize(25, 25)
-                if block then block.groupButton = button end
-                if blockBonus then blockBonus.groupButton = button end
-            end
-        end
-    end)
 
     fNotify.shouldDisplay = false
     -- only update the tracker on Events or if player moves
