@@ -619,7 +619,7 @@ local function updateHealthValues(self, event)
     if unitIsDead then
       healthPrecentage = 0
       health = 0
-      healtMax = 0
+      healthMax = 0
     end
 
     if absorb > 0 and healthMax > 0 then
