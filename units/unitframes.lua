@@ -661,6 +661,9 @@ local function updateHealthValues(self, event)
 
     end
 
+    self.healthbar.barOnUpdate = function()
+      updateHealthTextString(self, health, self.healthbar:GetFillAmount())
+    end
     --prediction calc
     local predictionbar = self.predictionbar
     if prediction == 0 then
@@ -682,9 +685,7 @@ local function updateHealthValues(self, event)
     end
 
 
-    self.healthbar.barOnUpdate = function()
-      updateHealthTextString(self, health, self.healthbar:GetFillAmount())
-    end
+
 --[[
 
 
