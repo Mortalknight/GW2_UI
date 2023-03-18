@@ -52,6 +52,12 @@ local function createNormalUnitFrame(ftype, revert)
     f.castingString:SetFont(UNIT_NAME_FONT, 12)
     f.castingString:SetShadowOffset(1, -1)
 
+    f.castingbarNormal.castingString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingbarNormal.castingString:SetShadowOffset(1, -1)
+
+    f.castingbarNormal.castingTimeString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingbarNormal.castingTimeString:SetShadowOffset(1, -1)
+
     f.castingTimeString:SetFont(UNIT_NAME_FONT, 12)
     f.castingTimeString:SetShadowOffset(1, -1)
 
@@ -89,6 +95,12 @@ local function createNormalUnitFrameSmall(ftype)
 
     f.castingString:SetFont(UNIT_NAME_FONT, 12)
     f.castingString:SetShadowOffset(1, -1)
+
+    f.castingbarNormal.castingString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingbarNormal.castingString:SetShadowOffset(1, -1)
+
+    f.castingbarNormal.castingTimeString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingbarNormal.castingTimeString:SetShadowOffset(1, -1)
 
     f.healthValue = 0
 
@@ -504,7 +516,7 @@ local function updateCastValues(self)
     startTime = startTime / 1000
     endTime = endTime / 1000
 
-    self.castingString:SetText(name)
+
 
     if texture ~= nil and self.portrait ~= nil and (self.activePortrait == nil or self.activePortrait ~= texture) then
         self.portrait:SetTexture(texture)
@@ -520,12 +532,24 @@ local function updateCastValues(self)
     end
 
     if notInterruptible then
+        self.castingString:SetText(name)
         self.castingbarNormal:Hide()
         self.castingbarNormalSpark:Hide()
 
         self.castingbar:Show()
         self.castingbarSpark:Show()
+
+        self.castingString:Show();
+        if self.castingTimeString~=nil then
+          self.castingTimeString:Show();
+        end
     else
+        self.castingbarNormal.castingString:SetText(name)
+        self.castingString:Hide();
+        if self.castingTimeString~=nil then
+          self.castingTimeString:Hide();
+        end
+
         self.castingbar:Hide()
         self.castingbarSpark:Hide()
 
@@ -547,7 +571,12 @@ local function updateCastValues(self)
         endTime - startTime,
         function()
             if GetSetting("target_CASTINGBAR_DATA") and self.castingTimeString then
-                self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
+              if notInterruptible then
+                  self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
+              else
+                  self.castingbarNormal.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
+              end
+
             end
             local p = self.isChanneling and (1 - animations["GwUnitFrame" .. self.unit .. "Cast"].progress) or animations["GwUnitFrame" .. self.unit .. "Cast"].progress
 
