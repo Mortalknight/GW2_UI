@@ -74,24 +74,18 @@ local function GetFillAmount(self)
 end
 local function SetFillAmount(self,value)
 
-  local totalWidth = self:GetWidth()
+  local isVertical = (self:GetOrientation()=="VERTICAL") or false
+  local totalWidth = isVertical and self:GetHeight() or self:GetWidth()
+  local height = isVertical and self:GetWidth() or self:GetHeight()
   local barWidth = totalWidth * value
 
-
+  local maskHightValue = isVertical and 64 or height
 
   self.fillAmount = value
-  --[[
-  local bit = totalWidth / numSpritesInAnimation
-  local spark = bit * math.floor(numSpritesInAnimation * value)
-  local spark_current = (bit * (numSpritesInAnimation * (value)) - spark) / bit
-  local bI = math.min(numSpritesInAnimation, math.max(1, math.floor((numSpritesInAnimation ) - (numSpritesInAnimation * spark_current))))
-  local fill_threshold = (1/numSpritesInAnimation) * ( math.floor(numSpritesInAnimation * value) + 1)
-  local maskTest = (totalWidth * fill_threshold) - bit
 
-  ]]
 
-  local numberOfSegments =  totalWidth / self:GetHeight()
-  local numberOfSegmentsRound = math.ceil(totalWidth / self:GetHeight())
+  local numberOfSegments =  totalWidth / maskHightValue
+  local numberOfSegmentsRound = math.ceil(numberOfSegments)
 
   local segmentSize = totalWidth / numberOfSegmentsRound
 
@@ -109,14 +103,18 @@ local function SetFillAmount(self,value)
   local interpolateRampRound = round(interpolateRamp)
 
   if self:GetName()=="test1" then
-    print(interpolateRampRound,value)
+  --  print(interpolateRampRound,value)
   end
 
   if value == 0 then
     interpolateRampRound = 0
   end
- self.maskContainer:SetSize(segmentSize,segmentSize)
 
+  if isVertical then
+    self.maskContainer:SetSize(height,segmentSize)
+  else
+    self.maskContainer:SetSize(segmentSize,segmentSize)
+  end
 
   if self.spark~=nil  then
     if value == 0 then
@@ -126,8 +124,6 @@ local function SetFillAmount(self,value)
     end
     local  sparkPosition = currentSegmentPosition - self.spark.width + (segmentSize * rampProgress)
     local sparkWidth = min(barWidth,self.spark.width)
-
-
     self.spark:SetWidth(sparkWidth)
     self.spark:ClearAllPoints()
     self.spark:SetPoint("LEFT",self.internalBar,"LEFT",max(0,sparkPosition),0)
@@ -137,6 +133,11 @@ local function SetFillAmount(self,value)
   if not self.interpolateRampRound or interpolateRampRound~=self.interpolateRampRound then
     local newMask = self.maskContainer["mask"..interpolateRampRound]
     self:addMask(newMask)
+
+    if isVertical then
+      newMask:SetSize(self.maskContainer:GetHeight(),self.maskContainer:GetWidth())
+    end
+
     if self.interpolateRampRound~=nil then
       local oldMask = self.maskContainer["mask"..self.interpolateRampRound]
       self:removeMask(oldMask)
@@ -144,7 +145,11 @@ local function SetFillAmount(self,value)
     self.interpolateRampRound = interpolateRampRound
   end
   if self.fill_threshold~=barPosition then
-      self.maskContainer:SetPoint("LEFT",self.internalBar,"LEFT",currentSegmentPosition,0)
+      if isVertical then
+        self.maskContainer:SetPoint("BOTTOM",self.internalBar,"BOTTOM",0,currentSegmentPosition)
+      else
+        self.maskContainer:SetPoint("LEFT",self.internalBar,"LEFT",currentSegmentPosition,0)
+      end
       self:SetValue(barPosition)
       self.fill_threshold = barPosition
   end
@@ -191,6 +196,29 @@ local function addToBarMask(self,texture)
   self.maskedTextures[#self.maskedTextures +  1] = texture
 
 end
+
+local function SetOrientation(self,direction)
+  for i=0,numSpritesInAnimation do
+    self.maskContainer["mask"..i]:SetRotation(1.5707)
+--[[
+<Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+<Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+]]
+  self.maskContainer["mask"..i]:ClearAllPoints()
+  self.maskContainer["mask"..i]:SetPoint("CENTER",self.maskContainer,"CENTER",0,0)
+  self.maskContainer["mask"..i]:SetSize(self.maskContainer:GetHeight(),self.maskContainer:GetWidth())
+  end
+  self.maskContainer:ClearAllPoints()
+  self.maskContainer:SetPoint("BOTTOM",self.internalBar,"BOTTOM",0,0)
+
+  self.mask:SetRotation(1.5707)
+  self.mask:ClearAllPoints()
+  self.mask:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
+  self.mask:SetPoint("TOPRIGHT",self,"TOPRIGHT",0,0)
+  self.mask:SetPoint("BOTTOMLEFT",self.maskContainer,"TOPLEFT",-2,0)
+  self.mask:SetPoint("BOTTOMRIGHT",self.maskContainer,"TOPRIGHT",-2,0)
+end
+
 local function hookStatusbarBehaviour(statusBar,smooth)
 
   if not AddToAnimation then
@@ -210,17 +238,19 @@ local function hookStatusbarBehaviour(statusBar,smooth)
   statusBar.removeMask = removeMask
 
   statusBar.maskContainer:ClearAllPoints()
-  statusBar.maskContainer:SetPoint("LEFT",statusBar.internalBar,"LEFT",0,0)
 
-  statusBar.mask:SetPoint("LEFT",statusBar.maskContainer,"RIGHT",-2,0)
-  --statusBar.mask:SetPoint("RIGHT",statusBar,"RIGHT",0,0)
-  statusBar.internalBar:AddMaskTexture(statusBar.mask)
+  statusBar.mask:SetPoint("TOPLEFT",statusBar.maskContainer,"TOPRIGHT",-2,0)
+  statusBar.mask:SetPoint("BOTTOMLEFT",statusBar.maskContainer,"BOTTOMRIGHT",-2,0)
+  statusBar.mask:SetPoint("TOPRIGHT",statusBar,"TOPRIGHT",0,0)
+  statusBar.mask:SetPoint("BOTTOMRIGHT",statusBar,"BOTTOMRIGHT",0,0)
+
+  --statusBar.internalBar:AddMaskTexture(statusBar.mask)
 
   if statusBar.spark ~=nil then
     statusBar:addToBarMask(statusBar.spark)
     statusBar.spark.width = statusBar.spark:GetWidth()
-
   end
+  hooksecurefunc(statusBar,"SetOrientation",SetOrientation)
 
   return statusBar
 end
@@ -236,23 +266,22 @@ GW.createNewStatusbar = createNewStatusBar
 
 
 local function LoadStatusbarTest()
+  local testFrameContainer = CreateFrame("Frame",nil,UIParent)
   local test1  = createNewStatusBar("test1",UIParent,nil,true)
+  test1:SetOrientation("VERTICAL")
+  test1:SetSize(150,150)
   --local test2  = createNewStatusBar("test2",UIParent,nil,true)
 --  test2:SetPoint("CENTER",0,-90)
 
-  test1:SetStatusBarColor(0.3,0,0,1)
+  test1:SetStatusBarColor(0.3,0.3,0.3,1)
 --  test2:SetStatusBarColor(0.3,0,0,1)
     local delay = 0
     local delay2 = 0
-    test1:SetScript("OnUpdate",function(self,delta)
-      if delay2>GetTime() then
-        return
-      end
-        delay2 = GetTime() + 3
+    testFrameContainer:SetScript("OnUpdate",function(self,delta)
 
         test1:SetFillAmount(math.abs(math.sin(GetTime())))
   --      test2:SetFillAmount(math.abs(math.sin(GetTime()*2)))
-    end)
+end)
 
 
 end
