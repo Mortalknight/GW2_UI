@@ -1456,9 +1456,12 @@ local function LoadClassPowers()
     cpf.exbar = exbar
 
     exbar:ClearAllPoints()
+    exbar:SetPoint("TOPLEFT", cpf, "TOPLEFT", 0 + xOff, 5 - yOff)
     exbar:SetPoint("BOTTOMLEFT", cpf, "BOTTOMLEFT", 0 + xOff, 5 - yOff)
+    exbar:SetPoint("TOPRIGHT", cpf, "TOPRIGHT", 0 + xOff, 5 - yOff)
+    exbar:SetPoint("BOTTOMRIGHT", cpf, "BOTTOMRIGHT", 0 + xOff, 5 - yOff)
     exbar:SetFrameStrata("MEDIUM")
-    exbar.label:SetFont(DAMAGE_TEXT_FONT, 14)
+    exbar.label:SetFont(DAMAGE_TEXT_FONT, 12)
 
     -- set a bunch of other init styling stuff
     cpf.decayCounter.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
