@@ -175,6 +175,11 @@ local function onupdate_AnimateBar(self,value)
     self:SetScript("OnUpdate",barUpdate)
 end
 
+local function ForceFIllAmount(self,value)
+  SetFillAmount(self,value)
+  self:SetScript("OnUpdate",nil)
+end
+
 local function addToBarMask(self,texture)
   if texture==nil then
      return
@@ -198,7 +203,7 @@ local function hookStatusbarBehaviour(statusBar,smooth)
   statusBar.fill_threshold = 0
   statusBar.GetFillAmount = GetFillAmount
   statusBar.SetFillAmount = smooth and onupdate_AnimateBar or SetFillAmount
-  statusBar.ForceFIllAmount = SetFillAmount
+  statusBar.ForceFIllAmount = ForceFIllAmount
   statusBar.addToBarMask = addToBarMask
   statusBar.uniqueID = uniqueID
   statusBar.addMask = addMask
