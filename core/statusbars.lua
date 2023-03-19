@@ -37,6 +37,13 @@ local function getAnimationDuration(self,val1,val2,width)
   local t = (width * math.abs(val1 - val2)) / speed
   return t
 end
+local function getAnimationDurationDynamic(self,val1,val2,width)
+  if width ==nil then width = 0 end
+  local speed = self.speed or 500
+  speed = speed * math.abs(val1 - val2)
+  local t = (width * math.abs(val1 - val2)) / speed
+  return t
+end
 
 local function removeMask(self,mask)
   self.internalBar:RemoveMaskTexture(mask)
@@ -112,11 +119,18 @@ local function SetFillAmount(self,value)
 
 
   if self.spark~=nil  then
-    local  sparkPosition = currentSegmentPosition - self.spark:GetWidth() + (segmentSize * rampProgress)
+    if value == 0 then
+      self.spark:Hide()
+    else
+      self.spark:Show()
+    end
+    local  sparkPosition = currentSegmentPosition - self.spark.width + (segmentSize * rampProgress)
+    local sparkWidth = min(barWidth,self.spark.width)
 
-    self.spark:SetWidth(min(self.spark.width, self.spark.width - -sparkPosition))
+
+    self.spark:SetWidth(sparkWidth)
     self.spark:ClearAllPoints()
-    self.spark:SetPoint("LEFT",self.internalBar,"LEFT",sparkPosition ,0)
+    self.spark:SetPoint("LEFT",self.internalBar,"LEFT",max(0,sparkPosition),0)
 
   end
 
@@ -156,7 +170,7 @@ local function onupdate_AnimateBar(self,value)
     self.animatedValue = value;
     self.animatedStartValue = GetFillAmount(self)
     self.animatedTime =0
-    self.animatedDuration = getAnimationDuration(self,self.animatedStartValue , self.animatedValue,self:GetWidth())
+    self.animatedDuration = getAnimationDurationDynamic(self,self.animatedStartValue , self.animatedValue,self:GetWidth())
 
     self:SetScript("OnUpdate",barUpdate)
 end
@@ -198,7 +212,7 @@ local function hookStatusbarBehaviour(statusBar,smooth)
   statusBar.internalBar:AddMaskTexture(statusBar.mask)
 
   if statusBar.spark ~=nil then
-    --statusBar:addToBarMask(statusBar.spark)
+    statusBar:addToBarMask(statusBar.spark)
     statusBar.spark.width = statusBar.spark:GetWidth()
 
   end
