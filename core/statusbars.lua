@@ -73,6 +73,7 @@ local function SetFillAmount(self,value)
 
 
   self.fillAmount = value
+  --[[
   local bit = totalWidth / numSpritesInAnimation
   local spark = bit * math.floor(numSpritesInAnimation * value)
   local spark_current = (bit * (numSpritesInAnimation * (value)) - spark) / bit
@@ -80,30 +81,58 @@ local function SetFillAmount(self,value)
   local fill_threshold = (1/numSpritesInAnimation) * ( math.floor(numSpritesInAnimation * value) + 1)
   local maskTest = (totalWidth * fill_threshold) - bit
 
-  if value == 0 then
-    bI = 0
+  ]]
+
+  local numberOfSegments =  totalWidth / self:GetHeight()
+  local numberOfSegmentsRound = math.ceil(totalWidth / self:GetHeight())
+
+  local segmentSize = totalWidth / numberOfSegmentsRound
+
+
+  local currentSegmentIndex = math.floor(numberOfSegmentsRound * value)
+  local currentSegmentPosition = currentSegmentIndex * segmentSize
+
+  local barPosition = ((currentSegmentIndex + 1) * segmentSize) / totalWidth
+
+  local rampStartPoint = (segmentSize * currentSegmentIndex)
+  local rampEndPoint = (segmentSize * (currentSegmentIndex+1))
+  local rampProgress = (barWidth - rampStartPoint) / (rampEndPoint - rampStartPoint)
+
+  local interpolateRamp = lerp(numSpritesInAnimation,1, rampProgress)
+  local interpolateRampRound = round(interpolateRamp)
+
+  if self:GetName()=="test1" then
+    print(interpolateRampRound,value)
   end
 
-  if self.spark~=nil then
-    local  sparkPosition = max(0,(spark - self.maskContainer:GetWidth()) + (spark_current * self.maskContainer:GetWidth()) - (self.spark:GetWidth()/2) + 5)
+  if value == 0 then
+    interpolateRampRound = 0
+  end
+ self.maskContainer:SetSize(segmentSize,segmentSize)
+
+
+  if self.spark~=nil  then
+    local  sparkPosition = currentSegmentPosition - self.spark:GetWidth() + (segmentSize * rampProgress)
+
+    self.spark:SetWidth(min(self.spark.width, self.spark.width - -sparkPosition))
     self.spark:ClearAllPoints()
     self.spark:SetPoint("LEFT",self.internalBar,"LEFT",sparkPosition ,0)
 
   end
 
-  if not self.bI or bI~=self.bI then
-    local newMask = self.maskContainer["mask"..bI]
+  if not self.interpolateRampRound or interpolateRampRound~=self.interpolateRampRound then
+    local newMask = self.maskContainer["mask"..interpolateRampRound]
     self:addMask(newMask)
-    if self.bI~=nil then
-      local oldMask = self.maskContainer["mask"..self.bI]
+    if self.interpolateRampRound~=nil then
+      local oldMask = self.maskContainer["mask"..self.interpolateRampRound]
       self:removeMask(oldMask)
     end
-    self.bI = bI
+    self.interpolateRampRound = interpolateRampRound
   end
-  if self.fill_threshold~=fill_threshold then
-      self.maskContainer:SetPoint("LEFT",self.internalBar,"LEFT",spark,0)
-      self:SetValue(fill_threshold)
-      self.fill_threshold = fill_threshold
+  if self.fill_threshold~=barPosition then
+      self.maskContainer:SetPoint("LEFT",self.internalBar,"LEFT",currentSegmentPosition,0)
+      self:SetValue(barPosition)
+      self.fill_threshold = barPosition
   end
   if self.barOnUpdate then
     self.barOnUpdate(self)
@@ -169,7 +198,9 @@ local function hookStatusbarBehaviour(statusBar,smooth)
   statusBar.internalBar:AddMaskTexture(statusBar.mask)
 
   if statusBar.spark ~=nil then
-    statusBar:addToBarMask(statusBar.spark)
+    --statusBar:addToBarMask(statusBar.spark)
+    statusBar.spark.width = statusBar.spark:GetWidth()
+
   end
 
   return statusBar
@@ -186,12 +217,12 @@ GW.createNewStatusbar = createNewStatusBar
 
 
 local function LoadStatusbarTest()
-  local test1  = createNewStatusBar("test1",UIParent,nil,false)
-  local test2  = createNewStatusBar("test2",UIParent,nil,true)
-  test2:SetPoint("CENTER",0,-90)
+  local test1  = createNewStatusBar("test1",UIParent,nil,true)
+  --local test2  = createNewStatusBar("test2",UIParent,nil,true)
+--  test2:SetPoint("CENTER",0,-90)
 
   test1:SetStatusBarColor(0.3,0,0,1)
-  test2:SetStatusBarColor(0.3,0,0,1)
+--  test2:SetStatusBarColor(0.3,0,0,1)
     local delay = 0
     local delay2 = 0
     test1:SetScript("OnUpdate",function(self,delta)
@@ -201,7 +232,7 @@ local function LoadStatusbarTest()
         delay2 = GetTime() + 3
 
         test1:SetFillAmount(math.abs(math.sin(GetTime())))
-        test2:SetFillAmount(math.abs(math.sin(GetTime()*2)))
+  --      test2:SetFillAmount(math.abs(math.sin(GetTime()*2)))
     end)
 
 
