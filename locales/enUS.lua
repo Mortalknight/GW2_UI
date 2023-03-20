@@ -523,3 +523,7 @@ L["<Assign specializations>"] = true
 L["Bottom"] = true
 L["Health Bar Position"] = true
 L["One or more of the changes you have made require a UI reload."] = true
+L["Show healing numbers"] = true
+L["Classic combat text anchoring"] = true
+L["Center of screen"] = true
+L["GW2 floating combat text style"] = true

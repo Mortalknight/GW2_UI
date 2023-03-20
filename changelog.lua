@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.1.0",{
+    {ct.bug,[=[Added damage text styles: Default, Stacking and Classic]=]},
+})
+
 addChange("2.0.3",{
     {ct.bug,[=[Fix micro menu issue if talent module is disabled]=]},
 })

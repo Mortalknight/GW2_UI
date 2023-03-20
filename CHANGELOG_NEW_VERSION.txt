@@ -1,18 +1,2 @@
-2.0.3-Wrath
-    - Fix micro menu issue if talent module is disabled
-
-2.0.2-Wrath
-    - Fix installation process
-    - Fix some memory leaks
-    - Mounts and pets can not be linked into chat or macro frame
-    - Fix raid aura indicators
-
-2.0.1-Wrath
-    - Fix resting icon
-    - Fix mail icon tooltip
-    - Fix stancebar icon
-    - Fix minimap tracking icon
-
-2.0.0-Wrath
-    - Merged art updates from retail version
-    - Added option to fade xp bar
+2.1.0-Wrath
+    - Added damage text styles: Default, Stacking and Classic

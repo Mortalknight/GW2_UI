@@ -608,12 +608,19 @@ local function evPlayerLogin(self)
 
     if not IsIncompatibleAddonLoadedOrOverride("FloatingCombatText", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("GW_COMBAT_TEXT_MODE") == "GW2" then
-            SetCVar("floatingCombatTextCombatDamage", "0")
-            GW.LoadDamageText()
+            C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+            if GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS") then
+                C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+            else
+                C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
+            end
+            GW.LoadDamageText(true)
         elseif GetSetting("GW_COMBAT_TEXT_MODE") == "BLIZZARD" then
-            SetCVar("floatingCombatTextCombatDamage", "1")
+            C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
+            C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
         else
-            SetCVar("floatingCombatTextCombatDamage", "0")
+            C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+            C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
         end
     end
 

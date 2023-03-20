@@ -1,3 +1,6 @@
+2.1.0-Wrath
+    - Added damage text styles: Default, Stacking and Classic
+
 2.0.3-Wrath
     - Fix micro menu issue if talent module is disabled
 

@@ -17,7 +17,7 @@ local function LoadHudPanel(sWindow)
     local general = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
     general.header:SetFont(DAMAGE_TEXT_FONT, 20)
     general.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    general.header:SetText(BINDING_HEADER_ACTIONBAR)
+    general.header:SetText(UIOPTIONS_MENU)
     general.sub:SetFont(UNIT_NAME_FONT, 12)
     general.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     general.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
@@ -29,7 +29,7 @@ local function LoadHudPanel(sWindow)
     local minimap = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
     minimap.header:SetFont(DAMAGE_TEXT_FONT, 20)
     minimap.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    minimap.header:SetText(BINDING_HEADER_ACTIONBAR)
+    minimap.header:SetText(UIOPTIONS_MENU)
     minimap.sub:SetFont(UNIT_NAME_FONT, 12)
     minimap.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     minimap.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
@@ -41,7 +41,7 @@ local function LoadHudPanel(sWindow)
     local worldmap = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
     worldmap.header:SetFont(DAMAGE_TEXT_FONT, 20)
     worldmap.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    worldmap.header:SetText(BINDING_HEADER_ACTIONBAR)
+    worldmap.header:SetText(UIOPTIONS_MENU)
     worldmap.sub:SetFont(UNIT_NAME_FONT, 12)
     worldmap.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     worldmap.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
@@ -53,7 +53,7 @@ local function LoadHudPanel(sWindow)
     local fct = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
     fct.header:SetFont(DAMAGE_TEXT_FONT, 20)
     fct.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    fct.header:SetText(BINDING_HEADER_ACTIONBAR)
+    fct.header:SetText(UIOPTIONS_MENU)
     fct.sub:SetFont(UNIT_NAME_FONT, 12)
     fct.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
     fct.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
@@ -212,7 +212,26 @@ local function LoadHudPanel(sWindow)
         COMBAT_TEXT_LABEL,
         COMBAT_SUBTEXT,
         "GW_COMBAT_TEXT_MODE",
-        function() GW.ShowRlPopup = true end,
+        function(value)
+            if value == "GW2" then
+                C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+                if GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS") then
+                    C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+                else
+                    C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
+                end
+                GW.LoadDamageText(true)
+            elseif value == "BLIZZARD" then
+                C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
+                C_CVar.SetCVar("floatingCombatTextCombafloatingCombatTextCombatHealingtDamage", "1")
+                GW.FloatingCombatTextToggleFormat(false)
+            else
+                C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+                C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+                GW.FloatingCombatTextToggleFormat(false)
+            end
+
+        end,
         {"GW2", "BLIZZARD", "OFF"},
         {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS},
         nil,
@@ -220,8 +239,37 @@ local function LoadHudPanel(sWindow)
         nil,
         "FloatingCombatText"
     )
-    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
-    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+
+    addOptionDropdown(
+        fct.scroll.scrollchild,
+        L["GW2 floating combat text style"],
+        nil,
+        "GW_COMBAT_TEXT_STYLE",
+        function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat(true) end,
+        {"Default", "Stacking", "Classic"},
+        {DEFAULT, L["Stacking"], EXPANSION_NAME0},
+        nil,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        nil,
+        "FloatingCombatText"
+    )
+
+    addOptionDropdown(
+        fct.scroll.scrollchild,
+        L["Classic combat text anchoring"],
+        nil,
+        "GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR",
+        function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat(true) end,
+        {"Nameplates", "Center"},
+        {L["Nameplates"], L["Center of screen"]},
+        nil,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = EXPANSION_NAME0},
+        nil,
+        "FloatingCombatText"
+    )
+    addOption(fct.scroll.scrollchild, L["Show healing numbers"], nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
 
     InitPanel(general, true)
     InitPanel(minimap, true)

@@ -629,8 +629,10 @@ local function LoadMicroMenu()
             m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
             m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
 
-            AchievementMicroButton:ClearAllPoints()
-            AchievementMicroButton:SetPoint("BOTTOMLEFT", (GwTalentMicroButton or TalentMicroButton), "BOTTOMRIGHT", 4, 0)
+            if not InCombatLockdown() then
+                AchievementMicroButton:ClearAllPoints()
+                AchievementMicroButton:SetPoint("BOTTOMLEFT", (GwTalentMicroButton or TalentMicroButton), "BOTTOMRIGHT", 4, 0)
+            end
         end
     )
 

@@ -656,7 +656,7 @@ local function InitPanel(panel, hasScroll)
                         SetSetting(self.optionName, self.option)
 
                         if v.callback then
-                            v.callback()
+                            v.callback(self.option)
                         end
                         --Check all dependencies on this option
                         checkDependenciesOnLoad()
