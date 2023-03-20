@@ -545,10 +545,13 @@ L["Empty slots alpha"] = true
 L["Set the empty action bar slots alpha value."] = true
 L["Hide Blizzard dragon riding vigor"] = true
 L["Bonus Net"] = true
-
---NEW
 L["Width"] = true
 L["Toggle the borders around the screen"] = true
 L["Disable FPS tooltip"] = true
 L["Main Action Bar"] = true
 L["Trading post"] = true
+L["Show healing numbers"] = true
+L["Classic combat text anchoring"] = true
+L["Center of screen"] = true
+L["GW2 floating combat text style"] = true
+L["Stacking"] = true
