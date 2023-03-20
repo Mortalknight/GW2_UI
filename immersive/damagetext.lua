@@ -795,9 +795,9 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
         end,
         nil,
         function()
-        if gridIndex ~= nil then
-            namePlateClassicGrid[frame.anchorFrame][gridIndex] = nil
-        end
+            if namePlateClassicGrid[frame.anchorFrame] and gridIndex ~= nil then
+                namePlateClassicGrid[frame.anchorFrame][gridIndex] = nil
+            end
             frame:SetScale(1)
             frame:Hide()
         end
@@ -833,7 +833,7 @@ local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
         end,
         nil,
         function()
-            if gridIndex ~= nil then
+            if namePlateClassicGrid[frame.anchorFrame] and gridIndex ~= nil then
                 namePlateClassicGrid[frame.anchorFrame][gridIndex] = nil
             end
             frame:SetScale(1)

@@ -554,3 +554,4 @@ L["Show healing numbers"] = true
 L["Classic combat text anchoring"] = true
 L["Center of screen"] = true
 L["GW2 floating combat text style"] = true
+L["Stacking"] = true
