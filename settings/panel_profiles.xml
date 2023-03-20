@@ -117,9 +117,9 @@
                         <Anchors>
                             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-10" y="5"/>
                         </Anchors>
-                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Up"></NormalTexture>
-                        <PushedTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Down"></PushedTexture>
-                        <HighlightTexture file="Interface/AddOns/GW2_UI/textures/MainMenuMicroButton-Down"></HighlightTexture>
+                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Up"></NormalTexture>
+                        <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Down"></PushedTexture>
+                        <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/MainMenuMicroButton-Down"></HighlightTexture>
                         <Frames>
                             <Frame parentKey="dropdown" hidden="true" frameLevel="28">
                                 <Size x="140" y="90"></Size>
