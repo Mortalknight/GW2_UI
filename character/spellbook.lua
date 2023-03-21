@@ -720,6 +720,7 @@ local function LoadSpellbook(tabContainer)
     fmSpellbook:RegisterEvent("CURRENT_SPELL_CAST_CHANGED")
     fmSpellbook:RegisterEvent("PLAYER_LEVEL_UP")
     SpellBookFrame:UnregisterAllEvents()
+    SpellBookFrame:HookScript("OnShow", function() HideUIPanel(SpellBookFrame) end)
 
     for tab = 1, 5 do
         if tab == 4 then
