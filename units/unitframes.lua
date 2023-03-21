@@ -30,16 +30,36 @@ GW.AddForProfiling("unitframes", "normalUnitFrame_OnEnter", normalUnitFrame_OnEn
 
 local function createNormalUnitFrame(ftype, revert)
     local f = CreateFrame("Button", ftype, UIParent, revert and "GwNormalUnitFrameInvert" or "GwNormalUnitFrame")
-    GW.hookStatusbarBehaviour(f.healthbar,true)
-    GW.hookStatusbarBehaviour(f.healthbar.absorbOverlay,true)
+    local hg = f.healthContainer
+    f.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
+    f.antiHeal = hg.healPrediction.absorbbg.health.antiHeal
+    f.health = hg.healPrediction.absorbbg.health
+    f.absorbbg = hg.healPrediction.absorbbg
+    f.healPrediction = hg.healPrediction
+    f.healthString = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+
+
+    GW.hookStatusbarBehaviour(f.absorbOverlay,true)
+    GW.hookStatusbarBehaviour(f.antiHeal,true)
+    GW.hookStatusbarBehaviour(f.health,true)
+    GW.hookStatusbarBehaviour(f.absorbbg,true)
+    GW.hookStatusbarBehaviour(f.healPrediction,false)
     GW.hookStatusbarBehaviour(f.castingbarNormal,false)
-    f.castingbarNormal.customMaskSize = 64
-    f.healthbar.customMaskSize = 64
-    f.healthbar.absorbOverlay.customMaskSize = 64
+
+    f.absorbOverlay.customMaskSize = 64
+    f.antiHeal.customMaskSize = 64
+    f.health.customMaskSize = 64
+    f.absorbbg.customMaskSize = 64
+
+    f.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
+    f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
+
+
+
     f.frameInvert = revert
 
-    f.healthbar.absorbOverlay.healthString:SetFont(UNIT_NAME_FONT, 11)
-    f.healthbar.absorbOverlay.healthString:SetShadowOffset(1, -1)
+    f.healthString:SetFont(UNIT_NAME_FONT, 11)
+    f.healthString:SetShadowOffset(1, -1)
 
     if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
         f.nameString:SetFont(UNIT_NAME_FONT, 14)
@@ -82,11 +102,33 @@ GW.AddForProfiling("unitframes", "createNormalUnitFrame", createNormalUnitFrame)
 
 local function createNormalUnitFrameSmall(ftype)
     local f = CreateFrame("Button", ftype, UIParent, "GwNormalUnitFrameSmall")
-    GW.hookStatusbarBehaviour(f.healthbar,true)
-    GW.hookStatusbarBehaviour(f.healthbar.absorbOverlay,true)
+    local hg = f.healthContainer
+    f.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
+    f.antiHeal = hg.healPrediction.absorbbg.health.antiHeal
+    f.health = hg.healPrediction.absorbbg.health
+    f.absorbbg = hg.healPrediction.absorbbg
+    f.healPrediction = hg.healPrediction
+    f.healthString = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+
+
+    GW.hookStatusbarBehaviour(f.absorbOverlay,true)
+    GW.hookStatusbarBehaviour(f.antiHeal,true)
+    GW.hookStatusbarBehaviour(f.health,true)
+    GW.hookStatusbarBehaviour(f.absorbbg,true)
+    GW.hookStatusbarBehaviour(f.healPrediction,false)
     GW.hookStatusbarBehaviour(f.castingbarNormal,false)
-    f.healthbar.absorbOverlay.healthString:SetFont(UNIT_NAME_FONT, 11)
-    f.healthbar.absorbOverlay.healthString:SetShadowOffset(1, -1)
+
+    f.absorbOverlay.customMaskSize = 64
+    f.antiHeal.customMaskSize = 64
+    f.health.customMaskSize = 64
+    f.absorbbg.customMaskSize = 64
+
+    f.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
+    f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
+
+
+    f.healthString:SetFont(UNIT_NAME_FONT, 11)
+    f.healthString:SetShadowOffset(1, -1)
 
     if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
         f.nameString:SetFont(UNIT_NAME_FONT, 14)
@@ -130,7 +172,7 @@ local function updateHealthTextString(self, health, healthPrecentage)
         healthString = healthString .. CommaValue(healthPrecentage * 100) .. "%"
     end
 
-    self.healthbar.absorbOverlay.healthString:SetText(healthString)
+    self.healthString:SetText(healthString)
 end
 GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextString)
 
@@ -139,7 +181,7 @@ local function updateHealthbarColor(self)
         local _, englishClass = UnitClass(self.unit)
         local color = GWGetClassColor(englishClass, true)
 
-        self.healthbar:SetStatusBarColor(color.r, color.g, color.b, color.a)
+        self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
       --  self.healthbar:SetVertexColor(color.r, color.g, color.b, color.a)
       -- self.healthbarSpark:SetVertexColor(color.r, color.g, color.b, color.a)
       --  self.healthbarFlash:SetVertexColor(color.r, color.g, color.b, color.a)
@@ -158,7 +200,7 @@ local function updateHealthbarColor(self)
         if UnitIsTapDenied(self.unit) then
             nameColor = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
         end
-        self.healthbar:SetStatusBarColor(nameColor.r, nameColor.g, nameColor.b, 1)
+        self.health:SetStatusBarColor(nameColor.r, nameColor.g, nameColor.b, 1)
     --    self.healthbar:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
     --    self.healthbarSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
     --    self.healthbarFlash:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
@@ -634,84 +676,51 @@ end
 GW.AddForProfiling("unitframes", "updateThreatValues", updateThreatValues)
 
 local function updateHealthValues(self, event)
-    local health = UnitHealth(self.unit)
-    local unitIsDead = UnitIsDeadOrGhost(self.unit)
-    local healthMax = UnitHealthMax(self.unit)
-    local absorb = UnitGetTotalAbsorbs(self.unit)
-    local prediction = UnitGetIncomingHeals(self.unit) or 0
-    local healthPrecentage = 0
-    local absorbPrecentage = 0
-    local predictionPrecentage = 0
+  local health = UnitHealth(self.unit)
+  local healthMax = UnitHealthMax(self.unit)
+  local absorb = UnitGetTotalAbsorbs(self.unit)
+  local prediction = UnitGetIncomingHeals(self.unit) or 0
+  local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
+  local absorbPrecentage = 0
+  local absorbAmount = 0
+  local absorbAmount2 = 0
+  local predictionPrecentage = 0
+  local healAbsorbPrecentage = 0
 
-    if health > 0 and healthMax > 0 then
-        healthPrecentage = health / healthMax
-    end
-    if unitIsDead then
-      healthPrecentage = 0
-      health = 0
-      healthMax = 0
-    end
+  local healthPrecentage = health/healthMax
+  self.health:SetFillAmount(healthPrecentage)
 
-    if absorb > 0 and healthMax > 0 then
-        absorbPrecentage = absorb / healthMax
-    end
-
-    if self.healthTextThroth == nil then
-        self.healthTextThroth = 0
-    end
-
-    if prediction > 0 and healthMax > 0 then
-        predictionPrecentage = prediction / healthMax
-    end
-
-    local animationSpeed
-
-
-    -- absorb calc got inlined here because nothing else uses this
-    local absbarbg = self.absorbbarbg
-    local absbar = self.healthbar.absorbOverlay
-    local absorbAmount = 0
-    local absorbAmount2 =0
-    if absorb == 0 then
-
-        absbarbg:SetAlpha(0.0)
-
-    else
+  if absorb > 0 and healthMax > 0 then
+      absorbPrecentage = absorb / healthMax
       absorbAmount = healthPrecentage + absorbPrecentage
       absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
+  end
+
+  if prediction > 0 and healthMax > 0 then
+      predictionPrecentage = (prediction / healthMax) + healthPrecentage
+  end
+  if healAbsorb > 0 and healthMax > 0 then
+      healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
+  end
+  self.healPrediction:SetFillAmount( predictionPrecentage)
 
 
+  self.absorbbg:SetFillAmount(absorbAmount)
+  self.absorbOverlay:SetFillAmount(absorbAmount2)
+  self.antiHeal:SetFillAmount(healAbsorbPrecentage)
 
-      absbarbg:SetWidth(math.min((self.barWidth - 1), math.max(1, self.barWidth * absorbAmount)))
-
-      absbarbg:SetTexCoord(0, math.min(1, 1 * absorbAmount), 0, 1)
-
-      absbarbg:SetAlpha(math.max(0, math.min(1, (1 * (absorbPrecentage / 0.1)))))
-
-
-    end
-
-    self.healthbar.barOnUpdate = function()
-      updateHealthTextString(self, health, self.healthbar:GetFillAmount())
-    end
-    --prediction calc
-    local predictionbar = self.predictionbar
-    if prediction == 0 then
-        predictionbar:SetAlpha(0.0)
-    else
-        local predictionAmount = healthPrecentage + predictionPrecentage
-
-        predictionbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * predictionAmount)))
-        predictionbar:SetTexCoord(0, math.min(1, 1 * predictionAmount), 0, 1)
-        predictionbar:SetAlpha(math.max(0, math.min(1, (1 * (predictionPrecentage / 0.1)))))
+    self.health.barOnUpdate = function()
+      updateHealthTextString(self, health, self.health:GetFillAmount())
     end
 
     if event == "UNIT_TARGET" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_TARGET_CHANGED" then
-        self.healthbar:ForceFIllAmount(healthPrecentage)
-        absbar:ForceFIllAmount(absorbAmount2)
+        self.health:ForceFIllAmount(healthPrecentage)
+        self.absorbbg:ForceFIllAmount(absorbAmount)
+        self.absorbOverlay:ForceFIllAmount(absorbAmount2)
     else
-        self.healthbar:SetFillAmount(healthPrecentage)
-        absbar:SetFillAmount(absorbAmount2)
+        self.health:SetFillAmount(healthPrecentage)
+        self.absorbbg:ForceFIllAmount(absorbAmount)
+        self.absorbOverlay:ForceFIllAmount(absorbAmount2)
     end
 
 
