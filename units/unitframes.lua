@@ -686,15 +686,19 @@ local function updateHealthValues(self, event)
   local absorbAmount2 = 0
   local predictionPrecentage = 0
   local healAbsorbPrecentage = 0
+  local healthPrecentage = 0
 
-  local healthPrecentage = health/healthMax
-  self.health:SetFillAmount(healthPrecentage)
+    if health > 0 and healthMax > 0 then
+        healthPrecentage = health / healthMax
+    end
 
-  if absorb > 0 and healthMax > 0 then
-      absorbPrecentage = absorb / healthMax
-      absorbAmount = healthPrecentage + absorbPrecentage
-      absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
-  end
+    self.health:SetFillAmount(healthPrecentage)
+
+    if absorb > 0 and healthMax > 0 then
+        absorbPrecentage = absorb / healthMax
+        absorbAmount = healthPrecentage + absorbPrecentage
+        absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
+    end
 
   if prediction > 0 and healthMax > 0 then
       predictionPrecentage = (prediction / healthMax) + healthPrecentage
