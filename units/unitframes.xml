@@ -462,7 +462,7 @@
             <Layers>
               <Layer textureSubLevel="1">
                 <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
-                    <Size x="16" y="13"/>
+                    <Size x="24" y="13"/>
                     <Anchors>
                         <Anchor point="RIGHT" relativeKey="$parent.internalBar" relativePoint="LEFT" x="0" y="0"></Anchor>
                     </Anchors>
@@ -727,7 +727,7 @@
                 <Layers>
                   <Layer textureSubLevel="1">
                     <Texture parentKey="spark" alphaMode="ADD" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar-spark-white">
-                        <Size x="16" y="13"/>
+                        <Size x="24" y="13"/>
                         <Anchors>
                             <Anchor point="RIGHT" relativeKey="$parent.internalBar" relativePoint="LEFT" x="0" y="0"></Anchor>
                         </Anchors>

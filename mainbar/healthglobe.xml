@@ -2,71 +2,244 @@
 ..\FrameXML\UI.xsd">
 
     <Button name="GwHealthGlobeTmpl" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate" virtual="true" frameStrata="MEDIUM" frameLevel="2">
-    
-        <Size x="88" y="88"></Size> 
-        <Frames>
-            <Frame parentKey="fill">
-                <Size x="128" y="128"/>
-                <Anchors>
-                    <Anchor point="CENTER"/>
-                </Anchors>
-                <Layers>
-                    <Layer level="BACKGROUND" textureSubLevel="1">
-                        <Texture file="Interface/AddOns/GW2_UI/textures/globe/fill-whole">
-                            <Color r="0.506" g="0.059" b="0.008" a="1.0"/>
-                        </Texture>
-                    </Layer>
-                    <Layer level="BORDER" textureSubLevel="1">
-                        <Texture parentKey="grime" file="Interface/AddOns/GW2_UI/textures/globe/grime" alphaMode="BLEND" alpha="0.66">
-                            <Color r="1" g="0.25" b="0" a="0.5"/>
-                        </Texture>
-                    </Layer>
-                    <Layer level="BORDER" textureSubLevel="2">
-                        <Texture parentKey="absorb_under" parentArray="masked" file="Interface/AddOns/GW2_UI/textures/globe/fill-absorb" alpha="0.44">
-                            <Size x="128" y="256"/>
-                        </Texture>
-                    </Layer>
-                    <Layer level="BORDER" textureSubLevel="3">
-                        <Texture parentKey="anti" parentArray="masked" file="Interface/AddOns/GW2_UI/textures/globe/fill-anti">
-                            <Size x="128" y="256"/>
-                        </Texture>
-                    </Layer>
-                    <Layer level="BORDER" textureSubLevel="4">
-                        <Texture parentKey="pred" file="Interface/AddOns/GW2_UI/textures/globe/pred-line" alphaMode="BLEND" alpha="0.66">
-                            <Size x="128" y="8"/>
-                            <Color r="0.15" g="0.8" b="0.15" a="0.5"/>
-                        </Texture>
-                    </Layer>
-                    <Layer level="BORDER" textureSubLevel="5">
-                        <Texture parentKey="absorb_over" file="Interface/AddOns/GW2_UI/textures/globe/fill-shield" alpha="0.5" alphaMode="ADD">
-                            <Size x="128" y="256"/>
-                            <Color r="1" g="1" b="1" a="0.75"/>
-                        </Texture>
-                    </Layer>
-                    <Layer level="ARTWORK">
-                        <!-- masks for static art/background elements -->
-                        <MaskTexture parentKey="mask" file="Interface/AddOns/GW2_UI/textures/globe/mask" hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
-                            <Size x="128" y="128"/>
-                        </MaskTexture>
 
-                        <!-- masks for the moving anti fill pieces -->
-                        <MaskTexture parentKey="maskb" file="Interface/AddOns/GW2_UI/textures/globe/mask" hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
-                            <Size x="128" y="128"/>
-                        </MaskTexture>
-                        <MaskTexture parentKey="maska" file="Interface/AddOns/GW2_UI/textures/globe/absorb-mask" hWrapMode="CLAMPTOBLACKADDITIVE" vWrapMode="CLAMPTOBLACKADDITIVE">
-                            <Size x="128" y="128"/>
-                        </MaskTexture>
-                    </Layer>
-                </Layers>
-            </Frame>
+        <Size x="88" y="88"></Size>
+        <Frames>
+                <StatusBar parentKey="healPrediction" inherits="GwStatusBarBar">
+                  <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globewhite"/>
+                  <Size x="88" y="88"/>
+                  <Anchors>
+                      <Anchor point="CENTER"/>
+                  </Anchors>
+                  <Frames>
+                  <StatusBar parentKey="absorbbg" inherits="GwStatusBarBar">
+                    <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeabsorb"/>
+                    <Size x="88" y="88"/>
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                    <Frames>
+                    <StatusBar parentKey="candy" inherits="GwStatusBarBar">
+                      <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globetexturedcandy"/>
+                      <Size x="88" y="88"/>
+                      <Anchors>
+                          <Anchor point="CENTER"/>
+                      </Anchors>
+                      <Frames>
+                        <StatusBar parentKey="health" inherits="GwStatusBarBar">
+                          <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globetextured"/>
+                          <Size x="88" y="88"/>
+                          <Anchors>
+                              <Anchor point="CENTER"/>
+                          </Anchors>
+                          <Frames>
+                            <StatusBar parentKey="antiHeal" inherits="GwStatusBarBar">
+                              <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeantiheal"/>
+                              <Size x="88" y="88"/>
+                              <Anchors>
+                                  <Anchor point="CENTER"/>
+                              </Anchors>
+                              <Frames>
+                                <StatusBar parentKey="absorbOverlay"  inherits="GwStatusBarBar">
+                                  <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeabsorb"/>
+                                  <Size x="88" y="88"/>
+                                  <Anchors>
+                                      <Anchor point="CENTER"/>
+                                  </Anchors>
+                                  <Frames>
+                                    <Frame parentKey="text_h" enableMouse="false">
+                                        <Size x="80" y="30"></Size>
+                                        <Anchors>
+                                            <Anchor point="CENTER" x="0" y="0"/>
+                                        </Anchors>
+                                        <Layers>
+                                            <Layer level="OVERLAY">
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="80" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="0"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="80" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="80" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="1" y="0"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString text="100,000" inherits="GameFontNormalSmall" parentArray="shadow" justifyH="CENTER">
+                                                    <Size x="80" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="1"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString text="100,000" inherits="GameFontNormalSmall" parentArray="shadow" justifyH="CENTER">
+                                                    <Size x="80" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="-2" y="0"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="80" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="80" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="2" y="0"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="80" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                            </Layer>
+                                            <Layer textureSubLevel="2" level="OVERLAY">
+                                                <FontString parentKey="value" text="100,000" inherits="GameFontNormalSmall" justifyV="MIDDLE" justifyH="CENTER">
+                                                    <Size x="80" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER"/>
+                                                    </Anchors>
+                                                </FontString>
+
+                                            </Layer>
+                                        </Layers>
+                                    </Frame>
+                                    <Frame parentKey="text_a" enableMouse="false">
+                                        <Size x="70" y="30"></Size>
+                                        <Anchors>
+                                            <Anchor point="CENTER" x="0" y="20"/>
+                                        </Anchors>
+                                        <Layers>
+                                            <Layer level="OVERLAY">
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="70" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="0"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="70" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="70" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="1" y="0"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="70" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="1"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="70" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="-2" y="0"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="70" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="70" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="2" y="0"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+                                                <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
+                                                    <Size x="70" y="30"/>
+                                                    <Color r="1" b="1" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="2"></Anchor>
+                                                    </Anchors>
+                                                </FontString>
+
+                                            </Layer>
+                                            <Layer textureSubLevel="2" level="OVERLAY">
+                                                <FontString parentKey="value" text="100,000" inherits="GameFontNormalSmall" justifyV="MIDDLE" justifyH="CENTER">
+                                                    <Size x="70" y="30"/>
+                                                    <Color r="1" b="0.2" g="1"></Color>
+                                                    <Anchors>
+                                                        <Anchor point="CENTER"/>
+                                                    </Anchors>
+                                                </FontString>
+
+                                            </Layer>
+                                        </Layers>
+                                    </Frame>
+                                    <Frame parentKey="repair">
+                                        <Size x="21" y="21"></Size>
+                                        <Anchors>
+                                            <Anchor point="BOTTOM" relativePoint="BOTTOM" x="33" y="0" />
+                                        </Anchors>
+                                        <Layers>
+                                            <Layer level="OVERLAY">
+                                                <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/globe/repair">
+                                                    <Size x="21" y="21"></Size>
+                                                    <TexCoords top="0" bottom="0.5" left="0" right="1"/>
+                                                </Texture>
+                                            </Layer>
+                                        </Layers>
+                                    </Frame>
+                                  </Frames>
+                                </StatusBar>
+                              </Frames>
+                            </StatusBar>
+                          </Frames>
+                        </StatusBar>
+                      </Frames>
+                    </StatusBar>
+                  </Frames>
+                </StatusBar>
+              </Frames>
+            </StatusBar>
+
             <Frame parentKey="border">
-                <Size x="128" y="128"/>
+                <Size x="90" y="90"/>
                 <Anchors>
                     <Anchor point="CENTER"/>
                 </Anchors>
                 <Layers>
+                  <Layer level="BORDER" textureSubLevel="5">
+                      <Texture parentKey="normal" file="Interface/AddOns/GW2_UI/textures/globe/globewhite">
+                          <Color r="0" b="0" g="0"></Color>
+                      </Texture>
+                  </Layer>
                     <Layer level="BORDER" textureSubLevel="6">
-                        <Texture parentKey="normal" file="Interface/AddOns/GW2_UI/textures/globe/border"/>
+                        <Texture parentKey="normal" file="Interface/AddOns/GW2_UI/textures/globe/globeborder"/>
                     </Layer>
                 </Layers>
             </Frame>
@@ -94,173 +267,7 @@
                     </Layer>
                 </Layers>
             </Frame>
-            <Frame parentKey="repair">
-                <Size x="21" y="21"></Size>
-                <Anchors>
-                    <Anchor point="BOTTOM" relativePoint="BOTTOM" x="33" y="0" />
-                </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <Texture parentKey="icon" file="Interface/AddOns/GW2_UI/textures/globe/repair">
-                            <Size x="21" y="21"></Size>
-                            <TexCoords top="0" bottom="0.5" left="0" right="1"/>
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </Frame>
-            <Frame parentKey="text_h" enableMouse="false">
-                <Size x="80" y="30"></Size>
-                <Anchors>
-                    <Anchor point="CENTER" x="0" y="0"/>
-                </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="80" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="0"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="80" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="80" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="1" y="0"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString text="100,000" inherits="GameFontNormalSmall" parentArray="shadow" justifyH="CENTER">
-                            <Size x="80" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="1"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString text="100,000" inherits="GameFontNormalSmall" parentArray="shadow" justifyH="CENTER">
-                            <Size x="80" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="-2" y="0"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="80" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="80" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="2" y="0"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="80" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                    <Layer textureSubLevel="2" level="OVERLAY">
-                        <FontString parentKey="value" text="100,000" inherits="GameFontNormalSmall" justifyV="MIDDLE" justifyH="CENTER">
-                            <Size x="80" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER"/>
-                            </Anchors>
-                        </FontString>
 
-                    </Layer>
-                </Layers>
-            </Frame>
-            <Frame parentKey="text_a" enableMouse="false">
-                <Size x="70" y="30"></Size>
-                <Anchors>
-                    <Anchor point="CENTER" x="0" y="20"/>
-                </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="70" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="-1" y="0"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="70" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-1"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="70" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="1" y="0"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="70" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="1"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="70" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="-2" y="0"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="70" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-2"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="70" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="2" y="0"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString parentArray="shadow" text="100,000" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Size x="70" y="30"/>
-                            <Color r="1" b="1" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="2"></Anchor>
-                            </Anchors>
-                        </FontString>
-
-                    </Layer>
-                    <Layer textureSubLevel="2" level="OVERLAY">
-                        <FontString parentKey="value" text="100,000" inherits="GameFontNormalSmall" justifyV="MIDDLE" justifyH="CENTER">
-                            <Size x="70" y="30"/>
-                            <Color r="1" b="0.2" g="1"></Color>
-                            <Anchors>
-                                <Anchor point="CENTER"/>
-                            </Anchors>
-                        </FontString>
-
-                    </Layer>
-                </Layers>
-            </Frame>
         </Frames>
     </Button>
 

@@ -1394,7 +1394,9 @@ end
 local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
     GW.hookStatusbarBehaviour(cpf.staggerBar.ironskin,false)
+    cpf.staggerBar.ironskin.customMaskSize = 64
     GW.hookStatusbarBehaviour(cpf.decayCounter.bar,true)
+    cpf.staggerBar.ironskin.customMaskSize = 64
 
 
     cpf.decayCounter.bar:addToBarMask(cpf.decayCounter.bar.texture1)
@@ -1427,6 +1429,7 @@ local function LoadClassPowers()
         local anchorFrame = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame or _G.GwPlayerPowerBar
         local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame.powerbar:GetWidth() or _G.GwPlayerPowerBar:GetWidth()
         local lmb =  GW.createNewStatusbar("GwPlayerAltClassLmb",UIParent,nil,true)
+        lmb.customMaskSize = 64
         lmb.bar = lmb;
         GW.MixinHideDuringPetAndOverride(lmb)
         cpf.lmb = lmb
@@ -1440,17 +1443,19 @@ local function LoadClassPowers()
             lmb:SetSize(barWidth + 2, 7)
             lmb:SetWidth(barWidth - 2)
         else
-            lmb:SetPoint("TOPLEFT", anchorFrame, "TOPLEFT", 0, 5)
+            lmb:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 1)
+            lmb:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 1)
             lmb:SetSize(barWidth, 7)
         end
         lmb:SetFrameStrata("MEDIUM")
-        lmb.label:SetFont(DAMAGE_TEXT_FONT, 8)
+        lmb.label:SetFont(DAMAGE_TEXT_FONT, 12)
     end
 
     -- create an extra mana power bar that is used sometimes
     local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
     local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 52 or 0
     local exbar = GW.createNewStatusbar("GwPlayerAltClassExBar",UIParent,nil,true)
+    exbar.customMaskSize = 64
     exbar.bar =exbar
     GW.MixinHideDuringPetAndOverride(exbar)
     cpf.exbar = exbar

@@ -2,15 +2,10 @@ local _, GW = ...
 local AddToAnimation = GW.AddToAnimation
 local lerpEaseOut = GW.lerpEaseOut
 local lerp = GW.lerp
-local numSpritesInAnimation = 15
+local numSpritesInAnimation = 254
 local uniqueID  = 0
 
 --[[
-  TODO
-    Implement Vertical bars (for healglobe etc)
-
-
-
 
   Bar:SetFillAmount(amount)
     Sets the fill amount of the bar to bar, Animates over time if smooth was set when bar was created
@@ -45,33 +40,18 @@ local function getAnimationDurationDynamic(self,val1,val2,width)
   return t
 end
 
-local function removeMask(self,mask)
-  self.internalBar:RemoveMaskTexture(mask)
-
-  if self.maskedTextures==nil then
-     return
-   end
-
-   for _,texture in pairs(self.maskedTextures) do
-     texture:RemoveMaskTexture(mask)
-  end
-end
-local function addMask(self,mask)
-  self.internalBar:AddMaskTexture(mask)
-
-  if self.maskedTextures==nil then
-     return
-   end
-
-  for _,texture in pairs(self.maskedTextures) do
-    texture:AddMaskTexture(mask)
-  end
+local function addMask(self,mask,value)
+    if value == 0 then
+      self.maskContainer.mask0:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/0")
+    end
+    self.maskContainer.mask0:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/"..mask)
 end
 
 local function GetFillAmount(self)
   if not self.fillAmount then return 0 end
   return self.fillAmount
 end
+
 local function SetFillAmount(self,value)
 
   local isVertical = (self:GetOrientation()=="VERTICAL") or false
@@ -79,7 +59,7 @@ local function SetFillAmount(self,value)
   local height = isVertical and self:GetWidth() or self:GetHeight()
   local barWidth = totalWidth * value
 
-  local maskHightValue = isVertical and 64 or height
+  local maskHightValue = self.customMaskSize or 128
 
   self.fillAmount = value
 
@@ -99,7 +79,7 @@ local function SetFillAmount(self,value)
   local rampEndPoint = (segmentSize * (currentSegmentIndex+1))
   local rampProgress = (barWidth - rampStartPoint) / (rampEndPoint - rampStartPoint)
 
-  local interpolateRamp = lerp(numSpritesInAnimation,1, rampProgress)
+  local interpolateRamp = lerp(numSpritesInAnimation,0, rampProgress)
   local interpolateRampRound = round(interpolateRamp)
 
   if self:GetName()=="test1" then
@@ -107,14 +87,12 @@ local function SetFillAmount(self,value)
   end
 
   if value == 0 then
-    interpolateRampRound = 0
+      barPosition = 0
   end
 
-  if isVertical then
-    self.maskContainer:SetSize(height,segmentSize)
-  else
+
     self.maskContainer:SetSize(segmentSize,segmentSize)
-  end
+
 
   if self.spark~=nil  then
     if value == 0 then
@@ -122,7 +100,7 @@ local function SetFillAmount(self,value)
     else
       self.spark:Show()
     end
-    local  sparkPosition = currentSegmentPosition - self.spark.width + (segmentSize * rampProgress)
+    local  sparkPosition =  currentSegmentPosition + (segmentSize * rampProgress) - self.spark.width + 5
     local sparkWidth = min(barWidth,self.spark.width)
     self.spark:SetWidth(sparkWidth)
     self.spark:ClearAllPoints()
@@ -131,16 +109,12 @@ local function SetFillAmount(self,value)
   end
 
   if not self.interpolateRampRound or interpolateRampRound~=self.interpolateRampRound then
-    local newMask = self.maskContainer["mask"..interpolateRampRound]
-    self:addMask(newMask)
+--    local newMask = self.maskContainer["mask"..interpolateRampRound]
+    self:addMask(interpolateRampRound,value)
 
     if isVertical then
-      newMask:SetSize(self.maskContainer:GetHeight(),self.maskContainer:GetWidth())
-    end
-
-    if self.interpolateRampRound~=nil then
-      local oldMask = self.maskContainer["mask"..self.interpolateRampRound]
-      self:removeMask(oldMask)
+    self.maskContainer.mask0:SetSize(self.maskContainer:GetHeight(),self.maskContainer:GetWidth())
+    self.maskOverflow.mask:SetSize(self.maskOverflow:GetHeight(),self.maskOverflow:GetWidth())
     end
     self.interpolateRampRound = interpolateRampRound
   end
@@ -189,34 +163,34 @@ local function addToBarMask(self,texture)
   if texture==nil then
      return
    end
-   texture:AddMaskTexture(self.mask)
-  if self.maskedTextures == nil then
-    self.maskedTextures  ={}
-  end
-  self.maskedTextures[#self.maskedTextures +  1] = texture
-
+   texture:AddMaskTexture(self.maskContainer.mask0)
+   texture:AddMaskTexture(self.maskOverflow.mask)
 end
 
 local function SetOrientation(self,direction)
-  for i=0,numSpritesInAnimation do
-    self.maskContainer["mask"..i]:SetRotation(1.5707)
---[[
-<Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-<Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-]]
-  self.maskContainer["mask"..i]:ClearAllPoints()
-  self.maskContainer["mask"..i]:SetPoint("CENTER",self.maskContainer,"CENTER",0,0)
-  self.maskContainer["mask"..i]:SetSize(self.maskContainer:GetHeight(),self.maskContainer:GetWidth())
-  end
+
+
+  self.maskContainer.mask0:SetRotation(1.5707)
+
+  self.maskContainer.mask0:ClearAllPoints()
+  self.maskContainer.mask0:SetPoint("CENTER",self.maskContainer,"CENTER",0,0)
+  self.maskContainer.mask0:SetSize(self.maskContainer:GetHeight(),self.maskContainer:GetWidth())
+
   self.maskContainer:ClearAllPoints()
   self.maskContainer:SetPoint("BOTTOM",self.internalBar,"BOTTOM",0,0)
 
-  self.mask:SetRotation(1.5707)
-  self.mask:ClearAllPoints()
-  self.mask:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
-  self.mask:SetPoint("TOPRIGHT",self,"TOPRIGHT",0,0)
-  self.mask:SetPoint("BOTTOMLEFT",self.maskContainer,"TOPLEFT",-2,0)
-  self.mask:SetPoint("BOTTOMRIGHT",self.maskContainer,"TOPRIGHT",-2,0)
+  self.maskOverflow.mask:SetRotation(1.5707)
+  self.maskOverflow:ClearAllPoints()
+  self.maskOverflow:SetPoint("TOPLEFT",self,"TOPLEFT",0,3)
+  self.maskOverflow:SetPoint("TOPRIGHT",self,"TOPRIGHT",0,3)
+  self.maskOverflow:SetPoint("BOTTOMLEFT",self.maskContainer,"TOPLEFT",0,0)
+  self.maskOverflow:SetPoint("BOTTOMRIGHT",self.maskContainer,"TOPRIGHT",0,0)
+
+  self.maskOverflow.mask:ClearAllPoints()
+  self.maskOverflow.mask:SetPoint("CENTER",self.maskOverflow,"CENTER",0,0)
+  self.maskOverflow.mask:SetSize(self.maskOverflow:GetHeight(),self.maskOverflow:GetWidth())
+
+
 end
 
 local function hookStatusbarBehaviour(statusBar,smooth)
@@ -238,13 +212,15 @@ local function hookStatusbarBehaviour(statusBar,smooth)
   statusBar.removeMask = removeMask
 
   statusBar.maskContainer:ClearAllPoints()
+  statusBar.maskOverflow:ClearAllPoints()
 
-  statusBar.mask:SetPoint("TOPLEFT",statusBar.maskContainer,"TOPRIGHT",-2,0)
-  statusBar.mask:SetPoint("BOTTOMLEFT",statusBar.maskContainer,"BOTTOMRIGHT",-2,0)
-  statusBar.mask:SetPoint("TOPRIGHT",statusBar,"TOPRIGHT",0,0)
-  statusBar.mask:SetPoint("BOTTOMRIGHT",statusBar,"BOTTOMRIGHT",0,0)
+  statusBar.maskOverflow:SetPoint("TOPLEFT",statusBar.maskContainer,"TOPRIGHT",0,0)
+  statusBar.maskOverflow:SetPoint("BOTTOMLEFT",statusBar.maskContainer,"BOTTOMRIGHT",0,0)
+  statusBar.maskOverflow:SetPoint("TOPRIGHT",statusBar,"TOPRIGHT",3,0)
+  statusBar.maskOverflow:SetPoint("BOTTOMRIGHT",statusBar,"BOTTOMRIGHT",3,0)
 
-  --statusBar.internalBar:AddMaskTexture(statusBar.mask)
+
+  statusBar:addToBarMask(statusBar.internalBar)
 
   if statusBar.spark ~=nil then
     statusBar:addToBarMask(statusBar.spark)
@@ -285,5 +261,21 @@ end)
 
 
 end
-
 GW.LoadStatusbarTest = LoadStatusbarTest
+
+local function preload(self)
+    self.preLoader:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/"..self.index)
+    self.index = self.index + 1
+    if self.index>numSpritesInAnimation then
+      self:SetScript("OnUpdate",nil)
+    end
+end
+local function preLoadStatusBarMaskTextures()
+  local f = CreateFrame("Frame",nil,UIParent)
+  f:SetSize(1,1)
+  f.preLoader = f:CreateTexture(nil, "BACKGROUND")
+  f.preLoader:SetSize(1,1)
+  f.index = 0
+  f:SetScript("OnUpdate",preload)
+end
+GW.preLoadStatusBarMaskTextures = preLoadStatusBarMaskTextures

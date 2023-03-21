@@ -33,6 +33,9 @@ local function createNormalUnitFrame(ftype, revert)
     GW.hookStatusbarBehaviour(f.healthbar,true)
     GW.hookStatusbarBehaviour(f.healthbar.absorbOverlay,true)
     GW.hookStatusbarBehaviour(f.castingbarNormal,false)
+    f.castingbarNormal.customMaskSize = 64
+    f.healthbar.customMaskSize = 64
+    f.healthbar.absorbOverlay.customMaskSize = 64
     f.frameInvert = revert
 
     f.healthbar.absorbOverlay.healthString:SetFont(UNIT_NAME_FONT, 11)

@@ -95,6 +95,7 @@ local function UpdatePowerData(self, forcePowerType, powerToken)
     if self.lastPowerType ~= self.powerType and self == GwPlayerPowerBar then
         self.lastPowerType = self.powerType
         self.powerBarString = self.label
+        self:ForceFIllAmount(powerPrec)
     if self.powerType == nil or self.powerType == 1 or self.powerType == 6 or self.powerType == 13 or self.powerType == 8 then
         self.barOnUpdate = nil
     else
@@ -177,6 +178,7 @@ GW.UpdatePowerData = UpdatePowerData
 
 local function LoadPowerBar()
     local playerPowerBar = GW.createNewStatusbar("GwPlayerPowerBar",UIParent,nil,true)
+    playerPowerBar.customMaskSize = 64
     playerPowerBar.bar = playerPowerBar
     --CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
 
@@ -212,7 +214,7 @@ local function LoadPowerBar()
         end
     )
 
-    playerPowerBar.label:SetFont(DAMAGE_TEXT_FONT, 14)
+    playerPowerBar.label:SetFont(DAMAGE_TEXT_FONT, 12)
 
     playerPowerBar:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
     playerPowerBar:RegisterUnitEvent("UNIT_MAXPOWER", "player")

@@ -18,15 +18,7 @@
                       <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                   </Anchors>
               </FontString>
-              <MaskTexture parentKey="mask" file="Interface/AddOns/GW2_UI/textures/hud/barmask/0" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAPMTOWHITE">
-                  <Size x="24" y="24"/>
-                  <Anchors>
-                      <Anchor point="TOPLEFT" relativeKey="$parent.maskContainer" relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
-                      <Anchor point="BOTTOMLEFT" relativeKey="$parent.maskContainer" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                      <Anchor point="TOPRIGHT"  relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
-                      <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                  </Anchors>
-              </MaskTexture>
+
           </Layer>
       </Layers>
       <Frames>
@@ -44,117 +36,25 @@
                         <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                     </Anchors>
                 </MaskTexture>
-                <MaskTexture parentKey="mask1" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/1" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask2" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/2" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask3" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/3" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask4" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/4" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask5" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/5" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask6" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/6" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask7" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/7" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask8" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/8" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask9" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/9" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask10" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/10" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask11" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/11" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask12" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/12" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask13" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/13" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask14" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/14" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask15" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/15" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
-                </MaskTexture>
-                <MaskTexture parentKey="mask16" file="Interface/AddOns/GW2_UI/textures/hud/barmask/generated/16" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
-                    <Size x="24" y="24"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                        <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                    </Anchors>
+              </Layer>
+            </Layers>
+          </Frame>
+          <Frame parentKey="maskOverflow">
+            <Size x="24" y="24"/>
+            <Anchors>
+                <Anchor point="TOPLEFT"  relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                <Anchor point="BOTTOMLEFT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                <Anchor point="TOPRIGHT"  relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+                <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+            </Anchors>
+            <Layers>
+              <Layer>
+                <MaskTexture parentKey="mask" file="Interface/AddOns/GW2_UI/textures/hud/barmask/0" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAPMTOWHITE">
+                  <Size x="24" y="24"/>
+                  <Anchors>
+                      <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                      <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                  </Anchors>
                 </MaskTexture>
               </Layer>
             </Layers>
@@ -211,4 +111,6 @@
         </Layer>
       </Layers>
   </StatusBar>
+
+
 </Ui>
