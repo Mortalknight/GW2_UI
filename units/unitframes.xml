@@ -685,7 +685,7 @@
                 </Anchors>
                 <Frames>
                 <StatusBar parentKey="absorbbg" inherits="GwStatusBarBar">
-                  <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeabsorb"/>
+                  <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/absorb"/>
                   <Size x="88" y="88"/>
                   <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
@@ -694,7 +694,7 @@
                   <Frames>
 
                       <StatusBar parentKey="health" inherits="GwStatusBarBar">
-                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
+                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/statusbar"/>
                         <Size x="88" y="88"/>
                         <Anchors>
                           <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
@@ -702,7 +702,7 @@
                         </Anchors>
                         <Frames>
                           <StatusBar parentKey="antiHeal" inherits="GwStatusBarBar">
-                            <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeantiheal"/>
+                            <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/antiheal"/>
                             <Size x="88" y="88"/>
                             <Anchors>
                               <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
@@ -710,7 +710,7 @@
                             </Anchors>
                             <Frames>
                               <StatusBar parentKey="absorbOverlay"  inherits="GwStatusBarBar">
-                                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/globe/globeabsorb"/>
+                                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/absorb"/>
                                 <Size x="88" y="88"/>
                                 <Anchors>
                                   <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>

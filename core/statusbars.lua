@@ -227,7 +227,6 @@ local function hookStatusbarBehaviour(statusBar,smooth)
     statusBar.spark.width = statusBar.spark:GetWidth()
   end
   hooksecurefunc(statusBar,"SetOrientation",SetOrientation)
-
   return statusBar
 end
 GW.hookStatusbarBehaviour = hookStatusbarBehaviour

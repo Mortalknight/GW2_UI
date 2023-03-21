@@ -50,8 +50,11 @@ local function createNormalUnitFrame(ftype, revert)
     f.antiHeal.customMaskSize = 64
     f.health.customMaskSize = 64
     f.absorbbg.customMaskSize = 64
+    f.healPrediction.customMaskSize = 64
+    f.castingbarNormal.customMaskSize = 64
 
     f.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
+    f.absorbbg:SetStatusBarColor(1,1,1,0.66)
     f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
 
@@ -122,8 +125,11 @@ local function createNormalUnitFrameSmall(ftype)
     f.antiHeal.customMaskSize = 64
     f.health.customMaskSize = 64
     f.absorbbg.customMaskSize = 64
+    f.healPrediction.customMaskSize = 64
+    f.castingbarNormal.customMaskSize = 64
 
     f.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
+    f.absorbbg:SetStatusBarColor(1,1,1,0.66)
     f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
 
@@ -692,7 +698,6 @@ local function updateHealthValues(self, event)
         healthPrecentage = health / healthMax
     end
 
-    self.health:SetFillAmount(healthPrecentage)
 
     if absorb > 0 and healthMax > 0 then
         absorbPrecentage = absorb / healthMax
@@ -709,9 +714,6 @@ local function updateHealthValues(self, event)
   self.healPrediction:SetFillAmount( predictionPrecentage)
 
 
-  self.absorbbg:SetFillAmount(absorbAmount)
-  self.absorbOverlay:SetFillAmount(absorbAmount2)
-  self.antiHeal:SetFillAmount(healAbsorbPrecentage)
 
     self.health.barOnUpdate = function()
       updateHealthTextString(self, health, self.health:GetFillAmount())
@@ -721,10 +723,12 @@ local function updateHealthValues(self, event)
         self.health:ForceFIllAmount(healthPrecentage)
         self.absorbbg:ForceFIllAmount(absorbAmount)
         self.absorbOverlay:ForceFIllAmount(absorbAmount2)
+        self.antiHeal:ForceFIllAmount(healAbsorbPrecentage)
     else
         self.health:SetFillAmount(healthPrecentage)
-        self.absorbbg:ForceFIllAmount(absorbAmount)
-        self.absorbOverlay:ForceFIllAmount(absorbAmount2)
+        self.absorbbg:SetFillAmount(absorbAmount)
+        self.absorbOverlay:SetFillAmount(absorbAmount2)
+        self.antiHeal:SetFillAmount(healAbsorbPrecentage)
     end
 
 
