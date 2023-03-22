@@ -54,8 +54,10 @@ local function AddCoordsToWorldMap()
         end
     end)
     WorldMapFrame:HookScript("OnHide", function()
-        CoordsTimer:Cancel()
-        CoordsTimer = nil
+        if CoordsTimer then
+            CoordsTimer:Cancel()
+            CoordsTimer = nil
+        end
     end)
 
     CoordsFrame.Coords:ClearAllPoints()
