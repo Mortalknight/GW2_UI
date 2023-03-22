@@ -74,56 +74,12 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar parentKey="predictionbar" defaultValue="1" minValue="0" maxValue="1">
-                <Size x="65" y="8"></Size>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/units/incominghealing"/>
-                <Frames>
-                    <StatusBar parentKey="healthbar" defaultValue="1" minValue="0" maxValue="1">
-                        <Size x="65" y="8"></Size>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                        </Anchors>
-                        <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
-                        <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
-                            <Layers>
-                                <Layer>
-                                    <Texture parentKey="spark" file="Interface/AddOns/GW2_UI/textures/hud/bloodspark">
-                                        <Color r="0.207" g="0.392" b="0.168"></Color>
-                                        <Anchors>
-                                            <Anchor point="RIGHT" x="0" y="0"/>
-                                        </Anchors>
-                                        <Size x="7" y="8"></Size>
-                                    </Texture>
-                                </Layer>
-                            </Layers>
-                        <Frames>
-                            <StatusBar parentKey="absorbbar" defaultValue="1" minValue="0" maxValue="1">
-                                <Size x="65" y="8"></Size>
-                                <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                                </Anchors>
-                                <BarTexture file="Interface/AddOns/GW2_UI/textures/party/absorbbar-animated"/>
-                                <Layers>
-                                    <Layer>
-                                        <Texture parentKey="aggroborder" file="Interface\AddOns\GW2_UI\textures\party\aggroborder">
-                                            <Anchors>
-                                                <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
-                                                <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                                            </Anchors>
-                                        </Texture>
-                                    </Layer>
-                                </Layers>
-                            </StatusBar>
-                        </Frames>
-                    </StatusBar>
-                </Frames>
-            </StatusBar>
+          <Frame parentKey="healthContainer" inherits="GwHealthRaidTemplate">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+              <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+            </Anchors>
+          </Frame>
 
             <StatusBar parentKey="manabar" hidden="true" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="65" y="3"></Size>
@@ -183,44 +139,120 @@
                 <Anchors><Anchor point="RIGHT" x="-0.3"></Anchor></Anchors>
             </Frame>
 
-            <Frame parentKey="data" name="$parentData" frameLevel="5">
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
-                </Anchors>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <Texture parentKey="classicon" file="Interface\AddOns\GW2_UI\textures\party\classicons">
-                            <Size x="25" y="25"></Size>
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
-                            </Anchors>
-                        </Texture>
-                        <Texture parentKey="summonResurrectionIcon" hidden="true">
-                            <Size x="25" y="25"></Size>
-                            <TexCoords left="0" right="1" top="0" bottom="1" />
-                            <Anchors>
-                                <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
-                            </Anchors>
-                        </Texture>
-                        <FontString name="$parentName" text="Unkown" parentKey="name" inherits="GameFontNormalSmall" justifyH="LEFT">
-                            <Size x="100" y="10"/>
-                            <Color r="1" g="1" b="1"></Color>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="2" y="-2"></Anchor>
-                                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-2" y="-2"></Anchor>
-                            </Anchors>
-                        </FontString>
-                        <FontString name="$parentHealth" text="" parentKey="healthstring" inherits="GameFontNormalSmall" justifyH="LEFT">
-                            <Size x="100" y="10"/>
-                            <Color r="1" g="1" b="1"></Color>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativeKey="$parent.name" relativePoint="TOPLEFT" x="2" y="-14"></Anchor>
-                            </Anchors>
-                        </FontString>
-                    </Layer>
-                </Layers>
-            </Frame>
+
         </Frames>
     </Button>
+
+    <Frame name="GwHealthRaidTemplate" virtual="true">
+      <Frames>
+              <StatusBar parentKey="healPrediction" inherits="GwStatusBarBar">
+                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
+                <Size x="88" y="88"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                </Anchors>
+                <Frames>
+                <StatusBar parentKey="absorbbg" inherits="GwStatusBarBar">
+                  <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/absorb"/>
+                  <Size x="88" y="88"/>
+                  <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                  </Anchors>
+                  <Frames>
+
+                      <StatusBar parentKey="health" inherits="GwStatusBarBar">
+                        <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/statusbarrectangle"/>
+                        <Size x="88" y="88"/>
+                        <Anchors>
+                          <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                        </Anchors>
+                        <Frames>
+                          <StatusBar parentKey="antiHeal" inherits="GwStatusBarBar">
+                            <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/antiheal"/>
+                            <Size x="88" y="88"/>
+                            <Anchors>
+                              <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                              <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                            </Anchors>
+                            <Frames>
+                              <StatusBar parentKey="absorbOverlay"  inherits="GwStatusBarBar">
+                                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/absorb"/>
+                                <Size x="88" y="88"/>
+                                <Anchors>
+                                  <Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+                                  <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+                                </Anchors>
+                                <Layers >
+                                  <Layer level="BORDER">
+                                      <Texture parentKey="aggroborder" file="Interface\AddOns\GW2_UI\textures\party\aggroborder">
+                                          <Anchors>
+                                              <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                                              <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                                          </Anchors>
+                                      </Texture>
+                                  </Layer>
+                                  <Layer level="BORDER">
+                                    <FontString parentKey="healthString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
+                                        <Size x="215" y="15"/>
+                                        <Anchors>
+                                            <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="5" y="0"></Anchor>
+                                        </Anchors>
+                                    </FontString>
+                                  </Layer>
+                                </Layers>
+                                <Frames>
+                                  <Frame parentKey="data" name="$parentData">
+                                      <Anchors>
+                                          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                                          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                                      </Anchors>
+                                      <Layers>
+                                          <Layer level="OVERLAY">
+                                              <Texture parentKey="classicon" file="Interface\AddOns\GW2_UI\textures\party\classicons">
+                                                  <Size x="25" y="25"></Size>
+                                                  <Anchors>
+                                                      <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                                                  </Anchors>
+                                              </Texture>
+                                              <Texture parentKey="summonResurrectionIcon" hidden="true">
+                                                  <Size x="25" y="25"></Size>
+                                                  <TexCoords left="0" right="1" top="0" bottom="1" />
+                                                  <Anchors>
+                                                      <Anchor point="CENTER" relativePoint="CENTER"></Anchor>
+                                                  </Anchors>
+                                              </Texture>
+                                              <FontString name="$parentName" text="Unkown" parentKey="name" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                                  <Size x="100" y="10"/>
+                                                  <Color r="1" g="1" b="1"></Color>
+                                                  <Anchors>
+                                                      <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="2" y="-2"></Anchor>
+                                                      <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-2" y="-2"></Anchor>
+                                                  </Anchors>
+                                              </FontString>
+                                              <FontString name="$parentHealth" text="" parentKey="healthstring" inherits="GameFontNormalSmall" justifyH="LEFT">
+                                                  <Size x="100" y="10"/>
+                                                  <Color r="1" g="1" b="1"></Color>
+                                                  <Anchors>
+                                                      <Anchor point="TOPLEFT" relativeKey="$parent.name" relativePoint="TOPLEFT" x="2" y="-14"></Anchor>
+                                                  </Anchors>
+                                              </FontString>
+                                          </Layer>
+                                      </Layers>
+                                  </Frame>
+                                </Frames>
+                              </StatusBar>
+                            </Frames>
+                          </StatusBar>
+                        </Frames>
+                      </StatusBar>
+                    </Frames>
+                  </StatusBar>
+                </Frames>
+              </StatusBar>
+      </Frames>
+
+    </Frame>
 </Ui>
