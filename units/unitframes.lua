@@ -1002,8 +1002,8 @@ local function LoadTarget()
     if NewUnitFrame.frameInvert then
         NewUnitFrame.altBg.backgroundOverlay:SetTexCoord(1, 0, 0, 1)
         NewUnitFrame.altBg.backgroundOverlay:SetPoint("CENTER", -15, -5)
-        NewUnitFrame.healthbar:ClearAllPoints()
-        NewUnitFrame.healthbar:SetPoint("RIGHT",NewUnitFrame.healthbarBackground,"RIGHT",-1,0)
+        NewUnitFrame.healthContainer:ClearAllPoints()
+        NewUnitFrame.healthContainer:SetPoint("RIGHT",NewUnitFrame.healthbarBackground,"RIGHT",-1,0)
     else
         NewUnitFrame.altBg:SetAllPoints(NewUnitFrame)
     end

@@ -626,7 +626,7 @@
             </Layer>
         </Layers>
         <Frames>
-          <Frame parentKey="healthbar" inherits="GwHealthBarTemplate">
+          <Frame parentKey="healthContainer" inherits="GwHealthBarTemplate">
             <Size x="213" y="13"/>
               <Anchors>
                 <Anchor point="RIGHT" relativeKey="$parent.healthbarBackground" relativePoint="RIGHT" x="-1" y="0"></Anchor>
