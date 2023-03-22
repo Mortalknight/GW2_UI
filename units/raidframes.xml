@@ -8,7 +8,7 @@
         </Anchors>
     </Frame>
 
-    <Frame name="GwRaidFrameIndicator" frameLevel="6" hidden="true" virtual="true">
+    <Frame name="GwRaidFrameIndicator"  hidden="true" virtual="true">
         <Size x="13" y="13"/>
         <Layers>
             <Layer level="BACKGROUND">
@@ -120,24 +120,7 @@
                 </Scripts>
             </StatusBar>
 
-            <Frame parentKey="indicatorTOPLEFT" inherits="GwRaidFrameIndicator">
-                <Anchors><Anchor point="TOPLEFT" x="0.3" y="-0.3"></Anchor></Anchors>
-            </Frame>
-            <Frame parentKey="indicatorTOP" inherits="GwRaidFrameIndicator">
-                <Anchors><Anchor point="TOP" y="-0.3"></Anchor></Anchors>
-            </Frame>
-            <Frame parentKey="indicatorTOPRIGHT" inherits="GwRaidFrameIndicator">
-                <Anchors><Anchor point="TOPRIGHT" x="-0.3" y="-0.3"></Anchor></Anchors>
-            </Frame>
-            <Frame parentKey="indicatorLEFT" inherits="GwRaidFrameIndicator">
-                <Anchors><Anchor point="LEFT" x="0.3"></Anchor></Anchors>
-            </Frame>
-            <Frame parentKey="indicatorCENTER" inherits="GwRaidFrameIndicator">
-                <Anchors><Anchor point="CENTER"></Anchor></Anchors>
-            </Frame>
-            <Frame parentKey="indicatorRIGHT" inherits="GwRaidFrameIndicator">
-                <Anchors><Anchor point="RIGHT" x="-0.3"></Anchor></Anchors>
-            </Frame>
+
 
 
         </Frames>
@@ -204,6 +187,24 @@
                                   </Layer>
                                 </Layers>
                                 <Frames>
+                                  <Frame parentKey="indicatorTOPLEFT" inherits="GwRaidFrameIndicator">
+                                      <Anchors><Anchor point="TOPLEFT" x="0.3" y="-0.3"></Anchor></Anchors>
+                                  </Frame>
+                                  <Frame parentKey="indicatorTOP" inherits="GwRaidFrameIndicator">
+                                      <Anchors><Anchor point="TOP" y="-0.3"></Anchor></Anchors>
+                                  </Frame>
+                                  <Frame parentKey="indicatorTOPRIGHT" inherits="GwRaidFrameIndicator">
+                                      <Anchors><Anchor point="TOPRIGHT" x="-0.3" y="-0.3"></Anchor></Anchors>
+                                  </Frame>
+                                  <Frame parentKey="indicatorLEFT" inherits="GwRaidFrameIndicator">
+                                      <Anchors><Anchor point="LEFT" x="0.3"></Anchor></Anchors>
+                                  </Frame>
+                                  <Frame parentKey="indicatorCENTER" inherits="GwRaidFrameIndicator">
+                                      <Anchors><Anchor point="CENTER"></Anchor></Anchors>
+                                  </Frame>
+                                  <Frame parentKey="indicatorRIGHT" inherits="GwRaidFrameIndicator">
+                                      <Anchors><Anchor point="RIGHT" x="-0.3"></Anchor></Anchors>
+                                  </Frame>
                                   <Frame parentKey="data" name="$parentData">
                                       <Anchors>
                                           <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>

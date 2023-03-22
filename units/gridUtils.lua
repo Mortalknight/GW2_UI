@@ -125,6 +125,13 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     frame.summonResurrectionIcon = frame.data.summonResurrectionIcon
     frame.healthstring = frame.data.healthstring
 
+    frame.indicatorTOPLEFT = frame.absorbOverlay.indicatorTOPLEFT
+    frame.indicatorTOP = frame.absorbOverlay.indicatorTOP
+    frame.indicatorTOPRIGHT = frame.absorbOverlay.indicatorTOPRIGHT
+    frame.indicatorLEFT = frame.absorbOverlay.indicatorLEFT
+    frame.indicatorCENTER = frame.absorbOverlay.indicatorCENTER
+    frame.indicatorRIGHT = frame.absorbOverlay.indicatorRIGHT
+
     frame.aggroborder = frame.absorbOverlay.aggroborder
     frame.nameNotLoaded = false
 
