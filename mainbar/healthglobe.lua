@@ -10,7 +10,7 @@ local GetSetting = GW.GetSetting
 
 local function flashAnimation(self,delta)
   if t==nil then t=0 end
-  local speed  =  max(0.4,4 * (1 - (self.healthPrecentage / 0.65)))
+  local speed  =  max(1,4 * (1 - (self.healthPrecentage / 0.65)))
   t = t + (delta) * speed
   local c =  0.4*math.abs(math.sin(t))
   self.border.normal:SetVertexColor(c,c,c,1)
