@@ -985,7 +985,7 @@ local function GridUpdateFrameData(self, index, profile)
         local pwcolor = PowerBarColorCustom[powerToken]
         self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
-    Gw.GridSetHealAbsorb(self);
+    GW.GridSetHealAbsorb(self);
     GW.GridSetUnitName(self, profile)
     GW.GridUpdateAwayData(self, profile)
     GW.GridUpdateAuras(self, profile)
