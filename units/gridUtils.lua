@@ -114,11 +114,21 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     frame.absorbbg = frame.healthContainer.healPrediction.absorbbg
     frame.absorbOverlay = frame.healthContainer.healPrediction.absorbbg.health.antiHeal.absorbOverlay
     frame.predictionbar = frame.healthContainer.healPrediction
-  --
-
-
     frame.healthbar = frame.healthContainer.healPrediction.absorbbg.health
     frame.antiHeal = frame.healthContainer.healPrediction.absorbbg.health.antiHeal
+
+    frame.absorbbg.customMaskSize = 32
+    frame.absorbOverlay.customMaskSize = 32
+    frame.predictionbar.customMaskSize = 32
+    frame.healthbar.customMaskSize = 32
+    frame.antiHeal.customMaskSize = 32
+
+    frame.absorbbg.strechMask = true
+    frame.absorbOverlay.strechMask = true
+    frame.predictionbar.strechMask = true
+    frame.healthbar.strechMask = true
+    frame.antiHeal.strechMask = true
+
     frame.data = frame.absorbOverlay.data
     frame.name = frame.data.name
     frame.classicon = frame.data.classicon
@@ -226,6 +236,7 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", frame.unit)
     frame:RegisterUnitEvent("UNIT_MAXPOWER", frame.unit)
     frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", frame.unit)
+    frame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", frame.unit)
     frame:RegisterUnitEvent("UNIT_PHASE", frame.unit)
     frame:RegisterUnitEvent("UNIT_AURA", frame.unit)
     frame:RegisterUnitEvent("UNIT_LEVEL", frame.unit)

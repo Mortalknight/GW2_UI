@@ -58,8 +58,10 @@ local function SetFillAmount(self,value)
   local totalWidth = isVertical and self:GetHeight() or self:GetWidth()
   local height = isVertical and self:GetWidth() or self:GetHeight()
   local barWidth = totalWidth * value
+  local stretchMask = self.strechMask or false
 
   local maskHightValue = self.customMaskSize or 128
+
 
   self.fillAmount = value
 
@@ -90,8 +92,17 @@ local function SetFillAmount(self,value)
       barPosition = 0
   end
 
-
+  if stretchMask then
+    if isVertical then
+      self.maskContainer:SetSize(height,maskHightValue)
+    else
+      self.maskContainer:SetSize(maskHightValue,height)
+    end
+  else
     self.maskContainer:SetSize(segmentSize,segmentSize)
+  end
+
+
 
 
   if self.spark~=nil  then
