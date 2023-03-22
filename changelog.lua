@@ -15,6 +15,20 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.6.0",{
+    {ct.feature,[=[Added 2 new damage text styles: Stacking and Classic (with anchor to nameplats or center of the screen)]=]},
+    {ct.feature,[=[Added option to show healing numbers for these 2 new styles (classic only with anchor to the center of the screen)]=]},
+
+    {ct.bug,[=[Fix move hud error if the frames gets moved back to it default position]=]},
+    {ct.bug,[=[Fix raid frame summon and resurrection icon]=]},
+    {ct.bug,[=[Fix friends data info tooltip]=]},
+    {ct.bug,[=[FFix worldmap drop-down position]=]},
+    {ct.bug,[=[ix objectives tracker group finder icon]=]},
+
+    {ct.change,[=[Changes for 10.0.7]=]},
+    {ct.change,[=[Update spell flyout skin]=]},
+})
+
 
 addChange("6.5.1",{
     {ct.bug,[=[Fixed memory leak cause by channeling spells]=]},

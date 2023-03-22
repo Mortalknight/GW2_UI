@@ -34,6 +34,9 @@ local function LoadRecruitAFriendList(tabContainer)
 
     RecruitAFriendFrame.RewardClaiming.NextRewardButton:ClearAllPoints()
     RecruitAFriendFrame.RewardClaiming.NextRewardButton:SetPoint("CENTER", RecruitAFriendFrame.RewardClaiming, "LEFT", 65, 0)
+    RecruitAFriendFrame.RewardClaiming.NextRewardButton.CircleMask:Hide()
+	RecruitAFriendFrame.RewardClaiming.NextRewardButton.IconBorder:GwKill()
+    RecruitAFriendFrame.RewardClaiming.NextRewardButton.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
     RecruitAFriendFrame.RecruitList:SetParent(RAFFrame.RecruitList)
     RecruitAFriendFrame.RecruitList:ClearAllPoints()
@@ -51,7 +54,7 @@ local function LoadRecruitAFriendList(tabContainer)
 
     RecruitAFriendFrame.RecruitmentButton:SetParent(RAFFrame.RecruitList)
     RecruitAFriendFrame.RecruitmentButton:ClearAllPoints()
-    RecruitAFriendFrame.RecruitmentButton:SetPoint("BOTTOMLEFT", RecruitAFriendFrame.RecruitList.ScrollFrame,  "BOTTOMLEFT", 4, -20)
+    RecruitAFriendFrame.RecruitmentButton:SetPoint("BOTTOMLEFT", RecruitAFriendFrame.RecruitList.ScrollBox,  "BOTTOMLEFT", 4, -20)
     RecruitAFriendFrame.RecruitmentButton:GwSkinButton(false, true)
 
     RecruitAFriendFrame.SplashFrame.OKButton:GwSkinButton(false, true)

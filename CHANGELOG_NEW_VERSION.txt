@@ -1,14 +1,15 @@
-6.5.1
-FIXES
-    - Fixed memory leak cause by channeling spells
-
-6.5.0
+6.6.0
 NEW
-    - Added option to add a new micromenu icon to show event timers at the tooltip
+    - Added 2 new damage text styles: Stacking and Classic (with anchor to nameplats or center of the screen)
+    - Added option to show healing numbers for these 2 new styles (classic only with anchor to the center of the screen)
 
 FIXES
-    - Fix copy chat corloring
-    - Hopefully fix ui flickering
+    - Fix move hud error if the frames gets moved back to it default position
+    - Fix raid frame summon and resurrection icon
+    - Fix friends data info tooltip
+    - Fix worldmap drop-down position
+    - Fix objectives tracker group finder icon
 
 CHANGES
-    - Show micromenu notification also if the micromenu is fade out
+    - Changes for 10.0.7
+    - Update spell flyout skin
