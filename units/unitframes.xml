@@ -61,7 +61,7 @@
                 <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="215" y="15"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbarBackground" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbar" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
                     </Anchors>
                     <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
                     <Color r="1" g="1" b="1" a="0.6"></Color>
@@ -240,7 +240,7 @@
                 <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="148" y="15"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbarBackground" relativePoint="BOTTOMLEFT" x="0" y="-1"></Anchor>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbar" relativePoint="BOTTOMLEFT" x="0" y="-1"></Anchor>
                     </Anchors>
                     <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
                     <Color r="1" g="1" b="1" a="0.6"></Color>
@@ -395,7 +395,7 @@
                 <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="215" y="15"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbarBackground" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbar" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
                     </Anchors>
                     <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
                     <Color r="1" g="1" b="1" a="0.6"></Color>
