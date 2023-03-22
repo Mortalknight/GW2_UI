@@ -45,6 +45,7 @@ local function createNormalUnitFrame(ftype, revert)
     GW.hookStatusbarBehaviour(f.absorbbg,true)
     GW.hookStatusbarBehaviour(f.healPrediction,false)
     GW.hookStatusbarBehaviour(f.castingbarNormal,false)
+    GW.hookStatusbarBehaviour(f.powerbar,true)
 
     f.absorbOverlay.customMaskSize = 64
     f.antiHeal.customMaskSize = 64
@@ -52,6 +53,7 @@ local function createNormalUnitFrame(ftype, revert)
     f.absorbbg.customMaskSize = 64
     f.healPrediction.customMaskSize = 64
     f.castingbarNormal.customMaskSize = 64
+    f.powerbar.customMaskSize = 64
 
     f.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
     f.absorbbg:SetStatusBarColor(1,1,1,0.66)
@@ -120,6 +122,7 @@ local function createNormalUnitFrameSmall(ftype)
     GW.hookStatusbarBehaviour(f.absorbbg,true)
     GW.hookStatusbarBehaviour(f.healPrediction,false)
     GW.hookStatusbarBehaviour(f.castingbarNormal,false)
+    GW.hookStatusbarBehaviour(f.powerbar,true)
 
     f.absorbOverlay.customMaskSize = 64
     f.antiHeal.customMaskSize = 64
@@ -127,6 +130,7 @@ local function createNormalUnitFrameSmall(ftype)
     f.absorbbg.customMaskSize = 64
     f.healPrediction.customMaskSize = 64
     f.castingbarNormal.customMaskSize = 64
+    f.powerbar.customMaskSize = 64
 
     f.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
     f.absorbbg:SetStatusBarColor(1,1,1,0.66)
@@ -509,7 +513,7 @@ local function hideCastBar(self)
     self.castingbarNormal:Hide()
 
     self.castingbarBackground:ClearAllPoints()
-    self.castingbarBackground:SetPoint("TOPLEFT", self.powerbarBackground, "BOTTOMLEFT", self.type == "NormalTarget" and -2 or 0, 19)
+    self.castingbarBackground:SetPoint("TOPLEFT", self.powerbar, "BOTTOMLEFT", self.type == "NormalTarget" and -2 or 0, 19)
 
     if self.portrait ~= nil then
         setUnitPortrait(self)
@@ -576,7 +580,7 @@ local function updateCastValues(self)
 
     self.castingbarBackground:Show()
     self.castingbarBackground:ClearAllPoints()
-    self.castingbarBackground:SetPoint("TOPLEFT", self.powerbarBackground, "BOTTOMLEFT", self.type == "NormalTarget" and -2 or 0, -1)
+    self.castingbarBackground:SetPoint("TOPLEFT", self.powerbar, "BOTTOMLEFT", self.type == "NormalTarget" and -2 or 0, -1)
     self.castingString:Show()
     if self.castingTimeString then
         self.castingTimeString:Show()
@@ -640,7 +644,7 @@ local function updateCastValues(self)
 end
 GW.AddForProfiling("unitframes", "updateCastValues", updateCastValues)
 
-local function updatePowerValues(self, hideAt0)
+local function updatePowerValues(self, hideAt0,event)
     local powerType, powerToken, _ = UnitPowerType(self.unit)
     local power = UnitPower(self.unit, powerType)
     local powerMax = UnitPowerMax(self.unit, powerType)
@@ -651,19 +655,21 @@ local function updatePowerValues(self, hideAt0)
     end
 
     if power <= 0 and hideAt0 then
-        self.powerbarBackground:Hide()
         self.powerbar:Hide()
     else
-        self.powerbarBackground:Show()
         self.powerbar:Show()
     end
 
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
-        self.powerbar:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
+        self.powerbar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
 
-    self.powerbar:SetWidth(math.min(self.barWidth - 1, math.max(1, self.barWidth * powerPrecentage)))
+    if event and event == "UNIT_TARGET" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_TARGET_CHANGED" then
+      self.powerbar:ForceFIllAmount(powerPrecentage)
+    else
+      self.powerbar:SetFillAmount(powerPrecentage)
+    end
 end
 GW.updatePowerValues = updatePowerValues
 GW.AddForProfiling("unitframes", "updatePowerValues", updatePowerValues)
@@ -795,8 +801,8 @@ local function target_OnEvent(self, event, unit)
         if (ttf) then unitFrameData(ttf) end
         updateHealthValues(self, event)
         if (ttf) then updateHealthValues(ttf, event) end
-        updatePowerValues(self)
-        if (ttf) then updatePowerValues(ttf) end
+        updatePowerValues(self,nil,event)
+        if (ttf) then updatePowerValues(ttf,nil,event) end
         updateCastValues(self)
         if (ttf) then updateCastValues(ttf) end
         updateRaidMarkers(self)
@@ -821,7 +827,7 @@ local function target_OnEvent(self, event, unit)
             if UnitExists("targettarget") then
                 unitFrameData(ttf)
                 updateHealthValues(ttf, event)
-                updatePowerValues(ttf)
+                updatePowerValues(ttf,nil,event)
                 updateCastValues(ttf)
                 updateRaidMarkers(ttf)
             end
@@ -845,7 +851,7 @@ local function target_OnEvent(self, event, unit)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
-            updatePowerValues(self)
+            updatePowerValues(self,nil,event)
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_EMPOWER_START") then
             updateCastValues(self)
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_EMPOWER_STOP") then
@@ -865,8 +871,8 @@ local function focus_OnEvent(self, event, unit)
         if (ttf) then unitFrameData(ttf) end
         updateHealthValues(self, event)
         if (ttf) then updateHealthValues(ttf, event) end
-        updatePowerValues(self)
-        if (ttf) then updatePowerValues(ttf) end
+        updatePowerValues(self,nil,event)
+        if (ttf) then updatePowerValues(ttf,nil,event) end
         updateCastValues(self)
         if (ttf) then updateCastValues(ttf) end
         updateRaidMarkers(self)
@@ -891,7 +897,7 @@ local function focus_OnEvent(self, event, unit)
             if UnitExists("focustarget") then
                 unitFrameData(ttf)
                 updateHealthValues(ttf, event)
-                updatePowerValues(ttf)
+                updatePowerValues(ttf,nil,event)
                 updateCastValues(ttf)
                 updateRaidMarkers(ttf)
             end
@@ -904,7 +910,7 @@ local function focus_OnEvent(self, event, unit)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
-            updatePowerValues(self)
+            updatePowerValues(self,nil,event)
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_EMPOWER_START") then
             updateCastValues(self)
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_EMPOWER_STOP") then
@@ -931,7 +937,7 @@ local function unittarget_OnUpdate(self, elapsed)
 
     updateRaidMarkers(self)
     updateHealthValues(self, "UNIT_TARGET")
-    updatePowerValues(self)
+    updatePowerValues(self,nil,"UNIT_TARGET")
     updateCastValues(self)
 end
 GW.AddForProfiling("unitframes", "unittarget_OnUpdate", unittarget_OnUpdate)
