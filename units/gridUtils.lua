@@ -277,16 +277,6 @@ local function GridUpdateRaidMarkers(self, profile)
 end
 GW.GridUpdateRaidMarkers = GridUpdateRaidMarkers
 
-local function GridSetHealAbsorb(self,event)
-  local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
-  local healthMax = UnitHealthMax(self.unit)
-  local healAbsorbPrecentage = 0
-  if healAbsorb > 0 and healthMax > 0 then
-      healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
-  end
-  self.antiHeal:SetFillAmount(healAbsorbPrecentage)
-end
-GW.GridSetHealAbsorb = GridSetHealAbsorb
 
 local function GridSetAbsorbAmount(self)
     local healthMax = UnitHealthMax(self.unit)
@@ -936,6 +926,18 @@ local function GridUpdatePower(self)
 end
 GW.GridUpdatePower = GridUpdatePower
 
+local function GridSetHealAbsorb(self,event)
+  local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
+  local healthMax = UnitHealthMax(self.unit)
+  local healAbsorbPrecentage = 0
+  if healAbsorb > 0 and healthMax > 0 then
+      healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
+  end
+  self.antiHeal:SetFillAmount(healAbsorbPrecentage)
+end
+GW.GridSetHealAbsorb = GridSetHealAbsorb
+
+
 local function GridUpdateFrameData(self, index, profile)
     if not UnitExists(self.unit) then
         return
@@ -983,7 +985,7 @@ local function GridUpdateFrameData(self, index, profile)
         local pwcolor = PowerBarColorCustom[powerToken]
         self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
-
+    Gw.GridSetHealAbsorb(self);
     GW.GridSetUnitName(self, profile)
     GW.GridUpdateAwayData(self, profile)
     GW.GridUpdateAuras(self, profile)
