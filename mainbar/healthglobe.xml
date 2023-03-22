@@ -239,7 +239,7 @@
                       </Texture>
                   </Layer>
                     <Layer level="BORDER" textureSubLevel="6">
-                        <Texture parentKey="normal" file="Interface/AddOns/GW2_UI/textures/globe/globeborder"/>
+                        <Texture parentKey="rborder" file="Interface/AddOns/GW2_UI/textures/globe/globeborder"/>
                     </Layer>
                 </Layers>
             </Frame>

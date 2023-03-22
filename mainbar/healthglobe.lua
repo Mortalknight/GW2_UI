@@ -7,6 +7,20 @@ local IsIn = GW.IsIn
 local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
 local GetSetting = GW.GetSetting
 
+
+local function flashAnimation(self,delta)
+  if t==nil then t=0 end
+  local speed  =  max(0.4,4 * (1 - (self.healthPrecentage / 0.65)))
+  t = t + (delta) * speed
+  local c =  0.4*math.abs(math.sin(t))
+  self.border.normal:SetVertexColor(c,c,c,1)
+
+  if self.healthPrecentage>0.65 and c<0.2 then
+    self:SetScript("OnUpdate",nil);
+    self.border.normal:SetVertexColor(0,0,0,1)
+  end
+end
+
 local function repair_OnEvent(self, event)
     if event ~= "PLAYER_ENTERING_WORLD" and not GW.inWorld then
         return
@@ -41,17 +55,13 @@ local function repair_OnEvent(self, event)
 end
 GW.AddForProfiling("healthglobe", "repair_OnEvent", repair_OnEvent)
 
-local Y_FULL = 47
-local Y_EMPTY = -42
-local Y_RANGE = Y_FULL - Y_EMPTY
-local X_MAX = 20
-local X_MIN = -20
+
 local function updateHealthData(self, anims)
     local health = UnitHealth("Player")
     local healthMax = UnitHealthMax("Player")
     local absorb = UnitGetTotalAbsorbs("Player")
     local prediction = UnitGetIncomingHeals("Player") or 0
-    local healAbsorb =  UnitGetTotalHealAbsorbs("Player") 
+    local healAbsorb =  UnitGetTotalHealAbsorbs("Player")
     local absorbPrecentage = 0
     local absorbAmount = 0
     local absorbAmount2 = 0
@@ -59,6 +69,8 @@ local function updateHealthData(self, anims)
     local healAbsorbPrecentage = 0
 
     local healthPrecentage = health/healthMax
+
+    self.healthPrecentage = healthPrecentage -- used for animation
     self.health:SetFillAmount(healthPrecentage - 0.035)
     self.candy:SetFillAmount(healthPrecentage)
 
@@ -117,6 +129,10 @@ local function updateHealthData(self, anims)
         self.text_a:Hide()
     else
         self.text_a:Show()
+    end
+
+    if healthPrecentage<0.65 and self:GetScript("OnUpdate")==nil then
+      self:SetScript("OnUpdate",flashAnimation)
     end
 
 end
@@ -263,10 +279,6 @@ local function LoadHealthGlobe()
     GW.hookStatusbarBehaviour(hg.healPrediction,true)
 
     hg.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
-
-
-    --hg.candy:SetStatusBarColor(0.74901,0.36078,0.08627,1.0)
-
     hg.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
     hg.candy:SetOrientation("VERTICAL")
