@@ -305,6 +305,16 @@ local function GridSetHealPrediction(self,predictionPrecentage)
 end
 GW.GridSetHealPrediction = GridSetHealPrediction
 
+local function GridSetHealAbsorb(self,event)
+  local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
+  local healthMax = UnitHealthMax(self.unit)
+  local healAbsorbPrecentage = 0
+  if healAbsorb > 0 and healthMax > 0 then
+      healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
+  end
+  self.antiHeal:SetFillAmount(healAbsorbPrecentage)
+end
+GW.GridSetHealAbsorb = GridSetHealAbsorb
 
 local function setHealthValue(self, healthCur, healthMax, healthPrec, profile)
     local healthstring = ""
@@ -926,16 +936,7 @@ local function GridUpdatePower(self)
 end
 GW.GridUpdatePower = GridUpdatePower
 
-local function GridSetHealAbsorb(self,event)
-  local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
-  local healthMax = UnitHealthMax(self.unit)
-  local healAbsorbPrecentage = 0
-  if healAbsorb > 0 and healthMax > 0 then
-      healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
-  end
-  self.antiHeal:SetFillAmount(healAbsorbPrecentage)
-end
-GW.GridSetHealAbsorb = GridSetHealAbsorb
+
 
 
 local function GridUpdateFrameData(self, index, profile)
