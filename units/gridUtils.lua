@@ -266,6 +266,17 @@ local function GridUpdateRaidMarkers(self, profile)
 end
 GW.GridUpdateRaidMarkers = GridUpdateRaidMarkers
 
+local function GridSetHealAbsorb(self,event)
+  local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
+  local healthMax = UnitHealthMax(self.unit)
+  local healAbsorbPrecentage = 0
+  if healAbsorb > 0 and healthMax > 0 then
+      healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
+  end
+  self.antiHeal:SetFillAmount(healAbsorbPrecentage)
+end
+GW.GridSetHealAbsorb = GridSetHealAbsorb
+
 local function GridSetAbsorbAmount(self)
     local healthMax = UnitHealthMax(self.unit)
     local health = UnitHealth(self.unit)
@@ -333,6 +344,7 @@ local function GridSetHealth(self, profile)
     setHealthValue(self, health, healthMax, healthPrec, profile)
     self.healthbar:SetFillAmount(healthPrec)
     GridSetAbsorbAmount(self);
+    GridSetHealAbsorb(self);
 end
 GW.GridSetHealth = GridSetHealth
 
