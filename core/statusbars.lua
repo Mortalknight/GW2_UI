@@ -263,7 +263,7 @@ end
 GW.LoadStatusbarTest = LoadStatusbarTest
 
 local function preload(self)
-    self.preLoader:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/"..self.index)
+
     self.index = self.index + 1
     if self.index>numSpritesInAnimation then
       self:SetScript("OnUpdate",nil)
@@ -272,9 +272,13 @@ end
 local function preLoadStatusBarMaskTextures()
   local f = CreateFrame("Frame",nil,UIParent)
   f:SetSize(1,1)
-  f.preLoader = f:CreateTexture(nil, "BACKGROUND")
-  f.preLoader:SetSize(1,1)
-  f.index = 0
-  f:SetScript("OnUpdate",preload)
+  for i =0,numSpritesInAnimation do
+    preLoader = f:CreateTexture(nil, "BACKGROUND")
+    preLoader:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/"..i)
+    preLoader:SetSize(1,1)
+
+  end
+
+--  f:SetScript("OnUpdate",preload)
 end
 GW.preLoadStatusBarMaskTextures = preLoadStatusBarMaskTextures
