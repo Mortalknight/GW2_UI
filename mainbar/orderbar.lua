@@ -28,7 +28,7 @@ end
 GW.AddForProfiling("orderbar", "createFollower", createFollower)
 
 local function updateOrderBar(self)
-    local categoryInfo = C_Garrison.GetClassSpecCategoryInfo(Enum.GarrisonFollowerType.FollowerType_7_0)
+    local categoryInfo = C_Garrison.GetClassSpecCategoryInfo(Enum.GarrisonFollowerType.FollowerType_7_0_GarrisonFollower)
 
     for index, category in ipairs(categoryInfo) do
         local categoryInfoFrame = _G["GwOrderHallFollower" .. index]
