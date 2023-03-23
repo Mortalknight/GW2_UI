@@ -597,7 +597,7 @@
                                     <FontString parentKey="healthString" text="unknown" justifyH="LEFT" justifyV="MIDDLE">
                                         <Size x="215" y="15"/>
                                         <Anchors>
-                                            <Anchor point="LEFT" relativeKey="$parent.healthbarBackground" relativePoint="LEFT" x="5" y="0"></Anchor>
+                                            <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="5" y="0"></Anchor>
                                         </Anchors>
                                     </FontString>
                                   </Layer>
