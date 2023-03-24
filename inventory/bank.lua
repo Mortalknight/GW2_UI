@@ -187,7 +187,7 @@ local function createBagBar(f)
     f.bags = {}
 
     local getBagId = function(self)
-        return self:GetID() + NUM_TOTAL_EQUIPPED_BAG_SLOTS
+        return self:GetID() + NUM_BAG_FRAMES + NUM_REAGENTBAG_FRAMES
     end
 
     for bag_idx = 1, NUM_BANKBAGSLOTS do
@@ -197,7 +197,6 @@ local function createBagBar(f)
         -- The ID set here is NOT the usual bag_id; rather it is a 1-based index of bank
         -- bags used by helper methods provided by BankItemButtonBagTemplate.
         b:SetID(bag_idx)
-        b.BagID = bag_idx
         -- unlike BagSlotButtonTemplate, we must provide the GetBagID method ourself
         b.GetBagID = getBagId
 
@@ -239,9 +238,9 @@ local function updateBagBar(f)
     for bag_idx = 1, NUM_BANKBAGSLOTS do
         local b = f.bags[bag_idx]
         local bag_id = b:GetBagID()
-        local inv_id = C_Container.ContainerIDToInventoryID(bag_idx) --b:GetInventorySlot()
+        local inv_id = C_Container.ContainerIDToInventoryID(bag_id)
         local bag_tex = GetInventoryItemTexture("player", inv_id)
-        local _, slot_tex = GetInventorySlotInfo("Bag" .. bag_idx)
+        local _, slot_tex = GetInventorySlotInfo("Bag" .. bag_id)
 
         b.icon:Show()
         b.gwHasBag = false -- flag used by OnClick hook to pop up context menu when valid
