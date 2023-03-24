@@ -78,7 +78,6 @@ local function GearSetButton_Edit(self)
     GwGearManagerPopupFrame.origName = self.setName
     GwGearManagerPopupFrame:Show()
     GwGearManagerPopupFrame:OnShow()
-    GW.HandleIconSelectionFrame(GwGearManagerPopupFrame) -- we need to do this here to have the loaded icons
 end
 
 local function DropDownOutfit_OnLoad(self)
@@ -321,7 +320,6 @@ local function LoadPDEquipset(fmMenu)
         PaperDollFrame.EquipmentManagerPane.selectedSetID = nil
         GwGearManagerPopupFrame:Show()
         GwGearManagerPopupFrame:OnShow()
-        GW.HandleIconSelectionFrame(GwGearManagerPopupFrame) -- we need to do this here to have the loaded icons
         PaperDollEquipmentManagerPane_Update(true)
 
         -- Ignore shirt and tabard by default
@@ -331,6 +329,12 @@ local function LoadPDEquipset(fmMenu)
     fmGPDO.newOutfit:SetText(TRANSMOG_OUTFIT_NEW)
     fmGPDO.newOutfit:SetScript("OnClick", fnGPDO_newOutfit_OnClick)
     fmMenu:SetupBackButton(fmGPDO.backButton, CHARACTER .. ":\n" .. EQUIPMENT_MANAGER)
+
+    hooksecurefunc(GwGearManagerPopupFrame, "OnShow", function(frame)
+        if not frame.isSkinned then
+            GW.HandleIconSelectionFrame(frame)
+        end
+    end)
 
     GwPaperDollOutfits:SetScript("OnShow", drawItemSetList)
     GwPaperDollOutfits:SetScript(
