@@ -142,7 +142,7 @@ local function outfitEditButton_OnClick(self)
     if self.gearSetButton ~= self:GetParent() then
         HideDropDownMenu(1)
         self.gearSetButton = self:GetParent()
-    end   
+    end
     ToggleDropDownMenu(1, nil, self:GetParent().DropDownOutfitFrame, self, 0, 0)
 end
 GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditButton_OnClick)
@@ -160,7 +160,7 @@ end
 GW.AddForProfiling("character_equipset", "outfitDeleteButton_OnClick", outfitDeleteButton_OnClick)
 
 local function getNewEquipmentSetButton(i)
-    if _G["GwPaperDollOutfitsButton" .. i] ~= nil then
+    if _G["GwPaperDollOutfitsButton" .. i] then
         return _G["GwPaperDollOutfitsButton" .. i]
     end
 
@@ -224,8 +224,7 @@ drawItemSetList = function()
         if numSets >= i then
             local frame = getNewEquipmentSetButton(i)
 
-            local name, texture, setID, isEquipped, _, _, _, numLost, _ =
-                C_EquipmentSet.GetEquipmentSetInfo(id_table[i])
+            local name, texture, setID, isEquipped, _, _, _, numLost, _ = C_EquipmentSet.GetEquipmentSetInfo(id_table[i])
 
             frame:Show()
             frame.saveOutfit:Hide()
@@ -272,7 +271,7 @@ drawItemSetList = function()
                 frame:GetFontString():SetTextColor(1, 1, 1)
             end
         else
-            if _G["GwPaperDollOutfitsButton" .. i] ~= nil then
+            if _G["GwPaperDollOutfitsButton" .. i] then
                 _G["GwPaperDollOutfitsButton" .. i]:Hide()
             end
         end
