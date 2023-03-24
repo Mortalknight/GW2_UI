@@ -129,11 +129,6 @@ local function LoadPaperDoll(tabContainer)
     CharacterMenuButton_OnLoad(fmMenu.outfitsMenu, true)
     CharacterMenuButton_OnLoad(fmMenu.titlesMenu, false)
 
-    GearManagerPopupFrame:HookScript("OnShow", function(frame)
-        if frame.isSkinned then return end
-        GW.HandleIconSelectionFrame(frame)
-    end)
-
     -- pull corruption thingy from default paperdoll
     if (CharacterStatsPane and CharacterStatsPane.ItemLevelFrame) then
         local cpt = CharacterStatsPane.ItemLevelFrame.Corruption

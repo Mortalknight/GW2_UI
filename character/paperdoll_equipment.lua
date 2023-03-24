@@ -743,6 +743,8 @@ local function grabDefaultSlots(slot, anchor, parent, size)
             self.isEquipmentSelected = true
         end
     end)
+    slot.overlayButton:SetScript("OnEnter", function() slot:GetScript("OnEnter")(slot) end)
+    slot.overlayButton:SetScript("OnLeave", function() slot:GetScript("OnLeave")(slot) end)
 
     hooksecurefunc(slot, "DisplayAsAzeriteItem", UpdateAzeriteItem)
     hooksecurefunc(slot, "DisplayAsAzeriteEmpoweredItem", UpdateAzeriteEmpoweredItem)
