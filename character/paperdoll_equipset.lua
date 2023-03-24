@@ -3,6 +3,8 @@ local CharacterMenuBlank_OnLoad = GW.CharacterMenuBlank_OnLoad
 local SavedItemSlots = GW.char_equipset_SavedItems
 local WarningPrompt = GW.WarningPrompt
 
+
+local GwGearManagerPopupFrame
 -- local forward function defs
 local drawItemSetList
 
@@ -70,15 +72,13 @@ GW.AddForProfiling("character_equipset", "outfitEquipButton_OnClick", outfitEqui
 
 
 local function GearSetButton_Edit(self)
-    GearManagerPopupFrame:ClearAllPoints()
-    GearManagerPopupFrame:SetParent(GwDressingRoom)
-    GearManagerPopupFrame:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
-
-    GearManagerPopupFrame.mode = IconSelectorPopupFrameModes.Edit
+    GwGearManagerPopupFrame.mode = IconSelectorPopupFrameModes.Edit
     PaperDollFrame.EquipmentManagerPane.selectedSetID = self.setID
-    GearManagerPopupFrame.setID = self.setID
-    GearManagerPopupFrame.origName = self.setName
-    GearManagerPopupFrame:Show()
+    GwGearManagerPopupFrame.setID = self.setID
+    GwGearManagerPopupFrame.origName = self.setName
+    GwGearManagerPopupFrame:Show()
+    GwGearManagerPopupFrame:OnShow()
+    GW.HandleIconSelectionFrame(GwGearManagerPopupFrame) -- we need to do this here to have the loaded icons
 end
 
 local function DropDownOutfit_OnLoad(self)
@@ -309,15 +309,19 @@ end
 --]]
 local function LoadPDEquipset(fmMenu)
     local fmGPDO = CreateFrame("Frame", "GwPaperDollOutfits", GwPaperDoll, "GwPaperDollOutfits")
-    local fnGPDO_newOutfit_OnClick = function(self)
-        self.oldParent = GearManagerPopupFrame:GetParent()
-        GearManagerPopupFrame:SetParent(GwDressingRoom)
-        GearManagerPopupFrame:ClearAllPoints()
-        GearManagerPopupFrame:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
+    GwGearManagerPopupFrame = CreateFrame("Frame", "GwGearManagerPopupFrame", GwDressingRoom, "IconSelectorPopupFrameTemplate")
+    Mixin(GwGearManagerPopupFrame, GearManagerPopupFrameMixin)
+    GwGearManagerPopupFrame:Hide()
 
-        GearManagerPopupFrame.mode = IconSelectorPopupFrameModes.New
+    GwGearManagerPopupFrame:SetParent(GwDressingRoom)
+    GwGearManagerPopupFrame:ClearAllPoints()
+    GwGearManagerPopupFrame:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
+    local fnGPDO_newOutfit_OnClick = function()
+        GwGearManagerPopupFrame.mode = IconSelectorPopupFrameModes.New
         PaperDollFrame.EquipmentManagerPane.selectedSetID = nil
-        GearManagerPopupFrame:Show()
+        GwGearManagerPopupFrame:Show()
+        GwGearManagerPopupFrame:OnShow()
+        GW.HandleIconSelectionFrame(GwGearManagerPopupFrame) -- we need to do this here to have the loaded icons
         PaperDollEquipmentManagerPane_Update(true)
 
         -- Ignore shirt and tabard by default
@@ -337,6 +341,6 @@ local function LoadPDEquipset(fmMenu)
     )
     drawItemSetList()
 
-    hooksecurefunc(GearManagerPopupFrame, "OkayButton_OnClick", drawItemSetList)
+    hooksecurefunc(GwGearManagerPopupFrame, "OkayButton_OnClick", drawItemSetList)
 end
 GW.LoadPDEquipset = LoadPDEquipset
