@@ -194,13 +194,13 @@ local function setManaBar(f)
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
     f.exbar:Show()
-    f:SetHeight(18)
+    f:SetHeight(14)
 
     f:ClearAllPoints()
     if GetSetting("XPBAR_ENABLED") or (f.isMoved and not CPF_HOOKED_TO_TARGETFRAME) then
-        f:SetPoint("TOPLEFT", f.gwMover, 0, -15)
+        f:SetPoint("TOPLEFT", f.gwMover, 0, -13)
     else
-        f:SetPoint("TOPLEFT", f.gwMover, 0, 0)
+        f:SetPoint("TOPLEFT", f.gwMover, 0, -3)
     end
 
     f:Hide()
@@ -1404,7 +1404,7 @@ local function LoadClassPowers()
     cpf.decayCounter.bar:addToBarMask(cpf.decayCounter.bar.spark)
 
 
-    GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", ALL .. ",Unitframe,Power", {316, 32}, {"default", "scaleable"}, true)
+    GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", ALL .. ",Unitframe,Power", {312, 32}, {"default", "scaleable"}, true)
 
     -- position mover
     if (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not cpf.isMoved  then
@@ -1455,8 +1455,6 @@ local function LoadClassPowers()
     end
 
     -- create an extra mana power bar that is used sometimes
-    local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
-    local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 52 or 0
     local exbar = GW.createNewStatusbar("GwPlayerAltClassExBar",UIParent,"GwStatusPowerBar",true)
     exbar.customMaskSize = 64
     exbar.bar =exbar
@@ -1465,12 +1463,9 @@ local function LoadClassPowers()
     exbar:addToBarMask(exbar.scrollTexture)
     GW.MixinHideDuringPetAndOverride(exbar)
     cpf.exbar = exbar
+    exbar:SetParent(cpf)
+    exbar:SetPoint("TOPLEFT", cpf)
 
-    exbar:ClearAllPoints()
-    exbar:SetPoint("TOPLEFT", cpf, "TOPLEFT", 0 + xOff, 5 - yOff)
-    exbar:SetPoint("BOTTOMLEFT", cpf, "BOTTOMLEFT", 0 + xOff, 5 - yOff)
-    exbar:SetPoint("TOPRIGHT", cpf, "TOPRIGHT", 0 + xOff, 5 - yOff)
-    exbar:SetPoint("BOTTOMRIGHT", cpf, "BOTTOMRIGHT", 0 + xOff, 5 - yOff)
     exbar:SetFrameStrata("MEDIUM")
     exbar.label:SetFont(DAMAGE_TEXT_FONT, 12)
 

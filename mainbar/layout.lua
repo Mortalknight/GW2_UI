@@ -129,7 +129,7 @@ local onstate_Barlayout = [=[
     --mblFrame
     if mbl and not mbl:GetAttribute("isMoved") and mbl_mover then
         mbl_mover:ClearAllPoints()
-        mbl_mover:SetPoint("BOTTOMLEFT", uip, "BOTTOM", pfat and -318 or -372, epbar and 120 or 114)
+        mbl_mover:SetPoint("BOTTOMLEFT", uip, "BOTTOM", pfat and -318 or -369, epbar and 120 or 114)
     end
 
     if bbar and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
