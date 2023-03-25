@@ -1428,9 +1428,12 @@ local function LoadClassPowers()
     if cpf.ourPowerBar then
         local anchorFrame = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame or _G.GwPlayerPowerBar
         local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame.powerbar:GetWidth() or _G.GwPlayerPowerBar:GetWidth()
-        local lmb =  GW.createNewStatusbar("GwPlayerAltClassLmb",UIParent,nil,true)
+        local lmb =  GW.createNewStatusbar("GwPlayerAltClassLmb",UIParent,"GwStatusPowerBar",true)
         lmb.customMaskSize = 64
         lmb.bar = lmb;
+        lmb:addToBarMask(lmb.intensity)
+        lmb:addToBarMask(lmb.intensity2)
+        lmb:addToBarMask(lmb.scrollTexture)
         GW.MixinHideDuringPetAndOverride(lmb)
         cpf.lmb = lmb
 
@@ -1454,9 +1457,12 @@ local function LoadClassPowers()
     -- create an extra mana power bar that is used sometimes
     local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
     local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 52 or 0
-    local exbar = GW.createNewStatusbar("GwPlayerAltClassExBar",UIParent,nil,true)
+    local exbar = GW.createNewStatusbar("GwPlayerAltClassExBar",UIParent,"GwStatusPowerBar",true)
     exbar.customMaskSize = 64
     exbar.bar =exbar
+    exbar:addToBarMask(exbar.intensity)
+    exbar:addToBarMask(exbar.intensity2)
+    exbar:addToBarMask(exbar.scrollTexture)
     GW.MixinHideDuringPetAndOverride(exbar)
     cpf.exbar = exbar
 

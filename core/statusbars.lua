@@ -111,11 +111,12 @@ local function SetFillAmount(self,value)
     else
       self.spark:Show()
     end
-    local  sparkPosition =  currentSegmentPosition + (segmentSize * rampProgress) - self.spark.width + 5
+    local  sparkPosition =  (currentSegmentPosition + (segmentSize * rampProgress) - self.spark.width) + 10
     local sparkWidth = min(barWidth,self.spark.width)
     self.spark:SetWidth(sparkWidth)
+    self.spark:SetHeight(height)
     self.spark:ClearAllPoints()
-    self.spark:SetPoint("LEFT",self.internalBar,"LEFT",max(0,sparkPosition),0)
+    self.spark:SetPoint("LEFT",self.internalBar,"LEFT",min(totalWidth - self.spark.width, max(0,sparkPosition)),0)
 
   end
 
@@ -146,8 +147,12 @@ end
 local function  barUpdate(self,delta)
 
   self.animatedTime = self.animatedTime + delta
-  local newValue = lerpEaseOut(self.animatedStartValue,self.animatedValue,self.animatedTime/self.animatedDuration)
+  local animationProgress = self.animatedTime/self.animatedDuration
+  local newValue = lerpEaseOut(self.animatedStartValue,self.animatedValue,animationProgress)
   SetFillAmount(self,newValue)
+  if self.onUpdateAnimation then
+    self.onUpdateAnimation(self,animationProgress,delta)
+  end
   if self.animatedTime>=self.animatedDuration then
   --  SetFillAmount(self,self.animatedValue)
     self:SetScript("OnUpdate",nil)
