@@ -2,7 +2,7 @@
 ..\FrameXML\UI.xsd">
 
 <StatusBar name="GwStatusPowerBar" minValue="0" maxValue="1" virtual="true" inherits="GwStatusBarBackground" >
-    <Size x="312" y="14"></Size>
+    <Size x="313" y="14"></Size>
     <Anchors>
         <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
     </Anchors>
@@ -65,7 +65,7 @@
         </Layer>
         <Layer level="OVERLAY" textureSubLevel="4">
             <FontString parentKey="label" text="Unknown" justifyH="CENTER">
-                <Size x="200" y="20"></Size>
+                <Size x="200" y="14"></Size>
                 <Anchors>
                     <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                 </Anchors>

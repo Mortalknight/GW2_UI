@@ -12,7 +12,7 @@ local AllTags = {}
 local function filterHudMovers(filter)
     if filter then
         for _, mf in pairs(GW.MOVABLE_FRAMES) do
-            if string.find(mf.tags, filter, 1, true) then
+            if string.find(mf.tags, filter, 1, true) and mf.enable then
                 mf:Show()
             else
                 mf:Hide()
@@ -145,7 +145,7 @@ local function moveHudObjects(self)
     for _, mf in pairs(GW.MOVABLE_FRAMES) do
         mf:EnableMouse(true)
         mf:SetMovable(true)
-        mf:Show()
+        mf:SetShown(mf.enable)
     end
     GW.MoveHudScaleableFrame.moverSettingsFrame.options:Hide()
     GW.MoveHudScaleableFrame.moverSettingsFrame.desc:Show()
@@ -638,6 +638,8 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
         end)
     end
 
+    mf.enable = true
+
     GW.MOVABLE_FRAMES[#GW.MOVABLE_FRAMES + 1] = mf
 
     return mf
@@ -687,6 +689,16 @@ local function MoveFrameByPixel(nudgeX, nudgeY)
 
     mover_OnDragStop(mover)
 end
+
+local function ToggleMover(frame, toggle)
+    for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
+        if moveableFrame == frame then
+            moveableFrame.enable = toggle
+            break
+        end
+    end
+end
+GW.ToggleMover = ToggleMover
 
 local function LoadMovers(layoutManager)
     -- Create mover settings frame
