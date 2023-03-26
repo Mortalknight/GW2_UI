@@ -95,15 +95,15 @@ local onstate_Barlayout = [=[
     if mbl and mbl:IsShown() and not mbl:GetAttribute("isMoved") and pet and not pet:GetAttribute("isMoved") then
         if newstate == "incombat" then
             petmover:ClearAllPoints()
-            petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 212)
+            petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -57 + (pfat and 54 or 0), 212)
         else
             if mbl and mbl:IsShown() then
                 if mbl:GetAttribute("gw_FadeShowing") then
                     petmover:ClearAllPoints()
-                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 212)
+                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -57 + (pfat and 54 or 0), 212)
                 else
                     petmover:ClearAllPoints()
-                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 120)
+                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -57 + (pfat and 54 or 0), 120)
                 end
             end
         end
@@ -123,7 +123,7 @@ local onstate_Barlayout = [=[
     --mbrFrame
     if mbr and not mbr:GetAttribute("isMoved") and mbr_mover then
         mbr_mover:ClearAllPoints()
-        mbr_mover:SetPoint("BOTTOMRIGHT", uip, "BOTTOM", pfat and 318 or 372, epbar and 120 or 114)
+        mbr_mover:SetPoint("BOTTOMRIGHT", uip, "BOTTOM", pfat and 318 or 369, epbar and 120 or 114)
     end
 
     --mblFrame
