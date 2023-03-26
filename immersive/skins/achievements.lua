@@ -547,7 +547,7 @@ local function updateAchievementFrameSummaryAchievement(self, achievementID)
         skinAchievementFrameSummaryAchievement(self)
     end
     setNormalText(self.Description)
-    if self.achievementId ~= achievementID then
+    if achievementID and self.achievementId ~= achievementID then
         updateSummaryAchievementTexture(self, achievementID)
         self.achievementId = achievementID
     end
