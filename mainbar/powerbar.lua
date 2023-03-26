@@ -6,6 +6,30 @@ local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local GetSetting = GW.GetSetting
 
+local function scrollTextureParalaxOnUpdate(self,delta)
+  local barWidth = self:GetWidth()
+  local speed = (0.025 * barWidth)/barWidth
+  local speed2 = (0.015 * barWidth)/barWidth
+  local speedMultiplier = self.scrollSpeedMultiplier or 1
+  speed = speed * speedMultiplier
+  speed2 = speed2 * speedMultiplier
+  local offset = self.scrollTexture.xoffset or 1
+  local offset2 = self.scrollTexture2.xoffset or 1
+  local newPoint = offset - delta*speed
+  local newPoint2 = offset2 - delta*speed2
+  if newPoint<0 then
+    newPoint = newPoint + 1
+  end
+  if newPoint2<0 then
+    newPoint2 = newPoint2 + 1
+  end
+  self.scrollTexture.xoffset = newPoint
+  self.scrollTexture2.xoffset = newPoint2
+  self.scrollTexture:SetTexCoord(newPoint,newPoint+1,0,1)
+  self.scrollTexture2:SetTexCoord(newPoint2,newPoint2+1,0,1)
+
+end
+
 local function scrollTextureOnUpdate(self,delta)
   local barWidth = self:GetWidth()
   local speed = (0.025 * barWidth)/barWidth
@@ -18,7 +42,50 @@ local function scrollTextureOnUpdate(self,delta)
   end
   self.scrollTexture.xoffset = newPoint
   self.scrollTexture:SetTexCoord(newPoint,newPoint+1,0,1)
+  self.runeoverlay:SetTexCoord(newPoint,newPoint+1,0,1)
 end
+
+local function AnimationPain(self,animationProgress)
+  local fill = self:GetFillAmount()
+  if self.animatedStartValue>self.animatedValue then
+    local width = self:GetWidth()
+    local startPoint = width * self.animatedStartValue
+    local endPoint = width * self.animatedValue
+    self.intensity:ClearAllPoints()
+    self.intensity:SetPoint("LEFT",self,"LEFT",startPoint,0)
+    self.intensity:SetPoint("RIGHT",self,"LEFT",endPoint,0)
+  end
+end
+local function AnimationFury(self,animationProgress,delta)
+  local fill = self:GetFillAmount()
+  local cap = min(0.4,fill)
+  local cap2 = min(0.6,fill)
+  self.scrollSpeedMultiplier = max(1,min(5,fill * 5))
+  if self.animatedStartValue<self.animatedValue then
+    self.scrollTexture:SetAlpha(max(cap,min(1,1 - animationProgress)))
+    self.scrollTexture2:SetAlpha(max(cap2,min(1,1 - animationProgress)))
+
+  else 
+    self.scrollTexture:SetAlpha(cap)
+    self.scrollTexture2:SetAlpha(cap2)
+  end
+end
+local function AnimationRunicPower(self,animationProgress,delta)
+  local fill = self:GetFillAmount()
+  local cap = min(0.4,fill)
+
+if self.animatedStartValue<self.animatedValue then
+  self.runeoverlay:SetAlpha(max(0,min(1,1 - animationProgress)))
+--  self.scrollTexture:SetAlpha(max(fill,min(1,1 - animationProgress)))
+else 
+  self.runeoverlay:SetAlpha(0)
+end
+self.scrollSpeedMultiplier = 1
+self.scrollTexture:SetAlpha(cap)
+self.spark:SetAlpha(cap)
+
+end
+
 local function AnimationLunarGlow(self,animationProgress,delta)
     local fill = self:GetFillAmount()
     local cap = min(1,max(0,(fill-0.5)*2))
@@ -49,10 +116,64 @@ local function AnimationIntensityGlow(self,animationProgress)
   self.intensity2:SetAlpha(cap2)
   self.spark:SetAlpha(0.75)
 end
+local function AnimationEnergy(self,animationProgress)
+  local fill = self:GetFillAmount()
+  local cap = min(0.4,fill)
+  local alphaStart = self.runeoverlay:GetAlpha()
+  local newAlpha = 0
+if self.animatedStartValue<self.animatedValue then
 
+  newAlpha = Lerp(alphaStart,1,animationProgress)
 
+  self.runeoverlay:SetAlpha(max(0,min(1,newAlpha)))
+  self.spark:SetAlpha( max(0,min(0.3,0.3*newAlpha) ))
+else 
+  newAlpha = Lerp(alphaStart,0,animationProgress)
+  self.runeoverlay:SetAlpha(max(0,min(1,newAlpha)))
+  self.spark:SetAlpha( max(0,min(0.3,0.3*newAlpha) ))
+end
+self.scrollSpeedMultiplier = 1
+--self.scrollTexture:SetAlpha(cap)
 
+end
 
+local function setPowerTypePain(self)
+  self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/pain")
+  self.intensity:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/pain-intensity")
+  self.intensity:SetAlpha(1)
+  self.intensity:ClearAllPoints()
+  self.intensity:SetPoint("LEFT",self,"LEFT",0,0)
+  self.intensity:SetPoint("RIGHT",self,"LEFT",0,0)
+  self.intensity:SetHeight(self:GetHeight())
+  self.onUpdateAnimation = AnimationPain
+  --self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
+ 
+end
+local function setPowerTypeFury(self)
+  self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury")
+  self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/fury-intensity","REPEAT")
+  self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/fury-intensity2","REPEAT")
+  self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
+  self.animator:SetScript("OnUpdate",function(_,delta) scrollTextureParalaxOnUpdate(self,delta) end)
+  self.scrollTexture:SetAlpha(1)
+  self.scrollTexture2:SetAlpha(1)
+  self.spark:SetAlpha(0.5)
+  self.onUpdateAnimation = AnimationFury
+  --self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
+ 
+end
+
+local function setPowerTypeRunic(self)
+  self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower")
+  self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower-intensity2","REPEAT")
+  self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower-intensity","REPEAT")
+  --self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/runicpower-intensity2")
+  self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark")
+  self.spark:SetAlpha(1)
+  --self.scrollTexture:SetAlpha(1)
+  self.onUpdateAnimation = AnimationRunicPower
+  self.animator:SetScript("OnUpdate",function(_,delta) scrollTextureOnUpdate(self,delta) end)
+end
 
 local function setPowerTypeLunarPower(self)
   self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/lunar")
@@ -75,12 +196,16 @@ local function setPowerTypeRage(self)
   end
 end
 local function setPowerTypeEnergy(self)
-  self.spark:SetAlpha(1)
-  self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/ragespark")
+  self.spark:SetAlpha(0)
+  self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark")
   self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/energy")
+  self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/energy-intensity","REPEAT")
+  self.onUpdateAnimation = AnimationEnergy
 end
 local function setPowerTypeMana(self)
   self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/mana")
+  self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/manaspark")
+  self.spark:SetAlpha(1)
 end
 local function setPowerTypeInsanity(self)
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity-scroll","REPEAT")
@@ -105,11 +230,15 @@ local function setPowerBarVisuals(self,powerType,powerToken)
   self.bar:SetStatusBarColor(1,1,1,1)
   self.bar.spark:SetAlpha(0)
   self.bar.scrollTexture:SetAlpha(0)
+  self.bar.scrollTexture2:SetAlpha(0)
   self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/statusbar")
   self.intensity:SetAlpha(0)
   self.intensity2:SetAlpha(0)
   self.spark:SetAlpha(0)
   self.onUpdateAnimation = nil
+  self.intensity:ClearAllPoints()
+  self.intensity:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
+  self.intensity:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT",0,0)
 
   if powerType == Enum.PowerType.Insanity then
     setPowerTypeInsanity(self)
@@ -125,6 +254,12 @@ local function setPowerBarVisuals(self,powerType,powerToken)
     return
   elseif powerType == Enum.PowerType.LunarPower then
     setPowerTypeLunarPower(self)
+    return
+  elseif powerType == Enum.PowerType.RunicPower then
+    setPowerTypeRunic(self)
+    return
+  elseif powerType == Enum.PowerType.Fury then
+    setPowerTypeFury(self)
     return
   end
 
@@ -196,7 +331,6 @@ local function UpdatePowerData(self, forcePowerType, powerToken)
     local powerMax = UnitPowerMax("player", forcePowerType)
     local powerPrec
     local powerBarWidth = self:GetWidth()
-
     self.powerType = forcePowerType
     self.lostKnownPower = power
     self.powerMax = powerMax
@@ -235,6 +369,10 @@ local function LoadPowerBar()
     playerPowerBar:addToBarMask(playerPowerBar.intensity)
     playerPowerBar:addToBarMask(playerPowerBar.intensity2)
     playerPowerBar:addToBarMask(playerPowerBar.scrollTexture)
+    playerPowerBar:addToBarMask(playerPowerBar.scrollTexture2)
+    playerPowerBar:addToBarMask(playerPowerBar.runeoverlay)
+    playerPowerBar.runicmask:SetSize(playerPowerBar:GetSize())
+    playerPowerBar.runeoverlay:AddMaskTexture(playerPowerBar.runicmask)
     --CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
 
     GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "PowerBar_pos", ALL .. ",Unitframe,Power", nil, {"default", "scaleable"}, true)

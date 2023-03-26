@@ -25,7 +25,7 @@
         </Texture>
       </Layer>
       <Layer level="OVERLAY" textureSubLevel="1">
-        <Texture parentKey="scrollTexture" hWrapMode="REPEAT" alpha="1" file="Interface/AddOns/GW2_UI/textures/bartextures/insanity-intensity2">
+        <Texture parentKey="runeoverlay"  alpha="0" file="Interface/AddOns/GW2_UI/textures/bartextures/runicpower-intensity2">
           <Size x="32" y="18"></Size>
           <Anchors>
               <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
@@ -33,15 +33,37 @@
           </Anchors>
         </Texture>
       </Layer>
-        <Layer level="OVERLAY" textureSubLevel="2">
+      <Layer level="OVERLAY" textureSubLevel="2">
+        <Texture parentKey="scrollTexture" hWrapMode="REPEAT" alpha="1" file="Interface/AddOns/GW2_UI/textures/bartextures/insanity-intensity2">
+          <Size x="32" y="18"></Size>
+          <Anchors>
+              <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+              <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+          </Anchors>
+        </Texture>
+         <Texture parentKey="scrollTexture2" hWrapMode="REPEAT" alpha="1" file="Interface/AddOns/GW2_UI/textures/bartextures/insanity-intensity2">
+          <Size x="32" y="18"></Size>
+          <Anchors>
+              <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+              <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+          </Anchors>
+        </Texture>
+      </Layer>
+        <Layer level="OVERLAY" textureSubLevel="3">
           <Texture parentKey="spark" alpha="0" alphaMode="BLEND" file="Interface/AddOns/GW2_UI/textures/bartextures/ragespark">
             <Size x="32" y="18"></Size>
             <Anchors>
                 <Anchor point="LEFT" relativeKey="$parent.internalBar" relativePoint="LEFT" x="0" y="0"></Anchor>
             </Anchors>
           </Texture>
+          <MaskTexture parentKey="runicmask" file="Interface/AddOns/GW2_UI/textures/bartextures/runicpowerspark" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
+              <Size x="50" y="50"/>
+              <Anchors>
+                  <Anchor point="RIGHT" relativeKey="$parent.spark" relativePoint="RIGHT" x="0" y="0"></Anchor>
+              </Anchors>
+          </MaskTexture>
         </Layer>
-        <Layer level="OVERLAY" textureSubLevel="2">
+        <Layer level="OVERLAY" textureSubLevel="4">
             <FontString parentKey="label" text="Unknown" justifyH="CENTER">
                 <Size x="200" y="20"></Size>
                 <Anchors>
