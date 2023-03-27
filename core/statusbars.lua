@@ -26,6 +26,9 @@ local uniqueID  = 0
 
 ]]
 
+local BarAnimateTypes = {All = 1, Decay = 2, Regenerate = 3}
+GW.BarAnimateTypes = BarAnimateTypes
+
 local function getAnimationDuration(self,val1,val2,width)
   if width ==nil then width = 0 end
   local speed = self.speed or 100
@@ -162,10 +165,25 @@ local function  barUpdate(self,delta)
 end
 
 local function onupdate_AnimateBar(self,value)
+
+
+
     self.animatedValue = value;
     self.animatedStartValue = GetFillAmount(self)
     self.animatedTime =0
     self.animatedDuration = getAnimationDurationDynamic(self,self.animatedStartValue , self.animatedValue,self:GetWidth())
+
+    if self.onAnimationStart~=nil then 
+      self.onAnimationStart(self,value)
+    end
+
+    if 
+    (self.animationType==BarAnimateTypes.Decay and self.animatedValue>self.animatedStartValue) or 
+    (self.animationType==BarAnimateTypes.Regenerate and self.animatedValue<self.animatedStartValue)
+    then 
+      self:ForceFIllAmount(value)
+      return 
+    end 
 
     self:SetScript("OnUpdate",barUpdate)
 end
@@ -209,12 +227,13 @@ local function SetOrientation(self,direction)
 
 end
 
-local function hookStatusbarBehaviour(statusBar,smooth)
+local function hookStatusbarBehaviour(statusBar,smooth,animationType)
 
   if not AddToAnimation then
     AddToAnimation = GW.AddToAnimation
      round = GW.RoundInt
   end
+  animationType = animationType or BarAnimateTypes.All
 
   uniqueID = uniqueID + 1
   statusBar.maskContainer:SetSize(statusBar.internalBar:GetWidth() / numSpritesInAnimation,statusBar.internalBar:GetHeight())
@@ -223,6 +242,7 @@ local function hookStatusbarBehaviour(statusBar,smooth)
   statusBar.SetFillAmount = smooth and onupdate_AnimateBar or SetFillAmount
   statusBar.ForceFIllAmount = ForceFIllAmount
   statusBar.addToBarMask = addToBarMask
+  statusBar.animationType = animationType
   statusBar.uniqueID = uniqueID
   statusBar.addMask = addMask
   statusBar.removeMask = removeMask

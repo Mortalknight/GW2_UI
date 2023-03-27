@@ -45,6 +45,18 @@ local function scrollTextureOnUpdate(self,delta)
   self.runeoverlay:SetTexCoord(newPoint,newPoint+1,0,1)
 end
 
+local function AnimationFocus(self,animationProgress)
+  local fill = self:GetFillAmount()
+  local alphaStart = self.spark:GetAlpha()
+  local newAlpha = 0
+if self.animatedStartValue<self.animatedValue then
+  newAlpha = Lerp(alphaStart,0.6,animationProgress)
+  self.spark:SetAlpha( max(0,min(0.6,newAlpha) ))
+else 
+  newAlpha = Lerp(alphaStart,0,animationProgress)
+  self.spark:SetAlpha( max(0,min(0.6,newAlpha) ))
+end
+end
 local function AnimationPain(self,animationProgress)
   local fill = self:GetFillAmount()
   if self.animatedStartValue>self.animatedValue then
@@ -137,6 +149,24 @@ self.scrollSpeedMultiplier = 1
 
 end
 
+local function setPowerTypeFocus(self)
+ -- self.spark:SetAlpha(0)
+   self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/ragespark")
+self.decay:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/focus-intensity")
+ self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/focus")
+ 
+ -- self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/energy-intensity","REPEAT")
+  self.onUpdateAnimation = AnimationFocus
+  self.animationType = GW.BarAnimateTypes.Regenerate
+  self.onAnimationStart = function(self,value) 
+    if self.animatedStartValue>self.animatedValue then 
+      if self.decay:GetFillAmount()<self.animatedStartValue then 
+        self.decay:ForceFIllAmount(self.animatedStartValue)
+      end
+      self.decay:SetFillAmount(value) 
+    end
+  end
+end
 local function setPowerTypePain(self)
   self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/pain")
   self.intensity:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/pain-intensity")
@@ -240,6 +270,8 @@ local function setPowerBarVisuals(self,powerType,powerToken)
   self.intensity:ClearAllPoints()
   self.intensity:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
   self.intensity:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT",0,0)
+  self.decay:ForceFIllAmount(0)
+  self.animationType = GW.BarAnimateTypes.All
 
 
   if powerType == Enum.PowerType.Insanity then
@@ -262,6 +294,9 @@ local function setPowerBarVisuals(self,powerType,powerToken)
     return
   elseif powerType == Enum.PowerType.Fury then
     setPowerTypeFury(self)
+    return
+  elseif powerType == Enum.PowerType.Focus then
+    setPowerTypeFocus(self)
     return
   end
 
@@ -375,6 +410,14 @@ local function LoadPowerBar()
     playerPowerBar:addToBarMask(playerPowerBar.runeoverlay)
     playerPowerBar.runicmask:SetSize(playerPowerBar:GetSize())
     playerPowerBar.runeoverlay:AddMaskTexture(playerPowerBar.runicmask)
+
+    playerPowerBar.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay",UIParent,nil,true)
+    
+    playerPowerBar.decay:SetFillAmount(0)
+    playerPowerBar.decay:SetFrameLevel(playerPowerBar.decay:GetFrameLevel() - 1)
+    playerPowerBar.decay:ClearAllPoints()
+    playerPowerBar.decay:SetPoint("TOPLEFT",playerPowerBar,"TOPLEFT",0,0)
+    playerPowerBar.decay:SetPoint("BOTTOMRIGHT",playerPowerBar,"BOTTOMRIGHT",0,0)
     --CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
 
     GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "PowerBar_pos", ALL .. ",Unitframe,Power", nil, {"default", "scaleable"}, true)
