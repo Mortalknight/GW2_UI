@@ -171,9 +171,11 @@ local function powerMana(self, event, ...)
         C_Timer.After(0.12, function()
             if GwPlayerPowerBar and GwPlayerPowerBar.powerType == 0 then
                 self.exbar:Hide()
+                self.exbar.decay:Hide()
             else
                 if self.barType == "mana" then
                     self.exbar:Show()
+                    self.exbar.decay:Show()
                 end
             end
         end)
@@ -215,6 +217,7 @@ GW.AddForProfiling("classpowers", "setManaBar", setManaBar)
 local function setLittleManaBar(f)
     f.barType = "combo"  -- only used in feral form, so we need to show the combo points
     f.lmb:Show()
+    f.lmb.decay:Show()
 
     f.littleManaBarEventFrame:SetScript("OnEvent", powerLittleMana)
     powerLittleMana(f.littleManaBarEventFrame, "CLASS_POWER_INIT")
@@ -1323,11 +1326,13 @@ local function selectType(f)
     f.disc:Hide()
     f.decay:Hide()
     f.exbar:Hide()
+    f.exbar.decay:Hide()
     f.warlock:Hide()
     f.combopoints:Hide()
     f.evoker:Hide()
     if f.ourPowerBar then
         f.lmb:Hide()
+        f.lmb.decay:Hide()
     end
     f.gwPower = -1
     local showBar = false
@@ -1428,15 +1433,25 @@ local function LoadClassPowers()
     if cpf.ourPowerBar then
         local anchorFrame = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame or _G.GwPlayerPowerBar
         local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame.powerbar:GetWidth() or _G.GwPlayerPowerBar:GetWidth()
-        local lmb =  GW.createNewStatusbar("GwPlayerAltClassLmb",UIParent,"GwStatusPowerBar",true)
+        local lmb =  GW.createNewStatusbar("GwPlayerAltClassLmb", cpf, "GwStatusPowerBar", true)
         lmb.customMaskSize = 64
         lmb.bar = lmb;
         lmb:addToBarMask(lmb.intensity)
         lmb:addToBarMask(lmb.intensity2)
         lmb:addToBarMask(lmb.scrollTexture)
+        lmb:addToBarMask(lmb.scrollTexture2)
+        lmb:addToBarMask(lmb.runeoverlay)
+        lmb.runicmask:SetSize(lmb:GetSize())
+        lmb.runeoverlay:AddMaskTexture(lmb.runicmask)
         GW.MixinHideDuringPetAndOverride(lmb)
         cpf.lmb = lmb
 
+        lmb.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay", lmb, nil, true)
+        lmb.decay:SetFillAmount(0)
+        lmb.decay:SetFrameLevel(lmb.decay:GetFrameLevel() - 1)
+        lmb.decay:ClearAllPoints()
+        lmb.decay:SetPoint("TOPLEFT", lmb, "TOPLEFT", 0, 0)
+        lmb.decay:SetPoint("BOTTOMRIGHT", lmb, "BOTTOMRIGHT", 0, 0)
 
         lmb:SetHeight(5)
 
@@ -1457,7 +1472,7 @@ local function LoadClassPowers()
     end
 
     -- create an extra mana power bar that is used sometimes
-    local exbar = GW.createNewStatusbar("GwPlayerAltClassExBar",UIParent,"GwStatusPowerBar",true)
+    local exbar = GW.createNewStatusbar("GwPlayerAltClassExBar", cpf, "GwStatusPowerBar", true)
     exbar.customMaskSize = 64
     exbar.bar = exbar
     exbar:addToBarMask(exbar.intensity)
@@ -1468,16 +1483,15 @@ local function LoadClassPowers()
     exbar.runicmask:SetSize(exbar:GetSize())
     exbar.runeoverlay:AddMaskTexture(exbar.runicmask)
 
-    exbar.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay",UIParent,nil,true)
+    exbar.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay", exbar, nil, true)
     exbar.decay:SetFillAmount(0)
     exbar.decay:SetFrameLevel(exbar.decay:GetFrameLevel() - 1)
     exbar.decay:ClearAllPoints()
-    exbar.decay:SetPoint("TOPLEFT",exbar,"TOPLEFT",0,0)
-    exbar.decay:SetPoint("BOTTOMRIGHT",exbar,"BOTTOMRIGHT",0,0)
+    exbar.decay:SetPoint("TOPLEFT", exbar, "TOPLEFT", 0, 0)
+    exbar.decay:SetPoint("BOTTOMRIGHT", exbar, "BOTTOMRIGHT", 0, 0)
 
     GW.MixinHideDuringPetAndOverride(exbar)
     cpf.exbar = exbar
-    exbar:SetParent(cpf)
     exbar:SetPoint("TOPLEFT", cpf)
 
     exbar:SetFrameStrata("MEDIUM")
