@@ -1459,10 +1459,22 @@ local function LoadClassPowers()
     -- create an extra mana power bar that is used sometimes
     local exbar = GW.createNewStatusbar("GwPlayerAltClassExBar",UIParent,"GwStatusPowerBar",true)
     exbar.customMaskSize = 64
-    exbar.bar =exbar
+    exbar.bar = exbar
     exbar:addToBarMask(exbar.intensity)
     exbar:addToBarMask(exbar.intensity2)
     exbar:addToBarMask(exbar.scrollTexture)
+    exbar:addToBarMask(exbar.scrollTexture2)
+    exbar:addToBarMask(exbar.runeoverlay)
+    exbar.runicmask:SetSize(exbar:GetSize())
+    exbar.runeoverlay:AddMaskTexture(exbar.runicmask)
+
+    exbar.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay",UIParent,nil,true)
+    exbar.decay:SetFillAmount(0)
+    exbar.decay:SetFrameLevel(exbar.decay:GetFrameLevel() - 1)
+    exbar.decay:ClearAllPoints()
+    exbar.decay:SetPoint("TOPLEFT",exbar,"TOPLEFT",0,0)
+    exbar.decay:SetPoint("BOTTOMRIGHT",exbar,"BOTTOMRIGHT",0,0)
+
     GW.MixinHideDuringPetAndOverride(exbar)
     cpf.exbar = exbar
     exbar:SetParent(cpf)

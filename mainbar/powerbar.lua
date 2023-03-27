@@ -412,7 +412,7 @@ local function LoadPowerBar()
     playerPowerBar.runeoverlay:AddMaskTexture(playerPowerBar.runicmask)
 
     playerPowerBar.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay",UIParent,nil,true)
-    
+
     playerPowerBar.decay:SetFillAmount(0)
     playerPowerBar.decay:SetFrameLevel(playerPowerBar.decay:GetFrameLevel() - 1)
     playerPowerBar.decay:ClearAllPoints()
