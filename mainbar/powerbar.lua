@@ -224,7 +224,7 @@ local function setPowerBarVisuals(self,powerType,powerToken)
   if self.pType==powerType then
     return
   end
-  self.pType = powerToken
+  self.pType = powerType
   --reset to default
   self.animator:SetScript("OnUpdate",nil)
   self.bar:SetStatusBarColor(1,1,1,1)
@@ -235,10 +235,12 @@ local function setPowerBarVisuals(self,powerType,powerToken)
   self.intensity:SetAlpha(0)
   self.intensity2:SetAlpha(0)
   self.spark:SetAlpha(0)
+  self.runeoverlay:SetAlpha(0)
   self.onUpdateAnimation = nil
   self.intensity:ClearAllPoints()
   self.intensity:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
   self.intensity:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT",0,0)
+
 
   if powerType == Enum.PowerType.Insanity then
     setPowerTypeInsanity(self)
