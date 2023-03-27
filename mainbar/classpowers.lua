@@ -1452,6 +1452,8 @@ local function LoadClassPowers()
         end
         lmb:SetFrameStrata("MEDIUM")
         lmb.label:SetFont(DAMAGE_TEXT_FONT, 12)
+        lmb.label:SetShadowColor(0, 0, 0, 1)
+        lmb.label:SetShadowOffset(1, -1)
     end
 
     -- create an extra mana power bar that is used sometimes
@@ -1468,6 +1470,8 @@ local function LoadClassPowers()
 
     exbar:SetFrameStrata("MEDIUM")
     exbar.label:SetFont(DAMAGE_TEXT_FONT, 12)
+    exbar.label:SetShadowColor(0, 0, 0, 1)
+    exbar.label:SetShadowOffset(1, -1)
 
     -- set a bunch of other init styling stuff
     cpf.decayCounter.count:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")

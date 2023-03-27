@@ -410,7 +410,8 @@ local function LoadPowerBar()
     )
 
     playerPowerBar.label:SetFont(DAMAGE_TEXT_FONT, 12)
-
+    playerPowerBar.label:SetShadowColor(0, 0, 0, 1)
+    playerPowerBar.label:SetShadowOffset(1, -1)
     playerPowerBar:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
     playerPowerBar:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     playerPowerBar:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
