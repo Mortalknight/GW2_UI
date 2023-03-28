@@ -69,42 +69,12 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar parentKey="predictionbar" defaultValue="1" minValue="0" maxValue="1">
-                <Size x="65" y="8"></Size>
+            <Frame parentKey="healthContainer" inherits="GwHealthBarTemplate">
+            <Size x="65" y="8"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-68"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/units/incominghealing"/>
-                <Frames>
-                    <StatusBar parentKey="healthbar" defaultValue="1" minValue="0" maxValue="1">
-                        <Size x="65" y="8"></Size>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
-                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
-                        </Anchors>
-                        <BarTexture file="Interface/AddOns/GW2_UI/textures/party/statusbarcolored_green"/>
-                        <Layers>
-                            <Layer>
-                                <Texture parentKey="spark" file="Interface/AddOns/GW2_UI/textures/hud/bloodspark">
-                                    <Anchors>
-                                        <Anchor point="RIGHT" x="0" y="0"/>
-                                    </Anchors>
-                                    <Size x="7" y="8"></Size>
-                                </Texture>
-                            </Layer>
-                            <Layer level="OVERLAY">
-                                <FontString name="$parenthealthstring" parentKey="healthstring" text="50%" inherits="GameFontNormalSmall" justifyH="LEFT">
-                                    <Size x="65" y="8"/>
-                                    <Color r="1" g="1" b="1"></Color>
-                                    <Anchors>
-                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="0" y="0"></Anchor>
-                                    </Anchors>
-                                </FontString>
-                            </Layer>
-                        </Layers>
-                    </StatusBar>
-                </Frames>
-            </StatusBar>
+            </Frame>
             <StatusBar parentKey="powerbar" name="$parentPowerBar" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="65" y="3"></Size>
                 <Anchors>
@@ -152,42 +122,13 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar parentKey="predictionbar" defaultValue="1" minValue="0" maxValue="1">
-                <Size x="65" y="8"></Size>
+        <Frame parentKey="healthContainer" inherits="GwHealthBarTemplate">
+               <Size x="65" y="8"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="1" y="-10"></Anchor>
                 </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/units/incominghealing"/>
-                <Frames>
-                    <StatusBar parentKey="healthbar" defaultValue="1" minValue="0" maxValue="1">
-                        <Size x="65" y="8"></Size>
-                        <Anchors>
-                            <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
-                            <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
-                        </Anchors>
-                        <BarTexture file="Interface/AddOns/GW2_UI/textures/party/statusbarcolored_green"/>
-                        <Layers>
-                            <Layer>
-                                <Texture parentKey="spark" file="Interface/AddOns/GW2_UI/textures/hud/bloodspark">
-                                    <Anchors>
-                                        <Anchor point="RIGHT" x="0" y="0"/>
-                                    </Anchors>
-                                    <Size x="7" y="8"></Size>
-                                </Texture>
-                            </Layer>
-                            <Layer level="OVERLAY">
-                                <FontString name="$parenthealthstring" parentKey="healthstring" text="50%" inherits="GameFontNormalSmall" justifyH="LEFT">
-                                    <Size x="65" y="8"/>
-                                    <Color r="1" g="1" b="1"></Color>
-                                    <Anchors>
-                                        <Anchor point="LEFT" relativeKey="$parent" relativePoint="LEFT" x="0" y="0"></Anchor>
-                                    </Anchors>
-                                </FontString>
-                            </Layer>
-                        </Layers>
-                    </StatusBar>
-                </Frames>
-            </StatusBar>
+            </Frame>
+     
             <StatusBar parentKey="powerbar" name="$parentPowerBar" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="65" y="1"></Size>
                 <Anchors>
