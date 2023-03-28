@@ -61,9 +61,6 @@ local function decayCounter_OnAnim(self)
     local px = p * fdc.bar:GetWidth()
     fdc.precentage = p
     fdc.bar:SetFillAmount(p)
-    fdc.bar.spark:ClearAllPoints()
-    fdc.bar.spark:SetPoint("RIGHT", fdc.bar, "LEFT",max(20,min(px+5,fdc:GetWidth()-5)), 0)
-    fdc.bar.spark:SetWidth(20)
     if p<=0 then
       self:SetScript("OnUpdate",nil)
     end

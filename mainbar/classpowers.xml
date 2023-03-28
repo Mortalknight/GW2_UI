@@ -357,12 +357,6 @@
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">
-                        <Texture name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg">
-                            <Size x="266" y="18"></Size>
-                            <Anchors>
-                                <Anchor point="LEFT" relativePoint="LEFT" x="2" y="0"></Anchor>
-                            </Anchors>
-                        </Texture>
                         <Texture name="$parentBackground" alpha="0" parentKey="flash" file="Interface\AddOns\GW2_UI\textures\altpower\combo-flash">
                             <Size x="80" y="80"></Size>
                             <Anchors>
@@ -381,7 +375,7 @@
                     </Layer>
                 </Layers>
                 <Frames>
-                    <StatusBar parentKey="bar" defaultValue="1" minValue="0" maxValue="1" inherits="GwStatusBarBar">
+                    <StatusBar parentKey="bar" defaultValue="1" minValue="0" maxValue="1" inherits="GwStatusBarTemplate">
                         <Size x="262" y="14"></Size>
                         <Anchors>
                             <Anchor point="LEFT" relativePoint="LEFT" x="4" y="0"></Anchor>
