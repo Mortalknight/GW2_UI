@@ -698,7 +698,6 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     frame.name:SetShadowOffset(-1, -1)
     frame.name:SetShadowColor(0, 0, 0, 1)
     frame.level:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINED")
- 
 
     frame.unit = registerUnit
     frame.guid = UnitGUID(frame.unit)
@@ -758,8 +757,8 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", registerUnit)
-    frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED",unit)
-    frame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED",unit)
+    frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
+    frame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", registerUnit)
 
