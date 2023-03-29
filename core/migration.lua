@@ -5,7 +5,6 @@ local function Migration()
     -- new Powerbar and Classpowerbar default position
     if GwPlayerPowerBar then
         if GwPlayerPowerBar.isMoved == false then
-            print(12313)
             GW.ResetMoverFrameToDefaultValues(nil, GwPlayerPowerBar.gwMover)
         end
     end
