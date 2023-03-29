@@ -179,6 +179,7 @@ local function setPowerTypePain(self)
   --self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
  
 end
+
 local function setPowerTypeFury(self)
   self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury")
   self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/fury-intensity","REPEAT")
@@ -236,6 +237,15 @@ local function setPowerTypeMana(self)
   self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/mana")
   self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/manaspark")
   self.spark:SetAlpha(1)
+
+
+  self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/mana-intensity","REPEAT")
+  self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/mana-intensity2","REPEAT")
+  
+  self.animator:SetScript("OnUpdate",function(_,delta) scrollTextureParalaxOnUpdate(self,delta) end)
+  self.scrollTexture:SetAlpha(1)
+  self.scrollTexture2:SetAlpha(1)
+  --self.onUpdateAnimation = AnimationFury
 end
 local function setPowerTypeInsanity(self)
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/insanity-scroll","REPEAT")
