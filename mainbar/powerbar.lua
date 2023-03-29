@@ -6,6 +6,50 @@ local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local GetSetting = GW.GetSetting
 
+local function resetPowerBarVisuals(self)
+  self.animator:SetScript("OnUpdate",nil)
+  self.bar:SetStatusBarColor(1,1,1,1)
+  self.bar.spark:SetAlpha(0)
+  self.bar.spark:SetBlendMode("BLEND")
+  self.bar.scrollTexture:SetAlpha(0)
+  self.bar.scrollTexture2:SetAlpha(0)
+  self.bar.scrollTexture:SetBlendMode("BLEND")
+  self.bar.scrollTexture2:SetBlendMode("BLEND")
+  self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/statusbar")
+  self.intensity:SetAlpha(0)
+  self.intensity2:SetAlpha(0)
+  self.runeoverlay:SetAlpha(0)
+  self.onUpdateAnimation = nil
+  self.intensity:ClearAllPoints()
+  self.intensity:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
+  self.intensity:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT",0,0)
+  self.decay:ForceFIllAmount(0)
+  self.animationType = GW.BarAnimateTypes.All
+end
+local function scrollTextureVerticalParalaxOnUpdate(self,delta)
+  local barHeight = self:GetHeight()
+  local speed = (0.5 * barHeight)/barHeight
+  local speed2 = (0.3 * barHeight)/barHeight
+  local speedMultiplier = self.scrollSpeedMultiplier or 1
+  speed = speed * speedMultiplier
+  speed2 = speed2 * speedMultiplier
+  local offset = self.scrollTexture.yoffset or 1
+  local offset2 = self.scrollTexture2.yoffset or 1
+  local newPoint = offset + delta*speed
+  local newPoint2 = offset2 + delta*speed2
+  if newPoint>1 then
+    newPoint = newPoint - 1
+  end
+  if newPoint2>1 then
+    newPoint2 = newPoint2 - 1
+  end
+  self.scrollTexture.yoffset = newPoint
+  self.scrollTexture2.yoffset = newPoint2
+  self.scrollTexture:SetTexCoord(0,1,newPoint,newPoint+1)
+  self.scrollTexture2:SetTexCoord(0,1,newPoint2,newPoint2+1)
+
+end
+
 local function scrollTextureParalaxOnUpdate(self,delta)
   local barWidth = self:GetWidth()
   local speed = (0.025 * barWidth)/barWidth
@@ -44,6 +88,31 @@ local function scrollTextureOnUpdate(self,delta)
   self.scrollTexture:SetTexCoord(newPoint,newPoint+1,0,1)
   self.runeoverlay:SetTexCoord(newPoint,newPoint+1,0,1)
 end
+local function scrollTextureVerticalOnUpdate(self,delta)
+  local barHeight = self:GetHeight()
+  local speed = (0.5 * barHeight)/barHeight
+  local speedMultiplier = self.scrollSpeedMultiplier or 1
+  speed = speed * speedMultiplier
+  local offset = self.scrollTexture.yoffset or 1
+  local newPoint = offset + delta*speed
+  if newPoint>1 then
+    newPoint = newPoint - 1
+  end
+  self.scrollTexture.yoffset = newPoint
+  self.scrollTexture:SetTexCoord(0,1,newPoint,newPoint+1)
+  self.runeoverlay:SetTexCoord(0,1,newPoint,newPoint+1)
+end
+
+local function initPowerBar(self)
+ self.scrollTextureOnUpdate = scrollTextureOnUpdate
+ self.scrollTextureParalaxOnUpdate = scrollTextureParalaxOnUpdate
+ self.scrollTextureVerticalParalaxOnUpdate = scrollTextureVerticalParalaxOnUpdate
+ self.scrollTextureVerticalOnUpdate = scrollTextureVerticalOnUpdate
+ self.resetPowerBarVisuals = resetPowerBarVisuals
+
+end
+GW.initPowerBar = initPowerBar
+
 
 local function AnimationFocus(self,animationProgress)
   local fill = self:GetFillAmount()
@@ -266,22 +335,7 @@ local function setPowerBarVisuals(self,powerType,powerToken)
   end
   self.pType = powerType
   --reset to default
-  self.animator:SetScript("OnUpdate",nil)
-  self.bar:SetStatusBarColor(1,1,1,1)
-  self.bar.spark:SetAlpha(0)
-  self.bar.scrollTexture:SetAlpha(0)
-  self.bar.scrollTexture2:SetAlpha(0)
-  self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/statusbar")
-  self.intensity:SetAlpha(0)
-  self.intensity2:SetAlpha(0)
-  self.spark:SetAlpha(0)
-  self.runeoverlay:SetAlpha(0)
-  self.onUpdateAnimation = nil
-  self.intensity:ClearAllPoints()
-  self.intensity:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
-  self.intensity:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT",0,0)
-  self.decay:ForceFIllAmount(0)
-  self.animationType = GW.BarAnimateTypes.All
+    self:resetPowerBarVisuals()
 
 
   if powerType == Enum.PowerType.Insanity then
@@ -428,6 +482,7 @@ local function LoadPowerBar()
     playerPowerBar.decay:ClearAllPoints()
     playerPowerBar.decay:SetPoint("TOPLEFT",playerPowerBar,"TOPLEFT",0,0)
     playerPowerBar.decay:SetPoint("BOTTOMRIGHT",playerPowerBar,"BOTTOMRIGHT",0,0)
+    initPowerBar(playerPowerBar)
     --CreateFrame("Frame", "GwPlayerPowerBar", UIParent, "GwPlayerPowerBar")
 
     GW.RegisterMovableFrame(playerPowerBar, DISPLAY_POWER_BARS, "PowerBar_pos", ALL .. ",Unitframe,Power", nil, {"default", "scaleable"}, true)

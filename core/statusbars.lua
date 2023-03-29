@@ -27,6 +27,7 @@ local uniqueID  = 0
 ]]
 
 local BarAnimateTypes = {All = 1, Decay = 2, Regenerate = 3}
+local BarInterpolation = {Ease=1,linear=2}
 GW.BarAnimateTypes = BarAnimateTypes
 
 local function getAnimationDuration(self,val1,val2,width)
@@ -151,7 +152,13 @@ local function  barUpdate(self,delta)
 
   self.animatedTime = self.animatedTime + delta
   local animationProgress = self.animatedTime/self.animatedDuration
-  local newValue = lerpEaseOut(self.animatedStartValue,self.animatedValue,animationProgress)
+  local newValue = 0
+  if self.BarInterpolation and self.BarInterpolation==BarInterpolation.linear then 
+    newValue = Lerp(self.animatedStartValue,self.animatedValue,animationProgress)
+  else 
+     newValue = lerpEaseOut(self.animatedStartValue,self.animatedValue,animationProgress)
+  end
+ 
   SetFillAmount(self,newValue)
   if self.onUpdateAnimation then
     self.onUpdateAnimation(self,animationProgress,delta)
@@ -164,10 +171,21 @@ local function  barUpdate(self,delta)
 
 end
 
+local function setCustomAnimation(self,from,to,time)
+  self.animatedValue = to;
+  self.animatedStartValue = from
+  self.animatedTime =0
+  self.animatedDuration = time
+  self.BarInterpolation = BarInterpolation.linear
+
+  if self.onAnimationStart~=nil then 
+    self.onAnimationStart(self,to)
+  end
+
+  self:SetScript("OnUpdate",barUpdate)
+end
+
 local function onupdate_AnimateBar(self,value)
-
-
-
     self.animatedValue = value;
     self.animatedStartValue = GetFillAmount(self)
     self.animatedTime =0
@@ -241,8 +259,10 @@ local function hookStatusbarBehaviour(statusBar,smooth,animationType)
   statusBar.GetFillAmount = GetFillAmount
   statusBar.SetFillAmount = smooth and onupdate_AnimateBar or SetFillAmount
   statusBar.ForceFIllAmount = ForceFIllAmount
+  statusBar.setCustomAnimation = setCustomAnimation
   statusBar.addToBarMask = addToBarMask
   statusBar.animationType = animationType
+  statusBar.BarInterpolation = BarInterpolation.Ease
   statusBar.uniqueID = uniqueID
   statusBar.addMask = addMask
   statusBar.removeMask = removeMask

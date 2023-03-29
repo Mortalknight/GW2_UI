@@ -9,6 +9,51 @@ local GetSetting = GW.GetSetting
 local CPWR_FRAME
 local CPF_HOOKED_TO_TARGETFRAME = false
 
+---Styling for powerbars
+local function setPowerTypeMeta(self)
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity","REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity2","REPEAT")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
+    self.animator:SetScript("OnUpdate",function(_,delta) self.scrollTextureParalaxOnUpdate(self,delta) end)
+    self.scrollTexture:SetAlpha(1)
+    self.scrollTexture2:SetAlpha(1)
+    self.spark:SetAlpha(0.5)
+    self.scrollSpeedMultiplier = 5
+   -- self.onUpdateAnimation = AnimationFury
+  end
+
+  local function setPowerTypeEnrage(self)
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/rage")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/enrage-intensity","REPEAT","REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/enrage-intensity2","REPEAT","REPEAT")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
+    self.animator:SetScript("OnUpdate",function(_,delta) self.scrollTextureVerticalParalaxOnUpdate(self,delta) end)
+    self.scrollTexture:SetAlpha(0.5)
+    self.scrollTexture2:SetAlpha(0.5)
+    self.scrollTexture:SetBlendMode("ADD")
+    self.scrollTexture2:SetBlendMode("ADD")
+   -- self.scrollTexture2:SetAlpha(1)
+    self.spark:SetAlpha(0.5)
+    self.scrollSpeedMultiplier = 5
+  end
+  local function setPowerTYpeBolster(self)
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/bloster")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark")
+    self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/bloster-intensity")
+    self.runeoverlay:SetAlpha(1)
+    self.spark:SetBlendMode("ADD")
+    self.spark:SetAlpha(0.3)
+    self.customMaskSize = 30
+  end
+  local function setPowerTYpeFrenzy(self)
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzy")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzyspark")
+    self.spark:SetAlpha(0.3)
+    self:SetWidth(262)
+    self.customMaskSize = 128
+  end
+
 local function updateTextureBasedOnCondition(self)
     if GW.myClassID == 9 then -- Warlock
         -- Hook green fire
@@ -106,19 +151,6 @@ local function decay_OnAnim()
     fd.bar.spark:SetWidth(math.min(15, math.max(1, px)))
 end
 GW.AddForProfiling("classpowers", "decay_OnAnim", decay_OnAnim)
-
-local function metamorphosis_OnAnim()
-    local f = CPWR_FRAME
-    local fd = f.decay
-    local p = animations["METAMORPHOSIS_BAR"].progress
-    local px = p * 310
-    fd.precentage = p
-    fd.bar:SetValue(p)
-    fd.bar.spark:ClearAllPoints()
-    fd.bar.spark:SetPoint("RIGHT", fd.bar, "LEFT", px, 0)
-    fd.bar.spark:SetWidth(math.min(15, math.max(1, px)))
-end
-GW.AddForProfiling("classpowers", "metamorphosis_OnAnim", metamorphosis_OnAnim)
 
 local function findBuff(unit, searchID)
     local name, count, duration, expires, spellID
@@ -448,23 +480,24 @@ end
 
 -- DEAMONHUNTER
 local function timerMetamorphosis(self)
+    
+
     local _, _, duration, expires = findBuff("player", 162264)
     if duration ~= nil then
-        self.decay:Show()
-        local pre = (expires - GetTime()) / duration
-        AddToAnimation("METAMORPHOSIS_BAR", pre, 0, GetTime(), expires - GetTime(), metamorphosis_OnAnim, "noease")
-    else
-        self.decay:Hide()
+        local remainingPrecantage = (expires - GetTime()) / duration
+        local remainingTime = duration * remainingPrecantage
+        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0,remainingTime)
     end
 end
 GW.AddForProfiling("classpowers", "timerMetamorphosis", timerMetamorphosis)
 
 -- WARRIOR
-local function powerEnrage()
+local function powerEnrage(self)
     local _, _, duration, expires = findBuff("player", 184362)
     if duration ~= nil then
-        local pre = (expires - GetTime()) / duration
-        AddToAnimation("DECAY_BAR", pre, 0, GetTime(), expires - GetTime(), decay_OnAnim, "noease")
+        local remainingPrecantage = (expires - GetTime()) / duration
+        local remainingTime = duration * remainingPrecantage
+        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0,remainingTime)
     end
 end
 GW.AddForProfiling("classpowers", "powerEnrage", powerEnrage)
@@ -488,8 +521,9 @@ local function powerSBlock(self)
         end
     end
     if expires > 0 then
-        local pre = (expires - GetTime()) / duration
-        AddToAnimation("DECAY_BAR", pre, 0, GetTime(), expires - GetTime(), decay_OnAnim, "noease")
+        local remainingPrecantage = (expires - GetTime()) / duration
+        local remainingTime = duration * remainingPrecantage
+        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0,remainingTime)
     end
 end
 GW.AddForProfiling("classpowers", "powerSBlock", powerSBlock)
@@ -498,23 +532,19 @@ local function setWarrior(f)
     local selected
 
     if GW.myspec == 2 or GW.myspec == 3 then
-        f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", f.gwMover, 0, -15)
+       
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
-        local fd = f.decay
-        fd.bar:SetStatusBarColor(0.45, 0.55, 0.60)
-        fd.bar.texture1:SetVertexColor(1, 1, 1, 0)
-        fd.bar.texture2:SetVertexColor(1, 1, 1, 0)
-        fd.bar:SetValue(0)
-        fd:Show()
+        f.customResourceBar:Show()
 
         if GW.myspec == 2 then -- fury
+            setPowerTypeEnrage(f.customResourceBar)
             f:SetScript("OnEvent", powerEnrage)
-            powerEnrage()
+            powerEnrage(f)
         elseif GW.myspec == 3 then -- prot
             -- determine if bolster talent is selected
             _, _, _, selected, _ = GetTalentInfo(4, 3, 1, false, "player")
+            setPowerTYpeBolster(f.customResourceBar)
             f.gw_BolsterSelected = selected
             f:SetScript("OnEvent", powerSBlock)
             powerSBlock(f)
@@ -618,6 +648,31 @@ local function powerFrenzy(self, event)
     local _, count, duration, expires = findBuff("pet", 272790)
 
     if duration == nil then
+      --NYI  fdc.count:SetText(0)
+        self.gwPower = -1
+        return
+    end
+
+    --NYI fdc.count:SetText(count)
+    local old_expires = self.gwPower
+    old_expires = old_expires or -1
+    self.gwPower = expires
+    if event == "CLASS_POWER_INIT" or expires > old_expires then
+        local remainingPrecantage = (expires - GetTime()) / duration
+        local remainingTime = duration * remainingPrecantage
+        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0,remainingTime)
+        if event ~= "CLASS_POWER_INIT" then
+       --NTI     AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
+        end
+    end
+end
+GW.AddForProfiling("classpowers", "powerFrenzy", powerFrenzy)
+
+local function powerMongoose(self, event)
+    local fdc = self.decayCounter
+    local _, count, duration, expires = findBuff("player", 259388)
+    print(count)
+    if duration == nil then
         fdc.count:SetText(0)
         self.gwPower = -1
         return
@@ -628,38 +683,11 @@ local function powerFrenzy(self, event)
     old_expires = old_expires or -1
     self.gwPower = expires
     if event == "CLASS_POWER_INIT" or expires > old_expires then
-        local pre = (expires - GetTime()) / duration
-
-        self.decayCounter.duration = duration
-        self.decayCounter.expires = expires
-        self.decayCounter:SetScript("OnUpdate",decayCounter_OnAnim)
-      --  AddToAnimation("DECAYCOUNTER_BAR", pre, 0, GetTime(), expires - GetTime(), decayCounter_OnAnim, "noease")
+        local remainingPrecantage = (expires - GetTime()) / duration
+        local remainingTime = duration * remainingPrecantage
+        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0,remainingTime)
         if event ~= "CLASS_POWER_INIT" then
-            AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
-        end
-    end
-end
-GW.AddForProfiling("classpowers", "powerFrenzy", powerFrenzy)
-
-local function powerMongoose(self, event)
-    local fdc = self.decayCounter
-    local _, count, duration, expires = findBuff("player", 259388)
-
-    if duration == nil then
-        fdc.count:SetText(0)
-        self.gwPower = -1
-        return
-    end
-
-    fdc.count:SetText(count)
-    local old_count = self.gwPower
-    old_count = old_count or -1
-    self.gwPower = count
-    if event == "CLASS_POWER_INIT" or count > old_count then
-        local pre = (expires - GetTime()) / duration
-        AddToAnimation("DECAYCOUNTER_BAR", pre, 0, GetTime(), expires - GetTime(), decayCounter_OnAnim, "noease")
-        if event ~= "CLASS_POWER_INIT" then
-            AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
+       --NTI     AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
         end
     end
 end
@@ -669,19 +697,16 @@ local function setHunter(f)
     local selected = false
     if GW.myspec == 3 then
         -- determine if mongoose talent is selected for survival
-        _, _, _, selected, _ = GetTalentInfo(6, 2, 1, false, "player")
+        _, _, _, selected, _ = GetTalentInfo(6, 2, 1, false, "player") -- this a not a work, mama mia
     end
 
     if GW.myspec == 1 or (GW.myspec == 3 and selected) then
-        f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -15)
+        setPowerTYpeFrenzy(f.customResourceBar)
+        --NYI STACK COUNT 
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
-        local fdc = f.decayCounter
-        fdc.bar.texture1:SetVertexColor(1, 1, 1, 0)
-        fdc.bar.texture2:SetVertexColor(1, 1, 1, 0)
-        fdc.bar:SetValue(0)
-        fdc:Show()
+        f.customResourceBar:Show()
+
 
         if GW.myspec == 1 then -- beast mastery
             f:SetScript("OnEvent", powerFrenzy)
@@ -1288,16 +1313,14 @@ end
 GW.AddForProfiling("classpowers", "setDruid", setDruid)
 
 local function setDeamonHunter(f)
+
     if GW.myspec == 1 then -- havoc
-        f:ClearAllPoints()
-        f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -15)
+        setPowerTypeMeta(f.customResourceBar)
+        f.customResourceBar:Show()
+      --  f:ClearAllPoints()
+       -- f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -15)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
-        local fd = f.decay
-        fd.bar:SetStatusBarColor(72 / 255, 38 / 255, 148 / 255)
-        fd.bar.texture1:SetVertexColor(1, 1, 1, 0)
-        fd.bar.texture2:SetVertexColor(1, 1, 1, 0)
-        fd.bar:SetValue(0)
 
         f:SetScript("OnEvent", timerMetamorphosis)
         timerMetamorphosis(f)
@@ -1315,6 +1338,10 @@ local function selectType(f)
     f:UnregisterAllEvents()
 
     -- hide all class power sub-pieces and reset anything needed
+    f.customResourceBar:ForceFIllAmount(0)
+    f.customResourceBar:resetPowerBarVisuals()
+    f.customResourceBar:Hide()
+    f.customResourceBar:SetWidth(313)
     f.runeBar:Hide()
     f.decayCounter:Hide()
     f.maelstrom:Hide()
@@ -1405,6 +1432,32 @@ local function LoadClassPowers()
     cpf.decayCounter.bar:addToBarMask(cpf.decayCounter.bar.texture2)
     cpf.decayCounter.bar:addToBarMask(cpf.decayCounter.bar.spark)
 
+    cpf.customResourceBar = GW.createNewStatusbar("GwCustomResourceBar",cpf,"GwStatusPowerBar",true)
+    cpf.customResourceBar.customMaskSize = 64
+    cpf.customResourceBar.bar = cpf.customResourceBar
+    cpf.customResourceBar:addToBarMask(cpf.customResourceBar.intensity)
+    cpf.customResourceBar:addToBarMask(cpf.customResourceBar.intensity2)
+    cpf.customResourceBar:addToBarMask(cpf.customResourceBar.scrollTexture)
+    cpf.customResourceBar:addToBarMask(cpf.customResourceBar.scrollTexture2)
+    cpf.customResourceBar:addToBarMask(cpf.customResourceBar.runeoverlay)
+    cpf.customResourceBar.runicmask:SetSize(cpf.customResourceBar:GetSize())
+    cpf.customResourceBar.runeoverlay:AddMaskTexture(cpf.customResourceBar.runicmask)
+
+    cpf.customResourceBar.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay",UIParent,nil,true)
+
+    cpf.customResourceBar.decay:SetFillAmount(0)
+    cpf.customResourceBar.decay:SetFrameLevel(cpf.customResourceBar.decay:GetFrameLevel() - 1)
+    cpf.customResourceBar.decay:ClearAllPoints()
+    cpf.customResourceBar.decay:SetPoint("TOPLEFT",cpf.customResourceBar,"TOPLEFT",0,0)
+    cpf.customResourceBar.decay:SetPoint("BOTTOMRIGHT",cpf.customResourceBar,"BOTTOMRIGHT",0,0)
+
+    cpf.customResourceBar:SetScript("OnShow",function() cpf.customResourceBar.decay:Show() end)
+    cpf.customResourceBar:SetScript("OnHide",function() cpf.customResourceBar.decay:Hide() end)
+
+    cpf.customResourceBar:ClearAllPoints()
+    cpf.customResourceBar:SetPoint("LEFT",cpf,"LEFT",0,-11) -- GLow help, is this the proper way of aligning this?
+
+    GW.initPowerBar(cpf.customResourceBar)
 
     GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", ALL .. ",Unitframe,Power", {312, 32}, {"default", "scaleable"}, true)
 
