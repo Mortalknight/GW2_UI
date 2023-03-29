@@ -101,7 +101,7 @@ local function UpdateAura_OnUpdate(self, xpr, elapsed)
         if self.duration < 121 then
             setShortCD(self, xpr, self.duration, self.stackCount)
             if self.duration - remains < 0.1 then
-                if GetSetting("PLAYER_AURA_ANIMATION") then
+                if GetSetting("PLAYER_AURA_ANIMATION") and (self.oldAuraName ~= self.auraName) then
                     self.agZoomIn:Play()
                 end
             end
@@ -142,6 +142,8 @@ local function ClearAuraTime(self)
     self.stackCount = nil
     self.duration = nil
 
+    self.auraName = nil
+    self.oldAuraName = nil
     self.endTime = nil
     self.status.duration:SetText("")
     setLongCD(self, 0) -- to reset border and timer
@@ -154,12 +156,14 @@ local function UpdateTime(self, expires)
 end
 GW.UpdateTime = UpdateTime
 
-local function SetCD(self, expires, duration, stackCount, auraType)
+local function SetCD(self, expires, duration, stackCount, auraType, name)
     local oldEnd = self.endTime
     self.endTime = expires
     self.auraType = auraType
     self.stackCount = stackCount
     self.duration = duration
+    self.oldAuraName = self.auraName
+    self.auraName = name
 
     if oldEnd ~= self.endTime then
         self.nextUpdate = 0
@@ -200,14 +204,18 @@ end
 
 local function UpdateAura(self, index)
     local name, icon, count, dtype, duration, expires = UnitAura(self.header:GetUnit(), index, self:GetFilter())
-    if not name then return end
+    if not name then
+        self.oldAuraName = nil
+        self.auraName = nil
+        return
+    end
 
     local auraType = self.header:GetAType()
     self:SetIcon(icon, dtype, auraType)
     self:SetCount(count)
 
     if duration > 0 and expires then
-        self:SetCD(expires, duration, count, auraType)
+        self:SetCD(expires, duration, count, auraType, name)
     else
         ClearAuraTime(self)
     end
@@ -218,7 +226,7 @@ local function UpdateTempEnchant(self, index, expires)
         self:SetIcon(GetInventoryItemTexture("player", index), nil, 2)
         self:SetCount(0)
 
-        self:SetCD(((expires / 1000) or 0) + GetTime(), -1, nil, 2)
+        self:SetCD(((expires / 1000) or 0) + GetTime(), -1, nil, 2, nil)
     else
         ClearAuraTime(self)
     end
