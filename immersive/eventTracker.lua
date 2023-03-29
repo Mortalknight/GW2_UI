@@ -85,7 +85,9 @@ local env = {
         [6] = {map = 2025, x = 0.57756, y = 0.65491},
         -- Ohn'ahran Plains
         [7] = {map = 2023, x = 0.80522, y = 0.78433},
-        [8] = {map = 2023, x = 0.80467, y = 0.77742}
+        [8] = {map = 2023, x = 0.80467, y = 0.77742},
+        -- 10.0.7
+        [9] = {map = 2151, x = 0.73951, y = 0.41047},
     },
     fishingNetWidgetIDToIndex = {
         -- data mining: https://wow.tools/dbc/?dbc=uiwidget&build=10.0.5.47621#page=1&colFilter[3]=exact%3A2087
