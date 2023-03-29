@@ -300,8 +300,8 @@ local function UpdateMatchingLayout(self, new_point)
     end
 end
 
-local function smallSettings_resetToDefault(self, moverFrame)
-    local mf = moverFrame or self:GetParent():GetParent().child
+local function smallSettings_resetToDefault(self, _,  moverFrame)
+    local mf = moverFrame and moverFrame or self:GetParent():GetParent().child
 
     mf:ClearAllPoints()
     mf:SetPoint(
