@@ -300,8 +300,8 @@ local function UpdateMatchingLayout(self, new_point)
     end
 end
 
-local function smallSettings_resetToDefault(self)
-    local mf = self:GetParent():GetParent().child
+local function smallSettings_resetToDefault(self, moverFrame)
+    local mf = moverFrame or self:GetParent():GetParent().child
 
     mf:ClearAllPoints()
     mf:SetPoint(
@@ -342,7 +342,9 @@ local function smallSettings_resetToDefault(self)
         mf:SetScale(scale)
         mf.parent:SetScale(scale)
         SetSetting(mf.setting .. "_scale", scale)
-        self:GetParent():GetParent().options.scaleSlider.slider:SetValue(scale)
+        if self then
+            self:GetParent():GetParent().options.scaleSlider.slider:SetValue(scale)
+        end
     end
 
     -- Set height back to default
@@ -351,7 +353,9 @@ local function smallSettings_resetToDefault(self)
         mf:SetHeight(height)
         mf.parent:SetHeight(height)
         SetSetting(mf.setting .. "_height", height)
-        self:GetParent():GetParent().options.heightSlider.slider:SetValue(height)
+        if self then
+            self:GetParent():GetParent().options.heightSlider.slider:SetValue(height)
+        end
 
         -- update also the matching settings
         GW.UpdateObjectivesSettings()
@@ -371,6 +375,7 @@ local function smallSettings_resetToDefault(self)
     GwSmallSettingsContainer.layoutManager:GetScript("OnEvent")(GwSmallSettingsContainer.layoutManager)
     GwSmallSettingsContainer.layoutManager:SetAttribute("inMoveHudMode", true)
 end
+GW.ResetMoverFrameToDefaultValues = smallSettings_resetToDefault
 GW.AddForProfiling("index", "smallSettings_resetToDefault", smallSettings_resetToDefault)
 
 local function lockFrame_OnEnter(self)
