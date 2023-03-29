@@ -362,21 +362,41 @@ local function updateRegTab(fmSpellbook, fmTab, spellBookTabs)
     activeGroup.poolNSD:ReleaseAll()
     passiveGroup.pool:ReleaseAll()
 
-    -- first add talent passives to not habe spaces between
+    -- first add talent passives to not have spaces between
     local talentPassiveSkills = {}
-    if BOOKTYPE == BOOKTYPE_SPELL and spellBookTabs == 3 then
-        for row = 1, maxTalentRows do
-            for index = 1, talentsPerRow do
-                local _, name, icon, selected, available, spellId = GetTalentInfo(row, index, 1, false, "player")
-                if selected and available and spellId and IsPassiveSpell(spellId) then
-                    local skillType = "TALENT"
-                    btn = passiveGroup.pool:Acquire()
-                    local row2 = math.floor((passiveIndex - 1) / 5)
-                    local col = (passiveIndex - 1) % 5
-                    btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row2))
-                    setPassiveButton(btn, spellId, skillType, icon, nil, BOOKTYPE, spellBookTabs, name)
-                    passiveIndex = passiveIndex + 1
-                    talentPassiveSkills[spellId] = true
+    if BOOKTYPE == BOOKTYPE_SPELL then
+        local configID = C_ClassTalents.GetActiveConfigID()
+        if configID then
+            local configInfo = C_Traits.GetConfigInfo(configID)
+            if configInfo then
+
+                for _, treeID in ipairs(configInfo.treeIDs) do -- in the context of talent trees, there is only 1 treeID
+                    local talentTreeCurrencyInfo = C_Traits.GetTreeCurrencyInfo(configID, treeID, true)
+                    local nodes = C_Traits.GetTreeNodes(treeID)
+                    for _, nodeID in ipairs(nodes) do
+                        local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
+                        local nodeCost = C_Traits.GetNodeCost(configID, nodeID)
+
+                        if nodeCost and nodeCost[1] and ((spellBookTabs == 2 and nodeCost[1].ID == talentTreeCurrencyInfo[1].traitCurrencyID) or (spellBookTabs == 3 and nodeCost[1].ID == talentTreeCurrencyInfo[2].traitCurrencyID)) then
+                            for _, entryID in ipairs(nodeInfo.entryIDs) do -- each node can have multiple entries (e.g. choice nodes have 2)
+                                local entryInfo = C_Traits.GetEntryInfo(configID, entryID)
+                                if entryInfo and entryInfo.definitionID then
+                                    local definitionInfo = C_Traits.GetDefinitionInfo(entryInfo.definitionID)
+                                    if definitionInfo.spellID and IsPlayerSpell(definitionInfo.spellID) and IsPassiveSpell(definitionInfo.spellID) then
+                                        local name, _, icon = GetSpellInfo(definitionInfo.spellID)
+                                        local skillType = "TALENT"
+                                        btn = passiveGroup.pool:Acquire()
+                                        local row2 = math.floor((passiveIndex - 1) / 5)
+                                        local col = (passiveIndex - 1) % 5
+                                        btn:SetPoint("TOPLEFT", passiveGroup, "TOPLEFT", 4 + (50 * col), -37 + (-50 * row2))
+                                        setPassiveButton(btn, definitionInfo.spellID, skillType, icon, nil, BOOKTYPE, spellBookTabs, name)
+                                        passiveIndex = passiveIndex + 1
+                                        talentPassiveSkills[definitionInfo.spellID] = true
+                                    end
+                                end
+                            end
+                        end
+                    end
                 end
             end
         end

@@ -1496,6 +1496,8 @@ local function LoadClassPowers()
         GW.MixinHideDuringPetAndOverride(lmb)
         cpf.lmb = lmb
 
+        GW.initPowerBar(cpf.lmb)
+
         lmb.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay", lmb, nil, true)
         lmb.decay:SetFillAmount(0)
         lmb.decay:SetFrameLevel(lmb.decay:GetFrameLevel() - 1)
@@ -1542,6 +1544,7 @@ local function LoadClassPowers()
 
     GW.MixinHideDuringPetAndOverride(exbar)
     cpf.exbar = exbar
+    GW.initPowerBar(cpf.exbar)
     exbar:SetPoint("TOPLEFT", cpf)
 
     exbar:SetFrameStrata("MEDIUM")
