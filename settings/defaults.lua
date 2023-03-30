@@ -926,9 +926,7 @@ GW_DEFAULT.IncompatibleAddons = {
     },
     AchievementSkin = {
         Override = false,
-        Addons = {
-            "Krowi_AchievementFilter",
-        },
+        Addons = {},
     },
     LfgInfo = {
         Override = false,

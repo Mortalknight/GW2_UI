@@ -508,7 +508,7 @@ local function skinAchievementFrameSummaryAchievement(self)
     self.completedBackground:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
     self.completedBackground:SetPoint("BOTTOMLEFT",self,"BOTTOMLEFT",0,0)
     self.completedBackground:SetWidth( self:GetHeight() * 2 )
-    self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcomplete")
+    self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
     self.completedBackground:SetVertexColor(1,1,1,0.7)
 
     self.fBackground = self:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -536,7 +536,7 @@ end
 local function updateSummaryAchievementTexture(self, achievementID)
     local _, _, _, _, _, _, _, _, flags = GetAchievementInfo(achievementID)
     if bit.band(flags, ACHIEVEMENT_FLAGS_ACCOUNT) == ACHIEVEMENT_FLAGS_ACCOUNT then
-        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcomplete")
+        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
     else
         self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebgred")
     end
@@ -675,13 +675,7 @@ local function skinAchievementFrameListAchievement(self)
     self.BottomLeftTsunami:SetAlpha(0)
     --GuildCornerR
     --GuildCornerL
-    if not self.completeFlare then
-        self.completeFlare = self:CreateTexture(nil, "BACKGROUND", nil, 0)
-        self.completeFlare:ClearAllPoints();
-        self.completeFlare:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
-        self.completeFlare:SetSize(256,128)
-        self.completeFlare:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
-    end
+
     if not self.fBackground then
         self.fBackground = self:CreateTexture(nil, "BACKGROUND", nil, 0)
         self.fBackground:ClearAllPoints();
@@ -696,7 +690,6 @@ local function skinAchievementFrameListAchievement(self)
         self.bottomBar:SetPoint("BOTTOMRIGHT")
         self.bottomBar:SetSize(512,64)
         self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooter")
-
     end
     if not self.completedBackground then
         self.completedBackground = self:CreateTexture(nil, "BACKGROUND", nil, 3)
@@ -704,7 +697,7 @@ local function skinAchievementFrameListAchievement(self)
         self.completedBackground:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
         self.completedBackground:SetPoint("BOTTOMLEFT",self,"TOPLEFT",0,-120)
         self.completedBackground:SetWidth(240)
-        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcomplete")
+        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
         self.completedBackground:SetVertexColor(1,1,1,0.7)
     end
 
@@ -770,7 +763,6 @@ local function UpdateAchievementFrameListAchievement(self)
         end
     end
 
-    self.completeFlare:Hide()
     if self.accountWide then
         self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
     else
@@ -968,7 +960,7 @@ local function skinAchievementComparison(self,isPlayer)
     self.completedBackground:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
     self.completedBackground:SetPoint("BOTTOMLEFT",self,"BOTTOMLEFT",0,0)
     self.completedBackground:SetWidth( self:GetHeight() * 2 )
-    self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcomplete")
+    self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
     self.completedBackground:SetVertexColor(1,1,1,0.7)
 
     if isPlayer then
@@ -1078,6 +1070,16 @@ end
 
 local function skinAchevement()
     AchievementFrameCategories_OnLoad(AchievementFrameCategories)
+    -- function to "hack" the blizzard functions
+    hooksecurefunc("AchievementFrameBaseTab_OnClick", function(tabIndex)
+        if tabIndex == AchievementCategoryIndex then
+            achievementFunctions = ACHIEVEMENT_FUNCTIONS;
+        elseif tabIndex == GuildCategoryIndex then
+            achievementFunctions = GUILD_ACHIEVEMENT_FUNCTIONS;
+        elseif tabIndex == StatisticsCategoryIndex then
+            achievementFunctions = STAT_FUNCTIONS;
+        end
+    end)
 
     AchievementFrame:GwStripTextures()
     AchievementFrame.Header:GwStripTextures()
@@ -1530,22 +1532,16 @@ local function skinAchevement()
             bgMask:SetPoint("BOTTOMRIGHT", AchievementFrame.tex, "BOTTOMLEFT", AchievementFrame.tex:GetWidth() + 200 , 0)
         end)
     end)
-
-    -- function to "hack" the blizzard functions
-    hooksecurefunc("AchievementFrameBaseTab_OnClick", function(tabIndex)
-        if tabIndex == AchievementCategoryIndex then
-            achievementFunctions = ACHIEVEMENT_FUNCTIONS;
-        elseif tabIndex == GuildCategoryIndex then
-            achievementFunctions = GUILD_ACHIEVEMENT_FUNCTIONS;
-        elseif tabIndex == StatisticsCategoryIndex then
-            achievementFunctions = STAT_FUNCTIONS;
-        end
-    end)
 end
 
 local function LoadAchivementSkin()
     if GW.IsIncompatibleAddonLoadedOrOverride("AchievementSkin", true) then return end
     if not GW.GetSetting("ACHIEVEMENT_SKIN_ENABLED") then return end
+
+    if IsAddOnLoaded("Krowi_AchievementFilter") and GetAddOnMetadata("Krowi_AchievementFilter", "Version") < "55.0" then
+        return
+    end
+
     GW.RegisterLoadHook(skinAchevement, "Blizzard_AchievementUI")
 end
 GW.LoadAchivementSkin = LoadAchivementSkin
