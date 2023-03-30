@@ -64,17 +64,9 @@ local function applyButtonStyle()
 
             local tex = b:CreateTexture(nil, "OVERLAY")
             tex:SetPoint("LEFT", b, "LEFT", 0, 0)
-            tex:SetSize(32,32)
+            tex:SetSize(32, 32)
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenuicons")
             tex:SetTexCoord(GW.getSprite(ICON_SPRITES, f.sprite[1], f.sprite[2]))
-
-            local r = {b:GetRegions()}
-            for _, c in pairs(r) do
-                if c:GetObjectType() == "Texture" and c:GetName() == nil then
-                    c:SetTexCoord(unpack(GW.TexCoords))
-                    c:SetSize(155, 30)
-                end
-            end
         end
     end
 end
