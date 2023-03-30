@@ -508,7 +508,7 @@ local function skinAchievementFrameSummaryAchievement(self)
     self.completedBackground:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
     self.completedBackground:SetPoint("BOTTOMLEFT",self,"BOTTOMLEFT",0,0)
     self.completedBackground:SetWidth( self:GetHeight() * 2 )
-    self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcomplete")
+    self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
     self.completedBackground:SetVertexColor(1,1,1,0.7)
 
     self.fBackground = self:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -536,7 +536,7 @@ end
 local function updateSummaryAchievementTexture(self, achievementID)
     local _, _, _, _, _, _, _, _, flags = GetAchievementInfo(achievementID)
     if bit.band(flags, ACHIEVEMENT_FLAGS_ACCOUNT) == ACHIEVEMENT_FLAGS_ACCOUNT then
-        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcomplete")
+        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
     else
         self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebgred")
     end
@@ -704,7 +704,7 @@ local function skinAchievementFrameListAchievement(self)
         self.completedBackground:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
         self.completedBackground:SetPoint("BOTTOMLEFT",self,"TOPLEFT",0,-120)
         self.completedBackground:SetWidth(240)
-        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcomplete")
+        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
         self.completedBackground:SetVertexColor(1,1,1,0.7)
     end
 
@@ -968,7 +968,7 @@ local function skinAchievementComparison(self,isPlayer)
     self.completedBackground:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
     self.completedBackground:SetPoint("BOTTOMLEFT",self,"BOTTOMLEFT",0,0)
     self.completedBackground:SetWidth( self:GetHeight() * 2 )
-    self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcomplete")
+    self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
     self.completedBackground:SetVertexColor(1,1,1,0.7)
 
     if isPlayer then
