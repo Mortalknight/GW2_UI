@@ -99,23 +99,10 @@ local function animFlare(f, scale, offset, duration, rotate)
 end
 GW.AddForProfiling("classpowers", "animFlare", animFlare)
 
-local function decayCounter_OnAnim(self)
+local function decayCounterFlash_OnAnim(p)
     local f = CPWR_FRAME
     local fdc = f.decayCounter
-    local p =(self.expires - GetTime()) / self.duration
-    local px = p * fdc.bar:GetWidth()
-    fdc.precentage = p
-    fdc.bar:SetFillAmount(p)
-    if p<=0 then
-      self:SetScript("OnUpdate",nil)
-    end
-end
-GW.AddForProfiling("classpowers", "decayCounter_OnAnim", decayCounter_OnAnim)
-
-local function decayCounterFlash_OnAnim()
-    local f = CPWR_FRAME
-    local fdc = f.decayCounter
-    fdc.flash:SetAlpha(math.min(1, math.max(0, animations["DECAYCOUNTER_TEXT"].progress)))
+    fdc.flash:SetAlpha(math.min(1, math.max(0, p)))
 end
 GW.AddForProfiling("classpowers", "decayCounterFlash_OnAnim", decayCounterFlash_OnAnim)
 
@@ -480,13 +467,14 @@ end
 
 -- DEAMONHUNTER
 local function timerMetamorphosis(self)
-    
-
     local _, _, duration, expires = findBuff("player", 162264)
     if duration ~= nil then
+        self.customResourceBar:Show()
         local remainingPrecantage = (expires - GetTime()) / duration
         local remainingTime = duration * remainingPrecantage
         self.customResourceBar:setCustomAnimation(remainingPrecantage, 0,remainingTime)
+    else
+        self.customResourceBar:Hide()
     end
 end
 GW.AddForProfiling("classpowers", "timerMetamorphosis", timerMetamorphosis)
@@ -495,9 +483,12 @@ GW.AddForProfiling("classpowers", "timerMetamorphosis", timerMetamorphosis)
 local function powerEnrage(self)
     local _, _, duration, expires = findBuff("player", 184362)
     if duration ~= nil then
+        self.customResourceBar:Show()
         local remainingPrecantage = (expires - GetTime()) / duration
         local remainingTime = duration * remainingPrecantage
         self.customResourceBar:setCustomAnimation(remainingPrecantage, 0,remainingTime)
+    else
+        self.customResourceBar:Hide()
     end
 end
 GW.AddForProfiling("classpowers", "powerEnrage", powerEnrage)
@@ -510,8 +501,11 @@ local function powerSBlock(self)
         results = findBuffs("player", 132404, 871)
     end
     if results == nil then
+        self.customResourceBar:Hide()
+
         return
     end
+    self.customResourceBar:Show()
     local duration = -1
     local expires = -1
     for i = 1, #results do
@@ -529,13 +523,9 @@ end
 GW.AddForProfiling("classpowers", "powerSBlock", powerSBlock)
 
 local function setWarrior(f)
-    local selected
-
     if GW.myspec == 2 or GW.myspec == 3 then
-       
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
-        f.customResourceBar:Show()
 
         if GW.myspec == 2 then -- fury
             setPowerTypeEnrage(f.customResourceBar)
@@ -543,9 +533,8 @@ local function setWarrior(f)
             powerEnrage(f)
         elseif GW.myspec == 3 then -- prot
             -- determine if bolster talent is selected
-            _, _, _, selected, _ = GetTalentInfo(4, 3, 1, false, "player")
             setPowerTYpeBolster(f.customResourceBar)
-            f.gw_BolsterSelected = selected
+            f.gw_BolsterSelected = GW.IsSpellTalented(12975)
             f:SetScript("OnEvent", powerSBlock)
             powerSBlock(f)
         end
@@ -648,36 +637,15 @@ local function powerFrenzy(self, event)
     local _, count, duration, expires = findBuff("pet", 272790)
 
     if duration == nil then
-      --NYI  fdc.count:SetText(0)
-        self.gwPower = -1
-        return
-    end
-
-    --NYI fdc.count:SetText(count)
-    local old_expires = self.gwPower
-    old_expires = old_expires or -1
-    self.gwPower = expires
-    if event == "CLASS_POWER_INIT" or expires > old_expires then
-        local remainingPrecantage = (expires - GetTime()) / duration
-        local remainingTime = duration * remainingPrecantage
-        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0,remainingTime)
-        if event ~= "CLASS_POWER_INIT" then
-       --NTI     AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
-        end
-    end
-end
-GW.AddForProfiling("classpowers", "powerFrenzy", powerFrenzy)
-
-local function powerMongoose(self, event)
-    local fdc = self.decayCounter
-    local _, count, duration, expires = findBuff("player", 259388)
-    print(count)
-    if duration == nil then
         fdc.count:SetText(0)
         self.gwPower = -1
+        self.customResourceBar:Hide()
+        fdc:Hide()
         return
     end
 
+    self.customResourceBar:Show()
+    fdc:Show()
     fdc.count:SetText(count)
     local old_expires = self.gwPower
     old_expires = old_expires or -1
@@ -687,26 +655,46 @@ local function powerMongoose(self, event)
         local remainingTime = duration * remainingPrecantage
         self.customResourceBar:setCustomAnimation(remainingPrecantage, 0,remainingTime)
         if event ~= "CLASS_POWER_INIT" then
-       --NTI     AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
+            AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
+        end
+    end
+end
+GW.AddForProfiling("classpowers", "powerFrenzy", powerFrenzy)
+
+local function powerMongoose(self, event)
+    local fdc = self.decayCounter
+    local _, count, duration, expires = findBuff("player", 259388)
+
+    if duration == nil then
+        fdc:Hide()
+        fdc.count:SetText(0)
+        self.gwPower = -1
+        self.customResourceBar:Hide()
+        return
+    end
+
+    self.customResourceBar:Show()
+    fdc:Show()
+    fdc.count:SetText(count)
+    local old_expires = self.gwPower
+    old_expires = old_expires or -1
+    self.gwPower = expires
+    if event == "CLASS_POWER_INIT" or expires > old_expires then
+        local remainingPrecantage = (expires - GetTime()) / duration
+        local remainingTime = duration * remainingPrecantage
+        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0,remainingTime)
+        if event ~= "CLASS_POWER_INIT" then
+            AddToAnimation("DECAYCOUNTER_TEXT", 1, 0, GetTime(), 0.5, decayCounterFlash_OnAnim)
         end
     end
 end
 GW.AddForProfiling("classpowers", "powerMongoose", powerMongoose)
 
 local function setHunter(f)
-    local selected = false
-    if GW.myspec == 3 then
-        -- determine if mongoose talent is selected for survival
-        _, _, _, selected, _ = GetTalentInfo(6, 2, 1, false, "player") -- this a not a work, mama mia
-    end
-
-    if GW.myspec == 1 or (GW.myspec == 3 and selected) then
+    if GW.myspec == 1 or (GW.myspec == 3 and GW.IsSpellTalented(259387)) then -- 259387 = mangoose id
         setPowerTYpeFrenzy(f.customResourceBar)
-        --NYI STACK COUNT 
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
-        f.customResourceBar:Show()
-
 
         if GW.myspec == 1 then -- beast mastery
             f:SetScript("OnEvent", powerFrenzy)
@@ -1424,13 +1412,7 @@ local function LoadClassPowers()
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
     GW.hookStatusbarBehaviour(cpf.staggerBar.ironskin,false)
     cpf.staggerBar.ironskin.customMaskSize = 64
-    GW.hookStatusbarBehaviour(cpf.decayCounter.bar,true)
     cpf.staggerBar.ironskin.customMaskSize = 64
-
-
-    cpf.decayCounter.bar:addToBarMask(cpf.decayCounter.bar.texture1)
-    cpf.decayCounter.bar:addToBarMask(cpf.decayCounter.bar.texture2)
-    cpf.decayCounter.bar:addToBarMask(cpf.decayCounter.bar.spark)
 
     cpf.customResourceBar = GW.createNewStatusbar("GwCustomResourceBar",cpf,"GwStatusPowerBar",true)
     cpf.customResourceBar.customMaskSize = 64
