@@ -5,7 +5,7 @@ local function ApplySoulbindsSkin()
 	if not GetSetting("SOULBINDS_SKIN_ENABLED") then return end
 
 	SoulbindViewer:GwStripTextures()
-	local tex = SoulbindViewer:CreateTexture("bg", "BACKGROUND", nil, -7)
+	local tex = SoulbindViewer:CreateTexture(nil, "BACKGROUND", nil, -7)
 	tex:SetPoint("TOP", SoulbindViewer, "TOP", 0, 25)
 	tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
 	local w, h = SoulbindViewer:GetSize()

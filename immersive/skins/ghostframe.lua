@@ -3,7 +3,7 @@ local _, GW = ...
 local function LoadGhostFrameSkin()
     local GhostFrame = _G.GhostFrame
 
-    local tex = GhostFrame:CreateTexture("bg", "BACKGROUND")
+    local tex = GhostFrame:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("TOP", GhostFrame, "TOP", 0, 0)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button")
     tex:SetSize(_G.GhostFrameContentsFrame:GetSize())

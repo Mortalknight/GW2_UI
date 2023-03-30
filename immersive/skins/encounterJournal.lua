@@ -170,13 +170,12 @@ local function encounterJournalSkin()
     EJ.navBar:SetPoint("TOPLEFT", 0, -33)
     EJ.navBar.SetPoint = GW.NoOp
 
-    EJ.navBar.tex = EJ.navBar:CreateTexture("bg", "BACKGROUND", nil, 0)
+    EJ.navBar.tex = EJ.navBar:CreateTexture(nil, "BACKGROUND", nil, 0)
     EJ.navBar.tex:SetPoint("TOPLEFT", EJ.navBar, "TOPLEFT", 0, 20)
     EJ.navBar.tex:SetPoint("BOTTOMRIGHT", EJ.navBar, "BOTTOMRIGHT", 0, 1)
     EJ.navBar.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
 
-
-    EJ.innertex = EJ:CreateTexture("bg2", "BACKGROUND", nil, 7)
+    EJ.innertex = EJ:CreateTexture(nil, "BACKGROUND", nil, 7)
     EJ.innertex:SetPoint("TOPLEFT", EJ.navBar, "BOTTOMLEFT", -1, 1)
     EJ.innertex:SetPoint("BOTTOMRIGHT", EJ, "BOTTOMRIGHT", 1, -1)
     EJ.innertex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
@@ -236,7 +235,7 @@ local function encounterJournalSkin()
 
     local EncounterInfo = EJ.encounter.info
 
-    --EncounterInfo.tex = EncounterInfo:CreateTexture("bg", "BACKGROUND", nil, 7)
+    --EncounterInfo.tex = EncounterInfo:CreateTexture(nil, "BACKGROUND", nil, 7)
     --EncounterInfo.tex:SetPoint("TOPLEFT", EncounterInfo, "TOPLEFT", -1, -1)
     --EncounterInfo.tex:SetPoint("BOTTOMRIGHT", EncounterInfo, "BOTTOMRIGHT", 1, 1)
     --EncounterInfo.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
@@ -347,7 +346,7 @@ local function encounterJournalSkin()
     local suggestion = suggestFrame.Suggestion1
     suggestion.bg:Hide()
 
-    suggestion.tex = suggestion:CreateTexture("bg", "BACKGROUND", nil, 0)
+    suggestion.tex = suggestion:CreateTexture(nil, "BACKGROUND", nil, 0)
     suggestion.tex:SetPoint("TOPLEFT", suggestion, "TOPLEFT", -1, 1)
     suggestion.tex:SetPoint("BOTTOMRIGHT", suggestion, "BOTTOMRIGHT", 1, -1)
     suggestion.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
@@ -368,7 +367,7 @@ local function encounterJournalSkin()
         suggestion.bg:Hide()
         suggestion.icon:SetPoint("TOPLEFT", 10, -10)
 
-        suggestion.tex = suggestion:CreateTexture("bg", "BACKGROUND", nil, 0)
+        suggestion.tex = suggestion:CreateTexture(nil, "BACKGROUND", nil, 0)
         suggestion.tex:SetPoint("TOPLEFT", suggestion, "TOPLEFT", -1, 1)
         suggestion.tex:SetPoint("BOTTOMRIGHT", suggestion, "BOTTOMRIGHT", 1, -1)
         suggestion.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
@@ -416,7 +415,7 @@ local function encounterJournalSkin()
     end
 
     LJ:GwStripTextures()
-    --LJ.tex = LJ:CreateTexture("bg", "BACKGROUND", nil, 0)
+    --LJ.tex = LJ:CreateTexture(nil "BACKGROUND", nil, 0)
     --LJ.tex:SetPoint("TOPLEFT", LJ, "TOPLEFT", -1, 1)
     --LJ.tex:SetPoint("BOTTOMRIGHT", LJ, "BOTTOMRIGHT", 1, -1)
     --LJ.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")

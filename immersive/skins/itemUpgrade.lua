@@ -18,7 +18,7 @@ local function ApplyItemUpgradeSkin()
 
     ItemUpgradeFrame:GwStripTextures()
 
-    ItemUpgradeFrame.tex = ItemUpgradeFrame:CreateTexture("bg", "BACKGROUND", nil, -7)
+    ItemUpgradeFrame.tex = ItemUpgradeFrame:CreateTexture(nil, "BACKGROUND", nil, -7)
     local w, h = ItemUpgradeFrame:GetSize()
     ItemUpgradeFrame.tex:SetPoint("TOP", ItemUpgradeFrame, "TOP", 0, 20)
     ItemUpgradeFrame.tex:SetSize(w + 50, h + 70)

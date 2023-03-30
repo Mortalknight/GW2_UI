@@ -10,7 +10,7 @@ local function LoadHelperFrameSkin()
 
     HelpFrame:GwStripTextures(true)
     HelpFrame:GwCreateBackdrop()
-    local tex = HelpFrame:CreateTexture("bg", "BACKGROUND")
+    local tex = HelpFrame:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("TOP", HelpFrame, "TOP", 0, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
     local w, h = HelpFrame:GetSize()

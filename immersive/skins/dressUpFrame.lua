@@ -51,7 +51,7 @@ local function LoadDressUpFrameSkin()
     DressUpFrameOutfitDropDown.SaveButton:SetPoint("LEFT", DressUpFrameOutfitDropDown, "RIGHT", -7, 3)
     DressUpFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()
 
-    local tex = DressUpFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
+    local tex = DressUpFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
     tex:SetPoint("TOP", DressUpFrame, "TOP", 0, 20)
     local w, h = DressUpFrame:GetSize()
     tex:SetSize(w + 50, h + 30)

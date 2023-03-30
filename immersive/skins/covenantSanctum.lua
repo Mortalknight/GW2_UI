@@ -81,7 +81,7 @@ local function ApplyCovenantSanctumSkin()
         if not CovenantSanctumFrame.IsSkinned then
             --CovenantSanctumFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
 
-            local tex = CovenantSanctumFrame:CreateTexture("bg", "BACKGROUND")
+            local tex = CovenantSanctumFrame:CreateTexture(nil, "BACKGROUND")
             tex:SetPoint("TOP", CovenantSanctumFrame, "TOP", 0, 25)
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
             local w, h = CovenantSanctumFrame:GetSize()

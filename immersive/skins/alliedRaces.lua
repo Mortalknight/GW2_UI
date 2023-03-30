@@ -12,7 +12,7 @@ local function ApplyAlliedRacesUISkin()
 
     select(2, AlliedRacesFrame.ModelFrame:GetRegions()):Hide()
 
-    local tex = AlliedRacesFrame:CreateTexture("bg", "BACKGROUND")
+    local tex = AlliedRacesFrame:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("TOP", AlliedRacesFrame, "TOP", 0, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
     local w, h = AlliedRacesFrame:GetSize()

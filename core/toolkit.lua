@@ -198,7 +198,7 @@ local function GwSkinSliderFrame(frame)
     local thumb = frame:GetThumbTexture()
     thumb:SetSize(SIZE - 2, SIZE - 2)
 
-    local tex = frame:CreateTexture("bg", "BACKGROUND")
+    local tex = frame:CreateTexture(nil, "BACKGROUND")
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/sliderbg")
     frame.tex = tex
 

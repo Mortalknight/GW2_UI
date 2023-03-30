@@ -675,7 +675,7 @@ local function ApplyPvPUISkin()
     ConquestFrame:GwStripTextures()
 
     for _, v in pairs({HonorFrame, ConquestFrame  }) do
-        local detailBg = v:CreateTexture("bg", "BACKGROUND", nil, 0)
+        local detailBg = v:CreateTexture(nil, "BACKGROUND", nil, 0)
         detailBg:SetPoint("TOPLEFT", v, "TOPLEFT", 0, -10)
         detailBg:SetPoint("BOTTOMRIGHT", v, "BOTTOMRIGHT", 0, 0)
         detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
@@ -864,7 +864,7 @@ local function ApplyChallengesUISkin()
     ChallengesFrameInset:GwStripTextures()
 
     -- Mythic+ KeyStoneFrame
-    local tex = ChallengesKeystoneFrame:CreateTexture("bg", "BACKGROUND")
+    local tex = ChallengesKeystoneFrame:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("TOP", ChallengesKeystoneFrame, "TOP", 0, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
     local w, h = ChallengesKeystoneFrame:GetSize()

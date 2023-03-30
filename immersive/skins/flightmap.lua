@@ -4,7 +4,7 @@ local GetSetting = GW.GetSetting
 local function ApplyFlightMapSkin()
     if not GetSetting("FLIGHTMAP_SKIN_ENABLED") then return end
 
-    local tex = FlightMapFrame:CreateTexture("bg", "BACKGROUND")
+    local tex = FlightMapFrame:CreateTexture(nil, "BACKGROUND")
     local w, h = FlightMapFrame:GetSize()
     tex:SetPoint("TOP", FlightMapFrame, "TOP", 10, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
@@ -23,7 +23,7 @@ local function ApplyFlightMapSkin()
     local TaxiFrame = _G.TaxiFrame
     TaxiFrame:GwStripTextures()
 
-    local tex = TaxiFrame:CreateTexture("bg", "BACKGROUND")
+    local tex = TaxiFrame:CreateTexture(nil, "BACKGROUND")
     local w, h = TaxiFrame:GetSize()
     tex:SetPoint("TOP", TaxiFrame, "TOP", 0, 20)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")

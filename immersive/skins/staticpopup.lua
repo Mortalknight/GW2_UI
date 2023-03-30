@@ -28,7 +28,7 @@ local function LoadStaticPopupSkin()
         StaticPopup.Separator:Hide()
         StaticPopup.Border:Hide()
 
-        local tex = StaticPopup:CreateTexture("bg", "BACKGROUND")
+        local tex = StaticPopup:CreateTexture(nil, "BACKGROUND")
         tex:SetPoint("TOP", StaticPopup, "TOP", 0, 0)
         tex:SetSize(StaticPopup:GetSize())
         tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
@@ -59,7 +59,7 @@ local function LoadStaticPopupSkin()
         if self and self.closeDialog and not self.closeDialog.template then
             self.closeDialog.Border:Hide()
 
-            local tex = self.closeDialog:CreateTexture("bg", "BACKGROUND")
+            local tex = self.closeDialog:CreateTexture(nil, "BACKGROUND")
             tex:SetPoint("TOP", self.closeDialog, "TOP", 0, 0)
             tex:SetSize(self.closeDialog:GetSize())
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
@@ -81,7 +81,7 @@ local function LoadStaticPopupSkin()
         if self and self.CloseDialog and not self.CloseDialog.template then
             self.CloseDialog.Border:Hide()
 
-            local tex = self.CloseDialog:CreateTexture("bg", "BACKGROUND")
+            local tex = self.CloseDialog:CreateTexture(nil, "BACKGROUND")
             tex:SetPoint("TOP", self.CloseDialog, "TOP", 0, 0)
             tex:SetSize(self.CloseDialog:GetSize())
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")

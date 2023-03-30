@@ -62,7 +62,7 @@ local function applyButtonStyle()
             b.Text:SetPoint("LEFT", b, "LEFT", 32,0)
             b:SetSize(150, 25)
 
-            local tex = b:CreateTexture("bg", "OVERLAY")
+            local tex = b:CreateTexture(nil, "OVERLAY")
             tex:SetPoint("LEFT", b, "LEFT", 0, 0)
             tex:SetSize(32,32)
             tex:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mainmenuicons")
@@ -115,7 +115,7 @@ local function SkinMainMenu()
     end
     GameMenuFrame:GwCreateBackdrop(nil)
 
-    local tex = GameMenuFrame:CreateTexture("bg", "BACKGROUND")
+    local tex = GameMenuFrame:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("TOP", GameMenuFrame, "TOP", 0, -10)
     tex:SetSize(256, 500)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubg")
