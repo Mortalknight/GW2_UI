@@ -675,13 +675,7 @@ local function skinAchievementFrameListAchievement(self)
     self.BottomLeftTsunami:SetAlpha(0)
     --GuildCornerR
     --GuildCornerL
-    if not self.completeFlare then
-        self.completeFlare = self:CreateTexture(nil, "BACKGROUND", nil, 0)
-        self.completeFlare:ClearAllPoints();
-        self.completeFlare:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
-        self.completeFlare:SetSize(256,128)
-        self.completeFlare:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
-    end
+
     if not self.fBackground then
         self.fBackground = self:CreateTexture(nil, "BACKGROUND", nil, 0)
         self.fBackground:ClearAllPoints();
@@ -696,7 +690,6 @@ local function skinAchievementFrameListAchievement(self)
         self.bottomBar:SetPoint("BOTTOMRIGHT")
         self.bottomBar:SetSize(512,64)
         self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooter")
-
     end
     if not self.completedBackground then
         self.completedBackground = self:CreateTexture(nil, "BACKGROUND", nil, 3)
@@ -770,7 +763,6 @@ local function UpdateAchievementFrameListAchievement(self)
         end
     end
 
-    self.completeFlare:Hide()
     if self.accountWide then
         self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
     else
