@@ -1070,6 +1070,16 @@ end
 
 local function skinAchevement()
     AchievementFrameCategories_OnLoad(AchievementFrameCategories)
+    -- function to "hack" the blizzard functions
+    hooksecurefunc("AchievementFrameBaseTab_OnClick", function(tabIndex)
+        if tabIndex == AchievementCategoryIndex then
+            achievementFunctions = ACHIEVEMENT_FUNCTIONS;
+        elseif tabIndex == GuildCategoryIndex then
+            achievementFunctions = GUILD_ACHIEVEMENT_FUNCTIONS;
+        elseif tabIndex == StatisticsCategoryIndex then
+            achievementFunctions = STAT_FUNCTIONS;
+        end
+    end)
 
     AchievementFrame:GwStripTextures()
     AchievementFrame.Header:GwStripTextures()
@@ -1521,17 +1531,6 @@ local function skinAchevement()
         end, 1, function()
             bgMask:SetPoint("BOTTOMRIGHT", AchievementFrame.tex, "BOTTOMLEFT", AchievementFrame.tex:GetWidth() + 200 , 0)
         end)
-    end)
-
-    -- function to "hack" the blizzard functions
-    hooksecurefunc("AchievementFrameBaseTab_OnClick", function(tabIndex)
-        if tabIndex == AchievementCategoryIndex then
-            achievementFunctions = ACHIEVEMENT_FUNCTIONS;
-        elseif tabIndex == GuildCategoryIndex then
-            achievementFunctions = GUILD_ACHIEVEMENT_FUNCTIONS;
-        elseif tabIndex == StatisticsCategoryIndex then
-            achievementFunctions = STAT_FUNCTIONS;
-        end
     end)
 end
 
