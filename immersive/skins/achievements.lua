@@ -1105,7 +1105,7 @@ local function skinAchevement()
 
     AchievementFrame.Header.Title:Hide()
 
-    GW.CreateFrameHeaderWithBody(AchievementFrame, nil, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon")
+    GW.CreateFrameHeaderWithBody(AchievementFrame, nil, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 0, 0)
 
     AchievementFrameHeader.windowIcon:ClearAllPoints()
     AchievementFrameHeader.windowIcon:SetPoint("CENTER", AchievementFrameHeader, "BOTTOMLEFT", -26, 26)
@@ -1149,7 +1149,7 @@ local function skinAchevement()
     AchievementFrameHeader:SetPoint("BOTTOMRIGHT", AchievementFrame, "TOPRIGHT")
     AchievementFrame.tex:ClearAllPoints()
     AchievementFrame.tex:SetPoint("TOPLEFT", AchievementFrame, "TOPLEFT", 0, 0)
-    AchievementFrame.tex:SetSize(853, 853)
+    AchievementFrame.tex:SetPoint("BOTTOMRIGHT", AchievementFrame, "BOTTOMRIGHT", 0, -226)
     AchievementFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/windowbg")
 
     AchievementFrameCloseButton:GwSkinButton(true)
