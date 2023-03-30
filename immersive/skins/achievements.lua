@@ -1537,6 +1537,11 @@ end
 local function LoadAchivementSkin()
     if GW.IsIncompatibleAddonLoadedOrOverride("AchievementSkin", true) then return end
     if not GW.GetSetting("ACHIEVEMENT_SKIN_ENABLED") then return end
+
+    if IsAddOnLoaded("Krowi_AchievementFilter") and GetAddOnMetadata("Krowi_AchievementFilter", "Version") < "55.0" then
+        return
+    end
+
     GW.RegisterLoadHook(skinAchevement, "Blizzard_AchievementUI")
 end
 GW.LoadAchivementSkin = LoadAchivementSkin
