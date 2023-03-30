@@ -103,6 +103,8 @@ local constBackdropAlertFrame = {
     edgeSize = 32,
     insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
+GW.BackdropTemplates.AlertFrame = constBackdropAlertFrame
+
 local constBackdropLevelUpAlertFrame = {
     bgFile = "Interface/AddOns/GW2_UI/textures/hud/toast-levelup",
     edgeFile = "",
@@ -111,12 +113,14 @@ local constBackdropLevelUpAlertFrame = {
     edgeSize = 32,
     insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
+GW.BackdropTemplates.LevelUpAlertFrame = constBackdropLevelUpAlertFrame
 
 local function forceAlpha(self, alpha, forced)
     if alpha ~= 1 and forced ~= true then
         self:SetAlpha(1, true)
     end
 end
+GW.ForceAlpha = forceAlpha
 
 local function AddFlare(frame, flarFrame)
     if not flarFrame then return end
@@ -156,6 +160,7 @@ local function AddFlare(frame, flarFrame)
         a2:SetSmoothing("OUT")
     end
 end
+GW.AddFlareAnimationToObject = AddFlare
 
 local function skinAchievementAlert(frame)
     frame:SetAlpha(1)

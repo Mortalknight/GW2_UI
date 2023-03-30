@@ -33,20 +33,23 @@ local barColors = {
     red = {r=153/255, g=60/255, b=48/255, a=1},
     blue = {r=48/255, g=56/255, b=153/255, a=1},
 }
-
+GW.AchievementFrameSkinFunction.BarColors = barColors
 -- Text Helper functions
 local function setSmallText(self)
     self:SetFont(UNIT_NAME_FONT, 11)
     self:SetTextColor(0.7, 0.7, 0.7)
 end
+GW.AchievementFrameSkinFunction.SetSmallText = setSmallText
 local function setNormalText(self)
     self:SetFont(UNIT_NAME_FONT, 12)
     self:SetTextColor(1, 1, 1)
 end
+GW.AchievementFrameSkinFunction.SetNormalText = setNormalText
 local function setTitleText(self)
     self:SetFont(DAMAGE_TEXT_FONT, 14)
     self:SetTextColor(1, 1, 1)
 end
+GW.AchievementFrameSkinFunction.SetTitleText = setTitleText
 
 -- Blizzard hacking starts here for overwriting functions to allow our own custom categories
 -- is there a less hacky way of doing this?
