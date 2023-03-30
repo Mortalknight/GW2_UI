@@ -10,7 +10,7 @@ local function ApplyChromieTimerSkin()
 
     ChromieTimeFrame:GwStripTextures()
     ChromieTimeFrame.Background:Hide()
-    local tex = ChromieTimeFrame:CreateTexture("bg", "BACKGROUND")
+    local tex = ChromieTimeFrame:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("TOP", ChromieTimeFrame, "TOP", 0, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
     local w, h = ChromieTimeFrame:GetSize()

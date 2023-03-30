@@ -140,7 +140,7 @@ local function SkinAndEnhanceColorPicker()
 
     ColorPickerFrame:SetHeight(ColorPickerFrame:GetHeight() + 40)
 
-    local tex = ColorPickerFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
+    local tex = ColorPickerFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
     tex:SetPoint("TOP", ColorPickerFrame, "TOP", 0, 20)
     local w, h = ColorPickerFrame:GetSize()
     tex:SetSize(w + 50, h + 30)

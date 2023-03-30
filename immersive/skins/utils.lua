@@ -300,7 +300,7 @@ local function HandlePortraitFrame(frame, createBackdrop)
     end
 
     if createBackdrop and not frame.backdrop then
-        --local tex = frame:CreateTexture("bg", "BACKGROUND", -7)
+        --local tex = frame:CreateTexture(nil, "BACKGROUND", -7)
         --tex:SetPoint("TOP", frame, "TOP", 0, 25)
         --tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
         --local w, h = frame:GetSize()
@@ -616,7 +616,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
         titleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     end
 
-    local tex = frame:CreateTexture("bg", "BACKGROUND", nil, 0)
+    local tex = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
     tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
     tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")
@@ -624,7 +624,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
 
     if detailBackgrounds then
         for _, v in pairs(detailBackgrounds) do
-            local detailBg = v:CreateTexture("bg", "BACKGROUND", nil, 0)
+            local detailBg = v:CreateTexture(nil, "BACKGROUND", nil, 0)
             detailBg:SetPoint("TOPLEFT", v, "TOPLEFT", 0,0)
             detailBg:SetPoint("BOTTOMRIGHT", v, "BOTTOMRIGHT", 0, 0)
             detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")

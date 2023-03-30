@@ -46,7 +46,7 @@ local function LoadMerchantFrameSkin()
     MerchantFrameCloseButton:GwSkinButton(true)
     MerchantFrameCloseButton:SetSize(20, 20)
 
-    local tex = MerchantFrame:CreateTexture("bg", "BACKGROUND")
+    local tex = MerchantFrame:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("TOP", MerchantFrame, "TOP", 0, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
     local w, h = MerchantFrame:GetSize()

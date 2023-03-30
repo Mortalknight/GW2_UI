@@ -15,7 +15,7 @@ local function FixMailSkin()
 end
 
 local function AddFrameSeperator()
-    MailFrame.mailFrameSepTexture = MailFrame:CreateTexture("MailFrameSepTexture", "ARTWORK")
+    MailFrame.mailFrameSepTexture = MailFrame:CreateTexture(nil, "ARTWORK")
     MailFrame.mailFrameSepTexture:SetSize(600, 2)
     MailFrame.mailFrameSepTexture:SetPoint("BOTTOMRIGHT", MailFrame, "BOTTOMRIGHT", 110, 50)
     MailFrame.mailFrameSepTexture:SetTexture("Interface/AddOns/GW2_UI/textures/hud/levelreward-sep")
@@ -350,14 +350,14 @@ local function LoadMailSkin()
     MailFrame.maxTabWidth = 320
 
     -- Configure Mail Frame Background
-    MailFrame.mailFrameBgTexture = MailFrame:CreateTexture("MailFrameBgTexture", "BACKGROUND", nil, -7)
+    MailFrame.mailFrameBgTexture = MailFrame:CreateTexture(nil, "BACKGROUND", nil, -7)
     MailFrame.mailFrameBgTexture:SetSize(newWidth, newHeight)
     MailFrame.mailFrameBgTexture:SetPoint("TOPLEFT", MailFrame, "TOPLEFT", 0, 5)
     MailFrame.mailFrameBgTexture:SetTexture("Interface/AddOns/GW2_UI/textures/hud/mailboxwindow-background")
     MailFrame.mailFrameBgTexture:SetTexCoord(0,0.7099,0,0.955);
 
     -- Configure Mail Heading
-    MailFrame.heading = MailFrame:CreateTexture("bg", "BACKGROUND")
+    MailFrame.heading = MailFrame:CreateTexture(nil, "BACKGROUND")
     MailFrame.heading:SetSize(newWidth, 64)
     MailFrame.heading:SetPoint("BOTTOMLEFT", MailFrame, "TOPLEFT", 0, 0)
     MailFrame.heading:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagheader")
@@ -368,12 +368,12 @@ local function LoadMailSkin()
     MailFrame.heading.Title:SetText(MAIL_LABEL)
     MailFrame.heading.Title:SetTextColor(1, .93, .73)
 
-    MailFrame.icon = MailFrame:CreateTexture("MailFrameIcon", "ARTWORK")
+    MailFrame.icon = MailFrame:CreateTexture(nil, "ARTWORK")
     MailFrame.icon:SetSize(80, 80)
     MailFrame.icon:SetPoint("CENTER", MailFrame, "TOPLEFT", 12, 25)
     MailFrame.icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/mail-window-icon")
 
-    MailFrame.headingRight = MailFrame:CreateTexture("bg", "BACKGROUND")
+    MailFrame.headingRight = MailFrame:CreateTexture(nil, "BACKGROUND")
     MailFrame.headingRight:SetSize(newWidth, 64)
     MailFrame.headingRight:SetPoint("BOTTOMRIGHT", MailFrame, "TOPRIGHT", 0, 0)
     MailFrame.headingRight:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagheader-right")
@@ -385,7 +385,7 @@ local function LoadMailSkin()
     MailFrame.CloseButton:SetParent(MailFrame)
 
     -- Configure footer
-    MailFrame.footer = MailFrame:CreateTexture("bg", "BACKGROUND")
+    MailFrame.footer = MailFrame:CreateTexture(nil, "BACKGROUND")
     MailFrame.footer:SetSize(newWidth, 70)
     MailFrame.footer:SetPoint("TOPLEFT", MailFrame, "BOTTOMLEFT", 0, 5)
     MailFrame.footer:SetPoint("TOPRIGHT", MailFrame, "BOTTOMRIGHT", 0, 5)

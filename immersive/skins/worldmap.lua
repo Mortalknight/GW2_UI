@@ -306,7 +306,7 @@ local function worldMapSkin()
     WorldMapFrame.NavBar:SetPoint("TOPLEFT", 1, -47)
     WorldMapFrame.NavBar.SetPoint = GW.NoOp
 
-    local navBarTex = WorldMapFrame.NavBar:CreateTexture("bg", "BACKGROUND", nil, 0)
+    local navBarTex = WorldMapFrame.NavBar:CreateTexture(nil, "BACKGROUND", nil, 0)
     navBarTex:SetPoint("TOPLEFT", WorldMapFrame.NavBar, "TOPLEFT", 0,20)
     navBarTex:SetPoint("BOTTOMRIGHT", WorldMapFrame.NavBar, "BOTTOMRIGHT", 0, -10)
     navBarTex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
@@ -438,7 +438,7 @@ local function worldMapSkin()
     local qms = _G.QuestModelScene
     local w, h = qms:GetSize()
     qms:GwStripTextures()
-    qms.tex = qms:CreateTexture("bg", "BACKGROUND", nil, 0)
+    qms.tex = qms:CreateTexture(nil, "BACKGROUND", nil, 0)
     qms.tex:SetPoint("TOP", qms, "TOP", 0, 20)
     qms.tex:SetSize(w + 30, h + 60)
     qms.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")

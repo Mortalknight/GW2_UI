@@ -60,7 +60,7 @@ local function ApplyWeeklyRewardsSkin()
     if not GetSetting("WEEKLY_REWARDS_SKIN_ENABLED") then return end
 
     WeeklyRewardsFrame:GwStripTextures()
-    local tex = WeeklyRewardsFrame:CreateTexture("bg", "BACKGROUND")
+    local tex = WeeklyRewardsFrame:CreateTexture(nil, "BACKGROUND")
     tex:SetPoint("TOP", WeeklyRewardsFrame, "TOP", 0, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
     local w, h = WeeklyRewardsFrame:GetSize()

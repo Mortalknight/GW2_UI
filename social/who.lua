@@ -164,7 +164,7 @@ local function LoadWhoList(tabContainer)
 
     WhoWindow.list.ColumnHeader2.DropDown:SetSize(135, 24)
     WhoWindow.list.ColumnHeader2.DropDown:GwStripTextures()
-    WhoWindow.list.ColumnHeader2.DropDown.tex = WhoWindow.list.ColumnHeader2.DropDown:CreateTexture("bg", "ARTWORK")
+    WhoWindow.list.ColumnHeader2.DropDown.tex = WhoWindow.list.ColumnHeader2.DropDown:CreateTexture(nil, "ARTWORK")
     WhoWindow.list.ColumnHeader2.DropDown.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button")
     WhoWindow.list.ColumnHeader2.DropDown.tex:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2.DropDown, "TOPLEFT", 1, 0)
     WhoWindow.list.ColumnHeader2.DropDown.tex:SetPoint("BOTTOMRIGHT", WhoWindow.list.ColumnHeader2.DropDown, "BOTTOMRIGHT", -2, 8)
