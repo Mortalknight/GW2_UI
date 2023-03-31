@@ -11,6 +11,12 @@ Hook up to a frame mover
 kill blizzards default frame position handling
 ]]
 
+local AchievementBackgroundTextures = {
+    blue = "Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg",
+    red = "Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebgred"
+}
+GW.AchievementFrameSkinFunction.AchievementBackgroundTextures = AchievementBackgroundTextures
+
 -- should be made utility function ?
 local function CreateColorFromTable(colorTable)
     return CreateColor(colorTable.r, colorTable.g, colorTable.b, colorTable.a)
@@ -508,7 +514,7 @@ local function skinAchievementFrameSummaryAchievement(self)
     self.completedBackground:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
     self.completedBackground:SetPoint("BOTTOMLEFT",self,"BOTTOMLEFT",0,0)
     self.completedBackground:SetWidth( self:GetHeight() * 2 )
-    self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
+    self.completedBackground:SetTexture(AchievementBackgroundTextures.blue)
     self.completedBackground:SetVertexColor(1,1,1,0.7)
 
     self.fBackground = self:CreateTexture(nil, "BACKGROUND", nil, 0)
@@ -536,9 +542,9 @@ end
 local function updateSummaryAchievementTexture(self, achievementID)
     local _, _, _, _, _, _, _, _, flags = GetAchievementInfo(achievementID)
     if bit.band(flags, ACHIEVEMENT_FLAGS_ACCOUNT) == ACHIEVEMENT_FLAGS_ACCOUNT then
-        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
+        self.completedBackground:SetTexture(AchievementBackgroundTextures.blue)
     else
-        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebgred")
+        self.completedBackground:SetTexture(AchievementBackgroundTextures.red)
     end
 end
 
@@ -697,7 +703,7 @@ local function skinAchievementFrameListAchievement(self)
         self.completedBackground:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
         self.completedBackground:SetPoint("BOTTOMLEFT",self,"TOPLEFT",0,-120)
         self.completedBackground:SetWidth(240)
-        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
+        self.completedBackground:SetTexture(AchievementBackgroundTextures.blue)
         self.completedBackground:SetVertexColor(1,1,1,0.7)
     end
 
@@ -764,9 +770,9 @@ local function UpdateAchievementFrameListAchievement(self)
     end
 
     if self.accountWide then
-        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
+        self.completedBackground:SetTexture(AchievementBackgroundTextures.blue)
     else
-        self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebgred")
+        self.completedBackground:SetTexture(AchievementBackgroundTextures.red)
     end
 
     if ( not completed or (not wasEarnedByMe and not isGuild) ) then
@@ -960,7 +966,7 @@ local function skinAchievementComparison(self,isPlayer)
     self.completedBackground:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
     self.completedBackground:SetPoint("BOTTOMLEFT",self,"BOTTOMLEFT",0,0)
     self.completedBackground:SetWidth( self:GetHeight() * 2 )
-    self.completedBackground:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementcompletebg")
+    self.completedBackground:SetTexture(AchievementBackgroundTextures.blue)
     self.completedBackground:SetVertexColor(1,1,1,0.7)
 
     if isPlayer then
@@ -1153,8 +1159,9 @@ local function skinAchevement()
     AchievementFrameHeader:SetPoint("BOTTOMLEFT", AchievementFrame, "TOPLEFT")
     AchievementFrameHeader:SetPoint("BOTTOMRIGHT", AchievementFrame, "TOPRIGHT")
     AchievementFrame.tex:ClearAllPoints()
+    AchievementFrame.tex:SetTexCoord(0, 1, 0, 0.73633)
     AchievementFrame.tex:SetPoint("TOPLEFT", AchievementFrame, "TOPLEFT", 0, 0)
-    AchievementFrame.tex:SetPoint("BOTTOMRIGHT", AchievementFrame, "BOTTOMRIGHT", 0, -226)
+    AchievementFrame.tex:SetPoint("BOTTOMRIGHT", AchievementFrame, "BOTTOMRIGHT", 0, 0)
     AchievementFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/windowbg")
 
     AchievementFrameCloseButton:GwSkinButton(true)
