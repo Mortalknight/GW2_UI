@@ -1,3 +1,13 @@
+6.6.1
+FIXES
+    - Fix rare lua error during open the worldmap with active worldmap skin
+    - Fix issue were is was impossible to buy bank slots
+    - Fix macro and gear manager icon selection
+
+CHANGES
+    - Added tooltips to equipment selection mode
+    - GW2 achievement frame skin is now compatible with 'Krowi's Achievement Filter' (requires version 55.0 and higher)
+
 6.6.0
 NEW
     - Added 2 new damage text styles: Stacking and Classic (with anchor to nameplats or center of the screen)
