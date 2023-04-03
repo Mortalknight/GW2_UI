@@ -1132,7 +1132,8 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             end
 
             local showLink = 1
-            if strsub(chatType, 1, 7) == "MONSTER" or strsub(chatType, 1, 9) == "RAID_BOSS" then
+            local isMonster = strsub(chatType, 1, 7) == "MONSTER"
+            if isMonster or strsub(chatType, 1, 9) == "RAID_BOSS" then
                 showLink = nil
                 -- fix blizzard formatting errors from localization strings
                 --arg1 = gsub(arg1, "%%%d", "%%s")
@@ -1191,15 +1192,17 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             local pflag = GetPFlag(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
 
             -- LFG Role Flags
-            local lfgRole = lfgRoles[playerName]
-            if lfgRole and (chatType == "PARTY_LEADER" or chatType == "PARTY" or chatType == "RAID" or chatType == "RAID_LEADER" or chatType == "INSTANCE_CHAT" or chatType == "INSTANCE_CHAT_LEADER") then
-                pflag = pflag .. lfgRole
+            local lfgRole = (chatType == "PARTY_LEADER" or chatType == "PARTY" or chatType == "RAID" or chatType == 'RAID_LEADER' or chatType == 'INSTANCE_CHAT' or chatType == 'INSTANCE_CHAT_LEADER') and lfgRoles[playerName]
+            if lfgRole then
+                pflag = pflag..lfgRole
             end
 
             -- GW2 Staff Icon Chat Icon
-            local gw2Icon = gw2StaffList[playerName]
-            if gw2Icon then
-                pflag = pflag .. gw2Icon
+            if not isMonster then
+                local gw2Icon = gw2StaffList[playerName]
+                if gw2Icon then
+                    pflag = pflag .. gw2Icon
+                end
             end
 
             if usingDifferentLanguage then
