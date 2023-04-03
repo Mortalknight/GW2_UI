@@ -1123,24 +1123,15 @@ local function ToggleFormat(activate)
 
         if settings.usedFormat == formats.Default or settings.usedFormat == formats.Classic then
             -- hide the other format things
-            if stackingContainer then
-                -- TODO remove from Move Hud mode
-                stackingContainer:SetScript("OnUpdate", nil)
-                stackingContainer:Hide()
-                wipe(stackingContainer.activeFrames)
-            end
+            GW.ToggleMover(stackingContainer.gwMover, false)
+
+            stackingContainer:SetScript("OnUpdate", nil)
+            stackingContainer:Hide()
+            wipe(stackingContainer.activeFrames)
 
             NUM_OBJECTS_HARDLIMIT = 20
 
             if settings.usedFormat == formats.Classic then
-                if not ClassicDummyFrame then
-                    ClassicDummyFrame = CreateFrame("Frame", nil, UIParent)
-                    ClassicDummyFrame:ClearAllPoints()
-                    ClassicDummyFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-                    ClassicDummyFrame:SetSize(100, 50)
-                    ClassicDummyFrame:EnableMouse(false)
-                end
-
                 CRITICAL_ANIMATION = animateTextCriticalForClassicFormat
                 NORMAL_ANIMATION = animateTextNormalForClassicFormat
 
@@ -1159,9 +1150,7 @@ local function ToggleFormat(activate)
 
                 ClassicDummyFrame:Show()
             else
-                if ClassicDummyFrame then
-                    ClassicDummyFrame:Hide()
-                end
+                ClassicDummyFrame:Hide()
 
                 CRITICAL_ANIMATION = animateTextCriticalForDefaultFormat
                 NORMAL_ANIMATION = animateTextNormalForDefaultFormat
@@ -1174,20 +1163,7 @@ local function ToggleFormat(activate)
                 wipe(namePlateClassicGrid)
             end
         elseif settings.usedFormat == formats.Stacking then
-            if not stackingContainer then
-                stackingContainer = CreateFrame("Frame", nil, UIParent)
-                stackingContainer:SetSize(200, 400)
-                stackingContainer:EnableMouse(false)
-                stackingContainer:ClearAllPoints()
-                GW.RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", ALL .. ",FCT", nil, {"default", "scaleable"})
-                stackingContainer:ClearAllPoints()
-                stackingContainer:SetPoint("TOPLEFT", stackingContainer.gwMover)
-                stackingContainer.activeFrames = {}
-            end
-
-            if ClassicDummyFrame then
-                ClassicDummyFrame:Hide()
-            end
+            ClassicDummyFrame:Hide()
 
             CRITICAL_ANIMATION = animateTextCriticalForStackingFormat
             NORMAL_ANIMATION = animateTextNormalForStackingFormat
@@ -1204,6 +1180,7 @@ local function ToggleFormat(activate)
 
             stackingContainer:SetScript("OnUpdate", stackingContainerOnUpdate)
             stackingContainer:Show()
+            GW.ToggleMover(stackingContainer.gwMover, true)
         end
     else
         eventHandler:UnregisterAllEvents()
@@ -1212,20 +1189,34 @@ local function ToggleFormat(activate)
         wipe(unitToGuid)
         wipe(guidToUnit)
 
-        if stackingContainer then
-            -- TODO remove from Move Hud mode
-            stackingContainer:SetScript("OnUpdate", nil)
-            stackingContainer:Hide()
-        end
-        if ClassicDummyFrame then
-            ClassicDummyFrame:Hide()
-        end
+        GW.ToggleMover(stackingContainer.gwMover, false)
+        stackingContainer:SetScript("OnUpdate", nil)
+        stackingContainer:Hide()
+
+        ClassicDummyFrame:Hide()
     end
 end
 GW.FloatingCombatTextToggleFormat = ToggleFormat
 
 local function LoadDamageText(activate)
     UpdateSettings()
+
+    -- Create the needed frames
+    stackingContainer = CreateFrame("Frame", nil, UIParent)
+    stackingContainer:SetSize(200, 400)
+    stackingContainer:EnableMouse(false)
+    stackingContainer:ClearAllPoints()
+    GW.RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", ALL .. ",FCT", nil, {"default", "scaleable"})
+    stackingContainer:ClearAllPoints()
+    stackingContainer:SetPoint("TOPLEFT", stackingContainer.gwMover)
+    stackingContainer.activeFrames = {}
+
+    ClassicDummyFrame = CreateFrame("Frame", nil, UIParent)
+    ClassicDummyFrame:ClearAllPoints()
+    ClassicDummyFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    ClassicDummyFrame:SetSize(100, 50)
+    ClassicDummyFrame:EnableMouse(false)
+
     ToggleFormat(activate)
     playerGUID = UnitGUID("player")
 end

@@ -103,9 +103,7 @@ local function PositionPartyFrame(frame, parent, i, grow1, grow2, cells1, sizePe
         frame:SetSize(w, h)
     end
 
-    if frame.healthbar then
-        frame.healthbar.spark:SetHeight(frame.healthbar:GetHeight())
-    end
+
 end
 
 local function GridPartyUpdateFramesPosition()

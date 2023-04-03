@@ -12,7 +12,7 @@ local AllTags = {}
 local function filterHudMovers(filter)
     if filter then
         for _, mf in pairs(GW.MOVABLE_FRAMES) do
-            if string.find(mf.tags, filter, 1, true) then
+            if string.find(mf.tags, filter, 1, true) and mf.enable then
                 mf:Show()
             else
                 mf:Hide()
@@ -145,7 +145,7 @@ local function moveHudObjects(self)
     for _, mf in pairs(GW.MOVABLE_FRAMES) do
         mf:EnableMouse(true)
         mf:SetMovable(true)
-        mf:Show()
+        mf:SetShown(mf.enable)
     end
     GW.MoveHudScaleableFrame.moverSettingsFrame.options:Hide()
     GW.MoveHudScaleableFrame.moverSettingsFrame.desc:Show()
@@ -300,8 +300,8 @@ local function UpdateMatchingLayout(self, new_point)
     end
 end
 
-local function smallSettings_resetToDefault(self)
-    local mf = self:GetParent():GetParent().child
+local function smallSettings_resetToDefault(self, _,  moverFrame)
+    local mf = moverFrame and moverFrame or self:GetParent():GetParent().child
 
     mf:ClearAllPoints()
     mf:SetPoint(
@@ -342,7 +342,9 @@ local function smallSettings_resetToDefault(self)
         mf:SetScale(scale)
         mf.parent:SetScale(scale)
         SetSetting(mf.setting .. "_scale", scale)
-        self:GetParent():GetParent().options.scaleSlider.slider:SetValue(scale)
+        if self then
+            self:GetParent():GetParent().options.scaleSlider.slider:SetValue(scale)
+        end
     end
 
     -- Set height back to default
@@ -351,7 +353,9 @@ local function smallSettings_resetToDefault(self)
         mf:SetHeight(height)
         mf.parent:SetHeight(height)
         SetSetting(mf.setting .. "_height", height)
-        self:GetParent():GetParent().options.heightSlider.slider:SetValue(height)
+        if self then
+            self:GetParent():GetParent().options.heightSlider.slider:SetValue(height)
+        end
 
         -- update also the matching settings
         GW.UpdateObjectivesSettings()
@@ -371,6 +375,7 @@ local function smallSettings_resetToDefault(self)
     GwSmallSettingsContainer.layoutManager:GetScript("OnEvent")(GwSmallSettingsContainer.layoutManager)
     GwSmallSettingsContainer.layoutManager:SetAttribute("inMoveHudMode", true)
 end
+GW.ResetMoverFrameToDefaultValues = smallSettings_resetToDefault
 GW.AddForProfiling("index", "smallSettings_resetToDefault", smallSettings_resetToDefault)
 
 local function lockFrame_OnEnter(self)
@@ -638,6 +643,8 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
         end)
     end
 
+    mf.enable = true
+
     GW.MOVABLE_FRAMES[#GW.MOVABLE_FRAMES + 1] = mf
 
     return mf
@@ -687,6 +694,16 @@ local function MoveFrameByPixel(nudgeX, nudgeY)
 
     mover_OnDragStop(mover)
 end
+
+local function ToggleMover(frame, toggle)
+    for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
+        if moveableFrame == frame then
+            moveableFrame.enable = toggle
+            break
+        end
+    end
+end
+GW.ToggleMover = ToggleMover
 
 local function LoadMovers(layoutManager)
     -- Create mover settings frame

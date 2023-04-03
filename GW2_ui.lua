@@ -455,7 +455,8 @@ local function evAddonLoaded(_, addonName)
     GW.LoadSoulbindsSkin()
     GW.LoadWeeklyRewardsSkin()
     GW.LoadPerksProgramSkin()
-    --GW.LoadStatusbarTest()
+    GW.preLoadStatusBarMaskTextures()
+  --  GW.LoadStatusbarTest()
 end
 AFP("evAddonLoaded", evAddonLoaded)
 
@@ -506,8 +507,16 @@ local function commonEntering()
     end)
 end
 
+local migrationDone = false
 local function evPlayerEnteringWorld()
     commonEntering()
+
+    -- do migration one on first login
+    if not migrationDone then
+        --migration things
+        GW.Migration()
+        migrationDone = true
+    end
 end
 AFP("evPlayerEnteringWorld", evPlayerEnteringWorld)
 

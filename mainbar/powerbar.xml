@@ -1,96 +1,119 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Frame name="GwPlayerPowerBar" virtual="true">
-        <Size x="318" y="20"></Size>
-        <Anchors>
-            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" x="53" y="86"></Anchor>
-        </Anchors>
-        <Layers>
-            <Layer level="BACKGROUND">
-              <Texture name="$parentBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
-                  <Size x="318" y="20"></Size>
-              </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
-                    <Size x="314" y="2"/>
-                    <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="1"/>
-                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"  x="0" y="1"/>
-                    </Anchors>
-                </Texture>
-                <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixel">
-                    <Size x="314" y="2"/>
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="-1"/>
-                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"  x="0" y="-1"/>
-                    </Anchors>
-                    <TexCoords left="0" right="1" top="1" bottom="0" />
-                </Texture>
+<StatusBar name="GwStatusPowerBar" minValue="0" maxValue="1" virtual="true" >
+    <Size x="313" y="14"></Size>
+    <Anchors>
+        <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+    </Anchors>
+    <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/statusbar"/>
+    <Layers>
+      <Layer level="OVERLAY" textureSubLevel="0">
+        <Texture parentKey="intensity" alpha="0" file="Interface/AddOns/GW2_UI/textures/bartextures/insanity-intensity">
+          <Size x="32" y="18"></Size>
+          <Anchors>
+              <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+              <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+          </Anchors>
+        </Texture>
+        <Texture parentKey="intensity2"  alpha="0" file="Interface/AddOns/GW2_UI/textures/bartextures/insanity-intensity2">
+          <Size x="32" y="18"></Size>
+          <Anchors>
+              <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+              <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+          </Anchors>
+        </Texture>
+      </Layer>
+      <Layer level="OVERLAY" textureSubLevel="1">
+        <Texture parentKey="runeoverlay"  alpha="0" file="Interface/AddOns/GW2_UI/textures/bartextures/runicpower-intensity2">
+          <Size x="32" y="18"></Size>
+          <Anchors>
+              <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+              <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+          </Anchors>
+        </Texture>
+      </Layer>
+      <Layer level="OVERLAY" textureSubLevel="2">
+        <Texture parentKey="scrollTexture" hWrapMode="REPEAT" alpha="1" file="Interface/AddOns/GW2_UI/textures/bartextures/insanity-intensity2">
+          <Size x="32" y="18"></Size>
+          <Anchors>
+              <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+              <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+          </Anchors>
+        </Texture>
+         <Texture parentKey="scrollTexture2" hWrapMode="REPEAT" alpha="1" file="Interface/AddOns/GW2_UI/textures/bartextures/insanity-intensity2">
+          <Size x="32" y="18"></Size>
+          <Anchors>
+              <Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+              <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+          </Anchors>
+        </Texture>
+      </Layer>
+        <Layer level="OVERLAY" textureSubLevel="3">
+          <Texture parentKey="spark" alpha="0" alphaMode="BLEND" file="Interface/AddOns/GW2_UI/textures/bartextures/ragespark">
+            <Size x="32" y="18"></Size>
+            <Anchors>
+                <Anchor point="LEFT" relativeKey="$parent.internalBar" relativePoint="LEFT" x="0" y="0"></Anchor>
+            </Anchors>
+          </Texture>
+          <MaskTexture parentKey="runicmask" file="Interface/AddOns/GW2_UI/textures/bartextures/runicpowerspark" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
+              <Size x="50" y="50"/>
+              <Anchors>
+                  <Anchor point="RIGHT" relativeKey="$parent.spark" relativePoint="RIGHT" x="0" y="0"></Anchor>
+              </Anchors>
+          </MaskTexture>
+        </Layer>
+        <Layer level="OVERLAY" textureSubLevel="4">
+            <FontString parentKey="label" text="Unknown" justifyH="CENTER">
+                <Size x="200" y="14"></Size>
+                <Anchors>
+                    <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
+                </Anchors>
+            </FontString>
 
-            <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
-                <Size x="2" y="2"/>
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="1" y="0"/>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="0"/>
-                </Anchors>
-            </Texture>
-            <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/statusbarBorderPixelVertical">
-                <Size x="2" y="2"/>
-                <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="0"/>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="-1" y="0"/>
-                </Anchors>
-                <TexCoords left="1" right="0" top="0" bottom="1" />
-            </Texture>
+        </Layer>
+    </Layers>
+    <Frames>
+        <Frame parentKey="maskContainer">
+          <Size x="24" y="24"/>
+          <Anchors>
+              <Anchor point="LEFT" relativeKey="$parent.internalBar" relativePoint="LEFT" x="0" y="0"></Anchor>
+          </Anchors>
+          <Layers>
+            <Layer>
+              <MaskTexture parentKey="mask0" file="Interface/AddOns/GW2_UI/textures/hud/barmask/0" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAMPTOWHITE">
+                  <Size x="24" y="24"/>
+                  <Anchors>
+                      <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                      <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                  </Anchors>
+              </MaskTexture>
             </Layer>
-            <Layer level="BORDER">
-                <Texture parentKey="bar" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
-                    <Size x="314" y="18"/>
-                    <Anchors>
-                        <Anchor point="LEFT" x="1" y="0"/>
-                        <Anchor point="RIGHT" relativePoint="LEFT" x="0" y="0"/>
-                    </Anchors>
-                </Texture>
+          </Layers>
+        </Frame>
+        <Frame parentKey="maskOverflow">
+          <Size x="24" y="24"/>
+          <Anchors>
+              <Anchor point="TOPLEFT"  relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+              <Anchor point="BOTTOMLEFT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+              <Anchor point="TOPRIGHT"  relativePoint="TOPRIGHT" x="0" y="0"></Anchor>
+              <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+          </Anchors>
+          <Layers>
+            <Layer>
+              <MaskTexture parentKey="mask" file="Interface/AddOns/GW2_UI/textures/hud/barmask/0" hWrapMode="CLAMPTOWHITE" vWrapMode="CLAPMTOWHITE">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="TOPLEFT"  relativePoint="TOPLEFT" x="0" y="0"></Anchor>
+                    <Anchor point="BOTTOMRIGHT"  relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
+                </Anchors>
+              </MaskTexture>
             </Layer>
-        </Layers>
-        <Frames>
-            <StatusBar parentKey="candy" name="$parentCandy" frameLevel="1" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
-                <Size x="314" y="18"/>
-                <Anchors>
-                    <Anchor point="LEFT" x="2" y="0"/>
-                </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbarCandy"/>
-                <Layers>
-                    <Layer>
-                        <Texture parentKey="spark" name="$parentSpark" file="Interface/AddOns/GW2_UI/textures/hud/bloodspark">
-                            <Anchors>
-                                <Anchor point="RIGHT" x="0" y="0"/>
-                            </Anchors>
-                            <Size x="21" y="18"></Size>
-                        </Texture>
-                    </Layer>
-                </Layers>
-            </StatusBar>
-            <StatusBar parentKey="statusBar" name="$parentBar" defaultValue="1" minValue="0" maxValue="1">
-                <Size x="314" y="18"/>
-                <Anchors>
-                    <Anchor point="LEFT" x="2" y="0"/>
-                </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
-                <Layers>
-                    <Layer level="OVERLAY">
-                        <FontString parentKey="label" name="$parentString" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
-                            <Color r="1" b="1" g="1"></Color>
-                            <Size x="316" y="18"/>
-                            <Anchors>
-                                <Anchor point="CENTER" x="0" y="0"/>
-                            </Anchors>
-                        </FontString>
-
-                    </Layer>
-                </Layers>
-            </StatusBar>
-        </Frames>
-    </Frame>
+          </Layers>
+        </Frame>
+        <Frame parentKey="animator">
+        </Frame>
+    </Frames>
+</StatusBar>
 
 </Ui>

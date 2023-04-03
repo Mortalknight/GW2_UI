@@ -916,3 +916,29 @@ local function IsGroupMember(name)
 	return false
 end
 GW.IsGroupMember = IsGroupMember
+
+local function IsSpellTalented(spellID) -- this could be made to be a lot more efficient, if you already know the relevant nodeID and entryID
+    local configID = C_ClassTalents.GetActiveConfigID()
+    if configID == nil then return end
+
+    local configInfo = C_Traits.GetConfigInfo(configID)
+    if configInfo == nil then return end
+
+    for _, treeID in ipairs(configInfo.treeIDs) do -- in the context of talent trees, there is only 1 treeID
+        local nodes = C_Traits.GetTreeNodes(treeID)
+        for i, nodeID in ipairs(nodes) do
+            local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
+            for _, entryID in ipairs(nodeInfo.entryIDsWithCommittedRanks) do -- there should be 1 or 0
+                local entryInfo = C_Traits.GetEntryInfo(configID, entryID)
+                if entryInfo and entryInfo.definitionID then
+                    local definitionInfo = C_Traits.GetDefinitionInfo(entryInfo.definitionID)
+                    if definitionInfo.spellID == spellID then
+                        return true
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+GW.IsSpellTalented = IsSpellTalented

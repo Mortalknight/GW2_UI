@@ -100,9 +100,6 @@ local function PositionRaidFrame(frame, parent, i, grow1, grow2, cells1, sizePer
         frame:SetSize(w, h)
     end
 
-    if frame.healthbar then
-        frame.healthbar.spark:SetHeight(frame.healthbar:GetHeight())
-    end
 end
 
 local function GridRaidUpdateFramesPosition()
@@ -228,6 +225,7 @@ local function RaidGridOnEvent(self, event, unit)
         GW.GripToggleSummonOrResurrection(self, "RAID")
         GW.GridUpdateAuras(self, "RAID")
         GW.GridUpdatePower(self)
+        GW.GridSetHealAbsorb(self)
     elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
         GW.GridSetHealth(self, "RAID")
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
@@ -236,6 +234,8 @@ local function RaidGridOnEvent(self, event, unit)
         GW.GridSetAbsorbAmount(self)
     elseif event == "UNIT_HEAL_PREDICTION" then
         GW.GridSetPredictionAmount(self, "RAID")
+    elseif event=="UNIT_HEAL_ABSORB_AMOUNT_CHANGED" then
+        GW.GridSetHealAbsorb(self)
     elseif event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
         GW.GridUpdateAwayData(self, "RAID")
     elseif event == "PLAYER_TARGET_CHANGED" then

@@ -376,32 +376,65 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
     local healthstring = ""
 
     if settings.unitNameString == "NONE" then
-        self.healthstring:Hide()
+        self.healthString:Hide()
         return
     end
 
     if settings.unitNameString == "PREC" then
-        self.healthstring:SetText(RoundDec(healthPrec * 100,0) .. "%")
-        self.healthstring:SetJustifyH("LEFT")
+        self.healthString:SetText(RoundDec(healthPrec * 100,0) .. "%")
+        self.healthString:SetJustifyH("LEFT")
     elseif settings.unitNameString == "HEALTH" then
-        self.healthstring:SetText(CommaValue(healthCur))
-        self.healthstring:SetJustifyH("LEFT")
+        self.healthString:SetText(CommaValue(healthCur))
+        self.healthString:SetJustifyH("LEFT")
     elseif settings.unitNameString == "LOSTHEALTH" then
         if healthMax - healthCur > 0 then healthstring = CommaValue(healthMax - healthCur) end
-        self.healthstring:SetText(healthstring)
-        self.healthstring:SetJustifyH("RIGHT")
+        self.healthString:SetText(healthstring)
+        self.healthString:SetJustifyH("RIGHT")
     end
     if healthCur == 0 then
-        self.healthstring:SetTextColor(255, 0, 0)
+        self.healthString:SetTextColor(255, 0, 0)
     else
-        self.healthstring:SetTextColor(1, 1, 1)
+        self.healthString:SetTextColor(1, 1, 1)
     end
-    self.healthstring:Show()
+    self.healthString:Show()
 end
 GW.AddForProfiling("party", "setHealthValue", setHealthValue)
+local function setAbsorbAmount(self)
+local health = UnitHealth(self.unit)
+  local healthMax = UnitHealthMax(self.unit)
+  local absorb = UnitGetTotalAbsorbs(self.unit)
+  local absorbPrecentage = 0
+  local absorbAmount = 0
+  local absorbAmount2 = 0
+  local healthPrecentage = 0
 
+    if health > 0 and healthMax > 0 then
+        healthPrecentage = health / healthMax
+    end
+
+
+    if absorb > 0 and healthMax > 0 then
+        absorbPrecentage = absorb / healthMax
+        absorbAmount = healthPrecentage + absorbPrecentage
+        absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
+    end
+    self.absorbbg:SetFillAmount(absorbAmount)
+    self.absorbOverlay:SetFillAmount(absorbAmount2)
+end
+GW.AddForProfiling("party", "setAbsorbAmount", setHealthValue)
+local function setUnitHealAbsorb(self)
+    local healthMax = UnitHealthMax(self.unit)
+    local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
+    local healAbsorbPrecentage = 0
+  
+    if healAbsorb > 0 and healthMax > 0 then
+        healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
+    end
+    self.antiHeal:SetFillAmount(healAbsorbPrecentage)
+end
 local function setHealPrediction(self, predictionPrecentage)
-    self.predictionbar:SetValue(predictionPrecentage)
+    
+    self.healPrediction:SetFillAmount(predictionPrecentage)
 end
 GW.AddForProfiling("party", "setHealPrediction", setHealPrediction)
 
@@ -418,7 +451,7 @@ local function setHealth(self)
     end
     setHealPrediction(self, predictionPrecentage)
     setHealthValue(self, health, healthMax, healthPrec)
-    Bar(self.healthbar, healthPrec)
+    self.health:SetFillAmount(healthPrec)
 end
 GW.AddForProfiling("party", "setHealth", setHealth)
 
@@ -460,13 +493,16 @@ local function updatePartyData(self)
         powerPrecentage = power / powerMax
     end
     Bar(self.healthbar, healthPrec)
-    self.predictionbar:SetValue(predictionPrecentage)
+    self.healPrediction:SetFillAmount(predictionPrecentage)
 
     self.powerbar:SetValue(powerPrecentage)
     setHealth(self)
+    setUnitHealAbsorb(self)
+    setAbsorbAmount(self)
     setUnitName(self)
     updateAwayData(self)
     updateUnitPortrait(self)
+
 
     if self.level then
         self.level:SetText(UnitLevel(self.unit))
@@ -506,6 +542,10 @@ local function party_OnEvent(self, event, unit)
         updatePartyData(self)
     elseif event == "UNIT_HEAL_PREDICTION" then
         setPredictionAmount(self)
+    elseif event == "UNIT_ABSORB_AMOUNT_CHANGED" then
+        setAbsorbAmount(self)
+    elseif event == "UNIT_HEAL_ABSORB_AMOUNT_CHANGED" then
+        setUnitHealAbsorb(self)
     elseif IsIn(event,"UNIT_PHASE", "PARTY_MEMBER_DISABLE", "PARTY_MEMBER_ENABLE", "UNIT_THREAT_SITUATION_UPDATE", "INCOMING_RESURRECT_CHANGED", "INCOMING_SUMMON_CHANGED") then
         updateAwayData(self)
     elseif event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" or event == "UNIT_PHASE" then
@@ -531,6 +571,24 @@ local function CreatePartyPetFrame(frame, i)
     local unit = frame.unit == "player" and "pet" or "partypet" .. (i - (settings.showPlayer and 1 or 0))
     local f = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, "GwPartyPetFrame")
 
+    local hg = f.healthContainer
+    f.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
+    f.antiHeal = hg.healPrediction.absorbbg.health.antiHeal
+    f.health = hg.healPrediction.absorbbg.health
+    f.absorbbg = hg.healPrediction.absorbbg
+    f.healPrediction = hg.healPrediction
+    f.healthString = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+
+    GW.hookStatusbarBehaviour(f.absorbOverlay,true)
+    GW.hookStatusbarBehaviour(f.antiHeal,true)
+    GW.hookStatusbarBehaviour(f.health,true)
+    GW.hookStatusbarBehaviour(f.absorbbg,true)
+    GW.hookStatusbarBehaviour(f.healPrediction,false)
+
+    f.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
+    f.absorbbg:SetStatusBarColor(1,1,1,0.66)
+    f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
+
     f:SetAttribute("*type1", "target")
     f:SetAttribute("*type2", "togglemenu")
     f:SetAttribute("unit", unit)
@@ -545,9 +603,6 @@ local function CreatePartyPetFrame(frame, i)
         RegisterStateDriver(f, "visibility", "hide")
     end
 
-    f.healthbar = f.predictionbar.healthbar
-    f.healthstring = f.healthbar.healthstring
-
     f:ClearAllPoints()
     f:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 15, -17)
 
@@ -560,10 +615,8 @@ local function CreatePartyPetFrame(frame, i)
 
     AddToClique(f)
 
-    f.healthbar.spark:SetVertexColor(COLOR_FRIENDLY[1].r, COLOR_FRIENDLY[1].g, COLOR_FRIENDLY[1].b)
+    f.health:SetStatusBarColor(COLOR_FRIENDLY[1].r, COLOR_FRIENDLY[1].g, COLOR_FRIENDLY[1].b)
 
-    f.healthbar.animationName = unit .. "animation"
-    f.healthbar.animationValue = 0
 
     f:SetScript("OnEvent", party_OnEvent)
 
@@ -583,6 +636,8 @@ local function CreatePartyPetFrame(frame, i)
     f:RegisterUnitEvent("UNIT_MAXPOWER", unit)
     f:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)
     f:RegisterUnitEvent("UNIT_HEAL_PREDICTION", unit)
+    f:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED",unit)
+    f:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED",unit)
 
     -- create de/buff frames
     f.buffFrames = {}
@@ -621,12 +676,28 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     local registerUnit = isPlayer and "player" or "party" .. (i - (settings.showPlayer and 1 or 0))
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, "GwPartyFrame")
 
+    local hg = frame.healthContainer
+    frame.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
+    frame.antiHeal = hg.healPrediction.absorbbg.health.antiHeal
+    frame.health = hg.healPrediction.absorbbg.health
+    frame.absorbbg = hg.healPrediction.absorbbg
+    frame.healPrediction = hg.healPrediction
+    frame.healthString = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+
+    GW.hookStatusbarBehaviour(frame.absorbOverlay,true)
+    GW.hookStatusbarBehaviour(frame.antiHeal,true)
+    GW.hookStatusbarBehaviour(frame.health,true)
+    GW.hookStatusbarBehaviour(frame.absorbbg,true)
+    GW.hookStatusbarBehaviour(frame.healPrediction,false)
+
+    frame.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
+    frame.absorbbg:SetStatusBarColor(1,1,1,0.66)
+    frame.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
+
     frame.name:SetFont(UNIT_NAME_FONT, 12)
     frame.name:SetShadowOffset(-1, -1)
     frame.name:SetShadowColor(0, 0, 0, 1)
     frame.level:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINED")
-    frame.healthbar = frame.predictionbar.healthbar
-    frame.healthstring = frame.healthbar.healthstring
 
     frame.unit = registerUnit
     frame.guid = UnitGUID(frame.unit)
@@ -660,10 +731,8 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
 
     AddToClique(frame)
 
-    frame.healthbar.spark:SetVertexColor(COLOR_FRIENDLY[1].r, COLOR_FRIENDLY[1].g, COLOR_FRIENDLY[1].b)
+    frame.health:SetStatusBarColor(COLOR_FRIENDLY[1].r, COLOR_FRIENDLY[1].g, COLOR_FRIENDLY[1].b)
 
-    frame.healthbar.animationName = registerUnit .. "animation"
-    frame.healthbar.animationValue = 0
 
     frame:SetScript("OnEvent", party_OnEvent)
 
@@ -688,6 +757,8 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", registerUnit)
+    frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
+    frame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", registerUnit)
 

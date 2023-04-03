@@ -30,6 +30,36 @@ GW.AddForProfiling("unitframes", "normalUnitFrame_OnEnter", normalUnitFrame_OnEn
 
 local function createNormalUnitFrame(ftype, revert)
     local f = CreateFrame("Button", ftype, UIParent, revert and "GwNormalUnitFrameInvert" or "GwNormalUnitFrame")
+    local hg = f.healthContainer
+    f.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
+    f.antiHeal = hg.healPrediction.absorbbg.health.antiHeal
+    f.health = hg.healPrediction.absorbbg.health
+    f.absorbbg = hg.healPrediction.absorbbg
+    f.healPrediction = hg.healPrediction
+    f.healthString = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+
+
+    GW.hookStatusbarBehaviour(f.absorbOverlay,true)
+    GW.hookStatusbarBehaviour(f.antiHeal,true)
+    GW.hookStatusbarBehaviour(f.health,true)
+    GW.hookStatusbarBehaviour(f.absorbbg,true)
+    GW.hookStatusbarBehaviour(f.healPrediction,false)
+    GW.hookStatusbarBehaviour(f.castingbarNormal,false)
+    GW.hookStatusbarBehaviour(f.powerbar,true)
+
+    f.absorbOverlay.customMaskSize = 64
+    f.antiHeal.customMaskSize = 64
+    f.health.customMaskSize = 64
+    f.absorbbg.customMaskSize = 64
+    f.healPrediction.customMaskSize = 64
+    f.castingbarNormal.customMaskSize = 64
+    f.powerbar.customMaskSize = 64
+
+    f.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
+    f.absorbbg:SetStatusBarColor(1,1,1,0.66)
+    f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
+
+
 
     f.frameInvert = revert
 
@@ -50,6 +80,12 @@ local function createNormalUnitFrame(ftype, revert)
     f.castingString:SetFont(UNIT_NAME_FONT, 12)
     f.castingString:SetShadowOffset(1, -1)
 
+    f.castingbarNormal.castingString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingbarNormal.castingString:SetShadowOffset(1, -1)
+
+    f.castingbarNormal.castingTimeString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingbarNormal.castingTimeString:SetShadowOffset(1, -1)
+
     f.castingTimeString:SetFont(UNIT_NAME_FONT, 12)
     f.castingTimeString:SetShadowOffset(1, -1)
 
@@ -59,7 +95,7 @@ local function createNormalUnitFrame(ftype, revert)
 
     f.healthValue = 0
 
-    f.barWidth = 212
+    f.barWidth = 214
 
     f:SetScript("OnEnter", normalUnitFrame_OnEnter)
     f:SetScript("OnLeave", GameTooltip_Hide)
@@ -71,6 +107,35 @@ GW.AddForProfiling("unitframes", "createNormalUnitFrame", createNormalUnitFrame)
 
 local function createNormalUnitFrameSmall(ftype)
     local f = CreateFrame("Button", ftype, UIParent, "GwNormalUnitFrameSmall")
+    local hg = f.healthContainer
+    f.absorbOverlay = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay
+    f.antiHeal = hg.healPrediction.absorbbg.health.antiHeal
+    f.health = hg.healPrediction.absorbbg.health
+    f.absorbbg = hg.healPrediction.absorbbg
+    f.healPrediction = hg.healPrediction
+    f.healthString = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
+
+
+    GW.hookStatusbarBehaviour(f.absorbOverlay,true)
+    GW.hookStatusbarBehaviour(f.antiHeal,true)
+    GW.hookStatusbarBehaviour(f.health,true)
+    GW.hookStatusbarBehaviour(f.absorbbg,true)
+    GW.hookStatusbarBehaviour(f.healPrediction,false)
+    GW.hookStatusbarBehaviour(f.castingbarNormal,false)
+    GW.hookStatusbarBehaviour(f.powerbar,true)
+
+    f.absorbOverlay.customMaskSize = 64
+    f.antiHeal.customMaskSize = 64
+    f.health.customMaskSize = 64
+    f.absorbbg.customMaskSize = 64
+    f.healPrediction.customMaskSize = 64
+    f.castingbarNormal.customMaskSize = 64
+    f.powerbar.customMaskSize = 64
+
+    f.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
+    f.absorbbg:SetStatusBarColor(1,1,1,0.66)
+    f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
+
 
     f.healthString:SetFont(UNIT_NAME_FONT, 11)
     f.healthString:SetShadowOffset(1, -1)
@@ -86,9 +151,15 @@ local function createNormalUnitFrameSmall(ftype)
     f.castingString:SetFont(UNIT_NAME_FONT, 12)
     f.castingString:SetShadowOffset(1, -1)
 
+    f.castingbarNormal.castingString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingbarNormal.castingString:SetShadowOffset(1, -1)
+
+    f.castingbarNormal.castingTimeString:SetFont(UNIT_NAME_FONT, 12)
+    f.castingbarNormal.castingTimeString:SetShadowOffset(1, -1)
+
     f.healthValue = 0
 
-    f.barWidth = 147
+    f.barWidth = 149
 
     f:SetScript("OnEnter", normalUnitFrame_OnEnter)
     f:SetScript("OnLeave", GameTooltip_Hide)
@@ -120,10 +191,11 @@ local function updateHealthbarColor(self)
         local _, englishClass = UnitClass(self.unit)
         local color = GWGetClassColor(englishClass, true)
 
-        self.healthbar:SetVertexColor(color.r, color.g, color.b, color.a)
-        self.healthbarSpark:SetVertexColor(color.r, color.g, color.b, color.a)
-        self.healthbarFlash:SetVertexColor(color.r, color.g, color.b, color.a)
-        self.healthbarFlashSpark:SetVertexColor(color.r, color.g, color.b, color.a)
+        self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
+      --  self.healthbar:SetVertexColor(color.r, color.g, color.b, color.a)
+      -- self.healthbarSpark:SetVertexColor(color.r, color.g, color.b, color.a)
+      --  self.healthbarFlash:SetVertexColor(color.r, color.g, color.b, color.a)
+      --  self.healthbarFlashSpark:SetVertexColor(color.r, color.g, color.b, color.a)
 
         self.nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
     else
@@ -138,10 +210,11 @@ local function updateHealthbarColor(self)
         if UnitIsTapDenied(self.unit) then
             nameColor = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
         end
-        self.healthbar:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
-        self.healthbarSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
-        self.healthbarFlash:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
-        self.healthbarFlashSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+        self.health:SetStatusBarColor(nameColor.r, nameColor.g, nameColor.b, 1)
+    --    self.healthbar:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+    --    self.healthbarSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+    --    self.healthbarFlash:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
+    --    self.healthbarFlashSpark:SetVertexColor(nameColor.r, nameColor.g, nameColor.b, 1)
         self.nameString:SetTextColor(nameColor.r, nameColor.g, nameColor.b, 1)
     end
 
@@ -362,6 +435,11 @@ end
 GW.AddForProfiling("unitframes", "unitFrameData", unitFrameData)
 
 local function normalCastBarAnimation(self, powerPrec)
+
+  self.castingbarNormal:SetFillAmount(powerPrec)
+  --[[
+
+
     local powerBarWidth = self.barWidth
     self.castingbarNormal:SetWidth(math.max(1, powerPrec * powerBarWidth))
     self.castingbarNormalSpark:SetWidth(math.min(15, math.max(1, powerPrec * powerBarWidth)))
@@ -383,6 +461,7 @@ local function normalCastBarAnimation(self, powerPrec)
             end
         end
     end
+      ]]
 end
 GW.AddForProfiling("unitframes", "normalCastBarAnimation", normalCastBarAnimation)
 
@@ -432,9 +511,9 @@ local function hideCastBar(self)
     self.castingbarSpark:Hide()
 
     self.castingbarNormal:Hide()
-    self.castingbarNormalSpark:Hide()
+
     self.castingbarBackground:ClearAllPoints()
-    self.castingbarBackground:SetPoint("TOPLEFT", self.powerbarBackground, "BOTTOMLEFT", self.type == "NormalTarget" and -2 or 0, 19)
+    self.castingbarBackground:SetPoint("TOPLEFT", self.powerbar, "BOTTOMLEFT", self.type == "NormalTarget" and -2 or 0, 19)
 
     if self.portrait ~= nil then
         setUnitPortrait(self)
@@ -469,7 +548,7 @@ local function updateCastValues(self)
         barHighlightTexture = GW.CASTINGBAR_TEXTURES.GREEN.HIGHLIGHT
     end
 
-    self.castingbarNormal:SetTexCoord(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
+    --WIP self.castingbarNormal:SetTexCoord(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
 
     local isChargeSpell = numStages and numStages > 0 or false
 
@@ -492,7 +571,7 @@ local function updateCastValues(self)
     startTime = startTime / 1000
     endTime = endTime / 1000
 
-    self.castingString:SetText(name)
+
 
     if texture ~= nil and self.portrait ~= nil and (self.activePortrait == nil or self.activePortrait ~= texture) then
         self.portrait:SetTexture(texture)
@@ -501,24 +580,34 @@ local function updateCastValues(self)
 
     self.castingbarBackground:Show()
     self.castingbarBackground:ClearAllPoints()
-    self.castingbarBackground:SetPoint("TOPLEFT", self.powerbarBackground, "BOTTOMLEFT", self.type == "NormalTarget" and -2 or 0, -1)
+    self.castingbarBackground:SetPoint("TOPLEFT", self.powerbar, "BOTTOMLEFT", self.type == "NormalTarget" and -2 or 0, -1)
     self.castingString:Show()
     if self.castingTimeString then
         self.castingTimeString:Show()
     end
 
     if notInterruptible then
+        self.castingString:SetText(name)
         self.castingbarNormal:Hide()
-        self.castingbarNormalSpark:Hide()
 
         self.castingbar:Show()
         self.castingbarSpark:Show()
+
+        self.castingString:Show();
+        if self.castingTimeString~=nil then
+          self.castingTimeString:Show();
+        end
     else
+        self.castingbarNormal.castingString:SetText(name)
+        self.castingString:Hide();
+        if self.castingTimeString~=nil then
+          self.castingTimeString:Hide();
+        end
+
         self.castingbar:Hide()
         self.castingbarSpark:Hide()
 
         self.castingbarNormal:Show()
-        self.castingbarNormalSpark:Show()
     end
 
     if self.reverseChanneling then
@@ -535,7 +624,12 @@ local function updateCastValues(self)
         endTime - startTime,
         function()
             if GetSetting("target_CASTINGBAR_DATA") and self.castingTimeString then
-                self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
+              if notInterruptible then
+                  self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
+              else
+                  self.castingbarNormal.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
+              end
+
             end
             local p = self.isChanneling and (1 - animations["GwUnitFrame" .. self.unit .. "Cast"].progress) or animations["GwUnitFrame" .. self.unit .. "Cast"].progress
 
@@ -550,7 +644,7 @@ local function updateCastValues(self)
 end
 GW.AddForProfiling("unitframes", "updateCastValues", updateCastValues)
 
-local function updatePowerValues(self, hideAt0)
+local function updatePowerValues(self, hideAt0,event)
     local powerType, powerToken, _ = UnitPowerType(self.unit)
     local power = UnitPower(self.unit, powerType)
     local powerMax = UnitPowerMax(self.unit, powerType)
@@ -561,19 +655,21 @@ local function updatePowerValues(self, hideAt0)
     end
 
     if power <= 0 and hideAt0 then
-        self.powerbarBackground:Hide()
         self.powerbar:Hide()
     else
-        self.powerbarBackground:Show()
         self.powerbar:Show()
     end
 
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
-        self.powerbar:SetVertexColor(pwcolor.r, pwcolor.g, pwcolor.b)
+        self.powerbar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
 
-    self.powerbar:SetWidth(math.min(self.barWidth - 1, math.max(1, self.barWidth * powerPrecentage)))
+    if event and event == "UNIT_TARGET" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_TARGET_CHANGED" then
+      self.powerbar:ForceFIllAmount(powerPrecentage)
+    else
+      self.powerbar:SetFillAmount(powerPrecentage)
+    end
 end
 GW.updatePowerValues = updatePowerValues
 GW.AddForProfiling("unitframes", "updatePowerValues", updatePowerValues)
@@ -592,73 +688,59 @@ end
 GW.AddForProfiling("unitframes", "updateThreatValues", updateThreatValues)
 
 local function updateHealthValues(self, event)
-    local health = UnitHealth(self.unit)
-    local healthMax = UnitHealthMax(self.unit)
-    local absorb = UnitGetTotalAbsorbs(self.unit)
-    local prediction = UnitGetIncomingHeals(self.unit) or 0
-    local healthPrecentage = 0
-    local absorbPrecentage = 0
-    local predictionPrecentage = 0
+  local health = UnitHealth(self.unit)
+  local healthMax = UnitHealthMax(self.unit)
+  local absorb = UnitGetTotalAbsorbs(self.unit)
+  local prediction = UnitGetIncomingHeals(self.unit) or 0
+  local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
+  local absorbPrecentage = 0
+  local absorbAmount = 0
+  local absorbAmount2 = 0
+  local predictionPrecentage = 0
+  local healAbsorbPrecentage = 0
+  local healthPrecentage = 0
 
     if health > 0 and healthMax > 0 then
         healthPrecentage = health / healthMax
     end
 
+
     if absorb > 0 and healthMax > 0 then
         absorbPrecentage = absorb / healthMax
+        absorbAmount = healthPrecentage + absorbPrecentage
+        absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
     end
 
-    if self.healthTextThroth == nil then
-        self.healthTextThroth = 0
-    end
+  if prediction > 0 and healthMax > 0 then
+      predictionPrecentage = (prediction / healthMax) + healthPrecentage
+  end
+  if healAbsorb > 0 and healthMax > 0 then
+      healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
+  end
+  self.healPrediction:SetFillAmount( predictionPrecentage)
 
-    if prediction > 0 and healthMax > 0 then
-        predictionPrecentage = prediction / healthMax
-    end
 
-    local animationSpeed
+
+    self.health.barOnUpdate = function()
+      updateHealthTextString(self, health, self.health:GetFillAmount())
+    end
 
     if event == "UNIT_TARGET" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_TARGET_CHANGED" then
-        animationSpeed = 0
-        self.healthValue = healthPrecentage
-        StopAnimation(self:GetName() .. self.unit)
+        self.health:ForceFIllAmount(healthPrecentage)
+        self.absorbbg:ForceFIllAmount(absorbAmount)
+        self.absorbOverlay:ForceFIllAmount(absorbAmount2)
+        self.antiHeal:ForceFIllAmount(healAbsorbPrecentage)
     else
-        animationSpeed = Diff(self.healthValue, healthPrecentage)
-        animationSpeed = math.min(1, math.max(0.2, 2 * animationSpeed))
+        self.health:SetFillAmount(healthPrecentage)
+        self.absorbbg:SetFillAmount(absorbAmount)
+        self.absorbOverlay:SetFillAmount(absorbAmount2)
+        self.antiHeal:SetFillAmount(healAbsorbPrecentage)
     end
 
-    -- absorb calc got inlined here because nothing else uses this
-    local absbarbg = self.absorbbarbg
-    local absbar = self.absorbbar
-    if absorb == 0 then
-        -- very common case; short-circuit this for performance
-        absbarbg:SetAlpha(0.0)
-        absbar:SetAlpha(0.0)
-    else
-        local absorbAmount = healthPrecentage + absorbPrecentage
-        local absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
 
-        absbarbg:SetWidth(math.min((self.barWidth - 1), math.max(1, self.barWidth * absorbAmount)))
-        absbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * absorbAmount2)))
 
-        absbarbg:SetTexCoord(0, math.min(1, 1 * absorbAmount), 0, 1)
-        absbar:SetTexCoord(0, math.min(1, 1 * absorbAmount2), 0, 1)
+--[[
 
-        absbarbg:SetAlpha(math.max(0, math.min(1, (1 * (absorbPrecentage / 0.1)))))
-        absbar:SetAlpha(math.max(0, math.min(1, (1 * (absorbPrecentage / 0.1)))))
-    end
-
-    --prediction calc
-    local predictionbar = self.predictionbar
-    if prediction == 0 then
-        predictionbar:SetAlpha(0.0)
-    else
-        local predictionAmount = healthPrecentage + predictionPrecentage
-
-        predictionbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * predictionAmount)))
-        predictionbar:SetTexCoord(0, math.min(1, 1 * predictionAmount), 0, 1)
-        predictionbar:SetAlpha(math.max(0, math.min(1, (1 * (predictionPrecentage / 0.1)))))
-    end
 
     healthBarAnimation(self, healthPrecentage, true)
     if animationSpeed == 0 then
@@ -688,6 +770,8 @@ local function updateHealthValues(self, event)
             end
         )
     end
+  ]]
+
 end
 GW.AddForProfiling("unitframes", "updateHealthValues", updateHealthValues)
 
@@ -717,8 +801,8 @@ local function target_OnEvent(self, event, unit)
         if (ttf) then unitFrameData(ttf) end
         updateHealthValues(self, event)
         if (ttf) then updateHealthValues(ttf, event) end
-        updatePowerValues(self)
-        if (ttf) then updatePowerValues(ttf) end
+        updatePowerValues(self,nil,event)
+        if (ttf) then updatePowerValues(ttf,nil,event) end
         updateCastValues(self)
         if (ttf) then updateCastValues(ttf) end
         updateRaidMarkers(self)
@@ -743,7 +827,7 @@ local function target_OnEvent(self, event, unit)
             if UnitExists("targettarget") then
                 unitFrameData(ttf)
                 updateHealthValues(ttf, event)
-                updatePowerValues(ttf)
+                updatePowerValues(ttf,nil,event)
                 updateCastValues(ttf)
                 updateRaidMarkers(ttf)
             end
@@ -767,7 +851,7 @@ local function target_OnEvent(self, event, unit)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
-            updatePowerValues(self)
+            updatePowerValues(self,nil,event)
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_EMPOWER_START") then
             updateCastValues(self)
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_EMPOWER_STOP") then
@@ -787,8 +871,8 @@ local function focus_OnEvent(self, event, unit)
         if (ttf) then unitFrameData(ttf) end
         updateHealthValues(self, event)
         if (ttf) then updateHealthValues(ttf, event) end
-        updatePowerValues(self)
-        if (ttf) then updatePowerValues(ttf) end
+        updatePowerValues(self,nil,event)
+        if (ttf) then updatePowerValues(ttf,nil,event) end
         updateCastValues(self)
         if (ttf) then updateCastValues(ttf) end
         updateRaidMarkers(self)
@@ -813,7 +897,7 @@ local function focus_OnEvent(self, event, unit)
             if UnitExists("focustarget") then
                 unitFrameData(ttf)
                 updateHealthValues(ttf, event)
-                updatePowerValues(ttf)
+                updatePowerValues(ttf,nil,event)
                 updateCastValues(ttf)
                 updateRaidMarkers(ttf)
             end
@@ -826,7 +910,7 @@ local function focus_OnEvent(self, event, unit)
         elseif IsIn(event, "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEALTH", "UNIT_HEAL_PREDICTION") then
             updateHealthValues(self, event)
         elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT") then
-            updatePowerValues(self)
+            updatePowerValues(self,nil,event)
         elseif IsIn(event, "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_EMPOWER_START") then
             updateCastValues(self)
         elseif IsIn(event, "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_INTERRUPTED", "UNIT_SPELLCAST_FAILED", "UNIT_SPELLCAST_EMPOWER_STOP") then
@@ -853,7 +937,7 @@ local function unittarget_OnUpdate(self, elapsed)
 
     updateRaidMarkers(self)
     updateHealthValues(self, "UNIT_TARGET")
-    updatePowerValues(self)
+    updatePowerValues(self,nil,"UNIT_TARGET")
     updateCastValues(self)
 end
 GW.AddForProfiling("unitframes", "unittarget_OnUpdate", unittarget_OnUpdate)
@@ -924,6 +1008,8 @@ local function LoadTarget()
     if NewUnitFrame.frameInvert then
         NewUnitFrame.altBg.backgroundOverlay:SetTexCoord(1, 0, 0, 1)
         NewUnitFrame.altBg.backgroundOverlay:SetPoint("CENTER", -15, -5)
+        NewUnitFrame.healthContainer:ClearAllPoints()
+        NewUnitFrame.healthContainer:SetPoint("RIGHT",NewUnitFrame.healthbarBackground,"RIGHT",-1,0)
     else
         NewUnitFrame.altBg:SetAllPoints(NewUnitFrame)
     end

@@ -110,14 +110,51 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     end
     frame.parent = parent
 
+
+    frame.absorbbg = frame.healthContainer.healPrediction.absorbbg
+    frame.absorbOverlay = frame.healthContainer.healPrediction.absorbbg.health.antiHeal.absorbOverlay
+    frame.predictionbar = frame.healthContainer.healPrediction
+    frame.healthbar = frame.healthContainer.healPrediction.absorbbg.health
+    frame.antiHeal = frame.healthContainer.healPrediction.absorbbg.health.antiHeal
+
+    frame.absorbbg.customMaskSize = 32
+    frame.absorbOverlay.customMaskSize = 32
+    frame.predictionbar.customMaskSize = 32
+    frame.healthbar.customMaskSize = 32
+    frame.antiHeal.customMaskSize = 32
+
+    frame.absorbbg.strechMask = true
+    frame.absorbOverlay.strechMask = true
+    frame.predictionbar.strechMask = true
+    frame.healthbar.strechMask = true
+    frame.antiHeal.strechMask = true
+
+    frame.data = frame.absorbOverlay.data
     frame.name = frame.data.name
-    frame.healthstring = frame.data.healthstring
     frame.classicon = frame.data.classicon
     frame.summonResurrectionIcon = frame.data.summonResurrectionIcon
-    frame.healthbar = frame.predictionbar.healthbar
-    frame.absorbbar = frame.healthbar.absorbbar
-    frame.aggroborder = frame.absorbbar.aggroborder
+    frame.healthstring = frame.data.healthstring
+
+    frame.indicatorTOPLEFT = frame.absorbOverlay.indicatorTOPLEFT
+    frame.indicatorTOP = frame.absorbOverlay.indicatorTOP
+    frame.indicatorTOPRIGHT = frame.absorbOverlay.indicatorTOPRIGHT
+    frame.indicatorLEFT = frame.absorbOverlay.indicatorLEFT
+    frame.indicatorCENTER = frame.absorbOverlay.indicatorCENTER
+    frame.indicatorRIGHT = frame.absorbOverlay.indicatorRIGHT
+
+    frame.aggroborder = frame.absorbOverlay.aggroborder
     frame.nameNotLoaded = false
+
+    GW.hookStatusbarBehaviour(frame.absorbOverlay,true)
+    GW.hookStatusbarBehaviour(frame.antiHeal,true)
+    GW.hookStatusbarBehaviour(frame.healthbar,true)
+    GW.hookStatusbarBehaviour(frame.absorbbg,true)
+    GW.hookStatusbarBehaviour(frame.predictionbar,false)
+
+    frame.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
+    frame.absorbbg:SetStatusBarColor(1,1,1,0.66)
+    frame.predictionbar:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
+
 
     if settings.fontEnabled then -- for any reason blizzard is not supporting UTF8 if we set this font
         frame.name:SetFont(UNIT_NAME_FONT, 12)
@@ -129,11 +166,6 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     frame.healthstring:SetShadowOffset(-1, -1)
     frame.healthstring:SetShadowColor(0, 0, 0, 1)
 
-    hooksecurefunc(frame.healthbar, "SetStatusBarColor",
-        function(_, r, g, b, a)
-            frame.healthbar.spark:SetVertexColor(r, g, b, a)
-        end
-    )
 
     frame.unit = unit
     frame.guid = UnitGUID(frame.unit)
@@ -204,6 +236,7 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     frame:RegisterUnitEvent("UNIT_POWER_FREQUENT", frame.unit)
     frame:RegisterUnitEvent("UNIT_MAXPOWER", frame.unit)
     frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", frame.unit)
+    frame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", frame.unit)
     frame:RegisterUnitEvent("UNIT_PHASE", frame.unit)
     frame:RegisterUnitEvent("UNIT_AURA", frame.unit)
     frame:RegisterUnitEvent("UNIT_LEVEL", frame.unit)
@@ -244,23 +277,44 @@ local function GridUpdateRaidMarkers(self, profile)
 end
 GW.GridUpdateRaidMarkers = GridUpdateRaidMarkers
 
+
 local function GridSetAbsorbAmount(self)
     local healthMax = UnitHealthMax(self.unit)
+    local health = UnitHealth(self.unit)
     local absorb = UnitGetTotalAbsorbs(self.unit)
+    local healthPrecentage = 0
     local absorbPrecentage = 0
-
-    if (absorb ~= nil or absorb == 0) and healthMax ~= 0 then
-        absorbPrecentage = math.min(absorb / healthMax, 1)
+    local absorbAmount = 0
+    local absorbAmount2 =0
+    if healthMax > 0 then
+        healthPrecentage = health / healthMax
     end
-    self.absorbbar:SetValue(absorbPrecentage)
+
+    if absorb > 0 and healthMax > 0 then
+        absorbPrecentage = absorb / healthMax
+        absorbAmount = healthPrecentage + absorbPrecentage
+        absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
+    end
+    self.absorbbg:SetFillAmount(absorbAmount)
+    self.absorbOverlay:SetFillAmount(absorbAmount2)
 end
 GW.GridSetAbsorbAmount = GridSetAbsorbAmount
 
 local function GridSetHealPrediction(self,predictionPrecentage)
-    self.predictionbar:SetValue(predictionPrecentage)
+    self.predictionbar:ForceFIllAmount(predictionPrecentage)
 end
 GW.GridSetHealPrediction = GridSetHealPrediction
 
+local function GridSetHealAbsorb(self,event)
+  local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
+  local healthMax = UnitHealthMax(self.unit)
+  local healAbsorbPrecentage = 0
+  if healAbsorb > 0 and healthMax > 0 then
+      healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
+  end
+  self.antiHeal:SetFillAmount(healAbsorbPrecentage)
+end
+GW.GridSetHealAbsorb = GridSetHealAbsorb
 
 local function setHealthValue(self, healthCur, healthMax, healthPrec, profile)
     local healthstring = ""
@@ -294,12 +348,14 @@ local function GridSetHealth(self, profile)
     if healthMax > 0 then
         healthPrec = health / healthMax
     end
-    if (self.healPredictionAmount ~= nil or self.healPredictionAmount == 0) and healthMax ~= 0 then
+    if self.healPredictionAmount ~= nil and self.healPredictionAmount ~= 0 and healthMax ~= 0 then
         predictionPrecentage = math.min(healthPrec + (self.healPredictionAmount / healthMax), 1)
     end
     GW.GridSetHealPrediction(self,predictionPrecentage)
     setHealthValue(self, health, healthMax, healthPrec, profile)
-    GW.Bar(self.healthbar, healthPrec)
+    self.healthbar:SetFillAmount(healthPrec)
+    GridSetAbsorbAmount(self);
+    GridSetHealAbsorb(self);
 end
 GW.GridSetHealth = GridSetHealth
 
@@ -880,6 +936,9 @@ local function GridUpdatePower(self)
 end
 GW.GridUpdatePower = GridUpdatePower
 
+
+
+
 local function GridUpdateFrameData(self, index, profile)
     if not UnitExists(self.unit) then
         return
@@ -890,9 +949,11 @@ local function GridUpdateFrameData(self, index, profile)
 
     local health = UnitHealth(self.unit)
     local healthMax = UnitHealthMax(self.unit)
-    local healthPrec = 0
+    local healthPrecentage = 0
     local absorb = UnitGetTotalAbsorbs(self.unit)
     local absorbPrecentage = 0
+    local absorbAmount = 0
+    local absorbAmount2 =0
     local prediction = UnitGetIncomingHeals(self.unit) or 0
     local predictionPrecentage = 0
 
@@ -901,20 +962,23 @@ local function GridUpdateFrameData(self, index, profile)
     local powerPrecentage = 0
 
     if healthMax > 0 then
-        healthPrec = health / healthMax
+        healthPrecentage = health / healthMax
     end
     if absorb > 0 and healthMax > 0 then
-        absorbPrecentage = math.min(absorb / healthMax, 1)
+        absorbPrecentage = absorb / healthMax
+        absorbAmount = healthPrecentage + absorbPrecentage
+        absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
     end
     if prediction > 0 and healthMax > 0 then
-        predictionPrecentage = math.min((healthPrec) + (prediction / healthMax), 1)
+        predictionPrecentage = math.min((healthPrecentage) + (prediction / healthMax), 1)
     end
     if powerMax > 0 then
         powerPrecentage = power / powerMax
     end
     self.manabar:SetValue(powerPrecentage)
-    GW.Bar(self.healthbar, healthPrec)
-    self.absorbbar:SetValue(absorbPrecentage)
+    self.healthbar:SetFillAmount(healthPrecentage)
+    self.absorbbg:SetFillAmount(absorbAmount)
+    self.absorbOverlay:SetFillAmount(absorbAmount2)
     self.predictionbar:SetValue(predictionPrecentage)
 
     local _, powerToken = UnitPowerType(self.unit)
@@ -922,7 +986,7 @@ local function GridUpdateFrameData(self, index, profile)
         local pwcolor = PowerBarColorCustom[powerToken]
         self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
-
+    GW.GridSetHealAbsorb(self);
     GW.GridSetUnitName(self, profile)
     GW.GridUpdateAwayData(self, profile)
     GW.GridUpdateAuras(self, profile)

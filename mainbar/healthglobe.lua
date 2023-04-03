@@ -7,6 +7,20 @@ local IsIn = GW.IsIn
 local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
 local GetSetting = GW.GetSetting
 
+
+local function flashAnimation(self,delta)
+  if t==nil then t=0 end
+  local speed  =  max(1,4 * (1 - (self.healthPrecentage / 0.65)))
+  t = t + (delta) * speed
+  local c =  0.4*math.abs(math.sin(t))
+  self.border.normal:SetVertexColor(c,c,c,1)
+
+  if self.healthPrecentage>0.65 and c<0.2 then
+    self:SetScript("OnUpdate",nil);
+    self.border.normal:SetVertexColor(0,0,0,1)
+  end
+end
+
 local function repair_OnEvent(self, event)
     if event ~= "PLAYER_ENTERING_WORLD" and not GW.inWorld then
         return
@@ -41,103 +55,45 @@ local function repair_OnEvent(self, event)
 end
 GW.AddForProfiling("healthglobe", "repair_OnEvent", repair_OnEvent)
 
-local Y_FULL = 47
-local Y_EMPTY = -42
-local Y_RANGE = Y_FULL - Y_EMPTY
-local X_MAX = 20
-local X_MIN = -20
+
 local function updateHealthData(self, anims)
     local health = UnitHealth("Player")
     local healthMax = UnitHealthMax("Player")
     local absorb = UnitGetTotalAbsorbs("Player")
     local prediction = UnitGetIncomingHeals("Player") or 0
+    local healAbsorb =  UnitGetTotalHealAbsorbs("Player")
+    local absorbPrecentage = 0
+    local absorbAmount = 0
+    local absorbAmount2 = 0
+    local predictionPrecentage = 0
+    local healAbsorbPrecentage = 0
 
-    local health_def = healthMax - health
-    local absorb_over = absorb - health_def
-    if absorb_over < 0 then
-        absorb_over = 0
-    end
-    local absorb_under = absorb - absorb_over
+    local healthPrecentage = health/healthMax
 
-    -- determine how much black (anti) area to mask off
-    local hp = (health + absorb_under) / healthMax
-    local hpy_off = Y_FULL - Y_RANGE * (1 - hp)
-    local hpx_off = ((X_MAX - X_MIN) * (math.random())) + X_MIN
+    self.healthPrecentage = healthPrecentage -- used for animation
+    self.health:SetFillAmount(healthPrecentage - 0.035)
+    self.candy:SetFillAmount(healthPrecentage)
 
-    -- determine how much light (absorb) area to mask off
-    local aup = health / healthMax
-    local auy_off = Y_FULL - Y_RANGE * (1 - aup)
 
-    -- determine how much shield (over absorb) to overlay
-    local ap = min(absorb_over / healthMax, 1) -- only max 1, if ap over is greater then player hp
-    local apy_off = Y_FULL - 7 - Y_RANGE * (1 - ap)
 
-    -- determine how much predicted health to overlay
-    if prediction + health > healthMax then
-        prediction = healthMax - health
-    end
-    local pp = prediction / healthMax
-    local ppy_off = Y_FULL - Y_RANGE * (1 - aup)
-
-    -- set the mask positions for health/absorb; prettily if animating,
-    -- otherwise just force them
-    local anti = self.fill.anti
-    local au = self.fill.absorb_under
-    if anims then
-        -- animate health transition
-        local ag = anti.gwAnimGroup
-        ag:Finish()
-        local _, _, _, _, y = anti:GetPoint()
-        anti:ClearAllPoints()
-        anti:SetPoint("CENTER", self.fill, "CENTER", hpx_off, y)
-        local aa = anti.gwAnim
-        aa.gwXoff = hpx_off
-        aa.gwYoff = hpy_off
-        aa:SetOffset(0, hpy_off - y)
-        ag:Play()
-
-        -- animate absorb under transition
-        local ag2 = au.gwAnimGroup
-        ag2:Finish()
-        local _, _, _, _, y2 = au:GetPoint()
-        au:ClearAllPoints()
-        au:SetPoint("CENTER", self.fill, "CENTER", hpx_off, y2)
-        local aa2 = au.gwAnim
-        aa2.gwXoff = hpx_off
-        aa2.gwYoff = auy_off
-        aa2:SetOffset(0, auy_off - y2)
-        ag2:Play()
-    else
-        -- hard-set positions
-        anti:ClearAllPoints()
-        anti:SetPoint("CENTER", self.fill, "CENTER", hpx_off, hpy_off)
-        au:ClearAllPoints()
-        au:SetPoint("CENTER", self.fill, "CENTER", hpx_off, auy_off)
+    if absorb > 0 and healthMax > 0 then
+        absorbPrecentage = absorb / healthMax
+        absorbAmount = healthPrecentage + absorbPrecentage
+        absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
     end
 
-    local flash = anti.gwFlashGroup
-    if aup < 0.5 and not UnitIsDeadOrGhost("PLAYER") then
-        flash:Play()
-    else
-        flash:Finish()
+    if prediction > 0 and healthMax > 0 then
+        predictionPrecentage = prediction / healthMax
     end
-
-    -- hard-set over-absorb amount; no animation setup for this yet
-    local abov = self.fill.absorb_over
-    abov:ClearAllPoints()
-    abov:SetPoint("CENTER", self.fill, "CENTER", -15, apy_off)
-
-    -- hard-set heal prediction amount; no animation setup for this yet
-    local pred = self.fill.pred
-    if prediction > 0 then
-        local h = (Y_RANGE * pp) - 2
-        pred:ClearAllPoints()
-        pred:SetPoint("CENTER", self.fill, "CENTER", -hpx_off, math.min(ppy_off + h, 41))
-        pred:Show()
-    else
-        pred:Hide()
+    if healAbsorb > 0 and healthMax > 0 then
+        healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
     end
+    self.healPrediction:SetFillAmount(healthPrecentage + predictionPrecentage)
 
+
+    self.absorbbg:SetFillAmount(absorbAmount)
+    self.absorbOverlay:SetFillAmount(absorbAmount2)
+    self.antiHeal:SetFillAmount(healAbsorbPrecentage)
     -- hard-set the text values for health/absorb based on the user settings (%, value or both)
     local hv = ""
     local av = ""
@@ -173,6 +129,10 @@ local function updateHealthData(self, anims)
         self.text_a:Hide()
     else
         self.text_a:Show()
+    end
+
+    if healthPrecentage<0.65 and self:GetScript("OnUpdate")==nil then
+      self:SetScript("OnUpdate",flashAnimation)
     end
 
 end
@@ -296,8 +256,41 @@ local function ToggleHealthglobeSettings()
 end
 GW.ToggleHealthglobeSettings = ToggleHealthglobeSettings
 
+
 local function LoadHealthGlobe()
+
     local hg = CreateFrame("Button", "GW2_PlayerFrame", UIParent, "GwHealthGlobeTmpl")
+
+    hg.absorbOverlay = hg.healPrediction.absorbbg.candy.health.antiHeal.absorbOverlay
+    hg.antiHeal = hg.healPrediction.absorbbg.candy.health.antiHeal
+    hg.health = hg.healPrediction.absorbbg.candy.health
+    hg.candy = hg.healPrediction.absorbbg.candy
+    hg.absorbbg = hg.healPrediction.absorbbg
+
+    hg.text_h = hg.absorbOverlay.text_h
+    hg.text_a = hg.absorbOverlay.text_a
+    hg.repair = hg.absorbOverlay.repair
+
+    GW.hookStatusbarBehaviour(hg.absorbOverlay,true)
+    GW.hookStatusbarBehaviour(hg.antiHeal,true)
+    GW.hookStatusbarBehaviour(hg.health,true)
+    GW.hookStatusbarBehaviour(hg.candy,true)
+    GW.hookStatusbarBehaviour(hg.absorbbg,true)
+    GW.hookStatusbarBehaviour(hg.healPrediction,true)
+
+    hg.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
+    hg.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
+
+    hg.candy:SetOrientation("VERTICAL")
+    hg.absorbOverlay:SetOrientation("VERTICAL")
+    hg.antiHeal:SetOrientation("VERTICAL")
+    hg.candy:SetOrientation("VERTICAL")
+    hg.healPrediction:SetOrientation("VERTICAL")
+    hg.health:SetOrientation("VERTICAL")
+    hg.absorbbg:SetOrientation("VERTICAL")
+
+
+
     GW.RegisterScaleFrame(hg, 1.1)
 
     -- position based on XP bar space and make it movable if your actionbars are off
@@ -326,45 +319,10 @@ local function LoadHealthGlobe()
 
     AddToClique(hg)
 
-    -- setup masking textures
-    for _, v in ipairs(hg.fill.masked) do
-        v:AddMaskTexture(hg.fill.mask)
-    end
 
-    -- setting these values in the XML creates animation glitches
-    -- so we do it here instead
-    hg.fill.maskb:SetPoint("CENTER", hg.fill, "CENTER", 0, 0)
-    hg.fill.maska:SetPoint("CENTER", hg.fill, "CENTER", 0, 0)
 
-    hg.fill.absorb_over:AddMaskTexture(hg.fill.maska)
-    hg.fill.absorb_under:AddMaskTexture(hg.fill.maskb)
-    hg.fill.anti:AddMaskTexture(hg.fill.maskb)
-    hg.fill.pred:AddMaskTexture(hg.fill.maskb)
 
-    -- setup fill animations; this marks off the black/empty space
-    local aag = hg.fill.anti:CreateAnimationGroup()
-    local aa = aag:CreateAnimation("translation")
-    aa:SetDuration(0.2)
-    aa:SetScript("OnFinished", fill_OnFinish)
-    hg.fill.anti.gwAnimGroup = aag
-    hg.fill.anti.gwAnim = aa
 
-    -- flashes the black/empty space (for low health warning)
-    local afg = hg.fill.anti:CreateAnimationGroup()
-    local af = afg:CreateAnimation("alpha")
-    af:SetDuration(0.66)
-    af:SetFromAlpha(1)
-    af:SetToAlpha(0.66)
-    afg:SetLooping("BOUNCE")
-    hg.fill.anti.gwFlashGroup = afg
-
-    -- marks off the light absorb/shield space
-    local aag2 = hg.fill.absorb_under:CreateAnimationGroup()
-    local aa2 = aag2:CreateAnimation("translation")
-    aa2:SetDuration(0.2)
-    aa2:SetScript("OnFinished", fill_OnFinish)
-    hg.fill.absorb_under.gwAnimGroup = aag2
-    hg.fill.absorb_under.gwAnim = aa2
 
     -- set text/font stuff
     hg.hSize = 14
