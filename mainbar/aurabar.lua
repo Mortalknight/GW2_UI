@@ -510,6 +510,59 @@ local function loadAuras(lm)
 
     -- Raise PetBattleFrame
     PetBattleFrame:SetFrameLevel(hb:GetFrameLevel() + 5)
+
+    -- creating a mover for private auras (2 atm) -- TODO: Maybe in a future update there is a skinning way
+    local privateAurasheader = CreateFrame("Frame", "test", UIParent)
+    privateAurasheader:SetSize(80, 40)
+    RegisterMovableFrame(privateAurasheader, GW.L["Private Auras"], "PlayerPrivateAuras", ALL .. ",Blizzard,Aura", nil, {"default", "scaleable"}, true)
+    privateAurasheader:ClearAllPoints()
+    privateAurasheader:SetPoint("TOPLEFT", privateAurasheader.gwMover)
+
+    for i = 1, 2 do
+        local aura = privateAurasheader["privateAuraAnchor" .. i]
+        aura = CreateFrame("Frame", "privateAura" .. i, privateAurasheader, "GwPrivateAuraTmpl")
+        aura.auraIndex = i
+        if i == 1 then
+            aura:SetPoint("TOPRIGHT")
+        else
+            aura:SetPoint("TOPLEFT")
+        end
+        local auraAnchor = {
+            unitToken = "player",
+            auraIndex = aura.auraIndex,
+            -- The parent frame of an aura anchor must have a valid rect with a non-zero
+            -- size. Each private aura will anchor to all points on its parent,
+            -- providing a tooltip when mouseovered.
+            parent = aura,
+            -- An optional cooldown spiral can be configured to represent duration.
+            showCountdownFrame = true,
+            showCountdownNumbers = true,
+            -- An optional icon can be created and shown for the aura. Omitting this
+            -- will display no icon.
+            iconInfo = {
+                iconWidth = aura.status:GetWidth(),
+                iconHeight = aura.status:GetHeight(),
+                iconAnchor = {
+                    point = "CENTER",
+                    relativeTo = aura.status,
+                    relativePoint = "CENTER",
+                    offsetX = 0,
+                    offsetY = 0,
+                },
+            },
+            -- An optional icon duration fontstring can also be configured.
+            durationAnchor = {
+                point = "TOP",
+                relativeTo = aura.status,
+                relativePoint = "BOTTOM",
+                offsetX = 0,
+                offsetY = -4,
+            },
+        }
+        -- Anchors can be removed (and the aura hidden) via the RemovePrivateAuraAnchor
+        -- API, passing it the anchor index returned from the Add function.
+        aura.anchorIndex = C_UnitAuras.AddPrivateAuraAnchor(auraAnchor)
+    end
 end
 
 local function LoadPlayerAuras(lm)

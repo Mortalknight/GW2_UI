@@ -22,7 +22,7 @@ local function LoadAddonListSkin()
     AddonList.CloseButton:ClearAllPoints()
     AddonList.CloseButton:SetPoint("TOPRIGHT", -5, 0)
 
-    GW.HandleTrimScrollBar(AddonList.ScrollBar)
+    GW.HandleTrimScrollBar(AddonList.ScrollBar, true)
     GW.HandleAchivementsScrollControls(AddonList)
 
     hooksecurefunc("AddonList_Update", function()

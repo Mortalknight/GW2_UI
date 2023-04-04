@@ -836,7 +836,7 @@ local function LoadMicroMenu()
 
     UpdateSettings()
 
-    MicroMenu:GwKillEditMode()
+    MicroMenuContainer:GwKillEditMode()
 
     -- create our micro button container frame
     local mbf = CreateFrame("Frame", "Gw2MicroBarFrame", UIParent, "GwMicroButtonFrameTmpl")

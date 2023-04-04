@@ -455,9 +455,9 @@ local function LoadGossipSkin()
 
     local GossipFrame = GossipFrame
 
-    ItemTextScrollFrameScrollBar:GwSkinScrollBar()
-    ItemTextScrollFrame:GwSkinScrollFrame()
-    GW.HandleTrimScrollBar(GossipFrame.GreetingPanel.ScrollBar)
+    GW.HandleTrimScrollBar(ItemTextScrollFrame.ScrollBar, true)
+    GW.HandleAchivementsScrollControls(ItemTextScrollFrame)
+    GW.HandleTrimScrollBar(GossipFrame.GreetingPanel.ScrollBar, true)
     GW.HandleAchivementsScrollControls(GossipFrame.GreetingPanel)
     GossipFrame.GreetingPanel.GoodbyeButton:Hide()
     GossipFrame.GreetingPanel.GoodbyeButton:GwStripTextures()
@@ -666,8 +666,10 @@ local function LoadGossipSkin()
         end)
         if numButtons > 0 then
           GossipFrame.ListBackground:Show()
+          GossipFrame.GreetingPanel:Show()
         else
           GossipFrame.ListBackground:Hide()
+          GossipFrame.GreetingPanel:Hide()
         end
 
         if GreetingPanelFirstLoad then
@@ -801,12 +803,15 @@ local function LoadGossipSkin()
     QuestFrameProgressPanel:GwStripTextures(true)
     QuestFrameRewardPanel:GwStripTextures(true)
 
-    QuestRewardScrollFrame.ScrollBar:GwSkinScrollBar()
-    QuestRewardScrollFrame:GwSkinScrollFrame()
-    QuestProgressScrollFrameScrollBar:GwSkinScrollBar()
-    QuestProgressScrollFrame:GwSkinScrollFrame()
-    QuestDetailScrollFrame.ScrollBar:GwSkinScrollBar()
-    QuestDetailScrollFrame:GwSkinScrollFrame()
+    GW.HandleTrimScrollBar(QuestProgressScrollFrame.ScrollBar, true)
+	GW.HandleTrimScrollBar(QuestRewardScrollFrame.ScrollBar, true)
+	GW.HandleTrimScrollBar(QuestDetailScrollFrame.ScrollBar, true)
+	GW.HandleTrimScrollBar(QuestGreetingScrollFrame.ScrollBar, true)
+
+    GW.HandleAchivementsScrollControls(QuestProgressScrollFrame)
+    GW.HandleAchivementsScrollControls(QuestRewardScrollFrame)
+    GW.HandleAchivementsScrollControls(QuestDetailScrollFrame)
+    GW.HandleAchivementsScrollControls(QuestGreetingScrollFrame)
 
     QuestFrameAcceptButton:GwSkinButton(false, true)
     QuestFrameDeclineButton:GwSkinButton(false, true)
@@ -854,7 +859,8 @@ local function LoadGossipSkin()
     QuestLogPopupDetailFrameCloseButton:SetSize(20, 20)
 
     QuestLogPopupDetailFrameScrollFrame:GwStripTextures()
-    QuestLogPopupDetailFrameScrollFrameScrollBar:GwSkinScrollBar()
+    GW.HandleTrimScrollBar(QuestLogPopupDetailFrameScrollFrame.ScrollBar, true)
+    GW.HandleAchivementsScrollControls(QuestLogPopupDetailFrameScrollFrame)
     QuestLogPopupDetailFrameScrollFrame:GwSkinScrollFrame()
 end
 GW.LoadGossipSkin = LoadGossipSkin

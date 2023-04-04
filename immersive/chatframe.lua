@@ -267,9 +267,9 @@ local function setButtonPosition(frame)
         frame.Container:ClearAllPoints()
         frame.Container:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
         if not frame.isDocked then
-            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
+            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
         else
-            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, 0)
+            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, 0)
         end
 
         editbox:ClearAllPoints()
@@ -1410,9 +1410,9 @@ local function styleChatWindow(frame)
         fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
         fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
         if not frame.isDocked then
-            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
+            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
         else
-            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, 0)
+            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, 0)
         end
         if not frame.isDocked then fmGCC.EditBox:Hide() end
         frame.Container = fmGCC
@@ -1473,9 +1473,12 @@ local function styleChatWindow(frame)
     scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     scrollToBottom:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
     scrollToBottom:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    scrollToBottom:SetHeight(24)
-    scrollToBottom:SetWidth(24)
-    scroll:GwSkinScrollBar()
+    scrollToBottom.Flash:GwKill()
+    scrollToBottom:SetSize(24, 24)
+    scrollToBottom:SetPoint("BOTTOMRIGHT", frame.ResizeButton, "TOPRIGHT", 7, -2)
+	GW.HandleTrimScrollBar(scroll, true)
+    GW.HandleAchivementsScrollControls(frame)
+
     ChatFrameMenuButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")
     ChatFrameMenuButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_up")
     ChatFrameMenuButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")
@@ -2150,9 +2153,9 @@ local function LoadChat()
                 fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
                 fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
                 if not frame.isDocked then
-                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
+                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
                 else
-                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, 0)
+                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, 0)
                 end
                 if not frame.isDocked then fmGCC.EditBox:Hide() end
                 frame.Container = fmGCC
@@ -2205,9 +2208,9 @@ local function LoadChat()
             fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
             fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
             if not frame.isDocked then
-                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
+                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
             else
-                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, 0)
+                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, 0)
             end
             if not frame.isDocked then fmGCC.EditBox:Hide() end
             frame.Container = fmGCC

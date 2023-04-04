@@ -98,4 +98,17 @@
     <Button name="GwAuraSecureTmpl56" inherits="GwAuraSecureTmpl" virtual="true"><Size x="56" y="56"/></Button>
     <Button name="GwAuraSecureTmpl58" inherits="GwAuraSecureTmpl" virtual="true"><Size x="58" y="58"/></Button>
     <Button name="GwAuraSecureTmpl60" inherits="GwAuraSecureTmpl" virtual="true"><Size x="60" y="60"/></Button>
+
+
+    <Frame name="GwPrivateAuraTmpl" mixin="BuffFramePrivateAuraAnchorMixin" parentArray="PrivateAuraAnchors" virtual="true">
+        <Size x="40" y="40"></Size>
+        <Frames>
+            <Frame parentKey="status" frameLevel="3">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="4" y="-6"/>
+                    <Anchor point="BOTTOMRIGHT" x="-4" y="2"/>
+                </Anchors>
+            </Frame>
+        </Frames>
+    </Frame>
 </Ui>

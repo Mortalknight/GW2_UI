@@ -272,42 +272,17 @@ local function SkinLookingForGroupFrames()
     RaidFinderFrameFindRaidButton:GwStripTextures()
     RaidFinderFrameFindRaidButton:GwSkinButton(false, true)
     RaidFinderQueueFrame:GwStripTextures()
-    RaidFinderQueueFrameScrollFrameScrollBar:GwStripTextures()
-    RaidFinderQueueFrameScrollFrame:GwSkinScrollFrame()
-    RaidFinderQueueFrameScrollFrameScrollBar:GwSkinScrollBar()
 
     --Skin Reward Items (This works for all frames, LFD, Raid, Scenario)
     hooksecurefunc("LFGRewardsFrame_SetItemButton", SkinItemButton)
 
-    -- Looking for raid
-    LFRBrowseFrame:HookScript("OnShow", function()
-        if not LFRBrowseFrameListScrollFrameScrollBar.skinned then
-            LFRBrowseFrameListScrollFrame:GwSkinScrollFrame()
-            LFRBrowseFrameListScrollFrameScrollBar:GwSkinScrollBar()
-            LFRBrowseFrameListScrollFrameScrollBar.skinned = true
-        end
-    end)
-
-    LFRBrowseFrameRoleInset:DisableDrawLayer("BORDER")
-    RaidBrowserFrameBg:Hide()
-    LFRBrowseFrameColumnHeader1:SetWidth(94)
-    LFRBrowseFrameColumnHeader2:SetWidth(38)
-
-    LFRQueueFrameFindGroupButton:GwSkinButton(false, true)
-    LFRQueueFrameAcceptCommentButton:GwSkinButton(false, true)
-
-    LFRQueueFrameCommentScrollFrame:GwSkinScrollFrame()
-    LFRQueueFrameCommentScrollFrameScrollBar:GwSkinScrollBar()
-    GW.HandleTrimScrollBar(LFDQueueFrameSpecific.ScrollBar)
+    GW.HandleTrimScrollBar(LFDQueueFrameSpecific.ScrollBar, true)
     GW.HandleAchivementsScrollControls(LFDQueueFrameSpecific)
 
     _G[_G.LFDQueueFrame.PartyBackfill:GetName().."BackfillButton"]:GwSkinButton(false, true)
     _G[_G.LFDQueueFrame.PartyBackfill:GetName().."NoBackfillButton"]:GwSkinButton(false, true)
     _G[_G.RaidFinderQueueFrame.PartyBackfill:GetName().."BackfillButton"]:GwSkinButton(false, true)
     _G[_G.RaidFinderQueueFrame.PartyBackfill:GetName().."NoBackfillButton"]:GwSkinButton(false, true)
-    LFDQueueFrameRandomScrollFrameScrollBar:GwStripTextures()
-    LFDQueueFrameRandomScrollFrameScrollBar:GwSkinScrollBar()
-    LFDQueueFrameRandomScrollFrame:GwSkinScrollFrame()
 
     --LFGListFrame
     LFGListFrame.CategorySelection.Inset:GwStripTextures()
@@ -391,7 +366,7 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.SearchPanel.SignUpButton:ClearAllPoints()
     LFGListFrame.SearchPanel.SignUpButton:SetPoint("BOTTOMRIGHT", -6, 3)
     LFGListFrame.SearchPanel.ResultsInset:GwStripTextures()
-    GW.HandleTrimScrollBar(LFGListFrame.SearchPanel.ScrollBar)
+    GW.HandleTrimScrollBar(LFGListFrame.SearchPanel.ScrollBar, true)
     GW.HandleAchivementsScrollControls(LFGListFrame.SearchPanel)
 
     if not LFGListFrame.SearchPanel.ResultsInset.SetBackdrop then
@@ -501,7 +476,7 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.ApplicationViewer.BrowseGroupsButton:SetPoint("BOTTOMLEFT", -1, 3)
     LFGListFrame.ApplicationViewer.BrowseGroupsButton:SetSize(120, 22)
 
-    GW.HandleTrimScrollBar(LFGListFrame.ApplicationViewer.ScrollBar)
+    GW.HandleTrimScrollBar(LFGListFrame.ApplicationViewer.ScrollBar, true)
     GW.HandleAchivementsScrollControls(LFGListFrame.ApplicationViewer)
     --LFGListFrame.ApplicationViewer.ScrollBar:ClearAllPoints()
     --LFGListFrame.ApplicationViewer.ScrollBar:SetPoint("TOPLEFT", LFGListFrame.ApplicationViewer.Inset, "TOPRIGHT", 0, -16)
@@ -683,7 +658,7 @@ local function ApplyPvPUISkin()
         v.tex = detailBg
     end
 
-    GW.HandleTrimScrollBar(HonorFrame.SpecificScrollBar)
+    GW.HandleTrimScrollBar(HonorFrame.SpecificScrollBar, true)
     GW.HandleAchivementsScrollControls(HonorFrame, "SpecificScrollBar")
     HonorFrameTypeDropDown:GwSkinDropDownMenu()
     HonorFrameQueueButton:GwSkinButton(false, true)

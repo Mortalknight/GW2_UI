@@ -39,7 +39,7 @@ end
 local function getAnimationDurationDynamic(self,val1,val2,width)
   if width ==nil then width = 0 end
   local speed = self.speed or 500
-  speed = speed * math.abs(val1 - val2)
+  speed = math.max(0.0000001, speed * math.abs(val1 - val2))
   local t = (width * math.abs(val1 - val2)) / speed
   return t
 end
@@ -151,7 +151,7 @@ end
 local function  barUpdate(self,delta)
 
   self.animatedTime = self.animatedTime + delta
-  local animationProgress = self.animatedTime/self.animatedDuration
+  local animationProgress = self.animatedTime / math.max(0.00000001, self.animatedDuration)
   local newValue = 0
   if self.BarInterpolation and self.BarInterpolation==BarInterpolation.linear then 
     newValue = Lerp(self.animatedStartValue,self.animatedValue,animationProgress)

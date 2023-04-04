@@ -816,6 +816,14 @@ GW_DEFAULT["PlayerDebuffFrame"]["hasMoved"] = false
 GW_DEFAULT["PlayerDebuffFrame_GrowDirection"] = "UP"
 GW_DEFAULT["PlayerDebuffFrame_scale"] = 1
 
+GW_DEFAULT["PlayerPrivateAuras"] = {}
+GW_DEFAULT["PlayerPrivateAuras"]["point"] = "TOPRIGHT"
+GW_DEFAULT["PlayerPrivateAuras"]["relativePoint"] = "TOPRIGHT"
+GW_DEFAULT["PlayerPrivateAuras"]["xOfs"] = -500
+GW_DEFAULT["PlayerPrivateAuras"]["yOfs"] = -173
+GW_DEFAULT["PlayerPrivateAuras"]["hasMoved"] = false
+GW_DEFAULT["PlayerPrivateAuras_scale"] = 1
+
 GW_DEFAULT["PlayerBuffFrame_Seperate"] = 0
 GW_DEFAULT["PlayerDebuffFrame_Seperate"] = 0
 

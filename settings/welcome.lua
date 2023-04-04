@@ -3,6 +3,8 @@ local L = GW.L
 local SetSetting = GW.SetSetting
 local AddForProfiling = GW.AddForProfiling
 
+local LEMO = GW.Libs.LEMO
+
 local wpanel
 local step = 0
 
@@ -57,8 +59,16 @@ local function button1_OnClick()
 
                 -- move general bottom left
                 if id == 1 then
-                    frame:ClearAllPoints()
-                    frame:SetPoint("BOTTOMLEFT", UIParent, 40, 60)
+                    -- this needs to be done via the edit mode lib
+                    local doesGw2LayoutExists = LEMO:DoesLayoutExist("GW2_Layout")
+                    if not LEMO:CanEditActiveLayout() or not doesGw2LayoutExists then
+                        if not doesGw2LayoutExists then
+                            LEMO:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
+                        end
+                        LEMO:SetActiveLayout("GW2_Layout")
+                    end
+                    LEMO:ReanchorFrame(frame, "BOTTOMLEFT", UIParent, 40, 60)
+                    LEMO:ApplyChanges()
                     frame:SetUserPlaced(true)
                 elseif id == 2 then
                     FCF_SetWindowName(frame, GUILD_EVENT_LOG)

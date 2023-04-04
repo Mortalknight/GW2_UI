@@ -76,7 +76,7 @@ local function handleReward(frame, isMap)
 end
 GW.HandleReward = handleReward
 
-local function QuestInfo_Display(template)
+local function QuestInfo_Display(template, parentFrame)
     if not GetSetting("GOSSIP_SKIN_ENABLED") and not GetSetting("QUESTVIEW_ENABLED") and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
         return
     end
@@ -90,7 +90,13 @@ local function QuestInfo_Display(template)
 
     local fInfo = _G.QuestInfoFrame
     local fRwd = fInfo.rewardsFrame
-    local isQuestLog = fInfo.questLog ~= nil
+    local questID
+    local questFrame = parentFrame:GetParent():GetParent()
+    if template.questLog then
+        questID = questFrame.questID
+    else
+        questID = GetQuestID();
+    end
 
     for i, questItem in ipairs(fRwd.RewardButtons) do
         local point, relativeTo, relativePoint, _, y = questItem:GetPoint()
@@ -107,8 +113,9 @@ local function QuestInfo_Display(template)
         handleReward(questItem, isMapStyle)
     end
 
-    local numSpellRewards = isQuestLog and GetNumQuestLogRewardSpells() or GetNumRewardSpells()
-    if numSpellRewards > 0 then
+    local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {}
+    --local numSpellRewards = isQuestLog and GetNumQuestLogRewardSpells() or GetNumRewardSpells()
+    if #spellRewards > 0 then
         for spellHeader in fRwd.spellHeaderPool:EnumerateActive() do
             spellHeader:SetVertexColor(1, 1, 1)
         end
@@ -396,8 +403,8 @@ local function worldMapSkin()
     local CampaignOverview = QuestMapFrame.CampaignOverview
     SkinHeaders(CampaignOverview.Header)
     CampaignOverview.ScrollFrame:GwStripTextures()
-    _G.QuestMapFrameScrollBar:GwStripTextures()
-    _G.QuestMapFrameScrollBar:GwSkinScrollBar()
+    GW.HandleTrimScrollBar(QuestScrollFrame.ScrollBar, true)
+    GW.HandleAchivementsScrollControls(QuestScrollFrame)
 
     _G.QuestMapDetailsScrollFrame.ScrollBar:SetWidth(3)
     _G.QuestMapDetailsScrollFrame.ScrollBar:GwSkinScrollBar()
