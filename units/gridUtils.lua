@@ -96,6 +96,50 @@ local function UpdateSettings()
 end
 GW.UpdateGridSettings = UpdateSettings
 
+local function CreateGridPrivateAuras(self)
+    for i = 1, 2 do
+        local privateAura = CreateFrame("Frame", nil, self.data, "GwPrivateAuraTmpl")
+        privateAura:SetPoint("CENTER", self.data, i == 1 and -9 or 9, 0)
+        privateAura.auraIndex = i
+        privateAura:SetSize(15, 15)
+        local auraAnchor = {
+            unitToken = self.unit,
+            auraIndex = privateAura.auraIndex,
+            -- The parent frame of an aura anchor must have a valid rect with a non-zero
+            -- size. Each private aura will anchor to all points on its parent,
+            -- providing a tooltip when mouseovered.
+            parent = privateAura,
+            -- An optional cooldown spiral can be configured to represent duration.
+            showCountdownFrame = true,
+            showCountdownNumbers = true,
+            -- An optional icon can be created and shown for the aura. Omitting this
+            -- will display no icon.
+            iconInfo = {
+                iconWidth = 15,
+                iconHeight = 15,
+                iconAnchor = {
+                    point = "CENTER",
+                    relativeTo = privateAura.status,
+                    relativePoint = "CENTER",
+                    offsetX = 0,
+                    offsetY = 0,
+                },
+            },
+            -- An optional icon duration fontstring can also be configured.
+            durationAnchor = {
+                point = "TOP",
+                relativeTo = privateAura.status,
+                relativePoint = "BOTTOM",
+                offsetX = 0,
+                offsetY = -4,
+            },
+        }
+        -- Anchors can be removed (and the aura hidden) via the RemovePrivateAuraAnchor
+        -- API, passing it the anchor index returned from the Add function.
+        privateAura.anchorIndex = C_UnitAuras.AddPrivateAuraAnchor(auraAnchor)
+    end
+end
+
 local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     local frame, unit = nil, ""
     if profile == "PARTY" then
@@ -109,7 +153,6 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
         unit = "raidpet" .. index
     end
     frame.parent = parent
-
 
     frame.absorbbg = frame.healthContainer.healPrediction.absorbbg
     frame.absorbOverlay = frame.healthContainer.healPrediction.absorbbg.health.antiHeal.absorbOverlay
@@ -154,7 +197,6 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     frame.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
     frame.absorbbg:SetStatusBarColor(1,1,1,0.66)
     frame.predictionbar:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
-
 
     if settings.fontEnabled then -- for any reason blizzard is not supporting UTF8 if we set this font
         frame.name:SetFont(UNIT_NAME_FONT, 12)
@@ -254,6 +296,8 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     if profile == "RAID_PET" then
         frame.classicon:SetTexture(nil)
     end
+
+    CreateGridPrivateAuras(frame)
 end
 GW.CreateGridFrame = CreateGridFrame
 

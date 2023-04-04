@@ -792,7 +792,7 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
         frame.buffFrames[k] = buffFrame
 
         if k <=2 then
-            local privateAura = CreateFrame("Button", nil, frame.auras, "GwPrivateAuraTmpl")
+            local privateAura = CreateFrame("Frame", nil, frame.auras, "GwPrivateAuraTmpl")
             privateAura:SetPoint("BOTTOMRIGHT", frame.auras, (28 * (k - 1)), 28 * 2)
             privateAura.auraIndex = k
             privateAura:SetSize(24, 24)
@@ -809,8 +809,8 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
                 -- An optional icon can be created and shown for the aura. Omitting this
                 -- will display no icon.
                 iconInfo = {
-                    iconWidth = 26,
-                    iconHeight = 26,
+                    iconWidth = 24,
+                    iconHeight = 24,
                     iconAnchor = {
                         point = "CENTER",
                         relativeTo = privateAura.status,
