@@ -453,7 +453,7 @@ local function setupMicroButtons(mbf)
     -- or if we need to create our own char button for the custom hero panel
     local cref
     if GetSetting("USE_CHARACTER_WINDOW") then
-        cref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
+        cref = CreateFrame("Button", "GwCharacterMicroButton", mbf, "SecureHandlerClickTemplate")
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
         reskinMicroButton(cref, "CharacterMicroButton", mbf)
@@ -814,13 +814,6 @@ local function hook_UpdateMicroButtons()
 end
 AFP("hook_UpdateMicroButtons", hook_UpdateMicroButtons)
 
-local function hook_MainMenuMicroButton_ShowAlert(f)
-    if f == TalentMicroButtonAlert and not TalentMicroButton:HasTalentAlertToShow() then
-        f:Hide()
-    end
-end
-AFP("hook_MainMenuMicroButton_ShowAlert", hook_MainMenuMicroButton_ShowAlert)
-
 local function mbf_OnLeave(self)
     if not self:IsMouseOver() and settings.fadeMicromenu then
         self:fadeOut()
@@ -861,12 +854,6 @@ local function LoadMicroMenu()
 
     --hooksecurefunc("MoveMicroButtons", hook_MoveMicroButtons) -- 10.0.5
     hooksecurefunc("UpdateMicroButtons", hook_UpdateMicroButtons)
-
-    -- get rid of the super-persistent PvP talent selector alert TODO
-    --if not TalentMicroButton:HasTalentAlertToShow() then
-    --   TalentMicroButtonAlert:Hide()
-    --end
-    hooksecurefunc("MainMenuMicroButton_ShowAlert", hook_MainMenuMicroButton_ShowAlert)
 
     -- if borders are hidden, hide the bg
     if not GetSetting("BORDER_ENABLED") then
@@ -931,12 +918,5 @@ local function LoadMicroMenu()
     else
         modifyMicroAlert(CharacterMicroButtonAlert, CharacterMicroButton)
     end
-    if GetSetting("USE_TALENT_WINDOW") then
-        modifyMicroAlert(TalentMicroButtonAlert, GwTalentMicroButton)
-    else
-        modifyMicroAlert(TalentMicroButtonAlert, TalentMicroButton)
-    end
-    --hooksecurefunc("MainMenuMicroButton_PositionAlert", gwMicro_PositionAlert) TODO
-
 end
 GW.LoadMicroMenu = LoadMicroMenu
