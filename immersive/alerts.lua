@@ -1423,6 +1423,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             if VignetteBlackListIDs[vignetteInfo.vignetteID] then return end
 
             if vignetteGUID ~= self.lastMinimapRare.id then
+                GW.Debug("Minimap vignette with id", vignetteInfo.vignetteID, "and name", vignetteInfo.name, "appeared on the minimap.")
                 vignetteInfo.nameColored = format("|cff00c0fa%s|r", vignetteInfo.name)
                 GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["has appeared on the Minimap!"], nil, vignetteInfo.nameColored, false, vignetteInfo.atlasName, false, nil, vignetteInfo.name)
                 self.lastMinimapRare.id = vignetteGUID
