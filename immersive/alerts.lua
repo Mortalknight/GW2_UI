@@ -1364,7 +1364,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             end
         end
         PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.levelUpSound), "Master")
-    elseif event == "LEARNED_SPELL_IN_TAB" and settings.showNewSpell then
+    elseif event == "LEARNED_SPELL_IN_TAB" and settings.showNewSpell and not self.ignoreNewSpells then
         local spellID = ...
         if ignoreDragonRidingSpells[spellID] then return end
         local name, _, icon = GetSpellInfo(spellID)
@@ -1470,7 +1470,10 @@ local function AlertContainerFrameOnEvent(self, event, ...)
     elseif event == "PLAYER_ENTERING_WORLD" then
         -- collect open invites
         C_Timer.After(7, function() AlertContainerFrameOnEvent(self, "CALENDAR_UPDATE_PENDING_INVITES") end)
-        self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+
+        -- disable "LEARNED_SPELL_IN_TAB" for 3 sec after after PLAYER_ENTERING_WORLD to prevent a false LEARNED_SPELL_IN_TAB trigger
+        self.ignoreNewSpells = true
+        C_Timer.After(3, function() self.ignoreNewSpells = false end)
     elseif event == "LFG_UPDATE_RANDOM_INFO" and settings.showCallToArms then
         local _, forTank, forHealer, forDamage = GetLFGRoleShortageRewards(2087, LFG_ROLE_SHORTAGE_RARE) -- 2087 Random Shadowlands Heroic
         local IsTank, IsHealer, IsDamage = C_LFGList.GetAvailableRoles()
@@ -1633,6 +1636,7 @@ local function LoadAlertSystem()
 
         GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["Alert Frames"], "AlertPos", ALL .. ",Blizzard,Widgets", {300, 5}, {"default"}, nil, postDragFunction)
 
+        GW.AlertContainerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         GW.AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
         GW.AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
         GW.AlertContainerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
@@ -1647,6 +1651,7 @@ local function LoadAlertSystem()
         GW.AlertContainerFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
         GW.AlertContainerFrame.lastMinimapRare = {time = 0, id = nil}
+        GW.AlertContainerFrame.ignoreNewSpells = true
 
         GW.AlertContainerFrame:SetScript("OnEvent", AlertContainerFrameOnEvent)
     end
