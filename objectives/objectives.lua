@@ -4,13 +4,61 @@ local GetSetting = GW.GetSetting
 local CommaValue = GW.CommaValue
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
+local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local savedQuests = {}
 local lastAQW = GetTime()
+local tomTomWaypoint = nil
 
-local TRACKER_TYPE_COLOR = {}
-GW.TRACKER_TYPE_COLOR = TRACKER_TYPE_COLOR
-TRACKER_TYPE_COLOR["QUEST"] = {r = 221 / 255, g = 198 / 255, b = 68 / 255}
+local function AddTomTomWaypoint(questId, objective)
+    if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
+        local QuestieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(questId)
+        local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(QuestieQuest)
+        if (not spawn) and objective ~= nil then
+            spawn, zone, name = QuestieMap:GetNearestSpawn(objective)
+        end
+        if spawn then
+            if tomTomWaypoint and TomTom.RemoveWaypoint then -- remove old waypoint
+                TomTom:RemoveWaypoint(tomTomWaypoint)
+            end
+            local uiMapId = QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone)
+            tomTomWaypoint = TomTom:AddWaypoint(uiMapId, spawn[1] / 100, spawn[2] / 100,  {title = name, crazy = true})
+        end
+    end
+end
+
+local function LinkQuestIntoChat(title, questId)
+    if not ChatFrame1EditBox:IsVisible() then
+        if Questie and Questie.started then
+            ChatFrame_OpenChat("[" .. title .. " (" .. questId .. ")]")
+        else
+            ChatFrame_OpenChat(gsub(title, " *(.*)", "%1"))
+        end
+    else
+        if Questie and Questie.started then
+            ChatEdit_InsertLink("[" .. title .. " (" .. questId .. ")]")
+        else
+            ChatEdit_InsertLink(gsub(title, " *(.*)", "%1"))
+        end
+    end
+end
+
+local function UntrackQuest(questLogIndex)
+    local questID = GetQuestIDFromLogIndex(questLogIndex)
+    for index, value in ipairs(QUEST_WATCH_LIST) do
+        if value.id == questID then
+            tremove(QUEST_WATCH_LIST, index)
+        end
+    end
+    if GetCVar("autoQuestWatch") == "0" then
+        GW2UI_QUEST_WATCH_DB.TrackedQuests[questID] = nil
+    else
+        GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questID] = true
+    end
+    RemoveQuestWatch(questLogIndex)
+    WatchFrame_Update()
+    QuestWatch_Update()
+end
 
 local function wiggleAnim(self)
     if self.animation == nil then
@@ -651,54 +699,86 @@ end
 GW.AddForProfiling("objectives", "updateQuestItemPositions", updateQuestItemPositions)
 
 local function OnBlockClick(self, button)
-    if IsShiftKeyDown() and ChatEdit_GetActiveWindow() then
-        if button == "LeftButton" then
-            if Questie and Questie.started then
-                ChatEdit_InsertLink("[" .. self.title .. " (" .. self.questID .. ")]")
-            else
-                ChatEdit_InsertLink(gsub(self.title, " *(.*)", "%1"))
-            end
-        else
-            SelectQuestLogEntry(self.questLogIndex)
-            local chat = ""
-            local numObjectives = GetNumQuestLeaderBoards()
-            if numObjectives > 0 then
-                for objectiveIndex = 1, numObjectives do
-                    local objectiveText = GetQuestLogLeaderBoard(objectiveIndex)
-                    chat = chat .. objectiveText
-                    if objectiveIndex ~= numObjectives then
-                        chat = chat .. ", "
-                    end
+    if button == "RightButton" then
+        local menuList = {{text = self.title, isTitle = true, notCheckable = true}}
+        local subMenu = {}
+
+        -- if we have objectives, we add them needs Questi
+        if Questie and Questie.started then
+            local QuestieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(self.questID)
+            for _, objective in pairs(QuestieQuest.Objectives) do
+                local objectiveMenu = {}
+
+                if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
+                    tinsert(objectiveMenu, {text = GW.L["Set TomTom Target"], hasArrow = false, notCheckable = true, func = function() AddTomTomWaypoint(self.questID, objective) end})
                 end
-            else
-                local _, objectiveText = GetQuestLogQuestText()
-                chat = objectiveText
+
+                tinsert(objectiveMenu, {text = GW.L["Show on Map"], notCheckable = true, func = function()
+                    QuestieLoader:ImportModule("TrackerUtils"):ShowObjectiveOnMap(objective)
+                end})
+
+                tinsert(subMenu, {text = objective.Description, hasArrow = true, notCheckable = true, menuList = objectiveMenu})
             end
-            ChatEdit_GetActiveWindow():Insert(chat)
-        end
-        return
-    end
-    if IsControlKeyDown() then
-        local questID = GetQuestIDFromLogIndex(self.questLogIndex)
-        for index, value in ipairs(QUEST_WATCH_LIST) do
-            if value.id == questID then
-                tremove(QUEST_WATCH_LIST, index)
+
+            if next(QuestieQuest.SpecialObjectives) then
+                for _, objective in pairs(QuestieQuest.SpecialObjectives) do
+                    local objectiveMenu = {}
+
+                    if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
+                        tinsert(objectiveMenu, {text = GW.L["Set TomTom Target"], hasArrow = false, notCheckable = true, func = function() AddTomTomWaypoint(self.questID, objective) end})
+                    end
+
+                    tinsert(objectiveMenu, {text = GW.L["Show on Map"], notCheckable = true, func = function()
+                        QuestieLoader:ImportModule("TrackerUtils"):ShowObjectiveOnMap(objective)
+                    end})
+
+                    tinsert(subMenu, {text = objective.Description, hasArrow = true, notCheckable = true, menuList = objectiveMenu})
+                end
+            end
+
+            if QuestieQuest:IsComplete() == 0 then
+                tinsert(menuList, { text = OBJECTIVES_TRACKER_LABEL, hasArrow = true, notCheckable = true, menuList = subMenu})
             end
         end
-        if GetCVar("autoQuestWatch") == "0" then
-            GW2UI_QUEST_WATCH_DBTrackedQuests[questID] = nil
-        else
-            GW2UI_QUEST_WATCH_DBTrackedQuests.AutoUntrackedQuests[questID] = true
+
+        tinsert(menuList, {text = COMMUNITIES_INVITE_MANAGER_LINK_TO_CHAT, hasArrow = false, notCheckable = true, func = function() LinkQuestIntoChat(self.title, self.questID) end})
+        tinsert(menuList, {text = "Wowhead URL", hasArrow = false, notCheckable = true, func = function() StaticPopup_Show("QUESTIE_WOWHEAD_URL", self.questID, self.title) end})
+        tinsert(menuList, {text = OBJECTIVES_VIEW_IN_QUESTLOG, notCheckable = true, func = function() QuestLogFrame:Show()
+            QuestLog_SetSelection(self.questLogIndex)
+            QuestLog_Update() end})
+
+        if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
+            tinsert(menuList, {text = GW.L["Set TomTom Target"], hasArrow = false, notCheckable = true, func = function() AddTomTomWaypoint(self.questID, nil) end})
         end
-        RemoveQuestWatch(self.questLogIndex)
-        QuestWatch_Update()
-        QuestLog_Update()
+
+        if Questie and Questie.started and self.isComplete then
+            tinsert(menuList, {text = GW.L["Show on Map"], notCheckable = true, func = function()
+                local QuestieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(self.questID)
+                QuestieLoader:ImportModule("TrackerUtils"):ShowFinisherOnMap(QuestieQuest)
+            end})
+        end
+
+        tinsert(menuList, {text = UNTRACK_QUEST, hasArrow = false, notCheckable = true, func = function() UntrackQuest(self.questLogIndex) end})
+
+        GW.SetEasyMenuAnchor(GW.EasyMenu, self)
+        EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
         return
     end
 
-    if IsAddOnLoaded("QuestGuru") then
-        QuestLogFrame = QuestGuru
+    if IsShiftKeyDown() and ChatEdit_GetActiveWindow() then
+        if button == "LeftButton" then
+            LinkQuestIntoChat(self.title, self.questID)
+        end
+        return
+    elseif IsControlKeyDown() then
+        if button == "LeftButton" then
+            AddTomTomWaypoint(self.questID, nil)
+        else
+            UntrackQuest(self.questLogIndex)
+        end
+        return
     end
+
     if button ~= "RightButton" then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         if QuestLogFrame:IsShown() and QuestLogFrame.selectedButtonID == self.questLogIndex then
@@ -708,17 +788,15 @@ local function OnBlockClick(self, button)
             QuestLog_SetSelection(self.questLogIndex)
             QuestLog_Update()
         end
-    elseif button == "RightButton" and QuestLogFrame:IsShown() then
-        QuestLogFrame:Hide()
     end
 end
 GW.AddForProfiling("objectives", "OnBlockClick", OnBlockClick)
 
 local function OnBlockClickHandler(self, button)
     if self.questID == nil then
-        OnBlockClick(self:GetParent(), button, true)
+        OnBlockClick(self:GetParent(), button)
     else
-        OnBlockClick(self, button, false)
+        OnBlockClick(self, button)
     end
 end
 GW.AddForProfiling("objectives", "OnBlockClickHandler", OnBlockClickHandler)
@@ -791,9 +869,12 @@ local function updateQuest(block, quest)
         --Quest item
         GW.CombatQueue_Queue(UpdateQuestItem, {block})
 
-        local rewardXP = GetQuestLogRewardXP and GetQuestLogRewardXP(quest.questId) or nil
-        if rewardXP and GetSetting("QUESTTRACKER_SHOW_XP") and GW.mylevel < GetMaxPlayerLevel() then
-            block.Header:SetText(text .. quest.title .. " |cFF888888(" .. CommaValue(rewardXP) .. XP .. ")|r")
+        if Questie and Questie.started then
+            local xpReward = QuestieLoader:ImportModule("QuestXP"):GetQuestLogRewardXP(quest.questId, false)
+
+            if xpReward and GetSetting("QUESTTRACKER_SHOW_XP") and GW.mylevel < GetMaxPlayerLevel() then
+                block.Header:SetText(text .. quest.title .. " |cFF888888(" .. CommaValue(xpReward) .. XP .. ")|r")
+            end
         end
 
         if quest.numObjectives == 0 and GetMoney() >= quest.requiredMoney and not quest.startEvent then
@@ -894,34 +975,42 @@ local function updateQuestLogLayout(self)
         end)
     elseif GetSetting("QUESTTRACKER_SORTING") == "ZONE" then
         -- Sort by Zone
-        if Questie and Questie.started then
-            table.sort(sorted, function(a, b)
-                local qA = QuestieLoader:ImportModule("QuestieDB"):GetQuest(a.questId)
-                local qB = QuestieLoader:ImportModule("QuestieDB"):GetQuest(b.questId)
-                local qAZone, qBZone
-                if qA.zoneOrSort > 0 then
-                    qAZone = QuestieLoader:ImportModule("QuestieTracker").utils:GetZoneNameByID(qA.zoneOrSort)
-                elseif qA.zoneOrSort < 0 then
-                    qAZone = QuestieLoader:ImportModule("QuestieTracker").utils:GetCategoryNameByID(qA.zoneOrSort)
-                end
-
-                if qB.zoneOrSort > 0 then
-                    qBZone = QuestieLoader:ImportModule("QuestieTracker").utils:GetZoneNameByID(qB.zoneOrSort)
-                elseif qB.zoneOrSort < 0 then
-                    qBZone = QuestieLoader:ImportModule("QuestieTracker").utils:GetCategoryNameByID(qB.zoneOrSort)
-                end
-
-                -- Sort by Zone then by Level to mimic QuestLog sorting
-                if qAZone == qBZone then
-                    return qA.level < qB.level
-                else
-                    if qAZone ~= nil and qBZone ~= nil then
-                        return qAZone < qBZone
+        if Questie and Questie.started and QuestieLoader then
+            local QuestieTrackerUtils = QuestieLoader:ImportModule("TrackerUtils")
+            local QuestieDB = QuestieLoader:ImportModule("QuestieDB")
+            if QuestieTrackerUtils and QuestieDB then
+                table.sort(sorted, function(a, b)
+                    local qA = QuestieDB:GetQuest(a.questId)
+                    local qB = QuestieDB:GetQuest(b.questId)
+                    local qAZone, qBZone
+                    if qA.zoneOrSort > 0 then
+                        qAZone = QuestieTrackerUtils:GetZoneNameByID(qA.zoneOrSort)
+                    elseif qA.zoneOrSort < 0 then
+                        qAZone = QuestieTrackerUtils:GetCategoryNameByID(qA.zoneOrSort)
                     else
-                        return qAZone and qBZone
+                        qAZone = tostring(qA.zoneOrSort)
                     end
-                end
-            end)
+
+                    if qB.zoneOrSort > 0 then
+                        qBZone = QuestieTrackerUtils:GetZoneNameByID(qB.zoneOrSort)
+                    elseif qB.zoneOrSort < 0 then
+                        qBZone = QuestieTrackerUtils:GetCategoryNameByID(qB.zoneOrSort)
+                    else
+                        qBZone = tostring(qB.zoneOrSort)
+                    end
+
+                    -- Sort by Zone then by Level to mimic QuestLog sorting
+                    if qAZone == qBZone then
+                        return qA.level < qB.level
+                    else
+                        if qAZone ~= nil and qBZone ~= nil then
+                            return qAZone < qBZone
+                        else
+                            return qAZone and qBZone
+                        end
+                    end
+                end)
+            end
         end
     end
 
@@ -933,6 +1022,14 @@ local function updateQuestLogLayout(self)
             end
             GwQuestHeader:Show()
             local block = getBlock(counter)
+            -- if questie is loaded check for daily quest
+            local isDaily = false
+            if Questie and Questie.started then
+                isDaily = QuestieLoader:ImportModule("QuestieDB").IsDailyQuest(quest.questId)
+            end
+            setBlockColor(block, isDaily and "DAILY" or "QUEST")
+            block.Header:SetTextColor(block.color.r, block.color.g, block.color.b)
+            block.hover:SetVertexColor(block.color.r, block.color.g, block.color.b)
             if block == nil then
                 return
             end
@@ -1221,55 +1318,49 @@ local function LoadQuestTracker()
     hooksecurefunc("AddQuestWatch", _AQW_Insert)
     hooksecurefunc("RemoveQuestWatch", _RemoveQuestWatch)
 
+    IsQuestWatched = function(index)
+        local questId = select(8, GetQuestLogTitle(index))
+        local isHeader = select(4, GetQuestLogTitle(index))
+        if isHeader then return false end
+        if questId == 0 then
+            questId = index
+        end
+
+        if "0" == GetCVar("autoQuestWatch") then
+            return GW2UI_QUEST_WATCH_DB.TrackedQuests[questId or -1]
+        else
+            return questId and (not GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questId])
+        end
+    end
+
+    GetNumQuestWatches = function()
+        return 0
+    end
+
     local baseQLTB_OnClick = QuestLogTitleButton_OnClick
-        QuestLogTitleButton_OnClick = function(self, button) -- I wanted to use hooksecurefunc but this needs to be a pre-hook to work properly unfortunately
-            if (not self) or self.isHeader or not IsShiftKeyDown() then baseQLTB_OnClick(self, button) return end
-            local questLogLineIndex = self:GetID() + FauxScrollFrame_GetOffset(QuestLogListScrollFrame)
+    QuestLogTitleButton_OnClick = function(self, button) -- I wanted to use hooksecurefunc but this needs to be a pre-hook to work properly unfortunately
+        if (not self) or self.isHeader or not IsShiftKeyDown() then baseQLTB_OnClick(self, button) return end
+        local questLogLineIndex = self:GetID()
+
+        if ( IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() ) then
             local questId = GetQuestIDFromLogIndex(questLogLineIndex)
-
-            if ( IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow() ) then
-                if (self.isHeader) then
-                    return
-                end
-                ChatEdit_InsertLink("["..gsub(self:GetText(), " *(.*)", "%1").." ("..questId..")]")
-
+            ChatEdit_InsertLink("["..gsub(self:GetText(), " *(.*)", "%1").." ("..questId..")]")
+        else
+            if GetNumQuestLeaderBoards(questLogLineIndex) == 0 and not IsQuestWatched(questLogLineIndex) then -- only call if we actually want to fix this quest (normal quests already call AQW_insert)
+                _AQW_Insert(questLogLineIndex)
+                QuestWatch_Update()
+                QuestLog_SetSelection(questLogLineIndex)
+                QuestLog_Update()
             else
-                if GetNumQuestLeaderBoards(questLogLineIndex) == 0 and not IsQuestWatched(questLogLineIndex) then -- only call if we actually want to fix this quest (normal quests already call AQW_insert)
-                    _AQW_Insert(questLogLineIndex, QUEST_WATCH_NO_EXPIRE)
-                    QuestWatch_Update()
-                    QuestLog_SetSelection(questLogLineIndex)
-                    QuestLog_Update()
-                else
-                    baseQLTB_OnClick(self, button)
-                end
+                baseQLTB_OnClick(self, button)
             end
         end
+    end
 
-        if not fQuest._IsQuestWatched then
-            fQuest._IsQuestWatched = IsQuestWatched
-            fQuest._GetNumQuestWatches = GetNumQuestWatches
-        end
-
-        -- this is probably bad
-        IsQuestWatched = function(index)
-            local questId = select(8, GetQuestLogTitle(index))
-            local isHeader = select(4, GetQuestLogTitle(index))
-            if isHeader then return false end
-            if questId == 0 then
-                questId = index
-            end
-
-            if "0" == GetCVar("autoQuestWatch") then
-                return GW2UI_QUEST_WATCH_DB.TrackedQuests[questId or -1]
-            else
-                return questId and not GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questId]
-            end
-        end
-
-        GetNumQuestWatches = function()
-            return 0
-        end
-
+    if not fQuest._IsQuestWatched then
+        fQuest._IsQuestWatched = IsQuestWatched
+        fQuest._GetNumQuestWatches = GetNumQuestWatches
+    end
 
     fNotify:HookScript("OnShow", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)
     fNotify:HookScript("OnHide", function() C_Timer.After(0.25, function() tracker_OnEvent(fQuest) end) end)

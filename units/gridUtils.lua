@@ -123,7 +123,7 @@ local function CreateGridFrame(index, isParty, parent, OnEvent, OnUpdate, profil
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", frame.unit)
 
     LCD.RegisterCallback("GW2_UI", "UNIT_BUFF", function(_, LCDUnit)
-        OnEvent(frame, "UNIT_AURA", LCDUnit)
+        OnEvent(frame, "UNIT_AURA", frame.unit)
     end)
 
     OnEvent(frame, "load")

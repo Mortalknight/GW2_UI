@@ -642,7 +642,7 @@ local function createPartyFrame(i, isFirstFrame)
     frame:RegisterEvent("UNIT_HEAL_PREDICTION")
 
     frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
-    --frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
+    frame:RegisterUnitEvent("UNIT_AURA", registerUnit)
     frame:RegisterUnitEvent("UNIT_LEVEL", registerUnit)
     frame:RegisterUnitEvent("UNIT_PHASE", registerUnit)
     frame:RegisterUnitEvent("UNIT_HEALTH", registerUnit)
@@ -654,7 +654,7 @@ local function createPartyFrame(i, isFirstFrame)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
 
     LCD.RegisterCallback("GW2_UI", "UNIT_BUFF", function(_, unit)
-        party_OnEvent(frame, "UNIT_AURA", unit)
+        party_OnEvent(frame, "UNIT_AURA", registerUnit)
     end)
 
     -- create de/buff frames

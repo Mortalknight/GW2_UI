@@ -75,7 +75,7 @@ local function button1_OnClick()
             FCF_ResetChatWindows()
             FCF_OpenNewWindow(LOOT .. " / " .. TRADE)
 
-            for _, name in ipairs(_G.CHAT_FRAMES) do
+            for _, name in ipairs(CHAT_FRAMES) do
                 local frame = _G[name]
                 local id = frame:GetID()
 
@@ -89,25 +89,33 @@ local function button1_OnClick()
                 FCF_SavePositionAndDimensions(frame)
                 FCF_StopDragging(frame)
                 FCF_SetChatWindowFontSize(nil, frame, 12)
+
+                if id == 2 then
+                    FCF_SetWindowName(frame, GUILD_EVENT_LOG)
+                elseif id == 3 then
+                    VoiceTranscriptionFrame_UpdateVisibility(frame)
+                    VoiceTranscriptionFrame_UpdateVoiceTab(frame)
+                    VoiceTranscriptionFrame_UpdateEditBox(frame)
+                end
             end
 
             -- keys taken from "ChatTypeGroup" but doesnt add: "OPENING", "TRADESKILLS", "PET_INFO", "COMBAT_MISC_INFO", "COMMUNITIES_CHANNEL", "PET_BATTLE_COMBAT_LOG", "PET_BATTLE_INFO", "TARGETICONS"
             local chatGroup = {"SYSTEM", "CHANNEL", "SAY", "EMOTE", "YELL", "WHISPER", "PARTY", "PARTY_LEADER", "RAID", "RAID_LEADER", "RAID_WARNING", "INSTANCE_CHAT", "INSTANCE_CHAT_LEADER", "GUILD", "OFFICER", "MONSTER_SAY", "MONSTER_YELL", "MONSTER_EMOTE", "MONSTER_WHISPER", "MONSTER_BOSS_EMOTE", "MONSTER_BOSS_WHISPER", "ERRORS", "AFK", "DND", "IGNORED", "BG_HORDE", "BG_ALLIANCE", "BG_NEUTRAL", "ACHIEVEMENT", "GUILD_ACHIEVEMENT", "BN_WHISPER", "BN_INLINE_TOAST_ALERT"}
-            ChatFrame_RemoveAllMessageGroups(_G.ChatFrame1)
+            ChatFrame_RemoveAllMessageGroups(ChatFrame1)
             for _, v in ipairs(chatGroup) do
-                ChatFrame_AddMessageGroup(_G.ChatFrame1, v)
+                ChatFrame_AddMessageGroup(ChatFrame1, v)
             end
 
             -- keys taken from "ChatTypeGroup" which weren't added above to ChatFrame1
             chatGroup = {"COMBAT_XP_GAIN", "COMBAT_HONOR_GAIN", "COMBAT_FACTION_CHANGE", "SKILL", "LOOT", "CURRENCY", "MONEY"}
-            ChatFrame_RemoveAllMessageGroups(_G.ChatFrame3)
+            ChatFrame_RemoveAllMessageGroups(ChatFrame4)
             for _, v in ipairs(chatGroup) do
-                ChatFrame_AddMessageGroup(_G.ChatFrame3, v)
+                ChatFrame_AddMessageGroup(ChatFrame4, v)
             end
 
-            ChatFrame_AddChannel(_G.ChatFrame1, GENERAL)
-            ChatFrame_RemoveChannel(_G.ChatFrame1, TRADE)
-            ChatFrame_AddChannel(_G.ChatFrame3, TRADE)
+            ChatFrame_AddChannel(ChatFrame1, GENERAL)
+            ChatFrame_RemoveChannel(ChatFrame1, TRADE)
+            ChatFrame_AddChannel(ChatFrame4, TRADE)
 
             -- set the chat groups names in class color to enabled for all chat groups which players names appear
             chatGroup = {"SAY", "EMOTE", "YELL", "WHISPER", "PARTY", "PARTY_LEADER", "RAID", "RAID_LEADER", "RAID_WARNING", "INSTANCE_CHAT", "INSTANCE_CHAT_LEADER", "GUILD", "OFFICER", "ACHIEVEMENT", "GUILD_ACHIEVEMENT", "COMMUNITIES_CHANNEL"}

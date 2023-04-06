@@ -53,6 +53,18 @@ DEBUFF_COLOR["Magic"] = {r = 72 / 255, g = 94 / 255, b = 177 / 255}
 DEBUFF_COLOR["Poison"] = {r = 94 / 255, g = 177 / 255, b = 72 / 255}
 DEBUFF_COLOR[""] = DEBUFF_COLOR["none"]
 
+GW.TRACKER_TYPE_COLOR = {
+    QUEST = {r = 221 / 255, g = 198 / 255, b = 68 / 255},
+    CAMPAIGN = {r = 121 / 255, g = 222 / 255, b = 47 / 255},
+    EVENT = {r = 240 / 255, g = 121 / 255, b = 37 / 255},
+    SCENARIO = {r = 171 / 255, g = 37 / 255, b = 240 / 255},
+    BOSS = {r = 240 / 255, g = 37 / 255, b = 37 / 255},
+    ARENA = {r = 240 / 255, g = 37 / 255, b = 37 / 255},
+    ACHIEVEMENT = {r = 37 / 255, g = 240 / 255, b = 172 / 255},
+    DAILY = {r = 68 / 255, g = 192 / 255, b = 250 / 255},
+    TORGHAST = {r = 109 / 255, g = 161 / 255, b = 207 / 255},
+}
+
 local FACTION_BAR_COLORS = {
     [1] = {r = 0.8, g = 0.3, b = 0.22},
     [2] = {r = 0.8, g = 0.3, b = 0.22},

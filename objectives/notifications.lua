@@ -116,39 +116,39 @@ local function getNearestQuestPOI()
         return nil
     end
 
-    if (GW.locationData.x == nil or GW.locationData.y == nil) and numQuests == 0 then
+    if (GW.locationData.x == nil or GW.locationData.y == nil) then
         return nil
     end
 
     local closestQuestID
     local minDist = math.huge
     local spawnInfo
+    local questieQuest
     wipe(questCompass)
 
     if Questie and Questie.started then
         for _, quest in pairs(GW.trackedQuests) do
             if quest.questId then
-                local questQuestie = QuestieLoader:ImportModule("QuestieDB"):GetQuest(quest.questId)
-                if questQuestie then
+                questieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(quest.questId)
+                if questieQuest then
                     -- do this to prevent a questie error
                     local shouldCheck = false
-                    if questQuestie.Objectives then
-                        for _, objective in pairs(questQuestie.Objectives) do
-                            if objective.spawnList and next(objective.spawnList) then
+                    if questieQuest.Objectives then
+                        for _, objective in pairs(questieQuest.Objectives) do
+                            if objective.spawnList then --and next(objective.spawnList) then
                                 shouldCheck = true
+                                break
                             else
                                 shouldCheck = false
-                                break
                             end
                         end
                     end
                     if shouldCheck then
-                        local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(questQuestie)
-
+                        local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(questieQuest)
                         if spawn and zone and name then
                             if QuestieLoader:ImportModule("ZoneDB"):GetUiMapIdByAreaId(zone) == GW.locationData.mapID then
                                 local distance = _GetDistanceToClosestObjective(spawn, zone, name)
-                                if distance < minDist then
+                                if distance and distance < minDist then
                                     minDist = distance
                                     closestQuestID = quest.questId
                                     spawnInfo = spawn
@@ -162,13 +162,14 @@ local function getNearestQuestPOI()
     end
 
     if closestQuestID and spawnInfo and spawnInfo[1] then
+        local isDaily = QuestieLoader:ImportModule("QuestieDB").IsDailyQuest(closestQuestID)
         questCompass.DESC = getQuestPOIText(GetQuestLogIndexByID(closestQuestID))
         questCompass.TITLE = GetQuestLogTitle(GetQuestLogIndexByID(closestQuestID))
         questCompass.ID = closestQuestID
         questCompass.X = spawnInfo[1] / 100
         questCompass.Y = spawnInfo[2] / 100
-        questCompass.TYPE = "QUEST"
-        questCompass.COLOR = TRACKER_TYPE_COLOR.QUEST
+        questCompass.TYPE = isDaily and "DAILY" or "QUEST"
+        questCompass.COLOR = isDaily and TRACKER_TYPE_COLOR.DAILY or TRACKER_TYPE_COLOR.QUEST
         questCompass.COMPASS = true
         questCompass.ID = closestQuestID
 
