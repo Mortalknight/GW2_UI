@@ -115,6 +115,24 @@ local constBackdropLevelUpAlertFrame = {
 }
 GW.BackdropTemplates.LevelUpAlertFrame = constBackdropLevelUpAlertFrame
 
+local function isUsefulAtlas(info)
+    local atlas = info.atlasName
+    if atlas then
+        return strfind(atlas, "[Vv]ignette") or (atlas == "nazjatar-nagaevent")
+    end
+end
+
+local function GetTextureStrByAtlas(info, sizeX, sizeY)
+    local file = info and info.file
+    if not file then return end
+
+    local width, height, txLeft, txRight, txTop, txBottom = info.width, info.height, info.leftTexCoord, info.rightTexCoord, info.topTexCoord, info.bottomTexCoord
+    local atlasWidth = width / (txRight - txLeft)
+    local atlasHeight = height / (txBottom - txTop)
+
+    return format("|T%s:%d:%d:0:0:%d:%d:%d:%d:%d:%d|t", file, (sizeX or 0), (sizeY or 0), atlasWidth, atlasHeight, atlasWidth*txLeft, atlasWidth*txRight, atlasHeight*txTop, atlasHeight*txBottom)
+end
+
 local function forceAlpha(self, alpha, forced)
     if alpha ~= 1 and forced ~= true then
         self:SetAlpha(1, true)
@@ -1420,7 +1438,14 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         if onMinimap then
             local vignetteInfo = C_VignetteInfo.GetVignetteInfo(vignetteGUID)
             if not vignetteInfo then return end
-            if VignetteBlackListIDs[vignetteInfo.vignetteID] then return end
+
+            local atlasInfo = C_Texture.GetAtlasInfo(vignetteInfo.atlasName)
+            if not atlasInfo then return end
+
+            local tex = GetTextureStrByAtlas(atlasInfo, 15, 15)
+            if not tex then return end
+
+            if VignetteBlackListIDs[vignetteInfo.vignetteID] or not isUsefulAtlas(vignetteInfo) then return end
 
             if vignetteGUID ~= self.lastMinimapRare.id then
                 GW.Debug("Minimap vignette with id", vignetteInfo.vignetteID, "and name", vignetteInfo.name, "appeared on the minimap.")
