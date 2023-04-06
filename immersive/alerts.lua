@@ -1,7 +1,6 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 
-GW2_UIAlertSystem = {}
 local toastQueue = {} --Prevent from showing all "new" spells after spec change
 local hasMail = false
 local showRepair = true
@@ -1291,7 +1290,7 @@ local function alertEvents()
     local num = C_Calendar.GetNumPendingInvites()
     if num ~= numInvites then
         if num > 0 then
-            GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["You have %s pending calendar invite(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock", false)
+            GW2_UIAlertSystem:AddAlert(GW.L["You have %s pending calendar invite(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock", false)
             showAlert = true
         end
         numInvites = num
@@ -1305,8 +1304,8 @@ local function alertGuildEvents()
     local showAlert = false
     local num = GetGuildInvites()
     if num > 0 then
-        -- /run GW2_UIAlertSystem.AlertSystem:AddAlert("tt", nil, CALENDAR_STATUS_INVITED, function() if not CalendarFrame then LoadAddOn("Blizzard_Calendar") end ShowUIPanel(CalendarFrame) end , "Interface/AddOns/GW2_UI/textures/icons/clock", false)
-        GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["You have %s pending guild event(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock", false)
+        -- /run GW2_UIAlertSystem:AddAlert("tt", nil, CALENDAR_STATUS_INVITED, function() if not CalendarFrame then LoadAddOn("Blizzard_Calendar") end ShowUIPanel(CalendarFrame) end , "Interface/AddOns/GW2_UI/textures/icons/clock", false)
+        GW2_UIAlertSystem:AddAlert(GW.L["You have %s pending guild event(s)."]:format(num), nil, CALENDAR_STATUS_INVITED, toggleCalendar, "Interface/AddOns/GW2_UI/textures/icons/clock", false)
         showAlert = true
     end
 
@@ -1346,16 +1345,16 @@ GW.UpdateAlertSettings = UpdateSettings
 local function AlertContainerFrameOnEvent(self, event, ...)
     if event == "PLAYER_LEVEL_UP" and settings.showLevelUp then
         local level, _, _, talentPoints, numNewPvpTalentSlots = ...
-        GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
-        -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " 120", nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+        GW2_UIAlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " " .. level, nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+        -- /run GW2_UIAlertSystem:AddAlert(LEVEL_UP_YOU_REACHED .. " " .. LEVEL .. " 120", nil, PLAYER_LEVEL_UP, false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
         if talentPoints and talentPoints > 0 then
-            GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
-            --/run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
+            GW2_UIAlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
+            --/run GW2_UIAlertSystem:AddAlert(LEVEL_UP_TALENT_MAIN, nil, LEVEL_UP_TALENT_SUB, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
         end
         if C_SpecializationInfo.CanPlayerUsePVPTalentUI() and numNewPvpTalentSlots and numNewPvpTalentSlots > 0 then
-            GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
-            --/run GW2_UIAlertSystem.AlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
+            GW2_UIAlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
+            --/run GW2_UIAlertSystem:AddAlert(LEVEL_UP_PVP_TALENT_MAIN, nil, BONUS_TALENTS, false, "Interface/AddOns/GW2_UI/textures/icons/talent-icon", false)
         end
 
         -- if we learn a spell here we should show the new spell so we remove the event from the toastQueue list
@@ -1373,13 +1372,13 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         C_Timer.After(1.5, function()
             for _, v in pairs(toastQueue) do
                 if v ~= nil then
-                    GW2_UIAlertSystem.AlertSystem:AddAlert(SPELL_BUCKET_ABILITIES_UNLOCKED, nil, v.name, false, v.icon, false, v.spellID)
+                    GW2_UIAlertSystem:AddAlert(SPELL_BUCKET_ABILITIES_UNLOCKED, nil, v.name, false, v.icon, false, v.spellID)
                 end
             end
             wipe(toastQueue)
-            PlaySoundFile(GW.Libs.LSM:Fetch("sound",settings.newSpellSound), "Master")
+            PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.newSpellSound), "Master")
         end)
-        -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(GetSpellInfo(48181), nil, LEVEL_UP_ABILITY, false, select(3, GetSpellInfo(48181)), false, 48181)
+        -- /run GW2_UIAlertSystem:AddAlert(GetSpellInfo(48181), nil, LEVEL_UP_ABILITY, false, select(3, GetSpellInfo(48181)), false, 48181)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" and settings.showNewSpell then
         C_Timer.After(0.5, function()
             for k, v in pairs(toastQueue) do
@@ -1395,8 +1394,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             hasMail = newMail
 
             if hasMail then
-                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon", false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon", false)
+                -- /run GW2_UIAlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon", false)
+                GW2_UIAlertSystem:AddAlert(HAVE_MAIL, nil, MAIL_LABEL, false, "Interface/AddOns/GW2_UI/textures/icons/mail-window-icon", false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.newMailSound), "Master")
             end
         end
@@ -1417,8 +1416,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         if showRepair and value < 20 then
             showRepair = false
             C_Timer.After(30, function() showRepair = true end)
-            -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s slot needs to repair, current durability is %d.", INVTYPE_HEAD, 20), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair", false)
-            GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s slot needs to repair, current durability is %d."], slots[1][2], value), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair", false)
+            -- /run GW2_UIAlertSystem:AddAlert(format("%s slot needs to repair, current durability is %d.", INVTYPE_HEAD, 20), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair", false)
+            GW2_UIAlertSystem:AddAlert(format(GW.L["%s slot needs to repair, current durability is %d."], slots[1][2], value), nil, MINIMAP_TRACKING_REPAIR, false, "Interface/AddOns/GW2_UI/textures/icons/repair", false)
             PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.repairSound), "Master")
         end
     elseif event == "QUEST_ACCEPTED" and settings.showParagon then
@@ -1426,8 +1425,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         if PARAGON_QUEST_ID[questId] then
             local text = GW.RGBToHex(0.22, 0.37, 0.98) .. (GetFactionInfoByID(PARAGON_QUEST_ID[questId][1]) or UNKNOWN) .. "|r"
             local name = GetQuestLogCompletionText(C_QuestLog.GetLogIndexForQuestID(questId))
-            -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("|cff00c0fa%s|r", GetFactionInfoByID(2407)), nil, format("|cff00c0fa%s|r", "TESTE"), false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
-            GW2_UIAlertSystem.AlertSystem:AddAlert(name, nil, text, false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
+            -- /run GW2_UIAlertSystem:AddAlert(format("|cff00c0fa%s|r", GetFactionInfoByID(2407)), nil, format("|cff00c0fa%s|r", "TESTE"), false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
+            GW2_UIAlertSystem:AddAlert(name, nil, text, false, "Interface\\Icons\\Achievement_Quests_Completed_08", false)
             PlaySoundFile(GW.Libs.LSM:Fetch("sound",settings.paragonSound), "Master")
         end
     elseif event == "VIGNETTE_MINIMAP_UPDATED" and settings.showRare then
@@ -1450,7 +1449,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             if vignetteGUID ~= self.lastMinimapRare.id then
                 GW.Debug("Minimap vignette with id", vignetteInfo.vignetteID, "and name", vignetteInfo.name, "appeared on the minimap.")
                 vignetteInfo.nameColored = format("|cff00c0fa%s|r", vignetteInfo.name)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(GW.L["has appeared on the Minimap!"], nil, vignetteInfo.nameColored, false, vignetteInfo.atlasName, false, nil, vignetteInfo.name)
+                GW2_UIAlertSystem:AddAlert(GW.L["has appeared on the Minimap!"], nil, vignetteInfo.nameColored, false, vignetteInfo.atlasName, false, nil, vignetteInfo.name)
                 self.lastMinimapRare.id = vignetteGUID
 
                 local time = GetTime()
@@ -1485,8 +1484,8 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         if ((IsTank and forTank) or (IsHealer and forHealer) or (IsDamage and forDamage)) and not ingroup then
             if GetTime() - LFG_Timer > 20 then
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.callToArmsSound), "Master")
-                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, "|cff00B2EE" .. TANK .. "|r"), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, tank .. " " .. healer .. " " .. damager), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
+                -- /run GW2_UIAlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, "|cff00B2EE" .. TANK .. "|r"), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
+                GW2_UIAlertSystem:AddAlert(format(LFG_CALL_TO_ARMS, tank .. " " .. healer .. " " .. damager), nil, BATTLEGROUND_HOLIDAY, false, "Interface/AddOns/GW2_UI/textures/icons/garrison-up", false)
                 LFG_Timer = GetTime()
             end
         end
@@ -1502,25 +1501,25 @@ local function AlertContainerFrameOnEvent(self, event, ...)
         if subEvent == "SPELL_CAST_SUCCESS" then
             if settings.showMageTable and spellID == 190336 then -- Refreshment Table
                 local name, _, icon = GetSpellInfo(190336)
-                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s created a table of Conjured Refreshments.", "Hansi"), nil, GetSpellInfo(190336), false, select(3, GetSpellInfo(190336)), false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s created a table of Conjured Refreshments."], srcName), nil, name, false, icon, false)
+                -- /run GW2_UIAlertSystem:AddAlert(format("%s created a table of Conjured Refreshments.", "Hansi"), nil, GetSpellInfo(190336), false, select(3, GetSpellInfo(190336)), false)
+                GW2_UIAlertSystem:AddAlert(format(GW.L["%s created a table of Conjured Refreshments."], srcName), nil, name, false, icon, false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.mageTableSound), "Master")
             end
         elseif subEvent == "SPELL_CREATE" then
             if settings.showRitualOfSummoning and spellID == 698 then -- Ritual of Summoning
                 local name, _, icon = GetSpellInfo(698)
-                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s is performing a Ritual of Summoning.", "Hansi"), nil, GetSpellInfo(698), false, select(3, GetSpellInfo(698)), false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s is performing a Ritual of Summoning."], srcName), nil, name, false, icon, false)
+                -- /run GW2_UIAlertSystem:AddAlert(format("%s is performing a Ritual of Summoning.", "Hansi"), nil, GetSpellInfo(698), false, select(3, GetSpellInfo(698)), false)
+                GW2_UIAlertSystem:AddAlert(format(GW.L["%s is performing a Ritual of Summoning."], srcName), nil, name, false, icon, false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.ritualOfSummoningSound), "Master")
             elseif settings.showSpoulwell and spellID == 29893 then -- Soul Well
                 local name, _, icon = GetSpellInfo(29893)
-                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s created a Soulwell.", "Hansi"), nil, GetSpellInfo(29893), false, select(3, GetSpellInfo(29893)), false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s created a Soulwell."], srcName), nil, name, false, icon, false)
+                -- /run GW2_UIAlertSystem:AddAlert(format("%s created a Soulwell.", "Hansi"), nil, GetSpellInfo(29893), false, select(3, GetSpellInfo(29893)), false)
+                GW2_UIAlertSystem:AddAlert(format(GW.L["%s created a Soulwell."], srcName), nil, name, false, icon, false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.spoulwellSound), "Master")
             elseif settings.showMagePortal and GW.MagePortals[spellID] then
                 local name, _, icon = GetSpellInfo(spellID)
-                -- /run GW2_UIAlertSystem.AlertSystem:AddAlert(format("%s placed a portal to %s.", "Hansi", GetSpellInfo(224871):gsub("^.+:%s+", "")), nil, GetSpellInfo(224871), false, select(3, GetSpellInfo(224871)), false)
-                GW2_UIAlertSystem.AlertSystem:AddAlert(format(GW.L["%s placed a portal to %s."], srcName, name:gsub("^.+:%s+", "")), nil, name, false, icon, false)
+                -- /run GW2_UIAlertSystem:AddAlert(format("%s placed a portal to %s.", "Hansi", GetSpellInfo(224871):gsub("^.+:%s+", "")), nil, GetSpellInfo(224871), false, select(3, GetSpellInfo(224871)), false)
+                GW2_UIAlertSystem:AddAlert(format(GW.L["%s placed a portal to %s."], srcName, name:gsub("^.+:%s+", "")), nil, name, false, icon, false)
                 PlaySoundFile(GW.Libs.LSM:Fetch("sound", settings.magePortalSound), "Master")
             end
         end
@@ -1660,8 +1659,6 @@ local function LoadOurAlertSubSystem()
     end
 
     -- Add customs alert system
-    if not GW2_UIAlertSystem.AlertSystem then
-        GW2_UIAlertSystem.AlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("GW2_UIAlertFrameTemplate", GW2_UIAlertFrame_SetUp, 4, math.huge)
-    end
+    GW2_UIAlertSystem = AlertFrame:AddQueuedAlertFrameSubSystem("GW2_UIAlertFrameTemplate", GW2_UIAlertFrame_SetUp, 4, math.huge)
 end
 GW.LoadOurAlertSubSystem = LoadOurAlertSubSystem
