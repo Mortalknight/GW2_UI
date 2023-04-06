@@ -1636,7 +1636,6 @@ local function LoadAlertSystem()
 
         GW.RegisterMovableFrame(GW.AlertContainerFrame, GW.L["Alert Frames"], "AlertPos", ALL .. ",Blizzard,Widgets", {300, 5}, {"default"}, nil, postDragFunction)
 
-        GW.AlertContainerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         GW.AlertContainerFrame:RegisterEvent("PLAYER_LEVEL_UP")
         GW.AlertContainerFrame:RegisterEvent("LEARNED_SPELL_IN_TAB")
         GW.AlertContainerFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
