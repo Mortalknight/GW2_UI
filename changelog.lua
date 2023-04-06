@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("2.0.7 Era", [=[
+MISC
+Fix questie integration
+]=])
+
 v("2.0.6 Era", [=[
 MISC
     Update for 1.14.3
