@@ -205,9 +205,9 @@ local function InitTalentDataText()
         if ClassTalentsID and newConfigID == C_ClassTalents.GetActiveConfigID() then return end
         ClassTalentsID = newConfigID
 
-        TalentButton_OnEvent(TalentMicroButton, "FORCE_UPDATE")
+        TalentButton_OnEvent(GwTalentMicroButton, "FORCE_UPDATE")
     end)
-    TalentButton_OnEvent(TalentMicroButton, "FORCE_UPDATE")
+    TalentButton_OnEvent(GwTalentMicroButton, "FORCE_UPDATE")
 end
 GW.InitTalentDataText = InitTalentDataText
 

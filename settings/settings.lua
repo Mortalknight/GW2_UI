@@ -966,6 +966,7 @@ local function InitPanel(panel, hasScroll)
         panel.scroll.slider.thumb:SetHeight(panel.scroll.slider:GetHeight() * (panel.scroll:GetHeight() / (maxScroll + panel.scroll:GetHeight())) )
         panel.scroll.slider:SetValue(1)
         panel.scroll.maxScroll = maxScroll
+        panel.scroll.doNotHide = false
     end
 end
 GW.InitPanel = InitPanel

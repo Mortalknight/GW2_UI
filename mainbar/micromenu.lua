@@ -9,7 +9,6 @@ local PERFORMANCE_BAR_UPDATE_INTERVAL = 1
 local MICRO_BUTTONS = {
     "CharacterMicroButton",
     "SpellbookMicroButton",
-    "TalentMicroButton",
     "AchievementMicroButton",
     "QuestLogMicroButton",
     "GuildMicroButton",
@@ -196,22 +195,6 @@ local function bag_OnUpdate(self, elapsed)
     self.GwNotifyText:Show()
 end
 AFP("bag_OnUpdate", bag_OnUpdate)
-
-local function gwMicro_PositionAlert(alert)
-    if
-        (alert ~= CollectionsMicroButtonAlert and alert ~= LFDMicroButtonAlert and alert ~= EJMicroButtonAlert and
-            alert ~= StoreMicroButtonAlert and
-            alert ~= CharacterMicroButtonAlert and
-            alert ~= TalentMicroButtonAlert)
-    then
-        return
-    end
-    alert.Arrow:ClearAllPoints()
-    alert.Arrow:SetPoint("BOTTOMLEFT", alert, "TOPLEFT", 4, -4)
-    alert:ClearAllPoints()
-    alert:SetPoint("TOPLEFT", alert.GwMicroButton, "BOTTOMLEFT", -18, -20)
-end
-AFP("gwMicro_PositionAlert", gwMicro_PositionAlert)
 
 local function modifyMicroAlert(alert, microButton)
     if not alert then return end --TODO: Alerts are changed
@@ -535,35 +518,37 @@ local function setupMicroButtons(mbf)
         sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
     end
     -- TalentMicroButton create aur own to prevent actionbar taint
-    local taltenMicroButton = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
-    taltenMicroButton.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
-    taltenMicroButton.newbieText = NEWBIE_TOOLTIP_TALENTS
-    reskinMicroButton(taltenMicroButton, "TalentMicroButton", mbf)
+    local talentMicroButton = CreateFrame("Button", "GwTalentMicroButton", mbf, "SecureHandlerClickTemplate")
+    talentMicroButton.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
+    talentMicroButton.newbieText = NEWBIE_TOOLTIP_TALENTS
+    reskinMicroButton(talentMicroButton, "TalentMicroButton", mbf)
 
     GW.InitTalentDataText()
-    taltenMicroButton:ClearAllPoints()
-    taltenMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
-    taltenMicroButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    taltenMicroButton:SetScript("OnEnter", GW.TalentButton_OnEnter)
-    taltenMicroButton:SetScript("OnLeave", GameTooltip_Hide)
-    taltenMicroButton:SetScript("OnClick", GW.TalentButton_OnClick)
-    taltenMicroButton:SetScript("OnEvent", GW.TalentButton_OnEvent)
-    taltenMicroButton:RegisterEvent("PLAYER_TALENT_UPDATE")
-    taltenMicroButton:RegisterEvent("PLAYER_ENTERING_WORLD")
-    taltenMicroButton:RegisterEvent("TRAIT_TREE_CURRENCY_INFO_UPDATED")
-    taltenMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
-    taltenMicroButton:RegisterEvent("TRAIT_CONFIG_UPDATED")
-    taltenMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
-    taltenMicroButton:RegisterEvent("TRAIT_NODE_CHANGED")
-    taltenMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-    taltenMicroButton:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-    taltenMicroButton:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
-    taltenMicroButton:RegisterEvent("TRAIT_CONFIG_DELETED")
-    disableMicroButton(TalentMicroButton, true)
+    talentMicroButton:ClearAllPoints()
+    talentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
+    talentMicroButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    talentMicroButton:SetScript("OnEnter", GW.TalentButton_OnEnter)
+    talentMicroButton:SetScript("OnLeave", GameTooltip_Hide)
+    talentMicroButton:SetScript("OnClick", GW.TalentButton_OnClick)
+    talentMicroButton:SetScript("OnEvent", GW.TalentButton_OnEvent)
+    talentMicroButton:RegisterEvent("PLAYER_TALENT_UPDATE")
+    talentMicroButton:RegisterEvent("PLAYER_ENTERING_WORLD")
+    talentMicroButton:RegisterEvent("TRAIT_TREE_CURRENCY_INFO_UPDATED")
+    talentMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
+    talentMicroButton:RegisterEvent("TRAIT_CONFIG_UPDATED")
+    talentMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
+    talentMicroButton:RegisterEvent("TRAIT_NODE_CHANGED")
+    talentMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    talentMicroButton:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    talentMicroButton:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
+    talentMicroButton:RegisterEvent("TRAIT_CONFIG_DELETED")
+    -- disable the default talent microbutton
+    TalentMicroButton:SetAlpha(0)
+    TalentMicroButton:EnableMouse(false)
 
     -- AchievementMicroButton
     AchievementMicroButton:ClearAllPoints()
-    AchievementMicroButton:SetPoint("BOTTOMLEFT", taltenMicroButton, "BOTTOMRIGHT", 4, 0)
+    AchievementMicroButton:SetPoint("BOTTOMLEFT", talentMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- QuestLogMicroButton
     QuestLogMicroButton:ClearAllPoints()
