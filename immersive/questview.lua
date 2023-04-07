@@ -356,13 +356,15 @@ function QuestViewMixin:showRequired()
 end
 
 function QuestViewMixin:showRewards(showObjective)
+    local questID = QuestInfoFrame.questLog and C_QuestLog.GetSelectedQuest() or GetQuestID()
+
     local xp = GetRewardXP()
     local money = GetRewardMoney()
     local title = GetRewardTitle()
     local currency = GetNumRewardCurrencies()
     local _, _, skillPoints = GetRewardSkillPoints()
     local items = GetNumQuestRewards()
-    local spells = GetNumRewardSpells()
+    local spells = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {}
     local choices = GetNumQuestChoices()
     local honor = GetRewardHonor()
 

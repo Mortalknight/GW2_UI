@@ -309,17 +309,19 @@ end
 GW.AddForProfiling("dodgebar", "dodge_OnLeave", dodge_OnLeave)
 
 local function setupDragonBar(self)
-    local maxVigor = UnitPowerMax("player" , DRAGON_POWERTYPE);
-    local frameName = self:GetName()
+    local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(4460)
+    if widgetInfo then
+        local frameName = self:GetName()
 
-    for i=1,5 do
-        local seperator = _G[frameName.."Sep"..i]
-        if i<=maxVigor then
-            local p = lerp(RAD_AT_START,RAD_AT_END,i/maxVigor)
-            seperator:SetRotation(p)
-            seperator:Show()
-        else
-            seperator:Hide()
+        for i = 1,5 do
+            local seperator = _G[frameName.."Sep"..i]
+            if i <= widgetInfo.numTotalFrames then
+                local p = lerp(RAD_AT_START,RAD_AT_END,i / widgetInfo.numTotalFrames)
+                seperator:SetRotation(p)
+                seperator:Show()
+            else
+                seperator:Hide()
+            end
         end
     end
 end
@@ -370,7 +372,7 @@ local function updateDragonRidingState(self, state, isLogin)
         if settings.hideBLizzardVigorBar and not EncounterBar:IsVisible() then
             C_Timer.After(0.5, function() EncounterBar:Show() end)
         end
-    elseif state and not self:IsShown() then
+    elseif (state and not self:IsShown()) or (state and isLogin and self:IsShown()) then
         self:Show()
         GwDodgeBar:SetScript("OnEnter", nil)
         GwDodgeBar:SetScript("OnLeave", nil)
@@ -383,27 +385,25 @@ end
 
 local function dragonBar_OnEvent(self, event, ...)
     if event == "UNIT_POWER_UPDATE" then
-        local current = UnitPower("player", DRAGON_POWERTYPE)
-        local max = UnitPowerMax("player", DRAGON_POWERTYPE)
-        local fraction = (self.lastPower and self.lastPower > current and 0) or nil
-        if not self.gwMaxCharges or (max > self.gwMaxCharges and max >= 3) then
-            self.gwMaxCharges = max
-            setupDragonBar(self)
+        local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(4460)
+        if widgetInfo then
+            local fraction = (self.lastPower and self.lastPower > widgetInfo.numFullFrames and 0) or nil
+            if not self.gwMaxCharges or (widgetInfo.numTotalFrames > self.gwMaxCharges and widgetInfo.numTotalFrames >= 3) then
+                self.gwMaxCharges = widgetInfo.numTotalFrames
+                setupDragonBar(self)
+            end
+            animateDragonBar(self, widgetInfo.numFullFrames, fraction, widgetInfo.numTotalFrames)
+            self.lastPower = widgetInfo.numFullFrames
         end
-        animateDragonBar(self, current, fraction, max)
-        self.lastPower = current
     elseif event == "UPDATE_UI_WIDGET" then
         local widget = ...
         if widget.widgetSetID ~= 283 then
             return
         end
-        local current = UnitPower("player", DRAGON_POWERTYPE)
-        local max = UnitPowerMax("player", DRAGON_POWERTYPE)
 
         local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(widget.widgetID)
         if widgetInfo then
-            --updateAnim(self, GetTime(), 20, math.min(max,current + (widgetInfo.fillValue / widgetInfo.fillMax)), max)
-            animateDragonBar(self, current, (widgetInfo.fillValue / widgetInfo.fillMax), max)
+            animateDragonBar(self, widgetInfo.numFullFrames, (widgetInfo.fillValue / widgetInfo.fillMax), widgetInfo.numTotalFrames)
             self.tooltip = widgetInfo.tooltip
         end
     elseif event == "GW2_PLAYER_DRAGONRIDING_STATE_CHANGE" then

@@ -117,7 +117,7 @@ do
             for x = 1, #data.lines do
                 local line = data.lines[x]
                 if line then
-                    local lineText = line.args[2].stringVal
+                    local lineText = line.leftText
                     if lineText and x == 1 and lineText == RETRIEVING_ITEM_INFO then
                         return "tooSoon"
                     else
@@ -126,15 +126,15 @@ do
                 end
             end
         else
-            if data.lines[1].args[2] and data.lines[1].args[2].field and data.lines[1].args[2].field == "leftText" and data.lines[1].args[2].stringVal
-            and data.lines[1].args[2].stringVal == RETRIEVING_ITEM_INFO then
+            if data.lines[1] and data.lines[1].leftText
+            and data.lines[1].leftText == RETRIEVING_ITEM_INFO then
                 return "tooSoon"
             end
 
             local colorblind = GetCVarBool("colorblindmode") and 4 or 3
             for x = 2, colorblind do
                 if data.lines[x] then
-                    local line = data.lines[x].args[2].stringVal
+                    local line = data.lines[x].leftText
                     if line then
                         local itemLevel = line and (strmatch(line, MATCH_ITEM_LEVEL_ALT) or strmatch(line, MATCH_ITEM_LEVEL))
                         if itemLevel then

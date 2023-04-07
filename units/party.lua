@@ -733,7 +733,6 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
 
     frame.health:SetStatusBarColor(COLOR_FRIENDLY[1].r, COLOR_FRIENDLY[1].g, COLOR_FRIENDLY[1].b)
 
-
     frame:SetScript("OnEvent", party_OnEvent)
 
     frame:RegisterEvent("GROUP_ROSTER_UPDATE")
@@ -767,6 +766,7 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     -- create de/buff frames
     frame.buffFrames = {}
     frame.debuffFrames = {}
+    frame.privateAuraFrames = {}
     for k = 1, 40 do
         local debuffFrame = CreateFrame("Frame", nil, frame.auras,  "GwDeBuffIcon")
         debuffFrame:SetParent(frame.auras)
@@ -790,6 +790,50 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
         buffFrame.throt = -1
 
         frame.buffFrames[k] = buffFrame
+
+        if k <=2 then
+            local privateAura = CreateFrame("Frame", nil, frame.auras, "GwPrivateAuraTmpl")
+            privateAura:SetPoint("BOTTOMRIGHT", frame.auras, (28 * (k - 1)), 28 * 2)
+            privateAura.auraIndex = k
+            privateAura:SetSize(24, 24)
+            local auraAnchor = {
+                unitToken = registerUnit,
+                auraIndex = privateAura.auraIndex,
+                -- The parent frame of an aura anchor must have a valid rect with a non-zero
+                -- size. Each private aura will anchor to all points on its parent,
+                -- providing a tooltip when mouseovered.
+                parent = privateAura,
+                -- An optional cooldown spiral can be configured to represent duration.
+                showCountdownFrame = true,
+                showCountdownNumbers = true,
+                -- An optional icon can be created and shown for the aura. Omitting this
+                -- will display no icon.
+                iconInfo = {
+                    iconWidth = 24,
+                    iconHeight = 24,
+                    iconAnchor = {
+                        point = "CENTER",
+                        relativeTo = privateAura.status,
+                        relativePoint = "CENTER",
+                        offsetX = 0,
+                        offsetY = 0,
+                    },
+                },
+                -- An optional icon duration fontstring can also be configured.
+                durationAnchor = {
+                    point = "TOP",
+                    relativeTo = privateAura.status,
+                    relativePoint = "BOTTOM",
+                    offsetX = 0,
+                    offsetY = -4,
+                },
+            }
+            -- Anchors can be removed (and the aura hidden) via the RemovePrivateAuraAnchor
+            -- API, passing it the anchor index returned from the Add function.
+            privateAura.anchorIndex = C_UnitAuras.AddPrivateAuraAnchor(auraAnchor)
+
+            frame.privateAuraFrames[k] = privateAura
+        end
     end
 
     party_OnEvent(frame, "load")

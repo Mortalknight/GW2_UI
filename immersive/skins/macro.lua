@@ -38,9 +38,11 @@ local function ApplyMacroOptionsSkin()
         end
     end
 
-    GW.HandleTrimScrollBar(MacroFrame.MacroSelector.ScrollBar)
+    GW.HandleTrimScrollBar(MacroFrame.MacroSelector.ScrollBar, true)
     GW.HandleAchivementsScrollControls(MacroFrame.MacroSelector)
-    MacroFrameScrollFrameScrollBar:GwSkinScrollBar()
+
+    GW.HandleTrimScrollBar(MacroFrameScrollFrame.ScrollBar, true)
+    GW.HandleAchivementsScrollControls(MacroFrameScrollFrame)
 
     local buttons = {
         MacroSaveButton,
