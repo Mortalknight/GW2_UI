@@ -4,6 +4,7 @@ local lerpEaseOut = GW.lerpEaseOut
 local lerp = GW.lerp
 local numSpritesInAnimation = 254
 local uniqueID  = 0
+local round = GW.RoundInt
 
 --[[
 
@@ -88,10 +89,6 @@ local function SetFillAmount(self,value)
   local interpolateRamp = lerp(numSpritesInAnimation,0, rampProgress)
   local interpolateRampRound = round(interpolateRamp)
 
-  if self:GetName()=="test1" then
-  --  print(interpolateRampRound,value)
-  end
-
   if value == 0 then
       barPosition = 0
   end
@@ -105,9 +102,6 @@ local function SetFillAmount(self,value)
   else
     self.maskContainer:SetSize(segmentSize,segmentSize)
   end
-
-
-
 
   if self.spark~=nil  then
     if value == 0 then
@@ -149,26 +143,22 @@ local function SetFillAmount(self,value)
 end
 
 local function  barUpdate(self,delta)
-
   self.animatedTime = self.animatedTime + delta
   local animationProgress = self.animatedTime/self.animatedDuration
   local newValue = 0
-  if self.BarInterpolation and self.BarInterpolation==BarInterpolation.linear then 
+  if self.BarInterpolation and self.BarInterpolation==BarInterpolation.linear then
     newValue = Lerp(self.animatedStartValue,self.animatedValue,animationProgress)
-  else 
+  else
      newValue = lerpEaseOut(self.animatedStartValue,self.animatedValue,animationProgress)
   end
- 
+
   SetFillAmount(self,newValue)
   if self.onUpdateAnimation then
     self.onUpdateAnimation(self,animationProgress,delta)
   end
   if self.animatedTime>=self.animatedDuration then
-  --  SetFillAmount(self,self.animatedValue)
     self:SetScript("OnUpdate",nil)
   end
-
-
 end
 
 local function setCustomAnimation(self,from,to,time)
@@ -178,7 +168,7 @@ local function setCustomAnimation(self,from,to,time)
   self.animatedDuration = time
   self.BarInterpolation = BarInterpolation.linear
 
-  if self.onAnimationStart~=nil then 
+  if self.onAnimationStart~=nil then
     self.onAnimationStart(self,to)
   end
 
@@ -188,20 +178,19 @@ end
 local function onupdate_AnimateBar(self,value)
     self.animatedValue = value;
     self.animatedStartValue = GetFillAmount(self)
-    self.animatedTime =0
+    self.animatedTime = 0
     self.animatedDuration = getAnimationDurationDynamic(self,self.animatedStartValue , self.animatedValue,self:GetWidth())
 
-    if self.onAnimationStart~=nil then 
-      self.onAnimationStart(self,value)
+    if self.onAnimationStart~=nil then
+      self.onAnimationStart(self, value)
     end
 
-    if 
-    (self.animationType==BarAnimateTypes.Decay and self.animatedValue>self.animatedStartValue) or 
-    (self.animationType==BarAnimateTypes.Regenerate and self.animatedValue<self.animatedStartValue)
-    then 
+    if (self.animationType==BarAnimateTypes.Decay and self.animatedValue>self.animatedStartValue) or
+        (self.animationType==BarAnimateTypes.Regenerate and self.animatedValue<self.animatedStartValue)
+    then
       self:ForceFIllAmount(value)
-      return 
-    end 
+      return
+    end
 
     self:SetScript("OnUpdate",barUpdate)
 end
@@ -219,9 +208,7 @@ local function addToBarMask(self,texture)
    texture:AddMaskTexture(self.maskOverflow.mask)
 end
 
-local function SetOrientation(self,direction)
-
-
+local function SetOrientation(self)
   self.maskContainer.mask0:SetRotation(1.5707)
 
   self.maskContainer.mask0:ClearAllPoints()
@@ -241,15 +228,13 @@ local function SetOrientation(self,direction)
   self.maskOverflow.mask:ClearAllPoints()
   self.maskOverflow.mask:SetPoint("CENTER",self.maskOverflow,"CENTER",0,0)
   self.maskOverflow.mask:SetSize(self.maskOverflow:GetHeight(),self.maskOverflow:GetWidth())
-
-
 end
 
 local function hookStatusbarBehaviour(statusBar,smooth,animationType)
 
   if not AddToAnimation then
     AddToAnimation = GW.AddToAnimation
-     round = GW.RoundInt
+    round = GW.RoundInt
   end
   animationType = animationType or BarAnimateTypes.All
 
@@ -265,7 +250,6 @@ local function hookStatusbarBehaviour(statusBar,smooth,animationType)
   statusBar.BarInterpolation = BarInterpolation.Ease
   statusBar.uniqueID = uniqueID
   statusBar.addMask = addMask
-  statusBar.removeMask = removeMask
 
   statusBar.maskContainer:ClearAllPoints()
   statusBar.maskOverflow:ClearAllPoints()
@@ -295,46 +279,13 @@ end
 
 GW.createNewStatusbar = createNewStatusBar
 
-
-local function LoadStatusbarTest()
-  local testFrameContainer = CreateFrame("Frame",nil,UIParent)
-  local test1  = createNewStatusBar("test1",UIParent,nil,true)
-  test1:SetOrientation("VERTICAL")
-  test1:SetSize(150,150)
-  --local test2  = createNewStatusBar("test2",UIParent,nil,true)
---  test2:SetPoint("CENTER",0,-90)
-
-  test1:SetStatusBarColor(0.3,0.3,0.3,1)
---  test2:SetStatusBarColor(0.3,0,0,1)
-    local delay = 0
-    local delay2 = 0
-    testFrameContainer:SetScript("OnUpdate",function(self,delta)
-
-        test1:SetFillAmount(math.abs(math.sin(GetTime())))
-  --      test2:SetFillAmount(math.abs(math.sin(GetTime()*2)))
-end)
-
-
-end
-GW.LoadStatusbarTest = LoadStatusbarTest
-
-local function preload(self)
-
-    self.index = self.index + 1
-    if self.index>numSpritesInAnimation then
-      self:SetScript("OnUpdate",nil)
-    end
-end
 local function preLoadStatusBarMaskTextures()
   local f = CreateFrame("Frame",nil,UIParent)
   f:SetSize(1,1)
   for i =0,numSpritesInAnimation do
-    preLoader = f:CreateTexture(nil, "BACKGROUND")
-    preLoader:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/"..i)
-    preLoader:SetSize(1,1)
-
+    f.preLoader = f:CreateTexture(nil, "BACKGROUND")
+    f.preLoader:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/"..i)
+    f.preLoader:SetSize(1,1)
   end
-
---  f:SetScript("OnUpdate",preload)
 end
 GW.preLoadStatusBarMaskTextures = preLoadStatusBarMaskTextures

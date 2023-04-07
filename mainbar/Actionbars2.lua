@@ -515,11 +515,11 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
     end
     if _G[buttonName .. "NormalTexture"] then
         _G[buttonName .. "NormalTexture"]:SetTexture(nil)
-        _G[buttonName .. "NormalTexture"]:Hide()
+        _G[buttonName .. "NormalTexture"]:SetAlpha(0)
     end
     if _G[buttonName .. "NormalTexture2"] then
         _G[buttonName .. "NormalTexture2"]:SetTexture(nil)
-        _G[buttonName .. "NormalTexture2"]:Hide()
+        _G[buttonName .. "NormalTexture2"]:SetAlpha(0)
     end
     if btn.AutoCastable then
         btn.AutoCastable:SetSize(btnWidth * 2, btnWidth * 2)
@@ -542,7 +542,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.BottomDivider:SetAlpha(0)
     end
 
-    if btn.IconMask then btn.IconMask:Hide() end
+    if btn.IconMask then btn.IconMask:SetAlpha(0) end
 
     btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
     btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
