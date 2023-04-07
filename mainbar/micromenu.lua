@@ -544,6 +544,9 @@ local function setupMicroButtons(mbf)
     talentMicroButton:RegisterEvent("TRAIT_CONFIG_DELETED")
     -- disable the default talent microbutton
     TalentMicroButton:SetAlpha(0)
+    hooksecurefunc(TalentMicroButton, "SetAlpha", function()
+        TalentMicroButton:SetAlpha(0)
+    end)
     TalentMicroButton:EnableMouse(false)
 
     -- AchievementMicroButton

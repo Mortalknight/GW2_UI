@@ -542,7 +542,9 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.BottomDivider:SetAlpha(0)
     end
 
-    if btn.IconMask then btn.IconMask:SetAlpha(0) end
+    if btn.IconMask then
+        btn.icon:RemoveMaskTexture(btn.IconMask)
+    end
 
     btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed")
     btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
