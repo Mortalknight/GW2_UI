@@ -342,6 +342,9 @@ local function updateHotkey(self)
         text = gsub(text, "(s%-)", "S")
         text = gsub(text, "(a%-)", "A")
         text = gsub(text, "(c%-)", "C")
+        text = gsub(text, "SHIFT%-", "S")
+		text = gsub(text, "ALT%-", "A")
+		text = gsub(text, "CTRL%-", "C")
         text = gsub(text, KEY_BUTTON3, "M3") --middle mouse Button
         text = gsub(text, gsub(KEY_BUTTON4, "4", ""), "M") -- mouse button
         text = gsub(text, KEY_PAGEUP, "PU")
