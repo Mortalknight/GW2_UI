@@ -1316,6 +1316,8 @@ local function skinAchevement()
     end)
 
     local function OnCategoriesFrameViewAcquiredFrame(self, frame, elementData, new)
+        if not new then return end
+
         frame:SetHeight(36)
         local button = frame.Button
         if button then
