@@ -1,2 +1,5 @@
+2.1.1-Wrath
+    - Try to fix keybind text on actionbars
+
 2.1.0-Wrath
     - Added damage text styles: Default, Stacking and Classic

@@ -8,8 +8,12 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.1.1",{
+    {ct.bug,[=[Try to fix keybind text on actionbars]=]},
+})
+
 addChange("2.1.0",{
-    {ct.bug,[=[Added damage text styles: Default, Stacking and Classic]=]},
+    {ct.feature,[=[Added damage text styles: Default, Stacking and Classic]=]},
 })
 
 addChange("2.0.3",{
