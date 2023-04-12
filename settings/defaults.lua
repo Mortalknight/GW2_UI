@@ -816,6 +816,12 @@ GW_DEFAULT["PlayerDebuffFrame"]["hasMoved"] = false
 GW_DEFAULT["PlayerDebuffFrame_GrowDirection"] = "UP"
 GW_DEFAULT["PlayerDebuffFrame_scale"] = 1
 
+GW_DEFAULT["AchievementWindow"] = {}
+GW_DEFAULT["AchievementWindow"]["point"] = "TOPLEFT"
+GW_DEFAULT["AchievementWindow"]["relativePoint"] = "TOPLEFT"
+GW_DEFAULT["AchievementWindow"]["xOfs"] = 96
+GW_DEFAULT["AchievementWindow"]["yOfs"] = -115
+
 GW_DEFAULT["PlayerBuffFrame_Seperate"] = 0
 GW_DEFAULT["PlayerDebuffFrame_Seperate"] = 0
 
