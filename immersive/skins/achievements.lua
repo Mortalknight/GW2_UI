@@ -757,12 +757,10 @@ local function UpdateAchievementFrameListAchievement(self)
     if self.completed then
         self.completedBackground:Show()
         self.cBackground:Hide()
-        self.gwBackdrop:Show()
         self.completedBackground:SetAlpha(1)
     else
         self.completedBackground:Hide()
         self.cBackground:Show()
-        self.gwBackdrop:Hide()
         if self.accountWide then
             self.completedBackground:Show()
             self.completedBackground:SetAlpha(0.1)
@@ -996,15 +994,13 @@ local function updateAchievementComparison(self,isPlayer)
     end
 
     if self.completed then
-        self.gwBackdrop:Show()
         self.completedBackground:Show()
     else
-        self.gwBackdrop:Hide()
         self.completedBackground:Hide()
     end
 
     if isPlayer and parent.GetOrderIndex then
-        local zebra =  (parent:GetOrderIndex() % 2)==1 or false
+        local zebra = (parent:GetOrderIndex() % 2)==1 or false
         if zebra then
             parent.fBackground:SetVertexColor(1, 1, 1, 0.2)
         else
@@ -1257,33 +1253,36 @@ local function skinAchevement()
     HandleAchivementsScrollControls(AchievementFrameComparison.StatContainer)
 
     local loaded = false
-    hooksecurefunc(AchievementFrameCategories.ScrollBox, "Update", function(frame)
-        for _, child in next, {frame.ScrollTarget:GetChildren()} do
-            child:SetHeight(36)
-            local button = child.Button
-            if button then
-                if not button.IsSkinned then
-                    button:GwStripTextures()
-                    button.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
-                    button.Background:ClearAllPoints()
-                    button.Background:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
-                    button.Background:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
-                    button:SetPoint("TOPLEFT", child, "TOPLEFT", 0,0 )
-                    button:SetPoint("BOTTOMRIGHT", child, "BOTTOMRIGHT", 0, 0)
-                    SetupButtonHighlight(button, button.Background)
-                    CatMenuButton(child, button)
-                    hooksecurefunc(child, "UpdateSelectionState", catMenuButtonState)
-
-                    button.IsSkinned = true
-                end
-            end
-        end
+    hooksecurefunc(AchievementFrameCategories.ScrollBox, "Update", function()
         --wait for load
-        if loaded==false then
+        if not loaded then
             loaded = true
             AchievementFrameCategories.ScrollBox.view:SetElementExtent(36)
         end
     end)
+
+    local function OnCategoriesFrameViewAcquiredFrame(self, frame, elementData, new)
+        frame:SetHeight(36)
+        local button = frame.Button
+        if button then
+            if not button.IsSkinned then
+                button:GwStripTextures()
+                button.Background:SetTexture("Interface/AddOns/GW2_UI/textures/character/menu-bg")
+                button.Background:ClearAllPoints()
+                button.Background:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+                button.Background:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+                button:SetPoint("TOPLEFT", frame, "TOPLEFT", 0,0 )
+                button:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+                SetupButtonHighlight(button, button.Background)
+                CatMenuButton(frame, button)
+                hooksecurefunc(frame, "UpdateSelectionState", catMenuButtonState)
+
+                button.IsSkinned = true
+            end
+        end
+    end
+
+    AchievementFrameCategories.ScrollBox:RegisterCallback(ScrollBoxListViewMixin.Event.OnAcquiredFrame, OnCategoriesFrameViewAcquiredFrame)
 
     ----SUMMARY
     AchievementFrameSummaryAchievements:ClearAllPoints()
