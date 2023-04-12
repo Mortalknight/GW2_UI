@@ -411,6 +411,11 @@ local function skinAchievementSummaryStatusBar(self)
     text:SetTextColor(1,1,1)
     text:SetHeight(bar:GetHeight())
     text:SetJustifyV("MIDDLE")
+
+    hooksecurefunc(self, "SetValue", function(_, value)
+        local _, max = self:GetMinMaxValues()
+        self.spark:SetShown(value ~= max)
+    end)
 end
 
 local function reanchorSummaryCategoriy(index)
