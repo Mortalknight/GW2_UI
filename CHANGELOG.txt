@@ -1,4 +1,7 @@
- 2.0.7-Era
+2.0.8-Era
+    Check grid auras more frequently
+
+2.0.7-Era
     Fix questie integration
 
 2.0.6

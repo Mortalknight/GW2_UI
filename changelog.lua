@@ -1,9 +1,14 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("2.0.8 Era", [=[
+MISC
+Check grid auras more frequently
+]=])
+
 v("2.0.7 Era", [=[
 MISC
-Fix questie integration
+    Fix questie integration
 ]=])
 
 v("2.0.6 Era", [=[
@@ -21,7 +26,6 @@ v("2.0.4 Era", [=[
 FIXES
     - Fix tooltip lua error
 ]=])
-
 
 v("2.0.3 Era", [=[
 FIXES
