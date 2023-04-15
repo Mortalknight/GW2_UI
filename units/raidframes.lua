@@ -261,9 +261,11 @@ local function GridOnUpdate(self, elapsed)
         self.onUpdateDelay = self.onUpdateDelay - elapsed
         return
     end
-    self.onUpdateDelay = 0.2
+    self.onUpdateDelay = 0.4
     if UnitExists(self.unit) then
         GW.GridUpdateAwayData(self)
+
+        GW.GridUpdateAuras(self, "RAID")
     end
 end
 

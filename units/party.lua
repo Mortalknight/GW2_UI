@@ -158,6 +158,7 @@ local function updatePartyDebuffs(self, x, y)
     x = self.isPet and x or 0
     local unit = self.unit
     local debuffList = getUnitDebuffs(unit)
+    local debuffScale = GW.GetDebuffScaleBasedOnPrio()
 
     for i, debuffFrame in pairs(self.debuffFrames) do
         if debuffList[i] then
@@ -589,8 +590,6 @@ local function createPartyFrame(i, isFirstFrame)
     frame.level:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINED")
     frame.healthbar = frame.predictionbar.healthbar
     frame.healthstring = frame.healthbar.healthstring
-
-    frame:SetScript("OnEvent", party_OnEvent)
 
     frame.unit = registerUnit
     frame.guid = UnitGUID(frame.unit)
