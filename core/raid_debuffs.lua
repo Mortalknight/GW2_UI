@@ -45,63 +45,6 @@ end
 ----------------------------------------------------------
 ----------------- Dragonflight (Season 1)) ---------------
 ----------------------------------------------------------
--- Court of Stars
-    SetDefaultOnTheFly(207278) -- Arcane Lockdown
-    SetDefaultOnTheFly(209516) -- Mana Fang
-    SetDefaultOnTheFly(209512) -- Disrupting Energy
-    SetDefaultOnTheFly(211473) -- Shadow Slash
-    SetDefaultOnTheFly(207979) -- Shockwave
-    SetDefaultOnTheFly(207980) -- Disintegration Beam 1
-    SetDefaultOnTheFly(207981) -- Disintegration Beam 2
-    SetDefaultOnTheFly(211464) -- Fel Detonation
-    SetDefaultOnTheFly(208165) -- Withering Soul
-    SetDefaultOnTheFly(209413) -- Suppress
-    SetDefaultOnTheFly(209027) -- Quelling Strike
--- Halls of Valor
-    SetDefaultOnTheFly(197964) -- Runic Brand Orange
-    SetDefaultOnTheFly(197965) -- Runic Brand Yellow
-    SetDefaultOnTheFly(197963) -- Runic Brand Purple
-    SetDefaultOnTheFly(197967) -- Runic Brand Green
-    SetDefaultOnTheFly(197966) -- Runic Brand Blue
-    SetDefaultOnTheFly(193783) -- Aegis of Aggramar Up
-    SetDefaultOnTheFly(196838) -- Scent of Blood
-    SetDefaultOnTheFly(199674) -- Wicked Dagger
-    SetDefaultOnTheFly(193260) -- Static Field
-    SetDefaultOnTheFly(193743) -- Aegis of Aggramar Wielder
-    SetDefaultOnTheFly(199652) -- Sever
-    SetDefaultOnTheFly(198944) -- Breach Armor
-    SetDefaultOnTheFly(215430) -- Thunderstrike 1
-    SetDefaultOnTheFly(215429) -- Thunderstrike 2
-    SetDefaultOnTheFly(203963) -- Eye of the Storm
-    SetDefaultOnTheFly(196497) -- Ravenous Leap
-    SetDefaultOnTheFly(193660) -- Felblaze Rush
-    SetDefaultOnTheFly(192133) --
-    SetDefaultOnTheFly(192132) --
--- Shadowmoon Burial Grounds
-    SetDefaultOnTheFly(156776) -- Rending Voidlash
-    SetDefaultOnTheFly(153692) -- Necrotic Pitch
-    SetDefaultOnTheFly(153524) -- Plague Spit
-    SetDefaultOnTheFly(154469) -- Ritual of Bones
-    SetDefaultOnTheFly(162652) -- Lunar Purity
-    SetDefaultOnTheFly(164907) -- Void Cleave
-    SetDefaultOnTheFly(152979) -- Soul Shred
-    SetDefaultOnTheFly(158061) -- Blessed Waters of Purity
-    SetDefaultOnTheFly(154442) -- Malevolence
-    SetDefaultOnTheFly(153501) -- Void Blast
--- Temple of the Jade Serpent
-    SetDefaultOnTheFly(396150) -- Feeling of Superiority
-    SetDefaultOnTheFly(397878) -- Tainted Ripple
-    SetDefaultOnTheFly(106113) -- Touch of Nothingness
-    SetDefaultOnTheFly(397914) -- Defiling Mist
-    SetDefaultOnTheFly(397904) -- Setting Sun Kick
-    SetDefaultOnTheFly(397911) -- Touch of Ruin
-    SetDefaultOnTheFly(395859) -- Haunting Scream
-    SetDefaultOnTheFly(374037) -- Overwhelming Rage
-    SetDefaultOnTheFly(396093) -- Savage Leap
-    SetDefaultOnTheFly(106823) -- Serpent Strike
-    SetDefaultOnTheFly(396152) -- Feeling of Inferiority
-    SetDefaultOnTheFly(110125) -- Shattered Resolve
-    SetDefaultOnTheFly(397797) -- Corrupted Vortex
 -- Ruby Life Pools
     SetDefaultOnTheFly(392406) -- Thunderclap
     SetDefaultOnTheFly(372820) -- Scorched Earth
@@ -185,9 +128,232 @@ end
 ---------------- Dragonflight (Season 2) -----------------
 ----------------------------------------------------------
 -- Brackenhide Hollow
+    SetDefaultOnTheFly(385361) -- Rotting Sickness
+    SetDefaultOnTheFly(378020) -- Gash Frenzy
+    SetDefaultOnTheFly(385356) -- Ensnaring Trap
+    SetDefaultOnTheFly(373917) -- Decaystrike 1
+    SetDefaultOnTheFly(377864) -- Infectious Spit
+    SetDefaultOnTheFly(376933) -- Grasping Vines
+    SetDefaultOnTheFly(384425) -- Smell Like Meat
+    SetDefaultOnTheFly(373912) -- Decaystrike 2
+    SetDefaultOnTheFly(373896) -- Withering Rot
+    SetDefaultOnTheFly(377844) -- Bladestorm 1
+    SetDefaultOnTheFly(378229) -- Marked for Butchery
+    SetDefaultOnTheFly(381835) -- Bladestorm 2
+    SetDefaultOnTheFly(376149) -- Choking Rotcloud
+    SetDefaultOnTheFly(384725) -- Feeding Frenzy
+    SetDefaultOnTheFly(385303) -- Teeth Trap
+    SetDefaultOnTheFly(368299) -- Toxic Trap
+    SetDefaultOnTheFly(384970) -- Scented Meat 1
+    SetDefaultOnTheFly(384974) -- Scented Meat 2
+    SetDefaultOnTheFly(368091) -- Infected Bite
+    SetDefaultOnTheFly(385185) -- Disoriented
+    SetDefaultOnTheFly(387210) -- Decaying Strength
+    SetDefaultOnTheFly(382808) -- Withering Contagion 1
+    SetDefaultOnTheFly(383087) -- Withering Contagion 2
+    SetDefaultOnTheFly(382723) -- Crushing Smash
+    SetDefaultOnTheFly(382787) -- Decay Claws
+    SetDefaultOnTheFly(385058) -- Withering Poison
+    SetDefaultOnTheFly(383399) -- Rotting Surge
+    SetDefaultOnTheFly(367484) -- Vicious Clawmangle
+    SetDefaultOnTheFly(367521) -- Bone Bolt
+    SetDefaultOnTheFly(368081) -- Withering
+    SetDefaultOnTheFly(374245) -- Rotting Creek
+    SetDefaultOnTheFly(367481) -- Bloody Bite
 -- Halls of Infusion
+    SetDefaultOnTheFly(387571) -- Focused Deluge
+    SetDefaultOnTheFly(383935) -- Spark Volley
+    SetDefaultOnTheFly(385555) -- Gulp
+    SetDefaultOnTheFly(384524) -- Titanic Fist
+    SetDefaultOnTheFly(385963) -- Frost Shock
+    SetDefaultOnTheFly(374389) -- Gulp Swog Toxin
+    SetDefaultOnTheFly(386743) -- Polar Winds
+    SetDefaultOnTheFly(389179) -- Power Overload
+    SetDefaultOnTheFly(389181) -- Power Field
+    SetDefaultOnTheFly(257274) -- Vile Coating
+    SetDefaultOnTheFly(375384) -- Rumbling Earth
+    SetDefaultOnTheFly(374563) -- Dazzle
+    SetDefaultOnTheFly(389446) -- Nullifying Pulse
+    SetDefaultOnTheFly(374615) -- Cheap Shot
+    SetDefaultOnTheFly(391610) -- Blinding Winds
+    SetDefaultOnTheFly(374724) -- Molten Subduction
+    SetDefaultOnTheFly(385168) -- Thunderstorm
+    SetDefaultOnTheFly(387359) -- Waterlogged
+    SetDefaultOnTheFly(391613) -- Creeping Mold
+    SetDefaultOnTheFly(374706) -- Pyretic Burst
+    SetDefaultOnTheFly(389443) -- Purifying Blast
+    SetDefaultOnTheFly(374339) -- Demoralizing Shout
+    SetDefaultOnTheFly(374020) -- Containment Beam
+    SetDefaultOnTheFly(391634) -- Deep Chill
+    SetDefaultOnTheFly(393444) -- Gushing Wound
 -- Neltharus
+    SetDefaultOnTheFly(374534) -- Heated Swings
+    SetDefaultOnTheFly(373735) -- Dragon Strike
+    SetDefaultOnTheFly(377018) -- Molten Gold
+    SetDefaultOnTheFly(374842) -- Blazing Aegis 1
+    SetDefaultOnTheFly(392666) -- Blazing Aegis 2
+    SetDefaultOnTheFly(375890) -- Magma Eruption
+    SetDefaultOnTheFly(396332) -- Fiery Focus
+    SetDefaultOnTheFly(389059) -- Slag Eruption
+    SetDefaultOnTheFly(376784) -- Flame Vulnerability
+    SetDefaultOnTheFly(377542) -- Burning Ground
+    SetDefaultOnTheFly(374451) -- Burning Chain
+    SetDefaultOnTheFly(372461) -- Imbued Magma
+    SetDefaultOnTheFly(378818) -- Magma Conflagration
+    SetDefaultOnTheFly(377522) -- Burning Pursuit
+    SetDefaultOnTheFly(375204) -- Liquid Hot Magma
+    SetDefaultOnTheFly(374482) -- Grounding Chain
+    SetDefaultOnTheFly(372971) -- Reverberating Slam
+    SetDefaultOnTheFly(384161) -- Mote of Combustion
+    SetDefaultOnTheFly(374854) -- Erupted Ground
+    SetDefaultOnTheFly(373089) -- Scorching Fusillade
+    SetDefaultOnTheFly(372224) -- Dragonbone Axe
+    SetDefaultOnTheFly(372570) -- Bold Ambush
+    SetDefaultOnTheFly(372459) -- Burning
+    SetDefaultOnTheFly(372208) -- Djaradin Lava
 -- Uldaman: Legacy of Tyr
+    SetDefaultOnTheFly(368996) -- Purging Flames
+    SetDefaultOnTheFly(369792) -- Skullcracker
+    SetDefaultOnTheFly(372718) -- Earthen Shards
+    SetDefaultOnTheFly(382071) -- Resonating Orb
+    SetDefaultOnTheFly(377405) -- Time Sink
+    SetDefaultOnTheFly(369006) -- Burning Heat
+    SetDefaultOnTheFly(369110) -- Unstable Embers
+    SetDefaultOnTheFly(375286) -- Searing Cannonfire
+    SetDefaultOnTheFly(372652) -- Resonating Orb
+    SetDefaultOnTheFly(377825) -- Burning Pitch
+    SetDefaultOnTheFly(369411) -- Sonic Burst
+    SetDefaultOnTheFly(382576) -- Scorn of Tyr
+    SetDefaultOnTheFly(369366) -- Trapped in Stone
+    SetDefaultOnTheFly(369365) -- Curse of Stone
+    SetDefaultOnTheFly(369419) -- Venomous Fangs
+    SetDefaultOnTheFly(377486) -- Time Blade
+    SetDefaultOnTheFly(369818) -- Diseased Bite
+    SetDefaultOnTheFly(377732) -- Jagged Bite
+    SetDefaultOnTheFly(369828) -- Chomp
+    SetDefaultOnTheFly(369811) -- Brutal Slam
+    SetDefaultOnTheFly(376325) -- Eternity Zone
+    SetDefaultOnTheFly(369337) -- Difficult Terrain
+    SetDefaultOnTheFly(376333) -- Temporal Zone
+    SetDefaultOnTheFly(377510) -- Stolen Time
+-- Freehold
+    SetDefaultOnTheFly(258323) -- Infected Wound
+    SetDefaultOnTheFly(257775) -- Plague Step
+    SetDefaultOnTheFly(257908) -- Oiled Blade
+    SetDefaultOnTheFly(257436) -- Poisoning Strike
+    SetDefaultOnTheFly(274389) -- Rat Traps
+    SetDefaultOnTheFly(274555) -- Scabrous Bites
+    SetDefaultOnTheFly(258875) -- Blackout Barrel
+    SetDefaultOnTheFly(256363) -- Ripper Punch
+    -- Neltharion's Lair
+    SetDefaultOnTheFly(199705) -- Devouring
+    SetDefaultOnTheFly(199178) -- Spiked Tongue
+    SetDefaultOnTheFly(210166) -- Toxic Retch 1
+    SetDefaultOnTheFly(217851) -- Toxic Retch 2
+    SetDefaultOnTheFly(193941) -- Impaling Shard
+    SetDefaultOnTheFly(183465) -- Viscid Bile
+    SetDefaultOnTheFly(226296) -- Piercing Shards
+    SetDefaultOnTheFly(226388) -- Rancid Ooze
+    SetDefaultOnTheFly(200154) -- Burning Hatred
+    SetDefaultOnTheFly(183407) -- Acid Splatter
+    SetDefaultOnTheFly(215898) -- Crystalline Ground
+    SetDefaultOnTheFly(188494) -- Rancid Maw
+    SetDefaultOnTheFly(192800) -- Choking Dust
+    -- Underrot
+    SetDefaultOnTheFly(265468) -- Withering Curse
+    SetDefaultOnTheFly(278961) -- Decaying Mind
+    SetDefaultOnTheFly(259714) -- Decaying Spores
+    SetDefaultOnTheFly(272180) -- Death Bolt
+    SetDefaultOnTheFly(272609) -- Maddening Gaze
+    SetDefaultOnTheFly(269301) -- Putrid Blood
+    SetDefaultOnTheFly(265533) -- Blood Maw
+    SetDefaultOnTheFly(265019) -- Savage Cleave
+    SetDefaultOnTheFly(265377) -- Hooked Snare
+    SetDefaultOnTheFly(265625) -- Dark Omen
+    SetDefaultOnTheFly(260685) -- Taint of G'huun
+    SetDefaultOnTheFly(266107) -- Thirst for Blood
+    SetDefaultOnTheFly(260455) -- Serrated Fangs
+    -- Vortex Pinnacle
+    SetDefaultOnTheFly(87618) -- Static Cling
+    SetDefaultOnTheFly(410870) -- Cyclone
+    SetDefaultOnTheFly(86292) -- Cyclone Shield
+    SetDefaultOnTheFly(88282) -- Upwind of Altairus
+    SetDefaultOnTheFly(88286) -- Downwind of Altairus
+    SetDefaultOnTheFly(410997) -- Rushing Wind
+    SetDefaultOnTheFly(411003) -- Turbulence
+    SetDefaultOnTheFly(87771) -- Crusader Strike
+    SetDefaultOnTheFly(87759) -- Shockwave
+    SetDefaultOnTheFly(88314) -- Twisting Winds
+    SetDefaultOnTheFly(76622) -- Sunder Armor
+    SetDefaultOnTheFly(88171) -- Hurricane
+    SetDefaultOnTheFly(88182) -- Lethargic Poison
+---------------------------------------------------------
+------------ Aberrus, the Shadowed Crucible -------------
+---------------------------------------------------------
+-- Kazzara
+    SetDefaultOnTheFly(406530) -- Riftburn
+    SetDefaultOnTheFly(402420) -- Molten Scar
+    SetDefaultOnTheFly(402253) -- Ray of Anguish
+    SetDefaultOnTheFly(406525) -- Dread Rift
+    SetDefaultOnTheFly(404743) -- Terror Claws
+-- Molgoth
+    SetDefaultOnTheFly(405084) -- Lingering Umbra
+    SetDefaultOnTheFly(405645) -- Engulfing Heat
+    SetDefaultOnTheFly(405642) -- Blistering Twilight
+    SetDefaultOnTheFly(402617) -- Blazing Heat
+    SetDefaultOnTheFly(401809) -- Corrupting Shadow
+    SetDefaultOnTheFly(405394) -- Shadowflame
+-- Experimentation of Dracthyr
+    SetDefaultOnTheFly(406317) -- Mutilation 1
+    SetDefaultOnTheFly(406365) -- Mutilation 2
+    SetDefaultOnTheFly(405392) -- Disintegrate 1
+    SetDefaultOnTheFly(405423) -- Disintegrate 2
+    SetDefaultOnTheFly(406233) -- Deep Breath
+    SetDefaultOnTheFly(407327) -- Unstable Essence
+    SetDefaultOnTheFly(406313) -- Infused Strikes
+    SetDefaultOnTheFly(407302) -- Infused Explosion
+-- Zaqali Invasion
+    SetDefaultOnTheFly(408873) -- Heavy Cudgel
+    SetDefaultOnTheFly(410353) -- Flaming Cudgel
+    SetDefaultOnTheFly(407017) -- Vigorous Gale
+    SetDefaultOnTheFly(401407) -- Blazing Spear 1
+    SetDefaultOnTheFly(401452) -- Blazing Spear 2
+    SetDefaultOnTheFly(409275) -- Magma Flow
+-- Rashok
+    SetDefaultOnTheFly(407547) -- Flaming Upsurge
+    SetDefaultOnTheFly(407597) -- Earthen Crush
+    SetDefaultOnTheFly(405819) -- Searing Slam
+    SetDefaultOnTheFly(408857) -- Doom Flame
+-- Zskarn
+    SetDefaultOnTheFly(404955) -- Shrapnel Bomb
+    SetDefaultOnTheFly(404010) -- Unstable Embers
+    SetDefaultOnTheFly(404942) -- Searing Claws
+    SetDefaultOnTheFly(403978) -- Blast Wave
+    SetDefaultOnTheFly(405592) -- Salvage Parts
+    SetDefaultOnTheFly(405462) -- Dragonfire Traps
+    SetDefaultOnTheFly(409942) -- Elimination Protocol
+-- Magmorax
+    SetDefaultOnTheFly(404846) -- Incinerating Maws 1
+    SetDefaultOnTheFly(408955) -- Incinerating Maws 2
+    SetDefaultOnTheFly(402994) -- Molten Spittle
+    SetDefaultOnTheFly(403747) -- Igniting Roar
+-- Echo of Neltharion
+    SetDefaultOnTheFly(409373) -- Disrupt Earth
+    SetDefaultOnTheFly(407220) -- Rushing Shadows 1
+    SetDefaultOnTheFly(407182) -- Rushing Shadows 2
+    SetDefaultOnTheFly(405484) -- Surrendering to Corruption
+    SetDefaultOnTheFly(409058) -- Seeping Lava
+    SetDefaultOnTheFly(402120) -- Collapsed Earth
+    SetDefaultOnTheFly(407728) -- Sundered Shadow
+    SetDefaultOnTheFly(401998) -- Calamitous Strike
+    SetDefaultOnTheFly(408160) -- Shadow Strike
+    SetDefaultOnTheFly(403846) -- Sweeping Shadows
+    SetDefaultOnTheFly(401133) -- Wildshift (Druid)
+    SetDefaultOnTheFly(401131) -- Wild Summoning (Warlock)
+    SetDefaultOnTheFly(401130) -- Wild Magic (Mage)
+    SetDefaultOnTheFly(401135) -- Wild Breath (Evoker)
+    SetDefaultOnTheFly(408071) -- Shapeshifter's Fervor
+-- Scalecommander Sarkareth
 ---------------------------------------------------------
 ---------------- Vault of the Incarnates ----------------
 ---------------------------------------------------------
