@@ -248,9 +248,9 @@ local function updateBagBar(f)
         norm:SetVertexColor(1, 1, 1, 0.75)
         if bag_tex ~= nil then
             b.gwHasBag = true
-            if not IsBagOpen(bag_id) then
-                OpenBag(bag_id) -- default open valid bank bags immediately
-            end
+            --if not IsBagOpen(bag_id) then
+                --OpenBag(bag_id) -- default open valid bank bags immediately  --TAINT atm
+            --end
             b.icon:SetTexture(bag_tex)
             local quality = GetInventoryItemQuality("player", inv_id)
             if quality then

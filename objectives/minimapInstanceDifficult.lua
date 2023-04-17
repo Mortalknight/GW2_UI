@@ -57,7 +57,7 @@ local function GuildEmblem()
         char.guildTexCoord = nil
     end
     if char.guildTexCoord ~= nil and IsInGuild() then
-        return "|TInterface\\GuildFrame\\GuildEmblemsLG_01:24:24:-4:1:32:32:" .. (char.guildTexCoord[1] * 32) .. ":" .. (char.guildTexCoord[7] * 32) .. ":" .. (char.guildTexCoord[2] * 32) .. ":" .. (char.guildTexCoord[8] * 32) .. "|t"
+        return "|TInterface\\GuildFrame\\GuildEmblems_01:16:16:0:0:32:32:" .. (char.guildTexCoord[1] * 32) .. ":" .. (char.guildTexCoord[7] * 32) .. ":" .. (char.guildTexCoord[2] * 32) .. ":" .. (char.guildTexCoord[8] * 32) .. "|t"
     else
         return ""
     end
