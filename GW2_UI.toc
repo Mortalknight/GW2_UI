@@ -93,7 +93,6 @@ dataInfo\money.lua
 dataInfo\guild.lua
 dataInfo\bags.lua
 dataInfo\time.lua
-dataInfo\spec.lua
 dataInfo\conduits.lua
 dataInfo\friends.lua
 dataInfo\system.lua
