@@ -10,6 +10,7 @@ local MICRO_BUTTONS = {
     "CharacterMicroButton",
     "SpellbookMicroButton",
     "AchievementMicroButton",
+    "TalentMicroButton",
     "QuestLogMicroButton",
     "GuildMicroButton",
     "LFDMicroButton",
@@ -517,41 +518,14 @@ local function setupMicroButtons(mbf)
         sref:ClearAllPoints()
         sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
     end
-    -- TalentMicroButton create aur own to prevent actionbar taint
-    local talentMicroButton = CreateFrame("Button", "GwTalentMicroButton", mbf, "SecureHandlerClickTemplate")
-    talentMicroButton.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
-    talentMicroButton.newbieText = NEWBIE_TOOLTIP_TALENTS
-    reskinMicroButton(talentMicroButton, "TalentMicroButton", mbf)
 
-    GW.InitTalentDataText()
-    talentMicroButton:ClearAllPoints()
-    talentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
-    talentMicroButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    talentMicroButton:SetScript("OnEnter", GW.TalentButton_OnEnter)
-    talentMicroButton:SetScript("OnLeave", GameTooltip_Hide)
-    talentMicroButton:SetScript("OnClick", GW.TalentButton_OnClick)
-    talentMicroButton:SetScript("OnEvent", GW.TalentButton_OnEvent)
-    talentMicroButton:RegisterEvent("PLAYER_TALENT_UPDATE")
-    talentMicroButton:RegisterEvent("PLAYER_ENTERING_WORLD")
-    talentMicroButton:RegisterEvent("TRAIT_TREE_CURRENCY_INFO_UPDATED")
-    talentMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
-    talentMicroButton:RegisterEvent("TRAIT_CONFIG_UPDATED")
-    talentMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
-    talentMicroButton:RegisterEvent("TRAIT_NODE_CHANGED")
-    talentMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-    talentMicroButton:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-    talentMicroButton:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
-    talentMicroButton:RegisterEvent("TRAIT_CONFIG_DELETED")
-    -- disable the default talent microbutton
-    TalentMicroButton:SetAlpha(0)
-    hooksecurefunc(TalentMicroButton, "SetAlpha", function()
-        TalentMicroButton:SetAlpha(0)
-    end)
-    TalentMicroButton:EnableMouse(false)
+    -- TalentMicroButton -- adding things to that one taint the actionbars
+    TalentMicroButton:ClearAllPoints()
+    TalentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
 
     -- AchievementMicroButton
     AchievementMicroButton:ClearAllPoints()
-    AchievementMicroButton:SetPoint("BOTTOMLEFT", talentMicroButton, "BOTTOMRIGHT", 4, 0)
+    AchievementMicroButton:SetPoint("BOTTOMLEFT", TalentMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- QuestLogMicroButton
     QuestLogMicroButton:ClearAllPoints()
