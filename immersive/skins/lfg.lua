@@ -299,7 +299,7 @@ local function SkinLookingForGroupFrames()
     LFRQueueFrameCommentScrollFrame:GwSkinScrollFrame()
     LFRQueueFrameCommentScrollFrameScrollBar:GwSkinScrollBar()
     GW.HandleTrimScrollBar(LFDQueueFrameSpecific.ScrollBar)
-    GW.HandleAchivementsScrollControls(LFDQueueFrameSpecific)
+    GW.HandleScrollControls(LFDQueueFrameSpecific)
 
     _G[_G.LFDQueueFrame.PartyBackfill:GetName().."BackfillButton"]:GwSkinButton(false, true)
     _G[_G.LFDQueueFrame.PartyBackfill:GetName().."NoBackfillButton"]:GwSkinButton(false, true)
@@ -325,20 +325,20 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.EntryCreation.CancelButton:SetPoint("BOTTOMLEFT", -1, 3)
     LFGListFrame.EntryCreation.ListGroupButton:ClearAllPoints()
     LFGListFrame.EntryCreation.ListGroupButton:SetPoint("BOTTOMRIGHT", -6, 3)
-    LFGListFrame.EntryCreation.Description:GwCreateBackdrop(GW.skins.constBackdropFrame, true, 5, 5)
+    LFGListFrame.EntryCreation.Description:GwCreateBackdrop(GW.BackdropTemplates.Default, true, 5, 5)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.Description)
 
-    LFGListFrame.EntryCreation.ItemLevel.EditBox:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.ItemLevel.EditBox:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.ItemLevel.EditBox)
-    LFGListFrame.EntryCreation.MythicPlusRating.EditBox:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.MythicPlusRating.EditBox:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.MythicPlusRating.EditBox)
-    LFGListFrame.EntryCreation.Name:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.Name:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.Name)
-    LFGListFrame.EntryCreation.PVPRating.EditBox:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.PVPRating.EditBox:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.PVPRating.EditBox)
-    LFGListFrame.EntryCreation.PvpItemLevel.EditBox:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.PvpItemLevel.EditBox:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.PvpItemLevel.EditBox)
-    LFGListFrame.EntryCreation.VoiceChat.EditBox:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.VoiceChat.EditBox:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.VoiceChat.EditBox)
 
     LFGListEntryCreationActivityDropDown:GwSkinDropDownMenu()
@@ -364,7 +364,7 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.EntryCreation.ActivityFinder.Dialog:GwStripTextures()
     LFGListFrame.EntryCreation.ActivityFinder.Dialog.BorderFrame:GwStripTextures()
 
-    LFGListFrame.EntryCreation.ActivityFinder.Dialog.EntryBox:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    LFGListFrame.EntryCreation.ActivityFinder.Dialog.EntryBox:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 4)
     GW.HandleBlizzardRegions(LFGListFrame.EntryCreation.ActivityFinder.Dialog.EntryBox)
     LFGListFrame.EntryCreation.ActivityFinder.Dialog.SelectButton:GwSkinButton(false, true)
     LFGListFrame.EntryCreation.ActivityFinder.Dialog.CancelButton:GwSkinButton(false, true)
@@ -374,10 +374,10 @@ local function SkinLookingForGroupFrames()
     LFGListApplicationDialog.CancelButton:GwSkinButton(false, true)
     GW.HandleBlizzardRegions(LFGListApplicationDialogDescription)
     GW.SkinTextBox(LFGListApplicationDialogDescription.MiddleTex, LFGListApplicationDialogDescription.LeftTex, LFGListApplicationDialogDescription.RightTex, LFGListApplicationDialogDescription.TopTex, LFGListApplicationDialogDescription.BottomTex)
-    LFGListApplicationDialog:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
+    LFGListApplicationDialog:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
 
     LFGListInviteDialog:GwStripTextures()
-    LFGListInviteDialog:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
+    LFGListInviteDialog:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
     LFGListInviteDialog.AcknowledgeButton:GwSkinButton(false, true)
     LFGListInviteDialog.AcceptButton:GwSkinButton(false, true)
     LFGListInviteDialog.DeclineButton:GwSkinButton(false, true)
@@ -392,13 +392,13 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.SearchPanel.SignUpButton:SetPoint("BOTTOMRIGHT", -6, 3)
     LFGListFrame.SearchPanel.ResultsInset:GwStripTextures()
     GW.HandleTrimScrollBar(LFGListFrame.SearchPanel.ScrollBar)
-    GW.HandleAchivementsScrollControls(LFGListFrame.SearchPanel)
+    GW.HandleScrollControls(LFGListFrame.SearchPanel)
 
     if not LFGListFrame.SearchPanel.ResultsInset.SetBackdrop then
         Mixin(LFGListFrame.SearchPanel.ResultsInset, _G.BackdropTemplateMixin)
         LFGListFrame.SearchPanel.ResultsInset:HookScript("OnSizeChanged", LFGListFrame.SearchPanel.ResultsInset.OnBackdropSizeChanged)
     end
-    LFGListFrame.SearchPanel.ResultsInset:SetBackdrop(GW.constBackdropFrameColorBorder)
+    LFGListFrame.SearchPanel.ResultsInset:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
     LFGListFrame.SearchPanel.ResultsInset:SetBackdropBorderColor(0, 0, 0, 1)
 
     LFGListFrame.SearchPanel.FilterButton:GwSkinButton(false, true)
@@ -453,7 +453,7 @@ local function SkinLookingForGroupFrames()
     end)
 
     LFGListFrame.SearchPanel.AutoCompleteFrame:GwStripTextures()
-    LFGListFrame.SearchPanel.AutoCompleteFrame:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    LFGListFrame.SearchPanel.AutoCompleteFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
     LFGListFrame.SearchPanel.AutoCompleteFrame.backdrop:SetPoint("TOPLEFT", LFGListFrame.SearchPanel.AutoCompleteFrame, "TOPLEFT", 0, 3)
     LFGListFrame.SearchPanel.AutoCompleteFrame.backdrop:SetPoint("BOTTOMRIGHT", LFGListFrame.SearchPanel.AutoCompleteFrame, "BOTTOMRIGHT", 6, 3)
 
@@ -470,7 +470,7 @@ local function SkinLookingForGroupFrames()
         _G.Mixin(LFGListFrame.ApplicationViewer.Inset, _G.BackdropTemplateMixin)
         LFGListFrame.ApplicationViewer.Inset:HookScript("OnSizeChanged", LFGListFrame.ApplicationViewer.Inset.OnBackdropSizeChanged)
     end
-    LFGListFrame.ApplicationViewer.Inset:SetBackdrop(GW.constBackdropFrameColorBorder)
+    LFGListFrame.ApplicationViewer.Inset:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
     LFGListFrame.ApplicationViewer.Inset:SetBackdropBorderColor(0, 0, 0, 1)
 
     LFGListFrame.ApplicationViewer.NameColumnHeader:GwSkinButton(false, true)
@@ -502,7 +502,7 @@ local function SkinLookingForGroupFrames()
     LFGListFrame.ApplicationViewer.BrowseGroupsButton:SetSize(120, 22)
 
     GW.HandleTrimScrollBar(LFGListFrame.ApplicationViewer.ScrollBar)
-    GW.HandleAchivementsScrollControls(LFGListFrame.ApplicationViewer)
+    GW.HandleScrollControls(LFGListFrame.ApplicationViewer)
     --LFGListFrame.ApplicationViewer.ScrollBar:ClearAllPoints()
     --LFGListFrame.ApplicationViewer.ScrollBar:SetPoint("TOPLEFT", LFGListFrame.ApplicationViewer.Inset, "TOPRIGHT", 0, -16)
     --LFGListFrame.ApplicationViewer.ScrollBar:SetPoint("BOTTOMLEFT", LFGListFrame.ApplicationViewer.Inset, "BOTTOMRIGHT", 0, 16)
@@ -525,7 +525,7 @@ local function SkinLookingForGroupFrames()
                     _G.Mixin(button, _G.BackdropTemplateMixin)
                     button:HookScript("OnSizeChanged", button.OnBackdropSizeChanged)
                 end
-                button:SetBackdrop(GW.constBackdropFrameColorBorder)
+                button:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
 
                 button.Icon:SetDrawLayer("BACKGROUND", 2)
                 button.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
@@ -684,7 +684,7 @@ local function ApplyPvPUISkin()
     end
 
     GW.HandleTrimScrollBar(HonorFrame.SpecificScrollBar)
-    GW.HandleAchivementsScrollControls(HonorFrame, "SpecificScrollBar")
+    GW.HandleScrollControls(HonorFrame, "SpecificScrollBar")
     HonorFrameTypeDropDown:GwSkinDropDownMenu()
     HonorFrameQueueButton:GwSkinButton(false, true)
 
@@ -700,7 +700,7 @@ local function ApplyPvPUISkin()
         reward.Border:Hide()
         reward.CircleMask:Hide()
         GW.HandleIcon(reward.Icon)
-        reward.Icon:GwCreateBackdrop(GW.constBackdropFrameColorBorder , true)
+        reward.Icon:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder , true)
 
         reward.EnlistmentBonus:GwStripTextures()
         reward.EnlistmentBonus:SetSize(20, 20)
@@ -753,7 +753,7 @@ local function ApplyPvPUISkin()
         reward.Border:Hide()
         reward.CircleMask:Hide()
         GW.HandleIcon(reward.Icon)
-        reward.Icon:GwCreateBackdrop(GW.constBackdropFrameColorBorder, true)
+        reward.Icon:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
     end
 
     -- Item Borders for HonorFrame & ConquestFrame
@@ -779,7 +779,7 @@ local function ApplyPvPUISkin()
             local r, g, b = GetItemQualityColor(rewardQuaility)
             rewardFrame.Icon:SetTexture(rewardTexture)
             if not rewardFrame.Icon.backdrop then
-                rewardFrame.Icon:GwCreateBackdrop(GW.constBackdropFrameColorBorder, true)
+                rewardFrame.Icon:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
             end
             rewardFrame.Icon.backdrop:SetBackdropBorderColor(r, g, b)
         end
@@ -806,7 +806,7 @@ local function ApplyPvPUISkin()
             _G.Mixin(Frame.ConquestBar, _G.BackdropTemplateMixin)
             Frame.ConquestBar:HookScript("OnSizeChanged", Frame.ConquestBar.OnBackdropSizeChanged)
         end
-        Frame.ConquestBar:SetBackdrop(GW.constBackdropFrameColorBorder)
+        Frame.ConquestBar:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
 
         Frame.ConquestBar.Reward:ClearAllPoints()
         Frame.ConquestBar.Reward:SetPoint("LEFT", Frame.ConquestBar, "RIGHT", 0, 0)
@@ -821,7 +821,7 @@ local function ApplyPvPUISkin()
         _G.Mixin(NewSeasonPopup, _G.BackdropTemplateMixin)
         NewSeasonPopup:HookScript("OnSizeChanged", NewSeasonPopup.OnBackdropSizeChanged)
     end
-    NewSeasonPopup:SetBackdrop(GW.constBackdropFrameColorBorder)
+    NewSeasonPopup:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
     NewSeasonPopup:SetFrameLevel(5)
 
     local RewardFrame = NewSeasonPopup.SeasonRewardFrame
@@ -896,7 +896,7 @@ local function ApplyChallengesUISkin()
                     _G.Mixin(child, _G.BackdropTemplateMixin)
                     child:HookScript("OnSizeChanged", child.OnBackdropSizeChanged)
                 end
-                child:SetBackdrop(GW.constBackdropFrameColorBorder)
+                child:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
                 child:SetBackdropBorderColor(1, 0.99, 0.85)
 
                 if child.mapID then
@@ -939,7 +939,7 @@ local function ApplyChallengesUISkin()
         _G.Mixin(NoticeFrame, _G.BackdropTemplateMixin)
         NoticeFrame:HookScript("OnSizeChanged", NoticeFrame.OnBackdropSizeChanged)
     end
-    NoticeFrame:SetBackdrop(GW.constBackdropFrameColorBorder)
+    NoticeFrame:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
     NoticeFrame:SetBackdropBorderColor(1, 1, 1)
 
     NoticeFrame:SetFrameLevel(5)

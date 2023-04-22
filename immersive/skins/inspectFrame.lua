@@ -83,7 +83,7 @@ local function SkinInspectFrameOnLoad()
     for _, Slot in pairs({InspectPaperDollItemsFrame:GetChildren()}) do
         if Slot:IsObjectType("Button") or Slot:IsObjectType("ItemButton") then
             if not Slot.icon then return end
-            GW.HandleIcon(Slot.icon, true, GW.constBackdropFrameColorBorder)
+            GW.HandleIcon(Slot.icon, true, GW.BackdropTemplates.DefaultWithColorableBorder)
 
             Slot.icon.backdrop:SetFrameLevel(Slot:GetFrameLevel())
             Slot.icon:GwSetInside()

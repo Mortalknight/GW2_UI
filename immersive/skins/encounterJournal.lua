@@ -217,7 +217,7 @@ local function encounterJournalSkin()
     EncounterJournalMonthlyActivitiesFrame.Bg:SetAlpha(0)
 
     GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
-    GW.HandleAchivementsScrollControls(InstanceSelect)
+    GW.HandleScrollControls(InstanceSelect)
 
     local tabs = {EncounterJournalMonthlyActivitiesTab, EncounterJournalSuggestTab, EncounterJournalDungeonTab, EncounterJournalRaidTab, EncounterJournalLootJournalTab}
     for _, tab in pairs(tabs) do
@@ -275,9 +275,9 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInfoResetButtonTexture:SetTexCoord(0.90625000, 0.94726563, 0.00097656, 0.02050781)
 
     GW.HandleTrimScrollBar(EncounterInfo.BossesScrollBar)
-    GW.HandleAchivementsScrollControls(EncounterInfo, "BossesScrollBar")
+    GW.HandleScrollControls(EncounterInfo, "BossesScrollBar")
     GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInstanceFrame.LoreScrollBar)
-    GW.HandleAchivementsScrollControls(EncounterJournalEncounterFrameInstanceFrame, "LoreScrollBar")
+    GW.HandleScrollControls(EncounterJournalEncounterFrameInstanceFrame, "LoreScrollBar")
 
     EncounterJournalEncounterFrameInstanceFrameBG:SetScale(0.85)
     EncounterJournalEncounterFrameInstanceFrameBG:ClearAllPoints()
@@ -294,7 +294,7 @@ local function encounterJournalSkin()
     EncounterInfo.detailsScroll.ScrollBar:SetWidth(3)
 
     GW.HandleTrimScrollBar(EncounterInfo.LootContainer.ScrollBar)
-    GW.HandleAchivementsScrollControls(EncounterInfo.LootContainer)
+    GW.HandleScrollControls(EncounterInfo.LootContainer)
 
     EncounterInfo.detailsScroll:SetHeight(360)
     EncounterInfo.LootContainer:SetHeight(360)
@@ -320,13 +320,13 @@ local function encounterJournalSkin()
     end
 
     EncounterJournalSearchResults:GwStripTextures()
-    EncounterJournalSearchResults:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    EncounterJournalSearchResults:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
     EncounterJournalSearchBox.searchPreviewContainer:GwStripTextures()
 
     EncounterJournalSearchResultsCloseButton:GwSkinButton(true)
     EncounterJournalSearchResultsCloseButton:SetSize(20, 20)
     GW.HandleTrimScrollBar(EncounterJournalSearchResults.ScrollBar)
-    GW.HandleAchivementsScrollControls(EncounterJournalSearchResults)
+    GW.HandleScrollControls(EncounterJournalSearchResults)
 
     for i = 1, AJ_MAX_NUM_SUGGESTIONS do
         local suggestion = EJ.suggestFrame["Suggestion" .. i]
@@ -408,7 +408,7 @@ local function encounterJournalSkin()
     LJ.RuneforgePowerFilterDropDownButton:SetFrameLevel(10)
 
     GW.HandleTrimScrollBar(EncounterJournal.LootJournal.ScrollBar)
-    GW.HandleAchivementsScrollControls(EncounterJournal.LootJournal)
+    GW.HandleScrollControls(EncounterJournal.LootJournal)
 
     for _, button in next, {EncounterJournalEncounterFrameInfoFilterToggle, EncounterJournalEncounterFrameInfoSlotFilterToggle } do
         button:GwSkinButton(false, true, nil, nil, true)
@@ -428,7 +428,7 @@ local function encounterJournalSkin()
                 child:SetHighlightTexture("")
                 child:SetPushedTexture("")
                 if child.SetDisabledTexture then child:SetDisabledTexture("") end
-                child:GwCreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
+                child:GwCreateBackdrop(GW.BackdropTemplates.Default, true, 4, 4)
                 child.hovertex = child:CreateTexture(nil, "ARTWORK", nil, 7)
                 child.hovertex:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\stancebar-border")
                 child.hovertex:SetAllPoints(child)
@@ -542,7 +542,7 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInstanceFrameBG:SetTexCoord(0.71, 0.06, 0.582, 0.08)
     EncounterJournalEncounterFrameInstanceFrameBG:SetRotation(rad(180))
     EncounterJournalEncounterFrameInstanceFrameBG:SetScale(0.7)
-    EncounterJournalEncounterFrameInstanceFrameBG:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+    EncounterJournalEncounterFrameInstanceFrameBG:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
     EncounterJournalEncounterFrameInstanceFrame.titleBG:SetAlpha(0)
     EncounterJournalEncounterFrameInstanceFrameTitle:SetTextColor(1, 1, 1)
     EncounterJournalEncounterFrameInstanceFrameTitle:SetFont(UNIT_NAME_FONT, 25, "")
@@ -569,13 +569,13 @@ local function encounterJournalSkin()
         ItemSetsFrame.scrollBar:GwSkinScrollBar()
 
         EJ.LootJournalItems:GwStripTextures()
-        EJ.LootJournalItems:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+        EJ.LootJournalItems:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 
         hooksecurefunc(ItemSetsFrame, "UpdateList", function(frame)
             if frame.buttons then
                 for _, button in ipairs(frame.buttons) do
                     if button and not button.backdrop then
-                        button:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+                        button:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
                         button.Background:Hide()
                     end
                 end

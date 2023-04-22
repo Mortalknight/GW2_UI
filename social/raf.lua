@@ -44,7 +44,7 @@ local function LoadRecruitAFriendList(tabContainer)
 
     RecruitAFriendFrame.RecruitList.ScrollFrameInset:GwStripTextures()
     GW.HandleTrimScrollBar(RecruitAFriendFrame.RecruitList.ScrollBar)
-    GW.HandleAchivementsScrollControls(RecruitAFriendFrame.RecruitList)
+    GW.HandleScrollControls(RecruitAFriendFrame.RecruitList)
     RecruitAFriendFrame.RecruitList.ScrollBox:SetSize(433, 420)
 
     RecruitAFriendFrame.RecruitList.Header:SetSize(450, 20)
@@ -62,7 +62,7 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendRewardsFrame.CloseButton:GwSkinButton(true)
     RecruitAFriendRewardsFrame.CloseButton:SetSize(20, 20)
     RecruitAFriendRewardsFrame:GwStripTextures()
-    RecruitAFriendRewardsFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
+    RecruitAFriendRewardsFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     hooksecurefunc(RecruitAFriendRewardsFrame, "UpdateRewards", RAFRewards)
     RAFRewards()
 end

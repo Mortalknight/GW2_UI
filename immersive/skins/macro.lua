@@ -29,7 +29,7 @@ local function ApplyMacroOptionsSkin()
         MacroFrameTextBackground.NineSlice:HookScript("OnSizeChanged", MacroFrameTextBackground.NineSlice.OnBackdropSizeChanged)
     end
 
-    MacroFrameTextBackground.NineSlice:SetBackdrop(GW.constBackdropFrameColorBorder)
+    MacroFrameTextBackground.NineSlice:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
     MacroFrameTextBackground.NineSlice:SetBackdropBorderColor(0, 0, 0)
 
     for _,c in pairs(r) do
@@ -39,7 +39,7 @@ local function ApplyMacroOptionsSkin()
     end
 
     GW.HandleTrimScrollBar(MacroFrame.MacroSelector.ScrollBar)
-    GW.HandleAchivementsScrollControls(MacroFrame.MacroSelector)
+    GW.HandleScrollControls(MacroFrame.MacroSelector)
     MacroFrameScrollFrameScrollBar:GwSkinScrollBar()
 
     local buttons = {

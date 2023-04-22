@@ -11,7 +11,7 @@ local function updateLootFrameButtons(self)
             item:GwStripTextures()
             item.icon:SetTexture(Icon)
 
-            GW.HandleIcon(item.icon, true, GW.constBackdropFrameColorBorder)
+            GW.HandleIcon(item.icon, true, GW.BackdropTemplates.DefaultWithColorableBorder)
             GW.HandleIconBorder(item.IconBorder, item.icon.backdrop)
             item.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         end

@@ -701,7 +701,7 @@ local function LoadInventory()
 
     -- Skin StackSplit
     StackSplitFrame:GwStripTextures()
-    StackSplitFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
+    StackSplitFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
     StackSplitFrame.OkayButton:GwSkinButton(false, true)
     StackSplitFrame.CancelButton:GwSkinButton(false, true)

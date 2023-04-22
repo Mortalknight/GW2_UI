@@ -1,6 +1,6 @@
 local _, GW = ...
-local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
-local constBackdropFrameSmallerBorder = GW.skins.constBackdropFrameSmallerBorder
+local constBackdropFrameBorder = GW.BackdropTemplates.OnlyBorder
+local constBackdropFrameSmallerBorder = GW.BackdropTemplates.DefaultWithSmallBorder
 local GetSetting = GW.GetSetting
 
 local function SkinMerchantFrameItemButton(i)

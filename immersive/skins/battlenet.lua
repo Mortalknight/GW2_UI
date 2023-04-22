@@ -66,7 +66,7 @@ local function LoadBNToastSkin()
     })
 
     ReportFrame.Comment:GwStripTextures()
-    ReportFrame.Comment:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true, 4)
+    ReportFrame.Comment:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true, 4)
     GW.HandleBlizzardRegions(ReportFrame.Comment)
     ReportFrame.CloseButton:GwSkinButton(true)
     ReportFrame.ReportButton:GwSkinButton(false, true)

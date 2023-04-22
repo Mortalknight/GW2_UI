@@ -736,7 +736,7 @@ local function LoadBag(helpers)
     do
         EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
         local dd = f.buttonSettings.dropdown
-        dd:GwCreateBackdrop(GW.skins.constBackdropFrame)
+        dd:GwCreateBackdrop(GW.BackdropTemplates.Default)
         f.buttonSettings:HookScript(
             "OnClick",
             function(self)

@@ -21,7 +21,7 @@ local function ReskinTalents(self)
                 _G.Mixin(frame, _G.BackdropTemplateMixin)
                 frame:HookScript("OnSizeChanged", frame.OnBackdropSizeChanged)
             end
-            frame:SetBackdrop(GW.constBackdropFrameColorBorder)
+            frame:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
             frame:SetBackdropBorderColor(1, 0.99, 0.85)
 
             GW.HandleIcon(frame.Icon, true)
@@ -55,7 +55,7 @@ local function ApplyCovenantSanctumSkin()
     CovenantSanctumFrame.LevelFrame.Background:SetAlpha(0)
 
     local UpgradesTab = CovenantSanctumFrame.UpgradesTab
-    UpgradesTab.Background:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
+    UpgradesTab.Background:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     UpgradesTab.DepositButton:GwSkinButton(false, true)
     UpgradesTab.DepositButton:SetFrameLevel(10)
     UpgradesTab.CurrencyBackground:SetAlpha(0)
@@ -68,7 +68,7 @@ local function ApplyCovenantSanctumSkin()
     end
 
     local TalentList = CovenantSanctumFrame.UpgradesTab.TalentsList
-    TalentList:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
+    TalentList:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     TalentList.UpgradeButton:GwSkinButton(false, true)
     TalentList.UpgradeButton:SetFrameLevel(10)
     TalentList.IntroBox.Background:Hide()
@@ -79,7 +79,7 @@ local function ApplyCovenantSanctumSkin()
 
     CovenantSanctumFrame:HookScript("OnShow", function()
         if not CovenantSanctumFrame.IsSkinned then
-            --CovenantSanctumFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
+            --CovenantSanctumFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
             local tex = CovenantSanctumFrame:CreateTexture(nil, "BACKGROUND")
             tex:SetPoint("TOP", CovenantSanctumFrame, "TOP", 0, 25)

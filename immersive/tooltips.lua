@@ -847,7 +847,7 @@ local function GameTooltip_ShowProgressBar(self)
 
     if not sb.Bar.backdrop then
         sb.Bar:GwStripTextures()
-        sb.Bar:GwCreateBackdrop(GW.constBackdropFrameColorBorder, true)
+        sb.Bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
         sb.Bar.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
         sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
     end
@@ -860,7 +860,7 @@ local function GameTooltip_ShowStatusBar(self)
     if not sb or sb.backdrop then return end
 
     sb:GwStripTextures()
-    sb:GwCreateBackdrop(GW.constBackdropFrameColorBorder, true)
+    sb:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
     sb.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
     sb:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
 end

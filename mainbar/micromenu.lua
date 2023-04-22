@@ -250,17 +250,18 @@ local function reskinMicroButton(btn, name, mbf)
     t:SetSize(32,32)
 
     if btn.Flash then
-        btn.Flash:GwSetInside()
-        btn.Flash:SetTexture()
+        btn.Flash:SetTexture(tex)
     end
 
     if btn.FlashBorder then
+        btn.FlashBorder:GwSetInside()
         btn.FlashBorder:SetAlpha(0)
         btn.FlashBorder:SetScale(0.00001)
     end
     if btn.FlashContent then
         btn.FlashContent:SetAlpha(0)
         btn.FlashContent:SetScale(0.00001)
+        btn.FlashContent:SetTexture(tex)
     end
 
     btn.GwNotify = btn:CreateTexture(nil, "OVERLAY")

@@ -23,7 +23,7 @@ local function ApplyOrderHallTalentFrameSkin()
                         Mixin(bu, BackdropTemplateMixin)
                         bu:HookScript("OnSizeChanged", bu.OnBackdropSizeChanged)
                     end
-                    bu:SetBackdrop(GW.constBackdropFrameColorBorder)
+                    bu:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
 
                     bu.Border:SetAlpha(0)
                     bu.Highlight:SetColorTexture(1, 1, 1, 0.25)
