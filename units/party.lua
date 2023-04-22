@@ -819,14 +819,6 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
                         offsetY = 0,
                     },
                 },
-                -- An optional icon duration fontstring can also be configured.
-                durationAnchor = {
-                    point = "TOP",
-                    relativeTo = privateAura.status,
-                    relativePoint = "BOTTOM",
-                    offsetX = 0,
-                    offsetY = -4,
-                },
             }
             -- Anchors can be removed (and the aura hidden) via the RemovePrivateAuraAnchor
             -- API, passing it the anchor index returned from the Add function.

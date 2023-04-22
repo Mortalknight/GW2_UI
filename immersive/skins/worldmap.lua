@@ -404,7 +404,7 @@ local function worldMapSkin()
     SkinHeaders(CampaignOverview.Header)
     CampaignOverview.ScrollFrame:GwStripTextures()
     GW.HandleTrimScrollBar(QuestScrollFrame.ScrollBar, true)
-    GW.HandleAchivementsScrollControls(QuestScrollFrame)
+    GW.HandleScrollControls(QuestScrollFrame)
 
     _G.QuestMapDetailsScrollFrame.ScrollBar:SetWidth(3)
     _G.QuestMapDetailsScrollFrame.ScrollBar:GwSkinScrollBar()

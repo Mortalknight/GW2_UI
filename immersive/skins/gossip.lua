@@ -808,10 +808,10 @@ local function LoadGossipSkin()
 	GW.HandleTrimScrollBar(QuestDetailScrollFrame.ScrollBar, true)
 	GW.HandleTrimScrollBar(QuestGreetingScrollFrame.ScrollBar, true)
 
-    GW.HandleAchivementsScrollControls(QuestProgressScrollFrame)
-    GW.HandleAchivementsScrollControls(QuestRewardScrollFrame)
-    GW.HandleAchivementsScrollControls(QuestDetailScrollFrame)
-    GW.HandleAchivementsScrollControls(QuestGreetingScrollFrame)
+    GW.HandleScrollControls(QuestProgressScrollFrame)
+    GW.HandleScrollControls(QuestRewardScrollFrame)
+    GW.HandleScrollControls(QuestDetailScrollFrame)
+    GW.HandleScrollControls(QuestGreetingScrollFrame)
 
     QuestFrameAcceptButton:GwSkinButton(false, true)
     QuestFrameDeclineButton:GwSkinButton(false, true)
@@ -860,7 +860,7 @@ local function LoadGossipSkin()
 
     QuestLogPopupDetailFrameScrollFrame:GwStripTextures()
     GW.HandleTrimScrollBar(QuestLogPopupDetailFrameScrollFrame.ScrollBar, true)
-    GW.HandleAchivementsScrollControls(QuestLogPopupDetailFrameScrollFrame)
+    GW.HandleScrollControls(QuestLogPopupDetailFrameScrollFrame)
     QuestLogPopupDetailFrameScrollFrame:GwSkinScrollFrame()
 end
 GW.LoadGossipSkin = LoadGossipSkin

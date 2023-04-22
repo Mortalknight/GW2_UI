@@ -127,8 +127,8 @@ local function SkinOpenMailFrame()
 
     OpenAllMail:GwSkinButton(false, true)
     GW.HandleTrimScrollBar(OpenMailScrollFrame.ScrollBar, true)
-    GW.HandleAchivementsScrollControls(OpenMailScrollFrame)
-
+    GW.HandleScrollControls(OpenMailScrollFrame)
+    
     for i = 1, _G.ATTACHMENTS_MAX_RECEIVE do
         local b = _G["OpenMailAttachmentButton" .. i]
         local t = _G["OpenMailAttachmentButton" .. i .. "IconTexture"]
@@ -210,7 +210,7 @@ local function SkinSendMailFrame()
 
     SendMailScrollFrame:GwStripTextures(true)
     GW.HandleTrimScrollBar(SendMailScrollFrame.ScrollBar, true)
-    GW.HandleAchivementsScrollControls(SendMailScrollFrame)
+    GW.HandleScrollControls(SendMailScrollFrame)
 
     SendMailMoneyFrame:ClearAllPoints()
     SendMailMoneyFrame:SetPoint("BOTTOMRIGHT", SendMailFrame, "BOTTOMRIGHT", -40, 15)

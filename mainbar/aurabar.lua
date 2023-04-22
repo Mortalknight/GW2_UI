@@ -535,7 +535,7 @@ local function loadAuras(lm)
             -- providing a tooltip when mouseovered.
             parent = aura,
             -- An optional cooldown spiral can be configured to represent duration.
-            showCountdownFrame = true,
+            showCountdownFrame = false,
             showCountdownNumbers = true,
             -- An optional icon can be created and shown for the aura. Omitting this
             -- will display no icon.

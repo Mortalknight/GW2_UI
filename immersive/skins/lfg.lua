@@ -277,7 +277,7 @@ local function SkinLookingForGroupFrames()
     hooksecurefunc("LFGRewardsFrame_SetItemButton", SkinItemButton)
 
     GW.HandleTrimScrollBar(LFDQueueFrameSpecific.ScrollBar, true)
-    GW.HandleAchivementsScrollControls(LFDQueueFrameSpecific)
+    GW.HandleScrollControls(LFDQueueFrameSpecific)
 
     _G[_G.LFDQueueFrame.PartyBackfill:GetName().."BackfillButton"]:GwSkinButton(false, true)
     _G[_G.LFDQueueFrame.PartyBackfill:GetName().."NoBackfillButton"]:GwSkinButton(false, true)

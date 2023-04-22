@@ -571,7 +571,7 @@ local function encounterJournalSkin()
         local ItemSetsFrame = EJ.LootJournalItems.ItemSetsFrame
         ItemSetsFrame.ClassButton:GwSkinButton(false, true)
         GW.HandleTrimScrollBar(ItemSetsFrame.ScrollBar, true)
-        GW.HandleAchivementsScrollControls(ItemSetsFrame)
+        GW.HandleScrollControls(ItemSetsFrame)
 
         EJ.LootJournalItems:GwStripTextures()
         EJ.LootJournalItems:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
