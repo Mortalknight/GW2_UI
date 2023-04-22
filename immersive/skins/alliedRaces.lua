@@ -35,7 +35,7 @@ local function ApplyAlliedRacesUISkin()
 
     scrollFrame.Child:GwStripTextures()
     scrollFrame.Child.ObjectivesFrame:GwStripTextures()
-    scrollFrame.Child.ObjectivesFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
+    scrollFrame.Child.ObjectivesFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
     AlliedRacesFrame.RaceInfoFrame.AlliedRacesRaceName:SetTextColor(1, 0.8, 0)
     scrollFrame.Child.RaceDescriptionText:SetTextColor(1, 1, 1)

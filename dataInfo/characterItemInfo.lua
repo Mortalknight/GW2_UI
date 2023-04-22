@@ -39,7 +39,7 @@ local function CreateInspectTexture(slot, x, y)
         _G.Mixin(backdrop, _G.BackdropTemplateMixin)
         backdrop:HookScript("OnSizeChanged", backdrop.OnBackdropSizeChanged)
 
-        backdrop:SetBackdrop(GW.constBackdropFrameColorBorder)
+        backdrop:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
     end
 
     backdrop:SetBackdropColor(0, 0, 0, 0)

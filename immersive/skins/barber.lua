@@ -1,5 +1,5 @@
 local _, GW = ...
-local constBackdropFrame = GW.skins.constBackdropFrame
+local constBackdropFrame = GW.BackdropTemplates.Default
 local AFP = GW.AddProfiling
 local GetSetting = GW.GetSetting
 
@@ -27,7 +27,7 @@ local function hook_SetSelectedCategory(list)
                 popoutButton.Popout.backdrop:SetFrameLevel(popoutButton.Popout:GetFrameLevel())
 
                 popoutButton:GwSkinButton(false, true, false, true)
-                popoutButton:GwCreateBackdrop(GW.constBackdropFrameColorBorder)
+                popoutButton:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
                 popoutButton.backdrop:SetBackdropBorderColor(0, 0, 0)
                 popoutButton.backdrop:GwSetInside(nil, 4, 4)
 

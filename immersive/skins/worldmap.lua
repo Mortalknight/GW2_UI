@@ -418,7 +418,7 @@ local function worldMapSkin()
     WorldMapFrame.BorderFrame.Tutorial:GwKill()
 
     WorldMapFrame.overlayFrames[1]:GwSkinDropDownMenu()
-    WorldMapFrame.overlayFrames[1]:SetPoint("TOPLEFT", WorldMapFrame.ScrollContainer, "TOPLEFT", -7, 2)
+    WorldMapFrame.overlayFrames[1]:SetPoint("TOPLEFT", WorldMapFrame.ScrollContainer, "TOPLEFT", -7, -1)
 
     WorldMapFrame.overlayFrames[2]:GwStripTextures()
     WorldMapFrame.overlayFrames[2].Icon:SetTexture([[Interface\Minimap\Tracking\None]])

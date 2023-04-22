@@ -68,7 +68,7 @@ local function ApplyWeeklyRewardsSkin()
     WeeklyRewardsFrame.tex = tex
 
     WeeklyRewardsFrame.HeaderFrame:GwStripTextures()
-    WeeklyRewardsFrame.HeaderFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
+    WeeklyRewardsFrame.HeaderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     WeeklyRewardsFrame.HeaderFrame:ClearAllPoints()
     WeeklyRewardsFrame.HeaderFrame:SetPoint("TOP", 1, -42)
 
@@ -107,7 +107,7 @@ local function ApplyWeeklyRewardsSkin()
                 _G.Mixin(overlay, _G.BackdropTemplateMixin)
                 overlay:HookScript("OnSizeChanged", overlay.OnBackdropSizeChanged)
             end
-            overlay:SetBackdrop(GW.constBackdropFrameColorBorder)
+            overlay:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
             overlay:SetBackdropBorderColor(1, 0.99, 0.85)
         end
     end)

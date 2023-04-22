@@ -456,9 +456,9 @@ local function LoadGossipSkin()
     local GossipFrame = GossipFrame
 
     GW.HandleTrimScrollBar(ItemTextScrollFrame.ScrollBar, true)
-    GW.HandleAchivementsScrollControls(ItemTextScrollFrame)
+    GW.HandleScrollControls(ItemTextScrollFrame)
     GW.HandleTrimScrollBar(GossipFrame.GreetingPanel.ScrollBar, true)
-    GW.HandleAchivementsScrollControls(GossipFrame.GreetingPanel)
+    GW.HandleScrollControls(GossipFrame.GreetingPanel)
     GossipFrame.GreetingPanel.GoodbyeButton:Hide()
     GossipFrame.GreetingPanel.GoodbyeButton:GwStripTextures()
     GossipFrame.GreetingPanel.GoodbyeButton:GwSkinButton(false, true)

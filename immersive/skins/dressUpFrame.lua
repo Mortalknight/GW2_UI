@@ -38,13 +38,10 @@ local function LoadDressUpFrameSkin()
 
         DressUpFrame.OutfitDetailsPanel:DisableDrawLayer("BACKGROUND")
         DressUpFrame.OutfitDetailsPanel:DisableDrawLayer("OVERLAY")
-        DressUpFrame.OutfitDetailsPanel:GwCreateBackdrop(GW.skins.constBackdropFrame)
+        DressUpFrame.OutfitDetailsPanel:GwCreateBackdrop(GW.BackdropTemplates.Default)
     end
 
     DressUpFrameOutfitDropDown:GwSkinDropDownMenu()
-    DressUpFrameOutfitDropDown.backdrop:ClearAllPoints()
-    DressUpFrameOutfitDropDown.backdrop:SetPoint("TOPLEFT", 0, 5)
-    DressUpFrameOutfitDropDown.backdrop:SetPoint("BOTTOMRIGHT", DressUpFrameOutfitDropDownButton, "BOTTOMRIGHT", 2, -2)
     DressUpFrameOutfitDropDownText:ClearAllPoints()
     DressUpFrameOutfitDropDownText:SetPoint("RIGHT", DressUpFrameOutfitDropDownButton, "LEFT", 25, 0)
     DressUpFrameOutfitDropDown.SaveButton:GwSkinButton(false, true)
@@ -91,10 +88,10 @@ local function LoadDressUpFrameSkin()
 
     -- Wardrobe edit frame
     WardrobeOutfitFrame:GwStripTextures(true)
-    WardrobeOutfitFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
+    WardrobeOutfitFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
     WardrobeOutfitEditFrame:GwStripTextures(true)
-    WardrobeOutfitEditFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
+    WardrobeOutfitEditFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
     WardrobeOutfitEditFrame.EditBox:GwStripTextures()
     GW.SkinTextBox(WardrobeOutfitEditFrame.EditBox.MiddleTexture, WardrobeOutfitEditFrame.EditBox.LeftTexture, WardrobeOutfitEditFrame.EditBox.RightTexture)
     WardrobeOutfitEditFrame.AcceptButton:GwSkinButton(false, true)
@@ -108,6 +105,6 @@ local function LoadDressUpFrameSkin()
     SideDressUpFrame:GwStripTextures()
     SideDressUpFrame.BGTopLeft:Hide()
 	SideDressUpFrame.BGBottomLeft:Hide()
-    SideDressUpFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true, -2, -2)
+    SideDressUpFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true, -2, -2)
 end
 GW.LoadDressUpFrameSkin = LoadDressUpFrameSkin

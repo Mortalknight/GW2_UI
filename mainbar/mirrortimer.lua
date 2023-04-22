@@ -21,7 +21,7 @@ local function HandleMirrorTimer()
 		end
 
 		frame:GwStripTextures()
-		frame:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+		frame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 
 		i = i + 1
 		frame = _G["MirrorTimer" .. i]

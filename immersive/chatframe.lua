@@ -1733,7 +1733,7 @@ end
 
 local function BuildEmoticonTableFrame()
     local frame = CreateFrame("Frame", "GW_EmoteFrame", UIParent)
-    frame:GwCreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
+    frame:GwCreateBackdrop(GW.BackdropTemplates.Default, true, 4, 4)
     frame:SetWidth(160)
     frame:SetHeight(134)
     frame:SetPoint("BOTTOMLEFT", QuickJoinToastButton, "TOPLEFT", 0, 5)
@@ -2183,7 +2183,7 @@ local function LoadChat()
             if chatFrame.Container then chatFrame.Container:SetAlpha(0) end
             if not chatFrame.minFrame.minimiizeStyled then
                 chatFrame.minFrame:GwStripTextures(true)
-                chatFrame.minFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
+                chatFrame.minFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
@@ -2279,7 +2279,7 @@ local function LoadChat()
         _G[ChatMenus[i]]:HookScript("OnShow",
             function(self)
                 self:GwStripTextures()
-                self:GwCreateBackdrop(GW.skins.constBackdropFrame)
+                self:GwCreateBackdrop(GW.BackdropTemplates.Default)
             end)
     end
 

@@ -286,7 +286,7 @@ local function ClearMailTextures()
     OpenMailFrame:GwStripTextures()
     OpenMailScrollFrame:GwStripTextures()
 
-    SendMailScrollFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
+    SendMailScrollFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
     MailFrame.NineSlice:Hide()
     MailFrame.TopTileStreaks:Hide()
@@ -395,7 +395,7 @@ local function LoadMailSkin()
 
 
     _G.AutoCompleteBox:GwStripTextures()
-    _G.AutoCompleteBox:GwCreateBackdrop(GW.skins.constBackdropFrame)
+    _G.AutoCompleteBox:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
     -- movable stuff
     local pos = GetSetting("MAILBOX_POSITION")

@@ -19,11 +19,11 @@ local function ApplyChromieTimerSkin()
 
     local Title = ChromieTimeFrame.Title
     Title:DisableDrawLayer("BACKGROUND")
-    Title:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
+    Title:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
     local InfoFrame = ChromieTimeFrame.CurrentlySelectedExpansionInfoFrame
     InfoFrame:DisableDrawLayer("BACKGROUND")
-    InfoFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
+    InfoFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
     InfoFrame.Name:SetTextColor(1, 0.8, 0)
     InfoFrame.Description:SetTextColor(1, 1, 1)
 end

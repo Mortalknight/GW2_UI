@@ -19,7 +19,7 @@ local function PVPCaptureBar(self)
     self.NeutralBar:SetVertexColor(0.8, 0.8, 0.8)
 
     if not self.backdrop then
-        self:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+        self:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
         self.backdrop:SetPoint("TOPLEFT", self.LeftBar, -1, 1)
         self.backdrop:SetPoint("BOTTOMRIGHT", self.RightBar, 1, -1)
     end
@@ -55,7 +55,7 @@ local function UIWidgetTemplateStatusBar(self)
     end
 
     if not bar.backdrop then
-        bar:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+        bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 
         bar.BGLeft:SetAlpha(0)
         bar.BGRight:SetAlpha(0)

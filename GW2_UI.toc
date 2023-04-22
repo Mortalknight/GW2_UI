@@ -43,6 +43,7 @@ core\staticPopupDialogs.lua
 core\raid_debuffs.lua
 core\toolkit.lua
 core\utils.lua
+core\backdropTemplates.lua
 core\itemlevel.lua
 core\shared.xml
 core\fonts.lua

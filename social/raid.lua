@@ -217,7 +217,7 @@ local function LoadRaidList(tabContainer)
                 if slot then
                     slot:GwStripTextures()
                     slot:SetSize(220, 22)
-                    slot:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+                    slot:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
                 end
             end
         end
@@ -227,7 +227,7 @@ local function LoadRaidList(tabContainer)
         _G["RaidGroupButton" .. i]:SetSize(220, 22)
         _G["RaidGroupButton" .. i]:GwSkinButton(false, true, true)
         _G["RaidGroupButton" .. i]:GwStripTextures()
-        _G["RaidGroupButton" .. i]:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
+        _G["RaidGroupButton" .. i]:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
         _G["RaidGroupButton" .. i .. "Name"]:SetFont(UNIT_NAME_FONT, 10)
         _G["RaidGroupButton" .. i .. "Level"]:SetFont(UNIT_NAME_FONT, 10)
         _G["RaidGroupButton" .. i .. "Class"]:SetFont(UNIT_NAME_FONT, 10)

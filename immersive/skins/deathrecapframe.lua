@@ -1,5 +1,5 @@
 local _, GW = ...
-local constBackdropFrame = GW.skins.constBackdropFrame
+local constBackdropFrame = GW.BackdropTemplates.Default
 local GetSetting = GW.GetSetting
 
 local function SkinDeathRecapFrame_Loaded()

@@ -33,7 +33,7 @@ local function LoadTimeManagerSkin()
     _G.TimeManagerAlarmMinuteDropDown:SetWidth(80)
     _G.TimeManagerAlarmAMPMDropDown:SetWidth(80)
 
-    --GW.SkinTextBox(_G.TimeManagerAlarmMessageEditBox.Middle, _G.TimeManagerAlarmMessageEditBox.Left, _G.TimeManagerAlarmMessageEditBox.Right)
+    GW.SkinTextBox(_G.TimeManagerAlarmMessageEditBox.Middle, _G.TimeManagerAlarmMessageEditBox.Left, _G.TimeManagerAlarmMessageEditBox.Right, nil, nil, 5, 5)
     _G.TimeManagerAlarmEnabledButton:GwSkinCheckButton()
     _G.TimeManagerMilitaryTimeCheck:GwSkinCheckButton()
     _G.TimeManagerLocalTimeCheck:GwSkinCheckButton()
@@ -54,7 +54,7 @@ local function LoadTimeManagerSkin()
 
     local StopwatchFrame = _G.StopwatchFrame
     StopwatchFrame:GwStripTextures()
-    StopwatchFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
+    StopwatchFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
     _G.StopwatchTabFrame:GwStripTextures()
     _G.StopwatchCloseButton:GwSkinButton(true)
