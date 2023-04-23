@@ -156,8 +156,8 @@ local function AddFinishAnimation(self, isStopped, isChanneling)
                     0,
                     GetTime(),
                     0.2,
-                    function()
-                        local p = math.min(1, math.max(0, GW.animations[self.animationName .. "FadeOut"].progress))
+                    function(p)
+                        p = math.min(1, math.max(0, p))
                         self:SetAlpha(p)
                     end
                 )
@@ -175,8 +175,8 @@ local function AddFinishAnimation(self, isStopped, isChanneling)
             1,
             GetTime(),
             isStopped and 0.5 or 0.2,
-            function()
-                self.highlight:SetVertexColor(1, 1, 1, lerp(1, 0.7, animations[self.animationName .. "Complete"].progress))
+            function(p)
+                self.highlight:SetVertexColor(1, 1, 1, lerp(1, 0.7, p))
             end,
             nil,
             function()
@@ -190,8 +190,8 @@ local function AddFinishAnimation(self, isStopped, isChanneling)
                             0,
                             GetTime(),
                             0.2,
-                            function()
-                                local p = math.min(1, math.max(0, GW.animations[self.animationName .. "FadeOut"].progress))
+                            function(p)
+                                local p = math.min(1, math.max(0, p))
                                 self:SetAlpha(p)
                             end
                         )
@@ -293,12 +293,12 @@ local function castBar_OnEvent(self, event, unitID, ...)
             1,
             self.startTime,
             self.endTime - self.startTime,
-            function()
+            function(p)
                 if self.showDetails then
                     self.time:SetText(TimeCount(self.endTime - GetTime(), true))
                 end
 
-                local p = self.isChanneling and (1 - animations[self.animationName].progress) or animations[self.animationName].progress
+                p = self.isChanneling and (1 - p) or p
                 self.latency:ClearAllPoints()
                 self.latency:SetPoint(self.isChanneling and "LEFT" or "RIGHT", self, self.isChanneling and "LEFT" or "RIGHT")
 

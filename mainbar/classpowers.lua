@@ -88,8 +88,8 @@ local function animFlare(f, scale, offset, duration, rotate)
         0,
         GetTime(),
         duration,
-        function()
-            local p = math.min(1, math.max(0, animations["POWER_FLARE_ANIM"].progress))
+        function(p)
+            p = math.min(1, math.max(0, p))
             ff:SetAlpha(p)
             if rotate then
                 ff:SetRotation(1 * p)
@@ -126,10 +126,9 @@ local function maelstromCounterFlash_OnAnim()
 end
 GW.AddForProfiling("classpowers", "maelstromCounterFlash_OnAnim", maelstromCounterFlash_OnAnim)
 
-local function decay_OnAnim()
+local function decay_OnAnim(p)
     local f = CPWR_FRAME
     local fd = f.decay
-    local p = animations["DECAY_BAR"].progress
     local px = p * 310
     fd.precentage = p
     fd.bar:SetValue(p)
@@ -303,8 +302,8 @@ local function powerCombo(self, event, ...)
                     5,
                     GetTime(),
                     0.5,
-                    function()
-                        local p = math.min(1, math.max(0, animations["COMBOPOINTS_FLARE"].progress))
+                    function(p)
+                        p = math.min(1, math.max(0, p))
                         self.combopoints.comboFlare:SetAlpha(p)
                     end,
                     nil,
@@ -786,8 +785,8 @@ local function powerRune(self)
                         0,
                         GetTime(),
                         0.5,
-                        function()
-                            f.flare:SetAlpha(math.min(1, math.max(0 ,animations["HOLY_POWER_FLARE_ANIMATION"].progress)))
+                        function(p)
+                            f.flare:SetAlpha(math.min(1, math.max(0, p)))
                         end
                     )
                 end
@@ -1010,8 +1009,8 @@ local function powerSoulshard(self, event, ...)
                     5,
                     GetTime(),
                     0.7,
-                    function()
-                        local p = GW.RoundInt(animations["WARLOCK_SHARD_FLARE"].progress)
+                    function(p)
+                        p = GW.RoundInt(p)
                         self.warlock.shardFlare:SetTexCoord(GW.getSpriteByIndex(self.warlock.flareMap, p))
                     end,
                     nil,
@@ -1048,8 +1047,8 @@ local function powerSoulshard(self, event, ...)
                 0,
                 GetTime(),
                 0.3,
-                function()
-                    self.warlock.shardFragment.flare:SetAlpha(math.min(1, math.max(0, animations["WARLOCK_FRAGMENT_FLARE"].progress)))
+                function(p)
+                    self.warlock.shardFragment.flare:SetAlpha(math.min(1, math.max(0, p)))
                 end
             )
         end

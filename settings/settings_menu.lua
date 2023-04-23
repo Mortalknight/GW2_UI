@@ -102,8 +102,7 @@ local function toggleMenuItem(self,active)
         self.button.arrow:SetRotation(0)
         self.content:SetHeight(self.content.height)
         updateScrollFrame(GwSettingsMenuSearchable)
-        AddToAnimation(self:GetName(), 0,1, GetTime(), 0.2, function()
-            local p = animations[self:GetName()].progress
+        AddToAnimation(self:GetName(), 0,1, GetTime(), 0.2, function(p)
             self.button.arrow:SetRotation(-1.5707*p)
         end, "noease")
 
@@ -113,8 +112,7 @@ local function toggleMenuItem(self,active)
     self.content:SetHeight(0)
     updateScrollFrame(GwSettingsMenuSearchable)
     --can be done with animation groups
-    AddToAnimation(self:GetName(), 1,0, GetTime(), 0.2, function()
-        local p = animations[self:GetName()].progress
+    AddToAnimation(self:GetName(), 1,0, GetTime(), 0.2, function(p)
         self.button.arrow:SetRotation(-1.5707*p)
     end, "noease")
 

@@ -345,8 +345,7 @@ local function animateDragonBar(self,current,fraction,max)
     self.currentValue = current
     self.currentValueFraction =  fraction
     AddToAnimation("DRAGONBAR", 0, 1, GetTime(), 0.8,
-    function()
-        local p = animations["DRAGONBAR"].progress
+    function(p)
         local l = lerp(from,to,p) / max
         local l2 = lerp(fromfraction,toFraction,p) / max
 

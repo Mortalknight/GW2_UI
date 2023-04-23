@@ -153,11 +153,10 @@ local function UpcomingSpellsFrameOnShow(self)
         0,
         start,
         0.2,
-        function()
-            local prog = GW.animations[name].progress
+        function(p)
             local a = math.min(1, math.max(0, GW.lerp(0, 1, (GetTime() - start) / 0.2)))
             self:SetAlpha(a)
-            self:SetPoint("CENTER", 0, prog)
+            self:SetPoint("CENTER", 0, p)
         end
     )
 end
