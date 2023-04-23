@@ -3,7 +3,6 @@ local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local GetSetting = GW.GetSetting
 local TimeCount = GW.TimeCount
 local CommaValue = GW.CommaValue
-local Diff = GW.Diff
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local bloodSpark = GW.BLOOD_SPARK
 local GWGetClassColor = GW.GWGetClassColor
@@ -11,7 +10,6 @@ local TARGET_FRAME_ART = GW.TARGET_FRAME_ART
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
-local StopAnimation = GW.StopAnimation
 local AddToClique = GW.AddToClique
 local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
@@ -622,8 +620,8 @@ local function updateCastValues(self)
         1,
         startTime,
         endTime - startTime,
-        function()
-            if GetSetting("target_CASTINGBAR_DATA") and self.castingTimeString then
+        function(p)
+            if self.showCastingbarData and self.castingTimeString then
               if notInterruptible then
                   self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
               else
@@ -631,7 +629,7 @@ local function updateCastValues(self)
               end
 
             end
-            local p = self.isChanneling and (1 - animations["GwUnitFrame" .. self.unit .. "Cast"].progress) or animations["GwUnitFrame" .. self.unit .. "Cast"].progress
+            local p = self.isChanneling and (1 - p) or p
 
             if notInterruptible then
                 protectedCastAnimation(self, p)
@@ -948,6 +946,7 @@ local function ToggleTargetFrameSettings()
     GwTargetUnitFrame.showHealthValue = GetSetting("target_HEALTH_VALUE_ENABLED")
     GwTargetUnitFrame.showHealthPrecentage = GetSetting("target_HEALTH_VALUE_TYPE")
     GwTargetUnitFrame.showCastbar = GetSetting("target_SHOW_CASTBAR")
+    GwTargetUnitFrame.showCastingbarData = GetSetting("target_CASTINGBAR_DATA")
 
     GwTargetUnitFrame.displayBuffs = GetSetting("target_BUFFS")
     GwTargetUnitFrame.displayDebuffs = GetSetting("target_DEBUFFS")

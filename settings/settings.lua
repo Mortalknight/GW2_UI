@@ -5,7 +5,6 @@ local SetSetting = GW.SetSetting
 local SetOverrideIncompatibleAddons = GW.SetOverrideIncompatibleAddons
 local RoundDec = GW.RoundDec
 local AddForProfiling = GW.AddForProfiling
-local animations
 local AddToAnimation
 local lerp
 
@@ -1077,13 +1076,11 @@ local function LoadSettings()
     sWindow:HookScript("OnShow",function()
         if AddToAnimation==nil then
             AddToAnimation = GW.AddToAnimation
-            animations = GW.animations
             lerp = GW.lerp
         end
 
         AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
-        function()
-            local p = animations["SETTINGSFRAME_PANEL_ONSHOW"].progress
+        function(p)
             sWindow:SetAlpha(p)
             bgMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT",lerp(-64,sWindow.background:GetWidth(), p) , 0)
         end,1,function()
