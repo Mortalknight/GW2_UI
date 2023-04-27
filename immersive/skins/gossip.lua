@@ -212,9 +212,8 @@ local function skinGossipOption(self)
             hl:Show()
             hl:SetAlpha(0.2)
             AddToAnimation("GOSSIP_OPTIONHOVER", 0, 1, GetTime(), 0.2,
-                function()
-                    local p = animations["GOSSIP_OPTIONHOVER"].progress
-                    p = math.max(0.2,p)
+                function(p)
+                    p = math.max(0.2, p)
                     hl:SetAlpha(p)
                 end
             )
@@ -354,8 +353,7 @@ local function updateModelFrame(self, unit,isDebugUpdate) -- needs to be tested 
 
         if not isDebugUpdate then
             AddToAnimation("GOSSIP_MODEL", 0, 1, GetTime(), 0.8,
-                function()
-                local p = animations["GOSSIP_MODEL"].progress
+                function(p)
                 p = math.min(1,math.max(0,(p - 0.5) / 0.5))
                 self.modelFrame:SetAlpha(p)
                 end
@@ -638,8 +636,7 @@ local function LoadGossipSkin()
         GossipFrame.CloseButton:Hide()
 
         AddToAnimation("GOSSIP_FRAME_FADE", 0, 1, GetTime(), 0.4,
-            function()
-                local p = animations["GOSSIP_FRAME_FADE"].progress
+            function(p)
                 GossipFrame:SetAlpha(math.max(0.5, p))
                 portraitFrame.npcNameLabel:SetWidth(200 * p)
                 portraitFrame.npcNameLabel:SetTexCoord(0, p, 0, 1)
@@ -690,9 +687,10 @@ local function LoadGossipSkin()
     end)
 
     local NPCFriendshipStatusBar = GossipFrame.FriendshipStatusBar
+    NPCFriendshipStatusBar:SetFrameLevel(portraitFrame:GetFrameLevel() + 2)
     NPCFriendshipStatusBar:ClearAllPoints()
     NPCFriendshipStatusBar:SetPoint("BOTTOMLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 3)
-    NPCFriendshipStatusBar:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "TOPRIGHT", -5, 3)
+    NPCFriendshipStatusBar:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "TOPRIGHT", 5, 3)
     NPCFriendshipStatusBar:SetHeight(16)
     NPCFriendshipStatusBar:GwStripTextures()
     NPCFriendshipStatusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")

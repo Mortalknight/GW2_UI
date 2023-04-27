@@ -44,9 +44,7 @@ local function wiggleAnim(self)
         1,
         GetTime(),
         2,
-        function()
-            local prog = animations[self:GetName()].progress
-
+        function(prog)
             self.flare:SetRotation(lerp(0, 1, prog))
 
             if prog < 0.25 then
