@@ -26,6 +26,18 @@ local ICON_SPRITES = {
     rows = 4
 }
 
+local function ToggleGw2Settings()
+    if InCombatLockdown() then
+        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
+        return
+    end
+    if not GW.InMoveHudMode then
+        ShowUIPanel(GwSettingsWindow)
+        HideUIPanel(GameMenuFrame)
+    end
+end
+GW.ToggleGw2Settings = ToggleGw2Settings
+
 local function PositionGameMenuButton()
     GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + GameMenuButtonLogout:GetHeight() - 4)
     local _, relTo, _, _, offY = GameMenuButtonEditMode:GetPoint()
@@ -76,20 +88,7 @@ local function SkinMainMenu()
 
     local GwMainMenuFrame = CreateFrame("Button", nil, GameMenuFrame, "GameMenuButtonTemplate")
     GwMainMenuFrame:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
-    GwMainMenuFrame:SetScript(
-        "OnClick",
-        function()
-            if InCombatLockdown() then
-                DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
-                return
-            end
-            if not GW.InMoveHudMode then
-                ShowUIPanel(GwSettingsWindow)
-                --UIFrameFadeIn(GwSettingsWindow, 0.2, 0, 1)
-                HideUIPanel(GameMenuFrame)
-            end
-        end
-    )
+    GwMainMenuFrame:SetScript("OnClick", ToggleGw2Settings)
     GameMenuFrame[GW.addonName] = GwMainMenuFrame
     BUTTONS[#BUTTONS + 1] = {button = GwMainMenuFrame, sprite = {4, 3}}
 
