@@ -421,6 +421,9 @@ local function specSwitchHandlerOnEvent(self, event)
 
     if layoutToUse and self.smallSettingsFrame.layoutView.savedLayoutDropDown.container.contentScroll.displayButton.selectedId ~= layoutToUse.id then
         UpdateFramePositionForLayout(layoutToUse, self.layoutManager, true, event == "PLAYER_ENTERING_WORLD")
+
+        -- also do the migration here
+        GW.Migration()
     end
 
     if event == "PLAYER_ENTERING_WORLD" then
