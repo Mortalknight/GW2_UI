@@ -512,7 +512,7 @@ local function loadAuras(lm)
     PetBattleFrame:SetFrameLevel(hb:GetFrameLevel() + 5)
 
     -- creating a mover for private auras (2 atm) -- TODO: Maybe in a future update there is a skinning way
-    local privateAurasheader = CreateFrame("Frame", "test", UIParent)
+    local privateAurasheader = CreateFrame("Frame", nil, UIParent)
     privateAurasheader:SetSize(80, 40)
     RegisterMovableFrame(privateAurasheader, GW.L["Private Auras"], "PlayerPrivateAuras", ALL .. ",Blizzard,Aura", nil, {"default", "scaleable"}, true)
     privateAurasheader:ClearAllPoints()
@@ -520,7 +520,7 @@ local function loadAuras(lm)
 
     for i = 1, 2 do
         local aura = privateAurasheader["privateAuraAnchor" .. i]
-        aura = CreateFrame("Frame", "privateAura" .. i, privateAurasheader, "GwPrivateAuraTmpl")
+        aura = CreateFrame("Frame", nil, privateAurasheader, "GwPrivateAuraTmpl")
         aura.auraIndex = i
         if i == 1 then
             aura:SetPoint("TOPRIGHT")
