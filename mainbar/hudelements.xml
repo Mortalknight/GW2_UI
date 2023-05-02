@@ -332,7 +332,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <statusbar parentKey="progress" inherits="GwStatusBarBar">
+            <StatusBar parentKey="progress" inherits="GwStatusBarBar">
                  <Size x="176" y="15"></Size>
                  <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm"/>
                 <BarColor r="1" g="1" b ="1" a="1"/>
@@ -365,7 +365,7 @@
                         </Layer>
                     </Layers>
             
-            </statusbar>
+            </StatusBar>
         </Frames>
     </Frame>
 
