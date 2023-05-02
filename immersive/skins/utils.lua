@@ -417,6 +417,7 @@ local function HandleTrimScrollBar(frame, small)
 
     local thumb = frame:GetThumb()
     if thumb then
+        thumb:DisableDrawLayer('ARTWORK')
         thumb:DisableDrawLayer("BACKGROUND")
         thumb:GwCreateBackdrop("ScrollBar")
         thumb.backdrop:SetFrameLevel(thumb:GetFrameLevel() + 1)
@@ -512,7 +513,7 @@ do
             GW.SkinTextBox(editBox.IconSelectorPopupNameMiddle, editBox.IconSelectorPopupNameLeft, editBox.IconSelectorPopupNameRight, nil, nil, 5, 5)
         end
 
-        GW.HandleTrimScrollBar(frame.IconSelector.ScrollBar)
+        GW.HandleTrimScrollBar(frame.IconSelector.ScrollBar, true)
         GW.HandleScrollControls(frame.IconSelector)
 
         for _, button in next, {frame.IconSelector.ScrollBox.ScrollTarget:GetChildren()} do

@@ -126,9 +126,9 @@ local function SkinOpenMailFrame()
     OpenMailCancelButton:SetPoint("BOTTOMRIGHT", OpenMailFrame, "BOTTOMRIGHT", -7, -31)
 
     OpenAllMail:GwSkinButton(false, true)
-    OpenMailScrollChildFrame:GwSkinScrollFrame()
-    OpenMailScrollFrameScrollBar:GwSkinScrollBar()
-
+    GW.HandleTrimScrollBar(OpenMailScrollFrame.ScrollBar, true)
+    GW.HandleScrollControls(OpenMailScrollFrame)
+    
     for i = 1, _G.ATTACHMENTS_MAX_RECEIVE do
         local b = _G["OpenMailAttachmentButton" .. i]
         local t = _G["OpenMailAttachmentButton" .. i .. "IconTexture"]
@@ -208,8 +208,9 @@ local function SkinSendMailFrame()
     SendMailCancelButton:GwSkinButton(false, true)
     SendMailMailButton:GwSkinButton(false, true)
 
-    SendMailScrollChildFrame:GwSkinScrollFrame()
-    SendMailScrollFrameScrollBar:GwSkinScrollBar()
+    SendMailScrollFrame:GwStripTextures(true)
+    GW.HandleTrimScrollBar(SendMailScrollFrame.ScrollBar, true)
+    GW.HandleScrollControls(SendMailScrollFrame)
 
     SendMailMoneyFrame:ClearAllPoints()
     SendMailMoneyFrame:SetPoint("BOTTOMRIGHT", SendMailFrame, "BOTTOMRIGHT", -40, 15)
@@ -261,7 +262,7 @@ local function SkinComposeButton()
 
     MailFrameTab2:SetText(SENDMAIL)
     MailFrameTab2:GwSkinButton(false, true)
-    MailFrameTab2:SetScript("OnClick", function()
+    MailFrameTab2:SetScript("OnClick", function(self)
         OpenMailFrame:Hide()
         MailFrameTab_OnClick(self, 2)
 

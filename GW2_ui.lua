@@ -580,18 +580,7 @@ local function evPlayerLogin(self)
         --Setup addon button
         local GwMainMenuFrame = CreateFrame("Button", "GW2_UI_SettingsButton", _G.GameMenuFrame, "GameMenuButtonTemplate") -- add a button name to you that for other Addons
         GwMainMenuFrame:SetText(format(("*%s|r"):gsub("*", GW.Gw2Color), GW.addonName))
-        GwMainMenuFrame:SetScript(
-            "OnClick",
-            function()
-                if InCombatLockdown() then
-                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
-                    return
-                end
-                ShowUIPanel(GwSettingsWindow)
-
-                HideUIPanel(GameMenuFrame)
-            end
-        )
+        GwMainMenuFrame:SetScript( "OnClick", GW.ToggleGw2Settings)
         GameMenuFrame[GW.addonName] = GwMainMenuFrame
 
         if not IsAddOnLoaded("ConsolePortUI_Menu") then

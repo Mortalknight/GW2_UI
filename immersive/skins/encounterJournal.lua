@@ -216,7 +216,7 @@ local function encounterJournalSkin()
     EncounterJournalInstanceSelectBG:SetAlpha(0)
     EncounterJournalMonthlyActivitiesFrame.Bg:SetAlpha(0)
 
-    GW.HandleTrimScrollBar(InstanceSelect.ScrollBar)
+    GW.HandleTrimScrollBar(InstanceSelect.ScrollBar, true)
     GW.HandleScrollControls(InstanceSelect)
 
     local tabs = {EncounterJournalMonthlyActivitiesTab, EncounterJournalSuggestTab, EncounterJournalDungeonTab, EncounterJournalRaidTab, EncounterJournalLootJournalTab}
@@ -274,10 +274,14 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInfoResetButtonTexture:SetTexture([[Interface\EncounterJournal\UI-EncounterJournalTextures]])
     EncounterJournalEncounterFrameInfoResetButtonTexture:SetTexCoord(0.90625000, 0.94726563, 0.00097656, 0.02050781)
 
-    GW.HandleTrimScrollBar(EncounterInfo.BossesScrollBar)
+    GW.HandleTrimScrollBar(EncounterInfo.BossesScrollBar, true)
     GW.HandleScrollControls(EncounterInfo, "BossesScrollBar")
-    GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInstanceFrame.LoreScrollBar)
+    GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInstanceFrame.LoreScrollBar, true)
     GW.HandleScrollControls(EncounterJournalEncounterFrameInstanceFrame, "LoreScrollBar")
+    GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInfoDetailsScrollFrame.ScrollBar, true)
+    GW.HandleScrollControls(EncounterJournalEncounterFrameInfoDetailsScrollFrame)
+    GW.HandleTrimScrollBar(EncounterJournalEncounterFrameInfoOverviewScrollFrame.ScrollBar, true)
+    GW.HandleScrollControls(EncounterJournalEncounterFrameInfoOverviewScrollFrame)
 
     EncounterJournalEncounterFrameInstanceFrameBG:SetScale(0.85)
     EncounterJournalEncounterFrameInstanceFrameBG:ClearAllPoints()
@@ -293,7 +297,7 @@ local function encounterJournalSkin()
     EncounterInfo.detailsScroll.ScrollBar:GwSkinScrollBar()
     EncounterInfo.detailsScroll.ScrollBar:SetWidth(3)
 
-    GW.HandleTrimScrollBar(EncounterInfo.LootContainer.ScrollBar)
+    GW.HandleTrimScrollBar(EncounterInfo.LootContainer.ScrollBar, true)
     GW.HandleScrollControls(EncounterInfo.LootContainer)
 
     EncounterInfo.detailsScroll:SetHeight(360)
@@ -325,7 +329,7 @@ local function encounterJournalSkin()
 
     EncounterJournalSearchResultsCloseButton:GwSkinButton(true)
     EncounterJournalSearchResultsCloseButton:SetSize(20, 20)
-    GW.HandleTrimScrollBar(EncounterJournalSearchResults.ScrollBar)
+    GW.HandleTrimScrollBar(EncounterJournalSearchResults.ScrollBar, true)
     GW.HandleScrollControls(EncounterJournalSearchResults)
 
     for i = 1, AJ_MAX_NUM_SUGGESTIONS do
@@ -407,7 +411,7 @@ local function encounterJournalSkin()
     LJ.RuneforgePowerFilterDropDownButton:GwSkinButton(false, true, nil, nil, true)
     LJ.RuneforgePowerFilterDropDownButton:SetFrameLevel(10)
 
-    GW.HandleTrimScrollBar(EncounterJournal.LootJournal.ScrollBar)
+    GW.HandleTrimScrollBar(EncounterJournal.LootJournal.ScrollBar, true)
     GW.HandleScrollControls(EncounterJournal.LootJournal)
 
     for _, button in next, {EncounterJournalEncounterFrameInfoFilterToggle, EncounterJournalEncounterFrameInfoSlotFilterToggle } do
@@ -566,7 +570,8 @@ local function encounterJournalSkin()
     do -- Item Sets
         local ItemSetsFrame = EJ.LootJournalItems.ItemSetsFrame
         ItemSetsFrame.ClassButton:GwSkinButton(false, true)
-        ItemSetsFrame.scrollBar:GwSkinScrollBar()
+        GW.HandleTrimScrollBar(ItemSetsFrame.ScrollBar, true)
+        GW.HandleScrollControls(ItemSetsFrame)
 
         EJ.LootJournalItems:GwStripTextures()
         EJ.LootJournalItems:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)

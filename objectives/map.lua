@@ -558,6 +558,16 @@ local function LoadMinimap()
         setMinimapButtons("right")
     end
 
+    hooksecurefunc(QueueStatusButton, "UpdatePosition", function()
+        local x = Minimap:GetCenter()
+        local screenWidth = UIParent:GetRight()
+        if x > (screenWidth / 2) then
+            setMinimapButtons("left")
+        else
+            setMinimapButtons("right")
+        end
+    end)
+
     Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow")
 
     hideMiniMapIcons()

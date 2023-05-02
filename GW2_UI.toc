@@ -1,4 +1,4 @@
-## Interface: 100007
+## Interface: 100100
 ## Title: |cffffedbaGW2 UI|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
@@ -8,6 +8,7 @@
 ## X-Curse-Project-ID: 94310
 ## X-Wago-ID: Mj6jXpGR
 ## DefaultState: Enabled
+## IconTexture: Interface\AddOns\GW2_UI\Textures\gwlogo
 
 ## Author: deadend06, Winglord89(Nils89), nezroy
 
