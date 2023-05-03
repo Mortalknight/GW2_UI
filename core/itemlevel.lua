@@ -55,10 +55,10 @@ local function InspectGearSlot(data, line, lineText, slotInfo)
         slotInfo.enchantTextShort2 = strsub(text, 1, 11)
         slotInfo.enchantTextReal = enchant
 
-        if line.args[3] and line.args[3].colorVal then
-            slotInfo.enchantColors[1] = line.args[3].colorVal.r
-            slotInfo.enchantColors[2] = line.args[3].colorVal.g
-            slotInfo.enchantColors[3] = line.args[3].colorVal.b
+        if line.leftColor then
+            slotInfo.enchantColors[1] = line.leftColor.r
+            slotInfo.enchantColors[2] = line.leftColor.g
+            slotInfo.enchantColors[3] = line.leftColor.b
         end
     end
 
@@ -66,10 +66,10 @@ local function InspectGearSlot(data, line, lineText, slotInfo)
     if itemLevel then
         slotInfo.iLvl = tonumber(itemLevel)
 
-        if data.lines[1].args[3] and data.lines[1].args[3].colorVal then
-            slotInfo.itemLevelColors[1] = data.lines[1].args[3].colorVal.r
-            slotInfo.itemLevelColors[2] = data.lines[1].args[3].colorVal.g
-            slotInfo.itemLevelColors[3] = data.lines[1].args[3].colorVal.b
+        if data.lines[1].leftColor then
+            slotInfo.itemLevelColors[1] = data.lines[1].leftColor.r
+            slotInfo.itemLevelColors[2] = data.lines[1].leftColor.g
+            slotInfo.itemLevelColors[3] = data.lines[1].leftColor.b
         end
     end
 end
@@ -84,8 +84,8 @@ local function ScanTooltipTextures(data, slotInfo)
     local idx = 1
     for i = 1, #data.lines do
         local texture = nil
-        if data.lines[i].args[4] and data.lines[i].args[4].field and data.lines[i].args[4].field == "gemIcon" then
-            texture = data.lines[i].args[4].intVal
+        if data.lines[i].gemIcon then
+            texture = data.lines[i].gemIcon
         end
 
         if texture then
