@@ -461,6 +461,7 @@ local function loadBaseFrame()
     local pos = GetSetting("HERO_POSITION")
     local scale = GetSetting("HERO_POSITION_SCALE")
     fmGCW:SetScale(scale)
+    fmGCW:ClearAllPoints()
     fmGCW:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     fmGCW.mover.onMoveSetting = "HERO_POSITION"
     fmGCW.mover.savePosition = mover_SavePosition
