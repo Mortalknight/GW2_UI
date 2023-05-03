@@ -15,6 +15,16 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.7.1",{
+    {ct.bug,[=[Fix hero panel anchor error]=]},
+    {ct.bug,[=[Fix party frame healthtext error]=]},
+    {ct.bug,[=[Fix hero panel item info error]=]},
+    {ct.bug,[=[Fix target castingbar texture]=]},
+    {ct.bug,[=[Fix pet grid error]=]},
+
+    {ct.change,[=[Handle addon compartment button and add a toggle to hide that button]=]},
+})
+
 addChange("6.7.0",{
     {ct.feature,[=[Added private aura support)]=]},
     {ct.feature,[=[Redo the statusbars and add custom animations to the classpower and ressource bars]=]},
