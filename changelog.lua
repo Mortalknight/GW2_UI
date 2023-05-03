@@ -15,6 +15,21 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.7.0",{
+    {ct.feature,[=[Added private aura support)]=]},
+    {ct.feature,[=[Redo the statusbars and add custom animations to the classpower and ressource bars]=]},
+
+    {ct.bug,[=[Added passive talents back to spellbook]=]},
+    {ct.bug,[=[Tweak vignett alerts to not spam]=]},
+    {ct.bug,[=[Fix talent micro button taint error]=]},
+    {ct.bug,[=[Fix bank taint issue]=]},
+    {ct.bug,[=[Fix vigor bar hidding]=]},
+
+    {ct.change,[=[Update for 10.1]=]},
+    {ct.change,[=[Make achievement frame movable]=]},
+    {ct.change,[=[Update S2 debuffs]=]},
+})
+
 addChange("6.6.1",{
     {ct.bug,[=[Fix rare lua error during open the worldmap with active worldmap skin]=]},
     {ct.bug,[=[Fix issue were is was impossible to buy bank slots]=]},

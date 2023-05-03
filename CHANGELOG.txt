@@ -1,3 +1,20 @@
+6.7.0
+NEW
+    - dded private aura support
+    - Redo the statusbars and add custom animations to the classpower and ressource bars
+
+FIXES
+    - Added passive talents back to spellbook
+    - Tweak vignett alerts to not spam
+    - Fix talent micro button taint error
+    - Fix bank taint issue
+    - ix vigor bar hidding
+
+CHANGES
+    - Update for 10.1
+    - Make achievement frame movable
+    - Update S2 debuffs
+
 6.6.1
 FIXES
     - Fix rare lua error during open the worldmap with active worldmap skin

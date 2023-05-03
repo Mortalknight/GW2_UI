@@ -1,25 +1,16 @@
-6.6.1
-FIXES
-    - Fix rare lua error during open the worldmap with active worldmap skin
-    - Fix issue were is was impossible to buy bank slots
-    - Fix macro and gear manager icon selection
-
-CHANGES
-    - Added tooltips to equipment selection mode
-    - GW2 achievement frame skin is now compatible with 'Krowi's Achievement Filter' (requires version 55.0 and higher)
-
-6.6.0
+6.7.0
 NEW
-    - Added 2 new damage text styles: Stacking and Classic (with anchor to nameplats or center of the screen)
-    - Added option to show healing numbers for these 2 new styles (classic only with anchor to the center of the screen)
+    - dded private aura support
+    - Redo the statusbars and add custom animations to the classpower and ressource bars
 
 FIXES
-    - Fix move hud error if the frames gets moved back to it default position
-    - Fix raid frame summon and resurrection icon
-    - Fix friends data info tooltip
-    - Fix worldmap drop-down position
-    - Fix objectives tracker group finder icon
+    - Added passive talents back to spellbook
+    - Tweak vignett alerts to not spam
+    - Fix talent micro button taint error
+    - Fix bank taint issue
+    - ix vigor bar hidding
 
 CHANGES
-    - Changes for 10.0.7
-    - Update spell flyout skin
+    - Update for 10.1
+    - Make achievement frame movable
+    - Update S2 debuffs
