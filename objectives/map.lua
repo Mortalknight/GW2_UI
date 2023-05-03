@@ -134,8 +134,7 @@ local function setMinimapButtons(side)
 
     if side == "left" then
         GameTimeFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -2)
-        QueueStatusButton:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
-        GwAddonToggle:SetPoint("TOP", QueueStatusButton, "BOTTOM", -3, 0)
+        GwAddonToggle:SetPoint("TOP", GameTimeFrame, "BOTTOM", -3, -20)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
         expButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 0, -3)
 
@@ -144,10 +143,11 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
+
+        QueueStatusButton:SetPoint("TOP", GwAddonToggle, "BOTTOM", 4, 0)
     else
         GameTimeFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -2)
-        QueueStatusButton:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
-        GwAddonToggle:SetPoint("TOP", QueueStatusButton, "BOTTOM", 3, 0)
+        GwAddonToggle:SetPoint("TOP", GameTimeFrame, "BOTTOM", 3, -20)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
         expButton:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 2, -3)
 
@@ -156,6 +156,8 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetNormalTexture():SetTexCoord(1, 0, 0, 1)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(1, 0, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(1, 0, 0, 1)
+
+        QueueStatusButton:SetPoint("TOP", GwAddonToggle, "BOTTOM", -4, 0)
     end
 
     QueueStatusButton:SetParent(UIParent)
