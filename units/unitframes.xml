@@ -108,7 +108,7 @@
                     </Anchors>
                 </Texture>
 
-                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castinbars/yellow-hightlight" hidden="true">
+                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-hightlight" hidden="true">
                     <Size x="213" y="12"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
@@ -176,7 +176,7 @@
             </Anchors>
           </StatusBar>
           <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
-            <BarTexture  parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castinbars/yellow-norm"/>
+            <BarTexture  parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm"/>
             <Size x="213" y="13"/>
             <Anchors>
                 <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
@@ -267,7 +267,7 @@
             <Layer level="ARTWORK" textureSubLevel="6">
 
 
-                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castinbars/yellow-highlight" hidden="true">
+                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-highlight" hidden="true">
                     <Size x="148" y="12"></Size>
                     <Anchors>
                        <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
@@ -313,7 +313,7 @@
             </Anchors>
           </StatusBar>
           <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
-            <BarTexture  parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castinbars/yellow-norm"/>
+            <BarTexture  parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm"/>
             <Size x="148" y="13"/>
             <Anchors>
                 <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
@@ -443,7 +443,7 @@
 
 
 
-                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castinbars/yellow-highlight" hidden="true">
+                <Texture parentKey="highlight" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-highlight" hidden="true">
                     <Size x="213" y="12"></Size>
                     <Anchors>
                         <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="1" y="0"></Anchor>
@@ -509,7 +509,7 @@
             </Anchors>
           </StatusBar>
           <StatusBar parentKey="castingbarNormal" inherits="GwStatusBarBar">
-            <BarTexture  parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castinbars/yellow-norm"/>
+            <BarTexture  parentkey="internalBar" file="Interface/AddOns/GW2_UI/textures/units/castingbars/yellow-norm"/>
             <Size x="213" y="13"/>
             <Anchors>
                 <Anchor point="LEFT" relativeKey="$parent.castingbarBackground" relativePoint="LEFT" x="4" y="0"></Anchor>
