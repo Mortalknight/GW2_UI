@@ -369,18 +369,18 @@ local function UpdateClusterPoint(_, _, anchor)
 end
 
 do
-	local function AddonCompartmentOnClickFunc()
-		GW.ToggleGw2Settings()
-	end
+    local function AddonCompartmentOnClickFunc()
+        GW.ToggleGw2Settings()
+    end
 
-	_G.GW2_ADDON_AddonCompartmentOnClickFunc = AddonCompartmentOnClickFunc
+    _G.GW2_ADDON_AddonCompartmentOnClickFunc = AddonCompartmentOnClickFunc
 end
 
 local function HandleAddonCompartmentButton()
-	if AddonCompartmentFrame then
+    if AddonCompartmentFrame then
         if not AddonCompartmentFrame.gw2Handled then
             AddonCompartmentFrame:GwStripTextures()
-            AddonCompartmentFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder )
+            AddonCompartmentFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
             AddonCompartmentFrame.Text:SetFont(UNIT_NAME_FONT, 12, "NONE")
             AddonCompartmentFrame:SetSize(18, 18)
             AddonCompartmentFrame.gw2Handled = true
@@ -391,7 +391,7 @@ local function HandleAddonCompartmentButton()
         else
             AddonCompartmentFrame:SetParent(GW.HiddenFrame)
         end
-	end
+    end
 end
 GW.HandleAddonCompartmentButton = HandleAddonCompartmentButton
 
