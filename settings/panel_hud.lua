@@ -152,6 +152,7 @@ local function LoadHudPanel(sWindow)
         1
     )
     --MINIMAP
+    addOption(minimap.scroll.scrollchild, L["Addon Compartment"], nil, "MINIMAP_ADDON_COMPARTMENT_TOGGLE", function() GW.UpdateMinimapSettings(); GW.HandleAddonCompartmentButton() end, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
     addOption(minimap.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", GW.ToogleMinimapFpsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
     addOption(minimap.scroll.scrollchild, L["Disable FPS tooltip"], nil, "MINIMAP_FPS_TOOLTIP_DISABLED", GW.UpdateMinimapSystemDataInfoSettings, nil, {["MINIMAP_ENABLED"] = true, ["MINIMAP_FPS"] = true}, "Minimap")
     addOption(minimap.scroll.scrollchild, L["Show Coordinates on Minimap"], L["Show Coordinates on Minimap"], "MINIMAP_COORDS_TOGGLE", GW.ToogleMinimapCoorsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")

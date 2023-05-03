@@ -24,6 +24,7 @@ local settings = {
 
 local function UpdateSettings()
     settings.hoverDetailsStay = GetSetting("MINIMAP_ALWAYS_SHOW_HOVER_DETAILS")
+    settings.showAddonCompartmentButton = GetSetting("MINIMAP_ADDON_COMPARTMENT_TOGGLE")
 end
 GW.UpdateMinimapSettings = UpdateSettings
 
@@ -131,10 +132,12 @@ local function setMinimapButtons(side)
     expButton:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
+    AddonCompartmentFrame:ClearAllPoints()
 
     if side == "left" then
         GameTimeFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -2)
-        GwAddonToggle:SetPoint("TOP", GameTimeFrame, "BOTTOM", -3, -20)
+        AddonCompartmentFrame:SetPoint("TOP", GameTimeFrame, "BOTTOM", 1, 0)
+        GwAddonToggle:SetPoint("TOP", GameTimeFrame, "BOTTOM", -3, -20) -- also attached to the gametime because the compartment be be hidden
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
         expButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 0, -3)
 
@@ -147,6 +150,7 @@ local function setMinimapButtons(side)
         QueueStatusButton:SetPoint("TOP", GwAddonToggle, "BOTTOM", 4, 0)
     else
         GameTimeFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -2)
+        AddonCompartmentFrame:SetPoint("TOP", GameTimeFrame, "BOTTOM", -1, 0)
         GwAddonToggle:SetPoint("TOP", GameTimeFrame, "BOTTOM", 3, -20)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
         expButton:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 2, -3)
@@ -364,6 +368,33 @@ local function UpdateClusterPoint(_, _, anchor)
     end
 end
 
+do
+	local function AddonCompartmentOnClickFunc()
+		GW.ToggleGw2Settings()
+	end
+
+	_G.GW2_ADDON_AddonCompartmentOnClickFunc = AddonCompartmentOnClickFunc
+end
+
+local function HandleAddonCompartmentButton()
+	if AddonCompartmentFrame then
+        if not AddonCompartmentFrame.gw2Handled then
+            AddonCompartmentFrame:GwStripTextures()
+            AddonCompartmentFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder )
+            AddonCompartmentFrame.Text:SetFont(UNIT_NAME_FONT, 12, "NONE")
+            AddonCompartmentFrame:SetSize(18, 18)
+            AddonCompartmentFrame.gw2Handled = true
+        end
+
+        if settings.showAddonCompartmentButton then
+            AddonCompartmentFrame:SetParent(UIParent)
+        else
+            AddonCompartmentFrame:SetParent(GW.HiddenFrame)
+        end
+	end
+end
+GW.HandleAddonCompartmentButton = HandleAddonCompartmentButton
+
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
     GetMinimapShape = GetMinimapShape
@@ -559,6 +590,8 @@ local function LoadMinimap()
     else
         setMinimapButtons("right")
     end
+
+    HandleAddonCompartmentButton()
 
     hooksecurefunc(QueueStatusButton, "UpdatePosition", function()
         local x = Minimap:GetCenter()
