@@ -353,7 +353,7 @@
             <Frame parentKey="decayCounter" hidden="true">
                 <Size x="266" y="18"></Size>
                 <Anchors>
-                    <Anchor point="LEFT" relativePoint="LEFT" x="0" y="-25"></Anchor>
+                    <Anchor point="LEFT" relativePoint="LEFT" x="0" y="-15"></Anchor>
                 </Anchors>
                 <Layers>
                     <Layer level="ARTWORK">

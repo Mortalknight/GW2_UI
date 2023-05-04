@@ -638,13 +638,9 @@ local function powerFrenzy(self, event)
     if duration == nil then
         fdc.count:SetText(0)
         self.gwPower = -1
-        self.customResourceBar:Hide()
-        fdc:Hide()
         return
     end
 
-    self.customResourceBar:Show()
-    fdc:Show()
     fdc.count:SetText(count)
     local old_expires = self.gwPower
     old_expires = old_expires or -1
@@ -665,15 +661,11 @@ local function powerMongoose(self, event)
     local _, count, duration, expires = findBuff("player", 259388)
 
     if duration == nil then
-        fdc:Hide()
         fdc.count:SetText(0)
         self.gwPower = -1
-        self.customResourceBar:Hide()
         return
     end
 
-    self.customResourceBar:Show()
-    fdc:Show()
     fdc.count:SetText(count)
     local old_expires = self.gwPower
     old_expires = old_expires or -1
@@ -694,6 +686,8 @@ local function setHunter(f)
         setPowerTYpeFrenzy(f.customResourceBar)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
+        f.customResourceBar:Show()
+        f.decayCounter:Show()
 
         if GW.myspec == 1 then -- beast mastery
             f:SetScript("OnEvent", powerFrenzy)
