@@ -15,6 +15,14 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.7.2",{
+    {ct.bug,[=[Fix player frame in target frame style]=]},
+    {ct.bug,[=[Fix immersive questing error]=]},
+    {ct.bug,[=[Fix healtglobe error]=]},
+
+    {ct.change,[=[Handle addon compartment button and add a toggle to hide that button]=]},
+})
+
 addChange("6.7.1",{
     {ct.bug,[=[Fix hero panel anchor error]=]},
     {ct.bug,[=[Fix party frame healthtext error]=]},

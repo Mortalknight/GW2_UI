@@ -1,3 +1,9 @@
+6.7.2
+FIXES
+    - Fix player frame in target frame style
+    - Fix immersive questing error
+    - Fix healtglobe error
+
 6.7.1
 FIXES
     - Fix hero panel anchor error
