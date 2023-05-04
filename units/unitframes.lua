@@ -58,7 +58,6 @@ local function createNormalUnitFrame(ftype, revert)
     f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
 
-
     f.frameInvert = revert
 
     f.healthString:SetFont(UNIT_NAME_FONT, 11)
@@ -686,22 +685,21 @@ end
 GW.AddForProfiling("unitframes", "updateThreatValues", updateThreatValues)
 
 local function updateHealthValues(self, event)
-  local health = UnitHealth(self.unit)
-  local healthMax = UnitHealthMax(self.unit)
-  local absorb = UnitGetTotalAbsorbs(self.unit)
-  local prediction = UnitGetIncomingHeals(self.unit) or 0
-  local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
-  local absorbPrecentage = 0
-  local absorbAmount = 0
-  local absorbAmount2 = 0
-  local predictionPrecentage = 0
-  local healAbsorbPrecentage = 0
-  local healthPrecentage = 0
+    local health = UnitHealth(self.unit)
+    local healthMax = UnitHealthMax(self.unit)
+    local absorb = UnitGetTotalAbsorbs(self.unit)
+    local prediction = UnitGetIncomingHeals(self.unit) or 0
+    local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
+    local absorbPrecentage = 0
+    local absorbAmount = 0
+    local absorbAmount2 = 0
+    local predictionPrecentage = 0
+    local healAbsorbPrecentage = 0
+    local healthPrecentage = 0
 
     if health > 0 and healthMax > 0 then
         healthPrecentage = health / healthMax
     end
-
 
     if absorb > 0 and healthMax > 0 then
         absorbPrecentage = absorb / healthMax
@@ -709,15 +707,13 @@ local function updateHealthValues(self, event)
         absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
     end
 
-  if prediction > 0 and healthMax > 0 then
-      predictionPrecentage = (prediction / healthMax) + healthPrecentage
-  end
-  if healAbsorb > 0 and healthMax > 0 then
-      healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
-  end
-  self.healPrediction:SetFillAmount( predictionPrecentage)
-
-
+    if prediction > 0 and healthMax > 0 then
+        predictionPrecentage = (prediction / healthMax) + healthPrecentage
+    end
+    if healAbsorb > 0 and healthMax > 0 then
+        healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
+    end
+    self.healPrediction:SetFillAmount(predictionPrecentage)
 
     self.health.barOnUpdate = function()
       updateHealthTextString(self, health, self.health:GetFillAmount())
@@ -734,42 +730,6 @@ local function updateHealthValues(self, event)
         self.absorbOverlay:SetFillAmount(absorbAmount2)
         self.antiHeal:SetFillAmount(healAbsorbPrecentage)
     end
-
-
-
---[[
-
-
-    healthBarAnimation(self, healthPrecentage, true)
-    if animationSpeed == 0 then
-        healthBarAnimation(self, healthPrecentage)
-        updateHealthTextString(self, health, healthPrecentage)
-    else
-        self.healthValueStepCount = 0
-        AddToAnimation(
-            self:GetName() .. self.unit,
-            self.healthValue,
-            healthPrecentage,
-            GetTime(),
-            animationSpeed,
-            function(step)
-                healthBarAnimation(self, step)
-
-                local hvsc = self.healthValueStepCount
-                if hvsc % 5 == 0 then
-                    updateHealthTextString(self, healthMax * step, step)
-                end
-                self.healthValueStepCount = hvsc + 1
-                self.healthValue = step
-            end,
-            nil,
-            function()
-                updateHealthTextString(self, health, healthPrecentage)
-            end
-        )
-    end
-  ]]
-
 end
 GW.AddForProfiling("unitframes", "updateHealthValues", updateHealthValues)
 

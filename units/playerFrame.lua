@@ -1,12 +1,10 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local AddToAnimation = GW.AddToAnimation
 local AddToClique = GW.AddToClique
 local createNormalUnitFrame = GW.createNormalUnitFrame
 local IsIn = GW.IsIn
 local CommaValue = GW.CommaValue
-local Diff = GW.Diff
 
 local function updateHealthTextString(self, health, healthPrecentage)
     local healthString = ""
@@ -28,9 +26,13 @@ local function updateHealthData(self)
     local healthMax = UnitHealthMax(self.unit)
     local absorb = UnitGetTotalAbsorbs(self.unit)
     local prediction = UnitGetIncomingHeals(self.unit) or 0
-    local healthPrecentage = 0
+    local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
     local absorbPrecentage = 0
+    local absorbAmount = 0
+    local absorbAmount2 = 0
     local predictionPrecentage = 0
+    local healAbsorbPrecentage = 0
+    local healthPrecentage = 0
 
     if health > 0 and healthMax > 0 then
         healthPrecentage = health / healthMax
@@ -38,75 +40,26 @@ local function updateHealthData(self)
 
     if absorb > 0 and healthMax > 0 then
         absorbPrecentage = absorb / healthMax
+        absorbAmount = healthPrecentage + absorbPrecentage
+        absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
     end
 
     if prediction > 0 and healthMax > 0 then
-        predictionPrecentage = prediction / healthMax
+        predictionPrecentage = (prediction / healthMax) + healthPrecentage
+    end
+    if healAbsorb > 0 and healthMax > 0 then
+        healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
+    end
+    self.healPrediction:SetFillAmount(predictionPrecentage)
+
+    self.health.barOnUpdate = function()
+        updateHealthTextString(self, health, self.health:GetFillAmount())
     end
 
-    local animationSpeed = math.min(1, math.max(0.2, 2 * Diff(self.healthValue, healthPrecentage)))
-
-    -- absorb calc got inlined here because nothing else uses this
-    local absbarbg = self.absorbbarbg
-    local absbar = self.absorbbar
-    if absorb == 0 then
-        -- very common case; short-circuit this for performance
-        absbarbg:SetAlpha(0)
-        absbar:SetAlpha(0)
-    else
-        local absorbAmount = healthPrecentage + absorbPrecentage
-        local absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
-
-        absbarbg:SetWidth(math.min((self.barWidth - 1), math.max(1, self.barWidth * absorbAmount)))
-        absbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * absorbAmount2)))
-
-        absbarbg:SetTexCoord(0, math.min(1, 1 * absorbAmount), 0, 1)
-        absbar:SetTexCoord(0, math.min(1, 1 * absorbAmount), 0, 1)
-
-        absbarbg:SetAlpha(math.max(0, math.min(1, (1 * (absorbPrecentage / 0.1)))))
-        absbar:SetAlpha(math.max(0, math.min(1, (1 * (absorbPrecentage / 0.1)))))
-    end
-
-    --prediction calc
-    local predictionbar = self.predictionbar
-    if prediction == 0 then
-        predictionbar:SetAlpha(0)
-    else
-        local predictionAmount = healthPrecentage + predictionPrecentage
-
-        predictionbar:SetWidth(math.min(self.barWidth, math.max(1, self.barWidth * predictionAmount)))
-        predictionbar:SetTexCoord(0, math.min(1, 1 * predictionAmount), 0, 1)
-        predictionbar:SetAlpha(math.max(0, math.min(1, (1 * (predictionPrecentage / 0.1)))))
-    end
-
-    GW.healthBarAnimation(self, healthPrecentage, true)
-    if animationSpeed == 0 then
-        GW.healthBarAnimation(self, healthPrecentage)
-        updateHealthTextString(self, health, healthPrecentage)
-    else
-        self.healthValueStepCount = 0
-        AddToAnimation(
-            self:GetName() .. self.unit,
-            self.healthValue,
-            healthPrecentage,
-            GetTime(),
-            animationSpeed,
-            function(step)
-                GW.healthBarAnimation(self, step)
-
-                local hvsc = self.healthValueStepCount
-                if hvsc % 5 == 0 then
-                    updateHealthTextString(self, healthMax * step, step)
-                end
-                self.healthValueStepCount = hvsc + 1
-                self.healthValue = step
-            end,
-            nil,
-            function()
-                updateHealthTextString(self, health, healthPrecentage)
-            end
-        )
-    end
+    self.health:SetFillAmount(healthPrecentage)
+    self.absorbbg:SetFillAmount(absorbAmount)
+    self.absorbOverlay:SetFillAmount(absorbAmount2)
+    self.antiHeal:SetFillAmount(healAbsorbPrecentage)
 end
 
 local function unitFrameData(self)
@@ -124,17 +77,10 @@ local function unitFrameData(self)
         local _, englishClass = UnitClass(self.unit)
         local color = GW.GWGetClassColor(englishClass, true)
 
-        self.healthbar:SetVertexColor(color.r, color.g, color.b, color.a)
-        self.healthbarSpark:SetVertexColor(color.r, color.g, color.b, color.a)
-        self.healthbarFlash:SetVertexColor(color.r, color.g, color.b, color.a)
-        self.healthbarFlashSpark:SetVertexColor(color.r, color.g, color.b, color.a)
-
+        self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
         self.nameString:SetTextColor(color.r + 0.3, color.g + 0.3, color.b + 0.3, color.a)
     else
-        self.healthbar:SetVertexColor(0.207, 0.392, 0.16, 1)
-        self.healthbarSpark:SetVertexColor(0.207, 0.392, 0.16, 1)
-        self.healthbarFlash:SetVertexColor(0.207, 0.392, 0.16, 1)
-        self.healthbarFlashSpark:SetVertexColor(0.207, 0.392, 0.16, 1)
+        self.health:SetStatusBarColor(0.207, 0.392, 0.16, 1)
         self.nameString:SetTextColor(0.207, 0.392, 0.16, 1)
     end
 
@@ -288,7 +234,6 @@ local function LoadPlayerFrame()
     NewUnitFrame.castingbar:Hide()
     NewUnitFrame.castingbarSpark:Hide()
     NewUnitFrame.castingbarNormal:Hide()
-    NewUnitFrame.castingbarNormalSpark:Hide()
     NewUnitFrame.raidmarker:Hide()
     NewUnitFrame.prestigebg:Hide()
     NewUnitFrame.prestigeString:Hide()
