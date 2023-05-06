@@ -65,7 +65,7 @@ local function LoadFriendList(tabContainer)
     FriendsFrameSendMessageButton:SetPoint("BOTTOMRIGHT", GWFriendFrame.list,  "BOTTOMRIGHT", -4, -40)
     FriendsFrameSendMessageButton:GwSkinButton(false, true)
 
-    GW.HandleTrimScrollBar(FriendsListFrame.ScrollBar)
+    GW.HandleTrimScrollBar(FriendsListFrame.ScrollBar, true)
     GW.HandleScrollControls(FriendsListFrame)
 
     FriendsTooltip:SetParent(GWFriendFrame.list)
@@ -120,7 +120,7 @@ local function LoadFriendList(tabContainer)
     FriendsFriendsFrameDropDown:GwSkinDropDownMenu()
     FriendsFriendsFrame.SendRequestButton:GwSkinButton(false, true)
     FriendsFriendsFrame.CloseButton:GwSkinButton(false, true)
-    GW.HandleTrimScrollBar(FriendsFriendsFrame.ScrollBar)
+    GW.HandleTrimScrollBar(FriendsFriendsFrame.ScrollBar, true)
     GW.HandleScrollControls(FriendsFriendsFrame)
 
     FriendsFrameBattlenetFrame.BroadcastButton:GwKill()

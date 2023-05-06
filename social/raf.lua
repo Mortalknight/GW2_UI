@@ -43,7 +43,7 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendFrame.RecruitList:SetAllPoints(RAFFrame.RecruitList)
 
     RecruitAFriendFrame.RecruitList.ScrollFrameInset:GwStripTextures()
-    GW.HandleTrimScrollBar(RecruitAFriendFrame.RecruitList.ScrollBar)
+    GW.HandleTrimScrollBar(RecruitAFriendFrame.RecruitList.ScrollBar, true)
     GW.HandleScrollControls(RecruitAFriendFrame.RecruitList)
     RecruitAFriendFrame.RecruitList.ScrollBox:SetSize(433, 420)
 
