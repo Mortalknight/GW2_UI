@@ -389,6 +389,7 @@ local function loadBaseFrame()
     local pos = GetSetting("SOCIAL_POSITION")
     local scale = GetSetting("SOCIAL_POSITION_SCALE")
     fmGSW:SetScale(scale)
+    fmGSW:ClearAllPoints()
     fmGSW:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     fmGSW.mover.onMoveSetting = "SOCIAL_POSITION"
     fmGSW.mover.savePosition = mover_SavePosition
