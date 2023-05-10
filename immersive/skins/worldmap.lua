@@ -380,6 +380,7 @@ local function worldMapSkin()
     QuestScrollFrame.DetailFrame:GwStripTextures()
     QuestScrollFrame.DetailFrame.BottomDetail:Hide()
     QuestScrollFrame.Contents.Separator.Divider:Hide()
+    QuestScrollFrame.Edge:SetAlpha(0)
 
     SkinHeaders(QuestScrollFrame.Contents.StoryHeader)
     QuestScrollFrame.ScrollBar:GwSkinScrollBar()
