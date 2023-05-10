@@ -19,7 +19,7 @@ local function LoadVehicleButton()
         GW.RegisterMovableFrame(VehicleSeatIndicator, BINDING_HEADER_VEHICLE, "VEHICLE_SEAT_POS", ALL .. ",Blizzard", nil, {"default", "scaleable"})
         VehicleSeatIndicator.PositionVehicleFrameHooked = true
     end
-
+--[[
     if GetSetting("ACTIONBARS_ENABLED") then
         VehicleSeatIndicator_UnloadTextures = function()
             VehicleSeatIndicatorBackgroundTexture:SetTexture()
@@ -29,5 +29,6 @@ local function LoadVehicleButton()
             DurabilityFrame:SetAlerts()
        end
     end
+    ]]
 end
 GW.LoadVehicleButton = LoadVehicleButton
