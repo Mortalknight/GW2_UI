@@ -1,3 +1,8 @@
+6.7.3
+FIXES
+    - Fix friends frame lua error
+    - Fix encounterjornal taint issue
+
 6.7.2
 FIXES
     - Fix player frame in target frame style

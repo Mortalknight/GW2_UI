@@ -15,12 +15,15 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.7.3",{
+    {ct.bug,[=[Fix friends frame lua error]=]},
+    {ct.bug,[=[Fix encounterjornal taint issue]=]},
+})
+
 addChange("6.7.2",{
     {ct.bug,[=[Fix player frame in target frame style]=]},
     {ct.bug,[=[Fix immersive questing error]=]},
     {ct.bug,[=[Fix healtglobe error]=]},
-
-    {ct.change,[=[Handle addon compartment button and add a toggle to hide that button]=]},
 })
 
 addChange("6.7.1",{
