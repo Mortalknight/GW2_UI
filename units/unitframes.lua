@@ -476,20 +476,20 @@ local function protectedCastAnimation(self, powerPrec)
     self.castingbar:SetWidth(math.min(powerBarWidth, math.max(1, spark)))
 
 
-    if self.numStages > 0 then
-        for i = 1, self.numStages - 1, 1 do
-            local stage_percentage = self.StagePoints[i]
-            if stage_percentage <= powerPrec then
-                self.highlight:SetTexCoord(self.barHighLightCoords.L, GW.lerp(self.barHighLightCoords.L, self.barHighLightCoords.R, stage_percentage), self.barHighLightCoords.T, self.barHighLightCoords.B)
-                self.highlight:SetWidth(math.max(1, stage_percentage * powerBarWidth))
-                self.highlight:Show()
-            end
+    --if self.numStages > 0 then
+    --    for i = 1, self.numStages - 1, 1 do
+    --        local stage_percentage = self.StagePoints[i]
+    --        if stage_percentage <= powerPrec then
+    --            self.highlight:SetTexCoord(self.barHighLightCoords.L, GW.lerp(self.barHighLightCoords.L, self.barHighLightCoords.R, stage_percentage), self.barHighLightCoords.T, self.barHighLightCoords.B)
+    --            self.highlight:SetWidth(math.max(1, stage_percentage * powerBarWidth))
+    --            self.highlight:Show()
+    --        end
 
-            if i == 1 and stage_percentage >= powerPrec then
-                self.highlight:Hide()
-            end
-        end
-    end
+    --        if i == 1 and stage_percentage >= powerPrec then
+    --            self.highlight:Hide()
+    --        end
+    --    end
+    --end
 end
 GW.AddForProfiling("unitframes", "protectedCastAnimation", protectedCastAnimation)
 
@@ -628,7 +628,7 @@ local function updateCastValues(self)
               end
 
             end
-            local p = self.isChanneling and (1 - p) or p
+            p = self.isChanneling and (1 - p) or p
 
             if notInterruptible then
                 protectedCastAnimation(self, p)
