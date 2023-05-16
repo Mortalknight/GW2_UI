@@ -281,7 +281,7 @@ local function UpdateMatchingLayout(self, new_point)
     local frameFound = false
     if layout then
         for i = 0, #layout.frames do
-            if layout.frames[i].settingName == self.setting then
+            if layout.frames[i] and layout.frames[i].settingName == self.setting then
                 layout.frames[i].point = nil
                 layout.frames[i].point = GW.copyTable(nil, new_point)
 
