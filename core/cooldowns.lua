@@ -159,7 +159,7 @@ local function OnSetCooldown(self, start, duration)
             local startup = time() - now
             local cdTime = (2 ^ 32) / 1000 - start
             local startTime = startup - cdTime
-            time.endTime = startTime + duration
+            timer.endTime = startTime + duration
         end
 
         timer.endCooldown = timer.endTime - 0.05
