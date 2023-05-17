@@ -157,7 +157,7 @@ local function OnSetCooldown(self, start, duration)
         else
             -- https://github.com/Stanzilla/WoWUIBugs/issues/47
             local startup = time() - now
-            local cdTime = (2 ^ 32) / 100 - start
+            local cdTime = (2 ^ 32) / 1000 - start
             local startTime = startup - cdTime
             time.endTime = startTime + duration
         end
