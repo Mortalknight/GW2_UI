@@ -150,7 +150,18 @@ local function OnSetCooldown(self, start, duration)
         local timer = self.timer or CreateCooldownTimer(self)
         timer.start = start
         timer.duration = duration
-        timer.endTime = start + duration
+
+        local now = GetTime()
+        if start <= now then
+            timer.endTime = start + duration
+        else
+            -- https://github.com/Stanzilla/WoWUIBugs/issues/47
+            local startup = time() - now
+            local cdTime = (2 ^ 32) / 100 - start
+            local startTime = startup - cdTime
+            time.endTime = startTime + duration
+        end
+
         timer.endCooldown = timer.endTime - 0.05
         Cooldown_ForceUpdate(timer)
     elseif self.timer then
