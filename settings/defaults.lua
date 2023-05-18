@@ -806,6 +806,9 @@ GW_DEFAULT["PlayerBuffFrame"]["xOfs"] = 57
 GW_DEFAULT["PlayerBuffFrame"]["yOfs"] = 120
 GW_DEFAULT["PlayerBuffFrame"]["hasMoved"] = false
 GW_DEFAULT["PlayerBuffFrame_GrowDirection"] = "UP"
+GW_DEFAULT["PlayerBuffFrame_HorizontalSpacing"] = 1
+GW_DEFAULT["PlayerBuffFrame_VerticalSpacing"] = 34
+GW_DEFAULT["PlayerBuffFrame_MaxWraps"] = 3
 GW_DEFAULT["PlayerBuffFrame_scale"] = 1
 
 GW_DEFAULT["PlayerDebuffFrame"] = {}
@@ -815,6 +818,9 @@ GW_DEFAULT["PlayerDebuffFrame"]["xOfs"] = 57
 GW_DEFAULT["PlayerDebuffFrame"]["yOfs"] = 220
 GW_DEFAULT["PlayerDebuffFrame"]["hasMoved"] = false
 GW_DEFAULT["PlayerDebuffFrame_GrowDirection"] = "UP"
+GW_DEFAULT["PlayerDebuffFrame_HorizontalSpacing"] = 1
+GW_DEFAULT["PlayerDebuffFrame_VerticalSpacing"] = 34
+GW_DEFAULT["PlayerDebuffFrame_MaxWraps"] = 3
 GW_DEFAULT["PlayerDebuffFrame_scale"] = 1
 
 GW_DEFAULT["PlayerPrivateAuras"] = {}

@@ -586,3 +586,8 @@ L["Classic combat text anchoring"] = "Classic-Style Textausrichtung"
 L["Center of screen"] = "In der Mitte des Bildschirms"
 L["GW2 floating combat text style"] = "GW2 erweiterte Kampftext Style"
 L["Stacking"] = "Stapeln"
+
+L["Horizontal Spacing"] = "Horizontaler Abstand"
+L["Vertical Spacing"] = "Vertikaler Abstand"
+L["Max Wraps"] = "Maximale Leisten"
+L["Limit the number of rows"]= "Beschränkung für die Anzahl an Leisten"

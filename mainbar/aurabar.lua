@@ -1,9 +1,29 @@
 local _, GW = ...
 local Debug = GW.Debug
-local TimeCount = GW.TimeCount
 local GetSetting = GW.GetSetting
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local RegisterMovableFrame = GW.RegisterMovableFrame
+
+local DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER = {
+    UPR = 1,
+    DOWNR = 1,
+    DOWN = -1,
+    UP = -1,
+}
+
+local DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER = {
+    UPR = 1,
+    DOWNR = -1,
+    DOWN = -1,
+    UP = 1,
+}
+
+local DIRECTION_TO_POINT = {
+    DOWNR = "TOPLEFT",
+    DOWN = "TOPRIGHT",
+    UPR = "BOTTOMLEFT",
+    UP = "BOTTOMRIGHT",
+}
 
 local function setLongCD(self, stackCount)
     self.cooldown:Hide()
@@ -352,45 +372,29 @@ local function UpdateAuraHeader(header, settingName)
     local size = tonumber(GW.RoundDec(GetSetting(settingName .. "_ICON_SIZE")))
     local aura_tmpl = format("GwAuraSecureTmpl%d", size)
     local grow_dir = GetSetting(settingName .. "_GrowDirection")
-    local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
-    local wrap_num = header.name == "GW2UIPlayerBuffs" and tonumber(GetSetting("PLAYER_AURA_WRAP_NUM")) or tonumber(GetSetting("PLAYER_AURA_WRAP_NUM_DEBUFF"))
-    if not wrap_num or wrap_num < 1 or wrap_num > 20 then
-        wrap_num = 7
+    local maxWraps = GetSetting(settingName .. "_MaxWraps")
+    local horizontalSpacing = tonumber(GetSetting(settingName .. "_HorizontalSpacing"))
+    local verticalSpacing = tonumber(GetSetting(settingName .. "_VerticalSpacing"))
+    local wrapAfter = header.name == "GW2UIPlayerBuffs" and tonumber(GetSetting("PLAYER_AURA_WRAP_NUM")) or tonumber(GetSetting("PLAYER_AURA_WRAP_NUM_DEBUFF"))
+    if not wrapAfter or wrapAfter < 1 or wrapAfter > 20 then
+        wrapAfter = 7
     end
 
-    Debug("settings", settingName, grow_dir, wrap_num, size)
-
-    local ap
-    local yoff
-    local xoff
-    if grow_dir == "UPR" then
-        ap = "BOTTOMLEFT"
-        xoff = (size + 1)
-        yoff = 50
-    elseif grow_dir == "DOWN" then
-        ap = "TOPRIGHT"
-        xoff = -(size + 1)
-        yoff = -50
-    elseif grow_dir == "DOWNR" then
-        ap = "TOPLEFT"
-        xoff = (size + 1)
-        yoff = -50
-    else
-        ap = "BOTTOMRIGHT"
-        xoff = -(size + 1)
-        yoff = 50
-    end
+    Debug("settings", settingName, grow_dir, wrapAfter, size)
 
     header:SetAttribute("sortMethod", GetSetting(settingName .. "_SortMethod"))
     header:SetAttribute("sortDirection", GetSetting(settingName .. "_SortDir"))
     header:SetAttribute("template", aura_tmpl)
     header:SetAttribute("separateOwn", tonumber(GW.RoundDec(GetSetting(settingName .. "_Seperate"))))
-    header:SetAttribute("wrapAfter", wrap_num)
-    header:SetAttribute("minWidth", (size + 1) * wrap_num)
+    header:SetAttribute("wrapAfter", wrapAfter)
+    header:SetAttribute("minWidth", ((wrapAfter == 1 and 0 or horizontalSpacing) + size) * wrapAfter)
     header:SetAttribute("minHeight", (size + 1))
-    header:SetAttribute("point", ap)
-    header:SetAttribute("xOffset", xoff)
-    header:SetAttribute("wrapYOffset", yoff)
+    header:SetAttribute("minHeight", (verticalSpacing+ size) * maxWraps)
+    header:SetAttribute("point", DIRECTION_TO_POINT[grow_dir])
+    header:SetAttribute("xOffset", DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[grow_dir] * (horizontalSpacing + size))
+    header:SetAttribute("yOffset", 0)
+    header:SetAttribute("wrapXOffset", 0)
+    header:SetAttribute("wrapYOffset", DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + size))
     header:SetAttribute("growDir", grow_dir)
 
     if header.filter == "HELPFUL" then
@@ -410,20 +414,15 @@ local function UpdateAuraHeader(header, settingName)
     -- set anchoring
     if header.filter == "HELPFUL" then
         header:ClearAllPoints()
-        header:SetPoint(anchor_hb, header.gwMover, anchor_hb, 0, 0)
+        header:SetPoint(DIRECTION_TO_POINT[grow_dir], header.gwMover, DIRECTION_TO_POINT[grow_dir], 0, 0)
     else
         local anchor_hd
         header:ClearAllPoints()
         if not header.isMoved then
             anchor_hd = grow_dir == "UPR" and "TOPLEFT" or grow_dir == "DOWNR" and "BOTTOMLEFT" or grow_dir == "UP" and "TOPRIGHT" or grow_dir == "DOWN" and "BOTTOMRIGHT"
-            if grow_dir == "DOWNR" or grow_dir == "DOWN" then
-                header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, -50)
-            else
-                header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, 50)
-            end
+            header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + size))
         else
-            anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
-            header:SetPoint(anchor_hd, header.gwMover, anchor_hd, 0, 0)
+            header:SetPoint(DIRECTION_TO_POINT[grow_dir], header.gwMover, DIRECTION_TO_POINT[grow_dir], 0, 0)
         end
     end
 end
@@ -461,8 +460,6 @@ local function newHeader(filter, settingname)
         if hide and shown then header:Hide() elseif not hide and not shown then header:Show() end
     ]])
 
-    h:SetAttribute("yOffset", "0")
-    h:SetAttribute("wrapXOffset", "0")
     if filter == "HELPFUL" then
         h:SetAttribute("consolidateDuration", -1)
         h:SetAttribute("consolidateTo", 0)

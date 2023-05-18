@@ -195,6 +195,48 @@ local function LoadPlayerPanel(sWindow)
     )
     addOptionSlider(
         p_player_aura.scroll.scrollchild,
+        L["Horizontal Spacing"],
+        nil,
+        "PlayerBuffFrame_HorizontalSpacing",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
+        end,
+        -20,
+        50,
+        nil,
+        0,
+        {["PLAYER_BUFFS_ENABLED"] = true}
+    )
+    addOptionSlider(
+        p_player_aura.scroll.scrollchild,
+        L["Vertical Spacing"],
+        nil,
+        "PlayerBuffFrame_VerticalSpacing",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
+        end,
+        0,
+        50,
+        nil,
+        0,
+        {["PLAYER_BUFFS_ENABLED"] = true}
+    )
+    addOptionSlider(
+        p_player_aura.scroll.scrollchild,
+        L["Max Wraps"],
+        L["Limit the number of rows"],
+        "PlayerBuffFrame_MaxWraps",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
+        end,
+        1,
+        32,
+        nil,
+        0,
+        {["PLAYER_BUFFS_ENABLED"] = true}
+    )
+    addOptionSlider(
+        p_player_aura.scroll.scrollchild,
         L["Buff size"],
         nil,
         "PlayerBuffFrame_ICON_SIZE",
@@ -288,6 +330,48 @@ local function LoadPlayerPanel(sWindow)
         end,
         1,
         20,
+        nil,
+        0,
+        {["PLAYER_BUFFS_ENABLED"] = true}
+    )
+    addOptionSlider(
+        p_player_debuff.scroll.scrollchild,
+        L["Horizontal Spacing"],
+        nil,
+        "PlayerDebuffFrame_HorizontalSpacing",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
+        end,
+        0,
+        50,
+        nil,
+        0,
+        {["PLAYER_BUFFS_ENABLED"] = true}
+    )
+    addOptionSlider(
+        p_player_debuff.scroll.scrollchild,
+        L["Vertical Spacing"],
+        L["Limit the number of rows"],
+        "PlayerDebuffFrame_VerticalSpacing",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
+        end,
+        0,
+        50,
+        nil,
+        0,
+        {["PLAYER_BUFFS_ENABLED"] = true}
+    )
+    addOptionSlider(
+        p_player_debuff.scroll.scrollchild,
+        L["Max Wraps"],
+        L["Limit the number of rows"],
+        "PlayerDebuffFrame_MaxWraps",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
+        end,
+        1,
+        32,
         nil,
         0,
         {["PLAYER_BUFFS_ENABLED"] = true}

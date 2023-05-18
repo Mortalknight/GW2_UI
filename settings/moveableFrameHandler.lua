@@ -323,9 +323,20 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
     mf.parent.isMoved = false
     mf.parent:SetAttribute("isMoved", new_point.hasMoved)
 
-    --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
+    --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction, h,v spacing, auras per row and max wraps to default
     if mf.setting == "PlayerBuffFrame" or mf.setting == "PlayerDebuffFrame" then
         SetSetting(mf.setting .. "_GrowDirection", "UP")
+        SetSetting(mf.setting .. "_HorizontalSpacing", 1)
+        SetSetting(mf.setting .. "_VerticalSpacing", 34)
+        SetSetting(mf.setting .. "_MaxWraps", 3)
+        SetSetting(mf.setting .. "_MaxWraps", 3)
+        SetSetting(mf.setting .. "_ICON_SIZE", 32)
+        if mf.setting == "PlayerBuffFrame" then
+            SetSetting("PLAYER_AURA_WRAP_NUM", 7)
+        elseif mf.setting == "PlayerDebuffFrame" then
+            SetSetting("PLAYER_AURA_WRAP_NUM_DEBUFF", 7)
+        end
+        GW.UpdateAuraHeader(mf.parent, mf.setting)
     elseif mf.setting == "MicromenuPos" then
         -- Hide/Show BG here
         mf.parent.cf.bg:Show()
