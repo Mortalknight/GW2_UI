@@ -291,9 +291,9 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInstanceFrameBG:ClearAllPoints()
     EncounterJournalEncounterFrameInstanceFrameBG:SetPoint("CENTER", 0, 40)
     EncounterJournalEncounterFrameInstanceFrameTitle:ClearAllPoints()
-    EncounterJournalEncounterFrameInstanceFrameTitle:SetPoint("TOP", 0, -105)
+    EncounterJournalEncounterFrameInstanceFrameTitle:SetPoint("TOP", 0, -30)
     EncounterJournalEncounterFrameInstanceFrameMapButton:ClearAllPoints()
-    EncounterJournalEncounterFrameInstanceFrameMapButton:SetPoint("LEFT", 55, -56)
+    EncounterJournalEncounterFrameInstanceFrameMapButton:SetPoint("LEFT", 55, -70)
 
     EncounterInfo.overviewScroll.ScrollBar:GwSkinScrollBar()
     EncounterInfo.overviewScroll.ScrollBar:SetWidth(3)
@@ -548,7 +548,6 @@ local function encounterJournalSkin()
     EncounterJournalEncounterFrameInstanceFrame.titleBG:SetAlpha(0)
     EncounterJournalEncounterFrameInstanceFrameTitle:SetTextColor(1, 1, 1)
     EncounterJournalEncounterFrameInstanceFrameTitle:SetFont(UNIT_NAME_FONT, 25, "")
-
 
     for _, child in next, {EncounterJournalEncounterFrameInstanceFrame.LoreScrollingFont.ScrollBox.ScrollTarget:GetChildren()} do
         if child.FontString then
