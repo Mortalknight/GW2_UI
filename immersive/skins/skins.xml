@@ -39,5 +39,6 @@
     <Script file="addons\immersion.lua"/>
     <Script file="addons\postal.lua"/>
     <Script file="addons\WorldQuestTracker.lua"/>
+    <Script file="addons\petTracker.lua"/>
     <Script file="addons\detailsProfile.lua"/>
 </Ui>

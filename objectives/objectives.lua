@@ -192,7 +192,9 @@ local function statusBar_OnShow(self)
     if not f then
         return
     end
-    f:SetHeight(50)
+    if not f.notChangeSize then
+        f:SetHeight(50)
+    end
     f.StatusBar.statusbarBg:Show()
 end
 AFP("statusBar_OnShow", statusBar_OnShow)
@@ -202,7 +204,9 @@ local function statusBar_OnHide(self)
     if not f then
         return
     end
-    f:SetHeight(20)
+    if not f.notChangeSize then
+        f:SetHeight(20)
+    end
     f.StatusBar.statusbarBg:Hide()
 end
 AFP("statusBar_OnHide", statusBar_OnHide)
@@ -214,6 +218,7 @@ local function statusBarSetValue(self)
     end
     local _, mx = f.StatusBar:GetMinMaxValues()
     local v = f.StatusBar:GetValue()
+    
     local width = math.max(1, math.min(10, 10 * ((v / mx) / 0.1)))
     f.StatusBar.Spark:SetPoint("RIGHT", f.StatusBar, "LEFT", 280 * (v / mx), 0)
     f.StatusBar.Spark:SetWidth(width)
@@ -258,7 +263,9 @@ local function blockOnEnter(self)
         self.objectiveBlocks = {}
     end
     for _, v in pairs(self.objectiveBlocks) do
-        v.StatusBar.progress:Show()
+        if not v.StatusBar.notHide then
+            v.StatusBar.progress:Show()
+        end
     end
     AddToAnimation(
         self:GetName() .. "hover",
@@ -291,7 +298,9 @@ local function blockOnLeave(self)
         self.objectiveBlocks = {}
     end
     for _, v in pairs(self.objectiveBlocks) do
-        v.StatusBar.progress:Hide()
+        if not v.StatusBar.notHide then
+            v.StatusBar.progress:Hide()
+        end
     end
     if animations[self:GetName() .. "hover"] then
         animations[self:GetName() .. "hover"].complete = true
@@ -863,7 +872,7 @@ end
 local function QuestTrackerLayoutChanged()
     updateExtraQuestItemPositions()
     -- adjust scrolframe height
-    local height = GwQuesttrackerContainerMonthlyActivity:GetHeight() + GwQuesttrackerContainerRecipe:GetHeight() + GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + 60 + (GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT:GetHeight() or 0)
+    local height = GwQuesttrackerContainerMonthlyActivity:GetHeight() + GwQuesttrackerContainerRecipe:GetHeight() + GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + 60 + (GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT:GetHeight() or 0) + (GwQuesttrackerContainerPetTracker and GwQuesttrackerContainerPetTracker:GetHeight() or 0)
     local scroll = 0
     local trackerHeight = settings.objectivesHeight - GwQuesttrackerContainerBossFrames:GetHeight() - GwQuesttrackerContainerArenaBGFrames:GetHeight() - GwQuesttrackerContainerScenario:GetHeight() - GwObjectivesNotification:GetHeight()
     if height > tonumber(trackerHeight) then
@@ -1376,6 +1385,7 @@ local function LoadQuestTracker()
     GW.LoadRecipeTracking(fRecipe)
     GW.LoadMonthlyActivitiesTracking(fMonthlyActivity)
     GW.LoadWQTAddonSkin()
+    GW.LoadPetTrackerAddonSkin()
 
     GW.ToggleCollapseObjectivesInChallangeMode()
 
