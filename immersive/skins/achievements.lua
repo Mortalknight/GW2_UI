@@ -6,9 +6,6 @@ local L = GW.L
 --[[
 TODO
 Background alignment after comparison
-
-Hook up to a frame mover
-kill blizzards default frame position handling
 ]]
 
 local AchievementBackgroundTextures = {
@@ -17,21 +14,6 @@ local AchievementBackgroundTextures = {
 }
 GW.AchievementFrameSkinFunction.AchievementBackgroundTextures = AchievementBackgroundTextures
 
--- should be made utility function ?
-local function CreateColorFromTable(colorTable)
-    return CreateColor(colorTable.r, colorTable.g, colorTable.b, colorTable.a)
-end
--- Creates a gradient lerp from 0% to 100% rather then lerping from 0% to current %
--- Should be added and used for statusbars with gradients
-local function CreateStausGradientCap(precentage, color1, color2)
-    local endcolor = {
-        r = lerp(color1.r, color2.r, precentage),
-        g = lerp(color1.g, color2.g, precentage),
-        b = lerp(color1.b, color2.b, precentage),
-        a = lerp(color1.a, color2.a, precentage)
-    }
-    return endcolor
-end
 
 -- Bar colors for accountWide / earnd by character
 local barColors = {
@@ -96,7 +78,7 @@ local function customCategorieInit(self,elementData)
         self.Button.Background:SetVertexColor(1, 1, 1);
     end
 
-    local categoryName, parentID, flags;
+    local categoryName, _, flags;
     local numAchievements, numCompleted;
 
     local id = elementData.id;
@@ -107,12 +89,12 @@ local function customCategorieInit(self,elementData)
         numAchievements, numCompleted = GetNumCompletedAchievements(InGuildView());
     elseif ( id == "watchlist" ) then -- custom watchlist category
         categoryName = L["Watch list"];
-    local trackedAchievements = {GetTrackedAchievements()}
+        local trackedAchievements = {GetTrackedAchievements()}
 
         numAchievements = #trackedAchievements
-    numCompleted = 0 -- might need to change or only used for bars?
-else
-        categoryName, parentID, flags = GetCategoryInfo(id);
+        numCompleted = 0 -- might need to change or only used for bars?
+    else
+        categoryName, _, flags = GetCategoryInfo(id);
         numAchievements, numCompleted = AchievementFrame_GetCategoryTotalNumAchievements(id, true);
     end
 
@@ -150,7 +132,7 @@ local function AchievementFrameCategories_MakeCategoryList(source, fakeSummaryId
     -- only change to this function is this line seems overkill
     tinsert(categories, { id = "watchlist" });
 
-    for i, id in next, source do
+    for _, id in next, source do
         local _, parent = GetCategoryInfo(id);
         if ( parent == -1 or parent == GUILD_CATEGORY_ID ) then
             tinsert(categories, { id = id });
@@ -175,12 +157,6 @@ local function AchievementFrameCategories_MakeCategoryList(source, fakeSummaryId
         end
     end
     return categories;
-end
-local g_categorySelections = {{},{},{}};
-local function GetSelectedCategory(categoryIndex)
-    local categoryIndex = ACHIEVEMENT_FUNCTIONS.categoryIndex;
-    if not categoryIndex then return 0 end
-    return g_categorySelections[categoryIndex].id or 0;
 end
 
 --- overrider for blizzard function
@@ -331,7 +307,7 @@ local function catMenuButtonState(self,selected)
     end
 end
 
-local function CatMenuButton(self, button, odd, hasArrow, margin)
+local function CatMenuButton(_, button)
     local arrow = button:CreateTexture(nil, "BACKGROUND", nil, 0)
     button.arrow = arrow
     button.arrow:ClearAllPoints();
@@ -351,12 +327,12 @@ local function SetupButtonHighlight(button, background)
     if not button then return end
 
     button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/character/menu-hover")
-
+    button.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     local hl = button:GetHighlightTexture()
     hl:SetVertexColor(0.8, 0.8, 0.8, 0.8)
     hl:GwSetInside(background)
     button:HookScript("OnEnter",function()
-        GW.TriggerButtonHoverAnimation(button,hl)
+        GW.TriggerButtonHoverAnimation(button, hl)
     end)
 end
 
@@ -653,21 +629,21 @@ local function skinAchievementFrameListAchievement(self)
         self.GwUpdateAchievementFrameListAchievement(self)
     end)
 
-    hooksecurefunc(self,"DisplayObjectives",function(self, id, completed)
+    hooksecurefunc(self,"DisplayObjectives",function(self)
         local objectivesFrame = self:GetObjectiveFrame();
 
         objectivesFrame:ClearAllPoints();
         objectivesFrame:SetPoint("TOPLEFT",self.HiddenDescription,"BOTTOMLEFT");
         objectivesFrame:SetPoint("TOPRIGHT",self.HiddenDescription,"BOTTOMRIGHT");
 
-        for k,v in pairs(objectivesFrame.metas) do
+        for _, v in pairs(objectivesFrame.metas) do
             skinMetasAchievements(v)
         end
-        for k,v in pairs(objectivesFrame.criterias) do
+        for _, v in pairs(objectivesFrame.criterias) do
             skinCriteriaText(v)
         end
-        for k,v in pairs(objectivesFrame.progressBars) do
-            skinCriteriaStatusbar(self,v)
+        for _, v in pairs(objectivesFrame.progressBars) do
+            skinCriteriaStatusbar(self, v)
         end
     end)
 
@@ -746,7 +722,7 @@ local function UpdateAchievementFrameListAchievement(self)
         skinAchievementFrameListAchievement(self)
     end
 
-    local id, name, points, completed, month, day, year, description, flags, icon, rewardText, isGuild, wasEarnedByMe, earnedBy = GetAchievementInfo(self.id);
+    local id, _, _, completed, _, _, _, _, flags, _, _, isGuild, wasEarnedByMe, _ = GetAchievementInfo(self.id);
     -- needed for status bars
     self.accountWide = bit.band(flags, ACHIEVEMENT_FLAGS_ACCOUNT) == ACHIEVEMENT_FLAGS_ACCOUNT
     self.isGuild = isGuild
@@ -1314,7 +1290,7 @@ local function skinAchevement()
         end
     end)
 
-    local function OnCategoriesFrameViewAcquiredFrame(self, frame, elementData, new)
+    local function OnCategoriesFrameViewAcquiredFrame(_, frame, _, new)
         if not new then return end
 
         frame:SetHeight(36)

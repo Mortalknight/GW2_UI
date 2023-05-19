@@ -143,12 +143,12 @@ local function TriggerButtonHoverAnimation(self, hover, to, duration)
             local w = self:GetWidth()
 
             local lerp = GW.lerp(0, w + (w * 0.5), p)
-            local lerp2 = GW.lerp(0.4, 1, p)
+            local lerp2 = math.min(1, math.max(0.4, math.min(1, GW.lerp(0.4, 1, p))))
             local stripAmount = 1 - math.max(0, (lerp / w) - 1)
+            if self.limitHoverStripAmount then
+                stripAmount = math.max(self.limitHoverStripAmount, stripAmount)
+            end
 
-            lerp2 = math.max(0.4, math.min(1, lerp2))
-
-            if lerp2 > 1 then lerp2 = 1 end
             hover:SetPoint("RIGHT", self, "LEFT", math.min(w, lerp) , 0)
             hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, lerp2)
             hover:SetTexCoord(0, stripAmount, 0, 1)

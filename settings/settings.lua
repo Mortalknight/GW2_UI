@@ -1038,7 +1038,6 @@ local function LoadSettings()
     sWindow:SetClampedToScreen(true)
     tinsert(UISpecialFrames, "GwSettingsWindow")
 
-
     sWindow:SetScript(
         "OnShow",
         function()
@@ -1082,16 +1081,15 @@ local function LoadSettings()
     sWindow:RegisterEvent("PLAYER_REGEN_ENABLED")
     mf:Hide()
 
-    local bgMask = UIParent:CreateMaskTexture()
-    bgMask:SetPoint("TOPLEFT", sWindow, "TOPLEFT", -64, 64)
-    bgMask:SetPoint("BOTTOMRIGHT", sWindow, "BOTTOMLEFT",-64, 0)
-    bgMask:SetTexture(
+    sWindow.backgroundMask = UIParent:CreateMaskTexture()
+    sWindow.backgroundMask:SetPoint("TOPLEFT", sWindow, "TOPLEFT", -64, 64)
+    sWindow.backgroundMask:SetPoint("BOTTOMRIGHT", sWindow, "BOTTOMLEFT",-64, 0)
+    sWindow.backgroundMask:SetTexture(
         "Interface/AddOns/GW2_UI/textures/masktest",
         "CLAMPTOBLACKADDITIVE",
         "CLAMPTOBLACKADDITIVE"
     )
-    sWindow.background:AddMaskTexture(bgMask)
-    sWindow.backgroundMask = bgMask
+    sWindow.background:AddMaskTexture(sWindow.backgroundMask)
 
     sWindow:HookScript("OnShow",function()
         if AddToAnimation==nil then
@@ -1100,12 +1098,15 @@ local function LoadSettings()
         end
 
         AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
-        function(p)
-            sWindow:SetAlpha(p)
-            bgMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT",lerp(-64,sWindow.background:GetWidth(), p) , 0)
-        end,1,function()
-            bgMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT",sWindow.background:GetWidth() + 200, 0)
-        end)
+            function(p)
+                sWindow:SetAlpha(p)
+                sWindow.backgroundMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT", lerp(-64, sWindow.background:GetWidth(), p) , 0)
+            end,
+            1,
+            function()
+                sWindow.backgroundMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT", sWindow.background:GetWidth() + 200, 0)
+            end
+        )
     end)
 
     GW.LoadOverviewPanel(sWindow)

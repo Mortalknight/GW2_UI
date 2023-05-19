@@ -6,8 +6,8 @@ local BUTTONS = {
     {button = _G.GameMenuButtonHelp         , sprite = {1, 1}},
     {button = _G.GameMenuButtonStore        , sprite = {2, 1}},
     {button = _G.GameMenuButtonWhatsNew     , sprite = {3, 1}},
-    {button = _G.GameMenuButtonSettings      , sprite = {4, 1}},
-    {button = _G.GameMenuButtonEditMode    , sprite = {1, 2}}, --TODO new Icon
+    {button = _G.GameMenuButtonSettings     , sprite = {4, 1}},
+    {button = _G.GameMenuButtonEditMode     , sprite = {1, 2}},
     {button = _G.GameMenuButtonMacros       , sprite = {3, 2}},
     {button = _G.GameMenuButtonAddons       , sprite = {4, 2}},
     {button = _G.GameMenuButtonLogout       , sprite = {1, 3}},
@@ -63,17 +63,22 @@ local function applyButtonStyle()
         local b = f.button
         if b == _G.GameMenuFrame then b = b.ElvUI end
         if b == btn163 and f.addOn and IsAddOnLoaded(f.addOn) then b = GameMenuFrame.btn163 end
-        if b ~= nil then
+        if b then
             if b == GameMenuFrame.btn163 then b.logo:Hide() end
             b.Right:Hide()
             b.Left:Hide()
             b.Middle:Hide()
             b:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubutton")
-            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubutton")
+            b:ClearHighlightTexture()
             b.Text:ClearAllPoints()
             b.Text:SetPoint("LEFT", b, "LEFT", 32,0)
             b:SetSize(150, 25)
-
+            b:HookScript("OnEnter", function()
+                b:GetNormalTexture():SetBlendMode("ADD")
+            end)
+            b:HookScript("OnLeave", function()
+                b:GetNormalTexture():SetBlendMode("BLEND")
+            end)
             local tex = b:CreateTexture(nil, "OVERLAY")
             tex:SetPoint("LEFT", b, "LEFT", 0, 0)
             tex:SetSize(32, 32)

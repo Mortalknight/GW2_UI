@@ -3,7 +3,6 @@ local L = GW.L
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
 local AddToAnimation = GW.AddToAnimation
-local animations = GW.animations
 local lerp = GW.lerp
 local windowsList = {}
 local hasBeenLoaded = false
@@ -617,6 +616,7 @@ GW.LoadCharacter = LoadCharacter
 -- stuff for standard menu functionality
 local function CharacterMenuBlank_OnLoad(self)
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     self:ClearNormalTexture()
     local fontString = self:GetFontString()
     fontString:SetTextColor(1, 1, 1, 1)
@@ -628,6 +628,7 @@ GW.CharacterMenuBlank_OnLoad = CharacterMenuBlank_OnLoad
 
 local function CharacterMenuButton_OnLoad(self, odd)
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     if odd then
         self:ClearNormalTexture()
     else
@@ -644,6 +645,7 @@ GW.CharacterMenuButton_OnLoad = CharacterMenuButton_OnLoad
 
 local function CharacterMenuButtonBack_OnLoad(self)
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     self:ClearNormalTexture()
     local fontString = self:GetFontString()
     fontString:SetTextColor(1, 1, 1, 1)
