@@ -1,7 +1,6 @@
 local _, GW = ...
 local GwSettingsMenuSearchable
 local AddToAnimation
-local animations
 
 local btnIndex = 0
 local newButtonAnchorPoint = nil
@@ -48,16 +47,7 @@ local function createBreadCrumbFrame()
     breadCrumbPool[#breadCrumbPool + 1] = f
     return f
 end
-local function getBreadCrumbFrame()
-  for i=1,#breadCrumbPool do
-    local f = breadCrumbPool[i]
-      if not f:IsVisible() then
-        f:Show()
-        return f
-      end
-  end
-  return createBreadCrumbFrame();
-end
+
 local function hideBreadCrumbFrames()
   for i=1,#breadCrumbPool do
       local f = breadCrumbPool[i]
@@ -95,7 +85,6 @@ end
 local function toggleMenuItem(self,active)
     if AddToAnimation==nil then
         AddToAnimation = GW.AddToAnimation
-        animations = GW.animations
     end
     if active then
         self.content:Show()
@@ -192,10 +181,10 @@ local function searchInputChanged(self)
     if not self:HasFocus() then return end
 
     local text = self:GetText()
-    if text==nil or text=="" then
+    if text == nil or text == "" then
         return
     end
-    if text==SEARCH then
+    if text == SEARCH then
         return
     end
     resetMenu(true)
@@ -396,7 +385,7 @@ local function settingMenuToggle(toggle)
 end
 GW.settingMenuToggle = settingMenuToggle
 
-local function loadSettingsSearchAbleMenu(sWindow)
+local function loadSettingsSearchAbleMenu()
     GwSettingsMenuSearchable = CreateFrame("Frame", "GwSettingsMenuSearchable",GwSettingsWindow,"GwSettingsMenuSearchable")
     GwSettingsMenuSearchable.scroll:SetScrollChild(GwSettingsMenuSearchable.scroll.scrollchild)
 

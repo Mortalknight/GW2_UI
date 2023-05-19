@@ -435,6 +435,28 @@ local function ShowColorPicker(r, g, b, a, changedCallback)
     ColorPickerFrame:Raise()
 end
 
+local function updateSettingsFrameSettingsValue(setting, value, setSetting)
+    local found = false
+    for _, panel in pairs(GW.getOptionReference()) do
+        for _, of in pairs(panel.options) do
+            if of.optionName == setting then
+                if setSetting then
+                    SetSetting(setting, value, of.perSpec)
+                end
+                if of.optionType == "slider" then
+                    of.slider:SetValue(value)
+                    of.inputFrame.input:SetNumber(tonumber(value))
+                end
+
+                found = true
+                break
+            end
+        end
+        if found then break end
+    end
+end
+GW.updateSettingsFrameSettingsValue = updateSettingsFrameSettingsValue
+
 local panelUniqueID = 0
 local function InitPanel(panel, hasScroll)
     panelUniqueID = panelUniqueID + 1
@@ -514,12 +536,8 @@ local function InitPanel(panel, hasScroll)
           of.displayName = v.name
           lastOptionName = v.name
         end
-        --need this for searchables
-        of.forceNewLine = v.forceNewLine
-
 
         optionReference[panelUniqueID].options[#optionReference[panelUniqueID].options + 1] = of
-
 
         of.optionName = v.optionName
         of.perSpec = v.perSpec
@@ -529,6 +547,8 @@ local function InitPanel(panel, hasScroll)
         of.newLine = newLine
         of.optionType = v.optionType
         of.groupHeaderName = v.groupHeaderName
+        --need this for searchables
+        of.forceNewLine = v.forceNewLine
 
         if (newLine and not first) or padding.x > maximumXSize then
             padding.y = padding.y + (pY + box_padding)
