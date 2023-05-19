@@ -5,9 +5,9 @@ local MIN_SCALE = 0.5 --the minimum scale we want to show cooldown counts at, an
 local MIN_DURATION = 1.5 --the minimum duration to show cooldown text for
 
 local TimeFormats = {
-    [0] = "%dd",
-    [1] = "%dh",
-    [2] = "%dm",
+    [0] = "%.0fd",
+    [1] = "%.0fh",
+    [2] = "%.0fm",
     [3] = "%ds",
     [4] = "%d"
 }
