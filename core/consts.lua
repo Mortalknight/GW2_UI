@@ -243,6 +243,30 @@ GW.bossFrameExtraEnergyBar = {
             [181398] = true,
         },
     },
+    [2522] = { -- Kazzara, the Hellforged
+        enable = true,
+        npcIds = {
+            [201261] = true,
+        },
+    },
+    [2525] = { -- Rashok
+        enable = true,
+        npcIds = {
+            [201320] = true,
+        },
+    },
+    [2524] = { -- Warlord Kagni
+        enable = true,
+        npcIds = {
+            [199659] = true,
+        },
+    },
+    [2532] = { -- Zskarn
+        enable = true,
+        npcIds = {
+            [202637] = true,
+        },
+    },
 --    [465] = { -- Lord Overheat for testing
 --        enable = true,
 --        npcIds = {
