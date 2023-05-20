@@ -1,7 +1,9 @@
 local _, GW = ...
-local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local GetSetting = GW.GetSetting
+local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
+local BleedList = GW.Libs.Dispel:GetBleedList()
+local BadDispels = GW.Libs.Dispel:GetBadList()
 
 local settings = {}
 
@@ -175,14 +177,21 @@ local function setBuffData(self, buffs, i)
     end
 
     if self.auraType == "debuff" then
+        if b.dispelType and BadDispels[b.spellID] and GW.Libs.Dispel:IsDispellableByMe(b.dispelType) then
+            b.dispelType = "BadDispel"
+        end
+        if not b.dispelType and BleedList[b.spellID] and GW.Libs.Dispel:IsDispellableByMe("Bleed") then
+            b.dispelType = "Bleed"
+        end
+
         if b.dispelType then
-            self.background:SetVertexColor(DEBUFF_COLOR[b.dispelType].r, DEBUFF_COLOR[b.dispelType].g, DEBUFF_COLOR[b.dispelType].b)
+            self.background:SetVertexColor(DebuffColors[b.dispelType].r, DebuffColors[b.dispelType].g, DebuffColors[b.dispelType].b)
         else
             self.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
         end
     else
         if b.isStealable then
-            self.background:SetVertexColor(1, 1, 1)
+            self.background:SetVertexColor(DebuffColors.Stealable.r, DebuffColors.Stealable.g, DebuffColors.Stealable.b)
         else
             self.background:SetVertexColor(0, 0, 0)
         end

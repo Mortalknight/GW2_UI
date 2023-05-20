@@ -1,7 +1,9 @@
 local _, GW = ...
 local Debug = GW.Debug
 local GetSetting = GW.GetSetting
-local DEBUFF_COLOR = GW.DEBUFF_COLOR
+local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
+local BleedList = GW.Libs.Dispel:GetBleedList()
+local BadDispels = GW.Libs.Dispel:GetBadList()
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
 local DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER = {
@@ -201,7 +203,7 @@ local function SetCount(self, count)
     self.status.stacks:SetText(count > 1 and count or "")
 end
 
-local function SetIcon(self, icon, dtype, auraType)
+local function SetIcon(self, icon, dtype, auraType, spellId)
     if not self or not self.status or not self.gwInit then
         return
     end
@@ -214,16 +216,24 @@ local function SetIcon(self, icon, dtype, auraType)
         if auraType == 2 then
             dtype = "Curse"
         end
-        local c = DEBUFF_COLOR[dtype]
+
+        if dtype and BadDispels[spellId] and GW.Libs.Dispel:IsDispellableByMe(dtype) then
+            dtype = "BadDispel"
+        end
+        if not dtype and BleedList[spellId] and GW.Libs.Dispel:IsDispellableByMe("Bleed") then
+            dtype = "Bleed"
+        end
+
+        local c = DebuffColors[dtype]
         if not c then
-            c = DEBUFF_COLOR.none
+            c = DebuffColors.none
         end
         self.border.inner:SetVertexColor(c.r, c.g, c.b)
     end
 end
 
 local function UpdateAura(self, index)
-    local name, icon, count, dtype, duration, expires = UnitAura(self.header:GetUnit(), index, self:GetFilter())
+    local name, icon, count, dtype, duration, expires, _, _, _, spellId = UnitAura(self.header:GetUnit(), index, self:GetFilter())
     if not name then
         self.oldAuraName = nil
         self.auraName = nil
@@ -231,7 +241,7 @@ local function UpdateAura(self, index)
     end
 
     local auraType = self.header:GetAType()
-    self:SetIcon(icon, dtype, auraType)
+    self:SetIcon(icon, dtype, auraType, spellId)
     self:SetCount(count)
 
     if duration > 0 and expires then

@@ -45,15 +45,6 @@ GW.professionBagColor = {
     [65536] = {r = .87, g = .05, b = .25} --cooking
 }
 
-GW.DEBUFF_COLOR = {
-    none = {r = 220 / 255, g = 0, b = 0},
-    Curse = {r = 97 / 255, g = 72 / 255, b = 177 / 255},
-    Disease = {r = 177 / 255, g = 114 / 255, b = 72 / 255},
-    Magic = {r = 72 / 255, g = 94 / 255, b = 177 / 255},
-    Poison = {r = 94 / 255, g = 177 / 255, b = 72 / 255},
-}
-GW.DEBUFF_COLOR[""] = GW.DEBUFF_COLOR.none
-
 GW.TRACKER_TYPE_COLOR = {
     QUEST = {r = 221 / 255, g = 198 / 255, b = 68 / 255},
     CAMPAIGN = {r = 121 / 255, g = 222 / 255, b = 47 / 255},

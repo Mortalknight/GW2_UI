@@ -2,7 +2,9 @@ local _, GW = ...
 local TimeCount = GW.TimeCount
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local GetSetting = GW.GetSetting
-local DEBUFF_COLOR = GW.DEBUFF_COLOR
+local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
+local BleedList = GW.Libs.Dispel:GetBleedList()
+local BadDispels = GW.Libs.Dispel:GetBadList()
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
@@ -200,9 +202,16 @@ local function updatePartyDebuffs(self, x, y)
             debuffFrame.key = debuffList[i].key
             debuffFrame.unit = unit
 
+            if debuffList[i].dispelType and BadDispels[debuffList[i].spellID] and GW.Libs.Dispel:IsDispellableByMe(debuffList[i].dispelType) then
+                debuffList[i].dispelType = "BadDispel"
+            end
+            if not debuffList[i].dispelType and BleedList[debuffList[i].spellID] and GW.Libs.Dispel:IsDispellableByMe("Bleed") then
+                debuffList[i].dispelType = "Bleed"
+            end
+
             debuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
-            if debuffList[i].dispelType ~= nil and DEBUFF_COLOR[debuffList[i].dispelType] ~= nil then
-                debuffFrame.background:SetVertexColor(DEBUFF_COLOR[debuffList[i].dispelType].r, DEBUFF_COLOR[debuffList[i].dispelType].g, DEBUFF_COLOR[debuffList[i].dispelType].b)
+            if debuffList[i].dispelType and DebuffColors[debuffList[i].dispelType] then
+                debuffFrame.background:SetVertexColor(DebuffColors[debuffList[i].dispelType].r, DebuffColors[debuffList[i].dispelType].g, DebuffColors[debuffList[i].dispelType].b)
             end
 
             debuffFrame.cooldown.duration:SetText(debuffList[i].duration > 0 and TimeCount(debuffList[i].timeRemaining) or "")
