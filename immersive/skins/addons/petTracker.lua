@@ -108,6 +108,13 @@ local function petTrackerUpdate(self)
     local petBlock = createNewMainBlock(GwQuesttrackerContainerPetTracker)
     petBlock.Header:SetText(PET)
 
+    -- hide always all objectives
+    for i = 1, 25 do
+        if petBlock and _G["GwPetTrackerBlockObjective" .. i] then
+            _G["GwPetTrackerBlockObjective" .. i]:Hide()
+        end
+    end
+
     if PetTracker.sets.trackPets then
         -- setup the progessbar
         height = height + setUpProgressbar(petBlock, progress, counter)
@@ -135,13 +142,6 @@ local function petTrackerUpdate(self)
         petBlock:SetHeight(height + 30)
     elseif petBlock then
         petBlock:Hide()
-    end
-
-    -- hide all not used objectives
-    for i = counter, 25 do
-        if _G["GwPetTrackerBlockObjective" .. i] and _G["GwPetTrackerBlockObjective" .. i]:IsShown() then
-            _G["GwPetTrackerBlockObjective" .. i]:Hide()
-        end
     end
 
     if GwQuesttrackerContainerPetTracker.collapsed and foundPet then
