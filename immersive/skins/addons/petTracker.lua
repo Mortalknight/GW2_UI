@@ -150,7 +150,7 @@ local function petTrackerUpdate(self)
         end
     end
 
-    GwQuesttrackerContainerPetTracker.header:SetShown(counter > 1 or foundPet)
+    GwQuesttrackerContainerPetTracker.header:SetShown(foundPet)
     GwQuesttrackerContainerPetTracker:SetHeight(height + 30)
     GW.QuestTrackerLayoutChanged()
 end
