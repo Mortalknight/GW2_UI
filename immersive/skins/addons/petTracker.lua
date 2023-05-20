@@ -12,11 +12,10 @@ local function getObjectiveBlock(self, index)
     newBlock:SetParent(self)
     newBlock.StatusBar:SetStatusBarColor(self.color.r, self.color.g, self.color.b)
 
-    self.objectiveBlocksNum = self.objectiveBlocksNum + 1
-    if self.objectiveBlocksNum == 1 then
+    if index == 1 then
         newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
     else
-        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. (self.objectiveBlocksNum - 1)], "BOTTOMRIGHT", 0, 0)
+        newBlock:SetPoint("TOPRIGHT", _G[self:GetName() .. "Objective" .. (index - 1)], "BOTTOMRIGHT", 0, 0)
     end
 
     return newBlock
@@ -24,7 +23,6 @@ end
 
 local function createNewMainBlock(parent)
     if _G["GwPetTrackerBlock"] then
-        _G["GwPetTrackerBlock"].objectiveBlocksNum = 0
         return _G["GwPetTrackerBlock"]
     end
 
@@ -34,7 +32,6 @@ local function createNewMainBlock(parent)
     newBlock.color = TRACKER_TYPE_COLOR.EVENT
     newBlock.Header:SetTextColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
     newBlock.hover:SetVertexColor(newBlock.color.r, newBlock.color.g, newBlock.color.b)
-    newBlock.objectiveBlocksNum = 0
     newBlock:Hide()
 
     return newBlock
@@ -202,6 +199,5 @@ local function LoadPetTrackerAddonSkin()
     )
 
     hooksecurefunc(PetTracker.Tracker, "Update", function() petTrackerUpdate(PetTracker.Tracker) end)
-    PetTracker.Tracker:Super(PetTracker.Tracker):RegisterSignal("OPTIONS_CHANGED", function() petTrackerUpdate(PetTracker.Tracker) end)
 end
 GW.LoadPetTrackerAddonSkin = LoadPetTrackerAddonSkin
