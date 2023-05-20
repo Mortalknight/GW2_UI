@@ -46,16 +46,26 @@ local function AddSpecie(self, block, specie, quality, level)
         local name, icon = specie:GetInfo()
         local text = name .. (level > 0 and format(" (%s)", level) or "")
         local r,g,b = self:GetColor(quality):GetRGB()
-        block.ObjectiveText:SetText("|T" .. icon ..":0:0:0:0:64:64:4:60:4:60|t|T" .. source ..":0:0:0:0:64:64:4:60:4:60|t " .. GW.RGBToHex(r, g, b) .. text .. "|r")
+        block.ObjectiveText:SetText("|T" .. icon ..":0:0:0:0:64:64:4:60:4:60|t |T" .. source ..":0:0:0:0:64:64:4:60:4:60|t " .. GW.RGBToHex(r, g, b) .. text .. "|r")
         block.StatusBar:Hide()
         block:SetHeight(20)
         block:Show()
-        --block:SetScript("OnClick", function() specie:Display() end)
+        block:SetScript("OnMouseDown", function() specie:Display() end)
+        block:SetScript("OnEnter", function()
+            if not block:GetParent().hover:IsShown() then
+                block:GetParent():GetScript("OnEnter")(block:GetParent())
+            end
+        end)
+        block:SetScript("OnLeave", function()
+            if not block:GetParent():IsMouseOver() then
+                block:GetParent():GetScript("OnLeave")(block:GetParent())
+            end
+        end)
     end
 end
 
-local function setUpProgressbar(block, progress)
-    local progessbarObjective = getObjectiveBlock(block, 1)
+local function setUpProgressbar(block, progress, counter)
+    local progessbarObjective = getObjectiveBlock(block, counter)
     local petsOwned = 0
 
     progessbarObjective.notChangeSize = true
@@ -77,20 +87,31 @@ local function setUpProgressbar(block, progress)
     local h = progessbarObjective.ObjectiveText:GetStringHeight() + progessbarObjective.StatusBar:GetHeight() + 10
     progessbarObjective:SetHeight(h)
 
+    progessbarObjective:SetScript("OnEnter", function()
+        if not progessbarObjective:GetParent().hover:IsShown() then
+            progessbarObjective:GetParent():GetScript("OnEnter")(progessbarObjective:GetParent())
+        end
+    end)
+    progessbarObjective:SetScript("OnLeave", function()
+        if not progessbarObjective:GetParent():IsMouseOver() then
+            progessbarObjective:GetParent():GetScript("OnLeave")(progessbarObjective:GetParent())
+        end
+    end)
+
     return h
 end
 
 local function petTrackerUpdate(self)
     local progress = PetTracker.Maps:GetCurrentProgress()
     local foundPet = false
-    local height, counter = 1, 2
+    local height, counter = 1, 1
     local petBlock = createNewMainBlock(GwQuesttrackerContainerPetTracker)
     petBlock.Header:SetText(PET)
 
-    if PetTracker.sets.trackPets and not GwQuesttrackerContainerPetTracker.collapsed then
+    if PetTracker.sets.trackPets then
         -- setup the progessbar
-        height = height + setUpProgressbar(petBlock, progress)
-
+        height = height + setUpProgressbar(petBlock, progress, counter)
+        counter = counter + 1
         for quality = 0, self:MaxQuality() do
             for level = 0, PetTracker.MaxLevel do
                 for _, specie in ipairs(progress[quality][level] or {}) do
@@ -116,14 +137,22 @@ local function petTrackerUpdate(self)
         petBlock:Hide()
     end
 
-    for i = (GwQuesttrackerContainerPetTracker.collapsed and foundPet and 1 or counter), 25 do
+    -- hide all not used objectives
+    for i = counter, 25 do
         if _G["GwPetTrackerBlockObjective" .. i] and _G["GwPetTrackerBlockObjective" .. i]:IsShown() then
             _G["GwPetTrackerBlockObjective" .. i]:Hide()
         end
     end
 
+    if GwQuesttrackerContainerPetTracker.collapsed and foundPet then
+        if petBlock and petBlock:IsShown() then
+            petBlock:Hide()
+        end
+    end
+
     GwQuesttrackerContainerPetTracker.header:SetShown(counter > 1 or foundPet)
     GwQuesttrackerContainerPetTracker:SetHeight(height + 30)
+    GW.QuestTrackerLayoutChanged()
 end
 
 local function CollapseHeader(self, forceCollapse, forceOpen)
@@ -143,8 +172,8 @@ local function LoadPetTrackerAddonSkin()
 
     local petTrackerLocals = LibStub("AceLocale-3.0"):GetLocale("PetTracker")
     local petTrackerObjectives = CreateFrame("Frame", "GwQuesttrackerContainerPetTracker", GwQuestTrackerScrollChild, "GwQuesttrackerContainer")
-    petTrackerObjectives:SetParent(GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT or GwQuestTrackerScrollChild)
-    petTrackerObjectives:SetPoint("TOPRIGHT", GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT or GwQuestTrackerScrollChild, "BOTTOMRIGHT")
+    petTrackerObjectives:SetParent(GwQuestTrackerScrollChild)
+    petTrackerObjectives:SetPoint("TOPRIGHT", GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT or GwQuesttrackerContainerRecipe, "BOTTOMRIGHT")
 
     petTrackerObjectives.header = CreateFrame("Button", nil, petTrackerObjectives, "GwQuestTrackerHeader")
     petTrackerObjectives.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
