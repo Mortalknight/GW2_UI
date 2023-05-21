@@ -800,16 +800,6 @@ local function SetTooltipFonts()
     GameTooltipTextSmall:SetFont(font, smallTextSize, fontOutline)
     GameTooltipText:SetFont(font, textSize, fontOutline)
 
-    if GameTooltip.hasMoney then
-        for i = 1, GameTooltip.numMoneyFrames do
-            _G["GameTooltipMoneyFrame" .. i .. "PrefixText"]:SetFont(font, textSize, fontOutline)
-            _G["GameTooltipMoneyFrame" .. i .. "SuffixText"]:SetFont(font, textSize, fontOutline)
-            _G["GameTooltipMoneyFrame" .. i .. "GoldButtonText"]:SetFont(font, textSize, fontOutline)
-            _G["GameTooltipMoneyFrame" .. i .. "SilverButtonText"]:SetFont(font, textSize, fontOutline)
-            _G["GameTooltipMoneyFrame" .. i .. "CopperButtonText"]:SetFont(font, textSize, fontOutline)
-        end
-    end
-
     if DatatextTooltip then
         DatatextTooltipTextLeft1:SetFont(font, textSize, fontOutline)
         DatatextTooltipTextRight1:SetFont(font, textSize, fontOutline)
@@ -1084,11 +1074,23 @@ local function LoadTooltips()
     end
 
     --Tooltip Fonts
-    if not GameTooltip.hasMoney then
-        SetTooltipMoney(GameTooltip, 1, nil, "", "")
-        SetTooltipMoney(GameTooltip, 1, nil, "", "")
-        GameTooltip_ClearMoney(GameTooltip)
-    end
+    -- hook here to avoid a taint
+    local moneyTooltipSetUp = false
+    hooksecurefunc("SetTooltipMoney", function()
+        if GameTooltip.hasMoney and not moneyTooltipSetUp then
+            local font = UNIT_NAME_FONT
+            local fontOutline = ""
+            local textSize = tonumber(settings.tooltipFontSize)
+            for i = 1, GameTooltip.numMoneyFrames do
+                _G["GameTooltipMoneyFrame" .. i .. "PrefixText"]:SetFont(font, textSize, fontOutline)
+                _G["GameTooltipMoneyFrame" .. i .. "SuffixText"]:SetFont(font, textSize, fontOutline)
+                _G["GameTooltipMoneyFrame" .. i .. "GoldButtonText"]:SetFont(font, textSize, fontOutline)
+                _G["GameTooltipMoneyFrame" .. i .. "SilverButtonText"]:SetFont(font, textSize, fontOutline)
+                _G["GameTooltipMoneyFrame" .. i .. "CopperButtonText"]:SetFont(font, textSize, fontOutline)
+            end
+            moneyTooltipSetUp = true
+        end
+    end)
     SetTooltipFonts()
 
     RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", ALL .. ",Blizzard", {230, 80}, {"default"})
