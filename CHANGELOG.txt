@@ -1,3 +1,20 @@
+6.8.0
+NEW
+    - Added option to adjust player de/buff horizontal and vertical spacing
+    - Added option to adjust player de/buff max wrap of lines
+    - Added support for the add PetTracker: Now included at GW2 objectives
+    - Added evoker bleeding support
+
+FIXES
+    - Avoid possible tooltip taint
+    - Fix casting bar lua error at pvp with an evoker
+    - Fix rare migration process issue
+    - Fix M+ dungeon icon border color at the lfg frame
+
+CHANGES
+    - Tweak some hover textures
+    - Cooldown round numbers are more accurate now
+
 6.7.3
 FIXES
     - Fix friends frame lua error

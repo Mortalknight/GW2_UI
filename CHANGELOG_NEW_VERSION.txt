@@ -1,38 +1,16 @@
-6.7.3
-FIXES
-    - Fix friends frame lua error
-    - Fix encounterjornal taint issue
-
-6.7.2
-FIXES
-    - Fix player frame in target frame style
-    - Fix immersive questing error
-    - Fix healtglobe error
-
-6.7.1
-FIXES
-    - Fix hero panel anchor error
-    - Fix party frame healthtext error
-    - Fix hero panel item info error
-    - Fix target castingbar texture
-    - Fix pet grid error
-
-CHANGES
-    - Handle addon compartment button and add a toggle to hide that button
-
-6.7.0
+6.8.0
 NEW
-    - dded private aura support
-    - Redo the statusbars and add custom animations to the classpower and ressource bars
+    - Added option to adjust player de/buff horizontal and vertical spacing
+    - Added option to adjust player de/buff max wrap of lines
+    - Added support for the add PetTracker: Now included at GW2 objectives
+    - Added evoker bleeding support
 
 FIXES
-    - Added passive talents back to spellbook
-    - Tweak vignett alerts to not spam
-    - Fix talent micro button taint error
-    - Fix bank taint issue
-    - ix vigor bar hidding
+    - Avoid possible tooltip taint
+    - Fix casting bar lua error at pvp with an evoker
+    - Fix rare migration process issue
+    - Fix M+ dungeon icon border color at the lfg frame
 
 CHANGES
-    - Update for 10.1
-    - Make achievement frame movable
-    - Update S2 debuffs
+    - Tweak some hover textures
+    - Cooldown round numbers are more accurate now
