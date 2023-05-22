@@ -776,10 +776,6 @@ local function evPlayerLogin(self)
             C_CVar.SetCVar("test_cameraDynamicPitch", "1")
             C_CVar.SetCVar("cameraKeepCharacterCentered", "0")
             C_CVar.SetCVar("cameraReduceUnexpectedMovement", "0")
-        else
-            C_CVar.SetCVar("test_cameraDynamicPitch", "0")
-            C_CVar.SetCVar("cameraKeepCharacterCentered", "1")
-            C_CVar.SetCVar("cameraReduceUnexpectedMovement", "1")
         end
         hooksecurefunc("StaticPopup_Show", function(which)
             if which == "EXPERIMENTAL_CVAR_WARNING" then
