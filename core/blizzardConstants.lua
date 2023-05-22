@@ -268,7 +268,7 @@ function C_CurrencyInfo.GetCurrencyListSize()
 end
 function C_CurrencyInfo.GetCurrencyListInfo(i)
     local t = {}
-     t.name, t.isHeader, t.isExpanded, t.isUnused, t.isShowInBackpack, t.count, t.icon = GetCurrencyListInfo(i);
+     t.name, t.isHeader, t.isExpanded, t.isUnused, t.isShowInBackpack, t.quantity, t.iconFileID = GetCurrencyListInfo(i);
      return t
 end
 function C_CurrencyInfo.GetCurrencyListLink(i)

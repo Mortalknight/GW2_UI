@@ -45,10 +45,10 @@ local function xpbar_OnEnter(self)
     if not IsPlayerAtEffectiveMaxLevel() then
         GameTooltip:AddLine(
             COMBAT_XP_GAIN ..
-                " " ..
-                    CommaValue(valCurrent) ..
-                        " / " ..
-                            CommaValue(valMax) .. " |cffa6a6a6 (" .. math.floor((valCurrent / valMax) * 100) .. "%)|r",
+            " " ..
+            CommaValue(valCurrent) ..
+            " / " ..
+            CommaValue(valMax) .. " |cffa6a6a6 (" .. math.floor((valCurrent / valMax) * 100) .. "%)|r",
             1,
             1,
             1
@@ -58,7 +58,7 @@ local function xpbar_OnEnter(self)
     if rested ~= nil and rested ~= 0 then
         GameTooltip:AddLine(
             L["Rested "] ..
-                CommaValue(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
+            CommaValue(rested) .. " |cffa6a6a6 (" .. math.floor((rested / valMax) * 100) .. "%) |r",
             1,
             1,
             1
@@ -76,7 +76,8 @@ local function xpbar_OnEnter(self)
     end
 
     local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-    local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
+    local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and
+        C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
 
     if shouldShowAzeritBar then
         local azeriteXP, xpForNextPoint = C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation)
@@ -154,7 +155,7 @@ local function xpbar_OnEvent(self, event)
     end
 
     local azeriteItemLocation --= C_AzeriteItem.FindActiveAzeriteItem()
-    local shouldShowAzeritBar =false
+    local shouldShowAzeritBar = false
     local AzeritVal = 0
     local AzeritLevel = 0
 
@@ -172,7 +173,8 @@ local function xpbar_OnEvent(self, event)
     local showBar1 = level < Nextlevel
     local showBar2 = false
     local showBar3 = false
-    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon:16:16:0:0|t " or ""
+    local restingIconString = IsResting() and " |TInterface\\AddOns\\GW2_UI\\textures\\icons\\resting-icon:16:16:0:0|t " or
+        ""
 
     if rested == nil or (rested / valMax) == 0 then
         rested = 0
@@ -205,62 +207,106 @@ local function xpbar_OnEvent(self, event)
             currentValue = currentValue % maxValueParagon;
             valPrecRepu = (currentValue - 0) / (maxValueParagon - 0)
 
-            gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue(currentValue - 0) .. " / " .. CommaValue(maxValueParagon - 0) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+            gw_reputation_vals = name ..
+                " " ..
+                REPUTATION ..
+                " " ..
+                CommaValue(currentValue - 0) ..
+                " / " .. CommaValue(maxValueParagon - 0) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
             isParagon = true
             isFriend = friendshipID > 0
-        elseif friendshipID > 0 then
+        elseif friendshipID and friendshipID > 0 then
             if friendReputationInfo.nextThreshold then
-                valPrecRepu = (friendReputationInfo.standing - friendReputationInfo.reactionThreshold) / (friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold)
-                gw_reputation_vals = friendReputationInfo.name .. " " .. REPUTATION .. " " .. CommaValue(friendReputationInfo.standing - friendReputationInfo.reactionThreshold) .. " / " .. CommaValue(friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                valPrecRepu = (friendReputationInfo.standing - friendReputationInfo.reactionThreshold) /
+                    (friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold)
+                gw_reputation_vals = friendReputationInfo.name ..
+                    " " ..
+                    REPUTATION ..
+                    " " ..
+                    CommaValue(friendReputationInfo.standing - friendReputationInfo.reactionThreshold) ..
+                    " / " ..
+                    CommaValue(friendReputationInfo.nextThreshold - friendReputationInfo.reactionThreshold) ..
+                    " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             else
                 valPrecRepu = 1
-                gw_reputation_vals = friendReputationInfo.name .. " " .. REPUTATION .. " " .. CommaValue(friendReputationInfo.maxRep) .. " / " .. CommaValue(friendReputationInfo.maxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                gw_reputation_vals = friendReputationInfo.name ..
+                    " " ..
+                    REPUTATION ..
+                    " " ..
+                    CommaValue(friendReputationInfo.maxRep) ..
+                    " / " ..
+                    CommaValue(friendReputationInfo.maxRep) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
             self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
-            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g, FACTION_BAR_COLORS[5].b)
+            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[5].r, FACTION_BAR_COLORS[5].g,
+                FACTION_BAR_COLORS[5].b)
             isFriend = true
         elseif C_Reputation.IsMajorFaction(factionID) then
             local majorFactionData = C_MajorFactions.GetMajorFactionData(factionID)
 
             MajorCurrentLevel = majorFactionData.renownLevel
-            MajorNextLevel = C_MajorFactions.HasMaximumRenown(factionID) and MajorCurrentLevel or MajorCurrentLevel + 1
+            MajorNextLevel = C_MajorFactions.HasMaximumRenown(factionID) and MajorCurrentLevel or
+                MajorCurrentLevel + 1
 
             if C_MajorFactions.HasMaximumRenown(factionID) then
                 valPrecRepu = 1
             else
-                valPrecRepu = ((majorFactionData.renownReputationEarned or 0)) / majorFactionData.renownLevelThreshold
+                valPrecRepu = ((majorFactionData.renownReputationEarned or 0)) /
+                    majorFactionData.renownLevelThreshold
             end
-            gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((majorFactionData.renownReputationEarned or 0)) .. " / " .. CommaValue(majorFactionData.renownLevelThreshold) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+            gw_reputation_vals = name ..
+                " " ..
+                REPUTATION ..
+                " " ..
+                CommaValue((majorFactionData.renownReputationEarned or 0)) ..
+                " / " ..
+                CommaValue(majorFactionData.renownLevelThreshold) ..
+                " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
 
-            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
-            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g, FACTION_BAR_COLORS[11].b)
+            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g,
+                FACTION_BAR_COLORS[11].b)
+            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[11].r, FACTION_BAR_COLORS[11].g,
+                FACTION_BAR_COLORS[11].b)
             isMajor = true
         else
             local currentRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (standingId or 1))), GW.mysex)
             local nextRank = GetText("FACTION_STANDING_LABEL" .. min(8, max(1, (standingId or 1) + 1)), GW.mysex)
 
-            earnedValue = earnedValue or 0 --fallback
-            topValue = topValue or 0 --fallback
-            bottomValue = bottomValue or 0 --fallback
+            earnedValue = earnedValue or 0     --fallback
+            topValue = topValue or 0           --fallback
+            bottomValue = bottomValue or 0     --fallback
             if currentRank == nextRank and earnedValue - bottomValue == 0 then
                 valPrecRepu = 1
-                gw_reputation_vals = name .. " " .. REPUTATION .. " 21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                gw_reputation_vals = name ..
+                    " " .. REPUTATION .. " 21,000 / 21,000 |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             else
                 valPrecRepu = (earnedValue - bottomValue) / (topValue - bottomValue)
-                gw_reputation_vals = name .. " " .. REPUTATION .. " " .. CommaValue((earnedValue - bottomValue)) .. " / " .. CommaValue((topValue - bottomValue)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
+                gw_reputation_vals = name ..
+                    " " ..
+                    REPUTATION ..
+                    " " ..
+                    CommaValue((earnedValue - bottomValue)) ..
+                    " / " ..
+                    CommaValue((topValue - bottomValue)) .. " |cffa6a6a6 (" .. math.floor(valPrecRepu * 100) .. "%)|r"
             end
-            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
-            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b)
+            self.RepuBar:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g,
+                FACTION_BAR_COLORS[reaction].b)
+            self.RepuBarCandy:SetStatusBarColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g,
+                FACTION_BAR_COLORS[reaction].b)
             isNormal = true
         end
 
         local nextId = standingId and standingId + 1 or 1
         if not lockLevelTextUnderMaxLevel then
-            level = isMajor and MajorCurrentLevel or isFriend and friendReputationInfo.reaction or isParagon and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1)) or isNormal and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1))
-            Nextlevel = isParagon and L["Paragon"] or isFriend and "" or isMajor and MajorNextLevel or isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
+            level = isMajor and MajorCurrentLevel or isFriend and friendReputationInfo.reaction or
+                isParagon and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1)) or
+                isNormal and getglobal("FACTION_STANDING_LABEL" .. (standingId or 1))
+            Nextlevel = isParagon and L["Paragon"] or isFriend and "" or isMajor and MajorNextLevel or
+                isNormal and getglobal("FACTION_STANDING_LABEL" .. math.min(8, nextId))
         end
+
 
         showBar3 = true
     end
@@ -301,7 +347,8 @@ local function xpbar_OnEvent(self, event)
                 )
 
                 self.AzeritBar:SetValue(animations["AzeritBarAnimation"].progress)
-                self.AzeritBar.Spark:SetPoint("LEFT", self.AzeritBar:GetWidth() * animations["AzeritBarAnimation"].progress - 8, 0)
+                self.AzeritBar.Spark:SetPoint("LEFT",
+                    self.AzeritBar:GetWidth() * animations["AzeritBarAnimation"].progress - 8, 0)
             end
         )
         self.AzeritBar.AzeritBarAnimation = AzeritVal
@@ -315,7 +362,8 @@ local function xpbar_OnEvent(self, event)
             self.labelLeft:SetTexture("Interface/AddOns/GW2_UI/textures/hud/level-label-azerit")
         end
     else
-        local texture = (maxPlayerLevel == GW.mylevel) and "Interface/AddOns/GW2_UI/textures/hud/level-label-azerit" or "Interface/AddOns/GW2_UI/textures/hud/level-label"
+        local texture = (maxPlayerLevel == GW.mylevel) and "Interface/AddOns/GW2_UI/textures/hud/level-label-azerit" or
+            "Interface/AddOns/GW2_UI/textures/hud/level-label"
         self.NextLevel:SetTextColor(1, 1, 1)
         self.CurrentLevel:SetTextColor(1, 1, 1)
         self.labelRight:SetTexture(texture)
@@ -336,10 +384,10 @@ local function xpbar_OnEvent(self, event)
 
         gw_honor_vals =
             HONOR ..
-                " " ..
-                    CommaValue(currentHonor) ..
-                        " / " .. CommaValue(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r"
-            self.ExpBar:SetStatusBarColor(1, 0.2, 0.2)
+            " " ..
+            CommaValue(currentHonor) ..
+            " / " .. CommaValue(maxHonor) .. " |cffa6a6a6 (" .. math.floor(valPrec * 100) .. "%)|r"
+        self.ExpBar:SetStatusBarColor(1, 0.2, 0.2)
     end
 
     if showBar1 then
@@ -371,26 +419,28 @@ local function xpbar_OnEvent(self, event)
                 self.ExpBar.Spark:SetWidth(
                     math.max(
                         8,
-                        math.min(9,self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress)
+                        math.min(9, self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress)
                     )
                 )
 
                 if not GainBigExp then
                     self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
-                    self.ExpBar.Spark:SetPoint("LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8, 0)
+                    self.ExpBar.Spark:SetPoint("LEFT",
+                        self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8, 0)
 
                     local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"].progress) + 90
                     self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
                 end
                 self.ExpBar.Rested:SetValue(rested)
-                self.ExpBar.Rested:SetPoint("LEFT", self.ExpBar, "LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress, 0)
+                self.ExpBar.Rested:SetPoint("LEFT", self.ExpBar, "LEFT",
+                    self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress, 0)
 
                 if GainBigExp and self.barOverlay.flare.soundCooldown < GetTime() then
                     expSoundCooldown =
                         math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
 
-                        self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
-                        self.ExpBar.Spark:SetPoint(
+                    self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
+                    self.ExpBar.Spark:SetPoint(
                         "LEFT",
                         self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8,
                         0
@@ -437,7 +487,8 @@ local function xpbar_OnEvent(self, event)
                 )
 
                 self.RepuBar:SetValue(animations["repuBarAnimation"].progress)
-                self.RepuBar.Spark:SetPoint("LEFT", self.RepuBar:GetWidth() * animations["repuBarAnimation"].progress - 8, 0)
+                self.RepuBar.Spark:SetPoint("LEFT", self.RepuBar:GetWidth() * animations["repuBarAnimation"].progress - 8,
+                    0)
             end
         )
         self.RepuBar.repuBarAnimation = valPrecRepu
@@ -446,7 +497,8 @@ local function xpbar_OnEvent(self, event)
     experiencebarAnimation = valPrec
 
     if GW.IsUpcomingSpellAvalible() then
-        Nextlevel = Nextlevel and Nextlevel .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon:20:20:0:0|t" or ""
+        Nextlevel = Nextlevel and Nextlevel .. " |TInterface/AddOns/GW2_UI/textures/icons/levelreward-icon:20:20:0:0|t" or
+            ""
     end
 
     if GW.mylevel ~= UnitEffectiveLevel("player") then
@@ -968,8 +1020,7 @@ end
 GW.LoadHudArt = LoadHudArt
 
 local function LoadXPBar()
-
-   -- StatusTrackingBarManager:GwKill()
+    -- StatusTrackingBarManager:GwKill()
     GW.LoadUpcomingSpells()
 
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")
