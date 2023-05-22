@@ -85,9 +85,7 @@ local env = {
         [6] = {map = 2025, x = 0.57756, y = 0.65491},
         -- Ohn'ahran Plains
         [7] = {map = 2023, x = 0.80522, y = 0.78433},
-        [8] = {map = 2023, x = 0.80467, y = 0.77742},
-        -- 10.0.7
-        [9] = {map = 2151, x = 0.73951, y = 0.41047},
+        [8] = {map = 2023, x = 0.80467, y = 0.77742}
     },
     fishingNetWidgetIDToIndex = {
         -- data mining: https://wow.tools/dbc/?dbc=uiwidget&build=10.0.5.47621#page=1&colFilter[3]=exact%3A2087
@@ -97,8 +95,8 @@ local env = {
         -- Thaldraszus
         [4388] = 5,
         [4398] = 6,
-        --10.0.7
-        [4615] = 9,
+        --UNKNOWN
+        --[4319] = 5,
         --[4318] = 5,
         --[4364] = 5,
         --[4365] = 5,
@@ -156,7 +154,7 @@ end
 local function reskinStatusBar(bar)
     bar:SetFrameLevel(bar:GetFrameLevel() + 1)
     bar:GwStripTextures()
-    bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    bar:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
     bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
 end
 
@@ -176,6 +174,8 @@ local function getGradientText(text, colorTable)
 end
 
 local eventData = {
+    --[[
+
     CommunityFeast = {
         dbKey = "communityFeast",
         args = {
@@ -335,6 +335,8 @@ local eventData = {
             }
         }
     }
+            
+    ]]
 }
 
 local functionFactory = {
@@ -431,7 +433,7 @@ local functionFactory = {
     loopTimer = {
         init = function(self)
             self.icon = self:CreateTexture(nil, "ARTWORK")
-            self.icon:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+            self.icon:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
             self.icon.backdrop:GwSetOutside(self.icon, 1, 1)
             self.statusBar = CreateFrame("StatusBar", nil, self)
             self.name = self.statusBar:CreateFontString(nil, "OVERLAY")
@@ -588,7 +590,7 @@ local functionFactory = {
     triggerTimer = {
         init = function(self)
             self.icon = self:CreateTexture(nil, "ARTWORK")
-            self.icon:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+            self.icon:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
             self.icon.backdrop:GwSetOutside(self.icon, 1, 1)
             self.statusBar = CreateFrame("StatusBar", nil, self)
             self.name = self.statusBar:CreateFontString(nil, "OVERLAY")
@@ -978,7 +980,7 @@ local function AddWorldMapFrame()
     mapFrame:SetPoint("TOPLEFT", WorldMapFrame, "BOTTOMLEFT", 0, 2)
     mapFrame:SetPoint("TOPRIGHT", WorldMapFrame, "BOTTOMRIGHT", 0, 2)
     mapFrame:SetHeight(30)
-    mapFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
+    mapFrame:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder)
 
     mapFrame:SetScript("OnEvent", HandlerEvent)
 end

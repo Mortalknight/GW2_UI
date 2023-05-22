@@ -292,12 +292,40 @@
         </Frames>
     </Frame>
 
-    <ItemButton name="GwBankBagTemplate" inherits="BankItemButtonBagTemplate" virtual="true">
+    <Button name="GwBankBagTemplate" inherits="BankItemButtonBagTemplate" virtual="true">
         <Size x="28" y="28"></Size>
-    </ItemButton>
+    </Button>
 
-    <ItemButton name="GwBankBaseBagTemplate" virtual="true">
+    <Button name="GwBankBaseBagTemplate" virtual="true">
         <Size x="28" y="28"></Size>
-    </ItemButton>
+                <Layers>
+            <Layer level="BACKGROUND">
+              <Texture parentKey="IconBorder" >
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="icon" >
+                      <Anchors>
+                          <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
+                      </Anchors>
+                  </Texture>
+                <Texture parentKey="gwBackdrop" file="Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop">
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0" />
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0" />
+                        <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Button>
 
 </Ui>

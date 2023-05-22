@@ -174,6 +174,7 @@ local function LoadActionbarPanel(sWindow)
         1,
         {["ACTIONBARS_ENABLED"] = true}
     )
+    --[[nyi
     addOptionDropdown(
         extraBars.scroll.scrollchild,
         OPTION_SHOW_ACTION_BAR:format(2) .. " " .. SHOW,
@@ -340,6 +341,7 @@ local function LoadActionbarPanel(sWindow)
         nil,
         "Actionbars"
     )
+    ]]--
 
     --TOTEMBAR
     addOptionDropdown(

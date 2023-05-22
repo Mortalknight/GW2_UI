@@ -10,7 +10,7 @@ local function ApplyChromieTimerSkin()
 
     ChromieTimeFrame:GwStripTextures()
     ChromieTimeFrame.Background:Hide()
-    local tex = ChromieTimeFrame:CreateTexture(nil, "BACKGROUND")
+    local tex = ChromieTimeFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", ChromieTimeFrame, "TOP", 0, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
     local w, h = ChromieTimeFrame:GetSize()
@@ -19,11 +19,11 @@ local function ApplyChromieTimerSkin()
 
     local Title = ChromieTimeFrame.Title
     Title:DisableDrawLayer("BACKGROUND")
-    Title:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    Title:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
 
     local InfoFrame = ChromieTimeFrame.CurrentlySelectedExpansionInfoFrame
     InfoFrame:DisableDrawLayer("BACKGROUND")
-    InfoFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    InfoFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
     InfoFrame.Name:SetTextColor(1, 0.8, 0)
     InfoFrame.Description:SetTextColor(1, 1, 1)
 end

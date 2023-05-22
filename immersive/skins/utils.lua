@@ -1,6 +1,50 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 
+local constBackdropFrame = {
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+    tile = false,
+    tileSize = 64,
+    edgeSize = 32,
+    insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+GW.skins.constBackdropFrame = constBackdropFrame
+
+local constBackdropFrameBorder = {
+    bgFile = "",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+    tile = false,
+    tileSize = 64,
+    edgeSize = 32,
+    insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+GW.skins.constBackdropFrameBorder = constBackdropFrameBorder
+
+local constBackdropFrameSmallerBorder = {
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+    tile = false,
+    tileSize = 64,
+    edgeSize = 18,
+    insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+GW.skins.constBackdropFrameSmallerBorder = constBackdropFrameSmallerBorder
+
+local constBackdropFrameColorBorder = {
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+    edgeSize = 1
+}
+GW.constBackdropFrameColorBorder = constBackdropFrameColorBorder
+
+local constBackdropFrameColorBorderNoBackground = {
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+    bgFile = "",
+    edgeSize = 1
+}
+GW.constBackdropFrameColorBorderNoBackground = constBackdropFrameColorBorderNoBackground
+
 local function SkinUIDropDownMenu()
     hooksecurefunc("UIDropDownMenu_CreateFrames", function(level, index)
         local listFrame = _G["DropDownList" .. level]
@@ -14,16 +58,12 @@ local function SkinUIDropDownMenu()
         end
 
         local Backdrop = _G[listFrameName .. "Backdrop"]
-        if Backdrop and not Backdrop.template then
-            Backdrop:GwStripTextures()
-            Backdrop:GwCreateBackdrop(GW.BackdropTemplates.Default)
-        end
+        Backdrop:GwStripTextures()
+        Backdrop:GwCreateBackdrop(constBackdropFrame)
 
         local menuBackdrop = _G[listFrameName .. "MenuBackdrop"]
-        if menuBackdrop and not menuBackdrop.template then
-            menuBackdrop:GwStripTextures()
-            menuBackdrop:GwCreateBackdrop(GW.BackdropTemplates.Default)
-        end
+        menuBackdrop:GwStripTextures()
+        menuBackdrop:GwCreateBackdrop(constBackdropFrame)
     end)
 end
 
@@ -38,13 +78,6 @@ local function SkinDropDownList()
             local check = _G["DropDownList" .. level .. "Button" .. i .. "Check"]
             local uncheck = _G["DropDownList" .. level .. "Button" .. i .. "UnCheck"]
             local arrow = _G["DropDownList" .. level .. "Button" .. i .. "ExpandArrow"]
-            local highlight = _G["DropDownList" .. level .. "Button" .. i .. "Highlight"]
-
-            highlight:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/button_hover")
-            highlight:SetBlendMode("BLEND")
-            highlight:SetDrawLayer("BACKGROUND")
-            highlight:SetAlpha(0.5)
-            highlight:GwSetOutside(button, 8)
 
             check:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked")
             check:SetTexCoord(unpack(GW.TexCoords))
@@ -56,20 +89,20 @@ local function SkinDropDownList()
                 button:GwCreateBackdrop()
             end
 
+            button.backdrop:Hide()
+
             if button.hasArrow then
                 arrow:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
             end
 
             if not button.notCheckable then
                 button.backdrop:Show()
-            else
-                button.backdrop:Hide()
             end
         end
         --Check if Raider.IO Entry is added
         if IsAddOnLoaded("RaiderIO") and _G.RaiderIO_CustomDropDownList then
             _G["RaiderIO_CustomDropDownListMenuBackdrop"]:Hide()
-            _G["RaiderIO_CustomDropDownList"]:GwCreateBackdrop(GW.BackdropTemplates.Default)
+            _G["RaiderIO_CustomDropDownList"]:GwCreateBackdrop(constBackdropFrame)
         end
     end)
 
@@ -188,6 +221,7 @@ local function SkinNavBarButtons(self)
     local navButton = self.navList[#self.navList]
     if navButton and not navButton.isSkinned then
         navButton:GwStripTextures()
+        --navButton:GwSkinButton(false, false, true)
 
         local r = {navButton:GetRegions()}
         for _,c in pairs(r) do
@@ -266,6 +300,12 @@ local function HandlePortraitFrame(frame, createBackdrop)
     end
 
     if createBackdrop and not frame.backdrop then
+        --local tex = frame:CreateTexture("bg", "BACKGROUND", -7)
+        --tex:SetPoint("TOP", frame, "TOP", 0, 25)
+        --tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+        --local w, h = frame:GetSize()
+        --tex:SetSize(w + 50, h + 50)
+        --frame.tex = tex
         frame:GwCreateBackdrop({
             edgeFile = "",
             bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
@@ -364,7 +404,7 @@ local function ReskinScrollBarArrow(frame, direction)
     end
 end
 
-local function HandleScrollControls(self, specifiedScrollBar)
+local function HandleAchivementsScrollControls(self, specifiedScrollBar)
     local scrollBar = specifiedScrollBar and self[specifiedScrollBar] or self.ScrollBar
     scrollBar:SetWidth(20)
 
@@ -398,7 +438,7 @@ local function HandleScrollControls(self, specifiedScrollBar)
     bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton")
     bg:SetTexCoord(0,1,1,0)
 end
-GW.HandleScrollControls = HandleScrollControls
+GW.HandleAchivementsScrollControls = HandleAchivementsScrollControls
 
 local function HandleTrimScrollBar(frame, small)
     frame:GwStripTextures()
@@ -417,7 +457,6 @@ local function HandleTrimScrollBar(frame, small)
 
     local thumb = frame:GetThumb()
     if thumb then
-        thumb:DisableDrawLayer('ARTWORK')
         thumb:DisableDrawLayer("BACKGROUND")
         thumb:GwCreateBackdrop("ScrollBar")
         thumb.backdrop:SetFrameLevel(thumb:GetFrameLevel() + 1)
@@ -439,7 +478,7 @@ local function HandleItemButton(b, setInside)
     local texture = icon and icon.GetTexture and icon:GetTexture()
 
     b:GwStripTextures()
-    b:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    b:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
     b:GwStyleButton()
 
     if icon then
@@ -479,16 +518,18 @@ do
         end
     end
 
-    local function HandleIconSelectionFrame(frame)
+    local function HandleIconSelectionFrame(frame, nameOverride)
         if frame.isSkinned then return end
 
         local borderBox = frame.BorderBox
+        local frameName = nameOverride or frame:GetName()
+        local scrollFrame = frame.ScrollFrame or _G[frameName  .. "ScrollFrame"]
         local editBox = borderBox.IconSelectorEditBox
         local cancel = frame.CancelButton or (borderBox and borderBox.CancelButton)
         local okay = frame.OkayButton or (borderBox and borderBox.OkayButton)
 
         frame:GwStripTextures()
-        frame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+        frame:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
         frame:SetHeight(frame:GetHeight() + 10)
 
         if borderBox then
@@ -513,8 +554,8 @@ do
             GW.SkinTextBox(editBox.IconSelectorPopupNameMiddle, editBox.IconSelectorPopupNameLeft, editBox.IconSelectorPopupNameRight, nil, nil, 5, 5)
         end
 
-        GW.HandleTrimScrollBar(frame.IconSelector.ScrollBar, true)
-        GW.HandleScrollControls(frame.IconSelector)
+        GW.HandleTrimScrollBar(frame.IconSelector.ScrollBar)
+        GW.HandleAchivementsScrollControls(frame.IconSelector)
 
         for _, button in next, {frame.IconSelector.ScrollBox.ScrollTarget:GetChildren()} do
             handleButton(button)
@@ -575,7 +616,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
         titleText:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     end
 
-    local tex = frame:CreateTexture(nil, "BACKGROUND", nil, 0)
+    local tex = frame:CreateTexture("bg", "BACKGROUND", nil, 0)
     tex:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, 0)
     tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-background")
@@ -583,7 +624,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
 
     if detailBackgrounds then
         for _, v in pairs(detailBackgrounds) do
-            local detailBg = v:CreateTexture(nil, "BACKGROUND", nil, 0)
+            local detailBg = v:CreateTexture("bg", "BACKGROUND", nil, 0)
             detailBg:SetPoint("TOPLEFT", v, "TOPLEFT", 0,0)
             detailBg:SetPoint("BOTTOMRIGHT", v, "BOTTOMRIGHT", 0, 0)
             detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")

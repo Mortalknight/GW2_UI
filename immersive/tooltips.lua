@@ -64,10 +64,21 @@ local function IsModKeyDown(setting)
     local k = setting or settings.idModifier
     return k == "ALWAYS" or ((k == "SHIFT" and IsShiftKeyDown()) or (k == "CTRL" and IsControlKeyDown()) or (k == "ALT" and IsAltKeyDown()))
 end
+local function  ActionButton_SetTooltip_hook(self, ...)
+    local spellType, id, subType  = GetActionInfo(self.action)
 
-local function EmbeddedItemTooltip_ID(self, id)
+    local Tooltip = GameTooltip
+    if Tooltip:IsForbidden() then return end
+    if Tooltip:IsShown() and IsModKeyDown() then
+        Tooltip:AddLine(format(IDLine, ID, id))
+        Tooltip:Show()
+    end
+end
+
+local function EmbeddedItemTooltip_ID(self, ...)
+
     if self:IsForbidden() then return end
-    if self.Tooltip:IsShown() and IsModKeyDown() then
+    if  self.Tooltip and self.Tooltip:IsShown() and IsModKeyDown() then
         self.Tooltip:AddLine(format(IDLine, ID, id))
         self.Tooltip:Show()
     end
@@ -99,7 +110,7 @@ end
 local function SetUnitAura(self, unit, index, filter)
     if not self or self:IsForbidden() then return end
 
-    local name, _, _, _, _, _, source, _, _, spellID = UnitAura(unit, index, filter)
+    local name, _, _, count, _, duration, expires, _, _, _, spellID, _ =  UnitAura(unit, index, filter)
     if not name then return end
 
     local mountID, mountText = MountIDs[spellID], ""
@@ -288,8 +299,8 @@ local function GameTooltip_OnTooltipCleared(self)
     -- This code is to reset stuck widgets.
     GameTooltip_ClearMoney(self)
     GameTooltip_ClearStatusBars(self)
-    GameTooltip_ClearProgressBars(self)
-    GameTooltip_ClearWidgetSet(self)
+  --  GameTooltip_ClearProgressBars(self)
+  --  GameTooltip_ClearWidgetSet(self)
 end
 
 local function GameTooltip_OnTooltipSetItem(self, data)
@@ -800,6 +811,16 @@ local function SetTooltipFonts()
     GameTooltipTextSmall:SetFont(font, smallTextSize, fontOutline)
     GameTooltipText:SetFont(font, textSize, fontOutline)
 
+    if GameTooltip.hasMoney then
+        for i = 1, GameTooltip.numMoneyFrames do
+            _G["GameTooltipMoneyFrame" .. i .. "PrefixText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "SuffixText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "GoldButtonText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "SilverButtonText"]:SetFont(font, textSize, fontOutline)
+            _G["GameTooltipMoneyFrame" .. i .. "CopperButtonText"]:SetFont(font, textSize, fontOutline)
+        end
+    end
+
     if DatatextTooltip then
         DatatextTooltipTextLeft1:SetFont(font, textSize, fontOutline)
         DatatextTooltipTextRight1:SetFont(font, textSize, fontOutline)
@@ -837,7 +858,7 @@ local function GameTooltip_ShowProgressBar(self)
 
     if not sb.Bar.backdrop then
         sb.Bar:GwStripTextures()
-        sb.Bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
+        sb.Bar:GwCreateBackdrop(GW.constBackdropFrameColorBorder, true)
         sb.Bar.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
         sb.Bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
     end
@@ -850,16 +871,16 @@ local function GameTooltip_ShowStatusBar(self)
     if not sb or sb.backdrop then return end
 
     sb:GwStripTextures()
-    sb:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder, true)
+    sb:GwCreateBackdrop(GW.constBackdropFrameColorBorder, true)
     sb.backdrop:SetBackdropBorderColor(0, 0, 0, 1)
     sb:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/uistuff/gwstatusbar")
 end
 
 local function SkinItemRefTooltipCloseButton()
-    ItemRefTooltip.CloseButton:GwSkinButton(true)
-    ItemRefTooltip.CloseButton:SetSize(20, 20)
-    ItemRefTooltip.CloseButton:ClearAllPoints()
-    ItemRefTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
+  --  ItemRefTooltip.CloseButton:GwSkinButton(true)
+   -- ItemRefTooltip.CloseButton:SetSize(20, 20)
+    --ItemRefTooltip.CloseButton:ClearAllPoints()
+  --  ItemRefTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
 
     if IsAddOnLoaded("Pawn") then
         if ItemRefTooltip.PawnIconFrame then ItemRefTooltip.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
@@ -934,13 +955,13 @@ local function shouldHiddenInCombat(tooltip)
 end
 
 local function SetStyle(self, _, isEmbedded)
-    if not self or (isEmbedded or self.IsEmbedded or not self.NineSlice) or self:IsForbidden() then return end
+    if not self or (isEmbedded or self.IsEmbedded ) or self:IsForbidden() then return end
 
     if self.Delimiter1 then self.Delimiter1:SetTexture() end
     if self.Delimiter2 then self.Delimiter2:SetTexture() end
 
-    self.NineSlice:Hide()
-    self:GwCreateBackdrop({
+  --  self.NineSlice:Hide()
+  self:SetBackdrop({
         bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
         edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
         edgeSize = GW.Scale(32),
@@ -1043,30 +1064,31 @@ local function LoadTooltips()
     SkinQueueStatusFrame()
     SkinBattlePetTooltip()
 
-    QuestScrollFrame.StoryTooltip:SetFrameLevel(4)
+    --QuestScrollFrame.StoryTooltip:SetFrameLevel(4)
 
     local ItemTT = GameTooltip.ItemTooltip
-    GW.HandleIcon(ItemTT.Icon, true)
-    GW.HandleIconBorder(ItemTT.IconBorder, ItemTT.Icon.backdrop)
-    ItemTT.Count:ClearAllPoints()
-    ItemTT.Count:SetPoint("BOTTOMRIGHT", ItemTT.Icon, "BOTTOMRIGHT", 1, 0)
+    --GW.HandleIcon(ItemTT.Icon, true)
+    --GW.HandleIconBorder(ItemTT.IconBorder, ItemTT.Icon.backdrop)
+    --ItemTT.Count:ClearAllPoints()
+    --ItemTT.Count:SetPoint("BOTTOMRIGHT", ItemTT.Icon, "BOTTOMRIGHT", 1, 0)
 
     -- Skin GameTooltip Status Bar
-    GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
-    GameTooltipStatusBar:GwCreateBackdrop()
-    GameTooltipStatusBar:ClearAllPoints()
-    GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", GW.BorderSize, -(GW.SpacingSize * 3))
-    GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -GW.BorderSize, -(GW.SpacingSize * 3))
+    --GameTooltipStatusBar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
+   -- GameTooltipStatusBar:GwCreateBackdrop()
+   -- GameTooltipStatusBar:ClearAllPoints()
+   -- GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", GW.BorderSize, -(GW.SpacingSize * 3))
+   -- GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -GW.BorderSize, -(GW.SpacingSize * 3))
 
     -- Tooltip Styling
     hooksecurefunc("GameTooltip_ShowStatusBar", GameTooltip_ShowStatusBar) -- Skin Status Bars
-    hooksecurefunc("GameTooltip_ShowProgressBar", GameTooltip_ShowProgressBar) -- Skin Progress Bars
-    hooksecurefunc("GameTooltip_ClearProgressBars", GameTooltip_ClearProgressBars)
+   -- hooksecurefunc("GameTooltip_ShowProgressBar", GameTooltip_ShowProgressBar) -- Skin Progress Bars
+    --hooksecurefunc("GameTooltip_ClearProgressBars", GameTooltip_ClearProgressBars)
     hooksecurefunc("GameTooltip_AddQuestRewardsToTooltip", GameTooltip_AddQuestRewardsToTooltip) -- Color Progress Bars
-    hooksecurefunc("SharedTooltip_SetBackdropStyle", SetStyle) -- This also deals with other tooltip borders like AzeriteEssence Tooltip
+    GameTooltip:HookScript("OnUpdate", SetStyle) -- This also deals with other tooltip borders like AzeriteEssence Tooltip
 
     -- Functions
     MountIDs = {}
+
     local mountIDs = C_MountJournal.GetMountIDs()
     for _, mountID in ipairs(mountIDs) do
         local _, spellID = C_MountJournal.GetMountInfoByID(mountID)
@@ -1074,30 +1096,18 @@ local function LoadTooltips()
     end
 
     --Tooltip Fonts
-    -- hook here to avoid a taint
-    local moneyTooltipSetUp = false
-    hooksecurefunc("SetTooltipMoney", function()
-        if GameTooltip.hasMoney and not moneyTooltipSetUp then
-            local font = UNIT_NAME_FONT
-            local fontOutline = ""
-            local textSize = tonumber(settings.tooltipFontSize)
-            for i = 1, GameTooltip.numMoneyFrames do
-                _G["GameTooltipMoneyFrame" .. i .. "PrefixText"]:SetFont(font, textSize, fontOutline)
-                _G["GameTooltipMoneyFrame" .. i .. "SuffixText"]:SetFont(font, textSize, fontOutline)
-                _G["GameTooltipMoneyFrame" .. i .. "GoldButtonText"]:SetFont(font, textSize, fontOutline)
-                _G["GameTooltipMoneyFrame" .. i .. "SilverButtonText"]:SetFont(font, textSize, fontOutline)
-                _G["GameTooltipMoneyFrame" .. i .. "CopperButtonText"]:SetFont(font, textSize, fontOutline)
-            end
-            moneyTooltipSetUp = true
-        end
-    end)
+    if not GameTooltip.hasMoney then
+        SetTooltipMoney(GameTooltip, 1, nil, "", "")
+        SetTooltipMoney(GameTooltip, 1, nil, "", "")
+        GameTooltip_ClearMoney(GameTooltip)
+    end
     SetTooltipFonts()
 
     RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", ALL .. ",Blizzard", {230, 80}, {"default"})
 
     hooksecurefunc("GameTooltip_SetDefaultAnchor", GameTooltip_SetDefaultAnchor)
 
-    GameTooltipDefaultContainer:GwKillEditMode()
+    --GameTooltipDefaultContainer:GwKillEditMode()
 
     if not GW.IsIncompatibleAddonLoadedOrOverride("LfgInfo", true)  then
         hooksecurefunc("LFGListUtil_SetSearchEntryTooltip", AddPremadeGroupInfo)
@@ -1112,10 +1122,13 @@ local function LoadTooltips()
 
         hooksecurefunc("SetItemRef", SetItemRef)
         hooksecurefunc("EmbeddedItemTooltip_SetItemByID", EmbeddedItemTooltip_ID)
-        hooksecurefunc("EmbeddedItemTooltip_SetCurrencyByID", EmbeddedItemTooltip_ID)
-        hooksecurefunc("EmbeddedItemTooltip_SetSpellWithTextureByID", EmbeddedItemTooltip_ID)
-        hooksecurefunc("EmbeddedItemTooltip_SetItemByQuestReward", EmbeddedItemTooltip_QuestReward)
-        hooksecurefunc("EmbeddedItemTooltip_SetSpellByQuestReward", EmbeddedItemTooltip_QuestReward)
+     --   hooksecurefunc("EmbeddedItemTooltip_SetCurrencyByID", EmbeddedItemTooltip_ID)
+        hooksecurefunc(GameTooltip,"SetSpellBookItem", EmbeddedItemTooltip_ID)
+        hooksecurefunc("ActionButton_SetTooltip", ActionButton_SetTooltip_hook)
+
+     
+      --  hooksecurefunc("EmbeddedItemTooltip_SetItemByQuestReward", EmbeddedItemTooltip_QuestReward)
+      --  hooksecurefunc("EmbeddedItemTooltip_SetSpellByQuestReward", EmbeddedItemTooltip_QuestReward)
         hooksecurefunc(GameTooltip, "SetUnitAura", SetUnitAura)
         hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitAura)
         hooksecurefunc(GameTooltip, "SetUnitDebuff", SetUnitAura)
@@ -1139,9 +1152,9 @@ local function LoadTooltips()
             end
         end)
 
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetItem)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
-        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
+   --     TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, GameTooltip_OnTooltipSetItem)
+    --    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, GameTooltip_OnTooltipSetUnit)
+      --  TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, GameTooltip_OnTooltipSetSpell)
 
         GameTooltip:HookScript("OnTooltipCleared", GameTooltip_OnTooltipCleared)
         GameTooltip.StatusBar:HookScript("OnValueChanged", GameTooltipStatusBar_OnValueChanged)

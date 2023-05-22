@@ -187,11 +187,11 @@ local function createBagBar(f)
     f.bags = {}
 
     local getBagId = function(self)
-        return self:GetID() + NUM_BAG_FRAMES + NUM_REAGENTBAG_FRAMES
+        return self:GetID() + NUM_BAG_FRAMES + 1
     end
 
     for bag_idx = 1, NUM_BANKBAGSLOTS do
-        local b = CreateFrame("ItemButton", nil, f, "GwBankBagTemplate")
+        local b = CreateFrame("Button", nil, f, "GwBankBagTemplate")
 
         -- We depend on a number of behaviors from the default BankItemButtonBagTemplate.
         -- The ID set here is NOT the usual bag_id; rather it is a 1-based index of bank
@@ -211,7 +211,7 @@ local function createBagBar(f)
     end
 
     -- create a fake bag frame for the base bank slots
-    local b = CreateFrame("ItemButton", nil, f, "GwBankBaseBagTemplate")
+    local b = CreateFrame("Button", nil, f, "GwBankBaseBagTemplate")
     b:SetID(0)
     b.BagID = 0
     b.GetBagID = function()
@@ -219,7 +219,7 @@ local function createBagBar(f)
     end
     inv.reskinBagBar(b)
     local norm = b:GetNormalTexture()
-    norm:SetVertexColor(1, 1, 1, 0.75)
+   -- norm:SetVertexColor(1, 1, 1, 0.75)
     SetItemButtonQuality(b, 1, nil)
     EnableTooltip(b, BANK, "ANCHOR_RIGHT", 0)
     b.icon:SetTexture(413587)
@@ -248,9 +248,9 @@ local function updateBagBar(f)
         norm:SetVertexColor(1, 1, 1, 0.75)
         if bag_tex ~= nil then
             b.gwHasBag = true
-            --if not IsBagOpen(bag_id) then
-                --OpenBag(bag_id) -- default open valid bank bags immediately  --TAINT atm
-            --end
+            if not IsBagOpen(bag_id) then
+                OpenBag(bag_id) -- default open valid bank bags immediately
+            end
             b.icon:SetTexture(bag_tex)
             local quality = GetInventoryItemQuality("player", inv_id)
             if quality then
@@ -512,7 +512,7 @@ local function LoadBank(helpers)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
     -- setup resizer stuff
-    f:SetResizeBounds(340, 340)
+    f:SetMinResize(340, 340)
     f:SetScript("OnSizeChanged", onBankFrameChangeSize)
     f.sizer.onResizeStop = onBankResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
@@ -611,7 +611,7 @@ local function LoadBank(helpers)
     do
         EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
         local dd = f.buttonSettings.dropdown
-        dd:GwCreateBackdrop(GW.BackdropTemplates.Default)
+        dd:GwCreateBackdrop(GW.skins.constBackdropFrame)
         f.buttonSettings:SetScript(
             "OnClick",
             function(self)

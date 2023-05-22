@@ -12,16 +12,46 @@ local CASTBAR_STAGE_DURATION_INVALID = -1
 
 local CASTINGBAR_TEXTURES = {
     YELLOW = {
-        NORMAL = "yellow-norm",
-        HIGHLIGHT = "yellow-highlight"
+        NORMAL = {
+            L = 0,
+            R = 0.5,
+            T = 0.25,
+            B = 0.50,
+        },
+        HIGHLIGHT = {
+            L = 0,
+            R = 0.5,
+            T = 0.5,
+            B = 0.75,
+        }
     },
     RED = {
-        NORMAL = "red-norm",
-        HIGHLIGHT = "red-highlight"
+        NORMAL = {
+            L = 0,
+            R = 0.5,
+            T = 0.75,
+            B = 1,
+        },
+        HIGHLIGHT = {
+            L = 0.5,
+            R = 1,
+            T = 0,
+            B = 0.25,
+        }
     },
     GREEN = {
-        NORMAL = "green-norm",
-        HIGHLIGHT = "green-highlight"
+        NORMAL = {
+            L = 0.5,
+            R = 1,
+            T = 0.25,
+            B = 0.50,
+        },
+        HIGHLIGHT = {
+            L = 0.5,
+            R = 1,
+            T = 0.5,
+            B = 0.75,
+        }
     },
 }
 GW.CASTINGBAR_TEXTURES = CASTINGBAR_TEXTURES
@@ -103,17 +133,15 @@ end
 GW.AddForProfiling("castingbar", "barReset", barReset)
 
 local function AddFinishAnimation(self, isStopped, isChanneling)
+    local highlightColor = isStopped and CASTINGBAR_TEXTURES.RED.HIGHLIGHT or self.bar.barHighLightCoords
     self.animating = true
-    local highlightColor = isStopped and CASTINGBAR_TEXTURES.RED.HIGHLIGHT or CASTINGBAR_TEXTURES.YELLOW.HIGHLIGHT
-    self.highlight:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/"..highlightColor)
+    self.highlight:SetTexCoord(highlightColor.L, highlightColor.R, highlightColor.T, highlightColor.B)
     self.highlight:SetWidth(176)
-    self.highlight:SetTexCoord(0,1,0,1);
-
+    self.spark:Hide()
 
     if isStopped then
-        self.progress:SetFillAmount(1);
-        self.highlight:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. highlightColor)
-        self.progress:SetStatusBarTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/" .. CASTINGBAR_TEXTURES.RED.NORMAL)
+        self.bar:SetWidth(176)
+        self.bar:SetTexCoord(CASTINGBAR_TEXTURES.RED.NORMAL.L, CASTINGBAR_TEXTURES.RED.NORMAL.R, CASTINGBAR_TEXTURES.RED.NORMAL.T, CASTINGBAR_TEXTURES.RED.NORMAL.B)
     end
 
     if isChanneling then
@@ -128,8 +156,8 @@ local function AddFinishAnimation(self, isStopped, isChanneling)
                     0,
                     GetTime(),
                     0.2,
-                    function(p)
-                        p = math.min(1, math.max(0, p))
+                    function()
+                        local p = math.min(1, math.max(0, GW.animations[self.animationName .. "FadeOut"].progress))
                         self:SetAlpha(p)
                     end
                 )
@@ -147,8 +175,8 @@ local function AddFinishAnimation(self, isStopped, isChanneling)
             1,
             GetTime(),
             isStopped and 0.5 or 0.2,
-            function(p)
-                self.highlight:SetVertexColor(1, 1, 1, lerp(1, 0.7, p))
+            function()
+                self.highlight:SetVertexColor(1, 1, 1, lerp(1, 0.7, animations[self.animationName .. "Complete"].progress))
             end,
             nil,
             function()
@@ -162,8 +190,8 @@ local function AddFinishAnimation(self, isStopped, isChanneling)
                             0,
                             GetTime(),
                             0.2,
-                            function(p)
-                                p = math.min(1, math.max(0, p))
+                            function()
+                                local p = math.min(1, math.max(0, GW.animations[self.animationName .. "FadeOut"].progress))
                                 self:SetAlpha(p)
                             end
                         )
@@ -179,11 +207,9 @@ local function AddFinishAnimation(self, isStopped, isChanneling)
 end
 
 local function castBar_OnEvent(self, event, unitID, ...)
-    local spell, icon, startTime, endTime, isTradeSkill, castID, spellID, numStages
+    local spell, text, icon, startTime, endTime, isTradeSkill, castID, spellID, numStages
     local barTexture = CASTINGBAR_TEXTURES.YELLOW.NORMAL
     local barHighlightTexture = CASTINGBAR_TEXTURES.YELLOW.HIGHLIGHT
-    self.highlight:SetTexCoord(0,1,0,1)
-    self.highlight:SetWidth( 176)
     if event == "PLAYER_ENTERING_WORLD" then
         local nameChannel = UnitChannelInfo(self.unit)
         local nameSpell = UnitCastingInfo(self.unit)
@@ -199,10 +225,13 @@ local function castBar_OnEvent(self, event, unitID, ...)
     if unitID ~= self.unit or not self.showCastbar then
         return
     end
-
+    
+    local _,eGUID, eSpellID  = select(2,...)
+    
     if IsIn(event, "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_START", "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_DELAYED") then
         if IsIn(event, "UNIT_SPELLCAST_CHANNEL_START", "UNIT_SPELLCAST_CHANNEL_UPDATE", "UNIT_SPELLCAST_EMPOWER_START", "UNIT_SPELLCAST_EMPOWER_UPDATE") then
-            spell, _, icon, startTime, endTime, isTradeSkill, _, spellID, _, numStages = UnitChannelInfo(self.unit)
+            spell, _, text, icon, startTime, endTime, isTradeSkill, _, spellID = UnitChannelInfo(self.unit)
+         
             local isChargeSpell = (numStages or 0) > 0
             if isChargeSpell then
                 endTime = endTime + GetUnitEmpowerHoldAtMaxTime(self.unit)
@@ -220,21 +249,19 @@ local function castBar_OnEvent(self, event, unitID, ...)
 
             barTexture = CASTINGBAR_TEXTURES.GREEN.NORMAL
             barHighlightTexture = CASTINGBAR_TEXTURES.GREEN.HIGHLIGHT
-           -- self.progress:setBar(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
+            self.bar:SetTexCoord(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
         else
-            spell, _, icon, startTime, endTime, isTradeSkill, castID, _, spellID = UnitCastingInfo(self.unit)
-
+            spell, _, text, icon, startTime, endTime, isTradeSkill, castID, _, spellID = UnitCastingInfo(self.unit)
+            self.bar:SetTexCoord(barTexture.L, barTexture.R, barTexture.T, barTexture.B)
             self.isChanneling = false
             self.isCasting = true
             self.reverseChanneling = false
         end
-        self.progress:SetStatusBarTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/"..barTexture)
-        self.highlight:SetTexture("Interface/AddOns/GW2_UI/Textures/units/castingbars/"..barHighlightTexture)
 
         barReset(self)
 
-       --- self.bar.barCoords = barTexture
-        self.barHighLightCoords = barHighlightTexture
+        self.bar.barCoords = barTexture
+        self.bar.barHighLightCoords = barHighlightTexture
 
         if not spell or (not self.showTradeSkills and isTradeSkill) then
             barReset(self)
@@ -251,7 +278,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
         self.castID = castID
         self.startTime = startTime / 1000
         self.endTime = endTime / 1000
-
+        self.spark:Show()
         self.highlight:Hide()
 
         StopAnimation(self.animationName)
@@ -268,26 +295,25 @@ local function castBar_OnEvent(self, event, unitID, ...)
             1,
             self.startTime,
             self.endTime - self.startTime,
-            function(p)
+            function()
                 if self.showDetails then
                     self.time:SetText(TimeCount(self.endTime - GetTime(), true))
                 end
 
-                p = self.isChanneling and (1 - p) or p
+                local p = self.isChanneling and (1 - animations[self.animationName].progress) or animations[self.animationName].progress
                 self.latency:ClearAllPoints()
                 self.latency:SetPoint(self.isChanneling and "LEFT" or "RIGHT", self, self.isChanneling and "LEFT" or "RIGHT")
 
-               -- self.bar:SetWidth(math.max(1, p * 176))
-               -- self.bar:SetVertexColor(1, 1, 1, 1)
-               self.progress:SetFillAmount(p);
-
-               -- self.bar:SetTexCoord(self.bar.barCoords.L, lerp(self.bar.barCoords.L,self.bar.barCoords.R, p), self.bar.barCoords.T, self.bar.barCoords.B)
+                self.bar:SetWidth(math.max(1, p * 176))
+                self.bar:SetVertexColor(1, 1, 1, 1)
+                self.spark:SetWidth(math.min(15, math.max(1, p * 176)))
+                self.bar:SetTexCoord(self.bar.barCoords.L, lerp(self.bar.barCoords.L,self.bar.barCoords.R, p), self.bar.barCoords.T, self.bar.barCoords.B)
 
                 if self.numStages > 0 then
                     for i = 1, self.numStages - 1, 1 do
                         local stage_percentage = self.StagePoints[i]
                         if stage_percentage <= p then
-                            self.highlight:SetTexCoord(0,stage_percentage,0,1)
+                            self.highlight:SetTexCoord(self.bar.barHighLightCoords.L, lerp(self.bar.barHighLightCoords.L, self.bar.barHighLightCoords.R, stage_percentage), self.bar.barHighLightCoords.T, self.bar.barHighLightCoords.B)
                             self.highlight:SetWidth(math.max(1, stage_percentage * 176))
                             self.highlight:Show()
                         end
@@ -310,10 +336,12 @@ local function castBar_OnEvent(self, event, unitID, ...)
         elseif self:GetAlpha() < 1 then
             UIFrameFadeIn(self, 0.1, 0, 1)
         end
+     
     elseif IsIn(event, "UNIT_SPELLCAST_STOP", "UNIT_SPELLCAST_CHANNEL_STOP", "UNIT_SPELLCAST_EMPOWER_STOP") then
-        if (event == "UNIT_SPELLCAST_STOP" and self.castID == select(1, ...)) or
+        if (event == "UNIT_SPELLCAST_STOP" and self.castID == eGUID) or
             ((event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "UNIT_SPELLCAST_EMPOWER_STOP") and (self.isChanneling or self.reverseChanneling)) then
-            if self.animating == nil or self.animating == false then
+        
+                if self.animating == nil or self.animating == false then
                 --UIFrameFadeOut(self, 0.2, 1, 0)
                 AddFinishAnimation(self, false, true)
             end
@@ -323,7 +351,8 @@ local function castBar_OnEvent(self, event, unitID, ...)
             self.reverseChanneling = false
         end
     elseif event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" then
-        if self:IsShown() and self.isCasting and select(1, ...) == self.castID then
+        
+        if self:IsShown() and self.isCasting and eGUID == self.castID then
             if self.showDetails then
                 if event == "UNIT_SPELLCAST_FAILED" then
                     self.name:SetText(FAILED)
@@ -336,7 +365,7 @@ local function castBar_OnEvent(self, event, unitID, ...)
             self.isChanneling = false
             self.reverseChanneling = false
         end
-    elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.spellID == select(2, ...) and not self.isChanneling then
+    elseif event == "UNIT_SPELLCAST_SUCCEEDED" and self.spellID == eSpellID and not self.isChanneling then
         AddFinishAnimation(self, false)
     end
 end
@@ -365,12 +394,6 @@ local function LoadCastingBar(name, unit, showTradeSkills)
     UpdateSettings()
 
     local GwCastingBar = CreateFrame("Frame", name, UIParent, "GwCastingBar")
-    GW.hookStatusbarBehaviour(GwCastingBar.progress,false);
-    GwCastingBar.progress.customMaskSize = 64;
-    GwCastingBar.highlight = GwCastingBar.progress.highlight;
-    GwCastingBar.latency = GwCastingBar.progress.latency;
-   
-
     GwCastingBar.name:SetFont(UNIT_NAME_FONT, 12)
     GwCastingBar.name:SetShadowOffset(1, -1)
     GwCastingBar.time:SetFont(UNIT_NAME_FONT, 12)

@@ -1,44 +1,30 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
+
 local TOTEM_BAR_BUTTON_SIZE = 48
 local TOTEM_BAR_BUTTON_MARGIN = 3
 
-local priority = GW.myclass == "SHAMAN" and {[1]=1, [2]=2, [3]=4, [4]=3} or STANDARD_TOTEM_PRIORITIES
-
-local function UpdateButton(button, totem, show)
-    if show and totem then
-        local _, _, startTime, duration, icon = GetTotemInfo(totem.slot)
-
-        button.iconTexture:SetTexture(icon)
-        button.cooldown:SetCooldown(startTime, duration)
-
-        totem:ClearAllPoints()
-        totem:SetParent(button.holder)
-        totem:SetAllPoints(button.holder)
-    end
-
-    button:SetShown(show)
-end
-
-local function HideTotem(self)
-    local i = priority[self.layoutIndex]
-    UpdateButton(GW_TotemBar[i], self, false)
-end
-
 local function gw_totem_bar_OnEvent(self)
-    for totem in next, TotemFrame.totemPool.activeObjects do
-        local i = priority[totem.layoutIndex]
-        UpdateButton(self[i], totem, true)
+    for i = 1, MAX_TOTEMS do
+        local button = _G["TotemFrameTotem" .. i]
+        local _, _, startTime, duration, icon = GetTotemInfo(button.slot)
 
-        if totem:GetScript("OnHide") ~= HideTotem then
-            totem:SetScript("OnHide", HideTotem)
+        if button:IsShown() then
+            self[i]:Show()
+            self[i].iconTexture:SetTexture(icon)
+            CooldownFrame_Set(self[i].cooldown, startTime, duration, true)
+
+            button:ClearAllPoints()
+            button:SetParent(self[i].holder)
+            button:SetAllPoints(self[i].holder)
+        else
+            self[i]:Hide()
         end
     end
 end
 
 local function PositionAndSize(self)
-    local growDirection = GetSetting("TotemBar_GrowDirection")
-    local sortDirection = GetSetting("TotemBar_SortDirection")
+    local growDirection = GW.GetSetting("TotemBar_GrowDirection")
+    local sortDirection = GW.GetSetting("TotemBar_SortDirection")
 
     for i = 1, MAX_TOTEMS do
         local button = self[i]
@@ -73,21 +59,16 @@ local function PositionAndSize(self)
         end
     end
 
-    local size1, size2 = TOTEM_BAR_BUTTON_SIZE * MAX_TOTEMS + MAX_TOTEMS * TOTEM_BAR_BUTTON_MARGIN + TOTEM_BAR_BUTTON_MARGIN, TOTEM_BAR_BUTTON_SIZE + TOTEM_BAR_BUTTON_MARGIN * 2
     if growDirection == "HORIZONTAL" then
-        self:SetWidth(size1) -- Button Size * MAX_TOTEMS + MAX_TOTEMS * Spacing + Spacing
-        self:SetHeight(size2) -- Button Size + Spacing * 2
+        self:SetWidth(TOTEM_BAR_BUTTON_SIZE * MAX_TOTEMS + MAX_TOTEMS * TOTEM_BAR_BUTTON_MARGIN + TOTEM_BAR_BUTTON_MARGIN) -- Button Size * MAX_TOTEMS + MAX_TOTEMS * Spacing + Spacing
+        self:SetHeight(TOTEM_BAR_BUTTON_SIZE + TOTEM_BAR_BUTTON_MARGIN * 2) -- Button Size + Spacing * 2
     else
-        self:SetHeight(size1) -- Button Size * MAX_TOTEMS + MAX_TOTEMS * Spacing + Spacing
-        self:SetWidth(size2) -- Button Size + Spacing * 2
-    end
-    if self.gwMover then
-        self.gwMover:SetSize(self:GetSize())
+        self:SetHeight(TOTEM_BAR_BUTTON_SIZE * MAX_TOTEMS + MAX_TOTEMS * TOTEM_BAR_BUTTON_MARGIN + TOTEM_BAR_BUTTON_MARGIN) -- Button Size * MAX_TOTEMS + MAX_TOTEMS * Spacing + Spacing
+        self:SetWidth(TOTEM_BAR_BUTTON_SIZE + TOTEM_BAR_BUTTON_MARGIN * 2) -- Button Size + Spacing * 2
     end
 
     gw_totem_bar_OnEvent(self)
 end
-GW.UpdateTotembar = PositionAndSize
 
 local function Create_Totem_Bar()
     local gw_totem_bar = CreateFrame("Frame", "GW_TotemBar", UIParent)
@@ -101,7 +82,9 @@ local function Create_Totem_Bar()
 
         local backDrop = CreateFrame("Frame", nil, button, "GwActionButtonBackdropTmpl")
         local backDropSize = 1
-
+        if button:GetWidth() > 40 then
+            backDropSize = 2
+        end
         backDrop:SetPoint("TOPLEFT", button, "TOPLEFT", -backDropSize, backDropSize)
         backDrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", backDropSize, -backDropSize)
         button:Hide()
@@ -131,8 +114,9 @@ local function Create_Totem_Bar()
     gw_totem_bar:RegisterEvent("PLAYER_ENTERING_WORLD")
     gw_totem_bar:SetScript("OnEvent", gw_totem_bar_OnEvent)
 
-    GW.RegisterMovableFrame(gw_totem_bar, GW.L["Class Totems"], "TotemBar_pos", ALL .. ",Blizzard,Widgets", nil, {"default", "scaleable"})
-    gw_totem_bar:ClearAllPoints()
+    
+GW.RegisterMovableFrame(gw_totem_bar, GW.L["Class Totems"], "TotemBar_pos", ALL .. ",Blizzard,Widgets", nil, {"default", "scaleable"})
+gw_totem_bar:ClearAllPoints()
     gw_totem_bar:SetPoint("TOPLEFT", gw_totem_bar.gwMover)
 end
 GW.Create_Totem_Bar = Create_Totem_Bar

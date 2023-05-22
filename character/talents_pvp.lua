@@ -94,7 +94,7 @@ local function updatePicks(self)
             end
 
             slotInfo = C_SpecializationInfo.GetPvpTalentSlotInfo(slot.slotIndex)
-            if slotInfo and slotInfo.selectedTalentID then
+            if slotInfo.selectedTalentID then
                 slot.talentId = slotInfo.selectedTalentID
                 local _, _, icon, _, _, spellId, _ = GetPvpTalentInfoByID(slot.talentId)
                 local isPassive = IsPassiveSpell(spellId)
@@ -219,7 +219,7 @@ local function setSlotButton(btn, info)
     if not btn.slotIndex then
         return
     end
-    
+
     local slotIndex = btn.slotIndex
     local unlock = C_SpecializationInfo.GetPvpTalentSlotUnlockLevel(slotIndex)
     if info.enabled and GW.mylevel >= unlock then
@@ -246,7 +246,7 @@ GW.AddForProfiling("talents_pvp", "setSlotButton", setSlotButton)
 
 local talentIds = {}
 local function UpdatePvPTab(fmTab)
-    if not C_SpecializationInfo.CanPlayerUsePVPTalentUI() then
+    if not true then
         for _, v in pairs(fmTab.groups) do
             v:Hide()
         end
@@ -270,6 +270,7 @@ local function UpdatePvPTab(fmTab)
     slotGroup.pool:ReleaseAll()
 
     wipe(talentIds)
+    if true then return end
     local tidx = 1
     for i, _ in ipairs({"TalentSlot1", "TalentSlot2", "TalentSlot3"}) do
         local btn = slotGroup.pool:Acquire()
@@ -278,15 +279,14 @@ local function UpdatePvPTab(fmTab)
 
         btn.slotIndex = i
         local info = C_SpecializationInfo.GetPvpTalentSlotInfo(i)
-        if info then
-            setSlotButton(btn, info)
-            btn:SetPoint("TOPLEFT", slotGroup, "TOPLEFT", 55 + (50 * col), -37 + (-50 * row))
 
-            for _, talentId in ipairs(info.availableTalentIDs) do
-                if not tContains(talentIds, talentId) then
-                    talentIds[tidx] = talentId
-                    tidx = tidx + 1
-                end
+        setSlotButton(btn, info)
+        btn:SetPoint("TOPLEFT", slotGroup, "TOPLEFT", 55 + (50 * col), -37 + (-50 * row))
+
+        for _, talentId in ipairs(info.availableTalentIDs) do
+            if not tContains(talentIds, talentId) then
+                talentIds[tidx] = talentId
+                tidx = tidx + 1
             end
         end
     end
@@ -365,14 +365,15 @@ local function slotPool_Resetter(_, btn)
     btn.icon:SetTexture("Interface/AddOns/GW2_UI/textures/talents/pvp_empty_icon")
 
     if not btn.mask then
-        btn.mask = UIParent:CreateMaskTexture()
-        btn.mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
-        btn.mask:SetTexture(
+        local mask = UIParent:CreateMaskTexture()
+        mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
+        mask:SetTexture(
             "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
-        btn.mask:SetSize(40, 40)
+        mask:SetSize(40, 40)
+        btn.mask = mask
     end
 end
 GW.AddForProfiling("talents_pvp", "slotPool_Resetter", slotPool_Resetter)
@@ -406,15 +407,16 @@ local function passivePool_Resetter(_, btn)
     btn.icon:SetTexture(nil)
 
     if not btn.mask then
-        btn.mask = UIParent:CreateMaskTexture()
-        btn.mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
-        btn.mask:SetTexture(
+        local mask = UIParent:CreateMaskTexture()
+        mask:SetPoint("CENTER", btn.icon, "CENTER", 0, 0)
+        mask:SetTexture(
             "Interface\\AddOns\\GW2_UI\\textures\\talents\\passive_border",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
-        btn.mask:SetSize(40, 40)
-        btn.icon:AddMaskTexture(btn.mask)
+        mask:SetSize(40, 40)
+        btn.mask = mask
+        btn.icon:AddMaskTexture(mask)
     end
 end
 GW.AddForProfiling("talents_pvp", "passivePool_Resetter", passivePool_Resetter)
@@ -453,7 +455,7 @@ GW.AddForProfiling("talents", "toggle_OnClick", toggle_OnClick)
 local function toggle_OnEnter(self)
     local canToggleWarmodeOFF = C_PvP.CanToggleWarMode(false)
     local canToggleWarmodeON = C_PvP.CanToggleWarMode(true)
-    
+
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
     GameTooltip:SetText(PVP_LABEL_WAR_MODE, 1, 1, 1)
     if (C_PvP.IsWarModeDesired()) then
@@ -493,7 +495,7 @@ local function CreatePvPTab(fmSpellbook)
     lockGroup.info:SetTextColor(1, 1, 1, 1)
     lockGroup.info:SetShadowColor(0, 0, 0, 1)
     lockGroup.info:SetShadowOffset(1, -1)
-    lockGroup.info:SetText(select(2, C_SpecializationInfo.CanPlayerUsePVPTalentUI()))
+  --LEGION  lockGroup.info:SetText(select(2, C_SpecializationInfo.CanPlayerUsePVPTalentUI()))
 
     warGroup:ClearAllPoints()
     warGroup:SetPoint("TOPLEFT", container, "TOPLEFT", -4, -31)
@@ -509,7 +511,7 @@ local function CreatePvPTab(fmSpellbook)
     warGroup.toggle:SetScript("OnHide", toggle_OnHide)
     warGroup.toggle:SetScript("OnClick", toggle_OnClick)
     warGroup.toggle:SetEnabled(true)
-    if C_PvP.IsWarModeDesired() then
+    if GetPVPDesired() then
         warGroup.toggle.background:SetTexture("Interface/AddOns/GW2_UI/textures/talents/warmode_on")
     end
 

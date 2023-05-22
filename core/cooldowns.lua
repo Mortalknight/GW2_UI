@@ -5,9 +5,9 @@ local MIN_SCALE = 0.5 --the minimum scale we want to show cooldown counts at, an
 local MIN_DURATION = 1.5 --the minimum duration to show cooldown text for
 
 local TimeFormats = {
-    [0] = "%.0fd",
-    [1] = "%.0fh",
-    [2] = "%.0fm",
+    [0] = "%dd",
+    [1] = "%dh",
+    [2] = "%dm",
     [3] = "%ds",
     [4] = "%d"
 }
@@ -54,19 +54,16 @@ local function Cooldown_BelowScale(self)
 end
 
 local function Cooldown_OnUpdate(self, elapsed)
-    if self.paused then return 0 end
-
     local forced = elapsed == -1
     if forced then
         self.nextUpdate = 0
     elseif self.nextUpdate > 0 then
         self.nextUpdate = self.nextUpdate - elapsed
-        return 1
+        return
     end
 
     if not Cooldown_IsEnabled(self) then
         Cooldown_StopTimer(self)
-        return 2
     else
         local now = GetTime()
         if self.endCooldown and now >= self.endCooldown then
@@ -86,13 +83,6 @@ local function Cooldown_OnUpdate(self, elapsed)
     end
 end
 
-local function Cooldown_TimerUpdate(timer)
-    local status = Cooldown_OnUpdate(timer, -1)
-    if not status then
-        timer:Show()
-    end
-end
-
 local function ToggleBlizzardCooldownText(self, timer, request)
     -- we should hide the blizzard cooldown
     if timer and self and self.SetHideCountdownNumbers then
@@ -103,6 +93,11 @@ local function ToggleBlizzardCooldownText(self, timer, request)
             self:SetHideCountdownNumbers(forceHide or Cooldown_IsEnabled(timer))
         end
     end
+end
+
+local function Cooldown_ForceUpdate(self)
+    Cooldown_OnUpdate(self, -1)
+    self:Show()
 end
 
 local function Cooldown_OnSizeChanged(self, width, force)
@@ -151,75 +146,22 @@ local function CreateCooldownTimer(parent)
 end
 
 local function OnSetCooldown(self, start, duration)
-    if self.isHooked ~= 1 then return end
-
     if (not self.forceDisabled) and (start and duration) and (duration > MIN_DURATION) then
         local timer = self.timer or CreateCooldownTimer(self)
         timer.start = start
         timer.duration = duration
-        timer.paused = nil
-
-        local now = GetTime()
-        if start <= now then
-            timer.endTime = start + duration
-        else
-            -- https://github.com/Stanzilla/WoWUIBugs/issues/47
-            local startup = time() - now
-            local cdTime = (2 ^ 32) / 1000 - start
-            local startTime = startup - cdTime
-            timer.endTime = startTime + duration
-        end
-
+        timer.endTime = start + duration
         timer.endCooldown = timer.endTime - 0.05
-        Cooldown_TimerUpdate(timer)
+        Cooldown_ForceUpdate(timer)
     elseif self.timer then
         Cooldown_StopTimer(self.timer)
-    end
-end
-
-local function OnPauseCooldown(self)
-    local timer = self.timer
-    if timer then
-        timer.paused = GetTime()
-    end
-end
-
-local function OnResumeCooldown(self)
-    local timer = self.timer
-    if timer and timer.paused then
-        -- calcuate time since paused
-        timer.endTime = timer.start + timer.duration + (GetTime() - timer.paused)
-        timer.endCooldown = timer.endTime - 0.05
-
-        timer.paused = nil
-
-        Cooldown_TimerUpdate(self.timer)
-    end
-end
-
--- USED BY WEAKAURAS
-local function ToggleCooldown(cooldown, switch)
-    cooldown.isHooked = switch and 1 or 0
-
-    if cooldown.timer then
-        if switch then
-            Cooldown_TimerUpdate(cooldown.timer)
-        else
-            Cooldown_StopTimer(cooldown.timer)
-        end
     end
 end
 
 local function RegisterCooldown(cooldown)
     if not cooldown.isHooked then
         hooksecurefunc(cooldown, "SetCooldown", OnSetCooldown)
-
-        if cooldown.Pause then
-            hooksecurefunc(cooldown, "Pause", OnPauseCooldown)
-            hooksecurefunc(cooldown, "Resume", OnResumeCooldown)
-        end
-
-        ToggleCooldown(cooldown, true)
+        cooldown.isHooked = true
     end
 end
 GW.RegisterCooldown = RegisterCooldown

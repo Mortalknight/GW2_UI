@@ -3,6 +3,7 @@ local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local GetSetting = GW.GetSetting
 local TimeCount = GW.TimeCount
 local CommaValue = GW.CommaValue
+local Diff = GW.Diff
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local bloodSpark = GW.BLOOD_SPARK
 local GWGetClassColor = GW.GWGetClassColor
@@ -10,6 +11,7 @@ local TARGET_FRAME_ART = GW.TARGET_FRAME_ART
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
+local StopAnimation = GW.StopAnimation
 local AddToClique = GW.AddToClique
 local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
@@ -56,6 +58,7 @@ local function createNormalUnitFrame(ftype, revert)
     f.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
     f.absorbbg:SetStatusBarColor(1,1,1,0.66)
     f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
+
 
 
     f.frameInvert = revert
@@ -476,20 +479,20 @@ local function protectedCastAnimation(self, powerPrec)
     self.castingbar:SetWidth(math.min(powerBarWidth, math.max(1, spark)))
 
 
-    --if self.numStages > 0 then
-    --    for i = 1, self.numStages - 1, 1 do
-    --        local stage_percentage = self.StagePoints[i]
-    --        if stage_percentage <= powerPrec then
-    --            self.highlight:SetTexCoord(self.barHighLightCoords.L, GW.lerp(self.barHighLightCoords.L, self.barHighLightCoords.R, stage_percentage), self.barHighLightCoords.T, self.barHighLightCoords.B)
-    --            self.highlight:SetWidth(math.max(1, stage_percentage * powerBarWidth))
-    --            self.highlight:Show()
-    --        end
+    if self.numStages > 0 then
+        for i = 1, self.numStages - 1, 1 do
+            local stage_percentage = self.StagePoints[i]
+            if stage_percentage <= powerPrec then
+                self.highlight:SetTexCoord(self.barHighLightCoords.L, GW.lerp(self.barHighLightCoords.L, self.barHighLightCoords.R, stage_percentage), self.barHighLightCoords.T, self.barHighLightCoords.B)
+                self.highlight:SetWidth(math.max(1, stage_percentage * powerBarWidth))
+                self.highlight:Show()
+            end
 
-    --        if i == 1 and stage_percentage >= powerPrec then
-    --            self.highlight:Hide()
-    --        end
-    --    end
-    --end
+            if i == 1 and stage_percentage >= powerPrec then
+                self.highlight:Hide()
+            end
+        end
+    end
 end
 GW.AddForProfiling("unitframes", "protectedCastAnimation", protectedCastAnimation)
 
@@ -619,8 +622,8 @@ local function updateCastValues(self)
         1,
         startTime,
         endTime - startTime,
-        function(p)
-            if self.showCastingbarData and self.castingTimeString then
+        function()
+            if GetSetting("target_CASTINGBAR_DATA") and self.castingTimeString then
               if notInterruptible then
                   self.castingTimeString:SetText(TimeCount(endTime - GetTime(), true))
               else
@@ -628,7 +631,7 @@ local function updateCastValues(self)
               end
 
             end
-            p = self.isChanneling and (1 - p) or p
+            local p = self.isChanneling and (1 - animations["GwUnitFrame" .. self.unit .. "Cast"].progress) or animations["GwUnitFrame" .. self.unit .. "Cast"].progress
 
             if notInterruptible then
                 protectedCastAnimation(self, p)
@@ -685,21 +688,22 @@ end
 GW.AddForProfiling("unitframes", "updateThreatValues", updateThreatValues)
 
 local function updateHealthValues(self, event)
-    local health = UnitHealth(self.unit)
-    local healthMax = UnitHealthMax(self.unit)
-    local absorb = UnitGetTotalAbsorbs(self.unit)
-    local prediction = UnitGetIncomingHeals(self.unit) or 0
-    local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
-    local absorbPrecentage = 0
-    local absorbAmount = 0
-    local absorbAmount2 = 0
-    local predictionPrecentage = 0
-    local healAbsorbPrecentage = 0
-    local healthPrecentage = 0
+  local health = UnitHealth(self.unit)
+  local healthMax = UnitHealthMax(self.unit)
+  local absorb = UnitGetTotalAbsorbs(self.unit)
+  local prediction = UnitGetIncomingHeals(self.unit) or 0
+  local healAbsorb =  UnitGetTotalHealAbsorbs(self.unit)
+  local absorbPrecentage = 0
+  local absorbAmount = 0
+  local absorbAmount2 = 0
+  local predictionPrecentage = 0
+  local healAbsorbPrecentage = 0
+  local healthPrecentage = 0
 
     if health > 0 and healthMax > 0 then
         healthPrecentage = health / healthMax
     end
+
 
     if absorb > 0 and healthMax > 0 then
         absorbPrecentage = absorb / healthMax
@@ -707,18 +711,20 @@ local function updateHealthValues(self, event)
         absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
     end
 
-    if prediction > 0 and healthMax > 0 then
-        predictionPrecentage = (prediction / healthMax) + healthPrecentage
-    end
-    if healAbsorb > 0 and healthMax > 0 then
-        healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
-    end
-    self.healPrediction:SetFillAmount(predictionPrecentage)
+  if prediction > 0 and healthMax > 0 then
+      predictionPrecentage = (prediction / healthMax) + healthPrecentage
+  end
+  if healAbsorb > 0 and healthMax > 0 then
+      healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
+  end
+  self.healPrediction:SetFillAmount( predictionPrecentage)
+
+
 
     self.health.barOnUpdate = function()
       updateHealthTextString(self, health, self.health:GetFillAmount())
     end
-
+    
     if event == "UNIT_TARGET" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_TARGET_CHANGED" then
         self.health:ForceFIllAmount(healthPrecentage)
         self.absorbbg:ForceFIllAmount(absorbAmount)
@@ -730,6 +736,42 @@ local function updateHealthValues(self, event)
         self.absorbOverlay:SetFillAmount(absorbAmount2)
         self.antiHeal:SetFillAmount(healAbsorbPrecentage)
     end
+
+
+
+--[[
+
+
+    healthBarAnimation(self, healthPrecentage, true)
+    if animationSpeed == 0 then
+        healthBarAnimation(self, healthPrecentage)
+        updateHealthTextString(self, health, healthPrecentage)
+    else
+        self.healthValueStepCount = 0
+        AddToAnimation(
+            self:GetName() .. self.unit,
+            self.healthValue,
+            healthPrecentage,
+            GetTime(),
+            animationSpeed,
+            function(step)
+                healthBarAnimation(self, step)
+
+                local hvsc = self.healthValueStepCount
+                if hvsc % 5 == 0 then
+                    updateHealthTextString(self, healthMax * step, step)
+                end
+                self.healthValueStepCount = hvsc + 1
+                self.healthValue = step
+            end,
+            nil,
+            function()
+                updateHealthTextString(self, health, healthPrecentage)
+            end
+        )
+    end
+  ]]
+
 end
 GW.AddForProfiling("unitframes", "updateHealthValues", updateHealthValues)
 
@@ -768,7 +810,7 @@ local function target_OnEvent(self, event, unit)
         UpdateBuffLayout(self, event)
 
         if event == "PLAYER_TARGET_CHANGED" then
-            if UnitExists(self.unit) and not C_PlayerInteractionManager.IsReplacingUnit() then
+            if UnitExists(self.unit) and not IsReplacingUnit() then
                 if UnitIsEnemy(self.unit, "player") then
                     PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
                 elseif UnitIsFriend("player", self.unit) then
@@ -838,7 +880,7 @@ local function focus_OnEvent(self, event, unit)
         UpdateBuffLayout(self, event)
 
         if event == "PLAYER_FOCUS_CHANGED" then
-            if UnitExists(self.unit) and not C_PlayerInteractionManager.IsReplacingUnit() then
+            if UnitExists(self.unit) and not IsReplacingUnit() then
                 if UnitIsEnemy(self.unit, "player") then
                     PlaySound(SOUNDKIT.IG_CREATURE_AGGRO_SELECT)
                 elseif UnitIsFriend("player", self.unit) then
@@ -906,7 +948,6 @@ local function ToggleTargetFrameSettings()
     GwTargetUnitFrame.showHealthValue = GetSetting("target_HEALTH_VALUE_ENABLED")
     GwTargetUnitFrame.showHealthPrecentage = GetSetting("target_HEALTH_VALUE_TYPE")
     GwTargetUnitFrame.showCastbar = GetSetting("target_SHOW_CASTBAR")
-    GwTargetUnitFrame.showCastingbarData = GetSetting("target_CASTINGBAR_DATA")
 
     GwTargetUnitFrame.displayBuffs = GetSetting("target_BUFFS")
     GwTargetUnitFrame.displayDebuffs = GetSetting("target_DEBUFFS")

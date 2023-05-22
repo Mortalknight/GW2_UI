@@ -3,8 +3,6 @@ local L = GW.L
 local SetSetting = GW.SetSetting
 local AddForProfiling = GW.AddForProfiling
 
-local LEMO = GW.Libs.LEMO
-
 local wpanel
 local step = 0
 
@@ -59,16 +57,8 @@ local function button1_OnClick()
 
                 -- move general bottom left
                 if id == 1 then
-                    -- this needs to be done via the edit mode lib
-                    local doesGw2LayoutExists = LEMO:DoesLayoutExist("GW2_Layout")
-                    if not LEMO:CanEditActiveLayout() or not doesGw2LayoutExists then
-                        if not doesGw2LayoutExists then
-                            LEMO:AddLayout(Enum.EditModeLayoutType.Account, "GW2_Layout")
-                        end
-                        LEMO:SetActiveLayout("GW2_Layout")
-                    end
-                    LEMO:ReanchorFrame(frame, "BOTTOMLEFT", UIParent, 40, 60)
-                    LEMO:ApplyChanges()
+                    frame:ClearAllPoints()
+                    frame:SetPoint("BOTTOMLEFT", UIParent, 40, 60)
                     frame:SetUserPlaced(true)
                 elseif id == 2 then
                     FCF_SetWindowName(frame, GUILD_EVENT_LOG)
@@ -112,7 +102,7 @@ local function button1_OnClick()
                 ToggleChatColorNamesByClassGroup(true, v)
             end
 
-            GW.AlertSystem:AddAlert(L["Complete"], nil, L["Setup Chat"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(L["Complete"], nil, L["Setup Chat"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
             step = 2
             button1_OnClick()
@@ -148,7 +138,7 @@ local function button1_OnClick()
             C_CVar.SetCVar("fstack_preferParentKeys", "0")
             C_CVar.SetCVar("whisperMode", "inline")
 
-            GW.AlertSystem:AddAlert(L["Complete"], nil, L["Setup CVars"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(L["Complete"], nil, L["Setup CVars"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
             step = 3
             button1_OnClick()
@@ -170,7 +160,7 @@ local function button1_OnClick()
             SetSetting("PIXEL_PERFECTION", true)
             GW.PixelPerfection()
 
-            GW.AlertSystem:AddAlert(L["Pixel Perfect Mode"], nil, L["Turn Pixel Perfect Mode On"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
+            GW2_UIAlertSystem.AlertSystem:AddAlert(L["Pixel Perfect Mode"], nil, L["Turn Pixel Perfect Mode On"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)
 
             step = 4
             button1_OnClick()

@@ -76,7 +76,7 @@ local function handleReward(frame, isMap)
 end
 GW.HandleReward = handleReward
 
-local function QuestInfo_Display(template, parentFrame)
+local function QuestInfo_Display(template)
     if not GetSetting("GOSSIP_SKIN_ENABLED") and not GetSetting("QUESTVIEW_ENABLED") and (template == QUEST_TEMPLATE_DETAIL or template == QUEST_TEMPLATE_REWARD or template == QUEST_TEMPLATE_LOG) then
         return
     end
@@ -90,13 +90,7 @@ local function QuestInfo_Display(template, parentFrame)
 
     local fInfo = _G.QuestInfoFrame
     local fRwd = fInfo.rewardsFrame
-    local questID
-    local questFrame = parentFrame:GetParent():GetParent()
-    if template.questLog then
-        questID = questFrame.questID
-    else
-        questID = GetQuestID();
-    end
+    local isQuestLog = fInfo.questLog ~= nil
 
     for i, questItem in ipairs(fRwd.RewardButtons) do
         local point, relativeTo, relativePoint, _, y = questItem:GetPoint()
@@ -113,9 +107,8 @@ local function QuestInfo_Display(template, parentFrame)
         handleReward(questItem, isMapStyle)
     end
 
-    local spellRewards = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {}
-    --local numSpellRewards = isQuestLog and GetNumQuestLogRewardSpells() or GetNumRewardSpells()
-    if #spellRewards > 0 then
+    local numSpellRewards = isQuestLog and GetNumQuestLogRewardSpells() or GetNumRewardSpells()
+    if numSpellRewards > 0 then
         for spellHeader in fRwd.spellHeaderPool:EnumerateActive() do
             spellHeader:SetVertexColor(1, 1, 1)
         end
@@ -229,8 +222,8 @@ end
 AFP("hook_UpdateState", hook_UpdateState)
 
 local sessionCommandToButtonAtlas = {
-    [_G.Enum.QuestSessionCommand.Start] = "QuestSharing-DialogIcon",
-    [_G.Enum.QuestSessionCommand.Stop] = "QuestSharing-Stop-DialogIcon"
+--    [_G.Enum.QuestSessionCommand.Start] = "QuestSharing-DialogIcon",
+ --   [_G.Enum.QuestSessionCommand.Stop] = "QuestSharing-Stop-DialogIcon"
 }
 local function hook_UpdateExecuteCommandAtlases(s, command)
     s.ExecuteSessionCommand:SetNormalTexture("")
@@ -313,7 +306,7 @@ local function worldMapSkin()
     WorldMapFrame.NavBar:SetPoint("TOPLEFT", 1, -47)
     WorldMapFrame.NavBar.SetPoint = GW.NoOp
 
-    local navBarTex = WorldMapFrame.NavBar:CreateTexture(nil, "BACKGROUND", nil, 0)
+    local navBarTex = WorldMapFrame.NavBar:CreateTexture("bg", "BACKGROUND", nil, 0)
     navBarTex:SetPoint("TOPLEFT", WorldMapFrame.NavBar, "TOPLEFT", 0,20)
     navBarTex:SetPoint("BOTTOMRIGHT", WorldMapFrame.NavBar, "BOTTOMRIGHT", 0, -10)
     navBarTex:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-header")
@@ -380,7 +373,6 @@ local function worldMapSkin()
     QuestScrollFrame.DetailFrame:GwStripTextures()
     QuestScrollFrame.DetailFrame.BottomDetail:Hide()
     QuestScrollFrame.Contents.Separator.Divider:Hide()
-    QuestScrollFrame.Edge:SetAlpha(0)
 
     SkinHeaders(QuestScrollFrame.Contents.StoryHeader)
     QuestScrollFrame.ScrollBar:GwSkinScrollBar()
@@ -404,8 +396,8 @@ local function worldMapSkin()
     local CampaignOverview = QuestMapFrame.CampaignOverview
     SkinHeaders(CampaignOverview.Header)
     CampaignOverview.ScrollFrame:GwStripTextures()
-    GW.HandleTrimScrollBar(QuestScrollFrame.ScrollBar, true)
-    GW.HandleScrollControls(QuestScrollFrame)
+    _G.QuestMapFrameScrollBar:GwStripTextures()
+    _G.QuestMapFrameScrollBar:GwSkinScrollBar()
 
     _G.QuestMapDetailsScrollFrame.ScrollBar:SetWidth(3)
     _G.QuestMapDetailsScrollFrame.ScrollBar:GwSkinScrollBar()
@@ -419,7 +411,7 @@ local function worldMapSkin()
     WorldMapFrame.BorderFrame.Tutorial:GwKill()
 
     WorldMapFrame.overlayFrames[1]:GwSkinDropDownMenu()
-    WorldMapFrame.overlayFrames[1]:SetPoint("TOPLEFT", WorldMapFrame.ScrollContainer, "TOPLEFT", -7, -1)
+    WorldMapFrame.overlayFrames[1]:SetPoint("TOPLEFT", WorldMapFrame.ScrollContainer, "TOPLEFT", -7, 2)
 
     WorldMapFrame.overlayFrames[2]:GwStripTextures()
     WorldMapFrame.overlayFrames[2].Icon:SetTexture([[Interface\Minimap\Tracking\None]])
@@ -446,7 +438,7 @@ local function worldMapSkin()
     local qms = _G.QuestModelScene
     local w, h = qms:GetSize()
     qms:GwStripTextures()
-    qms.tex = qms:CreateTexture(nil, "BACKGROUND", nil, 0)
+    qms.tex = qms:CreateTexture("bg", "BACKGROUND", nil, 0)
     qms.tex:SetPoint("TOP", qms, "TOP", 0, 20)
     qms.tex:SetSize(w + 30, h + 60)
     qms.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")

@@ -39,6 +39,7 @@ local profButtonSecure_OnDragStart =
 
 local function updateButton(self, spellIdx, unlearn)
     if spellIdx then
+       
         local tex = GetSpellBookItemTexture(spellIdx, BOOKTYPE_PROFESSION)
         local name, _, spellId = GetSpellBookItemName(spellIdx, BOOKTYPE_PROFESSION)
         self.spellbookIndex = spellIdx
@@ -52,6 +53,7 @@ local function updateButton(self, spellIdx, unlearn)
         self:SetAttribute("type2", "spell")
         self:SetAttribute("shift-type1", "modifiedClick")
         self:SetAttribute("shift-type2", "modifiedClick")
+        self:SetAttribute("ispickable", true)
         self:SetAttribute("spell", spellId)
         self:SetAttribute("_ondragstart", profButtonSecure_OnDragStart)
         self:Enable()

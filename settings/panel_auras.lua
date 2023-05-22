@@ -133,6 +133,7 @@ local function LoadAurasPanel(sWindow)
     addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", GW.UpdateGridSettings, nil, {["RAID_FRAMES"] = true})
     addOption(p_indicator.scroll.scrollchild, L["Show Remaining Time"], L["Show the remaining aura time as an animated overlay."], "INDICATORS_TIME", GW.UpdateGridSettings, nil, {["RAID_FRAMES"] = true})
 
+    --[[NYI
     local auraKeys, auraVals = {0}, {NONE_KEY}
     for spellID, indicator in pairs(GW.AURAS_INDICATORS[GW.myclass]) do
         if not indicator[4] then
@@ -141,6 +142,8 @@ local function LoadAurasPanel(sWindow)
             tinsert(auraVals, name)
         end
     end
+    ]]
+
 
     for v, pos in ipairs(GW.INDICATORS) do
         local key = "INDICATOR_" .. pos

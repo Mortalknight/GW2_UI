@@ -9,15 +9,14 @@ local PERFORMANCE_BAR_UPDATE_INTERVAL = 1
 local MICRO_BUTTONS = {
     "CharacterMicroButton",
     "SpellbookMicroButton",
-    "AchievementMicroButton",
     "TalentMicroButton",
+    "AchievementMicroButton",
     "QuestLogMicroButton",
     "GuildMicroButton",
     "LFDMicroButton",
     "EJMicroButton",
     "CollectionsMicroButton",
     "MainMenuMicroButton",
-    "HelpMicroButton",
     "StoreMicroButton",
     }
 
@@ -33,11 +32,11 @@ do
     local SendMessageWaiting
     local function SendMessage()
         if IsInRaid() then
-            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, (not IsInRaid(LE_PARTY_CATEGORY_HOME) and IsInRaid(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "RAID")
+       --     C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, (not IsInRaid(LE_PARTY_CATEGORY_HOME) and IsInRaid(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "RAID")
         elseif IsInGroup() then
-            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, (not IsInGroup(LE_PARTY_CATEGORY_HOME) and IsInGroup(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "PARTY")
+      --      C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, (not IsInGroup(LE_PARTY_CATEGORY_HOME) and IsInGroup(LE_PARTY_CATEGORY_INSTANCE)) and "INSTANCE_CHAT" or "PARTY")
         elseif IsInGuild() then
-            C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, "GUILD")
+    --        C_ChatInfo.SendAddonMessage("GW2UI_VERSIONCHK", GW.VERSION_STRING, "GUILD")
         end
 
         SendMessageWaiting = nil
@@ -93,7 +92,7 @@ do
     end
     AFP("SendRecieve", SendRecieve)
 
-    C_ChatInfo.RegisterAddonMessagePrefix("GW2UI_VERSIONCHK")
+--    C_ChatInfo.RegisterAddonMessagePrefix("GW2UI_VERSIONCHK")
 
     local f = CreateFrame("Frame")
     f:RegisterEvent("CHAT_MSG_ADDON")
@@ -197,6 +196,22 @@ local function bag_OnUpdate(self, elapsed)
 end
 AFP("bag_OnUpdate", bag_OnUpdate)
 
+local function gwMicro_PositionAlert(alert)
+    if
+        (alert ~= CollectionsMicroButtonAlert and alert ~= LFDMicroButtonAlert and alert ~= EJMicroButtonAlert and
+            alert ~= StoreMicroButtonAlert and
+            alert ~= CharacterMicroButtonAlert and
+            alert ~= TalentMicroButtonAlert)
+    then
+        return
+    end
+    alert.Arrow:ClearAllPoints()
+    alert.Arrow:SetPoint("BOTTOMLEFT", alert, "TOPLEFT", 4, -4)
+    alert:ClearAllPoints()
+    alert:SetPoint("TOPLEFT", alert.GwMicroButton, "BOTTOMLEFT", -18, -20)
+end
+AFP("gwMicro_PositionAlert", gwMicro_PositionAlert)
+
 local function modifyMicroAlert(alert, microButton)
     if not alert then return end --TODO: Alerts are changed
     alert.GwMicroButton = microButton
@@ -250,18 +265,17 @@ local function reskinMicroButton(btn, name, mbf)
     t:SetSize(32,32)
 
     if btn.Flash then
-        btn.Flash:SetTexture(tex)
+        btn.Flash:GwSetInside()
+        btn.Flash:SetTexture()
     end
 
     if btn.FlashBorder then
-        btn.FlashBorder:GwSetInside()
         btn.FlashBorder:SetAlpha(0)
         btn.FlashBorder:SetScale(0.00001)
     end
     if btn.FlashContent then
         btn.FlashContent:SetAlpha(0)
         btn.FlashContent:SetScale(0.00001)
-        btn.FlashContent:SetTexture(tex)
     end
 
     btn.GwNotify = btn:CreateTexture(nil, "OVERLAY")
@@ -345,8 +359,8 @@ local function hook_MainMenuMicroButton_OnUpdate()
     m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
     m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
     m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/MainMenuMicroButton-Up")
-    m.MainMenuBarPerformanceBar:SetAlpha(0)
-    m.MainMenuBarPerformanceBar:SetScale(0.00001)
+   -- m.MainMenuBarPerformanceBar:SetAlpha(0)
+   -- m.MainMenuBarPerformanceBar:SetScale(0.00001)
 end
 AFP("hook_MainMenuMicroButton_OnUpdate", hook_MainMenuMicroButton_OnUpdate)
 
@@ -438,7 +452,7 @@ local function setupMicroButtons(mbf)
     -- or if we need to create our own char button for the custom hero panel
     local cref
     if GetSetting("USE_CHARACTER_WINDOW") then
-        cref = CreateFrame("Button", "GwCharacterMicroButton", mbf, "SecureHandlerClickTemplate")
+        cref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
         reskinMicroButton(cref, "CharacterMicroButton", mbf)
@@ -455,7 +469,7 @@ local function setupMicroButtons(mbf)
         )
         disableMicroButton(CharacterMicroButton, true)
         CharacterMicroButton.GwSetAnchorPoint = char_SetAnchorPoint
-        cref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
+        --cref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
         cref:SetScript("OnLeave", GameTooltip_Hide)
         cref:HookScript("OnEnter", GW.Friends_OnEnter)
         cref:HookScript("OnEvent", GW.Friends_OnEvent)
@@ -508,7 +522,7 @@ local function setupMicroButtons(mbf)
             end
             ]=]
         )
-        sref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
+      --  sref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
         sref:SetScript("OnLeave", GameTooltip_Hide)
         sref:SetScript("OnHide", GameTooltip_Hide)
 
@@ -519,14 +533,36 @@ local function setupMicroButtons(mbf)
         sref:ClearAllPoints()
         sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
     end
+    -- TalentMicroButton create aur own to prevent actionbar taint
+    local taltenMicroButton = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
+    taltenMicroButton.tooltipText = MicroButtonTooltipText(TALENTS_BUTTON, "TOGGLETALENTS")
+    taltenMicroButton.newbieText = NEWBIE_TOOLTIP_TALENTS
+    reskinMicroButton(taltenMicroButton, "TalentMicroButton", mbf)
 
-    -- TalentMicroButton -- adding things to that one taint the actionbars
-    TalentMicroButton:ClearAllPoints()
-    TalentMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
+ --   GW.InitTalentDataText()
+    taltenMicroButton:ClearAllPoints()
+    taltenMicroButton:SetPoint("BOTTOMLEFT", sref, "BOTTOMRIGHT", 4, 0)
+    taltenMicroButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    taltenMicroButton:SetScript("OnEnter", GW.TalentButton_OnEnter)
+    taltenMicroButton:SetScript("OnLeave", GameTooltip_Hide)
+    taltenMicroButton:SetScript("OnClick", GW.TalentButton_OnClick)
+    taltenMicroButton:SetScript("OnEvent", GW.TalentButton_OnEvent)
+    taltenMicroButton:RegisterEvent("PLAYER_TALENT_UPDATE")
+    taltenMicroButton:RegisterEvent("PLAYER_ENTERING_WORLD")
+    taltenMicroButton:RegisterEvent("TRAIT_TREE_CURRENCY_INFO_UPDATED")
+    taltenMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
+    taltenMicroButton:RegisterEvent("TRAIT_CONFIG_UPDATED")
+    taltenMicroButton:RegisterEvent("CONFIG_COMMIT_FAILED")
+    taltenMicroButton:RegisterEvent("TRAIT_NODE_CHANGED")
+    taltenMicroButton:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    taltenMicroButton:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    taltenMicroButton:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
+    taltenMicroButton:RegisterEvent("TRAIT_CONFIG_DELETED")
+    disableMicroButton(TalentMicroButton, true)
 
     -- AchievementMicroButton
     AchievementMicroButton:ClearAllPoints()
-    AchievementMicroButton:SetPoint("BOTTOMLEFT", TalentMicroButton, "BOTTOMRIGHT", 4, 0)
+    AchievementMicroButton:SetPoint("BOTTOMLEFT", taltenMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- QuestLogMicroButton
     QuestLogMicroButton:ClearAllPoints()
@@ -582,18 +618,18 @@ local function setupMicroButtons(mbf)
     -- MainMenuMicroButton
     MainMenuMicroButton:ClearAllPoints()
     MainMenuMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
-    MainMenuMicroButton.MainMenuBarPerformanceBar:SetAlpha(0)
-    MainMenuMicroButton.MainMenuBarPerformanceBar:SetScale(0.00001)
+  --  MainMenuMicroButton.MainMenuBarPerformanceBar:SetAlpha(0)
+  --  MainMenuMicroButton.MainMenuBarPerformanceBar:SetScale(0.00001)
     MainMenuMicroButton:HookScript("OnUpdate", hook_MainMenuMicroButton_OnUpdate)
 
     -- HelpMicroButton
-    HelpMicroButton:ClearAllPoints()
-    HelpMicroButton:SetPoint("BOTTOMLEFT", MainMenuMicroButton, "BOTTOMRIGHT", 4, 0)
+  --  HelpMicroButton:ClearAllPoints()
+  --  HelpMicroButton:SetPoint("BOTTOMLEFT", MainMenuMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- StoreMicroButton
     StoreMicroButton:ClearAllPoints()
-    StoreMicroButton:SetPoint("BOTTOMLEFT", HelpMicroButton, "BOTTOMRIGHT", 4, 0)
-
+    StoreMicroButton:SetPoint("BOTTOMLEFT", MainMenuMicroButton, "BOTTOMRIGHT", 4, 0)
+--[[
     -- great vault icom
     local greatVaultIcon = CreateFrame("Button", "Gw2GreateVaultMicroMenuButton", mbf, "MainMenuBarMicroButton")
     greatVaultIcon.newbieText = nil
@@ -635,6 +671,7 @@ local function setupMicroButtons(mbf)
             end)
         end
     end)
+    ]]
 end
 AFP("setupMicroButtons", setupMicroButtons)
 
@@ -665,6 +702,7 @@ local function SetupNotificationArea(mbf)
     mailIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
 
     -- workorder icon
+    --[[
     local workOrderIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
     workOrderIcon:RegisterEvent("CRAFTINGORDERS_UPDATE_PERSONAL_ORDER_COUNTS")
     workOrderIcon:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -678,6 +716,8 @@ local function SetupNotificationArea(mbf)
     workOrderIcon:HookScript("OnLeave", GameTooltip_Hide)
     workOrderIcon:SetScript("OnEvent", workOrderIconOnEvent)
     workOrderIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
+    ]]
+
 end
 
 local function checkElvUI()
@@ -768,7 +808,7 @@ end
 AFP("hook_MoveMicroButtons", hook_MoveMicroButtons)
 
 local function hook_UpdateMicroButtons()
-    HelpMicroButton:Show()
+   -- HelpMicroButton:Show()
     local m = GuildMicroButton
     m:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
     m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
@@ -776,6 +816,13 @@ local function hook_UpdateMicroButtons()
     m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
 end
 AFP("hook_UpdateMicroButtons", hook_UpdateMicroButtons)
+
+local function hook_MainMenuMicroButton_ShowAlert(f)
+    if f == TalentMicroButtonAlert then
+        f:Hide()
+    end
+end
+AFP("hook_MainMenuMicroButton_ShowAlert", hook_MainMenuMicroButton_ShowAlert)
 
 local function mbf_OnLeave(self)
     if not self:IsMouseOver() and settings.fadeMicromenu then
@@ -792,7 +839,7 @@ local function LoadMicroMenu()
 
     UpdateSettings()
 
-    MicroMenuContainer:GwKillEditMode()
+    --MicroMenu:GwKillEditMode()
 
     -- create our micro button container frame
     local mbf = CreateFrame("Frame", "Gw2MicroBarFrame", UIParent, "GwMicroButtonFrameTmpl")
@@ -815,8 +862,14 @@ local function LoadMicroMenu()
     -- event timer icon
     ToggleEventTimerIcon(mbf.cf)
 
-    --hooksecurefunc("MoveMicroButtons", hook_MoveMicroButtons) -- 10.0.5
+    hooksecurefunc("MoveMicroButtons", hook_MoveMicroButtons) -- 10.0.5
     hooksecurefunc("UpdateMicroButtons", hook_UpdateMicroButtons)
+
+    -- get rid of the super-persistent PvP talent selector alert TODO
+    --if not TalentMicroButton:HasTalentAlertToShow() then
+    --   TalentMicroButtonAlert:Hide()
+    --end
+    hooksecurefunc("MainMenuMicroButton_ShowAlert", hook_MainMenuMicroButton_ShowAlert)
 
     -- if borders are hidden, hide the bg
     if not GetSetting("BORDER_ENABLED") then
@@ -870,8 +923,8 @@ local function LoadMicroMenu()
     mbf.cf:SetShown(not settings.fadeMicromenu)
 
     -- fix alert positions and hide the micromenu bar
-    MicroButtonAndBagsBar:SetAlpha(0)
-    MicroButtonAndBagsBar:EnableMouse(false)
+   -- MicroButtonAndBagsBar:SetAlpha(0)
+   -- MicroButtonAndBagsBar:EnableMouse(false)
     modifyMicroAlert(CollectionsMicroButtonAlert, CollectionsMicroButton)
     modifyMicroAlert(LFDMicroButtonAlert, LFDMicroButton)
     modifyMicroAlert(EJMicroButtonAlert, EJMicroButton)
@@ -881,5 +934,12 @@ local function LoadMicroMenu()
     else
         modifyMicroAlert(CharacterMicroButtonAlert, CharacterMicroButton)
     end
+    if GetSetting("USE_TALENT_WINDOW") then
+        modifyMicroAlert(TalentMicroButtonAlert, GwTalentMicroButton)
+    else
+        modifyMicroAlert(TalentMicroButtonAlert, TalentMicroButton)
+    end
+    --hooksecurefunc("MainMenuMicroButton_PositionAlert", gwMicro_PositionAlert) TODO
+
 end
 GW.LoadMicroMenu = LoadMicroMenu

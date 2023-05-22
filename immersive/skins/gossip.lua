@@ -212,8 +212,9 @@ local function skinGossipOption(self)
             hl:Show()
             hl:SetAlpha(0.2)
             AddToAnimation("GOSSIP_OPTIONHOVER", 0, 1, GetTime(), 0.2,
-                function(p)
-                    p = math.max(0.2, p)
+                function()
+                    local p = animations["GOSSIP_OPTIONHOVER"].progress
+                    p = math.max(0.2,p)
                     hl:SetAlpha(p)
                 end
             )
@@ -353,7 +354,8 @@ local function updateModelFrame(self, unit,isDebugUpdate) -- needs to be tested 
 
         if not isDebugUpdate then
             AddToAnimation("GOSSIP_MODEL", 0, 1, GetTime(), 0.8,
-                function(p)
+                function()
+                local p = animations["GOSSIP_MODEL"].progress
                 p = math.min(1,math.max(0,(p - 0.5) / 0.5))
                 self.modelFrame:SetAlpha(p)
                 end
@@ -453,10 +455,10 @@ local function LoadGossipSkin()
 
     local GossipFrame = GossipFrame
 
-    GW.HandleTrimScrollBar(ItemTextScrollFrame.ScrollBar, true)
-    GW.HandleScrollControls(ItemTextScrollFrame)
-    GW.HandleTrimScrollBar(GossipFrame.GreetingPanel.ScrollBar, true)
-    GW.HandleScrollControls(GossipFrame.GreetingPanel)
+    ItemTextScrollFrameScrollBar:GwSkinScrollBar()
+    ItemTextScrollFrame:GwSkinScrollFrame()
+    GW.HandleTrimScrollBar(GossipFrame.GreetingPanel.ScrollBar)
+    GW.HandleAchivementsScrollControls(GossipFrame.GreetingPanel)
     GossipFrame.GreetingPanel.GoodbyeButton:Hide()
     GossipFrame.GreetingPanel.GoodbyeButton:GwStripTextures()
     GossipFrame.GreetingPanel.GoodbyeButton:GwSkinButton(false, true)
@@ -486,7 +488,7 @@ local function LoadGossipSkin()
         GossipFrame.Background:Hide()
     end
 
-    local tex = ItemTextFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
+    local tex = ItemTextFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     local w, h = ItemTextFrame:GetSize()
     tex:SetPoint("TOP", ItemTextFrame, "TOP", 0, 20)
     tex:SetSize(w + 50, h + 70)
@@ -612,8 +614,8 @@ local function LoadGossipSkin()
     GossipPaginControler:SetSize(64, 32)
     GossipPagingForward:SetSize(32, 32)
     GossipPagingBack:SetSize(32, 32)
-    GossipPagingForward:ClearNormalTexture()
-    GossipPagingBack:ClearNormalTexture()
+    GossipPagingForward:SetNormalTexture(nil)
+    GossipPagingBack:SetNormalTexture(nil)
     GossipPagingForward.backarrow:SetRotation(math.pi)
     GossipPaginControler:SetPoint("TOPLEFT", greetings, "TOPLEFT", 0, 0)
     GossipPaginControler:SetPoint("BOTTOMRIGHT", greetings, "BOTTOMRIGHT", 0, 0)
@@ -636,7 +638,8 @@ local function LoadGossipSkin()
         GossipFrame.CloseButton:Hide()
 
         AddToAnimation("GOSSIP_FRAME_FADE", 0, 1, GetTime(), 0.4,
-            function(p)
+            function()
+                local p = animations["GOSSIP_FRAME_FADE"].progress
                 GossipFrame:SetAlpha(math.max(0.5, p))
                 portraitFrame.npcNameLabel:SetWidth(200 * p)
                 portraitFrame.npcNameLabel:SetTexCoord(0, p, 0, 1)
@@ -663,10 +666,8 @@ local function LoadGossipSkin()
         end)
         if numButtons > 0 then
           GossipFrame.ListBackground:Show()
-          GossipFrame.GreetingPanel:Show()
         else
           GossipFrame.ListBackground:Hide()
-          GossipFrame.GreetingPanel:Hide()
         end
 
         if GreetingPanelFirstLoad then
@@ -687,10 +688,9 @@ local function LoadGossipSkin()
     end)
 
     local NPCFriendshipStatusBar = GossipFrame.FriendshipStatusBar
-    NPCFriendshipStatusBar:SetFrameLevel(portraitFrame:GetFrameLevel() + 2)
     NPCFriendshipStatusBar:ClearAllPoints()
     NPCFriendshipStatusBar:SetPoint("BOTTOMLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 3)
-    NPCFriendshipStatusBar:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "TOPRIGHT", 5, 3)
+    NPCFriendshipStatusBar:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel, "TOPRIGHT", -5, 3)
     NPCFriendshipStatusBar:SetHeight(16)
     NPCFriendshipStatusBar:GwStripTextures()
     NPCFriendshipStatusBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
@@ -708,7 +708,7 @@ local function LoadGossipSkin()
     QuestFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
     QuestFrame:GwStripTextures()
     QuestFrame:GwCreateBackdrop()
-    QuestFrame.tex = QuestFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
+    QuestFrame.tex = QuestFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     w, h = QuestFrame:GetSize()
     QuestFrame.tex:SetPoint("TOP", QuestFrame, "TOP", 0, 20)
     QuestFrame.tex:SetSize(w + 50, h + 70)
@@ -801,15 +801,12 @@ local function LoadGossipSkin()
     QuestFrameProgressPanel:GwStripTextures(true)
     QuestFrameRewardPanel:GwStripTextures(true)
 
-    GW.HandleTrimScrollBar(QuestProgressScrollFrame.ScrollBar, true)
-	GW.HandleTrimScrollBar(QuestRewardScrollFrame.ScrollBar, true)
-	GW.HandleTrimScrollBar(QuestDetailScrollFrame.ScrollBar, true)
-	GW.HandleTrimScrollBar(QuestGreetingScrollFrame.ScrollBar, true)
-
-    GW.HandleScrollControls(QuestProgressScrollFrame)
-    GW.HandleScrollControls(QuestRewardScrollFrame)
-    GW.HandleScrollControls(QuestDetailScrollFrame)
-    GW.HandleScrollControls(QuestGreetingScrollFrame)
+    QuestRewardScrollFrame.ScrollBar:GwSkinScrollBar()
+    QuestRewardScrollFrame:GwSkinScrollFrame()
+    QuestProgressScrollFrameScrollBar:GwSkinScrollBar()
+    QuestProgressScrollFrame:GwSkinScrollFrame()
+    QuestDetailScrollFrame.ScrollBar:GwSkinScrollBar()
+    QuestDetailScrollFrame:GwSkinScrollFrame()
 
     QuestFrameAcceptButton:GwSkinButton(false, true)
     QuestFrameDeclineButton:GwSkinButton(false, true)
@@ -820,7 +817,7 @@ local function LoadGossipSkin()
     QuestNPCModelTextFrame:GwStripTextures()
     w, h = QuestNPCModelTextFrame:GetSize()
     QuestNPCModelTextFrame:GwStripTextures()
-    QuestNPCModelTextFrame.tex = QuestNPCModelTextFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
+    QuestNPCModelTextFrame.tex = QuestNPCModelTextFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     QuestNPCModelTextFrame.tex:SetPoint("TOP", QuestNPCModelTextFrame, "TOP", 0, 20)
     QuestNPCModelTextFrame.tex:SetSize(w + 30, h + 60)
     QuestNPCModelTextFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
@@ -843,7 +840,7 @@ local function LoadGossipSkin()
 
     QuestLogPopupDetailFrame:GwStripTextures(nil, true)
     QuestLogPopupDetailFrame:GwCreateBackdrop()
-    tex = QuestLogPopupDetailFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
+    tex = QuestLogPopupDetailFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     w, h = QuestLogPopupDetailFrame:GetSize()
     tex:SetPoint("TOP", QuestLogPopupDetailFrame, "TOP", 0, 20)
     tex:SetSize(w + 50, h + 70)
@@ -857,8 +854,7 @@ local function LoadGossipSkin()
     QuestLogPopupDetailFrameCloseButton:SetSize(20, 20)
 
     QuestLogPopupDetailFrameScrollFrame:GwStripTextures()
-    GW.HandleTrimScrollBar(QuestLogPopupDetailFrameScrollFrame.ScrollBar, true)
-    GW.HandleScrollControls(QuestLogPopupDetailFrameScrollFrame)
+    QuestLogPopupDetailFrameScrollFrameScrollBar:GwSkinScrollBar()
     QuestLogPopupDetailFrameScrollFrame:GwSkinScrollFrame()
 end
 GW.LoadGossipSkin = LoadGossipSkin

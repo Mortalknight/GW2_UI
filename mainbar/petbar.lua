@@ -277,8 +277,8 @@ local function updatePetData(self, event, unit)
         healthprec,
         GetTime(),
         0.2,
-        function(p)
-            self.health:SetValue(p)
+        function()
+            self.health:SetValue(animations["petBarAnimation"].progress)
         end
     )
     self.health.animationCurrent = healthprec
@@ -302,14 +302,14 @@ local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
     playerPetFrame.buttons = {}
 
-    PetActionBar:UnregisterEvent("PET_BAR_UPDATE")
-    PetActionBar:UnregisterEvent("UNIT_PET")
-    PetActionBar:UnregisterEvent("PET_UI_UPDATE")
-    PetActionBar:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
-    PetActionBar.ignoreFramePositionManager = true
-    PetActionBar:GwKillEditMode()
+    PetFrame:UnregisterEvent("PET_BAR_UPDATE")
+    PetFrame:UnregisterEvent("UNIT_PET")
+    PetFrame:UnregisterEvent("PET_UI_UPDATE")
+    PetFrame:UnregisterEvent("UPDATE_VEHICLE_ACTIONBAR")
+    PetFrame.ignoreFramePositionManager = true
+   -- PetFrame:GwKillEditMode()
 
-    hooksecurefunc(PetActionBar, "Update", UpdateAutoCast)
+    --hooksecurefunc(PetActPetFrameionBar, "Update", UpdateAutoCast)
 
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
@@ -378,7 +378,7 @@ local function LoadPetFrame(lm)
         playerPetFrame.buttons[i] = button
     end
     SetPetActionButtonPositionAndStyle(playerPetFrame)
-    hooksecurefunc(PetActionBar, "Update", UpdatePetActionBarIcons)
+    --hooksecurefunc(PetFrame, "Update", UpdatePetActionBarIcons)
     UpdatePetActionBarIcons()
 
     -- hook hotkey update calls so we can override styling changes
@@ -388,7 +388,7 @@ local function LoadPetFrame(lm)
     hotkeyEventTrackerFrame:SetScript("OnEvent", function()
         for _, button in ipairs(GwPlayerPetFrame.buttons) do
             GW.updateHotkey(button)
-            GW.FixHotKeyPosition(button, false, true)
+   --         GW.FixHotKeyPosition(button, false, true)
         end
     end)
 

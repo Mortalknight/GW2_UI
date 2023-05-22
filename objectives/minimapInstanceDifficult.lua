@@ -1,10 +1,13 @@
 local _, GW = ...
+local instance 
+--[[
+
 
 local difficulty = MinimapCluster.InstanceDifficulty
 local instance = difficulty.Instance
 local guild = difficulty.Guild
 local challenge = difficulty.ChallengeMode
-
+]]
 local difficulties = {
     [1] = "normal", --5ppl normal
     [2] = "heroic", --5ppl heroic
@@ -57,7 +60,7 @@ local function GuildEmblem()
         char.guildTexCoord = nil
     end
     if char.guildTexCoord ~= nil and IsInGuild() then
-        return "|TInterface\\GuildFrame\\GuildEmblems_01:16:16:0:0:32:32:" .. (char.guildTexCoord[1] * 32) .. ":" .. (char.guildTexCoord[7] * 32) .. ":" .. (char.guildTexCoord[2] * 32) .. ":" .. (char.guildTexCoord[8] * 32) .. "|t"
+        return "|TInterface\\GuildFrame\\GuildEmblemsLG_01:24:24:-4:1:32:32:" .. (char.guildTexCoord[1] * 32) .. ":" .. (char.guildTexCoord[7] * 32) .. ":" .. (char.guildTexCoord[2] * 32) .. ":" .. (char.guildTexCoord[8] * 32) .. "|t"
     else
         return ""
     end
@@ -86,9 +89,9 @@ local function InstanceDifficultOnEvent(self, _, inGuildGroup)
             local logo = GuildEmblem()
             self.icon:SetText(logo)
         end
-        instance:Hide()
-        challenge:Hide()
-        guild:Hide()
+     --   instance:Hide()
+      --  challenge:Hide()
+       -- guild:Hide()
     end
 end
 
@@ -114,10 +117,10 @@ local function SkinMinimapInstanceDifficult()
     d:RegisterEvent("GUILD_PARTY_STATE_UPDATED")
     d:SetScript("OnEvent", InstanceDifficultOnEvent)
 
-    instance:HookScript("OnShow", HideBlizzardIcon)
-    guild:HookScript("OnShow", HideBlizzardIcon)
-    challenge:HookScript("OnShow", HideBlizzardIcon)
+ --   instance:HookScript("OnShow", HideBlizzardIcon)
+ ----   guild:HookScript("OnShow", HideBlizzardIcon)
+  --  challenge:HookScript("OnShow", HideBlizzardIcon)
 
-    hooksecurefunc(MinimapCluster.InstanceDifficulty, "Update", function() InstanceDifficultOnEvent(d) end)
+--    hooksecurefunc(MinimapCluster.InstanceDifficulty, "Update", function() InstanceDifficultOnEvent(d) end)
 end
 GW.SkinMinimapInstanceDifficult = SkinMinimapInstanceDifficult

@@ -9,7 +9,8 @@ local function QuestXPPercent()
     local _, unitXPMax = UnitXP("player"), UnitXPMax("player")
     if QuestInfoFrame.questLog then
         local selectedQuest = C_QuestLog.GetSelectedQuest()
-        if C_QuestLog.ShouldShowQuestRewards(selectedQuest) then
+        --if C_QuestLog.ShouldShowQuestRewards(selectedQuest) then
+        if true then 
             local xp = GetQuestLogRewardXP()
             if xp and xp > 0 then
                 local text = MapQuestInfoRewardsFrame.XPFrame.Name:GetText()

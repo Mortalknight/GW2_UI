@@ -267,9 +267,9 @@ local function setButtonPosition(frame)
         frame.Container:ClearAllPoints()
         frame.Container:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
         if not frame.isDocked then
-            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
+            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
         else
-            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, 0)
+            frame.Container:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, 0)
         end
 
         editbox:ClearAllPoints()
@@ -1132,8 +1132,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             end
 
             local showLink = 1
-            local isMonster = strsub(chatType, 1, 7) == "MONSTER"
-            if isMonster or strsub(chatType, 1, 9) == "RAID_BOSS" then
+            if strsub(chatType, 1, 7) == "MONSTER" or strsub(chatType, 1, 9) == "RAID_BOSS" then
                 showLink = nil
                 -- fix blizzard formatting errors from localization strings
                 --arg1 = gsub(arg1, "%%%d", "%%s")
@@ -1192,17 +1191,15 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             local pflag = GetPFlag(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
 
             -- LFG Role Flags
-            local lfgRole = (chatType == "PARTY_LEADER" or chatType == "PARTY" or chatType == "RAID" or chatType == 'RAID_LEADER' or chatType == 'INSTANCE_CHAT' or chatType == 'INSTANCE_CHAT_LEADER') and lfgRoles[playerName]
-            if lfgRole then
-                pflag = pflag..lfgRole
+            local lfgRole = lfgRoles[playerName]
+            if lfgRole and (chatType == "PARTY_LEADER" or chatType == "PARTY" or chatType == "RAID" or chatType == "RAID_LEADER" or chatType == "INSTANCE_CHAT" or chatType == "INSTANCE_CHAT_LEADER") then
+                pflag = pflag .. lfgRole
             end
 
             -- GW2 Staff Icon Chat Icon
-            if not isMonster then
-                local gw2Icon = gw2StaffList[playerName]
-                if gw2Icon then
-                    pflag = pflag .. gw2Icon
-                end
+            local gw2Icon = gw2StaffList[playerName]
+            if gw2Icon then
+                pflag = pflag .. gw2Icon
             end
 
             if usingDifferentLanguage then
@@ -1410,9 +1407,9 @@ local function styleChatWindow(frame)
         fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
         fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
         if not frame.isDocked then
-            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
+            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
         else
-            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, 0)
+            fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, 0)
         end
         if not frame.isDocked then fmGCC.EditBox:Hide() end
         frame.Container = fmGCC
@@ -1473,12 +1470,9 @@ local function styleChatWindow(frame)
     scrollToBottom:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
     scrollToBottom:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_up")
     scrollToBottom:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
-    scrollToBottom.Flash:GwKill()
-    scrollToBottom:SetSize(24, 24)
-    scrollToBottom:SetPoint("BOTTOMRIGHT", frame.ResizeButton, "TOPRIGHT", 7, -2)
-	GW.HandleTrimScrollBar(scroll, true)
-    GW.HandleScrollControls(frame)
-
+    scrollToBottom:SetHeight(24)
+    scrollToBottom:SetWidth(24)
+    scroll:GwSkinScrollBar()
     ChatFrameMenuButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")
     ChatFrameMenuButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_up")
     ChatFrameMenuButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/bubble_down")
@@ -1733,7 +1727,7 @@ end
 
 local function BuildEmoticonTableFrame()
     local frame = CreateFrame("Frame", "GW_EmoteFrame", UIParent)
-    frame:GwCreateBackdrop(GW.BackdropTemplates.Default, true, 4, 4)
+    frame:GwCreateBackdrop(GW.skins.constBackdropFrame, true, 4, 4)
     frame:SetWidth(160)
     frame:SetHeight(134)
     frame:SetPoint("BOTTOMLEFT", QuickJoinToastButton, "TOPLEFT", 0, 5)
@@ -2153,9 +2147,9 @@ local function LoadChat()
                 fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
                 fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
                 if not frame.isDocked then
-                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
+                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
                 else
-                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, 0)
+                    fmGCC:SetPoint("BOTTOMRIGHT", _G[frameName .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, 0)
                 end
                 if not frame.isDocked then fmGCC.EditBox:Hide() end
                 frame.Container = fmGCC
@@ -2183,7 +2177,7 @@ local function LoadChat()
             if chatFrame.Container then chatFrame.Container:SetAlpha(0) end
             if not chatFrame.minFrame.minimiizeStyled then
                 chatFrame.minFrame:GwStripTextures(true)
-                chatFrame.minFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
+                chatFrame.minFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
                 _G[chatFrame.minFrame:GetName() .. "MaximizeButton"]:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/maximize_button")
@@ -2208,9 +2202,9 @@ local function LoadChat()
             fmGCC:SetScript("OnSizeChanged", chatBackgroundOnResize)
             fmGCC:SetPoint("TOPLEFT", frame, "TOPLEFT", -35, 5)
             if not frame.isDocked then
-                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, editbox:GetHeight() - 8)
+                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, editbox:GetHeight() - 8)
             else
-                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 5, 0)
+                fmGCC:SetPoint("BOTTOMRIGHT", _G[name .. "EditBoxFocusRight"], "BOTTOMRIGHT", 0, 0)
             end
             if not frame.isDocked then fmGCC.EditBox:Hide() end
             frame.Container = fmGCC
@@ -2279,7 +2273,7 @@ local function LoadChat()
         _G[ChatMenus[i]]:HookScript("OnShow",
             function(self)
                 self:GwStripTextures()
-                self:GwCreateBackdrop(GW.BackdropTemplates.Default)
+                self:GwCreateBackdrop(GW.skins.constBackdropFrame)
             end)
     end
 

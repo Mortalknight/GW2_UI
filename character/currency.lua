@@ -379,12 +379,12 @@ GW.AddForProfiling("currency", "raidInfoSetup", raidInfoSetup)
 local function menuItem_OnClick(self)
     local menuItems = self:GetParent().items
     for _, v in pairs(menuItems) do
-        v.activeTexture:Hide()
+        v:SetNormalTexture(nil)
         v.ToggleMe:Hide()
     end
-    self.activeTexture:Show()
+    self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
     self.ToggleMe:Show()
-    if self:GetName() == "GwRaidInfoFrame" then
+    if self:GetName() == "RaidInfoFrame" then
         RequestRaidInfo()
     end
 end
@@ -412,7 +412,7 @@ local function LoadCurrency(tabContainer)
 
     -- update currency window when anyone adds a watch currency
     hooksecurefunc(
-        C_CurrencyInfo, "SetCurrencyBackpack",
+        "SetCurrencyBackpack",
         function()
             if curwin:IsShown() then
                 loadCurrency(curwin)
@@ -447,17 +447,19 @@ local function LoadCurrency(tabContainer)
     item:SetText(CURRENCY)
     item:ClearAllPoints()
     item:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
-    fmMenu.items.currency = item
+    fmMenu.items["currency"] = item
 
-    item = CreateFrame("Button", "GwRaidInfoFrame", fmMenu, "GwCharacterMenuButtonTemplate")
+    item = CreateFrame("Button", "RaidInfoFrame", fmMenu, "GwCharacterMenuButtonTemplate")
     item.ToggleMe = raidinfo
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(RAID_INFORMATION)
     item:ClearAllPoints()
-    item:SetPoint("TOPLEFT", fmMenu.items.currency, "BOTTOMLEFT")
-    fmMenu.items.raidinfo = item
+    item:SetPoint("TOPLEFT", fmMenu.items["currency"], "BOTTOMLEFT")
+    fmMenu.items["raidinfo"] = item
 
-    CharacterMenuButton_OnLoad(fmMenu.items.currency, false)
-    CharacterMenuButton_OnLoad(fmMenu.items.raidinfo, true)
+    CharacterMenuButton_OnLoad(fmMenu.items["currency"], false)
+    CharacterMenuButton_OnLoad(fmMenu.items["raidinfo"], true)
+
+    fmMenu.items["currency"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
 end
 GW.LoadCurrency = LoadCurrency

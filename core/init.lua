@@ -62,8 +62,6 @@ GW.scaleableFrames = {}
 GW.scaleableMainHudFrames = {}
 GW.animations = {}
 GW.oUF = {}
-GW.BackdropTemplates = {}
-GW.AchievementFrameSkinFunction = {}
 
 -- money
 GW.earnedMoney = 0
@@ -138,8 +136,8 @@ local function AcknowledgeTips()
 end
 
 -- disable helper tooltips
-hooksecurefunc(HelpTip, "Show", AcknowledgeTips)
-C_Timer.After(1, function() AcknowledgeTips() end)
+--hooksecurefunc(HelpTip, "Show", AcknowledgeTips)
+--C_Timer.After(1, function() AcknowledgeTips() end)
 
 -- we need to load this function here because it is need in defaults.lua
 local function MapTable(T, fn, withKey)

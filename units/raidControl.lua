@@ -347,7 +347,7 @@ local function Create_Raid_Counter()
             end
         ]=]
     )
-    raidCounterFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    raidCounterFrame:GwCreateBackdrop(GW.skins.constBackdropFrameSmallerBorder, true)
 
     raidCounterFrame:SetSize(100, 25)
 

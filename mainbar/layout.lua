@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 -- this is the layout manager for all the pieces of the mainbar frame that
 -- have inter-related movement/visibility; it has intimate knowledge of the
@@ -32,14 +31,12 @@ end
 function lm:RegisterMultiBarLeft(f)
     local l = self.layoutFrame
     l:SetFrameRef("mbl", f)
-    l:SetFrameRef("mbl_mover", f.gwMover)
     self.mblFrame = f
 end
 
 function lm:RegisterMultiBarRight(f)
     local l = self.layoutFrame
     l:SetFrameRef("mbr", f)
-    l:SetFrameRef("mbr_mover", f.gwMover)
     self.mbrFrame = f
 end
 
@@ -48,12 +45,6 @@ function lm:RegisterPetFrame(f)
     l:SetFrameRef("pet", f)
     l:SetFrameRef("pet_mover", f.gwMover)
     self.petFrame = f
-
-    local up = self
-    GW.AddActionBarCallback(function()
-        up:onstate_None()
-    end)
-    self:onstate_None()
 end
 
 function lm:onstate_None()
@@ -76,67 +67,54 @@ local onstate_Barlayout = [=[
         self:SetAttribute("currentHandlerState", newstate)
     end
 
-    if self:GetAttribute("inMoveHudMode") then return end
-
     local uip = self:GetFrameRef("UIP")
     local mbr = self:GetFrameRef("mbr")
-    local mbr_mover = self:GetFrameRef("mbr_mover")
     local mbl = self:GetFrameRef("mbl")
-    local mbl_mover = self:GetFrameRef("mbl_mover")
     local bbar = self:GetFrameRef("buffs")
     local bbarmover = self:GetFrameRef("buffs_mover")
     local dbar = self:GetFrameRef("debuffs")
     local dbarmover = self:GetFrameRef("debuffs_mover")
     local pet = self:GetFrameRef("pet")
     local petmover = self:GetFrameRef("pet_mover")
-    local pfat = self:GetAttribute("playerFrameAsTarget")
-    local epbar = self:GetAttribute("isEpBarShown")
 
     if mbl and mbl:IsShown() and not mbl:GetAttribute("isMoved") and pet and not pet:GetAttribute("isMoved") then
+        local pfat = pet:GetAttribute("playerFrameAsTarget")
         if newstate == "incombat" then
             petmover:ClearAllPoints()
-            petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -57 + (pfat and 54 or 0), 212)
+            petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 212)
         else
             if mbl and mbl:IsShown() then
                 if mbl:GetAttribute("gw_FadeShowing") then
                     petmover:ClearAllPoints()
-                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -57 + (pfat and 54 or 0), 212)
+                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 212)
                 else
                     petmover:ClearAllPoints()
-                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -57 + (pfat and 54 or 0), 120)
+                    petmover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + (pfat and 54 or 0), 120)
                 end
             end
         end
     end
 
-    -- only set the dbarmover frame to the correct position, based on scaling
+    -- only set the bbarmover frame to the correct position, based on scaling
     if newstate == "outcombat" and dbarmover and bbar and not dbar:GetAttribute("isMoved") and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
         local buff_action = "none"
-        if mbr:IsShown() and mbr:GetAttribute("gw_FadeShowing") then
-            buff_action = "high"
+        if mbr and mbr:IsShown() and not mbr:GetAttribute("isMoved") then
+            if mbr:GetAttribute("gw_FadeShowing") then
+                buff_action = "high"
+            end
         end
-        local y_off = (buff_action == "high" and 200 or 100)
+        local y_off = (buff_action == "high") and 200 or 100
+        local grow_dir = bbar:GetAttribute("growDir")
+        local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
         dbarmover:ClearAllPoints()
-        dbarmover:SetPoint("BOTTOMRIGHT", mbr, "BOTTOMRIGHT", 0, y_off)
-    end
-
-    --mbrFrame
-    if mbr and not mbr:GetAttribute("isMoved") and mbr_mover then
-        mbr_mover:ClearAllPoints()
-        mbr_mover:SetPoint("BOTTOMRIGHT", uip, "BOTTOM", pfat and 318 or 369, epbar and 120 or 114)
-    end
-
-    --mblFrame
-    if mbl and not mbl:GetAttribute("isMoved") and mbl_mover then
-        mbl_mover:ClearAllPoints()
-        mbl_mover:SetPoint("BOTTOMLEFT", uip, "BOTTOM", pfat and -318 or -369, epbar and 120 or 114)
+        dbarmover:SetPoint(anchor_hb, mbr, anchor_hb, 0, y_off)
     end
 
     if bbar and not bbar:GetAttribute("isMoved") and mbr and not mbr:GetAttribute("isMoved") then
         local buff_action = "none"
         if newstate == "incombat" or newstate == "outcombat" then
             buff_action = "low"
-            if mbr:IsShown() then
+            if mbr and mbr:IsShown() and not mbr:GetAttribute("isMoved") then
                 if newstate == "outcombat" then
                     if mbr:GetAttribute("gw_FadeShowing") then
                         buff_action = "high"
@@ -150,13 +128,15 @@ local onstate_Barlayout = [=[
         elseif newstate == "obar" then
             buff_action = "show"
         elseif newstate == "vbar" then
-            buff_action = "high"
+            buff_action = "low"
         end
 
         if buff_action == "high" or buff_action == "low" then
             local y_off = (buff_action == "high") and 100 or 0
+            local grow_dir = bbar:GetAttribute("growDir")
+            local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
             bbarmover:ClearAllPoints()
-            bbarmover:SetPoint("BOTTOMRIGHT", mbr, "BOTTOMRIGHT", 0, y_off)
+            bbarmover:SetPoint(anchor_hb, mbr, anchor_hb, 0, y_off)
             bbar:Show()
             if dbar then dbar:Show() end
         elseif buff_action == "hide" then
@@ -171,8 +151,6 @@ local onstate_Barlayout = [=[
 
 local function LoadMainbarLayout()
     local l = CreateFrame("Frame", nil, UIParent, "SecureHandlerStateTemplate")
-    l:SetAttribute("playerFrameAsTarget", GetSetting("PLAYER_AS_TARGET_FRAME"))
-    l:SetAttribute("isEpBarShown", GetSetting("XPBAR_ENABLED"))
     l:SetAttribute("_onstate-barlayout", onstate_Barlayout)
     l.oocHandler = function()
         lm:onstate_None()

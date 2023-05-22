@@ -77,12 +77,12 @@ local function DisableBlizzardFrames()
 
     if ourPartyFrames then
         HandleFrame(PartyFrame, 1)
-        PartyFrame:UnregisterAllEvents()
-        PartyFrame:SetScript("OnShow", nil)
+      --  PartyFrame:UnregisterAllEvents()
+       -- PartyFrame:SetScript("OnShow", nil)
 
-        for frame in PartyFrame.PartyMemberFramePool:EnumerateActive() do
-            HandleFrame(frame, true)
-        end
+      --  for frame in PartyFrame.PartyMemberFramePool:EnumerateActive() do
+        --    HandleFrame(frame, true)
+     --   end
 
         for i = 1, MAX_PARTY do
             HandleFrame("PartyMemberFrame" .. i)
@@ -106,9 +106,6 @@ local function DisableBlizzardFrames()
             CompactRaidFrameManager:UnregisterAllEvents()
             CompactRaidFrameManager:SetParent(GW.HiddenFrame)
         end
-
-        CompactRaidFrameContainer:HookScript("OnShow", function() CompactRaidFrameContainer:Hide() end)
-        CompactRaidFrameContainer:GwKillEditMode()
     end
 
     if ourArenaFrames then
@@ -180,12 +177,12 @@ local function DisableBlizzardFrames()
     end
 
     if ourCastBar then
-        HandleFrame(PlayerCastingBarFrame)
+        HandleFrame(CastingBarFrame)
         HandleFrame(PetCastingBarFrame)
 
         -- disbale blizzard castingbar mover
-        PlayerCastingBarFrame:HookScript("OnShow", function() PlayerCastingBarFrame:Hide() end)
-        PlayerCastingBarFrame:GwKillEditMode()
+        CastingBarFrame:HookScript("OnShow", function() PlayerCastingBarFrame:Hide() end)
+        CastingBarFrame:GwKillEditMode()
     end
 
     if ourInventory then

@@ -1,6 +1,6 @@
 <Ui><Script><![CDATA[--[[
 
-TaintLess [23-05-18]
+TaintLess [22-11-27]
 https://www.townlong-yak.com/addons/taintless
 
 All rights reserved.
@@ -33,32 +33,11 @@ local function purgeKey(t, k)
     end
 end
 
-local patch do
-    local q, skips = {}, securecall(function()
-        local cb, r, _, an = select(4,GetBuildInfo()), {moon="haunted"}
-        r.moon, _, an = nil, issecurevariable(r, "moon")
-        for m, v, clo, chi in (GetAddOnMetadata(an, "X-TaintLess-DisableMitigations") or ""):gmatch("([%a_]+)=(%d+):?(%d*):?(%d*)") do
-            if (clo == "" or cb >= clo+0) and (chi == "" or chi+0 >= cb) then
-                r[m] = v + 0
-            end
-        end
-        return r
-    end)
-    function patch(name, version, impl)
-        if name == nil then
-            for qf, v in pairs(q) do
-                securecall(qf, v)
-            end
-        elseif not ((tonumber(_G[name]) or 0) >= version or skips and skips[name] == version) then
-            _G[name], q[impl] = version, version
-        end
-    end
-end
-
 -- https://www.townlong-yak.com/addons/taintless/fixes/RefreshOverread
-patch("UIDD_REFRESH_OVERREAD_PATCH_VERSION", 3, function(V)
+if (tonumber(UIDD_REFRESH_OVERREAD_PATCH_VERSION) or 0) < 3 then
+    UIDD_REFRESH_OVERREAD_PATCH_VERSION = 3
     hooksecurefunc("UIDropDownMenu_InitializeHelper", function()
-        for i=1, UIDD_REFRESH_OVERREAD_PATCH_VERSION == V and UIDROPDOWNMENU_MAXLEVELS or 0 do
+        for i=1, UIDD_REFRESH_OVERREAD_PATCH_VERSION == 3 and UIDROPDOWNMENU_MAXLEVELS or 0 do
             for j=1+_G["DropDownList" .. i].numButtons, UIDROPDOWNMENU_MAXBUTTONS do
                 local b, _ = _G["DropDownList" .. i .. "Button" .. j]
                 _ = issecurevariable(b, "checked")      or purgeKey(b, "checked")
@@ -66,41 +45,39 @@ patch("UIDD_REFRESH_OVERREAD_PATCH_VERSION", 3, function(V)
             end
         end
     end)
-end)
+end
 
 -- https://www.townlong-yak.com/addons/taintless/fixes/DisplayModeTaint
-patch("UIDROPDOWNMENU_OPEN_PATCH_VERSION", 1, function(V)
+if (tonumber(UIDROPDOWNMENU_OPEN_PATCH_VERSION) or 0) < 1 then
+    UIDROPDOWNMENU_OPEN_PATCH_VERSION = 1
     hooksecurefunc("UIDropDownMenu_InitializeHelper", function(frame)
-        if UIDROPDOWNMENU_OPEN_PATCH_VERSION == V
+        if UIDROPDOWNMENU_OPEN_PATCH_VERSION == 1
         and UIDROPDOWNMENU_OPEN_MENU and UIDROPDOWNMENU_OPEN_MENU ~= frame
         and not issecurevariable(UIDROPDOWNMENU_OPEN_MENU, "displayMode") then
             purgeKey(_G, "UIDROPDOWNMENU_OPEN_MENU")
         end
     end)
-end)
+end
 
 -- https://www.townlong-yak.com/addons/taintless/fixes/IOFrameSelection
-patch("IOFRAME_SELECTION_PATCH_VERSION", 5, function(V)
-    if type(InterfaceOptionsFrame) == "table" and type(InterfaceOptionsFrame.HookScript) == "function" then
+if (tonumber(IOFRAME_SELECTION_PATCH_VERSION) or 0) < 3 then
+    IOFRAME_SELECTION_PATCH_VERSION = 3
+    if InterfaceOptionsFrame then
         InterfaceOptionsFrame:HookScript("OnHide", function()
-            if IOFRAME_SELECTION_PATCH_VERSION == V then
+            if IOFRAME_SELECTION_PATCH_VERSION == 3 then
                 InterfaceOptionsFrameCategories.selection = nil
             end
         end)
     end
-end)
+end
 
 -- https://www.townlong-yak.com/addons/taintless/fixes/EditModeOpenDrop
-patch("EDITMAN_OPENDROP_PATCH_VERSION", 3, function(V)
-    if not (type(EditModeManagerFrame) == "table" and
-            type(EditModeManagerFrame.GetAttribute) == "function" and
-            type(FriendsFrameStatusDropDown) == "table") then
-        return
-    end
+if EditModeManagerFrame and FriendsFrameStatusDropDown and (tonumber(EDITMAN_OPENDROP_PATCH_VERSION) or 0) < 1 then
+    EDITMAN_OPENDROP_PATCH_VERSION = 1
     hooksecurefunc(EditModeManagerFrame, "GetAttribute", function(_, attr)
-        if attr ~= "UIPanelLayout-checkFit" or EDITMAN_OPENDROP_PATCH_VERSION ~= V
-        or (issecurevariable(DropDownList1, "maxWidth") and issecurevariable("UIDROPDOWNMENU_MENU_LEVEL"))
-        or InCombatLockdown() and FriendsFrameStatusDropDown:IsProtected() then
+        if attr ~= "UIPanelLayout-checkFit" or EDITMAN_OPENDROP_PATCH_VERSION ~= 1
+        or (issecurevariable(DropDownList1, "maxWidth") and issecurevariable("UIDROPDOWNMENU_MENU_LEVEL")) then
+        elseif InCombatLockdown() and FriendsFrameStatusDropDown:IsProtected() then
         elseif FriendsFrameStatusDropDown:IsVisible() then
             FriendsFrameStatusDropDown:Hide()
             FriendsFrameStatusDropDown:Show()
@@ -114,45 +91,40 @@ patch("EDITMAN_OPENDROP_PATCH_VERSION", 3, function(V)
             FriendsFrameStatusDropDown:SetParent(op)
         end
     end)
-end)
+end
 
 -- https://www.townlong-yak.com/addons/taintless/fixes/ObjectiveTrackerUpdate
-patch("OBJTRACK_DELAYUPDATE_PATCH_VERSION", 3, function(V)
-    if not (type(ObjectiveTrackerFrame) == "table" and
-            type(ObjectiveTrackerFrame.HeaderMenu) == "table" and
-            type(ObjectiveTrackerFrame.HeaderMenu.Title) == "table") then
-        return
-    end
+if ObjectiveTrackerFrame and (tonumber(OBJTRACK_DELAYUPDATE_PATCH_VERSION) or 0) < 1 then
+    OBJTRACK_DELAYUPDATE_PATCH_VERSION = 1
     local counter, didDelayUpdate, delayFrameCount = (CreateFrame("Frame", nil, ObjectiveTrackerFrame))
     counter:Hide()
     counter:SetScript("OnUpdate", function()
-        if OBJTRACK_DELAYUPDATE_PATCH_VERSION == V and delayFrameCount then
+        if OBJTRACK_DELAYUPDATE_PATCH_VERSION == 1 then
             delayFrameCount = delayFrameCount + 1
         else
             counter:Hide()
         end
     end)
     hooksecurefunc("ObjectiveTracker_Update", function()
-        if OBJTRACK_DELAYUPDATE_PATCH_VERSION == V and didDelayUpdate then
+        if OBJTRACK_DELAYUPDATE_PATCH_VERSION == 1 and didDelayUpdate then
             didDelayUpdate = nil
             purgeKey(ObjectiveTrackerFrame, "isUpdating")
         end
     end)
     hooksecurefunc(ObjectiveTrackerFrame.HeaderMenu.Title, "ClearAllPoints", function()
-        if OBJTRACK_DELAYUPDATE_PATCH_VERSION ~= V or ObjectiveTrackerFrame.isUpdating then
-        elseif issecurevariable(ObjectiveTrackerFrame, "isOnLeftSideOfScreen") then
-            if delayFrameCount then
-                delayFrameCount = nil
+        if OBJTRACK_DELAYUPDATE_PATCH_VERSION == 1 and not ObjectiveTrackerFrame.isUpdating then
+            if issecurevariable(ObjectiveTrackerFrame, "isOnLeftSideOfScreen") then
+                if delayFrameCount then
+                    delayFrameCount = nil
+                    counter:Hide()
+                end
+            elseif (delayFrameCount or 0) < 4 then
+                ObjectiveTrackerFrame.isUpdating, didDelayUpdate, delayFrameCount = 86, 1, delayFrameCount or 0
+                counter:Show()
+            else
                 counter:Hide()
             end
-        elseif 4 > (delayFrameCount or 0) then
-            ObjectiveTrackerFrame.isUpdating, didDelayUpdate, delayFrameCount = 86, 1, delayFrameCount or 0
-            counter:Show()
-        else
-            counter:Hide()
         end
     end)
-end)
-
-patch()
+end
 ]]></Script></Ui>

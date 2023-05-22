@@ -338,7 +338,7 @@ local function setDetailEx(
 
         frame.background2:SetVertexColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
         frame.StatusBar:SetStatusBarColor(FACTION_BAR_COLORS[9].r, FACTION_BAR_COLORS[9].g, FACTION_BAR_COLORS[9].b)
-    elseif friendInfo.friendshipFactionID > 0 then
+    elseif friendInfo.friendshipFactionID and friendInfo.friendshipFactionID > 0 then
         frame.StatusBar:SetMinMaxValues(0, 1)
         frame.currentRank:SetText(friendInfo.reaction)
         frame.nextRank:SetText()

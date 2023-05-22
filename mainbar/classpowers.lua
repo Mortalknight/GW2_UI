@@ -1,3 +1,4 @@
+local LEGION_HUNTER_FRENZY = 217200
 local _, GW = ...
 local lerp = GW.lerp
 local RoundInt = GW.RoundInt
@@ -88,8 +89,8 @@ local function animFlare(f, scale, offset, duration, rotate)
         0,
         GetTime(),
         duration,
-        function(p)
-            p = math.min(1, math.max(0, p))
+        function()
+            local p = math.min(1, math.max(0, animations["POWER_FLARE_ANIM"].progress))
             ff:SetAlpha(p)
             if rotate then
                 ff:SetRotation(1 * p)
@@ -126,9 +127,10 @@ local function maelstromCounterFlash_OnAnim()
 end
 GW.AddForProfiling("classpowers", "maelstromCounterFlash_OnAnim", maelstromCounterFlash_OnAnim)
 
-local function decay_OnAnim(p)
+local function decay_OnAnim()
     local f = CPWR_FRAME
     local fd = f.decay
+    local p = animations["DECAY_BAR"].progress
     local px = p * 310
     fd.precentage = p
     fd.bar:SetValue(p)
@@ -141,7 +143,7 @@ GW.AddForProfiling("classpowers", "decay_OnAnim", decay_OnAnim)
 local function findBuff(unit, searchID)
     local name, count, duration, expires, spellID
     for i = 1, 40 do
-        name, _, count, _, duration, expires, _, _, _, spellID, _ = UnitAura(unit, i)
+        name, _,_, count, _, duration, expires, _, _, _, spellID, _ = UnitAura(unit, i)
         if spellID == searchID then
             return name, count, duration, expires
         elseif not spellID then
@@ -162,7 +164,7 @@ local function findBuffs(unit, ...)
     end
     local results = nil
     for i = 1, 40 do
-        name, _, count, _, duration, expires, _, _, _, spellID, _ = UnitAura(unit, i)
+        name, _,_, count, _, duration, expires, _, _, _, spellID, _ = UnitAura(unit, i)
         if not spellID then
             break
         elseif searchIDs["ID" .. spellID] then
@@ -250,7 +252,7 @@ local function powerCombo(self, event, ...)
 
     local pwrMax = UnitPowerMax("player", Enum.PowerType.ComboPoints)
     local pwr = UnitPower("player", Enum.PowerType.ComboPoints)
-    local chargedPowerPoints = GetUnitChargedPowerPoints("player")
+    local chargedPowerPoints = {}--GetUnitChargedPowerPoints("player")
     local old_power = self.gwPower
     local showPoint = false
     self.gwPower = pwr
@@ -302,8 +304,8 @@ local function powerCombo(self, event, ...)
                     5,
                     GetTime(),
                     0.5,
-                    function(p)
-                        p = math.min(1, math.max(0, p))
+                    function()
+                        local p = math.min(1, math.max(0, animations["COMBOPOINTS_FLARE"].progress))
                         self.combopoints.comboFlare:SetAlpha(p)
                     end,
                     nil,
@@ -633,14 +635,17 @@ GW.AddForProfiling("classpowers", "setPaladin", setPaladin)
 -- HUNTER
 local function powerFrenzy(self, event)
     local fdc = self.decayCounter
-    local _, count, duration, expires = findBuff("pet", 272790)
-
+    local _, count, duration, expires = findBuff("pet", LEGION_HUNTER_FRENZY)
     if duration == nil then
         fdc.count:SetText(0)
         self.gwPower = -1
+        self.customResourceBar:Hide()
+        fdc:Hide()
         return
     end
 
+    self.customResourceBar:Show()
+    fdc:Show()
     fdc.count:SetText(count)
     local old_expires = self.gwPower
     old_expires = old_expires or -1
@@ -661,11 +666,15 @@ local function powerMongoose(self, event)
     local _, count, duration, expires = findBuff("player", 259388)
 
     if duration == nil then
+        fdc:Hide()
         fdc.count:SetText(0)
         self.gwPower = -1
+        self.customResourceBar:Hide()
         return
     end
 
+    self.customResourceBar:Show()
+    fdc:Show()
     fdc.count:SetText(count)
     local old_expires = self.gwPower
     old_expires = old_expires or -1
@@ -686,8 +695,6 @@ local function setHunter(f)
         setPowerTYpeFrenzy(f.customResourceBar)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
-        f.customResourceBar:Show()
-        f.decayCounter:Show()
 
         if GW.myspec == 1 then -- beast mastery
             f:SetScript("OnEvent", powerFrenzy)
@@ -779,8 +786,8 @@ local function powerRune(self)
                         0,
                         GetTime(),
                         0.5,
-                        function(p)
-                            f.flare:SetAlpha(math.min(1, math.max(0, p)))
+                        function()
+                            f.flare:SetAlpha(math.min(1, math.max(0 ,animations["HOLY_POWER_FLARE_ANIMATION"].progress)))
                         end
                     )
                 end
@@ -1003,8 +1010,8 @@ local function powerSoulshard(self, event, ...)
                     5,
                     GetTime(),
                     0.7,
-                    function(p)
-                        p = GW.RoundInt(p)
+                    function()
+                        local p = GW.RoundInt(animations["WARLOCK_SHARD_FLARE"].progress)
                         self.warlock.shardFlare:SetTexCoord(GW.getSpriteByIndex(self.warlock.flareMap, p))
                     end,
                     nil,
@@ -1041,8 +1048,8 @@ local function powerSoulshard(self, event, ...)
                 0,
                 GetTime(),
                 0.3,
-                function(p)
-                    self.warlock.shardFragment.flare:SetAlpha(math.min(1, math.max(0, p)))
+                function()
+                    self.warlock.shardFragment.flare:SetAlpha(math.min(1, math.max(0, animations["WARLOCK_FRAGMENT_FLARE"].progress)))
                 end
             )
         end

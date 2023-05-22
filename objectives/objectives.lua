@@ -44,7 +44,9 @@ local function wiggleAnim(self)
         1,
         GetTime(),
         2,
-        function(prog)
+        function()
+            local prog = animations[self:GetName()].progress
+
             self.flare:SetRotation(lerp(0, 1, prog))
 
             if prog < 0.25 then
@@ -192,9 +194,7 @@ local function statusBar_OnShow(self)
     if not f then
         return
     end
-    if not f.notChangeSize then
-        f:SetHeight(50)
-    end
+    f:SetHeight(50)
     f.StatusBar.statusbarBg:Show()
 end
 AFP("statusBar_OnShow", statusBar_OnShow)
@@ -204,9 +204,7 @@ local function statusBar_OnHide(self)
     if not f then
         return
     end
-    if not f.notChangeSize then
-        f:SetHeight(20)
-    end
+    f:SetHeight(20)
     f.StatusBar.statusbarBg:Hide()
 end
 AFP("statusBar_OnHide", statusBar_OnHide)
@@ -218,7 +216,6 @@ local function statusBarSetValue(self)
     end
     local _, mx = f.StatusBar:GetMinMaxValues()
     local v = f.StatusBar:GetValue()
-    
     local width = math.max(1, math.min(10, 10 * ((v / mx) / 0.1)))
     f.StatusBar.Spark:SetPoint("RIGHT", f.StatusBar, "LEFT", 280 * (v / mx), 0)
     f.StatusBar.Spark:SetWidth(width)
@@ -263,9 +260,7 @@ local function blockOnEnter(self)
         self.objectiveBlocks = {}
     end
     for _, v in pairs(self.objectiveBlocks) do
-        if not v.StatusBar.notHide then
-            v.StatusBar.progress:Show()
-        end
+        v.StatusBar.progress:Show()
     end
     AddToAnimation(
         self:GetName() .. "hover",
@@ -298,9 +293,7 @@ local function blockOnLeave(self)
         self.objectiveBlocks = {}
     end
     for _, v in pairs(self.objectiveBlocks) do
-        if not v.StatusBar.notHide then
-            v.StatusBar.progress:Hide()
-        end
+        v.StatusBar.progress:Hide()
     end
     if animations[self:GetName() .. "hover"] then
         animations[self:GetName() .. "hover"].complete = true
@@ -580,7 +573,11 @@ local function UpdateQuestItem(block)
     if block.questLogIndex then
         link, item, charges, showItemWhenComplete = GetQuestLogSpecialItemInfo(block.questLogIndex)
     end
-
+    if not QuestCache:Get(block.questID) then 
+     --   C_Timer.After(0.1,function() UpdateQuestItem(block) end)
+        return
+    end
+  
     local isQuestComplete = (block and block.questID) and QuestCache:Get(block.questID):IsComplete() or false
     local shouldShowItem = item and (not isQuestComplete or showItemWhenComplete)
     if shouldShowItem then
@@ -645,7 +642,7 @@ local function updateQuest(self, block, quest)
     local questLogIndex = quest:GetQuestLogIndex()
     local requiredMoney = C_QuestLog.GetRequiredMoney(questID)
     local questFailed = C_QuestLog.IsFailed(questID)
-    local hasGroupFinderButton = C_LFGList.CanCreateQuestGroup(questID)
+    local hasGroupFinderButton = false --nyi C_LFGList.CanCreateQuestGroup(questID)
 
     block.height = 25
     block.numObjectives = 0
@@ -872,7 +869,7 @@ end
 local function QuestTrackerLayoutChanged()
     updateExtraQuestItemPositions()
     -- adjust scrolframe height
-    local height = GwQuesttrackerContainerMonthlyActivity:GetHeight() + GwQuesttrackerContainerRecipe:GetHeight() + GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + 60 + (GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT:GetHeight() or 0) + (GwQuesttrackerContainerPetTracker and GwQuesttrackerContainerPetTracker:GetHeight() or 0)
+    local height = GwQuesttrackerContainerMonthlyActivity:GetHeight() + GwQuesttrackerContainerRecipe:GetHeight() + GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + 60 + (GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT:GetHeight() or 0)
     local scroll = 0
     local trackerHeight = settings.objectivesHeight - GwQuesttrackerContainerBossFrames:GetHeight() - GwQuesttrackerContainerArenaBGFrames:GetHeight() - GwQuesttrackerContainerScenario:GetHeight() - GwObjectivesNotification:GetHeight()
     if height > tonumber(trackerHeight) then
@@ -912,7 +909,6 @@ local function updateQuestLogLayout(self)
 
     for i = 1, numQuests do
         local questID = C_QuestLog.GetQuestIDForQuestWatchIndex(i)
-
         -- check if we have a quest id to prevent errors
         if questID then
             local q = QuestCache:Get(questID)
@@ -953,13 +949,14 @@ local function updateQuestLogLayout(self)
                         savedHeightQuest = 20
                     end
                     --if quest is reapeataple make it blue
-                    local isFrequency = q.frequency and q.frequency > 0
+                    local isFrequency = q.frequency and q.frequency > 1
+    
                     if q.frequency == nil then
                         local questLogIndex = q:GetQuestLogIndex()
                         if questLogIndex and questLogIndex > 0 then
                             questInfo = C_QuestLog.GetInfo(questLogIndex)
                             if questInfo then
-                                isFrequency = questInfo.frequency > 0
+                                isFrequency = questInfo.frequency > 1
                                 wipe(questInfo)
                             end
                         end
@@ -1031,18 +1028,22 @@ local function updateQuestLogLayoutSingle(self, questID, added)
 
     -- get the correct quest block for that questID
     local q = QuestCache:Get(questID)
+    if q==nil then 
+        C_Timer.After(0.2, function() updateQuestLogLayoutSingle(self, questID, added)end)
+        return
+    end
     local isCampaign = q:IsCampaign()
     if (isCampaign and GwQuesttrackerContainerCampaign.collapsed) or GwQuesttrackerContainerQuests.collapsed then
         self.isUpdating = false
         return
     end
     local questLogIndex = q:GetQuestLogIndex()
-    local isFrequency = q.frequency and q.frequency > 0
+    local isFrequency = q.frequency and q.frequency > 1
     if q.frequency == nil then
         if questLogIndex and questLogIndex > 0 then
             questInfo = C_QuestLog.GetInfo(questLogIndex)
             if questInfo then
-                isFrequency = questInfo.frequency > 0
+                isFrequency = questInfo.frequency > 1
                 wipe(questInfo)
             end
         end
@@ -1120,19 +1121,19 @@ end
 AFP("checkForAutoQuests", checkForAutoQuests)
 
 local function tracker_OnEvent(self, event, ...)
-    local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
 
+    local numWatchedQuests = C_QuestLog.GetNumQuestWatches()
     if event == "QUEST_LOG_UPDATE" then
         updateQuestLogLayout(self)
     elseif event == "QUEST_ACCEPTED" then
-        local questID = ...
+        local questWatchIndex, questID = ... 
         if not C_QuestLog.IsQuestBounty(questID) then
             if C_QuestLog.IsQuestTask(questID) then
                 if not QuestUtils_IsQuestWorldQuest(questID) then
                     updateQuestLogLayoutSingle(self, questID)
                 end
             else
-                if AUTO_QUEST_WATCH == "1" and C_QuestLog.GetNumQuestWatches() < Constants.QuestWatchConsts.MAX_QUEST_WATCHES then
+                if AUTO_QUEST_WATCH == "1" and C_QuestLog.GetNumQuestWatches() < 25 then
                     C_QuestLog.AddQuestWatch(questID, Enum.QuestWatchType.Automatic)
                     updateQuestLogLayoutSingle(self, questID)
                 end
@@ -1382,10 +1383,9 @@ local function LoadQuestTracker()
     GW.LoadScenarioFrame()
     GW.LoadAchievementFrame()
     GW.LoadBonusFrame()
-    GW.LoadRecipeTracking(fRecipe)
-    GW.LoadMonthlyActivitiesTracking(fMonthlyActivity)
+    --GW.LoadRecipeTracking(fRecipe)
+    --GW.LoadMonthlyActivitiesTracking(fMonthlyActivity)
     GW.LoadWQTAddonSkin()
-    GW.LoadPetTrackerAddonSkin()
 
     GW.ToggleCollapseObjectivesInChallangeMode()
 

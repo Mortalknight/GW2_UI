@@ -95,6 +95,10 @@ local function PositionRaidPetFrame(frame, parent, i, grow1, grow2, cells1, size
         frame:SetPoint(a, parent, a, x, y)
         frame:SetSize(w, h)
     end
+
+    if frame.healthbar then
+        frame.healthbar.spark:SetHeight(frame.healthbar:GetHeight())
+    end
 end
 
 local function GridRaidPetUpdateFramesPosition()

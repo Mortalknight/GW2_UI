@@ -160,9 +160,8 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             end
         end
         -- Show junk icon if active
-        local itemInfo = C_Container.GetContainerItemInfo(bag_id, button:GetID())
-        button.isJunk = itemInfo and ((itemInfo.quality and itemInfo.quality == Enum.ItemQuality.Poor) and not itemInfo.hasNoValue) or false
-
+        local _, _, _, rarity, _, _, _, _, noValue = C_Container.GetContainerItemInfo(bag_id, button:GetID())
+        button.isJunk = (rarity and rarity == ItemQuality.Poor) and not noValue
         if button.junkIcon then
             if button.isJunk and settings.showItemJunkIcon then
                 button.junkIcon:Show()
@@ -197,7 +196,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             button.itemlevel:SetText("")
         end
 
-        button:GetItemButtonIconTexture():Show()
+     --NYI   button:GetItemButtonIconTexture():Show()
     else
         if button.junkIcon then button.junkIcon:Hide() end
         if button.scrapIcon then button.scrapIcon:Hide() end
@@ -206,7 +205,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             button:SetScript("OnUpdate", nil)
         end
         if button.itemlevel then button.itemlevel:SetText("") end
-       button:GetItemButtonIconTexture():Hide()
+      --NYI button:GetItemButtonIconTexture():Hide()
     end
 end
 GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)
@@ -336,13 +335,15 @@ local function reskinBagBar(b, ha)
 
     b:SetSize(bag_size, bag_size)
     b.tooltipText = BANK_BAG
-
+    --[[
     b.Count:ClearAllPoints()
     b.Count:SetPoint("TOPRIGHT", b, "TOPRIGHT", 0, -3)
     b.Count:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     b.Count:SetJustifyH("RIGHT")
+    ]]
 
-    b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    --[[
+  b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     b.icon:SetAlpha(0.75)
     b.icon:Show()
 
@@ -352,7 +353,7 @@ local function reskinBagBar(b, ha)
     b.IconBorder:SetAllPoints(b)
     b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     hooksecurefunc(b.IconBorder, "SetTexture", function()
-        if b.IconBorder:GetTexture() and b.IconBorder:GetTexture() > 0 and b.IconBorder:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder" then
+        if b.IconBorder:GetTexture() and b.IconBorder:GetTexture() ~= "Interface/AddOns/GW2_UI/textures/bag/bagitemborder" then
             b.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         end
     end)
@@ -364,7 +365,7 @@ local function reskinBagBar(b, ha)
     high:SetSize(bag_size, bag_size)
     high:ClearAllPoints()
     high:SetPoint("TOPLEFT", b, "TOPLEFT", 0, 0)
-
+]]
     if b.SlotHighlightTexture then
         b.SlotHighlightTexture:SetAlpha(highlightAlpha)
         b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
@@ -643,7 +644,7 @@ GW.AddForProfiling("inventory", "hookUpdateAnchors", hookUpdateAnchors)
 local function LoadInventory()
     UpdateSettings()
 
-    BagsBar:GwKillEditMode()
+    --BagsBar:GwKillEditMode()
 
     if BagBarExpandToggle then
         BagBarExpandToggle:SetParent(GW.HiddenFrame)
@@ -701,10 +702,12 @@ local function LoadInventory()
 
     -- Skin StackSplit
     StackSplitFrame:GwStripTextures()
-    StackSplitFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    StackSplitFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
 
-    StackSplitFrame.OkayButton:GwSkinButton(false, true)
-    StackSplitFrame.CancelButton:GwSkinButton(false, true)
+   -- StackSplitFrame.OkayButton:GwSkinButton(false, true)
+    -- StackSplitFrame.CancelButton:GwSkinButton(false, true)
+    --[[
+
 
     StackSplitFrame.RightButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
     StackSplitFrame.RightButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
@@ -725,5 +728,6 @@ local function LoadInventory()
     StackSplitFrame.textboxbg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar-bg")
     StackSplitFrame.textboxbg:SetPoint("TOPLEFT", 35, -20)
     StackSplitFrame.textboxbg:SetPoint("BOTTOMRIGHT", -35, 55)
+        ]]
 end
 GW.LoadInventory = LoadInventory

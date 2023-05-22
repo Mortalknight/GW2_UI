@@ -1102,8 +1102,8 @@ local function RescanAllNameplates()
     end
 end
 
-local function onCombatLogEvent(self)
-    handleCombatLogEvent(self, CombatLogGetCurrentEventInfo())
+local function onCombatLogEvent(self,event,timestamp, eventtype, hideCaster, srcGUID, srcName, srcFlags, srcRaidFlags, dstGUID, dstFlags, dstRaidFlags, ...)
+    handleCombatLogEvent(self, timestamp, eventtype, hideCaster, srcGUID, srcName, srcFlags, srcRaidFlags, dstGUID, dstFlags, dstRaidFlags,...)
 end
 AFP("onNamePlateRemoved", onNamePlateRemoved)
 
@@ -1117,7 +1117,7 @@ local function ToggleFormat(activate)
             elseif event == "NAME_PLATE_UNIT_REMOVED" then
                 onNamePlateRemoved(eventHandler, event, ...)
             elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-                onCombatLogEvent(eventHandler)
+                onCombatLogEvent(eventHandler, event, ...)
             end
         end)
 

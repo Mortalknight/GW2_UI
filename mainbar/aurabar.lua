@@ -1,31 +1,9 @@
 local _, GW = ...
 local Debug = GW.Debug
+local TimeCount = GW.TimeCount
 local GetSetting = GW.GetSetting
-local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
-local BleedList = GW.Libs.Dispel:GetBleedList()
-local BadDispels = GW.Libs.Dispel:GetBadList()
+local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local RegisterMovableFrame = GW.RegisterMovableFrame
-
-local DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER = {
-    UPR = 1,
-    DOWNR = 1,
-    DOWN = -1,
-    UP = -1,
-}
-
-local DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER = {
-    UPR = 1,
-    DOWNR = -1,
-    DOWN = -1,
-    UP = 1,
-}
-
-local DIRECTION_TO_POINT = {
-    DOWNR = "TOPLEFT",
-    DOWN = "TOPRIGHT",
-    UPR = "BOTTOMLEFT",
-    UP = "BOTTOMRIGHT",
-}
 
 local function setLongCD(self, stackCount)
     self.cooldown:Hide()
@@ -123,7 +101,7 @@ local function UpdateAura_OnUpdate(self, xpr, elapsed)
         if self.duration < 121 then
             setShortCD(self, xpr, self.duration, self.stackCount)
             if self.duration - remains < 0.1 then
-                if GetSetting("PLAYER_AURA_ANIMATION") and (self.oldAuraName ~= self.auraName) then
+                if GetSetting("PLAYER_AURA_ANIMATION") then
                     self.agZoomIn:Play()
                 end
             end
@@ -164,8 +142,6 @@ local function ClearAuraTime(self)
     self.stackCount = nil
     self.duration = nil
 
-    self.auraName = nil
-    self.oldAuraName = nil
     self.endTime = nil
     self.status.duration:SetText("")
     setLongCD(self, 0) -- to reset border and timer
@@ -178,14 +154,12 @@ local function UpdateTime(self, expires)
 end
 GW.UpdateTime = UpdateTime
 
-local function SetCD(self, expires, duration, stackCount, auraType, name)
+local function SetCD(self, expires, duration, stackCount, auraType)
     local oldEnd = self.endTime
     self.endTime = expires
     self.auraType = auraType
     self.stackCount = stackCount
     self.duration = duration
-    self.oldAuraName = self.auraName
-    self.auraName = name
 
     if oldEnd ~= self.endTime then
         self.nextUpdate = 0
@@ -203,7 +177,7 @@ local function SetCount(self, count)
     self.status.stacks:SetText(count > 1 and count or "")
 end
 
-local function SetIcon(self, icon, dtype, auraType, spellId)
+local function SetIcon(self, icon, dtype, auraType)
     if not self or not self.status or not self.gwInit then
         return
     end
@@ -216,36 +190,24 @@ local function SetIcon(self, icon, dtype, auraType, spellId)
         if auraType == 2 then
             dtype = "Curse"
         end
-
-        if dtype and BadDispels[spellId] and GW.Libs.Dispel:IsDispellableByMe(dtype) then
-            dtype = "BadDispel"
-        end
-        if not dtype and BleedList[spellId] and GW.Libs.Dispel:IsDispellableByMe("Bleed") then
-            dtype = "Bleed"
-        end
-
-        local c = DebuffColors[dtype]
+        local c = DEBUFF_COLOR[dtype]
         if not c then
-            c = DebuffColors.none
+            c = DEBUFF_COLOR.none
         end
         self.border.inner:SetVertexColor(c.r, c.g, c.b)
     end
 end
 
 local function UpdateAura(self, index)
-    local name, icon, count, dtype, duration, expires, _, _, _, spellId = UnitAura(self.header:GetUnit(), index, self:GetFilter())
-    if not name then
-        self.oldAuraName = nil
-        self.auraName = nil
-        return
-    end
+    local name, rank, icon, count, dtype, duration, expires =UnitAura(self.header:GetUnit(), index, self:GetFilter())
+    if not name then return end
 
     local auraType = self.header:GetAType()
-    self:SetIcon(icon, dtype, auraType, spellId)
+    self:SetIcon(icon, dtype, auraType)
     self:SetCount(count)
 
     if duration > 0 and expires then
-        self:SetCD(expires, duration, count, auraType, name)
+        self:SetCD(expires, duration, count, auraType)
     else
         ClearAuraTime(self)
     end
@@ -256,7 +218,7 @@ local function UpdateTempEnchant(self, index, expires)
         self:SetIcon(GetInventoryItemTexture("player", index), nil, 2)
         self:SetCount(0)
 
-        self:SetCD(((expires / 1000) or 0) + GetTime(), -1, nil, 2, nil)
+        self:SetCD(((expires / 1000) or 0) + GetTime(), -1, nil, 2)
     else
         ClearAuraTime(self)
     end
@@ -361,8 +323,8 @@ function GwAuraTmpl_OnLoad(self)
 
     a1:SetFromAlpha(0.85)
     a1:SetToAlpha(1.0)
-    a2:SetScaleFrom(2.5, 2.5)
-    a2:SetScaleTo(1.0, 1.0)
+    --a2:SetScaleFrom(2.5, 2.5)
+    --a2:SetScaleTo(1.0, 1.0)
 
     -- add mouseover handlers
     self:SetScript("OnUpdate", AuraButton_OnUpdate)
@@ -382,29 +344,45 @@ local function UpdateAuraHeader(header, settingName)
     local size = tonumber(GW.RoundDec(GetSetting(settingName .. "_ICON_SIZE")))
     local aura_tmpl = format("GwAuraSecureTmpl%d", size)
     local grow_dir = GetSetting(settingName .. "_GrowDirection")
-    local maxWraps = GetSetting(settingName .. "_MaxWraps")
-    local horizontalSpacing = tonumber(GetSetting(settingName .. "_HorizontalSpacing"))
-    local verticalSpacing = tonumber(GetSetting(settingName .. "_VerticalSpacing"))
-    local wrapAfter = header.name == "GW2UIPlayerBuffs" and tonumber(GetSetting("PLAYER_AURA_WRAP_NUM")) or tonumber(GetSetting("PLAYER_AURA_WRAP_NUM_DEBUFF"))
-    if not wrapAfter or wrapAfter < 1 or wrapAfter > 20 then
-        wrapAfter = 7
+    local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
+    local wrap_num = header.name == "GW2UIPlayerBuffs" and tonumber(GetSetting("PLAYER_AURA_WRAP_NUM")) or tonumber(GetSetting("PLAYER_AURA_WRAP_NUM_DEBUFF"))
+    if not wrap_num or wrap_num < 1 or wrap_num > 20 then
+        wrap_num = 7
     end
 
-    Debug("settings", settingName, grow_dir, wrapAfter, size)
+    Debug("settings", settingName, grow_dir, wrap_num, size)
+
+    local ap
+    local yoff
+    local xoff
+    if grow_dir == "UPR" then
+        ap = "BOTTOMLEFT"
+        xoff = (size + 1)
+        yoff = 50
+    elseif grow_dir == "DOWN" then
+        ap = "TOPRIGHT"
+        xoff = -(size + 1)
+        yoff = -50
+    elseif grow_dir == "DOWNR" then
+        ap = "TOPLEFT"
+        xoff = (size + 1)
+        yoff = -50
+    else
+        ap = "BOTTOMRIGHT"
+        xoff = -(size + 1)
+        yoff = 50
+    end
 
     header:SetAttribute("sortMethod", GetSetting(settingName .. "_SortMethod"))
     header:SetAttribute("sortDirection", GetSetting(settingName .. "_SortDir"))
     header:SetAttribute("template", aura_tmpl)
     header:SetAttribute("separateOwn", tonumber(GW.RoundDec(GetSetting(settingName .. "_Seperate"))))
-    header:SetAttribute("wrapAfter", wrapAfter)
-    header:SetAttribute("minWidth", ((wrapAfter == 1 and 0 or horizontalSpacing) + size) * wrapAfter)
+    header:SetAttribute("wrapAfter", wrap_num)
+    header:SetAttribute("minWidth", (size + 1) * wrap_num)
     header:SetAttribute("minHeight", (size + 1))
-    header:SetAttribute("minHeight", (verticalSpacing+ size) * maxWraps)
-    header:SetAttribute("point", DIRECTION_TO_POINT[grow_dir])
-    header:SetAttribute("xOffset", DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[grow_dir] * (horizontalSpacing + size))
-    header:SetAttribute("yOffset", 0)
-    header:SetAttribute("wrapXOffset", 0)
-    header:SetAttribute("wrapYOffset", DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + size))
+    header:SetAttribute("point", ap)
+    header:SetAttribute("xOffset", xoff)
+    header:SetAttribute("wrapYOffset", yoff)
     header:SetAttribute("growDir", grow_dir)
 
     if header.filter == "HELPFUL" then
@@ -424,15 +402,20 @@ local function UpdateAuraHeader(header, settingName)
     -- set anchoring
     if header.filter == "HELPFUL" then
         header:ClearAllPoints()
-        header:SetPoint(DIRECTION_TO_POINT[grow_dir], header.gwMover, DIRECTION_TO_POINT[grow_dir], 0, 0)
+        header:SetPoint(anchor_hb, header.gwMover, anchor_hb, 0, 0)
     else
         local anchor_hd
         header:ClearAllPoints()
         if not header.isMoved then
             anchor_hd = grow_dir == "UPR" and "TOPLEFT" or grow_dir == "DOWNR" and "BOTTOMLEFT" or grow_dir == "UP" and "TOPRIGHT" or grow_dir == "DOWN" and "BOTTOMRIGHT"
-            header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[grow_dir] * (verticalSpacing + size))
+            if grow_dir == "DOWNR" or grow_dir == "DOWN" then
+                header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, -50)
+            else
+                header:SetPoint(anchor_hd, GW2UIPlayerBuffs, anchor_hd, 0, 50)
+            end
         else
-            header:SetPoint(DIRECTION_TO_POINT[grow_dir], header.gwMover, DIRECTION_TO_POINT[grow_dir], 0, 0)
+            anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
+            header:SetPoint(anchor_hd, header.gwMover, anchor_hd, 0, 0)
         end
     end
 end
@@ -470,6 +453,8 @@ local function newHeader(filter, settingname)
         if hide and shown then header:Hide() elseif not hide and not shown then header:Show() end
     ]])
 
+    h:SetAttribute("yOffset", "0")
+    h:SetAttribute("wrapXOffset", "0")
     if filter == "HELPFUL" then
         h:SetAttribute("consolidateDuration", -1)
         h:SetAttribute("consolidateTo", 0)
@@ -517,65 +502,12 @@ local function loadAuras(lm)
 
     -- Raise PetBattleFrame
     PetBattleFrame:SetFrameLevel(hb:GetFrameLevel() + 5)
-
-    -- creating a mover for private auras (2 atm) -- TODO: Maybe in a future update there is a skinning way
-    local privateAurasheader = CreateFrame("Frame", "test", UIParent)
-    privateAurasheader:SetSize(80, 40)
-    RegisterMovableFrame(privateAurasheader, GW.L["Private Auras"], "PlayerPrivateAuras", ALL .. ",Blizzard,Aura", nil, {"default", "scaleable"}, true)
-    privateAurasheader:ClearAllPoints()
-    privateAurasheader:SetPoint("TOPLEFT", privateAurasheader.gwMover)
-
-    for i = 1, 2 do
-        local aura = privateAurasheader["privateAuraAnchor" .. i]
-        aura = CreateFrame("Frame", "privateAura" .. i, privateAurasheader, "GwPrivateAuraTmpl")
-        aura.auraIndex = i
-        if i == 1 then
-            aura:SetPoint("TOPRIGHT")
-        else
-            aura:SetPoint("TOPLEFT")
-        end
-        local auraAnchor = {
-            unitToken = "player",
-            auraIndex = aura.auraIndex,
-            -- The parent frame of an aura anchor must have a valid rect with a non-zero
-            -- size. Each private aura will anchor to all points on its parent,
-            -- providing a tooltip when mouseovered.
-            parent = aura,
-            -- An optional cooldown spiral can be configured to represent duration.
-            showCountdownFrame = false,
-            showCountdownNumbers = true,
-            -- An optional icon can be created and shown for the aura. Omitting this
-            -- will display no icon.
-            iconInfo = {
-                iconWidth = aura.status:GetWidth(),
-                iconHeight = aura.status:GetHeight(),
-                iconAnchor = {
-                    point = "CENTER",
-                    relativeTo = aura.status,
-                    relativePoint = "CENTER",
-                    offsetX = 0,
-                    offsetY = 0,
-                },
-            },
-            -- An optional icon duration fontstring can also be configured.
-            durationAnchor = {
-                point = "TOP",
-                relativeTo = aura.status,
-                relativePoint = "BOTTOM",
-                offsetX = 0,
-                offsetY = -4,
-            },
-        }
-        -- Anchors can be removed (and the aura hidden) via the RemovePrivateAuraAnchor
-        -- API, passing it the anchor index returned from the Add function.
-        aura.anchorIndex = C_UnitAuras.AddPrivateAuraAnchor(auraAnchor)
-    end
 end
 
 local function LoadPlayerAuras(lm)
     -- hide default buffs
+    TemporaryEnchantFrame:GwKill()
     BuffFrame:GwKill()
-    DebuffFrame:GwKill()
 
     loadAuras(lm)
 end

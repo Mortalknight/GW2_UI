@@ -1,22 +1,21 @@
-## Interface: 100100
+## Interface: 100007
 ## Title: |cffffedbaGW2 UI|r
 ## Notes: HUD Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
-## OptionalDeps: Details, MoveAnything, _DebugLog, BugSack, !Stragglers, ACU, PetTracker
+## OptionalDeps: Details, MoveAnything, _DebugLog, BugSack, !Stragglers, ACU
 ## Version: @project-version@
 ## X-Website: https://www.curseforge.com/wow/addons/gw2-ui
 ## X-Curse-Project-ID: 94310
 ## X-Wago-ID: Mj6jXpGR
 ## DefaultState: Enabled
-## AddonCompartmentFunc: GW2_ADDON_AddonCompartmentOnClickFunc
-## IconTexture: Interface\AddOns\GW2_UI\Textures\gwlogo
 
 ## Author: deadend06, Winglord89(Nils89), nezroy
 
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03, GW2UI_PRIVATE_SETTINGS, GW2UI_PRIVATE_LAYOUTS
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES, GW2UI_STORAGE2, GW2UI_LAYOUTS
 
-core\migration.lua
+
+core\blizzardConstants.lua
 core\TaintLess.xml
 core\debug.lua
 core\incompatibleAddons.lua
@@ -45,7 +44,6 @@ core\staticPopupDialogs.lua
 core\raid_debuffs.lua
 core\toolkit.lua
 core\utils.lua
-core\backdropTemplates.lua
 core\itemlevel.lua
 core\shared.xml
 core\fonts.lua
@@ -96,6 +94,7 @@ dataInfo\money.lua
 dataInfo\guild.lua
 dataInfo\bags.lua
 dataInfo\time.lua
+dataInfo\spec.lua
 dataInfo\conduits.lua
 dataInfo\friends.lua
 dataInfo\system.lua

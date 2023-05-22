@@ -38,7 +38,7 @@ DODGEBAR_SPELLS_ATTR["DEMONHUNTER"] = "[spec:1] 343017,320416,344865; [spec:2] 1
 DODGEBAR_SPELLS["EVOKER"] = "358267"
 
 local EMPTY_IN_RAD = 128 * math.pi / 180 -- the angle in radians for an empty bar
-local FULL_IN_RAD = 2 * math.pi / 180 -- the angle in radians for a full bar
+local FULL_IN_RAD = 0
 local DELTA_RAD = EMPTY_IN_RAD - FULL_IN_RAD
 
 local EMPTY_IN_RAD_SMALL = 1.9040214425527
@@ -59,54 +59,39 @@ local function fill_OnFinished(self)
 end
 GW.AddForProfiling("dodgebar", "fill_OnFinished", fill_OnFinished)
 
-local function updateAnim(self, start, duration, charges, maxCharges)
-    local af = self.arcfill
-    local ag = af.gwAnimGroup
-    if charges == maxCharges then
-        if (ag:IsPlaying()) then
-            ag:Stop()
-        end
-        fill_OnFinished(ag)
-        return
-    end
-    if not self.gwCharges then  self.gwCharges = 0 end
-    -- spark if charge count has changed
-    if not self.gwNeedDrain and self.gwCharges > charges then
-  --    FrameFlash(self.arcfill.fill, 0.2)
-    end
-    self.gwCharges = charges
+local function updateAnim(self, start, duration, charges, max)
 
-    if maxCharges == nil or maxCharges == 0 then maxCharges = 1 end
-    -- figure out the total time (and fraction of 1 time) remaining until the bar is full again
-    local time_remain = (duration * (maxCharges - charges)) - (GetTime() - start)
-    local time_remain_frac = (time_remain / (duration * maxCharges))
+    if not start or not duration or start<=0 or duration<=0 then return end
 
-    if time_remain > 0 then
-        -- stop any currently playing anim
-        if (ag:IsPlaying()) then
-            ag:Stop()
-        end
+    local setFillPoint = charges/max
+    local arcSnapPoint = lerp(EMPTY_IN_RAD,FULL_IN_RAD,setFillPoint)
+   -- self.arcfill.fill:SetRotation(EMPTY_IN_RAD)
+    self.arcfill.fill:SetRotation(arcSnapPoint)
+  
+    
+    local fractionWidth = EMPTY_IN_RAD/max
+    local startPoint = arcSnapPoint
+    local endPoint =  startPoint - fractionWidth
 
-        -- set start position based on fraction of time remaining to recover entire bar;
-        -- if there's enough time (and we just cast a spell), do that prettily
-        local a1 = af.gwAnimDrain
-        a1:SetRadians(DELTA_RAD * time_remain_frac)
-        if (time_remain < 0.3 or not self.gwNeedDrain) then
-            a1:SetDuration(0)
-        else
-            a1:SetDuration(0.25)
-            time_remain = time_remain - 0.25
-            time_remain_frac = (time_remain / (duration * maxCharges))
-            self.gwNeedDrain = false
-        end
+    --(name, from, to, start, duration, method, easeing, onCompleteCallback, doCompleteOnOverider)
+    AddToAnimation("DODGEBAR", 0, 1, start, duration,
+    function()
+        local p = animations["DODGEBAR"].progress
+        local l = lerp(0,1,p)
+      --  local l2 = lerp(fromfraction,toFraction,p) / max
 
-        -- set the fill animation duration to the remaining time and the angle to the
-        -- remaining radians for a full bar, then begin the animation
-        local a2 = af.gwAnimFill
-        a2:SetDuration(time_remain)
-        a2:SetRadians(-DELTA_RAD * time_remain_frac)
-        ag:Play()
-    end
+        local value = lerp(EMPTY_IN_RAD_SMALL,FULL_IN_RAD_SMALL,l)
+        local valueFraction = lerp(startPoint,endPoint,l)
+     --   self.arcfill.fill:SetRotation(value)
+      --  self.arcfill.spark:SetRotation(value)
+        self.arcfill.fillFractions:SetRotation(valueFraction)
+    end, 1, function()
+    
+        local setFillPoint = (charges+1)/max
+        local arcSnapPoint = lerp(EMPTY_IN_RAD,FULL_IN_RAD,setFillPoint)
+    -- self.arcfill.fill:SetRotation(EMPTY_IN_RAD)
+        self.arcfill.fill:SetRotation(arcSnapPoint)
+    end)
 end
 GW.AddForProfiling("dodgebar", "updateAnim", updateAnim)
 
@@ -189,23 +174,20 @@ local function setupBar(self)
     self.gwMaxCharges = maxCharges or 0
 
     -- sort out separators for multi charges
-    local af = self.arcfill
-    if maxCharges == 2 then
-        af.sep50:Show()
-    else
-        af.sep50:Hide()
-    end
-    if maxCharges == 3 then
-        af.sep33:Show()
-        af.sep66:Show()
-    else
-        af.sep33:Hide()
-        af.sep66:Hide()
-    end
-    af.sep132:Hide()
-    af.sep264:Hide()
-    af.fillFractions:Hide()
+    local frameName = self:GetName()
 
+    for i=1,5 do
+        local seperator = _G[frameName.."Sep"..i]
+        if i<maxCharges then
+            local p = lerp(RAD_AT_START,RAD_AT_END-0.09,i/maxCharges)
+            seperator:SetRotation(p)
+            seperator:SetSize(128*2,128*2)
+            seperator:Show()
+        else
+            seperator:Hide()
+        end
+    end
+    --af.fillFractions:Hide()
     updateAnim(self, start, duration, charges, maxCharges)
 end
 GW.setDodgebarSpell = setupBar
@@ -214,7 +196,7 @@ GW.AddForProfiling("dodgebar", "setupBar", setupBar)
 local function dodge_OnEvent(self, event, ...)
     if event == "UNIT_SPELLCAST_SUCCEEDED" then
         -- we don't track anything until we first see our dodge skill cast
-        local spellId = select(3, ...)
+        local spellId = select(5, ...)
         if spellId ~= self.spellId then
             return
         end
@@ -309,19 +291,17 @@ end
 GW.AddForProfiling("dodgebar", "dodge_OnLeave", dodge_OnLeave)
 
 local function setupDragonBar(self)
-    local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(4460)
-    if widgetInfo then
-        local frameName = self:GetName()
+    local maxVigor = UnitPowerMax("player" , DRAGON_POWERTYPE);
+    local frameName = self:GetName()
 
-        for i = 1,5 do
-            local seperator = _G[frameName.."Sep"..i]
-            if i <= widgetInfo.numTotalFrames then
-                local p = lerp(RAD_AT_START,RAD_AT_END,i / widgetInfo.numTotalFrames)
-                seperator:SetRotation(p)
-                seperator:Show()
-            else
-                seperator:Hide()
-            end
+    for i=1,5 do
+        local seperator = _G[frameName.."Sep"..i]
+        if i<=maxVigor then
+            local p = lerp(RAD_AT_START,RAD_AT_END,i/maxVigor)
+            seperator:SetRotation(p)
+            seperator:Show()
+        else
+            seperator:Hide()
         end
     end
 end
@@ -347,7 +327,8 @@ local function animateDragonBar(self,current,fraction,max)
     self.currentValue = current
     self.currentValueFraction =  fraction
     AddToAnimation("DRAGONBAR", 0, 1, GetTime(), 0.8,
-    function(p)
+    function()
+        local p = animations["DRAGONBAR"].progress
         local l = lerp(from,to,p) / max
         local l2 = lerp(fromfraction,toFraction,p) / max
 
@@ -371,7 +352,7 @@ local function updateDragonRidingState(self, state, isLogin)
         if settings.hideBLizzardVigorBar and not EncounterBar:IsVisible() then
             C_Timer.After(0.5, function() EncounterBar:Show() end)
         end
-    elseif (state and not self:IsShown()) or (state and isLogin and self:IsShown()) then
+    elseif state and not self:IsShown() then
         self:Show()
         GwDodgeBar:SetScript("OnEnter", nil)
         GwDodgeBar:SetScript("OnLeave", nil)
@@ -384,25 +365,27 @@ end
 
 local function dragonBar_OnEvent(self, event, ...)
     if event == "UNIT_POWER_UPDATE" then
-        local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(4460)
-        if widgetInfo then
-            local fraction = (self.lastPower and self.lastPower > widgetInfo.numFullFrames and 0) or nil
-            if not self.gwMaxCharges or (widgetInfo.numTotalFrames > self.gwMaxCharges and widgetInfo.numTotalFrames >= 3) then
-                self.gwMaxCharges = widgetInfo.numTotalFrames
-                setupDragonBar(self)
-            end
-            animateDragonBar(self, widgetInfo.numFullFrames, fraction, widgetInfo.numTotalFrames)
-            self.lastPower = widgetInfo.numFullFrames
+        local current = UnitPower("player", DRAGON_POWERTYPE)
+        local max = UnitPowerMax("player", DRAGON_POWERTYPE)
+        local fraction = (self.lastPower and self.lastPower > current and 0) or nil
+        if not self.gwMaxCharges or (max > self.gwMaxCharges and max >= 3) then
+            self.gwMaxCharges = max
+            setupDragonBar(self)
         end
+        animateDragonBar(self, current, fraction, max)
+        self.lastPower = current
     elseif event == "UPDATE_UI_WIDGET" then
         local widget = ...
         if widget.widgetSetID ~= 283 then
             return
         end
+        local current = UnitPower("player", DRAGON_POWERTYPE)
+        local max = UnitPowerMax("player", DRAGON_POWERTYPE)
 
         local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(widget.widgetID)
         if widgetInfo then
-            animateDragonBar(self, widgetInfo.numFullFrames, (widgetInfo.fillValue / widgetInfo.fillMax), widgetInfo.numTotalFrames)
+            --updateAnim(self, GetTime(), 20, math.min(max,current + (widgetInfo.fillValue / widgetInfo.fillMax)), max)
+            animateDragonBar(self, current, (widgetInfo.fillValue / widgetInfo.fillMax), max)
             self.tooltip = widgetInfo.tooltip
         end
     elseif event == "GW2_PLAYER_DRAGONRIDING_STATE_CHANGE" then
@@ -439,19 +422,23 @@ local function LoadDodgeBar(hg, asTargetFrame)
 
     -- setting these values in the XML creates animation glitches so we do it here instead
     local af = fmdb.arcfill
-    af.fill:SetRotation(FULL_IN_RAD)
+
+   
+    af.fill:SetRotation(EMPTY_IN_RAD)
+    af.fill:SetSize(128*1.38,128*1.38)
+    af.fillFractions:SetRotation(FULL_IN_RAD)
+    af.fillFractions:SetSize(128*1.38,128*1.38)
+    af.fillFractions:SetVertexColor(255/255,197/255,51/255,0.5)
+    af.maskr_hover:ClearAllPoints()
+   
     af.maskr_hover:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
     af.maskr_normal:SetPoint("CENTER", af.fill, "CENTER", 0, 0)
 
-    -- create the arc drain/fill animations
-    local ag = af.fill:CreateAnimationGroup()
-    local a1 = ag:CreateAnimation("rotation")
-    local a2 = ag:CreateAnimation("rotation")
-    a1:SetOrder(1)
-    a2:SetOrder(2)
-    af.gwAnimGroup = ag
-    af.gwAnimDrain = a1
-    af.gwAnimFill = a2
+       -- create the arc drain/fill animations
+     
+       af.gwAnimGroup = ag
+       af.gwAnimDrain = a1
+       af.gwAnimFill = a2
     -- ag:SetScript("OnFinished", fill_OnFinished)
 
     -- setup dodgebar event handling
@@ -460,7 +447,7 @@ local function LoadDodgeBar(hg, asTargetFrame)
     fmdb:SetScript("OnLeave", dodge_OnLeave)
     fmdb:SetScript("OnEvent", dodge_OnEvent)
     fmdb:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
-    fmdb:RegisterEvent("SPELLS_CHANGED")
+   fmdb:RegisterEvent("SPELLS_CHANGED")
     fmdb:RegisterEvent("PLAYER_ENTERING_WORLD")
     fmdb:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     fmdb:RegisterEvent("LEARNED_SPELL_IN_TAB")

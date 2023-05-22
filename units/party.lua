@@ -2,9 +2,7 @@ local _, GW = ...
 local TimeCount = GW.TimeCount
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local GetSetting = GW.GetSetting
-local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
-local BleedList = GW.Libs.Dispel:GetBleedList()
-local BadDispels = GW.Libs.Dispel:GetBadList()
+local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local Bar = GW.Bar
 local SetClassIcon = GW.SetClassIcon
@@ -202,16 +200,9 @@ local function updatePartyDebuffs(self, x, y)
             debuffFrame.key = debuffList[i].key
             debuffFrame.unit = unit
 
-            if debuffList[i].dispelType and BadDispels[debuffList[i].spellID] and GW.Libs.Dispel:IsDispellableByMe(debuffList[i].dispelType) then
-                debuffList[i].dispelType = "BadDispel"
-            end
-            if not debuffList[i].dispelType and BleedList[debuffList[i].spellID] and GW.Libs.Dispel:IsDispellableByMe("Bleed") then
-                debuffList[i].dispelType = "Bleed"
-            end
-
             debuffFrame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
-            if debuffList[i].dispelType and DebuffColors[debuffList[i].dispelType] then
-                debuffFrame.background:SetVertexColor(DebuffColors[debuffList[i].dispelType].r, DebuffColors[debuffList[i].dispelType].g, DebuffColors[debuffList[i].dispelType].b)
+            if debuffList[i].dispelType ~= nil and DEBUFF_COLOR[debuffList[i].dispelType] ~= nil then
+                debuffFrame.background:SetVertexColor(DEBUFF_COLOR[debuffList[i].dispelType].r, DEBUFF_COLOR[debuffList[i].dispelType].g, DEBUFF_COLOR[debuffList[i].dispelType].b)
             end
 
             debuffFrame.cooldown.duration:SetText(debuffList[i].duration > 0 and TimeCount(debuffList[i].timeRemaining) or "")
@@ -282,7 +273,7 @@ local function getUnitBuffs(unit)
             buffList[i].shouldConsolidate,
             buffList[i].spellID = UnitBuff(unit, i)
             buffList[i].key = i
-            buffList[i].timeRemaining = buffList[i].duration <= 0 and 500000 or buffList[i].expires - GetTime()
+            buffList[i].timeRemaining = (buffList[i].duration and buffList[i].duration <= 0) and 500000 or buffList[i].expires - GetTime()
         end
     end
 
@@ -390,7 +381,7 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
     end
 
     if settings.unitNameString == "PREC" then
-        self.healthString:SetText(RoundDec(healthPrec * 100, 0) .. "%")
+        self.healthString:SetText(RoundDec(healthPrec * 100,0) .. "%")
         self.healthString:SetJustifyH("LEFT")
     elseif settings.unitNameString == "HEALTH" then
         self.healthString:SetText(CommaValue(healthCur))
@@ -598,8 +589,6 @@ local function CreatePartyPetFrame(frame, i)
     f.absorbbg:SetStatusBarColor(1,1,1,0.66)
     f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
-    f.healthString:SetFontObject(GameFontNormalSmall)
-
     f:SetAttribute("*type1", "target")
     f:SetAttribute("*type2", "togglemenu")
     f:SetAttribute("unit", unit)
@@ -709,8 +698,7 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     frame.name:SetShadowOffset(-1, -1)
     frame.name:SetShadowColor(0, 0, 0, 1)
     frame.level:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINED")
-
-    frame.healthString:SetFontObject(GameFontNormalSmall)
+ 
 
     frame.unit = registerUnit
     frame.guid = UnitGUID(frame.unit)
@@ -746,6 +734,7 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
 
     frame.health:SetStatusBarColor(COLOR_FRIENDLY[1].r, COLOR_FRIENDLY[1].g, COLOR_FRIENDLY[1].b)
 
+
     frame:SetScript("OnEvent", party_OnEvent)
 
     frame:RegisterEvent("GROUP_ROSTER_UPDATE")
@@ -769,8 +758,8 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_MODEL_CHANGED", registerUnit)
     frame:RegisterUnitEvent("UNIT_HEAL_PREDICTION", registerUnit)
-    frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", registerUnit)
-    frame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", registerUnit)
+    frame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED",unit)
+    frame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED",unit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", registerUnit)
     frame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", registerUnit)
 
@@ -779,7 +768,6 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     -- create de/buff frames
     frame.buffFrames = {}
     frame.debuffFrames = {}
-    frame.privateAuraFrames = {}
     for k = 1, 40 do
         local debuffFrame = CreateFrame("Frame", nil, frame.auras,  "GwDeBuffIcon")
         debuffFrame:SetParent(frame.auras)
@@ -803,42 +791,6 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
         buffFrame.throt = -1
 
         frame.buffFrames[k] = buffFrame
-
-        if k <=2 then
-            local privateAura = CreateFrame("Frame", nil, frame.auras, "GwPrivateAuraTmpl")
-            privateAura:SetPoint("BOTTOMRIGHT", frame.auras, (28 * (k - 1)), 28 * 2)
-            privateAura.auraIndex = k
-            privateAura:SetSize(24, 24)
-            local auraAnchor = {
-                unitToken = registerUnit,
-                auraIndex = privateAura.auraIndex,
-                -- The parent frame of an aura anchor must have a valid rect with a non-zero
-                -- size. Each private aura will anchor to all points on its parent,
-                -- providing a tooltip when mouseovered.
-                parent = privateAura,
-                -- An optional cooldown spiral can be configured to represent duration.
-                showCountdownFrame = true,
-                showCountdownNumbers = true,
-                -- An optional icon can be created and shown for the aura. Omitting this
-                -- will display no icon.
-                iconInfo = {
-                    iconWidth = 24,
-                    iconHeight = 24,
-                    iconAnchor = {
-                        point = "CENTER",
-                        relativeTo = privateAura.status,
-                        relativePoint = "CENTER",
-                        offsetX = 0,
-                        offsetY = 0,
-                    },
-                },
-            }
-            -- Anchors can be removed (and the aura hidden) via the RemovePrivateAuraAnchor
-            -- API, passing it the anchor index returned from the Add function.
-            privateAura.anchorIndex = C_UnitAuras.AddPrivateAuraAnchor(auraAnchor)
-
-            frame.privateAuraFrames[k] = privateAura
-        end
     end
 
     party_OnEvent(frame, "load")

@@ -8,8 +8,8 @@ local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
 local GetSetting = GW.GetSetting
 
 
-local function flashAnimation(self, delta, t)
-  if t == nil then t = 0 end
+local function flashAnimation(self,delta)
+  if t==nil then t=0 end
   local speed  =  max(1,4 * (1 - (self.healthPrecentage / 0.65)))
   t = t + (delta) * speed
   local c =  0.4*math.abs(math.sin(t))
@@ -140,7 +140,7 @@ GW.AddForProfiling("healthglobe", "updateHealthData", updateHealthData)
 
 local function selectPvp(self)
     local prevFlag = self.pvp.pvpFlag
-    if GetSetting("PLAYER_SHOW_PVP_INDICATOR") and (C_PvP.IsWarModeDesired() or GetPVPDesired() or UnitIsPVP("player") or UnitIsPVPFreeForAll("player")) then
+    if GetSetting("PLAYER_SHOW_PVP_INDICATOR") and (GetPVPDesired() or UnitIsPVP("player") or UnitIsPVPFreeForAll("player")) then
         self.pvp.pvpFlag = true
         if prevFlag ~= true then
             if GW.myfaction == "Horde" then
@@ -176,7 +176,7 @@ end
 GW.AddForProfiling("healthglobe", "globe_OnEvent", globe_OnEvent)
 
 local function globe_OnEnter(self)
-    local warmode = C_PvP.IsWarModeDesired()
+    local warmode = false
     local pvpdesired = GetPVPDesired()
     local pvpactive = UnitIsPVP("player") or UnitIsPVPFreeForAll("player")
 

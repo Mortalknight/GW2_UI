@@ -51,6 +51,10 @@ local STATS_ICONS = {
     PARRY = {l = 0, r = 0.25, t = 0, b = 0.25},
     MOVESPEED = {l = 0.5, r = 0.75, t = 0.75, b = 1}
 }
+
+local Slots = {"HeadSlot", "ShoulderSlot", "ChestSlot", "WristSlot", "HandsSlot", "WaistSlot", "LegsSlot", "FeetSlot", "MainHandSlot", "SecondaryHandSlot"}
+local SlotsFriendly = {INVTYPE_HEAD, INVTYPE_SHOULDER, INVTYPE_CHEST, INVTYPE_WRIST, INVTYPE_HAND, INVTYPE_WAIST, INVTYPE_LEGS, INVTYPE_FEET, INVTYPE_WEAPONMAINHAND, INVTYPE_WEAPONOFFHAND}
+
 -- forward function defs
 local getBagSlotFrame
 
@@ -110,12 +114,12 @@ end
 
 local function CorruptionIcon(self)
     local itemLink = GetInventoryItemLink("player", self:GetID())
-    self.IconOverlay:SetShown(itemLink and IsCorruptedItem(itemLink))
+    --LEGION self.IconOverlay:SetShown(itemLink and IsCorruptedItem(itemLink))
 end
 
 local function setItemButtonQuality(button, quality)
     if quality then
-        if quality >= Enum.ItemQuality.Common and GetItemQualityColor(quality) then
+        if quality >= LE_ITEM_QUALITY_COMMON and GetItemQualityColor(quality) then
             local r, g, b = GetItemQualityColor(quality)
             button.IconBorder:Show()
             button.IconBorder:SetVertexColor(r, g, b)
@@ -282,6 +286,81 @@ local function bagSlot_OnClick(self)
 end
 GW.AddForProfiling("paperdoll_equipment", "bagSlot_OnClick", bagSlot_OnClick)
 
+local function DurabilityTooltip()
+    local duravaltotal, duramaxtotal, durapercent = 0, 0, 0
+    local valcol, id, duraval, duramax
+    local validItems = false
+
+    -- Create layout
+    GameTooltip:AddLine("|cffffffff")
+    GameTooltip:AddLine("|cffffffff")
+    GameTooltip:AddLine("|cffffffff")
+    _G["GameTooltipTextLeft1"]:SetText("|cffffffff"); _G["GameTooltipTextRight1"]:SetText("|cffffffff")
+    _G["GameTooltipTextLeft2"]:SetText("|cffffffff"); _G["GameTooltipTextRight2"]:SetText("|cffffffff")
+    _G["GameTooltipTextLeft3"]:SetText("|cffffffff"); _G["GameTooltipTextRight3"]:SetText("|cffffffff")
+
+    for k, slotName in ipairs(Slots) do
+        if GetInventorySlotInfo(slotName) then
+            id = GetInventorySlotInfo(slotName)
+            duraval, duramax = GetInventoryItemDurability(id)
+            if duraval ~= nil then
+                -- At least one item has durability stat
+                validItems = true
+
+                -- Add to tooltip
+                durapercent = tonumber(GW.RoundDec(duraval / duramax * 100))
+                valcol = (durapercent >= 80 and "|cff00FF00") or (durapercent >= 60 and "|cff99FF00") or (durapercent >= 40 and "|cffFFFF00") or (durapercent >= 20 and "|cffFF9900") or (durapercent >= 0 and "|cffFF2000") or ("|cffFFFFFF")
+                _G["GameTooltipTextLeft1"]:SetText(DURABILITY)
+                _G["GameTooltipTextLeft2"]:SetText(_G["GameTooltipTextLeft2"]:GetText() .. SlotsFriendly[k] .. "|n")
+                _G["GameTooltipTextRight2"]:SetText(_G["GameTooltipTextRight2"]:GetText() ..  valcol .. durapercent .. "%" .. "|n")
+
+                duravaltotal = duravaltotal + duraval
+                duramaxtotal = duramaxtotal + duramax
+            end
+        end
+    end
+    if duravaltotal > 0 and duramaxtotal > 0 then
+        durapercent = duravaltotal / duramaxtotal * 100
+    else
+        durapercent = 0
+    end
+    if validItems == true then
+        -- Show overall durability in the tooltip
+        if durapercent >= 80 then valcol = "|cff00FF00"    elseif durapercent >= 60 then valcol = "|cff99FF00"    elseif durapercent >= 40 then valcol = "|cffFFFF00"    elseif durapercent >= 20 then valcol = "|cffFF9900"    elseif durapercent >= 0 then valcol = "|cffFF2000" else return end
+        _G["GameTooltipTextLeft3"]:SetText(TOTAL .. " " .. valcol)
+        _G["GameTooltipTextRight3"]:SetText(valcol .. GW.RoundDec(durapercent) .. "%")
+
+        -- Show lines of the tooltip
+        GameTooltipTextLeft1:Show(); GameTooltipTextRight1:Show()
+        GameTooltipTextLeft2:Show(); GameTooltipTextRight2:Show()
+        GameTooltipTextLeft3:Show(); GameTooltipTextRight3:Show()
+        GameTooltipTextRight2:SetJustifyH("RIGHT")
+        GameTooltipTextRight3:SetJustifyH("RIGHT")
+        GameTooltip:Show()
+    else
+        -- No items have durability stat
+        GameTooltip:ClearLines()
+        GameTooltip:AddLine("" .. DURABILITY, 1, 0.85, 0)
+        GameTooltip:Show()
+    end
+end
+GW.AddForProfiling("paperdoll_equipment", "DurabilityTooltip", DurabilityTooltip)
+
+local function collectDurability(self)
+    local completeDurability = 0
+    local completeDurabilityNumItems = 0
+    for i = 1, 23 do
+        local current, maximum = GetInventoryItemDurability(i)
+
+        if current ~= nil then
+            completeDurability = completeDurability + (current / maximum)
+            completeDurabilityNumItems = completeDurabilityNumItems + 1
+        end
+    end
+    self.Value:SetText(GW.RoundDec(completeDurability / completeDurabilityNumItems * 100) .. "%")
+end
+GW.AddForProfiling("paperdoll_equipment", "collectDurability", collectDurability)
+
 local function updateItemSlot(self)
     local slot = self:GetID()
     if SavedItemSlots[slot] == nil then
@@ -326,6 +405,7 @@ local function updateItemSlot(self)
 
     local quality = GetInventoryItemQuality("player", slot)
     setItemButtonQuality(self, quality)
+    setItemLevel(self, quality, nil, slot)
 end
 GW.AddForProfiling("paperdoll_equipment", "updateItemSlot", updateItemSlot)
 
@@ -351,7 +431,7 @@ local function stat_OnEnter(self)
         return
     elseif self.stat == "DURABILITY" then
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GW.DurabilityTooltip()
+        DurabilityTooltip()
         return
     end
     if (not self.tooltip) then
@@ -371,7 +451,7 @@ getBagSlotFrame = function(i)
         return _G["gwPaperDollBagSlotButton" .. i]
     end
 
-    local f = CreateFrame("ItemButton", "gwPaperDollBagSlotButton" .. i, GwPaperDollBagItemList, "GwPaperDollBagItem")
+    local f = CreateFrame("Button", "gwPaperDollBagSlotButton" .. i, GwPaperDollBagItemList, "GwPaperDollBagItem")
     f:SetScript("OnEvent", itemSlot_OnEvent)
     f:SetScript("OnClick", bagSlot_OnClick)
     f:SetScript("OnEnter", bagSlot_OnEnter)
@@ -501,6 +581,7 @@ GW.AddForProfiling("paperdoll_equipment", "getDurabilityListFrame", getDurabilit
 
 local function updateStats()
     local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel()
+
     avgItemLevelEquipped = math.floor(avgItemLevelEquipped)
     avgItemLevel = math.floor(avgItemLevel)
     if avgItemLevelEquipped < avgItemLevel then
@@ -581,6 +662,7 @@ GW.AddForProfiling("paperdoll_equipment", "updateStats", updateStats)
 local function stats_QueuedUpdate(self)
     self:SetScript("OnUpdate", nil)
     updateStats()
+    collectDurability(durabilityFrame)
 end
 GW.AddForProfiling("paperdoll_equipment", "stats_QueuedUpdate", stats_QueuedUpdate)
 
@@ -598,13 +680,10 @@ GW.AddForProfiling("paperdoll_equipment", "updateUnitData", updateUnitData)
 
 local function stats_OnEvent(self, event, ...)
     local unit = ...
-    if (IsIn(event, "UNIT_MODEL_CHANGED", "UNIT_NAME_UPDATE") and unit == "player") or event == "PLAYER_ENTERING_WORLD" then
+    if IsIn(event, "PLAYER_ENTERING_WORLD", "UNIT_MODEL_CHANGED" , "UNIT_NAME_UPDATE") and unit == "player" then
         GwDressingRoom.model:SetUnit("player", false)
         updateUnitData()
-        GW.collectDurability(durabilityFrame)
-        return
-    elseif IsIn(event, "UPDATE_INVENTORY_DURABILITY", "MERCHANT_SHOW") then
-        GW.collectDurability(durabilityFrame)
+        collectDurability(durabilityFrame)
         return
     end
 
@@ -637,7 +716,7 @@ GW.AddForProfiling("paperdoll_equipment", "stats_OnEvent", stats_OnEvent)
 local function resetBagInventory()
     GwPaperDollSelectedIndicator:Hide()
     selectedInventorySlot = nil
-    updateBagItemListAll()
+  --  updateBagItemListAll()
     for _, slot in pairs(slotButtons) do
         slot.overlayButton:Hide()
     end
@@ -679,7 +758,7 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot:SetPoint(unpack(anchor))
     slot:SetParent(parent)
     slot:SetSize(size, size)
-    slot:GwStripTextures()
+  --  slot:StripTextures()
 
     slot.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     slot.icon:SetAlpha(0.9)
@@ -714,12 +793,12 @@ local function grabDefaultSlots(slot, anchor, parent, size)
 
     slot.ignoreSlotCheck = CreateFrame("CheckButton", nil, slot, "GWIgnoreSlotCheck")
 
-    slot.IconOverlay:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    slot.IconOverlay:SetAllPoints(slot)
-    slot.IconOverlay:SetAtlas("Nzoth-inventory-icon")
-    slot.IconOverlay:ClearAllPoints()
-    slot.IconOverlay:SetPoint("TOPLEFT", slot.IconOverlay:GetParent(), "TOPLEFT", 1, -1)
-    slot.IconOverlay:SetPoint("BOTTOMRIGHT", slot.IconOverlay:GetParent(), "BOTTOMRIGHT", -1, 1)
+    --LEGION slot.IconOverlay:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+  --LEGION   slot.IconOverlay:SetAllPoints(slot)
+  --LEGION   slot.IconOverlay:SetAtlas("Nzoth-inventory-icon")
+  --LEGION   slot.IconOverlay:ClearAllPoints()
+  --LEGION   slot.IconOverlay:SetPoint("TOPLEFT", slot.IconOverlay:GetParent(), "TOPLEFT", 1, -1)
+  --LEGION   slot.IconOverlay:SetPoint("BOTTOMRIGHT", slot.IconOverlay:GetParent(), "BOTTOMRIGHT", -1, 1)
 
     slot.overlayButton = CreateFrame("Button", nil, slot)
     slot.overlayButton:SetAllPoints()
@@ -732,7 +811,7 @@ local function grabDefaultSlots(slot, anchor, parent, size)
         if self.isEquipmentSelected and selectedInventorySlot == self:GetParent():GetID() then
             GwPaperDollSelectedIndicator:Hide()
             selectedInventorySlot = nil
-            updateBagItemListAll()
+          --  updateBagItemListAll()
             self.isEquipmentSelected = false
         else
             GwPaperDollSelectedIndicator:ClearAllPoints()
@@ -743,11 +822,9 @@ local function grabDefaultSlots(slot, anchor, parent, size)
             self.isEquipmentSelected = true
         end
     end)
-    slot.overlayButton:SetScript("OnEnter", function() slot:GetScript("OnEnter")(slot) end)
-    slot.overlayButton:SetScript("OnLeave", function() slot:GetScript("OnLeave")(slot) end)
 
-    hooksecurefunc(slot, "DisplayAsAzeriteItem", UpdateAzeriteItem)
-    hooksecurefunc(slot, "DisplayAsAzeriteEmpoweredItem", UpdateAzeriteEmpoweredItem)
+    --LEGION hooksecurefunc(slot, "DisplayAsAzeriteItem", UpdateAzeriteItem)
+  --LEGION   hooksecurefunc(slot, "DisplayAsAzeriteEmpoweredItem", UpdateAzeriteEmpoweredItem)
     hooksecurefunc(slot.IconBorder, "SetVertexColor", function(self)
         self:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     end)
@@ -758,29 +835,13 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     EquipSlotList[#EquipSlotList + 1] = slot:GetID()
     slotButtons[#slotButtons + 1] = slot
 
-    updateItemSlot(slot)
-
     slot.IsGW2Hooked = true
 end
 
 local function GwPaperDollBagItemList_OnShow()
-    updateBagItemListAll()
+  ---  updateBagItemListAll()
     for _, slot in pairs(slotButtons) do
         slot.overlayButton:Show()
-    end
-end
-
-local function EquipCursorItem()
-    if InCombatLockdown() then return end
-    local cursorItem = C_Cursor.GetCursorItem()
-    if cursorItem and cursorItem.bagID and cursorItem.slotIndex then
-        local itemID = C_Container.GetContainerItemID(cursorItem.bagID, cursorItem.slotIndex)
-        if itemID then
-            if IsEquippableItem(itemID) and not IsEquippedItem(itemID) then
-                C_Timer.After(1.1, function() EquipItemByName(itemID) end)
-            end
-        end
-        ClearCursor()
     end
 end
 
@@ -826,12 +887,13 @@ local function LoadPDBagList(fmMenu)
         if not button.IsGW2Hooked then return end
         local textureName = GetInventoryItemTexture("player", button:GetID())
         if not textureName then
+            updateItemSlot(button)
             button.icon:SetTexture("Interface/AddOns/GW2_UI/textures/character/slot-bg")
             button.icon:SetTexCoord(unpack(PlayerSlots[button:GetName()]))
         else
             button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+            updateItemSlot(button)
         end
-        updateItemSlot(button)
     end)
 
     EquipmentFlyoutFrame:GwKill()
@@ -868,15 +930,9 @@ local function LoadPDBagList(fmMenu)
         fmPD3M:SetPosition(0.2, 0, -0.05)
     elseif GW.myrace == "Orc" or GW.myrace == "MagharOrc" then
         fmPD3M:SetPosition(0.1, 0, -0.15)
-    elseif GW.myrace == "Dracthyr" then
-        fmPD3M:SetPosition(0.1, 0, -0.15)
     end
-
     fmPD3M:SetRotation(-0.15)
     Model_OnLoad(fmPD3M, 4, 0, -0.1, CharacterModelFrame_OnMouseUp)
-
-    fmPD3M:SetScript("OnReceiveDrag", EquipCursorItem)
-    fmPD3M:HookScript("OnMouseDown", EquipCursorItem)
 
     fmGPDS.header:SetFont(DAMAGE_TEXT_FONT, 14)
     fmGPDS.header:SetText(STAT_CATEGORY_ATTRIBUTES)
@@ -900,8 +956,6 @@ local function LoadPDBagList(fmMenu)
     fmGPDS:RegisterEvent("LIFESTEAL_UPDATE")
     fmGPDS:RegisterEvent("AVOIDANCE_UPDATE")
     fmGPDS:RegisterEvent("KNOWN_TITLES_UPDATE")
-    fmGPDS:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
-    fmGPDS:RegisterEvent("MERCHANT_SHOW")
     fmGPDS:RegisterEvent("UNIT_NAME_UPDATE")
     fmGPDS:RegisterEvent("PLAYER_TALENT_UPDATE")
     fmGPDS:RegisterEvent("BAG_UPDATE")
@@ -929,11 +983,11 @@ local function LoadPDBagList(fmMenu)
     fmGDR:SetScript("OnClick", resetBagInventory)
 
     local fmGPDBIL = CreateFrame("Frame", "GwPaperDollBagItemList", GwPaperDoll, "GwPaperDollBagItemList")
-    fmGPDBIL:SetScript("OnEvent", updateBagItemListAll)
+  --  fmGPDBIL:SetScript("OnEvent", updateBagItemListAll)
     fmGPDBIL:SetScript("OnHide", resetBagInventory)
     fmGPDBIL:SetScript("OnShow", GwPaperDollBagItemList_OnShow)
     fmGPDBIL:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-    updateBagItemListAll()
+  --LEGION  updateBagItemListAll()
     fmMenu:SetupBackButton(fmGPDBIL.backButton, CHARACTER .. ": " .. BAG_FILTER_EQUIPMENT)
 
     local fmGPDSI = CreateFrame("Frame", "GwPaperDollSelectedIndicator", fmGDR, "GwPaperDollSelectedIndicator")

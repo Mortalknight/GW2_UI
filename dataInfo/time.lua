@@ -8,7 +8,7 @@ local lockoutColorNormal = {r = 0.8, g = 0.8, b = 0.8}
 
 local InstanceNameByID = {
     -- List of not matching instanceID from EJ_GetInstanceByIndex and from GetInstanceInfo
-    [749] = C_Map.GetAreaInfo(3845) -- "The Eye" vs. "Tempest Keep"
+  --  [749] = C_Map.GetAreaInfo(3845) -- "The Eye" vs. "Tempest Keep"
 }
 
 if GW.mylocal == "deDE" then
@@ -39,7 +39,7 @@ end
 local function Time_OnEnter(self)
     GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 5)
     GameTooltip:ClearLines()
-    GameTooltip_SetTitle(GameTooltip, TIMEMANAGER_TOOLTIP_TITLE)
+    GameTooltip:AddLine(TIMEMANAGER_TOOLTIP_TITLE)
 
     if not mouseOver then
         mouseOver = true

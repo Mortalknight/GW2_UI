@@ -1,5 +1,5 @@
 local _, GW = ...
-local constBackdropFrame = GW.BackdropTemplates.Default
+local constBackdropFrame = GW.skins.constBackdropFrame
 local GetSetting = GW.GetSetting
 
 -------------------------------------------------------LFGDungeonReadyStatus-------------------------------------------------------

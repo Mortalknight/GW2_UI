@@ -96,6 +96,31 @@ end
 GW.AddScenarioObjectivesBlock = addObjectiveBlock
 GW.AddForProfiling("scenario", "addObjectiveBlock", addObjectiveBlock)
 
+local function AddMawBuffsBelowMinimapFrame(block, numCriteria)
+    -- SL Season 2 Maw Buff Containers
+    --[[
+
+    if MawBuffsBelowMinimapFrame:IsShown() and not IsInJailersTower() then
+        numCriteria = numCriteria + 1
+        local objectiveBlock = getObjectiveBlock(block, numCriteria)
+        objectiveBlock:SetHeight(MawBuffsBelowMinimapFrame:GetHeight())
+        MawBuffsBelowMinimapFrame.Container:SetParent(objectiveBlock)
+        MawBuffsBelowMinimapFrame.Container:ClearAllPoints()
+        MawBuffsBelowMinimapFrame.Container:SetAllPoints()
+        MawBuffsBelowMinimapFrame.Container:Show()
+        objectiveBlock:Show()
+        objectiveBlock.ObjectiveText:SetText("")
+        block.height = block.height + objectiveBlock:GetHeight()
+        block.numObjectives = block.numObjectives + 1
+        objectiveBlock.hasObjectToHide = true
+        objectiveBlock.objectToHide = MawBuffsBelowMinimapFrame.Container
+    end
+
+    return numCriteria
+            
+    ]]
+end
+
 local function updateCurrentScenario(self, event, ...)
     if event == "UPDATE_UI_WIDGET" then
         -- we need this event only for torghast atm, so only update this we it is the torghast widget
@@ -157,6 +182,7 @@ local function updateCurrentScenario(self, event, ...)
                 _G[GwScenarioBlock:GetName() .. "GwQuestObjective" .. i]:Hide()
             end
         end
+        AddMawBuffsBelowMinimapFrame(GwScenarioBlock, 0)
 
         GwScenarioBlock:SetHeight(GwScenarioBlock.height)
 
@@ -243,6 +269,9 @@ local function updateCurrentScenario(self, event, ...)
             isMythicKeystone
         )
     end
+
+    numCriteria = AddMawBuffsBelowMinimapFrame(GwScenarioBlock, numCriteria)
+
     -- add special widgets here
     numCriteria = GW.addWarfrontData(GwScenarioBlock, numCriteria)
     numCriteria = GW.addHeroicVisionsData(GwScenarioBlock, numCriteria)
@@ -524,11 +553,14 @@ local function LoadScenarioFrame()
 
     -- JailersTower hook
     -- do it only here so we are sure we do not hook more than one time
+    --[[
     hooksecurefunc("ScenarioBlocksFrame_ExtraBlocksSetShown", function(shown)
         if shown and IsInJailersTower() then
             updateCurrentScenario(GwQuesttrackerContainerScenario)
         end
     end)
+    ]]
+
 
     local timerBlock = CreateFrame("Button", "GwQuestTrackerTimer", GwQuesttrackerContainerScenario, "GwQuesttrackerScenarioBlock")
     timerBlock.height = timerBlock:GetHeight()

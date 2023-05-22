@@ -1,6 +1,7 @@
 local _, GW = ...
 local GwSettingsMenuSearchable
 local AddToAnimation
+local animations
 
 local btnIndex = 0
 local newButtonAnchorPoint = nil
@@ -11,28 +12,30 @@ local matchingOptionFrames = {}
 
 local function CharacterMenuButton_OnLoad(self, odd, hasArrow, margin, isSubCat)
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
-    self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     if odd then
-        self:ClearNormalTexture()
+        self:SetNormalTexture(nil)
     else
         self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
     end
 
+    if self:GetFontString() then 
     self:GetFontString():SetTextColor(255 / 255, 241 / 255, 209 / 255)
     self:GetFontString():SetShadowColor(0, 0, 0, 0)
     self:GetFontString():SetShadowOffset(1, -1)
     self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14)
     self:GetFontString():SetJustifyH("LEFT")
-    self.arrow:ClearAllPoints();
-    self.arrow:SetPoint("LEFT", 10, 0)
-    self.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
-    self.arrow:SetSize(16, 16)
     if not hasArrow then
         self.arrow:Hide()
         self:GetFontString():SetPoint("LEFT", self, "LEFT", margin + (isSubCat and 0 or 20), 0)
     else
         self:GetFontString():SetPoint("LEFT", self, "LEFT", margin, 0)
     end
+    end
+    self.arrow:ClearAllPoints();
+    self.arrow:SetPoint("LEFT",10,0)
+    self.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
+    self.arrow:SetSize(16,16)
+
 end
 
 --create pool for search result breadcrumbs
@@ -48,7 +51,16 @@ local function createBreadCrumbFrame()
     breadCrumbPool[#breadCrumbPool + 1] = f
     return f
 end
-
+local function getBreadCrumbFrame()
+  for i=1,#breadCrumbPool do
+    local f = breadCrumbPool[i]
+      if not f:IsVisible() then
+        f:Show()
+        return f
+      end
+  end
+  return createBreadCrumbFrame();
+end
 local function hideBreadCrumbFrames()
   for i=1,#breadCrumbPool do
       local f = breadCrumbPool[i]
@@ -86,13 +98,15 @@ end
 local function toggleMenuItem(self,active)
     if AddToAnimation==nil then
         AddToAnimation = GW.AddToAnimation
+        animations = GW.animations
     end
     if active then
         self.content:Show()
         self.button.arrow:SetRotation(0)
         self.content:SetHeight(self.content.height)
         updateScrollFrame(GwSettingsMenuSearchable)
-        AddToAnimation(self:GetName(), 0,1, GetTime(), 0.2, function(p)
+        AddToAnimation(self:GetName(), 0,1, GetTime(), 0.2, function()
+            local p = animations[self:GetName()].progress
             self.button.arrow:SetRotation(-1.5707*p)
         end, "noease")
 
@@ -102,7 +116,8 @@ local function toggleMenuItem(self,active)
     self.content:SetHeight(0)
     updateScrollFrame(GwSettingsMenuSearchable)
     --can be done with animation groups
-    AddToAnimation(self:GetName(), 1,0, GetTime(), 0.2, function(p)
+    AddToAnimation(self:GetName(), 1,0, GetTime(), 0.2, function()
+        local p = animations[self:GetName()].progress
         self.button.arrow:SetRotation(-1.5707*p)
     end, "noease")
 
@@ -182,10 +197,10 @@ local function searchInputChanged(self)
     if not self:HasFocus() then return end
 
     local text = self:GetText()
-    if text == nil or text == "" then
+    if text==nil or text=="" then
         return
     end
-    if text == SEARCH then
+    if text==SEARCH then
         return
     end
     resetMenu(true)
@@ -386,7 +401,7 @@ local function settingMenuToggle(toggle)
 end
 GW.settingMenuToggle = settingMenuToggle
 
-local function loadSettingsSearchAbleMenu()
+local function loadSettingsSearchAbleMenu(sWindow)
     GwSettingsMenuSearchable = CreateFrame("Frame", "GwSettingsMenuSearchable",GwSettingsWindow,"GwSettingsMenuSearchable")
     GwSettingsMenuSearchable.scroll:SetScrollChild(GwSettingsMenuSearchable.scroll.scrollchild)
 

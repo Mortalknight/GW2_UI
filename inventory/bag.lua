@@ -39,8 +39,8 @@ end
 GW.UpdateBagSettings = UpdateSettings
 
 local function setBagHeaders()
-    for i = 1, 5 do
-        local slotID = GetInventorySlotInfo(i == 5 and ("ReagentBag0Slot") or ("Bag" .. i - 1 .. "Slot"))
+    for i = 1, 4 do
+        local slotID = GetInventorySlotInfo("Bag" .. i - 1 .. "Slot")
         local itemID = GetInventoryItemID("player", slotID)
 
         if itemID then
@@ -269,12 +269,14 @@ local function createBagBar(f)
     bp:HookScript("OnMouseDown", inv.bag_OnMouseDown)
     bp.gwBackdrop = true -- checked by some things to see if this is a reskinned button
     f.bags[BACKPACK_CONTAINER] = bp
+    --[[NYI
     hooksecurefunc(MainMenuBarBackpackButton,
         "UpdateFreeSlots",
         function()
             bp.Count:SetText(bp.freeSlots)
         end
     )
+    ]]
     SetItemButtonQuality(bp, 1, nil)
 
     -- create bag slot buttons for equippable bags
@@ -350,11 +352,14 @@ local function createBagBar(f)
     end
 
     setBagBarOrder(f)
-    hooksecurefunc(CharacterReagentBag0Slot, "SetPoint", function()
+    --[[
+ hooksecurefunc(CharacterReagentBag0Slot, "SetPoint", function()
         if not f.setBagBarOrderInProgress then
             setBagBarOrder(f)
         end
     end)
+    ]]
+   
 end
 GW.AddForProfiling("bag", "createBagBar", createBagBar)
 
@@ -598,12 +603,12 @@ local function bagHeader_OnEnter(self)
 end
 
 local function LoadBag(helpers)
-    ContainerFrameCombinedBags:SetScript("OnShow", nil)
-    ContainerFrameCombinedBags:SetScript("OnHide", nil)
-    ContainerFrameCombinedBags:SetParent(GW.HiddenFrame)
-    ContainerFrameCombinedBags:ClearAllPoints()
-    ContainerFrameCombinedBags:SetPoint("BOTTOM")
-    SetCVar("combinedBags", 0)
+   -- ContainerFrameCombinedBags:SetScript("OnShow", nil)
+   -- ContainerFrameCombinedBags:SetScript("OnHide", nil)
+   -- ContainerFrameCombinedBags:SetParent(GW.HiddenFrame)
+   -- ContainerFrameCombinedBags:ClearAllPoints()
+   -- ContainerFrameCombinedBags:SetPoint("BOTTOM")
+   -- SetCVar("combinedBags", 0)
 
     UpdateSettings()
 
@@ -642,7 +647,7 @@ local function LoadBag(helpers)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
     -- setup resizer stuff
-    f:SetResizeBounds(340, 340)
+    f:SetMinResize(340, 340)
     f:SetScript("OnSizeChanged", onBagFrameChangeSize)
     f.sizer.onResizeStop = onBagResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
@@ -662,12 +667,13 @@ local function LoadBag(helpers)
 
     -- take the original search box
     inv.reskinSearchBox(BagItemSearchBox)
-    hooksecurefunc(ContainerFrame1,
+  --[[NYI  hooksecurefunc(ContainerFrame1,
         "UpdateSearchBox",
         function()
             inv.relocateSearchBox(BagItemSearchBox, f)
         end
     )
+]]
     inv.relocateSearchBox(BagItemSearchBox, f)
 
     -- when we take ownership of ItemButtons, we need parent containers with IDs
@@ -736,7 +742,7 @@ local function LoadBag(helpers)
     do
         EnableTooltip(f.buttonSettings, BAG_SETTINGS_TOOLTIP)
         local dd = f.buttonSettings.dropdown
-        dd:GwCreateBackdrop(GW.BackdropTemplates.Default)
+        dd:GwCreateBackdrop(GW.skins.constBackdropFrame)
         f.buttonSettings:HookScript(
             "OnClick",
             function(self)
@@ -1014,12 +1020,14 @@ local function LoadBag(helpers)
         end
     end)
     f.currency:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+    --[[
     hooksecurefunc(
         C_CurrencyInfo, "SetCurrencyBackpack",
         function()
             watchCurrency(f)
         end
     )
+    ]]
     watchCurrency(f)
 
     -- return a callback that should be called when item size changes

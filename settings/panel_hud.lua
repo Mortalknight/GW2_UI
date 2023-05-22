@@ -152,7 +152,6 @@ local function LoadHudPanel(sWindow)
         1
     )
     --MINIMAP
-    addOption(minimap.scroll.scrollchild, L["Addon Compartment"], nil, "MINIMAP_ADDON_COMPARTMENT_TOGGLE", function() GW.UpdateMinimapSettings(); GW.HandleAddonCompartmentButton() end, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
     addOption(minimap.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", GW.ToogleMinimapFpsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
     addOption(minimap.scroll.scrollchild, L["Disable FPS tooltip"], nil, "MINIMAP_FPS_TOOLTIP_DISABLED", GW.UpdateMinimapSystemDataInfoSettings, nil, {["MINIMAP_ENABLED"] = true, ["MINIMAP_FPS"] = true}, "Minimap")
     addOption(minimap.scroll.scrollchild, L["Show Coordinates on Minimap"], L["Show Coordinates on Minimap"], "MINIMAP_COORDS_TOGGLE", GW.ToogleMinimapCoorsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
@@ -239,7 +238,7 @@ local function LoadHudPanel(sWindow)
     -- Fishing nets
     addGroupHeader(worldmap.scroll.scrollchild, L["Iskaaran Fishing Net"])
     addOption(worldmap.scroll.scrollchild, GW.NewSign .. L["Iskaaran Fishing Net"], nil, "WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Iskaaran Fishing Net"])
-    addOption(worldmap.scroll.scrollchild, GW.NewSign .. COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"] = true}, nil, nil, L["Iskaaran Fishing Net"])
+   -- addOption(worldmap.scroll.scrollchild, GW.NewSign .. COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"] = true}, nil, nil, L["Iskaaran Fishing Net"])
     addOption(worldmap.scroll.scrollchild, GW.NewSign .. L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_ISKAARAN_FISHING_NET_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"] = true, ["WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT"] = true}, nil, nil, L["Iskaaran Fishing Net"])
     addOptionSlider(
         worldmap.scroll.scrollchild,
@@ -268,18 +267,18 @@ local function LoadHudPanel(sWindow)
             if value == "GW2" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
                 if GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS") then
-                    C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+              --      C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
                 else
                     C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
                 end
                 GW.LoadDamageText(true)
             elseif value == "BLIZZARD" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
-                C_CVar.SetCVar("floatingCombatTextCombafloatingCombatTextCombatHealingtDamage", "1")
+             --   C_CVar.SetCVar("floatingCombatTextCombafloatingCombatTextCombatHealingtDamage", "1")
                 GW.FloatingCombatTextToggleFormat(false)
             else
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
-                C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+           --     C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
                 GW.FloatingCombatTextToggleFormat(false)
             end
 
@@ -321,7 +320,7 @@ local function LoadHudPanel(sWindow)
         nil,
         "FloatingCombatText"
     )
-    addOption(fct.scroll.scrollchild, L["Show healing numbers"], nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
+    addOption(fct.scroll.scrollchild, L["Show healing numbers"], nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then  else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
 
     InitPanel(general, true)
     InitPanel(minimap, true)

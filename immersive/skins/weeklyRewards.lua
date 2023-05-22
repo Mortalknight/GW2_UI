@@ -11,7 +11,7 @@ local function UpdateSelection(frame)
     end
 end
 
-local r, g, b = GetItemQualityColor(Enum.ItemQuality.Epic or 4)
+local r, g, b --= GetItemQualityColor(Enum.ItemQuality.Epic or 4)
 local function SkinRewardIcon(itemFrame)
     if not itemFrame.IsSkinned then
         itemFrame:GwCreateBackdrop("Transparent")
@@ -60,7 +60,7 @@ local function ApplyWeeklyRewardsSkin()
     if not GetSetting("WEEKLY_REWARDS_SKIN_ENABLED") then return end
 
     WeeklyRewardsFrame:GwStripTextures()
-    local tex = WeeklyRewardsFrame:CreateTexture(nil, "BACKGROUND")
+    local tex = WeeklyRewardsFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", WeeklyRewardsFrame, "TOP", 0, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
     local w, h = WeeklyRewardsFrame:GetSize()
@@ -68,7 +68,7 @@ local function ApplyWeeklyRewardsSkin()
     WeeklyRewardsFrame.tex = tex
 
     WeeklyRewardsFrame.HeaderFrame:GwStripTextures()
-    WeeklyRewardsFrame.HeaderFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    WeeklyRewardsFrame.HeaderFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
     WeeklyRewardsFrame.HeaderFrame:ClearAllPoints()
     WeeklyRewardsFrame.HeaderFrame:SetPoint("TOP", 1, -42)
 
@@ -107,7 +107,7 @@ local function ApplyWeeklyRewardsSkin()
                 _G.Mixin(overlay, _G.BackdropTemplateMixin)
                 overlay:HookScript("OnSizeChanged", overlay.OnBackdropSizeChanged)
             end
-            overlay:SetBackdrop(GW.BackdropTemplates.DefaultWithColorableBorder)
+            overlay:SetBackdrop(GW.constBackdropFrameColorBorder)
             overlay:SetBackdropBorderColor(1, 0.99, 0.85)
         end
     end)

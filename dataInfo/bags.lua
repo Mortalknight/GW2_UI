@@ -43,7 +43,7 @@ local function Bags_OnEnter(self)
             GameTooltip:AddDoubleLine(format(iconString, icon or "Interface/Buttons/Button-Backpack-Up") .. bagName, format("%d/%d", usedSlots, numSlots), r or 1, g or 1, b or 1, r2, g2, b2)
         end
     end
-
+    --[[
     for i = 1, BackpackTokenFrame:GetMaxTokensWatched() do
         local info = C_CurrencyInfo.GetBackpackCurrencyInfo(i)
         if info then
@@ -56,6 +56,8 @@ local function Bags_OnEnter(self)
             end
         end
     end
+    ]]
+
 
     GameTooltip:Show()
 end

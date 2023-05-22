@@ -153,8 +153,8 @@ local function xpbar_OnEvent(self, event)
         return
     end
 
-    local azeriteItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
-    local shouldShowAzeritBar = azeriteItemLocation and azeriteItemLocation:IsEquipmentSlot() and C_AzeriteItem.IsAzeriteItemEnabled(azeriteItemLocation)
+    local azeriteItemLocation --= C_AzeriteItem.FindActiveAzeriteItem()
+    local shouldShowAzeritBar =false
     local AzeritVal = 0
     local AzeritLevel = 0
 
@@ -292,16 +292,16 @@ local function xpbar_OnEvent(self, event)
             AzeritVal,
             GetTime(),
             animationSpeed,
-            function(p)
+            function()
                 self.AzeritBar.Spark:SetWidth(
                     math.max(
                         8,
-                        math.min(9, self.AzeritBar:GetWidth() * p)
+                        math.min(9, self.AzeritBar:GetWidth() * animations["AzeritBarAnimation"].progress)
                     )
                 )
 
-                self.AzeritBar:SetValue(p)
-                self.AzeritBar.Spark:SetPoint("LEFT", self.AzeritBar:GetWidth() * p - 8, 0)
+                self.AzeritBar:SetValue(animations["AzeritBarAnimation"].progress)
+                self.AzeritBar.Spark:SetPoint("LEFT", self.AzeritBar:GetWidth() * animations["AzeritBarAnimation"].progress - 8, 0)
             end
         )
         self.AzeritBar.AzeritBarAnimation = AzeritVal
@@ -371,32 +371,32 @@ local function xpbar_OnEvent(self, event)
                 self.ExpBar.Spark:SetWidth(
                     math.max(
                         8,
-                        math.min(9,self.ExpBar:GetWidth() * step)
+                        math.min(9,self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress)
                     )
                 )
 
                 if not GainBigExp then
-                    self.ExpBar:SetValue(step)
-                    self.ExpBar.Spark:SetPoint("LEFT", self.ExpBar:GetWidth() * step - 8, 0)
+                    self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
+                    self.ExpBar.Spark:SetPoint("LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8, 0)
 
-                    local flarePoint = ((UIParent:GetWidth() - 180) * step) + 90
+                    local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"].progress) + 90
                     self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
                 end
                 self.ExpBar.Rested:SetValue(rested)
-                self.ExpBar.Rested:SetPoint("LEFT", self.ExpBar, "LEFT", self.ExpBar:GetWidth() * step, 0)
+                self.ExpBar.Rested:SetPoint("LEFT", self.ExpBar, "LEFT", self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress, 0)
 
                 if GainBigExp and self.barOverlay.flare.soundCooldown < GetTime() then
                     expSoundCooldown =
                         math.max(0.1, lerp(0.1, 2, math.sin((GetTime() - startTime) / animationSpeed) * math.pi * 0.5))
 
-                        self.ExpBar:SetValue(step)
+                        self.ExpBar:SetValue(animations["experiencebarAnimation"].progress)
                         self.ExpBar.Spark:SetPoint(
                         "LEFT",
-                        self.ExpBar:GetWidth() * step - 8,
+                        self.ExpBar:GetWidth() * animations["experiencebarAnimation"].progress - 8,
                         0
                     )
 
-                    local flarePoint = ((UIParent:GetWidth() - 180) * step) + 90
+                    local flarePoint = ((UIParent:GetWidth() - 180) * animations["experiencebarAnimation"].progress) + 90
                     self.barOverlay.flare:SetPoint("CENTER", self, "LEFT", flarePoint, 0)
 
                     self.barOverlay.flare.soundCooldown = GetTime() + expSoundCooldown
@@ -412,8 +412,9 @@ local function xpbar_OnEvent(self, event)
             valPrec,
             GetTime(),
             0.3,
-            function(p)
-                self.ExpBarCandy:SetValue(p)
+            function()
+                local prog = animations["GwExperienceBarCandy"].progress
+                self.ExpBarCandy:SetValue(prog)
             end
         )
     end
@@ -427,16 +428,16 @@ local function xpbar_OnEvent(self, event)
             valPrecRepu,
             GetTime(),
             animationSpeed,
-            function(p)
+            function()
                 self.RepuBar.Spark:SetWidth(
                     math.max(
                         8,
-                        math.min(9, self.RepuBar:GetWidth() * p)
+                        math.min(9, self.RepuBar:GetWidth() * animations["repuBarAnimation"].progress)
                     )
                 )
 
-                self.RepuBar:SetValue(p)
-                self.RepuBar.Spark:SetPoint("LEFT", self.RepuBar:GetWidth() * p - 8, 0)
+                self.RepuBar:SetValue(animations["repuBarAnimation"].progress)
+                self.RepuBar.Spark:SetPoint("LEFT", self.RepuBar:GetWidth() * animations["repuBarAnimation"].progress - 8, 0)
             end
         )
         self.RepuBar.repuBarAnimation = valPrecRepu
@@ -968,7 +969,7 @@ GW.LoadHudArt = LoadHudArt
 
 local function LoadXPBar()
 
-    StatusTrackingBarManager:GwKill()
+   -- StatusTrackingBarManager:GwKill()
     GW.LoadUpcomingSpells()
 
     local experiencebar = CreateFrame("Frame", "GwExperienceFrame", UIParent, "GwExperienceBar")

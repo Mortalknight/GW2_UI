@@ -80,6 +80,51 @@ local function GearSetButton_Edit(self)
     GwGearManagerPopupFrame:OnShow()
 end
 
+local function DropDownOutfit_OnLoad(self)
+    self.Dropdown = self:GetParent().DropDownOutfitFrame
+    UIDropDownMenu_Initialize(self.Dropdown, nil, "MENU")
+    UIDropDownMenu_SetInitializeFunction(self.Dropdown, GWGearSetEditButtonDropDown_Initialize)
+end
+
+function GWGearSetEditButtonDropDown_Initialize(dropdownFrame)
+    local gearSetButton = dropdownFrame:GetParent()
+    local info = UIDropDownMenu_CreateInfo()
+    info.text = EQUIPMENT_SET_EDIT
+    info.notCheckable = true
+    info.func = function() GearSetButton_Edit(gearSetButton) end
+    UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+
+    info = UIDropDownMenu_CreateInfo()
+    info.text = EQUIPMENT_SET_ASSIGN_TO_SPEC
+    info.isTitle = true
+    info.notCheckable = true
+    UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+
+    local equipmentSetID = gearSetButton.setID
+    for i = 1, GetNumSpecializations() do
+        info = UIDropDownMenu_CreateInfo()
+        info.checked = function()
+            return C_EquipmentSet.GetEquipmentSetAssignedSpec(equipmentSetID) == i
+        end
+
+        info.func = function()
+            local currentSpecIndex = C_EquipmentSet.GetEquipmentSetAssignedSpec(equipmentSetID)
+            if currentSpecIndex ~= i then
+                C_EquipmentSet.AssignSpecToEquipmentSet(equipmentSetID, i)
+            else
+                C_EquipmentSet.UnassignEquipmentSetSpec(equipmentSetID)
+            end
+
+            GearSetButton_UpdateSpecInfo(gearSetButton)
+            PaperDollEquipmentManagerPane_Update(true)
+        end
+
+        local specID = GetSpecializationInfo(i)
+        info.text = select(2, GetSpecializationInfoByID(specID))
+        UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+    end
+end
+
 local function outfitSaveButton_OnClick(self)
     WarningPrompt(
         TRANSMOG_OUTFIT_CONFIRM_SAVE:format(self:GetParent().setName),
@@ -93,49 +138,11 @@ end
 GW.AddForProfiling("character_equipset", "outfitSaveButton_OnClick", outfitSaveButton_OnClick)
 
 local function outfitEditButton_OnClick(self)
-    local menuList = {}
-    local gearSetButton = self:GetParent()
-    tinsert(menuList,
-    {
-        text = EQUIPMENT_SET_EDIT,
-        isTitle = false,
-        notCheckable = true,
-        func = function()
-            GearSetButton_Edit(gearSetButton)
-        end
-    })
-    tinsert(menuList,
-    {
-        text = EQUIPMENT_SET_ASSIGN_TO_SPEC,
-        notCheckable = true,
-        isTitle = true
-    })
-    local equipmentSetID = gearSetButton.setID
-    for i = 1, GetNumSpecializations() do
-        tinsert(menuList,
-        {
-            text = select(2, GetSpecializationInfoByID(GetSpecializationInfo(i))),
-            notCheckable = false,
-            func = function()
-                local currentSpecIndex = C_EquipmentSet.GetEquipmentSetAssignedSpec(equipmentSetID)
-                if currentSpecIndex ~= i then
-                    C_EquipmentSet.AssignSpecToEquipmentSet(equipmentSetID, i)
-                else
-                    C_EquipmentSet.UnassignEquipmentSetSpec(equipmentSetID)
-                end
-
-                GearSetButton_UpdateSpecInfo(gearSetButton)
-                PaperDollEquipmentManagerPane_Update(true)
-            end,
-            checked = function()
-                return C_EquipmentSet.GetEquipmentSetAssignedSpec(equipmentSetID) == i
-            end
-        })
+    if self.gearSetButton ~= self:GetParent() then
+        HideDropDownMenu(1)
+        self.gearSetButton = self:GetParent()
     end
-
-    HideDropDownMenu(1, nil, GW.EasyMenu)
-    GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-    _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+    ToggleDropDownMenu(1, nil, self:GetParent().DropDownOutfitFrame, self, 0, 0)
 end
 GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditButton_OnClick)
 
@@ -238,6 +245,7 @@ drawItemSetList = function()
             frame.setName = name
             frame.setID = setID
 
+            DropDownOutfit_OnLoad(frame.editOutfit)
             GearSetButton_UpdateSpecInfo(frame)
 
             if texture then
@@ -250,7 +258,7 @@ drawItemSetList = function()
                 frame:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
                 textureC = 2
             else
-                frame:ClearNormalTexture()
+                frame:SetNormalTexture(nil)
                 textureC = 1
             end
             if isEquipped then
@@ -300,33 +308,21 @@ end
 --]]
 local function LoadPDEquipset(fmMenu)
     local fmGPDO = CreateFrame("Frame", "GwPaperDollOutfits", GwPaperDoll, "GwPaperDollOutfits")
-    GwGearManagerPopupFrame = CreateFrame("Frame", "GwGearManagerPopupFrame", GwDressingRoom, "IconSelectorPopupFrameTemplate")
-    Mixin(GwGearManagerPopupFrame, GearManagerPopupFrameMixin)
-    GwGearManagerPopupFrame:Hide()
-
-    GwGearManagerPopupFrame:SetParent(GwDressingRoom)
-    GwGearManagerPopupFrame:ClearAllPoints()
-    GwGearManagerPopupFrame:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
-    local fnGPDO_newOutfit_OnClick = function()
-        GwGearManagerPopupFrame.mode = IconSelectorPopupFrameModes.New
-        PaperDollFrame.EquipmentManagerPane.selectedSetID = nil
-        GwGearManagerPopupFrame:Show()
-        GwGearManagerPopupFrame:OnShow()
-        PaperDollEquipmentManagerPane_Update(true)
-
-        -- Ignore shirt and tabard by default
-		PaperDollFrame_IgnoreSlot(4)
-		PaperDollFrame_IgnoreSlot(19)
+    local fnGPDO_newOutfit_OnClick = function(self)
+        self.oldParent = GearManagerDialogPopup:GetParent()
+        GearManagerDialogPopup:SetParent(GwDressingRoom)
+        --GearManagerDialogPopup:GetParent():ClearAllPoints()
+        GearManagerDialogPopup:ClearAllPoints()
+        GearManagerDialogPopup:SetPoint("TOPLEFT", GwDressingRoom, "TOPRIGHT")
+        PaperDollEquipmentManagerPane.selectedSetID = nil
+        GearManagerDialogPopup:Show()
+        PaperDollFrame_ClearIgnoredSlots()
+        PaperDollFrame_IgnoreSlot(4)
+        PaperDollFrame_IgnoreSlot(19)
     end
     fmGPDO.newOutfit:SetText(TRANSMOG_OUTFIT_NEW)
     fmGPDO.newOutfit:SetScript("OnClick", fnGPDO_newOutfit_OnClick)
     fmMenu:SetupBackButton(fmGPDO.backButton, CHARACTER .. ":\n" .. EQUIPMENT_MANAGER)
-
-    hooksecurefunc(GwGearManagerPopupFrame, "OnShow", function(frame)
-        if not frame.isSkinned then
-            GW.HandleIconSelectionFrame(frame)
-        end
-    end)
 
     GwPaperDollOutfits:SetScript("OnShow", drawItemSetList)
     GwPaperDollOutfits:SetScript(
@@ -337,6 +333,16 @@ local function LoadPDEquipset(fmMenu)
     )
     drawItemSetList()
 
-    hooksecurefunc(GwGearManagerPopupFrame, "OkayButton_OnClick", drawItemSetList)
+    hooksecurefunc("GearManagerDialogPopupOkay_OnClick", drawItemSetList)
+    GearManagerDialogPopup:SetScript(
+        "OnShow",
+        function(self)
+            PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
+            self.name = nil
+            self.isEdit = false
+            RecalculateGearManagerDialogPopup()
+            RefreshEquipmentSetIconInfo()
+        end
+    )
 end
 GW.LoadPDEquipset = LoadPDEquipset

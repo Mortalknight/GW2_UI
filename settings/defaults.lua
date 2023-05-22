@@ -73,8 +73,8 @@ GW_DEFAULT["HIDE_BLIZZARD_VIGOR_BAR"] = true
 GW_DEFAULT["GW_COMBAT_TEXT_MODE"] = "GW2"
 GW_DEFAULT["GW_COMBAT_TEXT_BLIZZARD_COLOR"] = false
 GW_DEFAULT["GW_COMBAT_TEXT_COMMA_FORMAT"] = false
-GW_DEFAULT["GW_COMBAT_TEXT_STYLE"] = "Default"
-GW_DEFAULT["GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR"] = "Center"
+GW_DEFAULT["GW_COMBAT_TEXT_STYLE"] = "Classic"
+GW_DEFAULT["GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR"] = "Nameplates"
 GW_DEFAULT["GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS"] = false
 
 GW_DEFAULT["PET_FLOATING_COMBAT_TEXT"] = false
@@ -697,7 +697,6 @@ GW_DEFAULT["MINIMAP_FPS"] = false
 GW_DEFAULT["MINIMAP_FPS_TOOLTIP_DISABLED"] = false
 GW_DEFAULT["MINIMAP_COORDS_TOGGLE"] = false
 GW_DEFAULT["MINIMAP_COORDS_PRECISION"] = 0
-GW_DEFAULT["MINIMAP_ADDON_COMPARTMENT_TOGGLE"] = true
 GW_DEFAULT["WORLDMAP_COORDS_TOGGLE"] = false
 
 GW_DEFAULT["CASTINGBAR_DATA"] = false
@@ -746,7 +745,6 @@ GW_DEFAULT["INSPECTION_SKIN_ENABLED"] = true
 GW_DEFAULT["DRESSUP_SKIN_ENABLED"] = true
 GW_DEFAULT["HELPFRAME_SKIN_ENABLED"] = true
 GW_DEFAULT["SKIN_WQT_ENABLED"] = true
-GW_DEFAULT["SKIN_PETTRACKER_ENABLED"] = true
 GW_DEFAULT["SOCKET_SKIN_ENABLED"] = true
 GW_DEFAULT["WORLDMAP_SKIN_ENABLED"] = true
 GW_DEFAULT["GOSSIP_SKIN_ENABLED"] = true
@@ -807,9 +805,6 @@ GW_DEFAULT["PlayerBuffFrame"]["xOfs"] = 57
 GW_DEFAULT["PlayerBuffFrame"]["yOfs"] = 120
 GW_DEFAULT["PlayerBuffFrame"]["hasMoved"] = false
 GW_DEFAULT["PlayerBuffFrame_GrowDirection"] = "UP"
-GW_DEFAULT["PlayerBuffFrame_HorizontalSpacing"] = 1
-GW_DEFAULT["PlayerBuffFrame_VerticalSpacing"] = 34
-GW_DEFAULT["PlayerBuffFrame_MaxWraps"] = 3
 GW_DEFAULT["PlayerBuffFrame_scale"] = 1
 
 GW_DEFAULT["PlayerDebuffFrame"] = {}
@@ -819,24 +814,7 @@ GW_DEFAULT["PlayerDebuffFrame"]["xOfs"] = 57
 GW_DEFAULT["PlayerDebuffFrame"]["yOfs"] = 220
 GW_DEFAULT["PlayerDebuffFrame"]["hasMoved"] = false
 GW_DEFAULT["PlayerDebuffFrame_GrowDirection"] = "UP"
-GW_DEFAULT["PlayerDebuffFrame_HorizontalSpacing"] = 1
-GW_DEFAULT["PlayerDebuffFrame_VerticalSpacing"] = 34
-GW_DEFAULT["PlayerDebuffFrame_MaxWraps"] = 3
 GW_DEFAULT["PlayerDebuffFrame_scale"] = 1
-
-GW_DEFAULT["PlayerPrivateAuras"] = {}
-GW_DEFAULT["PlayerPrivateAuras"]["point"] = "TOPRIGHT"
-GW_DEFAULT["PlayerPrivateAuras"]["relativePoint"] = "TOPRIGHT"
-GW_DEFAULT["PlayerPrivateAuras"]["xOfs"] = -500
-GW_DEFAULT["PlayerPrivateAuras"]["yOfs"] = -173
-GW_DEFAULT["PlayerPrivateAuras"]["hasMoved"] = false
-GW_DEFAULT["PlayerPrivateAuras_scale"] = 1
-
-GW_DEFAULT["AchievementWindow"] = {}
-GW_DEFAULT["AchievementWindow"]["point"] = "TOPLEFT"
-GW_DEFAULT["AchievementWindow"]["relativePoint"] = "TOPLEFT"
-GW_DEFAULT["AchievementWindow"]["xOfs"] = 96
-GW_DEFAULT["AchievementWindow"]["yOfs"] = -115
 
 GW_DEFAULT["PlayerBuffFrame_Seperate"] = 0
 GW_DEFAULT["PlayerDebuffFrame_Seperate"] = 0
@@ -948,7 +926,9 @@ GW_DEFAULT.IncompatibleAddons = {
     },
     AchievementSkin = {
         Override = false,
-        Addons = {},
+        Addons = {
+            "Krowi_AchievementFilter",
+        },
     },
     LfgInfo = {
         Override = false,

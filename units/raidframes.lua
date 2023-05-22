@@ -218,7 +218,8 @@ local function RaidGridOnEvent(self, event, unit)
     end
 
     if event == "load" then
-        GW.GridSetAbsorbAmount(self)
+        
+        GW.GridSetAbsorbAmount(self,"RAID")
         GW.GridSetPredictionAmount(self, "RAID")
         GW.GridSetHealth(self, "RAID")
         GW.GridUpdateAwayData(self, "RAID", true)

@@ -5,6 +5,7 @@ local SetSetting = GW.SetSetting
 local SetOverrideIncompatibleAddons = GW.SetOverrideIncompatibleAddons
 local RoundDec = GW.RoundDec
 local AddForProfiling = GW.AddForProfiling
+local animations
 local AddToAnimation
 local lerp
 
@@ -435,28 +436,6 @@ local function ShowColorPicker(r, g, b, a, changedCallback)
     ColorPickerFrame:Raise()
 end
 
-local function updateSettingsFrameSettingsValue(setting, value, setSetting)
-    local found = false
-    for _, panel in pairs(GW.getOptionReference()) do
-        for _, of in pairs(panel.options) do
-            if of.optionName == setting then
-                if setSetting then
-                    SetSetting(setting, value, of.perSpec)
-                end
-                if of.optionType == "slider" then
-                    of.slider:SetValue(value)
-                    of.inputFrame.input:SetNumber(tonumber(value))
-                end
-
-                found = true
-                break
-            end
-        end
-        if found then break end
-    end
-end
-GW.updateSettingsFrameSettingsValue = updateSettingsFrameSettingsValue
-
 local panelUniqueID = 0
 local function InitPanel(panel, hasScroll)
     panelUniqueID = panelUniqueID + 1
@@ -536,8 +515,12 @@ local function InitPanel(panel, hasScroll)
           of.displayName = v.name
           lastOptionName = v.name
         end
+        --need this for searchables
+        of.forceNewLine = v.forceNewLine
+
 
         optionReference[panelUniqueID].options[#optionReference[panelUniqueID].options + 1] = of
+
 
         of.optionName = v.optionName
         of.perSpec = v.perSpec
@@ -547,8 +530,6 @@ local function InitPanel(panel, hasScroll)
         of.newLine = newLine
         of.optionType = v.optionType
         of.groupHeaderName = v.groupHeaderName
-        --need this for searchables
-        of.forceNewLine = v.forceNewLine
 
         if (newLine and not first) or padding.x > maximumXSize then
             padding.y = padding.y + (pY + box_padding)
@@ -620,8 +601,12 @@ local function InitPanel(panel, hasScroll)
                 end
             end)
         elseif v.optionType == "dropdown" then
+            local L = 0
+            if v.options~=nil then 
+                L = #v.options
+            end
             local scrollFrame = of.container.contentScroll
-            scrollFrame.numEntries = #v.options
+            scrollFrame.numEntries =L
             scrollFrame.scrollBar.thumbTexture:SetSize(12, 30)
             scrollFrame.scrollBar:ClearAllPoints()
             scrollFrame.scrollBar:SetPoint("TOPRIGHT", -3, -12)
@@ -715,12 +700,14 @@ local function InitPanel(panel, hasScroll)
             end
             loadDropDown(scrollFrame)
             -- set current settings value
-            for key, val in pairs(v.options) do
-                if GetSetting(of.optionName, of.perSpec) == val then
-                    of.button.string:SetText(v.options_names[key])
-                    break
+            if v.options then 
+                for key, val in pairs(v.options) do
+                    if GetSetting(of.optionName, of.perSpec) == val then
+                        of.button.string:SetText(v.options_names[key])
+                        break
+                    end
                 end
-            end
+             end
 
             of.button.string:SetFont(UNIT_NAME_FONT, 12)
             of.button:SetScript(
@@ -985,7 +972,6 @@ local function InitPanel(panel, hasScroll)
         panel.scroll.slider.thumb:SetHeight(panel.scroll.slider:GetHeight() * (panel.scroll:GetHeight() / (maxScroll + panel.scroll:GetHeight())) )
         panel.scroll.slider:SetValue(1)
         panel.scroll.maxScroll = maxScroll
-        panel.scroll.doNotHide = false
     end
 end
 GW.InitPanel = InitPanel
@@ -1038,6 +1024,7 @@ local function LoadSettings()
     sWindow:SetClampedToScreen(true)
     tinsert(UISpecialFrames, "GwSettingsWindow")
 
+
     sWindow:SetScript(
         "OnShow",
         function()
@@ -1081,32 +1068,32 @@ local function LoadSettings()
     sWindow:RegisterEvent("PLAYER_REGEN_ENABLED")
     mf:Hide()
 
-    sWindow.backgroundMask = UIParent:CreateMaskTexture()
-    sWindow.backgroundMask:SetPoint("TOPLEFT", sWindow, "TOPLEFT", -64, 64)
-    sWindow.backgroundMask:SetPoint("BOTTOMRIGHT", sWindow, "BOTTOMLEFT",-64, 0)
-    sWindow.backgroundMask:SetTexture(
+    local bgMask = UIParent:CreateMaskTexture()
+    bgMask:SetPoint("TOPLEFT", sWindow, "TOPLEFT", -64, 64)
+    bgMask:SetPoint("BOTTOMRIGHT", sWindow, "BOTTOMLEFT",-64, 0)
+    bgMask:SetTexture(
         "Interface/AddOns/GW2_UI/textures/masktest",
         "CLAMPTOBLACKADDITIVE",
         "CLAMPTOBLACKADDITIVE"
     )
-    sWindow.background:AddMaskTexture(sWindow.backgroundMask)
+    sWindow.background:AddMaskTexture(bgMask)
+    sWindow.backgroundMask = bgMask
 
     sWindow:HookScript("OnShow",function()
         if AddToAnimation==nil then
             AddToAnimation = GW.AddToAnimation
+            animations = GW.animations
             lerp = GW.lerp
         end
 
         AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
-            function(p)
-                sWindow:SetAlpha(p)
-                sWindow.backgroundMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT", lerp(-64, sWindow.background:GetWidth(), p) , 0)
-            end,
-            1,
-            function()
-                sWindow.backgroundMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT", sWindow.background:GetWidth() + 200, 0)
-            end
-        )
+        function()
+            local p = animations["SETTINGSFRAME_PANEL_ONSHOW"].progress
+            sWindow:SetAlpha(p)
+            bgMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT",lerp(-64,sWindow.background:GetWidth(), p) , 0)
+        end,1,function()
+            bgMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT",sWindow.background:GetWidth() + 200, 0)
+        end)
     end)
 
     GW.LoadOverviewPanel(sWindow)

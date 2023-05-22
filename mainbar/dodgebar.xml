@@ -19,10 +19,18 @@
                     <Layer level="BACKGROUND" textureSubLevel="2">
                         <Texture parentKey="fillFractions" file="Interface/AddOns/GW2_UI/textures/dodgebar/fill">
                             <Color r="1.0" g="0.682" b="0.031" a="1.0"/>
+                            <Size x="128" y="128"></Size>
+                        <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"/>
+                        </Anchors>
                         </Texture>
                     </Layer>
                     <Layer level="BACKGROUND" textureSubLevel="3">
                         <Texture parentKey="fill" file="Interface/AddOns/GW2_UI/textures/dodgebar/fill">
+                        <Size x="128" y="128"></Size>
+                        <Anchors>
+                        <Anchor point="CENTER" relativePoint="CENTER"/>
+                        </Anchors>
                             <Color r="1.0" g="0.682" b="0.031" a="1.0"/>
                         </Texture>
                     </Layer>

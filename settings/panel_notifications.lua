@@ -11,7 +11,7 @@ local function LoadNotificationsPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.header:SetText(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL)
+    p.header:SetText("Notification")
     p.header:SetWidth(p.header:GetStringWidth())
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
@@ -20,8 +20,8 @@ local function LoadNotificationsPanel(sWindow)
     p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     p.breadcrumb:SetText(L["Vignettes"])
 
-    createCat(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, L["Edit your GW2 notifications."], p, {p})
-    settingsMenuAddButton(COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, p, {})
+    createCat("Notification", L["Edit your GW2 notifications."], p, {p})
+    settingsMenuAddButton("Notification", p, {})
 
     local soundKeys = {}
     for _, sound in next, GW.Libs.LSM:List("sound") do

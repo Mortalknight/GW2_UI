@@ -1,9 +1,7 @@
 local _, GW = ...
+local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local GetSetting = GW.GetSetting
-local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
-local BleedList = GW.Libs.Dispel:GetBleedList()
-local BadDispels = GW.Libs.Dispel:GetBadList()
 
 local settings = {}
 
@@ -65,22 +63,24 @@ local function getBuffs(unit, filter, revert)
         filter = ""
     end
     for i = 1, 40 do
-        name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitBuff(unit, i, filter)
-        if name then
+     --   name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitBuff(unit, i, filter)
+        if UnitBuff(unit, i, filter) then
+
             buffList[i] = {}
             local bli = buffList[i]
-            bli.id = i
+              bli.id = i
 
-            bli.name = name
-            bli.icon = icon
-            bli.count = count
-            bli.dispelType = dispelType
-            bli.duration = duration
-            bli.expires = expires
-            bli.caster = caster
-            bli.isStealable = isStealable
-            bli.shouldConsolidate = shouldConsolidate
-            bli.spellID = spellID
+            bli.name,
+            bli.rank,
+            bli.icon,
+            bli.count,
+            bli.dispelType,
+            bli.duration,
+            bli.expires,
+            bli.caster,
+            bli.isStealable,
+            bli.shouldConsolidate,
+            bli.spellID = UnitBuff(unit, i, filter)
 
             bli.timeremaning = bli.duration <= 0 and 500001 or bli.expires - time
         end
@@ -101,23 +101,23 @@ local function getDebuffs(unit, filter, revert)
         filterToUse = filter
     end
     for i = 1, 40 do
-        name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitDebuff(unit, i, filterToUse)
-        if name and ((showImportant and (caster == "player" or GW.ImportendRaidDebuff[spellID])) or not showImportant) then
-            counter = counter + 1
+        if UnitDebuff(unit, i, filterToUse) and ((showImportant and (select(7, UnitDebuff(unit, i, filterToUse)) == "player" or GW.ImportendRaidDebuff[select(11, UnitDebuff(unit, i, filterToUse))])) or not showImportant) then
+            counter = #debuffList + 1
             debuffList[counter] = {}
             local dbi = debuffList[counter]
             dbi.id = i
 
-            dbi.name = name
-            dbi.icon = icon
-            dbi.count = count
-            dbi.dispelType = dispelType
-            dbi.duration = duration
-            dbi.expires = expires
-            dbi.caster = caster
-            dbi.isStealable = isStealable
-            dbi.shouldConsolidate = shouldConsolidate
-            dbi.spellID  = spellID
+            dbi.name,
+            dbi.rank,
+            dbi.icon,
+            dbi.count,
+            dbi.dispelType,
+            dbi.duration,
+            dbi.expires,
+            dbi.caster,
+            dbi.isStealable,
+            dbi.shouldConsolidate,
+            dbi.spellID = UnitDebuff(unit, i, filter)
 
             dbi.timeremaning = dbi.duration <= 0 and 500001 or dbi.expires - time
         end
@@ -177,21 +177,14 @@ local function setBuffData(self, buffs, i)
     end
 
     if self.auraType == "debuff" then
-        if b.dispelType and BadDispels[b.spellID] and GW.Libs.Dispel:IsDispellableByMe(b.dispelType) then
-            b.dispelType = "BadDispel"
-        end
-        if not b.dispelType and BleedList[b.spellID] and GW.Libs.Dispel:IsDispellableByMe("Bleed") then
-            b.dispelType = "Bleed"
-        end
-
         if b.dispelType then
-            self.background:SetVertexColor(DebuffColors[b.dispelType].r, DebuffColors[b.dispelType].g, DebuffColors[b.dispelType].b)
+            self.background:SetVertexColor(DEBUFF_COLOR[b.dispelType].r, DEBUFF_COLOR[b.dispelType].g, DEBUFF_COLOR[b.dispelType].b)
         else
             self.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
         end
     else
         if b.isStealable then
-            self.background:SetVertexColor(DebuffColors.Stealable.r, DebuffColors.Stealable.g, DebuffColors.Stealable.b)
+            self.background:SetVertexColor(1, 1, 1)
         else
             self.background:SetVertexColor(0, 0, 0)
         end

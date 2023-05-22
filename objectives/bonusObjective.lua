@@ -228,7 +228,7 @@ local function setUpBlock(questIDs, collapsed)
                 GwBonusObjectiveBlock.TrackedQuest = {}
                 GwBonusObjectiveBlock.TrackedQuest.questID = questID
                 GwBonusObjectiveBlock.questLogIndex = questLogIndex
-                GwBonusObjectiveBlock.hasGroupFinderButton = C_LFGList.CanCreateQuestGroup(questID)
+                GwBonusObjectiveBlock.hasGroupFinderButton = false --nyiC_LFGList.CanCreateQuestGroup(questID)
 
                 GwBonusObjectiveBlock.groupButton:SetShown(GwBonusObjectiveBlock.hasGroupFinderButton)
 

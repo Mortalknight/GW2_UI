@@ -56,7 +56,7 @@
         <CheckedTexture file="Interface/AddOns/GW2_UI/textures/uistuff/checkboxchecked"></CheckedTexture>
     </CheckButton>
 
-    <ItemButton name="GwPaperDollButtonTemplate" registerForDrag="LeftButton" registerForClicks="LeftButtonUp, RightButtonUp" mixin="ContainerFrameItemButtonMixin" inherits="SecureHandlerClickTemplate,PaperDollAzeriteItemOverlayTemplate" virtual="true">
+    <Button name="GwPaperDollButtonTemplate" registerForDrag="LeftButton" registerForClicks="LeftButtonUp, RightButtonUp" mixin="ContainerFrameItemButtonMixin" inherits="SecureHandlerClickTemplate,PaperDollItemSlotButtonTemplate" virtual="true">
         <Size x="49" y="49"></Size>
         <Layers>
             <Layer level="BACKGROUND">
@@ -86,9 +86,9 @@
                 </Texture>
             </Layer>
         </Layers>
-    </ItemButton>
+    </Button>
 
-    <ItemButton name="GwPaperDollBagItem" registerForClicks="LeftButtonDown, RightButtonDown" inherits="GwPaperDollButtonTemplate" virtual="true"/>
+    <Button name="GwPaperDollBagItem" registerForClicks="LeftButtonDown, RightButtonDown" inherits="GwPaperDollButtonTemplate" virtual="true"/>
 
     <Button name="GwPaperDollOutFitListButton" inherits="GwCharacterMenuBlank" text="Not yet loaded" virtual="true">
         <Layers>

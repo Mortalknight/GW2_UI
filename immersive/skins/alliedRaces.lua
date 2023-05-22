@@ -12,7 +12,7 @@ local function ApplyAlliedRacesUISkin()
 
     select(2, AlliedRacesFrame.ModelFrame:GetRegions()):Hide()
 
-    local tex = AlliedRacesFrame:CreateTexture(nil, "BACKGROUND")
+    local tex = AlliedRacesFrame:CreateTexture("bg", "BACKGROUND")
     tex:SetPoint("TOP", AlliedRacesFrame, "TOP", 0, 25)
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
     local w, h = AlliedRacesFrame:GetSize()
@@ -35,7 +35,7 @@ local function ApplyAlliedRacesUISkin()
 
     scrollFrame.Child:GwStripTextures()
     scrollFrame.Child.ObjectivesFrame:GwStripTextures()
-    scrollFrame.Child.ObjectivesFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    scrollFrame.Child.ObjectivesFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
 
     AlliedRacesFrame.RaceInfoFrame.AlliedRacesRaceName:SetTextColor(1, 0.8, 0)
     scrollFrame.Child.RaceDescriptionText:SetTextColor(1, 1, 1)

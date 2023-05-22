@@ -77,6 +77,14 @@ local StripTexturesBlizzFrames = {
     "ScrollFrameBorder",
 }
 
+local constBackdropDropDown = {
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar",
+    edgeFile = "",
+    tile = false,
+    tileSize = 64,
+    edgeSize = 32,
+    insets = {left = 0, right = 0, top = 0, bottom = 0}
+}
 
 
 local function HandleBlizzardRegions(frame)
@@ -190,7 +198,7 @@ local function GwSkinSliderFrame(frame)
     local thumb = frame:GetThumbTexture()
     thumb:SetSize(SIZE - 2, SIZE - 2)
 
-    local tex = frame:CreateTexture(nil, "BACKGROUND")
+    local tex = frame:CreateTexture("bg", "BACKGROUND")
     tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/sliderbg")
     frame.tex = tex
 
@@ -217,10 +225,11 @@ end
 
 local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShift, yShift)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
+    if not frame.backdrop then 
+     return 
+    end
     local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
     if not frame.backdrop then frame.backdrop = backdrop end
-
-    frame.template = template or "Default"
 
     if not backdrop.SetBackdrop then
         _G.Mixin(backdrop, _G.BackdropTemplateMixin)
@@ -453,25 +462,18 @@ local function GwSkinScrollBar(frame)
     end
 end
 
-local function GwSkinDropDownMenu(frame, buttonPaddindX, backdropTemplate, textBoxRightOffset)
+local function GwSkinDropDownMenu(frame, buttonPaddindX)
     local frameName = frame.GetName and frame:GetName()
     local button = frame.Button or frameName and (_G[frameName .. "Button"] or _G[frameName .. "_Button"])
     local text = frameName and _G[frameName .. "Text"] or frame.Text
-    local middle = frameName and _G[frameName .. "Middle"] or frame.Middle
-    local left = frameName and _G[frameName .. "Left"] or frame.Left
-    local right = frameName and _G[frameName .. "Right"] or frame.Right
     local icon = frame.Icon
 
     frame:GwStripTextures()
     frame:SetWidth(155)
 
-    if backdropTemplate then
-        frame:GwCreateBackdrop(backdropTemplate, true)
-        frame.backdrop:SetBackdropColor(0, 0, 0)
-    else
-        frame:GwCreateBackdrop()
-        GW.SkinTextBox(middle, left, right, nil, nil, -5, textBoxRightOffset or -10)
-    end
+    frame:GwCreateBackdrop(constBackdropDropDown, true)
+    frame.backdrop:SetBackdropColor(0, 0, 0)
+
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)
     frame.backdrop:SetPoint("TOPLEFT", 5, -2)
     frame.backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, -2)
@@ -484,9 +486,14 @@ local function GwSkinDropDownMenu(frame, buttonPaddindX, backdropTemplate, textB
 
     GW.HandleNextPrevButton(button, "down")
 
+    --button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    --button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    --button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+    --button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrowdown_down")
+
     if text then
         text:ClearAllPoints()
-        text:SetPoint("RIGHT", button, "LEFT", -2, 0)
+        text:SetPoint("LEFT", frame, "LEFT", 10, 0)
         text:SetFont(UNIT_NAME_FONT, 12, "")
         text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
         text:SetHeight(frame:GetHeight())
@@ -650,6 +657,7 @@ end
 local function GwKillEditMode(object)
     --object.HighlightSystem = GW.NoOp  --TAINT
     --object.ClearHighlight = GW.NoOp
+    if not  object.Selection then  return end
     object.Selection:SetScript("OnDragStart", nil)
     object.Selection:SetScript("OnDragStop", nil)
     object.Selection:SetScript("OnMouseDown", nil)

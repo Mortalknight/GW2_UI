@@ -175,7 +175,7 @@ local function Update(self)
         wipe(trackedActivities)
         savedHeight = 20
     end
-
+    
     for i = 1, #trackedActivities do
         local activityID = trackedActivities[i]
         local activityInfo = C_PerksActivities.GetPerksActivityInfo(activityID)

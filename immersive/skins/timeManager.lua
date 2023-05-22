@@ -16,7 +16,7 @@ local function LoadTimeManagerSkin()
     end
 
     TimeManagerFrame:GwStripTextures()
-    TimeManagerFrame.tex = TimeManagerFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
+    TimeManagerFrame.tex = TimeManagerFrame:CreateTexture("bg", "BACKGROUND", nil, 0)
     local w, h = TimeManagerFrame:GetSize()
     TimeManagerFrame.tex:SetPoint("TOP", TimeManagerFrame, "TOP", 0, 20)
     TimeManagerFrame.tex:SetSize(w + 50, h + 20)
@@ -33,7 +33,7 @@ local function LoadTimeManagerSkin()
     _G.TimeManagerAlarmMinuteDropDown:SetWidth(80)
     _G.TimeManagerAlarmAMPMDropDown:SetWidth(80)
 
-    GW.SkinTextBox(_G.TimeManagerAlarmMessageEditBox.Middle, _G.TimeManagerAlarmMessageEditBox.Left, _G.TimeManagerAlarmMessageEditBox.Right, nil, nil, 5, 5)
+    --GW.SkinTextBox(_G.TimeManagerAlarmMessageEditBox.Middle, _G.TimeManagerAlarmMessageEditBox.Left, _G.TimeManagerAlarmMessageEditBox.Right)
     _G.TimeManagerAlarmEnabledButton:GwSkinCheckButton()
     _G.TimeManagerMilitaryTimeCheck:GwSkinCheckButton()
     _G.TimeManagerLocalTimeCheck:GwSkinCheckButton()
@@ -54,7 +54,7 @@ local function LoadTimeManagerSkin()
 
     local StopwatchFrame = _G.StopwatchFrame
     StopwatchFrame:GwStripTextures()
-    StopwatchFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
+    StopwatchFrame:GwCreateBackdrop(GW.skins.constBackdropFrame)
 
     _G.StopwatchTabFrame:GwStripTextures()
     _G.StopwatchCloseButton:GwSkinButton(true)

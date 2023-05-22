@@ -6,9 +6,7 @@ local SetSetting = GW.SetSetting
 local REALM_FLAGS = GW.REALM_FLAGS
 local nameRoleIcon = GW.nameRoleIcon
 local LRI = GW.Libs.LRI
-local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
-local BleedList = GW.Libs.Dispel:GetBleedList()
-local BadDispels = GW.Libs.Dispel:GetBadList()
+local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local FillTable = GW.FillTable
 local TimeCount = GW.TimeCount
@@ -98,42 +96,6 @@ local function UpdateSettings()
 end
 GW.UpdateGridSettings = UpdateSettings
 
-local function CreateGridPrivateAuras(self)
-    for i = 1, 2 do
-        local privateAura = CreateFrame("Frame", nil, self.data, "GwPrivateAuraTmpl")
-        privateAura:SetPoint("CENTER", self.data, i == 1 and -9 or 9, 0)
-        privateAura.auraIndex = i
-        privateAura:SetSize(15, 15)
-        local auraAnchor = {
-            unitToken = self.unit,
-            auraIndex = privateAura.auraIndex,
-            -- The parent frame of an aura anchor must have a valid rect with a non-zero
-            -- size. Each private aura will anchor to all points on its parent,
-            -- providing a tooltip when mouseovered.
-            parent = privateAura,
-            -- An optional cooldown spiral can be configured to represent duration.
-            showCountdownFrame = true,
-            showCountdownNumbers = true,
-            -- An optional icon can be created and shown for the aura. Omitting this
-            -- will display no icon.
-            iconInfo = {
-                iconWidth = 15,
-                iconHeight = 15,
-                iconAnchor = {
-                    point = "CENTER",
-                    relativeTo = privateAura.status,
-                    relativePoint = "CENTER",
-                    offsetX = 0,
-                    offsetY = 0,
-                },
-            },
-        }
-        -- Anchors can be removed (and the aura hidden) via the RemovePrivateAuraAnchor
-        -- API, passing it the anchor index returned from the Add function.
-        privateAura.anchorIndex = C_UnitAuras.AddPrivateAuraAnchor(auraAnchor)
-    end
-end
-
 local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     local frame, unit = nil, ""
     if profile == "PARTY" then
@@ -147,6 +109,7 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
         unit = "raidpet" .. index
     end
     frame.parent = parent
+
 
     frame.absorbbg = frame.healthContainer.healPrediction.absorbbg
     frame.absorbOverlay = frame.healthContainer.healPrediction.absorbbg.health.antiHeal.absorbOverlay
@@ -191,6 +154,7 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     frame.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
     frame.absorbbg:SetStatusBarColor(1,1,1,0.66)
     frame.predictionbar:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
+
 
     if settings.fontEnabled then -- for any reason blizzard is not supporting UTF8 if we set this font
         frame.name:SetFont(UNIT_NAME_FONT, 12)
@@ -290,8 +254,6 @@ local function CreateGridFrame(index, parent, OnEvent, OnUpdate, profile)
     if profile == "RAID_PET" then
         frame.classicon:SetTexture(nil)
     end
-
-    CreateGridPrivateAuras(frame)
 end
 GW.CreateGridFrame = CreateGridFrame
 
@@ -333,6 +295,7 @@ local function GridSetAbsorbAmount(self)
         absorbAmount = healthPrecentage + absorbPrecentage
         absorbAmount2 = absorbPrecentage - (1 - healthPrecentage)
     end
+    
     self.absorbbg:SetFillAmount(absorbAmount)
     self.absorbOverlay:SetFillAmount(absorbAmount2)
 end
@@ -662,8 +625,8 @@ local function GridShowDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count
         end
     end
 
-    if debuffType and DebuffColors[debuffType] then
-        frame.background:SetVertexColor(DebuffColors[debuffType].r, DebuffColors[debuffType].g, DebuffColors[debuffType].b)
+    if debuffType and DEBUFF_COLOR[debuffType] then
+        frame.background:SetVertexColor(DEBUFF_COLOR[debuffType].r, DEBUFF_COLOR[debuffType].g, DEBUFF_COLOR[debuffType].b)
     else
         frame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
     end
@@ -721,13 +684,6 @@ local function GridUpdateDebuffs(self, profile)
             shouldDisplay = false
             isDispellable = debuffType and GW.Libs.Dispel:IsDispellableByMe(debuffType) or false
             isImportant = (settings.raidShowImportendInstanceDebuffs[profile] and GW.ImportendRaidDebuff[spellId]) or false
-
-            if debuffType and BadDispels[spellId] and GW.Libs.Dispel:IsDispellableByMe(debuffType) then
-                debuffType = "BadDispel"
-            end
-            if not debuffType and BleedList[spellId] and GW.Libs.Dispel:IsDispellableByMe("Bleed") and DebuffColors.Bleed then
-                debuffType = "Bleed"
-            end
 
             if settings.raidShowDebuffs[profile] then
                 if settings.raidShowOnlyDispelDebuffs[profile] then
@@ -870,7 +826,7 @@ local function GridUpdateBuffs(self, profile)
 
     -- current buffs
     for i = 1, 40 do
-        local name, icon, count, _, duration, expires, caster, _, _, spellID, canApplyAura, _, castByPlayer = UnitBuff(self.unit, i)
+        local name, rank, icon, count, _, duration, expires, caster, _, _, spellID, canApplyAura, _, castByPlayer = UnitBuff(self.unit, i)
 
         if name then
             hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")
@@ -996,6 +952,7 @@ local function GridUpdateFrameData(self, index, profile)
     local healthMax = UnitHealthMax(self.unit)
     local healthPrecentage = 0
     local absorb = UnitGetTotalAbsorbs(self.unit)
+    
     local absorbPrecentage = 0
     local absorbAmount = 0
     local absorbAmount2 =0
@@ -1024,6 +981,7 @@ local function GridUpdateFrameData(self, index, profile)
     self.healthbar:SetFillAmount(healthPrecentage)
     self.absorbbg:SetFillAmount(absorbAmount)
     self.absorbOverlay:SetFillAmount(absorbAmount2)
+
     self.predictionbar:SetValue(predictionPrecentage)
 
     local _, powerToken = UnitPowerType(self.unit)
