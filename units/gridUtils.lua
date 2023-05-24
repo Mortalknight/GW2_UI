@@ -678,7 +678,8 @@ local function GridUpdateDebuffs(self, profile)
     local shouldDisplay, isImportant, isDispellable
 
     for i = 1, 40 do
-        local debuffName, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitDebuff(self.unit, i, "HARMFUL")
+        local debuffName, rank, icon, count, debuffType, duration, expires, caster, _, _, spellId = UnitDebuff(self.unit, i, "HARMFUL")
+        
 
         if debuffName and y <= 0 then
             shouldDisplay = false
@@ -827,6 +828,7 @@ local function GridUpdateBuffs(self, profile)
     -- current buffs
     for i = 1, 40 do
         local name, rank, icon, count, _, duration, expires, caster, _, _, spellID, canApplyAura, _, castByPlayer = UnitBuff(self.unit, i)
+        
 
         if name then
             hasCustom, alwaysShowMine, showForMySpec = SpellGetVisibilityInfo(spellID, UnitAffectingCombat("player") and "RAID_INCOMBAT" or "RAID_OUTOFCOMBAT")

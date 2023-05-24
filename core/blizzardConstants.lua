@@ -33,6 +33,7 @@ C_FriendList = {}
 --C_LFGList = {}
 C_DateAndTime = {}
 --C_MountJournal = {}
+C_TooltipInfo = {}
 
 BACKPACK_CONTAINER = 0
 NUM_TOTAL_EQUIPPED_BAG_SLOTS  = 4
@@ -348,6 +349,9 @@ function C_DateAndTime.GetSecondsUntilDailyReset()
 end
 function C_DateAndTime.GetSecondsUntilWeeklyReset()
     return GetQuestResetTime();
+end
+function C_TooltipInfo.GetInventoryItem(unit, slot)
+    return{}
 end
 
 
