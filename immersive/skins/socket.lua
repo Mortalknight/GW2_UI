@@ -5,8 +5,8 @@ local function ApplySocketUISkin()
 
     ItemSocketingFramePortrait:Hide()
     ItemSocketingFrame:GwStripTextures()
-    _G.ItemSocketingFrameCloseButton:GwSkinButton(true)
-    _G.ItemSocketingFrameCloseButton:SetSize(20, 20)
+    ItemSocketingFrameCloseButton:GwSkinButton(true)
+    ItemSocketingFrameCloseButton:SetSize(20, 20)
 
     local regions = {ItemSocketingFrame:GetRegions()}
     for _,region in pairs(regions) do
@@ -26,23 +26,23 @@ local function ApplySocketUISkin()
     ItemSocketingFrame.tex = tex
 
 
-    ItemSocketingDescription:DisableDrawLayer('BORDER')
-	ItemSocketingDescription:DisableDrawLayer('BACKGROUND')
+    ItemSocketingDescription:DisableDrawLayer("BORDER")
+    ItemSocketingDescription:DisableDrawLayer("BACKGROUND")
     ItemSocketingScrollFrame:GwStripTextures()
 
-    ItemSocketingScrollFrameScrollBar:GwSkinScrollBar()
-    ItemSocketingScrollFrame:GwSkinScrollFrame()
+    GW.HandleTrimScrollBar(ItemSocketingScrollFrame.ScrollBar, true)
+    GW.HandleScrollControls(ItemSocketingScrollFrame)
 
-    for i = 1, _G.MAX_NUM_SOCKETS  do
+    for i = 1, MAX_NUM_SOCKETS  do
         local button_bracket = _G[("ItemSocketingSocket%dBracketFrame"):format(i)]
         local button_icon = _G[("ItemSocketingSocket%dIconTexture"):format(i)]
         button_bracket:GwKill()
         button_icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     end
 
-    _G.ItemSocketingSocketButton:ClearAllPoints()
-    _G.ItemSocketingSocketButton:SetPoint("BOTTOMRIGHT", ItemSocketingFrame, "BOTTOMRIGHT", -5, -10)
-    _G.ItemSocketingSocketButton:GwSkinButton(false, true)
+    ItemSocketingSocketButton:ClearAllPoints()
+    ItemSocketingSocketButton:SetPoint("BOTTOMRIGHT", ItemSocketingFrame, "BOTTOMRIGHT", -5, -10)
+    ItemSocketingSocketButton:GwSkinButton(false, true)
 
     ItemSocketingFrame.mover = CreateFrame("Frame", nil, ItemSocketingFrame)
     ItemSocketingFrame.mover:EnableMouse(true)
@@ -56,9 +56,7 @@ local function ApplySocketUISkin()
         self:GetParent():StartMoving()
     end)
     ItemSocketingFrame.mover:SetScript("OnDragStop", function(self)
-        local self = self:GetParent()
-
-        self:StopMovingOrSizing()
+        self:GetParent():StopMovingOrSizing()
     end)
 end
 
