@@ -113,7 +113,9 @@ local function xpbar_OnClick()
             GwLevelingRewards:Show()
         end
     elseif C_AzeriteEmpoweredItem.IsHeartOfAzerothEquipped() then
-        local heartItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
+        SocketInventoryItem(16)
+       --[[
+local heartItemLocation = C_AzeriteItem.FindActiveAzeriteItem()
         if heartItemLocation and heartItemLocation:IsEqualTo(ItemLocation:CreateFromEquipmentSlot(2)) then
             if AzeriteEssenceUI and AzeriteEssenceUI:IsShown() then
                 HideUIPanel(AzeriteEssenceUI)
@@ -121,6 +123,7 @@ local function xpbar_OnClick()
                 OpenAzeriteEssenceUIFromItemLocation(heartItemLocation)
             end
         end
+       ]] 
     end
 end
 GW.AddForProfiling("hud", "xpbar_OnClick", xpbar_OnClick)
@@ -155,7 +158,7 @@ local function xpbar_OnEvent(self, event)
     end
 
     local azeriteItemLocation --= C_AzeriteItem.FindActiveAzeriteItem()
-    local shouldShowAzeritBar = false
+    local shouldShowAzeritBar = HasArtifactEquipped()
     local AzeritVal = 0
     local AzeritLevel = 0
 

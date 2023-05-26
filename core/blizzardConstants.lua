@@ -68,6 +68,24 @@ Enum.SummonStatus.Pending = 1
 Enum.SummonStatus.Accepted = 2
 Enum.SummonStatus.Declined = 3
 
+local function gw_artifact_points()
+    
+    local itemID, altItemID, name, icon, totalXP, pointsSpent, quality, artifactAppearanceID, appearanceModID, itemAppearanceID, altItemAppearanceID, altOnTop, artifactTier = C_ArtifactUI.GetEquippedArtifactInfo();
+    
+    local numPoints = pointsSpent;
+	local xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
+	while totalXP >= xpForNextPoint and xpForNextPoint > 0 do
+		totalXP = totalXP - xpForNextPoint;
+
+		pointsSpent = pointsSpent + 1;
+		numPoints = numPoints + 1;
+
+		xpForNextPoint = C_ArtifactUI.GetCostForPointAtRank(pointsSpent, artifactTier);
+	end
+	return numPoints, totalXP, xpForNextPoint;
+    
+end
+
 function QuestCache.Get(self,QuestID)
     if not QuestCache.quests[QuestID] then
         local max  = C_QuestLog.GetNumQuestWatches() 
@@ -353,6 +371,23 @@ end
 function C_TooltipInfo.GetInventoryItem(unit, slot)
     return{}
 end
+function C_AzeriteItem.GetAzeriteItemXPInfo(azeriteItemLocation) 
+    --[[
+        ---@return number xp
+---@return number totalLevelXP
+    ]]
+    
+    local numPoints, artifactXP, xpForNextPoint =gw_artifact_points()
+    return artifactXP, xpForNextPoint;
+end
+function C_AzeriteItem.GetPowerLevel(azeriteItemLocation)
+    local numPoints, artifactXP, xpForNextPoint =gw_artifact_points()
+    return numPoints;
+end
+function C_AzeriteEmpoweredItem.IsHeartOfAzerothEquipped() 
+    return HasArtifactEquipped();
+end
+
 
 
 function IsOnGroundFloorInJailersTower()
