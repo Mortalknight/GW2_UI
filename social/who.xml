@@ -87,23 +87,6 @@
                         <Anchors>
                             <Anchor point="LEFT" relativeKey="$parent.ColumnHeader1" relativePoint="RIGHT" x="-2" y="0"/>
                         </Anchors>
-                        <Frames>
-                            <Frame parentKey="DropDown" inherits="UIDropDownMenuTemplate" id="1">
-                                <Anchors>
-                                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"></Anchor>
-                                </Anchors>
-                                <Layers>
-                                    <Layer level="OVERLAY">
-                                        <Texture parentKey="HighlightTexture" file="Interface\PaperDollInfoFrame\UI-Character-Tab-Highlight" alphaMode="ADD" hidden="true">
-                                            <Anchors>
-                                                <Anchor point="TOPLEFT" x="0" y="0"/>
-                                                <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
-                                            </Anchors>
-                                        </Texture>
-                                    </Layer>
-                                </Layers>
-                            </Frame>
-                        </Frames>
                         <Scripts>
                             <OnLoad>
                                 self:SetWidth(135);

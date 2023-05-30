@@ -133,9 +133,9 @@ local function outfitEditButton_OnClick(self)
         })
     end
 
-    HideDropDownMenu(1, nil, GW.EasyMenu)
+    GW.Libs.LibDD:HideDropDownMenu(1, nil, GW.EasyMenu)
     GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-    _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+    GW.Libs.LibDD:EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
 end
 GW.AddForProfiling("character_equipset", "outfitEditButton_OnClick", outfitEditButton_OnClick)
 

@@ -13,4 +13,5 @@
     <Script file="LibEditMode\LibEditModeOverride.lua"/>
     <Script file="LibDispel\LibDispel.lua"/>
     <Script file="LibGW2\LibGW2.lua"/>
+    <Script file="LibUIDropDownMenu\LibUIDropDownMenu.lua"/>
 </Ui>

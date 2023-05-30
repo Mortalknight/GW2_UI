@@ -20,26 +20,26 @@ end
 local function MonthlyActivitiesObjectiveTracker_OnOpenDropDown(self)
     local block = self.activeFrame;
 
-	local info = UIDropDownMenu_CreateInfo()
+	local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
 	info.text = block.title
 	info.isTitle = 1
 	info.notCheckable = 1
-	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL)
 
-	info = UIDropDownMenu_CreateInfo()
+	info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
 	info.notCheckable = 1
 
 	info.text = OBJECTIVES_VIEW_IN_QUESTLOG;
 	info.func = function (button, ...) MonthlyActivitiesObjectiveTracker_OpenFrameToActivity(...) end
 	info.arg1 = block.id
 	info.checked = false
-	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL)
 
 	info.text = OBJECTIVES_STOP_TRACKING
 	info.func = MonthlyActivitiesObjectiveTracker_UntrackPerksActivity
 	info.arg1 = block.id
 	info.checked = false
-	UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL)
 end
 
 local function monthlyActivities_OnClick(self, button)
@@ -47,7 +47,7 @@ local function monthlyActivities_OnClick(self, button)
 		local perksActivityLink = C_PerksActivities.GetPerksActivityChatLink(self.id)
 		ChatEdit_InsertLink(perksActivityLink)
 	elseif button ~= "RightButton" then
-		CloseDropDownMenus()
+		GW.Libs.LibDD:CloseDropDownMenus()
 		if not EncounterJournal then
 			EncounterJournal_LoadUI()
 		end
@@ -59,7 +59,7 @@ local function monthlyActivities_OnClick(self, button)
 
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	else
-		ObjectiveTracker_ToggleDropDown(self, MonthlyActivitiesObjectiveTracker_OnOpenDropDown)
+		GW.ObjectiveTracker_ToggleDropDown(self, MonthlyActivitiesObjectiveTracker_OnOpenDropDown)
 	end
 end
 

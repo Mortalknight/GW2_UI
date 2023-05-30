@@ -18,6 +18,60 @@ local function UpdateSettings()
 end
 GW.UpdateObjectivesSettings = UpdateSettings
 
+local function ObjectiveTracker_ToggleDropDown(frame, handlerFunc)
+	local dropDown = GW.Libs.LibDD:Create_UIDropDownMenu("GW2UIObjectiveTrackerBlockDropDown", UIParent)
+    dropDown:Hide()
+	if dropDown.activeFrame ~= frame then
+		GW.Libs.LibDD:CloseDropDownMenus()
+	end
+	dropDown.activeFrame = frame
+	dropDown.initialize = handlerFunc
+	GW.Libs.LibDD:ToggleDropDownMenu(1, nil, dropDown, "cursor", 3, -3)
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+end
+GW.ObjectiveTracker_ToggleDropDown = ObjectiveTracker_ToggleDropDown
+
+local function QuestObjectiveTracker_OnOpenDropDown(self)
+	local block = self.activeFrame;
+
+	local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
+	info.text = C_QuestLog.GetTitleForQuestID(block.id);
+	info.isTitle = 1;
+	info.notCheckable = 1;
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL);
+
+	info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
+	info.notCheckable = 1;
+
+	info.text = OBJECTIVES_VIEW_IN_QUESTLOG;
+	info.func = QuestObjectiveTracker_OpenQuestDetails;
+	info.arg1 = block.id;
+	info.noClickSound = 1;
+	info.checked = false;
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL);
+
+	info.text = OBJECTIVES_STOP_TRACKING;
+	info.func = QuestObjectiveTracker_UntrackQuest;
+	info.arg1 = block.id;
+	info.checked = false;
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL);
+
+	if ( C_QuestLog.IsPushableQuest(block.id) and IsInGroup() ) then
+		info.text = SHARE_QUEST;
+		info.func = QuestObjectiveTracker_ShareQuest;
+		info.arg1 = block.id;
+		info.checked = false;
+		GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL);
+	end
+
+	info.text = OBJECTIVES_SHOW_QUEST_MAP;
+	info.func = QuestObjectiveTracker_OpenQuestMap;
+	info.arg1 = block.id;
+	info.checked = false;
+	info.noClickSound = 1;
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL);
+end
+
 local function IsQuestAutoTurnInOrAutoAccept(blockQuestID, checkType)
     for i = 1, GetNumAutoQuestPopUps() do
         local questID, popUpType = GetAutoQuestPopUp(i)
@@ -218,7 +272,7 @@ local function statusBarSetValue(self)
     end
     local _, mx = f.StatusBar:GetMinMaxValues()
     local v = f.StatusBar:GetValue()
-    
+
     local width = math.max(1, math.min(10, 10 * ((v / mx) / 0.1)))
     f.StatusBar.Spark:SetPoint("RIGHT", f.StatusBar, "LEFT", 280 * (v / mx), 0)
     f.StatusBar.Spark:SetWidth(width)
@@ -611,7 +665,7 @@ local function OnBlockClick(self, button, isHeader)
         ObjectiveTracker_ToggleDropDown(self, QuestObjectiveTracker_OnOpenDropDown)
         return
     end
-    CloseDropDownMenus()
+    GW.Libs.LibDD:CloseDropDownMenus()
 
     if ChatEdit_TryInsertQuestLinkForQuestID(self.questID) then
         return

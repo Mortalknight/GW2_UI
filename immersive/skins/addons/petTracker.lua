@@ -190,7 +190,7 @@ local function LoadPetTrackerAddonSkin()
                         {text = petTrackerLocals.CapturedPets, checked = PetTracker.sets.capturedPets, isNotRadio = true, func = PetTracker.Tracker.ToggleCaptured},
                     }
                     GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-                    EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+                    GW.Libs.LibDD:EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
                 end
             else
                 CollapseHeader(self:GetParent(), false, false)
