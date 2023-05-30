@@ -14,6 +14,9 @@ GW_PRIVATE_DEFAULT["ISKAARAN_FISHING_NET_DATA"] = {}
 -- global settings
 GW_DEFAULT["GW2_UI_VERSION"] = "WELCOME"
 
+-- reset settings
+GW_DEFAULT["Reset_Container_Loot_Order"] = false
+
 GW_DEFAULT["OBJECTIVES_COLLAPSE_IN_M_PLUS"] = false
 
 GW_DEFAULT["TARGET_ENABLED"] = true
