@@ -206,9 +206,7 @@ local function encounterJournalSkin()
     EJ.navBar.homeButton.tex:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/buttonlightInner")
     EJ.navBar.homeButton.tex:SetAlpha(1)
 
-    local homeButtonBorder = CreateFrame("Frame", nil, EJ.navBar.homeButton, "GwLightButtonBorder")
-    EJ.navBar.homeButton.borderFrame = homeButtonBorder
-    EJ.navBar.homeButton.xoffset = -1
+    EJ.navBar.homeButton.borderFrame = CreateFrame("Frame", nil, EJ.navBar.homeButton, "GwLightButtonBorder")
 
     EJ.CloseButton:SetPoint("TOPRIGHT", -10, -2)
     EncounterJournalPortrait:Show()

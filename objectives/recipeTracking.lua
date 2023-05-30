@@ -34,7 +34,7 @@ local function RecipeObjectiveTracker_OnOpenDropDown(self)
         end
         info.arg1 = block.id
         info.checked = false
-        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL)
+        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL)
     end
 
     info.text = PROFESSIONS_UNTRACK_RECIPE
@@ -43,7 +43,7 @@ local function RecipeObjectiveTracker_OnOpenDropDown(self)
     end
     info.arg1 = block.id
     info.checked = false
-    GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL)
+    GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL)
 end
 
 local function recipe_OnClick(self, button)

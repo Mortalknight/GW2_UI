@@ -17,7 +17,7 @@ local function AchievementObjectiveTracker_OnOpenDropDown(self)
 	info.text = achievementName;
 	info.isTitle = 1;
 	info.notCheckable = 1;
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL);
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
 
 	info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
 	info.notCheckable = 1;
@@ -26,13 +26,13 @@ local function AchievementObjectiveTracker_OnOpenDropDown(self)
 	info.func = function (button, ...) OpenAchievementFrameToAchievement(...); end;
 	info.arg1 = block.id;
 	info.checked = false;
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL);
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
 
 	info.text = OBJECTIVES_STOP_TRACKING;
 	info.func = AchievementObjectiveTracker_UntrackAchievement;
 	info.arg1 = block.id;
 	info.checked = false;
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL);
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
 end
 
 local function achievement_OnClick(block, mouseButton)

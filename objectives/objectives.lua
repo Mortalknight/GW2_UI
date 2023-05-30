@@ -38,7 +38,7 @@ local function QuestObjectiveTracker_OnOpenDropDown(self)
 	info.text = C_QuestLog.GetTitleForQuestID(block.id);
 	info.isTitle = 1;
 	info.notCheckable = 1;
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL);
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
 
 	info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
 	info.notCheckable = 1;
@@ -48,20 +48,20 @@ local function QuestObjectiveTracker_OnOpenDropDown(self)
 	info.arg1 = block.id;
 	info.noClickSound = 1;
 	info.checked = false;
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL);
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
 
 	info.text = OBJECTIVES_STOP_TRACKING;
 	info.func = QuestObjectiveTracker_UntrackQuest;
 	info.arg1 = block.id;
 	info.checked = false;
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL);
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
 
 	if ( C_QuestLog.IsPushableQuest(block.id) and IsInGroup() ) then
 		info.text = SHARE_QUEST;
 		info.func = QuestObjectiveTracker_ShareQuest;
 		info.arg1 = block.id;
 		info.checked = false;
-		GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL);
+		GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
 	end
 
 	info.text = OBJECTIVES_SHOW_QUEST_MAP;
@@ -69,7 +69,7 @@ local function QuestObjectiveTracker_OnOpenDropDown(self)
 	info.arg1 = block.id;
 	info.checked = false;
 	info.noClickSound = 1;
-	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWN_MENU_LEVEL);
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
 end
 
 local function IsQuestAutoTurnInOrAutoAccept(blockQuestID, checkType)

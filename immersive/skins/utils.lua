@@ -279,9 +279,7 @@ local function SkinNavBarButtons(self)
         navButton.tex = tex
         navButton.tex:SetAlpha(1)
 
-        local homeButtonBorder = CreateFrame("Frame",nil,navButton,"GwLightButtonBorder")
-        navButton.borderFrame =homeButtonBorder
-
+        navButton.borderFrame = CreateFrame("Frame", nil, navButton, "GwLightButtonBorder")
 
         hooksecurefunc(navButton, "SetWidth", function()
             local w = navButton:GetWidth()
@@ -298,12 +296,21 @@ local function SkinNavBarButtons(self)
             end
         end
 
-        navButton.xoffset = -1
-
         navButton.isSkinned = true
     end
 end
 hooksecurefunc("NavBar_AddButton", SkinNavBarButtons)
+
+-- set xoffset for the navbar to -1 taints the dropdown
+hooksecurefunc("NavBar_CheckLength", function(self)
+    local func = NavBarCheck[self:GetParent():GetName()]
+    if func and not func() then return end
+
+    local lastButton = self.navList[2]
+    if lastButton then
+	    lastButton:SetPoint("LEFT", self.navList[1], "RIGHT", -1, 0)
+    end
+end)
 
 local function HandlePortraitFrame(frame, createBackdrop)
     local name = frame and frame.GetName and frame:GetName()
