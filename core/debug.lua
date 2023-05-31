@@ -32,14 +32,14 @@ local function Debug(...)
         local arg = select(i, ...)
         msg = msg .. tostring(arg) .. " "
     end
-    D.DebugLog("GW2", "%s", msg)
+    D.DebugLog("GW2_UI", "%s", msg)
 end
 
 local function Trace()
     D.DebugLog("GW2Trace", "%s", "------------------------- Trace -------------------------")
     for i,v in ipairs({("\n"):split(debugstack(2))}) do
         if v ~= "" then
-            D.DebugLog("GW2Trace", "%d: %s", i, v)
+            D.DebugLog("GW2_UI", "%d: %s", i, v)
         end
     end
     D.DebugLog("GW2Trace", "%s", "---------------------------------------------------------")
