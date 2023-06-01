@@ -58,7 +58,10 @@ local function AddSpecie(self, block, specie, quality, level)
                 block:GetParent():GetScript("OnLeave")(block:GetParent())
             end
         end)
+
+        return true
     end
+    return false
 end
 
 local function setUpProgressbar(block, progress, counter)
@@ -121,11 +124,11 @@ local function petTrackerUpdate(self)
                 for _, specie in ipairs(progress[quality][level] or {}) do
                     if counter <= maxEntries then
                         local petObjectives = getObjectiveBlock(petBlock, counter)
-                        AddSpecie(self, petObjectives, specie, quality, level)
-
-                        foundPet = true
-                        height = height + 20
-                        counter = counter + 1
+                        if AddSpecie(self, petObjectives, specie, quality, level) then
+                            foundPet = true
+                            height = height + 20
+                            counter = counter + 1
+                        end
                     else
                         break
                     end
