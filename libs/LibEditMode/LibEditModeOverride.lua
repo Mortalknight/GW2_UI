@@ -11,6 +11,7 @@ local pointGetter = CreateFrame("Frame", nil, UIParent)
 local FRAME_ERROR = "This frame isn't used by edit mode"
 local LOAD_ERROR = "You need to call LibEditModeOverride:LoadLayouts first"
 local EDIT_ERROR = "Active layout is not editable"
+local READY_ERROR = "You need to wait for EDIT_MODE_LAYOUTS_UPDATED"
 
 local layoutInfo
 local reconciledLayouts = false
@@ -158,7 +159,12 @@ function lib:AreLayoutsLoaded()
   return layoutInfo ~= nil
 end
 
+function lib:IsReady()
+  return EditModeManagerFrame.accountSettings ~= nil
+end
+
 function lib:LoadLayouts()
+  assert(lib:IsReady(), READY_ERROR)
   layoutInfo = C_EditMode.GetLayouts()
 
   if not reconciledLayouts then
@@ -188,6 +194,7 @@ end
 
 function lib:ApplyChanges()
   assert(not InCombatLockdown(), "Cannot move frames in combat")
+  assert(lib:IsReady(), READY_ERROR)
   lib:SaveOnly()
 
   if not issecurevariable(DropDownList1, "numButtons") then
