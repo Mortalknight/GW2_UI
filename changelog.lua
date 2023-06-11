@@ -16,6 +16,17 @@ AddChange(string addonVersion, table changeList)
 ]]
 
 
+addChange("6.8.1",{
+    {ct.bug,[=[Fix buff/debuff auto anchor]=]},
+    {ct.bug,[=[Fix buff/debuff max wraps setting]=]},
+    {ct.bug,[=[Fix socket skin lua error]=]},
+    {ct.bug,[=[Fix Pet Tracker integration]=]},
+
+    {ct.change,[=[Added LibUIDropDownMenu to prevent drop down taints]=]},
+    {ct.change,[=[Added Diablo 4 to friends data info]=]},
+    {ct.change,[=[Update LibEditModeOverride]=]},
+})
+
 addChange("6.8.0",{
     {ct.feature,[=[Added option to adjust player de/buff horizontal and vertical spacing]=]},
     {ct.feature,[=[Added option to adjust player de/buff max wrap of lines]=]},

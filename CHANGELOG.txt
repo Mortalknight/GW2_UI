@@ -1,3 +1,15 @@
+6.8.1
+FIXES
+    - Fix buff/debuff auto anchor
+    - Fix buff/debuff max wraps setting
+    - Fix socket skin lua error
+    - Fix Pet Tracker integration
+
+CHANGES
+    - Added LibUIDropDownMenu to prevent drop down taints
+    - Added Diablo 4 to friends data info
+    - Update LibEditModeOverride
+
 6.8.0
 NEW
     - Added option to adjust player de/buff horizontal and vertical spacing
