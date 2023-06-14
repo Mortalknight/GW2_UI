@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.8.2",{
+    {ct.bug,[=[Fix druid little manabar in cat form with player frame in target frame style]=]},
+    {ct.bug,[=[Try to handle bags correctly for accounts with not 2FA]=]},
+})
 
 addChange("6.8.1",{
     {ct.bug,[=[Fix buff/debuff auto anchor]=]},

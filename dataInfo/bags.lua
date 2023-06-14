@@ -25,7 +25,7 @@ local function Bags_OnEnter(self)
     for i = BACKPACK_CONTAINER, NUM_TOTAL_EQUIPPED_BAG_SLOTS do
         local bagName = GetBagName(i)
         if bagName then
-            local numSlots = C_Container.GetContainerNumSlots(i)
+            local numSlots = ContainerFrame_GetContainerNumSlots(i)
             local freeSlots = C_Container.GetContainerNumFreeSlots(i)
             local usedSlots = numSlots - freeSlots
             local sumNum = 19 + i

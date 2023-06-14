@@ -40,7 +40,7 @@ local function sellJunk()
 
     -- Traverse bags and sell grey items
     for BagID = 0, 4 do
-        for slotID = 1, C_Container.GetContainerNumSlots(BagID) do
+        for slotID = 1, ContainerFrame_GetContainerNumSlots(BagID) do
             ItemLink = C_Container.GetContainerItemLink(BagID, slotID)
             if ItemLink then
                 _, _, rarity, _, _, _, _, _, _, _, itemPrice, classID, _, bindType = GetItemInfo(ItemLink)

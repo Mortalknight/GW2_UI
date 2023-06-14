@@ -1,3 +1,8 @@
+6.8.2
+FIXES
+    - Fix druid little manabar in cat form with player frame in target frame style
+    - Try to handle bags correctly for accounts with not 2FA
+
 6.8.1
 FIXES
     - Fix buff/debuff auto anchor
