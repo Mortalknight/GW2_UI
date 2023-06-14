@@ -3,7 +3,7 @@ local v = GW.vernotes
 
 v("2.0.8 Era", [=[
 MISC
-Check grid auras more frequently
+    Check grid auras more frequently
 ]=])
 
 v("2.0.7 Era", [=[

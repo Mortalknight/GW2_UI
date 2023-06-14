@@ -125,7 +125,7 @@ local function player_OnEvent(self, event, ...)
         GW.updatePowerValues(self, false)
     elseif IsIn(event, "PLAYER_LEVEL_UP", "GROUP_ROSTER_UPDATE", "UNIT_PORTRAIT_UPDATE") then
         unitFrameData(self, event, ...)
-    elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
+    elseif IsIn(event, "UNIT_HEALTH_FREQUENT", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
         updateHealthData(self)
     elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT", "UPDATE_SHAPESHIFT_FORM") then
         GW.updatePowerValues(self, false)
@@ -200,7 +200,7 @@ local function LoadPlayerFrame()
     NewUnitFrame:RegisterEvent("UNIT_PORTRAIT_UPDATE")
     NewUnitFrame:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
     NewUnitFrame:RegisterEvent("UNIT_HEAL_PREDICTION")
-    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH", "player")
+    NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "player")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
     NewUnitFrame:RegisterUnitEvent("UNIT_FACTION", "player")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXPOWER", "player")
