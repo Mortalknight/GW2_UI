@@ -25,12 +25,12 @@ local ICON_SPRITES = {
 
 local function PositionGameMenuButton()
     GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + GameMenuButtonLogout:GetHeight() - 4)
-    local _, relTo, _, _, offY = GameMenuButtonKeybindings:GetPoint()
+    local _, relTo, _, _, offY = GameMenuButtonMacros:GetPoint()
     if relTo ~= GameMenuFrame[GW.addonName] then
         GameMenuFrame[GW.addonName]:ClearAllPoints()
         GameMenuFrame[GW.addonName]:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, -1)
-        GameMenuButtonKeybindings:ClearAllPoints()
-        GameMenuButtonKeybindings:SetPoint("TOPLEFT", GameMenuFrame[GW.addonName], "BOTTOMLEFT", 0, offY)
+        GameMenuButtonMacros:ClearAllPoints()
+        GameMenuButtonMacros:SetPoint("TOPLEFT", GameMenuFrame[GW.addonName], "BOTTOMLEFT", 0, offY)
     end
 end
 GW.PositionGameMenuButton = PositionGameMenuButton

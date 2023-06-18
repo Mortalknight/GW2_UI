@@ -697,7 +697,7 @@ local function LoadTooltips()
         hooksecurefunc("EmbeddedItemTooltip_SetItemByID", EmbeddedItemTooltip_ID)
         hooksecurefunc("EmbeddedItemTooltip_SetCurrencyByID", EmbeddedItemTooltip_ID)
         hooksecurefunc("EmbeddedItemTooltip_SetItemByQuestReward", EmbeddedItemTooltip_QuestReward)
-        hooksecurefunc("EmbeddedItemTooltip_SetSpellByQuestReward", EmbeddedItemTooltip_QuestReward)
+       --RETAILONLY hooksecurefunc("EmbeddedItemTooltip_SetSpellByQuestReward", EmbeddedItemTooltip_QuestReward)
 
         hooksecurefunc(GameTooltip, "SetUnitAura", SetUnitAura)
         hooksecurefunc(GameTooltip, "SetUnitBuff", SetUnitAura)
