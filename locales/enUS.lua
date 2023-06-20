@@ -560,3 +560,6 @@ L["Horizontal Spacing"] = true
 L["Vertical Spacing"] = true
 L["Max Wraps"] = true
 L["Limit the number of rows"]= true
+L["Crit modifier"] = true
+L["Pet number modifier"] = true
+L["Used for animations"] = true

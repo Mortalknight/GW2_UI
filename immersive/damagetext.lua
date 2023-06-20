@@ -52,9 +52,6 @@ local STACKING_NORMAL_ANIMATION_OFFSET_Y = 10
 local STACKING_NORMAL_ANIMATION_OFFSET_X = -20
 local STACKING_MOVESPEED = 1
 
-local CRITICAL_SCALE_MODIFIER = 1.5
-local PET_SCALE_MODIFIER = 0.7
-
 local CLASSIC_NUM_HITS = 0
 local CLASSIC_AVARAGE_HIT = 0
 
@@ -518,6 +515,12 @@ local function UpdateSettings()
     settings.usedFormat = GW.GetSetting("GW_COMBAT_TEXT_STYLE")
     settings.classicFormatAnchorPoint = GW.GetSetting("GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR")
     settings.showHealNumbers = GW.GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS")
+    settings.fontSizeMiss = tonumber(GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_MISS"))
+    settings.fontSizeCrit = tonumber(GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_CRIT"))
+    settings.fontSize = tonumber(GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE"))
+    settings.fontSizeBlockAbsorb = tonumber(GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_BLOCKED_ABSORBE"))
+    settings.fontSizePetModifier = tonumber(GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER"))
+    settings.fontSizeCritModifier = tonumber(GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER"))
 
     usedColorTable = settings.useBlizzardColor and colorTable.blizzard or colorTable.gw
 end
@@ -631,7 +634,7 @@ local function animateTextCriticalForStackingFormat(frame)
             if p < 0.25 then
                 local scaleFade = p - 0.25
                 frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X, 0, scaleFade / 0.25)
-                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.textScaleModifier, scaleFade / 0.25))
+                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * settings.fontSizeCritModifier, frame.textScaleModifier, scaleFade / 0.25))
             else
                 frame:SetScale(frame.textScaleModifier)
             end
@@ -700,7 +703,7 @@ local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
             if p < 0.25 then
                 local scaleFade = p - 0.25
 
-                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.textScaleModifier, scaleFade / 0.25))
+                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * settings.fontSizeCritModifier, frame.textScaleModifier, scaleFade / 0.25))
             else
                 frame:SetScale(frame.textScaleModifier)
             end
@@ -773,16 +776,16 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
         0,
         1,
         GetTime(),
-        CRITICAL_ANIMATION_DURATION  * (frame.dynamicScale + CRITICAL_SCALE_MODIFIER),
+        CRITICAL_ANIMATION_DURATION  * (frame.dynamicScale + settings.fontSizeCritModifier),
         function(p)
             if frame.anchorFrame == nil or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame
                 classicPositionGrid(frame.anchorFrame)
             end
             if p < 0.05 and not frame.periodic then
-                frame:SetScale(math.max(0.1, GW.lerp(1.5 * frame.dynamicScale * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.dynamicScale, (p - 0.05) / 0.05)))
+                frame:SetScale(math.max(0.1, GW.lerp(1.5 * frame.dynamicScale * frame.textScaleModifier * settings.fontSizeCritModifier, frame.dynamicScale, (p - 0.05) / 0.05)))
             else
-                frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER))
+                frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier * settings.fontSizeCritModifier))
             end
 
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
@@ -880,19 +883,19 @@ AFP("getFontElement", getFontElement)
 local function setElementData(self, critical, source, missType, blocked, absorbed, periodic, school)
     if missType then
         self.critTexture:Hide()
-        self.string:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINED")
+        self.string:SetFont(DAMAGE_TEXT_FONT, settings.fontSizeMiss, "OUTLINED")
         self.crit = false
     elseif blocked or absorbed then
         self.critTexture:Hide()
-        self.string:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
+        self.string:SetFont(DAMAGE_TEXT_FONT, settings.fontSizeBlockAbsorb, "OUTLINED")
         self.crit = false
     elseif critical then
         self.critTexture:Show()
-        self.string:SetFont(DAMAGE_TEXT_FONT, 34, "OUTLINED")
+        self.string:SetFont(DAMAGE_TEXT_FONT, settings.fontSizeCrit, "OUTLINED")
         self.crit = true
     else
         self.critTexture:Hide()
-        self.string:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
+        self.string:SetFont(DAMAGE_TEXT_FONT, settings.fontSize, "OUTLINED")
         self.crit = false
     end
 
@@ -905,7 +908,7 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
     end
 
     self.pet = source == "pet"
-    self.textScaleModifier = self.pet and PET_SCALE_MODIFIER or 1
+    self.textScaleModifier = self.pet and settings.fontSizePetModifier or 1
     self.periodic = periodic
 
     local colorSource = (source == "pet" or source == "melee") and source or source == "heal" and "heal" or "spell"

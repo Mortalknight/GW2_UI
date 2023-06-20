@@ -457,12 +457,12 @@ local function showExtraOptions(self)
     if self.optionScaleable then
         local scale = GetSetting(self.setting .. "_scale")
         GW.MoveHudScaleableFrame.moverSettingsFrame.options.scaleSlider.slider:SetValue(scale)
-        GW.MoveHudScaleableFrame.moverSettingsFrame.options.scaleSlider.input:SetNumber(scale)
+        GW.MoveHudScaleableFrame.moverSettingsFrame.options.scaleSlider.input:SetText(scale)
     end
     if self.optionHeight then
         local height = GetSetting(self.setting .. "_height")
         GW.MoveHudScaleableFrame.moverSettingsFrame.options.heightSlider.slider:SetValue(height)
-        GW.MoveHudScaleableFrame.moverSettingsFrame.options.heightSlider.input:SetNumber(height)
+        GW.MoveHudScaleableFrame.moverSettingsFrame.options.heightSlider.input:SetText(height)
     end
 
     if GW.MoveHudScaleableFrame.moverSettingsFrame.activeFlasher then
@@ -749,14 +749,14 @@ local function LoadMovers(layoutManager)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetMinMaxValues(0.5, 1.5)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetValue(1)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetScript("OnValueChanged", sliderValueChange)
-    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.input:SetNumber(1)
+    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.input:SetText(1)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.input:SetFont(UNIT_NAME_FONT, 8, "")
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.input:SetScript("OnEnterPressed", sliderEditBoxValueChanged)
 
     smallSettingsContainer.moverSettingsFrame.options.heightSlider.slider:SetMinMaxValues(1, 1500)
     smallSettingsContainer.moverSettingsFrame.options.heightSlider.slider:SetValue(1)
     smallSettingsContainer.moverSettingsFrame.options.heightSlider.slider:SetScript("OnValueChanged", heightSliderValueChange)
-    smallSettingsContainer.moverSettingsFrame.options.heightSlider.input:SetNumber(1)
+    smallSettingsContainer.moverSettingsFrame.options.heightSlider.input:SetText(1)
     smallSettingsContainer.moverSettingsFrame.options.heightSlider.input:SetFont(UNIT_NAME_FONT, 7, "")
     smallSettingsContainer.moverSettingsFrame.options.heightSlider.input:SetScript("OnEnterPressed", heightEditBoxValueChanged)
 
