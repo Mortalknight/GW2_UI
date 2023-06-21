@@ -1,3 +1,6 @@
+2.1.2-Wrath
+    - Update for 3.4.2
+
 2.1.1-Wrath
     - Try to fix keybind text on actionbars
 

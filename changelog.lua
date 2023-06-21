@@ -8,6 +8,9 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.1.2",{
+    {ct.change,[=[Update for 3.4.2]=]},
+})
 addChange("2.1.1",{
     {ct.bug,[=[Try to fix keybind text on actionbars]=]},
 })
