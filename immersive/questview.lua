@@ -159,7 +159,8 @@ GW.AddForProfiling("questview", "setQuestGiverAnimation", setQuestGiverAnimation
 local function showRewards()
     local money = GetRewardMoney()
     local items = GetNumQuestRewards()
-    local spells = GetNumRewardSpells()
+    local questID = GetQuestID()
+    local spells = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {}
     local choices = GetNumQuestChoices()
 
     local qinfoHeight = 300
@@ -212,7 +213,7 @@ local function showRewards()
         end
     end
 
-    if (money > 0 or items > 0 or spells > 0 or choices > 0) and questState ~= "PROGRESS" then
+    if (money > 0 or items > 0 or (spells and #spells > 0) or choices > 0) and questState ~= "PROGRESS" then
         UIFrameFadeIn(QuestInfoRewardsFrame, 0.1, 0, 1)
         QuestInfoRewardsFrame:SetParent(GwQuestviewFrame)
         QuestInfoRewardsFrame:SetWidth(400)
