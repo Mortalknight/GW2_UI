@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.2.1",{
+    {ct.bug,[=[Fix lua error from 2.2.0-Wrath]=]},
+})
+
 addChange("2.2.0",{
     {ct.change,[=[Animation tweaks]=]},
     {ct.change,[=[Update friends data info]=]},

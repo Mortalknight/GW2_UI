@@ -1,3 +1,6 @@
+2.2.1-Wrath
+    - Fix lua error from 2.2.0-Wrath
+
 2.2.0-Wrath
     - Animation tweaks
     - Update friends data info
