@@ -912,12 +912,6 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             chatType == "OPENING" or chatType == "TRADESKILLS" or chatType == "PET_INFO" or chatType == "TARGETICONS" or chatType == "BN_WHISPER_PLAYER_OFFLINE") then
             frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil)
         elseif chatType == "LOOT" then
-            if arg12 == GW.myguid and C_Social.IsSocialEnabled() then
-                local itemID, creationContext = GetItemInfoFromHyperlink(arg1)
-                if itemID and C_Social.GetLastItem() == itemID then
-                    arg1 = arg1 .. " " .. _G.Social_GetShareItemLink(creationContext, true)
-                end
-            end
             frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil)
         elseif strsub(chatType,1,7) == "COMBAT_" then
             frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil)
@@ -926,25 +920,9 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         elseif strsub(chatType,1,10) == "BG_SYSTEM_" then
             frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil)
         elseif strsub(chatType,1,11) == "ACHIEVEMENT" then
-            -- Append [Share] hyperlink
-            if arg12 == GW.myguid and C_Social.IsSocialEnabled() then
-                local achieveID = GetAchievementInfoFromHyperlink(arg1)
-                if achieveID then
-                    arg1 = arg1 .. " " .. Social_GetShareAchievementLink(achieveID, true)
-                end
-            end
             frame:AddMessage(format(arg1, GetPlayerLink(arg2, ("[%s]"):format(coloredName))), info.r, info.g, info.b, info.id, nil, nil)
         elseif strsub(chatType,1,18) == "GUILD_ACHIEVEMENT" then
             local message = format(arg1, GetPlayerLink(arg2, ("[%s]"):format(coloredName)))
-            if C_Social.IsSocialEnabled() then
-                local achieveID = GetAchievementInfoFromHyperlink(arg1)
-                if achieveID then
-                    local isGuildAchievement = select(12, GetAchievementInfo(achieveID))
-                    if isGuildAchievement then
-                        message = message .. " " .. Social_GetShareAchievementLink(achieveID, true)
-                    end
-                end
-            end
             frame:AddMessage(message, info.r, info.g, info.b, info.id, nil, nil)
         elseif chatType == "IGNORED" then
             frame:AddMessage(format(CHAT_IGNORED, arg2), info.r, info.g, info.b, info.id, nil, nil)
