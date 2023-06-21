@@ -160,8 +160,11 @@ local function showRewards()
     local money = GetRewardMoney()
     local items = GetNumQuestRewards()
     local questID = GetQuestID()
-    local spells = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {}
+    local spells = {}
     local choices = GetNumQuestChoices()
+    if questID and questID > 0 then
+        spells = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {}
+    end
 
     local qinfoHeight = 300
     local qinfoTop = -20
