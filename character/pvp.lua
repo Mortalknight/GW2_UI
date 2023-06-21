@@ -110,10 +110,10 @@ end
 local function menuItem_OnClick(self)
     local menuItems = self:GetParent().items
     for _, v in pairs(menuItems) do
-        v:ClearNormalTexture()
+        v.activeTexture:Hide()
         v.ToggleMe:Hide()
     end
-    self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.activeTexture:Show()
     self.ToggleMe:Show()
 end
 
@@ -131,7 +131,7 @@ local function LoadPvp()
     local fmMenu = CreateFrame("Frame", "GWPvpMenu", pvpWindow, "GwCharacterMenuTemplate")
     fmMenu.items = {}
 
-    local item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplateNew")
+    local item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
     item.ToggleMe = pvpFrame_outer.Pvp
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(PVP)
@@ -139,7 +139,7 @@ local function LoadPvp()
     item:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
     fmMenu.items.pvp = item
 
-    item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplateNew")
+    item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
     item.ToggleMe = pvpFrame_outer.Battleground
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(BATTLEGROUND)
@@ -149,8 +149,6 @@ local function LoadPvp()
 
     GW.CharacterMenuButton_OnLoad(fmMenu.items.pvp, false)
     GW.CharacterMenuButton_OnLoad(fmMenu.items.battleground, true)
-
-    fmMenu.items.pvp:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
 
     PVPParentFrame:HookScript("OnShow", function()
         TogglePVPFrame()

@@ -1,5 +1,4 @@
 local _, GW = ...
-local L = GW.L
 local GWGetClassColor = GW.GWGetClassColor
 
 local PlayerSlots = {

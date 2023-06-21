@@ -62,24 +62,6 @@
         </Anchors>
     </Frame>
 
-    <Button name="GwCharacterMenuButtonTemplateNew" inherits="GwStandardButton" virtual="true">
-        <Size x="231" y="36"></Size>
-        <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
-        </Anchors>
-        <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
-        <Layers>
-            <Layer>
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
-                    <Size x="10" y="20"></Size>
-                    <Anchors>
-                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
-                    </Anchors>
-                </Texture>
-            </Layer>
-        </Layers>
-    </Button>
-
     <Button name="GwCharacterMenuButtonTemplate" inherits="GwStandardButton" virtual="true">
         <Size x="231" y="36"></Size>
         <Anchors>
@@ -87,21 +69,16 @@
         </Anchors>
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
         <Layers>
-            <Layer>
-                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
-                    <Size x="10" y="20"></Size>
+            <Layer textureSubLevel="OVERLAY">
+                <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover" hidden="true">
                     <Anchors>
-                        <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
                     </Anchors>
                 </Texture>
             </Layer>
-        </Layers>
-    </Button>
-
-    <Button name="GwCharacterMenuButtonTemplate2" inherits="GwStandardButton" virtual="true">
-        <Layers>
             <Layer>
-                <Texture file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
+                <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
                     <Size x="10" y="20"></Size>
                     <Anchors>
                         <Anchor point="RIGHT" relativePoint="RIGHT"></Anchor>
@@ -128,6 +105,7 @@
         <Scripts>
             <OnLoad>
                 self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+                self.limitHoverStripAmount = 1
                 self:ClearNormalTexture()
                 local fontString = self:GetFontString()
                 fontString:SetTextColor(1, 1, 1, 1)
@@ -153,19 +131,19 @@
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentTitle" parentKey="titleMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate" text="PAPERDOLL_SIDEBAR_TITLES" >
+            <Button name="$parentTitle" parentKey="titleMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="PAPERDOLL_SIDEBAR_TITLES" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.skillsMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentTitle" parentKey="gearMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="EQUIPMENT_MANAGER" >
+            <Button name="$parentGear" parentKey="gearMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="EQUIPMENT_MANAGER" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.titleMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="PET" >
+            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate,SecureHandlerStateTemplate" text="PET" >
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.gearMenu" relativePoint="BOTTOMLEFT"></Anchor>
@@ -374,7 +352,6 @@
                 self.itemLevel:SetFont(UNIT_NAME_FONT, 24, "")
                 self.itemLevelLabel:SetFont(UNIT_NAME_FONT, 12, "")
                 self.itemLevelLabel:SetText(TRAINING_POINTS_LABEL)
-                self.backButton:SetText(CHARACTER .. ": " .. PET)
             </OnLoad>
         </Scripts>
     </Frame>
@@ -593,7 +570,6 @@
         </Frames>
         <Scripts>
             <OnLoad>
-                self.backButton:SetText(CHARACTER .. ": " .. SKILLS)
                 self:RegisterEvent("CHAT_MSG_SKILL")
                 self:RegisterEvent("TRADE_SKILL_UPDATE")
                 self:RegisterEvent("SKILL_LINES_CHANGED")

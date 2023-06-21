@@ -70,46 +70,29 @@ local statusTable = {
     DND = " |cffFFFFFF[|r|cffFF3333" .. DND .. "|r|cffFFFFFF]|r"
 }
 
-local clientTags = {
-    [BNET_CLIENT_WOW] = "WoW",
-    --[BNET_CLIENT_WTCG] = "HS",
-    --[BNET_CLIENT_HEROES] = "HotS",
-    --[BNET_CLIENT_OVERWATCH] = "OW",
-    --[BNET_CLIENT_D2] = "D2",
-    --[BNET_CLIENT_D3] = "D3",
-    --[BNET_CLIENT_SC] = "SC",
-    --[BNET_CLIENT_SC2] = "SC2",
-    --[BNET_CLIENT_WC3] = "WC3",
-    --[BNET_CLIENT_ARCADE] = "AC",
-    --[BNET_CLIENT_CRASH4] = "CB4",
-    --[BNET_CLIENT_COD] = "BO4",
-    --[BNET_CLIENT_COD_MW] = "MW",
-    --[BNET_CLIENT_COD_MW2] = "MW2",
-    --[BNET_CLIENT_COD_BOCW] = "CW",
-    --[BNET_CLIENT_DI] = "DI",
-    --BSAp = COMMUNITIES_PRESENCE_MOBILE_CHAT,
-}
-
-
-local clientIndex = {
-    [BNET_CLIENT_WOW] = 1,
-    --[BNET_CLIENT_WTCG] = 2,
-    --[BNET_CLIENT_HEROES] = 3,
-    --[BNET_CLIENT_OVERWATCH] = 4,
-    --[BNET_CLIENT_D2] = 5,
-    --[BNET_CLIENT_D3] = 6,
-    --[BNET_CLIENT_SC] = 7,
-    --[BNET_CLIENT_SC2] = 8,
-    --[BNET_CLIENT_WC3] = 9,
-    --[BNET_CLIENT_ARCADE] = 10,
-    --[BNET_CLIENT_CRASH4] = 11,
-    --[BNET_CLIENT_COD] = 12,
-    --[BNET_CLIENT_COD_MW] = 13,
-    --[BNET_CLIENT_COD_MW2] = 14,
-    --[BNET_CLIENT_COD_BOCW] = 15,
-    --[BNET_CLIENT_DI] = 16,
-    App = 17,
-    BSAp = 18,
+local clientList = {
+    WoW =	{ index = 1, tag = "WoW",	name = "World of Warcraft"},
+    WTCG =	{ index = 2, tag = "HS",	name = "Hearthstone"},
+    Hero =	{ index = 3, tag = "HotS",	name = "Heroes of the Storm"},
+    Pro =	{ index = 4, tag = "OW",	name = "Overwatch"},
+    OSI =	{ index = 5, tag = "D2",	name = "Diablo 2: Resurrected"},
+    D3 =	{ index = 6, tag = "D3",	name = "Diablo 3"},
+    Fen =	{ index = 7, tag = 'D4',	name = "Diablo 4"},
+    ANBS =	{ index = 8, tag = "DI",	name = "Diablo Immortal"},
+    S1 =	{ index = 9, tag = "SC",	name = "Starcraft"},
+    S2 =	{ index = 10, tag = "SC2",	name = "Starcraft 2"},
+    W3 =	{ index = 11, tag = "WC3",	name = "Warcraft 3: Reforged"},
+    RTRO =	{ index = 12, tag = "AC",	name = "Arcade Collection"},
+    WLBY =	{ index = 13, tag = "CB4",	name = "Crash Bandicoot 4"},
+    VIPR =	{ index = 14, tag = "BO4",	name = "COD: Black Ops 4"},
+    ODIN =	{ index = 15, tag = "WZ",	name = "COD: Warzone"},
+    AUKS =	{ index = 16, tag = "WZ2",	name = "COD: Warzone 2"},
+    LAZR =	{ index = 17, tag = "MW2",	name = "COD: Modern Warfare 2"},
+    ZEUS =	{ index = 18, tag = "CW",	name = "COD: Cold War"},
+    FORE =	{ index = 19, tag = "VG",	name = "COD: Vanguard"},
+    GRY = 	{ index = 20, tag = "AR",	name = "Warcraft Arclight Rumble"},
+    App =	{ index = 21, tag = "App",	name = "App"},
+    BSAp =	{ index = 22, tag = COMMUNITIES_PRESENCE_MOBILE_CHAT, name = COMMUNITIES_PRESENCE_MOBILE_CHAT}
 }
 
 local function inGroup(name, realmName)
@@ -145,6 +128,7 @@ local function BuildFriendTable(total)
             if a.name and b.name then
                 return a.name < b.name
             end
+            return a < b
         end)
     end
 end
@@ -170,8 +154,9 @@ end
 
 local function clientSort(a, b)
     if a and b then
-        if clientIndex[a] and clientIndex[b] then
-            return clientIndex[a] < clientIndex[b]
+        local A, B = clientList[a], clientList[b]
+        if A and B then
+            return A.index < B.index
         end
         return a < b
     end
@@ -378,7 +363,8 @@ local function Friends_OnEnter(self)
                         status = ""
                     end
 
-                    local header = format("%s (%s)", BATTLENET_OPTIONS_LABEL, info.classicText or clientTags[client] or client)
+                    local clientInfo = clientList[client]
+                    local header = format("%s (%s)", BATTLENET_OPTIONS_LABEL, info.classicText or (clientInfo and clientInfo.tag) or client)
                     if info.client and info.client == BNET_CLIENT_WOW then
                         classc = GW.GWGetClassColor(info.className, true, true)
                         if info.level and info.level ~= "" then

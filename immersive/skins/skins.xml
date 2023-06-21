@@ -5,8 +5,6 @@
     <Script file="gamemenu.lua"/>
     <Script file="staticpopup.lua"/>
     <Script file="addonManager.lua"/>
-    <Script file="bindings.lua"/>
-    <Script file="blizzard_options.lua"/>
     <Script file="macro.lua"/>
     <Script file="worldmap.lua"/>
     <Script file="colorPicker.lua"/>

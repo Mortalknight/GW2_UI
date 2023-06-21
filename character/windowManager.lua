@@ -616,6 +616,7 @@ local function loadBaseFrame()
     local scale = GetSetting("HERO_POSITION_SCALE")
 
     fmGCW:SetScale(scale)
+    fmGCW:ClearAllPoints()
     fmGCW:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     fmGCW.mover.onMoveSetting = "HERO_POSITION"
     fmGCW.mover.savePosition = mover_SavePosition
@@ -694,37 +695,10 @@ local function createTabIcon(iconName, tabIndex)
     return f
 end
 
-local function styleCharacterMenuButton(self, shadow)
-    if shadow then
-        self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-        self:GetFontString():SetTextColor(1,1,1,1)
-        self:GetFontString():SetShadowColor(0,0,0,0)
-        self:GetFontString():SetShadowOffset(1,-1)
-        self:GetFontString():SetFont(DAMAGE_TEXT_FONT,14, "")
-        self:GetFontString():SetJustifyH('LEFT')
-        self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
-    else
-        self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-        self:ClearNormalTexture()
-        self:GetFontString():SetTextColor(1,1,1,1)
-        self:GetFontString():SetShadowColor(0,0,0,0)
-        self:GetFontString():SetShadowOffset(1,-1)
-        self:GetFontString():SetFont(DAMAGE_TEXT_FONT,14, "")
-        self:GetFontString():SetJustifyH('LEFT')
-        self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
-    end
-    self:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
-end
-
-local function styleCharacterMenuBackButton(self)
-    self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-    self:ClearNormalTexture()
-    local fontString = self:GetFontString()
-    fontString:SetTextColor(1,1,1,1)
-    fontString:SetShadowColor(0,0,0,0)
-    fontString:SetShadowOffset(1,-1)
-    fontString:SetFont(DAMAGE_TEXT_FONT,14, "")
-    self:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+local function styleCharacterMenuBackButton(fmBtn, key)
+    fmBtn:SetText(key)
+    GW.CharacterMenuButtonBack_OnLoad(fmBtn)
+    fmBtn:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
 end
 
 local function container_OnShow(self)
@@ -744,8 +718,21 @@ local function charTab_OnEnter(self)
     GameTooltip:Show()
 end
 
-local function CharacterMenuButton_OnLoad(self, odd)
+local function CharacterMenuBlank_OnLoad(self)
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
+    self:ClearNormalTexture()
+    local fontString = self:GetFontString()
+    fontString:SetTextColor(1, 1, 1, 1)
+    fontString:SetShadowColor(0, 0, 0, 0)
+    fontString:SetShadowOffset(1, -1)
+    fontString:SetFont(DAMAGE_TEXT_FONT, 14)
+end
+GW.CharacterMenuBlank_OnLoad = CharacterMenuBlank_OnLoad
+
+local function CharacterMenuButton_OnLoad(self, odd, addGwHeroPanelFrameRef)
+    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     if not odd then
         self:ClearNormalTexture()
     else
@@ -757,22 +744,37 @@ local function CharacterMenuButton_OnLoad(self, odd)
     self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14, "")
     self:GetFontString():SetJustifyH("LEFT")
     self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
+
+    if addGwHeroPanelFrameRef then
+        self:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+    end
 end
 GW.CharacterMenuButton_OnLoad = CharacterMenuButton_OnLoad
+
+local function CharacterMenuButtonBack_OnLoad(self)
+    self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
+    self:ClearNormalTexture()
+    local fontString = self:GetFontString()
+    fontString:SetTextColor(1, 1, 1, 1)
+    fontString:SetShadowColor(0, 0, 0, 0)
+    fontString:SetShadowOffset(1, -1)
+    fontString:SetFont(DAMAGE_TEXT_FONT, 14)
+end
+GW.CharacterMenuButtonBack_OnLoad = CharacterMenuButtonBack_OnLoad
 
 local nextShadow, nextAnchor
 local function addAddonButton(name, setting, shadow, anchor, showFunction, hideOurFrame)
     if IsAddOnLoaded(name) and (setting == nil or setting == true) then
-        GwHeroPanelMenu.buttonName = CreateFrame("Button", nil, GwHeroPanelMenu, shadow and "GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" or "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate2")
-        GwHeroPanelMenu.buttonName:SetText(select(2, GetAddOnInfo(name)))
-        GwHeroPanelMenu.buttonName:SetSize(231, 36)
-        GwHeroPanelMenu.buttonName:ClearAllPoints()
-        GwHeroPanelMenu.buttonName:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT")
-        CharacterMenuButton_OnLoad(GwHeroPanelMenu.buttonName, shadow)
-        GwHeroPanelMenu.buttonName:SetFrameRef("charwin", GwCharacterWindow)
-        GwHeroPanelMenu.buttonName.ui_show = showFunction
-        GwHeroPanelMenu.buttonName:SetAttribute("hideOurFrame", hideOurFrame)
-        GwHeroPanelMenu.buttonName:SetAttribute("_onclick", [=[
+        GwHeroPanelMenu[name] = CreateFrame("Button", nil, GwHeroPanelMenu, "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate")
+        GwHeroPanelMenu[name]:SetText(select(2, GetAddOnInfo(name)))
+        GwHeroPanelMenu[name]:ClearAllPoints()
+        GwHeroPanelMenu[name]:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT")
+        CharacterMenuButton_OnLoad(GwHeroPanelMenu[name], shadow)
+        GwHeroPanelMenu[name]:SetFrameRef("charwin", GwCharacterWindow)
+        GwHeroPanelMenu[name].ui_show = showFunction
+        GwHeroPanelMenu[name]:SetAttribute("hideOurFrame", hideOurFrame)
+        GwHeroPanelMenu[name]:SetAttribute("_onclick", [=[
             local fchar = self:GetFrameRef("charwin")
             local hideOurFrame = self:GetAttribute("hideOurFrame")
             if fchar and hideOurFrame == true then
@@ -781,10 +783,10 @@ local function addAddonButton(name, setting, shadow, anchor, showFunction, hideO
             self:CallMethod("ui_show")
         ]=])
         nextShadow = not nextShadow
-        nextAnchor = GwHeroPanelMenu.buttonName
+        nextAnchor = GwHeroPanelMenu[name]
 
         if name == "GearQuipper-TBC" then
-            GwHeroPanelMenu.buttonName:SetText("GearQuipper Wrath")
+            GwHeroPanelMenu[name]:SetText("GearQuipper Wrath")
             GqUiFrame:ClearAllPoints()
             GqUiFrame:SetParent(GwCharacterWindow)
             GqUiFrame:SetPoint("TOPRIGHT", GwCharacterWindow, "TOPRIGHT", 350, -12)
@@ -851,14 +853,15 @@ local function LoadWindows()
                 fmGCW:SetFrameRef("GwPetContainer", GwPetContainer)
                 fmGCW:SetFrameRef("GwPaperGearSets", GwPaperGearSets)
 
-                styleCharacterMenuButton(GwHeroPanelMenu.skillsMenu, true)
-                styleCharacterMenuButton(GwHeroPanelMenu.titleMenu, false)
-                styleCharacterMenuButton(GwHeroPanelMenu.gearMenu, true)
-                styleCharacterMenuButton(GwHeroPanelMenu.petMenu, false)
-                styleCharacterMenuBackButton(GwPaperSkills.backButton)
-                styleCharacterMenuBackButton(GwPaperTitles.backButton)
-                styleCharacterMenuBackButton(GwPaperGearSets.backButton)
-                styleCharacterMenuBackButton(GwDressingRoomPet.backButton)
+                CharacterMenuButton_OnLoad(GwHeroPanelMenu.skillsMenu, true, true)
+                CharacterMenuButton_OnLoad(GwHeroPanelMenu.titleMenu, false, true)
+                CharacterMenuButton_OnLoad(GwHeroPanelMenu.gearMenu, true, true)
+                CharacterMenuButton_OnLoad(GwHeroPanelMenu.petMenu, false, true)
+
+                styleCharacterMenuBackButton(GwPaperSkills.backButton, CHARACTER .. ": " .. SKILLS)
+                styleCharacterMenuBackButton(GwPaperTitles.backButton, CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
+                styleCharacterMenuBackButton(GwPaperGearSets.backButton, CHARACTER .. ":\n" .. EQUIPMENT_MANAGER)
+                styleCharacterMenuBackButton(GwDressingRoomPet.backButton, CHARACTER .. ": " .. PET)
 
                 -- add addon buttons here
                 if GW.myClassID == 3 or GW.myClassID == 9 or GW.myClassID == 6 then

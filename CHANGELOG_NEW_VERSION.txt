@@ -1,11 +1,5 @@
-2.1.3-Wrath
-    - Immersive questing lua error
-
-2.1.2-Wrath
-    - Update for 3.4.2
-
-2.1.1-Wrath
-    - Try to fix keybind text on actionbars
-
-2.1.0-Wrath
-    - Added damage text styles: Default, Stacking and Classic
+2.2.0-Wrath
+    - Animation tweaks
+    - Update friends data info
+    - Fix aura timer rounding
+    - Fix lua error on login

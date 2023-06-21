@@ -119,6 +119,5 @@ local function LoadTitles()
             loadTitle(self.TitleScroll)
         end
     )
-    titleFrame.backButton:SetText(CHARACTER .. ": " .. PAPERDOLL_SIDEBAR_TITLES)
 end
 GW.LoadTitles = LoadTitles

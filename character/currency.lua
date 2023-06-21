@@ -250,12 +250,12 @@ GW.AddForProfiling("currency", "raidInfoSetup", raidInfoSetup)
 local function menuItem_OnClick(self)
     local menuItems = self:GetParent().items
     for _, v in pairs(menuItems) do
-        v:ClearNormalTexture()
+        v.activeTexture:Hide()
         v.ToggleMe:Hide()
     end
-    self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.activeTexture:Show()
     self.ToggleMe:Show()
-    if self:GetName() == "RaidInfoFrame" then
+    if self:GetName() == "GwRaidInfoFrame" then
         RequestRaidInfo()
     end
 end
@@ -314,26 +314,24 @@ local function LoadCurrency()
     local fmMenu = CreateFrame("Frame", "GWCurrencyMenu", currencyWindow, "GwCharacterMenuTemplate")
     fmMenu.items = {}
 
-    local item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplateNew")
+    local item = CreateFrame("Button", nil, fmMenu, "GwCharacterMenuButtonTemplate")
     item.ToggleMe = curwin
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(CURRENCY)
     item:ClearAllPoints()
     item:SetPoint("TOPLEFT", fmMenu, "TOPLEFT")
-    fmMenu.items["currency"] = item
+    fmMenu.items.currency = item
 
-    item = CreateFrame("Button", "RaidInfoFrame", fmMenu, "GwCharacterMenuButtonTemplateNew")
+    item = CreateFrame("Button", "GwRaidInfoFrame", fmMenu, "GwCharacterMenuButtonTemplate")
     item.ToggleMe = raidinfo
     item:SetScript("OnClick", menuItem_OnClick)
     item:SetText(RAID_INFORMATION)
     item:ClearAllPoints()
-    item:SetPoint("TOPLEFT", fmMenu.items["currency"], "BOTTOMLEFT")
-    fmMenu.items["raidinfo"] = item
+    item:SetPoint("TOPLEFT", fmMenu.items.currency, "BOTTOMLEFT")
+    fmMenu.items.raidinfo = item
 
-    GW.CharacterMenuButton_OnLoad(fmMenu.items["currency"], false)
-    GW.CharacterMenuButton_OnLoad(fmMenu.items["raidinfo"], true)
-
-    fmMenu.items["currency"]:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    GW.CharacterMenuButton_OnLoad(fmMenu.items.currency, false)
+    GW.CharacterMenuButton_OnLoad(fmMenu.items.raidinfo, true)
 
     return currencyWindow
 end

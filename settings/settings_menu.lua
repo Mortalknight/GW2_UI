@@ -12,6 +12,7 @@ local matchingOptionFrames = {}
 
 local function CharacterMenuButton_OnLoad(self, odd, hasArrow, margin, isSubCat)
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     if odd then
         self:ClearNormalTexture()
     else

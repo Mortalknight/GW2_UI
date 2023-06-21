@@ -38,16 +38,22 @@ GW.PositionGameMenuButton = PositionGameMenuButton
 local function applyButtonStyle()
     for _, f in pairs(BUTTONS) do
         local b = f.button
-        if b ~= nil then
-
+        if b then
             b.Right:Hide()
             b.Left:Hide()
             b.Middle:Hide()
             b:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubutton")
-            b:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/uistuff/mainmenubutton")
+            b:ClearHighlightTexture()
             b.Text:ClearAllPoints()
             b.Text:SetPoint("LEFT", b, "LEFT", 32, 0)
             b:SetSize(150, 25)
+
+            b:HookScript("OnEnter", function()
+                b:GetNormalTexture():SetBlendMode("ADD")
+            end)
+            b:HookScript("OnLeave", function()
+                b:GetNormalTexture():SetBlendMode("BLEND")
+            end)
 
             local tex = b:CreateTexture("bg", "OVERLAY")
             tex:SetPoint("LEFT",b ,"LEFT" , 0, 0)

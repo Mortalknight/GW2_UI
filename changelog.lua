@@ -8,6 +8,12 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.2.0",{
+    {ct.change,[=[Animation tweaks]=]},
+    {ct.change,[=[Update friends data info]=]},
+    {ct.bug,[=[Fix aura timer rounding]=]},
+    {ct.bug,[=[Fix lua error on login]=]},
+})
 
 addChange("2.1.3",{
     {ct.bug,[=[Immersive questing lua error]=]},

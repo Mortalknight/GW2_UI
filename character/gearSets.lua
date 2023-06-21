@@ -179,7 +179,5 @@ local function LoadGeatSets()
             GearManagerDialogPopup_Update()
         end
     end)
-
-    gearSetsFrame.backButton:SetText(CHARACTER .. ":\n" .. EQUIPMENT_MANAGER)
 end
 GW.LoadGeatSets = LoadGeatSets
