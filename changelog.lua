@@ -15,6 +15,73 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.8.2",{
+    {ct.bug,[=[Fix druid little manabar in cat form with player frame in target frame style]=]},
+    {ct.bug,[=[Try to handle bags correctly for accounts with not 2FA]=]},
+})
+
+addChange("6.8.1",{
+    {ct.bug,[=[Fix buff/debuff auto anchor]=]},
+    {ct.bug,[=[Fix buff/debuff max wraps setting]=]},
+    {ct.bug,[=[Fix socket skin lua error]=]},
+    {ct.bug,[=[Fix Pet Tracker integration]=]},
+
+    {ct.change,[=[Added LibUIDropDownMenu to prevent drop down taints]=]},
+    {ct.change,[=[Added Diablo 4 to friends data info]=]},
+    {ct.change,[=[Update LibEditModeOverride]=]},
+})
+
+addChange("6.8.0",{
+    {ct.feature,[=[Added option to adjust player de/buff horizontal and vertical spacing]=]},
+    {ct.feature,[=[Added option to adjust player de/buff max wrap of lines]=]},
+    {ct.feature,[=[Added support for the add PetTracker: Now included at GW2 objectives]=]},
+    {ct.feature,[=[Added evoker bleeding support]=]},
+
+    {ct.bug,[=[Avoid possible tooltip taint]=]},
+    {ct.bug,[=[Fix casting bar lua error at pvp with an evoker]=]},
+    {ct.bug,[=[Fix rare migration process issue]=]},
+    {ct.bug,[=[Fix M+ dungeon icon border color at the lfg frame]=]},
+
+    {ct.change,[=[Tweak some hover textures]=]},
+    {ct.change,[=[Cooldown round numbers are more accurate now]=]},
+})
+
+addChange("6.7.3",{
+    {ct.bug,[=[Fix friends frame lua error]=]},
+    {ct.bug,[=[Fix encounterjornal taint issue]=]},
+})
+
+addChange("6.7.2",{
+    {ct.bug,[=[Fix player frame in target frame style]=]},
+    {ct.bug,[=[Fix immersive questing error]=]},
+    {ct.bug,[=[Fix healtglobe error]=]},
+})
+
+addChange("6.7.1",{
+    {ct.bug,[=[Fix hero panel anchor error]=]},
+    {ct.bug,[=[Fix party frame healthtext error]=]},
+    {ct.bug,[=[Fix hero panel item info error]=]},
+    {ct.bug,[=[Fix target castingbar texture]=]},
+    {ct.bug,[=[Fix pet grid error]=]},
+
+    {ct.change,[=[Handle addon compartment button and add a toggle to hide that button]=]},
+})
+
+addChange("6.7.0",{
+    {ct.feature,[=[Added private aura support)]=]},
+    {ct.feature,[=[Redo the statusbars and add custom animations to the classpower and ressource bars]=]},
+
+    {ct.bug,[=[Added passive talents back to spellbook]=]},
+    {ct.bug,[=[Tweak vignett alerts to not spam]=]},
+    {ct.bug,[=[Fix talent micro button taint error]=]},
+    {ct.bug,[=[Fix bank taint issue]=]},
+    {ct.bug,[=[Fix vigor bar hidding]=]},
+
+    {ct.change,[=[Update for 10.1]=]},
+    {ct.change,[=[Make achievement frame movable]=]},
+    {ct.change,[=[Update S2 debuffs]=]},
+})
+
 addChange("6.6.1",{
     {ct.bug,[=[Fix rare lua error during open the worldmap with active worldmap skin]=]},
     {ct.bug,[=[Fix issue were is was impossible to buy bank slots]=]},

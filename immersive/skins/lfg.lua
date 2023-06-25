@@ -878,7 +878,7 @@ local function ApplyChallengesUISkin()
                     local _, overAllScore = C_MythicPlus.GetSeasonBestAffixScoreInfoForMap(child.mapID)
                     if overAllScore then
                         local color = C_ChallengeMode.GetSpecificDungeonOverallScoreRarityColor(overAllScore)
-                        child:SetBackdropBorderColor(color.r, color.g, color.g)
+                        child:SetBackdropBorderColor(color.r, color.g, color.b)
                     end
                 end
 

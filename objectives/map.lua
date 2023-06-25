@@ -22,8 +22,168 @@ local settings = {
     hoverDetailsStay = {},
 }
 
+
+-- copy from blizzard map dropdown to avoid dropdown taints
+local ALWAYS_ON_FILTERS = {
+	[Enum.MinimapTrackingFilter.QuestPoIs] = true,
+	[Enum.MinimapTrackingFilter.TaxiNode] = true,
+	[Enum.MinimapTrackingFilter.Innkeeper] = true,
+	[Enum.MinimapTrackingFilter.ItemUpgrade] = true,
+	[Enum.MinimapTrackingFilter.Battlemaster] = true,
+	[Enum.MinimapTrackingFilter.Stablemaster] = true,
+}
+
+local CONDITIONAL_FILTERS = {
+	[Enum.MinimapTrackingFilter.Target] = true,
+	[Enum.MinimapTrackingFilter.Digsites] = true,
+	[Enum.MinimapTrackingFilter.Repair] = true,
+}
+
+local TRACKING_SPELL_OVERRIDE_TEXTURES = {
+	[43308] = "professions_tracking_fish";-- Find Fish
+	[2580] = "professions_tracking_ore"; -- Find Minerals 1
+	[8388] = "professions_tracking_ore"; -- Find Minerals 2
+	[2383] = "professions_tracking_herb"; -- Find Herbs 1
+	[8387] = "professions_tracking_herb"; -- Find Herbs 2
+};
+
+local LOW_PRIORITY_TRACKING_SPELLS = {
+	[261764] = true; -- Track Warboards
+};
+
+function MiniMapTrackingDropDown_SetTrackingNone()
+	C_Minimap.ClearAllTracking();
+
+	local count = C_Minimap.GetNumTrackingTypes();
+	for id=1, count do
+		local filter = C_Minimap.GetTrackingFilter(id);
+		if ALWAYS_ON_FILTERS[filter.filterID] or CONDITIONAL_FILTERS[filter.filterID] then
+			C_Minimap.SetTracking(id, true);
+		end
+	end
+
+	GW.Libs.LibDD:UIDropDownMenu_Refresh(M.TrackingDropdown)
+end
+
+function MiniMapTrackingDropDown_SetTracking(self, id, unused, on)
+	C_Minimap.SetTracking(id, on);
+
+	GW.Libs.LibDD:UIDropDownMenu_Refresh(M.TrackingDropdown)
+end
+local function MiniMapTrackingDropDown_Initialize(self, level)
+	local name, texture, active, category, nested, numTracking, spellID
+	local count = C_Minimap.GetNumTrackingTypes()
+	local info
+
+	local showAll = GetCVarBool("minimapTrackingShowAll")
+
+	if level == 1 then
+		info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
+		info.text = MINIMAP_TRACKING_NONE
+		info.checked = MiniMapTrackingDropDown_IsNoTrackingActive
+		info.func = MiniMapTrackingDropDown_SetTrackingNone
+		info.icon = nil
+		info.arg1 = nil
+		info.isNotRadio = true
+		info.keepShownOnClick = true
+		GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level)
+		GW.Libs.LibDD:UIDropDownMenu_AddSeparator(level)
+
+		if GW.myclass == "HUNTER" then --only show hunter dropdown for hunters
+			numTracking = 0;
+			-- make sure there are at least two options in dropdown
+			for id=1, count do
+				name, texture, active, category, nested = C_Minimap.GetTrackingInfo(id);
+				if (nested == HUNTER_TRACKING and category == "spell") then
+					numTracking = numTracking + 1;
+				end
+			end
+			if (numTracking > 1) then
+				info.text = HUNTER_TRACKING_TEXT;
+				info.func =  nil;
+				info.notCheckable = true;
+				info.keepShownOnClick = false;
+				info.hasArrow = true;
+				info.value = HUNTER_TRACKING;
+				GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level)
+			end
+		end
+	end
+
+	if level == 1 and showAll then
+		info.text = TOWNSFOLK_TRACKING_TEXT;
+		info.func =  nil;
+		info.notCheckable = true;
+		info.keepShownOnClick = false;
+		info.hasArrow = true;
+		info.value = TOWNSFOLK;
+		GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level)
+	end
+
+	local trackingInfos = { };
+	for id=1, count do
+		name, texture, active, category, nested, spellID = C_Minimap.GetTrackingInfo(id);
+
+		if showAll or MiniMapTracking_FilterIsVisible(id) then
+			-- Remove nested townsfold unless showing all
+			if nested == TOWNSFOLK and not showAll then
+				nested = -1;
+			end
+
+			info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
+			info.text = name;
+			info.checked = MiniMapTrackingDropDown_IsActive;
+			info.func = MiniMapTrackingDropDown_SetTracking;
+			info.icon = TRACKING_SPELL_OVERRIDE_TEXTURES[spellID] or texture;
+			info.arg1 = id;
+			info.isNotRadio = true;
+			info.keepShownOnClick = true;
+
+			if ( category == "spell" ) then
+				info.tCoordLeft = 0.0625;
+				info.tCoordRight = 0.9;
+				info.tCoordTop = 0.0625;
+				info.tCoordBottom = 0.9;
+			else
+				info.tCoordLeft = 0;
+				info.tCoordRight = 1;
+				info.tCoordTop = 0;
+				info.tCoordBottom = 1;
+			end
+			if (level == 1 and
+				(nested < 0 or -- this tracking shouldn't be nested
+				(nested == HUNTER_TRACKING and class ~= "HUNTER") or
+				(numTracking == 1 and category == "spell"))) then -- this is a hunter tracking ability, but you only have one
+				table.insert(trackingInfos, info);
+			elseif (level == 2 and (nested == TOWNSFOLK or (nested == HUNTER_TRACKING and class == "HUNTER")) and nested == L_UIDROPDOWNMENU_MENU_VALUE) then
+				table.insert(trackingInfos, info);
+			end
+		end
+	end
+
+	table.sort(trackingInfos, function(a, b)
+		-- Sort low priority tracking spells to the end
+		local filterA = C_Minimap.GetTrackingFilter(a.arg1);
+		local filterB = C_Minimap.GetTrackingFilter(b.arg1);
+		local lowPriorityA = LOW_PRIORITY_TRACKING_SPELLS[filterA.spellID] or false;
+		local lowPriorityB = LOW_PRIORITY_TRACKING_SPELLS[filterB.spellID] or false;
+		if lowPriorityA ~= lowPriorityB then
+			return not lowPriorityA;
+		end
+
+		-- Sort by id
+		return a.arg1 < b.arg1;
+	end);
+
+	for _, info in ipairs(trackingInfos) do
+		GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level);
+	end
+
+end
+
 local function UpdateSettings()
     settings.hoverDetailsStay = GetSetting("MINIMAP_ALWAYS_SHOW_HOVER_DETAILS")
+    settings.showAddonCompartmentButton = GetSetting("MINIMAP_ADDON_COMPARTMENT_TOGGLE")
 end
 GW.UpdateMinimapSettings = UpdateSettings
 
@@ -131,11 +291,12 @@ local function setMinimapButtons(side)
     expButton:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
+    AddonCompartmentFrame:ClearAllPoints()
 
     if side == "left" then
         GameTimeFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -2)
-        QueueStatusButton:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
-        GwAddonToggle:SetPoint("TOP", QueueStatusButton, "BOTTOM", -3, 0)
+        AddonCompartmentFrame:SetPoint("TOP", GameTimeFrame, "BOTTOM", 1, 0)
+        GwAddonToggle:SetPoint("TOP", GameTimeFrame, "BOTTOM", -3, -20) -- also attached to the gametime because the compartment be be hidden
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
         expButton:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", 0, -3)
 
@@ -144,10 +305,12 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
+
+        QueueStatusButton:SetPoint("TOP", GwAddonToggle, "BOTTOM", 4, 0)
     else
         GameTimeFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 5, -2)
-        QueueStatusButton:SetPoint("TOP", GameTimeFrame, "BOTTOM", 0, 0)
-        GwAddonToggle:SetPoint("TOP", QueueStatusButton, "BOTTOM", 3, 0)
+        AddonCompartmentFrame:SetPoint("TOP", GameTimeFrame, "BOTTOM", -1, 0)
+        GwAddonToggle:SetPoint("TOP", GameTimeFrame, "BOTTOM", 3, -20)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
         expButton:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 2, -3)
 
@@ -156,6 +319,8 @@ local function setMinimapButtons(side)
         GwAddonToggle:GetNormalTexture():SetTexCoord(1, 0, 0, 1)
         GwAddonToggle:GetHighlightTexture():SetTexCoord(1, 0, 0, 1)
         GwAddonToggle:GetPushedTexture():SetTexCoord(1, 0, 0, 1)
+
+        QueueStatusButton:SetPoint("TOP", GwAddonToggle, "BOTTOM", -4, 0)
     end
 
     QueueStatusButton:SetParent(UIParent)
@@ -228,11 +393,11 @@ GW.ToogleMinimapFpsLable = ToogleMinimapFpsLable
 
 local function Minimap_OnMouseDown(self, btn)
     if M.TrackingDropdown then
-        HideDropDownMenu(1, nil, M.TrackingDropdown)
+        GW.Libs.LibDD:HideDropDownMenu(1, nil, M.TrackingDropdown)
     end
 
     if btn == "RightButton" and M.TrackingDropdown then
-        ToggleDropDownMenu(1, nil, M.TrackingDropdown, "cursor")
+        GW.Libs.LibDD:ToggleDropDownMenu(1, nil, M.TrackingDropdown, "cursor")
     else
         Minimap.OnClick(self)
     end
@@ -240,11 +405,11 @@ end
 
 local function MapCanvas_OnMouseDown(_, btn)
     if M.TrackingDropdown then
-        HideDropDownMenu(1, nil, M.TrackingDropdown)
+        GW.Libs.LibDD:HideDropDownMenu(1, nil, M.TrackingDropdown)
     end
 
     if btn == "RightButton" and M.TrackingDropdown then
-        ToggleDropDownMenu(1, nil, M.TrackingDropdown, "cursor")
+        GW.Libs.LibDD:ToggleDropDownMenu(1, nil, M.TrackingDropdown, "cursor")
     end
 end
 
@@ -281,12 +446,12 @@ local function Update_ZoneText()
 end
 
 local function CreateMinimapTrackingDropdown()
-    local dropdown = CreateFrame("Frame", "GW2UIMiniMapTrackingDropDown", UIParent, "UIDropDownMenuTemplate")
+    local dropdown = GW.Libs.LibDD:Create_UIDropDownMenu("GW2UIMiniMapTrackingDropDown", UIParent)
     dropdown:SetID(1)
     dropdown:SetClampedToScreen(true)
     dropdown:Hide()
 
-    UIDropDownMenu_Initialize(dropdown, MiniMapTrackingDropDown_Initialize, "MENU")
+    GW.Libs.LibDD:UIDropDownMenu_Initialize(dropdown, MiniMapTrackingDropDown_Initialize, "MENU")
     dropdown.noResize = true
 
     return dropdown
@@ -361,6 +526,33 @@ local function UpdateClusterPoint(_, _, anchor)
         MinimapCluster:SetPoint("TOPRIGHT", GW2UI_MinimapClusterHolder, 0, 1)
     end
 end
+
+do
+    local function AddonCompartmentOnClickFunc()
+        GW.ToggleGw2Settings()
+    end
+
+    _G.GW2_ADDON_AddonCompartmentOnClickFunc = AddonCompartmentOnClickFunc
+end
+
+local function HandleAddonCompartmentButton()
+    if AddonCompartmentFrame then
+        if not AddonCompartmentFrame.gw2Handled then
+            AddonCompartmentFrame:GwStripTextures()
+            AddonCompartmentFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
+            AddonCompartmentFrame.Text:SetFont(UNIT_NAME_FONT, 12, "NONE")
+            AddonCompartmentFrame:SetSize(18, 18)
+            AddonCompartmentFrame.gw2Handled = true
+        end
+
+        if settings.showAddonCompartmentButton then
+            AddonCompartmentFrame:SetParent(UIParent)
+        else
+            AddonCompartmentFrame:SetParent(GW.HiddenFrame)
+        end
+    end
+end
+GW.HandleAddonCompartmentButton = HandleAddonCompartmentButton
 
 local function LoadMinimap()
     -- https://wowwiki.wikia.com/wiki/USERAPI_GetMinimapShape
@@ -467,10 +659,8 @@ local function LoadMinimap()
 
     if ExpansionLandingPageMinimapButton.UpdateIcon then
         hooksecurefunc(ExpansionLandingPageMinimapButton, "UpdateIcon", HandleExpansionButton)
-        --ExpansionLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter) -- This was for SL
     else
         hooksecurefunc("GarrisonLandingPageMinimapButton_UpdateIcon", HandleExpansionButton)
-        --GarrisonLandingPageMinimapButton:SetScript("OnEnter", GW.LandingButton_OnEnter) -- This was for SL
     end
     HandleExpansionButton()
 
@@ -557,6 +747,8 @@ local function LoadMinimap()
     else
         setMinimapButtons("right")
     end
+
+    HandleAddonCompartmentButton()
 
     hooksecurefunc(QueueStatusButton, "UpdatePosition", function()
         local x = Minimap:GetCenter()

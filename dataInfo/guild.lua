@@ -213,7 +213,7 @@ local function Guild_OnClick(self, button)
             end
         end
         GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-        _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+        GW.Libs.LibDD:EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
     end
 end
 GW.Guild_OnClick = Guild_OnClick

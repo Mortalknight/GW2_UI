@@ -6,7 +6,9 @@ local SetSetting = GW.SetSetting
 local REALM_FLAGS = GW.REALM_FLAGS
 local nameRoleIcon = GW.nameRoleIcon
 local LRI = GW.Libs.LRI
-local DEBUFF_COLOR = GW.DEBUFF_COLOR
+local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
+local BleedList = GW.Libs.Dispel:GetBleedList()
+local BadDispels = GW.Libs.Dispel:GetBadList()
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local FillTable = GW.FillTable
 local TimeCount = GW.TimeCount
@@ -660,8 +662,8 @@ local function GridShowDebuffIcon(parent, i, btnIndex, x, y, filter, icon, count
         end
     end
 
-    if debuffType and DEBUFF_COLOR[debuffType] then
-        frame.background:SetVertexColor(DEBUFF_COLOR[debuffType].r, DEBUFF_COLOR[debuffType].g, DEBUFF_COLOR[debuffType].b)
+    if debuffType and DebuffColors[debuffType] then
+        frame.background:SetVertexColor(DebuffColors[debuffType].r, DebuffColors[debuffType].g, DebuffColors[debuffType].b)
     else
         frame.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
     end
@@ -719,6 +721,13 @@ local function GridUpdateDebuffs(self, profile)
             shouldDisplay = false
             isDispellable = debuffType and GW.Libs.Dispel:IsDispellableByMe(debuffType) or false
             isImportant = (settings.raidShowImportendInstanceDebuffs[profile] and GW.ImportendRaidDebuff[spellId]) or false
+
+            if debuffType and BadDispels[spellId] and GW.Libs.Dispel:IsDispellableByMe(debuffType) then
+                debuffType = "BadDispel"
+            end
+            if not debuffType and BleedList[spellId] and GW.Libs.Dispel:IsDispellableByMe("Bleed") and DebuffColors.Bleed then
+                debuffType = "Bleed"
+            end
 
             if settings.raidShowDebuffs[profile] then
                 if settings.raidShowOnlyDispelDebuffs[profile] then

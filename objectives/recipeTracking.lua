@@ -19,7 +19,7 @@ end
 local function RecipeObjectiveTracker_OnOpenDropDown(self)
     local block = self.activeFrame
 
-    local info = UIDropDownMenu_CreateInfo()
+    local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
     info.notCheckable = 1
 
     if not IsRecraftBlock(block) then
@@ -34,7 +34,7 @@ local function RecipeObjectiveTracker_OnOpenDropDown(self)
         end
         info.arg1 = block.id
         info.checked = false
-        UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL)
     end
 
     info.text = PROFESSIONS_UNTRACK_RECIPE
@@ -43,7 +43,7 @@ local function RecipeObjectiveTracker_OnOpenDropDown(self)
     end
     info.arg1 = block.id
     info.checked = false
-    UIDropDownMenu_AddButton(info, UIDROPDOWN_MENU_LEVEL)
+    GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL)
 end
 
 local function recipe_OnClick(self, button)
@@ -53,7 +53,7 @@ local function recipe_OnClick(self, button)
             ChatEdit_InsertLink(link)
         end
     elseif button ~= "RightButton" then
-        CloseDropDownMenus()
+        GW.Libs.LibDD:CloseDropDownMenus()
         if not ProfessionsFrame then
             ProfessionsFrame_LoadUI()
             ProfessionsFrame_LoadUI()
@@ -67,7 +67,7 @@ local function recipe_OnClick(self, button)
             end
         end
     else
-        ObjectiveTracker_ToggleDropDown(self, RecipeObjectiveTracker_OnOpenDropDown)
+        GW.ObjectiveTracker_ToggleDropDown(self, RecipeObjectiveTracker_OnOpenDropDown)
     end
 end
 

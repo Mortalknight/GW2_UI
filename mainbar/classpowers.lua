@@ -638,13 +638,9 @@ local function powerFrenzy(self, event)
     if duration == nil then
         fdc.count:SetText(0)
         self.gwPower = -1
-        self.customResourceBar:Hide()
-        fdc:Hide()
         return
     end
 
-    self.customResourceBar:Show()
-    fdc:Show()
     fdc.count:SetText(count)
     local old_expires = self.gwPower
     old_expires = old_expires or -1
@@ -665,15 +661,11 @@ local function powerMongoose(self, event)
     local _, count, duration, expires = findBuff("player", 259388)
 
     if duration == nil then
-        fdc:Hide()
         fdc.count:SetText(0)
         self.gwPower = -1
-        self.customResourceBar:Hide()
         return
     end
 
-    self.customResourceBar:Show()
-    fdc:Show()
     fdc.count:SetText(count)
     local old_expires = self.gwPower
     old_expires = old_expires or -1
@@ -694,6 +686,8 @@ local function setHunter(f)
         setPowerTYpeFrenzy(f.customResourceBar)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
+        f.customResourceBar:Show()
+        f.decayCounter:Show()
 
         if GW.myspec == 1 then -- beast mastery
             f:SetScript("OnEvent", powerFrenzy)
@@ -1408,6 +1402,7 @@ local function barChange_OnEvent(self, event)
 end
 
 local function LoadClassPowers()
+    local playerAsTargetFrame = GetSetting("PLAYER_AS_TARGET_FRAME")
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
     GW.hookStatusbarBehaviour(cpf.staggerBar.ironskin,false)
     cpf.staggerBar.ironskin.customMaskSize = 64
@@ -1443,10 +1438,10 @@ local function LoadClassPowers()
     GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", ALL .. ",Unitframe,Power", {312, 32}, {"default", "scaleable"}, true)
 
     -- position mover
-    if (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not cpf.isMoved  then
+    if (not GetSetting("XPBAR_ENABLED") or playerAsTargetFrame) and not cpf.isMoved  then
         local framePoint = GetSetting("ClasspowerBar_pos")
         local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
-        local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 52 or 0
+        local xOff = playerAsTargetFrame and 52 or 0
         cpf.gwMover:ClearAllPoints()
         cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
     end
@@ -1462,11 +1457,11 @@ local function LoadClassPowers()
 
     -- create an extra mana power bar that is used sometimes (feral druid in cat form) only if your Powerbar is on
     if cpf.ourPowerBar then
-        local anchorFrame = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame or _G.GwPlayerPowerBar
-        local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame.powerbar:GetWidth() or _G.GwPlayerPowerBar:GetWidth()
+        local anchorFrame = playerAsTargetFrame and GwPlayerUnitFrame or GwPlayerPowerBar
+        local barWidth = playerAsTargetFrame and GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
         local lmb =  GW.createNewStatusbar("GwPlayerAltClassLmb", cpf, "GwStatusPowerBar", true)
         lmb.customMaskSize = 64
-        lmb.bar = lmb;
+        lmb.bar = lmb
         lmb:addToBarMask(lmb.intensity)
         lmb:addToBarMask(lmb.intensity2)
         lmb:addToBarMask(lmb.scrollTexture)
@@ -1486,17 +1481,15 @@ local function LoadClassPowers()
         lmb.decay:SetPoint("TOPLEFT", lmb, "TOPLEFT", 0, 0)
         lmb.decay:SetPoint("BOTTOMRIGHT", lmb, "BOTTOMRIGHT", 0, 0)
 
-        lmb:SetHeight(5)
-
         lmb:ClearAllPoints()
-        if GetSetting("PLAYER_AS_TARGET_FRAME") then
-            lmb:SetPoint("LEFT", anchorFrame.castingbarBackground, "LEFT", 2, 5)
-            lmb:SetSize(barWidth + 2, 7)
-            lmb:SetWidth(barWidth - 2)
+        if playerAsTargetFrame then
+            lmb:SetPoint("BOTTOMLEFT", anchorFrame.powerbar, "TOPLEFT", 0, -10)
+            lmb:SetPoint("BOTTOMRIGHT", anchorFrame.powerbar, "TOPRIGHT", 0, -10)
+            lmb:SetSize(barWidth + 2, 3)
         else
             lmb:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 1)
             lmb:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 1)
-            lmb:SetSize(barWidth, 7)
+            lmb:SetSize(barWidth, 5)
         end
         lmb:SetFrameStrata("MEDIUM")
         lmb.label:SetFont(DAMAGE_TEXT_FONT, 12)

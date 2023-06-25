@@ -680,7 +680,7 @@ local function LoadBag(helpers)
         cf.gw_num_slots = 0
         cf:SetAllPoints(f.ItemFrame)
         cf:SetID(bag_id)
-        cf.BagID = bag_id
+        --cf.BagID = bag_id
         cf.shouldShow = true
         f.ItemFrame.Containers[bag_id] = cf
     end
@@ -770,14 +770,20 @@ local function LoadBag(helpers)
         dd.newOrder.checkbutton:HookScript(
             "OnClick",
             function()
-                local newStatus = not settings.reverseNewLoot
-                C_Container.SetInsertItemsLeftToRight(newStatus)
-                dd.newOrder.checkbutton:SetChecked(newStatus)
-                SetSetting("BAG_REVERSE_NEW_LOOT", newStatus)
-                GW.UpdateBagSettings()
+                -- FOR TAINT testing
+                --local newStatus = not settings.reverseNewLoot
+                --C_Container.SetInsertItemsLeftToRight(newStatus)
+                --dd.newOrder.checkbutton:SetChecked(newStatus)
+                --SetSetting("BAG_REVERSE_NEW_LOOT", newStatus)
+                --GW.UpdateBagSettings()
                 dd:Hide()
             end
         )
+        -- set it back to default, only once
+        if not GetSetting("Reset_Container_Loot_Order") then
+            C_Container.SetInsertItemsLeftToRight(false)
+            SetSetting("Reset_Container_Loot_Order", true)
+        end
 
         dd.sortOrder.checkbutton:HookScript(
             "OnClick",
@@ -837,7 +843,7 @@ local function LoadBag(helpers)
                 SetSetting("BAG_ITEM_SCRAP_ICON_SHOW", newStatus)
                 GW.UpdateInventorySettings()
                 GW.UpdateBagSettings()
-                --ContainerFrame_UpdateAll()  this is tainting
+                --ContainerFrame_UpdateAll() -- this is tainting
             end
         )
 

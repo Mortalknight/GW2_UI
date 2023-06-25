@@ -555,3 +555,11 @@ L["Classic combat text anchoring"] = true
 L["Center of screen"] = true
 L["GW2 floating combat text style"] = true
 L["Stacking"] = true
+
+L["Horizontal Spacing"] = true
+L["Vertical Spacing"] = true
+L["Max Wraps"] = true
+L["Limit the number of rows"]= true
+L["Crit modifier"] = true
+L["Pet number modifier"] = true
+L["Used for animations"] = true

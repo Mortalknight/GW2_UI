@@ -106,6 +106,9 @@ local function DisableBlizzardFrames()
             CompactRaidFrameManager:UnregisterAllEvents()
             CompactRaidFrameManager:SetParent(GW.HiddenFrame)
         end
+
+        CompactRaidFrameContainer:HookScript("OnShow", function() CompactRaidFrameContainer:Hide() end)
+        CompactRaidFrameContainer:GwKillEditMode()
     end
 
     if ourArenaFrames then

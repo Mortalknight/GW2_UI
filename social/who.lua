@@ -52,7 +52,7 @@ local function WhoList_Update()
             button.Class:SetTextColor(classTextColor.r, classTextColor.g, classTextColor.b)
 
             local variableColumnTable = { info.area, info.fullGuildName, info.raceStr }
-            local variableText = variableColumnTable[UIDropDownMenu_GetSelectedID(GwWhoWindow.list.ColumnHeader2.DropDown)]
+            local variableText = variableColumnTable[GW.Libs.LibDD:UIDropDownMenu_GetSelectedID(GwWhoWindow.list.ColumnHeader2.DropDown)]
             button.Variable:SetText(variableText)
 
             if button.Variable:IsTruncated() or button.Name:IsTruncated() then
@@ -101,17 +101,17 @@ end
 
 
 local function WhoWindowDropDownButton_OnClick(self)
-    UIDropDownMenu_SetSelectedID(GwWhoWindow.list.ColumnHeader2.DropDown, self:GetID())
+    GW.Libs.LibDD:UIDropDownMenu_SetSelectedID(GwWhoWindow.list.ColumnHeader2.DropDown, self:GetID())
     WhoList_Update()
 end
 
 local function WhoWindowDropDown_Initialize()
-    local info = UIDropDownMenu_CreateInfo()
+    local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
     for i=1, getn(WHOFRAME_DROPDOWN_LIST), 1 do
         info.text = WHOFRAME_DROPDOWN_LIST[i].name
         info.func = WhoWindowDropDownButton_OnClick
         info.checked = nil
-        UIDropDownMenu_AddButton(info)
+        GW.Libs.LibDD:UIDropDownMenu_AddButton(info)
     end
 end
 
@@ -124,15 +124,25 @@ local function LoadWhoList(tabContainer)
     WhoWindow:RegisterEvent("WHO_LIST_UPDATE")
     WhoWindow:SetScript("OnEvent", WhoList_Update)
 
+    -- Create Dropdown
+    WhoWindow.list.ColumnHeader2.DropDown = GW.Libs.LibDD:Create_UIDropDownMenu("", WhoWindow.list.ColumnHeader2)
+    WhoWindow.list.ColumnHeader2.DropDown:SetPoint("TOPLEFT", WhoWindow.list.ColumnHeader2, "TOPLEFT", 0, 0)
+    WhoWindow.list.ColumnHeader2.DropDown.HighlightTexture = WhoWindow.list.ColumnHeader2.DropDown:CreateTexture(nil, "OVERLAY")
+    WhoWindow.list.ColumnHeader2.DropDown.HighlightTexture:SetTexture("Interface/PaperDollInfoFrame/UI-Character-Tab-Highlight")
+    WhoWindow.list.ColumnHeader2.DropDown.HighlightTexture:SetBlendMode("ADD")
+    WhoWindow.list.ColumnHeader2.DropDown.HighlightTexture:Hide()
+    WhoWindow.list.ColumnHeader2.DropDown.HighlightTexture:SetPoint("TOPLEFT")
+    WhoWindow.list.ColumnHeader2.DropDown.HighlightTexture:SetPoint("BOTTOMRIGHT")
+
     WhoWindow.list.ColumnHeader2.DropDown.Text:SetFont(UNIT_NAME_FONT, 12)
-    UIDropDownMenu_Initialize(WhoWindow.list.ColumnHeader2.DropDown, WhoWindowDropDown_Initialize)
-    UIDropDownMenu_SetWidth(WhoWindow.list.ColumnHeader2.DropDown, 80)
-    UIDropDownMenu_SetButtonWidth(WhoWindow.list.ColumnHeader2.DropDown, 24)
-    UIDropDownMenu_JustifyText(WhoWindow.list.ColumnHeader2.DropDown, "LEFT")
+    GW.Libs.LibDD:UIDropDownMenu_Initialize(WhoWindow.list.ColumnHeader2.DropDown, WhoWindowDropDown_Initialize)
+    GW.Libs.LibDD:UIDropDownMenu_SetWidth(WhoWindow.list.ColumnHeader2.DropDown, 80)
+    GW.Libs.LibDD:UIDropDownMenu_SetButtonWidth(WhoWindow.list.ColumnHeader2.DropDown, 24)
+    GW.Libs.LibDD:UIDropDownMenu_JustifyText(WhoWindow.list.ColumnHeader2.DropDown, "LEFT")
 
     WhoWindow.list.ColumnHeader2.DropDown:SetScript("OnShow", function(self)
-        UIDropDownMenu_Initialize(self, WhoWindowDropDown_Initialize)
-        UIDropDownMenu_SetSelectedID(self, 1)
+        GW.Libs.LibDD:UIDropDownMenu_Initialize(self, WhoWindowDropDown_Initialize)
+        GW.Libs.LibDD:UIDropDownMenu_SetSelectedID(self, 1)
     end)
     WhoWindow.list.ColumnHeader2.DropDown:SetScript("OnEnter", function(self)
         self.HighlightTexture:Show()
@@ -141,8 +151,8 @@ local function LoadWhoList(tabContainer)
         self.HighlightTexture:Hide()
     end)
     WhoWindow.list.ColumnHeader2.DropDown:SetScript("OnMouseUp", function(self)
-        if WHOFRAME_DROPDOWN_LIST[UIDropDownMenu_GetSelectedID(self)].sortType then
-            C_FriendList.SortWho(WHOFRAME_DROPDOWN_LIST[UIDropDownMenu_GetSelectedID(self)].sortType)
+        if WHOFRAME_DROPDOWN_LIST[GW.Libs.LibDD:UIDropDownMenu_GetSelectedID(self)].sortType then
+            C_FriendList.SortWho(WHOFRAME_DROPDOWN_LIST[GW.Libs.LibDD:UIDropDownMenu_GetSelectedID(self)].sortType)
             PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         end
     end)

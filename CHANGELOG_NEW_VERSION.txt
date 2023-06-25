@@ -1,25 +1,33 @@
-6.6.1
+6.8.2
 FIXES
-    - Fix rare lua error during open the worldmap with active worldmap skin
-    - Fix issue were is was impossible to buy bank slots
-    - Fix macro and gear manager icon selection
+    - Fix druid little manabar in cat form with player frame in target frame style
+    - Try to handle bags correctly for accounts with not 2FA
+
+6.8.1
+FIXES
+    - Fix buff/debuff auto anchor
+    - Fix buff/debuff max wraps setting
+    - Fix socket skin lua error
+    - Fix Pet Tracker integration
 
 CHANGES
-    - Added tooltips to equipment selection mode
-    - GW2 achievement frame skin is now compatible with 'Krowi's Achievement Filter' (requires version 55.0 and higher)
+    - Added LibUIDropDownMenu to prevent drop down taints
+    - Added Diablo 4 to friends data info
+    - Update LibEditModeOverride
 
-6.6.0
+6.8.0
 NEW
-    - Added 2 new damage text styles: Stacking and Classic (with anchor to nameplats or center of the screen)
-    - Added option to show healing numbers for these 2 new styles (classic only with anchor to the center of the screen)
+    - Added option to adjust player de/buff horizontal and vertical spacing
+    - Added option to adjust player de/buff max wrap of lines
+    - Added support for the add PetTracker: Now included at GW2 objectives
+    - Added evoker bleeding support
 
 FIXES
-    - Fix move hud error if the frames gets moved back to it default position
-    - Fix raid frame summon and resurrection icon
-    - Fix friends data info tooltip
-    - Fix worldmap drop-down position
-    - Fix objectives tracker group finder icon
+    - Avoid possible tooltip taint
+    - Fix casting bar lua error at pvp with an evoker
+    - Fix rare migration process issue
+    - Fix M+ dungeon icon border color at the lfg frame
 
 CHANGES
-    - Changes for 10.0.7
-    - Update spell flyout skin
+    - Tweak some hover textures
+    - Cooldown round numbers are more accurate now

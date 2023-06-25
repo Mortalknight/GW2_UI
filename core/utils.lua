@@ -41,7 +41,7 @@ end
 GW.CombatQueue_Queue = CombatQueue_Queue
 
 -- Easy menu
-GW.EasyMenu = CreateFrame("Frame", "GWEasyMenu", UIParent, "UIDropDownMenuTemplate")
+GW.EasyMenu = GW.Libs.LibDD:Create_UIDropDownMenu("GWEasyMenu", UIParent)
 
 local function SetEasyMenuAnchor(menu, frame)
     local point = GW.GetScreenQuadrant(frame)
@@ -51,7 +51,7 @@ local function SetEasyMenuAnchor(menu, frame)
     local anchor1 = (bottom and left and "BOTTOMLEFT") or (bottom and "BOTTOMRIGHT") or (left and "TOPLEFT") or "TOPRIGHT"
     local anchor2 = (bottom and left and "TOPLEFT") or (bottom and "TOPRIGHT") or (left and "BOTTOMLEFT") or "BOTTOMRIGHT"
 
-    UIDropDownMenu_SetAnchor(menu, 0, 0, anchor1, frame, anchor2)
+    GW.Libs.LibDD:UIDropDownMenu_SetAnchor(menu, 0, 0, anchor1, frame, anchor2)
 end
 GW.SetEasyMenuAnchor = SetEasyMenuAnchor
 

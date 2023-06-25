@@ -1468,7 +1468,7 @@
             <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
         </Anchors>
         <Frames>
-            <Button parentKey="button" inherits="GwCharacterMenuButtonTemplate"  text="">
+            <Button parentKey="button" inherits="GwCharacterMenuButtonTemplate" text="">
                 <Anchors>
                     <Anchor point="TOPLEFT"/>
                 </Anchors>
@@ -1499,7 +1499,7 @@
         </Frames>
     </Frame>
 
-    <Button name="GwSettingsMenuSearchableSubButton" inherits="GwCharacterMenuButtonTemplate"  text="" virtual="true">
+    <Button name="GwSettingsMenuSearchableSubButton" inherits="GwCharacterMenuButtonTemplate" text="" virtual="true">
         <Anchors>
             <Anchor point="TOPLEFT"/>
         </Anchors>

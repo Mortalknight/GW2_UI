@@ -92,6 +92,7 @@ do
     AddLib("LEMO", "LibEditModeOverride-1.0", true)
     AddLib("Dispel", "LibDispel-1.0-GW", true)
     AddLib("GW2Lib", "LibGW2-1.0", true)
+    AddLib("LibDD", "LibUIDropDownMenu-4.0", true)
 end
 
 do

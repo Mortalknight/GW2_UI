@@ -140,7 +140,6 @@
                     </Layer>
                 </Layers>
             </Button>
-            <Frame name="$parentDropDownOutfitFrame" parentKey="DropDownOutfitFrame" inherits="UIDropDownMenuTemplate" id="1" hidden="true"/>
             <Button name="$parentEditOutfit" hidden="true" parentKey="editOutfit" inherits="GwStandardButton">
                 <Size x="25" y="20"></Size>
                 <Anchors>

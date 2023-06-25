@@ -53,7 +53,7 @@ local function Money_OnClick(self, button)
                 end
 
                 GW.SetEasyMenuAnchor(GW.EasyMenu, self)
-                _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
+                GW.Libs.LibDD:EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
             end
         elseif IsControlKeyDown() then
             GW.earnedMoney = 0

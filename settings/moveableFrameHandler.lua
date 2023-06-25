@@ -281,7 +281,7 @@ local function UpdateMatchingLayout(self, new_point)
     local frameFound = false
     if layout then
         for i = 0, #layout.frames do
-            if layout.frames[i].settingName == self.setting then
+            if layout.frames[i] and layout.frames[i].settingName == self.setting then
                 layout.frames[i].point = nil
                 layout.frames[i].point = GW.copyTable(nil, new_point)
 
@@ -323,9 +323,21 @@ local function smallSettings_resetToDefault(self, _,  moverFrame)
     mf.parent.isMoved = false
     mf.parent:SetAttribute("isMoved", new_point.hasMoved)
 
-    --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction to default
+    --if 'PlayerBuffFrame' or 'PlayerDebuffFrame', set also the grow direction, h,v spacing, auras per row and max wraps to default
     if mf.setting == "PlayerBuffFrame" or mf.setting == "PlayerDebuffFrame" then
-        SetSetting(mf.setting .. "_GrowDirection", "UP")
+        -- reset also the settings frame values
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_GrowDirection", "UP", true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_HorizontalSpacing", 1, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_VerticalSpacing", 34, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_MaxWraps", 3, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_MaxWraps", 3, true)
+        GW.updateSettingsFrameSettingsValue(mf.setting .. "_ICON_SIZE", 32, true)
+        if mf.setting == "PlayerBuffFrame" then
+            GW.updateSettingsFrameSettingsValue("PLAYER_AURA_WRAP_NUM", 7, true)
+        elseif mf.setting == "PlayerDebuffFrame" then
+            GW.updateSettingsFrameSettingsValue("PLAYER_AURA_WRAP_NUM_DEBUFF", 7, true)
+        end
+        GW.UpdateAuraHeader(mf.parent, mf.setting)
     elseif mf.setting == "MicromenuPos" then
         -- Hide/Show BG here
         mf.parent.cf.bg:Show()
@@ -445,12 +457,12 @@ local function showExtraOptions(self)
     if self.optionScaleable then
         local scale = GetSetting(self.setting .. "_scale")
         GW.MoveHudScaleableFrame.moverSettingsFrame.options.scaleSlider.slider:SetValue(scale)
-        GW.MoveHudScaleableFrame.moverSettingsFrame.options.scaleSlider.input:SetNumber(scale)
+        GW.MoveHudScaleableFrame.moverSettingsFrame.options.scaleSlider.input:SetText(scale)
     end
     if self.optionHeight then
         local height = GetSetting(self.setting .. "_height")
         GW.MoveHudScaleableFrame.moverSettingsFrame.options.heightSlider.slider:SetValue(height)
-        GW.MoveHudScaleableFrame.moverSettingsFrame.options.heightSlider.input:SetNumber(height)
+        GW.MoveHudScaleableFrame.moverSettingsFrame.options.heightSlider.input:SetText(height)
     end
 
     if GW.MoveHudScaleableFrame.moverSettingsFrame.activeFlasher then
@@ -737,14 +749,14 @@ local function LoadMovers(layoutManager)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetMinMaxValues(0.5, 1.5)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetValue(1)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.slider:SetScript("OnValueChanged", sliderValueChange)
-    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.input:SetNumber(1)
+    smallSettingsContainer.moverSettingsFrame.options.scaleSlider.input:SetText(1)
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.input:SetFont(UNIT_NAME_FONT, 8, "")
     smallSettingsContainer.moverSettingsFrame.options.scaleSlider.input:SetScript("OnEnterPressed", sliderEditBoxValueChanged)
 
     smallSettingsContainer.moverSettingsFrame.options.heightSlider.slider:SetMinMaxValues(1, 1500)
     smallSettingsContainer.moverSettingsFrame.options.heightSlider.slider:SetValue(1)
     smallSettingsContainer.moverSettingsFrame.options.heightSlider.slider:SetScript("OnValueChanged", heightSliderValueChange)
-    smallSettingsContainer.moverSettingsFrame.options.heightSlider.input:SetNumber(1)
+    smallSettingsContainer.moverSettingsFrame.options.heightSlider.input:SetText(1)
     smallSettingsContainer.moverSettingsFrame.options.heightSlider.input:SetFont(UNIT_NAME_FONT, 7, "")
     smallSettingsContainer.moverSettingsFrame.options.heightSlider.input:SetScript("OnEnterPressed", heightEditBoxValueChanged)
 

@@ -9,6 +9,32 @@ local setBlockColor = GW.setBlockColor
 
 local MAX_OBJECTIVES = 10
 
+local function AchievementObjectiveTracker_OnOpenDropDown(self)
+	local block = self.activeFrame;
+	local _, achievementName, _, completed, _, _, _, _, _, icon = GetAchievementInfo(block.id);
+
+	local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
+	info.text = achievementName;
+	info.isTitle = 1;
+	info.notCheckable = 1;
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
+
+	info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
+	info.notCheckable = 1;
+
+	info.text = OBJECTIVES_VIEW_ACHIEVEMENT;
+	info.func = function (button, ...) OpenAchievementFrameToAchievement(...); end;
+	info.arg1 = block.id;
+	info.checked = false;
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
+
+	info.text = OBJECTIVES_STOP_TRACKING;
+	info.func = AchievementObjectiveTracker_UntrackAchievement;
+	info.arg1 = block.id;
+	info.checked = false;
+	GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
+end
+
 local function achievement_OnClick(block, mouseButton)
     if (IsModifiedClick("CHATLINK") and ChatEdit_GetActiveWindow()) then
         local achievementLink = GetAchievementLink(block.id)
@@ -16,7 +42,7 @@ local function achievement_OnClick(block, mouseButton)
             ChatEdit_InsertLink(achievementLink)
         end
     elseif (mouseButton ~= "RightButton") then
-        CloseDropDownMenus()
+        GW.Libs.LibDD:CloseDropDownMenus()
         if (not AchievementFrame) then
             AchievementFrame_LoadUI()
         end
@@ -33,7 +59,7 @@ local function achievement_OnClick(block, mouseButton)
             end
         end
     else
-        ObjectiveTracker_ToggleDropDown(block, AchievementObjectiveTracker_OnOpenDropDown)
+        GW.ObjectiveTracker_ToggleDropDown(block, AchievementObjectiveTracker_OnOpenDropDown)
     end
 end
 GW.AddForProfiling("achievement", "achievement_OnClick", achievement_OnClick)

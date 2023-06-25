@@ -300,8 +300,6 @@ end
 AFP("mover_OnDragStop", mover_OnDragStop)
 
 local function worldMapSkin()
-    local WorldMapFrame = _G.WorldMapFrame
-
     WorldMapFrame:GwStripTextures()
     GW.CreateFrameHeaderWithBody(WorldMapFrame, WorldMapFrameTitleText, "Interface/AddOns/GW2_UI/textures/character/questlog-window-icon", {QuestMapFrame})
 
@@ -340,12 +338,9 @@ local function worldMapSkin()
     WorldMapFrame.NavBar.homeButton.tex = tex
     WorldMapFrame.NavBar.homeButton.tex:SetAlpha(1)
 
-    local homeButtonBorder = CreateFrame("Frame",nil,WorldMapFrame.NavBar.homeButton, "GwLightButtonBorder")
-    WorldMapFrame.NavBar.homeButton.borderFrame =homeButtonBorder
-    WorldMapFrame.NavBar.homeButton.xoffset = -1
+    WorldMapFrame.NavBar.homeButton.borderFrame = CreateFrame("Frame",nil, WorldMapFrame.NavBar.homeButton, "GwLightButtonBorder")
     WorldMapFrame.BorderFrame.CloseButton:GwSkinButton(true)
     WorldMapFrame.BorderFrame.CloseButton:SetSize(20, 20)
-    --WorldMapFrame.BorderFrame.CloseButton:ClearAllPoints()
     WorldMapFrame.BorderFrame.CloseButton:SetPoint("TOPRIGHT",-10,-2)
 
     WorldMapFrame.BorderFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()
@@ -380,6 +375,7 @@ local function worldMapSkin()
     QuestScrollFrame.DetailFrame:GwStripTextures()
     QuestScrollFrame.DetailFrame.BottomDetail:Hide()
     QuestScrollFrame.Contents.Separator.Divider:Hide()
+    QuestScrollFrame.Edge:SetAlpha(0)
 
     SkinHeaders(QuestScrollFrame.Contents.StoryHeader)
     QuestScrollFrame.ScrollBar:GwSkinScrollBar()

@@ -145,6 +145,14 @@
         </Anchors>
         <NormalTexture file="Interface\AddOns\GW2_UI\textures\character\menu-bg"></NormalTexture>
         <Layers>
+            <Layer textureSubLevel="OVERLAY">
+                <Texture parentKey="activeTexture" file="Interface\AddOns\GW2_UI\textures\character\menu-hover" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
             <Layer>
                 <Texture parentKey="arrow" file="Interface\AddOns\GW2_UI\textures\character\menu-arrow">
                     <Size x="10" y="20"></Size>
