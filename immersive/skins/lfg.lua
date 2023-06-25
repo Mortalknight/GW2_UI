@@ -890,7 +890,7 @@ local function ApplyChallengesUISkin()
         end
     end)
 
-    hooksecurefunc(ChallengesFrame.WeeklyInfo, "SetUp", function(info)
+    hooksecurefunc(ChallengesFrameWeeklyInfoMixin, "SetUp", function(info)
         if C_MythicPlus.GetCurrentAffixes() then
             HandleAffixIcons(info.Child)
         end

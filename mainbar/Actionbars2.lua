@@ -538,6 +538,34 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.HighlightTexture:SetSize(btnWidth, btnWidth)
     end
 
+    if btn.CooldownFlash then
+        btn.CooldownFlash:GwSetOutside(btn, 4, 4)
+    end
+
+    if btn.SpellCastAnimFrame then
+        btn.SpellCastAnimFrame.Fill.InnerGlowTexture:SetSize(btnWidth, btnWidth)
+        btn.SpellCastAnimFrame.Fill.CastFill:SetSize(btnWidth, btnWidth)
+        btn.SpellCastAnimFrame.Fill.FillMask:SetSize(btnWidth * 1.32, btnWidth * 1.32)
+        btn.SpellCastAnimFrame.Fill.InnerGlowTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
+        btn.SpellCastAnimFrame.Fill.InnerGlowTexture:SetVertexColor(0, 0, 0, 0)
+        --btn.SpellCastAnimFrame.EndBurst.GlowRing:SetSize(btnWidth, btnWidth)
+        btn.SpellCastAnimFrame.EndBurst.EndMask:SetSize(btnWidth * 1.4, btnWidth * 1.4)
+    end
+
+    if btn.InterruptDisplay then
+        btn.InterruptDisplay.Highlight.HighlightTexture:SetSize(btnWidth, btnWidth)
+        btn.InterruptDisplay.Highlight.Mask:SetSize(btnWidth * 1.5, btnWidth * 1.5)
+        btn.InterruptDisplay.Base.Base:SetSize(btnWidth, btnWidth)
+        btn.InterruptDisplay.Base.Base:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
+        btn.InterruptDisplay.Base.Base:SetVertexColor(1, 0, 0)
+    end
+
+    if btn.TargetReticleAnimFrame then
+        btn.TargetReticleAnimFrame.Base:SetSize(btnWidth, btnWidth)
+        btn.TargetReticleAnimFrame.Highlight:SetSize(btnWidth, btnWidth)
+        btn.TargetReticleAnimFrame.Mask:SetSize(btnWidth, btnWidth)
+    end
+
     if btn.BottomDivider then
         btn.BottomDivider:SetAlpha(0)
     end

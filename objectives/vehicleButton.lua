@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function SetPosition(_ ,_, relativeTo)
     local mover = VehicleSeatIndicator.gwMover
@@ -18,17 +17,7 @@ local function LoadVehicleButton()
 
         GW.RegisterMovableFrame(VehicleSeatIndicator, BINDING_HEADER_VEHICLE, "VEHICLE_SEAT_POS", ALL .. ",Blizzard", nil, {"default", "scaleable"})
         VehicleSeatIndicator.PositionVehicleFrameHooked = true
+        VehicleSeatIndicator:GwKillEditMode()
     end
---[[
-    if GetSetting("ACTIONBARS_ENABLED") then
-        VehicleSeatIndicator_UnloadTextures = function()
-            VehicleSeatIndicatorBackgroundTexture:SetTexture()
-            VehicleSeatIndicator:Hide()
-            VehicleSeatIndicator.currSkin = nil
-
-            DurabilityFrame:SetAlerts()
-       end
-    end
-    ]]
 end
 GW.LoadVehicleButton = LoadVehicleButton

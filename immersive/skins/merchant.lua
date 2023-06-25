@@ -127,13 +127,18 @@ local function LoadMerchantFrameSkin()
     MerchantBuyBackItemItemButtonIconTexture:SetPoint("BOTTOMRIGHT", -1, 1)
 
     MerchantRepairItemButton:GwSkinButton(false, false, true)
-    MerchantRepairItemButton:GetRegions():SetTexCoord(0.04, 0.24, 0.06, 0.5)
+    MerchantRepairItemButton.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    MerchantRepairItemButton:GetRegions():GwSetInside()
 
     MerchantGuildBankRepairButton:GwSkinButton(false, false, true)
-    MerchantGuildBankRepairButtonIcon:SetTexCoord(0.61, 0.82, 0.1, 0.52)
 
     MerchantRepairAllButton:GwSkinButton(false, false, true)
-    MerchantRepairAllIcon:SetTexCoord(0.34, 0.1, 0.34, 0.535, 0.535, 0.1, 0.535, 0.535)
+    MerchantRepairAllButton.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    MerchantRepairAllButton:GetRegions():GwSetInside()
+
+    MerchantSellAllJunkButton:GwSkinButton(false, false, true)
+    MerchantSellAllJunkButton.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    MerchantSellAllJunkButton:GetRegions():GwSetInside()
 
     GW.HandleNextPrevButton(MerchantNextPageButton, nil, true)
     GW.HandleNextPrevButton(MerchantPrevPageButton, nil, true)

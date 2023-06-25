@@ -926,7 +926,7 @@ end
 local function QuestTrackerLayoutChanged()
     updateExtraQuestItemPositions()
     -- adjust scrolframe height
-    local height = GwQuesttrackerContainerMonthlyActivity:GetHeight() + GwQuesttrackerContainerRecipe:GetHeight() + GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + 60 + (GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT:GetHeight() or 0) + (GwQuesttrackerContainerPetTracker and GwQuesttrackerContainerPetTracker:GetHeight() or 0)
+    local height = GwQuesttrackerContainerCollection:GetHeight() + GwQuesttrackerContainerMonthlyActivity:GetHeight() + GwQuesttrackerContainerRecipe:GetHeight() + GwQuesttrackerContainerBonusObjectives:GetHeight() + GwQuesttrackerContainerQuests:GetHeight() + GwQuesttrackerContainerCampaign:GetHeight() + GwQuesttrackerContainerAchievement:GetHeight() + 60 + (GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT:GetHeight() or 0) + (GwQuesttrackerContainerPetTracker and GwQuesttrackerContainerPetTracker:GetHeight() or 0)
     local scroll = 0
     local trackerHeight = settings.objectivesHeight - GwQuesttrackerContainerBossFrames:GetHeight() - GwQuesttrackerContainerArenaBGFrames:GetHeight() - GwQuesttrackerContainerScenario:GetHeight() - GwObjectivesNotification:GetHeight()
     if height > tonumber(trackerHeight) then
@@ -1358,6 +1358,7 @@ local function LoadQuestTracker()
     local fBonus = CreateFrame("Frame", "GwQuesttrackerContainerBonusObjectives", fScroll, "GwQuesttrackerContainer")
     local fRecipe = CreateFrame("Frame", "GwQuesttrackerContainerRecipe", fScroll, "GwQuesttrackerContainer")
     local fMonthlyActivity = CreateFrame("Frame", "GwQuesttrackerContainerMonthlyActivity", fScroll, "GwQuesttrackerContainer")
+    local fCollection = CreateFrame("Frame", "GwQuesttrackerContainerCollection", fScroll, "GwQuesttrackerContainer")
 
     fNotify:SetParent(fTracker)
     fBoss:SetParent(fTracker)
@@ -1369,6 +1370,7 @@ local function LoadQuestTracker()
     fBonus:SetParent(fScroll)
     fRecipe:SetParent(fScroll)
     fMonthlyActivity:SetParent(fScroll)
+    fCollection:SetParent(fScroll)
 
     fNotify:SetPoint("TOPRIGHT", fTracker, "TOPRIGHT")
     fBoss:SetPoint("TOPRIGHT", fNotify, "BOTTOMRIGHT")
@@ -1385,6 +1387,7 @@ local function LoadQuestTracker()
     fBonus:SetPoint("TOPRIGHT", fQuest, "BOTTOMRIGHT")
     fRecipe:SetPoint("TOPRIGHT", fBonus, "BOTTOMRIGHT")
     fMonthlyActivity:SetPoint("TOPRIGHT", fRecipe, "BOTTOMRIGHT")
+    fCollection:SetPoint("TOPRIGHT", fMonthlyActivity, "BOTTOMRIGHT")
 
     fScroll:SetSize(fTracker:GetWidth(), 2)
     fTraScr:SetScrollChild(fScroll)
@@ -1438,6 +1441,7 @@ local function LoadQuestTracker()
     GW.LoadBonusFrame()
     GW.LoadRecipeTracking(fRecipe)
     GW.LoadMonthlyActivitiesTracking(fMonthlyActivity)
+    GW.LoadCollectionTracking(fCollection)
     GW.LoadWQTAddonSkin()
     GW.LoadPetTrackerAddonSkin()
 
