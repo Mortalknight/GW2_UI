@@ -23,7 +23,6 @@ local function HandleMirrorTimer(self, timer)
 end
 
 local function LoadMirrorTimers()
-	-- ToDO: 10.1.5: mover stuff
 	hooksecurefunc(MirrorTimerContainer, "SetupTimer", HandleMirrorTimer)
 end
 GW.LoadMirrorTimers = LoadMirrorTimers
