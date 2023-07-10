@@ -612,7 +612,7 @@ local function evPlayerLogin(self)
 
     GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()
-    GW.LoadVehicleButton()
+    --GW.LoadVehicleButton() -- let the blizzard edit mode do this: prevent taint errors
     GW.MakeAltPowerBarMovable()
     GW.WidgetUISetup()
 
