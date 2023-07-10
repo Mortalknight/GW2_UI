@@ -345,6 +345,11 @@ GW.AURAS_INDICATORS = {
         [376788] =  {0.25, 0.25, 0.58},     -- Dreaon Breath (echo)
         [367364] =  {0.09, 0.69, 0.61},     -- Reversion (echo)
         [373267] =  {0.82, 0.29, 0.24},     -- Life Bind (Verdant Embrace)
+        [360827] =  {0.33, 0.33, 0.77},     -- Blistering Scales
+        [410089] =  {0.13, 0.87, 0.50},     -- Prescience
+        [395296] =  {0.98, 0.44, 0.00},     -- Ebon Might < self
+        [395152] =  {0.98, 0.44, 0.00},     -- Ebon Might < others
+        [406732] =  {0.82, 0.29, 0.24},     -- Spatial Paradox
     },
     PET = {
         [193396] =  {0.6, 0.2, 0.8},    -- Demonic Empowerment
