@@ -568,6 +568,14 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         )
         mask:SetSize(btnWidth, btnWidth)
         btn.SpellCastAnimFrame.Fill.CastFill:AddMaskTexture(mask)
+
+        hooksecurefunc(btn.SpellCastAnimFrame.Fill.CastingAnim, "OnFinished", function()
+            btn.SpellCastAnimFrame.Fill.CastFill:Hide()
+        end)
+
+        hooksecurefunc(btn.SpellCastAnimFrame, "Setup", function()
+            btn.SpellCastAnimFrame.Fill.CastFill:Show()
+        end)
     end
 
     if btn.InterruptDisplay then
