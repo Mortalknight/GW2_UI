@@ -221,7 +221,7 @@ GW.AddForProfiling("achievement", "updateAchievementObjectives", updateAchieveme
 local function updateAchievementLayout(self)
     local savedHeight = 1
     local shownIndex = 1
-    local trackedAchievements = {GetTrackedAchievements()}
+    local trackedAchievements = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
 
     self.header:Hide()
 
