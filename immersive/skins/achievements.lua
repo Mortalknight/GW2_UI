@@ -766,7 +766,7 @@ local function UpdateAchievementFrameListAchievement(self)
         self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooternotrack")
     end
 
-    if IsTrackedAchievement(id) then
+    if C_ContentTracking.IsTracking(Enum.ContentTrackingType.Achievement, id) then
         self.trackBackground:Show()
         self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooternotrack")
     else

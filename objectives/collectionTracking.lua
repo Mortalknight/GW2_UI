@@ -265,7 +265,7 @@ end
 
 
 local function OnEvent(self)
-    if not ContentTrackingUtil.isContentTrackingEnabled() then return end
+    if not ContentTrackingUtil.IsContentTrackingEnabled() then return end
 
     StopTrackingCollectedItems(self)
     EnumerateTrackables(self, GenerateClosure(updateCollectionLayout, self))

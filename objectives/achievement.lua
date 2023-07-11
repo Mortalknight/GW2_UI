@@ -291,6 +291,7 @@ local function LoadAchievementFrame()
     GwQuesttrackerContainerAchievement:RegisterEvent("TRACKED_ACHIEVEMENT_LIST_CHANGED")
     GwQuesttrackerContainerAchievement:RegisterEvent("TRACKED_ACHIEVEMENT_UPDATE")
     GwQuesttrackerContainerAchievement:RegisterEvent("ACHIEVEMENT_EARNED")
+    GwQuesttrackerContainerAchievement:RegisterEvent("CONTENT_TRACKING_UPDATE")
     GwQuesttrackerContainerAchievement:SetScript("OnEvent", updateAchievementLayout)
 
     GwQuesttrackerContainerAchievement.header = CreateFrame("Button", nil, GwQuesttrackerContainerAchievement, "GwQuestTrackerHeader")

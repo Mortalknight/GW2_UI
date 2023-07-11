@@ -5,7 +5,6 @@ local CreateObjectiveNormal = GW.CreateObjectiveNormal
 local CreateTrackerObject = GW.CreateTrackerObject
 local setBlockColor = GW.setBlockColor
 
-local itemIDs, currencyIDs = {}, {}
 local IsRecrafting = true
 
 local function GetRecipeID(block)
@@ -160,7 +159,7 @@ local function updateRecipeObjectives(block, recipeSchematic)
             if reagent.itemID then
                 local item = Item:CreateFromItemID(reagent.itemID)
                 local itemName = item:GetItemName()
-                local quantity = Professions.AccumulateReagentsInPossession(reagentSlotSchematic.reagents)
+                local quantity = ProfessionsUtil.AccumulateReagentsInPossession(reagentSlotSchematic.reagents)
                 local quantityRequired = reagentSlotSchematic.quantityRequired
                 if quantity < quantityRequired then
                     allCollacted = false
@@ -256,7 +255,7 @@ local function StartUpdate(self)
     self.continuableContainer = ContinuableContainer:Create()
     local function LoadItems(recipes)
         for _, recipeID in ipairs(recipes) do
-            local reagents = Professions.CreateRecipeReagentsForAllBasicReagents(recipeID)
+            local reagents = ProfessionsUtil.CreateRecipeReagentsForAllBasicReagents(recipeID)
             for _, reagent in ipairs(reagents) do
                 if reagent.itemID then
                     self.continuableContainer:AddContinuable(Item:CreateFromItemID(reagent.itemID))
@@ -285,44 +284,18 @@ local function StartUpdate(self)
     allLoaded = self.continuableContainer:ContinueOnLoad(OnItemsLoaded)
 end
 
-local function GetAllBasicReagentItemIDs()
-    local currencyIDsTemp = {}
-    local itemIDsTemp = {}
-    local function AddIDs(isRecraft)
-        for _, recipeID in ipairs(C_TradeSkillUI.GetRecipesTracked(isRecraft)) do
-            for _, reagent in ipairs(Professions.CreateRecipeReagentsForAllBasicReagents(recipeID)) do
-                if reagent.itemID then
-                    table.insert(itemIDsTemp, reagent.itemID)
-                elseif reagent.currencyID then
-                    table.insert(currencyIDsTemp, reagent.currencyID)
-                end
-            end
-        end
-    end
-
-    AddIDs(IsRecrafting)
-    AddIDs(not IsRecrafting)
-    return itemIDsTemp, currencyIDsTemp
-end
-
-local function UntrackRecipeIfUnlearned(isRecraft)
-    for _, recipeID in ipairs(C_TradeSkillUI.GetRecipesTracked(isRecraft)) do
+local function UntrackRecipeIfUnlearned()
+    for _, recipeID in ipairs(C_TradeSkillUI.GetRecipesTracked(not IsRecrafting)) do
         if not C_TradeSkillUI.IsRecipeProfessionLearned(recipeID) then
-            local track = false;
-            C_TradeSkillUI.SetRecipeTracked(recipeID, track, isRecraft)
+            local track = false
+            C_TradeSkillUI.SetRecipeTracked(recipeID, track, not IsRecrafting)
         end
     end
 end
 
 local function OnEvent(self, event, ...)
     if event == "TRACKED_RECIPE_UPDATE" then
-        itemIDs, currencyIDs = GetAllBasicReagentItemIDs()
         StartUpdate(self)
-    elseif event == "ITEM_COUNT_CHANGED" then
-        local itemID = ...
-        if tContains(itemIDs, itemID) then
-            StartUpdate(self)
-        end
     elseif event == "CURRENCY_DISPLAY_UPDATE" then
         local currencyID = ...
         if tContains(currencyIDs, currencyID) then
@@ -331,8 +304,9 @@ local function OnEvent(self, event, ...)
     elseif event == "UPDATE_PENDING_MAIL" then
         StartUpdate(self)
     elseif event == "SKILL_LINES_CHANGED" then
-        UntrackRecipeIfUnlearned(IsRecrafting)
-        UntrackRecipeIfUnlearned(not IsRecrafting)
+        UntrackRecipeIfUnlearned()
+    elseif event == "BAG_UPDATE_DELAYED" then
+        StartUpdate(self)
     end
 end
 
@@ -349,13 +323,11 @@ end
 GW.CollapseRecipeHeader = CollapseHeader
 
 local function LoadRecipeTracking(self)
-    itemIDs, currencyIDs = GetAllBasicReagentItemIDs()
-
     self:RegisterEvent("TRACKED_RECIPE_UPDATE")
-    self:RegisterEvent("ITEM_COUNT_CHANGED")
     self:RegisterEvent("SKILL_LINES_CHANGED")
     self:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
     self:RegisterEvent("UPDATE_PENDING_MAIL")
+    self:RegisterEvent("BAG_UPDATE_DELAYED")
     self:SetScript("OnEvent", OnEvent)
 
     self.header = CreateFrame("Button", nil, self, "GwQuestTrackerHeader")
