@@ -3,6 +3,34 @@ local constBackdropFrameBorder = GW.BackdropTemplates.OnlyBorder
 local constBackdropFrameSmallerBorder = GW.BackdropTemplates.DefaultWithSmallBorder
 local GetSetting = GW.GetSetting
 
+local function UpdateRepairButtons()
+    MerchantRepairAllButton:ClearAllPoints()
+    MerchantRepairAllButton:SetPoint("BOTTOMRIGHT", MerchantFrame, "BOTTOMLEFT", 90, 32)
+    MerchantRepairItemButton:ClearAllPoints()
+    MerchantRepairItemButton:SetPoint("RIGHT", MerchantRepairAllButton, "LEFT", -5, 0)
+    MerchantSellAllJunkButton:ClearAllPoints()
+    MerchantSellAllJunkButton:SetPoint("RIGHT", MerchantRepairAllButton, "LEFT", 117, 0)
+end
+
+local function UpdateMerchantInfo()
+    for i = 1, MERCHANT_ITEMS_PER_PAGE do
+        local button = _G["MerchantItem" .. i .. "ItemButton"]
+
+        local money = _G["MerchantItem" .. i .. "MoneyFrame"]
+        money:ClearAllPoints()
+        money:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 5, -3)
+
+        local currency = _G["MerchantItem" .. i .. "AltCurrencyFrame"]
+        currency:ClearAllPoints()
+
+        if button.price and button.extendedCost then
+            currency:SetPoint("LEFT", money, "RIGHT", -8, 0)
+        else
+            currency:SetPoint("BOTTOMLEFT", button, "BOTTOMRIGHT", 5, -3)
+        end
+    end
+end
+
 local function SkinMerchantFrameItemButton(i)
     local button = _G["MerchantItem" .. i .. "ItemButton"]
     local icon = button.icon
@@ -68,6 +96,7 @@ local function LoadMerchantFrameSkin()
 
     MerchantFrame:SetWidth(360)
 
+    MerchantBuyBackItem:SetPoint("TOPLEFT", MerchantItem10, "BOTTOMLEFT", 0, -50)
     MerchantBuyBackItem:GwStripTextures(true)
     MerchantBuyBackItem:GwCreateBackdrop(constBackdropFrameSmallerBorder, true, 6, 6)
     MerchantBuyBackItem.backdrop:SetPoint("TOPLEFT", -6, 6)
@@ -130,7 +159,10 @@ local function LoadMerchantFrameSkin()
     MerchantRepairItemButton.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     MerchantRepairItemButton:GetRegions():GwSetInside()
 
+    MerchantGuildBankRepairButton:SetPoint("LEFT", MerchantRepairAllButton, "RIGHT", 5, 0)
     MerchantGuildBankRepairButton:GwSkinButton(false, false, true)
+    MerchantGuildBankRepairButton.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    MerchantGuildBankRepairButton:GetRegions():GwSetInside()
 
     MerchantRepairAllButton:GwSkinButton(false, false, true)
     MerchantRepairAllButton.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
@@ -144,5 +176,8 @@ local function LoadMerchantFrameSkin()
     GW.HandleNextPrevButton(MerchantPrevPageButton, nil, true)
     MerchantNextPageButton:ClearAllPoints()
     MerchantNextPageButton:SetPoint("LEFT", MerchantPageText, "RIGHT", 100, 4)
+
+    hooksecurefunc("MerchantFrame_UpdateRepairButtons", UpdateRepairButtons)
+    hooksecurefunc("MerchantFrame_UpdateMerchantInfo", UpdateMerchantInfo)
 end
 GW.LoadMerchantFrameSkin = LoadMerchantFrameSkin
