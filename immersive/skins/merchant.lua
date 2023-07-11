@@ -8,8 +8,11 @@ local function UpdateRepairButtons()
     MerchantRepairAllButton:SetPoint("BOTTOMRIGHT", MerchantFrame, "BOTTOMLEFT", 90, 32)
     MerchantRepairItemButton:ClearAllPoints()
     MerchantRepairItemButton:SetPoint("RIGHT", MerchantRepairAllButton, "LEFT", -5, 0)
-    MerchantSellAllJunkButton:ClearAllPoints()
-    MerchantSellAllJunkButton:SetPoint("RIGHT", MerchantRepairAllButton, "LEFT", 117, 0)
+    -- to be sure
+    if MerchantSellAllJunkButton then
+        MerchantSellAllJunkButton:ClearAllPoints()
+        MerchantSellAllJunkButton:SetPoint("RIGHT", MerchantRepairAllButton, "LEFT", 117, 0)
+    end
 end
 
 local function UpdateMerchantInfo()
@@ -168,9 +171,11 @@ local function LoadMerchantFrameSkin()
     MerchantRepairAllButton.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     MerchantRepairAllButton:GetRegions():GwSetInside()
 
-    MerchantSellAllJunkButton:GwSkinButton(false, false, true)
-    MerchantSellAllJunkButton.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    MerchantSellAllJunkButton:GetRegions():GwSetInside()
+    if MerchantSellAllJunkButton then
+        MerchantSellAllJunkButton:GwSkinButton(false, false, true)
+        MerchantSellAllJunkButton.Icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        MerchantSellAllJunkButton:GetRegions():GwSetInside()
+    end
 
     GW.HandleNextPrevButton(MerchantNextPageButton, nil, true)
     GW.HandleNextPrevButton(MerchantPrevPageButton, nil, true)
