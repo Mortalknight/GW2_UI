@@ -543,9 +543,10 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
     end
 
     if btn.SpellCastAnimFrame then
+        btn.SpellCastAnimFrame.Fill:SetPoint("CENTER", -1, -1)
         btn.SpellCastAnimFrame.Fill.InnerGlowTexture:SetSize(btnWidth, btnWidth)
-        btn.SpellCastAnimFrame.Fill.CastFill:SetSize(btnWidth, btnWidth)
-        btn.SpellCastAnimFrame.Fill.FillMask:SetSize(btnWidth * 1.32, btnWidth * 1.32)
+       -- btn.SpellCastAnimFrame.Fill.CastFill:SetSize(btnWidth, btnWidth)
+        btn.SpellCastAnimFrame.Fill.FillMask:SetSize(btnWidth * 1.32, btnWidth * 1.4)
         btn.SpellCastAnimFrame.Fill.InnerGlowTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
         btn.SpellCastAnimFrame.Fill.InnerGlowTexture:SetVertexColor(0, 0, 0, 0)
         --btn.SpellCastAnimFrame.EndBurst.GlowRing:SetSize(btnWidth, btnWidth)
