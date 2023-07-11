@@ -1133,7 +1133,7 @@ local function LoadTooltips()
         eventFrame:SetScript("OnEvent", function()
             if not GameTooltip:IsForbidden() and GameTooltip:IsShown() then
                 local owner = GameTooltip:GetOwner()
-                if owner == UIParent and UnitExists("mouseover") then
+                if (owner == UIParent or (GW2_PlayerFrame and owner == GW2_PlayerFrame)) and UnitExists("mouseover") then
                     GameTooltip:SetUnit("mouseover")
                 end
             end
