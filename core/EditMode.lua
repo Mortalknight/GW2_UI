@@ -55,12 +55,17 @@ local function OnEvent(self, event)
                 end
             end
         end
-    elseif event == "PLAYER_ENTERING_WORLD" or event == "EDIT_MODE_LAYOUTS_UPDATED" then
+    elseif event == "PLAYER_ENTERING_WORLD" or event == "EDIT_MODE_LAYOUTS_UPDATED" or event == "PLAYER_REGEN_ENABLED" then
         if CheckActionBar() and LEMO:IsReady() then
+            if InCombatLockdown() then
+                self:RegisterEvent("PLAYER_REGEN_ENABLED")
+                return
+            end
             C_Timer.After(0, ApplyBlizzardEditModeChanges)
             -- only tigger that code once
             self:UnregisterEvent("EDIT_MODE_LAYOUTS_UPDATED")
             self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+            self:UnregisterEvent("PLAYER_REGEN_ENABLED")
         end
     end
 end
