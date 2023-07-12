@@ -1,3 +1,7 @@
+6.9.1
+FIXES
+    - More 10.1.5 related fixes
+
 6.9.0
 NEW
     - Added font settings for GW2 floating combat text

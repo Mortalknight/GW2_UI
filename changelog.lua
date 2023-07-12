@@ -15,7 +15,9 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
-
+addChange("6.9.1",{
+    {ct.bug,[=[More 10.1.5 related fixes]=]},
+})
 
 addChange("6.9.0",{
     {ct.feature,[=[Added font settings for GW2 floating combat text]=]},
