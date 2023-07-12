@@ -270,8 +270,16 @@ local function reskinMicroButton(btn, name, mbf, hook)
     t:SetPoint("CENTER",btn,"CENTER",0,0)
     t:SetSize(32,32)
 
-    if btn.Flash then
-        btn.Flash:SetTexture(tex)
+    if btn.PushedBackground then btn.PushedBackground:SetTexture() end
+    if btn.PushedShadow then btn.PushedShadow:SetTexture() end
+    if btn.FlashContent then btn.FlashContent:SetTexture() end
+    if btn.Background then btn.Background:SetTexture() end
+    if btn.Flash then btn.Flash:SetTexture() end
+    if btn.Portrait then btn.Portrait:SetTexture() end
+    if btn.Shadow then btn.Shadow:SetTexture() end
+
+    if btn.PortraitMask then
+        btn.PortraitMask:Hide()
     end
 
     if btn.FlashBorder then
@@ -279,46 +287,31 @@ local function reskinMicroButton(btn, name, mbf, hook)
         btn.FlashBorder:SetAlpha(0)
         btn.FlashBorder:SetScale(0.00001)
     end
-    if btn.FlashContent then
-        btn.FlashContent:SetAlpha(0)
-        btn.FlashContent:SetScale(0.00001)
-        btn.FlashContent:SetTexture(tex)
+
+    if not btn.GwNotify then
+        btn.GwNotify = btn:CreateTexture(nil, "OVERLAY")
+        btn.GwNotifyDark = btn:CreateTexture(nil, "OVERLAY")
+        btn.GwNotifyText = btn:CreateFontString(nil, "OVERLAY")
+
+        btn.GwNotify:SetSize(18, 18)
+        btn.GwNotify:SetPoint("CENTER", btn, "BOTTOM", 6, 3)
+        btn.GwNotify:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
+        btn.GwNotify:SetVertexColor(1, 0, 0, 1)
+        btn.GwNotify:Hide()
+
+        btn.GwNotifyDark:SetSize(18, 18)
+        btn.GwNotifyDark:SetPoint("CENTER", btn, "BOTTOM", 6, 3)
+        btn.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
+        btn.GwNotifyDark:SetVertexColor(0, 0, 0, 0.7)
+        btn.GwNotifyDark:Hide()
+
+        btn.GwNotifyText:SetSize(24, 24)
+        btn.GwNotifyText:SetPoint("CENTER", btn, "BOTTOM", 7, 2)
+        btn.GwNotifyText:SetFont(DAMAGE_TEXT_FONT, 12)
+        btn.GwNotifyText:SetTextColor(1, 1, 1, 1)
+        btn.GwNotifyText:SetShadowColor(0, 0, 0, 0)
+        btn.GwNotifyText:Hide()
     end
-
-    if btn.Background then
-        btn.Background:GwSetInside()
-        btn.Background:SetAlpha(0)
-        btn.Background:SetScale(0.00001)
-    end
-
-    if btn.PushedBackground then
-        btn.PushedBackground:GwSetInside()
-        btn.PushedBackground:SetAlpha(0)
-        btn.PushedBackground:SetScale(0.00001)
-    end
-
-    btn.GwNotify = btn:CreateTexture(nil, "OVERLAY")
-    btn.GwNotifyDark = btn:CreateTexture(nil, "OVERLAY")
-    btn.GwNotifyText = btn:CreateFontString(nil, "OVERLAY")
-
-    btn.GwNotify:SetSize(18, 18)
-    btn.GwNotify:SetPoint("CENTER", btn, "BOTTOM", 6, 3)
-    btn.GwNotify:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
-    btn.GwNotify:SetVertexColor(1, 0, 0, 1)
-    btn.GwNotify:Hide()
-
-    btn.GwNotifyDark:SetSize(18, 18)
-    btn.GwNotifyDark:SetPoint("CENTER", btn, "BOTTOM", 6, 3)
-    btn.GwNotifyDark:SetTexture("Interface/AddOns/GW2_UI/textures/hud/notification-backdrop")
-    btn.GwNotifyDark:SetVertexColor(0, 0, 0, 0.7)
-    btn.GwNotifyDark:Hide()
-
-    btn.GwNotifyText:SetSize(24, 24)
-    btn.GwNotifyText:SetPoint("CENTER", btn, "BOTTOM", 7, 2)
-    btn.GwNotifyText:SetFont(DAMAGE_TEXT_FONT, 12)
-    btn.GwNotifyText:SetTextColor(1, 1, 1, 1)
-    btn.GwNotifyText:SetShadowColor(0, 0, 0, 0)
-    btn.GwNotifyText:Hide()
 end
 AFP("reskinMicroButton", reskinMicroButton)
 
@@ -475,7 +468,7 @@ local function setupMicroButtons(mbf)
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
         cref.textureName = "CharacterMicroButton"
-        reskinMicroButton(cref, "CharacterMicroButton", mbf)
+        reskinMicroButton(cref, "CharacterMicroButton", mbf, true)
         cref:RegisterForClicks("AnyUp")
         cref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         cref:SetAttribute(
@@ -490,7 +483,7 @@ local function setupMicroButtons(mbf)
         disableMicroButton(CharacterMicroButton, true)
         CharacterMicroButton.GwSetAnchorPoint = char_SetAnchorPoint
         cref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
-        cref:SetScript("OnLeave", GameTooltip_Hide)
+        cref:SetScript("OnLeave", function() MainMenuBarMicroButtonMixin.OnLeave(cref); GameTooltip:Hide() end)
         cref:HookScript("OnEnter", GW.Friends_OnEnter)
         cref:HookScript("OnEvent", GW.Friends_OnEvent)
         cref:HookScript("OnClick", GW.Friends_OnClick)
@@ -528,7 +521,7 @@ local function setupMicroButtons(mbf)
         sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
         sref.newbieText = NEWBIE_TOOLTIP_TALENTS
         sref.textureName = "SpellbookMicroButton"
-        reskinMicroButton(sref, "SpellbookMicroButton", mbf)
+        reskinMicroButton(sref, "SpellbookMicroButton", mbf, true)
         sref:ClearAllPoints()
         sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
 
@@ -545,7 +538,7 @@ local function setupMicroButtons(mbf)
             ]=]
         )
         sref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
-        sref:SetScript("OnLeave", GameTooltip_Hide)
+        sref:SetScript("OnLeave", function() MainMenuBarMicroButtonMixin.OnLeave(sref); GameTooltip:Hide() end)
         sref:SetScript("OnHide", GameTooltip_Hide)
 
         disableMicroButton(SpellbookMicroButton)
@@ -574,7 +567,6 @@ local function setupMicroButtons(mbf)
     -- GuildMicroButton
     GuildMicroButton:ClearAllPoints()
     GuildMicroButton:SetPoint("BOTTOMLEFT", QuestLogMicroButton, "BOTTOMRIGHT", 4, 0)
-
     GuildMicroButton.Ticker = C_Timer.NewTicker(15, function() C_GuildInfo.GuildRoster() end)
     GuildMicroButton:RegisterEvent("GUILD_ROSTER_UPDATE")
     GuildMicroButton:RegisterEvent("MODIFIER_STATE_CHANGED")
@@ -582,6 +574,17 @@ local function setupMicroButtons(mbf)
     GuildMicroButton:HookScript("OnEvent", updateGuildButton)
     GuildMicroButton:HookScript("OnEnter", GW.Guild_OnEnter)
     GuildMicroButton:SetScript("OnClick", GW.Guild_OnClick)
+    hooksecurefunc(GuildMicroButton, "UpdateTabard", function()
+        GuildMicroButton:GetDisabledTexture():SetAlpha(1)
+        GuildMicroButton:GetNormalTexture():SetAlpha(1)
+        GuildMicroButton:GetPushedTexture():SetAlpha(1)
+        GuildMicroButton:GetHighlightTexture():SetAlpha(1)
+
+        GuildMicroButton:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+        GuildMicroButton:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+        GuildMicroButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+        GuildMicroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+    end)
     updateGuildButton(GuildMicroButton, "GUILD_ROSTER_UPDATE")
 
     -- LFDMicroButton
