@@ -67,7 +67,6 @@ local function HandleAffixIcons(self)
 
         self.PowerLevel:SetText("")
     end
-
     local list = self.AffixesContainer and self.AffixesContainer.Affixes or self.Affixes
     if not list then return end
 
@@ -866,6 +865,8 @@ local function ApplyChallengesUISkin()
         end
     end)
 
+    hooksecurefunc(ChallengesKeystoneFrame, "OnKeystoneSlotted", HandleAffixIcons)
+
     hooksecurefunc(ChallengesFrame, "Update", function(frame)
         for _, child in ipairs(frame.DungeonIcons) do
             if not child.template then
@@ -893,7 +894,7 @@ local function ApplyChallengesUISkin()
         end
     end)
 
-    hooksecurefunc(ChallengesFrameWeeklyInfoMixin, "SetUp", function(info)
+    hooksecurefunc(ChallengesFrame.WeeklyInfo, "SetUp", function(info)
         if C_MythicPlus.GetCurrentAffixes() then
             HandleAffixIcons(info.Child)
         end
