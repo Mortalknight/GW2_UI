@@ -77,7 +77,7 @@ local function PositionsAndSize(self)
         end
     end
 end
-GW.SetStanceButtons = SetStanceButtons
+GW.SetStanceButtons = PositionsAndSize
 
 local function StyleStanceBarButtons()
     local numForms = GetNumShapeshiftForms()

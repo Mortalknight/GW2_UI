@@ -89,7 +89,7 @@ local function customCategorieInit(self,elementData)
         numAchievements, numCompleted = GetNumCompletedAchievements(InGuildView());
     elseif ( id == "watchlist" ) then -- custom watchlist category
         categoryName = L["Watch list"];
-        local trackedAchievements = {GetTrackedAchievements()}
+        local trackedAchievements = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
 
         numAchievements = #trackedAchievements
         numCompleted = 0 -- might need to change or only used for bars?
@@ -171,7 +171,7 @@ local function UpdateCategoriesDataProvider()
     end
 
     local customCat = category == "watchlist" or false
-    local trackedAchievements = {GetTrackedAchievements()}
+    local trackedAchievements = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
 
     local numAchievements, numCompleted, completedOffset = ACHIEVEMENTUI_SELECTEDFILTER(category);
     local fosShown = numAchievements == 0 and IsCategoryFeatOfStrength(category);
@@ -206,7 +206,7 @@ local function AchievementFrameCategories_OnLoad(self)
     -- create new filter function for our watch list so we dont run into an error when building achievement lists
     ACHIEVEMENTUI_SELECTEDFILTER = function(categoryID)
         if categoryID =="watchlist" then
-        local trackedAchievements = {GetTrackedAchievements()}
+        local trackedAchievements = C_ContentTracking.GetTrackedIDs(Enum.ContentTrackingType.Achievement)
         return #trackedAchievements,0,0
         end
         local numAchievements, numCompleted, numIncomplete = GetCategoryNumAchievements(categoryID);
@@ -766,7 +766,7 @@ local function UpdateAchievementFrameListAchievement(self)
         self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooternotrack")
     end
 
-    if IsTrackedAchievement(id) then
+    if C_ContentTracking.IsTracking(Enum.ContentTrackingType.Achievement, id) then
         self.trackBackground:Show()
         self.bottomBar:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/achievementfooternotrack")
     else

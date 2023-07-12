@@ -212,7 +212,7 @@ local function modifyMicroAlert(alert, microButton)
 end
 AFP("modifyMicroAlert", modifyMicroAlert)
 
-local function reskinMicroButton(btn, name, mbf)
+local function reskinMicroButton(btn, name, mbf, hook)
     btn:SetParent(mbf)
     hooksecurefunc(btn, "SetParent", function(self, parent)
         if parent ~= mbf then
@@ -228,7 +228,28 @@ local function reskinMicroButton(btn, name, mbf)
     btn:SetPushedTexture(tex)
     btn:SetHighlightTexture(tex)
 
-        --hackfix for texture size
+    if hook then
+        btn:HookScript("OnEnter", function()
+            btn:SetDisabledTexture(tex)
+            btn:SetNormalTexture(tex)
+            btn:SetPushedTexture(tex)
+            btn:SetHighlightTexture(tex)
+        end)
+        btn:HookScript("OnMouseDown", function()
+            btn:SetDisabledTexture(tex)
+            btn:SetNormalTexture(tex)
+            btn:SetPushedTexture(tex)
+            btn:SetHighlightTexture(tex)
+        end)
+        btn:HookScript("OnMouseUp", function()
+            btn:SetDisabledTexture(tex)
+            btn:SetNormalTexture(tex)
+            btn:SetPushedTexture(tex)
+            btn:SetHighlightTexture(tex)
+        end)
+    end
+
+    --hackfix for texture size
     local t = btn:GetDisabledTexture()
     t:ClearAllPoints()
     t:SetPoint("CENTER",btn,"CENTER",0,0)
@@ -264,6 +285,18 @@ local function reskinMicroButton(btn, name, mbf)
         btn.FlashContent:SetTexture(tex)
     end
 
+    if btn.Background then
+        btn.Background:GwSetInside()
+        btn.Background:SetAlpha(0)
+        btn.Background:SetScale(0.00001)
+    end
+
+    if btn.PushedBackground then
+        btn.PushedBackground:GwSetInside()
+        btn.PushedBackground:SetAlpha(0)
+        btn.PushedBackground:SetScale(0.00001)
+    end
+
     btn.GwNotify = btn:CreateTexture(nil, "OVERLAY")
     btn.GwNotifyDark = btn:CreateTexture(nil, "OVERLAY")
     btn.GwNotifyText = btn:CreateFontString(nil, "OVERLAY")
@@ -289,12 +322,12 @@ local function reskinMicroButton(btn, name, mbf)
 end
 AFP("reskinMicroButton", reskinMicroButton)
 
-local function reskinMicroButtons(mbf)
+local function reskinMicroButtons(mbf, hook)
     for i = 1, #MICRO_BUTTONS do
         local name = MICRO_BUTTONS[i]
         local btn = _G[name]
         if btn then
-            reskinMicroButton(btn, name, mbf)
+            reskinMicroButton(btn, name, mbf, hook)
         end
     end
 end
@@ -441,6 +474,7 @@ local function setupMicroButtons(mbf)
         cref = CreateFrame("Button", "GwCharacterMicroButton", mbf, "SecureHandlerClickTemplate")
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
+        cref.textureName = "CharacterMicroButton"
         reskinMicroButton(cref, "CharacterMicroButton", mbf)
         cref:RegisterForClicks("AnyUp")
         cref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
@@ -476,6 +510,7 @@ local function setupMicroButtons(mbf)
     local bref = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
     bref.tooltipText = MicroButtonTooltipText(INVENTORY_TOOLTIP, "OPENALLBAGS")
     bref.newbieText = nil
+    bref.textureName = "BagMicroButton"
     reskinMicroButton(bref, "BagMicroButton", mbf)
 
     bref:ClearAllPoints()
@@ -492,6 +527,7 @@ local function setupMicroButtons(mbf)
         sref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
         sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
         sref.newbieText = NEWBIE_TOOLTIP_TALENTS
+        sref.textureName = "SpellbookMicroButton"
         reskinMicroButton(sref, "SpellbookMicroButton", mbf)
         sref:ClearAllPoints()
         sref:SetPoint("BOTTOMLEFT", bref, "BOTTOMRIGHT", 4, 0)
@@ -598,6 +634,7 @@ local function setupMicroButtons(mbf)
     local greatVaultIcon = CreateFrame("Button", "Gw2GreateVaultMicroMenuButton", mbf, "MainMenuBarMicroButton")
     greatVaultIcon.newbieText = nil
     greatVaultIcon.tooltipText = RATED_PVP_WEEKLY_VAULT
+    greatVaultIcon.textureName = "GreatVaultMicroButton"
     reskinMicroButton(greatVaultIcon, "GreatVaultMicroButton", mbf)
     greatVaultIcon:ClearAllPoints()
     greatVaultIcon:SetPoint("BOTTOMLEFT", IsAddOnLoaded("Dominos") and HelpMicroButton or StoreMicroButton, "BOTTOMRIGHT", 4, 0)
@@ -643,6 +680,7 @@ local function SetupNotificationArea(mbf)
     updateIcon = CreateFrame("Button", "Gw2UpdateMicroMenuButton", mbf, "MainMenuBarMicroButton")
     updateIcon.newbieText = nil
     updateIcon.tooltipText = ""
+    updateIcon.textureName = "UpdateMicroButton"
     reskinMicroButton(updateIcon, "UpdateMicroButton", mbf)
     updateIcon:ClearAllPoints()
     updateIcon:SetPoint("BOTTOMLEFT", Gw2GreateVaultMicroMenuButton, "BOTTOMRIGHT", 4, 0)
@@ -655,6 +693,7 @@ local function SetupNotificationArea(mbf)
     mailIcon:RegisterEvent("UPDATE_PENDING_MAIL")
     mailIcon.newbieText = nil
     mailIcon.tooltipText = ""
+    mailIcon.textureName = "MailMicroButton"
     reskinMicroButton(mailIcon, "MailMicroButton", mbf)
     mailIcon:ClearAllPoints()
     mailIcon:SetPoint("BOTTOMLEFT", updateIcon, "BOTTOMRIGHT", 4, 0)
@@ -670,6 +709,7 @@ local function SetupNotificationArea(mbf)
     workOrderIcon:RegisterEvent("PLAYER_ENTERING_WORLD")
     workOrderIcon.newbieText = nil
     workOrderIcon.tooltipText = ""
+    workOrderIcon.textureName = "WorkOrderMicroButton"
     reskinMicroButton(workOrderIcon, "WorkOrderMicroButton", mbf)
     workOrderIcon:ClearAllPoints()
     workOrderIcon:SetPoint("BOTTOMLEFT", mailIcon, "BOTTOMRIGHT", 4, 0)
@@ -774,6 +814,8 @@ local function hook_UpdateMicroButtons()
     m:SetNormalTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
     m:SetPushedTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
     m:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
+
+    reskinMicroButtons(Gw2MicroBarFrame.cf)
 end
 AFP("hook_UpdateMicroButtons", hook_UpdateMicroButtons)
 
@@ -803,7 +845,7 @@ local function LoadMicroMenu()
     mbf:SetPoint("TOPLEFT", mbf.gwMover)
 
     -- reskin all default (and custom) micro buttons to our styling
-    reskinMicroButtons(mbf.cf)
+    reskinMicroButtons(mbf.cf, true)
 
     -- re-do anchoring of the micro buttons to our preferred ordering and setup
     -- custom button overrides & behaviors for each button where necessary

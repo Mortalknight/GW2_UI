@@ -125,6 +125,8 @@ local function SellJunkFrame_OnEvent(self, event, arg1)
         if SellJunkTicker then SellJunkTicker._cancelled = true end
         -- Sell grey items using ticker (ends when all grey items are sold or iteration count reached)
         SellJunkTicker = NewAutoSellTicker(0.2, sellJunk, IterationCount)
+        -- use blizzard auto sell function
+        --C_MerchantFrame.SellAllJunkItems() -- delayed to 10.1.7
         self:RegisterEvent("ITEM_LOCKED")
     elseif event == "ITEM_LOCKED" then
         GwBagFrame.smsj:Show()

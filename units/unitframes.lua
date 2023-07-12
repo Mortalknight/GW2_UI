@@ -376,14 +376,14 @@ local function updateAvgItemLevel(self, guid)
 
                 if canUpdate then
                     local calculateItemLevel = GW.CalculateAverageItemLevel(iLevelDB, retryUnit)
-                    PopulateUnitIlvlsCache(guid, calculateItemLevel, "target")
+                    PopulateUnitIlvlsCache(guid, calculateItemLevel)
                     ClearInspectPlayer()
                     self:UnregisterEvent("INSPECT_READY")
                     setUnitPortraitFrame(self)
                 end
             end)
         else
-            PopulateUnitIlvlsCache(guid, itemLevel, "target")
+            PopulateUnitIlvlsCache(guid, itemLevel)
             self:UnregisterEvent("INSPECT_READY")
         end
         setUnitPortraitFrame(self)

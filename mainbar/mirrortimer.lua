@@ -1,66 +1,28 @@
 local _, GW = ...
 
-local function HandleMirrorTimer()
-	local i = 1
-	local frame = MirrorTimer1
-	while frame do
-		if not frame.atlasHolder then
-			frame.atlasHolder = CreateFrame("Frame", nil, frame)
-			frame.atlasHolder:SetClipsChildren(true)
-			frame.atlasHolder:GwSetInside()
+local function HandleMirrorTimer(self, timer)
+	local bar = self:GetAvailableTimer(timer)
+	if bar then
+		bar.atlasHolder = CreateFrame("Frame", nil, bar)
+		bar.atlasHolder:SetClipsChildren(true)
+		bar.atlasHolder:GwSetInside()
 
-			frame.StatusBar:SetParent(frame.atlasHolder)
-			frame.StatusBar:ClearAllPoints()
-			frame.StatusBar:SetSize(200, 18)
-			frame.StatusBar:SetPoint("TOP", 0, 2)
-			frame:SetSize(200, 18)
+		bar.StatusBar:SetParent(bar.atlasHolder)
+		bar.StatusBar:ClearAllPoints()
+		bar.StatusBar:SetSize(200, 18)
+		bar.StatusBar:SetPoint("TOP", 0, 2)
+		bar:SetSize(200, 18)
 
-			frame.Text:ClearAllPoints()
-			frame.Text:SetParent(frame.StatusBar)
-			frame.Text:SetPoint("CENTER", frame.StatusBar, 0, 1)
-		end
+		bar.Text:ClearAllPoints()
+		bar.Text:SetParent(bar.StatusBar)
+		bar.Text:SetPoint("CENTER", bar.StatusBar, 0, 1)
 
-		frame:GwStripTextures()
-		frame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-
-		i = i + 1
-		frame = _G["MirrorTimer" .. i]
+		bar:GwStripTextures()
+		bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 	end
 end
 
 local function LoadMirrorTimers()
-	for i = 1, 3 do
-		local frame = _G["MirrorTimer" .. i]
-		GW.RegisterMovableFrame(frame, GW.L["MirrorTimer"] .. i, "MirrorTimer" .. i, ALL .. ",Blizzard,Widgets", {200, 18}, {"default"})
-		frame:ClearAllPoints()
-		frame:SetPoint("TOPLEFT", frame.gwMover)
-
-		-- remove wrong anchor point for DB in Profiles and Layout frames
-		local profiles = GW.GetSettingsProfiles()
-		for k, _ in pairs(profiles) do
-			if profiles[k] then
-				if profiles[k]["MirrorTimer" ..i] and profiles[k]["MirrorTimer" ..i].anchor then
-					GW2UI_SETTINGS_PROFILES[k]["MirrorTimer" ..i].anchor = nil
-				end
-			end
-		end
-		--private layouts
-		if GW2UI_SETTINGS_DB_03["MirrorTimer" ..i] and GW2UI_SETTINGS_DB_03["MirrorTimer" ..i].anchor then
-			GW2UI_SETTINGS_DB_03["MirrorTimer" ..i].anchor = nil
-		end
-		local layouts = GW.GetAllLayouts()
-		for k, _ in pairs(layouts) do
-			if layouts[k] and layouts[k].frames then
-				for key, _ in pairs(layouts[k].frames) do
-					if layouts[k].frames[key] and layouts[k].frames[key].settingName == "MirrorTimer" .. i and layouts[k].frames[key].point and layouts[k].frames[key].point.anchor then
-						GW2UI_LAYOUTS[k].frames[key].point.anchor = nil
-					end
-				end
-			end
-		end
-		--
-	end
-
-	hooksecurefunc("MirrorTimer_Show", HandleMirrorTimer)
+	hooksecurefunc(MirrorTimerContainer, "SetupTimer", HandleMirrorTimer)
 end
 GW.LoadMirrorTimers = LoadMirrorTimers

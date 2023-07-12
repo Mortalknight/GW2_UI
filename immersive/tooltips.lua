@@ -26,7 +26,6 @@ local genderTable = {
 }
 
 local LEVEL1 = strlower(TOOLTIP_UNIT_LEVEL:gsub("%s?%%s%s?%-?",""))
-local LEVEL2 = strlower(TOOLTIP_UNIT_LEVEL_CLASS:gsub("^%%2$s%s?(.-)%s?%%1$s","%1"):gsub("^%-?г?о?%s?",""):gsub("%s?%%s%s?%-?",""))
 local IDLine = "|cffffedba%s|r %d"
 
 local TT = CreateFrame("Frame")
@@ -281,6 +280,8 @@ end
 local function GameTooltip_OnTooltipCleared(self)
     if self:IsForbidden() then return end
 
+    self.ItemLevelShown = nil
+
     if self.ItemTooltip then
         self.ItemTooltip:Hide()
     end
@@ -333,18 +334,14 @@ local function GameTooltip_OnTooltipSetItem(self, data)
     if bankCount then self:AddDoubleLine(" ", bankCount) end
 end
 
-local function GetLevelLine(self, offset, guildName)
+local function GetLevelLine(self, offset, player)
     if self:IsForbidden() then return end
-
-    if guildName then
-        offset = 3
-    end
 
     for i = offset, self:NumLines() do
         local tipLine = _G["GameTooltipTextLeft"..i]
         local tipText = tipLine and tipLine:GetText() and strlower(tipLine:GetText())
-        if tipText and (strfind(tipText, LEVEL1) or strfind(tipText, LEVEL2)) then
-            return tipLine
+        if tipText and strfind(tipText, LEVEL1) then
+            return tipLine, player and _G["GameTooltipTextLeft" .. i + 1] or nil
         end
     end
 end
@@ -381,7 +378,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local awayText = UnitIsAFK(unit) and AFK_LABEL or UnitIsDND(unit) and DND_LABEL or ""
         GameTooltipTextLeft1:SetFormattedText("|c%s%s%s|r", nameColor.colorStr, name or UNKNOWN, awayText)
 
-        local levelLine = GetLevelLine(self, 2, guildName)
+        local levelLine, specLine = GetLevelLine(self, (guildName and 3 or 2), true)
         if guildName then
             if guildRealm and isShiftKeyDown then
                 guildName = guildName.."-"..guildRealm
@@ -403,9 +400,14 @@ local function SetUnitText(self, unit, isPlayerUnit)
             local hexColor = GW.RGBToHex(diffColor.r, diffColor.g, diffColor.b)
             local unitGender = settings.showGender and genderTable[gender]
             if level < realLevel then
-                levelLine:SetFormattedText("%s%s|r |cffFFFFFF(%s)|r %s%s |c%s%s|r", hexColor, level > 0 and level or "??", realLevel, unitGender or "", race or "", nameColor.colorStr, localeClass)
+                levelLine:SetFormattedText("%s%s|r |cffFFFFFF(%s)|r %s%s", hexColor, level > 0 and level or "??", realLevel, unitGender or "", race or "")
             else
-                levelLine:SetFormattedText("%s%s|r %s%s |c%s%s|r", hexColor, level > 0 and level or "??", unitGender or "", race or "", nameColor.colorStr, localeClass)
+                levelLine:SetFormattedText("%s%s|r %s%s", hexColor, level > 0 and level or "??", unitGender or "", race or "")
+            end
+
+            local specText = specLine and specLine:GetText()
+            if specText then
+                specLine:SetFormattedText("|c%s%s|r", nameColor.colorStr, specText)
             end
         end
 
@@ -583,11 +585,11 @@ local function TT_OnEvent(_, event, unitGUID)
 
                 if canUpdate then
                     local calculateItemLevel = GW.CalculateAverageItemLevel(iLevelDB, retryUnit)
-                    PopulateUnitIlvlsCache(unitGUID, calculateItemLevel, "mouseover", true)
+                    PopulateUnitIlvlsCache(unitGUID, calculateItemLevel, true)
                 end
             end)
         else
-            PopulateUnitIlvlsCache(unitGUID, itemLevel, "mouseover", true)
+            PopulateUnitIlvlsCache(unitGUID, itemLevel, true)
         end
     end
 
@@ -598,25 +600,23 @@ end
 
 local lastGUID
 local function AddInspectInfo(self, unit, numTries, r, g, b)
-    if not unit or numTries > 3 or not CanInspect(unit) then return end
+    if self.ItemLevelShown or (not unit) or (numTries > 3) or not CanInspect(unit) then return end
 
     local unitGUID = UnitGUID(unit)
     if not unitGUID then return end
 
     if unitGUID == UnitGUID("player") then
-        self:AddDoubleLine(SPECIALIZATION .. ":", GW._GetSpecializationInfo(unit, true), nil, nil, nil, r, g, b)
+        self.ItemLevelShown = true
         self:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":", GetUnitItemLevel(unit), nil, nil, nil, 1, 1, 1)
     elseif GW.unitIlvlsCache[unitGUID] and GW.unitIlvlsCache[unitGUID].time then
-        local specName = GW.unitIlvlsCache[unitGUID].specName
         local itemLevel = GW.unitIlvlsCache[unitGUID].itemLevel
-        if not (specName and itemLevel) or (GetTime() - GW.unitIlvlsCache[unitGUID].time > 120) then
+        if not itemLevel or (GetTime() - GW.unitIlvlsCache[unitGUID].time > 120) then
             GW.unitIlvlsCache[unitGUID].time = nil
-            GW.unitIlvlsCache[unitGUID].specName = nil
             GW.unitIlvlsCache[unitGUID].itemLevel = nil
             return Wait(0.33, AddInspectInfo(self, unit, numTries + 1, r, g, b))
         end
 
-        self:AddDoubleLine(SPECIALIZATION .. ":", specName, nil, nil, nil, r, g, b)
+        self.ItemLevelShown = true
         self:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":", itemLevel, nil, nil, nil, 1, 1, 1)
     elseif unitGUID then
         if not GW.unitIlvlsCache[unitGUID] then
@@ -671,7 +671,7 @@ local function GameTooltip_OnTooltipSetUnit(self, data)
         AddMythicInfo(self, unit)
     end
 
-    if isShiftKeyDown and color then
+    if isShiftKeyDown and color and not self.ItemLevelShown then
         AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
     end
 
@@ -1133,7 +1133,7 @@ local function LoadTooltips()
         eventFrame:SetScript("OnEvent", function()
             if not GameTooltip:IsForbidden() and GameTooltip:IsShown() then
                 local owner = GameTooltip:GetOwner()
-                if owner == UIParent and UnitExists("mouseover") then
+                if (owner == UIParent or (GW2_PlayerFrame and owner == GW2_PlayerFrame)) and UnitExists("mouseover") then
                     GameTooltip:SetUnit("mouseover")
                 end
             end

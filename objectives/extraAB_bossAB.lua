@@ -5,6 +5,7 @@ local GetSetting = GW.GetSetting
 
 local ExtraActionBarHolder, ZoneAbilityHolder, eventFrame
 local NeedsReparentExtraButtons = false
+local NeedsRepositionExtraButtons = false
 local ExtraButtons = {}
 
 local function ExtraButtons_ZoneScale()
@@ -50,12 +51,28 @@ local function Reparent()
     ExtraActionBarFrame:SetParent(ExtraActionBarHolder)
 end
 
+local function Reposition()
+    if InCombatLockdown() then
+        NeedsRepositionExtraButtons = true
+        eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        return
+    end
+
+    ZoneAbilityFrame:ClearAllPoints()
+    ZoneAbilityFrame:SetAllPoints(ZoneAbilityHolder.gwMover)
+
+    ExtraActionBarFrame:ClearAllPoints()
+    ExtraActionBarFrame:SetAllPoints(ExtraActionBarHolder.gwMover)
+end
+
 local function OnEvent(self, event)
     if event == "UPDATE_BINDINGS" then
         UpdateExtraBindings()
     elseif event == "PLAYER_REGEN_ENABLED" then
         Reparent()
         NeedsReparentExtraButtons = false
+        Reposition()
+        NeedsRepositionExtraButtons = false
         self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     end
 end
@@ -152,6 +169,17 @@ local function ExtraAB_BossAB_Setup()
     hooksecurefunc(ExtraActionBarFrame, "SetParent", function(_, parent)
         if parent ~= ExtraActionBarHolder and not NeedsReparentExtraButtons then
             Reparent()
+        end
+    end)
+
+    hooksecurefunc(ZoneAbilityFrame, "SetPoint", function(_, _, parent)
+        if parent ~= ZoneAbilityHolder.gwMover and not NeedsRepositionExtraButtons then
+            Reposition()
+        end
+    end)
+    hooksecurefunc(ExtraActionBarFrame, "SetPoint", function(_, _, parent)
+        if parent ~= ExtraActionBarHolder.gwMover and not NeedsRepositionExtraButtons then
+            Reposition()
         end
     end)
 

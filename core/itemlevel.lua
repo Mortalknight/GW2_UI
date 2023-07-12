@@ -1,8 +1,6 @@
 local _, GW = ...
 local RoundDec = GW.RoundDec
 
-local inspectColorFallback = {1, 1, 1}
-
 local MATCH_ITEM_LEVEL = ITEM_LEVEL:gsub("%%d", "(%%d+)")
 local MATCH_ITEM_LEVEL_ALT = ITEM_LEVEL_ALT:gsub("%%d(%s?)%(%%d%)", "%%d+%1%%((%%d+)%%)")
 local MATCH_ENCHANT = ENCHANTED_TOOLTIP_LINE:gsub("%%s", "(.+)")
@@ -16,29 +14,15 @@ local X2_INVTYPES, X2_EXCEPTIONS, ARMOR_SLOTS = {
     },
     {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
 
-local function _GetSpecializationInfo(unit, isPlayer)
-    local spec = (isPlayer and GW.myspec) or (unit and GetInspectSpecialization(unit))
-    if spec and spec > 0 then
-        if isPlayer then
-            return select(2, GetSpecializationInfo(spec))
-        else
-            return select(2, GetSpecializationInfoByID(spec))
-        end
-    end
-end
-GW._GetSpecializationInfo = _GetSpecializationInfo
-
-local function PopulateUnitIlvlsCache(unitGUID, itemLevel, target, tooltip)
-    local specName = _GetSpecializationInfo(target)
-    if specName and itemLevel then
+local function PopulateUnitIlvlsCache(unitGUID, itemLevel, tooltip)
+    if itemLevel then
         if GW.unitIlvlsCache[unitGUID] then
             GW.unitIlvlsCache[unitGUID].time = GetTime()
             GW.unitIlvlsCache[unitGUID].itemLevel = itemLevel
-            GW.unitIlvlsCache[unitGUID].specName = specName
         end
 
         if tooltip then
-            GameTooltip:AddDoubleLine(SPECIALIZATION .. ":", specName, nil, nil, nil, unpack((GW.unitIlvlsCache[unitGUID].unitColor) or inspectColorFallback))
+            GameTooltip.ItemLevelShown = true
             GameTooltip:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":", itemLevel, nil, nil, nil, 1, 1, 1)
             GameTooltip:Show()
         end
