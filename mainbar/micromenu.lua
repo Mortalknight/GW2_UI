@@ -213,12 +213,18 @@ end
 AFP("modifyMicroAlert", modifyMicroAlert)
 
 local function reskinMicroButton(btn, name, mbf, hook)
-    btn:SetParent(mbf)
-    hooksecurefunc(btn, "SetParent", function(self, parent)
-        if parent ~= mbf then
-            self:SetParent(mbf)
+    if not btn.gwSetParentHooked then
+        if btn:GetParent() ~= mbf then
+            btn:SetParent(mbf)
         end
-    end)
+
+        hooksecurefunc(btn, "SetParent", function(self, parent)
+            if parent ~= mbf then
+                self:SetParent(mbf)
+            end
+        end)
+        btn.gwSetParentHooked = true
+    end
 
     local tex = "Interface/AddOns/GW2_UI/textures/icons/microicons/" .. name .. "-Up"
 
@@ -228,7 +234,7 @@ local function reskinMicroButton(btn, name, mbf, hook)
     btn:SetPushedTexture(tex)
     btn:SetHighlightTexture(tex)
 
-    if hook then
+    if hook and not btn.gwButtonTextureHooked then
         btn:HookScript("OnEnter", function()
             btn:SetDisabledTexture(tex)
             btn:SetNormalTexture(tex)
@@ -247,6 +253,8 @@ local function reskinMicroButton(btn, name, mbf, hook)
             btn:SetPushedTexture(tex)
             btn:SetHighlightTexture(tex)
         end)
+
+        btn.gwButtonTextureHooked = true
     end
 
     --hackfix for texture size
@@ -275,11 +283,16 @@ local function reskinMicroButton(btn, name, mbf, hook)
     if btn.FlashContent then btn.FlashContent:SetTexture() end
     if btn.Background then btn.Background:SetTexture() end
     if btn.Flash then btn.Flash:SetTexture() end
-    if btn.Portrait then btn.Portrait:SetTexture() end
     if btn.Shadow then btn.Shadow:SetTexture() end
 
     if btn.PortraitMask then
         btn.PortraitMask:Hide()
+    end
+
+    if btn.Portrait then
+        btn.Portrait:GwSetInside()
+        btn.Portrait:SetAlpha(0)
+        btn.Portrait:SetScale(0.00001)
     end
 
     if btn.FlashBorder then
@@ -339,26 +352,6 @@ local function disableMicroButton(btn, hideOnly)
     end
 end
 AFP("disableMicroButton", disableMicroButton)
-
-local function char_SetAnchorPoint(self)
-    self:ClearAllPoints()
-    self:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -40, 40)
-end
-AFP("char_SetAnchorPoint", char_SetAnchorPoint)
-
-local function cref_SetAnchorPoint(self, mbf)
-    -- this must also happen in the auto-layout update hook which is why we do it like this
-    self:ClearAllPoints()
-    self:SetPoint("TOPLEFT", mbf, "TOPLEFT", 5, -3)
-end
-AFP("cref_SetAnchorPoint", cref_SetAnchorPoint)
-
-local function lfd_SetAnchorPoint(self)
-    -- this must also happen in the auto-layout update hook which is why we do it like this
-    self:ClearAllPoints()
-    self:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
-end
-AFP("lfd_SetAnchorPoint", lfd_SetAnchorPoint)
 
 local function hook_MainMenuMicroButton_OnUpdate()
     -- the main menu button routinely updates its texture based on streaming download
@@ -481,7 +474,6 @@ local function setupMicroButtons(mbf)
             ]=]
         )
         disableMicroButton(CharacterMicroButton, true)
-        CharacterMicroButton.GwSetAnchorPoint = char_SetAnchorPoint
         cref:SetScript("OnEnter", MainMenuBarMicroButtonMixin.OnEnter)
         cref:SetScript("OnLeave", function() MainMenuBarMicroButtonMixin.OnLeave(cref); GameTooltip:Hide() end)
         cref:HookScript("OnEnter", GW.Friends_OnEnter)
@@ -496,8 +488,8 @@ local function setupMicroButtons(mbf)
     else
         cref = CharacterMicroButton
     end
-    cref.GwSetAnchorPoint = function(self) cref_SetAnchorPoint(self, mbf) end
-    cref:GwSetAnchorPoint()
+    cref:ClearAllPoints()
+    cref:SetPoint("TOPLEFT", mbf, "TOPLEFT", 5, -3)
 
     -- custom bag microbutton
     local bref = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
@@ -588,8 +580,8 @@ local function setupMicroButtons(mbf)
     updateGuildButton(GuildMicroButton, "GUILD_ROSTER_UPDATE")
 
     -- LFDMicroButton
-    LFDMicroButton.GwSetAnchorPoint = lfd_SetAnchorPoint
-    LFDMicroButton:GwSetAnchorPoint()
+    LFDMicroButton:ClearAllPoints()
+    LFDMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
 
     -- EJMicroButton
     EJMicroButton:ClearAllPoints()
@@ -800,16 +792,6 @@ local function checkElvUI()
 end
 AFP("checkElvUI", checkElvUI)
 
-local function hook_MoveMicroButtons()
-    if CharacterMicroButton.GwSetAnchorPoint then
-        CharacterMicroButton:GwSetAnchorPoint()
-    end
-    if LFDMicroButton.GwSetAnchorPoint then
-        LFDMicroButton:GwSetAnchorPoint()
-    end
-end
-AFP("hook_MoveMicroButtons", hook_MoveMicroButtons)
-
 local function hook_UpdateMicroButtons()
     HelpMicroButton:Show()
     local m = GuildMicroButton
@@ -860,7 +842,6 @@ local function LoadMicroMenu()
     -- event timer icon
     ToggleEventTimerIcon(mbf.cf)
 
-    --hooksecurefunc("MoveMicroButtons", hook_MoveMicroButtons) -- 10.0.5
     hooksecurefunc("UpdateMicroButtons", hook_UpdateMicroButtons)
 
     -- if borders are hidden, hide the bg
