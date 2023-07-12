@@ -297,10 +297,7 @@ local function OnEvent(self, event, ...)
     if event == "TRACKED_RECIPE_UPDATE" then
         StartUpdate(self)
     elseif event == "CURRENCY_DISPLAY_UPDATE" then
-        local currencyID = ...
-        if tContains(currencyIDs, currencyID) then
-            StartUpdate(self)
-        end
+        StartUpdate(self)
     elseif event == "UPDATE_PENDING_MAIL" then
         StartUpdate(self)
     elseif event == "SKILL_LINES_CHANGED" then
