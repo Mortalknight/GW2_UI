@@ -1,3 +1,9 @@
+6.9.0
+NEW
+    - Added font settings for GW2 floating combat text
+MISC
+    - Update for 10.1.5
+
 6.8.2
 FIXES
     - Fix druid little manabar in cat form with player frame in target frame style
