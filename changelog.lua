@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.9.2",{
+    {ct.bug,[=[Fix an actionbars issue which can crash the client]=]},
+})
+
 addChange("6.9.1",{
     {ct.bug,[=[More 10.1.5 related fixes]=]},
 })

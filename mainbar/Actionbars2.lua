@@ -542,32 +542,32 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.CooldownFlash:GwSetOutside(btn, 4, 4)
     end
 
-    if btn.SpellCastAnimFrame then
+    if btn.SpellCastAnimFrame and not btn.gwSpellCastAnimFrameFillMask then
         btn.SpellCastAnimFrame.Fill.InnerGlowTexture:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
         btn.SpellCastAnimFrame.Fill.InnerGlowTexture:SetVertexColor(0, 0, 0, 0)
 
         -- create our own mask
         btn.SpellCastAnimFrame.EndBurst.GlowRing:RemoveMaskTexture(btn.SpellCastAnimFrame.EndBurst.EndMask)
-        local mask = btn.SpellCastAnimFrame.EndBurst:CreateMaskTexture()
-        mask:SetPoint("CENTER", btn.SpellCastAnimFrame.EndBurst, "CENTER", 0, 0)
-        mask:SetTexture(
+        btn.gwSpellCastAnimFrameMask = btn.SpellCastAnimFrame.EndBurst:CreateMaskTexture()
+        btn.gwSpellCastAnimFrameMask:SetPoint("CENTER", btn.SpellCastAnimFrame.EndBurst, "CENTER", 0, 0)
+        btn.gwSpellCastAnimFrameMask:SetTexture(
             "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagbg",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
-        mask:SetSize(btnWidth, btnWidth)
-        btn.SpellCastAnimFrame.EndBurst.GlowRing:AddMaskTexture(mask)
+        btn.gwSpellCastAnimFrameMask:SetSize(btnWidth, btnWidth)
+        btn.SpellCastAnimFrame.EndBurst.GlowRing:AddMaskTexture(btn.gwSpellCastAnimFrameMask)
 
         btn.SpellCastAnimFrame.Fill.CastFill:RemoveMaskTexture(btn.SpellCastAnimFrame.Fill.FillMask)
-        mask = btn.SpellCastAnimFrame.Fill:CreateMaskTexture()
-        mask:SetPoint("CENTER", btn.SpellCastAnimFrame.Fill, "CENTER", 0, 0)
-        mask:SetTexture(
+        btn.gwSpellCastAnimFrameFillMask = btn.SpellCastAnimFrame.Fill:CreateMaskTexture()
+        btn.gwSpellCastAnimFrameFillMask:SetPoint("CENTER", btn.SpellCastAnimFrame.Fill, "CENTER", 0, 0)
+        btn.gwSpellCastAnimFrameFillMask:SetTexture(
             "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagbg",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
-        mask:SetSize(btnWidth, btnWidth)
-        btn.SpellCastAnimFrame.Fill.CastFill:AddMaskTexture(mask)
+        btn.gwSpellCastAnimFrameFillMask:SetSize(btnWidth, btnWidth)
+        btn.SpellCastAnimFrame.Fill.CastFill:AddMaskTexture(btn.gwSpellCastAnimFrameFillMask)
 
         hooksecurefunc(btn.SpellCastAnimFrame.Fill.CastingAnim, "OnFinished", function()
             btn.SpellCastAnimFrame.Fill.CastFill:Hide()
@@ -578,36 +578,36 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         end)
     end
 
-    if btn.InterruptDisplay then
+    if btn.InterruptDisplay and not btn.gwInterruptDisplayMask then
         -- create our own mask
         btn.InterruptDisplay.Highlight.HighlightTexture:RemoveMaskTexture(btn.InterruptDisplay.Highlight.Mask)
-        local mask = btn.InterruptDisplay.Highlight:CreateMaskTexture()
-        mask:SetPoint("CENTER", btn.InterruptDisplay.Highlight, "CENTER", 0, 0)
-        mask:SetTexture(
+        btn.gwInterruptDisplayMask = btn.InterruptDisplay.Highlight:CreateMaskTexture()
+        btn.gwInterruptDisplayMask:SetPoint("CENTER", btn.InterruptDisplay.Highlight, "CENTER", 0, 0)
+        btn.gwInterruptDisplayMask:SetTexture(
             "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagbg",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
-        mask:SetSize(btnWidth, btnWidth)
-        btn.InterruptDisplay.Highlight.HighlightTexture:AddMaskTexture(mask)
+        btn.gwInterruptDisplayMask:SetSize(btnWidth, btnWidth)
+        btn.InterruptDisplay.Highlight.HighlightTexture:AddMaskTexture(btn.gwInterruptDisplayMask)
 
         btn.InterruptDisplay.Base.Base:SetSize(btnWidth, btnWidth)
         btn.InterruptDisplay.Base.Base:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
         btn.InterruptDisplay.Base.Base:SetVertexColor(1, 0, 0)
     end
 
-    if btn.TargetReticleAnimFrame then
+    if btn.TargetReticleAnimFrame and not btn.gwTargetReticleAnimFrameMask then
         -- create our own mask
         btn.TargetReticleAnimFrame.Highlight:RemoveMaskTexture(btn.InterruptDisplay.Highlight.Mask)
-        local mask = btn.InterruptDisplay.Highlight:CreateMaskTexture()
-        mask:SetPoint("CENTER", btn.TargetReticleAnimFrame.Highlight, "CENTER", 0, 0)
-        mask:SetTexture(
+        btn.gwTargetReticleAnimFrameMask = btn.InterruptDisplay.Highlight:CreateMaskTexture()
+        btn.gwTargetReticleAnimFrameMask:SetPoint("CENTER", btn.TargetReticleAnimFrame.Highlight, "CENTER", 0, 0)
+        btn.gwTargetReticleAnimFrameMask:SetTexture(
             "Interface\\AddOns\\GW2_UI\\textures\\bag\\bagbg",
             "CLAMPTOBLACKADDITIVE",
             "CLAMPTOBLACKADDITIVE"
         )
-        mask:SetSize(btnWidth, btnWidth)
-        btn.TargetReticleAnimFrame.Highlight:AddMaskTexture(mask)
+        btn.gwTargetReticleAnimFrameMask:SetSize(btnWidth, btnWidth)
+        btn.TargetReticleAnimFrame.Highlight:AddMaskTexture(btn.gwTargetReticleAnimFrameMask)
 
         btn.TargetReticleAnimFrame.Base:SetSize(btnWidth, btnWidth)
     end
