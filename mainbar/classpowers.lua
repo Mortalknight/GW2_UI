@@ -10,6 +10,17 @@ local CPWR_FRAME
 local CPF_HOOKED_TO_TARGETFRAME = false
 
 ---Styling for powerbars
+local function setPowerTypeEbonMight(self)
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity","REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity2","REPEAT")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
+    self.animator:SetScript("OnUpdate",function(_,delta) self.scrollTextureParalaxOnUpdate(self,delta) end)
+    self.scrollTexture:SetAlpha(1)
+    self.scrollTexture2:SetAlpha(1)
+    self.spark:SetAlpha(0.5)
+    self.scrollSpeedMultiplier = 5
+  end
 local function setPowerTypeMeta(self)
     self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury")
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity","REPEAT")
@@ -229,8 +240,8 @@ local function setManaBar(f)
 end
 GW.AddForProfiling("classpowers", "setManaBar", setManaBar)
 
-local function setLittleManaBar(f)
-    f.barType = "combo"  -- only used in feral form, so we need to show the combo points
+local function setLittleManaBar(f, barType)
+    f.barType = barType  -- used in druid feral form and evoker ebon might bar
     f.lmb:Show()
     f.lmb.decay:Show()
 
@@ -457,10 +468,53 @@ local function setEssenceBar(f)
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
     f:RegisterUnitEvent("UNIT_POWER_POINT_CHARGE", "player")
 end
-GW.AddForProfiling("classpowers", "setComboBar", setComboBar)
+GW.AddForProfiling("classpowers", "setEssenceBar", setEssenceBar)
 
-local function setEvoker(self)
-    setEssenceBar(self)
+local function powerEbonMight(self, event, ...)
+    if event == "UNIT_AURA" then
+        local unitToken, auraUpdateInfo = ...
+        if unitToken ~= "player" or auraUpdateInfo == nil then
+            return
+        end
+
+        -- It's possible for UI to get a UNIT_AURA event with no update info, avoid reacting to that
+        local isUpdatePopulated = auraUpdateInfo.isFullUpdate
+            or (auraUpdateInfo.addedAuras ~= nil and #auraUpdateInfo.addedAuras > 0)
+            or (auraUpdateInfo.removedAuraInstanceIDs ~= nil and #auraUpdateInfo.removedAuraInstanceIDs > 0)
+            or (auraUpdateInfo.updatedAuraInstanceIDs ~= nil and #auraUpdateInfo.updatedAuraInstanceIDs > 0)
+
+        if isUpdatePopulated then
+            local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(395296)
+            local auraExpirationTime = auraInfo and auraInfo.expirationTime or nil
+
+            if auraInfo and auraExpirationTime ~= self.auraExpirationTime then
+                self.auraExpirationTime = auraExpirationTime
+
+                local remainingPrecantage = math.min(1, (auraExpirationTime - GetTime()) / 20) -- hard coded max duration of 20 sec like blizzard
+                self.customResourceBar:setCustomAnimation(remainingPrecantage, 0, auraInfo.duration)
+            end
+        end
+    end
+end
+
+local function setEvoker(f)
+    setEssenceBar(f)
+    f.background:SetTexture(nil)
+    f.fill:SetTexture(nil)
+
+    if GW.myspec == 3 then
+        f.customResourceBar:SetWidth(115)
+        f.customResourceBar:ClearAllPoints()
+        f.customResourceBar:SetPoint("RIGHT", GwPlayerClassPower.gwMover, 2, 0)
+        f.customResourceBar:Show()
+
+        setPowerTypeEbonMight(f.customResourceBar)
+        f:SetScript("OnEvent", powerEbonMight)
+        powerEbonMight(f)
+        f:RegisterUnitEvent("UNIT_AURA", "player")
+    else
+        f:UnregisterEvent("UNIT_AURA")
+    end
     return true
 end
 
@@ -1284,7 +1338,7 @@ local function setDruid(f)
     elseif barType == "combo|little_mana" then
         setComboBar(f)
         if f.ourPowerBar then
-            setLittleManaBar(f)
+            setLittleManaBar(f, "combo")
         end
         return true
     else
@@ -1454,6 +1508,7 @@ local function LoadClassPowers()
     cpf.ourTarget = GetSetting("TARGET_ENABLED")
     cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
     cpf.ourPowerBar = GetSetting("POWERBAR_ENABLED")
+    cpf.auraExpirationTime = nil
 
     -- create an extra mana power bar that is used sometimes (feral druid in cat form) only if your Powerbar is on
     if cpf.ourPowerBar then
@@ -1487,8 +1542,8 @@ local function LoadClassPowers()
             lmb:SetPoint("BOTTOMRIGHT", anchorFrame.powerbar, "TOPRIGHT", 0, -10)
             lmb:SetSize(barWidth + 2, 3)
         else
-            lmb:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 1)
-            lmb:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 1)
+            lmb:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 0)
+            lmb:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 0)
             lmb:SetSize(barWidth, 5)
         end
         lmb:SetFrameStrata("MEDIUM")

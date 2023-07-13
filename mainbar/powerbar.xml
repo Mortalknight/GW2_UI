@@ -70,7 +70,6 @@
                     <Anchor point="CENTER" relativePoint="CENTER" x="0" y="0"></Anchor>
                 </Anchors>
             </FontString>
-
         </Layer>
     </Layers>
     <Frames>
