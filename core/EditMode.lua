@@ -8,7 +8,11 @@ local eventFrame = CreateFrame("Frame")
 local hideFrames = {}
 eventFrame.hideFrames = hideFrames
 
-local function ApplyBlizzardEditModeChanges()
+local function ApplyBlizzardEditModeChanges(self)
+    if InCombatLockdown() then
+        self:RegisterEvent("PLAYER_REGEN_ENABLED")
+        return
+    end
     -- do that in the users profile, if this is not editable we create a gw2 profile with needed actionbar settings
     LEMO:LoadLayouts()
     local doesGw2LayoutExists = LEMO:DoesLayoutExist("GW2_Layout")
@@ -38,6 +42,8 @@ local function ApplyBlizzardEditModeChanges()
     LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainMenuBar, "TOP", -110, 40)
 
     LEMO:ApplyChanges()
+
+    self:UnregisterEvent("PLAYER_REGEN_ENABLED")
 end
 
 local function OnEvent(self, event)
@@ -57,15 +63,10 @@ local function OnEvent(self, event)
         end
     elseif event == "PLAYER_ENTERING_WORLD" or event == "EDIT_MODE_LAYOUTS_UPDATED" or event == "PLAYER_REGEN_ENABLED" then
         if CheckActionBar() and LEMO:IsReady() then
-            if InCombatLockdown() then
-                self:RegisterEvent("PLAYER_REGEN_ENABLED")
-                return
-            end
-            C_Timer.After(0, ApplyBlizzardEditModeChanges)
+            C_Timer.After(0, function() ApplyBlizzardEditModeChanges(self) end)
             -- only tigger that code once
             self:UnregisterEvent("EDIT_MODE_LAYOUTS_UPDATED")
             self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-            self:UnregisterEvent("PLAYER_REGEN_ENABLED")
         end
     end
 end
