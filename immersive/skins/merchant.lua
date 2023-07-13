@@ -146,6 +146,10 @@ local function LoadMerchantFrameSkin()
     backDrop:SetPoint("BOTTOMRIGHT", MerchantBuyBackItemItemButton, "BOTTOMRIGHT", backDropSize, -backDropSize)
     MerchantBuyBackItemItemButton.gwBackdrop = backDrop
 
+    if UndoFrame then
+        UndoFrame.Arrow:SetPoint("CENTER", MerchantBuyBackItemItemButton, "CENTER")
+    end
+
     MerchantBuyBackItemItemButton.IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     MerchantBuyBackItemItemButton.IconBorder:SetAllPoints(MerchantBuyBackItemItemButton)
     MerchantBuyBackItemItemButton.IconBorder:SetParent(MerchantBuyBackItemItemButton)
