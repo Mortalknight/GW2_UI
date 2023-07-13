@@ -150,13 +150,20 @@ end
 GW.AddForProfiling("classpowers", "decay_OnAnim", decay_OnAnim)
 
 local function findBuff(unit, searchID)
-    local name, count, duration, expires, spellID
-    for i = 1, 40 do
-        name, _, count, _, duration, expires, _, _, _, spellID, _ = UnitAura(unit, i)
-        if spellID == searchID then
-            return name, count, duration, expires
-        elseif not spellID then
-            break
+    if unit == "player" then
+        local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(searchID)
+        if auraInfo then
+            return auraInfo.name, auraInfo.charges, auraInfo.duration, auraInfo.expirationTime
+        end
+    else
+        local name, count, duration, expires, spellID
+        for i = 1, 40 do
+            name, _, count, _, duration, expires, _, _, _, spellID, _ = UnitAura(unit, i)
+            if spellID == searchID then
+                return name, count, duration, expires
+            elseif not spellID then
+                break
+            end
         end
     end
 
