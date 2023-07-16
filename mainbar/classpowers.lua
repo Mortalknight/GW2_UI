@@ -128,12 +128,22 @@ RUNE_TIMER_ANIMATIONS[3] = 0
 RUNE_TIMER_ANIMATIONS[4] = 0
 RUNE_TIMER_ANIMATIONS[5] = 0
 RUNE_TIMER_ANIMATIONS[6] = 0
+
+local getBlizzardRuneId = {
+    [1] = 1,
+    [2] = 2,
+    [3] = 5,
+    [4] = 6,
+    [5] = 3,
+    [6] = 4,
+}
 local function powerRune(self)
     local f = self
     local fr = self.runeBar
     for i = 1, 6 do
-        local rune_start, rune_duration, rune_ready = GetRuneCooldown(i)
-        local runeType = GetRuneType(i)
+        local correctRuneId = getBlizzardRuneId[i]
+        local rune_start, rune_duration, rune_ready = GetRuneCooldown(correctRuneId)
+        local runeType = GetRuneType(correctRuneId)
         local fFill = fr["runeTexFill" .. i]
         local fTex = fr["runeTex" .. i]
         local animId = "RUNE_TIMER_ANIMATIONS" .. i
@@ -167,10 +177,10 @@ local function powerRune(self)
                 1,
                 rune_start,
                 rune_duration,
-                function()
-                    fFill:SetTexCoord(0.5, 1, 1 - animations[animId].progress, 1)
-                    fFill:SetHeight(32 * animations[animId].progress)
-                    fFill:SetVertexColor(0.6 * animations[animId].progress, 0.6 * animations[animId].progress, 0.6 * animations[animId].progress)
+                function(p)
+                    fFill:SetTexCoord(0.5, 1, 1 - p, 1)
+                    fFill:SetHeight(32 * p)
+                    fFill:SetVertexColor(0.6 * p, 0.6 * p, 0.6 * p)
                 end,
                 "noease",
                 function()
@@ -182,8 +192,8 @@ local function powerRune(self)
                         0,
                         GetTime(),
                         0.5,
-                        function()
-                            f.flare:SetAlpha(math.min(1, math.max(0 ,animations["HOLY_POWER_FLARE_ANIMATION"].progress)))
+                        function(p)
+                            f.flare:SetAlpha(math.min(1, math.max(0, p)))
                         end
                     )
                 end
