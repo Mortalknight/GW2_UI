@@ -153,7 +153,7 @@ local function findBuff(unit, searchID)
     if unit == "player" then
         local auraInfo = C_UnitAuras.GetPlayerAuraBySpellID(searchID)
         if auraInfo then
-            return auraInfo.name, auraInfo.charges, auraInfo.duration, auraInfo.expirationTime
+            return auraInfo.name, auraInfo.applications, auraInfo.duration, auraInfo.expirationTime
         end
     else
         local name, count, duration, expires, spellID
@@ -888,7 +888,7 @@ GW.AddForProfiling("classpowers", "setDeathKnight", setDeathKnight)
 
 -- SHAMAN
 local function powerMaelstrom(self)
-    local _, count, duration, _ = findBuff("player", 344179)
+    local _, count, duration = findBuff("player", 344179)
 
     if duration == nil then
         self.gwPower = -1
