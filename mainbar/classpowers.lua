@@ -11,15 +11,17 @@ local CPF_HOOKED_TO_TARGETFRAME = false
 
 ---Styling for powerbars
 local function setPowerTypeEbonMight(self)
-    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury")
-    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity","REPEAT")
-    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/meta-intensity2","REPEAT")
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/agu")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/agu-intensity","REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/agu-intensity2","REPEAT")
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/furyspark")
     self.animator:SetScript("OnUpdate",function(_,delta) self.scrollTextureParalaxOnUpdate(self,delta) end)
     self.scrollTexture:SetAlpha(1)
     self.scrollTexture2:SetAlpha(1)
-    self.spark:SetAlpha(0.5)
-    self.scrollSpeedMultiplier = 5
+    self.scrollTexture:SetBlendMode("ADD")
+
+    self.spark:SetAlpha(1)
+    self.scrollSpeedMultiplier = -5
   end
 local function setPowerTypeMeta(self)
     self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/fury")
