@@ -479,6 +479,7 @@ local function setEssenceBar(f)
 end
 GW.AddForProfiling("classpowers", "setEssenceBar", setEssenceBar)
 
+-- this needs also the essence bar
 local function powerEbonMight(self, event, ...)
     if event == "UNIT_AURA" then
         local unitToken, auraUpdateInfo = ...
@@ -503,6 +504,8 @@ local function powerEbonMight(self, event, ...)
                 self.customResourceBar:setCustomAnimation(remainingPrecantage, 0, auraInfo.duration)
             end
         end
+    else
+        powerEssence(self, event, ...)
     end
 end
 
