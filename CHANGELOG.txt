@@ -1,3 +1,7 @@
+6.10.0
+NEW
+ - Added evoker ebon might bar
+
 6.9.2
 FIXES
     - Fix an actionbars issue which can crash the client
