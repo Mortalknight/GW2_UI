@@ -148,6 +148,7 @@ local function LoadHudPanel(sWindow)
         nil,
         1
     )
+
     --MINIMAP
     addOption(minimap.scroll.scrollchild, L["Addon Compartment"], nil, "MINIMAP_ADDON_COMPARTMENT_TOGGLE", function() GW.UpdateMinimapSettings(); GW.HandleAddonCompartmentButton() end, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
     addOption(minimap.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", GW.ToogleMinimapFpsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
@@ -209,7 +210,7 @@ local function LoadHudPanel(sWindow)
         L["Community Feast"]
     )
 
-   -- Dragonbane Keep
+    -- Dragonbane Keep
     addGroupHeader(worldmap.scroll.scrollchild, L["Siege On Dragonbane Keep"])
     addOption(worldmap.scroll.scrollchild, L["Siege On Dragonbane Keep"], nil, "WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Siege On Dragonbane Keep"])
     addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"] = true}, nil, nil, L["Siege On Dragonbane Keep"])
@@ -231,6 +232,54 @@ local function LoadHudPanel(sWindow)
         nil,
         nil,
         L["Siege On Dragonbane Keep"]
+    )
+
+    -- Researchers Under Fire
+    addGroupHeader(worldmap.scroll.scrollchild, L["Researchers Under Fire"])
+    addOption(worldmap.scroll.scrollchild, L["Researchers Under Fire"], nil, "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Researchers Under Fire"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true}, nil, nil, L["Researchers Under Fire"])
+    addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true}, nil, nil, L["Researchers Under Fire"])
+    addOption(worldmap.scroll.scrollchild, GW.NewSign .. L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true, ["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT"] = true}, nil, nil, L["Researchers Under Fire"])
+    addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true, ["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT"] = true}, nil, nil, L["Researchers Under Fire"])
+    addOptionSlider(
+        worldmap.scroll.scrollchild,
+        L["Alert Second"],
+        L["Alert will be triggered when the remaining time is less than the set value."],
+        "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT_SECONDS",
+        GW.UpdateWorldEventTrackers,
+        0,
+        3600,
+        nil,
+        0,
+        {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true, ["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT"] = true},
+        1,
+        nil,
+        nil,
+        L["Researchers Under Fire"]
+    )
+
+    -- Time Rift Thaldraszus
+    addGroupHeader(worldmap.scroll.scrollchild, L["Time Rift Thaldraszus"])
+    addOption(worldmap.scroll.scrollchild, L["Time Rift Thaldraszus"], nil, "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Time Rift Thaldraszus"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true}, nil, nil, L["Time Rift Thaldraszus"])
+    addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true}, nil, nil, L["Time Rift Thaldraszus"])
+    addOption(worldmap.scroll.scrollchild, GW.NewSign .. L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true, ["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT"] = true}, nil, nil, L["Time Rift Thaldraszus"])
+    addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true, ["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT"] = true}, nil, nil, L["Time Rift Thaldraszus"])
+    addOptionSlider(
+        worldmap.scroll.scrollchild,
+        L["Alert Second"],
+        L["Alert will be triggered when the remaining time is less than the set value."],
+        "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT_SECONDS",
+        GW.UpdateWorldEventTrackers,
+        0,
+        3600,
+        nil,
+        0,
+        {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true, ["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT"] = true},
+        1,
+        nil,
+        nil,
+        L["Time Rift Thaldraszus"]
     )
 
     -- Fishing nets
@@ -391,7 +440,7 @@ local function LoadHudPanel(sWindow)
         L["Used for animations"],
         "GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER",
         GW.UpdateDameTextSettings,
-        0,
+        0.1,
         50,
         nil,
         2,
@@ -407,7 +456,7 @@ local function LoadHudPanel(sWindow)
         nil,
         "GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER",
         GW.UpdateDameTextSettings,
-        0,
+        0.1,
         50,
         nil,
         2,

@@ -519,8 +519,8 @@ local function UpdateSettings()
     settings.fontSizeCrit = tonumber(GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_CRIT"))
     settings.fontSize = tonumber(GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE"))
     settings.fontSizeBlockAbsorb = tonumber(GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_BLOCKED_ABSORBE"))
-    settings.fontSizePetModifier = tonumber(GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER"))
-    settings.fontSizeCritModifier = tonumber(GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER"))
+    settings.fontSizePetModifier = math.max(0.1, tonumber(GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER")))
+    settings.fontSizeCritModifier = math.max(0.1, tonumber(GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER")))
 
     usedColorTable = settings.useBlizzardColor and colorTable.blizzard or colorTable.gw
 end
