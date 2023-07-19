@@ -210,7 +210,7 @@ local eventData = {
             icon = 4687629,
             type = "loopTimer",
             questIDs = {70893},
-			hasWeeklyReward = true,
+            hasWeeklyReward = true,
             duration = 16 * 60,
             interval = 1.5 * 60 * 60,
             barColor = colorPlatte.blue,
@@ -250,7 +250,7 @@ local eventData = {
             icon = 236469,
             type = "loopTimer",
             questIDs = {70866},
-			hasWeeklyReward = true,
+            hasWeeklyReward = true,
             duration = 10 * 60,
             interval = 2 * 60 * 60,
             eventName = L["Siege On Dragonbane Keep"],
@@ -290,7 +290,7 @@ local eventData = {
             icon = 5140835,
             type = "loopTimer",
             questIDs = {75627, 75628, 75629, 75630},
-			hasWeeklyReward = true,
+            hasWeeklyReward = true,
             duration = 25 * 60,
             interval = 1 * 60 * 60,
             eventName = L["Researchers Under Fire"],
@@ -311,7 +311,7 @@ local eventData = {
                     [3] = 1683804640, -- EU
                     [4] = 1670702460, -- TW
                     [5] = 1670702460, -- CN
-					[72] = 1670702460 -- TR
+                    [72] = 1670702460 -- TR
                 }
                 local region = GetCurrentRegion()
                 -- TW is not a real region, so we need to check the client language if player in KR
@@ -584,14 +584,14 @@ local functionFactory = {
             interval = 0.3,
             dateUpdater = function(self)
                 local completed = 0;
-				if (self.args.questIDs) and (type(self.args.questIDs) == "table") then
+                if (self.args.questIDs) and (type(self.args.questIDs) == "table") then
                     for _, questID in pairs(self.args.questIDs) do
                         if C_QuestLog.IsQuestFlaggedCompleted(questID) then
                             completed = completed + 1
                         end
                     end
                 end
-				self.isCompleted = (completed > 0)
+                self.isCompleted = (completed > 0)
 
                 local timeSinceStart = GetServerTime() - self.args.startTimestamp
                 self.timeOver = timeSinceStart % self.args.interval
