@@ -33,6 +33,24 @@ local function UpdateSettings()
         flashTaskbar = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_FLASH_TASKBAR")
     }
 
+    settings.researchersUnderFire = {
+        enabled = GetSetting("WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"),
+        desaturate = GetSetting("WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_DESATURATE"),
+        alert = GetSetting("WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT"),
+        alertSeconds = GetSetting("WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT_SECONDS"),
+        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_STOP_ALERT_IF_COMPLETED"),
+        flashTaskbar = GetSetting("WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_FLASH_TASKBAR")
+    }
+
+    settings.timeRiftThaldraszus = {
+        enabled = GetSetting("WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"),
+        desaturate = GetSetting("WORLD_EVENTS_TIME_RIFT_THALDRASZUS_DESATURATE"),
+        alert = GetSetting("WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT"),
+        alertSeconds = GetSetting("WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT_SECONDS"),
+        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_TIME_RIFT_THALDRASZUS_STOP_ALERT_IF_COMPLETED"),
+        flashTaskbar = GetSetting("WORLD_EVENTS_TIME_RIFT_THALDRASZUS_FLASH_TASKBAR")
+    }
+
     settings.iskaaranFishingNet = {
         enabled = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"),
         alert = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT"),
@@ -59,6 +77,8 @@ local eventHandlers = {}
 local eventList = {
     "CommunityFeast",
     "SiegeOnDragonbaneKeep",
+    "ResearchersUnderFire",
+    "TimeRiftThaldraszus",
     "IskaaranFishingNet"
 }
 
@@ -118,9 +138,17 @@ local colorPlatte = {
         { r = 0.92549, g = 0.00000, b = 0.54902, a = 1 },
         { r = 0.98824, g = 0.40392, b = 0.40392, a = 1 }
     },
+    green = {
+        {r = 0.40392, g = 0.92549, b = 0.54902, a = 1},
+        {r = 0.00000, g = 0.98824, b = 0.40392, a = 1}
+    },
     purple = {
         {r = 0.27843, g = 0.46275, b = 0.90196, a = 1},
         {r = 0.55686, g = 0.32941, b = 0.91373, a = 1}
+    },
+    bronze = {
+        {r = 0.83000, g = 0.42000, b = 0.10000, a = 1},
+        {r = 0.56500, g = 0.40800, b = 0.16900, a = 1}
     },
     running = {
         { r = 0.00000, g = 0.94902, b = 0.37647, a = 1 },
@@ -181,7 +209,8 @@ local eventData = {
         args = {
             icon = 4687629,
             type = "loopTimer",
-            questID = 70893,
+            questIDs = {70893},
+			hasWeeklyReward = true,
             duration = 16 * 60,
             interval = 1.5 * 60 * 60,
             barColor = colorPlatte.blue,
@@ -220,7 +249,8 @@ local eventData = {
         args = {
             icon = 236469,
             type = "loopTimer",
-            questID = 70866,
+            questIDs = {70866},
+			hasWeeklyReward = true,
             duration = 10 * 60,
             interval = 2 * 60 * 60,
             eventName = L["Siege On Dragonbane Keep"],
@@ -251,6 +281,84 @@ local eventData = {
                 end
 
                 return timestampTable[region]
+            end)()
+        }
+    },
+    ResearchersUnderFire = {
+        dbKey = "researchersUnderFire",
+        args = {
+            icon = 5140835,
+            type = "loopTimer",
+            questIDs = {75627, 75628, 75629, 75630},
+			hasWeeklyReward = true,
+            duration = 25 * 60,
+            interval = 1 * 60 * 60,
+            eventName = L["Researchers Under Fire"],
+            label = L["Researchers Under Fire"],
+            location = C_Map.GetMapInfo(2133).name,
+            barColor = colorPlatte.green,
+            runningText = IN_PROGRESS,
+            filter = function(args)
+                if args.stopAlertIfPlayerNotEnteredDragonlands and not C_QuestLog.IsQuestFlaggedCompleted(67700) then
+                    return false
+                end
+                return true
+            end,
+            startTimestamp = (function()
+                local timestampTable = {
+                    [1] = 1670333460, -- NA
+                    [2] = 1670703360, -- KR
+                    [3] = 1683804640, -- EU
+                    [4] = 1670702460, -- TW
+                    [5] = 1670702460, -- CN
+					[72] = 1670702460 -- TR
+                }
+                local region = GetCurrentRegion()
+                -- TW is not a real region, so we need to check the client language if player in KR
+                if region == 2 and GW.mylocal ~= "koKR" then
+                    region = 4
+                end
+
+            return timestampTable[region]
+            end)()
+        }
+    },
+    TimeRiftThaldraszus = {
+        dbKey = "timeRiftThaldraszus",
+        args = {
+            icon = 237538,
+            type = "loopTimer",
+            --questIDs = {0},
+            hasWeeklyReward = false,
+            duration = 15 * 60,
+            interval = 1 * 60 * 60,
+            eventName = L["Time Rift Thaldraszus"],
+            label = L["Time Rift Thaldraszus"],
+            location = C_Map.GetMapInfo(2025).name,
+            barColor = colorPlatte.bronze,
+            runningText = L["In Progress"],
+            filter = function(args)
+                if args.stopAlertIfPlayerNotEnteredDragonlands and not C_QuestLog.IsQuestFlaggedCompleted(67700) then
+                    return false
+                end
+                return true
+            end,
+            startTimestamp = (function()
+                local timestampTable = {
+                    [1] = 1701829815, -- NA
+                    [2] = 1701852315, -- KR
+                    [3] = 1701828015, -- EU
+                    [4] = 1701852315, -- TW
+                    [5] = 1701852315, -- CN
+                    [72] = 1701852315 -- TR
+                }
+                local region = GetCurrentRegion()
+                -- TW is not a real region, so we need to check the client language if player in KR
+                if region == 2 and GW.mylocal ~= "koKR" then
+                    region = 4
+                end
+
+            return timestampTable[region]
             end)()
         }
     },
@@ -475,7 +583,15 @@ local functionFactory = {
         ticker = {
             interval = 0.3,
             dateUpdater = function(self)
-                self.isCompleted = C_QuestLog.IsQuestFlaggedCompleted(self.args.questID)
+                local completed = 0;
+				if (self.args.questIDs) and (type(self.args.questIDs) == "table") then
+                    for _, questID in pairs(self.args.questIDs) do
+                        if C_QuestLog.IsQuestFlaggedCompleted(questID) then
+                            completed = completed + 1
+                        end
+                    end
+                end
+				self.isCompleted = (completed > 0)
 
                 local timeSinceStart = GetServerTime() - self.args.startTimestamp
                 self.timeOver = timeSinceStart % self.args.interval
@@ -574,10 +690,24 @@ local functionFactory = {
                     GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(QUEUED_STATUS_WAITING, "greyLight"), 1, 1, 1)
                 end
 
-                if self.isCompleted then
-                    GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_COMPLETED, "success"), 1, 1, 1)
-                else
-                    GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_NOT_COMPLETED, "danger"), 1, 1, 1)
+                if self.args.hasWeeklyReward then
+                    if self.isCompleted then
+                        GameTooltip:AddDoubleLine(
+                            PVP_WEEKLY_REWARD,
+                            StringByTemplate(CRITERIA_COMPLETED, "success"),
+                            1,
+                            1,
+                            1
+                        )
+                    else
+                        GameTooltip:AddDoubleLine(
+                            PVP_WEEKLY_REWARD,
+                            StringByTemplate(CRITERIA_NOT_COMPLETED, "danger"),
+                            1,
+                            1,
+                            1
+                        )
+                    end
                 end
 
                 GameTooltip:Show()
