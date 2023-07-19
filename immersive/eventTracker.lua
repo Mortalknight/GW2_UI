@@ -336,7 +336,7 @@ local eventData = {
             label = L["Time Rift Thaldraszus"],
             location = C_Map.GetMapInfo(2025).name,
             barColor = colorPlatte.bronze,
-            runningText = L["In Progress"],
+            runningText = IN_PROGRESS,
             filter = function(args)
                 if args.stopAlertIfPlayerNotEnteredDragonlands and not C_QuestLog.IsQuestFlaggedCompleted(67700) then
                     return false
