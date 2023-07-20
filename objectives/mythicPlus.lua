@@ -10,7 +10,9 @@ end
 GW.UpdateChallengeModeObjectivesSettings = UpdateSettings
 
 local function OnEvent(_, event)
-    if event == "CHALLENGE_MODE_START" then
+    local _, _, difficultyID = GetInstanceInfo()
+
+    if event == "CHALLENGE_MODE_START" or difficultyID == 8 then
         GwQuesttrackerContainerQuests.shouldUpdate = false
         GW.CollapseQuestHeader(GwQuesttrackerContainerCampaign, true, false)
         GwQuesttrackerContainerQuests.shouldUpdate = false

@@ -1060,7 +1060,8 @@ function trackers:get(event)
                 frame.tickerInstance = nil
             end
             frame.tickerInstance = C_Timer.NewTicker(functions.ticker.interval, function()
-                if not settings.communityFeast.enabled and not settings.dragonbaneKeep.enabled and not settings.iskaaranFishingNet.enabled then
+                if not settings.communityFeast.enabled and not settings.dragonbaneKeep.enabled and not settings.iskaaranFishingNet.enabled
+                    and not settings.researchersUnderFire.enabled and not settings.timeRiftThaldraszus.enabled then
                     return
                 end
                 functions.ticker.dateUpdater(frame)
