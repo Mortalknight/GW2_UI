@@ -40,6 +40,13 @@ local constBackdropFrameSmallerBorder = {
 }
 GW.BackdropTemplates.DefaultWithSmallBorder = constBackdropFrameSmallerBorder
 
+local constBackdropFrameStatusBar = {
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/StatusBar",
+    --edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+    insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+GW.BackdropTemplates.StatusBar = constBackdropFrameStatusBar
+
 local constBackdropFrameColorBorder = {
     edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
     bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",

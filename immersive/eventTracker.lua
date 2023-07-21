@@ -184,8 +184,9 @@ end
 local function reskinStatusBar(bar)
     bar:SetFrameLevel(bar:GetFrameLevel() + 1)
     bar:GwStripTextures()
-    bar:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
+    bar:GwCreateBackdrop(GW.BackdropTemplates.StatusBar, true)
     bar:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/hud/castinbar-white")
+    bar.backdrop:GwSetOutside(bar, 4, 4)
 end
 
 local function getGradientText(text, colorTable)
@@ -526,10 +527,12 @@ local functionFactory = {
                         GameTooltip:AddDoubleLine(STATUS .. ":", StringByTemplate(QUEUED_STATUS_WAITING, "greyLight"), 1, 1, 1)
                     end
 
-                    if data.frame.isCompleted then
-                        GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_COMPLETED, "success"), 1, 1, 1)
-                    else
-                        GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_NOT_COMPLETED, "danger"), 1, 1, 1)
+                    if data.args.hasWeeklyReward then
+                        if data.frame.isCompleted then
+                            GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_COMPLETED, "success"), 1, 1, 1)
+                        else
+                            GameTooltip:AddDoubleLine(PVP_WEEKLY_REWARD .. ":", StringByTemplate(CRITERIA_NOT_COMPLETED, "danger"), 1, 1, 1)
+                        end
                     end
                     GameTooltip:AddLine(" ")
                 end
@@ -564,17 +567,19 @@ local functionFactory = {
             self.icon:SetPoint("LEFT", self, "LEFT", 0, 0)
 
             self.statusBar:ClearAllPoints()
-            self.statusBar:SetPoint("TOPLEFT", self, "LEFT", 26, 2)
+            self.statusBar:SetPoint("TOPLEFT", self, "LEFT", 24, 2)
             self.statusBar:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", 0, 6)
 
-            self.timerText:SetFont(UNIT_NAME_FONT, 13, "OUTLINE")
+            self.timerText:SetFont(UNIT_NAME_FONT, 12, "OUTLINE")
             self.timerText:ClearAllPoints()
             self.timerText:SetPoint("TOPRIGHT", self, "TOPRIGHT", -2, -6)
 
-            self.name:SetFont(UNIT_NAME_FONT, 13, "OUTLINE")
+            self.name:SetFont(UNIT_NAME_FONT, 12, "OUTLINE")
             self.name:ClearAllPoints()
-            self.name:SetPoint("TOPLEFT", self, "TOPLEFT", 30, -6)
+            self.name:SetPoint("TOPLEFT", self, "TOPLEFT", 25, -6)
             self.name:SetText(self.args.label)
+            self.name:SetWidth(150)
+            self.name:SetJustifyH("LEFT")
 
             self.runningTip:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
             self.runningTip:SetText(self.args.runningText)
@@ -583,15 +588,15 @@ local functionFactory = {
         ticker = {
             interval = 0.3,
             dateUpdater = function(self)
-                local completed = 0;
-                if (self.args.questIDs) and (type(self.args.questIDs) == "table") then
+                local completed = 0
+                if self.args.questIDs then
                     for _, questID in pairs(self.args.questIDs) do
                         if C_QuestLog.IsQuestFlaggedCompleted(questID) then
                             completed = completed + 1
                         end
                     end
                 end
-                self.isCompleted = (completed > 0)
+                self.isCompleted = completed > 0
 
                 local timeSinceStart = GetServerTime() - self.args.startTimestamp
                 self.timeOver = timeSinceStart % self.args.interval
@@ -636,11 +641,11 @@ local functionFactory = {
                 end
             end,
             alert = function(self)
-                if not self.args["alertCache"] then
-                    self.args["alertCache"] = {}
+                if not self.args.alertCache then
+                    self.args.alertCache = {}
                 end
 
-                if self.args["alertCache"][self.nextEventIndex] then
+                if self.args.alertCache[self.nextEventIndex] then
                     return
                 end
 
@@ -657,7 +662,7 @@ local functionFactory = {
                 end
 
                 if self.timeLeft <= self.args.alertSecond then
-                    self.args["alertCache"][self.nextEventIndex] = true
+                    self.args.alertCache[self.nextEventIndex] = true
                     local eventIconString = GW.GetIconString(self.args.icon, 16, 16)
                     local gradientName = getGradientText(self.args.eventName, self.args.barColor)
                     DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. format(L["%s will start in %s!"], eventIconString .. " " .. gradientName, secondToTime(self.timeLeft))):gsub("*", GW.Gw2Color))
@@ -888,8 +893,8 @@ local functionFactory = {
                     return
                 end
 
-                if not self.args["alertCache"] then
-                    self.args["alertCache"] = {}
+                if not self.args.alertCache then
+                    self.args.alertCache = {}
                 end
 
                 local needAnnounce = false
@@ -898,12 +903,12 @@ local functionFactory = {
 
                 for netIndex, timeData in pairs(self.netTable) do
                     if type(timeData) == "table" and timeData.left <= 0 then
-                        if not self.args["alertCache"][netIndex] then
-                            self.args["alertCache"][netIndex] = {}
+                        if not self.args.alertCache[netIndex] then
+                            self.args.alertCache[netIndex] = {}
                         end
 
-                        if not self.args["alertCache"][netIndex][db[netIndex].time] then
-                            self.args["alertCache"][netIndex][db[netIndex].time] = true
+                        if not self.args.alertCache[netIndex][db[netIndex].time] then
+                            self.args.alertCache[netIndex][db[netIndex].time] = true
                             local hour = self.args.disableAlertAfterHours
                             if not hour or hour == 0 or (hour * 60 * 60 + timeData.left) > 0 then
                                 readyNets[netIndex] = true
@@ -1035,7 +1040,7 @@ function trackers:get(event)
     local data = eventData[event]
 
     local frame = CreateFrame("Frame", "GW2_EventTracker" .. event, mapFrame)
-    frame:SetSize(220, 30)
+    frame:SetSize(190, 30)
 
     frame.args = data.args
     frame.dbKey = data.dbKey
