@@ -563,3 +563,6 @@ L["Limit the number of rows"]= true
 L["Crit modifier"] = true
 L["Pet number modifier"] = true
 L["Used for animations"] = true
+L["Researchers Under Fire"] = true
+L["Time Rift Thaldraszus"] = true
+L["Net %s can be collected"] = true
