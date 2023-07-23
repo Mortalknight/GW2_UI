@@ -50,7 +50,7 @@ end
 
 
 local function SetUpExtendedVendor()
-    if IsAddOnLoaded("ExtVendor") or GetSetting("EXTENDED_VENDOR_NUM_PAGES") == "1" then
+    if IsAddOnLoaded("ExtVendor") or IsAddOnLoaded("Krowi_MerchantFrameExtended") or GetSetting("EXTENDED_VENDOR_NUM_PAGES") == "1" then
         return
     end
 
