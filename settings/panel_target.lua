@@ -70,6 +70,7 @@ local function LoadTargetPanel(sWindow)
     addOption(p_focus.scroll.scrollchild, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "focus_BUFFS_FILTER_IMPORTANT", GW.ToggleFocusFrameSettings, nil, {["TARGET_ENABLED"] = true, ["focus_DEBUFFS"] = true})
     addOption(p_focus.scroll.scrollchild, SHOW_ALL_ENEMY_DEBUFFS_TEXT, L["Display all of the target's debuffs."], "focus_BUFFS_FILTER_ALL", GW.ToggleFocusFrameSettings, nil, {["FOCUS_ENABLED"] = true, ["focus_DEBUFFS"] = true})
     addOption(p_focus.scroll.scrollchild, SHOW_BUFFS, L["Display the target's buffs."], "focus_BUFFS", GW.ToggleFocusFrameSettings, nil, {["FOCUS_ENABLED"] = true})
+    addOption(p_focus.scroll.scrollchild, BUFFS_ON_TOP, nil, "focus_AURAS_ON_TOP", GW.ToggleFocusFrameSettings, nil, {["FOCUS_ENABLED"] = true})
     addOption(p_focus.scroll.scrollchild, L["Invert focus frame"], nil, "focus_FRAME_INVERT", function() GW.ShowRlPopup = true end, nil, {["FOCUS_ENABLED"] = true})
     addOption(p_focus.scroll.scrollchild, L["Show alternative background texture"], nil, "focus_FRAME_ALT_BACKGROUND", GW.ToggleFocusFrameSettings, nil, {["TARGET_ENABLED"] = true})
 

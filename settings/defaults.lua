@@ -265,6 +265,7 @@ GW_DEFAULT["focus_SHOW_CASTBAR"] = true
 GW_DEFAULT["focus_DEBUFFS"] = true
 GW_DEFAULT["focus_DEBUFFS_FILTER"] = true
 GW_DEFAULT["focus_BUFFS"] = true
+GW_DEFAULT["focus_AURAS_ON_TOP"] = false
 GW_DEFAULT["focus_BUFFS_FILTER"] = true
 GW_DEFAULT["focus_BUFFS_FILTER_ALL"] = false
 GW_DEFAULT["focus_BUFFS_FILTER_IMPORTANT"] = false

@@ -1052,7 +1052,23 @@ local function ToggleFocusFrameSettings()
     GwFocusUnitFrame.displayBuffs = GetSetting("focus_BUFFS")
     GwFocusUnitFrame.displayDebuffs = GetSetting("focus_DEBUFFS")
 
+    GwFocusUnitFrame.auraPositionTop = GetSetting("focus_AURAS_ON_TOP")
+
     GwFocusUnitFrame.altBg:SetShown(GetSetting("focus_FRAME_ALT_BACKGROUND"))
+
+    GwFocusUnitFrame.auras:ClearAllPoints()
+    GwFocusUnitFrame.auras:SetPoint("TOPLEFT", GwFocusUnitFrame.castingbarBackground, "BOTTOMLEFT", 2, -15)
+
+    if GwFocusUnitFrame.auraPositionTop then
+        local yOff = GetSetting("focus_FRAME_ALT_BACKGROUND") and 22 or 17
+
+        GwFocusUnitFrame.auras:ClearAllPoints()
+        if GwFocusUnitFrame.frameInvert then
+            GwFocusUnitFrame.auras:SetPoint("TOPRIGHT", GwFocusUnitFrame.nameString, "TOPRIGHT", -2, yOff)
+        else
+            GwFocusUnitFrame.auras:SetPoint("TOPLEFT", GwFocusUnitFrame.nameString, "TOPLEFT", 2, yOff)
+        end
+    end
 
     -- priority: All > Important > Player
     GwFocusUnitFrame.debuffFilter = "PLAYER"
