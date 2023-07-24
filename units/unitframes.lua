@@ -964,13 +964,12 @@ local function LoadTarget()
     NewUnitFrame.portrait:AddMaskTexture(NewUnitFrame.portrait.mask)
 
     NewUnitFrame.altBg = CreateFrame("Frame", nil, NewUnitFrame, "GwAlternativeUnitFrameBackground")
+    NewUnitFrame.altBg:SetAllPoints(NewUnitFrame)
     if NewUnitFrame.frameInvert then
         NewUnitFrame.altBg.backgroundOverlay:SetTexCoord(1, 0, 0, 1)
         NewUnitFrame.altBg.backgroundOverlay:SetPoint("CENTER", -15, -5)
         NewUnitFrame.healthContainer:ClearAllPoints()
-        NewUnitFrame.healthContainer:SetPoint("RIGHT",NewUnitFrame.healthbarBackground,"RIGHT",-1,0)
-    else
-        NewUnitFrame.altBg:SetAllPoints(NewUnitFrame)
+        NewUnitFrame.healthContainer:SetPoint("RIGHT", NewUnitFrame.healthbarBackground, "RIGHT", -1, 0)
     end
 
     NewUnitFrame.segments = {}
@@ -1100,11 +1099,10 @@ local function LoadFocus()
     NewUnitFrame.portrait:AddMaskTexture(NewUnitFrame.portrait.mask)
 
     NewUnitFrame.altBg = CreateFrame("Frame", nil, NewUnitFrame, "GwAlternativeUnitFrameBackground")
+    NewUnitFrame.altBg:SetAllPoints(NewUnitFrame)
     if NewUnitFrame.frameInvert then
         NewUnitFrame.altBg.backgroundOverlay:SetTexCoord(1, 0, 0, 1)
         NewUnitFrame.altBg.backgroundOverlay:SetPoint("CENTER", -15, -5)
-    else
-        NewUnitFrame.altBg:SetAllPoints(NewUnitFrame)
     end
 
     NewUnitFrame.segments = {}
