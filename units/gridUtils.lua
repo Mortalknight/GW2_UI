@@ -20,6 +20,22 @@ local spellBookSearched = 0
 local function UpdateMissingAndIgnoredAuras()
     missing = FillTable(missing, true, strsplit(",", (GetSetting("AURAS_MISSING"):trim():gsub("%s*,%s*", ","))))
     ignored = FillTable(ignored, true, strsplit(",", (GetSetting("AURAS_IGNORED"):trim():gsub("%s*,%s*", ","))))
+
+    if _G["GwCompactRaidFrame1"] then
+        for i = 1, MAX_RAID_MEMBERS do
+            GW.GridUpdateAuras(_G["GwCompactRaidFrame" .. i])
+        end
+    end
+    if _G["GwCompactPartyFrame1"] then
+        for i = 1, 5 do
+            GW.GridUpdateAuras(_G["GwCompactPartyFrame" .. i], "PARTY")
+        end
+    end
+    if _G["GwCompactRaidPetFrame1"] then
+        for i = 1, MAX_RAID_MEMBERS do
+            GW.GridUpdateAuras(_G["GwCompactRaidPetFrame" .. i], "RAID_PET")
+        end
+    end
     GW.Debug("Update missing and ignored grid auras")
 end
 GW.UpdateMissingAndIgnoredAuras = UpdateMissingAndIgnoredAuras
