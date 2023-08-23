@@ -21,10 +21,10 @@ local function Bags_OnEnter(self)
     GameTooltip:AddLine(" ")
 
     for i = 0, NUM_BAG_SLOTS do
-        local bagName = GetBagName(i)
+        local bagName = C_Container.GetBagName(i)
         if bagName then
-            local numSlots = GetContainerNumSlots(i)
-            local freeSlots = GetContainerNumFreeSlots(i)
+            local numSlots = C_Container.GetContainerNumSlots(i)
+            local freeSlots = C_Container.GetContainerNumFreeSlots(i)
             local usedSlots = numSlots - freeSlots
             local sumNum = 19 + i
 

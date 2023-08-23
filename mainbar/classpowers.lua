@@ -42,8 +42,8 @@ local function powerCombo(self, event, ...)
                     5,
                     GetTime(),
                     0.5,
-                    function()
-                        local p = animations["COMBOPOINTS_FLARE"].progress
+                    function(p)
+                        p = math.min(1, math.max(0, p))
                         self.combopoints.comboFlare:SetAlpha(p)
                     end,
                     nil,
@@ -239,7 +239,7 @@ local function LoadClassPowers()
             lmb:SetSize(barWidth, 7)
         end
         lmb:SetFrameStrata("MEDIUM")
-        lmb.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8)
+        lmb.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8, "")
     end
 
     cpf.Script:SetScript("OnEvent", barChange_OnEvent)

@@ -11,7 +11,7 @@ local function UpdateBubbleBorder(self)
         return 
     end
 
-    text:SetFont(UNIT_NAME_FONT, 12)
+    text:SetFont(UNIT_NAME_FONT, 12, "")
     text:SetTextColor(0, 0, 0, 1)
     text:SetParent(self)
 

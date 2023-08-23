@@ -8,7 +8,7 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 
 local function setLongCD(self)
     self.cooldown:Hide()
-    self.status.duration:SetFont(UNIT_NAME_FONT, 11)
+    self.status.duration:SetFont(UNIT_NAME_FONT, 11, "")
     self.status.duration:SetShadowColor(0, 0, 0, 1)
     self.status.duration:SetShadowOffset(1, -1)
     self.status.stacks:SetFont(UNIT_NAME_FONT, 12, "OUTLINED")
@@ -26,7 +26,7 @@ GW.AddForProfiling("aurabar_secure", "setLongCD", setLongCD)
 
 local function setShortCD(self, expires, duration)
     self.cooldown:SetCooldown(expires - duration, duration)
-    self.status.duration:SetFont(UNIT_NAME_FONT, 13)
+    self.status.duration:SetFont(UNIT_NAME_FONT, 13, "")
     self.status.duration:SetShadowColor(0, 0, 0, 1)
     self.status.duration:SetShadowOffset(1, -1)
     self.status.stacks:SetFont(UNIT_NAME_FONT, 14, "OUTLINED")
@@ -315,8 +315,8 @@ function GwAuraTmpl_OnLoad(self)
 
     a1:SetFromAlpha(0.85)
     a1:SetToAlpha(1.0)
-    a2:SetFromScale(2.5, 2.5)
-    a2:SetToScale(1.0, 1.0)
+    a2:SetScaleFrom(2.5, 2.5)
+    a2:SetScaleTo(1.0, 1.0)
 
     -- add mouseover handlers
     self:HookScript("OnEnter", aura_OnEnter)

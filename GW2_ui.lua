@@ -15,7 +15,7 @@ local l = CreateFrame("Frame", nil, UIParent) -- Main event frame nil
 GW.VERSION_STRING = "@project-version@ Classic Era"
 
 -- setup Binding Header color
-_G.BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
+BINDING_HEADER_GW2UI = GetAddOnMetadata(..., "Title")
 
 -- Make a global GW variable , so others cann access out functions
 GW2_ADDON = GW
@@ -111,50 +111,52 @@ local function getSprite(map,x,y)
 end
 GW.getSprite = getSprite
 
-function GwStandardButton_OnEnter(self)
+local function TriggerButtonHoverAnimation(self, hover, to, duration)
     local name = tostring(self)
-    local w = self:GetWidth()
-    local hover = self.hover
-    if not hover then
-        return
-    end
-
     hover:SetAlpha(1)
-    self.animationValue = 0
-
+    duration = duration or math.min(1, self:GetWidth() * 0.002)
     AddToAnimation(
         name,
         self.animationValue,
-        1,
+        (to or 1),
         GetTime(),
-        0.2,
-        function()
-            buttonAnim(self, name, w, hover)
+        duration,
+        function(p)
+            local w = self:GetWidth()
+
+            local lerp = GW.lerp(0, w + (w * 0.5), p)
+            local lerp2 = math.min(1, math.max(0.4, math.min(1, GW.lerp(0.4, 1, p))))
+            local stripAmount = 1 - math.max(0, (lerp / w) - 1)
+            if self.limitHoverStripAmount then
+                stripAmount = math.max(self.limitHoverStripAmount, stripAmount)
+            end
+
+            hover:SetPoint("RIGHT", self, "LEFT", math.min(w, lerp) , 0)
+            hover:SetVertexColor(hover.r or 1, hover.g or 1, hover.b or 1, lerp2)
+            hover:SetTexCoord(0, stripAmount, 0, 1)
         end
     )
 end
+GW.TriggerButtonHoverAnimation = TriggerButtonHoverAnimation
 
-function GwStandardButton_OnLeave(self)
-    local name = tostring(self)
-    local w = self:GetWidth()
-    local hover = self.hover
-    if not hover then
+function GwStandardButton_OnEnter(self)
+    if not self.hover or (self.IsEnabled and not self:IsEnabled()) then
         return
     end
+    self.animationValue = self.hover.skipHover and 1 or 0
 
-    hover:SetAlpha(1)
+    TriggerButtonHoverAnimation(self, self.hover)
+end
+
+function GwStandardButton_OnLeave(self)
+    if not self.hover or (self.IsEnabled and not self:IsEnabled()) then
+        return
+    end
+    if self.hover.skipHover then return end
+    self.hover:SetAlpha(1)
     self.animationValue = 1
 
-    AddToAnimation(
-        name,
-        self.animationValue,
-        0,
-        GetTime(),
-        0.2,
-        function()
-            buttonAnim(self, name, w, hover)
-        end
-    )
+    TriggerButtonHoverAnimation(self, self.hover, 0, 0.1)
 end
 
 local function barAnimation(self, barWidth, sparkWidth)
@@ -420,9 +422,6 @@ local function loadAddon(self)
     if GetSetting("ADDONLIST_SKIN_ENABLED") then
         GW.SkinAddonList()
     end
-    if GetSetting("BINDINGS_SKIN_ENABLED") then
-        GW.SkinBindingsUI()
-    end
     if GetSetting("BLIZZARD_OPTIONS_SKIN_ENABLED") then
         GW.SkinBlizzardOptions()
     end
@@ -457,12 +456,19 @@ local function loadAddon(self)
 
     if not IsIncompatibleAddonLoadedOrOverride("FloatingCombatText", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("GW_COMBAT_TEXT_MODE") == "GW2" then
-            SetCVar("floatingCombatTextCombatDamage", 0)
-            GW.LoadDamageText()
+            C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+            if GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS") then
+                C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+            else
+                C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
+            end
+            GW.LoadDamageText(true)
         elseif GetSetting("GW_COMBAT_TEXT_MODE") == "BLIZZARD" then
-            SetCVar("floatingCombatTextCombatDamage", 1)
+            C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
+            C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
         else
-            SetCVar("floatingCombatTextCombatDamage", 0)
+            C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+            C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
         end
     end
 
@@ -560,7 +566,7 @@ local function loadAddon(self)
         if not IsFrameModified("UIErrorsFrame") then
             UIErrorsFrame:ClearAllPoints()
             UIErrorsFrame:SetPoint("TOP", UIParent, "TOP", 0, -190)
-            UIErrorsFrame:SetFont(STANDARD_TEXT_FONT, 14)
+            UIErrorsFrame:SetFont(STANDARD_TEXT_FONT, 14, "")
         end
     end
 

@@ -455,10 +455,17 @@ local function GetRealItemLevel(link)
 end
 GW.GetRealItemLevel = GetRealItemLevel
 
+local function SetPointsRestricted(frame)
+	if frame and not pcall(frame.GetPoint, frame) then
+		return true
+	end
+end
+GW.SetPointsRestricted = SetPointsRestricted
+
 local function getContainerItemLinkByName(itemName)
     for bag = 0, 4 do
-        for slot = 1, GetContainerNumSlots(bag) do
-            local item = GetContainerItemLink(bag, slot)
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            local item = C_Container.GetContainerItemLink(bag, slot)
             if item and item:find(itemName) then
                 return item
             end

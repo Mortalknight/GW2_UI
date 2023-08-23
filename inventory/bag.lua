@@ -28,29 +28,26 @@ end
 
 local function sellJunk()
     -- Variables
-    local SoldCount, Rarity, ItemPrice = 0, 0, 0
+    local soldCount, rarity, itemPrice, classID, bindType = 0, 0, 0, 0, 0
     local CurrentItemLink
 
     -- Traverse bags and sell grey items
     for BagID = 0, 4 do
-        for BagSlot = 1, GetContainerNumSlots(BagID) do
-            CurrentItemLink = GetContainerItemLink(BagID, BagSlot)
+        for BagSlot = 1, C_Container.GetContainerNumSlots(BagID) do
+            CurrentItemLink = C_Container.GetContainerItemLink(BagID, BagSlot)
             if CurrentItemLink then
-                _, _, Rarity, _, _, _, _, _, _, _, ItemPrice = GetItemInfo(CurrentItemLink)
-                local _, itemCount = GetContainerItemInfo(BagID, BagSlot)
-                if Rarity == 0 and ItemPrice ~= 0 then
-                    SoldCount = SoldCount + 1
+                _, _, rarity, _, _, _, _, _, _, _, itemPrice, classID, _, bindType = GetItemInfo(CurrentItemLink)
+                local itemInfo = C_Container.GetContainerItemInfo(BagID, BagSlot)
+                local itemCount = itemInfo.stackCount or 1
+                if rarity and rarity == 0 and itemPrice ~= 0 and (classID ~= 12 or bindType ~= 4) then
+                    soldCount = soldCount + 1
                     if MerchantFrame:IsShown() then
                         -- If merchant frame is open, vendor the item
-                        UseContainerItem(BagID, BagSlot)
+                        C_Container.UseContainerItem(BagID, BagSlot)
                         -- Perform actions on first iteration
                         if SellJunkTicker._remainingIterations == IterationCount then
                             -- Calculate total price
-                            totalPrice = totalPrice + (ItemPrice * itemCount)
-                            -- Store first sold bag slot for analysis
-                            if SoldCount == 1 then
-                                mBagID, mBagSlot = BagID, BagSlot
-                            end
+                            totalPrice = totalPrice + (itemPrice * itemCount)
                         end
                     else
                         -- If merchant frame is not open, stop selling
@@ -63,42 +60,58 @@ local function sellJunk()
     end
 
     -- Stop selling if no items were sold for this iteration or iteration limit was reached
-    if SoldCount == 0 or SellJunkTicker and SellJunkTicker._remainingIterations == 1 then 
-        StopSelling() 
-        if totalPrice > 0 then 
+    if soldCount == 0 or SellJunkTicker and SellJunkTicker._remainingIterations == 1 then
+        StopSelling()
+        if totalPrice > 0 then
             DEFAULT_CHAT_FRAME:AddMessage("|cffffedbaGW2 UI:|r " .. L["Sold Junk for: %s"]:format(FormatMoneyForChat(totalPrice)))
         end
     end
 end
 
-local function SellJunkFrame_OnEvent(self, event)
+local function NewAutoSellTicker(duration, callback, iterations)
+    local ticker = setmetatable({}, TickerMetatable)
+    ticker._remainingIterations = iterations
+    ticker._callback = function()
+        if not ticker._cancelled then
+            callback(ticker)
+            --Make sure we weren't cancelled during the callback
+            if not ticker._cancelled then
+                if ticker._remainingIterations then
+                    ticker._remainingIterations = ticker._remainingIterations - 1
+                end
+                if not ticker._remainingIterations or ticker._remainingIterations > 0 then
+                    C_Timer.After(duration, ticker._callback)
+                end
+            end
+        end
+    end
+    C_Timer.After(duration, ticker._callback)
+    return ticker
+end
+
+local function SellJunkFrame_OnEvent(self, event, arg1)
     if event == "MERCHANT_SHOW" then
-        -- Reset variables
-        totalPrice, mBagID, mBagSlot = 0, -1, -1
+        -- Check for vendors that refuse to buy items
+        self:RegisterEvent("UI_ERROR_MESSAGE")
+        -- Reset variable
+        totalPrice = 0
         -- Do nothing if shift key is held down
         if IsShiftKeyDown() then return end
         -- Cancel existing ticker if present
-        if SellJunkTicker then SellJunkTicker:Cancel() end
+        if SellJunkTicker then SellJunkTicker._cancelled = true end
         -- Sell grey items using ticker (ends when all grey items are sold or iteration count reached)
-        SellJunkTicker = C_Timer.NewTicker(0.2, sellJunk, IterationCount)
+        SellJunkTicker = NewAutoSellTicker(0.2, sellJunk, IterationCount)
         self:RegisterEvent("ITEM_LOCKED")
-        self:RegisterEvent("ITEM_UNLOCKED")
     elseif event == "ITEM_LOCKED" then
         GwBagFrame.smsj:Show()
         self:UnregisterEvent("ITEM_LOCKED")
-    elseif event == "ITEM_UNLOCKED" then
-        self:UnregisterEvent("ITEM_UNLOCKED")
-        -- Check whether vendor refuses to buy items
-        if mBagID and mBagSlot and mBagID ~= -1 and mBagSlot ~= -1 then
-            local _, count, locked = GetContainerItemInfo(mBagID, mBagSlot)
-            if count and not locked then
-                -- Item has been unlocked but still not sold so stop selling
-                StopSelling()
-            end
-        end
     elseif event == "MERCHANT_CLOSED" then
         -- If merchant frame is closed, stop selling
         StopSelling()
+    elseif event == "UI_ERROR_MESSAGE" then
+        if arg1 == 46 then
+            StopSelling() -- Vendor refuses to buy items
+        end
     end
 end
 
@@ -378,7 +391,7 @@ local function createBagBar(f)
         b:HookScript("OnMouseDown", inv.bag_OnMouseDown)
 
         inv.reskinBagBar(b)
-        local invID = ContainerIDToInventoryID(bag_idx)
+        local invID = C_Container.ContainerIDToInventoryID(bag_idx)
         local bagLink = GetInventoryItemLink("player", invID)
         if bagLink then
             GW.SetItemButtonQualityForBags(b, select(3, GetItemInfo(bagLink)))
@@ -443,7 +456,7 @@ local function updateBagBar(f)
         else
             b.icon:Hide()
         end
-        local invID = ContainerIDToInventoryID(bag_idx)  
+        local invID = C_Container.ContainerIDToInventoryID(bag_idx)  
         local bagLink = GetInventoryItemLink("player", invID)
         if bagLink then
             GW.SetItemButtonQualityForBags(b, select(3, GetItemInfo(bagLink)))
@@ -715,7 +728,7 @@ local function LoadBag(helpers)
     f.mover:SetScript("OnDragStop", inv.onMoverDragStop)
 
     -- setup resizer stuff
-    f:SetMinResize(304, 340)
+    f:SetResizeBounds(304, 340)
     f:SetScript("OnSizeChanged", onBagFrameChangeSize)
     f.sizer.onResizeStop = onBagResizeStop
     f.sizer:SetScript("OnMouseDown", inv.onSizerMouseDown)
@@ -723,7 +736,7 @@ local function LoadBag(helpers)
 
     -- setup bagheader stuff
     for i = 0, 5 do
-        _G["GwBagFrameGwBagHeader" .. i].nameString:SetFont(UNIT_NAME_FONT, 12)
+        _G["GwBagFrameGwBagHeader" .. i].nameString:SetFont(UNIT_NAME_FONT, 12, "")
         _G["GwBagFrameGwBagHeader" .. i].nameString:SetTextColor(1, 1, 1)
         _G["GwBagFrameGwBagHeader" .. i].nameString:SetShadowColor(0, 0, 0, 0)
         if i == 5 then
@@ -788,9 +801,9 @@ local function LoadBag(helpers)
     createBagBar(f.ItemFrame)
 
     -- skin some things not done in XML
-    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20)
+    f.headerString:SetFont(DAMAGE_TEXT_FONT, 20, "")
     f.headerString:SetText(INVENTORY_TOOLTIP)
-    f.spaceString:SetFont(UNIT_NAME_FONT, 12)
+    f.spaceString:SetFont(UNIT_NAME_FONT, 12, "")
     f.spaceString:SetTextColor(1, 1, 1)
     f.spaceString:SetShadowColor(0, 0, 0, 0)
 
@@ -967,11 +980,11 @@ local function LoadBag(helpers)
     end
 
     -- setup money frame
-    f.bronze:SetFont(UNIT_NAME_FONT, 12)
+    f.bronze:SetFont(UNIT_NAME_FONT, 12, "")
     f.bronze:SetTextColor(177 / 255, 97 / 255, 34 / 255)
-    f.silver:SetFont(UNIT_NAME_FONT, 12)
+    f.silver:SetFont(UNIT_NAME_FONT, 12, "")
     f.silver:SetTextColor(170 / 255, 170 / 255, 170 / 255)
-    f.gold:SetFont(UNIT_NAME_FONT, 12)
+    f.gold:SetFont(UNIT_NAME_FONT, 12, "")
     f.gold:SetTextColor(221 / 255, 187 / 255, 68 / 255)
 
     -- money frame tooltip

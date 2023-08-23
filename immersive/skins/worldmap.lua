@@ -43,6 +43,7 @@ local function SkinWorldMap()
     tex:SetSize(w + 110, h + 50)
     WorldMapFrame.tex = tex
 
+    _G.WorldMapZoneMinimapDropDown:SkinDropDownMenu()
     _G.WorldMapContinentDropDown:SkinDropDownMenu()
     _G.WorldMapZoneDropDown:SkinDropDownMenu()
 

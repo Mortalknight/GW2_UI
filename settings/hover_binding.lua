@@ -305,7 +305,7 @@ AddForProfiling("hover_binding", "fmGWKB_cancel_OnClick", fmGWKB_cancel_OnClick)
 
 local function LoadHoverBinds()
     local fmGWKB = CreateFrame("Frame", "GwKeyBindPrompt", UIParent, "GwKeyBindPromptTmpl")
-    fmGWKB.string:SetFont(UNIT_NAME_FONT, 14)
+    fmGWKB.string:SetFont(UNIT_NAME_FONT, 14, "")
     fmGWKB.string:SetTextColor(1, 1, 1)
     fmGWKB.acceptButton:SetText(SAVE)
     fmGWKB.cancelButton:SetText(CANCEL)

@@ -3,6 +3,7 @@ local L = GW.L
 
 local BUTTONS = {
     {button = _G.GameMenuButtonHelp         , sprite = {1, 1}},
+    {button = _G.GameMenuButtonStore        , sprite = {2, 1}},
     {button = _G.GameMenuButtonOptions      , sprite = {4, 1}},
     {button = _G.GameMenuButtonUIOptions    , sprite = {1, 2}},
     {button = _G.GameMenuButtonKeybindings  , sprite = {2, 2}},
@@ -24,12 +25,12 @@ local ICON_SPRITES = {
 
 local function PositionGameMenuButton()
     GameMenuFrame:SetHeight(GameMenuFrame:GetHeight() + GameMenuButtonLogout:GetHeight() - 4)
-    local _, relTo, _, _, offY = GameMenuButtonKeybindings:GetPoint()
+    local _, relTo, _, _, offY = GameMenuButtonMacros:GetPoint()
     if relTo ~= GameMenuFrame[GW.addonName] then
         GameMenuFrame[GW.addonName]:ClearAllPoints()
         GameMenuFrame[GW.addonName]:SetPoint("TOPLEFT", relTo, "BOTTOMLEFT", 0, -1)
-        GameMenuButtonKeybindings:ClearAllPoints()
-        GameMenuButtonKeybindings:SetPoint("TOPLEFT", GameMenuFrame[GW.addonName], "BOTTOMLEFT", 0, offY)
+        GameMenuButtonMacros:ClearAllPoints()
+        GameMenuButtonMacros:SetPoint("TOPLEFT", GameMenuFrame[GW.addonName], "BOTTOMLEFT", 0, offY)
     end
 end
 GW.PositionGameMenuButton = PositionGameMenuButton
@@ -37,7 +38,7 @@ GW.PositionGameMenuButton = PositionGameMenuButton
 local function applyButtonStyle()
     for _, f in pairs(BUTTONS) do
         local b = f.button
-        if b ~= nil then
+        if b then
 
             b.Right:Hide()
             b.Left:Hide()
@@ -47,6 +48,13 @@ local function applyButtonStyle()
             b.Text:ClearAllPoints()
             b.Text:SetPoint("LEFT", b, "LEFT", 32, 0)
             b:SetSize(150, 25)
+
+            b:HookScript("OnEnter", function()
+                b:GetNormalTexture():SetBlendMode("ADD")
+            end)
+            b:HookScript("OnLeave", function()
+                b:GetNormalTexture():SetBlendMode("BLEND")
+            end)
 
             local tex = b:CreateTexture("bg", "OVERLAY")
             tex:SetPoint("LEFT",b ,"LEFT" , 0, 0)

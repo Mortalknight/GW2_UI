@@ -16,6 +16,39 @@
                 </Texture>
             </Layer>
         </Layers>
+        <Frames>
+            <Button parentKey="showAllSpellRanks">
+                <Size x="200" y="20"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-10"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY" textureSubLevel="2">
+                        <FontString parentKey="string" text="SHOW_ALL_SPELL_RANKS" inherits="ChatBubbleFont" justifyH="LEFT">
+                            <Size x="200" y="20"/>
+                            <Anchors>
+                                <Anchor point="LEFT" x="25" y="0"></Anchor>
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+                <Frames>
+                    <CheckButton parentKey="checkbutton" checked="false">
+                        <Size x="16" y="16"/>
+                        <Anchors>
+                            <Anchor point="RIGHT" relativePoint="RIGHT" x="5"/>
+                        </Anchors>
+                        <NormalTexture file="Interface/AddOns/GW2_UI/textures/checkbox"/>
+                        <CheckedTexture file="Interface/AddOns/GW2_UI/textures/checkboxchecked"/>
+                        <Scripts>
+                            <OnShow>
+                                self:SetChecked( GetCVarBool("ShowAllSpellRanks"))
+                            </OnShow>
+                        </Scripts>
+                    </CheckButton>
+                </Frames>
+            </Button>
+        </Frames>
     </Frame>
 
     <ScrollFrame name="GwSpellbookUnknown" inherits="SecureHandlerShowHideTemplate" virtual="true" enableMouse="true">

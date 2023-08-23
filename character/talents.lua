@@ -161,19 +161,12 @@ local function getLinePath(buttonTier, buttonColumn, tier, column, frame, requir
 end
 
 local function TalentFrame_SetPrereqs(frame, buttonTier, buttonColumn, forceDesaturated, tierUnlocked, ...)
-    local tier, column, isLearnable
-    local requirementsMet
 
-    if tierUnlocked and not forceDesaturated then
-        requirementsMet = 1
-    else
-        requirementsMet = nil
-    end
-    for i = 1, select('#', ...), 3 do
-        tier = select(i, ...)
-        column = select(i + 1, ...)
-        isLearnable = select(i + 2, ...)
-        if not isLearnable or forceDesaturated then
+    local requirementsMet = tierUnlocked and not forceDesaturated
+
+    for i = 1, select('#', ...), 4 do
+        local tier, column, isLearnable = select(i, ...)
+        if ( forceDesaturated or not isLearnable ) then
             requirementsMet = nil
         end
         getLinePath(buttonTier, buttonColumn, tier, column, frame, requirementsMet)

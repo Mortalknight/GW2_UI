@@ -261,7 +261,7 @@ GW.AddForProfiling("chatframe", "handleChatFrameFadeOut", handleChatFrameFadeOut
 
 local function styleChatWindow(frame)
     local name = frame:GetName()
-    _G[name.."TabText"]:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G[name.."TabText"]:SetFont(DAMAGE_TEXT_FONT, 14, "")
     _G[name.."TabText"]:SetTextColor(1, 1, 1)
 
     if frame.styled then return end
@@ -408,9 +408,9 @@ local function styleChatWindow(frame)
 
     if GetSetting("FONTS_ENABLED") then
         if fontSize > 0 then
-            frame:SetFont(STANDARD_TEXT_FONT, fontSize)
+            frame:SetFont(STANDARD_TEXT_FONT, fontSize, "")
         elseif fontSize == 0 then
-            frame:SetFont(STANDARD_TEXT_FONT, 14)
+            frame:SetFont(STANDARD_TEXT_FONT, 14, "")
         end
     end
 
@@ -483,7 +483,7 @@ local function BuildCopyChatFrame()
     frame:SetMovable(true)
     frame:EnableMouse(true)
     frame:SetResizable(true)
-    frame:SetMinResize(350, 100)
+    frame:SetResizeBounds(350, 100)
     frame:SetScript("OnMouseDown", function(copyChat, button)
         if button == "LeftButton" and not copyChat.isMoving then
             copyChat:StartMoving()

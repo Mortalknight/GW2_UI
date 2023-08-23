@@ -193,7 +193,7 @@ local function LoadPetFrame(lm)
     -- TODO: When in override/vehicleui, we should show the pet auras/buffs as this can be important info
 
     playerPetFrame.health:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
-    playerPetFrame.health.text:SetFont(UNIT_NAME_FONT, 11)
+    playerPetFrame.health.text:SetFont(UNIT_NAME_FONT, 11, "")
 
     playerPetFrame.auraPositionUnder = GetSetting("PET_AURAS_UNDER")
 
@@ -281,7 +281,7 @@ local function LoadPetFrame(lm)
         fctf.unit = playerPetFrame.unit
 
         local font = fctf:CreateFontString(nil, "OVERLAY")
-        font:SetFont(DAMAGE_TEXT_FONT, 30)
+        font:SetFont(DAMAGE_TEXT_FONT, 30, "")
         fctf.fontString = font
         font:SetPoint("CENTER", playerPetFrame.portrait, "CENTER")
         font:Hide()

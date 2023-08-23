@@ -6,6 +6,17 @@ local AddForProfiling = GW.AddForProfiling
 local wpanel
 local step = 0
 
+local function ToggleChatColorNamesByClassGroup(checked, group)
+    local info = ChatTypeGroup[group]
+    if info then
+        for _, value in pairs(info) do
+            SetChatColorNameByClass(strsub(value, 10), checked)
+        end
+    else
+        SetChatColorNameByClass(group, checked)
+    end
+end
+
 local function settings_OnClick(self)
     local t = self.target
     self:GetParent():Hide()

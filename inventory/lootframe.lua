@@ -4,7 +4,7 @@ local RegisterMovableFrame = GW.RegisterMovableFrame
 
 local function updateLootFrameButtons()
     for i = 1, 4 do
-        _G["LootButton" .. i]:SetNormalTexture(nil)
+        _G["LootButton" .. i]:ClearNormalTexture()
         _G["LootButton" .. i].IconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
     end
 end
@@ -35,7 +35,7 @@ local function SkinLooTFrame()
 
     local GwLootFrameTitle = CreateFrame("Frame", nil, LootFrame, "GwLootFrameTitleTemp")
     GwLootFrameTitle:SetPoint("BOTTOMLEFT", LootFrameBg, "TOPLEFT")
-    GwLootFrameTitle.headerString:SetFont(DAMAGE_TEXT_FONT, 14)
+    GwLootFrameTitle.headerString:SetFont(DAMAGE_TEXT_FONT, 14, "")
     GwLootFrameTitle.headerString:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
     if GetCVar("lootUnderMouse") == "0" then
@@ -56,8 +56,8 @@ local function SkinLooTFrame()
     LootFrameCloseButton:SetPushedTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
     LootFrameCloseButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/window-close-button-hover")
 
-    LootFrameNext:SetFont(UNIT_NAME_FONT, 12)
-    LootFramePrev:SetFont(UNIT_NAME_FONT, 12)
+    LootFrameNext:SetFont(UNIT_NAME_FONT, 12, "")
+    LootFramePrev:SetFont(UNIT_NAME_FONT, 12, "")
     LootFrameNext:SetTextColor(255 / 255, 241 / 255, 209 / 255)
     LootFramePrev:SetTextColor(255 / 255, 241 / 255, 209 / 255)
 
@@ -75,7 +75,7 @@ local function SkinLooTFrame()
         _G["LootButton" .. i .. "NameFrame"]:SetPoint("LEFT",_G["LootButton" .. i],"RIGHT", 0, 0)
 
         _G["LootButton" .. i .. "IconTexture"]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        _G["LootButton" .. i .. "Text"]:SetFont(UNIT_NAME_FONT, 12)
+        _G["LootButton" .. i .. "Text"]:SetFont(UNIT_NAME_FONT, 12, "")
     end
 
     hooksecurefunc("LootFrame_Update", updateLootFrameButtons)

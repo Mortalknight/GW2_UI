@@ -179,7 +179,7 @@ local function bag_OnUpdate(self, elapsed)
 
     local totalEmptySlots = 0
     for i = 0, 4 do
-        local numberOfFreeSlots, _ = GetContainerNumFreeSlots(i)
+        local numberOfFreeSlots, _ = C_Container.GetContainerNumFreeSlots(i)
 
         if numberOfFreeSlots ~= nil then
             totalEmptySlots = totalEmptySlots + numberOfFreeSlots
@@ -231,7 +231,7 @@ local function reskinMicroButton(btn, name, mbf)
 
     btn.GwNotifyText:SetSize(24, 24)
     btn.GwNotifyText:SetPoint("CENTER", btn, "BOTTOM", 7, 2)
-    btn.GwNotifyText:SetFont(UNIT_NAME_FONT, 12)
+    btn.GwNotifyText:SetFont(UNIT_NAME_FONT, 12, "")
     btn.GwNotifyText:SetTextColor(1, 1, 1, 1)
     btn.GwNotifyText:SetShadowColor(0, 0, 0, 0)
     btn.GwNotifyText:Hide()

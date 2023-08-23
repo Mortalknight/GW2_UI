@@ -388,7 +388,7 @@ local function loadBaseFrame()
     hasBeenLoaded = true
 
     local fmGCW = CreateFrame('Button', 'GwCharacterWindow', UIParent, 'GwCharacterWindow')
-    fmGCW.WindowHeader:SetFont(DAMAGE_TEXT_FONT, 20)
+    fmGCW.WindowHeader:SetFont(DAMAGE_TEXT_FONT, 20, "")
     fmGCW.WindowHeader:SetTextColor(255/255, 241/255, 209/255)
     fmGCW:SetAttribute('windowpanelopen', nil)
     fmGCW.secure:SetAttribute("_onclick", charSecure_OnClick)
@@ -500,16 +500,16 @@ local function styleCharacterMenuButton(self, shadow)
         self:GetFontString():SetTextColor(1,1,1,1)
         self:GetFontString():SetShadowColor(0,0,0,0)
         self:GetFontString():SetShadowOffset(1,-1)
-        self:GetFontString():SetFont(DAMAGE_TEXT_FONT,14)
+        self:GetFontString():SetFont(DAMAGE_TEXT_FONT,14, "")
         self:GetFontString():SetJustifyH('LEFT')
         self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
     else
         self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-        self:SetNormalTexture(nil)
+        self:ClearNormalTexture()
         self:GetFontString():SetTextColor(1,1,1,1)
         self:GetFontString():SetShadowColor(0,0,0,0)
         self:GetFontString():SetShadowOffset(1,-1)
-        self:GetFontString():SetFont(DAMAGE_TEXT_FONT,14)
+        self:GetFontString():SetFont(DAMAGE_TEXT_FONT,14, "")
         self:GetFontString():SetJustifyH('LEFT')
         self:GetFontString():SetPoint('LEFT',self,'LEFT',5,0)
     end
@@ -518,12 +518,12 @@ end
 
 local function styleCharacterMenuBackButton(self)
     self.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
-    self:SetNormalTexture(nil)
+    self:ClearNormalTexture()
     local fontString = self:GetFontString()
     fontString:SetTextColor(1,1,1,1)
     fontString:SetShadowColor(0,0,0,0)
     fontString:SetShadowOffset(1,-1)
-    fontString:SetFont(DAMAGE_TEXT_FONT,14)
+    fontString:SetFont(DAMAGE_TEXT_FONT,14, "")
     self:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
 end
 
@@ -547,14 +547,14 @@ end
 local function CharacterMenuButton_OnLoad(self, odd)
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
     if not odd then
-        self:SetNormalTexture(nil)
+        self:ClearNormalTexture()
     else
         self:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-bg")
     end
     self:GetFontString():SetTextColor(1, 1, 1, 1)
     self:GetFontString():SetShadowColor(0, 0, 0, 0)
     self:GetFontString():SetShadowOffset(1, -1)
-    self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14)
+    self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14, "")
     self:GetFontString():SetJustifyH("LEFT")
     self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
 end

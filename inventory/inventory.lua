@@ -31,8 +31,6 @@ local function reskinItemButton(iname, b)
     high:SetBlendMode("ADD")
     high:SetAlpha(0.33)
 
-    b:SetPushedTexture(nil)
-
     if not b.gwBackdrop then
         local bd = b:CreateTexture(nil, "BACKGROUND")
         bd:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitembackdrop")
@@ -162,7 +160,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
 
     local bag_id = button:GetParent():GetID()
     local keyring = (bag_id == KEYRING_CONTAINER)
-    local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or BAG_TYP_COLORS[select(2, GetContainerNumFreeSlots(bag_id))]
+    local professionColors = keyring and BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_WOW_TOKEN] or BAG_TYP_COLORS[select(2, C_Container.GetContainerNumFreeSlots(bag_id))]
     local showItemLevel = button.itemlevel and itemIDOrLink and GetSetting("BAG_SHOW_ILVL") and not professionColors
 
     if itemIDOrLink then
@@ -184,7 +182,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         end
 
         -- Show junk icon if active
-        local _, _, _, rarity, _, _, _, _, noValue = GetContainerItemInfo(bag_id, button:GetID())
+        local _, _, _, rarity, _, _, _, _, noValue = C_Container.GetContainerItemInfo(bag_id, button:GetID())
         button.isJunk = (rarity and rarity == LE_ITEM_QUALITY_POOR) and not noValue
 
         if button.junkIcon then
@@ -319,7 +317,7 @@ local function takeItemButtons(p, bag_id)
     end
     cf.gw_owner = p
 
-    local num_slots = GetContainerNumSlots(bag_id)
+    local num_slots = C_Container.GetContainerNumSlots(bag_id)
     cf.gw_num_slots = num_slots
     for i = 1, max(MAX_CONTAINER_ITEMS, num_slots) do
         local item = _G[iname .. i]
@@ -364,9 +362,8 @@ local function reskinBagBar(b)
 
     if b.SlotHighlightTexture then
         b.SlotHighlightTexture:SetAlpha(0)
+        b.SlotHighlightTexture:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress")
     end
-
-    b:SetPushedTexture(nil)
 end
 GW.AddForProfiling("inventory", "reskinBagBar", reskinBagBar)
 
@@ -376,8 +373,8 @@ local function reskinSearchBox(sb)
         return
     end
 
-    sb:SetFont(UNIT_NAME_FONT, 14)
-    sb.Instructions:SetFont(UNIT_NAME_FONT, 14)
+    sb:SetFont(UNIT_NAME_FONT, 14, "")
+    sb.Instructions:SetFont(UNIT_NAME_FONT, 14, "")
     sb.Instructions:SetTextColor(178 / 255, 178 / 255, 178 / 255)
 
     sb.Left:SetPoint("LEFT", 0, 0)
@@ -418,7 +415,7 @@ local function bag_OnMouseDown(self, button)
     local bag_id = self:GetID() - CharacterBag0Slot:GetID() + 1
     local menuList = {}
     tinsert(menuList, { text = BAG_FILTER_ASSIGN_TO, isTitle = true, notCheckable = true })
-    tinsert(menuList, { text = BAG_FILTER_IGNORE, checked = function() return GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) end, func = function() SetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)) end })
+    tinsert(menuList, { text = BAG_FILTER_IGNORE, checked = function() return C_Container.GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) end, func = function() SetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not C_Container.GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)) end })
     GW.SetEasyMenuAnchor(GW.EasyMenu, self)
     _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
 end
@@ -480,13 +477,13 @@ local function updateFreeSlots(sp_str, start_idx, end_idx, opt_container)
     local free = 0
     local full = 0
     if opt_container then
-        free = GetContainerNumFreeSlots(opt_container)
-        full = GetContainerNumSlots(opt_container)
+        free = C_Container.GetContainerNumFreeSlots(opt_container)
+        full = C_Container.GetContainerNumSlots(opt_container)
     end
 
     for bag_id = start_idx, end_idx do
-        free = free + GetContainerNumFreeSlots(bag_id)
-        full = full + GetContainerNumSlots(bag_id)
+        free = free + C_Container.GetContainerNumFreeSlots(bag_id)
+        full = full + C_Container.GetContainerNumSlots(bag_id)
     end
 
     sp_str:SetText((full - free) .. " / " .. full)

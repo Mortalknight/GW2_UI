@@ -5,7 +5,6 @@
     <Script file="immersive\skins\gamemenu.lua"/>
     <Script file="immersive\skins\staticpopup.lua"/>
     <Script file="immersive\skins\addonManager.lua"/>
-    <Script file="immersive\skins\bindings.lua"/>
     <Script file="immersive\skins\blizzard_options.lua"/>
     <Script file="immersive\skins\macro.lua"/>
     <Script file="immersive\skins\worldmap.lua"/>

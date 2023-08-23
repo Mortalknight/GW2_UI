@@ -68,19 +68,6 @@ local function LoadHudPanel(sWindow)
             GW.PixelPerfection()
         end
     )
-    addOptionDropdown(
-        p.scroll.scrollchild,
-        COMBAT_TEXT_LABEL,
-        COMBAT_SUBTEXT,
-        "GW_COMBAT_TEXT_MODE",
-        nil,
-        {"GW2", "BLIZZARD", "OFF"},
-        {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS},
-        nil,
-        nil,
-        nil,
-        "FloatingCombatText"
-    )
     addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOptionSlider(
@@ -143,6 +130,75 @@ local function LoadHudPanel(sWindow)
         nil,
         "Minimap"
     )
+
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        COMBAT_TEXT_LABEL,
+        COMBAT_SUBTEXT,
+        "GW_COMBAT_TEXT_MODE",
+        function(value)
+            if value == "GW2" then
+                C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+                if GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS") then
+                    C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+                else
+                    C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")
+                end
+                GW.LoadDamageText(true)
+            elseif value == "BLIZZARD" then
+                C_CVar.SetCVar("floatingCombatTextCombatDamage", "1")
+                C_CVar.SetCVar("floatingCombatTextCombafloatingCombatTextCombatHealingtDamage", "1")
+                GW.FloatingCombatTextToggleFormat(false)
+            else
+                C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
+                C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
+                GW.FloatingCombatTextToggleFormat(false)
+            end
+
+        end,
+        {"GW2", "BLIZZARD", "OFF"},
+        {GW.addonName, "Blizzard", OFF .. " / " .. OTHER .. " " .. ADDONS},
+        nil,
+        nil,
+        nil,
+        "FloatingCombatText"
+    )
+    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        L["GW2 floating combat text style"],
+        nil,
+        "GW_COMBAT_TEXT_STYLE",
+        function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat(true) end,
+        {"Default", "Stacking", "Classic"},
+        {DEFAULT, L["Stacking"], EXPANSION_NAME0},
+        nil,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        nil,
+        "FloatingCombatText"
+    )
+
+    addOptionDropdown(
+        p.scroll.scrollchild,
+        L["Classic combat text anchoring"],
+        nil,
+        "GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR",
+        function() GW.UpdateDameTextSettings(); GW.FloatingCombatTextToggleFormat(true) end,
+        {"Nameplates", "Center"},
+        {L["Nameplates"], L["Center of screen"]},
+        nil,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = EXPANSION_NAME0},
+        nil,
+        "FloatingCombatText"
+    )
+    addOption(p.scroll.scrollchild, L["Show healing numbers"], nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
+
+
+
+
+
 
     InitPanel(p, true)
 end

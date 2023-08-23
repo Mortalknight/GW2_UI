@@ -253,9 +253,9 @@ GW.AddForProfiling("objectives", "statusBarSetValue", statusBarSetValue)
 
 local function CreateObjectiveNormal(name, parent)
     local f = CreateFrame("Frame", name, parent, "GwQuesttrackerObjectiveNormal")
-    f.ObjectiveText:SetFont(UNIT_NAME_FONT, 12)
+    f.ObjectiveText:SetFont(UNIT_NAME_FONT, 12, "")
     f.ObjectiveText:SetShadowOffset(-1, 1)
-    f.StatusBar.progress:SetFont(UNIT_NAME_FONT, 11)
+    f.StatusBar.progress:SetFont(UNIT_NAME_FONT, 11, "")
     f.StatusBar.progress:SetShadowOffset(-1, 1)
     if f.StatusBar.animationOld == nil then
         f.StatusBar.animationOld = 0
@@ -291,7 +291,7 @@ local function blockOnEnter(self)
         GetTime(),
         0.2,
         function(step)
-            self.hover:SetAlpha(step - 0.3)
+            self.hover:SetAlpha(math.max((step - 0.3), 0))
             self.hover:SetTexCoord(0, step, 0, 1)
         end
     )
@@ -324,8 +324,8 @@ end
 
 local function CreateTrackerObject(name, parent)
     local f = CreateFrame("Button", name, parent, "GwQuesttrackerObject")
-    f.Header:SetFont(UNIT_NAME_FONT, 14)
-    f.SubHeader:SetFont(UNIT_NAME_FONT, 12)
+    f.Header:SetFont(UNIT_NAME_FONT, 14, "")
+    f.SubHeader:SetFont(UNIT_NAME_FONT, 12, "")
     f.Header:SetShadowOffset(1, -1)
     f.SubHeader:SetShadowOffset(1, -1)
     f:SetScript("OnEnter", blockOnEnter)
@@ -428,9 +428,9 @@ local function getBlock(blockIndex)
 
         for bag = 0 , 5 do
             for slot = 0 , 24 do
-                local texture, _, _, _, _, _, _, _, _, itemID = GetContainerItemInfo(bag, slot)
-                if block.sourceItemId == itemID then
-                    validTexture = texture
+                local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
+                if itemInfo and block.sourceItemId == itemInfo.itemID then
+                    validTexture = itemInfo.iconFileID
                     isFound = true
                     break
                 end
@@ -579,13 +579,13 @@ local function getBlock(blockIndex)
     end
 
     newBlock.actionButton.FakeHide = function(self)
-        self:RegisterForClicks(nil)
+        --self:RegisterForClicks(nil)
         self:SetScript("OnEnter", nil)
         self:SetScript("OnLeave", nil)
 
-        self:SetNormalTexture(nil)
-        self:SetPushedTexture(nil)
-        self:SetHighlightTexture(nil)
+        self:ClearNormalTexture()
+        self:ClearPushedTexture()
+        self:ClearHighlightTexture()
     end
 
     newBlock.actionButton:SetScript("OnEvent", newBlock.actionButton.OnEvent)
@@ -1210,9 +1210,9 @@ local function LoadQuestTracker()
     local fNotify = CreateFrame("Frame", "GwObjectivesNotification", fTracker, "GwObjectivesNotification")
     fNotify.animatingState = false
     fNotify.animating = false
-    fNotify.title:SetFont(UNIT_NAME_FONT, 14)
+    fNotify.title:SetFont(UNIT_NAME_FONT, 14, "")
     fNotify.title:SetShadowOffset(1, -1)
-    fNotify.desc:SetFont(UNIT_NAME_FONT, 12)
+    fNotify.desc:SetFont(UNIT_NAME_FONT, 12, "")
     fNotify.desc:SetShadowOffset(1, -1)
     fNotify.compass:SetScript("OnShow", NewQuestAnimation)
 
@@ -1251,7 +1251,7 @@ local function LoadQuestTracker()
 
     local header = CreateFrame("Button", "GwQuestHeader", fQuest, "GwQuestTrackerHeader")
     header.icon:SetTexCoord(0, 1, 0.25, 0.5)
-    header.title:SetFont(UNIT_NAME_FONT, 14)
+    header.title:SetFont(UNIT_NAME_FONT, 14, "")
     header.title:SetShadowOffset(1, -1)
     header.title:SetText(QUESTS_LABEL)
 

@@ -194,7 +194,7 @@ local function LoadPowerBar()
         end
     )
 
-    _G["GwPlayerPowerBarBarString"]:SetFont(DAMAGE_TEXT_FONT, 14)
+    _G["GwPlayerPowerBarBarString"]:SetFont(DAMAGE_TEXT_FONT, 14, "")
 
     playerPowerBar:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
     playerPowerBar:RegisterUnitEvent("UNIT_MAXPOWER", "player")

@@ -34,6 +34,8 @@ GW.trackedQuests = {}
 GW.HiddenFrame = CreateFrame("Frame")
 GW.HiddenFrame.HiddenString = GW.HiddenFrame:CreateFontString(nil, "OVERLAY")
 GW.HiddenFrame:Hide()
+GW.BorderSize = 1
+GW.SpacingSize = 1
 
 -- money
 GW.earnedMoney = 0

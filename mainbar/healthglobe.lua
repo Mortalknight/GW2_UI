@@ -303,11 +303,11 @@ local function LoadHealthGlobe()
 
     -- set text/font stuff
     hg.hSize = 14
-    hg.text_h.value:SetFont(DAMAGE_TEXT_FONT, hg.hSize)
+    hg.text_h.value:SetFont(DAMAGE_TEXT_FONT, hg.hSize, "")
     hg.text_h.value:SetShadowColor(1, 1, 1, 0)
 
     for i, v in ipairs(hg.text_h.shadow) do
-        v:SetFont(DAMAGE_TEXT_FONT, hg.hSize)
+        v:SetFont(DAMAGE_TEXT_FONT, hg.hSize, "")
         v:SetShadowColor(1, 1, 1, 0)
         v:SetTextColor(0, 0, 0, 1 / i)
     end
