@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("2.1.0 Era", [=[
+MISC
+    Update for 1.14.4
+]=])
+
 v("2.0.8 Era", [=[
 MISC
     Check grid auras more frequently
