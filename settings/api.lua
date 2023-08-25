@@ -8,6 +8,7 @@ local Serializer = GW.Libs.Serializer
 local Deflate = GW.Libs.Deflate
 
 local EXPORT_PREFIX = "!GW2!"
+Deflate.compressLevel = {level = 5}
 
 local function GetAllLayouts()
     if GW2UI_LAYOUTS == nil then
