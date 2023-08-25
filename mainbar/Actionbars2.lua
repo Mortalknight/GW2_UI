@@ -634,28 +634,13 @@ local function trackBarChanges()
         return
     end
 
+    local toggles = {GetActionBarToggles()}
     local show1, show2, show3, show4
     -- need explicit bool's because we test for nil as a separate case
-    if SHOW_MULTI_ACTIONBAR_1 then
-        show1 = true
-    else
-        show1 = false
-    end
-    if SHOW_MULTI_ACTIONBAR_2 then
-        show2 = true
-    else
-        show2 = false
-    end
-    if SHOW_MULTI_ACTIONBAR_3 then
-        show3 = true
-    else
-        show3 = false
-    end
-    if SHOW_MULTI_ACTIONBAR_3 and SHOW_MULTI_ACTIONBAR_4 then
-        show4 = true
-    else
-        show4 = false
-    end
+    show1 = toggles[1] -- Bar 2
+    show2 = toggles[2] -- Bar 3
+    show3 = toggles[3] -- Bar 4
+    show4 = toggles[4] -- Bar 5
 
     -- set that we'll need to immediately re-calc visible bars and mainbar offset (happens in fadeCheck)
     fmActionbar.gw_DirtySetting = true
@@ -1216,7 +1201,7 @@ local function LoadActionBars(lm)
     GW.RegisterScaleFrame(MainMenuBarArtFrame)
 
     -- hook existing multibars to track settings changes
-    hooksecurefunc("SetActionBarToggles", trackBarChanges)
+    hooksecurefunc("SetActionBarToggles", function() C_Timer.After(1, trackBarChanges) end)
     hooksecurefunc("ActionButton_UpdateUsable", changeVertexColorActionbars)
     --hooksecurefunc("ActionButton_UpdateFlyout", changeFlyoutStyle)
     trackBarChanges()
