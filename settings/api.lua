@@ -5,6 +5,9 @@ local GW_PRIVATE_DEFAULT = GW.PRIVATE_DEFAULT
 local LibBase64 = GW.Libs.LibBase64
 local Compress = GW.Libs.Compress
 local Serializer = GW.Libs.Serializer
+local Deflate = GW.Libs.Deflate
+
+local EXPORT_PREFIX = "!GW2!"
 
 local function GetAllLayouts()
     if GW2UI_LAYOUTS == nil then
@@ -184,109 +187,47 @@ local function GetSettingsProfiles()
 end
 GW.GetSettingsProfiles = GetSettingsProfiles
 
-do -- This code is from WeakAuras Team, creadits goes to them
-    local function recurse(table, level, ret)
-        for i, v in pairs(table) do
-            ret = ret .. strrep("    ", level) .. "["
-            if type(i) == "string" then
-                ret = ret .. '"' .. i .. '"'
-            else
-                ret = ret .. tostring(i)
-            end
-            ret = ret .. "] = "
+local function GetExportString(profileIndex, profileName)
+    local profileTable = GW2UI_SETTINGS_PROFILES[profileIndex]
 
-            if type(v) == "number" then
-                ret = ret .. v .. ",\n"
-            elseif type(v) == "string" then
-                ret = ret .. '"' .. v:gsub("\\", "\\\\"):gsub("\n", "\\n"):gsub("\124", "\124\124") .. '",\n'
-            elseif type(v) == "boolean" then
-                if v then 
-                    ret = ret .. "true,\n"
-                else
-                    ret = ret .. "false,\n"
-                end
-            elseif type(v) == "table" then
-                ret = ret .. "{\n"
-                ret = recurse(v, level + 1, ret)
-                ret = ret .. strrep( "    ", level) .. "},\n"
-            else
-                ret = ret .. '"' .. tostring(v) .. '",\n'
-            end
-        end
+    local serialData = Serializer:Serialize(profileTable)
+    local exportString = format("%s::%s::%s::%s", serialData, profileName, GW.myname, "Retail")
+    local compressedData = Deflate:CompressDeflate(exportString, Deflate.compressLevel)
+    local printableString = Deflate:EncodeForPrint(compressedData)
 
-        return ret
-    end
-
-    local function TableToLuaString(inTable)
-        if type(inTable) ~= "table" then
-            return
-        end
-
-        local exportString = "{\n"
-        exportString = recurse(inTable, 1, exportString)
-        exportString = exportString .. "}"
-
-        return exportString
-    end
-    GW.TableToLuaString = TableToLuaString
-
-    local function GetExportString(profileIndex, profileName)
-        local profileTable = GW2UI_SETTINGS_PROFILES[profileIndex]
-        local serialData = Serializer:Serialize(profileTable)
-        local exportString = format("%s::%s::%s::%s", serialData, profileName, GW.myname, "Retail")
-        local compressedData = Compress:Compress(exportString)
-        local encodedData = LibBase64:Encode(compressedData) 
-
-        return encodedData
-    end
-    GW.GetExportString = GetExportString
+    return printableString and format("%s%s", EXPORT_PREFIX, printableString) or nil
 end
+GW.GetExportString = GetExportString
+
+local function GetImportStringType(dataString)
+    return (strmatch(dataString, "^" .. EXPORT_PREFIX) and "Deflate") or ""
+end
+GW.GetImportStringType = GetImportStringType
 
 local function DecodeProfile(dataString)
-    local dataType = LibBase64:IsBase64(dataString) and "base64" or strfind(dataString, "{") and "table" or nil
+    local stringType = GetImportStringType(dataString)
     local profileName, profilePlayer, version, profileData, success
 
-    if dataType == "base64" then
-        local decodedData = LibBase64:Decode(dataString)
-        local decompressedData, _ = Compress:Decompress(decodedData)
+    if stringType == "Deflate" then
+        local data = gsub(dataString, "^" .. EXPORT_PREFIX, "")
+        local decodedData = Deflate:DecodeForPrint(data)
+        local decompressed = Deflate:DecompressDeflate(decodedData)
 
-        if not decompressedData then
+        if not decompressed then
             return
         end
 
-        local serializedData, profileInfos = GW.splitString(decompressedData, "^^::")
+        local serializedData, profileInfos = GW.splitString(decompressed, "^^::")
 
         if not serializedData or not profileInfos then
             return
         end
 
         serializedData = format("%s%s", serializedData, "^^")
-
         profileName, profilePlayer, version = GW.splitString(profileInfos, "::")
-
         success, profileData = Serializer:Deserialize(serializedData)
 
         if not success then
-            return
-        end
-    elseif dataType == "table" then
-        local profileDataAsString, profileInfos = GW.splitString(dataString, "}::")
-
-        if not profileDataAsString or not profileInfos then
-            return
-        end
-
-        profileData = format("%s%s", profileDataAsString, "}")
-        profileData = gsub(profileData, "\124\124", "\124")
-        profileName, profilePlayer, version = GW.splitString(profileInfos, "::")
-
-        local profileToTable = loadstring(format("%s %s", "return", profileData))
-        local pm
-        if profileToTable then
-            pm, profileData = pcall(profileToTable)
-        end
-
-        if pm and (not profileData or type(profileData) ~= "table") then
             return
         end
     end
@@ -294,6 +235,28 @@ local function DecodeProfile(dataString)
     return profileName, profilePlayer, version, profileData
 end
 GW.DecodeProfile = DecodeProfile
+
+local function ConvertOldProfileString(dataString)
+    if strfind(dataString, EXPORT_PREFIX) then
+        return false, "Error: Input already uses the new format."
+    end
+    if not LibBase64:IsBase64(dataString) then
+        return false, "Error: Input doesn't look like a correct profile."
+    end
+
+    local decodedData = LibBase64:Decode(dataString)
+    local decompressedData, decompressedMessage = Compress:Decompress(decodedData)
+
+    if not decompressedData then
+        return false, format("Error decompressing data: %s.", decompressedMessage)
+    end
+
+    local compressedData = Deflate:CompressDeflate(decompressedData, {level = 5})
+    local profileExport = Deflate:EncodeForPrint(compressedData)
+
+    return true, EXPORT_PREFIX .. profileExport
+end
+GW.ConvertOldProfileString = ConvertOldProfileString
 
 local function ImportProfile(dataString)
     local profileName, profilePlayer, version, profileDataString = DecodeProfile(dataString)

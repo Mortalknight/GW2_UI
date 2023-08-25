@@ -157,9 +157,6 @@ local function createImportExportFrame()
         for _ = 1, max do
             ScrollFrameTemplate_OnMouseWheel(frame.scrollArea, -1)
         end
-        if strlen(self:GetText()) > 0 and string.sub(self:GetText(), -1) == "=" then
-            frame.decode:Enable()
-        end
     end)
 
     frame.close = CreateFrame("Button", nil, frame, "GwStandardButton")
@@ -195,22 +192,31 @@ local function createImportExportFrame()
     frame.decode:SetFrameLevel(frame.decode:GetFrameLevel() + 1)
     frame.decode:EnableMouse(true)
     frame.decode:SetSize(128, 28)
-    frame.decode:SetText(L["Decode"])
     frame.decode:SetScript("OnClick", function()
-        local profileName, profilePlayer, version, profileData = GW.DecodeProfile(frame.editBox:GetText())
+        -- if the frame header is L["Convert old profile String to new one"] then try to convert the string to the new format
+        if frame.header:GetText() == L["Convert old profile String to new one"] then
+            local result, dataString = GW.ConvertOldProfileString(frame.editBox:GetText())
 
-        frame.result:SetText("")
-        if not profileName or not profilePlayer or version ~= "Retail" then
-            frame.subheader:SetText("")
-            frame.result:SetFormattedText("|cffff0000%s|r", L["Error decoding profile: Invalid or corrupt string!"] )
+            if result then
+                frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully converted!"])
+                frame.editBox:SetText(dataString)
+            else
+                frame.result:SetFormattedText("|cffff0000%s|r", dataString)
+            end
         else
-            frame.subheader:SetText(profileName .. " - " .. profilePlayer .. " - " .. version)
+            if GW.GetImportStringType(frame.editBox:GetText()) == "Deflate" then
+                local profileName, profilePlayer, version, profileData = GW.DecodeProfile(frame.editBox:GetText())
 
-            local decodedString = (profileData and GW.TableToLuaString(profileData)) or nil
-            local importString = format("%s::%s::%s::%s", decodedString, profileName, profilePlayer, version)
-            frame.editBox:SetText(importString)
-            frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully decoded!"])
-            frame.decode:Disable()
+                frame.result:SetText("")
+                if not profileName or not profilePlayer or version ~= "Retail" then
+                    frame.subheader:SetText("")
+                    frame.result:SetFormattedText("|cffff0000%s|r", L["Error decoding profile: Invalid or corrupt string!"] )
+                else
+                    frame.subheader:SetText(profileName .. " - " .. profilePlayer .. " - " .. version)
+
+                    frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully decoded!"])
+                end
+            end
         end
     end)
 
@@ -550,7 +556,7 @@ local function collectAllIcons()
     end
 
     GetLooseMacroIcons(ICONS)
-    GetLooseMacroItemIcons( ICONS)
+    GetLooseMacroItemIcons(ICONS)
     GetMacroIcons(ICONS)
     GetMacroItemIcons(ICONS)
 end
@@ -577,6 +583,7 @@ local function LoadProfilesPanel(sWindow)
 
     CharacterMenuButton_OnLoad(p.menu.newProfile, true)
     CharacterMenuButton_OnLoad(p.menu.importProfile, false)
+    CharacterMenuButton_OnLoad(p.menu.convertOldProfileString, true)
 
     ProfileWin = p.profileScroll
 
@@ -636,7 +643,7 @@ local function LoadProfilesPanel(sWindow)
     p.menu.newProfile:SetScript("OnClick", fnGCNP_OnClick)
 
     p.menu.importProfile:SetText(L["Import Profile"])
-    local fnGCIP_OnClick = function()
+    p.menu.importProfile:SetScript("OnClick", function()
         ImportExportFrame:Show()
         ImportExportFrame.header:SetText(L["Import Profile"])
         ImportExportFrame.subheader:SetText("")
@@ -644,11 +651,24 @@ local function LoadProfilesPanel(sWindow)
         ImportExportFrame.editBox:SetText("")
         ImportExportFrame.import:Show()
         ImportExportFrame.decode:Show()
-        ImportExportFrame.decode:Disable()
         ImportExportFrame.result:SetText("")
         ImportExportFrame.editBox:SetFocus()
-    end
-    p.menu.importProfile:SetScript("OnClick", fnGCIP_OnClick)
+        ImportExportFrame.decode:SetText(L["Decode"])
+    end)
+
+    p.menu.convertOldProfileString:SetText(L["Convert old profile String"])
+    p.menu.convertOldProfileString:SetScript("OnClick", function()
+        ImportExportFrame:Show()
+        ImportExportFrame.header:SetText(L["Convert old profile String to new one"])
+        ImportExportFrame.subheader:SetText("")
+        ImportExportFrame.description:SetText(L["Paste your profile string here to convert to the new format."])
+        ImportExportFrame.editBox:SetText("")
+        ImportExportFrame.import:Hide()
+        ImportExportFrame.decode:Show()
+        ImportExportFrame.result:SetText("")
+        ImportExportFrame.editBox:SetFocus()
+        ImportExportFrame.decode:SetText(CONVERT)
+    end)
 
     ProfileWin.update = loadProfiles
     ProfileWin.scrollBar.doNotHide = false

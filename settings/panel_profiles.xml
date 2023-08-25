@@ -14,6 +14,11 @@
                             <Anchor point="TOPLEFT" relativeKey="$parent.welcomebtn" relativePoint="TOPLEFT" x="0" y="-36"/>
                         </Anchors>
                     </Button>
+                    <Button parentKey="convertOldProfileString" inherits="GwSettingsOverviewMenuButton" text="Convert old profile String">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.importProfile" relativePoint="TOPLEFT" x="0" y="-36"/>
+                        </Anchors>
+                    </Button>
                 </Frames>
             </Frame>
             <ScrollFrame parentKey="profileScroll" inherits="GwHybridScrollFrameTemplate">

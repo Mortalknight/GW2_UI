@@ -606,8 +606,8 @@ local function InsertEmotions(msg)
         local pattern = GW.EscapeString(word)
         local emoji = Smileys[pattern]
         if emoji and strmatch(msg, "[%s%p]-" .. pattern .. "[%s%p]*") then
-            local base64 = GW.Libs.LibBase64:Encode(word)
-            msg = gsub(msg, "([%s%p]-)" .. pattern .. "([%s%p]*)", (base64 and ("%1|Helvmoji:%%" .. base64 .. "|h|cFFffffff|r|h") or "%1") .. emoji .. "%2")
+            local encode = GW.Libs.Deflate:EncodeForPrint(word)
+            msg = gsub(msg, "([%s%p]-)" .. pattern .. "([%s%p]*)", (encode and ("%1|Helvmoji:%%" .. encode .. "|h|cFFffffff|r|h") or "%1") .. emoji .. "%2")
         end
     end
 

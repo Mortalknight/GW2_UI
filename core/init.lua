@@ -86,6 +86,7 @@ do
     AddLib("LSM", "LibSharedMedia-3.0", true)
     AddLib("Compress", "LibCompress", true)
     AddLib("Serializer", "AceSerializer-3.0", true)
+    AddLib("Deflate", "LibDeflate", true)
     AddLib("LibBase64", "LibBase64-1.0_GW2", true)
     AddLib("AceLocale", "AceLocale-3.0", true)
     AddLib("CustomGlows", "LibCustomGlow-1.0", true)
