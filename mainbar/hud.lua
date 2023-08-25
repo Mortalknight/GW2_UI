@@ -541,6 +541,9 @@ local function combatHealthState(self)
 
     if unitHealthPrecentage < 0.5 and not UnitIsDeadOrGhost("player") then
         unitHealthPrecentage = unitHealthPrecentage / 0.5
+        local alpha = 1 - unitHealthPrecentage - 0.2
+        if alpha < 0 then alpha = 0 end
+        if alpha > 1 then alpha = 1 end
 
         self.actionBarHud.Left:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
         self.actionBarHud.Right:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
@@ -548,8 +551,8 @@ local function combatHealthState(self)
         self.actionBarHud.RightSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
         self.actionBarHud.LeftSwim:SetVertexColor(1, unitHealthPrecentage, unitHealthPrecentage)
 
-        self.actionBarHud.LeftBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
-        self.actionBarHud.RightBlood:SetVertexColor(1, 1, 1, 1 - (unitHealthPrecentage - 0.2))
+        self.actionBarHud.LeftBlood:SetVertexColor(1, 1, 1, alpha)
+        self.actionBarHud.RightBlood:SetVertexColor(1, 1, 1, alpha)
     else
         self.actionBarHud.Left:SetVertexColor(1, 1, 1)
         self.actionBarHud.Right:SetVertexColor(1, 1, 1)

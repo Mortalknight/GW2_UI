@@ -267,7 +267,9 @@ local function HoverKeyBinds()
         local function registermacro()
             for i = 1, 120 do
                 local mb = _G["MacroButton"..i]
-                mb:HookScript("OnEnter", function(self) bind:Update(self, "MACRO") end)
+                if mb then
+                    mb:HookScript("OnEnter", function(self) bind:Update(self, "MACRO") end)
+                end
             end
             MacroFrameTab1:HookScript("OnMouseUp", function() localmacros = 0 end)
             MacroFrameTab2:HookScript("OnMouseUp", function() localmacros = 1 end)

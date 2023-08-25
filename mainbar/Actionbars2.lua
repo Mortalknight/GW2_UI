@@ -309,37 +309,54 @@ end
 
 local function updateHotkey(self)
     local hotkey = self.HotKey
-    local text = hotkey:GetText()
 
-    if text == nil then
-        return
+    if GetSetting("BUTTON_ASSIGNMENTS") then
+        hotkey:Show()
+        if self.hkBg then
+            self.hkBg.texture:Show()
+        end
+    else
+        hotkey:Hide()
+        if self.hkBg then
+            self.hkBg.texture:Hide()
+        end
     end
 
-    text = string.gsub(text, "(s%-)", "S")
-    text = string.gsub(text, "(a%-)", "A")
-    text = string.gsub(text, "(c%-)", "C")
-    text = string.gsub(text, "(Mouse Button )", "M")
-    text = string.gsub(text, "(Middle Mouse)", "M3")
-    text = string.gsub(text, "(Num Pad )", "N")
-    text = string.gsub(text, "(Page Up)", "PU")
-    text = string.gsub(text, "(Page Down)", "PD")
-    text = string.gsub(text, "(Spacebar)", "SpB")
-    text = string.gsub(text, "(Insert)", "Ins")
-    text = string.gsub(text, "(Home)", "Hm")
-    text = string.gsub(text, "(Delete)", "Del")
-    text = string.gsub(text, "(Left Arrow)", "LT")
-    text = string.gsub(text, "(Right Arrow)", "RT")
-    text = string.gsub(text, "(Up Arrow)", "UP")
-    text = string.gsub(text, "(Down Arrow)", "DN")
+    local text = hotkey:GetText()
+    if text and text ~= RANGE_INDICATOR then
+        text = gsub(text, "(s%-)", "S")
+        text = gsub(text, "(a%-)", "A")
+        text = gsub(text, "(c%-)", "C")
+        text = gsub(text, "SHIFT%-", "S")
+		text = gsub(text, "ALT%-", "A")
+		text = gsub(text, "CTRL%-", "C")
+        text = gsub(text, KEY_BUTTON3, "M3") --middle mouse Button
+        text = gsub(text, gsub(KEY_BUTTON4, "4", ""), "M") -- mouse button
+        text = gsub(text, KEY_PAGEUP, "PU")
+        text = gsub(text, KEY_PAGEDOWN, "PD")
+        text = gsub(text, KEY_SPACE, "SpB")
+        text = gsub(text, KEY_INSERT, "Ins")
+        text = gsub(text, KEY_HOME, "Hm")
+        text = gsub(text, KEY_DELETE, "Del")
+        text = gsub(text, "NDIVIDE", "N/")
+        text = gsub(text, "NMULTIPLY", "N*")
+        text = gsub(text, "NMINUS", "N-")
+        text = gsub(text, "NPLUS", "N+")
+        text = gsub(text, "NEQUALS", "N=")
+        text = gsub(text, KEY_LEFT, "LT")
+        text = gsub(text, KEY_RIGHT, "RT")
+        text = gsub(text, KEY_UP, "UP")
+        text = gsub(text, KEY_DOWN, "DN")
+        text = gsub(text, gsub(KEY_NUMPADPLUS, "%+", ""), "N") -- for all numpad keys
+        text = gsub(text, KEY_MOUSEWHEELDOWN, "MwD")
+        text = gsub(text, KEY_MOUSEWHEELUP, "MwU")
 
-    if hotkey:GetText() == RANGE_INDICATOR or not GetSetting("BUTTON_ASSIGNMENTS") then
-        hotkey:SetText("")
-    else
         hotkey:SetText(text)
+    else
+        hotkey:SetText("")
     end
 end
 GW.updateHotkey = updateHotkey
-GW.AddForProfiling("Actionbars2", "updateHotkey", updateHotkey)
 
 local function hideBackdrop(self)
     self.gwBackdrop:Hide()
@@ -351,20 +368,30 @@ local function showBackdrop(self)
 end
 GW.AddForProfiling("Actionbars2", "showBackdrop", showBackdrop)
 
+local function FixHotKeyPosition(button, isStanceButton, isPetButton, isMainBar)
+    button.HotKey:ClearAllPoints()
+    if isPetButton or isStanceButton then
+        button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 5)
+    elseif isMainBar then
+        button.HotKey:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, 0)
+        button.HotKey:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+        button.HotKey:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
+        button.HotKey:SetTextColor(1, 1, 1)
+    else
+        button.HotKey:SetPoint("CENTER", button, "BOTTOM", 0, 0)
+    end
+    button.HotKey:SetJustifyH("CENTER")
+end
+GW.FixHotKeyPosition = FixHotKeyPosition
+
 local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton, isPet)
     local btn = _G[buttonName]
 
     if btn.icon ~= nil then
         btn.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     end
-    if btn.HotKey ~= nil then
-        btn.HotKey:ClearAllPoints()
-        if isPet then
-            btn.HotKey:SetPoint("CENTER", btn, "BOTTOM", 0, 5)
-        else
-            btn.HotKey:SetPoint("CENTER", btn, "BOTTOM", 0, 0)
-        end
-        btn.HotKey:SetJustifyH("CENTER")
+    if btn.HotKey then
+        FixHotKeyPosition(btn, isStanceButton, isPet)
     end
     if btn.Count ~= nil then
         btn.Count:ClearAllPoints()
@@ -574,28 +601,13 @@ local function trackBarChanges()
         return
     end
 
+    local toggles = {GetActionBarToggles()}
     local show1, show2, show3, show4
     -- need explicit bool's because we test for nil as a separate case
-    if SHOW_MULTI_ACTIONBAR_1 then
-        show1 = true
-    else
-        show1 = false
-    end
-    if SHOW_MULTI_ACTIONBAR_2 then
-        show2 = true
-    else
-        show2 = false
-    end
-    if SHOW_MULTI_ACTIONBAR_3 then
-        show3 = true
-    else
-        show3 = false
-    end
-    if SHOW_MULTI_ACTIONBAR_3 and SHOW_MULTI_ACTIONBAR_4 then
-        show4 = true
-    else
-        show4 = false
-    end
+    show1 = toggles[1] -- Bar 2
+    show2 = toggles[2] -- Bar 3
+    show3 = toggles[3] -- Bar 4
+    show4 = toggles[4] -- Bar 5
 
     -- set that we'll need to immediately re-calc visible bars and mainbar offset (happens in fadeCheck)
     fmActionbar.gw_DirtySetting = true
@@ -607,6 +619,8 @@ local function trackBarChanges()
     fmActionbar.gw_Bar2.gw_IsEnabled = show2
     fmActionbar.gw_Bar3.gw_IsEnabled = show3
     fmActionbar.gw_Bar4.gw_IsEnabled = show4
+
+    fmActionbar.gw_IsEnabled = true
 end
 
 local function updateMultiBar(lm, barName, buttonName, actionPage, state)
@@ -1050,7 +1064,7 @@ local function LoadActionBars(lm)
     GW.RegisterScaleFrame(MainMenuBarArtFrame)
 
     -- hook existing multibars to track settings changes
-    hooksecurefunc("SetActionBarToggles", trackBarChanges)
+    hooksecurefunc("SetActionBarToggles", function() C_Timer.After(1, trackBarChanges) end)
     hooksecurefunc("ActionButton_UpdateUsable", changeVertexColorActionbars)
     --hooksecurefunc("ActionButton_UpdateFlyout", changeFlyoutStyle)
     trackBarChanges()
@@ -1061,7 +1075,28 @@ local function LoadActionBars(lm)
     setLeaveVehicleButton()
 
     -- hook hotkey update calls so we can override styling changes
-    hooksecurefunc("ActionButton_UpdateHotkeys", updateHotkey)
+    local hotkeyEventTrackerFrame = CreateFrame("Frame")
+    hotkeyEventTrackerFrame:RegisterEvent("UPDATE_BINDINGS")
+    hotkeyEventTrackerFrame:SetScript("OnEvent", function()
+        local fmMultiBar
+        for y = 0, 4 do
+            if y == 0 then fmMultiBar = fmActionbar end
+            if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
+            if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
+            if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
+            if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
+            if fmMultiBar.gw_IsEnabled then
+                for i = 1, 12 do
+                    updateHotkey(fmMultiBar.gw_Buttons[i])
+                    FixHotKeyPosition(fmMultiBar.gw_Buttons[i], false, false, y == 0)
+                end
+            end
+        end
+    end)
+    -- trigger the hotkeyfix after login for loading issues
+    C_Timer.After(7, function()
+        hotkeyEventTrackerFrame:GetScript("OnEvent")()
+    end)
 
     -- frames using the alert frame subsystem have their positioning managed by UIParent
     -- the secure code for that lives mostly in Interface/FrameXML/UIParent.lua
