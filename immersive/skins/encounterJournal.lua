@@ -45,24 +45,49 @@ local function HandleButton(btn, strip)
         str:SetTextColor(0, 0, 0)
     end
 end
-local function SkinOverviewInfo(self, _, index)
-    local header = self.overviews[index]
-    if not header.isSkinned then
-        for i = 4, 18 do
-            select(i, header.button:GetRegions()):SetTexture()
+
+local SkinOverviewInfo
+do
+    local lockColors = {}
+    local function LockValue(button, r, g, b)
+        local rr, gg, bb = 0, 0, 0
+        if r ~= rr or gg ~= g or b ~= bb then
+            button:SetTextColor(rr, gg, bb)
         end
+    end
 
-        HandleButton(header.button)
+    local function LockWhite(button, r, g, b)
+        if r ~= 1 or g ~= 1 or b ~= 1 then
+            button:SetTextColor(1, 1, 1)
+        end
+    end
 
-        header.descriptionBG:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background")
-        header.descriptionBGBottom:SetAlpha(0)
-        header.description:SetTextColor(1, 1, 1)
-        header.button.title:SetTextColor(0, 0, 0)
-        header.button.title.SetTextColor = GW.NoOp
-        header.button.expandedIcon:SetTextColor(1, 1, 1)
-        header.button.expandedIcon.SetTextColor = GW.NoOp
+    local function LockColor(button, valuecolor)
+        if lockColors[button] then return end
 
-        header.isSkinned = true
+        hooksecurefunc(button, "SetTextColor", (valuecolor and LockValue) or LockWhite)
+
+        lockColors[button] = true
+    end
+
+    SkinOverviewInfo = function(self, _, index)
+        local header = self.overviews[index]
+        if not header.isSkinned then
+            for i = 4, 18 do
+                select(i, header.button:GetRegions()):SetTexture()
+            end
+
+            HandleButton(header.button)
+
+            LockColor(header.button.title, true)
+            LockColor(header.button.expandedIcon)
+
+            header.descriptionBG:SetAlpha(0)
+            header.descriptionBGBottom:SetAlpha(0)
+            header.description:SetTextColor(1, 1, 1)
+
+            header.isSkinned = true
+        end
     end
 end
 
@@ -160,7 +185,7 @@ local function ItemSetsItemBorder(border, atlas)
     local parent = border:GetParent()
     local backdrop = parent and parent.Icon and parent.Icon.backdrop
     if backdrop and atlas then
-        local color = GetItemQualityColor[lootQuality[atlas]]
+        local color = BAG_ITEM_QUALITY_COLORS[lootQuality[atlas]]
         if color then
             backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
         else
