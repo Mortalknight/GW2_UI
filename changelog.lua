@@ -1,6 +1,11 @@
 local _, GW = ...
 local v = GW.vernotes
 
+v("2.1.3 Era", [=[
+FIXES
+    Fix some lua errors
+]=])
+
 v("2.1.2 Era", [=[
 FIXES
     Fix some lua errors

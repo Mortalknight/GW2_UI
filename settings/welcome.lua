@@ -84,7 +84,7 @@ local function button1_OnClick()
 
         wpanel.welcome.button1:SetScript("OnClick", function()
             FCF_ResetChatWindows()
-            FCF_OpenNewWindow(LOOT .. " / " .. TRADE)
+            FCF_OpenNewWindow(LOOT)
 
             for _, name in ipairs(CHAT_FRAMES) do
                 local frame = _G[name]
@@ -95,19 +95,19 @@ local function button1_OnClick()
                     frame:ClearAllPoints()
                     frame:SetPoint("BOTTOMLEFT", UIParent, 40, 60)
                     frame:SetUserPlaced(true)
-                end
-
-                FCF_SavePositionAndDimensions(frame)
-                FCF_StopDragging(frame)
-                FCF_SetChatWindowFontSize(nil, frame, 12)
-
-                if id == 2 then
+                elseif id == 2 then
                     FCF_SetWindowName(frame, GUILD_EVENT_LOG)
                 elseif id == 3 then
                     VoiceTranscriptionFrame_UpdateVisibility(frame)
                     VoiceTranscriptionFrame_UpdateVoiceTab(frame)
                     VoiceTranscriptionFrame_UpdateEditBox(frame)
+                elseif id == 4 then
+                    FCF_SetWindowName(frame, LOOT .. " / " .. TRADE)
                 end
+
+                FCF_SetChatWindowFontSize(nil, frame, 12)
+                FCF_SavePositionAndDimensions(frame)
+                FCF_StopDragging(frame)
             end
 
             -- keys taken from "ChatTypeGroup" but doesnt add: "OPENING", "TRADESKILLS", "PET_INFO", "COMBAT_MISC_INFO", "COMMUNITIES_CHANNEL", "PET_BATTLE_COMBAT_LOG", "PET_BATTLE_INFO", "TARGETICONS"
@@ -130,7 +130,7 @@ local function button1_OnClick()
 
             -- set the chat groups names in class color to enabled for all chat groups which players names appear
             chatGroup = {"SAY", "EMOTE", "YELL", "WHISPER", "PARTY", "PARTY_LEADER", "RAID", "RAID_LEADER", "RAID_WARNING", "INSTANCE_CHAT", "INSTANCE_CHAT_LEADER", "GUILD", "OFFICER", "ACHIEVEMENT", "GUILD_ACHIEVEMENT", "COMMUNITIES_CHANNEL"}
-            for i = 1, _G.MAX_WOW_CHAT_CHANNELS do
+            for i = 1, MAX_WOW_CHAT_CHANNELS do
                 tinsert(chatGroup, "CHANNEL" .. i)
             end
             for _, v in ipairs(chatGroup) do

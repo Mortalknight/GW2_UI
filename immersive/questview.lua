@@ -61,9 +61,9 @@ local function styleRewards()
     QuestInfoRewardsFrame.ItemReceiveText:SetTextColor(1, 1, 1)
     QuestInfoRewardsFrame.ItemReceiveText:SetShadowColor(0, 0, 0, 1)
 
-    QuestInfoRewardsFrame.PlayerTitleText:SetFont("UNIT_NAME_FONT", 12, "")
-    QuestInfoRewardsFrame.PlayerTitleText:SetTextColor(1, 1, 1)
-    QuestInfoRewardsFrame.PlayerTitleText:SetShadowColor(0, 0, 0, 1)
+    --QuestInfoRewardsFrame.PlayerTitleText:SetFont("UNIT_NAME_FONT", 12, "")
+    --QuestInfoRewardsFrame.PlayerTitleText:SetTextColor(1, 1, 1)
+    --QuestInfoRewardsFrame.PlayerTitleText:SetShadowColor(0, 0, 0, 1)
 
     QuestInfoXPFrame.ReceiveText:SetFont("UNIT_NAME_FONT", 12, "")
     QuestInfoXPFrame.ReceiveText:SetTextColor(1, 1, 1)
@@ -159,8 +159,12 @@ GW.AddForProfiling("questview", "setQuestGiverAnimation", setQuestGiverAnimation
 local function showRewards()
     local money = GetRewardMoney()
     local items = GetNumQuestRewards()
-    local spells = GetNumRewardSpells()
+    local questID = GetQuestID()
+    local spells = {}
     local choices = GetNumQuestChoices()
+    if questID and questID > 0 then
+        spells = C_QuestInfoSystem.GetQuestRewardSpells(questID) or {}
+    end
 
     local qinfoHeight = 300
     local qinfoTop = -20
@@ -212,7 +216,7 @@ local function showRewards()
         end
     end
 
-    if (money > 0 or items > 0 or spells > 0 or choices > 0) and questState ~= "PROGRESS" then
+    if (money > 0 or items > 0 or (spells and #spells > 0) or choices > 0) and questState ~= "PROGRESS" then
         UIFrameFadeIn(QuestInfoRewardsFrame, 0.1, 0, 1)
         QuestInfoRewardsFrame:SetParent(GwQuestviewFrame)
         QuestInfoRewardsFrame:SetWidth(400)
