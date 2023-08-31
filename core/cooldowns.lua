@@ -12,6 +12,14 @@ local TimeFormats = {
     [4] = "%d"
 }
 
+local function Cooldown_UnbuggedTime(timer)
+	if timer.buggedTime then
+		return time() - GetTime()
+	else
+		return GetTime()
+	end
+end
+
 do
     local YEAR, DAY, HOUR, MINUTE = 31557600, 86400, 3600, 60
     local function GetTimeInfo(s, hideSecondLabel)
@@ -68,7 +76,8 @@ local function Cooldown_OnUpdate(self, elapsed)
         Cooldown_StopTimer(self)
         return 2
     else
-        local now = GetTime()
+        local now = Cooldown_UnbuggedTime(self)
+
         if self.endCooldown and now >= self.endCooldown then
             Cooldown_StopTimer(self)
         elseif Cooldown_BelowScale(self) then
@@ -160,14 +169,16 @@ local function OnSetCooldown(self, start, duration)
         timer.paused = nil
 
         local now = GetTime()
-        if start <= now then
+        if start <= (now + 1) then
             timer.endTime = start + duration
+            timer.self.buggedTime = nil
         else
             -- https://github.com/Stanzilla/WoWUIBugs/issues/47
             local startup = time() - now
             local cdTime = (2 ^ 32) / 1000 - start
             local startTime = startup - cdTime
             timer.endTime = startTime + duration
+            timer.self.buggedTime = true
         end
 
         timer.endCooldown = timer.endTime - 0.05
@@ -180,7 +191,7 @@ end
 local function OnPauseCooldown(self)
     local timer = self.timer
     if timer then
-        timer.paused = GetTime()
+        timer.paused = Cooldown_UnbuggedTime(timer)
     end
 end
 
@@ -188,7 +199,8 @@ local function OnResumeCooldown(self)
     local timer = self.timer
     if timer and timer.paused then
         -- calcuate time since paused
-        timer.endTime = timer.start + timer.duration + (GetTime() - timer.paused)
+        local now = Cooldown_UnbuggedTime(timer)
+		timer.endTime = timer.start + timer.duration + (now - timer.paused)
         timer.endCooldown = timer.endTime - 0.05
 
         timer.paused = nil
