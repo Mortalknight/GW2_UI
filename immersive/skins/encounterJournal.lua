@@ -199,10 +199,10 @@ local function encounterJournalSkin()
     GW.HandlePortraitFrame(EJ)
     GW.CreateFrameHeaderWithBody(EJ, EncounterJournalTitleText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon")
 
-    EJ.navBar:GwStripTextures()
-    EJ.navBar.overlay:GwStripTextures()
+    EJ.navBar:GwStripTextures(true)
+    EJ.navBar.overlay:GwStripTextures(true)
     EJ.navBar:SetPoint("TOPLEFT", 0, -33)
-    EJ.navBar.SetPoint = GW.NoOp
+    --EJ.navBar.SetPoint = GW.NoOp
 
     EJ.navBar.tex = EJ.navBar:CreateTexture(nil, "BACKGROUND", nil, 0)
     EJ.navBar.tex:SetPoint("TOPLEFT", EJ.navBar, "TOPLEFT", 0, 20)

@@ -254,21 +254,22 @@ local NavBarCheck = {
     end,
 }
 
+local function NavButtonXOffset(button, point, anchor, point2, _, yoffset, skip)
+    if not skip then
+        button:SetPoint(point, anchor, point2, -1, yoffset, true)
+    end
+end
+
 local function SkinNavBarButtons(self)
     local func = NavBarCheck[self:GetParent():GetName()]
     if func and not func() then return end
 
-    local navButton = self.navList[#self.navList]
+    local total = #self.navList
+    local navButton = self.navList[total]
     if navButton and not navButton.isSkinned then
         navButton:GwStripTextures()
-
-        local r = {navButton:GetRegions()}
-        for _,c in pairs(r) do
-            if c:GetObjectType() == "FontString" then
-                c:SetTextColor(1, 1, 1, 1)
-                c:SetShadowOffset(0, 0)
-            end
-        end
+        navButton:GetFontString():SetTextColor(1, 1, 1, 1)
+        navButton:GetFontString():SetShadowOffset(0, 0)
 
         local tex = navButton:CreateTexture(nil, "BACKGROUND")
         tex:SetPoint("LEFT", navButton, "LEFT")
@@ -296,21 +297,17 @@ local function SkinNavBarButtons(self)
             end
         end
 
+        if total == 2 then
+            -- EJ.navBar.home.xoffset = -1
+            NavButtonXOffset(navButton, navButton:GetPoint())
+            hooksecurefunc(navButton, "SetPoint", NavButtonXOffset)
+        end
+
+        navButton.xoffset = -1
         navButton.isSkinned = true
     end
 end
 hooksecurefunc("NavBar_AddButton", SkinNavBarButtons)
-
--- set xoffset for the navbar to -1 taints the dropdown
-hooksecurefunc("NavBar_CheckLength", function(self)
-    local func = NavBarCheck[self:GetParent():GetName()]
-    if func and not func() then return end
-
-    local lastButton = self.navList[2]
-    if lastButton then
-	    lastButton:SetPoint("LEFT", self.navList[1], "RIGHT", -1, 0)
-    end
-end)
 
 local function HandlePortraitFrame(frame, createBackdrop)
     local name = frame and frame.GetName and frame:GetName()
