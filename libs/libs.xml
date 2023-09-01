@@ -15,4 +15,5 @@
     <Script file="LibDispel\LibDispel.lua"/>
     <Script file="LibGW2\LibGW2.lua"/>
     <Script file="LibUIDropDownMenu\LibUIDropDownMenu.lua"/>
+    <Include file="oUF\oUF.xml"/>
 </Ui>
