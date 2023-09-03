@@ -1,4 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Include file="oUF\oUF.xml"/>
+    <Include file='oUF\oUF_Plugins\oUF_Plugins.xml'/>
     <Script file="LibStub\LibStub.lua"/>
     <Script file="CallbackHandler-1.0\CallbackHandler-1.0.lua"/>
 
@@ -15,5 +17,4 @@
     <Script file="LibDispel\LibDispel.lua"/>
     <Script file="LibGW2\LibGW2.lua"/>
     <Script file="LibUIDropDownMenu\LibUIDropDownMenu.lua"/>
-    <Include file="oUF\oUF.xml"/>
 </Ui>

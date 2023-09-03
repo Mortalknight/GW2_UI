@@ -140,6 +140,18 @@ units\playerFrame.lua
 units\raidMarker.lua
 units\petGrid.lua
 
+units\grid\elements\middleIcon.lua
+units\grid\elements\threathIndicator.lua
+units\grid\elements\readyCheck.lua
+units\grid\elements\summonIcon.lua
+units\grid\elements\resurrectionIcon.lua
+units\grid\elements\healtValueText.lua
+units\grid\elements\health.lua
+units\grid\elements\power.lua
+units\grid\elements\nameText.lua
+units\grid\elements\tags.lua
+units\grid\raidframes.lua
+
 mainbar\upcomingSpells.xml
 mainbar\upcomingSpells.lua
 mainbar\micromenu.xml

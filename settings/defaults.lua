@@ -615,6 +615,13 @@ GW_DEFAULT["raid_pos"]["xOfs"] = 65
 GW_DEFAULT["raid_pos"]["yOfs"] = -60
 GW_DEFAULT["raid_pos"]["hasMoved"] = false
 
+GW_DEFAULT["raid_pos_new"] = {}
+GW_DEFAULT["raid_pos_new"]["point"] = "TOPLEFT"
+GW_DEFAULT["raid_pos_new"]["relativePoint"] = "TOPLEFT"
+GW_DEFAULT["raid_pos_new"]["xOfs"] = 65
+GW_DEFAULT["raid_pos_new"]["yOfs"] = -60
+GW_DEFAULT["raid_pos_new"]["hasMoved"] = false
+
 GW_DEFAULT["raid_pet_pos"] = {}
 GW_DEFAULT["raid_pet_pos"]["point"] = "TOPLEFT"
 GW_DEFAULT["raid_pet_pos"]["relativePoint"] = "TOPLEFT"

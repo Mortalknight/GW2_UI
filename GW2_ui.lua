@@ -803,6 +803,8 @@ local function evPlayerLogin(self)
         GW.LoadPetGrid()
     end
 
+    GW.InitializeRaidFrames()
+
     GW.UpdateHudScale()
 
     if (forcedMABags) then

@@ -39,7 +39,7 @@ local function createNormalUnitFrame(ftype, revert)
 
     GW.hookStatusbarBehaviour(f.absorbOverlay,true)
     GW.hookStatusbarBehaviour(f.antiHeal,true)
-    GW.hookStatusbarBehaviour(f.health,true)
+    GW.hookStatusbarBehaviour(f.health, true)
     GW.hookStatusbarBehaviour(f.absorbbg,true)
     GW.hookStatusbarBehaviour(f.healPrediction,false)
     GW.hookStatusbarBehaviour(f.castingbarNormal,false)

@@ -20,6 +20,8 @@ local function CheckRole()
 end
 GW.CheckRole = CheckRole
 
+assert(GW.oUF, 'GW2_UI was unable to locate oUF.')
+
 --Constants
 local gameLocale = GetLocale()
 GW.myguid = UnitGUID("player")
@@ -61,7 +63,6 @@ GW.MOVABLE_FRAMES = {}
 GW.scaleableFrames = {}
 GW.scaleableMainHudFrames = {}
 GW.animations = {}
-GW.oUF = {}
 GW.BackdropTemplates = {}
 GW.AchievementFrameSkinFunction = {}
 

@@ -508,6 +508,7 @@ local function GridUpdateAwayData(self, profile, checkReadyCheck)
         iconState = 2
     end
 
+     --done
     if iconState == 1 then
         self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
         ShouldShowClassIcon(self, true)
@@ -515,11 +516,13 @@ local function GridUpdateAwayData(self, profile, checkReadyCheck)
         GW.SetClassIcon(self.classicon, classIndex)
     end
 
+     --done
     if self.targetmarker and not (readyCheckStatus or self.readyCheckInProgress) and settings.raidUnitMarkers[profile] then
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
         GW.GridUpdateRaidMarkers(self)
     end
 
+     --done
     if iconState == 2 then
         if settings.raidClassColor[profile] then
             self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/classicons")
@@ -534,6 +537,7 @@ local function GridUpdateAwayData(self, profile, checkReadyCheck)
         GripToggleSummonOrResurrection(self, profile) -- prio 3 and 4
     end
 
+    --done
     if readyCheckStatus or self.readyCheckInProgress then
         self.readyCheckInProgress = true
         self.classicon:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
@@ -549,6 +553,7 @@ local function GridUpdateAwayData(self, profile, checkReadyCheck)
         end
     end
 
+     --done
     if not UnitIsConnected(self.unit) then
         self.classicon:SetTexture("Interface/CharacterFrame/Disconnect-Icon")
         self.classicon:SetTexCoord(unpack(GW.TexCoords))
@@ -556,6 +561,7 @@ local function GridUpdateAwayData(self, profile, checkReadyCheck)
         self.healthbar:SetStatusBarColor(0.3, 0.3, 0.3, 1)
     end
 
+     --done
     if UnitIsConnected(self.unit) and (UnitPhaseReason(self.unit) or not UnitInRange(self.unit)) then
         local r, g, b = self.healthbar:GetStatusBarColor()
 
@@ -565,6 +571,7 @@ local function GridUpdateAwayData(self, profile, checkReadyCheck)
         self.classicon:SetAlpha(1)
     end
 
+    --done
     if UnitThreatSituation(self.unit) and UnitThreatSituation(self.unit) > 2 then
         self.aggroborder:Show()
     else

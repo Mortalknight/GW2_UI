@@ -41,7 +41,7 @@ local oUF = ns.oUF
 local Private = oUF.Private
 
 local unitExists = Private.unitExists
-
+-- GW2 modified
 local function OnFinished(self)
 	local element = self:GetParent()
 	element:Hide()
@@ -53,6 +53,15 @@ local function OnFinished(self)
 	--]]
 	if(element.PostUpdateFadeOut) then
 		element:PostUpdateFadeOut()
+	end
+
+	element.__owner.readyCheckInProgress = false
+
+	-- check if the middle icon was shown
+	if element.__owner:IsElementEnabled("MiddleIcon") then
+		if element.__owner._middleIconIsShown then
+			element.__owner.MiddleIcon:Show()
+		end
 	end
 end
 
@@ -69,14 +78,22 @@ local function Update(self, event)
 		element:PreUpdate()
 	end
 
+	-- check if the middle icon was shown
+	if self:IsElementEnabled("MiddleIcon") then
+		if self._middleIconIsShown then
+			self.MiddleIcon:Hide()
+		end
+	end
+
 	local status = GetReadyCheckStatus(unit)
 	if(unitExists(unit) and status) then
+		self.readyCheckInProgress = true
 		if(status == 'ready') then
-			element:SetTexture(element.readyTexture)
+			element:SetTexCoord(0, 1, 0.50, 0.75)
 		elseif(status == 'notready') then
-			element:SetTexture(element.notReadyTexture)
+			element:SetTexCoord(0, 1, 0.25, 0.50)
 		else
-			element:SetTexture(element.waitingTexture)
+			element:SetTexCoord(0, 1, 0, 0.25)
 		end
 
 		element.status = status
@@ -84,11 +101,12 @@ local function Update(self, event)
 	elseif(event ~= 'READY_CHECK_FINISHED') then
 		element.status = nil
 		element:Hide()
+		self.readyCheckInProgress = false
 	end
 
 	if(event == 'READY_CHECK_FINISHED') then
 		if(element.status == 'waiting') then
-			element:SetTexture(element.notReadyTexture)
+			element:SetTexCoord(0, 1, 0.25, 0.50) -- not ready
 		end
 
 		element.Animation:Play()
@@ -139,11 +157,13 @@ local function Enable(self, unit)
 		Animation:SetFromAlpha(1)
 		Animation:SetToAlpha(0)
 		Animation:SetDuration(element.fadeTime or 1.5)
-		Animation:SetStartDelay(element.finishedTime or 10)
+		Animation:SetStartDelay(element.finishedTime or 1.5)
 
 		self:RegisterEvent('READY_CHECK', Path, true)
 		self:RegisterEvent('READY_CHECK_CONFIRM', Path, true)
 		self:RegisterEvent('READY_CHECK_FINISHED', Path, true)
+
+		element:SetTexture("Interface/AddOns/GW2_UI/textures/party/readycheck")
 
 		return true
 	end

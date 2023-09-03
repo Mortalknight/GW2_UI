@@ -31,6 +31,7 @@ local SUMMON_STATUS_PENDING = Enum.SummonStatus.Pending or 1
 local SUMMON_STATUS_ACCEPTED = Enum.SummonStatus.Accepted or 2
 local SUMMON_STATUS_DECLINED = Enum.SummonStatus.Declined or 3
 
+-- gw2 modified
 local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 
@@ -56,8 +57,22 @@ local function Update(self, event, unit)
 		end
 
 		element:Show()
+		self.summonInProgress = true
+		-- check if the middle icon was shown
+		if self:IsElementEnabled("MiddleIcon") then
+			if self._middleIconIsShown then
+				self.MiddleIcon:Hide()
+			end
+		end
 	else
 		element:Hide()
+		self.summonInProgress = false
+		-- check if the middle icon was shown
+		if self:IsElementEnabled("MiddleIcon") then
+			if self._middleIconIsShown then
+				self.MiddleIcon:Show()
+			end
+		end
 	end
 
 	--[[ Callback: SummonIndicator:PostUpdate(status)

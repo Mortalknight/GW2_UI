@@ -25,6 +25,8 @@ A default texture will be applied if the widget is a Texture and doesn't have a 
 local _, ns = ...
 local oUF = ns.oUF
 
+-- gw2 modified
+
 local function Update(self, event, unit)
 	if(self.unit ~= unit) then return end
 
@@ -42,8 +44,23 @@ local function Update(self, event, unit)
 	local incomingResurrect = UnitHasIncomingResurrection(unit)
 	if(incomingResurrect) then
 		element:Show()
+		self.resurrectionInProgress = true
+
+		-- check if the middle icon was shown
+		if self:IsElementEnabled("MiddleIcon") then
+			if self._middleIconIsShown then
+				self.MiddleIcon:Hide()
+			end
+		end
 	else
 		element:Hide()
+		self.resurrectionInProgress = false
+		-- check if the middle icon was shown
+		if self:IsElementEnabled("MiddleIcon") then
+			if self._middleIconIsShown then
+				self.MiddleIcon:Show()
+			end
+		end
 	end
 
 	--[[ Callback: ResurrectIndicator:PostUpdate(incomingResurrect)

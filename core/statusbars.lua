@@ -57,7 +57,10 @@ local function GetFillAmount(self)
   return self.fillAmount
 end
 
-local function SetFillAmount(self,value)
+local function SetFillAmount(self, value, maxValue, needConvertToPorcent)
+  if maxValue and needConvertToPorcent then
+    value = value / maxValue
+  end
 
   local isVertical = (self:GetOrientation()=="VERTICAL") or false
   local totalWidth = isVertical and self:GetHeight() or self:GetWidth()
@@ -142,7 +145,7 @@ local function SetFillAmount(self,value)
   end
 end
 
-local function  barUpdate(self,delta)
+local function  barUpdate(self, delta)
   self.animatedTime = self.animatedTime + delta
   local animationProgress = self.animatedTime / math.max(0.00000001, self.animatedDuration)
   local newValue = 0
@@ -151,8 +154,7 @@ local function  barUpdate(self,delta)
   else
      newValue = lerpEaseOut(self.animatedStartValue,self.animatedValue,animationProgress)
   end
-
-  SetFillAmount(self,newValue)
+  SetFillAmount(self, newValue)
   if self.onUpdateAnimation then
     self.onUpdateAnimation(self,animationProgress,delta)
   end
@@ -175,7 +177,10 @@ local function setCustomAnimation(self,from,to,time)
   self:SetScript("OnUpdate",barUpdate)
 end
 
-local function onupdate_AnimateBar(self,value)
+local function onupdate_AnimateBar(self,value, maxValue, needConvertToPorcent)
+    if maxValue and needConvertToPorcent then
+      value = value / maxValue
+    end
     self.animatedValue = value;
     self.animatedStartValue = GetFillAmount(self)
     self.animatedTime = 0
@@ -192,7 +197,7 @@ local function onupdate_AnimateBar(self,value)
       return
     end
 
-    self:SetScript("OnUpdate",barUpdate)
+    self:SetScript("OnUpdate", barUpdate)
 end
 
 local function ForceFIllAmount(self,value)

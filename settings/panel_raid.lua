@@ -159,11 +159,12 @@ local function LoadRaidProfile(panel)
         L["Set where the raid frame container should be anchored.\n\nBy position: Always the same as the container's position on screen.\nBy growth: Always opposite to the growth direction."],
         "RAID_ANCHOR",
         function()
+            GW.UpdateGridSettings()
             GW.UpdateRaidGridSettings()
             GW.GridContainerUpdateAnchor("RAID")
         end,
-        {"POSITION", "GROWTH", "TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
-        {L["By position on screen"], L["By growth direction"], "TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
+        {"TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
+        {"TOP", "LEFT", "BOTTOM", "CENTER", "TOPLEFT", "BOTTOMLEFT", "BOTTOMRIGHT", "RIGHT", "TOPRIGHT"},
         nil,
         {["RAID_FRAMES"] = true}
     )
@@ -192,6 +193,7 @@ local function LoadRaidProfile(panel)
         "RAID_WIDTH",
         function()
             GW.UpdateRaidGridSettings()
+            GW.UpdateGridSettings()
             GW.GridUpdateFramesPosition("RAID")
             GW.GridUpdateFramesLayout("RAID")
         end,
@@ -209,6 +211,7 @@ local function LoadRaidProfile(panel)
         "RAID_HEIGHT",
         function()
             GW.UpdateRaidGridSettings()
+            GW.UpdateGridSettings()
             GW.GridUpdateFramesPosition("RAID")
             GW.GridUpdateFramesLayout("RAID")
         end,

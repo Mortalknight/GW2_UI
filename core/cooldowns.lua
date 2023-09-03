@@ -171,14 +171,14 @@ local function OnSetCooldown(self, start, duration)
         local now = GetTime()
         if start <= (now + 1) then
             timer.endTime = start + duration
-            timer.self.buggedTime = nil
+            timer.buggedTime = nil
         else
             -- https://github.com/Stanzilla/WoWUIBugs/issues/47
             local startup = time() - now
             local cdTime = (2 ^ 32) / 1000 - start
             local startTime = startup - cdTime
             timer.endTime = startTime + duration
-            timer.self.buggedTime = true
+            timer.buggedTime = true
         end
 
         timer.endCooldown = timer.endTime - 0.05

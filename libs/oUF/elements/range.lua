@@ -46,11 +46,12 @@ local function Update(self, event)
 		element:PreUpdate()
 	end
 
+	-- GW2 modiefied
 	local inRange, checkedRange
 	local connected = UnitIsConnected(unit)
 	if(connected) then
 		inRange, checkedRange = UnitInRange(unit)
-		if(checkedRange and not inRange) then
+		if(checkedRange and not inRange) or UnitPhaseReason(unit) then
 			self:SetAlpha(element.outsideAlpha)
 		else
 			self:SetAlpha(element.insideAlpha)
