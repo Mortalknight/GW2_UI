@@ -15,10 +15,13 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.10.1",{
+    {ct.bug,[=[10.1.7 fixes]=]},
+})
+
 addChange("6.10.0",{
     {ct.bug,[=[Added evoker ebon might bar]=]},
 })
-
 
 addChange("6.9.2",{
     {ct.bug,[=[Fix an actionbars issue which can crash the client]=]},

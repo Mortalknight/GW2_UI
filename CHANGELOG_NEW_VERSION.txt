@@ -1,3 +1,7 @@
+6.10.1
+FIXES
+ - 10.1.7 fixes
+
 6.10.0
 NEW
  - Added evoker ebon might bar
