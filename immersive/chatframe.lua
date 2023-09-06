@@ -1015,6 +1015,8 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
         elseif strsub(chatType, 1, 18) == "GUILD_ACHIEVEMENT" then
             local message = format(arg1, GetPlayerLink(arg2, ("[%s]"):format(coloredName)))
             frame:AddMessage(message, info.r, info.g, info.b, info.id, nil, nil)
+        elseif chatType == "PING" then
+            frame:AddMessage(arg1, info.r, info.g, info.b, info.id, nil, nil)
         elseif chatType == "IGNORED" then
             frame:AddMessage(format(CHAT_IGNORED, arg2), info.r, info.g, info.b, info.id, nil, nil)
         elseif chatType == "FILTERED" then
