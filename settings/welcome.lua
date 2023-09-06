@@ -104,7 +104,7 @@ local function button1_OnClick()
             end
 
             -- keys taken from "ChatTypeGroup" which weren't added above to ChatFrame1
-            chatGroup = {"COMBAT_XP_GAIN", "COMBAT_HONOR_GAIN", "COMBAT_FACTION_CHANGE", "SKILL", "LOOT", "CURRENCY", "MONEY"}
+            chatGroup = {"PING", "COMBAT_XP_GAIN", "COMBAT_HONOR_GAIN", "COMBAT_FACTION_CHANGE", "SKILL", "LOOT", "CURRENCY", "MONEY"}
             ChatFrame_RemoveAllMessageGroups(ChatFrame4)
             for _, v in ipairs(chatGroup) do
                 ChatFrame_AddMessageGroup(ChatFrame4, v)
