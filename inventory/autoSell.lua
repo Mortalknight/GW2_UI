@@ -116,39 +116,39 @@ end
 local function SellJunkFrame_OnEvent(self, event, arg1)
     if event == "MERCHANT_SHOW" then
         -- Check for vendors that refuse to buy items
-        self:RegisterEvent("UI_ERROR_MESSAGE")
+        --self:RegisterEvent("UI_ERROR_MESSAGE")
         -- Do nothing if shift key is held down
         if IsShiftKeyDown() then return end
         -- Check if we need to ignore these vendor
-        if IgnoreVendors[GW.GetUnitCreatureId("npc")] then return end
+        --if IgnoreVendors[GW.GetUnitCreatureId("npc")] then return end
         -- Cancel existing ticker if present
-        if SellJunkTicker then SellJunkTicker._cancelled = true end
+        --if SellJunkTicker then SellJunkTicker._cancelled = true end
         -- Sell grey items using ticker (ends when all grey items are sold or iteration count reached)
-        SellJunkTicker = NewAutoSellTicker(0.2, sellJunk, IterationCount)
+        --SellJunkTicker = NewAutoSellTicker(0.2, sellJunk, IterationCount)
         -- use blizzard auto sell function
-        --C_MerchantFrame.SellAllJunkItems() -- delayed to 10.1.7
-        self:RegisterEvent("ITEM_LOCKED")
+        C_MerchantFrame.SellAllJunkItems()
+        --self:RegisterEvent("ITEM_LOCKED")
     elseif event == "ITEM_LOCKED" then
-        GwBagFrame.smsj:Show()
-        self:UnregisterEvent("ITEM_LOCKED")
+        --GwBagFrame.smsj:Show()
+        --self:UnregisterEvent("ITEM_LOCKED")
     elseif event == "MERCHANT_CLOSED" then
         -- If merchant frame is closed, stop selling
-        StopSelling()
+        --StopSelling()
     elseif event == "UI_ERROR_MESSAGE" then
-        if arg1 == 46 then
-            StopSelling() -- Vendor refuses to buy items
-        end
+        --if arg1 == 46 then
+        --    StopSelling() -- Vendor refuses to buy items
+        --end
     end
 end
 
 local function SetupVendorJunk(active)
     if active then
         SellJunkFrame:RegisterEvent("MERCHANT_SHOW")
-        SellJunkFrame:RegisterEvent("MERCHANT_CLOSED")
+        --SellJunkFrame:RegisterEvent("MERCHANT_CLOSED")
         SellJunkFrame:SetScript("OnEvent", SellJunkFrame_OnEvent)
     else
         SellJunkFrame:UnregisterEvent("MERCHANT_SHOW")
-        SellJunkFrame:UnregisterEvent("MERCHANT_CLOSED")
+        --SellJunkFrame:UnregisterEvent("MERCHANT_CLOSED")
         SellJunkFrame:SetScript("OnEvent", nil)
     end
 end
