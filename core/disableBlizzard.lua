@@ -218,10 +218,6 @@ local function DisableBlizzardFrames()
                 frame:UnregisterAllEvents()
             end
         end
-
-        --MainMenuBar.SetPositionForStatusBars = GW.NoOp
-        --MultiActionBar_HideAllGrids = GW.NoOp
-        --MultiActionBar_ShowAllGrids = GW.NoOp
     end
 end
 GW.DisableBlizzardFrames = DisableBlizzardFrames
