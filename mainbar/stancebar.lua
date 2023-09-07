@@ -1,6 +1,7 @@
 local _, GW = ...
 local GetSetting = GW.GetSetting
 local NeedAdjustMaxStanceButtons = false
+local NeedStanceButtonStyling = false
 local NUM_STANCE_SLOTS = NUM_STANCE_SLOTS or 10
 local WispSplode = [[Interface\Icons\Spell_Nature_WispSplode]]
 
@@ -135,6 +136,7 @@ local function AdjustMaxStanceButtons(self)
         if not self.buttons[i] then
             self.buttons[i] = CreateFrame("CheckButton", format(self:GetName() .. "Button%d", i), self, "StanceButtonTemplate")
             self.buttons[i]:SetID(i)
+            self.buttons[i].parentName = self:GetName()
         end
 
         local blizz = _G[format("StanceButton%d", i)]
@@ -173,8 +175,13 @@ local function StanceButton_OnEvent(self, event)
             AdjustMaxStanceButtons(self)
             NeedAdjustMaxStanceButtons = false
         end
-    elseif event == "UPDATE_SHAPESHIFT_FORM" or event == "UPDATE_SHAPESHIFT_USABLE" or event == "ACTIONBAR_PAGE_CHANGED" then
-        StyleStanceBarButtons()
+    elseif event == "UPDATE_SHAPESHIFT_FORM" or event == "UPDATE_SHAPESHIFT_USABLE" or event == "ACTIONBAR_PAGE_CHANGED" or NeedStanceButtonStyling then
+        if inCombat then
+            NeedStanceButtonStyling = true
+        else
+            StyleStanceBarButtons()
+            NeedStanceButtonStyling = false
+        end
     elseif event == "UPDATE_SHAPESHIFT_COOLDOWN" then
         UpdateCooldown()
     elseif event == "UPDATE_BINDINGS" then
