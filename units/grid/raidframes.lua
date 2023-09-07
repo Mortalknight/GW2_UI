@@ -164,6 +164,7 @@ local function Style(self)
     self.ReadyCheckIndicator = GW.Construct_ReadyCheck(self)
     self.SummonIndicator = GW.Construct_SummonIcon(self)
     self.ResurrectIndicator = GW.Construct_ResurrectionIcon(self)
+    GW.Construct_PredictionBar(self)
 
     return self
 end
@@ -187,6 +188,7 @@ local function UpdateGridFrames(frame, profile)
     GW.UpdateReadyCheckSettings(frame)
     GW.UpdateSummonIconSettings(frame)
     GW.UpdateResurrectionIconSettings(frame)
+    GW.Update_PredictionBars(frame)
 
 
     -- Update header values

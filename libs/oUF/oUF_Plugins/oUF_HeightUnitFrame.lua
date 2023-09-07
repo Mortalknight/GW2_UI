@@ -5,7 +5,7 @@ local _FRAMES = {}
 local CheckHighlightFrame
 
 local function Update(self, event)
-	local element = self.Health.bg
+	local element = self.Health.highlightBorder
     local guid = UnitGUID(self.unit)
     local guidTarget = UnitGUID("target")
 

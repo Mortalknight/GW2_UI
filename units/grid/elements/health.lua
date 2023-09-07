@@ -5,7 +5,7 @@ local function PostUpdateHealth(self, _, cur, max)
 end
 
 local function PostUpdateHealthColor(self, unit)
-    local parent = self:GetParent()
+    local parent = self:GetParent():GetParent():GetParent()
     local color = {}
 
     if parent.useClassColor then
@@ -45,28 +45,75 @@ local function UpdateHealthOverride(self, event, unit)
 end
 
 local function Construct_HealthBar(frame)
-    local health = GW.createNewStatusbar('$parent_HealthBar', frame, "GwStatusBarBar", true)
+    local healthPredictionbar = GW.createNewStatusbar('$parent_HealthPredictionBar', frame, "GwStatusBarBar", false)
+    healthPredictionbar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    healthPredictionbar:SetPoint('TOPLEFT', frame, "TOPLEFT")
+    healthPredictionbar:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
+    healthPredictionbar:SetMinMaxValues(0, 1)
+    healthPredictionbar:SetFrameLevel(10) --Make room for Portrait and Power which should be lower by default
+    healthPredictionbar.customMaskSize = 32
+    healthPredictionbar.strechMask = true
+    healthPredictionbar:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
-    health:SetFrameLevel(10) --Make room for Portrait and Power which should be lower by default
-    health.Override = UpdateHealthOverride
-	health.PostUpdate = PostUpdateHealth
-	health.PostUpdateColor = PostUpdateHealthColor
+    local absorbBar = GW.createNewStatusbar('$parent_AbsorbBar', healthPredictionbar, "GwStatusBarBar", true)
+    absorbBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb")
+    absorbBar:SetPoint('TOPLEFT', frame, "TOPLEFT")
+    absorbBar:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
+    absorbBar:SetMinMaxValues(0, 1)
+    absorbBar.customMaskSize = 32
+    absorbBar.strechMask = true
+    absorbBar:SetStatusBarColor(1,1,1,0.66)
+
+    local health = GW.createNewStatusbar('$parent_HealthBar', absorbBar, "GwStatusBarBar", true)
+    health:SetPoint('TOPLEFT', frame, "TOPLEFT")
+    health:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
     health:SetMinMaxValues(0, 1)
+    health.customMaskSize = 32
+    health.strechMask = true
 
-    health.bg = health:CreateTexture(nil, 'BORDER')
-    health.bg:SetPoint("TOPLEFT", -1, 1)
-    health.bg:SetPoint("BOTTOMRIGHT", 1, -1)
+    local healAbsorbBar = GW.createNewStatusbar('$parent_AntiHealBar', health, "GwStatusBarBar", true)
+    healAbsorbBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal")
+    healAbsorbBar:SetPoint('TOPLEFT', frame, "TOPLEFT")
+    healAbsorbBar:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
+    healAbsorbBar:SetMinMaxValues(0, 1)
+    healAbsorbBar.customMaskSize = 32
+    healAbsorbBar.strechMask = true
+
+    local overAbsorb = GW.createNewStatusbar('$parent_AbsorbOverlayHealBar', healAbsorbBar, "GwStatusBarBar", true)
+    overAbsorb:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb")
+    overAbsorb:SetPoint('TOPLEFT', frame, "TOPLEFT")
+    overAbsorb:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
+    overAbsorb:SetMinMaxValues(0, 1)
+    overAbsorb.customMaskSize = 32
+    overAbsorb.strechMask = true
+    overAbsorb:SetStatusBarColor(1,1,1,0.66)
+
+    -- Register with oUF
+    frame.HealthPrediction = {
+        healthPredictionbar = healthPredictionbar,
+        absorbBar = absorbBar,
+        healAbsorbBar = healAbsorbBar,
+        overAbsorb = overAbsorb,
+        maxOverflow = 1,
+    }
+
+    health.bg = healthPredictionbar:CreateTexture(nil, 'BORDER')
+    health.bg:SetPoint("TOPLEFT", 0, 0)
+    health.bg:SetPoint("BOTTOMRIGHT", 0, 0)
     health.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
     health.bg:SetVertexColor(0, 0, 0, 1)
     health.bg.multiplier = 1
 
-    health.customMaskSize = 32
-    health.strechMask = true
+    health.highlightBorder = frame:CreateTexture(nil, 'BORDER', nil, -7)
+    health.highlightBorder:SetPoint("TOPLEFT", -1, 1)
+    health.highlightBorder:SetPoint("BOTTOMRIGHT", 1, -1)
+    health.highlightBorder:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    health.highlightBorder:SetVertexColor(0, 0, 0, 1)
+    health.highlightBorder.multiplier = 1
 
-	--health:GwCreateBackdrop(nil, nil, nil, nil, true)
-
-	--local clipFrame = UF:Construct_ClipFrame(frame, health)
-	--clipFrame:SetScript('OnUpdate', UF.HealthClipFrame_OnUpdate)
+    health.Override = UpdateHealthOverride
+	health.PostUpdate = PostUpdateHealth
+	health.PostUpdateColor = PostUpdateHealthColor
 
 	return health
 end

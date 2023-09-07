@@ -140,6 +140,7 @@ units\playerFrame.lua
 units\raidMarker.lua
 units\petGrid.lua
 
+units\grid\elements\predictionBars.lua
 units\grid\elements\middleIcon.lua
 units\grid\elements\threathIndicator.lua
 units\grid\elements\readyCheck.lua

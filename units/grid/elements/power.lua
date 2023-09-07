@@ -12,7 +12,7 @@ end
 local function Construct_PowerBar(frame)
     local power = CreateFrame('StatusBar', '$parent_PowerBar', frame)
 
-    power:SetFrameLevel(11) --Make room for Portrait and Power which should be lower by default
+    power:SetFrameLevel(15) --Make room for Portrait and Power which should be lower by default
     power.PostUpdate = PostUpdatePower
 
     power:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
