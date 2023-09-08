@@ -137,14 +137,9 @@ local function AfterStyleCallback(self)
 end
 
 local function Style(self)
-    --self:SetSize(settings.raidWidth*2, settings.raidHeight*2)
-
     self:RegisterForClicks('AnyUp')
-    self:SetScript("OnLeave", function(self)
+    self:SetScript("OnLeave", function()
         GameTooltip_Hide()
-        if UnitGUID(self.unit) ~= UnitGUID("target") then
-            --self.Health.bg:SetVertexColor(0, 0, 0, 1)
-        end
     end)
     self:SetScript(
         "OnEnter",
@@ -152,7 +147,6 @@ local function Style(self)
             GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
             GameTooltip:SetUnit(self.unit)
             GameTooltip:Show()
-            --self.Health.bg:SetVertexColor(1, 1, 1, 1)
         end
     )
 
@@ -168,6 +162,7 @@ local function Style(self)
     self.ResurrectIndicator = GW.Construct_ResurrectionIcon(self)
     GW.Construct_PredictionBar(self)
     self.Auras = GW.Construct_Auras(self)
+    self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
 
     return self
 end
@@ -202,6 +197,7 @@ local function UpdateGridFrames(frame, profile)
     GW.UpdateResurrectionIconSettings(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
+    GW.Update_MissingAuraIndicator(frame)
 
 
     -- Update header values

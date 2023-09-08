@@ -152,6 +152,7 @@ units\grid\elements\health.lua
 units\grid\elements\power.lua
 units\grid\elements\nameText.lua
 units\grid\elements\tags.lua
+units\grid\elements\missingAuraIndicator.lua
 units\grid\raidframes.lua
 
 mainbar\upcomingSpells.xml

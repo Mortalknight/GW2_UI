@@ -38,6 +38,7 @@ local function Construct_AuraIcon(self, button)
     button.background:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
     button.background:Hide()
 end
+GW.Construct_AuraIcon = Construct_AuraIcon
 
 local function PostUpdateButton(self, button, unit, data, position)
     local parent = self:GetParent()

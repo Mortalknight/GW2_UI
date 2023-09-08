@@ -798,7 +798,7 @@ local function GridShowBuffIcon(parent, i, btnIndex, x, y, icon, isMissing, expi
         elseif settings.raidAuraTooltipInCombat[profile] == "ALWAYS" then
             frame:EnableMouse(true)
         elseif settings.raidAuraTooltipInCombat[profile] == "OUT_COMBAT" then
-            frame:EnableMouse(true)
+            frame:EnableMouse(true) -- this is trigger by an event
         end
     end
 

@@ -76,7 +76,9 @@ local oUF = ns.oUF
 local function UpdateTooltip(self)
 	if(GameTooltip:IsForbidden()) then return end
 
-	if(self.isHarmful) then
+	if self.tooltipByIndex then
+		GameTooltip:SetSpellByID(self.tooltipByIndex)
+	elseif(self.isHarmful) then
 		GameTooltip:SetUnitDebuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
 	else
 		GameTooltip:SetUnitBuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
@@ -145,6 +147,7 @@ local function CreateButton(element, index)
 
 	return button
 end
+ns.oUF_CreateAuraButton = CreateButton
 
 local function SetPosition(element, from, to)
 	local width = element.width or element.size or 16
