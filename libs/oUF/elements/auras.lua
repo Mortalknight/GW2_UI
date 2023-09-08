@@ -409,6 +409,11 @@ local function UpdateAuras(self, event, unit, updateInfo)
 					if(auras.allBuffs[auraInstanceID]) then
 						auras.allBuffs[auraInstanceID] = nil
 
+						-- GW2 hook: needed for aura indicators
+						if(auras.PostUpdateInfoRemovedAuraID) then
+							auras:PostUpdateInfoRemovedAuraID(auraInstanceID)
+						end
+
 						if(auras.activeBuffs[auraInstanceID]) then
 							auras.activeBuffs[auraInstanceID] = nil
 							buffsChanged = true

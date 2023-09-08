@@ -3,10 +3,7 @@ local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 local BleedList = GW.Libs.Dispel:GetBleedList()
 local BadDispels = GW.Libs.Dispel:GetBadList()
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
-
-local spellIDs = {}
-local spellBookSearched = 0
-
+local INDICATORS = GW.INDICATORS
 
 local function Construct_AuraIcon(self, button)
     button.Count:ClearAllPoints()
@@ -83,6 +80,7 @@ local function PostUpdateButton(self, button, unit, data, position)
 end
 
 local function FilterAura(self, unit, data)
+    local parent = self:GetParent()
     local shouldDisplay = false
     local isImportant, isDispellable
 
@@ -96,10 +94,64 @@ local function FilterAura(self, unit, data)
             shouldDisplay = (data.sourceUnit == "player" or data.sourceUnit == "pet" or data.sourceUnit == "vehicle") and (data.canApplyAura or data.isPlayerAura) and not SpellIsSelfBuff(data.spellId)
         end
 
+        -- check here for indicators
+        -- indicators
+        local indicators = GW.AURAS_INDICATORS[GW.myclass]
+        local indicator = indicators[data.spellId]
+        if indicator then
+            for _, pos in ipairs(INDICATORS) do
+                if parent.raidIndicators[pos] == (indicator[4] or data.spellId) then
+                    local frame = self["indicator" .. pos]
+                    local r, g, b = unpack(indicator)
+
+                    frame.isBar = pos == "BAR"
+                    if frame.isBar then
+                        frame.expires = data.expirationTime
+                        frame.duration = data.duration
+                        frame.isBar = "BAR"
+                    else
+                        -- Stacks
+                        if data.applications > 1 then
+                            frame.text:SetText(data.applications)
+                            frame.text:SetFont(UNIT_NAME_FONT, data.applications > 9 and 9 or 11, "OUTLINE")
+                            frame.text:Show()
+                        else
+                            frame.text:Hide()
+                        end
+
+                        -- Icon
+                        if parent.showRaidIndicatorIcon then
+                            frame.icon:SetTexture(data.icon)
+                        else
+                            frame.icon:SetColorTexture(r, g, b)
+                        end
+
+                        -- Cooldown
+                        frame.cooldown:SetCooldown(data.expirationTime - data.duration, data.duration)
+                        if not frame.cooldown.hooked then
+                            frame.cooldown:HookScript("OnCooldownDone", function()
+                                frame:Hide()
+                                frame.auraInstanceId = nil
+                                frame.isBar = nil
+                            end)
+                        end
+                        if parent.showRaidIndicatorTimer then
+                            frame.cooldown:Show()
+                        else
+                            frame.cooldown:Hide()
+                        end
+
+                        -- do not show that buff as normal buff
+                        shouldDisplay = false
+                    end
+                    frame.auraInstanceId = data.auraInstanceID
+                    frame:Show()
+                end
+            end
+        end
+
         return shouldDisplay
     else
-        local parent = self:GetParent()
-
         isDispellable = data.dispelName and GW.Libs.Dispel:IsDispellableByMe(data.dispelName) or false
         isImportant = (parent.raidShowImportendInstanceDebuffs and GW.ImportendRaidDebuff[data.spellId]) or false
 
@@ -128,6 +180,34 @@ local function FilterAura(self, unit, data)
     end
 end
 
+-- Update indicator data
+local function PostProcessAuraData(self, unit, data)
+    for _, pos in ipairs(INDICATORS) do
+        local frame = self["indicator" .. pos]
+        if frame and frame.auraInstanceId and frame.auraInstanceId == data.auraInstanceID then
+            if frame.isBar then
+                frame.expires = data.expirationTime
+                frame.duration = data.duration
+            else
+                frame.cooldown:SetCooldown(data.expirationTime - data.duration, data.duration)
+            end
+        end
+    end
+
+    return data
+end
+
+local function PostUpdateInfoRemovedAuraID(self, auraInstanceID)
+    for _, pos in ipairs(INDICATORS) do
+        local frame = self["indicator" .. pos]
+        if frame and frame.auraInstanceId and frame.auraInstanceId == auraInstanceID then
+            frame:Hide()
+            frame.isBar = nil
+            frame.auraInstanceId = nil
+        end
+    end
+end
+
 local function HandleTooltip(self, event)
     self.Auras:ForceUpdate()
 end
@@ -148,11 +228,69 @@ local function Construct_Auras(frame)
     auras.PostCreateButton = Construct_AuraIcon
     auras.PostUpdateButton = PostUpdateButton
     auras.FilterAura = FilterAura
+    auras.PostUpdateInfoRemovedAuraID = PostUpdateInfoRemovedAuraID
+    auras.PostProcessAuraData = PostProcessAuraData
 
     auras.size = 14 -- dynamic
 
     frame:RegisterEvent("PLAYER_REGEN_DISABLED", HandleTooltip, true)
     frame:RegisterEvent("PLAYER_REGEN_ENABLED", HandleTooltip, true)
+
+
+    -- construct the aura indicators
+    local indicatorTopleft = CreateFrame("Frame", '$parentIndicatorTopleft', frame, "GwRaidFrameIndicator")
+    indicatorTopleft:SetPoint("TOPLEFT", frame, "TOPLEFT", 0.3, -0.3)
+    indicatorTopleft:SetFrameLevel(20)
+    auras.indicatorTOPLEFT = indicatorTopleft
+
+    local indicatorTop = CreateFrame("Frame", '$parentIndicatorTop', frame, "GwRaidFrameIndicator")
+    indicatorTop:SetPoint("TOP", frame, "TOP", 0, -0.3)
+    indicatorTop:SetFrameLevel(20)
+    auras.indicatorTOP = indicatorTop
+
+    local indicatorLeft = CreateFrame("Frame", '$parentIndicatorLeft', frame, "GwRaidFrameIndicator")
+    indicatorLeft:SetPoint("LEFT", frame, "LEFT", 0.3, 0)
+    indicatorLeft:SetFrameLevel(20)
+    auras.indicatorLEFT = indicatorLeft
+
+    local indicatorTopright = CreateFrame("Frame", '$parentIndicatorTopright', frame, "GwRaidFrameIndicator")
+    indicatorTopright:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -0.3, -0.3)
+    indicatorTopright:SetFrameLevel(20)
+    auras.indicatorTOPRIGHT = indicatorTopright
+
+    local indicatorCenter = CreateFrame("Frame", '$parentIndicatorCenter', frame, "GwRaidFrameIndicator")
+    indicatorCenter:SetPoint("CENTER", frame, "CENTER", 0, 0)
+    indicatorCenter:SetFrameLevel(20)
+    auras.indicatorCENTER = indicatorCenter
+
+    local indicatorRight = CreateFrame("Frame", '$parentIndicatorRight', frame, "GwRaidFrameIndicator")
+    indicatorRight:SetPoint("RIGHT", frame, "RIGHT", -0.3, 0)
+    indicatorRight:SetFrameLevel(20)
+    auras.indicatorRIGHT = indicatorRight
+
+    local indicatorBar = CreateFrame("StatusBar", '$parentIndicatorBar', frame)
+    indicatorBar:SetFrameLevel(20)
+    indicatorBar:SetOrientation("VERTICAL")
+    indicatorBar:SetMinMaxValues(0, 1)
+    indicatorBar:SetSize(2, 2)
+    indicatorBar:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 3, 0)
+    indicatorBar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 3, 0)
+    indicatorBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    indicatorBar:SetStatusBarColor(1, 0.5, 0)
+    indicatorBar:SetScript("OnUpdate", function(self)
+        if self:IsShown() and self.expires and self.duration then
+            self:SetValue((self.expires - GetTime()) / self.duration)
+        end
+    end)
+    indicatorBar:Hide()
+
+    indicatorBar.bg = indicatorBar:CreateTexture(nil, "BORDER")
+    indicatorBar.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    indicatorBar.bg:SetPoint("TOPLEFT", indicatorBar, "TOPLEFT", 0, 1)
+    indicatorBar.bg:SetPoint("BOTTOMRIGHT", indicatorBar, "BOTTOMRIGHT", 1, -1)
+    indicatorBar.bg:SetVertexColor(0, 0, 0, 1)
+    auras.indicatorBAR = indicatorBar
+
 	return auras
 end
 GW.Construct_Auras = Construct_Auras

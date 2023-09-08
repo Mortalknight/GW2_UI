@@ -2,6 +2,7 @@ local _, GW = ...
 local GW_UF = GW.oUF
 local GetSetting = GW.GetSetting
 local FillTable = GW.FillTable
+local INDICATORS = GW.INDICATORS
 
 local headers = {}
 local missing, ignored = {}, {}
@@ -73,9 +74,9 @@ local function UpdateSettings()
     settings.raidHeight.RAID = GetSetting("RAID_HEIGHT")
     settings.raidAnchor = GetSetting("RAID_ANCHOR")
 
-    ----for _, pos in ipairs(INDICATORS) do
-        --settings.raidIndicators[pos] = GetSetting("INDICATOR_" .. pos, true)
-    --end
+    for _, pos in ipairs(INDICATORS) do
+        settings.raidIndicators[pos] = GetSetting("INDICATOR_" .. pos, true)
+    end
 
     missing = FillTable(missing, true, strsplit(",", (settings.aurasMissing:trim():gsub("%s*,%s*", ","))))
     ignored = FillTable(ignored, true, strsplit(",", (settings.aurasIgnored:trim():gsub("%s*,%s*", ","))))
@@ -183,6 +184,9 @@ local function UpdateGridFrames(frame, profile)
     frame.showAuraTooltipInCombat = settings.raidAuraTooltipInCombat[profile]
     frame.ignoredAuras = ignored
     frame.missingAuras = missing
+    frame.raidIndicators = settings.raidIndicators
+    frame.showRaidIndicatorIcon = settings.raidIndicatorIcon
+    frame.showRaidIndicatorTimer = settings.raidIndicatorTime
 
     frame:SetSize(frame.unitWidth, frame.unitHeight)
 
