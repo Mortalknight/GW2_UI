@@ -770,7 +770,7 @@ end
 
 local function GridShowBuffIcon(parent, i, btnIndex, x, y, icon, isMissing, expires, profile)
     local size = 14
-    local marginX, marginY = x * (size + 2), y * (size + 2)
+    local marginX, marginY = x * (size + 2), y * (size + 2) -- 16, 0
     local frame = _G["Gw" .. parent:GetName() .. "BuffItemFrame" .. btnIndex]
 
     if not frame then

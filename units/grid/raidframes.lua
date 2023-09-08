@@ -1,8 +1,10 @@
 local _, GW = ...
 local GW_UF = GW.oUF
 local GetSetting = GW.GetSetting
+local FillTable = GW.FillTable
 
 local headers = {}
+local missing, ignored = {}, {}
 
 local settings = {
     raidClassColor = {},
@@ -75,8 +77,8 @@ local function UpdateSettings()
         --settings.raidIndicators[pos] = GetSetting("INDICATOR_" .. pos, true)
     --end
 
-    --missing = FillTable(missing, true, strsplit(",", (settings.aurasMissing:trim():gsub("%s*,%s*", ","))))
-    --ignored = FillTable(ignored, true, strsplit(",", (settings.aurasIgnored:trim():gsub("%s*,%s*", ","))))
+    missing = FillTable(missing, true, strsplit(",", (settings.aurasMissing:trim():gsub("%s*,%s*", ","))))
+    ignored = FillTable(ignored, true, strsplit(",", (settings.aurasIgnored:trim():gsub("%s*,%s*", ","))))
 
     -- Update this settings on a spec switch
     if not settingsEventFrame.isSetup then
@@ -165,6 +167,7 @@ local function Style(self)
     self.SummonIndicator = GW.Construct_SummonIcon(self)
     self.ResurrectIndicator = GW.Construct_ResurrectionIcon(self)
     GW.Construct_PredictionBar(self)
+    self.Auras = GW.Construct_Auras(self)
 
     return self
 end
@@ -176,8 +179,17 @@ local function UpdateGridFrames(frame, profile)
     frame.showRealmFlags = settings.raidUnitFlag[profile]
     frame.healthStringFormat = settings.raidUnitHealthString[profile]
     frame.showTargetmarker = settings.raidUnitMarkers[profile]
+    frame.unitWidth = settings.raidWidth[profile]
+    frame.unitHeight = settings.raidHeight[profile]
+    frame.raidShowImportendInstanceDebuffs = settings.raidShowImportendInstanceDebuffs[profile]
+    frame.showAllDebuffs = settings.raidShowDebuffs[profile]
+    frame.showOnlyDispelDebuffs = settings.raidShowOnlyDispelDebuffs[profile]
+    frame.showImportendInstanceDebuffs = settings.raidShowImportendInstanceDebuffs[profile]
+    frame.showAuraTooltipInCombat = settings.raidAuraTooltipInCombat[profile]
+    frame.ignoredAuras = ignored
+    frame.missingAuras = missing
 
-    frame:SetSize(settings.raidWidth[profile], settings.raidHeight[profile])
+    frame:SetSize(frame.unitWidth, frame.unitHeight)
 
     GW.Update_Healtbar(frame)
     GW.Update_Powerbar(frame)
@@ -189,6 +201,7 @@ local function UpdateGridFrames(frame, profile)
     GW.UpdateSummonIconSettings(frame)
     GW.UpdateResurrectionIconSettings(frame)
     GW.Update_PredictionBars(frame)
+    GW.UpdateAurasSettings(frame)
 
 
     -- Update header values

@@ -15,7 +15,7 @@ At least one of the above widgets must be present for the element to work.
 
 ## Options
 
-.disableMouse             - Disables mouse events (boolean)
+.disableMouse             - Disables mouse events (boolean) 
 .disableCooldown          - Disables the cooldown spiral (boolean)
 .size                     - Aura button size. Defaults to 16 (number)
 .width                    - Aura button width. Takes priority over `size` (number)
