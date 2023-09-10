@@ -53,8 +53,16 @@ local function Update(self)
     self._middleIconIsShown = shouldShowIcon
 end
 
+local function ForceUpdate(element)
+	if(not element.__owner.unit) then return end
+	return Update(element.__owner)
+end
+
 local function Enable(self)
     if self.MiddleIcon then
+        self.MiddleIcon.__owner = self
+		self.MiddleIcon.ForceUpdate = ForceUpdate
+
         self:RegisterEvent("PARTY_MEMBER_DISABLE", Update)
         self:RegisterEvent("PARTY_MEMBER_ENABLE", Update)
         self:RegisterEvent("UNIT_CONNECTION", Update)

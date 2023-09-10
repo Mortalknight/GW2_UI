@@ -9,14 +9,15 @@ local function Update(self, event)
     local guid = UnitGUID(self.unit)
     local guidTarget = UnitGUID("target")
 
+    element:SetVertexColor(0, 0, 0, 1)
+
+    if self:IsMouseOver() then
+        element:SetVertexColor(1, 1, 1, 1)
+        return
+    end
+
     if guidTarget then
         if guid == guidTarget then
-            element:SetVertexColor(1, 1, 1, 1)
-        else
-            element:SetVertexColor(0, 0, 0, 1)
-        end
-    else
-        if guid == UnitGUID("mouseover") then
             element:SetVertexColor(1, 1, 1, 1)
         else
             element:SetVertexColor(0, 0, 0, 1)

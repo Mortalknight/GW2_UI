@@ -80,8 +80,15 @@ local function Update(self, event)
     end
 end
 
+local function ForceUpdate(element)
+	if(not element.__owner.unit) then return end
+	return Update(element.__owner)
+end
+
 local function Enable(self)
     if self.MissingBuffFrame then
+		self.MissingBuffFrame.ForceUpdate = ForceUpdate
+
         self:RegisterEvent("UNIT_AURA", Update, true)
         self.MissingBuffFrame:Show()
         self.MissingBuffFrame.createdButtons = self.MissingBuffFrame.createdButtons or 0

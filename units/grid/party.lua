@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local function GW2_GridRaid40StyleRegister(self)
+local function GW2_GridPartyStyleRegister(self)
     self:RegisterForClicks('AnyUp')
     self:SetScript("OnLeave", function()
         GameTooltip_Hide()
@@ -34,22 +34,22 @@ local function GW2_GridRaid40StyleRegister(self)
 
     return self
 end
-GW.GW2_GridRaid40StyleRegister = GW2_GridRaid40StyleRegister
+GW.GW2_GridPartyStyleRegister = GW2_GridPartyStyleRegister
 
-local function UpdateGridRaid40Frame(frame)
+local function UpdateGridPartyFrame(frame)
     -- set frame settings
-    frame.useClassColor = GW.GridSettings.raidClassColor.RAID40
-    frame.showResscoureBar = GW.GridSettings.raidUnitPowerBar.RAID40
-    frame.showRealmFlags = GW.GridSettings.raidUnitFlag.RAID40
-    frame.healthStringFormat = GW.GridSettings.raidUnitHealthString.RAID40
-    frame.showTargetmarker = GW.GridSettings.raidUnitMarkers.RAID40
-    frame.unitWidth = tonumber(GW.GridSettings.raidWidth.RAID40)
-    frame.unitHeight = tonumber(GW.GridSettings.raidHeight.RAID40)
-    frame.raidShowImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.RAID40
-    frame.showAllDebuffs = GW.GridSettings.raidShowDebuffs.RAID40
-    frame.showOnlyDispelDebuffs = GW.GridSettings.raidShowOnlyDispelDebuffs.RAID40
-    frame.showImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.RAID40
-    frame.showAuraTooltipInCombat = GW.GridSettings.raidAuraTooltipInCombat.RAID40
+    frame.useClassColor = GW.GridSettings.raidClassColor.PARTY
+    frame.showResscoureBar = GW.GridSettings.raidUnitPowerBar.PARTY
+    frame.showRealmFlags = GW.GridSettings.raidUnitFlag.PARTY
+    frame.healthStringFormat = GW.GridSettings.raidUnitHealthString.PARTY
+    frame.showTargetmarker = GW.GridSettings.raidUnitMarkers.PARTY
+    frame.unitWidth = tonumber(GW.GridSettings.raidWidth.PARTY)
+    frame.unitHeight = tonumber(GW.GridSettings.raidHeight.PARTY)
+    frame.raidShowImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.PARTY
+    frame.showAllDebuffs = GW.GridSettings.raidShowDebuffs.PARTY
+    frame.showOnlyDispelDebuffs = GW.GridSettings.raidShowOnlyDispelDebuffs.PARTY
+    frame.showImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.PARTY
+    frame.showAuraTooltipInCombat = GW.GridSettings.raidAuraTooltipInCombat.PARTY
     frame.ignoredAuras = GW.GridSettings.ignored
     frame.missingAuras = GW.GridSettings.missing
     frame.raidIndicators = GW.GridSettings.raidIndicators
@@ -76,4 +76,4 @@ local function UpdateGridRaid40Frame(frame)
 
     frame:UpdateAllElements("RefreshUnit")
 end
-GW.UpdateGridRaid40Frame = UpdateGridRaid40Frame
+GW.UpdateGridPartyFrame = UpdateGridPartyFrame

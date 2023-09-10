@@ -1,9 +1,5 @@
 local _, GW = ...
 
-local function PostUpdateHealth(self, _, cur, max)
-    self:SetFillAmount(cur/max)
-end
-
 local function PostUpdateHealthColor(self, unit)
     local parent = self:GetParent():GetParent():GetParent()
     local color = {}
@@ -14,8 +10,6 @@ local function PostUpdateHealthColor(self, unit)
     else
         color = {r= 0.207, g = 0.392, b = 0.168}
     end
-
-    self:SetStatusBarColor(color.r, color.g, color.b, color.a)
 
     if UnitIsConnected(unit) and (UnitPhaseReason(unit) or not UnitInRange(unit)) then
         self:SetStatusBarColor(color.r * 0.3, color.g * 0.3, color.b * 0.3)
@@ -31,11 +25,23 @@ local function UpdateHealthOverride(self, event, unit)
 	end
 
 	local cur, max = UnitHealth(unit), UnitHealthMax(unit)
+    element:SetFillAmount(cur/max)
     if cur == 0 then
         self.HealthValueText:SetTextColor(255, 0, 0)
     else
         self.HealthValueText:SetTextColor(1, 1, 1)
     end
+
+    local color = {}
+    if self.useClassColor then
+        local _, englishClass = UnitClass(unit)
+        color = GW.GWGetClassColor(englishClass, true)
+    else
+        color = {r= 0.207, g = 0.392, b = 0.168}
+    end
+
+    element:SetStatusBarColor(color.r, color.g, color.b, color.a)
+
 	element.cur = cur
 	element.max = max
 
@@ -112,8 +118,7 @@ local function Construct_HealthBar(frame)
     health.highlightBorder.multiplier = 1
 
     health.Override = UpdateHealthOverride
-	health.PostUpdate = PostUpdateHealth
-	health.PostUpdateColor = PostUpdateHealthColor
+	--health.PostUpdateColor = PostUpdateHealthColor
 
 	return health
 end

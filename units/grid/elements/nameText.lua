@@ -17,6 +17,6 @@ GW.Construct_NameText = Construct_NameText
 
 local function UpdateNameSettings(frame)
     local name = frame.Name
-    frame:Tag(name, ("[GW2_Grid:mainTank][GW2_Grid:leaderIcon][GW2_Grid:assistIcon][GW2_Grid:roleIcon][name][GW2_Grid:realmFlag(%s)]"):format(frame.showRealmFlags))
+    frame:Tag(name, ("[GW2_Grid:mainTank][GW2_Grid:leaderIcon][GW2_Grid:assistIcon][GW2_Grid:roleIcon][name] [GW2_Grid:realmFlag(%s)]"):format(frame.showRealmFlags))
 end
 GW.UpdateNameSettings = UpdateNameSettings

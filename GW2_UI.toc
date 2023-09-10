@@ -154,6 +154,9 @@ units\grid\elements\nameText.lua
 units\grid\elements\tags.lua
 units\grid\elements\missingAuraIndicator.lua
 units\grid\raidframes.lua
+units\grid\party.lua
+units\grid\raidPet.lua
+units\grid\constructor.lua
 
 mainbar\upcomingSpells.xml
 mainbar\upcomingSpells.lua

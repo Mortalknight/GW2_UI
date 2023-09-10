@@ -15,11 +15,15 @@ local function UpdateSettings()
     settings.raidAuraTooltipInCombat = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT")
     settings.raidClassColor = GetSetting("RAID_CLASS_COLOR")
     settings.raidUnitMarkers = GetSetting("RAID_UNIT_MARKERS")
+
     settings.raidGrow = GetSetting("RAID_GROW")
+
     settings.raidWidth = GetSetting("RAID_WIDTH")
     settings.raidHeight = GetSetting("RAID_HEIGHT")
+
     settings.raidContainerWidth = GetSetting("RAID_CONT_WIDTH")
     settings.raidContainerHeight = GetSetting("RAID_CONT_HEIGHT")
+
     settings.raidUnitsPerColumn = ceil(GetSetting("RAID_UNITS_PER_COLUMN"))
     settings.raidByRole = GetSetting("RAID_SORT_BY_ROLE")
     settings.raidAnchor = GetSetting("RAID_ANCHOR")
@@ -322,73 +326,6 @@ end
 GW.GridToggleFramesPreviewRaid = GridToggleFramesPreviewRaid
 
 local function LoadRaidFrames()
-    if not GwManageGroupButton then
-        GW.manageButton()
 
-        -- load missing and ignored auras, do it here because this code is only triggered from one of the 3 grids
-        GW.UpdateGridSettings()
-    end
-
-    UpdateSettings()
-
-    local container = CreateFrame("Frame", "GwRaidFrameContainer", UIParent, "GwRaidFrameContainer")
-    local pos = GetSetting("raid_pos")
-    container:ClearAllPoints()
-    container:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
-
-    RegisterMovableFrame(container, RAID_FRAMES_LABEL, "raid_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
-
-    hooksecurefunc(container.gwMover, "StopMovingOrSizing", function(frame)
-        if settings.raidAnchor == "GROWTH" then
-            local g1, g2 = strsplit("+", settings.raidGrow)
-            settings.raidAnchor = (IsIn("DOWN", g1, g2) and "TOP" or "BOTTOM") .. (IsIn("RIGHT", g1, g2) and "LEFT" or "RIGHT")
-        end
-
-        if settings.raidAnchor ~= "POSITION" then
-            local x = settings.raidAnchor:sub(-5) == "RIGHT" and frame:GetRight() - GetScreenWidth() or settings.raidAnchor:sub(-4) == "LEFT" and frame:GetLeft() or frame:GetLeft() + (frame:GetWidth() - GetScreenWidth()) / 2
-            local y = settings.raidAnchor:sub(1, 3) == "TOP" and frame:GetTop() - GetScreenHeight() or settings.raidAnchor:sub(1, 6) == "BOTTOM" and frame:GetBottom() or frame:GetBottom() + (frame:GetHeight() - GetScreenHeight()) / 2
-
-            frame:ClearAllPoints()
-            frame:SetPoint(settings.raidAnchor, x, y)
-        end
-
-        if not InCombatLockdown() then
-            container:ClearAllPoints()
-            container:SetPoint(frame:GetPoint())
-        end
-    end)
-
-    for i = 1, MAX_RAID_MEMBERS do
-        GW.CreateGridFrame(i, container, RaidGridOnEvent, GridOnUpdate, "RAID")
-    end
-
-    GridRaidUpdateFramesPosition()
-    GridRaidUpdateFramesLayout()
-
-    GwSettingsWindowMoveHud:HookScript("OnClick", function ()
-        GW.GridToggleFramesPreviewRaid(true, true)
-        GW.GridToggleFramesPreviewParty(true, true)
-    end)
-    GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.lockHud:HookScript("OnClick", function()
-        GW.GridToggleFramesPreviewRaid(true, true)
-        GW.GridToggleFramesPreviewParty(true, true)
-    end)
-
-    container:RegisterEvent("RAID_ROSTER_UPDATE")
-    container:RegisterEvent("GROUP_ROSTER_UPDATE")
-    container:RegisterEvent("PLAYER_ENTERING_WORLD")
-
-    container:SetScript("OnEvent", function(self, event)
-        if InCombatLockdown() then
-            self:RegisterEvent("PLAYER_REGEN_ENABLED")
-        end
-        if event == "PLAYER_REGEN_ENABLED" then self:UnregisterEvent("PLAYER_REGEN_ENABLED") end
-
-        GridRaidUpdateFramesLayout()
-
-        for i = 1, MAX_RAID_MEMBERS do
-            GW.GridUpdateFrameData(_G["GwCompactRaidFrame" .. i], i, "RAID")
-        end
-    end)
 end
 GW.LoadRaidFrames = LoadRaidFrames

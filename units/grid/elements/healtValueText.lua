@@ -8,7 +8,7 @@ local function Construct_HealtValueText(frame)
     healthValue:SetJustifyH("LEFT")
     healthValue:SetFont(UNIT_NAME_FONT, 11)
 
-	healthValue:SetPoint('TOPLEFT', frame.Name, "TOPLEFT", 2, -14)
+	healthValue:SetPoint('TOPLEFT', frame.Name, "BOTTOMLEFT", 2, 0)
 
 	return healthValue
 end

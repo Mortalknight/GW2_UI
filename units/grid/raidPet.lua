@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local function GW2_GridRaid40StyleRegister(self)
+local function GW2_GridRaidPetStyleRegister(self)
     self:RegisterForClicks('AnyUp')
     self:SetScript("OnLeave", function()
         GameTooltip_Hide()
@@ -32,31 +32,35 @@ local function GW2_GridRaid40StyleRegister(self)
         outsideAlpha = 1/2,
     }
 
+    self:DisableElement("MiddleIcon")
+
     return self
 end
-GW.GW2_GridRaid40StyleRegister = GW2_GridRaid40StyleRegister
+GW.GW2_GridRaidPetStyleRegister = GW2_GridRaidPetStyleRegister
 
-local function UpdateGridRaid40Frame(frame)
+local function UpdateGridRaidPetFrame(frame)
     -- set frame settings
-    frame.useClassColor = GW.GridSettings.raidClassColor.RAID40
-    frame.showResscoureBar = GW.GridSettings.raidUnitPowerBar.RAID40
-    frame.showRealmFlags = GW.GridSettings.raidUnitFlag.RAID40
-    frame.healthStringFormat = GW.GridSettings.raidUnitHealthString.RAID40
-    frame.showTargetmarker = GW.GridSettings.raidUnitMarkers.RAID40
-    frame.unitWidth = tonumber(GW.GridSettings.raidWidth.RAID40)
-    frame.unitHeight = tonumber(GW.GridSettings.raidHeight.RAID40)
-    frame.raidShowImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.RAID40
-    frame.showAllDebuffs = GW.GridSettings.raidShowDebuffs.RAID40
-    frame.showOnlyDispelDebuffs = GW.GridSettings.raidShowOnlyDispelDebuffs.RAID40
-    frame.showImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.RAID40
-    frame.showAuraTooltipInCombat = GW.GridSettings.raidAuraTooltipInCombat.RAID40
+    frame.useClassColor = GW.GridSettings.raidClassColor.RAID_PET
+    frame.showResscoureBar = GW.GridSettings.raidUnitPowerBar.RAID_PET
+    frame.showRealmFlags = GW.GridSettings.raidUnitFlag.RAID_PET
+    frame.healthStringFormat = GW.GridSettings.raidUnitHealthString.RAID_PET
+    frame.showTargetmarker = GW.GridSettings.raidUnitMarkers.RAID_PET
+    frame.unitWidth = tonumber(GW.GridSettings.raidWidth.RAID_PET)
+    frame.unitHeight = tonumber(GW.GridSettings.raidHeight.RAID_PET)
+    frame.raidShowImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.RAID_PET
+    frame.showAllDebuffs = GW.GridSettings.raidShowDebuffs.RAID_PET
+    frame.showOnlyDispelDebuffs = GW.GridSettings.raidShowOnlyDispelDebuffs.RAID_PET
+    frame.showImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.RAID_PET
+    frame.showAuraTooltipInCombat = GW.GridSettings.raidAuraTooltipInCombat.RAID_PET
     frame.ignoredAuras = GW.GridSettings.ignored
-    frame.missingAuras = GW.GridSettings.missing
+    --frame.missingAuras = GW.GridSettings.missing
     frame.raidIndicators = GW.GridSettings.raidIndicators
     frame.showRaidIndicatorIcon = GW.GridSettings.raidIndicatorIcon
     frame.showRaidIndicatorTimer = GW.GridSettings.raidIndicatorTime
     frame.raidDebuffScale = GW.GridSettings.raidDebuffScale
     frame.raidDispelDebuffScale = GW.GridSettings.raidDispelDebuffScale
+
+    frame:DisableElement("MiddleIcon")
 
     frame:SetSize(frame.unitWidth, frame.unitHeight)
     frame:ClearAllPoints()
@@ -76,4 +80,4 @@ local function UpdateGridRaid40Frame(frame)
 
     frame:UpdateAllElements("RefreshUnit")
 end
-GW.UpdateGridRaid40Frame = UpdateGridRaid40Frame
+GW.UpdateGridRaidPetFrame = UpdateGridRaidPetFrame

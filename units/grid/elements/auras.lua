@@ -53,7 +53,7 @@ local function PostUpdateButton(self, button, unit, data, position)
             end
         end
 
-        if data.dispelName and GW.DebuffColors[data.dispelName] then
+        if data.dispelName and DebuffColors[data.dispelName] then
             button.background:SetVertexColor(DebuffColors[data.dispelName].r, DebuffColors[data.dispelName].g, DebuffColors[data.dispelName].b)
         else
             button.background:SetVertexColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
@@ -100,7 +100,7 @@ local function FilterAura(self, unit, data)
         local indicator = indicators[data.spellId]
         if indicator then
             for _, pos in ipairs(INDICATORS) do
-                if parent.raidIndicators[pos] == (indicator[4] or data.spellId) then
+                if parent.raidIndicators and parent.raidIndicators[pos] and parent.raidIndicators[pos] == (indicator[4] or data.spellId) then
                     local frame = self["indicator" .. pos]
                     local r, g, b = unpack(indicator)
 

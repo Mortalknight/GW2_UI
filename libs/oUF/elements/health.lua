@@ -21,7 +21,7 @@ A default texture will be applied if the widget is a StatusBar and doesn't have 
 .considerSelectionInCombatHostile - Indicates whether selection should be considered hostile while the unit is in
                                     combat with the player (boolean)
 
-The following options are listed by priority. The first check that returns true decides the color of the bar.
+The following options are listed by priority. The first check that returns true decides the color of the bar. 
 
 .colorDisconnected - Use `self.colors.disconnected` to color the bar if the unit is offline (boolean)
 .colorTapping      - Use `self.colors.tapping` to color the bar if the unit isn't tapped by the player (boolean)
