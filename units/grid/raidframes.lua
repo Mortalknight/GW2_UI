@@ -27,6 +27,7 @@ local function GW2_GridRaid40StyleRegister(self)
     GW.Construct_PredictionBar(self) -- creates only the function regestration
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
+    self.PrivateAuras = GW.Construct_PrivateAura(self)
     self.Range = {
         insideAlpha = 1,
         outsideAlpha = 1/2,
@@ -73,6 +74,7 @@ local function UpdateGridRaid40Frame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
+    GW.UpdatePrivateAurasSettings(frame)
 
     frame:UpdateAllElements("RefreshUnit")
 end
