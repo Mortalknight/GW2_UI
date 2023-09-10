@@ -853,7 +853,7 @@ local function LoadPartyFrames()
         GW.manageButton()
 
         -- load missing and ignored auras, do it here because this code is only triggered from one of the 3 grids
-        GW.UpdateGridSettings()
+        --GW.UpdateGridSettings()
     end
 
     if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then

@@ -291,8 +291,6 @@ local function UpdateGridHeader(profile)
             local child = group:GetAttribute('child'..idx)
             while child do
                 child:ClearAllPoints()
-                print(profile, i, idx)
-
                 idx = idx + 1
                 child = group:GetAttribute('child'..idx)
             end
@@ -312,7 +310,6 @@ local function UpdateGridHeader(profile)
             end
 
             if not group.initialized then
-                --print(profile, i, settings.groupByRole[profile] and (-min(numGroups * (groupsPerRowCol * 5), MAX_RAID_MEMBERS) + 1) or -4)
                 group:SetAttribute('startingIndex', settings.groupByRole[profile] and (-min(numGroups * (groupsPerRowCol * 5), MAX_RAID_MEMBERS) + 1) or -4)
                 group:Show()
                 group.initialized = true
@@ -337,15 +334,18 @@ local function UpdateGridHeader(profile)
                 group:SetAttribute('filterOnPet', true)
             end
 
-            --print(profile, i, group:GetAttribute('columnAnchorPoint'))
-
-
             local groupWide = i == 1 and settings.groupByRole[profile] and strsub('1,2,3,4,5,6,7,8', 1, numGroups + numGroups-1)
             group:SetAttribute('groupFilter', groupWide or tostring(i))
 
             -- register the crrect visibility state driver. Only for header with more then one group
             if numGroups > 1 and i > 1 then
                 if settings.groupByRole[profile] then
+                    RegisterStateDriver(group, 'visibility', "hide")
+                else
+                    RegisterStateDriver(group, 'visibility', "show")
+                end
+            elseif profile == "PARTY" then
+                if not GetSetting("RAID_STYLE_PARTY") and not GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
                     RegisterStateDriver(group, 'visibility', "hide")
                 else
                     RegisterStateDriver(group, 'visibility', "show")
@@ -399,7 +399,6 @@ local function UpdateGridHeader(profile)
 
     header:SetSize(width - horizontalSpacing - groupSpacing, height - verticalSpacing - groupSpacing)
     header.gwMover:SetSize(width - horizontalSpacing - groupSpacing, height - verticalSpacing - groupSpacing)
-    --AdjustVisibility(profile)
 
     header.isUpdating = false
 end
@@ -445,10 +444,12 @@ local function Setup(self)
         end
 
         if profile == "RAID_PET" and not GetSetting("RAID_PET_FRAMES") then
-           -- options.visibility = '[group:raid] hide; [group:party] hide; hide'
+            options.visibility = 'hide'
         end
-        if profile == "PARTY" and not GetSetting("RAID_STYLE_PARTY") and not GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
-            --options.visibility = '[group:raid] hide; [group:party] hide; hide'
+        if profile == "PARTY" then
+            if not GetSetting("RAID_STYLE_PARTY") and not GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
+                options.visibility = 'hide'
+            end
         end
 
         RegisterStateDriver(Header, 'visibility', options.visibility)
@@ -471,7 +472,6 @@ local function Setup(self)
     C_Timer.After(0, function()
         for profile, _ in pairs(profiles) do
             UpdateSettings(profile)
-            --/run GW2_ADDON.UpdateGridSettings("RAID40", true)
         end
     end)
 end
@@ -480,9 +480,12 @@ local function Initialize()
         GW.manageButton()
     end
 
+    for profile, _ in pairs(profiles) do
+        UpdateSettings(profile)
+    end
+
     GW.Create_Tags()
     GW_UF:Factory(Setup)
-    --Setup(GW_UF)
 
 
 
