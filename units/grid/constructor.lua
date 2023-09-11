@@ -256,7 +256,7 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
     end
 
     if not onlyHeaderUpdate or updasteHeaderAndFrames then
-        if InCombatLockdown then
+        if InCombatLockdown() then
             settingsEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
         else
             settingsEventFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
