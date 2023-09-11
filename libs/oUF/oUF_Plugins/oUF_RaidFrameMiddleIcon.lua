@@ -15,6 +15,10 @@ local function Update(self)
     -- target marker
     -- Class icon if not classcolor
 
+    -- always in white
+    self.Name:SetTextColor(1, 1, 1)
+    self.HealthValueText:SetTextColor(1, 1, 1)
+
     -- disconnect
     if not UnitIsConnected(self.unit) then
         element:SetTexture("Interface/CharacterFrame/Disconnect-Icon")
@@ -28,7 +32,7 @@ local function Update(self)
         end
         ns.SetDeadIcon(element)
         self.Name:SetTextColor(255, 0, 0)
-
+        self.HealthValueText:SetTextColor(255, 0, 0)
         shouldShowIcon = true
     elseif self.showTargetmarker and index then -- targetmarker
         if index then

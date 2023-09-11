@@ -19,12 +19,6 @@ local function UpdateHealthOverride(self, event, unit)
 
 	local cur, max = UnitHealth(unit), UnitHealthMax(unit)
     element:SetFillAmount(cur/max)
-    if cur == 0 then
-        self.HealthValueText:SetTextColor(255, 0, 0)
-    else
-        self.HealthValueText:SetTextColor(1, 1, 1)
-    end
-
 	element.cur = cur
 	element.max = max
 
