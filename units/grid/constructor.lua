@@ -256,12 +256,17 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
     end
 
     if not onlyHeaderUpdate or updasteHeaderAndFrames then
-        for headerProfile, header in pairs(headers) do
-            if headerProfile == profile then
-                for i = 1, header.numGroups do
-                    local group = header.groups[i]
-                    for _, child in ipairs({ group:GetChildren() }) do
-                        GW["UpdateGrid" ..  header.profileName .. "Frame"](child, header.groupName)
+        if InCombatLockdown then
+            settingsEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        else
+            settingsEventFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
+            for headerProfile, header in pairs(headers) do
+                if headerProfile == profile then
+                    for i = 1, header.numGroups do
+                        local group = header.groups[i]
+                        for _, child in ipairs({ group:GetChildren() }) do
+                            GW["UpdateGrid" ..  header.profileName .. "Frame"](child, header.groupName)
+                        end
                     end
                 end
             end
@@ -443,7 +448,7 @@ local function UpdateGridHeader(profile)
 end
 GW.UpdateGridHeader = UpdateGridHeader
 
-local function CreateHeader(parent, options, overrideName, groupFilter)
+local function CreateHeader(parent, profile, options, overrideName, groupFilter)
     parent:SetActiveStyle('GW2_Grid' .. options.name)
 
     local header = parent:SpawnHeader(overrideName, (options.name == "RaidPet" and "SecureGroupPetHeaderTemplate" or nil), "custom " .. options.visibility,
@@ -452,10 +457,7 @@ local function CreateHeader(parent, options, overrideName, groupFilter)
         'showPlayer', true,
         'groupFilter', groupFilter,
         'groupingOrder', "1,2,3,4,5,6,7,8",
-        'oUF-initialConfigFunction', [[
-            self:SetHeight(19)
-            self:SetWidth(126)
-        ]]
+        'oUF-initialConfigFunction', format('self:SetWidth(%d); self:SetHeight(%d);', settings.raidWidth[profile], settings.raidHeight[profile])
     )
 
     return header
@@ -475,11 +477,11 @@ local function Setup(self)
         Header.profileName = options.name
         headers[profile] = Header
 
-        Header.groups[1] = CreateHeader(self, options, "GW2_" .. options.name .. "Group1")
+        Header.groups[1] = CreateHeader(self, profile, options, "GW2_" .. options.name .. "Group1")
 
         while options.numGroups > #Header.groups do
             local index = tostring(#Header.groups + 1)
-            tinsert(Header.groups, CreateHeader(self, options, "GW2_" .. options.name .. "Group" .. index, index))
+            tinsert(Header.groups, CreateHeader(self, profile, options, "GW2_" .. options.name .. "Group" .. index, index))
         end
 
         if profile == "RAID_PET" and not GetSetting("RAID_PET_FRAMES") then
@@ -524,7 +526,7 @@ local function Initialize()
     end
 
     GW.Create_Tags()
-    GW_UF:Factory(Setup)
+    Setup(GW_UF)
 
 
 
