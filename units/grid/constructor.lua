@@ -110,15 +110,54 @@ local settings = {
     startFromCenter = {},
     raidGrow = {},
     unitsPerColumn = {},
-    groupByRole = {}
+    raidWideSorting = {},
+    groupBy = {},
+    sortDirection = {},
+    sortMethod = {}
 }
 GW.GridSettings = settings
 
 local settingsEventFrame = CreateFrame("Frame")
 
+local headerGroupBy = {
+	CLASS = function(header, profile)
+		local sortMethod = settings.sortMethod[profile]
+		header:SetAttribute('groupingOrder', 'DEATHKNIGHT,DEMONHUNTER,DRUID,EVOKER,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR,MONK')
+		header:SetAttribute('sortMethod', sortMethod or 'NAME')
+		header:SetAttribute('groupBy', 'CLASS')
+	end,
+	ROLE = function(header, profile)
+		local sortMethod = settings.sortMethod[profile]
+		header:SetAttribute('groupingOrder', 'TANK,HEALER,DAMAGER,NONE')
+		header:SetAttribute('sortMethod', sortMethod or 'NAME')
+		header:SetAttribute('groupBy', 'ASSIGNEDROLE')
+	end,
+	NAME = function(header)
+		header:SetAttribute('groupingOrder', '1,2,3,4,5,6,7,8')
+		header:SetAttribute('sortMethod', 'NAME')
+		header:SetAttribute('groupBy', nil)
+	end,
+	GROUP = function(header, profile)
+		local sortMethod = settings.sortMethod[profile]
+		header:SetAttribute('groupingOrder', '1,2,3,4,5,6,7,8')
+		header:SetAttribute('sortMethod', sortMethod or 'INDEX')
+		header:SetAttribute('groupBy', 'GROUP')
+	end,
+	PETNAME = function(header)
+		header:SetAttribute('groupingOrder', '1,2,3,4,5,6,7,8')
+		header:SetAttribute('sortMethod', 'NAME')
+		header:SetAttribute('groupBy', nil)
+		header:SetAttribute('filterOnPet', true) --This is the line that matters. Without this, it sorts based on the owners name
+	end,
+	INDEX = function(header)
+		header:SetAttribute('groupingOrder', '1,2,3,4,5,6,7,8')
+		header:SetAttribute('sortMethod', 'INDEX')
+		header:SetAttribute('groupBy', nil)
+	end,
+}
+
 local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
     -- generell settings
-    settings.fontEnabled = GetSetting("FONTS_ENABLED")
     settings.raidDebuffScale = GetSetting("RAIDDEBUFFS_Scale")
     settings.raidDispelDebuffScale = GetSetting("DISPELL_DEBUFFS_Scale")
     settings.raidIndicatorIcon = GetSetting("INDICATORS_ICON")
@@ -190,9 +229,21 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
     settings.unitsPerColumn.RAID_PET = tonumber(GetSetting("RAID_UNITS_PER_COLUMN_PET"))
     settings.unitsPerColumn.RAID40 = tonumber(GetSetting("RAID_UNITS_PER_COLUMN"))
 
-    settings.groupByRole.PARTY = GetSetting("RAID_SORT_BY_ROLE_PARTY")
-    settings.groupByRole.RAID_PET = GetSetting("RAID_SORT_BY_ROLE_PET")
-    settings.groupByRole.RAID40 = GetSetting("RAID_SORT_BY_ROLE")
+    settings.raidWideSorting.PARTY = GetSetting("RAID_WIDE_SORTING_PARTY")
+    settings.raidWideSorting.RAID_PET = GetSetting("RAID_WIDE_SORTING_PET")
+    settings.raidWideSorting.RAID40 = GetSetting("RAID_WIDE_SORTING")
+
+    settings.groupBy.PARTY = GetSetting("RAID_GROUP_BY_PARTY")
+    settings.groupBy.RAID_PET = GetSetting("RAID_GROUP_BY_PET")
+    settings.groupBy.RAID40 = GetSetting("RAID_GROUP_BY")
+
+    settings.sortDirection.PARTY = GetSetting("RAID_SORT_DIRECTION_PARTY")
+    settings.sortDirection.RAID_PET = GetSetting("RAID_SORT_DIRECTION_PET")
+    settings.sortDirection.RAID40 = GetSetting("RAID_SORT_DIRECTION")
+
+    settings.sortMethod.PARTY = GetSetting("RAID_RAID_SORT_METHOD_PARTY")
+    settings.sortMethod.RAID_PET = GetSetting("RAID_RAID_SORT_METHOD_PET")
+    settings.sortMethod.RAID40 = GetSetting("RAID_RAID_SORT_METHOD")
 
     -- Update this settings on a spec switch
     if not settingsEventFrame.isSetup then
@@ -262,22 +313,9 @@ local function UpdateGridHeader(profile)
     local HEIGHT = GW.Scale(settings.raidHeight[profile]) + verticalSpacing
     local HEIGHT_FIVE = HEIGHT * 5
     local WIDTH_FIVE = WIDTH * 5
-    local groupBy, groupingOrder, sortMethod, filterOnPet
-
-    if profile == "RAID_PET" then
-        groupBy = nil
-        groupingOrder = "1,2,3,4,5,6,7,8"
-        sortMethod = "NAME"
-        filterOnPet = true
-    elseif settings.groupByRole[profile] then
-        groupBy = "ASSIGNEDROLE"
-        groupingOrder = "TANK,HEALER,DAMAGER,NONE"
-        sortMethod = "NAME"
-    else
-        groupBy = "GROUP"
-        groupingOrder = "1,2,3,4,5,6,7,8"
-        sortMethod = "INDEX"
-    end
+    local groupBy = settings.groupBy[profile]
+    local sortDirection = settings.sortDirection[profile]
+    local raidWideSorting = settings.raidWideSorting[profile]
 
     for i = 1, numGroups do
         local group = header.groups[i]
@@ -310,7 +348,7 @@ local function UpdateGridHeader(profile)
             end
 
             if not group.initialized then
-                group:SetAttribute('startingIndex', settings.groupByRole[profile] and (-min(numGroups * (groupsPerRowCol * 5), MAX_RAID_MEMBERS) + 1) or -4)
+                group:SetAttribute('startingIndex', raidWideSorting and (-min(numGroups * (groupsPerRowCol * 5), MAX_RAID_MEMBERS) + 1) or -4)
                 group:Show()
                 group.initialized = true
             end
@@ -318,28 +356,29 @@ local function UpdateGridHeader(profile)
 
             group:SetAttribute('columnAnchorPoint', DIRECTION_TO_COLUMN_ANCHOR_POINT[settings.raidGrow[profile]])
 
-            group:SetAttribute('maxColumns', settings.groupByRole[profile] and numGroups or 1)
-            if profile == "PARTY" or (profile ~= "PARTY" and settings.groupByRole[profile]) then
+            group:SetAttribute('maxColumns', raidWideSorting and numGroups or 1)
+            if profile == "PARTY" or (profile ~= "PARTY" and raidWideSorting) then
                 group:SetAttribute('unitsPerColumn', settings.unitsPerColumn[profile])
             else
                 group:SetAttribute('unitsPerColumn', 5)
             end
 
             group:SetAttribute('showPlayer', true)
-
-            group:SetAttribute('groupBy', groupBy)
-            group:SetAttribute('groupingOrder', groupingOrder)
-            group:SetAttribute('sortMethod', sortMethod)
-            if filterOnPet then
-                group:SetAttribute('filterOnPet', true)
+            group:SetAttribute('sortDir', sortDirection)
+            -- sorting
+            if profile == "RAID_PET" then
+                headerGroupBy.PETNAME(group)
+            else
+                local func = headerGroupBy[groupBy] or headerGroupBy.INDEX
+                func(group, profile)
             end
 
-            local groupWide = i == 1 and settings.groupByRole[profile] and strsub('1,2,3,4,5,6,7,8', 1, numGroups + numGroups-1)
+            local groupWide = i == 1 and raidWideSorting and strsub('1,2,3,4,5,6,7,8', 1, numGroups + numGroups-1)
             group:SetAttribute('groupFilter', groupWide or tostring(i))
 
-            -- register the crrect visibility state driver. Only for header with more then one group
+            -- register the correct visibility state driver
             if numGroups > 1 and i > 1 then
-                if settings.groupByRole[profile] then
+                if raidWideSorting then
                     RegisterStateDriver(group, 'visibility', "hide")
                 else
                     RegisterStateDriver(group, 'visibility', "show")
@@ -348,13 +387,13 @@ local function UpdateGridHeader(profile)
                 if not GetSetting("RAID_STYLE_PARTY") and not GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
                     RegisterStateDriver(group, 'visibility', "hide")
                 else
-                    RegisterStateDriver(group, 'visibility', "show")
+                    RegisterStateDriver(group, 'visibility', profiles.PARTY.visibility)
                 end
             end
         end
 
         local point = DIRECTION_TO_GROUP_ANCHOR_POINT[settings.raidGrow[profile]]
-        if (isParty or settings.groupByRole[profile]) and settings.startFromCenter[profile] then
+        if (isParty or raidWideSorting) and settings.startFromCenter[profile] then
 			point = DIRECTION_TO_GROUP_ANCHOR_POINT['OUT+' .. settings.raidGrow[profile]]
 		end
 
@@ -406,10 +445,10 @@ GW.UpdateGridHeader = UpdateGridHeader
 
 local function CreateHeader(parent, options, overrideName, groupFilter)
     parent:SetActiveStyle('GW2_Grid' .. options.name)
-
+    print(options.name, options.name ~= "Party")
     local header = parent:SpawnHeader(overrideName, (options.name == "RaidPet" and "SecureGroupPetHeaderTemplate" or nil), "custom " .. options.visibility,
         'showParty', true,
-        'showRaid', true,
+        'showRaid', options.name ~= "Party",
         'showPlayer', true,
         'groupFilter', groupFilter,
         'groupingOrder', "1,2,3,4,5,6,7,8",

@@ -10,22 +10,24 @@ local StrLower = GW.StrLower
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
 local settingsMenuAddButton = GW.settingsMenuAddButton
+local addGroupHeader = GW.AddGroupHeader
 
 -- Profiles
 local function LoadRaidProfile(panel)
-    local p = CreateFrame("Frame", "GwSettingsRaidPanel", panel, "GwSettingsRaidPanelTmpl")
-    p.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.header:SetText(L["Group Frames"] )
-    p.sub:SetFont(UNIT_NAME_FONT, 12)
-    p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.sub:SetText(L["Edit the party and raid options to suit your needs."])
+    local raid40 = CreateFrame("Frame", "GwSettingsRaidPanel", panel, "GwSettingsPanelScrollTmpl")
+    raid40.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    raid40.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    raid40.header:SetText(L["Group Frames"] )
+    raid40.sub:SetFont(UNIT_NAME_FONT, 12)
+    raid40.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    raid40.sub:SetText(L["Edit the party and raid options to suit your needs."])
 
-    p.header:SetWidth(p.header:GetStringWidth())
-    p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
-    p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.breadcrumb:SetText(RAID..": 40")
+    raid40.header:SetWidth(raid40.header:GetStringWidth())
+    raid40.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    raid40.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    raid40.breadcrumb:SetText(RAID..": 40")
 
+    --[[
     p.buttonRaidPreview:SetScript("OnClick", function()
         --GW.GridToggleFramesPreviewRaid(false, false) -- disabled for now
     end)
@@ -38,28 +40,18 @@ local function LoadRaidProfile(panel)
     end)
     p.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
     p.buttonRaidPreview:SetEnabled(GetSetting("RAID_FRAMES"))
+    ]]
 
-    addOption(p, PET, L["Show a separate grid for raid pets"], "RAID_PET_FRAMES", function() GW.ShowRlPopup = true end, nil, {["RAID_FRAMES"] = true})
-    addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
-    addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
-    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
-    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
-    addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
-    addOption(p, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER", function() GW.UpdateGridSettings("RAID40", true) end, nil, {["RAID_FRAMES"] = true})
-    addOption(
-        p,
-        L["Sort Raid Frames by Role"],
-        L["Sort raid unit frames by role (tank, heal, damage) instead of group."],
-        "RAID_SORT_BY_ROLE",
-        function()
-            GW.UpdateGridSettings("RAID40", true)
-        end,
-        nil,
-        {["RAID_FRAMES"] = true}
-    )
+    addOption(raid40.scroll.scrollchild, PET, L["Show a separate grid for raid pets"], "RAID_PET_FRAMES", function() GW.ShowRlPopup = true end, nil, {["RAID_FRAMES"] = true})
+    addOption(raid40.scroll.scrollchild, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
+    addOption(raid40.scroll.scrollchild, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
+    addOption(raid40.scroll.scrollchild, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
+    addOption(raid40.scroll.scrollchild, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS"] = true})
+    addOption(raid40.scroll.scrollchild, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
+    addOption(raid40.scroll.scrollchild, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
+    addOption(raid40.scroll.scrollchild, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER", function() GW.UpdateGridSettings("RAID40", true) end, nil, {["RAID_FRAMES"] = true})
     addOptionDropdown(
-        p,
+        raid40.scroll.scrollchild,
         L["Show Aura Tooltips"],
         L["Show tooltips of buffs and debuffs."],
         "RAID_AURA_TOOLTIP_INCOMBAT",
@@ -73,7 +65,7 @@ local function LoadRaidProfile(panel)
     )
 
     addOptionDropdown(
-        p,
+        raid40.scroll.scrollchild,
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         nil,
         "RAID_UNIT_HEALTH",
@@ -92,7 +84,7 @@ local function LoadRaidProfile(panel)
     )
 
     addOptionDropdown(
-        p,
+        raid40.scroll.scrollchild,
         L["Show Country Flag"],
         L["Display a country flag based on the unit's language"],
         "RAID_UNIT_FLAGS",
@@ -114,7 +106,7 @@ local function LoadRaidProfile(panel)
     end
 
     addOptionDropdown(
-        p,
+        raid40.scroll.scrollchild,
         L["Set Raid Growth Direction"],
         L["Set the grow direction for raid frames."],
         "RAID_GROW",
@@ -134,7 +126,7 @@ local function LoadRaidProfile(panel)
     )
 
     addOptionSlider(
-        p,
+        raid40.scroll.scrollchild,
         L["Set Raid Units per Column"],
         L["Set the number of raid unit frames per column or row, depending on grow directions."],
         "RAID_UNITS_PER_COLUMN",
@@ -149,7 +141,7 @@ local function LoadRaidProfile(panel)
     )
 
     addOptionSlider(
-        p,
+        raid40.scroll.scrollchild,
         L["Set Raid Unit Width"],
         L["Set the width of the raid units."],
         "RAID_WIDTH",
@@ -164,7 +156,7 @@ local function LoadRaidProfile(panel)
     )
 
     addOptionSlider(
-        p,
+        raid40.scroll.scrollchild,
         L["Set Raid Unit Height"],
         L["Set the height of the raid units."],
         "RAID_HEIGHT",
@@ -178,7 +170,60 @@ local function LoadRaidProfile(panel)
         {["RAID_FRAMES"] = true}
     )
 
-    return p
+    -- Sorting
+    addGroupHeader(raid40.scroll.scrollchild, L["Grouping & Sorting"])
+    addOption(
+        raid40.scroll.scrollchild,
+        L["Raid-Wide Sorting"],
+        L["Enabling this allows raid-wide sorting however you will not be able to distinguish between groups."],
+        "RAID_WIDE_SORTING",
+        function()
+            GW.UpdateGridSettings("RAID40", true)
+        end,
+        nil,
+        {["RAID_FRAMES"] = true}
+    )
+    addOptionDropdown(
+        raid40.scroll.scrollchild,
+        L["Group By"],
+        L["Set the order that the group will sort."],
+        "RAID_GROUP_BY",
+        function()
+            GW.UpdateGridSettings("RAID40", true)
+        end,
+        {"CLASS", "GROUP", "INDEX", "NAME", "ROLE"},
+        {CLASS, GROUP, "Index", NAME, ROLE},
+        nil,
+        {["RAID_FRAMES"] = true}
+    )
+    addOptionDropdown(
+        raid40.scroll.scrollchild,
+        L["Sort Direction"],
+        nil,
+        "RAID_SORT_DIRECTION",
+        function()
+            GW.UpdateGridSettings("RAID40", true)
+        end,
+        {"ASC", "DESC"},
+        {L["Ascending"], L["Descending"]},
+        nil,
+        {["RAID_FRAMES"] = true}
+    )
+    addOptionDropdown(
+        raid40.scroll.scrollchild,
+        L["Sort Method"],
+        nil,
+        "RAID_RAID_SORT_METHOD",
+        function()
+            GW.UpdateGridSettings("RAID40", true)
+        end,
+        {"INDEX", "NAME"},
+        {L["Index"], NAME},
+        nil,
+        {["RAID_FRAMES"] = true, ["RAID_GROUP_BY"] = {"CLASS", "GROUP", "NAME", "ROLE"}}
+    )
+
+    return raid40
 end
 
 local function LoadRaidPetProfile(panel)
@@ -213,7 +258,7 @@ local function LoadRaidPetProfile(panel)
     addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
     addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
     addOption(p, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER_PET", function() GW.UpdateGridSettings("RAID_PET", true) end, nil, {["RAID_FRAMES"] = true})
-    
+
     addOptionDropdown(
         p,
         L["Show Aura Tooltips"],
@@ -320,57 +365,87 @@ local function LoadRaidPetProfile(panel)
         {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
     )
 
+        -- Sorting
+        addGroupHeader(p, L["Grouping & Sorting"])
+        addOption(
+            p,
+            L["Raid-Wide Sorting"],
+            L["Enabling this allows raid-wide sorting however you will not be able to distinguish between groups."],
+            "RAID_WIDE_SORTING_PET",
+            function()
+                GW.UpdateGridSettings("RAID_PET", true)
+            end,
+            nil,
+            {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
+        )
+        addOptionDropdown(
+            p,
+            L["Sort Direction"],
+            nil,
+            "RAID_SORT_DIRECTION_PET",
+            function()
+                GW.UpdateGridSettings("RAID_PET", true)
+            end,
+            {"ASC", "DESC"},
+            {L["Ascending"], L["Descending"]},
+            nil,
+            {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
+        )
+        addOptionDropdown(
+            p,
+            L["Sort Method"],
+            nil,
+            "RAID_RAID_SORT_METHOD_PET",
+            function()
+                GW.UpdateGridSettings("RAID_PET", true)
+            end,
+            {"INDEX", "NAME"},
+            {L["Index"], NAME},
+            nil,
+            {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_GROUP_BY"] = {"CLASS", "GROUP", "NAME", "ROLE"}}
+        )
+
     return p
 end
 
 local function LoadPartyProfile(panel)
-    local p = CreateFrame("Frame", "GwSettingsRaidPartyPanel", panel, "GwSettingsRaidPanelTmpl")
-    p.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.header:SetText(L["Group Frames"])
-    p.sub:SetFont(UNIT_NAME_FONT, 12)
-    p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.sub:SetText(L["Edit the party and raid options to suit your needs."])
+    local party = CreateFrame("Frame", "GwSettingsRaidPartyPanel", panel, "GwSettingsPanelScrollTmpl")
+    party.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    party.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    party.header:SetText(L["Group Frames"])
+    party.sub:SetFont(UNIT_NAME_FONT, 12)
+    party.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    party.sub:SetText(L["Edit the party and raid options to suit your needs."])
 
-    p.header:SetWidth(p.header:GetStringWidth())
-    p.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
-    p.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.breadcrumb:SetText(PARTY)
+    party.header:SetWidth(party.header:GetStringWidth())
+    party.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    party.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    party.breadcrumb:SetText(PARTY)
 
-    p.buttonRaidPreview:SetScript("OnClick", function()
+    --[[
+    party.buttonRaidPreview:SetScript("OnClick", function()
         GW.GridToggleFramesPreviewParty(false, false)
     end)
-    p.buttonRaidPreview:SetScript("OnEnter", function(self)
+    party.buttonRaidPreview:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
         GameTooltip:ClearLines()
         GameTooltip:AddLine(L["Preview Raid Frames"], 1, 1, 1)
         GameTooltip:AddLine(L["Click to toggle raid frame preview and cycle through different group sizes."], 1, 1, 1)
         GameTooltip:Show()
     end)
-    p.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
-    p.buttonRaidPreview:SetEnabled(GetSetting("RAID_FRAMES"))
+    party.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
+    party.buttonRaidPreview:SetEnabled(GetSetting("RAID_FRAMES"))
+]]
+    addOption(party.scroll.scrollchild, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true})
+    addOption(party.scroll.scrollchild, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true})
+    addOption(party.scroll.scrollchild, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true})
+    addOption(party.scroll.scrollchild, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PARTY"] = true})
+    addOption(party.scroll.scrollchild, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true})
+    addOption(party.scroll.scrollchild, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true})
+    addOption(party.scroll.scrollchild, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER_PARTY", function() GW.UpdateGridSettings("PARTY", true) end, nil, {["RAID_FRAMES"] = true})
 
-    addOption(p, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true})
-    addOption(p, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true})
-    addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true})
-    addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PARTY"] = true})
-    addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true})
-    addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_PARTY", function() GW.UpdateGridSettings("PARTY") end, nil, {["RAID_FRAMES"] = true})
-    addOption(p, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER_PARTY", function() GW.UpdateGridSettings("PARTY", true) end, nil, {["RAID_FRAMES"] = true})
-    
-    addOption(
-        p,
-        L["Sort Raid Frames by Role"],
-        L["Sort raid unit frames by role (tank, heal, damage) instead of group."],
-        "RAID_SORT_BY_ROLE_PARTY",
-        function()
-            GW.UpdateGridSettings("PARTY", true)
-        end,
-        nil,
-        {["RAID_FRAMES"] = true}
-    )
     addOptionDropdown(
-        p,
+        party.scroll.scrollchild,
         L["Show Aura Tooltips"],
         L["Show tooltips of buffs and debuffs."],
         "RAID_AURA_TOOLTIP_INCOMBAT_PARTY",
@@ -384,7 +459,7 @@ local function LoadPartyProfile(panel)
     )
 
     addOptionDropdown(
-        p,
+        party.scroll.scrollchild,
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         nil,
         "RAID_UNIT_HEALTH_PARTY",
@@ -403,7 +478,7 @@ local function LoadPartyProfile(panel)
     )
 
     addOptionDropdown(
-        p,
+        party.scroll.scrollchild,
         L["Show Country Flag"],
         L["Display a country flag based on the unit's language"],
         "RAID_UNIT_FLAGS_PARTY",
@@ -425,7 +500,7 @@ local function LoadPartyProfile(panel)
     end
 
     addOptionDropdown(
-        p,
+        party.scroll.scrollchild,
         L["Set Raid Growth Direction"],
         L["Set the grow direction for raid frames."],
         "RAID_GROW_PARTY",
@@ -445,7 +520,7 @@ local function LoadPartyProfile(panel)
     )
 
     addOptionSlider(
-        p,
+        party.scroll.scrollchild,
         L["Set Raid Units per Column"],
         L["Set the number of raid unit frames per column or row, depending on grow directions."],
         "RAID_UNITS_PER_COLUMN_PARTY",
@@ -460,7 +535,7 @@ local function LoadPartyProfile(panel)
     )
 
     addOptionSlider(
-        p,
+        party.scroll.scrollchild,
         L["Set Raid Unit Width"],
         L["Set the width of the raid units."],
         "RAID_WIDTH_PARTY",
@@ -475,7 +550,7 @@ local function LoadPartyProfile(panel)
     )
 
     addOptionSlider(
-        p,
+        party.scroll.scrollchild,
         L["Set Raid Unit Height"],
         L["Set the height of the raid units."],
         "RAID_HEIGHT_PARTY",
@@ -487,6 +562,59 @@ local function LoadPartyProfile(panel)
         nil,
         0,
         {["RAID_FRAMES"] = true}
+    )
+
+    -- Sorting
+    addGroupHeader(party.scroll.scrollchild, L["Grouping & Sorting"])
+    addOption(
+        party.scroll.scrollchild,
+        L["Raid-Wide Sorting"],
+        L["Enabling this allows raid-wide sorting however you will not be able to distinguish between groups."],
+        "RAID_WIDE_SORTING_PARTY",
+        function()
+            GW.UpdateGridSettings("PARTY", true)
+        end,
+        nil,
+        {["RAID_FRAMES"] = true}
+    )
+    addOptionDropdown(
+        party.scroll.scrollchild,
+        L["Group By"],
+        L["Set the order that the group will sort."],
+        "RAID_GROUP_BY_PARTY",
+        function()
+            GW.UpdateGridSettings("PARTY", true)
+        end,
+        {"CLASS", "INDEX", "NAME", "ROLE"},
+        {CLASS, "Index", NAME, ROLE},
+        nil,
+        {["RAID_FRAMES"] = true}
+    )
+    addOptionDropdown(
+        party.scroll.scrollchild,
+        L["Sort Direction"],
+        nil,
+        "RAID_SORT_DIRECTION_PARTY",
+        function()
+            GW.UpdateGridSettings("PARTY", true)
+        end,
+        {"ASC", "DESC"},
+        {L["Ascending"], L["Descending"]},
+        nil,
+        {["RAID_FRAMES"] = true}
+    )
+    addOptionDropdown(
+        party.scroll.scrollchild,
+        L["Sort Method"],
+        nil,
+        "RAID_RAID_SORT_METHOD_PARTY",
+        function()
+            GW.UpdateGridSettings("PARTY", true)
+        end,
+        {"INDEX", "NAME"},
+        {L["Index"], NAME},
+        nil,
+        {["RAID_FRAMES"] = true, ["RAID_GROUP_BY"] = {"CLASS", "NAME", "ROLE"}}
     )
 
     return p
@@ -501,8 +629,8 @@ local function LoadRaidPanel(sWindow)
     createCat(L["Group Frames"], L["Edit the group settings."], p, profilePanles)
     settingsMenuAddButton(L["Group Frames"], p, profilePanles)
 
-    InitPanel(profilePanles[1], false)
+    InitPanel(profilePanles[1], true)
     InitPanel(profilePanles[2], false)
-    InitPanel(profilePanles[3], false)
+    InitPanel(profilePanles[3], true)
 end
 GW.LoadRaidPanel = LoadRaidPanel
