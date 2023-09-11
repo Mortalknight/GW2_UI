@@ -445,7 +445,7 @@ GW.UpdateGridHeader = UpdateGridHeader
 
 local function CreateHeader(parent, options, overrideName, groupFilter)
     parent:SetActiveStyle('GW2_Grid' .. options.name)
-    print(options.name, options.name ~= "Party")
+
     local header = parent:SpawnHeader(overrideName, (options.name == "RaidPet" and "SecureGroupPetHeaderTemplate" or nil), "custom " .. options.visibility,
         'showParty', true,
         'showRaid', options.name ~= "Party",
