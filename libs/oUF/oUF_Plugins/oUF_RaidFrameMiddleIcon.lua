@@ -69,6 +69,7 @@ local function Enable(self)
         self:RegisterEvent("PLAYER_FLAGS_CHANGED", Update)
         self:RegisterEvent("RAID_TARGET_UPDATE", Update, true)
         self:RegisterEvent("UPDATE_INSTANCE_INFO", Update, true)
+        self:RegisterEvent("UNIT_HEALTH", Update, true)
 
         return true
     end
@@ -82,7 +83,7 @@ local function Disable(self)
         self:UnregisterEvent("PLAYER_FLAGS_CHANGED", Update)
         self:UnregisterEvent("RAID_TARGET_UPDATE", Update, true)
         self:UnregisterEvent("UPDATE_INSTANCE_INFO", Update, true)
-
+        self:UnregisterEvent("UNIT_HEALTH", Update, true)
 
         self.MiddleIcon:Hide()
     end

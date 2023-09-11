@@ -89,7 +89,7 @@ local function Enable(self)
     if self.MissingBuffFrame then
 		self.MissingBuffFrame.ForceUpdate = ForceUpdate
 
-        self:RegisterEvent("UNIT_AURA", Update, true)
+        self:RegisterEvent("UNIT_AURA", Update)
         self.MissingBuffFrame:Show()
         self.MissingBuffFrame.createdButtons = self.MissingBuffFrame.createdButtons or 0
         self.MissingBuffFrame.__owner = self
@@ -99,7 +99,7 @@ end
 
 local function Disable(self)
     if self.MissingBuffFrame then
-        self:UnregisterEvent("UNIT_AURA", Update, true)
+        self:UnregisterEvent("UNIT_AURA", Update)
         self.MissingBuffFrame:Hide()
     end
 end
