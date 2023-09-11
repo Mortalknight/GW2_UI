@@ -58,8 +58,10 @@ local function UpdateGridPartyFrame(frame)
     frame.raidDebuffScale = GW.GridSettings.raidDebuffScale
     frame.raidDispelDebuffScale = GW.GridSettings.raidDispelDebuffScale
 
-    frame:SetSize(frame.unitWidth, frame.unitHeight)
-    frame:ClearAllPoints()
+    if not InCombatLockdown() then
+        frame:SetSize(frame.unitWidth, frame.unitHeight)
+        frame:ClearAllPoints()
+    end
 
     GW.Update_Healtbar(frame)
     GW.Update_Powerbar(frame)

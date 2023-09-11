@@ -248,8 +248,9 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
     -- Update this settings on a spec switch
     if not settingsEventFrame.isSetup then
         settingsEventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-        settingsEventFrame:SetScript("OnEvent", function()
+        settingsEventFrame:SetScript("OnEvent", function(_, event)
             UpdateSettings(profile, false, true)
+            if event == "PLAYER_REGEN_ENABLED" then settingsEventFrame:UnregisterEvent(event) end
         end)
 
         settingsEventFrame.isSetup = true
@@ -258,15 +259,13 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
     if not onlyHeaderUpdate or updasteHeaderAndFrames then
         if InCombatLockdown() then
             settingsEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-        else
-            settingsEventFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-            for headerProfile, header in pairs(headers) do
-                if headerProfile == profile then
-                    for i = 1, header.numGroups do
-                        local group = header.groups[i]
-                        for _, child in ipairs({ group:GetChildren() }) do
-                            GW["UpdateGrid" ..  header.profileName .. "Frame"](child, header.groupName)
-                        end
+        end
+        for headerProfile, header in pairs(headers) do
+            if headerProfile == profile then
+                for i = 1, header.numGroups do
+                    local group = header.groups[i]
+                    for _, child in ipairs({ group:GetChildren() }) do
+                        GW["UpdateGrid" ..  header.profileName .. "Frame"](child, header.groupName)
                     end
                 end
             end

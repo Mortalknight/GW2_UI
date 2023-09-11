@@ -62,8 +62,10 @@ local function UpdateGridRaidPetFrame(frame)
 
     frame:DisableElement("MiddleIcon")
 
-    frame:SetSize(frame.unitWidth, frame.unitHeight)
-    frame:ClearAllPoints()
+    if not InCombatLockdown() then
+        frame:SetSize(frame.unitWidth, frame.unitHeight)
+        frame:ClearAllPoints()
+    end
 
     GW.Update_Healtbar(frame)
     GW.Update_Powerbar(frame)
