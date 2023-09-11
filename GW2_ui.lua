@@ -798,12 +798,8 @@ local function evPlayerLogin(self)
     end
 
     if GetSetting("RAID_FRAMES") then
-        GW.LoadRaidFrames()
-        GW.LoadPartyGrid()
-        GW.LoadPetGrid()
+        GW.InitializeRaidFrames()
     end
-
-    GW.InitializeRaidFrames()
 
     GW.UpdateHudScale()
 
