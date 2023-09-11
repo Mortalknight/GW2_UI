@@ -257,7 +257,7 @@ local function LoadRaidPetProfile(panel)
     addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PET"] = true})
     addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
     addOption(p, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
-    addOption(p, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER_PET", function() GW.UpdateGridSettings("RAID_PET", true) end, nil, {["RAID_FRAMES"] = true})
+    addOption(p, L["Start Near Center"], L["The initial group will start near the center and grow out."], "UNITFRAME_ANCHOR_FROM_CENTER_PET", function() GW.UpdateGridSettings("RAID_PET", true) end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
 
     addOptionDropdown(
         p,
@@ -617,7 +617,7 @@ local function LoadPartyProfile(panel)
         {["RAID_FRAMES"] = true, ["RAID_GROUP_BY"] = {"CLASS", "NAME", "ROLE"}}
     )
 
-    return p
+    return party
 end
 
 local function LoadRaidPanel(sWindow)
@@ -630,7 +630,7 @@ local function LoadRaidPanel(sWindow)
     settingsMenuAddButton(L["Group Frames"], p, profilePanles)
 
     InitPanel(profilePanles[1], true)
-    InitPanel(profilePanles[2], false)
-    InitPanel(profilePanles[3], true)
+    InitPanel(profilePanles[2], true)
+    InitPanel(profilePanles[3], false)
 end
 GW.LoadRaidPanel = LoadRaidPanel
