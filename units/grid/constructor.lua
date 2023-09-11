@@ -157,6 +157,11 @@ local headerGroupBy = {
 }
 
 local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
+    --frame enabled settings
+    settings.raidPetEnabled = GetSetting("RAID_PET_FRAMES")
+    settings.partyEnabled = GetSetting("RAID_STYLE_PARTY")
+    settings.raidEnabled = GetSetting("RAID_FRAMES")
+
     -- generell settings
     settings.raidDebuffScale = GetSetting("RAIDDEBUFFS_Scale")
     settings.raidDispelDebuffScale = GetSetting("DISPELL_DEBUFFS_Scale")

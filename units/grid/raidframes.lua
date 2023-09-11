@@ -59,6 +59,12 @@ local function UpdateGridRaid40Frame(frame)
     frame.raidDebuffScale = GW.GridSettings.raidDebuffScale
     frame.raidDispelDebuffScale = GW.GridSettings.raidDispelDebuffScale
 
+    if GW.GridSettings.raidEnabled and not frame:IsEnabled() then
+		frame:Enable()
+	elseif not GW.GridSettings.raidEnabled and frame:IsEnabled() then
+		frame:Disable()
+	end
+
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
         frame:ClearAllPoints()
