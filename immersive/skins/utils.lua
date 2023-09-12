@@ -448,7 +448,6 @@ local function HandleScrollControls(self, specifiedScrollBar)
     scrollBar.Track:ClearAllPoints()
     scrollBar.Track:SetPoint("TOPLEFT", scrollBar, "TOPLEFT", 0, -12)
     scrollBar.Track:SetPoint("BOTTOMRIGHT", scrollBar, "BOTTOMRIGHT", 0, 12)
-    scrollBar.Track.Thumb.backdrop:SetWidth(12)
 
     local bg = scrollBar.Track:CreateTexture(nil, "BACKGROUND", nil, 0)
     bg:ClearAllPoints()
@@ -477,7 +476,7 @@ local function HandleScrollControls(self, specifiedScrollBar)
 end
 GW.HandleScrollControls = HandleScrollControls
 
-local function HandleTrimScrollBar(frame, small)
+local function HandleTrimScrollBar(frame)
     frame:GwStripTextures()
 
     ReskinScrollBarArrow(frame.Back, "up")
@@ -494,16 +493,9 @@ local function HandleTrimScrollBar(frame, small)
 
     local thumb = frame:GetThumb()
     if thumb then
-        thumb:DisableDrawLayer('ARTWORK')
         thumb:DisableDrawLayer("BACKGROUND")
-        thumb:GwCreateBackdrop("ScrollBar")
-        thumb.backdrop:SetFrameLevel(thumb:GetFrameLevel() + 1)
         thumb:SetSize(12, 12)
-        if not small then
-            thumb.backdrop:ClearAllPoints()
-            thumb.backdrop:SetPoint("TOP", 4, -1)
-            thumb.backdrop:SetPoint("BOTTOM", -4, 1)
-        end
+        thumb:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
     end
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar

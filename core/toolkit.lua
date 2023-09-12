@@ -217,7 +217,7 @@ end
 
 local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShift, yShift)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
-    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
+    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent)
     if not frame.backdrop then frame.backdrop = backdrop end
 
     frame.template = template or "Default"
