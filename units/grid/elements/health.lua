@@ -1,10 +1,12 @@
 local _, GW = ...
 
 local function PostUpdateHealthColor(self, unit)
-    --if we are here we need to class color the frame
-    local _, englishClass = UnitClass(unit)
-    local color = GW.GWGetClassColor(englishClass, true)
-    self:SetStatusBarColor(color.r, color.g, color.b)
+    if self:GetParent():GetParent():GetParent().useClassColor then
+        --if we are here we need to class color the frame
+        local _, englishClass = UnitClass(unit)
+        local color = GW.GWGetClassColor(englishClass, true)
+        self:SetStatusBarColor(color.r, color.g, color.b)
+    end
 
     self.bg:SetVertexColor(0, 0, 0, 1)
 end
