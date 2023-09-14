@@ -57,7 +57,7 @@ local function Path(self, ...)
 	* self  - the parent object
 	* event - the event triggering the update (string)
 	--]]
-	return (self.Range.Override or Update) (self, ...)
+	return (self.customRange.Override or Update) (self, ...)
 end
 
 -- Internal updating method
