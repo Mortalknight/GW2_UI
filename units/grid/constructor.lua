@@ -522,7 +522,7 @@ local function UpdateGridHeader(profile)
     header.gwMover:SetSize(width - horizontalSpacing - groupSpacing, height - verticalSpacing - groupSpacing)
 
     --check if we can diable the frame and also the mover
-    if profile == "RAID40" and numGroups > 1 and i > 1 then
+    if profile == "RAID40" then
         RegisterStateDriver(header, 'visibility', profiles.RAID40.visibility)
         UpdateGroupVisibility(header, profile, true)
     elseif profile == "RAID25" then
