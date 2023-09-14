@@ -27,7 +27,7 @@ local function GW2_GridRaidPetStyleRegister(self)
     GW.Construct_PredictionBar(self) -- creates only the function regestration
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
-    self.Range = {
+    self.customRange = {
         insideAlpha = 1,
         outsideAlpha = 1/2,
     }

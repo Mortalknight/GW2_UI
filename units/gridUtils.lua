@@ -568,7 +568,7 @@ local function GridUpdateAwayData(self, profile, checkReadyCheck)
         self.healthbar:SetStatusBarColor(r * 0.3, g * 0.3, b * 0.3)
         self.classicon:SetAlpha(0.4)
     else
-        self.classicon:SetAlpha(1)
+        self.classicon:SetAlpha(1)  
     end
 
     --done

@@ -7,7 +7,6 @@ local GetRaidTargetIndex = GetRaidTargetIndex
 local function Update(self)
 	local element = self.MiddleIcon
     local shouldShowIcon = false
-    local index = GetRaidTargetIndex(self.unit)
 
     -- Prio list
     -- disconnect
@@ -34,7 +33,8 @@ local function Update(self)
         self.Name:SetTextColor(255, 0, 0)
         self.HealthValueText:SetTextColor(255, 0, 0)
         shouldShowIcon = true
-    elseif self.showTargetmarker and index then -- targetmarker
+    elseif self.showTargetmarker then -- targetmarker
+        local index = GetRaidTargetIndex(self.unit)
         if index then
             element:SetTexture("Interface/TargetingFrame/UI-RaidTargetingIcon_" .. index)
             element:SetTexCoord(unpack(ns.TexCoords))

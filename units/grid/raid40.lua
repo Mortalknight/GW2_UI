@@ -28,7 +28,7 @@ local function GW2_GridRaid40StyleRegister(self)
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
     self.PrivateAuras = GW.Construct_PrivateAura(self)
-    self.Range = {
+    self.customRange = {
         insideAlpha = 1,
         outsideAlpha = 1/2,
     }
