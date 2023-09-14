@@ -6,6 +6,9 @@ local function PostUpdateHealthColor(self, unit)
         local _, englishClass = UnitClass(unit)
         local color = GW.GWGetClassColor(englishClass, true)
         self:SetStatusBarColor(color.r, color.g, color.b)
+        self.statusBarColor.r = color.r
+        self.statusBarColor.g = color.g
+        self.statusBarColor.b = color.b
     end
 
     self.bg:SetVertexColor(0, 0, 0, 1)
@@ -111,10 +114,14 @@ local function Update_Healtbar(frame)
     health:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
 
     --settings
+    health.statusBarColor = health.statusBarColor or {}
     health.colorClass = frame.useClassColor
 
     if not frame.useClassColor then
         health:SetStatusBarColor(0.207, 0.392, 0.168)
+        health.statusBarColor.r = 0.207
+        health.statusBarColor.g = 0.392
+        health.statusBarColor.b = 0.168
     end
 end
 GW.Update_Healtbar = Update_Healtbar

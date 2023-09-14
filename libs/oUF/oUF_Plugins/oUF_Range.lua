@@ -25,15 +25,15 @@ local function Update(self, event)
 		inRange, checkedRange = UnitInRange(unit)
 		if(checkedRange and not inRange) or UnitPhaseReason(unit) then
 			-- out of range
-			local r, g, b = self.Health:GetStatusBarColor()
-			self.Health:SetStatusBarColor(r * 0.3, g * 0.3, b * 0.3)
+			self.Health:SetStatusBarColor(self.Health.statusBarColor.r * 0.3, self.Health.statusBarColor.g * 0.3, self.Health.statusBarColor.b * 0.3)
 			self.MiddleIcon:SetAlpha(element.outsideAlpha)
 		else
 			self.MiddleIcon:SetAlpha(element.insideAlpha)
+			self.Health:SetStatusBarColor(self.Health.statusBarColor.r, self.Health.statusBarColor.g, self.Health.statusBarColor.b)
 		end
 	else
 		self.MiddleIcon:SetAlpha(element.insideAlpha)
-		self.Health.PostUpdateColor(self.Health, unit)
+		self.Health:SetStatusBarColor(self.Health.statusBarColor.r, self.Health.statusBarColor.g, self.Health.statusBarColor.b)
 	end
 
 	--[[ Callback: Range:PostUpdate(object, inRange, checkedRange, isConnected)
