@@ -465,13 +465,7 @@ local function UpdateGridHeader(profile)
             group:SetAttribute('groupFilter', groupWide or tostring(i))
 
             -- register the correct visibility state driver
-            if profile == "RAID40" and numGroups > 1 and i > 1 then
-                if raidWideSorting then
-                    RegisterStateDriver(group, 'visibility', "hide")
-                else
-                    RegisterStateDriver(group, 'visibility', "show")
-                end
-            elseif profile == "PARTY" then
+            if profile == "PARTY" then
                 if not GetSetting("RAID_STYLE_PARTY") and not GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
                     RegisterStateDriver(group, 'visibility', "hide")
                 else
@@ -528,7 +522,10 @@ local function UpdateGridHeader(profile)
     header.gwMover:SetSize(width - horizontalSpacing - groupSpacing, height - verticalSpacing - groupSpacing)
 
     --check if we can diable the frame and also the mover
-    if profile == "RAID25" then
+    if profile == "RAID40" and numGroups > 1 and i > 1 then
+        RegisterStateDriver(header, 'visibility', profiles.RAID40.visibility)
+        UpdateGroupVisibility(header, profile, true)
+    elseif profile == "RAID25" then
         GW.ToggleMover(header.gwMover, settings.raid25Enabled)
         if not settings.raid25Enabled then
             RegisterStateDriver(header, 'visibility', "hide")
