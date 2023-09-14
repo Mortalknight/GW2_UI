@@ -20,7 +20,7 @@ local profiles = {
     RAID40 = {
         name = "Raid40",
         size = 40,
-        visibility = '[@raid26,noexists] hide;show',
+        visibility = '[@raid26,exists] hide;show',
         numGroups = 8
     },
     RAID25 = {
