@@ -27,13 +27,16 @@ local function Update(self, event)
 			-- out of range
 			self.Health:SetStatusBarColor(self.Health.statusBarColor.r * 0.3, self.Health.statusBarColor.g * 0.3, self.Health.statusBarColor.b * 0.3)
 			self.MiddleIcon:SetAlpha(element.outsideAlpha)
+			self.outOfRange = true
 		else
 			self.MiddleIcon:SetAlpha(element.insideAlpha)
 			self.Health:SetStatusBarColor(self.Health.statusBarColor.r, self.Health.statusBarColor.g, self.Health.statusBarColor.b)
+			self.outOfRange = false
 		end
 	else
 		self.MiddleIcon:SetAlpha(element.insideAlpha)
 		self.Health:SetStatusBarColor(self.Health.statusBarColor.r, self.Health.statusBarColor.g, self.Health.statusBarColor.b)
+		self.outOfRange = false
 	end
 
 	--[[ Callback: Range:PostUpdate(object, inRange, checkedRange, isConnected)

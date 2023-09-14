@@ -1,7 +1,8 @@
 local _, GW = ...
 
 local function PostUpdateHealthColor(self, unit)
-    if self:GetParent():GetParent():GetParent().useClassColor then
+    local parent = self:GetParent():GetParent():GetParent()
+    if parent.useClassColor and not parent.outOfRange then
         --if we are here we need to class color the frame
         local _, englishClass = UnitClass(unit)
         local color = GW.GWGetClassColor(englishClass, true)
