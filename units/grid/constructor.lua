@@ -20,7 +20,7 @@ local profiles = {
     RAID40 = {
         name = "Raid40",
         size = 40,
-        visibility = '[@raid26,exists] hide;show',
+        visibility = '[@raid26,noexists] hide;show',
         numGroups = 8
     },
     RAID25 = {
@@ -333,7 +333,6 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
         else
             GW.UpdateGridHeader(profile)
         end
-        
     end
 end
 GW.UpdateGridSettings = UpdateSettings
