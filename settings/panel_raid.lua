@@ -467,7 +467,6 @@ local function LoadRaid40Profile(panel)
     p.buttonRaidPreview:SetEnabled(GetSetting("RAID_FRAMES"))
     ]]
 
-    addOption(raid40.scroll.scrollchild, PET, L["Show a separate grid for raid pets"], "RAID_PET_FRAMES",  function() GW.UpdateGridSettings("RAID_PET", nil, true) end, nil, {["RAID_FRAMES"] = true})
     addOption(raid40.scroll.scrollchild, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
     addOption(raid40.scroll.scrollchild, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
     addOption(raid40.scroll.scrollchild, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS", function() GW.UpdateGridSettings("RAID40") end, nil, {["RAID_FRAMES"] = true})
@@ -678,6 +677,7 @@ local function LoadRaidPetProfile(panel)
     p.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
     p.buttonRaidPreview:SetEnabled(GetSetting("RAID_FRAMES") and GetSetting("RAID_PET_FRAMES"))
 
+    addOption(p, L["Enable Raid pet grid"], L["Show a separate grid for raid pets"], "RAID_PET_FRAMES",  function() GW.UpdateGridSettings("RAID_PET", nil, true) end, nil, {["RAID_FRAMES"] = true})
     addOption(p, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
     addOption(p, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true, ["RAID_SHOW_DEBUFFS_PET"] = true})
     addOption(p, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET", function() GW.UpdateGridSettings("RAID_PET") end, nil, {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true})
