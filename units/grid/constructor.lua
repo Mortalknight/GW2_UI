@@ -9,7 +9,7 @@ local headers = {}
 local profiles = {
     PARTY = {
         name = "Party",
-        visibility = '[group:raid][nogroup] hide; [group:party][nogroup] show;hide',
+        visibility = '[group:raid][nogroup] hide; [group:party] show;hide',
         numGroups = 1
     },
     RAID_PET = {
@@ -21,12 +21,15 @@ local profiles = {
         name = "Raid40",
         size = 40,
         visibility = '[@raid26,noexists] hide;show',
+        visibilityAll = "[group:raid] show;hide",
+        visibilityIncl25 = "[@raid11,noexists] hide;show",
         numGroups = 8
     },
     RAID25 = {
         name = "Raid25",
         size = 25,
         visibility = '[@raid11,noexists][@raid26,exists] hide;show',
+        visibilityIncl10 = '[@raid26,exists] hide;show',
         numGroups = 5
     },
     RAID10 = {
@@ -36,6 +39,7 @@ local profiles = {
         numGroups = 2,
     },
 }
+
 
 --SecureCmdOptionParse("[@raid26,noexists] hide;show")
 --SecureCmdOptionParse("[@raid11,noexists][@raid26,exists] hide;show")
@@ -104,6 +108,7 @@ local DIRECTION_TO_GROUP_ANCHOR_POINT = {
 }
 
 local settings = {
+    enabled = {},
     missing = {},
     ignored = {},
     raidClassColor = {},
@@ -170,11 +175,11 @@ local headerGroupBy = {
 
 local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
     --frame enabled settings
-    settings.raidPetEnabled = GetSetting("RAID_PET_FRAMES")
-    settings.partyEnabled = GetSetting("RAID_STYLE_PARTY")
-    settings.raidEnabled = GetSetting("RAID_FRAMES")
-    settings.raid25Enabled = GetSetting("RAID25_ENABLED")
-    settings.raid10Enabled = GetSetting("RAID10_ENABLED")
+    settings.enabled.RAID_PET = GetSetting("RAID_PET_FRAMES")
+    settings.enabled.PARTY = GetSetting("RAID_STYLE_PARTY")
+    settings.enabled.RAID40 = GetSetting("RAID_FRAMES")
+    settings.enabled.RAID25 = GetSetting("RAID25_ENABLED")
+    settings.enabled.RAID10 = GetSetting("RAID10_ENABLED")
 
     -- generell settings
     settings.raidDebuffScale = GetSetting("RAIDDEBUFFS_Scale")
@@ -361,6 +366,46 @@ GW.CreateRaisedElement = CreateRaisedElement
 local function UpdateGroupVisibility(header, profile, enabled)
     local numGroups = header.numGroups
     local raidWideSorting = settings.raidWideSorting[profile]
+    local visibilityToUseForGroups
+
+    if profile == "RAID40" then
+        if settings.enabled.RAID40 and settings.enabled.RAID25 and settings.enabled.RAID10 then
+            RegisterStateDriver(header, 'visibility', profiles.RAID40.visibility)
+            visibilityToUseForGroups = profiles.RAID40.visibility
+        elseif settings.enabled.RAID40 and not settings.enabled.RAID25 and settings.enabled.RAID10 then
+            RegisterStateDriver(header, 'visibility', profiles.RAID40.visibilityIncl25)
+            visibilityToUseForGroups = profiles.RAID40.visibilityIncl25
+        elseif settings.enabled.RAID40 and not settings.enabled.RAID25 and not settings.enabled.RAID10 then
+            RegisterStateDriver(header, 'visibility', profiles.RAID40.visibilityAll)
+            visibilityToUseForGroups = profiles.RAID40.visibilityAll
+        elseif not settings.enabled.RAID40 then
+            RegisterStateDriver(header, 'visibility', "hide")
+        end
+    elseif profile == "RAID25" then
+        if settings.enabled.RAID25 and settings.enabled.RAID10 then
+            RegisterStateDriver(header, 'visibility', profiles.RAID25.visibility)
+            visibilityToUseForGroups = profiles.RAID25.visibility
+        elseif settings.enabled.RAID25 and not settings.enabled.RAID10 then
+            RegisterStateDriver(header, 'visibility', profiles.RAID25.visibilityIncl10)
+            visibilityToUseForGroups = profiles.RAID25.visibilityIncl10
+        elseif not settings.enabled.RAID25 then
+            RegisterStateDriver(header, 'visibility', "hide")
+        end
+    elseif profile == "RAID10" then
+        if settings.enabled.RAID10 then
+            RegisterStateDriver(header, 'visibility', profiles.RAID10.visibility)
+            visibilityToUseForGroups = profiles.RAID10.visibility
+        else
+            RegisterStateDriver(header, 'visibility', "hide")
+        end
+    elseif profile == "RAID_PET" then
+        if settings.enabled.RAID_PET then
+            RegisterStateDriver(header, 'visibility', profiles.RAID_PET.visibility)
+            visibilityToUseForGroups = profiles.RAID_PET.visibility
+        else
+            RegisterStateDriver(header, 'visibility', "hide")
+        end
+    end
 
     for i = 1, numGroups do
         local group = header.groups[i]
@@ -371,10 +416,10 @@ local function UpdateGroupVisibility(header, profile, enabled)
                     if raidWideSorting then
                         RegisterStateDriver(group, 'visibility', "hide")
                     else
-                        RegisterStateDriver(group, 'visibility', profiles[profile].visibility) --Track this (TODO)
+                        RegisterStateDriver(group, 'visibility', visibilityToUseForGroups)
                     end
                 elseif numGroups > 1 and i == 1 then
-                    RegisterStateDriver(group, 'visibility', profiles[profile].visibility) --Track this (TODO)
+                    RegisterStateDriver(group, 'visibility', visibilityToUseForGroups)
                 end
             else
                 RegisterStateDriver(group, 'visibility', "hide")
@@ -532,7 +577,7 @@ local function UpdateGridHeader(profile)
         else
             RegisterStateDriver(header, 'visibility', profiles.RAID25.visibility)
         end
-        UpdateGroupVisibility(header, profile, settings.raid25Enabled)
+        UpdateGroupVisibility(header, profile, settings.enabled.RAID25)
     elseif profile == "RAID10" then
         GW.ToggleMover(header.gwMover, settings.raid10Enabled)
         if not settings.raid10Enabled then
@@ -540,7 +585,7 @@ local function UpdateGridHeader(profile)
         else
             RegisterStateDriver(header, 'visibility', profiles.RAID10.visibility)
         end
-        UpdateGroupVisibility(header, profile, settings.raid10Enabled)
+        UpdateGroupVisibility(header, profile, settings.enabled.RAID10)
     elseif profile == "RAID_PET" then
         GW.ToggleMover(header.gwMover, settings.raidPetEnabled)
         if not settings.raidPetEnabled then
@@ -548,7 +593,7 @@ local function UpdateGridHeader(profile)
         else
             RegisterStateDriver(header, 'visibility', profiles.RAID_PET.visibility)
         end
-        UpdateGroupVisibility(header, profile, settings.raidPetEnabled)
+        UpdateGroupVisibility(header, profile, settings.enabled.RAID_PET)
     end
 
     header.isUpdating = false
