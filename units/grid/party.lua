@@ -58,9 +58,9 @@ local function UpdateGridPartyFrame(frame)
     frame.raidDebuffScale = GW.GridSettings.raidDebuffScale
     frame.raidDispelDebuffScale = GW.GridSettings.raidDispelDebuffScale
 
-    if GW.GridSettings.partyEnabled and not frame:IsEnabled() then
+    if GW.GridSettings.enabled.PARTY and not frame:IsEnabled() then
 		frame:Enable()
-	elseif not GW.GridSettings.partyEnabled and frame:IsEnabled() then
+	elseif not GW.GridSettings.enabled.PARTY and frame:IsEnabled() then
 		frame:Disable()
 	end
 

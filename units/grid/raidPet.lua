@@ -62,9 +62,9 @@ local function UpdateGridRaidPetFrame(frame)
 
     frame:DisableElement("MiddleIcon")
 
-    if GW.GridSettings.raidPetEnabled and not frame:IsEnabled() then
+    if GW.GridSettings.enabled.RAID_PET and not frame:IsEnabled() then
 		frame:Enable()
-	elseif not GW.GridSettings.raidPetEnabled and frame:IsEnabled() then
+	elseif not GW.GridSettings.enabled.RAID_PET and frame:IsEnabled() then
 		frame:Disable()
 	end
 

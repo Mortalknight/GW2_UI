@@ -59,9 +59,9 @@ local function UpdateGridRaid40Frame(frame)
     frame.raidDebuffScale = GW.GridSettings.raidDebuffScale
     frame.raidDispelDebuffScale = GW.GridSettings.raidDispelDebuffScale
 
-    if GW.GridSettings.raidEnabled and not frame:IsEnabled() then
+    if GW.GridSettings.enabled.RAID40 and not frame:IsEnabled() then
 		frame:Enable()
-	elseif not GW.GridSettings.raidEnabled and frame:IsEnabled() then
+	elseif not GW.GridSettings.enabled.RAID40 and frame:IsEnabled() then
 		frame:Disable()
 	end
 
