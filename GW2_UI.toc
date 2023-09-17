@@ -154,11 +154,13 @@ units\grid\elements\power.lua
 units\grid\elements\nameText.lua
 units\grid\elements\tags.lua
 units\grid\elements\missingAuraIndicator.lua
+units\grid\elements\range.lua
 units\grid\raid40.lua
 units\grid\raid25.lua
 units\grid\raid10.lua
 units\grid\party.lua
 units\grid\raidPet.lua
+units\grid\maintank.lua
 units\grid\constructor.lua
 
 mainbar\upcomingSpells.xml

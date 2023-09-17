@@ -38,6 +38,12 @@ local profiles = {
         visibility = '[@raid11,exists] hide;show',
         numGroups = 2,
     },
+    TANK = {
+        name = "Maintank",
+        size = 40,
+        visibility = '[@raid1,exists] show; hide',
+        numGroups = 1,
+    },
 }
 
 
@@ -174,6 +180,13 @@ local headerGroupBy = {
 		header:SetAttribute('sortMethod', 'INDEX')
 		header:SetAttribute('groupBy', nil)
 	end,
+    TANK = function(header)
+        header:SetAttribute('groupingOrder', 'TANK,HEALER,DAMAGER,NONE')
+		header:SetAttribute('sortMethod', 'INDEX')
+		header:SetAttribute('groupBy', nil)
+        header:SetAttribute('groupFilter', "MAINTANK")
+        header:SetAttribute("strictFiltering", true)
+    end,
 }
 
 local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
@@ -183,6 +196,7 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
     settings.enabled.RAID40 = GetSetting("RAID_FRAMES")
     settings.enabled.RAID25 = GetSetting("RAID25_ENABLED")
     settings.enabled.RAID10 = GetSetting("RAID10_ENABLED")
+    settings.enabled.TANK = GetSetting("RAID_MAINTANK_FRAMES_ENABLED")
 
     -- generell settings
     settings.raidDebuffScale = GetSetting("RAIDDEBUFFS_Scale")
@@ -204,84 +218,98 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
     settings.raidClassColor.RAID40 = GetSetting("RAID_CLASS_COLOR")
     settings.raidClassColor.RAID25 = GetSetting("RAID_CLASS_COLOR_RAID25")
     settings.raidClassColor.RAID10 = GetSetting("RAID_CLASS_COLOR_RAID10")
+    settings.raidClassColor.TANK = GetSetting("RAID_CLASS_COLOR_TANK")
 
     settings.raidUnitHealthString.PARTY = GetSetting("RAID_UNIT_HEALTH_PARTY")
     settings.raidUnitHealthString.RAID_PET = GetSetting("RAID_UNIT_HEALTH_PET")
     settings.raidUnitHealthString.RAID40 = GetSetting("RAID_UNIT_HEALTH")
     settings.raidUnitHealthString.RAID25 = GetSetting("RAID_UNIT_HEALTH_RAID25")
     settings.raidUnitHealthString.RAID10 = GetSetting("RAID_UNIT_HEALTH_RAID10")
+    settings.raidUnitHealthString.TANK = GetSetting("RAID_UNIT_HEALTH_TANK")
 
     settings.horizontalSpacing.PARTY = GetSetting("RAID_UNITS_HORIZONTAL_SPACING_PARTY")
     settings.horizontalSpacing.RAID_PET = GetSetting("RAID_UNITS_HORIZONTAL_SPACING_PET")
     settings.horizontalSpacing.RAID40 = GetSetting("RAID_UNITS_HORIZONTAL_SPACING")
     settings.horizontalSpacing.RAID25 = GetSetting("RAID_UNITS_HORIZONTAL_SPACING_RAID25")
     settings.horizontalSpacing.RAID10 = GetSetting("RAID_UNITS_HORIZONTAL_SPACING_RAID10")
+    settings.horizontalSpacing.TANK = GetSetting("RAID_UNITS_HORIZONTAL_SPACING_TANK")
 
     settings.verticalSpacing.PARTY = GetSetting("RAID_UNITS_VERTICAL_SPACING_PARTY")
     settings.verticalSpacing.RAID_PET = GetSetting("RAID_UNITS_VERTICAL_SPACING_PET")
     settings.verticalSpacing.RAID40 = GetSetting("RAID_UNITS_VERTICAL_SPACING")
     settings.verticalSpacing.RAID25 = GetSetting("RAID_UNITS_VERTICAL_SPACING_RAID25")
     settings.verticalSpacing.RAID10 = GetSetting("RAID_UNITS_VERTICAL_SPACING_RAID10")
+    settings.verticalSpacing.TANK = GetSetting("RAID_UNITS_VERTICAL_SPACING_TANK")
 
     settings.groupSpacing.PARTY = GetSetting("RAID_UNITS_GROUP_SPACING_PARTY")
     settings.groupSpacing.RAID_PET = GetSetting("RAID_UNITS_GROUP_SPACING_PET")
     settings.groupSpacing.RAID40 = GetSetting("RAID_UNITS_GROUP_SPACING")
     settings.groupSpacing.RAID25 = GetSetting("RAID_UNITS_GROUP_SPACING_RAID25")
     settings.groupSpacing.RAID10 = GetSetting("RAID_UNITS_GROUP_SPACING_RAID10")
+    settings.groupSpacing.TANK = GetSetting("RAID_UNITS_GROUP_SPACING_TANK")
 
     settings.raidUnitFlag.PARTY = GetSetting("RAID_UNIT_FLAGS_PARTY")
     settings.raidUnitFlag.RAID_PET = GetSetting("RAID_UNIT_FLAGS_PET")
     settings.raidUnitFlag.RAID40 = GetSetting("RAID_UNIT_FLAGS")
     settings.raidUnitFlag.RAID25 = GetSetting("RAID_UNIT_FLAGS_RAID25")
     settings.raidUnitFlag.RAID10 = GetSetting("RAID_UNIT_FLAGS_RAID10")
+    settings.raidUnitFlag.TANK = GetSetting("RAID_UNIT_FLAGS_TANK")
 
     settings.raidUnitMarkers.PARTY = GetSetting("RAID_UNIT_MARKERS_PARTY")
     settings.raidUnitMarkers.RAID_PET = GetSetting("RAID_UNIT_MARKERS_PET")
     settings.raidUnitMarkers.RAID40 = GetSetting("RAID_UNIT_MARKERS")
     settings.raidUnitMarkers.RAID25 = GetSetting("RAID_UNIT_MARKERS_RAID25")
     settings.raidUnitMarkers.RAID10 = GetSetting("RAID_UNIT_MARKERS_RAID10")
+    settings.raidUnitMarkers.TANK = GetSetting("RAID_UNIT_MARKERS_TANK")
 
     settings.raidUnitPowerBar.PARTY = GetSetting("RAID_POWER_BARS_PARTY")
     settings.raidUnitPowerBar.RAID_PET = GetSetting("RAID_POWER_BARS_PET")
     settings.raidUnitPowerBar.RAID40 = GetSetting("RAID_POWER_BARS")
     settings.raidUnitPowerBar.RAID25 = GetSetting("RAID_POWER_BARS_RAID25")
     settings.raidUnitPowerBar.RAID10 = GetSetting("RAID_POWER_BARS_RAID10")
+    settings.raidUnitPowerBar.TANK = GetSetting("RAID_POWER_BARS_TANK")
 
     settings.raidAuraTooltipInCombat.PARTY = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT_PARTY")
     settings.raidAuraTooltipInCombat.RAID_PET = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT_PET")
     settings.raidAuraTooltipInCombat.RAID40 = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT")
     settings.raidAuraTooltipInCombat.RAID25 = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT_RAID25")
     settings.raidAuraTooltipInCombat.RAID10 = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT_RAID10")
+    settings.raidAuraTooltipInCombat.TANK = GetSetting("RAID_AURA_TOOLTIP_INCOMBAT_TANK")
 
     settings.raidShowDebuffs.PARTY = GetSetting("RAID_SHOW_DEBUFFS_PARTY")
     settings.raidShowDebuffs.RAID_PET = GetSetting("RAID_SHOW_DEBUFFS_PET")
     settings.raidShowDebuffs.RAID40 = GetSetting("RAID_SHOW_DEBUFFS")
     settings.raidShowDebuffs.RAID25 = GetSetting("RAID_SHOW_DEBUFFS_RAID25")
     settings.raidShowDebuffs.RAID10 = GetSetting("RAID_SHOW_DEBUFFS_RAID10")
+    settings.raidShowDebuffs.TANK = GetSetting("RAID_SHOW_DEBUFFS_TANK")
 
     settings.raidShowOnlyDispelDebuffs.PARTY = GetSetting("RAID_ONLY_DISPELL_DEBUFFS_PARTY")
     settings.raidShowOnlyDispelDebuffs.RAID_PET = GetSetting("RAID_ONLY_DISPELL_DEBUFFS_PET")
     settings.raidShowOnlyDispelDebuffs.RAID40 = GetSetting("RAID_ONLY_DISPELL_DEBUFFS")
     settings.raidShowOnlyDispelDebuffs.RAID25 = GetSetting("RAID_ONLY_DISPELL_DEBUFFS_RAID25")
     settings.raidShowOnlyDispelDebuffs.RAID10 = GetSetting("RAID_ONLY_DISPELL_DEBUFFS_RAID10")
+    settings.raidShowOnlyDispelDebuffs.TANK = GetSetting("RAID_ONLY_DISPELL_DEBUFFS_TANK")
 
     settings.raidShowImportendInstanceDebuffs.PARTY = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY")
     settings.raidShowImportendInstanceDebuffs.RAID_PET = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET")
     settings.raidShowImportendInstanceDebuffs.RAID40 = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
     settings.raidShowImportendInstanceDebuffs.RAID25 = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID25")
     settings.raidShowImportendInstanceDebuffs.RAID10 = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID10")
+    settings.raidShowImportendInstanceDebuffs.TANK = GetSetting("RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_TANK")
 
     settings.raidWidth.PARTY = tonumber(GetSetting("RAID_WIDTH_PARTY"))
     settings.raidWidth.RAID_PET = tonumber(GetSetting("RAID_WIDTH_PET"))
     settings.raidWidth.RAID40 = tonumber(GetSetting("RAID_WIDTH"))
     settings.raidWidth.RAID25 = tonumber(GetSetting("RAID_WIDTH_RAID25"))
     settings.raidWidth.RAID10 = tonumber(GetSetting("RAID_WIDTH_RAID10"))
+    settings.raidWidth.TANK = tonumber(GetSetting("RAID_WIDTH_TANK"))
 
     settings.raidHeight.PARTY = tonumber(GetSetting("RAID_HEIGHT_PARTY"))
     settings.raidHeight.RAID_PET = tonumber(GetSetting("RAID_HEIGHT_PET"))
     settings.raidHeight.RAID40 = tonumber(GetSetting("RAID_HEIGHT"))
     settings.raidHeight.RAID25 = tonumber(GetSetting("RAID_HEIGHT_RAID25"))
     settings.raidHeight.RAID10 = tonumber(GetSetting("RAID_HEIGHT_RAID10"))
+    settings.raidHeight.TANK = tonumber(GetSetting("RAID_HEIGHT_TANK"))
 
     -- profile settings for the header
     settings.startFromCenter.PARTY = GetSetting("UNITFRAME_ANCHOR_FROM_CENTER_PARTY")
@@ -289,42 +317,49 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
     settings.startFromCenter.RAID40 = GetSetting("UNITFRAME_ANCHOR_FROM_CENTER")
     settings.startFromCenter.RAID25 = GetSetting("UNITFRAME_ANCHOR_FROM_CENTER_RAID25")
     settings.startFromCenter.RAID10 = GetSetting("UNITFRAME_ANCHOR_FROM_CENTER_RAID10")
+    settings.startFromCenter.RAID10 = GetSetting("UNITFRAME_ANCHOR_FROM_CENTER_TANK")
 
     settings.raidGrow.PARTY = GetSetting("RAID_GROW_PARTY")
     settings.raidGrow.RAID_PET = GetSetting("RAID_GROW_PET")
     settings.raidGrow.RAID40 = GetSetting("RAID_GROW")
     settings.raidGrow.RAID25 = GetSetting("RAID_GROW_RAID25")
     settings.raidGrow.RAID10 = GetSetting("RAID_GROW_RAID10")
+    settings.raidGrow.TANK = GetSetting("RAID_GROW_TANK")
 
     settings.unitsPerColumn.PARTY = tonumber(GetSetting("RAID_UNITS_PER_COLUMN_PARTY"))
     settings.unitsPerColumn.RAID_PET = tonumber(GetSetting("RAID_UNITS_PER_COLUMN_PET"))
     settings.unitsPerColumn.RAID40 = tonumber(GetSetting("RAID_UNITS_PER_COLUMN"))
     settings.unitsPerColumn.RAID25 = tonumber(GetSetting("RAID_UNITS_PER_COLUMN_RAID25"))
     settings.unitsPerColumn.RAID10 = tonumber(GetSetting("RAID_UNITS_PER_COLUMN_RAID10"))
+    settings.unitsPerColumn.TANK = tonumber(GetSetting("RAID_UNITS_PER_COLUMN_TANK"))
 
     settings.raidWideSorting.PARTY = GetSetting("RAID_WIDE_SORTING_PARTY")
     settings.raidWideSorting.RAID_PET = GetSetting("RAID_WIDE_SORTING_PET")
     settings.raidWideSorting.RAID40 = GetSetting("RAID_WIDE_SORTING")
     settings.raidWideSorting.RAID25 = GetSetting("RAID_WIDE_SORTING_RAID25")
     settings.raidWideSorting.RAID10 = GetSetting("RAID_WIDE_SORTING_RAID10")
+    settings.raidWideSorting.TANK = GetSetting("RAID_WIDE_SORTING_TANK")
 
     settings.groupBy.PARTY = GetSetting("RAID_GROUP_BY_PARTY")
     settings.groupBy.RAID_PET = GetSetting("RAID_GROUP_BY_PET")
     settings.groupBy.RAID40 = GetSetting("RAID_GROUP_BY")
     settings.groupBy.RAID25 = GetSetting("RAID_GROUP_BY_RAID25")
     settings.groupBy.RAID10 = GetSetting("RAID_GROUP_BY_RAID10")
+    settings.groupBy.TANK = GetSetting("RAID_GROUP_BY_TANK")
 
     settings.sortDirection.PARTY = GetSetting("RAID_SORT_DIRECTION_PARTY")
     settings.sortDirection.RAID_PET = GetSetting("RAID_SORT_DIRECTION_PET")
     settings.sortDirection.RAID40 = GetSetting("RAID_SORT_DIRECTION")
     settings.sortDirection.RAID25 = GetSetting("RAID_SORT_DIRECTION_RAID25")
     settings.sortDirection.RAID10 = GetSetting("RAID_SORT_DIRECTION_RAID10")
+    settings.sortDirection.TANK = GetSetting("RAID_SORT_DIRECTION_TANK")
 
     settings.sortMethod.PARTY = GetSetting("RAID_RAID_SORT_METHOD_PARTY")
     settings.sortMethod.RAID_PET = GetSetting("RAID_RAID_SORT_METHOD_PET")
     settings.sortMethod.RAID40 = GetSetting("RAID_RAID_SORT_METHOD")
     settings.sortMethod.RAID25 = GetSetting("RAID_RAID_SORT_METHOD_RAID25")
     settings.sortMethod.RAID10 = GetSetting("RAID_RAID_SORT_METHOD_RAID10")
+    settings.sortMethod.TANK = GetSetting("RAID_RAID_SORT_METHOD_TANK")
 
     -- Update this settings on a spec switch
     if not settingsEventFrame.isSetup then
@@ -522,13 +557,17 @@ local function UpdateGridHeader(profile)
             -- sorting
             if profile == "RAID_PET" then
                 headerGroupBy.PETNAME(group)
+            elseif profile == "TANK" then
+                headerGroupBy.TANK(group)
             else
                 local func = headerGroupBy[groupBy] or headerGroupBy.INDEX
                 func(group, profile)
             end
 
-            local groupWide = i == 1 and raidWideSorting and strsub('1,2,3,4,5,6,7,8', 1, numGroups + numGroups-1)
-            group:SetAttribute('groupFilter', groupWide or tostring(i))
+            if profile ~= "TANK" then
+                local groupWide = i == 1 and raidWideSorting and strsub('1,2,3,4,5,6,7,8', 1, numGroups + numGroups-1)
+                group:SetAttribute('groupFilter', groupWide or tostring(i))
+            end
 
             -- register the correct visibility state driver
             if profile == "PARTY" then
@@ -592,29 +631,37 @@ local function UpdateGridHeader(profile)
         RegisterStateDriver(header, 'visibility', profiles.RAID40.visibility)
         UpdateGroupVisibility(header, profile, true)
     elseif profile == "RAID25" then
-        GW.ToggleMover(header.gwMover, settings.raid25Enabled)
-        if not settings.raid25Enabled then
+        GW.ToggleMover(header.gwMover, settings.enabled.RAID25)
+        if not settings.enabled.RAID25 then
             RegisterStateDriver(header, 'visibility', "hide")
         else
             RegisterStateDriver(header, 'visibility', profiles.RAID25.visibility)
         end
         UpdateGroupVisibility(header, profile, settings.enabled.RAID25)
     elseif profile == "RAID10" then
-        GW.ToggleMover(header.gwMover, settings.raid10Enabled)
-        if not settings.raid10Enabled then
+        GW.ToggleMover(header.gwMover, settings.enabled.RAID10)
+        if not settings.enabled.RAID10 then
             RegisterStateDriver(header, 'visibility', "hide")
         else
             RegisterStateDriver(header, 'visibility', profiles.RAID10.visibility)
         end
         UpdateGroupVisibility(header, profile, settings.enabled.RAID10)
     elseif profile == "RAID_PET" then
-        GW.ToggleMover(header.gwMover, settings.raidPetEnabled)
-        if not settings.raidPetEnabled then
+        GW.ToggleMover(header.gwMover, settings.enabled.RAID_PET)
+        if not settings.enabled.RAID_PET then
             RegisterStateDriver(header, 'visibility', "hide")
         else
             RegisterStateDriver(header, 'visibility', profiles.RAID_PET.visibility)
         end
         UpdateGroupVisibility(header, profile, settings.enabled.RAID_PET)
+    elseif profile == "TANK" then
+        GW.ToggleMover(header.gwMover, settings.enabled.TANK)
+        if not settings.enabled.TANK then
+            RegisterStateDriver(header, 'visibility', "hide")
+        else
+            RegisterStateDriver(header, 'visibility', profiles.TANK.visibility)
+        end
+        UpdateGroupVisibility(header, profile, settings.enabled.TANK)
     end
 
     header.isUpdating = false
@@ -679,6 +726,8 @@ local function Setup(self)
             GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "raid25_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
         elseif profile == "RAID10" then
             GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "raid10_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
+        elseif profile == "TANK" then
+            GW.RegisterMovableFrame(Header, MAINTANK, "raidMaintank_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
         end
 
         Header:ClearAllPoints()

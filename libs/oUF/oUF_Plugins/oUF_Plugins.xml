@@ -2,5 +2,4 @@
 	<Script file='oUF_RaidFrameMiddleIcon.lua'/>
 	<Script file='oUF_HighlightUnitFrame.lua'/>
 	<Script file='oUF_MissingBuffIndicator.lua'/>
-	<Script file='oUF_Range.lua'/>
 </Ui>

@@ -28,10 +28,7 @@ local function GW2_GridRaid25StyleRegister(self)
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
     self.PrivateAuras = GW.Construct_PrivateAura(self)
-    self.customRange = {
-        insideAlpha = 1,
-        outsideAlpha = 1/2,
-    }
+    self.Range = GW.Construct_RangeIndicator(self)
 
     return self
 end
@@ -83,6 +80,7 @@ local function UpdateGridRaid25Frame(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
     GW.UpdatePrivateAurasSettings(frame)
+    GW.Update_RangeIndicator(frame)
 
     frame:UpdateAllElements("RefreshUnit")
 end

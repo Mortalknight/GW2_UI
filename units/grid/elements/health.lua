@@ -2,14 +2,11 @@ local _, GW = ...
 
 local function PostUpdateHealthColor(self, unit)
     local parent = self:GetParent():GetParent():GetParent()
-    if parent.useClassColor and not parent.outOfRange then
+    if parent.useClassColor then
         --if we are here we need to class color the frame
         local _, englishClass = UnitClass(unit)
         local color = GW.GWGetClassColor(englishClass, true)
         self:SetStatusBarColor(color.r, color.g, color.b)
-        self.statusBarColor.r = color.r
-        self.statusBarColor.g = color.g
-        self.statusBarColor.b = color.b
     end
 
     self.bg:SetVertexColor(0, 0, 0, 1)
@@ -100,6 +97,9 @@ local function Construct_HealthBar(frame)
     health.highlightBorder:SetVertexColor(0, 0, 0, 1)
     health.highlightBorder.multiplier = 1
 
+    health.healthPredictionbar = healthPredictionbar
+
+
     health.Override = UpdateHealthOverride
 	health.PostUpdateColor = PostUpdateHealthColor
 
@@ -120,9 +120,6 @@ local function Update_Healtbar(frame)
 
     if not frame.useClassColor then
         health:SetStatusBarColor(0.207, 0.392, 0.168)
-        health.statusBarColor.r = 0.207
-        health.statusBarColor.g = 0.392
-        health.statusBarColor.b = 0.168
     end
 end
 GW.Update_Healtbar = Update_Healtbar

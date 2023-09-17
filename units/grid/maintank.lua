@@ -1,6 +1,6 @@
 local _, GW = ...
 
-local function GW2_GridRaid10StyleRegister(self)
+local function GW2_GridMaintankStyleRegister(self)
     self:RegisterForClicks('AnyUp')
     self:SetScript("OnLeave", function()
         GameTooltip_Hide()
@@ -13,6 +13,13 @@ local function GW2_GridRaid10StyleRegister(self)
             GameTooltip:Show()
         end
     )
+
+    self.bg = self:CreateTexture(nil, 'BORDER')
+    self.bg:SetPoint("TOPLEFT", 0, 0)
+    self.bg:SetPoint("BOTTOMRIGHT", 0, 0)
+    self.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+    self.bg:SetVertexColor(0, 0, 0, 1)
+    self.bg.multiplier = 1
 
     self.RaisedElementParent = GW.CreateRaisedElement(self)
 	self.Health = GW.Construct_HealthBar(self, true)
@@ -27,38 +34,39 @@ local function GW2_GridRaid10StyleRegister(self)
     GW.Construct_PredictionBar(self) -- creates only the function regestration
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
-    self.PrivateAuras = GW.Construct_PrivateAura(self)
     self.Range = GW.Construct_RangeIndicator(self)
 
     return self
 end
-GW.GW2_GridRaid10StyleRegister = GW2_GridRaid10StyleRegister
+GW.GW2_GridMaintankStyleRegister = GW2_GridMaintankStyleRegister
 
-local function UpdateGridRaid10Frame(frame)
+local function UpdateGridMaintankFrame(frame)
     -- set frame settings
-    frame.useClassColor = GW.GridSettings.raidClassColor.RAID10
-    frame.showResscoureBar = GW.GridSettings.raidUnitPowerBar.RAID10
-    frame.showRealmFlags = GW.GridSettings.raidUnitFlag.RAID10
-    frame.healthStringFormat = GW.GridSettings.raidUnitHealthString.RAID10
-    frame.showTargetmarker = GW.GridSettings.raidUnitMarkers.RAID10
-    frame.unitWidth = tonumber(GW.GridSettings.raidWidth.RAID10)
-    frame.unitHeight = tonumber(GW.GridSettings.raidHeight.RAID10)
-    frame.raidShowImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.RAID10
-    frame.showAllDebuffs = GW.GridSettings.raidShowDebuffs.RAID10
-    frame.showOnlyDispelDebuffs = GW.GridSettings.raidShowOnlyDispelDebuffs.RAID10
-    frame.showImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.RAID10
-    frame.showAuraTooltipInCombat = GW.GridSettings.raidAuraTooltipInCombat.RAID10
+    frame.useClassColor = GW.GridSettings.raidClassColor.TANK
+    frame.showResscoureBar = GW.GridSettings.raidUnitPowerBar.TANK
+    frame.showRealmFlags = GW.GridSettings.raidUnitFlag.TANK
+    frame.healthStringFormat = GW.GridSettings.raidUnitHealthString.TANK
+    frame.showTargetmarker = GW.GridSettings.raidUnitMarkers.TANK
+    frame.unitWidth = tonumber(GW.GridSettings.raidWidth.TANK)
+    frame.unitHeight = tonumber(GW.GridSettings.raidHeight.TANK)
+    frame.raidShowImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.TANK
+    frame.showAllDebuffs = GW.GridSettings.raidShowDebuffs.TANK
+    frame.showOnlyDispelDebuffs = GW.GridSettings.raidShowOnlyDispelDebuffs.TANK
+    frame.showImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.TANK
+    frame.showAuraTooltipInCombat = GW.GridSettings.raidAuraTooltipInCombat.TANK
     frame.ignoredAuras = GW.GridSettings.ignored
-    frame.missingAuras = GW.GridSettings.missing
+    --frame.missingAuras = GW.GridSettings.missing
     frame.raidIndicators = GW.GridSettings.raidIndicators
     frame.showRaidIndicatorIcon = GW.GridSettings.raidIndicatorIcon
     frame.showRaidIndicatorTimer = GW.GridSettings.raidIndicatorTime
     frame.raidDebuffScale = GW.GridSettings.raidDebuffScale
     frame.raidDispelDebuffScale = GW.GridSettings.raidDispelDebuffScale
 
-    if GW.GridSettings.enabled.RAID10 and not frame:IsEnabled() then
+    frame:DisableElement("MiddleIcon")
+
+    if GW.GridSettings.enabled.TANK and not frame:IsEnabled() then
 		frame:Enable()
-	elseif not GW.GridSettings.enabled.RAID10 and frame:IsEnabled() then
+	elseif not GW.GridSettings.enabled.TANK and frame:IsEnabled() then
 		frame:Disable()
 	end
 
@@ -79,9 +87,8 @@ local function UpdateGridRaid10Frame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
-    GW.UpdatePrivateAurasSettings(frame)
     GW.Update_RangeIndicator(frame)
 
     frame:UpdateAllElements("RefreshUnit")
 end
-GW.UpdateGridRaid10Frame = UpdateGridRaid10Frame
+GW.UpdateGridMaintankFrame = UpdateGridMaintankFrame

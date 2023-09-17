@@ -27,10 +27,7 @@ local function GW2_GridPartyStyleRegister(self)
     GW.Construct_PredictionBar(self) -- creates only the function regestration
     self.Auras = GW.Construct_Auras(self)
     self.MissingBuffFrame = GW.Construct_MissingAuraIndicator(self)
-    self.customRange = {
-        insideAlpha = 1,
-        outsideAlpha = 1/2,
-    }
+    self.Range = GW.Construct_RangeIndicator(self)
 
     return self
 end
@@ -81,6 +78,7 @@ local function UpdateGridPartyFrame(frame)
     GW.Update_PredictionBars(frame)
     GW.UpdateAurasSettings(frame)
     GW.Update_MissingAuraIndicator(frame)
+    GW.Update_RangeIndicator(frame)
 
     frame:UpdateAllElements("RefreshUnit")
 end

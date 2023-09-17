@@ -608,20 +608,39 @@ GW_DEFAULT["QuestTracker_pos"]["hasMoved"] = false
 GW_DEFAULT["QuestTracker_pos_height"] = 700
 GW_DEFAULT["QuestTracker_pos_scale"] = 1
 
-GW_DEFAULT["raid_pos"] = {}
-GW_DEFAULT["raid_pos"]["point"] = "TOPLEFT"
-GW_DEFAULT["raid_pos"]["relativePoint"] = "TOPLEFT"
-GW_DEFAULT["raid_pos"]["xOfs"] = 65
-GW_DEFAULT["raid_pos"]["yOfs"] = -60
-GW_DEFAULT["raid_pos"]["hasMoved"] = false
+-- Maintank
+GW_DEFAULT["RAID_MAINTANK_FRAMES_ENABLED"] = true
+GW_DEFAULT["RAID_CLASS_COLOR_TANK"] = true
+GW_DEFAULT["RAID_UNIT_FLAGS_TANK"] = "NONE"
+GW_DEFAULT["RAID_UNIT_MARKERS_TANK"] = false
+GW_DEFAULT["RAID_WIDTH_TANK"] = 50
+GW_DEFAULT["RAID_HEIGHT_TANK"] = 25
+GW_DEFAULT["RAID_POWER_BARS_TANK"] = false -- always
+GW_DEFAULT["RAID_UNITS_PER_COLUMN_TANK"] = 5
+GW_DEFAULT["RAID_GROW_TANK"] = "DOWN+RIGHT"
+GW_DEFAULT["RAID_SHOW_DEBUFFS_TANK"] = true
+GW_DEFAULT["RAID_ONLY_DISPELL_DEBUFFS_TANKT"] = false
+GW_DEFAULT["RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_TANK"] = true
+GW_DEFAULT["RAID_AURA_TOOLTIP_INCOMBAT_TANK"] = "IN_COMBAT"
+GW_DEFAULT["RAID_UNIT_HEALTH_TANK"] = "NONE"
+GW_DEFAULT["UNITFRAME_ANCHOR_FROM_CENTER_TANK"] = false -- always
+GW_DEFAULT["RAID_WIDE_SORTING_TANK"] = true -- always
+GW_DEFAULT["RAID_GROUP_BY_TANK"] = "ROLE" -- always
+GW_DEFAULT["RAID_SORT_DIRECTION_TANK"] = "ASC" -- always
+GW_DEFAULT["RAID_RAID_SORT_METHOD_TANK"] = "NAME" -- always
+GW_DEFAULT["RAID_UNITS_HORIZONTAL_SPACING_TANK"] = 2
+GW_DEFAULT["RAID_UNITS_VERTICAL_SPACING_TANK"] = 2
+GW_DEFAULT["RAID_UNITS_GROUP_SPACING_TANK"] = 0 -- always
 
-GW_DEFAULT["raid_pet_pos"] = {}
-GW_DEFAULT["raid_pet_pos"]["point"] = "TOPLEFT"
-GW_DEFAULT["raid_pet_pos"]["relativePoint"] = "TOPLEFT"
-GW_DEFAULT["raid_pet_pos"]["xOfs"] = 315
-GW_DEFAULT["raid_pet_pos"]["yOfs"] = -60
-GW_DEFAULT["raid_pet_pos"]["hasMoved"] = false
+GW_DEFAULT["raidMaintank_pos"] = {}
+GW_DEFAULT["raidMaintank_pos"]["point"] = "TOPLEFT"
+GW_DEFAULT["raidMaintank_pos"]["relativePoint"] = "TOPLEFT"
+GW_DEFAULT["raidMaintank_pos"]["xOfs"] = 315
+GW_DEFAULT["raidMaintank_pos"]["yOfs"] = -60
+GW_DEFAULT["raidMaintank_pos"]["hasMoved"] = false
 
+-- Raid Pet
+GW_DEFAULT["RAID_PET_FRAMES"] = false
 GW_DEFAULT["RAID_CLASS_COLOR_PET"] = true -- always
 GW_DEFAULT["RAID_UNIT_FLAGS_PET"] = "NONE" -- always
 GW_DEFAULT["RAID_UNIT_MARKERS_PET"] = false
@@ -635,7 +654,7 @@ GW_DEFAULT["RAID_ONLY_DISPELL_DEBUFFS_PET"] = false
 GW_DEFAULT["RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET"] = true
 GW_DEFAULT["RAID_AURA_TOOLTIP_INCOMBAT_PET"] = "IN_COMBAT"
 GW_DEFAULT["RAID_UNIT_HEALTH_PET"] = "NONE"
-GW_DEFAULT["UNITFRAME_ANCHOR_FROM_PET"] = false
+GW_DEFAULT["UNITFRAME_ANCHOR_FROM_CENTER_PET"] = false
 GW_DEFAULT["RAID_WIDE_SORTING_PET"] = true
 GW_DEFAULT["RAID_GROUP_BY_PET"] = "ROLE"
 GW_DEFAULT["RAID_SORT_DIRECTION_PET"] = "ASC"
@@ -644,8 +663,14 @@ GW_DEFAULT["RAID_UNITS_HORIZONTAL_SPACING_PET"] = 2
 GW_DEFAULT["RAID_UNITS_VERTICAL_SPACING_PET"] = 2
 GW_DEFAULT["RAID_UNITS_GROUP_SPACING_PET"] = 0
 
-GW_DEFAULT["RAID_PET_FRAMES"] = false
+GW_DEFAULT["raid_pet_pos"] = {}
+GW_DEFAULT["raid_pet_pos"]["point"] = "TOPLEFT"
+GW_DEFAULT["raid_pet_pos"]["relativePoint"] = "TOPLEFT"
+GW_DEFAULT["raid_pet_pos"]["xOfs"] = 315
+GW_DEFAULT["raid_pet_pos"]["yOfs"] = -60
+GW_DEFAULT["raid_pet_pos"]["hasMoved"] = false
 
+-- RAID40
 GW_DEFAULT["RAID_CLASS_COLOR"] = false
 GW_DEFAULT["RAID_UNIT_FLAGS"] = "NONE"
 GW_DEFAULT["RAID_UNIT_MARKERS"] = false
@@ -668,12 +693,12 @@ GW_DEFAULT["RAID_UNITS_HORIZONTAL_SPACING"] = 2
 GW_DEFAULT["RAID_UNITS_VERTICAL_SPACING"] = 2
 GW_DEFAULT["RAID_UNITS_GROUP_SPACING"] = 0
 
-GW_DEFAULT["raid_party_pos"] = {}
-GW_DEFAULT["raid_party_pos"]["point"] = "TOPLEFT"
-GW_DEFAULT["raid_party_pos"]["relativePoint"] = "TOPLEFT"
-GW_DEFAULT["raid_party_pos"]["xOfs"] = 480
-GW_DEFAULT["raid_party_pos"]["yOfs"] = -760
-GW_DEFAULT["raid_party_pos"]["hasMoved"] = false
+GW_DEFAULT["raid_pos"] = {}
+GW_DEFAULT["raid_pos"]["point"] = "TOPLEFT"
+GW_DEFAULT["raid_pos"]["relativePoint"] = "TOPLEFT"
+GW_DEFAULT["raid_pos"]["xOfs"] = 65
+GW_DEFAULT["raid_pos"]["yOfs"] = -60
+GW_DEFAULT["raid_pos"]["hasMoved"] = false
 
 -- RAID25
 GW_DEFAULT["RAID25_ENABLED"] = true
@@ -759,6 +784,13 @@ GW_DEFAULT["RAID_RAID_SORT_METHOD_PARTY"] = "NAME"
 GW_DEFAULT["RAID_UNITS_HORIZONTAL_SPACING_PARTY"] = 2
 GW_DEFAULT["RAID_UNITS_VERTICAL_SPACING_PARTY"] = 2
 GW_DEFAULT["RAID_UNITS_GROUP_SPACING_PARTY"] = 0
+
+GW_DEFAULT["raid_party_pos"] = {}
+GW_DEFAULT["raid_party_pos"]["point"] = "TOPLEFT"
+GW_DEFAULT["raid_party_pos"]["relativePoint"] = "TOPLEFT"
+GW_DEFAULT["raid_party_pos"]["xOfs"] = 480
+GW_DEFAULT["raid_party_pos"]["yOfs"] = -760
+GW_DEFAULT["raid_party_pos"]["hasMoved"] = false
 
 GW_DEFAULT["RAID_STYLE_PARTY"] = false
 GW_DEFAULT["RAID_STYLE_PARTY_AND_FRAMES"] = false

@@ -7,7 +7,6 @@ local createCat = GW.CreateCat
 local MapTable = GW.MapTable
 local StrUpper = GW.StrUpper
 local StrLower = GW.StrLower
-local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
 local settingsMenuAddButton = GW.settingsMenuAddButton
 local addGroupHeader = GW.AddGroupHeader
@@ -42,7 +41,7 @@ local function LoadRaid10Profile(panel)
     p.buttonRaidPreview:SetEnabled(GetSetting("RAID_FRAMES"))
     ]]
 
-    addOption(raid10.scroll.scrollchild, L["Enable Raid 10 grid"], L["Display a separate raid grid for groups from 11 to 25 players"], "RAID10_ENABLED", function() GW.UpdateGridSettings("RAID10", nil, true) end, nil, {["RAID_FRAMES"] = true})
+    addOption(raid10.scroll.scrollchild, L["Enable Raid 10 grid"], L["Display a separate raid grid for groups from 11 to 25 players"], "RAID10_ENABLED", function() GW.UpdateGridSettings("RAID10", nil, true); GW.UpdateGridSettings("RAID25", nil, true); GW.UpdateGridSettings("RAID40", nil, true) end, nil, {["RAID_FRAMES"] = true})
     addOption(raid10.scroll.scrollchild, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
     addOption(raid10.scroll.scrollchild, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
     addOption(raid10.scroll.scrollchild, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_RAID10", function() GW.UpdateGridSettings("RAID10") end, nil, {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true})
@@ -301,7 +300,7 @@ local function LoadRaid25Profile(panel)
     p.buttonRaidPreview:SetEnabled(GetSetting("RAID_FRAMES"))
     ]]
 
-    addOption(raid25.scroll.scrollchild, L["Enable Raid 25 grid"], L["Display a separate raid grid for groups from 11 to 25 players"], "RAID25_ENABLED", function() GW.UpdateGridSettings("RAID25", nil, true) end, nil, {["RAID_FRAMES"] = true})
+    addOption(raid25.scroll.scrollchild, L["Enable Raid 25 grid"], L["Display a separate raid grid for groups from 11 to 25 players"], "RAID25_ENABLED", function() GW.UpdateGridSettings("RAID10", nil, true); GW.UpdateGridSettings("RAID25", nil, true); GW.UpdateGridSettings("RAID40", nil, true) end, nil, {["RAID_FRAMES"] = true})
     addOption(raid25.scroll.scrollchild, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
     addOption(raid25.scroll.scrollchild, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
     addOption(raid25.scroll.scrollchild, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_RAID25", function() GW.UpdateGridSettings("RAID25") end, nil, {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true})
@@ -1281,12 +1280,203 @@ local function LoadPartyProfile(panel)
     return party
 end
 
+local function LoadMaintankProfile(panel)
+    local tank = CreateFrame("Frame", "GwSettingsRaidPanel", panel, "GwSettingsPanelScrollTmpl")
+    tank.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    tank.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    tank.header:SetText(L["Group Frames"] )
+    tank.sub:SetFont(UNIT_NAME_FONT, 12)
+    tank.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    tank.sub:SetText(L["Edit the party and raid options to suit your needs."])
+
+    tank.header:SetWidth(tank.header:GetStringWidth())
+    tank.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    tank.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    tank.breadcrumb:SetText(MAINTANK)
+
+    --[[
+    p.buttonRaidPreview:SetScript("OnClick", function()
+        --GW.GridToggleFramesPreviewRaid(false, false) -- disabled for now
+    end)
+    p.buttonRaidPreview:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT", 28, 0)
+        GameTooltip:ClearLines()
+        GameTooltip:AddLine(L["Preview Raid Frames"], 1, 1, 1)
+        GameTooltip:AddLine(L["Click to toggle raid frame preview and cycle through different group sizes."], 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    p.buttonRaidPreview:SetScript("OnLeave", GameTooltip_Hide)
+    p.buttonRaidPreview:SetEnabled(GetSetting("RAID_FRAMES"))
+    ]]
+
+    addOption(tank.scroll.scrollchild, L["Enable Maintank grid"], nil, "RAID_MAINTANK_FRAMES_ENABLED", function() GW.UpdateGridSettings("TANK", nil, true) end, nil, {["RAID_FRAMES"] = true})
+    addOption(tank.scroll.scrollchild, RAID_USE_CLASS_COLORS, L["Use the class color instead of class icons."], "RAID_CLASS_COLOR_TANK0", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
+    addOption(tank.scroll.scrollchild, DISPLAY_POWER_BARS, L["Display the power bars on the raid units."], "RAID_POWER_BARS_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
+    addOption(tank.scroll.scrollchild, SHOW_DEBUFFS, OPTION_TOOLTIP_SHOW_ALL_ENEMY_DEBUFFS, "RAID_SHOW_DEBUFFS_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
+    addOption(tank.scroll.scrollchild, DISPLAY_ONLY_DISPELLABLE_DEBUFFS, L["Only displays the debuffs that you are able to dispell."], "RAID_ONLY_DISPELL_DEBUFFS_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true, ["RAID_SHOW_DEBUFFS"] = true})
+    addOption(tank.scroll.scrollchild, L["Dungeon & Raid Debuffs"], L["Show important Dungeon & Raid debuffs"], "RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
+    addOption(tank.scroll.scrollchild, RAID_TARGET_ICON, L["Displays the Target Markers on the Raid Unit Frames"], "RAID_UNIT_MARKERS_TANK", function() GW.UpdateGridSettings("TANK") end, nil, {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true})
+    addOptionDropdown(
+        tank.scroll.scrollchild,
+        L["Show Aura Tooltips"],
+        L["Show tooltips of buffs and debuffs."],
+        "RAID_AURA_TOOLTIP_INCOMBAT_TANK",
+        function()
+            GW.UpdateGridSettings("TANK")
+        end,
+        {"ALWAYS", "NEVER", "IN_COMBAT", "OUT_COMBAT"},
+        {ALWAYS, NEVER, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Out of combat"]},
+        nil,
+        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
+    )
+
+    addOptionDropdown(
+        tank.scroll.scrollchild,
+        COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
+        nil,
+        "RAID_UNIT_HEALTH_TANK",
+        function()
+            GW.UpdateGridSettings("TANK")
+        end,
+        {"NONE", "PREC", "HEALTH", "LOSTHEALTH"},
+        {
+            COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_NONE,
+            COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_PERC,
+            COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_HEALTH,
+            COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT_LOSTHEALTH
+        },
+        nil,
+        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
+    )
+
+    addOptionDropdown(
+        tank.scroll.scrollchild,
+        L["Show Country Flag"],
+        L["Display a country flag based on the unit's language"],
+        "RAID_UNIT_FLAGS_TANK",
+        function()
+            GW.UpdateGridSettings("TANK")
+        end,
+        {"NONE", "DIFFERENT", "ALL"},
+        {NONE_KEY, L["Different Than Own"], ALL},
+        nil,
+        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
+    )
+
+    local dirs, grow = {"Down", "Up", "Right", "Left"}, {}
+    for i in pairs(dirs) do
+        local k = i <= 2 and 3 or 1
+        for j = k, k + 1 do
+            tinsert(grow, StrUpper(dirs[i] .. "+" .. dirs[j]))
+        end
+    end
+
+    -- Size and Positions
+    addGroupHeader(tank.scroll.scrollchild,  L["Size and Positions"])
+    addOptionDropdown(
+        tank.scroll.scrollchild,
+        L["Set Raid Growth Direction"],
+        L["Set the grow direction for raid frames."],
+        "RAID_GROW_TANK",
+        function()
+            GW.UpdateGridSettings("TANK", true)
+        end,
+        grow,
+        MapTable(
+            grow,
+            function(dir)
+                local g1, g2 = strsplit("+", dir)
+                return L["%s and then %s"]:format(L[StrLower(g1, 2)], L[StrLower(g2, 2)])
+            end
+        ),
+        nil,
+        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
+    )
+
+    addOptionSlider(
+        tank.scroll.scrollchild,
+        L["Set Raid Units per Column"],
+        L["Set the number of raid unit frames per column or row, depending on grow directions."],
+        "RAID_UNITS_PER_COLUMN_TANK",
+        function()
+            GW.UpdateGridSettings("TANK", true)
+        end,
+        1,
+        40,
+        nil,
+        0,
+        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
+    )
+
+    addOptionSlider(
+        tank.scroll.scrollchild,
+        L["Set Raid Unit Width"],
+        L["Set the width of the raid units."],
+        "RAID_WIDTH_TANK",
+        function()
+            GW.UpdateGridSettings("TANK", false, true)
+        end,
+        45,
+        300,
+        nil,
+        0,
+        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
+    )
+
+    addOptionSlider(
+        tank.scroll.scrollchild,
+        L["Set Raid Unit Height"],
+        L["Set the height of the raid units."],
+        "RAID_HEIGHT_TANK",
+        function()
+            GW.UpdateGridSettings("TANK", false, true)
+        end,
+        15,
+        100,
+        nil,
+        0,
+        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
+    )
+
+    addOptionSlider(
+        tank.scroll.scrollchild,
+        L["Horizontal Spacing"],
+        nil,
+        "RAID_UNITS_HORIZONTAL_SPACING_TANK",
+        function()
+            GW.UpdateGridSettings("TANK", true)
+        end,
+        -1,
+        100,
+        nil,
+        0,
+        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
+    )
+
+    addOptionSlider(
+        tank.scroll.scrollchild,
+        L["Vertical Spacing"],
+        nil,
+        "RAID_UNITS_VERTICAL_SPACING_TANK",
+        function()
+            GW.UpdateGridSettings("TANK", true)
+        end,
+        -1,
+        100,
+        nil,
+        0,
+        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
+    )
+
+    return tank
+end
+
 local function LoadRaidPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
     p.header:Hide()
     p.sub:Hide()
 
-    local profilePanles = {LoadRaid40Profile(p), LoadRaid25Profile(p), LoadRaid10Profile(p), LoadRaidPetProfile(p), LoadPartyProfile(p)}
+    local profilePanles = {LoadRaid40Profile(p), LoadRaid25Profile(p), LoadRaid10Profile(p), LoadMaintankProfile(p), LoadRaidPetProfile(p), LoadPartyProfile(p)}
     createCat(L["Group Frames"], L["Edit the group settings."], p, profilePanles)
     settingsMenuAddButton(L["Group Frames"], p, profilePanles)
 
@@ -1295,5 +1485,6 @@ local function LoadRaidPanel(sWindow)
     InitPanel(profilePanles[3], true)
     InitPanel(profilePanles[4], true)
     InitPanel(profilePanles[5], true)
+    InitPanel(profilePanles[6], true)
 end
 GW.LoadRaidPanel = LoadRaidPanel

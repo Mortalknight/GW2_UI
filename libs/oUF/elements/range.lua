@@ -52,12 +52,12 @@ local function Update(self, event)
 	if(connected) then
 		inRange, checkedRange = UnitInRange(unit)
 		if(checkedRange and not inRange) or UnitPhaseReason(unit) then
-			self:SetAlpha(element.outsideAlpha)
+			self.Health.healthPredictionbar:SetAlpha(element.outsideAlpha)
 		else
-			self:SetAlpha(element.insideAlpha)
+			self.Health.healthPredictionbar:SetAlpha(element.insideAlpha)
 		end
 	else
-		self:SetAlpha(element.insideAlpha)
+		self.Health.healthPredictionbar:SetAlpha(element.insideAlpha)
 	end
 
 	--[[ Callback: Range:PostUpdate(object, inRange, checkedRange, isConnected)
