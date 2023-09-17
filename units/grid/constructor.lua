@@ -121,6 +121,9 @@ local settings = {
     raidShowOnlyDispelDebuffs = {},
     raidShowImportendInstanceDebuffs = {},
     raidIndicators = {},
+    groupSpacing = {},
+    horizontalSpacing = {},
+    verticalSpacing = {},
 
     raidWidth = {},
     raidHeight = {},
@@ -207,6 +210,24 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
     settings.raidUnitHealthString.RAID40 = GetSetting("RAID_UNIT_HEALTH")
     settings.raidUnitHealthString.RAID25 = GetSetting("RAID_UNIT_HEALTH_RAID25")
     settings.raidUnitHealthString.RAID10 = GetSetting("RAID_UNIT_HEALTH_RAID10")
+
+    settings.horizontalSpacing.PARTY = GetSetting("RAID_UNITS_HORIZONTAL_SPACING_PARTY")
+    settings.horizontalSpacing.RAID_PET = GetSetting("RAID_UNITS_HORIZONTAL_SPACING_PET")
+    settings.horizontalSpacing.RAID40 = GetSetting("RAID_UNITS_HORIZONTAL_SPACING")
+    settings.horizontalSpacing.RAID25 = GetSetting("RAID_UNITS_HORIZONTAL_SPACING_RAID25")
+    settings.horizontalSpacing.RAID10 = GetSetting("RAID_UNITS_HORIZONTAL_SPACING_RAID10")
+
+    settings.verticalSpacing.PARTY = GetSetting("RAID_UNITS_VERTICAL_SPACING_PARTY")
+    settings.verticalSpacing.RAID_PET = GetSetting("RAID_UNITS_VERTICAL_SPACING_PET")
+    settings.verticalSpacing.RAID40 = GetSetting("RAID_UNITS_VERTICAL_SPACING")
+    settings.verticalSpacing.RAID25 = GetSetting("RAID_UNITS_VERTICAL_SPACING_RAID25")
+    settings.verticalSpacing.RAID10 = GetSetting("RAID_UNITS_VERTICAL_SPACING_RAID10")
+
+    settings.groupSpacing.PARTY = GetSetting("RAID_UNITS_GROUP_SPACING_PARTY")
+    settings.groupSpacing.RAID_PET = GetSetting("RAID_UNITS_GROUP_SPACING_PET")
+    settings.groupSpacing.RAID40 = GetSetting("RAID_UNITS_GROUP_SPACING")
+    settings.groupSpacing.RAID25 = GetSetting("RAID_UNITS_GROUP_SPACING_RAID25")
+    settings.groupSpacing.RAID10 = GetSetting("RAID_UNITS_GROUP_SPACING_RAID10")
 
     settings.raidUnitFlag.PARTY = GetSetting("RAID_UNIT_FLAGS_PARTY")
     settings.raidUnitFlag.RAID_PET = GetSetting("RAID_UNIT_FLAGS_PET")
@@ -439,9 +460,9 @@ local function UpdateGridHeader(profile)
     local isParty = profile == "PARTY"
     local groupsPerRowCol = 1
     local width, height, newCols, newRows = 0, 0, 0, 0
-    local groupSpacing = 0
-    local horizontalSpacing = 2
-    local verticalSpacing = 2
+    local groupSpacing = tonumber(settings.groupSpacing[profile])
+    local horizontalSpacing = tonumber(settings.horizontalSpacing[profile])
+    local verticalSpacing = tonumber(settings.verticalSpacing[profile])
     local WIDTH = GW.Scale(settings.raidWidth[profile]) + horizontalSpacing
     local HEIGHT = GW.Scale(settings.raidHeight[profile]) + verticalSpacing
     local HEIGHT_FIVE = HEIGHT * 5
