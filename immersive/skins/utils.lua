@@ -297,13 +297,11 @@ local function SkinNavBarButtons(self)
             end
         end
 
-        if total == 2 then
-            -- EJ.navBar.home.xoffset = -1
+        if total > 1 then
             NavButtonXOffset(navButton, navButton:GetPoint())
             hooksecurefunc(navButton, "SetPoint", NavButtonXOffset)
         end
 
-        navButton.xoffset = -1
         navButton.isSkinned = true
     end
 end
