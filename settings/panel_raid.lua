@@ -128,14 +128,14 @@ local function LoadRaid10Profile(panel)
 
     addOptionSlider(
         raid10.scroll.scrollchild,
-        L["Set Raid Units per Column"],
-        L["Set the number of raid unit frames per column or row, depending on grow directions."],
-        "RAID_UNITS_PER_COLUMN_RAID10",
+        L["Groups Per Row/Column"],
+        nil,
+        "RAID_GROUPS_PER_COLUMN_RAID10",
         function()
             GW.UpdateGridSettings("RAID10", true)
         end,
         1,
-        40,
+        2,
         nil,
         0,
         {["RAID_FRAMES"] = true, ["RAID10_ENABLED"] = true}
@@ -387,14 +387,14 @@ local function LoadRaid25Profile(panel)
 
     addOptionSlider(
         raid25.scroll.scrollchild,
-        L["Set Raid Units per Column"],
-        L["Set the number of raid unit frames per column or row, depending on grow directions."],
-        "RAID_UNITS_PER_COLUMN_RAID25",
+        L["Groups Per Row/Column"],
+        nil,
+        "RAID_GROUPS_PER_COLUMN_RAID25",
         function()
             GW.UpdateGridSettings("RAID25", true)
         end,
         1,
-        40,
+        5,
         nil,
         0,
         {["RAID_FRAMES"] = true, ["RAID25_ENABLED"] = true}
@@ -646,14 +646,14 @@ local function LoadRaid40Profile(panel)
 
     addOptionSlider(
         raid40.scroll.scrollchild,
-        L["Set Raid Units per Column"],
-        L["Set the number of raid unit frames per column or row, depending on grow directions."],
-        "RAID_UNITS_PER_COLUMN",
+        L["Groups Per Row/Column"],
+        nil,
+        "RAID_GROUPS_PER_COLUMN",
         function()
             GW.UpdateGridSettings("RAID40", true)
         end,
         1,
-        40,
+        8,
         nil,
         0,
         {["RAID_FRAMES"] = true}
@@ -890,14 +890,14 @@ local function LoadRaidPetProfile(panel)
 
     addOptionSlider(
         p.scroll.scrollchild,
-        L["Set Raid Units per Column"],
-        L["Set the number of raid unit frames per column or row, depending on grow directions."],
-        "RAID_UNITS_PER_COLUMN_PET",
+        L["Groups Per Row/Column"],
+        nil,
+        "RAID_GROUPS_PER_COLUMN_PET",
         function()
             GW.UpdateGridSettings("RAID_PET", true)
         end,
         1,
-        40,
+        8,
         nil,
         0,
         {["RAID_FRAMES"] = true, ["RAID_PET_FRAMES"] = true}
@@ -1132,21 +1132,6 @@ local function LoadPartyProfile(panel)
             end
         ),
         nil,
-        {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}
-    )
-
-    addOptionSlider(
-        party.scroll.scrollchild,
-        L["Set Raid Units per Column"],
-        L["Set the number of raid unit frames per column or row, depending on grow directions."],
-        "RAID_UNITS_PER_COLUMN_PARTY",
-        function()
-            GW.UpdateGridSettings("PARTY", true)
-        end,
-        1,
-        5,
-        nil,
-        0,
         {["RAID_FRAMES"] = true, ["RAID_STYLE_PARTY"] = true}
     )
 
@@ -1390,21 +1375,6 @@ local function LoadMaintankProfile(panel)
             end
         ),
         nil,
-        {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
-    )
-
-    addOptionSlider(
-        tank.scroll.scrollchild,
-        L["Set Raid Units per Column"],
-        L["Set the number of raid unit frames per column or row, depending on grow directions."],
-        "RAID_UNITS_PER_COLUMN_TANK",
-        function()
-            GW.UpdateGridSettings("TANK", true)
-        end,
-        1,
-        40,
-        nil,
-        0,
         {["RAID_FRAMES"] = true, ["RAID_MAINTANK_FRAMES_ENABLED"] = true}
     )
 

@@ -46,7 +46,6 @@ local profiles = {
     },
 }
 
-
 --SecureCmdOptionParse("[@raid26,noexists] hide;show")
 --SecureCmdOptionParse("[@raid11,noexists][@raid26,exists] hide;show")
 --SecureCmdOptionParse("[@raid11,exists] hide;show")
@@ -135,7 +134,7 @@ local settings = {
     raidHeight = {},
     startFromCenter = {},
     raidGrow = {},
-    unitsPerColumn = {},
+    groupsPerColumnRow = {},
     raidWideSorting = {},
     groupBy = {},
     sortDirection = {},
@@ -326,12 +325,12 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
     settings.raidGrow.RAID10 = GetSetting("RAID_GROW_RAID10")
     settings.raidGrow.TANK = GetSetting("RAID_GROW_TANK")
 
-    settings.unitsPerColumn.PARTY = tonumber(GetSetting("RAID_UNITS_PER_COLUMN_PARTY"))
-    settings.unitsPerColumn.RAID_PET = tonumber(GetSetting("RAID_UNITS_PER_COLUMN_PET"))
-    settings.unitsPerColumn.RAID40 = tonumber(GetSetting("RAID_UNITS_PER_COLUMN"))
-    settings.unitsPerColumn.RAID25 = tonumber(GetSetting("RAID_UNITS_PER_COLUMN_RAID25"))
-    settings.unitsPerColumn.RAID10 = tonumber(GetSetting("RAID_UNITS_PER_COLUMN_RAID10"))
-    settings.unitsPerColumn.TANK = tonumber(GetSetting("RAID_UNITS_PER_COLUMN_TANK"))
+    settings.groupsPerColumnRow.PARTY = tonumber(GetSetting("RAID_GROUPS_PER_COLUMN_PARTY"))
+    settings.groupsPerColumnRow.RAID_PET = tonumber(GetSetting("RAID_GROUPS_PER_COLUMN_PET"))
+    settings.groupsPerColumnRow.RAID40 = tonumber(GetSetting("RAID_GROUPS_PER_COLUMN"))
+    settings.groupsPerColumnRow.RAID25 = tonumber(GetSetting("RAID_GROUPS_PER_COLUMN_RAID25"))
+    settings.groupsPerColumnRow.RAID10 = tonumber(GetSetting("RAID_GROUPS_PER_COLUMN_RAID10"))
+    settings.groupsPerColumnRow.TANK = tonumber(GetSetting("RAID_GROUPS_PER_COLUMN_TANK"))
 
     settings.raidWideSorting.PARTY = GetSetting("RAID_WIDE_SORTING_PARTY")
     settings.raidWideSorting.RAID_PET = GetSetting("RAID_WIDE_SORTING_PET")
@@ -493,7 +492,7 @@ local function UpdateGridHeader(profile)
     local x, y = DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER[settings.raidGrow[profile]], DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER[settings.raidGrow[profile]]
     local numGroups = header.numGroups
     local isParty = profile == "PARTY"
-    local groupsPerRowCol = 1
+    local groupsPerRowCol = isParty and 1 or tonumber(settings.groupsPerColumnRow[profile])
     local width, height, newCols, newRows = 0, 0, 0, 0
     local groupSpacing = tonumber(settings.groupSpacing[profile])
     local horizontalSpacing = tonumber(settings.horizontalSpacing[profile])
@@ -546,12 +545,7 @@ local function UpdateGridHeader(profile)
             group:SetAttribute('columnAnchorPoint', DIRECTION_TO_COLUMN_ANCHOR_POINT[settings.raidGrow[profile]])
 
             group:SetAttribute('maxColumns', raidWideSorting and numGroups or 1)
-            if profile == "PARTY" or (profile ~= "PARTY" and raidWideSorting) then
-                group:SetAttribute('unitsPerColumn', settings.unitsPerColumn[profile])
-            else
-                group:SetAttribute('unitsPerColumn', 5)
-            end
-
+            group:SetAttribute('unitsPerColumn', raidWideSorting and (groupsPerRowCol * 5) or 5)
             group:SetAttribute('showPlayer', true)
             group:SetAttribute('sortDir', sortDirection)
             -- sorting
@@ -614,13 +608,8 @@ local function UpdateGridHeader(profile)
             end
         end
 
-        if profile == "PARTY" then
-            height = HEIGHT * settings.unitsPerColumn[profile]
-            width = WIDTH * (math.floor(5 / settings.unitsPerColumn[profile]))
-        else
-            if height == 0 then height = height + HEIGHT_FIVE + groupSpacing end
-            if width == 0 then width = width + WIDTH_FIVE + groupSpacing end
-        end
+        if height == 0 then height = height + HEIGHT_FIVE + groupSpacing end
+        if width == 0 then width = width + WIDTH_FIVE + groupSpacing end
     end
 
     header:SetSize(width - horizontalSpacing - groupSpacing, height - verticalSpacing - groupSpacing)
@@ -702,15 +691,6 @@ local function Setup(self)
         while options.numGroups > #Header.groups do
             local index = tostring(#Header.groups + 1)
             tinsert(Header.groups, CreateHeader(self, profile, options, "GW2_" .. options.name .. "Group" .. index, index))
-        end
-
-        if profile == "RAID_PET" and not GetSetting("RAID_PET_FRAMES") then
-            options.visibility = 'hide'
-        end
-        if profile == "PARTY" then
-            if not GetSetting("RAID_STYLE_PARTY") and not GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
-                options.visibility = 'hide'
-            end
         end
 
         RegisterStateDriver(Header, 'visibility', options.visibility)
