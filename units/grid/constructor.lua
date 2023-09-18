@@ -40,7 +40,6 @@ local profiles = {
     },
     TANK = {
         name = "Maintank",
-        size = 40,
         visibility = '[@raid1,exists] show; hide',
         numGroups = 1,
     },
