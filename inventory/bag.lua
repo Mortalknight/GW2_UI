@@ -16,34 +16,35 @@ local BAG_WINDOW_SIZE = 480
 
 local IterationCount, totalPrice = 500, 0
 local SellJunkFrame = CreateFrame("FRAME")
-local SellJunkTicker, mBagID, mBagSlot
+local SellJunkTicker
 
 -- automaticly vendor junk
 local function StopSelling()
-    if SellJunkTicker then SellJunkTicker:Cancel() end
+    if SellJunkTicker then SellJunkTicker._cancelled = true end
     GwBagFrame.smsj:Hide()
     SellJunkFrame:UnregisterEvent("ITEM_LOCKED")
-    SellJunkFrame:UnregisterEvent("ITEM_UNLOCKED")
+    SellJunkFrame:UnregisterEvent("UI_ERROR_MESSAGE")
 end
 
 local function sellJunk()
     -- Variables
     local soldCount, rarity, itemPrice, classID, bindType = 0, 0, 0, 0, 0
-    local CurrentItemLink
+    local ItemLink
 
     -- Traverse bags and sell grey items
     for BagID = 0, 4 do
-        for BagSlot = 1, C_Container.GetContainerNumSlots(BagID) do
-            CurrentItemLink = C_Container.GetContainerItemLink(BagID, BagSlot)
-            if CurrentItemLink then
-                _, _, rarity, _, _, _, _, _, _, _, itemPrice, classID, _, bindType = GetItemInfo(CurrentItemLink)
-                local itemInfo = C_Container.GetContainerItemInfo(BagID, BagSlot)
+        for slotID = 1, C_Container.GetContainerNumSlots(BagID) do
+            ItemLink = C_Container.GetContainerItemLink(BagID, slotID)
+            if ItemLink then
+                _, _, rarity, _, _, _, _, _, _, _, itemPrice, classID, _, bindType = GetItemInfo(ItemLink)
+                local itemInfo = C_Container.GetContainerItemInfo(BagID, slotID)
                 local itemCount = itemInfo.stackCount or 1
+
                 if rarity and rarity == 0 and itemPrice ~= 0 and (classID ~= 12 or bindType ~= 4) then
                     soldCount = soldCount + 1
                     if MerchantFrame:IsShown() then
                         -- If merchant frame is open, vendor the item
-                        C_Container.UseContainerItem(BagID, BagSlot)
+                        C_Container.UseContainerItem(BagID, slotID)
                         -- Perform actions on first iteration
                         if SellJunkTicker._remainingIterations == IterationCount then
                             -- Calculate total price
