@@ -613,3 +613,5 @@ L["Display a separate raid grid for groups from 11 to 25 players"] = "Zeigt ein 
 L["Enable Raid pet grid"] = "Aktiviere das Schlachtzugbegleiter Raster"
 L["Show a separate grid for raid pets"] = "Zeigt ein separaters Raster für Schlachtzugbegleiter"
 L["Enable Maintank grid"] = "Aktiviere das Haupttank 10er Raster"
+L["Size and Positions"] = "Größe und Positionen"
+L["Grouping & Sorting"] = "Gruppierung und Sortierung"

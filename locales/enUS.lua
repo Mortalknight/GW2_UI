@@ -583,3 +583,5 @@ L["Display a separate raid grid for groups from 11 to 25 players"] = true
 L["Enable Raid pet grid"] = true
 L["Show a separate grid for raid pets"] = true
 L["Enable Maintank grid"] = true
+L["Size and Positions"] = true
+L["Grouping & Sorting"] = true
