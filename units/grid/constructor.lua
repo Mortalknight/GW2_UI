@@ -183,7 +183,6 @@ local headerGroupBy = {
 		header:SetAttribute('sortMethod', 'INDEX')
 		header:SetAttribute('groupBy', nil)
         header:SetAttribute('groupFilter', "MAINTANK")
-        header:SetAttribute("strictFiltering", true)
     end,
 }
 

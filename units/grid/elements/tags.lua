@@ -8,14 +8,14 @@ local function Create_Tags()
 			return "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:0:0:0:-2:64:64:4:60:4:60|t "
 		end
     end
-    GW.oUF.Tags.Events['GW2_Grid:leaderIcon'] = 'PARTY_LEADER_CHANGED'
+    GW.oUF.Tags.Events['GW2_Grid:leaderIcon'] = 'PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE'
 
     GW.oUF.Tags.Methods['GW2_Grid:assistIcon'] = function(unit)
         if( UnitIsGroupAssistant(unit)) then
 			return"|TInterface/AddOns/GW2_UI/textures/party/icon-assist:0:0:0:-2:64:64:4:60:4:60|t "
 		end
     end
-    GW.oUF.Tags.Events['GW2_Grid:assistIcon'] = 'PARTY_LEADER_CHANGED UNIT_NAME_UPDATE'
+    GW.oUF.Tags.Events['GW2_Grid:assistIcon'] = 'PARTY_LEADER_CHANGED UNIT_NAME_UPDATE GROUP_ROSTER_UPDATE'
 
     GW.oUF.Tags.Methods['GW2_Grid:roleIcon'] = function(unit)
         local role = UnitGroupRolesAssigned(unit)
@@ -23,7 +23,7 @@ local function Create_Tags()
             return GW.nameRoleIcon[role]
 		end
     end
-    GW.oUF.Tags.Events['GW2_Grid:roleIcon'] = 'PARTY_LEADER_CHANGED UNIT_NAME_UPDATE'
+    GW.oUF.Tags.Events['GW2_Grid:roleIcon'] = 'PARTY_LEADER_CHANGED UNIT_NAME_UPDATE PLAYER_ROLES_ASSIGNED GROUP_ROSTER_UPDATE'
 
     GW.oUF.Tags.Methods['GW2_Grid:realmFlag'] = function(unit, realUnit, ...)
         local realmLocal = select(5, LRI:GetRealmInfoByUnit(unit))
