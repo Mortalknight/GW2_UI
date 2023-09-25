@@ -11,10 +11,14 @@ local CPF_HOOKED_TO_TARGETFRAME = false
 
 local function updateVisibility(self)
     local onlyShowInCombat = GetSetting("CLASSPOWER_ONLY_SHOW_IN_COMBAT")
-    if onlyShowInCombat then
-        RegisterStateDriver(self, "visibility", "[combat] show; hide")
+    if self.shouldShowBar then
+        if onlyShowInCombat then
+            RegisterStateDriver(self, "visibility", "[combat] show; hide")
+        else
+            RegisterStateDriver(self, "visibility", "show")
+        end
     else
-        RegisterStateDriver(self, "visibility", "show")
+        RegisterStateDriver(self, "visibility", "hide")
     end
 end
 GW.UpdateClassPowerVisibility = updateVisibility
@@ -1374,8 +1378,8 @@ local function setDeamonHunter(f)
     if GW.myspec == 1 then -- havoc
         setPowerTypeMeta(f.customResourceBar)
         f.customResourceBar:Show()
-      --  f:ClearAllPoints()
-       -- f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -15)
+        --f:ClearAllPoints()
+        --f:SetPoint("TOPLEFT", f.gwMover, "TOPLEFT", 0, -15)
         f.background:SetTexture(nil)
         f.fill:SetTexture(nil)
 
@@ -1449,7 +1453,11 @@ local function selectType(f)
     if (GW.myClassID == 4 or GW.myClassID == 11) and f.ourTarget and f.comboPointsOnTarget and f.barType == "combo" then
         showBar = UnitExists("target") and UnitCanAttack("player", "target") and not UnitIsDead("target") or false
     end
+
+    f.shouldShowBar = showBar
     f:SetShown(showBar)
+
+    updateVisibility(f)
 end
 GW.AddForProfiling("classpowers", "selectType", selectType)
 
@@ -1523,8 +1531,6 @@ local function LoadClassPowers()
     end
     cpf:ClearAllPoints()
     cpf:SetPoint("TOPLEFT", cpf.gwMover)
-
-    updateVisibility(cpf)
 
     GW.MixinHideDuringPetAndOverride(cpf)
     CPWR_FRAME = cpf
