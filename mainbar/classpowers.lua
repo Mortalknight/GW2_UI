@@ -9,6 +9,16 @@ local GetSetting = GW.GetSetting
 local CPWR_FRAME
 local CPF_HOOKED_TO_TARGETFRAME = false
 
+local function updateVisibility(self)
+    local onlyShowInCombat = GetSetting("CLASSPOWER_ONLY_SHOW_IN_COMBAT")
+    if onlyShowInCombat then
+        RegisterStateDriver(self, "visibility", "[combat] show; hide")
+    else
+        RegisterStateDriver(self, "visibility", "show")
+    end
+end
+GW.UpdateClassPowerVisibility = updateVisibility
+
 ---Styling for powerbars
 local function setPowerTypeEbonMight(self)
     self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/agu")
@@ -1513,6 +1523,8 @@ local function LoadClassPowers()
     end
     cpf:ClearAllPoints()
     cpf:SetPoint("TOPLEFT", cpf.gwMover)
+
+    updateVisibility(cpf)
 
     GW.MixinHideDuringPetAndOverride(cpf)
     CPWR_FRAME = cpf
