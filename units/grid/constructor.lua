@@ -35,7 +35,7 @@ local profiles = {
     RAID10 = {
         name = "Raid10",
         size = 10,
-        visibility = '[@raid11,exists] hide;show',
+        visibility = '[@raid11,exists] hide; [group:party] hide;show',
         numGroups = 2,
     },
     TANK = {
