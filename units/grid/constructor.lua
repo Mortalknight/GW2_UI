@@ -20,27 +20,27 @@ local profiles = {
     RAID40 = {
         name = "Raid40",
         size = 40,
-        visibility = '[@raid26,noexists] hide;show',
+        visibility = '[@raid26,noexists] hide; show',
         visibilityAll = "[group:raid] show;hide",
-        visibilityIncl25 = "[@raid11,noexists] hide;show",
+        visibilityIncl25 = "[@raid11,noexists] hide; show",
         numGroups = 8
     },
     RAID25 = {
         name = "Raid25",
         size = 25,
         visibility = '[@raid11,noexists][@raid26,exists] hide;show',
-        visibilityIncl10 = '[@raid26,exists] hide;show',
+        visibilityIncl10 = '[@raid26,exists][group:party] hide; show',
         numGroups = 5
     },
     RAID10 = {
         name = "Raid10",
         size = 10,
-        visibility = '[@raid11,exists] hide; [group:party] hide;show',
+        visibility = '[@raid11,exists][group:party][nogroup] hide;show',
         numGroups = 2,
     },
     TANK = {
         name = "Maintank",
-        visibility = '[@raid1,exists] show; hide',
+        visibility = '[group:raid] show; hide',
         numGroups = 1,
     },
 }
