@@ -182,8 +182,8 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
         end
 
         -- Show junk icon if active
-        local _, _, _, rarity, _, _, _, _, noValue = C_Container.GetContainerItemInfo(bag_id, button:GetID())
-        button.isJunk = (rarity and rarity == LE_ITEM_QUALITY_POOR) and not noValue
+        local itemInfo = C_Container.GetContainerItemInfo(bag_id, button:GetID())
+        button.isJunk = itemInfo and ((itemInfo.quality and itemInfo.quality == Enum.ItemQuality.Poor) and not itemInfo.hasNoValue) or false
 
         if button.junkIcon then
             if button.isJunk and GetSetting("BAG_ITEM_JUNK_ICON_SHOW") then
@@ -415,7 +415,7 @@ local function bag_OnMouseDown(self, button)
     local bag_id = self:GetID() - CharacterBag0Slot:GetID() + 1
     local menuList = {}
     tinsert(menuList, { text = BAG_FILTER_ASSIGN_TO, isTitle = true, notCheckable = true })
-    tinsert(menuList, { text = BAG_FILTER_IGNORE, checked = function() return C_Container.GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) end, func = function() SetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not C_Container.GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)) end })
+    tinsert(menuList, { text = BAG_FILTER_IGNORE, checked = function() return C_Container.GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP) end, func = function() C_Container.SetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, not C_Container.GetBagSlotFlag(bag_id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)) end })
     GW.SetEasyMenuAnchor(GW.EasyMenu, self)
     _G.EasyMenu(menuList, GW.EasyMenu, nil, nil, nil, "MENU")
 end
