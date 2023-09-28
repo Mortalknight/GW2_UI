@@ -555,7 +555,6 @@ L["Classic combat text anchoring"] = true
 L["Center of screen"] = true
 L["GW2 floating combat text style"] = true
 L["Stacking"] = true
-
 L["Horizontal Spacing"] = true
 L["Vertical Spacing"] = true
 L["Max Wraps"] = true
@@ -566,10 +565,9 @@ L["Used for animations"] = true
 L["Researchers Under Fire"] = true
 L["Time Rift Thaldraszus"] = true
 L["Net %s can be collected"] = true
-
 L["Show classpower bar only in combat"] = true
 L["Enable Raid 10 grid"] = true
-L["Display a separate raid grid for groups from 11 to 25 players"] = true
+L["Display a separate raid grid for groups from 1 to 10 players"] = true
 L["Start Near Center"] = true
 L["The initial group will start near the center and grow out."] = true
 L["Groups Per Row/Column"] = true
