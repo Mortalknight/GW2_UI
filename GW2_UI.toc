@@ -86,7 +86,6 @@ settings\welcome.xml
 settings\welcome.lua
 settings\layouts.lua
 settings\moveableFrameHandler.lua
-settings\credits.lua
 settings\panel_overview.lua
 settings\panel_overview.xml
 
@@ -162,6 +161,7 @@ units\grid\party.lua
 units\grid\raidPet.lua
 units\grid\maintank.lua
 units\grid\constructor.lua
+units\grid\configEnvironment.lua
 
 mainbar\upcomingSpells.xml
 mainbar\upcomingSpells.lua

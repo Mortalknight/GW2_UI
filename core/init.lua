@@ -65,6 +65,7 @@ GW.scaleableMainHudFrames = {}
 GW.animations = {}
 GW.BackdropTemplates = {}
 GW.AchievementFrameSkinFunction = {}
+GW.CreditsList = {}
 
 -- money
 GW.earnedMoney = 0

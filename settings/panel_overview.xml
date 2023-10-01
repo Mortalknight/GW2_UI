@@ -55,9 +55,14 @@
                     <Anchor point="TOPLEFT" relativeKey="$parent.discordbtn" relativePoint="TOPLEFT" x="0" y="-36"/>
                 </Anchors>
               </Button>
-              <Button parentKey="creditsbtn" inherits="GwSettingsOverviewMenuButton"  text="Credits">
+               <Button parentKey="changelog" inherits="GwSettingsOverviewMenuButton"  text="Changelog">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.reportbtn" relativePoint="TOPLEFT" x="0" y="-36"/>
+                </Anchors>
+              </Button>
+              <Button parentKey="creditsbtn" inherits="GwSettingsOverviewMenuButton"  text="Credits">
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.changelog" relativePoint="TOPLEFT" x="0" y="-36"/>
                 </Anchors>
               </Button>
             </Frames>

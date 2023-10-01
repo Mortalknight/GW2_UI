@@ -5,22 +5,23 @@ local FillTable = GW.FillTable
 local INDICATORS = GW.INDICATORS
 
 local headers = {}
+GW.GridGroupHeaders = headers
 
 local profiles = {
     PARTY = {
         name = "Party",
-        visibility = '[group:raid][nogroup] hide; [group:party] show;hide',
+        visibility = "[group:raid][nogroup] hide; [group:party] show;hide",
         numGroups = 1
     },
     RAID_PET = {
         name = "RaidPet",
-        visibility = '[group:raid] show; hide',
+        visibility = "[group:raid] show; hide",
         numGroups = 8
     },
     RAID40 = {
         name = "Raid40",
         size = 40,
-        visibility = '[@raid26,noexists] hide; show',
+        visibility = "[@raid26,noexists] hide; show",
         visibilityAll = "[group:raid] show;hide",
         visibilityIncl25 = "[@raid11,noexists] hide; show",
         numGroups = 8
@@ -28,19 +29,19 @@ local profiles = {
     RAID25 = {
         name = "Raid25",
         size = 25,
-        visibility = '[@raid11,noexists][@raid26,exists] hide;show',
-        visibilityIncl10 = '[@raid26,exists][group:party] hide; show',
+        visibility = "[@raid11,noexists][@raid26,exists] hide;show",
+        visibilityIncl10 = "[@raid26,exists][group:party] hide; show",
         numGroups = 5
     },
     RAID10 = {
         name = "Raid10",
         size = 10,
-        visibility = '[@raid11,exists][group:party][nogroup] hide;show',
+        visibility = "[@raid11,exists][group:party][nogroup] hide;show",
         numGroups = 2,
     },
     TANK = {
         name = "Maintank",
-        visibility = '[group:raid] show; hide',
+        visibility = "[group:raid] show; hide",
         numGroups = 1,
     },
 }
@@ -49,25 +50,25 @@ local profiles = {
 --SecureCmdOptionParse("[@raid11,noexists][@raid26,exists] hide;show")
 --SecureCmdOptionParse("[@raid11,exists] hide;show")
 local DIRECTION_TO_POINT = {
-	["DOWN+RIGHT"] = 'TOP',
-	["DOWN+LEFT"] = 'TOP',
-	["UP+RIGHT"] = 'BOTTOM',
-	["UP+LEFT"] = 'BOTTOM',
-	["RIGHT+DOWN"] = 'LEFT',
-	["RIGHT+UP"] = 'LEFT',
-	["LEFT+DOWN"] = 'RIGHT',
-	["LEFT+UP"] = 'RIGHT'
+	["DOWN+RIGHT"] = "TOP",
+	["DOWN+LEFT"] = "TOP",
+	["UP+RIGHT"] = "BOTTOM",
+	["UP+LEFT"] = "BOTTOM",
+	["RIGHT+DOWN"] = "LEFT",
+	["RIGHT+UP"] = "LEFT",
+	["LEFT+DOWN"] = "RIGHT",
+	["LEFT+UP"] = "RIGHT"
 }
 
 local DIRECTION_TO_COLUMN_ANCHOR_POINT = {
-	["DOWN+RIGHT"] = 'LEFT',
-	["DOWN+LEFT"] = 'RIGHT',
-	["UP+RIGHT"] = 'LEFT',
-	["UP+LEFT"] = 'RIGHT',
-	["RIGHT+DOWN"] = 'TOP',
-	["RIGHT+UP"] = 'BOTTOM',
-	["LEFT+DOWN"] = 'TOP',
-	["LEFT+UP"] = 'BOTTOM',
+	["DOWN+RIGHT"] = "LEFT",
+	["DOWN+LEFT"] = "RIGHT",
+	["UP+RIGHT"] = "LEFT",
+	["UP+LEFT"] = "RIGHT",
+	["RIGHT+DOWN"] = "TOP",
+	["RIGHT+UP"] = "BOTTOM",
+	["LEFT+DOWN"] = "TOP",
+	["LEFT+UP"] = "BOTTOM",
 }
 
 local DIRECTION_TO_HORIZONTAL_SPACING_MULTIPLIER = {
@@ -93,22 +94,22 @@ local DIRECTION_TO_VERTICAL_SPACING_MULTIPLIER = {
 }
 
 local DIRECTION_TO_GROUP_ANCHOR_POINT = {
-	["DOWN+RIGHT"] = 'TOPLEFT',
-	["DOWN+LEFT"] = 'TOPRIGHT',
-	["UP+RIGHT"] = 'BOTTOMLEFT',
-	["UP+LEFT"] = 'BOTTOMRIGHT',
-	["RIGHT+DOWN"] = 'TOPLEFT',
-	["RIGHT+UP"] = 'BOTTOMLEFT',
-	["LEFT+DOWN"] = 'TOPRIGHT',
-	["LEFT+UP"] = 'BOTTOMRIGHT',
-    ["OUT+RIGHT+UP"] = 'BOTTOM',
-	["OUT+LEFT+UP"] = 'BOTTOM',
-	["OUT+RIGHT+DOWN"] = 'TOP',
-	["OUT+LEFT+DOWN"] = 'TOP',
-	["OUT+UP+RIGHT"] = 'LEFT',
-	["OUT+UP+LEFT"] = 'RIGHT',
-	["OUT+DOWN+RIGHT"] = 'LEFT',
-	["OUT+DOWN+LEFT"] = 'RIGHT',
+	["DOWN+RIGHT"] = "TOPLEFT",
+	["DOWN+LEFT"] = "TOPRIGHT",
+	["UP+RIGHT"] = "BOTTOMLEFT",
+	["UP+LEFT"] = "BOTTOMRIGHT",
+	["RIGHT+DOWN"] = "TOPLEFT",
+	["RIGHT+UP"] = "BOTTOMLEFT",
+	["LEFT+DOWN"] = "TOPRIGHT",
+	["LEFT+UP"] = "BOTTOMRIGHT",
+    ["OUT+RIGHT+UP"] = "BOTTOM",
+	["OUT+LEFT+UP"] = "BOTTOM",
+	["OUT+RIGHT+DOWN"] = "TOP",
+	["OUT+LEFT+DOWN"] = "TOP",
+	["OUT+UP+RIGHT"] = "LEFT",
+	["OUT+UP+LEFT"] = "RIGHT",
+	["OUT+DOWN+RIGHT"] = "LEFT",
+	["OUT+DOWN+LEFT"] = "RIGHT",
 }
 
 local settings = {
@@ -146,47 +147,47 @@ local settingsEventFrame = CreateFrame("Frame")
 local headerGroupBy = {
 	CLASS = function(header, profile)
 		local sortMethod = settings.sortMethod[profile]
-		header:SetAttribute('groupingOrder', 'DEATHKNIGHT,DEMONHUNTER,DRUID,EVOKER,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR,MONK')
-		header:SetAttribute('sortMethod', sortMethod or 'NAME')
-		header:SetAttribute('groupBy', 'CLASS')
+		header:SetAttribute("groupingOrder", "DEATHKNIGHT,DEMONHUNTER,DRUID,EVOKER,HUNTER,MAGE,PALADIN,PRIEST,ROGUE,SHAMAN,WARLOCK,WARRIOR,MONK")
+		header:SetAttribute("sortMethod", sortMethod or "NAME")
+		header:SetAttribute("groupBy", "CLASS")
 	end,
 	ROLE = function(header, profile)
 		local sortMethod = settings.sortMethod[profile]
-		header:SetAttribute('groupingOrder', 'TANK,HEALER,DAMAGER,NONE')
-		header:SetAttribute('sortMethod', sortMethod or 'NAME')
-		header:SetAttribute('groupBy', 'ASSIGNEDROLE')
+		header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
+		header:SetAttribute("sortMethod", sortMethod or "NAME")
+		header:SetAttribute("groupBy", "ASSIGNEDROLE")
 	end,
 	NAME = function(header)
-		header:SetAttribute('groupingOrder', '1,2,3,4,5,6,7,8')
-		header:SetAttribute('sortMethod', 'NAME')
-		header:SetAttribute('groupBy', nil)
+		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
+		header:SetAttribute("sortMethod", "NAME")
+		header:SetAttribute("groupBy", nil)
 	end,
 	GROUP = function(header, profile)
 		local sortMethod = settings.sortMethod[profile]
-		header:SetAttribute('groupingOrder', '1,2,3,4,5,6,7,8')
-		header:SetAttribute('sortMethod', sortMethod or 'INDEX')
-		header:SetAttribute('groupBy', 'GROUP')
+		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
+		header:SetAttribute("sortMethod", sortMethod or "INDEX")
+		header:SetAttribute("groupBy", "GROUP")
 	end,
 	PETNAME = function(header)
-		header:SetAttribute('groupingOrder', '1,2,3,4,5,6,7,8')
-		header:SetAttribute('sortMethod', 'NAME')
-		header:SetAttribute('groupBy', nil)
-		header:SetAttribute('filterOnPet', true) --This is the line that matters. Without this, it sorts based on the owners name
+		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
+		header:SetAttribute("sortMethod", "NAME")
+		header:SetAttribute("groupBy", nil)
+		header:SetAttribute("filterOnPet", true) --This is the line that matters. Without this, it sorts based on the owners name
 	end,
 	INDEX = function(header)
-		header:SetAttribute('groupingOrder', '1,2,3,4,5,6,7,8')
-		header:SetAttribute('sortMethod', 'INDEX')
-		header:SetAttribute('groupBy', nil)
+		header:SetAttribute("groupingOrder", "1,2,3,4,5,6,7,8")
+		header:SetAttribute("sortMethod", "INDEX")
+		header:SetAttribute("groupBy", nil)
 	end,
     TANK = function(header)
-        header:SetAttribute('groupingOrder', 'TANK,HEALER,DAMAGER,NONE')
-		header:SetAttribute('sortMethod', 'INDEX')
-		header:SetAttribute('groupBy', nil)
-        header:SetAttribute('groupFilter', "MAINTANK")
+        header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
+		header:SetAttribute("sortMethod", "INDEX")
+		header:SetAttribute("groupBy", nil)
+        header:SetAttribute("groupFilter", "MAINTANK")
     end,
 }
 
-local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
+local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
     --frame enabled settings
     settings.enabled.RAID_PET = GetSetting("RAID_PET_FRAMES")
     settings.enabled.PARTY = GetSetting("RAID_STYLE_PARTY")
@@ -369,7 +370,7 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
         settingsEventFrame.isSetup = true
     end
 
-    if not onlyHeaderUpdate or updasteHeaderAndFrames then
+    if not onlyHeaderUpdate or updateHeaderAndFrames then
         if InCombatLockdown() then
             settingsEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
         end
@@ -385,7 +386,7 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
         end
     end
 
-    if (onlyHeaderUpdate or updasteHeaderAndFrames) and headers[profile] then
+    if (onlyHeaderUpdate or updateHeaderAndFrames) and headers[profile] then
         if InCombatLockdown() then
             settingsEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
         else
@@ -395,8 +396,19 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updasteHeaderAndFrames)
 end
 GW.UpdateGridSettings = UpdateSettings
 
+local function GetGroupHeaderForProfile(profile)
+    for headerProfile, header in pairs(GW.GridGroupHeaders) do
+        if headerProfile == profile then
+            return header
+        end
+    end
+
+    return nil
+end
+GW.GetGroupHeaderForProfile = GetGroupHeaderForProfile
+
 local function CreateRaisedText(raised)
-	local text = raised:CreateFontString(nil, 'OVERLAY')
+	local text = raised:CreateFontString(nil, "OVERLAY")
 	text:SetFont(UNIT_NAME_FONT, 11)
     text:SetShadowOffset(-1, -1)
     text:SetShadowColor(0, 0, 0, 1)
@@ -406,80 +418,83 @@ end
 GW.CreateRaisedText = CreateRaisedText
 
 local function CreateRaisedElement(frame)
-	local raised = CreateFrame('Frame', nil, frame)
+	local raised = CreateFrame("Frame", nil, frame)
 	local level = frame:GetFrameLevel() + 100
 	raised:SetFrameLevel(level)
 	raised.__owner = frame
-	raised.TextureParent = CreateFrame('Frame', nil, raised)
+	raised.TextureParent = CreateFrame("Frame", nil, raised)
 
 	return raised
 end
 GW.CreateRaisedElement = CreateRaisedElement
 
 local function UpdateGroupVisibility(header, profile, enabled)
-    local numGroups = header.numGroups
-    local raidWideSorting = settings.raidWideSorting[profile]
-    local visibilityToUseForGroups
+    if not header.isForced then
+        local numGroups = header.numGroups
+        local raidWideSorting = settings.raidWideSorting[profile]
+        local visibilityToUseForGroups
 
-    if profile == "RAID40" then
-        if settings.enabled.RAID40 and settings.enabled.RAID25 and settings.enabled.RAID10 then
-            RegisterStateDriver(header, 'visibility', profiles.RAID40.visibility)
-            visibilityToUseForGroups = profiles.RAID40.visibility
-        elseif settings.enabled.RAID40 and not settings.enabled.RAID25 and settings.enabled.RAID10 then
-            RegisterStateDriver(header, 'visibility', profiles.RAID40.visibilityIncl25)
-            visibilityToUseForGroups = profiles.RAID40.visibilityIncl25
-        elseif settings.enabled.RAID40 and not settings.enabled.RAID25 and not settings.enabled.RAID10 then
-            RegisterStateDriver(header, 'visibility', profiles.RAID40.visibilityAll)
-            visibilityToUseForGroups = profiles.RAID40.visibilityAll
-        elseif not settings.enabled.RAID40 then
-            RegisterStateDriver(header, 'visibility', "hide")
-        end
-    elseif profile == "RAID25" then
-        if settings.enabled.RAID25 and settings.enabled.RAID10 then
-            RegisterStateDriver(header, 'visibility', profiles.RAID25.visibility)
-            visibilityToUseForGroups = profiles.RAID25.visibility
-        elseif settings.enabled.RAID25 and not settings.enabled.RAID10 then
-            RegisterStateDriver(header, 'visibility', profiles.RAID25.visibilityIncl10)
-            visibilityToUseForGroups = profiles.RAID25.visibilityIncl10
-        elseif not settings.enabled.RAID25 then
-            RegisterStateDriver(header, 'visibility', "hide")
-        end
-    elseif profile == "RAID10" then
-        if settings.enabled.RAID10 then
-            RegisterStateDriver(header, 'visibility', profiles.RAID10.visibility)
-            visibilityToUseForGroups = profiles.RAID10.visibility
-        else
-            RegisterStateDriver(header, 'visibility', "hide")
-        end
-    elseif profile == "RAID_PET" then
-        if settings.enabled.RAID_PET then
-            RegisterStateDriver(header, 'visibility', profiles.RAID_PET.visibility)
-            visibilityToUseForGroups = profiles.RAID_PET.visibility
-        else
-            RegisterStateDriver(header, 'visibility', "hide")
-        end
-    end
-
-    for i = 1, numGroups do
-        local group = header.groups[i]
-        if group then
-            if enabled then
-                -- register the correct visibility state driver
-                if numGroups > 1 and i > 1 then
-                    if raidWideSorting then
-                        RegisterStateDriver(group, 'visibility', "hide")
-                    else
-                        RegisterStateDriver(group, 'visibility', visibilityToUseForGroups)
-                    end
-                elseif numGroups > 1 and i == 1 then
-                    RegisterStateDriver(group, 'visibility', visibilityToUseForGroups)
-                end
+        if profile == "RAID40" then
+            if settings.enabled.RAID40 and settings.enabled.RAID25 and settings.enabled.RAID10 then
+                RegisterStateDriver(header, "visibility", profiles.RAID40.visibility)
+                visibilityToUseForGroups = profiles.RAID40.visibility
+            elseif settings.enabled.RAID40 and not settings.enabled.RAID25 and settings.enabled.RAID10 then
+                RegisterStateDriver(header, "visibility", profiles.RAID40.visibilityIncl25)
+                visibilityToUseForGroups = profiles.RAID40.visibilityIncl25
+            elseif settings.enabled.RAID40 and not settings.enabled.RAID25 and not settings.enabled.RAID10 then
+                RegisterStateDriver(header, "visibility", profiles.RAID40.visibilityAll)
+                visibilityToUseForGroups = profiles.RAID40.visibilityAll
+            elseif not settings.enabled.RAID40 then
+                RegisterStateDriver(header, "visibility", "hide")
+            end
+        elseif profile == "RAID25" then
+            if settings.enabled.RAID25 and settings.enabled.RAID10 then
+                RegisterStateDriver(header, "visibility", profiles.RAID25.visibility)
+                visibilityToUseForGroups = profiles.RAID25.visibility
+            elseif settings.enabled.RAID25 and not settings.enabled.RAID10 then
+                RegisterStateDriver(header, "visibility", profiles.RAID25.visibilityIncl10)
+                visibilityToUseForGroups = profiles.RAID25.visibilityIncl10
+            elseif not settings.enabled.RAID25 then
+                RegisterStateDriver(header, "visibility", "hide")
+            end
+        elseif profile == "RAID10" then
+            if settings.enabled.RAID10 then
+                RegisterStateDriver(header, "visibility", profiles.RAID10.visibility)
+                visibilityToUseForGroups = profiles.RAID10.visibility
             else
-                RegisterStateDriver(group, 'visibility', "hide")
+                RegisterStateDriver(header, "visibility", "hide")
+            end
+        elseif profile == "RAID_PET" then
+            if settings.enabled.RAID_PET then
+                RegisterStateDriver(header, "visibility", profiles.RAID_PET.visibility)
+                visibilityToUseForGroups = profiles.RAID_PET.visibility
+            else
+                RegisterStateDriver(header, "visibility", "hide")
+            end
+        end
+
+        for i = 1, numGroups do
+            local group = header.groups[i]
+            if group then
+                if enabled then
+                    -- register the correct visibility state driver
+                    if numGroups > 1 and i > 1 then
+                        if raidWideSorting then
+                            RegisterStateDriver(group, "visibility", "hide")
+                        else
+                            RegisterStateDriver(group, "visibility", visibilityToUseForGroups)
+                        end
+                    elseif numGroups > 1 and i == 1 then
+                        RegisterStateDriver(group, "visibility", visibilityToUseForGroups)
+                    end
+                else
+                    RegisterStateDriver(group, "visibility", "hide")
+                end
             end
         end
     end
 end
+GW.UpdateGroupVisibility = UpdateGroupVisibility
 
 local function UpdateGridHeader(profile)
     -- Update header values
@@ -512,72 +527,76 @@ local function UpdateGridHeader(profile)
             group:ClearAllPoints()
 
             local idx = 1
-            local child = group:GetAttribute('child'..idx)
+            local child = group:GetAttribute("child"..idx)
             while child do
                 child:ClearAllPoints()
                 idx = idx + 1
-                child = group:GetAttribute('child'..idx)
+                child = group:GetAttribute("child"..idx)
             end
 
 
             local point = DIRECTION_TO_POINT[settings.raidGrow[profile]]
-            group:SetAttribute('point', point)
+            group:SetAttribute("point", point)
 
-            if point == 'LEFT' or point == 'RIGHT' then
-                group:SetAttribute('xOffset', horizontalSpacing * x)
-                group:SetAttribute('yOffset', 0)
-                group:SetAttribute('columnSpacing', verticalSpacing)
+            if point == "LEFT" or point == "RIGHT" then
+                group:SetAttribute("xOffset", horizontalSpacing * x)
+                group:SetAttribute("yOffset", 0)
+                group:SetAttribute("columnSpacing", verticalSpacing)
             else
-                group:SetAttribute('xOffset', 0)
-                group:SetAttribute('yOffset', verticalSpacing * y)
-                group:SetAttribute('columnSpacing', horizontalSpacing)
+                group:SetAttribute("xOffset", 0)
+                group:SetAttribute("yOffset", verticalSpacing * y)
+                group:SetAttribute("columnSpacing", horizontalSpacing)
             end
 
-            if not group.initialized then
-                group:SetAttribute('startingIndex', raidWideSorting and (-min(numGroups * (groupsPerRowCol * 5), MAX_RAID_MEMBERS) + 1) or -4)
-                group:Show()
-                group.initialized = true
+            if not group.isForced then
+                if not group.initialized then
+                    group:SetAttribute("startingIndex", raidWideSorting and (-min(numGroups * (groupsPerRowCol * 5), MAX_RAID_MEMBERS) + 1) or -4)
+                    group:Show()
+                    group.initialized = true
+                end
+                group:SetAttribute("startingIndex", 1)
             end
-            group:SetAttribute('startingIndex', 1)
 
-            group:SetAttribute('columnAnchorPoint', DIRECTION_TO_COLUMN_ANCHOR_POINT[settings.raidGrow[profile]])
+            group:SetAttribute("columnAnchorPoint", DIRECTION_TO_COLUMN_ANCHOR_POINT[settings.raidGrow[profile]])
 
-            group:SetAttribute('maxColumns', raidWideSorting and numGroups or 1)
-            group:SetAttribute('unitsPerColumn', raidWideSorting and (groupsPerRowCol * 5) or 5)
-            group:SetAttribute('showPlayer', true)
-            group:SetAttribute('sortDir', sortDirection)
-            -- sorting
-            if profile == "RAID_PET" then
-                headerGroupBy.PETNAME(group)
-            elseif profile == "TANK" then
-                headerGroupBy.TANK(group)
-            else
-                local func = headerGroupBy[groupBy] or headerGroupBy.INDEX
-                func(group, profile)
+            if not group.isForced then
+                group:SetAttribute("maxColumns", raidWideSorting and numGroups or 1)
+                group:SetAttribute("unitsPerColumn", raidWideSorting and (groupsPerRowCol * 5) or 5)
+                group:SetAttribute("showPlayer", true)
+                group:SetAttribute("sortDir", sortDirection)
+                -- sorting
+                if profile == "RAID_PET" then
+                    headerGroupBy.PETNAME(group)
+                elseif profile == "TANK" then
+                    headerGroupBy.TANK(group)
+                else
+                    local func = headerGroupBy[groupBy] or headerGroupBy.INDEX
+                    func(group, profile)
+                end
             end
 
             if profile ~= "TANK" then
-                local groupWide = i == 1 and raidWideSorting and strsub('1,2,3,4,5,6,7,8', 1, numGroups + numGroups-1)
-                group:SetAttribute('groupFilter', groupWide or tostring(i))
+                local groupWide = i == 1 and raidWideSorting and strsub("1,2,3,4,5,6,7,8", 1, numGroups + numGroups-1)
+                group:SetAttribute("groupFilter", groupWide or tostring(i))
             end
 
             -- register the correct visibility state driver
             if profile == "PARTY" then
                 if not GetSetting("RAID_STYLE_PARTY") and not GetSetting("RAID_STYLE_PARTY_AND_FRAMES") then
-                    RegisterStateDriver(group, 'visibility', "hide")
+                    RegisterStateDriver(group, "visibility", "hide")
                 else
-                    RegisterStateDriver(group, 'visibility', profiles.PARTY.visibility)
+                    RegisterStateDriver(group, "visibility", profiles.PARTY.visibility)
                 end
             end
         end
 
         local point = DIRECTION_TO_GROUP_ANCHOR_POINT[settings.raidGrow[profile]]
         if (isParty or raidWideSorting) and settings.startFromCenter[profile] then
-			point = DIRECTION_TO_GROUP_ANCHOR_POINT['OUT+' .. settings.raidGrow[profile]]
+			point = DIRECTION_TO_GROUP_ANCHOR_POINT["OUT+" .. settings.raidGrow[profile]]
 		end
 
         if lastGroup == 0 then
-            if DIRECTION_TO_POINT[settings.raidGrow[profile]] == 'LEFT' or DIRECTION_TO_POINT[settings.raidGrow[profile]] == 'RIGHT' then
+            if DIRECTION_TO_POINT[settings.raidGrow[profile]] == "LEFT" or DIRECTION_TO_POINT[settings.raidGrow[profile]] == "RIGHT" then
                 if group then group:SetPoint(point, header, point, 0, height * y) end
                 height = height + HEIGHT + groupSpacing
                 newRows = newRows + 1
@@ -587,7 +606,7 @@ local function UpdateGridHeader(profile)
                 newCols = newCols + 1
             end
         else
-            if DIRECTION_TO_POINT[settings.raidGrow[profile]] == 'LEFT' or DIRECTION_TO_POINT[settings.raidGrow[profile]] == 'RIGHT' then
+            if DIRECTION_TO_POINT[settings.raidGrow[profile]] == "LEFT" or DIRECTION_TO_POINT[settings.raidGrow[profile]] == "RIGHT" then
                 if newRows == 1 then
                     if group then group:SetPoint(point, header, point, width * x, 0) end
                     width = width + WIDTH_FIVE + groupSpacing
@@ -614,41 +633,43 @@ local function UpdateGridHeader(profile)
     header.gwMover:SetSize(width - horizontalSpacing - groupSpacing, height - verticalSpacing - groupSpacing)
 
     --check if we can diable the frame and also the mover
-    if profile == "RAID40" then
-        RegisterStateDriver(header, 'visibility', profiles.RAID40.visibility)
-        UpdateGroupVisibility(header, profile, true)
-    elseif profile == "RAID25" then
-        GW.ToggleMover(header.gwMover, settings.enabled.RAID25)
-        if not settings.enabled.RAID25 then
-            RegisterStateDriver(header, 'visibility', "hide")
-        else
-            RegisterStateDriver(header, 'visibility', profiles.RAID25.visibility)
+    if not header.isForced then
+        if profile == "RAID40" then
+            RegisterStateDriver(header, "visibility", profiles.RAID40.visibility)
+            UpdateGroupVisibility(header, profile, true)
+        elseif profile == "RAID25" then
+            GW.ToggleMover(header.gwMover, settings.enabled.RAID25)
+            if not settings.enabled.RAID25 then
+                RegisterStateDriver(header, "visibility", "hide")
+            else
+                RegisterStateDriver(header, "visibility", profiles.RAID25.visibility)
+            end
+            UpdateGroupVisibility(header, profile, settings.enabled.RAID25)
+        elseif profile == "RAID10" then
+            GW.ToggleMover(header.gwMover, settings.enabled.RAID10)
+            if not settings.enabled.RAID10 then
+                RegisterStateDriver(header, "visibility", "hide")
+            else
+                RegisterStateDriver(header, "visibility", profiles.RAID10.visibility)
+            end
+            UpdateGroupVisibility(header, profile, settings.enabled.RAID10)
+        elseif profile == "RAID_PET" then
+            GW.ToggleMover(header.gwMover, settings.enabled.RAID_PET)
+            if not settings.enabled.RAID_PET then
+                RegisterStateDriver(header, "visibility", "hide")
+            else
+                RegisterStateDriver(header, "visibility", profiles.RAID_PET.visibility)
+            end
+            UpdateGroupVisibility(header, profile, settings.enabled.RAID_PET)
+        elseif profile == "TANK" then
+            GW.ToggleMover(header.gwMover, settings.enabled.TANK)
+            if not settings.enabled.TANK then
+                RegisterStateDriver(header, "visibility", "hide")
+            else
+                RegisterStateDriver(header, "visibility", profiles.TANK.visibility)
+            end
+            UpdateGroupVisibility(header, profile, settings.enabled.TANK)
         end
-        UpdateGroupVisibility(header, profile, settings.enabled.RAID25)
-    elseif profile == "RAID10" then
-        GW.ToggleMover(header.gwMover, settings.enabled.RAID10)
-        if not settings.enabled.RAID10 then
-            RegisterStateDriver(header, 'visibility', "hide")
-        else
-            RegisterStateDriver(header, 'visibility', profiles.RAID10.visibility)
-        end
-        UpdateGroupVisibility(header, profile, settings.enabled.RAID10)
-    elseif profile == "RAID_PET" then
-        GW.ToggleMover(header.gwMover, settings.enabled.RAID_PET)
-        if not settings.enabled.RAID_PET then
-            RegisterStateDriver(header, 'visibility', "hide")
-        else
-            RegisterStateDriver(header, 'visibility', profiles.RAID_PET.visibility)
-        end
-        UpdateGroupVisibility(header, profile, settings.enabled.RAID_PET)
-    elseif profile == "TANK" then
-        GW.ToggleMover(header.gwMover, settings.enabled.TANK)
-        if not settings.enabled.TANK then
-            RegisterStateDriver(header, 'visibility', "hide")
-        else
-            RegisterStateDriver(header, 'visibility', profiles.TANK.visibility)
-        end
-        UpdateGroupVisibility(header, profile, settings.enabled.TANK)
     end
 
     header.isUpdating = false
@@ -656,16 +677,20 @@ end
 GW.UpdateGridHeader = UpdateGridHeader
 
 local function CreateHeader(parent, profile, options, overrideName, groupFilter)
-    parent:SetActiveStyle('GW2_Grid' .. options.name)
+    parent:SetActiveStyle("GW2_Grid" .. options.name)
 
     local header = parent:SpawnHeader(overrideName, (options.name == "RaidPet" and "SecureGroupPetHeaderTemplate" or nil), "custom " .. options.visibility,
-        'showParty', true,
-        'showRaid', options.name ~= "Party",
-        'showPlayer', true,
-        'groupFilter', groupFilter,
-        'groupingOrder', "1,2,3,4,5,6,7,8",
-        'oUF-initialConfigFunction', format('self:SetWidth(%d); self:SetHeight(%d);', settings.raidWidth[profile], settings.raidHeight[profile])
+        "showParty", true,
+        "showRaid", options.name ~= "Party",
+        "showPlayer", true,
+        "groupFilter", groupFilter,
+        "groupingOrder", "1,2,3,4,5,6,7,8",
+        "oUF-initialConfigFunction", format("self:SetWidth(%d); self:SetHeight(%d);", settings.raidWidth[profile], settings.raidHeight[profile])
     )
+
+    header.groupName = profile
+    header.profileName = options.name
+    header.numGroups = options.numGroups
 
     return header
 end
@@ -673,11 +698,11 @@ end
 local function Setup(self)
     -- create headers and groups for all profiles
     for profile, options in pairs(profiles) do
-        self:RegisterStyle('GW2_Grid' .. options.name, GW['GW2_Grid' .. options.name .. "StyleRegister"])
-        self:SetActiveStyle('GW2_Grid' .. options.name)
+        self:RegisterStyle("GW2_Grid" .. options.name, GW["GW2_Grid" .. options.name .. "StyleRegister"])
+        self:SetActiveStyle("GW2_Grid" .. options.name)
 
         -- Create a holding header
-        local Header = CreateFrame('Frame', "GW2_" .. options.name .. 'GridContainer', UIParent, 'SecureHandlerStateTemplate')
+        local Header = CreateFrame("Frame", "GW2_" .. options.name .. "GridContainer", UIParent, "SecureHandlerStateTemplate")
         Header.groups = {}
         Header.groupName = profile
         Header.numGroups = options.numGroups
@@ -691,7 +716,7 @@ local function Setup(self)
             tinsert(Header.groups, CreateHeader(self, profile, options, "GW2_" .. options.name .. "Group" .. index, index))
         end
 
-        RegisterStateDriver(Header, 'visibility', options.visibility)
+        RegisterStateDriver(Header, "visibility", options.visibility)
 
         -- movable frame for the container
         if profile == "PARTY" then
@@ -731,19 +756,5 @@ local function Initialize()
 
     GW.Create_Tags()
     Setup(GW_UF)
-
-
-
-    --needed later
-    --[[
-    GwSettingsWindowMoveHud:HookScript("OnClick", function ()
-        GW.GridToggleFramesPreviewRaid(true, true)
-        GW.GridToggleFramesPreviewParty(true, true)
-    end)
-    GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.lockHud:HookScript("OnClick", function()
-        GW.GridToggleFramesPreviewRaid(true, true)
-        GW.GridToggleFramesPreviewParty(true, true)
-    end)
-    ]]
 end
 GW.InitializeRaidFrames = Initialize

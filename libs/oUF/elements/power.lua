@@ -246,7 +246,8 @@ local function Update(self, event, unit)
 	end
 end
 
-local function Path(self, ...)
+local function Path(self, event, ...)
+	if (self.isForced and event ~= 'Gw2_UpdateAllElements') then return end -- GW2 changed
 	--[[ Override: Power.Override(self, event, unit, ...)
 	Used to completely override the internal update function.
 
@@ -255,9 +256,9 @@ local function Path(self, ...)
 	* unit  - the unit accompanying the event (string)
 	* ...   - the arguments accompanying the event
 	--]]
-	(self.Power.Override or Update) (self, ...);
+	(self.Power.Override or Update) (self, event, ...);
 
-	ColorPath(self, ...)
+	ColorPath(self, event, ...)
 end
 
 local function ForceUpdate(element)

@@ -309,6 +309,7 @@ local function UpdateAurasSettings(frame)
     frame.Auras['spacing-x'] = 2
     frame.Auras['spacing-y'] = 2
     frame.Auras:SetSize(frame.unitWidth - 2, frame.unitHeight - 2)
+    frame.Auras.forceShow = frame.forceShowAuras
 
     frame.Auras:ForceUpdate()
 end

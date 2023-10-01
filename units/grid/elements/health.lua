@@ -1,18 +1,53 @@
 local _, GW = ...
 
+local function UnitClassRnd(unit)
+    if unit:find('target') or unit:find('focus') then
+        return UnitClass(unit)
+    end
+
+    local classToken = CLASS_SORT_ORDER[random(1, #(CLASS_SORT_ORDER))]
+    return LOCALIZED_CLASS_NAMES_MALE[classToken], classToken
+end
+
+local function PostUpdateHealth(self)
+	local parent = self:GetParent():GetParent():GetParent()
+	if parent.isForced then
+		self.cur = self.fakeValue or random(1, 100)
+		self.max = 100
+		self:SetFillAmount(self.cur/self.max)
+        self.fakeValue = self.cur
+    else
+        self.fakeValue = nil
+	end
+
+end
+
 local function PostUpdateHealthColor(self, unit)
     local parent = self:GetParent():GetParent():GetParent()
-    if parent.useClassColor then
-        --if we are here we need to class color the frame
-        local _, englishClass = UnitClass(unit)
-        local color = GW.GWGetClassColor(englishClass, true)
-        self:SetStatusBarColor(color.r, color.g, color.b)
+
+    if parent.isForced then
+        if parent.useClassColor then
+            --if we are here we need to class color the frame
+            local _, englishClass = UnitClassRnd(unit)
+            local color = self.fakeColor or GW.GWGetClassColor(englishClass, true)
+            self:SetStatusBarColor(color.r, color.g, color.b)
+            self.fakeColor = color
+        end
+    else
+        if parent.useClassColor then
+            --if we are here we need to class color the frame
+            local _, englishClass = UnitClass(unit)
+            local color = GW.GWGetClassColor(englishClass, true)
+            self:SetStatusBarColor(color.r, color.g, color.b)
+        end
+        self.fakeColor = nil
     end
 
     self.bg:SetVertexColor(0, 0, 0, 1)
 end
 
 local function UpdateHealthOverride(self, event, unit)
+    if (self.isForced and event ~= 'Gw2_UpdateAllElements') then return end -- GW2 changed
     if(not unit or self.unit ~= unit) then return end
 	local element = self.Health
 
@@ -21,7 +56,12 @@ local function UpdateHealthOverride(self, event, unit)
 	end
 
 	local cur, max = UnitHealth(unit), UnitHealthMax(unit)
-    element:SetFillAmount(cur/max)
+
+    if not self.Forced then
+        element:SetFillAmount(cur/max)
+    else
+        element:ForceFIllAmount(cur/max)
+    end
 	element.cur = cur
 	element.max = max
 
@@ -99,9 +139,9 @@ local function Construct_HealthBar(frame)
 
     health.healthPredictionbar = healthPredictionbar
 
-
     health.Override = UpdateHealthOverride
 	health.PostUpdateColor = PostUpdateHealthColor
+    health.PostUpdate = PostUpdateHealth
 
 	return health
 end
@@ -120,6 +160,11 @@ local function Update_Healtbar(frame)
 
     if not frame.useClassColor then
         health:SetStatusBarColor(0.207, 0.392, 0.168)
+    end
+
+    if not frame.isForced then
+        health.fakeColor = nil
+        health.fakeValue = nil
     end
 end
 GW.Update_Healtbar = Update_Healtbar

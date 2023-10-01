@@ -802,13 +802,13 @@ local function UpdateAuras(self, event, unit, updateInfo)
 end
 
 local function Update(self, event, unit, updateInfo)
-	if(self.unit ~= unit) then return end
+	if (self.isForced and event ~= 'Gw2_UpdateAllElements') or (self.unit ~= unit) then return end -- GW2 changed
 
 	UpdateAuras(self, event, unit, updateInfo)
 
 	-- Assume no event means someone wants to re-anchor things. This is usually
 	-- done by UpdateAllElements and :ForceUpdate.
-	if(event == 'ForceUpdate' or not event) then
+	if not event or event == 'ForceUpdate' or event == 'Gw2_UpdateAllElements' then -- GW2 changed
 		local auras = self.Auras
 		if(auras) then
 			(auras.SetPosition or SetPosition) (auras, 1, auras.createdButtons)

@@ -184,9 +184,10 @@ do
             return (w ~= "" and w) or (y ~= "" and y) or ""
         end
     end
-    local hyperLinkFunc = function(w, _, y)
+    local hyperLinkFunc = function(w, x, y)
         if w ~= "" then return end
-        return y
+        local emoji = (x~="" and x) and strmatch(x, 'gwuimoji:%%(.+)')
+		return (emoji and GW.Libs.Deflate:DecodeForPrint(emoji)) or y
     end
     local fourString = function(v, w, x, y)
         return format("%s%s%s", v, w, (v and v == "1" and x) or y)
@@ -607,7 +608,7 @@ local function InsertEmotions(msg)
         local emoji = Smileys[pattern]
         if emoji and strmatch(msg, "[%s%p]-" .. pattern .. "[%s%p]*") then
             local encode = GW.Libs.Deflate:EncodeForPrint(word)
-            msg = gsub(msg, "([%s%p]-)" .. pattern .. "([%s%p]*)", (encode and ("%1|Helvmoji:%%" .. encode .. "|h|cFFffffff|r|h") or "%1") .. emoji .. "%2")
+            msg = gsub(msg, "([%s%p]-)" .. pattern .. "([%s%p]*)", (encode and ("%1|Hgwuimoji:%%" .. encode .. "|h|cFFffffff|r|h") or "%1") .. emoji .. "%2")
         end
     end
 

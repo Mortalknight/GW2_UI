@@ -3,6 +3,14 @@ local LRI = GW.Libs.LRI
 local REALM_FLAGS = GW.REALM_FLAGS
 
 local function Create_Tags()
+    GW.oUF.Tags.Methods['GW2_Grid:name'] = function(unit)
+        local name, isFake = UnitName(unit)
+		if name then
+			return name
+		end
+    end
+    GW.oUF.Tags.Events['GW2_Grid:name'] = 'UNIT_NAME_UPDATE INSTANCE_ENCOUNTER_ENGAGE_UNIT'
+
     GW.oUF.Tags.Methods['GW2_Grid:leaderIcon'] = function(unit)
         if( UnitIsGroupLeader(unit)) then
 			return "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:0:0:0:-2:64:64:4:60:4:60|t "
@@ -70,7 +78,7 @@ local function Create_Tags()
             return ""
         end
         if setting == "PREC" then
-            return GW.RoundDec(healthPrec * 100,0) .. "%"
+            return GW.RoundDec(healthPrec * 100, 0) .. "%"
         elseif setting == "HEALTH" then
             return GW.CommaValue(health)
         elseif setting == "LOSTHEALTH" then

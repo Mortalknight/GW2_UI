@@ -82,6 +82,6 @@ local function UpdateGridRaid40Frame(frame)
     GW.UpdatePrivateAurasSettings(frame)
     GW.Update_RangeIndicator(frame)
 
-    frame:UpdateAllElements("RefreshUnit")
+    frame:UpdateAllElements("Gw2_UpdateAllElements")
 end
 GW.UpdateGridRaid40Frame = UpdateGridRaid40Frame

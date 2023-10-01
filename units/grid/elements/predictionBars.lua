@@ -16,7 +16,7 @@ local function UpdatePredictionBarsOverride(self, event, unit)
     local absorb = UnitGetTotalAbsorbs(unit)
     local absorbPrecentage = 0
     local absorbAmount = 0
-    local absorbAmount2 =0
+    local absorbAmount2 = 0
 
     local allIncomingHeal = UnitGetIncomingHeals(unit) or 0
     local allIncomingHealPrecentage = 0
@@ -41,10 +41,17 @@ local function UpdatePredictionBarsOverride(self, event, unit)
         healAbsorbPrecentage = min(healthMax, healAbsorb / healthMax)
     end
 
-    element.healthPredictionbar:SetFillAmount(allIncomingHealPrecentage)
-    element.absorbBar:SetFillAmount(absorbAmount)
-    element.overAbsorb:SetFillAmount(absorbAmount2)
-    element.healAbsorbBar:SetFillAmount(healAbsorbPrecentage)
+    if not self.Forced then
+        element.healthPredictionbar:SetFillAmount(allIncomingHealPrecentage)
+        element.absorbBar:SetFillAmount(absorbAmount)
+        element.overAbsorb:SetFillAmount(absorbAmount2)
+        element.healAbsorbBar:SetFillAmount(healAbsorbPrecentage)
+    else
+        element.healthPredictionbar:ForceFIllAmount(allIncomingHealPrecentage)
+        element.absorbBar:ForceFIllAmount(absorbAmount)
+        element.overAbsorb:ForceFIllAmount(absorbAmount2)
+        element.healAbsorbBar:ForceFIllAmount(healAbsorbPrecentage)
+    end
 
     if(element.PostUpdate) then
 		--return element:PostUpdate(unit, myIncomingHeal, otherIncomingHeal, absorb, healAbsorb, hasOverAbsorb, hasOverHealAbsorb)
