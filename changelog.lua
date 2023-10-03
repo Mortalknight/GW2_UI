@@ -8,10 +8,13 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.2.3",{
+    {ct.bug,[=[Fix a inventroy lua error]=]},
+})
+
 addChange("2.2.2",{
     {ct.bug,[=[Fix a rare layout lua error]=]},
 })
-
 
 addChange("2.2.1",{
     {ct.bug,[=[Fix lua error from 2.2.0-Wrath]=]},

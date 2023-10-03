@@ -1,3 +1,6 @@
+2.2.3-Wrath
+    - Fix a inventroy lua error
+
 2.2.2-Wrath
     - Fix a rare layout lua error
 
