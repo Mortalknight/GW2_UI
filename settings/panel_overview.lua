@@ -6,10 +6,6 @@ local SetSetting = GW.SetSetting
 local AddForProfiling = GW.AddForProfiling
 local settingMenuToggle = GW.settingMenuToggle
 
-local changelogTitelRows = {}
-local changelogRows = {}
-local addedFrames = {}
-
 local CreditsSection = {
     GW.Gw2Color .. L["Created by: "]:gsub(":", "")  .. "|r",
     GW.Gw2Color .. L["Developed by"] .. "|r",
@@ -56,7 +52,7 @@ local TESTING = {
 }
 
 local function SortList(a, b)
-	return a < b
+    return a < b
 end
 
 sort(OWNER, SortList)
@@ -65,19 +61,19 @@ sort(CONTRIBUTION, SortList)
 sort(LOCALIZATION, SortList)
 sort(TESTING, SortList)
 for _, name in pairs(OWNER) do
-	tinsert(GW.CreditsList, name)
+    tinsert(GW.CreditsList, name)
 end
 for _, name in pairs(DEVELOPER) do
-	tinsert(GW.CreditsList, name)
+    tinsert(GW.CreditsList, name)
 end
 for _, name in pairs(CONTRIBUTION) do
-	tinsert(GW.CreditsList, name)
+    tinsert(GW.CreditsList, name)
 end
 for _, name in pairs(LOCALIZATION) do
-	tinsert(GW.CreditsList, name)
+    tinsert(GW.CreditsList, name)
 end
 for _, name in pairs(TESTING) do
-	tinsert(GW.CreditsList, name)
+    tinsert(GW.CreditsList, name)
 end
 
 --copied from character.lua needs to be removed later
@@ -123,174 +119,158 @@ local creditst_OnClick = function(self)
 end
 AddForProfiling("panel_modules", "creditst_OnClick", creditst_OnClick)
 
-local function getChangeLogIcon(self,tag)
-
-  if tag==GW.CHANGELOGS_TYPES.bug then
-    self:SetTexCoord(0,0.5,0,0.5)
-    return
-  elseif tag==GW.CHANGELOGS_TYPES.feature then
-    self:SetTexCoord(0.5,1,0,0.5)
-    return
-  end
-  self:SetTexCoord(0,0.5,0.5,1)
-end
-
-local function GetTitleRow(idx, frame)
-    if changelogTitelRows[idx] then
-        changelogTitelRows[idx]:Show()
-        return changelogTitelRows[idx]
+local function getChangeLogIcon(self, tag)
+    if tonumber(tag) == GW.CHANGELOGS_TYPES.bug then
+        self:SetTexCoord(0, 0.5, 0, 0.5)
+    elseif tonumber(tag) == GW.CHANGELOGS_TYPES.feature then
+        self:SetTexCoord(0.5, 1, 0, 0.5)
     else
-        local changelogtitle = CreateFrame("Frame", nil, frame.scroll.scrollchild, "GWChangelogVersionRow")
-        tinsert(changelogTitelRows, changelogtitle)
-        return changelogtitle
+        self:SetTexCoord(0, 0.5, 0.5, 1)
     end
 end
 
-local function GetContentRow(idx, frame)
-    if changelogRows[idx] then
-        changelogRows[idx]:Show()
-        return changelogRows[idx]
-    else
-        local entry = CreateFrame("Frame", nil, frame.scroll.scrollchild, "GWChangelogRow")
-        tinsert(changelogRows, entry)
-        return entry
+local function ConvertChangeLogTableToOneTable()
+    local table = {}
+    local index = 1
+    for i = 1, #GW.GW_CHANGELOGS do
+        table[index] = "H" .. GW.GW_CHANGELOGS[i].version
+        index = index + 1
+        for _, change in pairs(GW.GW_CHANGELOGS[i].changes) do
+            table[index] = change[1] .. change[2]
+            index = index + 1
+        end
     end
-end
-
-local function SetScrollFrameSize(frame, size)
-    local scrollMax = max(0, size - frame.scroll:GetHeight() + 50)
-
-    frame.scroll.scrollchild:SetHeight(frame.scroll:GetHeight())
-    frame.scroll.scrollchild:SetWidth(frame.scroll:GetWidth() - 20)
-    frame.scroll.slider:SetMinMaxValues(0, scrollMax)
-    --Calculate how big the thumb is this is IMPORTANT for UX :<
-    frame.scroll.slider.thumb:SetHeight(frame.scroll.slider:GetHeight() * (frame.scroll:GetHeight() / (scrollMax + frame.scroll:GetHeight())) )
-
-    frame.scroll.slider:SetValue(1)
-    frame.scroll.maxScroll = scrollMax
-end
-
-local function ResetFrame(frame)
-    for _, v in pairs(addedFrames) do
-        v:ClearAllPoints()
-        v:Hide()
-    end
-
-    wipe(addedFrames)
-
-    SetScrollFrameSize(frame, 0)
+    return table
 end
 
 local function ShowChangelog(frame)
-    ResetFrame(frame)
+    frame.update = ShowChangelog
+    frame:GetParent().header:SetText(L["Changelog"])
 
-    frame.header:SetText(L["Changelog"])
+    local USED_CHANGELOG_HEIGHT = 0
+    local extraSpace = 0
     local zebra
-    local index = 1
-    local margin = 0
-    local size = 0
-    local previousElement = nil
-    local rowKey = 1
 
-    for i = 1, #GW.GW_CHANGELOGS do
-        local versionNumber = GW.GW_CHANGELOGS[i].version
-        local changes = GW.GW_CHANGELOGS[i].changes
+    local offset = HybridScrollFrame_GetOffset(frame)
+    local changelogCombiendTable = ConvertChangeLogTableToOneTable()
+    local numberOfRows = #changelogCombiendTable
 
-        local changelogtitle = GetTitleRow(i, frame)
-        if not previousElement then
-            changelogtitle:SetPoint("TOPLEFT", frame.scroll.scrollchild, "TOPLEFT", 0, -margin)
+    for i = 1, #frame.buttons do
+        local slot = frame.buttons[i]
+        local idx = i + offset
+        if idx > numberOfRows then
+            -- empty row (blank starter row, final row, and any empty entries)
+            slot.content:Hide()
+            slot.title:Hide()
         else
-            changelogtitle:SetPoint("TOPLEFT", previousElement, "BOTTOMLEFT", 0, 0)
-        end
-        tinsert(addedFrames, changelogtitle)
-        zebra = index % 2
-        changelogtitle.background:SetShown(zebra == 1)
+            local line = changelogCombiendTable[idx]
 
-        changelogtitle.text:SetFont(DAMAGE_TEXT_FONT, 14)
-        changelogtitle.text:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-        changelogtitle.text:SetText(versionNumber)
-        previousElement = changelogtitle
-        index = index + 1
-        size = size + changelogtitle:GetHeight()
+            if string.sub(line, 1, 1) == "H" then
+                slot.content:Hide()
+                slot.title.text:SetText(string.sub(line, 2))
+                slot.title:Show()
+                slot:SetHeight(36)
 
-        for _, change in pairs(changes) do
-            local iconTag = change[1]
-            local text = change[2]
-            zebra = index % 2
-            local entry = GetContentRow(rowKey, frame)
-            tinsert(addedFrames, entry)
-            entry:SetPoint("TOPLEFT", previousElement, "BOTTOMLEFT",0,0)
-            entry.text:SetFont(UNIT_NAME_FONT, 12)
-            entry.text:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-            entry.text:SetText(text)
-            getChangeLogIcon(entry.icon, iconTag)
-            entry.icon:Show()
-            entry:SetHeight(math.max(36, entry.text:GetStringHeight() + 20))
+                zebra = idx % 2
+                slot.title.background:SetShown(zebra == 1)
+            else
+                slot.title:Hide()
+                slot.content.text:SetText(string.sub(line, 2))
+                slot.content.text:SetPoint("TOPLEFT", 46, -10)
+                getChangeLogIcon(slot.content.icon, string.sub(line, 1, 1))
+                slot.content.icon:Show()
+                -- set zebra color by idx or watch status
+                zebra = idx % 2
+                slot.content.background:SetShown(zebra == 1)
+                slot:SetHeight(math.max(36, slot.content.text:GetStringHeight() + 20))
 
-            entry.background:SetShown(zebra == 1)
-
-            previousElement = entry
-            index = index + 1
-            size = size + entry:GetHeight()
-            rowKey = rowKey + 1
+                extraSpace = extraSpace + slot:GetHeight()
+                slot.content:Show()
+            end
+            slot:Show()
         end
     end
 
-    SetScrollFrameSize(frame, size)
+    USED_CHANGELOG_HEIGHT = 36 * numberOfRows + (extraSpace)
+    HybridScrollFrame_Update(frame, USED_CHANGELOG_HEIGHT, 390)
+end
+
+local function ConvertCreditsTableToOneTable()
+    local table = {}
+    local index = 1
+    for i = 1, #CreditsSection do
+        table[index] = "H-" .. CreditsSection[i]
+        index = index + 1
+
+        local contentTable = i == 1 and OWNER or i == 2 and DEVELOPER or i == 3 and CONTRIBUTION or i == 4 and LOCALIZATION or TESTING
+        for _, name in pairs(contentTable) do
+            table[index] = name
+            index = index + 1
+        end
+    end
+    return table
 end
 
 local function ShowCredits(frame)
-    ResetFrame(frame)
+    frame.update = ShowCredits
+    frame:GetParent().header:SetText(L["Credits"])
 
-    frame.header:SetText(L["Credits"])
+    local USED_CREDITS_HEIGHT = 0
     local zebra
-    local index = 1
-    local margin = 0
-    local size = 0
-    local previousElement = nil
-    local rowKey = 1
 
-    for k, v in pairs(CreditsSection) do
-        local row = GetTitleRow(k, frame)
+    local offset = HybridScrollFrame_GetOffset(frame)
+    local creditsCombiendTable = ConvertCreditsTableToOneTable()
+    local numberOfRows = #creditsCombiendTable
 
-        if not previousElement then
-            row:SetPoint("TOPLEFT", frame.scroll.scrollchild, "TOPLEFT", 0, -margin)
+    for i = 1, #frame.buttons do
+        local slot = frame.buttons[i]
+        local idx = i + offset
+        if idx > numberOfRows then
+            -- empty row (blank starter row, final row, and any empty entries)
+            slot.content:Hide()
+            slot.title:Hide()
         else
-            row:SetPoint("TOPLEFT", previousElement, "BOTTOMLEFT", 0, 0)
-        end
-        tinsert(addedFrames, row)
-        zebra = index % 2
-        row.background:SetShown(zebra == 1)
+            local line = creditsCombiendTable[idx]
 
-        row.text:SetFont(DAMAGE_TEXT_FONT, 14)
-        row.text:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-        row.text:SetText(v)
-        previousElement = row
-        index = index + 1
-        size = size + row:GetHeight()
-        local contentTable = k == 1 and OWNER or k == 2 and DEVELOPER or k == 3 and CONTRIBUTION or k == 4 and LOCALIZATION or TESTING
+            if string.sub(line, 1, 2) == "H-" then
+                slot.content:Hide()
+                slot.title.text:SetText(string.sub(line, 3))
+                slot.title:Show()
+                slot:SetHeight(36)
 
-        for _, name in pairs(contentTable) do
-            zebra = index % 2
+                zebra = idx % 2
+                slot.title.background:SetShown(zebra == 1)
+            else
+                slot.title:Hide()
+                slot.content.text:SetText(line)
+                slot.content.text:SetPoint("TOPLEFT", 25, -13)
+                slot.content.icon:Hide()
+                -- set zebra color by idx or watch status
+                zebra = idx % 2
+                slot.content.background:SetShown(zebra == 1)
+                slot:SetHeight(36)
 
-            local entry = GetContentRow(rowKey, frame)
-            tinsert(addedFrames, entry)
-            entry:SetPoint("TOPLEFT", previousElement, "BOTTOMLEFT", 0, 0)
-            entry.text:SetFont(UNIT_NAME_FONT, 12)
-            entry.text:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-            entry.text:SetText(name)
-            entry:SetHeight(math.max(36, entry.text:GetStringHeight() + 20))
-            entry.icon:Hide()
-
-            entry.background:SetShown(zebra == 1)
-
-            previousElement = entry
-            index = index + 1
-            size = size + entry:GetHeight()
-            rowKey = rowKey + 1
+                slot.content:Show()
+            end
+            slot:Show()
         end
     end
-    SetScrollFrameSize(frame, size)
+
+    USED_CREDITS_HEIGHT = 36 * numberOfRows
+    HybridScrollFrame_Update(frame, USED_CREDITS_HEIGHT, 390)
+end
+
+local function SetUpScrollFrame(frame)
+    HybridScrollFrame_CreateButtons(frame, "GWSettingsPanelRow", 0, 0, "TOPLEFT", "TOPLEFT", 0, 0, "TOP", "BOTTOM")
+    for i = 1, #frame.buttons do
+        local slot = frame.buttons[i]
+        slot:SetWidth(frame:GetWidth() - 12)
+        slot.title.text:SetFont(DAMAGE_TEXT_FONT, 14)
+        slot.title.text:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+
+        slot.content.text:SetFont(UNIT_NAME_FONT, 12)
+        slot.content.text:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    end
 end
 
 local function LoadOverviewPanel(sWindow)
@@ -345,12 +325,12 @@ local function LoadOverviewPanel(sWindow)
     p.menu.changelog:SetParent(p)
     p.menu.changelog.settings = sWindow
     p.menu.changelog:SetText(L["Changelog"])
-    p.menu.changelog:SetScript("OnClick", function() ShowChangelog(p) end)
+    p.menu.changelog:SetScript("OnClick", function() ShowChangelog(p.scroll) end)
 
     p.menu.creditsbtn:SetParent(p)
     p.menu.creditsbtn.settings = sWindow
     p.menu.creditsbtn:SetText(L["Credits"])
-    p.menu.creditsbtn:SetScript("OnClick", function() ShowCredits(p) end)
+    p.menu.creditsbtn:SetScript("OnClick", function() ShowCredits(p.scroll) end)
 
     p.menu.movehudbtn:SetText(L["Move HUD"])
     p.menu.movehudbtn:SetScript("OnClick", fnGSWMH_OnClick)
@@ -368,10 +348,14 @@ local function LoadOverviewPanel(sWindow)
     sWindow.headerBreadcrumb:SetFont(DAMAGE_TEXT_FONT, 14)
     sWindow.headerBreadcrumb:SetText(CHAT_CONFIGURATION)
 
-    createCat(L["Modules"], L["Enable and disable components"], p, {p}, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_overview")
+    createCat(L["Modules"], L["Enable and disable components"], p, nil, true, "Interface\\AddOns\\GW2_UI\\textures\\uistuff\\tabicon_overview")
 
     InitPanel(p, false)
-    p.scroll:SetScrollChild(p.scroll.scrollchild)
+    -- setup scrollframe
+    local scroll = p.scroll
+    scroll.scrollBar.doNotHide = true
+
+    SetUpScrollFrame(scroll)
 
     p:SetScript("OnShow", function()
         settingMenuToggle(false)
@@ -379,6 +363,6 @@ local function LoadOverviewPanel(sWindow)
         sWindow.headerBreadcrumb:SetText(OVERVIEW)
     end)
 
-    ShowChangelog(p)
+    ShowChangelog(scroll)
 end
 GW.LoadOverviewPanel = LoadOverviewPanel
