@@ -501,7 +501,7 @@ local function updateFreeSlots(sp_str, start_idx, end_idx, opt_container)
     local free = 0
     local full = 0
     if opt_container then
-        free = C_Container.GetContainerNumFreeSlots(opt_container)
+        free = GetContainerNumFreeSlots(opt_container)
         full = C_Container.GetContainerNumSlots(opt_container)
     end
 

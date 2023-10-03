@@ -287,7 +287,7 @@ local function CreateProfileLayout()
         end
     end
 
-    if needToCreate and profileIndex then
+    if needToCreate and profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] then
         local newIdx = #savedLayouts + 1
         local newMoverFrameIndex = 0
         GW2UI_LAYOUTS[newIdx] = {}
@@ -399,7 +399,7 @@ local function specSwitchHandlerOnEvent(self, event)
         local profileIndex = GW.GetActiveProfile()
         local allLayouts = GW.GetAllLayouts()
 
-        if profileIndex then
+        if profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] then
             for i = 0, #allLayouts do
                 if allLayouts[i] then
                     if allLayouts[i].name == L["Profiles"] .. " - " .. GW2UI_SETTINGS_PROFILES[profileIndex].profilename and allLayouts[i].profileLayout == true then

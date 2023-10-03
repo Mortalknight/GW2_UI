@@ -1,3 +1,6 @@
+2.2.2-Wrath
+    - Fix a rare layout lua error
+
 2.2.1-Wrath
     - Fix lua error from 2.2.0-Wrath
 
