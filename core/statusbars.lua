@@ -62,7 +62,7 @@ local function SetFillAmount(self, value, maxValue, needConvertToPorcent)
         value = value / maxValue
     end
 
-    local isVertical = (self:GetOrientation()=="VERTICAL") or false
+    local isVertical = (self:GetOrientation() == "VERTICAL") or false
     local totalWidth = isVertical and self:GetHeight() or self:GetWidth()
     local height = isVertical and self:GetWidth() or self:GetHeight()
     local barWidth = totalWidth * value
@@ -105,11 +105,11 @@ local function SetFillAmount(self, value, maxValue, needConvertToPorcent)
 
     if self.spark~=nil  then
         if value == 0 then
-        self.spark:Hide()
+            self.spark:Hide()
         else
-        self.spark:Show()
+            self.spark:Show()
         end
-        local  sparkPosition =  (currentSegmentPosition + (segmentSize * rampProgress) - self.spark.width) + 10
+        local sparkPosition =  (currentSegmentPosition + (segmentSize * rampProgress) - self.spark.width) + 10
         local sparkWidth = min(barWidth,self.spark.width)
         self.spark:SetWidth(sparkWidth)
         self.spark:SetHeight(height)
@@ -118,21 +118,21 @@ local function SetFillAmount(self, value, maxValue, needConvertToPorcent)
         self.spark:Hide()
     end
 
-    if not self.interpolateRampRound or interpolateRampRound~=self.interpolateRampRound then
-    --    local newMask = self.maskContainer["mask"..interpolateRampRound]
-        self:addMask(interpolateRampRound,value)
+    if not self.interpolateRampRound or interpolateRampRound ~= self.interpolateRampRound then
+        --local newMask = self.maskContainer["mask"..interpolateRampRound]
+        self:addMask(interpolateRampRound, value)
 
         if isVertical then
-        self.maskContainer.mask0:SetSize(self.maskContainer:GetHeight(),self.maskContainer:GetWidth())
-        self.maskOverflow.mask:SetSize(self.maskOverflow:GetHeight(),self.maskOverflow:GetWidth())
+            self.maskContainer.mask0:SetSize(self.maskContainer:GetHeight(), self.maskContainer:GetWidth())
+            self.maskOverflow.mask:SetSize(self.maskOverflow:GetHeight(), self.maskOverflow:GetWidth())
         end
         self.interpolateRampRound = interpolateRampRound
     end
-    if self.fill_threshold~=barPosition then
+    if self.fill_threshold ~= barPosition then
         if isVertical then
-            self.maskContainer:SetPoint("BOTTOM",self.internalBar,"BOTTOM",0,currentSegmentPosition)
+            self.maskContainer:SetPoint("BOTTOM", self.internalBar, "BOTTOM", 0, currentSegmentPosition)
         else
-            self.maskContainer:SetPoint("LEFT",self.internalBar,"LEFT",currentSegmentPosition,0)
+            self.maskContainer:SetPoint("LEFT", self.internalBar, "LEFT", currentSegmentPosition, 0)
         end
         self:SetValue(barPosition)
         self.fill_threshold = barPosition
@@ -160,18 +160,18 @@ local function barUpdate(self, delta)
     end
 end
 
-local function setCustomAnimation(self,from,to,time)
-    self.animatedValue = to;
+local function setCustomAnimation(self, from, to, time)
+    self.animatedValue = to
     self.animatedStartValue = from
-    self.animatedTime =0
+    self.animatedTime = 0
     self.animatedDuration = time
     self.BarInterpolation = BarInterpolation.linear
 
-    if self.onAnimationStart~=nil then
-        self.onAnimationStart(self,to)
+    if self.onAnimationStart ~= nil then
+        self.onAnimationStart(self, to)
     end
 
-    self:SetScript("OnUpdate",barUpdate)
+    self:SetScript("OnUpdate", barUpdate)
 end
 
 local function onupdate_AnimateBar(self, value, maxValue, needConvertToPorcent)
@@ -181,14 +181,14 @@ local function onupdate_AnimateBar(self, value, maxValue, needConvertToPorcent)
     self.animatedValue = value
     self.animatedStartValue = GetFillAmount(self)
     self.animatedTime = 0
-    self.animatedDuration = getAnimationDurationDynamic(self,self.animatedStartValue , self.animatedValue,self:GetWidth())
+    self.animatedDuration = getAnimationDurationDynamic(self, self.animatedStartValue, self.animatedValue, self:GetWidth())
 
-    if self.onAnimationStart~=nil then
+    if self.onAnimationStart ~= nil then
         self.onAnimationStart(self, value)
     end
 
-    if (self.animationType==BarAnimateTypes.Decay and self.animatedValue>self.animatedStartValue) or
-        (self.animationType==BarAnimateTypes.Regenerate and self.animatedValue<self.animatedStartValue) then
+    if (self.animationType == BarAnimateTypes.Decay and self.animatedValue > self.animatedStartValue) or
+        (self.animationType == BarAnimateTypes.Regenerate and self.animatedValue < self.animatedStartValue) then
         self:ForceFIllAmount(value)
         return
     end
@@ -198,11 +198,11 @@ end
 
 local function ForceFIllAmount(self, value)
     SetFillAmount(self, value)
-    self:SetScript("OnUpdate",nil)
+    self:SetScript("OnUpdate", nil)
 end
 
-local function addToBarMask(self,texture)
-    if texture==nil then
+local function addToBarMask(self, texture)
+    if texture == nil then
         return
     end
     texture:AddMaskTexture(self.maskContainer.mask0)
@@ -214,7 +214,7 @@ local function SetOrientation(self)
 
     self.maskContainer.mask0:ClearAllPoints()
     self.maskContainer.mask0:SetPoint("CENTER",self.maskContainer,"CENTER",0,0)
-    self.maskContainer.mask0:SetSize(self.maskContainer:GetHeight(),self.maskContainer:GetWidth())
+    self.maskContainer.mask0:SetSize(self.maskContainer:GetHeight(), self.maskContainer:GetWidth())
 
     self.maskContainer:ClearAllPoints()
     self.maskContainer:SetPoint("BOTTOM",self.internalBar,"BOTTOM",0,0)
@@ -254,10 +254,10 @@ local function hookStatusbarBehaviour(statusBar,smooth,animationType)
     statusBar.maskContainer:ClearAllPoints()
     statusBar.maskOverflow:ClearAllPoints()
 
-    statusBar.maskOverflow:SetPoint("TOPLEFT",statusBar.maskContainer,"TOPRIGHT",0,0)
-    statusBar.maskOverflow:SetPoint("BOTTOMLEFT",statusBar.maskContainer,"BOTTOMRIGHT",0,0)
-    --statusBar.maskOverflow:SetPoint("TOPRIGHT",statusBar,"TOPRIGHT",3,0) --TEST
-    --statusBar.maskOverflow:SetPoint("BOTTOMRIGHT",statusBar,"BOTTOMRIGHT",3,0)
+    statusBar.maskOverflow:SetPoint("TOPLEFT", statusBar.maskContainer, "TOPRIGHT", 0, 0)
+    statusBar.maskOverflow:SetPoint("BOTTOMLEFT", statusBar.maskContainer, "BOTTOMRIGHT", 0, 0)
+    statusBar.maskOverflow:SetPoint("TOPRIGHT", statusBar, "TOPRIGHT", 3, 0)
+    statusBar.maskOverflow:SetPoint("BOTTOMRIGHT", statusBar, "BOTTOMRIGHT", 3, 0)
 
     statusBar:addToBarMask(statusBar.internalBar)
 
@@ -265,7 +265,8 @@ local function hookStatusbarBehaviour(statusBar,smooth,animationType)
         statusBar:addToBarMask(statusBar.spark)
         statusBar.spark.width = statusBar.spark:GetWidth()
     end
-    hooksecurefunc(statusBar, "SetOrientation",SetOrientation)
+    hooksecurefunc(statusBar, "SetOrientation", SetOrientation)
+
     return statusBar
 end
 GW.hookStatusbarBehaviour = hookStatusbarBehaviour
