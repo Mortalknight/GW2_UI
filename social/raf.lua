@@ -1,9 +1,26 @@
 local _, GW = ...
 
+local function RAFRewardQuality(button)
+    local color = button.item and button.item:GetItemQualityColor()
+    if color and button.Icon then
+        button.Icon.backdrop:SetBackdropBorderColor(color.r, color.g, color.b)
+    end
+end
+
 local function RAFRewards()
     for reward in RecruitAFriendRewardsFrame.rewardPool:EnumerateActive() do
-        reward.Button.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        reward.Button.IconBorder:GwKill()
+        local button = reward.Button
+        button.IconOverlay:SetAlpha(0)
+        button.IconBorder:SetAlpha(0)
+
+        GW.HandleIcon(button.Icon, true, GW.BackdropTemplates.ColorableBorderOnly, true)
+        RAFRewardQuality(button)
+
+        local icon = button.Icon
+        icon:SetDesaturation(0)
+
+        local text = reward.Months
+        text:SetTextColor(1, 1, 1)
     end
 end
 
@@ -35,8 +52,14 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendFrame.RewardClaiming.NextRewardButton:ClearAllPoints()
     RecruitAFriendFrame.RewardClaiming.NextRewardButton:SetPoint("CENTER", RecruitAFriendFrame.RewardClaiming, "LEFT", 65, 0)
     RecruitAFriendFrame.RewardClaiming.NextRewardButton.CircleMask:Hide()
-	RecruitAFriendFrame.RewardClaiming.NextRewardButton.IconBorder:GwKill()
-    RecruitAFriendFrame.RewardClaiming.NextRewardButton.Icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+    RecruitAFriendFrame.RewardClaiming.NextRewardButton.IconBorder:SetAlpha(0)
+    RecruitAFriendFrame.RewardClaiming.NextRewardButton.IconOverlay:SetAlpha(0)
+    RecruitAFriendFrame.RewardClaiming.NextRewardButton.Icon:SetDesaturation(0)
+    GW.HandleIcon(RecruitAFriendFrame.RewardClaiming.NextRewardButton.Icon, true, GW.BackdropTemplates.ColorableBorderOnly, true)
+    RAFRewardQuality(RecruitAFriendFrame.RewardClaiming.NextRewardButton)
+    RecruitAFriendFrame.RewardClaiming.Watermark:SetAlpha(0)
+    RecruitAFriendFrame.RewardClaiming.Background:SetAlpha(0)
+    RecruitAFriendFrame.RewardClaiming:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
 
     RecruitAFriendFrame.RecruitList:SetParent(RAFFrame.RecruitList)
     RecruitAFriendFrame.RecruitList:ClearAllPoints()
@@ -63,6 +86,9 @@ local function LoadRecruitAFriendList(tabContainer)
     RecruitAFriendRewardsFrame.CloseButton:SetSize(20, 20)
     RecruitAFriendRewardsFrame:GwStripTextures()
     RecruitAFriendRewardsFrame:GwCreateBackdrop(GW.BackdropTemplates.Default, true)
+    RecruitAFriendRewardsFrame.Background:SetAlpha(0)
+    RecruitAFriendRewardsFrame.Watermark:SetAlpha(0)
+
     hooksecurefunc(RecruitAFriendRewardsFrame, "UpdateRewards", RAFRewards)
     RAFRewards()
 end

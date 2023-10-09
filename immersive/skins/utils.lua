@@ -351,11 +351,11 @@ local function HandlePortraitFrame(frame, createBackdrop)
 end
 GW.HandlePortraitFrame = HandlePortraitFrame
 
-local function HandleIcon(icon, backdrop, backdropTexture)
+local function HandleIcon(icon, backdrop, backdropTexture, isBorder)
     icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
     if backdrop and not icon.backdrop then
-        icon:GwCreateBackdrop(backdropTexture)
+        icon:GwCreateBackdrop(backdropTexture, isBorder)
     end
 end
 GW.HandleIcon = HandleIcon
