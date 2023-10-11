@@ -285,7 +285,7 @@ local function fadeCheck(self, forceCombat)
     if not inLockdown and self.gw_DirtySetting then
         local xOff
         local btn_padding = self.gw_Width
-        if self.gw_Bar2:IsShown() then
+        if self.gw_Bar2 and self.gw_Bar2:IsShown() then
             xOff = (804 - btn_padding) / 2
         else
             xOff = -(btn_padding - 550) / 2
@@ -681,8 +681,8 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
         local btn = _G[buttonName .. i]
         fmMultibar.gw_Buttons[i] = btn
 
-        if btn ~= nil then
-            if actionPage ~= nil then
+        if btn then
+            if actionPage then
                 -- reparent button to our action bar
                 btn:SetParent(fmMultibar)
             end
@@ -788,7 +788,7 @@ local function UpdateMultibarButtons()
         if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
         if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
         if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
-        if fmMultiBar.gw_IsEnabled then
+        if fmMultiBar and fmMultiBar.gw_IsEnabled then
             local settings = GetSetting(fmMultiBar.originalBarName)
             local used_height = 0
             local btn_padding = 0
@@ -982,13 +982,13 @@ local function changeVertexColorActionbars()
         if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
         if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
         if y == 5 then fmMultiBar = fmActionbar end
-        if fmMultiBar.gw_IsEnabled then
+        if fmMultiBar and fmMultiBar.gw_IsEnabled then
             for i = 1, 12 do
                 local btn = fmMultiBar.gw_Buttons[i]
                 if btn.changedColor then
                     local valid = IsActionInRange(btn.action)
                     local checksRange = (valid ~= nil)
-                    local inRange = checksRange and valid                
+                    local inRange = checksRange and valid
                     if checksRange and not inRange then
                         btn.icon:SetVertexColor(out_R, out_G, out_B)
                     end
@@ -1222,7 +1222,7 @@ local function LoadActionBars(lm)
             if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
             if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
             if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
-            if fmMultiBar.gw_IsEnabled then
+            if fmMultiBar and fmMultiBar.gw_IsEnabled then
                 for i = 1, 12 do
                     updateHotkey(fmMultiBar.gw_Buttons[i])
                     FixHotKeyPosition(fmMultiBar.gw_Buttons[i], false, false, y == 0)

@@ -97,7 +97,7 @@
             </Layer>
             <Layer level="BACKGROUND" textureSubLevel="2">
                 <Texture parentKey="BGLEFT" file="Interface/AddOns/GW2_UI/textures/bag/bagheader">
-                    <Size x="512" y="41"></Size>
+                    <Size x="170" y="41"></Size>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="0" />
                     </Anchors>

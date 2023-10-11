@@ -81,6 +81,7 @@ windowsList[5] = {
     ]=]
 }
 
+--[[
 windowsList[6] = {
     ['OnLoad'] = "LoadMounts",
     ['SettingName'] = 'USE_CHARACTER_WINDOW',
@@ -106,8 +107,9 @@ windowsList[7] = {
         self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "critter")
     ]=]
 }
+]]
 
-windowsList[8] = {
+windowsList[6] = {
     ["OnLoad"] = "LoadCurrency",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["TabIcon"] = "tabicon_currency",
@@ -122,7 +124,7 @@ windowsList[8] = {
     ]=]
 }
 
-windowsList[9] = {
+windowsList[7] = {
     ["OnLoad"] = "LoadPvp",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
     ["TabIcon"] = "tabicon-pvp",

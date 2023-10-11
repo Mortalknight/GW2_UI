@@ -34,7 +34,7 @@ end
 local function worldMapSkin()
     if not GW.GetSetting("WORLDMAP_SKIN_ENABLED") then return end
     WorldMapFrame:GwStripTextures()
-    WorldMapFrame.BlackoutFrame:Hide()
+    WorldMapFrame.BlackoutFrame:GwKill()
 
     local headerText
     local r = {WorldMapFrame.BorderFrame:GetRegions()}
@@ -47,12 +47,29 @@ local function worldMapSkin()
     end
 
     GW.CreateFrameHeaderWithBody(WorldMapFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/worldmap-window-icon", nil, 30)
+    WorldMapFrameHeader.BGLEFT:SetWidth(100)
+    WorldMapFrameHeader.BGRIGHT:SetWidth(WorldMapFrame.BorderFrame:GetWidth())
+    WorldMapFrame.BorderFrame:GwStripTextures()
+    WorldMapFrame.MiniBorderFrame:GwStripTextures()
+
+    WorldMapFrame.BorderFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
+    WorldMapFrame.MiniBorderFrame:GwCreateBackdrop(GW.skins.constBackdropFrame, true)
 
     WorldMapContinentDropDown:GwSkinDropDownMenu()
     WorldMapZoneDropDown:GwSkinDropDownMenu()
     WorldMapZoneMinimapDropDown:GwSkinDropDownMenu()
 
-    WorldMapContinentDropDown:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 330, -42)
+    WorldMapTrackQuest:GwSkinCheckButton()
+    WorldMapQuestShowObjectives:GwSkinCheckButton()
+    WorldMapTrackQuest:SetSize(15, 15)
+    WorldMapQuestShowObjectives:SetSize(15, 15)
+
+    QuestScrollFrame:GwSkinScrollFrame()
+    QuestMapFrame.DetailsFrame.ScrollFrame:GwSkinScrollFrame()
+    QuestScrollFrame.ScrollBar:GwSkinScrollBar()
+    QuestMapFrame.DetailsFrame.ScrollFrame.ScrollBar:GwSkinScrollBar()
+
+    WorldMapContinentDropDown:SetPoint("TOPLEFT", WorldMapFrame, "TOPLEFT", 330, -35)
     WorldMapContinentDropDown:SetWidth(205)
     WorldMapContinentDropDown:SetHeight(33)
     WorldMapZoneDropDown:SetPoint("LEFT", WorldMapContinentDropDown, "RIGHT", -20, 0)
@@ -65,24 +82,35 @@ local function worldMapSkin()
     WorldMapZoomOutButton:GwSkinButton(false, true)
 
     WorldMapFrameCloseButton:GwSkinButton(true)
-    WorldMapFrameCloseButton:SetSize(25, 25)
+    WorldMapFrameCloseButton:SetSize(20, 20)
     WorldMapFrameCloseButton:ClearAllPoints()
     WorldMapFrameCloseButton:SetPoint("TOPRIGHT", WorldMapFrame, "TOPRIGHT", 0, 0)
+    hooksecurefunc(WorldMapFrameCloseButton, "SetPoint", function(self)
+        if not WorldMapFrameCloseButton.gwSkipSetPoint then
+            WorldMapFrameCloseButton.gwSkipSetPoint = true
+            WorldMapFrameCloseButton:ClearAllPoints()
+            WorldMapFrameCloseButton:SetPoint("TOPRIGHT", WorldMapFrame, "TOPRIGHT", 0, 0)
+            WorldMapFrameCloseButton.gwSkipSetPoint = false
+        end
+    end)
+
     WorldMapFrameCloseButton:SetFrameLevel(WorldMapFrameCloseButton:GetFrameLevel() + 2)
 
-    ShowUIPanel(WorldMapFrame)
+    WorldMapFrame.MaximizeMinimizeFrame:GwHandleMaxMinFrame()
+
+    --ShowUIPanel(WorldMapFrame)
     WorldMapFrame:SetAttribute("UIPanelLayout-area", "center")
     WorldMapFrame:SetAttribute("UIPanelLayout-enabled", false)
     WorldMapFrame:SetAttribute("UIPanelLayout-allowOtherPanels", true)
     WorldMapFrame:SetIgnoreParentScale(false)
     WorldMapFrame.ScrollContainer:SetIgnoreParentScale(false)
-    WorldMapFrame.IsMaximized = function() return false end
     WorldMapFrame.HandleUserActionToggleSelf = function()
         if WorldMapFrame:IsShown() then WorldMapFrame:Hide() else WorldMapFrame:Show() end
     end
-    table.insert(UISpecialFrames, "WorldMapFrame")
-    HideUIPanel(WorldMapFrame)
 
+    --HideUIPanel(WorldMapFrame)
+
+    table.insert(UISpecialFrames, "WorldMapFrame")
     WorldMapFrame:SetScale(0.8)
     WorldMapFrame:EnableKeyboard(false)
     WorldMapFrame:EnableMouse(true)
@@ -113,9 +141,11 @@ local function worldMapSkin()
     end)
 
     -- Set position on startup
-    local pos = GW.GetSetting("WORLDMAP_POSITION")
-    WorldMapFrame:ClearAllPoints()
-    WorldMapFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+    WorldMapFrame:HookScript("OnShow", function()
+        local pos = GW.GetSetting("WORLDMAP_POSITION")
+        WorldMapFrame:ClearAllPoints()
+        WorldMapFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+    end)
 
     -- Create scale handle
     -- Replace function to account for frame scale

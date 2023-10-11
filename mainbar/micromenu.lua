@@ -422,6 +422,10 @@ local function setupMicroButtons(mbf)
     SocialsMicroButton:HookScript("OnEvent", updateGuildButton)
     updateGuildButton(SocialsMicroButton, "GUILD_ROSTER_UPDATE")
 
+    -- CollectionsMicroButton
+    CollectionsMicroButton:ClearAllPoints()
+    CollectionsMicroButton:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
+
     -- PVPMicroButton
     local pvpref
     if GetSetting("USE_CHARACTER_WINDOW") then
@@ -430,7 +434,7 @@ local function setupMicroButtons(mbf)
         pvpref.newbieText = NEWBIE_TOOLTIP_PVP
         reskinMicroButton(pvpref, "PvpMicroButton", mbf)
         pvpref:ClearAllPoints()
-        pvpref:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
+        pvpref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
 
         pvpref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         pvpref:SetAttribute(
@@ -444,13 +448,13 @@ local function setupMicroButtons(mbf)
 
         --disableMicroButton(PVPMicroButton, true)
         PVPMicroButton:ClearAllPoints()
-        PVPMicroButton:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
+        PVPMicroButton:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
         PVPMicroButton:SetAlpha(0)
         PVPMicroButton:EnableMouse(false)
     else
         pvpref = PVPMicroButton
         pvpref:ClearAllPoints()
-        pvpref:SetPoint("BOTTOMLEFT", SocialsMicroButton, "BOTTOMRIGHT", 4, 0)
+        pvpref:SetPoint("BOTTOMLEFT", CollectionsMicroButton, "BOTTOMRIGHT", 4, 0)
     end
 
     -- LFGMicroButton

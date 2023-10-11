@@ -556,6 +556,7 @@ local function CreateMoverFrame(parent, displayName, settingsName, size, frameOp
     mf:SetFrameStrata("DIALOG")
     mf:GwCreateBackdrop("Transparent White")
     mf:SetScale(parent:GetScale())
+    mf:SetProtected()
 
     if size then
         mf:SetSize(unpack(size))

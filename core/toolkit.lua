@@ -406,24 +406,37 @@ local function GwSkinScrollFrame(frame)
         frame.scrollBorderMiddle:SetPoint("BOTTOMLEFT", frame,"BOTTOMRIGHT", 12, 10)
     end
 
-    if _G[frame:GetName() .. "ScrollBarTop"] then _G[frame:GetName() .. "ScrollBarTop"]:Hide() end
-    if _G[frame:GetName() .. "ScrollBarBottom"] then _G[frame:GetName() .. "ScrollBarBottom"]:Hide() end
-    if _G[frame:GetName() .. "ScrollBarMiddle"] then
-        _G[frame:GetName() .. "ScrollBarMiddle"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
-        _G[frame:GetName() .. "ScrollBarMiddle"]:SetSize(3, _G[frame:GetName() .. "ScrollBarMiddle"]:GetSize())
-        _G[frame:GetName() .. "ScrollBarMiddle"]:ClearAllPoints()
-        _G[frame:GetName() .. "ScrollBarMiddle"]:SetPoint("TOPLEFT", frame, "TOPRIGHT", 12, -10)
-        _G[frame:GetName() .. "ScrollBarMiddle"]:SetPoint("BOTTOMLEFT", frame,"BOTTOMRIGHT", 12, 10)
-    end
+    if frame:GetName() then
+        if _G[frame:GetName() .. "ScrollBarTop"] then _G[frame:GetName() .. "ScrollBarTop"]:Hide() end
+        if _G[frame:GetName() .. "ScrollBarBottom"] then _G[frame:GetName() .. "ScrollBarBottom"]:Hide() end
+        if _G[frame:GetName() .. "ScrollBarMiddle"] then
+            _G[frame:GetName() .. "ScrollBarMiddle"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
+            _G[frame:GetName() .. "ScrollBarMiddle"]:SetSize(3, _G[frame:GetName() .. "ScrollBarMiddle"]:GetSize())
+            _G[frame:GetName() .. "ScrollBarMiddle"]:ClearAllPoints()
+            _G[frame:GetName() .. "ScrollBarMiddle"]:SetPoint("TOPLEFT", frame, "TOPRIGHT", 15, -10)
+            _G[frame:GetName() .. "ScrollBarMiddle"]:SetPoint("BOTTOMLEFT", frame,"BOTTOMRIGHT", 12, 10)
+        end
 
-    if _G[frame:GetName() .. "Top"] then _G[frame:GetName() .. "Top"]:Hide() end
-    if _G[frame:GetName() .. "Bottom"] then _G[frame:GetName() .. "Bottom"]:Hide() end
-    if _G[frame:GetName() .. "Middle"] then
-        _G[frame:GetName() .. "Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
-        _G[frame:GetName() .. "Middle"]:SetSize(3, _G[frame:GetName() .. "Middle"]:GetSize())
-        _G[frame:GetName() .. "Middle"]:ClearAllPoints()
-        _G[frame:GetName() .. "Middle"]:SetPoint("TOPLEFT", frame, "TOPRIGHT", 12, -10)
-        _G[frame:GetName() .. "Middle"]:SetPoint("BOTTOMLEFT", frame,"BOTTOMRIGHT", 12, 10)
+        if _G[frame:GetName() .. "Top"] then _G[frame:GetName() .. "Top"]:Hide() end
+        if _G[frame:GetName() .. "Bottom"] then _G[frame:GetName() .. "Bottom"]:Hide() end
+        if _G[frame:GetName() .. "Middle"] then
+            _G[frame:GetName() .. "Middle"]:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
+            _G[frame:GetName() .. "Middle"]:SetSize(3, _G[frame:GetName() .. "Middle"]:GetSize())
+            _G[frame:GetName() .. "Middle"]:ClearAllPoints()
+            _G[frame:GetName() .. "Middle"]:SetPoint("TOPLEFT", frame, "TOPRIGHT", 12, -10)
+            _G[frame:GetName() .. "Middle"]:SetPoint("BOTTOMLEFT", frame,"BOTTOMRIGHT", 12, 10)
+        end
+
+        if _G[frame:GetName() .. "ScrollBar"] and _G[frame:GetName() .. "ScrollBar"].Top then _G[frame:GetName() .. "ScrollBar"].Top:Hide() end
+        if _G[frame:GetName() .. "ScrollBar"] and _G[frame:GetName() .. "ScrollBar"].Bottom then _G[frame:GetName() .. "ScrollBar"].Bottom:Hide()end
+        if _G[frame:GetName() .. "ScrollBar"] and _G[frame:GetName() .. "ScrollBar"].Background then _G[frame:GetName() .. "ScrollBar"].Background:Hide() end
+        if _G[frame:GetName() .. "ScrollBar"] and _G[frame:GetName() .. "ScrollBar"].Middle then
+            _G[frame:GetName() .. "ScrollBar"].Middle:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
+            _G[frame:GetName() .. "ScrollBar"].Middle:SetSize(3, _G[frame:GetName() .. "ScrollBar"].Middle:GetSize())
+            _G[frame:GetName() .. "ScrollBar"].Middle:ClearAllPoints()
+            _G[frame:GetName() .. "ScrollBar"].Middle:SetPoint("TOPLEFT", frame, "TOPRIGHT", 12, -10)
+            _G[frame:GetName() .. "ScrollBar"].Middle:SetPoint("BOTTOMLEFT", frame,"BOTTOMRIGHT", 12, 10)
+        end
     end
 end
 
@@ -604,6 +617,33 @@ local function GwStyleButton(button, noHover, noPushed, noChecked)
 	end
 end
 
+
+local btns = {MaximizeButton = "up", MinimizeButton = "down"}
+local function GwHandleMaxMinFrame(frame)
+    if frame.isSkinned then return end
+
+    frame:GwStripTextures(true)
+
+    for name, direction in pairs(btns) do
+        local button = frame[name]
+        if button then
+            button:SetSize(20, 20)
+            button:ClearAllPoints()
+            button:SetPoint("CENTER")
+            button:SetHitRectInsets(1, 1, 1, 1)
+            button:GetHighlightTexture():GwKill()
+
+            button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
+            button:GetNormalTexture():SetRotation(ArrowRotation[direction])
+
+            button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
+            button:GetPushedTexture():SetRotation(ArrowRotation[direction])
+        end
+    end
+
+    frame.isSkinned = true
+end
+
 local function addapi(object)
     local mt = getmetatable(object).__index
     if not object.GwKill then mt.GwKill = GwKill end
@@ -620,6 +660,7 @@ local function addapi(object)
     if not object.GwSetOutside then mt.GwSetOutside = GwSetOutside end
     if not object.GwSetInside then mt.GwSetInside = GwSetInside end
     if not object.GwStyleButton then mt.GwStyleButton = GwStyleButton end
+    if not object.GwHandleMaxMinFrame then mt.GwHandleMaxMinFrame = GwHandleMaxMinFrame end
 end
 
 local handled = {["Frame"] = true}

@@ -1,3 +1,6 @@
+2.2.4-Wrath
+    - Update for 3.4.3
+
 2.2.3-Wrath
     - Fix a inventroy lua error
 

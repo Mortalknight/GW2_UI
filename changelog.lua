@@ -8,6 +8,10 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.2.4",{
+    {ct.bug,[=[Update for 3.4.3]=]},
+})
+
 addChange("2.2.3",{
     {ct.bug,[=[Fix a inventroy lua error]=]},
 })
