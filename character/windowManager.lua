@@ -81,34 +81,6 @@ windowsList[5] = {
     ]=]
 }
 
---[[
-windowsList[6] = {
-    ['OnLoad'] = "LoadMounts",
-    ['SettingName'] = 'USE_CHARACTER_WINDOW',
-    ['TabIcon'] = 'tabicon_mounts',
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/mount-window-icon",
-    ["HeaderText"] = MOUNTS,
-    ["Bindings"] = {
-    },
-    ["OnClick"] = [=[
-        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "mounts")
-    ]=]
-}
-
-windowsList[7] = {
-    ['OnLoad'] = "LoadCritter",
-    ['SettingName'] = 'USE_CHARACTER_WINDOW',
-    ['TabIcon'] = 'tabicon_pet',
-    ["HeaderIcon"] = "Interface/AddOns/GW2_UI/textures/character/pet-window-icon",
-    ["HeaderText"] = PETS,
-    ["Bindings"] = {
-    },
-    ["OnClick"] = [=[
-        self:GetFrameRef("GwCharacterWindow"):SetAttribute("windowpanelopen", "critter")
-    ]=]
-}
-]]
-
 windowsList[6] = {
     ["OnLoad"] = "LoadCurrency",
     ["SettingName"] = "USE_CHARACTER_WINDOW",
@@ -160,12 +132,6 @@ local charSecure_OnClick = [=[
     elseif button == "Glyphes" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "glyphes")
-    elseif button == "Mounts" then
-        f:SetAttribute("keytoggle", true)
-        f:SetAttribute("windowpanelopen", "mounts")
-    elseif button == "Critter" then
-        f:SetAttribute("keytoggle", true)
-        f:SetAttribute("windowpanelopen", "critter")
     elseif button == "Currency" then
         f:SetAttribute("keytoggle", true)
         f:SetAttribute("windowpanelopen", "currency")
@@ -247,22 +213,6 @@ local charSecure_OnAttributeChanged = [=[
             return
         else
             showGlyphes = true
-        end
-    elseif fmMounts ~= nil and value == "mounts" then
-        if keytoggle and fmMounts:IsVisible() then
-            self:SetAttribute("keytoggle", nil)
-            self:SetAttribute("windowpanelopen", nil)
-            return
-        else
-            showMounts = true
-        end
-    elseif fmCritter ~= nil and value == "critter" then
-        if keytoggle and fmCritter:IsVisible() then
-            self:SetAttribute("keytoggle", nil)
-            self:SetAttribute("windowpanelopen", nil)
-            return
-        else
-            showCritter = true
         end
     elseif fmCurrency ~= nil and value == "currency" then
         if keytoggle and fmCurrency:IsVisible() then

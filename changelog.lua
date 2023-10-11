@@ -6,7 +6,11 @@ local ct = {
   feature=2,
   change=3,
 }
-GW.CHANGELOGS_TYPES = ct
+
+
+addChange("2.2.5",{
+    {ct.bug,[=[Fix target frame damage number setting]=]},
+})
 
 addChange("2.2.4",{
     {ct.bug,[=[Update for 3.4.3]=]},

@@ -1,3 +1,6 @@
+2.2.5-Wrath
+    - Fix target frame damage number setting
+
 2.2.4-Wrath
     - Update for 3.4.3
 

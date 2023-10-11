@@ -170,10 +170,6 @@ character\talents.xml
 character\glyphData.lua
 character\glyphs.xml
 character\glyphs.lua
-character\mountsCritterFunctions.lua
-character\mountsCritter.xml
-character\mounts.lua
-character\critter.lua
 character\currency.xml
 character\currency.lua
 character\pvp.xml

@@ -785,7 +785,7 @@ local function LoadTarget()
     LoadAuras(NewUnitFrame)
 
     -- create floating combat text
-    if GetSetting("target_FLOATING_COMBAT_TEXT") then
+    if GetSetting("TARGET_FLOATING_COMBAT_TEXT") then
         local fctf = CreateFrame("Frame", nil, NewUnitFrame)
         fctf:SetFrameLevel(NewUnitFrame:GetFrameLevel() + 3)
         fctf:RegisterEvent("UNIT_COMBAT")
@@ -799,7 +799,7 @@ local function LoadTarget()
 
         local font = fctf:CreateFontString(nil, "OVERLAY")
         font:SetFont(DAMAGE_TEXT_FONT, 30)
-        fctf.fontString = font
+        fctf.feedbackText = font
         font:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER")
         font:Hide()
 
