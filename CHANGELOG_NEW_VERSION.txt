@@ -1,3 +1,6 @@
+2.2.6-Wrath
+    - Fix lua error on init
+
 2.2.5-Wrath
     - Fix target frame damage number setting
 
