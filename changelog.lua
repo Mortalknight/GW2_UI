@@ -7,6 +7,7 @@ local ct = {
   change=3,
 }
 
+GW.CHANGELOGS_TYPES = ct
 
 addChange("2.2.5",{
     {ct.bug,[=[Fix target frame damage number setting]=]},
