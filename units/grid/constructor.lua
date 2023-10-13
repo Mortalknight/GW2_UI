@@ -30,14 +30,14 @@ local profiles = {
         name = "Raid25",
         size = 25,
         visibility = "[@raid11,noexists][@raid26,exists] hide;show",
-        visibilityIncl10 = "[@raid26,exists][group:party] hide; show",
+        visibilityIncl10 = "[@raid1,noexists][@raid26,exists] hide; show",
         numGroups = 5
     },
     RAID10 = {
         name = "Raid10",
         size = 10,
-        visibility = "[@raid11,exists][group:party][nogroup] hide;show",
-        numGroups = 2,
+        visibility = "[@raid1,noexists][@raid11,exists] hide;show",
+        numGroups = 5,
     },
     TANK = {
         name = "Maintank",
@@ -46,9 +46,9 @@ local profiles = {
     },
 }
 
---SecureCmdOptionParse("[@raid26,noexists] hide;show")
+--SecureCmdOptionParse("[@raid1,noexists][@raid11,exists] hide;show")
 --SecureCmdOptionParse("[@raid11,noexists][@raid26,exists] hide;show")
---SecureCmdOptionParse("[@raid11,exists] hide;show")
+--SecureCmdOptionParse("[group:party] hide;show")
 local DIRECTION_TO_POINT = {
 	["DOWN+RIGHT"] = "TOP",
 	["DOWN+LEFT"] = "TOP",
