@@ -63,8 +63,8 @@ local function SetFillAmount(self, value, maxValue, needConvertToPorcent)
     end
 
     local isVertical = (self:GetOrientation() == "VERTICAL") or false
-    local totalWidth = isVertical and self:GetHeight() or self:GetWidth()
-    local height = isVertical and self:GetWidth() or self:GetHeight()
+    local totalWidth = self.totalWidth or isVertical and self:GetHeight() or self:GetWidth()
+    local height = self.totalHeight or isVertical and self:GetWidth() or self:GetHeight()
     local barWidth = totalWidth * value
     local stretchMask = self.strechMask or false
 
@@ -86,7 +86,7 @@ local function SetFillAmount(self, value, maxValue, needConvertToPorcent)
     local rampEndPoint = (segmentSize * (currentSegmentIndex+1))
     local rampProgress = (barWidth - rampStartPoint) / (rampEndPoint - rampStartPoint)
 
-    local interpolateRamp = lerp(numSpritesInAnimation,0, rampProgress)
+    local interpolateRamp = lerp(numSpritesInAnimation, 0, rampProgress)
     local interpolateRampRound = round(interpolateRamp)
 
     if value == 0 then
@@ -95,12 +95,12 @@ local function SetFillAmount(self, value, maxValue, needConvertToPorcent)
 
     if stretchMask then
         if isVertical then
-        self.maskContainer:SetSize(height,maskHightValue)
+            self.maskContainer:SetSize(height, maskHightValue)
         else
-        self.maskContainer:SetSize(maskHightValue,height)
+            self.maskContainer:SetSize(maskHightValue, height)
         end
     else
-        self.maskContainer:SetSize(segmentSize,segmentSize)
+        self.maskContainer:SetSize(segmentSize, segmentSize)
     end
 
     if self.spark~=nil  then
@@ -231,6 +231,13 @@ local function SetOrientation(self)
     self.maskOverflow.mask:SetSize(self.maskOverflow:GetHeight(),self.maskOverflow:GetWidth())
 end
 
+local function UpdateBarSize(self)
+    local isVertical = (self:GetOrientation() == "VERTICAL") or false
+    local totalWidth = self.totalWidth or isVertical and self:GetHeight() or self:GetWidth()
+    local height = self.totalHeight or isVertical and self:GetWidth() or self:GetHeight()
+    self.maskContainer:SetSize(totalWidth / numSpritesInAnimation, height)
+end
+
 local function hookStatusbarBehaviour(statusBar,smooth,animationType)
     if not AddToAnimation then
         AddToAnimation = GW.AddToAnimation
@@ -239,7 +246,7 @@ local function hookStatusbarBehaviour(statusBar,smooth,animationType)
     animationType = animationType or BarAnimateTypes.All
 
     uniqueID = uniqueID + 1
-    statusBar.maskContainer:SetSize(statusBar.internalBar:GetWidth() / numSpritesInAnimation,statusBar.internalBar:GetHeight())
+    statusBar.maskContainer:SetSize(statusBar.internalBar:GetWidth() / numSpritesInAnimation, statusBar.internalBar:GetHeight())
     statusBar.fill_threshold = 0
     statusBar.GetFillAmount = GetFillAmount
     statusBar.SetFillAmount = smooth and onupdate_AnimateBar or SetFillAmount
@@ -250,6 +257,7 @@ local function hookStatusbarBehaviour(statusBar,smooth,animationType)
     statusBar.BarInterpolation = BarInterpolation.Ease
     statusBar.uniqueID = uniqueID
     statusBar.addMask = addMask
+    statusBar.UpdateBarSize = UpdateBarSize
 
     statusBar.maskContainer:ClearAllPoints()
     statusBar.maskOverflow:ClearAllPoints()
@@ -273,7 +281,7 @@ GW.hookStatusbarBehaviour = hookStatusbarBehaviour
 
 local function createNewStatusBar(name, parent, template, smooth)
     template = template or "GwStatusBarTemplate"
-    local statusBar = CreateFrame("StatusBar",name, parent, template)
+    local statusBar = CreateFrame("StatusBar", name, parent, template)
     hookStatusbarBehaviour(statusBar, smooth)
     return statusBar
 end

@@ -14,7 +14,7 @@ local function PostUpdateHealth(self)
 	if parent.isForced then
 		self.cur = self.fakeValue or random(1, 100)
 		self.max = 100
-		self:SetFillAmount(self.cur/self.max)
+		self:ForceFIllAmount(self.cur / self.max)
         self.fakeValue = self.cur
     else
         self.fakeValue = nil
@@ -71,7 +71,7 @@ local function UpdateHealthOverride(self, event, unit)
 end
 
 local function Construct_HealthBar(frame)
-    local healthPredictionbar = GW.createNewStatusbar('$parent_HealthPredictionBar', frame, "GwStatusBarBar", false)
+    local healthPredictionbar = GW.createNewStatusbar('$parent_HealthPredictionBar', frame, "GwStatusBarBarNoAnchorNoSize", false)
     healthPredictionbar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
     healthPredictionbar:SetPoint('TOPLEFT', frame, "TOPLEFT")
     healthPredictionbar:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
@@ -81,34 +81,34 @@ local function Construct_HealthBar(frame)
     healthPredictionbar.strechMask = true
     healthPredictionbar:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
-    local absorbBar = GW.createNewStatusbar('$parent_AbsorbBar', healthPredictionbar, "GwStatusBarBar", true)
+    local absorbBar = GW.createNewStatusbar('$parent_AbsorbBar', healthPredictionbar, "GwStatusBarBarNoAnchorNoSize", true)
     absorbBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb")
-    absorbBar:SetPoint('TOPLEFT', frame, "TOPLEFT")
-    absorbBar:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
+    absorbBar:SetPoint('TOPLEFT', healthPredictionbar, "TOPLEFT")
+    absorbBar:SetPoint('BOTTOMRIGHT', healthPredictionbar, 'BOTTOMRIGHT')
     absorbBar:SetMinMaxValues(0, 1)
     absorbBar.customMaskSize = 32
     absorbBar.strechMask = true
     absorbBar:SetStatusBarColor(1,1,1,0.66)
 
-    local health = GW.createNewStatusbar('$parent_HealthBar', absorbBar, "GwStatusBarBar", true)
-    health:SetPoint('TOPLEFT', frame, "TOPLEFT")
-    health:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
+    local health = GW.createNewStatusbar('$parent_HealthBar', absorbBar, "GwStatusBarBarNoAnchorNoSize", true)
+    health:SetPoint('TOPLEFT', absorbBar, "TOPLEFT")
+    health:SetPoint('BOTTOMRIGHT', absorbBar, 'BOTTOMRIGHT')
     health:SetMinMaxValues(0, 1)
     health.customMaskSize = 32
     health.strechMask = true
 
-    local healAbsorbBar = GW.createNewStatusbar('$parent_AntiHealBar', health, "GwStatusBarBar", true)
+    local healAbsorbBar = GW.createNewStatusbar('$parent_AntiHealBar', health, "GwStatusBarBarNoAnchorNoSize", true)
     healAbsorbBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/antiheal")
-    healAbsorbBar:SetPoint('TOPLEFT', frame, "TOPLEFT")
-    healAbsorbBar:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
+    healAbsorbBar:SetPoint('TOPLEFT', health, "TOPLEFT")
+    healAbsorbBar:SetPoint('BOTTOMRIGHT', health, 'BOTTOMRIGHT')
     healAbsorbBar:SetMinMaxValues(0, 1)
     healAbsorbBar.customMaskSize = 32
     healAbsorbBar.strechMask = true
 
-    local overAbsorb = GW.createNewStatusbar('$parent_AbsorbOverlayHealBar', healAbsorbBar, "GwStatusBarBar", true)
+    local overAbsorb = GW.createNewStatusbar('$parent_AbsorbOverlayHealBar', healAbsorbBar, "GwStatusBarBarNoAnchorNoSize", true)
     overAbsorb:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/bartextures/absorb")
-    overAbsorb:SetPoint('TOPLEFT', frame, "TOPLEFT")
-    overAbsorb:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT')
+    overAbsorb:SetPoint('TOPLEFT', healAbsorbBar, "TOPLEFT")
+    overAbsorb:SetPoint('BOTTOMRIGHT', healAbsorbBar, 'BOTTOMRIGHT')
     overAbsorb:SetMinMaxValues(0, 1)
     overAbsorb.customMaskSize = 32
     overAbsorb.strechMask = true
@@ -150,9 +150,31 @@ GW.Construct_HealthBar = Construct_HealthBar
 local function Update_Healtbar(frame)
     local health = frame.Health
 
-    health:ClearAllPoints()
-    health:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
-    health:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+    local w, h = frame:GetSize()
+    health:SetSize(w, h)
+    health.totalWidth = frame:GetWidth()
+    health.totalHeight = frame:GetHeight()
+
+    frame.HealthPrediction.healthPredictionbar.totalWidth = frame:GetWidth()
+    frame.HealthPrediction.absorbBar.totalWidth = frame:GetWidth()
+    frame.HealthPrediction.healAbsorbBar.totalWidth = frame:GetWidth()
+    frame.HealthPrediction.overAbsorb.totalWidth = frame:GetWidth()
+
+    frame.HealthPrediction.healthPredictionbar.totalHeight = frame:GetHeight()
+    frame.HealthPrediction.absorbBar.totalHeight = frame:GetHeight()
+    frame.HealthPrediction.healAbsorbBar.totalHeight = frame:GetHeight()
+    frame.HealthPrediction.overAbsorb.totalHeight = frame:GetHeight()
+
+    health:SetSize(w, h)
+    frame.HealthPrediction.healthPredictionbar:SetSize(w, h)
+    frame.HealthPrediction.absorbBar:SetSize(w, h)
+    frame.HealthPrediction.healAbsorbBar:SetSize(w, h)
+    frame.HealthPrediction.overAbsorb:SetSize(w, h)
+
+    frame.HealthPrediction.healthPredictionbar:UpdateBarSize()
+    frame.HealthPrediction.absorbBar:UpdateBarSize()
+    frame.HealthPrediction.healAbsorbBar:UpdateBarSize()
+    frame.HealthPrediction.overAbsorb:UpdateBarSize()
 
     --settings
     health.statusBarColor = health.statusBarColor or {}
