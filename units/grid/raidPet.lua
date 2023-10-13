@@ -59,15 +59,15 @@ local function UpdateGridRaidPetFrame(frame)
 
     frame:DisableElement("MiddleIcon")
 
-    if GW.GridSettings.enabled.RAID_PET and not frame:IsEnabled() then
-		frame:Enable()
-	elseif not GW.GridSettings.enabled.RAID_PET and frame:IsEnabled() then
-		frame:Disable()
-	end
-
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
         frame:ClearAllPoints()
+
+        if GW.GridSettings.enabled.RAID_PET and not frame:IsEnabled() then
+            frame:Enable()
+        elseif not GW.GridSettings.enabled.RAID_PET and frame:IsEnabled() then
+            frame:Disable()
+        end
     end
 
     GW.Update_Healtbar(frame)

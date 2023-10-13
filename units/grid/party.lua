@@ -55,15 +55,16 @@ local function UpdateGridPartyFrame(frame)
     frame.raidDebuffScale = GW.GridSettings.raidDebuffScale
     frame.raidDispelDebuffScale = GW.GridSettings.raidDispelDebuffScale
 
-    if GW.GridSettings.enabled.PARTY and not frame:IsEnabled() then
-		frame:Enable()
-	elseif not GW.GridSettings.enabled.PARTY and frame:IsEnabled() then
-		frame:Disable()
-	end
-
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
         frame:ClearAllPoints()
+
+        if GW.GridSettings.enabled.PARTY and not frame:IsEnabled() then
+            frame:Enable()
+        elseif not GW.GridSettings.enabled.PARTY and frame:IsEnabled() then
+            frame:Disable()
+        end
+    
     end
 
     GW.Update_Healtbar(frame)
