@@ -69,10 +69,10 @@ local attributeBlacklist = {
 }
 
 local allowHidePlayer = {
-    party = true,
-    RAID10 = true,
-    RAID25 = true,
-    RAID40 = true
+    party = false,
+    RAID10 = false,
+    RAID25 = false,
+    RAID40 = false
 }
 
 local function ForceShow2(frame, header)
@@ -103,7 +103,7 @@ local function ForceShow(frame, index, length, header)
     frame:SetID(index)
 
     if not length or (index % length) > 0 then
-    ForceShow2(frame, header)
+        ForceShow2(frame, header)
     end
 end
 
