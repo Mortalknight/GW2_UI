@@ -123,7 +123,7 @@ local function Construct_HealthBar(frame)
         maxOverflow = 1,
     }
 
-    health.bg = healthPredictionbar:CreateTexture(nil, 'BORDER')
+    health.bg = frame:CreateTexture(nil, 'BORDER')
     health.bg:SetPoint("TOPLEFT", 0, 0)
     health.bg:SetPoint("BOTTOMRIGHT", 0, 0)
     health.bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
