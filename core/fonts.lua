@@ -3,6 +3,7 @@ local L = GW.L
 
 local function setFont(fontObject, font, size, style, shadowX, shadowY, shadowA, r, g, b, shadowR, shadowG, shadowB)
     if not fontObject then return end
+    local newStyle
 
     local _, oldSize, oldStyle = fontObject:GetFont()
 
@@ -10,16 +11,19 @@ local function setFont(fontObject, font, size, style, shadowX, shadowY, shadowA,
         size = oldSize
     end
 
-    if not style then
-        style = oldStyle == "OUTLINE" and "THINOUTLINE" or oldStyle or "" -- keep outlines thin
+    if style == "NONE" or not style then style = "" end
+
+    local shadow = strsub(style, 0, 6) == "SHADOW" -- only used for shadow color(offset)
+    if shadow then style = strsub(style, 7) end
+
+    if not style or style == "" then
+        newStyle = oldStyle == "OUTLINE" and "THINOUTLINE" or oldStyle or "" -- keep outlines thin
     end
 
-    fontObject:SetFont(font, size, style)
+    fontObject:SetFont(font, size, newStyle or style)
+    fontObject:SetShadowColor(shadowR or 0, shadowG or 0, shadowB or 0, shadowA or (shadow and (style == "" and 1 or 0.6)) or 0)
+    fontObject:SetShadowOffset(shadowX or (shadow and 1) or 0, shadowY or (shadow and -1) or 0)
 
-    if shadowX and shadowY then
-        fontObject:SetShadowOffset(shadowX, shadowY)
-        fontObject:SetShadowColor(shadowR or 0, shadowG or 0, shadowB or 0, shadowA or 1)
-    end
     if r and g and b then
         fontObject:SetTextColor(r, g, b)
     end
@@ -106,7 +110,7 @@ local function LoadFonts()
     setFont(CoreAbilityFont, normal)
     setFont(DestinyFontHuge, normal)
     setFont(DestinyFontMed, normal)
-    setFont(FriendsFont_11, normal)
+    setFont(FriendsFont_11, normal, 11, "SHADOW")
     setFont(Game10Font_o1, normal)
     setFont(Game120Font, normal)
     setFont(Game12Font, normal)
@@ -138,27 +142,31 @@ local function LoadFonts()
     setFont(Number12Font, narrow)
     setFont(Number12Font_o1, narrow)
     setFont(Number13Font, narrow)
-    setFont(Number13FontGray, narrow)
-    setFont(Number13FontWhite, narrow)
-    setFont(Number13FontYellow, narrow)
-    setFont(Number14FontGray, narrow)
-    setFont(Number14FontWhite, narrow)
-    setFont(Number15Font, narrowBold)
-    setFont(Number18Font, narrowBold)
-    setFont(Number18FontWhite, narrowBold)
+    setFont(Number13FontGray, narrow, 13, "SHADOW")
+    setFont(Number13FontWhite, narrow, 13, "SHADOW")
+    setFont(Number13FontYellow, narrow, 13, "SHADOW")
+    setFont(Number14FontGray, narrow, 14, "SHADOW")
+    setFont(Number14FontWhite, narrow, 14, "SHADOW")
+    setFont(Number15Font, narrowBold, 15)
+    setFont(Number18Font, narrowBold, 18)
+    setFont(Number18FontWhite, narrowBold, 18, "SHADOW")
     setFont(NumberFont_OutlineThick_Mono_Small, narrow)
     setFont(NumberFont_Shadow_Small, normal)
     setFont(NumberFontNormalSmall, normal)
     setFont(PriceFont, normal)
-    setFont(PVPArenaTextString, normal)
-    setFont(PVPInfoTextString, normal)
+    setFont(PVPArenaTextString, normal, 22, "OUTLINE")
+    setFont(PVPInfoTextString, normal, 22, "OUTLINE")
     setFont(QuestFont, normal)
-    setFont(QuestFont_Enormous, normal)
+    setFont(QuestFont_Large, normal, 14)
+    setFont(QuestFont_Larger, normal, 16)
+    setFont(QuestFont_39, normal, 39)
     setFont(QuestFont_Huge, normal)
-    setFont(QuestFont_Large, normal)
-    setFont(QuestFont_Shadow_Huge, normal)
-    setFont(QuestFont_Shadow_Small, normal)
     setFont(QuestFont_Super_Huge, normal)
+    setFont(QuestFont_Enormous, normal)
+    setFont(QuestFont_Shadow_Small, normal, nil, "SHADOW", nil, nil, 1, nil, nil, nil, 0.49, 0.35, 0.05)
+    setFont(QuestFont_Shadow_Huge, normal, nil, "SHADOW", nil, nil, 1, nil, nil, nil, 0.49, 0.35, 0.05)
+    setFont(QuestFont_Shadow_Super_Huge, normal, nil, "SHADOW", nil, nil, 1, nil, nil, nil, 0.49, 0.35, 0.05)
+    setFont(QuestFont_Shadow_Enormous, normal, nil, "SHADOW", nil, nil, 1, nil, nil, nil, 0.49, 0.35, 0.05)
     setFont(SubSpellFont, normal)
     setFont(SubZoneTextString, normal)
     setFont(SystemFont_Huge1_Outline, normal)

@@ -90,7 +90,6 @@ local function RemoveTrashLines(self)
             break
         elseif linetext == PVP or linetext == FACTION_ALLIANCE or linetext == FACTION_HORDE then
             tiptext:SetText("")
-            tiptext:Hide()
         end
     end
 end
@@ -334,14 +333,14 @@ local function GameTooltip_OnTooltipSetItem(self, data)
     if bankCount then self:AddDoubleLine(" ", bankCount) end
 end
 
-local function GetLevelLine(self, offset, player)
+local function GetLevelLine(self, offset)
     if self:IsForbidden() then return end
 
     for i = offset, self:NumLines() do
         local tipLine = _G["GameTooltipTextLeft"..i]
         local tipText = tipLine and tipLine:GetText() and strlower(tipLine:GetText())
         if tipText and strfind(tipText, LEVEL1) then
-            return tipLine, player and _G["GameTooltipTextLeft" .. i + 1] or nil
+            return tipLine, _G["GameTooltipTextLeft" .. i + 1] or nil
         end
     end
 end
@@ -378,7 +377,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local awayText = UnitIsAFK(unit) and AFK_LABEL or UnitIsDND(unit) and DND_LABEL or ""
         GameTooltipTextLeft1:SetFormattedText("|c%s%s%s|r", nameColor.colorStr, name or UNKNOWN, awayText)
 
-        local levelLine, specLine = GetLevelLine(self, (guildName and 3 or 2), true)
+        local levelLine, specLine = GetLevelLine(self, (guildName and 3 or 2))
         if guildName then
             if guildRealm and isShiftKeyDown then
                 guildName = guildName.."-"..guildRealm
@@ -414,20 +413,21 @@ local function SetUnitText(self, unit, isPlayerUnit)
         return nameColor
     else
         local isPetCompanion = UnitIsBattlePetCompanion(unit)
-        local levelLine = GetLevelLine(self, 2)
+        local levelLine, classLine = GetLevelLine(self, 2)
         if levelLine then
             local pvpFlag, diffColor, level = "", "", ""
             local creatureClassification = UnitClassification(unit)
-            local creatureType = UnitCreatureType(unit) or ""
+            local creatureType = UnitCreatureType(unit)
 
             if isPetCompanion or UnitIsWildBattlePet(unit) then
                 level = UnitBattlePetLevel(unit)
 
-                local petType = _G["BATTLE_PET_NAME_"..UnitBattlePetType(unit)]
+                local petType = UnitBattlePetType(unit)
+                local petClass = _G["BATTLE_PET_NAME_" .. petType]
                 if creatureType then
-                    creatureType = format("%s %s", creatureType, petType)
+                    creatureType = format("%s %s", creatureType, petClass)
                 else
-                    creatureType = petType
+                    creatureType = petClass
                 end
 
                 local teamLevel = C_PetJournal.GetPetTeamAverageLevel()
@@ -445,7 +445,12 @@ local function SetUnitText(self, unit, isPlayerUnit)
                 pvpFlag = format(" (%s)", PVP)
             end
 
-            levelLine:SetFormattedText("|cff%02x%02x%02x%s|r%s %s%s", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", classification[creatureClassification] or "", creatureType, pvpFlag)
+            levelLine:SetFormattedText("|cff%02x%02x%02x%s|r%s %s%s", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", classification[creatureClassification] or "", creatureType or "", pvpFlag)
+        
+            local classText = creatureType and classLine and classLine:GetText()
+            if creatureType == classText then
+                classLine:SetText("")
+            end
         end
 
         local unitReaction = UnitReaction(unit, "player")
