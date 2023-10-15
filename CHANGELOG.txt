@@ -1,3 +1,6 @@
+2.2.7-Wrath
+    - Fix Questie integration
+
 2.2.6-Wrath
     - Fix lua error on init
 

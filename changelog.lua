@@ -9,6 +9,10 @@ local ct = {
 
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.2.7",{
+    {ct.bug,[=[Fix Questie integration]=]},
+})
+
 addChange("2.2.6",{
     {ct.bug,[=[Fix lua error on init]=]},
 })

@@ -14,7 +14,7 @@ local tomTomWaypoint = nil
 
 local function AddTomTomWaypoint(questId, objective)
     if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
-        local QuestieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(questId)
+        local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(questId)
         local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(QuestieQuest)
         if (not spawn) and objective ~= nil then
             spawn, zone, name = QuestieMap:GetNearestSpawn(objective)
@@ -423,8 +423,8 @@ local function getBlock(blockIndex)
         local validTexture
         local isFound = false
 
-        for bag = 0 , 5 do
-            for slot = 0 , 24 do
+        for bag = -2 , 4 do
+            for slot = 1 , 24 do
                 local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
                 if itemInfo and block.sourceItemId == itemInfo.itemID then
                     validTexture = itemInfo.iconFileID
@@ -435,12 +435,11 @@ local function getBlock(blockIndex)
         end
 
         -- Edge case to find "equipped" quest items since they will no longer be in the players bag
-        if (not isFound) then
-            for j = 13, 18 do
+        if (not validTexture) then
+            for j = 1, 19 do
                 local itemID = GetInventoryItemID("player", j)
-                local texture = GetInventoryItemTexture("player", j)
                 if block.sourceItemId == itemID then
-                    validTexture = texture
+                    validTexture = GetInventoryItemTexture("player", j)
                     isFound = true
                     break
                 end
@@ -477,7 +476,12 @@ local function getBlock(blockIndex)
 
             self.UpdateButton(self)
 
+            self:Show()
+
             return true
+        else
+            self:SetAttribute("item1", nil)
+            self:Hide()
         end
 
         return false
@@ -703,7 +707,7 @@ local function OnBlockClick(self, button)
 
         -- if we have objectives, we add them needs Questi
         if Questie and Questie.started then
-            local QuestieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(self.questID)
+            local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(self.questID)
             for _, objective in pairs(QuestieQuest.Objectives) do
                 local objectiveMenu = {}
 
@@ -751,7 +755,7 @@ local function OnBlockClick(self, button)
 
         if Questie and Questie.started and self.isComplete then
             tinsert(menuList, {text = L["Show on Map"], notCheckable = true, func = function()
-                local QuestieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(self.questID)
+                local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(self.questID)
                 QuestieLoader:ImportModule("TrackerUtils"):ShowFinisherOnMap(QuestieQuest)
             end})
         end
@@ -805,10 +809,7 @@ local function AddQuestInfos(questId, questLogIndex, watchId)
     local isFailed = false
 
     if Questie and Questie.started then
-        local questieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(questId)
-        if questieQuest and questieQuest.sourceItemId then
-            sourceItemId = questieQuest.sourceItemId
-        end
+        sourceItemId = QuestieLoader:ImportModule("QuestieDB").QueryQuestSingle(questId, "sourceItemId")
     end
 
     if isComplete == nil then
@@ -978,8 +979,8 @@ local function updateQuestLogLayout(self)
             local QuestieDB = QuestieLoader:ImportModule("QuestieDB")
             if QuestieTrackerUtils and QuestieDB then
                 table.sort(sorted, function(a, b)
-                    local qA = QuestieDB:GetQuest(a.questId)
-                    local qB = QuestieDB:GetQuest(b.questId)
+                    local qA = QuestieDB.GetQuest(a.questId)
+                    local qB = QuestieDB.GetQuest(b.questId)
                     local qAZone, qBZone
                     if qA.zoneOrSort > 0 then
                         qAZone = QuestieTrackerUtils:GetZoneNameByID(qA.zoneOrSort)
