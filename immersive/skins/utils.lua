@@ -491,9 +491,13 @@ local function HandleTrimScrollBar(frame)
 
     local thumb = frame:GetThumb()
     if thumb then
+        thumb:DisableDrawLayer("ARTWORK")
         thumb:DisableDrawLayer("BACKGROUND")
-        thumb:SetSize(12, 12)
-        thumb:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
+        thumb:GwCreateBackdrop("ScrollBar")
+        thumb.backdrop:SetFrameLevel(thumb:GetFrameLevel() + 1)
+        local h = thumb:GetHeight()
+        thumb:SetSize(12, h)
+        --thumb:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
     end
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar

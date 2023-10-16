@@ -309,19 +309,16 @@ end
 GW.AddForProfiling("dodgebar", "dodge_OnLeave", dodge_OnLeave)
 
 local function setupDragonBar(self)
-    local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(4460)
-    if widgetInfo then
-        local frameName = self:GetName()
+    local frameName = self:GetName()
 
-        for i = 1,5 do
-            local seperator = _G[frameName.."Sep"..i]
-            if i <= widgetInfo.numTotalFrames then
-                local p = lerp(RAD_AT_START,RAD_AT_END,i / widgetInfo.numTotalFrames)
-                seperator:SetRotation(p)
-                seperator:Show()
-            else
-                seperator:Hide()
-            end
+    for i = 1,5 do
+        local seperator = _G[frameName.."Sep"..i]
+        if i <= self.gwMaxCharges then
+            local p = lerp(RAD_AT_START,RAD_AT_END,i / self.gwMaxCharges)
+            seperator:SetRotation(p)
+            seperator:Show()
+        else
+            seperator:Hide()
         end
     end
 end
@@ -396,14 +393,15 @@ local function dragonBar_OnEvent(self, event, ...)
         end
     elseif event == "UPDATE_UI_WIDGET" then
         local widget = ...
-        if widget.widgetSetID ~= 283 then
+        if widget.widgetSetID ~= 283 or not self:IsShown() then
             return
         end
 
-        local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(widget.widgetID)
+        local widgetInfo = C_UIWidgetManager.GetFillUpFramesWidgetVisualizationInfo(4460)
         if widgetInfo then
             animateDragonBar(self, widgetInfo.numFullFrames, (widgetInfo.fillValue / widgetInfo.fillMax), widgetInfo.numTotalFrames)
             self.tooltip = widgetInfo.tooltip
+            self.gwMaxCharges = widgetInfo.numTotalFrames
         end
     elseif event == "GW2_PLAYER_DRAGONRIDING_STATE_CHANGE" then
         local state, isLogin = ...
