@@ -311,10 +311,10 @@ GW.AddForProfiling("dodgebar", "dodge_OnLeave", dodge_OnLeave)
 local function setupDragonBar(self)
     local frameName = self:GetName()
 
-    for i = 1,5 do
-        local seperator = _G[frameName.."Sep"..i]
+    for i = 1, 5 do
+        local seperator = _G[frameName .. "Sep" .. i]
         if i <= self.gwMaxCharges then
-            local p = lerp(RAD_AT_START,RAD_AT_END,i / self.gwMaxCharges)
+            local p = lerp(RAD_AT_START, RAD_AT_END, i / self.gwMaxCharges)
             seperator:SetRotation(p)
             seperator:Show()
         else
@@ -357,7 +357,7 @@ local function animateDragonBar(self,current,fraction,max)
 end
 
 local function updateDragonRidingState(self, state, isLogin)
-    if isLogin or (self.gwMaxCharges and (self.gwMaxCharges == nil or self.gwMaxCharges < 3)) then
+    if isLogin or (self.gwMaxCharges and self.gwMaxCharges < 3) then
         setupDragonBar(self)
     end
 
