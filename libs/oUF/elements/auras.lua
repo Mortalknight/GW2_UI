@@ -76,8 +76,8 @@ local oUF = ns.oUF
 local function UpdateTooltip(self)
 	if(GameTooltip:IsForbidden()) then return end
 
-	if self.tooltipByIndex then
-		GameTooltip:SetSpellByID(self.tooltipByIndex)
+	if self.tooltipBySpellId then
+		GameTooltip:SetSpellByID(self.tooltipBySpellId)
 	elseif(self.isHarmful) then
 		GameTooltip:SetUnitDebuffByAuraInstanceID(self:GetParent().__owner.unit, self.auraInstanceID)
 	else

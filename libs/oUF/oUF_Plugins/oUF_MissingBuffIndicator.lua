@@ -1,27 +1,25 @@
 local _, ns = ...
 local oUF = ns.oUF
-local spellIDs = {}
-local spellBookSearched = 0
+local chachedSpellInfo = {}
 
-local function GridShowBuffIcon(parent, btnIndex, x, y, icon, index)
+local function GridShowBuffIcon(parent, btnIndex, x, y, icon, spellId)
     local size = 14
     local element = parent.MissingBuffFrame
-    local marginX, marginY = x * (size + 2), y * (size + 2) -- 16, 0
-    local button = element[btnIndex]
+    local marginX, marginY = x * (size + 2), y * (size + 2)
+    local button = element.createdButtons[btnIndex]
 
     if not button then
         button = ns.oUF_CreateAuraButton(element, btnIndex)
         button:SetSize(size, size)
         ns.Construct_AuraIcon(parent, button)
-        button.tooltipByIndex = index
+        button.tooltipBySpellId = spellId
 
         button:ClearAllPoints()
         button:SetPoint("TOPRIGHT", element, "TOPRIGHT", -(marginX + 3), -(marginY + 3))
 
         button.backdrop:Show()
 
-        table.insert(element, button)
-		element.createdButtons = element.createdButtons + 1
+        table.insert(element.createdButtons, button)
     end
 
     button.Icon:SetTexture(icon)
@@ -39,41 +37,31 @@ end
 local function Update(self, event)
 	 -- missing buffs
      if not UnitIsDeadOrGhost(self.unit) and self.missingAuras then
-        local i, name, spellid = 1, nil, nil
-        local btnIndex, x, y = 1, 0, 0
+        local name, spellid, icon
+        local btnIndex, i, x, y = 1, 0, 0, 0
         -- do a reset
-        for ii = 1, self.MissingBuffFrame.createdButtons do
-            if self.MissingBuffFrame[ii] then
-                self.MissingBuffFrame[ii]:Hide()
-            end
+        for _, btn in pairs(self.MissingBuffFrame.createdButtons) do
+            btn:Hide()
         end
         for mName, _ in pairs(self.missingAuras) do
             self.missingAuras[mName] = true
         end
-        repeat
-            i, name = i + 1, UnitBuff(self.unit, i)
-            if name and self.missingAuras[name] then
-                self.missingAuras[name] = false
+        for mName, _ in pairs(self.missingAuras) do
+            if AuraUtil.FindAuraByName(mName, "player", "HELPFUL") then
+                self.missingAuras[mName] = false
             end
-        until not name
+        end
 
-        i = 0
         for mName, v in pairs(self.missingAuras) do
-            --print(mName, v)
             if v then
-                spellBookSearched = 0
-                while not spellIDs[mName] and spellBookSearched < MAX_SPELLS do
-                    spellBookSearched = spellBookSearched + 1
-                    name, _, spellid = GetSpellBookItemName(spellBookSearched, BOOKTYPE_SPELL)
-                    if not name then
-                        spellBookSearched = MAX_SPELLS
-                    elseif self.missingAuras[name] and not spellIDs[name] then
-                        spellIDs[name] = spellid
+                if not chachedSpellInfo[mName] then
+                    name, _, icon, _, _, _, spellid = GetSpellInfo(mName)
+                    if name then
+                        chachedSpellInfo[name] = {spellId = spellid, iconId = icon}
                     end
                 end
-                if spellIDs[mName] then
-                    local icon = GetSpellTexture(spellIDs[mName])
-                    i, btnIndex, x, y = i + 1, GridShowBuffIcon(self, btnIndex, x, y, icon, spellIDs[mName])
+                if chachedSpellInfo[mName] then
+                    i, btnIndex, x, y = i + 1, GridShowBuffIcon(self, btnIndex, x, y, chachedSpellInfo[mName].iconId, chachedSpellInfo[mName].spellId)
                 end
             end
         end
@@ -91,7 +79,7 @@ local function Enable(self)
 
         self:RegisterEvent("UNIT_AURA", Update)
         self.MissingBuffFrame:Show()
-        self.MissingBuffFrame.createdButtons = self.MissingBuffFrame.createdButtons or 0
+        self.MissingBuffFrame.createdButtons = self.MissingBuffFrame.createdButtons or {}
         self.MissingBuffFrame.__owner = self
         return true
     end
