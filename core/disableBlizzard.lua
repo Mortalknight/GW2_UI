@@ -120,7 +120,7 @@ local function DisableBlizzardFrames()
 
         if not isArenaHooked then
             isArenaHooked = true
-            HandleFrame(CompactArenaFrame)
+            HandleFrame(CompactArenaFrame, 1)
 
 			for _, frame in next, CompactArenaFrame.memberUnitFrames do
 				HandleFrame(frame, true)
