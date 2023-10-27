@@ -401,7 +401,7 @@ end
 GW.StrLower = StrLower
 
 local function IsNAN(n)
-    return tostring(n) == "-1.#IND"
+    return tostring(n) == tostring(0/0)
 end
 GW.IsNAN = IsNAN
 

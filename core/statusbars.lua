@@ -65,6 +65,11 @@ local function SetFillAmount(self, value, maxValue, needConvertToPorcent)
     local isVertical = (self:GetOrientation() == "VERTICAL") or false
     local totalWidth = self.totalWidth or isVertical and self:GetHeight() or self:GetWidth()
     local height = self.totalHeight or isVertical and self:GetWidth() or self:GetHeight()
+
+    -- fallback if width or height is 0
+    if totalWidth == 0 then totalWidth = 1 end
+    if height == 0 then height = 1 end
+
     local barWidth = totalWidth * value
     local stretchMask = self.strechMask or false
 
