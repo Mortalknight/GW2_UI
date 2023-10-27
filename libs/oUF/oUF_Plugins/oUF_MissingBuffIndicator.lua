@@ -47,7 +47,7 @@ local function Update(self, event)
             self.missingAuras[mName] = true
         end
         for mName, _ in pairs(self.missingAuras) do
-            if AuraUtil.FindAuraByName(mName, "player", "HELPFUL") then
+            if AuraUtil.FindAuraByName(mName, self.unit, "HELPFUL") then
                 self.missingAuras[mName] = false
             end
         end
