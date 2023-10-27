@@ -62,6 +62,9 @@ local function PostUpdateButton(self, button, unit, data, position)
         button:SetSize(size, size)
         button.background:Show()
         button.backdrop:Hide()
+
+        -- redo the position
+        self:ForceUpdate(true)
     else
         button.background:Hide()
         button.backdrop:Show()
