@@ -1,3 +1,6 @@
+2.2.8-Wrath
+    - Fix gear set manager lua error
+
 2.2.7-Wrath
     - Fix Questie integration
 

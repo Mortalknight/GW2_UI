@@ -9,6 +9,10 @@ local ct = {
 
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.2.8",{
+    {ct.bug,[=[Fix gear set manager lua error]=]},
+})
+
 addChange("2.2.7",{
     {ct.bug,[=[Fix Questie integration]=]},
 })
