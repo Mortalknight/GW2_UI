@@ -1,3 +1,6 @@
+2.2.9-Wrath
+    - Update libs
+
 2.2.8-Wrath
     - Fix gear set manager lua error
 

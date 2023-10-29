@@ -14,12 +14,16 @@
 --       PlayerRealm = PlayerRealm, -- Normalized Realm Name
 --       GearScore = GearScore, -- Number
 --       AvgItemLevel = AvgItemLevel, -- Number
+--       LFGItemLevel = AvgItemLevelWithBags -- Number
+--       LFGItemLevelPVP = AvrItemLevelPvP -- Number
 --       FLOPScore = FLOPScore, -- Number (bonus or minus itemlevels for Flame Leviathan vehicles)
 --       HeraldFails = hashTable, -- {slotName = itemlevel}
+--       InsanityFails = hashTable, -- {slotName = itemLevel}
 --       RawTime = RawTime, -- nilable: unixtime (can feed to date(fmt,RawTime) to get back human readable datetime)
 --       Color = color, -- nilable: ColorMixin
 --       FLOPColor = color, -- ColorMixin
 --       HeraldColor = color, -- ColorMixin
+--       InsanityColor = color, -- ColorMixin
 --       Description = description -- nilable: String
 --     }
 --     PlayerName / PlayerRealm == _G.UKNOWNOBJECT or GearScore = 0 indicates failure to calculate
@@ -54,7 +58,7 @@
 --     LibGearScore-1.0 does NOT initiate Inspects, it only passively monitors inspect results.
 -----------------------------------------------------------------------------------------------------------------------
 
-local MAJOR, MINOR = "LibGearScore.1000", 7
+local MAJOR, MINOR = "LibGearScore.1000", 8
 assert(LibStub, format("%s requires LibStub.", MAJOR))
 local lib, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 
@@ -71,6 +75,8 @@ local GetServerTime = _G.GetServerTime
 local UnitGUID = _G.UnitGUID
 local UnitLevel = _G.UnitLevel
 local UnitIsPlayer = _G.UnitIsPlayer
+local UnitIsUnit = _G.UnitIsUnit
+local GetAverageItemLevel = _G.GetAverageItemLevel
 local Item = _G.Item
 local After = _G.C_Timer.After
 local CreateColor = _G.CreateColor
@@ -97,8 +103,9 @@ elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
 end
 local MAX_PLAYER_LEVEL = MAX_PLAYER_LEVEL_TABLE[LE_EXPANSION_LEVEL_CURRENT]
 local MAX_SCORE = BRACKET_SIZE*6-1
-local BASELINE, ARMOR_MAX, WEAPON_MAX = 200, 239, 245
+local BASELINE, ARMOR_MAX, WEAPON_MAX, CLOAK_MAX = 200, 239, 245, 258
 local FLOPBASE, FLOPMAX, SCALING_FACTOR = 3000, 4225, 6
+local myGUID = UnitGUID("player")
 
 local AllSlots = {
   _G.INVSLOT_HEAD,
@@ -196,6 +203,26 @@ local Herald_ItemSlots = {
   [_G.INVSLOT_MAINHAND] = WEAPON_MAX,
   [_G.INVSLOT_OFFHAND] = WEAPON_MAX,
   [_G.INVSLOT_RANGED] = WEAPON_MAX, -- check if INVTYPE_RELIC needs special handling
+}
+
+local DedInsaniy_ItemSlots = {
+  [_G.INVSLOT_HEAD] = WEAPON_MAX,
+  [_G.INVSLOT_NECK] = WEAPON_MAX,
+  [_G.INVSLOT_SHOULDER] = WEAPON_MAX,
+  [_G.INVSLOT_CHEST] = WEAPON_MAX,
+  [_G.INVSLOT_WAIST] = WEAPON_MAX,
+  [_G.INVSLOT_LEGS] = WEAPON_MAX,
+  [_G.INVSLOT_FEET] = WEAPON_MAX,
+  [_G.INVSLOT_WRIST] = WEAPON_MAX,
+  [_G.INVSLOT_HAND] = WEAPON_MAX,
+  [_G.INVSLOT_FINGER1] = WEAPON_MAX,
+  [_G.INVSLOT_FINGER2] = WEAPON_MAX,
+  [_G.INVSLOT_TRINKET1] = WEAPON_MAX,
+  [_G.INVSLOT_TRINKET2] = WEAPON_MAX,
+  [_G.INVSLOT_BACK] = CLOAK_MAX,
+  [_G.INVSLOT_MAINHAND] = WEAPON_MAX,
+  [_G.INVSLOT_OFFHAND] = WEAPON_MAX,
+  [_G.INVSLOT_RANGED] = WEAPON_MAX,
 }
 
 local GS_ItemTypes = {
@@ -471,7 +498,7 @@ local function CacheScore(guid, unit, level)
   if PlayerRealm == "" then PlayerRealm = GetNormalizedRealmName() end
   local GearScore = 0
   local FLOPScore
-  local HeraldFails = {}
+  local HeraldFails, DedInsanityFails = {}, {}
   local ItemCount = 0
   local LevelTotal = 0
   local TitanGrip = 1
@@ -479,7 +506,13 @@ local function CacheScore(guid, unit, level)
   local ItemLevel = 0
   local ItemQuality = 0
   local AvgItemLevel = 0
+  local AvgItemLevelWithBags, AvgItemLevelEquip, AvgItemLevelPvP
   local Description
+  if GetAverageItemLevel then
+    if (guid and guid == myGUID) or (unit and UnitIsUnit("player",unit)) then
+      AvgItemLevelWithBags, AvgItemLevelEquip, AvgItemLevelPvP = GetAverageItemLevel()
+    end
+  end
   local mainHandLink = GetUnitSlotLink(unit, _G.INVSLOT_MAINHAND)
   local offHandLink = GetUnitSlotLink(unit, _G.INVSLOT_OFFHAND)
   if mainHandLink and offHandLink then
@@ -555,6 +588,16 @@ local function CacheScore(guid, unit, level)
           end
         end
       end
+      if DedInsaniy_ItemSlots[slot] then
+        local slotName = SlotMap[slot]
+        if ItemLevel > DedInsaniy_ItemSlots[slot] then
+          DedInsanityFails[slotName] = ItemLevel
+        else
+          if DedInsanityFails[slotName] then
+            DedInsanityFails[slotName] = nil
+          end
+        end
+      end
     else
       if Flop_ItemSlots[slot] then
         FLOPScore = (FLOPScore or 0) - BASELINE
@@ -563,7 +606,11 @@ local function CacheScore(guid, unit, level)
   end
   if GearScore > 0 and ItemCount > 0 then
     GearScore = floor(GearScore)
-    AvgItemLevel = floor(LevelTotal/ItemCount)
+    if AvgItemLevelWithBags then
+      AvgItemLevel = floor(AvgItemLevelEquip) -- LFG tools use WithBags for PvE and PvP for PvP activities
+    else
+      AvgItemLevel = floor(LevelTotal/ItemCount)
+    end
     local RawTime = GetServerTime()
     local TimeStamp = date("%Y%m%d%H%M%S",RawTime) -- 20221017133545 (YYYYMMDDHHMMSS)
     local r,g,b, description = GetScoreColor(GearScore)
@@ -576,13 +623,18 @@ local function CacheScore(guid, unit, level)
         flopColor = ColorGradient(FLOPScore/(FLOPMAX-FLOPBASE))
       end
     end
-    local heraldColor
+    local heraldColor, dedInsanityColor
     if tCount(HeraldFails) > 0 then
       heraldColor = colorFail
     else
       heraldColor = colorPass
     end
-    local scoreData = {TimeStamp = TimeStamp, PlayerName = PlayerName, PlayerRealm = PlayerRealm, GearScore = GearScore, AvgItemLevel = AvgItemLevel, FLOPScore = FLOPScore, HeraldFails = HeraldFails, RawTime = RawTime, Color = color, FLOPColor = flopColor, HeraldColor = heraldColor, Description = description}
+    if tCount(DedInsanityFails) > 0 then
+      dedInsanityColor = colorFail
+    else
+      dedInsanityColor = colorPass
+    end
+    local scoreData = {TimeStamp = TimeStamp, PlayerName = PlayerName, PlayerRealm = PlayerRealm, GearScore = GearScore, AvgItemLevel = AvgItemLevel, LFGItemLevel = AvgItemLevelWithBags, LFGItemLevelPVP = AvgItemLevelPvP, FLOPScore = FLOPScore, HeraldFails = HeraldFails, InsanityFails = DedInsanityFails, RawTime = RawTime, Color = color, FLOPColor = flopColor, HeraldColor = heraldColor, InsanityColor = dedInsanityColor, Description = description}
     lib.PlayerScoreData[guid] = scoreData
     lib.callbacks:Fire("LibGearScore_Update", guid, scoreData)
   end
@@ -712,6 +764,18 @@ function lib:HeraldCheck(unitorguid)
   end
 end
 
+function lib:InsanityCheck(unitorguid)
+  local guid = ResolveGUID(unitorguid)
+  if (guid) then
+    local scoreData = lib.PlayerScoreData[guid]
+    if scoreData and scoreData.InsanityFails then
+      local fail = tCount(scoreData.InsanityFails)>0
+      local pass = not fail
+      return pass, scoreData.InsanityFails, scoreData.InsanityColor
+    end
+  end
+end
+
 ---------------
 --- Testing ---
 ---------------
@@ -737,6 +801,14 @@ local function TargetScore()
           end
         else
           print("Herald: "..scoreData.HeraldColor:WrapTextInColorCode(_G.YES))
+        end
+        if tCount(scoreData.InsanityFails) > 0 then
+          print("Ded.Insanity: "..scoreData.InsanityColor:WrapTextInColorCode(_G.NO))
+          for k,v in pairs(scoreData.InsanityFails) do
+            print(format("  %s: %s",k,scoreData.InsanityColor:WrapTextInColorCode(v)))
+          end
+        else
+          print("Ded.Insanity: "..scoreData.InsanityColor:WrapTextInColorCode(_G.YES))
         end
       end
     else

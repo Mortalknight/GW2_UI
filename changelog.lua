@@ -9,6 +9,10 @@ local ct = {
 
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.2.9",{
+    {ct.change,[=[Update libs]=]},
+})
+
 addChange("2.2.8",{
     {ct.bug,[=[Fix gear set manager lua error]=]},
 })
