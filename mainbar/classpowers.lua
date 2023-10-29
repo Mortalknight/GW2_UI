@@ -1533,6 +1533,8 @@ local function LoadClassPowers()
     cpf:SetPoint("TOPLEFT", cpf.gwMover)
 
     GW.MixinHideDuringPetAndOverride(cpf)
+    GW.MixinHideDuringPetAndOverride(cpf.customResourceBar)
+    GW.MixinHideDuringPetAndOverride(cpf.customResourceBar.decay)
     CPWR_FRAME = cpf
 
     cpf.ourTarget = GetSetting("TARGET_ENABLED")
@@ -1554,7 +1556,6 @@ local function LoadClassPowers()
         lmb:addToBarMask(lmb.runeoverlay)
         lmb.runicmask:SetSize(lmb:GetSize())
         lmb.runeoverlay:AddMaskTexture(lmb.runicmask)
-        GW.MixinHideDuringPetAndOverride(lmb)
         cpf.lmb = lmb
 
         GW.initPowerBar(cpf.lmb)
@@ -1580,6 +1581,9 @@ local function LoadClassPowers()
         lmb.label:SetFont(DAMAGE_TEXT_FONT, 12)
         lmb.label:SetShadowColor(0, 0, 0, 1)
         lmb.label:SetShadowOffset(1, -1)
+
+        GW.MixinHideDuringPetAndOverride(lmb)
+        GW.MixinHideDuringPetAndOverride(lmb.decay)
     end
 
     -- create an extra mana power bar that is used sometimes
@@ -1602,6 +1606,7 @@ local function LoadClassPowers()
     exbar.decay:SetPoint("BOTTOMRIGHT", exbar, "BOTTOMRIGHT", 0, 0)
 
     GW.MixinHideDuringPetAndOverride(exbar)
+    GW.MixinHideDuringPetAndOverride(exbar.decay)
     cpf.exbar = exbar
     GW.initPowerBar(cpf.exbar)
     exbar:SetPoint("TOPLEFT", cpf)
