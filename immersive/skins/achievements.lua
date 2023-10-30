@@ -1067,7 +1067,7 @@ local function moveFrameToPosition(frame, x, y)
     end
 
     frame:ClearAllPoints()
-    frame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos. yOfs)
+    frame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 end
 
 local function MakeMovable(frame, target)

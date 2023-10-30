@@ -456,6 +456,7 @@ local function evAddonLoaded(_, addonName)
     GW.LoadWeeklyRewardsSkin()
     GW.LoadPerksProgramSkin()
     GW.preLoadStatusBarMaskTextures()
+    
   --  GW.LoadStatusbarTest()
 end
 AFP("evAddonLoaded", evAddonLoaded)
@@ -606,6 +607,8 @@ local function evPlayerLogin(self)
     GW.LoadTimeManagerSkin()
     GW.LoadMerchantFrameSkin()
     GW.LoadLootFrameSkin()
+    GW.LoadExpansionLadningPageSkin()
+    GW.LoadGenericTraitFrameSkin()
 
     GW.LoadDetailsSkin()
     GW.LoadImmersionAddonSkin()
