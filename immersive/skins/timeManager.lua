@@ -14,24 +14,34 @@ local function LoadTimeManagerSkin()
             end
         end
     end
-
+    TimeManagerFrame:SetMovable(true)
+    TimeManagerFrame:EnableMouse(true)
+    TimeManagerFrame:SetScript("OnMouseDown", function(_, button)
+        if button == "LeftButton" then
+            TimeManagerFrame:StartMoving()
+        end
+    end)
+    TimeManagerFrame:SetScript("OnMouseUp", function()
+        TimeManagerFrame:StopMovingOrSizing()
+    end)
     TimeManagerFrame:GwStripTextures()
-    TimeManagerFrame.tex = TimeManagerFrame:CreateTexture(nil, "BACKGROUND", nil, 0)
-    local w, h = TimeManagerFrame:GetSize()
-    TimeManagerFrame.tex:SetPoint("TOP", TimeManagerFrame, "TOP", 0, 20)
-    TimeManagerFrame.tex:SetSize(w + 50, h + 20)
-    TimeManagerFrame.tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
+    TimeManagerFrame:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
     TimeManagerFrame.CloseButton:GwSkinButton(true)
     TimeManagerFrame.CloseButton:SetSize(20, 20)
 
+    TimeManagerAlarmHourDropDown:ClearAllPoints()
+    TimeManagerAlarmHourDropDown:SetPoint("TOPLEFT", TimeManagerAlarmTimeLabel, "BOTTOMLEFT", -10, -4)
     _G.TimeManagerAlarmHourDropDown:GwSkinDropDownMenu()
     _G.TimeManagerAlarmMinuteDropDown:GwSkinDropDownMenu()
     _G.TimeManagerAlarmAMPMDropDown:GwSkinDropDownMenu()
 
-    _G.TimeManagerAlarmHourDropDown:SetWidth(80)
-    _G.TimeManagerAlarmMinuteDropDown:SetWidth(80)
-    _G.TimeManagerAlarmAMPMDropDown:SetWidth(80)
+    _G.TimeManagerAlarmHourDropDown:SetWidth(70)
+    _G.TimeManagerAlarmMinuteDropDown:SetWidth(70)
+    _G.TimeManagerAlarmAMPMDropDown:SetWidth(70)
+
+    TimeManagerAlarmMessageFrame:ClearAllPoints()
+    TimeManagerAlarmMessageFrame:SetPoint("TOPLEFT", TimeManagerAlarmHourDropDown, "BOTTOMLEFT", 6, 0)
 
     GW.SkinTextBox(_G.TimeManagerAlarmMessageEditBox.Middle, _G.TimeManagerAlarmMessageEditBox.Left, _G.TimeManagerAlarmMessageEditBox.Right, nil, nil, 5, 5)
     _G.TimeManagerAlarmEnabledButton:GwSkinCheckButton()
