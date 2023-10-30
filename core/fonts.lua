@@ -65,7 +65,6 @@ local function LoadFonts()
     setFont(SystemFont_Shadow_Large, bold)
     setFont(SystemFont_Shadow_Large_Outline, bold)
     setFont(SystemFont_Huge1, normal)
-    setFont(SystemFont_Shadow_Huge1, normal)
     setFont(SystemFont_OutlineThick_Huge2, bold)
     setFont(SystemFont_Shadow_Outline_Huge2, narrow)
     setFont(SystemFont_Shadow_Huge3, normal)
@@ -175,15 +174,22 @@ local function LoadFonts()
     setFont(SystemFont_Shadow_Large2, normal)
     setFont(ZoneTextString, normal)
 
-    --RaidBossEmoteFrame.timings["RAID_NOTICE_MIN_HEIGHT"] = 12
-    --RaidBossEmoteFrame.timings["RAID_NOTICE_MAX_HEIGHT"] = 12
-    --RaidBossEmoteFrame.timings["RAID_NOTICE_SCALE_UP_TIME"] = 0
-    --RaidBossEmoteFrame.timings["RAID_NOTICE_SCALE_DOWN_TIME"] = 0
+    do
+        -- fix the blurr on the frames
+        setFont(SystemFont_Shadow_Huge1, normal)
 
-    --RaidWarningFrame.timings["RAID_NOTICE_MIN_HEIGHT"] = 12
-    --RaidWarningFrame.timings["RAID_NOTICE_MAX_HEIGHT"] = 12
-    --RaidWarningFrame.timings["RAID_NOTICE_SCALE_UP_TIME"] = 0
-    --RaidWarningFrame.timings["RAID_NOTICE_SCALE_DOWN_TIME"] = 0
+        local warnTimings = RaidWarningFrame and RaidWarningFrame.timings
+        if warnTimings then
+            warnTimings.RAID_NOTICE_MIN_HEIGHT = 20
+            warnTimings.RAID_NOTICE_MAX_HEIGHT = 24
+        end
+
+        local bossTimings = RaidBossEmoteFrame and RaidBossEmoteFrame.timings
+        if bossTimings then
+            bossTimings.RAID_NOTICE_MIN_HEIGHT = 20
+            bossTimings.RAID_NOTICE_MAX_HEIGHT = 24
+        end
+    end
 
     RaidWarningFrame:SetSize(640, 48)
     RaidBossEmoteFrame:SetSize(640, 56)
