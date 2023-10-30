@@ -43,6 +43,7 @@ local function ApplyBlizzardEditModeChanges(self)
 
     LEMO:ApplyChanges()
 
+    LEMO:RegisterForLayoutChangeBackToGW2Layout()
     self:UnregisterEvent("PLAYER_REGEN_ENABLED")
 end
 
