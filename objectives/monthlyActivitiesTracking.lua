@@ -167,6 +167,7 @@ local function Update(self)
     local trackedActivities = C_PerksActivities.GetTrackedPerksActivities().trackedIDs
     local savedHeight = 1
     local shownIndex = 1
+    local showHeader = false
 
     self.header:Hide()
 
@@ -202,9 +203,13 @@ local function Update(self)
             shownIndex = shownIndex + 1
 
             self.header:Show()
+            showHeader = true
         end
     end
 
+    if showHeader and not self.collapsed then
+        savedHeight = savedHeight + 20
+    end
     self:SetHeight(savedHeight)
 
     for i = shownIndex, 25 do
