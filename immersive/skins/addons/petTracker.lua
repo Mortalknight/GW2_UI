@@ -173,7 +173,7 @@ local function LoadPetTrackerAddonSkin()
     local petTrackerLocals = LibStub("AceLocale-3.0"):GetLocale("PetTracker")
     local petTrackerObjectives = CreateFrame("Frame", "GwQuesttrackerContainerPetTracker", GwQuestTrackerScrollChild, "GwQuesttrackerContainer")
     petTrackerObjectives:SetParent(GwQuestTrackerScrollChild)
-    petTrackerObjectives:SetPoint("TOPRIGHT", GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT or GwQuesttrackerContainerRecipe, "BOTTOMRIGHT")
+    petTrackerObjectives:SetPoint("TOPRIGHT", GwQuesttrackerContainerWQT and GwQuesttrackerContainerWQT or GwQuesttrackerContainerCollection, "BOTTOMRIGHT")
 
     petTrackerObjectives.header = CreateFrame("Button", nil, petTrackerObjectives, "GwQuestTrackerHeader")
     petTrackerObjectives.header.icon:SetTexCoord(0, 0.5, 0.5, 0.75)
