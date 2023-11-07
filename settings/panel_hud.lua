@@ -185,13 +185,61 @@ local function LoadHudPanel(sWindow)
         1
     )
     --WORLDMAP
-    addOption(worldmap.scroll.scrollchild, L["Show Coordinates on World Map"], L["Show Coordinates on World Map"], "WORLDMAP_COORDS_TOGGLE", GW.ToggleWorldMapCoords)
+    -- world map coordinates
+    addGroupHeader(worldmap.scroll.scrollchild, L["World Map Coordinates"])
+    addOption(worldmap.scroll.scrollchild, L["Enable"], nil, "WORLDMAP_COORDS_TOGGLE", GW.UpdateWorldMapCoordinateSettings, nil, nil, nil, nil, L["World Map Coordinates"])
+    addOptionDropdown(
+        worldmap.scroll.scrollchild,
+        GW.NewSign .. L["Position"],
+        nil,
+        "WORLDMAP_COORDS_POSITION",
+        GW.UpdateWorldMapCoordinateSettings,
+        {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"},
+        {L["Bottom"],L["Bottom left"], L["Bottom right"], L["Left"], L["Right"], L["Top"], L["Top Left"], L["Top Right"]},
+        nil,
+        {["WORLDMAP_COORDS_TOGGLE"] = true},
+        nil, nil, nil, nil, nil, nil, nil, nil, nil,
+        L["World Map Coordinates"]
+    )
+    addOptionSlider(
+        worldmap.scroll.scrollchild,
+        GW.NewSign .. L["X-Offset"],
+        nil,
+        "WORLDMAP_COORDS_X_OFFSET",
+        GW.UpdateWorldMapCoordinateSettings,
+        -200,
+        200,
+        nil,
+        0,
+        {["WORLDMAP_COORDS_TOGGLE"] = true},
+        1,
+        nil,
+        nil,
+        L["World Map Coordinates"]
+    )
+    addOptionSlider(
+        worldmap.scroll.scrollchild,
+        GW.NewSign .. L["Y-Offset"],
+        nil,
+        "WORLDMAP_COORDS_Y_OFFSET",
+        GW.UpdateWorldMapCoordinateSettings,
+        -200,
+        200,
+        nil,
+        0,
+        {["WORLDMAP_COORDS_TOGGLE"] = true},
+        1,
+        nil,
+        nil,
+        L["World Map Coordinates"]
+    )
+
     -- Community Feast
     addGroupHeader(worldmap.scroll.scrollchild, L["Community Feast"])
     addOption(worldmap.scroll.scrollchild, L["Community Feast"], nil, "WORLD_EVENTS_COMMUNITY_FEAST_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Community Feast"])
     addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true}, nil, nil, L["Community Feast"])
     addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_COMMUNITY_FEAST_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true}, nil, nil, L["Community Feast"])
-    addOption(worldmap.scroll.scrollchild, GW.NewSign .. L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_COMMUNITY_FEAST_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true}, nil, nil, L["Community Feast"])
+    addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_COMMUNITY_FEAST_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true}, nil, nil, L["Community Feast"])
     addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true, ["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true}, nil, nil, L["Community Feast"])
     addOptionSlider(
         worldmap.scroll.scrollchild,

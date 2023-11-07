@@ -583,3 +583,11 @@ L["Show a separate grid for raid pets"] = true
 L["Enable Maintank grid"] = true
 L["Size and Positions"] = true
 L["Grouping & Sorting"] = true
+
+L["World Map Coordinates"] = true
+L["Enable"] = true
+L["Position"] = true
+L["X-Offset"] = true
+L["Y-Offset"] = true
+L["Bottom left"] = true
+L["Bottom right"] = true
