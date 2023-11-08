@@ -176,8 +176,8 @@ local function Gossip_ReplaceColor(color)
     return "|cFF" .. (ReplacedGossipColor[color] or color)
 end
 
-local function ReplaceGossipFormat(button, textFormat, text)
-    if not text or text == "" then return end
+local function ReplaceGossipFormat(button, textFormat, text, skip)
+    if skip or not text or text == "" then return end
 
     local newFormat, count = gsub(textFormat, "|c[fF][fF](%x%x%x%x%x%x)", Gossip_ReplaceColor)
     if count > 0 then
@@ -236,10 +236,11 @@ local function skinGossipOption(self)
         end)
     end
 
-    local buttonText = select(3, self:GetRegions())
-    if buttonText and buttonText:IsObjectType("FontString") then
+    local buttonText = self.GetFontString and self:GetFontString()
+    if buttonText then
         buttonText:ClearAllPoints()
         buttonText:SetPoint("LEFT", self, "LEFT", 40, 0)
+        buttonText:SetTextColor(1, 1, 1)
         hooksecurefunc(buttonText, "SetTextColor", Gossip_SetTextColor)
 
         ReplaceGossipText(self, self:GetText())
