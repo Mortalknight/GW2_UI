@@ -252,23 +252,23 @@ local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xSh
 
     if template == "Transparent" then
         backdrop:SetBackdrop({
-			edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
-			bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
-			edgeSize = GW.Scale(1)
-		})
+            edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+            edgeSize = GW.Scale(1)
+        })
     elseif template == "Transparent White" then
         backdrop:SetBackdrop({
-			edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
-			bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
-			edgeSize = GW.Scale(1)
-		})
+            edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+            edgeSize = GW.Scale(1)
+        })
 
         backdrop:SetBackdropColor(1, 1, 1, 0.4)
     elseif template == "ScrollBar" then
         backdrop:SetBackdrop({
-			bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle",
-			edgeSize = GW.Scale(1)
-		})
+            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle",
+            edgeSize = GW.Scale(1)
+        })
     elseif template then
         backdrop:SetBackdrop(template)
     else
@@ -373,7 +373,7 @@ local function GwSkinTab(tabButton, direction)
             if textureName then
                 textureName:SetTexture()
             elseif tabButton[object] then
-				tabButton[object]:SetTexture()
+                tabButton[object]:SetTexture()
             end
         end
     end
@@ -657,9 +657,9 @@ end
 
 local function FixStatusBarMinCurPlease(frame, value)
     local MIN = frame:GetMinMaxValues()
-    if MIN and (value <= MIN) then -- gg blizz, idk how you manage this one lol
+    if MIN and (value <= MIN) then
         local style = frame:GetFillStyle()
-		if style ~= 'STANDARD' and style ~= 'REVERSE' then return end
+        if style ~= 'STANDARD' and style ~= 'REVERSE' then return end
 
         local width, height = frame:GetSize()
         if not width or not height then return end
@@ -728,11 +728,11 @@ local function addapi(object)
     if not object.GwKillEditMode then mt.GwKillEditMode = GwKillEditMode end
 
     if not object.fixTheStatusBarsPlease and mt.SetStatusBarTexture then
-		hooksecurefunc(mt, 'SetValue', FixMinCurDuringValue)
-		hooksecurefunc(mt, 'SetStatusBarTexture', FixMinCurDuringTexture)
+        hooksecurefunc(mt, 'SetValue', FixMinCurDuringValue)
+        hooksecurefunc(mt, 'SetStatusBarTexture', FixMinCurDuringTexture)
 
-		object.fixTheStatusBarsPlease = true
-	end
+        object.fixTheStatusBarsPlease = true
+    end
 end
 
 local handled = {Frame = true}
