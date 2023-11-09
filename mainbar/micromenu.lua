@@ -70,7 +70,7 @@ do
 
                 if isUpdate and not printChatMessage then
                     GW.FrameFlash(updateIcon, 1, 0.3, 1, true)
-                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. updateIcon.tooltipText):gsub("*", GW.Gw2Color))
+                    GW.Notice(updateIcon.tooltipText)
                     updateIcon:Show()
                     printChatMessage = true
                 end
@@ -453,6 +453,7 @@ end
 GW.ToggleEventTimerMicroMenuIcon = ToggleEventTimerIcon
 
 local function setupMicroButtons(mbf)
+    local i = 1
     -- CharacterMicroButton
     -- determine if we are using the default char button (for default charwin)
     -- or if we need to create our own char button for the custom hero panel
@@ -579,7 +580,7 @@ local function setupMicroButtons(mbf)
         GuildMicroButton:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/icons/microicons/GuildMicroButton-Up")
     end)
     updateGuildButton(GuildMicroButton, "GUILD_ROSTER_UPDATE")
-
+    --if i == 1 then return end
     -- LFDMicroButton
     LFDMicroButton:ClearAllPoints()
     LFDMicroButton:SetPoint("BOTTOMLEFT", GuildMicroButton, "BOTTOMRIGHT", 4, 0)
@@ -587,20 +588,13 @@ local function setupMicroButtons(mbf)
     -- EJMicroButton
     EJMicroButton:ClearAllPoints()
     EJMicroButton:SetPoint("BOTTOMLEFT", LFDMicroButton, "BOTTOMRIGHT", 4, 0)
-    hooksecurefunc(EJMicroButton, "EvaluateAlertVisibility", function(self)
-        MicroButtonPulseStop(self) -- hide blizzard flash
-    end)
 
     -- CollectionsMicroButton
     CollectionsMicroButton:ClearAllPoints()
     CollectionsMicroButton:SetPoint("BOTTOMLEFT", EJMicroButton, "BOTTOMRIGHT", 4, 0)
-    hooksecurefunc(CollectionsMicroButton, "EvaluateAlertVisibility", function(self)
-        MicroButtonPulseStop(self) -- hide blizzard flash
-    end)
 
     hooksecurefunc("MicroButtonPulse", function(self)
         if self == CollectionsMicroButton or self == EJMicroButton then
-            MicroButtonPulseStop(self)
             GW.FrameFlash(self, 1, 0.3, 1, true)
         end
     end)
