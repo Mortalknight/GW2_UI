@@ -298,7 +298,7 @@ local function LoadOverviewPanel(sWindow)
 
     local fnGSWMH_OnClick = function()
         if InCombatLockdown() then
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
+            GW.Notice(L["You can not move elements during combat!"])
             return
         end
         GW.moveHudObjects(GW.MoveHudScaleableFrame)

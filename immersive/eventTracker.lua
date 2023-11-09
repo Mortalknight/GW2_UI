@@ -665,7 +665,7 @@ local functionFactory = {
                     self.args.alertCache[self.nextEventIndex] = true
                     local eventIconString = GW.GetIconString(self.args.icon, 16, 16)
                     local gradientName = getGradientText(self.args.eventName, self.args.barColor)
-                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. format(L["%s will start in %s!"], eventIconString .. " " .. gradientName, secondToTime(self.timeLeft))):gsub("*", GW.Gw2Color))
+                    GW.Notice(format(L["%s will start in %s!"], eventIconString .. " " .. gradientName, secondToTime(self.timeLeft)))
                     if self.args.flashTaskbar then
                         FlashClientIcon()
                     end
@@ -940,7 +940,7 @@ local functionFactory = {
 
                     local eventIconString = GW.GetIconString(self.args.icon, 16, 16)
                     local gradientName = getGradientText(self.args.eventName, self.args.barColor)
-                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. format(eventIconString .. " " .. gradientName .. " " .. L["%s can be collected"], netsText)):gsub("*", GW.Gw2Color))
+                    GW.Notice(format(eventIconString .. " " .. gradientName .. " " .. L["%s can be collected"], netsText))
                     if self.args.flashTaskbar then
                         FlashClientIcon()
                     end

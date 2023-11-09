@@ -423,7 +423,7 @@ local function Notice(...)
         local arg = select(i, ...)
         msg = msg .. tostring(arg) .. " "
     end
-    msg_tab:AddMessage("|cffC0C0F0GW2 UI|r: " .. msg)
+    msg_tab:AddMessage(GW.Gw2Color .. "GW2 UI|r: " .. msg)
 end
 GW.Notice = Notice
 

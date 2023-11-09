@@ -146,7 +146,7 @@ local function SetOverrideIncompatibleAddons(setting, value)
     end
 
     settings.IncompatibleAddons[setting].Override = value
-    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. GW.L["Incompatible Addons behavior Overridden. Needs a reload to take effect."]):gsub("*", GW.Gw2Color))
+    GW.Notice(GW.L["Incompatible Addons behavior Overridden. Needs a reload to take effect."])
 end
 GW.SetOverrideIncompatibleAddons = SetOverrideIncompatibleAddons
 

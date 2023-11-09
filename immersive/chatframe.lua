@@ -1989,7 +1989,7 @@ local function SocialQueueMessage(guid, message)
 
     PlaySound(SOUNDKIT.UI_71_SOCIAL_QUEUEING_TOAST)
 
-    DEFAULT_CHAT_FRAME:AddMessage(strjoin("",  GW.Gw2Color, "GW2 UI:|r ", format("|Hsqu:%s|h%s|h", guid, strtrim(message))))
+    GW.Notice(format("|Hsqu:%s|h%s|h", guid, strtrim(message)))
 end
 
 local function SocialQueueEvent(...)

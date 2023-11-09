@@ -40,7 +40,7 @@ local function AssignLayoutToSpec(specwin, button, specId, layoutId, toSet)
         for j = 0, #allPrivateLayouts do
             if allPrivateLayouts[j] and allPrivateLayouts[j].layoutId ~= privateLayoutSettings.layoutId then
                 if allPrivateLayouts[j].assignedSpecs[specId] then
-                    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Spec is already assigned to a layout!"]):gsub("*", GW.Gw2Color))
+                    GW.Notice(L["Spec is already assigned to a layout!"])
                     button.checkbutton:SetChecked(false)
                     return
                 end

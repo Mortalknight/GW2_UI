@@ -112,7 +112,7 @@ local function HandleError(msg, stack)
         local file = Name .. "\\core\\errorHandler.lua[^\n]*"
         if stack:match(file .. "HandleError") then
             ErrorHandler.errors = math.huge
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000[ERROR]|r " .. msg .. "\n\nThis is an error in the error-handling system itself. Please create a new ticket on Curse, Discord or GitHub, copy & paste the error message in there and add any additional info you might have. Thank you! =)"):gsub("*", GW.Gw2Color))
+            GW.Notice("|cffff0000[ERROR]|r " .. msg .. "\n\nThis is an error in the error-handling system itself. Please create a new ticket on Curse, Discord or GitHub, copy & paste the error message in there and add any additional info you might have. Thank you! =)")
         -- Log error message and stack as well as printing the error message
         elseif ErrorHandler.errors < ErrorHandler.LOG_MAX_ERRORS then
             ErrorHandler.errorRate = max(0, ErrorHandler.errorRate - ErrorHandler.LOG_MAX_ERROR_RATE * (GetTime() - ErrorHandler.errorPrev)) + 1
@@ -129,7 +129,7 @@ local function HandleError(msg, stack)
                     end
 
                     if ErrorHandler.errors == 1 then
-                        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000[ERROR]|r " .. msg .. "\n\nPlease type in |cffbbbbbb/gw2 error|r, create a new ticket on Curse or GitHub, copy & paste the log in there and add any additional info you might have. Thank you! =)"):gsub("*", GW.Gw2Color))
+                        GW.Notice("|cffff0000[ERROR]|r " .. msg .. "\n\nPlease type in |cffbbbbbb/gw2 error|r, create a new ticket on Curse or GitHub, copy & paste the log in there and add any additional info you might have. Thank you! =)")
                     end
 
                     break

@@ -1068,7 +1068,7 @@ local function LoadSettings()
             if event == "PLAYER_REGEN_DISABLED" and self:IsShown() then
                 self:Hide()
                 mf:Hide()
-                DEFAULT_CHAT_FRAME:AddMessage(("*GW2_UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
+                GW.Notice("*GW2_UI:|r " .. L["Settings are not available in combat!"])
                 sWindow.wasOpen = true
             elseif event == "PLAYER_REGEN_ENABLED" and self.wasOpen then
                 self:Show()
