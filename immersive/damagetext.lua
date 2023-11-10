@@ -1012,7 +1012,7 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
     -- if targetNameplate doesnt exists, ignore
     if settings.usedFormat == formats.Default and not targetUnit then return end
     local _
-    if playerGUID == sourceGUID then
+    if playerGUID == sourceGUID and playerGUID~=destGUID then
         local periodic = false
         local element = nil
         if (string.find(event, "_DAMAGE")) then
