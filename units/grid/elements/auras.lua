@@ -241,32 +241,32 @@ local function Construct_Auras(frame)
 
 
     -- construct the aura indicators
-    local indicatorTopleft = CreateFrame("Frame", '$parentIndicatorTopleft', frame, "GwRaidFrameIndicator")
+    local indicatorTopleft = CreateFrame("Frame", '$parentIndicatorTopleft', frame, "GwGridFrameAuraIndicator")
     indicatorTopleft:SetPoint("TOPLEFT", frame, "TOPLEFT", 0.3, -0.3)
     indicatorTopleft:SetFrameLevel(20)
     auras.indicatorTOPLEFT = indicatorTopleft
 
-    local indicatorTop = CreateFrame("Frame", '$parentIndicatorTop', frame, "GwRaidFrameIndicator")
+    local indicatorTop = CreateFrame("Frame", '$parentIndicatorTop', frame, "GwGridFrameAuraIndicator")
     indicatorTop:SetPoint("TOP", frame, "TOP", 0, -0.3)
     indicatorTop:SetFrameLevel(20)
     auras.indicatorTOP = indicatorTop
 
-    local indicatorLeft = CreateFrame("Frame", '$parentIndicatorLeft', frame, "GwRaidFrameIndicator")
+    local indicatorLeft = CreateFrame("Frame", '$parentIndicatorLeft', frame, "GwGridFrameAuraIndicator")
     indicatorLeft:SetPoint("LEFT", frame, "LEFT", 0.3, 0)
     indicatorLeft:SetFrameLevel(20)
     auras.indicatorLEFT = indicatorLeft
 
-    local indicatorTopright = CreateFrame("Frame", '$parentIndicatorTopright', frame, "GwRaidFrameIndicator")
+    local indicatorTopright = CreateFrame("Frame", '$parentIndicatorTopright', frame, "GwGridFrameAuraIndicator")
     indicatorTopright:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -0.3, -0.3)
     indicatorTopright:SetFrameLevel(20)
     auras.indicatorTOPRIGHT = indicatorTopright
 
-    local indicatorCenter = CreateFrame("Frame", '$parentIndicatorCenter', frame, "GwRaidFrameIndicator")
+    local indicatorCenter = CreateFrame("Frame", '$parentIndicatorCenter', frame, "GwGridFrameAuraIndicator")
     indicatorCenter:SetPoint("CENTER", frame, "CENTER", 0, 0)
     indicatorCenter:SetFrameLevel(20)
     auras.indicatorCENTER = indicatorCenter
 
-    local indicatorRight = CreateFrame("Frame", '$parentIndicatorRight', frame, "GwRaidFrameIndicator")
+    local indicatorRight = CreateFrame("Frame", '$parentIndicatorRight', frame, "GwGridFrameAuraIndicator")
     indicatorRight:SetPoint("RIGHT", frame, "RIGHT", -0.3, 0)
     indicatorRight:SetFrameLevel(20)
     auras.indicatorRIGHT = indicatorRight

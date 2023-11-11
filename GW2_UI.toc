@@ -126,19 +126,15 @@ units\aurabar.xml
 units\target.xml
 units\target.lua
 units\party.xml
-units\raidframes.xml
 units\unitframes.xml
-units\gridUtils.lua
 units\raidControl.lua
-units\raidframes.lua
-units\partyGrid.lua
 units\unitframes.lua
 units\party.lua
 units\markers.lua
 units\playerFrame.lua
 units\raidMarker.lua
-units\petGrid.lua
 
+units\grid\elements\gridFrameAuraIndicator.xml
 units\grid\elements\privateAura.lua
 units\grid\elements\auras.lua
 units\grid\elements\predictionBars.lua

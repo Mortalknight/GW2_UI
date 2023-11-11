@@ -851,9 +851,6 @@ GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 local function LoadPartyFrames()
     if not GwManageGroupButton then
         GW.manageButton()
-
-        -- load missing and ignored auras, do it here because this code is only triggered from one of the 3 grids
-        --GW.UpdateGridSettings()
     end
 
     if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
