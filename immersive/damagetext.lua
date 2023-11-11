@@ -705,9 +705,9 @@ local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
         CRITICAL_ANIMATION_DURATION,
         function(p)
             if p < 0.25 then
-                local scaleFade = p - 0.25
+               
 
-                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * settings.fontSizeCritModifier, frame.textScaleModifier, scaleFade / 0.25))
+                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * settings.fontSizeCritModifier, frame.textScaleModifier, p / 0.25))
             else
                 frame:SetScale(frame.textScaleModifier)
             end
