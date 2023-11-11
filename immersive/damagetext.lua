@@ -559,7 +559,7 @@ local function getSchoolIconMap(self, school)
 end
 
 local function getDurationModifier()
-    return NUM_ACTIVE_FRAMES / 10
+    return math.max(1,NUM_ACTIVE_FRAMES / 10)
 end
 local function calcAvarageHit(amount)
     if CLASSIC_NUM_HITS>100 then
