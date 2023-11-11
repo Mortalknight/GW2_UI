@@ -377,7 +377,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local awayText = UnitIsAFK(unit) and AFK_LABEL or UnitIsDND(unit) and DND_LABEL or ""
         GameTooltipTextLeft1:SetFormattedText("|c%s%s%s|r", nameColor.colorStr, name or UNKNOWN, awayText)
 
-        local levelLine, specLine = GetLevelLine(self, (guildName and 3 or 2))
+        local levelLine, specLine = GetLevelLine(self, (guildName and 2 or 1))
         if guildName then
             if guildRealm and isShiftKeyDown then
                 guildName = guildName.."-"..guildRealm
@@ -413,7 +413,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         return nameColor
     else
         local isPetCompanion = UnitIsBattlePetCompanion(unit)
-        local levelLine, classLine = GetLevelLine(self, 2)
+        local levelLine, classLine = GetLevelLine(self, 1)
         if levelLine then
             local pvpFlag, diffColor, level = "", "", ""
             local creatureClassification = UnitClassification(unit)
@@ -446,10 +446,11 @@ local function SetUnitText(self, unit, isPlayerUnit)
             end
 
             levelLine:SetFormattedText("|cff%02x%02x%02x%s|r%s %s%s", diffColor.r * 255, diffColor.g * 255, diffColor.b * 255, level > 0 and level or "??", classification[creatureClassification] or "", creatureType or "", pvpFlag)
-        
+
             local classText = creatureType and classLine and classLine:GetText()
             if creatureType == classText then
                 classLine:SetText("")
+                classLine:Hide()
             end
         end
 
@@ -1062,6 +1063,8 @@ local function LoadTooltips()
     GameTooltipStatusBar:ClearAllPoints()
     GameTooltipStatusBar:SetPoint("TOPLEFT", GameTooltip, "BOTTOMLEFT", GW.BorderSize, -(GW.SpacingSize * 3))
     GameTooltipStatusBar:SetPoint("TOPRIGHT", GameTooltip, "BOTTOMRIGHT", -GW.BorderSize, -(GW.SpacingSize * 3))
+
+    GameTooltipStatusBar:SetMinMaxValues(-0.00001, 1)
 
     -- Tooltip Styling
     hooksecurefunc("GameTooltip_ShowStatusBar", GameTooltip_ShowStatusBar) -- Skin Status Bars
