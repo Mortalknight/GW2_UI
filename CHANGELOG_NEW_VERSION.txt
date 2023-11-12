@@ -1,21 +1,35 @@
-6.10.1
-FIXES
- - 10.1.7 fixes
-
-6.10.0
+6.11.0
 NEW
- - Added evoker ebon might bar
+    - Redo all grids: Party, Raid, Raid Pet
+    - Grids are now secure and can update during combat
+    - Added new grids:
+        - Maintank
+        - Raid 10
+        - Raid 25
+        - Raid 40
+    - Raid grids switch automaticly between the 3 raid grids, based on the number of players at the raid
+    - Added new grouping and sorting settings to all grids:
+        - Group by: Role, Class, Group, Name, Index
+        - Sort direction
+        - Sortmethode: Name, Index
+        - Raidwaid sorting: If disabled the grouping and sorting settings are applyed per raid group
+    - All grids have there individual settings (Raid 10, Raid 25, Raid 40, Maintank, Raid Pet, Group)
+    - Added Superbloom event timer to worldmap
+    - Added options to change the worldmap coordinats lable
+    - Added option to hide classpower bar outside of combat
 
-6.9.2
 FIXES
-    - Fix an actionbars issue which can crash the client
+    - Fix ready check skin
+    - Fix blurr on raid warning font
+    - Fix Pet Tracker and WQT Anchor points
+    - Fix travler log header stucking after tracking activity is completed
+    - Fix some taints
 
-6.9.1
-FIXES
-    - More 10.1.5 related fixes
-
-6.9.0
-NEW
-    - Added font settings for GW2 floating combat text
 MISC
-    - Update for 10.1.5
+    - Update for 10.2.0
+    - Update RAF skin
+    - Update Time Manager skin
+    - Added back right click option on bags
+    - Added S3 raid debuffs
+    - Adjust damage text animations
+    - Update TaintLess
