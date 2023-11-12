@@ -780,7 +780,7 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
         0,
         1,
         GetTime(),
-        CRITICAL_ANIMATION_DURATION  * (frame.dynamicScale + settings.fontSizeCritModifier) / getDurationModifier(),
+        math.min(CRITICAL_ANIMATION_DURATION*2,(CRITICAL_ANIMATION_DURATION  * (frame.dynamicScale + settings.fontSizeCritModifier))) / getDurationModifier(),
         function(p)
             if frame.anchorFrame == nil or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame
