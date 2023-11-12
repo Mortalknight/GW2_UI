@@ -8,12 +8,7 @@ local function LoadReadyCheckSkin()
     _G.ReadyCheckFrameYesButton:GwSkinButton(false, true)
     _G.ReadyCheckFrameNoButton:GwSkinButton(false, true)
 
-    local r = {_G.ReadyCheckListenerFrame:GetRegions()}
-    for _,c in pairs(r) do
-        if c:GetObjectType() == "Texture" then
-            c:Hide()
-        end
-    end
+    ReadyCheckListenerFrame:GwStripTextures()
 
     _G.ReadyCheckListenerFrame:GwCreateBackdrop(constBackdropFrame)
     _G.ReadyCheckPortrait:Show()

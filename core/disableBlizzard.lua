@@ -120,22 +120,12 @@ local function DisableBlizzardFrames()
 
         if not isArenaHooked then
             isArenaHooked = true
-            -- this disables ArenaEnemyFramesContainer
-            SetCVar("showArenaEnemyFrames", "0")
-            SetCVar("showArenaEnemyPets", "0")
-
-            HandleFrame(ArenaEnemyFramesContainer, 1)
-            HandleFrame(ArenaEnemyPrepFramesContainer, 1)
-            HandleFrame(ArenaEnemyMatchFramesContainer, 1)
             HandleFrame(CompactArenaFrame, 1)
 
-            for i = 1, MAX_ARENA_ENEMIES do
-                HandleFrame("ArenaEnemyMatchFrame" .. i, true)
-                HandleFrame("ArenaEnemyPrepFrame" .. i, true)
-            end
+			for _, frame in next, CompactArenaFrame.memberUnitFrames do
+				HandleFrame(frame, true)
+			end
         end
-
-        CompactArenaFrame:GwKillEditMode()
     end
 
     if ourBossFrames then

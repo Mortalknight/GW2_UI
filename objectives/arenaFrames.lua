@@ -114,7 +114,7 @@ local function updateArena_Name(self)
     local nameString = UNKNOWNOBJECT
     local name
 
-    if UnitName(self.unit) ~= nil then 
+    if UnitName(self.unit) ~= nil then
         name = UnitName(self.unit)
     else
         name = UNKNOWNOBJECT
@@ -134,7 +134,7 @@ local function updateArena_Name(self)
     elseif inBG ~= nil then
         local role = UnitGroupRolesAssigned(self.unit)
         local englishFaction, localizedFaction = UnitFactionGroup(self.unit)
-        if role == nil or englishFaction == nil or localizedFaction == nil then 
+        if role == nil or englishFaction == nil or localizedFaction == nil then
             return
         else
             nameString = FractionIcon[englishFaction] .. nameRoleIcon[role] .. name

@@ -7,17 +7,17 @@ local function HandleSlashCommands(msg)
     --SlashCmdList["GWSLASH"] = function(msg)
         --if msg == "" then
         if msg == "/gw2" then
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r Slash commands:"):gsub("*", GW.Gw2Color))
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r   /gw2 settings       -> To open the settings window"):gsub("*", GW.Gw2Color))
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r   /gw2 reset windows  -> To reset the inventory and hero panel windows"):gsub("*", GW.Gw2Color))
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r   /gw2 status         -> To show GW2 Status window"):gsub("*", GW.Gw2Color))
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r   /gw2 kb             -> To activate the keybindoptions"):gsub("*", GW.Gw2Color))
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r   /gw2 mh             -> To activate 'Move HUD'-Mode"):gsub("*", GW.Gw2Color))
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r   /gw2 reset profile  -> To reset the current profile to default settings"):gsub("*", GW.Gw2Color))
+            GW.Notice("Slash commands:")
+            GW.Notice("  /gw2 settings       -> To open the settings window")
+            GW.Notice("  /gw2 reset windows  -> To reset the inventory and hero panel windows")
+            GW.Notice("  /gw2 status         -> To show GW2 Status window")
+            GW.Notice("  /gw2 kb             -> To activate the keybindoptions")
+            GW.Notice("  /gw2 mh             -> To activate 'Move HUD'-Mode")
+            GW.Notice("  /gw2 reset profile  -> To reset the current profile to default settings")
         --elseif msg == "settings" then
         elseif msg == "/gw2 settings" then
             if InCombatLockdown() then
-                DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
+                GW.Notice(L["Settings are not available in combat!"])
                 return
             end
             ShowUIPanel(GwSettingsWindow)
@@ -35,14 +35,14 @@ local function HandleSlashCommands(msg)
         --elseif msg == "kb" then
         elseif msg == "/gw2 kb" then
             if InCombatLockdown() then
-                DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
+                GW.Notice(L["Settings are not available in combat!"])
                 return
             end
             GW.DisplayHoverBinding()
         --elseif msg == "mh" then
         elseif msg == "/gw2 mh" then
             if InCombatLockdown() then
-                DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
+                GW.Notice(L["You can not move elements during combat!"])
                 return
             end
             if GW.MoveHudScaleableFrame:IsShown() then
@@ -53,7 +53,7 @@ local function HandleSlashCommands(msg)
         --elseif msg == "reset profile" then
         elseif msg == "/gw2 reset profile" then
             if InCombatLockdown() then
-                DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
+                GW.Notice(L["Settings are not available in combat!"])
                 return
             end
             GW.WarningPrompt(
@@ -75,7 +75,7 @@ local function HandleSlashCommands(msg)
 
             errorlogFrame:Show()
         else
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r \"" .. msg .. "\" is not a valid GW2 UI slash command."):gsub("*", GW.Gw2Color))
+            GW.Notice("\"" .. msg .. "\" is not a valid GW2 UI slash command.")
         end
     --end
 end

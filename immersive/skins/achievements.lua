@@ -231,7 +231,6 @@ local function HandleAchivementsScrollControls(self)
     self.ScrollBar.Track:ClearAllPoints()
     self.ScrollBar.Track:SetPoint("TOPLEFT",self.ScrollBar,"TOPLEFT",0,0)
     self.ScrollBar.Track:SetPoint("BOTTOMRIGHT",self.ScrollBar,"BOTTOMRIGHT",0,0)
-    self.ScrollBar.Track.Thumb.backdrop:SetWidth(12)
 
     local bg = self.ScrollBar.Track:CreateTexture(nil, "BACKGROUND", nil, 0)
     bg:ClearAllPoints();
@@ -1068,7 +1067,7 @@ local function moveFrameToPosition(frame, x, y)
     end
 
     frame:ClearAllPoints()
-    frame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos. yOfs)
+    frame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 end
 
 local function MakeMovable(frame, target)

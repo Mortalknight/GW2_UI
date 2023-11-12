@@ -77,8 +77,6 @@ local StripTexturesBlizzFrames = {
     "ScrollFrameBorder",
 }
 
-
-
 local function HandleBlizzardRegions(frame)
     local name = frame.GetName and frame:GetName()
     for _, area in pairs(BlizzardRegions) do
@@ -217,7 +215,7 @@ end
 
 local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShift, yShift)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
-    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
+    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent)
     if not frame.backdrop then frame.backdrop = backdrop end
 
     frame.template = template or "Default"
@@ -254,23 +252,23 @@ local function GwCreateBackdrop(frame, template, isBorder, xOffset, yOffset, xSh
 
     if template == "Transparent" then
         backdrop:SetBackdrop({
-			edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
-			bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
-			edgeSize = GW.Scale(1)
-		})
+            edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+            edgeSize = GW.Scale(1)
+        })
     elseif template == "Transparent White" then
         backdrop:SetBackdrop({
-			edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
-			bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
-			edgeSize = GW.Scale(1)
-		})
+            edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+            edgeSize = GW.Scale(1)
+        })
 
         backdrop:SetBackdropColor(1, 1, 1, 0.4)
     elseif template == "ScrollBar" then
         backdrop:SetBackdrop({
-			bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle",
-			edgeSize = GW.Scale(1)
-		})
+            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle",
+            edgeSize = GW.Scale(1)
+        })
     elseif template then
         backdrop:SetBackdrop(template)
     else
@@ -375,7 +373,7 @@ local function GwSkinTab(tabButton, direction)
             if textureName then
                 textureName:SetTexture()
             elseif tabButton[object] then
-				tabButton[object]:SetTexture()
+                tabButton[object]:SetTexture()
             end
         end
     end
@@ -657,6 +655,59 @@ local function GwKillEditMode(object)
     object.Selection:EnableMouse(false)
 end
 
+local function FixStatusBarMinCurPlease(frame, value)
+    local MIN = frame:GetMinMaxValues()
+    if MIN and (value <= MIN) then
+        local style = frame:GetFillStyle()
+        if style ~= 'STANDARD' and style ~= 'REVERSE' then return end
+
+        local width, height = frame:GetSize()
+        if not width or not height then return end
+
+        local texture = frame:GetStatusBarTexture()
+        if not texture then return end
+
+        texture:ClearAllPoints()
+
+        local reverse = frame:GetReverseFill()
+        local orientation = frame:GetOrientation()
+        if orientation == 'VERTICAL' then
+            if reverse then
+                texture:SetPoint('TOPLEFT', 0, 0)
+                texture:SetPoint('TOPRIGHT', 0, 0)
+                texture:SetPoint('BOTTOMLEFT', 0, height)
+                texture:SetPoint('BOTTOMRIGHT', 0, height)
+            else
+                texture:SetPoint('TOPLEFT', 0, -height)
+                texture:SetPoint('TOPRIGHT', 0, -height)
+                texture:SetPoint('BOTTOMLEFT', 0, 0)
+                texture:SetPoint('BOTTOMRIGHT', 0, 0)
+            end
+        else -- horizontal
+            if reverse then
+                texture:SetPoint('TOPLEFT', width, 0)
+                texture:SetPoint('TOPRIGHT', 0, 0)
+                texture:SetPoint('BOTTOMLEFT', width, 0)
+                texture:SetPoint('BOTTOMRIGHT', 0, 0)
+            else
+                texture:SetPoint('TOPLEFT', 0, 0)
+                texture:SetPoint('TOPRIGHT', -width, 0)
+                texture:SetPoint('BOTTOMLEFT', 0, 0)
+                texture:SetPoint('BOTTOMRIGHT', -width, 0)
+            end
+        end
+    end
+end
+
+local function FixMinCurDuringValue(frame, value)
+    FixStatusBarMinCurPlease(frame, value)
+end
+
+local function FixMinCurDuringTexture(frame)
+    FixStatusBarMinCurPlease(frame, frame:GetValue())
+end
+
+
 local function addapi(object)
     local mt = getmetatable(object).__index
     if not object.GwKill then mt.GwKill = GwKill end
@@ -675,6 +726,13 @@ local function addapi(object)
     if not object.GwSetInside then mt.GwSetInside = GwSetInside end
     if not object.GwStyleButton then mt.GwStyleButton = GwStyleButton end
     if not object.GwKillEditMode then mt.GwKillEditMode = GwKillEditMode end
+
+    if not object.fixTheStatusBarsPlease and mt.SetStatusBarTexture then
+        hooksecurefunc(mt, 'SetValue', FixMinCurDuringValue)
+        hooksecurefunc(mt, 'SetStatusBarTexture', FixMinCurDuringTexture)
+
+        object.fixTheStatusBarsPlease = true
+    end
 end
 
 local handled = {Frame = true}
@@ -686,9 +744,10 @@ addapi(object:CreateMaskTexture())
 
 object = EnumerateFrames()
 while object do
-    if not object:IsForbidden() and not handled[object:GetObjectType()] then
+    local objectType = object:GetObjectType()
+    if not object:IsForbidden() and not handled[objectType] then
         addapi(object)
-        handled[object:GetObjectType()] = true
+        handled[objectType] = true
     end
 
     object = EnumerateFrames(object)

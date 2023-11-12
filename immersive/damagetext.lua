@@ -64,6 +64,7 @@ local formats = {Default = "Default", Stacking = "Stacking", Classic = "Classic"
 
 local NORMAL_ANIMATION
 local CRITICAL_ANIMATION
+local NUM_ACTIVE_FRAMES = 0
 
 local classicGridData = {
     {x =1, y=0},
@@ -557,6 +558,9 @@ local function getSchoolIconMap(self, school)
     end
 end
 
+local function getDurationModifier()
+    return math.max(1,NUM_ACTIVE_FRAMES / 10)
+end
 local function calcAvarageHit(amount)
     if CLASSIC_NUM_HITS>100 then
         return
@@ -701,9 +705,9 @@ local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
         CRITICAL_ANIMATION_DURATION,
         function(p)
             if p < 0.25 then
-                local scaleFade = p - 0.25
+               
 
-                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * settings.fontSizeCritModifier, frame.textScaleModifier, scaleFade / 0.25))
+                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * settings.fontSizeCritModifier, frame.textScaleModifier, p / 0.25))
             else
                 frame:SetScale(frame.textScaleModifier)
             end
@@ -770,28 +774,29 @@ AFP("animateTextNormalForDefaultFormat", animateTextNormalForDefaultFormat)
 --CLASSIC
 local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
     local aName = frame:GetName()
-
+    NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES +1;
     AddToAnimation(
         aName,
         0,
         1,
         GetTime(),
-        CRITICAL_ANIMATION_DURATION  * (frame.dynamicScale + settings.fontSizeCritModifier),
+        math.min(CRITICAL_ANIMATION_DURATION*2,(CRITICAL_ANIMATION_DURATION  * (frame.dynamicScale + settings.fontSizeCritModifier))) / getDurationModifier(),
         function(p)
             if frame.anchorFrame == nil or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame
                 classicPositionGrid(frame.anchorFrame)
             end
+            
             if p < 0.05 and not frame.periodic then
-                frame:SetScale(math.max(0.1, GW.lerp(1.5 * frame.dynamicScale * frame.textScaleModifier * settings.fontSizeCritModifier, frame.dynamicScale, (p - 0.05) / 0.05)))
+                frame:SetScale(math.max(0.1, GW.lerp(2 * frame.dynamicScale * frame.textScaleModifier * settings.fontSizeCritModifier, frame.dynamicScale, p  / 0.05)))
             else
                 frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier * settings.fontSizeCritModifier))
             end
 
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
 
-            if p > 0.7 then
-                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))))
+            if p > 0.9 then
+                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.9) / 0.1))))
             else
                 frame:SetAlpha(1)
             end
@@ -803,6 +808,7 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
             end
             frame:SetScale(1)
             frame:Hide()
+            NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES - 1;
         end
     )
 end
@@ -810,13 +816,13 @@ AFP("animateTextCriticalForClassicFormat", animateTextCriticalForClassicFormat)
 
 local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
     local aName = frame:GetName()
-
+    NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES + 1;
     AddToAnimation(
         aName,
         0,
         1,
         GetTime(),
-        NORMAL_ANIMATION_DURATION,
+        NORMAL_ANIMATION_DURATION / getDurationModifier(),
         function(p)
             if frame.anchorFrame==nil or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame
@@ -824,7 +830,7 @@ local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
             end
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
             if p < 0.10 and not frame.periodic then
-                frame:SetScale(math.max(0.1, GW.lerp(1.2 * frame.dynamicScale * frame.textScaleModifier, frame.dynamicScale, (p - 0.10) / 0.10)))
+                frame:SetScale(math.max(0.1, GW.lerp(1.2 * frame.dynamicScale * frame.textScaleModifier, frame.dynamicScale, p  / 0.10)))
             else
                 frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier))
             end
@@ -841,6 +847,7 @@ local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
             end
             frame:SetScale(1)
             frame:Hide()
+            NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES - 1;
         end
     )
 end
@@ -1012,7 +1019,7 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
     -- if targetNameplate doesnt exists, ignore
     if settings.usedFormat == formats.Default and not targetUnit then return end
     local _
-    if playerGUID == sourceGUID then
+    if playerGUID == sourceGUID and playerGUID~=destGUID then
         local periodic = false
         local element = nil
         if (string.find(event, "_DAMAGE")) then

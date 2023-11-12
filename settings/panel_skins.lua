@@ -54,6 +54,8 @@ local function LoadSkinsPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Loot Frame"], nil, "LOOTFRAME_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, ACHIEVEMENTS, nil, "ACHIEVEMENT_SKIN_ENABLED", function() GW.ShowRlPopup = true end, nil, nil, "AchievementSkin")
     addOption(p.scroll.scrollchild, L["Trading post"], nil, "PERK_PROGRAM_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, L["Expansion Landing Page"], nil, "EXPANSION_LANDING_PAGE_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, L["Generic Trait"], nil, "GENERIC_TRAINT_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
 
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r World Quest Tracker", nil, "SKIN_WQT_ENABLED", function() GW.ShowRlPopup = true end, nil, {["QUESTTRACKER_ENABLED"] = true}, "Objectives")
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Immersion", nil, "IMMERSIONADDON_SKIN_ENABLED", function() GW.ShowRlPopup = true end)

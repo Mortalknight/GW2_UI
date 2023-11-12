@@ -2,9 +2,9 @@ local _, GW = ...
 local addChange = GW.addChange
 
 local ct = {
-  bug=1,
-  feature=2,
-  change=3,
+  bug = 1,
+  feature = 2,
+  change = 3,
 }
 GW.CHANGELOGS_TYPES = ct
 --[[
@@ -14,6 +14,40 @@ AddChange(string addonVersion, table changeList)
    string description
   }
 ]]
+
+addChange("6.11.0",{
+    {ct.feature, [=[Redo all grids: Party, Raid, Raid Pet]=]},
+    {ct.feature, [=[Grids are now secure and can update during combat]=]},
+    {ct.feature, [=[Added new grids:
+        - Maintank
+        - Raid 10
+        - Raid 25
+        - Raid 40]=]},
+    {ct.feature, [=[Raid grids switch automaticly between the 3 raid grids, based on the number of players at the raid]=]},
+    {ct.feature, [=[Added new grouping and sorting settings to all grids:
+        - Group by: Role, Class, Group, Name, Index
+        - Sort direction
+        - Sortmethode: Name, Index
+        - Raidwaid sorting: If disabled the grouping and sorting settings are applyed per raid group]=]},
+    {ct.feature, [=[All grids have there individual settings (Raid 10, Raid 25, Raid 40, Maintank, Raid Pet, Group)]=]},
+    {ct.feature, [=[Added Superbloom event timer to worldmap]=]},
+    {ct.feature, [=[Added options to change the worldmap coordinats lable]=]},
+    {ct.feature, [=[Added option to hide classpower bar outside of combat]=]},
+
+    {ct.change, [=[Update for 10.2.0]=]},
+    {ct.change, [=[Update RAF skin]=]},
+    {ct.change, [=[Update Time Manager skin]=]},
+    {ct.change, [=[Added back right click option on bags]=]},
+    {ct.change, [=[Added S3 raid debuffs]=]},
+    {ct.change, [=[Adjust damage text animations]=]},
+    {ct.change, [=[Update TaintLess]=]},
+
+    {ct.bug, [=[Fix ready check skin]=]},
+    {ct.bug, [=[Fix blurr on raid warning font]=]},
+    {ct.bug, [=[Fix Pet Tracker and WQT Anchor points]=]},
+    {ct.bug, [=[Fix travler log header stucking after tracking activity is completed]=]},
+    {ct.bug, [=[Fix some taints]=]},
+})
 
 addChange("6.10.1",{
     {ct.bug,[=[10.1.7 fixes]=]},

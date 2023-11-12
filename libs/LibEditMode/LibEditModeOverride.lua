@@ -7,6 +7,7 @@ if not lib then return end
 local activeLayoutPending = false
 
 local pointGetter = CreateFrame("Frame", nil, UIParent)
+local eventFrame = CreateFrame("Frame")
 
 local FRAME_ERROR = "This frame isn't used by edit mode"
 local LOAD_ERROR = "You need to call LibEditModeOverride:LoadLayouts first"
@@ -290,4 +291,27 @@ end
 function lib:GetActiveLayout()
   assert(layoutInfo, LOAD_ERROR)
   return layoutInfo.layouts[layoutInfo.activeLayout].layoutName
+end
+
+-- GW2 Change
+local function SetLayoutBackToGw2Layout(_, layoutIndex)
+  if not InCombatLockdown() then
+    local gw2LayoutIndex = GetLayoutIndex("GW2_Layout")
+    if layoutIndex ~= gw2LayoutIndex and EditModeManagerFrame.layoutInfo.activeLayout ~= gw2LayoutIndex then
+      lib:SetActiveLayout("GW2_Layout")
+      lib:ApplyChanges()
+      EditModeManagerFrame:NotifyChatOfLayoutChange()
+      eventFrame:UnregisterAllEvents()
+    end
+  else
+    eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    eventFrame.layoutIndex = layoutIndex
+  end
+end
+
+eventFrame:SetScript("OnEvent", function(self)
+  SetLayoutBackToGw2Layout(nil, eventFrame.layoutIndex)
+end)
+function lib:RegisterForLayoutChangeBackToGW2Layout()
+  hooksecurefunc(EditModeManagerFrame, "SelectLayout", SetLayoutBackToGw2Layout)
 end

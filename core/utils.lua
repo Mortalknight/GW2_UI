@@ -401,7 +401,7 @@ end
 GW.StrLower = StrLower
 
 local function IsNAN(n)
-    return tostring(n) == "-1.#IND"
+    return tostring(n) == tostring(0/0)
 end
 GW.IsNAN = IsNAN
 
@@ -423,7 +423,7 @@ local function Notice(...)
         local arg = select(i, ...)
         msg = msg .. tostring(arg) .. " "
     end
-    msg_tab:AddMessage("|cffC0C0F0GW2 UI|r: " .. msg)
+    msg_tab:AddMessage(GW.Gw2Color .. "GW2 UI|r: " .. msg)
 end
 GW.Notice = Notice
 

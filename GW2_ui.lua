@@ -20,12 +20,12 @@ GW.VERSION_STRING = "GW2_UI @project-version@"
 GW2_ADDON = GW
 
 if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
-    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r You have installed GW2_UI retail version. Please install the classic version to use GW2_UI."):gsub("*", GW.Gw2Color))
+    GW.Notice("You have installed GW2_UI retail version. Please install the classic version to use GW2_UI.")
     return
 end
 
 if GW.CheckForPasteAddon() and GetSetting("ACTIONBARS_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Actionbars", true) then
-    DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r |cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r"):gsub("*", GW.Gw2Color))
+    GW.Notice("|cffff0000You have installed the Addon 'Paste'. This can cause, that our actionbars are empty. Deactive 'Paste' to use our actionbars.|r")
 end
 
 local loaded = false
@@ -413,7 +413,7 @@ local function evAddonLoaded(_, addonName)
         -- setup default values on load, which are required for same skins
         if GetSetting("PIXEL_PERFECTION") and not GetCVarBool("useUiScale") then
             PixelPerfection()
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r"):gsub("*", GW.Gw2Color))
+            GW.Notice("Pixel Perfection-Mode enabled. UIScale down to perfect pixel size. Can be deactivated in HUD settings. |cFF00FF00/gw2|r")
         else
             GW.scale = UIParent:GetScale()
             GW.border = ((1 / GW.scale) - ((1 - (768 / GW.screenHeight)) / GW.scale)) * 2
@@ -456,6 +456,7 @@ local function evAddonLoaded(_, addonName)
     GW.LoadWeeklyRewardsSkin()
     GW.LoadPerksProgramSkin()
     GW.preLoadStatusBarMaskTextures()
+    
   --  GW.LoadStatusbarTest()
 end
 AFP("evAddonLoaded", evAddonLoaded)
@@ -606,6 +607,8 @@ local function evPlayerLogin(self)
     GW.LoadTimeManagerSkin()
     GW.LoadMerchantFrameSkin()
     GW.LoadLootFrameSkin()
+    GW.LoadExpansionLadningPageSkin()
+    GW.LoadGenericTraitFrameSkin()
 
     GW.LoadDetailsSkin()
     GW.LoadImmersionAddonSkin()
@@ -798,9 +801,7 @@ local function evPlayerLogin(self)
     end
 
     if GetSetting("RAID_FRAMES") then
-        GW.LoadRaidFrames()
-        GW.LoadPartyGrid()
-        GW.LoadPetGrid()
+        GW.InitializeRaidFrames()
     end
 
     GW.UpdateHudScale()

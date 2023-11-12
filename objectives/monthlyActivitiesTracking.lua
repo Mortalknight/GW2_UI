@@ -167,6 +167,7 @@ local function Update(self)
     local trackedActivities = C_PerksActivities.GetTrackedPerksActivities().trackedIDs
     local savedHeight = 1
     local shownIndex = 1
+    local showHeader = false
 
     self.header:Hide()
 
@@ -180,7 +181,6 @@ local function Update(self)
         local activityID = trackedActivities[i]
         local activityInfo = C_PerksActivities.GetPerksActivityInfo(activityID)
 
-        self.header:Show()
         if activityInfo and not activityInfo.completed then
             local activityName = activityInfo.activityName
 			local requirements = activityInfo.requirementsList
@@ -201,9 +201,15 @@ local function Update(self)
             savedHeight = savedHeight + block.height
 
             shownIndex = shownIndex + 1
+
+            self.header:Show()
+            showHeader = true
         end
     end
 
+    if showHeader and not self.collapsed then
+        savedHeight = savedHeight + 20
+    end
     self:SetHeight(savedHeight)
 
     for i = shownIndex, 25 do
@@ -240,7 +246,7 @@ local function CollapseHeader(self, forceCollapse, forceOpen)
         self.collapsed = false
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
-    Update(GwQuesttrackerContainerMonthlyActivity, IsRecrafting)
+    Update(GwQuesttrackerContainerMonthlyActivity)
 end
 GW.CollapseonthlyActivitiesHeader = CollapseHeader
 

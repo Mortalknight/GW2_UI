@@ -28,7 +28,7 @@ local ICON_SPRITES = {
 
 local function ToggleGw2Settings()
     if InCombatLockdown() then
-        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Settings are not available in combat!"]):gsub("*", GW.Gw2Color))
+        GW.Notice(L["Settings are not available in combat!"])
         return
     end
     if not GW.InMoveHudMode then

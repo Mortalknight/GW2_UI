@@ -25,13 +25,13 @@ local function autoRepairOutput()
         if STATUS == "GUILD_REPAIR_FAILED" then
             autoRepair(true) --Try using player money instead
         else
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Your items have been repaired using guild bank funds for: %s"]:format(FormatMoneyForChat(COST))):gsub("*", GW.Gw2Color))
+            GW.Notice(L["Your items have been repaired using guild bank funds for: %s"]:format(FormatMoneyForChat(COST)))
         end
     elseif TYPE == "PLAYER" then
         if STATUS == "PLAYER_REPAIR_FAILED" then
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. GUILDBANK_REPAIR_INSUFFICIENT_FUNDS):gsub("*", GW.Gw2Color))
+            GW.Notice(GUILDBANK_REPAIR_INSUFFICIENT_FUNDS)
         else
-            DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Your items have been repaired for: %s"]:format(FormatMoneyForChat(COST))):gsub("*", GW.Gw2Color))
+            GW.Notice(L["Your items have been repaired for: %s"]:format(FormatMoneyForChat(COST)))
         end
     end
 end

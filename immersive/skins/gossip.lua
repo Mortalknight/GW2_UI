@@ -37,40 +37,40 @@ TODO Greetings text above the model frame
 [1673939]="Interface/GossipFrame/transmogrifyGossipIcon", 1673939
 
 ["Interface/GossipFrame/CampaignGossipIcons"]={
-		["CampaignActiveDailyQuestIcon"]={16, 16, 0.0078125, 0.195312, 0.015625, 0.390625, false, false, "1x"},
-		["CampaignActiveQuestIcon"]={16, 16, 0.0078125, 0.195312, 0.421875, 0.796875, false, false, "1x"},
-		["CampaignAvailableDailyQuestIcon"]={16, 16, 0.210938, 0.398438, 0.015625, 0.390625, false, false, "1x"},
-		["CampaignAvailableQuestIcon"]={16, 16, 0.210938, 0.398438, 0.421875, 0.796875, false, false, "1x"},
-		["CampaignIncompleteQuestIcon"]={16, 16, 0.414062, 0.601562, 0.015625, 0.390625, false, false, "1x"},
+        ["CampaignActiveDailyQuestIcon"]={16, 16, 0.0078125, 0.195312, 0.015625, 0.390625, false, false, "1x"},
+        ["CampaignActiveQuestIcon"]={16, 16, 0.0078125, 0.195312, 0.421875, 0.796875, false, false, "1x"},
+        ["CampaignAvailableDailyQuestIcon"]={16, 16, 0.210938, 0.398438, 0.015625, 0.390625, false, false, "1x"},
+        ["CampaignAvailableQuestIcon"]={16, 16, 0.210938, 0.398438, 0.421875, 0.796875, false, false, "1x"},
+        ["CampaignIncompleteQuestIcon"]={16, 16, 0.414062, 0.601562, 0.015625, 0.390625, false, false, "1x"},
 
 ]]
 
 local CUSTOM_ICONS = {
-  [646979]= 646979,
-  [132048]= 132048,
-  [646980]= 646980,
-  [132049]= 132049,
-  [132050]= 132050,
-  [132051]= 132051,
-  [132052]= 132054,
-  [3532316]= 3532316,
-  [3532317]= 3532317,
-  [3532318]= 3532318,
-  [1019848]= 132053,
-  [368577]= 368577,
-  [368364]= 368364,
-  [132053]= 132053,
-  [132054]= 132054,
-  [365195]= 365195,
-  [132055]= 132055,
-  [132056]= 132056,
-  [132057]= 132057,
-  [132058]= 132058,
-  [132059]= 132059,
-  [132060]= 132060,
-  [1130518]= 1130518,
-  [528409]= 528409,
-  [1673939]= 1673939,
+[646979]= 646979,
+[132048]= 132048,
+[646980]= 646980,
+[132049]= 132049,
+[132050]= 132050,
+[132051]= 132051,
+[132052]= 132054,
+[3532316]= 3532316,
+[3532317]= 3532317,
+[3532318]= 3532318,
+[1019848]= 132053,
+[368577]= 368577,
+[368364]= 368364,
+[132053]= 132053,
+[132054]= 132054,
+[365195]= 365195,
+[132055]= 132055,
+[132056]= 132056,
+[132057]= 132057,
+[132058]= 132058,
+[132059]= 132059,
+[132060]= 132060,
+[1130518]= 1130518,
+[528409]= 528409,
+[1673939]= 1673939,
 }
 
 local DEBUG_ENABLED = false
@@ -123,7 +123,9 @@ local MODEL_POSITION_OVERRIDERS = {
     {oldX = 1.070325255394, oldY =0.44662028551102, oldZ = 0.4964391887188, x = 0.40, y = 0.40, z = 0.5964391887188,},
     {oldX = 2.9506461620331, oldY =0, oldZ = 1.2835310697556, x = -11, y = -0.3, z = 1.3835310697556,},
     {oldX = 0.75775837898254, oldY =0.39659583568573, oldZ = 0.54236280918121, x = -4.5, y = -0.2, z = 0.6736280918121,},
-
+    {oldX = 2.3754806518555, oldY =1.0457524061203, oldZ = 2.8190972805023, x = 8, y = -0, z = 4.4,},
+    {oldX = 8.8620824813843, oldY =5.2495307922363, oldZ = 1.1385167837143, x = 2, y = 2, z = 3.8,},
+    {oldX = 0.39927804470062, oldY =0.31848821043968, oldZ = 0.90161156654358, x = -5, y = -0.5, z = 0.9016,},
 }
 
 local function splitIter(inputstr, pat)
@@ -161,31 +163,44 @@ local function splitQuest(inputstr)
     return t
 end
 
-local function ReplaceGossipFormat(button, textFormat, text)
-    local newFormat, count = gsub(textFormat, "000000", "ffffff")
-    if count > 0 then
-        button:SetFormattedText(newFormat, text)
-    end
-end
-
 local ReplacedGossipColor = {
     ["000000"] = "ffffff",
     ["414141"] = "7b8489",
 }
 
-local function ReplaceGossipText(button, text)
-    if text and text ~= "" then
-        local newText, count = gsub(text, ":32:32:0:0", ":32:32:0:0:64:64:5:59:5:59")
-        if count > 0 then
-            text = newText
-            button:SetFormattedText("%s", text)
-        end
+local function Gossip_SetTextColor(text, r, g, b)
+    if r ~= 1 or g ~= 1 or b ~= 1 then
+        text:SetTextColor(1, 1, 1)
+    end
+end
 
-        local colorStr, rawText = strmatch(text, "|c[fF][fF](%x%x%x%x%x%x)(.-)|r")
-        colorStr = ReplacedGossipColor[colorStr]
-        if colorStr and rawText then
-            button:SetFormattedText("|cff%s%s|r", colorStr, rawText)
-        end
+local function Gossip_ReplaceColor(color)
+    return "|cFF" .. (ReplacedGossipColor[color] or color)
+end
+
+local function ReplaceGossipFormat(button, textFormat, text, skip)
+    if skip or not text or text == "" then return end
+
+    local newFormat, count = gsub(textFormat, "|c[fF][fF](%x%x%x%x%x%x)", Gossip_ReplaceColor)
+    if count > 0 then
+        button:SetFormattedText(newFormat, text, true)
+    end
+end
+
+local function ReplaceGossipText(button, text)
+    if not text and text == "" then return end
+    local startText = text
+
+    local iconText, iconCount = gsub(text, ":32:32:0:0", ":32:32:0:0:64:64:5:59:5:59")
+    if iconCount > 0 then
+        text = iconText
+    end
+
+    local colorStr, colorCount = gsub(text, "|c[fF][fF](%x%x%x%x%x%x)", Gossip_ReplaceColor)
+    if colorCount > 0 then text = colorStr end
+
+    if startText ~= text then
+        button:SetFormattedText("%s", text, true)
     end
 end
 
@@ -223,10 +238,13 @@ local function skinGossipOption(self)
         end)
     end
 
-    local buttonText = select(3, self:GetRegions())
-    if buttonText and buttonText:IsObjectType("FontString") then
+    local buttonText = self.GetFontString and self:GetFontString()
+    if buttonText then
         buttonText:ClearAllPoints()
         buttonText:SetPoint("LEFT", self, "LEFT", 40, 0)
+        buttonText:SetTextColor(1, 1, 1)
+        hooksecurefunc(buttonText, "SetTextColor", Gossip_SetTextColor)
+
         ReplaceGossipText(self, self:GetText())
         hooksecurefunc(self, "SetText", ReplaceGossipText)
         hooksecurefunc(self, "SetFormattedText", ReplaceGossipFormat)
@@ -271,7 +289,7 @@ local function comparePosition(p1, p2)
 end
 
 local function createModelPositionOverriderString(x, y, z, overriderX, overriderY, overriderZ)
-  return "{oldX = "..x..", oldY ="..y..", oldZ = "..z..", x = "..overriderX..", y = "..overriderY..", z = "..overriderZ..",},"
+return "{oldX = "..x..", oldY ="..y..", oldZ = "..z..", x = "..overriderX..", y = "..overriderY..", z = "..overriderZ..",},"
 end
 
 -- unit for testing
@@ -544,7 +562,7 @@ local function LoadGossipSkin()
 
     portraitFrame.backLayer = portraitFrame:CreateTexture(nil, "BACKGROUND", nil, -1)
     portraitFrame.backLayer:SetPoint("TOPLEFT", portraitFrame)
-	portraitFrame.backLayer:SetPoint("BOTTOMRIGHT", portraitFrame)
+    portraitFrame.backLayer:SetPoint("BOTTOMRIGHT", portraitFrame)
 
     portraitFrame.modelFrame = CreateFrame("PlayerModel", nil, portraitFrame, "GW2ModelLevelTemplate")
     portraitFrame.modelFrame:SetModelDrawLayer("ARTWORK")
@@ -553,7 +571,7 @@ local function LoadGossipSkin()
 
     portraitFrame.maskLayer = portraitFrame:CreateTexture(nil, "ARTWORK", nil, 1)
     portraitFrame.maskLayer:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/modelmask") -- add custom overlay texture here
-	portraitFrame.maskLayer:SetPoint("TOPLEFT", GossipFrame.tex)
+    portraitFrame.maskLayer:SetPoint("TOPLEFT", GossipFrame.tex)
     portraitFrame.maskLayer:SetSize(1024,256)
     portraitFrame.maskLayer:AddMaskTexture(GossipFrame.bgMask)
 
@@ -571,13 +589,14 @@ local function LoadGossipSkin()
     portraitFrame.npcNameLabel = portraitFrame:CreateTexture(nil, "ARTWORK", nil, 2)
     portraitFrame.npcNameLabel:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/npcname")
     portraitFrame.npcNameLabel:SetSize(200, 32)
-	portraitFrame.npcNameLabel:SetPoint("TOPLEFT", portraitFrame, "TOPLEFT", -3, -170)
+    portraitFrame.npcNameLabel:SetPoint("TOPLEFT", portraitFrame, "TOPLEFT", -3, -170)
 
     hooksecurefunc(GossipFrame, "Update", function()
         updateModelFrame(portraitFrame)
     end)
 
     GossipFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINE")
+    GossipFrameTitleText:SetTextColor(1, 1, 1)
     GossipFrameTitleText:ClearAllPoints()
     GossipFrameTitleText:SetPoint("TOPLEFT", portraitFrame.npcNameLabel, "TOPLEFT", 5, 0)
     GossipFrameTitleText:SetPoint("BOTTOMRIGHT", portraitFrame.npcNameLabel,"BOTTOMRIGHT", -10, 0)
@@ -662,11 +681,11 @@ local function LoadGossipSkin()
             end
         end)
         if numButtons > 0 then
-          GossipFrame.ListBackground:Show()
-          GossipFrame.GreetingPanel:Show()
+        GossipFrame.ListBackground:Show()
+        GossipFrame.GreetingPanel:Show()
         else
-          GossipFrame.ListBackground:Hide()
-          GossipFrame.GreetingPanel:Hide()
+        GossipFrame.ListBackground:Hide()
+        GossipFrame.GreetingPanel:Hide()
         end
 
         if GreetingPanelFirstLoad then
@@ -674,15 +693,15 @@ local function LoadGossipSkin()
             -- replace the element default size calculator
             GossipFrame.GreetingPanel.ScrollBox.view:SetPadding(10, 10, 10, 10, 0)
             GossipFrame.GreetingPanel.ScrollBox.view:SetElementExtentCalculator(function(_, elementData)
-        		if elementData.greetingTextFrame then
-        			setGreetingsText(elementData.text)
-        			return 0
-        		elseif elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER then
+                if elementData.greetingTextFrame then
+                    setGreetingsText(elementData.text)
+                    return 0
+                elseif elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER then
                     return 0
                 else
-        			return 32
-        		end
-        	end)
+                    return 32
+                end
+            end)
         end
     end)
 
@@ -802,9 +821,9 @@ local function LoadGossipSkin()
     QuestFrameRewardPanel:GwStripTextures(true)
 
     GW.HandleTrimScrollBar(QuestProgressScrollFrame.ScrollBar, true)
-	GW.HandleTrimScrollBar(QuestRewardScrollFrame.ScrollBar, true)
-	GW.HandleTrimScrollBar(QuestDetailScrollFrame.ScrollBar, true)
-	GW.HandleTrimScrollBar(QuestGreetingScrollFrame.ScrollBar, true)
+    GW.HandleTrimScrollBar(QuestRewardScrollFrame.ScrollBar, true)
+    GW.HandleTrimScrollBar(QuestDetailScrollFrame.ScrollBar, true)
+    GW.HandleTrimScrollBar(QuestGreetingScrollFrame.ScrollBar, true)
 
     GW.HandleScrollControls(QuestProgressScrollFrame)
     GW.HandleScrollControls(QuestRewardScrollFrame)

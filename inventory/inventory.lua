@@ -206,7 +206,7 @@ local function hookItemQuality(button, quality, itemIDOrLink, suppressOverlays)
             button:SetScript("OnUpdate", nil)
         end
         if button.itemlevel then button.itemlevel:SetText("") end
-       button:GetItemButtonIconTexture():Hide()
+    button:GetItemButtonIconTexture():Hide()
     end
 end
 GW.AddForProfiling("inventory", "hookItemQuality", hookItemQuality)
@@ -412,6 +412,120 @@ end
 GW.AddForProfiling("inventory", "relocateSearchBox", relocateSearchBox)
 
 -- on right click, open the bag filter dropdown (if valid) for this bag slot
+local function ContainerFrame_IsBankBag(id)
+    return id > NUM_TOTAL_BAG_FRAMES;
+end
+
+local function ContainerFrame_IsHeldBag(id)
+    return id >= Enum.BagIndex.Backpack and id <= NUM_TOTAL_BAG_FRAMES;
+end
+
+local function ContainerFrame_IsMainBank(id)
+    return id == Enum.BagIndex.Bank;
+end
+
+local function ContainerFrame_IsBackpack(id)
+    return id == Enum.BagIndex.Backpack;
+end
+
+local ContainerFrameFilterDropDown_Initialize = nil
+
+do
+    local function OnBagFilterClicked(bagID, filterID, value)
+        C_Container.SetBagSlotFlag(bagID, filterID, value);
+        ContainerFrameSettingsManager:SetFilterFlag(bagID, filterID, value);
+    end
+    local function AddButtons_BagFilters(bagID, level)
+        if not ContainerFrame_CanContainerUseFilterMenu(bagID) then
+            return;
+        end
+
+        local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
+        info.text = BAG_FILTER_ASSIGN_TO;
+        info.isTitle = 1;
+        info.notCheckable = 1;
+        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
+
+        info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
+        local activeBagFilter = ContainerFrameSettingsManager:GetFilterFlag(bagID);
+
+        for _, flag in ContainerFrameUtil_EnumerateBagGearFilters() do
+            info.text = BAG_FILTER_LABELS[flag];
+            info.checked = activeBagFilter == flag;
+            info.func = function(_, _, _, value)
+                return OnBagFilterClicked(bagID, flag, not value);
+            end
+
+            GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
+        end
+    end
+
+    local function AddButtons_BagCleanup(bagID, level)
+        local info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
+
+        info.text = BAG_FILTER_IGNORE;
+        info.isTitle = 1;
+        info.notCheckable = 1;
+        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
+
+        info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
+        info.text = BAG_FILTER_CLEANUP;
+        info.func = function(_, _, _, value)
+            if ContainerFrame_IsMainBank(bagID) then
+                C_Container.SetBankAutosortDisabled(not value);
+            elseif ContainerFrame_IsBackpack(bagID) then
+                C_Container.SetBackpackAutosortDisabled(not value);
+            else
+                C_Container.SetBagSlotFlag(bagID, Enum.BagSlotFlags.DisableAutoSort, not value);
+            end
+        end
+
+        if ContainerFrame_IsMainBank(bagID) then
+            info.checked = C_Container.GetBankAutosortDisabled();
+        elseif ContainerFrame_IsBackpack(bagID) then
+            info.checked = C_Container.GetBackpackAutosortDisabled();
+        else
+            info.checked = C_Container.GetBagSlotFlag(bagID, Enum.BagSlotFlags.DisableAutoSort);
+        end
+
+        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
+
+        -- ignore junk selling from this bag or backpack
+        if not ContainerFrame_IsMainBank(bagID) then
+            info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
+            info.text = SELL_ALL_JUNK_ITEMS_EXCLUDE_FLAG;
+            info.func = function(_, _, _, value)
+                if ContainerFrame_IsBackpack(bagID) then
+                    C_Container.SetBackpackSellJunkDisabled(not value);
+                else
+                    C_Container.SetBagSlotFlag(bagID, Enum.BagSlotFlags.ExcludeJunkSell, not value);
+                end
+            end
+
+            if ContainerFrame_IsBackpack(bagID) then
+                info.checked = C_Container.GetBackpackSellJunkDisabled();
+            else
+                info.checked = C_Container.GetBagSlotFlag(bagID, Enum.BagSlotFlags.ExcludeJunkSell);
+            end
+
+            GW.Libs.LibDD:UIDropDownMenu_AddButton(info, L_UIDROPDOWNMENU_MENU_LEVEL);
+        end
+    end
+
+    ContainerFrameFilterDropDown_Initialize = function(self, level)
+        local frame = self:GetParent();
+        local bagID = frame:GetBagID();
+        if not (ContainerFrame_IsHeldBag(bagID) or ContainerFrame_IsBankBag(bagID)) then
+            return;
+        end
+
+        AddButtons_BagFilters(bagID, level);
+        AddButtons_BagCleanup(bagID, level);
+    end
+
+end
+
+
 local function bag_OnMouseDown(self, button)
     if button ~= "RightButton" then
         return
@@ -423,9 +537,14 @@ local function bag_OnMouseDown(self, button)
     local bag_id = self:GetBagID()
     if self.gwHasBag or bag_id == BACKPACK_CONTAINER then
         local cf = getContainerFrame(bag_id)
-        if cf and cf.FilterDropDown then
-            --PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-            --ToggleDropDownMenu(1, nil, cf.FilterDropDown, self, 32, 32)
+        if cf then
+            if not cf.FilterDopDownGw2 then
+                cf.FilterDopDownGw2 = CreateFrame("Frame", "$parentFilterDropDownGw2", cf, "UIDropDownMenuTemplate")
+                GW.Libs.LibDD:UIDropDownMenu_Initialize(cf.FilterDopDownGw2, ContainerFrameFilterDropDown_Initialize, "MENU")
+            end
+
+            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+            GW.Libs.LibDD:ToggleDropDownMenu(1, nil, cf.FilterDopDownGw2, "cursor")
         end
     end
 end
@@ -659,7 +778,7 @@ local function LoadInventory()
             --cf:SetAlpha(0)
             --cf:SetParent(GW.HiddenFrame)
             --cf:ClearAllPoints()
-		    --cf:SetPoint("BOTTOM")
+            --cf:SetPoint("BOTTOM")
 
             -- un-hook ContainerFrame open event; this event isn't used anymore but just in case
             cf:UnregisterEvent("BAG_OPEN")

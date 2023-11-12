@@ -161,7 +161,7 @@ GW.moveHudObjects = moveHudObjects
 
 local function HandleMoveHudEvents(self, event)
     if event == "PLAYER_REGEN_DISABLED" then
-        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["You can not move elements during combat!"]):gsub("*", GW.Gw2Color))
+        GW.Notice(L["You can not move elements during combat!"])
         self:UnregisterEvent(event)
         self:RegisterEvent("PLAYER_REGEN_ENABLED")
         lockHudObjects(self, nil, true)

@@ -10,7 +10,7 @@ local hideCharframe = true
 
 local function characterPanelToggle(frame)
     if InCombatLockdown() then
-        DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. ERR_NOT_IN_COMBAT):gsub("*", GW.Gw2Color))
+        GW.Notice(ERR_NOT_IN_COMBAT)
         return
     end
     fmMenu:Hide()

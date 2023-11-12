@@ -16,6 +16,7 @@ if not lib then return end
 local standalone = (...) == MAJOR
 local realmData, connectionData
 local Unpack
+local unpackInProgress = false
 
 local function debug(...)
     if standalone then
@@ -146,6 +147,8 @@ end
 ------------------------------------------------------------------------
 
 function Unpack()
+    if unpackInProgress then return end
+    unpackInProgress = true
     debug("Unpacking data...")
 
     for id, info in pairs(realmData) do
@@ -223,6 +226,7 @@ function Unpack()
     collectgarbage()
 
     debug("Done unpacking data.")
+    unpackInProgress = false
 end
 
 ------------------------------------------------------------------------

@@ -297,13 +297,11 @@ local function SkinNavBarButtons(self)
             end
         end
 
-        if total == 2 then
-            -- EJ.navBar.home.xoffset = -1
+        if total > 1 then
             NavButtonXOffset(navButton, navButton:GetPoint())
             hooksecurefunc(navButton, "SetPoint", NavButtonXOffset)
         end
 
-        navButton.xoffset = -1
         navButton.isSkinned = true
     end
 end
@@ -353,11 +351,11 @@ local function HandlePortraitFrame(frame, createBackdrop)
 end
 GW.HandlePortraitFrame = HandlePortraitFrame
 
-local function HandleIcon(icon, backdrop, backdropTexture)
+local function HandleIcon(icon, backdrop, backdropTexture, isBorder)
     icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
     if backdrop and not icon.backdrop then
-        icon:GwCreateBackdrop(backdropTexture)
+        icon:GwCreateBackdrop(backdropTexture, isBorder)
     end
 end
 GW.HandleIcon = HandleIcon
@@ -448,7 +446,6 @@ local function HandleScrollControls(self, specifiedScrollBar)
     scrollBar.Track:ClearAllPoints()
     scrollBar.Track:SetPoint("TOPLEFT", scrollBar, "TOPLEFT", 0, -12)
     scrollBar.Track:SetPoint("BOTTOMRIGHT", scrollBar, "BOTTOMRIGHT", 0, 12)
-    scrollBar.Track.Thumb.backdrop:SetWidth(12)
 
     local bg = scrollBar.Track:CreateTexture(nil, "BACKGROUND", nil, 0)
     bg:ClearAllPoints()
@@ -477,7 +474,7 @@ local function HandleScrollControls(self, specifiedScrollBar)
 end
 GW.HandleScrollControls = HandleScrollControls
 
-local function HandleTrimScrollBar(frame, small)
+local function HandleTrimScrollBar(frame)
     frame:GwStripTextures()
 
     ReskinScrollBarArrow(frame.Back, "up")
@@ -494,16 +491,13 @@ local function HandleTrimScrollBar(frame, small)
 
     local thumb = frame:GetThumb()
     if thumb then
-        thumb:DisableDrawLayer('ARTWORK')
+        thumb:DisableDrawLayer("ARTWORK")
         thumb:DisableDrawLayer("BACKGROUND")
         thumb:GwCreateBackdrop("ScrollBar")
         thumb.backdrop:SetFrameLevel(thumb:GetFrameLevel() + 1)
-        thumb:SetSize(12, 12)
-        if not small then
-            thumb.backdrop:ClearAllPoints()
-            thumb.backdrop:SetPoint("TOP", 4, -1)
-            thumb.backdrop:SetPoint("BOTTOM", -4, 1)
-        end
+        local h = thumb:GetHeight()
+        thumb:SetSize(12, h)
+        --thumb:SetNormalTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle")
     end
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar

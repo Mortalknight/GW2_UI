@@ -1,0 +1,5 @@
+<Ui xmlns='http://www.blizzard.com/wow/ui/'>
+	<Script file='oUF_RaidFrameMiddleIcon.lua'/>
+	<Script file='oUF_HighlightUnitFrame.lua'/>
+	<Script file='oUF_MissingBuffIndicator.lua'/>
+</Ui>
