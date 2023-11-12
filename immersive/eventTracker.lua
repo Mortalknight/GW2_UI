@@ -7,8 +7,6 @@ local GetSetting = GW.GetSetting
 ]]--
 
 local settings = {
-    communityFeast = {},
-    dragonbaneKeep = {},
     iskaaranFishingNet = {
         playerData = {}
     }
@@ -51,6 +49,15 @@ local function UpdateSettings()
         flashTaskbar = GetSetting("WORLD_EVENTS_TIME_RIFT_THALDRASZUS_FLASH_TASKBAR")
     }
 
+    settings.superBloom = {
+        enabled = GetSetting("WORLD_EVENTS_SUPER_BLOOM_ENABLED"),
+        desaturate = GetSetting("WORLD_EVENTS_SUPER_BLOOM_DESATURATE"),
+        alert = GetSetting("WORLD_EVENTS_SUPER_BLOOM_ALERT"),
+        alertSeconds = GetSetting("WORLD_EVENTS_SUPER_BLOOM_ALERT_SECONDS"),
+        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_SUPER_BLOOM_STOP_ALERT_IF_COMPLETED"),
+        flashTaskbar = GetSetting("WORLD_EVENTS_SUPER_BLOOM_FLASH_TASKBAR")
+    }
+
     settings.iskaaranFishingNet = {
         enabled = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"),
         alert = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT"),
@@ -79,6 +86,7 @@ local eventList = {
     "SiegeOnDragonbaneKeep",
     "ResearchersUnderFire",
     "TimeRiftThaldraszus",
+    "SuperBloom",
     "IskaaranFishingNet"
 }
 
@@ -155,7 +163,6 @@ local colorPlatte = {
         { r = 0.01961, g = 0.45882, b = 0.90196, a = 1 }
     }
 }
-
 
 local function secondToTime(second)
     local hour = floor(second / 3600)
@@ -299,8 +306,8 @@ local eventData = {
             location = C_Map.GetMapInfo(2133).name,
             barColor = colorPlatte.green,
             runningText = IN_PROGRESS,
-            filter = function(args)
-                if args.stopAlertIfPlayerNotEnteredDragonlands and not C_QuestLog.IsQuestFlaggedCompleted(67700) then
+            filter = function()
+                if not C_QuestLog.IsQuestFlaggedCompleted(67700) then
                     return false
                 end
                 return true
@@ -338,8 +345,8 @@ local eventData = {
             location = C_Map.GetMapInfo(2025).name,
             barColor = colorPlatte.bronze,
             runningText = IN_PROGRESS,
-            filter = function(args)
-                if args.stopAlertIfPlayerNotEnteredDragonlands and not C_QuestLog.IsQuestFlaggedCompleted(67700) then
+            filter = function()
+                if not C_QuestLog.IsQuestFlaggedCompleted(67700) then
                     return false
                 end
                 return true
@@ -360,6 +367,44 @@ local eventData = {
                 end
 
             return timestampTable[region]
+            end)()
+        }
+    },
+    SuperBloom = {
+        dbKey = "superBloom",
+        args = {
+            icon = 3939983,
+            type = "loopTimer",
+            hasWeeklyReward = true,
+            duration = 15 * 16,
+            interval = 1 * 60 * 60,
+            eventName = L["Superbloom"],
+            label = L["Superbloom"] .. " " .. C_Map.GetMapInfo(2200).name,
+            location = C_Map.GetMapInfo(2200).name,
+            barColor = colorPlatte.green,
+            runningText = IN_PROGRESS,
+            filter = function()
+                if not C_QuestLog.IsQuestFlaggedCompleted(67700) then
+                    return false
+                end
+                return true
+            end,
+            startTimestamp = (function()
+                local timestampTable = {
+                    [1] = 1701828010, -- NA
+                    [2] = 1701828010, -- KR
+                    [3] = 1701828010, -- EU
+                    [4] = 1701828010, -- TW
+                    [5] = 1701828010, -- CN
+                    [72] = 1701828010 -- TR
+                }
+                local region = GetCurrentRegion()
+                -- TW is not a real region, so we need to check the client language if player in KR
+                if region == 2 and GW.mylocal ~= "koKR" then
+                    region = 4
+                end
+
+                return timestampTable[region]
             end)()
         }
     },
@@ -578,7 +623,7 @@ local functionFactory = {
             self.name:ClearAllPoints()
             self.name:SetPoint("TOPLEFT", self, "TOPLEFT", 25, -6)
             self.name:SetText(self.args.label)
-            self.name:SetWidth(150)
+            self.name:SetWidth(125)
             self.name:SetJustifyH("LEFT")
 
             self.runningTip:SetFont(UNIT_NAME_FONT, 10, "OUTLINE")
@@ -1066,7 +1111,7 @@ function trackers:get(event)
             end
             frame.tickerInstance = C_Timer.NewTicker(functions.ticker.interval, function()
                 if not settings.communityFeast.enabled and not settings.dragonbaneKeep.enabled and not settings.iskaaranFishingNet.enabled
-                    and not settings.researchersUnderFire.enabled and not settings.timeRiftThaldraszus.enabled then
+                    and not settings.researchersUnderFire.enabled and not settings.timeRiftThaldraszus.enabled and not settings.superBloom.enabled then
                     return
                 end
                 functions.ticker.dateUpdater(frame)
@@ -1104,7 +1149,6 @@ function trackers:disable(event)
         self.pool[event]:Hide()
     end
 end
-
 
 local function AddWorldMapFrame()
     if not WorldMapFrame or mapFrame then

@@ -591,3 +591,4 @@ L["X-Offset"] = true
 L["Y-Offset"] = true
 L["Bottom left"] = true
 L["Bottom right"] = true
+L["Superbloom"] = true
