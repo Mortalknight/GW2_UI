@@ -15,6 +15,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.11.1",{
+    {ct.bug,[=[Correct LEMO integration which was causing an lua error during installation process]=]},
+    {ct.bug,[=[Tweak Event Timer height]=]},
+})
+
 addChange("6.11.0",{
     {ct.feature, [=[Redo all grids: Party, Raid, Raid Pet]=]},
     {ct.feature, [=[Grids are now secure and can update during combat]=]},

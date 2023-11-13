@@ -1,3 +1,8 @@
+6.11.1
+FIXES
+    - Correct LEMO integration which was causing an lua error during installation process
+    - Tweak Event Timer height
+
 6.11.0
 NEW
     - Redo all grids: Party, Raid, Raid Pet
