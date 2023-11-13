@@ -301,8 +301,8 @@ local eventData = {
             hasWeeklyReward = true,
             duration = 25 * 60,
             interval = 1 * 60 * 60,
-            eventName = L["Researchers Under Fire"],
-            label = L["Researchers Under Fire"],
+            eventName = L["Researchers"],
+            label = L["Researchers"],
             location = C_Map.GetMapInfo(2133).name,
             barColor = colorPlatte.green,
             runningText = IN_PROGRESS,
@@ -340,8 +340,8 @@ local eventData = {
             hasWeeklyReward = false,
             duration = 15 * 60,
             interval = 1 * 60 * 60,
-            eventName = L["Time Rift Thaldraszus"],
-            label = L["Time Rift Thaldraszus"],
+            eventName = L["Time Rift"],
+            label = L["Time Rift"],
             location = C_Map.GetMapInfo(2025).name,
             barColor = colorPlatte.bronze,
             runningText = IN_PROGRESS,
@@ -379,7 +379,7 @@ local eventData = {
             duration = 15 * 16,
             interval = 1 * 60 * 60,
             eventName = L["Superbloom"],
-            label = L["Superbloom"] .. " " .. C_Map.GetMapInfo(2200).name,
+            label = L["Superbloom"],
             location = C_Map.GetMapInfo(2200).name,
             barColor = colorPlatte.green,
             runningText = IN_PROGRESS,
@@ -1156,10 +1156,11 @@ local function AddWorldMapFrame()
     end
 
     mapFrame = CreateFrame("Frame", "GW2_EventTracker", WorldMapFrame)
+    mapFrame.heightPerRow = 30
     mapFrame:SetFrameStrata("MEDIUM")
     mapFrame:SetPoint("TOPLEFT", WorldMapFrame, "BOTTOMLEFT", 0, 2)
     mapFrame:SetPoint("TOPRIGHT", WorldMapFrame, "BOTTOMRIGHT", 0, 2)
-    mapFrame:SetHeight(30)
+    mapFrame:SetHeight(mapFrame.heightPerRow)
     mapFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder)
 
     mapFrame:SetScript("OnEvent", HandlerEvent)
@@ -1169,6 +1170,9 @@ local function UpdateTrackers()
     UpdateSettings()
 
     local lastTracker = nil
+    local usedWidth = 0
+    local mapFrameWidth = mapFrame:GetWidth()
+    local rowIdx = 1
     for _, event in ipairs(eventList) do
         local data = eventData[event]
         local tracker = settings[data.dbKey].enabled and trackers:get(event) or trackers:disable(event)
@@ -1190,24 +1194,34 @@ local function UpdateTrackers()
                 tracker.args.stopAlertIfCompleted = nil
             end
 
+            if usedWidth + tracker:GetWidth() + 5 > mapFrameWidth then
+                -- create a new row
+                lastTracker = nil
+                usedWidth = 0
+                rowIdx = rowIdx + 1
+            end
+
             tracker:ClearAllPoints()
             if lastTracker then
                 tracker:SetPoint("LEFT", lastTracker, "RIGHT", 5, 0)
+                usedWidth = usedWidth + tracker:GetWidth() + 5
             else
-                tracker:SetPoint("LEFT", mapFrame, "LEFT", 5 * 0.68, 0)
+                tracker:SetPoint("TOPLEFT", mapFrame, "TOPLEFT", 3.5, rowIdx == 1 and 0 or -(mapFrame.heightPerRow * (rowIdx - 1) - 3))
+                usedWidth = usedWidth + tracker:GetWidth() + 3.5
             end
             lastTracker = tracker
         end
     end
-
-    mapFrame:SetShown(settings.communityFeast.enabled or settings.dragonbaneKeep.enable or settings.iskaaranFishingNet.enabled)
+    mapFrame:SetHeight(mapFrame.heightPerRow * rowIdx)
+    mapFrame:SetShown(settings.communityFeast.enabled or settings.dragonbaneKeep.enable or settings.iskaaranFishingNet.enabled or settings.researchersUnderFire.enabled or settings.timeRiftThaldraszus.enabled or settings.superBloom.enabled)
 end
 GW.UpdateWorldEventTrackers = UpdateTrackers
 
 local function LoadDragonFlightWorldEvents()
     AddWorldMapFrame()
-
+    WorldMapFrame:Show()
     UpdateTrackers()
+    WorldMapFrame:Hide()
 
     for event in pairs(eventHandlers) do
         mapFrame:RegisterEvent(event)

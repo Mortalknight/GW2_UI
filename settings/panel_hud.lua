@@ -283,12 +283,12 @@ local function LoadHudPanel(sWindow)
     )
 
     -- Researchers Under Fire
-    addGroupHeader(worldmap.scroll.scrollchild, L["Researchers Under Fire"])
-    addOption(worldmap.scroll.scrollchild, L["Researchers Under Fire"], nil, "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Researchers Under Fire"])
-    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true}, nil, nil, L["Researchers Under Fire"])
-    addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true}, nil, nil, L["Researchers Under Fire"])
-    addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true, ["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT"] = true}, nil, nil, L["Researchers Under Fire"])
-    addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true, ["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT"] = true}, nil, nil, L["Researchers Under Fire"])
+    addGroupHeader(worldmap.scroll.scrollchild, L["Researchers"])
+    addOption(worldmap.scroll.scrollchild, L["Researchers"], nil, "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Researchers"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true}, nil, nil, L["Researchers"])
+    addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true}, nil, nil, L["Researchers"])
+    addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true, ["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT"] = true}, nil, nil, L["Researchers"])
+    addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"] = true, ["WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT"] = true}, nil, nil, L["Researchers"])
     addOptionSlider(
         worldmap.scroll.scrollchild,
         L["Alert Second"],
@@ -303,16 +303,16 @@ local function LoadHudPanel(sWindow)
         1,
         nil,
         nil,
-        L["Researchers Under Fire"]
+        L["Researchers"]
     )
 
     -- Time Rift Thaldraszus
-    addGroupHeader(worldmap.scroll.scrollchild, L["Time Rift Thaldraszus"])
-    addOption(worldmap.scroll.scrollchild, L["Time Rift Thaldraszus"], nil, "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Time Rift Thaldraszus"])
-    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true}, nil, nil, L["Time Rift Thaldraszus"])
-    addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true}, nil, nil, L["Time Rift Thaldraszus"])
-    addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true, ["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT"] = true}, nil, nil, L["Time Rift Thaldraszus"])
-    addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true, ["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT"] = true}, nil, nil, L["Time Rift Thaldraszus"])
+    addGroupHeader(worldmap.scroll.scrollchild, L["Time Rift"])
+    addOption(worldmap.scroll.scrollchild, L["Time Rift"], nil, "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Time Rift"])
+    addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true}, nil, nil, L["Time Rift"])
+    addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true}, nil, nil, L["Time Rift"])
+    addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true, ["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT"] = true}, nil, nil, L["Time Rift"])
+    addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_TIME_RIFT_THALDRASZUS_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"] = true, ["WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT"] = true}, nil, nil, L["Time Rift"])
     addOptionSlider(
         worldmap.scroll.scrollchild,
         L["Alert Second"],
@@ -327,7 +327,7 @@ local function LoadHudPanel(sWindow)
         1,
         nil,
         nil,
-        L["Time Rift Thaldraszus"]
+        L["Time Rift"]
     )
 
     -- Superbloom
