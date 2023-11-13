@@ -59,6 +59,7 @@ core\notaint.lua
 core\LFGPlayerInfo.lua
 core\statusbars.xml
 core\statusbars.lua
+core\utf8.lua
 
 settings\settings_menu.lua
 settings\settings.xml

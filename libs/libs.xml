@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
     <Include file="oUF\oUF.xml"/>
     <Include file='oUF\oUF_Plugins\oUF_Plugins.xml'/>
+    <Include file="UTF8\UTF8.xml"/>
     <Script file="LibStub\LibStub.lua"/>
     <Script file="CallbackHandler-1.0\CallbackHandler-1.0.lua"/>
 

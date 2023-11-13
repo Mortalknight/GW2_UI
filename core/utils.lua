@@ -713,11 +713,11 @@ end
 GW.ColorGradient = ColorGradient
 
 local function TextGradient(text, ...)
-    local msg, total = "", string.len(text)
+    local msg, total = "", string.utf8len(text)
     local idx, num = 0, select("#", ...) / 3
 
     for i = 1, total do
-        local x = string.sub(text, i, i)
+        local x = string.utf8sub(text, i, i)
         if strmatch(x, "%s") then
             msg = msg .. x
             idx = idx + 1

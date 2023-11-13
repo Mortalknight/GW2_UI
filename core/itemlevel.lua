@@ -36,8 +36,8 @@ local function InspectGearSlot(data, line, lineText, slotInfo)
         local color1, color2 = strmatch(enchant, "(|cn.-:).-(|r)")
         local text = gsub(gsub(enchant, "%s?|A.-|a", ""), "|cn.-:(.-)|r", "%1")
         slotInfo.enchantText = format("%s%s%s", color1 or "", text, color2 or "")
-        slotInfo.enchantTextShort = format("%s%s%s", color1 or "", strsub(text, 1, 18), color2 or "")
-        slotInfo.enchantTextShort2 = format("%s%s%s", color1 or "", strsub(text, 1, 11), color2 or "")
+        slotInfo.enchantTextShort = format("%s%s%s", color1 or "", string.utf8sub(text, 1, 18), color2 or "")
+        slotInfo.enchantTextShort2 = format("%s%s%s", color1 or "", string.utf8sub(text, 1, 11), color2 or "")
         slotInfo.enchantTextReal = enchant
 
         if line.leftColor then

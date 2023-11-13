@@ -1186,9 +1186,9 @@ local function UpdateTrackers()
 
             if settings[data.dbKey].alert then
                 tracker.args.alert = true
-                tracker.args.alertSecond = settings[data.dbKey].alertSeconds
+                tracker.args.alertSecond = tonumber(settings[data.dbKey].alertSeconds)
                 tracker.args.stopAlertIfCompleted = settings[data.dbKey].stopAlertIfCompleted
-                tracker.args.disableAlertAfterHours = settings[data.dbKey].disableAlertAfterHours
+                tracker.args.disableAlertAfterHours = tonumber(settings[data.dbKey].disableAlertAfterHours)
             else
                 tracker.args.alertSecond = nil
                 tracker.args.stopAlertIfCompleted = nil

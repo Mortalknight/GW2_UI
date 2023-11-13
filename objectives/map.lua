@@ -441,7 +441,7 @@ local function GetLocTextColor()
 end
 
 local function Update_ZoneText()
-    GwMapGradient.location:SetText(GetMinimapZoneText())
+    GwMapGradient.location:SetText(string.utf8sub(GetMinimapZoneText(), 1, 46))
     GwMapGradient.location:SetTextColor(GetLocTextColor())
 end
 
