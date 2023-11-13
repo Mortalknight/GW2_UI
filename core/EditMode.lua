@@ -64,7 +64,7 @@ local function OnEvent(self, event)
         end
     elseif event == "PLAYER_ENTERING_WORLD" or event == "EDIT_MODE_LAYOUTS_UPDATED" or event == "PLAYER_REGEN_ENABLED" then
         if CheckActionBar() and LEMO:IsReady() then
-            --C_Timer.After(0, function() ApplyBlizzardEditModeChanges(self) end)
+            C_Timer.After(0, function() ApplyBlizzardEditModeChanges(self) end)
             -- only tigger that code once
             self:UnregisterEvent("EDIT_MODE_LAYOUTS_UPDATED")
             self:UnregisterEvent("PLAYER_ENTERING_WORLD")
