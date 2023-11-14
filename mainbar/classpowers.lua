@@ -37,6 +37,15 @@ local function AnimationStagger(self, animationProgress)
     self.scrollSpeedMultiplier = lerp(-1, -10, fill)
 end
 ---Styling for powerbars
+local function setPowerTypePaladinShield(self)
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/bloster")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/spark")
+    self.runeoverlay:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/bloster-intensity")
+    self.runeoverlay:SetAlpha(1)
+    self.spark:SetBlendMode("ADD")
+    self.spark:SetAlpha(0.3)
+    self.customMaskSize = 30
+end
 local function setPowerTypeEbonMight(self)
     self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/agu")
     self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/agu-intensity", "REPEAT")
@@ -678,27 +687,45 @@ local function powerSotR()
 end
 GW.AddForProfiling("classpowers", "powerSotR", powerSotR)
 
+
 local function powerHoly(self, event, ...)
     local pType = select(2, ...)
-    if event ~= "CLASS_POWER_INIT" and pType ~= "HOLY_POWER" then
+    if event ~= "CLASS_POWER_INIT" and pType ~= "HOLY_POWER" and event~="UNIT_AURA" then
         return
     end
-
-    local old_power = self.gwPower
-    old_power = old_power or -1
-
-    local pwrMax = UnitPowerMax("player", 9)
-    local pwr = UnitPower("player", 9)
-    local p = pwr - 1
-
-    self.gwPower = pwr
-
-    self.background:SetTexCoord(0, 1, 0.125 * pwrMax, 0.125 * (pwrMax + 1))
-    self.fill:SetTexCoord(0, 1, 0.125 * p, 0.125 * (p + 1))
-
-    if old_power < pwr and event ~= "CLASS_POWER_INIT" then
-        animFlare(self)
+    if event=="UNIT_AURA" then
+        local _, count, duration, expires = findBuff("player", 132403)
+        if duration~=nil then 
+            local remainingPrecantage = (expires - GetTime()) / duration
+            local remainingTime = duration * remainingPrecantage
+            self.customResourceBar:setCustomAnimation(remainingPrecantage, 0, remainingTime)
+        end
+    else 
+        local old_power = self.gwPower
+        --empty v:SetTexCoord(0,0.5,0,0.5)
+        --full  v:SetTexCoord(0.5,1,0,0.5)
+        --current  v:SetTexCoord(0,0.5,0.5,1)
+        local pwrMax = UnitPowerMax("player", 9)
+        local pwr = UnitPower("player", 9)
+        if pwr<3 then 
+            self.background:SetAlpha(0.2)
+        else
+            self.background:SetAlpha(1)
+        end
+        for k,v in pairs(self.paladin.power) do 
+            local id = tonumber(v:GetParentKey())
+            if pwr>=3 and id<4 then 
+                v:SetTexCoord(0,0.5,0.5,1)
+            elseif pwr>=id then
+                v:SetTexCoord(0.5,1,0,0.5)
+            elseif pwr<id then 
+                v:SetTexCoord(0,0.5,0,0.5)
+            end
+        end
     end
+
+    
+ 
 end
 GW.AddForProfiling("classpowers", "powerHoly", powerHoly)
 
@@ -719,20 +746,32 @@ local function setPaladin(f)
 
     --return true
     --elseif GW.myspec == 3 or GW.myspec == 5 then -- retribution / standard
-    f:SetHeight(32)
-    f:SetWidth(320)
-    f.background:SetHeight(32)
-    f.background:SetWidth(320)
-    f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/holypower")
-    f.background:SetTexCoord(0, 1, 0.5, 1)
-    f.fill:SetHeight(32)
-    f.fill:SetWidth(320)
-    f.fill:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/holypower")
+    f.paladin:Show()
+    f:SetHeight(64)
+    f:SetWidth(256)
+    f.background:SetHeight(64)
+    f.background:SetWidth(256)
+    f.background:ClearAllPoints()
+    f.background:SetPoint("TOPLEFT",f,"TOPLEFT",0,8)
+    f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/holypower/background")
+    f.background:SetTexCoord(0, 1, 0, 1)
+    f.fill:Hide()
 
     f:SetScript("OnEvent", powerHoly)
     powerHoly(f, "CLASS_POWER_INIT")
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+
+    if GW.myspec==2 then 
+        f.customResourceBar:SetWidth(164)
+        f.customResourceBar:ClearAllPoints()
+        f.customResourceBar:SetPoint("RIGHT", GwPlayerClassPower.gwMover, 2, 0)
+        f.customResourceBar:Show()
+
+        setPowerTypePaladinShield(f.customResourceBar)
+        
+        f:RegisterUnitEvent("UNIT_AURA", "player")
+    end
 
     return true
     --end
