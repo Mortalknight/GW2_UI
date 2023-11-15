@@ -779,7 +779,7 @@ local function setPaladin(f)
     f.paladin:ClearAllPoints()
     f.paladin:SetPoint("TOPLEFT", GwPlayerClassPower.gwMover, 0, 0)
     f.paladin:SetPoint("BOTTOMLEFT", GwPlayerClassPower.gwMover, 0, 0)
-    f.background:SetPoint("LEFT", GwPlayerClassPower.gwMover, "LEFT",0, 0)
+    f.background:SetPoint("LEFT", GwPlayerClassPower.gwMover, "LEFT",0, 2)
 
     print(f.background:GetWidth())
     f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/holypower/background")
