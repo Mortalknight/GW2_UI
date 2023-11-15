@@ -140,6 +140,26 @@ local function updateTextureBasedOnCondition(self)
     end
 end
 
+local function animFlarePoint(f,point,to,from,duration)
+
+    local ff = f.flare
+    local pwr = f.gwPower
+    ff:ClearAllPoints()
+    ff:SetPoint("CENTER", point, "CENTER",0,0)
+    AddToAnimation(
+        "POWER_FLARE_ANIM",
+        1,
+        0,
+        GetTime(),
+        duration,
+        function(p)
+            p = math.min(1, math.max(0, p))
+            ff:SetAlpha(p)
+       
+        end
+    )
+end
+
 local function animFlare(f, scale, offset, duration, rotate)
     scale = scale or 32
     offset = offset or 0
@@ -714,6 +734,9 @@ local function powerHoly(self, event, ...)
         end
         for k,v in pairs(self.paladin.power) do 
             local id = tonumber(v:GetParentKey())
+            if old_power<id and pwr>=id then 
+                animFlarePoint(self,v,1,0,0.5)
+            end
             if pwr>=3 and id<4 then 
                 v:SetTexCoord(0,0.5,0.5,1)
             elseif pwr>=id then
@@ -722,6 +745,7 @@ local function powerHoly(self, event, ...)
                 v:SetTexCoord(0,0.5,0,0.5)
             end
         end
+        self.gwPower = pwr;
     end
 
     
