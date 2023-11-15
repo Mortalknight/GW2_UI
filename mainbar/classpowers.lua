@@ -747,14 +747,19 @@ local function setPaladin(f)
     --return true
     --elseif GW.myspec == 3 or GW.myspec == 5 then -- retribution / standard
     f.paladin:Show()
-    f:SetHeight(64)
-    f:SetWidth(256)
-    f.background:SetHeight(64)
-    f.background:SetWidth(256)
+
     f.background:ClearAllPoints()
-    f.background:SetPoint("TOPLEFT",f,"TOPLEFT",0,8)
+    f.background:SetHeight(41)
+    f.background:SetWidth(181)
+    f.background:SetTexCoord(0,0.70703125,0,0.640625 )
+    f.paladin:ClearAllPoints()
+    f.paladin:SetPoint("TOPLEFT", GwPlayerClassPower.gwMover, 0, 0)
+    f.paladin:SetPoint("BOTTOMLEFT", GwPlayerClassPower.gwMover, 0, 0)
+    f.background:SetPoint("LEFT", GwPlayerClassPower.gwMover, "LEFT",0, 0)
+
+    print(f.background:GetWidth())
     f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/holypower/background")
-    f.background:SetTexCoord(0, 1, 0, 1)
+   
     f.fill:Hide()
 
     f:SetScript("OnEvent", powerHoly)
