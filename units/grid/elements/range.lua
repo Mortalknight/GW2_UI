@@ -4,7 +4,7 @@ local _, GW = ...
 local function Construct_RangeIndicator(frame)
     local range = {
         insideAlpha = 1,
-        outsideAlpha = 0.1,
+        outsideAlpha = 0.2,
     }
 
 	return range
