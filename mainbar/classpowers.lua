@@ -112,8 +112,27 @@ end
 local function setPowerTYpeFrenzy(self)
     self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzy")
     self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzyspark")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll", "REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2", "REPEAT")
+    self.animator:SetScript("OnUpdate", function(_, delta) self.scrollTextureParalaxOnUpdate(self, delta) end)
+    self.scrollSpeedMultiplier = -3
+    self.scrollTexture:SetAlpha(1)
+    self.scrollTexture2:SetAlpha(1)
     self.spark:SetAlpha(0.3)
     self:SetWidth(262)
+    self.customMaskSize = 128
+end
+local function setPowerTypeRend(self)
+    self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzy")
+    self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/frenzyspark")
+    self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll", "REPEAT")
+    self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2", "REPEAT")
+    self.animator:SetScript("OnUpdate", function(_, delta) self.scrollTextureParalaxOnUpdate(self, delta) end)
+    self.scrollSpeedMultiplier = -3
+    self.scrollTexture:SetAlpha(1)
+    self.scrollTexture2:SetAlpha(1)
+    self.spark:SetAlpha(0.3)
+
     self.customMaskSize = 128
 end
 
@@ -140,12 +159,11 @@ local function updateTextureBasedOnCondition(self)
     end
 end
 
-local function animFlarePoint(f,point,to,from,duration)
-
+local function animFlarePoint(f, point, to, from, duration)
     local ff = f.flare
     local pwr = f.gwPower
     ff:ClearAllPoints()
-    ff:SetPoint("CENTER", point, "CENTER",0,0)
+    ff:SetPoint("CENTER", point, "CENTER", 0, 0)
     AddToAnimation(
         "POWER_FLARE_ANIM",
         1,
@@ -155,7 +173,6 @@ local function animFlarePoint(f,point,to,from,duration)
         function(p)
             p = math.min(1, math.max(0, p))
             ff:SetAlpha(p)
-       
         end
     )
 end
@@ -246,6 +263,24 @@ local function findBuff(unit, searchID)
     return nil, nil, nil, nil
 end
 GW.AddForProfiling("classpowers", "findBuff", findBuff)
+
+local function findDebuff(unit, searchID,unitSource)
+    local name, count, duration, expires, spellID,caster
+    for i = 1, 40 do
+        name, _, count, _, duration, expires, caster, _, _, spellID, _ = UnitDebuff(unit, i)
+    
+        
+        if (unitSource==caster and spellID == searchID) or (unitSource==nil and spellID == searchID)  then
+            return name, count, duration, expires
+        elseif not spellID then
+            break
+        end
+    end
+
+
+    return nil, nil, nil, nil
+end
+GW.AddForProfiling("classpowers", "findDebuff", findDebuff)
 
 local searchIDs = {}
 local function findBuffs(unit, ...)
@@ -619,6 +654,17 @@ end
 GW.AddForProfiling("classpowers", "timerMetamorphosis", timerMetamorphosis)
 
 -- WARRIOR
+local function powerRend(self)
+    local _, _, duration, expires = findDebuff("target", 388539,"player")
+    if duration ~= nil then
+        self.customResourceBar:Show()
+        local remainingPrecantage = (expires - GetTime()) / duration
+        local remainingTime = duration * remainingPrecantage
+        self.customResourceBar:setCustomAnimation(remainingPrecantage, 0, remainingTime)
+    else
+        self.customResourceBar:Hide()
+    end
+end
 local function powerEnrage(self)
     local _, _, duration, expires = findBuff("player", 184362)
     if duration ~= nil then
@@ -662,27 +708,34 @@ end
 GW.AddForProfiling("classpowers", "powerSBlock", powerSBlock)
 
 local function setWarrior(f)
-    if GW.myspec == 2 or GW.myspec == 3 then
-        f.background:SetTexture(nil)
-        f.fill:SetTexture(nil)
+    f.background:SetTexture(nil)
+    f.fill:SetTexture(nil)
 
-        if GW.myspec == 2 then -- fury
-            setPowerTypeEnrage(f.customResourceBar)
-            f:SetScript("OnEvent", powerEnrage)
-            powerEnrage(f)
-        elseif GW.myspec == 3 then -- prot
-            -- determine if bolster talent is selected
-            setPowerTYpeBolster(f.customResourceBar)
-            f.gw_BolsterSelected = GW.IsSpellTalented(12975)
-            f:SetScript("OnEvent", powerSBlock)
-            powerSBlock(f)
-        end
+    if GW.myspec == 1 then --arms rend
+        setPowerTypeRend(f.customResourceBar)
+        f:SetScript("OnEvent", powerRend)
+        powerRend(f)
+        f:RegisterUnitEvent("UNIT_AURA", "target")
+        f:RegisterEvent("PLAYER_TARGET_CHANGED")
+    elseif GW.myspec == 2 then -- fury
+        setPowerTypeEnrage(f.customResourceBar)
+        f:SetScript("OnEvent", powerEnrage)
+        powerEnrage(f)
         f:RegisterUnitEvent("UNIT_AURA", "player")
-
-        return true
+    elseif GW.myspec == 3 then     -- prot
+        -- determine if bolster talent is selected
+        setPowerTYpeBolster(f.customResourceBar)
+        f.gw_BolsterSelected = GW.IsSpellTalented(12975)
+        f:SetScript("OnEvent", powerSBlock)
+        powerSBlock(f)
+        f:RegisterUnitEvent("UNIT_AURA", "player")
     end
 
-    return false
+
+  
+
+
+    return true
 end
 GW.AddForProfiling("classpowers", "setWarrior", setWarrior)
 
@@ -710,46 +763,43 @@ GW.AddForProfiling("classpowers", "powerSotR", powerSotR)
 
 local function powerHoly(self, event, ...)
     local pType = select(2, ...)
-    if event ~= "CLASS_POWER_INIT" and pType ~= "HOLY_POWER" and event~="UNIT_AURA" then
+    if event ~= "CLASS_POWER_INIT" and pType ~= "HOLY_POWER" and event ~= "UNIT_AURA" then
         return
     end
-    if event=="UNIT_AURA" then
+    if event == "UNIT_AURA" then
         local _, count, duration, expires = findBuff("player", 132403)
-        if duration~=nil then 
+        if duration ~= nil then
             local remainingPrecantage = (expires - GetTime()) / duration
             local remainingTime = duration * remainingPrecantage
             self.customResourceBar:setCustomAnimation(remainingPrecantage, 0, remainingTime)
         end
-    else 
+    else
         local old_power = self.gwPower
         --empty v:SetTexCoord(0,0.5,0,0.5)
         --full  v:SetTexCoord(0.5,1,0,0.5)
         --current  v:SetTexCoord(0,0.5,0.5,1)
         local pwrMax = UnitPowerMax("player", 9)
         local pwr = UnitPower("player", 9)
-        if pwr<3 then 
+        if pwr < 3 then
             self.background:SetAlpha(0.2)
         else
             self.background:SetAlpha(1)
         end
-        for k,v in pairs(self.paladin.power) do 
+        for k, v in pairs(self.paladin.power) do
             local id = tonumber(v:GetParentKey())
-            if old_power<id and pwr>=id then 
-                animFlarePoint(self,v,1,0,0.5)
+            if old_power < id and pwr >= id then
+                animFlarePoint(self, v, 1, 0, 0.5)
             end
-            if pwr>=3 and id<4 then 
-                v:SetTexCoord(0,0.5,0.5,1)
-            elseif pwr>=id then
-                v:SetTexCoord(0.5,1,0,0.5)
-            elseif pwr<id then 
-                v:SetTexCoord(0,0.5,0,0.5)
+            if pwr >= 3 and id < 4 then
+                v:SetTexCoord(0, 0.5, 0.5, 1)
+            elseif pwr >= id then
+                v:SetTexCoord(0.5, 1, 0, 0.5)
+            elseif pwr < id then
+                v:SetTexCoord(0, 0.5, 0, 0.5)
             end
         end
         self.gwPower = pwr;
     end
-
-    
- 
 end
 GW.AddForProfiling("classpowers", "powerHoly", powerHoly)
 
@@ -775,14 +825,14 @@ local function setPaladin(f)
     f.background:ClearAllPoints()
     f.background:SetHeight(41)
     f.background:SetWidth(181)
-    f.background:SetTexCoord(0,0.70703125,0,0.640625 )
+    f.background:SetTexCoord(0, 0.70703125, 0, 0.640625)
     f.paladin:ClearAllPoints()
     f.paladin:SetPoint("TOPLEFT", GwPlayerClassPower.gwMover, 0, 0)
     f.paladin:SetPoint("BOTTOMLEFT", GwPlayerClassPower.gwMover, 0, 0)
-    f.background:SetPoint("LEFT", GwPlayerClassPower.gwMover, "LEFT",0, 2)
+    f.background:SetPoint("LEFT", GwPlayerClassPower.gwMover, "LEFT", 0, 2)
 
     f.background:SetTexture("Interface/AddOns/GW2_UI/textures/altpower/holypower/background")
-   
+
     f.fill:Hide()
 
     f:SetScript("OnEvent", powerHoly)
@@ -790,14 +840,14 @@ local function setPaladin(f)
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
-    if GW.myspec==2 then 
+    if GW.myspec == 2 then
         f.customResourceBar:SetWidth(164)
         f.customResourceBar:ClearAllPoints()
         f.customResourceBar:SetPoint("RIGHT", GwPlayerClassPower.gwMover, 2, 0)
         f.customResourceBar:Show()
 
         setPowerTypePaladinShield(f.customResourceBar)
-        
+
         f:RegisterUnitEvent("UNIT_AURA", "player")
     end
 
