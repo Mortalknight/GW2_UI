@@ -750,7 +750,7 @@
                       <Texture parentKey="1" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power" hidden="false">
                             <Size x="64" y="64"></Size>
                             <Anchors>
-                                <Anchor point="LEFT" relativePoint="LEFT" x="-16" y="6"></Anchor>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="-16" y="4"></Anchor>
                             </Anchors>
                         </Texture>
                         <Texture parentKey="2" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power" hidden="false">
@@ -762,7 +762,7 @@
                         <Texture parentKey="3" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power" hidden="false">
                             <Size x="64" y="64"></Size>
                             <Anchors>
-                                <Anchor point="LEFT" relativePoint="LEFT" x="34" y="6"></Anchor>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="34" y="4"></Anchor>
                             </Anchors>
                         </Texture>
                            <Texture parentKey="4" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power" hidden="false">
@@ -774,7 +774,7 @@
                             <Texture parentKey="5" parentArray="power" file="Interface\AddOns\GW2_UI\textures\altpower\holypower\power" hidden="false">
                             <Size x="64" y="64"></Size>
                             <Anchors>
-                                <Anchor point="LEFT" relativePoint="LEFT" x="84" y="6"></Anchor>
+                                <Anchor point="LEFT" relativePoint="LEFT" x="84" y="4"></Anchor>
                             </Anchors>
                         </Texture>
                     </Layer>
