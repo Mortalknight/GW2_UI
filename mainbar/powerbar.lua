@@ -247,7 +247,15 @@ end
 local function setPowerTypeRage(self)
   self.spark:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/ragespark")
   self:SetStatusBarTexture("Interface/Addons/GW2_UI/textures/bartextures/rage")
+  self.scrollTexture:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll", "REPEAT")
+  self.scrollTexture2:SetTexture("Interface/Addons/GW2_UI/textures/bartextures/stagger-scroll2", "REPEAT")
+  self.animator:SetScript("OnUpdate", function(_, delta) self.scrollTextureParalaxOnUpdate(self, delta) end)
+  
   self.onUpdateAnimation = function(self,animationProgress)
+    local l = self:GetFillAmount()
+    self.scrollTexture:SetAlpha(math.max(0.4,l))
+    self.scrollTexture2:SetAlpha(math.max(0.4,l))
+    self.scrollSpeedMultiplier = 5 * l
     if self.animatedStartValue<self.animatedValue then
       self.spark:SetAlpha(max(0,min(1,1 - animationProgress)))
     else
