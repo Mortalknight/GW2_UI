@@ -867,7 +867,7 @@ local function SkinItemRefTooltipCloseButton()
     ItemRefTooltip.CloseButton:ClearAllPoints()
     ItemRefTooltip.CloseButton:SetPoint("TOPRIGHT", -3, -3)
 
-    if IsAddOnLoaded("Pawn") then
+    if C_AddOns.IsAddOnLoaded("Pawn") then
         if ItemRefTooltip.PawnIconFrame then ItemRefTooltip.PawnIconFrame.PawnIconTexture:SetTexCoord(0.1, 0.9, 0.1, 0.9) end
     end
 end

@@ -134,7 +134,7 @@ local function onValueChanged(frame, value)
 end
 
 local function SkinAndEnhanceColorPicker()
-    if IsAddOnLoaded("ColorPickerPlus") then return end
+    if C_AddOns.IsAddOnLoaded("ColorPickerPlus") then return end
 
     ColorPickerFrame:SetClampedToScreen(true)
 

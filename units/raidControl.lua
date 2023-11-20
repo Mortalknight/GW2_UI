@@ -159,7 +159,7 @@ local function manageButton()
 
     local fmGGCD_OnClick = function(_, button)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-        if IsControlKeyDown() and button == "LeftButton" and IsAddOnLoaded("DBM-Core") then
+        if IsControlKeyDown() and button == "LeftButton" and C_AddOns.IsAddOnLoaded("DBM-Core") then
             SlashCmdList.DEADLYBOSSMODSPULL()
         else
             C_PartyInfo.DoCountdown(10)

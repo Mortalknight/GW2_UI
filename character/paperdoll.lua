@@ -73,9 +73,9 @@ GW.AddForProfiling("paperdoll", "menu_SetupBackButton", menu_SetupBackButton)
 
 local nextShadow, nextAnchor
 local function addAddonButton(name, setting, shadow, anchor, showFunction)
-    if IsAddOnLoaded(name) and (setting == nil or setting == true) then
+    if C_AddOns.IsAddOnLoaded(name) and (setting == nil or setting == true) then
         fmMenu.buttonName = CreateFrame("Button", nil, fmMenu, "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate")
-        fmMenu.buttonName:SetText(select(2, GetAddOnInfo(name)))
+        fmMenu.buttonName:SetText(select(2, C_AddOns.GetAddOnInfo(name)))
         fmMenu.buttonName:ClearAllPoints()
         fmMenu.buttonName:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT")
         CharacterMenuButton_OnLoad(fmMenu.buttonName, shadow)

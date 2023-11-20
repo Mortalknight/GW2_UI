@@ -16,7 +16,7 @@ local function LandingButton_OnEnter(self)
         local soulbindData = C_Soulbinds.GetSoulbindData(soulbindID)
 
         -- load Soulbinds UI if needed (Blizzard one)
-        if not IsAddOnLoaded("Blizzard_Soulbinds") then
+        if not C_AddOns.IsAddOnLoaded("Blizzard_Soulbinds") then
             LoadAddOn("Blizzard_Soulbinds")
         end
 

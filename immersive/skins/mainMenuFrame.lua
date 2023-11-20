@@ -62,7 +62,7 @@ local function applyButtonStyle()
         end
         local b = f.button
         if b == _G.GameMenuFrame then b = b.ElvUI end
-        if b == btn163 and f.addOn and IsAddOnLoaded(f.addOn) then b = GameMenuFrame.btn163 end
+        if b == btn163 and f.addOn and C_AddOns.IsAddOnLoaded(f.addOn) then b = GameMenuFrame.btn163 end
         if b then
             if b == GameMenuFrame.btn163 then b.logo:Hide() end
             b.Right:Hide()
@@ -97,7 +97,7 @@ local function SkinMainMenu()
     GameMenuFrame[GW.addonName] = GwMainMenuFrame
     BUTTONS[#BUTTONS + 1] = {button = GwMainMenuFrame, sprite = {4, 3}}
 
-    if not IsAddOnLoaded("ConsolePortUI_Menu") then
+    if not C_AddOns.IsAddOnLoaded("ConsolePortUI_Menu") then
         GwMainMenuFrame:SetSize(GameMenuButtonLogout:GetWidth(), GameMenuButtonLogout:GetHeight())
         GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonUIOptions, "BOTTOMLEFT", 0, -1)
         hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", PositionGameMenuButton)
@@ -122,7 +122,7 @@ local function SkinMainMenu()
     applyButtonStyle()
 
     -- remove elvui transparent bg if ours is enabled
-    if IsAddOnLoaded("ElvUI") then
+    if C_AddOns.IsAddOnLoaded("ElvUI") then
         _G.GameMenuFrame.backdrop:Hide()
     end
 end

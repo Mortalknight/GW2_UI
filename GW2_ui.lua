@@ -427,7 +427,7 @@ local function evAddonLoaded(_, addonName)
     -- TODO: A lot of what happens in player login should probably happen here instead
 
     -- check for DeModal
-    local _, _, _, enabled, _ = GetAddOnInfo("DeModal")
+    local _, _, _, enabled, _ = C_AddOns.GetAddOnInfo("DeModal")
     if enabled then
         GW.HasDeModal = true
     else
@@ -584,7 +584,7 @@ local function evPlayerLogin(self)
         GwMainMenuFrame:SetScript( "OnClick", GW.ToggleGw2Settings)
         GameMenuFrame[GW.addonName] = GwMainMenuFrame
 
-        if not IsAddOnLoaded("ConsolePortUI_Menu") then
+        if not C_AddOns.IsAddOnLoaded("ConsolePortUI_Menu") then
             GwMainMenuFrame:SetSize(GameMenuButtonMacros:GetWidth(), GameMenuButtonMacros:GetHeight())
             GwMainMenuFrame:SetPoint("TOPLEFT", GameMenuButtonUIOptions, "BOTTOMLEFT", 0, -1)
             hooksecurefunc("GameMenuFrame_UpdateVisibleButtons", GW.PositionGameMenuButton)

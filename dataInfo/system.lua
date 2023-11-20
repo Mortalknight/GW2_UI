@@ -30,7 +30,7 @@ local function BuildAddonList()
     wipe(infoTable)
 
     for i = 1, addOnCount do
-        local name, title, _, loadable, reason = GetAddOnInfo(i)
+        local name, title, _, loadable, reason = C_AddOns.GetAddOnInfo(i)
         if loadable or reason == "DEMAND_LOADED" then
             tinsert(infoTable, {name = name, index = i, title = title})
         end
@@ -104,7 +104,7 @@ local function FpsOnEnter(self, slow)
     local showByCPU = cpuProfiling and not IsShiftKeyDown()
     for _, data in ipairs(infoTable) do
         local i = data.index
-        if IsAddOnLoaded(i) then
+        if C_AddOns.IsAddOnLoaded(i) then
             local mem = GetAddOnMemoryUsage(i)
             totalMEM = totalMEM + mem
 

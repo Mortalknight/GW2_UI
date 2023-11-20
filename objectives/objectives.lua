@@ -1433,7 +1433,7 @@ local function LoadQuestTracker()
     tracker_OnEvent(fQuest, "LOAD")
 
     GW.LoadBossFrame()
-    if not IsAddOnLoaded("sArena") then
+    if not C_AddOns.IsAddOnLoaded("sArena") then
         GW.LoadArenaFrame(fArenaBG)
     end
     GW.LoadScenarioFrame()

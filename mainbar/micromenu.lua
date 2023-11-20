@@ -627,7 +627,7 @@ local function setupMicroButtons(mbf)
     greatVaultIcon.textureName = "GreatVaultMicroButton"
     reskinMicroButton(greatVaultIcon, "GreatVaultMicroButton", mbf)
     greatVaultIcon:ClearAllPoints()
-    greatVaultIcon:SetPoint("BOTTOMLEFT", IsAddOnLoaded("Dominos") and HelpMicroButton or StoreMicroButton, "BOTTOMRIGHT", 4, 0)
+    greatVaultIcon:SetPoint("BOTTOMLEFT", C_AddOns.IsAddOnLoaded("Dominos") and HelpMicroButton or StoreMicroButton, "BOTTOMRIGHT", 4, 0)
     greatVaultIcon:SetScript("OnMouseUp", function(self, button, upInside)
         if button == "LeftButton" and upInside and self:IsEnabled() then
             GW.StopFlash(self) -- Hide flasher if playing

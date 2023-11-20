@@ -92,7 +92,7 @@ local function SkinDropDownList()
             end
         end
         --Check if Raider.IO Entry is added
-        if IsAddOnLoaded("RaiderIO") and _G.RaiderIO_CustomDropDownList then
+        if C_AddOns.IsAddOnLoaded("RaiderIO") and _G.RaiderIO_CustomDropDownList then
             _G["RaiderIO_CustomDropDownListMenuBackdrop"]:Hide()
             _G["RaiderIO_CustomDropDownList"]:GwCreateBackdrop(GW.BackdropTemplates.Default)
         end

@@ -41,7 +41,7 @@ local function SkinDeathRecapFrame_Loaded()
         end
     end
 
-    if IsAddOnLoaded("Details") then
+    if C_AddOns.IsAddOnLoaded("Details") then
         for i = 1, 10 do
             if _G["DetailsDeathRecapLine" .. i] then
                 _G["DetailsDeathRecapLine" .. i].spellIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
