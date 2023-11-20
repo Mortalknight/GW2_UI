@@ -24,7 +24,7 @@ end
 GW.UpdateMinimapSystemDataInfoSettings = UpdateSettings
 
 local function BuildAddonList()
-    local addOnCount = GetNumAddOns()
+    local addOnCount = C_AddOns.GetNumAddOns()
     if addOnCount == #infoTable then return end
 
     wipe(infoTable)
