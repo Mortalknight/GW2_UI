@@ -34,12 +34,12 @@ local function LoadAddonListSkin()
             if character == true then
                 character = nil
             else
-                checkall = GetAddOnEnableState(nil, id)
+                checkall = C_AddOns.GetAddOnEnableState(nil, id)
             end
 
             entry.Reload:SetTextColor(1.0, 0.3, 0.3)
 
-            local checkstate = GetAddOnEnableState(character, id)
+            local checkstate = C_AddOns.GetAddOnEnableState(character, id)
             local enabledForSome = not character and checkstate == 1
             local enabled = checkstate > 0
             local disabled = not enabled or enabledForSome
