@@ -111,7 +111,6 @@ local function FilterAura(self, unit, data)
                     if frame.isBar then
                         frame.expires = data.expirationTime
                         frame.duration = data.duration
-                        frame.isBar = "BAR"
                     else
                         -- Stacks
                         if data.applications > 1 then
@@ -282,7 +281,7 @@ local function Construct_Auras(frame)
     indicatorBar:SetStatusBarColor(1, 0.5, 0)
     indicatorBar:SetScript("OnUpdate", function(self)
         if self:IsShown() and self.expires and self.duration then
-            self:SetValue((self.expires - GetTime()) / self.duration)
+            self:SetValue(math.max(0, math.min(1, (self.expires - GetTime()) / self.duration)))
         end
     end)
     indicatorBar:Hide()
