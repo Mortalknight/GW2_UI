@@ -6,14 +6,16 @@ local createNormalUnitFrame = GW.createNormalUnitFrame
 local IsIn = GW.IsIn
 local CommaValue = GW.CommaValue
 
+local settings = {}
+
 local function updateHealthTextString(self, health, healthPrecentage)
     local healthString = ""
 
-    if self.healthTextSetting == "PREC" then
+    if settings.healthTextSetting == "PREC" then
         healthString = CommaValue(healthPrecentage * 100) .. "%"
-    elseif self.healthTextSetting == "VALUE" then
+    elseif settings.healthTextSetting == "VALUE" then
         healthString = CommaValue(health)
-    elseif self.healthTextSetting == "BOTH" then
+    elseif settings.healthTextSetting == "BOTH" then
         healthString = CommaValue(health) .. " - " .. CommaValue(healthPrecentage * 100) .. "%"
     end
 
@@ -73,7 +75,7 @@ local function unitFrameData(self)
     self.nameString:SetText(name)
     self.levelString:SetText(level)
 
-    if self.classColor then
+    if settings.classColor then
         local _, englishClass = UnitClass(self.unit)
         local color = GW.GWGetClassColor(englishClass, true)
 
@@ -105,18 +107,22 @@ local function player_OnEvent(self, event)
     end
 end
 
-local function TogglePlayerFrameASettings()
-    if not GwPlayerUnitFrame then return end
-    GwPlayerUnitFrame.altBg:SetShown(GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
-    GwPlayerUnitFrame.classColor = GetSetting("player_CLASS_COLOR")
-    GwPlayerUnitFrame.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
+local function UpdateSettings()
+    settings.classColor = GetSetting("player_CLASS_COLOR")
+    settings.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
 
-    updateHealthData(GwPlayerUnitFrame)
-    unitFrameData(GwPlayerUnitFrame)
+    if GwPlayerUnitFrame then
+        GwPlayerUnitFrame.altBg:SetShown(GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
+
+        updateHealthData(GwPlayerUnitFrame)
+        unitFrameData(GwPlayerUnitFrame)
+    end
 end
-GW.TogglePlayerFrameASettings = TogglePlayerFrameASettings
+GW.UpdatePlayerFrameSettings = UpdateSettings
 
 local function LoadPlayerFrame()
+    UpdateSettings()
+
     local NewUnitFrame = createNormalUnitFrame("GwPlayerUnitFrame")
     NewUnitFrame.unit = "player"
     NewUnitFrame.type = "NormalTarget"
@@ -237,8 +243,6 @@ local function LoadPlayerFrame()
     NewUnitFrame.raidmarker:Hide()
     NewUnitFrame.prestigebg:Hide()
     NewUnitFrame.prestigeString:Hide()
-
-    TogglePlayerFrameASettings()
 
     return NewUnitFrame
 end

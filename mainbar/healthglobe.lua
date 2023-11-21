@@ -7,18 +7,19 @@ local IsIn = GW.IsIn
 local MixinHideDuringPetAndOverride = GW.MixinHideDuringPetAndOverride
 local GetSetting = GW.GetSetting
 
+local settings = {}
 
 local function flashAnimation(self, delta, t)
-  if t == nil then t = 0 end
-  local speed  =  max(1,4 * (1 - (self.healthPrecentage / 0.65)))
-  t = t + (delta) * speed
-  local c =  0.4*math.abs(math.sin(t))
-  self.border.normal:SetVertexColor(c,c,c,1)
+    if t == nil then t = 0 end
+    local speed  =  max(1, 4 * (1 - (self.healthPrecentage / 0.65)))
+    t = t + (delta) * speed
+    local c =  0.4 * math.abs(math.sin(t))
+    self.border.normal:SetVertexColor(c, c, c, 1)
 
-  if self.healthPrecentage>0.65 and c<0.2 then
-    self:SetScript("OnUpdate",nil);
-    self.border.normal:SetVertexColor(0,0,0,1)
-  end
+    if self.healthPrecentage > 0.65 and c < 0.2 then
+        self:SetScript("OnUpdate", nil)
+        self.border.normal:SetVertexColor(0, 0, 0, 1)
+    end
 end
 
 local function repair_OnEvent(self, event)
@@ -55,8 +56,7 @@ local function repair_OnEvent(self, event)
 end
 GW.AddForProfiling("healthglobe", "repair_OnEvent", repair_OnEvent)
 
-
-local function updateHealthData(self, anims)
+local function updateHealthData(self)
     local health = UnitHealth("Player")
     local healthMax = UnitHealthMax("Player")
     local absorb = UnitGetTotalAbsorbs("Player")
@@ -67,14 +67,11 @@ local function updateHealthData(self, anims)
     local absorbAmount2 = 0
     local predictionPrecentage = 0
     local healAbsorbPrecentage = 0
-
     local healthPrecentage = health/healthMax
 
     self.healthPrecentage = healthPrecentage -- used for animation
     self.health:SetFillAmount(healthPrecentage - 0.035)
     self.candy:SetFillAmount(healthPrecentage)
-
-
 
     if absorb > 0 and healthMax > 0 then
         absorbPrecentage = absorb / healthMax
@@ -88,9 +85,8 @@ local function updateHealthData(self, anims)
     if healAbsorb > 0 and healthMax > 0 then
         healAbsorbPrecentage = min(healthMax,healAbsorb / healthMax)
     end
+
     self.healPrediction:SetFillAmount(healthPrecentage + predictionPrecentage)
-
-
     self.absorbbg:SetFillAmount(absorbAmount)
     self.absorbOverlay:SetFillAmount(absorbAmount2)
     self.antiHeal:SetFillAmount(healAbsorbPrecentage)
@@ -98,19 +94,19 @@ local function updateHealthData(self, anims)
     local hv = ""
     local av = ""
 
-    if self.healthTextSetting == "PREC" then
+    if settings.healthTextSetting == "PREC" then
         hv = CommaValue(health / healthMax * 100) .. "%"
-    elseif self.healthTextSetting == "VALUE" then
+    elseif settings.healthTextSetting == "VALUE" then
         hv = CommaValue(health)
-    elseif self.healthTextSetting == "BOTH" then
+    elseif settings.healthTextSetting == "BOTH" then
         hv = CommaValue(health) .. "\n" .. CommaValue(health / healthMax * 100) .. "%"
     end
 
-    if self.absorbTextSetting == "PREC" then
+    if settings.absorbTextSetting == "PREC" then
         av = CommaValue(absorb / healthMax * 100) .. "%"
-    elseif self.absorbTextSetting == "VALUE" then
+    elseif settings.absorbTextSetting == "VALUE" then
         av = CommaValue(absorb)
-    elseif self.absorbTextSetting == "BOTH" then
+    elseif settings.absorbTextSetting == "BOTH" then
         av = CommaValue(absorb) .. "\n" .. CommaValue(absorb / healthMax * 100) .. "%"
     end
 
@@ -131,10 +127,9 @@ local function updateHealthData(self, anims)
         self.text_a:Show()
     end
 
-    if healthPrecentage<0.65 and self:GetScript("OnUpdate")==nil then
-      self:SetScript("OnUpdate",flashAnimation)
+    if healthPrecentage < 0.65 and self:GetScript("OnUpdate") == nil then
+        self:SetScript("OnUpdate", flashAnimation)
     end
-
 end
 GW.AddForProfiling("healthglobe", "updateHealthData", updateHealthData)
 
@@ -163,10 +158,10 @@ GW.AddForProfiling("healthglobe", "selectPvp", selectPvp)
 local function globe_OnEvent(self, event)
     if event == "PLAYER_ENTERING_WORLD" then
         MixinHideDuringPetAndOverride(self)
-        updateHealthData(self, false)
+        updateHealthData(self)
         selectPvp(self)
     elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
-        updateHealthData(self, true)
+        updateHealthData(self)
     elseif IsIn(event, "WAR_MODE_STATUS_UPDATE", "PLAYER_FLAGS_CHANGED", "UNIT_FACTION") then
         selectPvp(self)
     elseif event == "RESURRECT_REQUEST" then
@@ -247,17 +242,18 @@ local function repair_OnEnter(self)
 end
 GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)
 
-local function ToggleHealthglobeSettings()
-    if not GW2_PlayerFrame then return end
-    GW2_PlayerFrame.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
-    GW2_PlayerFrame.absorbTextSetting = GetSetting("PLAYER_UNIT_ABSORB")
+local function UpdateSettings()
+    settings.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
+    settings.absorbTextSetting = GetSetting("PLAYER_UNIT_ABSORB")
 
-    updateHealthData(GW2_PlayerFrame, false)
+    if GW2_PlayerFrame then
+        updateHealthData(GW2_PlayerFrame)
+    end
 end
-GW.ToggleHealthglobeSettings = ToggleHealthglobeSettings
-
+GW.UpdateHealthglobeSettings = UpdateSettings
 
 local function LoadHealthGlobe()
+    UpdateSettings()
 
     local hg = CreateFrame("Button", "GW2_PlayerFrame", UIParent, "GwHealthGlobeTmpl")
 
@@ -278,8 +274,8 @@ local function LoadHealthGlobe()
     GW.hookStatusbarBehaviour(hg.absorbbg,true)
     GW.hookStatusbarBehaviour(hg.healPrediction,true)
 
-    hg.absorbOverlay:SetStatusBarColor(1,1,1,0.66)
-    hg.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
+    hg.absorbOverlay:SetStatusBarColor(1, 1, 1, 0.66)
+    hg.healPrediction:SetStatusBarColor(0.58431, 0.9372, 0.2980, 0.60)
 
     hg.candy:SetOrientation("VERTICAL")
     hg.absorbOverlay:SetOrientation("VERTICAL")
@@ -288,8 +284,6 @@ local function LoadHealthGlobe()
     hg.healPrediction:SetOrientation("VERTICAL")
     hg.health:SetOrientation("VERTICAL")
     hg.absorbbg:SetOrientation("VERTICAL")
-
-
 
     GW.RegisterScaleFrame(hg, 1.1)
 
@@ -319,14 +313,9 @@ local function LoadHealthGlobe()
 
     AddToClique(hg)
 
-
-
-
-
-
     -- set text/font stuff
     hg.hSize = 14
-    if hg.absorbTextSetting == "BOTH" then
+    if settings.absorbTextSetting == "BOTH" then
         hg.aSize = 12
         hg.text_a:ClearAllPoints()
         hg.text_a:SetPoint("CENTER", hg, "CENTER", 0, 25)
@@ -416,9 +405,6 @@ local function LoadHealthGlobe()
     end
 
     if not GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
-
-    --save settingsvalue for later use
-    ToggleHealthglobeSettings()
 
     return hg
 end

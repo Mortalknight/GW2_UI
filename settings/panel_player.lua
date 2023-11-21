@@ -56,8 +56,8 @@ local function LoadPlayerPanel(sWindow)
     settingsMenuAddButton(PLAYER, p, {p_player, p_player_aura, p_player_debuff})
 
     addOption(p_player.scroll.scrollchild, L["Player frame in target frame style"], nil, "PLAYER_AS_TARGET_FRAME", function() GW.UpdateActionbarSettings(); GW.ShowRlPopup = true end, nil, {["HEALTHGLOBE_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, L["Show alternative background texture"], nil, "PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND", GW.TogglePlayerFrameASettings, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
-    addOption(p_player.scroll.scrollchild, RAID_USE_CLASS_COLORS, nil, "player_CLASS_COLOR", GW.TogglePlayerFrameASettings, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
+    addOption(p_player.scroll.scrollchild, L["Show alternative background texture"], nil, "PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND", GW.UpdatePlayerFrameSettings, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
+    addOption(p_player.scroll.scrollchild, RAID_USE_CLASS_COLORS, nil, "player_CLASS_COLOR", GW.UpdatePlayerFrameSettings, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
     addOption(p_player.scroll.scrollchild, L["Show an additional resource bar"], nil, "PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR", function() GW.ShowRlPopup = true end, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true, ["POWERBAR_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["PvP Indicator"], nil, "PLAYER_SHOW_PVP_INDICATOR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["Player de/buff animation"], L["Shows an animation for new de/buffs"], "PLAYER_AURA_ANIMATION", nil, nil, {["PLAYER_BUFFS_ENABLED"] = true})
@@ -73,7 +73,7 @@ local function LoadPlayerPanel(sWindow)
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         nil,
         "PLAYER_UNIT_HEALTH",
-        function() GW.ToggleHealthglobeSettings(); GW.TogglePlayerFrameASettings() end,
+        function() GW.UpdateHealthglobeSettings(); GW.UpdatePlayerFrameSettings() end,
         {"NONE", "PREC", "VALUE", "BOTH"},
         {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH},
         nil,
@@ -84,7 +84,7 @@ local function LoadPlayerPanel(sWindow)
         L["Show Shield Value"],
         nil,
         "PLAYER_UNIT_ABSORB",
-        function() GW.ToggleHealthglobeSettings(); GW.TogglePlayerFrameASettings() end,
+        function() GW.UpdateHealthglobeSettings(); GW.UpdatePlayerFrameSettings() end,
         {"NONE", "PREC", "VALUE", "BOTH"},
         {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH},
         nil,
