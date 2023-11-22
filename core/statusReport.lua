@@ -3,7 +3,7 @@ local _, GW = ...
 local function AreOtherAddOnsEnabled()
     for i = 1, C_AddOns.GetNumAddOns() do
         local name = C_AddOns.GetAddOnInfo(i)
-        if name ~= "GW2_UI"and C_AddOns.GetAddOnEnableState(GW.myname, name) == 2 then --Loaded or load on demand
+        if name ~= "GW2_UI"and C_AddOns.GetAddOnEnableState(name, GW.myname) == 2 then --Loaded or load on demand
             return "|cffff0000Yes|r"
         end
     end
@@ -13,7 +13,7 @@ end
 local function CheckForPasteAddon()
     for i = 1, C_AddOns.GetNumAddOns() do
         local name = C_AddOns.GetAddOnInfo(i)
-        if (name == "Paste" or name == "CopyPaste") and C_AddOns.GetAddOnEnableState(GW.myname, name) == 2 then --Loaded or load on demand
+        if (name == "Paste" or name == "CopyPaste") and C_AddOns.GetAddOnEnableState(name, GW.myname) == 2 then --Loaded or load on demand
             return true
         end
     end
