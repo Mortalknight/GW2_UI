@@ -615,8 +615,11 @@ function QuestViewMixin:acceptQuest()
 end
 
 function QuestViewMixin:OnKeyDown(key)
+    local inCombat = InCombatLockdown()
     if key == "SPACE" then
-        self:SetPropagateKeyboardInput(false)
+        if not inCombat then
+            self:SetPropagateKeyboardInput(false)
+        end
         local Stringcount = #self.questString
 
         if self.questStringInt < Stringcount then
@@ -629,7 +632,9 @@ function QuestViewMixin:OnKeyDown(key)
             end
         end
     else
-        self:SetPropagateKeyboardInput(true)
+        if not inCombat then
+            self:SetPropagateKeyboardInput(true)
+        end
     end
 end
 
