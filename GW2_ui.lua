@@ -392,9 +392,16 @@ GW.RegisterLoadHook = RegisterLoadHook
 local function hookOmniCDLoad()
     local func = OmniCD and OmniCD.AddUnitFrameData
     if func then
-        func("GW2_UI-Party-Grid", "GwCompactPartyFrame", "unit", 1)
         func("GW2_UI-Party", "GwPartyFrame", "unit", 1)
-        func("GW2_UI-Raid", "GwCompactRaidFrame", "unit", 1, nil, 40)
+        func("GW2_UI-Raid40", "GW2_Raid40Group%dUnitButton", "unit", 1, nil, 5)
+        func("GW2_UI-Raid40-RWS", "GW2_Raid40Group%dUnitButton", "unit", 1, nil, 40) -- 'Raid Wide Sorting'
+        func("GW2_UI-Raid25", "GW2_Raid25Group%dUnitButton", "unit", 1, nil, 5)
+        func("GW2_UI-Raid25-RWS", "GW2_Raid25Group%dUnitButton", "unit", 1, nil, 25) -- 'Raid Wide Sorting'
+        func("GW2_UI-Raid10", "GW2_Raid10Group%dUnitButton", "unit", 1, nil, 5)
+        func("GW2_UI-Raid10-RWS", "GW2_Raid10Group%dUnitButton", "unit", 1, nil, 10) -- 'Raid Wide Sorting'
+        func("GW2_UI-Party-Grid", "GW2_RaidPetGroup1UnitButton", "unit", 1, nil, 40)
+        func("GW2_UI-RaidPet", "GW2_PartyGroup1UnitButton", "unit", 1, nil, 5)
+        func("GW2_UI-Maintank", "GW2_MaintankGroup1UnitButton", "unit", 1, nil, 5)
     end
 end
 AFP("hookOmniCDLoad", hookOmniCDLoad)
