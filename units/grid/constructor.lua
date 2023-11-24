@@ -129,6 +129,9 @@ local settings = {
     groupSpacing = {},
     horizontalSpacing = {},
     verticalSpacing = {},
+    showRoleIcon = {},
+    showTankIcon = {},
+    showLeaderAssistIcon = {},
 
     raidWidth = {},
     raidHeight = {},
@@ -308,6 +311,27 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
     settings.raidHeight.RAID25 = tonumber(GetSetting("RAID_HEIGHT_RAID25"))
     settings.raidHeight.RAID10 = tonumber(GetSetting("RAID_HEIGHT_RAID10"))
     settings.raidHeight.TANK = tonumber(GetSetting("RAID_HEIGHT_TANK"))
+
+    settings.showRoleIcon.PARTY = GetSetting("RAID_SHOW_ROLE_ICON_PARTY")
+    settings.showRoleIcon.RAID_PET = GetSetting("RAID_SHOW_ROLE_ICON_PET")
+    settings.showRoleIcon.RAID40 = GetSetting("RAID_SHOW_ROLE_ICON")
+    settings.showRoleIcon.RAID25 = GetSetting("RAID_SHOW_ROLE_ICON_RAID25")
+    settings.showRoleIcon.RAID10 = GetSetting("RAID_SHOW_ROLE_ICON_RAID10")
+    settings.showRoleIcon.TANK = GetSetting("RAID_SHOW_ROLE_ICON_TANK")
+
+    settings.showTankIcon.PARTY = GetSetting("RAID_SHOW_TANK_ICON_PARTY")
+    settings.showTankIcon.RAID_PET = GetSetting("RAID_SHOW_TANK_ICON_PET")
+    settings.showTankIcon.RAID40 = GetSetting("RAID_SHOW_TANK_ICON")
+    settings.showTankIcon.RAID25 = GetSetting("RAID_SHOW_TANK_ICON_RAID25")
+    settings.showTankIcon.RAID10 = GetSetting("RAID_SHOW_TANK_ICON_RAID10")
+    settings.showTankIcon.TANK = GetSetting("RAID_SHOW_TANK_ICON_TANK")
+
+    settings.showLeaderAssistIcon.PARTY = GetSetting("RAID_SHOW_LEADER_ICON_PARTY")
+    settings.showLeaderAssistIcon.RAID_PET = GetSetting("RAID_SHOW_LEADER_ICON_PET")
+    settings.showLeaderAssistIcon.RAID40 = GetSetting("RAID_SHOW_LEADER_ICON")
+    settings.showLeaderAssistIcon.RAID25 = GetSetting("RAID_SHOW_LEADER_ICON_RAID25")
+    settings.showLeaderAssistIcon.RAID10 = GetSetting("RAID_SHOW_LEADER_ICON_RAID10")
+    settings.showLeaderAssistIcon.TANK = GetSetting("RAID_SHOW_LEADER_ICON_TANK")
 
     -- profile settings for the header
     settings.startFromCenter.PARTY = GetSetting("UNITFRAME_ANCHOR_FROM_CENTER_PARTY")

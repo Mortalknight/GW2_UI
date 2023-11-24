@@ -56,6 +56,9 @@ local function UpdateGridRaidPetFrame(frame)
     frame.showRaidIndicatorTimer = GW.GridSettings.raidIndicatorTime
     frame.raidDebuffScale = GW.GridSettings.raidDebuffScale
     frame.raidDispelDebuffScale = GW.GridSettings.raidDispelDebuffScale
+    frame.showRoleIcon = GW.GridSettings.showRoleIcon.RAID_PET
+    frame.showTankIcon = GW.GridSettings.showTankIcon.RAID_PET
+    frame.showLeaderAssistIcon = GW.GridSettings.showLeaderAssistIcon.RAID_PET
 
     if not InCombatLockdown() then
         frame:DisableElement("MiddleIcon")

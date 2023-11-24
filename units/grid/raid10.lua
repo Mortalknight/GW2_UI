@@ -55,6 +55,9 @@ local function UpdateGridRaid10Frame(frame)
     frame.showRaidIndicatorTimer = GW.GridSettings.raidIndicatorTime
     frame.raidDebuffScale = GW.GridSettings.raidDebuffScale
     frame.raidDispelDebuffScale = GW.GridSettings.raidDispelDebuffScale
+    frame.showRoleIcon = GW.GridSettings.showRoleIcon.RAID10
+    frame.showTankIcon = GW.GridSettings.showTankIcon.RAID10
+    frame.showLeaderAssistIcon = GW.GridSettings.showLeaderAssistIcon.RAID10
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)

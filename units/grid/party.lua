@@ -54,6 +54,9 @@ local function UpdateGridPartyFrame(frame)
     frame.showRaidIndicatorTimer = GW.GridSettings.raidIndicatorTime
     frame.raidDebuffScale = GW.GridSettings.raidDebuffScale
     frame.raidDispelDebuffScale = GW.GridSettings.raidDispelDebuffScale
+    frame.showRoleIcon = GW.GridSettings.showRoleIcon.PARTY
+    frame.showTankIcon = GW.GridSettings.showTankIcon.PARTY
+    frame.showLeaderAssistIcon = GW.GridSettings.showLeaderAssistIcon.PARTY
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
@@ -64,7 +67,6 @@ local function UpdateGridPartyFrame(frame)
         elseif not GW.GridSettings.enabled.PARTY and frame:IsEnabled() then
             frame:Disable()
         end
-    
     end
 
     GW.Update_Healtbar(frame)

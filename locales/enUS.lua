@@ -592,3 +592,6 @@ L["Y-Offset"] = true
 L["Bottom left"] = true
 L["Bottom right"] = true
 L["Superbloom"] = true
+L["Role Icon"] = true
+L["Tank Icon"] = true
+L["Leader/Assist Icon"] = true

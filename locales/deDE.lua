@@ -622,3 +622,6 @@ L["Y-Offset"] = "Y-Versatz"
 L["Bottom left"] = "Unten Links"
 L["Bottom right"] = "Unten Rechts"
 L["Superbloom"] = "Superblüte"
+L["Role Icon"] = "Rollensymbol"
+L["Tank Icon"] = true
+L["Leader/Assist Icon"] = "Gruppenleiter- / Assistentsymbol"

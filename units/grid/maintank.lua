@@ -61,6 +61,9 @@ local function UpdateGridMaintankFrame(frame)
     frame.showRaidIndicatorTimer = GW.GridSettings.raidIndicatorTime
     frame.raidDebuffScale = GW.GridSettings.raidDebuffScale
     frame.raidDispelDebuffScale = GW.GridSettings.raidDispelDebuffScale
+    frame.showRoleIcon = GW.GridSettings.showRoleIcon.TANK
+    frame.showTankIcon = GW.GridSettings.showTankIcon.TANK
+    frame.showLeaderAssistIcon = GW.GridSettings.showLeaderAssistIcon.TANK
 
     frame:DisableElement("MiddleIcon")
 
