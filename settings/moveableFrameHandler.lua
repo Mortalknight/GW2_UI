@@ -8,6 +8,7 @@ local moveable_window_placeholders_visible = true
 local settings_window_open_before_change = false
 
 local AllTags = {}
+local grid
 
 local function filterHudMovers(filter)
     if filter then
@@ -171,105 +172,111 @@ local function HandleMoveHudEvents(self, event)
     end
 end
 
-local function Grid_GetRegion(mhgb)
-    if mhgb.grid then
-        if mhgb.grid.regionCount and mhgb.grid.regionCount > 0 then
-            local line = select(mhgb.grid.regionCount, mhgb.grid:GetRegions())
-            mhgb.grid.regionCount = mhgb.grid.regionCount - 1
+local function Grid_GetRegion()
+    if grid then
+        if grid.regionCount and grid.regionCount > 0 then
+            local line = select(grid.regionCount, grid:GetRegions())
+            grid.regionCount = grid.regionCount - 1
             line:SetAlpha(1)
             return line
         else
-            return mhgb.grid:CreateTexture()
+            return grid:CreateTexture()
         end
     end
 end
 
 local function create_grid(mhgb)
-    if not mhgb.grid then
-        mhgb.grid = CreateFrame("Frame", nil, UIParent)
-        mhgb.grid:SetFrameStrata("BACKGROUND")
+    if not grid then
+        grid = CreateFrame("Frame", "GW2_Grid", UIParent)
+        grid:SetFrameStrata("BACKGROUND")
     else
-        mhgb.grid.regionCount = 0
-        local numRegions = mhgb.grid:GetNumRegions()
-        for i = 1, numRegions do
-            local region = select(i, mhgb.grid:GetRegions())
+        grid.regionCount = 0
+        for _, region in next, { grid:GetRegions() } do
             if region and region.IsObjectType and region:IsObjectType("Texture") then
-                mhgb.grid.regionCount = mhgb.grid.regionCount + 1
+                grid.regionCount = grid.regionCount + 1
                 region:SetAlpha(0)
             end
         end
     end
 
-    local size = (1 / 0.64) - ((1 - (768 / GW.screenHeight)) / 0.64)
     local width, height = UIParent:GetSize()
+    local size, half = GW.mult * 0.5, height * 0.5
+
+    local gSize = mhgb.gridSize
+    local gHalf = gSize * 0.5
+
     local ratio = width / height
-    local hStepheight = height * ratio
-    local wStep = width / mhgb.gridSize
-    local hStep = hStepheight / mhgb.gridSize
+    local hHeight = height * ratio
+    local wStep = width / gSize
+    local hStep = hHeight / gSize
 
-    mhgb.grid.boxSize = mhgb.gridSize
-    mhgb.grid:SetPoint("CENTER", UIParent)
-    mhgb.grid:SetSize(width, height)
-    mhgb.grid:Hide()
+    grid.boxSize = gSize
+    grid:SetPoint("CENTER", UIParent)
+    grid:SetSize(width, height)
+    grid:Hide()
 
-    for i = 0, mhgb.gridSize do
-        local tx = Grid_GetRegion(mhgb)
-        if i == mhgb.gridSize / 2 then
+    for i = 0, gSize do
+        local tx = Grid_GetRegion()
+        if i == gHalf then
             tx:SetColorTexture(1, 0, 0)
             tx:SetDrawLayer("BACKGROUND", 1)
         else
             tx:SetColorTexture(0, 0, 0)
             tx:SetDrawLayer("BACKGROUND", 0)
         end
+        local iwStep = i * wStep
         tx:ClearAllPoints()
-        tx:SetPoint("TOPLEFT", mhgb.grid, "TOPLEFT", i * wStep - (size / 2), 0)
-        tx:SetPoint("BOTTOMRIGHT", mhgb.grid, "BOTTOMLEFT", i * wStep + (size / 2), 0)
+        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", iwStep - size, 0)
+        tx:SetPoint("BOTTOMRIGHT", grid, "BOTTOMLEFT", iwStep + size, 0)
     end
 
     do
-        local tx = Grid_GetRegion(mhgb)
+        local tx = Grid_GetRegion()
         tx:SetColorTexture(1, 0, 0)
         tx:SetDrawLayer("BACKGROUND", 1)
         tx:ClearAllPoints()
-        tx:SetPoint("TOPLEFT", mhgb.grid, "TOPLEFT", 0, -(height / 2) + (size / 2))
-        tx:SetPoint("BOTTOMRIGHT", mhgb.grid, "TOPRIGHT", 0, -(height / 2 + size / 2))
+        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -half + size)
+        tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(half + size))
     end
 
-    for i = 1, floor((height / 2) / hStep) do
-        local tx = Grid_GetRegion(mhgb)
-        tx:SetColorTexture(0, 0, 0)
-        tx:SetDrawLayer("BACKGROUND", 0)
-        tx:ClearAllPoints()
-        tx:SetPoint("TOPLEFT", mhgb.grid, "TOPLEFT", 0, -(height / 2 + i * hStep) + (size / 2))
-        tx:SetPoint("BOTTOMRIGHT", mhgb.grid, "TOPRIGHT", 0, -(height / 2 + i * hStep + size / 2))
+    local hSteps = floor((height * 0.5) / hStep)
+    for i = 1, hSteps do
+        local ihStep = i * hStep
 
-        tx = Grid_GetRegion(mhgb)
+        local tx = Grid_GetRegion()
         tx:SetColorTexture(0, 0, 0)
         tx:SetDrawLayer("BACKGROUND", 0)
         tx:ClearAllPoints()
-        tx:SetPoint("TOPLEFT", mhgb.grid, "TOPLEFT", 0, -(height / 2 - i * hStep) + (size / 2))
-        tx:SetPoint("BOTTOMRIGHT", mhgb.grid, "TOPRIGHT", 0, -(height / 2 - i * hStep + size / 2))
+        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(half+ihStep) + size)
+        tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(half+ihStep + size))
+
+        tx = Grid_GetRegion()
+        tx:SetColorTexture(0, 0, 0)
+        tx:SetDrawLayer("BACKGROUND", 0)
+        tx:ClearAllPoints()
+        tx:SetPoint("TOPLEFT", grid, "TOPLEFT", 0, -(half-ihStep) + size)
+        tx:SetPoint("BOTTOMRIGHT", grid, "TOPRIGHT", 0, -(half-ihStep + size))
     end
 end
 
 local function Grid_Show_Hide(self)
     local self = self:GetParent()
     if self.showGrid.forceHide then
-        if self.showGrid.grid then
-            self.showGrid.grid:Hide()
+        if grid then
+            grid:Hide()
         end
         self.gridAlign:Hide()
         self.showGrid.forceHide = false
         self.showGrid:SetText(L["Show grid"])
     else
-        if not self.showGrid.grid then
+        if not grid then
             create_grid(self.showGrid)
-        elseif self.showGrid.grid.boxSize ~= self.showGrid.gridSize then
-            self.showGrid.grid:Hide()
+        elseif grid.boxSize ~= self.showGrid.gridSize then
+            grid:Hide()
             create_grid(self.showGrid)
         end
         self.gridAlign:Show()
-        self.showGrid.grid:Show()
+        grid:Show()
         self.showGrid.forceHide = true
         self.showGrid:SetText(L["Hide grid"])
     end
@@ -740,8 +747,8 @@ local function LoadMovers(layoutManager)
 
     --set correct separator rotation
     local angle = math.rad(90)
-	local cos, sin = math.cos(angle), math.sin(angle)
-	smallSettingsContainer.seperator:SetTexCoord((sin - cos), -(cos + sin), -cos, -sin, sin, -cos, 0, 0)
+    local cos, sin = math.cos(angle), math.sin(angle)
+    smallSettingsContainer.seperator:SetTexCoord((sin - cos), -(cos + sin), -cos, -sin, sin, -cos, 0, 0)
 
     smallSettingsContainer.headerString:SetFont(UNIT_NAME_FONT, 14, "")
     smallSettingsContainer.headerString:SetTextColor(255 / 255, 241 / 255, 209 / 255)
@@ -802,7 +809,6 @@ local function LoadMovers(layoutManager)
     smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid:SetText(L["Show grid"])
     smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid.gridSize = 64
     smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid.forceHide = false
-    create_grid(smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid)
 
     smallSettingsContainer.moverSettingsFrame.defaultButtons.gridAlign.input:SetScript("OnEscapePressed", function(eb)
         eb:SetText(smallSettingsContainer.moverSettingsFrame.defaultButtons.showGrid.gridSize)
