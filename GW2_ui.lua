@@ -463,7 +463,7 @@ local function evAddonLoaded(_, addonName)
     GW.LoadWeeklyRewardsSkin()
     GW.LoadPerksProgramSkin()
     GW.preLoadStatusBarMaskTextures()
-    
+
   --  GW.LoadStatusbarTest()
 end
 AFP("evAddonLoaded", evAddonLoaded)
@@ -840,7 +840,7 @@ local function gw_OnEvent(self, event, ...)
     if event == "PLAYER_LOGIN" then
         evPlayerLogin(self)
     elseif event == "UI_SCALE_CHANGED" then
-        evUiScaleChanged()
+        C_Timer.After(0, evUiScaleChanged) -- We need one frame time for setting the cvar values
     elseif event == "PLAYER_LEAVING_WORLD" then
         evPlayerLeavingWorld()
     elseif event == "PLAYER_ENTERING_WORLD" then
