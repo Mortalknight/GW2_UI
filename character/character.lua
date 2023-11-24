@@ -449,7 +449,8 @@ local function loadBaseFrame()
             end
             fmGCW.backgroundMask:SetPoint("BOTTOMRIGHT", fmGCW.background, "BOTTOMLEFT", lerp(-64, fmGCW.background:GetWidth(), p) , 0)
         end, 1, function()
-            fmGCW.backgroundMask:SetPoint("BOTTOMRIGHT", fmGCW.background, "BOTTOMLEFT", fmGCW.background:GetWidth() + 200 , 0)
+            fmGCW.backgroundMask:SetPoint("TOPLEFT", fmGCW.background, "TOPLEFT", -64, 64)
+            fmGCW.backgroundMask:SetPoint("BOTTOMRIGHT", fmGCW.background, "BOTTOMLEFT",-64, 0)
         end)
     end)
 
