@@ -991,8 +991,6 @@ GW_DEFAULT["player_pos"]["yOfs"] = -100
 GW_DEFAULT["player_pos"]["hasMoved"] = false
 GW_DEFAULT["player_pos_scale"] = 1
 
-GW_DEFAULT["boss_frame_extra_energy_bar"] = GW.copyTable(nil, GW.bossFrameExtraEnergyBar)
-
 GW_DEFAULT["WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"] = true
 GW_DEFAULT["WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE"] = false
 GW_DEFAULT["WORLD_EVENTS_COMMUNITY_FEAST_ALERT"] = true

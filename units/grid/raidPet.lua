@@ -57,9 +57,8 @@ local function UpdateGridRaidPetFrame(frame)
     frame.raidDebuffScale = GW.GridSettings.raidDebuffScale
     frame.raidDispelDebuffScale = GW.GridSettings.raidDispelDebuffScale
 
-    frame:DisableElement("MiddleIcon")
-
     if not InCombatLockdown() then
+        frame:DisableElement("MiddleIcon")
         frame:SetSize(frame.unitWidth, frame.unitHeight)
         frame:ClearAllPoints()
 
