@@ -564,7 +564,7 @@
         </Frames>
     </Frame>
 
-    <Button name="GwQuestTrackerBossFrameTemp" virtual="true" hidden="true">
+    <Button name="GwQuestTrackerBossFrameTemp" inherits="SecureUnitButtonTemplate"  virtual="true" hidden="true">
         <Size x="300" y="60"></Size>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"></Anchor>
