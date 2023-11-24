@@ -411,6 +411,17 @@ local function CreateTrackerObject(name, parent)
         end
     end)
 
+    f.turnin:SetScale(GwQuestTracker:GetScale() * 0.9)
+    f.popupQuestAccept:SetScale(GwQuestTracker:GetScale() * 0.9)
+    f.groupButton:SetScale(GwQuestTracker:GetScale() * 0.9)
+
+    -- hooks for scaling
+    hooksecurefunc(GwQuestTracker, "SetScale", function(_, scale)
+        f.turnin:SetScale(scale * 0.9)
+        f.popupQuestAccept:SetScale(scale * 0.9)
+        f.groupButton:SetScale(scale * 0.9)
+    end)
+
     return f
 end
 GW.CreateTrackerObject = CreateTrackerObject
