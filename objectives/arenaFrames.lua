@@ -70,7 +70,7 @@ local function updateArenaFrameHeight(self)
         end
     end
     self.oldHeight = GW.RoundInt(self:GetHeight())
-    self:SetHeight(i > 0 and (35 * i) or 1)
+    self:SetHeight(i > 0 and (48 * i) or 1)
 end
 GW.AddForProfiling("arenaFrames", "updateArenaFrameHeight", updateArenaFrameHeight)
 
@@ -93,6 +93,7 @@ local function updateArena_Power(self)
     local powerType, powerToken, altR, altG, altB = UnitPowerType(self.unit)
     local power = UnitPower(self.unit, powerType)
     local powerMax = UnitPowerMax(self.unit, powerType)
+    local powerPercentage = 0
 
     if PowerBarColorCustom[powerToken] then
         local pwcolor = PowerBarColorCustom[powerToken]
@@ -101,8 +102,13 @@ local function updateArena_Power(self)
         self.power:SetStatusBarColor(altR or 0, altG or 0, altB or 0)
     end
 
+    if power > 0 and powerMax > 0 then
+        powerPercentage = power / powerMax
+    end
+
     self.power:SetMinMaxValues(0, powerMax)
     self.power:SetValue(power)
+    self.power.value:SetText(GW.RoundInt(powerPercentage * 100) .. "%")
 end
 GW.AddForProfiling("arenaFrames", "updateArena_Power", updateArena_Power)
 
@@ -147,7 +153,7 @@ local function updateArena_Name(self)
     self.guid = UnitGUID(self.unit)
     self.class = select(2, UnitClass(self.unit))
     self.classIndex = select(3, UnitClass(self.unit))
-    if self.class then 
+    if self.class then
         SetClassIcon(self.icon, self.classIndex)
         local color = GWGetClassColor(self.class, true)
         self.health:SetStatusBarColor(
@@ -189,7 +195,7 @@ local function registerFrame(i, container)
     local arenaFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerAreanaFrameTemp")
     local unit = "arena" .. i
     local yOffset = GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
-    local p = yOffset + ((35 * i) - 35)
+    local p = yOffset + ((48 * i) - 48)
 
     arenaFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 
@@ -199,7 +205,7 @@ local function registerFrame(i, container)
 
     arenaFrame:SetAttribute("unit", unit)
     arenaFrame:SetAttribute("*type1", "target")
-    arenaFrame:SetAttribute("*type2", "showmenu")
+    arenaFrame:SetAttribute("*type2", "togglemenu")
 
     AddToClique(arenaFrame)
 
@@ -213,8 +219,6 @@ local function registerFrame(i, container)
     arenaFrame.icon:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\party\\classicons")
 
     arenaFrame.power.value:Hide()
-    arenaFrame.power.name:Hide()
-    arenaFrame.powerBarbg:Hide()
 
     arenaFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     arenaFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -268,7 +272,7 @@ GW.AddForProfiling("arenaFrames", "registerFrame", registerFrame)
 local function registerPrepFrame(i, container)
     local arenaPrepFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerArenaPrepFrameTemp")
     local yOffset = GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
-    local p = yOffset + ((35 * i) - 35)
+    local p = yOffset + ((48 * i) - 48)
 
     arenaPrepFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 

@@ -63,7 +63,6 @@ local function updateBoss_Power(self)
 
     self.power:SetMinMaxValues(0, powerMax)
     self.power:SetValue(power)
-    self.power.name:SetText(getglobal(powerToken) or UNKNOWN)
     self.power.value:SetText(GW.RoundInt(powerPercentage * 100) .. "%")
 end
 GW.AddForProfiling("bossFrames", "updateBoss_Power", updateBoss_Power)
@@ -128,6 +127,14 @@ local function bossFrameOnHide(self)
     end
 end
 
+local function bossFrame_OnEnter(self)
+    if self.unit ~= nil then
+        GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
+        GameTooltip:SetUnit(self.unit)
+        GameTooltip:Show()
+    end
+end
+
 local function bossFrame_OnEvent(self, event)
     if not self:IsShown() then return end
 
@@ -165,7 +172,7 @@ local function registerFrame(i, yOffset)
 
     bossFrame:SetAttribute("unit", unit)
     bossFrame:SetAttribute("*type1", "target")
-    bossFrame:SetAttribute("*type2", "showmenu")
+    bossFrame:SetAttribute("*type2", "togglemenu")
 
     AddToClique(bossFrame)
 
@@ -201,6 +208,8 @@ local function registerFrame(i, yOffset)
     bossFrame:SetScript("OnShow", bossFrameOnShow)
     bossFrame:SetScript("OnHide", bossFrameOnHide)
     bossFrame:SetScript("OnEvent", bossFrame_OnEvent)
+    bossFrame:SetScript("OnEnter", bossFrame_OnEnter)
+    bossFrame:SetScript("OnLeave", GameTooltip_Hide)
 
     return bossFrame
 end
