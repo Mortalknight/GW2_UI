@@ -592,7 +592,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar name="$parentHealthBar" parentKey="health" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            <StatusBar name="$parentHealthBar" parentKey="health">
                 <Size x="280" y="10"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
@@ -650,7 +650,7 @@
                     </Layer>
                 </Layers>
             </StatusBar>
-            <StatusBar name="$parentPowerBar" parentKey="power" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            <StatusBar name="$parentPowerBar" parentKey="power">
                 <Size x="280" y="8"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-33"></Anchor>
@@ -737,7 +737,7 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar name="$parentStatusBar" parentKey="health" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            <StatusBar name="$parentStatusBar" parentKey="health" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="280" y="10"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-20"></Anchor>
@@ -786,7 +786,7 @@
                     </Layer>
                 </Layers>
             </StatusBar>
-            <StatusBar name="$parentStatusBar" parentKey="power" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            <StatusBar name="$parentStatusBar" parentKey="power" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="280" y="8"></Size>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-33"></Anchor>

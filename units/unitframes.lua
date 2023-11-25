@@ -1031,7 +1031,7 @@ local function LoadTarget()
         fctf.unit = NewUnitFrame.unit
 
         local font = fctf:CreateFontString(nil, "OVERLAY")
-        font:SetFont(DAMAGE_TEXT_FONT, 30)
+        font:SetFont(DAMAGE_TEXT_FONT, 30, "")
         fctf.fontString = font
         font:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER")
         font:Hide()

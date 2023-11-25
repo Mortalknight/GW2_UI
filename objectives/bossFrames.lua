@@ -95,6 +95,21 @@ local function updateBoss_RaidMarkers(self)
 end
 GW.AddForProfiling("bossFrames", "updateBoss_RaidMarkers", updateBoss_RaidMarkers)
 
+local function updateHealthbarColor(self)
+    local unitReaction = UnitReaction(self.unit, "player")
+    local nameColor = unitReaction and GW.FACTION_BAR_COLORS[unitReaction] or RAID_CLASS_COLORS.PRIEST
+
+    if unitReaction then
+        if unitReaction <= 3 then nameColor = GW.COLOR_FRIENDLY[2] end --Enemy
+        if unitReaction >= 5 then nameColor = GW.COLOR_FRIENDLY[1] end --Friend
+    end
+
+    if UnitIsTapDenied(self.unit) then
+        nameColor = {r = 159 / 255, g = 159 / 255, b = 159 / 255}
+    end
+    self.health:SetStatusBarColor(nameColor.r, nameColor.g, nameColor.b, 1)
+end
+
 local function bossFrameOnShow(self)
     local compassData = {}
 
@@ -117,6 +132,7 @@ local function bossFrameOnShow(self)
     updateBoss_Power(self)
     updateBoss_RaidMarkers(self)
     updateBossFrameHeight()
+    updateHealthbarColor(self)
 end
 
 local function bossFrameOnHide(self)
@@ -146,12 +162,15 @@ local function bossFrame_OnEvent(self, event)
         updateBoss_Name(self)
     elseif event == "RAID_TARGET_UPDATE" then
         updateBoss_RaidMarkers(self)
+    elseif event == "UNIT_FACTION" then
+        updateHealthbarColor(self)
     elseif event == "PLAYER_ENTERING_WORLD" or event == "UNIT_NAME_UPDATE" or event == "INSTANCE_ENCOUNTER_ENGAGE_UNIT" then
         updateBoss_Name(self)
         updateBoss_Health(self)
         updateBoss_Power(self)
         updateBoss_RaidMarkers(self)
         updateBossFrameHeight()
+        updateHealthbarColor(self)
     end
 end
 GW.AddForProfiling("bossFrames", "bossFrame_OnEvent", bossFrame_OnEvent)
@@ -184,11 +203,6 @@ local function registerFrame(i, yOffset)
     bossFrame.name:SetShadowOffset(1, -1)
     bossFrame.marker:Hide()
 
-    bossFrame.health:SetStatusBarColor(
-        TRACKER_TYPE_COLOR.BOSS.r,
-        TRACKER_TYPE_COLOR.BOSS.g,
-        TRACKER_TYPE_COLOR.BOSS.b
-    )
     bossFrame.icon:SetVertexColor(
         TRACKER_TYPE_COLOR.BOSS.r,
         TRACKER_TYPE_COLOR.BOSS.g,
@@ -204,6 +218,7 @@ local function registerFrame(i, yOffset)
     bossFrame:RegisterUnitEvent("UNIT_MAXPOWER", unit)
     bossFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", unit)
     bossFrame:RegisterUnitEvent("UNIT_NAME_UPDATE", unit)
+    bossFrame:RegisterUnitEvent("UNIT_FACTION", unit)
 
     bossFrame:SetScript("OnShow", bossFrameOnShow)
     bossFrame:SetScript("OnHide", bossFrameOnHide)
