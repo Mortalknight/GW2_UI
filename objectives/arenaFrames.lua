@@ -115,35 +115,28 @@ GW.AddForProfiling("arenaFrames", "updateArena_Power", updateArena_Power)
 local function updateArena_Name(self)
     local inArena = GetZonePVPInfo()
     local inBG = UnitInBattleground("player")
-    local guidTarget = UnitGUID("target")
-    local specID = GetArenaOpponentSpec(self.id)
     local nameString = UNKNOWNOBJECT
-    local name
-
-    if UnitName(self.unit) ~= nil then
-        name = UnitName(self.unit)
-    else
-        name = UNKNOWNOBJECT
-    end
+    local name = UnitName(self.unit) or UNKNOWNOBJECT
 
     if inArena == "arena" then
+        local specID = GetArenaOpponentSpec(self.id)
         if specID == nil then
             return
         else
             if specID and specID > 0 then
                 local _, specName, _, _, role = GetSpecializationInfoByID(specID, UnitSex(self.unit))
-                if nameRoleIcon[role] ~= nil then
+                if role and nameRoleIcon[role] and specName and name then
                     nameString = nameRoleIcon[role] .. name .. " - " .. specName
                 end
             end
         end
     elseif inBG ~= nil then
         local role = UnitGroupRolesAssigned(self.unit)
-        local englishFaction, localizedFaction = UnitFactionGroup(self.unit)
-        if role == nil or englishFaction == nil or localizedFaction == nil then
-            return
-        else
+        local englishFaction = UnitFactionGroup(self.unit)
+        if role and nameRoleIcon[role] and englishFaction and FractionIcon[englishFaction] and name then
             nameString = FractionIcon[englishFaction] .. nameRoleIcon[role] .. name
+        else
+            return
         end
     else
         return
@@ -156,14 +149,9 @@ local function updateArena_Name(self)
     if self.class then
         SetClassIcon(self.icon, self.classIndex)
         local color = GWGetClassColor(self.class, true)
-        self.health:SetStatusBarColor(
-            color.r,
-            color.g,
-            color.b,
-            color.a
-        )
+        self.health:SetStatusBarColor(color.r, color.g, color.b, color.a)
     end
-    if self.guid == guidTarget then
+    if self.guid == UnitGUID("target") then
         self.name:SetFont(UNIT_NAME_FONT, 14)
     else
         self.name:SetFont(UNIT_NAME_FONT, 12)
