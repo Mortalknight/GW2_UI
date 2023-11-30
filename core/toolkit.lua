@@ -509,6 +509,32 @@ local function StyleButton(button, noHover, noPushed, noChecked)
 	end
 end
 
+local btns = {MaximizeButton = "up", MinimizeButton = "down"}
+local function GwHandleMaxMinFrame(frame)
+    if frame.isSkinned then return end
+
+    frame:StripTextures(true)
+
+    for name, direction in pairs(btns) do
+        local button = frame[name]
+        if button then
+            button:SetSize(20, 20)
+            button:ClearAllPoints()
+            button:SetPoint("CENTER")
+            button:SetHitRectInsets(1, 1, 1, 1)
+            button:GetHighlightTexture():Kill()
+
+            button:SetNormalTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
+            button:GetNormalTexture():SetRotation(ArrowRotation[direction])
+
+            button:SetPushedTexture("Interface/AddOns/GW2_UI/Textures/uistuff/arrowup_down")
+            button:GetPushedTexture():SetRotation(ArrowRotation[direction])
+        end
+    end
+
+    frame.isSkinned = true
+end
+
 local function addapi(object)
     local mt = getmetatable(object).__index
     if not object.Kill then mt.Kill = Kill end
@@ -525,6 +551,7 @@ local function addapi(object)
     if not object.SetOutside then mt.SetOutside = SetOutside end
     if not object.SetInside then mt.SetInside = SetInside end
     if not object.StyleButton then mt.StyleButton = StyleButton end
+    if not object.GwHandleMaxMinFrame then mt.GwHandleMaxMinFrame = GwHandleMaxMinFrame end
 end
 
 local handled = {["Frame"] = true}

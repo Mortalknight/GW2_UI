@@ -453,7 +453,7 @@ local function loadAddon(self)
         GW.SkinWorldMap()
     end
 
-
+    GW.AddCoordsToWorldMap()
     --Create hud art
     hudArtFrame = GW.LoadHudArt()
 
