@@ -676,7 +676,7 @@ function QuestViewMixin:evQuestProgress()
 end
 
 function QuestViewMixin:evQuestDetail(questStartItemID)
-    if (questStartItemID ~= nil and questStartItemID ~= 0) or QuestIsFromAreaTrigger() then
+    if (questStartItemID ~= nil and questStartItemID ~= 0) or (QuestGetAutoAccept() and QuestIsFromAreaTrigger()) then
         if GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
             AcknowledgeAutoAcceptQuest()
         end
