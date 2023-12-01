@@ -12,7 +12,7 @@ local tomTomWaypoint = nil
 
 local function AddTomTomWaypoint(questId, objective)
     if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
-        local QuestieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(questId)
+        local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(questId)
         local spawn, zone, name = QuestieLoader:ImportModule("QuestieMap"):GetNearestQuestSpawn(QuestieQuest)
         if (not spawn) and objective ~= nil then
             spawn, zone, name = QuestieMap:GetNearestSpawn(objective)
@@ -705,11 +705,11 @@ local function OnBlockClick(self, button)
 
         -- if we have objectives, we add them needs Questi
         if Questie and Questie.started then
-            local QuestieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(self.questID)
+            local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(self.questID) or {}
             for _, objective in pairs(QuestieQuest.Objectives) do
                 local objectiveMenu = {}
 
-                if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
+                if TomTom and TomTom.AddWaypoint then
                     tinsert(objectiveMenu, {text = GW.L["Set TomTom Target"], hasArrow = false, notCheckable = true, func = function() AddTomTomWaypoint(self.questID, objective) end})
                 end
 
@@ -724,7 +724,7 @@ local function OnBlockClick(self, button)
                 for _, objective in pairs(QuestieQuest.SpecialObjectives) do
                     local objectiveMenu = {}
 
-                    if TomTom and TomTom.AddWaypoint and Questie and Questie.started then
+                    if TomTom and TomTom.AddWaypoint then
                         tinsert(objectiveMenu, {text = GW.L["Set TomTom Target"], hasArrow = false, notCheckable = true, func = function() AddTomTomWaypoint(self.questID, objective) end})
                     end
 
@@ -753,7 +753,7 @@ local function OnBlockClick(self, button)
 
         if Questie and Questie.started and self.isComplete then
             tinsert(menuList, {text = GW.L["Show on Map"], notCheckable = true, func = function()
-                local QuestieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(self.questID)
+                local QuestieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(self.questID)
                 QuestieLoader:ImportModule("TrackerUtils"):ShowFinisherOnMap(QuestieQuest)
             end})
         end
@@ -807,7 +807,7 @@ local function AddQuestInfos(questId, questLogIndex, watchId)
     local isFailed = false
 
     if Questie and Questie.started then
-        local questieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(questId)
+        local questieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(questId)
         if questieQuest and questieQuest.sourceItemId then
             sourceItemId = questieQuest.sourceItemId
         end
@@ -980,8 +980,8 @@ local function updateQuestLogLayout(self)
             local QuestieDB = QuestieLoader:ImportModule("QuestieDB")
             if QuestieTrackerUtils and QuestieDB then
                 table.sort(sorted, function(a, b)
-                    local qA = QuestieDB:GetQuest(a.questId)
-                    local qB = QuestieDB:GetQuest(b.questId)
+                    local qA = QuestieDB.GetQuest(a.questId)
+                    local qB = QuestieDB.GetQuest(b.questId)
                     local qAZone, qBZone
                     if qA.zoneOrSort > 0 then
                         qAZone = QuestieTrackerUtils:GetZoneNameByID(qA.zoneOrSort)
