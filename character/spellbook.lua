@@ -45,11 +45,13 @@ local function spell_buttonOnEnter(self)
         end
     else
         GameTooltip:SetSpellByID(self.spellId)
-        GameTooltip:AddLine(' ')
-        if self.requiredLevel <= GW.mylevel then
-            GameTooltip:AddLine("|c0423ff2f" .. AVAILABLE .. "|r", 1, 1, 1)
-        else
-            GameTooltip:AddLine("|c00ff0000" .. UNLOCKED_AT_LEVEL:format(self.requiredLevel) .. "|r", 1, 1, 1)
+        if self.requiredLevel then
+            GameTooltip:AddLine(' ')
+            if self.requiredLevel <= GW.mylevel then
+                GameTooltip:AddLine("|c0423ff2f" .. AVAILABLE .. "|r", 1, 1, 1)
+            else
+                GameTooltip:AddLine("|c00ff0000" .. UNLOCKED_AT_LEVEL:format(self.requiredLevel) .. "|r", 1, 1, 1)
+            end
         end
         if self.money then
             GameTooltip:AddDoubleLine(COSTS_LABEL, GW.FormatMoneyForChat(self.money))
@@ -589,9 +591,7 @@ local function updateSpellbookTab()
             local ispassive = IsPassiveSpell(spellID)
 
             if spellBookTabs == 2 then
-                print(name, rank, spellID, skillType, IsSpellHidden(spellIndex, BOOKTYPE))
                 local hidden = GetClassicExpansionLevel() < LE_EXPANSION_WRATH_OF_THE_LICH_KING and spellIndex and IsSpellHidden(spellIndex, BOOKTYPE);
-
             end
 
             rank = rank and string.match(rank, "[%d]") or ""
@@ -678,14 +678,11 @@ local function LoadSpellBook()
     CreateFrame('Frame', 'GwSpellbook', GwCharacterWindow, 'GwSpellbook')
     CreateFrame('Frame', 'GwSpellbookMenu', GwSpellbook, 'GwSpellbookMenu')
 
-
-    GwSpellbook.showAllSpellRanks:Hide() -- seasonal
-    SetCVar("ShowAllSpellRanks", 1)
-    --GwSpellbook.showAllSpellRanks.checkbutton:SetScript("OnClick", function(self)
-    --    SetCVar("ShowAllSpellRanks", self:GetChecked())
-    --    updateSpellbookTab()
-    --    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-    --end)
+    GwSpellbook.showAllSpellRanks.checkbutton:SetScript("OnClick", function(self)
+        SetCVar("ShowAllSpellRanks", self:GetChecked())
+        updateSpellbookTab()
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    end)
     spellBookMenu_onLoad(GwSpellbookMenu)
     GwSpellbookMenu:RegisterEvent("PLAYER_ENTERING_WORLD")
     GwSpellbook:Hide()

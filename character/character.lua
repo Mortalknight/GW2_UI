@@ -732,7 +732,7 @@ function LoadHonorTab()
             GWHonorFrameLifeTimeHKValue:SetPoint("RIGHT")
             GWHonorFrameLifeTimeHKText:SetFont(GWHonorFrameLifeTimeHKText:GetFont(), 14, "")
             GWHonorFrameLifeTimeHKValue:SetFont(GWHonorFrameLifeTimeHKValue:GetFont(), 14, "")
-            
+
             local DKLT = CreateFrame("Frame", "GWHonorFrameLifeTimeDK", GwPaperHonor, "HonorFrameDKButtonTemplate")
             DKLT:SetPoint("TOPLEFT", slot.Header, "TOPLEFT", 15, -45)
             DKLT:SetWidth(slot:GetWidth() - 30)
@@ -946,12 +946,61 @@ local function grabDefaultSlots(slot, anchor, parent, size)
     slot.IsGW2Hooked = true
 end
 
+local function SetUpEngravingFrame()
+    if not C_Engraving.IsEngravingEnabled() then
+		return
+	end
+
+    if not C_AddOns.IsAddOnLoaded("Blizzard_EngravingUI") then
+        UIParentLoadAddOn("Blizzard_EngravingUI");
+    end
+
+    EngravingFrame:ClearAllPoints()
+    EngravingFrame:SetPoint("TOPLEFT", GwCharacterWindow, "TOPRIGHT", 10, -70)
+
+    if not EngravingFrame.gw2Skinned then
+        GW.HandlePortraitFrame(EngravingFrame, true)
+        EngravingFrame.Border.NineSlice:Kill()
+        EngravingFrameSideInset:StripTextures()
+
+        GW.SkinTextBox(EngravingFrameSearchBoxMiddle, EngravingFrameSearchBoxLeft, EngravingFrameSearchBoxRight)
+        EngravingFrameFilterDropDown:SkinDropDownMenu(30, nil, 50)
+        EngravingFrameScrollFrame:SkinScrollFrame()
+        EngravingFrameScrollFrameScrollBar:SkinScrollBar()
+
+        hooksecurefunc('EngravingFrame_UpdateRuneList', function()
+            local categories = C_Engraving.GetRuneCategories(true, true)
+            local numHeaders = #categories
+            for i = 1, numHeaders do
+                if not _G['EngravingFrameHeader'..i].isSkinned then
+                    _G['EngravingFrameHeader'..i]:StripTextures()
+                    _G['EngravingFrameHeader'..i]:CreateBackdrop('Transparent')
+                    _G['EngravingFrameHeader'..i].isSkinned = true
+                end
+            end
+        end)
+        local buttons = EngravingFrame.scrollFrame.buttons
+		local numButtons = #buttons
+		for i = 1, numButtons do
+			if not _G['EngravingFrameScrollFrameButton'..i].isSkinned then
+				_G['EngravingFrameScrollFrameButton'..i]:SkinButton(false, true)
+                GW.HandleIcon(_G['EngravingFrameScrollFrameButton'..i .. "Icon"])
+				_G['EngravingFrameScrollFrameButton'..i].isSkinned = true
+			end
+		end
+
+        EngravingFrame.gw2Skinned = true
+    end
+end
+
 local function LoadPaperDoll()
     CreateFrame("Frame", "GwCharacterWindowContainer", GwCharacterWindow, "GwCharacterWindowContainer")
     CreateFrame("Button", "GwDressingRoom", GwCharacterWindowContainer, "GwDressingRoom")
     CreateFrame("Frame", "GwCharacterMenu", GwCharacterWindowContainer, "GwCharacterMenu")
     CreateFrame("Frame", "GwPaperHonor", GwCharacterWindowContainer, "GwPaperHonor")
     CreateFrame("Frame", "GwPaperSkills", GwCharacterWindowContainer, "GwPaperSkills")
+
+    tinsert(UISpecialFrames, "GwCharacterWindow")
 
     --Legacy pet window
     CreateFrame("Frame", "GwPetContainer", GwCharacterWindowContainer, "GwPetContainer")
@@ -1057,6 +1106,15 @@ local function LoadPaperDoll()
 
     GwPaperHonor.buttons = {}
     LoadHonorTab()
+
+    SetUpEngravingFrame()
+    GwCharacterWindow:HookScript("OnShow", ToggleEngravingFrame)
+    GwCharacterWindow:HookScript("OnHide", function()
+        if ( EngravingFrame and EngravingFrame:IsVisible() ) then
+            EngravingFrame:Hide();
+            RuneFrameControlButton:SetChecked(false);
+        end
+    end)
 
     GwDressingRoomPet.model.expBar:SetScript("OnEnter", function(self)
         self.value:Show()

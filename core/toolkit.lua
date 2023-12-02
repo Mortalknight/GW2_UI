@@ -120,8 +120,8 @@ local function AddHover(self)
         self.hover = hover
         self.hover:SetAlpha(0)
 
-        self:SetScript("OnEnter", GwStandardButton_OnEnter)
-        self:SetScript("OnLeave", GwStandardButton_OnLeave)
+        self:HookScript("OnEnter", GwStandardButton_OnEnter)
+        self:HookScript("OnLeave", GwStandardButton_OnLeave)
     end
 end
 
@@ -192,10 +192,12 @@ local function BackdropFrameLower(backdrop, parent)
     end
 end
 
-local function CreateBackdrop(frame, backdropTexture, isBorder, setOffset)
+local function CreateBackdrop(frame, template, isBorder, xOffset, yOffset, xShift, yShift)
     local parent = (frame.IsObjectType and frame:IsObjectType("Texture") and frame:GetParent()) or frame
-    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent, "BackdropTemplate")
+    local backdrop = frame.backdrop or CreateFrame("Frame", nil, parent)
     if not frame.backdrop then frame.backdrop = backdrop end
+
+    frame.template = template or "Default"
 
     if not backdrop.SetBackdrop then
         _G.Mixin(backdrop, _G.BackdropTemplateMixin)
@@ -204,6 +206,7 @@ local function CreateBackdrop(frame, backdropTexture, isBorder, setOffset)
 
     local frameLevel = parent.GetFrameLevel and parent:GetFrameLevel()
     local frameLevelMinusOne = frameLevel and (frameLevel - 1)
+
     if frameLevelMinusOne and (frameLevelMinusOne >= 0) then
         backdrop:SetFrameLevel(frameLevelMinusOne)
     else
@@ -213,18 +216,38 @@ local function CreateBackdrop(frame, backdropTexture, isBorder, setOffset)
     if isBorder then
         local trunc = function(s) return s >= 0 and s-s%01 or s-s%-1 end
         local round = function(s) return s >= 0 and s-s%-1 or s-s%01 end
-        local x = setOffset and setOffset or ((GW.mult == 1 or 2 == 0) and 2 or ((GW.mult < 1 and trunc(2 / GW.mult) or round(2 / GW.mult)) * GW.mult))
-        local y = setOffset and setOffset or ((GW.mult == 1 or 2 == 0) and 2 or ((GW.mult < 1 and trunc(2 / GW.mult) or round(2 / GW.mult)) * GW.mult))
+        local x = (GW.mult == 1 or (xOffset or 2) == 0) and (xOffset or 2) or ((GW.mult < 1 and trunc((xOffset or 2) / GW.mult) or round((xOffset or 2) / GW.mult)) * GW.mult)
+        local y = (GW.mult == 1 or (yOffset or 2) == 0) and (yOffset or 2) or ((GW.mult < 1 and trunc((yOffset or 2) / GW.mult) or round((yOffset or 2) / GW.mult)) * GW.mult)
 
-        backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -x, y)
-        backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", x, -y)
-
+        xShift = xShift or 0
+        yShift = yShift or 0
+        backdrop:SetPoint("TOPLEFT", frame, "TOPLEFT", -(x + xShift), (y - yShift))
+        backdrop:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", (x - xShift), -(y + yShift))
     else
         backdrop:SetAllPoints()
     end
 
-    if backdropTexture then
-        backdrop:SetBackdrop(backdropTexture)
+    if template == "Transparent" then
+        backdrop:SetBackdrop({
+            edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+            bgFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background",
+            edgeSize = GW.Scale(1)
+        })
+    elseif template == "Transparent White" then
+        backdrop:SetBackdrop({
+            edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+            edgeSize = GW.Scale(1)
+        })
+
+        backdrop:SetBackdropColor(1, 1, 1, 0.4)
+    elseif template == "ScrollBar" then
+        backdrop:SetBackdrop({
+            bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/scrollbarmiddle",
+            edgeSize = GW.Scale(1)
+        })
+    elseif template then
+        backdrop:SetBackdrop(template)
     else
         backdrop:SetBackdrop(nil)
     end
@@ -362,17 +385,25 @@ local function SkinScrollBar(frame)
     end
 end
 
-local function SkinDropDownMenu(frame, buttonPaddindX)
+local function SkinDropDownMenu(frame, buttonPaddindX, backdropTemplate, textBoxRightOffset)
     local frameName = frame.GetName and frame:GetName()
     local button = frame.Button or frameName and (_G[frameName .. "Button"] or _G[frameName .. "_Button"])
     local text = frameName and _G[frameName .. "Text"] or frame.Text
+    local middle = frameName and _G[frameName .. "Middle"] or frame.Middle
+    local left = frameName and _G[frameName .. "Left"] or frame.Left
+    local right = frameName and _G[frameName .. "Right"] or frame.Right
     local icon = frame.Icon
 
     frame:StripTextures()
     frame:SetWidth(155)
 
-    frame:CreateBackdrop(constBackdropDropDown)
-    frame.backdrop:SetBackdropColor(0, 0, 0)
+    if backdropTemplate then
+        frame:CreateBackdrop(backdropTemplate, true)
+        frame.backdrop:SetBackdropColor(0, 0, 0)
+    else
+        frame:CreateBackdrop()
+        GW.SkinTextBox(middle, left, right, nil, nil, -5, textBoxRightOffset or -10)
+    end
 
     frame:SetFrameLevel(frame:GetFrameLevel() + 2)
     frame.backdrop:SetPoint("TOPLEFT", 20, -2)
@@ -384,14 +415,15 @@ local function SkinDropDownMenu(frame, buttonPaddindX)
     button.SetPoint = GW.NoOp
     button:StripTextures()
 
-    button.NormalTexture:SetTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    button:SetPushedTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    button:SetDisabledTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
-    button:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/arrowdown_down")
+    GW.HandleNextPrevButton(button, "down")
 
     if text then
         text:ClearAllPoints()
-        text:SetPoint("RIGHT", button, "LEFT", 4, 0)
+        text:SetPoint("RIGHT", button, "LEFT", -2, 0)
+        text:SetFont(UNIT_NAME_FONT, 12, "")
+        text:SetTextColor(178 / 255, 178 / 255, 178 / 255)
+        text:SetHeight(frame:GetHeight())
+        text:SetJustifyV("MIDDLE")
     end
 
     if icon then

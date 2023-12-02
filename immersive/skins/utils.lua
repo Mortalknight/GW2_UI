@@ -245,6 +245,59 @@ local function HandleTrimScrollBar(frame, small)
 end
 GW.HandleTrimScrollBar = HandleTrimScrollBar
 
+local function HandleIcon(icon, backdrop, backdropTexture, isBorder)
+    icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+
+    if backdrop and not icon.backdrop then
+        icon:GwCreateBackdrop(backdropTexture, isBorder)
+    end
+end
+GW.HandleIcon = HandleIcon
+
+local function HandlePortraitFrame(frame, createBackdrop)
+    local name = frame and frame.GetName and frame:GetName()
+    local insetFrame = name and _G[name .. "Inset"] or frame.Inset
+    local portraitFrame = name and _G[name .. "Portrait"] or frame.Portrait or frame.portrait
+    local portraitFrameOverlay = name and _G[name .. "PortraitOverlay"] or frame.PortraitOverlay
+    local artFrameOverlay = name and _G[name .. "ArtOverlayFrame"] or frame.ArtOverlayFrame
+
+    frame:StripTextures()
+
+    if portraitFrame then portraitFrame:SetAlpha(0) end
+    if portraitFrameOverlay then portraitFrameOverlay:SetAlpha(0) end
+    if artFrameOverlay then artFrameOverlay:SetAlpha(0) end
+
+    if insetFrame then
+        if insetFrame.InsetBorderTop then insetFrame.InsetBorderTop:Hide() end
+        if insetFrame.InsetBorderTopLeft then insetFrame.InsetBorderTopLeft:Hide() end
+        if insetFrame.InsetBorderTopRight then insetFrame.InsetBorderTopRight:Hide() end
+
+        if insetFrame.InsetBorderBottom then insetFrame.InsetBorderBottom:Hide() end
+        if insetFrame.InsetBorderBottomLeft then insetFrame.InsetBorderBottomLeft:Hide() end
+        if insetFrame.InsetBorderBottomRight then insetFrame.InsetBorderBottomRight:Hide() end
+
+        if insetFrame.InsetBorderLeft then insetFrame.InsetBorderLeft:Hide() end
+        if insetFrame.InsetBorderRight then insetFrame.InsetBorderRight:Hide() end
+
+        if insetFrame.Bg then insetFrame.Bg:Hide() end
+    end
+
+    if frame.CloseButton then
+        frame.CloseButton:SkinButton(true)
+        frame.CloseButton:SetSize(20, 20)
+    end
+
+    if createBackdrop and not frame.backdrop then
+        frame:CreateBackdrop({
+            edgeFile = "",
+            bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
+            edgeSize = 1
+        }, true, 30, 70, nil, -10)
+    end
+
+end
+GW.HandlePortraitFrame = HandlePortraitFrame
+
 local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds, yOffset)
     local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
     header.windowIcon:SetTexture(icon)
