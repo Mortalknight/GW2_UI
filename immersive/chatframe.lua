@@ -269,6 +269,25 @@ local function handleChatFrameFadeOut(chatFrame, force)
 end
 GW.AddForProfiling("chatframe", "handleChatFrameFadeOut", handleChatFrameFadeOut)
 
+do
+    local charCount
+    local function CountLinkCharacters(self)
+        charCount = charCount + (strlen(self) + 4) -- 4 is ending "|h|r"
+    end
+
+    local function EditBoxOnTextChanged(self)
+        local userInput = self:GetText()
+        local len = strlen(userInput)
+
+        charCount = 0
+        gsub(userInput, "(|c%x-|H.-|h).-|h|r", CountLinkCharacters)
+        if charCount ~= 0 then len = len - charCount end
+
+        self.characterCount:SetText(len > 0 and (255 - len) or "")
+    end
+    GW.ChatFrameEditBoxOnTextChanged = EditBoxOnTextChanged
+end
+
 local function styleChatWindow(frame)
     local name = frame:GetName()
     _G[name.."TabText"]:SetFont(DAMAGE_TEXT_FONT, 14, "")
@@ -279,7 +298,7 @@ local function styleChatWindow(frame)
     frame:SetFrameLevel(4)
 
     local id = frame:GetID()
-    local _, fontSize, _, _, _, _, _, _, isDocked = GetChatWindowInfo(id)
+    local _, _, _, _, _, _, _, _, isDocked = GetChatWindowInfo(id)
 
     local tab = _G[name.."Tab"]
     local editbox = _G[name.."EditBox"]
@@ -406,40 +425,43 @@ local function styleChatWindow(frame)
     frame:StripTextures(true)
     _G[name.."ButtonFrame"]:Hide()
 
-    _G[format(editbox:GetName() .. "Left", id)]:Hide()
-    _G[format(editbox:GetName() .. "Mid", id)]:Hide()
-    _G[format(editbox:GetName() .. "Right", id)]:Hide()
     editbox:ClearAllPoints()
     editbox:SetPoint("TOPLEFT", _G[name.."ButtonFrame"], "BOTTOMLEFT", 0, 0)
     editbox:SetPoint("TOPRIGHT", background, "BOTTOMRIGHT", 0, 0)
     editbox:SetAltArrowKeyMode(false)
     editbox.editboxHasFocus = false
     editbox:Hide()
+    GW.SkinTextBox(_G[name .. "EditBoxMid"], _G[name .. "EditBoxLeft"], _G[name .. "EditBoxRight"])
+
+    --Character count
+    local charCount = editbox:CreateFontString(nil, "ARTWORK")
+    charCount:SetFont(UNIT_NAME_FONT, 10, "")
+    charCount:SetTextColor(190, 190, 190, 0.4)
+    charCount:SetPoint("TOPRIGHT", editbox, "TOPRIGHT", -5, 0)
+    charCount:SetPoint("BOTTOMRIGHT", editbox, "BOTTOMRIGHT", -5, 0)
+    charCount:SetJustifyH("CENTER")
+    charCount:SetWidth(40)
+    editbox.characterCount = charCount
 
     editbox:HookScript("OnEditFocusGained", function(editBox)
         frame.editboxHasFocus = true
-        frame:SetScript(
-            "OnUpdate",
-            function()
-                handleChatFrameFadeIn(frame)
-            end
-        )
         FCF_FadeInChatFrame(frame)
         editBox:Show()
     end)
     editbox:HookScript("OnEditFocusLost", function(editBox)
-        frame:SetScript("OnUpdate", nil)
         frame.editboxHasFocus = false
         FCF_FadeOutChatFrame(frame)
         editBox:Hide()
     end)
 
-    if GetSetting("FONTS_ENABLED") and fontSize then
-        if fontSize > 0 then
-            frame:SetFont(STANDARD_TEXT_FONT, fontSize, "")
-        elseif fontSize == 0 then
-            frame:SetFont(STANDARD_TEXT_FONT, 14, "")
-        end
+    editbox:HookScript("OnTextChanged", GW.ChatFrameEditBoxOnTextChanged)
+
+    if GetSetting("FONTS_ENABLED") then
+        local chatFont = GW.Libs.LSM:Fetch("font", "GW2_UI_Chat")
+        local _, fontHeight, fontFlags = frame:GetFont()
+        frame:SetFont(chatFont, fontHeight or 12, fontFlags)
+        editbox:SetFont(chatFont, fontHeight or 12, fontFlags)
+        _G[editbox:GetName() .. "Header"]:SetFont(chatFont, fontHeight or 12, fontFlags)
     end
 
     if frame.hasContainer then setButtonPosition(frame) end
