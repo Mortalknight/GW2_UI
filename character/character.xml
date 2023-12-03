@@ -135,22 +135,28 @@
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="10" y="-20"></Anchor>
         </Anchors>
         <Frames>
-            <Button name="$parentSkills" parentKey="skillsMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="Skills" >
+            <Button name="$parentSkills" parentKey="skillsMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="Skills">
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentHonor" parentKey="honorMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate" text="PVP" >
+            <Button name="$parentHonor" parentKey="honorMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate" text="PVP">
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.skillsMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
-            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="PET" >
+            <Button name="$parentRunes" parentKey="runeMenu" inherits="GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" text="RUNES">
                 <Size x="231" y="36"></Size>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativeKey="$parent.honorMenu" relativePoint="BOTTOMLEFT"></Anchor>
+                </Anchors>
+            </Button>
+            <Button name="$parentPet" parentKey="petMenu" inherits="GwCharacterMenuButtonTemplate2,SecureHandlerClickTemplate" text="PET">
+                <Size x="231" y="36"></Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeKey="$parent.runeMenu" relativePoint="BOTTOMLEFT"></Anchor>
                 </Anchors>
             </Button>
         </Frames>
@@ -158,6 +164,7 @@
             <OnLoad>
                 self.skillsMenu:SetText(SKILLS)
                 self.honorMenu:SetText(PVP)
+                self.runeMenu:SetText(RUNES)
                 self.petMenu:SetText(PET)
             </OnLoad>
         </Scripts>

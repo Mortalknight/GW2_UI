@@ -21,6 +21,8 @@ GW.wowpatch, GW.wowbuild = GetBuildInfo()
 GW.wowbuild = tonumber(GW.wowbuild)
 GW.Gw2Color = "|cffffedba" -- Color used for chat prints or buttons
 
+GW.ClassicSOD = C_Engraving and C_Engraving.IsEngravingEnabled()
+
 --Tables
 GW.skins = {}
 GW.TexCoords = {0, 1, 0, 1}

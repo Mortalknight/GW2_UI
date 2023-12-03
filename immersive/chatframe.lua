@@ -434,7 +434,7 @@ local function styleChatWindow(frame)
         editBox:Hide()
     end)
 
-    if GetSetting("FONTS_ENABLED") then
+    if GetSetting("FONTS_ENABLED") and fontSize then
         if fontSize > 0 then
             frame:SetFont(STANDARD_TEXT_FONT, fontSize, "")
         elseif fontSize == 0 then

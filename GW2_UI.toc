@@ -162,6 +162,8 @@ character/spellbook.lua
 character/spellbook.xml
 character/talents.lua
 character/talents.xml
+character/sodEngravingFrame.lua
+character/sodEngravingFrame.xml
 character/windowManager.lua
 
 immersive/skins/skins.xml
