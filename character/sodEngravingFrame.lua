@@ -144,12 +144,12 @@ local function EngravingFrame_UpdateRuneList(self)
 
 	local exclusiveFilter = C_Engraving.GetExclusiveCategoryFilter();
 	if exclusiveFilter then
-		--UIDropDownMenu_SetText(EngravingFrameFilterDropDown, GetItemInventorySlotInfo(exclusiveFilter));
+		UIDropDownMenu_SetText(self.dropdown, GetItemInventorySlotInfo(exclusiveFilter));
 	else
 		if C_Engraving.IsEquippedFilterEnabled() then
-			--UIDropDownMenu_SetText(EngravingFrameFilterDropDown, EQUIPPED_RUNES);
+			UIDropDownMenu_SetText(self.dropdown, EQUIPPED_RUNES);
 		else
-			--UIDropDownMenu_SetText(EngravingFrameFilterDropDown, ALL_RUNES);
+			UIDropDownMenu_SetText(self.dropdown, ALL_RUNES);
 		end
 	end
 
