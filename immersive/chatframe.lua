@@ -750,7 +750,85 @@ local function LoadChat()
             end)
     end
 
-    _G.CombatLogQuickButtonFrame_CustomTexture:Hide()
+    CombatLogQuickButtonFrame_CustomProgressBar:SetStatusBarTexture("Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar")
+
+    CombatLogQuickButtonFrame_CustomTexture:Hide()
     BuildCopyChatFrame()
+
+    -- set custom textures for chat channel buttons (chats/voice, mute mic/sound)
+    ChatFrameChannelButton:SetHeight(20)
+    ChatFrameChannelButton:SetWidth(20)
+    ChatFrameChannelButton.Flash:SetHeight(20)
+    ChatFrameChannelButton.Flash:SetWidth(20)
+    ChatFrameChannelButton.Icon:Kill()
+    hooksecurefunc(ChatFrameChannelButton, "SetIconToState", function(self, joined)
+        if joined then
+            self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
+            self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc")
+            self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
+            self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_vc_highlight")
+            if ChatFrameToggleVoiceMuteButton then ChatFrameToggleVoiceMuteButton:Show() end
+            if ChatFrameToggleVoiceDeafenButton then ChatFrameToggleVoiceDeafenButton:Show() end
+        else
+            self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
+            self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal")
+            self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
+            self.Flash:SetTexture("Interface/AddOns/GW2_UI/textures/chat/channel_button_normal_highlight")
+            if ChatFrameToggleVoiceMuteButton then ChatFrameToggleVoiceMuteButton:Hide() end
+            if ChatFrameToggleVoiceDeafenButton then ChatFrameToggleVoiceDeafenButton:Hide() end
+        end
+    end)
+    if ChatFrameToggleVoiceMuteButton then
+        ChatFrameToggleVoiceMuteButton:SetHeight(20)
+        ChatFrameToggleVoiceMuteButton:SetWidth(20)
+        ChatFrameToggleVoiceMuteButton.Icon:Kill()
+
+        hooksecurefunc(ChatFrameToggleVoiceMuteButton, "SetIconToState", function(self, state)
+            if state == MUTE_SILENCE_STATE_NONE then -- mic on
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_on_highlight")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_on")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_on_highlight")
+            elseif state == MUTE_SILENCE_STATE_MUTE then -- mic off
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_off_highlight")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_off")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_off_highlight")
+            elseif state == MUTE_SILENCE_STATE_SILENCE then -- mic silenced on
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_on_highlight")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_on")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_on_highlight")
+            elseif state == MUTE_SILENCE_STATE_MUTE_AND_SILENCE then -- mic silenced off
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_off_highlight")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_off")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_mic_silenced_off_highlight")
+            end
+        end)
+    end
+    if ChatFrameToggleVoiceDeafenButton then
+        ChatFrameToggleVoiceDeafenButton:SetHeight(20)
+        ChatFrameToggleVoiceDeafenButton:SetWidth(20)
+        ChatFrameToggleVoiceDeafenButton.Icon:Kill()
+        hooksecurefunc(ChatFrameToggleVoiceDeafenButton, "SetIconToState", function(self, deafened)
+            if deafened then
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_off_highlight")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_off")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_off_highlight")
+            else
+                self:SetPushedTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on_highlight")
+                self:SetNormalTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on")
+                self:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/chat/channel_vc_sound_on_highlight")
+            end
+        end)
+    end
+
+    -- events for functions
+    local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    eventFrame:SetScript("OnEvent", function(_, event, ...)
+        if event == "PLAYER_ENTERING_WORLD" then
+            ChatFrameChannelButton:UpdateVisibleState()
+            if ChatFrameToggleVoiceMuteButton then ChatFrameToggleVoiceMuteButton:UpdateVisibleState() end
+            if ChatFrameToggleVoiceDeafenButton then ChatFrameToggleVoiceDeafenButton:UpdateVisibleState() end
+        end
+    end)
 end
 GW.LoadChat = LoadChat
