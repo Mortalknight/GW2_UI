@@ -81,13 +81,19 @@ GW.Libs.LSM:Register("font", "GW2_UI Light", "Interface/AddOns/GW2_UI/fonts/meno
 GW.Libs.LSM:Register("font", "GW2_UI Headlines", "Interface/AddOns/GW2_UI/fonts/headlines.ttf", GW.Libs.LSM.LOCALE_BIT_western + GW.Libs.LSM.LOCALE_BIT_ruRU)
 GW.Libs.LSM:Register("font", "GW2_UI", "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf", GW.Libs.LSM.LOCALE_BIT_zhCN + GW.Libs.LSM.LOCALE_BIT_zhTW)
 GW.Libs.LSM:Register("font", "GW2_UI", "Interface/AddOns/GW2_UI/fonts/korean.ttf", GW.Libs.LSM.LOCALE_BIT_koKR)
+GW.Libs.LSM:Register("font", "GW2_UI_Chat", "Interface/AddOns/GW2_UI/fonts/trebuchet_ms.ttf", GW.Libs.LSM.LOCALE_BIT_western + GW.Libs.LSM.LOCALE_BIT_ruRU)
+GW.Libs.LSM:Register("font", "GW2_UI_Chat", "Interface/AddOns/GW2_UI/fonts/chinese-font.ttf", GW.Libs.LSM.LOCALE_BIT_zhCN + GW.Libs.LSM.LOCALE_BIT_zhTW)
+GW.Libs.LSM:Register("font", "GW2_UI_Chat", "Interface/AddOns/GW2_UI/fonts/korean.ttf", GW.Libs.LSM.LOCALE_BIT_koKR)
+
 
 --Texture
-GW.Libs.LSM:Register("background", "GW2_UI_White", "Interface/AddOns/GW2_UI/Textures/ChatBubble-Background.tga")
-GW.Libs.LSM:Register("background", "GW2_UI", "Interface/Addons/GW2_UI/Textures/UI-Tooltip-Background.tga")
-GW.Libs.LSM:Register("statusbar", "GW2_UI_Yellow", "Interface/Addons/GW2_UI/Textures/castingbar.tga")
-GW.Libs.LSM:Register("statusbar", "GW2_UI_Blue", "Interface/Addons/GW2_UI/Textures/breathmeter.tga")
-GW.Libs.LSM:Register("statusbar", "GW2_UI", "Interface/Addons/GW2_UI/Textures/castinbar-white.tga")
+GW.Libs.LSM:Register("background", "GW2_UI_White", "Interface/AddOns/GW2_UI/Textures/windowborder")
+GW.Libs.LSM:Register("background", "GW2_UI", "Interface/Addons/GW2_UI/Textures/UI-Tooltip-Background")
+GW.Libs.LSM:Register("statusbar", "GW2_UI_Yellow", "Interface/Addons/GW2_UI/Textures/castingbar")
+GW.Libs.LSM:Register("statusbar", "GW2_UI_Blue", "Interface/Addons/GW2_UI/Textures/breathmeter")
+GW.Libs.LSM:Register("statusbar", "GW2_UI", "Interface/Addons/GW2_UI/Textures/castinbar-white")
+GW.Libs.LSM:Register("statusbar", "GW2_UI_Details", "Interface/Addons/GW2_UI/textures/addonSkins/details_statusbar")
+GW.Libs.LSM:Register("border", "GW2_UI", "Interface/Addons/GW2_UI/textures/UI-Tooltip-Border")
 
 --Sound
 GW.Libs.LSM:Register("sound", "GW2_UI: Close", "Interface/AddOns/GW2_UI/sounds/dialog_close.ogg")
