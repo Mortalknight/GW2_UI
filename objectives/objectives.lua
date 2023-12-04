@@ -415,7 +415,6 @@ local function getBlock(blockIndex)
 
     -- quest item button here
     newBlock.actionButton = CreateFrame("Button", nil, GwQuestTracker, "GwQuestItemTemplate")
-    newBlock.actionButton.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     newBlock.actionButton.NormalTexture:SetTexture(nil)
 
     newBlock.actionButton:SetAttribute("type1", "item")

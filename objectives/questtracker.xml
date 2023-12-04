@@ -12,7 +12,6 @@
                 </FontString>
             </Layer>
             <Layer level="ARTWORK">
-                <Texture parentKey="icon"/>
                 <FontString parentKey="count" inherits="NumberFontNormal" justifyH="RIGHT" hidden="true">
                     <Anchors>
                         <Anchor point="BOTTOMRIGHT" x="-3" y="2"/>
@@ -23,12 +22,7 @@
         <Frames>
             <Cooldown parentKey="cooldown" inherits="CooldownFrameTemplate"/>
         </Frames>
-        <NormalTexture parentKey="NormalTexture" file="Interface\Buttons\UI-Quickslot2">
-            <Size x="42" y="42"/>
-            <Anchors>
-                <Anchor point="CENTER"/>
-            </Anchors>
-        </NormalTexture>
+        <NormalTexture parentKey="NormalTexture" file="Interface\Buttons\UI-Quickslot2" setAllPoints="true"/>
         <PushedTexture file="Interface\Buttons\UI-Quickslot-Depress"/>
         <HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
     </Button>
