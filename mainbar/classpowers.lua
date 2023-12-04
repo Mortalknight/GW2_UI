@@ -5,26 +5,31 @@ local UpdatePowerData = GW.UpdatePowerData
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local GetSetting = GW.GetSetting
-local color = GW.colorUtil
 
 local CPWR_FRAME
 local CPF_HOOKED_TO_TARGETFRAME = false
 
-local function updateVisibility(self)
-    local onlyShowInCombat = GetSetting("CLASSPOWER_ONLY_SHOW_IN_COMBAT")
-    if self.shouldShowBar then
-        if onlyShowInCombat then
-            RegisterStateDriver(self, "visibility", "[combat] show; hide")
-        else
-            RegisterStateDriver(self, "visibility", "show")
-        end
+local function updateVisibilitySetting(self)
+    self.onlyShowInCombat = GetSetting("CLASSPOWER_ONLY_SHOW_IN_COMBAT")
+    if self.onlyShowInCombat then
+        self.decay:RegisterEvent("PLAYER_REGEN_ENABLED")
+        self.decay:RegisterEvent("PLAYER_REGEN_DISABLED")
     else
-        RegisterStateDriver(self, "visibility", "hide")
+        self.decay:UnregisterEvent("PLAYER_REGEN_ENABLED")
+        self.decay:UnregisterEvent("PLAYER_REGEN_DISABLED")
     end
 end
-GW.UpdateClassPowerVisibility = updateVisibility
+GW.UpdateClassPowerVisibilitySetting = updateVisibilitySetting
 
-local function AnimationStagger(self, animationProgress)
+local function UpdateVisibility(self)
+    if self.onlyShowInCombat then
+       self:SetShown(InCombatLockdown() and self.shouldShowBar)
+    else
+        self:SetShown(self.shouldShowBar)
+    end
+end
+
+local function AnimationStagger(self)
     local fill = self:GetFillAmount()
 
     local yellow = lerp(0, 1, fill / 0.5)
@@ -1627,9 +1632,8 @@ local function selectType(f)
     end
 
     f.shouldShowBar = showBar
-    f:SetShown(showBar)
 
-    updateVisibility(f)
+    UpdateVisibility(f)
 end
 GW.AddForProfiling("classpowers", "selectType", selectType)
 
@@ -1654,6 +1658,8 @@ local function barChange_OnEvent(self, event)
         f.gwPlayerForm = GetShapeshiftFormID()
         GW.CheckRole()
         selectType(f)
+    elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
+        UpdateVisibility(f)
     end
 end
 
