@@ -15,6 +15,22 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.12.0",{
+    {ct.feature, [=[Added new paladin classpower texture and animation]=]},
+    {ct.feature, [=[Added new arms warrior classpower]=]},
+    {ct.feature, [=[Update GW2 boss frames, they are now unitframes]=]},
+    {ct.feature, [=[Added options to toggle grid rol icons, tank icons and leader icons]=]},
+
+    {ct.change, [=[Adjust grid out of range alpha value]=]},
+    {ct.change, [=[Update grid to work again with OmniCD]=]},
+
+    {ct.bug, [=[Fix PP mode get saved correctly]=]},
+    {ct.bug, [=[Fix move HUD grid]=]},
+    {ct.bug, [=[Fix immersive Questing taint issue]=]},
+    {ct.bug, [=[Fix arena frame lua errors]=]},
+    {ct.bug, [=[Fix classpower error in combat]=]},
+})
+
 addChange("6.11.1",{
     {ct.bug,[=[Correct LEMO integration which was causing an lua error during installation process]=]},
     {ct.bug,[=[Tweak Event Timer height]=]},

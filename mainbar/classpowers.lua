@@ -9,7 +9,15 @@ local GetSetting = GW.GetSetting
 local CPWR_FRAME
 local CPF_HOOKED_TO_TARGETFRAME = false
 
-local function updateVisibilitySetting(self)
+local function UpdateVisibility(self, inCombat)
+    if self.onlyShowInCombat then
+       self:SetShown(inCombat and self.shouldShowBar)
+    else
+        self:SetShown(self.shouldShowBar)
+    end
+end
+
+local function updateVisibilitySetting(self, updateVis)
     self.onlyShowInCombat = GetSetting("CLASSPOWER_ONLY_SHOW_IN_COMBAT")
     if self.onlyShowInCombat then
         self.decay:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -18,16 +26,11 @@ local function updateVisibilitySetting(self)
         self.decay:UnregisterEvent("PLAYER_REGEN_ENABLED")
         self.decay:UnregisterEvent("PLAYER_REGEN_DISABLED")
     end
-end
-GW.UpdateClassPowerVisibilitySetting = updateVisibilitySetting
-
-local function UpdateVisibility(self)
-    if self.onlyShowInCombat then
-       self:SetShown(InCombatLockdown() and self.shouldShowBar)
-    else
-        self:SetShown(self.shouldShowBar)
+    if updateVis then
+        UpdateVisibility(self, false)
     end
 end
+GW.UpdateClassPowerVisibilitySetting = updateVisibilitySetting
 
 local function AnimationStagger(self)
     local fill = self:GetFillAmount()
@@ -1659,7 +1662,7 @@ local function barChange_OnEvent(self, event)
         GW.CheckRole()
         selectType(f)
     elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
-        UpdateVisibility(f)
+        UpdateVisibility(f, event == "PLAYER_REGEN_DISABLED")
     end
 end
 
@@ -1820,6 +1823,7 @@ local function LoadClassPowers()
 
     cpf.gwPlayerForm = GetShapeshiftFormID()
 
+    updateVisibilitySetting(cpf, false)
     selectType(cpf)
 
     if (GW.myClassID == 4 or GW.myClassID == 11) and cpf.ourTarget and cpf.comboPointsOnTarget then
