@@ -542,6 +542,23 @@ local function getSkillElement(index)
     f.val:SetFont(DAMAGE_TEXT_FONT, 12, "")
     f.val:SetText(UNKNOWN)
     f:SetText("")
+    f.arrow:ClearAllPoints()
+    f.arrow:SetPoint("RIGHT", -5, 0)
+    f.arrow2:ClearAllPoints()
+    f.arrow2:SetPoint("RIGHT", -5, 0)
+
+    f:SetScript("OnClick", function()
+        if not f.isHeader then return end
+
+        if f.isExpanded then
+            CollapseSkillHeader(f.skillIndex)
+        else
+            ExpandSkillHeader(f.skillIndex)
+        end
+
+        GWupdateSkills()
+    end)
+
     return f
 end
 
@@ -551,17 +568,23 @@ local function updateSkillItem(self)
         self.val:Hide()
         self.StatusBar:Hide()
         self.name:SetFont(DAMAGE_TEXT_FONT, 14, "")
-        self.arrow:Show()
-        self.arrow:SetRotation(-1.5708)
         self.bgheader:Show()
         self.bg:Hide()
         self.bgstatic:Hide()
+        if self.isExpanded then
+            self.arrow:Show()
+            self.arrow2:Hide()
+        else
+            self.arrow:Hide()
+            self.arrow2:Show()
+        end
     else
         self:SetHeight(50)
         self.val:Show()
         self.StatusBar:Show()
         self.name:SetFont(DAMAGE_TEXT_FONT, 12, "")
         self.arrow:Hide()
+        self.arrow2:Hide()
         self.bgheader:Hide()
         self.bg:Show()
         self.bgstatic:Show()
@@ -633,6 +656,7 @@ function GWupdateSkills()
         f.StatusBar:SetValue(skillRank / skillMaxRank)
         f.val:SetText(skillRank .. " / " .. skillMaxRank)
         f.isHeader = isHeader
+        f.isExpanded = isExpanded
         f.bg:SetVertexColor(1, 1, 1, zebra)
         updateSkillItem(f)
         totlaHeight = totlaHeight + f:GetHeight()
