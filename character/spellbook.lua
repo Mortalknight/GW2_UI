@@ -774,7 +774,7 @@ local function LoadSpellBook()
     menuItem.hover:SetTexture('Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover')
     menuItem:ClearNormalTexture()
     menuItem:SetText("")
-    unknownFrame.title:SetText(L["FUTURE_SPELLS"])
+    unknownFrame.title:SetText(L["Future Spells"])
     GwSpellbookMenu:SetFrameRef('GwSpellbookUnknown', unknownFrame)
     menuItem:SetFrameRef('GwSpellbookMenu', GwSpellbookMenu)
     menuItem:SetAttribute("_onclick", [=[
