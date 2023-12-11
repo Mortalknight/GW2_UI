@@ -1,7 +1,6 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 local function ApplySocketUISkin()
-    if not GetSetting("SOCKET_SKIN_ENABLED") then return end
+    if not GW.settings.SOCKET_SKIN_ENABLED then return end
 
     ItemSocketingFramePortrait:Hide()
     ItemSocketingFrame:GwStripTextures()

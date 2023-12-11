@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local POSITION, ANCHOR_POINT, YOFFSET = "TOP", "BOTTOM", -5
 
@@ -92,7 +91,7 @@ local function resetAlertSubSystemAdjustPositions(subSystem)
 end
 
 local function SetupAlertFramePosition()
-    if not GetSetting("ALERTFRAME_ENABLED") then return end
+    if not GW.settings.ALERTFRAME_ENABLED then return end
 
     GwAlertFrameOffsetter:SetHeight(205)
     hooksecurefunc("GroupLootContainer_Update", UpdateGroupLootContainer)

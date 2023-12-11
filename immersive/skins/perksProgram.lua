@@ -18,7 +18,7 @@ local function HandleRewardButton(button)
 end
 
 local function SkinPerksProgram()
-    if not GW.GetSetting("PERK_PROGRAM_SKIN_ENABLED") then return end
+    if not GW.settings.PERK_PROGRAM_SKIN_ENABLED then return end
 
     if PerksProgramFrame.ProductsFrame then
         PerksProgramFrame.ProductsFrame.PerksProgramFilter.FilterDropDownButton:GwSkinButton(false, true)

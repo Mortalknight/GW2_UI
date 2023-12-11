@@ -1,19 +1,11 @@
 local _, GW = ...
 local L = GW.L
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
-local GetSetting = GW.GetSetting
 local AddToAnimation = GW.AddToAnimation
 local ParseSimpleObjective = GW.ParseSimpleObjective
 
 local notifications = {}
 local questCompass = {}
-
-local settings = {}
-
-local function UpdateSettings()
-    settings.showCompass = GetSetting("SHOW_QUESTTRACKER_COMPASS")
-end
-GW.UpdateObjectivesNotificationSettings = UpdateSettings
 
 local icons = {
     QUEST = {tex = "icon-objective", l = 0, r = 0.5, t = 0.25, b = 0.5},
@@ -303,7 +295,7 @@ GW.AddForProfiling("notifications", "updateRadar", updateRadar)
 
 local currentCompassData
 local function SetObjectiveNotification()
-    if not settings.showCompass then return end
+    if not GW.settings.SHOW_QUESTTRACKER_COMPASS then return end
 
     local data, dataBefore
     for k, _ in pairs(notifications) do

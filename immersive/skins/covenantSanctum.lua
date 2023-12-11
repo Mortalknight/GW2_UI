@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function HandleIconString(self, text)
     if not text then text = self:GetText() end
@@ -48,7 +47,7 @@ local function ReplaceCurrencies(displayGroup)
 end
 
 local function ApplyCovenantSanctumSkin()
-    if not GetSetting("CONCENANT_SANCTUM_SKIN_ENABLED") then return end
+    if not GW.settings.CONCENANT_SANCTUM_SKIN_ENABLED then return end
 
     CovenantSanctumFrame.LevelFrame.Level:SetFont(UNIT_NAME_FONT, 20)
 

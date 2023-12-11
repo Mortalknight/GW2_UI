@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function gwSetStaticPopupSize()
     for i = 1, 4 do
@@ -18,7 +17,7 @@ local function gwSetStaticPopupSize()
 end
 
 local function LoadStaticPopupSkin()
-    if not GetSetting("STATICPOPUP_SKIN_ENABLED") then return end
+    if not GW.settings.STATICPOPUP_SKIN_ENABLED then return end
 
     for i = 1, 4 do
         local StaticPopup = _G["StaticPopup" .. i]

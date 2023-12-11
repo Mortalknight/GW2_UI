@@ -1,14 +1,13 @@
 local _, GW = ...
 local L = GW.L
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local GetSetting = GW.GetSetting
 
 local ExtraActionBarHolder, ZoneAbilityHolder, eventFrame
 local NeedsReparentExtraButtons = false
 local ExtraButtons = {}
 
 local function ExtraButtons_ZoneScale()
-    local scale = GetSetting("ZoneAbilityFramePos_scale")
+    local scale = GW.settings.ZoneAbilityFramePos_scale
     ZoneAbilityFrame.Style:SetScale(scale)
     ZoneAbilityFrame.SpellButtonContainer:SetScale(scale)
 
@@ -20,7 +19,7 @@ end
 local function ExtraButtons_UpdateScale()
     ExtraButtons_ZoneScale()
 
-    local scale = GetSetting("ExtraActionBarFramePos_scale")
+    local scale = GW.settings.ExtraActionBarFramePos_scale
     ExtraActionBarFrame:SetScale(scale)
 
     local width, height = ExtraActionBarFrame.button:GetSize()
@@ -158,7 +157,7 @@ local function ExtraAB_BossAB_Setup()
     ExtraButtons_UpdateScale()
 
     -- Spawn the mover before its available.
-    local size = 52 * GetSetting("ZoneAbilityFramePos_scale")
+    local size = 52 * GW.settings.ZoneAbilityFramePos_scale
     ZoneAbilityHolder:SetSize(size, size)
     ZoneAbilityHolder.gwMover:SetSize(size, size)
 end

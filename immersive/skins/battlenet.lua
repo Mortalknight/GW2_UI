@@ -1,6 +1,5 @@
 local _, GW = ...
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local GetSetting = GW.GetSetting
 local AFP = GW.AddProfiling
 
 local function BNTostPostDrag(self)
@@ -30,7 +29,7 @@ end
 AFP("hook_SetPoint", hook_SetPoint)
 
 local function LoadBNToastSkin()
-    if not GetSetting("BNTOASTFRAME_SKIN_ENABLED") then return end
+    if not GW.settings.BNTOASTFRAME_SKIN_ENABLED then return end
 
     local skins = {
         BNToastFrame,

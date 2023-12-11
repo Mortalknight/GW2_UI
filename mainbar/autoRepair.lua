@@ -1,12 +1,11 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
 local FormatMoneyForChat = GW.FormatMoneyForChat
 
 local STATUS, TYPE, COST, canRepair
 
 local function autoRepair(overrideSettings)
-    STATUS, TYPE, COST, canRepair = "", GetSetting("AUTO_REPAIR"), GetRepairAllCost()
+    STATUS, TYPE, COST, canRepair = "", GW.settings.AUTO_REPAIR, GetRepairAllCost()
 
     if canRepair and COST > 0 then
         local tryGuild = not overrideSettings and TYPE == "GUILD" and IsInGuild()
@@ -39,7 +38,7 @@ GW.autoRepairOutput = autoRepairOutput
 
 local function ar_frame_OnEvent(self, event, ...)
     if event == "MERCHANT_SHOW" then
-        if GetSetting("AUTO_REPAIR") == "NONE" or IsShiftKeyDown() or not CanMerchantRepair() then
+        if GW.settings.AUTO_REPAIR == "NONE" or IsShiftKeyDown() or not CanMerchantRepair() then
             return
         end
 

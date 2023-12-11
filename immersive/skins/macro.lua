@@ -1,8 +1,7 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function ApplyMacroOptionsSkin()
-    if not GetSetting("MACRO_SKIN_ENABLED") then return end
+    if not GW.settings.MACRO_SKIN_ENABLED then return end
 
     local macroHeaderText
 

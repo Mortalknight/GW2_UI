@@ -1,7 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
-local SetSetting = GW.SetSetting
 local EnableTooltip = GW.EnableTooltip
 local inv
 
@@ -11,22 +9,12 @@ local BANK_ITEM_COMPACT_SIZE = 32
 local BANK_ITEM_PADDING = 5
 local BANK_WINDOW_SIZE = 720
 
-local settings = {}
-
-local function UpdateSettings()
-    settings.reverseSort = GetSetting("BANK_REVERSE_SORT")
-    settings.itemSize = GetSetting("BAG_ITEM_SIZE")
-    settings.bankWidth = GetSetting("BANK_WIDTH")
-    settings.showItemQualityBorder = GetSetting("BAG_ITEM_QUALITY_BORDER_SHOW")
-end
-GW.UpdateBankSettings = UpdateSettings
-
 -- adjusts the ItemButton layout flow when the bank window size changes (or on open)
 local function layoutBankItems(f)
     local max_col = f:GetParent().gw_bank_cols
     local row = 0
     local col = 0
-    local rev = settings.reverseSort
+    local rev = GW.settings.BANK_REVERSE_SORT
 
     local item_off = BANK_ITEM_SIZE + BANK_ITEM_PADDING
 
@@ -146,7 +134,7 @@ local function setBagBarOrder(f)
     local y
     local bag_size = 28
     local bag_padding = 4
-    local rev = settings.reverseSort
+    local rev = GW.settings.BANK_REVERSE_SORT
     if rev then
         y = -40 - ((bag_size + bag_padding) * NUM_BANKBAGSLOTS)
     else
@@ -284,8 +272,7 @@ GW.AddForProfiling("bank", "updateBagBar", updateBagBar)
 
 local function onBankResizeStop(self)
     BANK_WINDOW_SIZE = self:GetWidth()
-    SetSetting("BANK_WIDTH", BANK_WINDOW_SIZE)
-    GW.UpdateBankSettings()
+    GW.settings.BANK_WIDTH = BANK_WINDOW_SIZE
     inv.onMoved(self, "BANK_POSITION", snapFrameSize)
 end
 GW.AddForProfiling("bank", "onBankResizeStop", onBankResizeStop)
@@ -306,19 +293,13 @@ GW.AddForProfiling("bank", "onBankFrameChangeSize", onBankFrameChangeSize)
 local function compactToggle()
     if BANK_ITEM_SIZE == BANK_ITEM_LARGE_SIZE then
         BANK_ITEM_SIZE = BANK_ITEM_COMPACT_SIZE
-        SetSetting("BAG_ITEM_SIZE", BANK_ITEM_SIZE)
-        GW.UpdateBankSettings()
-        GW.UpdateInventorySettings()
-        GW.UpdateBagSettings()
+        GW.settings.BAG_ITEM_SIZE = BANK_ITEM_SIZE
         inv.resizeInventory()
         return true
     end
 
     BANK_ITEM_SIZE = BANK_ITEM_LARGE_SIZE
-    SetSetting("BAG_ITEM_SIZE", BANK_ITEM_SIZE)
-    GW.UpdateBankSettings()
-    GW.UpdateInventorySettings()
-    GW.UpdateBagSettings()
+    GW.settings.BAG_ITEM_SIZE = BANK_ITEM_SIZE
     inv.resizeInventory()
     return false
 end
@@ -468,18 +449,13 @@ end
 GW.AddForProfiling("bank", "tab_OnLeave", tab_OnLeave)
 
 local function LoadBank(helpers)
-    UpdateSettings()
-
     inv = helpers
 
-    BANK_WINDOW_SIZE = settings.bankWidth
-    BANK_ITEM_SIZE = settings.itemSize
+    BANK_WINDOW_SIZE = GW.settings.BANK_WIDTH
+    BANK_ITEM_SIZE = GW.settings.BAG_ITEM_SIZE
     if BANK_ITEM_SIZE > 40 then
         BANK_ITEM_SIZE = 40
-        SetSetting("BAG_ITEM_SIZE", 40)
-        GW.UpdateBankSettings()
-        GW.UpdateInventorySettings()
-        GW.UpdateBagSettings()
+        GW.settings.BAG_ITEM_SIZE = 40
     end
 
     -- create bank frame, restore its saved size, and init its many pieces
@@ -504,7 +480,7 @@ local function LoadBank(helpers)
     end)
 
     -- setup movable stuff
-    local pos = GetSetting("BANK_POSITION")
+    local pos = GW.settings.BANK_POSITION
     f:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
     f.mover:RegisterForDrag("LeftButton")
     f.mover.onMoveSetting = "BANK_POSITION"
@@ -645,10 +621,9 @@ local function LoadBank(helpers)
         dd.bagOrder.checkbutton:SetScript(
             "OnClick",
             function()
-                local newStatus = not settings.reverseSort
+                local newStatus = not GW.settings.BANK_REVERSE_SORT
                 dd.bagOrder.checkbutton:SetChecked(newStatus)
-                SetSetting("BANK_REVERSE_SORT", newStatus)
-                GW.UpdateBankSettings()
+                GW.settings.BANK_REVERSE_SORT = newStatus
                 --ContainerFrame_UpdateAll() this is tainting
             end
         )
@@ -656,19 +631,16 @@ local function LoadBank(helpers)
         dd.itemBorder.checkbutton:HookScript(
             "OnClick",
             function()
-                local newStatus = not settings.showItemQualityBorder
+                local newStatus = not GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW
                 dd.itemBorder.checkbutton:SetChecked(newStatus)
-                SetSetting("BAG_ITEM_QUALITY_BORDER_SHOW", newStatus)
-                GW.UpdateBankSettings()
-                GW.UpdateInventorySettings()
-                GW.UpdateBagSettings()
+                GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW = newStatus
                 --ContainerFrame_UpdateAll() this is tainting
             end
         )
 
-        dd.compactBank.checkbutton:SetChecked(settings.itemSize == BANK_ITEM_COMPACT_SIZE)
-        dd.bagOrder.checkbutton:SetChecked(settings.reverseSort)
-        dd.itemBorder.checkbutton:SetChecked(settings.showItemQualityBorder)
+        dd.compactBank.checkbutton:SetChecked(GW.settings.BAG_ITEM_SIZE == BANK_ITEM_COMPACT_SIZE)
+        dd.bagOrder.checkbutton:SetChecked(GW.settings.BANK_REVERSE_SORT)
+        dd.itemBorder.checkbutton:SetChecked(GW.settings.BAG_ITEM_QUALITY_BORDER_SHOW)
 
         -- setup bag setting icons locals
         dd.compactBank.title:SetText(L["Compact Icons"])
@@ -735,7 +707,7 @@ local function LoadBank(helpers)
 
     -- return a callback that should be called when item size changes
     local changeItemSize = function()
-        BANK_ITEM_SIZE = settings.itemSize
+        BANK_ITEM_SIZE = GW.settings.BAG_ITEM_SIZE
         reskinBankItemButtons()
         reskinReagentItemButtons()
         layoutItems(f)

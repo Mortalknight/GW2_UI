@@ -2,7 +2,6 @@ local _, GW = ...
 local L = GW.L
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
-local GetSetting = GW.GetSetting
 
 local AFKMode
 
@@ -171,7 +170,7 @@ local function Chat_OnEvent(self, event, arg1, arg2, arg3, arg4, arg5, arg6, arg
     local accessID = ChatHistory_GetAccessID(chatGroup, chatTarget)
     local typeID = ChatHistory_GetAccessID(chatType, chatTarget, arg12 == "" and arg13 or arg12)
 
-    if GetSetting("CHAT_SHORT_CHANNEL_NAMES") then
+    if GW.settings.CHAT_SHORT_CHANNEL_NAMES then
         body = body:gsub("|Hchannel:(.-)|h%[(.-)%]|h", GW.ShortChannel)
         body = body:gsub("^(.-|h) " .. CHAT_WHISPER_GET:format("~"):gsub("~ ", ""):gsub(": ", ""), "%1")
         body = body:gsub("<" .. AFK .. ">", "[|cffFF0000" .. AFK .. "|r] ")
@@ -203,7 +202,7 @@ local function LoopAnimations(self)
 end
 
 local function ToggelAfkMode()
-    if GetSetting("AFK_MODE") then
+    if GW.settings.AFK_MODE then
         AFKMode:RegisterEvent("PLAYER_FLAGS_CHANGED")
         AFKMode:RegisterEvent("PLAYER_REGEN_DISABLED")
         AFKMode:RegisterEvent("LFG_PROPOSAL_SHOW")

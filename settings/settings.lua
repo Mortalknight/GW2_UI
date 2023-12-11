@@ -1,7 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
-local SetSetting = GW.SetSetting
 local SetOverrideIncompatibleAddons = GW.SetOverrideIncompatibleAddons
 local RoundDec = GW.RoundDec
 local AddForProfiling = GW.AddForProfiling
@@ -349,13 +347,13 @@ local function checkDependenciesOnLoad()
                 if type(sv) == "table" then
                     for _, dv in ipairs(sv) do
                         allOptionsSet = false
-                        if GetSetting(sn) == dv then
+                        if GW.settings[sn] == dv then
                             allOptionsSet = true
                             break
                         end
                     end
                 else
-                    if GetSetting(sn) == sv then
+                    if GW.settings[sn] == sv then
                         allOptionsSet = true
                     else
                         allOptionsSet = false
@@ -406,7 +404,7 @@ local function loadDropDown(scrollFrame)
                 slot.optionDisplayName = scrollFrame.data.options_names[idx]
 
                 if scrollFrame.data.hasCheckbox then
-                    local settingstable = GetSetting(scrollFrame.data.optionName, scrollFrame.data.perSpec)
+                    local settingstable = GW.settings[scrollFrame.data.optionName]
                     if type(settingstable[scrollFrame.data.options[idx]]) == "table" then
                         slot.checkbutton:SetChecked(settingstable[scrollFrame.data.options[idx]].enable)
                     else
@@ -435,6 +433,28 @@ local function ShowColorPicker(r, g, b, a, changedCallback)
     ColorPickerFrame:SetClampedToScreen(true)
     ColorPickerFrame:Raise()
 end
+
+local function updateSettingsFrameSettingsValue(setting, value, setSetting)
+    local found = false
+    for _, panel in pairs(GW.getOptionReference()) do
+        for _, of in pairs(panel.options) do
+            if of.optionName == setting then
+                if setSetting then
+                    GW.settings[setting] = value
+                end
+                if of.optionType == "slider" then
+                    of.slider:SetValue(value)
+                    of.inputFrame.input:SetText(tonumber(value))
+                end
+
+                found = true
+                break
+            end
+        end
+        if found then break end
+    end
+end
+GW.updateSettingsFrameSettingsValue = updateSettingsFrameSettingsValue
 
 local panelUniqueID = 0
 local function InitPanel(panel, hasScroll)
@@ -572,13 +592,13 @@ local function InitPanel(panel, hasScroll)
         of:SetScript("OnLeave", GameTooltip_Hide)
 
         if v.optionType == "colorPicker" then
-            local color = GetSetting(of.optionName)
+            local color = GW.settings[of.optionName]
             of.button.bg:SetColorTexture(color.r, color.g, color.b)
             of.button:SetScript("OnClick", function()
                 if ColorPickerFrame:IsShown() then
                     HideUIPanel(ColorPickerFrame)
                 else
-                    color = GetSetting(of.optionName)
+                    color = GW.settings[of.optionName]
                     ShowColorPicker(color.r, color.g, color.b, nil, function(restore)
                         if ColorPickerFrame.noColorCallback then return end
                         local newR, newG, newB
@@ -591,11 +611,11 @@ local function InitPanel(panel, hasScroll)
                         end
                         -- Update our internal storage.
 
-                        local color = GetSetting(of.optionName)
+                        local color = GW.settings[of.optionName]
                         color.r = newR
                         color.g = newG
                         color.b = newB
-                        SetSetting(of.optionName, color)
+                        GW.settings[of.optionName] = color
                         of.button.bg:SetColorTexture(newR, newG, newB)
                     end)
                 end
@@ -637,7 +657,7 @@ local function InitPanel(panel, hasScroll)
                             of.container:Show()
                         end
 
-                        SetSetting(self.optionName, self.option, self:GetParent():GetParent().data.perSpec)
+                        GW.settings[self.optionName] = self.option
 
                         if v.callback then
                             v.callback(self.option)
@@ -651,7 +671,7 @@ local function InitPanel(panel, hasScroll)
                             toSet = true
                         end
 
-                        SetSetting(self:GetParent().optionName, toSet, self:GetParent():GetParent():GetParent().data.perSpec, self:GetParent().option)
+                        GW.settings[self:GetParent().optionName] = toSet
 
                         if v.callback then
                             v.callback(toSet, self:GetParent().option)
@@ -700,12 +720,10 @@ local function InitPanel(panel, hasScroll)
             end
             loadDropDown(scrollFrame)
             -- set current settings value
-            if v.options then 
-                for key, val in pairs(v.options) do
-                    if GetSetting(of.optionName, of.perSpec) == val then
-                        of.button.string:SetText(v.options_names[key])
-                        break
-                    end
+            for key, val in pairs(v.options) do
+                if GW.settings[of.optionName] == val then
+                    of.button.string:SetText(v.options_names[key])
+                    break
                 end
              end
 
@@ -745,7 +763,7 @@ local function InitPanel(panel, hasScroll)
             )
         elseif v.optionType == "slider" then
             of.slider:SetMinMaxValues(v.min, v.max)
-            of.slider:SetValue(GetSetting(of.optionName, of.perSpec))
+            of.slider:SetValue(RoundDec(GW.settings[of.optionName]))
             if v.step then of.slider:SetValueStep(v.step) end
             of.slider:SetObeyStepOnDrag(true)
             of.slider:SetScript(
@@ -761,19 +779,19 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetValue(GetSetting(of.optionName, of.perSpec))
+                        self:SetValue(GW.settings[of.optionName])
                         return
                     end
                     local roundValue = RoundDec(self:GetValue(), of.decimalNumbers)
 
-                    SetSetting(of.optionName, roundValue, of.perSpec)
+                    GW.settings[of.optionName] = roundValue
                     self:GetParent().inputFrame.input:SetText(roundValue)
                     if v.callback then
                         v.callback()
                     end
                 end
             )
-            of.inputFrame.input:SetNumber(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
+            of.inputFrame.input:SetText(RoundDec(GW.settings[of.optionName], of.decimalNumbers))
             of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
@@ -787,7 +805,7 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetNumber(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
+                        self:SetText(RoundDec(GW.settings[of.optionName], of.decimalNumbers))
                         return
                     end
                     local roundValue = RoundDec(self:GetNumber(), of.decimalNumbers) or v.min
@@ -802,14 +820,14 @@ local function InitPanel(panel, hasScroll)
                     end
                     self:GetParent():GetParent().slider:SetValue(roundValue)
                     self:SetText(roundValue)
-                    SetSetting(v.optionName, roundValue, of.perSpec)
+                    GW.settings[v.optionName] = roundValue
                     if v.callback then
                         v.callback()
                     end
                 end
             )
         elseif v.optionType == "text" then
-            of.inputFrame.input:SetText(GetSetting(of.optionName, of.perSpec) or "")
+            of.inputFrame.input:SetText(GW.settings[of.optionName] or "")
             of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
@@ -823,18 +841,18 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetText(GetSetting(of.optionName, of.perSpec) or "")
+                        self:SetText(GW.settings[of.optionName] or "")
                         return
                     end
                     self:ClearFocus()
-                    SetSetting(of.optionName, self:GetText(), of.perSpec)
+                    GW.settings[of.optionName] = self:GetText()
                     if v.callback then
                         v.callback(self)
                     end
                 end
             )
         elseif v.optionType == "boolean" then
-            of.checkbutton:SetChecked(GetSetting(of.optionName, of.perSpec))
+            of.checkbutton:SetChecked(GW.settings[of.optionName])
             of.checkbutton:SetScript(
                 "OnClick",
                 function(self, button)
@@ -856,7 +874,7 @@ local function InitPanel(panel, hasScroll)
                     if self:GetChecked() then
                         toSet = true
                     end
-                    SetSetting(of.optionName, toSet, of.perSpec)
+                    GW.settings[of.optionName] = toSet
 
                     if v.callback ~= nil then
                         v.callback(toSet, of.optionName)
@@ -885,7 +903,7 @@ local function InitPanel(panel, hasScroll)
                         toSet = false
                     end
                     self.checkbutton:SetChecked(toSet)
-                    SetSetting(of.optionName, toSet, of.perSpec)
+                    GW.settings[of.optionName] = toSet
 
                     if v.callback ~= nil then
                         v.callback(toSet, of.optionName)
@@ -928,7 +946,7 @@ local function InitPanel(panel, hasScroll)
         if of.perSpec then
             local onUpdate = function (self)
                 self:SetScript("OnUpdate", nil)
-                local val = GetSetting(of.optionName, true)
+                local val = GW.settings[of.optionName]
 
                 if v.optionType == "dropdown" then
                     for i,value in pairs(v.options) do
