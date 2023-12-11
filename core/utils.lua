@@ -1,6 +1,5 @@
 local _, GW = ...
 local GW_CLASS_COLORS = GW.GW_CLASS_COLORS
-local GetSetting = GW.GetSetting
 
 local afterCombatQueue = {}
 local maxUpdatesPerCircle = 5
@@ -113,22 +112,12 @@ end
 GW.FormatMoneyForChat = FormatMoneyForChat
 
 do
-    local classColorSetting = nil
-    local function UpdateClassColorSetting()
-        classColorSetting = GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
-    end
-    GW.UpdateClassColorSetting = UpdateClassColorSetting
-
     local function GWGetClassColor(class, useClassColor, forNameString, alwaysUseBlizzardColors)
         if not class or not useClassColor then
             return RAID_CLASS_COLORS.PRIEST
         end
 
-        if classColorSetting == nil then
-            UpdateClassColorSetting()
-        end
-
-        local useBlizzardClassColor = alwaysUseBlizzardColors or classColorSetting
+        local useBlizzardClassColor = alwaysUseBlizzardColors or GW.settings.BLIZZARDCLASSCOLOR_ENABLED
         local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or GW_CLASS_COLORS[class]
         local colorForNameString
 

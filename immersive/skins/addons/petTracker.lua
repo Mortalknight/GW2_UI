@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local maxEntries = 25
@@ -168,7 +167,7 @@ end
 GW.CollapsePetTrackerAddonHeader = CollapseHeader
 
 local function LoadPetTrackerAddonSkin()
-    if not GetSetting("SKIN_PETTRACKER_ENABLED") or not PetTracker then return end
+    if not GW.settings.SKIN_PETTRACKER_ENABLED or not PetTracker then return end
 
     local petTrackerLocals = LibStub("AceLocale-3.0"):GetLocale("PetTracker")
     local petTrackerObjectives = CreateFrame("Frame", "GwQuesttrackerContainerPetTracker", GwQuestTrackerScrollChild, "GwQuesttrackerContainer")

@@ -1,26 +1,16 @@
 local _, GW = ...
-GW.DEFAULTS = GW.DEFAULTS or {}
-GW.DEFAULTS.RAIDDEBUFFS = {}
 GW.ImportendRaidDebuff = {}
 
 local function RemoveOldRaidDebuffsFormProfiles()
-    local profiles = GW2UI_SETTINGS_PROFILES or {}
+    local profiles = GW.globalSettings.profiles or {}
     for k, _ in pairs(profiles) do
         if profiles[k] then
             if profiles[k].RAIDDEBUFFS then
                 for id, _ in pairs(profiles[k].RAIDDEBUFFS) do
-                    if GW.DEFAULTS.RAIDDEBUFFS[id] == nil then
-                        GW2UI_SETTINGS_PROFILES[k].RAIDDEBUFFS[id] = nil
+                    if GW.globalDefault.profile.RAIDDEBUFFS[id] == nil then
+                        profiles[k].RAIDDEBUFFS[id] = nil
                     end
                 end
-            end
-        end
-    end
-    --private layouts
-    if GW2UI_SETTINGS_DB_03 and GW2UI_SETTINGS_DB_03.RAIDDEBUFFS then
-        for id, _ in pairs(GW2UI_SETTINGS_DB_03.RAIDDEBUFFS) do
-            if GW.DEFAULTS.RAIDDEBUFFS[id] == nil then
-                GW2UI_SETTINGS_DB_03.RAIDDEBUFFS[id] = nil
             end
         end
     end
@@ -28,8 +18,8 @@ end
 GW.RemoveOldRaidDebuffsFormProfiles = RemoveOldRaidDebuffsFormProfiles
 
 local function SetDefaultOnTheFly(id)
-    GW.DEFAULTS.RAIDDEBUFFS[id] = true
     GW.ImportendRaidDebuff[id] = true
+    GW.globalDefault.profile.RAIDDEBUFFS[id] = true
 end
 ----------------------------------------------------------
 -------------------- Mythic+ Specific --------------------

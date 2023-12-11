@@ -1,8 +1,7 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function ApplyChromieTimerSkin()
-    if not GetSetting("CHROMIE_TIME_SKIN_ENABLED") then return end
+    if not GW.settings.HROMIE_TIME_SKIN_ENABLED then return end
 
     ChromieTimeFrame.CloseButton:GwSkinButton(true)
     ChromieTimeFrame.CloseButton:SetSize(20, 20)

@@ -1,21 +1,14 @@
 local _, GW = ...
 local AFP = GW.AddProfiling
-local GetSetting = GW.GetSetting
 local CoordsFrame
 local MOUSE_LABEL = MOUSE_LABEL:gsub("|[TA].-|[ta]","")
-local settings = {}
 
 local function UpdateSettings()
-    settings.enabled = GetSetting("WORLDMAP_COORDS_TOGGLE")
-    settings.position = GetSetting("WORLDMAP_COORDS_POSITION")
-    settings.xOffset = tonumber(GetSetting("WORLDMAP_COORDS_X_OFFSET"))
-    settings.yOffset = tonumber(GetSetting("WORLDMAP_COORDS_Y_OFFSET"))
-
     -- set the position and toggle the frame
     CoordsFrame.Coords:ClearAllPoints()
-    CoordsFrame.Coords:SetPoint(settings.position, WorldMapFrame.ScrollContainer, settings.position, settings.xOffset, settings.yOffset)
+    CoordsFrame.Coords:SetPoint(GW.settings.WORLDMAP_COORDS_POSITION, WorldMapFrame.ScrollContainer, GW.settings.WORLDMAP_COORDS_POSITION, GW.settings.WORLDMAP_COORDS_X_OFFSET, GW.settings.WORLDMAP_COORDS_Y_OFFSET)
 
-    if settings.enabled then
+    if GW.settings.WORLDMAP_COORDS_TOGGLE then
         CoordsFrame:Show()
     else
         CoordsFrame:Hide()
@@ -54,7 +47,7 @@ local function AddCoordsToWorldMap()
     CoordsFrame.Coords:SetFontObject(Number12Font)
 
     WorldMapFrame:HookScript("OnShow", function()
-        if not CoordsTimer and settings.enabled then
+        if not CoordsTimer and GW.settings.WORLDMAP_COORDS_TOGGLE then
             UpdateCoords()
             if CoordsTimer then
                 CoordsTimer:Cancel()

@@ -1,7 +1,6 @@
 local _, GW = ...
 local constBackdropFrameBorder = GW.BackdropTemplates.OnlyBorder
 local constBackdropFrameSmallerBorder = GW.BackdropTemplates.DefaultWithSmallBorder
-local GetSetting = GW.GetSetting
 
 local function UpdateRepairButtons()
     MerchantRepairAllButton:ClearAllPoints()
@@ -64,7 +63,7 @@ end
 GW.SkinMerchantFrameItemButton = SkinMerchantFrameItemButton
 
 local function LoadMerchantFrameSkin()
-    if not GetSetting("MERCHANT_SKIN_ENABLED") then return end
+    if not GW.settings.MERCHANT_SKIN_ENABLED then return end
 
     MerchantFrame:GwStripTextures()
     MerchantFrame.NineSlice:Hide()

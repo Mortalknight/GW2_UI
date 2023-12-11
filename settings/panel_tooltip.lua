@@ -19,27 +19,27 @@ local function LoadTooltipPanel(sWindow)
     createCat(L["Tooltips"], nil, p, {p})
     settingsMenuAddButton(L["Tooltips"],p, {})
 
-    addOption(p.scroll.scrollchild, L["Cursor Tooltips"], L["Anchor the tooltips to the cursor."], "TOOLTIP_MOUSE", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Cursor Tooltips"], L["Anchor the tooltips to the cursor."], "TOOLTIP_MOUSE", nil, nil, {["TOOLTIPS_ENABLED"] = true})
     addOption(p.scroll.scrollchild, L["Advanced Tooltips"], L["Displays additional information in the tooltip (further information is displayed when the SHIFT key is pressed)"], "ADVANCED_TOOLTIP", function() GW.ShowRlPopup = true end, nil, {["TOOLTIPS_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Current Mount"], L["Display current mount the unit is riding."], "ADVANCED_TOOLTIP_SHOW_MOUNT", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p.scroll.scrollchild, L["Target Info"], L["When in a raid group, show if anyone in your raid is targeting the current tooltip unit."], "ADVANCED_TOOLTIP_SHOW_TARGET_INFO", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p.scroll.scrollchild, SHOW_PLAYER_TITLES, L["Display player titles."], "ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p.scroll.scrollchild, GUILDCONTROL_GUILDRANKS, L["Display guild ranks if a unit is a member of a guild."], "ADVANCED_TOOLTIP_SHOW_GUILD_RANKS", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p.scroll.scrollchild, L["Always Show Realm"], nil, "ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p.scroll.scrollchild, ROLE, L["Display the unit role in the tooltip."], "ADVANCED_TOOLTIP_SHOW_ROLE", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p.scroll.scrollchild, CLASS_COLORS, COMPACT_UNIT_FRAME_PROFILE_USECLASSCOLORS, "ADVANCED_TOOLTIP_SHOW_CLASS_COLOR", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p.scroll.scrollchild, L["Gender"], L["Displays the player character's gender."], "ADVANCED_TOOLTIP_SHOW_GENDER", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p.scroll.scrollchild, DUNGEON_SCORE, nil, "ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p.scroll.scrollchild, CHALLENGE_MODE_KEYSTONE_NAME:format("_"):gsub(": _", ""), L["Adds descriptions for mythic keystone properties to their tooltips."], "ADVANCED_TOOLTIP_SHOW_KEYSTONEINFO", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, L["Current Mount"], L["Display current mount the unit is riding."], "ADVANCED_TOOLTIP_SHOW_MOUNT", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, L["Target Info"], L["When in a raid group, show if anyone in your raid is targeting the current tooltip unit."], "ADVANCED_TOOLTIP_SHOW_TARGET_INFO", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, SHOW_PLAYER_TITLES, L["Display player titles."], "ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, GUILDCONTROL_GUILDRANKS, L["Display guild ranks if a unit is a member of a guild."], "ADVANCED_TOOLTIP_SHOW_GUILD_RANKS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, L["Always Show Realm"], nil, "ADVANCED_TOOLTIP_SHOW_REALM_ALWAYS", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, ROLE, L["Display the unit role in the tooltip."], "ADVANCED_TOOLTIP_SHOW_ROLE", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, CLASS_COLORS, COMPACT_UNIT_FRAME_PROFILE_USECLASSCOLORS, "ADVANCED_TOOLTIP_SHOW_CLASS_COLOR", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, L["Gender"], L["Displays the player character's gender."], "ADVANCED_TOOLTIP_SHOW_GENDER", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, DUNGEON_SCORE, nil, "ADVANCED_TOOLTIP_SHOW_DUNGEONSCORE", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
+    addOption(p.scroll.scrollchild, CHALLENGE_MODE_KEYSTONE_NAME:format("_"):gsub(": _", ""), L["Adds descriptions for mythic keystone properties to their tooltips."], "ADVANCED_TOOLTIP_SHOW_KEYSTONEINFO", nil, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
     addOption(p.scroll.scrollchild, L["Show Health bar text"], nil, "ADVANCED_TOOLTIP_SHOW_HEALTHBAR_TEXT", function(value) GW.UpdateTooltipSettings(); if not GameTooltip:IsForbidden() then if value then GameTooltipStatusBar.text:Show(); else GameTooltipStatusBar.text:Hide() end end end, nil, {["TOOLTIPS_ENABLED"] = true, ["ADVANCED_TOOLTIP"] = true})
-    addOption(p.scroll.scrollchild, L["Hide in combat"], L["Hide different kind of tooltips during combat."], "HIDE_TOOLTIP_IN_COMBAT", GW.UpdateTooltipSettings, nil, {["TOOLTIPS_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Hide in combat"], L["Hide different kind of tooltips during combat."], "HIDE_TOOLTIP_IN_COMBAT", nil, nil, {["TOOLTIPS_ENABLED"] = true})
     addOption(p.scroll.scrollchild, GW.NewSign .. L["Show premade group info"], L["Add LFG group info to tooltip."], "TOOLTIP_SHOW_PREMADE_GROUP_INFO", nil, nil, {["TOOLTIPS_ENABLED"] = true}, "LfgInfo")
     addOptionDropdown(
         p.scroll.scrollchild,
         L["Health Bar Position"],
         nil,
         "TOOLTIP_HEALTHBAER_POSITION",
-        GW.UpdateTooltipSettings,
+        nil,
         {"BOTTOM", "TOP", "DISABLED"},
         {
             L["Bottom"],
@@ -54,7 +54,7 @@ local function LoadTooltipPanel(sWindow)
         L["Combat Override Key"],
         L["Modifier to hold to show the tooltip in combat."],
         "HIDE_TOOLTIP_IN_COMBAT_OVERRIDE",
-        GW.UpdateTooltipSettings,
+        nil,
         {"ALWAYS", "NONE", "SHIFT", "CTRL", "ALT"},
         {
             ALWAYS,
@@ -71,7 +71,7 @@ local function LoadTooltipPanel(sWindow)
         L["Hide Units"],
         L["Only hide unit tooltips of the selected reactions."],
         "HIDE_TOOLTIP_IN_COMBAT_UNIT",
-        GW.UpdateTooltipSettings,
+        nil,
         {"NONE", "FRIENDLY", "HOSTILE", "NEUTRAL", "FRIENDLY_NEUTRAL", "FRIENDLY_HOSTILE", "HOSTILE_NEUTRAL", "ALL"},
         {
             NONE,
@@ -92,7 +92,6 @@ local function LoadTooltipPanel(sWindow)
         nil,
         "TOOLTIP_FONT_SIZE",
         function()
-            GW.UpdateTooltipSettings()
             GW.SetTooltipFonts()
         end,
         5,
@@ -107,7 +106,7 @@ local function LoadTooltipPanel(sWindow)
         L["Modifier for IDs"],
         nil,
         "ADVANCED_TOOLTIP_ID_MODIFIER",
-        GW.UpdateTooltipSettings,
+        nil,
         {"ALWAYS", "NONE", "SHIFT", "CTRL", "ALT"},
         {
             ALWAYS,
@@ -124,7 +123,7 @@ local function LoadTooltipPanel(sWindow)
         L["Item Count"],
         L["Display how many of a certain item you have in your possession."],
         "ADVANCED_TOOLTIP_OPTION_ITEMCOUNT",
-        GW.UpdateTooltipSettings,
+        nil,
         {"NONE", "BAG", "BANK", "BOTH"},
         {
             NONE,
@@ -140,7 +139,7 @@ local function LoadTooltipPanel(sWindow)
         L["Cursor Anchor Type"],
         L["Only takes effect if the option 'Cursor Tooltips' is activated"],
         "CURSOR_ANCHOR_TYPE",
-        GW.UpdateTooltipSettings,
+        nil,
         {"ANCHOR_CURSOR", "ANCHOR_CURSOR_LEFT", "ANCHOR_CURSOR_RIGHT"},
         {
             L["Cursor Anchor"],
@@ -155,7 +154,7 @@ local function LoadTooltipPanel(sWindow)
         L["Cursor Anchor Offset X"],
         L["Only takes effect if the option 'Cursor Tooltips' is activated and the cursor anchor is NOT 'Cursor Anchor'"],
         "ANCHOR_CURSOR_OFFSET_X",
-        GW.UpdateTooltipSettings,
+        nil,
         -128,
         128,
         nil,
@@ -167,7 +166,7 @@ local function LoadTooltipPanel(sWindow)
         L["Cursor Anchor Offset Y"],
         L["Only takes effect if the option 'Cursor Tooltips' is activated and the cursor anchor is NOT 'Cursor Anchor'"],
         "ANCHOR_CURSOR_OFFSET_Y",
-        GW.UpdateTooltipSettings,
+        nil,
         -128,
         128,
         nil,

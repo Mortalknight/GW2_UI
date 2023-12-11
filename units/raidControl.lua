@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function fnGMIG_OnEvent(self)
     local activ = (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) or (IsInGroup() and not IsInRaid())
@@ -257,7 +256,7 @@ local function manageButton()
 
     local fnGMGB_OnEnter = function(self)
         self.arrow:SetSize(21, 42)
-        if GetSetting("FADE_GROUP_MANAGE_FRAME") then
+        if GW.settings.FADE_GROUP_MANAGE_FRAME then
             if GwGroupManage:IsShown() then
                 return
             end
@@ -266,7 +265,7 @@ local function manageButton()
     end
     local fnGMGB_OnLeave = function(self)
         self.arrow:SetSize(16, 32)
-        if GetSetting("FADE_GROUP_MANAGE_FRAME") then
+        if GW.settings.FADE_GROUP_MANAGE_FRAME then
             if GwGroupManage:IsShown() then
                 return
             end
@@ -278,7 +277,7 @@ local function manageButton()
 
     fnGMIG_OnEvent(GwGroupManage.inGroup)
 
-    if GetSetting("FADE_GROUP_MANAGE_FRAME") then
+    if GW.settings.FADE_GROUP_MANAGE_FRAME then
         local fo = fmGMGB:CreateAnimationGroup("fadeOut")
         local fi = fmGMGB:CreateAnimationGroup("fadeIn")
         local fadeOut = fo:CreateAnimation("Alpha")
@@ -321,7 +320,7 @@ local function UpdateRaidCounterVisibility()
         ["IN_RAID_IN_PARTY"] = "[petbattle] hide; [group] show; hide",
     }
 
-    RegisterStateDriver(GW_RaidCounter_Frame, "visibility", VisibilityStates[GetSetting("ROLE_BAR")])
+    RegisterStateDriver(GW_RaidCounter_Frame, "visibility", VisibilityStates[GW.settings.ROLE_BAR])
     GW_RaidCounter_Frame:GetScript("OnEvent")(GW_RaidCounter_Frame)
 end
 GW.UpdateRaidCounterVisibility = UpdateRaidCounterVisibility
@@ -332,7 +331,7 @@ local function Create_Raid_Counter()
     if GwSocialWindow then
         raidCounterFrame:SetFrameRef("GwSocialWindow", GwSocialWindow)
     end
-    raidCounterFrame:SetAttribute("ourWindow", GetSetting("USE_SOCIAL_WINDOW"))
+    raidCounterFrame:SetAttribute("ourWindow", GW.settings.USE_SOCIAL_WINDOW)
     raidCounterFrame:SetAttribute("ourWindow", false)
     raidCounterFrame.func = function() ToggleRaidFrame() end
     raidCounterFrame:SetAttribute(

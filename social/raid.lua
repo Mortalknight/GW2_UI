@@ -1,13 +1,10 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function RaidGroupButton_OnDragStart(raidButton)
     if InCombatLockdown() then return end
     if ( not UnitIsGroupLeader("player") and not UnitIsGroupAssistant("player") ) then
         return;
     end
-    local cursorX, cursorY = GetCursorPosition();
-    local uiScale = UIParent:GetScale();
     raidButton:StartMoving();
     MOVING_RAID_MEMBER = raidButton;
 end
@@ -180,7 +177,7 @@ local function LoadRaidList(tabContainer)
 
     RaidFrameConvertToRaidButton:GwSkinButton(false, true)
     RaidFrameRaidInfoButton:GwSkinButton(false, true)
-    if GetSetting("USE_CHARACTER_WINDOW") then
+    if GW.settings.USE_CHARACTER_WINDOW then
         RaidFrameRaidInfoButton:SetScript("OnClick", function()
             if InCombatLockdown() then return end
             if GWCharacterCurrenyRaidInfoFrame.RaidScroll:IsVisible() then

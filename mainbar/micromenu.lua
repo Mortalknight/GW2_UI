@@ -1,6 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
 local AFP = GW.AddProfiling
 local updateIcon
 
@@ -20,14 +19,6 @@ local MICRO_BUTTONS = {
     "HelpMicroButton",
     "StoreMicroButton",
     }
-
-local settings = {}
-
-local function UpdateSettings()
-    settings.fadeMicromenu = GetSetting("FADE_MICROMENU")
-    settings.showEventTimerIcon = GetSetting("MICROMENU_EVENT_TIMER_ICON")
-end
-GW.UpdateMicroMenuSettings = UpdateSettings
 
 do
     local SendMessageWaiting
@@ -428,7 +419,7 @@ end
 local function ToggleEventTimerIcon(mbf)
     Gw2UpdateMicroMenuButton:ClearAllPoints()
 
-    if settings.showEventTimerIcon then
+    if GW.settings.MICROMENU_EVENT_TIMER_ICON then
         if not Gw2EventTimerMicroMenuButton then
             local eventTimerIcon = CreateFrame("Button", "Gw2EventTimerMicroMenuButton", mbf, "MainMenuBarMicroButton")
             eventTimerIcon.newbieText = nil
@@ -458,7 +449,7 @@ local function setupMicroButtons(mbf)
     -- determine if we are using the default char button (for default charwin)
     -- or if we need to create our own char button for the custom hero panel
     local cref
-    if GetSetting("USE_CHARACTER_WINDOW") then
+    if GW.settings.USE_CHARACTER_WINDOW then
         cref = CreateFrame("Button", "GwCharacterMicroButton", mbf, "SecureHandlerClickTemplate")
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
@@ -510,7 +501,7 @@ local function setupMicroButtons(mbf)
     -- determine if we are using the default spell & talent buttons
     -- or if we need our custom talent button for the hero panel
     local sref
-    if GetSetting("USE_SPELLBOOK_WINDOW") then
+    if GW.settingsUSE_SPELLBOOK_WINDOW then
         sref = CreateFrame("Button", nil, mbf, "SecureHandlerClickTemplate")
         sref.tooltipText = MicroButtonTooltipText(SPELLBOOK_ABILITIES_BUTTON, "TOGGLESPELLBOOK")
         sref.newbieText = NEWBIE_TOOLTIP_TALENTS
@@ -800,7 +791,7 @@ end
 AFP("hook_UpdateMicroButtons", hook_UpdateMicroButtons)
 
 local function mbf_OnLeave(self)
-    if not self:IsMouseOver() and settings.fadeMicromenu then
+    if not self:IsMouseOver() and GW.settings.FADE_MICROMENU then
         self:fadeOut()
     end
 end
@@ -811,8 +802,6 @@ local function LoadMicroMenu()
     if checkElvUI() then
         return
     end
-
-    UpdateSettings()
 
     MicroMenuContainer:GwKillEditMode()
 
@@ -840,12 +829,12 @@ local function LoadMicroMenu()
     hooksecurefunc("UpdateMicroButtons", hook_UpdateMicroButtons)
 
     -- if borders are hidden, hide the bg
-    if not GetSetting("BORDER_ENABLED") then
+    if not GW.settings.BORDER_ENABLED then
         mbf.cf.bg:Hide()
     end
 
     -- if set to fade micro menu, add fader
-    mbf.cf:SetAttribute("shouldFade", settings.fadeMicromenu)
+    mbf.cf:SetAttribute("shouldFade", GW.settings.FADE_MICROMENU)
     mbf.cf:SetAttribute("fadeTime", 0.15)
 
     local fo = mbf.cf:CreateAnimationGroup("fadeOut")
@@ -888,7 +877,7 @@ local function LoadMicroMenu()
         cf:RegisterAutoHide(cf:GetAttribute("fadeTime") + 0.25)
     ]=])
     mbf.cf:HookScript("OnLeave", mbf_OnLeave)
-    mbf.cf:SetShown(not settings.fadeMicromenu)
+    mbf.cf:SetShown(not GW.settings.FADE_MICROMENU)
 
     -- fix alert positions and hide the micromenu bar
     MicroButtonAndBagsBar:SetAlpha(0)
@@ -897,7 +886,7 @@ local function LoadMicroMenu()
     modifyMicroAlert(LFDMicroButtonAlert, LFDMicroButton)
     modifyMicroAlert(EJMicroButtonAlert, EJMicroButton)
     modifyMicroAlert(StoreMicroButtonAlert, StoreMicroButton)
-    if GetSetting("USE_CHARACTER_WINDOW") then
+    if GW.settings.USE_CHARACTER_WINDOW then
         modifyMicroAlert(CharacterMicroButtonAlert, GwCharacterMicroButton)
     else
         modifyMicroAlert(CharacterMicroButtonAlert, CharacterMicroButton)

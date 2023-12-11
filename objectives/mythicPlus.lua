@@ -2,13 +2,6 @@ local _, GW = ...
 
 local evenFrame = CreateFrame("Frame")
 
-local settings = {}
-
-local function UpdateSettings()
-    settings.collapseObjectives = GW.GetSetting("OBJECTIVES_COLLAPSE_IN_M_PLUS")
-end
-GW.UpdateChallengeModeObjectivesSettings = UpdateSettings
-
 local function OnEvent(_, event)
     local _, _, difficultyID = GetInstanceInfo()
 
@@ -52,7 +45,7 @@ end
 --/run GW_TESTEVENT(nil, "CHALLENGE_MODE_COMPLETED")
 
 local function ToggleCollapseObjectivesInChallangeMode()
-    if settings.collapseObjectives then
+    if GW.settings.OBJECTIVES_COLLAPSE_IN_M_PLUS then
         evenFrame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
         evenFrame:RegisterEvent("CHALLENGE_MODE_START")
         evenFrame:RegisterEvent("PLAYER_ENTERING_WORLD")

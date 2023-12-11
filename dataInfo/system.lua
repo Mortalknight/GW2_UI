@@ -16,13 +16,6 @@ local CombineAddOns = {
     ["BigWigs"] = "^BigWigs",
 }
 
-local settings = {}
-
-local function UpdateSettings()
-    settings.disableFpsTooltip = GW.GetSetting("MINIMAP_FPS_TOOLTIP_DISABLED")
-end
-GW.UpdateMinimapSystemDataInfoSettings = UpdateSettings
-
 local function BuildAddonList()
     local addOnCount = C_AddOns.GetNumAddOns()
     if addOnCount == #infoTable then return end
@@ -68,7 +61,7 @@ local function displaySort(a, b)
 end
 
 local function FpsOnEnter(self, slow)
-    if settings.disableFpsTooltip then return end
+    if GW.settings.MINIMAP_FPS_TOOLTIP_DISABLED then return end
     enteredInfo = true
     GameTooltip:ClearLines()
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")

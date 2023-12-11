@@ -1,7 +1,6 @@
 local _, GW = ...
 local TimeCount = GW.TimeCount
 local PowerBarColorCustom = GW.PowerBarColorCustom
-local GetSetting = GW.GetSetting
 local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 local BleedList = GW.Libs.Dispel:GetBleedList()
 local BadDispels = GW.Libs.Dispel:GetBadList()
@@ -21,21 +20,6 @@ local GW_PORTRAIT_BACKGROUND = {
     [4] = {l = 0, r = 0.828, t = 0.166015625 * 3, b = 0.166015625 * 4},
     [5] = {l = 0, r = 0.828, t = 0.166015625 * 4, b = 0.166015625 * 5}
 }
-
-local settings = {}
-
-local function UpdateSettings()
-    settings.showDebuffs = GetSetting("PARTY_SHOW_DEBUFFS")
-    settings.showOnlyDispelDebuffs = GetSetting("PARTY_ONLY_DISPELL_DEBUFFS")
-    settings.showImportendDebuffs = GetSetting("PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF")
-    settings.debuffScale = GetSetting("RAIDDEBUFFS_Scale")
-    settings.dispelDebuffScale = GetSetting("DISPELL_DEBUFFS_Scale")
-    settings.unitNameString = GetSetting("PARTY_UNIT_HEALTH")
-    settings.showPlayer = GetSetting("PARTY_PLAYER_FRAME")
-    settings.showPets = GetSetting("PARTY_SHOW_PETS")
-end
-GW.UpdatePartySettings = UpdateSettings
-GW.UpdatePartySettings()
 
 local function setPortraitBackground(self, idx)
     self.portraitBackground:SetTexCoord(GW_PORTRAIT_BACKGROUND[idx].l, GW_PORTRAIT_BACKGROUND[idx].r, GW_PORTRAIT_BACKGROUND[idx].t, GW_PORTRAIT_BACKGROUND[idx].b)
@@ -125,11 +109,11 @@ local function getUnitDebuffs(unit)
         local debuffName, icon, count, debuffType, duration, expires, caster, isStealable, shouldConsolidate, spellId = UnitDebuff(unit, i, "HARMFUL")
         if debuffName then
             local shouldDisplay = false
-            local isImportant = (GW.ImportendRaidDebuff[spellId] and settings.showImportendDebuffs) or false
+            local isImportant = (GW.ImportendRaidDebuff[spellId] and GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) or false
             local isDispellable = GW.Libs.Dispel:IsDispellableByMe(debuffType)
 
-            if settings.showDebuffs then
-                if settings.showOnlyDispelDebuffs then
+            if GW.settings.PARTY_SHOW_DEBUFFS then
+                if GW.settings.PARTY_ONLY_DISPELL_DEBUFFS then
                     if debuffType and GW.Libs.Dispel:IsDispellableByMe(debuffType) then
                         shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
                     end
@@ -138,7 +122,7 @@ local function getUnitDebuffs(unit)
                 end
             end
 
-            if settings.showImportendDebuffs and not shouldDisplay then
+            if GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF and not shouldDisplay then
                 shouldDisplay = GW.ImportendRaidDebuff[spellId] or false
             end
 
@@ -236,9 +220,9 @@ local function updatePartyDebuffs(self, x, y)
                 if debuffList[i].isImportant and debuffList[i].isDispellable then
                     size = size * debuffScale
                 elseif debuffList[i].isImportant then
-                    size = size * tonumber(settings.debuffScale)
+                    size = size * tonumber(GW.settings.RAIDDEBUFFS_Scale)
                 elseif debuffList[i].isDispellable then
-                    size = size * tonumber(settings.dispelDebuffScale)
+                    size = size * tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
                 end
             end
             debuffFrame:SetSize(size, size)
@@ -384,18 +368,18 @@ GW.AddForProfiling("party", "setUnitName", setUnitName)
 local function setHealthValue(self, healthCur, healthMax, healthPrec)
     local healthstring = ""
 
-    if settings.unitNameString == "NONE" then
+    if GW.settings.PARTY_UNIT_HEALTH == "NONE" then
         self.healthString:Hide()
         return
     end
 
-    if settings.unitNameString == "PREC" then
+    if GW.settings.PARTY_UNIT_HEALTH == "PREC" then
         self.healthString:SetText(RoundDec(healthPrec * 100, 0) .. "%")
         self.healthString:SetJustifyH("LEFT")
-    elseif settings.unitNameString == "HEALTH" then
+    elseif GW.settings.PARTY_UNIT_HEALTH == "HEALTH" then
         self.healthString:SetText(CommaValue(healthCur))
         self.healthString:SetJustifyH("LEFT")
-    elseif settings.unitNameString == "LOSTHEALTH" then
+    elseif GW.settings.PARTY_UNIT_HEALTH == "LOSTHEALTH" then
         if healthMax - healthCur > 0 then healthstring = CommaValue(healthMax - healthCur) end
         self.healthString:SetText(healthstring)
         self.healthString:SetJustifyH("RIGHT")
@@ -577,7 +561,7 @@ end
 GW.AddForProfiling("party", "party_OnEvent", party_OnEvent)
 
 local function CreatePartyPetFrame(frame, i)
-    local unit = frame.unit == "player" and "pet" or "partypet" .. (i - (settings.showPlayer and 1 or 0))
+    local unit = frame.unit == "player" and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
     local f = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, "GwPartyPetFrame")
 
     local hg = f.healthContainer
@@ -608,7 +592,7 @@ local function CreatePartyPetFrame(frame, i)
     f.unit = unit
     f.isPet = true
 
-    if settings.showPets then
+    if GW.settings.PARTY_SHOW_PETS then
         RegisterStateDriver(f, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format(unit))
     else
         RegisterStateDriver(f, "visibility", "hide")
@@ -684,7 +668,7 @@ local function CreatePartyPetFrame(frame, i)
 end
 
 local function createPartyFrame(i, isFirstFrame, isPlayer)
-    local registerUnit = isPlayer and "player" or "party" .. (i - (settings.showPlayer and 1 or 0))
+    local registerUnit = isPlayer and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
     local frame = CreateFrame("Button", "GwPartyFrame" .. i, UIParent, "GwPartyFrame")
 
     local hg = frame.healthContainer
@@ -853,17 +837,14 @@ local function LoadPartyFrames()
         GW.manageButton()
     end
 
-    if GetSetting("RAID_FRAMES") and GetSetting("RAID_STYLE_PARTY") then
+    if GW.settings.RAID_FRAMES and GW.settings.RAID_STYLE_PARTY then
         return
     end
-
-    UpdateSettings()
-
-    local addCounter = settings.showPlayer and 1 or 0
+    local addCounter = GW.settings.PARTY_PLAYER_FRAME and 1 or 0
     local index = 1
     local isFirstFrame = true
     for _ = 1, MAX_PARTY_MEMBERS + addCounter do
-        if settings.showPlayer and isFirstFrame then
+        if GW.settings.PARTY_PLAYER_FRAME and isFirstFrame then
             createPartyFrame(index, isFirstFrame, true)
         else
             createPartyFrame(index, isFirstFrame, false)
@@ -879,20 +860,20 @@ local function LoadPartyFrames()
             self:SetText("-")
             for i = 1, MAX_PARTY_MEMBERS + addCounter do
                 if _G["GwPartyFrame" .. i] then
-                    _G["GwPartyFrame" .. i].unit = i == 1 and settings.showPlayer and "player" or "party" .. (i - (settings.showPlayer and 1 or 0))
-                    _G["GwPartyFrame" .. i].guid = UnitGUID(i == 1 and settings.showPlayer and "player" or "party" .. (i - (settings.showPlayer and 1 or 0)))
-                    _G["GwPartyFrame" .. i]:SetAttribute("unit", (i == 1 and settings.showPlayer and "player" or "party" .. (i - (settings.showPlayer and 1 or 0))))
+                    _G["GwPartyFrame" .. i].unit = i == 1 and GW.settings.PARTY_PLAYER_FRAME and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
+                    _G["GwPartyFrame" .. i].guid = UnitGUID(i == 1 and GW.settings.PARTY_PLAYER_FRAME and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))
+                    _G["GwPartyFrame" .. i]:SetAttribute("unit", (i == 1 and GW.settings.PARTY_PLAYER_FRAME and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))))
                     UnregisterStateDriver(_G["GwPartyFrame" .. i], "visibility")
-                    RegisterStateDriver(_G["GwPartyFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format((i == 1 and settings.showPlayer and "player" or "party" .. (i - (settings.showPlayer and 1 or 0)))))
+                    RegisterStateDriver(_G["GwPartyFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format((i == 1 and GW.settings.PARTY_PLAYER_FRAME and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))))
                     party_OnEvent(_G["GwPartyFrame" .. i], "load")
                     updatePartyData(_G["GwPartyFrame" .. i])
 
-                    _G["GwPartyPetFrame" .. i].unit = i == 1 and settings.showPlayer and "pet" or "partypet" .. (i - (settings.showPlayer and 1 or 0))
-                    _G["GwPartyPetFrame" .. i].guid = UnitGUID(i == 1 and settings.showPlayer and "pet" or "partypet" .. (i - (settings.showPlayer and 1 or 0)))
-                    _G["GwPartyPetFrame" .. i]:SetAttribute("unit", (i == 1 and settings.showPlayer and "pet" or "partypet" .. (i - (settings.showPlayer and 1 or 0))))
+                    _G["GwPartyPetFrame" .. i].unit = i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
+                    _G["GwPartyPetFrame" .. i].guid = UnitGUID(i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))
+                    _G["GwPartyPetFrame" .. i]:SetAttribute("unit", (i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))))
                     UnregisterStateDriver(_G["GwPartyPetFrame" .. i], "visibility")
-                    if settings.showPets then
-                        RegisterStateDriver(_G["GwPartyPetFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format((i == 1 and settings.showPlayer and "pet" or "partypet" .. (i - (settings.showPlayer and 1 or 0)))))
+                    if GW.settings.PARTY_SHOW_PETS then
+                        RegisterStateDriver(_G["GwPartyPetFrame" .. i], "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format((i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))))
                     else
                         RegisterStateDriver(_G["GwPartyPetFrame" .. i], "visibility", "hide")
                     end

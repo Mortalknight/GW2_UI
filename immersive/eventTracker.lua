@@ -1,6 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
 
 --[[
     Credits: fang2hou -> ElvUI_Windtools
@@ -14,57 +13,57 @@ local settings = {
 
 local function UpdateSettings()
     settings.communityFeast = {
-        enabled = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ENABLED"),
-        desaturate = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE"),
-        alert = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ALERT"),
-        alertSeconds = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS"),
-        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED"),
-        flashTaskbar = GetSetting("WORLD_EVENTS_COMMUNITY_FEAST_FLASH_TASKBAR")
+        enabled = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ENABLED,
+        desaturate = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_DESATURATE,
+        alert = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ALERT,
+        alertSeconds = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_ALERT_SECONDS,
+        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_STOP_ALERT_IF_COMPLETED,
+        flashTaskbar = GW.settings.WORLD_EVENTS_COMMUNITY_FEAST_FLASH_TASKBAR
     }
 
     settings.dragonbaneKeep = {
-        enabled = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED"),
-        desaturate = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE"),
-        alert = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ALERT"),
-        alertSeconds = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS"),
-        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED"),
-        flashTaskbar = GetSetting("WORLD_EVENTS_DRAGONBANE_KEEP_FLASH_TASKBAR")
+        enabled = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_ENABLED,
+        desaturate = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_DESATURATE,
+        alert = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_ALERT,
+        alertSeconds = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_ALERT_SECONDS,
+        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_STOP_ALERT_IF_COMPLETED,
+        flashTaskbar = GW.settings.WORLD_EVENTS_DRAGONBANE_KEEP_FLASH_TASKBAR
     }
 
     settings.researchersUnderFire = {
-        enabled = GetSetting("WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED"),
-        desaturate = GetSetting("WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_DESATURATE"),
-        alert = GetSetting("WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT"),
-        alertSeconds = GetSetting("WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT_SECONDS"),
-        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_STOP_ALERT_IF_COMPLETED"),
-        flashTaskbar = GetSetting("WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_FLASH_TASKBAR")
+        enabled = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ENABLED,
+        desaturate = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_DESATURATE,
+        alert = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT,
+        alertSeconds = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_ALERT_SECONDS,
+        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_STOP_ALERT_IF_COMPLETED,
+        flashTaskbar = GW.settings.WORLD_EVENTS_RESEARCHERS_UNDER_FIRE_FLASH_TASKBAR
     }
 
     settings.timeRiftThaldraszus = {
-        enabled = GetSetting("WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED"),
-        desaturate = GetSetting("WORLD_EVENTS_TIME_RIFT_THALDRASZUS_DESATURATE"),
-        alert = GetSetting("WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT"),
-        alertSeconds = GetSetting("WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT_SECONDS"),
-        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_TIME_RIFT_THALDRASZUS_STOP_ALERT_IF_COMPLETED"),
-        flashTaskbar = GetSetting("WORLD_EVENTS_TIME_RIFT_THALDRASZUS_FLASH_TASKBAR")
+        enabled = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ENABLED,
+        desaturate = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_DESATURATE,
+        alert = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT,
+        alertSeconds = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_ALERT_SECONDS,
+        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_STOP_ALERT_IF_COMPLETED,
+        flashTaskbar = GW.settings.WORLD_EVENTS_TIME_RIFT_THALDRASZUS_FLASH_TASKBAR
     }
 
     settings.superBloom = {
-        enabled = GetSetting("WORLD_EVENTS_SUPER_BLOOM_ENABLED"),
-        desaturate = GetSetting("WORLD_EVENTS_SUPER_BLOOM_DESATURATE"),
-        alert = GetSetting("WORLD_EVENTS_SUPER_BLOOM_ALERT"),
-        alertSeconds = GetSetting("WORLD_EVENTS_SUPER_BLOOM_ALERT_SECONDS"),
-        stopAlertIfCompleted = GetSetting("WORLD_EVENTS_SUPER_BLOOM_STOP_ALERT_IF_COMPLETED"),
-        flashTaskbar = GetSetting("WORLD_EVENTS_SUPER_BLOOM_FLASH_TASKBAR")
+        enabled = GW.settings.WORLD_EVENTS_SUPER_BLOOM_ENABLED,
+        desaturate = GW.settings.WORLD_EVENTS_SUPER_BLOOM_DESATURATE,
+        alert = GW.settings.WORLD_EVENTS_SUPER_BLOOM_ALERT,
+        alertSeconds = GW.settings.WORLD_EVENTS_SUPER_BLOOM_ALERT_SECONDS,
+        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_SUPER_BLOOM_STOP_ALERT_IF_COMPLETED,
+        flashTaskbar = GW.settings.WORLD_EVENTS_SUPER_BLOOM_FLASH_TASKBAR
     }
 
     settings.iskaaranFishingNet = {
-        enabled = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED"),
-        alert = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT"),
-        disableAlertAfterHours = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_DISABLE_ALERT_AFTER_HOURS"),
-        flashTaskbar = GetSetting("WORLD_EVENTS_ISKAARAN_FISHING_NET_FLASH_TASKBAR"),
+        enabled = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED,
+        alert = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT,
+        disableAlertAfterHours = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_DISABLE_ALERT_AFTER_HOURS,
+        flashTaskbar = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_FLASH_TASKBAR,
         -- this are player settings no global ones
-        playerData = GetSetting("ISKAARAN_FISHING_NET_DATA")
+        playerData = GW.private.ISKAARAN_FISHING_NET_DATA
     }
 end
 GW.UpdateEventTrackerSettings = UpdateSettings
@@ -75,7 +74,7 @@ local function UpdateIskaaranFishingNetPlayerData(key, value)
     end
     settings.iskaaranFishingNet.playerData[key] = value
 
-    GW.SetSetting("ISKAARAN_FISHING_NET_DATA", settings.iskaaranFishingNet.playerData)
+    GW.private.ISKAARAN_FISHING_NET_DATA = settings.iskaaranFishingNet.playerData
 end
 
 local mapFrame

@@ -1051,7 +1051,7 @@ local function updatePointsDisplay()
 end
 
 local function moveFrameToPosition(frame, x, y)
-    local pos = GW.GetSetting("AchievementWindow")
+    local pos = GW.settings["AchievementWindow"]
 
     if x and y then
         if pos then
@@ -1063,7 +1063,7 @@ local function moveFrameToPosition(frame, x, y)
         pos.relativePoint = "TOPLEFT"
         pos.xOfs = x
         pos.yOfs = y
-        GW.SetSetting("AchievementWindow", pos)
+        GW.settings.AchievementWindow = pos
     end
 
     frame:ClearAllPoints()
@@ -1076,7 +1076,8 @@ local function MakeMovable(frame, target)
     end
 
     if not target then
-        local point = GW.GetSetting("AchievementWindow")
+        local point = GW.settings.AchievementWindow
+        DevTools_Dump(point)
         frame:ClearAllPoints()
         frame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point. yOfs)
     end
@@ -1575,7 +1576,7 @@ local function skinAchevement()
 end
 
 local function LoadAchivementSkin()
-    if not GW.GetSetting("ACHIEVEMENT_SKIN_ENABLED") then return end
+    if not GW.settings.ACHIEVEMENT_SKIN_ENABLED then return end
 
     GW.RegisterLoadHook(skinAchevement, "Blizzard_AchievementUI")
 end

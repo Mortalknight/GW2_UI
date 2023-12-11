@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 local NeedAdjustMaxStanceButtons = false
 local NeedStanceButtonStyling = false
 local NUM_STANCE_SLOTS = NUM_STANCE_SLOTS or 10
@@ -31,7 +30,7 @@ local function PositionsAndSize(self)
         GwStanceBarButton1:SetPoint("TOPLEFT", self.gwMover)
         GwStanceBarButton1:SetFrameLevel(self:GetFrameLevel() + 5)
     else
-        local growDirection = GetSetting("StanceBar_GrowDirection")
+        local growDirection = GW.settings.StanceBar_GrowDirection
         local button, lastbutton
 
         self.container:ClearAllPoints()
@@ -171,7 +170,7 @@ local function StanceButton_OnEvent(self, event)
         if inCombat then
             NeedAdjustMaxStanceButtons = true
         else
-            self.container:SetShown(GetSetting("StanceBarContainerState") == "open" and true or false)
+            self.container:SetShown(GW.settings.StanceBarContainerState == "open" and true or false)
             AdjustMaxStanceButtons(self)
             NeedAdjustMaxStanceButtons = false
         end
@@ -230,7 +229,7 @@ local function CreateStanceBar()
         end
     ]=])
     StanceButtonHolder:HookScript("OnClick", function(self)
-        GW.SetSetting("StanceBarContainerState", self.container:IsShown() and "open" or "close")
+        GW.settings.StanceBarContainerState =  self.container:IsShown() and "open" or "close"
     end)
 
     GW.RegisterMovableFrame(StanceButtonHolder, GW.L["StanceBar"], "StanceBar_pos", ALL .. ",Power,Blizzard", nil, {"default", "scaleable"})

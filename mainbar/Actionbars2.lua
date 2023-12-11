@@ -1,6 +1,5 @@
 local _, GW = ...
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local GetSetting = GW.GetSetting
 local Wait = GW.Wait
 local Self_Hide = GW.Self_Hide
 local CountTable = GW.CountTable
@@ -57,39 +56,6 @@ local GW_BLIZZARD_FORCE_HIDE = {
     PossessBackground1,
     PossessBackground2
 }
-
-local settings = {
-    fadeActionbar = {},
-    actionbarSetting = {
-        MultiBarBottomLeft = {},
-        MultiBarBottomRight = {},
-        MultiBarRight = {},
-        MultiBarLeft = {},
-        MultiBar5 = {},
-        MultiBar6 = {},
-        MultiBar7 = {},
-    }
-}
-
-local function UpdateSettings()
-    settings.buttonAssignments = GetSetting("BUTTON_ASSIGNMENTS")
-    settings.mainBarMargin = tonumber(GetSetting("MAINBAR_MARGIIN"))
-    settings.showMarcroName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
-    settings.mainBarRangeIndicator = GetSetting("MAINBAR_RANGEINDICATOR")
-    settings.xpBarEnabled = GetSetting("XPBAR_ENABLED")
-    settings.playerAsTargetFrameEnabled = GetSetting("PLAYER_AS_TARGET_FRAME") --or not GetSetting("HEALTHGLOBE_ENABLED")
-    settings.multibarMargin = tonumber(GetSetting("MULTIBAR_MARGIIN"))
-    settings.actiobarBackdropAlpha = tonumber(GetSetting("ACTIONBAR_BACKGROUND_ALPHA"))
-
-    for _, v in pairs({"MultiBarBottomLeft", "MultiBarBottomRight", "MultiBarRight", "MultiBarLeft", "MultiBar5", "MultiBar6", "MultiBar7"}) do
-        settings.actionbarSetting[v] = GetSetting(v)
-    end
-
-    for i = 1, 8 do
-        settings.fadeActionbar[i] = GetSetting("FADE_MULTIACTIONBAR_" .. i)
-    end
-end
-GW.UpdateActionbarSettings = UpdateSettings
 
 -- forward function defs
 local actionBarEquipUpdate
@@ -164,10 +130,10 @@ local function UpdateActionbarBorders(btn)
         btn.gwBackdrop.border3:SetAlpha(1)
         btn.gwBackdrop.border4:SetAlpha(1)
     else
-        btn.gwBackdrop.border1:SetAlpha(settings.actiobarBackdropAlpha)
-        btn.gwBackdrop.border2:SetAlpha(settings.actiobarBackdropAlpha)
-        btn.gwBackdrop.border3:SetAlpha(settings.actiobarBackdropAlpha)
-        btn.gwBackdrop.border4:SetAlpha(settings.actiobarBackdropAlpha)
+        btn.gwBackdrop.border1:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+        btn.gwBackdrop.border2:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+        btn.gwBackdrop.border3:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+        btn.gwBackdrop.border4:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
     end
 end
 
@@ -307,7 +273,7 @@ local function fadeCheck(self, forceCombat)
 
     for i = 1, 8 do
         local f = i == 8 and self or self["gw_Bar" .. i]
-        local fadeOption = settings.fadeActionbar[i]
+        local fadeOption = GW.settings["FADE_MULTIACTIONBAR_" .. i]
         if f then
             if isDirty and not inLockdown and f ~= self then
                 -- this should only be set after a bar setting change (including initial load)
@@ -390,7 +356,7 @@ local function updateHotkey(self)
         return
     end
 
-    if settings.buttonAssignments then
+    if GW.settings.BUTTON_ASSIGNMENTS then
         hotkey:Show()
         if self.hkBg then
             self.hkBg.texture:Show()
@@ -643,11 +609,11 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.gwBackdrop = backDrop
 
         if not isStanceButton and not isPet then
-            btn.gwBackdrop.bg:SetAlpha(settings.actiobarBackdropAlpha)
-            btn.gwBackdrop.border1:SetAlpha(settings.actiobarBackdropAlpha)
-            btn.gwBackdrop.border2:SetAlpha(settings.actiobarBackdropAlpha)
-            btn.gwBackdrop.border3:SetAlpha(settings.actiobarBackdropAlpha)
-            btn.gwBackdrop.border4:SetAlpha(settings.actiobarBackdropAlpha)
+            btn.gwBackdrop.bg:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+            btn.gwBackdrop.border1:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+            btn.gwBackdrop.border2:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+            btn.gwBackdrop.border3:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+            btn.gwBackdrop.border4:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
         end
         --btn:HookScript("OnHide", hideBackdrop)
         --btn:HookScript("OnShow", showBackdrop)
@@ -684,7 +650,7 @@ local function main_OnEvent(_, event)
                     GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.Orientation, Enum.ActionBarOrientation.Horizontal)
                     GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.NumRows, 1)
                     GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.NumIcons, 12)
-                    GW.Libs.LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GetSetting("HUD_SCALE")) or 1)))
+                    GW.Libs.LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.settings.HUD_SCALE) or 1)))
 
                     -- PossessActionBar
                     GW.Libs.LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainMenuBar, "TOP", -110, 40)
@@ -709,7 +675,7 @@ local function updateMainBar()
     MainMenuBar:GwKillEditMode()
 
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
-    local btn_padding = settings.mainBarMargin
+    local btn_padding = GW.settings.MAINBAR_MARGIIN
 
     fmActionbar.gw_Buttons = {}
     fmActionbar.rangeTimer = -1
@@ -726,9 +692,9 @@ local function updateMainBar()
             btn.SlotArt:Hide()
 
             local hotkey = _G["ActionButton" .. i .. "HotKey"]
-            btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + settings.mainBarMargin
+            btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + GW.settings.MAINBAR_MARGIIN
             btn:SetSize(MAIN_MENU_BAR_BUTTON_SIZE, MAIN_MENU_BAR_BUTTON_SIZE)
-            btn.showMacroName = settings.showMarcroName
+            btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
 
             btn.hkBg = CreateFrame("Frame", "GwHotKeyBackDropActionButton" .. i, hotkey:GetParent(), "GwActionHotkeyBackdropTmpl")
             btn.hkBg:SetPoint("CENTER", hotkey, "CENTER", 0, 0)
@@ -745,7 +711,7 @@ local function updateMainBar()
             hotkey:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
             hotkey:SetTextColor(1, 1, 1)
             btn.changedColor = false
-            btn.rangeIndicatorSetting = settings.mainBarRangeIndicator
+            btn.rangeIndicatorSetting = GW.settings.MAINBAR_RANGEINDICATOR
 
             if IsEquippedAction(btn.action) then
                 local borname = "ActionButton" .. i .. "Border"
@@ -764,9 +730,9 @@ local function updateMainBar()
             btn.gw_RangeIndicator = rangeIndicator
 
             btn:ClearAllPoints()
-            btn:SetPoint("LEFT", fmActionbar, "LEFT", btn_padding - settings.mainBarMargin - MAIN_MENU_BAR_BUTTON_SIZE, settings.xpBarEnabled and 0 or -14)
+            btn:SetPoint("LEFT", fmActionbar, "LEFT", btn_padding - GW.settings.MAINBAR_MARGIIN - MAIN_MENU_BAR_BUTTON_SIZE, GW.settings.XPBAR_ENABLED and 0 or -14)
 
-            if i == 6 and not settings.playerAsTargetFrameEnabled then
+            if i == 6 and not GW.settings.PLAYER_AS_TARGET_FRAME then
                 btn_padding = btn_padding + 108
             end
         end
@@ -843,7 +809,7 @@ AFP("trackBarChanges", trackBarChanges)
 local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local multibar = _G[barName]
     local used_width = 0
-    local used_height = settings.actionbarSetting[barName].size
+    local used_height = GW.settings[barName].size
     local btn_padding = 0
     local btn_padding_y = 0
     local btn_this_row = 0
@@ -871,10 +837,10 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             btn:SetScript("OnUpdate", nil) -- disable the default button update handler
             btn.SlotBackground:SetAlpha(0)
 
-            btn:SetSize(settings.actionbarSetting[barName].size, settings.actionbarSetting[barName].size)
+            btn:SetSize(GW.settings[barName].size, GW.settings[barName].size)
             updateHotkey(btn)
 
-            btn.showMacroName = settings.showMarcroName
+            btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
 
             setActionButtonStyle(buttonName .. i)
 
@@ -894,12 +860,12 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
                 end
             end)
 
-            btn_padding = btn_padding + settings.actionbarSetting[barName].size + settings.multibarMargin
+            btn_padding = btn_padding + GW.settings[barName].size + GW.settings.MULTIBAR_MARGIIN
             btn_this_row = btn_this_row + 1
             used_width = btn_padding
 
-            if btn_this_row == settings.actionbarSetting[barName].ButtonsPerRow then
-                btn_padding_y = btn_padding_y + settings.actionbarSetting[barName].size + settings.multibarMargin
+            if btn_this_row == GW.settings[barName].ButtonsPerRow then
+                btn_padding_y = btn_padding_y + GW.settings[barName].size + GW.settings.MULTIBAR_MARGIIN
                 btn_this_row = 0
                 btn_padding = 0
                 used_height = btn_padding_y
@@ -955,14 +921,14 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     end)
 
     -- position mover
-    if (barName == "MultiBarBottomLeft" or barName == "MultiBarBottomRight") and (not settings.xpBarEnabled or settings.playerAsTargetFrameEnabled) and not fmMultibar.isMoved  then
-        local yOff = not settings.xpBarEnabled and 14 or 0
-        local xOff = settings.playerAsTargetFrameEnabled and 56 or 0
+    if (barName == "MultiBarBottomLeft" or barName == "MultiBarBottomRight") and (not GW.settings.XPBAR_ENABLED or GW.settings.PLAYER_AS_TARGET_FRAME) and not fmMultibar.isMoved  then
+        local yOff = not GW.settings.XPBAR_ENABLED and 14 or 0
+        local xOff = GW.settings.PLAYER_AS_TARGET_FRAME and 56 or 0
         fmMultibar.gwMover:ClearAllPoints()
         if barName == "MultiBarBottomLeft" then
-            fmMultibar.gwMover:SetPoint(settings.actionbarSetting[barName].point, UIParent, settings.actionbarSetting[barName].relativePoint, settings.actionbarSetting[barName].xOfs + xOff, settings.actionbarSetting[barName].yOfs - yOff)
+            fmMultibar.gwMover:SetPoint(GW.settings[barName].point, UIParent, GW.settings[barName].relativePoint, GW.settings[barName].xOfs + xOff, GW.settings[barName].yOfs - yOff)
         elseif barName == "MultiBarBottomRight" then
-            fmMultibar.gwMover:SetPoint(settings.actionbarSetting[barName].point, UIParent, settings.actionbarSetting[barName].relativePoint, settings.actionbarSetting[barName].xOfs - xOff, settings.actionbarSetting[barName].yOfs - yOff)
+            fmMultibar.gwMover:SetPoint(GW.settings[barName].point, UIParent, GW.settings[barName].relativePoint, GW.settings[barName].xOfs - xOff, GW.settings[barName].yOfs - yOff)
         end
     end
 
@@ -1014,24 +980,24 @@ local function UpdateMultibarButtons()
                 btn:ClearAllPoints()
                 btn:SetPoint("TOPLEFT", fmMultiBar, "TOPLEFT", btn_padding, -btn_padding_y)
 
-                btn_padding = btn_padding + settings.actionbarSetting[fmMultiBar.originalBarName].size + settings.multibarMargin
+                btn_padding = btn_padding + GW.settings[fmMultiBar.originalBarName].size + GW.settings.MULTIBAR_MARGIIN
                 btn_this_row = btn_this_row + 1
                 used_width = btn_padding
 
-                if btn_this_row == settings.actionbarSetting[fmMultiBar.originalBarName].ButtonsPerRow then
-                    btn_padding_y = btn_padding_y + settings.actionbarSetting[fmMultiBar.originalBarName].size + settings.multibarMargin
+                if btn_this_row == GW.settings[fmMultiBar.originalBarName].ButtonsPerRow then
+                    btn_padding_y = btn_padding_y + GW.settings[fmMultiBar.originalBarName].size + GW.settings.MULTIBAR_MARGIIN
                     btn_this_row = 0
                     btn_padding = 0
-                    used_height = used_height + settings.actionbarSetting[fmMultiBar.originalBarName].size + settings.multibarMargin
+                    used_height = used_height + GW.settings[fmMultiBar.originalBarName].size + GW.settings.MULTIBAR_MARGIIN
                 end
 
-                btn.gwBackdrop.bg:SetAlpha(settings.actiobarBackdropAlpha)
-                btn.gwBackdrop.border1:SetAlpha(settings.actiobarBackdropAlpha)
-                btn.gwBackdrop.border2:SetAlpha(settings.actiobarBackdropAlpha)
-                btn.gwBackdrop.border3:SetAlpha(settings.actiobarBackdropAlpha)
-                btn.gwBackdrop.border4:SetAlpha(settings.actiobarBackdropAlpha)
+                btn.gwBackdrop.bg:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+                btn.gwBackdrop.border1:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+                btn.gwBackdrop.border2:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+                btn.gwBackdrop.border3:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+                btn.gwBackdrop.border4:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
 
-                btn.showMacroName = settings.showMarcroName
+                btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
                 updateMacroName(btn)
                 updateHotkey(btn)
             end
@@ -1262,27 +1228,27 @@ AFP("actionBar_OnUpdate", actionBar_OnUpdate)
 local function UpdateMainBarHot()
     local fmActionbar = MainMenuBar
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
-    local btn_padding = settings.mainBarMargin
+    local btn_padding = GW.settings.MAINBAR_MARGIIN
 
     for i = 1, 12 do
         local btn = fmActionbar.gw_Buttons[i]
-        btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + settings.mainBarMargin
+        btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + GW.settings.MAINBAR_MARGIIN
 
         btn:ClearAllPoints()
-        btn:SetPoint("LEFT", fmActionbar, "LEFT", btn_padding - settings.mainBarMargin - MAIN_MENU_BAR_BUTTON_SIZE, (settings.xpBarEnabled and 0 or -14))
+        btn:SetPoint("LEFT", fmActionbar, "LEFT", btn_padding - GW.settings.MAINBAR_MARGIIN - MAIN_MENU_BAR_BUTTON_SIZE, (GW.settings.XPBAR_ENABLED and 0 or -14))
 
-        if i == 6 and not settings.playerAsTargetFrameEnabled then
+        if i == 6 and not GW.settings.PLAYER_AS_TARGET_FRAME then
             btn_padding = btn_padding + 108
         end
 
-        btn.gwBackdrop.bg:SetAlpha(settings.actiobarBackdropAlpha)
-        btn.gwBackdrop.border1:SetAlpha(settings.actiobarBackdropAlpha)
-        btn.gwBackdrop.border2:SetAlpha(settings.actiobarBackdropAlpha)
-        btn.gwBackdrop.border3:SetAlpha(settings.actiobarBackdropAlpha)
-        btn.gwBackdrop.border4:SetAlpha(settings.actiobarBackdropAlpha)
+        btn.gwBackdrop.bg:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+        btn.gwBackdrop.border1:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+        btn.gwBackdrop.border2:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+        btn.gwBackdrop.border3:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+        btn.gwBackdrop.border4:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
 
-        btn.showMacroName = settings.showMarcroName
-        btn.rangeIndicatorSetting = settings.mainBarRangeIndicator
+        btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
+        btn.rangeIndicatorSetting = GW.settings.MAINBAR_RANGEINDICATOR
         updateMacroName(btn)
         updateHotkey(btn)
     end
@@ -1295,7 +1261,6 @@ end
 GW.UpdateMainBarHot = UpdateMainBarHot
 
 local function LoadActionBars(lm)
-    UpdateSettings()
     -- init our bars
     local fmActionbar = updateMainBar()
     fmActionbar.gw_Bar1 = updateMultiBar(lm, "MultiBarBottomLeft", "MultiBarBottomLeftButton", BOTTOMLEFT_ACTIONBAR_PAGE, true)

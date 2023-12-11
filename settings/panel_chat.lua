@@ -20,17 +20,17 @@ local function LoadChatPanel(sWindow)
 
     createCat(CHAT, nil, p, {p})
     settingsMenuAddButton(CHAT, p, {})
-    addOption(p.scroll.scrollchild, L["GW2 chat message style"], L["Changes the chat font, timestamp color and name display"], "CHAT_USE_GW2_STYLE", function() GW.UpdateChatSettings(true) end, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Fade Chat"], L["Allow the chat to fade when not in use."], "CHATFRAME_FADE", function() GW.UpdateChatSettings(true) end, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Hide Editbox"], L["Hide the chat editbox when not in focus."], "CHATFRAME_EDITBOX_HIDE", function() GW.UpdateChatSettings(true) end, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["URL Links"], L["Attempt to create URL links inside the chat."], "CHAT_FIND_URL", function() GW.UpdateChatSettings(true) end, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Hyperlink Hover"], L["Display the hyperlink tooltip while hovering over a hyperlink."], "CHAT_HYPERLINK_TOOLTIP", function(value) GW.UpdateChatSettings(true); GW.ToggleChatHyperlink(value) end, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Short Channels"], L["Shorten the channel names in chat."], "CHAT_SHORT_CHANNEL_NAMES", function() GW.UpdateChatSettings(true) end, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Role Icon"], L["Display LFG Icons in group chat."], "CHAT_SHOW_LFG_ICONS", function() GW.UpdateChatSettings(true); GW.CollectLfgRolesForChatIcons() end, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Class Color Mentions"], L["Use class color for the names of players when they are mentioned."], "CHAT_CLASS_COLOR_MENTIONS", function() GW.UpdateChatSettings(true) end, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Emotion Icons"], L["Display emotion icons in chat"], "CHAT_KEYWORDS_EMOJI", function(value) GW.UpdateChatSettings(true); GW_EmoteFrame:Hide(); for _, frameName in ipairs(CHAT_FRAMES) do if _G[frameName].buttonEmote then _G[frameName].buttonEmote:SetShown(value); end end end, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Quick Join Messages"], L["Show clickable Quick Join messages inside of the chat."], "CHAT_SOCIAL_LINK", function() GW.UpdateChatSettings(true) end, nil, {["CHATFRAME_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Add timestamp to all messages"], nil, "CHAT_ADD_TIMESTAMP_TO_ALL", function() GW.UpdateChatSettings(true) end, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["GW2 chat message style"], L["Changes the chat font, timestamp color and name display"], "CHAT_USE_GW2_STYLE", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Fade Chat"], L["Allow the chat to fade when not in use."], "CHATFRAME_FADE", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Hide Editbox"], L["Hide the chat editbox when not in focus."], "CHATFRAME_EDITBOX_HIDE", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["URL Links"], L["Attempt to create URL links inside the chat."], "CHAT_FIND_URL", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Hyperlink Hover"], L["Display the hyperlink tooltip while hovering over a hyperlink."], "CHAT_HYPERLINK_TOOLTIP", function(value) GW.UpdateChatSettings(); GW.ToggleChatHyperlink(value) end, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Short Channels"], L["Shorten the channel names in chat."], "CHAT_SHORT_CHANNEL_NAMES", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Role Icon"], L["Display LFG Icons in group chat."], "CHAT_SHOW_LFG_ICONS", function() GW.UpdateChatSettings(); GW.CollectLfgRolesForChatIcons() end, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Class Color Mentions"], L["Use class color for the names of players when they are mentioned."], "CHAT_CLASS_COLOR_MENTIONS", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Emotion Icons"], L["Display emotion icons in chat"], "CHAT_KEYWORDS_EMOJI", function(value) GW.UpdateChatSettings(); GW_EmoteFrame:Hide(); for _, frameName in ipairs(CHAT_FRAMES) do if _G[frameName].buttonEmote then _G[frameName].buttonEmote:SetShown(value); end end end, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Quick Join Messages"], L["Show clickable Quick Join messages inside of the chat."], "CHAT_SOCIAL_LINK", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
+    addOption(p.scroll.scrollchild, L["Add timestamp to all messages"], nil, "CHAT_ADD_TIMESTAMP_TO_ALL", function() GW.UpdateChatSettings() end, nil, {["CHATFRAME_ENABLED"] = true})
 
     local soundKeys = {}
     for _, sound in next, GW.Libs.LSM:List("sound") do
@@ -42,7 +42,7 @@ local function LoadChatPanel(sWindow)
         nil,
         "CHAT_KEYWORDS_ALERT_NEW",
         function()
-            GW.UpdateChatSettings(true)
+            GW.UpdateChatSettings()
         end,
         soundKeys,
         soundKeys,
@@ -59,7 +59,7 @@ local function LoadChatPanel(sWindow)
         L["Prevent the same messages from displaying in chat more than once within this set amount of seconds, set to zero to disable."],
         "CHAT_SPAM_INTERVAL_TIMER",
         function()
-            GW.UpdateChatSettings(true)
+            GW.UpdateChatSettings()
             GW.DisableChatThrottle()
         end,
         0,
@@ -75,7 +75,7 @@ local function LoadChatPanel(sWindow)
         L["Number of repeat characters while in combat before the chat editbox is automatically closed, set to zero to disable."],
         "CHAT_INCOMBAT_TEXT_REPEAT",
         function()
-            GW.UpdateChatSettings(true)
+            GW.UpdateChatSettings()
         end,
         0,
         15,
@@ -90,7 +90,7 @@ local function LoadChatPanel(sWindow)
         L["Number of messages you scroll for each step."],
         "CHAT_NUM_SCROLL_MESSAGES",
         function()
-            GW.UpdateChatSettings(true)
+            GW.UpdateChatSettings()
         end,
         1,
         12,
@@ -106,7 +106,7 @@ local function LoadChatPanel(sWindow)
         L["Number of time in seconds to scroll down to the bottom of the chat window if you are not scrolled down completely."],
         "CHAT_SCROLL_DOWN_INTERVAL",
         function()
-            GW.UpdateChatSettings(true)
+            GW.UpdateChatSettings()
         end,
         0,
         120,
@@ -134,7 +134,7 @@ local function LoadChatPanel(sWindow)
         L["List of words to color in chat if found in a message. If you wish to add multiple words you must seperate the word with a comma. To search for your current name you can use %MYNAME%.\n\nExample:\n%MYNAME%, Heal, Tank"],
         "CHAT_KEYWORDS",
         function()
-            GW.UpdateChatSettings(true)
+            GW.UpdateChatSettings()
             GW.UpdateChatKeywords()
         end,
         false,

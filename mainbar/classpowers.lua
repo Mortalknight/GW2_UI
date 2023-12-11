@@ -4,7 +4,6 @@ local RoundInt = GW.RoundInt
 local UpdatePowerData = GW.UpdatePowerData
 local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
-local GetSetting = GW.GetSetting
 
 local CPWR_FRAME
 local CPF_HOOKED_TO_TARGETFRAME = false
@@ -18,7 +17,7 @@ local function UpdateVisibility(self, inCombat)
 end
 
 local function updateVisibilitySetting(self, updateVis)
-    self.onlyShowInCombat = GetSetting("CLASSPOWER_ONLY_SHOW_IN_COMBAT")
+    self.onlyShowInCombat = GW.settings.CLASSPOWER_ONLY_SHOW_IN_COMBAT
     if self.onlyShowInCombat then
         self.decay:RegisterEvent("PLAYER_REGEN_ENABLED")
         self.decay:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -351,7 +350,7 @@ local function setManaBar(f)
     f:SetHeight(14)
 
     f:ClearAllPoints()
-    if GetSetting("XPBAR_ENABLED") or (f.isMoved and not CPF_HOOKED_TO_TARGETFRAME) then
+    if GW.settings.XPBAR_ENABLED or (f.isMoved and not CPF_HOOKED_TO_TARGETFRAME) then
         f:SetPoint("TOPLEFT", f.gwMover, 0, -13)
     else
         f:SetPoint("TOPLEFT", f.gwMover, 0, -3)
@@ -1667,7 +1666,7 @@ local function barChange_OnEvent(self, event)
 end
 
 local function LoadClassPowers()
-    local playerAsTargetFrame = GetSetting("PLAYER_AS_TARGET_FRAME")
+    local playerAsTargetFrame = GW.settings.PLAYER_AS_TARGET_FRAME
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
     GW.hookStatusbarBehaviour(cpf.staggerBar.ironskin, false)
     cpf.staggerBar.ironskin.customMaskSize = 64
@@ -1704,9 +1703,9 @@ local function LoadClassPowers()
         { "default", "scaleable" }, true)
 
     -- position mover
-    if (not GetSetting("XPBAR_ENABLED") or playerAsTargetFrame) and not cpf.isMoved then
-        local framePoint = GetSetting("ClasspowerBar_pos")
-        local yOff = not GetSetting("XPBAR_ENABLED") and 14 or 0
+    if (not GW.settings.XPBAR_ENABLED or playerAsTargetFrame) and not cpf.isMoved then
+        local framePoint = GW.settings.ClasspowerBar_pos
+        local yOff = not GW.settings.XPBAR_ENABLED and 14 or 0
         local xOff = playerAsTargetFrame and 52 or 0
         cpf.gwMover:ClearAllPoints()
         cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff,
@@ -1720,9 +1719,9 @@ local function LoadClassPowers()
     GW.MixinHideDuringPetAndOverride(cpf.customResourceBar.decay)
     CPWR_FRAME = cpf
 
-    cpf.ourTarget = GetSetting("TARGET_ENABLED")
-    cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
-    cpf.ourPowerBar = GetSetting("POWERBAR_ENABLED")
+    cpf.ourTarget = GW.settings.TARGET_ENABLED
+    cpf.comboPointsOnTarget = GW.settings.target_HOOK_COMBOPOINTS
+    cpf.ourPowerBar = GW.settings.POWERBAR_ENABLED
     cpf.auraExpirationTime = nil
 
     -- create an extra mana power bar that is used sometimes (feral druid in cat form) only if your Powerbar is on

@@ -1,6 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
-local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local lerp = GW.lerp
 
@@ -467,7 +465,7 @@ local function loadPortraitDebugMode()
 end
 
 local function LoadGossipSkin()
-    if not GetSetting("GOSSIP_SKIN_ENABLED") then return end
+    if not GW.settings.GOSSIP_SKIN_ENABLED then return end
 
     local GossipFrame = GossipFrame
 
@@ -796,7 +794,7 @@ local function LoadGossipSkin()
     end)
 
     -- questview handles required item styling when it is enabled
-    if not GetSetting("QUESTVIEW_ENABLED") then
+    if not GW.settings.QUESTVIEW_ENABLED then
         for i = 1, 6 do
             local button = _G["QuestProgressItem" .. i]
             local icon = _G["QuestProgressItem" .. i .. "IconTexture"]

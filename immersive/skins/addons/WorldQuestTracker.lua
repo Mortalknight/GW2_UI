@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 
 local function getObjectiveBlock(self, index)
@@ -108,7 +107,7 @@ end
 GW.CollapseWQTAddonHeader = CollapseHeader
 
 local function LoadWQTAddonSkin()
-    if not GetSetting("SKIN_WQT_ENABLED") or not WorldQuestTrackerAddon then return end
+    if not GW.settings.SKIN_WQT_ENABLED or not WorldQuestTrackerAddon then return end
 
     local fWQT = CreateFrame("Frame", "GwQuesttrackerContainerWQT", GwQuestTrackerScrollChild, "GwQuesttrackerContainer")
     fWQT:SetParent(GwQuestTrackerScrollChild)

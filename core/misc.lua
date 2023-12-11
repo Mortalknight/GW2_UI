@@ -1,10 +1,9 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local QuestRewardGoldIconOverlay = {}
 
 local function QuestXPPercent()
-    if not GetSetting("QUEST_XP_PERCENT") then return end
+    if not GW.settings.QUEST_XP_PERCENT then return end
 
     local _, unitXPMax = UnitXP("player"), UnitXPMax("player")
     if QuestInfoFrame.questLog then
@@ -34,7 +33,7 @@ end
 GW.ResetQuestRewardMostValueIcon = ResetQuestRewardMostValueIcon
 
 local function QuestRewardMostValueIcon()
-    if not GetSetting("QUEST_REWARDS_MOST_VALUE_ICON") then return end
+    if not GW.settings.QUEST_REWARDS_MOST_VALUE_ICON then return end
 
     ResetQuestRewardMostValueIcon()
 

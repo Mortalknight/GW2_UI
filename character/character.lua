@@ -1,7 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
-local SetSetting = GW.SetSetting
 local AddToAnimation = GW.AddToAnimation
 local lerp = GW.lerp
 local windowsList = {}
@@ -351,7 +349,7 @@ local mover_OnDragStop = [=[
 local function mover_SavePosition(self, x, y)
     local setting = self.onMoveSetting
     if setting then
-        local pos = GetSetting(setting)
+        local pos = GW.settings[setting]
         if pos then
             wipe(pos)
         else
@@ -361,7 +359,7 @@ local function mover_SavePosition(self, x, y)
         pos.relativePoint = "BOTTOMLEFT"
         pos.xOfs = x
         pos.yOfs = y
-        SetSetting(setting, pos)
+        GW.settings[setting] = pos
     end
 end
 GW.AddForProfiling("character", "mover_SavePosition", mover_SavePosition)
@@ -458,8 +456,8 @@ local function loadBaseFrame()
     fmGCW.close:SetAttribute("_onclick", charCloseSecure_OnClick)
 
     -- setup movable stuff and scale
-    local pos = GetSetting("HERO_POSITION")
-    local scale = GetSetting("HERO_POSITION_SCALE")
+    local pos = GW.settings.HERO_POSITION
+    local scale = GW.settings.HERO_POSITION_SCALE
     fmGCW:SetScale(scale)
     fmGCW:ClearAllPoints()
     fmGCW:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
@@ -503,16 +501,16 @@ local function loadBaseFrame()
     end)
     fmGCW.sizer:SetScript("OnMouseUp", function(self)
         self:SetScript("OnUpdate", nil)
-        SetSetting("HERO_POSITION_SCALE", GwCharacterWindow:GetScale())
+        GW.settings.HERO_POSITION_SCALE = GwCharacterWindow:GetScale()
         -- Save hero frame position
-        local pos = GetSetting("HERO_POSITION")
+        local pos = GW.settings.HERO_POSITION
         if pos then
             wipe(pos)
         else
             pos = {}
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = GwCharacterWindow:GetPoint()
-        SetSetting("HERO_POSITION", pos)
+        GW.settings.HERO_POSITION = pos
         --Reset Model Camera
         GwDressingRoom.model:RefreshCamera()
     end)
@@ -571,7 +569,7 @@ GW.AddForProfiling("character", "charTab_OnEnter", charTab_OnEnter)
 local function LoadCharacter()
     local anyThingToLoad = false
     for _, v in pairs(windowsList) do
-        if GetSetting(v.SettingName) then
+        if GW.settings[v.SettingName] then
             anyThingToLoad = true
         end
     end
@@ -583,7 +581,7 @@ local function LoadCharacter()
 
     local tabIndex = 1
     for _, v in pairs(windowsList) do
-        if GetSetting(v.SettingName) then
+        if GW.settings[v.SettingName] then
             local container = CreateFrame("Frame", v.FrameName, GwCharacterWindow, "GwCharacterTabContainer")
             local tab = createTabIcon(v.TabIcon, tabIndex)
 

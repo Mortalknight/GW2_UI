@@ -1,8 +1,7 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function ApplyOrderHallTalentFrameSkin()
-    if not GetSetting("ORDERRHALL_TALENT_FRAME_SKIN_ENABLED") then return end
+    if not GW.settings.ORDERRHALL_TALENT_FRAME_SKIN_ENABLED then return end
 
     GW.HandlePortraitFrame(OrderHallTalentFrame, true)
     OrderHallTalentFrameTitleText:SetFont(DAMAGE_TEXT_FONT, 16, "OUTLINE")

@@ -4,20 +4,18 @@ local addOption = GW.AddOption
 local addOptionDropdown = GW.AddOptionDropdown
 local addOptionSlider = GW.AddOptionSlider
 local createCat = GW.CreateCat
-local GetSetting = GW.GetSetting
-local SetSetting = GW.SetSetting
 local InitPanel = GW.InitPanel
 local AddForProfiling = GW.AddForProfiling
 local StrUpper = GW.StrUpper
 local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function setMultibarCols(barName, setting)
-    local mb = GetSetting(barName)
-    local cols = GetSetting(setting)
+    local mb = GW.settings[barName]
+    local cols = GW.settings[setting]
     GW.Debug("setting multibar colsfor bar ", barName, "to", cols)
 
     mb["ButtonsPerRow"] = cols
-    SetSetting(barName, mb)
+    GW.settings[barName] = mb
     --#regionto update the cols
     GW.UpdateMultibarButtons()
 end
@@ -98,7 +96,6 @@ local function LoadActionbarPanel(sWindow)
         L["Set the empty action bar slots alpha value."],
         "ACTIONBAR_BACKGROUND_ALPHA",
         function()
-            GW.UpdateActionbarSettings()
             GW.UpdateMainBarHot()
             GW.UpdateMultibarButtons()
         end,
@@ -108,8 +105,8 @@ local function LoadActionbarPanel(sWindow)
         1,
         {["ACTIONBARS_ENABLED"] = true}
     )
-    addOption(general.scroll.scrollchild, L["Action Button Labels"], L["Enable or disable the action button assignment text"], "BUTTON_ASSIGNMENTS", function() GW.UpdateActionbarSettings(); GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
-    addOption(general.scroll.scrollchild, L["Show Macro Name"], L["Show Macro Name on Action Button"], "SHOWACTIONBAR_MACRO_NAME_ENABLED", function() GW.UpdateActionbarSettings(); GW.UpdatePetbarSettings(); GW.UpdateMainBarHot(); GW.UpdateMultibarButtons(); GW.UpdatePetBarButtonsHot() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
+    addOption(general.scroll.scrollchild, L["Action Button Labels"], L["Enable or disable the action button assignment text"], "BUTTON_ASSIGNMENTS", function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
+    addOption(general.scroll.scrollchild, L["Show Macro Name"], L["Show Macro Name on Action Button"], "SHOWACTIONBAR_MACRO_NAME_ENABLED", function() GW.UpdateMainBarHot(); GW.UpdateMultibarButtons(); GW.UpdatePetBarButtonsHot() end, nil, {["ACTIONBARS_ENABLED"] = true}, "Actionbars")
 
     -- MAINBAR
     addOptionSlider(
@@ -118,7 +115,6 @@ local function LoadActionbarPanel(sWindow)
         nil,
         "MAINBAR_MARGIIN",
         function()
-            GW.UpdateActionbarSettings()
             GW.UpdateMainBarHot()
         end,
         0,
@@ -133,7 +129,6 @@ local function LoadActionbarPanel(sWindow)
         nil,
         "MAINBAR_RANGEINDICATOR",
         function()
-            GW.UpdateActionbarSettings()
             GW.UpdateMainBarHot()
         end,
         {"RED_INDICATOR", "RED_OVERLAY", "BOTH", "NONE"},
@@ -148,7 +143,7 @@ local function LoadActionbarPanel(sWindow)
         BINDING_HEADER_ACTIONBAR .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_8",
-        GW.UpdateActionbarSettings ,
+        nil ,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -165,7 +160,6 @@ local function LoadActionbarPanel(sWindow)
         nil,
         "MULTIBAR_MARGIIN",
         function()
-            GW.UpdateActionbarSettings()
             GW.UpdateMultibarButtons()
         end,
         0,
@@ -179,7 +173,7 @@ local function LoadActionbarPanel(sWindow)
         OPTION_SHOW_ACTION_BAR:format(2) .. " " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_1",
-        GW.UpdateActionbarSettings ,
+        nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -192,7 +186,7 @@ local function LoadActionbarPanel(sWindow)
         OPTION_SHOW_ACTION_BAR:format(3) .. " " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_2",
-        GW.UpdateActionbarSettings ,
+        nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -205,7 +199,7 @@ local function LoadActionbarPanel(sWindow)
         OPTION_SHOW_ACTION_BAR:format(4) .. " " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_3",
-        GW.UpdateActionbarSettings ,
+        nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -233,7 +227,7 @@ local function LoadActionbarPanel(sWindow)
         OPTION_SHOW_ACTION_BAR:format(5) .. " " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_4",
-        GW.UpdateActionbarSettings ,
+        nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -261,7 +255,7 @@ local function LoadActionbarPanel(sWindow)
         OPTION_SHOW_ACTION_BAR:format(6) .. " " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_5",
-        GW.UpdateActionbarSettings ,
+        nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -289,7 +283,7 @@ local function LoadActionbarPanel(sWindow)
         OPTION_SHOW_ACTION_BAR:format(7) .. " " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_6",
-        GW.UpdateActionbarSettings,
+        nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,
@@ -317,7 +311,7 @@ local function LoadActionbarPanel(sWindow)
         OPTION_SHOW_ACTION_BAR:format(8) .. " " .. SHOW,
         nil,
         "FADE_MULTIACTIONBAR_7",
-        GW.UpdateActionbarSettings,
+        nil,
         {"ALWAYS", "INCOMBAT", "MOUSE_OVER"},
         {ALWAYS, GARRISON_LANDING_STATUS_MISSION_COMBAT, L["Only on Mouse Over"]},
         nil,

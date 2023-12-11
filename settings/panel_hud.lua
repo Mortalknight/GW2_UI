@@ -6,7 +6,6 @@ local addOptionSlider = GW.AddOptionSlider
 local addOptionDropdown = GW.AddOptionDropdown
 local addGroupHeader = GW.AddGroupHeader
 local createCat = GW.CreateCat
-local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
 local settingsMenuAddButton = GW.settingsMenuAddButton;
 
@@ -67,13 +66,13 @@ local function LoadHudPanel(sWindow)
     settingsMenuAddButton(UIOPTIONS_MENU, p, {general, minimap, worldmap, fct})
 
     --GENERAL
-    addOption(general.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND", function() GW.UpdateHudSettings(); GW.ToggleHudBackground() end)
-    addOption(general.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", GW.UpdateHudSettings, nil, {["HUD_BACKGROUND"] = true})
+    addOption(general.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND", function() GW.ToggleHudBackground() end)
+    addOption(general.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
     addOption(general.scroll.scrollchild, L["AFK Mode"], L["When you go AFK, display the AFK screen."], "AFK_MODE", GW.ToggelAfkMode)
     addOption(general.scroll.scrollchild, L["Mark Quest Reward"], L["Marks the most valuable quest reward with a gold coin."], "QUEST_REWARDS_MOST_VALUE_ICON", function() GW.ResetQuestRewardMostValueIcon() end)
     addOption(general.scroll.scrollchild, L["XP Quest Percent"], L["Shows the xp you got from that quest in % based on your current needed xp for next level."], "QUEST_XP_PERCENT")
-    addOption(general.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU", function(value) GW.UpdateMicroMenuSettings() Gw2MicroBarFrame.cf:SetAttribute("shouldFade", value) Gw2MicroBarFrame.cf:SetShown(not value) if value then Gw2MicroBarFrame.cf.fadeOut(Gw2MicroBarFrame.cf) else Gw2MicroBarFrame.cf.fadeIn(Gw2MicroBarFrame.cf) end end)
-    addOption(general.scroll.scrollchild, L["Show event timer micro menu icon"], L["Displays an micro menu icon for the world map event timers"], "MICROMENU_EVENT_TIMER_ICON", function() GW.UpdateMicroMenuSettings(); GW.ToggleEventTimerMicroMenuIcon(Gw2MicroBarFrame.cf) end)    
+    addOption(general.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU", function(value) Gw2MicroBarFrame.cf:SetAttribute("shouldFade", value) Gw2MicroBarFrame.cf:SetShown(not value) if value then Gw2MicroBarFrame.cf.fadeOut(Gw2MicroBarFrame.cf) else Gw2MicroBarFrame.cf.fadeIn(Gw2MicroBarFrame.cf) end end)
+    addOption(general.scroll.scrollchild, L["Show event timer micro menu icon"], L["Displays an micro menu icon for the world map event timers"], "MICROMENU_EVENT_TIMER_ICON", function() GW.ToggleEventTimerMicroMenuIcon(Gw2MicroBarFrame.cf) end)    
 
     addOption(general.scroll.scrollchild, DISPLAY_BORDERS, L["Toggle the borders around the screen"], "BORDER_ENABLED", GW.ToggleHudBackground)
     addOption(general.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", function() GW.ShowRlPopup = true end, nil, {["PARTY_FRAMES"] = true})
@@ -100,11 +99,11 @@ local function LoadHudPanel(sWindow)
     )
     addOptionButton(general.scroll.scrollchild, L["Apply to all"], L["Applies the UI scale to all frames which can be scaled in 'Move HUD' mode."], "GW2_Apply_all_Button",
         function()
-            local scale = GetSetting("HUD_SCALE")
+            local scale = GW.settings.HUD_SCALE
             for _, mf in pairs(GW.scaleableFrames) do
                 mf.parent:SetScale(scale)
                 mf:SetScale(scale)
-                GW.SetSetting(mf.setting .."_scale", scale)
+                GW.settings[mf.setting .."_scale"] = scale
             end
         end)
     addOptionDropdown(
@@ -150,9 +149,9 @@ local function LoadHudPanel(sWindow)
     )
 
     --MINIMAP
-    addOption(minimap.scroll.scrollchild, L["Addon Compartment"], nil, "MINIMAP_ADDON_COMPARTMENT_TOGGLE", function() GW.UpdateMinimapSettings(); GW.HandleAddonCompartmentButton() end, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
+    addOption(minimap.scroll.scrollchild, L["Addon Compartment"], nil, "MINIMAP_ADDON_COMPARTMENT_TOGGLE", function() GW.HandleAddonCompartmentButton() end, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
     addOption(minimap.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", GW.ToogleMinimapFpsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
-    addOption(minimap.scroll.scrollchild, L["Disable FPS tooltip"], nil, "MINIMAP_FPS_TOOLTIP_DISABLED", GW.UpdateMinimapSystemDataInfoSettings, nil, {["MINIMAP_ENABLED"] = true, ["MINIMAP_FPS"] = true}, "Minimap")
+    addOption(minimap.scroll.scrollchild, L["Disable FPS tooltip"], nil, "MINIMAP_FPS_TOOLTIP_DISABLED", nil, nil, {["MINIMAP_ENABLED"] = true, ["MINIMAP_FPS"] = true}, "Minimap")
     addOption(minimap.scroll.scrollchild, L["Show Coordinates on Minimap"], L["Show Coordinates on Minimap"], "MINIMAP_COORDS_TOGGLE", GW.ToogleMinimapCoorsLable, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
     addOptionDropdown(
         minimap.scroll.scrollchild,
@@ -173,7 +172,7 @@ local function LoadHudPanel(sWindow)
         L["Change the Minimap size."],
         "MINIMAP_SCALE",
         function()
-            local size = GetSetting("MINIMAP_SCALE")
+            local size = GW.settings.MINIMAP_SCALE
             Minimap:SetSize(size, size)
             Minimap.gwMover:SetSize(size, size)
         end,
@@ -385,7 +384,7 @@ local function LoadHudPanel(sWindow)
         function(value)
             if value == "GW2" then
                 C_CVar.SetCVar("floatingCombatTextCombatDamage", "0")
-                if GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS") then
+                if GW.settings.GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS then
                     C_CVar.SetCVar("floatingCombatTextCombatHealing", "0")
                 else
                     C_CVar.SetCVar("floatingCombatTextCombatHealing", "1")

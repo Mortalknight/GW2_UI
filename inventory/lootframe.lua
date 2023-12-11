@@ -1,6 +1,5 @@
 local _, GW = ...
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local GetSetting = GW.GetSetting
 
 local function updateLootFrameButtons(self)
     for _, button in next, { self.ScrollTarget:GetChildren() } do
@@ -42,7 +41,7 @@ local function updateLootFrameButtons(self)
 end
 
 local function LoadLootFrameSkin()
-    if not GetSetting("LOOTFRAME_SKIN_ENABLED") then return end
+    if not GW.settings.LOOTFRAME_SKIN_ENABLED then return end
 
     LootFrame:GwStripTextures()
     LootFrameBg:Hide()
@@ -71,7 +70,7 @@ local function LoadLootFrameSkin()
     })
 
     if not GetCVarBool("lootUnderMouse") then
-        local pos = GetSetting("LOOTFRAME_POS")
+        local pos = GW.settings.LOOTFRAME_POS
         LootFrame:ClearAllPoints()
         LootFrame:SetPoint(pos.point, nil, pos.relativePoint, pos.xOfs, pos.yOfs)
         RegisterMovableFrame(LootFrame, BUTTON_LAG_LOOT, "LOOTFRAME_POS", ALL .. ",Blizzard", nil, {"default", "scaleable"})

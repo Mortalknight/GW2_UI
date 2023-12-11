@@ -1,6 +1,5 @@
 local _, GW = ...
 local lerp = GW.lerp
-local GetSetting = GW.GetSetting
 local TimeCount = GW.TimeCount
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local animations = GW.animations
@@ -29,7 +28,7 @@ GW.CASTINGBAR_TEXTURES = CASTINGBAR_TEXTURES
 local settings = {}
 
 local function UpdateSettings()
-    settings.showSpellQueueWindow = GetSetting("PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW")
+    settings.showSpellQueueWindow = GW.settings.PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW
 end
 GW.UpdateCastingBarSettings = UpdateSettings
 
@@ -388,7 +387,7 @@ local function LoadCastingBar(name, unit, showTradeSkills)
     GwCastingBar.showTradeSkills = showTradeSkills
     GwCastingBar.StagePoints = {}
     GwCastingBar.numStages = 0
-    GwCastingBar.showDetails = GetSetting("CASTINGBAR_DATA")
+    GwCastingBar.showDetails = GW.settings.CASTINGBAR_DATA
 
     GwCastingBar.segments = {}
 

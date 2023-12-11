@@ -1,5 +1,58 @@
 local _, GW = ...
 
+
+local function DatabaseMigration()
+    if GW2UI_PRIVATE_SETTINGS then
+        if next(GW2UI_PRIVATE_SETTINGS) then
+            for setting, value in next, GW2UI_PRIVATE_SETTINGS do
+                GW.private[setting] = value
+            end
+        end
+    end
+    if GW2UI_PRIVATE_LAYOUTS then
+        if next(GW2UI_PRIVATE_LAYOUTS) then
+            for setting, value in next, GW2UI_PRIVATE_LAYOUTS do
+                if not GW.private.Layouts then GW.private.Layouts = {} end
+                GW.private.Layouts[setting] = value
+            end
+        end
+    end
+
+    if GW2UI_SETTINGS_PROFILES then
+        if next(GW2UI_SETTINGS_PROFILES) then
+            for _, profileTbl in next, GW2UI_SETTINGS_PROFILES do
+                GW.globalSettings:SetProfile(profileTbl.profilename)
+                for settings, value in next, profileTbl do
+                    if type(value) == "table" then
+                        GW.settings[settings] = GW.copyTable(value)
+                    else
+                        GW.settings[settings] = value
+                    end
+                end
+            end
+        end
+    end
+
+    if GW2UI_LAYOUTS then
+        if next(GW2UI_LAYOUTS) then
+            for k, profileTbl in next, GW2UI_LAYOUTS do
+                if not GW.globalSettings.global.layouts then GW.globalSettings.global.layouts = {} end
+                GW.globalSettings.global.layouts[profileTbl.name] = profileTbl
+                if GW.globalSettings.global.layouts[profileTbl.name].profileLayout and GW.globalSettings.global.layouts[profileTbl.name].profileLayout == true then
+                    GW.globalSettings.global.layouts[profileTbl.name].profileName = GW2UI_SETTINGS_PROFILES[profileTbl.profileId].profilename
+                end
+            end
+        end
+    end
+
+    --GW2UI_PRIVATE_SETTINGS = nil
+    --GW2UI_PRIVATE_LAYOUTS = nil
+    --GW2UI_SETTINGS_PROFILES = nil
+    --GW2UI_LAYOUTS = nil
+end
+GW.DatabaseMigration = DatabaseMigration
+
+
 local function Migration()
     GW.InMoveHudMode = true
     -- new Powerbar and Classpowerbar default position

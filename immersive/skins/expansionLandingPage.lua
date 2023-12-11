@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function HandlePanel(panel)
     if panel.DragonridingPanel then
@@ -40,7 +39,7 @@ local function ExpansionLadningPageSkin()
 end
 
 local function LoadExpansionLadningPageSkin()
-    if not GetSetting("EXPANSION_LANDING_PAGE_SKIN_ENABLED") then return end
+    if not GW.settings.EXPANSION_LANDING_PAGE_SKIN_ENABLED then return end
     GW.RegisterLoadHook(ExpansionLadningPageSkin, "Blizzard_ExpansionLandingPage", ExpansionLandingPage)
 end
 GW.LoadExpansionLadningPageSkin = LoadExpansionLadningPageSkin

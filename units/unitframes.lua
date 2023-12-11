@@ -1,6 +1,5 @@
 local _, GW = ...
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
-local GetSetting = GW.GetSetting
 local TimeCount = GW.TimeCount
 local CommaValue = GW.CommaValue
 local PowerBarColorCustom = GW.PowerBarColorCustom
@@ -63,7 +62,7 @@ local function createNormalUnitFrame(ftype, revert)
     f.healthString:SetFont(UNIT_NAME_FONT, 11)
     f.healthString:SetShadowOffset(1, -1)
 
-    if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
+    if GW.settings.FONTS_ENABLED then -- for any reason blizzard is not supporting UTF8 if we set this font
         f.nameString:SetFont(UNIT_NAME_FONT, 14)
     end
     f.nameString:SetShadowOffset(1, -1)
@@ -137,7 +136,7 @@ local function createNormalUnitFrameSmall(ftype)
     f.healthString:SetFont(UNIT_NAME_FONT, 11)
     f.healthString:SetShadowOffset(1, -1)
 
-    if GetSetting("FONTS_ENABLED") then -- for any reason blizzard is not supporting UTF8 if we set this font
+    if GW.settings.FONTS_ENABLED then -- for any reason blizzard is not supporting UTF8 if we set this font
         f.nameString:SetFont(UNIT_NAME_FONT, 14)
     end
     f.nameString:SetShadowOffset(1, -1)
@@ -279,7 +278,7 @@ local function setUnitPortraitFrame(self)
 
     local txt
     local border = "normal"
-    local showItemLevel = (GetSetting(self.unit .. "_SHOW_ILVL") and CanInspect(self.unit))
+    local showItemLevel = (GW.settings[self.unit .. "_SHOW_ILVL"] and CanInspect(self.unit))
     local honorLevel = showItemLevel and 0 or UnitHonorLevel(self.unit)
 
     local unitClassIfication = UnitClassification(self.unit)
@@ -737,7 +736,7 @@ local function target_OnEvent(self, event, unit)
     local ttf = GwTargetTargetUnitFrame
 
     if IsIn(event, "PLAYER_TARGET_CHANGED", "ZONE_CHANGED", "FORCE_UPDATE") then
-        if event == "PLAYER_TARGET_CHANGED" and CanInspect(self.unit) and GetSetting("target_SHOW_ILVL") then
+        if event == "PLAYER_TARGET_CHANGED" and CanInspect(self.unit) and GW.settings.target_SHOW_ILVL then
             local guid = UnitGUID(self.unit)
             if guid then
                 if not GW.unitIlvlsCache[guid] then
@@ -796,7 +795,7 @@ local function target_OnEvent(self, event, unit)
         updateRaidMarkers(self)
         if (ttf) then updateRaidMarkers(ttf) end
     elseif event == "INSPECT_READY" then
-        if not GetSetting("target_SHOW_ILVL") then
+        if not GW.settings.target_SHOW_ILVL then
             self:UnregisterEvent("INSPECT_READY")
         else
             updateAvgItemLevel(self, unit)
@@ -901,27 +900,27 @@ end
 GW.AddForProfiling("unitframes", "unittarget_OnUpdate", unittarget_OnUpdate)
 
 local function ToggleTargetFrameSettings()
-    GwTargetUnitFrame.classColor = GetSetting("target_CLASS_COLOR")
+    GwTargetUnitFrame.classColor = GW.settings.target_CLASS_COLOR
 
-    GwTargetUnitFrame.showHealthValue = GetSetting("target_HEALTH_VALUE_ENABLED")
-    GwTargetUnitFrame.showHealthPrecentage = GetSetting("target_HEALTH_VALUE_TYPE")
-    GwTargetUnitFrame.showCastbar = GetSetting("target_SHOW_CASTBAR")
-    GwTargetUnitFrame.showCastingbarData = GetSetting("target_CASTINGBAR_DATA")
+    GwTargetUnitFrame.showHealthValue = GW.settings.target_HEALTH_VALUE_ENABLED
+    GwTargetUnitFrame.showHealthPrecentage = GW.settings.target_HEALTH_VALUE_TYPE
+    GwTargetUnitFrame.showCastbar = GW.settings.target_SHOW_CASTBAR
+    GwTargetUnitFrame.showCastingbarData = GW.settings.target_CASTINGBAR_DATA
 
-    GwTargetUnitFrame.displayBuffs = GetSetting("target_BUFFS")
-    GwTargetUnitFrame.displayDebuffs = GetSetting("target_DEBUFFS")
+    GwTargetUnitFrame.displayBuffs = GW.settings.target_BUFFS
+    GwTargetUnitFrame.displayDebuffs = GW.settings.target_DEBUFFS
 
-    GwTargetUnitFrame.showThreat = GetSetting("target_THREAT_VALUE_ENABLED")
+    GwTargetUnitFrame.showThreat = GW.settings.target_THREAT_VALUE_ENABLED
 
-    GwTargetUnitFrame.auraPositionTop = GetSetting("target_AURAS_ON_TOP")
+    GwTargetUnitFrame.auraPositionTop = GW.settings.target_AURAS_ON_TOP
 
-    GwTargetUnitFrame.altBg:SetShown(GetSetting("target_FRAME_ALT_BACKGROUND"))
+    GwTargetUnitFrame.altBg:SetShown(GW.settings.target_FRAME_ALT_BACKGROUND)
 
     GwTargetUnitFrame.auras:ClearAllPoints()
     GwTargetUnitFrame.auras:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbarBackground, "BOTTOMLEFT", 2, -15)
 
     if GwTargetUnitFrame.auraPositionTop then
-        local yOff = GetSetting("target_FRAME_ALT_BACKGROUND") and 22 or 17
+        local yOff = GW.settings.target_FRAME_ALT_BACKGROUND and 22 or 17
 
         GwTargetUnitFrame.auras:ClearAllPoints()
         if GwTargetUnitFrame.frameInvert then
@@ -929,17 +928,17 @@ local function ToggleTargetFrameSettings()
         else
             GwTargetUnitFrame.auras:SetPoint("TOPLEFT", GwTargetUnitFrame.nameString, "TOPLEFT", 2, yOff)
         end
-    elseif GetSetting("target_HOOK_COMBOPOINTS") and (GW.myClassID == 4 or GW.myClassID == 11) then
+    elseif GW.settings.target_HOOK_COMBOPOINTS and (GW.myClassID == 4 or GW.myClassID == 11) then
         GwTargetUnitFrame.auras:ClearAllPoints()
         GwTargetUnitFrame.auras:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbarBackground, "BOTTOMLEFT", 2, -23)
     end
 
     -- priority: All > Important > Player
     GwTargetUnitFrame.debuffFilter = "PLAYER"
-    if GetSetting("target_BUFFS_FILTER_IMPORTANT") then
+    if GW.settings.target_BUFFS_FILTER_IMPORTANT then
         GwTargetUnitFrame.debuffFilter = "IMPORTANT"
     end
-    if GetSetting("target_BUFFS_FILTER_ALL") then
+    if GW.settings.target_BUFFS_FILTER_ALL then
         GwTargetUnitFrame.debuffFilter = nil
     end
 
@@ -948,7 +947,7 @@ end
 GW.ToggleTargetFrameSettings = ToggleTargetFrameSettings
 
 local function LoadTarget()
-    local NewUnitFrame = createNormalUnitFrame("GwTargetUnitFrame", GetSetting("target_FRAME_INVERT"))
+    local NewUnitFrame = createNormalUnitFrame("GwTargetUnitFrame", GW.settings.target_FRAME_INVERT)
     NewUnitFrame.unit = "target"
     NewUnitFrame.type = "NormalTarget"
 
@@ -1018,7 +1017,7 @@ local function LoadTarget()
     LoadAuras(NewUnitFrame)
 
     -- create floating combat text
-    if GetSetting("target_FLOATING_COMBAT_TEXT") then
+    if GW.settings.target_FLOATING_COMBAT_TEXT then
         local fctf = CreateFrame("Frame", nil, NewUnitFrame)
         fctf:SetFrameLevel(NewUnitFrame:GetFrameLevel() + 3)
         fctf:RegisterEvent("UNIT_COMBAT")
@@ -1042,24 +1041,24 @@ end
 GW.LoadTarget = LoadTarget
 
 local function ToggleFocusFrameSettings()
-    GwFocusUnitFrame.classColor = GetSetting("focus_CLASS_COLOR")
+    GwFocusUnitFrame.classColor = GW.settings.focus_CLASS_COLOR
 
-    GwFocusUnitFrame.showHealthValue = GetSetting("focus_HEALTH_VALUE_ENABLED")
-    GwFocusUnitFrame.showHealthPrecentage = GetSetting("focus_HEALTH_VALUE_TYPE")
-    GwFocusUnitFrame.showCastbar = GetSetting("focus_SHOW_CASTBAR")
+    GwFocusUnitFrame.showHealthValue = GW.settings.focus_HEALTH_VALUE_ENABLED
+    GwFocusUnitFrame.showHealthPrecentage = GW.settings.focus_HEALTH_VALUE_TYPE
+    GwFocusUnitFrame.showCastbar = GW.settings.focus_SHOW_CASTBAR
 
-    GwFocusUnitFrame.displayBuffs = GetSetting("focus_BUFFS")
-    GwFocusUnitFrame.displayDebuffs = GetSetting("focus_DEBUFFS")
+    GwFocusUnitFrame.displayBuffs = GW.settings.focus_BUFFS
+    GwFocusUnitFrame.displayDebuffs = GW.settings.focus_DEBUFFS
 
-    GwFocusUnitFrame.auraPositionTop = GetSetting("focus_AURAS_ON_TOP")
+    GwFocusUnitFrame.auraPositionTop = GW.settings.focus_AURAS_ON_TOP
 
-    GwFocusUnitFrame.altBg:SetShown(GetSetting("focus_FRAME_ALT_BACKGROUND"))
+    GwFocusUnitFrame.altBg:SetShown(GW.settings.focus_FRAME_ALT_BACKGROUND)
 
     GwFocusUnitFrame.auras:ClearAllPoints()
     GwFocusUnitFrame.auras:SetPoint("TOPLEFT", GwFocusUnitFrame.castingbarBackground, "BOTTOMLEFT", 2, -15)
 
     if GwFocusUnitFrame.auraPositionTop then
-        local yOff = GetSetting("focus_FRAME_ALT_BACKGROUND") and 22 or 17
+        local yOff = GW.settings.focus_FRAME_ALT_BACKGROUND and 22 or 17
 
         GwFocusUnitFrame.auras:ClearAllPoints()
         if GwFocusUnitFrame.frameInvert then
@@ -1071,10 +1070,10 @@ local function ToggleFocusFrameSettings()
 
     -- priority: All > Important > Player
     GwFocusUnitFrame.debuffFilter = "PLAYER"
-    if GetSetting("focus_BUFFS_FILTER_IMPORTANT") then
+    if GW.settings.focus_BUFFS_FILTER_IMPORTANT then
         GwFocusUnitFrame.debuffFilter = "IMPORTANT"
     end
-    if GetSetting("focus_BUFFS_FILTER_ALL") then
+    if GW.settings.focus_BUFFS_FILTER_ALL then
         GwFocusUnitFrame.debuffFilter = nil
     end
 
@@ -1083,7 +1082,7 @@ end
 GW.ToggleFocusFrameSettings = ToggleFocusFrameSettings
 
 local function LoadFocus()
-    local NewUnitFrame = createNormalUnitFrame("GwFocusUnitFrame", GetSetting("focus_FRAME_INVERT"))
+    local NewUnitFrame = createNormalUnitFrame("GwFocusUnitFrame", GW.settings.focus_FRAME_INVERT)
     NewUnitFrame.unit = "focus"
     NewUnitFrame.type = "NormalTarget"
 
@@ -1149,11 +1148,11 @@ end
 GW.LoadFocus = LoadFocus
 
 local function ToggleTargetTargetFrameSetting(unit)
-    _G["Gw" .. unit .. "TargetUnitFrame"].classColor = GetSetting(string.lower(unit) .. "_CLASS_COLOR")
-    _G["Gw" .. unit .. "TargetUnitFrame"].showCastbar = GetSetting(string.lower(unit) .. "_TARGET_SHOW_CASTBAR")
+    _G["Gw" .. unit .. "TargetUnitFrame"].classColor = GW.settings[string.lower(unit) .. "_CLASS_COLOR"]
+    _G["Gw" .. unit .. "TargetUnitFrame"].showCastbar = GW.settings[string.lower(unit) .. "_TARGET_SHOW_CASTBAR"]
 
 
-    _G["Gw" .. unit .. "TargetUnitFrame"].altBg:SetShown((unit == "Target" and GetSetting("target_FRAME_ALT_BACKGROUND")) or (unit == "Focus" and GetSetting("focus_FRAME_ALT_BACKGROUND")))
+    _G["Gw" .. unit .. "TargetUnitFrame"].altBg:SetShown((unit == "Target" and GW.settings.target_FRAME_ALT_BACKGROUND) or (unit == "Focus" and GW.settings.focus_FRAME_ALT_BACKGROUND))
 
     if unit == "Target" then
         target_OnEvent(GwTargetUnitFrame, "FORCE_UPDATE")

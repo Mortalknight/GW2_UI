@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function ReplaceIconString(frame, text)
     if not text then text = frame:GetText() end
@@ -21,7 +20,7 @@ local function GenericTraitFrameSkin()
 end
 
 local function LoadGenericTraitFrameSkin()
-    if not GetSetting("GENERIC_TRAINT_SKIN_ENABLED") then return end
+    if not GW.settings.GENERIC_TRAINT_SKIN_ENABLED then return end
     GW.RegisterLoadHook(GenericTraitFrameSkin, "Blizzard_GenericTraitUI", GenericTraitFrame)
 end
 GW.LoadGenericTraitFrameSkin = LoadGenericTraitFrameSkin

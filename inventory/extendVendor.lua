@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 local BLIZZARD_MERCHANT_ITEMS_PER_PAGE = 10
 
 local function UpdateBuybackPositions()
@@ -50,17 +49,17 @@ end
 
 
 local function SetUpExtendedVendor()
-    if C_AddOns.IsAddOnLoaded("ExtVendor") or C_AddOns.IsAddOnLoaded("Krowi_MerchantFrameExtended") or GetSetting("EXTENDED_VENDOR_NUM_PAGES") == "1" then
+    if C_AddOns.IsAddOnLoaded("ExtVendor") or C_AddOns.IsAddOnLoaded("Krowi_MerchantFrameExtended") or GW.settings.EXTENDED_VENDOR_NUM_PAGES == "1" then
         return
     end
 
-    MERCHANT_ITEMS_PER_PAGE = GetSetting("EXTENDED_VENDOR_NUM_PAGES") * 10
-    MerchantFrame:SetWidth(30 + GetSetting("EXTENDED_VENDOR_NUM_PAGES") * 330)
+    MERCHANT_ITEMS_PER_PAGE = GW.settings.EXTENDED_VENDOR_NUM_PAGES * 10
+    MerchantFrame:SetWidth(30 + GW.settings.EXTENDED_VENDOR_NUM_PAGES * 330)
 
     for i = 1, MERCHANT_ITEMS_PER_PAGE do
         if not _G["MerchantItem" .. i] then
             CreateFrame("Frame", "MerchantItem" .. i, MerchantFrame, "MerchantItemTemplate")
-            if GetSetting("MERCHANT_SKIN_ENABLED") then
+            if GW.settings.MERCHANT_SKIN_ENABLED then
                 GW.SkinMerchantFrameItemButton(i)
             end
         end

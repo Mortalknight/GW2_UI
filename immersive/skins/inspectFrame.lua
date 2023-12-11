@@ -1,8 +1,7 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function SkinInspectFrameOnLoad()
-    if not GetSetting("INSPECTION_SKIN_ENABLED") then return end
+    if not GW.settings.INSPECTION_SKIN_ENABLED then return end
 
     local w, h = InspectFrame:GetSize()
     InspectFrame:GwStripTextures()

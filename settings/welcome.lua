@@ -1,6 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local SetSetting = GW.SetSetting
 local AddForProfiling = GW.AddForProfiling
 
 local LEMO = GW.Libs.LEMO
@@ -179,7 +178,7 @@ local function button1_OnClick()
         wpanel.welcome.button2:Show()
 
         wpanel.welcome.button1:SetScript("OnClick", function()
-            SetSetting("PIXEL_PERFECTION", true)
+            GW.settings.PIXEL_PERFECTION = true
             GW.PixelPerfection()
 
             GW.AlertSystem:AddAlert(L["Pixel Perfect Mode"], nil, L["Turn Pixel Perfect Mode On"], false, "Interface/AddOns/GW2_UI/textures/icons/icon-levelup", true)

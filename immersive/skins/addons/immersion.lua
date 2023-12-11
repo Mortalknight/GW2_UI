@@ -1,8 +1,7 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function LoadImmersionAddonSkin()
-    if not GetSetting("IMMERSIONADDON_SKIN_ENABLED") then return end
+    if not GW.settings.IMMERSIONADDON_SKIN_ENABLED then return end
 
     local ImmersionFrame = _G.ImmersionFrame
 

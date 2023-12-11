@@ -1,22 +1,9 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
 
 local LibCustomGlow = GW.Libs.CustomGlows
 local ALPHA = 0.3
-local classColor = GW.GWGetClassColor(GW.myclass, true)
-
-local settings = {}
-
-local function UpdateSettings()
-    settings.invert = GetSetting("MISSING_RAID_BUFF_INVERT")
-    settings.dimmed = GetSetting("MISSING_RAID_BUFF_dimmed")
-    settings.grayedout = GetSetting("MISSING_RAID_BUFF_grayed_out")
-    settings.animated = GetSetting("MISSING_RAID_BUFF_animated")
-    settings.visibility = GetSetting("MISSING_RAID_BUFF")
-    settings.customsId = GetSetting("MISSING_RAID_BUFF_custom_id")
-end
-GW.UpdateMissingRaidBuffSettings = UpdateSettings
+local classColor
 
 -- tables
 local checkIds = {}
@@ -181,21 +168,21 @@ end
 
 local function setButtonStyle(button, haveBuff)
     if not haveBuff then
-        button.icon:SetDesaturated(settings.invert and settings.grayedout or false)
-        button:SetAlpha(not settings.invert and 1 or settings.dimmed and ALPHA or 1)
-        if settings.animated then
+        button.icon:SetDesaturated(GW.settings.MISSING_RAID_BUFF_INVERT and GW.settings.MISSING_RAID_BUFF_grayed_out or false)
+        button:SetAlpha(not GW.settings.MISSING_RAID_BUFF_INVERT and 1 or GW.settings.MISSING_RAID_BUFF_dimmed and ALPHA or 1)
+        if GW.settings.MISSING_RAID_BUFF_animated then
             LibCustomGlow.PixelGlow_Start(button, {classColor.r, classColor.g, classColor.b, 1}, nil, -0.25, nil, 1)
         else
             LibCustomGlow.PixelGlow_Stop(button)
         end
     else
-        if settings.invert then
+        if GW.settings.MISSING_RAID_BUFF_INVERT then
             button.icon:SetDesaturated(false)
         else
-            button.icon:SetDesaturated(settings.grayedout)
+            button.icon:SetDesaturated(GW.settings.MISSING_RAID_BUFF_grayed_out)
         end
 
-        button:SetAlpha(settings.invert and 1 or settings.dimmed and ALPHA or 1)
+        button:SetAlpha(GW.settings.MISSING_RAID_BUFF_INVERT and 1 or GW.settings.MISSING_RAID_BUFF_dimmed and ALPHA or 1)
         LibCustomGlow.PixelGlow_Stop(button)
     end
 end
@@ -372,14 +359,14 @@ local function UpdateMissingRaidBuffVisibility()
         ["IN_RAID_IN_PARTY"] = "[petbattle] hide; [group] show; hide",
     }
 
-    RegisterStateDriver(GW_RaidBuffReminder, "visibility", VisibilityStates[settings.visibility])
+    RegisterStateDriver(GW_RaidBuffReminder, "visibility", VisibilityStates[GW.settings.MISSING_RAID_BUFF])
 end
 GW.UpdateMissingRaidBuffVisibility = UpdateMissingRaidBuffVisibility
 
 local function UpdateMissingRaidBuffCustomSpell()
 	wipe(buffInfos.Custom)
 
-	local keywords = gsub(settings.customsId, ",%s", ",")
+	local keywords = gsub(GW.settings.MISSING_RAID_BUFF_custom_id, ",%s", ",")
 
 	for stringValue in gmatch(keywords, "[^,]+") do
 		if stringValue ~= "" then
@@ -394,9 +381,9 @@ end
 GW.UpdateMissingRaidBuffCustomSpell = UpdateMissingRaidBuffCustomSpell
 
 local function LoadRaidbuffReminder()
-    UpdateSettings()
-
     local rbr = CreateFrame("Frame", "GW_RaidBuffReminder", UIParent)
+
+    classColor = GW.GWGetClassColor(GW.myclass, true)
 
     rbr:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
 

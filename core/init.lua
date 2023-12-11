@@ -84,6 +84,7 @@ do
         GW.Libs[name] = _G.LibStub(libname, silent)
     end
 
+    AddLib("AceDB", "AceDB-3.0", true)
     AddLib("LRI", "LibRealmInfo", true)
     AddLib("LSM", "LibSharedMedia-3.0", true)
     AddLib("Compress", "LibCompress", true)
@@ -145,19 +146,6 @@ end
 hooksecurefunc(HelpTip, "Show", AcknowledgeTips)
 C_Timer.After(1, function() AcknowledgeTips() end)
 
--- we need to load this function here because it is need in defaults.lua
-local function MapTable(T, fn, withKey)
-    local t = {}
-    for k,v in pairs(T) do
-        if withKey then
-            t[k] = fn(v, k)
-        else
-            t[k] = fn(v)
-        end
-    end
-    return t
-end
-GW.MapTable = MapTable
 
 local function copyTable(newTable, tableToCopy)
     if type(newTable) ~= "table" then newTable = {} end

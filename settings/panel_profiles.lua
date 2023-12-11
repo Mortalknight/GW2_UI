@@ -1,10 +1,7 @@
 local _, GW = ...
 local L = GW.L
 local createCat = GW.CreateCat
-local GetActiveProfile = GW.GetActiveProfile
-local SetSetting = GW.SetSetting
 local ResetToDefault = GW.ResetToDefault
-local GetSettingsProfiles = GW.GetSettingsProfiles
 local AddForProfiling = GW.AddForProfiling
 local settingMenuToggle = GW.settingMenuToggle
 
@@ -15,16 +12,16 @@ local ProfileWin = nil
 local function loadProfiles(profilewin)
     local USED_PROFILE_HEIGHT
     local offset = HybridScrollFrame_GetOffset(profilewin)
-    local profiles = GetSettingsProfiles()
-    local currentProfile = GetActiveProfile()
+    local profiles = GW.globalSettings:GetProfiles()
+    local currentProfile = GW.globalSettings:GetCurrentProfile()
     local validProfiles = {}
     local validProfileIdx = 1
 
     -- sort out nil tables and sort table by id
-    for k, _ in pairs(profiles) do
-        if profiles[k] then
-            validProfiles[validProfileIdx] = profiles[k]
-            validProfiles[validProfileIdx].realIdx = k
+    for k, name in pairs(profiles) do
+        if profiles[k] and name ~= "Default" then
+            validProfiles[validProfileIdx] = GW.globalSettings.profiles[name]
+            validProfiles[validProfileIdx].profileName = name
             validProfileIdx = validProfileIdx + 1
         end
     end
@@ -32,7 +29,7 @@ local function loadProfiles(profilewin)
     table.sort(
         validProfiles,
         function(a, b)
-            return a.realIdx < b.realIdx
+            return a.profileName < b.profileName
         end
     )
 
@@ -43,20 +40,19 @@ local function loadProfiles(profilewin)
         if idx > #validProfiles then
             -- empty row (blank starter row, final row, and any empty entries)
             slot.item:Hide()
-            slot.item.profileID = nil
+            slot.item.profileName = nil
         else
-            slot.item.profileID = validProfiles[idx].realIdx
-            slot.item.name:SetText(validProfiles[idx].profilename)
+            slot.item.profileName = validProfiles[idx].profileName
+            slot.item.name:SetText(validProfiles[idx].profileName)
 
             slot.item.hasOptions = true
             slot.item.canDelete = true
             slot.item.canExport = true
-            slot.item.canRename = true
             slot.item.canCopy = true
             slot.item.canActivate = true
             slot.item.activeProfile:Hide()
 
-            if currentProfile == validProfiles[idx].realIdx then
+            if currentProfile == validProfiles[idx].profileName then
                 slot.item.canActivate = false
                 slot.item.canDelete = false
                 slot.item.activeProfile:Show()
@@ -223,25 +219,22 @@ local function createImportExportFrame()
     return frame
 end
 
-local function deleteProfile(index)
-    GW2UI_SETTINGS_PROFILES[index] = nil
-    if GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] ~= nil and GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] == index then
-        SetSetting("ACTIVE_PROFILE", nil)
-    end
+local function deleteProfile(name)
+    GW.globalSettings:DeleteProfile(name, true)
 
     -- delete also all "attached" layouts
     local allLayouts = GW.GetAllLayouts()
     for i = 0, #allLayouts do
-        if allLayouts[i] and allLayouts[i].profileId == index then
-            GW2UI_LAYOUTS[i] = nil
+        if allLayouts[i] and allLayouts[i].profileName == name then
+            GW.global.layouts[i] = nil
             break
         end
     end
 end
 AddForProfiling("panel_profiles", "deleteProfile", deleteProfile)
 
-local function setProfile(index)
-    GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"] = index
+local function setProfile(profileName)
+    GW.globalSettings:SetProfile(profileName)
     C_UI.Reload()
 end
 AddForProfiling("panel_profiles", "setProfile", setProfile)
@@ -250,9 +243,9 @@ local function delete_OnClick(self)
     local p = self:GetParent().parentItem
     self:GetParent():Hide()
     GW.WarningPrompt(
-        L["Are you sure you want to delete this profile?"] .. "\n\n'" .. (GW2UI_SETTINGS_PROFILES[p.profileID].profilename or UNKNOWN) .. "'",
+        L["Are you sure you want to delete this profile?"] .. "\n\n'" .. (p.profileName or UNKNOWN) .. "'",
         function()
-            deleteProfile(p.profileID)
+            deleteProfile(p.profileName)
             loadProfiles(ProfileWin)
             GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll)
         end
@@ -271,14 +264,6 @@ local function buttons_OnEnter(self)
     else
         self:GetParent().settingsButton.dropdown.delete:Disable()
         self:GetParent().settingsButton.dropdown.delete.name:SetTextColor(1, 1, 1, 0.2)
-    end
-
-    if self:GetParent().canRename then
-        self:GetParent().settingsButton.dropdown.rename:Enable()
-        self:GetParent().settingsButton.dropdown.rename.name:SetTextColor(1, 1, 1, 1)
-    else
-        self:GetParent().settingsButton.dropdown.rename:Disable()
-        self:GetParent().settingsButton.dropdown.rename.name:SetTextColor(1, 1, 1, 0.2)
     end
 
     if self:GetParent().canExport then
@@ -315,9 +300,9 @@ local function activate_OnClick(self)
     if not p.canActivate then return end
 
     GW.WarningPrompt(
-        L["Do you want to activate profile"] .. "\n\n'" .. (GW2UI_SETTINGS_PROFILES[p.profileID].profilename or UNKNOWN) .."'?",
+        L["Do you want to activate profile"] .. "\n\n'" .. (GW.globalSettings:GetCurrentProfile() or UNKNOWN) .."'?",
         function()
-            setProfile(p.profileID) -- triggers a reload
+            setProfile(GW.globalSettings:GetCurrentProfile()) -- triggers a reload
         end
     )
 end
@@ -325,11 +310,11 @@ AddForProfiling("panel_profiles", "activate_OnClick", activate_OnClick)
 
 local function export_OnClick(self)
     local p = self:GetParent().parentItem
-    local exportString = GW.GetExportString(p.profileID, GW2UI_SETTINGS_PROFILES[p.profileID].profilename)
+    local exportString = GW.GetExportString(GW.globalSettings:GetCurrentProfile())
 
     ImportExportFrame:Show()
     ImportExportFrame.header:SetText(L["Export Profile"])
-    ImportExportFrame.subheader:SetText(GW2UI_SETTINGS_PROFILES[p.profileID].profilename)
+    ImportExportFrame.subheader:SetText(GW.globalSettings:GetCurrentProfile())
     ImportExportFrame.description:SetText(L["Profile string to share your settings:"])
     ImportExportFrame.import:Hide()
     ImportExportFrame.decode:Hide()
@@ -339,14 +324,10 @@ local function export_OnClick(self)
 end
 AddForProfiling("panel_profiles", "export_OnClick", export_OnClick)
 
-local function rename_OnClick(self)
-    StaticPopup_Show("GW_CHANGE_PROFILE_NAME", nil, nil, self:GetParent().parentItem)
-    self:GetParent():Hide()
-end
 
 local function copy_OnClick(self)
-    local newProfil = GW.copyTable(nil, GW2UI_SETTINGS_PROFILES[self:GetParent().parentItem.profileID])
-    GW.addProfile(L["Copy of"] .. " " .. GW2UI_SETTINGS_PROFILES[self:GetParent().parentItem.profileID].profilename, newProfil, true)
+    local newProfil = GW.copyTable(nil, GW.globalSettings.profiles[self:GetParent().parentItem.profileName])
+    GW.addProfile(L["Copy of"] .. " " .. GW.globalSettings.profiles[self:GetParent().parentItem.profileName].profilename, newProfil, true)
     self:GetParent():Hide()
 end
 
@@ -359,7 +340,7 @@ local function settingsSubButtonOnLeave(self)
 end
 
 local function item_OnLoad(self)
-    local settingButtons = {self.settingsButton.dropdown.copy, self.settingsButton.dropdown.export, self.settingsButton.dropdown.rename, self.settingsButton.dropdown.delete}
+    local settingButtons = {self.settingsButton.dropdown.copy, self.settingsButton.dropdown.export, self.settingsButton.dropdown.delete}
     self.name:SetFont(UNIT_NAME_FONT, 14)
     self.desc:SetFont(UNIT_NAME_FONT, 10)
     self.activateButton.hint:SetFont(DAMAGE_TEXT_FONT, 10)
@@ -375,7 +356,6 @@ local function item_OnLoad(self)
 
     self.settingsButton.dropdown.delete:SetScript("OnClick", delete_OnClick)
     self.settingsButton.dropdown.export:SetScript("OnClick", export_OnClick)
-    self.settingsButton.dropdown.rename:SetScript("OnClick", rename_OnClick)
     self.settingsButton.dropdown.copy:SetScript("OnClick", copy_OnClick)
 
     for _, button in pairs(settingButtons) do
@@ -395,9 +375,6 @@ local function item_OnEnter(self)
     end
     if self.canDelete then
         self.settingsButton.dropdown.delete:Show()
-    end
-    if self.canRename then
-        self.settingsButton.dropdown.rename:Show()
     end
     if self.canExport then
         self.settingsButton.dropdown.export:Show()
@@ -424,9 +401,6 @@ local function item_OnLeave(self)
     if self.canDelete then
         self.settingsButton.dropdown.delete:Hide()
     end
-    if self.canRename then
-        self.settingsButton.dropdown.rename:Hide()
-    end
     if self.canExport then
         self.settingsButton.dropdown.export:Hide()
     end
@@ -437,20 +411,19 @@ end
 AddForProfiling("panel_profiles", "item_OnLeave", item_OnLeave)
 
 local function addProfile(name, profileData, copy)
-    local profileList = GetSettingsProfiles()
-    local newIdx = #profileList + 1
+    local profileList = GW.globalSettings:GetProfiles()
+    for _, v in pairs(profileList) do
+        if name == v then
+            GW.Notice("Profile with that name already exists")
+            return
+        end
+    end
 
     if copy then
-        GW2UI_SETTINGS_PROFILES[newIdx] = profileData
-        GW2UI_SETTINGS_PROFILES[newIdx]["profilename"] = name
+        GW.globalSettings.profiles[name] = profileData
+        GW.globalSettings.profiles[name].profilename = name
     elseif profileData then
-        GW2UI_SETTINGS_PROFILES[newIdx] = profileData
-    else
-        GW2UI_SETTINGS_PROFILES[newIdx] = GW.copyTable(nil, GW2UI_SETTINGS_DB_03)
-        GW2UI_SETTINGS_PROFILES[newIdx].profilename = name
-        GW2UI_SETTINGS_PROFILES[newIdx].profileCreatedDate = date("%m/%d/%y %H:%M:%S")
-        GW2UI_SETTINGS_PROFILES[newIdx].profileCreatedCharacter = GetUnitName("player", true)
-        GW2UI_SETTINGS_PROFILES[newIdx].profileLastUpdated = date("%m/%d/%y %H:%M:%S")
+        GW.globalSettings.profiles[name] = profileData
     end
 
     loadProfiles(ProfileWin)
@@ -608,7 +581,6 @@ local function LoadProfilesPanel(sWindow)
     p.resetToDefaultFrame.item.hasOptions = false
     p.resetToDefaultFrame.item.canDelete = false
     p.resetToDefaultFrame.item.canExport = false
-    p.resetToDefaultFrame.item.canRename = false
     p.resetToDefaultFrame.item.canCopy = false
     p.resetToDefaultFrame.item.background:SetTexCoord(0, 1, 0, 0.5)
     p.resetToDefaultFrame.item.canActivate = false

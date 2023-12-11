@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function Update(frame)
     if frame.upgradeInfo then
@@ -10,7 +9,7 @@ local function Update(frame)
 end
 
 local function ApplyItemUpgradeSkin()
-    if not GetSetting("ITEMUPGRADE_SKIN_ENABLED") then return end
+    if not GW.settings.ITEMUPGRADE_SKIN_ENABLED then return end
     ItemUpgradeFrameBg:Hide()
     ItemUpgradeFramePortrait:Hide()
     ItemUpgradeFramePlayerCurrenciesBorder:GwStripTextures()

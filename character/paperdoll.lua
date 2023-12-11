@@ -1,7 +1,6 @@
 local _, GW = ...
 local CharacterMenuButton_OnLoad = GW.CharacterMenuButton_OnLoad
 local CharacterMenuButtonBack_OnLoad = GW.CharacterMenuButtonBack_OnLoad
-local GetSetting = GW.GetSetting
 
 --local CHARACTER_PANEL_OPEN
 
@@ -144,13 +143,12 @@ local function LoadPaperDoll(tabContainer)
     nextShadow = true
     nextAnchor = fmMenu.titlesMenu
     addAddonButton("Pawn", nil, nextShadow, nextAnchor, PawnUIShow)
-    addAddonButton("Clique", GetSetting("USE_SPELLBOOK_WINDOW"), nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end)
-    addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end)
-    addAddonButton("MyRolePlay", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false ToggleCharacter("MyRolePlayCharacterFrame") end)
-    addAddonButton("TalentSetManager", GetSetting("USE_TALENT_WINDOW"), nextShadow, nextAnchor, function() TalentFrame_LoadUI() if PlayerTalentFrame_Toggle then PlayerTalentFrame_Toggle(TALENTS_TAB) end end)
+    addAddonButton("Clique", GW.settings.USE_SPELLBOOK_WINDOW, nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end)
+    addAddonButton("Outfitter", GW.settings.USE_CHARACTER_WINDOW, nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end)
+    addAddonButton("MyRolePlay", GW.settings.USE_CHARACTER_WINDOW, nextShadow, nextAnchor, function() hideCharframe = false ToggleCharacter("MyRolePlayCharacterFrame") end)
+    addAddonButton("TalentSetManager", GW.settings.USE_TALENT_WINDOW, nextShadow, nextAnchor, function() TalentFrame_LoadUI() if PlayerTalentFrame_Toggle then PlayerTalentFrame_Toggle(TALENTS_TAB) end end)
 
 
-    GW.UpdateHeroPanelItemInfoSettings()
     GW.ToggleCharacterItemInfo(true)
     CharacterFrame:SetScript(
         "OnShow",

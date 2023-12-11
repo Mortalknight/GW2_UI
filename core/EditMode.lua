@@ -1,8 +1,7 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 local LEMO = GW.Libs.LEMO
 
-local CheckActionBar = function() return GetSetting("ACTIONBARS_ENABLED") end
+local CheckActionBar = function() return GW.settings.ACTIONBARS_ENABLED end
 
 local eventFrame = CreateFrame("Frame")
 local hideFrames = {}
@@ -36,7 +35,7 @@ local function ApplyBlizzardEditModeChanges(self)
     LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.Orientation, Enum.ActionBarOrientation.Horizontal)
     LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.NumRows, 1)
     LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.NumIcons, 12)
-    LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GetSetting("HUD_SCALE")) or 1)))
+    LEMO:ReanchorFrame(MainMenuBar, "TOP", UIParent, "BOTTOM", 0, (80 * (tonumber(GW.settings.HUD_SCALE) or 1)))
 
     -- PossessActionBar
     LEMO:ReanchorFrame(PossessActionBar, "BOTTOM", MainMenuBar, "TOP", -110, 40)

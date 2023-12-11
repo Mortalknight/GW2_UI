@@ -1,6 +1,5 @@
 local _, GW = ...
 local Debug = GW.Debug
-local GetSetting = GW.GetSetting
 local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 local BleedList = GW.Libs.Dispel:GetBleedList()
 local BadDispels = GW.Libs.Dispel:GetBadList()
@@ -123,7 +122,7 @@ local function UpdateAura_OnUpdate(self, xpr, elapsed)
         if self.duration < 121 then
             setShortCD(self, xpr, self.duration, self.stackCount)
             if self.duration - remains < 0.1 then
-                if GetSetting("PLAYER_AURA_ANIMATION") and (self.oldAuraName ~= self.auraName) then
+                if GW.settings.PLAYER_AURA_ANIMATION and (self.oldAuraName ~= self.auraName) then
                     self.agZoomIn:Play()
                 end
             end
@@ -379,23 +378,23 @@ end
 local function UpdateAuraHeader(header, settingName)
     if not header then return end
 
-    local size = tonumber(GW.RoundDec(GetSetting(settingName .. "_ICON_SIZE")))
+    local size = tonumber(GW.RoundDec(GW.settings[settingName .. "_ICON_SIZE"]))
     local aura_tmpl = format("GwAuraSecureTmpl%d", size)
-    local grow_dir = GetSetting(settingName .. "_GrowDirection")
-    local maxWraps = GetSetting(settingName .. "_MaxWraps")
-    local horizontalSpacing = tonumber(GetSetting(settingName .. "_HorizontalSpacing"))
-    local verticalSpacing = tonumber(GetSetting(settingName .. "_VerticalSpacing"))
-    local wrapAfter = header.name == "GW2UIPlayerBuffs" and tonumber(GetSetting("PLAYER_AURA_WRAP_NUM")) or tonumber(GetSetting("PLAYER_AURA_WRAP_NUM_DEBUFF"))
+    local grow_dir = GW.settings[settingName .. "_GrowDirection"]
+    local maxWraps = GW.settings[settingName .. "_MaxWraps"]
+    local horizontalSpacing = tonumber(GW.settings[settingName .. "_HorizontalSpacing"])
+    local verticalSpacing = tonumber(GW.settings[settingName .. "_VerticalSpacing"])
+    local wrapAfter = header.name == "GW2UIPlayerBuffs" and tonumber(GW.settings.PLAYER_AURA_WRAP_NUM) or tonumber(GW.settings.PLAYER_AURA_WRAP_NUM_DEBUFF)
     if not wrapAfter or wrapAfter < 1 or wrapAfter > 20 then
         wrapAfter = 7
     end
 
     Debug("settings", settingName, grow_dir, wrapAfter, size)
 
-    header:SetAttribute("sortMethod", GetSetting(settingName .. "_SortMethod"))
-    header:SetAttribute("sortDirection", GetSetting(settingName .. "_SortDir"))
+    header:SetAttribute("sortMethod", GW.settings[settingName .. "_SortMethod"])
+    header:SetAttribute("sortDirection", GW.settings[settingName .. "_SortDir"])
     header:SetAttribute("template", aura_tmpl)
-    header:SetAttribute("separateOwn", tonumber(GW.RoundDec(GetSetting(settingName .. "_Seperate"))))
+    header:SetAttribute("separateOwn", tonumber(GW.RoundDec(GW.settings[settingName .. "_Seperate"])))
     header:SetAttribute("wrapAfter", wrapAfter)
     header:SetAttribute("maxWraps", maxWraps)
     header:SetAttribute("minWidth", ((wrapAfter == 1 and 0 or horizontalSpacing) + size) * wrapAfter)
@@ -492,7 +491,7 @@ local function loadAuras(lm)
 
     lm:RegisterBuffFrame(hb)
     hooksecurefunc(hb.gwMover, "StopMovingOrSizing", function ()
-        local grow_dir = GetSetting("PlayerBuffFrame_GrowDirection")
+        local grow_dir = GW.settings.PlayerBuffFrame_GrowDirection
         local anchor_hb = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 
         if not InCombatLockdown() then
@@ -506,7 +505,7 @@ local function loadAuras(lm)
     hd:Show()
     lm:RegisterDebuffFrame(hd)
     hooksecurefunc(hd.gwMover, "StopMovingOrSizing", function ()
-        local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
+        local grow_dir = GW.settings.PlayerDebuffFrame_GrowDirection
         local anchor_hd = grow_dir == "UPR" and "BOTTOMLEFT" or grow_dir == "DOWNR" and "TOPLEFT" or grow_dir == "UP" and "BOTTOMRIGHT" or grow_dir == "DOWN" and "TOPRIGHT"
 
         if not InCombatLockdown() then

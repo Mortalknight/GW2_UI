@@ -2,10 +2,8 @@ local _, GW = ...
 
 local isArenaHooked = false
 local lockedFrames = {}
-local GetSetting = GW.GetSetting
 
 local MAX_PARTY = MEMBERS_PER_RAID_GROUP or MAX_PARTY_MEMBERS or 5
-local MAX_ARENA_ENEMIES = MAX_ARENA_ENEMIES or 5
 local MAX_BOSS_FRAMES = 8
 
 -- lock Boss, Party, and Arena
@@ -50,19 +48,19 @@ end
 
 
 local function DisableBlizzardFrames()
-    local ourPartyFrames = GetSetting("PARTY_FRAMES")
-    local ourRaidFrames = GetSetting("RAID_FRAMES")
-    local ourBossFrames = GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
-    local ourArenaFrames = not C_AddOns.IsAddOnLoaded("sArena") and GetSetting("QUESTTRACKER_ENABLED") and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
-    local ourPetFrame = GetSetting("PETBAR_ENABLED")
-    local ourTargetFrame = GetSetting("TARGET_ENABLED")
-    local ourTargetTargetFrame = GetSetting("target_TARGET_ENABLED")
-    local ourFocusFrame = GetSetting("FOCUS_ENABLED")
-    local ourFocusTargetFrame = GetSetting("focus_TARGET_ENABLED")
-    local ourPlayerFrame = GetSetting("HEALTHGLOBE_ENABLED")
-    local ourCastBar = GetSetting("CASTINGBAR_ENABLED")
-    local ourActionbars = GetSetting("ACTIONBARS_ENABLED")
-    local ourInventory = GetSetting("BAGS_ENABLED")
+    local ourPartyFrames = GW.settings.PARTY_FRAMES
+    local ourRaidFrames = GW.settings.RAID_FRAMES
+    local ourBossFrames = GW.settings.QUESTTRACKER_ENABLED and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
+    local ourArenaFrames = not C_AddOns.IsAddOnLoaded("sArena") and GW.settings.QUESTTRACKER_ENABLED and not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true)
+    local ourPetFrame = GW.settings.PETBAR_ENABLED
+    local ourTargetFrame = GW.settings.TARGET_ENABLED
+    local ourTargetTargetFrame = GW.settings.target_TARGET_ENABLED
+    local ourFocusFrame = GW.settings.FOCUS_ENABLED
+    local ourFocusTargetFrame = GW.settings.focus_TARGET_ENABLED
+    local ourPlayerFrame = GW.settings.HEALTHGLOBE_ENABLED
+    local ourCastBar = GW.settings.CASTINGBAR_ENABLED
+    local ourActionbars = GW.settings.ACTIONBARS_ENABLED
+    local ourInventory = GW.settings.BAGS_ENABLED
 
     if ourPartyFrames or ourRaidFrames then
         -- calls to UpdateRaidAndPartyFrames, which as of writing this is used to show/hide the

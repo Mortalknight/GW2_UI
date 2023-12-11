@@ -1,6 +1,4 @@
 local _, GW = ...
-local SetSetting = GW.SetSetting
-local GetSetting = GW.GetSetting
 
 -- get local references
 local MailFrame = _G.MailFrame
@@ -319,7 +317,7 @@ local function ClearMailTextures()
 end
 
 local function LoadMailSkin()
-    if not GetSetting("MAIL_SKIN_ENABLED") then return end
+    if not GW.settings.MAIL_SKIN_ENABLED then return end
 
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("MAIL_SHOW")
@@ -398,7 +396,7 @@ local function LoadMailSkin()
     _G.AutoCompleteBox:GwCreateBackdrop(GW.BackdropTemplates.Default)
 
     -- movable stuff
-    local pos = GetSetting("MAILBOX_POSITION")
+    local pos = GW.settings.MAILBOX_POSITION
     MailFrame.mover = CreateFrame("Frame", nil, MailFrame)
     MailFrame.mover:EnableMouse(true)
     MailFrame:SetMovable(true)
@@ -427,7 +425,7 @@ local function LoadMailSkin()
 
         -- store the updated position
         if self.mover.onMoveSetting then
-            local pos = GetSetting(self.mover.onMoveSetting)
+            local pos = GW.settings[self.mover.onMoveSetting]
             if pos then
                 wipe(pos)
             else
@@ -437,7 +435,7 @@ local function LoadMailSkin()
             pos.relativePoint = "BOTTOMLEFT"
             pos.xOfs = x
             pos.yOfs = y
-            SetSetting(self.mover.onMoveSetting, pos)
+            GW.settings[self.mover.onMoveSetting] = pos
         end
     end)
     MailFrame:ClearAllPoints()

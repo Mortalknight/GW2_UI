@@ -2,7 +2,6 @@ local _, GW = ...
 local L = GW.L
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
-local SetSetting = GW.SetSetting
 local AddForProfiling = GW.AddForProfiling
 local settingMenuToggle = GW.settingMenuToggle
 
@@ -99,7 +98,7 @@ local welcome_OnClick = function(self)
     end
     GW.ShowWelcomePanel()
     --Save current Version
-    SetSetting("GW2_UI_VERSION", GW.VERSION_STRING)
+    GW.private.GW2_UI_VERSION = GW.VERSION_STRING
 end
 AddForProfiling("panel_modules", "welcome_OnClick", welcome_OnClick)
 

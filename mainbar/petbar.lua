@@ -1,21 +1,11 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local LoadAuras = GW.LoadAuras
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local CommaValue = GW.CommaValue
 local UpdateBuffLayout = GW.UpdateBuffLayout
-local animations = GW.animations
 local AddToAnimation = GW.AddToAnimation
 local RegisterMovableFrame = GW.RegisterMovableFrame
-
-local settings = {}
-
-local function UpdateSettings()
-    settings.showMarcroName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
-    settings.aurasUnder = GetSetting("PET_AURAS_UNDER")
-end
-GW.UpdatePetbarSettings = UpdateSettings
 
 local function UpdatePetActionBarIcons()
     PetActionButton1Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
@@ -100,7 +90,7 @@ local function SetPetActionButtonPositionAndStyle(self)
             button:SetAttribute("_onreceivedrag", nil)
         end
 
-        button.showMacroName = settings.showMarcroName
+        button.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
 
         GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, true)
         GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])
@@ -113,7 +103,7 @@ local function UpdatePetBarButtonsHot()
         local btn = _G["PetActionButton" .. i]
 
         if btn then
-            btn.showMacroName = settings.showMarcroName
+            btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
             GW.updateMacroName(btn)
         end
     end
@@ -287,7 +277,7 @@ end
 GW.AddForProfiling("petbar", "updatePetData", updatePetData)
 
 local function TogglePetAuraPosition()
-    GwPlayerPetFrame.auraPositionUnder = settings.aurasUnder
+    GwPlayerPetFrame.auraPositionUnder = GW.settings.PET_AURAS_UNDER
 
     if GwPlayerPetFrame.auraPositionUnder then
         GwPlayerPetFrame.auras:ClearAllPoints()
@@ -297,8 +287,6 @@ end
 GW.TogglePetAuraPosition = TogglePetAuraPosition
 
 local function LoadPetFrame(lm)
-    UpdateSettings()
-
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
     playerPetFrame.buttons = {}
 
@@ -393,7 +381,7 @@ local function LoadPetFrame(lm)
     end)
 
     -- create floating combat text
-    if GetSetting("PET_FLOATING_COMBAT_TEXT") then
+    if GW.settings.PET_FLOATING_COMBAT_TEXT then
         local fctf = CreateFrame("Frame", nil, playerPetFrame)
         fctf:SetFrameLevel(playerPetFrame:GetFrameLevel() + 3)
         fctf:RegisterEvent("UNIT_COMBAT")

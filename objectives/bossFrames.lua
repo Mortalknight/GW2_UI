@@ -4,7 +4,6 @@ local RemoveTrackerNotificationOfType = GW.RemoveTrackerNotificationOfType
 local TRACKER_TYPE_COLOR = GW.TRACKER_TYPE_COLOR
 local AddToClique = GW.AddToClique
 local PowerBarColorCustom = GW.PowerBarColorCustom
-local GetSetting = GW.GetSetting
 local bossFrames = {}
 
 local function updateBossFrameHeight()
@@ -231,7 +230,7 @@ end
 GW.AddForProfiling("bossFrames", "registerFrame", registerFrame)
 
 local function LoadBossFrame()
-    local yOffset = GetSetting("SHOW_QUESTTRACKER_COMPASS") and 70 or 0
+    local yOffset = GW.settings.SHOW_QUESTTRACKER_COMPASS and 70 or 0
 
     for i = 1, MAX_BOSS_FRAMES do
         bossFrames[i] = registerFrame(i, yOffset)

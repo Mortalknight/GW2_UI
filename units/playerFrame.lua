@@ -1,5 +1,4 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 local RegisterMovableFrame = GW.RegisterMovableFrame
 local AddToClique = GW.AddToClique
 local createNormalUnitFrame = GW.createNormalUnitFrame
@@ -11,11 +10,11 @@ local settings = {}
 local function updateHealthTextString(self, health, healthPrecentage)
     local healthString = ""
 
-    if settings.healthTextSetting == "PREC" then
+    if GW.settings.PLAYER_UNIT_HEALTH == "PREC" then
         healthString = CommaValue(healthPrecentage * 100) .. "%"
-    elseif settings.healthTextSetting == "VALUE" then
+    elseif GW.settings.PLAYER_UNIT_HEALTH == "VALUE" then
         healthString = CommaValue(health)
-    elseif settings.healthTextSetting == "BOTH" then
+    elseif GW.settings.PLAYER_UNIT_HEALTH == "BOTH" then
         healthString = CommaValue(health) .. " - " .. CommaValue(healthPrecentage * 100) .. "%"
     end
 
@@ -75,7 +74,7 @@ local function unitFrameData(self)
     self.nameString:SetText(name)
     self.levelString:SetText(level)
 
-    if settings.classColor then
+    if GW.settings.player_CLASS_COLOR then
         local _, englishClass = UnitClass(self.unit)
         local color = GW.GWGetClassColor(englishClass, true)
 
@@ -108,11 +107,8 @@ local function player_OnEvent(self, event)
 end
 
 local function UpdateSettings()
-    settings.classColor = GetSetting("player_CLASS_COLOR")
-    settings.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
-
     if GwPlayerUnitFrame then
-        GwPlayerUnitFrame.altBg:SetShown(GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
+        GwPlayerUnitFrame.altBg:SetShown(GW.settings.PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND)
 
         updateHealthData(GwPlayerUnitFrame)
         unitFrameData(GwPlayerUnitFrame)
@@ -121,8 +117,6 @@ end
 GW.UpdatePlayerFrameSettings = UpdateSettings
 
 local function LoadPlayerFrame()
-    UpdateSettings()
-
     local NewUnitFrame = createNormalUnitFrame("GwPlayerUnitFrame")
     NewUnitFrame.unit = "player"
     NewUnitFrame.type = "NormalTarget"
@@ -231,7 +225,7 @@ local function LoadPlayerFrame()
         pagIn:Play()
     end
 
-    if not GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
+    if not GW.settings.PLAYER_SHOW_PVP_INDICATOR then pvp:Hide() end
 
     --hide unsed things from default target frame
     NewUnitFrame.castingbarBackground:Hide()

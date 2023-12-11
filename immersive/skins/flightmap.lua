@@ -1,8 +1,7 @@
 local _, GW = ...
-local GetSetting = GW.GetSetting
 
 local function ApplyFlightMapSkin()
-    if not GetSetting("FLIGHTMAP_SKIN_ENABLED") then return end
+    if not GW.settings.LIGHTMAP_SKIN_ENABLED then return end
 
     local tex = FlightMapFrame:CreateTexture(nil, "BACKGROUND")
     local w, h = FlightMapFrame:GetSize()

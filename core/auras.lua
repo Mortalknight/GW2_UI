@@ -1,26 +1,16 @@
 local _, GW = ...
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
-local GetSetting = GW.GetSetting
 local DebuffColors = GW.Libs.Dispel:GetDebuffTypeColor()
 local BleedList = GW.Libs.Dispel:GetBleedList()
 local BadDispels = GW.Libs.Dispel:GetBadList()
 
-local settings = {}
-
-local function UpdateSetting()
-    settings.raidDebuffScale = GetSetting("RAIDDEBUFFS_Scale")
-    settings.raidDebuffScalePrio = GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO")
-    settings.raidDispelDebuffScale = GetSetting("DISPELL_DEBUFFS_Scale")
-end
-GW.UpdateAurasSetting = UpdateSetting
-
 local function GetDebuffScaleBasedOnPrio()
     local scale = 1
 
-    if settings.raidDebuffScalePrio == "DISPELL" then
-        return tonumber(settings.raidDispelDebuffScale)
-    elseif settings.raidDebuffScalePrio == "IMPORTANT" then
-        return tonumber(settings.raidDebuffScale)
+    if GW.settings.RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO == "DISPELL" then
+        return tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
+    elseif GW.settings.RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO == "IMPORTANT" then
+        return tonumber(GW.settings.RAIDDEBUFFS_Scale)
     end
 
     return scale
@@ -296,9 +286,9 @@ local function UpdateBuffLayout(self, event, anchorPos)
                 if GW.ImportendRaidDebuff[list[index].spellID] and list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
                     size = size * debuffScale
                 elseif GW.ImportendRaidDebuff[list[index].spellID] then
-                    size = size * tonumber(settings.raidDebuffScale)
+                    size = size * tonumber(GW.settings.RAIDDEBUFFS_Scale)
                 elseif list[index].dispelType and GW.Libs.Dispel:IsDispellableByMe(list[index].dispelType) then
-                    size = size * tonumber(settings.raidDispelDebuffScale)
+                    size = size * tonumber(GW.settings.DISPELL_DEBUFFS_Scale)
                 end
             end
 
@@ -408,7 +398,6 @@ end
 GW.CreateAuraFrame = CreateAuraFrame
 
 local function LoadAuras(self)
-    UpdateSetting()
     for i = 1, 40 do
         local frame = CreateAuraFrame("Gw" .. self.unit .. "buffFrame" .. i, self.auras)
         frame.unit = self.unit

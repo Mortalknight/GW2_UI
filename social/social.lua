@@ -1,7 +1,5 @@
 local _, GW = ...
 local L = GW.L
-local GetSetting = GW.GetSetting
-local SetSetting = GW.SetSetting
 
 local windowsList = {}
 local hasBeenLoaded = false
@@ -301,7 +299,7 @@ local mover_OnDragStop = [=[
 local function mover_SavePosition(self, x, y)
     local setting = self.onMoveSetting
     if setting then
-        local pos = GetSetting(setting)
+        local pos = GW.settings[setting]
         if pos then
             wipe(pos)
         else
@@ -311,7 +309,7 @@ local function mover_SavePosition(self, x, y)
         pos.relativePoint = "BOTTOMLEFT"
         pos.xOfs = x
         pos.yOfs = y
-        SetSetting(setting, pos)
+        GW.settings[setting] = pos
     end
 end
 GW.AddForProfiling("social", "mover_SavePosition", mover_SavePosition)
@@ -386,8 +384,8 @@ local function loadBaseFrame()
     fmGSW.close:SetAttribute("_onclick", socialCloseSecure_OnClick)
 
     -- setup movable stuff and scale
-    local pos = GetSetting("SOCIAL_POSITION")
-    local scale = GetSetting("SOCIAL_POSITION_SCALE")
+    local pos = GW.settings.SOCIAL_POSITION
+    local scale = GW.settings.SOCIAL_POSITION_SCALE
     fmGSW:SetScale(scale)
     fmGSW:ClearAllPoints()
     fmGSW:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
@@ -431,16 +429,16 @@ local function loadBaseFrame()
     end)
     fmGSW.sizer:SetScript("OnMouseUp", function(self)
         self:SetScript("OnUpdate", nil)
-        SetSetting("SOCIAL_POSITION_SCALE", GwSocialWindow:GetScale())
+        GW.settings.SOCIAL_POSITION_SCALE = GwSocialWindow:GetScale()
         -- Save hero frame position
-        local pos = GetSetting("SOCIAL_POSITION")
+        local pos = GW.settings.SOCIAL_POSITION
         if pos then
             wipe(pos)
         else
             pos = {}
         end
         pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = GwSocialWindow:GetPoint()
-        SetSetting("SOCIAL_POSITION", pos)
+        GW.settings.SOCIAL_POSITION = pos
     end)
 
     -- set binding change handlers
@@ -581,7 +579,7 @@ end
 local function LoadSocialFrame()
     local anyThingToLoad = false
     for _, v in pairs(windowsList) do
-        if GetSetting(v.SettingName) then
+        if GW.settings[v.SettingName] then
             anyThingToLoad = true
         end
     end
@@ -595,7 +593,7 @@ local function LoadSocialFrame()
 
     local tabIndex = 1
     for _, v in pairs(windowsList) do
-        if GetSetting(v.SettingName) then
+        if GW.settings[v.SettingName] then
             local container = CreateFrame("Frame", nil, GwSocialWindow, "GwSocialTabContainer")
             local tab = createTabIcon(v.TabIcon, tabIndex, v.RefName == "GwQuickList" and true or false)
 
