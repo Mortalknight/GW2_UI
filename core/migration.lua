@@ -2,6 +2,10 @@ local _, GW = ...
 
 
 local function DatabaseMigration()
+    local oldActiveProfileId, oldActiveProfileName
+    if GW2UI_SETTINGS_DB_03 then
+        oldActiveProfileId = GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"]
+    end
     if GW2UI_PRIVATE_SETTINGS then
         if next(GW2UI_PRIVATE_SETTINGS) then
             for setting, value in next, GW2UI_PRIVATE_SETTINGS do
@@ -20,7 +24,10 @@ local function DatabaseMigration()
 
     if GW2UI_SETTINGS_PROFILES then
         if next(GW2UI_SETTINGS_PROFILES) then
-            for _, profileTbl in next, GW2UI_SETTINGS_PROFILES do
+            for k, profileTbl in next, GW2UI_SETTINGS_PROFILES do
+                if oldActiveProfileId and oldActiveProfileId == k then
+                    oldActiveProfileName = profileTbl.profilename
+                end
                 GW.globalSettings:SetProfile(profileTbl.profilename)
                 for settings, value in next, profileTbl do
                     if type(value) == "table" then
@@ -45,10 +52,15 @@ local function DatabaseMigration()
         end
     end
 
+    if oldActiveProfileName then
+        GW.globalSettings:SetProfile(oldActiveProfileName)
+    end
+
     --GW2UI_PRIVATE_SETTINGS = nil
     --GW2UI_PRIVATE_LAYOUTS = nil
     --GW2UI_SETTINGS_PROFILES = nil
     --GW2UI_LAYOUTS = nil
+    --GW2UI_SETTINGS_DB_03 = nil
 end
 GW.DatabaseMigration = DatabaseMigration
 
