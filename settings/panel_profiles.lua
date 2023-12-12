@@ -298,11 +298,10 @@ AddForProfiling("panel_profiles", "buttons_OnLeave", buttons_OnLeave)
 local function activate_OnClick(self)
     local p = self:GetParent()
     if not p.canActivate then return end
-
     GW.WarningPrompt(
-        L["Do you want to activate profile"] .. "\n\n'" .. (GW.globalSettings:GetCurrentProfile() or UNKNOWN) .."'?",
+        L["Do you want to activate profile"] .. "\n\n'" .. (p.profileName or UNKNOWN) .."'?",
         function()
-            setProfile(GW.globalSettings:GetCurrentProfile()) -- triggers a reload
+            setProfile(p.profileName) -- triggers a reload
         end
     )
 end
@@ -310,11 +309,11 @@ AddForProfiling("panel_profiles", "activate_OnClick", activate_OnClick)
 
 local function export_OnClick(self)
     local p = self:GetParent().parentItem
-    local exportString = GW.GetExportString(GW.globalSettings:GetCurrentProfile())
+    local exportString = GW.GetExportString(p.profileName)
 
     ImportExportFrame:Show()
     ImportExportFrame.header:SetText(L["Export Profile"])
-    ImportExportFrame.subheader:SetText(GW.globalSettings:GetCurrentProfile())
+    ImportExportFrame.subheader:SetText(p.profileName)
     ImportExportFrame.description:SetText(L["Profile string to share your settings:"])
     ImportExportFrame.import:Hide()
     ImportExportFrame.decode:Hide()
