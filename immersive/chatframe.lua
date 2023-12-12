@@ -200,7 +200,7 @@ end
 
 local function getLines(frame)
     local index = 1
-    local maxMessages, frameMessages = GW.settings.CHAT_MAX_COPY_CHAT_LINES, frame:GetNumMessages()
+    local maxMessages, frameMessages = tonumber(GW.settings.CHAT_MAX_COPY_CHAT_LINES), frame:GetNumMessages()
     local startLine = frameMessages <= maxMessages and 1 or frameMessages + 1 - maxMessages
 
     for i = startLine, frameMessages do
