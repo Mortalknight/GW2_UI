@@ -1077,7 +1077,6 @@ local function MakeMovable(frame, target)
 
     if not target then
         local point = GW.settings.AchievementWindow
-        DevTools_Dump(point)
         frame:ClearAllPoints()
         frame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point. yOfs)
     end

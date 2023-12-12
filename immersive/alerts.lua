@@ -1584,7 +1584,6 @@ local function LoadAlertSystem()
         GW.AlertContainerFrame:SetSize(300, 5) -- 265
 
         local point = GW.settings.AlertPos
-        DevTools_Dump(point)
         GW.AlertContainerFrame:ClearAllPoints()
         GW.AlertContainerFrame:SetPoint(point.point, UIParent, point.relativePoint, point.xOfs, point.yOfs)
 

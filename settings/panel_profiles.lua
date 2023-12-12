@@ -224,11 +224,9 @@ local function deleteProfile(name)
 
     -- delete also all "attached" layouts
     local allLayouts = GW.GetAllLayouts()
-    for i = 0, #allLayouts do
-        if allLayouts[i] and allLayouts[i].profileName == name then
-            GW.global.layouts[i] = nil
-            break
-        end
+    local profileName = L["Profiles"] .. " - " .. name
+    if allLayouts[profileName] then
+        GW.global.layouts[profileName] = nil
     end
 end
 AddForProfiling("panel_profiles", "deleteProfile", deleteProfile)

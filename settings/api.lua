@@ -84,11 +84,9 @@ local function ResetToDefault()
         GW.globalSettings.settings.profilename = oldProfilename or UNKNOWN
 
         -- also rest the matching profile layout
-        for i = 0, #allLayouts do
-            if allLayouts[i] and allLayouts[i].profileLayout and allLayouts[i].profileName == activeProfile then
-                GW.global.layouts[i] = nil
-                break
-            end
+        local profileName = GW.L["Profiles"] .. " - " .. activeProfile
+        if allLayouts[profileName] then
+            GW.global.layouts[profileName] = nil
         end
 
         return

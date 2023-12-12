@@ -2,9 +2,12 @@ local _, GW = ...
 local L = GW.L
 
 local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdown, startUp)
+    print(updateDropdown)
     if updateDropdown then
+        print(1, layout.name)
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.string:SetText(layout.name)
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.layoutName = layout.name
+        GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.selectedName = layout.name
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.setByUpdateFramePositionForLayout = true
 
         GwSmallSettingsContainer.layoutView.specsDropDown.container.contentScroll.update(GwSmallSettingsContainer.layoutView.specsDropDown.container.contentScroll)
@@ -299,18 +302,21 @@ local function CreateNewLayout(self)
         L["New layout name:"],
         function()
             if GwWarningPrompt.input:GetText() == nil then return end
-
+            local newName = GwWarningPrompt.input:GetText()
             local savedLayouts = GW.GetAllLayouts()
-            local newIdx = #savedLayouts + 1
+            if savedLayouts[newName] then
+                GW.Notice("Layout with that name already exists")
+                return
+            end
             local newMoverFrameIndex = 0
-            GW.global.layouts[newIdx] = {}
-            GW.global.layouts[newIdx].name = (GwWarningPrompt.input:GetText() or UNKNOWN)
-            GW.global.layouts[newIdx].frames = {}
-            GW.global.layouts[newIdx].profileLayout = false
+            GW.global.layouts[newName] = {}
+            GW.global.layouts[newName].name = newName
+            GW.global.layouts[newName].frames = {}
+            GW.global.layouts[newName].profileLayout = false
             for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
-                GW.global.layouts[newIdx].frames[newMoverFrameIndex] = {}
-                GW.global.layouts[newIdx].frames[newMoverFrameIndex].settingName = moveableFrame.setting
-                GW.global.layouts[newIdx].frames[newMoverFrameIndex].point = moveableFrame.savedPoint
+                GW.global.layouts[newName].frames[newMoverFrameIndex] = {}
+                GW.global.layouts[newName].frames[newMoverFrameIndex].settingName = moveableFrame.setting
+                GW.global.layouts[newName].frames[newMoverFrameIndex].point = moveableFrame.savedPoint
 
                 newMoverFrameIndex = newMoverFrameIndex + 1
             end
@@ -356,6 +362,7 @@ local function RenameSelectedLayout(self) --TODO
 end
 
 local function specSwitchHandlerOnEvent(self, event)
+    print(event)
     local currentSpecIdx = GetSpecialization()
 
     if event == "PLAYER_SPECIALIZATION_CHANGED" and self.currentSpecIdx == currentSpecIdx then
@@ -387,13 +394,9 @@ local function specSwitchHandlerOnEvent(self, event)
         local allLayouts = GW.GetAllLayouts()
 
         if profileName then
-            for i = 0, #allLayouts do
-                if allLayouts[i] then
-                    if allLayouts[i].name == L["Profiles"] .. " - " .. profileName and allLayouts[i].profileLayout == true then
-                        layoutToUse = allLayouts[i]
-                        break
-                    end
-                end
+            local name = L["Profiles"] .. " - " .. profileName
+            if allLayouts[name] and allLayouts[name].profileLayout == true then
+                layoutToUse = allLayouts[name]
             end
 
             if not layoutToUse then
@@ -445,16 +448,14 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
             local allLayouts = GW.GetAllLayouts()
             local currentProfileName = GW.globalSettings:GetCurrentProfile()
 
-            for i = 0, #allLayouts do
-                if allLayouts[i] and allLayouts[i].profileName == currentProfileName then
-                    smallSettingsFrame.layoutView.savedLayoutDropDown.button.string:SetText(allLayouts[i].name)
-                    smallSettingsFrame.layoutView.savedLayoutDropDown.button.layoutName = allLayouts[i].name
-                    smallSettingsFrame.layoutView.savedLayoutDropDown.button.selectedName = allLayouts[i].name
+            local name = L["Profiles"] .. " - " .. currentProfileName
+            if allLayouts[name] then
+                smallSettingsFrame.layoutView.savedLayoutDropDown.button.string:SetText(allLayouts[name].name)
+                smallSettingsFrame.layoutView.savedLayoutDropDown.button.layoutName = allLayouts[name].name
+                smallSettingsFrame.layoutView.savedLayoutDropDown.button.selectedName = allLayouts[name].name
 
-                    GwSmallSettingsContainer.layoutView.delete:Disable()
-                    GwSmallSettingsContainer.layoutView.rename:Disable()
-                    break
-                end
+                GwSmallSettingsContainer.layoutView.delete:Disable()
+                GwSmallSettingsContainer.layoutView.rename:Disable()
             end
         end
     end)
