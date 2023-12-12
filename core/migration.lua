@@ -25,10 +25,6 @@ local function DatabaseMigration(globalDb, privateDb)
         if GW2UI_SETTINGS_DB_03 then
             oldActiveProfileId = GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"]
         end
-
-        if oldActiveProfileName then
-            GW.globalSettings:SetProfile(oldActiveProfileName)
-        end
     end
     if globalDb then
         if GW2UI_SETTINGS_PROFILES then
@@ -56,15 +52,19 @@ local function DatabaseMigration(globalDb, privateDb)
                         if not GW.globalSettings.global.layouts then GW.globalSettings.global.layouts = {} end
 
                         GW.globalSettings.global.layouts[profileTbl.name] = profileTbl
-                        GW.globalSettings.global.layouts[profileTbl.name].id = nil
-                        GW.globalSettings.global.layouts[profileTbl.name].profileId = nil
                         if GW.globalSettings.global.layouts[profileTbl.name].profileLayout and GW.globalSettings.global.layouts[profileTbl.name].profileLayout == true then
                             GW.globalSettings.global.layouts[profileTbl.name].profileName = GW2UI_SETTINGS_PROFILES[profileTbl.profileId].profilename
                         end
+                        GW.globalSettings.global.layouts[profileTbl.name].id = nil
+                        GW.globalSettings.global.layouts[profileTbl.name].profileId = nil
                     end
                 end
             end
         end
+    end
+
+    if oldActiveProfileName then
+        GW.globalSettings:SetProfile(oldActiveProfileName)
     end
 
     --GW2UI_PRIVATE_SETTINGS = nil
