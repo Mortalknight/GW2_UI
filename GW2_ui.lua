@@ -516,7 +516,7 @@ AFP("evPlayerLeavingWorld", evPlayerLeavingWorld)
 local function commonEntering()
     GW.inWorld = true
     GW.CheckRole()
-    if GW.settingsPIXEL_PERFECTION and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
+    if GW.settings.PIXEL_PERFECTION and not GetCVarBool("useUiScale") and not UnitAffectingCombat("player") then
         PixelPerfection()
     end
     C_Timer.After(0.5, function()

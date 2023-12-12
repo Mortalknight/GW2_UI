@@ -177,7 +177,6 @@ local function loadLayoutDropDown(layoutwin)
         if savedLayouts[k] then
             layouts[tableIndex] = {}
             layouts[tableIndex].name = savedLayouts[k].name
-            layouts[tableIndex].id = k
             layouts[tableIndex].isProfileLayout = savedLayouts[k].profileLayout
             tableIndex = tableIndex + 1
         end
@@ -269,31 +268,26 @@ end
 local function CreateProfileLayout()
     local savedLayouts = GW.GetAllLayouts()
     local profileName = GW.globalSettings:GetCurrentProfile()
+    local name = L["Profiles"] .. " - " .. profileName
     local needToCreate = true
 
     if profileName then
-        for i = 0, #savedLayouts do
-            if savedLayouts[i] then
-                if savedLayouts[i].profileLayout == true and savedLayouts[i].profileName == profileName then
-                    needToCreate = false
-                    break
-                end
-            end
+        if savedLayouts[name] and savedLayouts[name].profileLayout == true and savedLayouts[name].profileName == profileName then
+            needToCreate = false
         end
     end
 
     if needToCreate and profileName then
-        local newIdx = #savedLayouts + 1
         local newMoverFrameIndex = 0
-        GW.global.layouts[newIdx] = {}
-        GW.global.layouts[newIdx].name = L["Profiles"] .. " - " .. profileName
-        GW.global.layouts[newIdx].frames = {}
-        GW.global.layouts[newIdx].profileLayout = true
-        GW.global.layouts[newIdx].profileName = profileName
+        GW.global.layouts[name] = {}
+        GW.global.layouts[name].name = L["Profiles"] .. " - " .. profileName
+        GW.global.layouts[name].frames = {}
+        GW.global.layouts[name].profileLayout = true
+        GW.global.layouts[name].profileName = profileName
         for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
-            GW.global.layouts[newIdx].frames[newMoverFrameIndex] = {}
-            GW.global.layouts[newIdx].frames[newMoverFrameIndex].settingName = moveableFrame.setting
-            GW.global.layouts[newIdx].frames[newMoverFrameIndex].point = moveableFrame.savedPoint
+            GW.global.layouts[name].frames[newMoverFrameIndex] = {}
+            GW.global.layouts[name].frames[newMoverFrameIndex].settingName = moveableFrame.setting
+            GW.global.layouts[name].frames[newMoverFrameIndex].point = moveableFrame.savedPoint
 
             newMoverFrameIndex = newMoverFrameIndex + 1
         end
@@ -312,7 +306,6 @@ local function CreateNewLayout(self)
             GW.global.layouts[newIdx] = {}
             GW.global.layouts[newIdx].name = (GwWarningPrompt.input:GetText() or UNKNOWN)
             GW.global.layouts[newIdx].frames = {}
-            GW.global.layouts[newIdx].id = newIdx
             GW.global.layouts[newIdx].profileLayout = false
             for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
                 GW.global.layouts[newIdx].frames[newMoverFrameIndex] = {}
@@ -444,7 +437,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
     smallSettingsFrame.layoutView.specsDropDown.button.string:SetText(L["<Assign specializations>"])
 
     --create or get profile layout
-    C_Timer.After(1, function()
+    C_Timer.After(3, function()
         CreateProfileLayout()
         loadLayoutDropDown(smallSettingsFrame.layoutView.savedLayoutDropDown.container.contentScroll)
         if not smallSettingsFrame.layoutView.savedLayoutDropDown.button.setByUpdateFramePositionForLayout then

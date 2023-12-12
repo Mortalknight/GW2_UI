@@ -52,10 +52,15 @@ local function DatabaseMigration(globalDb, privateDb)
         if GW2UI_LAYOUTS then
             if next(GW2UI_LAYOUTS) then
                 for k, profileTbl in next, GW2UI_LAYOUTS do
-                    if not GW.globalSettings.global.layouts then GW.globalSettings.global.layouts = {} end
-                    GW.globalSettings.global.layouts[profileTbl.name] = profileTbl
-                    if GW.globalSettings.global.layouts[profileTbl.name].profileLayout and GW.globalSettings.global.layouts[profileTbl.name].profileLayout == true then
-                        GW.globalSettings.global.layouts[profileTbl.name].profileName = GW2UI_SETTINGS_PROFILES[profileTbl.profileId].profilename
+                    if profileTbl and profileTbl.name then
+                        if not GW.globalSettings.global.layouts then GW.globalSettings.global.layouts = {} end
+
+                        GW.globalSettings.global.layouts[profileTbl.name] = profileTbl
+                        GW.globalSettings.global.layouts[profileTbl.name].id = nil
+                        GW.globalSettings.global.layouts[profileTbl.name].profileId = nil
+                        if GW.globalSettings.global.layouts[profileTbl.name].profileLayout and GW.globalSettings.global.layouts[profileTbl.name].profileLayout == true then
+                            GW.globalSettings.global.layouts[profileTbl.name].profileName = GW2UI_SETTINGS_PROFILES[profileTbl.profileId].profilename
+                        end
                     end
                 end
             end
