@@ -16,13 +16,13 @@ local function GetAllLayouts()
 end
 GW.GetAllLayouts = GetAllLayouts
 
-local function GetLayoutById(id)
+local function GetLayoutByName(layoutName)
     if GW.global.layouts == nil then
         GW.global.layouts = {}
     end
-    return GW.global.layouts[id] or nil
+    return GW.global.layouts[layoutName] or nil
 end
-GW.GetLayoutById = GetLayoutById
+GW.GetLayoutByName = GetLayoutByName
 
 local function GetAllPrivateLayouts()
     if GW.private.Layouts == nil then
@@ -32,30 +32,30 @@ local function GetAllPrivateLayouts()
 end
 GW.GetAllPrivateLayouts = GetAllPrivateLayouts
 
-local function GetPrivateLayoutByLayoutId(layoutId)
+local function GetPrivateLayoutByLayoutName(layoutName)
     if GW.private.Layouts == nil then
         GW.private.Layouts = {}
     end
     for k, _ in pairs(GW.private.Layouts) do
-        if GW.private.Layouts[k].layoutId == layoutId then
+        if GW.private.Layouts[k].layoutName == layoutName then
             return GW.private.Layouts[k]
         end
     end
     return nil
 end
-GW.GetPrivateLayoutByLayoutId = GetPrivateLayoutByLayoutId
+GW.GetPrivateLayoutByLayoutName = GetPrivateLayoutByLayoutName
 
-local function DeletePrivateLayoutByLayoutId(layoutId)
+local function DeletePrivateLayoutByLayoutName(layoutName)
     if GW.private.Layouts == nil then
         GW.private.Layouts = {}
     end
     for k, _ in pairs(GW.private.Layouts) do
-        if GW.private.Layouts[k].layoutId == layoutId then
+        if GW.private.Layouts[k].layoutName == layoutName then
             GW.private.Layouts[k] = nil
         end
     end
 end
-GW.DeletePrivateLayoutByLayoutId = DeletePrivateLayoutByLayoutId
+GW.DeletePrivateLayoutByLayoutName = DeletePrivateLayoutByLayoutName
 
 local function SetOverrideIncompatibleAddons(setting, value)
     local profileName = GW.globalSettings:GetCurrentProfile()

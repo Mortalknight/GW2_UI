@@ -280,8 +280,8 @@ local function Grid_Show_Hide(self)
 end
 
 local function UpdateMatchingLayout(self, new_point)
-    local selectedLayoutId = GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.selectedId
-    local layout = selectedLayoutId and GW.GetLayoutById(selectedLayoutId) or nil
+    local selectedLayoutName = GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.selectedName
+    local layout = selectedLayoutName and GW.GetLayoutByName(selectedLayoutName) or nil
     local frameFound = false
     if layout then
         for i = 0, #layout.frames do

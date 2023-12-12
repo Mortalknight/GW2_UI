@@ -5,7 +5,6 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
     if updateDropdown then
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.string:SetText(layout.name)
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.layoutName = layout.name
-        GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.selectedId = layout.id
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.setByUpdateFramePositionForLayout = true
 
         GwSmallSettingsContainer.layoutView.specsDropDown.container.contentScroll.update(GwSmallSettingsContainer.layoutView.specsDropDown.container.contentScroll)
@@ -30,15 +29,15 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
     end
 end
 
-local function AssignLayoutToSpec(specwin, button, specId, layoutId, toSet)
-    local allLayouts = GW.GetAllLayouts()
+local function AssignLayoutToSpec(specwin, button, specId, layoutName, toSet)
+    print(specId, layoutName, toSet)
     local allPrivateLayouts = GW.GetAllPrivateLayouts()
-    local privateLayoutSettings = GW.GetPrivateLayoutByLayoutId(layoutId)
+    local privateLayoutSettings = GW.GetPrivateLayoutByLayoutName(layoutName)
 
     -- check if that check has already a layout assigned
     if toSet and privateLayoutSettings then
         for j = 0, #allPrivateLayouts do
-            if allPrivateLayouts[j] and allPrivateLayouts[j].layoutId ~= privateLayoutSettings.layoutId then
+            if allPrivateLayouts[j] and allPrivateLayouts[j].layoutName ~= privateLayoutSettings.layoutName then
                 if allPrivateLayouts[j].assignedSpecs[specId] then
                     GW.Notice(L["Spec is already assigned to a layout!"])
                     button.checkbutton:SetChecked(false)
@@ -57,8 +56,7 @@ local function AssignLayoutToSpec(specwin, button, specId, layoutId, toSet)
         privateLayoutSettings = GW.private.Layouts[newIdx]
     end
 
-    privateLayoutSettings.layoutName = allLayouts[layoutId].name
-    privateLayoutSettings.layoutId = layoutId
+    privateLayoutSettings.layoutName = layoutName
     privateLayoutSettings.assignedSpecs[specId] = toSet
 
     if specwin.scrollContainer:IsShown() then
@@ -106,7 +104,7 @@ local function loadSpecDropDown(specwin)
 
             -- set the correct spec values
             for j = 0, #privateLayoutSettings do
-                if privateLayoutSettings[j] and privateLayoutSettings[j].layoutId == specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId then
+                if privateLayoutSettings[j] and privateLayoutSettings[j].layoutName == specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedName then
                     privateLayoutToUse = privateLayoutSettings[j]
                     break
                 end
@@ -138,14 +136,14 @@ local function SetupSpecs(specwin)
                 if slot.checkbutton:GetChecked() then
                     toSet = false
                 end
-                AssignLayoutToSpec(specwin, slot, slot.specIdx, specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId, toSet)
+                AssignLayoutToSpec(specwin, slot, slot.specIdx, specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedName, toSet)
             end)
             slot.checkbutton:HookScript("OnClick", function()
                 local toSet = false
                 if slot.checkbutton:GetChecked() then
                     toSet = true
                 end
-                AssignLayoutToSpec(specwin, slot, slot.specIdx, specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId, toSet)
+                AssignLayoutToSpec(specwin, slot, slot.specIdx, specwin:GetParent():GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedName, toSet)
             end)
             slot:HookScript("OnEnter", function()
                 slot.hover:Show()
@@ -200,10 +198,8 @@ local function loadLayoutDropDown(layoutwin)
         if idx > #layouts then
             -- empty row (blank starter row, final row, and any empty entries)
             slot:Hide()
-            slot.id = nil
             slot.name = nil
         else
-            slot.id = layouts[idx].id
             slot.name = layouts[idx].name
 
             slot.checkbutton:Hide()
@@ -232,7 +228,7 @@ local function SetupLayouts(layoutwin)
             slot:HookScript("OnClick", function(self)
                 layoutwin.displayButton.string:SetText(self.name)
                 layoutwin.displayButton.layoutName = self.name
-                layoutwin.displayButton.selectedId = self.id
+                layoutwin.displayButton.selectedName = self.name
 
                 if layoutwin.scrollContainer:IsShown() then
                     layoutwin.scrollContainer:Hide()
@@ -242,7 +238,7 @@ local function SetupLayouts(layoutwin)
                 loadSpecDropDown(layoutwin:GetParent():GetParent().specsDropDown.container.contentScroll)
 
                 -- prevent profile layouts from deletion
-                if self.id and GW.global.layouts[self.id] and GW.global.layouts[self.id].profileLayout then
+                if self.name and GW.global.layouts[self.name] and GW.global.layouts[self.name].profileLayout then
                     GwSmallSettingsContainer.layoutView.delete:Disable()
                     GwSmallSettingsContainer.layoutView.rename:Disable()
                 else
@@ -251,7 +247,7 @@ local function SetupLayouts(layoutwin)
                 end
 
                 -- load layout
-                UpdateFramePositionForLayout(GW.GetLayoutById(self.id))
+                UpdateFramePositionForLayout(GW.GetLayoutByName(self.name))
             end)
             slot:HookScript("OnEnter", function()
                 slot.hover:Show()
@@ -292,7 +288,6 @@ local function CreateProfileLayout()
         GW.global.layouts[newIdx] = {}
         GW.global.layouts[newIdx].name = L["Profiles"] .. " - " .. profileName
         GW.global.layouts[newIdx].frames = {}
-        GW.global.layouts[newIdx].id = newIdx
         GW.global.layouts[newIdx].profileLayout = true
         GW.global.layouts[newIdx].profileName = profileName
         for _, moveableFrame in pairs(GW.MOVABLE_FRAMES) do
@@ -337,25 +332,25 @@ local function DeleteSelectedLayout(self)
     GW.WarningPrompt(
         L["Are you sure you want to delete the selected layout?"],
         function()
-            GW.global.layouts[self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId] = nil
+            GW.global.layouts[self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedName] = nil
             --also delete the assing settings
-            GW.DeletePrivateLayoutByLayoutId(self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId)
+            GW.DeletePrivateLayoutByLayoutName(self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedName)
             loadLayoutDropDown(self:GetParent().savedLayoutDropDown.container.contentScroll)
 
             self:GetParent().savedLayoutDropDown.button.string:SetText("")
-            self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId = nil
+            self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedName = nil
 
             GwWarningPrompt:Hide()
         end
     )
 end
 
-local function RenameSelectedLayout(self)
+local function RenameSelectedLayout(self) --TODO
     GW.InputPrompt(
         L["Rename layout:"],
         function()
             if GwWarningPrompt.input:GetText() == nil then return end
-            GW.global.layouts[self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedId].name = (GwWarningPrompt.input:GetText() or UNKNOWN)
+            GW.global.layouts[self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedName].name = (GwWarningPrompt.input:GetText() or UNKNOWN)
 
             loadLayoutDropDown(self:GetParent().savedLayoutDropDown.container.contentScroll)
 
@@ -375,7 +370,7 @@ local function specSwitchHandlerOnEvent(self, event)
     end
 
     local privateLayoutSettings = GW.GetAllPrivateLayouts()
-    local layoutIdToUse
+    local layoutNameToUse
     local layoutToUse
 
     self.currentSpecIdx = currentSpecIdx
@@ -383,17 +378,17 @@ local function specSwitchHandlerOnEvent(self, event)
     for i = 0, #privateLayoutSettings do
         if privateLayoutSettings[i] then
             if privateLayoutSettings[i].assignedSpecs[currentSpecIdx] ~= nil and privateLayoutSettings[i].assignedSpecs[currentSpecIdx] == true then
-                layoutIdToUse = privateLayoutSettings[i].layoutId
+                layoutNameToUse = privateLayoutSettings[i].layoutName
                 break
             end
         end
     end
 
-    if layoutIdToUse then
-        layoutToUse = GW.GetLayoutById(layoutIdToUse)
+    if layoutNameToUse then
+        layoutToUse = GW.GetLayoutByName(layoutNameToUse)
     end
     if layoutToUse then
-        GW.Debug("Spec switch detected!", "Switch to Layout ID", layoutIdToUse, "With name:", layoutToUse.name)
+        GW.Debug("Spec switch detected!", "Switch to Layout ", layoutNameToUse)
     else
         local profileName = GW.globalSettings:GetCurrentProfile()
         local allLayouts = GW.GetAllLayouts()
@@ -419,7 +414,7 @@ local function specSwitchHandlerOnEvent(self, event)
         end
     end
 
-    if layoutToUse and self.smallSettingsFrame.layoutView.savedLayoutDropDown.container.contentScroll.displayButton.selectedId ~= layoutToUse.id then
+    if layoutToUse and self.smallSettingsFrame.layoutView.savedLayoutDropDown.container.contentScroll.displayButton.selectedName ~= layoutToUse.name then --TODO
         UpdateFramePositionForLayout(layoutToUse, self.layoutManager, true, event == "PLAYER_ENTERING_WORLD")
 
         -- also do the migration here
@@ -461,7 +456,7 @@ local function LoadLayoutsFrame(smallSettingsFrame, layoutManager)
                 if allLayouts[i] and allLayouts[i].profileName == currentProfileName then
                     smallSettingsFrame.layoutView.savedLayoutDropDown.button.string:SetText(allLayouts[i].name)
                     smallSettingsFrame.layoutView.savedLayoutDropDown.button.layoutName = allLayouts[i].name
-                    smallSettingsFrame.layoutView.savedLayoutDropDown.button.selectedId = allLayouts[i].id
+                    smallSettingsFrame.layoutView.savedLayoutDropDown.button.selectedName = allLayouts[i].name
 
                     GwSmallSettingsContainer.layoutView.delete:Disable()
                     GwSmallSettingsContainer.layoutView.rename:Disable()

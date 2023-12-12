@@ -536,9 +536,20 @@ local function evPlayerEnteringWorld()
         GW.Migration()
         migrationDone = true
     end
+
+    local dbMigrated = false
     if not GW.private.dbConverted then
-        GW.DatabaseMigration()
+        GW.DatabaseMigration(false, true)
         GW.private.dbConverted = true
+        dbMigrated = true
+    end
+    if not GW.global.dbConverted then
+        GW.DatabaseMigration(true, false)
+        GW.global.dbConverted = true
+        dbMigrated = true
+    end
+
+    if dbMigrated then
         C_Timer.After(3, function() GW.WarningPrompt(
             L["DB was converted Reload is needed /reload"],
                 function() C_UI.Reload() end

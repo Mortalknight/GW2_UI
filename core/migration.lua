@@ -1,59 +1,65 @@
 local _, GW = ...
 
 
-local function DatabaseMigration()
+local function DatabaseMigration(globalDb, privateDb)
     local oldActiveProfileId, oldActiveProfileName
-    if GW2UI_SETTINGS_DB_03 then
-        oldActiveProfileId = GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"]
-    end
-    if GW2UI_PRIVATE_SETTINGS then
-        if next(GW2UI_PRIVATE_SETTINGS) then
-            for setting, value in next, GW2UI_PRIVATE_SETTINGS do
-                GW.private[setting] = value
-            end
-        end
-    end
-    if GW2UI_PRIVATE_LAYOUTS then
-        if next(GW2UI_PRIVATE_LAYOUTS) then
-            for setting, value in next, GW2UI_PRIVATE_LAYOUTS do
-                if not GW.private.Layouts then GW.private.Layouts = {} end
-                GW.private.Layouts[setting] = value
-            end
-        end
-    end
 
-    if GW2UI_SETTINGS_PROFILES then
-        if next(GW2UI_SETTINGS_PROFILES) then
-            for k, profileTbl in next, GW2UI_SETTINGS_PROFILES do
-                if oldActiveProfileId and oldActiveProfileId == k then
-                    oldActiveProfileName = profileTbl.profilename
+    if privateDb then
+        if GW2UI_PRIVATE_SETTINGS then
+            if next(GW2UI_PRIVATE_SETTINGS) then
+                for setting, value in next, GW2UI_PRIVATE_SETTINGS do
+                    GW.private[setting] = value
                 end
-                GW.globalSettings:SetProfile(profileTbl.profilename)
-                for settings, value in next, profileTbl do
-                    if type(value) == "table" then
-                        GW.settings[settings] = GW.copyTable(value)
-                    else
-                        GW.settings[settings] = value
+            end
+        end
+
+        if GW2UI_PRIVATE_LAYOUTS then
+            if next(GW2UI_PRIVATE_LAYOUTS) then
+                for setting, value in next, GW2UI_PRIVATE_LAYOUTS do
+                    if not GW.private.Layouts then GW.private.Layouts = {} end
+                    GW.private.Layouts[setting] = value
+                end
+            end
+        end
+
+        if GW2UI_SETTINGS_DB_03 then
+            oldActiveProfileId = GW2UI_SETTINGS_DB_03["ACTIVE_PROFILE"]
+        end
+
+        if oldActiveProfileName then
+            GW.globalSettings:SetProfile(oldActiveProfileName)
+        end
+    end
+    if globalDb then
+        if GW2UI_SETTINGS_PROFILES then
+            if next(GW2UI_SETTINGS_PROFILES) then
+                for k, profileTbl in next, GW2UI_SETTINGS_PROFILES do
+                    if oldActiveProfileId and oldActiveProfileId == k then
+                        oldActiveProfileName = profileTbl.profilename
+                    end
+                    GW.globalSettings:SetProfile(profileTbl.profilename)
+                    for settings, value in next, profileTbl do
+                        if type(value) == "table" then
+                            GW.settings[settings] = GW.copyTable(value)
+                        else
+                            GW.settings[settings] = value
+                        end
                     end
                 end
             end
         end
-    end
 
-    if GW2UI_LAYOUTS then
-        if next(GW2UI_LAYOUTS) then
-            for k, profileTbl in next, GW2UI_LAYOUTS do
-                if not GW.globalSettings.global.layouts then GW.globalSettings.global.layouts = {} end
-                GW.globalSettings.global.layouts[profileTbl.name] = profileTbl
-                if GW.globalSettings.global.layouts[profileTbl.name].profileLayout and GW.globalSettings.global.layouts[profileTbl.name].profileLayout == true then
-                    GW.globalSettings.global.layouts[profileTbl.name].profileName = GW2UI_SETTINGS_PROFILES[profileTbl.profileId].profilename
+        if GW2UI_LAYOUTS then
+            if next(GW2UI_LAYOUTS) then
+                for k, profileTbl in next, GW2UI_LAYOUTS do
+                    if not GW.globalSettings.global.layouts then GW.globalSettings.global.layouts = {} end
+                    GW.globalSettings.global.layouts[profileTbl.name] = profileTbl
+                    if GW.globalSettings.global.layouts[profileTbl.name].profileLayout and GW.globalSettings.global.layouts[profileTbl.name].profileLayout == true then
+                        GW.globalSettings.global.layouts[profileTbl.name].profileName = GW2UI_SETTINGS_PROFILES[profileTbl.profileId].profilename
+                    end
                 end
             end
         end
-    end
-
-    if oldActiveProfileName then
-        GW.globalSettings:SetProfile(oldActiveProfileName)
     end
 
     --GW2UI_PRIVATE_SETTINGS = nil
