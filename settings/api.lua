@@ -8,6 +8,12 @@ local Deflate = GW.Libs.Deflate
 local EXPORT_PREFIX = "!GW2!"
 Deflate.compressLevel = {level = 5}
 
+local function GetSetting(settingsName)
+    -- Wrapper function to not break other addons/plugins
+    return GW.settings[settingsName]
+end
+GW.GetSetting = GetSetting
+
 local function GetAllLayouts()
     if GW.global.layouts == nil then
         GW.global.layouts = {}
