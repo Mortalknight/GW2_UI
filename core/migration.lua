@@ -33,7 +33,17 @@ local function DatabaseMigration(globalDb, privateDb)
                     if oldActiveProfileId and oldActiveProfileId == k then
                         oldActiveProfileName = profileTbl.profilename
                     end
-                    GW.globalSettings:SetProfile(profileTbl.profilename)
+
+                    local profileName = profileTbl.profilename
+                    if GW.globalSettings.profiles[profileName] then
+                        local counter = 1
+                        repeat
+                            profileName = profileTbl.profilename .. counter
+                        until not GW.globalSettings.profiles[profileName]
+
+                    end
+                    profileTbl.profilename = profileName
+                    GW.globalSettings:SetProfile(profileName)
                     for settings, value in next, profileTbl do
                         if type(value) == "table" then
                             GW.settings[settings] = GW.copyTable(value)

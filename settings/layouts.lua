@@ -344,16 +344,23 @@ local function DeleteSelectedLayout(self)
     )
 end
 
-local function RenameSelectedLayout(self) --TODO
+local function RenameSelectedLayout(self)
     GW.InputPrompt(
         L["Rename layout:"],
         function()
             if GwWarningPrompt.input:GetText() == nil then return end
-            GW.global.layouts[self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedName].name = (GwWarningPrompt.input:GetText() or UNKNOWN)
+            local layoutName = GwWarningPrompt.input:GetText() or UNKNOWN
+            if GW.global.layouts[layoutName] then
+                GW.Notice("Layout with that name already exists")
+                return
+            end
+            GW.global.layouts[self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedName].name = layoutName
+            GW.global.layouts[layoutName] = GW.copyTable(nil, GW.global.layouts[self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedName])
+            GW.global.layouts[self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedName] = nil
 
             loadLayoutDropDown(self:GetParent().savedLayoutDropDown.container.contentScroll)
 
-            self:GetParent().savedLayoutDropDown.button.string:SetText(GwWarningPrompt.input:GetText() or UNKNOWN)
+            self:GetParent().savedLayoutDropDown.button.string:SetText(layoutName)
 
             GwWarningPrompt:Hide()
         end,
@@ -362,7 +369,6 @@ local function RenameSelectedLayout(self) --TODO
 end
 
 local function specSwitchHandlerOnEvent(self, event)
-    print(event)
     local currentSpecIdx = GetSpecialization()
 
     if event == "PLAYER_SPECIALIZATION_CHANGED" and self.currentSpecIdx == currentSpecIdx then

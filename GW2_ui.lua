@@ -420,7 +420,7 @@ local function evAddonLoaded(self, addonName)
         return
     else
         -- init databse
-        GW.globalSettings = GW.Libs.AceDB:New('GW2UI_DATABASE', GW.globalDefault)
+        GW.globalSettings = GW.Libs.AceDB:New('GW2UI_DATABASE', GW.globalDefault, true)
         GW.globalSettings.RegisterCallback(self, 'OnProfileChanged', UpdateDb)
         GW.settings = GW.globalSettings.profile
         GW.global = GW.globalSettings.global
