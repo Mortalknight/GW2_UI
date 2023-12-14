@@ -149,7 +149,7 @@ do
 end
 
 local function UpdateCharacterInfo(self, event)
-    if not GW.settings.HOW_CHARACTER_ITEM_INFO then return end
+    if not GW.settings.SHOW_CHARACTER_ITEM_INFO then return end
     -- set the values for the next time the char window gets open
     if event == "PLAYER_EQUIPMENT_CHANGED" then
         self.needsUpdate = true
