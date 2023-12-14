@@ -2,9 +2,7 @@ local _, GW = ...
 local L = GW.L
 
 local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdown, startUp)
-    print(updateDropdown)
     if updateDropdown then
-        print(1, layout.name)
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.string:SetText(layout.name)
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.layoutName = layout.name
         GwSmallSettingsContainer.layoutView.savedLayoutDropDown.button.selectedName = layout.name
@@ -33,7 +31,6 @@ local function UpdateFramePositionForLayout(layout, layoutManager, updateDropdow
 end
 
 local function AssignLayoutToSpec(specwin, button, specId, layoutName, toSet)
-    print(specId, layoutName, toSet)
     local allPrivateLayouts = GW.GetAllPrivateLayouts()
     local privateLayoutSettings = GW.GetPrivateLayoutByLayoutName(layoutName)
 
