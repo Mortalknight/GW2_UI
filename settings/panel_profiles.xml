@@ -159,22 +159,6 @@
                                             </Layer>
                                         </Layers>
                                     </Button>
-                                    <Button parentKey="rename" inherits="GwProfileSettingsButtonTemplate">
-                                        <Anchors>
-                                            <Anchor point="LEFT" relativePoint="LEFT" y="30"></Anchor>
-                                        </Anchors>
-                                        <Layers>
-                                            <Layer level="OVERLAY" textureSubLevel="2">
-                                                <FontString parentKey="name" text="PET_RENAME" inherits="ChatBubbleFont" justifyH="LEFT">
-                                                    <Size x="140" y="20"/>
-                                                    <Color r="0" b="0" g="0"/>
-                                                    <Anchors>
-                                                        <Anchor point="LEFT" x="10" y="0"/>
-                                                    </Anchors>
-                                                </FontString>
-                                            </Layer>
-                                        </Layers>
-                                    </Button>
                                     <Button parentKey="copy" inherits="GwProfileSettingsButtonTemplate">
                                         <Anchors>
                                             <Anchor point="LEFT" relativePoint="LEFT" y="10"></Anchor>
