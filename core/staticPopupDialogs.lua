@@ -55,6 +55,46 @@ StaticPopupDialogs["GW_CHANGE_BAG_HEADER"] = {
     closeButton = 1,
 }
 
+StaticPopupDialogs["GW_CHANGE_PROFILE_NAME"] = {
+    text = GARRISON_SHIP_RENAME_LABEL,
+    button1 = SAVE,
+    button2 = CANCEL,
+    selectCallbackByIndex = true,
+    OnButton1 = function(self, data)
+        local profileToRename = GW2UI_SETTINGS_PROFILES[data.profileID]
+        local text = self.editBox:GetText()
+        local changeDate = date("%m/%d/%y %H:%M:%S")
+        local description = L["Created: "] .. profileToRename["profileCreatedDate"] .. "\n" .. L["Created by: "] ..
+            profileToRename["profileCreatedCharacter"] .. "\n" .. L["Last updated: "] .. changeDate
+
+        -- Use hidden frame font object to calculate string width
+        GW.HiddenFrame.HiddenString:SetFont(UNIT_NAME_FONT, 14)
+        GW.HiddenFrame.HiddenString:SetText(text)
+        profileToRename["profilename"] = text
+        profileToRename["profileLastUpdated"] = changeDate
+        data.name:SetText(text)
+        data.desc:SetText(description)
+
+        -- rename also all "attached" layouts
+        local allLayouts = GW.GetAllLayouts()
+        for i = 0, #allLayouts do
+            if allLayouts[i] and allLayouts[i].profileId == data.profileID then
+                GW2UI_LAYOUTS[i].name = text
+                GW2UI_LAYOUTS[i].name = L["Profiles"] .. " - " .. text
+                GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll)
+                break
+            end
+        end
+    end,
+    OnButton2 = function() end,
+    timeout = 0,
+    whileDead = 1,
+    hasEditBox = 1,
+    maxLetters = 64,
+    editBoxWidth = 250,
+    closeButton = 0,
+}
+
 StaticPopupDialogs["JOIN_DISCORD"] = {
     text = L["Join Discord"],
     button2 = CLOSE,

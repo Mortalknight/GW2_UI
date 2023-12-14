@@ -303,6 +303,7 @@ local function CreateNewLayout(self)
             local savedLayouts = GW.GetAllLayouts()
             if savedLayouts[newName] then
                 GW.Notice("Layout with that name already exists")
+                GW.WarningPrompt("Layout with that name already exists")
                 return
             end
             local newMoverFrameIndex = 0
@@ -349,6 +350,7 @@ local function RenameSelectedLayout(self)
             local layoutName = GwWarningPrompt.input:GetText() or UNKNOWN
             if GW.global.layouts[layoutName] then
                 GW.Notice("Layout with that name already exists")
+                GW.WarningPrompt("Layout with that name already exists")
                 return
             end
             GW.global.layouts[self:GetParent().savedLayoutDropDown.container.contentScroll.displayButton.selectedName].name = layoutName

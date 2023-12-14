@@ -48,6 +48,7 @@ local function loadProfiles(profilewin)
             slot.item.hasOptions = true
             slot.item.canDelete = true
             slot.item.canExport = true
+            slot.item.canRename = true
             slot.item.canCopy = true
             slot.item.canActivate = true
             slot.item.activeProfile:Hide()
@@ -264,6 +265,14 @@ local function buttons_OnEnter(self)
         self:GetParent().settingsButton.dropdown.delete.name:SetTextColor(1, 1, 1, 0.2)
     end
 
+    if self:GetParent().canRename then
+        self:GetParent().settingsButton.dropdown.rename:Enable()
+        self:GetParent().settingsButton.dropdown.rename.name:SetTextColor(1, 1, 1, 1)
+    else
+        self:GetParent().settingsButton.dropdown.rename:Disable()
+        self:GetParent().settingsButton.dropdown.rename.name:SetTextColor(1, 1, 1, 0.2)
+    end
+
     if self:GetParent().canExport then
         self:GetParent().settingsButton.dropdown.export:Enable()
         self:GetParent().settingsButton.dropdown.export.name:SetTextColor(1, 1, 1, 1)
@@ -321,6 +330,48 @@ local function export_OnClick(self)
 end
 AddForProfiling("panel_profiles", "export_OnClick", export_OnClick)
 
+local function rename_OnClick(self)
+    GW.InputPrompt(
+        GARRISON_SHIP_RENAME_LABEL,
+        function()
+            if GwWarningPrompt.input:GetText() == nil then return end
+            local profileName = GwWarningPrompt.input:GetText() or UNKNOWN
+            local profileOriginalName = self:GetParent().parentItem.profileName
+            if GW.globalSettings.profiles[profileName] then
+                GW.Notice("Profile with that name already exists")
+                GW.WarningPrompt("Profile with that name already exists")
+                return
+            end
+            GW.globalSettings.profiles[profileOriginalName].profilename = profileName
+            GW.globalSettings.profiles[profileName] = GW.copyTable(nil, GW.globalSettings.profiles[profileOriginalName])
+            GW.globalSettings.profiles[profileOriginalName] = nil
+
+            -- rename also the profile layout
+            if GW.global.layouts[profileOriginalName] then
+                GW.global.layouts[profileOriginalName].name = L["Profiles"] .. " - " .. profileName
+                GW.global.layouts[profileOriginalName].profileName = profileName
+
+                GW.global.layouts[profileName] = GW.copyTable(nil, GW.global.layouts[profileOriginalName])
+                GW.global.layouts[profileOriginalName] = nil
+                GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll.update(GwSmallSettingsContainer.layoutView.savedLayoutDropDown.container.contentScroll)
+
+                --rename the assinged layouts
+                local privateLayouts = GW.GetAllPrivateLayouts()
+                for i = 0, #privateLayouts do
+                    if privateLayouts[i] and privateLayouts[i].layoutName == profileOriginalName then
+                        GW.private.Layouts[i].layoutName = profileName
+                    end
+                end
+            end
+
+            GwWarningPrompt:Hide()
+        end,
+        self:GetParent().savedLayoutDropDown.button.string:GetText()
+    )
+
+
+    self:GetParent():Hide()
+end
 
 local function copy_OnClick(self)
     local newProfil = GW.copyTable(nil, GW.globalSettings.profiles[self:GetParent().parentItem.profileName])
@@ -337,7 +388,7 @@ local function settingsSubButtonOnLeave(self)
 end
 
 local function item_OnLoad(self)
-    local settingButtons = {self.settingsButton.dropdown.copy, self.settingsButton.dropdown.export, self.settingsButton.dropdown.delete}
+    local settingButtons = {self.settingsButton.dropdown.copy, self.settingsButton.dropdown.export, self.settingsButton.dropdown.rename, self.settingsButton.dropdown.delete}
     self.name:SetFont(UNIT_NAME_FONT, 14)
     self.desc:SetFont(UNIT_NAME_FONT, 10)
     self.activateButton.hint:SetFont(DAMAGE_TEXT_FONT, 10)
@@ -353,6 +404,7 @@ local function item_OnLoad(self)
 
     self.settingsButton.dropdown.delete:SetScript("OnClick", delete_OnClick)
     self.settingsButton.dropdown.export:SetScript("OnClick", export_OnClick)
+    self.settingsButton.dropdown.rename:SetScript("OnClick", rename_OnClick)
     self.settingsButton.dropdown.copy:SetScript("OnClick", copy_OnClick)
 
     for _, button in pairs(settingButtons) do
@@ -372,6 +424,9 @@ local function item_OnEnter(self)
     end
     if self.canDelete then
         self.settingsButton.dropdown.delete:Show()
+    end
+    if self.canRename then
+        self.settingsButton.dropdown.rename:Show()
     end
     if self.canExport then
         self.settingsButton.dropdown.export:Show()
@@ -398,6 +453,9 @@ local function item_OnLeave(self)
     if self.canDelete then
         self.settingsButton.dropdown.delete:Hide()
     end
+    if self.canRename then
+        self.settingsButton.dropdown.rename:Hide()
+    end
     if self.canExport then
         self.settingsButton.dropdown.export:Hide()
     end
@@ -412,6 +470,7 @@ local function addProfile(name, profileData, copy)
     for _, v in pairs(profileList) do
         if name == v then
             GW.Notice("Profile with that name already exists")
+            GW.WarningPrompt("Profile with that name already exists")
             return
         end
     end
@@ -578,6 +637,7 @@ local function LoadProfilesPanel(sWindow)
     p.resetToDefaultFrame.item.hasOptions = false
     p.resetToDefaultFrame.item.canDelete = false
     p.resetToDefaultFrame.item.canExport = false
+    p.resetToDefaultFrame.item.canRename = false
     p.resetToDefaultFrame.item.canCopy = false
     p.resetToDefaultFrame.item.background:SetTexCoord(0, 1, 0, 0.5)
     p.resetToDefaultFrame.item.canActivate = false
