@@ -170,7 +170,7 @@ local function ToggleCharacterItemInfo(setup)
         CreateSlotStrings()
     end
 
-    if GW.settings.HOW_CHARACTER_ITEM_INFO then
+    if GW.settings.SHOW_CHARACTER_ITEM_INFO then
         f.needsUpdate = true
         f.lastUpdateTime = GetTime()
         f:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
