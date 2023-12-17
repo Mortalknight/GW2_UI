@@ -129,7 +129,7 @@ local function getNearestQuestPOI()
     if Questie and Questie.started then
         for _, quest in pairs(GW.trackedQuests) do
             if quest.questId then
-                questieQuest = QuestieLoader:ImportModule("QuestieDB"):GetQuest(quest.questId)
+                questieQuest = QuestieLoader:ImportModule("QuestieDB").GetQuest(quest.questId)
                 if questieQuest then
                     -- do this to prevent a questie error
                     local shouldCheck = false
