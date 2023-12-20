@@ -17,8 +17,6 @@ local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
 local LoadAuras = GW.LoadAuras
 local UpdateBuffLayout = GW.UpdateBuffLayout
-local LCC = GW.Libs.LCC
-local LCD = GW.Libs.LCD
 
 local function normalUnitFrame_OnEnter(self)
     if self.unit ~= nil then
@@ -343,10 +341,10 @@ GW.AddForProfiling("unitframes", "hideCastBar", hideCastBar)
 local function updateCastValues(self)
     local castType = 1
 
-    local name, _, texture, startTime, endTime = LCC:UnitCastingInfo(self.unit)
+    local name, _, texture, startTime, endTime = UnitCastingInfo(self.unit)
 
     if name == nil then
-        name, _, texture, startTime, endTime = LCC:UnitChannelInfo(self.unit)
+        name, _, texture, startTime, endTime = UnitChannelInfo(self.unit)
         castType = 0
     end
 
@@ -739,32 +737,14 @@ local function LoadTarget()
     NewUnitFrame:RegisterUnitEvent("UNIT_AURA", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_THREAT_LIST_UPDATE", "target")
 
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "target")
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", "target")
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "target")
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "target")
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "target")
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "target")
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "target")
-    --NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "target")
-
-    local CastbarEventHandler = function(event, ...)
-        local self = NewUnitFrame
-        return target_OnEvent(self, event, ...)
-    end
-
-    LCD.RegisterCallback("GW2_UI", "UNIT_BUFF", function(_, unit)
-        target_OnEvent(NewUnitFrame, "UNIT_AURA", unit)
-    end)
-
-    LCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_START", CastbarEventHandler)
-    LCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_DELAYED", CastbarEventHandler) -- only for player
-    LCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_STOP", CastbarEventHandler)
-    LCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_FAILED", CastbarEventHandler)
-    LCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_INTERRUPTED", CastbarEventHandler)
-    LCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_START", CastbarEventHandler)
-    LCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_UPDATE", CastbarEventHandler) -- only for player
-    LCC.RegisterCallback(NewUnitFrame, "UNIT_SPELLCAST_CHANNEL_STOP", CastbarEventHandler)
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_START", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_DELAYED", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_STOP", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_INTERRUPTED", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_START", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", "target")
+    NewUnitFrame:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "target")
 
     LoadAuras(NewUnitFrame)
 

@@ -11,8 +11,6 @@ local INDICATORS = GW.INDICATORS
 local AURAS_INDICATORS = GW.AURAS_INDICATORS
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local AddToClique = GW.AddToClique
-local UnitAura = GW.Libs.LCD.UnitAuraWithBuffs
-local LCD = GW.Libs.LCD
 
 local missing, ignored = {}, {}
 local spellIDs = {}
@@ -121,10 +119,7 @@ local function CreateGridFrame(index, isParty, parent, OnEvent, OnUpdate, profil
     frame:RegisterUnitEvent("UNIT_TARGET", frame.unit)
     frame:RegisterUnitEvent("UNIT_NAME_UPDATE", frame.unit)
     frame:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", frame.unit)
-
-    LCD.RegisterCallback("GW2_UI", "UNIT_BUFF", function(_, LCDUnit)
-        OnEvent(frame, "UNIT_AURA", frame.unit)
-    end)
+    frame:RegisterUnitEvent("UNIT_AURA", frame.unit)
 
     OnEvent(frame, "load")
 

@@ -2,7 +2,6 @@ local _, GW = ...
 local DEBUFF_COLOR = GW.DEBUFF_COLOR
 local COLOR_FRIENDLY = GW.COLOR_FRIENDLY
 local TimeCount = GW.TimeCount
-local UnitAura = GW.Libs.LCD.UnitAuraWithBuffs
 
 local function GetDebuffScaleBasedOnPrio()
     local debuffScalePrio = GW.GetSetting("RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO")
