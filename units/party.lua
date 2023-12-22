@@ -479,6 +479,8 @@ local function party_OnEvent(self, event, unit)
         self.powerbar:SetValue(powerPrecentage)
     elseif event == "UNIT_LEVEL" or event == "GROUP_ROSTER_UPDATE" or event == "UNIT_MODEL_CHANGED" then
         updatePartyData(self)
+    elseif event == "UNIT_HEAL_PREDICTION" then
+        setPredictionAmount(self)
     elseif event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" or event == "UNIT_THREAT_SITUATION_UPDATE" then
         updateAwayData(self)
     elseif event == "UNIT_PORTRAIT_UPDATE" or event == "PORTRAITS_UPDATED" or event == "UNIT_PHASE" then
