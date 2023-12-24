@@ -209,6 +209,8 @@ local function CreateStanceBarButtonHolder()
     StanceButtonHolder:RegisterEvent("UPDATE_BINDINGS")
     StanceButtonHolder:SetScript("OnEvent", StanceButton_OnEvent)
 
+    StanceButtonHolder.container:SetProtected()
+
     return StanceButtonHolder
 end
 
@@ -221,12 +223,13 @@ local function CreateStanceBar()
     StanceButtonHolder:SetAttribute(
         "_onclick",
         [=[
-        if self:GetFrameRef("GwStanceBarContainer"):IsVisible() then
-            self:GetFrameRef("GwStanceBarContainer"):Hide()
-        else
-            self:GetFrameRef("GwStanceBarContainer"):Show()
-        end
-    ]=])
+            local GwStanceBarContainer = self:GetFrameRef("GwStanceBarContainer")
+            if GwStanceBarContainer:IsVisible() then
+                GwStanceBarContainer:Hide()
+            else
+                GwStanceBarContainer:Show()
+            end
+        ]=])
     StanceButtonHolder:HookScript("OnClick", function(self)
         GW.SetSetting("StanceBarContainerState", self.container:IsShown() and "open" or "close")
     end)

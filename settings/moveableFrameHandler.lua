@@ -439,6 +439,7 @@ local function RegisterMovableFrame(frame, displayName, settingsName, dummyFrame
     end
 
     moveframe:SetClampedToScreen(true)
+    moveframe:SetProtected()
 
     -- position mover (as fallback use the default position)
     local framePoint = GetSetting(settingsName)
