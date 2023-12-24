@@ -532,7 +532,6 @@ local function LoadRaid25Profile(panel)
 
     return raid25
 end
-
 local function LoadRaid40Profile(panel)
     local raid40 = CreateFrame("Frame", "GwSettingsRaidPanel", panel, "GwSettingsRaidPanelTmpl")
     raid40.header:SetFont(DAMAGE_TEXT_FONT, 20)
@@ -792,7 +791,6 @@ local function LoadRaid40Profile(panel)
 
     return raid40
 end
-
 local function LoadRaidPetProfile(panel)
     local p = CreateFrame("Frame", "GwSettingsRaidPanel", panel, "GwSettingsRaidPanelTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
@@ -1022,7 +1020,6 @@ local function LoadRaidPetProfile(panel)
 
     return p
 end
-
 local function LoadPartyProfile(panel)
     local party = CreateFrame("Frame", "GwSettingsRaidPartyPanel", panel, "GwSettingsRaidPanelTmpl")
     party.header:SetFont(DAMAGE_TEXT_FONT, 20)

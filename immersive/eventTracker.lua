@@ -1171,7 +1171,7 @@ local function UpdateTrackers()
 
     local lastTracker = nil
     local usedWidth = 0
-    local mapFrameWidth = mapFrame:GetWidth()
+    local mapFrameWidth = WorldMapFrame:GetWidth()
     local rowIdx = 1
     for _, event in ipairs(eventList) do
         local data = eventData[event]
@@ -1219,9 +1219,11 @@ GW.UpdateWorldEventTrackers = UpdateTrackers
 
 local function LoadDragonFlightWorldEvents()
     AddWorldMapFrame()
-    WorldMapFrame:Show()
-    UpdateTrackers()
-    WorldMapFrame:Hide()
+    C_Timer.After(1, function()
+        WorldMapFrame:Show()
+        UpdateTrackers()
+        WorldMapFrame:Hide()
+    end)
 
     for event in pairs(eventHandlers) do
         mapFrame:RegisterEvent(event)
