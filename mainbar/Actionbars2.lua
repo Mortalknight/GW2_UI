@@ -130,10 +130,10 @@ local function UpdateActionbarBorders(btn)
         btn.gwBackdrop.border3:SetAlpha(1)
         btn.gwBackdrop.border4:SetAlpha(1)
     else
-        btn.gwBackdrop.border1:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-        btn.gwBackdrop.border2:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-        btn.gwBackdrop.border3:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-        btn.gwBackdrop.border4:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+        btn.gwBackdrop.border1:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+        btn.gwBackdrop.border2:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+        btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+        btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
     end
 end
 
@@ -609,11 +609,11 @@ local function setActionButtonStyle(buttonName, noBackDrop, isStanceButton, isPe
         btn.gwBackdrop = backDrop
 
         if not isStanceButton and not isPet then
-            btn.gwBackdrop.bg:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-            btn.gwBackdrop.border1:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-            btn.gwBackdrop.border2:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-            btn.gwBackdrop.border3:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-            btn.gwBackdrop.border4:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+            btn.gwBackdrop.bg:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+            btn.gwBackdrop.border1:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+            btn.gwBackdrop.border2:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+            btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+            btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
         end
         --btn:HookScript("OnHide", hideBackdrop)
         --btn:HookScript("OnShow", showBackdrop)
@@ -991,11 +991,11 @@ local function UpdateMultibarButtons()
                     used_height = used_height + GW.settings[fmMultiBar.originalBarName].size + GW.settings.MULTIBAR_MARGIIN
                 end
 
-                btn.gwBackdrop.bg:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-                btn.gwBackdrop.border1:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-                btn.gwBackdrop.border2:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-                btn.gwBackdrop.border3:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-                btn.gwBackdrop.border4:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+                btn.gwBackdrop.bg:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+                btn.gwBackdrop.border1:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+                btn.gwBackdrop.border2:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+                btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+                btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
 
                 btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
                 updateMacroName(btn)
@@ -1241,11 +1241,11 @@ local function UpdateMainBarHot()
             btn_padding = btn_padding + 108
         end
 
-        btn.gwBackdrop.bg:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-        btn.gwBackdrop.border1:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-        btn.gwBackdrop.border2:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-        btn.gwBackdrop.border3:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
-        btn.gwBackdrop.border4:SetAlpha(GW.settings.ACTIONBAR_BACKGROUND_ALPHA)
+        btn.gwBackdrop.bg:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+        btn.gwBackdrop.border1:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+        btn.gwBackdrop.border2:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+        btn.gwBackdrop.border3:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
+        btn.gwBackdrop.border4:SetAlpha(tonumber(GW.settings.ACTIONBAR_BACKGROUND_ALPHA))
 
         btn.showMacroName = GW.settings.SHOWACTIONBAR_MACRO_NAME_ENABLED
         btn.rangeIndicatorSetting = GW.settings.MAINBAR_RANGEINDICATOR
