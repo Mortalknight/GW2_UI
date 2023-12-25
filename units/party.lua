@@ -358,15 +358,15 @@ local function setHealthValue(self, healthCur, healthMax, healthPrec)
     end
 
     if settings.unitNameString == "PREC" then
-        self.healthString:SetText(RoundDec(healthPrec * 100, 0) .. "%")
-        self.healthString:SetJustifyH("LEFT")
+        self.healthstring:SetText(RoundDec(healthPrec * 100, 0) .. "%")
+        self.healthstring:SetJustifyH("LEFT")
     elseif settings.unitNameString == "HEALTH" then
-        self.healthString:SetText(CommaValue(healthCur))
-        self.healthString:SetJustifyH("LEFT")
+        self.healthstring:SetText(CommaValue(healthCur))
+        self.healthstring:SetJustifyH("LEFT")
     elseif settings.unitNameString == "LOSTHEALTH" then
         if healthMax - healthCur > 0 then healthstring = CommaValue(healthMax - healthCur) end
-        self.healthString:SetText(healthstring)
-        self.healthString:SetJustifyH("RIGHT")
+        self.healthstring:SetText(healthstring)
+        self.healthstring:SetJustifyH("RIGHT")
     end
     if healthCur == 0 then
         self.healthstring:SetTextColor(255, 0, 0)
