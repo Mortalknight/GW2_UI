@@ -1371,7 +1371,7 @@ do
         local len = strlen(userInput)
 
         if GW.settings.CHAT_INCOMBAT_TEXT_REPEAT ~= 0 and InCombatLockdown() and (not repeatedText or not strfind(userInput, repeatedText, 1, true)) then
-            local MIN_REPEAT_CHARACTERS = GW.settings.CHAT_INCOMBAT_TEXT_REPEAT
+            local MIN_REPEAT_CHARACTERS = tonumber(GW.settings.CHAT_INCOMBAT_TEXT_REPEAT)
             if len > MIN_REPEAT_CHARACTERS then
                 local repeatChar = true
                 for i = 1, MIN_REPEAT_CHARACTERS, 1 do

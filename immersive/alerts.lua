@@ -836,7 +836,7 @@ local function skinScenarioAlert(frame)
     frame.dungeonTexture:SetDrawLayer("OVERLAY")
 
     -- Icon border
-    if not frame.dungeonTexture.b then        
+    if not frame.dungeonTexture.b then
         frame.dungeonTexture.b = CreateFrame("Frame", nil, frame)
         frame.dungeonTexture.b:SetPoint("TOPLEFT", frame.dungeonTexture, "TOPLEFT", -2, 2)
         frame.dungeonTexture.b:SetPoint("BOTTOMRIGHT", frame.dungeonTexture, "BOTTOMRIGHT", 2, -2)
@@ -845,7 +845,7 @@ local function skinScenarioAlert(frame)
         frame.dungeonTexture.iconBorder:SetTexture("Interface/AddOns/GW2_UI/textures/bag/bagitemborder")
         frame.dungeonTexture.iconBorder:SetAllPoints(frame.dungeonTexture.b)
     end
-    
+
     --flare
     AddFlare(frame, frame.dungeonTexture.b)
 end
@@ -1347,7 +1347,7 @@ local function AlertContainerFrameOnEvent(self, event, ...)
             wipe(toastQueue)
             PlaySoundFile(GW.Libs.LSM:Fetch("sound", GW.settings.ALERTFRAME_NOTIFICATION_NEW_SPELL_SOUND), "Master")
         end)
-        -- /run GW.AlertSystem:AddAlert(GetSpellInfo(48181), nil, LEVEL_UP_ABILITY, false, select(3, GetSpellInfo(48181)), false, 48181)
+        -- /run GW2_ADDON.AlertSystem:AddAlert(GetSpellInfo(48181), nil, LEVEL_UP_ABILITY, false, select(3, GetSpellInfo(48181)), false, 48181)
     elseif event == "PLAYER_SPECIALIZATION_CHANGED" and GW.settings.ALERTFRAME_NOTIFICATION_NEW_SPELL then
         C_Timer.After(0.5, function()
             for k, v in pairs(toastQueue) do
