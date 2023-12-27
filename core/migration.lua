@@ -21,7 +21,6 @@ local function ConvertDBIntegerBackToIntegers()
                 else
                     if tonumber(value) then
                         GW.globalSettings.profiles[profileName][setting] = tonumber(value)
-                        print(setting, value)
                     end
                 end
             end
