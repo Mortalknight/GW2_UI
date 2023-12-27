@@ -1578,7 +1578,7 @@ local function selectType(f)
     f:UnregisterAllEvents()
 
     -- hide all class power sub-pieces and reset anything needed
-    f.customResourceBar:ForceFIllAmount(0)
+    f.customResourceBar:ForceFillAmount(0)
     f.customResourceBar:resetPowerBarVisuals()
     f.customResourceBar:Hide()
     f.customResourceBar:SetWidth(313)

@@ -47,10 +47,10 @@ local function UpdatePredictionBarsOverride(self, event, unit)
         element.overAbsorb:SetFillAmount(absorbAmount2)
         element.healAbsorbBar:SetFillAmount(healAbsorbPrecentage)
     else
-        element.healthPredictionbar:ForceFIllAmount(allIncomingHealPrecentage)
-        element.absorbBar:ForceFIllAmount(absorbAmount)
-        element.overAbsorb:ForceFIllAmount(absorbAmount2)
-        element.healAbsorbBar:ForceFIllAmount(healAbsorbPrecentage)
+        element.healthPredictionbar:ForceFillAmount(allIncomingHealPrecentage)
+        element.absorbBar:ForceFillAmount(absorbAmount)
+        element.overAbsorb:ForceFillAmount(absorbAmount2)
+        element.healAbsorbBar:ForceFillAmount(healAbsorbPrecentage)
     end
 
     if(element.PostUpdate) then

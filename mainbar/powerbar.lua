@@ -19,7 +19,7 @@ local function resetPowerBarVisuals(self)
   self.intensity:ClearAllPoints()
   self.intensity:SetPoint("TOPLEFT",self,"TOPLEFT",0,0)
   self.intensity:SetPoint("BOTTOMRIGHT",self,"BOTTOMRIGHT",0,0)
-  self.decay:ForceFIllAmount(0)
+  self.decay:ForceFillAmount(0)
   self.animationType = GW.BarAnimateTypes.All
 end
 local function scrollTextureVerticalParalaxOnUpdate(self,delta)
@@ -205,7 +205,7 @@ local function setPowerTypeFocus(self)
   self.onAnimationStart = function(self,value)
     if self.animatedStartValue>self.animatedValue then
       if self.decay:GetFillAmount()<self.animatedStartValue then
-        self.decay:ForceFIllAmount(self.animatedStartValue)
+        self.decay:ForceFillAmount(self.animatedStartValue)
       end
       self.decay:SetFillAmount(value)
     end
@@ -410,7 +410,7 @@ local function UpdatePowerData(self, forcePowerType, powerToken)
   if self.lastPowerType ~= self.powerType and self == GwPlayerPowerBar then
     self.lastPowerType = self.powerType
     self.powerBarString = self.label
-    self:ForceFIllAmount(powerPrec)
+    self:ForceFillAmount(powerPrec)
     if self.powerType == nil or self.powerType == 1 or self.powerType == 6 or self.powerType == 13 or self.powerType == 8 then
         self.barOnUpdate = nil
     else

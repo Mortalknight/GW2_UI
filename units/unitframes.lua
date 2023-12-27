@@ -662,7 +662,7 @@ local function updatePowerValues(self, hideAt0,event)
     end
 
     if event and event == "UNIT_TARGET" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_TARGET_CHANGED" then
-      self.powerbar:ForceFIllAmount(powerPrecentage)
+      self.powerbar:ForceFillAmount(powerPrecentage)
     else
       self.powerbar:SetFillAmount(powerPrecentage)
     end
@@ -719,10 +719,10 @@ local function updateHealthValues(self, event)
     end
 
     if event == "UNIT_TARGET" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_TARGET_CHANGED" then
-        self.health:ForceFIllAmount(healthPrecentage)
-        self.absorbbg:ForceFIllAmount(absorbAmount)
-        self.absorbOverlay:ForceFIllAmount(absorbAmount2)
-        self.antiHeal:ForceFIllAmount(healAbsorbPrecentage)
+        self.health:ForceFillAmount(healthPrecentage)
+        self.absorbbg:ForceFillAmount(absorbAmount)
+        self.absorbOverlay:ForceFillAmount(absorbAmount2)
+        self.antiHeal:ForceFillAmount(healAbsorbPrecentage)
     else
         self.health:SetFillAmount(healthPrecentage)
         self.absorbbg:SetFillAmount(absorbAmount)

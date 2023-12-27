@@ -14,7 +14,7 @@ local function PostUpdateHealth(self)
 	if parent.isForced then
 		self.cur = self.fakeValue or random(1, 100)
 		self.max = 100
-		self:ForceFIllAmount(self.cur / self.max)
+		self:ForceFillAmount(self.cur / self.max)
         self.fakeValue = self.cur
     else
         self.fakeValue = nil
@@ -60,7 +60,7 @@ local function UpdateHealthOverride(self, event, unit)
     if not self.Forced then
         element:SetFillAmount(cur/max)
     else
-        element:ForceFIllAmount(cur/max)
+        element:ForceFillAmount(cur/max)
     end
 	element.cur = cur
 	element.max = max
