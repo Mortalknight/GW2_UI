@@ -664,7 +664,11 @@ local function InitPanel(panel, hasScroll)
                             toSet = true
                         end
 
-                        GW.settings[self:GetParent().optionName] = toSet
+                        if type(GW.settings[self:GetParent().optionName][self:GetParent().option]) == "table" then
+                            GW.settings[self:GetParent().optionName][self:GetParent().option].enable = toSet
+                        else
+                            GW.settings[self:GetParent().optionName][self:GetParent().option] = toSet
+                        end
 
                         if v.callback then
                             v.callback(toSet, self:GetParent().option)

@@ -121,7 +121,7 @@ local function LoadAurasPanel(sWindow)
         "RAIDDEBUFFS_DISPELLDEBUFF_SCALE_PRIO",
         nil,
         {"DISPELL", "IMPORTANT", "OFF"},
-        {L["Dispell > Important"], L["Important > Dispell"]}
+        {L["Dispell > Important"], L["Important > Dispell"], OFF}
     )
 
     addOption(p_indicator.scroll.scrollchild, L["Show Spell Icons"], L["Show spell icons instead of monochrome squares."], "INDICATORS_ICON", GW.UpdateGridSettings, nil, {["RAID_FRAMES"] = true})
