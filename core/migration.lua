@@ -1,5 +1,35 @@
 local _, GW = ...
 
+local function loopTableForIntConv(tbl, settingToChange)
+    for setting, value in next, tbl do
+        if type(value) == "table" then
+            loopTableForIntConv(value, settingToChange[setting])
+        else
+            if tonumber(value) then
+                settingToChange = tonumber(value)
+            end
+        end
+    end
+end
+
+local function ConvertDBIntegerBackToIntegers()
+    if next(GW.globalSettings.profiles) then
+        for profileName, profileTbl in next, GW.globalSettings.profiles do
+            for setting, value in next, profileTbl do
+                if type(value) == "table" then
+                    loopTableForIntConv(value, GW.globalSettings.profiles[profileName][setting])
+                else
+                    if tonumber(value) then
+                        GW.globalSettings.profiles[profileName][setting] = tonumber(value)
+                        print(setting, value)
+                    end
+                end
+            end
+        end
+    end
+end
+GW.ConvertDBIntegerBackToIntegers = ConvertDBIntegerBackToIntegers
+--/run GW2_ADDON.ConvertDBIntegerBackToIntegers()
 
 local function DatabaseMigration(globalDb, privateDb)
     local oldActiveProfileId, oldActiveProfileName
@@ -72,6 +102,8 @@ local function DatabaseMigration(globalDb, privateDb)
             end
         end
     end
+
+    ConvertDBIntegerBackToIntegers()
 
     if oldActiveProfileName then
         GW.globalSettings:SetProfile(oldActiveProfileName)
