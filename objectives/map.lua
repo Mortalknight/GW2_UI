@@ -437,6 +437,70 @@ local function Update_ZoneText()
     GwMapGradient.location:SetTextColor(GetLocTextColor())
 end
 
+local function ExpansionLandingButtonDropDown_Initialize(self, level)
+    local NUM_EXPANSIONS_WITH_EXPANSION_LANDING_PAGE = 4
+    local info
+
+    for id = 1, NUM_EXPANSIONS_WITH_EXPANSION_LANDING_PAGE do
+        if id == 1 then
+            info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
+            info.text = GARRISON_LANDING_PAGE_TITLE .. " (Warlords of Draenor)"
+            info.notCheckable = true
+            info.func = function()
+                if (GarrisonLandingPage and GarrisonLandingPage:IsShown()) then
+                    HideUIPanel(GarrisonLandingPage)
+                end
+                ShowGarrisonLandingPage(Enum.GarrisonType.Type_6_0_Garrison)
+                GarrisonMinimap_HideHelpTip(ExpansionLandingPageMinimapButton)
+            end
+        elseif id == 2 then
+            info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
+            info.text = ORDER_HALL_LANDING_PAGE_TITLE .. " (Legion)"
+            info.notCheckable = true
+            info.func = function()
+                if (GarrisonLandingPage and GarrisonLandingPage:IsShown()) then
+                    HideUIPanel(GarrisonLandingPage)
+                end
+                ShowGarrisonLandingPage(Enum.GarrisonType.Type_7_0_Garrison)
+                GarrisonMinimap_HideHelpTip(ExpansionLandingPageMinimapButton)
+            end
+        elseif id == 3 then
+            info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
+            info.text = GARRISON_TYPE_8_0_LANDING_PAGE_TITLE .. " (Battle of Azeroth)"
+            info.notCheckable = true
+            info.func = function()
+                if (GarrisonLandingPage and GarrisonLandingPage:IsShown()) then
+                    HideUIPanel(GarrisonLandingPage)
+                end
+                ShowGarrisonLandingPage(Enum.GarrisonType.Type_8_0_Garrison)
+                GarrisonMinimap_HideHelpTip(ExpansionLandingPageMinimapButton)
+            end
+        elseif id == 4 then
+            info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
+            local pageTitle = GARRISON_TYPE_9_0_LANDING_PAGE_TITLE;
+            local activeCovenantID = C_Covenants.GetActiveCovenantID()
+            if activeCovenantID and activeCovenantID > 0 then
+                local covenantData = C_Covenants.GetCovenantData(activeCovenantID)
+                if covenantData then
+                    pageTitle = covenantData.name
+                end
+            end
+
+            info.text = pageTitle .. " (Shadowlands)"
+            info.notCheckable = true
+            info.func = function()
+                if (GarrisonLandingPage and GarrisonLandingPage:IsShown()) then
+                    HideUIPanel(GarrisonLandingPage)
+                end
+                ShowGarrisonLandingPage(Enum.GarrisonType.Type_9_0_Garrison)
+                GarrisonMinimap_HideHelpTip(ExpansionLandingPageMinimapButton)
+            end
+        end
+
+        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level);
+    end
+end
+
 local function CreateMinimapTrackingDropdown()
     local dropdown = GW.Libs.LibDD:Create_UIDropDownMenu("GW2UIMiniMapTrackingDropDown", UIParent)
     dropdown:SetID(1)
@@ -449,9 +513,33 @@ local function CreateMinimapTrackingDropdown()
     return dropdown
 end
 
+local function ExpansionLandingPageMinimapButtonDropdown(self)
+    local dropdown = GW.Libs.LibDD:Create_UIDropDownMenu("GW2UIMiniMapExpansionLandingButtonDropDown", UIParent)
+    dropdown:SetID(1)
+    dropdown:SetClampedToScreen(true)
+    dropdown:Hide()
+
+    GW.Libs.LibDD:UIDropDownMenu_Initialize(dropdown, ExpansionLandingButtonDropDown_Initialize, "MENU")
+    dropdown.noResize = true
+
+    self:HookScript("OnClick", function(self, button)
+        if button == "RightButton" then
+            ToggleExpansionLandingPage()
+            GW.Libs.LibDD:ToggleDropDownMenu(1, nil, dropdown, "cursor")
+        end
+    end)
+
+end
+
 local function HandleExpansionButton()
-    local garrison = ExpansionLandingPageMinimapButton or GarrisonLandingPageMinimapButton
+    local garrison = ExpansionLandingPageMinimapButton
     if not garrison then return end
+
+    if not garrison.gw2Hooked then
+        garrison:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+        ExpansionLandingPageMinimapButtonDropdown(garrison)
+        garrison.gw2Hooked = true
+    end
 
     garrison:GetHighlightTexture():SetBlendMode("BLEND")
     garrison:SetSize(43, 43)
@@ -647,11 +735,7 @@ local function LoadMinimap()
         frame:GwKill()
     end
 
-    if ExpansionLandingPageMinimapButton.UpdateIcon then
-        hooksecurefunc(ExpansionLandingPageMinimapButton, "UpdateIcon", HandleExpansionButton)
-    else
-        hooksecurefunc("GarrisonLandingPageMinimapButton_UpdateIcon", HandleExpansionButton)
-    end
+    hooksecurefunc(ExpansionLandingPageMinimapButton, "UpdateIcon", HandleExpansionButton)
     HandleExpansionButton()
 
     QueueStatusFrame:SetClampedToScreen(true)
