@@ -16,166 +16,193 @@ local minimapDetails = {
     ["COORDS"] = "GwMapCoords"
 }
 
-local settings = {
-    hoverDetailsStay = {},
+local expansionLandingPageTable = {
+    { -- WOD
+        id = 1,
+        enabled = C_Garrison.GetNumFollowers(Enum.GarrisonFollowerType.FollowerType_6_0_GarrisonFollower) > 0,
+        text = GARRISON_LANDING_PAGE_TITLE .. " (Warlords of Draenor)",
+        enumValue = Enum.GarrisonType.Type_6_0_Garrison,
+        enumFollowerValue = Enum.GarrisonFollowerType.FollowerType_6_0_GarrisonFollower
+    },
+    { -- LEGION
+        id = 2,
+        enabled = C_Garrison.GetNumFollowers(Enum.GarrisonFollowerType.FollowerType_7_0_GarrisonFollower) > 0,
+        text = ORDER_HALL_LANDING_PAGE_TITLE .. " (Legion)",
+        enumValue = Enum.GarrisonType.Type_7_0_Garrison,
+        enumFollowerValue = Enum.GarrisonFollowerType.FollowerType_7_0_GarrisonFollower
+    },
+    { -- BFA
+        id = 3,
+        enabled = C_Garrison.GetNumFollowers(Enum.GarrisonFollowerType.FollowerType_8_0_GarrisonFollower) > 0,
+        text = GARRISON_TYPE_8_0_LANDING_PAGE_TITLE .. " (Battle for Azeroth)",
+        enumValue = Enum.GarrisonType.Type_8_0_Garrison,
+        enumFollowerValue = Enum.GarrisonFollowerType.FollowerType_8_0_GarrisonFollower
+    },
+    { -- SHADOWLANDS
+        id = 4,
+        enabled = C_Garrison.GetNumFollowers(Enum.GarrisonFollowerType.FollowerType_9_0_GarrisonFollower) > 0,
+        text = GARRISON_TYPE_9_0_LANDING_PAGE_TITLE  .. " (Shadowlands)",
+        enumValue = Enum.GarrisonType.Type_9_0_Garrison,
+        enumFollowerValue = Enum.GarrisonFollowerType.FollowerType_9_0_GarrisonFollower
+    },
 }
 
 
 -- copy from blizzard map dropdown to avoid dropdown taints
 local ALWAYS_ON_FILTERS = {
-	[Enum.MinimapTrackingFilter.QuestPoIs] = true,
-	[Enum.MinimapTrackingFilter.TaxiNode] = true,
-	[Enum.MinimapTrackingFilter.Innkeeper] = true,
-	[Enum.MinimapTrackingFilter.ItemUpgrade] = true,
-	[Enum.MinimapTrackingFilter.Battlemaster] = true,
-	[Enum.MinimapTrackingFilter.Stablemaster] = true,
+    [Enum.MinimapTrackingFilter.QuestPoIs] = true,
+    [Enum.MinimapTrackingFilter.TaxiNode] = true,
+    [Enum.MinimapTrackingFilter.Innkeeper] = true,
+    [Enum.MinimapTrackingFilter.ItemUpgrade] = true,
+    [Enum.MinimapTrackingFilter.Battlemaster] = true,
+    [Enum.MinimapTrackingFilter.Stablemaster] = true,
 }
 
 local CONDITIONAL_FILTERS = {
-	[Enum.MinimapTrackingFilter.Target] = true,
-	[Enum.MinimapTrackingFilter.Digsites] = true,
-	[Enum.MinimapTrackingFilter.Repair] = true,
+    [Enum.MinimapTrackingFilter.Target] = true,
+    [Enum.MinimapTrackingFilter.Digsites] = true,
+    [Enum.MinimapTrackingFilter.Repair] = true,
 }
 
 local TRACKING_SPELL_OVERRIDE_TEXTURES = {
-	[43308] = "professions_tracking_fish";-- Find Fish
-	[2580] = "professions_tracking_ore"; -- Find Minerals 1
-	[8388] = "professions_tracking_ore"; -- Find Minerals 2
-	[2383] = "professions_tracking_herb"; -- Find Herbs 1
-	[8387] = "professions_tracking_herb"; -- Find Herbs 2
+    [43308] = "professions_tracking_fish";-- Find Fish
+    [2580] = "professions_tracking_ore"; -- Find Minerals 1
+    [8388] = "professions_tracking_ore"; -- Find Minerals 2
+    [2383] = "professions_tracking_herb"; -- Find Herbs 1
+    [8387] = "professions_tracking_herb"; -- Find Herbs 2
 };
 
 local LOW_PRIORITY_TRACKING_SPELLS = {
-	[261764] = true; -- Track Warboards
+    [261764] = true; -- Track Warboards
 };
 
 function MiniMapTrackingDropDown_SetTrackingNone()
-	C_Minimap.ClearAllTracking();
+    C_Minimap.ClearAllTracking();
 
-	local count = C_Minimap.GetNumTrackingTypes();
-	for id=1, count do
-		local filter = C_Minimap.GetTrackingFilter(id);
-		if ALWAYS_ON_FILTERS[filter.filterID] or CONDITIONAL_FILTERS[filter.filterID] then
-			C_Minimap.SetTracking(id, true);
-		end
-	end
+    local count = C_Minimap.GetNumTrackingTypes();
+    for id=1, count do
+        local filter = C_Minimap.GetTrackingFilter(id);
+        if ALWAYS_ON_FILTERS[filter.filterID] or CONDITIONAL_FILTERS[filter.filterID] then
+            C_Minimap.SetTracking(id, true);
+        end
+    end
 
-	GW.Libs.LibDD:UIDropDownMenu_Refresh(M.TrackingDropdown)
+    GW.Libs.LibDD:UIDropDownMenu_Refresh(M.TrackingDropdown)
 end
 
 function MiniMapTrackingDropDown_SetTracking(self, id, unused, on)
-	C_Minimap.SetTracking(id, on);
+    C_Minimap.SetTracking(id, on);
 
-	GW.Libs.LibDD:UIDropDownMenu_Refresh(M.TrackingDropdown)
+    GW.Libs.LibDD:UIDropDownMenu_Refresh(M.TrackingDropdown)
 end
 local function MiniMapTrackingDropDown_Initialize(self, level)
-	local name, texture, active, category, nested, numTracking, spellID
-	local count = C_Minimap.GetNumTrackingTypes()
-	local info
+    local name, texture, active, category, nested, numTracking, spellID
+    local count = C_Minimap.GetNumTrackingTypes()
+    local info
 
-	local showAll = GetCVarBool("minimapTrackingShowAll")
+    local showAll = GetCVarBool("minimapTrackingShowAll")
 
-	if level == 1 then
-		info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
-		info.text = MINIMAP_TRACKING_NONE
-		info.checked = MiniMapTrackingDropDown_IsNoTrackingActive
-		info.func = MiniMapTrackingDropDown_SetTrackingNone
-		info.icon = nil
-		info.arg1 = nil
-		info.isNotRadio = true
-		info.keepShownOnClick = true
-		GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level)
-		GW.Libs.LibDD:UIDropDownMenu_AddSeparator(level)
+    if level == 1 then
+        info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
+        info.text = MINIMAP_TRACKING_NONE
+        info.checked = MiniMapTrackingDropDown_IsNoTrackingActive
+        info.func = MiniMapTrackingDropDown_SetTrackingNone
+        info.icon = nil
+        info.arg1 = nil
+        info.isNotRadio = true
+        info.keepShownOnClick = true
+        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level)
+        GW.Libs.LibDD:UIDropDownMenu_AddSeparator(level)
 
-		if GW.myclass == "HUNTER" then --only show hunter dropdown for hunters
-			numTracking = 0;
-			-- make sure there are at least two options in dropdown
-			for id=1, count do
-				name, texture, active, category, nested = C_Minimap.GetTrackingInfo(id);
-				if (nested == HUNTER_TRACKING and category == "spell") then
-					numTracking = numTracking + 1;
-				end
-			end
-			if (numTracking > 1) then
-				info.text = HUNTER_TRACKING_TEXT;
-				info.func =  nil;
-				info.notCheckable = true;
-				info.keepShownOnClick = false;
-				info.hasArrow = true;
-				info.value = HUNTER_TRACKING;
-				GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level)
-			end
-		end
-	end
+        if GW.myclass == "HUNTER" then --only show hunter dropdown for hunters
+            numTracking = 0;
+            -- make sure there are at least two options in dropdown
+            for id=1, count do
+                name, texture, active, category, nested = C_Minimap.GetTrackingInfo(id);
+                if (nested == HUNTER_TRACKING and category == "spell") then
+                    numTracking = numTracking + 1;
+                end
+            end
+            if (numTracking > 1) then
+                info.text = HUNTER_TRACKING_TEXT;
+                info.func =  nil;
+                info.notCheckable = true;
+                info.keepShownOnClick = false;
+                info.hasArrow = true;
+                info.value = HUNTER_TRACKING;
+                GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level)
+            end
+        end
+    end
 
-	if level == 1 and showAll then
-		info.text = TOWNSFOLK_TRACKING_TEXT;
-		info.func =  nil;
-		info.notCheckable = true;
-		info.keepShownOnClick = false;
-		info.hasArrow = true;
-		info.value = TOWNSFOLK;
-		GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level)
-	end
+    if level == 1 and showAll then
+        info.text = TOWNSFOLK_TRACKING_TEXT;
+        info.func =  nil;
+        info.notCheckable = true;
+        info.keepShownOnClick = false;
+        info.hasArrow = true;
+        info.value = TOWNSFOLK;
+        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level)
+    end
 
-	local trackingInfos = { };
-	for id=1, count do
-		name, texture, active, category, nested, spellID = C_Minimap.GetTrackingInfo(id);
+    local trackingInfos = { };
+    for id=1, count do
+        name, texture, active, category, nested, spellID = C_Minimap.GetTrackingInfo(id);
 
-		if showAll or MiniMapTracking_FilterIsVisible(id) then
-			-- Remove nested townsfold unless showing all
-			if nested == TOWNSFOLK and not showAll then
-				nested = -1;
-			end
+        if showAll or MiniMapTracking_FilterIsVisible(id) then
+            -- Remove nested townsfold unless showing all
+            if nested == TOWNSFOLK and not showAll then
+                nested = -1;
+            end
 
-			info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
-			info.text = name;
-			info.checked = MiniMapTrackingDropDown_IsActive;
-			info.func = MiniMapTrackingDropDown_SetTracking;
-			info.icon = TRACKING_SPELL_OVERRIDE_TEXTURES[spellID] or texture;
-			info.arg1 = id;
-			info.isNotRadio = true;
-			info.keepShownOnClick = true;
+            info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
+            info.text = name;
+            info.checked = MiniMapTrackingDropDown_IsActive;
+            info.func = MiniMapTrackingDropDown_SetTracking;
+            info.icon = TRACKING_SPELL_OVERRIDE_TEXTURES[spellID] or texture;
+            info.arg1 = id;
+            info.isNotRadio = true;
+            info.keepShownOnClick = true;
 
-			if ( category == "spell" ) then
-				info.tCoordLeft = 0.0625;
-				info.tCoordRight = 0.9;
-				info.tCoordTop = 0.0625;
-				info.tCoordBottom = 0.9;
-			else
-				info.tCoordLeft = 0;
-				info.tCoordRight = 1;
-				info.tCoordTop = 0;
-				info.tCoordBottom = 1;
-			end
-			if (level == 1 and
-				(nested < 0 or -- this tracking shouldn't be nested
-				(nested == HUNTER_TRACKING and class ~= "HUNTER") or
-				(numTracking == 1 and category == "spell"))) then -- this is a hunter tracking ability, but you only have one
-				table.insert(trackingInfos, info);
-			elseif (level == 2 and (nested == TOWNSFOLK or (nested == HUNTER_TRACKING and class == "HUNTER")) and nested == L_UIDROPDOWNMENU_MENU_VALUE) then
-				table.insert(trackingInfos, info);
-			end
-		end
-	end
+            if ( category == "spell" ) then
+                info.tCoordLeft = 0.0625;
+                info.tCoordRight = 0.9;
+                info.tCoordTop = 0.0625;
+                info.tCoordBottom = 0.9;
+            else
+                info.tCoordLeft = 0;
+                info.tCoordRight = 1;
+                info.tCoordTop = 0;
+                info.tCoordBottom = 1;
+            end
+            if (level == 1 and
+                (nested < 0 or -- this tracking shouldn't be nested
+                (nested == HUNTER_TRACKING and class ~= "HUNTER") or
+                (numTracking == 1 and category == "spell"))) then -- this is a hunter tracking ability, but you only have one
+                table.insert(trackingInfos, info);
+            elseif (level == 2 and (nested == TOWNSFOLK or (nested == HUNTER_TRACKING and class == "HUNTER")) and nested == L_UIDROPDOWNMENU_MENU_VALUE) then
+                table.insert(trackingInfos, info);
+            end
+        end
+    end
 
-	table.sort(trackingInfos, function(a, b)
-		-- Sort low priority tracking spells to the end
-		local filterA = C_Minimap.GetTrackingFilter(a.arg1);
-		local filterB = C_Minimap.GetTrackingFilter(b.arg1);
-		local lowPriorityA = LOW_PRIORITY_TRACKING_SPELLS[filterA.spellID] or false;
-		local lowPriorityB = LOW_PRIORITY_TRACKING_SPELLS[filterB.spellID] or false;
-		if lowPriorityA ~= lowPriorityB then
-			return not lowPriorityA;
-		end
+    table.sort(trackingInfos, function(a, b)
+        -- Sort low priority tracking spells to the end
+        local filterA = C_Minimap.GetTrackingFilter(a.arg1);
+        local filterB = C_Minimap.GetTrackingFilter(b.arg1);
+        local lowPriorityA = LOW_PRIORITY_TRACKING_SPELLS[filterA.spellID] or false;
+        local lowPriorityB = LOW_PRIORITY_TRACKING_SPELLS[filterB.spellID] or false;
+        if lowPriorityA ~= lowPriorityB then
+            return not lowPriorityA;
+        end
 
-		-- Sort by id
-		return a.arg1 < b.arg1;
-	end);
+        -- Sort by id
+        return a.arg1 < b.arg1;
+    end);
 
-	for _, info in ipairs(trackingInfos) do
-		GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level);
-	end
+    for _, info in ipairs(trackingInfos) do
+        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level);
+    end
 
 end
 
@@ -437,67 +464,44 @@ local function Update_ZoneText()
     GwMapGradient.location:SetTextColor(GetLocTextColor())
 end
 
+local function UpdateUxpansionLandingPageTable()
+    for _, v in pairs(expansionLandingPageTable) do
+        v.enabled = C_Garrison.GetNumFollowers(v.enumFollowerValue) > 0
+    end
+
+    if M.ExpansionLandingPageDropDown then
+        GW.Libs.LibDD:UIDropDownMenu_RefreshAll(M.ExpansionLandingPageDropDown)
+    end
+end
+
 local function ExpansionLandingButtonDropDown_Initialize(self, level)
-    local NUM_EXPANSIONS_WITH_EXPANSION_LANDING_PAGE = 4
+    UpdateUxpansionLandingPageTable()
+
+    sort(expansionLandingPageTable, function(a, b)
+        return a.id < b.id
+    end)
+
     local info
-
-    for id = 1, NUM_EXPANSIONS_WITH_EXPANSION_LANDING_PAGE do
-        if id == 1 then
-            info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
-            info.text = GARRISON_LANDING_PAGE_TITLE .. " (Warlords of Draenor)"
-            info.notCheckable = true
-            info.func = function()
-                if (GarrisonLandingPage and GarrisonLandingPage:IsShown()) then
-                    HideUIPanel(GarrisonLandingPage)
-                end
-                ShowGarrisonLandingPage(Enum.GarrisonType.Type_6_0_Garrison)
-                GarrisonMinimap_HideHelpTip(ExpansionLandingPageMinimapButton)
-            end
-        elseif id == 2 then
-            info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
-            info.text = ORDER_HALL_LANDING_PAGE_TITLE .. " (Legion)"
-            info.notCheckable = true
-            info.func = function()
-                if (GarrisonLandingPage and GarrisonLandingPage:IsShown()) then
-                    HideUIPanel(GarrisonLandingPage)
-                end
-                ShowGarrisonLandingPage(Enum.GarrisonType.Type_7_0_Garrison)
-                GarrisonMinimap_HideHelpTip(ExpansionLandingPageMinimapButton)
-            end
-        elseif id == 3 then
-            info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
-            info.text = GARRISON_TYPE_8_0_LANDING_PAGE_TITLE .. " (Battle of Azeroth)"
-            info.notCheckable = true
-            info.func = function()
-                if (GarrisonLandingPage and GarrisonLandingPage:IsShown()) then
-                    HideUIPanel(GarrisonLandingPage)
-                end
-                ShowGarrisonLandingPage(Enum.GarrisonType.Type_8_0_Garrison)
-                GarrisonMinimap_HideHelpTip(ExpansionLandingPageMinimapButton)
-            end
-        elseif id == 4 then
-            info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
-            local pageTitle = GARRISON_TYPE_9_0_LANDING_PAGE_TITLE;
-            local activeCovenantID = C_Covenants.GetActiveCovenantID()
-            if activeCovenantID and activeCovenantID > 0 then
-                local covenantData = C_Covenants.GetCovenantData(activeCovenantID)
-                if covenantData then
-                    pageTitle = covenantData.name
-                end
-            end
-
-            info.text = pageTitle .. " (Shadowlands)"
-            info.notCheckable = true
-            info.func = function()
-                if (GarrisonLandingPage and GarrisonLandingPage:IsShown()) then
-                    HideUIPanel(GarrisonLandingPage)
-                end
-                ShowGarrisonLandingPage(Enum.GarrisonType.Type_9_0_Garrison)
-                GarrisonMinimap_HideHelpTip(ExpansionLandingPageMinimapButton)
-            end
+    for _, v in pairs(expansionLandingPageTable) do
+        info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo()
+        info.notCheckable = true
+        if not v.enabled then
+            info.disablecolor = "|cff666666"
         end
 
-        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level);
+        info.text = v.text
+        info.notClickable = not v.enabled
+        info.func = function()
+            if (GarrisonLandingPage and GarrisonLandingPage:IsShown()) then
+                HideUIPanel(GarrisonLandingPage)
+            end
+            local num = C_Garrison.GetAvailableMissions(GetPrimaryGarrisonFollowerType(v.enumValue))
+            if num == nil then return end
+            ShowGarrisonLandingPage(v.enumValue)
+            GarrisonMinimap_HideHelpTip(ExpansionLandingPageMinimapButton)
+        end
+
+        GW.Libs.LibDD:UIDropDownMenu_AddButton(info, level)
     end
 end
 
@@ -522,13 +526,14 @@ local function ExpansionLandingPageMinimapButtonDropdown(self)
     GW.Libs.LibDD:UIDropDownMenu_Initialize(dropdown, ExpansionLandingButtonDropDown_Initialize, "MENU")
     dropdown.noResize = true
 
+    M.ExpansionLandingPageDropDown = dropdown
+
     self:HookScript("OnClick", function(self, button)
         if button == "RightButton" then
             ToggleExpansionLandingPage()
             GW.Libs.LibDD:ToggleDropDownMenu(1, nil, dropdown, "cursor")
         end
     end)
-
 end
 
 local function HandleExpansionButton()
@@ -538,6 +543,8 @@ local function HandleExpansionButton()
     if not garrison.gw2Hooked then
         garrison:RegisterForClicks("LeftButtonUp", "RightButtonUp")
         ExpansionLandingPageMinimapButtonDropdown(garrison)
+        hooksecurefunc(ExpansionLandingPageMinimapButton, "HandleGarrisonEvent", UpdateUxpansionLandingPageTable)
+
         garrison.gw2Hooked = true
     end
 
