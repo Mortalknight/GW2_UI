@@ -530,8 +530,13 @@ local function ExpansionLandingPageMinimapButtonDropdown(self)
 
     self:HookScript("OnClick", function(self, button)
         if button == "RightButton" then
-            ToggleExpansionLandingPage()
+            if ExpansionLandingPage:IsVisible() then
+                ToggleExpansionLandingPage()
+            end
             GW.Libs.LibDD:ToggleDropDownMenu(1, nil, dropdown, "cursor")
+            if C_AddOns.IsAddOnLoaded("WarPlan") then
+                HideDropDownMenu(1)
+            end
         end
     end)
 end
