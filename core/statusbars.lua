@@ -39,19 +39,18 @@ local function getAnimationDurationDynamic(self,val1,val2,width)
 end
 
 local function addMask(self, mask, value)
-    if value == 0 then
-        self.maskContainer.mask0:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/0")
-    else
+    --if value == 0 then
+    --    self.maskContainer.mask0:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/0")
+    --else
         self.maskContainer.mask0:SetTexture("Interface/AddOns/GW2_UI/textures/hud/barmask/ramp/" .. mask)
-    end
+    --end
 end
 
 local function GetFillAmount(self)
-    if not self.fillAmount then return 0 end
-    return self.fillAmount
+    return self.fillAmount or 0
 end
 
-local function SetFillAmount(self, value)
+local function SetFillAmount(self, value, forced)
     local isVertical = (self:GetOrientation() == "VERTICAL") or false
     local totalWidth = self.totalWidth or isVertical and self:GetHeight() or self:GetWidth()
     local height = self.totalHeight or isVertical and self:GetWidth() or self:GetHeight()
@@ -114,7 +113,6 @@ local function SetFillAmount(self, value)
     end
 
     if not self.interpolateRampRound or interpolateRampRound ~= self.interpolateRampRound then
-        --local newMask = self.maskContainer["mask"..interpolateRampRound]
         self:addMask(interpolateRampRound, value)
 
         if isVertical then
@@ -123,7 +121,7 @@ local function SetFillAmount(self, value)
         end
         self.interpolateRampRound = interpolateRampRound
     end
-    if self.fill_threshold ~= barPosition then
+    if self.fill_threshold ~= barPosition or forced then
         if isVertical then
             self.maskContainer:SetPoint("BOTTOM", self.internalBar, "BOTTOM", 0, currentSegmentPosition)
         else
@@ -191,7 +189,7 @@ local function onupdate_AnimateBar(self, value)
 end
 
 local function ForceFillAmount(self, value)
-    SetFillAmount(self, value)
+    SetFillAmount(self, value, true)
     self:SetScript("OnUpdate", nil)
 end
 
@@ -232,7 +230,7 @@ local function UpdateBarSize(self)
     self.maskContainer:SetSize(totalWidth / numSpritesInAnimation, height)
 end
 
-local function hookStatusbarBehaviour(statusBar, smooth, animationType)
+local function hookStatusbarBehaviour(statusBar, smooth, animationType, name)
     if not AddToAnimation then
         AddToAnimation = GW.AddToAnimation
         round = GW.RoundInt

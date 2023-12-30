@@ -35,10 +35,10 @@ local function createNormalUnitFrame(ftype, revert)
     f.healPrediction = hg.healPrediction
     f.healthString = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
 
-
+    --GwTargetUnitFrame.health:GetValue()
     GW.hookStatusbarBehaviour(f.absorbOverlay,true)
     GW.hookStatusbarBehaviour(f.antiHeal,true)
-    GW.hookStatusbarBehaviour(f.health, true)
+    GW.hookStatusbarBehaviour(f.health, true, nil)
     GW.hookStatusbarBehaviour(f.absorbbg,true)
     GW.hookStatusbarBehaviour(f.healPrediction,false)
     GW.hookStatusbarBehaviour(f.castingbarNormal,false)
