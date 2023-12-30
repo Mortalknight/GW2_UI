@@ -4,34 +4,36 @@ local REALM_FLAGS = GW.REALM_FLAGS
 
 local stringtoboolean = {["true"] = true, ["false"] = false}
 
+local function AddTag(tagName, events, func)
+    GW.oUF.Tags.Events[tagName] = events
+    GW.oUF.Tags.Methods[tagName] = func
+end
+
 local function Create_Tags()
-    GW.oUF.Tags.Methods['GW2_Grid:name'] = function(unit)
+    AddTag("GW2_Grid:name", "UNIT_NAME_UPDATE INSTANCE_ENCOUNTER_ENGAGE_UNIT", function(unit)
         local name = UnitName(unit)
         if name then
             return name
         end
-    end
-    GW.oUF.Tags.Events['GW2_Grid:name'] = 'UNIT_NAME_UPDATE INSTANCE_ENCOUNTER_ENGAGE_UNIT'
+    end)
 
-    GW.oUF.Tags.Methods['GW2_Grid:leaderIcon'] = function(unit, realUnit, ...)
+    AddTag("GW2_Grid:leaderIcon", "PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE", function(unit, realUnit, ...)
         local setting = stringtoboolean[...]
         if not setting then return "" end
         if( UnitIsGroupLeader(unit)) then
             return "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:0:0:0:-2:64:64:4:60:4:60|t "
         end
-    end
-    GW.oUF.Tags.Events['GW2_Grid:leaderIcon'] = 'PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE'
+    end)
 
-    GW.oUF.Tags.Methods['GW2_Grid:assistIcon'] = function(unit, realUnit, ...)
+    AddTag("GW2_Grid:assistIcon", "PARTY_LEADER_CHANGED UNIT_NAME_UPDATE GROUP_ROSTER_UPDATE", function(unit, realUnit, ...)
         local setting = stringtoboolean[...]
         if not setting then return "" end
         if( UnitIsGroupAssistant(unit)) then
             return"|TInterface/AddOns/GW2_UI/textures/party/icon-assist:0:0:0:-2:64:64:4:60:4:60|t "
         end
-    end
-    GW.oUF.Tags.Events['GW2_Grid:assistIcon'] = 'PARTY_LEADER_CHANGED UNIT_NAME_UPDATE GROUP_ROSTER_UPDATE'
+    end)
 
-    GW.oUF.Tags.Methods['GW2_Grid:roleIcon'] = function(unit, realUnit, ...)
+    AddTag("GW2_Grid:roleIcon", "PARTY_LEADER_CHANGED UNIT_NAME_UPDATE PLAYER_ROLES_ASSIGNED GROUP_ROSTER_UPDATE" ,function(unit, realUnit, ...)
         local setting = stringtoboolean[...]
         if not setting then return "" end
 
@@ -39,10 +41,9 @@ local function Create_Tags()
         if GW.nameRoleIcon[role] then
             return GW.nameRoleIcon[role]
         end
-    end
-    GW.oUF.Tags.Events['GW2_Grid:roleIcon'] = 'PARTY_LEADER_CHANGED UNIT_NAME_UPDATE PLAYER_ROLES_ASSIGNED GROUP_ROSTER_UPDATE'
+    end)
 
-    GW.oUF.Tags.Methods['GW2_Grid:realmFlag'] = function(unit, realUnit, ...)
+    AddTag("GW2_Grid:realmFlag", "PARTY_LEADER_CHANGED UNIT_NAME_UPDATE", function(unit, realUnit, ...)
         local realmLocal = select(5, LRI:GetRealmInfoByUnit(unit))
         local realmflag = ""
         local setting = ...
@@ -51,10 +52,9 @@ local function Create_Tags()
         end
 
         return realmflag
-    end
-    GW.oUF.Tags.Events['GW2_Grid:realmFlag'] = 'PARTY_LEADER_CHANGED UNIT_NAME_UPDATE'
+    end)
 
-    GW.oUF.Tags.Methods['GW2_Grid:mainTank'] = function(unit, realUnit, ...)
+    AddTag("GW2_Grid:mainTank", "PARTY_LEADER_CHANGED UNIT_NAME_UPDATE", function(unit, realUnit, ...)
         local setting = stringtoboolean[...]
         if not setting then return "" end
 
@@ -73,10 +73,9 @@ local function Create_Tags()
                 end
             end
         end
-    end
-    GW.oUF.Tags.Events['GW2_Grid:mainTank'] = 'PARTY_LEADER_CHANGED UNIT_NAME_UPDATE'
+    end)
 
-    GW.oUF.Tags.Methods['GW2_Grid:healtValue'] = function(unit, realUnit, ...)
+    AddTag("GW2_Grid:healtValue", "UNIT_HEALTH UNIT_MAXHEALTH", function(unit, realUnit, ...)
         local healthstring = ""
         local setting = ...
         local health = UnitHealth(unit)
@@ -97,8 +96,7 @@ local function Create_Tags()
             if healthMax - health > 0 then healthstring = GW.CommaValue(healthMax - health) end
             return healthstring
         end
-    end
-    GW.oUF.Tags.Events['GW2_Grid:healtValue'] = 'UNIT_HEALTH UNIT_MAXHEALTH'
+    end)
 
 end
 GW.Create_Tags = Create_Tags

@@ -8,15 +8,18 @@ local function Construct_NameText(frame)
     name:SetJustifyH("LEFT")
     name:SetFont(UNIT_NAME_FONT, 12)
 
-	name:SetPoint('TOPLEFT', frame.Health, "TOPLEFT", 2, -2)
-    name:SetPoint('TOPRIGHT', frame.Health, "TOPRIGHT", -2, -2)
 
-	return name
+    return name
 end
 GW.Construct_NameText = Construct_NameText
 
 local function UpdateNameSettings(frame)
     local name = frame.Name
+
+
+    name:ClearAllPoints()
+    name:SetPoint("TOPLEFT", frame.Health, "TOPLEFT", 2, -2)
+
     frame:Tag(name, ("[GW2_Grid:mainTank(%s)][GW2_Grid:leaderIcon(%s)][GW2_Grid:assistIcon(%s)][GW2_Grid:roleIcon(%s)][GW2_Grid:name] [GW2_Grid:realmFlag(%s)]"):format(tostring(frame.showTankIcon), tostring(frame.showLeaderAssistIcon), tostring(frame.showLeaderAssistIcon), tostring(frame.showRoleIcon), frame.showRealmFlags))
 end
 GW.UpdateNameSettings = UpdateNameSettings
