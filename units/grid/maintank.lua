@@ -65,8 +65,6 @@ local function UpdateGridMaintankFrame(frame)
     frame.showTankIcon = GW.GridSettings.showTankIcon.TANK
     frame.showLeaderAssistIcon = GW.GridSettings.showLeaderAssistIcon.TANK
 
-    frame:DisableElement("MiddleIcon")
-
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
         frame:ClearAllPoints()

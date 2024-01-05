@@ -183,7 +183,7 @@ do
     local hyperLinkFunc = function(w, x, y)
         if w ~= "" then return end
         local emoji = (x~="" and x) and strmatch(x, 'gwuimoji:%%(.+)')
-		return (emoji and GW.Libs.Deflate:DecodeForPrint(emoji)) or y
+        return (emoji and GW.Libs.Deflate:DecodeForPrint(emoji)) or y
     end
     local fourString = function(v, w, x, y)
         return format("%s%s%s", v, w, (v and v == "1" and x) or y)
@@ -885,10 +885,10 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
         return
     end
 
-    local showLink = 1
-    local isMonster = strsub(chatType, 1, 7) == "MONSTER"
-    if isMonster or strsub(chatType, 1, 9) == "RAID_BOSS" then
-        showLink = nil
+    local showLink = true
+    local bossMonster = strsub(chatType, 1, 9) == "RAID_BOSS" or strsub(chatType, 1, 7) == "MONSTER"
+    if bossMonster then
+        showLink = false
         -- fix blizzard formatting errors from localization strings
         --arg1 = gsub(arg1, "%%%d", "%%s")
         arg1 = gsub(arg1, "(%d%%)([^%%%a])", "%1%%%2")
@@ -959,7 +959,7 @@ local function MessageFormatter(frame, info, chatType, chatGroup, chatTarget, ch
     end
 
     -- GW2 Staff Icon Chat Icon
-    if not isMonster then
+    if not bossMonster then
         local gw2Icon = gw2StaffList[playerName]
         if gw2Icon then
             pflag = pflag .. gw2Icon
