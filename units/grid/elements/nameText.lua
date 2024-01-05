@@ -21,5 +21,6 @@ local function UpdateNameSettings(frame)
     name:SetPoint("TOPLEFT", frame.Health, "TOPLEFT", 2, -2)
 
     frame:Tag(name, ("[GW2_Grid:mainTank(%s)][GW2_Grid:leaderIcon(%s)][GW2_Grid:assistIcon(%s)][GW2_Grid:roleIcon(%s)][GW2_Grid:name] [GW2_Grid:realmFlag(%s)]"):format(tostring(frame.showTankIcon), tostring(frame.showLeaderAssistIcon), tostring(frame.showLeaderAssistIcon), tostring(frame.showRoleIcon), frame.showRealmFlags))
+    --frame:Tag(name, "[GW2_Grid:name]")
 end
 GW.UpdateNameSettings = UpdateNameSettings

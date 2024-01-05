@@ -10,11 +10,8 @@ local function AddTag(tagName, events, func)
 end
 
 local function Create_Tags()
-    AddTag("GW2_Grid:name", "UNIT_NAME_UPDATE INSTANCE_ENCOUNTER_ENGAGE_UNIT", function(unit)
-        local name = UnitName(unit)
-        if name then
-            return name
-        end
+    AddTag("GW2_Grid:name", "UNIT_NAME_UPDATE", function(unit, realunit)
+        return UnitName(realunit or unit)
     end)
 
     AddTag("GW2_Grid:leaderIcon", "PARTY_LEADER_CHANGED GROUP_ROSTER_UPDATE", function(unit, realUnit, ...)
