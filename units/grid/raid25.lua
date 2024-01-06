@@ -36,36 +36,39 @@ GW.GW2_GridRaid25StyleRegister = GW2_GridRaid25StyleRegister
 
 local function UpdateGridRaid25Frame(frame)
     -- set frame settings
-    frame.useClassColor = GW.GridSettings.raidClassColor.RAID25
-    frame.showResscoureBar = GW.GridSettings.raidUnitPowerBar.RAID25
-    frame.showRealmFlags = GW.GridSettings.raidUnitFlag.RAID25
-    frame.healthStringFormat = GW.GridSettings.raidUnitHealthString.RAID25
-    frame.showTargetmarker = GW.GridSettings.raidUnitMarkers.RAID25
-    frame.unitWidth = tonumber(GW.GridSettings.raidWidth.RAID25)
-    frame.unitHeight = tonumber(GW.GridSettings.raidHeight.RAID25)
-    frame.raidShowImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.RAID25
-    frame.showAllDebuffs = GW.GridSettings.raidShowDebuffs.RAID25
-    frame.showOnlyDispelDebuffs = GW.GridSettings.raidShowOnlyDispelDebuffs.RAID25
-    frame.showImportendInstanceDebuffs = GW.GridSettings.raidShowImportendInstanceDebuffs.RAID25
-    frame.showAuraTooltipInCombat = GW.GridSettings.raidAuraTooltipInCombat.RAID25
-    frame.ignoredAuras = GW.GridSettings.ignored
-    frame.missingAuras = GW.GridSettings.missing
-    frame.raidIndicators = GW.GridSettings.raidIndicators
-    frame.showRaidIndicatorIcon = GW.GridSettings.raidIndicatorIcon
-    frame.showRaidIndicatorTimer = GW.GridSettings.raidIndicatorTime
-    frame.raidDebuffScale = GW.GridSettings.raidDebuffScale
-    frame.raidDispelDebuffScale = GW.GridSettings.raidDispelDebuffScale
-    frame.showRoleIcon = GW.GridSettings.showRoleIcon.RAID25
-    frame.showTankIcon = GW.GridSettings.showTankIcon.RAID25
-    frame.showLeaderAssistIcon = GW.GridSettings.showLeaderAssistIcon.RAID25
+    frame.useClassColor = GW.settings.RAID_CLASS_COLOR_RAID25
+    frame.showResscoureBar = GW.settings.RAID_POWER_BARS_RAID25
+    frame.showRealmFlags = GW.settings.RAID_UNIT_FLAGS_RAID25
+    frame.healthStringFormat = GW.settings.RAID_UNIT_HEALTH_RAID25
+    frame.showTargetmarker = GW.settings.RAID_UNIT_MARKERS_RAID25
+    frame.unitWidth = tonumber(GW.settings.RAID_WIDTH_RAID25)
+    frame.unitHeight = tonumber(GW.settings.RAID_HEIGHT_RAID25)
+    frame.raidShowImportendInstanceDebuffs = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID25
+    frame.showAllDebuffs = GW.settings.RAID_SHOW_DEBUFFS_RAID25
+    frame.showOnlyDispelDebuffs = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_RAID25
+    frame.showAuraTooltipInCombat = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_RAID25
+    frame.ignoredAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_IGNORED:trim():gsub("%s*,%s*", ","))))
+    frame.missingAuras = GW.FillTable({}, true, strsplit(",", (GW.settings.AURAS_MISSING:trim():gsub("%s*,%s*", ","))))
+
+    frame.raidIndicators = {}
+    for _, pos in ipairs(GW.INDICATORS) do
+        frame.raidIndicators[pos] = GW.settings["INDICATOR_" .. pos]
+    end
+    frame.showRaidIndicatorIcon = GW.settings.INDICATORS_ICON
+    frame.showRaidIndicatorTimer = GW.settings.INDICATORS_TIME
+    frame.raidDebuffScale = GW.settings.RAIDDEBUFFS_Scale
+    frame.raidDispelDebuffScale = GW.settings.DISPELL_DEBUFFS_Scale
+    frame.showRoleIcon = GW.settings.RAID_SHOW_ROLE_ICON_RAID25
+    frame.showTankIcon = GW.settings.RAID_SHOW_TANK_ICON_RAID25
+    frame.showLeaderAssistIcon = GW.settings.RAID_SHOW_LEADER_ICON_RAID25
 
     if not InCombatLockdown() then
         frame:SetSize(frame.unitWidth, frame.unitHeight)
         frame:ClearAllPoints()
 
-        if GW.GridSettings.enabled.RAID25 and not frame:IsEnabled() then
+        if GW.settings.RAID25_ENABLED and not frame:IsEnabled() then
             frame:Enable()
-        elseif not GW.GridSettings.enabled.RAID25 and frame:IsEnabled() then
+        elseif not GW.settings.RAID25_ENABLED and frame:IsEnabled() then
             frame:Disable()
         end
     end

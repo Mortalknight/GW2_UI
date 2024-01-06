@@ -1,7 +1,5 @@
 local _, GW = ...
 local GW_UF = GW.oUF
-local FillTable = GW.FillTable
-local INDICATORS = GW.INDICATORS
 
 local headers = {}
 GW.GridGroupHeaders = headers
@@ -113,25 +111,9 @@ local DIRECTION_TO_GROUP_ANCHOR_POINT = {
 
 local settings = {
     enabled = {},
-    missing = {},
-    ignored = {},
-    raidClassColor = {},
-    raidUnitHealthString = {},
-    raidUnitFlag = {},
-    raidUnitMarkers = {},
-    raidUnitPowerBar = {},
-    raidAuraTooltipInCombat = {},
-    raidShowDebuffs = {},
-    raidShowOnlyDispelDebuffs = {},
-    raidShowImportendInstanceDebuffs = {},
-    raidIndicators = {},
     groupSpacing = {},
     horizontalSpacing = {},
     verticalSpacing = {},
-    showRoleIcon = {},
-    showTankIcon = {},
-    showLeaderAssistIcon = {},
-
     raidWidth = {},
     raidHeight = {},
     startFromCenter = {},
@@ -190,7 +172,7 @@ local headerGroupBy = {
 }
 
 local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
-    --frame enabled settings
+    --frame enabled settings -- needed for config mode
     settings.enabled.RAID_PET = GW.settings.RAID_PET_FRAMES
     settings.enabled.PARTY = GW.settings.RAID_STYLE_PARTY
     settings.enabled.RAID40 = GW.settings.RAID_FRAMES
@@ -198,35 +180,7 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
     settings.enabled.RAID10 = GW.settings.RAID10_ENABLED
     settings.enabled.TANK = GW.settings.RAID_MAINTANK_FRAMES_ENABLED
 
-    -- generell settings
-    settings.raidDebuffScale = GW.settings.RAIDDEBUFFS_Scale
-    settings.raidDispelDebuffScale = GW.settings.DISPELL_DEBUFFS_Scale
-    settings.raidIndicatorIcon = GW.settings.INDICATORS_ICON
-    settings.raidIndicatorTime = GW.settings.INDICATORS_TIME
-    settings.aurasIgnored = GW.settings.AURAS_IGNORED
-    settings.aurasMissing = GW.settings.AURAS_MISSING
-    settings.missing = FillTable({}, true, strsplit(",", (settings.aurasMissing:trim():gsub("%s*,%s*", ","))))
-    settings.ignored = FillTable({}, true, strsplit(",", (settings.aurasIgnored:trim():gsub("%s*,%s*", ","))))
-
-    for _, pos in ipairs(INDICATORS) do
-        settings.raidIndicators[pos] = GW.settings["INDICATOR_" .. pos]
-    end
-
-    -- profile settings for the unitframes
-    settings.raidClassColor.PARTY = GW.settings.RAID_CLASS_COLOR_PARTY
-    settings.raidClassColor.RAID_PET = GW.settings.RAID_CLASS_COLOR_PET
-    settings.raidClassColor.RAID40 = GW.settings.RAID_CLASS_COLOR
-    settings.raidClassColor.RAID25 = GW.settings.RAID_CLASS_COLOR_RAID25
-    settings.raidClassColor.RAID10 = GW.settings.RAID_CLASS_COLOR_RAID10
-    settings.raidClassColor.TANK = GW.settings.RAID_CLASS_COLOR_TANK
-
-    settings.raidUnitHealthString.PARTY = GW.settings.RAID_UNIT_HEALTH_PARTY
-    settings.raidUnitHealthString.RAID_PET = GW.settings.RAID_UNIT_HEALTH_PET
-    settings.raidUnitHealthString.RAID40 = GW.settings.RAID_UNIT_HEALTH
-    settings.raidUnitHealthString.RAID25 = GW.settings.RAID_UNIT_HEALTH_RAID25
-    settings.raidUnitHealthString.RAID10 = GW.settings.RAID_UNIT_HEALTH_RAID10
-    settings.raidUnitHealthString.TANK = GW.settings.RAID_UNIT_HEALTH_TANK
-
+    -- profile settings for the header
     settings.horizontalSpacing.PARTY = GW.settings.RAID_UNITS_HORIZONTAL_SPACING_PARTY
     settings.horizontalSpacing.RAID_PET = GW.settings.RAID_UNITS_HORIZONTAL_SPACING_PET
     settings.horizontalSpacing.RAID40 = GW.settings.RAID_UNITS_HORIZONTAL_SPACING
@@ -248,55 +202,6 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
     settings.groupSpacing.RAID10 = GW.settings.RAID_UNITS_GROUP_SPACING_RAID10
     settings.groupSpacing.TANK = GW.settings.RAID_UNITS_GROUP_SPACING_TANK
 
-    settings.raidUnitFlag.PARTY = GW.settings.RAID_UNIT_FLAGS_PARTY
-    settings.raidUnitFlag.RAID_PET = GW.settings.RAID_UNIT_FLAGS_PET
-    settings.raidUnitFlag.RAID40 = GW.settings.RAID_UNIT_FLAGS
-    settings.raidUnitFlag.RAID25 = GW.settings.RAID_UNIT_FLAGS_RAID25
-    settings.raidUnitFlag.RAID10 = GW.settings.RAID_UNIT_FLAGS_RAID10
-    settings.raidUnitFlag.TANK = GW.settings.RAID_UNIT_FLAGS_TANK
-
-    settings.raidUnitMarkers.PARTY = GW.settings.RAID_UNIT_MARKERS_PARTY
-    settings.raidUnitMarkers.RAID_PET = GW.settings.RAID_UNIT_MARKERS_PET
-    settings.raidUnitMarkers.RAID40 = GW.settings.RAID_UNIT_MARKERS
-    settings.raidUnitMarkers.RAID25 = GW.settings.RAID_UNIT_MARKERS_RAID25
-    settings.raidUnitMarkers.RAID10 = GW.settings.RAID_UNIT_MARKERS_RAID10
-    settings.raidUnitMarkers.TANK = GW.settings.RAID_UNIT_MARKERS_TANK
-
-    settings.raidUnitPowerBar.PARTY = GW.settings.RAID_POWER_BARS_PARTY
-    settings.raidUnitPowerBar.RAID_PET = GW.settings.RAID_POWER_BARS_PET
-    settings.raidUnitPowerBar.RAID40 = GW.settings.RAID_POWER_BARS
-    settings.raidUnitPowerBar.RAID25 = GW.settings.RAID_POWER_BARS_RAID25
-    settings.raidUnitPowerBar.RAID10 = GW.settings.RAID_POWER_BARS_RAID10
-    settings.raidUnitPowerBar.TANK = GW.settings.RAID_POWER_BARS_TANK
-
-    settings.raidAuraTooltipInCombat.PARTY = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_PARTY
-    settings.raidAuraTooltipInCombat.RAID_PET = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_PET
-    settings.raidAuraTooltipInCombat.RAID40 = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT
-    settings.raidAuraTooltipInCombat.RAID25 = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_RAID25
-    settings.raidAuraTooltipInCombat.RAID10 = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_RAID10
-    settings.raidAuraTooltipInCombat.TANK = GW.settings.RAID_AURA_TOOLTIP_INCOMBAT_TANK
-
-    settings.raidShowDebuffs.PARTY = GW.settings.RAID_SHOW_DEBUFFS_PARTY
-    settings.raidShowDebuffs.RAID_PET = GW.settings.RAID_SHOW_DEBUFFS_PET
-    settings.raidShowDebuffs.RAID40 = GW.settings.RAID_SHOW_DEBUFFS
-    settings.raidShowDebuffs.RAID25 = GW.settings.RAID_SHOW_DEBUFFS_RAID25
-    settings.raidShowDebuffs.RAID10 = GW.settings.RAID_SHOW_DEBUFFS_RAID10
-    settings.raidShowDebuffs.TANK = GW.settings.RAID_SHOW_DEBUFFS_TANK
-
-    settings.raidShowOnlyDispelDebuffs.PARTY = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_PARTY
-    settings.raidShowOnlyDispelDebuffs.RAID_PET = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_PET
-    settings.raidShowOnlyDispelDebuffs.RAID40 = GW.settings.RAID_ONLY_DISPELL_DEBUFFS
-    settings.raidShowOnlyDispelDebuffs.RAID25 = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_RAID25
-    settings.raidShowOnlyDispelDebuffs.RAID10 = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_RAID10
-    settings.raidShowOnlyDispelDebuffs.TANK = GW.settings.RAID_ONLY_DISPELL_DEBUFFS_TANK
-
-    settings.raidShowImportendInstanceDebuffs.PARTY = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PARTY
-    settings.raidShowImportendInstanceDebuffs.RAID_PET = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_PET
-    settings.raidShowImportendInstanceDebuffs.RAID40 = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF
-    settings.raidShowImportendInstanceDebuffs.RAID25 = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID25
-    settings.raidShowImportendInstanceDebuffs.RAID10 = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_RAID10
-    settings.raidShowImportendInstanceDebuffs.TANK = GW.settings.RAID_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF_TANK
-
     settings.raidWidth.PARTY = tonumber(GW.settings.RAID_WIDTH_PARTY)
     settings.raidWidth.RAID_PET = tonumber(GW.settings.RAID_WIDTH_PET)
     settings.raidWidth.RAID40 = tonumber(GW.settings.RAID_WIDTH)
@@ -311,28 +216,6 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
     settings.raidHeight.RAID10 = tonumber(GW.settings.RAID_HEIGHT_RAID10)
     settings.raidHeight.TANK = tonumber(GW.settings.RAID_HEIGHT_TANK)
 
-    settings.showRoleIcon.PARTY = GW.settings.RAID_SHOW_ROLE_ICON_PARTY
-    settings.showRoleIcon.RAID_PET = GW.settings.RAID_SHOW_ROLE_ICON_PET
-    settings.showRoleIcon.RAID40 = GW.settings.RAID_SHOW_ROLE_ICON
-    settings.showRoleIcon.RAID25 = GW.settings.RAID_SHOW_ROLE_ICON_RAID25
-    settings.showRoleIcon.RAID10 = GW.settings.RAID_SHOW_ROLE_ICON_RAID10
-    settings.showRoleIcon.TANK = GW.settings.RAID_SHOW_ROLE_ICON_TANK
-
-    settings.showTankIcon.PARTY = GW.settings.RAID_SHOW_TANK_ICON_PARTY
-    settings.showTankIcon.RAID_PET = GW.settings.RAID_SHOW_TANK_ICON_PET
-    settings.showTankIcon.RAID40 = GW.settings.RAID_SHOW_TANK_ICON
-    settings.showTankIcon.RAID25 = GW.settings.RAID_SHOW_TANK_ICON_RAID25
-    settings.showTankIcon.RAID10 = GW.settings.RAID_SHOW_TANK_ICON_RAID10
-    settings.showTankIcon.TANK = GW.settings.RAID_SHOW_TANK_ICON_TANK
-
-    settings.showLeaderAssistIcon.PARTY = GW.settings.RAID_SHOW_LEADER_ICON_PARTY
-    settings.showLeaderAssistIcon.RAID_PET = GW.settings.RAID_SHOW_LEADER_ICON_PET
-    settings.showLeaderAssistIcon.RAID40 = GW.settings.RAID_SHOW_LEADER_ICON
-    settings.showLeaderAssistIcon.RAID25 = GW.settings.RAID_SHOW_LEADER_ICON_RAID25
-    settings.showLeaderAssistIcon.RAID10 = GW.settings.RAID_SHOW_LEADER_ICON_RAID10
-    settings.showLeaderAssistIcon.TANK = GW.settings.RAID_SHOW_LEADER_ICON_TANK
-
-    -- profile settings for the header
     settings.startFromCenter.PARTY = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER_PARTY
     settings.startFromCenter.RAID_PET = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER_PET
     settings.startFromCenter.RAID40 = GW.settings.UNITFRAME_ANCHOR_FROM_CENTER
@@ -458,37 +341,37 @@ local function UpdateGroupVisibility(header, profile, enabled)
         local visibilityToUseForGroups
 
         if profile == "RAID40" then
-            if settings.enabled.RAID40 and settings.enabled.RAID25 and settings.enabled.RAID10 then
+            if GW.settings.RAID_FRAMES and GW.settings.RAID25_ENABLED and GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", profiles.RAID40.visibility)
                 visibilityToUseForGroups = profiles.RAID40.visibility
-            elseif settings.enabled.RAID40 and not settings.enabled.RAID25 and settings.enabled.RAID10 then
+            elseif GW.settings.RAID_FRAMES and not GW.settings.RAID25_ENABLED and GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", profiles.RAID40.visibilityIncl25)
                 visibilityToUseForGroups = profiles.RAID40.visibilityIncl25
-            elseif settings.enabled.RAID40 and not settings.enabled.RAID25 and not settings.enabled.RAID10 then
+            elseif GW.settings.RAID_FRAMES and not GW.settings.RAID25_ENABLED and not GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", profiles.RAID40.visibilityAll)
                 visibilityToUseForGroups = profiles.RAID40.visibilityAll
-            elseif not settings.enabled.RAID40 then
+            elseif not GW.settings.RAID_FRAMES then
                 RegisterStateDriver(header, "visibility", "hide")
             end
         elseif profile == "RAID25" then
-            if settings.enabled.RAID25 and settings.enabled.RAID10 then
+            if GW.settings.RAID25_ENABLED and GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", profiles.RAID25.visibility)
                 visibilityToUseForGroups = profiles.RAID25.visibility
-            elseif settings.enabled.RAID25 and not settings.enabled.RAID10 then
+            elseif GW.settings.RAID25_ENABLED and not GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", profiles.RAID25.visibilityIncl10)
                 visibilityToUseForGroups = profiles.RAID25.visibilityIncl10
-            elseif not settings.enabled.RAID25 then
+            elseif not GW.settings.RAID25_ENABLED then
                 RegisterStateDriver(header, "visibility", "hide")
             end
         elseif profile == "RAID10" then
-            if settings.enabled.RAID10 then
+            if GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", profiles.RAID10.visibility)
                 visibilityToUseForGroups = profiles.RAID10.visibility
             else
                 RegisterStateDriver(header, "visibility", "hide")
             end
         elseif profile == "RAID_PET" then
-            if settings.enabled.RAID_PET then
+            if GW.settings.RAID_PET_FRAMES then
                 RegisterStateDriver(header, "visibility", profiles.RAID_PET.visibility)
                 visibilityToUseForGroups = profiles.RAID_PET.visibility
             else
@@ -661,37 +544,37 @@ local function UpdateGridHeader(profile)
             RegisterStateDriver(header, "visibility", profiles.RAID40.visibility)
             UpdateGroupVisibility(header, profile, true)
         elseif profile == "RAID25" then
-            GW.ToggleMover(header.gwMover, settings.enabled.RAID25)
-            if not settings.enabled.RAID25 then
+            GW.ToggleMover(header.gwMover, GW.settings.RAID25_ENABLED)
+            if not GW.settings.RAID25_ENABLED then
                 RegisterStateDriver(header, "visibility", "hide")
             else
                 RegisterStateDriver(header, "visibility", profiles.RAID25.visibility)
             end
-            UpdateGroupVisibility(header, profile, settings.enabled.RAID25)
+            UpdateGroupVisibility(header, profile, GW.settings.RAID25_ENABLED)
         elseif profile == "RAID10" then
-            GW.ToggleMover(header.gwMover, settings.enabled.RAID10)
-            if not settings.enabled.RAID10 then
+            GW.ToggleMover(header.gwMover, GW.settings.RAID10_ENABLED)
+            if not GW.settings.RAID10_ENABLED then
                 RegisterStateDriver(header, "visibility", "hide")
             else
                 RegisterStateDriver(header, "visibility", profiles.RAID10.visibility)
             end
-            UpdateGroupVisibility(header, profile, settings.enabled.RAID10)
+            UpdateGroupVisibility(header, profile, GW.settings.RAID10_ENABLED)
         elseif profile == "RAID_PET" then
-            GW.ToggleMover(header.gwMover, settings.enabled.RAID_PET)
-            if not settings.enabled.RAID_PET then
+            GW.ToggleMover(header.gwMover, GW.settings.RAID_PET_FRAMES)
+            if not GW.settings.RAID_PET_FRAMES then
                 RegisterStateDriver(header, "visibility", "hide")
             else
                 RegisterStateDriver(header, "visibility", profiles.RAID_PET.visibility)
             end
-            UpdateGroupVisibility(header, profile, settings.enabled.RAID_PET)
+            UpdateGroupVisibility(header, profile, GW.settings.RAID_PET_FRAMES)
         elseif profile == "TANK" then
-            GW.ToggleMover(header.gwMover, settings.enabled.TANK)
-            if not settings.enabled.TANK then
+            GW.ToggleMover(header.gwMover, GW.settings.RAID_MAINTANK_FRAMES_ENABLED)
+            if not GW.settings.RAID_MAINTANK_FRAMES_ENABLED then
                 RegisterStateDriver(header, "visibility", "hide")
             else
                 RegisterStateDriver(header, "visibility", profiles.TANK.visibility)
             end
-            UpdateGroupVisibility(header, profile, settings.enabled.TANK)
+            UpdateGroupVisibility(header, profile, GW.settings.RAID_MAINTANK_FRAMES_ENABLED)
         end
     end
 
@@ -745,7 +628,7 @@ local function Setup(self)
         if profile == "PARTY" then
             GW.RegisterMovableFrame(Header, GW.L["Group Frames"], "raid_party_pos",  ALL .. ",Unitframe,Group", nil, {"default", "default"})
         elseif profile == "RAID_PET" then
-            GW.RegisterMovableFrame(Header, GW.L["Raid pet's Grid"], "raid_pet_pos",  ALL .. ",Unitframe,Rid", nil, {"default", "default"})
+            GW.RegisterMovableFrame(Header, GW.L["Raid pet's Grid"], "raid_pet_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
         elseif profile == "RAID40" then
             GW.RegisterMovableFrame(Header, RAID_FRAMES_LABEL .. ": " .. options.size, "raid_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
         elseif profile == "RAID25" then

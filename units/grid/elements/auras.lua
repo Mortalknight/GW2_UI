@@ -174,7 +174,7 @@ local function FilterAura(self, unit, data)
             end
         end
 
-        if parent.showImportendInstanceDebuffs and not shouldDisplay then
+        if parent.raidShowImportendInstanceDebuffs and not shouldDisplay then
             shouldDisplay = isImportant
         end
 
