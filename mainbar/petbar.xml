@@ -33,12 +33,12 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar name="$parentHealth" parentKey="health" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            <StatusBar name="$parentHealth" parentKey="health" inherits="GwStatusBarTemplate">
                 <Size x="230" y="16"/>
                 <Anchors>
                     <Anchor point="left" relativePoint="LEFT" relativeKey="$parent.Background" x="1" y="0"/>
                 </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
+                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/statusbar"/>
                 <Layers>
                     <Layer level="OVERLAY">
                         <FontString name="$parentString" parentKey="text" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
@@ -51,13 +51,12 @@
                     </Layer>
                 </Layers>
             </StatusBar>
-            <StatusBar parentKey="resource" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            <StatusBar parentKey="resource" inherits="GwStatusBarTemplate">
                 <Size x="230" y="2"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.health" x="0" y="-2"/>
                 </Anchors>
-                <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
-
+                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/statusbar"/>
             </StatusBar>
             <Frame parentKey="auras">
                 <Size x="230" y="100"/>

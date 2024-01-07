@@ -204,12 +204,50 @@ local function UpdatePetCooldown(self)
     end
 end
 
+local function updatePowerData(self)
+    local powerType, powerToken = UnitPowerType("pet")
+    local resource = UnitPower("pet", powerType)
+    local resourceMax = UnitPowerMax("pet", powerType)
+    local resourcePrec = 0
+
+    if resource ~= nil and resource > 0 and resourceMax > 0 then
+        resourcePrec = resource / resourceMax
+    end
+
+    if PowerBarColorCustom[powerToken] then
+        local pwcolor = PowerBarColorCustom[powerToken]
+        self.resource:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
+    end
+
+    self.resource:SetFillAmount(resourcePrec)
+end
+
+local function updateHealthData(self)
+    local health = UnitHealth("pet")
+    local healthMax = UnitHealthMax("pet")
+    local healthprec = 0
+
+    if health > 0 and healthMax > 0 then
+        healthprec = health / healthMax
+    end
+
+    self.health:SetFillAmount(healthprec)
+
+    self.health.barOnUpdate = function()
+        self.health.text:SetText(CommaValue(health))
+    end
+end
+
 local function updatePetData(self, event, unit)
     if not UnitExists("pet") then
         return
     end
-
-    if event == "UNIT_AURA" then
+    if event == "PLAYER_ENTERING_WORLD" then
+        SetPortraitTexture(self.portrait, "pet")
+        UpdatePetActionBar(self, event, unit)
+        updateHealthData(self)
+        updatePowerData(self)
+    elseif event == "UNIT_AURA" then
         UpdateBuffLayout(self, event, unit)
         return
     elseif event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
@@ -225,54 +263,16 @@ local function updatePetData(self, event, unit)
         end
         self:UnregisterEvent("PLAYER_REGEN_ENABLED")
         return
-    elseif GW.IsIn(event, "PET_UI_UPDATE", "PET_BAR_UPDATE", "PLAYER_CONTROL_GAINED", "PLAYER_CONTROL_LOST", "PLAYER_ENTERING_WORLD", "PLAYER_FARSIGHT_FOCUS_CHANGED", "SPELLS_CHANGED", "UNIT_FLAGS", "UNIT_PET") then
+    elseif GW.IsIn(event, "PET_UI_UPDATE", "PET_BAR_UPDATE", "PLAYER_CONTROL_GAINED", "PLAYER_CONTROL_LOST", "PLAYER_FARSIGHT_FOCUS_CHANGED", "SPELLS_CHANGED", "UNIT_FLAGS", "UNIT_PET") then
         SetPortraitTexture(self.portrait, "pet")
         UpdatePetActionBar(self, event, unit)
-
-        if event  ~= "UNIT_PET" then return end
     elseif event == "PET_BAR_UPDATE_COOLDOWN" then
         UpdatePetCooldown(self)
+    elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" then
+        updateHealthData(self)
+    elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
+        updatePowerData(self)
     end
-
-    local health = UnitHealth("pet")
-    local healthMax = UnitHealthMax("pet")
-    local healthprec = 0
-
-    local powerType, powerToken, _ = UnitPowerType("pet")
-    local resource = UnitPower("pet", powerType)
-    local resourceMax = UnitPowerMax("pet", powerType)
-    local resourcePrec = 0
-
-    if health > 0 and healthMax > 0 then
-        healthprec = health / healthMax
-    end
-
-    if resource ~= nil and resource > 0 and resourceMax > 0 then
-        resourcePrec = resource / resourceMax
-    end
-
-    if PowerBarColorCustom[powerToken] then
-        local pwcolor = PowerBarColorCustom[powerToken]
-        self.resource:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
-    end
-
-    self.resource:SetValue(resourcePrec)
-
-    if self.health.animationCurrent == nil then
-        self.health.animationCurrent = 0
-    end
-    AddToAnimation(
-        "petBarAnimation",
-        self.health.animationCurrent,
-        healthprec,
-        GetTime(),
-        0.2,
-        function(p)
-            self.health:SetValue(p)
-        end
-    )
-    self.health.animationCurrent = healthprec
-    self.health.text:SetText(CommaValue(health))
 end
 GW.AddForProfiling("petbar", "updatePetData", updatePetData)
 
@@ -288,6 +288,13 @@ GW.TogglePetAuraPosition = TogglePetAuraPosition
 
 local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
+
+    GW.hookStatusbarBehaviour(playerPetFrame.health, true)
+    GW.hookStatusbarBehaviour(playerPetFrame.resource, true)
+
+    playerPetFrame.health.customMaskSize = 64
+    playerPetFrame.resource.customMaskSize = 64
+
     playerPetFrame.buttons = {}
 
     PetActionBar:UnregisterEvent("PET_BAR_UPDATE")
