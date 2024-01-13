@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Button name="GwPartyFrame" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
+    <Button name="GwPartyFrame" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true">
         <Size x="82" y="80"></Size>
         <Anchors>
             <Anchor point="TOPLEFT"></Anchor>
@@ -91,7 +91,7 @@
         </Frames>
     </Button>
 
-    <Button name="GwPartyPetFrame" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
+    <Button name="GwPartyPetFrame" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true">
         <Size x="65" y="15"></Size>
         <Anchors>
             <Anchor point="TOPLEFT"></Anchor>

@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Button name="GwTargetFrameTemplate" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
+    <Button name="GwTargetFrameTemplate" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true">
         <Size x="378" y="82"/>
         <HitRectInsets>
             <AbsInset left="0" right="40" top="10" bottom="20"/>
@@ -186,7 +186,7 @@
             <OnEvent function="target_OnEvent"/>
         </Scripts>
     </Button>
-    <Button name="GwTargetFrameSmallTemplate" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate" virtual="true">
+    <Button name="GwTargetFrameSmallTemplate" frameStrata="LOW" toplevel="true" parent="UIParent" inherits="SecureUnitButtonTemplate,PingableUnitFrameTemplate" virtual="true">
         <Size x="146" y="128"/>
         <HitRectInsets>
             <AbsInset left="0" right="40" top="10" bottom="20"/>
