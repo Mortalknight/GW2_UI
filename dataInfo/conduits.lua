@@ -17,7 +17,7 @@ local function LandingButton_OnEnter(self)
 
         -- load Soulbinds UI if needed (Blizzard one)
         if not C_AddOns.IsAddOnLoaded("Blizzard_Soulbinds") then
-            C_AddOns.IsAddOnLoaded("Blizzard_Soulbinds")
+            C_AddOns.LoadAddOn("Blizzard_Soulbinds")
         end
 
         GameTooltip:AddLine(" ")
