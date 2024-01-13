@@ -298,7 +298,7 @@ GW.globalDefault = {
 
         targettarget_pos= {
             point= "TOP",
-            elativePoint= "TOP",
+            relativePoint= "TOP",
             xOfs= 250,
             yOfs= -110,
             hasMoved= false,
