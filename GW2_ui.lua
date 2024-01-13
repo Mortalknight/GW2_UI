@@ -645,7 +645,7 @@ local function evPlayerLogin(self)
     GW.LoadDetailsSkin()
     GW.LoadImmersionAddonSkin()
 
-    --GW.SkinAndEnhanceColorPicker() --TODO 10.2.5
+    GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()
     GW.MakeAltPowerBarMovable()
     GW.WidgetUISetup()

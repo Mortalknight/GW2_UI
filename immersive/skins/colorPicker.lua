@@ -16,7 +16,7 @@ local function extendToSix(str)
 end
 
 local function UpdateAlphaText(alpha)
-    if not alpha then alpha = alphaValue(OpacitySliderFrame:GetValue()) end
+    if not alpha then alpha = alphaValue(ColorPickerFrame:GetColorAlpha()) end
 
     ColorPPBoxA:SetText(alpha)
 end
@@ -41,7 +41,7 @@ local function UpdateAlpha(tbox)
         num = 100
     end
 
-    OpacitySliderFrame:SetValue(1 - (num / 100))
+    ColorPickerFrame.Content.ColorPicker:SetColorAlpha(1 - (num / 100))
 end
 
 local function ColorPPBoxA_SetFocus()
@@ -53,17 +53,17 @@ local function ColorPPBoxR_SetFocus()
 end
 
 local function UpdateColor()
-    local r, g, b = GetHexColor(ColorPPBoxH)
-    ColorPickerFrame:SetColorRGB(r, g, b)
-    ColorSwatch:SetColorTexture(r, g, b)
+    local r, g, b = GetHexColor(ColorPickerFrame.Content.HexBox)
+    ColorPickerFrame.Content.ColorPicker:SetColorRGB(r, g, b)
+    ColorPickerFrame.Content.ColorSwatchCurrent:SetColorTexture(r, g, b)
 end
 
 local function UpdateColorTexts(r, g, b, box)
     if not (r and g and b) then
-        r, g, b = ColorPickerFrame:GetColorRGB()
+        r, g, b = ColorPickerFrame.Content.ColorPicker:GetColorRGB()
 
         if box then
-            if box == ColorPPBoxH then
+            if box == ColorPickerFrame.Content.HexBox then
                 r, g, b = GetHexColor(box)
             else
                 local num = box:GetNumber()
@@ -82,7 +82,7 @@ local function UpdateColorTexts(r, g, b, box)
 
     r, g, b = r * 255, g * 255, b * 255
 
-    ColorPPBoxH:SetText(("%.2x%.2x%.2x"):format(r, g, b))
+    ColorPickerFrame.Content.HexBox:SetText(("%.2x%.2x%.2x"):format(r, g, b))
     ColorPPBoxR:SetText(r)
     ColorPPBoxG:SetText(g)
     ColorPPBoxB:SetText(b)
@@ -97,7 +97,7 @@ local function delayCall()
 end
 
 local function onColorSelect(frame, r, g, b)
-    ColorSwatch:SetColorTexture(r, g, b)
+    ColorPickerFrame.Content.ColorSwatchCurrent:SetColorTexture(r, g, b)
     UpdateColorTexts(r, g, b)
 
     if r == 0 and g == 0 and b == 0 then
@@ -151,32 +151,32 @@ local function SkinAndEnhanceColorPicker()
     ColorPickerFrame.Header:GwStripTextures()
     ColorPickerFrame.Header.Text:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
 
-    ColorPickerCancelButton:ClearAllPoints()
-    ColorPickerOkayButton:ClearAllPoints()
-    ColorPickerCancelButton:SetPoint("BOTTOMRIGHT", ColorPickerFrame, "BOTTOMRIGHT", -6, 6)
-    ColorPickerCancelButton:SetPoint("BOTTOMLEFT", ColorPickerFrame, "BOTTOM", 0, 6)
-    ColorPickerOkayButton:SetPoint("BOTTOMLEFT", ColorPickerFrame,"BOTTOMLEFT", 6,6)
-    ColorPickerOkayButton:SetPoint("RIGHT", ColorPickerCancelButton,"LEFT", -4,0)
-    OpacitySliderFrame:GwSkinSliderFrame()
-    ColorPickerOkayButton:GwSkinButton(false, true)
-    ColorPickerCancelButton:GwSkinButton(false, true)
+    ColorPickerFrame.Footer.CancelButton:ClearAllPoints()
+    ColorPickerFrame.Footer.OkayButton:ClearAllPoints()
+    ColorPickerFrame.Footer.CancelButton:SetPoint("BOTTOMRIGHT", ColorPickerFrame, "BOTTOMRIGHT", -6, 6)
+    ColorPickerFrame.Footer.CancelButton:SetPoint("BOTTOMLEFT", ColorPickerFrame, "BOTTOM", 0, 6)
+    ColorPickerFrame.Footer.OkayButton:SetPoint("BOTTOMLEFT", ColorPickerFrame,"BOTTOMLEFT", 6,6)
+    ColorPickerFrame.Footer.OkayButton:SetPoint("RIGHT", ColorPickerFrame.Footer.CancelButton,"LEFT", -4,0)
+    --OpacitySliderFrame:GwSkinSliderFrame()
+    ColorPickerFrame.Footer.OkayButton:GwSkinButton(false, true)
+    ColorPickerFrame.Footer.CancelButton:GwSkinButton(false, true)
 
     ColorPickerFrame:HookScript("OnShow", function(frame)
         if frame.hasOpacity then
             ColorPPBoxA:Show()
             ColorPPBoxLabelA:Show()
-            ColorPPBoxH:SetScript("OnTabPressed", ColorPPBoxA_SetFocus)
+            ColorPickerFrame.Content.HexBox:SetScript("OnTabPressed", ColorPPBoxA_SetFocus)
             UpdateAlphaText()
             UpdateColorTexts()
         else
             ColorPPBoxA:Hide()
             ColorPPBoxLabelA:Hide()
-            ColorPPBoxH:SetScript("OnTabPressed", ColorPPBoxR_SetFocus)
+            ColorPickerFrame.Content.HexBox:SetScript("OnTabPressed", ColorPPBoxR_SetFocus)
             UpdateColorTexts()
         end
 
-        OpacitySliderFrame:SetScript("OnValueChanged", onValueChanged)
-        frame:SetScript("OnColorSelect", onColorSelect)
+        --frame.Content.ColorPicker:SetScript("OnValueChanged", onValueChanged)
+        frame.Content.ColorPicker:SetScript("OnColorSelect", onColorSelect)
     end)
 
     --class color button
@@ -187,46 +187,39 @@ local function SkinAndEnhanceColorPicker()
 
     b:SetScript("OnClick", function()
         local color = GW.GWGetClassColor(GW.myclass, true, true)
-        ColorPickerFrame:SetColorRGB(color.r, color.g, color.b)
-        ColorSwatch:SetColorTexture(color.r, color.g, color.b)
+        ColorPickerFrame.Content.ColorPicker:SetColorRGB(color.r, color.g, color.b)
+        ColorPickerFrame.Content.ColorSwatchCurrent:SetColorTexture(color.r, color.g, color.b)
         if ColorPickerFrame.hasOpacity then
-            OpacitySliderFrame:SetValue(0)
+            ColorPickerFrame.Content.ColorPicker:SetColorAlpha(0)
         end
     end)
 
     -- set up edit box frames and interior label and text areas
-    local boxes = {"R", "G", "B", "H", "A"}
+    local boxes = {"R", "G", "B", "A"}
     for i = 1, #boxes do
         local rgb = boxes[i]
         local box = CreateFrame("EditBox", "ColorPPBox" .. rgb, ColorPickerFrame, "InputBoxTemplate")
-        box:SetPoint("TOP", "ColorPickerWheel", "BOTTOM", 0, -15)
+        box:SetPoint("TOP", ColorPickerFrame.Content.ColorPicker.Wheel, "BOTTOM", 0, -15)
         box:SetFrameStrata("DIALOG")
         box:SetAutoFocus(false)
-        box:SetTextInsets(0,7,0,0)
+        box:SetTextInsets(0, 7, 0, 0)
         box:SetJustifyH("RIGHT")
         box:SetHeight(24)
         box:SetID(i)
         GW.SkinTextBox(box.Middle, box.Left, box.Right)
 
-        -- hex entry box
-        if i == 4 then
-            box:SetMaxLetters(6)
-            box:SetWidth(56)
-            box:SetNumeric(false)
-        else
-            box:SetMaxLetters(3)
-            box:SetWidth(40)
-            box:SetNumeric(true)
-        end
+        box:SetMaxLetters(3)
+        box:SetWidth(40)
+        box:SetNumeric(true)
 
         -- label
         local label = box:CreateFontString("ColorPPBoxLabel" .. rgb, "ARTWORK", "GameFontNormalSmall")
         label:SetPoint("RIGHT", "ColorPPBox" .. rgb, "LEFT", -5, 0)
-        label:SetText(i == 4 and "#" or rgb)
+        label:SetText(rgb)
         label:SetTextColor(1, 1, 1)
 
         -- set up scripts to handle event appropriately
-        if i == 5 then
+        if i == 4 then
             box:SetScript("OnKeyUp", function(eb, key)
                 local copyPaste = IsControlKeyDown() and key == "V"
                 if key == "BACKSPACE" or copyPaste or (strlen(key) == 1 and not IsModifierKeyDown()) then
@@ -256,9 +249,14 @@ local function SkinAndEnhanceColorPicker()
         box:Show()
     end
 
-    ColorPPBoxA:SetPoint("RIGHT", ColorPickerCancelButton, "RIGHT", 0, 20)
-    ColorPPBoxH:SetPoint("RIGHT", ColorPPBoxA, "LEFT", -15, 0)
-    ColorPPBoxB:SetPoint("RIGHT", ColorPPBoxH, "LEFT", -40, 0)
+    GW.SkinTextBox(ColorPickerFrame.Content.HexBox.Middle, ColorPickerFrame.Content.HexBox.Left, ColorPickerFrame.Content.HexBox.Right)
+    ColorPickerFrame.Content.HexBox:SetMaxLetters(6)
+    ColorPickerFrame.Content.HexBox:SetWidth(56)
+    ColorPickerFrame.Content.HexBox:SetNumeric(false)
+
+    ColorPPBoxA:SetPoint("RIGHT", ColorPickerFrame.Footer.CancelButton, "RIGHT", 0, 20)
+    ColorPickerFrame.Content.HexBox:SetPoint("RIGHT", ColorPPBoxA, "LEFT", -15, 0)
+    ColorPPBoxB:SetPoint("RIGHT", ColorPickerFrame.Content.HexBox, "LEFT", -40, 0)
     ColorPPBoxG:SetPoint("RIGHT", ColorPPBoxB, "LEFT", -25, 0)
     ColorPPBoxR:SetPoint("RIGHT", ColorPPBoxG, "LEFT", -25, 0)
 
