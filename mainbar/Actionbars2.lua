@@ -639,6 +639,7 @@ local function main_OnEvent(_, event)
                 GW.Libs.LEMO:SetActiveLayout("GW2_Layout")
                 if createdLayout then
                     GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.IconSize, 5)
+                    GW.Libs.LEMO:SetFrameSetting(MainMenuBar, Enum.EditModeActionBarSetting.HideBarArt, 1)
                     GW.Libs.LEMO:SetFrameSetting(MultiBarBottomLeft, Enum.EditModeActionBarSetting.IconSize, 5)
                     GW.Libs.LEMO:SetFrameSetting(MultiBarBottomRight, Enum.EditModeActionBarSetting.IconSize, 5)
                     GW.Libs.LEMO:SetFrameSetting(MultiBarRight, Enum.EditModeActionBarSetting.IconSize, 5)
@@ -688,7 +689,6 @@ local function updateMainBar()
 
         if btn then
             btn:SetScript("OnUpdate", nil) -- disable the default button update handler
-            btn.RightDivider:Hide()
             btn.SlotArt:Hide()
 
             local hotkey = _G["ActionButton" .. i .. "HotKey"]

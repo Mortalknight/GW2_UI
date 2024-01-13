@@ -49,28 +49,28 @@ GW.AddForProfiling("auras", "sortAuraList", sortAuraList)
 
 local function getBuffs(unit, filter, revert)
     local buffList = {}
-    local name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID
+    local auraData
     local time = GetTime()
     if filter == nil then
         filter = ""
     end
     for i = 1, 40 do
-        name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitBuff(unit, i, filter)
-        if name then
+        auraData = C_UnitAuras.GetBuffDataByIndex(unit, i, filter)
+        if auraData then
             buffList[i] = {}
             local bli = buffList[i]
             bli.id = i
 
-            bli.name = name
-            bli.icon = icon
-            bli.count = count
-            bli.dispelType = dispelType
-            bli.duration = duration
-            bli.expires = expires
-            bli.caster = caster
-            bli.isStealable = isStealable
-            bli.shouldConsolidate = shouldConsolidate
-            bli.spellID = spellID
+            bli.name = auraData.name
+            bli.icon = auraData.icon
+            bli.count = auraData.applications
+            bli.dispelType = auraData.dispelName
+            bli.duration = auraData.duration
+            bli.expires = auraData.expirationTime
+            bli.caster = auraData.sourceUnit
+            bli.isStealable = auraData.isStealable
+            bli.shouldConsolidate = auraData.nameplateShowPersonal
+            bli.spellID = auraData.spellId
 
             bli.timeremaning = bli.duration <= 0 and 500001 or bli.expires - time
         end
@@ -86,28 +86,28 @@ local function getDebuffs(unit, filter, revert)
     local counter = 0
     local filterToUse = nil
     local time = GetTime()
-    local name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID
+    local auraData
     if not showImportant then
         filterToUse = filter
     end
     for i = 1, 40 do
-        name, icon, count, dispelType, duration, expires, caster, isStealable, shouldConsolidate, spellID = UnitDebuff(unit, i, filterToUse)
-        if name and ((showImportant and (caster == "player" or GW.ImportendRaidDebuff[spellID])) or not showImportant) then
+        auraData = C_UnitAuras.GetDebuffDataByIndex(unit, i, filterToUse)
+        if auraData and ((showImportant and (auraData.sourceUnit == "player" or GW.ImportendRaidDebuff[auraData.spellId])) or not showImportant) then
             counter = counter + 1
             debuffList[counter] = {}
             local dbi = debuffList[counter]
             dbi.id = i
 
-            dbi.name = name
-            dbi.icon = icon
-            dbi.count = count
-            dbi.dispelType = dispelType
-            dbi.duration = duration
-            dbi.expires = expires
-            dbi.caster = caster
-            dbi.isStealable = isStealable
-            dbi.shouldConsolidate = shouldConsolidate
-            dbi.spellID  = spellID
+            dbi.name = auraData.name
+            dbi.icon = auraData.icon
+            dbi.count = auraData.applications
+            dbi.dispelType = auraData.dispelName
+            dbi.duration = auraData.duration
+            dbi.expires = auraData.expirationTime
+            dbi.caster = auraData.sourceUnit
+            dbi.isStealable = auraData.isStealable
+            dbi.shouldConsolidate = auraData.nameplateShowPersonal
+            dbi.spellID  = auraData.spellId
 
             dbi.timeremaning = dbi.duration <= 0 and 500001 or dbi.expires - time
         end

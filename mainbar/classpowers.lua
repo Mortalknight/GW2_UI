@@ -256,12 +256,12 @@ local function findBuff(unit, searchID)
             return auraInfo.name, auraInfo.applications, auraInfo.duration, auraInfo.expirationTime
         end
     else
-        local name, count, duration, expires, spellID
+        local auraData
         for i = 1, 40 do
-            name, _, count, _, duration, expires, _, _, _, spellID, _ = UnitAura(unit, i)
-            if spellID == searchID then
-                return name, count, duration, expires
-            elseif not spellID then
+            auraData = C_UnitAuras.GetAuraDataByIndex(unit, i)
+            if auraData and auraData.spellId == searchID then
+                return auraData.name, auraData.applications, auraData.duration, auraData.expirationTime
+            elseif not auraData then
                 break
             end
         end
@@ -271,15 +271,14 @@ local function findBuff(unit, searchID)
 end
 GW.AddForProfiling("classpowers", "findBuff", findBuff)
 
-local function findDebuff(unit, searchID,unitSource)
-    local name, count, duration, expires, spellID,caster
+local function findDebuff(unit, searchID, unitSource)
+    local auraData
     for i = 1, 40 do
-        name, _, count, _, duration, expires, caster, _, _, spellID, _ = UnitDebuff(unit, i)
-    
-        
-        if (unitSource==caster and spellID == searchID) or (unitSource==nil and spellID == searchID)  then
-            return name, count, duration, expires
-        elseif not spellID then
+        auraData = C_UnitAuras.GetDebuffDataByIndex(unit, i)
+
+        if auraData and ((unitSource == auraData.sourceUnit and auraData.spellId == searchID) or (unitSource == nil and auraData.spellId == searchID)) then
+            return auraData.name, auraData.applications, auraData.duration, auraData.expirationTime
+        elseif not auraData then
             break
         end
     end
@@ -291,21 +290,21 @@ GW.AddForProfiling("classpowers", "findDebuff", findDebuff)
 
 local searchIDs = {}
 local function findBuffs(unit, ...)
-    local name, count, duration, expires, spellID
+    local auraData
     table.wipe(searchIDs)
     for i = 1, select("#", ...) do
         searchIDs["ID" .. select(i, ...)] = true
     end
     local results = nil
     for i = 1, 40 do
-        name, _, count, _, duration, expires, _, _, _, spellID, _ = UnitAura(unit, i)
-        if not spellID then
+        auraData = C_UnitAuras.GetAuraDataByIndex(unit, i)
+        if not auraData then
             break
-        elseif searchIDs["ID" .. spellID] then
+        elseif searchIDs["ID" .. auraData.spellId] then
             if results == nil then
                 results = {}
             end
-            results[#results + 1] = { name, count, duration, expires }
+            results[#results + 1] = { auraData.name, auraData.applications, auraData.duration, auraData.expirationTime }
         end
     end
 

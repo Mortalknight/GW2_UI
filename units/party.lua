@@ -106,43 +106,43 @@ local function getUnitDebuffs(unit)
     local counter = 1
 
     for i = 1, 40 do
-        local debuffName, icon, count, debuffType, duration, expires, caster, isStealable, shouldConsolidate, spellId = UnitDebuff(unit, i, "HARMFUL")
-        if debuffName then
+        local auraData = C_UnitAuras.GetDebuffDataByIndex(unit, i, "HARMFUL")
+        if auraData then
             local shouldDisplay = false
-            local isImportant = (GW.ImportendRaidDebuff[spellId] and GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) or false
-            local isDispellable = GW.Libs.Dispel:IsDispellableByMe(debuffType)
+            local isImportant = (GW.ImportendRaidDebuff[auraData.spellId] and GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF) or false
+            local isDispellable = GW.Libs.Dispel:IsDispellableByMe(auraData.dispelName)
 
             if GW.settings.PARTY_SHOW_DEBUFFS then
                 if GW.settings.PARTY_ONLY_DISPELL_DEBUFFS then
-                    if debuffType and GW.Libs.Dispel:IsDispellableByMe(debuffType) then
-                        shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
+                    if auraData.dispelName and GW.Libs.Dispel:IsDispellableByMe(auraData.dispelName) then
+                        shouldDisplay = auraData.name and not (auraData.spellId == 6788 and auraData.sourceUnit and not UnitIsUnit(auraData.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
                     end
                 else
-                    shouldDisplay = debuffName and not (spellId == 6788 and caster and not UnitIsUnit(caster, "player")) -- Don't show "Weakened Soul" from other players
+                    shouldDisplay = auraData.name and not (auraData.spellId == 6788 and auraData.sourceUnit and not UnitIsUnit(auraData.sourceUnit, "player")) -- Don't show "Weakened Soul" from other players
                 end
             end
 
             if GW.settings.PARTY_SHOW_IMPORTEND_RAID_INSTANCE_DEBUFF and not shouldDisplay then
-                shouldDisplay = GW.ImportendRaidDebuff[spellId] or false
+                shouldDisplay = GW.ImportendRaidDebuff[auraData.spellId] or false
             end
 
             if shouldDisplay then
                 debuffList[counter] = {}
 
-                debuffList[counter].name = debuffName
-                debuffList[counter].icon = icon
-                debuffList[counter].count = count
-                debuffList[counter].dispelType = debuffType
-                debuffList[counter].duration = duration
-                debuffList[counter].expires = expires
-                debuffList[counter].caster = caster
-                debuffList[counter].isStealable = isStealable
-                debuffList[counter].shouldConsolidate = shouldConsolidate
-                debuffList[counter].spellID = spellId
+                debuffList[counter].name = auraData.name
+                debuffList[counter].icon = auraData.icon
+                debuffList[counter].count = auraData.applications
+                debuffList[counter].dispelType = auraData.dispelName
+                debuffList[counter].duration = auraData.duration
+                debuffList[counter].expires = auraData.expirationTime
+                debuffList[counter].caster = auraData.sourceUnit
+                debuffList[counter].isStealable = auraData.isStealable
+                debuffList[counter].shouldConsolidate = auraData.nameplateShowPersonal
+                debuffList[counter].spellID = auraData.spellId
                 debuffList[counter].isImportant = isImportant
                 debuffList[counter].isDispellable = isDispellable
                 debuffList[counter].key = i
-                debuffList[counter].timeRemaining = duration <= 0 and 500000 or expires - GetTime()
+                debuffList[counter].timeRemaining = auraData.duration <= 0 and 500000 or auraData.expirationTime - GetTime()
 
                 counter = counter  + 1
             end
@@ -252,20 +252,22 @@ local function getUnitBuffs(unit)
     local buffList = {}
 
     for i = 1, 40 do
-        if UnitBuff(unit, i) then
+        local auraData = C_UnitAuras.GetBuffDataByIndex(unit, i)
+        if auraData then
             buffList[i] = {}
-
-            buffList[i].name,
-            buffList[i].icon,
-            buffList[i].count,
-            buffList[i].dispelType,
-            buffList[i].duration,
-            buffList[i].expires,
-            buffList[i].caster,
-            buffList[i].isStealable,
-            buffList[i].shouldConsolidate,
-            buffList[i].spellID = UnitBuff(unit, i)
             buffList[i].key = i
+
+            buffList[i].name = auraData.name
+            buffList[i].icon = auraData.icon
+            buffList[i].count = auraData.applications
+            buffList[i].dispelType = auraData.dispelName
+            buffList[i].duration = auraData.duration
+            buffList[i].expires = auraData.expirationTime
+            buffList[i].caster = auraData.sourceUnit
+            buffList[i].isStealable = auraData.isStealable
+            buffList[i].shouldConsolidate = auraData.nameplateShowPersonal
+            buffList[i].spellID = auraData.spellId
+
             buffList[i].timeRemaining = buffList[i].duration <= 0 and 500000 or buffList[i].expires - GetTime()
         end
     end

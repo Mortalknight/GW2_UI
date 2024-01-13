@@ -232,19 +232,19 @@ local function SetIcon(self, icon, dtype, auraType, spellId)
 end
 
 local function UpdateAura(self, index)
-    local name, icon, count, dtype, duration, expires, _, _, _, spellId = UnitAura(self.header:GetUnit(), index, self:GetFilter())
-    if not name then
+    local auraData = C_UnitAuras.GetAuraDataByIndex(self.header:GetUnit(), index, self:GetFilter())
+    if not auraData then
         self.oldAuraName = nil
         self.auraName = nil
         return
     end
 
     local auraType = self.header:GetAType()
-    self:SetIcon(icon, dtype, auraType, spellId)
-    self:SetCount(count)
+    self:SetIcon(auraData.icon, auraData.dispelName, auraType, auraData.spellId)
+    self:SetCount(auraData.applications)
 
-    if duration > 0 and expires then
-        self:SetCD(expires, duration, count, auraType, name)
+    if auraData.duration > 0 and auraData.expirationTime then
+        self:SetCD(auraData.expirationTime, auraData.duration, auraData.applications, auraType, auraData.name)
     else
         ClearAuraTime(self)
     end

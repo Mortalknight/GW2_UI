@@ -761,20 +761,20 @@ local function selectBg(self)
 
         local bolFound = false
         for i = 1, 40 do
-            local _, _, _, _, _, _, _, _, _, spellID = UnitBuff("player", i)
-            if spellID ~= nil and action_hud_auras[spellID] ~= nil and action_hud_auras[spellID].unit == "player" then
-                right = action_hud_auras[spellID].right
-                left = action_hud_auras[spellID].left
+            local auraData = C_UnitAuras.GetBuffDataByIndex("player", i)
+            if auraData and action_hud_auras[auraData.spellId] and action_hud_auras[auraData.spellId].unit == "player" then
+                right = action_hud_auras[auraData.spellId].right
+                left = action_hud_auras[auraData.spellId].left
                 bolFound = true
                 break
             end
         end
         if not bolFound then
             for i = 1, 40 do
-                local _, _, _, _, _, _, _, _, _, spellID = UnitBuff("pet", i)
-                if spellID ~= nil and action_hud_auras[spellID] ~= nil and action_hud_auras[spellID].unit == "pet" then
-                    right = action_hud_auras[spellID].right
-                    left = action_hud_auras[spellID].left
+                local auraData = C_UnitAuras.GetBuffDataByIndex("pet", i)
+                if auraData and action_hud_auras[auraData.spellId] and action_hud_auras[auraData.spellId].unit == "pet" then
+                    right = action_hud_auras[auraData.spellId].right
+                    left = action_hud_auras[auraData.spellId].left
                     break
                 end
             end

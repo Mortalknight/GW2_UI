@@ -113,7 +113,7 @@ local function GetBuffInfos()
 end
 
 local function CheckForBuffs()
-    local spellID, foundBuff
+    local auraData, foundBuff
     local hasMainHandEnchant, mainHandEnchantID, hasOffHandEnchant, offHandEnchantId
     wipe(checkIds)
 
@@ -128,8 +128,8 @@ local function CheckForBuffs()
 
     for i = 1, 40 do
         foundBuff = false
-        spellID = select(10, UnitBuff("player", i))
-        if not spellID then
+        auraData = C_UnitAuras.GetBuffDataByIndex("player", i)
+        if not auraData then
             break
         else
             for k, v in pairs(buffInfos) do
@@ -144,9 +144,9 @@ local function CheckForBuffs()
                                 break
                             end
                         else
-                            if buffInfos[k][sk].spellId == spellID then
+                            if buffInfos[k][sk].spellId == auraData.spellId then
                                 buffInfos[k][sk].hasBuff = true
-                                checkIds[spellID] = true
+                                checkIds[auraData.spellId] = true
                                 foundBuff = true
                                 break
 
@@ -159,8 +159,8 @@ local function CheckForBuffs()
                 end
             end
 
-            if not checkIds[spellID or mainHandEnchantID or offHandEnchantId] then
-                checkIds[spellID or mainHandEnchantID or offHandEnchantId] = true
+            if not checkIds[auraData.spellId or mainHandEnchantID or offHandEnchantId] then
+                checkIds[auraData.spellId or mainHandEnchantID or offHandEnchantId] = true
             end
         end
     end

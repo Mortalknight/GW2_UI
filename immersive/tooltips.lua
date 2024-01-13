@@ -68,10 +68,10 @@ end
 local function SetUnitAura(self, unit, index, filter)
     if not self or self:IsForbidden() then return end
 
-    local name, _, _, _, _, _, source, _, _, spellID = UnitAura(unit, index, filter)
-    if not name then return end
+    local auraData = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
+    if not auraData then return end
 
-    local mountID, mountText = MountIDs[spellID], ""
+    local mountID, mountText = MountIDs[auraData.spellId], ""
     if mountID then
         local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(mountID)
         mountText = sourceText and gsub(sourceText, "|n%s+|n", "|n")
@@ -87,12 +87,12 @@ local function SetUnitAura(self, unit, index, filter)
             self:AddLine(" ")
         end
 
-        if source then
-            local _, class = UnitClass(source)
+        if auraData.sourceUnit then
+            local _, class = UnitClass(auraData.sourceUnit)
             local color = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
-            self:AddDoubleLine(format(IDLine, ID, spellID), format("|c%s%s|r", color.colorStr, UnitName(source) or UNKNOWN))
+            self:AddDoubleLine(format(IDLine, ID, auraData.spellId), format("|c%s%s|r", color.colorStr, UnitName(auraData.sourceUnit) or UNKNOWN))
         else
-            self:AddLine(format(IDLine, ID, spellID))
+            self:AddLine(format(IDLine, ID, auraData.spellId))
         end
     end
 
@@ -473,12 +473,12 @@ end
 
 local function AddMountInfo(self, unit)
     local index = 1
-    local name, _, _, _, _, _, _, _, _, spellID = UnitBuff(unit, index)
-    while name do
-        local mountID = MountIDs[spellID]
+    local auraData = C_UnitAuras.GetBuffDataByIndex(unit, index)
+    while auraData do
+        local mountID = MountIDs[auraData.spellId]
         if mountID then
             local _, _, sourceText = C_MountJournal.GetMountInfoExtraByID(mountID)
-            self:AddDoubleLine(format("%s:", MOUNT), name, nil, nil, nil, 1, 1, 1)
+            self:AddDoubleLine(format("%s:", MOUNT), auraData.name, nil, nil, nil, 1, 1, 1)
 
             local mountText = sourceText and IsControlKeyDown() and gsub(sourceText, "|n%s+|n", "|n")
             if mountText then
@@ -496,7 +496,7 @@ local function AddMountInfo(self, unit)
             break
         else
             index = index + 1
-            name, _, _, _, _, _, _, _, _, spellID = UnitBuff(unit, index)
+            auraData = C_UnitAuras.GetBuffDataByIndex(unit, index)
         end
     end
 end
