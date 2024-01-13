@@ -4,8 +4,9 @@ local LoadAuras = GW.LoadAuras
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local CommaValue = GW.CommaValue
 local UpdateBuffLayout = GW.UpdateBuffLayout
-local AddToAnimation = GW.AddToAnimation
 local RegisterMovableFrame = GW.RegisterMovableFrame
+
+local fctf
 
 local function UpdatePetActionBarIcons()
     PetActionButton1Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
@@ -266,6 +267,10 @@ local function updatePetData(self, event, unit)
     elseif GW.IsIn(event, "PET_UI_UPDATE", "PET_BAR_UPDATE", "PLAYER_CONTROL_GAINED", "PLAYER_CONTROL_LOST", "PLAYER_FARSIGHT_FOCUS_CHANGED", "SPELLS_CHANGED", "UNIT_FLAGS", "UNIT_PET") then
         SetPortraitTexture(self.portrait, "pet")
         UpdatePetActionBar(self, event, unit)
+        if event == "UNIT_PET" then
+            updateHealthData(self)
+            updatePowerData(self)
+        end
     elseif event == "PET_BAR_UPDATE_COOLDOWN" then
         UpdatePetCooldown(self)
     elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" then
@@ -285,6 +290,36 @@ local function TogglePetAuraPosition()
     end
 end
 GW.TogglePetAuraPosition = TogglePetAuraPosition
+
+local function TogglePetFrameCombatFeedback()
+    if GW.settings.PET_FLOATING_COMBAT_TEXT then
+        if not fctf then
+            fctf = CreateFrame("Frame", nil, GwPlayerPetFrame)
+            fctf:SetFrameLevel(GwPlayerPetFrame:GetFrameLevel() + 3)
+            fctf:SetScript("OnEvent", function(self, _, unit, ...)
+                if self.unit == unit then
+                    CombatFeedback_OnCombatEvent(self, ...)
+                end
+            end)
+            local font = fctf:CreateFontString(nil, "OVERLAY")
+            font:SetFont(DAMAGE_TEXT_FONT, 30, "")
+            fctf.fontString = font
+            font:SetPoint("CENTER", GwPlayerPetFrame.portrait, "CENTER")
+            font:Hide()
+
+            fctf.unit = GwPlayerPetFrame.unit
+            CombatFeedback_Initialize(fctf, fctf.fontString, 30)
+        end
+        fctf:RegisterEvent("UNIT_COMBAT")
+        fctf:SetScript("OnUpdate", CombatFeedback_OnUpdate)
+    else
+        if fctf then
+            fctf:UnregisterAllEvents()
+            fctf:SetScript("OnUpdate", nil)
+        end
+    end
+end
+GW.TogglePetFrameCombatFeedback = TogglePetFrameCombatFeedback
 
 local function LoadPetFrame(lm)
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
@@ -388,25 +423,6 @@ local function LoadPetFrame(lm)
     end)
 
     -- create floating combat text
-    if GW.settings.PET_FLOATING_COMBAT_TEXT then
-        local fctf = CreateFrame("Frame", nil, playerPetFrame)
-        fctf:SetFrameLevel(playerPetFrame:GetFrameLevel() + 3)
-        fctf:RegisterEvent("UNIT_COMBAT")
-        fctf:SetScript("OnEvent", function(self, _, unit, ...)
-            if self.unit == unit then
-                CombatFeedback_OnCombatEvent(self, ...)
-            end
-        end)
-        fctf:SetScript("OnUpdate", CombatFeedback_OnUpdate)
-        fctf.unit = playerPetFrame.unit
-
-        local font = fctf:CreateFontString(nil, "OVERLAY")
-        font:SetFont(DAMAGE_TEXT_FONT, 30)
-        fctf.fontString = font
-        font:SetPoint("CENTER", playerPetFrame.portrait, "CENTER")
-        font:Hide()
-
-        CombatFeedback_Initialize(fctf, font, 30)
-    end
+    TogglePetFrameCombatFeedback()
 end
 GW.LoadPetFrame = LoadPetFrame

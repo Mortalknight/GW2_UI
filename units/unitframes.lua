@@ -16,6 +16,8 @@ local LoadAuras = GW.LoadAuras
 local UpdateBuffLayout = GW.UpdateBuffLayout
 local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 
+local fctf
+
 local function normalUnitFrame_OnEnter(self)
     if self.unit ~= nil then
         GameTooltip_SetDefaultAnchor(GameTooltip, UIParent)
@@ -946,6 +948,36 @@ local function ToggleTargetFrameSettings()
 end
 GW.ToggleTargetFrameSettings = ToggleTargetFrameSettings
 
+local function ToggleTargetFrameCombatFeedback()
+    if GW.settings.target_FLOATING_COMBAT_TEXT then
+        if not fctf then
+            fctf = CreateFrame("Frame", nil, GwTargetUnitFrame)
+            fctf:SetFrameLevel(GwTargetUnitFrame:GetFrameLevel() + 3)
+            fctf:SetScript("OnEvent", function(self, _, unit, ...)
+                if self.unit == unit then
+                    CombatFeedback_OnCombatEvent(self, ...)
+                end
+            end)
+            local font = fctf:CreateFontString(nil, "OVERLAY")
+            font:SetFont(DAMAGE_TEXT_FONT, 30, "")
+            fctf.fontString = font
+            font:SetPoint("CENTER", GwTargetUnitFrame.portrait, "CENTER")
+            font:Hide()
+
+            fctf.unit = GwTargetUnitFrame.unit
+            CombatFeedback_Initialize(fctf, fctf.fontString, 30)
+        end
+        fctf:RegisterEvent("UNIT_COMBAT")
+        fctf:SetScript("OnUpdate", CombatFeedback_OnUpdate)
+    else
+        if fctf then
+            fctf:UnregisterAllEvents()
+            fctf:SetScript("OnUpdate", nil)
+        end
+    end
+end
+GW.ToggleTargetFrameCombatFeedback = ToggleTargetFrameCombatFeedback
+
 local function LoadTarget()
     local NewUnitFrame = createNormalUnitFrame("GwTargetUnitFrame", GW.settings.target_FRAME_INVERT)
     NewUnitFrame.unit = "target"
@@ -1017,26 +1049,7 @@ local function LoadTarget()
     LoadAuras(NewUnitFrame)
 
     -- create floating combat text
-    if GW.settings.target_FLOATING_COMBAT_TEXT then
-        local fctf = CreateFrame("Frame", nil, NewUnitFrame)
-        fctf:SetFrameLevel(NewUnitFrame:GetFrameLevel() + 3)
-        fctf:RegisterEvent("UNIT_COMBAT")
-        fctf:SetScript("OnEvent", function(self, _, unit, ...)
-            if self.unit == unit then
-                CombatFeedback_OnCombatEvent(self, ...)
-            end
-        end)
-        fctf:SetScript("OnUpdate", CombatFeedback_OnUpdate)
-        fctf.unit = NewUnitFrame.unit
-
-        local font = fctf:CreateFontString(nil, "OVERLAY")
-        font:SetFont(DAMAGE_TEXT_FONT, 30, "")
-        fctf.fontString = font
-        font:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER")
-        font:Hide()
-
-        CombatFeedback_Initialize(fctf, font, 30)
-    end
+    ToggleTargetFrameCombatFeedback()
 end
 GW.LoadTarget = LoadTarget
 
