@@ -295,7 +295,10 @@ GW.AddForProfiling("notifications", "updateRadar", updateRadar)
 
 local currentCompassData
 local function SetObjectiveNotification()
-    if not GW.settings.SHOW_QUESTTRACKER_COMPASS then return end
+    if not GW.settings.SHOW_QUESTTRACKER_COMPASS then
+        GwObjectivesNotification.shouldDisplay = false
+        return
+    end
 
     local data, dataBefore
     for k, _ in pairs(notifications) do

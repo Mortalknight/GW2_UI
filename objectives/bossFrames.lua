@@ -174,15 +174,22 @@ local function bossFrame_OnEvent(self, event)
 end
 GW.AddForProfiling("bossFrames", "bossFrame_OnEvent", bossFrame_OnEvent)
 
-local function registerFrame(i, yOffset)
+local function SetUpFramePosition()
+    local yOffset = GW.settings.SHOW_QUESTTRACKER_COMPASS and 70 or 0
+
+    for idx, frame in pairs(bossFrames) do
+        if idx == 1 then
+            frame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -yOffset)
+        else
+            frame:SetPoint("TOPRIGHT", bossFrames[idx - 1], "BOTTOMRIGHT", 0, 0)
+        end
+    end
+end
+GW.SetUpBossFramePosition = SetUpFramePosition
+
+local function registerFrame(i)
     local bossFrame = CreateFrame("Button", "GwBossFrame" .. i, GwQuestTracker, "GwQuestTrackerBossFrameTemp")
     local unit = "boss" .. i
-
-    if i == 1 then
-        bossFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -yOffset)
-    else
-        bossFrame:SetPoint("TOPRIGHT", bossFrames[i - 1], "BOTTOMRIGHT", 0, 0)
-    end
 
     bossFrame.id = i
     bossFrame.unit = unit
@@ -230,11 +237,10 @@ end
 GW.AddForProfiling("bossFrames", "registerFrame", registerFrame)
 
 local function LoadBossFrame()
-    local yOffset = GW.settings.SHOW_QUESTTRACKER_COMPASS and 70 or 0
-
     for i = 1, MAX_BOSS_FRAMES do
-        bossFrames[i] = registerFrame(i, yOffset)
+        bossFrames[i] = registerFrame(i)
     end
+    SetUpFramePosition()
     C_Timer.After(0.01, function() updateBossFrameHeight() end)
 end
 GW.LoadBossFrame = LoadBossFrame
