@@ -107,7 +107,7 @@ local function addObjectiveBlock(block, text, finished, objectiveIndex, objectiv
 
         if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text, objectiveType, quantity) then
             if objectiveType == "progressbar" then
-                objectiveBlock.StatusBar:Show()
+                objectiveBlock.StatusBar:SetShown(GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
                 objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
                 objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
                 objectiveBlock.progress = GetQuestProgressBarPercent(block.questID) / 100

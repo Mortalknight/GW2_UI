@@ -221,6 +221,7 @@ local function Update(self)
 
     GW.QuestTrackerLayoutChanged()
 end
+GW.UpdateMonthlyActivitesTracking = Update
 
 local function OnEvent(self, event, ...)
     if event == "PERKS_ACTIVITIES_TRACKED_UPDATED" then
