@@ -66,8 +66,6 @@ local function LoadPlayerPanel(sWindow)
     addOption(p_player.scroll.scrollchild, L["Show character item info"], L["Display gems and enchants on the GW2 character panel"], "SHOW_CHARACTER_ITEM_INFO", function() GW.ToggleCharacterItemInfo() end, nil, {["USE_CHARACTER_WINDOW"] = true, ["CASTINGBAR_DATA"] = true})
     addOption(p_player.scroll.scrollchild, L["Hide Blizzard dragon riding vigor"], nil, "HIDE_BLIZZARD_VIGOR_BAR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["Show classpower bar only in combat"], nil, "CLASSPOWER_ONLY_SHOW_IN_COMBAT", function() GW.UpdateClassPowerVisibilitySetting(GwPlayerClassPower, true) end, nil, {["CLASS_POWER"] = true})
-    addOption(p_player.scroll.scrollchild, PET .. ": " .. L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "PET_FLOATING_COMBAT_TEXT", GW.TogglePetFrameCombatFeedback, nil, {["PETBAR_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, PET .. ": " .. L["Show auras below"], nil, "PET_AURAS_UNDER", function() GW.TogglePetAuraPosition() end, nil, {["PETBAR_ENABLED"] = true})
     addOptionDropdown(
         p_player.scroll.scrollchild,
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,

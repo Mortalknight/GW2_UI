@@ -281,7 +281,7 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
             settingsEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
         end
         for headerProfile, header in pairs(headers) do
-            if headerProfile == profile then
+            if profile == "ALL" or headerProfile == profile then
                 for i = 1, header.numGroups do
                     local group = header.groups[i]
                     for _, child in ipairs({ group:GetChildren() }) do
@@ -292,7 +292,7 @@ local function UpdateSettings(profile, onlyHeaderUpdate, updateHeaderAndFrames)
         end
     end
 
-    if (onlyHeaderUpdate or updateHeaderAndFrames) and headers[profile] then
+    if (onlyHeaderUpdate or updateHeaderAndFrames) and (headers[profile] or profile == "ALL") then
         if InCombatLockdown() then
             settingsEventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
         else
