@@ -46,7 +46,7 @@
     </Font>
 
     <Frame name="GwSettingsMoverFrame" frameStrata="HIGH" enableMouse="true" movable="true" parent="UIParent" virtual="true">
-        <Size x="470" y="40"></Size>
+        <Size x="853" y="40"></Size>
         <Anchors>
             <Anchor point="CENTER" x="0" y="312"></Anchor>
         </Anchors>
@@ -80,7 +80,6 @@
                         <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="0" y="0" />
                     </Anchors>
                 </Texture>
-
                 <Texture file="Interface/AddOns/GW2_UI/textures/bag/bagleftpanel">
                     <Size x="40" y="512"/>
                     <Anchors>
@@ -89,7 +88,7 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer  level="BACKGROUND" textureSubLevel="1">
+            <Layer level="BACKGROUND" textureSubLevel="1">
                 <Texture file="Interface/AddOns/GW2_UI/textures/bag/bottom-right">
                     <Size x="128" y="128"/>
                     <Anchors>
@@ -103,11 +102,8 @@
                     </Anchors>
                     <TexCoords left="0" right="0.921875 " top="0" bottom="0.796875"/>
                 </Texture>
-
-
-
             </Layer>
-            <Layer  level="BACKGROUND" textureSubLevel="2">
+            <Layer level="BACKGROUND" textureSubLevel="2">
                 <Texture file="Interface/AddOns/GW2_UI/textures/character/settings-window-icon">
                     <Size x="84" y="84"></Size>
                     <Anchors>
@@ -138,14 +134,12 @@
             </Layer>
         </Layers>
         <Frames>
-
             <Frame parentKey="panels">
                 <Size x="612" y="625"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" x="241" y="0"/>
                 </Anchors>
             </Frame>
-
             <Button parentKey="close" text="">
                 <Size x="20" y="20" />
                 <Anchors>
