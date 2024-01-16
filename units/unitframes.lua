@@ -185,7 +185,7 @@ end
 GW.AddForProfiling("unitframes", "updateHealthTextString", updateHealthTextString)
 
 local function updateHealthbarColor(self)
-    if self.classColor and UnitIsPlayer(self.unit) then
+    if self.classColor and (UnitIsPlayer(self.unit) or UnitInPartyIsAI(self.unit)) then
         local _, englishClass = UnitClass(self.unit)
         local color = GWGetClassColor(englishClass, true)
 

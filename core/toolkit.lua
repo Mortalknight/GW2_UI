@@ -646,67 +646,12 @@ local function GwStyleButton(button, noHover, noPushed, noChecked)
 end
 
 local function GwKillEditMode(object)
-    --object.HighlightSystem = GW.NoOp  --TAINT
-    --object.ClearHighlight = GW.NoOp
     object.Selection:SetScript("OnDragStart", nil)
     object.Selection:SetScript("OnDragStop", nil)
     object.Selection:SetScript("OnMouseDown", nil)
     object.Selection:SetAlpha(0)
     object.Selection:EnableMouse(false)
 end
-
-local function FixStatusBarMinCurPlease(frame, value)
-    local MIN = frame:GetMinMaxValues()
-    if MIN and (value <= MIN) then
-        local style = frame:GetFillStyle()
-        if style ~= 'STANDARD' and style ~= 'REVERSE' then return end
-
-        local width, height = frame:GetSize()
-        if not width or not height then return end
-
-        local texture = frame:GetStatusBarTexture()
-        if not texture then return end
-
-        texture:ClearAllPoints()
-
-        local reverse = frame:GetReverseFill()
-        local orientation = frame:GetOrientation()
-        if orientation == 'VERTICAL' then
-            if reverse then
-                texture:SetPoint('TOPLEFT', 0, 0)
-                texture:SetPoint('TOPRIGHT', 0, 0)
-                texture:SetPoint('BOTTOMLEFT', 0, height)
-                texture:SetPoint('BOTTOMRIGHT', 0, height)
-            else
-                texture:SetPoint('TOPLEFT', 0, -height)
-                texture:SetPoint('TOPRIGHT', 0, -height)
-                texture:SetPoint('BOTTOMLEFT', 0, 0)
-                texture:SetPoint('BOTTOMRIGHT', 0, 0)
-            end
-        else -- horizontal
-            if reverse then
-                texture:SetPoint('TOPLEFT', width, 0)
-                texture:SetPoint('TOPRIGHT', 0, 0)
-                texture:SetPoint('BOTTOMLEFT', width, 0)
-                texture:SetPoint('BOTTOMRIGHT', 0, 0)
-            else
-                texture:SetPoint('TOPLEFT', 0, 0)
-                texture:SetPoint('TOPRIGHT', -width, 0)
-                texture:SetPoint('BOTTOMLEFT', 0, 0)
-                texture:SetPoint('BOTTOMRIGHT', -width, 0)
-            end
-        end
-    end
-end
-
-local function FixMinCurDuringValue(frame, value)
-    FixStatusBarMinCurPlease(frame, value)
-end
-
-local function FixMinCurDuringTexture(frame)
-    FixStatusBarMinCurPlease(frame, frame:GetValue())
-end
-
 
 local function addapi(object)
     local mt = getmetatable(object).__index
@@ -726,13 +671,6 @@ local function addapi(object)
     if not object.GwSetInside then mt.GwSetInside = GwSetInside end
     if not object.GwStyleButton then mt.GwStyleButton = GwStyleButton end
     if not object.GwKillEditMode then mt.GwKillEditMode = GwKillEditMode end
-
-    if not object.fixTheStatusBarsPlease and mt.SetStatusBarTexture then
-        hooksecurefunc(mt, 'SetValue', FixMinCurDuringValue)
-        hooksecurefunc(mt, 'SetStatusBarTexture', FixMinCurDuringTexture)
-
-        object.fixTheStatusBarsPlease = true
-    end
 end
 
 local handled = {Frame = true}

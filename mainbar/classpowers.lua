@@ -661,7 +661,7 @@ GW.AddForProfiling("classpowers", "timerMetamorphosis", timerMetamorphosis)
 
 -- WARRIOR
 local function powerRend(self)
-    local _, _, duration, expires = findDebuff("target", 388539,"player")
+    local _, _, duration, expires = findDebuff("target", 388539, "player")
     if duration ~= nil then
         self.customResourceBar:Show()
         local remainingPrecantage = (expires - GetTime()) / duration
@@ -736,10 +736,6 @@ local function setWarrior(f)
         powerSBlock(f)
         f:RegisterUnitEvent("UNIT_AURA", "player")
     end
-
-
-  
-
 
     return true
 end
