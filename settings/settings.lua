@@ -993,92 +993,72 @@ end
 GW.InitPanel = InitPanel
 
 local function LoadSettings()
+    -- GwWarningPrompt
     local fmGWP = CreateFrame("Frame", "GwWarningPrompt", UIParent, "GwWarningPrompt")
     fmGWP.string:SetFont(UNIT_NAME_FONT, 14)
     fmGWP.string:SetTextColor(1, 1, 1)
-    local fnGWP_input_OnEscapePressed = function(self)
-        self:ClearFocus()
-    end
-    local fnGWP_input_OnEnterPressed = function(self)
-        if self:GetParent().method ~= nil then
-            self:GetParent().method()
-        end
-        self:GetParent():Hide()
-    end
-    fmGWP.input:SetScript("OnEscapePressed", fnGWP_input_OnEscapePressed)
+
+    fmGWP.input:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
     fmGWP.input:SetScript("OnEditFocusGained", nil)
     fmGWP.input:SetScript("OnEditFocusLost", nil)
-    fmGWP.input:SetScript("OnEnterPressed", fnGWP_input_OnEnterPressed)
-    local fnGWP_accept_OnClick = function(self)
-        if self:GetParent().method ~= nil then
+    fmGWP.input:SetScript("OnEnterPressed", function(self)
+        if self:GetParent().method then
             self:GetParent().method()
         end
         self:GetParent():Hide()
-    end
-    local fnGWP_cancel_OnClick = function(self)
+    end)
+    fmGWP.acceptButton:SetScript("OnClick", function(self)
+        if self:GetParent().method then
+            self:GetParent().method()
+        end
         self:GetParent():Hide()
-    end
-    fmGWP.acceptButton:SetScript("OnClick", fnGWP_accept_OnClick)
-    fmGWP.cancelButton:SetScript("OnClick", fnGWP_cancel_OnClick)
+    end)
+    fmGWP.cancelButton:SetScript("OnClick", function(self) self:GetParent():Hide() end)
 
     tinsert(UISpecialFrames, "GwWarningPrompt")
 
-    local fnMf_OnDragStart = function(self)
-        self:StartMoving()
-    end
-    local fnMf_OnDragStop = function(self)
-        self:StopMovingOrSizing()
-    end
+    --GwSettingsWindow
     local mf = CreateFrame("Frame", "GwSettingsMoverFrame", UIParent, "GwSettingsMoverFrame")
     mf:SetClampedToScreen(true)
     mf:RegisterForDrag("LeftButton")
-    mf:SetScript("OnDragStart", fnMf_OnDragStart)
-    mf:SetScript("OnDragStop", fnMf_OnDragStop)
+    mf:SetScript("OnDragStart", function(self) self:StartMoving() end)
+    mf:SetScript("OnDragStop", function(self) self:StopMovingOrSizing() end)
 
     local sWindow = CreateFrame("Frame", "GwSettingsWindow", UIParent, "GwSettingsWindowTmpl")
     GW.loadSettingsSearchAbleMenu()
     sWindow:SetClampedToScreen(true)
     tinsert(UISpecialFrames, "GwSettingsWindow")
 
-    sWindow:SetScript(
-        "OnShow",
-        function()
-            mf:Show()
-            -- Check UI Scale
-            if GetCVarBool("useUiScale") then
-                _G["PIXEL_PERFECTION"].checkbutton:SetChecked(false)
-            end
+    mf:SetFrameLevel(sWindow:GetFrameLevel() + 100)
 
-            checkDependenciesOnLoad()
+    sWindow:SetScript("OnShow", function()
+        mf:Show()
+        -- Check UI Scale
+        if GetCVarBool("useUiScale") then
+            _G["PIXEL_PERFECTION"].checkbutton:SetChecked(false)
         end
-    )
-    sWindow:SetScript(
-        "OnHide",
-        function()
+
+        checkDependenciesOnLoad()
+    end)
+    sWindow:SetScript("OnHide", function()
+        mf:Hide()
+        if not GW.InMoveHudMode and GW.ShowRlPopup then
+            StaticPopup_Show("CONFIG_RELOAD")
+            GW.ShowRlPopup = false
+        end
+    end)
+    sWindow:SetScript( "OnEvent", function(self, event)
+        if event == "PLAYER_REGEN_DISABLED" and self:IsShown() then
+            self:Hide()
             mf:Hide()
-            if not GW.InMoveHudMode then
-                if GW.ShowRlPopup then
-                    StaticPopup_Show("CONFIG_RELOAD")
-                    GW.ShowRlPopup = false
-                end
-            end
+            GW.Notice(L["Settings are not available in combat!"])
+            sWindow.wasOpen = true
+        elseif event == "PLAYER_REGEN_ENABLED" and self.wasOpen then
+            self:Show()
+            mf:Show()
+            sWindow.wasOpen = false
         end
-    )
-    sWindow:SetScript(
-        "OnEvent",
-        function(self, event)
-            if event == "PLAYER_REGEN_DISABLED" and self:IsShown() then
-                self:Hide()
-                mf:Hide()
-                GW.Notice("*GW2_UI:|r " .. L["Settings are not available in combat!"])
-                sWindow.wasOpen = true
-            elseif event == "PLAYER_REGEN_ENABLED" and self.wasOpen then
-                self:Show()
-                mf:Show()
-                sWindow.wasOpen = false
-            end
-        end
-    )
+    end)
     sWindow:RegisterEvent("PLAYER_REGEN_DISABLED")
     sWindow:RegisterEvent("PLAYER_REGEN_ENABLED")
     mf:Hide()
@@ -1086,20 +1066,20 @@ local function LoadSettings()
     sWindow.backgroundMask = UIParent:CreateMaskTexture()
     sWindow.backgroundMask:SetPoint("TOPLEFT", sWindow, "TOPLEFT", -64, 64)
     sWindow.backgroundMask:SetPoint("BOTTOMRIGHT", sWindow, "BOTTOMLEFT",-64, 0)
-    sWindow.backgroundMask:SetTexture(
-        "Interface/AddOns/GW2_UI/textures/masktest",
-        "CLAMPTOBLACKADDITIVE",
-        "CLAMPTOBLACKADDITIVE"
-    )
+    sWindow.backgroundMask:SetTexture("Interface/AddOns/GW2_UI/textures/masktest", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     sWindow.background:AddMaskTexture(sWindow.backgroundMask)
 
-    sWindow:HookScript("OnShow",function()
-        if AddToAnimation==nil then
+    sWindow:HookScript("OnShow", function()
+        if AddToAnimation == nil then
             AddToAnimation = GW.AddToAnimation
             lerp = GW.lerp
         end
 
-        AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW", 0, 1, GetTime(), GW.WINDOW_FADE_DURATION,
+        AddToAnimation("SETTINGSFRAME_PANEL_ONSHOW",
+            0,
+            1,
+            GetTime(),
+            GW.WINDOW_FADE_DURATION,
             function(p)
                 sWindow:SetAlpha(p)
                 sWindow.backgroundMask:SetPoint("BOTTOMRIGHT", sWindow.background, "BOTTOMLEFT", lerp(-64, sWindow.background:GetWidth(), p) , 0)
@@ -1129,12 +1109,9 @@ local function LoadSettings()
 
     checkDependenciesOnLoad()
 
-    local fnGSBC_OnClick = function(self)
-        self:GetParent():Hide()
-    end
-    sWindow.close:SetScript("OnClick", fnGSBC_OnClick)
+    sWindow.close:SetScript("OnClick", function(self) self:GetParent():Hide() end)
 
     switchCat(1)
-    GwSettingsWindow:Hide()
+    sWindow:Hide()
 end
 GW.LoadSettings = LoadSettings

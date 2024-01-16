@@ -181,11 +181,11 @@ local function ParseCriteria(quantity, totalQuantity, criteriaString, isMythicKe
 end
 GW.ParseCriteria = ParseCriteria
 
-local function ParseObjectiveString(block, text, objectiveType, quantity, numItems, numNeeded)
+local function ParseObjectiveString(block, text, objectiveType, quantity, numItems, numNeeded, overrideShowStatusbarSetting)
     if objectiveType == "progressbar" then
         block.StatusBar:SetMinMaxValues(0, 100)
         block.StatusBar:SetValue(quantity or 0)
-        block.StatusBar:Show()
+        block.StatusBar:SetShown(overrideShowStatusbarSetting or GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
         block.StatusBar.precentage = true
         return true
     end
@@ -202,7 +202,7 @@ local function ParseObjectiveString(block, text, objectiveType, quantity, numIte
     numNeeded = tonumber(numNeeded)
 
     if numItems and numNeeded and numNeeded > 1 and numItems < numNeeded then
-        block.StatusBar:Show()
+        block.StatusBar:SetShown(overrideShowStatusbarSetting or GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
         block.StatusBar:SetMinMaxValues(0, numNeeded)
         block.StatusBar:SetValue(numItems)
         block.progress = numItems / numNeeded
@@ -593,7 +593,7 @@ local function addObjective(block, text, finished, objectiveIndex, objectiveType
 
         if objectiveType == "progressbar" or ParseObjectiveString(objectiveBlock, text) then
             if objectiveType == "progressbar" then
-                objectiveBlock.StatusBar:Show()
+                objectiveBlock.StatusBar:SetShown(GW.settings.QUESTTRACKER_STATUSBARS_ENABLED)
                 objectiveBlock.StatusBar:SetMinMaxValues(0, 100)
                 objectiveBlock.StatusBar:SetValue(GetQuestProgressBarPercent(block.questID))
                 objectiveBlock.progress = GetQuestProgressBarPercent(block.questID) / 100

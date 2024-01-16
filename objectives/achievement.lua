@@ -273,6 +273,7 @@ local function updateAchievementLayout(self)
 
     QuestTrackerLayoutChanged()
 end
+GW.UpdateAchievementLayout = updateAchievementLayout
 GW.AddForProfiling("achievement", "updateAchievementLayout", updateAchievementLayout)
 
 local function CollapseHeader(self, forceCollapse, forceOpen)

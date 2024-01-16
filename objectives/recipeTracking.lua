@@ -246,6 +246,7 @@ local function updateRecipeLayout(self)
 
     GW.QuestTrackerLayoutChanged()
 end
+GW.UpdateRecipeTrackingLayout = updateRecipeLayout
 
 local function StartUpdate(self)
     if self.continuableContainer then

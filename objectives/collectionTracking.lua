@@ -215,7 +215,6 @@ local function EnumerateTrackables(self, callback)
     blockIndex = 0
     savedHeight = 1
 
-
     for i, trackableType in ipairs(C_ContentTracking.GetCollectableSourceTypes()) do
 		local trackedIDs = C_ContentTracking.GetTrackedIDs(trackableType)
 		for j, trackableID in ipairs(trackedIDs) do
@@ -262,13 +261,16 @@ local function StopTrackingCollectedItems(self)
 	self.collectedIds = nil
 end
 
-
+local function UpdateCollectionTrackingLayout(self)
+    StopTrackingCollectedItems(self)
+    EnumerateTrackables(self, GenerateClosure(updateCollectionLayout, self))
+end
+GW.UpdateCollectionTrackingLayout = UpdateCollectionTrackingLayout
 
 local function OnEvent(self)
     if not ContentTrackingUtil.IsContentTrackingEnabled() then return end
 
-    StopTrackingCollectedItems(self)
-    EnumerateTrackables(self, GenerateClosure(updateCollectionLayout, self))
+    UpdateCollectionTrackingLayout(self)
 end
 
 local function CollapseHeader(self, forceCollapse, forceOpen)
@@ -279,8 +281,7 @@ local function CollapseHeader(self, forceCollapse, forceOpen)
         self.collapsed = false
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
-    StopTrackingCollectedItems(self)
-    EnumerateTrackables(GwQuesttrackerContainerCollection, GenerateClosure(updateCollectionLayout, self))
+    UpdateCollectionTrackingLayout(self)
 end
 GW.CollapseCollectionHeader = CollapseHeader
 

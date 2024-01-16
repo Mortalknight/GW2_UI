@@ -12,6 +12,9 @@ local nameRoleIcon = GW.nameRoleIcon
 local countArenaFrames = 0
 local MAX_ARENA_ENEMIES = MAX_ARENA_ENEMIES or 5
 
+local arenaFrames = {}
+local arenaPrepFrames = {}
+
 local FractionIcon = {}
     FractionIcon.Alliance = "|TInterface/AddOns/GW2_UI/textures/battleground/Alliance:16:16:0:0|t "
     FractionIcon.Horde = "|TInterface/AddOns/GW2_UI/textures/battleground/Horde:16:16:0:0|t "
@@ -55,14 +58,14 @@ end
 local function updateArenaFrameHeight(self)
     local i = 0
 
-    for k, frame in pairs(self.arenaFrames) do
+    for k, frame in pairs(arenaFrames) do
         if frame:IsShown() then
             i = k
         end
     end
 
     if i == 0 then
-        for k, frame in pairs(self.arenaPrepFrames) do
+        for k, frame in pairs(arenaPrepFrames) do
             if frame:IsShown() then
                 i = k
             end
@@ -181,10 +184,6 @@ GW.AddForProfiling("arenaFrames", "arenaFrame_OnEvent", arenaFrame_OnEvent)
 local function registerFrame(i, container)
     local arenaFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerAreanaFrameTemp")
     local unit = "arena" .. i
-    local yOffset = GW.settings.SHOW_QUESTTRACKER_COMPASS and 70 or 0
-    local p = yOffset + ((48 * i) - 48)
-
-    arenaFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 
     arenaFrame.unit = unit
     arenaFrame.id = i
@@ -221,7 +220,7 @@ local function registerFrame(i, container)
         "OnShow",
         function(self)
             --Hide prep frames
-            for _, frame in pairs(container.arenaPrepFrames) do
+            for _, frame in pairs(arenaPrepFrames) do
                 if frame:IsShown() then
                     frame:Hide()
                 end
@@ -258,10 +257,6 @@ GW.AddForProfiling("arenaFrames", "registerFrame", registerFrame)
 
 local function registerPrepFrame(i, container)
     local arenaPrepFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerArenaPrepFrameTemp")
-    local yOffset = GW.settings.SHOW_QUESTTRACKER_COMPASS and 70 or 0
-    local p = yOffset + ((48 * i) - 48)
-
-    arenaPrepFrame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
 
     arenaPrepFrame:EnableMouse(true)
     arenaPrepFrame:RegisterForClicks("AnyDown")
@@ -298,7 +293,7 @@ local function ArenaFrameOnEvent(self, event)
         end
 
         for i = 1, MAX_ARENA_ENEMIES do
-            local prepFrame = self.arenaPrepFrames[i]
+            local prepFrame = arenaPrepFrames[i]
             if i <= numOpps then
                 local specID, gender = GetArenaOpponentSpec(i)
                 if specID > 0 then
@@ -334,13 +329,27 @@ local function ArenaFrameOnEvent(self, event)
 end
 GW.AddForProfiling("arenaFrames", "arenaPrepFrame_OnEvent", ArenaFrameOnEvent)
 
-local function LoadArenaFrame(self)
-    self.arenaFrames = {}
-    self.arenaPrepFrames = {}
-    for i = 1, MAX_ARENA_ENEMIES do
-        self.arenaFrames[i] = registerFrame(i, self)
-        self.arenaPrepFrames[i] = registerPrepFrame(i, self)
+local function SetUpFramePosition()
+    local yOffset = GW.settings.SHOW_QUESTTRACKER_COMPASS and 70 or 0
+
+    for idx, frame in pairs(arenaFrames) do
+        local p = yOffset + ((48 * idx) - 48)
+        frame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
     end
+
+    for idx, frame in pairs(arenaPrepFrames) do
+        local p = yOffset + ((48 * idx) - 48)
+        frame:SetPoint("TOPRIGHT", GwQuestTracker, "TOPRIGHT", 0, -p)
+    end
+end
+GW.SetUpArenaFramePosition = SetUpFramePosition
+
+local function LoadArenaFrame(self)
+    for i = 1, MAX_ARENA_ENEMIES do
+        arenaFrames[i] = registerFrame(i, self)
+        arenaPrepFrames[i] = registerPrepFrame(i, self)
+    end
+    SetUpFramePosition()
 
     --event for arena prep frames
     self:RegisterEvent("ARENA_PREP_OPPONENT_SPECIALIZATIONS")

@@ -38,6 +38,7 @@ GW.globalDefault = {
         ACTIONBAR_BACKGROUND_ALPHA = 0.3,
         SHOWACTIONBAR_MACRO_NAME_ENABLED = false,
         SHOW_QUESTTRACKER_COMPASS = true,
+        QUESTTRACKER_STATUSBARS_ENABLED = true,
         MINIMAP_HOVER = "NONE",
         MINIMAP_ALWAYS_SHOW_HOVER_DETAILS = {CLOCK = false,ZONE = false,COORDS = false,},
         CLASS_POWER = true,
