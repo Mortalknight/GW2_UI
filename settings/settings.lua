@@ -240,37 +240,6 @@ local function AddOptionDropdown(panel, name, desc, optionName, callback, option
 end
 GW.AddOptionDropdown = AddOptionDropdown
 
-local function WarningPrompt(text, method, point, button1Name, button2Name)
-    GwWarningPrompt.string:SetText(text)
-    GwWarningPrompt.method = method
-    GwWarningPrompt:ClearAllPoints()
-    if point then
-        GwWarningPrompt:SetPoint(unpack(point))
-    else
-        GwWarningPrompt:SetPoint("CENTER")
-    end
-    GwWarningPrompt.acceptButton:SetText(button1Name or ACCEPT)
-    GwWarningPrompt.cancelButton:SetText(button2Name or CANCEL)
-    GwWarningPrompt:Show()
-    GwWarningPrompt.input:Hide()
-end
-GW.WarningPrompt = WarningPrompt
-
-local function InputPrompt(text, method, input, point)
-    GwWarningPrompt.string:SetText(text)
-    GwWarningPrompt.method = method
-    GwWarningPrompt:Show()
-    GwWarningPrompt:ClearAllPoints()
-    if point then
-        GwWarningPrompt:SetPoint(unpack(point))
-    else
-        GwWarningPrompt:SetPoint("CENTER")
-    end
-    GwWarningPrompt.input:Show()
-    GwWarningPrompt.input:SetText(input or "")
-end
-GW.InputPrompt = InputPrompt
-
 local function setDependenciesOption(type, name, SetEnable, deactivateColor, overrideColor)
     if deactivateColor then
         _G[name].title:SetTextColor(0.82, 0, 0)
@@ -993,30 +962,6 @@ end
 GW.InitPanel = InitPanel
 
 local function LoadSettings()
-    -- GwWarningPrompt
-    local fmGWP = CreateFrame("Frame", "GwWarningPrompt", UIParent, "GwWarningPrompt")
-    fmGWP.string:SetFont(UNIT_NAME_FONT, 14)
-    fmGWP.string:SetTextColor(1, 1, 1)
-
-    fmGWP.input:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
-    fmGWP.input:SetScript("OnEditFocusGained", nil)
-    fmGWP.input:SetScript("OnEditFocusLost", nil)
-    fmGWP.input:SetScript("OnEnterPressed", function(self)
-        if self:GetParent().method then
-            self:GetParent().method()
-        end
-        self:GetParent():Hide()
-    end)
-    fmGWP.acceptButton:SetScript("OnClick", function(self)
-        if self:GetParent().method then
-            self:GetParent().method()
-        end
-        self:GetParent():Hide()
-    end)
-    fmGWP.cancelButton:SetScript("OnClick", function(self) self:GetParent():Hide() end)
-
-    tinsert(UISpecialFrames, "GwWarningPrompt")
-
     --GwSettingsWindow
     local mf = CreateFrame("Frame", "GwSettingsMoverFrame", UIParent, "GwSettingsMoverFrame")
     mf:SetClampedToScreen(true)
