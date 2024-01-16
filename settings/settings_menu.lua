@@ -6,7 +6,7 @@ local btnIndex = 0
 local newButtonAnchorPoint = nil
 local menuButtons = {}
 
-local GwSettingsSearchResultPanel;
+local GwSettingsSearchResultPanel
 local matchingOptionFrames = {}
 
 local function CharacterMenuButton_OnLoad(self, odd, hasArrow, margin, isSubCat)
@@ -23,7 +23,7 @@ local function CharacterMenuButton_OnLoad(self, odd, hasArrow, margin, isSubCat)
     self:GetFontString():SetShadowOffset(1, -1)
     self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14)
     self:GetFontString():SetJustifyH("LEFT")
-    self.arrow:ClearAllPoints();
+    self.arrow:ClearAllPoints()
     self.arrow:SetPoint("LEFT", 10, 0)
     self.arrow:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/arrow_right")
     self.arrow:SetSize(16, 16)
@@ -38,7 +38,7 @@ end
 --create pool for search result breadcrumbs
 local breadCrumbPool = {}
 local function createBreadCrumbFrame()
-    local f = CreateFrame("Frame", nil,GwSettingsSearchResultPanel.scroll.scrollchild,"GwSettingsSearchBreadCrumb")
+    local f = CreateFrame("Frame", nil, GwSettingsSearchResultPanel.scroll.scrollchild, "GwSettingsSearchBreadCrumb")
 
     f.header:SetFont(DAMAGE_TEXT_FONT, 20)
     f.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
@@ -50,15 +50,15 @@ local function createBreadCrumbFrame()
 end
 
 local function hideBreadCrumbFrames()
-  for i=1,#breadCrumbPool do
-      local f = breadCrumbPool[i]
-      f:Hide()
-  end
+    for i = 1, #breadCrumbPool do
+        local f = breadCrumbPool[i]
+        f:Hide()
+    end
 end
 
 local function updateScrollFrame(self)
     local height = 0
-    for i=1,#menuButtons do
+    for i = 1, #menuButtons do
         local b = menuButtons[i]
         height = height + b:GetHeight()
         if b.content:IsVisible() then
@@ -68,7 +68,7 @@ local function updateScrollFrame(self)
 
     local scrollMax = max(0, height - self.scroll:GetHeight())
 
-    if scrollMax==0 then
+    if scrollMax == 0 then
         self.scroll.slider.thumb:Hide()
     else
         self.scroll.slider.thumb:Show()
@@ -84,7 +84,7 @@ local function updateScrollFrame(self)
 end
 
 local function toggleMenuItem(self,active)
-    if AddToAnimation==nil then
+    if AddToAnimation == nil then
         AddToAnimation = GW.AddToAnimation
     end
     if active then
@@ -92,9 +92,9 @@ local function toggleMenuItem(self,active)
         self.button.arrow:SetRotation(0)
         self.content:SetHeight(self.content.height)
         updateScrollFrame(GwSettingsMenuSearchable)
-        AddToAnimation(self:GetName(), 0,1, GetTime(), 0.2, function(p)
-            self.button.arrow:SetRotation(-1.5707*p)
-        end, "noease")
+        AddToAnimation(self:GetName(), 0,1, GetTime(), 0.2,
+            function(p) self.button.arrow:SetRotation(-1.5707 * p) end,
+            "noease")
 
         return
     end
@@ -102,21 +102,21 @@ local function toggleMenuItem(self,active)
     self.content:SetHeight(0)
     updateScrollFrame(GwSettingsMenuSearchable)
     --can be done with animation groups
-    AddToAnimation(self:GetName(), 1,0, GetTime(), 0.2, function(p)
-        self.button.arrow:SetRotation(-1.5707*p)
-    end, "noease")
+    AddToAnimation(self:GetName(), 1,0, GetTime(), 0.2,
+        function(p) self.button.arrow:SetRotation(-1.5707 * p) end,
+        "noease")
 
 end
 local function resetMenu(collapse)
-    for _,menuItem in pairs(menuButtons) do
-        if menuItem.content.buttonCount>0 then
+    for _, menuItem in pairs(menuButtons) do
+        if menuItem.content.buttonCount > 0 then
             for _, subButton in pairs(menuItem.content.buttons) do
             subButton.activeTexture:Hide()
             end
         end
         menuItem.button.activeTexture:Hide()
         if menuItem.content:IsVisible() and collapse then
-            toggleMenuItem(menuItem,false)
+            toggleMenuItem(menuItem, false)
         end
     end
 end
@@ -126,7 +126,7 @@ local function resetSearchables()
     for _, of in pairs(matchingOptionFrames) do
         of:ClearAllPoints()
         of:SetParent(of.searchAble.og_parent)
-        of:SetPoint(of.searchAble.og_point ,of.searchAble.og_relativePoint, of.searchAble.og_x, of.searchAble.og_y)
+        of:SetPoint(of.searchAble.og_point, of.searchAble.og_relativePoint, of.searchAble.og_x, of.searchAble.og_y)
         if of.searchAble.og_dd_container_parent then
             of.container:SetParent(of.searchAble.og_dd_container_parent)
         end
@@ -253,7 +253,7 @@ local function searchInputChanged(self)
                 of:SetParent(GwSettingsSearchResultPanel.scroll.scrollchild)
                 of:SetPoint("TOPLEFT", GwSettingsSearchResultPanel.scroll.scrollchild, "TOPLEFT", padding.x, padding.y)
                 if of.optionType == "dropdown" then
-                  of.container:SetParent(GwSettingsSearchResultPanel.scroll)
+                of.container:SetParent(GwSettingsSearchResultPanel.scroll)
                 end
 
                 if not of.newLine then
