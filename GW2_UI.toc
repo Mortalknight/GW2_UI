@@ -16,6 +16,7 @@
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03, GW2UI_PRIVATE_SETTINGS, GW2UI_PRIVATE_LAYOUTS
 ## SavedVariables: GW2UI_SETTINGS_PROFILES, GW2UI_STORAGE2, GW2UI_LAYOUTS, GW2UI_DATABASE, GW2UI_PRIVATE_DB
 
+core\shared.xml
 core\migration.lua
 core\TaintLess.xml
 core\debug.lua
@@ -35,6 +36,8 @@ locales\frFR.lua
 locales\zhCN.lua
 locales\itIT.lua
 
+core\warningPrompt.xml
+core\warningPrompt.lua
 core\consts.lua
 settings\defaults2.lua
 core\init.lua
@@ -47,7 +50,6 @@ core\toolkit.lua
 core\utils.lua
 core\backdropTemplates.lua
 core\itemlevel.lua
-core\shared.xml
 core\fonts.lua
 core\storage.lua
 core\statusReport.lua

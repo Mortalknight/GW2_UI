@@ -501,9 +501,11 @@ function QuestViewMixin:showQuestFrame()
     local mapTex
     repeat
         local mapInfo = C_Map.GetMapInfo(mapId)
-        Debug("current map", mapInfo.mapID, mapInfo.name, mapInfo.mapType, mapInfo.parentMapID)
-        mapTex = mapBGs[mapInfo.mapID] or mapBGs[mapInfo.parentMapID]
-        mapId = mapInfo.parentMapID
+        if mapInfo then
+            Debug("current map", mapInfo.mapID, mapInfo.name, mapInfo.mapType, mapInfo.parentMapID)
+            mapTex = mapBGs[mapInfo.mapID] or mapBGs[mapInfo.parentMapID]
+            mapId = mapInfo.parentMapID
+        end
     until not mapInfo or mapTex or mapInfo.parentMapID == 0
     if not mapTex then
         mapTex = "default"
