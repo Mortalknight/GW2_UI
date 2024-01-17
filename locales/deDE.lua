@@ -625,3 +625,5 @@ L["Superbloom"] = "Superblüte"
 L["Role Icon"] = "Rollensymbol"
 L["Tank Icon"] = true
 L["Leader/Assist Icon"] = "Gruppenleiter- / Assistentsymbol"
+L["Show Objective Tracker progress bars"] = "Fortschrittsbalken des Objective Tracker anzeigen"
+L["If disabled, progress bars will not be shown for various objective tracker items such as quests, achievements, etc."] = "Wenn deaktiviert, werden Fortschrittsbalken für verschiedene Zielverfolgungselemente wie Quests, Erfolge usw. nicht angezeigt"

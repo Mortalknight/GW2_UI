@@ -15,6 +15,23 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.13.0",{
+    {ct.feature, [=[Switch to a new database format to better handle profiles. That requires a reload after the first login on each character.]=]},
+    {ct.feature, [=[Added right click function to the minimaps expansion icon to show also the landing pages from previous addons]=]},
+    {ct.feature, [=[Added animated statusbars to the pet frame]=]},
+    {ct.feature, [=[Added copy/paste function to colorpicker]=]},
+    {ct.feature, [=[Added option to disable objectives statusbars to have a more compact objectives tracker]=]},
+
+    {ct.change, [=[Some more settings does not requires a reload]=]},
+
+    {ct.bug, [=[Fix stancebar error. You can now use the button in combat again]=]},
+    {ct.bug, [=[Fix worldmap event tracker container size]=]},
+    {ct.bug, [=[Fix tank frame middle icon]=]},
+    {ct.bug, [=[ix auraindicators updating]=]},
+    {ct.bug, [=[GW2 setting window is now moveable]=]},
+})
+
+
 addChange("6.12.0",{
     {ct.feature, [=[Added new paladin classpower texture and animation]=]},
     {ct.feature, [=[Added new arms warrior classpower]=]},

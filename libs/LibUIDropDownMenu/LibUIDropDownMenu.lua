@@ -18,7 +18,7 @@ local GameTooltip_SetTitle, GameTooltip_AddInstructionLine, GameTooltip_AddNorma
 
 -- ----------------------------------------------------------------------------
 local MAJOR_VERSION = "LibUIDropDownMenu-4.0"
-local MINOR_VERSION = 90000 + tonumber(("$Rev: 117 $"):match("%d+"))
+local MINOR_VERSION = 90000 + tonumber(("$Rev: 118 $"):match("%d+"))
 
 
 local LibStub = _G.LibStub
@@ -2131,7 +2131,7 @@ function lib:OpenColorPicker(info)
 	ColorPickerFrame.cancelFunc = info.cancelFunc;
 	ColorPickerFrame.extraInfo = info.extraInfo;
 	-- This must come last, since it triggers a call to ColorPickerFrame.func()
-	ColorPickerFrame:SetColorRGB(info.r, info.g, info.b);
+	ColorPickerFrame.Content.ColorPicker:SetColorRGB(info.r, info.g, info.b);
 	ShowUIPanel(ColorPickerFrame);
 end
 

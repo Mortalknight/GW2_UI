@@ -178,6 +178,7 @@ local function SkinAndEnhanceColorPicker()
     ColorPickerFrame.Content.HexBox.Hash:SetFontObject("GameFontNormalSmall")
     local HexText = ColorPickerFrame.Content.HexBox:GetRegions()
     HexText:SetFontObject("GameFontNormalSmall")
+    HexText:SetTextColor(1, 1, 1)
 
     ColorPickerFrame.Content.ColorPicker:SetScript("OnColorSelect", onColorSelect)
 
@@ -277,6 +278,7 @@ local function SkinAndEnhanceColorPicker()
 
         GW.SkinTextBox(box.Middle, box.Left, box.Right)
         box:SetFontObject("GameFontNormalSmall")
+        box:SetTextColor(1, 1, 1)
 
         box:SetMaxLetters(3)
         box:SetWidth(40)

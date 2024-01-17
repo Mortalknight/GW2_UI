@@ -392,10 +392,13 @@ local function loadDropDown(scrollFrame)
 end
 
 local function ShowColorPicker(r, g, b, a, changedCallback)
-    ColorPickerFrame:SetColorRGB(r, g, b)
-    ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = (a ~= nil), a
+    ColorPickerFrame.Content.ColorPicker:SetColorRGB(r, g, b)
+    ColorPickerFrame.hasOpacity = (a ~= nil)
+    ColorPickerFrame.opacity = a
     ColorPickerFrame.previousValues = {r, g, b, a}
-    ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.cancelFunc = changedCallback, changedCallback, changedCallback
+    ColorPickerFrame.func = changedCallback
+    ColorPickerFrame.opacityFunc = changedCallback
+    ColorPickerFrame.cancelFunc = changedCallback
     ColorPickerFrame:Show()
     ColorPickerFrame:SetFrameStrata('FULLSCREEN_DIALOG')
     ColorPickerFrame:SetClampedToScreen(true)
@@ -573,7 +576,7 @@ local function InitPanel(panel, hasScroll)
                          newR, newG, newB = unpack(restore)
                         else
                          -- Something changed
-                          newR, newG, newB = ColorPickerFrame:GetColorRGB()
+                          newR, newG, newB = ColorPickerFrame.Content.ColorPicker:GetColorRGB()
                         end
                         -- Update our internal storage.
 
