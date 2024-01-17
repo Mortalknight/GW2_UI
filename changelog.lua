@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.13.1",{
+    {ct.bug, [=[Fix error a profile rename]=]},
+})
+
 addChange("6.13.0",{
     {ct.feature, [=[Switch to a new database format to better handle profiles. That requires a reload after the first login on each character.]=]},
     {ct.feature, [=[Added right click function to the minimaps expansion icon to show also the landing pages from previous addons]=]},

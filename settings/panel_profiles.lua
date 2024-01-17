@@ -364,11 +364,12 @@ local function rename_OnClick(self)
                 end
             end
 
+            loadProfiles(ProfileWin)
+
             GwWarningPrompt:Hide()
         end,
-        self:GetParent().savedLayoutDropDown.button.string:GetText()
+        self:GetParent().parentItem.profileName
     )
-
 
     self:GetParent():Hide()
 end

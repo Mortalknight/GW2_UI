@@ -1,3 +1,7 @@
+6.13.1
+FIXES
+    - Fix error a profile rename
+
 6.13.0
 NEW
     - Switch to a new database format to better handle profiles. That requires a reload after the first login on each character.
