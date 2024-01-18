@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.13.3",{
+    {ct.bug, [=[Remove print statement]=]},
+})
+
 addChange("6.13.2",{
     {ct.bug, [=[Fix profile page error]=]},
     {ct.bug, [=[Fix db migration error]=]},
