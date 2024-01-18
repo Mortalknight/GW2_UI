@@ -152,7 +152,6 @@ do
     end
 
     local function HandleEvents(_, event, ...)
-        print(event)
         if event == "CRITERIA_UPDATE" or event == "PLAYER_STOPPED_MOVING" or event == "PLAYER_CONTROL_GAINED" then
             CoordsWatcherStop(event)
         elseif event == "PLAYER_STARTED_MOVING" or event == "PLAYER_CONTROL_LOST" then
