@@ -57,6 +57,15 @@ local function UpdateSettings()
         flashTaskbar = GW.settings.WORLD_EVENTS_SUPER_BLOOM_FLASH_TASKBAR
     }
 
+    settings.bigDig = {
+        enabled = GW.settings.WORLD_EVENTS_BIG_DIG_ENABLED,
+        desaturate = GW.settings.WORLD_EVENTS_BIG_DIG_DESATURATE,
+        alert = GW.settings.WORLD_EVENTS_BIG_DIG_ALERT,
+        alertSeconds = GW.settings.WORLD_EVENTS_BIG_DIG_ALERT_SECONDS,
+        stopAlertIfCompleted = GW.settings.WORLD_EVENTS_BIG_DIG_STOP_ALERT_IF_COMPLETED,
+        flashTaskbar = GW.settings.WORLD_EVENTS_BIG_DIG_FLASH_TASKBAR
+    }
+
     settings.iskaaranFishingNet = {
         enabled = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_ENABLED,
         alert = GW.settings.WORLD_EVENTS_ISKAARAN_FISHING_NET_ALERT,
@@ -86,6 +95,7 @@ local eventList = {
     "ResearchersUnderFire",
     "TimeRiftThaldraszus",
     "SuperBloom",
+    "BigDig",
     "IskaaranFishingNet"
 }
 
@@ -401,6 +411,46 @@ local eventData = {
                 local region = GetCurrentRegion()
                 -- TW is not a real region, so we need to check the client language if player in KR
                 if region == 2 and GW.mylocal ~= "koKR" then
+                    region = 4
+                end
+
+                return timestampTable[region]
+            end)()
+        }
+    },
+    BigDig = {
+        dbKey = "bigDig",
+        args = {
+            icon = 4549135,
+            type = "loopTimer",
+            questIDs = {79226},
+            hasWeeklyReward = true,
+            duration = 15 * 60,
+            interval = 1 * 60 * 60,
+            eventName = L["Big Dig"],
+            label = L["Big Dig"],
+            location = C_Map.GetMapInfo(2024).name,
+            barColor = colorPlatte.purple,
+            runningText = IN_PROGRESS,
+            filter = function()
+                if not C_QuestLog.IsQuestFlaggedCompleted(67700) then
+                    return false
+                end
+                return true
+            end,
+            startTimestamp = (function()
+                local timestampTable = {
+                    -- need more accurate Timers
+                    [1] = 1701831615, -- NA
+                    [2] = 1701853215, -- KR
+                    [3] = 1705487400, -- EU
+                    [4] = 1701826200, -- TW
+                    [5] = 1701826200, -- CN
+                    [72] = 1701852315 -- TR
+                }
+                local region = GetCurrentRegion()
+                -- TW is not a real region, so we need to check the client language if player in KR
+                if region == 2 and GW.Locale ~= "koKR" then
                     region = 4
                 end
 

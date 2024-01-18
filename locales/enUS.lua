@@ -597,3 +597,4 @@ L["Tank Icon"] = true
 L["Leader/Assist Icon"] = true
 L["Show Objective Tracker progress bars"] = true
 L["If disabled, progress bars will not be shown for various objective tracker items such as quests, achievements, etc."] = true
+L["Big Dig"] = true

@@ -330,7 +330,7 @@ local function LoadHudPanel(sWindow)
     )
 
     -- Superbloom
-    addGroupHeader(worldmap.scroll.scrollchild, GW.NewSign .. L["Superbloom"])
+    addGroupHeader(L["Superbloom"])
     addOption(worldmap.scroll.scrollchild, L["Superbloom"], nil, "WORLD_EVENTS_SUPER_BLOOM_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Superbloom"])
     addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_SUPER_BLOOM_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_SUPER_BLOOM_ENABLED"] = true}, nil, nil, L["Superbloom"])
     addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_SUPER_BLOOM_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_SUPER_BLOOM_ENABLED"] = true}, nil, nil, L["Superbloom"])
@@ -352,6 +352,30 @@ local function LoadHudPanel(sWindow)
         nil,
         L["Superbloom"]
     )
+
+     -- Big Dig
+     addGroupHeader(worldmap.scroll.scrollchild, GW.NewSign .. L["Big Dig"])
+     addOption(worldmap.scroll.scrollchild, L["Big Dig"], nil, "WORLD_EVENTS_BIG_DIG_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Big Dig"])
+     addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_BIG_DIG_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true}, nil, nil, L["Big Dig"])
+     addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_BIG_DIG_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true}, nil, nil, L["Big Dig"])
+     addOption(worldmap.scroll.scrollchild, L["Flash taskbar on reminder"], nil, "WORLD_EVENTS_BIG_DIG_FLASH_TASKBAR", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true, ["WORLD_EVENTS_BIG_DIG_ALERT"] = true}, nil, nil, L["Big Dig"])
+     addOption(worldmap.scroll.scrollchild, L["Stop alert if completed"], L["Stop alert when the event is completed in this week."], "WORLD_EVENTS_BIG_DIG_STOP_ALERT_IF_COMPLETED", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true, ["WORLD_EVENTS_BIG_DIG_ALERT"] = true}, nil, nil, L["Big Dig"])
+     addOptionSlider(
+         worldmap.scroll.scrollchild,
+         L["Alert Second"],
+         L["Alert will be triggered when the remaining time is less than the set value."],
+         "WORLD_EVENTS_BIG_DIG_ALERT_SECONDS",
+         GW.UpdateWorldEventTrackers,
+         0,
+         3600,
+         nil,
+         0,
+         {["WORLD_EVENTS_BIG_DIG_ENABLED"] = true, ["WORLD_EVENTS_BIG_DIG_ALERT"] = true},
+         1,
+         nil,
+         nil,
+         L["Big Dig"]
+     )
 
     -- Fishing nets
     addGroupHeader(worldmap.scroll.scrollchild, L["Iskaaran Fishing Net"])
