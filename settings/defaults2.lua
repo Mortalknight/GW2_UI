@@ -254,22 +254,6 @@ GW.globalDefault = {
         focus_FRAME_INVERT= false,
         focus_FRAME_ALT_BACKGROUND= false,
 
-        multibarleft_pos= {
-            point= "RIGHT",
-            relativePoint= "RIGHT",
-            xOfs= -300,
-            yOfs= 0,
-            hasMoved= false,
-        },
-
-        multibarright_pos= {
-            point= "RIGHT",
-            relativePoint= "RIGHT",
-            xOfs= -260,
-            yOfs= 0,
-            hasMoved= false,
-        },
-
         target_pos= {
             point= "TOP",
             relativePoint= "TOP",

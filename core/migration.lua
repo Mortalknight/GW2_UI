@@ -64,20 +64,26 @@ local function DatabaseMigration(globalDb, privateDb)
                     end
 
                     local profileName = profileTbl.profilename
+                    local skipProfile = false
                     if GW.globalSettings.profiles[profileName] then
-                        local counter = 1
+                        local counter = 0
                         repeat
+                            counter = counter + 1
                             profileName = profileTbl.profilename .. counter
-                        until not GW.globalSettings.profiles[profileName]
-
+                        until not GW.globalSettings.profiles[profileName] or counter == 100
+                        if GW.globalSettings.profiles[profileName] then
+                            skipProfile = true
+                        end
                     end
-                    profileTbl.profilename = profileName
-                    GW.globalSettings:SetProfile(profileName)
-                    for settings, value in next, profileTbl do
-                        if type(value) == "table" then
-                            GW.settings[settings] = GW.copyTable(value)
-                        else
-                            GW.settings[settings] = value
+                    if not skipProfile then
+                        profileTbl.profilename = profileName
+                        GW.globalSettings:SetProfile(profileName)
+                        for settings, value in next, profileTbl do
+                            if type(value) == "table" then
+                                GW.settings[settings] = GW.copyTable(value)
+                            else
+                                GW.settings[settings] = value
+                            end
                         end
                     end
                 end
@@ -86,12 +92,13 @@ local function DatabaseMigration(globalDb, privateDb)
 
         if GW2UI_LAYOUTS then
             if next(GW2UI_LAYOUTS) then
-                for k, profileTbl in next, GW2UI_LAYOUTS do
+                for _, profileTbl in next, GW2UI_LAYOUTS do
                     if profileTbl and profileTbl.name then
                         if not GW.globalSettings.global.layouts then GW.globalSettings.global.layouts = {} end
 
                         GW.globalSettings.global.layouts[profileTbl.name] = profileTbl
-                        if GW.globalSettings.global.layouts[profileTbl.name].profileLayout and GW.globalSettings.global.layouts[profileTbl.name].profileLayout == true and profileTbl.profileId then
+                        if GW.globalSettings.global.layouts[profileTbl.name].profileLayout and GW.globalSettings.global.layouts[profileTbl.name].profileLayout == true and profileTbl.profileId 
+                            and GW2UI_SETTINGS_PROFILES[profileTbl.profileId] and GW2UI_SETTINGS_PROFILES[profileTbl.profileId].profilename then
                             GW.globalSettings.global.layouts[profileTbl.name].profileName = GW2UI_SETTINGS_PROFILES[profileTbl.profileId].profilename
                         end
                         GW.globalSettings.global.layouts[profileTbl.name].id = nil

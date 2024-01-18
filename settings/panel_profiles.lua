@@ -12,24 +12,13 @@ local ProfileWin = nil
 local function loadProfiles(profilewin)
     local USED_PROFILE_HEIGHT
     local offset = HybridScrollFrame_GetOffset(profilewin)
-    local profiles = GW.globalSettings:GetProfiles()
+    local profiles, numProfiles = GW.globalSettings:GetProfiles()
     local currentProfile = GW.globalSettings:GetCurrentProfile()
-    local validProfiles = {}
-    local validProfileIdx = 1
-
-    -- sort out nil tables and sort table by id
-    for k, name in pairs(profiles) do
-        if profiles[k] and name ~= "Default" then
-            validProfiles[validProfileIdx] = GW.globalSettings.profiles[name]
-            validProfiles[validProfileIdx].profileName = name
-            validProfileIdx = validProfileIdx + 1
-        end
-    end
 
     table.sort(
-        validProfiles,
+        profiles,
         function(a, b)
-            return a.profileName < b.profileName
+            return a < b
         end
     )
 
@@ -37,13 +26,13 @@ local function loadProfiles(profilewin)
         local slot = profilewin.buttons[i]
 
         local idx = i + offset
-        if idx > #validProfiles then
+        if idx > numProfiles then
             -- empty row (blank starter row, final row, and any empty entries)
             slot.item:Hide()
             slot.item.profileName = nil
         else
-            slot.item.profileName = validProfiles[idx].profileName
-            slot.item.name:SetText(validProfiles[idx].profileName)
+            slot.item.profileName = profiles[idx]
+            slot.item.name:SetText(profiles[idx])
 
             slot.item.hasOptions = true
             slot.item.canDelete = true
@@ -53,36 +42,34 @@ local function loadProfiles(profilewin)
             slot.item.canActivate = true
             slot.item.activeProfile:Hide()
 
-            if currentProfile == validProfiles[idx].profileName then
+            if currentProfile == profiles[idx] then
                 slot.item.canActivate = false
                 slot.item.canDelete = false
                 slot.item.activeProfile:Show()
             end
 
-            validProfiles[idx].profileCreatedDate = validProfiles[idx].profileCreatedDate or UNKNOWN
-            validProfiles[idx].profileCreatedCharacter = validProfiles[idx].profileCreatedCharacter or UNKNOWN
-            validProfiles[idx].profileLastUpdated = validProfiles[idx].profileLastUpdated or UNKNOWN
-            validProfiles[idx].profileIcon = validProfiles[idx].profileIcon or ICONS[math.random(1, #ICONS)]
+            GW.globalSettings.profiles[profiles[idx]].profileCreatedDate = GW.globalSettings.profiles[profiles[idx]].profileCreatedDate or UNKNOWN
+            GW.globalSettings.profiles[profiles[idx]].profileCreatedCharacter = GW.globalSettings.profiles[profiles[idx]].profileCreatedCharacter or UNKNOWN
+            GW.globalSettings.profiles[profiles[idx]].profileLastUpdated = GW.globalSettings.profiles[profiles[idx]].profileLastUpdated or UNKNOWN
+            GW.globalSettings.profiles[profiles[idx]].profileIcon = GW.globalSettings.profiles[profiles[idx]].profileIcon or ICONS[math.random(1, #ICONS)]
 
-            if(type(validProfiles[idx].profileIcon) == "number") then
-                slot.item.activateButton.icon:SetTexture(validProfiles[idx].profileIcon)
+            if(type(GW.globalSettings.profiles[profiles[idx]].profileIcon) == "number") then
+                slot.item.activateButton.icon:SetTexture(GW.globalSettings.profiles[profiles[idx]].profileIcon)
             else
-                slot.item.activateButton.icon:SetTexture("INTERFACE\\ICONS\\" .. validProfiles[idx].profileIcon)
+                slot.item.activateButton.icon:SetTexture("INTERFACE\\ICONS\\" .. GW.globalSettings.profiles[profiles[idx]].profileIcon)
             end
 
-            local description =
-                L["Created: "] ..
-                validProfiles[idx].profileCreatedDate .. "\n" ..
+            slot.item.desc:SetText(L["Created: "] ..
+                GW.globalSettings.profiles[profiles[idx]].profileCreatedDate .. "\n" ..
                 L["Created by: "] ..
-                validProfiles[idx].profileCreatedCharacter .. "\n" .. L["Last updated: "] .. validProfiles[idx].profileLastUpdated
-
-            slot.item.desc:SetText(description)
+                GW.globalSettings.profiles[profiles[idx]].profileCreatedCharacter .. "\n" .. L["Last updated: "] .. GW.globalSettings.profiles[profiles[idx]].profileLastUpdated
+            )
 
             slot.item:Show()
         end
     end
 
-    USED_PROFILE_HEIGHT = profilewin.buttons[1]:GetHeight() * #validProfiles
+    USED_PROFILE_HEIGHT = profilewin.buttons[1]:GetHeight() * numProfiles
     HybridScrollFrame_Update(profilewin, USED_PROFILE_HEIGHT, 433)
 end
 
