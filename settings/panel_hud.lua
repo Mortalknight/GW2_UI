@@ -330,7 +330,7 @@ local function LoadHudPanel(sWindow)
     )
 
     -- Superbloom
-    addGroupHeader(L["Superbloom"])
+    addGroupHeader(worldmap.scroll.scrollchild, L["Superbloom"])
     addOption(worldmap.scroll.scrollchild, L["Superbloom"], nil, "WORLD_EVENTS_SUPER_BLOOM_ENABLED", GW.UpdateWorldEventTrackers, nil, nil, nil, nil, L["Superbloom"])
     addOption(worldmap.scroll.scrollchild, L["Desaturate icon"], L["Desaturate icon if the event is completed in this week."], "WORLD_EVENTS_SUPER_BLOOM_DESATURATE", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_SUPER_BLOOM_ENABLED"] = true}, nil, nil, L["Superbloom"])
     addOption(worldmap.scroll.scrollchild, COMMUNITIES_NOTIFICATION_SETTINGS_DIALOG_SETTINGS_LABEL, nil, "WORLD_EVENTS_SUPER_BLOOM_ALERT", GW.UpdateWorldEventTrackers, nil, {["WORLD_EVENTS_SUPER_BLOOM_ENABLED"] = true}, nil, nil, L["Superbloom"])
