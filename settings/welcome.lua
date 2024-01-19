@@ -61,11 +61,15 @@ local function button1_OnClick()
 
         wpanel.welcome.button1:SetScript("OnClick", function()
             FCF_ResetChatWindows()
+
+            local voiceChat = _G[CHAT_FRAMES[3]]
+            FCF_ResetChatWindow(voiceChat, VOICE)
+            FCF_DockFrame(voiceChat, 3)
+
             FCF_OpenNewWindow(LOOT)
 
-            for _, name in ipairs(CHAT_FRAMES) do
+            for id, name in next, CHAT_FRAMES do
                 local frame = _G[name]
-                local id = frame:GetID()
 
                 -- move general bottom left
                 if id == 1 then
