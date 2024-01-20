@@ -99,6 +99,9 @@ do
     AddLib("LibDD", "LibUIDropDownMenu-4.0", true)
 end
 
+-- triger GetCurrentRegion() for LRI to unpack all data on startup
+GW.Libs.LRI:GetCurrentRegion()
+
 do
 	GW.UnlocalizedClasses = {}
 	for k, v in pairs(LOCALIZED_CLASS_NAMES_MALE) do GW.UnlocalizedClasses[v] = k end
