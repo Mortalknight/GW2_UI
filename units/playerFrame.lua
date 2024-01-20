@@ -238,6 +238,8 @@ local function LoadPlayerFrame()
     NewUnitFrame.prestigebg:Hide()
     NewUnitFrame.prestigeString:Hide()
 
+    UpdateSettings()
+
     return NewUnitFrame
 end
 GW.LoadPlayerFrame = LoadPlayerFrame
