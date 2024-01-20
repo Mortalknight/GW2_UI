@@ -10,8 +10,18 @@ local function powerCombo(self, event, ...)
         return
     end
 
-    local pwrMax = UnitPowerMax("player", Enum.PowerType.ComboPoints)
-    local pwr = UnitPower("player", Enum.PowerType.ComboPoints)
+    local pwrMax = UnitPowerMax(self.unit, Enum.PowerType.ComboPoints)
+    local pwr = UnitPower(self.unit, Enum.PowerType.ComboPoints)
+    local comboPoints = GetComboPoints(self.unit, "target")
+
+    if self.unit == "vehicle" then
+        if comboPoints == 0 then
+            self.combopoints:Hide()
+            return
+        else
+            self.combopoints:Show()
+        end
+    end
 
     local old_power = self.gwPower
     self.gwPower = pwr
@@ -42,8 +52,8 @@ local function powerCombo(self, event, ...)
                     5,
                     GetTime(),
                     0.5,
-                    function(p)
-                        p = math.min(1, math.max(0, p))
+                    function()
+                        local p = math.min(1, math.max(0, animations["COMBOPOINTS_FLARE"].progress))
                         self.combopoints.comboFlare:SetAlpha(p)
                     end,
                     nil,
@@ -67,34 +77,8 @@ local function setComboBar(f)
 
     f:SetScript("OnEvent", powerCombo)
     powerCombo(f, "CLASS_POWER_INIT")
-    f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
-    f:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
-
-    if f.ourTarget and f.comboPointsOnTarget then
-        f:ClearAllPoints()
-        if GwTargetUnitFrame.frameInvert then
-            f:SetPoint("TOPRIGHT", GwTargetUnitFrame.castingbar, "TOPRIGHT", 0, -13)
-            f.combopoints:SetWidth(213)
-        else
-            f:SetPoint("TOPLEFT", GwTargetUnitFrame.castingbar, "TOPLEFT", 0, -13)
-        end
-        f:SetWidth(220)
-        f:SetHeight(30)
-        f.combopoints.comboFlare:SetSize(64, 64)
-        local point = 0
-        for i = 1, 9 do
-            f.combopoints["runeTex" .. i]:SetSize(18, 18)
-            f.combopoints["combo" .. i]:SetSize(18, 18)
-            if GwTargetUnitFrame.frameInvert then
-                f.combopoints["runeTex" .. i]:ClearAllPoints()
-                f.combopoints["combo" .. i]:ClearAllPoints()
-                f.combopoints["runeTex" .. i]:SetPoint("RIGHT", f.combopoints, "RIGHT", point, 0)
-                f.combopoints["combo" .. i]:SetPoint("RIGHT", f.combopoints, "RIGHT", point, 0)
-                point = point - 32
-            end
-        end
-        f:Hide()
-    end
+    f:RegisterEvent("UNIT_MAXPOWER")
+    f:RegisterEvent("UNIT_POWER_UPDATE")
 end
 
 local function powerMana(self, event, ...)
@@ -110,7 +94,7 @@ local function setManaBar(f)
 
     f:SetWidth(220)
     f:SetHeight(30)
-    f:Hide()
+    --f:Hide()
 
     GwPlayerPowerBarExtra:SetScript("OnEvent", powerMana)
     powerMana(GwPlayerPowerBarExtra, "CLASS_POWER_INIT")
@@ -120,6 +104,8 @@ end
 
 -- ROGUE
 local function setRogue(f)
+    if GetSetting("target_HOOK_COMBOPOINTS") then return false end
+
     setComboBar(f)
     return true
 end
@@ -129,9 +115,9 @@ local function setDruid(f)
     local form = f.gwPlayerForm
     local barType = "none"
 
-    if form == 1 then -- cat
+    if form == CAT_FORM then -- cat
         barType = "combo|little_mana"
-    elseif form == 5 or form == 8 then --bear
+    elseif form == BEAR_FORM or form == 8 then --bear
         barType = "little_mana"
     end
 
@@ -145,6 +131,7 @@ local function setDruid(f)
         setManaBar(f)
         return false
     else
+        f.barType = "none"
         return false
     end
 end
@@ -156,7 +143,7 @@ local function selectType(f)
 
     f.combopoints:Hide()
 
-    if f.ourPowerBar then
+    if GwPlayerPowerBarExtra then
         GwPlayerPowerBarExtra:Hide()
     end
     f.gwPower = -1
@@ -168,10 +155,11 @@ local function selectType(f)
         showBar = setDruid(f)
     end
 
-    if (GW.myClassID == 4 or GW.myClassID == 11) and f.ourTarget and f.comboPointsOnTarget and f.barType == "combo" then
-        showBar = UnitExists("target") and UnitCanAttack("player", "target") and not UnitIsDead("target")
+    if showBar and not f:IsShown() then
+        f:Show()
+    elseif not showBar and f:IsShown() then
+        f:Hide()
     end
-    f:SetShown(showBar)
 end
 
 local function barChange_OnEvent(self, event, ...)
@@ -191,6 +179,12 @@ local function barChange_OnEvent(self, event, ...)
         elseif f.barType == "combo" then
             f:Hide()
         end
+    elseif event == "UNIT_ENTERED_VEHICLE" then
+        f.unit = "vehicle"
+        selectType(f)
+    elseif event == "UNIT_EXITED_VEHICLE" then
+        f.unit = "player"
+        selectType(f)
     end
 end
 
@@ -212,8 +206,6 @@ local function LoadClassPowers()
         cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff, framePoint.yOfs - yOff)
     end
 
-    cpf.ourTarget = GetSetting("TARGET_ENABLED")
-    cpf.comboPointsOnTarget = GetSetting("target_HOOK_COMBOPOINTS")
     cpf.ourPowerBar = GetSetting("POWERBAR_ENABLED")
     cpf.gwPlayerForm = GetShapeshiftFormID()
 
@@ -244,14 +236,11 @@ local function LoadClassPowers()
 
     cpf.Script:SetScript("OnEvent", barChange_OnEvent)
     cpf.Script:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+    cpf.Script:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player")
+	cpf.Script:RegisterUnitEvent("UNIT_EXITED_VEHICLE", "player")
+
+    cpf.unit = "player"
 
     selectType(cpf)
-
-    if (GW.myClassID == 4 or GW.myClassID == 11) and (cpf.ourTarget and cpf.comboPointsOnTarget) then
-        cpf.Script:RegisterEvent("PLAYER_TARGET_CHANGED")
-        if cpf.barType == "combo" then
-            cpf:Hide()
-        end
-    end
 end
 GW.LoadClassPowers = LoadClassPowers

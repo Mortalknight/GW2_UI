@@ -712,6 +712,8 @@ local function LoadTarget()
 
     NewUnitFrame.showThreat = GetSetting("target_THREAT_VALUE_ENABLED")
 
+    GW.LoadComboBarOnTargetFrame(NewUnitFrame)
+
     -- priority: All > Important > Player
     NewUnitFrame.debuffFilter = "PLAYER|HARMFUL"
     if GetSetting("target_BUFFS_FILTER_IMPORTANT") then
