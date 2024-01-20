@@ -78,7 +78,7 @@ local function UpdateAlpha(tbox)
     end
 
     local value = num * 0.01
-    ColorPickerFrame.Content.ColorPicker:SetColorAlpha((1 - num) * 0.01)
+    ColorPickerFrame.Content.ColorPicker:SetColorAlpha(value)
     onAlphaValueChanged(nil, value)
 end
 
@@ -118,7 +118,7 @@ local function UpdateColorTexts(r, g, b, box)
         end
     end
 
-    r, g, b = r * 255, g * 255, b * 255
+    r, g, b = GW.RoundDec(r * 255), GW.RoundDec(g * 255), GW.RoundDec(b * 255)
 
     ColorPickerFrame.Content.HexBox:SetText(("%.2x%.2x%.2x"):format(r, g, b))
     GwColorPPBoxR:SetText(r)
