@@ -604,7 +604,7 @@ local function evPlayerLogin(self)
 
     -- Misc
     GW.InitializeMiscFunctions()
-    GW.LoadRaidMarker()
+    GW.LoadRaidMarkerCircle()
 
     --Create general skins
     if GW.settings.MAINMENU_SKIN_ENABLED then

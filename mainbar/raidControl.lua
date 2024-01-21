@@ -1,5 +1,7 @@
 local _, GW = ...
 
+local created = false
+
 local function fnGMIG_OnEvent(self)
     local activ = (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) or (IsInGroup() and not IsInRaid())
 
@@ -26,39 +28,42 @@ local function fnGMIG_OnEvent(self)
 
     -- set counter
     local unit = (IsInRaid() and "raid" or "party")
-        local numTank, numDamage, numHeal = 0, 0, 0
-        for i = 1, GetNumGroupMembers() do
-            local role = UnitGroupRolesAssigned(unit .. i)
+    local numTank, numDamage, numHeal = 0, 0, 0
+    for i = 1, GetNumGroupMembers() do
+        local role = UnitGroupRolesAssigned(unit .. i)
 
-            if role then
-                if role == "TANK" then
-                    numTank = numTank + 1
-                elseif role == "HEALER" then
-                    numHeal = numHeal + 1
-                elseif role == "DAMAGER" then
-                    numDamage = numDamage + 1
-                end
+        if role then
+            if role == "TANK" then
+                numTank = numTank + 1
+            elseif role == "HEALER" then
+                numHeal = numHeal + 1
+            elseif role == "DAMAGER" then
+                numDamage = numDamage + 1
             end
         end
+    end
 
-        if GetNumGroupMembers() == 0 or unit == "party" then
-            if GW.myrole then
-                if GW.myrole == "TANK" then
-                    numTank = numTank + 1
-                elseif GW.myrole == "HEALER" then
-                    numHeal = numHeal + 1
-                elseif GW.myrole == "DAMAGER" then
-                    numDamage = numDamage + 1
-                end
+    if GetNumGroupMembers() == 0 or unit == "party" then
+        if GW.myrole then
+            if GW.myrole == "TANK" then
+                numTank = numTank + 1
+            elseif GW.myrole == "HEALER" then
+                numHeal = numHeal + 1
+            elseif GW.myrole == "DAMAGER" then
+                numDamage = numDamage + 1
             end
         end
+    end
     self.groupCounter:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank:0:0:0:2:64:64:4:60:4:60|t " .. numTank .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-healer:0:0:0:2:64:64:4:60:4:60|t " .. numHeal .. "    |TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:15:15:0:0:64:64:4:60:4:60|t " .. numDamage)
-
 end
 
-local function manageButton()
+local function CreateRaidControlFrame()
+    if created then return end
+    created = true
+
     local GwGroupManage = CreateFrame("Frame", "GwGroupManage", UIParent, "GwGroupManage")
     local fmGMGB = CreateFrame("Button", "GwManageGroupButton", UIParent, "GwManageGroupButtonTmpl")
+    GwGroupManage.inGroup:SetProtected()
 
     fmGMGB:SetFrameRef("GroupManager", GwGroupManage)
     fmGMGB:SetAttribute("state", "closed")
@@ -79,7 +84,7 @@ local function manageButton()
 
     GwGroupManage:SetFrameRef("GroupManagerGroup", GwGroupManage.inGroup)
     GwGroupManage:SetAttribute("_onshow", [=[
-        local ref = self:GetFrameRef("GroupManagerGroup") 
+        local ref = self:GetFrameRef("GroupManagerGroup")
 
         if PlayerInGroup() ~= false then
             ref:Show()
@@ -90,7 +95,7 @@ local function manageButton()
         end
     ]=])
     GwGroupManage:SetAttribute("_onstate-barlayout", [=[
-        local ref = self:GetFrameRef("GroupManagerGroup") 
+        local ref = self:GetFrameRef("GroupManagerGroup")
         local state = self:GetAttribute("state")
 
         if newstate == "show" and state == "open" then
@@ -103,7 +108,7 @@ local function manageButton()
     ]=])
     RegisterStateDriver(GwGroupManage, "barlayout", "[group:raid] show; [group:party] show; hide")
 
-    local fnGMGIB_OnEscapePressed = function(self)
+    local TextBox_OnEscapePressed = function(self)
         self:ClearFocus()
     end
     local fnGMGIB_OnEditFocusGained = function(self)
@@ -125,7 +130,7 @@ local function manageButton()
         self:SetText("")
         self:ClearFocus()
     end
-    GwGroupManage.groupInviteBox:SetScript("OnEscapePressed", fnGMGIB_OnEscapePressed)
+    GwGroupManage.groupInviteBox:SetScript("OnEscapePressed", TextBox_OnEscapePressed)
     GwGroupManage.groupInviteBox:SetScript("OnEditFocusGained", fnGMGIB_OnEditFocusGained)
     GwGroupManage.groupInviteBox:SetScript("OnEditFocusLost", fnGMGIB_OnEditFocusLost)
     GwGroupManage.groupInviteBox:SetScript("OnEnterPressed", fnGMGIB_OnEnterPressed)
@@ -159,9 +164,9 @@ local function manageButton()
     local fmGGCD_OnClick = function(_, button)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         if IsControlKeyDown() and button == "LeftButton" and C_AddOns.IsAddOnLoaded("DBM-Core") then
-            SlashCmdList.DEADLYBOSSMODSPULL()
+            SlashCmdList.DEADLYBOSSMODSPULL(GW.settings.pulltimerSeconds)
         else
-            C_PartyInfo.DoCountdown(10)
+            C_PartyInfo.DoCountdown(GW.settings.pulltimerSeconds)
         end
     end
 
@@ -171,6 +176,19 @@ local function manageButton()
     GwGroupManage.inGroup.countdown:GetFontString():SetShadowColor(0, 0, 0, 1)
     GwGroupManage.inGroup.countdown:GetFontString():SetShadowOffset(1, -1)
     GwGroupManage.inGroup.countdown:SetEnabled(UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
+
+    GwGroupManage.inGroup.inputCountdownFrame.input:SetText(GW.settings.pulltimerSeconds)
+
+    GwGroupManage.inGroup.inputCountdownFrame.input:SetScript("OnEscapePressed", TextBox_OnEscapePressed)
+    GwGroupManage.inGroup.inputCountdownFrame.input:SetScript("OnEnterPressed", function(self)
+        local roundValue = GW.RoundDec(self:GetNumber(), 0) or GW.settings.pulltimerSeconds
+        self:ClearFocus()
+        if tonumber(roundValue) == 0 then
+            roundValue = GW.globalDefault.profile.pulltimerSeconds
+        end
+        GW.settings.pulltimerSeconds = tonumber(roundValue)
+        self:SetText(roundValue)
+    end)
 
     local fnGGRlC_OnClick = function()
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -308,106 +326,4 @@ local function manageButton()
         fmGMGB:SetAlpha(0)
     end
 end
-GW.manageButton = manageButton
-GW.AddForProfiling("raidControl", "manageButton", manageButton)
-
-local function UpdateRaidCounterVisibility()
-    local VisibilityStates = {
-        ["NEVER"] = "hide",
-        ["ALWAYS"] = "[petbattle] hide; show",
-        ["IN_GROUP"] = "[petbattle] hide; [group:raid] hide; [group:party] show; hide",
-        ["IN_RAID"] = "[petbattle] hide; [group:raid] show; [group:party] hide; hide",
-        ["IN_RAID_IN_PARTY"] = "[petbattle] hide; [group] show; hide",
-    }
-
-    RegisterStateDriver(GW_RaidCounter_Frame, "visibility", VisibilityStates[GW.settings.ROLE_BAR])
-    GW_RaidCounter_Frame:GetScript("OnEvent")(GW_RaidCounter_Frame)
-end
-GW.UpdateRaidCounterVisibility = UpdateRaidCounterVisibility
-
-local function Create_Raid_Counter()
-    local raidCounterFrame = CreateFrame("Button", "GW_RaidCounter_Frame", UIParent, "SecureHandlerClickTemplate")
-
-    if GwSocialWindow then
-        raidCounterFrame:SetFrameRef("GwSocialWindow", GwSocialWindow)
-    end
-    raidCounterFrame:SetAttribute("ourWindow", GW.settings.USE_SOCIAL_WINDOW)
-    raidCounterFrame:SetAttribute("ourWindow", false)
-    raidCounterFrame.func = function() ToggleRaidFrame() end
-    raidCounterFrame:SetAttribute(
-        "_onclick",
-        [=[
-            if self:GetAttribute("ourWindow") then
-                local f = self:GetFrameRef("GwSocialWindow")
-                f:SetAttribute("keytoggle", true)
-                f:SetAttribute("windowpanelopen", "raidlist")
-            else
-                self:CallMethod("func")
-            end
-        ]=]
-    )
-    raidCounterFrame:GwCreateBackdrop(GW.BackdropTemplates.DefaultWithSmallBorder, true)
-
-    raidCounterFrame:SetSize(100, 25)
-
-    raidCounterFrame.tank = raidCounterFrame:CreateFontString(nil, "ARTWORK")
-    raidCounterFrame.tank:SetFont(UNIT_NAME_FONT, 12)
-    raidCounterFrame.tank:SetPoint("LEFT", raidCounterFrame, "LEFT", 5, 0)
-    raidCounterFrame.tank:SetTextColor(1, 1, 1)
-
-    raidCounterFrame.heal = raidCounterFrame:CreateFontString(nil, "ARTWORK")
-    raidCounterFrame.heal:SetFont(UNIT_NAME_FONT, 12)
-    raidCounterFrame.heal:SetPoint("CENTER", raidCounterFrame, "CENTER", 0, 0)
-    raidCounterFrame.heal:SetTextColor(1, 1, 1)
-
-    raidCounterFrame.damager = raidCounterFrame:CreateFontString(nil, "ARTWORK")
-    raidCounterFrame.damager:SetFont(UNIT_NAME_FONT, 12)
-    raidCounterFrame.damager:SetPoint("RIGHT", raidCounterFrame, "RIGHT", -5, 0)
-    raidCounterFrame.damager:SetTextColor(1, 1, 1)
-
-    raidCounterFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    raidCounterFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    raidCounterFrame:SetScript("OnEvent", function(self)
-        if not self:IsShown() then return end
-
-        local unit = (IsInRaid() and "raid" or "party")
-        local tank, damage, heal = 0, 0, 0
-        for i = 1, GetNumGroupMembers() do
-            local role = UnitGroupRolesAssigned(unit .. i)
-
-            if role then
-                if role == "TANK" then
-                    tank = tank + 1
-                elseif role == "HEALER" then
-                    heal = heal + 1
-                elseif role == "DAMAGER" then
-                    damage = damage + 1
-                end
-            end
-        end
-
-        if GetNumGroupMembers() == 0 or unit == "party" then
-            local plyerRole = UnitGroupRolesAssigned("player")
-            if plyerRole then
-                if GW.myrole == "TANK" then
-                    tank = tank + 1
-                elseif GW.myrole == "HEALER" then
-                    heal = heal + 1
-                elseif GW.myrole == "DAMAGER" then
-                    damage = damage + 1
-                end
-            end
-        end
-
-        raidCounterFrame.tank:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-tank:0:0:0:2:64:64:4:60:4:60|t " .. tank)
-        raidCounterFrame.heal:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-healer:0:0:0:1:64:64:4:60:4:60|t " .. heal)
-        raidCounterFrame.damager:SetText("|TInterface/AddOns/GW2_UI/textures/party/roleicon-dps:15:15:0:0:64:64:4:60:4:60|t" .. damage)
-    end)
-
-    GW.RegisterMovableFrame(raidCounterFrame, GW.L["Role Bar"], "ROLE_BAR_pos", ALL .. ",Group,Raid", nil, {"default", "scaleable"})
-    raidCounterFrame:ClearAllPoints()
-    raidCounterFrame:SetPoint("TOPLEFT", raidCounterFrame.gwMover)
-
-    UpdateRaidCounterVisibility()
-end
-GW.Create_Raid_Counter = Create_Raid_Counter
+GW.CreateRaidControlFrame = CreateRaidControlFrame

@@ -157,9 +157,9 @@
                     </Button>
                     <Button parentKey="countdown" inherits="GwStandardButton" text="PLAYER_COUNTDOWN_BUTTON">
                         <NormalTexture file="Interface/AddOns/GW2_UI/textures/party/readycheck-button"></NormalTexture>
-                        <Size x="190" y="20" />
+                        <Size x="165" y="20" />
                         <Anchors>
-                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="0" y="-330"></Anchor>
+                            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeKey="$parent.$parent.groupLeaveButton" x="-25" y="-330"></Anchor>
                         </Anchors>
                         <Layers>
                             <Layer level="OVERLAY">
@@ -172,6 +172,12 @@
                             </Layer>
                         </Layers>
                     </Button>
+                    <Frame parentKey="inputCountdownFrame" inherits="GwStandardInputField" justifyH="CENTER">
+                        <Size x="23" y="20"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.countdown" relativePoint="RIGHT" x="2" y="0"/>
+                        </Anchors>
+                    </Frame>
                     <Button parentKey="roleCheck" inherits="GwStandardButton" text="ROLE_POLL">
                         <Size x="190" y="20" />
                         <Anchors>

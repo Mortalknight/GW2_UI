@@ -652,9 +652,7 @@ local function Setup(self)
     end)
 end
 local function Initialize()
-    if not GwManageGroupButton then
-        GW.manageButton()
-    end
+    GW.CreateRaidControlFrame()
 
     for profile, _ in pairs(profiles) do
         UpdateSettings(profile)

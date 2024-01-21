@@ -836,9 +836,7 @@ GW.AddForProfiling("party", "createPartyFrame", createPartyFrame)
 
 
 local function LoadPartyFrames()
-    if not GwManageGroupButton then
-        GW.manageButton()
-    end
+    GW.CreateRaidControlFrame()
 
     if GW.settings.RAID_FRAMES and GW.settings.RAID_STYLE_PARTY then
         return

@@ -1065,6 +1065,8 @@ GW.globalDefault = {
 
         SHOW_CHARACTER_ITEM_INFO= false,
 
+        pulltimerSeconds = 10,
+
         IncompatibleAddons = {
             Actionbars = {
                 Override = false,

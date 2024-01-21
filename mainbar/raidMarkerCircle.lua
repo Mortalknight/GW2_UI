@@ -61,7 +61,7 @@ local function RaidMarkButton_OnClick(self, button)
     RaidMarkFrame:Hide()
 end
 
-local function LoadRaidMarker()
+local function LoadRaidMarkerCircle()
     _G["BINDING_NAME_RAID_MARKER"] = RAID_TARGET_ICON
 
     RaidMarkFrame:EnableMouse(true)
@@ -89,4 +89,4 @@ local function LoadRaidMarker()
         end
     end
 end
-GW.LoadRaidMarker = LoadRaidMarker
+GW.LoadRaidMarkerCircle = LoadRaidMarkerCircle
