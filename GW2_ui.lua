@@ -1,4 +1,4 @@
-local _, GW = ...
+local addonName, GW = ...
 local L = GW.L
 local RoundInt = GW.RoundInt
 local bloodSpark = GW.BLOOD_SPARK
@@ -32,6 +32,23 @@ local forcedMABags = false
 local swimAnimation = 0
 local lastSwimState = true
 local hudArtFrame
+
+
+function GW2_ADDON_AddonCompartmentOnClickFunc()
+    GW.ToggleGw2Settings()
+end
+
+function GW2_ADDON_OnAddonCompartmentEnter(_, menuButtonFrame)
+    GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_NONE");
+    GameTooltip:SetPoint("TOPRIGHT", menuButtonFrame, "BOTTOMRIGHT", 0, 0);
+    GameTooltip:ClearLines()
+    GameTooltip:AddDoubleLine(addonName, C_AddOns.GetAddOnMetadata(addonName, "Version"))
+    GameTooltip:Show()
+end
+
+function GW2_ADDON_OnAddonCompartmentLeave(addonName, button)
+    GameTooltip:Hide();
+end
 
 local function disableMABags()
     local bags = GW.settings.BAGS_ENABLED and not IsIncompatibleAddonLoadedOrOverride("Inventory", true)

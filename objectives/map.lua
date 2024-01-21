@@ -619,14 +619,6 @@ local function UpdateClusterPoint(_, _, anchor)
     end
 end
 
-do
-    local function AddonCompartmentOnClickFunc()
-        GW.ToggleGw2Settings()
-    end
-
-    _G.GW2_ADDON_AddonCompartmentOnClickFunc = AddonCompartmentOnClickFunc
-end
-
 local function HandleAddonCompartmentButton()
     if AddonCompartmentFrame then
         if not AddonCompartmentFrame.gw2Handled then

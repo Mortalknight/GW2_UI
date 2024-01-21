@@ -8,6 +8,8 @@
 ## X-Curse-Project-ID: 94310
 ## X-Wago-ID: Mj6jXpGR
 ## DefaultState: Enabled
+## AddonCompartmentFuncOnEnter: GW2_ADDON_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: GW2_ADDON_OnAddonCompartmentLeave
 ## AddonCompartmentFunc: GW2_ADDON_AddonCompartmentOnClickFunc
 ## IconTexture: Interface\AddOns\GW2_UI\Textures\gwlogo
 
