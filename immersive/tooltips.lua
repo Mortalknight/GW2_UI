@@ -331,7 +331,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
 
         local nameColor = GWGetClassColor(class, GW.settings.ADVANCED_TOOLTIP_SHOW_CLASS_COLOR, true)
 
-        if GW.settings.ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES and pvpName then
+        if GW.settings.ADVANCED_TOOLTIP_SHOW_PLAYER_TITLES and pvpName and pvpName ~= "" then
             name = pvpName
         end
 
