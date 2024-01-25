@@ -31,6 +31,7 @@ GW.AddForProfiling("petbar", "petBarUpdate", petBarUpdate)
 local function setPetBar(fmPet)
     local BUTTON_SIZE = 28
     local BUTTON_MARGIN = 3
+    local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
 
     PetActionButton1:ClearAllPoints()
     PetActionButton1:SetPoint("BOTTOMLEFT", fmPet, "BOTTOMLEFT", 3, 30)
@@ -67,6 +68,8 @@ local function setPetBar(fmPet)
                 btn:SetAttribute("_onreceivedrag", nil)
             end
 
+            btn.showMacroName = showName
+
             GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, nil, true)
             GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])
         end
@@ -92,6 +95,18 @@ local function updatePetFrameLocation()
     end
 end
 GW.AddForProfiling("petbar", "updatePetFrameLocation", updatePetFrameLocation)
+
+local function UpdatePetBarButtonsHot()
+    for i = 1, 12 do
+        local btn = _G["PetActionButton" .. i]
+
+        if btn then
+            btn.showMacroName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
+            GW.updateMacroName(btn)
+        end
+    end
+end
+GW.UpdatePetBarButtonsHot = UpdatePetBarButtonsHot
 
 local function SetPetHappiness(self)
     local happiness, damagePercentage, loyaltyRate = GetPetHappiness()

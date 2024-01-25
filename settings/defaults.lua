@@ -23,6 +23,7 @@ GW_DEFAULT["NPC_CAM_ENABLED"] = false
 GW_DEFAULT["FONTS_ENABLED"] = true
 GW_DEFAULT["CASTINGBAR_ENABLED"] = true
 GW_DEFAULT["HIDEACTIONBAR_BACKGROUND_ENABLED"] = false
+GW_DEFAULT["SHOWACTIONBAR_MACRO_NAME_ENABLED"] = false
 GW_DEFAULT["SHOW_QUESTTRACKER_COMPASS"] = true
 GW_DEFAULT["QUESTTRACKER_SHOW_XP"] = true
 GW_DEFAULT["MINIMAP_HOVER"] = "NONE"
@@ -233,6 +234,9 @@ GW_DEFAULT["focustarget_pos"]["xOfs"] = -80
 GW_DEFAULT["focustarget_pos"]["yOfs"] = -10
 GW_DEFAULT["focustarget_pos_scale"] = 1
 
+GW_DEFAULT.MULTIBAR_MARGIIN = 2
+GW_DEFAULT.MAINBAR_MARGIIN = 5
+
 GW_DEFAULT["MultiBarBottomLeft"] = {}
 GW_DEFAULT["MultiBarBottomLeft"]["point"] = "BOTTOMLEFT"
 GW_DEFAULT["MultiBarBottomLeft"]["relativePoint"] = "BOTTOM"
@@ -258,6 +262,7 @@ GW_DEFAULT["MultiBarBottomRight"]["ButtonsPerRow"] = 6
 GW_DEFAULT["MultiBarBottomRight"]["hideDefaultBackground"] = true
 
 GW_DEFAULT["MULTIBAR_RIGHT_COLS"] = 1
+GW_DEFAULT["MULTIBAR_RIGHT_COLS_2"] = 1
 
 GW_DEFAULT["StanceBar_pos"] = {}
 GW_DEFAULT["StanceBar_pos"]["point"] = "BOTTOMLEFT"

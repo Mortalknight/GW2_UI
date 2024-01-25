@@ -358,6 +358,22 @@ local function updateHotkey(self)
 end
 GW.updateHotkey = updateHotkey
 
+local function updateMacroName(self)
+    if self.Name then
+        if self.showMacroName then
+            self.Name:SetPoint("TOPLEFT", self, "TOPLEFT")
+            self.Name:SetJustifyH("LEFT")
+            self.Name:SetWidth(self:GetWidth())
+            local font, fontHeight = self.Name:GetFont()
+            self.Name:SetFont(font, fontHeight, "OUTLINED")
+            self.Name:SetAlpha(1)
+        else
+            self.Name:SetAlpha(0)
+        end
+    end
+end
+GW.updateMacroName = updateMacroName
+
 local function hideBackdrop(self)
     self.gwBackdrop:Hide()
 end
@@ -440,6 +456,8 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
     btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
     btn.Name:SetAlpha(0) --Hide Marco Name on Actionbutton
 
+    updateMacroName(btn)
+
     if noBackDrop == nil or noBackDrop == false then
         local backDrop = CreateFrame("Frame", nil, btn, "GwActionButtonBackdropTmpl")
         local backDropSize = 1
@@ -476,7 +494,8 @@ local function updateMainBar()
     local fmActionbar = MainMenuBarArtFrame
 
     local used_height = MAIN_MENU_BAR_BUTTON_SIZE
-    local btn_padding = MAIN_MENU_BAR_BUTTON_MARGIN
+    local btn_padding = GetSetting("MAINBAR_MARGIIN")
+    local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
 
     fmActionbar.gw_Buttons = {}
     fmActionbar.gw_Backdrops = {}
@@ -510,6 +529,7 @@ local function updateMainBar()
             local hotkey = _G["ActionButton" .. i .. "HotKey"]
             btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + MAIN_MENU_BAR_BUTTON_MARGIN
             btn:SetSize(MAIN_MENU_BAR_BUTTON_SIZE, MAIN_MENU_BAR_BUTTON_SIZE)
+            btn.showMacroName = showName
 
             setActionButtonStyle("ActionButton" .. i, true)
             updateHotkey(btn)
@@ -628,9 +648,11 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     local settings = GetSetting(barName)
     local used_width = 0
     local used_height = settings["size"]
+    local margin = GetSetting("MULTIBAR_MARGIIN")
     local btn_padding = 0
     local btn_padding_y = 0
     local btn_this_row = 0
+    local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
 
     local fmMultibar = CreateFrame("FRAME", "Gw" .. barName, UIParent, "GwMultibarTmpl")
 
@@ -639,6 +661,7 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
         fmMultibar:SetFrameStrata("LOW")
     end
     fmMultibar.gw_Buttons = {}
+    fmMultibar.originalBarName = barName
 
     local hideActionBarBG = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
     for i = 1, 12 do
@@ -654,6 +677,8 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
 
             btn:SetSize(settings.size, settings.size)
             updateHotkey(btn)
+            btn.showMacroName = showName
+
             setActionButtonStyle(buttonName .. i, nil, hideActionBarBG)
 
             btn:ClearAllPoints()
@@ -661,12 +686,12 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
             btn.noGrid = nil
             btn.changedColor = false
 
-            btn_padding = btn_padding + settings.size + settings.margin
+            btn_padding = btn_padding + settings.size + margin
             btn_this_row = btn_this_row + 1
             used_width = btn_padding
 
             if btn_this_row == settings.ButtonsPerRow then
-                btn_padding_y = btn_padding_y + settings.size + settings.margin
+                btn_padding_y = btn_padding_y + settings.size + margin
                 btn_this_row = 0
                 btn_padding = 0
                 used_height = btn_padding_y
@@ -728,6 +753,71 @@ local function updateMultiBar(lm, barName, buttonName, actionPage, state)
     return fmMultibar
 end
 GW.AddForProfiling("Actionbars2", "updateMultiBar", updateMultiBar)
+
+local function UpdateMultibarButtons()
+    local margin = GetSetting("MULTIBAR_MARGIIN")
+    local fmActionbar = MainMenuBarArtFrame
+    local fmMultiBar
+    local HIDE_ACTIONBARS_CVAR
+
+    local hideActionbuttonBackdrop = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
+
+    if hideActionbuttonBackdrop then
+        HIDE_ACTIONBARS_CVAR = nil
+    else
+        HIDE_ACTIONBARS_CVAR = 1
+    end
+    C_CVar.SetCVar("alwaysShowActionBars", tostring(HIDE_ACTIONBARS_CVAR))
+
+    for y = 1, 4 do
+        if y == 1 then fmMultiBar = fmActionbar.gw_Bar1 end
+        if y == 2 then fmMultiBar = fmActionbar.gw_Bar2 end
+        if y == 3 then fmMultiBar = fmActionbar.gw_Bar3 end
+        if y == 4 then fmMultiBar = fmActionbar.gw_Bar4 end
+        if fmMultiBar and fmMultiBar.gw_IsEnabled then
+            local settings = GetSetting(fmMultiBar.originalBarName)
+            local used_height = 0
+            local btn_padding = 0
+            local btn_padding_y = 0
+            local btn_this_row = 0
+            local used_width = 0
+            for i = 1, 12 do
+                local btn = fmMultiBar.gw_Buttons[i]
+
+                btn:ClearAllPoints()
+                btn:SetPoint("TOPLEFT", fmMultiBar, "TOPLEFT", btn_padding, -btn_padding_y)
+
+                btn_padding = btn_padding + settings.size + margin
+                btn_this_row = btn_this_row + 1
+                used_width = btn_padding
+
+                if btn_this_row == settings.ButtonsPerRow then
+                    btn_padding_y = btn_padding_y + settings.size + margin
+                    btn_this_row = 0
+                    btn_padding = 0
+                    used_height = used_height + settings.size + margin
+                end
+
+                if hideActionbuttonBackdrop then
+                    btn.gwBackdrop:Hide()
+                else
+                    btn.gwBackdrop:Show()
+                end
+
+                btn.showMacroName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
+                updateMacroName(btn)
+                updateHotkey(btn)
+            end
+
+            fmMultiBar.gwMover:SetSize(used_width, used_height)
+            fmMultiBar:SetSize(used_width, used_height)
+        end
+    end
+    ALWAYS_SHOW_MULTIBARS = HIDE_ACTIONBARS_CVAR
+    MultiActionBar_UpdateGridVisibility()
+    InterfaceOptions_UpdateMultiActionBars()
+end
+GW.UpdateMultibarButtons = UpdateMultibarButtons
 
 local function vehicleLeave_OnUpdate()
     if InCombatLockdown() then
@@ -1022,6 +1112,37 @@ local function changeFlyoutStyle(self)
         btn = _G["SpellFlyoutButton" .. i]
     end
 end
+
+local function UpdateMainBarHot()
+    local fmActionbar = MainMenuBarArtFrame
+    local used_height = MAIN_MENU_BAR_BUTTON_SIZE
+    local btn_padding = GetSetting("MAINBAR_MARGIIN")
+
+    for i = 1, 12 do
+        local btn = fmActionbar.gw_Buttons[i]
+        btn_padding = btn_padding + MAIN_MENU_BAR_BUTTON_SIZE + GetSetting("MAINBAR_MARGIIN")
+
+        btn:ClearAllPoints()
+        btn:SetPoint("LEFT", fmActionbar, "LEFT", btn_padding - GetSetting("MAINBAR_MARGIIN") - MAIN_MENU_BAR_BUTTON_SIZE, (GetSetting("XPBAR_ENABLED") and 0 or -14))
+
+        if i == 6 and not GetSetting("PLAYER_AS_TARGET_FRAME") then
+            btn_padding = btn_padding + 108
+        end
+
+        btn.showMacroName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
+        btn.rangeIndicatorSetting = GetSetting("MAINBAR_RANGEINDICATOR")
+        updateMacroName(btn)
+        updateHotkey(btn)
+    end
+   -- position the main action bar
+   fmActionbar:ClearAllPoints()
+   fmActionbar:SetPoint("TOP", UIParent, "BOTTOM", 0, 80)
+   fmActionbar:SetSize(btn_padding, used_height)
+   fmActionbar.gw_Width = btn_padding
+
+   actionButtons_OnUpdate(MainMenuBarArtFrame, 0, true)
+end
+GW.UpdateMainBarHot = UpdateMainBarHot
 
 local function LoadActionBars(lm)
     local HIDE_ACTIONBARS_CVAR = GetSetting("HIDEACTIONBAR_BACKGROUND_ENABLED")
