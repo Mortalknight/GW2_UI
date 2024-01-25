@@ -249,7 +249,7 @@ local function HandleIcon(icon, backdrop, backdropTexture, isBorder)
     icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
     if backdrop and not icon.backdrop then
-        icon:GwCreateBackdrop(backdropTexture, isBorder)
+        icon:CreateBackdrop(backdropTexture, isBorder)
     end
 end
 GW.HandleIcon = HandleIcon

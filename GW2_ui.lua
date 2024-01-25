@@ -10,7 +10,7 @@ local Debug = GW.Debug
 local animations = GW.animations
 local IsIncompatibleAddonLoadedOrOverride = GW.IsIncompatibleAddonLoadedOrOverride
 
-local l = CreateFrame("Frame", nil, UIParent) -- Main event frame nil
+local l = CreateFrame("Frame") -- Main event frame nil
 
 GW.VERSION_STRING = "@project-version@ Classic Era"
 
@@ -27,7 +27,6 @@ end
 local loaded = false
 local forcedMABags = false
 
-local ourPetbar = false
 local swimAnimation = 0
 local lastSwimState = true
 local hudArtFrame
@@ -296,7 +295,7 @@ local function gw_OnUpdate(_, elapsed)
         end
     end
 
-    if not foundAnimation and count ~= 0 then
+    if not foundAnimation and count > 0 then
         table.wipe(animations)
     end
 
@@ -316,11 +315,10 @@ local function gw_OnUpdate(_, elapsed)
         cb.func(cb.payload, elapsed)
     end
 
-    if PetActionBarFrame:IsShown() and ourPetbar and loaded then
+    if PetActionBarFrame:IsShown() and GetSetting("PETBAR_ENABLED") and loaded then
         PetActionBarFrame:Hide()
     end
 end
-GW.AddForProfiling("index", "gw_OnUpdate", gw_OnUpdate)
 
 local function getBestPixelScale()
     return max(0.4, min(1.15, 768 / GW.screenHeight))
@@ -336,7 +334,7 @@ GW.PixelPerfection = PixelPerfection
 
 local SCALE_HUD_FRAMES = {}
 local function UpdateHudScale()
-    local hudScale = GetSetting("HUD_SCALE")
+    local hudScale = tonumber(GetSetting("HUD_SCALE")) or 1
     for _, f in ipairs(SCALE_HUD_FRAMES) do
         if f then
             local fm = f.gwMover
@@ -352,10 +350,10 @@ local function UpdateHudScale()
     end
     -- let all mainhub frames scale with the HUD scaler, but only if they are not moved and not individual scaled
     for _, mf in pairs(GW.scaleableMainHudFrames) do
-        if not mf.gw_frame.isMoved and mf:GetScale() ~= hudScale then
-            mf.gw_frame:SetScale(hudScale)
+        if not mf.parent.isMoved and mf:GetScale() ~= hudScale then
+            mf.parent:SetScale(hudScale)
             mf:SetScale(hudScale)
-            GW.SetSetting(mf.gw_Settings .. "_scale", hudScale)
+            GW.SetSetting(mf.setting .. "_scale", hudScale)
         end
     end
 end
@@ -376,7 +374,10 @@ GW.RegisterScaleFrame = RegisterScaleFrame
 local function loadAddon(self)
     --Create Settings window
     GW.CombatQueue_Initialize()
-    GW.LoadMovers()
+
+    --Create the mainbar layout manager
+    local lm = GW.LoadMainbarLayout()
+    GW.LoadMovers(lm.layoutFrame)
     GW.LoadSettings()
     GW.LoadHoverBinds()
 
@@ -400,9 +401,6 @@ local function loadAddon(self)
 
     -- Misc
     GW.LoadRaidMarker()
-
-    --Create the mainbar layout manager
-    local lm = GW.LoadMainbarLayout()
 
     --Create general skins
     if GetSetting("MAINMENU_SKIN_ENABLED") then
@@ -649,6 +647,7 @@ local function loadAddon(self)
     if GetSetting("RAID_FRAMES") then
         GW.LoadRaidFrames()
         GW.LoadPartyGrid()
+        GW.LoadPetGrid()
     end
 
     GW.UpdateHudScale()

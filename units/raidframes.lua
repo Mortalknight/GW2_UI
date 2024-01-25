@@ -114,26 +114,52 @@ local function GridRaidUpdateFramesPosition()
 end
 GW.GridRaidUpdateFramesPosition = GridRaidUpdateFramesPosition
 
+local function GridSortByRole()
+    local sorted = {}
+    local roleIndex = {"TANK", "HEALER", "DAMAGER", "NONE"}
+    local unitString = "Raid"
+
+    for _, v in pairs(roleIndex) do
+        for i = 1, MAX_RAID_MEMBERS do
+            if UnitExists(unitString .. i) and UnitGroupRolesAssigned(unitString .. i) == v then
+                tinsert(sorted, unitString .. "Frame" .. i)
+            end
+        end
+    end
+
+    return sorted
+end
+
 local grpPos, noGrp = {}, {}
 local function GridRaidUpdateFramesLayout()
     -- Get directions, rows, cols and sizing
-    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures()
+    local grow1, grow2, cells1, _, size1, size2, _, _, sizePer1, sizePer2, m = GetRaidFramesMeasures(IsInRaid() and max(1, GetNumGroupMembers()) or previewStep == 0 and 40 or previewSteps[previewStep])
     local isV = grow1 == "DOWN" or grow1 == "UP"
 
     if not InCombatLockdown() then
         GwRaidFrameContainer:SetSize(isV and size2 or size1, isV and size1 or size2)
     end
 
+    local unitString = "Raid"
+    local sorted = GetSetting("RAID_SORT_BY_ROLE") and GridSortByRole() or {}
+
+    -- Position by role
+    for i, v in ipairs(sorted) do
+        PositionRaidFrame(_G["GwCompact" .. v], GwRaidFrameContainer, i, grow1, grow2, cells1, sizePer1, sizePer2, m)
+    end
+
     wipe(grpPos) wipe(noGrp)
 
     -- Position by group
     for i = 1, MAX_RAID_MEMBERS do
-        local name, _, grp = GetRaidRosterInfo(i)
-        if name or grp > 1 then
-            grpPos[grp] = (grpPos[grp] or 0) + 1
-            PositionRaidFrame(_G["GwCompactRaidFrame" .. i], GwRaidFrameContainer, (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
-        else
-            tinsert(noGrp, i)
+        if not tContains(sorted, unitString .. "Frame" .. i) then
+            local name, _, grp = GetRaidRosterInfo(i)
+            if name or grp > 1 then
+                grpPos[grp] = (grpPos[grp] or 0) + 1
+                PositionRaidFrame(_G["GwCompactRaidFrame" .. i], GwRaidFrameContainer, (grp - 1) * MEMBERS_PER_RAID_GROUP + grpPos[grp], grow1, grow2, cells1, sizePer1, sizePer2, m)
+            else
+                tinsert(noGrp, i)
+            end
         end
     end
 
@@ -171,7 +197,7 @@ local function hideBlizzardRaidFrame()
 end
 GW.AddForProfiling("raidframes", "hideBlizzardRaidFrame", hideBlizzardRaidFrame)
 
-local function GridOnEvent(self, event, unit)
+local function RaidGridOnEvent(self, event, unit)
     if not UnitExists(self.unit) then
         return
     elseif not self.nameNotLoaded then
@@ -255,21 +281,20 @@ local function GridOnEvent(self, event, unit)
         end)
     end
 end
+GW.RaidGridOnEvent = RaidGridOnEvent
 
 local function GridOnUpdate(self, elapsed)
     if self.onUpdateDelay ~= nil and self.onUpdateDelay > 0 then
         self.onUpdateDelay = self.onUpdateDelay - elapsed
         return
     end
-    self.onUpdateDelay = 0.4
+    self.onUpdateDelay = 0.2
     if UnitExists(self.unit) then
         GW.GridUpdateAwayData(self)
-
-        GW.GridUpdateAuras(self, "RAID")
     end
 end
 
-local function GridToggleFramesPreviewRaid(_, _, moveHudMode, hudMoving)
+local function GridToggleFramesPreviewRaid(moveHudMode, hudMoving)
     previewStep = max((previewStep + 1) % (#previewSteps + 1), hudMoving and 1 or 0)
 
     if previewStep == 0 or moveHudMode then
@@ -280,7 +305,7 @@ local function GridToggleFramesPreviewRaid(_, _, moveHudMode, hudMoving)
                 _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "raid" .. i)
                 UnregisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility")
                 RegisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility", ("[group:raid,@%s,exists] show; [group:party] hide; hide"):format(_G["GwCompactRaidFrame" .. i].unit))
-                GridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
+                RaidGridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
             end
         end
     else
@@ -291,7 +316,7 @@ local function GridToggleFramesPreviewRaid(_, _, moveHudMode, hudMoving)
                 _G["GwCompactRaidFrame" .. i]:SetAttribute("unit", "player")
                 UnregisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility")
                 RegisterStateDriver(_G["GwCompactRaidFrame" .. i], "visibility", ("%s"):format((i > previewSteps[previewStep] and "hide" or "show")))
-                GridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
+                RaidGridOnEvent(_G["GwCompactRaidFrame" .. i], "load")
             end
         end
         GridRaidUpdateFramesPosition()
@@ -322,7 +347,7 @@ local function LoadRaidFrames()
     container:ClearAllPoints()
     container:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
 
-    RegisterMovableFrame(container, RAID_FRAMES_LABEL, "raid_pos", "VerticalActionBarDummy", nil, true, {"default", "default"})
+    RegisterMovableFrame(container, RAID_FRAMES_LABEL, "raid_pos",  ALL .. ",Unitframe,Raid", nil, {"default", "default"})
 
     hooksecurefunc(container.gwMover, "StopMovingOrSizing", function(frame)
         local anchor = GetSetting("RAID_ANCHOR")
@@ -347,19 +372,19 @@ local function LoadRaidFrames()
     end)
 
     for i = 1, MAX_RAID_MEMBERS do
-        GW.CreateGridFrame(i, false, container, GridOnEvent, GridOnUpdate, "RAID")
+        GW.CreateGridFrame(i, container, RaidGridOnEvent, GridOnUpdate, "RAID")
     end
 
     GridRaidUpdateFramesPosition()
     GridRaidUpdateFramesLayout()
 
     GwSettingsWindowMoveHud:HookScript("OnClick", function ()
-        GW.GridToggleFramesPreviewRaid(_, _, true, true)
-        GW.GridToggleFramesPreviewParty(_, _, true, true)
+        GW.GridToggleFramesPreviewRaid(true, true)
+        GW.GridToggleFramesPreviewParty(true, true)
     end)
-    GwSmallSettingsWindow.lockHud:HookScript("OnClick", function()
-        GW.GridToggleFramesPreviewRaid(_, _, true, true)
-        GW.GridToggleFramesPreviewParty(_, _, true, true)
+    GwSmallSettingsContainer.moverSettingsFrame.defaultButtons.lockHud:HookScript("OnClick", function()
+        GW.GridToggleFramesPreviewRaid(true, true)
+        GW.GridToggleFramesPreviewParty(true, true)
     end)
 
     container:RegisterEvent("RAID_ROSTER_UPDATE")

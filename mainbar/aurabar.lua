@@ -449,7 +449,7 @@ local function loadAuras(lm)
     if hb.inner then
         hb.inner:Show()
     end
-    RegisterMovableFrame(hb, SHOW_BUFFS, "PlayerBuffFrame", "VerticalActionBarDummy", {316, 100}, true, {"default", "scaleable"}, true)
+    RegisterMovableFrame(hb, SHOW_BUFFS, "PlayerBuffFrame", ALL .. ",Blizzard,Aura", {316, 100}, {"default", "scaleable"}, true)
     hb:ClearAllPoints()
     hb:SetPoint(anchor_hb, hb.gwMover, anchor_hb, 0, 0)
     lm:RegisterBuffFrame(hb)
@@ -467,7 +467,7 @@ local function loadAuras(lm)
     local grow_dir = GetSetting("PlayerDebuffFrame_GrowDirection")
     local hd = newHeader("HARMFUL", "PlayerDebuffFrame")
     local anchor_hd
-    RegisterMovableFrame(hd, SHOW_DEBUFFS, "PlayerDebuffFrame", "VerticalActionBarDummy", {316, 60}, true, {"default", "scaleable"}, true)
+    RegisterMovableFrame(hd, SHOW_DEBUFFS, "PlayerDebuffFrame", ALL .. ",Blizzard,Aura", {316, 60}, {"default", "scaleable"}, true)
     hd:Show()
     if hd.inner then
         hd.inner:Show()

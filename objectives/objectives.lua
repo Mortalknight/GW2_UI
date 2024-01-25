@@ -56,8 +56,8 @@ local function UntrackQuest(questLogIndex)
         GW2UI_QUEST_WATCH_DB.AutoUntrackedQuests[questID] = true
     end
     RemoveQuestWatch(questLogIndex)
-    WatchFrame_Update()
     QuestWatch_Update()
+    QuestLog_Update()
 end
 
 local function wiggleAnim(self)
@@ -1308,7 +1308,7 @@ local function LoadQuestTracker()
         end
     end)
 
-    GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", "VerticalActionBarDummy", {350, 10}, true, {"scaleable", "height"})
+    GW.RegisterMovableFrame(fTracker, OBJECTIVES_TRACKER_LABEL, "QuestTracker_pos", ALL, nil, {"scaleable", "height"})
     fTracker:ClearAllPoints()
     fTracker:SetPoint("TOPLEFT", fTracker.gwMover)
     fTracker:SetHeight(GetSetting("QuestTracker_pos_height"))

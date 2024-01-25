@@ -7,24 +7,70 @@ local addOptionButton = GW.AddOptionButton
 local createCat = GW.CreateCat
 local GetSetting = GW.GetSetting
 local InitPanel = GW.InitPanel
+local settingsMenuAddButton = GW.settingsMenuAddButton
 
 local function LoadHudPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
-    p.scroll.scrollchild.header:SetFont(DAMAGE_TEXT_FONT, 20)
-    p.scroll.scrollchild.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.scroll.scrollchild.header:SetText(UIOPTIONS_MENU)
-    p.scroll.scrollchild.sub:SetFont(UNIT_NAME_FONT, 12)
-    p.scroll.scrollchild.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.scroll.scrollchild.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
+    p.header:Hide()
+    p.sub:Hide()
 
-    createCat(UIOPTIONS_MENU, L["Edit the HUD modules."], p, 3, nil, {p})
+    local general = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
+    general.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    general.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    general.header:SetText(UIOPTIONS_MENU)
+    general.sub:SetFont(UNIT_NAME_FONT, 12)
+    general.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    general.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
+    general.header:SetWidth(general.header:GetStringWidth())
+    general.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    general.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    general.breadcrumb:SetText(GENERAL)
 
-    addOption(p.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND")
-    addOption(p.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
-    addOption(p.scroll.scrollchild, L["AFK Mode"], L["When you go AFK display the AFK screen."], "AFK_MODE")
-    addOption(p.scroll.scrollchild, L["Fade Chat"], L["Allow the chat to fade when not in use."], "CHATFRAME_FADE", nil, nil, {["CHATFRAME_ENABLED"] = true})
+    local minimap = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
+    minimap.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    minimap.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    minimap.header:SetText(UIOPTIONS_MENU)
+    minimap.sub:SetFont(UNIT_NAME_FONT, 12)
+    minimap.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    minimap.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
+    minimap.header:SetWidth(minimap.header:GetStringWidth())
+    minimap.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    minimap.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    minimap.breadcrumb:SetText(MINIMAP_LABEL)
+
+    local worldmap = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
+    worldmap.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    worldmap.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    worldmap.header:SetText(UIOPTIONS_MENU)
+    worldmap.sub:SetFont(UNIT_NAME_FONT, 12)
+    worldmap.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    worldmap.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
+    worldmap.header:SetWidth(worldmap.header:GetStringWidth())
+    worldmap.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    worldmap.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    worldmap.breadcrumb:SetText(WORLDMAP_BUTTON)
+
+    local fct = CreateFrame("Frame", nil, p, "GwSettingsPanelScrollTmpl")
+    fct.header:SetFont(DAMAGE_TEXT_FONT, 20)
+    fct.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    fct.header:SetText(UIOPTIONS_MENU)
+    fct.sub:SetFont(UNIT_NAME_FONT, 12)
+    fct.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
+    fct.sub:SetText(L["Edit the modules in the Heads-Up Display for more customization."])
+    fct.header:SetWidth(fct.header:GetStringWidth())
+    fct.breadcrumb:SetFont(DAMAGE_TEXT_FONT, 12)
+    fct.breadcrumb:SetTextColor(255 / 255, 241 / 255, 209 / 255)
+    fct.breadcrumb:SetText(COMBAT_TEXT_LABEL)
+
+    createCat(UIOPTIONS_MENU, L["Edit the HUD modules."], p, {general, minimap, worldmap, fct})
+    settingsMenuAddButton(UIOPTIONS_MENU, p, {general, minimap, worldmap, fct})
+
+    addOption(general.scroll.scrollchild, L["Show HUD background"], L["The HUD background changes color in the following situations: In Combat, Not In Combat, In Water, Low HP, Ghost"], "HUD_BACKGROUND")
+    addOption(general.scroll.scrollchild, L["Dynamic HUD"], L["Enable or disable the dynamically changing HUD background."], "HUD_SPELL_SWAP", nil, nil, {["HUD_BACKGROUND"] = true})
+    addOption(general.scroll.scrollchild, L["AFK Mode"], L["When you go AFK display the AFK screen."], "AFK_MODE")
+    addOption(general.scroll.scrollchild, L["Fade Chat"], L["Allow the chat to fade when not in use."], "CHATFRAME_FADE", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOptionSlider(
-        p.scroll.scrollchild,
+        general.scroll.scrollchild,
         L["Maximum lines of 'Copy Chat Frame'"],
         L["Set the maximum number of lines displayed in the Copy Chat Frame"],
         "CHAT_MAX_COPY_CHAT_LINES",
@@ -36,10 +82,10 @@ local function LoadHudPanel(sWindow)
         {["CHATFRAME_ENABLED"] = true},
         1
     )
-    addOption(p.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Show Quest XP on Quest Tracker"], nil, "QUESTTRACKER_SHOW_XP", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
+    addOption(general.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
+    addOption(general.scroll.scrollchild, L["Show Quest XP on Quest Tracker"], nil, "QUESTTRACKER_SHOW_XP", nil, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOptionDropdown(
-        p.scroll.scrollchild,
+        general.scroll.scrollchild,
         L["Quest Tracker sorting"],
         nil,
         "QUESTTRACKER_SORTING",
@@ -50,16 +96,12 @@ local function LoadHudPanel(sWindow)
         {["QUESTTRACKER_ENABLED"] = true},
         nil
     )
-    addOption(p.scroll.scrollchild, L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], "CASTINGBAR_DATA", nil, nil, {["CASTINGBAR_ENABLED"] = true})
-    addOption(p.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU")
-    addOption(p.scroll.scrollchild, L["Auto Repair"], L["Automatically repair using the following method when visiting a merchant."], "AUTO_REPAIR")
-    addOption(p.scroll.scrollchild, DISPLAY_BORDERS, nil, "BORDER_ENABLED")
-    addOption(p.scroll.scrollchild, L["Show Coordinates on World Map"], L["Show Coordinates on World Map"], "WORLDMAP_COORDS_TOGGLE", GW.ToggleWorldMapCoords, nil)
-    addOption(p.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", nil, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
-    addOption(p.scroll.scrollchild, L["Show Coordinates on Minimap"], L["Show Coordinates on Minimap"], "MINIMAP_COORDS_TOGGLE", nil, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
-    addOption(p.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", nil, nil, {["PARTY_FRAMES"] = true})
+    addOption(general.scroll.scrollchild, L["Fade Menu Bar"], L["The main menu icons will fade when you move your cursor away."], "FADE_MICROMENU")
+    addOption(general.scroll.scrollchild, L["Auto Repair"], L["Automatically repair using the following method when visiting a merchant."], "AUTO_REPAIR")
+    addOption(general.scroll.scrollchild, DISPLAY_BORDERS, nil, "BORDER_ENABLED")
+    addOption(general.scroll.scrollchild, L["Fade Group Manage Button"], L["The Group Manage Button will fade when you move the cursor away."], "FADE_GROUP_MANAGE_FRAME", nil, nil, {["PARTY_FRAMES"] = true})
     addOption(
-        p.scroll.scrollchild,
+        general.scroll.scrollchild,
         L["Pixel Perfect Mode"],
         L["Scales the UI into a Pixel Perfect Mode. This is dependent on screen resolution."],
         "PIXEL_PERFECTION",
@@ -68,20 +110,7 @@ local function LoadHudPanel(sWindow)
             GW.PixelPerfection()
         end
     )
-    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
-    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
-    addOptionSlider(
-        p.scroll.scrollchild,
-        L["HUD Scale"],
-        L["Change the HUD size."],
-        "HUD_SCALE",
-        GW.UpdateHudScale,
-        0.5,
-        1.5,
-        nil,
-        2
-    )
-    addOptionButton(p.scroll.scrollchild, L["Apply UI scale to all scaleable frames"], L["Applies the UI scale to all frames, which can be scaled in 'Move HUD' mode."], nil, function()
+    addOptionButton(general.scroll.scrollchild, L["Apply UI scale to all scaleable frames"], L["Applies the UI scale to all frames, which can be scaled in 'Move HUD' mode."], nil, function()
         local scale = GetSetting("HUD_SCALE")
         for _, mf in pairs(GW.scaleableFrames) do
             mf.gw_frame:SetScale(scale)
@@ -89,8 +118,12 @@ local function LoadHudPanel(sWindow)
             GW.SetSetting(mf.gw_Settings .."_scale", scale)
         end
     end)
+
+    --MINIMAP
+    addOption(minimap.scroll.scrollchild, L["Show FPS on minimap"], L["Show FPS on minimap"], "MINIMAP_FPS", nil, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
+    addOption(minimap.scroll.scrollchild, L["Show Coordinates on Minimap"], L["Show Coordinates on Minimap"], "MINIMAP_COORDS_TOGGLE", nil, nil, {["MINIMAP_ENABLED"] = true}, "Minimap")
     addOptionDropdown(
-        p.scroll.scrollchild,
+        minimap.scroll.scrollchild,
         L["Minimap details"],
         L["Always show Minimap details."],
         "MINIMAP_HOVER",
@@ -112,7 +145,7 @@ local function LoadHudPanel(sWindow)
         "Minimap"
     )
     addOptionDropdown(
-        p.scroll.scrollchild,
+        minimap.scroll.scrollchild,
         L["Minimap Scale"],
         L["Change the Minimap size."],
         "MINIMAP_SCALE",
@@ -131,8 +164,25 @@ local function LoadHudPanel(sWindow)
         "Minimap"
     )
 
+    --WORLDMAP
+    addOption(worldmap.scroll.scrollchild, L["Show Coordinates on World Map"], L["Show Coordinates on World Map"], "WORLDMAP_COORDS_TOGGLE", GW.ToggleWorldMapCoords, nil)
+
+    --FCT
+    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", nil, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOptionSlider(
+        fct.scroll.scrollchild,
+        L["HUD Scale"],
+        L["Change the HUD size."],
+        "HUD_SCALE",
+        GW.UpdateHudScale,
+        0.5,
+        1.5,
+        nil,
+        2
+    )
     addOptionDropdown(
-        p.scroll.scrollchild,
+        fct.scroll.scrollchild,
         COMBAT_TEXT_LABEL,
         COMBAT_SUBTEXT,
         "GW_COMBAT_TEXT_MODE",
@@ -163,11 +213,9 @@ local function LoadHudPanel(sWindow)
         nil,
         "FloatingCombatText"
     )
-    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
-    addOption(p.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
 
     addOptionDropdown(
-        p.scroll.scrollchild,
+        fct.scroll.scrollchild,
         L["GW2 floating combat text style"],
         nil,
         "GW_COMBAT_TEXT_STYLE",
@@ -181,7 +229,7 @@ local function LoadHudPanel(sWindow)
     )
 
     addOptionDropdown(
-        p.scroll.scrollchild,
+        fct.scroll.scrollchild,
         L["Classic combat text anchoring"],
         nil,
         "GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR",
@@ -193,13 +241,12 @@ local function LoadHudPanel(sWindow)
         nil,
         "FloatingCombatText"
     )
-    addOption(p.scroll.scrollchild, L["Show healing numbers"], nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
+    addOption(fct.scroll.scrollchild, L["Show healing numbers"], nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
 
 
-
-
-
-
-    InitPanel(p, true)
+    InitPanel(general, true)
+    InitPanel(minimap, true)
+    InitPanel(worldmap, true)
+    InitPanel(fct, true)
 end
 GW.LoadHudPanel = LoadHudPanel

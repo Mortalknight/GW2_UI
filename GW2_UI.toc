@@ -35,6 +35,7 @@ locales/itIT.lua
 
 core/consts.lua
 core/init.lua
+core\staticPopupDialogs.lua
 core/raid_debuffs.lua
 core/toolkit.lua
 core/utils.lua
@@ -45,9 +46,10 @@ core/statusReport.lua
 core/slashcommands.lua
 core/cooldowns.lua
 
+settings/settings_menu.lua
+settings/settings.xml
 settings/defaults.lua
 settings/api.lua
-settings/settings.xml
 settings/panel_modules.xml
 settings/panel_profiles.xml
 settings/panel_raid.xml
@@ -70,6 +72,8 @@ settings/welcome.lua
 settings/moveableFrameHandler.lua
 settings/credits.lua
 settings/versionApi.lua
+settings\panel_overview.lua
+settings\panel_overview.xml
 
 dataInfo/money.lua
 dataInfo/guild.lua
@@ -92,6 +96,7 @@ units/gridUtils.lua
 units/raidControl.lua
 units/raidframes.lua
 units/partyGrid.lua
+units/petGrid.lua
 units/unitframes.lua
 units/party.lua
 units/playerFrame.lua

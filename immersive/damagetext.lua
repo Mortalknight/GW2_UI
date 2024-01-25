@@ -1163,7 +1163,7 @@ local function ToggleFormat(activate)
                 stackingContainer:SetSize(200, 400)
                 stackingContainer:EnableMouse(false)
                 stackingContainer:ClearAllPoints()
-                GW.RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", "VerticalActionBarDummy", nil, nil, {"default", "scaleable"})
+                GW.RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", ALL .. ",FCT", nil, {"default", "scaleable"})
                 stackingContainer:ClearAllPoints()
                 stackingContainer:SetPoint("TOPLEFT", stackingContainer.gwMover)
                 stackingContainer.activeFrames = {}

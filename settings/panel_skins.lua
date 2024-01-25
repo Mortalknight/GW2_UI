@@ -3,18 +3,20 @@ local L = GW.L
 local addOption = GW.AddOption
 local createCat = GW.CreateCat
 local InitPanel = GW.InitPanel
-
+local settingsMenuAddButton = GW.settingsMenuAddButton;
 
 local function LoadSkinsPanel(sWindow)
-    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelTmpl")
+    local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsPanelScrollTmpl")
     p.header:SetFont(DAMAGE_TEXT_FONT, 20)
     p.header:SetTextColor(255 / 255, 241 / 255, 209 / 255)
-    p.header:SetText("General Skins")
+    p.header:SetText(L["Skins"])
     p.sub:SetFont(UNIT_NAME_FONT, 12)
     p.sub:SetTextColor(181 / 255, 160 / 255, 128 / 255)
-    p.sub:SetText("Enable or disable the skins you need and don't need.")
+    p.sub:SetText(L["Adjust Skin settings."])
 
-    createCat("General Skins", "Enable and disable general skins", p, 6)
+    createCat(L["Skins"], L["Adjust Skin settings."], p, {p})
+
+    settingsMenuAddButton(L["Skins"],p,{})
 
     addOption(p, MAINMENU_BUTTON, nil, "MAINMENU_SKIN_ENABLED")
     addOption(p, L["Popup notifications"], nil, "STATICPOPUP_SKIN_ENABLED")

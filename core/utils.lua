@@ -524,6 +524,14 @@ local function vernotes(ver, notes)
 end
 GW.vernotes = vernotes
 
+local function addChange(addonVersion, changeList)
+    if not GW.GW_CHANGELOGS then
+        GW.GW_CHANGELOGS = {}
+    end
+    GW.GW_CHANGELOGS[#GW.GW_CHANGELOGS + 1] = {version = addonVersion, changes = changeList}
+end
+GW.addChange = addChange
+
 -- create custom UIFrameFlash animation
 local function SetUpFrameFlash(frame, loop)
     frame.flasher = frame:CreateAnimationGroup("Flash")
@@ -733,3 +741,20 @@ local function Join(del, ...)
     return s
 end
 GW.Join = Join
+
+local function CopyTable(newTable, tableToCopy)
+    if type(newTable) ~= "table" then newTable = {} end
+
+    if type(tableToCopy) == "table" then
+        for option, value in pairs(tableToCopy) do
+            if type(value) == "table" then
+                value = CopyTable(newTable[option], value)
+            end
+
+            newTable[option] = value
+        end
+    end
+
+    return newTable
+end
+GW.CopyTable = CopyTable

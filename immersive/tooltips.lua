@@ -468,7 +468,7 @@ local function LoadTooltips()
         GameTooltip:HookScript("OnTooltipSetSpell", movePlacement)
         --GameTooltip:HookScript("OnTooltipSetItem", movePlacement)
         GameTooltip:HookScript("OnTooltipSetDefaultAnchor", movePlacement)
-        RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", "VerticalActionBarDummy", {230, 80}, true, {"default"})
+        RegisterMovableFrame(GameTooltip, "Tooltip", "GameTooltipPos", ALL .. ",Blizzard", {230, 80}, {"default"})
         hooksecurefunc(GameTooltip.gwMover, "StopMovingOrSizing", function (frame)
             local anchor = "BOTTOMRIGHT"
             local x = frame:GetRight() - GetScreenWidth()

@@ -1,5 +1,4 @@
 local _, GW = ...
-local constBackdropFrame = GW.skins.constBackdropFrame
 local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 
 local function SkinAddonList()
@@ -52,25 +51,52 @@ local function SkinAddonList()
     _G.AddonListScrollFrameScrollBar:SkinScrollBar()
 
     hooksecurefunc("AddonList_Update", function()
-        local numEntrys = GetNumAddOns()
+        local numEntrys = C_AddOns.GetNumAddOns()
 
         for i = 1, MAX_ADDONS_DISPLAYED do
             local addonIndex = AddonList.offset + i
 
             if addonIndex <= numEntrys then
-                local checkbox = _G["AddonListEntry" .. i .. "Enabled"]
-                local checkboxState = GetAddOnEnableState(character, addonIndex)
-                -- Get the character from the current list (nil is all characters)
-                local character = UIDropDownMenu_GetSelectedValue(AddonCharacterDropDown)
-                if ( character == true ) then
-                    character = nil
-                end
 
-                local checkedTexture = checkbox:GetCheckedTexture()
-                -- 1 is a gray check
-                if checkboxState == 1 then
-                    checkedTexture:SetVertexColor(1, .93, .73)
-                end
+            local checkall
+            local character = UIDropDownMenu_GetSelectedValue(AddonCharacterDropDown)
+            local entry = _G["AddonListEntry" .. i]
+                entry.Enabled = entry.Enabled or _G["AddonListEntry" .. i .. "Enabled"]
+            if character == true then
+                character = nil
+            else
+                checkall = C_AddOns.GetAddOnEnableState(nil, addonIndex)
+            end
+
+            entry.Reload:SetTextColor(1.0, 0.3, 0.3)
+
+            local checkstate = C_AddOns.GetAddOnEnableState(character, addonIndex)
+            local enabledForSome = not character and checkstate == 1
+            local enabled = checkstate > 0
+            local disabled = not enabled or enabledForSome
+
+            if disabled then
+                entry.Status:SetTextColor(0.4, 0.4, 0.4)
+            else
+                entry.Status:SetTextColor(0.7, 0.7, 0.7)
+            end
+
+            local checktex = entry.Enabled:GetCheckedTexture()
+            if not enabled and checkall == 1 then
+                checktex:SetVertexColor(0.3, 0.3, 0.3)
+                checktex:SetDesaturated(true)
+                checktex:Show()
+            elseif not checkstate or checkstate == 0 then
+                checktex:Hide()
+            elseif checkstate == 1 then
+                checktex:SetVertexColor(1, 0.93, 0.73)
+                checktex:SetDesaturated(true)
+                checktex:Show()
+            elseif checkstate == 2 then
+                checktex:SetVertexColor(1, 1, 1)
+                checktex:SetDesaturated(false)
+                checktex:Show()
+            end
             end
         end
     end)

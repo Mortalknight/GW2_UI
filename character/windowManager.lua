@@ -577,8 +577,9 @@ local function charTab_OnEnter(self)
     GameTooltip:Show()
 end
 
-local function CharacterMenuButton_OnLoad(self, odd)
+local function CharacterMenuButton_OnLoad(self, odd, addGwHeroPanelFrameRef)
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
+    self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     if not odd then
         self:ClearNormalTexture()
     else
@@ -590,21 +591,25 @@ local function CharacterMenuButton_OnLoad(self, odd)
     self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14, "")
     self:GetFontString():SetJustifyH("LEFT")
     self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
+
+    if addGwHeroPanelFrameRef then
+        self:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+    end
 end
+GW.CharacterMenuButton_OnLoad = CharacterMenuButton_OnLoad
 
 local nextShadow, nextAnchor
 local function addAddonButton(name, setting, shadow, anchor, showFunction, hideOurFrame)
     if IsAddOnLoaded(name) and (setting == nil or setting == true) then
-        GwCharacterMenu.buttonName = CreateFrame("Button", nil, GwCharacterMenu, shadow and "GwCharacterMenuButtonTemplate,SecureHandlerClickTemplate" or "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate2")
-        GwCharacterMenu.buttonName:SetText(name)
-        GwCharacterMenu.buttonName:SetSize(231, 36)
-        GwCharacterMenu.buttonName:ClearAllPoints()
-        GwCharacterMenu.buttonName:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT")
-        CharacterMenuButton_OnLoad(GwCharacterMenu.buttonName, shadow)
-        GwCharacterMenu.buttonName:SetFrameRef("charwin", GwCharacterWindow)
-        GwCharacterMenu.buttonName.ui_show = showFunction
-        GwCharacterMenu.buttonName:SetAttribute("hideOurFrame", hideOurFrame)
-        GwCharacterMenu.buttonName:SetAttribute("_onclick", [=[
+        GwCharacterMenu[name] = CreateFrame("Button", nil, GwCharacterMenu, "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate")
+        GwCharacterMenu[name]:SetText(select(2, GetAddOnInfo(name)))
+        GwCharacterMenu[name]:ClearAllPoints()
+        GwCharacterMenu[name]:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT")
+        CharacterMenuButton_OnLoad(GwCharacterMenu[name], shadow)
+        GwCharacterMenu[name]:SetFrameRef("charwin", GwCharacterWindow)
+        GwCharacterMenu[name].ui_show = showFunction
+        GwCharacterMenu[name]:SetAttribute("hideOurFrame", hideOurFrame)
+        GwCharacterMenu[name]:SetAttribute("_onclick", [=[
             local fchar = self:GetFrameRef("charwin")
             local hideOurFrame = self:GetAttribute("hideOurFrame")
             if fchar and hideOurFrame == true then
@@ -613,7 +618,7 @@ local function addAddonButton(name, setting, shadow, anchor, showFunction, hideO
             self:CallMethod("ui_show")
         ]=])
         nextShadow = not nextShadow
-        nextAnchor = GwCharacterMenu.buttonName
+        nextAnchor = GwCharacterMenu[name]
     end
 end
 
@@ -675,8 +680,10 @@ local function LoadWindows()
                 fmGCW:SetFrameRef("GwDressingRoom", GwDressingRoom)
                 fmGCW:SetFrameRef("GwPetContainer", GwPetContainer)
 
-                styleCharacterMenuButton(GwCharacterMenu.skillsMenu, true)
-                styleCharacterMenuButton(GwCharacterMenu.honorMenu, false)
+                CharacterMenuButton_OnLoad(GwCharacterMenu.skillsMenu, true, true)
+                CharacterMenuButton_OnLoad(GwCharacterMenu.honorMenu, false, true)
+                CharacterMenuButton_OnLoad(GwCharacterMenu.runeMenu, true, true)
+                CharacterMenuButton_OnLoad(GwCharacterMenu.petMenu, false, true)
 
                 if not GW.ClassicSOD then
                     GwCharacterMenu.runeMenu:Hide()
@@ -698,6 +705,7 @@ local function LoadWindows()
                 nextAnchor = GwCharacterMenu.petMenu
                 addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end, true)
                 addAddonButton("Clique", GetSetting("USE_SPELLBOOK_WINDOW"), nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end, true)
+                addAddonButton("Pawn", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, PawnUIShow, false)
 
                 GwCharacterMenu.skillsMenu:SetAttribute("_onclick", [=[
                     local f = self:GetFrameRef("GwCharacterWindow")
