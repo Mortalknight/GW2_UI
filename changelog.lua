@@ -15,6 +15,17 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+addChange("6.14.0",{
+    {ct.feature, [=[Added Big Dig event timer]=]},
+    {ct.feature, [=[Added option to change pulltimer seconds]=]},
+
+    {ct.bug, [=[Raidframes name overlapping]=]},
+    {ct.bug, [=[Chat install process]=]},
+    {ct.bug, [=[Alt player background setting]=]},
+    {ct.bug, [=[Colorpicker error]=]},
+})
+
 addChange("6.13.3",{
     {ct.bug, [=[Remove print statement]=]},
 })
@@ -41,7 +52,7 @@ addChange("6.13.0",{
     {ct.bug, [=[Fix stancebar error. You can now use the button in combat again]=]},
     {ct.bug, [=[Fix worldmap event tracker container size]=]},
     {ct.bug, [=[Fix tank frame middle icon]=]},
-    {ct.bug, [=[ix auraindicators updating]=]},
+    {ct.bug, [=[Fix auraindicators updating]=]},
     {ct.bug, [=[GW2 setting window is now moveable]=]},
 })
 

@@ -1,3 +1,14 @@
+6.14.0
+NEW
+    - Added Big Dig event timer
+    - Added option to change pulltimer seconds
+
+FIXES
+    - Raidframes name overlapping
+    - Chat install process
+    - Alt player background setting
+    - Colorpicker error
+
 6.13.3
 FIXES
     - Remove print statement

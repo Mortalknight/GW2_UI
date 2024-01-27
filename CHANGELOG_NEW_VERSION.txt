@@ -1,31 +1,10 @@
-6.13.3
-FIXES
-    - Remove print statement
-
-6.13.2
-FIXES
-    - Fix profile page error
-    - Fix db migration error
-    - Handle evoker soar correct
-
-6.13.1
-FIXES
-    - Fix error a profile rename
-
-6.13.0
+6.14.0
 NEW
-    - Switch to a new database format to better handle profiles. That requires a reload after the first login on each character.
-    - Added right click function to the minimaps expansion icon to show also the landing pages from previous addons
-    - Added animated statusbars to the pet frame
-    - Added copy/paste function to colorpicker
-    - Added option to disable objectives statusbars to have a more compact objectives tracker
+    - Added Big Dig event timer
+    - Added option to change pulltimer seconds
 
 FIXES
-    - Fix stancebar error. You can now use the button in combat again
-    - Fix worldmap event tracker container size
-    - Fix tank frame middle icon
-    - Fix auraindicators updating
-    - GW2 setting window is now moveable
-
-MISC
-    - Some more settings does not requires a reload
+    - Raidframes name overlapping
+    - Chat install process
+    - Alt player background setting
+    - Colorpicker error
