@@ -24,6 +24,7 @@ GW.Gw2Color = "|cffffedba" -- Color used for chat prints or buttons
 GW.ClassicSOD = C_Engraving and C_Engraving.IsEngravingEnabled()
 
 --Tables
+GW.unitIlvlsCache = {}
 GW.skins = {}
 GW.TexCoords = {0, 1, 0, 1}
 GW.locationData = {}

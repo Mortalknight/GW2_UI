@@ -57,7 +57,7 @@ local function LoadTargetPanel(sWindow)
     addOption(p_target.scroll.scrollchild, L["Show Combo Points on Target"], L["Show combo points on target, below the health bar"], "target_HOOK_COMBOPOINTS", function() GW.ShowRlPopup = true end, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target.scroll.scrollchild, L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], "target_CASTINGBAR_DATA", GW.ToggleTargetFrameSettings, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target.scroll.scrollchild, BUFFS_ON_TOP, nil, "target_AURAS_ON_TOP", GW.ToggleTargetFrameSettings, nil, {["TARGET_ENABLED"] = true, ["target_BUFFS"] = true})
-    addOption(p_target.scroll.scrollchild, L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "TARGET_FLOATING_COMBAT_TEXT", function() GW.ShowRlPopup = true end, nil, {["TARGET_ENABLED"] = true})
+    addOption(p_target.scroll.scrollchild, L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "TARGET_FLOATING_COMBAT_TEXT", GW.ToggleTargetFrameCombatFeedback, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target.scroll.scrollchild, L["Invert target frame"], nil, "target_FRAME_INVERT", function() GW.ShowRlPopup = true end, nil, {["TARGET_ENABLED"] = true})
     addOptionSlider(
         p_target.scroll.scrollchild,

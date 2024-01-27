@@ -634,8 +634,10 @@ local function evPlayerLogin(self)
     end
 
     if GetSetting("CASTINGBAR_ENABLED") then
-        GW.LoadCastingBar(CastingBarFrame, "GwCastingBarPlayer", "player", true)
-        GW.LoadCastingBar(PetCastingBarFrame, "GwCastingBarPet", "pet", false)
+        GW.LoadCastingBar("GwCastingBarPlayer", "player", true)
+        GW.LoadCastingBar("GwCastingBarPet", "pet", false)
+        CastingBarFrame:Kill()
+        PetCastingBarFrame:Kill()
     end
 
     if GetSetting("MINIMAP_ENABLED") and not IsIncompatibleAddonLoadedOrOverride("Minimap", true) then
