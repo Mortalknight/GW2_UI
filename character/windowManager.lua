@@ -623,7 +623,7 @@ local function addAddonButton(name, setting, shadow, anchor, showFunction, hideO
 end
 
 local LoadCharWindowAfterCombat = CreateFrame("Frame", nil, UIParent)
-local function LoadWindows()
+local function LoadCharacter()
     if InCombatLockdown() then
         LoadCharWindowAfterCombat:SetScript(
             "OnUpdate",
@@ -632,7 +632,7 @@ local function LoadWindows()
                 if inCombat == true then
                     return
                 end
-                LoadWindows()
+                LoadCharacter()
                 LoadCharWindowAfterCombat:SetScript("OnUpdate", nil)
             end)
         return
@@ -778,4 +778,4 @@ local function LoadWindows()
     -- set bindings on secure instead of char win to not interfere with secure ESC binding on char win
     click_OnEvent(fmGCW.secure, "UPDATE_BINDINGS")
 end
-GW.LoadWindows = LoadWindows
+GW.LoadCharacter = LoadCharacter

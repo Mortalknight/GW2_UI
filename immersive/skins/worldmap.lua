@@ -31,7 +31,7 @@ local function GetScaleDistance()
     return sqrt(x * x + y * y)
 end
 
-local function SkinWorldMap()
+local function LoadWorldMapSkin()
     WorldMapFrame:StripTextures()
     WorldMapFrame.BlackoutFrame:Kill()
 
@@ -244,7 +244,7 @@ local function SkinWorldMap()
 
     if Questie_Toggle then Questie_Toggle:SkinButton(false, true) end
 end
-GW.SkinWorldMap = SkinWorldMap
+GW.LoadWorldMapSkin = LoadWorldMapSkin
 
 local function ToggleWorldMapCoords()
     if GW.GetSetting("WORLDMAP_COORDS_TOGGLE") then

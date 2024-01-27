@@ -72,6 +72,8 @@ GW_DEFAULT["PET_AURAS_UNDER"] = false
 
 GW_DEFAULT["BUTTON_ASSIGNMENTS"] = true
 
+GW_DEFAULT["CUSTOM_AURA_TRACKER"] = ""
+
 GW_DEFAULT["HUD_BACKGROUND"] = true
 GW_DEFAULT["HUD_SPELL_SWAP"] = true
 
@@ -164,6 +166,23 @@ GW_DEFAULT["CHATFRAME_FADE"] = true
 GW_DEFAULT["FADE_MICROMENU"] = false
 GW_DEFAULT["AFK_MODE"] = true
 GW_DEFAULT["CHAT_MAX_COPY_CHAT_LINES"] = 100
+GW_DEFAULT["CHAT_USE_GW2_STYLE"] = true
+GW_DEFAULT["CHAT_NUM_SCROLL_MESSAGES"] = 3
+GW_DEFAULT["CHAT_SCROLL_DOWN_INTERVAL"] = 15
+GW_DEFAULT["CHAT_FIND_URL"] = true
+GW_DEFAULT["CHAT_HYPERLINK_TOOLTIP"] = true
+GW_DEFAULT["CHAT_SHORT_CHANNEL_NAMES"] = false
+GW_DEFAULT["CHAT_SHOW_LFG_ICONS"] = true
+GW_DEFAULT["CHAT_SPAM_INTERVAL_TIMER"] = 5
+GW_DEFAULT["CHAT_INCOMBAT_TEXT_REPEAT"] = 5
+GW_DEFAULT["CHAT_CLASS_COLOR_MENTIONS"] = true
+GW_DEFAULT["CHAT_KEYWORDS"] = "%MYNAME%"
+GW_DEFAULT["CHAT_KEYWORDS_ALERT_NEW"] = "GW2_UI: Ping"
+GW_DEFAULT["CHAT_KEYWORDS_ALERT_COLOR"] = {r = .5, g = .5, b = .5}
+GW_DEFAULT["CHAT_KEYWORDS_EMOJI"] = true
+GW_DEFAULT["CHAT_SOCIAL_LINK"] = true
+GW_DEFAULT["CHAT_ADD_TIMESTAMP_TO_ALL"] = true
+GW_DEFAULT["CHATFRAME_EDITBOX_HIDE"] = true
 
 GW_DEFAULT["target_TARGET_ENABLED"] = true
 GW_DEFAULT["target_DEBUFFS"] = true
@@ -343,6 +362,15 @@ GW_DEFAULT["GameTooltipPos"]["relativePoint"] = "BOTTOMRIGHT"
 GW_DEFAULT["GameTooltipPos"]["xOfs"] = 0
 GW_DEFAULT["GameTooltipPos"]["yOfs"] = 300
 
+GW_DEFAULT["AuraTrackerPos"] = {}
+GW_DEFAULT["AuraTrackerPos"]["point"] = "CENTER"
+GW_DEFAULT["AuraTrackerPos"]["relativePoint"] = "CENTER"
+GW_DEFAULT["AuraTrackerPos"]["xOfs"] = 0
+GW_DEFAULT["AuraTrackerPos"]["yOfs"] = 0
+GW_DEFAULT["AuraTrackerPos_scale"] = 1
+GW_DEFAULT["AuraTracker_GrowDirection"] = "HORIZONTAL"
+GW_DEFAULT["AuraTracker_SortDirection"] = "ASC"
+
 GW_DEFAULT["BNToastPos"] = {}
 GW_DEFAULT["BNToastPos"]["point"] = "BOTTOM"
 GW_DEFAULT["BNToastPos"]["relativePoint"] = "BOTTOMLEFT"
@@ -359,14 +387,14 @@ GW_DEFAULT["HealthGlobe_pos"]["yOfs"] = 17
 GW_DEFAULT["PowerBar_pos"] = {}
 GW_DEFAULT["PowerBar_pos"]["point"] = "BOTTOMLEFT"
 GW_DEFAULT["PowerBar_pos"]["relativePoint"] = "BOTTOM"
-GW_DEFAULT["PowerBar_pos"]["xOfs"] = 53
+GW_DEFAULT["PowerBar_pos"]["xOfs"] = 56
 GW_DEFAULT["PowerBar_pos"]["yOfs"] = 86
 GW_DEFAULT["PowerBar_pos_scale"] = 1
 
 GW_DEFAULT["ClasspowerBar_pos"] = {}
 GW_DEFAULT["ClasspowerBar_pos"]["point"] = "BOTTOMLEFT"
 GW_DEFAULT["ClasspowerBar_pos"]["relativePoint"] = "BOTTOM"
-GW_DEFAULT["ClasspowerBar_pos"]["xOfs"] = -372
+GW_DEFAULT["ClasspowerBar_pos"]["xOfs"] = -369
 GW_DEFAULT["ClasspowerBar_pos"]["yOfs"] = 81
 GW_DEFAULT["ClasspowerBar_pos_scale"] = 1
 

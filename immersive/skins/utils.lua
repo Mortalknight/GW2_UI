@@ -85,11 +85,12 @@ local function SkinDropDownList()
     end)
 end
 
-local function SkinDropDown()
+local function LoadDropDownSkin()
+    if not GW.GetSetting("DROPDOWN_SKIN_ENABLED") then return end
     SkinDropDownList()
     SkinUIDropDownMenu()
 end
-GW.SkinDropDown = SkinDropDown
+GW.LoadDropDownSkin = LoadDropDownSkin
 
 local function SkinTextBox(middleTex, leftTex, rightTex, topTex, bottomTex, leftOffset, rightOffset)
     if middleTex then

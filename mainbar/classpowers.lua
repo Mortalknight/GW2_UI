@@ -213,25 +213,41 @@ local function LoadClassPowers()
     if cpf.ourPowerBar then
         local anchorFrame = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame or _G.GwPlayerPowerBar
         local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame.powerbar:GetWidth() or _G.GwPlayerPowerBar:GetWidth()
-        local lmb = CreateFrame("Frame", "GwPlayerPowerBarExtra", anchorFrame, "GwPlayerPowerBar")
+        local lmb = GW.createNewStatusbar("GwPlayerAltClassLmb", cpf, "GwStatusPowerBar", true)
+        lmb.customMaskSize = 64
+        lmb.bar = lmb
+        lmb:addToBarMask(lmb.intensity)
+        lmb:addToBarMask(lmb.intensity2)
+        lmb:addToBarMask(lmb.scrollTexture)
+        lmb:addToBarMask(lmb.scrollTexture2)
+        lmb:addToBarMask(lmb.runeoverlay)
+        lmb.runicmask:SetSize(lmb:GetSize())
+        lmb.runeoverlay:AddMaskTexture(lmb.runicmask)
         cpf.lmb = lmb
-        lmb.candy.spark:ClearAllPoints()
 
-        lmb.bar:SetHeight(5)
-        lmb.candy:SetHeight(5)
-        lmb.candy.spark:SetHeight(5)
-        lmb.statusBar:SetHeight(5)
+        GW.initPowerBar(cpf.lmb)
+
+        lmb.decay = GW.createNewStatusbar("GwPlayerPowerBarDecay", lmb, nil, true)
+        lmb.decay:SetFillAmount(0)
+        lmb.decay:SetFrameLevel(lmb.decay:GetFrameLevel() - 1)
+        lmb.decay:ClearAllPoints()
+        lmb.decay:SetPoint("TOPLEFT", lmb, "TOPLEFT", 0, 0)
+        lmb.decay:SetPoint("BOTTOMRIGHT", lmb, "BOTTOMRIGHT", 0, 0)
+
         lmb:ClearAllPoints()
         if GetSetting("PLAYER_AS_TARGET_FRAME") then
-            lmb:SetPoint("LEFT", anchorFrame.castingbarBackground, "LEFT", 2, 5)
-            lmb:SetSize(barWidth + 2, 7)
-            lmb.statusBar:SetWidth(barWidth - 2)
+            lmb:SetPoint("BOTTOMLEFT", anchorFrame.powerbar, "TOPLEFT", 0, -10)
+            lmb:SetPoint("BOTTOMRIGHT", anchorFrame.powerbar, "TOPRIGHT", 0, -10)
+            lmb:SetSize(barWidth + 2, 3)
         else
-            lmb:SetPoint("TOPLEFT", anchorFrame, "TOPLEFT", 0, 5)
-            lmb:SetSize(barWidth, 7)
+            lmb:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 0)
+            lmb:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 0)
+            lmb:SetSize(barWidth, 5)
         end
         lmb:SetFrameStrata("MEDIUM")
-        lmb.statusBar.label:SetFont(DAMAGE_TEXT_FONT, 8, "")
+        lmb.label:SetFont(DAMAGE_TEXT_FONT, 12)
+        lmb.label:SetShadowColor(0, 0, 0, 1)
+        lmb.label:SetShadowOffset(1, -1)
     end
 
     cpf.Script:SetScript("OnEvent", barChange_OnEvent)

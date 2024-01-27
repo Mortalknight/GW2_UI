@@ -13,7 +13,8 @@
 ## SavedVariablesPerCharacter: GW2UI_SETTINGS_DB_03, GW2UI_QUEST_WATCH_DB, GW2UI_PRIVATE_SETTINGS
 ## SavedVariables: GW2UI_STORAGE, GW2UI_SETTINGS_PROFILES, GW2UI_STORAGE2
 
-
+core/shared.xml
+core\migration.lua
 core/TaintLess.xml
 core/debug.lua
 core/incompatibleAddons.lua
@@ -41,12 +42,13 @@ core\staticPopupDialogs.lua
 core/raid_debuffs.lua
 core/toolkit.lua
 core/utils.lua
-core/shared.xml
 core/fonts.lua
 core/storage.lua
 core/statusReport.lua
 core/slashcommands.lua
 core/cooldowns.lua
+core\statusbars.xml
+core\statusbars.lua
 
 settings/settings_menu.lua
 settings/settings.xml
@@ -62,6 +64,7 @@ settings/panel_player.lua
 settings/panel_target.lua
 settings/panel_actionbar.lua
 settings/panel_hud.lua
+settings/panel_chat.lua
 settings/panel_tooltip.lua
 settings/panel_party.lua
 settings/panel_raid.lua
@@ -122,6 +125,8 @@ mainbar/5sr.lua
 mainbar/mirrortimer.lua
 mainbar/hud.lua
 mainbar/stancebar.lua
+mainbar\customTrackAura.lua
+mainbar\customTrackAura.xml
 mainbar/actionbars2.lua
 mainbar/petbar.lua
 mainbar/aurabar_blizz_modified.lua

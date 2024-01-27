@@ -1,7 +1,7 @@
 local _, GW = ...
 local constBackdropFrame = GW.skins.constBackdropFrame
 
-local function SkinMacroOptions()
+local function LoadMacroOptionsSkin()
     MacroFrame_LoadUI()
 
     if not GW.GetSetting("MACRO_SKIN_ENABLED") then return end
@@ -181,4 +181,4 @@ local function SkinMacroOptions()
         end
     end)
 end
-GW.SkinMacroOptions = SkinMacroOptions
+GW.LoadMacroOptionsSkin = LoadMacroOptionsSkin

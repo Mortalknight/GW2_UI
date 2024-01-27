@@ -1,7 +1,8 @@
 local _, GW = ...
 local RegisterMovableFrame = GW.RegisterMovableFrame
 
-local function SkinBNToastFrame()
+local function LoadBNToastSkin()
+    if not GW.GetSetting("BNTOASTFRAME_SKIN_ENABLED") then return end
     local BNToastFrame = _G.BNToastFrame
 
     BNToastFrame:SetBackdrop(nil)
@@ -27,4 +28,4 @@ local function SkinBNToastFrame()
 
     RegisterMovableFrame(BNToastFrame, "BNet Frame", "BNToastPos", ALL .. ",Blizzard", nil, {"default", "scaleable"}, nil, BNTostPostDrag)
 end
-GW.SkinBNToastFrame = SkinBNToastFrame
+GW.LoadBNToastSkin = LoadBNToastSkin
