@@ -33,6 +33,8 @@ locales/frFR.lua
 locales/zhCN.lua
 locales/itIT.lua
 
+core\warningPrompt.xml
+core\warningPrompt.lua
 core/consts.lua
 core/init.lua
 core\staticPopupDialogs.lua
@@ -70,7 +72,6 @@ settings/hover_binding.lua
 settings/welcome.xml
 settings/welcome.lua
 settings/moveableFrameHandler.lua
-settings/credits.lua
 settings/versionApi.lua
 settings\panel_overview.lua
 settings\panel_overview.xml

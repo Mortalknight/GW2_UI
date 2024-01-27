@@ -32,6 +32,7 @@ GW.scaleableFrames = {}
 GW.scaleableMainHudFrames = {}
 GW.animations = {}
 GW.trackedQuests = {}
+GW.CreditsList = {}
 
 GW.HiddenFrame = CreateFrame("Frame")
 GW.HiddenFrame.HiddenString = GW.HiddenFrame:CreateFontString(nil, "OVERLAY")
