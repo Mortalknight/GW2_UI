@@ -250,7 +250,7 @@ end
 function GwRuneFrameFilter_Initialize()
 	local info = UIDropDownMenu_CreateInfo();
 	info.func = RuneFrameFilter_Modify;
-	
+
 	info.text = ALL_RUNES;
 	info.checked = C_Engraving.GetExclusiveCategoryFilter() == nil and not C_Engraving.IsEquippedFilterEnabled();
 	info.arg1 = ALL_RUNES_CATEGORY;

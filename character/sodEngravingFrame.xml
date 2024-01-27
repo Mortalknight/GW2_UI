@@ -13,14 +13,14 @@
 					</Anchors>
 				</Texture>
 				<FontString name="$parentName" inherits="GameFontNormal" justifyH="LEFT" parentKey="name">
-					<Size x="110" y="12"/>
+					<Size x="225" y="12"/>
 					<Anchors>
 						<Anchor point="TOPLEFT"  relativeTo="$parentIcon" relativePoint="TOPRIGHT" x="4" y="-5"/>
 					</Anchors>
 					<Color r="1" g="1" b="1"/>
 				</FontString>
 				<FontString name="$parentTypeName" inherits="GameFontNormalSmall" justifyH="LEFT" parentKey="typeName">
-					<Size x="110" y="12"/>
+					<Size x="225" y="12"/>
 					<Anchors>
 						<Anchor point="TOPLEFT"  relativeTo="$parentName" relativePoint="BOTTOMLEFT" x="0" y="-2"/>
 					</Anchors>

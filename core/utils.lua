@@ -617,6 +617,15 @@ local function GetScreenQuadrant(frame)
 end
 GW.GetScreenQuadrant = GetScreenQuadrant
 
+do
+    local a, d = "", {"|c[fF][fF]%x%x%x%x%x%x","|r","^%s+","%s+$","|[TA].-|[ta]"}
+    local function StripString(s, ignoreTextures)
+        for i = 1, #d - (ignoreTextures and 1 or 0) do s = gsub(s, d[i], a) end
+        return s
+    end
+    GW.StripString = StripString
+end
+
 local function setItemLevel(button, quality, itemlink)
     button.itemlevel:SetFont(UNIT_NAME_FONT, 12, "THINOUTLINED")
     if quality then

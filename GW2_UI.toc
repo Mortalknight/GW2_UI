@@ -78,6 +78,7 @@ settings\panel_overview.xml
 dataInfo/money.lua
 dataInfo/guild.lua
 dataInfo/bags.lua
+dataInfo/system.lua
 
 core/auras.lua
 
