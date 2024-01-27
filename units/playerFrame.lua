@@ -136,6 +136,17 @@ local function player_OnEvent(self, event, ...)
     end
 end
 
+local function TogglePlayerFrameASettings()
+    if not GwPlayerUnitFrame then return end
+    --GwPlayerUnitFrame.altBg:SetShown(GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
+    GwPlayerUnitFrame.classColor = GetSetting("player_CLASS_COLOR")
+    GwPlayerUnitFrame.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
+
+    updateHealthData(GwPlayerUnitFrame)
+    unitFrameData(GwPlayerUnitFrame)
+end
+GW.TogglePlayerFrameASettings = TogglePlayerFrameASettings
+
 local function LoadPlayerFrame()
     local NewUnitFrame = createNormalUnitFrame("GwPlayerUnitFrame")
     NewUnitFrame.unit = "player"
@@ -261,6 +272,8 @@ local function LoadPlayerFrame()
     NewUnitFrame.castingbarNormal:Hide()
     NewUnitFrame.castingbarNormalSpark:Hide()
     NewUnitFrame.raidmarker:Hide()
+
+    TogglePlayerFrameASettings()
 
     return NewUnitFrame
 end

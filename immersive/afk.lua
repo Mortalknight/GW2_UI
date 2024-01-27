@@ -3,6 +3,8 @@ local L = GW.L
 local GWGetClassColor = GW.GWGetClassColor
 local IsIn = GW.IsIn
 
+local AFKMode
+
 local ignoreKeys = {
     LALT = true,
     LSHIFT = true,
@@ -39,6 +41,10 @@ local function SetAFK(self, status)
         self.bottom.model:SetAnimation(67)
         self.bottom.model.idleDuration = 30
         self.startTime = GetTime()
+        if self.timer then
+            self.timer:Cancel()
+            self.timer =nil
+        end
         self.timer = C_Timer.NewTicker(1, function() UpdateTimer(self) end)
 
         self.chat:RegisterEvent("CHAT_MSG_WHISPER")
@@ -53,7 +59,7 @@ local function SetAFK(self, status)
 
         self.timer:Cancel()
         if self.animTimer then self.animTimer:Cancel() end
-        
+
         self.bottom.time:SetText("00:00")
 
         self.chat:UnregisterAllEvents()
@@ -63,14 +69,9 @@ local function SetAFK(self, status)
     end
 end
 
-local function AFKMode_OnEvent(self, event, ...)
+local function AFKMode_OnEvent(self, event, arg1, ...)
     if IsIn(event, "PLAYER_REGEN_DISABLED", "UPDATE_BATTLEFIELD_STATUS") then
-        if event == "UPDATE_BATTLEFIELD_STATUS" then
-            local status = GetBattlefieldStatus(...)
-            if status == "confirm" then
-                SetAFK(self, false)
-            end
-        else
+        if event ~= "UPDATE_BATTLEFIELD_STATUS" or (GetBattlefieldStatus(arg1, ...) == "confirm") then
             SetAFK(self, false)
         end
 
@@ -84,18 +85,14 @@ local function AFKMode_OnEvent(self, event, ...)
         self:UnregisterEvent("PLAYER_REGEN_ENABLED")
     end
 
-    if InCombatLockdown() or CinematicFrame:IsShown() or MovieFrame:IsShown() then return end
+    if (event == "PLAYER_FLAGS_CHANGED" and arg1 ~= "player") or (InCombatLockdown() or CinematicFrame:IsShown() or MovieFrame:IsShown()) then return end
     if UnitCastingInfo("player") ~= nil then
         --Don't activate afk if player is crafting stuff, check back in 30 seconds
         C_Timer.After(30, function() AFKMode_OnEvent(self) end)
         return
     end
 
-    if UnitIsAFK("player") then
-        SetAFK(self, true)
-    else
-        SetAFK(self, false)
-    end
+    SetAFK(self, UnitIsAFK("player"))
 end
 
 local function OnKeyDown(self, key)
@@ -178,11 +175,27 @@ local function LoopAnimations(self)
     end
 end
 
+local function ToggelAfkMode()
+    if GW.GetSetting("AFK_MODE") then
+        AFKMode:RegisterEvent("PLAYER_FLAGS_CHANGED")
+        AFKMode:RegisterEvent("PLAYER_REGEN_DISABLED")
+        AFKMode:RegisterEvent("LFG_PROPOSAL_SHOW")
+        AFKMode:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
+        AFKMode:SetScript("OnEvent", AFKMode_OnEvent)
+        C_CVar.SetCVar("autoClearAFK", "1")
+    else
+        AFKMode:UnregisterAllEvents()
+        AFKMode:SetScript("OnEvent", nil)
+        C_CVar.SetCVar("autoClearAFK", "1")
+    end
+end
+GW.ToggelAfkMode = ToggelAfkMode
+
 local function loadAFKAnimation()
     local classColor = GWGetClassColor(GW.myclass, true, true)
-    
+
     local BackdropFrame = {
-        bgFile = "Interface/AddOns/GW2_UI/textures/welcome-bg",
+        bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/welcome-bg",
         edgeFile = "",
         tile = false,
         tileSize = 64,
@@ -190,7 +203,7 @@ local function loadAFKAnimation()
         insets = {left = 2, right = 2, top = 2, bottom = 2}
     }
 
-    local AFKMode = CreateFrame("Frame")
+    AFKMode = CreateFrame("Frame")
     AFKMode:SetFrameLevel(1)
     AFKMode:SetScale(UIParent:GetScale())
     AFKMode:SetAllPoints(UIParent)
@@ -227,7 +240,7 @@ local function loadAFKAnimation()
     elseif GW.myrace == "Tauren" then
         modelOffsetY = 250
     elseif GW.myrace == "Troll" then
-        if GW.mysex == 2 then 
+        if GW.mysex == 2 then
             modelOffsetY = 250
         elseif GW.mysex == 3 then
             modelOffsetY = 280
@@ -283,6 +296,8 @@ local function loadAFKAnimation()
     AFKMode:RegisterEvent("UPDATE_BATTLEFIELD_STATUS")
     AFKMode:SetScript("OnEvent", AFKMode_OnEvent)
     SetCVar("autoClearAFK", "1")
+
+    ToggelAfkMode()
 
     if IsMacClient() then
         printKeys[KEY_PRINTSCREEN_MAC] = true

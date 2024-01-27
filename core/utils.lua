@@ -204,6 +204,11 @@ local function RGBToHex(r, g, b, header, ending)
 end
 GW.RGBToHex = RGBToHex
 
+local function GetUnitBattlefieldFaction(unit)
+    return UnitFactionGroup(unit)
+end
+GW.GetUnitBattlefieldFaction = GetUnitBattlefieldFaction
+
 local function FillTable(T, map, ...)
     wipe(T)
     for i=1,select("#", ...) do

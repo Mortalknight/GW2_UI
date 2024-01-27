@@ -974,7 +974,7 @@ local function changeVertexColorActionbars()
                 if btn.changedColor then
                     local valid = IsActionInRange(btn.action)
                     local checksRange = (valid ~= nil)
-                    local inRange = checksRange and valid                
+                    local inRange = checksRange and valid
                     if checksRange and not inRange then
                         btn.icon:SetVertexColor(out_R, out_G, out_B)
                     end

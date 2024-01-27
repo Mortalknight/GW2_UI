@@ -54,22 +54,23 @@ local function LoadPlayerPanel(sWindow)
 
     settingsMenuAddButton(PLAYER, p, {p_player, p_player_aura, p_player_debuff})
 
-    addOption(p_player.scroll.scrollchild, L["Player frame in target frame style"], nil, "PLAYER_AS_TARGET_FRAME", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, RAID_USE_CLASS_COLORS, nil, "player_CLASS_COLOR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
-    addOption(p_player.scroll.scrollchild, L["Show an additional resource bar"], nil, "PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true, ["POWERBAR_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, L["Player frame in target frame style"], nil, "PLAYER_AS_TARGET_FRAME", function() GW.ShowRlPopup = true end, nil, {["HEALTHGLOBE_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, RAID_USE_CLASS_COLORS, nil, "player_CLASS_COLOR", GW.TogglePlayerFrameASettings, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true})
+    addOption(p_player.scroll.scrollchild, L["Show an additional resource bar"], nil, "PLAYER_AS_TARGET_FRAME_SHOW_RESSOURCEBAR", function() GW.ShowRlPopup = true end, nil, {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = true, ["POWERBAR_ENABLED"] = true})
     addOption(p_player.scroll.scrollchild, L["PvP Indicator"], nil, "PLAYER_SHOW_PVP_INDICATOR", nil, nil, {["HEALTHGLOBE_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, L["Energy/Mana Ticker"], nil, "PLAYER_ENERGY_MANA_TICK", nil, nil, {["POWERBAR_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, L["Show Energy/Mana Ticker only in combat"], nil, "PLAYER_ENERGY_MANA_TICK_HIDE_OFC", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
-    addOption(p_player.scroll.scrollchild, L["5 secound rule: display remaning time"], nil, "PLAYER_5SR_TIMER", nil, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
-    addOption(p_player.scroll.scrollchild, L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], "CASTINGBAR_DATA", nil, nil, {["CASTINGBAR_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, PET .. ": " .. L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "PET_FLOATING_COMBAT_TEXT", nil, nil, {["PETBAR_ENABLED"] = true})
-    addOption(p_player.scroll.scrollchild, PET .. ": " .. L["Show auras below"], nil, "PET_AURAS_UNDER", nil, nil, {["PETBAR_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, L["Energy/Mana Ticker"], nil, "PLAYER_ENERGY_MANA_TICK", function() GW.ShowRlPopup = true end, nil, {["POWERBAR_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, L["Show Energy/Mana Ticker only in combat"], nil, "PLAYER_ENERGY_MANA_TICK_HIDE_OFC", GW.Update5SrHot, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
+    addOption(p_player.scroll.scrollchild, L["5 secound rule: display remaning time"], nil, "PLAYER_5SR_TIMER", GW.Update5SrHot, nil, {["POWERBAR_ENABLED"] = true, ["PLAYER_ENERGY_MANA_TICK"] = true})
+    addOption(p_player.scroll.scrollchild, L["Show spell queue window on castinbar"], nil, "PLAYER_CASTBAR_SHOW_SPELL_QUEUEWINDOW", nil, nil, {["CASTINGBAR_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, L["Advanced Casting Bar"], L["Enable or disable the advanced casting bar."], "CASTINGBAR_DATA", function(value) GW.TogglePlayerEnhancedCastbar(GwCastingBarPlayer, value); GW.TogglePlayerEnhancedCastbar(GwCastingBarPet, value); end, nil, {["CASTINGBAR_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, PET .. ": " .. L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "PET_FLOATING_COMBAT_TEXT", function() GW.ShowRlPopup = true end, nil, {["PETBAR_ENABLED"] = true})
+    addOption(p_player.scroll.scrollchild, PET .. ": " .. L["Show auras below"], nil, "PET_AURAS_UNDER", GW.TogglePetAuraPosition, nil, {["PETBAR_ENABLED"] = true})
     addOptionDropdown(
         p_player.scroll.scrollchild,
         COMPACT_UNIT_FRAME_PROFILE_HEALTHTEXT,
         nil,
         "PLAYER_UNIT_HEALTH",
-        nil,
+        function() GW.ToggleHealthglobeSettings(); GW.TogglePlayerFrameASettings() end,
         {"NONE", "PREC", "VALUE", "BOTH"},
         {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH},
         nil,
@@ -102,7 +103,9 @@ local function LoadPlayerPanel(sWindow)
         L["Player Buff Growth Direction"],
         nil,
         "PlayerBuffFrame_GrowDirection",
-        GW.UpdateHudScale(),
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
+        end,
         {"UP", "DOWN", "UPR", "DOWNR"},
         {
             StrUpper(L["Up"], 1, 1),
@@ -113,12 +116,64 @@ local function LoadPlayerPanel(sWindow)
         nil,
         {["PLAYER_BUFFS_ENABLED"] = true}
     )
+    addOptionDropdown(
+        p_player_aura.scroll.scrollchild,
+        L["Sort Method"],
+        L["Defines how the group is sorted."],
+        "PlayerBuffFrame_SortMethod",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
+        end,
+        {"INDEX", "TIME", "NAME"},
+        {
+            L["Index"],
+            L["Time"],
+            NAME
+        },
+        nil,
+        {["PLAYER_BUFFS_ENABLED"] = true}
+    )
+    addOptionDropdown(
+        p_player_aura.scroll.scrollchild,
+        L["Sort Direction"],
+        L["Defines the sort order of the selected sort method."],
+        "PlayerBuffFrame_SortDir",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
+        end,
+        {"+", "-"},
+        {
+            L["Ascending"],
+            L["Descending"]
+        },
+        nil,
+        {["PLAYER_BUFFS_ENABLED"] = true}
+    )
+    addOptionDropdown(
+        p_player_aura.scroll.scrollchild,
+        L["Seperate"],
+        L["Indicate whether buffs you cast yourself should be separated before or after."],
+        "PlayerBuffFrame_Seperate",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
+        end,
+        {-1, 0, 1},
+        {
+            L["Other's First"],
+            L["No Sorting"],
+            L["Your Auras First"]
+        },
+        nil,
+        {["PLAYER_BUFFS_ENABLED"] = true}
+    )
     addOptionSlider(
         p_player_aura.scroll.scrollchild,
         L["Auras per row"],
         nil,
         "PLAYER_AURA_WRAP_NUM",
-        nil,
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
+        end,
         1,
         20,
         nil,
@@ -130,7 +185,9 @@ local function LoadPlayerPanel(sWindow)
         L["Buff size"],
         nil,
         "PlayerBuffFrame_ICON_SIZE",
-        nil,
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerBuffs, "PlayerBuffFrame")
+        end,
         16,
         60,
         nil,
@@ -139,72 +196,104 @@ local function LoadPlayerPanel(sWindow)
         2
     )
 
-    --DEBUFF
-    addOptionSlider(
-        p_player_debuff.scroll.scrollchild,
-        L["Debuff size"],
-        nil,
-        "PlayerDebuffFrame_ICON_SIZE",
-        nil,
-        16,
-        60,
-        nil,
-        0,
-        {["PLAYER_BUFFS_ENABLED"] = true},
-        2
-    )
+    -- DEBUFF
     addOptionDropdown(
         p_player_debuff.scroll.scrollchild,
         L["Player Debuffs Growth Direction"],
         nil,
         "PlayerDebuffFrame_GrowDirection",
-        GW.UpdateHudScale(),
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame")
+        end,
         {"UP", "DOWN", "UPR", "DOWNR"},
         {
             StrUpper(L["Up"], 1, 1),
             StrUpper(L["Down"], 1, 1),
-            L["Up and Right"],
-            L["Down and Right"]
+            L["Up and right"],
+            L["Down and right"]
         },
         nil,
         {["PLAYER_BUFFS_ENABLED"] = true}
     )
-
-    --[[
     addOptionDropdown(
-        p.scroll.scrollchild,
-        L["Show Shield Value"],
+        p_player_debuff.scroll.scrollchild,
+        L["Sort Method"],
+        L["Defines how the group is sorted."],
+        "PlayerDebuffFrame_SortMethod",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame")
+        end,
+        {"INDEX", "TIME", "NAME"},
+        {
+            L["Index"],
+            L["Time"],
+            NAME
+        },
         nil,
-        "PLAYER_UNIT_ABSORB",
-        nil,
-        {"NONE", "PREC", "VALUE", "BOTH"},
-        {NONE, STATUS_TEXT_PERCENT, STATUS_TEXT_VALUE, STATUS_TEXT_BOTH},
-        nil,
-        {["HEALTHGLOBE_ENABLED"] = true, ["PLAYER_AS_TARGET_FRAME"] = false}
+        {["PLAYER_BUFFS_ENABLED"] = true}
     )
     addOptionDropdown(
-        p.scroll.scrollchild,
-        L["Class Totems Sorting"],
+        p_player_debuff.scroll.scrollchild,
+        L["Sort Direction"],
+        L["Defines the sort order of the selected sort method."],
+        "PlayerDebuffFrame_SortDir",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame")
+        end,
+        {"+", "-"},
+        {
+            L["Ascending"],
+            L["Descending"]
+        },
         nil,
-        "TotemBar_SortDirection",
-        nil,
-        {"ASC", "DSC"},
-        {L["Ascending"], L["Descending"]},
-        nil,
-        {["HEALTHGLOBE_ENABLED"] = true}
+        {["PLAYER_BUFFS_ENABLED"] = true}
     )
     addOptionDropdown(
-        p.scroll.scrollchild,
-        L["Class Totems Growth Direction"],
+        p_player_debuff.scroll.scrollchild,
+        L["Seperate"],
+        L["Indicate whether buffs you cast yourself should be separated before or after."],
+        "PlayerDebuffFrame_Seperate",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame")
+        end,
+        {-1, 0, 1},
+        {
+            L["Other's First"],
+            L["No Sorting"],
+            L["Your Auras First"]
+        },
         nil,
-        "TotemBar_GrowDirection",
-        nil,
-        {"HORIZONTAL", "VERTICAL"},
-        {L["Horizontal"], L["Vertical"]},
-        nil,
-        {["HEALTHGLOBE_ENABLED"] = true}
+        {["PLAYER_BUFFS_ENABLED"] = true}
     )
-    ]]
+    addOptionSlider(
+        p_player_debuff.scroll.scrollchild,
+        L["Auras per row"],
+        nil,
+        "PLAYER_AURA_WRAP_NUM_DEBUFF",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame")
+        end,
+        1,
+        20,
+        nil,
+        0,
+        {["PLAYER_BUFFS_ENABLED"] = true}
+    )
+    addOptionSlider(
+        p_player_debuff.scroll.scrollchild,
+        L["Debuff size"],
+        nil,
+        "PlayerDebuffFrame_ICON_SIZE",
+        function()
+            GW.UpdateAuraHeader(GW2UIPlayerDebuffs, "PlayerDebuffFrame")
+        end,
+        16,
+        60,
+        nil,
+        0,
+        {["PLAYER_BUFFS_ENABLED"] = true},
+        2
+    )
 
     InitPanel(p_player, true)
     InitPanel(p_player_aura, true)

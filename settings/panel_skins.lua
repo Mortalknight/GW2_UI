@@ -18,14 +18,14 @@ local function LoadSkinsPanel(sWindow)
 
     settingsMenuAddButton(L["Skins"],p,{})
 
-    addOption(p, MAINMENU_BUTTON, nil, "MAINMENU_SKIN_ENABLED")
-    addOption(p, L["Popup notifications"], nil, "STATICPOPUP_SKIN_ENABLED")
-    addOption(p, SHOW_BATTLENET_TOASTS, nil, "BNTOASTFRAME_SKIN_ENABLED")
-    addOption(p, L["Blizzard Class Colors"], nil, "BLIZZARDCLASSCOLOR_ENABLED")
-    addOption(p, ADDON_LIST, nil, "ADDONLIST_SKIN_ENABLED")
-    addOption(p, INTERFACE_OPTIONS, nil, "BLIZZARD_OPTIONS_SKIN_ENABLED")
-    addOption(p, MACRO, nil, "MACRO_SKIN_ENABLED")
-    addOption(p, WORLD_MAP, nil, "WORLDMAP_SKIN_ENABLED")
+    addOption(p, MAINMENU_BUTTON, nil, "MAINMENU_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p, L["Popup notifications"], nil, "STATICPOPUP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p, SHOW_BATTLENET_TOASTS, nil, "BNTOASTFRAME_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p, L["Blizzard Class Colors"], nil, "BLIZZARDCLASSCOLOR_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p, ADDON_LIST, nil, "ADDONLIST_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p, INTERFACE_OPTIONS, nil, "BLIZZARD_OPTIONS_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p, MACRO, nil, "MACRO_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p, WORLD_MAP, nil, "WORLDMAP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
 
     InitPanel(p)
 end

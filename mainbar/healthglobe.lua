@@ -233,6 +233,15 @@ local function repair_OnEnter(self)
 end
 GW.AddForProfiling("healthglobe", "repair_OnEnter", repair_OnEnter)
 
+local function ToggleHealthglobeSettings()
+    if not GW2_PlayerFrame then return end
+    GW2_PlayerFrame.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
+    --GW2_PlayerFrame.absorbTextSetting = GetSetting("PLAYER_UNIT_ABSORB")
+
+    updateHealthData(GW2_PlayerFrame, false)
+end
+GW.ToggleHealthglobeSettings = ToggleHealthglobeSettings
+
 local function LoadHealthGlobe()
     local hg = CreateFrame("Button", "GW2_PlayerFrame", UIParent, "GwHealthGlobeTmpl")
     GW.RegisterScaleFrame(hg, 1.1)
@@ -254,8 +263,6 @@ local function LoadHealthGlobe()
             end
         end
 
-    --save settingsvalue for later use
-    hg.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
 
     -- unit frame stuff
     hg:SetAttribute("*type1", "target")
@@ -382,6 +389,9 @@ local function LoadHealthGlobe()
     end
 
     if not GetSetting("PLAYER_SHOW_PVP_INDICATOR") then pvp:Hide() end
+
+    --save settingsvalue for later use
+    ToggleHealthglobeSettings()
 
     return hg
 end

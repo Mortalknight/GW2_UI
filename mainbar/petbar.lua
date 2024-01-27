@@ -77,25 +77,6 @@ local function setPetBar(fmPet)
 end
 GW.AddForProfiling("petbar", "setPetBar", setPetBar)
 
-local function updatePetFrameLocation()
-    local fPet = GwPlayerPetFrame
-    if not fPet or InCombatLockdown() then
-        return
-    end
-    local fBar = MultiBarBottomLeft
-    local xOff = GetSetting("PLAYER_AS_TARGET_FRAME") and 54 or 0
-    fPet:ClearAllPoints()
-    fPet.gwMover:ClearAllPoints()
-    if fBar and fBar.gw_FadeShowing then
-        fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + xOff, 212)
-        fPet:SetPoint("TOPLEFT", fPet.gwMover)
-    else
-        fPet.gwMover:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOM", -53 + xOff, 120)
-        fPet:SetPoint("TOPLEFT", fPet.gwMover)
-    end
-end
-GW.AddForProfiling("petbar", "updatePetFrameLocation", updatePetFrameLocation)
-
 local function UpdatePetBarButtonsHot()
     for i = 1, 12 do
         local btn = _G["PetActionButton" .. i]
@@ -139,7 +120,7 @@ local function updatePetData(self, event)
 
     if event == "PLAYER_ENTERING_WORLD" then
         UpdateBuffLayout(self, event, "pet")
-        SetPetHappiness(self)
+        C_Timer.After(0.1, function() SetPetHappiness(self) end)
         SetPortraitTexture(self.portrait, "pet")
         self:UnregisterEvent(event)
     elseif event == "UNIT_AURA" then
@@ -195,6 +176,16 @@ local function updatePetData(self, event)
 end
 GW.AddForProfiling("petbar", "updatePetData", updatePetData)
 
+local function TogglePetAuraPosition()
+    GwPlayerPetFrame.auraPositionUnder = GetSetting("PET_AURAS_UNDER")
+
+    if GwPlayerPetFrame.auraPositionUnder then
+        GwPlayerPetFrame.auras:ClearAllPoints()
+        GwPlayerPetFrame.auras:SetPoint("TOPLEFT", GwPlayerPetFrame.resource, "BOTTOMLEFT", 0, -5)
+    end
+end
+GW.TogglePetAuraPosition = TogglePetAuraPosition
+
 local function LoadPetFrame(lm)
     -- disable default PetFrame stuff
     PetFrame:Kill()
@@ -208,17 +199,11 @@ local function LoadPetFrame(lm)
     playerPetFrame:EnableMouse(true)
     playerPetFrame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     RegisterStateDriver(playerPetFrame, "visibility", "[overridebar] hide; [vehicleui] hide; [petbattle] hide; [target=pet,exists] show; hide")
-    -- TODO: When in override/vehicleui, we should show the pet auras/buffs as this can be important info
 
     playerPetFrame.health:SetStatusBarColor(COLOR_FRIENDLY[2].r, COLOR_FRIENDLY[2].g, COLOR_FRIENDLY[2].b)
-    playerPetFrame.health.text:SetFont(UNIT_NAME_FONT, 11, "")
+    playerPetFrame.health.text:SetFont(UNIT_NAME_FONT, 11)
 
-    playerPetFrame.auraPositionUnder = GetSetting("PET_AURAS_UNDER")
-
-    if playerPetFrame.auraPositionUnder then
-        playerPetFrame.auras:ClearAllPoints()
-        playerPetFrame.auras:SetPoint("TOPLEFT", playerPetFrame.resource, "BOTTOMLEFT", 0, -5)
-    end
+    TogglePetAuraPosition()
 
     playerPetFrame:SetScript("OnEnter", function(self)
         if self.unit then
@@ -240,7 +225,7 @@ local function LoadPetFrame(lm)
 
     playerPetFrame.displayBuffs = true
     playerPetFrame.displayDebuffs = true
-    playerPetFrame.debuffFilter = "HARMFUL" --"player"
+    playerPetFrame.debuffFilter = nil --"player"
 
     playerPetFrame.portraitBackground:SetTexCoord(0, 0.25, 0, 1)
     playerPetFrame.happiness:SetScript("OnEnter", function(self)
@@ -268,18 +253,14 @@ local function LoadPetFrame(lm)
     playerPetFrame:RegisterUnitEvent("UNIT_AURA", "pet", "player")
     playerPetFrame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MODEL_CHANGED", "pet")
-    playerPetFrame:RegisterUnitEvent("UNIT_HAPPINESS", "pet")
+    playerPetFrame:RegisterEvent("UNIT_HAPPINESS")
     playerPetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     RegisterMovableFrame(playerPetFrame, PET, "pet_pos", ALL .. ",Unitframe", nil, {"default", "scaleable"}, true)
 
-    if not playerPetFrame.isMoved then
-        AddActionBarCallback(updatePetFrameLocation)
-        updatePetFrameLocation()
-    else
-        playerPetFrame:ClearAllPoints()
-        playerPetFrame:SetPoint("TOPLEFT", playerPetFrame.gwMover)
-    end
+    playerPetFrame:ClearAllPoints()
+    playerPetFrame:SetPoint("TOPLEFT", playerPetFrame.gwMover)
+
 
     lm:RegisterPetFrame(playerPetFrame)
 
@@ -311,7 +292,7 @@ local function LoadPetFrame(lm)
         fctf.unit = playerPetFrame.unit
 
         local font = fctf:CreateFontString(nil, "OVERLAY")
-        font:SetFont(DAMAGE_TEXT_FONT, 30, "")
+        font:SetFont(DAMAGE_TEXT_FONT, 30)
         fctf.fontString = font
         font:SetPoint("CENTER", playerPetFrame.portrait, "CENTER")
         font:Hide()

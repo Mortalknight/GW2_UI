@@ -757,8 +757,9 @@ local function InitPanel(panel, hasScroll)
                 end
             )
         elseif v.optionType == "slider" then
+            print(of.optionName)
             of.slider:SetMinMaxValues(v.min, v.max)
-            of.slider:SetValue(GetSetting(of.optionName))
+            of.slider:SetValue(GetSetting(of.optionName) or GW.GetDefault(of.optionName) )
             if v.step then of.slider:SetValueStep(v.step) end
             of.slider:SetObeyStepOnDrag(true)
             of.slider:SetScript(
