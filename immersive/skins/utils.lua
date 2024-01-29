@@ -1,8 +1,8 @@
 local _, GW = ...
 
 local constBackdropFrame = {
-    bgFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Background",
-    edgeFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Border",
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
     tile = false,
     tileSize = 64,
     edgeSize = 32,
@@ -12,13 +12,37 @@ GW.skins.constBackdropFrame = constBackdropFrame
 
 local constBackdropFrameBorder = {
     bgFile = "",
-    edgeFile = "Interface/AddOns/GW2_UI/textures/UI-Tooltip-Border",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
     tile = false,
     tileSize = 64,
     edgeSize = 32,
     insets = {left = 2, right = 2, top = 2, bottom = 2}
 }
 GW.skins.constBackdropFrameBorder = constBackdropFrameBorder
+
+local constBackdropFrameSmallerBorder = {
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Border",
+    tile = false,
+    tileSize = 64,
+    edgeSize = 18,
+    insets = {left = 2, right = 2, top = 2, bottom = 2}
+}
+GW.skins.constBackdropFrameSmallerBorder = constBackdropFrameSmallerBorder
+
+local constBackdropFrameColorBorder = {
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+    bgFile = "Interface/AddOns/GW2_UI/textures/uistuff/UI-Tooltip-Background",
+    edgeSize = 1
+}
+GW.constBackdropFrameColorBorder = constBackdropFrameColorBorder
+
+local constBackdropFrameColorBorderNoBackground = {
+    edgeFile = "Interface/AddOns/GW2_UI/textures/uistuff/white",
+    bgFile = "",
+    edgeSize = 1
+}
+GW.constBackdropFrameColorBorderNoBackground = constBackdropFrameColorBorderNoBackground
 
 
 local function SkinUIDropDownMenu()

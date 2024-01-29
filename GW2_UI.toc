@@ -61,7 +61,7 @@ settings/panel_party.xml
 settings/settings.lua
 settings/panel_modules.lua
 settings/panel_player.lua
-settings/panel_target.lua
+settings/panel_unitframes.lua
 settings/panel_actionbar.lua
 settings/panel_hud.lua
 settings/panel_chat.lua

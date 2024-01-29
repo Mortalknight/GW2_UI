@@ -30,6 +30,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p.scroll.scrollchild, L["Gossip Frame"], nil, "GOSSIP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, READY_CHECK, nil, "READYCHECK_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, TIMEMANAGER_TITLE, nil, "TIMEMANAGER_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, QUEST_LOG, nil, "QUESTLOG_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
 
     InitPanel(p, true)
 end

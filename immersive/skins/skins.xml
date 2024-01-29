@@ -12,6 +12,7 @@
     <Script file="timeManager.lua"/>
     <Script file="merchant.lua"/>
     <Script file="gossip.lua"/>
+    <Script file="questLog.lua"/>
 
     <Script file="addons\detailsProfile.lua"/>
 </Ui>
