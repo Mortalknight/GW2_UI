@@ -215,6 +215,60 @@ local function HandleItemButton(b, setInside)
 end
 GW.HandleItemButton = HandleItemButton
 
+do
+    local function iconBorderColor(border, r, g, b, a)
+        border:StripTextures()
+
+        if border.customFunc then
+            local br, bg, bb = 1, 1, 1
+            border.customFunc(border, r, g, b, a, br, bg, bb)
+        elseif border.customBackdrop then
+            border.customBackdrop:SetBackdropBorderColor(r, g, b)
+        end
+    end
+
+    local function iconBorderHide(border)
+        local br, bg, bb = 1, 1, 1
+        if border.customFunc then
+            local r, g, b, a = border:GetVertexColor()
+            border.customFunc(border, r, g, b, a, br, bg, bb)
+        elseif border.customBackdrop then
+            border.customBackdrop:SetBackdropBorderColor(br, bg, bb)
+        end
+    end
+
+    local function HandleIconBorder(border, backdrop, customFunc)
+        if not backdrop then
+            local parent = border:GetParent()
+            backdrop = parent.backdrop or parent
+        end
+
+        border.customBackdrop = backdrop
+
+        if not border.IconBorderHooked then
+            border:StripTextures()
+
+            hooksecurefunc(border, "SetVertexColor", iconBorderColor)
+            hooksecurefunc(border, "Hide", iconBorderHide)
+
+            border.IconBorderHooked = true
+        end
+
+        local r, g, b, a = border:GetVertexColor()
+        if customFunc then
+            border.customFunc = customFunc
+            local br, bg, bb = 1, 1, 1
+            customFunc(border, r, g, b, a, br, bg, bb)
+        elseif r then
+            backdrop:SetBackdropBorderColor(r, g, b, a)
+        else
+            local br, bg, bb = 1, 1, 1
+            backdrop:SetBackdropBorderColor(br, bg, bb)
+        end
+    end
+    GW.HandleIconBorder = HandleIconBorder
+end
+
 local function Scale(x)
     local m = GW.mult
     if m == 1 or x == 0 then

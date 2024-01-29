@@ -274,6 +274,8 @@ end
 
 local function LoadOverviewPanel(sWindow)
     local p = CreateFrame("Frame", nil, sWindow.panels, "GwSettingsSplashPanelTmpl")
+    local l = math.random(1, 2)
+    p.splashart:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/settingartwork" .. l)
 
     p.splashart:AddMaskTexture(sWindow.backgroundMask)
 

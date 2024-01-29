@@ -403,9 +403,7 @@ local function LoadQuestLogFrameSkin()
 		QuestInfoRewardsFrame.ItemChooseText:SetTextColor(textR, textG, textB)
 		QuestInfoRewardsFrame.ItemReceiveText:SetTextColor(textR, textG, textB)
 		QuestInfoRewardsFrame.XPFrame.ReceiveText:SetTextColor(textR, textG, textB)
-		QuestInfoRewardsFrameHonorReceiveText:SetTextColor(textR, textG, textB)
-		QuestInfoRewardsFrameReceiveText:SetTextColor(textR, textG, textB)
-
+		QuestInfoRewardsFrame.PlayerTitleText:SetTextColor(textR, textG, textB)
 		QuestInfoRewardsFrame.spellHeaderPool.textR, QuestInfoRewardsFrame.spellHeaderPool.textG, QuestInfoRewardsFrame.spellHeaderPool.textB = textR, textG, textB
 
 		for spellHeader, _ in QuestInfoFrame.rewardsFrame.spellHeaderPool:EnumerateActive() do
