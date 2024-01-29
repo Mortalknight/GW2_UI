@@ -587,6 +587,10 @@ local function evPlayerLogin(self)
     GW.LoadBNToastSkin()
     GW.LoadDropDownSkin()
     GW.LoadAddonListSkin()
+    GW.LoadMerchantFrameSkin()
+    GW.LoadReadyCheckSkin()
+    GW.LoadTimeManagerSkin()
+    GW.LoadGossipSkin()
 
     GW.LoadDetailsSkin()
 

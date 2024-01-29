@@ -216,6 +216,42 @@ local function ReskinScrollBarArrow(frame, direction)
     end
 end
 
+local function HandleAchivementsScrollControls(self, specifiedScrollBar)
+    local scrollBar = specifiedScrollBar and self[specifiedScrollBar] or self.ScrollBar
+    scrollBar:SetWidth(20)
+
+    scrollBar.Track:ClearAllPoints()
+    scrollBar.Track:SetPoint("TOPLEFT", scrollBar, "TOPLEFT", 0, -12)
+    scrollBar.Track:SetPoint("BOTTOMRIGHT", scrollBar, "BOTTOMRIGHT", 0, 12)
+    scrollBar.Track.Thumb.backdrop:SetWidth(12)
+
+    local bg = scrollBar.Track:CreateTexture(nil, "BACKGROUND", nil, 0)
+    bg:ClearAllPoints()
+    bg:SetPoint("TOP", 0, 0)
+    bg:SetPoint("BOTTOM", 0, 0)
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbg")
+
+    scrollBar.Back:ClearAllPoints()
+    scrollBar.Back:SetPoint("BOTTOM", scrollBar, "TOP", 0, -13)
+    scrollBar.Back:SetSize(12,12)
+    bg = scrollBar.Back:CreateTexture(nil, "BACKGROUND", nil, 0)
+    bg:ClearAllPoints();
+    bg:SetPoint("TOPLEFT",0,0)
+    bg:SetPoint("BOTTOMRIGHT",0,0)
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton")
+
+    scrollBar.Forward:ClearAllPoints()
+    scrollBar.Forward:SetPoint("TOP", scrollBar, "BOTTOM", 0, 13)
+    scrollBar.Forward:SetSize(12,12)
+    bg = scrollBar.Forward:CreateTexture(nil, "BACKGROUND", nil, 0)
+    bg:ClearAllPoints();
+    bg:SetPoint("TOPLEFT",0,0)
+    bg:SetPoint("BOTTOMRIGHT",0,0)
+    bg:SetTexture("Interface/AddOns/GW2_UI/textures/uistuff/scrollbutton")
+    bg:SetTexCoord(0,1,1,0)
+end
+GW.HandleAchivementsScrollControls = HandleAchivementsScrollControls
+
 local function HandleTrimScrollBar(frame, small)
     frame:StripTextures()
 

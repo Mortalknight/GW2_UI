@@ -18,15 +18,19 @@ local function LoadSkinsPanel(sWindow)
 
     settingsMenuAddButton(L["Skins"],p,{})
 
-    addOption(p, MAINMENU_BUTTON, nil, "MAINMENU_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
-    addOption(p, L["Popup notifications"], nil, "STATICPOPUP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
-    addOption(p, SHOW_BATTLENET_TOASTS, nil, "BNTOASTFRAME_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
-    addOption(p, L["Blizzard Class Colors"], nil, "BLIZZARDCLASSCOLOR_ENABLED", function() GW.ShowRlPopup = true end)
-    addOption(p, ADDON_LIST, nil, "ADDONLIST_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
-    addOption(p, INTERFACE_OPTIONS, nil, "BLIZZARD_OPTIONS_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
-    addOption(p, MACRO, nil, "MACRO_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
-    addOption(p, WORLD_MAP, nil, "WORLDMAP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, MAINMENU_BUTTON, nil, "MAINMENU_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, L["Popup notifications"], nil, "STATICPOPUP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, SHOW_BATTLENET_TOASTS, nil, "BNTOASTFRAME_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, L["Blizzard Class Colors"], nil, "BLIZZARDCLASSCOLOR_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, ADDON_LIST, nil, "ADDONLIST_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, INTERFACE_OPTIONS, nil, "BLIZZARD_OPTIONS_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, MACRO, nil, "MACRO_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, WORLD_MAP, nil, "WORLDMAP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, MERCHANT, nil, "MERCHANT_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, L["Gossip Frame"], nil, "GOSSIP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, READY_CHECK, nil, "READYCHECK_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, TIMEMANAGER_TITLE, nil, "TIMEMANAGER_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
 
-    InitPanel(p)
+    InitPanel(p, true)
 end
 GW.LoadSkinsPanel = LoadSkinsPanel
