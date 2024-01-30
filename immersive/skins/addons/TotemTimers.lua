@@ -2,7 +2,7 @@ local _, GW = ...
 
 local function LoadTotemTimersSkin()
     if not GW.GetSetting("TOTEM_TIMERS_ADDON_SKIN_ENABLED") then return end
-
+    if not TTActionBars then return end
     C_Timer.After(0, function()
         for i = 1,#TTActionBars.bars do
             for j = 1,#TTActionBars.bars[i].buttons do
