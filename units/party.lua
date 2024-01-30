@@ -808,9 +808,18 @@ local function hideBlizzardPartyFrame()
         end
     end
 
+    if not CompactRaidFrameManager_SetSetting then
+        StaticPopup_Show("WARNING_BLIZZARD_ADDONS")
+    else
+        CompactRaidFrameManager_SetSetting("IsShown", "0")
+    end
+
     if CompactRaidFrameManager then
         CompactRaidFrameManager:UnregisterAllEvents()
-        CompactRaidFrameManager:Hide()
+        CompactRaidFrameManager:SetParent(GW.HiddenFrame)
+    end
+    if CompactRaidFrameContainer then
+        CompactRaidFrameContainer:HookScript("OnShow", function() CompactRaidFrameContainer:Hide() end)
     end
 end
 GW.AddForProfiling("party", "hideBlizzardPartyFrame", hideBlizzardPartyFrame)

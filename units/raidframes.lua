@@ -187,18 +187,18 @@ local function hideBlizzardRaidFrame()
         return
     end
 
+    if not CompactRaidFrameManager_SetSetting then
+        StaticPopup_Show("WARNING_BLIZZARD_ADDONS")
+    else
+        CompactRaidFrameManager_SetSetting("IsShown", "0")
+    end
+
     if CompactRaidFrameManager then
         CompactRaidFrameManager:UnregisterAllEvents()
-        CompactRaidFrameManager:Hide()
+        CompactRaidFrameManager:SetParent(GW.HiddenFrame)
     end
     if CompactRaidFrameContainer then
-        CompactRaidFrameContainer:UnregisterAllEvents()
-    end
-    if CompactRaidFrameManager_GetSetting then
-        local compact_raid = CompactRaidFrameManager_GetSetting("IsShown")
-        if compact_raid and compact_raid ~= "0" then
-            CompactRaidFrameManager_SetSetting("IsShown", "0")
-        end
+        CompactRaidFrameContainer:HookScript("OnShow", function() CompactRaidFrameContainer:Hide() end)
     end
 end
 GW.AddForProfiling("raidframes", "hideBlizzardRaidFrame", hideBlizzardRaidFrame)

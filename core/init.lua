@@ -66,6 +66,7 @@ do
     AddLib("AceLocale", "AceLocale-3.0", true)
     AddLib("LibDetours", "LibDetours-1.0", true)
     AddLib("CI", "LibClassicInspector", true)
+    AddLib("Dispel", "LibDispel-1.0-GW", true)
 end
 
 -- Locale doesn't exist yet, make it exist

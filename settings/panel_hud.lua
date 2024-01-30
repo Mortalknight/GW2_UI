@@ -70,7 +70,6 @@ local function LoadHudPanel(sWindow)
     addOption(general.scroll.scrollchild, L["AFK Mode"], L["When you go AFK display the AFK screen."], "AFK_MODE", GW.ToggelAfkMode)
     addOption(general.scroll.scrollchild, L["Toggle Compass"], L["Enable or disable the quest tracker compass."], "SHOW_QUESTTRACKER_COMPASS", function() GW.ShowRlPopup = true end, nil, {["QUESTTRACKER_ENABLED"] = true})
     addOption(general.scroll.scrollchild, L["Show Quest XP on Quest Tracker"], nil, "QUESTTRACKER_SHOW_XP", function() GW.UpdateQuestTracker(GwQuesttrackerContainerQuests) end, nil, {["QUESTTRACKER_ENABLED"] = true})
-    addOption(general.scroll.scrollchild, L["Fade Chat"], L["Allow the chat to fade when not in use."], "CHATFRAME_FADE", nil, nil, {["CHATFRAME_ENABLED"] = true})
     addOptionSlider(
         general.scroll.scrollchild,
         L["Maximum lines of 'Copy Chat Frame'"],
