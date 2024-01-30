@@ -32,6 +32,8 @@ local function LoadSkinsPanel(sWindow)
     addOption(p.scroll.scrollchild, TIMEMANAGER_TITLE, nil, "TIMEMANAGER_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, QUEST_LOG, nil, "QUESTLOG_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
 
+    addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Totem Timers", nil, "TOTEM_TIMERS_ADDON_SKIN_ENABLED", function() GW.ShowRlPopup = true end, nil, {["QUESTTRACKER_ENABLED"] = true}, "Objectives")
+
     InitPanel(p, true)
 end
 GW.LoadSkinsPanel = LoadSkinsPanel

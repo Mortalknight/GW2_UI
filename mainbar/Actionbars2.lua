@@ -403,13 +403,13 @@ GW.FixHotKeyPosition = FixHotKeyPosition
 local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStanceButton, isPet)
     local btn = _G[buttonName]
 
-    if btn.icon ~= nil then
+    if btn.icon then
         btn.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
     end
     if btn.HotKey then
         FixHotKeyPosition(btn, isStanceButton, isPet)
     end
-    if btn.Count ~= nil then
+    if btn.Count then
         btn.Count:ClearAllPoints()
         btn.Count:SetPoint("TOPRIGHT", btn, "TOPRIGHT", -3, -3)
         btn.Count:SetJustifyH("RIGHT")
@@ -417,7 +417,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
         btn.Count:SetTextColor(1, 1, 0.6)
     end
 
-    if btn.Border ~= nil then
+    if btn.Border then
         btn.Border:SetSize(btn:GetWidth(), btn:GetWidth())
         btn.Border:SetBlendMode("BLEND")
         if isStanceButton then
@@ -427,7 +427,7 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
             btn.Border:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagitemborder")
         end
     end
-    if btn.NormalTexture ~= nil then
+    if btn.NormalTexture then
         btn:SetNormalTexture("Interface\\AddOns\\GW2_UI\\textures\\bag\\bagnormal")
     end
 
@@ -453,17 +453,16 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
 
     btn:SetPushedTexture("Interface/AddOns/GW2_UI/textures/actionbutton-pressed")
     btn:SetHighlightTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
-    btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+    if btn.SetCheckedTexture then
+        btn:SetCheckedTexture("Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress")
+    end
     btn.Name:SetAlpha(0) --Hide Marco Name on Actionbutton
 
     updateMacroName(btn)
 
-    if noBackDrop == nil or noBackDrop == false then
+    if btn.gwBackdrop == nil and (noBackDrop == nil or noBackDrop == false) then
         local backDrop = CreateFrame("Frame", nil, btn, "GwActionButtonBackdropTmpl")
         local backDropSize = 1
-        if btn:GetWidth() > 40 then
-            backDropSize = 2
-        end
 
         backDrop:SetPoint("TOPLEFT", btn, "TOPLEFT", -backDropSize, backDropSize)
         backDrop:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", backDropSize, -backDropSize)

@@ -2,7 +2,7 @@
 ## Title: |cffffedbaGW2 UI|r |cFF888888Era|r
 ## Notes: Hud Replacement addon
 ## Notes-deDE: Ersetzt die Benutzeroberfläche
-## OptionalDeps: MoveAnything, HonorSpy, TitanClassic, LibClassicDurations, Clique, LibHealComm-4.0, LibClassicCasterino, LibSharedMedia-3.0
+## OptionalDeps: MoveAnything, HonorSpy, TitanClassic, LibClassicDurations, Clique, LibHealComm-4.0, LibClassicCasterino, LibSharedMedia-3.0, TotemTimers
 ## Version: @project-version@
 ## X-Website: https://www.curseforge.com/wow/addons/gw2-ui
 ## X-Curse-Project-ID: 94310

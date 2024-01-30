@@ -594,6 +594,7 @@ local function evPlayerLogin(self)
     GW.LoadQuestLogFrameSkin()
 
     GW.LoadDetailsSkin()
+    GW.LoadTotemTimersSkin()
 
     GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()

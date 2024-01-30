@@ -15,4 +15,5 @@
     <Script file="questLog.lua"/>
 
     <Script file="addons\detailsProfile.lua"/>
+    <Script file="addons\TotemTimers.lua"/>
 </Ui>
