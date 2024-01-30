@@ -161,10 +161,10 @@ local function LatencyInfoToolTip()
     table.sort(AddonMemoryArray, function(a, b) return a["addonMemory"] > b["addonMemory"] end)
 
     for _, v in pairs(AddonMemoryArray) do
-            if v["addonIndex"] ~= 0 and (IsAddOnLoaded(v["addonIndex"]) and v["addonMemory"] ~= 0) then
+            if v["addonIndex"] ~= 0 and (C_AddOns.IsAddOnLoaded(v["addonIndex"]) and v["addonMemory"] ~= 0) then
                 addonMemory = RoundDec(v["addonMemory"] / 1024, 2)
                 if addonMemory ~= "0.00" then
-                    GameTooltip:AddLine("(" .. addonMemory .. " MB) " .. GetAddOnInfo(v["addonIndex"]), 0.8, 0.8, 0.8)
+                    GameTooltip:AddLine("(" .. addonMemory .. " MB) " .. C_AddOns.GetAddOnInfo(v["addonIndex"]), 0.8, 0.8, 0.8)
                 end
             end
     end

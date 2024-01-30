@@ -8,10 +8,10 @@ local function IsIncompatibleAddonLoadedOrOverride(setting, LoadedAndOverride)
         if settings == setting then
             isOverride = table.Override
             for _, addon in ipairs(table.Addons) do
-                if IsAddOnLoaded(addon) then
+                if C_AddOns.IsAddOnLoaded(addon) then
                     IncompatibleAddonLoaded = true
 
-                    whichAddonsIsLoaded =  select(2, GetAddOnInfo(addon)) .. ", " .. whichAddonsIsLoaded
+                    whichAddonsIsLoaded =  select(2, C_AddOns.GetAddOnInfo(addon)) .. ", " .. whichAddonsIsLoaded
                 end
             end
         end

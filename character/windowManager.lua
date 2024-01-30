@@ -600,9 +600,9 @@ GW.CharacterMenuButton_OnLoad = CharacterMenuButton_OnLoad
 
 local nextShadow, nextAnchor
 local function addAddonButton(name, setting, shadow, anchor, showFunction, hideOurFrame)
-    if IsAddOnLoaded(name) and (setting == nil or setting == true) then
+    if C_AddOns.IsAddOnLoaded(name) and (setting == nil or setting == true) then
         GwCharacterMenu[name] = CreateFrame("Button", nil, GwCharacterMenu, "SecureHandlerClickTemplate,GwCharacterMenuButtonTemplate")
-        GwCharacterMenu[name]:SetText(select(2, GetAddOnInfo(name)))
+        GwCharacterMenu[name]:SetText(select(2, C_AddOns.GetAddOnInfo(name)))
         GwCharacterMenu[name]:ClearAllPoints()
         GwCharacterMenu[name]:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT")
         CharacterMenuButton_OnLoad(GwCharacterMenu[name], shadow)

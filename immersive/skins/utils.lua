@@ -407,7 +407,7 @@ local function HandlePortraitFrame(frame, createBackdrop)
             edgeFile = "",
             bgFile = "Interface/AddOns/GW2_UI/textures/party/manage-group-bg",
             edgeSize = 1
-        }, true, 30, 70, nil, -10)
+        }, true, 50, 50, nil, 25)
     end
 
 end
@@ -420,6 +420,7 @@ local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgroun
     header:SetWidth(frame:GetWidth() - 20)
     header.BGLEFT:SetWidth(frame:GetWidth() - 20)
     header.BGRIGHT:SetWidth(frame:GetWidth() - 20)
+    frame.gwHeader = header
 
     if titleText then
         if type(titleText) ~= "string" then

@@ -4,8 +4,10 @@ local constBackdropFrameBorder = GW.skins.constBackdropFrameBorder
 local function LoadAddonListSkin()
     if not GW.GetSetting("ADDONLIST_SKIN_ENABLED") then return end
     local AddonList = _G.AddonList
+    GW.HandlePortraitFrame(AddonList)
 
-    _G.AddonList:StripTextures(true)
+    GW.CreateFrameHeaderWithBody(AddonList, AddonListTitleText, "Interface/AddOns/GW2_UI/textures/character/addon-window-icon", {AddonListScrollFrame})
+
     _G.AddonListBg:Hide()
     AddonList.TitleBg:Hide()
     AddonList.TopTileStreaks:Hide()
@@ -18,15 +20,6 @@ local function LoadAddonListSkin()
     _G.AddonListInsetInsetBotRightCorner:Hide()
     _G.AddonListInsetInsetBotLeftCorner:Hide()
     AddonListInset:CreateBackdrop(constBackdropFrameBorder)
-
-    AddonList.TitleText:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
-
-    local tex = AddonList:CreateTexture("bg", "BACKGROUND")
-    tex:SetPoint("TOP", AddonList, "TOP", 0, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    local w, h = AddonList:GetSize()
-    tex:SetSize(w + 50, h + 50)
-    AddonList.tex = tex
 
     AddonList.CloseButton:SkinButton(true)
     AddonList.EnableAllButton:SkinButton(false, true)
@@ -66,12 +59,12 @@ local function LoadAddonListSkin()
             if character == true then
                 character = nil
             else
-                checkall = C_AddOns.GetAddOnEnableState(nil, addonIndex)
+                checkall = C_AddOns.GetAddOnEnableState(addonIndex)
             end
 
             entry.Reload:SetTextColor(1.0, 0.3, 0.3)
 
-            local checkstate = C_AddOns.GetAddOnEnableState(character, addonIndex)
+            local checkstate = C_AddOns.GetAddOnEnableState(addonIndex, character)
             local enabledForSome = not character and checkstate == 1
             local enabled = checkstate > 0
             local disabled = not enabled or enabledForSome

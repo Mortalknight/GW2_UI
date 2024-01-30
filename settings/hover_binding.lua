@@ -275,7 +275,7 @@ local function HoverKeyBinds()
             MacroFrameTab2:HookScript("OnMouseUp", function() localmacros = 1 end)
         end
 
-        if not IsAddOnLoaded("Blizzard_MacroUI") then
+        if not C_AddOns.IsAddOnLoaded("Blizzard_MacroUI") then
             hooksecurefunc("LoadAddOn", function(addon)
                 if addon == "Blizzard_MacroUI" then
                     registermacro()

@@ -156,22 +156,21 @@ function SkinSliderFrame(frame)
 
     if orientation == "VERTICAL" then
         frame:SetWidth(SIZE)
-        frame.tex:SetPoint("TOP", frame, "TOP")
-        frame.tex:SetPoint("BOTTOM", frame, "BOTTOM")
+        frame.tex:SetPoint("TOPLEFT", frame, "TOPLEFT")
+        frame.tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
     else
         frame:SetHeight(SIZE)
         frame.tex:SetPoint("TOPLEFT", frame, "TOPLEFT")
         frame.tex:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT")
 
-        for i = 1, frame:GetNumRegions() do
-            local region = select(i, frame:GetRegions())
-            if region and region:IsObjectType("FontString") then
-                local point, anchor, anchorPoint, x, y = region:GetPoint()
-                if strfind(anchorPoint, "BOTTOM") then
-                    region:SetPoint(point, anchor, anchorPoint, x, y - 4)
-                end
-            end
-        end
+        for _, region in next, { frame:GetRegions() } do
+			if region:IsObjectType('FontString') then
+				local point, anchor, anchorPoint, x, y = region:GetPoint()
+				if strfind(anchorPoint, 'BOTTOM') then
+					region:SetPoint(point, anchor, anchorPoint, x, y - 4)
+				end
+			end
+		end
     end
 end
 
