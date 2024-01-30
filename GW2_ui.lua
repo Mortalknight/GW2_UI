@@ -440,6 +440,7 @@ local function evAddonLoaded(self, addonName)
     -- TODO: moving skinning from player login to here
     -- Skins: BLizzard & Addons
     GW.LoadWorldMapSkin()
+    GW.LoadFlightMapSkin()
     GW.LoadMacroOptionsSkin()
     GW.preLoadStatusBarMaskTextures()
 end
@@ -690,7 +691,7 @@ local function evPlayerLogin(self)
     if not IsIncompatibleAddonLoadedOrOverride("Inventory", true) then -- Only touch this setting if no other addon for this is loaded
         if GetSetting("BAGS_ENABLED") then
             GW.LoadInventory()
-            GW.SkinLooTFrame()
+            GW.LoadLootFrameSkin()
         end
     else
         -- if not our bags, we need to cut the bagbar frame out of the micromenu
