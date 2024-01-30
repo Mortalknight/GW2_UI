@@ -236,6 +236,7 @@ local function hookSetItemButtonQuality(button, quality, itemIDOrLink)
     else
         t:Hide()
         if button.junkIcon then button.junkIcon:Hide() end
+        if button.UpgradeIcon then button.UpgradeIcon:Hide() end
         if button.questIcon then button.questIcon:Hide() end
         if button.itemlevel then button.itemlevel:SetText("") end
     end
