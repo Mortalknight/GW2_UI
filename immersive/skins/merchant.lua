@@ -65,36 +65,42 @@ GW.SkinMerchantFrameItemButton = SkinMerchantFrameItemButton
 local function LoadMerchantFrameSkin()
     if not GW.settings.MERCHANT_SKIN_ENABLED then return end
 
+    MerchantMoneyBg:GwStripTextures()
+    MerchantMoneyInset:GwStripTextures()
     MerchantFrame:GwStripTextures()
     MerchantFrame.NineSlice:Hide()
     MerchantFrame.TopTileStreaks:Hide()
     MerchantFrame:GwCreateBackdrop()
 
+    local r = {MerchantFrame:GetRegions()}
+    local i = 1
+    local headerText
+    for _,c in pairs(r) do
+        if c:GetObjectType() == "FontString" then
+            if i == 2 then headerText = c break end
+            i = i + 1
+        end
+    end
+
+    GW.CreateFrameHeaderWithBody(MerchantFrame, headerText, "Interface/AddOns/GW2_UI/textures/character/macro-window-icon", {MerchantFrameInset, MerchantMoneyInset})
+    MerchantFrame.gwHeader.windowIcon:SetSize(65, 65)
+    MerchantFrame.gwHeader.windowIcon:ClearAllPoints()
+    MerchantFrame.gwHeader.windowIcon:SetPoint("CENTER", MerchantFrame.gwHeader.BGLEFT, "LEFT", 25, -5)
+
     MerchantFrameInset.NineSlice:Hide()
-    MerchantFrameInset:GwCreateBackdrop(constBackdropFrameBorder)
 
     MerchantFrameCloseButton:GwSkinButton(true)
     MerchantFrameCloseButton:SetSize(20, 20)
+    MerchantFramePortrait:Hide()
 
-    local tex = MerchantFrame:CreateTexture(nil, "BACKGROUND")
-    tex:SetPoint("TOP", MerchantFrame, "TOP", 0, 25)
-    tex:SetTexture("Interface/AddOns/GW2_UI/textures/party/manage-group-bg")
-    local w, h = MerchantFrame:GetSize()
-    tex:SetSize(w + 50, h + 50)
-    MerchantFrame.tex = tex
+    hooksecurefunc("MerchantFrame_UpdateMerchantInfo", function()
+        SetPortraitTexture(MerchantFrame.gwHeader.windowIcon, "NPC");
+    end)
+
     hooksecurefunc(MerchantFrame, "SetWidth", function()
         local w2, h2 = MerchantFrame:GetSize()
         MerchantFrame.tex:SetSize(w2 + 50, h2 + 50)
     end)
-
-    local r = {MerchantFrame:GetRegions()}
-    local i = 1
-    for _,c in pairs(r) do
-        if c:GetObjectType() == "FontString" then
-            if i == 2 then c:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE"); break end
-            i = i + 1
-        end
-    end
 
     MerchantFrame:SetWidth(360)
 
@@ -106,9 +112,6 @@ local function LoadMerchantFrameSkin()
 
     MerchantExtraCurrencyInset:GwStripTextures()
     MerchantExtraCurrencyBg:GwStripTextures()
-
-    MerchantMoneyBg:GwStripTextures()
-    MerchantMoneyInset:GwStripTextures()
 
     MerchantFrameLootFilter:GwSkinDropDownMenu()
 
