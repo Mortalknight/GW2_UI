@@ -247,7 +247,7 @@ local function RaidGridOnEvent(self, event, unit)
         GW.GridUpdateAuras(self, "RAID")
         GW.GridUpdatePower(self)
         GW.GridSetHealAbsorb(self)
-    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
+    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" then
         GW.GridSetHealth(self, "RAID")
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
         GW.GridUpdatePower(self)

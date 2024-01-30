@@ -199,7 +199,7 @@ local function PetGridOnEvent(self, event, unit)
         for i = 1, MAX_RAID_MEMBERS do
             GW.GridUpdateFrameData(_G["GwCompactRaidPetFrame" .. i], i, "RAID_PET")
         end
-    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH" then
+    elseif event == "UNIT_MAXHEALTH" or event == "UNIT_HEALTH_FREQUENT" then
         GW.GridSetHealth(self, "RAID_PET")
     elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
         --GW.GridUpdatePower(self)
