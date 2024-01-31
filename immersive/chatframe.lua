@@ -272,11 +272,12 @@ local function handleChatFrameFadeIn(chatFrame, force)
             UIFrameFadeIn(object, 0.5, object:GetAlpha(), 1)
         end
     end
-
     if chatFrame.isDocked == 1 then
         for _, v in pairs(gw_fade_frames) do
             if v == ChatFrameToggleVoiceDeafenButton or v == ChatFrameToggleVoiceMuteButton then
-                if v:IsShown() then
+                if v == ChatFrameToggleVoiceDeafenButton and ChatFrameToggleVoiceDeafenButton:IsShown() then
+                    UIFrameFadeIn(v, 0.5, v:GetAlpha(), 1)
+                elseif v == ChatFrameToggleVoiceMuteButton and ChatFrameToggleVoiceMuteButton:IsShown() then
                     UIFrameFadeIn(v, 0.5, v:GetAlpha(), 1)
                 end
             else
@@ -301,6 +302,7 @@ local function handleChatFrameFadeIn(chatFrame, force)
     if GW_EmoteFrame and GW_EmoteFrame:IsShown() then
         UIFrameFadeIn(GW_EmoteFrame, 0.5, GW_EmoteFrame:GetAlpha(), 1)
     end
+
 
     local chatTab = _G[frameName .. "Tab"]
     UIFrameFadeIn(chatTab, 0.5, chatTab:GetAlpha(), 1)
@@ -1823,6 +1825,21 @@ local function CollectLfgRolesForChatIcons()
     end
 end
 GW.CollectLfgRolesForChatIcons = CollectLfgRolesForChatIcons
+
+local function UpdateSettings()
+    for _, frameName in ipairs(CHAT_FRAMES) do
+        local frame = _G[frameName]
+        if frame and frame:IsShown() then
+            frame:SetFading(GetSetting("CHATFRAME_FADE"))
+            if GetSetting("CHATFRAME_FADE") then
+                handleChatFrameFadeOut(frame, true)
+            else
+                handleChatFrameFadeIn(frame, true)
+            end
+        end
+    end
+end
+GW.UpdateChatSettings = UpdateSettings
 
 local function LoadChat()
     local shouldFading = GetSetting("CHATFRAME_FADE")
