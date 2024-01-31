@@ -193,7 +193,6 @@ function GwEngravingFrameSearchBox_OnTextChanged(self)
 end
 
 local function EngravingFrame_OnShow(self)
-	OpenAllBags(self)
 	C_Engraving.RefreshRunesList()
 	C_Engraving.SetSearchFilter("")
 
