@@ -632,6 +632,7 @@ GW.HandleTabs = HandleTabs
 local function CreateFrameHeaderWithBody(frame, titleText, icon, detailBackgrounds)
     local header = CreateFrame("Frame", frame:GetName() .. "Header", frame, "GwFrameHeader")
     header.windowIcon:SetTexture(icon)
+    frame.gwHeader = header
 
     header:SetWidth(frame:GetWidth() - 20)
     header.BGLEFT:SetWidth(frame:GetWidth() - 20)
