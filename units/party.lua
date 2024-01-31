@@ -588,6 +588,8 @@ local function CreatePartyPetFrame(frame, i)
     f.absorbbg:SetStatusBarColor(1,1,1,0.66)
     f.healPrediction:SetStatusBarColor(0.58431,0.9372,0.2980,0.60)
 
+    f.healthString:SetFontObject(GameFontNormalSmall)
+
     f:SetAttribute("*type1", "target")
     f:SetAttribute("*type2", "togglemenu")
     f:SetAttribute("unit", unit)
