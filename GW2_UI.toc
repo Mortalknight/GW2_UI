@@ -129,7 +129,6 @@ mainbar\customTrackAura.lua
 mainbar\customTrackAura.xml
 mainbar/actionbars2.lua
 mainbar/petbar.lua
-mainbar/aurabar_blizz_modified.lua
 mainbar/aurabar.lua
 mainbar/castingbar.lua
 mainbar/totemBar.lua
