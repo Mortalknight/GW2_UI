@@ -3,12 +3,13 @@ local _, GW = ...
 local GW_DEFAULT = GW.DEFAULTS or {}
 GW.DEFAULTS = GW_DEFAULT
 
-local GW_PRIVATE_DEFAULT = GW.PRIVATE_DEFAULT or {}
-GW.PRIVATE_DEFAULT = GW_PRIVATE_DEFAULT
 
 --private settings
-GW_PRIVATE_DEFAULT["PLAYER_TRACKED_DODGEBAR_SPELL"] = ""
-GW_PRIVATE_DEFAULT["PLAYER_TRACKED_DODGEBAR_SPELL_ID"] = 0
+GW.PRIVATE_DEFAULT = {
+    PLAYER_TRACKED_DODGEBAR_SPELL = "",
+    PLAYER_TRACKED_DODGEBAR_SPELL_ID = 0,
+    migrationDone = false,
+}
 
 GW_DEFAULT["GW2_UI_VERSION"] = "WELCOME"
 
@@ -34,6 +35,7 @@ GW_DEFAULT["SHOWACTIONBAR_MACRO_NAME_ENABLED"] = false
 GW_DEFAULT["SHOW_QUESTTRACKER_COMPASS"] = true
 GW_DEFAULT["QUESTTRACKER_SHOW_XP"] = true
 GW_DEFAULT["MINIMAP_HOVER"] = "NONE"
+GW_DEFAULT["MINIMAP_ALWAYS_SHOW_HOVER_DETAILS"] = {CLOCK = false,ZONE = false,COORDS = false,}
 GW_DEFAULT["MINIMAP_POS"] = "BOTTOM"
 GW_DEFAULT["CLASS_POWER"] = true
 GW_DEFAULT["RAID_FRAMES"] = true
@@ -277,6 +279,7 @@ GW_DEFAULT["MultiBarBottomLeft"]["point"] = "BOTTOMLEFT"
 GW_DEFAULT["MultiBarBottomLeft"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["MultiBarBottomLeft"]["xOfs"] = -372
 GW_DEFAULT["MultiBarBottomLeft"]["yOfs"] = 120
+GW_DEFAULT["MultiBarBottomLeft"]["hasMoved"] = false
 GW_DEFAULT["MultiBarBottomLeft_scale"] = 1
 
 GW_DEFAULT["MultiBarBottomLeft"]["size"] = 38
@@ -289,6 +292,7 @@ GW_DEFAULT["MultiBarBottomRight"]["point"] = "BOTTOMRIGHT"
 GW_DEFAULT["MultiBarBottomRight"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["MultiBarBottomRight"]["xOfs"] = 372
 GW_DEFAULT["MultiBarBottomRight"]["yOfs"] = 120
+GW_DEFAULT["MultiBarBottomRight"]["hasMoved"] = false
 GW_DEFAULT["MultiBarBottomRight_scale"] = 1
 
 GW_DEFAULT["MultiBarBottomRight"]["size"] = 38
@@ -390,6 +394,7 @@ GW_DEFAULT["PowerBar_pos"]["point"] = "BOTTOMLEFT"
 GW_DEFAULT["PowerBar_pos"]["relativePoint"] = "BOTTOM"
 GW_DEFAULT["PowerBar_pos"]["xOfs"] = 56
 GW_DEFAULT["PowerBar_pos"]["yOfs"] = 86
+GW_DEFAULT["PowerBar_pos"]["hasMoved"] = false
 GW_DEFAULT["PowerBar_pos_scale"] = 1
 
 GW_DEFAULT["ClasspowerBar_pos"] = {}

@@ -493,15 +493,13 @@ local function commonEntering()
     end)
 end
 
-local migrationDone = false
 local function evPlayerEnteringWorld()
     commonEntering()
 
     -- do migration one on first login
-    if not migrationDone then
+    if not GW.GetSetting("migrationDone") then
         --migration things
         GW.Migration()
-        migrationDone = true
     end
 --[[
     local dbMigrated = false

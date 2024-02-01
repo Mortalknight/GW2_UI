@@ -20,67 +20,34 @@
         </Anchors>
     </Button>
 
-    <Button name="GwAddonToggle" virtual="true">
-        <Size x="40" y="40"/>
-        <Layers>
-            <Layer level="OVERLAY">
-                <Texture name="$parentTexture" parentKey="Texture" file="Interface/AddOns/GW2_UI/textures/icon-module">
-                    <Size x="35" y="35"></Size>
-                    <Anchors>
-                        <Anchor point="CENTER" x="0" y="0"></Anchor>
-                    </Anchors>
-                    <TexCoords left="0" right="0.25" top="0" bottom="0.25" />
-                </Texture>
-            </Layer>
-        </Layers>
+    <Button name="GwAddonToggle" frameStrata="MEDIUM" virtual="true">
+        <Size x="38" y="38"/>
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout">
+            <Size x="38" y="38"></Size>
+            <Anchors>
+                <Anchor point="CENTER"></Anchor>
+            </Anchors>
+        </NormalTexture>
+        <HighlightTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout" alphaMode="ADD" alpha="0.5">
+            <Size x="38" y="38"></Size>
+            <Anchors>
+                <Anchor point="CENTER"></Anchor>
+            </Anchors>
+
+        </HighlightTexture>
+        <PushedTexture file="Interface/AddOns/GW2_UI/textures/icons/addondropout" alpha="0.5">
+            <Size x="38" y="38"></Size>
+            <Anchors>
+                <Anchor point="CENTER"></Anchor>
+            </Anchors>
+
+        </PushedTexture>
         <Frames>
             <Frame parentKey="container" hidden="true">
-                <Size x="40" y="35"/>
+                <Size x="35" y="30"/>
                 <Anchors>
                     <Anchor point="RIGHT" relativePoint="LEFT"></Anchor>
                 </Anchors>
-                <Layers>
-                    <Layer level="BACKGROUND">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-bg">
-                            <Size x="40" y="35"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
-                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="2" y="-2"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                    <Layer level="ARTWORK" textureSubLevel="2">
-                        <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
-                            <Size x="2" y="2"></Size>
-                            <Anchors>
-                                <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT"></Anchor>
-                                <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
-                            <Size x="2" y="2"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"></Anchor>
-                                <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
-                            <Size x="2" y="2"></Size>
-                            <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPRIGHT"></Anchor>
-                                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                        <Texture file="Interface\AddOns\GW2_UI\textures\party\manage-group-border">
-                            <Size x="2" y="2"></Size>
-                            <Anchors>
-                                <Anchor point="TOPRIGHT" relativePoint="TOPLEFT"></Anchor>
-                                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMLEFT"></Anchor>
-                            </Anchors>
-                        </Texture>
-                    </Layer>
-                </Layers>
-
             </Frame>
         </Frames>
     </Button>

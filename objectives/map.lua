@@ -13,66 +13,55 @@ MAP_FRAMES_HIDE[4] = MiniMapTrackingButton
 MAP_FRAMES_HIDE[5] = MiniMapTracking
 MAP_FRAMES_HIDE[6] = MinimapToggleButton
 
-local MAP_FRAMES_HOVER = {}
+local M = CreateFrame("Frame")
+
+local minimapDetails = {
+    ["ZONE"] = "GwMapGradient",
+    ["CLOCK"] = "GwMapTime",
+    ["COORDS"] = "GwMapCoords"
+}
 
 local function SetMinimapHover()
-    local hoverSetting = GetSetting("MINIMAP_HOVER")
-
-    if hoverSetting == "NONE" then
-        MAP_FRAMES_HOVER[1] = "GwMapGradient"
-        MAP_FRAMES_HOVER[2] = "MinimapZoneText"
-        MAP_FRAMES_HOVER[3] = "GwMapTime"
-        MAP_FRAMES_HOVER[4] = "GwMapCoords"
-    elseif hoverSetting == "CLOCK" then
-        MAP_FRAMES_HOVER[1] = "GwMapGradient"
-        MAP_FRAMES_HOVER[2] = "MinimapZoneText"
-        MAP_FRAMES_HOVER[3] = "GwMapCoords"
-    elseif hoverSetting == "ZONE" then
-        MAP_FRAMES_HOVER[1] = "GwMapTime"
-        MAP_FRAMES_HOVER[2] = "GwMapCoords"
-    elseif hoverSetting == "COORDS" then
-        MAP_FRAMES_HOVER[1] = "GwMapGradient"
-        MAP_FRAMES_HOVER[2] = "MinimapZoneText"
-        MAP_FRAMES_HOVER[3] = "GwMapTime"
-    elseif hoverSetting == "CLOCKZONE" then
-        MAP_FRAMES_HOVER[1] = "GwMapCoords"
-    elseif hoverSetting == "CLOCKCOORDS" then
-        MAP_FRAMES_HOVER[1] = "GwMapGradient"
-        MAP_FRAMES_HOVER[2] = "MinimapZoneText"
-    elseif hoverSetting == "ZONECOORDS" then
-        MAP_FRAMES_HOVER[1] = "GwMapTime"
+    -- show all and hide not needes
+    for _, v in pairs(minimapDetails) do
+        if v and _G[v] then _G[v]:SetAlpha(1) end
     end
+
+    GW.hoverMiniMapOut()
 end
 GW.SetMinimapHover = SetMinimapHover
 
 local function setMinimapButtons(side)
-    MiniMapBattlefieldIcon:ClearAllPoints()
+    MiniMapBattlefieldFrame:ClearAllPoints()
     if MiniMapLFGFrame then
         MiniMapLFGFrame:ClearAllPoints()
     end
-    GwMailButton:ClearAllPoints()
     GwAddonToggle:ClearAllPoints()
     GwAddonToggle.container:ClearAllPoints()
     GwMiniMapTrackingFrame:ClearAllPoints()
 
     if side == "left" then
-        MiniMapBattlefieldIcon:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -8.5, -69)
+        GwMiniMapTrackingFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
+        MiniMapBattlefieldFrame:SetPoint("TOP", GwMiniMapTrackingFrame, "BOTTOM", 3, -6)
         if MiniMapLFGFrame then
             MiniMapLFGFrame:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -5, -7)
         end
-        GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -10, -47)
         GwAddonToggle:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -127)
         GwAddonToggle.container:SetPoint("RIGHT", GwAddonToggle, "LEFT")
-        GwMiniMapTrackingFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -7, 0)
+        GwAddonToggle:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
+        GwAddonToggle:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
+        GwAddonToggle:GetPushedTexture():SetTexCoord(0, 1, 0, 1)
     else
-        MiniMapBattlefieldIcon:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -69)
+        GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 0, 0)
+        MiniMapBattlefieldFrame:SetPoint("TOP", GwMiniMapTrackingFrame, "BOTTOM", 3, -6)
         if MiniMapLFGFrame then
             MiniMapLFGFrame:SetPoint("BOTTOMLEFT", Minimap, "BOTTOMRIGHT", 5, -7)
         end
-        GwMailButton:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 14, -47)
         GwAddonToggle:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 8, -127)
         GwAddonToggle.container:SetPoint("LEFT", GwAddonToggle, "RIGHT")
-        GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 7, 0)
+        GwAddonToggle:GetNormalTexture():SetTexCoord(1, 0, 0, 1)
+        GwAddonToggle:GetHighlightTexture():SetTexCoord(1, 0, 0, 1)
+        GwAddonToggle:GetPushedTexture():SetTexCoord(1, 0, 0, 1)
     end
 end
 
@@ -214,41 +203,25 @@ local function MapCoordsMiniMap_OnClick(self, button)
 end
 GW.AddForProfiling("map", "MapCoordsMiniMap_OnClick", MapCoordsMiniMap_OnClick)
 
-local function hoverMiniMap()
-    for _, v in ipairs(MAP_FRAMES_HOVER) do
-        local child = _G[v]
-        if child ~= nil then
-            UIFrameFadeIn(child, 0.2, child:GetAlpha(), 1)
-            if child == GwMapCoords then
-                GwMapCoords.CoordsTimer = C_Timer.NewTicker(0.1, function() mapCoordsMiniMap_setCoords(GwMapCoords) end)
-            end
+local function hoverMiniMapIn()
+    for k, v in pairs(GW2_ADDON.GetSetting("MINIMAP_ALWAYS_SHOW_HOVER_DETAILS")) do
+        if v == false and minimapDetails[k] and _G[minimapDetails[k]] then
+            UIFrameFadeIn(_G[minimapDetails[k]], 0.2, _G[minimapDetails[k]]:GetAlpha(), 1)
         end
     end
+
     MinimapNorthTag:Hide()
 end
-GW.AddForProfiling("map", "hoverMiniMap", hoverMiniMap)
+GW.AddForProfiling("map", "hoverMiniMapIn", hoverMiniMapIn)
 
 local function hoverMiniMapOut()
-    local shouldShowNorthTag = false
-
-    for _, v in ipairs(MAP_FRAMES_HOVER) do
-        local child = _G[v]
-        if child ~= nil then
-            UIFrameFadeOut(child, 0.2, child:GetAlpha(), 0)
-            if child == GwMapCoords then
-                GwMapCoords:SetScript("OnUpdate", nil)
-                if GwMapCoords.CoordsTimer then
-                    GwMapCoords.CoordsTimer:Cancel()
-                    GwMapCoords.CoordsTimer = nil
-                end
-            end
-        end
-        if v == "MinimapZoneText" then
-            shouldShowNorthTag = true
+    for k, v in pairs(GW.GetSetting("MINIMAP_ALWAYS_SHOW_HOVER_DETAILS")) do
+        if v == false and minimapDetails[k] and _G[minimapDetails[k]] then
+            UIFrameFadeOut(_G[minimapDetails[k]], 0.2, _G[minimapDetails[k]]:GetAlpha(), 0)
         end
     end
-    MinimapNorthTag:SetShown(shouldShowNorthTag)
 end
+GW.hoverMiniMapOut = hoverMiniMapOut
 GW.AddForProfiling("map", "hoverMiniMapOut", hoverMiniMapOut)
 
 local function checkCursorOverMap()
@@ -291,9 +264,6 @@ local function minimap_OnShow()
     if GwAddonToggle and GwAddonToggle.gw_Showing then
         GwAddonToggle:Show()
     end
-    if GwMailButton and GwMailButton.gw_Showing then
-        GwMailButton:Show()
-    end
 end
 GW.AddForProfiling("map", "minimap_OnShow", minimap_OnShow)
 
@@ -301,11 +271,28 @@ local function minimap_OnHide()
     if GwAddonToggle then
         GwAddonToggle:Hide()
     end
-    if GwMailButton then
-        GwMailButton:Hide()
-    end
 end
 GW.AddForProfiling("map", "minimap_OnHide", minimap_OnHide)
+
+local function Minimap_OnMouseDown(self, btn)
+    if M.TrackingDropdown then
+        GW.Libs.LibDD:HideDropDownMenu(1, nil, M.TrackingDropdown)
+    end
+
+    if btn == "RightButton" and M.TrackingDropdown then
+        GW.Libs.LibDD:ToggleDropDownMenu(1, nil, M.TrackingDropdown, "cursor")
+    else
+        Minimap.OnClick(self)
+    end
+end
+
+local function Minimap_OnMouseWheel(_, d)
+    if d > 0 then
+        MinimapZoomIn:Click()
+    elseif d < 0 then
+        MinimapZoomOut:Click()
+    end
+end
 
 local function ToogleMinimapCoorsLable()
     if GetSetting("MINIMAP_COORDS_TOGGLE") then
@@ -362,19 +349,20 @@ local function LoadMinimap()
 
     SetMinimapHover()
 
-    if MiniMapLFGFrame then
-        MiniMapLFGFrameIcon:HookScript("OnUpdate", lfgAnim)
-        MiniMapLFGFrame:HookScript("OnHide", lfgAnimStop)
-        MiniMapLFGFrameIconTexture:SetSize(20, 20)
-        MiniMapLFGFrameIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/LFGMicroButton-Down")
-        MiniMapLFGFrameIcon:SetSize(20, 20)
-
-        MiniMapLFGFrame.animationCircle = CreateFrame("Frame", "GwLFGAnimation", MiniMapLFGFrame, "GwLFDAnimation")
-    end
+    MiniMapLFGFrameIcon:HookScript("OnUpdate", lfgAnim)
+    MiniMapLFGFrame:HookScript("OnHide", lfgAnimStop)
+    MiniMapLFGFrameIconTexture:SetSize(20, 20)
+    MiniMapLFGFrameIconTexture:SetTexture("Interface/AddOns/GW2_UI/textures/icons/LFDMicroButton-Down")
+    MiniMapLFGFrameIcon:SetSize(20, 20)
 
     hooksecurefunc("BattlefieldFrame_OnUpdate", lfgAnimPvP)
-
+    MiniMapBattlefieldIcon:SetTexture("Interface\\BattlefieldFrame\\Battleground-" .. UnitFactionGroup("player"))
+    MiniMapBattlefieldIcon:SetTexCoord(0, 1, 0, 1)
+    MiniMapBattlefieldIcon:SetSize(30, 30)
+    MiniMapBattlefieldIcon:ClearAllPoints()
+    MiniMapBattlefieldIcon:SetPoint("CENTER", MiniMapBattlefieldFrame, "CENTER", 0, 0)
     MiniMapBattlefieldFrame.animationCircle = CreateFrame("Frame", "GwLFDAnimation", MiniMapBattlefieldFrame, "GwLFDAnimation")
+    MiniMapLFGFrame.animationCircle = CreateFrame("Frame", "GwLFGAnimation", MiniMapLFGFrame, "GwLFDAnimation")
 
     Minimap:SetMaskTexture("Interface/ChatFrame/ChatFrameBackground")
     Minimap:SetParent(UIParent)
@@ -385,8 +373,23 @@ local function LoadMinimap()
     GwMapGradient:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 0, 0)
     GwMapGradient:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", 0, 0)
 
-    GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
+    if MiniMapInstanceDifficulty then
+        MiniMapInstanceDifficulty:SetParent(Minimap)
+        MiniMapInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
+        MiniMapInstanceDifficulty:SetScale(0.8)
+    end
+    if GuildInstanceDifficulty then
+        GuildInstanceDifficulty:SetParent(Minimap)
+        GuildInstanceDifficulty:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
+        GuildInstanceDifficulty:SetScale(0.8)
+    end
+    if MiniMapChallengeMode then
+        MiniMapChallengeMode:SetParent(Minimap)
+        MiniMapChallengeMode:SetPoint("TOPLEFT", Minimap, "TOPLEFT", 10, -10)
+        MiniMapChallengeMode:SetScale(0.8)
+    end
 
+    GwMiniMapTrackingFrame = CreateFrame("Frame", "GwMiniMapTrackingFrame", Minimap, "GwMiniMapTrackingFrame")
     MiniMapTrackingFrame:UnregisterAllEvents()
     MiniMapTrackingFrame:SetScript("OnEvent", nil)
     MiniMapTrackingFrame:Hide()
@@ -400,23 +403,24 @@ local function LoadMinimap()
     end
 
     GwMiniMapTrackingFrame:RegisterEvent("UNIT_AURA")
-    GwMiniMapTrackingFrame:SetScript("OnEvent", function(self,event)
-        if event == "UNIT_AURA" then
-            local icontype = GetTrackingTexture()
-            if icontype == 132328 then icontype = icontype .. GW.myClassID end
-            if icontype and trackingTypes[icontype] then     
-                GwMiniMapTrackingFrame.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
-                GwMiniMapTrackingFrame:Show()
-            else
-                GwMiniMapTrackingFrame:Hide()
-            end
+    GwMiniMapTrackingFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    GwMiniMapTrackingFrame:SetScript("OnEvent", function(self, event)
+        local icontype = GetTrackingTexture()
+        if icontype == 132328 then icontype = icontype .. GW.myClassID end
+        if icontype and trackingTypes[icontype] then
+            GwMiniMapTrackingFrame.icon:SetTexCoord(trackingTypes[icontype].l, trackingTypes[icontype].r, trackingTypes[icontype].t, trackingTypes[icontype].b)
+            GwMiniMapTrackingFrame:Show()
+        else
+            GwMiniMapTrackingFrame:Hide()
         end
     end)
+    GwMiniMapTrackingFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", -30, 0)
 
+    --Time
     GwMapTime = CreateFrame("Button", "GwMapTime", Minimap, "GwMapTime")
     TimeManager_LoadUI()
     TimeManagerClockButton:Hide()
-    StopwatchFrame:SetParent(UIParent)
+    --StopwatchFrame:SetParent("UIParent")
     GwMapTime:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     GwMapTime.timeTimer = C_Timer.NewTicker(0.2, function()
         GwMapTime.Time:SetText(GameTime_GetTime(false))
@@ -445,16 +449,11 @@ local function LoadMinimap()
     MinimapBorder:Hide()
     MiniMapWorldMapButton:Kill()
 
-    MiniMapMailFrame:ClearAllPoints()
     MinimapZoneText:ClearAllPoints()
 
     MinimapZoneText:SetParent(GwMapGradient)
     MinimapZoneText:SetDrawLayer("OVERLAY", 2)
     --MiniMapTracking:SetPoint("TOPLEFT", Minimap, -15, -30)
-    GameTimeFrame:SetPoint("TOPLEFT", Minimap, -42, 0)
-    MiniMapMailFrame:SetPoint("TOPLEFT", Minimap, 45, 15)
-    MiniMapBattlefieldFrame:ClearAllPoints()
-    MiniMapBattlefieldFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 45, 0)
     --MiniMapLFGFrame:ClearAllPoints()
     --MiniMapLFGFrame:SetPoint("TOPLEFT", Minimap, "TOPRIGHT", 45, 0)
 
@@ -470,46 +469,14 @@ local function LoadMinimap()
 
     MiniMapBattlefieldBorder:SetTexture(nil)
     BattlegroundShine:SetTexture(nil)
-    MiniMapBattlefieldFrame:ClearAllPoints()
-    MiniMapBattlefieldFrame:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -5, -69)
 
+    --CalenderIcon
     GameTimeFrame:HookScript(
         "OnShow",
         function(self)
             self:Hide()
         end
     )
-
-    local GwMailButton = CreateFrame("Button", "GwMailButton", UIParent, "GwMailButton")
-    local fnGwMailButton_OnEvent = function(self, event, ...)
-        if (event == "UPDATE_PENDING_MAIL") then
-            if (HasNewMail()) then
-                if Minimap:IsShown() then
-                    self:Show()
-                end
-                self.gw_Showing = true
-                if (GameTooltip:IsOwned(self)) then
-                    MinimapMailFrameUpdate()
-                end
-            else
-                self:Hide()
-                self.gw_Showing = false
-            end
-        end
-    end
-    local fnGwMailButton_OnEnter = function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, -55)
-        if (GameTooltip:IsOwned(self)) then
-            MinimapMailFrameUpdate()
-        end
-    end
-    GwMailButton:SetScript("OnEvent", fnGwMailButton_OnEvent)
-    GwMailButton:SetScript("OnEnter", fnGwMailButton_OnEnter)
-    GwMailButton:SetScript("OnLeave", GameTooltip_Hide)
-    GwMailButton.gw_Showing = false
-    GwMailButton:RegisterEvent("UPDATE_PENDING_MAIL")
-    GwMailButton:SetFrameLevel(GwMailButton:GetFrameLevel() + 1)
-    GwMailButton:SetPoint("TOPRIGHT", Minimap, "TOPLEFT", -12, -47)
 
     GW.CreateMinimapButtonsSack()
 
@@ -529,7 +496,7 @@ local function LoadMinimap()
     Minimap:SetScript(
         "OnEnter",
         function()
-            hoverMiniMap()
+            hoverMiniMapIn()
             Minimap:SetScript(
                 "OnUpdate",
                 function()
@@ -554,16 +521,6 @@ local function LoadMinimap()
         end
     )
 
-    --Minimap:SetScript(
-    --    "OnMouseDown",
-    --    function(_, button)
-    --        if button == "RightButton" then
-    --            ToggleDropDownMenu(1, nil, MiniMapTrackingDropDown, "MiniMapTracking", 0, -5)
-    --            PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-    --        end
-    --    end
-    --)
-
     local Minimap_OnEvent = function(_, event)
         if event == "CVAR_UPDATE" then
             Minimap_UpdateRotationSetting()
@@ -575,7 +532,6 @@ local function LoadMinimap()
 
     Minimap:HookScript("OnShow", minimap_OnShow)
     Minimap:HookScript("OnHide", minimap_OnHide)
-
     local size = GetSetting("MINIMAP_SCALE")
     Minimap:SetSize(size, size)
 
@@ -591,10 +547,17 @@ local function LoadMinimap()
     else
         setMinimapButtons("right")
     end
-    MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
-    MinimapCluster:ClearAllPoints()
-    MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
+
+    if not GW.IsIncompatibleAddonLoadedOrOverride("Objectives", true) then
+        MinimapCluster:SetSize(GwMinimapShadow:GetWidth(), 5)
+        MinimapCluster:ClearAllPoints()
+        MinimapCluster:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -320, 0)
+    end
+
+    Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow")
 
     C_Timer.After(0.1, hoverMiniMapOut)
+
+    Minimap:SetPlayerTexture("Interface/AddOns/GW2_UI/textures/icons/player_arrow")
 end
 GW.LoadMinimap = LoadMinimap

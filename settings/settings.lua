@@ -410,7 +410,7 @@ local function updateSettingsFrameSettingsValue(setting, value, setSetting)
         for _, of in pairs(panel.options) do
             if of.optionName == setting then
                 if setSetting then
-                    GW.SetSettings(setting, value)
+                    SetSetting(setting, value)
                 end
                 if of.optionType == "slider" then
                     of.slider:SetValue(value)

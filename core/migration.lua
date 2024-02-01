@@ -129,6 +129,7 @@ local function Migration()
     -- new Powerbar and Classpowerbar default position
     if GwPlayerPowerBar then
         if GwPlayerPowerBar.isMoved == false then
+            print("sfdmiuasfa")
             GW.ResetMoverFrameToDefaultValues(nil, nil, GwPlayerPowerBar.gwMover)
         end
     end
@@ -147,6 +148,8 @@ local function Migration()
         GW.MoveHudScaleableFrame.layoutManager:GetScript("OnEvent")(GW.MoveHudScaleableFrame.layoutManager)
         GW.MoveHudScaleableFrame.layoutManager:SetAttribute("InMoveHudMode", false)
     end
+
+    GW.SetSetting("migrationDone", true)
 
     GW.InMoveHudMode = false
 end

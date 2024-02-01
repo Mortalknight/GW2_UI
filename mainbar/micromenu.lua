@@ -171,6 +171,29 @@ local function LatencyInfoToolTip()
     GameTooltip:Show()
 end
 
+-- mail icon
+local function mailIconOnEvent(self, event)
+    if event == "UPDATE_PENDING_MAIL" then
+        if HasNewMail() then
+            self:Show()
+            self.GwNotify:Show()
+            if GameTooltip:IsOwned(self) then
+                MinimapMailFrameUpdate()
+            end
+        else
+            self:Hide()
+            self.GwNotify:Hide()
+        end
+    end
+end
+
+local function mailIconOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    if GameTooltip:IsOwned(self) then
+        MinimapMailFrameUpdate()
+    end
+end
+
 local function bag_OnUpdate(self, elapsed)
     self.interval = self.interval - elapsed
     if self.interval > 0 then
@@ -198,7 +221,7 @@ GW.AddForProfiling("micromenu", "bag_OnUpdate", bag_OnUpdate)
 
 local function reskinMicroButton(btn, name, mbf)
     btn:SetParent(mbf)
-    local tex = "Interface\\AddOns\\GW2_UI/Textures\\" .. name .. "-Up"
+    local tex = "Interface/AddOns/GW2_UI/textures/icons/microicons/" .. name .. "-Up"
 
     btn:SetSize(24, 24)
     btn:SetHitRectInsets(0, 0, 0, 0)
@@ -416,8 +439,11 @@ local function setupMicroButtons(mbf)
     -- HelpMicroButton
     HelpMicroButton:ClearAllPoints()
     HelpMicroButton:SetPoint("BOTTOMLEFT", MainMenuMicroButton, "BOTTOMRIGHT", 4, 0)
+end
+GW.AddForProfiling("micromenu", "setupMicroButtons", setupMicroButtons)
 
-    -- Update icon
+local function SetupNotificationArea(mbf)
+-- Update icon
     updateIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
     updateIcon.newbieText = nil
     updateIcon.tooltipText = ""
@@ -432,8 +458,22 @@ local function setupMicroButtons(mbf)
         GameTooltip:AddLine(self.tooltipText)
         GameTooltip:Show()
     end)
+    updateIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
+
+    -- Mail icon
+    local mailIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
+    mailIcon:RegisterEvent("UPDATE_PENDING_MAIL")
+    mailIcon.newbieText = nil
+    mailIcon.tooltipText = ""
+    reskinMicroButton(mailIcon, "MailMicroButton", mbf)
+    mailIcon:ClearAllPoints()
+    mailIcon:SetPoint("BOTTOMLEFT", updateIcon, "BOTTOMRIGHT", 4, 0)
+    mailIcon:Hide()
+    mailIcon:SetScript("OnEnter", mailIconOnEnter)
+    mailIcon:SetScript("OnLeave", GameTooltip_Hide)
+    mailIcon:SetScript("OnEvent", mailIconOnEvent)
+    mailIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
 end
-GW.AddForProfiling("micromenu", "setupMicroButtons", setupMicroButtons)
 
 local function checkElvUI()
     -- ElvUI re-styles the MicroButton bar even if it is disabled in their options.
@@ -524,6 +564,9 @@ local function LoadMicroMenu()
     -- re-do anchoring of the micro buttons to our preferred ordering and setup
     -- custom button overrides & behaviors for each button where necessary
     setupMicroButtons(mbf.cf)
+
+    -- setup our notification area
+    SetupNotificationArea(mbf)
 
     -- undo micro button position and visibility changes done by others
     for i = 1, #MICRO_BUTTONS do

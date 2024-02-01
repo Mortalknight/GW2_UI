@@ -33,7 +33,7 @@ end
 GW.InputPrompt = InputPrompt
 
 local function CreateWarningPrompt()
-    warningPrompt= CreateFrame("Frame", "GwWarningPrompt", UIParent, "GwWarningPrompt")
+    warningPrompt = CreateFrame("Frame", "GwWarningPrompt", UIParent, "GwWarningPrompt")
     warningPrompt.string:SetFont(UNIT_NAME_FONT, 14)
     warningPrompt.string:SetTextColor(1, 1, 1)
 

@@ -1,7 +1,6 @@
 local _, GW = ...
 
 local GW_DEFAULT = GW.DEFAULTS
-local GW_PRIVATE_DEFAULT = GW.PRIVATE_DEFAULT
 local LibBase64 = GW.Libs.LibBase64
 local Compress = GW.Libs.Compress
 local Serializer = GW.Libs.Serializer
@@ -48,10 +47,13 @@ local function GetSetting(name)
         GW2UI_PRIVATE_SETTINGS = {}
     end
 
-    local settings = GW_PRIVATE_DEFAULT[name] and GW2UI_PRIVATE_SETTINGS or profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] or GW2UI_SETTINGS_DB_03
+    local settings = GW.PRIVATE_DEFAULT[name] ~= nil and GW2UI_PRIVATE_SETTINGS or profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] or GW2UI_SETTINGS_DB_03
 
     if settings[name] == nil then
-        settings[name] = GW_PRIVATE_DEFAULT[name] or GetDefault(name)
+        settings[name] = GW.PRIVATE_DEFAULT[name] ~= nil and GW.PRIVATE_DEFAULT[name] or nil
+        if settings[name] == nil then
+            settings[name] = GetDefault(name)
+        end
     end
 
     return settings[name]
@@ -61,8 +63,9 @@ GW.GetSetting = GetSetting
 local function SetSetting(name, state, tableID)
     local profileIndex = GetActiveProfile()
 
-    local settings = GW_PRIVATE_DEFAULT[name] and GW2UI_PRIVATE_SETTINGS or GW2UI_SETTINGS_DB_03
-    if GW_PRIVATE_DEFAULT[name] == nil and profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] then
+    local settings = GW.PRIVATE_DEFAULT[name] ~= nil and GW2UI_PRIVATE_SETTINGS or GW2UI_SETTINGS_DB_03
+
+    if GW.PRIVATE_DEFAULT[name] == nil and profileIndex and GW2UI_SETTINGS_PROFILES[profileIndex] then
         settings = GW2UI_SETTINGS_PROFILES[profileIndex]
         settings["profileLastUpdated"] = date("%m/%d/%y %H:%M:%S")
     end
@@ -99,7 +102,7 @@ local function ResetToDefault()
         GW2UI_SETTINGS_PROFILES[profileIndex] = nil
         GW2UI_SETTINGS_PROFILES[profileIndex] = GW.CopyTable(nil, GW_DEFAULT)
         GW2UI_PRIVATE_SETTINGS = nil
-        GW2UI_PRIVATE_SETTINGS = GW.CopyTable(nil, GW_PRIVATE_DEFAULT)
+        GW2UI_PRIVATE_SETTINGS = GW.CopyTable(nil, GW.PRIVATE_DEFAULT)
         GW2UI_SETTINGS_PROFILES[profileIndex].profileLastUpdated = date("%m/%d/%y %H:%M:%S")
         GW2UI_SETTINGS_PROFILES[profileIndex].profileCreatedDate = date("%m/%d/%y %H:%M:%S")
         GW2UI_SETTINGS_PROFILES[profileIndex].profileCreatedCharacter = oldUsername or UNKNOWN
