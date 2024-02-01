@@ -184,7 +184,7 @@ local function createImportExportFrame()
         local profileName, profilePlayer, version = GW.ImportProfile(frame.editBox:GetText())
 
         frame.result:SetText("")
-        if profileName and profilePlayer and version == "Retail" then
+        if profileName and profilePlayer and version == "Classic" then
             frame.subheader:SetText(profileName .. " - " .. profilePlayer .. " - " .. version)
             frame.result:SetFormattedText("|cff4beb2c%s|r", L["Import string successfully imported!"])
             frame.editBox:SetText("")

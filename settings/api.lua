@@ -173,7 +173,7 @@ do -- This code is from WeakAuras Team, creadits goes to them
         local serialData = Serializer:Serialize(profileTable)
         local exportString = format("%s::%s::%s::%s", serialData, profileName, GW.myname, "Classic")
         local compressedData = Compress:Compress(exportString)
-        local encodedData = LibBase64:Encode(compressedData) 
+        local encodedData = LibBase64:Encode(compressedData)
 
         return encodedData
     end
