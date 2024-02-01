@@ -97,18 +97,14 @@ local function GameTooltip_OnTooltipSetSpell(self)
     self:Show()
 end
 
-local function GetLevelLine(self, offset, guildName)
+local function GetLevelLine(self, offset, player)
     if self:IsForbidden() then return end
-
-    if guildName then
-        offset = 3
-    end
 
     for i = offset, self:NumLines() do
         local tipLine = _G["GameTooltipTextLeft"..i]
         local tipText = tipLine and tipLine:GetText() and strlower(tipLine:GetText())
-        if tipText and (strfind(tipText, LEVEL1) or strfind(tipText, LEVEL2)) then
-            return tipLine
+        if tipText and strfind(tipText, LEVEL1) then
+            return tipLine, player and _G["GameTooltipTextLeft" .. i + 1] or nil
         end
     end
 end
@@ -149,7 +145,7 @@ local function SetUnitText(self, unit, isPlayerUnit)
         local awayText = UnitIsAFK(unit) and AFK_LABEL or UnitIsDND(unit) and DND_LABEL or ""
         GameTooltipTextLeft1:SetFormattedText("|c%s%s%s|r", nameColor.colorStr, name or UNKNOWN, awayText)
 
-        local levelLine = GetLevelLine(self, 2, guildName)
+        local levelLine, specLine = GetLevelLine(self, 1, true)
         if guildName then
             if guildRealm and isShiftKeyDown then
                 guildName = guildName .. "-" .. guildRealm
@@ -170,12 +166,14 @@ local function SetUnitText(self, unit, isPlayerUnit)
             if localizedFaction and englishRace == "Pandaren" then race = localizedFaction.." "..race end
             local hexColor = GW.RGBToHex(diffColor.r, diffColor.g, diffColor.b)
             local unitGender = showGender and genderTable[gender]
-            levelLine:SetFormattedText("%s%s|r %s%s |c%s%s|r", hexColor, realLevel > 0 and realLevel or "??", unitGender or "", race or "", nameColor.colorStr, localeClass)
+
+            local levelText = format('%s%s|r %s%s', hexColor, realLevel > 0 and realLevel or '??', unitGender or '', race or '')
+            levelText = format('%s |c%s%s|r', levelText, nameColor.colorStr, localeClass)
         end
 
         return nameColor
     else
-        local levelLine = GetLevelLine(self, 2)
+        local levelLine = GetLevelLine(self, 1)
         if levelLine then
             local pvpFlag, diffColor, level = "", "", ""
             local creatureClassification = UnitClassification(unit)
