@@ -127,6 +127,9 @@ local function LoadPlayerFrame()
 
     UpdateSettings()
 
+    PlayerFrame:SetScript("OnEvent", nil)
+    PlayerFrame:Kill()
+
     RegisterMovableFrame(NewUnitFrame, PLAYER, "player_pos",  ALL .. ",Unitframe", nil, {"default", "scaleable"})
 
     NewUnitFrame:ClearAllPoints()

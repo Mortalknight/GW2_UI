@@ -3,6 +3,76 @@
 
     <PlayerModel name="GW2ModelLevelTemplate" useParentLevel="true" virtual="true"/>
 
+    <FontFamily name="GW_Standard_Button_Font" virtual="true">
+        <Member alphabet="roman">
+            <Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="14"/>
+        </Member>
+        <Member alphabet="korean">
+            <Font font="Interface/AddOns/GW2_UI/fonts/korean.ttf" height="14"/>
+        </Member>
+        <Member alphabet="simplifiedchinese">
+            <Font font="Interface/AddOns/GW2_UI/fonts/chinese-font.ttf" height="14"/>
+        </Member>
+        <Member alphabet="traditionalchinese">
+            <Font font="Interface/AddOns/GW2_UI/fonts/chinese-font.ttf" height="14"/>
+        </Member>
+        <Member alphabet="russian">
+            <Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="14"/>
+        </Member>
+    </FontFamily>
+
+    <FontFamily name="GW_Standard_Button_Font_Small" virtual="true">
+        <Member alphabet="roman">
+            <Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="10"/>
+        </Member>
+        <Member alphabet="korean">
+            <Font font="Interface/AddOns/GW2_UI/fonts/korean.ttf" height="10"/>
+        </Member>
+        <Member alphabet="simplifiedchinese">
+            <Font font="Interface/AddOns/GW2_UI/fonts/chinese-font.ttf" height="10"/>
+        </Member>
+        <Member alphabet="traditionalchinese">
+            <Font font="Interface/AddOns/GW2_UI/fonts/chinese-font.ttf" height="10"/>
+        </Member>
+        <Member alphabet="russian">
+            <Font font="Interface/AddOns/GW2_UI/fonts/headlines.ttf" height="10"/>
+        </Member>
+    </FontFamily>
+
+    <Font name="gw_button_font_black" inherits="GW_Standard_Button_Font" virtual="true">
+        <Color r="0" b="0" g="0"></Color>
+    </Font>
+
+    <Font name="gw_button_font_black_small" inherits="GW_Standard_Button_Font_Small" virtual="true">
+        <Color r="0" b="0" g="0"></Color>
+    </Font>
+
+    <Button name="GwStandardButton" text="" virtual="true">
+        <Size x="128" y="24" />
+        <NormalTexture file="Interface/AddOns/GW2_UI/textures/uistuff/button"/>
+        <DisabledTexture file="Interface/AddOns/GW2_UI/textures/uistuff/button_disable"/>
+        <NormalFont style="gw_button_font_black"/>
+        <HighlightFont style="gw_button_font_black"/>
+        <Layers>
+            <Layer level="ARTWORK" textureSubLevel="7">
+                <Texture parentKey="hover" file="Interface/AddOns/GW2_UI/textures/uistuff/button_hover">
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="LEFT"/>
+                        <Anchor point="TOP" relativePoint="TOP"/>
+                        <Anchor point="BOTTOM" relativePoint="BOTTOM"/>
+                        <Anchor point="RIGHT" relativePoint="LEFT"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnShow>
+                self:HookScript("OnEnter", GwStandardButton_OnEnter)
+                self:HookScript("OnLeave", GwStandardButton_OnLeave)
+            </OnShow>
+        </Scripts>
+    </Button>
+
     <Slider name="GwHybridScrollBarTemplate" parentKey="scrollBar" virtual="true">
         <Size x="12" y="0"></Size>
         <Layers>
