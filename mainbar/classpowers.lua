@@ -213,7 +213,7 @@ local function LoadClassPowers()
     if cpf.ourPowerBar then
         local anchorFrame = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame or _G.GwPlayerPowerBar
         local barWidth = GetSetting("PLAYER_AS_TARGET_FRAME") and _G.GwPlayerUnitFrame.powerbar:GetWidth() or _G.GwPlayerPowerBar:GetWidth()
-        local lmb = GW.createNewStatusbar("GwPlayerAltClassLmb", cpf, "GwStatusPowerBar", true)
+        local lmb = GW.createNewStatusbar("GwPlayerPowerBarExtra", cpf, "GwStatusPowerBar", true)
         lmb.customMaskSize = 64
         lmb.bar = lmb
         lmb:addToBarMask(lmb.intensity)

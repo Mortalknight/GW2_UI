@@ -24,8 +24,12 @@ local function loadProfiles(profilewin)
     for k, _ in pairs(profiles) do
         if profiles[k] then
             validProfiles[validProfileIdx] = profiles[k]
-            validProfiles[validProfileIdx].realIdx = k
-            validProfileIdx = validProfileIdx + 1
+            if type(validProfiles[validProfileIdx]) == "table" then
+                validProfiles[validProfileIdx].realIdx = k
+                validProfileIdx = validProfileIdx + 1
+            else
+                validProfiles[validProfileIdx] = nil
+            end
         end
     end
 
@@ -224,13 +228,13 @@ local function deleteProfile(index)
     end
 
     -- delete also all "attached" layouts
-    local allLayouts = GW.GetAllLayouts()
-    for i = 0, #allLayouts do
-        if allLayouts[i] and allLayouts[i].profileId == index then
-            GW2UI_LAYOUTS[i] = nil
-            break
-        end
-    end
+    --local allLayouts = GW.GetAllLayouts()
+    --for i = 0, #allLayouts do
+    --    if allLayouts[i] and allLayouts[i].profileId == index then
+    --        GW2UI_LAYOUTS[i] = nil
+    --        break
+    --    end
+    --end
 end
 AddForProfiling("panel_profiles", "deleteProfile", deleteProfile)
 
