@@ -700,6 +700,8 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     frame.name:SetShadowColor(0, 0, 0, 1)
     frame.level:SetFont(DAMAGE_TEXT_FONT, 12, "OUTLINED")
 
+    frame.healthString:SetFontObject(GameFontNormalSmall)
+
     frame.unit = registerUnit
     frame.guid = UnitGUID(frame.unit)
     frame.ready = -1
