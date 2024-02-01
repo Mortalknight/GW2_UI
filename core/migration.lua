@@ -64,25 +64,27 @@ local function DatabaseMigration(globalDb, privateDb)
                     end
 
                     local profileName = profileTbl.profilename
-                    local skipProfile = false
-                    if GW.globalSettings.profiles[profileName] then
-                        local counter = 0
-                        repeat
-                            counter = counter + 1
-                            profileName = profileTbl.profilename .. counter
-                        until not GW.globalSettings.profiles[profileName] or counter == 100
+                    if not profileName == nil then
+                        local skipProfile = false
                         if GW.globalSettings.profiles[profileName] then
-                            skipProfile = true
+                            local counter = 0
+                            repeat
+                                counter = counter + 1
+                                profileName = profileTbl.profilename .. counter
+                            until not GW.globalSettings.profiles[profileName] or counter == 100
+                            if GW.globalSettings.profiles[profileName] then
+                                skipProfile = true
+                            end
                         end
-                    end
-                    if not skipProfile then
-                        profileTbl.profilename = profileName
-                        GW.globalSettings:SetProfile(profileName)
-                        for settings, value in next, profileTbl do
-                            if type(value) == "table" then
-                                GW.settings[settings] = GW.copyTable(value)
-                            else
-                                GW.settings[settings] = value
+                        if not skipProfile then
+                            profileTbl.profilename = profileName
+                            GW.globalSettings:SetProfile(profileName)
+                            for settings, value in next, profileTbl do
+                                if type(value) == "table" then
+                                    GW.settings[settings] = GW.copyTable(value)
+                                else
+                                    GW.settings[settings] = value
+                                end
                             end
                         end
                     end
