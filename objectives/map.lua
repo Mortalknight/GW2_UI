@@ -246,16 +246,6 @@ local function time_OnEnter(self)
 end
 GW.AddForProfiling("map", "time_OnEnter", time_OnEnter)
 
-local function time_OnClick(_, button)
-    if button == "LeftButton" then
-        PlaySound(SOUNDKIT.IG_MAINMENU_QUIT)
-        TimeManager_Toggle()
-    else
-        Stopwatch_Toggle()
-    end
-end
-GW.AddForProfiling("map", "time_OnClick", time_OnClick)
-
 local function getMinimapShape()
     return "SQUARE"
 end
@@ -425,9 +415,10 @@ local function LoadMinimap()
     GwMapTime.timeTimer = C_Timer.NewTicker(0.2, function()
         GwMapTime.Time:SetText(GameTime_GetTime(false))
     end)
-    GwMapTime:SetScript("OnClick", time_OnClick)
-    GwMapTime:SetScript("OnEnter", time_OnEnter)
-    GwMapTime:SetScript("OnLeave", GameTooltip_Hide)
+    GwMapTime:SetScript("OnClick", GW.Time_OnClick)
+    GwMapTime:SetScript("OnEnter", GW.Time_OnEnter)
+    GwMapTime:SetScript("OnLeave", GW.Time_OnLeave)
+    GwMapTime:SetScript("OnEvent", GW.Time_OnEvent)
 
     --coords
     GwMapCoords = CreateFrame("Button", "GwMapCoords", Minimap, "GwMapCoords")
