@@ -444,8 +444,8 @@ local function newHeader(filter, settingname)
     h:SetClampedToScreen(true)
     h:UnregisterEvent("UNIT_AURA") -- only need player and vehicle, so we can reduce the calls
     h:RegisterUnitEvent("UNIT_AURA", "player", "vehicle")
-    h.GetFilter = function(_, btn) return btn:GetAttribute("filter") end
-    h.GetAType = function(self) return self:GetAttribute("filter") == "HELPFUL" and 1 or 0 end
+    h.GetFilter = function(self) return self.filter end
+    h.GetAType = function(self) return self.filter == "HELPFUL" and 1 or 0 end
     h.GetUnit = function(self) return self:GetAttribute("unit") end
 
     -- setup parameters for the header template
