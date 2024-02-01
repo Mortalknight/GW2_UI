@@ -169,6 +169,8 @@ local function SetUnitText(self, unit, isPlayerUnit)
 
             local levelText = format('%s%s|r %s%s', hexColor, realLevel > 0 and realLevel or '??', unitGender or '', race or '')
             levelText = format('%s |c%s%s|r', levelText, nameColor.colorStr, localeClass)
+
+            levelLine:SetFormattedText(levelText)
         end
 
         return nameColor
