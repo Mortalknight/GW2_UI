@@ -52,6 +52,7 @@ end
 
 local function SetFillAmount(self, value, forced)
     local isVertical = (self:GetOrientation() == "VERTICAL") or false
+    local isReverseFill = self:GetReverseFill()
     local totalWidth = self.totalWidth or isVertical and self:GetHeight() or self:GetWidth()
     local height = self.totalHeight or isVertical and self:GetWidth() or self:GetHeight()
 
@@ -108,7 +109,11 @@ local function SetFillAmount(self, value, forced)
         self.spark:SetWidth(sparkWidth)
         self.spark:SetHeight(height)
         self.spark:ClearAllPoints()
-        self.spark:SetPoint("LEFT", self.internalBar, "LEFT", min(totalWidth - self.spark.width, max(0, sparkPosition)), 0)
+        if isReverseFill then
+            self.spark:SetPoint("RIGHT", self.internalBar, "RIGHT", -min(totalWidth - self.spark.width, max(0, sparkPosition)), 0)
+        else
+            self.spark:SetPoint("LEFT", self.internalBar, "LEFT", min(totalWidth - self.spark.width, max(0, sparkPosition)), 0)
+        end
         self.spark:Hide()
     end
 
@@ -124,6 +129,8 @@ local function SetFillAmount(self, value, forced)
     if self.fill_threshold ~= barPosition or forced then
         if isVertical then
             self.maskContainer:SetPoint("BOTTOM", self.internalBar, "BOTTOM", 0, currentSegmentPosition)
+        elseif isReverseFill then
+            self.maskContainer:SetPoint("RIGHT", self.internalBar, "RIGHT", currentSegmentPosition, 0)
         else
             self.maskContainer:SetPoint("LEFT", self.internalBar, "LEFT", currentSegmentPosition, 0)
         end
@@ -201,6 +208,30 @@ local function addToBarMask(self, texture)
     texture:AddMaskTexture(self.maskOverflow.mask)
 end
 
+local function SetReverseFill(self, reverse)
+    if reverse then
+        self.maskContainer.mask0:SetRotation(math.rad(180))
+
+        self.maskContainer.mask0:ClearAllPoints()
+        self.maskContainer.mask0:SetPoint("TOPRIGHT", self.maskContainer, "TOPRIGHT", 0, 0)
+        self.maskContainer.mask0:SetPoint("BOTTOMLEFT", self.maskContainer, "BOTTOMLEFT", 0, 0)
+
+        self.maskContainer:ClearAllPoints()
+        self.maskContainer:SetPoint("RIGHT", self.internalBar, "RIGHT", 0, 0)
+
+        self.maskOverflow.mask:SetRotation(math.rad(180))
+        self.maskOverflow:ClearAllPoints()
+        self.maskOverflow:SetPoint("TOPRIGHT", self.maskContainer, "TOPLEFT", 0, 0)
+        self.maskOverflow:SetPoint("BOTTOMRIGHT", self.maskContainer, "BOTTOMLEFT", 0, 0)
+        self.maskOverflow:SetPoint("TOPLEFT", self, "TOPLEFT", -3, 0)
+        self.maskOverflow:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", -3, 0)
+
+        self.maskOverflow.mask:ClearAllPoints()
+        self.maskOverflow.mask:SetPoint("TOPRIGHT", self.maskOverflow, "TOPRIGHT", 0, 0)
+        self.maskOverflow.mask:SetPoint("BOTTOMLEFT", self.maskOverflow, "BOTTOMLEFT", 0, 0)
+    end
+end
+
 local function SetOrientation(self)
     self.maskContainer.mask0:SetRotation(1.5707)
 
@@ -270,7 +301,7 @@ local function hookStatusbarBehaviour(statusBar, smooth, animationType, name)
         statusBar.spark.width = statusBar.spark:GetWidth()
     end
     hooksecurefunc(statusBar, "SetOrientation", SetOrientation)
-
+    --hooksecurefunc(statusBar, "SetReverseFill", SetReverseFill) --MAYBE NOT NEEDED??
     return statusBar
 end
 GW.hookStatusbarBehaviour = hookStatusbarBehaviour
