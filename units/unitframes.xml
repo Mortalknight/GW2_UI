@@ -233,14 +233,14 @@
                 <Texture parentKey="healthbarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
                     <Size x="148" y="13"/>
                     <Anchors>
-                        <Anchor point="LEFT" relativePoint="LEFT" x="4" y="4"></Anchor>
+                        <Anchor point="LEFT" relativeKey="$parent.portrait" relativePoint="RIGHT" x="4" y="-2"></Anchor>
                     </Anchors>
                     <Color r="1" g="1" b="1" a="0"></Color>
                 </Texture>
                 <Texture parentKey="castingbarBackground" file="Interface/AddOns/GW2_UI/textures/units/castingbarsDF">
                     <Size x="148" y="15"/>
                     <Anchors>
-                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbar" relativePoint="BOTTOMLEFT" x="0" y="-1"></Anchor>
+                        <Anchor point="TOPLEFT" relativeKey="$parent.powerbar" relativePoint="BOTTOMLEFT" x="-2" y="-1"></Anchor>
                     </Anchors>
                     <TexCoords left="0" right="0.5" top="0" bottom="0.25" />
                     <Color r="1" g="1" b="1" a="0.6"></Color>
