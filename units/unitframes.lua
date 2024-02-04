@@ -63,7 +63,7 @@ local function createNormalUnitFrame(ftype, revert)
 
     if revert then
         f.healthString:ClearAllPoints()
-        f.healthString:SetPoint("RIGHT", f.absorbOverlay, "RIGHT", -5, -1)
+        f.healthString:SetPoint("RIGHT", f.absorbOverlay, "RIGHT", -5, 0)
         f.healthString:SetJustifyH("RIGHT")
 
         --f.absorbOverlay:SetReverseFill(true)
