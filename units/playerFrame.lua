@@ -125,8 +125,6 @@ local function LoadPlayerFrame()
     NewUnitFrame.unit = "player"
     NewUnitFrame.type = "NormalTarget"
 
-    UpdateSettings()
-
     PlayerFrame:SetScript("OnEvent", nil)
     PlayerFrame:Kill()
 
@@ -250,6 +248,7 @@ local function LoadPlayerFrame()
     NewUnitFrame.prestigebg:Hide()
     NewUnitFrame.prestigeString:Hide()
 
+    UpdateSettings()
 
     return NewUnitFrame
 end

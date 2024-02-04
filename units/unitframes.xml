@@ -219,7 +219,7 @@
                 <Texture parentKey="healthbarBackground" file="Interface/AddOns/GW2_UI/textures/uistuff/statusbar">
                     <Size x="148" y="13"/>
                     <Anchors>
-                         <Anchor point="LEFT" relativeKey="$parent.portrait" relativePoint="RIGHT" x="4" y="-2"></Anchor>
+                        <Anchor point="LEFT" relativePoint="LEFT" x="0" y="-2"></Anchor>
                     </Anchors>
                     <Color r="1" g="1" b="1" a="0"></Color>
                 </Texture>
