@@ -63,8 +63,8 @@ local function updateHealthData(self)
     self.antiHeal:SetFillAmount(healAbsorbPrecentage)
 end
 
-local function unitFrameData(self)
-    local level = UnitLevel(self.unit)
+local function unitFrameData(self, lvl)
+    local level = lvl or UnitLevel(self.unit)
     local name = UnitName(self.unit)
 
     if UnitIsGroupLeader(self.unit) then
@@ -88,13 +88,16 @@ local function unitFrameData(self)
     SetPortraitTexture(self.portrait, self.unit)
 end
 
-local function player_OnEvent(self, event)
+local function player_OnEvent(self, event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         unitFrameData(self)
         updateHealthData(self)
         GW.updatePowerValues(self, false)
     elseif IsIn(event, "PLAYER_LEVEL_UP", "GROUP_ROSTER_UPDATE", "UNIT_PORTRAIT_UPDATE") then
         unitFrameData(self)
+    elseif event == "PLAYER_LEVEL_UP" then
+        local level = ...
+        unitFrameData(self, level)
     elseif IsIn(event, "UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_ABSORB_AMOUNT_CHANGED", "UNIT_HEAL_PREDICTION") then
         updateHealthData(self)
     elseif IsIn(event, "UNIT_MAXPOWER", "UNIT_POWER_FREQUENT", "UPDATE_SHAPESHIFT_FORM", "ACTIVE_TALENT_GROUP_CHANGED") then
