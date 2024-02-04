@@ -963,7 +963,7 @@ end
 GW.ToggleTargetFrameSettings = ToggleTargetFrameSettings
 
 local function ToggleTargetFrameCombatFeedback()
-    if GW.GetSetting("target_FLOATING_COMBAT_TEXT") then
+    if GW.GetSetting("TARGET_FLOATING_COMBAT_TEXT") then
         if not fctf then
             fctf = CreateFrame("Frame", nil, GwTargetUnitFrame)
             fctf:SetFrameLevel(GwTargetUnitFrame:GetFrameLevel() + 3)

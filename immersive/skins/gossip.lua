@@ -160,7 +160,7 @@ local function ReplaceGossipText(button, text)
 end
 
 local function Resize(self)
-    self:SetHeight(math.max(self:GetTextHeight() + 2, self.Icon:GetHeight()))
+    self:SetHeight(math.max(32, self:GetTextHeight() + 2, self.Icon:GetHeight()))
 end
 
 local function skinGossipOption(self)
@@ -206,6 +206,7 @@ local function skinGossipOption(self)
         hooksecurefunc(buttonText, "SetTextColor", Gossip_SetTextColor)
 
         ReplaceGossipText(self, self:GetText())
+        Resize(self)
         hooksecurefunc(self, "SetText", ReplaceGossipText)
         hooksecurefunc(self, "SetFormattedText", ReplaceGossipFormat)
         hooksecurefunc(self, "Resize", Resize)
@@ -659,7 +660,7 @@ local function LoadGossipSkin()
                     return 0
                 elseif elementData.titleOptionButton then
                     elementData.titleOptionButton:Setup(elementData.info)
-                    return elementData.titleOptionButton:GetHeight()
+                    return math.max(32, elementData.titleOptionButton:GetHeight())
                 else
         			return 32
         		end
