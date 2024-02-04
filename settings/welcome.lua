@@ -157,6 +157,7 @@ local function button1_OnClick()
             SetCVar("showQuestTrackingTooltips", 1)
             SetCVar("fstack_preferParentKeys", 0)
             SetCVar("whisperMode", "inline")
+            SetCVar("alwaysShowRuneIcons", "0")
 
             DEFAULT_CHAT_FRAME:AddMessage(("*GW2 UI:|r " .. L["Complete"] .. ": " .. L["Setup CVars"]):gsub("*", GW.Gw2Color))
 

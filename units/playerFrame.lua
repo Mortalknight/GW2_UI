@@ -112,7 +112,7 @@ end
 
 local function UpdateSettings()
     if GwPlayerUnitFrame then
-        GwPlayerUnitFrame.altBg:SetShown(GW.Getting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
+        GwPlayerUnitFrame.altBg:SetShown(GetSetting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
 
         settings.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
         settings.classColor = GetSetting("player_CLASS_COLOR")
