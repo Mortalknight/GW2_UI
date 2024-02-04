@@ -109,7 +109,7 @@ end
 
 local function UpdateSettings()
     if GwPlayerUnitFrame then
-        --GwPlayerUnitFrame.altBg:SetShown(GW.settings.PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND)
+        GwPlayerUnitFrame.altBg:SetShown(GW.Getting("PLAYER_AS_TARGET_FRAME_ALT_BACKGROUND"))
 
         settings.healthTextSetting = GetSetting("PLAYER_UNIT_HEALTH")
         settings.classColor = GetSetting("player_CLASS_COLOR")
@@ -142,8 +142,8 @@ local function LoadPlayerFrame()
     NewUnitFrame:EnableMouse(true)
     NewUnitFrame:RegisterForClicks("AnyDown")
 
-    --NewUnitFrame.altBg = CreateFrame("Frame", nil, NewUnitFrame, "GwAlternativeUnitFrameBackground")
-    --NewUnitFrame.altBg:SetAllPoints(NewUnitFrame)
+    NewUnitFrame.altBg = CreateFrame("Frame", nil, NewUnitFrame, "GwAlternativeUnitFrameBackground")
+    NewUnitFrame.altBg:SetAllPoints(NewUnitFrame)
 
     NewUnitFrame.mask = UIParent:CreateMaskTexture()
     NewUnitFrame.mask:SetPoint("CENTER", NewUnitFrame.portrait, "CENTER", 0, 0)

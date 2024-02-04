@@ -94,6 +94,8 @@ local function LoadTargetPanel(sWindow)
     addOption(p_target.scroll.scrollchild, BUFFS_ON_TOP, nil, "target_AURAS_ON_TOP", GW.ToggleTargetFrameSettings, nil, {["TARGET_ENABLED"] = true, ["target_BUFFS"] = true})
     addOption(p_target.scroll.scrollchild, L["Display Portrait Damage"], L["Display Portrait Damage on this frame"], "TARGET_FLOATING_COMBAT_TEXT", GW.ToggleTargetFrameCombatFeedback, nil, {["TARGET_ENABLED"] = true})
     addOption(p_target.scroll.scrollchild, L["Invert target frame"], nil, "target_FRAME_INVERT", function() GW.ShowRlPopup = true end, nil, {["TARGET_ENABLED"] = true})
+    addOption(p_target.scroll.scrollchild, L["Show alternative background texture"], nil, "target_FRAME_ALT_BACKGROUND", GW.ToggleTargetFrameSettings, nil, {["TARGET_ENABLED"] = true})
+
     addOptionSlider(
         p_target.scroll.scrollchild,
         L["Aura size"],
