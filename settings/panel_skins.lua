@@ -32,6 +32,7 @@ local function LoadSkinsPanel(sWindow)
     addOption(p.scroll.scrollchild, QUEST_LOG, nil, "QUESTLOG_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, FLIGHT_MAP, nil, "FLIGHTMAP_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
     addOption(p.scroll.scrollchild, L["Loot Frame"], nil, "LOOTFRAME_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
+    addOption(p.scroll.scrollchild, QUEST_TIMERS, nil, "QUESTTIMERS_SKIN_ENABLED", function() GW.ShowRlPopup = true end)
 
     addOption(p.scroll.scrollchild, "|cffaaaaaa[AddOn]|r Totem Timers", nil, "TOTEM_TIMERS_ADDON_SKIN_ENABLED", function() GW.ShowRlPopup = true end, nil, {["QUESTTRACKER_ENABLED"] = true}, "Objectives")
 

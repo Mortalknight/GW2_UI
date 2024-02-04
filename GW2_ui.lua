@@ -591,6 +591,7 @@ local function evPlayerLogin(self)
     GW.LoadTimeManagerSkin()
     GW.LoadGossipSkin()
     GW.LoadQuestLogFrameSkin()
+    GW.LoadQuestTimersSkin()
 
     GW.LoadDetailsSkin()
     GW.LoadTotemTimersSkin()

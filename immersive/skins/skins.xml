@@ -14,6 +14,7 @@
     <Script file="gossip.lua"/>
     <Script file="questLog.lua"/>
     <Script file="flightmap.lua"/>
+    <Script file="questTimers.lua"/>
 
     <Script file="addons\detailsProfile.lua"/>
     <Script file="addons\TotemTimers.lua"/>
