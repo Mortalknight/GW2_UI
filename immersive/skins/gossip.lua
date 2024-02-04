@@ -159,6 +159,10 @@ local function ReplaceGossipText(button, text)
     end
 end
 
+local function Resize(self)
+    self:SetHeight(math.max(self:GetTextHeight() + 2, self.Icon:GetHeight()))
+end
+
 local function skinGossipOption(self)
     self.skinned = true
 
@@ -204,6 +208,7 @@ local function skinGossipOption(self)
         ReplaceGossipText(self, self:GetText())
         hooksecurefunc(self, "SetText", ReplaceGossipText)
         hooksecurefunc(self, "SetFormattedText", ReplaceGossipFormat)
+        hooksecurefunc(self, "Resize", Resize)
     end
 end
 
@@ -211,11 +216,11 @@ local function updateGossipOption(self)
     if not self.skinned then
         skinGossipOption(self)
     end
-    self:SetHeight(32)
+
     if self.GetElementData then
         local elementData = self:GetElementData()
         if elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER or elementData.buttonType == GOSSIP_BUTTON_TYPE_TITLE then
-        self:SetHeight(0)
+            self:SetHeight(0)
         end
     end
 
@@ -223,15 +228,15 @@ local function updateGossipOption(self)
         self.Icon:SetSize(32,32)
         local atlas = self.Icon:GetAtlas()
         if atlas then
-        self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/" .. atlas)
+            self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/" .. atlas)
         else
 
-        local t = self.Icon:GetTexture()
-        if CUSTOM_ICONS[t] then
-            self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/" .. CUSTOM_ICONS[t])
-        else
-            GW.Debug("Missing Gossip Icon ID: ", t)
-        end
+            local t = self.Icon:GetTexture()
+            if CUSTOM_ICONS[t] then
+                self.Icon:SetTexture("Interface/AddOns/GW2_UI/textures/gossip/" .. CUSTOM_ICONS[t])
+            else
+                GW.Debug("Missing Gossip Icon ID: ", t)
+            end
         end
     end
 end
@@ -652,6 +657,9 @@ local function LoadGossipSkin()
         			return 0
         		elseif elementData.buttonType == GOSSIP_BUTTON_TYPE_DIVIDER then
                     return 0
+                elseif elementData.titleOptionButton then
+                    elementData.titleOptionButton:Setup(elementData.info)
+                    return elementData.titleOptionButton:GetHeight()
                 else
         			return 32
         		end
