@@ -194,8 +194,8 @@ local function LoadClassPowers()
     GW.RegisterMovableFrame(cpf, GW.L["Class Power"], "ClasspowerBar_pos", ALL .. ",Unitframe,Power", {316, 32}, {"default", "scaleable"}, true)
     cpf:ClearAllPoints()
     cpf:SetPoint("TOPLEFT", cpf.gwMover)
-    hooksecurefunc(cpf, "SetHeight", function() cpf.gwMover:SetHeight(cpf:GetHeight()) end)
-    hooksecurefunc(cpf, "SetWidth", function() cpf.gwMover:SetWidth(cpf:GetWidth()) end)
+    hooksecurefunc(cpf, "SetHeight", function() if not InCombatLockdown() then  cpf.gwMover:SetHeight(cpf:GetHeight()) end end)
+    hooksecurefunc(cpf, "SetWidth", function() if not InCombatLockdown() then cpf.gwMover:SetWidth(cpf:GetWidth()) end end)
 
     -- position mover
     if (not GetSetting("XPBAR_ENABLED") or GetSetting("PLAYER_AS_TARGET_FRAME")) and not cpf.isMoved  then

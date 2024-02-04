@@ -2,6 +2,7 @@ local _, GW = ...
 local L = GW.L
 local GetSetting = GW.GetSetting
 local SetSetting = GW.SetSetting
+local ClassIndex = GW.ClassIndex
 
 local windowsList = {}
 local hasBeenLoaded = false
@@ -702,7 +703,7 @@ local function LoadCharacter()
 
                 -- add addon buttons here
                 nextShadow = false
-                nextAnchor = GwCharacterMenu.petMenu
+                nextAnchor = GW.myClassID == ClassIndex.WARLOCK and GwCharacterMenu.petMenu or GW.myClassID  == ClassIndex.HUNTER and GwCharacterMenu.petMenu or GW.ClassicSOD and GwCharacterMenu.runeMenu or GwCharacterMenu.honorMenu
                 addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, function() hideCharframe = false Outfitter:OpenUI() end, true)
                 addAddonButton("Clique", GetSetting("USE_SPELLBOOK_WINDOW"), nextShadow, nextAnchor, function() ShowUIPanel(CliqueConfig) end, true)
                 addAddonButton("Pawn", GetSetting("USE_CHARACTER_WINDOW"), nextShadow, nextAnchor, PawnUIShow, false)

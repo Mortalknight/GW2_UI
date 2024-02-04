@@ -1,8 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 
-    <Button name="GwPlayerPetFrameTmpl" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="MEDIUM" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate" virtual="true">
+   <Button name="GwPlayerPetFrameTmpl" registerForClicks="LeftButtonUp,RightButtonUp" topLevel="true" frameStrata="MEDIUM" enableMouse="true" parent="UIParent" inherits="SecureUnitButtonTemplate,SecureHandlerStateTemplate" virtual="true">
         <Size x="316" y="100"></Size>
+        <HitRectInsets>
+            <AbsInset left="0" right="0" top="0" bottom="30"/>
+        </HitRectInsets>
         <Layers>
             <Layer level="ARTWORK">
                 <Texture name="$parentBarBackground" file="Interface\AddOns\GW2_UI\textures\gwstatusbar" parentKey="Background">
@@ -30,12 +33,12 @@
             </Layer>
         </Layers>
         <Frames>
-            <StatusBar name="$parentHealth" parentKey="health" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            <StatusBar name="$parentHealth" parentKey="health" inherits="GwStatusBarTemplate">
                 <Size x="230" y="16"/>
                 <Anchors>
                     <Anchor point="left" relativePoint="LEFT" relativeKey="$parent.Background" x="1" y="0"/>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/statusbar"/>
                 <Layers>
                     <Layer level="OVERLAY">
                         <FontString name="$parentString" parentKey="text" text="unknown" inherits="GameFontNormalSmall" justifyH="CENTER">
@@ -48,12 +51,12 @@
                     </Layer>
                 </Layers>
             </StatusBar>
-            <StatusBar parentKey="resource" defaultValue="1" minValue="0" maxValue="1" drawlayer="BACKGROUND">
+            <StatusBar parentKey="resource" inherits="GwStatusBarTemplate">
                 <Size x="230" y="2"/>
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeKey="$parent.health" x="0" y="-2"/>
                 </Anchors>
-                <BarTexture file="Interface\AddOns\GW2_UI\textures\gwstatusbar"/>
+                <BarTexture parentKey="internalBar" file="Interface/AddOns/GW2_UI/textures/bartextures/statusbar"/>
             </StatusBar>
             <Frame parentKey="auras">
                 <Size x="230" y="100"/>

@@ -5,10 +5,9 @@ local LoadAuras = GW.LoadAuras
 local PowerBarColorCustom = GW.PowerBarColorCustom
 local CommaValue = GW.CommaValue
 local UpdateBuffLayout = GW.UpdateBuffLayout
-local animations = GW.animations
-local AddToAnimation = GW.AddToAnimation
 local RegisterMovableFrame = GW.RegisterMovableFrame
-local AddActionBarCallback = GW.AddActionBarCallback
+
+local fctf
 
 local  petStateSprite = {
     width = 512,
@@ -17,7 +16,7 @@ local  petStateSprite = {
     rows = 1
 }
 
-local function petBarUpdate()
+local function UpdatePetActionBarIcons()
     PetActionButton1Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-attack")
     PetActionButton2Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-follow")
     PetActionButton3Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-place")
@@ -26,56 +25,88 @@ local function petBarUpdate()
     PetActionButton9Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-defense")
     PetActionButton10Icon:SetTexture("Interface/AddOns/GW2_UI/textures/icons/pet-passive")
 end
-GW.AddForProfiling("petbar", "petBarUpdate", petBarUpdate)
+GW.AddForProfiling("petbar", "UpdatePetActionBarIcons", UpdatePetActionBarIcons)
 
-local function setPetBar(fmPet)
+local function SetPetActionButtonPositionAndStyle(self)
     local BUTTON_SIZE = 28
     local BUTTON_MARGIN = 3
     local showName = GetSetting("SHOWACTIONBAR_MACRO_NAME_ENABLED")
 
-    PetActionButton1:ClearAllPoints()
-    PetActionButton1:SetPoint("BOTTOMLEFT", fmPet, "BOTTOMLEFT", 3, 30)
+    for i, button in ipairs(self.buttons) do
+        local lastButton = _G["PetActionButton" .. (i - 1)]
+        local lastColumnButton = _G["PetActionButton5"]
+        local buttonShine = _G["PetActionButton" .. i .. "Shine"]
+        local autoCast = button.AutoCastable
+        local point, relativeFrame, relativePoint, x, y
 
-    fmPet.gwButton = {}
+        button:SetScale(1)
 
-    for i = 1, 12 do
-        local btn = _G["PetActionButton" .. i]
-        local btnPrev = _G["PetActionButton" .. (i - 1)]
-
-        if btn then
-            fmPet.gwButton[i] = btn
-            btn:SetParent(fmPet)
-            GW.updateHotkey(btn)
-            btn.noGrid = nil
-            btn:SetSize(i < 4 and 32 or BUTTON_SIZE, i < 4 and 32 or BUTTON_SIZE)
-
-            if i > 1 and i ~= 8 then
-                btn:ClearAllPoints()
-                btn:SetPoint("BOTTOMLEFT", btnPrev, "BOTTOMRIGHT", BUTTON_MARGIN, 0)
-            elseif i == 8 then
-                btn:ClearAllPoints()
-                btn:SetPoint("BOTTOM", PetActionButton5, "TOP", 0, BUTTON_MARGIN)
-            end
-
-            if i == 1 then
-                hooksecurefunc("PetActionBar_Update", petBarUpdate)
-            end
-
-            if i <= 3 or i >= 8 then
-                btn:SetScript("OnDragStart", nil)
-                btn:SetAttribute("_ondragstart", nil)
-                btn:SetScript("OnReceiveDrag", nil)
-                btn:SetAttribute("_onreceivedrag", nil)
-            end
-
-            btn.showMacroName = showName
-
-            GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, nil, true)
-            GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])
+        if i == 1 then
+            point, relativeFrame, relativePoint, x, y = "BOTTOMLEFT", self, "BOTTOMLEFT", 3, 30
+        elseif i == 8 then
+            point, relativeFrame, relativePoint, x, y = "BOTTOM", lastColumnButton, "TOP", 0, BUTTON_MARGIN
+        else
+            point, relativeFrame, relativePoint, x, y = "BOTTOMLEFT", lastButton, "BOTTOMRIGHT", BUTTON_MARGIN, 0
         end
+
+        button:SetParent(self)
+        button:ClearAllPoints()
+        button:SetAttribute("showgrid", 0)
+        button:EnableMouse(true)
+        button:SetSize(i < 4 and 32 or BUTTON_SIZE, i < 4 and 32 or BUTTON_SIZE)
+        button:SetPoint(point, relativeFrame, relativePoint, x, y)
+
+        GW.updateHotkey(button)
+        button.noGrid = nil
+
+        button.relativeFrame = relativeFrame
+        button.point = point
+        button.relativePoint = relativePoint
+        button.gwX = x
+        button.gwY = y
+        hooksecurefunc(button, "SetPoint", function(btn, _, parent)
+            if parent ~= btn.relativeFrame then
+                if not InCombatLockdown() then
+                    btn:ClearAllPoints()
+                    btn:SetPoint(btn.point, btn.relativeFrame, btn.relativePoint, btn.gwX, btn.gwY)
+                else
+                    btn:GetParent():RegisterEvent("PLAYER_REGEN_ENABLED")
+                end
+            end
+        end)
+
+        if buttonShine then
+            buttonShine:SetSize(button:GetSize())
+            for _, v in pairs(buttonShine.sparkles) do
+                v:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
+                v:SetSize((i < 4 and 32 or BUTTON_SIZE) + 5, (i < 4 and 32 or BUTTON_SIZE) + 5)
+            end
+
+            autoCast:SetTexture("Interface/AddOns/GW2_UI/Textures/talents/autocast")
+            autoCast.size = (i < 4 and 32 or BUTTON_SIZE) + 5
+            hooksecurefunc(autoCast, "SetSize", function()
+                local w = autoCast:GetSize()
+                if autoCast.size ~= w then
+                    autoCast:SetHeight(autoCast.size)
+                    autoCast:SetWidth(autoCast.size)
+                end
+            end)
+        end
+
+        if i <= 3 or i >= 8 then
+            button:SetScript("OnDragStart", nil)
+            button:SetAttribute("_ondragstart", nil)
+            button:SetScript("OnReceiveDrag", nil)
+            button:SetAttribute("_onreceivedrag", nil)
+        end
+
+        button.showMacroName = showName
+
+        GW.setActionButtonStyle("PetActionButton" .. i, nil, nil, true)
+        GW.RegisterCooldown(_G["PetActionButton" .. i .. "Cooldown"])
     end
 end
-GW.AddForProfiling("petbar", "setPetBar", setPetBar)
+GW.AddForProfiling("petbar", "SetPetActionButtonPositionAndStyle", SetPetActionButtonPositionAndStyle)
 
 local function UpdatePetBarButtonsHot()
     for i = 1, 12 do
@@ -113,39 +144,105 @@ local function SetPetHappiness(self)
     end
 end
 
-local function updatePetData(self, event)
-    if not UnitExists("pet") then
-        return
-    end
+local function UpdateAutoCast()
+    for i, button in ipairs(GwPlayerPetFrame.buttons) do
+        local _, _, _, _, _, autoCastEnabled = GetPetActionInfo(i)
 
-    if event == "PLAYER_ENTERING_WORLD" then
-        UpdateBuffLayout(self, event, "pet")
-        C_Timer.After(0.1, function() SetPetHappiness(self) end)
-        SetPortraitTexture(self.portrait, "pet")
-        self:UnregisterEvent(event)
-    elseif event == "UNIT_AURA" then
-        UpdateBuffLayout(self, event, "pet")
-    elseif event == "UNIT_HAPPINESS" then
-        SetPetHappiness(self)
-    elseif event == "UNIT_PET" or event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
-        SetPortraitTexture(self.portrait, "pet")
-        if event ~= "UNIT_PET" then
-            return
+        if autoCastEnabled then
+            button.AutoCastable:Show()
+        else
+            button.AutoCastable:Hide()
+        end
+    end
+end
+
+local function UpdatePetActionBar(self, event, unit)
+    if (event == "UNIT_FLAGS" and unit ~= "pet") or (event == "UNIT_PET" and unit ~= "player") then return end
+
+    for i, button in ipairs(self.buttons) do
+        local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(i)
+        local autoCast = button.AutoCastable
+        button:SetAlpha(1)
+        button.isToken = isToken
+        button.icon:Show()
+
+        if i > 3 and i < 8 then
+            if not isToken then
+                button.icon:SetTexture(texture)
+                button.tooltipName = name
+            else
+                button.icon:SetTexture(_G[texture])
+                button.tooltipName = _G[name]
+            end
+        end
+
+        if spellID then
+            local spell = Spell:CreateFromSpellID(spellID)
+            button.spellDataLoadedCancelFunc = spell:ContinueWithCancelOnSpellLoad(function()
+                button.tooltipSubtext = spell:GetSpellSubtext()
+            end)
+        end
+
+        if isActive and name ~= "PET_ACTION_FOLLOW" then
+            button:SetChecked(true)
+
+            if IsPetAttackAction(i) then
+                if PetActionButton_StartFlash then
+                    PetActionButton_StartFlash(button)
+                else
+                    button:StartFlash()
+                end
+            end
+        else
+            button:SetChecked(false)
+
+            if IsPetAttackAction(i) then
+                if PetActionButton_StopFlash then
+                    PetActionButton_StopFlash(button)
+                else
+                    button:StopFlash()
+                end
+            end
+        end
+
+        if not PetHasActionBar() and texture and name ~= "PET_ACTION_FOLLOW" then
+            if PetActionButton_StopFlash then
+                PetActionButton_StopFlash(button)
+            else
+                button:StopFlash()
+            end
+
+            button.icon:SetDesaturation(1)
+            button:SetChecked(false)
         end
     end
 
-    local health = UnitHealth("pet")
-    local healthMax = UnitHealthMax("pet")
-    local healthprec = 0
+    UpdateAutoCast()
+end
 
+local function UpdatePetCooldown(self)
+    if PetActionBar_UpdateCooldowns then
+        PetActionBar_UpdateCooldowns()
+    else
+        local forbidden = GameTooltip:IsForbidden()
+        local owner = GameTooltip:GetOwner()
+
+        for i, button in ipairs(self.buttons) do
+            local start, duration = GetPetActionCooldown(i)
+            button.cooldown:SetCooldown(start, duration)
+
+            if not forbidden and owner == button then
+                button:OnEnter(button)
+            end
+        end
+    end
+end
+
+local function updatePowerData(self)
     local powerType, powerToken = UnitPowerType("pet")
     local resource = UnitPower("pet", powerType)
     local resourceMax = UnitPowerMax("pet", powerType)
     local resourcePrec = 0
-
-    if health > 0 and healthMax > 0 then
-        healthprec = health / healthMax
-    end
 
     if resource ~= nil and resource > 0 and resourceMax > 0 then
         resourcePrec = resource / resourceMax
@@ -156,23 +253,68 @@ local function updatePetData(self, event)
         self.resource:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
 
-    self.resource:SetValue(resourcePrec)
+    self.resource:SetFillAmount(resourcePrec)
+end
 
-    if self.health.animationCurrent == nil then
-        self.health.animationCurrent = healthprec
+local function updateHealthData(self)
+    local health = UnitHealth("pet")
+    local healthMax = UnitHealthMax("pet")
+    local healthprec = 0
+
+    if health > 0 and healthMax > 0 then
+        healthprec = health / healthMax
     end
-    AddToAnimation(
-        "petBarAnimation",
-        self.health.animationCurrent,
-        healthprec,
-        GetTime(),
-        0.2,
-        function()
-            self.health:SetValue(animations["petBarAnimation"].progress)
+
+    self.health:SetFillAmount(healthprec)
+
+    self.health.barOnUpdate = function()
+        self.health.text:SetText(CommaValue(health))
+    end
+end
+
+local function updatePetData(self, event, unit)
+    if not UnitExists("pet") then
+        return
+    end
+
+    if event == "PLAYER_ENTERING_WORLD" then
+        SetPortraitTexture(self.portrait, "pet")
+        UpdatePetActionBar(self, event, unit)
+        updateHealthData(self)
+        updatePowerData(self)
+        C_Timer.After(0.1, function() SetPetHappiness(self) end)
+    elseif event == "UNIT_AURA" then
+        UpdateBuffLayout(self, event, unit)
+        return
+    elseif event == "UNIT_HAPPINESS" then
+        SetPetHappiness(self)
+        return
+    elseif event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED" then
+        SetPortraitTexture(self.portrait, "pet")
+    elseif event == "PLAYER_REGEN_ENABLED" then
+        for i = 1, NUM_PET_ACTION_SLOTS do
+            local button = self.buttons[i]
+            if button then
+                button:ClearAllPoints()
+                button:SetPoint(button.point, button.relativeFrame, button.relativePoint, button.gwX, button.gwY)
+            end
         end
-    )
-    self.health.animationCurrent = healthprec
-    self.health.text:SetText(CommaValue(health))
+        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+        return
+    elseif GW.IsIn(event, "PET_UI_UPDATE", "PET_BAR_UPDATE", "PLAYER_CONTROL_GAINED", "PLAYER_CONTROL_LOST", "PLAYER_FARSIGHT_FOCUS_CHANGED", "SPELLS_CHANGED", "UNIT_FLAGS", "UNIT_PET") then
+        SetPortraitTexture(self.portrait, "pet")
+        UpdatePetActionBar(self, event, unit)
+        if event == "UNIT_PET" then
+            updateHealthData(self)
+            updatePowerData(self)
+        end
+    elseif event == "PET_BAR_UPDATE_COOLDOWN" then
+        UpdatePetCooldown(self)
+    elseif event == "UNIT_HEALTH_FREQUENT" or event == "UNIT_MAXHEALTH" then
+        updateHealthData(self)
+    elseif event == "UNIT_POWER_FREQUENT" or event == "UNIT_MAXPOWER" then
+        updatePowerData(self)
+    end
 end
 GW.AddForProfiling("petbar", "updatePetData", updatePetData)
 
@@ -186,13 +328,50 @@ local function TogglePetAuraPosition()
 end
 GW.TogglePetAuraPosition = TogglePetAuraPosition
 
+local function TogglePetFrameCombatFeedback()
+    if GetSetting("PET_FLOATING_COMBAT_TEXT") then
+        if not fctf then
+            fctf = CreateFrame("Frame", nil, GwPlayerPetFrame)
+            fctf:SetFrameLevel(GwPlayerPetFrame:GetFrameLevel() + 3)
+            fctf:SetScript("OnEvent", function(self, _, unit, ...)
+                if self.unit == unit then
+                    CombatFeedback_OnCombatEvent(self, ...)
+                end
+            end)
+            local font = fctf:CreateFontString(nil, "OVERLAY")
+            font:SetFont(DAMAGE_TEXT_FONT, 30, "")
+            fctf.fontString = font
+            font:SetPoint("CENTER", GwPlayerPetFrame.portrait, "CENTER")
+            font:Hide()
+
+            fctf.unit = GwPlayerPetFrame.unit
+            CombatFeedback_Initialize(fctf, fctf.fontString, 30)
+        end
+        fctf:RegisterEvent("UNIT_COMBAT")
+        fctf:SetScript("OnUpdate", CombatFeedback_OnUpdate)
+    else
+        if fctf then
+            fctf:UnregisterAllEvents()
+            fctf:SetScript("OnUpdate", nil)
+        end
+    end
+end
+GW.TogglePetFrameCombatFeedback = TogglePetFrameCombatFeedback
+
 local function LoadPetFrame(lm)
     -- disable default PetFrame stuff
     PetFrame:Kill()
 
     local playerPetFrame = CreateFrame("Button", "GwPlayerPetFrame", UIParent, "GwPlayerPetFrameTmpl")
 
-    playerPetFrame:SetAttribute("playerFrameAsTarget", GetSetting("PLAYER_AS_TARGET_FRAME"))
+    GW.hookStatusbarBehaviour(playerPetFrame.health, true)
+    GW.hookStatusbarBehaviour(playerPetFrame.resource, true)
+
+    playerPetFrame.health.customMaskSize = 64
+    playerPetFrame.resource.customMaskSize = 64
+
+    playerPetFrame.buttons = {}
+
     playerPetFrame:SetAttribute("*type1", "target")
     playerPetFrame:SetAttribute("*type2", "togglemenu")
     playerPetFrame:SetAttribute("unit", "pet")
@@ -218,14 +397,14 @@ local function LoadPetFrame(lm)
     playerPetFrame:HookScript(
         "OnShow",
         function(self)
-            updatePetData(self, "UNIT_PET")
+            updatePetData(self, "UNIT_PET", "pet")
         end
     )
     playerPetFrame.unit = "pet"
 
     playerPetFrame.displayBuffs = true
     playerPetFrame.displayDebuffs = true
-    playerPetFrame.debuffFilter = nil --"player"
+    playerPetFrame.debuffFilter = "player"
 
     playerPetFrame.portraitBackground:SetTexCoord(0, 0.25, 0, 1)
     playerPetFrame.happiness:SetScript("OnEnter", function(self)
@@ -246,58 +425,53 @@ local function LoadPetFrame(lm)
     LoadAuras(playerPetFrame)
 
     playerPetFrame:RegisterUnitEvent("UNIT_PET", "player")
-    playerPetFrame:RegisterUnitEvent("UNIT_POWER_UPDATE", "pet")
+    playerPetFrame:RegisterUnitEvent("UNIT_POWER_FREQUENT", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MAXPOWER", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "pet")
-    playerPetFrame:RegisterUnitEvent("UNIT_AURA", "pet", "player")
+    playerPetFrame:RegisterUnitEvent("UNIT_AURA", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_PORTRAIT_UPDATE", "pet")
     playerPetFrame:RegisterUnitEvent("UNIT_MODEL_CHANGED", "pet")
     playerPetFrame:RegisterEvent("UNIT_HAPPINESS")
+    playerPetFrame:RegisterEvent("PET_UI_UPDATE")
+    playerPetFrame:RegisterEvent("PET_BAR_UPDATE")
+    playerPetFrame:RegisterEvent("PLAYER_CONTROL_GAINED")
+    playerPetFrame:RegisterEvent("PLAYER_CONTROL_LOST")
+    playerPetFrame:RegisterEvent("PLAYER_FARSIGHT_FOCUS_CHANGED")
+    playerPetFrame:RegisterEvent("SPELLS_CHANGED")
+    playerPetFrame:RegisterEvent("UNIT_FLAGS")
+    playerPetFrame:RegisterEvent("PET_BAR_UPDATE_COOLDOWN")
     playerPetFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     RegisterMovableFrame(playerPetFrame, PET, "pet_pos", ALL .. ",Unitframe", nil, {"default", "scaleable"}, true)
+    lm:RegisterPetFrame(playerPetFrame)
 
     playerPetFrame:ClearAllPoints()
     playerPetFrame:SetPoint("TOPLEFT", playerPetFrame.gwMover)
 
+    -- Pet Actionbuttons here
+    for i = 1, NUM_PET_ACTION_SLOTS do
+        local button = _G["PetActionButton" .. i]
+        button:Show()
+        playerPetFrame.buttons[i] = button
+    end
 
-    lm:RegisterPetFrame(playerPetFrame)
-
-    setPetBar(playerPetFrame)
+    SetPetActionButtonPositionAndStyle(playerPetFrame)
+    hooksecurefunc("PetActionBar_Update", UpdatePetActionBarIcons)
+    UpdatePetActionBarIcons()
 
     -- hook hotkey update calls so we can override styling changes
     local hotkeyEventTrackerFrame = CreateFrame("Frame")
     hotkeyEventTrackerFrame:RegisterEvent("UPDATE_BINDINGS")
+    hotkeyEventTrackerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     hotkeyEventTrackerFrame:SetScript("OnEvent", function()
-        for i = 1, 12 do
-            if playerPetFrame.gwButton[i] then
-                GW.updateHotkey(playerPetFrame.gwButton[i])
-                GW.FixHotKeyPosition(playerPetFrame.gwButton[i], false, true)
-            end
+        for _, button in ipairs(GwPlayerPetFrame.buttons) do
+            GW.updateHotkey(button)
+            GW.FixHotKeyPosition(button, false, true)
         end
     end)
 
     -- create floating combat text
-    if GetSetting("PET_FLOATING_COMBAT_TEXT") then
-        local fctf = CreateFrame("Frame", nil, playerPetFrame)
-        fctf:SetFrameLevel(playerPetFrame:GetFrameLevel() + 3)
-        fctf:RegisterEvent("UNIT_COMBAT")
-        fctf:SetScript("OnEvent", function(self, _, unit, ...)
-            if self.unit == unit then
-                CombatFeedback_OnCombatEvent(self, ...)
-            end
-        end)
-        fctf:SetScript("OnUpdate", CombatFeedback_OnUpdate)
-        fctf.unit = playerPetFrame.unit
-
-        local font = fctf:CreateFontString(nil, "OVERLAY")
-        font:SetFont(DAMAGE_TEXT_FONT, 30)
-        fctf.fontString = font
-        font:SetPoint("CENTER", playerPetFrame.portrait, "CENTER")
-        font:Hide()
-
-        CombatFeedback_Initialize(fctf, font, 30)
-    end
+    TogglePetFrameCombatFeedback()
 end
 GW.LoadPetFrame = LoadPetFrame

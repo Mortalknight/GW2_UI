@@ -38,13 +38,13 @@ local function createNormalUnitFrame(ftype, revert)
     f.healthString = hg.healPrediction.absorbbg.health.antiHeal.absorbOverlay.healthString
 
     --GwTargetUnitFrame.health:GetValue()
-    GW.hookStatusbarBehaviour(f.absorbOverlay,true)
-    GW.hookStatusbarBehaviour(f.antiHeal,true)
-    GW.hookStatusbarBehaviour(f.health, true, nil)
-    GW.hookStatusbarBehaviour(f.absorbbg,true)
-    GW.hookStatusbarBehaviour(f.healPrediction,false)
-    GW.hookStatusbarBehaviour(f.castingbarNormal,false)
-    GW.hookStatusbarBehaviour(f.powerbar,true)
+    GW.hookStatusbarBehaviour(f.absorbOverlay, true)
+    GW.hookStatusbarBehaviour(f.antiHeal, true)
+    GW.hookStatusbarBehaviour(f.health, true)
+    GW.hookStatusbarBehaviour(f.absorbbg, true)
+    GW.hookStatusbarBehaviour(f.healPrediction, false)
+    GW.hookStatusbarBehaviour(f.castingbarNormal, false)
+    GW.hookStatusbarBehaviour(f.powerbar, true)
 
     f.absorbOverlay.customMaskSize = 64
     f.antiHeal.customMaskSize = 64
@@ -60,6 +60,19 @@ local function createNormalUnitFrame(ftype, revert)
 
 
     f.frameInvert = revert
+
+    if revert then
+        f.healthString:ClearAllPoints()
+        f.healthString:SetPoint("RIGHT", f.absorbOverlay, "RIGHT", -5, -1)
+        f.healthString:SetJustifyH("RIGHT")
+
+        --f.absorbOverlay:SetReverseFill(true)
+        --f.antiHeal:SetReverseFill(true)
+        --f.health:SetReverseFill(true)
+        --f.absorbbg:SetReverseFill(true)
+        --f.healPrediction:SetReverseFill(true)
+        --f.powerbar:SetReverseFill(true)
+    end
 
     f.healthString:SetFont(UNIT_NAME_FONT, 11)
     f.healthString:SetShadowOffset(1, -1)
@@ -169,15 +182,16 @@ GW.AddForProfiling("unitframes", "createNormalUnitFrameSmall", createNormalUnitF
 local function updateHealthTextString(self, health, healthPrecentage)
     local healthString = ""
 
-    if self.showHealthValue == true then
-        healthString = CommaValue(health)
-        if self.showHealthPrecentage == true then
-            healthString = healthString .. " - "
+    if self.showHealthValue and self.showHealthPrecentage then
+        if not self.frameInvert then
+            healthString = CommaValue(health) .. " - " .. CommaValue(healthPrecentage * 100) .. "%"
+        else
+            healthString = CommaValue(healthPrecentage * 100) .. "% - " .. CommaValue(health)
         end
-    end
-
-    if self.showHealthPrecentage == true then
-        healthString = healthString .. CommaValue(healthPrecentage * 100) .. "%"
+    elseif self.showHealthValue and not self.showHealthPrecentage then
+        healthString = CommaValue(health)
+    elseif not self.showHealthValue and self.showHealthPrecentage then
+        healthString = CommaValue(healthPrecentage * 100) .. "%"
     end
 
     self.healthString:SetText(healthString)
