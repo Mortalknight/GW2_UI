@@ -87,7 +87,7 @@ local function Time_OnEnter(self)
     local lockedInstances = {raids = {}, dungeons = {}}
 
     for i = 1, GetNumSavedInstances() do
-        local name, _, _, difficulty, locked, extended, _, isRaid = GetSavedInstanceInfo(i)
+        local name, _, _, difficulty, locked, extended, _, isRaid, maxPlayer = GetSavedInstanceInfo(i)
         if locked or extended and name then
             local isLFR = (difficulty == 7 or difficulty == 17)
             local isHeroicOrMythicDungeon = (difficulty == 2 or difficulty == 23)
@@ -96,7 +96,7 @@ local function Time_OnEnter(self)
             local difficulty = (displayMythic and PLAYER_DIFFICULTY6 or (isHeroic or displayHeroic) and PLAYER_DIFFICULTY2 or isLFR and PLAYER_DIFFICULTY3 or PLAYER_DIFFICULTY1)
             local buttonImg = instanceIconByName[name] and format("|T%s:16:16:0:0:96:96:0:64:0:64|t ", instanceIconByName[name]) or ""
 
-            if isRaid then
+            if isRaid or (maxPlayer and maxPlayer >= 10) then
                 tinsert(lockedInstances.raids, {sortName, difficulty, buttonImg, {GetSavedInstanceInfo(i)}})
             elseif isHeroicOrMythicDungeon then
                 tinsert(lockedInstances.dungeons, {sortName, difficulty, buttonImg, {GetSavedInstanceInfo(i)}})
