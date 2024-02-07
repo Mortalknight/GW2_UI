@@ -1,4 +1,5 @@
 local _, GW = ...
+local AFP = GW.AddProfiling
 local AddToAnimation = GW.AddToAnimation
 local CommaValue = GW.CommaValue
 local CountTable  = GW.CountTable
@@ -14,8 +15,6 @@ local namePlateClassicGrid = {}
 local namePlatesCriticalOffsets = {}
 
 local eventHandler = CreateFrame("Frame")
-
-local settings = {}
 
 local elementIcons = {
     width = 512,
@@ -51,9 +50,6 @@ local STACKING_NORMAL_ANIMATION_OFFSET_Y = 10
 local STACKING_NORMAL_ANIMATION_OFFSET_X = -20
 local STACKING_MOVESPEED = 1
 
-local CRITICAL_SCALE_MODIFIER = 1.5
-local PET_SCALE_MODIFIER = 0.7
-
 local CLASSIC_NUM_HITS = 0
 local CLASSIC_AVARAGE_HIT = 0
 
@@ -66,6 +62,7 @@ local formats = {Default = "Default", Stacking = "Stacking", Classic = "Classic"
 
 local NORMAL_ANIMATION
 local CRITICAL_ANIMATION
+local NUM_ACTIVE_FRAMES = 0
 
 local classicGridData = {
     {x =1, y=0},
@@ -511,14 +508,18 @@ local classicGridData = {
 }
 
 local usedColorTable
+local settings = {}
 local function UpdateSettings()
-    settings.useBlizzardColor = GW.GetSetting("GW_COMBAT_TEXT_BLIZZARD_COLOR")
-    settings.useCommaFormat = GW.GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT")
-    settings.usedFormat = GW.GetSetting("GW_COMBAT_TEXT_STYLE")
-    settings.classicFormatAnchorPoint = GW.GetSetting("GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR")
-    settings.showHealNumbers = GW.GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS")
-
-    usedColorTable = settings.useBlizzardColor and colorTable.blizzard or colorTable.gw
+    usedColorTable = GW.GetSetting("GW_COMBAT_TEXT_BLIZZARD_COLOR") and colorTable.blizzard or colorTable.gw
+    settings.combatTextStyle = GW.GetSetting("GW_COMBAT_TEXT_STYLE")
+    settings.combatTextStyleClassicAnchor = GW.GetSetting("GW_COMBAT_TEXT_STYLE_CLASSIC_ANCHOR")
+    settings.combatTextStyleCommaFormat = GW.GetSetting("GW_COMBAT_TEXT_COMMA_FORMAT")
+    settings.combatTextStyleFontSizePetModifier = GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER")
+    settings.combatTextStyleFontSizeMiss = GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_MISS")
+    settings.combatTextStyleFontSizeBlockAbsorbe = GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_BLOCKED_ABSORBE")
+    settings.combatTextStyleFontSizeCrit = GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_CRIT")
+    settings.combatTextStyleFontSize = GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE")
+    settings.combatTextStyleSHowHealing = GW.GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS")
 end
 GW.UpdateDameTextSettings = UpdateSettings
 
@@ -553,6 +554,9 @@ local function getSchoolIconMap(self, school)
     end
 end
 
+local function getDurationModifier()
+    return math.max(1,NUM_ACTIVE_FRAMES / 10)
+end
 local function calcAvarageHit(amount)
     if CLASSIC_NUM_HITS>100 then
         return
@@ -630,7 +634,7 @@ local function animateTextCriticalForStackingFormat(frame)
             if p < 0.25 then
                 local scaleFade = p - 0.25
                 frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X, 0, scaleFade / 0.25)
-                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.textScaleModifier, scaleFade / 0.25))
+                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * math.max(0.1, tonumber(settings.combatTextStyleFontSizeCrit_MODIFIER)), frame.textScaleModifier, scaleFade / 0.25))
             else
                 frame:SetScale(frame.textScaleModifier)
             end
@@ -649,6 +653,7 @@ local function animateTextCriticalForStackingFormat(frame)
         end
     )
 end
+AFP("animateTextCriticalForStackingFormat", animateTextCriticalForStackingFormat)
 
 local function animateTextNormalForStackingFormat(frame)
     local aName = frame:GetName()
@@ -682,6 +687,7 @@ local function animateTextNormalForStackingFormat(frame)
         end
     )
 end
+AFP("animateTextNormalForStackingFormat", animateTextNormalForStackingFormat)
 
 -- DEFAULT
 local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
@@ -695,9 +701,7 @@ local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
         CRITICAL_ANIMATION_DURATION,
         function(p)
             if p < 0.25 then
-                local scaleFade = p - 0.25
-
-                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.textScaleModifier, scaleFade / 0.25))
+                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * math.max(0.1, tonumber(settings.combatTextStyleFontSizeCrit_MODIFIER)), frame.textScaleModifier, p / 0.25))
             else
                 frame:SetScale(frame.textScaleModifier)
             end
@@ -723,6 +727,7 @@ local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
         end
     )
 end
+AFP("animateTextCriticalForDefaultFormat", animateTextCriticalForDefaultFormat)
 
 local function animateTextNormalForDefaultFormat(frame, offsetIndex)
     local aName = frame:GetName()
@@ -758,56 +763,60 @@ local function animateTextNormalForDefaultFormat(frame, offsetIndex)
         end
     )
 end
+AFP("animateTextNormalForDefaultFormat", animateTextNormalForDefaultFormat)
 
 --CLASSIC
 local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
     local aName = frame:GetName()
-
+    NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES +1;
     AddToAnimation(
         aName,
         0,
         1,
         GetTime(),
-        CRITICAL_ANIMATION_DURATION  * (frame.dynamicScale + CRITICAL_SCALE_MODIFIER),
+        math.min(CRITICAL_ANIMATION_DURATION*2,(CRITICAL_ANIMATION_DURATION  * (frame.dynamicScale + math.max(0.1, tonumber(settings.combatTextStyleFontSizeCrit_MODIFIER))))) / getDurationModifier(),
         function(p)
             if frame.anchorFrame == nil or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame
                 classicPositionGrid(frame.anchorFrame)
             end
+
             if p < 0.05 and not frame.periodic then
-                frame:SetScale(math.max(0.1, GW.lerp(1.5 * frame.dynamicScale * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER, frame.dynamicScale, (p - 0.05) / 0.05)))
+                frame:SetScale(math.max(0.1, GW.lerp(2 * frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(settings.combatTextStyleFontSizeCrit_MODIFIER)), frame.dynamicScale, p  / 0.05)))
             else
-                frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier * CRITICAL_SCALE_MODIFIER))
+                frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(settings.combatTextStyleFontSizeCrit_MODIFIER))))
             end
 
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
 
-            if p > 0.7 then
-                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.7) / 0.3))))
+            if p > 0.9 then
+                frame:SetAlpha(math.min(1, math.max(0, GW.lerp(1, 0, (p - 0.9) / 0.1))))
             else
                 frame:SetAlpha(1)
             end
         end,
         nil,
         function()
-        if namePlateClassicGrid[frame.anchorFrame] and gridIndex ~= nil then
-            namePlateClassicGrid[frame.anchorFrame][gridIndex] = nil
-        end
+            if namePlateClassicGrid[frame.anchorFrame] and gridIndex ~= nil then
+                namePlateClassicGrid[frame.anchorFrame][gridIndex] = nil
+            end
             frame:SetScale(1)
             frame:Hide()
+            NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES - 1;
         end
     )
 end
+AFP("animateTextCriticalForClassicFormat", animateTextCriticalForClassicFormat)
 
 local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
     local aName = frame:GetName()
-
+    NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES + 1;
     AddToAnimation(
         aName,
         0,
         1,
         GetTime(),
-        NORMAL_ANIMATION_DURATION,
+        NORMAL_ANIMATION_DURATION / getDurationModifier(),
         function(p)
             if frame.anchorFrame==nil or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame
@@ -815,7 +824,7 @@ local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
             end
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
             if p < 0.10 and not frame.periodic then
-                frame:SetScale(math.max(0.1, GW.lerp(1.2 * frame.dynamicScale * frame.textScaleModifier, frame.dynamicScale, (p - 0.10) / 0.10)))
+                frame:SetScale(math.max(0.1, GW.lerp(1.2 * frame.dynamicScale * frame.textScaleModifier, frame.dynamicScale, p  / 0.10)))
             else
                 frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier))
             end
@@ -832,9 +841,11 @@ local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
             end
             frame:SetScale(1)
             frame:Hide()
+            NUM_ACTIVE_FRAMES = NUM_ACTIVE_FRAMES - 1;
         end
     )
 end
+AFP("animateTextNormalForClassicFormat", animateTextNormalForClassicFormat)
 
 local createdFramesIndex = 0
 local function createNewFontElement(self)
@@ -851,6 +862,7 @@ local function createNewFontElement(self)
     createdFramesIndex = createdFramesIndex + 1
     return f
 end
+AFP("createNewFontElement", createNewFontElement)
 
 local function getFontElement(self)
     for _, f in pairs(fontStringList) do
@@ -867,23 +879,24 @@ local function getFontElement(self)
         return f
     end
 end
+AFP("getFontElement", getFontElement)
 
 local function setElementData(self, critical, source, missType, blocked, absorbed, periodic, school)
     if missType then
         self.critTexture:Hide()
-        self.string:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINED")
+        self.string:SetFont(DAMAGE_TEXT_FONT, settings.combatTextStyleFontSizeMiss, "OUTLINED")
         self.crit = false
     elseif blocked or absorbed then
         self.critTexture:Hide()
-        self.string:SetFont(DAMAGE_TEXT_FONT, 14, "OUTLINED")
+        self.string:SetFont(DAMAGE_TEXT_FONT, settings.combatTextStyleFontSizeBlockAbsorbe, "OUTLINED")
         self.crit = false
     elseif critical then
         self.critTexture:Show()
-        self.string:SetFont(DAMAGE_TEXT_FONT, 34, "OUTLINED")
+        self.string:SetFont(DAMAGE_TEXT_FONT, settings.combatTextStyleFontSizeCrit, "OUTLINED")
         self.crit = true
     else
         self.critTexture:Hide()
-        self.string:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINED")
+        self.string:SetFont(DAMAGE_TEXT_FONT, settings.combatTextStyleFontSize, "OUTLINED")
         self.crit = false
     end
 
@@ -896,7 +909,7 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
     end
 
     self.pet = source == "pet"
-    self.textScaleModifier = self.pet and PET_SCALE_MODIFIER or 1
+    self.textScaleModifier = self.pet and math.max(0.1, tonumber(settings.combatTextStyleFontSizePetModifier)) or 1
     self.periodic = periodic
 
     local colorSource = (source == "pet" or source == "melee") and source or source == "heal" and "heal" or "spell"
@@ -907,18 +920,20 @@ local function setElementData(self, critical, source, missType, blocked, absorbe
 
     self:ClearAllPoints()
 end
+AFP("setElementData", setElementData)
 
 local function formatDamageValue(amount)
-    return settings.useCommaFormat and CommaValue(amount) or amount
+    return settings.combatTextStyleCommaFormat and CommaValue(amount) or amount
 end
+AFP("formatDamageValue", formatDamageValue)
 
 local function displayDamageText(self, guid, amount, critical, source, missType, blocked, absorbed, periodic,school)
     local f = getFontElement(self)
     f.string:SetText(missType and getglobal(missType) or blocked and format(TEXT_MODE_A_STRING_RESULT_BLOCK, formatDamageValue(blocked)) or absorbed and format(TEXT_MODE_A_STRING_RESULT_ABSORB, formatDamageValue(absorbed)) or formatDamageValue(amount))
 
-    if settings.usedFormat == formats.Default or settings.usedFormat == formats.Classic then
+    if settings.combatTextStyle == formats.Default or settings.combatTextStyle == formats.Classic then
         local nameplate
-        if settings.classicFormatAnchorPoint == "Center" and settings.usedFormat == formats.Classic then
+        if settings.combatTextStyleClassicAnchor == "Center" and settings.combatTextStyle == formats.Classic then
             nameplate = ClassicDummyFrame
         else
             local unit = guidToUnit[guid]
@@ -929,7 +944,7 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
             end
 
             if not nameplate then
-                if settings.usedFormat == formats.Default then
+                if settings.combatTextStyle == formats.Default then
                     return
                 else
                     nameplate = ClassicDummyFrame -- use as fallback if namplates out off range
@@ -964,19 +979,19 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
                 end
             end
 
-            if settings.usedFormat == formats.Default then
+            if settings.combatTextStyle == formats.Default then
                 CRITICAL_ANIMATION(f, namePlatesCriticalOffsets[nameplate])
             else
                 CRITICAL_ANIMATION(f, classicPositionGrid(nameplate))
             end
             return
         end
-        if settings.usedFormat == formats.Default then
+        if settings.combatTextStyle == formats.Default then
             NORMAL_ANIMATION(f, namePlatesOffsets[nameplate])
         else
             NORMAL_ANIMATION(f, classicPositionGrid(nameplate))
         end
-    elseif settings.usedFormat == formats.Stacking then
+    elseif settings.combatTextStyle == formats.Stacking then
         f.anchorFrame = stackingContainer
         -- Add damage text to array of active Elements
         table.insert(stackingContainer.activeFrames, f)
@@ -991,13 +1006,14 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         end
     end
 end
+AFP("displayDamageText", displayDamageText)
 
 local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlags, _, destGUID, _, _, _, ...)
     local targetUnit = guidToUnit[destGUID]
     -- if targetNameplate doesnt exists, ignore
-    if settings.usedFormat == formats.Default and not targetUnit then return end
+    if settings.combatTextStyle == formats.Default and not targetUnit then return end
     local _
-    if playerGUID == sourceGUID then
+    if playerGUID == sourceGUID and playerGUID~=destGUID then
         local periodic = false
         local element = nil
         if (string.find(event, "_DAMAGE")) then
@@ -1023,7 +1039,7 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
                 _, _, _, missType = ...
             end
             displayDamageText(self, destGUID, nil, nil, nil, missType)
-        elseif ((settings.usedFormat == formats.Stacking or (settings.usedFormat == formats.Classic and settings.classicFormatAnchorPoint == "Center"))) and settings.showHealNumbers and string.find(event, "_HEAL") then
+        elseif ((settings.combatTextStyle == formats.Stacking or (settings.combatTextStyle == formats.Classic and settings.combatTextStyleClassicAnchor == "Center"))) and settings.combatTextStyleSHowHealing and string.find(event, "_HEAL") then
             local amount, overhealing, absorbed, critical = select(4, ...)
             if amount - overhealing > 0 then
                 displayDamageText(self, destGUID, (amount - overhealing), critical, "heal", nil, nil, (absorbed > 0 and absorbed or nil))
@@ -1051,6 +1067,7 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
         end
     end
 end
+AFP("handleCombatLogEvent", handleCombatLogEvent)
 
 local function onNamePlateAdded(_, _, unitID)
     local guid = UnitGUID(unitID)
@@ -1059,6 +1076,7 @@ local function onNamePlateAdded(_, _, unitID)
         guidToUnit[guid] = unitID
     end
 end
+AFP("onNamePlateAdded", onNamePlateAdded)
 
 local function onNamePlateRemoved(_, _, unitID)
     local guid = unitToGuid[unitID]
@@ -1066,7 +1084,7 @@ local function onNamePlateRemoved(_, _, unitID)
     unitToGuid[unitID] = nil
     guidToUnit[guid] = nil
 
-    if settings.usedFormat == formats.Classic then
+    if settings.combatTextStyle == formats.Classic then
       return
     end
 
@@ -1076,6 +1094,7 @@ local function onNamePlateRemoved(_, _, unitID)
         end
     end
 end
+AFP("onNamePlateRemoved", onNamePlateRemoved)
 
 local function RescanAllNameplates()
     for _, frame in pairs(C_NamePlate.GetNamePlates(false)) do
@@ -1090,6 +1109,7 @@ end
 local function onCombatLogEvent(self)
     handleCombatLogEvent(self, CombatLogGetCurrentEventInfo())
 end
+AFP("onNamePlateRemoved", onNamePlateRemoved)
 
 local function ToggleFormat(activate)
     if activate then
@@ -1105,30 +1125,21 @@ local function ToggleFormat(activate)
             end
         end)
 
-        if settings.usedFormat == formats.Default or settings.usedFormat == formats.Classic then
+        if settings.combatTextStyle == formats.Default or settings.combatTextStyle == formats.Classic then
             -- hide the other format things
-            if stackingContainer then
-                -- TODO remove from Move Hud mode
-                stackingContainer:SetScript("OnUpdate", nil)
-                stackingContainer:Hide()
-                wipe(stackingContainer.activeFrames)
-            end
+            GW.ToggleMover(stackingContainer.gwMover, false)
+
+            stackingContainer:SetScript("OnUpdate", nil)
+            stackingContainer:Hide()
+            wipe(stackingContainer.activeFrames)
 
             NUM_OBJECTS_HARDLIMIT = 20
 
-            if settings.usedFormat == formats.Classic then
-                if not ClassicDummyFrame then
-                    ClassicDummyFrame = CreateFrame("Frame", nil, UIParent)
-                    ClassicDummyFrame:ClearAllPoints()
-                    ClassicDummyFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-                    ClassicDummyFrame:SetSize(100, 50)
-                    ClassicDummyFrame:EnableMouse(false)
-                end
-
+            if settings.combatTextStyle == formats.Classic then
                 CRITICAL_ANIMATION = animateTextCriticalForClassicFormat
                 NORMAL_ANIMATION = animateTextNormalForClassicFormat
 
-                if settings.classicFormatAnchorPoint == "Nameplates" then
+                if settings.combatTextStyleClassicAnchor == "Nameplates" then
                     eventHandler:RegisterEvent("NAME_PLATE_UNIT_ADDED")
                     eventHandler:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 
@@ -1143,9 +1154,7 @@ local function ToggleFormat(activate)
 
                 ClassicDummyFrame:Show()
             else
-                if ClassicDummyFrame then
-                    ClassicDummyFrame:Hide()
-                end
+                ClassicDummyFrame:Hide()
 
                 CRITICAL_ANIMATION = animateTextCriticalForDefaultFormat
                 NORMAL_ANIMATION = animateTextNormalForDefaultFormat
@@ -1157,21 +1166,8 @@ local function ToggleFormat(activate)
 
                 wipe(namePlateClassicGrid)
             end
-        elseif settings.usedFormat == formats.Stacking then
-            if not stackingContainer then
-                stackingContainer = CreateFrame("Frame", nil, UIParent)
-                stackingContainer:SetSize(200, 400)
-                stackingContainer:EnableMouse(false)
-                stackingContainer:ClearAllPoints()
-                GW.RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", ALL .. ",FCT", nil, {"default", "scaleable"})
-                stackingContainer:ClearAllPoints()
-                stackingContainer:SetPoint("TOPLEFT", stackingContainer.gwMover)
-                stackingContainer.activeFrames = {}
-            end
-
-            if ClassicDummyFrame then
-                ClassicDummyFrame:Hide()
-            end
+        elseif settings.combatTextStyle == formats.Stacking then
+            ClassicDummyFrame:Hide()
 
             CRITICAL_ANIMATION = animateTextCriticalForStackingFormat
             NORMAL_ANIMATION = animateTextNormalForStackingFormat
@@ -1188,6 +1184,7 @@ local function ToggleFormat(activate)
 
             stackingContainer:SetScript("OnUpdate", stackingContainerOnUpdate)
             stackingContainer:Show()
+            GW.ToggleMover(stackingContainer.gwMover, true)
         end
     else
         eventHandler:UnregisterAllEvents()
@@ -1196,20 +1193,33 @@ local function ToggleFormat(activate)
         wipe(unitToGuid)
         wipe(guidToUnit)
 
-        if stackingContainer then
-            -- TODO remove from Move Hud mode
-            stackingContainer:SetScript("OnUpdate", nil)
-            stackingContainer:Hide()
-        end
-        if ClassicDummyFrame then
-            ClassicDummyFrame:Hide()
-        end
+        GW.ToggleMover(stackingContainer.gwMover, false)
+        stackingContainer:SetScript("OnUpdate", nil)
+        stackingContainer:Hide()
+
+        ClassicDummyFrame:Hide()
     end
 end
 GW.FloatingCombatTextToggleFormat = ToggleFormat
 
 local function LoadDamageText(activate)
     UpdateSettings()
+    -- Create the needed frames
+    stackingContainer = CreateFrame("Frame", nil, UIParent)
+    stackingContainer:SetSize(200, 400)
+    stackingContainer:EnableMouse(false)
+    stackingContainer:ClearAllPoints()
+    GW.RegisterMovableFrame(stackingContainer, GW.L["FCT Container"], "FCT_STACKING_CONTAINER", ALL .. ",FCT", nil, {"default", "scaleable"})
+    stackingContainer:ClearAllPoints()
+    stackingContainer:SetPoint("TOPLEFT", stackingContainer.gwMover)
+    stackingContainer.activeFrames = {}
+
+    ClassicDummyFrame = CreateFrame("Frame", nil, UIParent)
+    ClassicDummyFrame:ClearAllPoints()
+    ClassicDummyFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    ClassicDummyFrame:SetSize(100, 50)
+    ClassicDummyFrame:EnableMouse(false)
+
     ToggleFormat(activate)
     playerGUID = UnitGUID("player")
 end

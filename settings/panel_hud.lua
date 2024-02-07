@@ -167,8 +167,6 @@ local function LoadHudPanel(sWindow)
     addOption(worldmap.scroll.scrollchild, L["Show Coordinates on World Map"], L["Show Coordinates on World Map"], "WORLDMAP_COORDS_TOGGLE", GW.ToggleWorldMapCoords, nil)
 
     --FCT
-    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
-    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
     addOptionDropdown(
         fct.scroll.scrollchild,
         COMBAT_TEXT_LABEL,
@@ -201,6 +199,10 @@ local function LoadHudPanel(sWindow)
         nil,
         "FloatingCombatText"
     )
+    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Use Blizzard colors"], nil, "GW_COMBAT_TEXT_BLIZZARD_COLOR", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. L[": Show numbers with commas"], nil, "GW_COMBAT_TEXT_COMMA_FORMAT", GW.UpdateDameTextSettings, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2"}, "FloatingCombatText")
+    addOption(fct.scroll.scrollchild, COMBAT_TEXT_LABEL .. ": " .. L["Show healing numbers"], nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
+
 
     addOptionDropdown(
         fct.scroll.scrollchild,
@@ -229,7 +231,102 @@ local function LoadHudPanel(sWindow)
         nil,
         "FloatingCombatText"
     )
-    addOption(fct.scroll.scrollchild, L["Show healing numbers"], nil, "GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS", function(value) if value then C_CVar.SetCVar("floatingCombatTextCombatHealing", "0") else C_CVar.SetCVar("floatingCombatTextCombatHealing", "1") end GW.UpdateDameTextSettings() end, nil, {["GW_COMBAT_TEXT_MODE"] = "GW2", ["GW_COMBAT_TEXT_STYLE"] = {EXPANSION_NAME0, "Stacking"}}, "FloatingCombatText")
+    addOptionSlider(
+        fct.scroll.scrollchild,
+        FONT_SIZE,
+        nil,
+        "GW_COMBAT_TEXT_FONT_SIZE",
+        GW.UpdateDameTextSettings,
+        2,
+        50,
+        nil,
+        0,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        2,
+        "FloatingCombatText",
+        nil,
+        COMBAT_TEXT_LABEL
+    )
+    addOptionSlider(
+        fct.scroll.scrollchild,
+        FONT_SIZE .. ": " .. MISS,
+        nil,
+        "GW_COMBAT_TEXT_FONT_SIZE_MISS",
+        GW.UpdateDameTextSettings,
+        2,
+        50,
+        nil,
+        0,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        2,
+        "FloatingCombatText",
+        nil,
+        COMBAT_TEXT_LABEL
+    )
+    addOptionSlider(
+        fct.scroll.scrollchild,
+        FONT_SIZE .. ": " .. CRIT_ABBR,
+        nil,
+        "GW_COMBAT_TEXT_FONT_SIZE_CRIT",
+        GW.UpdateDameTextSettings,
+        2,
+        50,
+        nil,
+        0,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        2,
+        "FloatingCombatText",
+        nil,
+        COMBAT_TEXT_LABEL
+    )
+    addOptionSlider(
+        fct.scroll.scrollchild,
+        FONT_SIZE .. ": " .. BLOCK .. "/" .. ABSORB,
+        nil,
+        "GW_COMBAT_TEXT_FONT_SIZE_BLOCKED_ABSORBE",
+        GW.UpdateDameTextSettings,
+        2,
+        50,
+        nil,
+        0,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        2,
+        "FloatingCombatText",
+        nil,
+        COMBAT_TEXT_LABEL
+    )
+    addOptionSlider(
+        fct.scroll.scrollchild,
+        FONT_SIZE .. ": " .. L["Crit modifier"],
+        L["Used for animations"],
+        "GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER",
+        GW.UpdateDameTextSettings,
+        0.1,
+        50,
+        nil,
+        2,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        nil,
+        "FloatingCombatText",
+        nil,
+        COMBAT_TEXT_LABEL
+    )
+    addOptionSlider(
+        fct.scroll.scrollchild,
+        FONT_SIZE .. ": " .. L["Pet number modifier"],
+        nil,
+        "GW_COMBAT_TEXT_FONT_SIZE_PET_MODIFIER",
+        GW.UpdateDameTextSettings,
+        0.1,
+        50,
+        nil,
+        2,
+        {["GW_COMBAT_TEXT_MODE"] = "GW2"},
+        nil,
+        "FloatingCombatText",
+        nil,
+        COMBAT_TEXT_LABEL
+    )
 
 
     InitPanel(general, true)

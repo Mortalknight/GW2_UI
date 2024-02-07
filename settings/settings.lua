@@ -750,7 +750,7 @@ local function InitPanel(panel, hasScroll)
                     end
                     local roundValue = RoundDec(self:GetValue(), of.decimalNumbers)
 
-                    SetSetting(of.optionName, roundValue)
+                    SetSetting(of.optionName, tonumber(roundValue))
                     self:GetParent().inputFrame.input:SetText(roundValue)
                     if v.callback then
                         v.callback()
@@ -786,7 +786,7 @@ local function InitPanel(panel, hasScroll)
                     end
                     self:GetParent():GetParent().slider:SetValue(roundValue)
                     self:SetText(roundValue)
-                    SetSetting(v.optionName, roundValue)
+                    SetSetting(v.optionName, tonumber(roundValue))
                     if v.callback then
                         v.callback()
                     end
