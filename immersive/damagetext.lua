@@ -554,8 +554,10 @@ local function calcAvarageHit(amount)
     CLASSIC_NUM_HITS = CLASSIC_NUM_HITS + 1
     CLASSIC_AVARAGE_HIT = CLASSIC_AVARAGE_HIT + amount
 end
-local function getAvrageHitModifier(amount,critical)
-  if amount == nil then return 0 end
+local function getAvrageHitModifier(amount, critical, forAdd)
+    if amount == nil then
+        return forAdd and 0 or 1
+    end
 
 	local a = CLASSIC_AVARAGE_HIT / CLASSIC_NUM_HITS;
 
@@ -764,7 +766,7 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
         0,
         1,
         GetTime(),
-        math.min(CRITICAL_ANIMATION_DURATION*2,(CRITICAL_ANIMATION_DURATION  * (frame.dynamicScale + math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER))))) / getDurationModifier(),
+        math.min(CRITICAL_ANIMATION_DURATION*2,(CRITICAL_ANIMATION_DURATION  * (frame.dynamicScaleAdd + math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER))))) / getDurationModifier(),
         function(p)
             if frame.anchorFrame == nil or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame
@@ -772,7 +774,7 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
             end
 
             if p < 0.05 and not frame.periodic then
-                frame:SetScale(math.max(0.1, GW.lerp(2 * frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER)), frame.dynamicScale, p  / 0.05)))
+                frame:SetScale(math.max(0.1, GW.lerp(2 * frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER)), frame.dynamicScaleAdd, p  / 0.05)))
             else
                 frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(GW.settings.GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER))))
             end
@@ -814,7 +816,7 @@ local function animateTextNormalForClassicFormat(frame, gridIndex, x, y)
             end
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
             if p < 0.10 and not frame.periodic then
-                frame:SetScale(math.max(0.1, GW.lerp(1.2 * frame.dynamicScale * frame.textScaleModifier, frame.dynamicScale, p  / 0.10)))
+                frame:SetScale(math.max(0.1, GW.lerp(1.2 * frame.dynamicScale * frame.textScaleModifier, frame.dynamicScaleAdd, p  / 0.10)))
             else
                 frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier))
             end
@@ -946,7 +948,8 @@ local function displayDamageText(self, guid, amount, critical, source, missType,
         end
 
         f.anchorFrame = nameplate
-        f.dynamicScale = getAvrageHitModifier(amount,critical)
+        f.dynamicScale = getAvrageHitModifier(amount, critical)
+        f.dynamicScaleAdd = getAvrageHitModifier(amount,critical, true)
 
         setElementData(f, critical, source, missType, blocked, absorbed, periodic, school)
 
