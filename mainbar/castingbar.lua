@@ -355,8 +355,18 @@ local function TogglePlayerEnhancedCastbar(self, setShown)
     self.icon:SetShown(setShown)
     self.latency:SetShown(setShown)
     self.time:SetShown(setShown)
-
     self.showDetails = setShown
+
+    if self.gwMover then
+        self:ClearAllPoints()
+        if setShown then
+            self.gwMover:SetSize(self:GetWidth() + self.icon:GetWidth(), math.max(self:GetHeight(), self.icon:GetHeight()))
+            self:SetPoint("CENTER", self.gwMover, self.icon:GetWidth() / 2, -(self.icon:GetHeight() / 4))
+        else
+            self.gwMover:SetSize(self:GetWidth(), self:GetHeight())
+            self:SetPoint("CENTER", self.gwMover)
+        end
+    end
 end
 GW.TogglePlayerEnhancedCastbar = TogglePlayerEnhancedCastbar
 
@@ -391,16 +401,16 @@ local function LoadCastingBar(name, unit, showTradeSkills)
 
     GwCastingBar.segments = {}
 
-    TogglePlayerEnhancedCastbar(GwCastingBar, GwCastingBar.showDetails)
-
     if name == "GwCastingBarPlayer" then
         RegisterMovableFrame(GwCastingBar, SHOW_ARENA_ENEMY_CASTBAR_TEXT, "castingbar_pos", ALL .. ",Blizzard", nil, {"default", "scaleable"})
         GwCastingBar:ClearAllPoints()
-        GwCastingBar:SetPoint("TOPLEFT", GwCastingBar.gwMover)
+        GwCastingBar:SetPoint("CENTER", GwCastingBar.gwMover)
     else
         GwCastingBar:ClearAllPoints()
         GwCastingBar:SetPoint("TOPLEFT", GwCastingBarPlayer.gwMover, "TOPLEFT", 0, 35)
     end
+
+    TogglePlayerEnhancedCastbar(GwCastingBar, GwCastingBar.showDetails)
 
     GwCastingBar:SetScript("OnEvent", unit == "pet" and petCastBar_OnEvent or castBar_OnEvent)
 
