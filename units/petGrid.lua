@@ -145,7 +145,7 @@ local function PetGridOnEvent(self, event, unit)
     if not UnitExists(self.unit) then
         return
     elseif not self.nameNotLoaded then
-        GW.GridSetUnitName(self, "RAID_PET")
+        GW.GridSetUnitName(self)
     end
 
     if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
@@ -212,7 +212,7 @@ local function PetGridOnEvent(self, event, unit)
     elseif event == "PLAYER_TARGET_CHANGED" then
         GW.GridHighlightTargetFrame(self)
     elseif event == "UNIT_NAME_UPDATE" then
-        GW.GridSetUnitName(self, "RAID_PET")
+        GW.GridSetUnitName(self)
     elseif event == "UNIT_AURA" then
         GW.GridUpdateAuras(self, "RAID_PET")
     elseif event == "PLAYER_ENTERING_WORLD" then

@@ -968,11 +968,23 @@ local function GridUpdateFrameData(self, index, profile)
         self.manabar:SetStatusBarColor(pwcolor.r, pwcolor.g, pwcolor.b)
     end
     GW.GridSetHealAbsorb(self);
-    GW.GridSetUnitName(self, profile)
+    GW.GridSetUnitName(self)
     GW.GridUpdateAwayData(self, profile)
     GW.GridUpdateAuras(self, profile)
 end
 GW.GridUpdateFrameData = GridUpdateFrameData
+
+---- Settings Function Functions
+local function GridUpdateFramesLayout(profile)
+    if profile == "RAID" then
+        GW.GridRaidUpdateFramesLayout()
+    elseif profile == "PARTY" then
+        GW.GridPartyUpdateFramesLayout()
+    elseif profile == "RAID_PET" then
+        GW.GridRaidPetUpdateFramesLayout()
+    end
+end
+GW.GridUpdateFramesLayout = GridUpdateFramesLayout
 
 local function GridUpdateFramesPosition(profile)
     if profile == "RAID" then

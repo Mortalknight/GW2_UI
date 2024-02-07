@@ -209,7 +209,7 @@ local function PartyGridOnEvent(self, event, unit)
     if not UnitExists(self.unit) or (self.unit == "player" and (not IsInGroup() and previewStep == 0)) then
         return
     elseif not self.nameNotLoaded then
-        GW.GridSetUnitName(self, "PARTY")
+        GW.GridSetUnitName(self)
     end
 
     if event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
@@ -261,7 +261,7 @@ local function PartyGridOnEvent(self, event, unit)
     elseif event == "PLAYER_TARGET_CHANGED" then
         GW.GridHighlightTargetFrame(self)
     elseif event == "UNIT_NAME_UPDATE" then
-        GW.GridSetUnitName(self, "PARTY")
+        GW.GridSetUnitName(self)
     elseif event == "UNIT_AURA" then
         GW.GridUpdateAuras(self, "PARTY")
     elseif event == "PLAYER_ENTERING_WORLD" then
