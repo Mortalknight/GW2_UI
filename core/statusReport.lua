@@ -113,11 +113,10 @@ local function CreateStatusFrame()
         edgeSize = 32,
         insets = {left = 2, right = 2, top = 2, bottom = 2}
     }
-    local isPasteAddon = CheckForPasteAddon()
 
     --Main frame
     local StatusFrame = CreateFrame("Frame", "GWStatusFrame", UIParent)
-    StatusFrame:SetSize(320, 685)
+    StatusFrame:SetSize(320, 720)
     StatusFrame:SetPoint("CENTER", UIParent, "CENTER")
     StatusFrame:SetFrameStrata("HIGH")
     StatusFrame:CreateBackdrop(BackdropFrame)
@@ -139,7 +138,7 @@ local function CreateStatusFrame()
     --Sections
     StatusFrame.Section1 = CreateSection(300, 150, StatusFrame, "TOP", StatusFrame, "TOP", -150)
     StatusFrame.Section2 = CreateSection(300, 150, StatusFrame, "TOP", StatusFrame.Section1, "BOTTOM", 0)
-    StatusFrame.Section3 = CreateSection(300, 150, StatusFrame, "TOP", StatusFrame.Section2, "BOTTOM", 0)
+    StatusFrame.Section3 = CreateSection(300, 185, StatusFrame, "TOP", StatusFrame.Section2, "BOTTOM", 0)
     StatusFrame.Section4 = CreateSection(300, 60, StatusFrame, "TOP", StatusFrame.Section3, "BOTTOM", 0)
 
     --Section headers
@@ -151,7 +150,7 @@ local function CreateStatusFrame()
     --Section content
     StatusFrame.Section1.Content = CreateContentLines(5, StatusFrame.Section1, StatusFrame.Section1.Header)
     StatusFrame.Section2.Content = CreateContentLines(5, StatusFrame.Section2, StatusFrame.Section2.Header)
-    StatusFrame.Section3.Content = CreateContentLines(5, StatusFrame.Section3, StatusFrame.Section3.Header)
+    StatusFrame.Section3.Content = CreateContentLines(6, StatusFrame.Section3, StatusFrame.Section3.Header)
     StatusFrame.Section4.Content = CreateFrame("Frame", nil, StatusFrame.Section4)
     StatusFrame.Section4.Content:SetSize(240, 25)
     StatusFrame.Section4.Content:SetPoint("TOP", StatusFrame.Section4.Header, "BOTTOM", 0, 0)
@@ -159,7 +158,7 @@ local function CreateStatusFrame()
     --Content lines
     StatusFrame.Section1.Content.Line1.Text:SetFormattedText("GW2 UI version: |cff4beb2c%s|r", GW.VERSION_STRING)
     StatusFrame.Section1.Content.Line2.Text:SetFormattedText("Other AddOns Enabled: |cff4beb2c%s|r", AreOtherAddOnsEnabled())
-    StatusFrame.Section1.Content.Line3.Text:SetFormattedText("Paste Addon Enabled: %s", isPasteAddon and "|cffff0000Yes|r" or "|cff4beb2cNo|r")
+    StatusFrame.Section1.Content.Line3.Text:SetFormattedText("Paste Addon Enabled: %s", CheckForPasteAddon() and "|cffff0000Yes|r" or "|cff4beb2cNo|r")
     StatusFrame.Section1.Content.Line4.Text:SetFormattedText("Recommended Scale: |cff4beb2c%s|r", GW.getBestPixelScale())
     StatusFrame.Section1.Content.Line5.Text:SetFormattedText("UI Scale Is: %s", GW.scale == GW.getBestPixelScale() and  format("|cff4beb2c%s|r", GW.scale) or format("|cffff0000%s|r", GW.scale))
     StatusFrame.Section2.Content.Line1.Text:SetFormattedText("WoW version: |cff4beb2c%s (build %s)|r", GW.wowpatch, GW.wowbuild) 
@@ -172,6 +171,7 @@ local function CreateStatusFrame()
     StatusFrame.Section3.Content.Line3.Text:SetFormattedText("Class: |cff4beb2c%s|r", EnglishClassName[GW.myclass])
     StatusFrame.Section3.Content.Line4.Text:SetFormattedText("Level: |cff4beb2c%s|r", GW.mylevel)
     StatusFrame.Section3.Content.Line5.Text:SetFormattedText("Zone: |cff4beb2c%s|r", GetRealZoneText())
+    StatusFrame.Section3.Content.Line6.Text:SetFormattedText("Game Mode: |cff4beb2c%s|r", GW.ClassicHC and "Hardcore" or GW.ClassicSOD and "Seasonal" or "Normal")
 
     --Action button
     StatusFrame.Section4.Content.Button1 = CreateFrame("Button", nil, StatusFrame.Section4.Content, "GwStandardButton")
