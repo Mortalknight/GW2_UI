@@ -426,15 +426,12 @@ local function getObjectiveBlock(self, index)
     if self.objectiveBlocksNum == nil then
         self.objectiveBlocksNum = 0
     end
-    if self.objectiveBlocks == nil then
-        self.objectiveBlocks = {}
-    end
-
+    self.objectiveBlocks = self.objectiveBlocks or {}
     self.objectiveBlocksNum = self.objectiveBlocksNum + 1
 
     local newBlock = CreateObjectiveNormal(self:GetName() .. "GwQuestObjective" .. self.objectiveBlocksNum, self)
     newBlock:SetParent(self)
-    self.objectiveBlocks[#self.objectiveBlocks] = newBlock
+    tinsert(self.objectiveBlocks, newBlock)
     if self.objectiveBlocksNum == 1 then
         newBlock:SetPoint("TOPRIGHT", self, "TOPRIGHT", 0, -25)
     else
