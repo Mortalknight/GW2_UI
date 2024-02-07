@@ -729,7 +729,7 @@ local function InitPanel(panel, hasScroll)
             )
         elseif v.optionType == "slider" then
             of.slider:SetMinMaxValues(v.min, v.max)
-            of.slider:SetValue(GetSetting(of.optionName) or GW.GetDefault(of.optionName) )
+            of.slider:SetValue(RoundDec(GetSetting(of.optionName) or GW.GetDefault(of.optionName)))
             if v.step then of.slider:SetValueStep(v.step) end
             of.slider:SetObeyStepOnDrag(true)
             of.slider:SetScript(
@@ -751,13 +751,13 @@ local function InitPanel(panel, hasScroll)
                     local roundValue = RoundDec(self:GetValue(), of.decimalNumbers)
 
                     SetSetting(of.optionName, tonumber(roundValue))
-                    self:GetParent().inputFrame.input:SetText(roundValue)
+                    self:GetParent().inputFrame.input:SetText(tonumber(roundValue))
                     if v.callback then
                         v.callback()
                     end
                 end
             )
-            of.inputFrame.input:SetNumber(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
+            of.inputFrame.input:SetText(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
             of.inputFrame.input:SetScript(
                 "OnEnterPressed",
                 function(self)
@@ -771,7 +771,7 @@ local function InitPanel(panel, hasScroll)
                                 SetOverrideIncompatibleAddons(v.incompatibleAddonsType, false)
                             end
                         end
-                        self:SetNumber(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
+                        self:SetText(RoundDec(GetSetting(of.optionName), of.decimalNumbers))
                         return
                     end
                     local roundValue = RoundDec(self:GetNumber(), of.decimalNumbers) or v.min
@@ -784,7 +784,7 @@ local function InitPanel(panel, hasScroll)
                         local min_value = v.min or 0
                         roundValue = floor((roundValue - min_value) / v.step + 0.5) * v.step + min_value
                     end
-                    self:GetParent():GetParent().slider:SetValue(roundValue)
+                    self:GetParent():GetParent().slider:SetValue(tonumber(roundValue))
                     self:SetText(roundValue)
                     SetSetting(v.optionName, tonumber(roundValue))
                     if v.callback then
