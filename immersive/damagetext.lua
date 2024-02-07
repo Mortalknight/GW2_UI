@@ -1059,7 +1059,6 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
             else
                 _, _, _, amount, _, _, _, blocked, absorbed, critical = ...
             end
-            print(amount, critical, blocked, absorbed)
             displayDamageText(self, destGUID, amount, critical, "pet", nil, blocked, absorbed)
         elseif (string.find(event, "_MISSED")) then
             local missType
@@ -1068,7 +1067,6 @@ local function handleCombatLogEvent(self, _, event, _, sourceGUID, _, sourceFlag
             elseif (string.find(event, "SWING")) then
                 missType = ...
             end
-            print(missType)
             displayDamageText(self, destGUID, nil, nil, "pet", missType)
         end
     end
