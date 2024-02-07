@@ -520,6 +520,7 @@ local function UpdateSettings()
     settings.combatTextStyleFontSizeCrit = GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_CRIT")
     settings.combatTextStyleFontSize = GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE")
     settings.combatTextStyleSHowHealing = GW.GetSetting("GW_COMBAT_TEXT_SHOW_HEALING_NUMBERS")
+    settings.combatTextStyleFontSizeCritModifier = GW.GetSetting("GW_COMBAT_TEXT_FONT_SIZE_CRIT_MODIFIER")
 end
 GW.UpdateDameTextSettings = UpdateSettings
 
@@ -634,7 +635,7 @@ local function animateTextCriticalForStackingFormat(frame)
             if p < 0.25 then
                 local scaleFade = p - 0.25
                 frame.offsetX = GW.lerp(STACKING_NORMAL_ANIMATION_OFFSET_X, 0, scaleFade / 0.25)
-                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * math.max(0.1, tonumber(settings.combatTextStyleFontSizeCrit_MODIFIER)), frame.textScaleModifier, scaleFade / 0.25))
+                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * math.max(0.1, tonumber(settings.combatTextStyleFontSizeCritModifier)), frame.textScaleModifier, scaleFade / 0.25))
             else
                 frame:SetScale(frame.textScaleModifier)
             end
@@ -701,7 +702,7 @@ local function animateTextCriticalForDefaultFormat(frame, offsetIndex)
         CRITICAL_ANIMATION_DURATION,
         function(p)
             if p < 0.25 then
-                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * math.max(0.1, tonumber(settings.combatTextStyleFontSizeCrit_MODIFIER)), frame.textScaleModifier, p / 0.25))
+                frame:SetScale(GW.lerp(1 * frame.textScaleModifier * math.max(0.1, tonumber(settings.combatTextStyleFontSizeCritModifier)), frame.textScaleModifier, p / 0.25))
             else
                 frame:SetScale(frame.textScaleModifier)
             end
@@ -774,7 +775,7 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
         0,
         1,
         GetTime(),
-        math.min(CRITICAL_ANIMATION_DURATION*2,(CRITICAL_ANIMATION_DURATION  * (frame.dynamicScale + math.max(0.1, tonumber(settings.combatTextStyleFontSizeCrit_MODIFIER))))) / getDurationModifier(),
+        math.min(CRITICAL_ANIMATION_DURATION*2,(CRITICAL_ANIMATION_DURATION  * (frame.dynamicScale + math.max(0.1, tonumber(settings.combatTextStyleFontSizeCritModifier))))) / getDurationModifier(),
         function(p)
             if frame.anchorFrame == nil or not frame.anchorFrame:IsShown() then
                 frame.anchorFrame = ClassicDummyFrame
@@ -782,9 +783,9 @@ local function animateTextCriticalForClassicFormat(frame, gridIndex, x, y)
             end
 
             if p < 0.05 and not frame.periodic then
-                frame:SetScale(math.max(0.1, GW.lerp(2 * frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(settings.combatTextStyleFontSizeCrit_MODIFIER)), frame.dynamicScale, p  / 0.05)))
+                frame:SetScale(math.max(0.1, GW.lerp(2 * frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(settings.combatTextStyleFontSizeCritModifier)), frame.dynamicScale, p  / 0.05)))
             else
-                frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(settings.combatTextStyleFontSizeCrit_MODIFIER))))
+                frame:SetScale(math.max(0.1, frame.dynamicScale * frame.textScaleModifier * math.max(0.1, tonumber(settings.combatTextStyleFontSizeCritModifier))))
             end
 
             frame:SetPoint("CENTER", frame.anchorFrame, "CENTER", 50 * x, 50 * y)
