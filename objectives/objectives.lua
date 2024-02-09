@@ -512,10 +512,8 @@ local function getBlock(blockIndex)
             return
         end
 
-        local valid
-        local rangeTimer = self.rangeTimer
-        local charges = GetItemCount(self.itemID, nil, true)
 
+        local charges = GetItemCount(self.itemID, nil, true)
         if (not charges or charges ~= self.charges) then
             self.count:Hide()
             self.charges = GetItemCount(self.itemID, nil, true)
@@ -525,24 +523,25 @@ local function getBlock(blockIndex)
             end
         end
 
-        if UnitExists("target") then
+        if UnitExists("target") and (not UnitIsFriend("player", "target") or (not InCombatLockdown())) then
 
             if not self.itemName then
                 self.itemName = GetItemInfo(self.itemID)
             end
 
+            local rangeTimer = self.rangeTimer
             if (rangeTimer) then
                 rangeTimer = rangeTimer - elapsed
 
                 if (rangeTimer <= 0) then
 
-                    valid = IsItemInRange(self.itemName, "target")
+                    local isInRange = IsItemInRange(self.itemName, "target")
 
-                    if valid == false then
+                    if isInRange == false then
                         self.HotKey:SetVertexColor(1.0, 0.1, 0.1)
                         self.HotKey:Show()
 
-                    elseif valid == true then
+                    elseif isInRange == true then
                         self.HotKey:SetVertexColor(0.6, 0.6, 0.6)
                         self.HotKey:Show()
                     end
