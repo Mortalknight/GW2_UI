@@ -220,7 +220,7 @@ end
 GW.Update5SrHot = Update5SrHot()
 
 local function load5SR(playerFrame)
-    if loaded then return end
+    if not loaded then return end
     loaded = true
     local powerType, powerName = UnitPowerType("player")
     -- Setup bar
