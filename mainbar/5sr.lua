@@ -2,6 +2,7 @@ local _, GW = ...
 
 local fsrMana
 local fsrEnergy
+local loaded = false
 
 local Mp5IgnoredSpells = {
     [11689] = true, -- life tap 6
@@ -180,7 +181,7 @@ local function Update5SrHot()
     local hide_ofc = GW.GetSetting("PLAYER_ENERGY_MANA_TICK_HIDE_OFC")
 
     if hide_ofc then
-        if fsrMana then 
+        if fsrMana then
             fsrMana:RegisterEvent("PLAYER_REGEN_DISABLED")
             fsrMana:RegisterEvent("PLAYER_REGEN_ENABLED")
         end
@@ -190,7 +191,7 @@ local function Update5SrHot()
             fsrEnergy:RegisterEvent("PLAYER_REGEN_ENABLED")
         end
     else
-        if fsrMana then 
+        if fsrMana then
             fsrMana:UnregisterEvent("PLAYER_REGEN_DISABLED")
             fsrMana:UnregisterEvent("PLAYER_REGEN_ENABLED")
         end
@@ -206,7 +207,7 @@ local function Update5SrHot()
         if fsrEnergy then fsrEnergy:Hide() end
     end
 
-    if fsrMana then 
+    if fsrMana then
         fsrMana.showTimer = GW.GetSetting("PLAYER_5SR_TIMER")
         fsrMana.showTick = GW.GetSetting("PLAYER_5SR_MANA_TICK")
     end
@@ -219,6 +220,8 @@ end
 GW.Update5SrHot = Update5SrHot()
 
 local function load5SR(playerFrame)
+    if loaded then return end
+    loaded = true
     local powerType, powerName = UnitPowerType("player")
     -- Setup bar
     fsrMana = createStatusbar(playerFrame)
