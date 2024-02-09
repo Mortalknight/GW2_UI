@@ -978,20 +978,20 @@ local function updateQuestLogLayout(self)
                     local qA = QuestieDB.GetQuest(a.questId)
                     local qB = QuestieDB.GetQuest(b.questId)
                     local qAZone, qBZone
-                    if qA.zoneOrSort > 0 then
+                    if qA and qA.zoneOrSort > 0 then
                         qAZone = QuestieTrackerUtils:GetZoneNameByID(qA.zoneOrSort)
-                    elseif qA.zoneOrSort < 0 then
+                    elseif qA and qA.zoneOrSort < 0 then
                         qAZone = QuestieTrackerUtils:GetCategoryNameByID(qA.zoneOrSort)
                     else
-                        qAZone = tostring(qA.zoneOrSort)
+                        qAZone = tostring(qA and qA.zoneOrSort or "")
                     end
 
-                    if qB.zoneOrSort > 0 then
+                    if qB and qB.zoneOrSort > 0 then
                         qBZone = QuestieTrackerUtils:GetZoneNameByID(qB.zoneOrSort)
-                    elseif qB.zoneOrSort < 0 then
+                    elseif qB and qB.zoneOrSort < 0 then
                         qBZone = QuestieTrackerUtils:GetCategoryNameByID(qB.zoneOrSort)
                     else
-                        qBZone = tostring(qB.zoneOrSort)
+                        qBZone = tostring(qB and qB.zoneOrSort or "")
                     end
 
                     -- Sort by Zone then by Level to mimic QuestLog sorting

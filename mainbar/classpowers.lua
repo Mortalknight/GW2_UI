@@ -73,6 +73,7 @@ local function setComboBar(f)
     f.background:SetTexture(nil)
     f.fill:SetTexture(nil)
     f:SetHeight(32)
+    f:SetWidth(220)
     f.combopoints:Show()
 
     f:SetScript("OnEvent", powerCombo)
@@ -93,7 +94,7 @@ local function setManaBar(f)
     GwPlayerPowerBarExtra:Show()
 
     f:SetWidth(220)
-    f:SetHeight(30)
+    f:SetHeight(32)
     --f:Hide()
 
     GwPlayerPowerBarExtra:SetScript("OnEvent", powerMana)

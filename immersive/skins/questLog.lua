@@ -445,6 +445,13 @@ local function LoadQuestLogFrameSkin()
 	QuestLogListScrollFrame:CreateBackdrop(GW.skins.constBackdropFrameBorder, true, 2, 2)
     QuestLogDetailScrollFrame:CreateBackdrop(GW.skins.constBackdropFrameBorder, true, 2, 4)
 
+	local detailBg = QuestLogFrame:CreateTexture("bg", "BACKGROUND", nil, 7)
+	detailBg:SetPoint("TOPLEFT", QuestLogFrame, "TOPLEFT", 15, -40)
+	detailBg:SetPoint("BOTTOMRIGHT", QuestLogFrame, "BOTTOMRIGHT", -QuestLogFrame:GetWidth(), 100)
+	detailBg:SetTexture("Interface/AddOns/GW2_UI/textures/character/worldmap-questlog-background")
+	detailBg:SetTexCoord(0, 0.70703125, 0, 0.580078125)
+	QuestLogFrame.tex = detailBg
+
 	QuestLogTitleText:Hide()
 
 	QuestLogFrameCloseButton:SetPoint("TOPRIGHT", QuestLogFrame, "TOPRIGHT", -5, -3)
