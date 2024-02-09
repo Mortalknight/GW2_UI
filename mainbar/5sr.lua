@@ -131,7 +131,7 @@ local function createStatusbar(playerFrame)
 
     fsr:ClearAllPoints()
     if playerFrame then
-        fsr:SetPoint("LEFT", playerFrame.powerbarBackground, "LEFT", 2, -3)
+        fsr:SetPoint("LEFT", playerFrame.powerbar, "LEFT", 0, -3)
     else
         fsr:SetPoint("TOPLEFT", GwPlayerPowerBar, "TOPLEFT", 0, 2)
     end
@@ -220,7 +220,7 @@ end
 GW.Update5SrHot = Update5SrHot()
 
 local function load5SR(playerFrame)
-    if not loaded then return end
+    if loaded then return end
     loaded = true
     local powerType, powerName = UnitPowerType("player")
     -- Setup bar
