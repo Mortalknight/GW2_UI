@@ -200,6 +200,9 @@ local function Update5SrHot()
             fsrEnergy:UnregisterEvent("PLAYER_REGEN_DISABLED")
             fsrEnergy:UnregisterEvent("PLAYER_REGEN_ENABLED")
         end
+
+        if fsrMana then fsrMana:Show() end
+        if fsrEnergy then fsrEnergy:Show() end
     end
 
     if not InCombatLockdown() and hide_ofc then
@@ -217,7 +220,7 @@ local function Update5SrHot()
         fsrEnergy.showTick = GW.GetSetting("PLAYER_5SR_MANA_TICK")
     end
 end
-GW.Update5SrHot = Update5SrHot()
+GW.Update5SrHot = Update5SrHot
 
 local function load5SR(playerFrame)
     if loaded then return end
