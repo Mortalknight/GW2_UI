@@ -366,7 +366,7 @@ local function GridSetUnitName(self)
         return
     end
 
-    local role = UnitGroupRolesAssigned(self.unit)
+    --local role = UnitGroupRolesAssigned(self.unit)
     local nameString = UnitName(self.unit)
 
     if not nameString or nameString == UNKNOWNOBJECT then
@@ -375,9 +375,9 @@ local function GridSetUnitName(self)
         self.nameNotLoaded = true
     end
 
-    if nameRoleIcon[role] then
-        nameString = nameRoleIcon[role] .. nameString
-    end
+    --if nameRoleIcon[role] then
+    --    nameString = nameRoleIcon[role] .. nameString
+    --end
 
     if UnitIsGroupLeader(self.unit) then
         nameString = "|TInterface/AddOns/GW2_UI/textures/party/icon-groupleader:0:0:0:-2:64:64:4:60:4:60|t " .. nameString

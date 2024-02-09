@@ -40,7 +40,7 @@ local function LoadTotemTimersSkin()
                     self:SetTexCoord(0.1, 0.9, 0.1, 0.9)
                 end
             end)
-            for mi = 1, v.button.nrOfTimers or 1 do
+            for mi = 1, v.button.nrOfTimers or 2 do
                 if v.button.icons[mi] then
                     v.button.icons[mi]:SetTexCoord(0.1, 0.9, 0.1, 0.9)
                     hooksecurefunc(v.button.icons[mi], "SetTexCoord", function(self, a, b, c, d)

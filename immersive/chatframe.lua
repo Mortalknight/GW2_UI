@@ -2070,7 +2070,7 @@ local function LoadChat()
         if event == "PLAYER_ENTERING_WORLD" then
             ChatFrameChannelButton:UpdateVisibleState()
         elseif event == "GROUP_ROSTER_UPDATE" then
-            CollectLfgRolesForChatIcons()
+            --CollectLfgRolesForChatIcons()
         elseif event == "CVAR_UPDATE" and ... == "ENABLE_SPEECH_TO_TEXT_TRANSCRIPTION" then
             local showVoice = GetCVarBool("speechToText")
             SetChatWindowShown(3, showVoice)

@@ -10,5 +10,5 @@ local ct = {
 GW.CHANGELOGS_TYPES = ct
 
 addChange("3.0.0",{
-    {ct.change,[=[Update settings widows]=]},
+    {ct.change,[=[Portover from retail]=]},
 })
