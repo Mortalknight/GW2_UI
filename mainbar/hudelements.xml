@@ -116,7 +116,7 @@
                 if button == "RightButton" then
                     CancelTrackingBuff()
                 end
-            </OnMouseUp> 
+            </OnMouseUp>
             <OnEnter>
                 GameTooltip:SetOwner(self, "ANCHOR_LEFT");
                 GameTooltip:SetTrackingSpell()
