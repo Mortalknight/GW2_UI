@@ -9,6 +9,13 @@ local ct = {
 
 GW.CHANGELOGS_TYPES = ct
 
+
+addChange("3.0.0",{
+  {ct.bug,[=[Fix target frame level color]=]},
+  {ct.bug,[=[Fix targetframe combopoints]=]},
+  {ct.bug,[=[Fix MP5 bar]=]},
+})
+
 addChange("3.0.0",{
     {ct.change,[=[Portover from retail]=]},
 })
