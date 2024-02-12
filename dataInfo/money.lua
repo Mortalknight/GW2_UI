@@ -45,7 +45,6 @@ local function Money_OnClick(self, button)
                                 func = function()
                                     ClearStorage(nil, char.name)
                                     GW.UpdateCharData()
-                                    UpdateMoney()
                                 end
                             })
                         end

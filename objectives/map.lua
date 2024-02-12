@@ -392,8 +392,8 @@ local function LoadMinimap()
         GwMiniMapTrackingFrame:Hide()
     end
 
-    GwMiniMapTrackingFrame:RegisterEvent("UNIT_AURA")
     GwMiniMapTrackingFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    GwMiniMapTrackingFrame:RegisterEvent("MINIMAP_UPDATE_TRACKING")
     GwMiniMapTrackingFrame:SetScript("OnEvent", function(self, event)
         local icontype = GetTrackingTexture()
         if icontype == 132328 then icontype = icontype .. GW.myClassID end
