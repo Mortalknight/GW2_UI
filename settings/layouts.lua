@@ -293,6 +293,7 @@ local function CreateProfileLayout()
         end
     end
 end
+GW.CreateProfileLayout = CreateProfileLayout
 
 local function CreateNewLayout(self)
     GW.InputPrompt(

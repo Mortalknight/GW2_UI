@@ -468,6 +468,12 @@ local function addProfile(name, profileData, copy)
         GW.globalSettings.profiles[name].profilename = name
     elseif profileData then
         GW.globalSettings.profiles[name] = profileData
+    else
+        local currentProfile = GW.globalSettings:GetCurrentProfile()
+        GW.globalSettings:SetProfile(name)
+        GW.globalSettings:ResetProfile(nil, true)
+        GW.CreateProfileLayout()
+        GW.globalSettings:SetProfile(currentProfile)
     end
 
     loadProfiles(ProfileWin)

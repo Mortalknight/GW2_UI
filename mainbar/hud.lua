@@ -713,14 +713,23 @@ local function updateBarSize(self)
 end
 GW.AddForProfiling("hud", "updateBarSize", updateBarSize)
 
-local action_hud_auras = {}
+local actionHudPlayerAuras = {}
+local actionHudPlayerPetAuras = {}
 
 local function registerActionHudAura(auraID, left, right, unit)
-    action_hud_auras[auraID] = {}
-    action_hud_auras[auraID].auraID = auraID
-    action_hud_auras[auraID].left = left
-    action_hud_auras[auraID].right = right
-    action_hud_auras[auraID].unit = unit
+    if unit == "player" then
+        actionHudPlayerAuras[auraID] = {}
+        actionHudPlayerAuras[auraID].auraID = auraID
+        actionHudPlayerAuras[auraID].left = left
+        actionHudPlayerAuras[auraID].right = right
+        actionHudPlayerAuras[auraID].unit = unit
+    elseif unit == "pet" then
+        actionHudPlayerPetAuras[auraID] = {}
+        actionHudPlayerPetAuras[auraID].auraID = auraID
+        actionHudPlayerPetAuras[auraID].left = left
+        actionHudPlayerPetAuras[auraID].right = right
+        actionHudPlayerPetAuras[auraID].unit = unit
+    end
 end
 GW.AddForProfiling("hud", "registerActionHudAura", registerActionHudAura)
 
@@ -760,21 +769,23 @@ local function selectBg(self)
         left = "Interface/AddOns/GW2_UI/textures/hud/leftshadowcombat"
 
         local bolFound = false
-        for i = 1, 40 do
-            local auraData = C_UnitAuras.GetBuffDataByIndex("player", i)
-            if auraData and action_hud_auras[auraData.spellId] and action_hud_auras[auraData.spellId].unit == "player" then
-                right = action_hud_auras[auraData.spellId].right
-                left = action_hud_auras[auraData.spellId].left
+        --player buffs
+        for k, v in pairs(actionHudPlayerAuras) do
+            local auraData = C_UnitAuras.GetPlayerAuraBySpellID(k)
+            if auraData then
+                right = v.right
+                left = v.left
                 bolFound = true
                 break
             end
         end
+        -- pet buffs
         if not bolFound then
             for i = 1, 40 do
                 local auraData = C_UnitAuras.GetBuffDataByIndex("pet", i)
-                if auraData and action_hud_auras[auraData.spellId] and action_hud_auras[auraData.spellId].unit == "pet" then
-                    right = action_hud_auras[auraData.spellId].right
-                    left = action_hud_auras[auraData.spellId].left
+                if auraData and actionHudPlayerPetAuras[auraData.spellId] and actionHudPlayerPetAuras[auraData.spellId].unit == "pet" then
+                    right = actionHudPlayerPetAuras[auraData.spellId].right
+                    left = actionHudPlayerPetAuras[auraData.spellId].left
                     break
                 end
             end
