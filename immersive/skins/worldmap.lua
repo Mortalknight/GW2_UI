@@ -32,6 +32,7 @@ local function GetScaleDistance()
 end
 
 local function LoadWorldMapSkin()
+    if not GW.GetSetting("WORLDMAP_SKIN_ENABLED") then return end
     WorldMapFrame:StripTextures()
     WorldMapFrame.BlackoutFrame:Kill()
 
