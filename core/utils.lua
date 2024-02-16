@@ -164,20 +164,14 @@ local function FormatMoneyForChat(amount)
 end
 GW.FormatMoneyForChat = FormatMoneyForChat
 
-local function GWGetClassColor(class, useClassColor, forNameString)
+local function GWGetClassColor(class, useClassColor, forNameString, alwaysUseBlizzardColors)
     if not class or not useClassColor then
         return RAID_CLASS_COLORS.PRIEST
     end
 
-    local useBlizzardClassColor = GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
-    local color
+    local useBlizzardClassColor = alwaysUseBlizzardColors or GW.GetSetting("BLIZZARDCLASSCOLOR_ENABLED")
+    local color = useBlizzardClassColor and RAID_CLASS_COLORS[class] or CLASS_COLORS_RAIDFRAME[class]
     local colorForNameString
-
-    if useBlizzardClassColor then
-        color = RAID_CLASS_COLORS[class]
-    else
-        color = CLASS_COLORS_RAIDFRAME[class]
-    end
 
     if type(color) ~= "table" then return end
 
@@ -188,7 +182,7 @@ local function GWGetClassColor(class, useClassColor, forNameString)
     end
 
     if forNameString and not useBlizzardClassColor then
-        colorForNameString = {r = color.r + 0.3, g = color.g + 0.3, b = color.b + 0.3, a = color.a, colorStr = GW.RGBToHex(color.r + 0.3, color.g + 0.3, color.b + 0.3, "ff")}
+        colorForNameString = {r = min(1, color.r + 0.3), g = min(1, color.g + 0.3), b = min(1, color.b + 0.3), a = color.a, colorStr = GW.RGBToHex(min(1, color.r + 0.3), min(1, color.g + 0.3), min(1, color.b + 0.3), "ff")}
     end
 
     return forNameString and colorForNameString or color
@@ -768,6 +762,20 @@ local function EscapeString(s)
     return gsub(s, "([%(%)%.%%%+%-%*%?%[%^%$])", "%%%1")
 end
 GW.EscapeString = EscapeString
+
+do
+    local a1,a2 = '','[%s%-]'
+    local function ShortenRealm(realm)
+        return gsub(realm, a2, a1)
+    end
+    GW.ShortenRealm = ShortenRealm
+
+    local a3 = format('%%-%s', ShortenRealm(GW.myrealm))
+    local function StripMyRealm(name)
+        return gsub(name, a3, a1)
+    end
+    GW.StripMyRealm = StripMyRealm
+end
 
 local function CopyTable(newTable, tableToCopy)
     if type(newTable) ~= "table" then newTable = {} end

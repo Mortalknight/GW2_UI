@@ -805,7 +805,7 @@ local function GW_GetPlayerInfoByGUID(guid)
         GuidCache[guid] = data
     end
 
-    if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true) end
+    if data then data.classColor = GW.GWGetClassColor(data.englishClass, true, true, true) end
 
     return data
 end

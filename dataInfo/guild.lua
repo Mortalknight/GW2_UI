@@ -66,7 +66,7 @@ local function FetchGuildMembers()
 
         if connected or isMobile then
             guildTable[#guildTable + 1] = {
-                name = gsub(name, gsub(GW.myrealm, "[%s%-]", ""), ""),
+                name = GW.StripMyRealm(name),
                 rank = rank,
                 level = level,
                 zone = zone,
@@ -146,7 +146,7 @@ local function Guild_OnEnter(self)
         if not classc then classc = levelc end
 
         if shiftDown then
-            GameTooltip:AddDoubleLine(strmatch(info.name, "([^%-]+).*") .. " |cff999999-|cffffffff " .. info.rank, info.zone, classc.r, classc.g, classc.b, zonec.r, zonec.g, zonec.b)
+            GameTooltip:AddDoubleLine(info.name.. " |cff999999-|cffffffff " .. info.rank, info.zone, classc.r, classc.g, classc.b, zonec.r, zonec.g, zonec.b)
             if info.note ~= "" then
                 GameTooltip:AddLine("|cff999999   " .. LABEL_NOTE .. ":|r " .. info.note, ttsubh.r, ttsubh.g, ttsubh.b, 1)
             end
@@ -191,20 +191,20 @@ local function Guild_OnClick(self, button)
         menuList[3].menuList = {}
 
         for _, info in ipairs(guildTable) do
-            if (info.online or info.isMobile) and strmatch(info.name, "([^%-]+).*") ~= GW.myname then
+            if (info.online or info.isMobile) and info.name ~= GW.myname then
                 local classc, levelc = GW.GWGetClassColor(info.class, true, true), GetQuestDifficultyColor(info.level)
                 if not classc then classc = levelc end
 
-                local name = format("|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r", levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, strmatch(info.name, "([^%-]+).*"))
-                if inGroup(strmatch(info.name, "([^%-]+).*")) ~= "" then
+                local name = format("|cff%02x%02x%02x%d|r |cff%02x%02x%02x%s|r", levelc.r * 255, levelc.g * 255, levelc.b * 255, info.level, classc.r * 255, classc.g * 255, classc.b * 255, info.name)
+                if inGroup(info.name) ~= "" then
                     name = name .. " |cffaaaaaa*|r"
                 elseif not (info.isMobile and info.zone == REMOTE_CHAT) then
                     menuCountInvites = menuCountInvites + 1
-                    menuList[2].menuList[menuCountInvites] = {text = name, arg1 = strmatch(info.name, "([^%-]+).*"), arg2 = info.guid, notCheckable = true, func = inviteClick}
+                    menuList[2].menuList[menuCountInvites] = {text = name, arg1 = info.name, arg2 = info.guid, notCheckable = true, func = inviteClick}
                 end
 
                 menuCountWhispers = menuCountWhispers + 1
-                menuList[3].menuList[menuCountWhispers] = {text = name, arg1 = strmatch(info.name, "([^%-]+).*"), notCheckable = true, func = whisperClick}
+                menuList[3].menuList[menuCountWhispers] = {text = name, arg1 = info.name, notCheckable = true, func = whisperClick}
             end
         end
         GW.SetEasyMenuAnchor(GW.EasyMenu, self)
