@@ -17,5 +17,5 @@
     <Script file="questTimers.lua"/>
 
     <Script file="addons\detailsProfile.lua"/>
-    <Script file="addons\TotemTimers.lua"/>
+    <Script file="addons\masqueSkin.lua"/>
 </Ui>

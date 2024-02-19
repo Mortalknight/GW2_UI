@@ -10,7 +10,7 @@
     <Frame name="GwMultibarTmpl" virtual="true" protected="true" parent="UIParent" hidden="true" enableMouse="true" inherits="SecureHandlerStateTemplate">
     </Frame>
 
-   <Frame name="GwActionButtonBackdropTmpl" virtual="true" frameLevel="1">
+    <Frame name="GwActionButtonBackdropTmpl" virtual="true" frameLevel="1">
         <Anchors>
             <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-1" y="1"></Anchor>
             <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="1" y="-1"></Anchor>
