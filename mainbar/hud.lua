@@ -747,9 +747,5 @@ local function LoadXPBar()
         UIFrameFadeIn(self.RepuBar, 0.2, self.RepuBar:GetAlpha(), 1)
         UIFrameFadeIn(self.PetBar, 0.2, self.PetBar:GetAlpha(), 1)
     end)
-
-    if MainMenuBarMaxLevelBar then
-        MainMenuBarMaxLevelBar:Hide()
-    end
 end
 GW.LoadXPBar = LoadXPBar

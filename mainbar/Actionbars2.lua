@@ -44,7 +44,8 @@ local GW_BLIZZARD_FORCE_HIDE = {
     StanceBarMiddle,
     StanceBarRight,
     PossessBackground1,
-    PossessBackground2
+    PossessBackground2,
+    MainMenuBarMaxLevelBar
 }
 
 -- forward function defs

@@ -1,7 +1,4 @@
-3.0.1-Era
-   Fix target frame level color
-   Fix targetframe combopoints
-   Fix MP5 bar
-
-3.0.0-Era
-   Portover from retail
+3.1.0-Era
+   Added Actionbutton masque skin
+   Portover chatframe changes
+   Fix some bugs
