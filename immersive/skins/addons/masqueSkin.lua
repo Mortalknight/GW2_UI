@@ -36,7 +36,7 @@ local function AddMasqueSkin()
         Pushed = {
             Width = 38,
             Height = 38,
-            Texture = [[Interface/AddOns/GW2_UI/textures/actionbutton-pressed]],
+            Texture = [[Interface/AddOns/GW2_UI/textures/uistuff/actionbutton-pressed]],
         },
         Normal = {
             Texture = [[Interface\AddOns\GW2_UI\textures\bag\bagnormal]],
@@ -52,7 +52,7 @@ local function AddMasqueSkin()
             Height = 38,
             BlendMode = "ADD",
             Color = {1, 1, 1, 1},
-            Texture = [[Interface/AddOns/GW2_UI/textures/UI-Quickslot-Depress]],
+            Texture = [[Interface/AddOns/GW2_UI/textures/uistuff/UI-Quickslot-Depress]],
         },
         Border = {
             Width = 38,
