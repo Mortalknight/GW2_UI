@@ -110,7 +110,7 @@ local function LoadHudPanel(sWindow)
         end
     )
     addOptionSlider(
-        fct.scroll.scrollchild,
+        general.scroll.scrollchild,
         L["HUD Scale"],
         L["Change the HUD size."],
         "HUD_SCALE",
