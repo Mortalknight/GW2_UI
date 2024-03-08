@@ -55,7 +55,7 @@
             <Anchor point="LEFT" relativePoint="LEFT"></Anchor>
         </Anchors>
         <Layers>
-            <Layer level="ARTWORK" textureSubLevel="-1">
+            <Layer level="BORDER" textureSubLevel="-7">
                 <Texture parentKey="targetHighlight" file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Color r="0" g="0" b="0" a="1"></Color>
                     <Anchors>
@@ -64,12 +64,12 @@
                     </Anchors>
                 </Texture>
             </Layer>
-            <Layer level="ARTWORK">
+            <Layer level="BORDER">
                 <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
                     <Color r="0" g="0" b="0" a="1"></Color>
                     <Anchors>
-                        <Anchor point="TOPLEFT" x="1" y="-1"></Anchor>
-                        <Anchor point="BOTTOMRIGHT" x="-1" y="1"></Anchor>
+                        <Anchor point="TOPLEFT" x="0" y="0"></Anchor>
+                        <Anchor point="BOTTOMRIGHT" x="0" y="0"></Anchor>
                     </Anchors>
                 </Texture>
             </Layer>
@@ -85,12 +85,22 @@
             <StatusBar parentKey="manabar" hidden="true" defaultValue="1" minValue="0" maxValue="1">
                 <Size x="65" y="3"></Size>
                 <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="1" y="2"></Anchor>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-1" y="-1"></Anchor>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="0" y="1"></Anchor>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"></Anchor>
                 </Anchors>
                 <BarTexture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar"/>
                 <BarColor r="0.207" g="0.392" b="0.168"></BarColor>
-
+                <Layers>
+                    <Layer level="BORDER">
+                        <Texture file="Interface/AddOns/GW2_UI/textures/uistuff/gwstatusbar">
+                            <Color r="0" g="0" b="0" a="1"></Color>
+                            <Anchors>
+                                <Anchor point="TOPLEFT" x="0" y="1"></Anchor>
+                                <Anchor point="BOTTOMRIGHT" x="0" y="-1"></Anchor>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
             </StatusBar>
 
             <StatusBar parentKey="indicatorBAR" orientation="VERTICAL" defaultValue="1" minValue="0" maxValue="1">
