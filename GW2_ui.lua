@@ -661,6 +661,7 @@ local function evPlayerLogin(self)
 
     GW.LoadDetailsSkin()
     GW.LoadImmersionAddonSkin()
+    GW.AddMasqueSkin()
 
     GW.SkinAndEnhanceColorPicker()
     GW.AddCoordsToWorldMap()

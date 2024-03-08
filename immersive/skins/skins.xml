@@ -43,4 +43,5 @@
     <Script file="addons\WorldQuestTracker.lua"/>
     <Script file="addons\petTracker.lua"/>
     <Script file="addons\detailsProfile.lua"/>
+    <Script file="addons\masqueSkin.lua"/>
 </Ui>
