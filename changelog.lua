@@ -15,6 +15,9 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.14.1",{
+    {ct.bug, [=[Fix details profile]=]},
+})
 
 addChange("6.14.0",{
     {ct.feature, [=[Added Big Dig event timer]=]},

@@ -1,3 +1,7 @@
+6.14.1
+FIXES
+    - Fix details profile
+
 6.14.0
 NEW
     - Added Big Dig event timer
