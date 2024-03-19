@@ -9,6 +9,9 @@ local ct = {
 
 GW.CHANGELOGS_TYPES = ct
 
+addChange("3.1.1",{
+  {ct.bug,[=[Fix details profile]=]},
+})
 
 addChange("3.1.0",{
   {ct.feature,[=[Added Actionbutton masque skin]=]},

@@ -13,7 +13,7 @@ local function LoadDetailsSkin()
     details:InstallSkin("GW2 UI Default", {
         file = "Interface/AddOns/GW2_UI/textures/addonSkins/details_skin",
         author = "GW2 UI",
-        version = "1.0.1",
+        version = "1.0.2",
         site = "unknown",
         desc = "Skin to match the GW2 UI",
 
@@ -32,7 +32,7 @@ local function LoadDetailsSkin()
         right_corner_anchor_bottom = {96, 0},
 
         attribute_icon_anchor = {34, -6},
-        attribute_icon_size = {24, 24},
+        attribute_icon_size = 24,
 
         --overwrites
         instance_cprops = {
@@ -182,7 +182,7 @@ local function LoadDetailsSkin()
         right_corner_anchor_bottom = {96, 0},
 
         attribute_icon_anchor = {34, -6},
-        attribute_icon_size = {24, 24},
+        attribute_icon_size = 24,
 
         --overwrites
         instance_cprops = {
