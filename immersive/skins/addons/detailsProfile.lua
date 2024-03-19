@@ -32,7 +32,7 @@ local function LoadDetailsSkin()
         right_corner_anchor_bottom = {96, 0},
 
         attribute_icon_anchor = {34, -6},
-        attribute_icon_size = {24, 24},
+        attribute_icon_size = 24,
 
         --overwrites
         instance_cprops = {
@@ -181,7 +181,7 @@ local function LoadDetailsSkin()
         right_corner_anchor_bottom = {96, 0},
 
         attribute_icon_anchor = {34, -6},
-        attribute_icon_size = {24, 24},
+        attribute_icon_size = 24,
 
         --overwrites
         instance_cprops = {

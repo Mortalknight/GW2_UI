@@ -9,6 +9,10 @@ local ct = {
 
 GW.CHANGELOGS_TYPES = ct
 
+addChange("2.2.10",{
+    {ct.bug,[=[Fix details profile]=]},
+})
+
 addChange("2.2.9",{
     {ct.change,[=[Update libs]=]},
 })
