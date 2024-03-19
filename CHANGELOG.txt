@@ -1,6 +1,18 @@
 6.14.1
 FIXES
     - Fix details profile
+    - Fix player debuff show wrong icon texture
+    - Fix gossip skin text height
+    - Fix small unitframe height
+    - Fix ToT mover
+    - Fix playerframe level up icon
+    - Fix objectiv tracker hover not showing all details
+    - Fix creating new profile
+
+CHANGES
+    - Update merchant skin
+    - Change castbar mover frame beased on details option
+    - Added Masque actionbutton skin
 
 6.14.0
 NEW

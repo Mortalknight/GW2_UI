@@ -17,6 +17,17 @@ AddChange(string addonVersion, table changeList)
 
 addChange("6.14.1",{
     {ct.bug, [=[Fix details profile]=]},
+    {ct.bug, [=[Fix player debuff show wrong icon texture]=]},
+    {ct.bug, [=[Fix gossip skin text height]=]},
+    {ct.bug, [=[Fix small unitframe height]=]},
+    {ct.bug, [=[Fix ToT mover]=]},
+    {ct.bug, [=[Fix playerframe level up icon]=]},
+    {ct.bug, [=[Fix objectiv tracker hover not showing all details]=]},
+    {ct.bug, [=[Fix creating new profile]=]},
+
+    {ct.bug, [=[Update merchant skin]=]},
+    {ct.bug, [=[Change castbar mover frame beased on details option]=]},
+    {ct.bug, [=[Added Masque actionbutton skin=]},
 })
 
 addChange("6.14.0",{
