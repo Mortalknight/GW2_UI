@@ -15,6 +15,10 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.14.2",{
+    {ct.change, [=[Update for 10.2.6]=]},
+})
+
 addChange("6.14.1",{
     {ct.bug, [=[Fix details profile]=]},
     {ct.bug, [=[Fix player debuff show wrong icon texture]=]},
@@ -25,12 +29,12 @@ addChange("6.14.1",{
     {ct.bug, [=[Fix objectiv tracker hover not showing all details]=]},
     {ct.bug, [=[Fix creating new profile]=]},
 
-    {ct.bug, [=[Update merchant skin]=]},
-    {ct.bug, [=[Change castbar mover frame beased on details option]=]},
-    {ct.bug, [=[Added Masque actionbutton skin=]},
+    {ct.change, [=[Update merchant skin]=]},
+    {ct.change, [=[Change castbar mover frame beased on details option]=]},
+    {ct.change, [=[Added Masque actionbutton skin]=]},
 })
 
-addChange("6.14.0",{
+addChange("6.14.0", {
     {ct.feature, [=[Added Big Dig event timer]=]},
     {ct.feature, [=[Added option to change pulltimer seconds]=]},
 

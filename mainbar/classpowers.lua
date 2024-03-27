@@ -466,7 +466,7 @@ local function setComboBar(f)
     f:RegisterUnitEvent("UNIT_MAXPOWER", "player")
     f:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
-    if f.ourTarget and f.comboPointsOnTarget then
+    if GW.settings.TARGET_ENABLED and GW.settings.target_HOOK_COMBOPOINTS then
         f:ClearAllPoints()
         if GwTargetUnitFrame.frameInvert then
             f:SetPoint("TOPRIGHT", GwTargetUnitFrame.castingbar, "TOPRIGHT", 0, -13)
@@ -1538,7 +1538,7 @@ local function setDruid(f)
         return true
     elseif barType == "combo|little_mana" then
         setComboBar(f)
-        if f.ourPowerBar then
+        if GW.settings.POWERBAR_ENABLED then
             setLittleManaBar(f, "combo")
         end
         return true
@@ -1589,7 +1589,7 @@ local function selectType(f)
     f.warlock:Hide()
     f.combopoints:Hide()
     f.evoker:Hide()
-    if f.ourPowerBar then
+    if GW.settings.POWERBAR_ENABLED then
         f.lmb:Hide()
         f.lmb.decay:Hide()
     end
@@ -1624,7 +1624,7 @@ local function selectType(f)
         showBar = setEvoker(f)
     end
 
-    if (GW.myClassID == 4 or GW.myClassID == 11) and f.ourTarget and f.comboPointsOnTarget and f.barType == "combo" then
+    if (GW.myClassID == 4 or GW.myClassID == 11) and GW.settings.TARGET_ENABLED and GW.settings.target_HOOK_COMBOPOINTS and f.barType == "combo" then
         showBar = UnitExists("target") and UnitCanAttack("player", "target") and not UnitIsDead("target") or false
     end
 
@@ -1661,7 +1661,6 @@ local function barChange_OnEvent(self, event)
 end
 
 local function LoadClassPowers()
-    local playerAsTargetFrame = GW.settings.PLAYER_AS_TARGET_FRAME
     local cpf = CreateFrame("Frame", "GwPlayerClassPower", UIParent, "GwPlayerClassPower")
     GW.hookStatusbarBehaviour(cpf.staggerBar.ironskin, false)
     cpf.staggerBar.ironskin.customMaskSize = 64
@@ -1698,10 +1697,10 @@ local function LoadClassPowers()
         { "default", "scaleable" }, true)
 
     -- position mover
-    if (not GW.settings.XPBAR_ENABLED or playerAsTargetFrame) and not cpf.isMoved then
+    if (not GW.settings.XPBAR_ENABLED or GW.settings.PLAYER_AS_TARGET_FRAME) and not cpf.isMoved then
         local framePoint = GW.settings.ClasspowerBar_pos
         local yOff = not GW.settings.XPBAR_ENABLED and 14 or 0
-        local xOff = playerAsTargetFrame and 52 or 0
+        local xOff = GW.settings.PLAYER_AS_TARGET_FRAME and 52 or 0
         cpf.gwMover:ClearAllPoints()
         cpf.gwMover:SetPoint(framePoint.point, UIParent, framePoint.relativePoint, framePoint.xOfs + xOff,
             framePoint.yOfs - yOff)
@@ -1714,15 +1713,12 @@ local function LoadClassPowers()
     GW.MixinHideDuringPetAndOverride(cpf.customResourceBar.decay)
     CPWR_FRAME = cpf
 
-    cpf.ourTarget = GW.settings.TARGET_ENABLED
-    cpf.comboPointsOnTarget = GW.settings.target_HOOK_COMBOPOINTS
-    cpf.ourPowerBar = GW.settings.POWERBAR_ENABLED
     cpf.auraExpirationTime = nil
 
     -- create an extra mana power bar that is used sometimes (feral druid in cat form) only if your Powerbar is on
-    if cpf.ourPowerBar then
-        local anchorFrame = playerAsTargetFrame and GwPlayerUnitFrame or GwPlayerPowerBar
-        local barWidth = playerAsTargetFrame and GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
+    if GW.settings.POWERBAR_ENABLED then
+        local anchorFrame = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and GwPlayerUnitFrame or GwPlayerPowerBar
+        local barWidth = GW.settings.PLAYER_AS_TARGET_FRAME and GwPlayerUnitFrame and GwPlayerUnitFrame.powerbar:GetWidth() or GwPlayerPowerBar:GetWidth()
         local lmb = GW.createNewStatusbar("GwPlayerAltClassLmb", cpf, "GwStatusPowerBar", true)
         lmb.customMaskSize = 64
         lmb.bar = lmb
@@ -1745,7 +1741,7 @@ local function LoadClassPowers()
         lmb.decay:SetPoint("BOTTOMRIGHT", lmb, "BOTTOMRIGHT", 0, 0)
 
         lmb:ClearAllPoints()
-        if playerAsTargetFrame then
+        if GW.settings.PLAYER_AS_TARGET_FRAME then
             lmb:SetPoint("BOTTOMLEFT", anchorFrame.powerbar, "TOPLEFT", 0, -10)
             lmb:SetPoint("BOTTOMRIGHT", anchorFrame.powerbar, "TOPRIGHT", 0, -10)
             lmb:SetSize(barWidth + 2, 3)
@@ -1820,7 +1816,7 @@ local function LoadClassPowers()
     updateVisibilitySetting(cpf, false)
     selectType(cpf)
 
-    if (GW.myClassID == 4 or GW.myClassID == 11) and cpf.ourTarget and cpf.comboPointsOnTarget then
+    if (GW.myClassID == 4 or GW.myClassID == 11) and GW.settings.TARGET_ENABLED and GW.settings.target_HOOK_COMBOPOINTS then
         cpf.decay:RegisterEvent("PLAYER_TARGET_CHANGED")
         CPF_HOOKED_TO_TARGETFRAME = true
         if cpf.barType == "combo" then

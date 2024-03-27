@@ -1,3 +1,7 @@
+6.14.2
+CHANGES
+    - Update for 10.2.6
+
 6.14.1
 FIXES
     - Fix details profile

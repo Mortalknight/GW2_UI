@@ -7,12 +7,12 @@ GW.GridGroupHeaders = headers
 local profiles = {
     PARTY = {
         name = "Party",
-        visibility = "[group:party,nogroup:raid] show; hide",
+        visibility = "[@raid6,exists][@party1,noexists] hide;show",
         numGroups = 1
     },
     RAID_PET = {
         name = "RaidPet",
-        visibility = "[group:raid] show; hide",
+        visibility = "[@raid1,exists] show; hide",
         numGroups = 8
     },
     RAID40 = {

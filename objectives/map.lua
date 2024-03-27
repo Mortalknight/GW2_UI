@@ -707,7 +707,7 @@ local function LoadMinimap()
 
     MinimapCluster.ZoneTextButton:GwKill()
     TimeManagerClockButton:GwKill()
-    MinimapCluster.Tracking.Button:SetParent(GW.HiddenFrame)
+    MinimapCluster.TrackingFrame.Button:SetParent(GW.HiddenFrame)
 
     GwMapGradient.location = GwMapGradient:CreateFontString(nil, "OVERLAY", "GW_Standard_Button_Font_Small", 7)
     GwMapGradient.location:SetPoint("TOP", Minimap, "TOP", 0, -2)
@@ -733,7 +733,7 @@ local function LoadMinimap()
     }
 
     MinimapCluster.BorderTop:GwStripTextures()
-    MinimapCluster.Tracking.Background:GwStripTextures()
+    MinimapCluster.TrackingFrame.Background:GwStripTextures()
 
     for _, frame in next, killFrames do
         frame:GwKill()
