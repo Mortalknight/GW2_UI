@@ -562,6 +562,56 @@ local function party_OnEvent(self, event, unit)
 end
 GW.AddForProfiling("party", "party_OnEvent", party_OnEvent)
 
+local function UpdatePetVisibility()
+    for i = 1, MAX_PARTY_MEMBERS + (GW.settings.PARTY_PLAYER_FRAME and 1 or 0) do
+        local frame = _G["GwPartyPetFrame" .. i]
+        if GW.settings.PARTY_SHOW_PETS then
+            RegisterStateDriver(frame, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format((i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))))
+        else
+            RegisterStateDriver(frame, "visibility", "hide")
+        end
+    end
+end
+GW.UpdatePartyPetVisibility = UpdatePetVisibility
+
+local function UpdatePlayerInPartySetting()
+    local isFirstFrame = true
+    for i = 1, MAX_PARTY_MEMBERS + 1 do
+        local frame = _G["GwPartyFrame" .. i]
+
+        frame:ClearAllPoints()
+        if GW.settings.PARTY_PLAYER_FRAME and isFirstFrame then
+            frame:SetPoint("TOPLEFT", 20, -104 + (-85 * i) + 85)
+        else
+            if isFirstFrame then
+                frame:SetPoint("TOPLEFT", 20, -104 + (-85 * i) + 85)
+            else
+                frame:SetPoint("BOTTOMLEFT", _G["GwPartyPetFrame" .. (i - 1)], "BOTTOMLEFT", -15, -90)
+            end
+        end
+
+        frame.unit = i == 1 and GW.settings.PARTY_PLAYER_FRAME and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
+        frame.guid = UnitGUID(frame.unit)
+        frame:SetAttribute("unit", frame.unit)
+        party_OnEvent(frame, "load")
+        updatePartyData(frame)
+
+        if frame.unit == "player" then
+            RegisterStateDriver(frame, "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format("party1"))
+        else
+            RegisterStateDriver(frame, "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format(frame.unit))
+        end
+
+        isFirstFrame = false
+    end
+
+    if not GW.settings.PARTY_PLAYER_FRAME then
+        RegisterStateDriver(_G["GwPartyFrame" .. MAX_PARTY_MEMBERS + 1], "visibility", "hide")
+        RegisterStateDriver(_G["GwPartyPetFrame" .. MAX_PARTY_MEMBERS + 1], "visibility", "hide")
+    end
+end
+GW.UpdatePlayerInPartySetting = UpdatePlayerInPartySetting
+
 local function CreatePartyPetFrame(frame, i)
     local unit = frame.unit == "player" and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
     local f = CreateFrame("Button", "GwPartyPetFrame" .. i, UIParent, "GwPartyPetFrame")
@@ -593,12 +643,6 @@ local function CreatePartyPetFrame(frame, i)
     f:RegisterForClicks("AnyDown")
     f.unit = unit
     f.isPet = true
-
-    if GW.settings.PARTY_SHOW_PETS then
-        RegisterStateDriver(f, "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format(unit))
-    else
-        RegisterStateDriver(f, "visibility", "hide")
-    end
 
     f:ClearAllPoints()
     f:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 15, -17)
@@ -703,20 +747,17 @@ local function createPartyFrame(i, isFirstFrame, isPlayer)
     frame.ready = -1
     frame.nameNotLoaded = false
 
-    frame:ClearAllPoints()
-    if isFirstFrame then
-        frame:SetPoint("TOPLEFT", 20, -104 + (-85 * i) + 85)
-    else
-        frame:SetPoint("BOTTOMLEFT", _G["GwPartyPetFrame" .. (i - 1)], "BOTTOMLEFT", -15, -90)
-    end
-
     CreatePartyPetFrame(frame, i)
 
     frame:SetAttribute("unit", registerUnit)
     frame:SetAttribute("*type1", "target")
     frame:SetAttribute("*type2", "togglemenu")
 
-    RegisterStateDriver(frame, "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format(registerUnit))
+    if registerUnit == "player" then
+        RegisterStateDriver(frame, "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format("party1"))
+    else
+        RegisterStateDriver(frame, "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format(registerUnit))
+    end
 
     frame:EnableMouse(true)
     frame:RegisterForClicks("AnyUp")
@@ -840,10 +881,9 @@ local function LoadPartyFrames()
     if GW.settings.RAID_FRAMES and GW.settings.RAID_STYLE_PARTY then
         return
     end
-    local addCounter = GW.settings.PARTY_PLAYER_FRAME and 1 or 0
     local index = 1
     local isFirstFrame = true
-    for _ = 1, MAX_PARTY_MEMBERS + addCounter do
+    for _ = 1, MAX_PARTY_MEMBERS + 1 do
         if GW.settings.PARTY_PLAYER_FRAME and isFirstFrame then
             createPartyFrame(index, isFirstFrame, true)
         else
@@ -853,54 +893,76 @@ local function LoadPartyFrames()
         index = index + 1
     end
 
+    UpdatePlayerInPartySetting()
+    UpdatePetVisibility()
+
     -- Set up preview mode
     GwSettingsPartyPanel.buttonPartyPreview.previewMode = false
     GwSettingsPartyPanel.buttonPartyPreview:SetScript("OnClick", function(self)
+        local unitFrame, unitPetFrame
         if self.previewMode then
             self:SetText("-")
-            for i = 1, MAX_PARTY_MEMBERS + addCounter do
-                if _G["GwPartyFrame" .. i] then
-                    _G["GwPartyFrame" .. i].unit = i == 1 and GW.settings.PARTY_PLAYER_FRAME and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
-                    _G["GwPartyFrame" .. i].guid = UnitGUID(i == 1 and GW.settings.PARTY_PLAYER_FRAME and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))
-                    _G["GwPartyFrame" .. i]:SetAttribute("unit", (i == 1 and GW.settings.PARTY_PLAYER_FRAME and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))))
-                    UnregisterStateDriver(_G["GwPartyFrame" .. i], "visibility")
-                    RegisterStateDriver(_G["GwPartyFrame" .. i], "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format((i == 1 and GW.settings.PARTY_PLAYER_FRAME and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))))
-                    party_OnEvent(_G["GwPartyFrame" .. i], "load")
-                    updatePartyData(_G["GwPartyFrame" .. i])
+            for i = 1, MAX_PARTY_MEMBERS + 1 do
+                unitFrame = _G["GwPartyFrame" .. i]
+                unitPetFrame = _G["GwPartyPetFrame" .. i]
 
-                    _G["GwPartyPetFrame" .. i].unit = i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
-                    _G["GwPartyPetFrame" .. i].guid = UnitGUID(i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))
-                    _G["GwPartyPetFrame" .. i]:SetAttribute("unit", (i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))))
-                    UnregisterStateDriver(_G["GwPartyPetFrame" .. i], "visibility")
-                    if GW.settings.PARTY_SHOW_PETS then
-                        RegisterStateDriver(_G["GwPartyPetFrame" .. i], "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format((i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))))
-                    else
-                        RegisterStateDriver(_G["GwPartyPetFrame" .. i], "visibility", "hide")
-                    end
-                    party_OnEvent(_G["GwPartyPetFrame" .. i], "load")
-                    updatePartyData(_G["GwPartyPetFrame" .. i])
+                unitFrame.unit = i == 1 and GW.settings.PARTY_PLAYER_FRAME and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
+                unitFrame.guid = UnitGUID(i == 1 and GW.settings.PARTY_PLAYER_FRAME and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))
+                unitFrame:SetAttribute("unit", (i == 1 and GW.settings.PARTY_PLAYER_FRAME and "player" or "party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))))
+                UnregisterStateDriver(unitFrame, "visibility")
+                if i == 1 and GW.settings.PARTY_PLAYER_FRAME then
+                    RegisterStateDriver(unitFrame, "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format("party1"))
+                else
+                    RegisterStateDriver(unitFrame, "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format("party" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))))
                 end
+                party_OnEvent(unitFrame, "load")
+                updatePartyData(unitFrame)
+
+                unitPetFrame.unit = i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))
+                unitPetFrame.guid = UnitGUID(i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))
+                unitPetFrame:SetAttribute("unit", (i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0))))
+                UnregisterStateDriver(unitPetFrame, "visibility")
+                if GW.settings.PARTY_SHOW_PETS then
+                    RegisterStateDriver(unitPetFrame, "visibility", ("[group:raid] hide; [group:party,@%s,exists] show; hide"):format((i == 1 and GW.settings.PARTY_PLAYER_FRAME and "pet" or "partypet" .. (i - (GW.settings.PARTY_PLAYER_FRAME and 1 or 0)))))
+                else
+                    RegisterStateDriver(unitPetFrame, "visibility", "hide")
+                end
+                party_OnEvent(unitPetFrame, "load")
+                updatePartyData(unitPetFrame)
+            end
+            if not GW.settings.PARTY_PLAYER_FRAME then
+                RegisterStateDriver(_G["GwPartyFrame" .. MAX_PARTY_MEMBERS + 1], "visibility", "hide")
+                RegisterStateDriver(_G["GwPartyPetFrame" .. MAX_PARTY_MEMBERS + 1], "visibility", "hide")
             end
             self.previewMode = false
         else
             self:SetText("5")
-            for i = 1, MAX_PARTY_MEMBERS + addCounter do
-                if _G["GwPartyFrame" .. i] then
-                    _G["GwPartyFrame" .. i].unit = "player"
-                    _G["GwPartyFrame" .. i].guid = UnitGUID("player")
-                    _G["GwPartyFrame" .. i]:SetAttribute("unit", "player")
-                    UnregisterStateDriver(_G["GwPartyFrame" .. i], "visibility")
-                    RegisterStateDriver(_G["GwPartyFrame" .. i], "visibility", "show")
-                    party_OnEvent(_G["GwPartyFrame" .. i], "load")
-                    updatePartyData(_G["GwPartyFrame" .. i])
+            for i = 1, MAX_PARTY_MEMBERS + 1 do
+                unitFrame = _G["GwPartyFrame" .. i]
+                unitPetFrame = _G["GwPartyPetFrame" .. i]
+                if unitFrame then
+                    unitFrame.unit = "player"
+                    unitFrame.guid = UnitGUID("player")
+                    unitFrame:SetAttribute("unit", "player")
+                    UnregisterStateDriver(unitFrame, "visibility")
+                    RegisterStateDriver(unitFrame, "visibility", "show")
+                    party_OnEvent(unitFrame, "load")
+                    updatePartyData(unitFrame)
 
-                    _G["GwPartyPetFrame" .. i].unit = "player"
-                    _G["GwPartyPetFrame" .. i].guid = UnitGUID("player")
-                    _G["GwPartyPetFrame" .. i]:SetAttribute("unit", "player")
-                    UnregisterStateDriver(_G["GwPartyPetFrame" .. i], "visibility")
-                    RegisterStateDriver(_G["GwPartyPetFrame" .. i], "visibility", "show")
-                    party_OnEvent(_G["GwPartyPetFrame" .. i], "load")
-                    updatePartyData(_G["GwPartyPetFrame" .. i])
+                    if GW.settings.PARTY_SHOW_PETS then
+                        unitPetFrame.unit = "player"
+                        unitPetFrame.guid = UnitGUID("player")
+                        unitPetFrame:SetAttribute("unit", "player")
+                        UnregisterStateDriver(unitPetFrame, "visibility")
+                        RegisterStateDriver(unitPetFrame, "visibility", "show")
+                        party_OnEvent(unitPetFrame, "load")
+                        updatePartyData(unitPetFrame)
+                    end
+                end
+
+                if not GW.settings.PARTY_PLAYER_FRAME then
+                    RegisterStateDriver(_G["GwPartyFrame" .. MAX_PARTY_MEMBERS + 1], "visibility", "hide")
+                    RegisterStateDriver(_G["GwPartyPetFrame" .. MAX_PARTY_MEMBERS + 1], "visibility", "hide")
                 end
             end
             self.previewMode = true

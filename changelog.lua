@@ -15,6 +15,11 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+
+addChange("6.14.3",{
+    {ct.bug, [=[Party visibility]=]},
+})
+
 addChange("6.14.2",{
     {ct.change, [=[Update for 10.2.6]=]},
 })
