@@ -539,6 +539,7 @@ local function AddMythicInfo(self, unit)
     local data = C_PlayerInfo.GetPlayerMythicPlusRatingSummary(unit)
     if data and data.currentSeasonScore and data.currentSeasonScore > 0 then
         local color = C_ChallengeMode.GetDungeonScoreRarityColor(data.currentSeasonScore)
+        if not color or color == nil then color = {} end
 
         self:AddDoubleLine(DUNGEON_SCORE_LEADER:format("@"):gsub(": @", ""), GW.CommaValue(data.currentSeasonScore), nil, nil, nil, color.r or 1, color.g or 1, color.b or 1)
     end

@@ -20,6 +20,8 @@ end
 local function SkinPerksProgram()
     if not GW.settings.PERK_PROGRAM_SKIN_ENABLED then return end
 
+    PerksProgramFrame.ThemeContainer:SetAlpha(0)
+
     if PerksProgramFrame.ProductsFrame then
         PerksProgramFrame.ProductsFrame.PerksProgramFilter.FilterDropDownButton:GwSkinButton(false, true)
         PerksProgramFrame.ProductsFrame.PerksProgramCurrencyFrame.Text:SetFont("UNIT_NAME_FONT", 30)

@@ -15,6 +15,9 @@ AddChange(string addonVersion, table changeList)
   }
 ]]
 
+addChange("6.14.4",{
+    {ct.bug, [=[Tooltip M+ lua error]=]},
+})
 
 addChange("6.14.3",{
     {ct.bug, [=[Party visibility]=]},

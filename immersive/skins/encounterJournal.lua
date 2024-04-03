@@ -245,6 +245,7 @@ local function encounterJournalSkin()
     InstanceSelect.tierDropDown:GwSkinDropDownMenu()
     EncounterJournalInstanceSelectBG:SetAlpha(0)
     EncounterJournalMonthlyActivitiesFrame.Bg:SetAlpha(0)
+    EncounterJournalMonthlyActivitiesFrame.MonthlyActivitiesFrame.ThemeContainer:SetAlpha(0)
     GW.HandleTrimScrollBar(EncounterJournalMonthlyActivitiesFrame.ScrollBar, true)
     GW.HandleScrollControls(EncounterJournalMonthlyActivitiesFrame)
 
