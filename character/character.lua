@@ -626,6 +626,10 @@ end
 GW.CharacterMenuBlank_OnLoad = CharacterMenuBlank_OnLoad
 
 local function CharacterMenuButton_OnLoad(self, odd)
+    if odd == nil then
+        odd = GW.nextHeroPanelMenuButtonShadowOdd
+    end
+
     self.hover:SetTexture("Interface\\AddOns\\GW2_UI\\textures\\character\\menu-hover")
     self.limitHoverStripAmount = 1 --limit that value to 0.75 because we do not use the default hover texture
     if odd then
@@ -639,6 +643,7 @@ local function CharacterMenuButton_OnLoad(self, odd)
     self:GetFontString():SetFont(DAMAGE_TEXT_FONT, 14)
     self:GetFontString():SetJustifyH("LEFT")
     self:GetFontString():SetPoint("LEFT", self, "LEFT", 5, 0)
+    GW.nextHeroPanelMenuButtonShadowOdd = not GW.nextHeroPanelMenuButtonShadowOdd
 end
 GW.CharacterMenuButton_OnLoad = CharacterMenuButton_OnLoad
 

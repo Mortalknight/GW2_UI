@@ -187,6 +187,8 @@ local function loadLayoutDropDown(layoutwin)
             return a.isProfileLayout
         elseif a.name and b.name then
             return a.name < b.name
+        else
+            return a.name < b.name
         end
     end)
 

@@ -656,6 +656,17 @@ local function setupMicroButtons(mbf)
 end
 AFP("setupMicroButtons", setupMicroButtons)
 
+local function UpdateHelpTicketButtonAnchor()
+    local ticket = HelpOpenWebTicketButton
+	if not ticket then return end
+    local btn = GwCharacterMicroButton or CharacterMicroButton
+    local _, y = btn:GetCenter()
+    local height, middle = 17, GW.screenHeight
+
+    ticket:ClearAllPoints()
+    ticket:SetPoint("CENTER", btn, 0, (y and y >= middle) and height or -height)
+end
+
 local function SetupNotificationArea(mbf)
     -- Update icon
     updateIcon = CreateFrame("Button", "Gw2UpdateMicroMenuButton", mbf, "MainMenuBarMicroButton")
@@ -685,7 +696,7 @@ local function SetupNotificationArea(mbf)
     mailIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
 
     -- workorder icon
-    local workOrderIcon = CreateFrame("Button", nil, mbf, "MainMenuBarMicroButton")
+    local workOrderIcon = CreateFrame("Button", "Gw2NotificationIconWorkorder", mbf, "MainMenuBarMicroButton")
     workOrderIcon:RegisterEvent("CRAFTINGORDERS_UPDATE_PERSONAL_ORDER_COUNTS")
     workOrderIcon:RegisterEvent("PLAYER_ENTERING_WORLD")
     workOrderIcon.newbieText = nil
@@ -699,6 +710,12 @@ local function SetupNotificationArea(mbf)
     workOrderIcon:HookScript("OnLeave", GameTooltip_Hide)
     workOrderIcon:SetScript("OnEvent", workOrderIconOnEvent)
     workOrderIcon:SetFrameLevel(mbf.cf:GetFrameLevel() + 10)
+
+    -- blizzard ticket icon
+	if MicroMenu and MicroMenu.UpdateHelpTicketButtonAnchor then
+        hooksecurefunc(MicroMenu, 'UpdateHelpTicketButtonAnchor', UpdateHelpTicketButtonAnchor)
+        UpdateHelpTicketButtonAnchor()
+    end
 end
 
 local function checkElvUI()

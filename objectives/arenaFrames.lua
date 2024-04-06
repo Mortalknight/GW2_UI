@@ -115,7 +115,7 @@ end
 GW.AddForProfiling("arenaFrames", "updateArena_Power", updateArena_Power)
 
 local function updateArena_Name(self)
-    local inArena = GetZonePVPInfo()
+    local inArena = C_PvP.GetZonePVPInfo()
     local inBG = UnitInBattleground("player")
     local nameString = UNKNOWNOBJECT
     local name = UnitName(self.unit) or UNKNOWNOBJECT
@@ -255,7 +255,7 @@ local function registerFrame(i, container)
 end
 GW.AddForProfiling("arenaFrames", "registerFrame", registerFrame)
 
-local function registerPrepFrame(i, container)
+local function registerPrepFrame(container)
     local arenaPrepFrame = CreateFrame("Button", nil, GwQuestTracker, "GwQuestTrackerArenaPrepFrameTemp")
 
     arenaPrepFrame:EnableMouse(true)
@@ -347,7 +347,7 @@ GW.SetUpArenaFramePosition = SetUpFramePosition
 local function LoadArenaFrame(self)
     for i = 1, MAX_ARENA_ENEMIES do
         arenaFrames[i] = registerFrame(i, self)
-        arenaPrepFrames[i] = registerPrepFrame(i, self)
+        arenaPrepFrames[i] = registerPrepFrame(self)
     end
     SetUpFramePosition()
 

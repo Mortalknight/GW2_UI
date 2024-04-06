@@ -441,7 +441,7 @@ local function Minimap_OnMouseWheel(_, d)
 end
 
 local function GetLocTextColor()
-    local pvpType = GetZonePVPInfo()
+    local pvpType = C_PvP.GetZonePVPInfo()
     if pvpType == "arena" then
         return 0.84, 0.03, 0.03
     elseif pvpType == "friendly" then

@@ -1262,7 +1262,7 @@ local function ChatFrame_MessageEventHandler(frame, event, arg1, arg2, arg3, arg
             -- The message formatter is captured so that the original message can be reformatted when a censored message
             -- is approved to be shown. We only need to pack the event args if the line was censored, as the message transformation
             -- step is the only code that needs these arguments. See ItemRef.lua "censoredmessage".
-            local isChatLineCensored, eventArgs, msgFormatter = C_ChatInfo.IsChatLineCensored and C_ChatInfo.IsChatLineCensored(arg11) -- arg11: lineID
+            local isChatLineCensored, eventArgs, msgFormatter = C_ChatInfo.IsChatLineCensored(arg11) -- arg11: lineID
             if isChatLineCensored then
                 eventArgs = _G.SafePack(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17)
                 msgFormatter = function(msg) -- to translate the message on click [Show Message]

@@ -734,7 +734,7 @@ local function ApplyPvPUISkin()
 
     -- Item Borders for HonorFrame & ConquestFrame
     hooksecurefunc("PVPUIFrame_ConfigureRewardFrame", function(rewardFrame, _, _, itemRewards, currencyRewards)
-        local rewardTexture, rewardQuaility, _ = nil, 1
+        local rewardTexture, rewardQuaility, _ = nil, 1, nil
 
         if currencyRewards then
             for _, reward in ipairs(currencyRewards) do

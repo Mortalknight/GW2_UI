@@ -110,7 +110,7 @@ end
 
 local function CorruptionIcon(self)
     local itemLink = GetInventoryItemLink("player", self:GetID())
-    self.IconOverlay:SetShown(itemLink and IsCorruptedItem(itemLink))
+    self.IconOverlay:SetShown(itemLink and C_Item.IsCorruptedItem(itemLink))
 end
 
 local function setItemButtonQuality(button, quality)
@@ -171,7 +171,7 @@ local function updateBagItemButton(button)
         setItemLevel(button, quality, button.ItemLink)
         setItemButtonQuality(button, quality)
 
-        button.IconOverlay:SetShown(button.ItemLink and IsCorruptedItem(button.ItemLink))
+        button.IconOverlay:SetShown(button.ItemLink and C_Item.IsCorruptedItem(button.ItemLink))
     end
 end
 GW.AddForProfiling("paperdoll_equipment", "updateBagItemButton", updateBagItemButton)
@@ -474,7 +474,7 @@ end
 GW.AddForProfiling("paperdoll_equipment", "getStatListFrame", getStatListFrame)
 
 local function getDurabilityListFrame(self)
-    if _G["GwPaperDollStatDurability"] ~= nil then
+    if _G["GwPaperDollStatDurability"] then
         return _G["GwPaperDollStatDurability"]
     end
 
@@ -501,13 +501,14 @@ GW.AddForProfiling("paperdoll_equipment", "getDurabilityListFrame", getDurabilit
 
 local function updateStats()
     local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel()
+    local avgItemLevelEquippedText = ""
     avgItemLevelEquipped = math.floor(avgItemLevelEquipped)
     avgItemLevel = math.floor(avgItemLevel)
     if avgItemLevelEquipped < avgItemLevel then
-        avgItemLevelEquipped = math.floor(avgItemLevelEquipped) .. "(" .. math.floor(avgItemLevel) .. ")"
+        avgItemLevelEquippedText = math.floor(avgItemLevelEquipped) .. "(" .. math.floor(avgItemLevel) .. ")"
     end
 
-    GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped)
+    GwDressingRoom.itemLevel:SetText(avgItemLevelEquippedText)
     GwDressingRoom.itemLevel:SetTextColor(GetItemLevelColor())
 
     local statFrame
@@ -776,8 +777,8 @@ local function EquipCursorItem()
     if cursorItem and cursorItem.bagID and cursorItem.slotIndex then
         local itemID = C_Container.GetContainerItemID(cursorItem.bagID, cursorItem.slotIndex)
         if itemID then
-            if IsEquippableItem(itemID) and not IsEquippedItem(itemID) then
-                C_Timer.After(1.1, function() EquipItemByName(itemID) end)
+            if C_Item.IsEquippableItem(itemID) and not  C_Item.IsEquippedItem(itemID) then
+                C_Timer.After(1.1, function() C_Item.EquipItemByName(itemID) end)
             end
         end
         ClearCursor()

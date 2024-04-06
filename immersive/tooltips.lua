@@ -279,8 +279,8 @@ local function GameTooltip_OnTooltipSetItem(self, data)
         end
 
         if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT then
-            local num = GetItemCount(link)
-            local numall = GetItemCount(link, true)
+            local num = C_Item.GetItemCount(link)
+            local numall = C_Item.GetItemCount(link, true)
             if GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BAG" then
                 bagCount = format(("*%s|r %d"):gsub("*", GW.Gw2Color), INVENTORY_TOOLTIP, num)
             elseif GW.settings.ADVANCED_TOOLTIP_OPTION_ITEMCOUNT == "BANK" then

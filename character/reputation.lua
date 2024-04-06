@@ -673,6 +673,8 @@ local function sortFactionsStatus(tbl)
                 return b.isFriend
             elseif a.standingId ~= b.standingId then
                 return a.standingId > b.standingId
+            else
+                return a.standingId < b.standingId
             end
         end)
     return tbl
