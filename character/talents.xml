@@ -384,28 +384,65 @@
                     </Texture>
                     </Layer>
                     <Layer level="BORDER">
-                        <FontString parentKey="unspentPoints" text="10" justifyH="LEFT" justifyV="MIDDLE">
+                         <FontString parentKey="unspentPoints" text="10" justifyH="LEFT" justifyV="MIDDLE">
                             <Anchors>
-                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeKey="$parent.background" x="10" y="-20"/>
+                                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeKey="$parent.background" x="10" y="-10"/>
                             </Anchors>
                         </FontString>
-                        <FontString parentKey="unspentPointsLabel" text="Unspent talent points" justifyH="LEFT" justifyV="MIDDLE">
+                        <FontString parentKey="dualSpecActiveTalentGroupe" text="TALENT_SPECTAB_TOOLTIP_ACTIVE" justifyH="LEFT" justifyV="MIDDLE">
                             <Anchors>
-                                <Anchor point="LEFT" relativePoint="RIGHT" relativeKey="$parent.unspentPoints" x="0" y="0"/>
+                                <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-13"/>
                             </Anchors>
                         </FontString>
                     </Layer>
                 </Layers>
+                <Frames>
+                    <Button parentKey="prevLearn" hidden="true" text="LEARN" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="100" y="20"/>
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeKey="$parent.unspentPoints" relativePoint="BOTTOMLEFT" x="0" y="-5"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="prevCancel" hidden="true" text="RESET" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="100" y="20"/>
+                        <Anchors>
+                            <Anchor point="LEFT" relativeKey="$parent.prevLearn" relativePoint="RIGHT" x="10" y="0"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="spec1Button" registerForClicks="AnyDown" text="PRIMARY" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="130" y="16"/>
+                        <Anchors>
+                            <Anchor point="CENTER" relativePoint="CENTER" x="-70" y="13"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="spec2Button" registerForClicks="AnyDown" text="SECONDARY" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="130" y="16"/>
+                        <Anchors>
+                            <Anchor point="CENTER" relativePoint="CENTER" x="70" y="13"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="petTalentsButton" text="PETS" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="74" y="16"/>
+                        <Anchors>
+                           <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-10" y="-5"/>
+                        </Anchors>
+                    </Button>
+                    <Button parentKey="activateSpecGroup" text="TALENT_SPEC_ACTIVATE" registerForClicks="AnyDown" enableMouse="true" inherits="GwStandardButton">
+                        <Size x="80" y="22"/>
+                        <Anchors>
+                             <Anchor point="CENTER" relativePoint="CENTER" x="0" y="-15"/>
+                        </Anchors>
+                    </Button>
+                </Frames>
             </Frame>
         </Frames>
         <Scripts>
             <OnLoad>
-                self.bottomBar.unspentPoints:SetFont(DAMAGE_TEXT_FONT, 24, "OUTLINE")
+                self.bottomBar.unspentPoints:SetFont(DAMAGE_TEXT_FONT, 20, "OUTLINE")
                 self.bottomBar.unspentPoints:SetTextColor(0.87, 0.74, 0.29, 1)
 
-                self.bottomBar.unspentPointsLabel:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINE")
-                self.bottomBar.unspentPointsLabel:SetTextColor(0.85, 0.70, 0.29, 1)
-                self.bottomBar.unspentPointsLabel:SetText(BONUS_TALENTS)
+                self.bottomBar.dualSpecActiveTalentGroupe:SetFont(DAMAGE_TEXT_FONT, 18, "OUTLINE")
+                self.bottomBar.dualSpecActiveTalentGroupe:SetTextColor(0.85, 0.70, 0.29, 1)
 
                 self:RegisterEvent("UNIT_MODEL_CHANGED")
                 self:RegisterEvent("UNIT_LEVEL")

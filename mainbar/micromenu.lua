@@ -123,7 +123,7 @@ local function LatencyInfoToolTip()
     local frameRate = GW.RoundInt(GetFramerate())
     local down, up, lagHome, lagWorld = GetNetStats()
     local addonMemory = 0
-    local numAddons = GetNumAddOns()
+    local numAddons = C_AddOns.GetNumAddOns()
 
     -- wipe and reuse our memtable to avoid temp pre-GC bloat on the tooltip (still get a bit from the sort)
     for i = 1, #AddonMemoryArray do
@@ -295,7 +295,7 @@ local function setupMicroButtons(mbf)
         cref.tooltipText = MicroButtonTooltipText(CHARACTER_BUTTON, "TOGGLECHARACTER0")
         cref.newbieText = NEWBIE_TOOLTIP_CHARACTER
         reskinMicroButton(cref, "CharacterMicroButton", mbf)
-    
+
         cref:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
         cref:SetAttribute(
             "_onclick",
@@ -482,7 +482,7 @@ local function checkElvUI()
     --
     -- This works as-is because we know ElvUI will load before us. Otherwise we'll
     -- have to get more in-depth with the ACE loading logic.
-    
+
     -- get the ElvUI addon/ActionBars module from ACE
     if not LibStub then
         return false
