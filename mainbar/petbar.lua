@@ -36,7 +36,7 @@ local function SetPetActionButtonPositionAndStyle(self)
         local lastButton = _G["PetActionButton" .. (i - 1)]
         local lastColumnButton = _G["PetActionButton5"]
         local buttonShine = _G["PetActionButton" .. i .. "Shine"]
-        local autoCast = button.AutoCastable
+        local autoCast = _G["PetActionButton" .. i .. "AutoCastable"]
         local point, relativeFrame, relativePoint, x, y
 
         button:SetScale(1)
@@ -75,6 +75,7 @@ local function SetPetActionButtonPositionAndStyle(self)
             end
         end)
 
+        --[[
         if buttonShine then
             buttonShine:SetSize(button:GetSize())
             for _, v in pairs(buttonShine.sparkles) do
@@ -91,6 +92,11 @@ local function SetPetActionButtonPositionAndStyle(self)
                     autoCast:SetWidth(autoCast.size)
                 end
             end)
+        end
+        ]]
+
+        if autoCast then
+            autoCast:SetAlpha(0)
         end
 
         if i <= 3 or i >= 8 then
@@ -145,14 +151,9 @@ local function SetPetHappiness(self)
 end
 
 local function UpdateAutoCast()
-    for i, button in ipairs(GwPlayerPetFrame.buttons) do
-        local _, _, _, _, _, autoCastEnabled = GetPetActionInfo(i)
-
-        if autoCastEnabled then
-            button.AutoCastable:Show()
-        else
-            button.AutoCastable:Hide()
-        end
+    for i, _ in ipairs(GwPlayerPetFrame.buttons) do
+        local autocast = _G["PetActionButton" .. i .. "AutoCastable"]
+        autocast:Hide()
     end
 end
 
@@ -160,8 +161,7 @@ local function UpdatePetActionBar(self, event, unit)
     if (event == "UNIT_FLAGS" and unit ~= "pet") or (event == "UNIT_PET" and unit ~= "player") then return end
 
     for i, button in ipairs(self.buttons) do
-        local name, texture, isToken, isActive, autoCastAllowed, autoCastEnabled, spellID = GetPetActionInfo(i)
-        local autoCast = button.AutoCastable
+        local name, texture, isToken, isActive, _, _, spellID = GetPetActionInfo(i)
         button:SetAlpha(1)
         button.isToken = isToken
         button.icon:Show()

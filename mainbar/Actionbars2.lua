@@ -435,9 +435,10 @@ local function setActionButtonStyle(buttonName, noBackDrop, hideUnused, isStance
     if _G[buttonName .. "FloatingBG"] ~= nil then
         _G[buttonName .. "FloatingBG"]:SetTexture(nil)
     end
-    if _G[buttonName .. "NormalTexture2"] ~= nil then
+    if _G[buttonName .. "NormalTexture2"] then
         _G[buttonName .. "NormalTexture2"]:SetTexture(nil)
         _G[buttonName .. "NormalTexture2"]:Hide()
+        _G[buttonName .. "NormalTexture2"]:SetAlpha(0)
     end
     if btn.AutoCastable then
         btn.AutoCastable:SetSize(btn:GetWidth() * 2, btn:GetWidth() * 2)
