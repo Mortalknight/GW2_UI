@@ -217,6 +217,29 @@ local function TalentFrame_SetPrereqs(frame, buttonTier, buttonColumn, forceDesa
     return requirementsMet
 end
 
+local function CleanUpTalentTrees()
+    wipe(TALENT_BRANCH_ARRAY)
+    for i = 1, 3 do
+        TALENT_BRANCH_ARRAY[i] = {}
+        for y = 1, 15 do
+            TALENT_BRANCH_ARRAY[i][y] = {}
+            for j = 1, NUM_TALENT_COLUMNS do
+                TALENT_BRANCH_ARRAY[i][y][j] = {id = nil, up = 0, left = 0, right = 0, down = 0, leftArrow = 0, rightArrow = 0, topArrow = 0}
+                local button = _G['GwLegacyTalentTree' .. i .. 'Teir' .. y .. 'index' .. j]
+                button.talentid = nil
+                button:Hide()
+
+                for l = 1, 10 do
+                    local line = _G["GwLegacyTalentLine" .. "-" .. i .. "-" .. y .. "-" .. j .. "-" .. l]
+                    if line then
+                        line:Hide()
+                    end
+                end
+            end
+        end
+    end
+end
+
 local function UpdatePreviewControls(isPreview)
     local talentPoints = GetUnspentTalentPoints(false, isPetTalents, openSpec)
 
@@ -275,7 +298,7 @@ local function updateTalentTrees()
     if hasPetTalents then
         GwTalentFrame.bottomBar.petTalentsButton:SetText(isPetTalents and PLAYER or PETS)
     end
-    GwTalentFrame.bottomBar.petTalentsButton:SetShown(not hasPetTalents)
+    GwTalentFrame.bottomBar.petTalentsButton:SetShown(hasPetTalents)
 
     GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UpdateTalentPoints())
 
