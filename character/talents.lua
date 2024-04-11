@@ -275,7 +275,7 @@ local function updateTalentTrees()
     if hasPetTalents then
         GwTalentFrame.bottomBar.petTalentsButton:SetText(isPetTalents and PLAYER or PETS)
     end
-    GwTalentFrame.bottomBar.petTalentsButton:SetShown(hasPetTalents)
+    GwTalentFrame.bottomBar.petTalentsButton:SetShown(not hasPetTalents)
 
     GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UpdateTalentPoints())
 
@@ -462,6 +462,13 @@ local function LoadTalents()
     GwTalentFrame:RegisterEvent("TALENT_GROUP_ROLE_CHANGED")
     GwTalentFrame:RegisterEvent("PREVIEW_TALENT_POINTS_CHANGED")
     GwTalentFrame:RegisterEvent("PREVIEW_PET_TALENT_POINTS_CHANGED")
+
+    GwTalentFrame.bottomBar.talentPreview.checkbutton:SetScript("OnClick", function(self)
+        local talentPreview = GetCVarBool("previewTalents") and "0" or "1"
+        C_CVar.SetCVar("previewTalents", talentPreview)
+        self:SetChecked(GetCVarBool("previewTalents"))
+        updateTalentTrees()
+    end)
 
     GwTalentFrame:SetScript('OnEvent', function()
         GwTalentFrame.bottomBar.unspentPoints:SetFormattedText(UNSPENT_TALENT_POINTS, UnitCharacterPoints("player"))
