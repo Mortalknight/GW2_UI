@@ -150,18 +150,7 @@ inventory/bank.lua
 inventory/lootframe.xml
 inventory/lootframe.lua
 
-character/data/ClassLoader.lua
-character/data/Druid.lua
-character/data/Hunter.lua
-character/data/Mage.lua
-character/data/Paladin.lua
-character/data/Priest.lua
-character/data/Rogue.lua
-character/data/Shaman.lua
-character/data/Warlock.lua
-character/data/Warrior.lua
-
-
+character/skills.lua
 character/reputation_table.lua
 character/reputation.xml
 ##character/title.xml
