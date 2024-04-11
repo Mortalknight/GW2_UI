@@ -6,6 +6,11 @@ local ct = {
   feature=2,
   change=3,
 }
+GW.CHANGELOGS_TYPES = ct
+
+addChange("3.3.1",{
+  {ct.bug,[=[Fix lua error on load]=]},
+})
 
 addChange("3.3.0",{
   {ct.feature,[=[Added Talent Preview toggle]=]},
