@@ -1,3 +1,6 @@
+3.3.0-Era
+   Added Talent Preview toggle
+
 3.2.0-Era
    Added SoD dual spec support
 

@@ -7,8 +7,9 @@ local ct = {
   change=3,
 }
 
-GW.CHANGELOGS_TYPES = ct
-
+addChange("3.3.0",{
+  {ct.feature,[=[Added Talent Preview toggle]=]},
+})
 
 addChange("3.2.0",{
   {ct.feature,[=[Added SoD dual spec support]=]},
