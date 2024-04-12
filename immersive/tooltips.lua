@@ -236,23 +236,23 @@ local function AddTargetInfo(self, unit)
 end
 
 local function AddInspectInfo(self, unit, numTries, r, g, b)
-    if not unit or numTries > 3 or not CanInspect(unit) then return end
+    --if not unit or numTries > 3 or not CanInspect(unit) then return end
 
-    local unitGUID = UnitGUID(unit)
-    if not unitGUID then return end
-    local specIndex = CI:GetSpecialization(unitGUID) or 1
-    local x1, x2, x3 = 0, 0, 0
+    --local unitGUID = UnitGUID(unit)
+    --if not unitGUID then return end
+    --local specIndex = CI:GetSpecialization(unitGUID) or 1
+    --local x1, x2, x3 = 0, 0, 0
 
-    x1, x2, x3 = CI:GetTalentPoints(unitGUID)
+    --x1, x2, x3 = CI:GetTalentPoints(unitGUID)
     --GW.Libs.LibGearScore:NotifyInspect(unitGUID)
     --local _, gearScore = GW.Libs.LibGearScore:GetScore(unitGUID)
 
-    if unitGUID == UnitGUID("player") then
-        self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(GW.myclass, specIndex, true), x1, x2, x3), nil, nil, nil, r, g, b)
-    else
-        local _, className = UnitClass(unit)
-        self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(className, specIndex, true), x1, x2, x3), nil, nil, nil, r, g, b)
-    end
+    --if unitGUID == UnitGUID("player") then
+    --    self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(GW.myclass, specIndex, true), x1, x2, x3), nil, nil, nil, r, g, b)
+    --else
+    --    local _, className = UnitClass(unit)
+    --    self:AddDoubleLine(TALENTS .. ":", string.format("%s [%d/%d/%d]", CI:GetSpecializationName(className, specIndex, true), x1, x2, x3), nil, nil, nil, r, g, b)
+    --end
 
     --if gearScore then
     --    self:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL .. ":" , gearScore.AvgItemLevel, nil, nil, nil, 1, 1, 1)
@@ -285,9 +285,10 @@ local function GameTooltip_OnTooltipSetUnit(self)
         AddTargetInfo(self, unit)
     end
 
-    if isShiftKeyDown and color then
-        AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
-    end
+    --NOT FOR ERA
+    --if isShiftKeyDown and color then
+    --    AddInspectInfo(self, unit, 0, color.r, color.g, color.b)
+    --end
 
     if unit and not isPlayerUnit and IsModKeyDown() then
         local guid = UnitGUID(unit) or ""

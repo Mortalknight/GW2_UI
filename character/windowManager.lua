@@ -718,6 +718,7 @@ local function LoadCharacter()
                 addAddonButton("Outfitter", GetSetting("USE_CHARACTER_WINDOW"), function() hideCharframe = false Outfitter:OpenUI() end, true)
                 addAddonButton("Clique", GetSetting("USE_SPELLBOOK_WINDOW"), function() ShowUIPanel(CliqueConfig) end, true)
                 addAddonButton("Pawn", GetSetting("USE_CHARACTER_WINDOW"), PawnUIShow, false)
+                addAddonButton("Ranker", GetSetting("USE_CHARACTER_WINDOW"), function() RankerMainFrame:SetParent(GwCharacterWindow); RankerMainFrame:ClearAllPoints(); RankerMainFrame:SetPoint("LEFT", GwCharacterWindow, "RIGHT", 0, 0) Ranker:ToggleWindow() end, false)
 
                 GwCharacterMenu.skillsMenu:SetAttribute("_onclick", [=[
                     local f = self:GetFrameRef("GwCharacterWindow")

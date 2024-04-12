@@ -14,7 +14,7 @@ local animations = GW.animations
 
 local l = CreateFrame("Frame") -- Main event frame
 
-GW.VERSION_STRING = "GW2_UI @project-version@-Era"
+GW.VERSION_STRING = "GW2_UI @project-version@"
 
 -- setup Binding Header color
 BINDING_HEADER_GW2UI = C_AddOns.GetAddOnMetadata(..., "Title")

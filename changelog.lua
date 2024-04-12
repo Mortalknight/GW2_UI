@@ -8,6 +8,11 @@ local ct = {
 }
 GW.CHANGELOGS_TYPES = ct
 
+
+addChange("3.3.2",{
+  {ct.bug,[=[Fix target frame and tooltip inspection errors]=]},
+})
+
 addChange("3.3.1",{
   {ct.bug,[=[Fix lua error on load]=]},
 })

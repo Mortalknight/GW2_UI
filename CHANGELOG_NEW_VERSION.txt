@@ -1,3 +1,6 @@
+3.3.2-Era
+   Fix target frame and tooltip inspection errors
+
 3.3.1-Era
    Fix lua error on load
 

@@ -25,7 +25,6 @@ GW.ClassicHC = C_GameRules and C_GameRules.IsHardcoreActive()
 GW.ClassicSOD = C_Engraving and C_Engraving.IsEngravingEnabled()
 
 --Tables
-GW.unitIlvlsCache = {}
 GW.skins = {}
 GW.TexCoords = {0, 1, 0, 1}
 GW.locationData = {}

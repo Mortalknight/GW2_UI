@@ -14,7 +14,6 @@ local IsIn = GW.IsIn
 local RoundDec = GW.RoundDec
 local LoadAuras = GW.LoadAuras
 local UpdateBuffLayout = GW.UpdateBuffLayout
-local PopulateUnitIlvlsCache = GW.PopulateUnitIlvlsCache
 
 local fctf
 
@@ -294,8 +293,7 @@ local function setUnitPortraitFrame(self)
 
     local txt
     local border = "normal"
-    local showItemLevel = (GW.GetSetting(self.unit .. "_SHOW_ILVL") and CanInspect(self.unit))
-    local honorLevel = showItemLevel and 0 or UnitHonorLevel and UnitHonorLevel(self.unit) or 0
+    local honorLevel = UnitHonorLevel and UnitHonorLevel(self.unit) or 0
 
     local unitClassIfication = UnitClassification(self.unit)
     if TARGET_FRAME_ART[unitClassIfication] ~= nil then
@@ -305,12 +303,7 @@ local function setUnitPortraitFrame(self)
         end
     end
 
-    if showItemLevel then
-        local guid = UnitGUID(self.unit)
-        if guid and GW.unitIlvlsCache[guid] and GW.unitIlvlsCache[guid].itemLevel then
-            txt = RoundDec(GW.unitIlvlsCache[guid].itemLevel, 0)
-        end
-    elseif honorLevel > 9 then
+    if honorLevel > 9 then
         local plvl
         txt = honorLevel
 
@@ -372,39 +365,6 @@ local function setUnitPortraitFrame(self)
     self.background:SetTexture(TARGET_FRAME_ART[border])
 end
 GW.AddForProfiling("unitframes", "setUnitPortraitFrame", setUnitPortraitFrame)
-
-local function updateAvgItemLevel(self, guid)
-    if guid == UnitGUID(self.unit) and CanInspect(self.unit) then
-        local itemLevel, retryUnit, retryTable, iLevelDB = GW.GetUnitItemLevel(self.unit)
-        if itemLevel == "tooSoon" then
-            C_Timer.After(0.05, function()
-                local canUpdate = true
-                for _, x in ipairs(retryTable) do
-                    local slotInfo = GW.GetGearSlotInfo(retryUnit, x)
-                    if slotInfo == "tooSoon" then
-                        canUpdate = false
-                    else
-                        iLevelDB[x] = slotInfo.iLvl
-                        slotInfo = nil -- clear cache
-                    end
-                end
-
-                if canUpdate then
-                    local calculateItemLevel = GW.CalculateAverageItemLevel(iLevelDB, retryUnit)
-                    PopulateUnitIlvlsCache(guid, calculateItemLevel)
-                    ClearInspectPlayer()
-                    self:UnregisterEvent("INSPECT_READY")
-                    setUnitPortraitFrame(self)
-                end
-            end)
-        else
-            PopulateUnitIlvlsCache(guid, itemLevel)
-            self:UnregisterEvent("INSPECT_READY")
-        end
-        setUnitPortraitFrame(self)
-    end
-end
-GW.AddForProfiling("unitframes", "updateAvgItemLevel", updateAvgItemLevel)
 
 local function updateRaidMarkers(self)
     local i = GetRaidTargetIndex(self.unit)
@@ -761,18 +721,6 @@ local function target_OnEvent(self, event, unit)
     local ttf = GwTargetTargetUnitFrame
 
     if IsIn(event, "PLAYER_TARGET_CHANGED", "ZONE_CHANGED", "FORCE_UPDATE") then
-        if event == "PLAYER_TARGET_CHANGED" and CanInspect(self.unit) and GW.GetSetting("target_SHOW_ILVL") then
-            local guid = UnitGUID(self.unit)
-            if guid then
-                if not GW.unitIlvlsCache[guid] then
-                    local _, englishClass = UnitClass(self.unit)
-                    local color = GWGetClassColor(englishClass, true, true)
-                    GW.unitIlvlsCache[guid] = {unitColor = {color.r, color.g, color.b}}
-                    self:RegisterEvent("INSPECT_READY")
-                    NotifyInspect(self.unit)
-                end
-            end
-        end
         if self.showThreat then
             updateThreatValues(self)
         elseif self.threattabbg:IsShown() then
@@ -814,17 +762,9 @@ local function target_OnEvent(self, event, unit)
                 updateRaidMarkers(ttf)
             end
         end
-    elseif event == "PLAYER_ENTERING_WORLD" then
-        wipe(GW.unitIlvlsCache)
     elseif event == "RAID_TARGET_UPDATE" then
         updateRaidMarkers(self)
         if (ttf) then updateRaidMarkers(ttf) end
-    elseif event == "INSPECT_READY" then
-        if not GW.GetSetting("target_SHOW_ILVL") then
-            self:UnregisterEvent("INSPECT_READY")
-        else
-            updateAvgItemLevel(self, unit)
-        end
     elseif event == "UNIT_THREAT_LIST_UPDATE" and self.showThreat then
         updateThreatValues(self)
     elseif UnitIsUnit(unit, self.unit) then
@@ -1047,7 +987,6 @@ local function LoadTarget()
     NewUnitFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
     NewUnitFrame:RegisterEvent("ZONE_CHANGED")
     NewUnitFrame:RegisterEvent("RAID_TARGET_UPDATE")
-    NewUnitFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     NewUnitFrame:RegisterUnitEvent("UNIT_HEALTH_FREQUENT", "target")
     NewUnitFrame:RegisterUnitEvent("UNIT_MAXHEALTH", "target")
