@@ -7,7 +7,7 @@ GW.GridGroupHeaders = headers
 local profiles = {
     PARTY = {
         name = "Party",
-        visibility = "[@raid6,exists][@party1,noexists] hide;show",
+        visibility = "[@raid1,exists][@party1,noexists] hide;show",
         numGroups = 1
     },
     RAID_PET = {
@@ -43,9 +43,10 @@ local profiles = {
     },
 }
 
+
 --SecureCmdOptionParse("[@raid1,noexists][@raid11,exists] hide;show")
 --SecureCmdOptionParse("[@raid11,noexists][@raid26,exists] hide;show")
---SecureCmdOptionParse("[group:party] hide;show")
+--SecureCmdOptionParse("[@raid1,exists][@party1,noexists] hide;show")
 local DIRECTION_TO_POINT = {
 	["DOWN+RIGHT"] = "TOP",
 	["DOWN+LEFT"] = "TOP",

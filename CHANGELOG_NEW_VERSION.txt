@@ -1,3 +1,7 @@
+6.14.5
+FIXES
+    - Party frame visibility
+
 6.14.4
 FIXES
     - Tooltip M+ lua error

@@ -597,9 +597,9 @@ local function UpdatePlayerInPartySetting()
         updatePartyData(frame)
 
         if frame.unit == "player" then
-            RegisterStateDriver(frame, "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format("party1"))
+            RegisterStateDriver(frame, "visibility", ("[@raid1,exists][@%s,noexists] hide;show"):format("party1"))
         else
-            RegisterStateDriver(frame, "visibility", ("[@raid6,exists][@%s,noexists] hide;show"):format(frame.unit))
+            RegisterStateDriver(frame, "visibility", ("[@raid1,exists][@%s,noexists] hide;show"):format(frame.unit))
         end
 
         isFirstFrame = false
