@@ -692,7 +692,7 @@ local function showAdvancedChatStats(self)
 
     GameTooltip:AddLine(" ")
     GameTooltip:AddLine(STAT_CATEGORY_SPELL)
-    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. SPELL_CRIT_CHANCE .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. GetSpellCrit() .. FONT_COLOR_CODE_CLOSE)
+    GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. SPELL_CRIT_CHANCE .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. GetSpellCrit(2) .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   " .. ITEM_MOD_HIT_SPELL_RATING_SHORT .. ": " .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. SpellHitBonus() .. FONT_COLOR_CODE_CLOSE)
     GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   Miss-Chance:" .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. SpellMissChanceSameLevel() .. FONT_COLOR_CODE_CLOSE)
         GameTooltip:AddDoubleLine(HIGHLIGHT_FONT_COLOR_CODE .. "   Miss-Chance (Level + 3):" .. FONT_COLOR_CODE_CLOSE, HIGHLIGHT_FONT_COLOR_CODE .. SpellMissChanceBossLevel() .. FONT_COLOR_CODE_CLOSE)

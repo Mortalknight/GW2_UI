@@ -428,15 +428,15 @@ local function loadBaseFrame()
     fmGCW.WindowHeader:SetTextColor(255/255, 241/255, 209/255)
     fmGCW:SetAttribute('windowpanelopen', nil)
     fmGCW.secure:SetAttribute("_onclick", charSecure_OnClick)
-    fmGCW.secure:SetFrameRef("GwCharacterWindow", GwCharacterWindow)
+    fmGCW.secure:SetFrameRef("GwCharacterWindow", fmGCW)
     fmGCW:SetAttribute("_onattributechanged", charSecure_OnAttributeChanged)
-    fmGCW.SoundOpen = function(self)
+    fmGCW.SoundOpen = function()
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN)
     end
-    fmGCW.SoundSwap = function(self)
+    fmGCW.SoundSwap = function()
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
     end
-    fmGCW.SoundExit = function(self)
+    fmGCW.SoundExit = function()
         PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE)
     end
 
@@ -473,45 +473,45 @@ local function loadBaseFrame()
     fmGCW.sizer:SetFrameStrata(fmGCW:GetFrameStrata())
     fmGCW.sizer:SetFrameLevel(fmGCW:GetFrameLevel() + 15)
     fmGCW.sizer:SetScript("OnMouseDown", function(self, btn)
-     if btn ~= "RightButton" then
-         return
-     end
-     heroFrameLeft, heroFrameTop = GwCharacterWindow:GetLeft(), GwCharacterWindow:GetTop()
-     heroFrameNormalScale = GwCharacterWindow:GetScale()
-     heroFrameX,heroFrameY = heroFrameLeft, heroFrameTop - (UIParent:GetHeight() / heroFrameNormalScale)
-     heroFrameEffectiveScale = GwCharacterWindow:GetEffectiveScale()
-     moveDistance = GetScaleDistance()
-     self:SetScript("OnUpdate", function()
-         local scale = GetScaleDistance() / moveDistance * heroFrameNormalScale
-         if scale < 0.2 then scale = 0.2 elseif scale > 3.0 then scale = 3.0 end
-         GwCharacterWindow:SetScale(scale)
-         local s = heroFrameNormalScale / GwCharacterWindow:GetScale()
-         local x = heroFrameX * s
-         local y = heroFrameY * s
-         GwCharacterWindow:ClearAllPoints()
-         GwCharacterWindow:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
-     end)
- end)
- fmGCW.sizer:SetScript("OnMouseUp", function(self)
-     self:SetScript("OnUpdate", nil)
-     SetSetting("HERO_POSITION_SCALE", GwCharacterWindow:GetScale())
-     -- Save hero frame position
-     local pos = GetSetting("HERO_POSITION")
-     if pos then
-         wipe(pos)
-     else
-         pos = {}
-     end
-     pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = GwCharacterWindow:GetPoint()
-     SetSetting("HERO_POSITION", pos)
-     --Reset Model Camera
-     GwDressingRoom.model:RefreshCamera()
- end)
- -- set binding change handlers
- fmGCW.secure:HookScript("OnEvent", function(self, event)
-     GW.CombatQueue_Queue(click_OnEvent, {self, event})
- end)
- fmGCW.secure:RegisterEvent("UPDATE_BINDINGS")
+        if btn ~= "RightButton" then
+            return
+        end
+        heroFrameLeft, heroFrameTop = fmGCW:GetLeft(), fmGCW:GetTop()
+        heroFrameNormalScale = fmGCW:GetScale()
+        heroFrameX,heroFrameY = heroFrameLeft, heroFrameTop - (UIParent:GetHeight() / heroFrameNormalScale)
+        heroFrameEffectiveScale = fmGCW:GetEffectiveScale()
+        moveDistance = GetScaleDistance()
+        self:SetScript("OnUpdate", function()
+            local scale = GetScaleDistance() / moveDistance * heroFrameNormalScale
+            if scale < 0.2 then scale = 0.2 elseif scale > 3.0 then scale = 3.0 end
+            fmGCW:SetScale(scale)
+            local s = heroFrameNormalScale / fmGCW:GetScale()
+            local x = heroFrameX * s
+            local y = heroFrameY * s
+            fmGCW:ClearAllPoints()
+            fmGCW:SetPoint("TOPLEFT", UIParent, "TOPLEFT", x, y)
+        end)
+    end)
+    fmGCW.sizer:SetScript("OnMouseUp", function(self)
+        self:SetScript("OnUpdate", nil)
+        SetSetting("HERO_POSITION_SCALE", fmGCW:GetScale())
+        -- Save hero frame position
+        local pos = GetSetting("HERO_POSITION")
+        if pos then
+            wipe(pos)
+        else
+            pos = {}
+        end
+        pos.point, _, pos.relativePoint, pos.xOfs, pos.yOfs = fmGCW:GetPoint()
+        SetSetting("HERO_POSITION", pos)
+        --Reset Model Camera
+        GwDressingRoom.model:RefreshCamera()
+    end)
+    -- set binding change handlers
+    fmGCW.secure:HookScript("OnEvent", function(self, event)
+        GW.CombatQueue_Queue(click_OnEvent, {self, event})
+    end)
+    fmGCW.secure:RegisterEvent("UPDATE_BINDINGS")
 end
 
 local function setTabIconState(self, b)
