@@ -729,6 +729,7 @@ local function LoadInventory()
 
     if BagBarExpandToggle then
         BagBarExpandToggle:SetParent(GW.HiddenFrame)
+        SetCVar("expandBagBar", "1")
     end
     item_size = GW.settings.BAG_ITEM_SIZE
 
