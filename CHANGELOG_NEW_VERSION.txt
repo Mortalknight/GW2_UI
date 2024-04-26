@@ -1,3 +1,10 @@
+6.14.6
+FIXES
+    - Fix GW2 slash commands
+    - Fix merchant frame next/prev page button position
+    - Fix lua error if our minimap is disabled
+    - Fix character itemlevel was not shown
+
 6.14.5
 FIXES
     - Party frame visibility
