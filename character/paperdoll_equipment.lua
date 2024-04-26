@@ -501,14 +501,13 @@ GW.AddForProfiling("paperdoll_equipment", "getDurabilityListFrame", getDurabilit
 
 local function updateStats()
     local avgItemLevel, avgItemLevelEquipped = GetAverageItemLevel()
-    local avgItemLevelEquippedText = ""
     avgItemLevelEquipped = math.floor(avgItemLevelEquipped)
     avgItemLevel = math.floor(avgItemLevel)
     if avgItemLevelEquipped < avgItemLevel then
-        avgItemLevelEquippedText = math.floor(avgItemLevelEquipped) .. "(" .. math.floor(avgItemLevel) .. ")"
+        avgItemLevelEquipped = math.floor(avgItemLevelEquipped) .. "(" .. math.floor(avgItemLevel) .. ")"
     end
 
-    GwDressingRoom.itemLevel:SetText(avgItemLevelEquippedText)
+    GwDressingRoom.itemLevel:SetText(avgItemLevelEquipped)
     GwDressingRoom.itemLevel:SetTextColor(GetItemLevelColor())
 
     local statFrame
