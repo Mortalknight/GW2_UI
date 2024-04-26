@@ -1,0 +1,25 @@
+name: TOC Bump
+
+on:
+  schedule:
+    - cron: 0 12 * * *
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v4
+
+      - name: Update TOC Interface version
+        uses: p3lim/toc-interface-updater@v3
+        with:
+          flavor: retail
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "chore: Update Interface version"
+          commit-message: "Update Interface version"
+          branch: toc-bump
+          delete-branch: true

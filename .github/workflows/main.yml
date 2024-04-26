@@ -16,6 +16,6 @@ jobs:
   release: # "release" is a job, you can name it anything you want
     runs-on: ubuntu-latest
     steps:
-        - uses: actions/checkout@v1
+        - uses: actions/checkout@v4
 
         - uses: BigWigsMods/packager@v2
