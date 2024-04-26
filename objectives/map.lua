@@ -76,7 +76,7 @@ local LOW_PRIORITY_TRACKING_SPELLS = {
     [261764] = true; -- Track Warboards
 };
 
-function MiniMapTrackingDropDown_SetTrackingNone()
+local function MiniMapTrackingDropDown_SetTrackingNone()
     C_Minimap.ClearAllTracking();
 
     local count = C_Minimap.GetNumTrackingTypes();
@@ -90,10 +90,10 @@ function MiniMapTrackingDropDown_SetTrackingNone()
     GW.Libs.LibDD:UIDropDownMenu_Refresh(M.TrackingDropdown)
 end
 
-function MiniMapTrackingDropDown_SetTracking(self, id, unused, on)
+local function MiniMapTrackingDropDown_SetTracking(self, id, unused, on)
     C_Minimap.SetTracking(id, on);
 
-    GW.Libs.LibDD:UIDropDownMenu_Refresh(M.TrackingDropdown)
+    C_Timer.After(1, function()GW.Libs.LibDD:UIDropDownMenu_Refresh(M.TrackingDropdown) end)
 end
 local function MiniMapTrackingDropDown_Initialize(self, level)
     local name, texture, active, category, nested, numTracking, spellID
@@ -157,7 +157,7 @@ local function MiniMapTrackingDropDown_Initialize(self, level)
 
             info = GW.Libs.LibDD:UIDropDownMenu_CreateInfo();
             info.text = name;
-            info.checked = MiniMapTrackingDropDown_IsActive;
+            info.checked = function() return select(3, C_Minimap.GetTrackingInfo(id)) end
             info.func = MiniMapTrackingDropDown_SetTracking;
             info.icon = TRACKING_SPELL_OVERRIDE_TEXTURES[spellID] or texture;
             info.arg1 = id;
@@ -510,9 +510,8 @@ local function CreateMinimapTrackingDropdown()
     dropdown:SetID(1)
     dropdown:SetClampedToScreen(true)
     dropdown:Hide()
-
-    GW.Libs.LibDD:UIDropDownMenu_Initialize(dropdown, MiniMapTrackingDropDown_Initialize, "MENU")
     dropdown.noResize = true
+    GW.Libs.LibDD:UIDropDownMenu_Initialize(dropdown, MiniMapTrackingDropDown_Initialize, "MENU")
 
     return dropdown
 end
